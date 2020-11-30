@@ -43,8 +43,9 @@ sap.ui.define([
 	var Button;
 	var ValueHelpPanel;
 	var DefineConditionPanel;
-	var ConditionModel;
 	var ManagedObjectModel;
+	var FilterBar;
+	var FilterField;
 
 	// shortcut for sap.m.ButtonType
 	var ButtonType = mobileLibrary.ButtonType;
@@ -214,6 +215,17 @@ sap.ui.define([
 					type: "sap.m.Dialog",
 					multiple: false,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Internal <code>FilterBar</code> control of the field help. (If no external <code>FilterBar</code> used.)
+				 *
+				 * @since 1.85.0
+				 */
+				_filterBar: {
+					type: "sap.ui.mdc.filterbar.FilterBarBase",
+					multiple: false,
+					visibility: "hidden"
 				}
 			},
 			defaultAggregation: "content",
@@ -241,7 +253,6 @@ sap.ui.define([
 		Button = undefined;
 		ValueHelpPanel = undefined;
 		DefineConditionPanel = undefined;
-		ConditionModel = undefined;
 		ManagedObjectModel = undefined;
 
 	};
@@ -254,10 +265,12 @@ sap.ui.define([
 
 		this._oObserver.observe(this, {
 			properties: ["filterValue", "conditions", "showConditionPanel", "title", "filterFields"],
-			aggregations: ["content", "filterBar", "inParameters"]
+			aggregations: ["content", "filterBar", "_filterBar", "inParameters"]
 		});
 
 		this.setBindingContext(null); // don't inherit from parent as this could have a invalid BindingContent to read InParameters...
+
+		this._oConditions = {}; // if no FilterBar is used store Conditions for search and InParameters locally
 
 	};
 
@@ -270,13 +283,20 @@ sap.ui.define([
 			delete this._oManagedObjectModel;
 		}
 
-		if (this._oFilterConditionModel) {
-			this._oFilterConditionModel.destroy();
-			delete this._oFilterConditionModel;
-		}
-
 		this._oObserver.disconnect();
 		this._oObserver = undefined;
+
+		delete this._oConditions;
+
+		if (this._iUpdateTimer) {
+			clearTimeout(this._iUpdateTimer);
+			this._iUpdateTimer = null;
+		}
+
+		if (this._iFilterTimer) {
+			clearTimeout(this._iFilterTimer);
+			this._iFilterTimer = null;
+		}
 
 	};
 
@@ -299,7 +319,7 @@ sap.ui.define([
 				return;
 			}
 
-			var oFilterBar = this.getFilterBar();
+			var oFilterBar = _getFilterBar.call(this);
 			if ((oDialog && oOrigin === oDialog) ||
 					(oFilterBar && oOrigin === oFilterBar)) {
 				if (oOrigin.bOutput && !this._bIsBeingDestroyed) {
@@ -392,8 +412,6 @@ sap.ui.define([
 			bSuggestion = true;
 		}
 
-		this._bUseFilterBar = !bSuggestion; // FilterBar should be used for filtering (if exist)
-
 		// as BindingContext of Field might change (happens in table) update if needed
 		_updateBindingContext.call(this);
 
@@ -424,10 +442,6 @@ sap.ui.define([
 				_getDialog.call(this);
 			}
 
-			if (oWrapper && oWrapper.getFilterEnabled() && !this._oFilterConditionModel) {
-				_createFilterConditionModel.call(this);
-			}
-
 			this._bOpenAfterPromise = true;
 
 			return;
@@ -441,12 +455,7 @@ sap.ui.define([
 				// apply use in-parameter filters
 				this._bApplyFilter = true;
 			}
-			if (!this._oFilterConditionModel) {
-				_createFilterConditionModel.call(this);
-			} else {
-				// remove all filters from FilterBar (initialize on new open). But let in-parameter filters active
-				_removeFilterBarFilters.call(this);
-			}
+			_initializeFilters.call(this);
 		}
 
 		if (this._bUpdateFilterAfterClose) {
@@ -463,18 +472,14 @@ sap.ui.define([
 				//call the fieldHelpOpen before the open to update the table width and avoid rerender and flickering of suggest popover
 				oWrapper.fieldHelpOpen(bSuggestion);
 
-				if (this._oFilterConditionModel && !this.getFilterValue() && !this._bNavigateRunning) {
+				if (!this.getFilterValue() && !this._bNavigateRunning) {
 					// if no filter call filters to search for all (use in-parameters)
-					// use checkUpdate to call _applyFilters not twice
-					this._oFilterConditionModel.checkUpdate(true, true);
+					_applyFilters.call(this, true);
 				}
 
 				FieldHelpBase.prototype.open.apply(this, [bSuggestion]);
 			}
 		} else {
-			// use FilterBar filters
-			_updateFiltersFromFilterBar.call(this);
-
 			var oPopover = this.getAggregation("_popover");
 			if (oPopover) {
 				if (oPopover.isOpen()) {
@@ -486,14 +491,16 @@ sap.ui.define([
 			var oDialog = _getDialog.call(this);
 
 			if (oDialog) {
+				// create SearchField if needed
+				_initializeSearchField.call(this);
+
+				// use FilterBar filters
+				_updateFiltersFromFilterBar.call(this);
+
 				var oValueHelpPanel = oDialog.getContent()[0];
 				oValueHelpPanel.setShowTokenizer(this.getMaxConditions() !== 1 && !!oWrapper);
 				oValueHelpPanel.setFormatOptions(this._getFormatOptions());
 				oValueHelpPanel.bindProperty("conditions", {path: "$help>/conditions"});
-				var sFilterFields = this.getFilterFields();
-				if (sFilterFields) {
-					oValueHelpPanel.bindProperty("filterConditions", {path: "filter>/conditions/" + sFilterFields});
-				}
 
 				if (oWrapper) {
 					oWrapper.fieldHelpOpen(false);
@@ -554,7 +561,6 @@ sap.ui.define([
 		if (!this._bDialogOpen) {
 			FieldHelpBase.prototype.close.apply(this, arguments);
 		} else {
-			this._bUseFilterBar = false;
 			var oDialog = this.getAggregation("_dialog");
 
 			if (oDialog) {
@@ -564,7 +570,6 @@ sap.ui.define([
 				var oValueHelpPanel = oDialog.getContent()[0];
 				// remove binding of conditions to prevent updates on ValueHelpPanel and DefineConditionPanel while closed. (e.g. empty row)
 				oValueHelpPanel.unbindProperty("conditions", true);
-				oValueHelpPanel.unbindProperty("filterConditions", true);
 			}
 
 			this._bReopen = false;
@@ -603,25 +608,28 @@ sap.ui.define([
 
 	};
 
-	function _cleanupFilters() {
-
-		if (!this._oFilterConditionModel) {
-			return;
-		}
+	function _cleanupFilters() { // TODO: really needed or better use single requests if needed by getText or description?
 
 		// remove filters: update table only if filter exist
-		var oConditions = this._oFilterConditionModel.getAllConditions();
+		var oFilterBar = _getFilterBar.call(this);
+		var oConditions;
+
+		if (oFilterBar) {
+			oConditions = oFilterBar.getInternalConditions();
+		} else {
+			oConditions = this._oConditions;
+		}
+
 		var bRemove = false;
 		for (var sMyFieldPath in oConditions) {
 			if (oConditions[sMyFieldPath].length > 0) {
+				_removeConditions.call(this, sMyFieldPath);
 				bRemove = true;
-				break;
 			}
 		}
 
 		if (bRemove) {
-			this._oFilterConditionModel.removeAllConditions(/*sFilterFields*/);
-			// _applyFilters called from _handleFilterModelChange after all filters set
+			_applyFilters.call(this, true);
 		}
 
 	}
@@ -638,7 +646,9 @@ sap.ui.define([
 			oWrapper.fieldHelpClose();
 		}
 
-		this._bApplyFilter = false;
+		if (!this.isOpen()) { // maybe Popover closed while Dialog opens -> here Filter needs to be applied
+			this._bApplyFilter = false;
+		}
 
 		FieldHelpBase.prototype._handleAfterClose.apply(this, arguments);
 
@@ -654,7 +664,14 @@ sap.ui.define([
 			}
 
 			if (oChanges.name === "filterBar") {
-				_updateFilterBar.call(this, oChanges.mutation, oChanges.child);
+				if (oChanges.mutation === "insert" && this.getAggregation("_filterBar")) {
+					this.destroyAggregation("_filterBar");
+				}
+				_updateFilterBar.call(this, oChanges.mutation, oChanges.child, false);
+			}
+
+			if (oChanges.name === "_filterBar") {
+				_updateFilterBar.call(this, oChanges.mutation, oChanges.child, true);
 			}
 
 			if (oChanges.name === "conditions") {
@@ -683,13 +700,11 @@ sap.ui.define([
 			if (oChanges.name === "filterFields") {
 				oDialog = this.getAggregation("_dialog");
 				if (oDialog) {
-					var oValueHelpPanel = oDialog.getContent()[0];
-					oValueHelpPanel.setSearchEnabled(!!oChanges.current);
 					if (oDialog.isOpen()) {
 						if (oChanges.current) {
-							oValueHelpPanel.bindProperty("filterConditions", {path: "filter>/conditions/" + oChanges.current});
-						} else {
-							oValueHelpPanel.unbindProperty("filterConditions", true);
+							_initializeSearchField.call(this);
+						} else if (this.getAggregation("_filterBar")) {
+							this.destroyAggregation("_filterBar");
 						}
 					}
 				}
@@ -788,9 +803,6 @@ sap.ui.define([
 				this._iStep = null;
 				if (oWrapper) {
 					this._getPopover();
-					if (!this._oFilterConditionModel) {
-						_createFilterConditionModel.call(this);
-					}
 				}
 				return;
 			}
@@ -806,12 +818,8 @@ sap.ui.define([
 			// apply use in-parameter filters
 			this._bApplyFilter = true;
 			this._bNavigateRunning = true;
-			if (!this._oFilterConditionModel) {
-				_createFilterConditionModel.call(this);
-			} else {
-				_setInParameterFilters.call(this);
-			}
-			this._oFilterConditionModel.checkUpdate(true, true); // if no filter set and no in-parameters, trigger initial select (if suspended)
+			_setInParameterFilters.call(this);
+			_applyFilters.call(this, true); // if no filter set and no in-parameters, trigger initial select (if suspended)
 		}
 
 		if (!oPopover) {
@@ -1151,9 +1159,6 @@ sap.ui.define([
 			var oPopover = this.getAggregation("_popover");
 			var oDialog = this.getAggregation("_dialog");
 			if (oWrapper) {
-				if (oWrapper.getFilterEnabled() && !this._oFilterConditionModel && ((oPopover && this._bOpenIfContent) || oDialog)) {
-					_createFilterConditionModel.call(this);
-				}
 				if (oPopover && this._bOpenIfContent) {
 					var oField = this._getField();
 					if (oField) {
@@ -1229,34 +1234,28 @@ sap.ui.define([
 
 	function _filterContent(sFilterText) {
 
-		if (!this._oFilterConditionModel) {
-			return;
-		}
-
 		var sFilterFields = this.getFilterFields();
 
 		if (!sFilterFields) {
 			return; // we don't know how to filter
 		}
 
-		var aConditions = this._oFilterConditionModel.getConditions(sFilterFields);
+		var aConditions = _getConditions.call(this, sFilterFields);
 		var sFilterValue = aConditions.length > 0 ? aConditions[0].values[0] : "";
 		if (sFilterText === sFilterValue) {
 			// not changed
 			return;
 		}
 
-		if (sFilterText) {
-			this._bOwnFilterChange = true; // do not filter twice;
-		}
-
-		this._oFilterConditionModel.removeAllConditions(sFilterFields);
+		_removeConditions.call(this, sFilterFields);
 		sFilterText = sFilterText.trim();
 		if (sFilterText) {
 			this._bOwnFilterChange = false;
 			var oCondition = Condition.createCondition("StartsWith", [sFilterText], undefined, undefined, ConditionValidated.NotValidated);
-			this._oFilterConditionModel.addCondition(sFilterFields, oCondition);
+			_addCondition.call(this, sFilterFields, oCondition);
 		}
+
+		_applyFilters.call(this, true);
 
 	}
 
@@ -1282,28 +1281,16 @@ sap.ui.define([
 			}
 		}
 
-		// _applyFilters called from _handleFilterModelChange after all filters set
+		_applyFilters.call(this, true); // call async to handle more inParamers at one time
 
 	}
 
 	function _addInFilter(sFilterPath, vValue, bUseConditions) {
 
-		var oFilterBar;
-		var oConditions;
 		var oCondition;
 		var bUpdate = false;
 
-		if (this._oFilterConditionModel && sFilterPath && vValue) { // TODO: support boolean?
-			oFilterBar = this.getFilterBar();
-
-			if (this._bUseFilterBar && oFilterBar) {
-				// update in FilterBar and in FilterConditionModel
-				oConditions = oFilterBar.getInternalConditions();
-				if (!oConditions[sFilterPath]) {
-					oConditions[sFilterPath] = [];
-				}
-			}
-
+		if (sFilterPath && vValue) { // TODO: support boolean?
 			if (bUseConditions) {
 				if (Array.isArray(vValue)) {
 					for (var i = 0; i < vValue.length; i++) {
@@ -1316,10 +1303,7 @@ sap.ui.define([
 							oCondition.outParameters = _mapOutParametersToHelp.call(this, oCondition.outParameters);
 						}
 
-						this._oFilterConditionModel.addCondition(sFilterPath, oCondition);
-						if (this._bUseFilterBar && oFilterBar) {
-							oConditions[sFilterPath].push(oCondition); // use FieldHelp paths in FilterBar too
-						}
+						_addCondition.call(this, sFilterPath, oCondition);
 						bUpdate = true;
 					}
 				}
@@ -1329,16 +1313,9 @@ sap.ui.define([
 				// Also to show it as selected on table in FieldHelp of FilterField.
 				oCondition = Condition.createItemCondition(vValue);
 				oCondition.validated = ConditionValidated.Validated;
-				this._oFilterConditionModel.addCondition(sFilterPath, oCondition);
-				if (this._bUseFilterBar && oFilterBar) {
-					oConditions[sFilterPath].push(oCondition);
-				}
+				_addCondition.call(this, sFilterPath, oCondition);
 				bUpdate = true;
 			}
-		}
-
-		if (bUpdate && this._bUseFilterBar && oFilterBar) {
-			oFilterBar.setInternalConditions(oConditions);
 		}
 
 		return bUpdate;
@@ -1349,21 +1326,9 @@ sap.ui.define([
 
 		var bUpdate = false;
 
-		if (this._oFilterConditionModel && sFilterPath && this._oFilterConditionModel.getConditions(sFilterPath).length > 0) {
-			this._oFilterConditionModel.removeAllConditions(sFilterPath); // TODO: remove only filters from In-parameters, not from FilterBar
+		if (sFilterPath && _getConditions.call(this, sFilterPath).length > 0) {
+			_removeConditions.call(this, sFilterPath); // TODO: remove only filters from In-parameters, not from FilterBar
 			bUpdate = true;
-		}
-
-		var oFilterBar = this.getFilterBar();
-
-		if (this._bUseFilterBar && oFilterBar) {
-			// update in FilterBar and in FilterConditionModel
-			var oConditions = oFilterBar.getInternalConditions();
-			if (oConditions[sFilterPath] && oConditions[sFilterPath].length > 0) {
-				oConditions[sFilterPath] = [];
-				oFilterBar.setInternalConditions(oConditions);
-				bUpdate = true;
-			}
 		}
 
 		return bUpdate;
@@ -1377,9 +1342,9 @@ sap.ui.define([
 			return;
 		}
 
-		if (!this.sUpdateTimer) { // do async as it can take a while until model updates all bindings.
-			this.sUpdateTimer = setTimeout(function() {
-				this.sUpdateTimer = undefined;
+		if (!this._iUpdateTimer) { // do async as it can take a while until model updates all bindings.
+			this._iUpdateTimer = setTimeout(function() {
+				this._iUpdateTimer = undefined;
 				this.fireDataUpdate(); // to update text
 			}.bind(this), 0);
 		}
@@ -1394,7 +1359,7 @@ sap.ui.define([
 		bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions) || bUpdate;
 		_updateSelectedItems.call(this); // as default in-parameters could change
 
-		// _applyFilters called from _handleFilterModelChange after all filters set
+		_applyFilters.call(this, true); // call async to handle more inParamers at one time
 
 	}
 
@@ -1409,11 +1374,11 @@ sap.ui.define([
 		bUpdate = _removeInFilter.call(this, sOldFilterPath); // if exist, remove old filter
 		bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions) || bUpdate;
 
-		// _applyFilters called from _handleFilterModelChange after all filters set
+		_applyFilters.call(this, true); // call async to handle more inParamers at one time
 
 	}
 
-	function _setInParameterFilters() {
+	function _setInParameterFilters() { // if closed, InParameters are not added to FilterBar or conditions, so do it here
 
 		var aInParameters = this.getInParameters();
 		var bUpdate = false;
@@ -1427,10 +1392,10 @@ sap.ui.define([
 			bUpdate = _addInFilter.call(this, sFilterPath, vValue, bUseConditions) || bUpdate;
 		}
 
-		if (this._oFilterConditionModel && !bUpdate && this._bApplyFilter && this._bPendingFilterUpdate) {
-			// maybe filter change while closed, so trigger check now
+		if (bUpdate || (this._bApplyFilter && this._bPendingFilterUpdate)) {
+			// updated or maybe filter change while closed, so trigger check now
 			this._bPendingFilterUpdate = false;
-			this._oFilterConditionModel.checkUpdate(true, true);
+			_applyFilters.call(this, true);
 		}
 
 	}
@@ -1673,9 +1638,22 @@ sap.ui.define([
 
 	}
 
-	function _applyFilters() {
+	function _applyFilters(bAsync) {
 
-		if (!this._oFilterConditionModel || (!this.isOpen() && !this._bNavigateRunning && !this._bOpen) || this._bClosing || !this._bApplyFilter) {
+		if (bAsync) {
+			if (!this._iFilterTimer) {
+				this._iFilterTimer = setTimeout(function() {
+					this._iFilterTimer = undefined;
+					_applyFilters.call(this);
+				}.bind(this), 0);
+			}
+			return;
+		} else if (this._iFilterTimer) {
+			clearTimeout(this._iFilterTimer);
+			this._iFilterTimer = undefined;
+		}
+
+		if ((!this.isOpen() && !this._bNavigateRunning && !this._bOpen) || this._bClosing || !this._bApplyFilter) {
 			// apply filters only if open (no request on closed FieldHelp)
 			this._bPendingFilterUpdate = true;
 			return;
@@ -1695,7 +1673,7 @@ sap.ui.define([
 			oBindingPendingPromise.then(function() {
 				// promise on binding is resolved before property updated on InParameter or update triggered in ConditionModel
 				this._bFilterWaitingForBinding = false;
-				this._oFilterConditionModel.checkUpdate(true, true); // to trigger _applyFilters ofter the InParameter "value" property was updated and even if InParameter is empty
+				_applyFilters.call(this, true); // trigger after the InParameter "value" property was updated and even if InParameter is empty
 			}.bind(this));
 			this._bFilterWaitingForBinding = true;
 			return;
@@ -1703,83 +1681,31 @@ sap.ui.define([
 
 		var oWrapper = this.getContent();
 		if (oWrapper) {
-			var oConditions = this._oFilterConditionModel.getAllConditions();
-			var oConditionTypes = FilterConverter.createConditionTypesMapFromFilterBar( oConditions, this.getFilterBar());
-			var oFilter = FilterConverter.createFilters( oConditions, oConditionTypes);
+			var oFilterBar = _getFilterBar.call(this);
+			var oConditions;
 
+			if (oFilterBar) {
+				oConditions = oFilterBar.getInternalConditions();
+			} else {
+				// no FilterBar used - use lokal condition
+				oConditions = this._oConditions;
+			}
+
+			var oConditionTypes = FilterConverter.createConditionTypesMapFromFilterBar( oConditions, oFilterBar);
+			var oFilter = FilterConverter.createFilters( oConditions, oConditionTypes);
 			var aFilters = [];
-			var aSearchConditions = this._oFilterConditionModel.getConditions("$search");
+			var aSearchConditions = oConditions["$search"];
 			var sSearch;
 
 			if (oFilter) {
 				aFilters.push(oFilter);
 			}
 
-			if (aSearchConditions.length > 0) {
+			if (aSearchConditions && aSearchConditions.length > 0) {
 				sSearch = aSearchConditions[0].values[0];
 			}
 
 			oWrapper.applyFilters(aFilters, sSearch);
-		}
-
-	}
-
-	function _handleFilterModelChange(oEvent) {
-
-		if (this._bOwnFilterChange) {
-			return;
-		}
-
-		// check if FilterValue changed by SearchField
-		var sFilterFields = this.getFilterFields();
-		if (sFilterFields && !this._bUpdateFilterAfterClose) { // filter changed while closing -> condition not updated
-			var aConditions = this._oFilterConditionModel.getConditions(sFilterFields);
-			var sFilterValue = aConditions.length > 0 ? aConditions[0].values[0] : "";
-			if (sFilterValue !== this.getFilterValue()) {
-				this.setProperty("filterValue", sFilterValue, true);
-			}
-		}
-
-		_applyFilters.call(this);
-
-	}
-
-	function _createFilterConditionModel() {
-
-		if (!ConditionModel && !this._bFilterConditionModelRequested) {
-			ConditionModel = sap.ui.require("sap/ui/mdc/condition/ConditionModel");
-			if (!ConditionModel) {
-				sap.ui.require(["sap/ui/mdc/condition/ConditionModel"], _FilterConditionModelLoaded.bind(this));
-				this._bFilterConditionModelRequested = true;
-			}
-		}
-
-		if (ConditionModel) {
-			var sFilterValue = this.getFilterValue();
-
-			this._oFilterConditionModel = new ConditionModel();
-			if (sFilterValue) {
-				_filterContent.call(this, sFilterValue);
-			}
-
-			//IN/OUT handling
-			_setInParameterFilters.call(this);
-
-			var oConditionChangeBinding = this._oFilterConditionModel.bindProperty("/conditions", this._oFilterConditionModel.getContext("/conditions"));
-			oConditionChangeBinding.attachChange(_handleFilterModelChange.bind(this));
-
-			this.setModel(this._oFilterConditionModel, "filter");
-		}
-
-	}
-
-	function _FilterConditionModelLoaded(fnConditionModel) {
-
-		ConditionModel = fnConditionModel;
-		this._bFilterConditionModelRequested = false;
-
-		if (!this._bIsBeingDestroyed) {
-			_createFilterConditionModel.call(this);
 		}
 
 	}
@@ -1906,19 +1832,22 @@ sap.ui.define([
 
 		var oDialog;
 
-		if ((!Dialog || !Button || !ValueHelpPanel || !DefineConditionPanel) && !this._bDialogRequested) {
+		if ((!Dialog || !Button || !ValueHelpPanel || !DefineConditionPanel || !ManagedObjectModel || !FilterBar || !FilterField) && !this._bDialogRequested) {
 			Dialog = sap.ui.require("sap/m/Dialog");
 			Button = sap.ui.require("sap/m/Button");
 			ValueHelpPanel = sap.ui.require("sap/ui/mdc/field/ValueHelpPanel");
 			DefineConditionPanel = sap.ui.require("sap/ui/mdc/field/DefineConditionPanel"); // TODO: load only if needed
 			ManagedObjectModel = sap.ui.require("sap/ui/model/base/ManagedObjectModel");
-			if (!Dialog || !Button || !ValueHelpPanel || !DefineConditionPanel || !ManagedObjectModel) {
+			FilterBar = sap.ui.require("sap/ui/mdc/filterbar/vh/FilterBar");
+			FilterField = sap.ui.require("sap/ui/mdc/FilterField");
+			if (!Dialog || !Button || !ValueHelpPanel || !DefineConditionPanel || !ManagedObjectModel || !FilterBar || !FilterField) {
 				sap.ui.require(["sap/m/Dialog", "sap/m/Button", "sap/ui/mdc/field/ValueHelpPanel",
-				                "sap/ui/mdc/field/DefineConditionPanel", "sap/ui/model/base/ManagedObjectModel"], _DialogLoaded.bind(this));
+				                "sap/ui/mdc/field/DefineConditionPanel", "sap/ui/model/base/ManagedObjectModel",
+				                "sap/ui/mdc/filterbar/vh/FilterBar", "sap/ui/mdc/FilterField"], _DialogLoaded.bind(this));
 				this._bDialogRequested = true;
 			}
 		}
-		if (Dialog && Button && ValueHelpPanel && DefineConditionPanel && ManagedObjectModel && !this._bDialogRequested) {
+		if (Dialog && Button && ValueHelpPanel && DefineConditionPanel && ManagedObjectModel && FilterBar && FilterField && !this._bDialogRequested) {
 			if (!this._oResourceBundle) {
 				this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 			}
@@ -1958,7 +1887,7 @@ sap.ui.define([
 
 			this.setAggregation("_dialog", oDialog, true);
 			// TODO
-			oDialog.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
+			this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
 
 			_toggleDefineConditions.call(this, this.getShowConditionPanel());
 		}
@@ -1985,13 +1914,15 @@ sap.ui.define([
 		}
 	}
 
-	function _DialogLoaded(fnDialog, fnButton, fnValueHelpPanel, fnDefineConditionPanel, fnManagedObjectModel) {
+	function _DialogLoaded(fnDialog, fnButton, fnValueHelpPanel, fnDefineConditionPanel, fnManagedObjectModel, fnFilterBar, fnFilterField) {
 
 		Dialog = fnDialog;
 		Button = fnButton;
 		ValueHelpPanel = fnValueHelpPanel;
 		DefineConditionPanel = fnDefineConditionPanel;
 		ManagedObjectModel = fnManagedObjectModel;
+		FilterBar = fnFilterBar;
+		FilterField = fnFilterField;
 		this._bDialogRequested = false;
 
 		if (!this._bIsBeingDestroyed) {
@@ -2006,14 +1937,12 @@ sap.ui.define([
 	function _createValueHelpPanel() {
 
 		var oWrapper = this.getContent();
-		var oFilterBar = this.getFilterBar();
+		var oFilterBar = _getFilterBar.call(this);
 
 		var oValueHelpPanel = new ValueHelpPanel(this.getId() + "-VHP", {
 			height: "100%",
 			showFilterbar: !!oFilterBar,
-			searchEnabled: !!this.getFilterFields(),
-			formatOptions: this._getFormatOptions(),
-			search: _handleSearch.bind(this)
+			formatOptions: this._getFormatOptions()
 		});
 		oValueHelpPanel.setModel(this._oManagedObjectModel, "$help");
 
@@ -2061,9 +1990,6 @@ sap.ui.define([
 			}
 			_setInParameterFilters.call(this);
 
-			if (oWrapper && oWrapper.getFilterEnabled() && !this._oFilterConditionModel) {
-				_createFilterConditionModel.call(this);
-			}
 			if (oWrapper && this._bOpenIfContent) {
 				oWrapper.initialize(true);
 
@@ -2082,9 +2008,6 @@ sap.ui.define([
 			// update ValueHelpPanel
 			if (oWrapper) {
 				oWrapper.initialize(false);
-				if (oWrapper.getFilterEnabled() && !this._oFilterConditionModel) {
-					_createFilterConditionModel.call(this);
-				}
 				var oValueHelpPanel = oDialog.getContent()[0];
 				oValueHelpPanel.setShowTokenizer(this.getMaxConditions() !== 1);
 				_setContentOnValueHelpPanel.call(this, oValueHelpPanel, oWrapper.getDialogContent());
@@ -2116,7 +2039,6 @@ sap.ui.define([
 		aConditions = Condition._removeEmptyConditions(aConditions);
 		FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
 
-		this._bNoConditionModelUpdate = true;
 		this.setProperty("conditions", aConditions, true); // do not invalidate whole FieldHelp
 
 		// fire select event after Dialog is closed because inside applyFocusInfo is called
@@ -2141,8 +2063,6 @@ sap.ui.define([
 
 		this._bDialogOpen = false;
 		this._aOldConditions = undefined;
-		this._bUseFilterBar = false; // to be sure
-		this._bApplyFilter = false;
 
 		this._handleAfterClose(oEvent);
 
@@ -2171,10 +2091,17 @@ sap.ui.define([
 		}
 	}
 
-	function _updateFilterBar(sMutation, oFilterBar) {
+	function _updateFilterBar(sMutation, oFilterBar, bInternalFilterBar) {
 
 		if (sMutation === "remove") {
 			oFilterBar.detachEvent("search", _updateFiltersFromFilterBar, this);
+			if (!bInternalFilterBar) { // internal FilterBar is completely destroyed
+				var oSearchField = oFilterBar.getBasicSearchField();
+				if (oSearchField && oSearchField._bCreadedByFVH) { // destroy own SearchField
+					oFilterBar.destroyBasicSearchField(); // as rendeing-parent of SearchField might not be Filterbar destroy on FilterBar
+				}
+			}
+
 			oFilterBar = undefined;
 		} else {
 			oFilterBar.attachEvent("search", _updateFiltersFromFilterBar, this);
@@ -2185,111 +2112,159 @@ sap.ui.define([
 			var oValueHelpPanel = oDialog.getContent()[0];
 			oValueHelpPanel.setFilterbar(oFilterBar);
 			oValueHelpPanel.setShowFilterbar(!!oFilterBar);
-			_setInParameterFilters.call(this);
-			_updateFiltersFromFilterBar.call(this); // to add initial filters
+			if (this.isOpen()) { // add current InParameterFilters and Filtervalue to Filterbar or internal condition to have right filters
+				_initializeFilters.call(this);
+			}
 		}
 
 	}
 
 	function _updateFiltersFromFilterBar(oEvent) {
 
-		if (!this._oFilterConditionModel || !this._bUseFilterBar) {
-			return;
-		}
-
-		var oFilterBar = this.getFilterBar();
+		var oFilterBar = _getFilterBar.call(this);
 
 		if (oFilterBar) {
-			// use filters from FilterBar (in-parameters are there included)
-			// first remove all filters not in FilterBar, except suggestion
-			var oFilterConditions = this._oFilterConditionModel.getAllConditions();
-			var oConditions = oFilterBar.getInternalConditions();
+			// update FilterValue from SearchField
 			var sFilterFields = this.getFilterFields();
-			var i = 0;
-			var sMyFieldPath;
-			var oCondition;
-			for (sMyFieldPath in oFilterConditions) {
-				if (sMyFieldPath !== sFilterFields) {
-					for (i = 0; i < oFilterConditions[sMyFieldPath].length; i++) {
-						oCondition = merge({}, oFilterConditions[sMyFieldPath][i]);
-						// don't change paths of in- and out-parameters as they point to the same filters
-						if (!oConditions[sMyFieldPath] || FilterOperatorUtil.indexOfCondition(oCondition, oConditions[sMyFieldPath]) < 0) {
-							this._oFilterConditionModel.removeCondition(sMyFieldPath, oCondition);
-						}
-					}
+			if (sFilterFields && !this._bUpdateFilterAfterClose) { // filter changed while closing -> condition not updated
+				var aConditions = _getConditions.call(this, sFilterFields);
+				var sFilterValue = aConditions.length > 0 ? aConditions[0].values[0] : "";
+				if (sFilterValue !== this.getFilterValue()) {
+					this.setProperty("filterValue", sFilterValue, true);
 				}
 			}
 
-			// add conditions from FilterBar
-			for (sMyFieldPath in oConditions) {
-				for (i = 0; i < oConditions[sMyFieldPath].length; i++) {
-					oCondition = merge({}, oConditions[sMyFieldPath][i]);
-					// don't change paths of in- and out-parameters as they pont to the same filters
-					if (!oFilterConditions[sMyFieldPath] || FilterOperatorUtil.indexOfCondition(oCondition, oFilterConditions[sMyFieldPath]) < 0) {
-						this._oFilterConditionModel.addCondition(sMyFieldPath, oCondition);
-					}
-				}
-			}
-
-			// if conditions are changed in _oFilterConditionModel an update is triggered.
-			// But initially the filter must set active
-			if (!this._bApplyFilter && (oEvent || oFilterBar.getLiveMode())) {
+			// If event fired from Filterbar the filter must set active
+			if (this._bApplyFilter || (!this._bApplyFilter && (oEvent || oFilterBar.getLiveMode()))) {
 				// user triggers search or liveMode -> resume
-				// use checkUpdate to call _applyFilters not twice
 				this._bApplyFilter = true; // applyFilter even if suspended (resume)
-				this._oFilterConditionModel.checkUpdate(true, true);
+				_applyFilters.call(this, true);
 			}
 		}
 
 	}
 
-	function _removeFilterBarFilters() {
+	function _initializeFilters() {
 
-		if (!this._oFilterConditionModel) {
-			return;
-		}
-
-		var oFilterBar = this.getFilterBar();
-
+		var oFilterBar = _getFilterBar.call(this);
 		if (oFilterBar) {
-			var oFilterConditions = this._oFilterConditionModel.getAllConditions();
-			var oFilterBarConditions = oFilterBar.getInternalConditions();
-			var sFilterFields = this.getFilterFields();
-			var bUpdateFilterBar = false;
-			var sMyFieldPath;
-
-			// check filters in FilterBar
-			for (sMyFieldPath in oFilterBarConditions) {
-				if (sMyFieldPath !== sFilterFields) {
-					if (oFilterConditions[sMyFieldPath] && oFilterConditions[sMyFieldPath].length > 0) {
-						this._oFilterConditionModel.removeAllConditions(sMyFieldPath);
-					}
-					if (oFilterBarConditions[sMyFieldPath].length > 0) {
-						oFilterBarConditions[sMyFieldPath] = [];
-						bUpdateFilterBar = true;
-					}
-				}
-			}
-
-			// check remaining Filters in FilterConditionModel (might be deleted in FilterBar, but no "Go" pressed"
-			oFilterConditions = this._oFilterConditionModel.getAllConditions();
-			for (sMyFieldPath in oFilterConditions) {
-				if (sMyFieldPath !== sFilterFields) {
-					if (oFilterConditions[sMyFieldPath].length > 0) {
-						this._oFilterConditionModel.removeAllConditions(sMyFieldPath);
-					}
-				}
-			}
-
-			if (bUpdateFilterBar) {
-				oFilterBar.setInternalConditions(oFilterBarConditions);
-			}
+			// remove old conditions
+			oFilterBar.setInternalConditions({});
 		}
 
-		// add conditions from In-Parameters
+		// add conditions from In-Parameters and Filter
+		_filterContent.call(this, this.getFilterValue());
 		_setInParameterFilters.call(this);
 
 	}
+
+	function _getFilterBar() {
+
+		var oFilterBar = this.getFilterBar();
+
+		if (!oFilterBar) {
+			oFilterBar = this.getAggregation("_filterBar");
+		}
+
+		return oFilterBar;
+
+	}
+
+	function _getConditions(sFieldPath) {
+
+		var oFilterBar = _getFilterBar.call(this);
+		var oConditions;
+
+		if (oFilterBar) {
+			oConditions = oFilterBar.getInternalConditions();
+		} else {
+			oConditions = this._oConditions;
+		}
+
+		return oConditions[sFieldPath] || [];
+
+	}
+
+	function _addCondition(sFieldPath, oCondition) {
+
+		var oFilterBar = _getFilterBar.call(this);
+		var oConditions;
+
+		if (oFilterBar) {
+			oConditions = oFilterBar.getInternalConditions();
+		} else {
+			oConditions = this._oConditions;
+		}
+
+		if (!oConditions[sFieldPath]) {
+			oConditions[sFieldPath] = [];
+		}
+		oConditions[sFieldPath].push(oCondition); // use FieldHelp paths in FilterBar too
+
+		if (oFilterBar) {
+			oConditions = oFilterBar.setInternalConditions(oConditions);
+		}
+
+	}
+
+	function _removeConditions(sFieldPath) {
+
+		var oFilterBar = _getFilterBar.call(this);
+		var oConditions;
+
+		if (oFilterBar) {
+			oConditions = oFilterBar.getInternalConditions();
+		} else {
+			oConditions = this._oConditions;
+		}
+
+		if (oConditions[sFieldPath] && oConditions[sFieldPath].length > 0) {
+			oConditions[sFieldPath] = [];
+		}
+
+		if (oFilterBar) {
+			oConditions = oFilterBar.setInternalConditions(oConditions);
+		}
+
+	}
+
+	/* if search is supported a SearchField is needed on the Dialog. (not on the suggest-popover)
+	 * If there is a FilterBar given, add the SearchField to it.
+	 * If there is no FilterBar given, create a new one and add the SearchField.
+	 */
+	function _initializeSearchField() {
+
+		var sFilterFields = this.getFilterFields();
+		var oWrapper = this.getContent(); // without content it makes no sense to have a SearchField
+
+		if (sFilterFields && oWrapper) {
+			var oFilterBar = _getFilterBar.call(this);
+
+			if (!oFilterBar) {
+				oFilterBar = new FilterBar(this.getId() + "-FB", {
+					liveMode: !oWrapper.isSuspended(), // if suspended, no live search
+					showGoButton: false
+				});
+				this.setAggregation("_filterBar", oFilterBar, true);
+			}
+
+			if (!oFilterBar.getBasicSearchField()) {
+				var oSearchField = new FilterField(this.getId() + "-search", {
+					conditions: "{$filters>/conditions/" + sFilterFields + "}",
+					placeholder:"{$i18n>filterbar.SEARCH}",
+					label:"{$i18n>filterbar.SEARCH}", // TODO: do we want a label?
+					maxConditions: 1,
+					width: "50%"
+				});
+				oSearchField._bCreadedByFVH = true; // to only remove own SearchFields
+
+				oFilterBar.setBasicSearchField(oSearchField);
+			}
+
+		}
+
+	}
+
 
 	function _getSuggestionContent() {
 
@@ -2304,13 +2279,6 @@ sap.ui.define([
 
 		var oBindingContext = this._oField ? this._oField.getBindingContext() : null; // if not connected use no BindingContext
 		this.setBindingContext(oBindingContext);
-
-	}
-
-	function _handleSearch(oEvent) {
-
-		this._bApplyFilter = true; // applyFilter even if suspended (resume)
-		this._oFilterConditionModel.checkUpdate(true, true); // to trigger _applyFilters even if no search string is entered
 
 	}
 

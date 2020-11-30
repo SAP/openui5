@@ -44,9 +44,9 @@ sap.ui.define(
 				metadata: {
 					properties: {
 						/**
-						 * Determines whether the Filters button is visible in the filter bar.<br>
+						 * Determines whether the Show/Hide Filters button is in the state show or hide.<br>
 						 */
-						showFilterFields: {
+						expandFilterFields: {
 							type: "boolean",
 							defaultValue: true
 						}
@@ -69,25 +69,42 @@ sap.ui.define(
 			this._oBtnFilters = new Button(this.getId() + "-btnShowFilters", {
 				type: ButtonType.Transparent,
 				press: this._onToggleFilters.bind(this)
-			}).setText(
-				this._oRb.getText("valuehelp." + (this.getProperty("showFilterFields") ? "HIDE" : "SHOW") + "ADVSEARCH")
-			);
+			});
+			this._oBtnFilters.bindProperty("text", {
+				model : FilterBarBase.INNER_MODEL_NAME,
+				path: "/expandFilterFields",
+				formatter: function(bExpandFilterFields) {
+					return this._oRb.getText("valuehelp." + (bExpandFilterFields ? "HIDE" : "SHOW") + "ADVSEARCH");
+				}.bind(this)
+			});
+			this._oBtnFilters.bindProperty("visible", {
+				model : FilterBarBase.INNER_MODEL_NAME,
+				path: "/filterItems",
+				formatter: function(aItems) {
+					return aItems.length > 0;
+				}
+			});
 
 			this._oFilterBarLayout.addControl(this._oBtnFilters);
 
 
 			this._oFilterBarLayout.addControl(
-				this._getSearchButton().bindProperty("visible", "{$sap.ui.filterbar.mdc.FilterBarBase>/liveMode}")
+				this._getSearchButton().bindProperty("visible", {
+					parts: [
+						{
+							path: '/showGoButton',
+							model: FilterBarBase.INNER_MODEL_NAME
+						}, {
+							path: "/liveMode",
+							model: FilterBarBase.INNER_MODEL_NAME
+						}
+					],
+					formatter: function(bShowGoButton, bLiveMode) {
+						return bShowGoButton && ((this._isPhone()) ? true : !bLiveMode);
+					}.bind(this)
+				})
 			);
 
-
-			// this._oShowAllFiltersBtn = new Button(this.getId() + "-btnShowAllFilters", {
-			// 	type: ButtonType.Transparent,
-			// 	press: this._onShowAllFilters.bind(this)
-			// }).setText(
-			// 	"Show All Filters" //this._oRb.getText("valuehelp.SHOWADVSEARCH")
-			// );
-			// this._oFilterBarLayout.addEndContent(this._oShowAllFiltersBtn);
 		};
 
 		FilterBar.prototype.exit = function() {
@@ -97,43 +114,50 @@ sap.ui.define(
 		};
 
 		FilterBar.prototype._onToggleFilters = function (oEvent) {
-			this.setProperty("showFilterFields", !this.getProperty("showFilterFields"), true);
-
-			this._oBtnFilters.setText(
-				this._oRb.getText("valuehelp." + (this.getProperty("showFilterFields") ? "HIDE" : "SHOW") + "ADVSEARCH")
-			);
-
+			this.setProperty("expandFilterFields", !this.getProperty("expandFilterFields"), true);
 		};
-
-		// FilterBar.prototype._onShowAllFilters = function (oEvent) {
-		// 	this._bShowAllFilters = true;
-
-		// 	// Fake example for ShowAllfilters
-		// 	this.addFilterItem(new sap.ui.mdc.FilterField({
-		// 		delegate: { name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {} },
-		// 		label: "ID 2",
-		// 		dataType: "Edm.Int32",
-		// 		conditions: "{$filters>/conditions/ID}"
-		// 	}));
-
-		// 	// Hide the endContent button
-		// 	this._oShowAllFiltersBtn.setVisible(!this._bShowAllFilters);
-		// };
 
 		FilterBar.prototype.setBasicSearchField = function (oBasicSearchField) {
 			if (this._oBasicSearchField) {
 				if (this._oFilterBarLayout) {
 					this._oFilterBarLayout.removeControl(this._oBasicSearchField);
 				}
+				this.oBasicSearchField.detachSubmit(this._handleFilterItemSubmit, this);
 			}
 			this._oBasicSearchField = oBasicSearchField;
-			if (this._oFilterBarLayout) {
-				this._oFilterBarLayout.insertControl(oBasicSearchField, 0);
+
+			if (oBasicSearchField) {
+				this.setExpandFilterFields(false);
+
+				if (this._oFilterBarLayout) {
+					this._oFilterBarLayout.insertControl(oBasicSearchField, 0);
+				}
+
+				oBasicSearchField.attachSubmit(this._handleFilterItemSubmit, this);
+				if (!this._oObserver.isObserved(oBasicSearchField, {properties: ["visible"]})) {
+					this._oObserver.observe(oBasicSearchField, {properties: ["visible"]});
+				}
 			}
+
+			return this;
 		};
 
 		FilterBar.prototype.getBasicSearchField = function () {
 			return this._oBasicSearchField;
+		};
+
+		FilterBar.prototype.destroyBasicSearchField = function () {
+			if (this._oBasicSearchField && this._oFilterBarLayout) {
+				this._oFilterBarLayout.removeControl(this._oBasicSearchField);
+				this._oBasicSearchField.detachSubmit(this._handleFilterItemSubmit, this);
+				if (this._oObserver.isObserved(this._oBasicSearchField, {properties: ["visible"]})) {
+					this._oObserver.unobserve(this._oBasicSearchField);
+				}
+				this._oBasicSearchField.destroy();
+				this._oBasicSearchField = undefined;
+			}
+
+			return this;
 		};
 
 		return FilterBar;

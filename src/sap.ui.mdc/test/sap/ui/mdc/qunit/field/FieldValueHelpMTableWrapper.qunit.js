@@ -16,6 +16,8 @@ sap.ui.define([
 	"sap/ui/mdc/field/OutParameter",
 	"sap/ui/mdc/field/ValueHelpPanel",
 	"sap/ui/mdc/field/DefineConditionPanel",
+	"sap/ui/mdc/filterbar/vh/FilterBar",
+	"sap/ui/mdc/FilterField",
 	"sap/m/Table",
 	"sap/m/Column",
 	"sap/m/ColumnListItem",
@@ -45,6 +47,8 @@ sap.ui.define([
 		OutParameter,
 		ValueHelpPanel,
 		DefineConditionPanel,
+		VHFilterBar,
+		FilterField,
 		Table,
 		Column,
 		ColumnListItem,
@@ -1451,6 +1455,7 @@ sap.ui.define([
 			assert.ok(oDialog.isOpen(), "Field help opened");
 			assert.equal(oTable.getMode(), "MultiSelect", "Table mode in dialog");
 
+			oTable.focus(); // to be sure focus is on table
 			var oFocusedElement = document.activeElement;
 			var aItems = oTable.getItems();
 			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");

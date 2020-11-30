@@ -80,28 +80,6 @@ sap.ui.define([
 				},
 
 				/**
-				 * Sets the conditions for the <code>SearchField</code> control.
-				 *
-				 * @since 1.62.0
-				 */
-				filterConditions: {
-					type: "object[]",
-					group: "Data",
-					defaultValue: []
-				},
-
-				/**
-				 * If set, a <code>SearchField</code> control is shown.
-				 *
-				 * @since 1.74.0
-				 */
-				searchEnabled: {
-					type: "boolean",
-					group: "Data",
-					defaultValue: true
-				},
-
-				/**
 				 * The <code>formatOptions</code> for the <code>ConditionType</code> used to format tokens.
 				 *
 				 * @since 1.62.0
@@ -120,15 +98,6 @@ sap.ui.define([
 					defaultValue: false,
 					visibility: "hidden"
 				}
-			},
-			events: {
-				/**
-				 * This event is fired when a search is triggered by the <code>SearchField</code> control.
-				 *
-				 * @since 1.72.0
-				 */
-				search: {
-				}
 			}
 
 		},
@@ -143,12 +112,6 @@ sap.ui.define([
 				this._oTokenizer._oScroller.setHorizontal(true);
 			}
 			this._oTokenizerPanel = this.byId("VHPTokenizerPanel");
-
-			// TODO: better logic to get FieldPath or decide when to render a SearchField in FieldBase
-			var oSearchField = this.byId("SearchField");
-			oSearchField.getFieldPath = _getSearchFieldPath.bind(this);
-
-			this._oAdvButton = this.byId("AdvancedFilter");
 
 			this._oFilterVBox = this.byId("filterbarVBox");
 			this._oFilterVBox._oValueHelpPanel = this;
@@ -198,7 +161,6 @@ sap.ui.define([
 
 			this._oTablePanel = null;
 			this._oFilterVBox = null;
-			this._oAdvButton = null;
 			this._oResourceBundle = null;
 		},
 
@@ -246,10 +208,6 @@ sap.ui.define([
 
 				// TODO: hack for FlexBoxStylingHelper.writeStyle in IE11
 				oFilterbar.getParent().getDirection = this._oFilterVBox.getDirection.bind(this._oFilterVBox);
-
-				if (oFilterbar.getLiveMode && !oFilterbar.getLiveMode()) {
-					oFilterbar.setShowGoButton(false);
-				}
 
 			}
 
@@ -379,15 +337,6 @@ sap.ui.define([
 
 		},
 
-		_onToggleAdvancedFilter: function(oEvent) {
-			this.setProperty("_filterBarVisible", !this.getProperty("_filterBarVisible"), true);
-		},
-
-		_onGo: function(oEvent) {
-			// this._oFilterbar.fireSearch();
-			this._oFilterbar.triggerSearch();
-		},
-
 		_onRemoveAllConditions: function(oEvent) {
 			this.setProperty("conditions", [], true);
 		},
@@ -480,12 +429,6 @@ sap.ui.define([
 
 			return formatMessage(sText, iCount);
 
-		},
-
-		_handleSearch: function(oEvent) {
-
-			this.fireSearch();
-
 		}
 
 	});
@@ -524,18 +467,6 @@ sap.ui.define([
 
 		if (oChanges.name === "_filterBarVisible") {
 			this._oTablePanel.invalidate();
-			this._oAdvButton.setText(this._oResourceBundle.getText("valuehelp." + (this.getProperty("_filterBarVisible") ? "HIDE" : "SHOW") + "ADVSEARCH"));
-		}
-
-	}
-
-	function _getSearchFieldPath() {
-
-		var sBindingPath = this.getBindingPath("filterConditions");
-		if (sBindingPath && sBindingPath.startsWith("/conditions/")) {
-			return sBindingPath.slice(12);
-		} else {
-			return "";
 		}
 
 	}

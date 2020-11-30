@@ -19,8 +19,10 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldBaseDelegate",
 	"sap/ui/mdc/field/ValueHelpPanel",
 	"sap/ui/mdc/field/DefineConditionPanel",
+	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/FilterBar",
+	"sap/ui/mdc/FilterBarDelegate",
 	"sap/ui/core/Icon",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
@@ -45,8 +47,10 @@ sap.ui.define([
 		FieldBaseDelegate,
 		ValueHelpPanel,
 		DefineConditionPanel,
+		VHFilterBar,
 		FilterField,
 		FilterBar,
+		FilterBarDelegate,
 		Icon,
 		JSONModel,
 		StringType,
@@ -936,6 +940,8 @@ sap.ui.define([
 			var oScrollDelegate1 = oFieldHelp.getScrollDelegate();
 			var oScrollDelegate2 = oPopover.getScrollDelegate();
 			assert.equal(oScrollDelegate1, oScrollDelegate2, "oScrollDelegate of Popover used");
+			var oFilterBar = oFieldHelp.getAggregation("_filterBar");
+			assert.notOk(oFilterBar, "No Filterbar created");
 		}
 		oFieldHelp.close();
 		oClock.tick(iPopoverDuration); // fake closing time
@@ -1024,7 +1030,7 @@ sap.ui.define([
 		oClock.tick(iPopoverDuration); // fake closing time
 		assert.ok(oWrapper.fieldHelpClose.called, "fieldHelpClose of Wrapper called");
 		assert.notOk(oWrapper.applyFilters.called, "Wrapper.applyFilters not called");
-		var aConditions = oFieldHelp._oFilterConditionModel.getConditions(oFieldHelp.getFilterFields());
+		var aConditions = oFieldHelp._oConditions[oFieldHelp.getFilterFields()];
 		assert.equal(aConditions.length, 0, "No filter conditions created");
 
 		oFieldHelp.open(true);
@@ -1541,16 +1547,6 @@ sap.ui.define([
 			assert.equal(iDataUpdate, 1, "DataUpdate event fired");
 			var oCheckFilters = {text: [{operator: "StartsWith", value: "It", value2: undefined}], additionalText: [{operator: "StartsWith", value: "It", value2: undefined}]};
 			assert.deepEqual(oFilters, oCheckFilters, "Filters used");
-			var oCM = oFieldHelp._oFilterConditionModel;
-			assert.notOk(oCM._oListBinding, "No ListBinding in ConditionModel");
-
-			// change ListBinding of wrapper
-			var oListBinding2 = oModel.bindList("/items"); // use different binding
-			oWrapper.getListBinding.returns(oListBinding2);
-			oWrapper.fireDataUpdate({contentChange: true});
-			var oCM2 = oFieldHelp._oFilterConditionModel;
-			assert.equal(oCM, oCM2, "no new ConditionModel");
-			oListBinding2.destroy();
 
 			oFieldHelp.close();
 			oClock.tick(iPopoverDuration); // fake closing time
@@ -1769,6 +1765,7 @@ sap.ui.define([
 			assert.equal(iOpen, 1, "Open event fired");
 			assert.notOk(bOpenSuggest, "Open not as suggestion");
 			assert.ok(oDialog.isOpen(), "Dialog is open");
+			assert.equal(oFieldHelp.getDomRef(), oDialog.getDomRef(), "DomRef of Dialog returned by getDomRef");
 			assert.ok(oFieldHelp.isOpen(), "FieldHelp is open");
 			assert.ok(oWrapper.initialize.called, "Wrapper.initialize is called");
 			assert.ok(oWrapper.fieldHelpOpen.calledWith(false), "fieldHelpOpen of Wrapper called");
@@ -1776,7 +1773,12 @@ sap.ui.define([
 			assert.ok(oWrapper.getDialogContent.called, "Wrapper.getDialogContent is called");
 			var oVHP = oDialog.getContent()[0];
 			assert.ok(oVHP, "Dialog has content");
-			assert.notOk(oVHP.getShowFilterbar(), "No FilterBar shown");
+			var oFilterBar = oFieldHelp.getAggregation("_filterBar");
+			assert.ok(oFilterBar, "Filterbar created");
+			assert.ok(oFilterBar.isA("sap.ui.mdc.filterbar.vh.FilterBar"), "Filterbar is VH-FilterBar");
+			var oSearchField = oFilterBar && oFilterBar.getBasicSearchField();
+			assert.ok(oSearchField, "SearchField created");
+			assert.ok(oVHP.getShowFilterbar(), "FilterBar shown");
 			assert.ok(oVHP && oVHP.isA("sap.ui.mdc.field.ValueHelpPanel"), "content is ValueHelpPanel");
 			assert.equal(oVHP.getId(), "F1-H-VHP", "ValueHelpPanel ID");
 			assert.equal(iDataUpdate, 1, "DataUpdate event fired");
@@ -2239,31 +2241,39 @@ sap.ui.define([
 		oFieldHelp.open(false);
 		oClock.tick(iDialogDuration); // fake opening time
 
-		var oDialog = oFieldHelp.getAggregation("_dialog");
-		var oVHP = oDialog.getContent()[0];
-		assert.ok(oVHP.getSearchEnabled(), "Search is enabled");
-		assert.ok(oVHP.getBinding("filterConditions"), "FilterConditions bound");
-		var oSearchFilterField = oVHP.byId("SearchField");
+		var oFilterBar = oFieldHelp.getAggregation("_filterBar");
+		assert.ok(oFilterBar, "Filterbar created");
+		assert.ok(oFilterBar.isA("sap.ui.mdc.filterbar.vh.FilterBar"), "Filterbar is VH-FilterBar");
+		var oSearchFilterField = oFilterBar && oFilterBar.getBasicSearchField();
+		assert.ok(oSearchFilterField, "SearchField created");
 		var oSearchField = oSearchFilterField.getAggregation("_content")[0];
 		qutils.triggerCharacterInput(oSearchField.getFocusDomRef(), "-" );
 		oSearchField.setValue("-"); // as onInput SearchField sets it's value
 		qutils.triggerKeydown(oSearchField.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
 		qutils.triggerKeyup(oSearchField.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
-		oClock.tick(0); // wait for binding update
 
-		var aConditions = oFieldHelp._oFilterConditionModel.getConditions(oFieldHelp.getFilterFields());
-		assert.equal(aConditions.length, 1, "One Search condition");
-		assert.equal(aConditions.length > 0 && aConditions[0].values[0], "-", "Value of Search condition");
-		assert.equal(oFieldHelp.getFilterValue(), "-", "FilterValue of FieldHelp");
-		assert.ok(oWrapper.getFilterEnabled.called, "Wrapper.getFilterEnabled is called");
-		assert.notOk(oWrapper.getListBinding.called, "Wrapper.getListBinding is not called");
-		var oCheckFilters = {text: [{operator: "Contains", value: "-", value2: undefined}], additionalText: [{operator: "Contains", value: "-", value2: undefined}]};
-		assert.deepEqual(oFilters, oCheckFilters, "Filters used");
-		oFieldHelp.close();
-		oClock.tick(iDialogDuration); // fake closing time
+		oClock.restore(); // as search event is handled in a Promise
+		var fnDone = assert.async();
+		setTimeout( function(){ // wait resolving promise
+			setTimeout( function(){ // search is triggered with timeout in FilterBar
+				setTimeout( function(){ // applyFilters is async
+					oClock = sinon.useFakeTimers(); // now we can use fake timer again
+					var aConditions = oFilterBar.getInternalConditions()[oFieldHelp.getFilterFields()];
+					assert.equal(aConditions.length, 1, "One Search condition");
+					assert.equal(aConditions.length > 0 && aConditions[0].values[0], "-", "Value of Search condition");
+					assert.equal(oFieldHelp.getFilterValue(), "-", "FilterValue of FieldHelp");
+					assert.ok(oWrapper.getFilterEnabled.called, "Wrapper.getFilterEnabled is called");
+					assert.notOk(oWrapper.getListBinding.called, "Wrapper.getListBinding is not called");
+					var oCheckFilters = {text: [{operator: "Contains", value: "-", value2: undefined}], additionalText: [{operator: "Contains", value: "-", value2: undefined}]};
+					assert.deepEqual(oFilters, oCheckFilters, "Filters used");
+					oFieldHelp.close();
+					oClock.tick(iDialogDuration); // fake closing time
 
-		assert.ok(oWrapper.fieldHelpClose.called, "fieldHelpClose of Wrapper called");
-		assert.notOk(oVHP.getBinding("filterConditions"), "FilterConditions not bound");
+					assert.ok(oWrapper.fieldHelpClose.called, "fieldHelpClose of Wrapper called");
+					fnDone();
+				}, 0);
+			}, 0);
+		}, 0);
 
 	});
 
@@ -2273,18 +2283,28 @@ sap.ui.define([
 		oFieldHelp.open(false);
 		oClock.tick(iDialogDuration); // fake opening time
 
-		var oDialog = oFieldHelp.getAggregation("_dialog");
 		assert.ok(oListBinding.isSuspended(), "ListBinding suspended after open");
 
-		var oVHP = oDialog.getContent()[0];
-		oVHP.fireSearch(); // fake just empty search
-		oClock.tick(0); // wait for binding update
+		var oFilterBar = oFieldHelp.getAggregation("_filterBar");
+		var oSearchFilterField = oFilterBar && oFilterBar.getBasicSearchField();
+		var oSearchField = oSearchFilterField.getAggregation("_content")[0];
+		oSearchField.fireSearch(); // fake just empty search
 
-		assert.notOk(oListBinding.isSuspended(), "ListBinding not suspended after search");
-		var aContexts = oListBinding.getContexts();
-		assert.equal(aContexts.length, 3, "List has 3 Items");
-		oFieldHelp.close();
-		oClock.tick(iDialogDuration); // fake closing time
+		oClock.restore(); // as search event is handled in a Promise
+		var fnDone = assert.async();
+		setTimeout( function(){ // wait resolving promise
+			setTimeout( function(){ // search is triggered with timeout in FilterBar
+				setTimeout( function(){ // applyFilters is async
+					oClock = sinon.useFakeTimers(); // now we can use fake timer again
+					assert.notOk(oListBinding.isSuspended(), "ListBinding not suspended after search");
+					var aContexts = oListBinding.getContexts();
+					assert.equal(aContexts.length, 3, "List has 3 Items");
+					oFieldHelp.close();
+					oClock.tick(iDialogDuration); // fake closing time
+					fnDone();
+				}, 0);
+			}, 0);
+		}, 0);
 
 	});
 
@@ -2294,18 +2314,18 @@ sap.ui.define([
 		oFieldHelp.open(false);
 		oClock.tick(iDialogDuration); // fake opening time
 
-		var oDialog = oFieldHelp.getAggregation("_dialog");
-		var oVHP = oDialog.getContent()[0];
-		assert.notOk(oVHP.getSearchEnabled(), "Search is disabled");
-		assert.notOk(oVHP.getBinding("filterConditions"), "FilterConditions not bound");
+		var oFilterBar = oFieldHelp.getAggregation("_filterBar");
+		assert.notOk(oFilterBar, "no Filterbar created");
 
 		oFieldHelp.setFilterFields("*text*");
-		assert.ok(oVHP.getSearchEnabled(), "Search is rnabled");
-		assert.ok(oVHP.getBinding("filterConditions"), "FilterConditions bound");
+		oFilterBar = oFieldHelp.getAggregation("_filterBar");
+		assert.ok(oFilterBar, "Filterbar created");
+		var oSearchField = oFilterBar && oFilterBar.getBasicSearchField();
+		assert.ok(oSearchField, "SearchField created");
 
 		oFieldHelp.setFilterFields("");
-		assert.notOk(oVHP.getSearchEnabled(), "Search is disabled");
-		assert.notOk(oVHP.getBinding("filterConditions"), "FilterConditions not bound");
+		var oFilterBar = oFieldHelp.getAggregation("_filterBar");
+		assert.notOk(oFilterBar, "no Filterbar created");
 
 		oFieldHelp.close();
 		oClock.tick(iDialogDuration); // fake closing time
@@ -2444,7 +2464,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			_teardown();
-			oFilterBar = undefined; // destroyed vis FieldHelp
+			oFilterBar = undefined; // destroyed via FieldHelp
 			oFilterField = undefined; // destroyed via FilterBar
 		}
 	});
@@ -2460,6 +2480,10 @@ sap.ui.define([
 		assert.ok(oVHP._oFilterbar, "ValueHelpPanel FilterBar used");
 		assert.ok(oFilterBar.getDomRef(), "FilterBar rendered");
 
+		assert.notOk(oFieldHelp.getAggregation("_filterBar"), "no internal Filterbar created");
+		var oSearchField = oFilterBar && oFilterBar.getBasicSearchField();
+		assert.ok(oSearchField, "SearchField created");
+
 		oFilterField.setConditions([Condition.createCondition("Contains", ["2"])]); // fake change
 		oClock.tick(0); // wait for binding update (FilterBar)
 		oClock.tick(0); // wait for binding update (FilterConditionModel) - to check no live update
@@ -2471,6 +2495,11 @@ sap.ui.define([
 
 		oFieldHelp.close();
 		oClock.tick(iDialogDuration); // fake closing time
+
+		sinon.spy(oSearchField, "destroy");
+		oFieldHelp.setFilterBar();
+		assert.ok(oSearchField.destroy.called, "SearchField destroyed after FilterBar removed");
+		oFilterBar.destroy();
 
 	});
 
@@ -2574,14 +2603,14 @@ sap.ui.define([
 	QUnit.test("FilterBar in suggestion after dialog", function(assert) {
 
 		oWrapper.getAsyncKeyText = function() {return true;}; // to fake async support
-		oFilterField.setConditions([Condition.createCondition("Contains", ["2"])]);
 		oFieldHelp.open(false);
 		oClock.tick(iDialogDuration); // fake opening time
+		oFilterField.setConditions([Condition.createCondition("Contains", ["2"])]);
 		oClock.tick(0); // wait for binding update (FilterBar)
-		oClock.tick(0); // wait for binding update (FilterConditionModel)
+		oFilterBar.fireSearch();
+		oClock.tick(0); // wait for applyFilters
 		var oCheckFilters = {additionalText: [{operator: "Contains", value: "2", value2: undefined}]};
 		assert.deepEqual(oFilters, oCheckFilters, "Filters used");
-		oFieldHelp._oFilterConditionModel.addCondition("test", Condition.createCondition("Contains", ["X"])); // fake condition remaining after deleting from FilterBar but not pressing "Go"
 		oFieldHelp.close();
 		oClock.tick(iDialogDuration); // fake closing time
 

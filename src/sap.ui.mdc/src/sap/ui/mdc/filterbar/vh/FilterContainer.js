@@ -53,7 +53,7 @@ sap.ui.define(
 			this.oToolbar = new Toolbar(this.getId() + "-tbr", { content: [new ToolbarSpacer()] });
 
 			this.oAlgnLayout = new AlignedFlowLayout(this.getId() + "-aflayout",{
-				visible: "{$sap.ui.filterbar.mdc.FilterBarBase>/showFilterFields}"
+				visible: "{$sap.ui.filterbar.mdc.FilterBarBase>/expandFilterFields}"
 			}).addStyleClass("sapUiMdcFilterBarBaseAFLayout");
 
 			this.oLayout = new VBox(this.getId() + "-vbox", {

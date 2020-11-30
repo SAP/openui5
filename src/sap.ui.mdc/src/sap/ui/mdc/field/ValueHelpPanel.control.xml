@@ -15,25 +15,6 @@
 					<!-- <ScrollContainer height="100%" width="100%" vertical="true" horizontal="false"> -->
 					<l:FixFlex minFlexSize="200px"> <!-- minHight for the Flex content Items Table -->
 						<l:fixContent>
-							<Toolbar id="toolbar" width="100%" visible="{= ${$this>/searchEnabled} || ${$this>/showFilterbar}}">
-								<mdc:FilterField
-									id="SearchField"
-									dataType="sap.ui.model.type.String"
-									maxConditions="1"
-									conditions="{path: '$this>/filterConditions'}"
-									placeholder="{$i18n>filterbar.SEARCH}"
-									width="50%"
-									visible="{$this>/searchEnabled}"
-									submit="_handleSearch"/>
-								<ToolbarSpacer/>
-								<Button id="AdvancedFilter" type="Transparent" press="_onToggleAdvancedFilter" visible="{$this>/showFilterbar}">
-									<layoutData>
-										<ToolbarLayoutData shrinkable="true"/>
-									</layoutData>
-								</Button>
-								<Button id="Go" press="_onGo" text="{$i18n>filterbar.GO}" type="Emphasized"
-									visible="{$this>/showFilterbar}"/>
-							</Toolbar>
 							<VBox id="filterbarVBox" visible="{$this>/_filterBarVisible}">
 								<!-- container for the Filterbar / advanced FilterFields -->
 							</VBox>

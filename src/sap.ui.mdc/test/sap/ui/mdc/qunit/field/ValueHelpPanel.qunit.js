@@ -48,7 +48,6 @@ sap.ui.define([
 	QUnit.test("setFilterbar", function(assert) {
 
 		assert.notOk(oValueHelpPanel._oFilterVBox.getVisible(), "VBox for FilterBar invisible");
-		assert.ok(oValueHelpPanel._oAdvButton.getVisible(), "Filter Toggle button is visible");
 
 		oValueHelpPanel.placeAt("content");
 		var oFilterBar = new Button("B1");
@@ -62,56 +61,18 @@ sap.ui.define([
 
 		assert.ok(oValueHelpPanel.getShowFilterbar(), "showFilterbar default is true");
 		assert.ok(oValueHelpPanel._oFilterVBox.getVisible(), "VBox for FilterBar visible");
-		assert.ok(oValueHelpPanel._oAdvButton.getVisible(), "Filter Toggle button is visible");
 		oValueHelpPanel.setShowFilterbar(false);
 		assert.notOk(oValueHelpPanel.getShowFilterbar(), "showFilterbar change to false");
 		assert.notOk(oValueHelpPanel._oFilterVBox.getVisible(), "VBox for FilterBar invisible");
-		assert.notOk(oValueHelpPanel._oAdvButton.getVisible(), "Filter Toggle button not visible");
 		oValueHelpPanel.setShowFilterbar(true);
 		assert.ok(oValueHelpPanel.getShowFilterbar(), "showFilterbar change to true");
 		assert.ok(oValueHelpPanel._oFilterVBox.getVisible(), "VBox for FilterBar visible");
-		assert.ok(oValueHelpPanel._oAdvButton.getVisible(), "Filter Toggle button is visible");
-
-		var spy = sinon.spy(oValueHelpPanel._oTablePanel, "invalidate");
-		qutils.triggerKeyboardEvent(oValueHelpPanel._oAdvButton.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
-		assert.equal(spy.callCount, 1, "_oTablePanel.invalidate should be called");
-		assert.notOk(oValueHelpPanel._oFilterVBox.getVisible(), "VBox for FilterBar invisible");
-		spy.restore();
-
-		qutils.triggerKeyboardEvent(oValueHelpPanel._oAdvButton.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
-		assert.ok(oValueHelpPanel._oFilterVBox.getVisible(), "VBox for FilterBar visible");
-
-		var oGoButton = oValueHelpPanel.byId("Go");
-		assert.ok(oGoButton.getVisible(), "Go button visible");
-		qutils.triggerKeyboardEvent(oGoButton.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
-		assert.ok(oFilterBar.triggerSearch.calledOnce, "FilterBar.triggerSearch called");
 
 		oValueHelpPanel.setFilterbar(null);
 		assert.ok(oValueHelpPanel._oFilterbar == null, "filterbar should be removed");
 		assert.notOk(oValueHelpPanel._oFilterVBox.getVisible(), "VBox for FilterBar invisible");
 
 		oFilterBar.destroy();
-	});
-
-	QUnit.test("searchEnabled", function(assert) {
-
-		oValueHelpPanel.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		var oSearchField = oValueHelpPanel.byId("SearchField");
-		var oToolbar = oValueHelpPanel.byId("toolbar");
-
-		assert.ok(oValueHelpPanel.getSearchEnabled(), "Search is enabled by default");
-		assert.ok(oSearchField.getVisible(), "SearchField visible by default");
-		assert.ok(oToolbar.getVisible(), "Toolbar visible by default");
-
-		oValueHelpPanel.setSearchEnabled(false);
-		assert.notOk(oSearchField.getVisible(), "SearchField not visible is disabled");
-		assert.ok(oToolbar.getVisible(), "Toolbar visible if Search disabled and FilterBar enabled");
-
-		oValueHelpPanel.setShowFilterbar(false);
-		assert.notOk(oToolbar.getVisible(), "Toolbar not visible if Search and Filterbar disabled");
-
 	});
 
 	QUnit.test("setTable", function(assert) {
@@ -233,19 +194,19 @@ sap.ui.define([
 		oDataType.destroy();
 	});
 
-	QUnit.test("search event", function(assert) {
+	QUnit.test("remove all tokens", function(assert) {
 
-		var iSearchCount = 0;
-		oValueHelpPanel.attachSearch(function(oEvent) {
-			iSearchCount++;
-		});
+		oValueHelpPanel.setConditions([
+		                               Condition.createCondition("EQ", ["1", "Text"]),
+		                               Condition.createCondition("EQ", ["2"])
+		                               ]);
+		sap.ui.getCore().applyChanges();
 
-		var oSearchField = oValueHelpPanel.byId("SearchField");
-		oSearchField.fireChange();
-		assert.equal(iSearchCount, 0, "No Search event fired on change");
+		var oButton = oValueHelpPanel.byId("removeAllBtn");
+		oButton.firePress();
 
-		oSearchField.fireSubmit();
-		assert.equal(iSearchCount, 1, "Search event fired on search");
+		var aConditions = oValueHelpPanel.getConditions();
+		assert.equal(aConditions.length, 0, "No conditions");
 
 	});
 
