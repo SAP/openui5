@@ -41,7 +41,7 @@ sap.ui.define([
 			oTable.getColumns()[2].setVisible(!isSuggest);
 			if (isSuggest) {
 				oTable.setWidth("20rem");
-				oTable.getColumns()[1].setWidth("10rem");
+				oTable.getColumns()[1].setWidth("100%");
 				oTable.getColumns()[2].setVisible(false);
 			} else {
 				oTable.setWidth("100%");

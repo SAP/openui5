@@ -5,6 +5,7 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 	xmlns:mdcl="sap.ui.mdc.link"
 	xmlns:ui="sap.ui"
 	xmlns:variants="sap.ui.fl.variants"
@@ -49,10 +50,10 @@
 							<mdcf:OutParameter id="IOFFVHRegion-Out-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
 						</mdcf:outParameters>
 						<mdcf:filterBar>
-							<mdc:FilterBar liveMode= "false">
+							<vhfb:FilterBar liveMode= "false">
 								<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFCountry" label= "Country" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" >
 								</mdc:FilterField>
-							</mdc:FilterBar>
+							</vhfb:FilterBar>
 						</mdcf:filterBar>
 						<mdcf:FieldValueHelpMTableWrapper>
 							<Table items="{path: '/Regions'}" width="26rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
@@ -88,10 +89,10 @@
 							<mdcf:OutParameter id="IOFFVHCity_Out-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" mode="Always" />
 						</mdcf:outParameters>
 						<mdcf:filterBar>
-							<mdc:FilterBar liveMode= "false">
+							<vhfb:FilterBar liveMode= "false">
 								<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFCountry2" label= "Country" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" operators="EQ,NE" />
 								<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="VHFFBTextFFRegion2" label= "Region" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/region_code}" />
-							</mdc:FilterBar>
+							</vhfb:FilterBar>
 						</mdcf:filterBar>
 						<mdcf:FieldValueHelpMTableWrapper>
 							<Table items="{path: '/Cities'}" width="26rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
