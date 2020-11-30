@@ -140,6 +140,7 @@ function(
 			 * The navigated state of the list item.
 			 *
 			 * If set to <code>true</code>, a navigation indicator is displayed at the end of the list item.
+			 * <b>Note:</b> This property must be set for <b>one</b> list item only.
 			 *
 			 * @since 1.72
 			 */
@@ -445,10 +446,6 @@ function(
 
 		if (sTooltip) {
 			aOutput.push(sTooltip);
-		}
-
-		if (this.getNavigated()) {
-			aOutput.push(oBundle.getText("LIST_ITEM_NAVIGATED"));
 		}
 
 		if (this._bAnnounceNotSelected && this.isSelectable() && !this.getSelected()) {
