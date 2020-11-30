@@ -220,7 +220,7 @@ sap.ui.define([
 				/**
 				 * Internal <code>FilterBar</code> control of the field help. (If no external <code>FilterBar</code> used.)
 				 *
-				 * @since 1.85.0
+				 * @since 1.86.0
 				 */
 				_filterBar: {
 					type: "sap.ui.mdc.filterbar.FilterBarBase",
@@ -2114,6 +2114,7 @@ sap.ui.define([
 			oValueHelpPanel.setShowFilterbar(!!oFilterBar);
 			if (this.isOpen()) { // add current InParameterFilters and Filtervalue to Filterbar or internal condition to have right filters
 				_initializeFilters.call(this);
+				_initializeSearchField.call(this); //TODO: async to prevent creating internal FilterBar while removing old one and adding new one
 			}
 		}
 
