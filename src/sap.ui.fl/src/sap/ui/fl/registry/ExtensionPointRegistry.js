@@ -96,7 +96,7 @@ sap.ui.define([
 	 * Registration of extension points for observing the aggregation to track the index.
 	 *
 	 * @param {Object} mExtensionPointInfo - Map of extension point information
-	 * @param {Object} mExtensionPointInfo.view - View object
+	 * @param {Object} mExtensionPointInfo.viewId - View id
 	 * @param {string} mExtensionPointInfo.name - Name of the extension point
 	 * @param {Object} mExtensionPointInfo.targetControl - Parent control of the extension point
 	 * @param {string} mExtensionPointInfo.aggregationName - Name of the aggregation where the extension point is
@@ -105,7 +105,7 @@ sap.ui.define([
 	 */
 	ExtensionPointRegistry.prototype.registerExtensionPoints = function(mExtensionPointInfo) {
 		var oParent = mExtensionPointInfo.targetControl;
-		var sViewId = mExtensionPointInfo.view.getId();
+		var sViewId = mExtensionPointInfo.viewId;
 		var sAggregationName = mExtensionPointInfo.aggregationName;
 		this._startObserver(oParent, sAggregationName);
 
