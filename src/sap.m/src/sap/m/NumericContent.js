@@ -346,7 +346,6 @@ sap.ui.define([
 		var sValue = this.getValue();
 		var sScale = this.getScale();
 		var sEmptyValue;
-		var sMeaning = this._rb.getText(("SEMANTIC_COLOR_" + this.getValueColor()).toUpperCase());
 		var sAltText = "";
 		if (this.getNullifyValue()) {
 			sEmptyValue = "0";
@@ -367,6 +366,7 @@ sap.ui.define([
 			sAltText = sAltText.concat(this._rb.getText(("NUMERICCONTENT_DEVIATION_" + this.getIndicator()).toUpperCase()));
 		}
 		if (this.getValueColor() !== ValueColor.None) {
+			var sMeaning = this._rb.getText(("SEMANTIC_COLOR_" + this.getValueColor()).toUpperCase());
 			sAltText = sAltText.concat("\n");
 			sAltText = sAltText.concat(sMeaning);
 		}
