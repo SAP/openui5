@@ -1565,7 +1565,7 @@ sap.ui.define([
 		}
 
 		oDeleteButton = new Button({
-			icon: "sap-icon://sys-cancel",
+			icon: "sap-icon://decline",
 			enabled: true,
 			type: ButtonType.Transparent,
 			press: fPress,
