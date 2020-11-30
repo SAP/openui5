@@ -572,7 +572,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns <code>true</code> if the current layer is the same as the layer in which the change was created, or if the change is from the end-user layer and was ceated for this user.
+	 * Returns <code>true</code> if the current layer is the same as the layer in which the change was created, or if the change is from the end-user layer and was created for this user.
 	 * @returns {boolean} <code>true</code> if the change file is read only
 	 *
 	 * @deprecated
