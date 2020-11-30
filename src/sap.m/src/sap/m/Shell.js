@@ -150,12 +150,12 @@ sap.ui.define([
 		Shell.prototype.init = function() {
 			// theme change might change the logo
 			Core.attachThemeChanged(jQuery.proxy(function(){
-				var $hdr = this.$("hdr");
-				if ($hdr.length) {
-					$hdr.find(".sapMShellLogo").remove(); // remove old logo, if present
-					var rm = Core.createRenderManager();
-					ShellRenderer.renderLogoImage(rm, this);
-					rm.flush($hdr[0], true, 1);
+				var $hdr = this.$("hdr"),
+					sImgSrc = this._getImageSrc();
+
+				if ($hdr.length && sImgSrc) {
+					this._getImage().setSrc(sImgSrc);
+					this._getImage().rerender();
 				}
 			}, this));
 
@@ -164,6 +164,13 @@ sap.ui.define([
 				statusBar: "default",
 				hideBrowser: true
 			});
+		};
+
+		Shell.prototype.onBeforeRendering = function() {
+			var sImgSrc = this._getImageSrc();
+			if (sImgSrc) {
+				this._getImage().setSrc(sImgSrc);
+			}
 		};
 
 		Shell.prototype.onAfterRendering = function () {
@@ -184,6 +191,12 @@ sap.ui.define([
 				}
 			}
 			this.$("content").css("height", "");
+		};
+
+		Shell.prototype.exit = function() {
+			if (this.oImg) {
+				this.oImg.destroy();
+			}
 		};
 
 		Shell.prototype.ontap = function(oEvent) {
@@ -231,6 +244,30 @@ sap.ui.define([
 			this.setProperty("homeIcon", oIcons, true); // no rerendering
 			Mobile.setIcons(oIcons);
 			return this;
+		};
+
+		Shell.prototype._getImage = function() {
+			if (!this.oImg) {
+				this.oImg = new sap.m.Image(this.getId() + "-logo", {
+					decorative: false,
+					alt: sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("SHELL_ARIA_LOGO")
+				});
+
+				this.oImg.addStyleClass("sapMShellLogoImg");
+			}
+
+			return this.oImg;
+		};
+
+		Shell.prototype._getImageSrc = function() {
+			var sImage = this.getLogo(); // configured logo
+			if (!sImage) {
+				//TODO: global jquery call found
+				jQuery.sap.require("sap.ui.core.theming.Parameters");
+				sImage = sap.ui.require("sap/ui/core/theming/Parameters")._getThemeImage(); // theme logo
+			}
+
+			return sImage;
 		};
 
 		return Shell;
