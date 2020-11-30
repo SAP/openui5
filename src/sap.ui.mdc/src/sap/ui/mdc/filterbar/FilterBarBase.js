@@ -18,6 +18,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 * @since 1.80.0
 	 * @alias sap.ui.mdc.filterbar.FilterBarBase
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
@@ -242,6 +243,7 @@ sap.ui.define([
 		this._oAdaptationController = null;
 
 		this._bSearchTriggered = false;
+		this._bIgnoreQueuing = false;     // used to overrule the default behaviour of suspendSelection
 
 		this.setProperty("adaptationConfig", {
 			liveMode: false,
@@ -350,17 +352,43 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	/**
+	 * Determines whether the default behavior of the <code>suspendSelection</code> property is overruled. This can only happen during the suspension of the selection.
+	 * If this property is set to <code>true</code>, a possible queue of search requests is ignored during the final <code>suspendSelection</code> operation.
+	 * Once the suspension of the selection is over, this value will be set to <code>false</code>.
+	 *
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @param {boolean} bValue Indicates if set to <code>true</code> that the default behavior is to be ignored
+	 *
+	 */
+	FilterBarBase.prototype.setIgnoreQueuing = function(bValue) {
+		this._bIgnoreQueuing = bValue;
+	};
+
+	/**
+	 * Determines whether the default behavior of the <code>suspendSelection</code> property is overruled.
+	 *
+	 * @private
+	 * @ui5-restricted sap.fe
+	 * @returns {boolean} Indicator that determines if default behavior of  <code>suspendSelection</code> is overruled
+	 */
+	FilterBarBase.prototype.getIgnoreQueuing = function() {
+		return this._bIgnoreQueuing;
+	};
+
+
 	FilterBarBase.prototype.setSuspendSelection = function(bValue) {
 
 		this.setProperty("suspendSelection", bValue);
 
 		if (!bValue) {
-			if (this._bSearchTriggered) {
-
-				this._bSearchTriggered = false;
-
+			if (this._bSearchTriggered && !this.getIgnoreQueuing()) {
 				this.triggerSearch();
 			}
+
+			this._bSearchTriggered = false;
+			this.setIgnoreQueuing(false);
 		}
 
 		return this;
@@ -437,7 +465,8 @@ sap.ui.define([
 	 * Note: filters annotated with hiddenFilters will not be considered
 	 *
 	 * @returns {Array} array of labels of filters with value assignment
-	 * @protected
+	 * @private
+	 * @ui5-restricted sap.fe
 	 */
 	FilterBarBase.prototype.getAssignedFilterNames = function() {
 		var sName, aFilterNames = null, oModel = this._getConditionModel();
@@ -548,7 +577,8 @@ sap.ui.define([
 	 * <b>Example for expanded filter bar</b>:<br>
 	 * <i>3 filters active (1 hidden)</i>
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.fe
 	 * @returns {map} A map containing the text information
 	 * @returns {map.filtersText} A string that is displayed if the filter bar is collapsed
 	 * @returns {map.filtersTextExpanded} A string that is displayed if the filter bar is expanded
@@ -755,7 +785,8 @@ sap.ui.define([
 
 	/**
 	 * Triggers the search.
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.fe
 	 * @returns {Promise} Returns a Promise which resolves after the validation of erroneous fields has been propagated.
 	 */
 	FilterBarBase.prototype.triggerSearch = function() {
@@ -1606,7 +1637,8 @@ sap.ui.define([
 	/**
 	 * Returns the external conditions.
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.fe
 	 * @returns {map} Map containing the external conditions.
 	 */
 	FilterBarBase.prototype.getConditions = function() {
@@ -1623,7 +1655,8 @@ sap.ui.define([
 	/**
 	 * Returns the value of the basic search condition.
 	 *
-	 * @public
+	 * @private
+	 * @ui5-restricted sap.fe
 	 * @returns {string} Value of search condition or empty
 	 */
 	FilterBarBase.prototype.getSearch = function() {

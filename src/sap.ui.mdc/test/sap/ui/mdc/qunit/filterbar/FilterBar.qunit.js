@@ -1385,6 +1385,56 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("check suspendSelection with ignoreQueuing", function (assert) {
+
+		var done = assert.async();
+
+		sinon.spy(oFilterBar, "_validate");
+
+		var oTriggerSearchPromise = null;
+
+		var fOriginalTriggerSearch = oFilterBar.triggerSearch;
+		oFilterBar.triggerSearch = function() {
+			oTriggerSearchPromise = fOriginalTriggerSearch.apply(oFilterBar);
+			return oTriggerSearchPromise;
+		};
+
+		assert.ok(!oFilterBar.getIgnoreQueuing());
+
+		oFilterBar.setIgnoreQueuing(false);
+		assert.ok(!oFilterBar.getIgnoreQueuing());
+
+		oFilterBar.setIgnoreQueuing(true);
+		assert.ok(oFilterBar.getIgnoreQueuing());
+
+		oFilterBar.setSuspendSelection(true);
+		oFilterBar.setSuspendSelection(false);
+		assert.ok(!oFilterBar.getIgnoreQueuing());
+
+		oFilterBar.setSuspendSelection(true);
+		oFilterBar.triggerSearch().then(function() {
+			assert.ok(!oFilterBar._validate.called);
+			oFilterBar.setSuspendSelection(false);
+			assert.ok(oTriggerSearchPromise);
+
+			oTriggerSearchPromise.then(function() {
+				assert.ok(oFilterBar._validate.called);
+
+				oFilterBar._validate.reset();
+				oFilterBar.setSuspendSelection(true);
+				oFilterBar.setIgnoreQueuing(true);
+				oFilterBar.triggerSearch().then(function() {
+					oFilterBar.setSuspendSelection(false);
+					assert.ok(!oFilterBar._validate.called);
+					assert.ok(!oFilterBar.getIgnoreQueuing());
+
+					done();
+				});
+
+			});
+		});
+	});
+
 	QUnit.test("check _stringifyConditions", function (assert) {
 		var oProperty = {
 		   name: "test",
