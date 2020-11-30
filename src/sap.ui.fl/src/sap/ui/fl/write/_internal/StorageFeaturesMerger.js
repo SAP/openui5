@@ -22,6 +22,7 @@ sap.ui.define([
 	var DEFAULT_FEATURES = {
 		isKeyUser: false,
 		isVariantSharingEnabled: false,
+		isVariantPersonalizationEnabled: true,
 		isAtoAvailable: false,
 		isAtoEnabled: false,
 		versioning: {},

@@ -110,6 +110,7 @@ sap.ui.define([
 				oSettings = {
 					isKeyUser: false,
 					isVariantSharingEnabled: false,
+					isVariantPersonalizationEnabled: true,
 					isAtoAvailable: false,
 					isAtoEnabled: false,
 					isAppVariantSaveAsEnabled: false,
@@ -254,6 +255,16 @@ sap.ui.define([
 	 */
 	Settings.prototype.isVariantSharingEnabled = function() {
 		return this._getBooleanProperty("isVariantSharingEnabled");
+	};
+
+	/**
+	 * Checks whether personalization of variants is enabled or not.
+	 *
+	 * @returns {boolean} true if personalization of variants is enabled
+	 * @public
+	 */
+	Settings.prototype.isVariantPersonalizationEnabled = function() {
+		return this._getBooleanProperty("isVariantPersonalizationEnabled");
 	};
 
 	/**

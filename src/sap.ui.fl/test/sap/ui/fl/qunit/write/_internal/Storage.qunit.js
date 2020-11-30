@@ -616,6 +616,7 @@ sap.ui.define([
 			var oExpectedResponse = {
 				isKeyUser: true,
 				isVariantSharingEnabled: false,
+				isVariantPersonalizationEnabled: true,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
 				versioning: {
@@ -694,6 +695,7 @@ sap.ui.define([
 			var DEFAULT_FEATURES = {
 				isKeyUser: false,
 				isVariantSharingEnabled: false,
+				isVariantPersonalizationEnabled: true,
 				isAtoAvailable: false,
 				isAtoEnabled: false,
 				draft: {},

@@ -96,6 +96,34 @@ sap.ui.define([
 				assert.equal(isVariantSharingEnabledSpy.callCount, 1, "called once");
 			});
 		});
+
+		QUnit.test("When isVariantPersonalizationEnabled() is called it calls the Settings instance and returns true", function (assert) {
+			var oSetting = {
+				isVariantPersonalizationEnabled: true
+			};
+
+			sandbox.stub(Storage, "loadFeatures").resolves(oSetting);
+
+			var isVariantPersonalizationEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantPersonalizationEnabled");
+			return SmartVariantManagementWriteAPI.isVariantPersonalizationEnabled().then(function (bFlag) {
+				assert.equal(bFlag, true, "the true flag is returned");
+				assert.equal(isVariantPersonalizationEnabledSpy.callCount, 1, "called once");
+			});
+		});
+
+		QUnit.test("When isVariantPersonalizationEnabled() is called it calls the Settings instance and returns false", function (assert) {
+			var oSetting = {
+				isVariantPersonalizationEnabled: false
+			};
+
+			sandbox.stub(Storage, "loadFeatures").resolves(oSetting);
+
+			var isVariantPersonalizationEnabledSpy = sandbox.spy(SmartVariantManagementWriteAPI, "isVariantPersonalizationEnabled");
+			return SmartVariantManagementWriteAPI.isVariantPersonalizationEnabled().then(function (bFlag) {
+				assert.equal(bFlag, false, "the false flag is returned");
+				assert.equal(isVariantPersonalizationEnabledSpy.callCount, 1, "called once");
+			});
+		});
 	});
 
 	QUnit.done(function () {
