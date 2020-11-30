@@ -166,7 +166,7 @@ function(
 		 * @public
 		 */
 		isLayerFilteringRequired: function() {
-			return !(this._sTopLayer === this.getMaxLayer());
+			return this._sTopLayer !== this.getMaxLayer();
 		},
 
 		/**
@@ -188,10 +188,7 @@ function(
 		 */
 		filterChangeDefinitionsByMaxLayer: function(aChangeDefinitions) {
 			return aChangeDefinitions.filter(function(oChangeDefinition) {
-				if (oChangeDefinition.layer && LayerUtils.isOverMaxLayer(oChangeDefinition.layer)) {
-					return false;
-				}
-				return true;
+				return !oChangeDefinition.layer || !LayerUtils.isOverMaxLayer(oChangeDefinition.layer);
 			});
 		},
 
