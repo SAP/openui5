@@ -172,7 +172,7 @@ sap.ui.define([
 	/**
 	 * Sets an array of model state messages.
 	 *
-	 * @param {sap.ui.core.Message[]} aMessages - The model messages for this data state.
+	 * @param {sap.ui.core.Message[]} [aMessages=[]] The model messages for this data state.
 	 * @returns {sap.ui.model.DataState} <code>this</code> to allow method chaining
 	 * @public
 	 */
