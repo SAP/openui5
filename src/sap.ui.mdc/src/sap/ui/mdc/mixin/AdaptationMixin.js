@@ -297,6 +297,11 @@ sap.ui.define(
                     this._oAdaptationController = null;
                 }
 
+                if (this._oP13nFilter){
+                    this._oP13nFilter.destroy();
+                    this._oP13nFilter = null;
+                }
+
                 if (this._oInbuiltFilterPromise) {
                     this._oInbuiltFilterPromise = null;
                 }
