@@ -395,51 +395,51 @@
 .sapUiTableRowActionCell {
 	display: flex;
 	align-items: center;
-	width: @_sap_ui_table_RowActionColumnWidth;
+	min-width: @_sap_ui_table_RowActionColumnWidth;
 
 	html[data-sap-ui-browser^="ie"] & {
-		width: calc(@_sap_ui_table_RowActionColumnWidthForIECalc);
+		min-width: calc(@_sap_ui_table_RowActionColumnWidthForIECalc);
 	}
 
 	.sapUiTableRActS & {
-		width: @_sap_ui_table_RowActionColumnSmallWidth;
+		min-width: @_sap_ui_table_RowActionColumnSmallWidth;
 
 		html[data-sap-ui-browser^="ie"] & {
-			width: calc(@_sap_ui_table_RowActionColumnSmallWidthForIECalc);
+			min-width: calc(@_sap_ui_table_RowActionColumnSmallWidthForIECalc);
 		}
 	}
 
 	.sapUiSizeCozy & {
-		width: @_sap_ui_table_RowActionColumnWidthCozy;
+		min-width: @_sap_ui_table_RowActionColumnWidthCozy;
 
 		html[data-sap-ui-browser^="ie"] & {
-			width: calc(@_sap_ui_table_RowActionColumnWidthCozyForIECalc);
+			min-width: calc(@_sap_ui_table_RowActionColumnWidthCozyForIECalc);
 		}
 	}
 
 	.sapUiSizeCozy .sapUiTableRActS &,
 	.sapUiSizeCozy.sapUiTableRActS & {
-		width: @_sap_ui_table_RowActionColumnSmallWidthCozy;
+		min-width: @_sap_ui_table_RowActionColumnSmallWidthCozy;
 
 		html[data-sap-ui-browser^="ie"] & {
-			width: calc(@_sap_ui_table_RowActionColumnSmallWidthCozyForIECalc);
+			min-width: calc(@_sap_ui_table_RowActionColumnSmallWidthCozyForIECalc);
 		}
 	}
 
 	.sapUiSizeCondensed & {
-		width: @_sap_ui_table_RowActionColumnWidthCondensed;
+		min-width: @_sap_ui_table_RowActionColumnWidthCondensed;
 
 		html[data-sap-ui-browser^="ie"] & {
-			width: calc(@_sap_ui_table_RowActionColumnWidthCondensedForIECalc);
+			min-width: calc(@_sap_ui_table_RowActionColumnWidthCondensedForIECalc);
 		}
 	}
 
 	.sapUiSizeCondensed .sapUiTableRActS &,
 	.sapUiSizeCondensed.sapUiTableRActS & {
-		width: @_sap_ui_table_RowActionColumnSmallWidthCondensed;
+		min-width: @_sap_ui_table_RowActionColumnSmallWidthCondensed;
 
 		html[data-sap-ui-browser^="ie"] & {
-			width: calc(@_sap_ui_table_RowActionColumnSmallWidthCondensedForIECalc);
+			min-width: calc(@_sap_ui_table_RowActionColumnSmallWidthCondensedForIECalc);
 		}
 	}
 
