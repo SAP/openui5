@@ -1,5 +1,5 @@
 sap.ui.define([
-	"sap/ui/mdc/odata/v4/TableDelegate"
+	"sap/ui/mdc/odata/v4/TableDelegateDemo"
 ], function (TableDelegate) {
 	"use strict";
 
