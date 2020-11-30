@@ -1389,8 +1389,7 @@ sap.ui.define([
 
 		// enable/disable text selection for column headers
 		if (!this._bAllowColumnHeaderTextSelection && !bRenderedRows) {
-			this._disableTextSelection(this.$().find(".sapUiTableCtrlScrFixed"));
-			this._disableTextSelection(this.$().find(".sapUiTableCtrlScr"));
+			this._disableTextSelection(this.$().find(".sapUiTableCHA"));
 		}
 
 		// If only the rows are rendered, the css flag is not removed while the positioning of the actions is reset. Therefore, the flag must be
