@@ -55,8 +55,7 @@
 		  "sap.uxap.sample.ObjectPageHeaderExpanded",
 		  "sap.uxap.sample.ObjectPageHeaderContentPriorities",
 		  "sap.uxap.sample.ObjectPageFormLayout",
-		  "sap.uxap.sample.ObjectPageFormFocusableInput",
-		  "sap.uxap.sample.ObjectPageSectionShowTitle"
+		  "sap.uxap.sample.ObjectPageFormFocusableInput"
 		]
 	  },
 	  {
