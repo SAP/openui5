@@ -1408,8 +1408,12 @@ sap.ui.define([
 			return this;
 		};
 
-		//method provided via FilterIntegrationMixin
+		//methods provided via FilterIntegrationMixin
 		Chart.prototype._onFilterProvided = function() {
+			this._updateInnerChartNoDataText();
+		};
+
+		Chart.prototype._onFilterRemoved = function() {
 			this._updateInnerChartNoDataText();
 		};
 

@@ -91,7 +91,8 @@ sap.ui.define([
             function (oError) {
                 return (
                     oError instanceof Error &&
-                    oError.message === ("\"" + vFilter + "\" is not valid for association \"filter\" of mdc.Table. Please use an object that implements \"" + IFILTER + "\" interface")
+                    oError.message === ("\"" + vFilter + "\" is not valid for association \"filter\"."
+										+ " Please use an object that implements the \"" + IFILTER + "\" interface")
                 );
             },
             "Error has been raised for false provided 'filter' association"
@@ -117,18 +118,6 @@ sap.ui.define([
 
 	QUnit.test("initialization", function(assert) {
         assert.ok(oSomeInstance, "Control instance created");
-    });
-
-    QUnit.test("check '_registerFilter'", function(assert) {
-        assert.ok(oSomeInstance._registerFilter instanceof Function, "Method provided");
-    });
-
-    QUnit.test("check '_onFilterProvided'", function(assert) {
-        assert.ok(oSomeInstance._onFilterProvided instanceof Function, "Method provided");
-    });
-
-    QUnit.test("check '_deregisterFilter'", function(assert) {
-        assert.ok(oSomeInstance._deregisterFilter instanceof Function, "Method provided");
     });
 
     QUnit.test("check '_validateFilter'", function(assert) {
@@ -247,5 +236,56 @@ sap.ui.define([
         assert.equal(oRetrieveInnerSpy.callCount, 1, "Filter Promise fetched");
 
     });
+
+    QUnit.test("Hooks", function(assert) {
+		var oFilter = new FilterBarBase();
+		var oOtherFilter = new FilterBarBase();
+		var oOnFilterProvided = sinon.spy();
+		var oOnFilterRemoved = sinon.spy();
+		var oOnFiltersChanged = sinon.spy();
+		var oOnFilterSearch = sinon.spy();
+
+		oSomeInstance._onFilterProvided = oOnFilterProvided;
+		oSomeInstance._onFilterRemoved = oOnFilterRemoved;
+		oSomeInstance._onFiltersChanged = function(oEvent) {
+			oOnFiltersChanged(oEvent);
+			assert.ok(oEvent && oEvent.isA && oEvent.isA("sap.ui.base.Event"),
+				"Fired 'filtersChanged' event: _onFiltersChanged is called with the event object");
+		};
+		oSomeInstance._onFilterSearch = function(oEvent) {
+			oOnFilterSearch(oEvent);
+			assert.ok(oEvent && oEvent.isA && oEvent.isA("sap.ui.base.Event"),
+				"Fired 'search' event: _onFilterSearch is called with the event object");
+		};
+
+		oSomeInstance.setFilter(oFilter);
+		assert.ok(oOnFilterRemoved.notCalled, "Set filter: _onFilterRemoved is not called");
+		assert.ok(oOnFilterProvided.calledOnceWithExactly(oFilter), "Set filter: _onFilterProvided is called once with the filter instance");
+
+		oOnFilterRemoved.reset();
+		oOnFilterProvided.reset();
+		oSomeInstance.setFilter();
+		assert.ok(oOnFilterRemoved.calledOnceWithExactly(oFilter), "Remove filter: _onFilterRemoved is called once with the filter instance");
+		assert.ok(oOnFilterProvided.notCalled, "Remove filter: _onFilterProvided is not called");
+
+		oSomeInstance.setFilter(oFilter);
+		oOnFilterRemoved.reset();
+		oOnFilterProvided.reset();
+		oSomeInstance.setFilter(oOtherFilter);
+		assert.ok(oOnFilterRemoved.calledOnceWithExactly(oFilter), "Change filter: _onFilterRemoved is called once with the filter instance");
+		assert.ok(oOnFilterProvided.calledOnceWithExactly(oOtherFilter), "Change filter: _onFilterProvided is called once with the filter instance");
+
+		oOtherFilter.fireFiltersChanged();
+		oOtherFilter.fireSearch();
+		assert.ok(oOnFiltersChanged.calledOnce, "Fired 'filtersChanged' event: _onFiltersChanged is called once");
+		assert.ok(oOnFilterSearch.calledOnce, "Fired 'search' event: _onFilterSearch is called once");
+
+		oOnFiltersChanged.reset();
+		oOnFilterSearch.reset();
+		oFilter.fireFiltersChanged();
+		oFilter.fireSearch();
+		assert.ok(oOnFiltersChanged.notCalled, "Fired 'filtersChanged' event on previously associated filter: _onFiltersChanged is not called");
+		assert.ok(oOnFilterSearch.notCalled, "Fired 'search' event on previously associated filter: _onFilterSearch is not called");
+	});
 
 });
