@@ -514,6 +514,25 @@ sap.ui.define([
 			assert.equal(this.oVariantManagement.oInputManualKey.getValueState(), "Error");
 		});
 
+		QUnit.test("Checking _handleVariantSaveAs with cancel", function(assert) {
+			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
+
+			var bCalled = false;
+			this.oVariantManagement.attachCancel(function() {
+				bCalled = true;
+			});
+
+			this.oVariantManagement._createSaveAsDialog();
+
+			assert.ok(this.oVariantManagement.oSaveAsDialog);
+			sinon.stub(this.oVariantManagement.oSaveAsDialog, "open");
+
+			this.oVariantManagement._openSaveAsDialog();
+
+			this.oVariantManagement._cancelPressed();
+			assert.ok(bCalled);
+		});
+
 		QUnit.test("Checking _handleVariantSave", function(assert) {
 			sinon.stub(oModel, "_handleSave");
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
