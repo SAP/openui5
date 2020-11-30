@@ -30,6 +30,14 @@ sap.ui.define([
 			library: "sap.ui.mdc",
 			associations: {},
 			defaultAggregation: "items",
+			properties: {
+				/**
+				 * Factory function which can be used to enhance custom content
+				 */
+				itemFactory: {
+					type: "function"
+				}
+			},
 			aggregations: {
 				/**
 				 * Content to be set for the <code>BasePanel</code>.
@@ -93,18 +101,21 @@ sap.ui.define([
 		this.setAggregation("_content", this._oListControl);
 	};
 
+	BasePanel.prototype._getDragDropConfig = function() {
+		if (!this._oDragDropInfo){
+			this._oDragDropInfo = new DragDropInfo({
+				enabled: false,
+				sourceAggregation: "items",
+				targetAggregation: "items",
+				dropPosition: "Between",
+				drop: [this._onRearrange, this]
+			});
+		}
+		return this._oDragDropInfo;
+	};
+
 	BasePanel.prototype._createUI = function(){
-
-		this._oDragDropInfo = new DragDropInfo({
-			enabled: false,
-			sourceAggregation: "items",
-			targetAggregation: "items",
-			dropPosition: "Between",
-			drop: [this._onRearrange, this]
-		});
-
 		var oBasePanelUI = this._createInnerListControl();
-
 		return oBasePanelUI;
 	};
 
@@ -226,7 +237,7 @@ sap.ui.define([
 			itemPress: [this._onItemPressed, this],
 			selectionChange: [this._onSelectionChange, this],
 			sticky: ["HeaderToolbar", "ColumnHeaders"],
-			dragDropConfig: this._oDragDropInfo
+			dragDropConfig: this._getDragDropConfig()
 		};
 	};
 
@@ -292,7 +303,10 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype._addTableColumns = function(aColumns) {
-		this._oListControl.removeAllColumns();
+		var aRemovedColumns = this._oListControl.removeAllColumns();
+		aRemovedColumns.forEach(function(oRemovedColumn){
+			oRemovedColumn.destroy();
+		});
 		aColumns.forEach(function(vColumn) {
 			var oColumn;
 
@@ -360,7 +374,7 @@ sap.ui.define([
 	BasePanel.prototype._onItemPressed = function(oEvent) {
 		var oTableItem = oEvent.getParameter('listItem');
 		this._oSelectedItem = oTableItem;
-		this._updateEnableOfMoveButtons(oTableItem);
+		this._updateEnableOfMoveButtons(oTableItem, true);
 	};
 
 	BasePanel.prototype._onSearchFieldLiveChange = function(oEvent) {
@@ -420,7 +434,7 @@ sap.ui.define([
 		this._getMoveBottomButton().setEnabled(false);
 
 		//disable / enable d&d
-		this._oDragDropInfo.setEnabled(bReorderMode);
+		this._getDragDropConfig().setEnabled(bReorderMode);
 	};
 
 	BasePanel.prototype._setMoveButtonVisibility = function(bVisible) {
@@ -472,7 +486,7 @@ sap.ui.define([
 	};
 
 	BasePanel.prototype._selectTableItem = function(oTableItem, bSelectAll) {
-		this._updateEnableOfMoveButtons(oTableItem);
+		this._updateEnableOfMoveButtons(oTableItem, true);
 		this._oSelectedItem = oTableItem;
 		if (!bSelectAll) {
 			var oItem = this.getP13nModel().getProperty(this._oSelectedItem.getBindingContext(this.P13N_MODEL).sPath);
@@ -520,7 +534,7 @@ sap.ui.define([
 		// store the moved item again due to binding
 		this._oSelectedItem = aItems[iNewIndex];
 
-		this._updateEnableOfMoveButtons(this._oSelectedItem);
+		this._updateEnableOfMoveButtons(this._oSelectedItem, true);
 
 		this.fireChange({
 			reason: "Move",
@@ -539,7 +553,7 @@ sap.ui.define([
 		this._moveTableItem(oDraggedItem, iActualDroppedIndex);
 	};
 
-	BasePanel.prototype._updateEnableOfMoveButtons = function(oTableItem) {
+	BasePanel.prototype._updateEnableOfMoveButtons = function(oTableItem, bFocus) {
 		var iTableItemPos = this._oListControl.getItems().indexOf(oTableItem);
 		var bUpEnabled = true, bDownEnabled = true;
 		if (iTableItemPos == 0) {
@@ -554,7 +568,9 @@ sap.ui.define([
 		this._getMoveUpButton().setEnabled(bUpEnabled);
 		this._getMoveDownButton().setEnabled(bDownEnabled);
 		this._getMoveBottomButton().setEnabled(bDownEnabled);
-		oTableItem.focus();
+		if (bFocus) {
+			oTableItem.focus();
+		}
 	};
 
 	BasePanel.prototype.exit = function() {

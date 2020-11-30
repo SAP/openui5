@@ -427,8 +427,17 @@ sap.ui.define([
 
 		Then.thePersonalizationDialogOpens();
 		Then.iShouldSeeDialogTitle(Arrangement.P13nDialog.Titles.filter);
-		Then.iShouldSeeP13nFilterItem("Country", 5, ["DE"]);
-		Then.iShouldSeeP13nFilterItem("Founding Year", 8, ["1989"]);
+
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Country",
+			index: 5,
+			values: ["DE"]
+		});
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Founding Year",
+			index: 8,
+			values: ["1989"]
+		});
 
 		//shut down app frame for next test
 		Then.iTeardownMyAppFrame();

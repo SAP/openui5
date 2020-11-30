@@ -33,7 +33,7 @@ sap.ui.define([
 
     opaTest("Open FilterBar 'Adapt Filters' dialog to enter condition values", function(Given, When, Then){
         When.iPressButtonWithText("Adapt Filters");
-        When.iChangeAdaptFiltersView("group");
+        When.iChangeAdaptFiltersView("sap-icon://group-2");
         When.iEnterTextInFilterDialog("Founding Year", "192*");
 
         When.iPressDialogOk();

@@ -4,8 +4,8 @@
 
 // Provides control sap.ui.mdc.filterbar.FilterItemLayout.
 sap.ui.define([
-	'sap/ui/mdc/filterbar/IFilterContainer','sap/ui/mdc/p13n/panels/GroupPanelBase'
-], function(IFilterContainer, GroupPanelBase) {
+	'sap/ui/mdc/filterbar/IFilterContainer','sap/ui/mdc/p13n/panels/AdaptFiltersPanel'
+], function(IFilterContainer, AdaptFiltersPanel) {
 	"use strict";
 
 	/**
@@ -28,15 +28,8 @@ sap.ui.define([
 
 		this.mFilterItems = {
 		};
-		this.mFilterFields = {
-		};
 
-		this.oLayout = new GroupPanelBase({
-			enableListView: true,
-			expandFirstGroup: true,
-			enableReorder: true,
-			defaultView: "group"
-		});
+		this.oLayout = new AdaptFiltersPanel();
 
 		this.oLayout.setItemFactory(function(oBindingContext){
 			var sKey = this.oLayout.getModel(this.oLayout.P13N_MODEL).getProperty(oBindingContext.sPath).name;
@@ -47,7 +40,6 @@ sap.ui.define([
 
 	GroupContainer.prototype.insertFilterField = function(oControl, iIndex) {
 		this.mFilterItems[oControl._getFieldPath()] = oControl;
-		this.mFilterFields[oControl._getFieldPath()] = oControl._oFilterField;
 	};
 
 	GroupContainer.prototype.removeFilterField = function(oControl) {
@@ -56,14 +48,10 @@ sap.ui.define([
 
 	GroupContainer.prototype.getFilterFields = function() {
 		var aFilterItems = [];
-		var aOuterItems = this.oLayout._oListControl.getItems();
-		aOuterItems.forEach(function(oOuterItem){
-			var oPanel = oOuterItem.getContent()[0];
-			var aInnerItems = oPanel.getContent()[0].getItems();
-			aInnerItems.forEach(function(oInnerItem){
-				aFilterItems.push(oInnerItem);
-			});
-		});
+
+		Object.keys(this.mFilterItems).forEach(function(sKey){
+			aFilterItems.push(this.mFilterItems[sKey]);
+		}.bind(this));
 
 		return aFilterItems;
 	};

@@ -305,8 +305,16 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 
 		//check values from variant
-		Then.iShouldSeeP13nFilterItem("Founding Year", 8, ["1989", "1904"]);
-		Then.iShouldSeeP13nFilterItem("Name", 9, ["S"]);
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Founding Year",
+			index: 8,
+			values: ["1989", "1904"]
+		});
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Name",
+			index: 9,
+			values: ["S"]
+		});
 
 		When.iPressDialogOk();
 
@@ -333,8 +341,17 @@ sap.ui.define([
 		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Filter.Icon);
 
 		//check values from variant
-		Then.iShouldSeeP13nFilterItem("Founding Year", 8, [undefined]);
-		Then.iShouldSeeP13nFilterItem("Name", 9, [undefined]);
+
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Founding Year",
+			index: 8,
+			values: [undefined]
+		});
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Name",
+			index: 9,
+			values: [undefined]
+		});
 
 		When.iPressDialogOk();
 
@@ -354,8 +371,16 @@ sap.ui.define([
 		Then.thePersonalizationDialogOpens();
 
 		//check values persisted in variant --> values should be present again
-		Then.iShouldSeeP13nFilterItem("Founding Year", 8, ["1989", "1904"]);
-		Then.iShouldSeeP13nFilterItem("Name", 9, ["S"]);
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Founding Year",
+			index: 8,
+			values: ["1989", "1904"]
+		});
+		Then.iShouldSeeP13nFilterItem({
+			itemText: "Name",
+			index: 9,
+			values: ["S"]
+		});
 
 		//close dialogs
 		When.iPressDialogOk();
