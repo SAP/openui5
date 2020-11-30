@@ -7,7 +7,8 @@ sap.ui.define([
 	"sap/ui/dt/DesignTime",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/command/ControlVariantSwitch",
-	"sap/ui/rta/command/ControlVariantDuplicate",
+	"sap/ui/rta/command/ControlVariantSave",
+	"sap/ui/rta/command/ControlVariantSaveAs",
 	"sap/ui/rta/command/ControlVariantSetTitle",
 	"sap/ui/rta/command/ControlVariantConfigure",
 	"sap/ui/rta/command/CompositeCommand",
@@ -35,7 +36,8 @@ sap.ui.define([
 	DesignTime,
 	CommandFactory,
 	ControlVariantSwitch,
-	ControlVariantDuplicate,
+	ControlVariantSave,
+	ControlVariantSaveAs,
 	ControlVariantSetTitle,
 	ControlVariantConfigure,
 	CompositeCommand,
@@ -82,13 +84,8 @@ sap.ui.define([
 		};
 	}
 
-	var checkTitle = function(assert, sExpectedTitle, sTitleToBeCopied) {
-		assert.strictEqual(this.oControlVariantPlugin._getVariantTitleForCopy(sTitleToBeCopied, "varMgtKey", this.oModel.getData()), sExpectedTitle, "then correct title returned for duplicate");
-	};
-
 	var fnCheckErrorRequirements = function(assert, oOverlay, fnMessageBoxShowStub, oPlugin, sTextKey, bShowError, bCheckHandlerEdit) {
 		assert.strictEqual(oPlugin._createSetTitleCommand.callCount, 0, "then _createSetTitleCommand() was not called");
-		assert.strictEqual(oPlugin._createDuplicateCommand.callCount, 0, "then _createDuplicateCommand() was not called");
 		assert.ok(oPlugin.stopEdit.calledOnce, "then stopEdit() was called once");
 
 		if (bShowError) {
@@ -233,17 +230,17 @@ sap.ui.define([
 			assert.notOk(this.oLayoutOuterOverlay.getVariantManagement(), "then no VariantManagement reference set to an element outside element not a part of the associated control");
 			assert.deepEqual(this.oVariantManagementOverlay.getEditableByPlugins(), [this.oControlVariantPlugin.getMetadata().getName()],
 				"then VariantManagement is marked as editable by ControlVariant plugin");
-			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, false, "the parameter 'variantsEditable' is set to false");
+			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, true, "the parameter 'variantsEditable' is set to true");
 		});
 
 		QUnit.test("when registerElementOverlay and afterwards deregisterElementOverlay are called with VariantManagement control Overlay", function(assert) {
 			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, true, "the parameter 'variantsEditable' is true by default");
 			this.oToolHooksPlugin.registerElementOverlay(this.oVariantManagementOverlay);
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, false, "'variantsEditable' is set to false after registering");
+			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, true, "'variantsEditable' stays true after registering");
 			this.oToolHooksPlugin.deregisterElementOverlay(this.oVariantManagementOverlay);
 			this.oControlVariantPlugin.deregisterElementOverlay(this.oVariantManagementOverlay);
-			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, true, "'variantsEditable' is set to true after deregistering");
+			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, true, "'variantsEditable' stays true after deregistering");
 		});
 
 		QUnit.test("when isVariantSwitchAvailable is called with VariantManagement overlay", function(assert) {
@@ -261,18 +258,32 @@ sap.ui.define([
 			assert.notOk(bButtonEnabled, "then variant switch is not enabled for a non VariantManagement control");
 		});
 
-		QUnit.test("when isVariantDuplicateAvailable is called with different overlays", function(assert) {
-			assert.notOk(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oObjectPageLayoutOverlay), "then duplicate not available for a non VariantManagement control overlay with variantReference");
-			assert.ok(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oVariantManagementOverlay), "then duplicate available for a VariantManagement control overlay with variantReference");
-			assert.notOk(this.oControlVariantPlugin.isVariantDuplicateAvailable(this.oLayoutOuterOverlay), "then duplicate not available for a non VariantManagement control overlay without variantReference");
+		QUnit.test("when isVariantSaveAvailable is called with different overlays", function(assert) {
+			assert.notOk(this.oControlVariantPlugin.isVariantSaveAvailable(this.oObjectPageLayoutOverlay), "then save not available for a non VariantManagement control overlay with variantReference");
+			assert.ok(this.oControlVariantPlugin.isVariantSaveAvailable(this.oVariantManagementOverlay), "then save available for a VariantManagement control overlay with variantReference");
+			assert.notOk(this.oControlVariantPlugin.isVariantSaveAvailable(this.oLayoutOuterOverlay), "then save not available for a non VariantManagement control overlay without variantReference");
 		});
 
-		QUnit.test("when isVariantDuplicateEnabled is called with VariantManagement overlay", function(assert) {
+		QUnit.test("when isVariantSaveEnabled is called with VariantManagement overlay", function(assert) {
 			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			var bVMEnabled = this.oControlVariantPlugin.isVariantDuplicateEnabled([this.oVariantManagementOverlay]);
-			var bButtonEnabled = this.oControlVariantPlugin.isVariantDuplicateEnabled([this.oButtonOverlay]);
-			assert.ok(bVMEnabled, "then variant duplicate is enabled for VariantManagement control");
-			assert.notOk(bButtonEnabled, "then variant duplicate is not enabled for a non VariantManagement control");
+			var bVMEnabled = this.oControlVariantPlugin.isVariantSaveEnabled([this.oVariantManagementOverlay]);
+			var bButtonEnabled = this.oControlVariantPlugin.isVariantSaveEnabled([this.oButtonOverlay]);
+			assert.ok(bVMEnabled, "then variant save is enabled for VariantManagement control");
+			assert.notOk(bButtonEnabled, "then variant save is not enabled for a non VariantManagement control");
+		});
+
+		QUnit.test("when isVariantSaveAsAvailable is called with different overlays", function(assert) {
+			assert.notOk(this.oControlVariantPlugin.isVariantSaveAsAvailable(this.oObjectPageLayoutOverlay), "then saveAs not available for a non VariantManagement control overlay with variantReference");
+			assert.ok(this.oControlVariantPlugin.isVariantSaveAsAvailable(this.oVariantManagementOverlay), "then saveAs available for a VariantManagement control overlay with variantReference");
+			assert.notOk(this.oControlVariantPlugin.isVariantSaveAsAvailable(this.oLayoutOuterOverlay), "then saveAs not available for a non VariantManagement control overlay without variantReference");
+		});
+
+		QUnit.test("when isVariantSaveAsEnabled is called with VariantManagement overlay", function(assert) {
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			var bVMEnabled = this.oControlVariantPlugin.isVariantSaveAsEnabled([this.oVariantManagementOverlay]);
+			var bButtonEnabled = this.oControlVariantPlugin.isVariantSaveAsEnabled([this.oButtonOverlay]);
+			assert.ok(bVMEnabled, "then variant saveAs is enabled for VariantManagement control");
+			assert.notOk(bButtonEnabled, "then variant saveAs is not enabled for a non VariantManagement control");
 		});
 
 		QUnit.test("when isVariantRenameAvailable is called with VariantManagement overlay", function(assert) {
@@ -358,6 +369,63 @@ sap.ui.define([
 			this.oControlVariantPlugin.configureVariants([this.oVariantManagementOverlay]);
 		});
 
+		QUnit.test("when createSaveCommand is called and the key user presses the save button", function(assert) {
+			var done = assert.async();
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+
+			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
+				assert.ok(oEvent, "then fireElementModified is called once");
+				var oCommand = oEvent.getParameter("command");
+				assert.ok(oCommand instanceof ControlVariantSave, "then a save Variant event is received with a save command");
+				done();
+			});
+			this.oControlVariantPlugin.createSaveCommand([this.oVariantManagementOverlay]);
+		});
+
+		QUnit.test("when createSaveAsCommand is called and the key user presses the save button", function(assert) {
+			var done = assert.async();
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			var fnCreateSaveAsDialog = this.oVariantManagementControl._createSaveAsDialog;
+			sandbox.stub(this.oVariantManagementControl, "_createSaveAsDialog").callsFake(function() {
+				fnCreateSaveAsDialog.call(this.oVariantManagementControl);
+				this.oVariantManagementControl.oSaveAsDialog.attachEventOnce("afterOpen", function() {
+					this.oVariantManagementControl._handleVariantSaveAs("myNewVariant");
+				}.bind(this));
+			}.bind(this));
+			var oOpenSaveAsDialogSpy = sandbox.spy(this.oVariantManagementControl, "_openSaveAsDialog");
+
+			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
+				assert.ok(oEvent, "then fireElementModified is called once");
+				var oCommand = oEvent.getParameter("command");
+				assert.equal(oOpenSaveAsDialogSpy.callCount, 1, "then openSaveAsDialog has been called once");
+				assert.ok(oCommand instanceof ControlVariantSaveAs, "then a saveAs Variant event is received with a saveAs command");
+				done();
+			});
+			this.oControlVariantPlugin.createSaveAsCommand([this.oVariantManagementOverlay]);
+		});
+
+		QUnit.test("when createSaveAsCommand is called and the key user presses the cancel button", function(assert) {
+			var done = assert.async();
+			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+			var fnCreateSaveAsDialog = this.oVariantManagementControl._createSaveAsDialog;
+			sandbox.stub(this.oVariantManagementControl, "_createSaveAsDialog").callsFake(function() {
+				fnCreateSaveAsDialog.call(this.oVariantManagementControl);
+				this.oVariantManagementControl.oSaveAsDialog.attachEventOnce("afterOpen", function() {
+					this.oVariantManagementControl._cancelPressed();
+				}.bind(this));
+			}.bind(this));
+			var oOpenSaveAsDialogSpy = sandbox.spy(this.oVariantManagementControl, "_openSaveAsDialog");
+
+			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
+				assert.ok(oEvent, "then fireElementModified is called once");
+				var oCommand = oEvent.getParameter("command");
+				assert.equal(oOpenSaveAsDialogSpy.callCount, 1, "then openSaveAsDialog has been called once");
+				assert.notOk(oCommand, "then a saveAs Variant event is received, but no command is created");
+				done();
+			});
+			this.oControlVariantPlugin.createSaveAsCommand([this.oVariantManagementOverlay]);
+		});
+
 		QUnit.test("when manage dialog is already open, followed by registration of variant management overlay", function(assert) {
 			var done = assert.async();
 			this.oVariantManagementControl.openManagementDialog();
@@ -389,79 +457,6 @@ sap.ui.define([
 			assert.equal(sVarMgmt, "varMgtKey", "then correct VariantManagement reference returned");
 		});
 
-		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> no copy pattern, no counter, no previous existence", function(assert) {
-			checkTitle.call(this, assert, "SampleTitle Copy", "SampleTitle");
-		});
-
-		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, no counter, no previous existence", function(assert) {
-			checkTitle.call(this, assert, "SampleTitle Copy", "SampleTitle Copy");
-		});
-
-		QUnit.test("when calling '_getVariantTitleForCopy' with the greatest counter at the beginning of the model and title containing -> copy pattern, counter, previous existence with counter", function(assert) {
-			this.oModel.oData["varMgtKey"].variants.unshift({
-				key: "variant100",
-				title: "SampleTitle Copy(100)",
-				visible: true
-			});
-			checkTitle.call(this, assert, "SampleTitle Copy(101)", "SampleTitle Copy");
-			this.oModel.oData["varMgtKey"].variants.splice(0, 1);
-		});
-
-		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> no copy pattern, no counter, previous existence with counter", function(assert) {
-			this.oModel.oData["varMgtKey"].variants.push({
-				title: "SampleTitle Copy(5)",
-				visible: true
-			});
-			checkTitle.call(this, assert, "SampleTitle Copy(6)", "SampleTitle");
-			this.oModel.oData["varMgtKey"].variants.splice(2, 1);
-		});
-
-		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, counter, previous existence with counter", function(assert) {
-			this.oModel.oData["varMgtKey"].variants.push({
-				title: "SampleTitle Copy(5)",
-				visible: true
-			}, {
-				title: "SampleTitle Copy(8)",
-				visible: true
-			});
-			checkTitle.call(this, assert, "SampleTitle Copy(9)", "SampleTitle Copy(5)");
-			this.oModel.oData["varMgtKey"].variants.splice(2, 2);
-		});
-
-		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, counter, previous existence without counter and a different base title", function(assert) {
-			this.oModel.oData["varMgtKey"].variants.push({
-				title: "TitleSample",
-				visible: true
-			}, {
-				title: "SampleTitle Copy(1)",
-				visible: true
-			});
-			checkTitle.call(this, assert, "TitleSample Copy", "TitleSample");
-			this.oModel.oData["varMgtKey"].variants.splice(2, 2);
-		});
-
-		QUnit.test("when calling '_getVariantTitleForCopy' with a title containing -> copy pattern, counter, no previous existence and a different resource bundle pattern", function(assert) {
-			sandbox.stub(this.oModel._oResourceBundle, "getText").callsFake(function(sText, aArguments) {
-				if (sText === "VARIANT_COPY_SINGLE_TEXT") {
-					return "{0} Copy";
-				} else if (sText === "VARIANT_COPY_MULTIPLE_TEXT") {
-					if (!aArguments) {
-						return "({1}) {0} Copy";
-					}
-					return "(" + aArguments[1] + ") " + aArguments[0] + " Copy";
-				}
-			});
-			this.oModel.oData["varMgtKey"].variants.push({
-				title: "SampleTitle Copy",
-				visible: true
-			}, {
-				title: "SampleTitle Copy(8)",
-				visible: true
-			});
-			checkTitle.call(this, assert, "(1) SampleTitle Copy", "SampleTitle Copy(5)");
-			this.oModel.oData["varMgtKey"].variants.splice(2, 2);
-		});
-
 		//Integration Test
 		QUnit.test("when ControlVariant Plugin is added to designTime and a new overlay is rendered dynamically", function(assert) {
 			var done = assert.async();
@@ -480,23 +475,22 @@ sap.ui.define([
 		});
 
 		QUnit.test("when retrieving the context menu items", function(assert) {
-			var duplicateDone = assert.async();
 			var renameDone = assert.async();
+			var createSaveAsCommandDone = assert.async();
 			var configureDone = assert.async();
 			var switchDone = assert.async();
 
 			sandbox.stub(this.oControlVariantPlugin, "renameVariant").callsFake(function (aElementOverlays) {
-				if (aElementOverlays[0]._triggerDuplicate) {
-					// Duplicate
-					assert.ok(true, "Overlay._triggerDuplicate property set for duplicate");
-					assert.deepEqual(aElementOverlays[0], this.oVariantManagementOverlay, "the 'handler' function calls renameVariant for duplicate menu item with the correct overlay");
-					duplicateDone();
-				} else {
-					// Rename
-					assert.deepEqual(aElementOverlays[0], this.oVariantManagementOverlay, "the 'handler' function calls renameVariant for rename menu item with the correct overlay");
-					renameDone();
-				}
+				// Rename
+				assert.deepEqual(aElementOverlays[0], this.oVariantManagementOverlay, "the 'handler' function calls renameVariant for rename menu item with the correct overlay");
+				renameDone();
 			}.bind(this));
+
+			// SaveAs
+			sandbox.stub(this.oControlVariantPlugin, "createSaveAsCommand").callsFake(function() {
+				assert.ok(true, "the 'handler' function calls the createSaveAsCommand method");
+				createSaveAsCommandDone();
+			});
 
 			// Configure
 			sandbox.stub(this.oControlVariantPlugin, "configureVariants").callsFake(function() {
@@ -537,22 +531,27 @@ sap.ui.define([
 			aMenuItems[0].handler([this.oVariantManagementOverlay]);
 			assert.ok(aMenuItems[0].enabled([this.oVariantManagementOverlay]), "and the entry is enabled");
 
-			assert.equal(aMenuItems[1].id, "CTX_VARIANT_DUPLICATE", "there is an entry for duplicate variant");
+			assert.equal(aMenuItems[1].id, "CTX_VARIANT_SAVE", "there is an entry for save variant");
 			assert.equal(aMenuItems[1].rank, 220, "and the entry has the correct rank");
 			aMenuItems[1].handler([this.oVariantManagementOverlay]);
 			assert.ok(aMenuItems[1].enabled([this.oVariantManagementOverlay]), "and the entry is enabled");
 
-			assert.equal(aMenuItems[2].id, "CTX_VARIANT_MANAGE", "there is an entry for configure variant");
-			assert.equal(aMenuItems[2].rank, 230, "and the entry has the correct rank");
+			assert.equal(aMenuItems[2].id, "CTX_VARIANT_SAVEAS", "there is an entry for saveAs variant");
+			assert.equal(aMenuItems[2].rank, 225, "and the entry has the correct rank");
 			aMenuItems[2].handler([this.oVariantManagementOverlay]);
 			assert.ok(aMenuItems[2].enabled([this.oVariantManagementOverlay]), "and the entry is enabled");
-			assert.equal(aMenuItems[2].startSection, true, "the configure variant starts a new section on the menu");
 
-			assert.equal(aMenuItems[3].id, "CTX_VARIANT_SWITCH_SUBMENU", "there is an entry for switch variant");
-			assert.equal(aMenuItems[3].rank, 240, "and the entry has the correct rank");
+			assert.equal(aMenuItems[3].id, "CTX_VARIANT_MANAGE", "there is an entry for configure variant");
+			assert.equal(aMenuItems[3].rank, 230, "and the entry has the correct rank");
+			aMenuItems[3].handler([this.oVariantManagementOverlay]);
 			assert.ok(aMenuItems[3].enabled([this.oVariantManagementOverlay]), "and the entry is enabled");
-			assert.propEqual(aMenuItems[3].submenu, aExpectedSubmenu, "and the submenu array is correct");
-			aMenuItems[3].handler([this.oVariantManagementOverlay], mPropertyBag);
+			assert.equal(aMenuItems[3].startSection, true, "the configure variant starts a new section on the menu");
+
+			assert.equal(aMenuItems[4].id, "CTX_VARIANT_SWITCH_SUBMENU", "there is an entry for switch variant");
+			assert.equal(aMenuItems[4].rank, 240, "and the entry has the correct rank");
+			assert.ok(aMenuItems[4].enabled([this.oVariantManagementOverlay]), "and the entry is enabled");
+			assert.propEqual(aMenuItems[4].submenu, aExpectedSubmenu, "and the submenu array is correct");
+			aMenuItems[4].handler([this.oVariantManagementOverlay], mPropertyBag);
 		});
 	});
 
@@ -655,11 +654,11 @@ sap.ui.define([
 			assert.notOk(this.oButton1Overlay.getVariantManagement(), this.sLocalVariantManagementId, "then VariantManagement reference successfully set to ObjectPageLayout Overlay from the id of VariantManagement control");
 			assert.deepEqual(this.oVariantManagementOverlay.getEditableByPlugins(), [this.oControlVariantPlugin.getMetadata().getName()],
 				"then VariantManagement is marked as editable by ControlVariant plugin");
-			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, false, "the parameter 'variantsEditable' is set to false");
+			assert.equal(this.oModel.getData()[this.sLocalVariantManagementId].variantsEditable, true, "the parameter 'variantsEditable' is set to true");
 		});
 	});
 
-	QUnit.module("Given variant management control is renamed/duplicated", {
+	QUnit.module("Given variant management control is renamed", {
 		beforeEach: function (assert) {
 			var done = assert.async();
 
@@ -739,12 +738,11 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when variant is RENAMED and DUPLICATED with an EXISTING VARIANT TITLE, after which _handlePostRename is called", function (assert) {
+		QUnit.test("when variant is RENAMED with an EXISTING VARIANT TITLE, after which _handlePostRename is called", function (assert) {
 			var sNewVariantTitle = "Existing Variant Title";
 			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
 			sandbox.spy(this.oControlVariantPlugin, "startEdit");
 			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
 			sandbox.spy(RenameHandler, "startEdit");
@@ -764,7 +762,6 @@ sap.ui.define([
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sNewVariantTitle);
 			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
 			this.oControlVariantPlugin._$oEditableControlDomRef.text(sOldVariantTitle);
-			this.oVariantManagementOverlay._triggerDuplicate = true;
 			sap.ui.getCore().applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
@@ -808,7 +805,6 @@ sap.ui.define([
 			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
 			sandbox.stub(this.oControlVariantPlugin, "startEdit");
 			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
 
@@ -834,48 +830,11 @@ sap.ui.define([
 				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, this.oControlVariantPlugin, "BLANK_ERROR_TEXT", true));
 		});
 
-		QUnit.test("when variant is RENAMED with the SAME TEXT AS SOURCE, after which _handlePostRename is called", function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
-
-			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
-			sandbox.stub(this.oControlVariantPlugin, "startEdit");
-			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
-
-			var sOldVariantTitle = "Old Variant Title";
-			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sOldVariantTitle);
-			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-			sap.ui.getCore().applyChanges();
-
-			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT"));
-		});
-
-		QUnit.test("when variant is DUPLICATED and RENAMED with the SAME TEXT AS SOURCE, after which _handlePostRename is called", function(assert) {
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
-
-			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
-			sandbox.spy(this.oControlVariantPlugin, "startEdit");
-			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
-			sandbox.spy(RenameHandler, "startEdit");
-
-			var sOldVariantTitle = "Standard";
-			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sOldVariantTitle);
-			this.oControlVariantPlugin.setOldValue(sOldVariantTitle);
-			this.oVariantManagementOverlay._triggerDuplicate = true;
-			sap.ui.getCore().applyChanges();
-
-			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true, true));
-		});
-
 		QUnit.test("when variant RENAMED with the an EXISTING VARIANT TITLE, after which _handlePostRename is called", function(assert) {
 			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
 			var sExistingVariantTitle = "Existing Variant Title";
 
 			sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
-			sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
 			sandbox.stub(this.oControlVariantPlugin, "startEdit");
 			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
 
@@ -935,59 +894,9 @@ sap.ui.define([
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
 		});
 
-		QUnit.test("when variant is RENAMED and DUPLICATED with an UNCHANGED TITLE, after which _handlePostRename is called", function(assert) {
-			assert.expect(10);
-
-			var sExistingVariantTitle = "Existing Variant Title";
-			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
-			var fnCreateDuplicateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
-
-			this.oModel.setData({
-				varMgtKey : {
-					variants: [
-						{
-							title: sExistingVariantTitle,
-							visible: true
-						}
-					]
-				}
-			});
-
-			var sSourceVariantTitle = "Source Variant Title";
-			this.oVariantManagementOverlay._triggerDuplicate = true;
-			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns(sSourceVariantTitle + " Copy");
-			sandbox.stub(this.oModel, "getCurrentVariantReference").returns("varMgtKey");
-			this.oControlVariantPlugin.setOldValue(sSourceVariantTitle + " Copy");
-			sap.ui.getCore().applyChanges();
-
-			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
-				assert.ok(oEvent, "then fireElementModified is called once");
-
-				var oCommand = oEvent.getParameter("command");
-				var oDuplicateCommand = oCommand.getCommands()[0];
-
-				assert.equal(fnCreateDuplicateCommandSpy.callCount, 1, "then ControlVariantPlugin._createDuplicateCommand called once");
-				assert.ok(oCommand instanceof CompositeCommand, "then a composite command is received");
-				assert.equal(oCommand.getCommands().length, 1, "then one command inside composite command");
-
-				assert.ok(oDuplicateCommand instanceof ControlVariantDuplicate, "then control variant duplicate command present inside composite command, returned from ControlVariantPlugin._createDuplicateCommand");
-				assert.equal(oDuplicateCommand.getNewVariantTitle(), "Source Variant Title Copy", "then command has the correct title");
-				assert.equal(oDuplicateCommand.getElement(), this.oVariantManagementControl, "then command has the correct control");
-				assert.equal(oDuplicateCommand.getSourceVariantReference(), "varMgtKey", "then command has correct variant management reference");
-
-				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
-				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils.showMessageBox never called");
-			}.bind(this));
-
-			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin);
-		});
-
-		QUnit.test("when variant is RENAMED and DUPLICATED with a CHANGED TITLE, after which _handlePostRename is called", function(assert) {
-			assert.expect(14);
-
+		QUnit.test("when variant is RENAMED with a CHANGED TITLE, after which _handlePostRename is called", function(assert) {
 			var sExistingVariantTitle = "Source Variant Title";
 			var fnMessageBoxShowStub = sandbox.stub(RtaUtils, "showMessageBox").resolves();
-			var fnCreateDuplicateCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createDuplicateCommand");
 			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 
 			this.oModel.setData({
@@ -1001,7 +910,6 @@ sap.ui.define([
 				}
 			});
 
-			this.oVariantManagementOverlay._triggerDuplicate = true;
 			sandbox.stub(RenameHandler, "_getCurrentEditableFieldText").returns("Modified Source Variant Title Copy");
 			sandbox.stub(this.oModel, "getCurrentVariantReference").returns("varMgtKey");
 			this.oControlVariantPlugin.setOldValue(sExistingVariantTitle + " Copy");
@@ -1010,23 +918,12 @@ sap.ui.define([
 			this.oControlVariantPlugin.attachElementModified(function(oEvent) {
 				assert.ok(oEvent, "then fireElementModified is called once");
 
-				var oCommand = oEvent.getParameter("command");
-				var oDuplicateCommand = oCommand.getCommands()[0];
-				var oSetTitleCommand = oCommand.getCommands()[1];
+				var oSetTitleCommand = oEvent.getParameter("command");
 
-				assert.equal(fnCreateDuplicateCommandSpy.callCount, 1, "then ControlVariantPlugin._createDuplicateCommand called once");
 				assert.equal(fnCreateSetTitleCommandSpy.callCount, 1, "then ControlVariantPlugin._createSetTitleCommand called once");
-				assert.ok(oCommand instanceof CompositeCommand, "then a composite command is received");
-				assert.equal(oCommand.getCommands().length, 2, "then one command inside composite command");
-
 				assert.ok(oSetTitleCommand instanceof ControlVariantSetTitle, "then an event is received with a setTitle command, returned from ControlVariantPlugin._createSetTitleCommand");
 				assert.equal(oSetTitleCommand .getNewText(), "Modified Source Variant Title Copy", "then setTitle command has the correct new title");
 				assert.equal(oSetTitleCommand .getElement(), this.oVariantManagementControl, "then setTitle command has the correct control");
-
-				assert.ok(oDuplicateCommand instanceof ControlVariantDuplicate, "then control variant duplicate command present inside composite command, returned from ControlVariantPlugin._createDuplicateCommand");
-				assert.equal(oDuplicateCommand.getNewVariantTitle(), "Source Variant Title Copy", "then duplicate command has the correct title");
-				assert.equal(oDuplicateCommand.getElement(), this.oVariantManagementControl, "then duplicate command has the correct control");
-				assert.equal(oDuplicateCommand.getSourceVariantReference(), "varMgtKey", "then duplicate command has correct variant management reference");
 
 				assert.notOk(this.oVariantManagementOverlay.hasStyleClass("sapUiRtaErrorBg"), "then error border not added to VariantManagement control overlay");
 				assert.equal(fnMessageBoxShowStub.callCount, 0, "then RtaUtils.showMessageBox never called");
@@ -1145,10 +1042,9 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when startEdit is called in duplicate mode", function (assert) {
+		QUnit.test("when startEdit is called", function (assert) {
 			var done = assert.async();
 			var vDomRef = this.oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
-			this.oVariantManagementOverlay._triggerDuplicate = true;
 
 			var mPropertyBag = {
 				domRef: vDomRef,
@@ -1168,11 +1064,10 @@ sap.ui.define([
 			this.oControlVariantPlugin.startEdit(this.oVariantManagementOverlay);
 		});
 
-		QUnit.test("when stopEdit is called in non-error mode on duplicate", function(assert) {
+		QUnit.test("when stopEdit is called in non-error mode", function(assert) {
 			var oControl = this.oVariantManagementControl.getTitle();
 			var $oControl = jQuery(oControl.getDomRef("inner"));
 			var sOldText = "Title Old";
-			this.oVariantManagementOverlay._triggerDuplicate = true;
 			this.oControlVariantPlugin.setOldValue(sOldText);
 			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
 
@@ -1180,17 +1075,15 @@ sap.ui.define([
 			this.oControlVariantPlugin.stopEdit();
 
 			assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
-			assert.notOk(this.oVariantManagementOverlay._triggerDuplicate, "then Overlay._triggerDuplicate property reset (deleted)");
 			assert.ok($oControl.css("visibility"), "visible", "then control visibility set back to visible");
 			assert.notOk(this._$oEditableControlDomRef);
 			assert.notOk(this._oEditedOverlay);
 		});
 
-		QUnit.test("when stopEdit is called in error mode on duplicate", function(assert) {
+		QUnit.test("when stopEdit is called in error mode", function(assert) {
 			var oControl = this.oVariantManagementControl.getTitle();
 			var $oControl = jQuery(oControl.getDomRef("inner"));
 			var sOldText = "Title Old";
-			this.oVariantManagementOverlay._triggerDuplicate = true;
 			this.oControlVariantPlugin.setOldValue(sOldText);
 			this.oControlVariantPlugin._oEditedOverlay = this.oVariantManagementOverlay;
 			sandbox.stub(this.oVariantManagementOverlay, "hasStyleClass").returns(true);
@@ -1199,7 +1092,6 @@ sap.ui.define([
 			this.oControlVariantPlugin.stopEdit();
 
 			assert.strictEqual(this.oControlVariantPlugin.getOldValue(), sOldText, "then old value is the same");
-			assert.ok(this.oVariantManagementOverlay._triggerDuplicate, "then Overlay._triggerDuplicate property still set");
 			assert.ok($oControl.css("visibility"), "visible", "then control visibility set back to visible");
 			assert.notOk(this._$oEditableControlDomRef);
 			assert.notOk(this._oEditedOverlay);
@@ -1381,9 +1273,9 @@ sap.ui.define([
 
 			var aMenuItems = this.oControlVariantPlugin.getMenuItems([this.oVariantManagementOverlay]);
 
-			assert.equal(aMenuItems[3].id, "CTX_VARIANT_SWITCH_SUBMENU", "there is an entry for switch variant");
-			assert.equal(aMenuItems[3].rank, 240, "and the entry has the correct rank");
-			assert.notOk(aMenuItems[3].enabled([this.oVariantManagementOverlay]), "and the entry is disabled");
+			assert.equal(aMenuItems[4].id, "CTX_VARIANT_SWITCH_SUBMENU", "there is an entry for switch variant");
+			assert.equal(aMenuItems[4].rank, 240, "and the entry has the correct rank");
+			assert.notOk(aMenuItems[4].enabled([this.oVariantManagementOverlay]), "and the entry is disabled");
 		});
 	});
 

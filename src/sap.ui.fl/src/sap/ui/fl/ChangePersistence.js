@@ -111,13 +111,19 @@ sap.ui.define([
 			// if change content was passed, then replace the newly created change instance in the variant
 			var sVariantReference = oChange.getVariantReference();
 			if (sVariantReference) {
-				var oVariant = VariantManagementState.getVariant({
-					vReference: sVariantReference,
-					reference: this._mComponent.name
-				});
-				if (oVariant) {
-					replaceChangeContentWithInstance(oVariant, oChange);
-				}
+				var aVariantManagementReferences = VariantManagementState.getVariantManagementReferences(this._mComponent.name);
+				aVariantManagementReferences.some(function(sVariantManagementReference) {
+					var oVariant = VariantManagementState.getVariant({
+						vReference: sVariantReference,
+						vmReference: sVariantManagementReference,
+						reference: this._mComponent.name
+					});
+					if (oVariant) {
+						replaceChangeContentWithInstance(oVariant, oChange);
+						return true;
+					}
+					return false;
+				}.bind(this));
 			}
 		}
 		return oChange;

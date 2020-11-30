@@ -309,10 +309,16 @@ sap.ui.define([
 					only: ["sap/ui/rta/command/ControlVariantConfigure"]
 				}
 			},
-			"command/ControlVariantDuplicate": {
+			"command/ControlVariantSave": {
 				group: "Command",
 				coverage: {
-					only: ["sap/ui/rta/command/ControlVariantDuplicate"]
+					only: ["sap/ui/rta/command/ControlVariantSave"]
+				}
+			},
+			"command/ControlVariantSaveAs": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/ControlVariantSaveAs"]
 				}
 			},
 			"command/ControlVariantSetTitle": {
