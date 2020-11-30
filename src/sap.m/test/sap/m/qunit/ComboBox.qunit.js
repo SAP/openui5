@@ -3058,7 +3058,7 @@ sap.ui.define([
 		oComboBox.open();
 		this.clock.tick(1000);
 
-		oComboBox._oList.getItems()[1].$().trigger("tap");
+		oComboBox._getList().getItems()[1].$().trigger("tap");
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(1000);
 
@@ -9303,7 +9303,7 @@ sap.ui.define([
 		this.clock.tick(1000);
 
 		// asserts
-		assert.ok(oComboBox.getPicker().getDomRef("cont").scrollTop < oComboBox._oSuggestionPopover._oList.getSelectedItem().getDomRef().offsetTop, "Selected Item should be visible after scrolling");
+		assert.ok(oComboBox.getPicker().getDomRef("cont").scrollTop < oComboBox._oSuggestionPopover.getItemsContainer().getSelectedItem().getDomRef().offsetTop, "Selected Item should be visible after scrolling");
 
 		// cleanup
 		oComboBox.destroy();
@@ -10418,7 +10418,7 @@ sap.ui.define([
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
 
 		var oListItem = ListHelpers.getListItem(oComboBox.getItems()[0]);
-		oComboBox._oList.fireItemPress({listItem: oListItem});
+		oComboBox._getList().fireItemPress({listItem: oListItem});
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired when the first filtered item is pressed');
@@ -10463,7 +10463,7 @@ sap.ui.define([
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
 
 		var oListItem = ListHelpers.getListItem(oComboBox.getItems()[0]);
-		oComboBox._oList.fireItemPress({listItem: oListItem});
+		oComboBox._getList().fireItemPress({listItem: oListItem});
 
 		// assert
 		assert.strictEqual(fnFireChangeSpy.callCount, 1, 'The "change" event is fired when the first filtered item is pressed');
@@ -10866,8 +10866,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oListItem = ListHelpers.getListItem(oComboBox.getItems()[1]);
-		oComboBox._oList.fireItemPress({listItem: oListItem});
-		oComboBox._oList.fireSelectionChange({listItem: oListItem});
+		oComboBox._getList().fireItemPress({listItem: oListItem});
+		oComboBox._getList().fireSelectionChange({listItem: oListItem});
 
 		assert.ok(oComboBox.getValue(), "ComboBox value to be filled in");
 		assert.strictEqual(oComboBox.getValue(), oComboBox.getItems()[1].getText(), "ComboBox value to be the same as the selected element");
@@ -12246,7 +12246,7 @@ sap.ui.define([
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
 		sap.ui.test.qunit.triggerKeydown(oFocusDomRef, KeyCodes.ARROW_UP);
 
-		oGroupHeaderListItem = this.oComboBox._oList.getItems()[0];
+		oGroupHeaderListItem = this.oComboBox._getList().getItems()[0];
 		oInvisibleText = sap.ui.getCore().byId(oGroupHeaderListItem.getAriaLabelledBy()[0]);
 
 		// assert
@@ -12302,7 +12302,7 @@ sap.ui.define([
 
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
 
-		aItems = this.oComboBox._oList.getItems();
+		aItems = this.oComboBox._getList().getItems();
 		oGroupHeaderItem = aItems[0];
 		oSelectedItem = aItems[1];
 
@@ -12331,7 +12331,7 @@ sap.ui.define([
 
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
 		oExpectedListItem = ListHelpers.getListItem(oExpectedItem);
-		oGroupHeaderListItem = this.oComboBox._oList.getItems()[0];
+		oGroupHeaderListItem = this.oComboBox._getList().getItems()[0];
 
 
 		// assert
@@ -12359,7 +12359,7 @@ sap.ui.define([
 		// assert
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
 		assert.ok(this.oComboBox.getSelectedItem() === oInitiallySelectedItem, "The expected item was initially selected.");
-		assert.ok(this.oComboBox._oList.hasStyleClass("sapMListFocus"), "The visual focus was correctly on the combo box's list initially.");
+		assert.ok(this.oComboBox._getList().hasStyleClass("sapMListFocus"), "The visual focus was correctly on the combo box's list initially.");
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
@@ -12391,7 +12391,7 @@ sap.ui.define([
 		// assert
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
 		assert.ok(this.oComboBox.getSelectedItem() === oInitiallySelectedItem, "The expected item was initially selected.");
-		assert.ok(this.oComboBox._oList.hasStyleClass("sapMListFocus"), "The visual focus was correctly on the combo box's list initially.");
+		assert.ok(this.oComboBox._getList().hasStyleClass("sapMListFocus"), "The visual focus was correctly on the combo box's list initially.");
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
@@ -12600,7 +12600,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// act
-		sap.ui.test.qunit.triggerEvent("tap", oComboBox._oList.getItems()[0].getDomRef());
+		sap.ui.test.qunit.triggerEvent("tap", oComboBox._getList().getItems()[0].getDomRef());
 		this.clock.tick(500);
 
 		// assert
@@ -12637,7 +12637,7 @@ sap.ui.define([
 		this.clock.tick(500);
 
 		// act
-		sap.ui.test.qunit.triggerEvent("tap", oComboBox._oList.getItems()[0].getDomRef());
+		sap.ui.test.qunit.triggerEvent("tap", oComboBox._getList().getItems()[0].getDomRef());
 		this.clock.tick(500);
 
 		// assert
@@ -12757,8 +12757,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oCombobox._oList.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._oList.getItems()).length, 5, "Shows all items");
+		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._getList().getItems()).length, 5, "Shows all items");
 	});
 
 	QUnit.test("Should filter the items", function (assert) {
@@ -12776,8 +12776,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oCombobox._oList.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._oList.getItems()).length, 1, "Only the matching items are visible");
+		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._getList().getItems()).length, 1, "Only the matching items are visible");
 	});
 
 	QUnit.test("Destroy & reinit on mobile", function (assert) {
@@ -12884,15 +12884,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oCombobox._oList.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._oList.getItems()).length, 1, "Only the matching items are visible");
+		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._getList().getItems()).length, 1, "Only the matching items are visible");
 
 		// Act
 		this.oCombobox._handlePopupOpenAndItemsLoad(true); // Icon press
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(this.oCombobox._oList.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._oList.getItems()).length, 5, "All items are visible");
+		assert.strictEqual(this.oCombobox._getList().getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oCombobox._getList().getItems()).length, 5, "All items are visible");
 	});
 
 	QUnit.test("Should not open the Popover in case of 0 items.", function (assert) {
@@ -13122,7 +13122,7 @@ sap.ui.define([
 		this.clock.tick();
 
 		// Arrange
-		var oFirstListItem = oComboBox._oList.getItems()[0],
+		var oFirstListItem = oComboBox._getList().getItems()[0],
 			sExpectedActiveDescendantId = oFirstListItem.getId();
 
 		// Assert
@@ -13281,7 +13281,7 @@ sap.ui.define([
 
 		// Assert
 		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not the value state header");
-		assert.notOk(this.oErrorComboBox._getSuggestionsPopover()._oList.getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
+		assert.notOk(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
 		assert.ok(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is on the input field");
 	});
 
@@ -13310,7 +13310,7 @@ sap.ui.define([
 
 		// Assert
 		assert.ok(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is on the value state header");
-		assert.notOk(this.oErrorComboBox._getSuggestionsPopover()._oList.getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
+		assert.notOk(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
 		assert.notOk(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is not the input field");
 	});
 
@@ -13343,7 +13343,7 @@ sap.ui.define([
 		// Assert
 		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not on the value state header");
 		assert.notOk(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is not the input field");
-		assert.ok(this.oErrorComboBox._getSuggestionsPopover()._oList.getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
+		assert.ok(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
 	});
 
 	QUnit.test("When the FormattedText in the value state header is focused onsapend should move the focus to the last item", function (assert) {
@@ -13360,7 +13360,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
 		this.clock.tick();
 
-		iLastItemIndex = this.oErrorComboBox._getSuggestionsPopover()._oList.getItems().length - 1;
+		iLastItemIndex = this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems().length - 1;
 
 		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
@@ -13372,7 +13372,7 @@ sap.ui.define([
 		// Assert
 		assert.notOk(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is not the value state header");
 		assert.notOk(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual pseudo focus is not the input field");
-		assert.ok(this.oErrorComboBox._getSuggestionsPopover()._oList.getItems()[iLastItemIndex].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the last item");
+		assert.ok(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getItems()[iLastItemIndex].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the last item");
 	});
 
 	QUnit.test("Should display the correct value state FormattedText message when a value with no matching suggestion is typed in the ComboBox input field", function (assert) {
@@ -13406,7 +13406,7 @@ sap.ui.define([
 		this.clock.tick();
 
 		// Assert
-		assert.strictEqual(this.oErrorComboBox._getSuggestionsPopover()._oList.getSelectedItem().getTitle(), "Germany", "Suggestion item has been matched");
+		assert.strictEqual(this.oErrorComboBox._getSuggestionsPopover().getItemsContainer().getSelectedItem().getTitle(), "Germany", "Suggestion item has been matched");
 
 		// Add one more character that will make the input value with no matching suggestion item
 		this.oErrorComboBox.handleInputValidation(oEventMock, false);
@@ -13441,7 +13441,7 @@ sap.ui.define([
 		this.clock.tick();
 
 		// Arrange
-		oFirstListItem = this.oErrorComboBox._oList.getItems()[0];
+		oFirstListItem = this.oErrorComboBox._getList().getItems()[0];
 
 		// Act
 		this.oErrorComboBox.ontap(oFakeEvent);

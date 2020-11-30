@@ -53,7 +53,7 @@ sap.ui.define([
 		this.resizePopup = function (oInput) {
 			var oPopover = this.getPopover();
 
-			if (this._oList && oPopover) {
+			if (this.getItemsContainer() && oPopover) {
 
 				if (this._sPopoverContentWidth) {
 					oPopover.setContentWidth(this._sPopoverContentWidth);

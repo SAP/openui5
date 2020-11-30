@@ -1507,7 +1507,7 @@ function(
 	MultiInput.prototype._getSuggestionsList = function() {
 		var oSuggestionsPopover = this._getSuggestionsPopoverInstance();
 
-		return oSuggestionsPopover && oSuggestionsPopover._oList;
+		return oSuggestionsPopover && oSuggestionsPopover.getItemsContainer();
 	};
 
 	/**

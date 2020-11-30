@@ -52,9 +52,6 @@ sap.ui.define([
 	) {
 		"use strict";
 
-		// shortcut for sap.m.ListType
-		var ListType = library.ListType;
-
 		// shortcut for sap.m.ListMode
 		var ListMode = library.ListMode;
 
@@ -896,28 +893,13 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype._mapItemToListItem = function (oItem) {
-			var oListItem, sAdditionalText;
+			var oListItem = ListHelpers.createListItemFromCoreItem(oItem, this.getShowSecondaryValues());
 
-			if (oItem.isA("sap.ui.core.SeparatorItem")) {
-				oListItem = this._mapSeparatorItemToGroupHeader(oItem);
-			} else {
-				sAdditionalText = (oItem.getAdditionalText && this.getShowSecondaryValues()) ? oItem.getAdditionalText() : "";
-
-				oListItem = new StandardListItem({
-					type: ListType.Active,
-					info: sAdditionalText,
-					visible: oItem.getEnabled(),
-					title: oItem.getText(),
-					tooltip: oItem.getTooltip()
-				});
-
+			if (oItem.isA("sap.ui.core.Item")) {
 				this.setSelectable(oItem, oItem.getEnabled());
 			}
-
-			oItem.data(ListHelpers.CSS_CLASS + "ListItem", oListItem);
-			oItem.getCustomData().forEach(function(oCustomData){
-				oListItem.addCustomData(oCustomData.clone());
-			});
+			oListItem.addAriaLabelledBy(this._getGroupHeaderInvisibleText().getId());
+			oListItem.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "NonInteractiveItem");
 
 			this._oItemObserver.observe(oItem, {properties: ["text", "additionalText", "enabled", "tooltip"]});
 

@@ -5,8 +5,15 @@
  * IMPORTANT: This is a private module, its API must not be used and is subject to change.
  * Code other than the OpenUI5 libraries must not introduce dependencies to this module.
  */
-sap.ui.define(["sap/base/util/deepEqual"], function (deepEqual) {
+sap.ui.define([
+	"sap/m/library",
+	"sap/base/util/deepEqual",
+	"sap/m/GroupHeaderListItem",
+	"sap/m/StandardListItem"],
+	function (library, deepEqual, GroupHeaderListItem, StandardListItem) {
 	"use strict";
+
+	var ListType = library.ListType;
 
 	/**
 	 * A helper module containing general methods for list handling in input with suggestions.
@@ -36,7 +43,7 @@ sap.ui.define(["sap/base/util/deepEqual"], function (deepEqual) {
 	 * @returns {sap.m.StandardListItem | sap.m.GroupHeaderListItem | null} The ListItem
 	 */
 	ListHelpers.getListItem = function (oItem) {
-		return oItem && oItem.data ?  oItem.data(ListHelpers.CSS_CLASS + "ListItem") : null;
+		return oItem && oItem.data ? oItem.data(ListHelpers.CSS_CLASS + "ListItem") : null;
 	};
 
 	/**
@@ -56,7 +63,7 @@ sap.ui.define(["sap/base/util/deepEqual"], function (deepEqual) {
 			return;
 		}
 
-		for ( var i = 0; i < aItems.length; i++) {
+		for (var i = 0; i < aItems.length; i++) {
 			oItem = aItems[i].data && aItems[i].data(sDataName);
 			if (oItem === oDataObject || deepEqual(oItem, oDataObject)) {
 				return aItems[i];
@@ -72,14 +79,55 @@ sap.ui.define(["sap/base/util/deepEqual"], function (deepEqual) {
 	 * @param {sap.ui.core.Item[]} aItems Items to filter
 	 * @returns {sap.ui.core.Item[]} An array containing the enabled items
 	 */
-	ListHelpers.getEnabledItems = function(aItems) {
+	ListHelpers.getEnabledItems = function (aItems) {
 		if (!Array.isArray(aItems)) {
 			return;
 		}
 
-		return aItems.filter(function(oItem) {
+		return aItems.filter(function (oItem) {
 			return oItem.getEnabled && oItem.getEnabled();
 		});
+	};
+
+	/**
+	 * Creates ListItem from core.Item.
+	 *
+	 * @param oItem
+	 * @param bShowSecondaryValues
+	 * @returns {StandardListItem|GroupHeaderListItem|null}
+	 */
+	ListHelpers.createListItemFromCoreItem = function (oItem, bShowSecondaryValues) {
+		var oListItem;
+
+		if (!oItem) {
+			return null;
+		}
+
+		if (oItem.isA("sap.ui.core.SeparatorItem")) {
+			oListItem = new GroupHeaderListItem({
+				title: oItem.getText(),
+				type: ListType.Inactive
+			});
+		} else if (oItem.isA("sap.ui.core.Item")) {
+			oListItem = new StandardListItem({
+				type: ListType.Active,
+				visible: oItem.getEnabled()
+			});
+
+			// Constructor does not escape properly curly braces and binding. We need to use the setters instead.
+			oListItem.setTitle(oItem.getText());
+			oListItem.setInfo((oItem.getAdditionalText && bShowSecondaryValues) ? oItem.getAdditionalText() : "");
+			oListItem.setTooltip(oItem.getTooltip());
+		} else {
+			return null;
+		}
+
+		oItem.data(ListHelpers.CSS_CLASS + "ListItem", oListItem);
+		oItem.getCustomData().forEach(function (oCustomData) {
+			oListItem.addCustomData(oCustomData.clone());
+		});
+
+		return oListItem;
 	};
 
 	return ListHelpers;

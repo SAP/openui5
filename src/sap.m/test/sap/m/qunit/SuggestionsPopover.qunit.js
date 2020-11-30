@@ -47,7 +47,7 @@ sap.ui.define([
 		var oSpy;
 
 		// Arrange
-		this.oSuggestionsPopover._createSuggestionPopup();
+		this.oSuggestionsPopover.createSuggestionPopup();
 		this.oSuggestionsPopover._getValueStateHeader();
 
 		// Assert
@@ -67,7 +67,7 @@ sap.ui.define([
 		oSpy.restore();
 	});
 
-	QUnit.module("_createSuggestionPopupContent", {
+	QUnit.module("initContent", {
 		beforeEach: function () {
 			var oInput = new Input();
 			this.oSuggestionsPopover = new SuggestionsPopover(oInput);
@@ -128,7 +128,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		oSuggestionsPopover._createSuggestionPopup({});
+		oSuggestionsPopover.createSuggestionPopup({});
 
 		//Assert
 		assert.ok(oSuggestionsPopover._oPopover.hasStyleClass("sapUiNoContentPadding"), "The sapUiNoContentPadding class is added");

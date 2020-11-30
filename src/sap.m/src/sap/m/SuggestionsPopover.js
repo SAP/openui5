@@ -81,17 +81,11 @@ sap.ui.define([
 			// stores a reference to the input control that instantiates the popover
 			this._oInput = oInput;
 
-			// show suggestions in a dialog on phones
-			this._bUseDialog = Device.system.phone;
-
 			// stores the selected index inside the popover list or table
 			this._iPopupListSelectedIndex = -1;
 
 			// specifies the width of the suggestion list
 			this._sPopoverContentWidth = null;
-
-			// specifies whether the suggestions highlighting is enabled
-			this._bEnableHighlighting = true;
 
 			// is the input incremental type
 			this._bIsInputIncrementalType = false;
@@ -116,16 +110,20 @@ sap.ui.define([
 				onsappagedown: function(oEvent) {
 					this._onsaparrowkey(oEvent, "down", 5);
 				},
-				onsaphome: function(oEvent) {
-					var iItems;
-					if (this._oList) {
-						iItems = this._oList.getItems().length ? this._oList.getItems().length - 1 : 0;
+				onsaphome: function (oEvent) {
+					var iItems,
+						oList = this.getItemsContainer();
+
+					if (oList) {
+						iItems = oList.getItems().length ? oList.getItems().length - 1 : 0;
 						this._onsaparrowkey(oEvent, "up", iItems);
 					}
 				},
 				onsapend: function(oEvent) {
-					if (this._oList) {
-						this._onsaparrowkey(oEvent, "down", this._oList.getItems().length);
+					var oList = this.getItemsContainer();
+
+					if (oList) {
+						this._onsaparrowkey(oEvent, "down", oList.getItems().length);
 					}
 				},
 				onsaptabnext: this._handleValueStateLinkNav,
@@ -142,20 +140,7 @@ sap.ui.define([
 		},
 
 		destroy: function () {
-			this.destroyPopover();
-
-			// CSN# 1404088/2014: list is not destroyed when it has not been attached to the popup yet
-			if (this._oList) {
-				this._oList.destroy();
-				this._oList = null;
-			}
-
-			this._oValueStateHeader = null; // The value state header is destroyed by the Popover
-
-			if (this._oPickerValueStateText) {
-				this._oPickerValueStateText.destroy();
-				this._oPickerValueStateText = null;
-			}
+			this._destroySuggestionPopup();
 		}
 	});
 
@@ -206,10 +191,14 @@ sap.ui.define([
 
 	/**
 	 * Helper function that creates suggestion popup.
+	 *
+	 * @param mOptions {object} Settings for the Popover
+	 * @public
 	 */
-	SuggestionsPopover.prototype._createSuggestionPopup = function (mOptions) {
+	SuggestionsPopover.prototype.createSuggestionPopup = function (mOptions) {
 		var oPopover,
-			oInput = this._oInput;
+			oInput = this._oInput,
+			oList = this.getItemsContainer();
 
 		mOptions = mOptions || [];
 		oPopover = this.createPopover(oInput, this._oPopupInput, mOptions);
@@ -219,22 +208,28 @@ sap.ui.define([
 		oPopover.addStyleClass(CSS_CLASS_NO_CONTENT_PADDING);
 		oPopover.addAriaLabelledBy(InvisibleText.getStaticId("sap.m", "INPUT_AVALIABLE_VALUES"));
 
-		if (this._oList) {
-			this.addContent(this._oList);
+		if (oList) {
+			this.addContent(oList);
 		}
 	};
 
 	/**
-	 * Helper function that creates content for the suggestion popup.
+	 * Helper function that creates  (List/Table) for the suggestion popup.
 	 *
-	 * @param {boolean | null } bTabular Determines whether the popup content is a table or a list.
+	 * @param {sap.ui.core.Control} oContent Typically a List or a Table which would be Popover's content
+	 * @public
 	 */
-	SuggestionsPopover.prototype._createSuggestionPopupContent = function (bTabular) {
-		var oInput = this._oInput,
+	SuggestionsPopover.prototype.initContent = function (oContent) {
+		var oList = oContent,
+			oInput = this._oInput,
 			oPopover = this.getPopover();
 
-		if (!bTabular) {
-			this._oList = new List(oInput.getId() + "-popup-list", {
+		if (!oPopover) {
+			return;
+		}
+
+		if (!oList) {
+			oList = new List(oInput.getId() + "-popup-list", {
 				showNoData : false,
 				mode : ListMode.SingleSelectMaster,
 				rememberSelections : false,
@@ -242,43 +237,21 @@ sap.ui.define([
 				showSeparators: ListSeparators.None,
 				busyIndicatorDelay: 0
 			});
-
-			this._oList.addEventDelegate({
-				onAfterRendering: function () {
-					var aListItemsDomRef, sInputValue;
-
-					if (!this._bEnableHighlighting) {
-						return;
-					}
-
-					aListItemsDomRef = this._oList.$().find('.sapMSLIInfo, .sapMSLITitleOnly');
-					sInputValue = this._oInput._bDoTypeAhead ? this._oInput._sTypedInValue : this._oInput.getValue();
-					sInputValue = (sInputValue || "").toLowerCase();
-
-					highlightDOMElements(aListItemsDomRef, sInputValue);
-				}.bind(this)
-			});
-
-		} else {
-			// tabular suggestions
-			this._oList = this._oInput._getSuggestionsTable();
 		}
 
-		if (oPopover) {
-			if (this._bUseDialog) {
-				// this._oList needs to be manually rendered otherwise it triggers a rerendering of the whole
-				// dialog and may close the opened on screen keyboard
-				oPopover.addAggregation("content", this._oList, true);
-				var oRenderTarget = oPopover.$("scrollCont")[0];
-				if (oRenderTarget) {
-					var rm = sap.ui.getCore().createRenderManager();
-					rm.renderControl(this._oList);
-					rm.flush(oRenderTarget);
-					rm.destroy();
-				}
-			} else {
-				this.addContent(this._oList);
+		if (Device.system.phone) {
+			// oList needs to be manually rendered otherwise it triggers a rerendering of the whole
+			// dialog and may close the opened on screen keyboard
+			oPopover.addAggregation("content", oList, true);
+			var oRenderTarget = oPopover.$("scrollCont")[0];
+			if (oRenderTarget) {
+				var rm = sap.ui.getCore().createRenderManager();
+				rm.renderControl(oList);
+				rm.flush(oRenderTarget);
+				rm.destroy();
 			}
+		} else {
+			this.addContent(oList);
 		}
 	};
 
@@ -306,27 +279,13 @@ sap.ui.define([
 	 * Helper function that destroys suggestion popup.
 	 */
 	SuggestionsPopover.prototype._destroySuggestionPopup = function () {
-		// if the table is not removed before destroying the popup the table is also destroyed (table needs to stay because we forward the column and row aggregations to the table directly, they would be destroyed as well)
-		if (this.getPopover() && this._oList instanceof Table) {
-			this.getPopover().removeAllContent();
-		}
-
 		this.destroyPopover();
 
-		// CSN# 1404088/2014: list is not destroyed when it has not been attached to the popup yet
-		if (this._oList instanceof List) {
-			this._oList.destroy();
-			this._oList = null;
-		}
+		this._oValueStateHeader = null; // The value state header is destroyed by the Popover
 
 		if (this._oPickerValueStateText) {
 			this._oPickerValueStateText.destroy();
 			this._oPickerValueStateText = null;
-		}
-
-		if (this._oValueStateHeader) {
-			this._oValueStateHeader.destroy();
-			this._oValueStateHeader = null;
 		}
 	};
 
@@ -432,7 +391,7 @@ sap.ui.define([
 		oEvent.stopPropagation();
 
 		var bFirst = false,
-			oList = this._oList,
+			oList = this.getItemsContainer(),
 			aListItems = oList.getItems(),
 			oSelectedItem = oList.getSelectedItem(),
 			iSelectedIndex = this._iPopupListSelectedIndex,
@@ -450,7 +409,7 @@ sap.ui.define([
 		// If Value State Header contains links and it is focused - move the visual focus to the last item when on sapend
 		if (this.getValueStateLinks().length && this.bMessageValueStateActive && oEvent.type === "sapend") {
 			oPseudoFocusedElement.removeStyleClass("sapMPseudoFocus");
-			this._oList.addStyleClass("sapMListFocus");
+			oList.addStyleClass("sapMListFocus");
 			// If the visual focus is on the value state header then the last selected suggested item was the first one
 			iOldIndex = 0;
 			iSelectedIndex = aListItems.length - 1;
@@ -461,7 +420,7 @@ sap.ui.define([
 		var iStopIndex;
 		if (iItems > 1) {
 			// if iItems would go over the borders, search for valid item in other direction
-			if (sDir == "down" && iSelectedIndex + iItems >= aListItems.length) {
+			if (sDir === "down" && iSelectedIndex + iItems >= aListItems.length) {
 				sDir = "up";
 				iItems = 1;
 				aListItems[iSelectedIndex].setSelected(false);
@@ -469,7 +428,7 @@ sap.ui.define([
 				iStopIndex = iSelectedIndex;
 				iSelectedIndex = aListItems.length - 1;
 				bFirst = true;
-			} else if (sDir == "up" && iSelectedIndex - iItems < 0 && iSelectedIndex >= 0) {
+			} else if (sDir === "up" && iSelectedIndex - iItems < 0 && iSelectedIndex >= 0) {
 				sDir = "down";
 				iItems = 1;
 				aListItems[iSelectedIndex].setSelected(false);
@@ -481,7 +440,7 @@ sap.ui.define([
 		}
 
 		oInput.removeStyleClass("sapMFocus");
-		this._oList.addStyleClass("sapMListFocus");
+		oList.addStyleClass("sapMListFocus");
 
 		// always select the first item from top when nothing is selected so far
 		if (iSelectedIndex === -1) {
@@ -526,7 +485,7 @@ sap.ui.define([
 			is the first selectable item (if no further visible item can be found) - move the focus to the value state header on arrow up.
 			In case of saphome move the focus to the Value State Header, no matter the position of the old selected item */
 			oPseudoFocusedElement.addStyleClass(("sapMPseudoFocus"));
-			this._oList.removeStyleClass("sapMListFocus");
+			oList.removeStyleClass("sapMListFocus");
 			oInnerRef.attr("aria-activedescendant", oFormattedText.getId());
 			this.bMessageValueStateActive = true;
 			this._iPopupListSelectedIndex = -1;
@@ -537,7 +496,7 @@ sap.ui.define([
 		// Remove the visual focus of the Value State Header, if links are present and arrow up/down is pressed
 		if ((this.getValueStateLinks().length && this.bMessageValueStateActive) && (sDir === "up" && iSelectedIndex === 0 || sDir === "down")) {
 			oPseudoFocusedElement.removeStyleClass("sapMPseudoFocus");
-			this._oList.addStyleClass("sapMListFocus");
+			oList.addStyleClass("sapMListFocus");
 			this.bMessageValueStateActive = false;
 		}
 
@@ -616,17 +575,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the Input control
-	 * depending on the device (mobile or desktop).
-	 *
-	 * @private
-	 * @returns {sap.m.Input} Reference to the corresponding control
-	 */
-	SuggestionsPopover.prototype._getInput = function () {
-		return this._bUseDialog ? this._oPopupInput : this._oInput;
-	};
-
-	/**
 	 *
 	 * Updates the value state displayed in the popover.
 	 *
@@ -693,6 +641,21 @@ sap.ui.define([
 	 */
 	SuggestionsPopover.prototype.addContent = function(oControl) {
 		this.getPopover().addContent(oControl);
+	};
+
+	/**
+	 * Gets Popover's List or Table.
+	 *
+	 * @return {sap.m.List | sap.m.Table | null}
+	 * @public
+	 */
+	SuggestionsPopover.prototype.getItemsContainer = function () {
+		var oPopover = this.getPopover(),
+			aContent = oPopover && oPopover.getContent();
+
+		return aContent && aContent.filter(function (oControl) {
+			return oControl.isA("sap.m.List") || oControl.isA("sap.m.Table");
+		})[0];
 	};
 
 	/**

@@ -72,9 +72,6 @@ function(
 ) {
 	"use strict";
 
-	// shortcut for sap.m.ListType
-	var ListType = library.ListType;
-
 	// shortcut for sap.m.ListMode
 	var ListMode = library.ListMode;
 
@@ -3054,39 +3051,26 @@ function(
 	 * Map an item type of sap.ui.core.Item to an item type of sap.m.StandardListItem.
 	 *
 	 * @param {sap.ui.core.Item} oItem The item to be matched
-	 * @returns {sap.m.StandardListItem | null} The matched StandardListItem
+	 * @returns {sap.m.StandardListItem | GroupHeaderListItem | null} The matched StandardListItem
 	 * @private
 	 */
-	MultiComboBox.prototype._mapItemToListItem = function(oItem) {
-		var oListItem, sListItem, sListItemSelected, sAdditionalText;
-		var oRenderer = this.getRenderer();
+	MultiComboBox.prototype._mapItemToListItem = function (oItem) {
+		var oListItem, sListItem, sListItemSelected,
+			oRenderer = this.getRenderer();
 
 		if (!oItem) {
 			return null;
 		}
-		sAdditionalText = (oItem.getAdditionalText && this.getShowSecondaryValues()) ? oItem.getAdditionalText() : "";
+
+		oListItem = ListHelpers.createListItemFromCoreItem(oItem, this.getShowSecondaryValues());
 
 		if (oItem.isA("sap.ui.core.SeparatorItem")) {
-			oListItem = this._mapSeparatorItemToGroupHeader(oItem, oRenderer);
-			oItem.data(ListHelpers.CSS_CLASS + "ListItem", oListItem);
-			this._decorateListItem(oListItem);
-
 			return oListItem;
 		}
 
 		sListItem = oRenderer.CSS_CLASS_MULTICOMBOBOX + "Item";
 		sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";
-
-		oListItem = new StandardListItem({
-			type: ListType.Active,
-			visible: oItem.getEnabled()
-		}).addStyleClass(sListItem + " " + sListItemSelected);
-
-		oListItem.setTooltip(oItem.getTooltip());
-
-		oItem.data(ListHelpers.CSS_CLASS + "ListItem", oListItem);
-		oListItem.setTitle(oItem.getText());
-		oListItem.setInfo(sAdditionalText);
+		oListItem.addStyleClass(sListItem + " " + sListItemSelected);
 
 		if (sListItemSelected) {
 			var oToken = new Token({
