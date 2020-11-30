@@ -5,12 +5,14 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/mapEditor/MapEditor",
 	"sap/base/util/includes",
-	"sap/base/util/restricted/_merge"
+	"sap/base/util/restricted/_merge",
+	"sap/base/util/deepEqual"
 ], function (
 	BasePropertyEditor,
 	MapEditor,
 	includes,
-	_merge
+	_merge,
+	deepEqual
 ) {
 	"use strict";
 
@@ -74,7 +76,28 @@ sap.ui.define([
 		var bAllowSettings = (oConfigValue.value.allowSettings || vItemMetadata.allowSettings) === true;
 		var bAllowDynamicValues = (oConfigValue.value.allowDynamicValues || vItemMetadata.allowDynamicValues) === true;
 		var oVisualization = oConfigValue.value.visualization || vItemMetadata.visualization;
+		var oValues = oConfigValue.value.values || vItemMetadata.values;
 		var sLabel = vItemMetadata.label;
+		//var oTemplate = oConfigValue.value.template || vItemMetadata.template || {};
+/*
+		if (sType === "array") {
+		    if (deepEqual(oTemplate, {})) {
+				oTemplate = {
+					"key": {
+						"label": "Key",
+						"type": "string",
+						"path": "key"
+					},
+					"text": {
+						"label": "Text",
+						"type": "string",
+						"path": "text"
+					}
+				};
+			}
+			oMapItemConfig[2].allowAddAndRemove = false;
+		}*/
+		oMapItemConfig[2].visible = !(sType === "group" || sType === "array");
 
 		oMapItemConfig.push(
 			{
@@ -156,6 +179,16 @@ sap.ui.define([
 				value: oVisualization,
 				visible: sType !== "group",
 				placeholder: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VISUALIZATION.PLACEHOLDER"),
+				type: "textArea",
+				itemKey: sKey
+			},
+			{
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VALUES"),
+				path: "values",
+				allowBindings: true,
+				value: oValues,
+				visible: sType === "string" || sType === "array",
+				placeholder: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VALUES.PLACEHOLDER"),
 				type: "textArea",
 				itemKey: sKey
 			}

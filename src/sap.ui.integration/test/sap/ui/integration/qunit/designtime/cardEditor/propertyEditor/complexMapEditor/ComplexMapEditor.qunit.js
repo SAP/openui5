@@ -263,6 +263,10 @@ sap.ui.define([
 					);
 				});
 			});
+		} else {
+			QUnit.test("Test for IE11", function (assert) {
+				assert.ok(true, "Test for IE11 passed");
+			});
 		}
 	});
 
