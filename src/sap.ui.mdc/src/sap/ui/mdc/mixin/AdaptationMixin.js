@@ -167,7 +167,7 @@ sap.ui.define(
          * @private
          * @returns {object} Returns the enhanced control instance
          */
-        AdaptationMixin.retrieveInbuiltFilter = function (fnRegister, bAdvancedMode) {
+        AdaptationMixin.retrieveInbuiltFilter = function (fnRegister) {
             if (!this._oInbuiltFilterPromise) {
                 this._oInbuiltFilterPromise = new Promise(function(resolve, reject) {
                     sap.ui.require(["sap/ui/mdc/filterbar/p13n/AdaptationFilterBar"], function(AdaptationFilterBar) {
@@ -181,7 +181,6 @@ sap.ui.define(
                             //create instance of 'AdaptationFilterBar'
                             this._oP13nFilter = new AdaptationFilterBar(this.getId() + "-p13nFilter",{
                                 adaptationControl: this,
-                                advancedMode: bAdvancedMode,
                                 filterConditions: this.getFilterConditions()
                             });
 

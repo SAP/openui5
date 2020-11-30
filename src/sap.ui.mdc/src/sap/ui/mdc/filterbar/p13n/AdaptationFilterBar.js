@@ -10,7 +10,10 @@ sap.ui.define([
 	 * Constructor for a new AdaptationFilterBar.
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] initial settings for the new control
-	 * @class The <code>AdaptationFilterBar</code> control is used for a lightweight FilterBar implementation in p13n panels
+	 * @class The <code>AdaptationFilterBar</code> control is used for a lightweight FilterBar implementation for p13n use cases.
+	 * The <code>AdaptationFilterBar</code> should only be used if the consuming control implements atleast the <code>IFilterSource</code>
+	 * interface to provide basic filter functionality.
+	 *
 	 * @extends sap.ui.mdc.filterbar.FilterBarBase
 	 * @author SAP SE
 	 * @version ${version}
@@ -29,20 +32,12 @@ sap.ui.define([
 				 */
 				adaptationControl: {
 					type: "object"
-				},
-				/**
-				 * Determines whether the <code>AdaptationFilterBar</code> has selectable Fields and a <code>Select</code> Control to
-				 * toggle between visible/all FilterItems
-				 */
-				advancedMode: {
-					type: "boolean",
-					defaultValue: true
 				}
 			},
 			events: {
 				/**
-				 * Event which is only being thrown once the <code>advancedMode</code> property is set to true.
-				 * The event will be thrown once an item has been selected/deselected.
+				 * Event which is only being thrown if the inner layout has a <code>change</code> event.
+				 * This depends whether the inner layout supports the selection of FilterFields.
 				 */
 				change: {}
 			}
@@ -65,6 +60,8 @@ sap.ui.define([
 			this._oConditionModel.detachPropertyChange(this._handleConditionModelPropertyChange, this);
 		}
 
+		var oAdaptationControl = this.getAdaptationControl();
+
 		var fnOnContainerClose = function(oEvt) {
 			var oContainer = oEvt.getParameter("container");
 			oContainer.removeAllContent();
@@ -73,7 +70,7 @@ sap.ui.define([
 				this._handleModal(oEvt.getParameter("reason"));
 			}
 
-			if (this.getAdvancedMode()) {
+			if (this._checkAdvancedParent(oAdaptationControl)) {
 				this._executeRequestedRemoves();
 			}
 
@@ -211,7 +208,9 @@ sap.ui.define([
 				return this;
 			}
 
-			var oDelegate = this.getAdaptationControl().getControlDelegate();
+			var oAdaptationControl = this.getAdaptationControl();
+			var oDelegate = oAdaptationControl.getControlDelegate();
+			var oFilterDelegate = this._checkAdvancedParent(oAdaptationControl) ? oDelegate : oDelegate.getFilterDelegate();
 
 			//used to store the originals
 			this._mOriginalsForClone = {};
@@ -221,22 +220,18 @@ sap.ui.define([
 			this.oAdaptationModel.getProperty("/items").forEach(function(oItem, iIndex){
 				var oFilterFieldPromise;
 
-				if (this.getAdvancedMode()) {
-					oFilterFieldPromise = this._checkExisting(oItem, oDelegate);
-				} else {
-					oFilterFieldPromise = oDelegate.getFilterDelegate().addFilterItem(oItem, this.getAdaptationControl());
-				}
+				oFilterFieldPromise = this._checkExisting(oItem, oFilterDelegate);
 
 				oFilterFieldPromise.then(function(oFilterField){
 
 					var oFieldForDialog;
 
 					//Important: always use clones for the personalization dialog. The "originals" should never be shown in the P13n UI
-					//Currently the advancedMode property is being used in case a more complex personalization is required, this is
+					//Currently the IFilter interface is being used to identify if a more complex personalization is required, this is
 					//as of now only part for the sap.ui.mdc.FilterBar, as the AdaptationFilterBar will allow to select FilterFields in advance.
-					//This logic requires a cloning logic, as there is a mix of parent/child filterFields which is not the case if the advancedMode
-					//is configured to false.
-					if (this.getAdvancedMode()) {
+					//This logic requires a cloning logic, as there is a mix of parent/child filterFields which is not the case if the adaptaitonControl
+					//does only provide Filter capabilities via an inenr FilterBar (such as the Table inbuilt filtering)
+					if (this._checkAdvancedParent(oAdaptationControl)) {
 						if (oFilterField._bTemporaryOriginal) {
 							delete oFilterFieldPromise._bTemporaryOriginal;
 							this._mOriginalsForClone[oFilterField.getFieldPath()] = oFilterField;
@@ -270,14 +265,17 @@ sap.ui.define([
 	 * instead of requesting a new one.
 	 *
 	 * @param {object} oItem Corresponding item in the AdaptaitonModel
-	 * @param {object} oDelegate Parent delegate
+	 * @param {object} oFilterDelegate Parent filter delegate
 	 *
 	 * @returns {Promise} A Promise resolving in the corresponding FilterField
 	 */
-	AdaptationFilterBar.prototype._checkExisting = function(oItem, oDelegate) {
+	AdaptationFilterBar.prototype._checkExisting = function(oItem, oFilterDelegate) {
 		var oFilterFieldPromise;
 
-		var mExistingFilterItems = this.getAdaptationControl().getFilterItems().reduce(function(mMap, oField){
+		var oAdaptationControl = this.getAdaptationControl();
+		var aExistingItems = this._checkAdvancedParent(oAdaptationControl) ? oAdaptationControl.getFilterItems() : [];
+
+		var mExistingFilterItems = aExistingItems.reduce(function(mMap, oField){
 			mMap[oField.getFieldPath()] = oField;
 			return mMap;
 		},{});
@@ -285,7 +283,15 @@ sap.ui.define([
 		if (mExistingFilterItems[oItem.name]){
 			oFilterFieldPromise = Promise.resolve(mExistingFilterItems[oItem.name]);
 		}else {
-			oFilterFieldPromise = oDelegate.addItem(oItem.name, this.getAdaptationControl()).then(function(oFilterField){
+
+			//TODO: remove 'addFilterItem' check
+			if (oFilterDelegate.addFilterItem) {
+				oFilterFieldPromise = oFilterDelegate.addFilterItem({name: oItem.name}, this.getAdaptationControl());
+			} else {
+				oFilterFieldPromise = oFilterDelegate.addItem(oItem.name, this.getAdaptationControl());
+			}
+
+			oFilterFieldPromise = oFilterFieldPromise.then(function(oFilterField){
 
 				if (!oFilterField) {
 					throw new Error("No FilterField could be created for property: '" + oItem.name + "'.");
@@ -326,20 +332,36 @@ sap.ui.define([
 		return Promise.all(aOriginalsToRemove);
 	};
 
-	AdaptationFilterBar.prototype.setAdvancedMode = function(bAdvancedUI, bSuppressInvalidate) {
-		this.setProperty("advancedMode", bAdvancedUI, bSuppressInvalidate);
-		this._cLayoutItem = this.getAdvancedMode() ? FilterGroupLayout : FilterColumnLayout;
-		this._oFilterBarLayout = this.getAdvancedMode() ? new GroupContainer() : new TableContainer();
+	AdaptationFilterBar.prototype._checkAdvancedParent = function(oControl) {
+		if (!oControl.isA("sap.ui.mdc.IFilterSource") && !oControl.isA("sap.ui.mdc.IFilter")) {
+			throw new Error("The 'adaptationControl' needs to implement the IFilterSource or IFilter interface");
+		}
+
+		return oControl.isA("sap.ui.mdc.IFilter");
+	};
+
+	/**
+	 *
+	 * @param {sap.ui.mdc.Control} oControl the mdc control instance
+	 * @param {boolean} bSuppressInvalidate suppress invalidation
+	 */
+	AdaptationFilterBar.prototype.setAdaptationControl = function(oControl, bSuppressInvalidate) {
+		this.setProperty("adaptationControl", oControl, bSuppressInvalidate);
+
+		this._checkAdvancedParent(oControl);
+
+		//TODO: use 'GroupView' for inbuilt filtering enabled Controls
+		this._cLayoutItem = this._checkAdvancedParent(oControl) ? FilterGroupLayout : FilterColumnLayout;
+		this._oFilterBarLayout = this._checkAdvancedParent(oControl) ? new GroupContainer() : new TableContainer();
 		this._oFilterBarLayout.getInner().setParent(this);
 		this.setAggregation("layout", this._oFilterBarLayout, true);
 		this.addStyleClass("sapUIAdaptationFilterBar");
+
 		if (this._oFilterBarLayout.getInner().attachChange) {
 			this._oFilterBarLayout.getInner().attachChange(function(){
 				this.fireChange();
 			}.bind(this));
 		}
-		//this._oFilterBarLayout.getInner().setAllowSelection(bAdvancedUI);
-		//this._oFilterBarLayout.getInner().setGrouping(bAdvancedUI);
 		return this;
 	};
 

@@ -102,7 +102,10 @@ sap.ui.define([
 					aProperties.push(oPropertyInfo);
 				}
 			}
-			oTable.data("$tablePropertyInfo",aProperties);
+			if (oTable.data){
+				oTable.data("$tablePropertyInfo",aProperties);
+			}
+
 			return aProperties;
 		});
 	}
@@ -177,33 +180,8 @@ sap.ui.define([
 		oBindingInfo.filters = new Filter(aFilters, true);
 	};
 
-	/**
-	 * Provide the Table's filter delegate to provide basic filter functionality such as adding FilterFields
-	 * <b>Note:</b> The functionality provided in this delegate should act as a subset of a FilterBarDelegate
-	 * to enable the Table for inbuilt filtering
-	 *
-	 * @returns {Object} Object for the Tables filter personalization:
-	 *
-	 * oFilterDelegate = {
-	 * 		addFilterItem: function() {
-	 * 			var oFilterFieldPromise = new Promise(...);
-	 * 			return oFilterFieldPromise;
-	 * 		}
-	 * }
-	 *
-	 * @public
-	 */
 	ODataTableDelegate.getFilterDelegate = function() {
-		return {
-			/**
-			 *
-			 * @param {Object} oProperty Corresponding property to create a FilterField
-			 * @param {Object} oTable Table instance
-			 */
-			addFilterItem: function(oProperty, oTable) {
-				return FilterBarDelegate._createFilterField(oProperty, oTable);
-			}
-		};
+		return FilterBarDelegate;
 	};
 
 	ODataTableDelegate.getTypeUtil = function (oPayload) {
