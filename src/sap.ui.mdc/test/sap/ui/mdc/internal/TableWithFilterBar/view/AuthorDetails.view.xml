@@ -4,6 +4,7 @@
 	xmlns:core="sap.ui.core"
 	xmlns:l="sap.ui.layout"
 	xmlns:f="sap.ui.layout.form"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdcl="sap.ui.mdc.link"
@@ -83,10 +84,10 @@
 													<mdcf:OutParameter id="IOFFVHRegion-Out-Country" value="{$filters>/conditions/countryOfOrigin_code}" helpPath="country_code" />
 												</mdcf:outParameters>
 												<mdcf:filterBar>
-													<mdc:FilterBar liveMode= "true">
+													<vhfb:FilterBar liveMode= "true">
 														<mdc:FilterField id="VHFFBTextFFCountry" label= "Country" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/countryOfOrigin_code}" operators="EQ,NE" valueState="{ path: '$filters>/fieldPath/countryOfOrigin_code/valueState'}" valueStateText="{ path: '$filters>/fieldPath/countryOfOrigin_code/valueStateText'}">
 														</mdc:FilterField>
-													</mdc:FilterBar>
+													</vhfb:FilterBar>
 												</mdcf:filterBar>
 												<mdcf:FieldValueHelpMTableWrapper>
 													<Table items="{path: '/Regions'}" width="26rem">
@@ -127,12 +128,12 @@
 													<mdcf:OutParameter id="IOFFVHCity_Out-Region" value="{$filters>/conditions/regionOfOrigin_code}" helpPath="region_code" mode="Always" />
 												</mdcf:outParameters>
 												<mdcf:filterBar>
-													<mdc:FilterBar liveMode= "false">
+													<vhfb:FilterBar liveMode= "false">
 														<mdc:FilterField id="VHFFBTextFFCountry2" label= "Country" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/country_code}" operators="EQ,NE" valueState="{ path: '$filters>/fieldPath/country_code/valueState'}" valueStateText="{ path: '$filters>/fieldPath/country_code/valueStateText'}">
 														</mdc:FilterField>
 														<mdc:FilterField id="VHFFBTextFFRegion2" label= "Region" editMode= "Editable" display= "ValueDescription" dataType="sap.ui.model.type.String" width="100%" conditions="{$filters>/conditions/region_code}" valueState="{ path: '$filters>/fieldPath/region_code/valueState'}" valueStateText="{ path: '$filters>/fieldPath/region_code/valueStateText'}">
 														</mdc:FilterField>
-													</mdc:FilterBar>
+													</vhfb:FilterBar>
 												</mdcf:filterBar>
 												<mdcf:FieldValueHelpMTableWrapper>
 													<Table items="{path: '/Cities'}" width="26rem">

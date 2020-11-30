@@ -33,9 +33,9 @@
 								<mdcf:content>
 									<mdcf:FieldValueHelpMTableWrapper>
 										<mdcf:table>
-											<Table items='{path : "/Orders"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+											<Table items='{path : "/Orders"}' width="20rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
-													<Column width="5rem">
+													<Column>
 														<header>
 															<Text text="Title" />
 														</header>
@@ -98,7 +98,7 @@
 									id="cOrderNo"
 									header="OrderNo"
 									dataProperty="OrderNo"
-									width="15rem"
+									width="10rem"
 								>
                             <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{OrderNo}" editMode="Display"/>
                         </mdc:table.Column>
@@ -106,7 +106,7 @@
 									id="cTime"
 									header="Order time"
 									dataProperty="orderTime"
-									width="15rem"
+									width="8rem"
 								>
                             <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{orderTime}" editMode="Display"/>
                         </mdc:table.Column>
@@ -114,7 +114,7 @@
 									id="cCustomer"
 									header="Customer"
 									dataProperty="customer_ID"
-									width="15rem"
+									width="100%"
 								>
                             <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{customer/name}" editMode="Display"/>
                         </mdc:table.Column>
@@ -122,7 +122,7 @@
 									id="cCreatedAt"
 									header="createdAt"
 									dataProperty="createdAt"
-									width="15rem"
+									width="13rem"
 								>
                             <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{createdAt}" display="Description" editMode="Display"/>
                         </mdc:table.Column>
@@ -130,7 +130,7 @@
 									id="cModifiedAt"
 									header="modifiedAt"
 									dataProperty="modifiedAt"
-									width="15rem"
+									width="13rem"
 								>
                             <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{modifiedAt}" display="Description" editMode="Display"/>
                         </mdc:table.Column>
@@ -138,7 +138,7 @@
 									id="cTotal"
 									header="Total"
 									dataProperty="total"
-									width="15rem"
+									width="10rem"
 								>
                                 <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{parts: [{path: 'total'}, {path: 'currency_code'}], type: 'sap.ui.model.type.Currency'}" editMode="Display" />
 

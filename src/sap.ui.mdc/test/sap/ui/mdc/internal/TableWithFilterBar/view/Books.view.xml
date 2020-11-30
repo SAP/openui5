@@ -47,9 +47,9 @@
 								<mdcf:content>
 									<mdcf:FieldValueHelpMTableWrapper>
 										<mdcf:table>
-											<Table items='{path : "/Books"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
+											<Table items='{path : "/Books"}' width="20rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
 												<columns>
-													<Column width="5rem">
+													<Column>
 														<header>
 															<Text text="Title" />
 														</header>
@@ -509,7 +509,7 @@
 										</mdc:fieldInfo>
 									</mdc:Field>
 								</mdc:table.Column>
-								<mdc:table.Column id="id3" header="Description" dataProperty="descr" width="30%">
+								<mdc:table.Column id="id3" header="Description" dataProperty="descr">
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" multipleLines="true" editMode="Display" />
 								</mdc:table.Column>
 								<mdc:table.Column id="id1" header="Author" dataProperty="author_ID" width="10rem">
