@@ -492,6 +492,7 @@
 	var bInfo,
 		sClassName = "sap.ui.base.SyncPromise",
 		mFileName2InitialHits = {},
+		sFilter,
 		fnModule,
 		iNo = 0,
 		sTestId,
@@ -659,7 +660,7 @@
 		fnBeforeEach = mHooks.beforeEach || function () {};
 
 		mHooks.after = function (assert) {
-			if (window.blanket && !sTestId && !this.__ignoreIsolatedCoverage__
+			if (window.blanket && !sFilter && !sTestId && !this.__ignoreIsolatedCoverage__
 					&& iThreshold >= 100) {
 				checkIsolatedCoverage(this, assert);
 			}
@@ -725,8 +726,11 @@
 			"sap/base/util/UriParameters",
 			"sap/ui/base/SyncPromise"
 		], function (Log, UriParameters, SyncPromise) {
+			var oUriParameters = UriParameters.fromQuery(window.location.search);
+
 			bInfo = Log.isLoggable(Log.Level.INFO, sClassName);
-			sTestId = UriParameters.fromQuery(window.location.search).get("testId");
+			sFilter = oUriParameters.get("filter");
+			sTestId = oUriParameters.get("testId");
 			SyncPromise.listener = listener;
 		});
 
