@@ -547,6 +547,7 @@ sap.ui.define([
 			this.oTable = new Table({
 				growing: true,
 				growingThreshold: 2,
+				fixedLayout: "Strict",
 				columns: [
 					new Column({width: "20rem"}),
 					new Column({width: "30rem"})

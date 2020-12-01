@@ -311,6 +311,7 @@ sap.ui.define([
 		assert.strictEqual(sut.getColCount(), 7, "highlight, MultiSelect, 3 visible columns, navigation & navigated columns");
 		assert.strictEqual(sut.getColSpan(), 5, "navigation & navigated colums are ignored from the col span since they are always rendered by the table");
 
+		sut.setFixedLayout("Strict");
 		sut.getColumns().forEach(function(oColumn) {
 			oColumn.setWidth("10rem");
 		});
@@ -361,6 +362,38 @@ sap.ui.define([
 		sut.setFixedLayout(false);
 		Core.applyChanges();
 		assert.strictEqual(sut.$().find("table").css("table-layout"), "auto", "Table has correct layout after disabling fix layout.");
+		assert.strictEqual(sut.getFixedLayout(), false, "getter is returning the correct value");
+
+		sut.setFixedLayout("true");
+		Core.applyChanges();
+		assert.strictEqual(sut.$().find("table").css("table-layout"), "fixed", "Table has correct layout after fix layout is set.");
+		assert.strictEqual(sut.getFixedLayout(), true, "getter is returning the boolean value");
+
+		sut.setFixedLayout("false");
+		Core.applyChanges();
+		assert.strictEqual(sut.$().find("table").css("table-layout"), "auto", "Table has correct layout after disabling fix layout.");
+		assert.strictEqual(sut.getFixedLayout(), false, "getter is returning the boolean value");
+
+		sut.setFixedLayout();
+		Core.applyChanges();
+		assert.strictEqual(sut.$().find("table").css("table-layout"), "fixed", "Table has correct layout for the undefined value");
+		assert.strictEqual(sut.getFixedLayout(), true, "getter is returning the default value");
+
+		sut.setFixedLayout(false);
+		Core.applyChanges();
+		assert.strictEqual(sut.$().find("table").css("table-layout"), "auto", "Table has correct layout after disabling fix layout.");
+		assert.strictEqual(sut.getFixedLayout(), false, "getter is returning the boolean value");
+
+		sut.setFixedLayout("Strict");
+		Core.applyChanges();
+		assert.strictEqual(sut.$().find("table").css("table-layout"), "fixed", "Table has fixed layout for the Strict value");
+		assert.strictEqual(sut.getFixedLayout(), "Strict", "getter is returning the correct string value");
+
+		["strict", "sTrIcT", "False", "True", 5, new Date(), {}, [1], ""].forEach(function(value) {
+			assert.throws(function() {
+				sut.setFixedLayout(value);
+			}, value + " is not a valid value");
+		});
 
 		//clean up
 		sut.destroy();
@@ -2093,6 +2126,7 @@ sap.ui.define([
 	QUnit.module("Dummy column", {
 		beforeEach: function() {
 			this.sut = createSUT("idDummyColTest", true, false, "MultiSelect");
+			this.sut.setFixedLayout("Strict");
 			this.sut.placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
@@ -2147,6 +2181,18 @@ sap.ui.define([
 		Core.applyChanges();
 
 		assert.notOk(this.sut.shouldRenderDummyColumn(), "Dummy column should not render since fixedLayout=false");
+	});
+
+	QUnit.test("Dummy column should not be created when there is no visible column", function(assert) {
+
+		// apply static widths to all columns
+		this.sut.getColumns().forEach(function(oColumn) {
+			oColumn.setVisible(false);
+			oColumn.setWidth("15rem");
+		});
+		Core.applyChanges();
+
+		assert.notOk(this.sut.shouldRenderDummyColumn(), "Dummy column should not render since there is no visible column");
 	});
 
 	QUnit.test("Dummy column position when table does not have popins", function(assert) {
