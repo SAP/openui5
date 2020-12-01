@@ -4,14 +4,12 @@
 
 /*global XMLHttpRequest */
 sap.ui.define([
+	"sap/ui/thirdparty/sinon",
 	"sap/ui/test/autowaiter/_utils",
 	"./WaiterBase"
-], function (_utils, WaiterBase) {
+], function (sinon, _utils, WaiterBase) {
 	"use strict";
 
-	// the dependency to sinon is omitted because it is version-dependent i.e.
-	// tests can choose a version which requires different sinon (and sinon bridge) files
-	var sinon = window.sinon || sap.ui.requireSync("sap/ui/thirdparty/sinon");
 	var aXHRs = [];
 
 	var XHRWaiter = WaiterBase.extend("sap.ui.test.autowaiter._XHRWaiter", {

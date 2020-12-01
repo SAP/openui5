@@ -21,14 +21,12 @@ sap.ui.define([
 	["false", "true", undefined].forEach(function (paramValue) {
 		QUnit.test("Should handle stack trace in IE if opaFrameIEStackTrace is " + paramValue, function callingFunction (assert) {
 			var fnOrig = URI.prototype.search;
-			var fnSearchStub = function(query) {
+			var oSearchStub = sinon.stub(URI.prototype, "search", function(query) {
 				if ( query === true ) {
 					return {opaFrameIEStackTrace: paramValue};
 				}
 				return fnOrig.apply(this, arguments); // should use callThrough with sinon > 3.0
-			};
-			var oSearchStub = sinon.stub.callsFake ? sinon.stub(URI.prototype, "search").callsFake(fnSearchStub) :
-				sinon.stub(URI.prototype, "search", fnSearchStub);
+			});
 			var sTrace = _utils.resolveStackTrace();
 			assert.contains(sTrace, new Error().stack || paramValue === "true" ? "callingFunction" : "No stack trace available");
 			oSearchStub.restore();
