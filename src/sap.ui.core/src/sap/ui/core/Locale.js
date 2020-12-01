@@ -281,8 +281,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/assert"],
 		var M_ISO639_OLD_TO_NEW = {
 			"iw" : "he",
 			"ji" : "yi",
-			"in" : "id",
-			"sh" : "sr"
+			"in" : "id"
 		};
 
 		/**
