@@ -379,17 +379,27 @@ function(
 						valueTypes: [],
 						exclude: true,
 						getModelFilter: function(oCondition, sFieldPath, oType) {
-							//TODO Type specific handling of empty is missing
+							var isNullable = false;
+							if (oType) {
+								var vResult = oType.parseValue("", "string");
+								try {
+									oType.validateValue(vResult);
+									isNullable = vResult === null;
+								} catch (oError) {
+									isNullable = false;
+								}
+							}
+							//TODO Type specific handling of empty is missing. Empty is currently only available for type String
 							// if (Type == "date") {
 							// 	return new Filter({ path: sFieldPath, operator: oOperator.filterOperator, value1: null });
 							// } else {
-							// 	if (isNullable) {
-							// 		return new Filter({ filters: [new Filter(sFieldPath, ModelOperator.EQ, ""),
-							// 									  new Filter(sFieldPath, ModelOperator.EQ, null)],
-							// 							and: false});
-							// 	} else {
-							return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: "" });
-							// 	}
+							if (isNullable) {
+								return new Filter({ filters: [new Filter(sFieldPath, ModelOperator.EQ, ""),
+															new Filter(sFieldPath, ModelOperator.EQ, null)],
+													and: false});
+							} else {
+								return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: "" });
+							}
 							// }
 						}
 					}),
