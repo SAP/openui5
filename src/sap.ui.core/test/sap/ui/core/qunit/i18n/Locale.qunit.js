@@ -31,7 +31,10 @@ sap.ui.define([
 		["EN-X-sAptRc",				"en",		null,	null,	null,			null,			"X-sAptRc",	"1Q"],
 		["en-x-sappsd",				"en",		null,	null,	null,			null,			"x-sappsd",	"2Q"],
 		["de-CH-x-sapufmt-sappsd",	"de",		null,	"CH",	null,			null,			"x-sapufmt-sappsd",	"2Q"],
-		["iw-IL",					"iw",		null,	"IL",	null,			null,			null,		"HE"],
+		["sh",					    "sh",		null,	null,	null,			null,			null,		"SH"],
+		["iw-IL",					"iw",		null,	"IL",	null,			null,			null,		"HE"], // ISO639_OLD_TO_NEW
+		["ji",					    "ji",		null,	null,	null,			null,			null,		"YI"], // ISO639_OLD_TO_NEW
+		["in",					    "in",		null,	null,	null,			null,			null,		"ID"], // ISO639_OLD_TO_NEW
 		["zz",						"zz",		null,	null,	null,			null,			null,		"ZZ"] // unknown language
 	];
 
