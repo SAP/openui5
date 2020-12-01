@@ -74,6 +74,14 @@ Common compact/cozy
 	}
 }
 
+.sapUxAPObjectPageLayout:not(.sapUxAPObjectPageLayout-Std-Phone) {
+    .sapUxAPAnchorBar.sapMTB > .sapMSlt.sapMSltFocused {
+        &:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):before {
+            outline: none;
+        }
+    }
+}
+
 /* L fullscreen paddings */
 html .sapUxAPObjectPageLayout-Std-Desktop .sapUxAPAnchorBar.sapMTB
 {
