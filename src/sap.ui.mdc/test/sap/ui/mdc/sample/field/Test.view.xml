@@ -199,6 +199,17 @@
 					</mdc:dependents>
 				</mdc:Field>
 
+				<m:Label text="Grouped List"></m:Label>
+				<mdc:Field id="F2-Group" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" fieldHelp="F2-Group-H">
+					<mdc:dependents>
+						<mdcField:ListFieldHelp id="F2-Group-H"
+								items="{path: '/ProductCollection'}" >
+							<mdcField:ListFieldHelpItem text="{Name}" additionalText="{ProductId}" key="{ProductId}" icon="{= '../../../../../../' + ${ProductPicUrl}}" groupKey="{Category}"/>
+						</mdcField:ListFieldHelp>
+					</mdc:dependents>
+				</mdc:Field>
+				<m:Label text="using the same ListFieldHelp"></m:Label>
+
 				<c:Title text="table help"></c:Title>
 				<m:Label text="default implementation of FieldValueHelp without dialog"></m:Label>
 				<mdc:Field id="F2-6" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="F2-6-H">
@@ -236,6 +247,40 @@
 
 				<m:Label text="using the same FieldValueHelp"></m:Label>
 				<mdc:Field id="F2-6a" value="22134T" display="Description" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" fieldHelp="F2-6-H"></mdc:Field>
+
+				<m:Label text="Grouped table"></m:Label>
+				<mdc:Field id="F2-6b" value="870394932" display="Description" change="handleChange" liveChange="handleLiveChange" fieldHelp="F2-6b-H">
+					<mdc:dependents>
+						<mdcField:FieldValueHelp id="F2-6b-H"
+							noDialog="true"
+							filterFields="*ProductId,Name*"
+							keyPath="ProductId"
+							descriptionPath="Name">
+							<mdcField:FieldValueHelpMTableWrapper id="F2-6b-H-W">
+								<m:Table items="{path: '/ProductCollection', suspended: true, sorter: {path: 'Category', descending: false, group: true}}" width="30rem">
+									<m:columns>
+										<m:Column>
+											<m:Label text="{/#Product/ProductId/@sap:label}"></m:Label>
+										</m:Column>
+										<m:Column width="10rem">
+											<m:Label text="{/#Product/Name/@sap:label}"></m:Label>
+										</m:Column>
+										<m:Column width="10rem">
+											<m:Label text="{/#Product/Description/@sap:label}"></m:Label>
+										</m:Column>
+									</m:columns>
+									<m:items>
+										<m:ColumnListItem type="Active">
+											<m:Text text="{ProductId}"></m:Text>
+											<m:Text text="{Name}"></m:Text>
+											<m:Text text="{Description}"></m:Text>
+										</m:ColumnListItem>
+									</m:items>
+								</m:Table>
+							</mdcField:FieldValueHelpMTableWrapper>
+						</mdcField:FieldValueHelp>
+					</mdc:dependents>
+				</mdc:Field>
 
 				<c:Title text="ValueHelp"></c:Title>
 				<m:Label text="using FieldValueHelp"></m:Label>

@@ -264,10 +264,23 @@ sap.ui.define([
 			iSelectedIndex = iItems + iStep;
 		}
 
+		var bSeachForNext;
 		if (iSelectedIndex < 0) {
 			iSelectedIndex = 0;
+			bSeachForNext = true;
 		} else if (iSelectedIndex >= iItems - 1) {
 			iSelectedIndex = iItems - 1;
+			bSeachForNext = false;
+		} else {
+			bSeachForNext = iStep >= 0;
+		}
+
+		while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
+			if (bSeachForNext) {
+				iSelectedIndex++;
+			} else {
+				iSelectedIndex--;
+			}
 		}
 
 		var oItem = aItems[iSelectedIndex];

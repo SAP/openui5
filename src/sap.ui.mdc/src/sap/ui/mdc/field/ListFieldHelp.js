@@ -26,6 +26,7 @@ sap.ui.define([
 	var DisplayListItem;
 	var mLibrary;
 	var Filter;
+	var Sorter;
 
 	/**
 	 * Constructor for a new <code>ListFieldHelp</code>.
@@ -89,6 +90,10 @@ sap.ui.define([
 				 * If the <code>additionalText</code> for all the items is not used, the column will not be displayed.
 				 *
 				 * <b>Note:</b> At the moment, icons are not supported.
+				 *
+				 * <b>Note:</b> If <code>sap.ui.mdc.field.ListFieldHelpItem</code> elements are used as items, the items are grouped and sorted
+				 * by the value provided in the <code>groupKey</code> property of the item.
+				 * The value provided in the <code>groupText</code> property will be shown as group header.
 				 */
 				items: {
 					type: "sap.ui.core.ListItem",
@@ -155,8 +160,9 @@ sap.ui.define([
 			DisplayListItem = sap.ui.require("sap/m/DisplayListItem");
 			mLibrary = sap.ui.require("sap/m/library");
 			Filter = sap.ui.require("sap/ui/model/Filter");
+			Sorter = sap.ui.require("sap/ui/model/Sorter");
 			if (!List || !DisplayListItem || !mLibrary) {
-				sap.ui.require(["sap/m/List", "sap/m/DisplayListItem", "sap/m/library", "sap/ui/model/Filter"], _ListLoaded.bind(this));
+				sap.ui.require(["sap/m/List", "sap/m/DisplayListItem", "sap/m/library", "sap/ui/model/Filter", "sap/ui/model/Sorter"], _ListLoaded.bind(this));
 				this._bListRequested = true;
 			}
 		}
@@ -175,17 +181,32 @@ sap.ui.define([
 			var oItemTemplate = new DisplayListItem(this.getId() + "-item", {
 				type: mLibrary.ListType.Active,
 				label: "{$field>text}",
-				value: "{$field>additionalText}"
+				value: "{$field>additionalText}",
+				valueTextDirection: "{$field>textDirection}"
 			});
 
 			var oFilter = new Filter("text", _suggestFilter.bind(this));
+
+			// add sorter only if supported
+			var bUseSorter = false;
+			var oBindingInfo = this.getBindingInfo("items");
+			if (oBindingInfo && oBindingInfo.template && oBindingInfo.template.isA("sap.ui.mdc.field.ListFieldHelpItem")) {
+				bUseSorter = true;
+			} else {
+				var aItems = this.getItems();
+				if (aItems.length > 0 && aItems[0].isA("sap.ui.mdc.field.ListFieldHelpItem")) {
+					bUseSorter = true;
+				}
+			}
+
+			var oSorter = bUseSorter && new Sorter("groupKey", false, _suggestGrouping.bind(this));
 
 			this._oList = new List(this.getId() + "-List", {
 				width: "100%",
 				showNoData: false,
 				mode: mLibrary.ListMode.SingleSelectMaster,
 				rememberSelections: false,
-				items: {path: "$field>items", template: oItemTemplate, filters: oFilter},
+				items: {path: "$field>items", template: oItemTemplate, filters: oFilter, sorter: oSorter},
 				itemPress: _handleItemPress.bind(this) // as selected item can be pressed
 			});
 
@@ -204,12 +225,13 @@ sap.ui.define([
 
 	}
 
-	function _ListLoaded(fnList, fnDisplayListItem, fnLibrary, fnFilter) {
+	function _ListLoaded(fnList, fnDisplayListItem, fnLibrary, fnFilter, fnSorter) {
 
 		List = fnList;
 		DisplayListItem = fnDisplayListItem;
 		mLibrary = fnLibrary;
 		Filter = fnFilter;
+		Sorter = fnSorter;
 		this._bListRequested = false;
 
 		if (!this._bIsBeingDestroyed) {
@@ -333,15 +355,29 @@ sap.ui.define([
 		} else if (oSelectedItem) {
 			iSelectedIndex = this._oList.indexOfItem(oSelectedItem);
 			iSelectedIndex = iSelectedIndex + iStep;
-			if (iSelectedIndex < 0) {
-				iSelectedIndex = 0;
-			} else if (iSelectedIndex >= iItems - 1) {
-				iSelectedIndex = iItems - 1;
-			}
 		} else if (iStep >= 0){
 			iSelectedIndex = iStep - 1;
 		} else {
 			iSelectedIndex = iItems + iStep;
+		}
+
+		var bSeachForNext;
+		if (iSelectedIndex < 0) {
+			iSelectedIndex = 0;
+			bSeachForNext = true;
+		} else if (iSelectedIndex >= iItems - 1) {
+			iSelectedIndex = iItems - 1;
+			bSeachForNext = false;
+		} else {
+			bSeachForNext = iStep >= 0;
+		}
+
+		while (aItems[iSelectedIndex] && aItems[iSelectedIndex].isA("sap.m.GroupHeaderListItem")) { // ignore group headers
+			if (bSeachForNext) {
+				iSelectedIndex++;
+			} else {
+				iSelectedIndex--;
+			}
 		}
 
 		var oItem = aItems[iSelectedIndex];
@@ -455,6 +491,14 @@ sap.ui.define([
 
 	}
 
+	function _suggestGrouping(oContext) {
+
+		var vKey = oContext.getProperty('groupKey');
+		var sText = oContext.getProperty('groupText');
+		return {key: vKey, text: sText};
+
+	}
+
 	function _updateSelection() {
 
 		if (this._oList) {
@@ -471,16 +515,18 @@ sap.ui.define([
 			var aItems = this._oList.getItems();
 			for (var i = 0; i < aItems.length; i++) {
 				var oItem = aItems[i];
-				var oOriginalItem = _getOriginalItem.call(this, oItem);
-				if (aConditions.length > 0 && _getKey.call(this, oOriginalItem) === vSelectedKey) {
-					// conditions given -> use them to show selected items
-					oItem.setSelected(true);
-				} else if (aConditions.length === 0 && bUseFirstMatch && sFilterValue && !bFistFilterItemSelected && _filterText.call(this, oItem.getLabel(), sFilterValue)) {
-					// filter value used -> show first match as selected
-					oItem.setSelected(true);
-					bFistFilterItemSelected = true;
-				} else {
-					oItem.setSelected(false);
+				if (oItem.isA("sap.m.DisplayListItem")) { // not for group headers
+					var oOriginalItem = _getOriginalItem.call(this, oItem);
+					if (aConditions.length > 0 && _getKey.call(this, oOriginalItem) === vSelectedKey) {
+						// conditions given -> use them to show selected items
+						oItem.setSelected(true);
+					} else if (aConditions.length === 0 && bUseFirstMatch && sFilterValue && !bFistFilterItemSelected && _filterText.call(this, oItem.getLabel(), sFilterValue)) {
+						// filter value used -> show first match as selected
+						oItem.setSelected(true);
+						bFistFilterItemSelected = true;
+					} else {
+						oItem.setSelected(false);
+					}
 				}
 			}
 		}
