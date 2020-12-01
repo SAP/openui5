@@ -4998,6 +4998,7 @@ sap.ui.define([
 		});
 
 		var aComboBox = [oComboBox1, oComboBox2, oComboBox3, oComboBox4, oComboBox5, oComboBox6, oComboBox7, oComboBox8];
+		var sAutoCapitalization = Device.browser.firefox ? "none" : "off";
 
 		// arrange
 		oComboBox1.placeAt("content");
@@ -5020,7 +5021,7 @@ sap.ui.define([
 			assert.ok(oComboBox.getDomRef(), "The combobox element exists");
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocomplete"), "off");
 			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocorrect"), "off");
-			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocapitalize"), "off");
+			assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("autocapitalize"), sAutoCapitalization);
 			assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("aria-expanded"), "false");
 			assert.strictEqual(oComboBox.getRoleComboNodeDomRef().getAttribute("aria-autocomplete"), "inline");
 			assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-required"), undefined);
