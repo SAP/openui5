@@ -3,9 +3,10 @@ sap.ui.define([
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/core/mvc/View",
 	"sap/ui/core/mvc/JSONView",
+	"sap/ui/base/ManagedObject",
 	"./AnyViewAsync.qunit",
 	"sap/base/Log"
-], function(ResourceBundle, View, JSONView, asyncTestsuite, Log) {
+], function(ResourceBundle, View, JSONView, ManagedObject, asyncTestsuite, Log) {
 	"use strict";
 
 	// setup test config with generic factory
@@ -76,6 +77,42 @@ sap.ui.define([
 			assert.ok(oCreateCall, "async call");
 			assert.ok(oCreateCall.args[0].async, "async call");
 			oResourceBundleCreateSpy.restore();
+		});
+	});
+
+	QUnit.test("Async JSONView: Aggregation Binding with value property", function(assert) {
+		var done = assert.async();
+
+		sap.ui.require(["sap/ui/table/Table"], function() {
+			var oExtractBindingInfoSpy = sinon.spy(ManagedObject.prototype, "extractBindingInfo");
+			var json = JSON.stringify({
+				"Type": "sap.ui.core.mvc.JSONView",
+				"content": [
+					{
+						"Type": "sap.ui.table.Table",
+						"columns": [
+							{
+								"Type": "sap.ui.table.Column",
+								"template": {
+									"Type": "sap.m.DatePicker",
+									"value": {
+										"path": "Date",
+										"type": "sap.ui.model.type.String"
+									}
+								}
+							}
+						]
+					}
+				]
+			});
+
+			JSONView.create({
+				definition: json
+			}).then(function(oJsonView) {
+				assert.equal(oExtractBindingInfoSpy.callCount, 7, "ManagedObject#extractBindingInfo called seven times");
+				assert.equal(oExtractBindingInfoSpy.getCall(5).returnValue, undefined, "ManagedObject#extractBindingInfo should return undefined");
+				done();
+			});
 		});
 	});
 });

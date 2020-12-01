@@ -2909,10 +2909,12 @@ sap.ui.define([
 	 * @private
 	 */
 	ManagedObject.prototype.extractBindingInfo = function(oValue, oScope, bDetectValue) {
-
 		// property:{path:"path", template:oTemplate}
 		if (oValue && typeof oValue === "object") {
-			if (oValue.ui5object) {
+			if (oValue.Type) {
+				// if value contains the 'Type' property (capital 'T'), this is not a binding info.
+				return undefined;
+			} else if (oValue.ui5object) {
 				// if value contains ui5object property, this is not a binding info,
 				// remove it and not check for path or parts property
 				delete oValue.ui5object;
@@ -2930,8 +2932,6 @@ sap.ui.define([
 			// either returns a binding info or an unescaped string or undefined - depending on binding syntax
 			return ManagedObject.bindingParser(oValue, oScope, true);
 		}
-
-		// return undefined;
 	};
 
 	/**
