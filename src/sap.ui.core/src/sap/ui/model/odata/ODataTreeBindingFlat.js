@@ -291,8 +291,27 @@ sap.ui.define([
 
 
 	/**
-	 * Applies the given function to all tree nodes
-	 * @param {function} fnMap the map function which will be called for all nodes.
+	 * Applies the given callback function to all tree nodes including server-index nodes and deep
+	 * nodes. It iterates all tree nodes unless the property <code>broken</code> of the callback
+	 * function parameter <code>oRecursionBreaker</code> is set to <code>true</code>.
+	 *
+	 * @param {function} fnMap
+	 *   This callback function is called for all nodes of this tree. It has no return value and
+	 *   gets the following parameters:
+	 *   <ul>
+	 *     <li>{object} oNode: The current tree node</li>
+	 *     <li>{object} oRecursionBreaker: An object reference that allows to interrupt calling the
+	 *       callback function with further tree nodes</li>
+	 *     <li>{object} oRecursionBreaker.broken=false: Whether the recursion has to be interrupted
+	 *       when the current <code>oNode</code> has finished processing</li>
+	 *     <li>{string} sIndexType: Describes the node type ("serverIndex" for nodes on the highest
+	 *       hierarchy, "positionInParent" for nodes in subtrees and "newNode" for newly added
+	 *       nodes)</li>
+	 *     <li>{int} [iIndex]: The structured position in the tree accessible with the property
+	 *       described in <code>sIndexType</code></li>
+	 *     <li>{object} [oParent]: The parent node of the current tree node</li>
+	 *   </ul>
+	 *
 	 * @private
 	 */
 	ODataTreeBindingFlat.prototype._map = function (fnMap) {
