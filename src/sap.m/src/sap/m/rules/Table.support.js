@@ -29,13 +29,15 @@ sap.ui.define(["sap/ui/support/library", "sap/m/ListBase", "sap/ui/core/library"
 			minversion: "1.28",
 			title: "Table: Defining column widths",
 			description: "Defining column widths",
-			resolution: "Configure at least 1 column with width=auto or do not configure the width at all",
+			resolution: "Configure at least 1 column with width=auto or use fixedLayout=Strict",
 			resolutionurls: [{
 				text: "Documentation: Defining Column Widths",
 				href: "https://sapui5.hana.ondemand.com/#/topic/6f778a805bc3453dbb66e246d8271839"
 			}],
 			check: function (oIssueManager, oCoreFacade, oScope) {
-				oScope.getElementsByClassName("sap.m.Table").forEach(function (oTable) {
+				oScope.getElementsByClassName("sap.m.Table").filter(function(oTable) {
+					return oTable.getFixedLayout() == true;
+				}).forEach(function (oTable) {
 					var aColumn = oTable.getColumns(),
 						bSomeColumnNoWidth;
 					if (!aColumn.length) {
@@ -48,7 +50,7 @@ sap.ui.define(["sap/ui/support/library", "sap/m/ListBase", "sap/ui/core/library"
 					if (!bSomeColumnNoWidth) {
 						oIssueManager.addIssue({
 							severity: Severity.Medium,
-							details: "All the columns are configured with a width. This should be avoided.",
+							details: "All the columns are configured with a width. Either set at least for one column width=auto, or fixedLayout=Strict for the table",
 							context: {
 								id: oTable.getId()
 							}

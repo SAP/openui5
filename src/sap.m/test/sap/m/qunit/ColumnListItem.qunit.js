@@ -243,7 +243,8 @@ sap.ui.define([
 					new Column({width: "15rem"}),
 					new Column({width: "150px"})
 				],
-				items : this.sut
+				items : this.sut,
+				fixedLayout: "Strict"
 			});
 
 

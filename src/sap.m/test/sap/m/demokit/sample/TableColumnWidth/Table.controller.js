@@ -28,6 +28,11 @@ sap.ui.define([
 			this.oColumnModel.setData(this.oData);
 		},
 
+		onCheckBoxSelect: function (oEvent) {
+			var bStrictLayout = oEvent.getParameter("selected");
+			this.byId("table").setFixedLayout(bStrictLayout ? "Strict" : true);
+		},
+
 		oData : [{
 				width: "30%",
 				header: "Product Name",
