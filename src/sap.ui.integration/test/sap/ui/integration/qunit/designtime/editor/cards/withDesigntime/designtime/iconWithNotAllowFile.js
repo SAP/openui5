@@ -4,9 +4,9 @@ sap.ui.define([
 	"use strict";
 	return function () {
 		return new Designtime({
-			form: {
-				items: {
-					iconParameter: {
+			"form": {
+				"items": {
+					"iconParameter": {
 						"manifestpath": "/sap.card/configuration/parameters/iconParameter/value",
 						"type": "string",
 						"visualization": {
@@ -20,9 +20,9 @@ sap.ui.define([
 					}
 				}
 			},
-			preview: {
-				modes: "AbstractLive",
-				src: "./img/preview.png"
+			"preview": {
+				"modes": "AbstractLive",
+				"src": "./img/preview.png"
 			}
 		});
 	};

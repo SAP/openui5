@@ -4627,8 +4627,8 @@ sap.ui.define([
 		QUnit.test("Slider is created from  dt json inline", function (assert) {
 
 			var dt = {
-				form: {
-					items: {
+				"form": {
+					"items": {
 						"integer": {
 							"manifestpath": "/sap.card/configuration/parameters/integer/value",
 							"defaultValue": 1,
@@ -4666,8 +4666,8 @@ sap.ui.define([
 			var dt = function () {
 				return new Designtime(
 					{
-						form: {
-							items: {
+						"form": {
+							"items": {
 								"integer": {
 									"manifestpath": "/sap.card/configuration/parameters/integer/value",
 									"defaultValue": 1,
@@ -4705,8 +4705,8 @@ sap.ui.define([
 			var dt = function () {
 				return new Designtime(
 					{
-						form: {
-							items: {
+						"form": {
+							"items": {
 								"icon": {
 									"manifestpath": "/sap.card/configuration/parameters/integer/value",
 									"defaultValue": "sap-icon://accept",

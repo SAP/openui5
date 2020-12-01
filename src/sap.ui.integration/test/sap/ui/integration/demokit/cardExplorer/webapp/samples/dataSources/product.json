@@ -41,6 +41,7 @@
 			}
 		},
 		"type": "Object",
+		"designtime": "dt/Configuration",
 		"header": {
 			"data": {
 				"path": "/d"

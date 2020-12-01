@@ -23,6 +23,7 @@
 	},
 	"sap.card": {
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Order status {= format.dateTime(Date.now(), {format: 'yMMMd'}) }",
 			"subTitle": "Orders exceeding 50$ are highlighted as important",

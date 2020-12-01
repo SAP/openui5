@@ -22,6 +22,7 @@
 	},
 	"sap.card": {
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Order status",
 			"subTitle": "Orders exceeding {= format.float(50.00, {decimals:2, style:'short'}, 'de' )} are highlighted as important",

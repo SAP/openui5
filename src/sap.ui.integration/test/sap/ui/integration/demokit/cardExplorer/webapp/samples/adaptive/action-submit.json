@@ -32,6 +32,7 @@
 	  }
 	},
 	"type": "AdaptiveCard",
+	"designtime": "dt/Configuration",
 	"header": {
 		"title": "Submit Details",
 		"subTitle": "Provide more details",

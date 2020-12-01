@@ -21,6 +21,7 @@
 	},
 	"sap.card": {
 		"type": "AdaptiveCard",
+		"designtime": "dt/Configuration",
 		"data": {
 			"request": {
 				"url": "./data-json.json"

@@ -49,6 +49,7 @@
 	},
 	"sap.card": {
 		"type": "Component",
+		"designtime": "dt/Configuration",
 		"header": {
 			"icon": {
 				"src": "sap-icon://bus-public-transport"

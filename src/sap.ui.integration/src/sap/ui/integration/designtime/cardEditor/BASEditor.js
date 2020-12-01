@@ -601,6 +601,7 @@ sap.ui.define([
 
 	BASEditor.prototype.updateDesigntimeMetadata = function (oDesigntimeJSConfig, bIsInitialMetadata) {
 		var oDesigntimeMetadata = this._generateMetadataFromJSConfig(oDesigntimeJSConfig);
+		this._oInitialDesigntimeMetadata = oDesigntimeMetadata;
 		this.setDesigntimeMetadata(formatImportedDesigntimeMetadata(oDesigntimeMetadata), bIsInitialMetadata);
 	};
 

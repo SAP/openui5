@@ -27,6 +27,7 @@
 	},
 	"sap.card": {
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Notebooks Distribution",
 			"subTitle": "by years",

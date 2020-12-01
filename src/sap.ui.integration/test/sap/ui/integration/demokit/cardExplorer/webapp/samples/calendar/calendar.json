@@ -22,6 +22,7 @@
   },
   "sap.card": {
 	"type": "Calendar",
+	"designtime": "dt/Configuration",
 	"data": {
 	  "json": {
 		"item": [

@@ -1,14 +1,11 @@
-/*!
- * ${copyright}
- */
 sap.ui.define(["sap/ui/integration/Designtime"], function (
 	Designtime
 ) {
 	"use strict";
 	return function () {
 		return new Designtime({
-			form: {
-				items: {
+			"form": {
+				"items": {
 					"group": {
 						"label": "Dependent",
 						"type": "group"
@@ -429,8 +426,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					}
 				}
 			},
-			preview: {
-				modes: "LiveAbstract"
+			"preview": {
+				"modes": "LiveAbstract"
 			}
 		});
 	};

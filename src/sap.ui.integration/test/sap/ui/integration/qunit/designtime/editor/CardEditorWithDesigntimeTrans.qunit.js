@@ -1133,28 +1133,28 @@ sap.ui.define([
 			//Fallback language
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor = createEditor({
-					form: {
-						items: {
-							string1: {
+					"form": {
+						"items": {
+							"string1": {
 								"manifestpath": "/sap.card/configuration/parameters/string1/value",
 								"type": "string",
 								"translatable": true
 							},
-							string2: {
+							"string2": {
 								"manifestpath": "/sap.card/configuration/parameters/string2/value",
 								"type": "string",
 								"translatable": true
 							},
-							string3: {
+							"string3": {
 								"manifestpath": "/sap.card/configuration/parameters/string3/value",
 								"type": "string",
 								"translatable": true
 							}
 						}
 					},
-					preview: {
-						modes: "AbstractLive",
-						src: "./img/preview.png"
+					"preview": {
+						"modes": "AbstractLive",
+						"src": "./img/preview.png"
 					}
 				});
 				//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
