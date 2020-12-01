@@ -298,8 +298,8 @@ sap.ui.define([
 		aMonths = jQuery("#Cal2-content").children(".sapUiCalMonthView");
 		aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
 
-		assert.equal(jQuery(aWeekNumbers[0]).text(), "52", "week number 2011 first week for de-DE");
-		assert.equal(jQuery(aWeekNumbers[1]).text(), "1", "week number 2011 second week for de-DE");
+		assert.equal(jQuery(aWeekNumbers[0]).text(), "1", "week number 2011 first week for de-DE");
+		assert.equal(jQuery(aWeekNumbers[1]).text(), "2", "week number 2011 second week for de-DE");
 		oCal2.focusDate(new Date(2014, 0, 10));
 
 		aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
