@@ -1964,6 +1964,59 @@ function(
 			}.bind(this));
 		});
 
+		QUnit.test("Shall call the condenser with only one layer of changes if lower level change is already saved - backend condensing enabled", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
+
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
+
+				addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+				assert.equal(this.oCondenserStub.lastCall.args[1].length, 3, "three changes were passed to the condenser");
+				assert.equal(this.oCondenserStub.lastCall.args[1][0].getLayer(), Layer.CUSTOMER, "and all are in the CUSTOMER layer");
+				assert.equal(this.oCondenserStub.lastCall.args[1][1].getLayer(), Layer.CUSTOMER, "and all are in the CUSTOMER layer");
+				assert.equal(this.oCondenserStub.lastCall.args[1][2].getLayer(), Layer.CUSTOMER, "and all are in the CUSTOMER layer");
+			}.bind(this));
+		});
+
+		QUnit.test("Shall call the condenser with only one layer of changes if lower level change is already saved - backend condensing enabled - only one dirty change passed", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
+
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
+
+				addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, false, [this.oChangePersistence._mChanges.aChanges[2]]);
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+				assert.equal(this.oCondenserStub.lastCall.args[1].length, 2, "three changes were passed to the condenser");
+				assert.equal(this.oCondenserStub.lastCall.args[1][0].getLayer(), Layer.CUSTOMER, "and all are in the CUSTOMER layer");
+				assert.equal(this.oCondenserStub.lastCall.args[1][1].getLayer(), Layer.CUSTOMER, "and all are in the CUSTOMER layer");
+			}.bind(this));
+		});
+
 		QUnit.test("Shall not call the storage when the condenser returns no change", function(assert) {
 			setURLParameterForCondensing("true");
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.USER);
