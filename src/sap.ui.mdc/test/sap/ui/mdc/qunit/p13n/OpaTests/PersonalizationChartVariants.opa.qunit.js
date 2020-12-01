@@ -19,12 +19,16 @@ sap.ui.define([
 		actions: new Action(),
 		assertions: new Assertion(),
 		viewNamespace: "view.",
+		autoWait: true,
 		executionDelay: 50
 	});
 
 	// Apply a variant and switch back to the standard
 	opaTest("When I start the 'appUnderTestChart' app, the chart with some dimensions and measures appears", function(Given, When, Then) {
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html',
+			autoWait: true
+		});
 		Given.enableAndDeleteLrepLocalStorage();
 
 		When.iLookAtTheScreen();
@@ -84,7 +88,7 @@ sap.ui.define([
 		Then.iShouldSeeP13nItems(aLanguageFirst);
 	});
 	opaTest("When I close the 'Define Chart Properties', the chart has not been changed", function(Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		When.iPressDialogOk();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleDimensionsInOrder([
@@ -135,7 +139,7 @@ sap.ui.define([
 		]);
 	});
 	opaTest("When I close the 'Define Chart Properties', the chart has not been changed", function(Given, When, Then) {
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		When.iPressDialogOk();
 
 		Then.thePersonalizationDialogShouldBeClosed();
 		Then.iShouldSeeVisibleDimensionsInOrder([
@@ -153,7 +157,10 @@ sap.ui.define([
 
 	// Apply a variant, make some changes and save as another variant
 	opaTest("When I start the 'appUnderTestChart' app again, the chart with some dimensions and measures appears", function(Given, When, Then) {
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html',
+			autoWait: true
+		});
 		Given.enableAndDeleteLrepLocalStorage();
 
 		When.iLookAtTheScreen();
@@ -212,7 +219,7 @@ sap.ui.define([
 			{p13nItem: "Words (min)", selected: false}
 		]);
 
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
+		When.iPressDialogOk();
 
 		Then.iShouldSeeVisibleDimensionsInOrder([
 			"Title"
@@ -234,13 +241,14 @@ sap.ui.define([
 		Then.iShouldSeeP13nItem("Price (average)", 5, true);
 		Then.iShouldSeeEnabledSelectControl("Price (average)", true);
 
+		When.iPressDialogOk();
+
 		Then.iShouldSeeVisibleDimensionsInOrder([
 			"Title"
 		]);
 		Then.iShouldSeeVisibleMeasuresInOrder([
 			"Price (average)"
 		]);
-		Device.system.phone ? When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.Back) : When.iPressDialogOk();
 
 		Then.iShouldSeeChartOfType("column");
 		Then.iShouldSeeButtonWithIcon("sap-icon://vertical-bar-chart");

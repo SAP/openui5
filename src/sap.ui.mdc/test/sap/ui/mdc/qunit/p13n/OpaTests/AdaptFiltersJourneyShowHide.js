@@ -59,13 +59,16 @@ sap.ui.define([
 
 	opaTest("When I start the 'appUnderTestTable' app, the FilterBar should appear", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 
 		//check buttons
-		Then.iShouldSeeButtonWithText("Adapt Filters");//TODO
-		Then.iShouldSeeButtonWithText("Go");//TODO
+		Then.iShouldSeeButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
+		Then.iShouldSeeButtonWithText(Arrangement.P13nDialog.AdaptFilter.go);
 
 		//check initially visible FilterFields
 		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year"]);
@@ -74,7 +77,7 @@ sap.ui.define([
 	});
 
 	opaTest("When I hide the FilterFields, I should not be able to use them", function (Given, When, Then) {
-		When.iPressButtonWithText("Adapt Filters");//TODO
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 		When.iChangeAdaptFiltersView("sap-icon://group-2");
 
 		Then.thePersonalizationDialogOpens(false);
@@ -110,7 +113,7 @@ sap.ui.define([
 	});
 
 	opaTest("When I show/hide the FilterFields, I should be able to toggle their visibility", function (Given, When, Then) {
-		When.iPressButtonWithText("Adapt Filters");//TODO
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 		When.iChangeAdaptFiltersView("sap-icon://group-2");
 
 		Then.thePersonalizationDialogOpens(false);

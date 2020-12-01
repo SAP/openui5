@@ -18,7 +18,8 @@ sap.ui.define([
 		arrangements: new Arrangement(),
 		actions: new Action(),
 		assertions: new Assertion(),
-		viewNamespace: "view."
+		viewNamespace: "view.",
+		autoWait: true
 	});
 
 	//set execution delay for Internet Explorer and Edge
@@ -61,7 +62,10 @@ sap.ui.define([
 	];
 
 	opaTest("When I start the 'appUnderTestChart' app, the chart with some dimentions and measures appears", function(Given, When, Then) {
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html',
+			autoWait: true
+		});
 		Given.enableAndDeleteLrepLocalStorage();
 
 		When.iLookAtTheScreen();
@@ -163,7 +167,10 @@ sap.ui.define([
 	// Change chart type from vertical-bar to pie
 	// ----------------------------------------------------------------
 	opaTest("When I start the 'appUnderTestChart' app again and press on 'Define Chart Type' button, the dialog should open", function(Given, When, Then) {
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html',
+			autoWait: true
+		});
 
 		When.iLookAtTheScreen();
 
@@ -216,7 +223,10 @@ sap.ui.define([
 	// BCP 1880469461: Wrong order of measures
 	// ----------------------------------------------------------------
 	opaTest("When I start the 'appUnderTestChart' app again and press on on 'Define Chart Properties' button, the chart-specific-dialog opens", function(Given, When, Then) {
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html',
+			autoWait: true
+		});
 
 		When.iLookAtTheScreen();
 
@@ -286,7 +296,10 @@ sap.ui.define([
 	// BCP 1880469461: Wrong order of dimensions
 	// ----------------------------------------------------------------
 	opaTest("When I start the 'appUnderTestChart' app again and press on on 'Define Chart Properties' button, the chart-specific-dialog opens", function(Given, When, Then) {
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestChart/ChartOpaApp.html',
+			autoWait: true
+		});
 
 		When.iLookAtTheScreen();
 

@@ -12,7 +12,8 @@ sap.ui.define([
 		arrangements: new Arrangement(),
 		actions: new Action(),
 		assertions: new Assertion(),
-		viewNamespace: "view."
+		viewNamespace: "view.",
+		autoWait: true
 	});
 
 	var aTableItems = [
@@ -63,7 +64,10 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 
@@ -181,7 +185,10 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I select the default variant and restart the application, it should load the default variant", function(Given, When, Then){
 		//simulate restart
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 
 		//check if the correct variant is selected
 		Then.iShouldSeeSelectedVariant("TestVariant");
@@ -274,7 +281,10 @@ sap.ui.define([
 
 	opaTest("Switch Variant after restart without opening the dialog", function (Given, When, Then) {
 
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 
 		//check default variant appliance
 		Then.iShouldSeeSelectedVariant("FilterVariantTest");

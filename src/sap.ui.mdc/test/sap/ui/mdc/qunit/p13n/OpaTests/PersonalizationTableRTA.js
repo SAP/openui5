@@ -42,7 +42,10 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 

@@ -24,7 +24,10 @@ sap.ui.define([
 
 	opaTest("When I start the 'appUnderTestTable' app, the table should appear and contain some columns", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 
@@ -32,13 +35,13 @@ sap.ui.define([
     });
 
     opaTest("Open FilterBar 'Adapt Filters' dialog to enter condition values", function(Given, When, Then){
-        When.iPressButtonWithText("Adapt Filters");
+        When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
         When.iChangeAdaptFiltersView("sap-icon://group-2");
         When.iEnterTextInFilterDialog("Founding Year", "192*");
 
         When.iPressDialogOk();
 
-        When.iPressButtonWithText("Go");
+        When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.go);
 
         //Table should be filtered
         Then.iShouldSeeVisibleItemsInTable(15);
@@ -71,7 +74,10 @@ sap.ui.define([
 
     opaTest("Restart the application to check the variant appliance", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 		When.iLookAtTheScreen();
 
         Then.iShouldSeeSelectedVariant("Standard");

@@ -59,13 +59,16 @@ sap.ui.define([
 
 	opaTest("When I start the 'appUnderTestTable' app, the FilterBar should appear", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 
 		//check buttons
-		Then.iShouldSeeButtonWithText("Adapt Filters");
-		Then.iShouldSeeButtonWithText("Go");
+		Then.iShouldSeeButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
+		Then.iShouldSeeButtonWithText(Arrangement.P13nDialog.AdaptFilter.go);
 
 		//check initially visible FilterFields
 		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year"]);
@@ -78,7 +81,7 @@ sap.ui.define([
 	// Define new FilterFields and enter values
 	// ----------------------------------------------------------------
 	opaTest("When I press on 'Adapt Filters' button, I change the FilterField selection", function (Given, When, Then) {
-		When.iPressButtonWithText("Adapt Filters");
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 		When.iChangeAdaptFiltersView("sap-icon://group-2");
 		Then.thePersonalizationDialogOpens(false);
 
@@ -118,12 +121,14 @@ sap.ui.define([
 
 	opaTest("When I start the 'appUnderTestTable' app, the current variant should affect the FilterBar", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 		When.iLookAtTheScreen();
 
-		//check buttons
-		Then.iShouldSeeButtonWithText("Adapt Filters (2)");
-		Then.iShouldSeeButtonWithText("Go");
+		Then.iShouldSeeButtonWithText(Arrangement.P13nDialog.AdaptFilter.getButtonCountText(2));
+		Then.iShouldSeeButtonWithText(Arrangement.P13nDialog.AdaptFilter.go);
 
 		//check initially visible FilterFields
 		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city", "Country"]);
@@ -135,7 +140,7 @@ sap.ui.define([
 	});
 
 	opaTest("Recheck dialog", function (Given, When, Then) {
-		When.iPressButtonWithText("Adapt Filters (2)");
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.getButtonCountText(2));
 		When.iChangeAdaptFiltersView("sap-icon://group-2");
 
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
@@ -151,7 +156,7 @@ sap.ui.define([
 	// Create dirty changes on existing variant 'FilterBarTest'
 	// ----------------------------------------------------------------
 	opaTest("When I press on 'Adapt Filters' button, I change the FilterField selection for an existing variant", function (Given, When, Then) {
-		When.iPressButtonWithText("Adapt Filters (2)");
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.getButtonCountText(2));
 		Then.thePersonalizationDialogOpens(false);
 
 		//Enter a different value
@@ -174,7 +179,7 @@ sap.ui.define([
 	// Reset dirty changes for variant 'FilterBarTest'
 	// ----------------------------------------------------------------
 	opaTest("When I press on 'Adapt Filters' button, I reset my changes made", function (Given, When, Then) {
-		When.iPressButtonWithText("Adapt Filters (2)");
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.getButtonCountText(2));
 
 		When.iPressResetInDialog();
 		When.iConfirmResetWarning();
@@ -210,7 +215,7 @@ sap.ui.define([
 		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year"]);
 
 		//check dialog + Filter values
-		When.iPressButtonWithText("Adapt Filters");
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 
 		//Check "Countries" Panel
 		oFilterItems["Countries"][2].value = null;
