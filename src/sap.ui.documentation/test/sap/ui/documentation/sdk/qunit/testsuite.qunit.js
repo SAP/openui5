@@ -37,6 +37,12 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				}
 			},
 
+			"TopicDetailController": {
+				coverage: {
+					only : ["sap/ui/documentation/sdk/controller/TopicDetail.controller"]
+				}
+			},
+
 			"LiveEditorOutput": {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/util/LiveEditorOutput.html"]
