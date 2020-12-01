@@ -222,7 +222,8 @@ sap.ui.define([
 
 		this._oObserver.observe(this, {
 			aggregations: [
-				"filterItems"
+				"filterItems",
+				"basicSearchField"
 			]
 		});
 
@@ -1244,21 +1245,36 @@ sap.ui.define([
 
 	FilterBarBase.prototype._observeChanges = function(oChanges) {
 
-		if (oChanges.type === "aggregation" && oChanges.name === "filterItems") {
+		if (oChanges.type === "aggregation") {
 
-			switch (oChanges.mutation) {
-				case "insert":
-					oChanges.child.attachChange(this._handleFilterItemChanges, this);
-					oChanges.child.attachSubmit(this._handleFilterItemSubmit, this);
-					this._filterItemInserted(oChanges.child);
-					break;
-				case "remove":
-					oChanges.child.detachChange(this._handleFilterItemChanges, this);
-					oChanges.child.detachSubmit(this._handleFilterItemSubmit, this);
-					this._filterItemRemoved(oChanges.child);
-					break;
-				default:
-					Log.error("operation " + oChanges.mutation + " not yet implemented");
+			if (oChanges.name === "filterItems") {
+				switch (oChanges.mutation) {
+					case "insert":
+						oChanges.child.attachChange(this._handleFilterItemChanges, this);
+						oChanges.child.attachSubmit(this._handleFilterItemSubmit, this);
+						this._filterItemInserted(oChanges.child);
+						break;
+					case "remove":
+						oChanges.child.detachChange(this._handleFilterItemChanges, this);
+						oChanges.child.detachSubmit(this._handleFilterItemSubmit, this);
+						this._filterItemRemoved(oChanges.child);
+						break;
+					default:
+						Log.error("operation " + oChanges.mutation + " not yet implemented");
+				}
+			} else if (oChanges.name === "basicSearchField") {
+				switch (oChanges.mutation) {
+					case "insert":
+						oChanges.child.attachSubmit(this._handleFilterItemSubmit, this);
+						this._insertFilterFieldtoContent(oChanges.child, 0);
+						break;
+					case "remove":
+						oChanges.child.detachSubmit(this._handleFilterItemSubmit, this);
+						this._removeFilterFieldFromContent(oChanges.child);
+						break;
+					default:
+						Log.error("operation " + oChanges.mutation + " not yet implemented");
+				}
 			}
 		} else if (oChanges.type === "property") {
 			var oFilterField;
@@ -1360,21 +1376,15 @@ sap.ui.define([
 
 		var oOldBasicSearchField = this.getAggregation("basicSearchField");
 		if (oOldBasicSearchField) {
-			this._removeFilterFieldFromContent(oOldBasicSearchField);
-			oOldBasicSearchField.detachSubmit(this._handleFilterItemSubmit, this);
+			this.removeAggregation("basicSearchField", oOldBasicSearchField);
 		}
 
 		this.setAggregation("basicSearchField", oBasicSearchField);
 
 		if (oBasicSearchField) {
-
-			oBasicSearchField.attachSubmit(this._handleFilterItemSubmit, this);
-
 			if (!this._oObserver.isObserved(oBasicSearchField, {properties: ["visible"]})) {
 				this._oObserver.observe(oBasicSearchField, {properties: ["visible"]});
 			}
-
-			this._insertFilterFieldtoContent(oBasicSearchField, 0);
 		}
 
 		return this;
