@@ -7,11 +7,6 @@
     border: none;
 }
 
-//Vertical alignment of the inner Panels with Toolbar controls
-.sapUiMDCGroupPanelBase .sapMPanel{
-    padding-left: 0.5rem;
-}
-
 //padding between list items in group view
 .sapUiMDCGroupPanelBase .sapMLIBContent {
     padding-bottom: 0.75rem;
@@ -30,11 +25,6 @@
     background: @sapUiListBackground;
 }
 
-//Adapt padding for the fixed controls
-.sapUiMDCGroupPanelBase .sapUiFixFlexFixed {
-    padding: 0.5rem 1rem 0.5rem 1rem;
-}
-
 .sapUiMDCGroupPanelBase .sapMTBStandard {
 	border-bottom: none;
 }
@@ -51,18 +41,39 @@
     padding-right: 0.75rem;
 }
 
-//Remove padding for items in list view
-.sapUiMDCGroupPanelBase .sapMListTblCell{
-    padding-top: 0;
-    padding-bottom: 0;
-}
-
 //Checkbox alignment
-.sapUiMDCGroupPanelBase .sapMPanelContent .sapMCbBg {
-    margin-top: -1.25rem;
+.sapUiMDCGroupPanelBase li .sapMCLI {
+    align-items: start;
 }
 
 //Display ':' for Labels in the 'group' view
-.sapUiMDCGroupPanelBase .sapMPanelContent .sapMLabel::after {
+.sapUiMDCGroupPanelBase .sapUiMDCAFLabelMarking .sapMPanelContent .sapMLabel::after {
 	content: ":";
+}
+//Display ':' for Labels in the 'list' view
+.sapUiMDCGroupPanelBase .sapUiMDCAFLabelMarkingList tbody .sapMLabel::after {
+	content: ":";
+}
+
+//Table cell has padding which should be lowered as the inner list items have their own padding
+.sapUiMDCGroupPanelBase .sapMListTblCell{
+    padding-left: 0.25rem;
+}
+
+.sapUiMDCGroupPanelBase .sapMPanelContent li {
+    align-items: start; //Checkbox should not be centered
+    display: flex; //Is the default for Lists - only needs to be set as the parent is a Table
+}
+
+.sapUiMDCGroupPanelBase .sapMPageSubHeader .sapMBar {
+    box-shadow: none;
+}
+
+//Display checkbox at the top for items in the ListView
+.sapUiMDCGroupPanelBase tbody .sapMListTblSelCol {
+    vertical-align: top;
+}
+
+.sapUiMDCGroupPanelBase .sapUiMDCPaddingPanelLeft {
+    padding-left: 1.5rem;
 }
