@@ -56,5 +56,36 @@
         ]
       }
     ]
+  },
+  "1.84.2": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "ea4c5b9e6dab5b07d143953ed52aa2260338c023",
+        "type": "FIX",
+        "text": " theming/Parameters: Request library-parameters.json with credentials",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070394805"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070394696"
+          }
+        ]
+      },
+      {
+        "id": "5bec8998288c43f19c2b8f7e235048ffc62a6c8a",
+        "type": "FIX",
+        "text": " Fragment.js: Extensionpoint is root node",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080383816"
+          }
+        ]
+      }
+    ]
   }
 }
