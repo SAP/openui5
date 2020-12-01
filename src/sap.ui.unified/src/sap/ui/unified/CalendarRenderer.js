@@ -38,7 +38,7 @@ sap.ui.define([],
 
 		var rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 		var mAccProps = {labelledby: {value: "", append: false}}; // render on Month
-		if (oCal._bPoupupMode) {
+		if (oCal._bPoupupMode && !oCal._bPopoverContainer) {
 			mAccProps.role = "dialog";
 			mAccProps.modal = true;
 		}

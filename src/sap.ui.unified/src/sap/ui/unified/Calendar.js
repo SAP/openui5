@@ -767,6 +767,15 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Marks that calendar control instance will be used as content of sap.m.Popover or
+	 * sap.m.ResponisvePopover control instance.
+	 * Modal dialog aria description shouldn't be explicityly added
+	 */
+	Calendar.prototype._markPopover = function(){
+		this._bPopoverContainer = true;
+	};
+
 	Calendar.prototype.setMonths = function(iMonths){
 
 		this._bDateRangeChanged = undefined; // to force rerendering

@@ -267,6 +267,7 @@ function(
 		oCalendarPicker = new Calendar(sOPHId + "-Cal", {
 			ariaLabelledBy: InvisibleText.getStaticId("sap.ui.unified", "CALENDAR_DIALOG")
 		});
+		oCalendarPicker.setPopupMode(true);
 		oCalendarPicker.attachEvent("select", this._handlePickerDateSelect, this);
 		oCalendarPicker.attachEvent("cancel", this._handlePickerCancelEvent, this);
 		this.setAggregation("_calendarPicker", oCalendarPicker);
