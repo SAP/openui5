@@ -604,6 +604,14 @@ sap.ui.define([
 		this.setDesigntimeMetadata(formatImportedDesigntimeMetadata(oDesigntimeMetadata), bIsInitialMetadata);
 	};
 
+	BASEditor.prototype.setDestinations = function (oDestinations) {
+		if (Array.isArray(oDestinations) && oDestinations.length > 0) {
+			var oConfig = this.getConfig();
+			oConfig.properties.destinations.allowedValues = oDestinations;
+			this.setConfig(oConfig);
+		}
+	};
+
 	function formatImportedDesigntimeMetadata(oFlatMetadata) {
 		var oFormattedMetadata = {};
 		Object.keys(oFlatMetadata).forEach(function (sPath) {

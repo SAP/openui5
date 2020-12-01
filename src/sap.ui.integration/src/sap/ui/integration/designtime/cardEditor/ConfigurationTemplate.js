@@ -1,6 +1,4 @@
-/*!
- * ${copyright}
- */
+// add your copyright here
 
 /**
  * This module was created by the BASEditor
