@@ -203,5 +203,21 @@
         ]
       }
     ]
+  },
+  "1.78.13": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "b851bffcd7b5bb3e459e36a87ceb2e11364413c5",
+        "type": "FIX",
+        "text": " Fragment.js: Extensionpoint is root node",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080383816"
+          }
+        ]
+      }
+    ]
   }
 }
