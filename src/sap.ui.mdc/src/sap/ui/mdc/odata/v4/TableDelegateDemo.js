@@ -1,0 +1,214 @@
+/*
+ * ! ${copyright}
+ */
+
+// ---------------------------------------------------------------------------------------
+// Helper class used to help create content in the table/column and fill relevant metadata
+// ---------------------------------------------------------------------------------------
+// ---------------------------------------------------------------------------------------
+sap.ui.define([
+	"sap/ui/mdc/TableDelegate", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil', 'sap/ui/mdc/odata/v4/util/DelegateUtil', 'sap/ui/mdc/odata/v4/FilterBarDelegate', './ODataMetaModelUtil', 'sap/ui/mdc/odata/v4/TypeUtil', 'sap/ui/model/Filter', 'sap/base/Log'
+], function(TableDelegate, Core, FilterUtil, DelegateUtil, FilterBarDelegate, ODataMetaModelUtil, TypeUtil, Filter, Log) {
+	"use strict";
+	/**
+	 * Helper class for sap.ui.mdc.Table.
+	 * <h3><b>Note:</b></h3>
+	 * The class is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
+	 *
+	 * @author SAP SE
+	 * @private
+	 * @experimental
+	 * @since 1.60
+	 * @alias sap.ui.mdc.odata.v4.TableDelegateDemo
+	 */
+	var ODataTableDelegate = Object.assign({}, TableDelegate);
+
+	/**
+	 * Fetches the relevant metadata for the table and returns property info array
+	 *
+	 * @param {Object} oTable - instance of the mdc Table
+	 * @returns {Array} array of property info
+	 */
+	ODataTableDelegate.fetchProperties = function(oTable) {
+		var oMetadataInfo = oTable.getDelegate().payload, oModel;
+		oModel = oTable.getModel(oMetadataInfo.model);
+
+		return new Promise(function(resolve) {
+			if (!oModel) {
+				oTable.attachModelContextChange({
+					resolver: resolve
+				}, onModelContextChange);
+			} else {
+				createPropertyInfos(oTable, oModel).then(resolve);
+			}
+		});
+	};
+
+	function onModelContextChange(oEvent, oData) {
+		var oTable = oEvent.getSource();
+		var oMetadataInfo = oTable.getDelegate().payload;
+		var oModel = oTable.getModel(oMetadataInfo.model);
+		if (oModel) {
+			createPropertyInfos(oTable, oModel).then(oData.resolver);
+			oTable.detachModelContextChange(onModelContextChange);
+		}
+	}
+
+	function createPropertyInfos(oTable, oModel) {
+		var oMetadataInfo = oTable.getDelegate().payload, aProperties = [], oPropertyInfo, oObj, oPropertyAnnotations;
+		var sEntitySetPath = "/" + oMetadataInfo.collectionName;
+		var oMetaModel = oModel.getMetaModel();
+		return Promise.all([
+			oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "@")
+		]).then(function(aResults) {
+			var oEntityType = aResults[0], mEntitySetAnnotations = aResults[1];
+			var oSortRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.SortRestrictions"] || {};
+			var oSortRestrictionsInfo = ODataMetaModelUtil.getSortRestrictionsInfo(oSortRestrictions);
+			var oFilterRestrictions = mEntitySetAnnotations["@Org.OData.Capabilities.V1.FilterRestrictions"];
+			var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
+
+			for (var sKey in oEntityType) {
+				oObj = oEntityType[sKey];
+				if (oObj && oObj.$kind === "Property") {
+
+					// ignore (as for now) all complex properties
+					// not clear if they might be nesting (complex in complex)
+					// not clear how they are represented in non-filterable annotation
+					// etc.
+					if (oObj.$isCollection) {
+						Log.warning("Complex property with type " + oObj.$Type + " has been ignored");
+						continue;
+					}
+
+					// TODO: Enhance with more properties as used in MetadataAnalyser and check if this should be made async
+					oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
+					oPropertyInfo = {
+						name: sKey,
+						label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
+						description: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] && oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path,
+						maxLength: oObj.$MaxLength,
+						precision: oObj.$Precision,
+						scale: oObj.$Scale,
+						type: oObj.$Type,
+						sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
+
+						//Required for inbuilt filtering: filterable, typeConfig
+						//Optional: maxConditions, fieldHelp
+						filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
+						typeConfig: oTable.getTypeUtil().getTypeConfig(oObj.$Type),
+						fieldHelp: undefined,
+						maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1
+					};
+					aProperties.push(oPropertyInfo);
+				}
+			}
+			oTable.data("$tablePropertyInfo",aProperties);
+			return aProperties;
+		});
+	}
+
+	/**
+	 * Updates the binding info with the relevant path and model from the metadata.
+	 *
+	 * @param {Object} oMDCTable The MDC table instance
+	 * @param {Object} oMetadataInfo The metadataInfo set on the table
+	 * @param {Object} oBindingInfo The bindingInfo of the table
+	 */
+	ODataTableDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
+
+		if (!oMDCTable) {
+			return;
+		}
+
+		if (oMetadataInfo && oBindingInfo) {
+			oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
+			oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
+		}
+
+		if (!oBindingInfo) {
+			oBindingInfo = {};
+		}
+
+		var oFilter = Core.byId(oMDCTable.getFilter()), bFilterEnabled = oMDCTable.isFilteringEnabled(), mConditions;
+		var oInnerFilterInfo, oOuterFilterInfo;
+		var aFilters = [];
+
+		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
+		if (bFilterEnabled) {
+			mConditions = oMDCTable.getConditions();
+			var aTableProperties = oMDCTable.data("$tablePropertyInfo");
+			oInnerFilterInfo = FilterUtil.getFilterInfo(oMDCTable, mConditions, aTableProperties);
+			if (oInnerFilterInfo.filters) {
+				aFilters.push(oInnerFilterInfo.filters);
+			}
+		}
+
+		if (oFilter) {
+			mConditions = oFilter.getConditions();
+			if (mConditions) {
+
+				var aPropertiesMetadata = oFilter.getPropertyInfoSet ? oFilter.getPropertyInfoSet() : null;
+				var aParameterNames = DelegateUtil.getParameterNames(oFilter);
+				oOuterFilterInfo = FilterUtil.getFilterInfo(oFilter, mConditions, aPropertiesMetadata, aParameterNames);
+
+				if (oOuterFilterInfo.filters) {
+					aFilters.push(oOuterFilterInfo.filters);
+				}
+
+				var sParameterPath = DelegateUtil.getParametersInfo(oFilter, mConditions);
+				if (sParameterPath) {
+					oBindingInfo.path = sParameterPath;
+				}
+			}
+
+			// get the basic search
+			var sSearchText = oFilter.getSearch();
+			if (sSearchText) {
+
+				if (!oBindingInfo.parameters) {
+					oBindingInfo.parameters = {};
+				}
+
+				// add basic search parameter as expected by v4.ODataListBinding
+				oBindingInfo.parameters.$search = sSearchText;
+			}
+		}
+
+		oBindingInfo.filters = new Filter(aFilters, true);
+	};
+
+	/**
+	 * Provide the Table's filter delegate to provide basic filter functionality such as adding FilterFields
+	 * <b>Note:</b> The functionality provided in this delegate should act as a subset of a FilterBarDelegate
+	 * to enable the Table for inbuilt filtering
+	 *
+	 * @returns {Object} Object for the Tables filter personalization:
+	 *
+	 * oFilterDelegate = {
+	 * 		addFilterItem: function() {
+	 * 			var oFilterFieldPromise = new Promise(...);
+	 * 			return oFilterFieldPromise;
+	 * 		}
+	 * }
+	 *
+	 * @public
+	 */
+	ODataTableDelegate.getFilterDelegate = function() {
+		return {
+			/**
+			 *
+			 * @param {Object} oProperty Corresponding property to create a FilterField
+			 * @param {Object} oTable Table instance
+			 */
+			addFilterItem: function(oProperty, oTable) {
+				return FilterBarDelegate._createFilterField(oProperty, oTable);
+			}
+		};
+	};
+
+	ODataTableDelegate.getTypeUtil = function (oPayload) {
+		return TypeUtil;
+	};
+
+	return ODataTableDelegate;
+});
