@@ -212,9 +212,11 @@ sap.ui.define([
 	 * event. If there are multiple synchronous <code>checkUpdateInternal</code> calls the data
 	 * state is checked only after the last call is processed.
 	 *
-	 * @param {boolean} [bForceUpdate=false]
+	 * @param {boolean} [bForceUpdate]
 	 *   If <code>true</code> the change event is always fired except there is no context for a
-	 *   relative binding and the (old and new) value is <code>undefined</code>.
+	 *   relative binding and the (old and new) value is <code>undefined</code>. If
+	 *   <code>undefined</code> a change event is also fired in case the data state contains control
+	 *   messages, see {@link sap.ui.model.DataState#getControlMessages}.
 	 * @param {sap.ui.model.ChangeReason} [sChangeReason=ChangeReason.Change]
 	 *   The change reason for the change event
 	 * @param {string} [sGroupId=getGroupId()]
@@ -244,6 +246,8 @@ sap.ui.define([
 				// before
 				forceUpdate : sResolvedPath
 					&& (bForceUpdate
+						|| bForceUpdate === undefined
+							&& this.getDataState().getControlMessages().length > 0
 						|| this.oCheckUpdateCallToken && this.oCheckUpdateCallToken.forceUpdate)
 			},
 			vType = this.oType, // either the type or a promise resolving with it
@@ -503,7 +507,7 @@ sap.ui.define([
 		}
 		this.fetchCache(this.oContext);
 		return bCheckUpdate
-			? this.checkUpdateInternal(false, ChangeReason.Refresh, sGroupId)
+			? this.checkUpdateInternal(undefined, ChangeReason.Refresh, sGroupId)
 			: SyncPromise.resolve();
 	};
 
@@ -520,7 +524,7 @@ sap.ui.define([
 	ODataPropertyBinding.prototype.requestValue = function () {
 		var that = this;
 
-		return Promise.resolve(this.checkUpdateInternal().then(function () {
+		return Promise.resolve(this.checkUpdateInternal(false).then(function () {
 			return that.getValue();
 		}));
 	};
@@ -611,17 +615,19 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bCheckUpdate
 	 *   Whether this property binding shall call <code>checkUpdate</code>
+	 * @param {boolean} [bParentHasChanges]
+	 *   Whether there are changes on the parent binding that become active after resuming
 	 *
 	 * @private
 	 */
-	ODataPropertyBinding.prototype.resumeInternal = function (bCheckUpdate) {
+	ODataPropertyBinding.prototype.resumeInternal = function (bCheckUpdate, bParentHasChanges) {
 		var sResumeChangeReason = this.sResumeChangeReason;
 
 		this.sResumeChangeReason = undefined;
 
 		this.fetchCache(this.oContext);
 		if (bCheckUpdate) {
-			this.checkUpdateInternal(false, sResumeChangeReason);
+			this.checkUpdateInternal(bParentHasChanges ? undefined : false, sResumeChangeReason);
 		}
 	};
 
@@ -645,7 +651,7 @@ sap.ui.define([
 			this.sResumeChangeReason = undefined;
 			if (this.bRelative) {
 				this.fetchCache(this.oContext);
-				this.checkUpdateInternal(this.bInitial, ChangeReason.Context);
+				this.checkUpdateInternal(this.bInitial || undefined, ChangeReason.Context);
 			}
 		}
 	};

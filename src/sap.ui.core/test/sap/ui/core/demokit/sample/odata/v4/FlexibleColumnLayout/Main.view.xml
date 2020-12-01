@@ -85,9 +85,6 @@
 									press="onRefreshSalesOrder" tooltip="Refresh Sales Order"/>
 						</Toolbar>
 					</form:toolbar>
-					<Toolbar design="Transparent" id="salesOrderDetailsToolbar">
-						<Title level="H2" text="Sales Order"/>
-					</Toolbar>
 					<Label labelFor="SalesOrder::id" text="Sales Order ID"/>
 					<Input editable="false" id="SalesOrder::id" value="{SalesOrderID}"/>
 					<Label labelFor="SalesOrder::createdAt" text="Created At"/>
@@ -98,8 +95,10 @@
 					<Input editable="false" id="SalesOrder::status" value="{LifecycleStatusDesc}"/>
 					<Label labelFor="SalesOrder::note" text="Note"/>
 					<Input id="SalesOrder::note" value="{Note}"/>
-					<Label text="Gross Amount" />
-					<Text text="{GrossAmount} {CurrencyCode}"/>
+					<Label text="Gross Amount"/>
+					<Text text="{GrossAmount}"/>
+					<Label text="Currency"/>
+					<Input value="{CurrencyCode}"/>
 				</form:SimpleForm>
 				<Table growing="true" growingThreshold="5" id="SO_2_SOITEM"
 					items="{
@@ -155,7 +154,7 @@
 		<f:endColumnPages>
 			<VBox id="subObjectPage" visible="{=${ui>/bSalesOrderItemSelected}}">
 				<form:SimpleForm ariaLabelledBy="lineItemDetailsTitle" editable="true"
-						layout="ColumnLayout">
+						layout="ColumnLayout" title="Line Item Details">
 					<form:toolbar>
 						<Toolbar design="Transparent">
 							<Title id="lineItemDetailsTitle" level="H2" text="Line Item Details"/>

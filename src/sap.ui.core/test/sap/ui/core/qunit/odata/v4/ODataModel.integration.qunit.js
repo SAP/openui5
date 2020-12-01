@@ -1638,6 +1638,39 @@ sap.ui.define([
 		},
 
 		/**
+		 * Sets an invalid value into an input control with id = 'budgetCurrency' and resolves after
+		 * awaiting changes.
+		 *
+		 * @param {object} assert - The QUnit assert object
+		 * @returns {Promise}
+		 *   A promise which resolves after awaiting changes
+		 */
+		setInvalidBudgetCurrency : function (assert) {
+			var oInput = this.oView.byId("budgetCurrency"),
+				sMessage = "Enter a text with a maximum of 5 characters and spaces";
+
+			this.expectMessages([{
+				message : sMessage,
+				persistent : false,
+				target : this.oView.createId("budgetCurrency/value"),
+				technical : false,
+				type : "Error"
+			}]);
+
+			// Note: Because the invalid value has to be set via control, changes for that control
+			// cannot be observed via expectChanges
+			oInput.setValue("INVALID");
+
+			assert.strictEqual(oInput.getValue(), "INVALID");
+			assert.strictEqual(oInput.getBinding("value").getValue(), "EUR");
+
+			return Promise.all([
+				this.checkValueState(assert, "budgetCurrency", "Error", sMessage),
+				this.waitForChanges(assert)
+			]);
+		},
+
+		/**
 		 * Waits for the expected requests and changes.
 		 *
 		 * @param {object} assert The QUnit assert object
@@ -11067,22 +11100,33 @@ sap.ui.define([
 	// Scenario: list/detail where the detail needs additional $expand/$select and thus causes
 	// late property requests
 	// JIRA: CPOUI5ODATAV4-27 see that two late property requests are merged
+	//
+	// Afterwards set an invalid value in the input field for the budget currency. Expect messages
+	// on the UI and an invalid data state. When changing the binding context of the form the
+	// invalid value shall be removed and the model value shall be visible (esp. also if this value
+	// is the previous binding value).
+	// JIRA: CPOUI5ODATAV4-459
 	QUnit.test("Auto-$expand/$select: list/detail with separate requests", function (assert) {
 		var oModel = createTeaBusiModel({autoExpandSelect : true}),
 			sView = '\
 <Table id="list" items="{/TEAMS}">\
+	<Text id="currency" text="{BudgetCurrency}"/>\
 	<Text id="text0" text="{Team_Id}"/>\
 </Table>\
 <FlexBox id="detail" binding="{}">\
 	<Text id="text1" text="{Name}"/>\
 	<Text id="text2" text="{Budget}"/>\
+	<Input id="budgetCurrency" value="{BudgetCurrency}"/>\
 </FlexBox>',
 			that = this;
 
-		this.expectRequest("TEAMS?$select=Team_Id&$skip=0&$top=100", {
-				value : [{Team_Id : "TEAM_01"}]
+		this.expectRequest("TEAMS?$select=BudgetCurrency,Team_Id&$skip=0&$top=100", {
+				value : [
+					{BudgetCurrency : "EUR", Team_Id : "TEAM_01"},
+					{BudgetCurrency : "EUR", Team_Id : "TEAM_02"}]
 			})
-			.expectChange("text0", ["TEAM_01"])
+			.expectChange("currency", ["EUR", "EUR"])
+			.expectChange("text0", ["TEAM_01", "TEAM_02"])
 			.expectChange("text1") // expect a later change
 			.expectChange("text2");
 
@@ -11098,6 +11142,26 @@ sap.ui.define([
 			that.oView.byId("detail").setBindingContext(oContext);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			// JIRA: CPOUI5ODATAV4-459
+			return that.setInvalidBudgetCurrency(assert);
+		}).then(function (oInput) {
+			that.expectRequest("TEAMS('TEAM_02')?$select=Budget,Name",
+					{Budget : "789", Name : "Team #2"})
+				.expectChange("text1", "Team #2")
+				.expectChange("text2", "789");
+
+			that.expectMessages([]); // validation error has gone
+
+			// 2. Change the context of the control but let the data be same as the binding value
+			that.oView.byId("detail").setBindingContext(
+				that.oView.byId("list").getItems()[1].getBindingContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("budgetCurrency").getValue(), "EUR");
+
+			return that.checkValueState(assert, "budgetCurrency", "None", "");
 		});
 	});
 
@@ -11142,6 +11206,42 @@ sap.ui.define([
 
 		return this.createView(assert, sView, createTeaBusiModel({autoExpandSelect : true}),
 			oController);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Refresh a form with an invalid value
+	// JIRA: CPOUI5ODATAV4-459
+	QUnit.test("CPOUI5ODATAV4-459: Context binding with invalid value", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/TEAMS(\'TEAM_01\')}">\
+	<Text id="budget" text="{Budget}"/>\
+	<Input id="budgetCurrency" value="{BudgetCurrency}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("TEAMS('TEAM_01')?$select=Budget,BudgetCurrency,Team_Id",
+					{Budget : "456", BudgetCurrency : "EUR", Team_Id : "Team_01"})
+				.expectChange("budget", "456");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			return that.setInvalidBudgetCurrency(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS('TEAM_01')?$select=Budget,BudgetCurrency,Team_Id",
+					{Budget : "789", BudgetCurrency : "EUR", Team_Id : "Team_01"})
+				.expectChange("budget", "789");
+
+			that.expectMessages([]); // validation error has gone
+
+			// code under test
+			that.oView.byId("form").getObjectBinding().refresh();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("budgetCurrency").getValue(), "EUR");
+
+			return that.checkValueState(assert, "budgetCurrency", "None", "");
+		});
 	});
 
 	//*********************************************************************************************
@@ -14027,6 +14127,10 @@ sap.ui.define([
 	// Change the $expand/select parameters on both both ODCB and ODLB. Afterwards both bindings
 	// get their own cache and send own requests.
 	// JIRA: CPOUI5ODATAV4-227
+	//
+	// The form contains an input field where an invalid value is set. Expect messages on the UI and
+	// an invalid data state. After resuming the invalid value shall be removed and the model value
+	// shall be visible (esp. also if this value is the previous binding value).
 	QUnit.test("suspend/resume (w/o autoExpandSelect) change $expand/$select on ODCB and ODLB",
 			function (assert) {
 		var oFormBinding,
@@ -14035,8 +14139,9 @@ sap.ui.define([
 <FlexBox id="form" binding="{path : \'/TEAMS(\\\'TEAM_01\\\')\', \
 		parameters : {\
 			$expand : {\'TEAM_2_EMPLOYEES\' : {$select : \'AGE,Name\'}},\
-			$select : \'MEMBER_COUNT\'}\
+			$select : \'BudgetCurrency,MEMBER_COUNT\'}\
 		}">\
+	<Input id="budgetCurrency" value="{BudgetCurrency}"/>\
 	<Text id="memberCount" text="{MEMBER_COUNT}"/>\
 	<Table id="table" items="{TEAM_2_EMPLOYEES}">\
 		<Text id="age" text="{AGE}"/>\
@@ -14046,7 +14151,8 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("TEAMS('TEAM_01')?$expand=TEAM_2_EMPLOYEES($select=AGE,Name)"
-				+ "&$select=MEMBER_COUNT", {
+				+ "&$select=BudgetCurrency,MEMBER_COUNT", {
+				BudgetCurrency : "EUR",
 				TEAM_2_EMPLOYEES : [{
 					AGE : 52,
 					Name : "Frederic Fall"
@@ -14063,13 +14169,19 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oFormBinding = that.oView.byId("form").getObjectBinding();
 
+			return that.setInvalidBudgetCurrency(assert);
+		}).then(function () {
 			oFormBinding.suspend();
 
-			oFormBinding.changeParameters({$expand : undefined, $select : "Name,MEMBER_COUNT"});
+			oFormBinding.changeParameters({
+				$expand : undefined,
+				$select : "BudgetCurrency,Name,MEMBER_COUNT"
+			});
 			that.oView.byId("table").getBinding("items")
 				.changeParameters({$select : 'AGE,ID,Name'});
 
-			that.expectRequest("TEAMS('TEAM_01')?$select=Name,MEMBER_COUNT", {
+			that.expectRequest("TEAMS('TEAM_01')?$select=BudgetCurrency,Name,MEMBER_COUNT", {
+					BudgetCurrency : "EUR",
 					Name : "invisible",
 					MEMBER_COUNT : 3
 				})
@@ -14093,10 +14205,16 @@ sap.ui.define([
 				.expectChange("age", [,, "58"])
 				.expectChange("name", [,, "John Doe"]);
 
+			that.expectMessages([]); // validation error has gone
+
 			// code under test
 			oFormBinding.resume();
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("budgetCurrency").getValue(), "EUR");
+
+			return that.checkValueState(assert, "budgetCurrency", "None", "");
 		});
 	});
 
