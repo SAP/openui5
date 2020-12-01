@@ -222,7 +222,7 @@ sap.ui.define([
 
 		this.addView(new ContainerItem({
             key: sKey,
-            content: oContent
+            content: oContent.addStyleClass("sapUiMDCPanelPadding")
         }));
 
         var oViewSwitch = this._getViewSwitch();
