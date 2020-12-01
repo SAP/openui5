@@ -22,7 +22,9 @@ sap.ui.define([
 	"sap/ui/core/EnabledPropagator",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "control"
-	"sap/ui/dom/jquery/control"
+	"sap/ui/dom/jquery/control",
+	// jQuery Plugin "scrollLeftRTL"
+	"sap/ui/dom/jquery/scrollLeftRTL"
 ],
 	function(
 		library,
@@ -41,7 +43,8 @@ sap.ui.define([
 		KeyCodes,
 		Log,
 		EnabledPropagator,
-		jQuery
+		jQuery,
+		scrollLeftRTL
 	) {
 	"use strict";
 
@@ -699,6 +702,8 @@ sap.ui.define([
 	 */
 	Tokenizer.prototype.scrollToEnd = function() {
 		var domRef = this.getDomRef(),
+			bRTL = Core.getConfiguration().getRTL(),
+			iScrollWidth,
 			scrollDiv;
 
 		if (!this.getDomRef()) {
@@ -706,12 +711,18 @@ sap.ui.define([
 		}
 
 		scrollDiv = this.$().find(".sapMTokenizerScrollContainer")[0];
+		iScrollWidth = scrollDiv.scrollWidth;
+
+		if (bRTL) {
+			iScrollWidth *= -1;
+		}
+
 		if (Device.browser.msie) {
 			setTimeout(function () {
-				domRef.scrollLeft = scrollDiv.scrollWidth;
+				domRef.scrollLeft = iScrollWidth;
 			});
 		} else {
-			domRef.scrollLeft = scrollDiv.scrollWidth;
+			domRef.scrollLeft = iScrollWidth;
 		}
 	};
 
@@ -1095,7 +1106,14 @@ sap.ui.define([
 		var iTokenizerLeftOffset = this.$().offset().left,
 			iTokenizerWidth = this.$().width(),
 			iTokenLeftOffset = oToken.$().offset().left,
-			iTokenWidth = oToken.$().width();
+			bRTL = Core.getConfiguration().getRTL(),
+			// Margins and borders are excluded from calculations therefore we need to add them explicitly.
+			iTokenMargin = bRTL ? parseInt(oToken.$().css("margin-left")) : parseInt(oToken.$().css("margin-right")),
+			iTokenBorder = parseInt(oToken.$().css("border-left-width")) + parseInt(oToken.$().css("border-right-width")),
+			iTokenWidth = oToken.$().width() + iTokenMargin + iTokenBorder,
+			iScrollLeft = bRTL ? this.$().scrollLeftRTL() : this.$().scrollLeft(),
+			iLeftOffset = iScrollLeft - iTokenizerLeftOffset + iTokenLeftOffset,
+			iRightOffset = iScrollLeft + (iTokenLeftOffset - iTokenizerLeftOffset + iTokenWidth - iTokenizerWidth);
 
 		if (this._getVisibleTokens().indexOf(oToken) === 0) {
 			this.$().scrollLeft(0);
@@ -1103,11 +1121,11 @@ sap.ui.define([
 		}
 
 		if (iTokenLeftOffset < iTokenizerLeftOffset) {
-			this.$().scrollLeft(this.$().scrollLeft() - iTokenizerLeftOffset + iTokenLeftOffset);
+			bRTL ? this.$().scrollLeftRTL(iLeftOffset) : this.$().scrollLeft(iLeftOffset);
 		}
 
 		if (iTokenLeftOffset - iTokenizerLeftOffset + iTokenWidth > iTokenizerWidth) {
-			this.$().scrollLeft(this.$().scrollLeft() + (iTokenLeftOffset - iTokenizerLeftOffset + iTokenWidth - iTokenizerWidth));
+			bRTL ? this.$().scrollLeftRTL(iRightOffset) : this.$().scrollLeft(iRightOffset);
 		}
 	};
 
@@ -1185,9 +1203,11 @@ sap.ui.define([
 
 		if (index > 0) {
 			targetToken = aTokens[index - 1];
+			this._ensureTokenVisible(targetToken);
 			targetToken.focus();
 		} else  {
 			targetToken = aTokens[aTokens.length - 1];
+			this._ensureTokenVisible(targetToken);
 			// Prevent default scrolling in IE when last token is focused
 			targetToken.focus({ preventScroll: true });
 		}
@@ -1220,10 +1240,11 @@ sap.ui.define([
 
 		// oFocusedElement could be undefined since the focus element might not correspond to an SAPUI5 Control
 		var index = oFocusedElement ? aTokens.indexOf(oFocusedElement) : -1;
+		var oNextToken = aTokens[index + 1];
+		this._ensureTokenVisible(oNextToken);
 
 		if (index < iLength - 1) {
-			var oNextToken = aTokens[index + 1],
-				currentToken = aTokens[index];
+			var currentToken = aTokens[index];
 
 			oNextToken.focus();
 
@@ -1231,8 +1252,6 @@ sap.ui.define([
 				oNextToken.setSelected(true);
 				currentToken.setSelected(true);
 			}
-
-			this._ensureTokenVisible(oNextToken);
 		} else {
 			// focus is on last token - we do not handle this event and let it bubble
 			// notify the parent that the focus should be taken over
