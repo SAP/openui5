@@ -10,7 +10,7 @@ describe("sap.m.TextArea", function() {
 
 	//TextArea with 50% width
 	it("should vizualize a text area with 50% width", function(){
-		var fiftyPercentTextArea = element(by.id("textAreaWithoutGrowing"));
+		var fiftyPercentTextArea = element(by.id("textAreaFiftyPercentWidth"));
 		fiftyPercentTextArea.click();
 		expect(takeScreenshot(fiftyPercentTextArea)).toLookAs("fifty_percent_width");
 	});
@@ -55,20 +55,20 @@ describe("sap.m.TextArea", function() {
 	});
 
 	//TextArea - Success State
-	it("should vizualize a text area with error state", function(){
+	it("should vizualize a text area with success state", function(){
 		var successStateTextArea = element(by.id("textAreaSuccessState"));
 		browser.executeScript('document.getElementById("textAreaSuccessState").scrollIntoView()').then(function() {
 			successStateTextArea.click();
-			expect(takeScreenshot(successStateTextArea)).toLookAs("error_state");
+			expect(takeScreenshot(successStateTextArea)).toLookAs("success_state");
 		});
 	});
 
 	//TextArea - Information State
-	it("should vizualize a text area with error state", function(){
+	it("should vizualize a text area with information state", function(){
 		var informationStateTextArea = element(by.id("textAreaInformationState"));
 		browser.executeScript('document.getElementById("textAreaInformationState").scrollIntoView()').then(function() {
 			informationStateTextArea.click();
-			expect(takeScreenshot()).toLookAs("error_state");
+			expect(takeScreenshot()).toLookAs("information_state");
 		});
 	});
 
