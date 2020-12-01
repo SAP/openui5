@@ -18,13 +18,13 @@ sap.ui.define([
 
 			[
 				this.byId("grid1"),
-				this.byId("grid2"),
-				this.byId("grid3"),
+				this.byId("gridEmpty"),
 				this.byId("grid4"),
 				this.byId("grid5"),
+				this.byId("grid6"),
+				this.byId("grid7"),
 				this.byId("links1"),
-				this.byId("gridList1"),
-				this.byId("gridEmpty")
+				this.byId("gridList1")
 			].forEach(function (oGrid) {
 				oGrid.addDragDropConfig(new DragInfo({
 					sourceAggregation: "items",
@@ -44,6 +44,12 @@ sap.ui.define([
 							};
 						}
 					},
+					dragEnter: function (oEvent) {
+						// Prevent drop
+						if (oGrid.getId() === this.createId("grid4")) {
+							oEvent.preventDefault();
+						}
+					}.bind(this),
 					drop: function (oInfo) {
 						var oDragged = oInfo.getParameter("draggedControl"),
 							oDropped = oInfo.getParameter("droppedControl"),
@@ -94,11 +100,10 @@ sap.ui.define([
 						MessageToast.show("Border reached");
 					});
 				}
-			});
+			}.bind(this));
 		},
 
 		initData: function () {
-			this.byId("gridEmpty").setModel(new JSONModel([]));
 			this.byId("grid1").setModel(new JSONModel([
 				{ uniqueId: "item1", header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
 				{ uniqueId: "item2", header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
@@ -113,7 +118,15 @@ sap.ui.define([
 				{ uniqueId: "item12", header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
 			]));
 
-			this.byId("grid2").setModel(new JSONModel([
+			this.byId("gridEmpty").setModel(new JSONModel([]));
+
+			this.byId("gridDifferentGroup").setModel(new JSONModel([
+				{ uniqueId: "item1", header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
+				{ uniqueId: "item2", header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
+				{ uniqueId: "item3", header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" }
+			]));
+
+			this.byId("grid4").setModel(new JSONModel([
 				{ uniqueId: "item1", header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
 				{ uniqueId: "item2", header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
 				{ uniqueId: "item3", header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" },
@@ -127,7 +140,7 @@ sap.ui.define([
 				{ uniqueId: "item12", header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
 			]));
 
-			this.byId("grid3").setModel(new JSONModel([
+			this.byId("grid5").setModel(new JSONModel([
 				{ uniqueId: "item1", header: "Unified Ticketing", subheader: "Submit a new ticket", footer: "", numberValue: "11", icon: "sap-icon://check-availability" },
 				{ uniqueId: "item2", header: "Success Map", subheader: "", footer: "", numberValue: "3", icon: "sap-icon://message-success" },
 				{ uniqueId: "item3", header: "My Team Calendar", subheader: "", footer: "", numberValue: "6", icon: "sap-icon://appointment" },
@@ -141,7 +154,7 @@ sap.ui.define([
 				{ uniqueId: "item12", header: "My IT Equipment", subheader: "Manage equipment", footer: "", numberValue: "5", valueColor: "Critical", icon: "sap-icon://add-equipment" }
 			]));
 
-			this.byId("grid4").setModel(new JSONModel([
+			this.byId("grid6").setModel(new JSONModel([
 				{ header: "Sales Fulfillment Application Title", subheader: "Subtitle", footer: "", numberValue: "3", icon: "sap-icon://home-share" },
 				{ header: "Manage Activity Master Data Type", subheader: "", footer: "", numberValue: "15", valueColor: "Critical", icon: "sap-icon://activities" },
 				{ type: "card", rows: 2, columns: 2, manifest: "manifests>/listContent/smallList" },
@@ -154,7 +167,7 @@ sap.ui.define([
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/analyticalContent/stackedBar" }
 			]));
 
-			this.byId("grid5").setModel(new JSONModel([
+			this.byId("grid7").setModel(new JSONModel([
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/listContent/smallList" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/listContent/mediumList" },
 				{ type: "card", rows: 4, columns: 4, manifest: "manifests>/listContent/largeList" },

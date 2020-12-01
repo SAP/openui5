@@ -21,7 +21,6 @@ sap.ui.define([
 	"sap/ui/integration/cards/Header",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/model/json/JSONModel",
-	"sap/f/dnd/GridKeyboardDragAndDrop",
 	"sap/f/dnd/GridDragOver"
 ],
 function (
@@ -45,7 +44,6 @@ function (
 	Header,
 	IntegrationCard,
 	JSONModel,
-	GridKeyboardDragAndDrop,
 	GridDragOver
 ) {
 	"use strict";
@@ -54,15 +52,8 @@ function (
 	var NavigationDirection = library.NavigationDirection;
 
 	var DOM_RENDER_LOCATION = "qunit-fixture",
-		bIsGridSupported = !Device.browser.msie;
+		bIsGridSupported = GridContainerUtils.isGridSupportedByBrowser();
 
-	function createFakeKeydownEvent (sType) {
-		var oEvent = new jQuery.Event("sapincreasemodifiers");
-
-		oEvent.originalEvent = new jQuery.Event("keydown");
-
-		return oEvent;
-	}
 	var oIntegrationCardManifest = {
 		"sap.card": {
 			"type": "List",
@@ -644,16 +635,6 @@ function (
 		// Assert
 		assert.strictEqual(oItem1.$().parent().height(), iExpectedHeight, "Card height is equal to minRows.");
 		assert.strictEqual(oItem1.$().parent().height(), iExpectedHeight, "Tile height is equal to minRows.");
-	});
-
-	QUnit.module("Layout settings", {
-		beforeEach: function () {
-			this.oGrid = new GridContainer();
-			this.oGrid.placeAt(DOM_RENDER_LOCATION);
-		},
-		afterEach: function () {
-			this.oGrid.destroy();
-		}
 	});
 
 	QUnit.module("Layout settings basics");
@@ -1705,63 +1686,6 @@ function (
 		oItemWrapperFocusSpy.restore();
 	});
 
-	QUnit.module("Keyboard Drag&Drop into an empty GridContainer");
-
-	QUnit.test("Simulate Keyboard Drag&Drop into an empty container", function (assert) {
-
-		// Arrange
-		var oDropSpy1 = sinon.spy(),
-			oDropSpy2 = sinon.spy(),
-			oDraggedControl = new GenericTile({
-				header: "Tile 1",
-				layoutData: new GridContainerItemLayoutData({ columns: 1, rows: 1 })
-			}),
-			oDragContainer = new GridContainer({
-				items: [
-					oDraggedControl
-				],
-				dragDropConfig: [
-					new DragInfo({
-						sourceAggregation: "items"
-					}),
-					new GridDropInfo({
-						targetAggregation: "items",
-						dropPosition: "Between",
-						dropLayout: "Horizontal",
-						drop: oDropSpy1
-					})
-				]
-			}),
-
-			oDropContainer = new GridContainer({
-				items: [
-				],
-				dragDropConfig: [
-					new GridDropInfo({
-						targetAggregation: "items",
-						dropPosition: "Between",
-						dropLayout: "Horizontal",
-						drop: oDropSpy2
-					})
-				]
-			});
-
-		oDragContainer.placeAt(DOM_RENDER_LOCATION);
-		oDropContainer.placeAt(DOM_RENDER_LOCATION);
-		Core.applyChanges();
-
-		// Act
-		GridKeyboardDragAndDrop.fireDnDByKeyboard(oDraggedControl, oDropContainer, "Before", createFakeKeydownEvent());
-
-		// Assert
-		assert.ok(oDropSpy1.notCalled, "Drop event is NOT fired on the wrong container");
-		assert.ok(oDropSpy2.called, "Drop event is fired on the correct container");
-
-		// Clean up
-		oDragContainer.destroy();
-		oDropContainer.destroy();
-	});
-
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer({
@@ -1858,7 +1782,7 @@ function (
 	QUnit.test("Grid matrix should not include items with visible=false", function (assert) {
 		// Arrange
 		var oInvisibleItem = this.oGrid.getItems()[0].setVisible(false),
-			oItemWrapper = this.oGrid.getItemWrapper(oInvisibleItem),
+			oItemWrapper = GridContainerUtils.getItemWrapper(oInvisibleItem),
 			aMatrix = GridContainerUtils.makeMatrix(this.oGrid),
 
 			bExists = aMatrix.some(function (aRow) {

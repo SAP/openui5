@@ -16,7 +16,7 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 	 * @since 1.81
 	 */
 
-	var GridDnD = {};
+	var GridKeyboardDnD = {};
 
 	function createDragSession(oEvent, oDraggedControl, oDroppedControl, sDropPosition) {
 		// provide only a minimal set of sap.ui.core.dnd.DragSession capabilities, in order to make internal calculations
@@ -101,42 +101,59 @@ sap.ui.define(["sap/ui/thirdparty/jquery"], function(jQuery) {
 		});
 	}
 
-	GridDnD.fireDnDByKeyboard = function (oDraggedControl, oDroppedControl, sDropPosition, oEvent) {
-		var aValidDragInfos = getValidDragInfos(oDraggedControl);
-
-		oEvent.dragSession = createDragSession(
-			oEvent,
-			oDraggedControl,
-			oDroppedControl.isA("sap.f.GridContainer") ? null : oDroppedControl,
-			sDropPosition
-		);
-
-		if (!aValidDragInfos.length) {
-			return;
-		}
-
-		// fire dragstart event of valid DragInfos and filter if preventDefault is called
-		aValidDragInfos = oEvent.isMarked("NonDraggable") ? [] : aValidDragInfos.filter(function(oDragInfo) {
+	GridKeyboardDnD._filterDragInfos = function (aValidDragInfos, oEvent) {
+		return aValidDragInfos.filter(function(oDragInfo) {
 			return oDragInfo.fireDragStart(oEvent);
-		});
-
-		// check whether drag is possible
-		if (!aValidDragInfos.length) {
-			return;
-		}
-
-		var oDroppedContainerControl = oDroppedControl.isA("sap.f.GridContainer") ? oDroppedControl : oDroppedControl.getParent();
-		var aValidDropInfos = getValidDropInfos(oDroppedContainerControl, aValidDragInfos, oEvent);
-
-		// fire dragenter event of valid DropInfos and filter if preventDefault is called
-		aValidDropInfos = aValidDropInfos.filter(function(oDropInfo) {
-			return oDropInfo.fireDragEnter(oEvent);
-		});
-
-		aValidDropInfos.forEach(function (oDropConfig) {
-			oDropConfig.fireDrop(oEvent);
 		});
 	};
 
-	return GridDnD;
+	GridKeyboardDnD._filterDropInfos = function (aValidDropInfos, oEvent) {
+		return aValidDropInfos.filter(function(oDropInfo) {
+			return oDropInfo.fireDragEnter(oEvent);
+		});
+	};
+
+	GridKeyboardDnD._fireDrop = function (aDropInfos, oEvent) {
+		aDropInfos.forEach(function (oDropInfo) {
+			oDropInfo.fireDrop(oEvent);
+		});
+	};
+
+	GridKeyboardDnD.fireDnD = function (oDraggedControl, aConfigs, oEvent) {
+		var aValidDragInfos = getValidDragInfos(oDraggedControl);
+
+		if (!aValidDragInfos.length) {
+			return;
+		}
+
+		for (var i = 0; i < aConfigs.length; i++) {
+			oEvent.dragSession = createDragSession(
+				oEvent,
+				oDraggedControl,
+				aConfigs[i].item,
+				aConfigs[i].dropPosition
+			);
+
+			// fire dragstart event of valid DragInfos and filter if preventDefault is called
+			aValidDragInfos = oEvent.isMarked("NonDraggable") ? [] : this._filterDragInfos(aValidDragInfos, oEvent);
+
+			// check whether drag is possible
+			if (!aValidDragInfos.length) {
+				continue;
+			}
+
+			// check if we can drop into that container
+			var aValidDropInfos = getValidDropInfos(aConfigs[i].grid, aValidDragInfos, oEvent);
+
+			// fire dragenter event of valid DropInfos and filter if preventDefault is called
+			aValidDropInfos = this._filterDropInfos(aValidDropInfos, oEvent);
+
+			if (aValidDropInfos.length > 0) {
+				this._fireDrop(aValidDropInfos, oEvent);
+				break;
+			}
+		}
+	};
+
+	return GridKeyboardDnD;
 }, /* bExport= */ true);
