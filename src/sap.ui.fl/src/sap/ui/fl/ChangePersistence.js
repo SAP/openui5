@@ -561,6 +561,15 @@ sap.ui.define([
 		this._deleteNotSavedChanges(aAllChanges, aCondensedChanges);
 	}
 
+	function getAllRelevantChangesForCondensing(aPassedChanges) {
+		var aDirtyChanges = aPassedChanges || this._aDirtyChanges;
+		var sLayer = aDirtyChanges[0].getLayer();
+		var aPersistedAndSameLayerChanges = this._mChanges.aChanges.filter(function(oChange) {
+			return oChange.getState() === Change.states.PERSISTED && LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sLayer) === 0;
+		});
+		return aPersistedAndSameLayerChanges.concat(aDirtyChanges);
+	}
+
 	/**
 	 * Saves the passed or all dirty changes by calling the appropriate back-end method (create for new changes, deleteChange for deleted changes);
 	 * to ensure the correct order, the methods are called sequentially;
@@ -580,7 +589,7 @@ sap.ui.define([
 		var bBackendCondensingEnabled = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().isCondensingEnabled();
 		var bIsCondensingEnabled = false;
 		if (bBackendCondensingEnabled) {
-			aAllChanges = aChanges || this._mChanges.aChanges;
+			aAllChanges = getAllRelevantChangesForCondensing.call(this, aChanges);
 			bIsCondensingEnabled = shouldCondensingBeEnabled(oAppComponent, aAllChanges);
 		}
 		if (bIsCondensingEnabled) {
@@ -594,7 +603,7 @@ sap.ui.define([
 		var aRequests = this._getRequests(aDirtyChanges);
 		var aPendingActions = this._getPendingActions(aDirtyChanges);
 
-		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === "NEW") {
+		if (aPendingActions.length === 1 && aRequests.length === 1 && aPendingActions[0] === Change.states.NEW) {
 			var oCondensedChangesPromise = Promise.resolve(aChangesClone);
 			if (shouldCondensingBeEnabled(oAppComponent, aChangesClone)) {
 				oCondensedChangesPromise = Condenser.condense(oAppComponent, aChangesClone);
