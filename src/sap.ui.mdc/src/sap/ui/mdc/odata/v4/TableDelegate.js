@@ -45,7 +45,7 @@ sap.ui.define([
 			loadModules("sap/ui/mdc/table/V4AnalyticsPropertyHelper")
 		]).then(function(aResult) {
 			return Promise.all(aResult.concat(this.fetchPropertyExtensions(oTable, aResult[0])));
-		}).bind(this).then(function(aResult) {
+		}.bind(this)).then(function(aResult) {
 			var aProperties = aResult[0];
 			var PropertyHelper = aResult[1][0];
 			var mExtensions = aResult[2];
