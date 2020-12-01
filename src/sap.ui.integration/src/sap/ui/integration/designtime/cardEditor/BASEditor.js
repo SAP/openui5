@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/merge",
 	"sap/base/util/deepClone",
+	"sap/base/util/deepEqual",
 	"sap/base/util/ObjectPath",
 	"./CardEditor",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
@@ -20,6 +21,7 @@ sap.ui.define([
 	_omit,
 	merge,
 	deepClone,
+	deepEqual,
 	ObjectPath,
 	CardEditor,
 	BaseEditor,
@@ -102,7 +104,7 @@ sap.ui.define([
 			if (oJson) {
 				//parameters content changed added, removed
 				var mParametersInDesigntime = ObjectPath.get(["sap.card", "configuration", "parameters"], this._oDesigntimeMetadataModel.getData());
-				if (mParameters === {} && !mParametersInDesigntime) {
+				if (deepEqual(mParameters, {}) && !mParametersInDesigntime) {
 					this._oDesigntimeJSConfig.form.items = {};
 					this._oCurrent = {
 						configuration: this._cleanConfig(this._oDesigntimeJSConfig),

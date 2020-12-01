@@ -77,7 +77,7 @@ sap.ui.define([
 		var bAllowDynamicValues = (oConfigValue.value.allowDynamicValues || vItemMetadata.allowDynamicValues) === true;
 		var oVisualization = oConfigValue.value.visualization || vItemMetadata.visualization;
 		var oValues = oConfigValue.value.values || vItemMetadata.values;
-		var sLabel = vItemMetadata.label;
+		var sLabel = oConfigValue.value.label || vItemMetadata.label;
 		//var oTemplate = oConfigValue.value.template || vItemMetadata.template || {};
 /*
 		if (sType === "array") {
