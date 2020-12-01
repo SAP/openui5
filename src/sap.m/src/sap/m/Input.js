@@ -2223,16 +2223,15 @@ function(
 
 			this._oSuggestionTable.addEventDelegate({
 				onAfterRendering: function () {
-					var aTableCellsDomRef, sInputValue;
+					var aTableCellsDomRef;
 
 					if (!this.getEnableSuggestionsHighlighting()) {
 						return;
 					}
 
 					aTableCellsDomRef = this._oSuggestionTable.$().find('tbody .sapMLabel');
-					sInputValue = this.getValue().toLowerCase();
 
-					highlightDOMElements(aTableCellsDomRef, sInputValue);
+					highlightDOMElements(aTableCellsDomRef, this._sTypedInValue);
 				}
 			}, this);
 
