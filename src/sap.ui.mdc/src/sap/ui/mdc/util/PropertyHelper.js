@@ -586,6 +586,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the array of raw property infos.
+	 *
+	 * @returns {Array|null} the array of propertyInfos
+	 * @public
+	 */
+	PropertyHelper.prototype.getRawPropertyInfos = function() {
+		var mPrivate = _private.get(this);
+		return mPrivate && mPrivate.aProperties;
+	};
+
+	/**
 	 * Gets the raw property by its name.
 	 *
 	 * @param {string} sName Name of a property

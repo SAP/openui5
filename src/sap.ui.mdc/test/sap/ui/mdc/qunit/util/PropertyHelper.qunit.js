@@ -1104,6 +1104,84 @@ sap.ui.define([
 		oPropertyHelper.destroy();
 	});
 
+	QUnit.test("Clone property infos and add default values", function(assert) {
+		var oStringType = new StringType();
+		var aPropertyInfos = [{
+			name: "prop",
+			label: "prop",
+			exportSettings: {
+				label: "exportLabel",
+				width: 10
+			},
+			typeConfig: {
+				baseType: "String",
+				className: "sap.ui.model.type.String",
+				typeInstance: oStringType
+			},
+			extension: {
+				foo: {
+					bar: {myAttr: 2},
+					baz: ["something"]
+				}
+			}
+		}, {
+			name: "complexProperty",
+			label: "Complex property",
+			propertyInfos: ["prop"],
+			extension: {}
+		}];
+		var aEnrichedPropertyInfos = [{
+			name: "prop",
+			label: "prop",
+			exportSettings: {
+				label: "exportLabel",
+				width: 10
+			},
+			typeConfig: {
+				baseType: "String",
+				className: "sap.ui.model.type.String",
+				typeInstance: oStringType
+			},
+			extension: {
+				foo: {
+					bar: {myAttr: 2},
+					baz: ["something"]
+				}
+			},
+			key: false,
+			visible: true,
+			filterable: true,
+			sortable: true,
+			groupable: false,
+			unit: "",
+			groupLabel: "",
+			maxConditions: -1,
+			fieldHelp: "",
+			path: "prop"
+		}, {
+			name: "complexProperty",
+			label: "Complex property",
+			propertyInfos: ["prop"],
+			extension: {},
+			visible: true,
+			groupLabel: "",
+			exportSettings: null
+		}];
+		var oPropertyHelper = new PropertyHelper(aPropertyInfos, null, {
+			foo: {
+				type: {
+					bar: {type: "object"},
+					baz: {type: "string[]"}
+				}
+			}
+		});
+
+		assert.equal(JSON.stringify(aEnrichedPropertyInfos), JSON.stringify(oPropertyHelper.getRawPropertyInfos()), "propertyInfos are enriched with default values");
+
+		oStringType.destroy();
+		oPropertyHelper.destroy();
+	});
+
 	QUnit.test("Changing original property infos", function(assert) {
 		var aPropertyInfos = [{
 			name: "prop",

@@ -128,6 +128,16 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks if a propertyInfo corresponds to an aggregatable property.
+	 *
+	 * @param {object} oPropertyInfo the propoerty info
+	 * @returns {boolean} true if the propertyInfo corresponds to an aggregatable property, false otherwise
+	 */
+	V4Aggregation.prototype.isPropertyAggregatable = function(oPropertyInfo) {
+		return (oPropertyInfo.extension && oPropertyInfo.extension.defaultAggregate) ? true : false;
+	};
+
+	/**
 	 * Sets aggregation info and derives the query options to be passed to the table list binding.
 	 *
 	 * @param {object} oAggregateInfo An object holding the information needed for data aggregation
@@ -159,27 +169,26 @@ sap.ui.define([
 					this._mGroup[oPropertyInfo.path] = {};
 				}
 
-				if (oPropertyInfo && oPropertyInfo.aggregatable) {
+				if (oPropertyInfo && this.isPropertyAggregatable(oPropertyInfo)) {
 					this._mAggregate[oPropertyInfo.path] = {
 						grandTotal: oAggregateInfo.grandTotal && (oAggregateInfo.grandTotal.indexOf(sVisiblePropertyName) >= 0),
 						subtotals: oAggregateInfo.subtotals && (oAggregateInfo.subtotals.indexOf(sVisiblePropertyName) >= 0)
 					};
 
-					if (oPropertyInfo.aggregationDetails) {
-						if (oPropertyInfo.aggregationDetails.defaultMethod && oPropertyInfo.aggregationDetails.defaultMethod.unit) {
-							var oUnitPropertyInfo = this.findPropertyInfo(oPropertyInfo.aggregationDetails.defaultMethod.unit);
-							if (oUnitPropertyInfo) {
-								this._mAggregate[oPropertyInfo.path].unit = oUnitPropertyInfo.path;
+					if (oPropertyInfo.unit) {
+						var oUnitPropertyInfo = this.findPropertyInfo(oPropertyInfo.unit);
+						if (oUnitPropertyInfo) {
+							this._mAggregate[oPropertyInfo.path].unit = oUnitPropertyInfo.path;
+						}
+					}
+
+					if (oPropertyInfo.extension.defaultAggregate.contextDefiningProperties) {
+						oPropertyInfo.extension.defaultAggregate.contextDefiningProperties.forEach(function(sContextDefiningPropertyName) {
+							var oDefiningPropertyInfo = this.findPropertyInfo(sContextDefiningPropertyName);
+							if (oDefiningPropertyInfo && (oDefiningPropertyInfo.groupable || oDefiningPropertyInfo.key)) {
+								this._mGroup[oDefiningPropertyInfo.path] = {};
 							}
-						}
-						if (oPropertyInfo.aggregationDetails.contextDefiningProperties) {
-							oPropertyInfo.aggregationDetails.contextDefiningProperties.forEach(function(sContextDefiningPropertyName) {
-								var oDefiningPropertyInfo = this.findPropertyInfo(sContextDefiningPropertyName);
-								if (oDefiningPropertyInfo && oDefiningPropertyInfo.groupable) {
-									this._mGroup[oDefiningPropertyInfo.path] = {};
-								}
-							}.bind(this));
-						}
+						}.bind(this));
 					}
 				}
 			}.bind(this));

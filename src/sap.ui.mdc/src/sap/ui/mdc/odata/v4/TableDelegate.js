@@ -97,17 +97,18 @@ sap.ui.define([
 			oTable.awaitPropertyHelper(),
 			loadModules("sap/ui/table/plugins/V4Aggregation")
 		]).then(function(aResult) {
-			//var oPropertyHelper = oTable.getPropertyHelper();
-			var V4AggregationPlugin = aResult[1][0];
-			var oInnerTable = oTable._oTable;
-			var oPlugin = new V4AggregationPlugin();
-
-			// TODO: configure the plugin
+			var oPropertyHelper = oTable.getPropertyHelper(),
+				V4AggregationPlugin = aResult[1][0],
+				oInnerTable = oTable._oTable,
+				oPlugin = new V4AggregationPlugin();
 
 			oInnerTable.addDependent(oPlugin);
 			TableMap.set(oTable, {
 				plugin: oPlugin
 			});
+
+			// Configure the plugin with the propertyInfos
+			oPlugin.setPropertyInfos(oPropertyHelper.getRawPropertyInfos());
 		});
 	}
 
