@@ -13,7 +13,7 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function(BaseDelegate) {
 	 * @experimental As of version 1.74
 	 * @since 1.74
 	 * @alias sap.ui.mdc.LinkDelegate
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	var LinkDelegate = Object.assign({}, BaseDelegate, {
 		/**

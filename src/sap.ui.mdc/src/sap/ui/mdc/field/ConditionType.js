@@ -47,7 +47,7 @@ sap.ui.define([
 	 * @since 1.62.0
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 *
 	 * @param {object} [oFormatOptions] Formatting options
 	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting and parsing)

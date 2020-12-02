@@ -16,7 +16,7 @@ sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDe
 	 * @private
 	 * @ui5-restricted sap.fe
 	 * @experimental As of version 1.61.0
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.61.0
 	 * @alias sap.ui.mdc.FilterBarDelegate
 	 */

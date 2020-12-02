@@ -33,7 +33,7 @@ sap.ui.define(
 		 * @author SAP SE
 		 * @version ${version}
 		 * @constructor
-		 * @protected
+		 * @private
 		 * @since 1.84.0
 		 * @alias sap.ui.mdc.filterbar.vh.FilterBar
 		 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
