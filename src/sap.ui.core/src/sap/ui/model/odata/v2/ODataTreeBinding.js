@@ -4,43 +4,27 @@
 
 // Provides the OData model implementation of a tree binding
 sap.ui.define([
-	'sap/ui/model/TreeBinding',
-	'sap/ui/model/odata/CountMode',
+	"sap/base/assert",
+	"sap/base/Log",
+	"sap/base/util/includes",
+	"sap/base/util/isEmptyObject",
 	'sap/ui/model/ChangeReason',
+	'sap/ui/model/Context',
 	'sap/ui/model/Filter',
-	'sap/ui/model/Sorter',
-	'sap/ui/model/odata/ODataUtils',
-	'sap/ui/model/TreeBindingUtils',
-	'sap/ui/model/odata/OperationMode',
-	'sap/ui/model/SorterProcessor',
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/FilterType',
-	'sap/ui/model/Context',
-	"sap/base/Log",
-	"sap/base/assert",
-	"sap/ui/thirdparty/jquery",
-	"sap/base/util/isEmptyObject"
-],
-	function(
-		TreeBinding,
-		CountMode,
-		ChangeReason,
-		Filter,
-		Sorter,
-		ODataUtils,
-		TreeBindingUtils,
-		OperationMode,
-		SorterProcessor,
-		FilterProcessor,
-		FilterType,
-		Context,
-		Log,
-		assert,
-		jQuery,
-		isEmptyObject
-	) {
+	'sap/ui/model/Sorter',
+	'sap/ui/model/SorterProcessor',
+	'sap/ui/model/TreeBinding',
+	'sap/ui/model/TreeBindingUtils',
+	'sap/ui/model/odata/CountMode',
+	'sap/ui/model/odata/ODataUtils',
+	'sap/ui/model/odata/OperationMode',
+	"sap/ui/thirdparty/jquery"
+], function(assert, Log, includes, isEmptyObject, ChangeReason, Context, Filter, FilterProcessor,
+		FilterType, Sorter, SorterProcessor, TreeBinding, TreeBindingUtils, CountMode, ODataUtils,
+		OperationMode, jQuery) {
 	"use strict";
-
 
 	/**
 	 *
@@ -1536,17 +1520,7 @@ sap.ui.define([
 				}
 			}
 			if (mChangedEntities && !bChangeDetected) {
-				jQuery.each(this.oKeys, function(i, aNodeKeys) {
-					jQuery.each(aNodeKeys, function(i, sKey) {
-						if (sKey in mChangedEntities) {
-							bChangeDetected = true;
-							return false;
-						}
-					});
-					if (bChangeDetected) {
-						return false;
-					}
-				});
+				bChangeDetected = this._hasChangedEntity(mChangedEntities);
 			}
 			if (!mChangedEntities && !mEntityTypes) { // default
 				bChangeDetected = true;
@@ -1558,6 +1532,31 @@ sap.ui.define([
 			this.bRefresh = true;
 			this._fireRefresh({reason: ChangeReason.Refresh});
 		}
+	};
+
+	/**
+	 * Checks whether an entry of <code>this.oKeys</code> matches an entry of
+	 * <code>mChangedEntities</code>.
+	 *
+	 * @param {Object<string,boolean>} mChangedEntities
+	 *   Maps the key of a changed entity to <code>true</code>
+	 * @return {boolean}
+	 *   Whether at least one entry matches
+	 *
+	 * @private
+	 */
+	ODataTreeBinding.prototype._hasChangedEntity = function (mChangedEntities) {
+		var sChangedEntityKey, sNodeKey;
+
+		for (sNodeKey in this.oKeys) {
+			for (sChangedEntityKey in mChangedEntities) {
+				if (includes(this.oKeys[sNodeKey], sChangedEntityKey)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
 	};
 
 	/**

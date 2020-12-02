@@ -1560,8 +1560,11 @@ sap.ui.define([
 			var oNewParent = oBinding.findNode(6);
 			oBinding.addContexts(oNewParent.context, [oNode.context]);
 
-			oBinding.attachChange(handler3);
-			oBinding.submitChanges();
+			oBinding.submitChanges({
+				success : function () {
+					oBinding.attachChange(handler3);
+				}
+			});
 		}
 
 		function handler3() {
@@ -1605,8 +1608,11 @@ sap.ui.define([
 			var oNewParent = oBinding.findNode(13);
 			oBinding.addContexts(oNewParent.context, [oNode.context]);
 
-			oBinding.attachChange(handler2);
-			oBinding.submitChanges();
+			oBinding.submitChanges({
+				success : function () {
+					oBinding.attachChange(handler2);
+				}
+			});
 		}
 
 		function handler2() {
@@ -1675,8 +1681,11 @@ sap.ui.define([
 			var oNewParent = oBinding.findNode(1);
 			oBinding.addContexts(oNewParent.context, [oNode.context]);
 
-			oBinding.attachChange(handler6);
-			oBinding.submitChanges();
+			oBinding.submitChanges({
+				success : function () {
+					oBinding.attachChange(handler6);
+				}
+			});
 		}
 
 		function handler6() {

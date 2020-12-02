@@ -195,6 +195,19 @@ sap.ui.define([
 	}
 
 	/**
+	 * Creates a V2 OData model for special cases.
+	 *
+	 * @param {object} [mModelParameters]
+	 *   Map of parameters for model construction. The default parameters are set in the createModel
+	 *   function.
+	 * @returns {sap.ui.model.odata.v2.ODataModel}
+	 *   The model
+	 */
+	function createSpecialCasesModel(mModelParameters) {
+		return createModel("/special/cases/", mModelParameters);
+	}
+
+	/**
 	 * Gets a string representation of the given messages to be used in "sap-message" response
 	 * header. In case of multiple messages, the first message is the outer message and the other
 	 * messages are stored as inner messages in the "details" property.
@@ -384,7 +397,9 @@ sap.ui.define([
 				"/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT/$metadata"
 					: {source : "model/RMTSAMPLEFLIGHT.withMessageScope.metadata.xml"},
 				"/sap/opu/odata/sap/UI_C_DFS_ALLWNCREQ/$metadata"
-					: {source : "odata/v2/data/UI_C_DFS_ALLWNCREQ.metadata.xml"}
+					: {source : "odata/v2/data/UI_C_DFS_ALLWNCREQ.metadata.xml"},
+				"/special/cases/$metadata"
+					: {source : "odata/v2/data/metadata_special_cases.xml"}
 			});
 			this.oLogMock = this.mock(Log);
 			this.oLogMock.expects("warning").never();
@@ -1253,6 +1268,19 @@ sap.ui.define([
 				this.mChanges[sControlId].every(function (vValue) {
 					return vValue === null;
 				});
+		},
+
+		/**
+		 * Allows that the property "text" of the control with the given ID is set to undefined or
+		 * null. This may happen when bindings are initialized before the model value is available.
+		 *
+		 * @param {string} sControlId The control ID
+		 * @returns {object} The test instance for chaining
+		 */
+		ignoreNullChanges : function (sControlId) {
+			this.mIgnoredChanges[sControlId] = true;
+
+			return this;
 		},
 
 		/**
@@ -7063,6 +7091,91 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectChange("orgID", ["4711"]);
 
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: TreeTable using ODataTreeBindingFlat reads automatically an updated entity when
+	// binding parameter 'refreshAfterChange' is enabled. With refreshAfterChange set to true, a
+	// MERGE request is followed by a GET request within the same batch request.
+	// BCP: 2070497030
+	// JIRA: CPOUI5MODELS-379
+	QUnit.test("ODataTreeBindingFlat: refreshAfterChange leads to GET", function (assert) {
+		var oModel = createSpecialCasesModel({refreshAfterChange : true, useBatch : true}),
+			sView = '\
+<t:TreeTable id="table"\
+		rows="{\
+			parameters : {\
+				countMode : \'Inline\',\
+				gantt : {\
+					rowIdName : \'OrderOperationRowID\'\
+				},\
+				treeAnnotationProperties : {\
+					hierarchyDrillStateFor : \'OrderOperationIsExpanded\',\
+					hierarchyLevelFor : \'OrderOperationRowLevel\',\
+					hierarchyNodeDescendantCountFor : \'HierarchyDescendantCount\',\
+					hierarchyNodeFor : \'OrderOperationRowID\',\
+					hierarchyParentNodeFor : \'OrderOperationParentRowID\'\
+				}\
+			},\
+			path : \'/C_RSHMaintSchedSmltdOrdAndOp\'\
+		}"\
+		visibleRowCount="1"\
+		visibleRowCountMode="Fixed" \>\
+	<Text id="maintenanceOrder" text="{MaintenanceOrder}" />\
+</t:TreeTable>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest({
+				batchNo : 1,
+				deepPath : "/C_RSHMaintSchedSmltdOrdAndOp",
+				method : "GET",
+				requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=101&$inlinecount=allpages"
+					+ "&$filter=OrderOperationRowLevel%20le%200"
+			}, {
+				__count : "1",
+				results : [{
+					__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('~0~')"},
+					MaintenanceOrder : "Foo"
+				}]
+			})
+			.ignoreNullChanges("maintenanceOrder") //FIXME: unexpected change occurring in testsuite
+			.expectChange("maintenanceOrder", ["Foo"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest({
+					batchNo : 2,
+					data : {
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('~0~')"},
+						MaintenanceOrder : "Bar"
+					},
+					deepPath : "/C_RSHMaintSchedSmltdOrdAndOp('~0~')",
+					headers : {},
+					key : "C_RSHMaintSchedSmltdOrdAndOp('~0~')",
+					method : "MERGE",
+					requestUri : "C_RSHMaintSchedSmltdOrdAndOp('~0~')"
+				}, NO_CONTENT)
+				.expectRequest({
+					batchNo : 2,
+					deepPath : "/C_RSHMaintSchedSmltdOrdAndOp",
+					method : "GET",
+					requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=101"
+						+ "&$inlinecount=allpages&$filter=OrderOperationRowLevel%20le%200"
+				}, {
+					__count : "1",
+					results : [{
+						__metadata : {uri : "C_RSHMaintSchedSmltdOrdAndOp('~0~')"},
+						MaintenanceOrder : "Bar"
+					}]
+				})
+				.expectChange("maintenanceOrder", ["Bar"]);
+
+			// code under test
+			oModel.setProperty("/C_RSHMaintSchedSmltdOrdAndOp('~0~')/MaintenanceOrder", "Bar");
+			oModel.submitChanges();
+
+			return that.waitForChanges(assert);
+		});
 	});
 
 	//*********************************************************************************************
