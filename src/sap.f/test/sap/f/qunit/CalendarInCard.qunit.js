@@ -38,7 +38,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.equal(oMonthPicker.$().css("display"), "none", "MonthPicker is not visible after triggering navigation");
-		assert.equal(oYearPicker.$().css("display"), "block", "YearPicker is visible after triggering navigation");
+		assert.notEqual(oYearPicker.$().css("display"), "none", "YearPicker is visible after triggering navigation");
 		assert.equal(oPickerBtn.getText(), "2009 - 2028", "picker text is correct");
 
 		// Act
@@ -46,7 +46,7 @@ sap.ui.define([
 		// Assert
 		assert.equal(oMonthPicker.$().css("display"), "none", "MonthPicker is not visible after triggering navigation");
 		assert.equal(oYearPicker.$().css("display"), "none", "YearPicker is not visible after triggering navigation");
-		assert.equal(oYearRangePicker.$().css("display"), "block", "YearRangePicker is visible after triggering navigation");
+		assert.notEqual(oYearRangePicker.$().css("display"), "none", "YearRangePicker is visible after triggering navigation");
 		assert.notOk(oPickerBtn.getVisible(), "picker button is not visible");
 	});
 
@@ -68,7 +68,7 @@ sap.ui.define([
 		oYearRangePicker.fireSelect();
 		// Assert
 		assert.equal(oMonthPicker.$().css("display"), "none", "MonthPicker is not visible after selecting year range");
-		assert.equal(oYearPicker.$().css("display"), "block", "YearPicker is visible after selecting year range");
+		assert.notEqual(oYearPicker.$().css("display"), "none", "YearPicker is visible after selecting year range");
 		assert.equal(oYearRangePicker.$().css("display"), "none", "YearRangePicker is not visible after selecting year range");
 		assert.equal(oCalendar.getSelectedDates()[0].getStartDate().getFullYear(), 2009, "year set correct");
 		assert.ok(oPickerBtn.getVisible(), "picker button is visible");
@@ -78,7 +78,7 @@ sap.ui.define([
 		oYearPicker.setYear(2018);
 		oYearPicker.fireSelect();
 		// Assert
-		assert.equal(oMonthPicker.$().css("display"), "block","MonthPicker is visible after selecting year");
+		assert.notEqual(oMonthPicker.$().css("display"), "none","MonthPicker is visible after selecting year");
 		assert.equal(oYearPicker.$().css("display"), "none", "YearPicker is not visible after selecting year");
 		assert.equal(oYearRangePicker.$().css("display"), "none", "YearRangePicker is not visible after selecting year");
 		assert.equal(oCalendar.getSelectedDates()[0].getStartDate().getFullYear(), 2018, "year set correct");
