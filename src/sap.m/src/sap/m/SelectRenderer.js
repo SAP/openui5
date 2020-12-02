@@ -157,7 +157,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			oRm.write("<label");
 			oRm.writeAttribute("id", oSelect.getId() + "-label");
 			oRm.writeAttribute("for", oSelect.getId());
-			oRm.writeAttribute("aria-live", "polite");
 			oRm.addClass(CSS_CLASS + "Label");
 
 			if (oSelect.getValueState() !== ValueState.None) {

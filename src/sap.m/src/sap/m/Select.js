@@ -374,6 +374,42 @@ function(
 			}
 		}
 
+		var oAnnounceInstance = null;
+
+		/**
+		 * @return {string} Returns the span to be rendered for the assertive instance.
+		 * @private
+		 * @function
+		 */
+		function fnGetAssertiveInstance() {
+			var sId = "_sapMSltAnnounceMessage-assertive";
+
+			return '<span id="' + sId + '" data-sap-ui="' + sId +
+					'" class="sapUiAnnounceMessageAssertive" role="status" aria-live="assertive">' +
+					'</span>';
+		}
+
+		function fnGetAnnounceInstance() {
+			var oCore = sap.ui.getCore(),
+				oStatic = oCore.getStaticAreaRef(),
+				oNode;
+
+			if (!oAnnounceInstance) {
+				oStatic.insertAdjacentHTML("beforeend", fnGetAssertiveInstance());
+
+				oAnnounceInstance = {
+					announce: function (sText) {
+						oNode = oStatic.querySelector(".sapUiAnnounceMessageAssertive");
+
+						oNode.textContent = "";
+						oNode.textContent = sText;
+					}
+				};
+			}
+
+			return oAnnounceInstance;
+		}
+
 		Select.prototype._handleFocusout = function(oEvent) {
 			this._bFocusoutDueRendering = this.bRenderingPhase;
 
@@ -579,6 +615,10 @@ function(
 		 */
 		Select.prototype.setValue = function(sValue) {
 			this.$("label").text(sValue);
+
+			if (this._bFocused && !this.isOpen()) {
+				this._oAnnounceInstance.announce(sValue);
+			}
 		};
 
 		/**
@@ -674,8 +714,7 @@ function(
 		 */
 		Select.prototype.onAfterOpen = function(oControlEvent) {
 			var oDomRef = this.getFocusDomRef(),
-				oItem = null,
-				$oLabel = this.$("label");
+				oItem = null;
 
 			if (!oDomRef) {
 				return;
@@ -683,10 +722,6 @@ function(
 
 			oItem = this.getSelectedItem();
 			oDomRef.setAttribute("aria-expanded", "true");
-
-			// Needs to be removed while popover is opened. Otherwise when going through the items, the currently
-			// selected item would be read out for a second time due to this label's update.
-			$oLabel.attr("aria-live", null);
 
 			// expose a parent/child contextual relationship to assistive technologies
 			// note: the "aria-owns" attribute is set when the list is visible and in view
@@ -735,15 +770,11 @@ function(
 		Select.prototype.onAfterClose = function(oControlEvent) {
 			var oDomRef = this.getFocusDomRef(),
 				CSS_CLASS = this.getRenderer().CSS_CLASS,
-				sPressedCSSClass = CSS_CLASS + "Pressed",
-				$oLabel = this.$("label");
+				sPressedCSSClass = CSS_CLASS + "Pressed";
 
 			if (oDomRef) {
 				oDomRef.setAttribute("aria-expanded", "false");
 				oDomRef.removeAttribute("aria-activedescendant");
-
-				// Add it back, because we want to hear updates when going through the items, while the popover is closed
-				$oLabel.attr("aria-live", "polite");
 			}
 
 			// Remove the active state
@@ -978,9 +1009,15 @@ function(
 
 			// delegate object used to open/close value state message popups
 			this._oValueStateMessage = new ValueStateMessage(this);
+
+			this._bFocused = false;
 		};
 
 		Select.prototype.onBeforeRendering = function() {
+
+			if (!this._oAnnounceInstance) {
+				this._oAnnounceInstance = fnGetAnnounceInstance();
+			}
 
 			// rendering phase is started
 			this.bRenderingPhase = true;
@@ -1465,6 +1502,7 @@ function(
 		 * @private
 		 */
 		Select.prototype.onfocusin = function(oEvent) {
+			this._bFocused = true;
 
 			if (!this._bFocusoutDueRendering && !this._bProcessChange) {
 				this._oSelectionOnFocus = this.getSelectedItem();
@@ -1494,6 +1532,8 @@ function(
 		 * @private
 		 */
 		Select.prototype.onfocusout = function(oEvent) {
+			this._bFocused = false;
+
 			this._handleFocusout(oEvent);
 
 			if (this.bRenderingPhase) {

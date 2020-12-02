@@ -6229,7 +6229,6 @@ sap.ui.define([
 				}
 
 				assert.strictEqual(oSelect.getDomRef().getAttribute("aria-expanded"), "false");
-				assert.strictEqual(oSelect.$("label").attr("aria-live"), "polite");
 
 				// cleanup
 				oSelect.destroy();
@@ -8755,35 +8754,18 @@ sap.ui.define([
 			oDisabledSelect.destroy();
 		});
 
-		QUnit.test("Hidden label's aria-live", function (assert) {
-			var $oLabel,
-				oSelect = new Select({
-				items: [
-					new Item({
-						key: "0",
-						text: "item 0"
-					}),
-
-					new Item({
-						key: "1",
-						text: "item 1"
-					})
-				]
-			});
+		QUnit.test("AnnounceMessage's aria-live", function (assert) {
+			var oSelect = new Select(),
+				oStatic = sap.ui.getCore().getStaticAreaRef(),
+				oAnnounceInstanceDom;
 
 			oSelect.placeAt("content");
 			sap.ui.getCore().applyChanges();
 
-			$oLabel = oSelect.$("label");
-			assert.strictEqual($oLabel.attr("aria-live"), "polite", "aria-live is correctly set before opening the popover");
+			oAnnounceInstanceDom = oStatic.querySelector(".sapUiAnnounceMessageAssertive");
 
-			oSelect.open();
-			this.clock.tick(1000);
-			assert.notOk($oLabel.attr("aria-live"), "aria-live is removed while the popover is opened");
-
-			oSelect.close();
-			this.clock.tick(1000);
-			assert.strictEqual($oLabel.attr("aria-live"), "polite", "aria-live is returned when popover closes");
+			assert.ok(oAnnounceInstanceDom, "oAnnounceInstance is initialized");
+			assert.strictEqual(oAnnounceInstanceDom.getAttribute("aria-live"), "assertive", "aria-live is correctly set");
 
 			oSelect.destroy();
 		});
