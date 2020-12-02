@@ -433,7 +433,7 @@
 											</m:columns>
 											<m:items>
 												<m:ColumnListItem type="Active">
-													<m:Text text="{countryId}"></m:Text>
+													<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"></m:Text>
 													<m:Text text="{text}"></m:Text>
 												</m:ColumnListItem>
 											</m:items>
@@ -475,6 +475,7 @@
 												editMode= "Editable"
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
+												dataTypeConstraints="{maxLength: 3}"
 												width="100%"
 												conditions="{$filters>/conditions/countryId}"
 												operators="EQ,NE,EUROPE">
@@ -496,9 +497,9 @@
 											</m:columns>
 											<m:items>
 												<m:ColumnListItem type="Active">
-													<m:Text text="{regionId}"></m:Text>
+													<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"></m:Text>
 													<m:Text text="{text}"></m:Text>
-													<m:Text text="{countryId}"></m:Text>
+													<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"></m:Text>
 												</m:ColumnListItem>
 											</m:items>
 										</m:Table>
@@ -511,8 +512,8 @@
 					<mdc:FilterField
 						id="IOFFCity"
 						conditions="{cm>/conditions/CityId}"
-						dataType="sap.ui.model.type.String"
-						dataTypeConstraints="{maxLength: 2, search: '^[0-9]+$'}"
+						dataType="sap.ui.model.odata.type.String"
+						dataTypeConstraints="{maxLength: 2, isDigitSequence: true, nullable: false}"
 						display="ValueDescription"
 						change="handleChange"
 						liveChange="handleLiveChange"
@@ -541,6 +542,7 @@
 												editMode= "Editable"
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
+												dataTypeConstraints="{maxLength: 3}"
 												width="100%"
 												conditions="{$filters>/conditions/countryId}"
 												operators="EQ,NE,EUROPE">
@@ -551,6 +553,7 @@
 												editMode= "Editable"
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
+												dataTypeConstraints="{maxLength: 2, search: '^[0-9]+$'}"
 												width="100%"
 												conditions="{$filters>/conditions/regionId}"
 												fieldHelp="IOFFVHRegion2">
@@ -583,9 +586,9 @@
 																	</m:columns>
 																	<m:items>
 																		<m:ColumnListItem type="Active">
-																			<m:Text text="{regionId}"></m:Text>
+																			<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"></m:Text>
 																			<m:Text text="{text}"></m:Text>
-																			<m:Text text="{countryId}"></m:Text>
+																			<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"></m:Text>
 																		</m:ColumnListItem>
 																	</m:items>
 																</m:Table>
@@ -613,10 +616,10 @@
 											</m:columns>
 											<m:items>
 												<m:ColumnListItem type="Active">
-													<m:Text text="{cityId}"></m:Text>
+													<m:Text text="{path:'cityId', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"></m:Text>
 													<m:Text text="{text}"></m:Text>
-													<m:Text text="{countryId}"></m:Text>
-													<m:Text text="{regionId}"></m:Text>
+													<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"></m:Text>
+													<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"></m:Text>
 												</m:ColumnListItem>
 											</m:items>
 										</m:Table>
@@ -629,6 +632,11 @@
 
 					<m:Label text="Conditions"></m:Label>
 					<m:TextArea id="Cond" editable="false" rows="10"></m:TextArea>
+					<m:Button id="clear" icon="sap-icon://clear-filter" press="clearFilters">
+						<m:layoutData>
+							<form:ColumnElementData cellsLarge="1" cellsSmall="1"></form:ColumnElementData>
+						</m:layoutData>
+					</m:Button>
 
 					<form:dependents>
 						<mdcField:ConditionFieldHelp id="CFH1" title="Conditions"/>
@@ -681,9 +689,9 @@
 							<m:Text id="T-F6" text="{Status}"/>
 							<m:Text id="T-F7" text="{Quantity}"/>
 							<m:Text id="T-F8" text="{MatrId}"/>
-							<m:Text id="T-F9" text="{CountryId}"/>
-							<m:Text id="T-F10" text="{RegionId}"/>
-							<m:Text id="T-F11" text="{CityId}"/>
+							<m:Text id="T-F9" text="{path: 'CountryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"/>
+							<m:Text id="T-F10" text="{path: 'RegionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"/>
+							<m:Text id="T-F11" text="{path:'CityId', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"/>
 							<m:Text id="T-F12" text="{parts: ['WeightMeasure', 'WeightUnit'], type: 'sap.ui.model.type.Unit'}"/>
 						</m:ColumnListItem>
 					</m:items>

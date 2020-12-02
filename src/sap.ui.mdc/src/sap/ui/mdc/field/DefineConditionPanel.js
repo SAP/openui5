@@ -576,7 +576,7 @@ sap.ui.define([
 		var oOperator = FilterOperatorUtil.getOperator(sOperator);
 
 		if (oOperator.valueTypes[iIndex] && [Operator.ValueType.Self, Operator.ValueType.Static].indexOf(oOperator.valueTypes[iIndex]) === -1) {
-			oDataType = oOperator._createLocalType(oOperator.valueTypes[iIndex]);
+			oDataType = oOperator._createLocalType(oOperator.valueTypes[iIndex], oDataType);
 		}
 
 		var bStaticText = false;

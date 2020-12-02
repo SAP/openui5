@@ -54,7 +54,7 @@ sap.ui.define([
 			toString: function(oCondition, oTypeConfig, oTypeUtil) {
 
 				// convert using "normalized" data type
-				var aValues = _valuesToString(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil) || oTypeConfig);
+				var aValues = _valuesToString(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil, oTypeConfig) || oTypeConfig);
 
 				// ignore the second value for EQ operator with description
 				if (oCondition.operator === "EQ") {
@@ -95,7 +95,7 @@ sap.ui.define([
 			 */
 			toType: function(oCondition, oTypeConfig, oTypeUtil) {
 				// convert using "normalized" data type
-				var aValues = _stringToValues(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil) || oTypeConfig);
+				var aValues = _stringToValues(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil, oTypeConfig) || oTypeConfig);
 
 				// inParameter, OutParameter
 				// TODO: we need the types of the in/out parameter
@@ -115,11 +115,11 @@ sap.ui.define([
 			}
 		};
 
-		function _getLocalTypeConfig (oCondition, oTypeUtil) {
+		function _getLocalTypeConfig (oCondition, oTypeUtil, oTypeConfig) {
 			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
 			if (oOperator && oOperator.valueTypes[0] && (oOperator.valueTypes[0] !== Operator.ValueType.Self && oOperator.valueTypes[0] !== Operator.ValueType.Static)) {
 				// we have to create the type instance for the values
-				return oTypeUtil.getTypeConfig(oOperator._createLocalType(oOperator.valueTypes[0])); // TODO type for all values must be the same})
+				return oTypeUtil.getTypeConfig(oOperator._createLocalType(oOperator.valueTypes[0], oTypeConfig && oTypeConfig.typeInstance)); // TODO type for all values must be the same})
 			}
 		}
 

@@ -224,6 +224,10 @@ sap.ui.define([
 //				var oFilter = oFilterConditionModel.getFilters();
 //				oFilterConditionModel._oListBinding.filter(oFilter); // TODO: function on CM
 //			}
+		},
+		clearFilters: function(oEvent) {
+			var oCM = this.getView().getModel("cm");
+			oCM.removeAllConditions();
 		}
 	});
 }, true);

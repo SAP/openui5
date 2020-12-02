@@ -188,7 +188,7 @@ sap.ui.define([
 
 					// EQ-Operator.parse("=Test") --> ["Test"]
 					try {
-						var aParseText = oOperator.parse.apply(oOperator, oTest.parseArgs || [sFormattedText]);
+						var aParseText = oOperator.parse.apply(oOperator, oTest.parseArgs || [sFormattedText, oTest.type]);
 						var sParseText = Array.isArray(aParseText) ? aParseText.join("") : aParseText; // also test undefined result
 						var sTestText = Array.isArray(oTest.parseArgs) ? oTest.parseArgs[0] : sFormattedText;
 						assert.strictEqual(sParseText, oTest.parsedValue, "Parsing: Operator " + sOperator + " has parsed correctly from " + sTestText + " to " + sParseText);
@@ -199,7 +199,7 @@ sap.ui.define([
 					// EQ-Operator.getCondition("=Test") --> {operator: "EQ", values: ["Test"]]}
 					var oCondition;
 					try {
-						oCondition = oOperator.getCondition.apply(oOperator, oTest.parseArgs || [sFormattedText]);
+						oCondition = oOperator.getCondition.apply(oOperator, oTest.parseArgs || [sFormattedText, oTest.type]);
 						if (oTest.condition) {
 							assert.deepEqual(oCondition, oTest.condition, "getCondition: Operator " + sOperator + " returns oCondition instance");
 
@@ -266,7 +266,9 @@ sap.ui.define([
 			aOperators.push(FilterOperatorUtil._mOperators[sName]);
 		}
 
-		var oType = new IntegerType({}, {maximum: 3});
+		var oIntType = new IntegerType({}, {maximum: 3});
+		var oStringType = new StringType({}, {maxLength: 5});
+		var oNUMCType = new StringType({}, {maxLength: 5, isDigitSequence: true, nullable: false});
 
 		var aFormatTest = {
 				"EQ": [{
@@ -328,35 +330,35 @@ sap.ui.define([
 						valid: true
 					},
 					{
-						formatArgs: [Condition.createItemCondition(5, "desc"), oType, "ValueDescription"],
+						formatArgs: [Condition.createItemCondition(5, "desc"), oIntType, "ValueDescription"],
 						formatValue: "5 (desc)",
-						parseArgs: ["=5", oType, "ValueDescription"],
+						parseArgs: ["=5", oIntType, "ValueDescription"],
 						parsedValue: "5",
 						condition: Condition.createCondition("EQ", [5, undefined], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: false,
-						type: oType
+						type: oIntType
 					},
 					{
-						formatArgs: [Condition.createItemCondition(5, "desc"), oType, "DescriptionValue"],
+						formatArgs: [Condition.createItemCondition(5, "desc"), oIntType, "DescriptionValue"],
 						formatValue: "desc (5)",
-						parseArgs: ["=desc (5)", oType, "DescriptionValue"],
+						parseArgs: ["=desc (5)", oIntType, "DescriptionValue"],
 						parsedValue: "5desc",
 						condition: Condition.createCondition("EQ", [5, "desc"], undefined, undefined, ConditionValidated.Validated),
 						isEmpty: false,
 						valid: false,
-						type: oType
+						type: oIntType
 					},
 					{
-						formatArgs: [Condition.createItemCondition(1, "desc"), oType, "ValueDescription"],
+						formatArgs: [Condition.createItemCondition(1, "desc"), oIntType, "ValueDescription"],
 						formatValue: "1 (desc)",
-						parseArgs: ["=A", oType, "ValueDescription"],
+						parseArgs: ["=A", oIntType, "ValueDescription"],
 						parsedValue: "",
 						condition: Condition.createCondition("EQ", [undefined, undefined], undefined, undefined, ConditionValidated.NotValidated),
 						exception: true,
 						isEmpty: true,
 						valid: false,
-						type: oType
+						type: oIntType
 					},
 					{
 						formatArgs: [Condition.createItemCondition("Test", "desc"), undefined, "ValueDescription"],
@@ -656,93 +658,103 @@ sap.ui.define([
 					}
 				],
 				"StartsWith": [{
-						formatArgs: [Condition.createCondition("StartsWith", ["Test"])],
+						formatArgs: [Condition.createCondition("StartsWith", ["Test"]), oStringType, "Description"],
 						formatValue: "Test*",
 						parsedValue: "Test",
 						condition: Condition.createCondition("StartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						isSingleValue: true
+						isSingleValue: true,
+						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("StartsWith", ["*"])],
+						formatArgs: [Condition.createCondition("StartsWith", ["*"]), oStringType, "Description"],
 						formatValue: "**",
 						parsedValue: undefined,
 						isEmpty: true,
-						valid: true
+						valid: true,
+						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("StartsWith", ["a", "b"])],
+						formatArgs: [Condition.createCondition("StartsWith", ["a", "b"]), oStringType, "Description"],
 						formatValue: "a*",
 						parsedValue: "a",
 						condition: Condition.createCondition("StartsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
-						valid: true
+						valid: true,
+						type: oStringType
 					}
 				],
 				"NotStartsWith": [{
-						formatArgs: [Condition.createCondition("NotStartsWith", ["Test"])],
+						formatArgs: [Condition.createCondition("NotStartsWith", ["Test"]), oStringType, "Description"],
 						formatValue: "!(Test*)",
-						parseArgs: ["!Test*"],
+						parseArgs: ["!Test*", oStringType, "Description"],
 						parsedValue: "Test",
 						condition: Condition.createCondition("NotStartsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						isSingleValue: true
+						isSingleValue: true,
+						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotStartsWith", ["*"])],
+						formatArgs: [Condition.createCondition("NotStartsWith", ["*"]), oStringType, "Description"],
 						formatValue: "!(**)",
 						parsedValue: undefined,
 						isEmpty: true,
-						valid: true
+						valid: true,
+						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotStartsWith", ["a", "b"])],
+						formatArgs: [Condition.createCondition("NotStartsWith", ["a", "b"]), oStringType, "Description"],
 						formatValue: "!(a*)",
-						parseArgs: ["!a*"],
+						parseArgs: ["!a*", oStringType, "Description"],
 						parsedValue: "a",
 						condition: Condition.createCondition("NotStartsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
-						valid: true
+						valid: true,
+						type: oStringType
 					}
 				],
 				"EndsWith": [{
-						formatArgs: [Condition.createCondition("EndsWith", ["Test"])],
+						formatArgs: [Condition.createCondition("EndsWith", ["Test"]), oStringType, "Description"],
 						formatValue: "*Test",
 						parsedValue: "Test",
 						condition: Condition.createCondition("EndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						isSingleValue: true
+						isSingleValue: true,
+						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("EndsWith", ["a", "b"])],
+						formatArgs: [Condition.createCondition("EndsWith", ["a", "b"]), oStringType, "Description"],
 						formatValue: "*a",
 						parsedValue: "a",
 						condition: Condition.createCondition("EndsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
-						valid: true
+						valid: true,
+						type: oStringType
 					}
 				],
 				"NotEndsWith": [{
-						formatArgs: [Condition.createCondition("NotEndsWith", ["Test"])],
+						formatArgs: [Condition.createCondition("NotEndsWith", ["Test"]), oStringType, "Description"],
 						formatValue: "!(*Test)",
-						parseArgs: ["!*Test"],
+						parseArgs: ["!*Test", oStringType, "Description"],
 						parsedValue: "Test",
 						condition: Condition.createCondition("NotEndsWith", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
-						isSingleValue: true
+						isSingleValue: true,
+						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotEndsWith", ["a", "b"])],
+						formatArgs: [Condition.createCondition("NotEndsWith", ["a", "b"]), oStringType, "Description"],
 						formatValue: "!(*a)",
-						parseArgs: ["!*a"],
+						parseArgs: ["!*a", oStringType, "Description"],
 						parsedValue: "a",
 						condition: Condition.createCondition("NotEndsWith", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
-						valid: true
+						valid: true,
+						type: oStringType
 					}
 				],
 				"BT": [{
@@ -856,43 +868,69 @@ sap.ui.define([
 					}
 				],
 				"Contains": [{
-						formatArgs: [Condition.createCondition("Contains", ["Test"])],
+						formatArgs: [Condition.createCondition("Contains", ["Test"]), oStringType, "Description"],
 						formatValue: "*Test*",
 						parsedValue: "Test",
 						condition: Condition.createCondition("Contains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						filter:  {path: "test", operator: "Contains", value1: "Test"},
-						isSingleValue: true
+						isSingleValue: true,
+						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("Contains", ["a", "b"])],
+						formatArgs: [Condition.createCondition("Contains", ["a", "b"]), oStringType, "Description"],
 						formatValue: "*a*",
 						parsedValue: "a",
 						condition: Condition.createCondition("Contains", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
-						valid: true
+						valid: true,
+						type: oStringType
+					},
+					{
+						formatArgs: [Condition.createCondition("Contains", ["01"]), oNUMCType, "Description"],
+						formatValue: "*01*",
+						parseArgs: ["*1*", oNUMCType, "Description"],
+						parsedValue: "1",
+						condition: Condition.createCondition("Contains", ["1"], undefined, undefined, ConditionValidated.NotValidated),
+						exception: false,
+						isEmpty: false,
+						valid: true,
+						type: oNUMCType
+					},
+					{
+						formatArgs: [Condition.createCondition("Contains", ["1"]), oNUMCType, "Description"],
+						formatValue: "*1*",
+						parseArgs: ["*A*", oNUMCType, "Description"],
+						parsedValue: "A",
+						condition: Condition.createCondition("Contains", ["A"], undefined, undefined, ConditionValidated.NotValidated),
+						exception: true,
+						isEmpty: false,
+						valid: false,
+						type: oNUMCType
 					}
 				],
 				"NotContains": [{
-						formatArgs: [Condition.createCondition("NotContains", ["Test"])],
+						formatArgs: [Condition.createCondition("NotContains", ["Test"]), oStringType, "Description"],
 						formatValue: "!(*Test*)",
-						parseArgs: ["!*Test*"],
+						parseArgs: ["!*Test*", oStringType, "Description"],
 						parsedValue: "Test",
 						condition: Condition.createCondition("NotContains", ["Test"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
 						valid: true,
 						filter:  {path: "test", operator: "NotContains", value1: "Test"},
-						isSingleValue: true
+						isSingleValue: true,
+						type: oStringType
 					},
 					{
-						formatArgs: [Condition.createCondition("NotContains", ["a", "b"])],
+						formatArgs: [Condition.createCondition("NotContains", ["a", "b"]), oStringType, "Description"],
 						formatValue: "!(*a*)",
-						parseArgs: ["!*a*"],
+						parseArgs: ["!*a*", oStringType, "Description"],
 						parsedValue: "a",
 						condition: Condition.createCondition("NotContains", ["a"], undefined, undefined, ConditionValidated.NotValidated),
 						isEmpty: false,
-						valid: true
+						valid: true,
+						type: oStringType
 					}
 				],
 				"Empty": [{
@@ -957,7 +995,9 @@ sap.ui.define([
 		//checking all above Operators for validity
 		fOperatorCheck(assert, aOperators, aFormatTest);
 
-		oType.destroy();
+		oIntType.destroy();
+		oStringType.destroy();
+		oNUMCType.destroy();
 
 	});
 

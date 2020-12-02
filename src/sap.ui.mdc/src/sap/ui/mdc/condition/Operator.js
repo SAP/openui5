@@ -8,6 +8,8 @@ sap.ui.define([
 	'sap/ui/Device',
 	'sap/base/Log',
 	'sap/base/util/ObjectPath',
+	'sap/base/util/merge',
+	'sap/base/util/deepEqual',
 	'./Condition',
 	'sap/ui/mdc/enum/ConditionValidated',
 	"sap/base/strings/escapeRegExp"
@@ -18,6 +20,8 @@ sap.ui.define([
 		Device,
 		Log,
 		ObjectPath,
+		merge,
+		deepEqual,
 		Condition,
 		ConditionValidated,
 		escapeRegExp
@@ -226,7 +230,16 @@ sap.ui.define([
 				 *
 				 * @public
 				 */
-				Static: "static"
+				Static: "static",
+
+				/**
+				 * The <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used
+				 * for validation, but the user input is used as value.
+				 *
+				 * @public
+				 * @since 1.86
+				 */
+				SelfNoParse: "selfNoParse"
 		};
 
 		function _getText(sKey, sType) {
@@ -372,7 +385,7 @@ sap.ui.define([
 				if (this.valueTypes[i] !== Operator.ValueType.Static) {
 					var v = aValues[i] !== undefined && aValues[i] !== null ? aValues[i] : "";
 					if (this.valueTypes[i] !== Operator.ValueType.Self) {
-						oType = this._createLocalType(this.valueTypes[i]);
+						oType = this._createLocalType(this.valueTypes[i], oType);
 					}
 					var sReplace = oType ? oType.formatValue(v, "string") : v;
 					// the regexp will replace placeholder like $0, 0$ and {0}
@@ -404,7 +417,7 @@ sap.ui.define([
 				aResult = [];
 				for (var i = 0; i < this.valueTypes.length; i++) {
 					if (this.valueTypes[i] && [Operator.ValueType.Self, Operator.ValueType.Static].indexOf(this.valueTypes[i]) === -1) {
-						oType = this._createLocalType(this.valueTypes[i]);
+						oType = this._createLocalType(this.valueTypes[i], oType);
 					}
 					try {
 						if (this.valueTypes[i] !== Operator.ValueType.Static) {
@@ -483,7 +496,7 @@ sap.ui.define([
 				var vValue = aValues[i] !== undefined && aValues[i] !== null ? aValues[i] : "";
 				if (this.valueTypes[i] && this.valueTypes[i] !== Operator.ValueType.Static) { // do not validate Description in EQ case
 					if ([Operator.ValueType.Self, Operator.ValueType.Static].indexOf(this.valueTypes[i]) === -1) {
-						oType = this._createLocalType(this.valueTypes[i]);
+						oType = this._createLocalType(this.valueTypes[i], oType);
 					}
 					if (oType) {
 						oType.validateValue(vValue);
@@ -498,31 +511,67 @@ sap.ui.define([
 		/**
 		 * Creates a local type.
 		 *
-		 * @param {string} sType Type name
+		 * @param {string|object} vType Type name or object with type information
+		 * @param {sap.ui.model.Type} oType original data type
 		 * @returns {sap.ui.model.SimpleType} data type
 		 * @private
 		 * @ui5-restricted sap.ui.mdc.field.DefineConditionPanel
 		 */
-		Operator.prototype._createLocalType = function(vType) {
+		Operator.prototype._createLocalType = function(vType, oType) {
 
-			if (!this._oType) {
-				var sType;
-				var oFormatOptions;
-				var oConstraints;
-
-				if (typeof vType === "string") {
-					sType = vType;
-				} else if (vType && typeof vType === "object") {
-					sType = vType.name;
-					oFormatOptions = vType.formatOptions;
-					oConstraints = vType.constraints;
-				}
-
-				sap.ui.requireSync(sType.replace(/\./g, "/"));
-				var oTypeClass = ObjectPath.get(sType || "");
-				this._oType = new oTypeClass(oFormatOptions, oConstraints);
+			if (!this._aTypes) {
+				this._aTypes = []; // array as for SelfNoParse type depends on FilterField
 			}
-			return this._oType;
+
+			var sType;
+			var oFormatOptions;
+			var oConstraints;
+			var oUsedType;
+
+			if (vType === Operator.ValueType.SelfNoParse) {
+				// create "clone" of original type but do not change value in parse or format
+				sType = oType.getMetadata().getName(); // type is already loaded because instance is provided
+				oFormatOptions = merge({}, oType.oFormatOptions);
+				oConstraints = merge(oType.getConstraints());
+			} else if (typeof vType === "string") {
+				sType = vType;
+			} else if (vType && typeof vType === "object") {
+				sType = vType.name;
+				oFormatOptions = vType.formatOptions;
+				oConstraints = vType.constraints;
+			}
+
+			for (var i = 0; i < this._aTypes.length; i++) {
+				var oMyType = this._aTypes[i];
+				if (oMyType.name === sType && deepEqual(oMyType.formatOptions, oFormatOptions) && deepEqual(oMyType.constraints, oConstraints)) {
+					oUsedType = oMyType.type;
+					break;
+				}
+			}
+
+			if (!oUsedType) {
+				sap.ui.requireSync(sType.replace(/\./g, "/"));
+				var TypeClass = ObjectPath.get(sType || "");
+				oUsedType = new TypeClass(oFormatOptions, oConstraints);
+				oUsedType._bCreatedByOperator = true; // to distinguish in Field between original type and Operator type on Operator change
+
+				if (vType === Operator.ValueType.SelfNoParse) {
+					oUsedType.parseValue = function(vValue, sSourceType) {
+						TypeClass.prototype.parseValue.apply(this, arguments); // to check for parse exception
+						return vValue;
+					};
+					oUsedType.validateValue = function(vValue) {
+						var sValue = TypeClass.prototype.parseValue.apply(this, [vValue, "string"]); // to check with parsed value
+						TypeClass.prototype.validateValue.apply(this, [sValue]);
+					};
+					oUsedType.formatValue = function(vValue, sTargetType) {
+						TypeClass.prototype.formatValue.apply(this, arguments); // to check for format exception
+						return vValue;
+					};
+				}
+				this._aTypes.push({name: sType, formatOptions: oFormatOptions, constraints: oConstraints, type: oUsedType});
+			}
+			return oUsedType;
 
 		};
 

@@ -295,14 +295,14 @@ function(
 						filterOperator: ModelOperator.StartsWith,
 						tokenParse: "^([^!\\*]+.*)\\*$",
 						tokenFormat: "{0}*",
-						valueTypes: [Operator.ValueType.Self]
+						valueTypes: [Operator.ValueType.SelfNoParse]
 					}),
 					notStartsWith: new Operator({
 						name: "NotStartsWith",
 						filterOperator: ModelOperator.NotStartsWith,
 						tokenParse: "^!([^\\*].*)\\*$",
 						tokenFormat: "!({0}*)",
-						valueTypes: [Operator.ValueType.Self],
+						valueTypes: [Operator.ValueType.SelfNoParse],
 						exclude: true
 					}),
 					endsWith: new Operator({
@@ -310,14 +310,14 @@ function(
 						filterOperator: ModelOperator.EndsWith,
 						tokenParse: "^\\*(.*[^\\*])$",
 						tokenFormat: "*{0}",
-						valueTypes: [Operator.ValueType.Self]
+						valueTypes: [Operator.ValueType.SelfNoParse]
 					}),
 					notEndsWith: new Operator({
 						name: "NotEndsWith",
 						filterOperator: ModelOperator.NotEndsWith,
 						tokenParse: "^!\\*(.*[^\\*])$",
 						tokenFormat: "!(*{0})",
-						valueTypes: [Operator.ValueType.Self],
+						valueTypes: [Operator.ValueType.SelfNoParse],
 						exclude: true
 					}),
 					contains: new Operator({
@@ -325,14 +325,14 @@ function(
 						filterOperator: ModelOperator.Contains,
 						tokenParse: "^\\*(.*)\\*$",
 						tokenFormat: "*{0}*",
-						valueTypes: [Operator.ValueType.Self]
+						valueTypes: [Operator.ValueType.SelfNoParse]
 					}),
 					notContains: new Operator({
 						name: "NotContains",
 						filterOperator: ModelOperator.NotContains,
 						tokenParse: "^!\\*(.*)\\*$",
 						tokenFormat: "!(*{0}*)",
-						valueTypes: [Operator.ValueType.Self],
+						valueTypes: [Operator.ValueType.SelfNoParse],
 						exclude: true
 					}),
 					notEqual: new Operator({

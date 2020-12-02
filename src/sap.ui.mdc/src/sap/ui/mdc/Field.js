@@ -156,7 +156,11 @@ sap.ui.define([
 
 		if (sName === "value" && !oBindingInfo.formatter) { // not if a formatter is used, as this needs to be executed
 			oBindingInfo.targetType = "raw"; // provide internal value to inner control
-			if (oBindingInfo.type && (!this._oDataType || this._oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName())) {
+			if (oBindingInfo.type && (!this._oDataType ||
+					this._oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
+					!deepEqual(this._oDataType.oFormatOptions, oBindingInfo.type.oFormatOptions) ||
+					!deepEqual(this._oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
+					this._oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
 				this._oDataType = oBindingInfo.type;
 				this._updateConditionType();
 				this.invalidate(); // as new inner control might be needed
