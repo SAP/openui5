@@ -1,10 +1,20 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/m/library', 'sap/ui/core/Core', "sap/ui/model/json/JSONModel"],
-    function(Control, Button, SearchField, mobileLibrary, Core, JSONModel) {
+sap.ui.define([
+    'sap/ui/core/Control',
+    'sap/m/Button',
+    'sap/m/library',
+    'sap/ui/core/Core',
+    'sap/m/SearchField'
+], function(
+    Control,
+    Button,
+    mobileLibrary,
+    Core,
+    SearchField
+) {
     "use strict";
-
 		/**
 		 * @private
 		 * @ui5-restricted sdk
@@ -14,7 +24,8 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
                 library : "sap.ui.documentation",
                 properties : {
                     isOpen : {type : "boolean", group : "Appearance", defaultValue : false},
-                    width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null}
+                    width : {type : "sap.ui.core.CSSSize", group : "Appearance", defaultValue : null},
+					value : {type : "string", group : "Data", defaultValue : null}
                 },
                 aggregations : {
                     _openingButton : {type: "sap.m.Button", multiple: false},
@@ -55,6 +66,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
                             clearButtonPressed: {type: "boolean"}
                         }
                     },
+                    liveChange : {
+                        parameters : {
+
+                            /**
+                             * Current search string.
+                             */
+                            newValue : {type : "string"}
+                        }
+                    },
                     suggest : {
                         parameters : {
                             /**
@@ -62,7 +82,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
                              */
                             suggestValue : {type : "string"}
                         }
-					}
+                    }
                 }
 			},
             renderer: {
@@ -98,6 +118,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
                 this._maximizeSearchField();
             }
         };
+
+		Search.prototype.getValue = function() {
+			return this._lazyLoadSearchField().getValue();
+		};
+
+		Search.prototype.setValue = function(sValue) {
+            this._lazyLoadSearchField().setValue(sValue);
+            return this;
+		};
 
         Search.prototype._maximizeSearchField = function() {
             return this._resizeSearchField("100%");
@@ -186,12 +215,15 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
             if (!this.getAggregation("_searchField")) {
                 var oSrch = new SearchField(this.getId() + "-searchField", {
                     showSearchButton: true,
-                    enableSuggestions: true,
                     search: function(oEvent) {
-
                         var oParameters = oEvent.getParameters();
                         oParameters.id = this.getId();
                         this.fireSearch(oParameters);
+                    }.bind(this),
+                    liveChange: function(oEvent) {
+                        var oParameters = oEvent.getParameters();
+                        oParameters.id = this.getId();
+                        this.fireLiveChange(oParameters);
                     }.bind(this)
                 });
                 oSrch.addStyleClass("sdkHeaderSearchField");
@@ -199,6 +231,10 @@ sap.ui.define(['sap/ui/core/Control', 'sap/m/Button', 'sap/m/SearchField', 'sap/
             }
             return this.getAggregation("_searchField");
         };
+
+		Search.prototype._updateValue = function(sValue) {
+			this._lazyLoadSearchField()._updateValue(sValue);
+		};
 
         return Search;
 });

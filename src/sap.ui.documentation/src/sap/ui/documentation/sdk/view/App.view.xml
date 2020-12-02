@@ -78,7 +78,7 @@
 					</layoutData>
 				</Button>
 
-				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
+				<custom:Search id="searchControl" toggle="onToggleSearchMode" search="onSearch" liveChange="onSearchLiveChange" width="{= (${appView>/bPhoneSize} &amp;&amp; ${appView>/bSearchMode}) ? '100%' : ''}"/>
 
 				<Button id="feedBackDialogButton" tooltip="{i18n>APP_FEEDBACK_BTN_TOOLTIP}" press="feedbackDialogOpen" icon="sap-icon://comment" type="Transparent" visible="{=!${appView>/bPhoneSize} &amp;&amp; !${appView>/bSearchMode}}">
 

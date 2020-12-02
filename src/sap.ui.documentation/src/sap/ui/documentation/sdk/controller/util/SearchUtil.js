@@ -56,7 +56,7 @@ sap.ui.define(["sap/ui/Device"],
 		 * @param sQuery the search string
 		 * @returns {Promise<any>}
 		 */
-		function search(sQuery) {
+		function search(sQuery, sPreferencedCategory) {
 
 			return new Promise(function(resolve, reject) {
 				init().then(function() {
@@ -68,12 +68,12 @@ sap.ui.define(["sap/ui/Device"],
 
 					oWorker.postMessage({
 						"cmd": WORKER.COMMANDS.SEARCH,
-						"sQuery": sQuery
+						"sQuery": sQuery,
+						"preferencedCategory": sPreferencedCategory
 					});
 				});
 			});
 		}
-
 
 		return {
 			init: init,
