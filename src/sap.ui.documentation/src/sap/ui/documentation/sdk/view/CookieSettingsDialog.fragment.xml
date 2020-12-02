@@ -7,8 +7,9 @@
 		<content>
 			<html:div class="cookieSettingsContainer sapUiSmallMargin">
 				<Text text="{i18n>COOKIE_SETTINGS_DIALOG_SUMMARY}"
-					  visible="{=! ${cookieData>/showCookieDetails} }"/>
-
+					  visible="{= !${cookieData>/showCookieDetails} &amp;&amp; ${cookieData>/supportsUsageTracking} }"/>
+				<Text text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_TEXT}"
+					  visible="{= !${cookieData>/showCookieDetails} &amp;&amp; !${cookieData>/supportsUsageTracking} }"/>
 				<List visible="{cookieData>/showCookieDetails}">
 					<CustomListItem class="cookieSetting">
 						<Title text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_TITLE}" />
@@ -38,7 +39,7 @@
 				<OverflowToolbarLayoutData priority="NeverOverflow"/>
 			</layoutData>
 		</Button>
-		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_SET_PREFERENCES}" id="btnSetPreferences" type="Ghost" press="showCookieDetails" visible="{=! ${cookieData>/showCookieDetails} }"></Button>
+		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_SET_PREFERENCES}" id="btnSetPreferences" type="Ghost" press="showCookieDetails" visible="{= !${cookieData>/showCookieDetails} &amp;&amp; ${cookieData>/supportsUsageTracking} }"></Button>
 		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_REJECT_ALL}" press="onRejectAllCookies" visible="{=! ${cookieData>/showCookieDetails} }">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow"/>

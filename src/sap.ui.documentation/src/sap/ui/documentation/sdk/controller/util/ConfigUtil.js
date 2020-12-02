@@ -5,8 +5,9 @@
 /* Utility class that facilitates route configuration handling */
 sap.ui.define([
 	"sap/ui/base/Object",
-	"sap/base/strings/capitalize"
-], function (BaseObject, capitalize) {
+	"sap/base/strings/capitalize",
+	"sap/base/util/merge"
+], function (BaseObject, capitalize, merge) {
 	"use strict";
 
 	return BaseObject.extend("sap.ui.documentation.sdk.controller.util.ConfigUtil", {
@@ -15,6 +16,12 @@ sap.ui.define([
 			"APPROVAL_REQUESTED": "dk_approval_requested",
 			"ALLOW_REQUIRED_COOKIES": "dk_allow_required_cookies",
 			"ALLOW_USAGE_TRACKING": "dk_allow_usage_tracking"
+		},
+
+		SWA_CONFIG: {
+			pubToken: 'd5a5359b-0b55-415c-acc8-314511b613ca',
+			baseUrl: 'https://webanalytics2.cfapps.eu10.hana.ondemand.com/tracker/',
+			owner: null
 		},
 
 		constructor : function (oComponent) {
@@ -65,10 +72,11 @@ sap.ui.define([
 		},
 
 		enableUsageTracking: function() {
-			var swa = window['swa'];
-			if (swa && typeof swa.enable === "function") {
-				swa.enable();
-			}
+			this._loadSWA().then(function(swa) {
+				if (swa && typeof swa.enable === "function") {
+					swa.enable();
+				}
+			});
 		},
 
 		disableUsageTracking: function() {
@@ -76,6 +84,29 @@ sap.ui.define([
 			if (swa && typeof swa.disable === "function") {
 				swa.disable();
 			}
+		},
+
+		_loadSWA: function() {
+			if (!this._oPromiseLoadSWA) {
+				this._oPromiseLoadSWA = new Promise(function(resolve, reject) {
+					var oSWAConfig = merge({}, this.SWA_CONFIG),
+						oDoc = document,
+						oNewScriptEl = oDoc.createElement('script'),
+						oFirstScriptEl = oDoc.getElementsByTagName('script')[0];
+
+					oNewScriptEl.type = 'text/javascript';
+					oNewScriptEl.defer = true;
+					oNewScriptEl.async = true;
+					oNewScriptEl.src = oSWAConfig.baseUrl + 'js/track.js';
+					oNewScriptEl.onload = function() {
+						resolve(window["swa"]);
+					};
+
+					oFirstScriptEl.parentNode.insertBefore(oNewScriptEl, oFirstScriptEl);
+					window["swa"] = oSWAConfig;
+				}.bind(this));
+			}
+			return this._oPromiseLoadSWA;
 		},
 
 		_getMasterTargetName: function(sRouteName) {

@@ -121,7 +121,8 @@ sap.ui.define([
 					bSnapshot,
 					bOpenUI5,
 					sVersionSuffix,
-					bIsInternal;
+					bIsInternal,
+					bSupportsSWA;
 
 				this.aAllowedMembers = ["public", "protected"];
 
@@ -133,6 +134,9 @@ sap.ui.define([
 				sVersionSuffix = oVersion.getSuffix();
 				bSnapshot = /-SNAPSHOT$/i.test(sVersionSuffix);
 				bOpenUI5 = oVersionInfo.gav && /openui5/i.test(oVersionInfo.gav);
+				bSupportsSWA = oVersionInfo.libraries.some(function (lib) {
+					return lib.name === "sap.webanalytics.core";
+				});
 
 				// We show restricted members for internal versions
 				if (/internal/i.test(oVersionInfo.name)) {
@@ -151,6 +155,7 @@ sap.ui.define([
 					isDevVersion: bSnapshot,
 					isBetaVersion: !bOpenUI5 && !bSnapshot && /-beta$/i.test(sVersionSuffix),
 					isInternal: !!bIsInternal,
+					supportsSWA: bSupportsSWA,
 					libraries: oVersionInfo.libraries,
 					allowedMembers: this.aAllowedMembers
 				});

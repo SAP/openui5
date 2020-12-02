@@ -121,7 +121,8 @@ sap.ui.define([
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
 					"<a href='https://openui5.hana.ondemand.com/1.52.4/'>https://openui5.hana.ondemand.com/1.52.4/</a>",
 					oThemeScrollContainerHeight: oToolbarHeights[this.extractThemeSettings()]
-				});
+				}),
+					bSupportsSWA, bHasConsentUseSWA;
 
 				this.MENU_LINKS_MAP = {
 					"legal": "https://www.sap.com/corporate/en/legal/impressum.html",
@@ -194,6 +195,16 @@ sap.ui.define([
 
 				this._createConfigurationBasedOnURIInput();
 
+				this.getOwnerComponent().loadVersionInfo().then(function () {
+					bSupportsSWA = this.getModel("versionData").getProperty("/supportsSWA");
+					bHasConsentUseSWA = this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_USAGE_TRACKING) === "1";
+
+					if (bSupportsSWA && bHasConsentUseSWA) {
+						this._oConfigUtil.enableUsageTracking();
+					}
+
+				}.bind(this));
+
 				if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1" && this._aConfiguration.length > 0) {
 					this._applyCookiesConfiguration(this._aConfiguration);
 				} else {
@@ -208,6 +219,7 @@ sap.ui.define([
 			},
 
 			onAfterRendering: function() {
+				var bSupportsSWA;
 				// apply content density mode to the body tag
 				// in order to get the controls in the static area styled correctly,
 				// such as Dialog and Popover.
@@ -216,7 +228,11 @@ sap.ui.define([
 				Device.orientation.attachHandler(this._onOrientationChange, this);
 
 				if (this._oConfigUtil.getCookieValue(this._oCookieNames.APPROVAL_REQUESTED) !== "1") {
-					this.cookieSettingsDialogOpen({ showCookieDetails: false });
+					bSupportsSWA = this.getModel("versionData").getProperty("/supportsSWA");
+					this.cookieSettingsDialogOpen({
+						showCookieDetails: false,
+						supportsUsageTracking: bSupportsSWA
+					});
 				}
 			},
 

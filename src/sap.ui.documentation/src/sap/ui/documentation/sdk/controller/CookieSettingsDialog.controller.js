@@ -26,7 +26,7 @@ sap.ui.define([
 
 			openCookieSettingsDialog: function(oConfigUtil, oRootView, oOptions) {
 				this._oInitOptions = oOptions;
-				this._oModel.setData(oOptions, true);
+				this._oModel.setData(oOptions, true /* merge */);
 
 				if (this._oCookieSettingsDialog) {
 					this._oCookieSettingsDialog.open();
@@ -73,7 +73,7 @@ sap.ui.define([
 
 			onAcceptAllCookies: function () {
 				this._saveCookiePreference(this._oCookieNames.ALLOW_REQUIRED_COOKIES, true);
-				this._saveCookiePreference(this._oCookieNames.ALLOW_USAGE_TRACKING, true);
+				this._saveCookiePreference(this._oCookieNames.ALLOW_USAGE_TRACKING, this._oModel.getProperty("/supportsUsageTracking"));
 
 				this._oCookieSettingsDialog.close();
 			},
