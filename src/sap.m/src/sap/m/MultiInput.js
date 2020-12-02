@@ -1072,7 +1072,7 @@ function(
 		if (oEvent.target === this.getFocusDomRef()) {
 			Input.prototype.onfocusin.apply(this, arguments);
 
-			if (oTokenizer.hasOneTruncatedToken()) {
+			if (oTokenizer.hasOneTruncatedToken() && this.getEnabled() && this.getEditable()) {
 				oTokenizer.getTokens()[0].setSelected(false);
 				!this.isMobileDevice() && oTokenizer.setFirstTokenTruncated(false);
 			}

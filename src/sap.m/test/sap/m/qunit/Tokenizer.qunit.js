@@ -1411,7 +1411,6 @@ sap.ui.define([
 			oSpy = this.spy(this.tokenizer, "_togglePopup");
 
 		this.tokenizer._adjustTokensVisibility();
-		qutils.triggerEvent("click", this.tokenizer.getDomRef());
 		// await to set the truncation
 		sap.ui.getCore().applyChanges();
 
@@ -1419,7 +1418,11 @@ sap.ui.define([
 		assert.ok(oToken.getTruncated(), "Token should be truncated");
 
 		// Act
-		oToken.fireSelect();
+		this.tokenizer.ontap({
+			getMark: function (sId) {
+				return sId === "tokenTap" ? oToken : null;
+			}
+		});
 
 		// Assert
 		assert.strictEqual(oSpy.callCount, 1, "fnOnNMorePress should be called once.");
