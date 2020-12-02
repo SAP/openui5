@@ -12,44 +12,52 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * Provides and updates the status data of a binding.
-	 * Depending on the model's state and control's state changes, the data state is used to propagate changes to a control.
-	 * The control can react to these changes by implementing the <code>refreshDataState</code> method for the control.
-	 * Here, the data state object is passed as second parameter.
-	 *
-	 * Using the {@link #getChanges} method, the control can determine the changed properties and their old and new values.
+	 * Holds the status data of a binding.
+	 * To react to changes of this status data, a control must implement the
+	 * <code>refreshDataState</code> method, which is called with the name of the bound control
+	 * property and the data state object as parameters.
+	 * With the {@link #getChanges} method, the control can determine the changed properties
+	 * and their old and new values.
 	 * <pre>
-	 *     //sample implementation to handle message changes
-	 *     myControl.prototype.refreshDataState = function(oDataState) {
-	 *        var aMessages = oDataState.getChanges().messages;
-	 *        if (aMessages) {
-	 *            for (var i = 0; i &lt; aMessages.length; i++) {
-	 *                console.log(aMessages.message);
-	 *            }
+	 *     // sample implementation to handle message changes
+	 *     myControl.prototype.refreshDataState = function (sPropertyName, oDataState) {
+	 *        oDataState.getMessages().forEach(function (oMessage) {
+	 *            console.log(oMessage.getMessage());
 	 *        }
 	 *     }
 	 *
-	 *     //sample implementation to handle laundering state
-	 *     myControl.prototype.refreshDataState = function(oDataState) {
-	 *        var bLaundering = oDataState.getChanges().laundering || false;
-	 *        this.setBusy(bLaundering);
+	 *     // sample implementation to handle laundering state
+	 *     myControl.prototype.refreshDataState = function (sPropertyName, oDataState) {
+	 *        this.setBusy(oDataState.isLaundering());
 	 *     }
 	 *
-	 *     //sample implementation to handle dirty state
-	 *     myControl.prototype.refreshDataState = function(oDataState) {
-	 *        if (oDataState.isDirty()) console.log("Control " + this.getId() + " is now dirty");
+	 *     // sample implementation to handle dirty state
+	 *     myControl.prototype.refreshDataState = function (sPropertyName, oDataState) {
+	 *        if (oDataState.isDirty()) {
+	 *           console.log("Property " + sPropertyName + " of control " + this.getId()
+	 *               + " is dirty");
+	 *        }
 	 *     }
 	 * </pre>
 	 *
-	 * Using the {@link #getProperty} method, the control can read the properties of the data state. The properties are
+	 * With the {@link #getProperty} method, the control can read a property of the data state.
+	 * The properties are
 	 * <ul>
-	 *     <li><code>value</code> The value formatted by the formatter of the binding
-	 *     <li><code>originalValue</code> The original value of the model formatted by the formatter of the binding
-	 *     <li><code>invalidValue</code> The control value that was tried to be applied to the model but was rejected by a type validation
-	 *     <li><code>modelMessages</code> The messages that were applied to the binding by the <code>sap.ui.model.MessageModel</code>
-	 *     <li><code>controlMessages</code> The messages that were applied due to type validation errors
+	 *     <li><code>controlMessages</code> The {@link sap.ui.core.message.Message messages}
+	 *         created from type validation or parse errors on user input for a property binding
+	 *     <li><code>dirty</code> Whether the value was not yet confirmed by the server; use
+	 *         {@link #isDirty} to read this property
+	 *     <li><code>invalidValue</code> The control value that was rejected by type parsing or
+	 *         validation on user input for a property binding
+	 *     <li><code>laundering</code> Whether the value has been sent to the server but is not yet
+	 *         confirmed
 	 *     <li><code>messages</code> All messages of the data state
-	 *      <li><code>dirty</code> true if the value was not yet confirmed by the server
+	 *     <li><code>modelMessages</code> The {@link sap.ui.core.message.Message messages}
+	 *         available for the binding in its {@link sap.ui.model.Binding#getModel model}
+	 *     <li><code>originalValue</code> The <em>original</em> value of a property binding in
+	 *         {@link sap.ui.model.PropertyBinding#getExternalValue external representation}
+	 *     <li><code>value</code> The value of a property binding in
+	 *         {@link sap.ui.model.PropertyBinding#getExternalValue external representation}
 	 * </ul>
 	 *
 	 * @extends sap.ui.base.Object
@@ -76,7 +84,6 @@ sap.ui.define([
 				messages: []
 
 			};
-			//the resolved path of the binding to check for binding context changes
 			this.mChangedProperties = Object.assign({},this.mProperties);
 		}
 	});

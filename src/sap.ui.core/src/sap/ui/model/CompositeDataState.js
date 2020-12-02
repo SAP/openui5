@@ -7,45 +7,7 @@ sap.ui.define(['./DataState', "sap/base/util/deepEqual", "sap/base/util/each"], 
 
 	/**
 	 * @class
-	 * Provides and update the status data of a binding.
-	 * Depending on the models state and controls state changes, the data state is used to propagated changes to a control.
-	 * The control can react on these changes by implementing the <code>refreshDataState</code> method for the control.
-	 * Here the data state object is passed as a parameter.
-	 *
-	 * Using the {@link #getChanges getChanges} method the control can determine the changed properties and their old and new value.
-	 * <pre>
-	 *     //sample implementation to handle message changes
-	 *     myControl.prototype.refreshDataState = function(oDataState) {
-	 *        var aMessages = oDataState.getChanges().messages;
-	 *        if (aMessages) {
-	 *            for (var i = 0; i &lt; aMessages.length; i++) {
-	 *                console.log(aMessages.message);
-	 *            }
-	 *        }
-	 *     }
-	 *
-	 *     //sample implementation to handle laundering state
-	 *     myControl.prototype.refreshDataState = function(oDataState) {
-	 *        var bLaundering = oDataState.getChanges().laundering || false;
-	 *        this.setBusy(bLaundering);
-	 *     }
-	 *
-	 *     //sample implementation to handle dirty state
-	 *     myControl.prototype.refreshDataState = function(oDataState) {
-	 *        if (oDataState.isDirty()) console.log("Control " + this.getId() + " is now dirty");
-	 *     }
-	 * </pre>
-	 *
-	 * Using the {@link #getProperty getProperty} method the control can read the properties of the data state. The properties are
-	 * <ul>
-	 *     <li><code>value</code> The value formatted by the formatter of the binding
-	 *     <li><code>originalValue</code> The original value of the model formatted by the formatter of the binding
-	 *     <li><code>invalidValue</code> The control value that was tried to be applied to the model but was rejected by a type validation
-	 *     <li><code>modelMessages</code> The messages that were applied to the binding by the <code>sap.ui.model.MessageModel</code>
-	 *     <li><code>controlMessages</code> The messages that were applied due to type validation errors
-	 *     <li><code>messages</code> All messages of the data state
-	 *      <li><code>dirty</code> true if the value was not yet confirmed by the server
-	 * </ul>
+	 * Holds the status data of a composite binding.
 	 *
 	 * @extends sap.ui.model.DataState
 	 *
