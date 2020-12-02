@@ -56,11 +56,14 @@ sap.ui.define([
     QUnit.module("RecordReplay - DOM element search", {
         beforeEach: function () {
             this.oSearchField = new SearchField("mySearch", {placeholder: "Test"});
+            this.oSearchFieldMulti = new SearchField("mySecondSearch", {placeholder: "Multi"});
             this.oSearchField.placeAt("qunit-fixture");
+            this.oSearchFieldMulti.placeAt("qunit-fixture");
             sap.ui.getCore().applyChanges();
         },
         afterEach: function () {
             this.oSearchField.destroy();
+            this.oSearchFieldMulti.destroy();
         }
     });
 
@@ -83,16 +86,63 @@ sap.ui.define([
         }).finally(fnDone);
     });
 
-    QUnit.test("Should reject if no DOM element is found by a control selector", function (assert) {
+    QUnit.test("Should find multiple DOM element by control selector", function (assert) {
         var fnDone = assert.async();
-        RecordReplay.findDOMElementByControlSelector({
+        return RecordReplay.findAllDOMElementsByControlSelector({
+            selector: {
+                controlType: "sap.m.SearchField"
+            }
+        }).then(function (aDOMElements) {
+            assert.strictEqual(aDOMElements.length, 2, "Should find all search buttons");
+            assert.equal(aDOMElements[0], $("#mySearch-search")[0]);
+            assert.equal(aDOMElements[1], $("#mySecondSearch-search")[0]);
+
+            return RecordReplay.findAllDOMElementsByControlSelector({
+                selector: {
+                    controlType: "sap.m.SearchField",
+                    interaction: "focus"
+                }
+            });
+        }).then(function (aDOMElements) {
+            assert.strictEqual(aDOMElements.length, 2, "Should find all search inputs");
+            assert.equal(aDOMElements[0], $("#mySearch input")[0]);
+            assert.equal(aDOMElements[1], $("#mySecondSearch input")[0]);
+        }).finally(fnDone);
+    });
+
+    QUnit.test("Should reject if no DOM element is found by a control selector - single", function (assert) {
+        assert.expect(2);
+        var fnDone = assert.async();
+        return RecordReplay.findDOMElementByControlSelector({
             selector: {
                 controlType: "sap.m.App"
             }
         }).catch(function (oError) {
             assert.ok(oError.toString().match(/No DOM element found/), "Should reject when no DOM element matches the selector");
             this.oSearchField.destroy();
-            RecordReplay.findDOMElementByControlSelector({
+            this.oSearchFieldMulti.destroy();
+            return RecordReplay.findDOMElementByControlSelector({
+                selector: {
+                    controlType: "sap.m.SearchField"
+                }
+            }).catch(function (oError) {
+                assert.ok(oError.toString().match(/No DOM element found/), "Should reject when an error occurs while searching for DOM element");
+            });
+        }.bind(this)).finally(fnDone);
+    });
+
+    QUnit.test("Should resolve with empty array if no DOM elements are found - multi", function (assert) {
+        assert.expect(2);
+        var fnDone = assert.async();
+        return RecordReplay.findAllDOMElementsByControlSelector({
+            selector: {
+                controlType: "sap.m.App"
+            }
+        }).then(function (aDOMElements) {
+            assert.ok(!aDOMElements.length, "Should return no elements when none match the selector");
+            this.oSearchField.destroy();
+            this.oSearchFieldMulti.destroy();
+            return RecordReplay.findDOMElementByControlSelector({
                 selector: {
                     controlType: "sap.m.SearchField"
                 }
