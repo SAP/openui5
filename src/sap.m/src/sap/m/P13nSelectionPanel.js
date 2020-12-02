@@ -360,6 +360,7 @@ sap.ui.define([
 								href: "{href}",
 								text: "{text}",
 								target: "{target}",
+								wrapping: true,
 								enabled: {
 									path: 'href',
 									formatter: function(oValue) {
@@ -381,6 +382,7 @@ sap.ui.define([
 									fnPress(oEvent);
 								}
 							}), new Text({
+								wrapping: true,
 								visible: {
 									path: 'description',
 									formatter: function(sDescription) {
