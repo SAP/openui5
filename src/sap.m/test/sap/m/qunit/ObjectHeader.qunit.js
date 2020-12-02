@@ -275,7 +275,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(oOA.$("text").html(), "rerendered", "Attribute is rendered inside ObjectHeader");
+		assert.strictEqual(oOA.$("text")[0].textContent, "rerendered", "Attribute is rendered inside ObjectHeader");
 
 		// cleanup
 		oOH.destroy();

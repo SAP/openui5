@@ -62,19 +62,20 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 			 * Indicates if the <code>ObjectAttribute</code> text is selectable for the user.
 			 *
 			 * <b>Note:</b> As of version 1.48, only the value of the <code>text</code> property becomes active (styled and acts like a link) as opposed to both the <code>title</code> and <code>text</code> in the previous versions. If you set this property to <code>true</code>, you have to also set the <code>text</code> property.
+			 * <b>Note:</b> When <code>active</code> property is set to <code>true</code>, and the text direction of the <code>title</code> or the <code>text</code> does not match the text direction of the application, the <code>textDirection</code> property should be set to ensure correct display.
 			 */
 			active : {type : "boolean", group : "Misc", defaultValue : null},
 
 			/**
-			 * Determines the direction of the text, not including the title.
-			 * Available options for the text direction are LTR (left-to-right) and RTL (right-to-left). By default the control inherits the text direction from its parent control.
+			 * Determines the direction of the text.
+			 * Available options for the text direction are LTR (left-to-right), RTL (right-to-left), or Inherit. By default the control inherits the text direction from its parent control.
 			 */
 			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit}
 		},
 		aggregations : {
 
 			/**
-			 * When the aggregation is set, it replaces the text, active and textDirection properties. This also ignores the press event. The provided control is displayed as an active link in case it is a sap.m.Link.
+			 * When the aggregation is set, it replaces the <code>text</code>, <code>active</code> and <code>textDirection</code> properties. This also ignores the press event. The provided control is displayed as an active link in case it is a sap.m.Link.
 			 * <b>Note:</b> It will only allow sap.m.Text and sap.m.Link controls.
 			 */
 			customContent : {type : "sap.ui.core.Control", multiple : false},
@@ -148,6 +149,7 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 		}
 
 		oAttrAggregation.setProperty('text', sResult, true);
+		oAttrAggregation.setProperty('textDirection', sTextDir, true);
 
 		//if attribute is used inside responsive ObjectHeader or in ObjectListItem - only 1 line
 		if (oParent instanceof sap.m.ObjectListItem) {

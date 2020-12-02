@@ -31,4 +31,11 @@ describe('sap.m.ObjectAttribute', function() {
 		expect(takeScreenshot(element(by.id('testPage')))).toLookAs('objectAttribute_page4');
 	});
 
+	it('hebrew rtl example', function() {
+		browser.executeScript(function() { // scroll page down
+			document.getElementById("testPage-cont").scrollTop = 3000;
+		});
+		expect(takeScreenshot(element(by.id('testPage')))).toLookAs('objectAttribute_rtl_example');
+	});
+
 });

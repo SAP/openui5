@@ -29,7 +29,8 @@ sap.ui.define(["sap/ui/core/library"],
 	 */
 	ObjectAttributeRenderer.render = function(oRm, oOA) {
 		var oParent = oOA.getParent(),
-			sTooltip = oOA.getTooltip_AsString();
+			sTooltip = oOA.getTooltip_AsString(),
+			sTextDir = oOA.getTextDirection();
 
 		oRm.openStart("div", oOA);
 		if (oOA._isEmpty()) {
@@ -41,6 +42,11 @@ sap.ui.define(["sap/ui/core/library"],
 		}
 
 		oRm.class("sapMObjectAttributeDiv");
+
+		if (sTextDir !== TextDirection.Inherit) {
+			oRm.attr("dir", sTextDir.toLowerCase());
+		}
+
 		// add tabindex, "active" class and ARIA only when the ObjectAttribute is clickable
 		// e.g. when is active ot the CustomContent is sap.m.Link
 		if (oOA._isClickable()) {
@@ -84,7 +90,10 @@ sap.ui.define(["sap/ui/core/library"],
 		oRm.openStart("span", oOA.getId() + "-title");
 		oRm.class("sapMObjectAttributeTitle");
 		oRm.openEnd();
+		oRm.openStart("bdi");
+		oRm.openEnd();
 		oRm.text(oOA.getProperty("title"));
+		oRm.close("bdi");
 		if (oCore.getConfiguration().getLocale().getLanguage().toLowerCase() === "fr") {
 			oRm.unsafeHtml("&nbsp;");
 		}
@@ -97,16 +106,10 @@ sap.ui.define(["sap/ui/core/library"],
 	};
 
 	ObjectAttributeRenderer.renderActiveText = function (oRm, oOA, oParent) {
-		var sTextDir = oOA.getTextDirection(),
-			oAttrAggregation = oOA.getAggregation("customContent");
+		var oAttrAggregation = oOA.getAggregation("customContent");
 
 		oRm.openStart("span", oOA.getId() + "-text");
 		oRm.class("sapMObjectAttributeText");
-
-		if (sTextDir && sTextDir !== TextDirection.Inherit) {
-			oRm.attr("dir", sTextDir.toLowerCase());
-		}
-
 		oRm.openEnd();
 
 		if (oAttrAggregation && oParent) {
@@ -117,7 +120,10 @@ sap.ui.define(["sap/ui/core/library"],
 			}
 			oRm.renderControl(oAttrAggregation);
 		} else {
+			oRm.openStart("bdi");
+			oRm.openEnd();
 			oRm.text(oOA.getProperty("text"));
+			oRm.close("bdi");
 		}
 		oRm.close("span");
 	};

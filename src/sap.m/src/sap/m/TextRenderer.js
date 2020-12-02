@@ -131,7 +131,13 @@ sap.ui.define([
 		 */
 		TextRenderer.renderText = function(oRm, oText) {
 			var sText = HyphenationSupport.getTextForRender(oText, "main");
+
+			oRm.openStart("bdi");
+			oRm.openEnd();
+
 			oRm.text(sText);
+
+			oRm.close("bdi");
 		};
 
 		return TextRenderer;

@@ -135,7 +135,7 @@ sap.ui.define([
 	QUnit.test("Text Output", function(assert) {
 		// test if result is in HTML
 		oDom = jQuery.sap.domById('Text1');
-		assert.equal(oDom.innerHTML,"This is a simple Text.", "Displayed Text");
+		assert.equal(oDom.textContent,"This is a simple Text.", "Displayed Text");
 		// test if text is escaped
 		t1.setText("~!@#$%^&*()_+{}:\"|<>?\'\"><script>alert('xss')<\/script>");
 		oCore.applyChanges();
@@ -201,14 +201,14 @@ sap.ui.define([
 		try {
 			oCore.applyChanges();
 			oDom = jQuery.sap.domById('Text1');
-			assert.equal(oDom.innerHTML,"", "Null Text");
+			assert.equal(oDom.textContent,"", "Null Text");
 		} catch (e) {
 			// do nothing but let "expect" raise an error
 		}
 		t1.setText("Hello World!");
 		oCore.applyChanges();
 		oDom = jQuery.sap.domById('Text1');
-		assert.equal(oDom.innerHTML,"Hello World!", "Text entered again");
+		assert.equal(oDom.textContent,"Hello World!", "Text entered again");
 	});
 
 	QUnit.test("New line characters in XML view", function(assert) {

@@ -358,6 +358,32 @@
 
 	addToPage(oVBox, oPage);
 
+	addToPage(new sap.m.ObjectAttribute({
+		title: "רכיבים",
+		text: "מים, קמח, (Additive) תרכיז 2% חלב"
+	}), oPage);
+
+	addToPage(new sap.m.ObjectAttribute({
+		textDirection: "RTL",
+		title: "רכיבים",
+		text: "מים, קמח, (Additive) תרכיז 2% חלב"
+	}), oPage);
+
+	addToPage(new sap.m.ObjectAttribute({
+		active: true,
+		textDirection: "RTL",
+		title: "רכיבים",
+		text: "מים, קמח, (Additive) תרכיז 2% חלב"
+	}), oPage);
+
+	addToPage(new sap.m.Text({ text: "===== not OK, explicit textDirection is required =====" }), oPage);
+
+	addToPage(new sap.m.ObjectAttribute({
+		active: true,
+		title: "רכיבים",
+		text: "מים, קמח, (Additive) תרכיז 2% חלב"
+	}), oPage);
+
 </script>
 
 </head>
