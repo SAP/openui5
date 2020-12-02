@@ -109,7 +109,7 @@ sap.ui.define([
 
 			/**
 			 * Layout of the <code>Form</code>. The assigned <code>Layout</code> renders the <code>Form</code>.
-			 * We recommend using the <code>ResponsiveGridLayout</code> for rendering a <code>Form</code>,
+			 * We recommend using the {@link sap.ui.layout.form.ColumnLayout ColumnLayout} for rendering a <code>Form</code>,
 			 * as its responsiveness allows the available space to be used in the best way possible.
 			 */
 			layout : {type : "sap.ui.layout.form.FormLayout", multiple : false}

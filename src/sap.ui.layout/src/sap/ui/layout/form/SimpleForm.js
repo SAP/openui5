@@ -129,7 +129,7 @@ sap.ui.define([
 			/**
 			 * The <code>FormLayout</code> that is used to render the <code>SimpleForm</code>.
 			 *
-			 * We recommend using the <code>ResponsiveGridLayout</code> for rendering a <code>SimpleForm</code>,
+			 * We recommend using the <code>ColumnLayout</code> for rendering a <code>SimpleForm</code>,
 			 * as its responsiveness uses the space available in the best way possible.
 			 *
 			 * <b>Note</b> If possible, set the <code>layout</code> before adding content to prevent calculations for the default layout.
