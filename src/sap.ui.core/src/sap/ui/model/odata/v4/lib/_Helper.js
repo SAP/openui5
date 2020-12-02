@@ -24,6 +24,7 @@ sap.ui.define([
 		rNotMetaContext = /\([^/]*|\/-?\d+/g,
 		rPlus = /\+/g,
 		rSingleQuote = /'/g,
+		rSingleQuoteTwice = /''/g,
 		/**
 		 * @alias sap.ui.model.odata.v4.lib._Helper
 		 */
@@ -1183,8 +1184,7 @@ sap.ui.define([
 		},
 
 		/**
-		 * Parses a literal to the model value. The types "Edm.Binary" and "Edm.String" are
-		 * unsupported.
+		 * Parses a literal to the model value. The type "Edm.Binary" is unsupported.
 		 *
 		 * @param {string} sLiteral The literal value
 		 * @param {string} sType The type
@@ -1226,6 +1226,8 @@ sap.ui.define([
 					return sLiteral === "INF" || sLiteral === "-INF" || sLiteral === "NaN"
 						? sLiteral
 						: checkNaN(parseFloat(sLiteral));
+				case "Edm.String":
+					return sLiteral.slice(1, -1).replace(rSingleQuoteTwice, "'");
 				default:
 					throw new Error(sPath + ": Unsupported type: " + sType);
 			}

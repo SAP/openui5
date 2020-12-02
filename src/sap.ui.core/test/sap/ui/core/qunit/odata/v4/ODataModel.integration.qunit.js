@@ -5969,6 +5969,174 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Filter entities by messages
+	// Show that entities w/o messages are filtered out correctly with the filter returned by
+	// ODataListBinding#requestFilterForMessages and that entities with transient key predicates are
+	// ignored.
+	// JIRA: CPOUI5ODATAV4-679
+	QUnit.test("Filter entities by messages", function (assert) {
+		var oBinding,
+			oContext,
+			sView = '\
+<Table id="table" items="{path : \'/EntitiesWithComplexKey\', \
+		parameters : {$select : \'Messages\'}}">\
+	<Input id="item" value="{Value}"/>\
+</Table>',
+			oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			that = this;
+
+		this.expectRequest("EntitiesWithComplexKey?$select=Key/P1,Key/P2,Messages,Value"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					Key : { // entity w/o messages
+						P1 : "baz",
+						P2 : 44
+					},
+					Messages : [],
+					Value : "Baz"
+				}, {
+					Key : {
+						P1 : "f/o'o", // to check that inner+outer quotes and encode/decode work
+						P2 : 42
+					},
+					Messages : [{
+						message : "Foo error",
+						numericSeverity : 4,
+						target : "Value"
+					},{
+						message : "Foo warning",
+						numericSeverity : 3,
+						target : "Value"
+					}],
+					Value : "Foo"
+				}, {
+					Key : {
+						P1 : "bar",
+						P2 : 43
+					},
+					Messages : [{
+						message : "Bar error",
+						numericSeverity : 4,
+						target : "Value"
+					}],
+					Value : "Bar"
+				}]
+			})
+			.expectChange("item", ["Baz", "Foo", "Bar"])
+			.expectMessages([{
+				message : "Foo error",
+				target : "/EntitiesWithComplexKey(Key1='f%2Fo''o',Key2=42)/Value",
+				type : "Error"
+			  }, {
+				message : "Foo warning",
+				target : "/EntitiesWithComplexKey(Key1='f%2Fo''o',Key2=42)/Value",
+				type : "Warning"
+			  }, {
+				message : "Bar error",
+				target : "/EntitiesWithComplexKey(Key1='bar',Key2=43)/Value",
+				type : "Error"
+			  }]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			that.oLogMock.expects("error")
+				.withExactArgs("POST on 'EntitiesWithComplexKey' failed; "
+					+ "will be repeated automatically",
+					sinon.match("Create Error"), "sap.ui.model.odata.v4.ODataListBinding");
+			that.expectChange("item", ["", "Baz", "Foo", "Bar"])
+				.expectRequest({
+					method : "POST",
+					url : "EntitiesWithComplexKey",
+					payload : {}
+				},  createError({
+					code : "CODE",
+					message : "Create Error",
+					target : "Value"
+				}))
+				.expectMessages([{
+					message : "Foo error",
+					target : "/EntitiesWithComplexKey(Key1='f%2Fo''o',Key2=42)/Value",
+					type : "Error"
+				  }, {
+					code : "CODE",
+					message : "Create Error",
+					persistent : true,
+					target : "/EntitiesWithComplexKey($uid=...)/Value",
+					technical : true,
+					type : "Error"
+				  }, {
+					message : "Foo warning",
+					target : "/EntitiesWithComplexKey(Key1='f%2Fo''o',Key2=42)/Value",
+					type : "Warning"
+				  }, {
+					message : "Bar error",
+					target : "/EntitiesWithComplexKey(Key1='bar',Key2=43)/Value",
+					type : "Error"
+				}]);
+
+			// code under test
+			oContext = oBinding.create({}, true);
+
+			return that.waitForChanges(assert, "produce error message for transient entity");
+		}).then(function () {
+			// code under test
+			return oBinding.requestFilterForMessages().then(function (oFilter) {
+				that.expectChange("item", ["Baz", "Foo", "Bar"]);
+
+				oContext.delete(); // clean up to be able to call filter API
+
+				return Promise.all([
+					oContext.created().catch(function (oError) {
+						assert.ok(oError.canceled);
+					}),
+					that.waitForChanges(assert, "Clean up")
+				]).then(function () {
+					return oFilter;
+				});
+			});
+		}).then(function (oFilter) {
+			that.expectRequest("EntitiesWithComplexKey?$select=Key/P1,Key/P2,Messages,Value"
+				+ "&$filter=Key/P1 eq 'f/o''o' and Key/P2 eq 42"
+				+ " or Key/P1 eq 'bar' and Key/P2 eq 43&$skip=0&$top=100", {
+					value : [{
+						Key : {
+							P1 : "f/o'o",
+							P2 : 42
+						},
+						Messages : [{
+							message : "Foo error",
+							numericSeverity : 4,
+							target : "Value"
+						},{
+							message : "Foo warning",
+							numericSeverity : 3,
+							target : "Value"
+						}],
+						Value : "Foo"
+					}, {
+						Key : {
+							P1 : "bar",
+							P2 : 43
+						},
+						Messages : [{
+							message : "Bar error",
+							numericSeverity : 4,
+							target : "Value"
+						}],
+						Value : "Bar"
+					}]
+				})
+				.expectChange("item", ["Foo", "Bar"]);
+
+			// code under test
+			oBinding.filter(oFilter);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Request Late property with navigation properties in entity with key aliases
 	// JIRA: CPOUI5ODATAV4-122
 	QUnit.test("Late property in entity with key aliases", function (assert) {

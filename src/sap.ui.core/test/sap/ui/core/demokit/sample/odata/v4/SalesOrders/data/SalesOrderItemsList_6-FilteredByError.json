@@ -1,0 +1,49 @@
+{
+	"@odata.context" : "../$metadata#SalesOrderList('0500000006')/SO_2_SOITEM(DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID,SOITEM_2_PRODUCT(Category,Name,ProductID,SupplierName,TypeCode,PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber,BP_2_CONTACT(ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber))))",
+	"@odata.count" : "1",
+	"value" : [{
+		"SalesOrderID" : "0500000006",
+		"ItemPosition" : "0000000010",
+		"Note" : "",
+		"NoteLanguage" : "E",
+		"CurrencyCode" : "EUR",
+		"GrossAmount" : "2963.10",
+		"NetAmount" : "2490.00",
+		"TaxAmount" : "473.10",
+		"DeliveryDate" : "2016-06-26T22:00:00Z",
+		"Quantity" : "3",
+		"QuantityUnit" : "EA",
+		"ProductID" : "HT-1040",
+		"SOITEM_2_PRODUCT" : {
+			"ProductID" : "HT-1040",
+			"TypeCode" : "PR",
+			"Category" : "Laser Printers",
+			"Name" : "Laser Professional Eco",
+			"NameLanguage" : "EN",
+			"Description" : "Print 2400 dpi image quality color documents at speeds of up to 32 ppm (color) or 36 ppm (monochrome), letter/A4. Powerful 500 MHz processor, 512MB of memory",
+			"DescriptionLanguage" : "EN",
+			"SupplierID" : "0100000017",
+			"SupplierName" : "Meliva",
+			"TaxTarifCode" : 1,
+			"MeasureUnit" : "EA",
+			"WeightMeasure" : "32.000",
+			"WeightUnit" : "KG",
+			"CurrencyCode" : "EUR",
+			"Price" : "830.00",
+			"Width" : "51.000",
+			"Depth" : "46.000",
+			"Height" : "30.000",
+			"DimUnit" : "CM",
+			"CreatedAt" : "2016-06-13T06:53:13.000000Z",
+			"ChangedAt" : "2016-06-13T06:53:13.000000Z",
+			"PRODUCT_2_BP" : {
+				"@odata.etag" : "W/\"20160613065313.0000000\"",
+				"BusinessPartnerID" : "0100000017",
+				"CompanyName" : "Meliva",
+				"LegalForm" : "AG",
+				"PhoneNumber" : "2208791738",
+				"BP_2_CONTACT" : []
+			}
+		}
+	}]
+}

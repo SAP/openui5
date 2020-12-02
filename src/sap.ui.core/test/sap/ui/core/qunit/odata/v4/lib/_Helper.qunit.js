@@ -549,6 +549,8 @@ sap.ui.define([
 		{t : "Edm.Single", v : "-INF"},
 		{t : "Edm.String", v : "foo", l : "'foo'"},
 		{t : "Edm.String", v : "string with 'quote'", l : "'string with ''quote'''"},
+		{t : "Edm.String", v : "more ''quotes''", l : "'more ''''quotes'''''"},
+		{t : "Edm.String", v : "s'om\"e", l : "'s''om\"e'"},
 		{t : "Edm.String", v : null, l : "null"},
 		{t : "Edm.TimeOfDay", v : "18:59:59.999"}
 	].forEach(function (oFixture) {
@@ -561,7 +563,6 @@ sap.ui.define([
 			switch (oFixture.t) {
 				case "Edm.Binary":
 				case "Edm.Duration":
-				case "Edm.String":
 					// not supported
 					break;
 				default:
@@ -585,7 +586,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	["Edm.Binary", "Edm.Duration", "Edm.String", "Edm.bar"].forEach(function (sType) {
+	["Edm.Binary", "Edm.Duration", "Edm.bar"].forEach(function (sType) {
 		QUnit.test("parseLiteral: unsupported " + sType, function (assert) {
 			assert.throws(function () {
 				_Helper.parseLiteral("foo", sType, "path/to/property");
