@@ -385,7 +385,7 @@ sap.ui.define([
 			icon: "sap-icon://slim-arrow-down",
 			type: ButtonType.Transparent,
 			tooltip: this._oRb.getText("VARIANT_MANAGEMENT_TRIGGER_TT"),
-			press: function() { this._oCtrlRef = this.oVariantPopoverTrigger; }.bind(this)
+			press: function(oEvent) { this._oCtrlRef = oEvent.getParameter("pressed") ? this.oVariantPopoverTrigger : null; }.bind(this)
 		});
 
 		this.oVariantPopoverTrigger.addAriaLabelledBy(this.oVariantInvisibleText);
