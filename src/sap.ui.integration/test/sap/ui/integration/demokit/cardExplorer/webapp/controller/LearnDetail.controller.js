@@ -17,6 +17,8 @@ sap.ui.define([
 		 * Called when the controller is instantiated.
 		 */
 		onInit : function () {
+			TopicController.prototype.onInit.apply(this, arguments);
+
 			this.getRouter().getRoute("learnDetail").attachPatternMatched(this._onTopicMatched, this);
 			this.oDefaultModel = new JSONModel();
 			this.getView().setModel(this.oDefaultModel);

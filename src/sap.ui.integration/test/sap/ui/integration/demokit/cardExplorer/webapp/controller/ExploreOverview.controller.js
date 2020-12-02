@@ -17,6 +17,8 @@ sap.ui.define([
 		 * Called when the controller is instantiated.
 		 */
 		onInit: function () {
+			TopicController.prototype.onInit.apply(this, arguments);
+
 			var oRouter = this.getRouter();
 			oRouter.getRoute("exploreOverview").attachMatched(this._onRouteMatched, this);
 
