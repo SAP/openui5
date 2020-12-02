@@ -402,6 +402,53 @@ sap.ui.define([
 			assert.equal(oInsertStub.lastCall.args[1], "newTargetAggregation", "then the target aggregation from the change got changed");
 		});
 
+		QUnit.test("When applying a change and using mPropertyBag.sourceAggregation and .targetAggregation when the change was already performed", function(assert) {
+			var oChange = new Change({
+				selector : this.mSelectorWithGlobalId,
+				content : {
+					movedElements : [{
+						selector : {
+							id : this.oObjectAttribute.getId(),
+							type : "sap.m.ObjectAttribute"
+						},
+						sourceIndex : 1,
+						targetIndex : 0
+					}],
+					source : {
+						selector : {
+							id : this.oObjectHeader.getId(),
+							aggregation : "attributes"
+						}
+					},
+					target : {
+						selector : {
+							id : this.oObjectHeader.getId(),
+							aggregation : "attributes"
+						}
+					}
+				}
+			});
+
+			var oRemoveStub = sandbox.stub(JsControlTreeModifier, "removeAggregation");
+			var oInsertStub = sandbox.stub(JsControlTreeModifier, "insertAggregation");
+			sandbox.stub(JsControlTreeModifier, "getAggregation").returns([this.oObjectAttribute]);
+			var sAggregationName = "newAggregationName";
+
+			MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {
+				modifier: JsControlTreeModifier,
+				sourceAggregation: sAggregationName,
+				targetAggregation: sAggregationName
+			});
+			assert.equal(oRemoveStub.callCount, 0, "the change was not performed");
+			assert.equal(oInsertStub.callCount, 0, "the change was not performed");
+			var mExpectedRevertData = {
+				index: 1,
+				aggregation: sAggregationName,
+				sourceParent: { id: this.oObjectHeader.getId(), idIsLocal: false }
+			};
+			assert.deepEqual(oChange.getRevertData()[0], mExpectedRevertData, "the revert data is correct");
+		});
+
 		QUnit.test("When applying broken changes (functionality independent of modifier)", function(assert) {
 			var oChange = new Change({
 				selector : this.mSelectorWithGlobalId,
