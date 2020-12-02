@@ -20,9 +20,7 @@
 		<script>
 		var oModel = new sap.ui.model.json.JSONModel();
 
-		new sap.ui.core.InvisibleText("select_label", {text: "My label"}).toStatic();
-
-        var mData = {
+		var mData = {
 			"items": [
 				{
 					"key": "DZ",
@@ -395,7 +393,6 @@
 		});
 
 		var oSelect = new sap.m.Select({
-			ariaLabelledBy: 'select_label',
 			width: "15rem",
 			items: {
 				path: "/items",
@@ -411,7 +408,6 @@
 		});
 
 		var oSelectTwoColumn = new sap.m.Select({
-			ariaLabelledBy: 'select_label',
 			showSecondaryValues: true,
 			items: {
 				path: "/items",
@@ -420,7 +416,6 @@
 		});
 
 		var oSelectLabeled = new sap.m.Select({
-			ariaLabelledBy: 'select_label',
 			items: {
 				path: "/items",
 				template: oItemTemplate
@@ -441,7 +436,6 @@
 		}).addStyleClass("customLabel");
 
 		var oSelectIconOnly = new sap.m.Select({
-			ariaLabelledBy: 'select_label',
 			autoAdjustWidth: true,
 			icon: sap.ui.core.IconPool.getIconURI("filter"),
 			type: sap.m.SelectType.IconOnly,
@@ -452,7 +446,6 @@
 		});
 
 		var oSelectDisabled = new sap.m.Select({
-			ariaLabelledBy: 'select_label',
 			enabled: false,
 			items: {
 				path: "/items",
@@ -461,7 +454,6 @@
 		});
 
 		var oSelectSuccess = new sap.m.Select({
-			ariaLabelledBy: 'select_label',
 			width: "15rem",
 			valueState: sap.ui.core.ValueState.Success,
 			items: {
@@ -471,7 +463,6 @@
 		});
 
 		var oSelectWarning = new sap.m.Select({
-			ariaLabelledBy: 'select_label',
 			width: "15rem",
 			valueState: sap.ui.core.ValueState.Warning,
 			valueStateText: "value state text",
@@ -487,7 +478,6 @@
 		}).addStyleClass("customLabel");
 
 		var oSelectError = new sap.m.Select({
-			ariaLabelledBy: 'select_label',
 			width: "15rem",
 			valueState: sap.ui.core.ValueState.Error,
 			valueStateText: "value state text",
@@ -498,7 +488,6 @@
 		});
 
 		var oSelectInformation = new sap.m.Select({
-			ariaLabelledBy: 'select_label',
 			width: "15rem",
 			valueState: sap.ui.core.ValueState.Information,
 			valueStateText: "value state text",
@@ -509,7 +498,6 @@
 		});
 
 		var oSelectBusy = new sap.m.Select({
-			ariaLabelledBy: 'select_label',
 			busy: true,
 			items: {
 				path: "/items",

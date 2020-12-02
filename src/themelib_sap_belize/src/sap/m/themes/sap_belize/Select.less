@@ -23,24 +23,24 @@
 	border: 0.0625rem solid @sapUiToggleButtonPressedBorderColor;
 }
 
-html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState) {
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):not(.sapMSltState):focus {
 	outline-offset: -3px;
 	outline: 1px dotted @sapUiContentFocusColor;
 }
 
-html.sap-desktop .sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltState {
+html.sap-desktop .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltState:focus {
 	outline-offset: -4px;
 	outline: 1px dotted @sapUiContentFocusColor;
 }
 
-html.sap-desktop .sapMSltIconOnly.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltPressed {
+html.sap-desktop .sapMSltIconOnly:not(.sapMSltExpanded):not(.sapMSltDisabled).sapMSltPressed:focus {
 	outline-color: @sapUiContentContrastFocusColor;
 }
 
 /* TODO remove after 1.62 version */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMSlt.sapMSltFocused:not(.sapMSltExpanded):not(.sapMSltDisabled) {
+	.sapMSlt:not(.sapMSltExpanded):not(.sapMSltDisabled):focus {
 	  	outline: none;
 
 		&:before {

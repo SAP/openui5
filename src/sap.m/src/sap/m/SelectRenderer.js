@@ -81,6 +81,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			oRm.writeControlData(oSelect);
 			oRm.writeStyles();
 			oRm.writeClasses();
+			this.writeAccessibilityState(oRm, oSelect);
 
 			if (sTooltip) {
 				oRm.writeAttributeEscaped("title", sTooltip);
@@ -92,8 +93,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				}
 			}
 
+			if (bEnabled) {
+				oRm.writeAttribute("tabindex", "0");
+			}
+
 			oRm.write(">");
-			this.renderHiddenSelect(oRm, oSelect);
+			this.renderHiddenInput(oRm, oSelect);
 			this.renderLabel(oRm, oSelect);
 
 			switch (sType) {
@@ -114,54 +119,26 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				this.renderShadowList(oRm, oList);
 			}
 
+			if (oSelect.getName()) {
+				this.renderInput(oRm, oSelect);
+			}
+
 			oRm.write("</div>");
 		};
 
-		SelectRenderer.renderHiddenSelect = function (oRm, oSelect) {
-			var oList = oSelect.getList(),
-				aItems,
-				i;
-
-			oRm.write("<select");
-
-			oRm.writeAttribute("id", oSelect.getId() + "-hiddenSelect");
-
-			this.writeAccessibilityState(oRm, oSelect);
-
+		SelectRenderer.renderHiddenInput = function (oRm, oSelect) {
+			oRm.write("<input");
 
 			// Attributes
-
-			if (!oSelect.getEnabled()) {
-				oRm.writeAttribute("disabled", "disabled");
-			}
-
-			oRm.writeAttributeEscaped("name", oSelect.getName());
-			oRm.writeAttributeEscaped("value", oSelect.getSelectedKey());
+			oRm.writeAttribute("id", oSelect.getId() + "-hiddenInput");
+			oRm.writeAttribute("aria-readonly", "true");
+			oRm.writeAttribute("tabindex", "-1");
 
 			// Classes
 			oRm.addClass("sapUiPseudoInvisibleText");
-			oRm.addClass(SelectRenderer.CSS_CLASS + "HiddenSelect");
 			oRm.writeClasses();
-			oRm.write(">");
 
-			if (oSelect.getForceSelection()) {
-				oRm.write("<option");
-				oRm.writeAttribute("hidden", true);
-				oRm.writeAttribute("disabled", true);
-				oRm.writeAttribute("selected", true);
-				oRm.write(">");
-				oRm.write("</option>");
-			}
-
-			for (i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
-				oRm.write("<option");
-				oRm.writeAttributeEscaped("value", aItems[i].getText());
-				oRm.write(">");
-				oRm.writeEscaped(aItems[i].getText());
-				oRm.write("</option>");
-			}
-
-			oRm.write("</select>");
+			oRm.write(" />");
 		};
 
 		/**
@@ -180,7 +157,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			oRm.write("<label");
 			oRm.writeAttribute("id", oSelect.getId() + "-label");
 			oRm.writeAttribute("for", oSelect.getId());
-			oRm.writeAttribute("aria-hidden", true);
+			oRm.writeAttribute("aria-live", "polite");
 			oRm.addClass(CSS_CLASS + "Label");
 
 			if (oSelect.getValueState() !== ValueState.None) {
@@ -228,7 +205,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				oRm.addClass(CSS_CLASS + "ArrowState");
 			}
 
-			oRm.writeAttribute("aria-hidden", true);
 			oRm.writeAttribute("id", oSelect.getId() + "-arrow");
 			oRm.writeClasses();
 			oRm.write("></span>");
@@ -246,6 +222,23 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				id: oSelect.getId() + "-icon",
 				title: null
 			});
+		};
+
+		SelectRenderer.renderInput = function(oRm, oSelect) {
+			oRm.write("<input hidden");
+			oRm.writeAttribute("id", oSelect.getId() + "-input");
+			oRm.addClass(SelectRenderer.CSS_CLASS + "Input");
+			oRm.writeAttribute("aria-hidden", "true");
+			oRm.writeAttribute("tabindex", "-1");
+
+			if (!oSelect.getEnabled()) {
+				oRm.write("disabled");
+			}
+
+			oRm.writeClasses();
+			oRm.writeAttributeEscaped("name", oSelect.getName());
+			oRm.writeAttributeEscaped("value", oSelect.getSelectedKey());
+			oRm.write(">");
 		};
 
 		/**
@@ -315,7 +308,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		SelectRenderer.getAriaRole = function(oSelect) {
 			switch (oSelect.getType()) {
 				case SelectType.Default:
-					return "listbox";
+					return "combobox";
 
 				case SelectType.IconOnly:
 					return "button";
@@ -355,37 +348,22 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.writeAccessibilityState = function(oRm, oSelect) {
-			var sValueState = this._getValueStateString(oSelect),
-				bIconOnly = oSelect.getType() === SelectType.IconOnly,
-				aLabels = [],
-				aAriaLabelledBy = [],
-				oAriaLabelledBy;
-
-			oSelect.getLabels().forEach(function (oLabel) {
-				if (oLabel && oLabel.getId) {
-					aLabels.push(oLabel.getId());
-				}
-			});
+			var sValueState = this._getValueStateString(oSelect);
 
 			if (sValueState) {
-				aAriaLabelledBy.push(sValueState);
+				sValueState = " " + sValueState;
 			}
 
-			if (aLabels.length) {
-				aAriaLabelledBy = aAriaLabelledBy.concat(aLabels);
-			}
-
-			oAriaLabelledBy = {
-				value: aAriaLabelledBy.join(" "),
-				append: true
-			};
-
-			oRm.writeAccessibilityState(null, {
+			oRm.writeAccessibilityState(oSelect, {
 				role: this.getAriaRole(oSelect),
+				disabled: !oSelect.getEnabled(),
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
-				labelledby: (bIconOnly || oAriaLabelledBy.value === "") ? undefined : oAriaLabelledBy,
-				haspopup: bIconOnly ? true : undefined
+				labelledby: {
+					value: oSelect.getId() + "-label" + sValueState,
+					append: true
+				},
+				haspopup: (oSelect.getType() === SelectType.IconOnly) ? true : undefined
 			});
 		};
 
