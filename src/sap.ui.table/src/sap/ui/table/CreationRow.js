@@ -91,7 +91,7 @@ sap.ui.define([
 	 */
 	CreationRow.prototype.setVisible = function(bVisible) {
 		var bVisibleBefore = this.getVisible();
-		var oTable = this._getTable();
+		var oTable = this.getTable();
 
 		this.setProperty("visible", bVisible);
 
@@ -119,7 +119,7 @@ sap.ui.define([
 	 * @public
 	 */
 	CreationRow.prototype.resetFocus = function() {
-		var oInteractiveElement = this._getFirstInteractiveElement();
+		var oInteractiveElement = TableUtils.getFirstInteractiveElement(this);
 
 		if (oInteractiveElement) {
 			oInteractiveElement.focus();
@@ -135,7 +135,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	CreationRow.prototype.getFocusDomRef = function() {
-		var oInteractiveElement = this._getFirstInteractiveElement();
+		var oInteractiveElement = TableUtils.getFirstInteractiveElement(this);
 
 		if (oInteractiveElement) {
 			return oInteractiveElement;
@@ -168,7 +168,7 @@ sap.ui.define([
 	function setEventMarkedAndFireApplyAsync(oCreationRow, oEvent) {
 		var oFocusedElement = document.activeElement;
 
-		oCreationRow._getTable().getDomRef("focusDummy").focus();
+		oCreationRow.getTable().getDomRef("focusDummy").focus();
 		oEvent.setMarked();
 
 		window.setTimeout(function() {
@@ -281,28 +281,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the first interactive (editable) form element.
-	 *
-	 * @return {HTMLElement|null} The first interactive DOM element.
-	 * @private
-	 */
-	CreationRow.prototype._getFirstInteractiveElement = function() {
-		var aCells = this.getCells();
-
-		for (var i = 0; i < aCells.length; i++) {
-			var oCellContent = aCells[i].getDomRef();
-			var $Cell = TableUtils.getCell(this._getTable(), oCellContent, true);
-			var $InteractiveElements = TableUtils.getInteractiveElements($Cell);
-
-			if ($InteractiveElements) {
-				return $InteractiveElements[0];
-			}
-		}
-
-		return null;
-	};
-
-	/**
 	 * Gets the cell control of the corresponding column.
 	 *
 	 * @param {int} iColumnIndex The index of the column in the table's columns aggregation.
@@ -332,7 +310,7 @@ sap.ui.define([
 	CreationRow.prototype._getCellDomRef = function(iColumnIndex) {
 		var oCell = this._getCell(iColumnIndex);
 		var oCellContent = oCell ? oCell.getDomRef() : null;
-		var $Cell = TableUtils.getCell(this._getTable(), oCellContent, true);
+		var $Cell = TableUtils.getCell(this.getTable(), oCellContent, true);
 
 		if (!$Cell) {
 			return null;
@@ -370,7 +348,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype._takeOverKeyboardHandling = function(oEvent) {
-		var oTable = this._getTable();
+		var oTable = this.getTable();
 		var oTableDomRef = oTable ? oTable.getDomRef() : null;
 
 		if (!oTableDomRef || !oTableDomRef.contains(document.activeElement)) {
@@ -378,7 +356,7 @@ sap.ui.define([
 			return false;
 		}
 
-		var oCell = TableUtils.getCell(this._getTable(), document.activeElement);
+		var oCell = TableUtils.getCell(this.getTable(), document.activeElement);
 		var oCellInfo = TableUtils.getCellInfo(oCell);
 		var bFocusSet = false;
 
@@ -403,7 +381,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CreationRow.prototype._update = function() {
-		var oTable = this._getTable();
+		var oTable = this.getTable();
 
 		if (!oTable) {
 			this.removeAllCells();
@@ -427,7 +405,7 @@ sap.ui.define([
 	 * @return {sap.ui.table.Table|null} The instance of the table or <code>null</code>, if this row is not inside a table.
 	 * @private
 	 */
-	CreationRow.prototype._getTable = function() {
+	CreationRow.prototype.getTable = function() {
 		var oParent = this.getParent();
 		return TableUtils.isA(oParent, "sap.ui.table.Table") ? oParent : null;
 	};

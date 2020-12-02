@@ -1346,6 +1346,39 @@ sap.ui.define([
 		},
 
 		/**
+		 * Gets the first interactive element in the data cells of a row.
+		 *
+		 * @param {sap.ui.table.Row|sap.ui.table.CreationRow} oRow
+		 * @param {boolean} [bRowActionCells=false] Indicates whether the <code>RowAction</code> cells are taken
+		 * into consideration
+		 * @return {HTMLElement|null} The first interactive DOM element
+		 */
+		getFirstInteractiveElement: function(oRow, bRowActionCells) {
+			if (!oRow) {
+				return null;
+			}
+
+			var oTable = oRow.getTable();
+			var aCells = oRow.getCells();
+
+			if (bRowActionCells === true && this.hasRowActions(oTable)) {
+				aCells.push(oRow.getRowAction());
+			}
+
+			for (var i = 0; i < aCells.length; i++) {
+				var oCellContent = aCells[i].getDomRef();
+				var $Cell = this.getCell(oTable, oCellContent, true);
+				var $InteractiveElements = TableUtils.getInteractiveElements($Cell);
+
+				if ($InteractiveElements) {
+					return $InteractiveElements[0];
+				}
+			}
+
+			return null;
+		},
+
+		/**
 		 * Converts the CSS size to pixels and returns it with or without unit. Can also be used to parse a pixel value string to an integer.
 		 *
 		 * @param {string} sCSSSize The CSSSize to convert.

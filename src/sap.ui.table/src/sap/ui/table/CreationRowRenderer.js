@@ -27,7 +27,7 @@ sap.ui.define([
 	 * @param {sap.ui.table.CreationRow} oCreationRow The <code>CreationRow</code> that should be rendered
 	 */
 	CreationRowRenderer.render = function(oRm, oCreationRow) {
-		var oTable = oCreationRow._getTable();
+		var oTable = oCreationRow.getTable();
 
 		if (!oTable) {
 			return;

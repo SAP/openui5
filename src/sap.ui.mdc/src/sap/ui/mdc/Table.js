@@ -555,9 +555,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a Promise that resolves after the table has been initialized after being created and after changing the type.
+	 * Returns a <code>Promise</code> that resolves once the table has been initialized after the creation and
+	 * changing of its type.
 	 *
-	 * @returns {Promise} A Promise that resolves after the table has been initialized
+	 * @returns {Promise} A <code>Promise</code> that resolves after the table has been initialized
 	 * @public
 	 */
 	Table.prototype.initialized = function() {
@@ -615,24 +616,56 @@ sap.ui.define([
 	 * to the end of the current binding and might trigger a request for additional entries. This also applies in case
 	 * of a responsive table with growing enabled.
 	 *
-	 * @param {number} iIndex - The index of the row that should be scrolled into the visible area
-	 * @function scrollToIndex
+	 * @param {number} iIndex The index of the row that should be scrolled into the visible area
 	 * @since 1.76
-	 * @private
+	 * @returns {Promise} A <code>Promise</code> that resolves after the table scrolls to the row with the given index
 	 */
 	Table.prototype.scrollToIndex = function(iIndex) {
-		if (!this._oTable || (typeof iIndex !== "number")) {
-			return;
-		}
-
-		if (this._getStringType() === TableType.ResponsiveTable) {
-			this._oTable.scrollToIndex(iIndex);
-		} else {
-			if (iIndex === -1) {
-				iIndex = this.getRowBinding() ? this.getRowBinding().getLength() : 0;
+		return new Promise(function(resolve, reject) {
+			if (!this._oTable) {
+				return reject();
 			}
-			this._oTable.setFirstVisibleRow(iIndex);
-		}
+
+			if (typeof iIndex !== "number") {
+				return reject("The iIndex parameter has to be a number");
+			}
+
+			if (this._getStringType() === TableType.ResponsiveTable) {
+				this._oTable.scrollToIndex(iIndex).then(resolve).catch(reject);
+			} else {
+				if (iIndex === -1) {
+					iIndex = this.getRowBinding() ? this.getRowBinding().getLength() : 0;
+				}
+
+				if (this._oTable._setFirstVisibleRowIndex(iIndex)) {
+					this._oTable.attachEventOnce("rowsUpdated", function() {
+						resolve();
+					});
+				} else {
+					resolve();
+				}
+			}
+		}.bind(this));
+	};
+
+	/**
+	 * Sets the focus on the row. If <code>bFirstInteractiveElement</code> is <code>true</code>, and there are
+	 * interactive elements inside the row, sets the focus on the first interactive element. Otherwise the
+	 * focus is on the first data cell, if the type is <code>GridTableType</code>, and on the entire row, if
+	 * the type is <code>ResponsiveTableType</code>.
+	 * If the given index is not visible, the table scrolls to it automatically. In this case the same rules
+	 * apply as in {@link #scrollToIndex}.
+	 *
+	 * @param {number} iIndex The index of the row that is to be focused
+	 * @param {boolean} [bFirstInteractiveElement=false] Indicates whether to set the focus on the first
+	 * interactive element inside the row
+	 * @since 1.86
+	 * @returns {Promise} A <code>Promise</code> that resolves after the focus has been set
+	 */
+	Table.prototype.focusRow = function(iIndex, bFirstInteractiveElement) {
+		return this.scrollToIndex(iIndex).then(function() {
+			return this._oTable._setFocus(iIndex, bFirstInteractiveElement);
+		}.bind(this));
 	};
 
 	Table.prototype.setType = function(vType) {

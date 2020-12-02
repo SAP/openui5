@@ -1822,6 +1822,56 @@ sap.ui.define([
 		return bExpectRowsUpdatedEvent;
 	};
 
+	/**
+	 * Sets the focus on the row. If <code>bFirstInteractiveElement</code> is <code>true</code> and there are
+	 * interactive elements in the row, sets the focus on the first interactive element. Otherwise sets the
+	 * focus on the first data cell.
+	 *
+	 * If the given index is not in the visible area, it scrolls it into view and then sets the focus.
+	 *
+	 * @param {number} iIndex The index of the row that is to be focused
+	 * @param {boolean} [bFirstInteractiveElement=false] Indicates whether to set the focus on the first
+	 * interactive element
+	 *
+	 * @private
+	 * @returns {Promise} A <code>Promise</code> that resolves after the focus has been set
+	 */
+	Table.prototype._setFocus = function(iIndex, bFirstInteractiveElement) {
+		return new Promise(function(resolve) {
+			if (iIndex === -1) {
+				iIndex = this._getTotalRowCount() - 1;
+			}
+
+			if (typeof iIndex !== 'number' || iIndex < -1) {
+				iIndex = 0;
+			}
+
+			var iFirstVisibleRow = this.getFirstVisibleRow();
+			var iRowCount = this._getRowCounts().count;
+
+			if (iIndex > iFirstVisibleRow && iIndex < iFirstVisibleRow + iRowCount) {
+				this.getRows()[iIndex - iFirstVisibleRow]._setFocus(bFirstInteractiveElement);
+				return resolve();
+			}
+
+			if (this._setFirstVisibleRowIndex(iIndex)) {
+				this.attachEventOnce("rowsUpdated", function() {
+					setFocus(this, iIndex, bFirstInteractiveElement);
+					return resolve();
+				});
+			} else {
+				setFocus(this, iIndex, bFirstInteractiveElement);
+				return resolve();
+			}
+		}.bind(this));
+	};
+
+	function setFocus(oTable, iIndex, bFirstInteractiveElement) {
+		var iTotalRowCount = oTable._getTotalRowCount();
+		var iFirstRenderedRowIndex = oTable._getFirstRenderedRowIndex();
+		oTable.getRows()[Math.min(iIndex, iTotalRowCount - 1) - iFirstRenderedRowIndex]._setFocus(bFirstInteractiveElement);
+	}
+
 	// enable calling 'bindAggregation("rows")' without a factory
 	Table.getMetadata().getAggregation("rows")._doesNotRequireFactory = true;
 

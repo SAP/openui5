@@ -534,6 +534,58 @@ sap.ui.define([
 		assert.equal(oTable.getFirstVisibleRow(), iMaxRowIndex, "FirstVisibleRow is: " + iMaxRowIndex);
 	});
 
+	QUnit.test("_setFocus", function(assert) {
+		var oSpy = sinon.spy(oTable, "onRowsUpdated");
+
+		function testFocus(iIndex, bFirstInteractiveElement) {
+			return new Promise(function(resolve) {
+				if (iIndex === -1) {
+					iIndex = oTable._getTotalRowCount() - 1;
+				}
+
+				iIndex = Math.min(iIndex, oTable._getTotalRowCount() - 1);
+
+				var iFirstVisibleRow = oTable.getFirstVisibleRow();
+				var iRowCount = oTable.getVisibleRowCount();
+				var bScroll = true;
+				if (iIndex > iFirstVisibleRow && iIndex < iFirstVisibleRow + iRowCount) {
+					bScroll = false;
+				}
+
+				oTable._setFocus(iIndex, bFirstInteractiveElement).then(function() {
+					assert.ok(bScroll ? oSpy.calledOnce : oSpy.notCalled, "The table was " + (bScroll ? "" : "not") + " scrolled");
+
+					var oRow = oTable.getRows()[iIndex - oTable.getFirstVisibleRow()];
+					var $Elem = (bFirstInteractiveElement && TableUtils.getFirstInteractiveElement(oRow)) ?
+						TableUtils.getFirstInteractiveElement(oRow) : oRow.getDomRef("col0");
+					assert.deepEqual(document.activeElement, $Elem, "The focus was set correctly");
+					oSpy.reset();
+					return resolve();
+				});
+			});
+		}
+
+		return new Promise(function(resolve) {
+			resolve();
+		}).then(function() {
+			return testFocus(10, false);
+		}).then(function() {
+			return testFocus(0, false);
+		}).then(function() {
+			return testFocus(oTable._getTotalRowCount() / 2, false);
+		}).then(function() {
+			return testFocus(-1, false);
+		}).then(function() {
+			return testFocus(100, true);
+		}).then(function() {
+			return testFocus(0, true);
+		}).then(function() {
+			return testFocus(oTable._getTotalRowCount() / 2, true);
+		}).then(function() {
+			return testFocus(-1, true);
+		});
+	});
+
 	QUnit.test("ColumnHeaderVisible", function(assert) {
 		oTable.setColumnHeaderVisible(false);
 		sap.ui.getCore().applyChanges();

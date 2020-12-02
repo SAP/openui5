@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
+	"sap/ui/table/utils/TableUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
 	"sap/ui/table/TreeTable",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/ui/table/extensions/Keyboard",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/Device"
-], function(TableQUnitUtils, qutils, Table, TreeTable, AnalyticalTable, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, Device) {
+], function(TableQUnitUtils, TableUtils, qutils, Table, TreeTable, AnalyticalTable, containsOrEquals, ExtensionBase, KeyboardExtension, JSONModel, Device) {
 	"use strict";
 
 	// mapping of global function calls
@@ -339,7 +340,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		function doAfterNoDataDisplayed() {
-			assert.ok(window.checkFocus(oTable.getCreationRow()._getFirstInteractiveElement(), assert),
+			assert.ok(window.checkFocus(TableUtils.getFirstInteractiveElement(oTable.getCreationRow()), assert),
 				"focus is on the first interactive element in the CreationRow after overlay disappeared");
 			done();
 		}
