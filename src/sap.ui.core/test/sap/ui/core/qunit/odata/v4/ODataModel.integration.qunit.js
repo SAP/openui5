@@ -3621,6 +3621,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Failure to read from an ODataContextBinding returning a bound message
+	// BCP: 2070436327: the data state is updated if unbindProperty is called
 	QUnit.test("ODCB: read failure & message", function (assert) {
 		var oError = createError({
 				code : "CODE",
@@ -3660,6 +3661,16 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			return that.checkValueState(assert, "text", "Error", "Could not read");
+		}).then(function () {
+			// code under test
+			that.oView.byId("text").unbindProperty("value");
+
+			return Promise.all([
+				that.checkValueState(assert, "text", "None", ""),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("text").getValue(), "");
 		});
 	});
 

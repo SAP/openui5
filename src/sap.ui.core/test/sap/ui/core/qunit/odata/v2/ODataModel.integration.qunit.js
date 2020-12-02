@@ -1956,6 +1956,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Messages are visualized at controls that are bound against the messages' target.
+	// BCP: 2070436327: the data state is updated if unbindProperty is called
 	QUnit.test("Messages: check value state", function (assert) {
 		var oModel = createSalesOrdersModel(),
 			oMsgGrossAmount = this.createResponseMessage("GrossAmount", "Foo", "warning"),
@@ -1987,8 +1988,19 @@ sap.ui.define([
 			return Promise.all([
 				that.checkValueState(assert, "Note", "Error", "Bar"),
 				that.checkValueState(assert, "GrossAmount", "Warning", "Foo"),
-				that.checkValueState(assert, "LifecycleStatusDescription", "None", "")
+				that.checkValueState(assert, "LifecycleStatusDescription", "None", ""),
+				that.waitForChanges(assert)
 			]);
+		}).then(function () {
+			// code under test
+			that.oView.byId("Note").unbindProperty("value");
+
+			return Promise.all([
+				that.checkValueState(assert, "Note", "None", ""),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("Note").getValue(), "");
 		});
 	});
 
@@ -7219,6 +7231,90 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			);
 
 			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Value state of a control gets updates when removing a binding of a property.
+	// BCP: 2070436327
+	QUnit.test("JSONModel: Value state updated after calling unbindProperty", function (assert) {
+		var oModel = new JSONModel({Note : "Foo"}),
+			sView = '<Input id="note" value="{/Note}" />',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(that.oView.byId("note").getValue("value"), "Foo");
+
+			that.expectMessages([{
+					descriptionUrl : undefined,
+					message : "Some message",
+					target : "/Note",
+					type : "Error"
+				}]);
+
+			sap.ui.getCore().getMessageManager().addMessages(new Message({
+				message: "Some message",
+				processor: oModel,
+				target: "/Note",
+				type: "Error"
+			}));
+
+			return Promise.all([
+				that.checkValueState(assert, "note", "Error", "Some message"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// code under test
+			that.oView.byId("note").unbindProperty("value");
+
+			return Promise.all([
+				that.checkValueState(assert, "note", "None", ""),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("note").getValue("value"), "");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Value state of a control gets updates when setting another model.
+	// BCP: 2070436327
+	QUnit.test("JSONModel: Correct value state after setting another model", function (assert) {
+		var oModel = new JSONModel({Note : "Foo"}),
+			sView = '<Input id="note" value="{/Note}" />',
+			that = this;
+
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(that.oView.byId("note").getValue("value"), "Foo");
+
+			that.expectMessages([{
+					descriptionUrl : undefined,
+					message : "Some message",
+					target : "/Note",
+					type : "Error"
+				}]);
+
+			sap.ui.getCore().getMessageManager().addMessages(new Message({
+				message: "Some message",
+				processor: oModel,
+				target: "/Note",
+				type: "Error"
+			}));
+
+			return Promise.all([
+				that.checkValueState(assert, "note", "Error", "Some message"),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			// code under test
+			that.oView.setModel(new JSONModel({Note : "Bar"}));
+
+			return Promise.all([
+				that.checkValueState(assert, "note", "None", ""),
+				that.waitForChanges(assert)
+			]);
+		}).then(function () {
+			assert.strictEqual(that.oView.byId("note").getValue("value"), "Bar");
 		});
 	});
 });
