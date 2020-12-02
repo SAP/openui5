@@ -298,6 +298,11 @@ sap.ui.define([
 			this._iFilterTimer = null;
 		}
 
+		if (this._iSearchFieldTimer) {
+			clearTimeout(this._iSearchFieldTimer);
+			this._iSearchFieldTimer = null;
+		}
+
 	};
 
 	FieldValueHelp.prototype.invalidate = function(oOrigin) {
@@ -2098,7 +2103,8 @@ sap.ui.define([
 			if (!bInternalFilterBar) { // internal FilterBar is completely destroyed
 				var oSearchField = oFilterBar.getBasicSearchField();
 				if (oSearchField && oSearchField._bCreadedByFVH) { // destroy own SearchField
-					oFilterBar.destroyBasicSearchField(); // as rendeing-parent of SearchField might not be Filterbar destroy on FilterBar
+					oFilterBar.setBasicSearchField(); // as rendeing-parent of SearchField might not be Filterbar remove it from FilterBar
+					oSearchField.destroy(); // destroy is outside of FilterBar as destroyBasicSearchField would run into issues as FieldPath of SearchField can not be determined any longer
 				}
 			}
 
@@ -2114,7 +2120,9 @@ sap.ui.define([
 			oValueHelpPanel.setShowFilterbar(!!oFilterBar);
 			if (this.isOpen()) { // add current InParameterFilters and Filtervalue to Filterbar or internal condition to have right filters
 				_initializeFilters.call(this);
-				_initializeSearchField.call(this); //TODO: async to prevent creating internal FilterBar while removing old one and adding new one
+				if (!bInternalFilterBar || sMutation === "remove") { // on creating internal FilterBar SearchField is already created
+					_initializeSearchField.call(this, sMutation === "remove"); // async in removing to prevent creating internal FilterBar while removing old one and adding new one
+				}
 			}
 		}
 
@@ -2233,7 +2241,20 @@ sap.ui.define([
 	 * If there is a FilterBar given, add the SearchField to it.
 	 * If there is no FilterBar given, create a new one and add the SearchField.
 	 */
-	function _initializeSearchField() {
+	function _initializeSearchField(bAsync) {
+
+		if (bAsync) {
+			if (!this._iSearchFieldTimer) {
+				this._iSearchFieldTimer = setTimeout(function() {
+					this._iSearchFieldTimer = undefined;
+					_initializeSearchField.call(this, false);
+				}.bind(this), 0);
+			}
+			return;
+		} else if (this._iSearchFieldTimer) { // in case of a pending timeOut but sync calling, skip pending timeout
+			clearTimeout(this._iSearchFieldTimer);
+			this._iSearchFieldTimer = null;
+		}
 
 		var sFilterFields = this.getFilterFields();
 		var oWrapper = this.getContent(); // without content it makes no sense to have a SearchField

@@ -2493,13 +2493,21 @@ sap.ui.define([
 		var oCheckFilters = {additionalText: [{operator: "Contains", value: "2", value2: undefined}]};
 		assert.deepEqual(oFilters, oCheckFilters, "Filters used");
 
-		oFieldHelp.close();
-		oClock.tick(iDialogDuration); // fake closing time
-
 		sinon.spy(oSearchField, "destroy");
 		oFieldHelp.setFilterBar();
 		assert.ok(oSearchField.destroy.called, "SearchField destroyed after FilterBar removed");
 		oFilterBar.destroy();
+
+		oClock.tick(1); // As internal Filterbar is created async
+
+		var oInternalFilterBar = oFieldHelp.getAggregation("_filterBar");
+		assert.ok(oInternalFilterBar, "internal Filterbar created");
+		assert.ok(oInternalFilterBar.isA("sap.ui.mdc.filterbar.vh.FilterBar"), "Filterbar is VH-FilterBar");
+		oSearchField = oInternalFilterBar && oInternalFilterBar.getBasicSearchField();
+		assert.ok(oSearchField, "SearchField created");
+
+		oFieldHelp.close();
+		oClock.tick(iDialogDuration); // fake closing time
 
 	});
 
@@ -2581,6 +2589,8 @@ sap.ui.define([
 		assert.equal(aConditions.length, 1, "One condition in FilterField");
 		assert.equal(aConditions[0].operator, "EQ", "Operator of Condition");
 		assert.equal(aConditions[0].values[0], "Text 2", "Value of Condition");
+		var oSearchField = oFilterBar && oFilterBar.getBasicSearchField();
+		assert.ok(oSearchField, "SearchField created");
 		oFieldHelp.close();
 		oClock.tick(iDialogDuration); // fake closing time
 
