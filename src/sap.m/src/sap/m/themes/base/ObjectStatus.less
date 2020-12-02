@@ -142,6 +142,12 @@
 .sapMObjStatusIndication08 .sapMObjStatusIcon {
 	color: @sapUiIndication8;
 }
+
+.sapMObjStatus:not(.sapMObjStatusInverted) .sapMObjStatusText,
+.sapMObjStatus:not(.sapMObjStatusInverted) .sapMObjStatusIcon {
+	text-shadow: @sapUiContentTextShadow;
+}
+
 // inverted classes
 
 .sapMObjStatusInverted .sapMObjStatusText,
