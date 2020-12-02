@@ -29,15 +29,22 @@ sap.ui.define([
 
 	DelegateMediator._mDefaultDelegateItems = {};
 
-	function getDefaultDelegateInfo(oControl, sModelType) {
-		if (!sModelType && oControl.getModel) {
+	function getModelTypeForControl(oControl, sModelType) {
+		if (sModelType) {
+			return sModelType;
+		}
+		if (oControl.getModel) {
 			// get the default model
 			var oModel = oControl.getModel();
 			if (!oModel) {
 				return undefined;
 			}
-			sModelType = oModel.getMetadata().getName();
+			return oModel.getMetadata().getName();
 		}
+	}
+
+	function getDefaultDelegateInfo(oControl, sModelType) {
+		sModelType = getModelTypeForControl(oControl, sModelType);
 		var mDelegateInfo = DelegateMediator._mDefaultDelegateItems[sModelType];
 		if (mDelegateInfo) {
 			//only return a delegate info if a default delegate is found
@@ -90,6 +97,22 @@ sap.ui.define([
 
 	DelegateMediator.getKnownDefaultDelegateLibraries = function () {
 		return ["sap.ui.comp"]; // OdataV2Delegate is defined in sap.ui.comp
+	};
+
+	/**
+	 * Returns a list of required libraries for the given default delegate.
+	 * If it is not a default delegate, an empty list is returned.
+	 *
+	 * @param {string} sDelegateName - Name of the delegate
+	 * @param {sap.ui.core.Element} oControl - Control for which the corresponding delegate was returned
+	 * @param {string} [sModelType] - Model type, if none is provided the default model of oControl is taken instead
+	 * @returns {string[]} Required libraries
+	 */
+	DelegateMediator.getRequiredLibrariesForDefaultDelegate = function (sDelegateName, oControl, sModelType) {
+		sModelType = getModelTypeForControl(oControl, sModelType);
+		var mDelegateInfo = DelegateMediator._mDefaultDelegateItems[sModelType] || {};
+		var bIsDefaultDelegate = sDelegateName === mDelegateInfo.name;
+		return Object.keys((bIsDefaultDelegate && mDelegateInfo.requiredLibraries) || {});
 	};
 
 	/**

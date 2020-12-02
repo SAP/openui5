@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
-	"sap/ui/core/util/reflection/JsControlTreeModifier"
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
+	"sap/base/util/restricted/_difference"
 ], function(
 	Plugin,
 	ElementUtil,
@@ -25,7 +26,8 @@ sap.ui.define([
 	Log,
 	merge,
 	DelegateMediatorAPI,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	difference
 ) {
 	"use strict";
 
@@ -178,7 +180,7 @@ sap.ui.define([
 		return bValidAction;
 	}
 
-	function _filterValidAddPropertyActions(aActions, mParents, oPlugin) {
+	function _filterValidAddPropertyActions(aActions, mParents, oPlugin, aDefaultDelegateLibraries) {
 		return aActions.reduce(function (oPreviousActionsPromise, mAction) {
 			return oPreviousActionsPromise.then(function (aFilteredActions) {
 				var oCheckElement = mAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
@@ -190,13 +192,27 @@ sap.ui.define([
 						control: mParents.relevantContainer, //delegate will always be added on the relevant container
 						modifier: JsControlTreeModifier,
 						supportsDefault: mAction.supportsDefaultDelegate
-					}).then(function(mDelegateInfo) {
-						if (mDelegateInfo && mDelegateInfo.name) {
-							mAction.delegateInfo = mDelegateInfo;
-							aFilteredActions.push(mAction);
-						}
-						return aFilteredActions;
-					});
+					})
+						.then(function(mDelegateInfo) {
+							if (mDelegateInfo && mDelegateInfo.name) {
+								var aRequiredLibraries = DelegateMediatorAPI.getRequiredLibrariesForDefaultDelegate({
+									delegateName: mDelegateInfo.name,
+									control: mParents.relevantContainer
+								});
+
+								// Check if all required libraries were successfully loaded
+								if (
+									difference(
+										aRequiredLibraries,
+										aDefaultDelegateLibraries.filter(Boolean)
+									).length === 0
+								) {
+									mAction.delegateInfo = mDelegateInfo;
+									aFilteredActions.push(mAction);
+								}
+							}
+							return aFilteredActions;
+						});
 				}
 				return aFilteredActions;
 			});
@@ -236,9 +252,13 @@ sap.ui.define([
 		var aRequiredLibraries = DelegateMediatorAPI.getKnownDefaultDelegateLibraries();
 		aRequiredLibraries.forEach(function(sLibrary) {
 			var oLoadLibraryPromise = sap.ui.getCore().loadLibrary(sLibrary, { async: true })
+				.then(function() {
+					return Promise.resolve(sLibrary);
+				})
 				.catch(function(vError) {
 					Log.warning("Required library not available: ", vError);
-					return Promise.reject();
+					// Ignore the error here as the default delegate might not be required
+					return Promise.resolve();
 				});
 			aLoadLibraryPromises.push(oLoadLibraryPromise);
 		});
