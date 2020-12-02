@@ -1033,10 +1033,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Resolves the given URL relative to the card's base URL during runtime.
+	 * Resolves the given URL relatively to the manifest base path.
+	 * Absolute paths are not changed.
 	 *
 	 * @example
-	 * oCard.getRuntimeUrl("images/Avatar.png") === "/sample/card/images/Avatar.png"
+	 * oCard.getRuntimeUrl("images/Avatar.png") === "sample/card/images/Avatar.png"
+	 * oCard.getRuntimeUrl("http://www.someurl.com/Avatar.png") === "http://www.someurl.com/Avatar.png"
+	 * oCard.getRuntimeUrl("https://www.someurl.com/Avatar.png") === "https://www.someurl.com/Avatar.png"
 	 *
 	 * @ui5-restricted
 	 * @param {string} sUrl The URL to resolve.
@@ -1052,13 +1055,18 @@ sap.ui.define([
 			return null;
 		}
 
-		if (!sAppId) {
+		if (!sAppId ||
+			sUrl.startsWith("http://") ||
+			sUrl.startsWith("https://") ||
+			sUrl.startsWith("//")) {
 			return sUrl;
 		}
 
 		sAppName = sAppId.replace(/\./g, "/");
 
-		return sap.ui.require.toUrl(sAppName + "/" + sSanitizedUrl);
+		// do not use sap.ui.require.toUrl(sAppName + "/" + sSanitizedUrl)
+		// because it doesn't work when the sSanitizedUrl starts with ".."
+		return sap.ui.require.toUrl(sAppName) + "/" + sSanitizedUrl;
 	};
 
 	/**

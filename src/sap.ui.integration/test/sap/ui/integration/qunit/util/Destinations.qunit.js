@@ -16,7 +16,8 @@ sap.ui.define([
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 
-		var sResourcePath = "test-resources/sap/ui/integration/qunit/manifests/";
+		var sResourcePath = "./qunit/manifests/",
+			sBaseUrl = "test-resources/sap/ui/integration/";
 
 		var oManifest_Valid = {
 			"sap.app": {
@@ -156,7 +157,7 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 				var aItems = this.oCard.getCardContent().getInnerList().getItems(),
 					sFirstItemIcon = aItems[0].getIcon(),
-					sExpectedIcon = "test-resources/sap/ui/integration/qunit/manifests/Image1.png";
+					sExpectedIcon = "./qunit/manifests/Image1.png";
 
 				// Assert
 				assert.ok(aItems.length, "The data request is successful.");
@@ -243,7 +244,8 @@ sap.ui.define([
 
 				this.oCard = new Card({
 					"manifest": oManifest_Valid,
-					"host": this.oHost
+					"host": this.oHost,
+					"baseUrl": sBaseUrl
 				});
 				this.oCard.setHost(this.oHost);
 			},
@@ -284,7 +286,8 @@ sap.ui.define([
 
 				this.oCard = new Card({
 					"manifest": oManifest_Valid,
-					"host": this.oHost
+					"host": this.oHost,
+					"baseUrl": sBaseUrl
 				});
 				this.oCard.setHost(this.oHost);
 			},
@@ -314,7 +317,8 @@ sap.ui.define([
 
 				this.oCard = new Card({
 					"manifest": oManifest_Invalid_Destinations,
-					"host": this.oHost
+					"host": this.oHost,
+					"baseUrl": sBaseUrl
 				});
 				this.oCard.setHost(this.oHost);
 			},
@@ -351,7 +355,8 @@ sap.ui.define([
 
 				this.oCard = new Card({
 					"manifest": oManifest_Mixed_Valid_Invalid_Destinations,
-					"host": this.oHost
+					"host": this.oHost,
+					"baseUrl": sBaseUrl
 				});
 				this.oCard.setHost(this.oHost);
 			},
@@ -391,7 +396,8 @@ sap.ui.define([
 			beforeEach: function () {
 
 				this.oCard = new Card({
-					"manifest": oManifest_Valid
+					"manifest": oManifest_Valid,
+					"baseUrl": sBaseUrl
 				});
 				this.oCard.setHost(this.oHost);
 			},
@@ -413,7 +419,8 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oCard = new Card({
 					"manifest": oManifest_DefaultUrl,
-					"host": this.oHost
+					"host": this.oHost,
+					"baseUrl": sBaseUrl
 				});
 			},
 			afterEach: function () {

@@ -56,7 +56,7 @@ sap.ui.define([
 					var aProducts = oData.d.results;
 
 					oMockServer = new MockServer({
-						rootUri: "./graphql"
+						rootUri: "/graphql"
 					});
 
 					var aRequests = oMockServer.getRequests();

@@ -39,6 +39,12 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 				 */
 				settingsJson: {
 					type: "string"
+				},
+				/**
+				 * The card.
+				 */
+				card: {
+					type: "sap.ui.integration.widgets.Card"
 				}
 			},
 			events: {
