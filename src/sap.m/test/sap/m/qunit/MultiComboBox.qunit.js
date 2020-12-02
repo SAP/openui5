@@ -5472,7 +5472,8 @@ sap.ui.define([
 		assert.strictEqual(oInvisibleText.getText(), oResourceBundle.getText("TOKENIZER_ARIA_CONTAIN_SEVERAL_TOKENS", 2), "'MultiComboBox contains N tokens' text is set.");
 
 		//arrange
-		var sInvisibleTextId1 = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER");
+		var sInvisibleTextId1 = InvisibleText.getStaticId("sap.m", "MULTICOMBOBOX_OPEN_NMORE_POPOVER"),
+			sAriaDescribedBy = Device.browser.msie ? oMultiComboBox.getId() + "-describedby" + " " + sInvisibleTextId + " " + sInvisibleTextId1 : sInvisibleTextId + " " + sInvisibleTextId1;
 
 		// act
 		oMultiComboBox.setEditable(false);
@@ -5483,7 +5484,7 @@ sap.ui.define([
 
 		//assert
 		assert.ok(oMultiComboBox.getFocusDomRef().getAttribute('aria-describedby').indexOf(sInvisibleTextId1) !== -1, "Input has aria-describedby attribute to indicate Enter press possibility");
-		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute('aria-describedby'), sInvisibleTextId + " " + sInvisibleTextId1, "Both references are added to the aria-describedby attribute");
+		assert.strictEqual(oMultiComboBox.getFocusDomRef().getAttribute('aria-describedby'), sAriaDescribedBy, "Both references are added to the aria-describedby attribute");
 
 		// destroy
 		oItem1.destroy();
