@@ -6,12 +6,14 @@ sap.ui.define([
 	"sap/base/util/extend",
 	"sap/ui/integration/formatters/DateTimeFormatter",
 	"sap/ui/integration/formatters/NumberFormatter",
+	"sap/ui/integration/formatters/TextFormatter",
 	"sap/ui/integration/bindingFeatures/DateRange"
 ], function (
 	BindingParser,
 	extend,
 	DateTimeFormatter,
 	NumberFormatter,
+	TextFormatter,
 	DateRange
 ) {
 	"use strict";
@@ -51,6 +53,7 @@ sap.ui.define([
 		"float": NumberFormatter.float,
 		integer: NumberFormatter.integer,
 		percent: NumberFormatter.percent,
+		text: TextFormatter.text,
 		unit: NumberFormatter.unit
 	};
 

@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>Text Formatter</title>
+	<meta http-equiv="Content-Type" content="text/html">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta charset="utf-8">
+	<script src="../../../scripts/boot.js"></script>
+</head>
+
+<body class="sapUiBody topicBody">
+	<div class="topic">
+		<div class="content">
+
+			<h2 id="textFormatter">Text Formatter</h2>
+			<p>
+				Creates a string from a pattern by replacing placeholders with concrete values.
+			</p>
+	
+			<h2 id="api">API</h2>
+			<p>
+				The <code>text</code> formatter takes as a first argument a string that contains placeholders (typically a text from i18n resource bundle).
+				The second argument is an array of values that will be put inside the placeholders.
+			</p>
+			<p><code>format.text(pattern, values)</code></p>
+			<div class="tableWrapper">
+				<table>
+					<tbody>
+						<tr>
+							<th>Param</th>
+							<th>Type</th>
+							<th>Required</th>
+							<th>Description</th>
+							<th>Since</th>
+						</tr>
+						<tr>
+							<td>pattern</td>
+							<td>string</td>
+							<td>Yes</td>
+							<td>A string that contains placeholders. For example "Some text {0}".
+								For detailed description about possible patterns and how to escape them read the<a data-demokit-href="/api/module:sap/base/strings/formatMessage" target="_blank">formatMessage documentation</a>.
+							</td>
+							<td>1.86</td>
+						</tr>
+						<tr>
+							<td>values</td>
+							<td>any[]</td>
+							<td>Yes</td>
+							<td>
+								Values, that will be put in the placeholders. The first value of the array will be put in placeholder "{0}",
+								the second value will be put in placeholder "{1}" and so on...
+							</td>
+							<td>1.86</td>
+						</tr>
+					</tbody>
+
+					<tbody>
+						<tr>
+							<th>Returns</th>
+							<th></th>
+							<th></th>
+							<th></th>
+							<th></th>
+						</tr>
+						<tr>
+							<td></td>
+							<td>string</td>
+							<td></td>
+							<td>The formatted text</td>
+							<td>1.86</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+
+			<h2 id="examples">
+				Examples
+			</h2>
+
+			<p>Card with <code>text</code> formatter using text from i18n resource bundle</p>
+			<p>i18n/i18n.properties</p>
+			<pre class="prettyprint lang-properties">
+subtitle=Showing {0} of Total {1} Items
+</pre>
+			<p>manifest.json</p>
+			<pre class="prettyprint lang-js" lines="11">
+"sap.card": {
+	"type": "List",
+	"data": {
+		"json": {
+			"visibleItems": 5,
+			"totalItems": 15
+		}
+	},
+	"header": {
+		"title": "Order Status",
+		"subTitle": "{= format.text(${i18n>subtitle}, [${/visibleItems}, ${/totalItems}]}"
+	},
+	"content": {...}
+}
+</pre>
+			<a class="try-button" href="../../../index.html#/explore/text" target="_parent">Try it Out</a>
+		</div>
+		<div class="navigation">
+			<h4>Table of Contents</h4>
+			<div><a href="#textFormatter">Text Formatter</a></div>
+			<div><a href="#api">API</a></div>
+			<div><a href="#examples">Examples</a></div>
+		</div>
+	</div>
+
+</body>
+
+</html>

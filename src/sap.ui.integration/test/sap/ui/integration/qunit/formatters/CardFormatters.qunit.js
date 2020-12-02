@@ -197,4 +197,35 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest);
 	});
 
+	QUnit.module("Formatters using i18n model of the card", {
+		beforeEach: function () {
+			this.oCard = new Card({
+				width: "400px",
+				height: "600px",
+				manifest: "test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsAndFormatters/manifest.json"
+			});
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+			this.oCard = null;
+		}
+	});
+
+	QUnit.test("Text formatter", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var sTitle = this.oCard.getCardHeader().getTitle();
+
+			// Column values
+			assert.strictEqual(sTitle, "Hello World from card header.", "The text is properly formatted");
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 });

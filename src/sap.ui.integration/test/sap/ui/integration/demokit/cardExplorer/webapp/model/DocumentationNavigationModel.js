@@ -195,6 +195,11 @@ sap.ui.define([
 						key: 'percent'
 					},
 					{
+						title: 'Text',
+						target: 'learnDetail',
+						key: 'text'
+					},
+					{
 						title: 'Unit of Measurement',
 						target: 'learnDetail',
 						key: 'unit'
