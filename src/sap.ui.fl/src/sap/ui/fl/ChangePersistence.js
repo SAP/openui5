@@ -563,6 +563,9 @@ sap.ui.define([
 
 	function getAllRelevantChangesForCondensing(aPassedChanges) {
 		var aDirtyChanges = aPassedChanges || this._aDirtyChanges;
+		if (!aDirtyChanges.length) {
+			return [];
+		}
 		var sLayer = aDirtyChanges[0].getLayer();
 		var aPersistedAndSameLayerChanges = this._mChanges.aChanges.filter(function(oChange) {
 			return oChange.getState() === Change.states.PERSISTED && LayerUtils.compareAgainstCurrentLayer(oChange.getLayer(), sLayer) === 0;
