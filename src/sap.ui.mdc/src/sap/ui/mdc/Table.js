@@ -1261,7 +1261,7 @@ sap.ui.define([
 
 	Table.prototype.retrieveInbuiltFilter = function() {
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		return Control.prototype.retrieveInbuiltFilter.call(this, this._registerInnerFilter, false).then(function(oAdaptationFilterBar){
+		return Control.prototype.retrieveInbuiltFilter.call(this, this._registerInnerFilter).then(function(oAdaptationFilterBar){
 			var oFilterConfig = {
 				adaptationUI: oAdaptationFilterBar,
 				applyFilterChangeOn: oAdaptationFilterBar,

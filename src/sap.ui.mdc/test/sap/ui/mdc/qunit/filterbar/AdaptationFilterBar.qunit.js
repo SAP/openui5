@@ -46,7 +46,6 @@ sap.ui.define([
 			this.oTestTable = new Table();
 
 			this.oAdaptationFilterBar = new AdaptationFilterBar({
-				advancedMode: false,
 				adaptationControl: this.oTestTable
 			});
 			if (FlexUtil.handleChanges.restore){
@@ -134,35 +133,44 @@ sap.ui.define([
 	});
 
 	QUnit.module("AdaptationFilterBar - MDC Control unspecific tests", {
-		beforeEach: function () {
-
+		createIFilter: function(mSettings) {
+			var IFilterControl = Control.extend("temp", {
+				metadata: {
+					interfaces: [
+						"sap.ui.mdc.IFilter"
+					]
+				}
+			});
+			return new IFilterControl(mSettings);
+		},
+		createIFilterSource: function(mSettings) {
+			var IFilterControl = Control.extend("temp", {
+				metadata: {
+					interfaces: [
+						"sap.ui.mdc.IFilterSource"
+					]
+				}
+			});
+			return new IFilterControl(mSettings);
+		},
+		prepareTestSetup: function(bCreateIFilter) {
 			//mock parent as 'AdaptationControl'
-			this.oParent = new Control({
+
+			var fnParentFactory = bCreateIFilter ? this.createIFilter : this.createIFilterSource;
+
+			this.oParent = fnParentFactory({
 				delegate: {
 					name: "sap/ui/mdc/AggregationBaseDelegate"
 				}
 			});
 
 			oAdaptationFilterBar = new AdaptationFilterBar({
-				advancedMode: false,
 				adaptationControl: this.oParent
 			});
 
 			if (FlexUtil.handleChanges.restore){
 				FlexUtil.handleChanges.restore();
 			}
-
-			//Mock propertyinfo
-			this.aMockProperties = [
-				{
-					name: "key1",
-					typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
-				},
-				{
-					name: "key2",
-					typeConfig: TypeUtil.getTypeConfig("sap.ui.model.odata.type.DateTimeOffset")
-				}
-			];
 
 			//AdaptatationFilterBar expects 'filterConditions' property
 			this.oParent.getFilterConditions = function() {
@@ -181,28 +189,43 @@ sap.ui.define([
 			});
 			this.oParentAC = this.oParent._oAdaptationController;
 
+			oAdaptationFilterBar.setAdaptationControl(this.oParent);
+		},
+		beforeEach: function () {
+			//Mock propertyinfo
+			this.aMockProperties = [
+				{
+					name: "key1",
+					typeConfig: TypeUtil.getTypeConfig("sap.ui.model.type.String")
+				},
+				{
+					name: "key2",
+					typeConfig: TypeUtil.getTypeConfig("sap.ui.model.odata.type.DateTimeOffset")
+				}
+			];
+
 			//Mock Delegate funcitonality
 			var oMockedPropertyInfoPromise = new Promise(function(resolve){
 				resolve(this.aMockProperties);
 			}.bind(this));
 
+			//Mock fetch properties
 			sinon.stub(AggregationBaseDelegate, "fetchProperties").returns(oMockedPropertyInfoPromise);
 
+			//Mock 'getFilterDelegate'
 			sinon.stub(AggregationBaseDelegate, "getFilterDelegate").returns({
-				addFilterItem: function(oProperty, oControl) {
+				addItem: function(sProperty, oControl) {
 					return Promise.resolve(new FilterField());
 				}
 			});
 
+			//Provide simple 'addItem' hook for testing on 'AggregationBaseDelegate'
 			this.addItem = function(sKey, oControl){
 				return Promise.resolve(new FilterField({
 					conditions: "{$filters>/conditions/" + sKey + "}"
 				}));
 			};
-
 			this.oAddStub = sinon.stub(AggregationBaseDelegate, "addItem");
-
-			oAdaptationFilterBar.setAdaptationControl(this.oParent);
 		},
 		afterEach: function () {
 			AggregationBaseDelegate.fetchProperties.restore();
@@ -217,6 +240,7 @@ sap.ui.define([
 
 	QUnit.test("Created changes should always be externalized - Check String types", function(assert) {
 		var done = assert.async();
+		this.prepareTestSetup(true);
 
 		//Init parent
 		this.oParent.initControlDelegate().then(function(){
@@ -252,6 +276,7 @@ sap.ui.define([
 
 	QUnit.test("Created changes should always be externalized - Check Date types", function(assert) {
 		var done = assert.async();
+		this.prepareTestSetup(true);
 
 		//Init parent
 		this.oParent.initControlDelegate().then(function(){
@@ -290,6 +315,7 @@ sap.ui.define([
 	QUnit.test("Create filter fields", function(assert) {
 
 		var done = assert.async();
+		this.prepareTestSetup(false);
 
 		oAdaptationFilterBar.setP13nModel(new JSONModel({
 			items: [
@@ -312,13 +338,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Check 'advancedMode' - check 'remove' hook executions", function(assert){
+	QUnit.test("Test '_checkFunctionality' - check 'remove' hook executions", function(assert){
 		var done = assert.async();
+		this.prepareTestSetup(true);
+
 		var oRemoveSpy = sinon.spy(AggregationBaseDelegate, "removeItem");
 
 		this.oAddStub.callsFake(this.addItem);
 
-		oAdaptationFilterBar.setAdvancedMode(true);
 
 		this.oParent.getFilterItems = function() {
 			return [
@@ -360,11 +387,12 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Check 'advanvedMode' - check 'remove' hook executions, but change the selection before", function(assert){
+	QUnit.test("Test '_checkFunctionality' - check 'remove' hook executions, but change the selection before", function(assert){
 		var done = assert.async(1);
+		this.prepareTestSetup(true);
+
 		var oRemoveSpy = sinon.spy(AggregationBaseDelegate, "removeItem");
 		this.oAddStub.callsFake(this.addItem);
-		oAdaptationFilterBar.setAdvancedMode(true);
 
 		this.oParent.getFilterItems = function() {
 			return [
@@ -416,6 +444,7 @@ sap.ui.define([
 	QUnit.test("CreateFilterFields should only resolve once all Fields have been created", function(assert) {
 
 		var done = assert.async();
+		this.prepareTestSetup(true);
 
 		//Use a timeout to mock FilterField creation delay
 		this.oAddStub.callsFake(function(){
@@ -429,8 +458,6 @@ sap.ui.define([
 		this.oParent.getFilterItems = function() {
 			return [];
 		};
-
-		oAdaptationFilterBar.setAdvancedMode(true);
 
 		oAdaptationFilterBar.setP13nModel(new JSONModel({
 			items: [
@@ -460,6 +487,7 @@ sap.ui.define([
 	QUnit.test("Throw an error for undefined FilterField creation", function(assert) {
 
 		var done = assert.async();
+		this.prepareTestSetup(true);
 
 		this.oAddStub.callsFake(function(){
 			return Promise.resolve(undefined);
@@ -468,8 +496,6 @@ sap.ui.define([
 		this.oParent.getFilterItems = function() {
 			return [];
 		};
-
-		oAdaptationFilterBar.setAdvancedMode(true);
 
 		oAdaptationFilterBar.setP13nModel(new JSONModel({
 			items: [
@@ -493,6 +519,21 @@ sap.ui.define([
 
 			});
 		});
+	});
+
+	QUnit.test("Throw an error for unsufficient an unsufficient 'adaptatationControl' ", function(assert) {
+		assert.throws(
+			function () {
+				oAdaptationFilterBar.setAdaptationControl(new Control());
+			},
+			function (oError) {
+				return (
+					oError instanceof Error &&
+					oError.message ===
+					"The 'adaptationControl' needs to implement the IFilterSource or IFilter interface"
+				);
+			}
+		);
 	});
 
 	QUnit.module("FilterBar with bound filterItems aggregation", {

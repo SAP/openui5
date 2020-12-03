@@ -27,6 +27,9 @@ sap.ui.define(
         var fnExtendTestClass = function () {
             TestClass = Control.extend("temp", {
                 metadata: {
+                    interfaces: [
+                        "sap.ui.mdc.IFilterSource"
+                    ],
                     properties: {
                         adaptationConfig: {
                             type: "object",

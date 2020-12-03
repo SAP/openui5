@@ -112,25 +112,39 @@ sap.ui.define([
 		},
 
 		/**
+		 *
+		 * @public
 		 * Provide the Table's filter delegate to provide basic filter functionality such as adding FilterFields
 		 * <b>Note:</b> The functionality provided in this delegate should act as a subset of a FilterBarDelegate
 		 * to enable the Table for inbuilt filtering
 		 *
 		 * @returns {Object} Object for the Tables filter personalization:
 		 *
+		 * @example <caption>Example usage of <code>getFilterDelegate</code> </caption>
 		 * oFilterDelegate = {
-		 * 		addFilterItem: function() {
+		 * 		addItem: function() {
 		 * 			var oFilterFieldPromise = new Promise(...);
 		 * 			return oFilterFieldPromise;
 		 * 		}
 		 * }
 		 *
-		 * @public
 		 */
 		getFilterDelegate: function() {
 			return {
 				/**
 				 *
+				 * @param {String} sPropertyInfoName The property info name
+		 		 * @param {Object} oTable Instance of the table
+				 *
+				 * @returns {Promise} Promise that resolves with an instance of a <code>sap.ui.mdc.FilterField</code>.
+				 * For more information, see {@link sap.ui.mdc.AggregationBaseDelegate#addItem AggregationBaseDelegate}.
+				 */
+				addItem: function(sPropertyInfoName, oTable) {
+					return Promise.resolve(null);
+				},
+
+				/**
+				 * @deprecated
 				 * @param {Object} oProperty Corresponding property to create a FilterField
 				 * @param {Object} oTable Table instance
 				 */

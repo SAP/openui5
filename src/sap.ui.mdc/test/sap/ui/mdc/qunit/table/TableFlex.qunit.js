@@ -94,9 +94,9 @@ sap.ui.define([
 
 			TableDelegate.getFilterDelegate = function() {
 				return {
-					addFilterItem: function(oProp, oTable){
+					addItem: function(sPropName, oTable){
 						return Promise.resolve(new FilterField({
-							conditions: "{$filters>/conditions/" + oProp.name + "}"
+							conditions: "{$filters>/conditions/" + sPropName + "}"
 						}));
 					}
 				};

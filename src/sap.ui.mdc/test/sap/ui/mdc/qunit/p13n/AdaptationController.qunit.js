@@ -51,9 +51,9 @@ sap.ui.define([
 
 				this.oAdaptationController.oAdaptationControlDelegate.getFilterDelegate = function() {
 					return {
-						addFilterItem: function(oProp, oControl){
+						addItem: function(sPropName, oControl){
 							return Promise.resolve(new FilterField({
-								conditions: "{$filters>/conditions/" + oProp.name + "}"
+								conditions: "{$filters>/conditions/" + sPropName + "}"
 							}));
 						}
 					};

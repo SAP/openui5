@@ -1,10 +1,9 @@
 sap.ui.define([
 	"sap/ui/mdc/odata/v4/TableDelegateDemo",
-	"./Books.FB.delegate",
-	"sap/ui/mdc/Field",
-	"sap/m/Column"
-], function (ODataTableDelegate, Field, Column, BooksFBDelegate) {
+	"sap/ui/mdc/Field"
+], function (ODataTableDelegate, Field) {
 	"use strict";
+
 	var AuthorsTableDelegate = Object.assign({}, ODataTableDelegate);
 
 	AuthorsTableDelegate._createColumnTemplate = function (oInfo) {
@@ -24,14 +23,6 @@ sap.ui.define([
 		}
 
 		return Promise.resolve(new Field(oProps));
-	};
-
-	ODataTableDelegate.getFilterDelegate = function() {
-		return {
-			addFilterItem: function(oItem, oTable) {
-				return BooksFBDelegate._createFilterField(oItem, oTable);
-			}
-		};
 	};
 
 	return AuthorsTableDelegate;
