@@ -4,14 +4,14 @@
 
 // Provides control sap.m.Link.
 sap.ui.define([
-	'./library',
-	'sap/ui/core/Control',
-	'sap/ui/core/InvisibleText',
-	'sap/ui/core/EnabledPropagator',
-	'sap/ui/core/LabelEnablement',
-	'sap/ui/core/library',
-	'sap/ui/Device',
-	'./LinkRenderer',
+	"./library",
+	"sap/ui/core/Control",
+	"sap/ui/core/InvisibleText",
+	"sap/ui/core/EnabledPropagator",
+	"sap/ui/core/LabelEnablement",
+	"sap/ui/core/library",
+	"sap/ui/Device",
+	"./LinkRenderer",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 		"sap/base/security/URLWhitelist"
@@ -31,15 +31,14 @@ function(
 ) {
 	"use strict";
 
-
-
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
-
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	/**
 	 * Constructor for a new <code>Link</code>.
@@ -174,7 +173,15 @@ function(
 			 * Emphasized links look visually more important than regular links.
 			 * @since 1.22
 			 */
-			emphasized : {type : "boolean", group : "Behavior", defaultValue : false}
+			emphasized : {type : "boolean", group : "Behavior", defaultValue : false},
+
+			/**
+			 * Specifies the value of the <code>aria-haspopup</code> attribute
+			 *
+			 * If the value is <code>None</code>, the attribute will not be rendered. Otherwise it will be rendered according to the selected value.
+			 * @since 1.86.0
+			 */
+			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
 		},
 		associations : {
 
