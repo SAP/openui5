@@ -523,10 +523,10 @@
 												<m:Table items="{path: '/CountryCollection'}" width="26rem">
 													<m:columns>
 														<m:Column>
-															<m:Label text="{/#CountryCollection/countryId/@sap:label}"/>
+															<m:Label text="{/#Country/countryId/@sap:label}"/>
 														</m:Column>
 														<m:Column>
-															<m:Label text="{/#CountryCollection/text/@sap:label}"/>
+															<m:Label text="{/#Country/text/@sap:label}"/>
 														</m:Column>
 													</m:columns>
 													<m:items>
