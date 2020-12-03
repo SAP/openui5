@@ -1505,7 +1505,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Month.prototype._handleWeekSelection = function (oStartDate, bFocusStartDate) {
-		var iSelectedWeekNumber = CalendarUtils.calculateWeekNumber(oStartDate.toUTCJSDate(), oStartDate.getYear(), this._getLocale(), this._getLocaleData()),
+		var iSelectedWeekNumber = this._calculateWeekNumber(oStartDate),
 			oEndDate = this._getLastWeekDate(oStartDate),
 			bSingleSelection = this.getSingleSelection(),
 			bIntervalSelection = this.getIntervalSelection();
@@ -1544,6 +1544,29 @@ sap.ui.define([
 		this._toggleDaysBetween(oStartDate, oEndDate, !bShouldDeselectDays);
 
 		return this;
+	};
+
+	/**
+	* Calculates week number.
+	*
+	* @param {sap.ui.unified.calendar.CalendarDate} oStartDate Start date of the week
+	* @returns {int} Week number
+	* @private
+	*/
+   Month.prototype._calculateWeekNumber = function (oStartDate) {
+		var oEndDate = this._getLastWeekDate(oStartDate);
+		var oLocale = new Locale(this._getLocale());
+		var oDateFormat = DateFormat.getInstance({pattern: "w", calendarType: this.getPrimaryCalendarType()}, oLocale);
+		var iWeekNumber;
+
+		// Because the date we use to calculate the week number may be in one year and in the same time
+		// includes days in a new month into a new year, we explicitly changed the week number
+		if (oStartDate.getMonth() === 11 && oEndDate.getMonth() === 0 && oLocale.getRegion() === "US" && oLocale.getLanguage() === "en") {
+			iWeekNumber = 1;
+		} else {
+			iWeekNumber = oDateFormat.format(oStartDate.toLocalJSDate());
+		}
+		return iWeekNumber;
 	};
 
 	/**
