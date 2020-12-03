@@ -6705,7 +6705,7 @@ sap.ui.define([
 					{text: "A2", tabbable: false},
 					{text: "A3", tabbable: false},
 					{text: "A4", tabbable: true},
-					{text: "A5", tabbable: false},
+					{text: "A5", tabbable: true},
 					{text: "A6", tabbable: false},
 					{text: "A7", tabbable: false}
 				]),
@@ -6754,13 +6754,36 @@ sap.ui.define([
 			return new Promise(function(resolve){
 				simulateTabEvent(oElem, false);
 				oElem = checkFocus(oTable.getRows()[2].getCells()[1].getDomRef(), assert);
-
+				simulateTabEvent(oElem, false);
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					setTimeout(function() {
+						assert.equal(oTable.getRows()[2].getIndex(), 4, "The table is scrolled");
+						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+						oElem = checkFocus(oTable.qunit.getRowHeaderCell(2), assert);
+						resolve(oElem);
+					}, 0);
+				});
+			});
+		}).then(function(oElem){
+			return new Promise(function(resolve){
 				simulateTabEvent(oElem, true);
-				oElem = checkFocus(oTable.qunit.getRowHeaderCell(2), assert);
+				oElem = checkFocus(oTable.getRows()[1].getCells()[1].getDomRef(), assert);
 				simulateTabEvent(oElem, true);
 				oElem = checkFocus(oTable.qunit.getRowHeaderCell(1), assert);
 				simulateTabEvent(oElem, true);
 				oElem = checkFocus(oTable.qunit.getRowHeaderCell(0), assert);
+				simulateTabEvent(oElem, true);
+				oTable.attachEventOnce("_rowsUpdated", function() {
+					setTimeout(function() {
+						assert.equal(oTable.getRows()[0].getIndex(), 1, "The table is scrolled");
+						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
+						oElem = checkFocus(oTable.qunit.getRowHeaderCell(0), assert);
+						resolve(oElem);
+					}, 0);
+				});
+			});
+		}).then(function(oElem){
+			return new Promise(function(resolve){
 				simulateTabEvent(oElem, true);
 				oTable.attachEventOnce("_rowsUpdated", function() {
 					setTimeout(function() {
@@ -6802,7 +6825,7 @@ sap.ui.define([
 					setTimeout(function() {
 						assert.equal(oTable.getRows()[2].getIndex(), 4, "The table is scrolled");
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
-						oElem = checkFocus(oTable.qunit.getDataCell(2, 0), assert);
+						oElem = checkFocus(oTable.getRows()[2].getCells()[1].getDomRef(), assert);
 						resolve(oElem);
 					}, 0);
 				});
@@ -6821,6 +6844,8 @@ sap.ui.define([
 			});
 		}).then(function(oElem){
 			return new Promise(function(resolve){
+				simulateTabEvent(oElem, true);
+				oElem = checkFocus(oTable.getRows()[1].getCells()[1].getDomRef(), assert);
 				simulateTabEvent(oElem, true);
 				oElem = checkFocus(oTable.getRows()[0].getCells()[1].getDomRef(), assert);
 				simulateTabEvent(oElem, true);
@@ -7728,7 +7753,7 @@ sap.ui.define([
 		assert.ok(!oTable._getKeyboardExtension().isInActionMode(), "Table is in Navigation Mode");
 	});
 
-	QUnit.test("Allow interactive elements to handle \"sapfocusleave\" on navigation without focus change (on scroll)", function(assert) {
+	QUnit.test("Focus handling when the table is in Action Mode and keyboard navigation scrolls the table", function(assert) {
 		var aEvents = [];
 
 		oTable.setFixedColumnCount(0);
@@ -7743,11 +7768,26 @@ sap.ui.define([
 				aEvents.push("focusin");
 			}
 		});
+
+		TableQUnitUtils.addColumn(oTable, "Focus&TabSpan", "Focus&TabSpan", true, true, true).getTemplate().addEventDelegate({
+			onsapfocusleave: function() {
+				aEvents.push("sapfocusleave");
+			},
+			onfocusin: function() {
+				aEvents.push("focusin");
+			}
+		});
 		sap.ui.getCore().applyChanges();
 
 		var oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
+		var oInput = oTable.getRows()[0].getCells()[1];
 
-		function test(sTitle, fnAct) {
+		oInput.setFieldGroupIds(["fieldGroup1"]);
+		oInput.attachValidateFieldGroup(function() {
+			aEvents.push("validateFieldGroup");
+		});
+
+		function test(sTitle, aExpectedEvents, fnAct) {
 			aEvents = [];
 			fnAct();
 
@@ -7756,7 +7796,7 @@ sap.ui.define([
 					setTimeout(function() {
 						oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), sTitle + ": Table is in Action Mode");
-						assert.deepEqual(aEvents, ["sapfocusleave", "focusin"], sTitle + ": The events were correctly fired");
+						assert.deepEqual(aEvents, aExpectedEvents, sTitle + ": The events were correctly fired");
 						resolve();
 					}, 10);
 				});
@@ -7768,27 +7808,42 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			oTable.attachEventOnce("_rowsUpdated", resolve);
 		}).then(function() {
-			return test("Arrow down", function() {
+			return test("Arrow down", ["sapfocusleave", "focusin"], function() {
 				qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);
 			});
 		}).then(function() {
-			return test("Arrow up", function() {
+			return test("Arrow up", ["sapfocusleave", "focusin"], function() {
 				qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, false);
 			});
 		}).then(function() {
-			return test("Ctrl+Arrow down", function() {
+			return test("Ctrl+Arrow down", ["sapfocusleave", "focusin"], function() {
 				qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, true);
 			});
 		}).then(function() {
-			return test("Ctrl+Arrow up", function() {
+			return test("Ctrl+Arrow up", ["sapfocusleave", "focusin"], function() {
 				qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, true);
 			});
 		}).then(function() {
-			return test("Tab", function() {
+			return new Promise(function(resolve) {
+				simulateTabEvent(document.activeElement, false);
+				setTimeout(function() {
+					resolve();
+				}, 0);
+			});
+		}).then(function() {
+			return test("Ctrl+Arrow down", ["sapfocusleave", "validateFieldGroup", "focusin"], function() {
+				qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, true);
+			});
+		}).then(function() {
+			return test("Ctrl+Arrow up", ["sapfocusleave", "validateFieldGroup", "focusin"], function() {
+				qutils.triggerKeydown(document.activeElement, Key.Arrow.UP, false, false, true);
+			});
+		}).then(function() {
+			return test("Tab", ["sapfocusleave", "validateFieldGroup", "focusin"], function() {
 				simulateTabEvent(document.activeElement, false);
 			});
 		}).then(function() {
-			return test("Shift+Tab", function() {
+			return test("Shift+Tab", ["sapfocusleave", "focusin"], function() {
 				simulateTabEvent(document.activeElement, true);
 			});
 		});
