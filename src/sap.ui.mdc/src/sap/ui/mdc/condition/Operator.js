@@ -226,10 +226,14 @@ sap.ui.define([
 			var key = sKey + (sType ? "." + sType : ""),
 				sText;
 
-			sText = oMessageBundle.getText(key);
-			if (sText === key) {
+			// try to get the resource bundle text (the key might not exist)
+			sText = oMessageBundle.getText(key, undefined, true); // use bIgnoreKeyFallback=true to avoid assert messages in the console
+			if (sText === key || sText === undefined) {
 				if (sType) {
-					sText = oMessageBundle.getText(sKey);
+					sText = oMessageBundle.getText(sKey, undefined, true);
+					if (sText === key || sText === undefined) {
+						sText = sKey;
+					}
 				} else {
 					sText = key;
 				}
