@@ -809,7 +809,7 @@ sap.ui.define([
 		var sParameterName,
 			mTransformedOptions = _Helper.clone(mParameters) || {};
 
-		/**
+		/*
 		 * Parses the query options for the given option name "sOptionName" in the given map of
 		 * query options "mOptions" to an object if necessary.
 		 * Validates if the given query option name is allowed.
@@ -1065,7 +1065,7 @@ sap.ui.define([
 			sResolvedPath,
 			iSeparator;
 
-		/**
+		/*
 		 * Checks if the given meta path contains a dot in its first segment.
 		 *
 		 * @param {string} sMetaPath The meta path

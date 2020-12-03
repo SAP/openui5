@@ -416,7 +416,7 @@ sap.ui.define([
 			i, n,
 			that = this;
 
-		/**
+		/*
 		 * Reads the given range of the current gap, saves the promise, and replaces the gap with
 		 * the read's result.
 		 *

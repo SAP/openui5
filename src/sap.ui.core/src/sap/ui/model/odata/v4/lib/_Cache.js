@@ -935,7 +935,7 @@ sap.ui.define([
 		return this.bSentRequest;
 	};
 
-		/**
+	/**
 	 * Patches the cache at the given path with the given data.
 	 *
 	 * @param {string} sPath The path (as used by change listeners)
@@ -2531,7 +2531,7 @@ sap.ui.define([
 			that = this,
 			i;
 
-		/**
+		/*
 		 * Adds the filter for the given element to the array of filters.
 		 *
 		 * @param {object} oFilterElement The element for which a filter is computed
