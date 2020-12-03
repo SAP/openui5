@@ -42,11 +42,18 @@ sap.ui.define([
             this.oNamedModelPropertyText = new Text({text: "{myModel>/propertyText}"});
             this.oCompositePropertyText = new Text({text: "{/compositeProperty/partOne}+{/compositeProperty/partTwo}"});
             this.oNamedCompositePropertyText = new Text({text: "{myModel>/compositeProperty/partOne}+{myModel>/compositeProperty/partTwo}"});
+            this.oStaticPropertyText = new Text();
+            this.oStaticPropertyText.bindText({
+                parts: [{
+                    value: "hello"
+                }]
+            });
 
             this.oPropertyText.placeAt("qunit-fixture");
             this.oNamedModelPropertyText.placeAt("qunit-fixture");
             this.oCompositePropertyText.placeAt("qunit-fixture");
             this.oNamedCompositePropertyText.placeAt("qunit-fixture");
+            this.oStaticPropertyText.placeAt("qunit-fixture");
             sap.ui.getCore().applyChanges();
         };
 
@@ -57,6 +64,7 @@ sap.ui.define([
             this.oNamedModelPropertyText.destroy();
             this.oCompositePropertyText.destroy();
             this.oNamedCompositePropertyText.destroy();
+            this.oStaticPropertyText.destroy();
         };
     }
 

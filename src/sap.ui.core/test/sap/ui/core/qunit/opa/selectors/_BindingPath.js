@@ -58,6 +58,21 @@ sap.ui.define([
             }).finally(fnDone);
     });
 
+    QUnit.test("Should generate selector for static binding", function (assert) {
+        var fnDone = assert.async();
+        var aData = [
+            {type: "static", control: this.oStaticPropertyText}
+        ];
+        Promise.all(aData.map(function (mData) {
+            return _ControlSelectorGenerator._generate({control: mData.control, multiple: true})
+                .then(function (mSelector) {
+                    assert.strictEqual(mSelector.bindingPath.value, "hello", "Should generate selector with correct static value");
+                    assert.ok(!mSelector.bindingPath.path, "Should generate selector without path");
+                    assert.ok(!mSelector.bindingPath.modelName, "Should generate selector without model name");
+                });
+        })).finally(fnDone);
+    });
+
     QUnit.module("_BindingPath - i18n", {
         beforeEach: function () {
             var oResourceModel = new ResourceModel({
