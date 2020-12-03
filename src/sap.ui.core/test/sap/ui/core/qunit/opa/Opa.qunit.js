@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/test/_OpaUriParameterParser",
 	"sap/ui/test/_LogCollector",
 	"sap/ui/test/Opa",
-	"./utils/browser"
-], function ($, URI, _OpaUriParameterParser, _LogCollector, Opa, browser) {
+	"./utils/browser",
+	"./utils/sinon"
+], function ($, URI, _OpaUriParameterParser, _LogCollector, Opa, browser, sinonUtils) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -32,11 +33,11 @@ sap.ui.define([
 
 	QUnit.module("waitFor", {
 		beforeEach: function () {
-			sinon.config.useFakeTimers = true;
+			this.clock = sinon.useFakeTimers();
 		},
 		afterEach: function () {
 			Opa.resetConfig();
-			sinon.config.useFakeTimers = false;
+			this.clock.restore();
 		}
 	});
 
@@ -59,6 +60,7 @@ sap.ui.define([
 			success : oFirstSuccess
 		});
 
+		this.clock.tick(1000);
 		oOpa.waitFor({
 			check : function () {
 				return bSecondCheck;
@@ -66,8 +68,6 @@ sap.ui.define([
 			success : oSecondSuccess
 		}).done(oDoneSpy);
 		Opa.emptyQueue();
-
-		this.clock.tick(1000);
 
 		// Assert
 		assert.strictEqual(oFirstSuccess.callCount, 0, "First did not succeed yet");
@@ -240,7 +240,7 @@ sap.ui.define([
 		this.clock.tick(200);
 
 		//check for faster polling
-		this.clock.tick(1000);
+		this.clock.tick(1100);
 		assert.strictEqual(oSecondCheckSpy.callCount, 11, "Did apply the polling of the waitFor");
 
 		bSecondCheck = true;
@@ -327,10 +327,10 @@ sap.ui.define([
 
 	QUnit.module("Exception Handling", {
 		beforeEach: function () {
-			sinon.config.useFakeTimers = true;
+			this.clock = sinon.useFakeTimers();
 		},
 		afterEach: function () {
-			sinon.config.useFakeTimers = false;
+			this.clock.restore();
 		}
 	});
 
@@ -756,7 +756,7 @@ sap.ui.define([
 
 	QUnit.test("Should read an opa config value from URL parameter", function (assert) {
 		var fnOrig = URI.prototype.search;
-		var oStub = sinon.stub(URI.prototype, "search", function (query) {
+		var oStub = sinonUtils.createStub(URI.prototype, "search", function (query) {
 			if ( query === true ) {
 				return {
 					"opaKey": "value",			// should parse prefixed params
@@ -790,7 +790,7 @@ sap.ui.define([
 	QUnit.test("Should configure the max log level", function (assert) {
 		var fnLogLevelSpy = sinon.spy(sap.ui.test._OpaLogger, "setLevel");
 		var fnOrig = URI.prototype.search;
-		var oStub = sinon.stub(URI.prototype, "search", function (query) {
+		var oStub = sinonUtils.createStub(URI.prototype, "search", function (query) {
 			if ( query === true ) {
 				return {
 					opaLogLevel: "trace"

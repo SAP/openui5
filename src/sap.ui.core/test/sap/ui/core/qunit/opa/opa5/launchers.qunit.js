@@ -6,9 +6,10 @@ sap.ui.define([
 	'sap/ui/test/autowaiter/_autoWaiter',
 	'sap/ui/test/launchers/iFrameLauncher',
 	'sap/ui/test/_OpaUriParameterParser',
+	"../utils/sinon",
 	'../utils/customQUnitAssertions',
 	'samples/components/button/Component' // loaded early although not needed to comply with 'noglobals' option
-], function ($, Opa5, URI, _autoWaiter, iFrameLauncher, _OpaUriParameterParser) {
+], function ($, Opa5, URI, _autoWaiter, iFrameLauncher, _OpaUriParameterParser, sinonUtils) {
 	"use strict";
 
 	var EMPTY_SITE_URL = "test-resources/sap/ui/core/qunit/opa/fixture/emptySite.html";
@@ -72,7 +73,7 @@ sap.ui.define([
 	QUnit.module("Launchers and app params", {
 		beforeEach: function () {
 			var fnOrig = URI.prototype.search;
-			this.oStub = sinon.stub(URI.prototype, "search", function (query) {
+			this.oStub = sinonUtils.createStub(URI.prototype, "search", function (query) {
 				var mParams = fnOrig.apply(this, arguments);
 				if (query === true) {
 					mParams.opaSpecific = "value";

@@ -198,11 +198,11 @@ sap.ui.define([
 		var fnGetSpy = sinon.spy(_LogCollector.prototype, "getAndClearLog");
 
 		_ControlFinder._findElements({id: "myId"});
-		sinon.assert.calledOnce(fnStartSpy, "Should start log collection");
-		sinon.assert.calledOnce(fnStopSpy, "Should stop log collection");
+		sinon.assert.calledOnce(fnStartSpy);
+		sinon.assert.calledOnce(fnStopSpy);
 		assert.ok(fnStartSpy.calledBefore(fnStopSpy));
 		var sLog = _ControlFinder._getLatestLog();
-		sinon.assert.calledOnce(fnGetSpy, "Should get and clear log");
+		sinon.assert.calledOnce(fnGetSpy);
 		assert.ok(sLog.match("Found control with the global ID 'myId'"), "Should include logs");
 
 		fnStartSpy.restore();

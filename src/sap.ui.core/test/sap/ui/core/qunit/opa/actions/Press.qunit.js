@@ -589,7 +589,7 @@ function(Press,
 	QUnit.module("ComboBox",{
 		beforeEach: function() {
 			// system under test
-			sinon.config.useFakeTimers = true;
+			this.clock = sinon.useFakeTimers();
 			this.oComboBox =  new ComboBox({
 				items: [
 					new Item({
@@ -613,7 +613,7 @@ function(Press,
 		// cleanup
 		afterEach: function() {
 			this.oComboBox.destroy();
-			sinon.config.useFakeTimers = false;
+			this.clock.restore();
 		}
 	});
 

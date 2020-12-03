@@ -1,9 +1,10 @@
-/*global QUnit, sinon */
+/*global QUnit */
 sap.ui.define([
 	"sap/ui/test/Opa5",
 	"sap/ui/test/Opa",
-	"sap/ui/test/_LogCollector"
-], function (Opa5, Opa, _LogCollector) {
+	"sap/ui/test/_LogCollector",
+	"../utils/sinon"
+], function (Opa5, Opa, _LogCollector, sinonUtils) {
 	"use strict";
 
 	QUnit.test("Should not execute the test in debug mode", function (assert) {
@@ -32,7 +33,7 @@ sap.ui.define([
 			this.oView.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			var that = this;
-			this.waitForStub = sinon.stub(Opa.prototype, "waitFor", function (oOptions) {
+			this.waitForStub = sinonUtils.createStub(Opa.prototype, "waitFor", function (oOptions) {
 				that.check = function () {
 					oOptions.check.apply(this, oOptions);
 				}.bind(this);
