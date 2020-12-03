@@ -178,7 +178,7 @@ function(
 				// and we can't use the current aggregations/parents
 				if (
 					iSourceIndex === iInsertIndex
-					&& oModifier.getParentAggregationName(oMovedElement, oSourceParent) === sTargetAggregation
+					&& sSourceAggregation === sTargetAggregation
 					&& oModifier.getParent(oMovedElement) === oTargetParent
 				) {
 					iSourceIndex = mMovedElement.sourceIndex;
