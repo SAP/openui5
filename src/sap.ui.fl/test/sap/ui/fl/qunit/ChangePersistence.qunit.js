@@ -1991,6 +1991,27 @@ function(
 			}.bind(this));
 		});
 
+		QUnit.test("Shall not call the condenser without any changes - backend condensing enabled", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.VENDOR, Layer.CUSTOMER);
+
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				assert.equal(this.oWriteStub.callCount, 1);
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
+
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called");
+			}.bind(this));
+		});
+
 		QUnit.test("Shall call the condenser with only one layer of changes if lower level change is already saved - backend condensing enabled - only one dirty change passed", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
