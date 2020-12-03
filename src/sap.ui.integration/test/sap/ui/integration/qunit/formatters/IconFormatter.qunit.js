@@ -9,7 +9,7 @@ function (
 ) {
 	"use strict";
 
-	QUnit.module("General", {
+	QUnit.module("IconFormatter", {
 		beforeEach: function () {
 			this.oDestinationsStub = sinon.createStubInstance(Destinations);
 			this.oIconFormatter = new IconFormatter(this.oDestinationsStub);
