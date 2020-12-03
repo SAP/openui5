@@ -95,17 +95,23 @@ sap.ui.define([
 	 */
 
 	/**
-	 * The <code>change</code> event is fired, when the data of the binding is changed from the model.
-	 * The <code>reason</code> parameter of the event provides a hint where the change came from.
+	 * The <code>change</code> event is fired, when the model data are changed. The optional
+	 * <code>reason</code> parameter of the event provides a hint where the change came from.
 	 *
-	 * Note: Subclasses might add additional parameters to the event object. Optional parameters can be omitted.
+	 * Note: Subclasses might add additional parameters to the event object.
 	 *
 	 * @name sap.ui.model.Binding#change
 	 * @event
-	 * @param {sap.ui.base.Event} oEvent The event object
-	 * @param {sap.ui.base.EventProvider} oEvent.getSource The object on which the event initially occurred
-	 * @param {object} oEvent.getParameters Object containing all event parameters
-	 * @param {string} [oEvent.getParameters.reason] A string stating the reason for the data change. Can be any string and new values can be added in the future.
+	 * @param {sap.ui.base.Event} oEvent
+	 *   The event object
+	 * @param {sap.ui.base.EventProvider} oEvent.getSource
+	 *   The object on which the event initially occurred
+	 * @param {object} oEvent.getParameters
+	 *   Object containing all event parameters
+	 * @param {string} [oEvent.getParameters.reason]
+	 *   A string stating the reason for the data change. Some change reasons can be found in
+	 *   {@link sap.ui.model.ChangeReason}, but there may be additional reasons specified by a
+	 *   specific model implementation.
 	 * @public
 	 */
 
