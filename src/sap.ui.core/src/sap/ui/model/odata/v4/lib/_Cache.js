@@ -2408,7 +2408,7 @@ sap.ui.define([
 	_CollectionCache.prototype.refreshKeptElement = function (oGroupLock, fnOnRemove) {
 		var mTypes, that = this;
 
-		/**
+		/*
 		 * Calculates a query to request the kept-alive element.
 		 *
 		 * @returns {string}
@@ -2437,7 +2437,7 @@ sap.ui.define([
 
 		mTypes = this.fetchTypes().getResult(); // in this stage the promise is resolved
 
-		return this.oRequestor.request("GET", calculateKeptElementQuery(mTypes), oGroupLock)
+		return this.oRequestor.request("GET", calculateKeptElementQuery(), oGroupLock)
 			.then(function (oResponse) {
 				var oElement = oResponse.value[0],
 					sPredicate;
