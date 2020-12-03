@@ -76,5 +76,9 @@
 		</ColumnListItem>
 	</core:ExtensionPoint>
 
-	<core:Fragment id="F1" fragmentName="testdata.customizing.customer.ext.EP" type="XML" />
+	<!-- Fragment contains an ExtensionPoint as root node -->
+	<core:Fragment id="EPRootFragment" fragmentName="testdata.customizing.customer.ext.EPRoot" type="XML" />
+
+	<!-- Fragment contains another Fragment with an ExtensionPoint -->
+	<core:Fragment id="NestingFragment" fragmentName="testdata.customizing.customer.ext.NestingFragment" type="XML" />
 </mvc:View>
