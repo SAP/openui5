@@ -1,0 +1,123 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:form="sap.ui.layout.form"
+	xmlns:uxap="sap.uxap"
+	xmlns:sap.ui.layout="sap.ui.layout"
+	controllerName="sap.ui.rta.test.rtaOpenUI5Only.Root" >
+
+	<Page title="{i18n>appTitle}" id="page">
+		<headerContent>
+			<Button text="{i18n>btnAdapt}" visible="{view>/showAdaptButton}" press=".switchToAdaptionMode" />
+		</headerContent>
+		<content>
+			<sap.ui.layout:VerticalLayout width="100%">
+				<sap.ui.layout:VerticalLayout id="layout1">
+					<Toolbar id="toolbar">
+						<Button text="UI5 Button1" id="UI5Button1" />
+						<Button text="UI5 Button2" id="UI5Button2" />
+						<Button text="UI5 Button3" id="UI5Button3" />
+					</Toolbar>
+				</sap.ui.layout:VerticalLayout>
+
+				<sap.ui.layout:VerticalLayout width="100%" class="sapUiLargeMarginTop">
+					<!--This Form is bound to EntityType02 in the controller -->
+					<form:Form id="MainForm" title="Form with  assigned bound to EntityType02" editable="true" >
+						<form:layout>
+							<form:ResponsiveGridLayout/>
+						</form:layout>
+						<form:formContainers>
+							<!--This Group is bound to EntityType01 in the controller -->
+							<form:FormContainer id="GroupEntityType01" title="Group1 bound to  EntityType01" >
+								<form:FormElement id="EntityType01.Prop1" label="Prop1">
+									<Input editable="true" value="{Property01}"/>
+								</form:FormElement>
+								<form:FormElement id="EntityType01.Prop2" label="Prop2">
+									<Input value="{Property02}"/>
+								</form:FormElement>
+								<form:FormElement id="EntityType01.Prop3" label="Prop3">
+									<TextArea value="{Property03}"/>
+								</form:FormElement>
+								<form:FormElement id="EntityType02.EntityType02_Property02" label="Field bound to EntityType02" >
+									<Input value="{EntityType02_Property02}"/>
+								</form:FormElement>
+								<form:FormElement label="i18n Bound Value" id="EntityType01.I18NTest" >
+									<Input value="{i18n>groupElementLabelText}" />
+								</form:FormElement>
+								<form:FormElement label="Invisible field" id="EntityType01.Property04.Invisible" visible="false">
+									<Input value="{Property04}" />
+								</form:FormElement>
+								<form:FormElement label="Ignored Property05 bound" id="EntityType01.BoundButton" >
+									<Button text="{Property05}"></Button>
+								</form:FormElement>
+								<form:FormElement label="No-Bound-Field" id="EntityType01.BoundButton34" >
+									<Button text="{i18n>buttonText}"></Button>
+									<TextArea value="Some Text"></TextArea>
+								</form:FormElement>
+								<form:FormElement id="EntityType01.UnboundButton" >
+									<Button text="No Binding"></Button>
+								</form:FormElement>
+								<form:FormElement id="EntityType01.CommonProperty" visible="false" label="CommonProp">
+									<Input value="{CommonPropertyName}" />
+								</form:FormElement>
+								<form:FormElement label="Invisible complex property" id="EntityType01.ComplexProperty031.Invisible" visible="false">
+									<Input value="{EntityType01_Complex/ComplexProperty031}" />
+								</form:FormElement>
+								<form:FormElement label="Invisible property without binding" id="InvisibleNoBinding" visible="false">
+									<Input />
+								</form:FormElement>
+								<form:FormElement id="EntityType01.Prop9" visible="false" label="Invisible with binding inside (revealable)">
+									<TextArea value="{Property09}"/>
+								</form:FormElement>
+								<form:FormElement id="EntityType01.Prop10" visible="false" label="Invisible with binding inside (not revealable)">
+									<TextArea value="{DELETED_CUSTOM_FIELD}"/>
+								</form:FormElement>
+							</form:FormContainer>
+							<!--This Group is bound to EntityType02 because the form is bound to EntityType02 -->
+							<form:FormContainer id="GroupEntityType02" title="Group2 bound to EntityType02" >
+								<form:FormElement id="EntityType02.CompProp1" label="CompProp1">
+									<Input editable="true" value="{EntityType02_Complex/ComplexProperty01}"/>
+								</form:FormElement>
+								<form:FormElement id="EntityType02.CompProp2" label="CompProp2">
+									<Input value="{EntityType02_Complex/ComplexProperty02}"/>
+								</form:FormElement>
+								<form:FormElement label="Property02 bound button" id="EntityType02.Prop2Button" >
+									<Button text="{EntityType02_Property02}"></Button>
+								</form:FormElement>
+								<form:FormElement label="{i18n>customLabel}" id="ComplexBindingCase">
+									<TextArea id="mytextarea" value="{EntityType02_Property03} {EntityType02_Complex/ComplexProperty02}"/>
+								</form:FormElement>
+								<form:FormElement label="No-Bound-Field" id="EntityType02.BoundButton34" >
+									<Button text="{i18n>buttonText}"></Button>
+									<TextArea value="Some Text"></TextArea>
+								</form:FormElement>
+								<form:FormElement id="EntityType02.UnboundButton" label="unbound">
+									<Button text="No Binding"></Button>
+								</form:FormElement>
+								<form:FormElement label="Partially visible combined field, real use case from SD CustomerReturn_OP_F1708Type" id="EntityType02.PartiallyVisible" >
+									<Input value="{EntityType02_Property05}"/>
+									<Input value="{EntityType02_Property06}" visible="false"/>
+								</form:FormElement>
+								<form:FormElement id="EntityType02.CommonProperty" visible="false" label="CommonProp">
+									<Input value="{CommonPropertyName}" />
+								</form:FormElement>
+								<form:FormElement label="NavigationLabel01" id="EntityType02.NavigationProperty" visible="false">
+									<Input value="{to_EntityType02Nav/NavProperty}"/>
+								</form:FormElement>
+								<form:FormElement label="IncorrectNavigationProperty" id="EntityType02.IncorrectNavigationProperty" visible="false">
+									<Input value="{to_NonexistentEntity/NavProperty}"/>
+								</form:FormElement>
+								<form:FormElement label="Field with absolute binding" id="EntityType02.AbsoluteBinding" visible="false">
+									<Input value="{/ModelName/PropertyName}"/>
+								</form:FormElement>
+								<form:FormElement label="Field with binding to non-existent model" id="NonExistentModel" visible="false">
+									<Input value="{NonExistentModel>PropertyName}"/>
+								</form:FormElement>
+							</form:FormContainer>
+						</form:formContainers>
+					</form:Form>
+				</sap.ui.layout:VerticalLayout>
+			</sap.ui.layout:VerticalLayout>
+		</content>
+	</Page>
+</mvc:View>

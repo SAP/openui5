@@ -16,7 +16,6 @@ sap.ui.define([
 	"use strict";
 
 	return UIComponent.extend("sap.ui.rta.test.embeddedComponent.Component", {
-
 		metadata: {
 			manifest: "json"
 		},
@@ -24,7 +23,6 @@ sap.ui.define([
 		init : function() {
 			this._adaptButtonConfiguration();
 			this._setModels(this._startMockServer());
-			//this._bShowAdaptButton = this.getComponentData().showAdaptButton ? this.getComponentData().showAdaptButton : false;
 			UIComponent.prototype.init.apply(this, arguments);
 			this.getRouter().initialize();
 		},

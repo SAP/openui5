@@ -19,17 +19,14 @@ sap.ui.define([
 	var ViewType = library.mvc.ViewType;
 
 	return UIComponent.extend("sap.ui.rta.test.additionalElements.Component", {
-
 		metadata: {
 			manifest: "json"
 		},
 
 		init : function() {
-			// app specific setup
 			this._enableExtensibility();
 
-			// default init methods
-			this._bShowAdaptButton = this.getComponentData().showAdaptButton ? this.getComponentData().showAdaptButton : false;
+			this._bShowAdaptButton = !!this.getComponentData().showAdaptButton;
 			UIComponent.prototype.init.apply(this, arguments);
 		},
 
