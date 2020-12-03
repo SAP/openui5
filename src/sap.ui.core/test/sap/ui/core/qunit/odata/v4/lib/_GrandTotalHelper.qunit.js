@@ -20,31 +20,38 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getResourcePathWithQuery", function (assert) {
-		var oAggregation = {
-				aggregate : {},
-				group : {},
-				groupLevels : []
-			},
+	QUnit.test("enhanceCacheWithGrandTotal", function (assert) {
+		var oAggregation = {},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
-			bCount = "/*false,true*/", // dummy value suitable for deepEqual()
-			oFirstLevelCache = {
+			oCountRow = {
+				UI5__count : "26",
+				"UI5__count@odata.type" : "#Decimal"
+			},
+			oDataRow = {},
+			// handleResponse must be at the prototype
+			oFirstLevelCache = Object.assign(Object.create({handleResponse : sinon.stub()}), {
 				sMetaPath : "/meta/path",
+				mQueryOptions : {"sap-client" : "123"},
 				oRequestor : {
 					buildQueryString : function () {}
 				},
 				sResourcePath : "SalesOrderList"
-			},
-			mQueryOptions = {$count : bCount, "sap-client" : "123"},
+			}),
+			fnGrandTotal = sinon.spy(),
+			oGrandTotalRow = {},
+			fnHandleResponse = oFirstLevelCache.handleResponse,
+			mQueryOptions = oFirstLevelCache.mQueryOptions,
 			sQueryOptionsJSON = JSON.stringify(mQueryOptions),
 			mQueryOptionsWithApply = {},
 			oRequestorMock = this.mock(oFirstLevelCache.oRequestor),
-			sResourcePath;
+			sResourcePath,
+			oResult = {value : [oGrandTotalRow, oCountRow, oDataRow]},
+			mTypeForMetaPath = {/*fetchTypes result*/};
 
-		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation, mQueryOptions);
+		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation, fnGrandTotal);
 		oAggregationHelperMock.expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation),
-				{$count : bCount, $skip : 42, $top : 57, "sap-client" : "123"}, 1, undefined)
+				{$skip : 42, $top : 57, "sap-client" : "123"}, 1, undefined)
 			.returns(mQueryOptionsWithApply);
 		oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oFirstLevelCache.sMetaPath, sinon.match.same(mQueryOptionsWithApply),
@@ -59,7 +66,7 @@ sap.ui.define([
 
 		oAggregationHelperMock.expects("buildApply")
 			.withExactArgs(sinon.match.same(oAggregation),
-				{$count : bCount, $skip : 42, $top : 57, "sap-client" : "123"}, 1, true)
+				{$skip : 42, $top : 57, "sap-client" : "123"}, 1, true)
 			.returns(mQueryOptionsWithApply);
 		oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oFirstLevelCache.sMetaPath, sinon.match.same(mQueryOptionsWithApply),
@@ -71,139 +78,18 @@ sap.ui.define([
 
 		assert.strictEqual(sResourcePath, "SalesOrderList?$apply=2nd");
 		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptionsJSON, "unmodified");
-	});
-
-	//*********************************************************************************************
-[false, true].forEach(function (bCount) {
-	var sTitle = "handleGrandTotalResponse: without visual grouping; $count : " + bCount;
-
-	QUnit.test(sTitle, function (assert) {
-		var oAggregation = {
-				aggregate : {
-					NoTotals : {},
-					SalesAmountSum : {
-						grandTotal : true,
-						name : "SalesAmount",
-						"with" : "sum"
-					},
-					SalesNumber : {
-						grandTotal : true
-					}
-				},
-				group : {
-					Country : {},
-					Region : {},
-					Segment : {}
-				},
-				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
-			},
-			oCountRow = {
-				UI5__count : "26",
-				"UI5__count@odata.type" : "#Decimal"
-			},
-			oDataRow = {},
-			oFirstLevelCache = {
-				handleResponse : sinon.stub()
-			},
-			oGrandTotalRow = {
-				"@odata.id" : null,
-				SalesAmountSum : "351",
-				"SalesAmountSum@odata.type" : "#Decimal",
-				SalesNumber : 0,
-				"SalesNumber@odata.type" : "#Decimal"
-			},
-			fnHandleResponse = oFirstLevelCache.handleResponse,
-			oResult = bCount
-				? {value : [oGrandTotalRow, oCountRow, oDataRow]}
-				: {value : [oGrandTotalRow, oDataRow]},
-			mTypeForMetaPath = {/*fetchTypes result*/},
-			iStart = 0,
-			iEnd = 10;
-
-		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation);
-		this.mock(_AggregationHelper).expects("setAnnotations")
-			.withExactArgs(oGrandTotalRow, true, true, 0,
-				["NoTotals", "SalesAmountSum", "SalesNumber", "Country", "Region", "Segment"]);
 
 		// code under test
-		oFirstLevelCache.handleResponse(iStart, iEnd, oResult, mTypeForMetaPath);
+		oFirstLevelCache.handleResponse(42, 99, oResult, mTypeForMetaPath);
 
-		assert.ok("handleResponse" in oFirstLevelCache, "still replaced");
+		assert.notOk(oFirstLevelCache.hasOwnProperty("handleResponse"), "reverted to prototype");
+		assert.strictEqual(fnGrandTotal.callCount, 1);
+		assert.ok(fnGrandTotal.calledWith(sinon.match.same(oGrandTotalRow)));
 		assert.strictEqual(fnHandleResponse.callCount, 1);
-		assert.ok(fnHandleResponse.calledWith(iStart, iEnd, sinon.match.same(oResult),
+		assert.ok(fnHandleResponse.calledWith(42, 99, sinon.match.same(oResult),
 			sinon.match.same(mTypeForMetaPath)));
-		if (bCount) {
-			assert.strictEqual(oFirstLevelCache.iLeafCount, 26,
-				"leaf $count w/o grand total row");
-			// Note: it is OK to transform string into number here
-			assert.strictEqual(oResult["@odata.count"], bCount ? 27 : undefined,
-				"count includes grand total row");
-		} else {
-			assert.notOk("iLeafCount" in oFirstLevelCache, "iLeafCount");
-			assert.notOk("@odata.count" in oResult, "@odata.count");
-		}
-		assert.strictEqual(oResult.value.length, 2, "data still includes grand total row");
-		assert.strictEqual(oResult.value[0], oGrandTotalRow);
-		assert.strictEqual(oResult.value[1], oDataRow);
+		assert.strictEqual(oResult["@odata.count"], "26");
+		assert.strictEqual(oResult.value.length, 1, "grand total and count rows removed");
+		assert.strictEqual(oResult.value[0], oDataRow);
 	});
-});
-
-	//*********************************************************************************************
-[false, true].forEach(function (bCount) {
-	var sTitle = "handleGrandTotalResponse: w/o visual grouping; w/o grand total; $count=" + bCount;
-
-	QUnit.test(sTitle, function (assert) {
-		var oAggregation = {
-				aggregate : {
-					SalesNumber : {grandTotal : true}
-				},
-				group : {
-					Country : {},
-					Region : {},
-					Segment : {}
-				},
-				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
-			},
-			oFirstLevelCache = {
-				handleResponse : sinon.stub()
-			},
-			fnHandleResponse = oFirstLevelCache.handleResponse,
-			oResult = { /*GET response*/
-				value : [
-					bCount
-						? {UI5__count : "26", "UI5__count@odata.type" : "#Decimal"}
-						: {Country : "Country", Region : "Region", Segment : "Segment"}
-				]
-			},
-			mTypeForMetaPath = {/*fetchTypes result*/},
-			iStart = 1,
-			iEnd = 10;
-
-		_GrandTotalHelper.enhanceCacheWithGrandTotal(oFirstLevelCache, oAggregation);
-		this.mock(_AggregationHelper).expects("setAnnotations").never();
-
-		// code under test
-		oFirstLevelCache.handleResponse(iStart, iEnd, oResult, mTypeForMetaPath);
-
-		assert.ok("handleResponse" in oFirstLevelCache, "still replaced");
-		assert.strictEqual(fnHandleResponse.callCount, 1);
-		assert.ok(fnHandleResponse.calledWith(iStart, iEnd, sinon.match.same(oResult),
-			sinon.match.same(mTypeForMetaPath)));
-		if (bCount) {
-			assert.strictEqual(oFirstLevelCache.iLeafCount, 26,
-				"leaf $count w/o grand total row");
-			// Note: it is OK to transform string into number here
-			assert.strictEqual(oResult["@odata.count"], bCount ? 27 : undefined,
-				"count includes grand total row");
-			assert.strictEqual(oResult.value.length, 0, "data does not include count row");
-		} else {
-			assert.notOk("iLeafCount" in oFirstLevelCache, "iLeafCount");
-			assert.notOk("@odata.count" in oResult, "@odata.count");
-			assert.strictEqual(oResult.value.length, 1, "no data row dropped");
-			assert.deepEqual(oResult.value[0],
-				{Country : "Country", Region : "Region", Segment : "Segment"});
-		}
-	});
-});
-
 });

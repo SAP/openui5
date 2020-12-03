@@ -17,6 +17,30 @@ sap.ui.define([
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
 	"use strict";
 
+	/**
+	 * Copies the given elements from a cache read into <code>this.aElements</code>.
+	 *
+	 * @param {object[]} aReadElements
+	 *   The elements from a cache read
+	 * @param {number} iOffset
+	 *   The offset within aElements
+	 *
+	 * @private
+	 */
+	function addElements(aReadElements, iOffset) {
+		var aElements = this.aElements;
+
+		aReadElements.forEach(function (oElement, i) {
+			var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+
+			// for simplicity, avoid all sanity checks of _AggregationCache#addElements
+			aElements[iOffset + i] = oElement;
+			if (sPredicate) { // Note: sometimes, even $byPredicate is missing...
+				aElements.$byPredicate[sPredicate] = oElement;
+			}
+		});
+	}
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.odata.v4.lib._AggregationCache", {
 		beforeEach : function () {
@@ -57,7 +81,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("create with min/max", function (assert) {
+	QUnit.test("create: with min/max", function (assert) {
 		var oAggregation = {
 				aggregate : {},
 				group : {},
@@ -81,100 +105,130 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("create: $expand not allowed", function (assert) {
-		var oAggregation = {groupLevels : ["foo"]},
-			mQueryOptions = {$expand : undefined}; // even falsy values are forbidden!
+[{
+	bHasGrandTotal : false,
+	groupLevels : ["BillToParty"],
+	hasMinOrMax : false
+}, {
+	bHasGrandTotal : false,
+	groupLevels : [],
+	hasMinOrMax : true
+}, {
+	bHasGrandTotal : true,
+	groupLevels : [],
+	hasMinOrMax : false
+}].forEach(function (oFixture, i) {
+	["$expand", "$select"].forEach(function (sName) {
 
-		assert.throws(function () {
-			// code under test
-			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
-		}, new Error("Unsupported system query option: $expand"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("create: $select not allowed", function (assert) {
-		var oAggregation = {groupLevels : ["foo"]},
-			mQueryOptions = {$select : undefined}; // even falsy values are forbidden!
-
-		assert.throws(function () {
-			// code under test
-			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
-		}, new Error("Unsupported system query option: $select"));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("create: $count not allowed with visual grouping", function (assert) {
+	QUnit.test("create: " + sName + " not allowed #" + i, function (assert) {
 		var oAggregation = {
 				aggregate : {},
-				group : {
-					BillToParty : {}
-				},
-				groupLevels : ["BillToParty"]
+				group : {},
+				groupLevels : oFixture.groupLevels
 			},
-			mQueryOptions = {$count : true};
+			mQueryOptions = {};
+
+		mQueryOptions[sName] = undefined; // even falsy values are forbidden!
+
+		this.mock(_AggregationHelper).expects("hasGrandTotal")
+			.withExactArgs(sinon.match.same(oAggregation.aggregate))
+			.returns(oFixture.bHasGrandTotal);
+		this.mock(_AggregationHelper).expects("hasMinOrMax")
+			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(oFixture.hasMinOrMax);
+		this.mock(_MinMaxHelper).expects("createCache").never();
+		this.mock(_Cache).expects("create").never();
 
 		assert.throws(function () {
 			// code under test
 			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
-		}, new Error("Unsupported system query option: $count"));
+		}, new Error("Unsupported system query option: " + sName));
 	});
 
-	//*********************************************************************************************
-	QUnit.test("create: $filter not allowed with visual grouping", function (assert) {
-		var oAggregation = {groupLevels : ["BillToParty"]},
-			mQueryOptions = {$filter : "answer eq 42"};
-
-		assert.throws(function () {
-			// code under test
-			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
-		}, new Error("Unsupported system query option: $filter"));
 	});
-	//TODO if we allow filtering, do we need to filter $filter by current level, like $orderby?
+});
 
 	//*********************************************************************************************
-	QUnit.test("create: grandTotal", function (assert) {
+[{$count : true}, {$filter : "answer eq 42"}].forEach(function (mQueryOptions) {
+	var sName = Object.keys(mQueryOptions)[0];
+
+	QUnit.test("create: " + sName + " not allowed", function (assert) {
 		var oAggregation = {
-				aggregate : {
-					// SalesNumber : {grandTotal : true}
-				},
-				group : {
-					Region : {}
-				},
-				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
-			},
-			sAggregation = JSON.stringify(oAggregation),
-			oCache,
-			fnDataRequested = {},
-			fnGetResourcePathWithQuery = function () {},
-			oGroupLock = {},
-			fnHandleResponse = function () {},
-			oFirstLevelCache = {
-				fetchValue : function () {},
-				getResourcePathWithQuery : fnGetResourcePathWithQuery,
-				handleResponse : fnHandleResponse,
-				read : function () {}
-			},
-			mQueryOptions = {},
-			sQueryOptions = JSON.stringify(mQueryOptions),
-			sResourcePath = "BusinessPartner",
-			that = this;
+				aggregate : {},
+				group : {},
+				groupLevels : ["BillToParty"]
+			};
 
+		this.mock(_AggregationHelper).expects("hasGrandTotal")
+			.withExactArgs(sinon.match.same(oAggregation.aggregate))
+			.returns(false);
 		this.mock(_AggregationHelper).expects("hasMinOrMax")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(false);
+		this.mock(_MinMaxHelper).expects("createCache").never();
+		this.mock(_Cache).expects("create").never();
+
+		assert.throws(function () {
+			// code under test
+			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
+		}, new Error("Unsupported system query option: " + sName));
+	});
+
+});
+
+	//*********************************************************************************************
+[false, true].forEach(function (bHasGrandTotal) {
+	QUnit.test("create: either grandTotal or groupLevels, " + bHasGrandTotal, function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {
+					x : {},
+					y : {
+						grandTotal : bHasGrandTotal,
+						unit : "UnitY"
+					}
+				},
+				group: {
+					c : {}, // intentionally out of ABC order
+					a : {},
+					b : {}
+				},
+				groupLevels : bHasGrandTotal ? [] : ["a"]
+						},
+			aAllProperties = [],
+			oCache,
+			oEnhanceCacheWithGrandTotalExpectation,
+			oFirstLevelCache = {},
+			oGrandTotal = {},
+			oGrandTotalPromise,
+			oGroupLock = {
+				unlock : function () {}
+			},
+			mQueryOptions = {
+				$count : bHasGrandTotal,
+				$filter : bHasGrandTotal ? "answer eq 42" : "",
+				$orderby : "a",
+				"sap-client" : "123"
+			},
+			oReadPromise,
+			sResourcePath = "Foo";
+
 		this.mock(_AggregationHelper).expects("hasGrandTotal")
-			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(true);
-		this.mock(_Cache).expects("create")
-			.withExactArgs(sinon.match.same(this.oRequestor), sResourcePath,
-				sinon.match.same(mQueryOptions), true)
-			.returns(oFirstLevelCache);
-		this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal")
-			.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation),
-				sinon.match.same(mQueryOptions));
+			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(bHasGrandTotal);
+		this.mock(_AggregationHelper).expects("hasMinOrMax")
+			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(false);
+		this.mock(_MinMaxHelper).expects("createCache").never();
+		this.mock(_Cache).expects("create").never();
+		this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
+			.withExactArgs(null, bHasGrandTotal).returns(oFirstLevelCache);
+		oEnhanceCacheWithGrandTotalExpectation
+			= this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal")
+				.exactly(bHasGrandTotal ? 1 : 0)
+				.withExactArgs(sinon.match.same(oFirstLevelCache), sinon.match.same(oAggregation),
+					sinon.match.func);
 
 		// code under test
 		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, "", oAggregation,
 			mQueryOptions);
 
+		// "super" call
 		assert.ok(oCache instanceof _AggregationCache, "module value is c'tor function");
 		assert.ok(oCache instanceof _Cache, "_AggregationCache is a _Cache");
 		assert.strictEqual(oCache.oRequestor, this.oRequestor);
@@ -183,53 +237,64 @@ sap.ui.define([
 		assert.strictEqual(oCache.bSortExpandSelect, true);
 		assert.strictEqual(typeof oCache.fetchValue, "function");
 		assert.strictEqual(typeof oCache.read, "function");
+		// c'tor itself
 		assert.strictEqual(oCache.oAggregation, oAggregation);
-		assert.strictEqual(oCache.oMeasureRangePromise, undefined);
-		assert.strictEqual(oCache.getMeasureRangePromise(), undefined);
-		assert.strictEqual(JSON.stringify(mQueryOptions), sQueryOptions, "not modified");
-		assert.strictEqual(JSON.stringify(oAggregation), sAggregation, "not modified");
+		assert.deepEqual(oCache.aElements.$byPredicate, {});
+		assert.ok("$count" in oCache.aElements);
+		assert.strictEqual(oCache.aElements.$count, undefined);
+		assert.strictEqual(oCache.aElements.$created, 0);
 		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
+		assert.strictEqual(oCache.bHasGrandTotal, bHasGrandTotal);
+		if (!bHasGrandTotal) {
+			assert.deepEqual(oCache.aElements, []);
+			return;
+		}
+		assert.strictEqual(oCache.aElements.length, 1);
+		oGrandTotalPromise = oCache.aElements[0];
+		assert.ok(oGrandTotalPromise instanceof SyncPromise);
+		assert.strictEqual(oGrandTotalPromise.isPending(), true);
 
-		this.mock(oFirstLevelCache).expects("read").on(oFirstLevelCache)
-			.withExactArgs(0, 5, 100, sinon.match.same(oGroupLock),
-				sinon.match.same(fnDataRequested))
-			.returns(SyncPromise.resolve({
-				value : [{
-					"@$ui5.node.isExpanded" : true,
-					"@$ui5.node.isTotal" : true,
-					"@$ui5.node.level" : 0
-				}, {}, {}]
-			}
-		));
+		[undefined, 1, 2, 3, 100, Infinity].forEach(function (iPrefetchLength) {
+			assert.throws(function () {
+				// code under test (read grand total row separately, but with iPrefetchLength !== 0)
+				oCache.read(0, 1, iPrefetchLength);
+			}, new Error("Unsupported prefetch length: " + iPrefetchLength));
+		});
 
-		// code under test
-		return oCache.read(0, 5, 100, oGroupLock, fnDataRequested).then(function (oResult) {
-			assert.deepEqual(oResult, {
-				value : [{
-					"@$ui5.node.isExpanded" : true,
-					"@$ui5.node.isTotal" : true,
-					"@$ui5.node.level" : 0
-				}, {
-					"@$ui5.node.isExpanded" : undefined,
-					"@$ui5.node.isTotal" : false,
-					"@$ui5.node.level" : 1
-				}, {
-					"@$ui5.node.isExpanded" : undefined,
-					"@$ui5.node.isTotal" : false,
-					"@$ui5.node.level" : 1
-				}]
-			});
+		this.mock(oGroupLock).expects("unlock").withExactArgs();
 
-			that.mock(oFirstLevelCache).expects("fetchValue")
-				.withExactArgs("~groupLock~", "path", "~dataRequested", "~listener~")
-				.returns("~promise~");
+		// code under test (read grand total row separately)
+		oReadPromise = oCache.read(0, 1, 0, oGroupLock);
 
-			assert.strictEqual(
-				// code under test
-				oCache.fetchValue("~groupLock~", "path", "~dataRequested", "~listener~"),
-				"~promise~");
+		assert.strictEqual(oReadPromise.isPending(), true);
+
+		this.mock(_AggregationHelper).expects("getAllProperties")
+			.withExactArgs(sinon.match.same(oAggregation)).returns(aAllProperties);
+		this.mock(_AggregationHelper).expects("setAnnotations")
+			.withExactArgs(sinon.match.same(oGrandTotal), true, true, 0,
+				sinon.match.same(aAllProperties));
+		this.mock(_Helper).expects("setPrivateAnnotation")
+			.withExactArgs(sinon.match.same(oGrandTotal), "predicate", "()");
+
+		// code under test (fnGrandTotal)
+		oEnhanceCacheWithGrandTotalExpectation.args[0][2](oGrandTotal);
+
+		assert.strictEqual(oGrandTotalPromise.isFulfilled(), true);
+		assert.strictEqual(oCache.aElements.length, 1);
+		assert.strictEqual(oCache.aElements[0], oGrandTotal);
+		assert.deepEqual(Object.keys(oCache.aElements.$byPredicate), ["()"]);
+		assert.strictEqual(oCache.aElements.$byPredicate["()"], oGrandTotal);
+
+		assert.strictEqual(oReadPromise.isPending(), true, "still async...");
+		oCache.aElements.$count = 42; // simulate 1st level read for actual data
+
+		return oReadPromise.then(function (oReadResult) {
+			assert.deepEqual(oReadResult, {value : [oGrandTotal]});
+			assert.strictEqual(oReadResult.value[0], oGrandTotal);
+			assert.strictEqual(oReadResult.value.$count, 42);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("toString", function (assert) {
@@ -320,6 +385,7 @@ sap.ui.define([
 				groupLevels : ["a", "b"]
 			},
 			oAggregationCache,
+			aAllProperties = [],
 			oCache = {},
 			mCacheQueryOptions = {},
 			aGroupBy = ["a"],
@@ -346,6 +412,8 @@ sap.ui.define([
 		oAggregationCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation,
 			{/*$orderby : "~orderby~"*/});
 
+		this.mock(_AggregationHelper).expects("getAllProperties")
+			.withExactArgs(sinon.match.same(oAggregation)).returns(aAllProperties);
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(oAggregationCache.mQueryOptions))
 			.returns(mQueryOptions);
@@ -354,9 +422,6 @@ sap.ui.define([
 			.returns(oPICT.sFilteredOrderBy);
 		if (oPICT.bHasGrandTotal) {
 			this.mock(_AggregationHelper).expects("buildApply").never();
-			this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal")
-				.withExactArgs(sinon.match.same(oCache), sinon.match.same(oAggregation),
-					sinon.match.same(mQueryOptions));
 		} else {
 			this.mock(_AggregationHelper).expects("buildApply")
 				.withExactArgs(sinon.match.same(oAggregation), sinon.match(function (o) {
@@ -384,10 +449,9 @@ sap.ui.define([
 		// This must be done before calling createGroupLevelCache, so that bind grabs the mock
 		this.mock(_AggregationCache).expects("calculateKeyPredicate").on(null)
 			.withExactArgs(sinon.match.same(oPICT.oParentGroupNode), aGroupBy,
-				// Note: order does not matter for aAllProperties
-				["x", "y", "c", "a", "b", "UnitY"], oPICT.bLeaf, oPICT.bSubtotals,
-				sinon.match.same(oAggregationCache.aElements.$byPredicate),
-				"~oElement~", "~mTypeForMetaPath~", "~metapath~");
+				sinon.match.same(aAllProperties), oPICT.bLeaf, oPICT.bSubtotals,
+				"~oElement~", "~mTypeForMetaPath~", "~metapath~")
+			.returns("~sPredicate~");
 
 		assert.strictEqual(
 			// code under test
@@ -396,10 +460,13 @@ sap.ui.define([
 		);
 
 		// code under test (this normally happens inside the created cache's handleResponse method)
-		oCache.calculateKeyPredicate("~oElement~", "~mTypeForMetaPath~", "~metapath~");
+		assert.strictEqual(
+			oCache.calculateKeyPredicate("~oElement~", "~mTypeForMetaPath~", "~metapath~"),
+			"~sPredicate~");
 	});
 });
-	// TODO can there already be a $$filterBeforeAggregate when creating a group level cache?
+	// Q: Can there already be a $$filterBeforeAggregate when creating a group level cache?
+	// A: Yes, but it does not matter anymore to fetch the children of a given parent!
 
 	//*********************************************************************************************
 [false, true].forEach(function (bLeaf) {
@@ -407,7 +474,6 @@ sap.ui.define([
 
 	QUnit.test("calculateKeyPredicate: leaf=" + bLeaf + ", parent=" + bParent, function (assert) {
 		var aAllProperties = ["p1", "p2", "p3", "p4"],
-			mByPredicate = {},
 			oElement = {
 				p2 : "v2"
 			},
@@ -436,10 +502,11 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oElement), bLeaf ? undefined : false, "~bTotal~",
 				bParent ? 3 : 1, aAllProperties);
 
-		// code under test
-		_AggregationCache.calculateKeyPredicate(bParent ? oGroupNode : undefined, aGroupBy,
-			aAllProperties, bLeaf, "~bTotal~", mByPredicate, oElement, "~mTypeForMetaPath~",
-			"~sMetaPath~");
+		assert.strictEqual(
+			// code under test
+			_AggregationCache.calculateKeyPredicate(bParent ? oGroupNode : undefined, aGroupBy,
+				aAllProperties, bLeaf, "~bTotal~", oElement, "~mTypeForMetaPath~", "~sMetaPath~"),
+			"~predicate~");
 
 		if (bParent) {
 			assert.strictEqual(oElement.p1, "v1");
@@ -452,111 +519,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("calculateKeyPredicate: grand total element", function (assert) {
-		var oElement = {
-				group : null,
-				"@$ui5.node.isExpanded" : true,
-				"@$ui5.node.isTotal" : true,
-				"@$ui5.node.level" : 0
-			};
-
-		this.mock(_Helper).expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(oElement), "~sMetaPath~", "~mTypeForMetaPath~",
-				["group"], true)
-			.returns("~predicate~");
-		this.mock(_AggregationHelper).expects("setAnnotations").never();
-
-		// code under test - simulate call on grandTotal
-		_AggregationCache.calculateKeyPredicate(undefined, ["group"], ["bar", "foo", "group"],
-			true, false, {}, oElement, "~mTypeForMetaPath~", "~sMetaPath~");
-
-		assert.deepEqual(oElement, {
-			group : null,
-			"@$ui5._": {
-				"predicate": "~predicate~"
-			},
-			"@$ui5.node.isExpanded" : true,
-			"@$ui5.node.isTotal" : true,
-			"@$ui5.node.level" : 0
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("calculateKeyPredicate: multi-unit", function (assert) {
-		var oConflictingElement = {dimension : "A", measure : 0, unit : "EUR"},
-			oElement = {dimension : "A", measure : 0, unit : "USD"},
-			mByPredicate = {
-				"~predicate~" : oConflictingElement
-			};
-
-		this.mock(_Helper).expects("getKeyPredicate")
-			.withExactArgs(sinon.match.same(oElement), "~sMetaPath~", "~mTypeForMetaPath~", [],
-				true)
-			.returns("~predicate~");
-		this.mock(_Helper).expects("setPrivateAnnotation").never();
-		this.mock(_AggregationHelper).expects("setAnnotations").never();
-
-		assert.throws(function () {
-			// code under test
-			_AggregationCache.calculateKeyPredicate(undefined, [], [], false, false, mByPredicate,
-				oElement, "~mTypeForMetaPath~", "~sMetaPath~");
-		}, new Error("Multi-unit situation detected: "
-			+ '{"dimension":"A","measure":0,"unit":"USD"} vs. '
-			+ '{"dimension":"A","measure":0,"unit":"EUR"}'));
-	});
-
-	//*********************************************************************************************
-	QUnit.test("create with visual grouping", function (assert) {
-		var oAggregation = {
-				aggregate : {},
-				group : {
-					BillToParty : {}
-				},
-				groupLevels : ["BillToParty"]
-			},
-			oCache,
-			oFirstLevelCache = {
-				aElements : [],
-				fetchTypes : function () {},
-				fetchValue : function () {},
-				read : function () {}
-			},
-			mQueryOptions = {$count : false, $orderby : "FirstDimension", "sap-client" : "123"},
-			sResourcePath = "Foo";
-
-		oFirstLevelCache.aElements.$byPredicate = {};
-		this.mock(_AggregationHelper).expects("hasGrandTotal")
-			.withExactArgs(sinon.match.same(oAggregation.aggregate))
-			.returns("~bHasGrandTotal~");
-		this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
-			.withExactArgs(null, "~bHasGrandTotal~")
-			.returns(oFirstLevelCache);
-
-		// code under test
-		oCache = _AggregationCache.create(this.oRequestor, sResourcePath, "", oAggregation,
-			mQueryOptions);
-
-		assert.deepEqual(oCache.aElements, []);
-		assert.deepEqual(oCache.aElements.$byPredicate, {});
-		assert.ok("$count" in oCache.aElements);
-		assert.strictEqual(oCache.aElements.$count, undefined);
-		assert.strictEqual(oCache.aElements.$created, 0);
-
-		assert.ok(oCache instanceof _AggregationCache, "module value is c'tor function");
-		assert.ok(oCache instanceof _Cache, "_AggregationCache is a _Cache");
-		assert.strictEqual(oCache.oRequestor, this.oRequestor);
-		assert.strictEqual(oCache.sResourcePath, sResourcePath);
-		assert.strictEqual(oCache.mQueryOptions, mQueryOptions);
-		assert.strictEqual(oCache.bSortExpandSelect, true);
-		assert.strictEqual(typeof oCache.fetchValue, "function");
-		assert.strictEqual(typeof oCache.read, "function");
-		assert.strictEqual(oCache.oAggregation, oAggregation);
-		assert.notOk("oMeasureRangePromise" in oCache, "no min/max");
-		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchValue: with visual grouping", function (assert) {
+	QUnit.test("fetchValue: not $count", function (assert) {
 		var oAggregation = {
 				aggregate : {},
 				group : {},
@@ -567,13 +530,12 @@ sap.ui.define([
 		this.mock(oCache).expects("registerChange").withExactArgs("~path~", "~oListener~");
 		this.mock(oCache).expects("drillDown")
 			.withExactArgs(sinon.match.same(oCache.aElements), "~path~", "~oGroupLock~")
-			.returns(SyncPromise.resolve("~result~"));
+			.returns("~promise~");
 
-		// code under test
-		return oCache.fetchValue("~oGroupLock~", "~path~", "~fnDataRequested~", "~oListener~")
-			.then(function (vResult) {
-				assert.strictEqual(vResult, "~result~");
-			});
+		assert.strictEqual(
+			// code under test
+			oCache.fetchValue("~oGroupLock~", "~path~", "~fnDataRequested~", "~oListener~"),
+			"~promise~");
 	});
 
 	//*********************************************************************************************
@@ -583,47 +545,19 @@ sap.ui.define([
 				group : {},
 				groupLevels : ["BillToParty"]
 			},
-			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {}),
-			fnDoNotCall = assert.ok.bind(assert, false),
-			oListener = {
-				update : fnDoNotCall
-			};
+			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {});
 
 		this.mock(oCache.oFirstLevel).expects("fetchValue").never();
+		this.mock(oCache).expects("registerChange").never();
+		this.mock(oCache).expects("drillDown").never();
 		this.oLogMock.expects("error")
 			.withExactArgs("Failed to drill-down into $count, invalid segment: $count",
 				oCache.toString(), "sap.ui.model.odata.v4.lib._Cache");
 
-		// code under test
-		return oCache.fetchValue({/*oGroupLock*/}, "$count", fnDoNotCall, oListener)
-			.then(function (vResult) {
-				assert.strictEqual(vResult, undefined, "no $count available");
-			});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("fetchValue: no leaf $count available without $count", function (assert) {
-		var oAggregation = {
-				aggregate : {},
-				group : {},
-				groupLevels : ["bar"] // Note: added by _AggregationHelper.buildApply before
-			},
-			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {}),
-			fnDoNotCall = assert.ok.bind(assert, false),
-			oListener = {
-				update : fnDoNotCall
-			};
-
-		this.mock(oCache.oFirstLevel).expects("fetchValue").never();
-		this.oLogMock.expects("error")
-			.withExactArgs("Failed to drill-down into $count, invalid segment: $count",
-				oCache.toString(), "sap.ui.model.odata.v4.lib._Cache");
-
-		// code under test
-		return oCache.fetchValue({/*oGroupLock*/}, "$count", fnDoNotCall, oListener)
-			.then(function (vResult) {
-				assert.strictEqual(vResult, undefined, "no $count available");
-			});
+		assert.strictEqual(
+			// code under test
+			oCache.fetchValue("~oGroupLock~", "$count", "~fnDataRequested~", "~oListener~"),
+			SyncPromise.resolve());
 	});
 
 	//*********************************************************************************************
@@ -632,56 +566,64 @@ sap.ui.define([
 				aggregate : {
 					SalesNumber : {grandTotal : true}
 				},
-				group : {
-					Country : {},
-					Region : {},
-					Segment : {}
-				},
+				group : {},
 				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, {
 				$count : true
-			}),
-			fnDoNotCall = assert.ok.bind(assert, false),
-			oGroupLock = {},
-			oListener = {update : fnDoNotCall},
-			fnResolve,
-			oResult,
-			oFirstLevelPromise = new SyncPromise(function (resolve) {
-				fnResolve = resolve;
 			});
 
 		this.mock(oCache.oFirstLevel).expects("fetchValue")
-			.withExactArgs(sinon.match.same(oGroupLock), "$count")
-			.returns(oFirstLevelPromise);
+			.withExactArgs("~oGroupLock~", "$count", "~fnDataRequested~", "~oListener~")
+			.returns("~promise~");
+		this.mock(oCache).expects("registerChange").never();
+		this.mock(oCache).expects("drillDown").never();
 
-		// code under test
-		oResult = oCache.fetchValue(oGroupLock, "$count", fnDoNotCall, oListener);
-
-		assert.strictEqual(oResult.isPending(), true, "leaf $count not yet available");
-
-		oCache.oFirstLevel.iLeafCount = 42; // @see handleResponse
-		fnResolve();
-
-		return oResult.then(function (iLeafCount) {
-			assert.strictEqual(iLeafCount, 42, "leaf $count available");
-		});
+		assert.strictEqual(
+			// code under test
+			oCache.fetchValue("~oGroupLock~", "$count", "~fnDataRequested~", "~oListener~"),
+			"~promise~");
 	});
 
 	//*********************************************************************************************
-[0, 10].forEach(function (iReadIndex) {
-	QUnit.test("read: with visual grouping - read index: " + iReadIndex, function (assert) {
+[{
+	iFirstLevelIndex : 0,
+	iFirstLevelLength : 3,
+	bHasGrandTotal : false,
+	iIndex : 0
+}, {
+	iFirstLevelIndex : 10,
+	iFirstLevelLength : 3,
+	bHasGrandTotal : false,
+	iIndex : 10
+}, {
+	iFirstLevelIndex : 0,
+	iFirstLevelLength : 2,
+	bHasGrandTotal : true,
+	iIndex : 0
+}, {
+	iFirstLevelIndex : 9,
+	iFirstLevelLength : 3,
+	bHasGrandTotal : true,
+	iIndex : 10
+}].forEach(function (oFixture, i) {
+	QUnit.test("read: 1st time, #" + i, function (assert) {
 		var oAggregation = { // filled before by buildApply
-				aggregate : {},
+				aggregate : {
+					SalesNumber : {grandTotal : oFixture.bHasGrandTotal}
+				},
 				group : {},
 				groupLevels : ["group"]
 			},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			iFirstLevelIndex = oFixture.iFirstLevelIndex,
 			oGroupLock = {
 				unlock : function () {}
 			},
+			iIndex = oFixture.iIndex,
 			iLength = 3,
+			iOffset = oFixture.bHasGrandTotal ? 1 : 0,
 			iPrefetchLength = 100,
 			oReadResult = {
 				value : [{}, {}, {}]
@@ -690,57 +632,56 @@ sap.ui.define([
 
 		function checkResult(oResult) {
 			assert.strictEqual(oResult.value.length, 3);
-			assert.strictEqual(oResult.value.$count, 42);
-			assert.strictEqual(oResult.value[0], oCache.aElements[iReadIndex + 0]);
-			assert.strictEqual(oResult.value[1], oCache.aElements[iReadIndex + 1]);
-			assert.strictEqual(oResult.value[2], oCache.aElements[iReadIndex + 2]);
+			assert.strictEqual(oResult.value.$count, 42 + iOffset);
+			assert.strictEqual(oResult.value[0], oCache.aElements[iIndex + 0]);
+			assert.strictEqual(oResult.value[1], oCache.aElements[iIndex + 1]);
+			assert.strictEqual(oResult.value[2], oCache.aElements[iIndex + 2]);
 		}
 
 		oReadResult.value.$count = 42;
 
 		this.mock(oCache.oFirstLevel).expects("read")
-			.withExactArgs(iReadIndex, iLength, iPrefetchLength, sinon.match.same(oGroupLock),
-				"~fnDataRequested~")
+			.withExactArgs(iFirstLevelIndex, oFixture.iFirstLevelLength, iPrefetchLength,
+				sinon.match.same(oGroupLock), "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
 		this.mock(oCache).expects("addElements")
-			.withExactArgs(sinon.match.same(oReadResult.value), iReadIndex,
-				sinon.match.same(oCache.oFirstLevel), iReadIndex)
-			.callThrough(); // so that oCache.aElements is actually filled
-		// expect placeholders before iReadIndex
-		for (i = 0; i < iReadIndex; i += 1) {
+			.withExactArgs(sinon.match.same(oReadResult.value), iFirstLevelIndex + iOffset,
+				sinon.match.same(oCache.oFirstLevel), iFirstLevelIndex)
+			.callsFake(addElements); // so that oCache.aElements is actually filled
+		// expect placeholders before and after real read results
+		for (i = 0; i < iFirstLevelIndex; i += 1) {
 			oAggregationHelperMock.expects("createPlaceholder")
-				.withExactArgs(0, i, sinon.match.same(oCache.oFirstLevel))
+				.withExactArgs(1, i, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + i);
 		}
-		// expect placeholders after iReadIndex + result length
-		for (i = iReadIndex + 3; i < oReadResult.value.$count; i += 1) {
+		for (i = iFirstLevelIndex + 3; i < 42; i += 1) {
 			oAggregationHelperMock.expects("createPlaceholder")
-				.withExactArgs(0, i, sinon.match.same(oCache.oFirstLevel))
+				.withExactArgs(1, i, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + i);
 		}
 
 		// code under test
-		return oCache.read(iReadIndex, iLength, iPrefetchLength, oGroupLock,
+		return oCache.read(iIndex, iLength, iPrefetchLength, oGroupLock,
 				"~fnDataRequested~")
 			.then(function (oResult1) {
 				var i;
 
-				assert.strictEqual(oCache.aElements.$count, oReadResult.value.$count);
+				assert.strictEqual(oCache.aElements.length, 42 + iOffset);
+				assert.strictEqual(oCache.aElements.$count, 42 + iOffset);
 				assert.strictEqual(oCache.iReadLength, iLength + iPrefetchLength);
 
 				checkResult(oResult1);
 
-				// check placeholders before iReadIndex
-				for (i = 0; i < iReadIndex; i += 1) {
-					assert.strictEqual(oCache.aElements[i], "~placeholder~" + i);
+				// check placeholders before and after real read results
+				for (i = 0; i < iFirstLevelIndex; i += 1) {
+					assert.strictEqual(oCache.aElements[iOffset + i], "~placeholder~" + i);
 				}
-				// check placeholders after iReadIndex + result length
-				for (i = iReadIndex + 3; i < oCache.aElements.length; i += 1) {
-					assert.strictEqual(oCache.aElements[i], "~placeholder~" + i);
+				for (i = iFirstLevelIndex + 3; i < 42; i += 1) {
+					assert.strictEqual(oCache.aElements[iOffset + i], "~placeholder~" + i);
 				}
 
 				// code under test
-				return oCache.read(iReadIndex, iLength, iPrefetchLength, oGroupLock,
+				return oCache.read(iIndex, iLength, iPrefetchLength, oGroupLock,
 					"~fnDataRequested~"
 				).then(function (oResult2) {
 					checkResult(oResult2);
@@ -750,7 +691,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("read: with visual grouping - read from group level cache", function (assert) {
+	QUnit.test("read: from group level cache", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
@@ -788,16 +729,13 @@ sap.ui.define([
 
 		this.mock(oGroupLock0).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy0~");
-
 		oGroupLevelCacheMock.expects("read")
 			.withExactArgs(1, 1, 0, "~oGroupLockCopy0~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult0)));
-
 		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult0.value), 2,
 				sinon.match.same(oGroupLevelCache), 1)
-			.callThrough(); // so that oCache.aElements is actually filled
-
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 		this.mock(oGroupLock0).expects("unlock").withExactArgs();
 
 		// code under test
@@ -808,16 +746,13 @@ sap.ui.define([
 
 			that.mock(oGroupLock1).expects("getUnlockedCopy").withExactArgs()
 				.returns("~oGroupLockCopy1~");
-
 			oGroupLevelCacheMock.expects("read")
 				.withExactArgs(2, 2, 0, "~oGroupLockCopy1~", "~fnDataRequested~")
 				.returns(SyncPromise.resolve(Promise.resolve(oReadResult1)));
-
 			oCacheMock.expects("addElements")
 				.withExactArgs(sinon.match.same(oReadResult1.value), 3,
 					sinon.match.same(oGroupLevelCache), 2)
-				.callThrough(); // so that oCache.aElements is actually filled
-
+				.callsFake(addElements); // so that oCache.aElements is actually filled
 			that.mock(oGroupLock1).expects("unlock").withExactArgs();
 
 			// code under test
@@ -832,7 +767,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: with visual grouping - first and group level cache", function (assert) {
+	QUnit.test("read: first level cache and group level cache", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
@@ -840,7 +775,9 @@ sap.ui.define([
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oFirstLeaf = {},
-			oGroupLevelCache = {read : function () {}},
+			oGroupLevelCache = {
+				read : function () {}
+			},
 			oGroupLock = {
 				getUnlockedCopy : function () {},
 				unlock : function () {}
@@ -857,31 +794,25 @@ sap.ui.define([
 			_AggregationHelper.createPlaceholder(1, 2, oGroupLevelCache),
 			_AggregationHelper.createPlaceholder(0, 1, oCache.oFirstLevel)
 		];
-
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy0~");
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy1~");
-
 		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(1, 2, 0, "~oGroupLockCopy0~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult0)));
-
 		this.mock(oCache.oFirstLevel).expects("read")
 			.withExactArgs(1, 1, 0, "~oGroupLockCopy1~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult1)));
-
 		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult0.value), 2,
 				sinon.match.same(oGroupLevelCache), 1)
-			.callThrough(); // so that oCache.aElements is actually filled
-
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult1.value), 4,
 				sinon.match.same(oCache.oFirstLevel), 1)
-			.callThrough(); // so that oCache.aElements is actually filled
-
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 		oGroupLockMock.expects("unlock").withExactArgs();
 
 		// code under test
@@ -901,7 +832,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: with visual grouping - intersecting reads", function (assert) {
+	QUnit.test("read: intersecting reads", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
@@ -933,14 +864,12 @@ sap.ui.define([
 			_AggregationHelper.createPlaceholder(1, 5, oGroupLevelCache),
 			_AggregationHelper.createPlaceholder(1, 6, oGroupLevelCache)
 		];
-
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy0~");
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy1~");
 		oGroupLockMock.expects("unlock").withExactArgs().twice();
-
 		oGroupLevelCacheMock.expects("read")
 			.withExactArgs(1, 3, 0, "~oGroupLockCopy0~", "~fnDataRequested~")
 			.callsFake(function () {
@@ -948,20 +877,17 @@ sap.ui.define([
 					setTimeout(resolve(oReadResult0), 500);
 				});
 			});
-
 		oGroupLevelCacheMock.expects("read")
 			.withExactArgs(2, 1, 0, "~oGroupLockCopy1~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult1)));
-
 		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult0.value), 2,
 				sinon.match.same(oGroupLevelCache), 1)
-			.callThrough(); // so that oCache.aElements is actually filled
-
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult1.value), 3,
 				sinon.match.same(oGroupLevelCache), 2)
-			.callThrough(); // so that oCache.aElements is actually filled
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 
 		// code under test
 		return Promise.all([
@@ -1015,13 +941,11 @@ sap.ui.define([
 			_AggregationHelper.createPlaceholder(1, 1, oGroupLevelCache),
 			_AggregationHelper.createPlaceholder(1, 2, oGroupLevelCache)
 		];
-
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy~");
-
 		oGroupLevelCacheMock.expects("read")
 			.withExactArgs(1, 2, 0, "~oGroupLockCopy~", "~fnDataRequested~")
 			.callsFake(function () {
@@ -1030,12 +954,10 @@ sap.ui.define([
 
 				return Promise.resolve(oReadResult0);
 			});
-
 		this.mock(oCache).expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult0.value), 4,
 				sinon.match.same(oGroupLevelCache), 1)
-			.callThrough(); // so that oCache.aElements is actually filled
-
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
@@ -1080,6 +1002,7 @@ sap.ui.define([
 			oPlaceholder0,
 			_AggregationHelper.createPlaceholder(1, 2, oGroupLevelCache)
 		];
+		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
@@ -1096,7 +1019,7 @@ sap.ui.define([
 		this.mock(oCache).expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult0.value), 5,
 				sinon.match.same(oGroupLevelCache), 2)
-			.callThrough(); // so that oCache.aElements is actually filled
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 		this.mock(oGroupLock).expects("unlock").withExactArgs();
 
 		// code under test
@@ -1137,6 +1060,8 @@ sap.ui.define([
 			_AggregationHelper.createPlaceholder(1, 2, oGroupLevelCache),
 			{/* yet another not expanded node */}
 		];
+		oCache.aElements.$byPredicate = {};
+		oCache.aElements.$count = 42;
 
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy~");
@@ -1145,7 +1070,6 @@ sap.ui.define([
 			.callsFake(function () {
 				// while the read request is running - simulate a collapse
 				oCache.aElements.splice(2, 3);
-				oCache.aElements.$count = 42;
 
 				return Promise.resolve(oReadResult);
 			});
@@ -1162,7 +1086,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: with visual grouping - two different group level caches", function (assert) {
+	QUnit.test("read: two different group level caches", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
@@ -1185,7 +1109,8 @@ sap.ui.define([
 			oGroupLockMock = this.mock(oGroupLock),
 			oReadPromise,
 			oReadResult0 = {value : [{}, {}]},
-			oReadResult1 = {value : [{}, {}]};
+			oReadResult1 = {value : [{}, {}]},
+			oUnlockExpectation;
 
 		oCache.aElements = [
 			{/* expanded node */},
@@ -1197,31 +1122,26 @@ sap.ui.define([
 			_AggregationHelper.createPlaceholder(1, 1, oGroupLevelCache1),
 			_AggregationHelper.createPlaceholder(1, 2, oGroupLevelCache1)
 		];
-
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 42;
 
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy0~");
 		oGroupLockMock.expects("getUnlockedCopy").withExactArgs().returns("~oGroupLockCopy1~");
-		var oUnlockCall = oGroupLockMock.expects("unlock").withExactArgs();
-
+		oUnlockExpectation = oGroupLockMock.expects("unlock").withExactArgs();
 		this.mock(oGroupLevelCache0).expects("read")
 			.withExactArgs(1, 2, 0, "~oGroupLockCopy0~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult0)));
-
 		this.mock(oGroupLevelCache1).expects("read")
 			.withExactArgs(1, 2, 0, "~oGroupLockCopy1~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult1)));
-
 		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult0.value), 2,
 				sinon.match.same(oGroupLevelCache0), 1)
-			.callThrough(); // so that oCache.aElements is actually filled
-
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult1.value), 6,
 				sinon.match.same(oGroupLevelCache1), 1)
-			.callThrough(); // so that oCache.aElements is actually filled
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 
 		// code under test
 		oReadPromise = oCache.read(1, 7, 0, oGroupLock, "~fnDataRequested~").then(function (oResult) {
@@ -1244,13 +1164,13 @@ sap.ui.define([
 				assert.strictEqual(oCache.aElements[7], oReadResult1.value[1]);
 			});
 
-		sinon.assert.called(oUnlockCall);
+		sinon.assert.called(oUnlockExpectation);
 
 		return oReadPromise;
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: with visual grouping - only placeholder", function (assert) {
+	QUnit.test("read: only placeholder", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
@@ -1278,15 +1198,13 @@ sap.ui.define([
 
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy~");
-
 		this.mock(oCache.oFirstLevel).expects("read")
 			.withExactArgs(3, 3, 0, "~oGroupLockCopy~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
-
 		this.mock(oCache).expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult.value), 3,
 				sinon.match.same(oCache.oFirstLevel), 3)
-			.callThrough(); // so that oCache.aElements is actually filled
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 
 		// code under test
 		return oCache.read(3, 3, 0, oGroupLock, "~fnDataRequested~").then(function (oResult) {
@@ -1299,7 +1217,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("read: with visual grouping - read more elements than existing", function (assert) {
+	QUnit.test("read: more elements than existing", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
@@ -1321,15 +1239,13 @@ sap.ui.define([
 
 		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs()
 			.returns("~oGroupLockCopy~");
-
 		this.mock(oCache.oFirstLevel).expects("read")
 			.withExactArgs(1, 1, 0, "~oGroupLockCopy~", "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
-
 		this.mock(oCache).expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult.value), 1,
 				sinon.match.same(oCache.oFirstLevel), 1)
-			.callThrough(); // so that oCache.aElements is actually filled
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 
 		// code under test
 		return oCache.read(0, 100, 0, oGroupLock, "~fnDataRequested~").then(function (oResult) {
@@ -1396,7 +1312,7 @@ sap.ui.define([
 		this.mock(oCache).expects("addElements")
 			.withExactArgs(sinon.match.same(oExpandResult.value), 1,
 				sinon.match.same(oGroupLevelCache), 0)
-			.callThrough(); // so that oCache.aElements is actually filled
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 		oAggregationHelperMock.expects("createPlaceholder")
 			.withExactArgs(1, 5, sinon.match.same(oGroupLevelCache)).returns("~placeholder~1");
 		oAggregationHelperMock.expects("createPlaceholder")
@@ -1487,15 +1403,14 @@ sap.ui.define([
 				sinon.match.same(oGroupNode), {"@$ui5.node.isExpanded" : true})
 			.callThrough(); // "@$ui5.node.isExpanded" is checked once read has finished
 		this.mock(oCache).expects("createGroupLevelCache")
-			.withExactArgs(sinon.match.same(oGroupNode))
-			.returns(oGroupLevelCache);
+			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
 		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(0, oCache.iReadLength, 0, sinon.match.same(oGroupLock))
 			.returns(SyncPromise.resolve(Promise.resolve(oExpandResult)));
 		this.mock(oCache).expects("addElements")
 			.withExactArgs(sinon.match.same(oExpandResult.value), 3,
 				sinon.match.same(oGroupLevelCache), 0)
-			.callThrough(); // so that oCache.aElements is actually filled
+			.callsFake(addElements); // so that oCache.aElements is actually filled
 		oAggregationHelperMock.expects("createPlaceholder")
 			.withExactArgs(1, 5, sinon.match.same(oGroupLevelCache)).returns("~placeholder~1");
 		oAggregationHelperMock.expects("createPlaceholder")
@@ -1966,6 +1881,27 @@ sap.ui.define([
 			// code under test
 			oCache.addElements([{}, {}], 1, oGroupLevelCache, 0);
 		}, new Error("Array index out of bounds: 2"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("addElements: duplicate placeholder", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group: {},
+				groupLevels : ["a"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oElement = {};
+
+		oCache.aElements.length = 2; // avoid "Array index out of bounds: 1"
+		oCache.aElements[0] = {/*unexpected element*/};
+		oCache.aElements.$byPredicate["foo"] = oCache.aElements[0];
+		_Helper.setPrivateAnnotation(oElement, "predicate", "foo");
+
+		assert.throws(function () {
+			// code under test
+			oCache.addElements([oElement], 1); // oCache/iStart does not matter here
+		}, new Error("Duplicate predicate: foo"));
 	});
 
 	//*********************************************************************************************

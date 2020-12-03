@@ -160,8 +160,8 @@ sap.ui.define([
 		 * If at least one aggregatable property requesting minimum or maximum values is contained,
 		 * the resulting "$apply" is extended: ".../concat(aggregate(&lt;alias> with min as
 		 * UI5min__&lt;alias>,&lt;alias> with max as UI5max__&lt;alias>,...),identity)". Grand
-		 * total values are requested in a similar way, unless <code>mQueryOptions.$skip</code> is
-		 * given. If <code>mQueryOptions.$skip</code> is given, it is inserted as a transformation:
+		 * total values are requested in a similar way.
+		 * If <code>mQueryOptions.$skip</code> is given, it is inserted as a transformation:
 		 * ".../skip(&lt;mQueryOptions.$skip>))". Same for <code>mQueryOptions.$top</code>.
 		 * Unnecessary transformations like "identity/" or "skip(0)" are actually avoided.
 		 * In case of a "concat", if <code>mQueryOptions.$count</code> is given, it is inserted as
@@ -195,8 +195,8 @@ sap.ui.define([
 		 *   The current level
 		 * @param {boolean} [bFollowUp]
 		 *   Tells whether this method is called for a follow-up request, not for the first one; in
-		 *   this case, neither the count nor minimum or maximum values are requested again and
-		 *   <code>mAlias2MeasureAndMethod</code> is ignored
+		 *   this case, neither the count nor grand totals or minimum or maximum values are
+		 *   requested again and <code>mAlias2MeasureAndMethod</code> is ignored
 		 * @param {object} [mAlias2MeasureAndMethod]
 		 *   An optional map which is filled in case an aggregatable property requests minimum or
 		 *   maximum values; the alias (for example "UI5min__&lt;alias>") for that value becomes the
@@ -268,7 +268,7 @@ sap.ui.define([
 			oAggregation.aggregate = oAggregation.aggregate || {};
 			checkKeys4AllDetails(oAggregation.aggregate, mAllowedAggregateDetails2Type);
 			aAliases = Object.keys(oAggregation.aggregate).sort();
-			if (iLevel <= 1 && !mQueryOptions.$skip) {
+			if (iLevel <= 1 && !bFollowUp) {
 				aAliases.filter(function (sAlias) {
 					return oAggregation.aggregate[sAlias].grandTotal;
 				}).forEach(
@@ -308,15 +308,6 @@ sap.ui.define([
 			if (mQueryOptions.$orderby) {
 				sApply += "/orderby(" + mQueryOptions.$orderby + ")";
 				delete mQueryOptions.$orderby;
-			}
-			if (_AggregationHelper.hasGrandTotal(oAggregation.aggregate)) {
-				// account for grand total row
-				if (mQueryOptions.$skip) {
-					mQueryOptions.$skip -= 1;
-				} else {
-					// Note: turns undefined into NaN which is later ignored
-					mQueryOptions.$top -= 1;
-				}
 			}
 			sSkipTop = skipTop(mQueryOptions);
 			if (aMinMaxAggregate.length) {
@@ -365,10 +356,8 @@ sap.ui.define([
 		 * @param {string} [sOrderby]
 		 *   The original "$orderby" system query option
 		 * @param {object} oAggregation
-		 *   An object holding the information needed for data aggregation; see also
-		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
-		 *   Extension for Data Aggregation Version 4.0</a>; must contain <code>aggregate</code>,
-		 *   <code>group</code>, <code>groupLevels</code>
+		 *   An object holding the information needed for data aggregation;
+		 *   (see {@link .buildApply})
 		 * @param {number} iLevel
 		 *   The current level
 		 * @returns {string}
@@ -394,6 +383,32 @@ sap.ui.define([
 					return true;
 				}).join(",");
 			}
+		},
+
+		/**
+		 * Returns an unsorted list of all aggregatable or groupable properties, including units.
+		 *
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation;
+		 *   (see {@link .buildApply})
+		 * @returns {string[]}
+		 *   An unsorted list of all aggregatable or groupable properties, including units
+		 *
+		 * @private
+		 */
+		getAllProperties : function (oAggregation) {
+			var aAllProperties
+				= Object.keys(oAggregation.aggregate).concat(Object.keys(oAggregation.group));
+
+			Object.keys(oAggregation.aggregate).forEach(function (sAlias) {
+				var sUnit = oAggregation.aggregate[sAlias].unit;
+
+				if (sUnit) {
+					aAllProperties.push(sUnit);
+				}
+			});
+
+			return aAllProperties;
 		},
 
 		/**

@@ -113,7 +113,10 @@ sap.ui.define([
 			+ ",GrossAmount with countdistinct as GrossAmountCount)"
 			+ ",groupby((BillToParty),aggregate(Amount with average as Amount,Currency"
 			+ ",GrossAmount with countdistinct as GrossAmountCount"
-			+ ",NetAmount as NetAmountAggregate)))"
+			+ ",NetAmount as NetAmountAggregate)))",
+		sFollowUpApply : "groupby((BillToParty),aggregate(Amount with average as Amount,Currency"
+			+ ",GrossAmount with countdistinct as GrossAmountCount"
+			+ ",NetAmount as NetAmountAggregate))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -135,50 +138,54 @@ sap.ui.define([
 			}
 		},
 		sApply : "concat(aggregate(Name as Alias,GrossAmount,Currency,NetAmount)"
-			+ ",groupby((BillToParty),aggregate(Name as Alias,GrossAmount,Currency,NetAmount)))"
-		}, {
-			oAggregation : {
-				aggregate : {
-					Amount : {
-						grandTotal : true,
-						unit : "Currency"
-					}
-				},
-				group : {
-					Currency : {}
+			+ ",groupby((BillToParty),aggregate(Name as Alias,GrossAmount,Currency,NetAmount)))",
+		sFollowUpApply
+			: "groupby((BillToParty),aggregate(Name as Alias,GrossAmount,Currency,NetAmount))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {
+					grandTotal : true,
+					unit : "Currency"
 				}
 			},
-			sApply : "concat(aggregate(Amount,Currency),groupby((Currency),aggregate(Amount)))"
-		}, {
-			oAggregation : {
-				aggregate : {
-					Amount : {
-						grandTotal : true,
-						subtotals : true,
-						unit : "Currency"
-					}
-				},
-				groupLevels : ['Currency']
+			group : {
+				Currency : {}
+			}
+		},
+		sApply : "concat(aggregate(Amount,Currency),groupby((Currency),aggregate(Amount)))",
+		sFollowUpApply : "groupby((Currency),aggregate(Amount))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {
+					grandTotal : true,
+					subtotals : true,
+					unit : "Currency"
+				}
 			},
-			sApply : "concat(aggregate(Amount,Currency),groupby((Currency),aggregate(Amount)))"
-		}, {
-			oAggregation : {
-				aggregate : {
-					Amount : {
-						grandTotal : true,
-						subtotals : true,
-						unit : "Currency"
-					},
-					Currency : {
-						grandTotal : true,
-						subtotals : true
-					}
+			groupLevels : ['Currency']
+		},
+		sApply : "concat(aggregate(Amount,Currency),groupby((Currency),aggregate(Amount)))",
+		sFollowUpApply : "groupby((Currency),aggregate(Amount))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {
+					grandTotal : true,
+					subtotals : true,
+					unit : "Currency"
 				},
-				groupLevels : ['Country']
+				Currency : {
+					grandTotal : true,
+					subtotals : true
+				}
 			},
-			sApply : "concat(aggregate(Amount,Currency)"
-				+ ",groupby((Country),aggregate(Amount,Currency)))"
-		}, {
+			groupLevels : ['Country']
+		},
+		sApply : "concat(aggregate(Amount,Currency),groupby((Country),aggregate(Amount,Currency)))",
+		sFollowUpApply : "groupby((Country),aggregate(Amount,Currency))"
+	}, {
 		oAggregation : {
 			aggregate : {
 				GrossAmountInTransactionCurrency : {},
@@ -202,12 +209,12 @@ sap.ui.define([
 			}
 		},
 		mQueryOptions : {
-			$skip : 0, // special case
+			$skip : 0,
 			$top : Infinity // special case
 		},
 		sApply : "concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber)))",
-		sFollowUpApply : // Note: follow-up request not needed in this case
-			"concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber)))"
+		// Note: follow-up request not needed in this special case, due to $top : Infinity
+		sFollowUpApply : "groupby((Region),aggregate(SalesNumber))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -222,16 +229,15 @@ sap.ui.define([
 			$count : true,
 			$filter : "SalesNumber ge 100",
 			$orderby : "Region desc",
-			$skip : 0, // special case
+			$skip : 0,
 			$top : 42
 		},
 		sApply : "filter(Region gt 'E')"
 			+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
 			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
-			+ "/concat(aggregate($count as UI5__count),top(41)))",
-		sFollowUpApply : "filter(Region gt 'E')"
-			+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
-			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/top(41))"
+			+ "/concat(aggregate($count as UI5__count),top(42)))",
+		sFollowUpApply : "filter(Region gt 'E')/groupby((Region),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/top(42)"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -249,11 +255,11 @@ sap.ui.define([
 			$skip : 42,
 			$top : 99
 		},
-		sApply : "groupby((Region),aggregate(SalesNumber))"
+		sApply : "concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
 			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
-			+ "/concat(aggregate($count as UI5__count),skip(41)/top(99))",
+			+ "/concat(aggregate($count as UI5__count),skip(42)/top(99)))",
 		sFollowUpApply : "groupby((Region),aggregate(SalesNumber))"
-			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/skip(41)/top(99)"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/skip(42)/top(99)"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -265,7 +271,8 @@ sap.ui.define([
 		},
 		iLevel : 1, // include grandTotal
 		sApply : "concat(aggregate(SalesNumber with sum as SalesNumberSum)"
-			+ ",groupby((Region),aggregate(SalesNumber with sum as SalesNumberSum)))"
+			+ ",groupby((Region),aggregate(SalesNumber with sum as SalesNumberSum)))",
+		sFollowUpApply : "groupby((Region),aggregate(SalesNumber with sum as SalesNumberSum))"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -290,14 +297,14 @@ sap.ui.define([
 			$count : true,
 			$filter : "SalesNumber ge 100",
 			$orderby : "Region desc",
-			$skip : 0, // special case
+			$skip : 0,
 			$top : 10
 		},
 		sApply : "concat(aggregate(SalesAmount),groupby((Region),aggregate(SalesNumber))"
 			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
-			+ "/concat(aggregate($count as UI5__count),top(9)))",
-		sFollowUpApply : "concat(aggregate(SalesAmount),groupby((Region),aggregate(SalesNumber))"
-			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/top(9))"
+			+ "/concat(aggregate($count as UI5__count),top(10)))",
+		sFollowUpApply : "groupby((Region),aggregate(SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)/top(10)"
 	}, {
 		oAggregation : {
 			aggregate : {
@@ -884,5 +891,26 @@ sap.ui.define([
 			group : "~group~",
 			measure : "~measure~"
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getAllProperties", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {
+					x : {},
+					y : {unit : "UnitY"}
+				},
+				group: {
+					c : {}, // intentionally out of ABC order
+					a : {},
+					b : {}
+				}
+				// groupLevels : ["a", "b"]
+			};
+
+		assert.deepEqual(
+			// code under test
+			_AggregationHelper.getAllProperties(oAggregation),
+			["x", "y", "c", "a", "b", "UnitY"]);
 	});
 });

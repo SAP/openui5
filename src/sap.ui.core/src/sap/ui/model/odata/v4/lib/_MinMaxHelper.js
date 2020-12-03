@@ -45,8 +45,7 @@ sap.ui.define([
 				throw new Error("Unsupported group levels together with min/max");
 			}
 
-			// Note: the cache's query options are completely ignored (see getResourcePathWithQuery)
-			oCache = _Cache.create(oRequestor, sResourcePath, {}, true);
+			oCache = _Cache.create(oRequestor, sResourcePath, mQueryOptions, true);
 			oMeasureRangePromise = new Promise(function (resolve) {
 				fnMeasureRangeResolve = resolve;
 			});
@@ -81,10 +80,11 @@ sap.ui.define([
 			 *   The index after the last element
 			 * @returns {string} The resource path including the query string
 			 */
-			// @override sap.ui.model.odata.v4.lib._Cache#getResourcePathWithQuery
+			// @override sap.ui.model.odata.v4.lib._CollectionCache#getResourcePathWithQuery
+			// Note: same as in _GrandTotalHelper
 			oCache.getResourcePathWithQuery = function (iStart, iEnd) {
 				var mQueryOptionsWithApply = _AggregationHelper.buildApply(oAggregation,
-						Object.assign({}, mQueryOptions, {
+						Object.assign({}, this.mQueryOptions, {
 							$skip : iStart,
 							$top : iEnd - iStart
 						}), 1, bFollowUp, mAlias2MeasureAndMethod);
@@ -113,14 +113,13 @@ sap.ui.define([
 			oCache.handleResponse = function (iStart, iEnd, oResult, mTypeForMetaPath) {
 				var sAlias,
 					mMeasureRange = {},
-					oMinMaxElement;
+					oMinMaxElement = oResult.value.shift();
 
 				function getMeasureRange(sMeasure) {
 					mMeasureRange[sMeasure] = mMeasureRange[sMeasure] || {};
 					return mMeasureRange[sMeasure];
 				}
 
-				oMinMaxElement = oResult.value.shift();
 				oResult["@odata.count"] = oMinMaxElement.UI5__count;
 				for (sAlias in mAlias2MeasureAndMethod) {
 					getMeasureRange(mAlias2MeasureAndMethod[sAlias].measure)

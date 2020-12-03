@@ -243,9 +243,6 @@ sap.ui.define([
 		assert.strictEqual(oCache.bSharedRequest, "bSharedRequest");
 		assert.strictEqual(oCache.oTypePromise, undefined);
 
-		// code under test
-		assert.strictEqual(oCache.getMeasureRangePromise(), undefined);
-
 		assert.throws(function () {
 			// code under test
 			oCache.getValue();
