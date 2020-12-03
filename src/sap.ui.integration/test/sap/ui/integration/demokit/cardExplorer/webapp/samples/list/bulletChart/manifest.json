@@ -39,7 +39,7 @@
 		"content": {
 			"data": {
 				"request": {
-					"url": "./samples/list/bulletChart/data.json"
+					"url": "./data.json"
 				}
 			},
 			"maxItems": 5,
