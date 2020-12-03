@@ -791,7 +791,12 @@ sap.ui.define([
 		return this.getDomRef("inner");
 	};
 
-	// A hook to be used by controls that extend sap.m.Button and want to display the text in a different way
+	/**
+	 * A hook to be used by controls that extend <code>sap.m.Button</code> and display the text in a different way,
+	 * such as <code>sap.uxap.ObjectPageHeaderActionButton</code>, <code>sap.m.OverflowToolbarButton</code>.
+	 *
+	 * @private
+	 */
 	Button.prototype._getText = function() {
 		return this.getText();
 	};
@@ -803,7 +808,7 @@ sap.ui.define([
 
 		sTooltip = this.getTooltip_AsString();
 
-		if (!sTooltip && !this.getText()) {
+		if (!sTooltip && !this._getText()) {
 			// get icon-font info. will return null if the icon is an image
 			oIconInfo = IconPool.getIconInfo(this._getAppliedIcon());
 
@@ -832,7 +837,7 @@ sap.ui.define([
 	 * @protected
 	 */
 	Button.prototype.getAccessibilityInfo = function() {
-		var sDesc = this.getText() || this.getTooltip_AsString();
+		var sDesc = this._getText() || this.getTooltip_AsString();
 		if (!sDesc && this._getAppliedIcon()) {
 			var oIconInfo = IconPool.getIconInfo(this._getAppliedIcon());
 			if (oIconInfo) {

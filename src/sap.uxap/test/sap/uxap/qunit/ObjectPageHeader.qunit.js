@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
+	"sap/ui/core/IconPool",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageHeader",
 	"sap/uxap/ObjectPageHeaderActionButton",
@@ -11,7 +12,7 @@ sap.ui.define([
 	"sap/m/Breadcrumbs",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/qunit/QUnitUtils"],
-function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, Button, Link, Breadcrumbs, XMLView, QUtils) {
+function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionButton, Button, Link, Breadcrumbs, XMLView, QUtils) {
 	"use strict";
 
 	var oFactory = {
@@ -861,6 +862,50 @@ function ($, Core, ObjectPageLayout, ObjectPageHeader, ObjectPageHeaderActionBut
 		assert.ok(this._oHeader._oOverflowButton.$().is(':hidden'), "There is no overflow button");
 
 	});
+
+	QUnit.test("Correct hook states", function (assert) {
+		var aActionButtons = [
+			new ObjectPageHeaderActionButton("test", {
+				text:"Test text"
+			}),
+			new ObjectPageHeaderActionButton({
+				text:"Test text",
+				hideText: false
+			})
+		];
+
+		aActionButtons.forEach(function (oAction){
+			this._oHeader.addAction(oAction);
+		}.bind(this));
+
+		Core.applyChanges();
+
+		assert.strictEqual(aActionButtons[0]._getText(), "", "Button's text should be hidden through the hook");
+		assert.strictEqual(aActionButtons[1]._getText(), aActionButtons[1].getText(), "Button's text is shown");
+	});
+
+	QUnit.test("Correct accessibility attributes", function (assert) {
+		var sIconSrc = "sap-icon://search",
+			oActionButton = new ObjectPageHeaderActionButton({
+				icon: sIconSrc,
+				text:"Test text"
+			}),
+			oIconInfo =  IconPool.getIconInfo(sIconSrc);
+
+		this._oHeader.addAction(oActionButton);
+
+		Core.applyChanges();
+
+		assert.strictEqual(oActionButton.getDomRef().getAttribute("aria-label"), oIconInfo.text, "Aria-label attribute is set correct");
+		assert.strictEqual(oActionButton.getDomRef().getAttribute("title"), oIconInfo.text, "Title attribute is set correct");
+
+		oActionButton.setHideText(false);
+		Core.applyChanges();
+
+		assert.strictEqual(oActionButton.getDomRef().getAttribute("aria-label"), null, "Aria-label attribute is set correct");
+		assert.strictEqual(oActionButton.getDomRef().getAttribute("title"), null, "Title attribute is set correct");
+	});
+
 
 	QUnit.module("Resize", {
 		beforeEach: function (assert) {
