@@ -59,13 +59,16 @@ sap.ui.define([
 
 	opaTest("When I start the 'appUnderTestTable' app, the FilterBar should appear", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 		Given.enableAndDeleteLrepLocalStorage();
 		When.iLookAtTheScreen();
 
 		//check buttons
-		Then.iShouldSeeButtonWithText("Adapt Filters");//TODO
-		Then.iShouldSeeButtonWithText("Go");//TODO
+		Then.iShouldSeeButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
+		Then.iShouldSeeButtonWithText(Arrangement.P13nDialog.AdaptFilter.go);
 
 		//check initially visible FilterFields
 		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year"]);
@@ -74,7 +77,7 @@ sap.ui.define([
 	});
 
 	opaTest("When I press on 'Adapt Filters' button, the 'Adapt Filters' Dialog opens", function (Given, When, Then) {
-		When.iPressButtonWithText("Adapt Filters");//TODO
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 		When.iChangeAdaptFiltersView("sap-icon://group-2");
 
 		Then.thePersonalizationDialogOpens(false);
@@ -123,7 +126,7 @@ sap.ui.define([
 	// Define new FilterFields
 	// ----------------------------------------------------------------
 	opaTest("When I press on 'Adapt Filters' button, I change the FilterField selection", function (Given, When, Then) {
-		When.iPressButtonWithText("Adapt Filters");//TODO
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 
 		Then.thePersonalizationDialogOpens(false);
 
@@ -149,7 +152,7 @@ sap.ui.define([
 	// Move a FilterField to the top
 	// ----------------------------------------------------------------
 	opaTest("When I select the 'Country' column and move it to the top, the FilterBar should be changed", function (Given, When, Then) {
-		When.iPressButtonWithText("Adapt Filters");
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 		When.iChangeAdaptFiltersView("sap-icon://list");
 		When.iClickOnTableItem("Country").and.iPressOnButtonWithIcon(Arrangement.P13nDialog.Settings.MoveToTop);
 
@@ -168,7 +171,7 @@ sap.ui.define([
 	});
 
 	opaTest("The List view order should not affect the group view", function (Given, When, Then) {
-		When.iPressButtonWithText("Adapt Filters");
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 		When.iChangeAdaptFiltersView("sap-icon://group-2");
 
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Artists"], "Artists");
@@ -202,7 +205,7 @@ sap.ui.define([
 	// Check view toggle
 	// ----------------------------------------------------------------
 	opaTest("When toggling to list view to select filters and switch back the filters should be selected in both view modes", function(Given, When, Then){
-		When.iPressButtonWithText("Adapt Filters");
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 		When.iChangeAdaptFiltersView("sap-icon://list");
 
 		When.iSelectColumn("Localized Country Code", null, null, true);
@@ -249,7 +252,7 @@ sap.ui.define([
 		//check dirty flag
 		Then.theVariantManagementIsDirty(true);
 
-		When.iPressButtonWithText("Adapt Filters");//TODO
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 		Then.thePersonalizationDialogOpens(false);
 
 		//deselect a FilterField
@@ -260,7 +263,7 @@ sap.ui.define([
 
 		Then.iShouldSeeVisibleFiltersInOrderInFilterBar(["Name", "Founding Year", "artistUUID", "Breakout Year", "cityOfOrigin_city", "Localized Country Code"]);
 
-		When.iPressButtonWithText("Adapt Filters");//TODO
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 
 		//Select FilterField from different group
 		When.iTogglePanelInDialog("Artists");
@@ -278,7 +281,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("Open the filter personalization dialog and enter some values", function (Given, When, Then) {
 		//open dialig
-		When.iPressButtonWithText("Adapt Filters");//TODO
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 		Then.thePersonalizationDialogOpens(false);
 
 		//Go to "Artists" and enter a value
@@ -308,7 +311,7 @@ sap.ui.define([
 	});
 
 	opaTest("Reopen Dialog to check values", function (Given, When, Then) {
-		When.iPressButtonWithText("Adapt Filters (2)");//TODO
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.getButtonCountText(2));
 
 		//recheck values upon opening
 		Then.iShouldSeeP13nFilterItemsInPanel(oFilterItems["Countries"], "Countries");
@@ -322,13 +325,16 @@ sap.ui.define([
 
 	opaTest("When I start the 'appUnderTestTable' app, the FilterBar should be toggled to not persist values (modify p13nMode)", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 		When.iLookAtTheScreen();
 
 		When.iSetP13nMode("sap.ui.mdc.FilterBar", ["Item"]);
 
 		//open dialig
-		When.iPressButtonWithText("Adapt Filters");//TODO
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 		When.iChangeAdaptFiltersView("sap-icon://group-2");
 		Then.thePersonalizationDialogOpens(false);
 
@@ -349,13 +355,16 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("When I start the 'appUnderTestTable' app and create new p13n changes - create some changes", function (Given, When, Then) {
 		//insert application
-		Given.iStartMyAppInAFrame('test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html');
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
 		When.iLookAtTheScreen();
 
 		When.iSetP13nMode("sap.ui.mdc.FilterBar", ["Item","Value"]);
 
 		//open dialig
-		When.iPressButtonWithText("Adapt Filters");
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.button);
 		When.iChangeAdaptFiltersView("sap-icon://group-2");
 		Then.thePersonalizationDialogOpens(false);
 
@@ -377,7 +386,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("Press reset and cancel - no changes expected", function(Given, When, Then){
 
-		When.iPressButtonWithText("Adapt Filters (1)");
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.getButtonCountText(1));
 		When.iPressResetInDialog();
 		When.iCancelResetWarning();
 
@@ -391,7 +400,7 @@ sap.ui.define([
 	// ----------------------------------------------------------------
 	opaTest("Press reset and confirm - reset should revert the changes based on the current variant", function(Given, When, Then){
 
-		When.iPressButtonWithText("Adapt Filters (1)");
+		When.iPressButtonWithText(Arrangement.P13nDialog.AdaptFilter.getButtonCountText(1));
 		When.iPressResetInDialog();
 		When.iConfirmResetWarning();
 

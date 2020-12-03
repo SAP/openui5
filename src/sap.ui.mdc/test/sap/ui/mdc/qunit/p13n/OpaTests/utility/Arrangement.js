@@ -58,10 +58,7 @@ sap.ui.define([
 			FakeLrepConnectorLocalStorage.enableFakeConnector();
 			FakeLrepConnectorLocalStorage.forTesting.synchronous.clearAll();
 		}
-	// iClearTheLocalStorageFromRtaRestart: function() {
-	// 	window.localStorage.removeItem("sap.ui.rta.restart.CUSTOMER");
-	// 	window.localStorage.removeItem("sap.ui.rta.restart.USER");
-	// }
+
 	});
 
 	Arrangement.P13nDialog = {
@@ -89,7 +86,12 @@ sap.ui.define([
 		AdaptFilter:{
 			MoveToTop: "sap-icon://collapse-group",
 			MoveUp: "sap-icon://slim-arrow-up",
-			MoveDown: "sap-icon://slim-arrow-down"
+			MoveDown: "sap-icon://slim-arrow-down",
+			button: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT"),
+			getButtonCountText: function(iCount) {
+				return TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.ADAPT_NONZERO", iCount);
+			},
+			go: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "filterbar.GO")
 		},
 		Titles:{
 			sort: TestUtil.getTextFromResourceBundle("sap.ui.mdc", "sort.PERSONALIZATION_DIALOG_TITLE"),

@@ -4,18 +4,19 @@
 
 /**
  * @namespace Provides utitlity functions for OPA tests
- * @name sap.ui.mdc.qunit.p13n.test.Util
+ * @name sap.ui.mdc.qunit.p13n.OpaTests.utility.Util
  * @author SAP SE
  * @version ${version}
  * @private
  * @since 1.30.0
  */
 sap.ui.define([
-	'sap/ui/base/Object'
-], function(BaseObject) {
+	'sap/ui/base/Object',
+	'sap/ui/core/Core'
+], function(BaseObject, Core) {
 	"use strict";
 
-	var Util = BaseObject.extend("sap.ui.mdc.qunit.p13n.test.Util", /** @lends sap.ui.mdc.qunit.p13n.test.Util */
+	var Util = BaseObject.extend("sap.ui.mdc.qunit.p13n.test.Util",
 	{});
 
 	/**
@@ -44,12 +45,12 @@ sap.ui.define([
 		return oNavigationItem;
 	};
 
-	Util.getTextFromResourceBundle = function(sLibraryName, sTextKey) {
-		var oCore = sap.ui.test.Opa5.getWindow().sap.ui.getCore();
-		return oCore.getLibraryResourceBundle(sLibraryName).getText(sTextKey);
+	Util.getTextFromResourceBundle = function(sLibraryName, sTextKey, iCount) {
+		return Core.getLibraryResourceBundle(sLibraryName).getText(sTextKey, iCount);
 	};
+
 	Util.getTextOfChartType = function(sChartType) {
-		var oBundle = sap.ui.getCore().getLibraryResourceBundle("sap.chart.messages");
+		var oBundle = Core.getLibraryResourceBundle("sap.chart.messages");
 		return oBundle.getText("info/" + sChartType);
 	};
 
