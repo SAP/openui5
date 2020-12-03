@@ -2745,6 +2745,75 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		// other test similar to integer -> skip
 	});
 
+	QUnit.test("Float as number with preserveDecimals", function (assert) {
+		var oFormat = NumberFormat.getFloatInstance({preserveDecimals: true}, new Locale("en"));
+
+		assert.equal(oFormat.format(123.456).toString(), "123.456", "unchanged");
+
+		// decimals 2 (same as minFractionDigits: 2 and maxFractionDigits: 2):
+		oFormat = NumberFormat.getFloatInstance({preserveDecimals: true, decimals: 2}, new Locale("en"));
+		assert.equal(oFormat.format(123.456).toString(), "123.456", "decimals: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format(123.456789).toString(), "123.456789", "decimals: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format(123.45).toString(), "123.45", "decimals: Length should not change.");
+		assert.equal(oFormat.format(123.4).toString(), "123.40", "decimals: Length should be filled up.");
+		assert.equal(oFormat.format(123).toString(), "123.00", "decimals: Length should be filled up.");
+
+		// fractionDigits:
+		oFormat = NumberFormat.getFloatInstance({preserveDecimals: true, minFractionDigits: 1, maxFractionDigits: 3}, new Locale("en"));
+		assert.equal(oFormat.format(123.456).toString(), "123.456", "fractionDigits: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format(123.456789).toString(), "123.456789", "fractionDigits: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format(123.45).toString(), "123.45", "fractionDigits: Length should not change.");
+		assert.equal(oFormat.format(123.4).toString(), "123.4", "fractionDigits: Length should not change.");
+		assert.equal(oFormat.format(123).toString(), "123.0", "fractionDigits: Length should be filled up.");
+
+		// precision (sets the maximum fraction digits):
+		oFormat = NumberFormat.getFloatInstance({preserveDecimals: true, precision: 5}, new Locale("en"));
+		assert.equal(oFormat.format(123.456).toString(), "123.456", "precision: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format(123.456789).toString(), "123.456789", "precision: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format(123.45).toString(), "123.45", "precision: Length should not change.");
+		assert.equal(oFormat.format(123.4).toString(), "123.4", "precision: Length should not change.");
+		assert.equal(oFormat.format(123).toString(), "123", "precision: Length should not change.");
+	});
+
+	QUnit.test("Float as string with preserveDecimals", function (assert) {
+		var oFormat = NumberFormat.getFloatInstance({preserveDecimals: true, parseAsString: true}, new Locale("en"));
+
+		assert.equal(oFormat.format("123.456").toString(), "123.456", "unchanged");
+		assert.equal(oFormat.format("123.40").toString(), "123.40", "unchanged");
+
+		// decimals 2 (same as minFractionDigits: 2 and maxFractionDigits: 2):
+		oFormat = NumberFormat.getFloatInstance({preserveDecimals: true, decimals: 2, parseAsString: true}, new Locale("en"));
+		assert.equal(oFormat.format("123.456").toString(), "123.456", "decimals: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format("123.456789").toString(), "123.456789", "decimals: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format("123.45").toString(), "123.45", "decimals: Length should not change.");
+		assert.equal(oFormat.format("123.4").toString(), "123.40", "decimals: Length should be filled up.");
+		assert.equal(oFormat.format("123").toString(), "123.00", "decimals: Length should be filled up.");
+		assert.equal(oFormat.format("123.0").toString(), "123.00", "decimals: Length should be filled up.");
+		assert.equal(oFormat.format("123.000").toString(), "123.000", "decimals: Length should not change because of preserveDecimals.");
+
+		// fractionDigits:
+		oFormat = NumberFormat.getFloatInstance({preserveDecimals: true, minFractionDigits: 1, maxFractionDigits: 3, parseAsString: true}, new Locale("en"));
+		assert.equal(oFormat.format("123.456").toString(), "123.456", "fractionDigits: Length should not change.");
+		assert.equal(oFormat.format("123.456789").toString(), "123.456789", "fractionDigits: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format("123.45").toString(), "123.45", "fractionDigits: Length should not change.");
+		assert.equal(oFormat.format("123.4").toString(), "123.4", "fractionDigits: Length should not change.");
+		assert.equal(oFormat.format("123").toString(), "123.0", "fractionDigits: Length should be filled up.");
+		assert.equal(oFormat.format("123.0").toString(), "123.0", "fractionDigits: Length should not change.");
+		assert.equal(oFormat.format("123.0000").toString(), "123.0000", "fractionDigits: Length should not change because of preserveDecimals .");
+
+
+		// precision (sets the maximum fraction digits):
+		oFormat = NumberFormat.getFloatInstance({preserveDecimals: true, precision: 5, parseAsString: true}, new Locale("en"));
+		assert.equal(oFormat.format("123.456").toString(), "123.456", "precision: Length should not change because of preserveDecimals.");
+		assert.equal(oFormat.format("123.456789").toString(), "123.456789", "precision: Length should not change because of preserveDecimals. ");
+		assert.equal(oFormat.format("123.45").toString(), "123.45", "precision: Length should not change.");
+		assert.equal(oFormat.format("123.4").toString(), "123.4", "precision: Length should not change.");
+		assert.equal(oFormat.format("123").toString(), "123", "precision: Length should not change.");
+		assert.equal(oFormat.format("123.0").toString(), "123.0", "precision: Length should not change.");
+		assert.equal(oFormat.format("123.0000").toString(), "123.0000", "precision: Length should not change because of preserveDecimals.");
+	});
+
+
 	QUnit.module("General");
 
 	QUnit.test("origin info", function (assert) {

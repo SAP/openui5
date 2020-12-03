@@ -158,6 +158,7 @@ sap.ui.define([
 		showMeasure: false,
 		style: "standard",
 		parseAsString: false,
+		preserveDecimals: false,
 		roundingMode: NumberFormat.RoundingMode.TOWARDS_ZERO,
 		emptyString: NaN,
 		showScale: true
@@ -182,6 +183,7 @@ sap.ui.define([
 		showMeasure: false,
 		style: "standard",
 		parseAsString: false,
+		preserveDecimals: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
 		emptyString: NaN,
 		showScale: true
@@ -207,6 +209,7 @@ sap.ui.define([
 		showMeasure: false,
 		style: "standard",
 		parseAsString: false,
+		preserveDecimals: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
 		emptyString: NaN,
 		showScale: true
@@ -235,6 +238,7 @@ sap.ui.define([
 		style: "standard",
 		customCurrencies: undefined,
 		parseAsString: false,
+		preserveDecimals: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
 		emptyString: NaN,
 		showScale: true,
@@ -263,6 +267,7 @@ sap.ui.define([
 		customUnits: undefined,
 		allowedUnits: undefined,
 		parseAsString: false,
+		preserveDecimals: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
 		emptyString: NaN,
 		showScale: true
@@ -316,6 +321,10 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
 	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
+	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits
+	 *   in case there are more than allowed via format option <code>maxFractionDigits</code>; if
+	 *   decimals are not preserved, the formatted number is rounded to
+	 *   <code>maxFractionDigits</code>.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
@@ -371,6 +380,10 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
 	 *  back to the standard notation. For example "5e+3" is parsed to "5000".
+	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits
+	 *   in case there are more than allowed via format option <code>maxFractionDigits</code>; if
+	 *   decimals are not preserved, the formatted number is rounded to
+	 *   <code>maxFractionDigits</code>.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=TOWARDS_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
@@ -468,6 +481,10 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
 	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
+	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits
+	 *   in case there are more than allowed via format option <code>maxFractionDigits</code>; if
+	 *   decimals are not preserved, the formatted number is rounded to
+	 *   <code>maxFractionDigits</code>.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
@@ -567,6 +584,10 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.minusSign] defines the used minus symbol
 	 * @param {boolean} [oFormatOptions.parseAsString] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
 	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
+	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits
+	 *   in case there are more than allowed via format option <code>maxFractionDigits</code>; if
+	 *   decimals are not preserved, the formatted number is rounded to
+	 *   <code>maxFractionDigits</code>.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
@@ -624,6 +645,10 @@ sap.ui.define([
 	 * @param {string} [oFormatOptions.percentSign] defines the used percent symbol
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
 	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
+	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits
+	 *   in case there are more than allowed via format option <code>maxFractionDigits</code>; if
+	 *   decimals are not preserved, the formatted number is rounded to
+	 *   <code>maxFractionDigits</code>.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
 	 * 'short' or 'long'. When this option is set, the default value of option 'precision' is set to 2. This can be changed by setting either min/maxFractionDigits, decimals, shortDecimals or precision option.
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
@@ -1067,7 +1092,7 @@ sap.ui.define([
 		// If the number of fraction digits are equal or less than oOptions.maxFractionDigits, the
 		// number isn't changed. After this operation, the number of fraction digits is
 		// equal or less than oOptions.maxFractionDigits.
-		if (typeof vValue === "number") {
+		if (typeof vValue === "number" && !oOptions.preserveDecimals) {
 			vValue = rounding(vValue, oOptions.maxFractionDigits, oOptions.roundingMode);
 		}
 
@@ -1106,7 +1131,7 @@ sap.ui.define([
 		// fraction part length
 		if (sFractionPart.length < oOptions.minFractionDigits) {
 			sFractionPart = sFractionPart.padEnd(oOptions.minFractionDigits, "0");
-		} else if (sFractionPart.length > oOptions.maxFractionDigits) {
+		} else if (sFractionPart.length > oOptions.maxFractionDigits && !oOptions.preserveDecimals) {
 			sFractionPart = sFractionPart.substr(0, oOptions.maxFractionDigits);
 		}
 
