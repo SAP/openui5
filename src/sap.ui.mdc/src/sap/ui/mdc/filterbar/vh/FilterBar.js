@@ -122,7 +122,7 @@ sap.ui.define(
 				if (this._oFilterBarLayout) {
 					this._oFilterBarLayout.removeControl(this._oBasicSearchField);
 				}
-				this.oBasicSearchField.detachSubmit(this._handleFilterItemSubmit, this);
+				this._oBasicSearchField.detachSubmit(this._handleFilterItemSubmit, this);
 			}
 			this._oBasicSearchField = oBasicSearchField;
 
