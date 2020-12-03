@@ -87,6 +87,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 			oRm.attr("title", sTooltip);
 		}
 
+		if (sTextDir != TextDirection.Inherit) {
+			oRm.attr("dir", sTextDir.toLowerCase());
+		}
+
 		oRm.openEnd();
 
 		oRm.openStart("div", oControl.getId() + "-content");
@@ -137,11 +141,6 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/library'
 		} else if (!oControl.getEditable()) {
 			oRm.attr("readonly", "readonly");
 
-		}
-
-		// check if textDirection property is not set to default "Inherit" and add "dir" attribute
-		if (sTextDir != TextDirection.Inherit) {
-			oRm.attr("dir", sTextDir.toLowerCase());
 		}
 
 		this.writeInnerValue(oRm, oControl);
