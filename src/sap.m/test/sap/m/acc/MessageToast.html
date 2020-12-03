@@ -6,7 +6,10 @@
 	<script src="../shared-config.js"></script>
 	<script id="sap-ui-bootstrap"
 			data-sap-ui-libs="sap.m"
-			src="../../../../resources/sap-ui-core.js">
+			src="../../../../resources/sap-ui-core.js"
+			data-sap-ui-resourceroots='{
+				"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+			}'>
 	</script>
 	<script>
 		var bCompactMode = new sap.m.CheckBox("compactMode", {
