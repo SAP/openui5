@@ -150,10 +150,11 @@ sap.ui.define([
 					return vValue;
 
 				case BaseType.Numeric:
-					if (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal") {
+					if (typeof vValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
+						// INT64 and Decimal parsed always to string, if for some reason a number comes in -> convert to string, but don't use type at this might have locale dependent formatting
 						return vValue.toString();
 					}
-					return vValue;
+					return vValue; // use as it is and let Flex handle it
 
 				default:
 					// just use type to convert
@@ -196,14 +197,15 @@ sap.ui.define([
 					return sValue;
 
 				case BaseType.Numeric:
-					if (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal") {
-						return oTypeInstance.parseValue(sValue, "string");
+					if (typeof sValue !== "string" && (oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Int64" || oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.Decimal")) {
+						// INT64 and Decimal using string as internal value -> if for some reason a number comes in convert it to string
+						return sValue.toString(); // don't use type as this could have locale dependent parsing
 					}
-					return sValue;
+					return sValue; // use as it is
 
 				default:
 					// just use type to convert
-					return oTypeConfig.typeInstance.parseValue(sValue, "string");
+					return oTypeInstance.parseValue(sValue, "string");
 			}
 
 		}
