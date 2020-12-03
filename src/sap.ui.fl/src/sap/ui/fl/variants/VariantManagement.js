@@ -229,7 +229,7 @@ sap.ui.define([
 			events: {
 
 				/**
-				 * This event is fired when the <i>Save View</i> dialog is closed with <i>OK</i> for a variant.
+				 * This event is fired when the <i>Save View</i> dialog or the <i>Save As</i> dialog is closed with the save button.
 				 */
 				save: {
 					parameters: {
@@ -269,6 +269,11 @@ sap.ui.define([
 						}
 					}
 				},
+
+				/**
+				 * This event is fired when users presses the cancel button inside <i>Save As</i> dialog.
+				 */
+				cancel: {},
 
 				/**
 				 * This event is fired when users apply changes to variants in the <i>Manage Views</i> dialog.
@@ -1199,16 +1204,17 @@ sap.ui.define([
 				beginButton: this.oSaveSave,
 				endButton: new Button(this.getId() + "-variantcancel", {
 					text: this._oRb.getText("VARIANT_MANAGEMENT_CANCEL"),
-					press: function() {
-						this._bSaveCanceled = true;
-						this.oSaveAsDialog.close();
-					}.bind(this)
+					press: this._cancelPressed.bind(this)
 				}),
 				content: [
 					oLabelName, this.oInputName, this.oLabelKey, this.oInputManualKey, oSaveAsDialogOptionsGrid
 				],
 				stretch: Device.system.phone
 			});
+
+			this.oSaveAsDialog.isPopupAdaptationAllowed = function() {
+				return false;
+			};
 
 			this.oSaveAsDialog.addStyleClass("sapUiPopupWithPadding");
 			this.oSaveAsDialog.addStyleClass("sapUiFlVarMngmtSaveDialog");
@@ -1220,6 +1226,14 @@ sap.ui.define([
 			this.addDependent(this.oSaveAsDialog);
 		}
 	};
+
+	VariantManagement.prototype._cancelPressed = function() {
+		this._bSaveCanceled = true;
+
+		this.fireCancel();
+		this.oSaveAsDialog.close();
+	};
+
 
 	VariantManagement.prototype._openSaveAsDialog = function() {
 		this._createSaveAsDialog();
