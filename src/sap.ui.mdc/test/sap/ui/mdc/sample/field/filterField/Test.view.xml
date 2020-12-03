@@ -425,10 +425,10 @@
 										<m:Table items="{path: '/CountryCollection', suspended: true}" width="26rem">
 											<m:columns>
 												<m:Column>
-													<m:Label text="{/#CountryCollection/countryId/@sap:label}"/>
+													<m:Label text="{/#Country/countryId/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-												<m:Label text="{/#CountryCollection/text/@sap:label}"/>
+												<m:Label text="{/#Country/text/@sap:label}"/>
 												</m:Column>
 											</m:columns>
 											<m:items>
@@ -471,7 +471,7 @@
 											liveMode= "true">
 											<mdc:FilterField
 												id="VHFFBTextFFCountry"
-												label= "{/#RegionCollection/countryId/@sap:label}"
+												label= "{/#Region/countryId/@sap:label}"
 												editMode= "Editable"
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
@@ -485,13 +485,13 @@
 										<m:Table items="{path: '/RegionCollection', suspended: true}" width="26rem">
 											<m:columns>
 												<m:Column>
-													<m:Label text="{/#RegionCollection/regionId/@sap:label}"/>
+													<m:Label text="{/#Region/regionId/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-													<m:Label text="{/#RegionCollection/text/@sap:label}"/>
+													<m:Label text="{/#Region/text/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-													<m:Label text="{/#RegionCollection/countryId/@sap:label}"/>
+													<m:Label text="{/#Region/countryId/@sap:label}"/>
 												</m:Column>
 											</m:columns>
 											<m:items>
@@ -537,7 +537,7 @@
 											liveMode= "false">
 											<mdc:FilterField
 												id="VHFFBTextFFCountry2"
-												label= "{/#CityCollection/countryId/@sap:label}"
+												label= "{/#City/countryId/@sap:label}"
 												editMode= "Editable"
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
@@ -547,7 +547,7 @@
 											</mdc:FilterField>
 											<mdc:FilterField
 												id="VHFFBTextFFRegion2"
-												label= "{/#CityCollection/regionId/@sap:label}"
+												label= "{/#City/regionId/@sap:label}"
 												editMode= "Editable"
 												display= "ValueDescription"
 												dataType="sap.ui.model.type.String"
@@ -572,13 +572,13 @@
 																<m:Table items="{path: '/RegionCollection', suspended: true}" width="26rem">
 																	<m:columns>
 																		<m:Column>
-																			<m:Label text="{/#RegionCollection/regionId/@sap:label}"/>
+																			<m:Label text="{/#Region/regionId/@sap:label}"/>
 																		</m:Column>
 																		<m:Column>
-																			<m:Label text="{/#RegionCollection/text/@sap:label}"/>
+																			<m:Label text="{/#Region/text/@sap:label}"/>
 																		</m:Column>
 																		<m:Column>
-																			<m:Label text="{/#RegionCollection/countryId/@sap:label}"/>
+																			<m:Label text="{/#Region/countryId/@sap:label}"/>
 																		</m:Column>
 																	</m:columns>
 																	<m:items>
@@ -599,16 +599,16 @@
 										<m:Table items="{path: '/CityCollection', suspended: true}" width="26rem">
 											<m:columns>
 												<m:Column>
-													<m:Label text="{/#CityCollection/cityId/@sap:label}"/>
+													<m:Label text="{/#City/cityId/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-													<m:Label text="{/#CityCollection/text/@sap:label}"/>
+													<m:Label text="{/#City/text/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-													<m:Label text="{/#CityCollection/countryId/@sap:label}"/>
+													<m:Label text="{/#City/countryId/@sap:label}"/>
 												</m:Column>
 												<m:Column>
-													<m:Label text="{/#CityCollection/regionId/@sap:label}"/>
+													<m:Label text="{/#City/regionId/@sap:label}"/>
 												</m:Column>
 											</m:columns>
 											<m:items>
