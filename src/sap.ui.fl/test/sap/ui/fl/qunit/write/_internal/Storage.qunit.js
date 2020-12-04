@@ -38,8 +38,6 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("ApplyStorage.getWriteConnectors", {
-		beforeEach : function () {
-		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -380,13 +378,14 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("then it calls condense of the connector", function(assert) {
+		QUnit.test("then it calls condense of the connector (persisted and dirty changes)", function(assert) {
 			var aAllChanges = createChangesAndSetState(["delete", "delete", "select"]);
+			aAllChanges[0].setState("NONE");
 			var mCondenseExpected = {
 				namespace: "a.name.space",
 				layer: this.sLayer,
 				"delete": {
-					change: ["0", "1"]
+					change: ["0"]
 				},
 				update: {
 					change: []
@@ -435,7 +434,7 @@ sap.ui.define([
 				namespace: "a.name.space",
 				layer: this.sLayer,
 				"delete": {
-					change: ["0"]
+					change: []
 				},
 				update: {
 					change: []
@@ -495,7 +494,7 @@ sap.ui.define([
 				namespace: "a.name.space",
 				layer: this.sLayer,
 				"delete": {
-					change: ["0", "1", "2"]
+					change: []
 				},
 				update: {
 					change: []
@@ -569,6 +568,53 @@ sap.ui.define([
 				layer: this.sLayer,
 				allChanges: aAllChanges,
 				condensedChanges: [aAllChanges[0], aAllChanges[1], aAllChanges[2]],
+				reference: "reference"
+			};
+
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+
+			return Storage.condense(mPropertyBag).then(function () {
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "then flexObject is filled correctly");
+			});
+		});
+
+		QUnit.test("and select and delete get condensed", function (assert) {
+			var aAllChanges = createChangesAndSetState(["select", "delete"]);
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				"delete": {
+					change: []
+				},
+				update: {
+					change: []
+				},
+				reorder: {
+					change: []
+				},
+				create: {
+					change: [
+						{0: {
+							fileType: "change",
+							layer: this.sLayer,
+							fileName: "0",
+							namespace: "a.name.space",
+							changeType: "labelChange",
+							reference: "",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 0"
+							}}
+						}
+					]
+				}
+			};
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: [aAllChanges[0]],
 				reference: "reference"
 			};
 
@@ -1047,6 +1093,7 @@ sap.ui.define([
 			});
 		});
 	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});

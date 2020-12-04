@@ -133,13 +133,15 @@ sap.ui.define([
 			mPropertyBag.allChanges.forEach(function(oChange, index) {
 				if (oChange.condenserState) {
 					var bDifferentOrder = false;
-					if (mPropertyBag.condensedChanges.length) {
+					if (oChange.condenserState === "delete") {
+						if (oChange.getState() === "NONE") {
+							mCondense.delete.change.push(oChange.getFileName());
+						}
+						iOffset++;
+					} else if (mPropertyBag.condensedChanges.length) {
 						bDifferentOrder = mPropertyBag.allChanges[index].getFileName() !== mPropertyBag.condensedChanges[index - iOffset].getFileName();
 					}
-					if (oChange.condenserState === "delete") {
-						mCondense.delete.change.push(oChange.getFileName());
-						iOffset++;
-					} else if (oChange.condenserState === "select" && bDifferentOrder && !bAlreadyReordered) {
+					if (oChange.condenserState === "select" && bDifferentOrder && !bAlreadyReordered) {
 						var aReorderedChanges = mPropertyBag.condensedChanges.slice(index - iOffset).map(function(oChange) {
 							return oChange.getFileName();
 						});
@@ -162,6 +164,7 @@ sap.ui.define([
 				}
 			});
 		}
+
 		return mCondense;
 	}
 
