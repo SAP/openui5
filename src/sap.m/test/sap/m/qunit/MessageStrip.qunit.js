@@ -178,7 +178,7 @@ sap.ui.define([
 		// Assert
 		oAssert.ok(oFormattedText.getDomRef(),
 			"Internal sap.m.FormattedText is rendered in the DOM");
-		oAssert.strictEqual(this.oMessageStrip.$().find(CLASS_FORMATTED_TEXT).html(), sTestString,
+		oAssert.strictEqual(this.oMessageStrip.$().find(CLASS_FORMATTED_TEXT)[0].textContent, sTestString,
 			"Rendered HTML in internal sap.m.FormattedText should match passed test string");
 
 		// Act - toggle setter
@@ -188,7 +188,7 @@ sap.ui.define([
 		// Assert
 		oAssert.notOk(oFormattedText.getDomRef(),
 			"Internal sap.m.FormattedText is not rendered in the DOM");
-		oAssert.strictEqual(this.oMessageStrip.$().find(CLASS_TEXT).html(), sTestString,
+		oAssert.strictEqual(this.oMessageStrip.$().find(CLASS_TEXT)[0].textContent, sTestString,
 			"Rendered HTML should match passed test string");
 
 		// Cleanup
