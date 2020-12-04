@@ -8,6 +8,9 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 				return Promise.resolve("./");
 
 			}
+			if (name == "Northwind") {
+				return Promise.resolve("https://services.odata.org/V3/Northwind/Northwind.svc");
+			}
 			return Promise.resolve("https://" + name);
 		}
 	});

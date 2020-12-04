@@ -111,11 +111,29 @@
 				},
 				"iconNotAllowFileAndNone": {
 					"value": "sap-icon://accept"
+				},
+				"Customer": {
+					"value": ""
+				},
+				"Employee": {
+					"value": ""
+				},
+				"Order": {
+					"value": ""
+				},
+				"Product": {
+					"value": ""
+				},
+				"CustomerWithTopAndSkipOption": {
+					"value": ""
 				}
 			},
 			"destinations": {
 				"string": {
 					"name": "JAM"
+				},
+				"local": {
+					"name": "local"
 				},
 				"dest": {
 					"name": "JAM"
@@ -127,6 +145,10 @@
 				"destLabelTrans": {
 					"name": "SF",
 					"label": "{{TRANSLATED_DESTINATION_LABEL}}"
+				},
+				"northwind": {
+					"name": "Northwind",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
 				}
 			}
 		},
