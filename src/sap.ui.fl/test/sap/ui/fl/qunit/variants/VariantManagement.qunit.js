@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/layout/Grid",
 	"sap/m/OverflowToolbar",
 	"sap/m/Input",
@@ -17,6 +18,7 @@ sap.ui.define([
 	VariantModel,
 	Layer,
 	flUtils,
+	flSettings,
 	Grid,
 	OverflowToolbar,
 	Input,
@@ -59,6 +61,7 @@ sap.ui.define([
 
 	QUnit.module("sap.ui.fl.variants.VariantManagement", {
 		beforeEach: function() {
+			this.fnSettingsGetInstanceSpy = sinon.spy(flSettings, "getInstance");
 			this.oVariantManagement = new VariantManagement("One", {});
 
 			oModel = new VariantModel({
@@ -131,10 +134,15 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oVariantManagement.destroy();
+			flSettings.getInstance.restore();
 		}
 	}, function() {
 		QUnit.test("Shall be instantiable", function(assert) {
 			assert.ok(this.oVariantManagement);
+		});
+
+		QUnit.test("fl settings is called", function(assert) {
+			assert.equal(this.fnSettingsGetInstanceSpy.callCount, 1, "fl settings is called once");
 		});
 
 		QUnit.test("Check property 'updateVariantInURL'", function(assert) {
@@ -309,29 +317,34 @@ sap.ui.define([
 
 			this.oVariantManagement._openVariantList();
 
-			assert.ok(!this.oVariantManagement.oVariantSaveBtn.getVisible());
-			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
+			assert.equal(this.oVariantManagement.oVariantSaveBtn.getVisible(), false);
+			assert.equal(this.oVariantManagement.oVariantSaveAsBtn.getVisible(), true);
 
 			this.oVariantManagement._openVariantList();
 
-			assert.ok(!this.oVariantManagement.getModified());
-			assert.ok(!this.oVariantManagement.oVariantSaveBtn.getVisible());
-			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
+			assert.equal(this.oVariantManagement.getModified(), false);
+			assert.equal(this.oVariantManagement.oVariantSaveBtn.getVisible(), false);
+			assert.equal(this.oVariantManagement.oVariantSaveAsBtn.getVisible(), true);
 
 			this.oVariantManagement.setModified(true);
-			assert.ok(this.oVariantManagement.getModified());
-			assert.ok(this.oVariantManagement.oVariantSaveBtn.getVisible());
-			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
+			assert.equal(this.oVariantManagement.getModified(), true);
+			assert.equal(this.oVariantManagement.oVariantSaveBtn.getVisible(), true);
+			assert.equal(this.oVariantManagement.oVariantSaveAsBtn.getVisible(), true);
 
 			this.oVariantManagement.setCurrentVariantKey("4");
 			this.oVariantManagement._openVariantList();
-			assert.ok(!this.oVariantManagement.oVariantSaveBtn.getVisible());
-			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
+			assert.equal(this.oVariantManagement.oVariantSaveBtn.getVisible(), false);
+			assert.equal(this.oVariantManagement.oVariantSaveAsBtn.getVisible(), true);
 
 			this.oVariantManagement.setCurrentVariantKey("1");
 			this.oVariantManagement._openVariantList();
-			assert.ok(this.oVariantManagement.oVariantSaveBtn.getVisible());
-			assert.ok(this.oVariantManagement.oVariantSaveAsBtn.getVisible());
+			assert.equal(this.oVariantManagement.oVariantSaveBtn.getVisible(), true);
+			assert.equal(this.oVariantManagement.oVariantSaveAsBtn.getVisible(), true);
+
+			this.oVariantManagement.getModel(VariantManagement.INNER_MODEL_NAME).setProperty("/showSaveAs", false);
+			this.oVariantManagement._openVariantList();
+			assert.equal(this.oVariantManagement.oVariantSaveAsBtn.getVisible(), false);
+			this.oVariantManagement.getModel(VariantManagement.INNER_MODEL_NAME).setProperty("/showSaveAs", true);
 		});
 
 		QUnit.test("Create Variants List with favorited Standard", function(assert) {
