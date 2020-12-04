@@ -18,9 +18,9 @@
 				"samples": [
 					"sap.ui.mdc.sample.ResponsiveTable",
 					"sap.ui.mdc.sample.GridTable",
-					"sap.ui.mdc.sample.V4AnalyticsTable",
 					"sap.ui.mdc.sample.TableStateHandling",
-					"sap.ui.mdc.sample.TableFilter"
+					"sap.ui.mdc.sample.TableFilter",
+					"sap.ui.mdc.sample.V4AnalyticsTableDemo"
 				]
 			}
 		],
@@ -34,10 +34,6 @@
 				"name": "GridTable",
 				"description": "Basic example with GridTable"
 			}, {
-				"id": "sap.ui.mdc.sample.V4AnalyticsTable",
-				"name": "V4AnalyticsTable",
-				"description": "Basic example with V4AnalyticsTable"
-			}, {
 				"id": "sap.ui.mdc.sample.TableStateHandling",
 				"name": "TableStateHandling",
 				"description": "Basic example of State Handling"
@@ -45,6 +41,10 @@
 				"id": "sap.ui.mdc.sample.TableFilter",
 				"name": "TableFilter",
 				"description": "Basic example with Filter"
+			}, {
+				"id": "sap.ui.mdc.sample.V4AnalyticsTableDemo",
+				"name": "V4AnalyticsTableDemo",
+				"description": "Demo example for Analytics"
 			}
 		]
 	}
