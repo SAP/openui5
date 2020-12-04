@@ -10,6 +10,10 @@ sap.ui.define([
 			// set explored app's demo model on this sample
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
+		},
+
+		onPress : function () {
+			sap.m.MessageToast.show('PRESS fired!');
 		}
 	});
 

@@ -347,6 +347,7 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapMOHAttr {
 	.sapMObjStatusText {
 		word-break: normal;
 	}
+
 }
 
 .sapMOHStatusFixedWidth {
@@ -911,15 +912,31 @@ html.sap-phone .sapMOHTitle h1 > .sapMText {
 	font-size: @sapMFontHeader4Size;
 }
 
+.sapMOHNumberDiv .sapMObjectNumber {
+	margin: 0;
+	padding-bottom: 0.125rem;
+	line-height: initial;
+}
+
 .sapMOHNumberDiv .sapMObjectNumberText {
 	font-family: @sapUiFontHeaderFamily;
 	font-size: 1.375rem;
 	font-weight: @sapUiFontHeaderWeight;
+	white-space: nowrap;
 }
 
 .sapMOHNumberDiv .sapMObjectNumberUnit {
 	padding: 0;
 	display: block;
+}
+
+.sapMOHRTitleNumberDiv .sapMObjectNumber {
+	padding-top: 0.25rem;
+	line-height: initial;
+
+	.sapMObjectNumberText {
+		vertical-align: top;
+	}
 }
 
 .sapMOHC .sapMOHNumberDiv .sapMObjectNumberText {

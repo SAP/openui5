@@ -1,0 +1,16 @@
+/* =================================== */
+/* CSS for control sap.m/ObjectNumber  */
+/* Belize HCW		                   */
+/* =================================== */
+
+@sapUiInformativeElement: @sapUiInformationBG;
+
+.sapMObjectNumberInverted .sapMObjectNumberInner {
+	background-color: @sapUiBaseBG;
+	border-width: 0.0625rem;
+	border-style: solid;
+}
+
+html.sap-desktop .sapMObjectNumberActive:focus .sapMObjectNumberInner::after {
+	outline: 2px dotted @sapUiContentFocusColor;
+}

@@ -201,7 +201,7 @@ sap.ui.define([
 		var $onnum = jQuery("#on4").find(".sapMObjectNumberText");
 		var $onunit = jQuery("#on4").find(".sapMObjectNumberUnit");
 
-		assert.ok($onnum.offset().left === 0, "object number is left aligned");
+		assert.equal($onnum.offset().left, 0, "object number is left aligned");
 		assert.ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
 
 		$onnum = jQuery("#on5").find(".sapMObjectNumberText");
@@ -218,7 +218,7 @@ sap.ui.define([
 		$onnum = jQuery("#on7").find(".sapMObjectNumberText");
 		$onunit = jQuery("#on7").find(".sapMObjectNumberUnit");
 
-		assert.ok($onunit.offset().left === 0, "object number is left aligned");
+		assert.equal($onunit.offset().left, 0, "object number is left aligned");
 		assert.ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
 
 		//Cleanup
