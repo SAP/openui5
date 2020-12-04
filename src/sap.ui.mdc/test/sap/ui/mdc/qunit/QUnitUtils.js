@@ -50,7 +50,6 @@ sap.ui.define(function() {
 				fnOriginalFetchProperties.apply(this, arguments);
 				return Promise.resolve(aPropertyInfos);
 			};
-
 			return oDelegate;
 		}
 
@@ -75,14 +74,86 @@ sap.ui.define(function() {
 		};
 	}
 
+	function stubPropertyExtension(oTarget, mExtensions) {
+		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
+		var fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
+		var oDelegate;
+		var fnOriginalFetchPropertyExtensions;
+		var bPropertyHelperExists;
+
+		if (typeof fnOriginalGetControlDelegate !== "function") {
+			throw new Error("The target cannot be stubbed. " + oTarget);
+		}
+
+		if (oTarget.__restorePropertyExtension) {
+			throw new Error("The target is already stubbed. " + oTarget);
+		}
+
+		if (typeof oTarget.getPropertyHelper === "function") {
+			try {
+				oTarget.getPropertyHelper();
+				bPropertyHelperExists = true;
+			} catch (e) {
+				bPropertyHelperExists = false;
+			}
+
+			if (bPropertyHelperExists) {
+				throw new Error("The target cannot be stubbed if the property helper is already initialized. " + oTarget);
+			}
+		}
+
+		function getDelegate() {
+			if (oDelegate) {
+				return oDelegate;
+			}
+
+			oDelegate = fnOriginalGetControlDelegate.apply(this, arguments);
+			fnOriginalFetchPropertyExtensions = oDelegate.fetchPropertyExtensions;
+
+			oDelegate.fetchPropertyExtensions = function() {
+				fnOriginalFetchPropertyExtensions.apply(this, arguments);
+				return Promise.resolve(mExtensions);
+			};
+			return oDelegate;
+		}
+
+		oTarget.getControlDelegate = function() {
+			return getDelegate.call(this);
+		};
+
+		oTarget.awaitControlDelegate = function() {
+			return fnOriginalAwaitControlDelegate.apply(this, arguments).then(function() {
+				return getDelegate.call(this);
+			}.bind(this));
+		};
+
+		oTarget.__restorePropertyExtension = function() {
+			delete oTarget.__restorePropertyExtension;
+			oTarget.getControlDelegate = fnOriginalGetControlDelegate;
+			oTarget.awaitControlDelegate = fnOriginalAwaitControlDelegate;
+
+			if (oDelegate) {
+				oDelegate.fetchPropertyExtensions = fnOriginalFetchPropertyExtensions;
+			}
+		};
+	}
+
 	function restorePropertyInfos(oTarget) {
 		if (oTarget.__restorePropertyInfos) {
 			oTarget.__restorePropertyInfos();
 		}
 	}
 
+	function restorePropertyExtension(oTarget) {
+		if (oTarget.__restorePropertyExtension) {
+			oTarget.__restorePropertyExtension();
+		}
+	}
+
 	return {
 		stubPropertyInfos: stubPropertyInfos,
-		restorePropertyInfos: restorePropertyInfos
+		restorePropertyInfos: restorePropertyInfos,
+		stubPropertyExtension: stubPropertyExtension,
+		restorePropertyExtension: restorePropertyExtension
 	};
 });

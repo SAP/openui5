@@ -233,6 +233,18 @@ sap.ui.define([
 
 	V4Aggregation.prototype.updateAggregation = function() {
 		var oBinding = this.getTableBinding();
+		if (this._mGroup && this._mAggregate) {
+			var self = this;
+			Object.keys(this._mGroup).forEach(function(item) {
+				if (self._mAggregate.hasOwnProperty(item)) {
+					if ((self._mAggregate[item].grandTotal || self._mAggregate[item].subtotals) == true) {
+						delete self._mGroup[item];
+					} else {
+						delete self._mAggregate[item];
+					}
+				}
+			});
+		}
 		var mAggregation = {
 			aggregate: this._mAggregate,
 			group: this._mGroup,
