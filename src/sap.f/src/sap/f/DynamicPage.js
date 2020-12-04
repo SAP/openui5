@@ -1120,7 +1120,7 @@ sap.ui.define([
 		var iMaxScrollPosition = this._getMaxScrollPosition(),
 			iThreshold = this._bMSBrowser ? 1 : 0;
 
-		if (this._bHeaderInTitleArea) { // when snapping with scroll, the header will be in the content area
+		if (this._bHeaderInTitleArea  && iMaxScrollPosition > 0) { // when snapping with scroll, the header will be in the content area
 			iMaxScrollPosition += this._getHeaderHeight();
 			iMaxScrollPosition -= iThreshold;
 		}

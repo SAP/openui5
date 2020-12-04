@@ -242,6 +242,17 @@ function (
 		assert.notOk(this.oDynamicPage.getHeader().$().hasClass("sapFDynamicPageHeaderHidden"), "DynamicPage header is shown correctly");
 	});
 
+	QUnit.test("DynamicPage headerExpanded=false and no content renders header correctly snapped", function (assert) {
+		// setup
+		var oHeaderElement;
+		this.oDynamicPage.rerender();
+		Core.applyChanges();
+		// assert
+
+		oHeaderElement = this.oDynamicPage.$().find(".sapFDynamicPageContentWrapper .sapFDynamicPageHeader");
+		assert.notOk(oHeaderElement.length, "Snapped header is inside title area, not in the content");
+	});
+
 	/* --------------------------- DynamicPage Rendering ---------------------------------- */
 	QUnit.module("DynamicPage - Rendering", {
 		beforeEach: function () {
