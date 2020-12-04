@@ -18,6 +18,7 @@ sap.ui.define([
 	"sap/m/inputUtils/typeAhead",
 	"sap/m/inputUtils/filterItems",
 	"sap/m/inputUtils/ListHelpers",
+	"sap/m/inputUtils/itemsVisibilityHandler",
 	"sap/ui/events/KeyCodes",
 	"./Toolbar",
 	"sap/base/assert",
@@ -42,6 +43,7 @@ sap.ui.define([
 		typeAhead,
 		filterItems,
 		ListHelpers,
+		itemsVisibilityHandler,
 		KeyCodes,
 		Toolbar,
 		assert,
@@ -866,7 +868,7 @@ sap.ui.define([
 
 			// handle the visibility of list items, depending on the filtering result
 			if (this._sInputValueBeforeOpen) {
-				this.handleItemsVisibility(oFilterResults);
+				itemsVisibilityHandler(this.getItems(), oFilterResults);
 			}
 
 			if (oLastSelectedItem) {
@@ -904,34 +906,6 @@ sap.ui.define([
 			this._oItemObserver.observe(oItem, {properties: ["text", "additionalText", "enabled", "tooltip"]});
 
 			return oListItem;
-		};
-
-		/**
-		 * Updates the visible property of each list item, depending on the filtering result.
-		 *
-		 * @param {Object} oFilterResults A filtering result object, containing the matching items and list groups
-		 * @private
-		 */
-		ComboBox.prototype.handleItemsVisibility = function(oFilterResults) {
-			var aItems = this.getItems(),
-				aFilteredItems = oFilterResults.items,
-				aGroups = oFilterResults.groups,
-				oListItem;
-
-			// toggle visibility of list items, depending if the item is present in the filtered items
-			aItems.forEach(function (oItem) {
-				oListItem = ListHelpers.getListItem(oItem);
-
-				if (!oItem.isA("sap.ui.core.SeparatorItem") && oListItem) {
-					oListItem.setVisible(aFilteredItems.indexOf(oItem) !== -1);
-				}
-			});
-
-			// toggle group headers visibility
-			aGroups.forEach(function (oGroupItem) {
-				oListItem = ListHelpers.getListItem(oGroupItem.header);
-				oListItem && oListItem.setVisible(oGroupItem.visible);
-			});
 		};
 
 		/* =========================================================== */
@@ -1006,7 +980,7 @@ sap.ui.define([
 				aVisibleItems = this.getItems();
 			} else {
 				aVisibleItems = this.getNonSeparatorSelectableItems(oFilterResults.items);
-				this.handleItemsVisibility(oFilterResults);
+				itemsVisibilityHandler(this.getItems(), oFilterResults);
 			}
 
 			oFirstVisibleItem = aVisibleItems[0]; // first item that matches the value
@@ -1196,7 +1170,7 @@ sap.ui.define([
 			this._oSelectedItemBeforeOpen = this.getSelectedItem();
 			this._sValueBeforeOpen = this.getValue();
 
-			this.getSelectedItem() && this.handleItemsVisibility(this.filterItems(""));
+			this.getSelectedItem() && itemsVisibilityHandler(this.getItems(), this.filterItems(""));
 
 			oPickerTextField.setValue(this._sValueBeforeOpen);
 		};
@@ -2216,7 +2190,7 @@ sap.ui.define([
 				oPicker.detachBeforeOpen(fnPickerOpenListener, this);
 				oPicker = null;
 
-				this.handleItemsVisibility(this.filterItems(this.getValue() || "_"));
+				itemsVisibilityHandler(this.getItems(), this.filterItems(this.getValue() || "_"));
 			};
 
 			// Combobox uses onBeforeOpen of the picker in order to sync the items
@@ -2243,7 +2217,7 @@ sap.ui.define([
 					// Get filtered items and open the popover only when the items array is not empty.
 					this.setFilterFunction(fnFilter || function () { return true; });
 					oFilterResults = this.filterItems(this.getValue() || "_");
-					this.handleItemsVisibility(oFilterResults);
+					itemsVisibilityHandler(this.getItems(), oFilterResults);
 					this.setFilterFunction(fnFilterRestore);
 
 					aFilteredItems = oFilterResults.items;

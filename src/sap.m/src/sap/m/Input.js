@@ -1724,7 +1724,7 @@ function(
 			// The number of all items, including group headers
 			var aHitItems = oFilterResults.items,
 				aGroups = oFilterResults.groups,
-				iItemsLength = aHitItems.length,
+				iItemsLength = aHitItems.length +  aGroups.length,
 				iSuggestionsLength = iItemsLength;
 
 			if (!this._hasTabularSuggestions()) {
@@ -3040,27 +3040,42 @@ function(
 	 * @private
 	 */
 	Input.prototype._mapItems = function (oFilterResults) {
-		var aItems = oFilterResults.items,
+		var aItems = this.getSuggestionItems(),
+			aFilteredItems = oFilterResults.items,
 			aGroups = oFilterResults.groups,
+			aMappedGroups = aGroups.map(function (aGroupItem) { return aGroupItem.header; }),
 			bIsAnySuggestionAlreadySelected = false,
 			oSuggestionsPopover = this._oSuggPopover,
 			oList = oSuggestionsPopover && oSuggestionsPopover.getItemsContainer(),
-			oListItem;
+			oListItem, iGroupItemIndex;
 
-		for (var i = 0; i < aItems.length; i++) {
-			oListItem = ListHelpers.createListItemFromCoreItem(aItems[i], true);
-			oList.addItem(oListItem);
+		aItems
+			.filter(function (oItem) {
+				return (aFilteredItems.indexOf(oItem) > -1) ||
+					(aMappedGroups.indexOf(oItem) > -1);
+			})
+			.map(function (oItem) {
+				oListItem = ListHelpers.createListItemFromCoreItem(oItem, true);
+				oList.addItem(oListItem);
 
-			if (!bIsAnySuggestionAlreadySelected && this._sProposedItemText === aItems[i].getText()) {
-				oListItem.setSelected(true);
-				bIsAnySuggestionAlreadySelected = true;
-			}
-		}
+				if (!bIsAnySuggestionAlreadySelected && this._sProposedItemText === oItem.getText()) {
+					oListItem.setSelected(true);
+					bIsAnySuggestionAlreadySelected = true;
+				}
 
-		aGroups.forEach(function (oGroupItem) {
-			oListItem = ListHelpers.getListItem(oGroupItem.header);
-			oListItem && oListItem.setVisible(oGroupItem.visible);
-		});
+				return oItem;
+			}, this)
+			.filter(function (oItem) {
+				return aMappedGroups.indexOf(oItem) > -1;
+			})
+			.forEach(function (oGroupItem) {
+				iGroupItemIndex = aMappedGroups.indexOf(oGroupItem);
+
+				if (iGroupItemIndex > -1) {
+					oListItem = ListHelpers.getListItem(oGroupItem);
+					oListItem && oListItem.setVisible(aGroups[iGroupItemIndex].visible);
+				}
+			});
 	};
 
 	return Input;
