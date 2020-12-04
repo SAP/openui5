@@ -113,11 +113,26 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @since 1.84.0
 		 *
-		 * @returns {boolean} <code>true</code> if sharing of variants is enabled
+		 * @returns {Promise<boolean>} <code>true</code> if sharing of variants is enabled
 		 */
 		isVariantSharingEnabled: function() {
 			return Settings.getInstance().then(function (oInstance) {
 				return oInstance.isVariantSharingEnabled();
+			});
+		},
+
+		/**
+		 * Checks whether personalization of variants is enabled.
+		 *
+		 * @private
+		 * @ui5-restricted
+		 * @since 1.86.0
+		 *
+		 * @returns {Promise<boolean>}  <code>true</code> if personalization of variants is enabled
+		 */
+		isVariantPersonalizationEnabled: function() {
+			return Settings.getInstance().then(function (oInstance) {
+				return oInstance.isVariantPersonalizationEnabled();
 			});
 		},
 

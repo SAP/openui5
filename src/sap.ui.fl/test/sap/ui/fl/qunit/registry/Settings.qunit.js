@@ -24,6 +24,7 @@ sap.ui.define([
 				isAtoAvailable: false,
 				isAtoEnabled: false,
 				isPublicLayerAvailable: false,
+				isVariantPersonalizationEnabled: true,
 				isAppVariantSaveAsEnabled: false,
 				isCondensingEnabled: false,
 				features: {
@@ -89,6 +90,22 @@ sap.ui.define([
 			assert.equal(this.cut._oSettings.isVariantSharingEnabled, false);
 			var bIsVariantSharingEnabled = this.cut.isVariantSharingEnabled();
 			assert.equal(bIsVariantSharingEnabled, false);
+		});
+
+		QUnit.test("variants personalization is enabled by default", function(assert) {
+			assert.equal(this.cut._oSettings.isVariantPersonalizationEnabled, true);
+			var bIsVariantPersonalizationEnabled = this.cut.isVariantPersonalizationEnabled();
+			assert.equal(bIsVariantPersonalizationEnabled, true);
+		});
+
+		QUnit.test("variants personalization is set to false", function(assert) {
+			var oSettings = {
+				isVariantPersonalizationEnabled: false
+			};
+			this.cut = new Settings(oSettings);
+			assert.equal(this.cut._oSettings.isVariantPersonalizationEnabled, false);
+			var bIsVariantPersonalizationEnabled = this.cut.isVariantPersonalizationEnabled();
+			assert.equal(bIsVariantPersonalizationEnabled, false);
 		});
 
 		QUnit.test("isPublicLayerAvailable is false by default", function(assert) {
