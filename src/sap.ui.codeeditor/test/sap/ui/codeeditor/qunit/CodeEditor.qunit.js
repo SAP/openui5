@@ -204,4 +204,40 @@ sap.ui.define([
 
 		oCodeEditor.destroy();
 	});
+
+	QUnit.module("Size", {
+		beforeEach: function () {
+			this.oCodeEditor = new CodeEditor({});
+
+			this.oCodeEditor.placeAt("qunit-fixture");
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oCodeEditor.destroy();
+		}
+	});
+
+	QUnit.test("Resize is called explicitly only once", function (assert) {
+		// Arrange
+		var oEditor = this.oCodeEditor,
+			fnResizeSpy = sinon.spy(oEditor._oEditor, "resize");
+
+		// Act
+		oEditor.$().width("50px");
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(fnResizeSpy.calledOnce, "Resize is called explicitly once");
+
+		// Act
+		fnResizeSpy.resetHistory();
+		oEditor.$().width("100px");
+		this.clock.tick(500);
+
+		// Assert
+		assert.ok(fnResizeSpy.notCalled, "Resize is not called explicitly a second time");
+
+		// Clean
+		fnResizeSpy.restore();
+	});
 });

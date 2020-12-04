@@ -370,6 +370,7 @@ sap.ui.define([
 			// listen once for resize of the _oEditorDomRef, in some ui5 containers (sap.m.App for example) this can happen very late and ace editor does not handle it
 			this._iResizeListenerId = ResizeHandler.register(this._oEditorDomRef, function() {
 				this._oEditor.resize(); // force the ace editor to recalculate height
+				this._deregisterResizeListener();
 			}.bind(this));
 		}
 	};
