@@ -164,12 +164,14 @@ sap.ui.define([
 				oTestConfig.module = resolvePackage(resolvePlaceholders(oTestConfig.module, name));
 			}
 			oTestConfig.beforeBootstrap = resolvePackage(resolvePlaceholders(oTestConfig.beforeBootstrap, name));
+			oTestConfig.page = resolvePlaceholders(oTestConfig.page, name);
+
 			if (oTestConfig.uriParams) {
 				var oUri = new URI(oTestConfig.page);
-				oUri.search(oTestConfig.uriParams);
+				oUri.addSearch(oTestConfig.uriParams);
 				oTestConfig.page = oUri.toString();
 			}
-			oTestConfig.page = resolvePlaceholders(oTestConfig.page, name);
+
 			oTestConfig.title = resolvePlaceholders(oTestConfig.title, name);
 			oSuiteConfig.tests[name] = oTestConfig;
 		});
