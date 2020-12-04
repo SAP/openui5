@@ -103,7 +103,6 @@ sap.ui.define([
 					text: "Close"
 				}),
 				customHeader: new Bar({
-					titleAlignment: sap.m.TitleAlignment.Auto,
 					contentMiddle: [
 						new Text({ text: "Error"})
 					],

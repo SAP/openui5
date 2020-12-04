@@ -102,7 +102,6 @@ sap.ui.define([
 					contentRight: oCloseButton
 				}),
 				oPopoverBar = new Bar({
-					titleAlignment: sap.m.TitleAlignment.Auto,
 					contentLeft: [oBackButton],
 					contentMiddle: [
 						new Text({
