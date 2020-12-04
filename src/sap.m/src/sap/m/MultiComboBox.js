@@ -2451,15 +2451,11 @@ function(
 	MultiComboBox.prototype.onclick = function (oEvent) {
 		var bEditable = this.getEditable(),
 			bEnabled = this.getEnabled(),
-			bNMoreLableClick = oEvent.target.className.indexOf("sapMTokenizerIndicator") > -1,
-			oTokenizer = this.getAggregation("tokenizer"),
-			bTruncatedTokenClick = oEvent.target.className.indexOf("sapMToken") > -1 && this.getAggregation("tokenizer").hasOneTruncatedToken();
+			bNMoreLableClick = oEvent.target.className.indexOf("sapMTokenizerIndicator") > -1;
 
-		if (bEditable && bEnabled && (bNMoreLableClick || bTruncatedTokenClick)) {
-
+		if (bEditable && bEnabled && bNMoreLableClick) {
 			oEvent.preventDefault();
 			this._handleIndicatorPress();
-			oTokenizer.setFirstTokenTruncated(false);
 		}
 	};
 
