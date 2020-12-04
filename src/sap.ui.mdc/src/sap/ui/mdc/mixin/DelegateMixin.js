@@ -224,14 +224,9 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 			this._bPropertyHelperIsBeingInitialized = true;
 			this.awaitControlDelegate().then(function(oDelegate) {
 				if (this.bIsDestroyed) {
-					return;
+					return null;
 				}
-
-				if (typeof oDelegate.initPropertyHelper === "function") {
-					return initPropertyHelperFromDelegate(this, oDelegate, CustomPropertyHelper);
-				}
-
-				return initPropertyHelperFromClass(this, oDelegate, CustomPropertyHelper);
+				return initPropertyHelper(this, oDelegate, CustomPropertyHelper);
 			}.bind(this)).catch(function(oError) {
 				this._fnRejectInitPropertyHelper(oError);
 			}.bind(this));
@@ -240,42 +235,65 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 		return this._pInitPropertyHelper;
 	};
 
-	function initPropertyHelperFromDelegate(oControl, oDelegate, CustomPropertyHelper) {
-		return oDelegate.initPropertyHelper(oControl).then(function(oPropertyHelper) {
-			if (oControl.bIsDestroyed) {
-				return;
-			}
-
-			if (CustomPropertyHelper) {
-				if (!(oPropertyHelper instanceof CustomPropertyHelper)) {
-					throw new Error("The property helper must be an instance of " + CustomPropertyHelper.getMetadata().getName() + ".");
-				}
-			} else if (!oPropertyHelper || !oPropertyHelper.isA || !oPropertyHelper.isA("sap.ui.mdc.util.PropertyHelper")) {
-				throw new Error("The property helper must be an instance of sap.ui.mdc.util.PropertyHelper.");
-			}
-
-			finalizePropertyHelperInitialization(oControl, oPropertyHelper);
-		});
-	}
-
-	function initPropertyHelperFromClass(oControl, oDelegate, CustomPropertyHelper) {
+	function initPropertyHelper(oControl, oDelegate, CustomPropertyHelper) {
 		return Promise.all([
-			CustomPropertyHelper || loadModules("sap/ui/mdc/util/PropertyHelper"),
 			oDelegate.fetchProperties(oControl)
 		]).then(function(aResult) {
 			if (oControl.bIsDestroyed) {
+				return [];
+			}
+
+			if (typeof oDelegate.fetchPropertyExtensions === "function") {
+				return oDelegate.fetchPropertyExtensions(oControl, aResult[0]).then(function(mExtensions) {
+					return aResult.concat(mExtensions);
+				});
+			}
+
+			return aResult.concat(undefined);
+		}).then(function(aResult) {
+			if (oControl.bIsDestroyed) {
+				return [];
+			}
+
+			return fetchPropertyHelper(oControl, oDelegate, CustomPropertyHelper, aResult[0], aResult[1]).then(function(PropertyHelper) {
+				return aResult.concat(PropertyHelper);
+			});
+		}).then(function(aResult) {
+			if (oControl.bIsDestroyed) {
 				return;
 			}
-			var PropertyHelper = aResult[0][0] ? aResult[0][0]/* default class */ : aResult[0]/* custom class */;
-			var aProperties = aResult[1];
-			finalizePropertyHelperInitialization(oControl, new PropertyHelper(aProperties, oControl));
+
+			var aProperties = aResult[0];
+			var mExtensions = aResult[1];
+			var PropertyHelper = aResult[2];
+			var bPropertyHelperIsInstance = !!PropertyHelper.isA;
+
+			oControl._oPropertyHelper = bPropertyHelperIsInstance ? PropertyHelper : new PropertyHelper(aProperties, mExtensions, oControl);
+			oControl._bPropertyHelperIsBeingInitialized = false;
+			oControl._fnResolveInitPropertyHelper(oControl._oPropertyHelper);
 		});
 	}
 
-	function finalizePropertyHelperInitialization(oControl, oPropertyHelper) {
-		oControl._oPropertyHelper = oPropertyHelper;
-		oControl._bPropertyHelperIsBeingInitialized = false;
-		oControl._fnResolveInitPropertyHelper(oPropertyHelper);
+	function fetchPropertyHelper(oControl, oDelegate, CustomPropertyHelper, aProperties, mExtensions) {
+		if (typeof oDelegate.fetchPropertyHelper === "function") {
+			return oDelegate.fetchPropertyHelper(oControl, aProperties, mExtensions).then(function(PropertyHelper) {
+				var sBaseClass = CustomPropertyHelper ? CustomPropertyHelper.getMetadata().getName() : "sap.ui.mdc.util.PropertyHelper";
+
+				if (!PropertyHelper || !PropertyHelper.getMetadata || !PropertyHelper.getMetadata().isA(sBaseClass)) {
+					throw new Error("The property helper must be a class or instance of type " + sBaseClass + " or a subclass of it.");
+				}
+
+				return PropertyHelper;
+			});
+		}
+
+		if (CustomPropertyHelper) {
+			return Promise.resolve(CustomPropertyHelper);
+		}
+
+		return loadModules("sap/ui/mdc/util/PropertyHelper").then(function(aResult) {
+			return aResult[0];
+		});
 	}
 
 	/**

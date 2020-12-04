@@ -682,7 +682,7 @@ sap.ui.define([
 		var oPropertyHelper = this.oPropertyHelper || this.getAdaptationControl().getPropertyHelper();
 		oPropertyHelper.getProperties().some(function(oProperty) {
 			//First check unique name
-			var bValid = oProperty.getName() === sName || sName == "$search";
+			var bValid = oProperty.name === sName || sName == "$search";
 
 			if (bValid){
 				oInfo.valid = true;

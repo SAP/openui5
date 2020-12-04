@@ -12,8 +12,16 @@ sap.ui.define([
 	/**
 	 * Constructor for a new table property helper.
 	 *
-	 * @param {object[]} aProperties The properties to process in this helper
-	 * @param {sap.ui.base.ManagedObject} [oParent] A reference to an instance that will act as the parent of this helper
+	 * @param {object[]} aProperties
+	 *     The properties to process in this helper
+	 * @param {object<string, object>} [mExtensions]
+	 *     Key-value map, where the key is the name of the property and the value is the extension containing mode-specific information.
+	 *     The extension of a property is stored in a reserved <code>extension</code> attribute and its attributes must be specified with
+	 *     <code>mExtensionAttributeMetadata</code>.
+	 * @param {sap.ui.base.ManagedObject} [oParent]
+	 *     A reference to an instance that will act as the parent of this helper
+	 * @param {object} [mExtensionAttributeMetadata]
+	 *     The attribute metadata for the model-specific property extension
 	 *
 	 * @class
 	 * Table property helpers give tables of this library a consistent and standardized view on properties and their attributes.
@@ -31,7 +39,12 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.table.PropertyHelper
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.table.PropertyHelper");
+	var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.table.PropertyHelper", {
+		constructor: function(aProperties, mExtensions, oParent, mExtensionAttributeMetadata) {
+			var aAllowedAttributes = ["filterable", "sortable", "groupable", "key", "unit", "exportSettings", "propertyInfos"];
+			PropertyHelperBase.call(this, aProperties, mExtensions, oParent, aAllowedAttributes, mExtensionAttributeMetadata);
+		}
+	});
 
 	function isMdcColumnInstance(oColumn) {
 		return !!(oColumn && oColumn.isA && oColumn.isA("sap.ui.mdc.table.Column"));
