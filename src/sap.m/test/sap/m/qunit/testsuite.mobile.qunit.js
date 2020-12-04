@@ -845,6 +845,13 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			OverflowToolbarButton: {
+				title: "Test Page for sap.m.OverflowToolbarButton",
+				_alternativeTitle: "QUnit tests: sap.m.OverflowToolbarButton",
+				ui5: {
+					libs: "sap.m"
+				}
+			},
 			P13nColumnsPanel: {
 				title: "Test Page for sap.m.P13nColumnsPanel",
 				_alternativeTitle: "QUnit Page for sap.m.P13nColumnsPanel",
