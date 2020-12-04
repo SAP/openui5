@@ -13,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/connectors/LrepConnector",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	ChangePersistence,
@@ -27,6 +28,7 @@ sap.ui.define([
 	Settings,
 	FlexState,
 	LrepConnector,
+	LoaderExtensions,
 	sinon
 ) {
 	"use strict";
@@ -254,6 +256,79 @@ sap.ui.define([
 					assert.equal(oFlexStateInitSpy.getCall(0).args[0].manifest, this.oAppComponent.getManifest(), "the manifest was passed");
 				}.bind(this));
 		});
+
+		QUnit.test("When loadVariants() is called and one variant is present for the persistencyKey of the passed control", function (assert) {
+			this.oControl = new Control("controlId1");
+			var sPersistencyKey = "variantManagement1";
+			this.oControl.getPersistencyKey = function () {
+				return sPersistencyKey;
+			};
+
+			var mFlexData = LoaderExtensions.loadResource({
+				dataType: "json",
+				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/apply/api/SmartVariantManagementAPI.loadVariantsTestSetup-flexData.json")
+			});
+
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
+
+			var aVariants = [{
+				fileName: "variant_2",
+				fileType: "variant",
+				selector: {
+					persistencyKey: sPersistencyKey
+				},
+				texts: {
+					variantName: {
+						value: "C variant"
+					}
+				}
+			}, {
+				fileName: "variant_3",
+				fileType: "variant",
+				selector: {
+					persistencyKey: sPersistencyKey
+				},
+				texts: {
+					variantName: {
+						value: "A variant"
+					}
+				}
+			}, {
+				fileName: "variant_4",
+				fileType: "variant",
+				selector: {
+					persistencyKey: sPersistencyKey
+				},
+				texts: {
+					variantName: {
+						value: "A Variant"
+					}
+				}
+			}];
+
+			var sStandardVariantTitle = "this is a localized standard variant title";
+
+			return SmartVariantManagementApplyAPI.loadVariants({
+				control: this.oControl,
+				standardVariantTitle: sStandardVariantTitle,
+				variants: aVariants
+			})
+			.then(function (aEntities) {
+				assert.equal(aEntities.length, 5, "then five entities are returned");
+				assert.equal(aEntities[0].getId(), "*standard*", "the first is the standard variant passed");
+				assert.equal(aEntities[0].getText("variantName"), sStandardVariantTitle, "with the passed title");
+				assert.equal(aEntities[0].getFavorite(), false, "which is NOT a favorite");
+				assert.equal(aEntities[1].getId(), "variant_4", "the second is the variant provided from the loadFlexData");
+				assert.equal(aEntities[1].getFavorite(), false, "which is NOT a favorite");
+				assert.equal(aEntities[2].getId(), "variant_3", "the third is the variant provided from the loadFlexData");
+				assert.equal(aEntities[2].getFavorite(), true, "which is a favorite, because it was changed");
+				assert.equal(aEntities[3].getId(), "variant_1", "the fourth is the variant provided from the loadFlexData");
+				assert.equal(aEntities[3].getFavorite(), false, "which is NOT a favorite, because it was added as a favorite and afterwards removed");
+				assert.equal(aEntities[4].getId(), "variant_2", "the fifth is the variant provided from the loadFlexData");
+				assert.equal(aEntities[4].getFavorite(), false, "which is NOT a favorite");
+			});
+		});
+
 		QUnit.test("When loadChanges() is called and one variant is present for the persistencyKey of another control", function (assert) {
 			this.oControl = new Control("controlId1");
 			var sPersistencyKey = "variant1";
