@@ -17,6 +17,12 @@ describe('sap.m.MultiComboBox', function() {
 		expect(takeScreenshot(firstMultiComboBox)).toLookAs("first_multiComboBox");
 	});
 
+	it("should visualize the RTL MultiComboBox", function () {
+		var oMultiComboBoxRTL = element(by.id("MultiComboBox-rtl"));
+		oMultiComboBoxRTL.click();
+		expect(takeScreenshot(oMultiComboBoxRTL)).toLookAs("MultiComboBox-rtl");
+	});
+
 	//MultiComboBox - default in fullscreen
 	it("should visualize the first MultiComboBox - Default in fullscreen", function() {
 		var defaultMultiComboBoxArrow = element(by.id("MultiComboBox2-arrow"));

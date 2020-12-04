@@ -5531,6 +5531,17 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("RTL support", function(assert) {
+		var oMultiComboBox = new MultiComboBox();
+
+		oMultiComboBox.setTextDirection(sap.ui.core.TextDirection.RTL);
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oMultiComboBox.getDomRef().getAttribute("dir"), "rtl", "Text direction is correctly set to 'rtl' with the textDirection property");
+
+		oMultiComboBox.destroy();
+	});
 
 	QUnit.module("Keyboard handling", {
 		beforeEach: function(){
