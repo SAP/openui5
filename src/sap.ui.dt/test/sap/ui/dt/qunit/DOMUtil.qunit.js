@@ -449,6 +449,69 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("when isVisible is called with svg", {
+		beforeEach: function() {
+			var ns = "http://www.w3.org/2000/svg";
+
+			var svg01 = document.createElementNS(ns, "svg");
+			svg01.id = "svg01";
+			svg01.setAttribute("width", "100px");
+			svg01.setAttribute("height", "100px");
+
+			var g01 = document.createElementNS(ns, "g");
+			g01.id = "g01";
+			g01.setAttribute("width", "100px");
+			g01.setAttribute("height", "100px");
+
+			var rect01 = document.createElementNS(ns, "rect");
+			rect01.id = "rect01";
+			rect01.setAttribute("width", "100px");
+			rect01.setAttribute("height", "100px");
+			rect01.setAttribute("fill", "#f0ab00");
+
+			g01.appendChild(rect01);
+			svg01.appendChild(g01);
+
+			this.oNode = svg01;
+			document.getElementById("qunit-fixture").appendChild(this.oNode);
+		}
+	}, function() {
+		QUnit.test("a visible svg", function(assert) {
+			assert.strictEqual(DOMUtil.isVisible(this.oNode), true, "with both width and height > 0 the domRef is visible");
+		});
+
+		QUnit.test("a svg with 0 height", function(assert) {
+			var g01 = this.oNode.querySelector("#g01");
+			g01.setAttribute("height", "0px");
+			var rect01 = this.oNode.querySelector("#rect01");
+			rect01.setAttribute("height", "0px");
+			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with height 0 the domRef is not visible");
+		});
+
+		QUnit.test("a svg with 0 width", function(assert) {
+			var g01 = this.oNode.querySelector("#g01");
+			g01.setAttribute("width", "0px");
+			var rect01 = this.oNode.querySelector("#rect01");
+			rect01.setAttribute("width", "0px");
+			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with width 0 the domRef is not visible");
+		});
+
+		QUnit.test("a svg with 0 width and 0 height", function(assert) {
+			var g01 = this.oNode.querySelector("#g01");
+			g01.setAttribute("height", "0px");
+			g01.setAttribute("width", "0px");
+			var rect01 = this.oNode.querySelector("#rect01");
+			rect01.setAttribute("height", "0px");
+			rect01.setAttribute("width", "0px");
+			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with both height 0 and width 0 domRef is not visible");
+		});
+
+		QUnit.test("a svg with height and width but visible none", function(assert) {
+			this.oNode.style.display = "none";
+			assert.strictEqual(DOMUtil.isVisible(this.oNode), false, "with display:none the domRef is not visible");
+		});
+	});
+
 	QUnit.module("insertStyles()", function () {
 		QUnit.test("basic functionality", function (assert) {
 			var oFixtureNode = document.getElementById("qunit-fixture");
