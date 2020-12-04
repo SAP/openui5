@@ -387,7 +387,7 @@ sap.ui.define([
 	}
 
 	function handleChangeUpdate(aCondenserInfos, aReducedChanges) {
-		aCondenserInfos.forEach(function(oCondenserInfo, index) {
+		aCondenserInfos.forEach(function(oCondenserInfo) {
 			var oUpdateChange = oCondenserInfo.updateChange;
 			if (oUpdateChange && oUpdateChange.getState() !== Change.states.NEW) {
 				var oCondensedChange = oCondenserInfo.change;
@@ -395,13 +395,19 @@ sap.ui.define([
 					var oNewContent = oCondensedChange.getContent();
 					oUpdateChange.setContent(oNewContent);
 					oCondensedChange.condenserState = "delete";
-					aReducedChanges.splice(index, 1, oUpdateChange);
+					aReducedChanges = aReducedChanges.map(function(oChange) {
+						if (oChange.getFileName() === oCondensedChange.getFileName()) {
+							return oUpdateChange;
+						}
+						return oChange;
+					});
 				} else {
 					oUpdateChange.setState(Change.states.DIRTY);
 				}
 				oUpdateChange.condenserState = "update";
 			}
 		});
+		return aReducedChanges;
 	}
 
 	/**
@@ -473,7 +479,7 @@ sap.ui.define([
 				Measurement.end("Condenser_sort");
 
 				UIReconstruction.swapChanges(aReducedIndexRelatedChanges, aReducedChanges);
-				handleChangeUpdate(aCondenserInfos, aReducedChanges);
+				aReducedChanges = handleChangeUpdate(aCondenserInfos, aReducedChanges);
 
 				Measurement.end("Condenser_handleIndexRelatedChanges");
 			}
