@@ -247,34 +247,6 @@ sap.ui.define([
 		},
 
 		/**
-		 * Checks if the element is an instance of the type.
-		 *
-		 * @param {object} oElement - Element to be checked
-		 * @param {string} sType - Type that the element should be checked against
-		 * @returns {boolean} <code>true</code> if the element is an instance of the type
-		 */
-		_isInstanceOf: function(oElement, sType) {
-			var oInstance = ObjectPath.get(sType);
-			if (typeof oInstance === "function") {
-				return oElement instanceof oInstance;
-			} else {
-				return false;
-			}
-		},
-
-		/**
-		 * Checks if the element has the interface.
-		 *
-		 * @param {object} oElement - Element
-		 * @param {string} sInterface - Interface that should be in the element
-		 * @returns {boolean} <code>true</code> if the element has the interface
-		 */
-		_hasInterface: function(oElement, sInterface) {
-			var aInterfaces = oElement.getMetadata().getInterfaces();
-			return aInterfaces.indexOf(sInterface) !== -1;
-		},
-
-		/**
 		 * Gets the metadata of an XML control.
 		 *
 		 * @param {Element} oControl - Control in XML
