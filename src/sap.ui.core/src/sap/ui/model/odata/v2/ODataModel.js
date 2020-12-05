@@ -6300,6 +6300,7 @@ sap.ui.define([
 		function create() {
 			var oCreateData, oCreatedContext, oCreateResponse, oEntitySetMetadata, oExpandRequest,
 				sUID,
+				bDeferred,
 				bCreateFailed = false,
 				fnErrorFromParameters = fnError,
 				fnSuccessFromParameters = fnSuccess;
@@ -6428,15 +6429,14 @@ sap.ui.define([
 			oRequest.created = true;
 
 			mRequests = that.mRequests;
-			if (sGroupId in that.mDeferredGroups) {
-				mRequests = that.mDeferredRequests;
+			bDeferred = sGroupId in that.mDeferredGroups;
+			if (!bDeferred) {
+				that.oMetadata.loaded().then(function() {
+					that._pushToRequestQueue(mRequests, sGroupId,
+						sChangeSetId, oRequest, fnSuccess, fnError, oRequestHandle, bRefreshAfterChange);
+					that._processRequestQueueAsync(that.mRequests);
+				});
 			}
-
-			that.oMetadata.loaded().then(function() {
-				that._pushToRequestQueue(mRequests, sGroupId,
-					sChangeSetId, oRequest, fnSuccess, fnError, oRequestHandle, bRefreshAfterChange);
-				that._processRequestQueueAsync(that.mRequests);
-			});
 			return oCreatedContext;
 		}
 
