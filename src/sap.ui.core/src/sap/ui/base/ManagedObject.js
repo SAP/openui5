@@ -919,9 +919,17 @@ sap.ui.define([
 	 * in the <code>oKeyInfo</code> object. In both cases, the type can be specified by name (dot separated
 	 * name of the class) or by the constructor function of the class.
 	 *
-	 * @param {sap.ui.base.ManagedObject|object} vData the data to create the object from
+	 * @param {sap.ui.base.ManagedObject|object} vData
+	 *   The data to create the object from
 	 * @param {object} [oKeyInfo]
-	 * @param {object} [oScope] Scope object to resolve types and formatters in bindings
+	 *   Info object for the aggregation to which the created object will be added;
+	 *   serves as a fallback for determining the type of the object to be created
+	 * @param {object} [oScope]
+	 *   Scope object to resolve types and formatters in bindings
+	 * @returns {sap.ui.base.ManagedObject}
+	 *   The newly created <code>ManagedObject</code>
+	 * @throws {Error}
+	 *   When there's not enough type information to create an instance from the given data
 	 * @public
 	 * @static
 	 */
@@ -953,27 +961,28 @@ sap.ui.define([
 
 	/**
 	 * A global preprocessor for the ID of a ManagedObject (used internally).
+	 *
 	 * If set, this function will be called before the ID is applied to any ManagedObject.
-	 * If the original ID was empty, the hook will not be called (to be discussed).
+	 * If the original ID was empty, the hook will not be called.
 	 *
 	 * The expected signature is <code>function(sId)</code>, and <code>this</code> will
 	 * be the current ManagedObject.
 	 *
-	 * @return new ID of the ManagedObject
-	 * @type function
+	 * @type {function(string):string}
 	 * @private
 	 */
 	ManagedObject._fnIdPreprocessor = null;
 
 	/**
 	 * A global preprocessor for the settings of a ManagedObject (used internally).
+	 *
 	 * If set, this function will be called before the settings are applied to any ManagedObject.
 	 * If the original settings are empty, the hook will not be called (to be discussed).
 	 *
 	 * The expected signature is <code>function(mSettings)</code>, and <code>this</code> will
 	 * be the current ManagedObject.
 	 *
-	 * @type function
+	 * @type {function}
 	 * @private
 	 */
 	ManagedObject._fnSettingsPreprocessor = null;
@@ -1811,7 +1820,7 @@ sap.ui.define([
 	 * @throws Error if no aggregation with the given name is found or the given value does not fit to the aggregation type
 	 * @protected
 	 */
-	ManagedObject.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple, bOmitForwarding /* private */) {
+	ManagedObject.prototype.validateAggregation = function(sAggregationName, oObject, bMultiple, _bOmitForwarding /* private */) {
 		var oMetadata = this.getMetadata(),
 			oAggregation = oMetadata.getManagedAggregation(sAggregationName), // public or private
 			aAltTypes,
@@ -1828,7 +1837,7 @@ sap.ui.define([
 		}
 
 		var oForwarder = oMetadata.getAggregationForwarder(sAggregationName);
-		if (oForwarder && !bOmitForwarding) {
+		if (oForwarder && !_bOmitForwarding) {
 			oForwarder.getTarget(this).validateAggregation(oForwarder.targetAggregationName, oObject, bMultiple);
 		}
 
@@ -1870,7 +1879,7 @@ sap.ui.define([
 			assert(false, msg);
 			return oObject;
 		} else {
-		  throw new Error(msg);
+			throw new Error(msg);
 		}
 	};
 
@@ -2261,12 +2270,11 @@ sap.ui.define([
 	 * Applications or frameworks must not use this method to generically remove all objects from an aggregation.
 	 * Use the concrete method removeAll<i>XYZ</i> for aggregation 'XYZ' instead.
 	 *
-	 * @param {string}
-	 *            sAggregationName the name of the aggregation
-	 * @param {boolean}
-	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
-	 * @type Array
-	 * @return an array of the removed elements (might be empty)
+	 * @param {string} sAggregationName
+	 *   Name of the aggregation to remove all objects from
+	 * @param {boolean} [bSuppressInvalidate=false]
+	 *   If true, this <code>ManagedObject</code> is not marked as changed
+	 * @returns {sap.ui.base.ManagedObject[]} An array of the removed elements (might be empty)
 	 * @protected
 	 */
 	ManagedObject.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate){
@@ -2428,8 +2436,9 @@ sap.ui.define([
 
 
 	/**
-	 * Returns whether rerendering is currently suppressed on this ManagedObject
-	 * @return boolean
+	 * Returns whether re-rendering is currently suppressed on this ManagedObject.
+	 *
+	 * @returns {boolean} Whether re-rendering is suppressed
 	 * @protected
 	 */
 	ManagedObject.prototype.isInvalidateSuppressed = function() {
@@ -3511,9 +3520,12 @@ sap.ui.define([
 
 	/**
 	 * Generic method which is called, whenever a property binding is changed.
+	 *
 	 * This method gets the external format from the property binding and applies
 	 * it to the setter.
 	 *
+	 * @param {string} sName
+	 *   Name of the property to update
 	 * @private
 	 */
 	ManagedObject.prototype.updateProperty = function(sName) {
@@ -4164,8 +4176,9 @@ sap.ui.define([
 		 *
 		 * Precondition: oBindingInfo contains a 'binding' object
 		 *
-		 * @param oBindingInfo
-		 * @returns {boolean}
+		 * @param {object} oBindingInfo
+		 * @returns {boolean} Whether the binding info became invalid
+		 * @private
 		 */
 		function becameInvalid(oBindingInfo) {
 			var aParts = oBindingInfo.parts,
@@ -4190,9 +4203,11 @@ sap.ui.define([
 		}
 
 		/*
-		 * Checks whether a binding can be created for the given oBindingInfo
-		 * @param oBindingInfo
-		 * @returns {boolean}
+		 * Checks whether a binding can be created for the given oBindingInfo.
+		 *
+		 * @param {object} oBindingInfo
+		 * @returns {boolean} Whether a binding can be created
+		 * @private
 		 */
 		function canCreate(oBindingInfo) {
 			var aParts = oBindingInfo.parts,
@@ -4536,7 +4551,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Get the binding context of this object for the given model name. The elementBindingContext will not be considered
+	 * Get the binding context of this object for the given model name.
+	 *
+	 * An elementBindingContext will not be considered.
+	 *
+	 * @returns {sap.ui.model.Context|null|undefined} Bound context
 	 * @private
 	 */
 	ManagedObject.prototype._getBindingContext = function(sModelName){
@@ -4689,10 +4708,11 @@ sap.ui.define([
 	}
 
 	/**
-	 * Propagate Properties (models and bindingContext) to aggregated objects.
-	 * @param {string|undefined|true|false} sName when <code>true</code>, all bindings are updated,
-	 * 		when <code>false</code> only propagationListeners are update.
-	 * 		Otherwise only those for the given model name (undefined == name of default model)
+	 * Propagate properties (models and binding contexts) to aggregated objects.
+	 *
+	 * @param {boolean|string|undefined} vName
+	 *   When <code>true</code>, all bindings are updated, when <code>false</code> only propagationListeners
+	 *   are update. Otherwise only those for the given model name (undefined == name of default model).
 	 *
 	 * @private
 	 */
@@ -4991,9 +5011,11 @@ sap.ui.define([
 		 * Clones the BindingInfo for the aggregation/property with the given name of this ManagedObject and binds
 		 * the aggregation/property with the given target name on the given clone using the same BindingInfo.
 		 *
+		 * @param {sap.ui.base.ManagedObject} oSource Source of the clone operation
 		 * @param {string} sName the name of the binding to clone
 		 * @param {sap.ui.base.ManagedObject} oClone the object on which to establish the cloned binding
 		 * @param {string} sTargetName the name of the clone's aggregation to bind
+		 * @private
 		 */
 		function cloneBinding(oSource, sName, oClone, sTargetName) {
 			var oBindingInfo = oSource.mBindingInfos[sName];
@@ -5137,14 +5159,14 @@ sap.ui.define([
 	 * If no check function is given, all aggregated objects will pass the check and be added
 	 * to the result array.
 	 *
-	 * <b>Take care: this operation might be expensive.</b>
+	 * <b>Take care:</b> this operation might be expensive.
 	 *
-	 * @param {boolean}
-	 *          bRecursive Whether the whole aggregation tree should be searched
-	 * @param {boolean}
-	 *          [fnCondition] Objects for which this function returns a falsy value will not be added
-	 *          to the result array
-	 * @returns {sap.ui.base.ManagedObject[]} Array of aggregated objects that passed the check
+	 * @param {boolean} [bRecursive=false]
+	 *   Whether the whole aggregation tree should be searched
+	 * @param {function(sap.ui.base.ManagedObject):boolean} [fnCondition]
+	 *   Objects for which this function returns a falsy value will not be added to the result array
+	 * @returns {sap.ui.base.ManagedObject[]}
+	 *   Array of aggregated objects that passed the check
 	 * @public
 	 */
 	ManagedObject.prototype.findAggregatedObjects = function(bRecursive, fnCondition) {

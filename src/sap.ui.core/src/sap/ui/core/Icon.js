@@ -556,6 +556,7 @@ sap.ui.define([
 	};
 
 	/**
+	 * @returns {object} Current accessibility state of the Icon
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 * @protected
 	 */

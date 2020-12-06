@@ -238,6 +238,9 @@ sap.ui.define([
 	};
 
 	/**
+	 * Elements don't have a facade and therefore return themselves as their interface.
+	 *
+	 * @returns {sap.ui.core.Element} <code>this</code> as there's no facade for elements
 	 * @see sap.ui.base.Object#getInterface
 	 * @public
 	 */
@@ -289,8 +292,9 @@ sap.ui.define([
 	 *  <li><code>[layout="Vertical"]: </code> The arrangement of the items in this aggregation. This setting is recommended for the aggregation with multiplicity 0..n (<code>multiple: true</code>). Possible values are <code>Vertical</code> (e.g. rows in a table) and <code>Horizontal</code> (e.g. columns in a table). It is recommended to use <code>Horizontal</code> layout if the arrangement is multidimensional.</li>
 	 * </ul>
 	 *
-	 * @param {string} sClassName fully qualified name of the class that is described by this metadata object
-	 * @param {object} oStaticInfo static info to construct the metadata from
+	 * @param {string} sClassName Name of the class to be created
+	 * @param {object} [oClassInfo] Object literal with information about the class
+	 * @param {function} [FNMetaImpl] Constructor function for the metadata object. If not given, it defaults to <code>sap.ui.core.ElementMetadata</code>.
 	 * @returns {function} Created class / constructor function
 	 *
 	 * @public
@@ -453,8 +457,7 @@ sap.ui.define([
 	/**
 	 * Checks whether this element has an active parent.
 	 *
-	 * @type boolean
-	 * @return true if this element has an active parent
+	 * @returns {boolean} Whether this element has an active parent
 	 * @private
 	 */
 	Element.prototype.isActive = function() {
@@ -827,9 +830,9 @@ sap.ui.define([
 	}
 
 	/**
-	 * Sets the focus to the stored focus DOM reference
+	 * Sets the focus to the stored focus DOM reference.
 	 *
-	 * @param {object} [oFocusInfo={}]
+	 * @param {object} [oFocusInfo={}] Options for setting the focus
 	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 if it's set to true, the focused
 	 *   element won't be shifted into the viewport if it's not completely visible before the focus is set
 	 * @public
@@ -860,10 +863,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns an object representing the serialized focus information
-	 * To be overwritten by the specific control method
-	 * @type object
-	 * @return an object representing the serialized focus information
+	 * Returns an object representing the serialized focus information.
+	 *
+	 * To be overwritten by the specific control method.
+	 *
+	 * @returns {object} an object representing the serialized focus information
 	 * @protected
 	 */
 	Element.prototype.getFocusInfo = function () {
@@ -875,9 +879,10 @@ sap.ui.define([
 	 *
 	 * To be overwritten by the specific control method.
 	 *
-	 * @param {object} oFocusInfo
+	 * @param {object} oFocusInfo Focus info object as returned by {@link getFocusInfo}
 	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 if it's set to true, the focused
 	 *   element won't be shifted into the viewport if it's not completely visible before the focus is set
+	 * @returns {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	Element.prototype.applyFocusInfo = function (oFocusInfo) {
@@ -905,13 +910,15 @@ sap.ui.define([
 
 
 	/**
-	 * Sets a new tooltip for this object. The tooltip can either be a simple string
-	 * (which in most cases will be rendered as the <code>title</code> attribute of this
-	 * Element) or an instance of {@link sap.ui.core.TooltipBase}.
+	 * Sets a new tooltip for this object.
+	 *
+	 * The tooltip can either be a simple string (which in most cases will be rendered as the
+	 * <code>title</code> attribute of this  Element) or an instance of {@link sap.ui.core.TooltipBase}.
 	 *
 	 * If a new tooltip is set, any previously set tooltip is deactivated.
 	 *
-	 * @param {string|sap.ui.core.TooltipBase} vTooltip
+	 * @param {string|sap.ui.core.TooltipBase} vTooltip New tooltip
+	 * @returns {sap.ui.core.Element} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Element.prototype.setTooltip = function(vTooltip) {

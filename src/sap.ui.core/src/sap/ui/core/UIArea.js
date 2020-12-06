@@ -252,8 +252,9 @@ sap.ui.define([
 	});
 
 	/**
-	 * Returns whether rerendering is currently suppressed on this UIArea
-	 * @return boolean
+	 * Returns whether re-rendering is currently suppressed on this UIArea.
+	 *
+	 * @returns {boolean} Whether re-rendering is currently suppressed on this UIArea
 	 * @protected
 	 */
 	UIArea.prototype.isInvalidateSuppressed = function() {
@@ -284,8 +285,8 @@ sap.ui.define([
 	 *
 	 * The node must have an ID that will be used as ID for this instance of <code>UIArea</code>.
 	 *
-	 * @param {object}
-	 *            oRootNode the hosting DOM node for this instance of <code>UIArea</code>.
+	 * @param {object} oRootNode
+	 *            the hosting DOM node for this instance of <code>UIArea</code>.
 	 * @public
 	 */
 	UIArea.prototype.setRootNode = function(oRootNode) {
@@ -333,8 +334,8 @@ sap.ui.define([
 	 * The real re-rendering happens whenever the re-rendering is called. Either implicitly
 	 * at the end of any control event or by calling sap.ui.getCore().applyChanges().
 	 *
-	 * @param {sap.ui.base.Interface | sap.ui.core.Control}
-	 *            oRootControl the Control that should be the Root for this <code>UIArea</code>.
+	 * @param {sap.ui.base.Interface | sap.ui.core.Control} oRootControl
+	 *            the Control that should be the Root for this <code>UIArea</code>.
 	 * @public
 	 * @deprecated As of version 1.1, use {@link #removeAllContent} and {@link #addContent} instead
 	 */
@@ -471,7 +472,8 @@ sap.ui.define([
 
 	/**
 	 * Provide getBindingContext, as UIArea can be parent of an element.
-	 * @return {null} Always returns null.
+	 *
+	 * @returns {null} Always returns null.
 	 *
 	 * @protected
 	 */

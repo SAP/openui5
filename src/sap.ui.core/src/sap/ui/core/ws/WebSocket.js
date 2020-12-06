@@ -57,6 +57,9 @@ sap.ui.define([
 	});
 
 	/**
+	 * <code>WebSockets</code> don't have a facade and therefore return themselves as their interface.
+	 *
+	 * @returns {sap.ui.core.Element} <code>this</code> as there's no facade for a <code>Websocket</code> instance
 	 * @see sap.ui.base.Object#getInterface
 	 * @public
 	 */

@@ -248,8 +248,9 @@ sap.ui.define([
 	 * Renderer.apiVersion 2" of the {@link sap.ui.core.RenderManager RenderManager} API documentation are
 	 * fulfilled.
 	 *
-	 * @param {string} sClassName fully qualified name of the class that is described by this metadata object
-	 * @param {object} oStaticInfo static info to construct the metadata from
+	 * @param {string} sClassName Name of the class to be created
+	 * @param {object} [oClassInfo] Object literal with information about the class
+	 * @param {function} [FNMetaImpl] Constructor function for the metadata object. If not given, it defaults to <code>sap.ui.core.ElementMetadata</code>.
 	 * @returns {function} Constructor of the newly created class
 	 *
 	 * @public
@@ -483,8 +484,7 @@ sap.ui.define([
 	 * @function
 	 *
 	 * @param {string} sStyleClass the style to check for
-	 * @type boolean
-	 * @return whether the given style(s) has been set before
+	 * @returns {boolean} Whether the given style(s) has been set before
 	 * @public
 	 */
 
@@ -551,6 +551,7 @@ sap.ui.define([
 	 * @param {string} [sEventType] A string containing one or more JavaScript event types, such as "click" or "blur".
 	 * @param {function} [fnHandler] The function that is to be no longer executed.
 	 * @param {object} [oListener] The context object that was given in the call to <code>attachBrowserEvent</code>.
+	 * @returns {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Control.prototype.detachBrowserEvent = function(sEventType, fnHandler, oListener) {
@@ -1051,7 +1052,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @deprecated As of 1.15, use {@link #getBusy} instead
-	 * @return boolean
+	 * @returns {boolean}
 	 * @function
 	 */
 	Control.prototype.isBusy = Control.prototype.getBusy;
@@ -1163,6 +1164,7 @@ sap.ui.define([
 	 *
 	 * See {@link #attachValidateFieldGroup}.
 	 *
+	 * @param {string[]} aFieldGroupIds IDs of the field groups that should be validated
 	 * @public
 	 */
 	Control.prototype.triggerValidateFieldGroup = function(aFieldGroupIds) {

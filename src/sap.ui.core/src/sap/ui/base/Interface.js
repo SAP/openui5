@@ -25,21 +25,21 @@ sap.ui.define([], function() {
 	 *
 	 * @class A class whose instances act as a facade for other objects.
 	 *
-	 * <b>Note:</b> If a class returns a facade in its constructor, only the defined functions will be visible, no
-	 * internals of the class can be accessed.
+	 * <b>Note:</b> If a class returns a facade in its constructor, only the defined functions will be visible,
+	 * no internals of the class can be accessed.
 	 *
 	 * @author Malte Wedel, Daniel Brinkmann
 	 * @version ${version}
-	 * @param {sap.ui.base.Object}
-	 *            oObject Object for which a facade should be created
-	 * @param {string[]}
-	 *            aMethods Names of the methods, that should be available in the new facade
+	 * @param {sap.ui.base.Object} oObject
+	 *   Object for which a facade should be created
+	 * @param {string[]} aMethods
+	 *   Names of the methods, that should be available in the new facade
 	 *
 	 * @public
 	 * @alias sap.ui.base.Interface
 	 */
-	// bFacade: If true, the return value of a function call is this created Interface instance instead of the BaseObject interface
-	var Interface = function(oObject, aMethods, bFacade) {
+	// _bReturnFacade: If true, the return value of a function call is this created Interface instance instead of the BaseObject interface
+	var Interface = function(oObject, aMethods, _bReturnFacade) {
 
 		// if object is null or undefined, return itself
 		if (!oObject) {
@@ -55,7 +55,7 @@ sap.ui.define([], function() {
 					var tmp = oObject[sMethodName].apply(oObject, arguments);
 					// to avoid to hide the implementation behind the interface you need
 					// to override the getInterface function in the object or create the interface with bFacade = true
-					if (bFacade) {
+					if (_bReturnFacade) {
 						return this;
 					} else {
 						return (tmp instanceof BaseObject) ? tmp.getInterface() : tmp;

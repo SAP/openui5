@@ -225,6 +225,7 @@ sap.ui.define([
 	 * @param {function} [FNMetaImpl=sap.ui.core.ComponentMetadata]
 	 *            Constructor function for the metadata object. If not given, it defaults to an
 	 *            internal subclass of <code>sap.ui.core.ComponentMetadata</code>.
+	 * @returns {function} The created class / constructor function
 	 * @name sap.ui.core.UIComponent.extend
 	 * @function
 	 * @public
@@ -636,7 +637,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the parent in the eventing hierarchy of this object
+	 * which will be the UIArea of the containing ComponentContainer or null.
+	 *
 	 * @see sap.ui.base.EventProvider#getEventingParent
+	 * @returns {sap.ui.base.EventProvider} The parent event provider
 	 * @protected
 	 */
 	UIComponent.prototype.getEventingParent = function() {
