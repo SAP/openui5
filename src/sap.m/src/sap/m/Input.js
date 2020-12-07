@@ -198,7 +198,7 @@ function(
 			showValueHelp : {type : "boolean", group : "Behavior", defaultValue : false},
 
 			/**
-			 * Set custom value state icon.
+			 * Set custom value help icon.
 			 * @since 1.84.0
 			 */
 			valueHelpIconSrc : {type : "sap.ui.core.URI", group : "Behavior", defaultValue : "sap-icon://value-help"},
