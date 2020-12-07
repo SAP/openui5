@@ -630,7 +630,7 @@ sap.ui.define([
 			if (!Array.isArray(aControls)) {
 				aControls = [aControls];
 			}
-			var bReturn = XmlTreeModifier._isInstanceOf(aControls[iIndex], sTypeOrInterface) || XmlTreeModifier._hasInterface(aControls[iIndex], sTypeOrInterface);
+			var bReturn = aControls[iIndex].isA(sTypeOrInterface);
 			aControls.forEach(function(oFragmentControl) {
 				oFragmentControl.destroy();
 			});

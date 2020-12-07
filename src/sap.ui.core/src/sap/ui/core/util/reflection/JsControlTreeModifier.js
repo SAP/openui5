@@ -424,7 +424,7 @@ sap.ui.define([
 					this.getAggregation(oParent, oAggregationMetadata.name).length > 0) {
 				return false;
 			}
-			return this._isInstanceOf(oControl, sTypeOrInterface) || this._hasInterface(oControl, sTypeOrInterface);
+			return oControl.isA(sTypeOrInterface);
 		},
 
 		/**
