@@ -1,7 +1,12 @@
 {
   "1.86.0": {
-    "date": "November 2020",
+    "date": "December 2020",
     "notes": [
+      {
+        "id": "8298319dc75395a76b5a9c9a7b72f2570b9ae33e",
+        "type": "FEATURE",
+        "text": " fl.VariantManagement: replace remove icon"
+      },
       {
         "id": "1f2ef933dfe6225d00fa86fb9429457c8f0a250e",
         "type": "FIX",
@@ -17,22 +22,6 @@
             "reference": "2070497103"
           }
         ]
-      },
-      {
-        "id": "0a40f11b40348165518e76c3ecab7085f26bfb9f",
-        "type": "FIX",
-        "text": " sap.ui.fl: Extension point registry handles aggregations correctly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2070448933"
-          }
-        ]
-      },
-      {
-        "id": "0a553ef507800c3cc494619178b53ddd815118f7",
-        "type": "FEATURE",
-        "text": " fl.VariantManagement: New checkbox text for standard variant"
       }
     ]
   }
