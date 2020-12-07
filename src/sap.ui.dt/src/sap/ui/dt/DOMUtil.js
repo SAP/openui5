@@ -6,12 +6,9 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/Device",
-	// jQuery Plugin "zIndex"
 	"sap/ui/dom/jquery/zIndex",
-	// jQuery Plugin "scrollLeftRTL"
 	"sap/ui/dom/jquery/scrollLeftRTL"
-],
-function(
+], function(
 	jQuery,
 	Device
 ) {
@@ -35,9 +32,6 @@ function(
 
 	var DOMUtil = {};
 
-	/**
-	 *
-	 */
 	DOMUtil.getSize = function(oDomRef) {
 		var oClientRec = oDomRef.getBoundingClientRect();
 		return {
@@ -49,18 +43,18 @@ function(
 	/**
 	 * Returns the offset for an element based on the parent position and scrolling
 	 * @typedef {object} SizeObject
-	 * @property {number} width Element width
-	 * @property {number} height Element height
+	 * @property {number} width - Element width
+	 * @property {number} height - Element height
 	 * @typedef {object} PositionObject
-	 * @property {number} left Element left coordinate
-	 * @property {number} top Element top coordinate
+	 * @property {number} left - Element left coordinate
+	 * @property {number} top - Element top coordinate
 	 * @typedef {object} GeometryObject
-	 * @property {SizeObject} size Element size
-	 * @property {PositionObject} position Element position
-	 * @property {boolean} visible Element visibility
+	 * @property {SizeObject} size - Element size
+	 * @property {PositionObject} position - Element position
+	 * @property {boolean} visible - Element visibility
 	 * @param {GeometryObject} oGeometry - Position object containing left and top values
 	 * @param {HTMLElement} oParent - Parent element
-	 * @return {PositionObject} - Returns the calculated offset containing left and top values
+	 * @returns {PositionObject} the calculated offset containing left and top values
 	 */
 	DOMUtil.getOffsetFromParent = function(oGeometry, oParent) {
 		var $Parent = oParent ? jQuery(oParent) : null;
@@ -96,8 +90,8 @@ function(
 	 * The specification for the behavior of scrollLeft values in Right-to-Left (RTL)
 	 * is still in draft, so different browsers calculate it differently.
 	 * We return the result from Webkit/Gecko, which is becoming the standard.
-	 * @param {HTMLElement} oElement Element to read scrollLeft from
-	 * @return {number} returns browser agnostic scrollLeft value (negative in RTL)
+	 * @param {HTMLElement} oElement - Element to read scrollLeft from
+	 * @returns {number} browser agnostic scrollLeft value (negative in RTL)
 	 */
 	DOMUtil.getScrollLeft = function(oElement) {
 		if (
@@ -115,9 +109,6 @@ function(
 		return iScrollLeftRTL - iMaxScrollValue;
 	};
 
-	/**
-	 *
-	 */
 	DOMUtil.getZIndex = function(oDomRef) {
 		var zIndex;
 		var $ElementDomRef = jQuery(oDomRef);
@@ -159,7 +150,7 @@ function(
 	/**
 	 * Checks whether DOM Element has vertical scrollbar
 	 * @param {HTMLElement} oDomRef - DOM Element
-	 * @return {boolean} <code>true</code> if vertical scrollbar is available on DOM Element.
+	 * @returns {boolean} <code>true</code> if vertical scrollbar is available on DOM Element.
 	 */
 	DOMUtil.hasVerticalScrollBar = function(oDomRef) {
 		var $DomRef = jQuery(oDomRef);
@@ -170,7 +161,7 @@ function(
 	/**
 	 * Checks whether DOM Element has horizontal scrollbar
 	 * @param {HTMLElement} oDomRef - DOM Element
-	 * @return {boolean} <code>true</code> if horizontal scrollbar is available on DOM Element
+	 * @returns {boolean} <code>true</code> if horizontal scrollbar is available on DOM Element
 	 */
 	DOMUtil.hasHorizontalScrollBar = function (oDomRef) {
 		var $DomRef = jQuery(oDomRef);
@@ -181,7 +172,7 @@ function(
 	/**
 	 * Checks whether DOM Element has vertical or horizontal scrollbar
 	 * @param oDomRef {HTMLElement} - DOM Element
-	 * @return {boolean}
+	 * @returns {boolean}
 	 */
 	DOMUtil.hasScrollBar = function(oDomRef) {
 		return DOMUtil.hasVerticalScrollBar(oDomRef) || DOMUtil.hasHorizontalScrollBar(oDomRef);
@@ -189,7 +180,7 @@ function(
 
 	/**
 	 * Gets scrollbar width in the running browser
-	 * @return {number} - returns width in pixels
+	 * @returns {number} returns width in pixels
 	 */
 	DOMUtil.getScrollbarWidth = function() {
 		if (typeof DOMUtil.getScrollbarWidth._cache === 'undefined') {
@@ -235,9 +226,6 @@ function(
 		};
 	};
 
-	/**
-	 *
-	 */
 	DOMUtil.getGeometry = function(oDomRef, bUseWindowOffset) {
 		if (oDomRef) {
 			var oOffset = jQuery(oDomRef).offset();
@@ -255,9 +243,6 @@ function(
 		}
 	};
 
-	/**
-	 *
-	 */
 	DOMUtil.syncScroll = function(oSourceDom, oTargetDom) {
 		var $target = jQuery(oTargetDom);
 		var oTargetScrollTop = $target.scrollTop();
@@ -277,9 +262,9 @@ function(
 
 	/**
 	 * returns jQuery object found in oDomRef for sCSSSelector
-	 * @param  {Element|jQuery} oDomRef to search in
-	 * @param  {string} sCSSSelector jQuery (CSS-like) selector to look for
-	 * @return {jQuery} found domRef
+	 * @param {Element|jQuery} oDomRef - to search in
+	 * @param {string} sCSSSelector - jQuery (CSS-like) selector to look for
+	 * @returns {jQuery} found domRef
 	 */
 	DOMUtil.getDomRefForCSSSelector = function(oDomRef, sCSSSelector) {
 		if (sCSSSelector && oDomRef) {
@@ -303,10 +288,19 @@ function(
 	};
 
 	/**
-	 *
+	 * Checks whether DOM Element is visible by evaluating offsetWidth and offsetHeight
+	 * For SVG Groups (tag `g`) getBBox is used, which returns a SVGRect object, defining the bounding box.
+	 * @param {HTMLElement} oDomRef - DOM Element
+	 * @returns {boolean} <code>true</code> if element is visible.
 	 */
 	DOMUtil.isVisible = function(oDomRef) {
-		return oDomRef ? oDomRef.offsetWidth > 0 && oDomRef.offsetHeight > 0 : false;
+		if (oDomRef) {
+			var oBBox = oDomRef.getBBox && oDomRef.getBBox();
+			var iWidth = oBBox ? oBBox.width : oDomRef.offsetWidth;
+			var iHeight = oBBox ? oBBox.height : oDomRef.offsetHeight;
+			return iWidth > 0 && iHeight > 0;
+		}
+		return false;
 	};
 
 	/**
@@ -321,7 +315,7 @@ function(
 	/**
 	 * Sets the draggable attribute of a specified node
 	 * @param {HTMLElement} oNode - Target node to set the draggable attribute on
-	 * @return {boolean|undefined} - returns undefined when draggable is not set to the node
+	 * @returns {boolean|undefined} undefined when draggable is not set to the node
 	 */
 	DOMUtil.getDraggable = function (oNode) {
 		switch (oNode.getAttribute("draggable")) {
@@ -382,9 +376,6 @@ function(
 		}
 	};
 
-	/**
-	 *
-	 */
 	DOMUtil.copyComputedStyle = function(oSrc, oDest) {
 		oSrc = jQuery(oSrc).get(0);
 		oDest = jQuery(oDest).get(0);
@@ -401,9 +392,6 @@ function(
 		this._copyPseudoElement(":before", oSrc, oDest);
 	};
 
-	/**
-	 *
-	 */
 	DOMUtil.copyComputedStyles = function(oSrc, oDest) {
 		oSrc = jQuery(oSrc).get(0);
 		oDest = jQuery(oDest).get(0);
@@ -424,9 +412,6 @@ function(
 		this.copyComputedStyle(oSrc, oDest);
 	};
 
-	/**
-	 *
-	 */
 	DOMUtil.cloneDOMAndStyles = function(oNode, oTarget) {
 		oNode = jQuery(oNode).get(0);
 
