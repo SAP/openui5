@@ -18,6 +18,7 @@ sap.ui.define([
 
 	var HOST = window.location.host, // static per session
 		INTERACTION = "INTERACTION",
+		isNavigation = false,
 		aInteractions = [],
 		oPendingInteraction = createMeasurement(),
 		mCompressedMimeTypes = {
@@ -168,15 +169,20 @@ sap.ui.define([
 
 			oPendingInteraction.completed = true;
 			Object.freeze(oPendingInteraction);
-			aInteractions.push(oPendingInteraction);
-			var oFinshedInteraction = aInteractions[aInteractions.length - 1];
-			if (Interaction.onInteractionFinished && oFinshedInteraction) {
-				Interaction.onInteractionFinished(oFinshedInteraction);
-			}
-			if (Log.isLoggable()) {
-				Log.debug("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length, "Interaction.js");
+
+			if (oPendingInteraction.duration !== 0 || oPendingInteraction.requests.length > 0 || isNavigation) {
+				aInteractions.push(oPendingInteraction);
+				var oFinshedInteraction = aInteractions[aInteractions.length - 1];
+				if (Interaction.onInteractionFinished && oFinshedInteraction) {
+					Interaction.onInteractionFinished(oFinshedInteraction);
+				}
+				if (Log.isLoggable()) {
+					Log.debug("Interaction step finished: trigger: " + oPendingInteraction.trigger + "; duration: " + oPendingInteraction.duration + "; requests: " + oPendingInteraction.requests.length, "Interaction.js");
+				}
 			}
 			oPendingInteraction = null;
+			oCurrentBrowserEvent = null;
+			isNavigation = false;
 		}
 	}
 
@@ -537,6 +543,14 @@ sap.ui.define([
 		},
 
 		/**
+		 * Mark interaction as navigation related
+		 * @private
+		 */
+		notifyNavigation: function() {
+			isNavigation = true;
+		},
+
+		/**
 		 * Start tracking busy time for a Control
 		 * @param {sap.ui.core.Control} oControl
 		 * @private
@@ -565,21 +579,20 @@ sap.ui.define([
 		 * for the new interaction, the creation of the FESR headers for the last interaction is triggered here, so that
 		 * the headers can be sent with the first request of the current interaction.<br>
 		 *
+		 * @param {string} sEventId The control event name
 		 * @param {sap.ui.core.Element} oElement Element on which the interaction has been triggered
 		 * @param {boolean} bForce Forces the interaction to start independently from a currently active browser event
 		 * @static
 		 * @private
 		 */
-		notifyStepStart : function(oElement, bForce) {
+		notifyStepStart : function(sEventId, oElement, bForce) {
 			if (bInteractionActive) {
 				if ((!oPendingInteraction && oCurrentBrowserEvent && !bInteractionProcessed) || bForce) {
 					var sType;
 					if (bForce) {
 						sType = "startup";
-					} else if (oCurrentBrowserEvent.originalEvent) {
-						sType = oCurrentBrowserEvent.originalEvent.type;
 					} else {
-						sType = oCurrentBrowserEvent.type;
+						sType = sEventId;
 					}
 
 					Interaction.start(sType, oElement);
@@ -592,6 +605,7 @@ sap.ui.define([
 					oCurrentBrowserEvent = null;
 					//only handle the first browser event within a call stack. Ignore virtual/harmonization events.
 					bInteractionProcessed = true;
+					isNavigation = false;
 					setTimeout(function() {
 						//cleanup internal registry after actual call stack.
 						oCurrentBrowserEvent = null;

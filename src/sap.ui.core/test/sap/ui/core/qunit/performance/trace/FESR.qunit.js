@@ -50,7 +50,6 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		Interaction.notifyStepStart("startup", true);
 
 		// implement hook
-		var fnOnBeforeCreated = FESR.onBeforeCreated;
 		FESR.onBeforeCreated = function(oFESRHandle, oInteraction) {
 			assert.ok(oFESRHandle.timeToInteractive > 0, "startup time should be > 0");
 			//delete startup time as we cannot compare it
@@ -181,7 +180,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		var oPassportHeaderSpy = sinon.spy(Passport, "header");
 
 		FESR.setActive(true);
-		Interaction.notifyStepStart("startup", true);
+		Interaction.notifyStepStart("startup", "startup", true);
 		// trigger at least one request to enable header creation
 		var oXhrHandle = this.dummyRequest();
 		var sPassportAction = oPassportHeaderSpy.args[0][4];
@@ -239,6 +238,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			FESR.setActive(true, "example.url");
 			for (var index = 0; index < 10; index++) {
 				Interaction.start();
+				Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
 				Interaction.end(true);
 			}
 
@@ -272,9 +272,18 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			this.clock = sinon.useFakeTimers();
 			var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
 			window.performance.getEntriesByType = function() { return []; };
+			var addFakeProcessingTime = function () {
+				// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
+				var notifyAsyncStepCallback;
+
+				notifyAsyncStepCallback = Interaction.notifyAsyncStep();
+				this.clock.tick(1);
+				notifyAsyncStepCallback();
+			}.bind(this);
 
 			FESR.setActive(true, "example.url");
 			Interaction.start();
+			addFakeProcessingTime();
 			Interaction.end(true);
 			this.clock.tick(60000);
 			assert.ok(sendBeaconStub.calledOnce, "Beacon called once after 60s");
@@ -282,6 +291,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 			this.clock.tick(30000);
 			Interaction.start();
+			addFakeProcessingTime();
 			Interaction.end(true);
 			this.clock.tick(30000);
 			assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
@@ -291,9 +301,11 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 			this.clock.tick(30000);
 			Interaction.start();
+			addFakeProcessingTime();
 			Interaction.end(true);
 			this.clock.tick(30000);
 			Interaction.start();
+			addFakeProcessingTime();
 			Interaction.end(true);
 			assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
 			this.clock.tick(30000);
@@ -301,6 +313,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 			sendBeaconStub.reset();
 
 			Interaction.start();
+			addFakeProcessingTime();
 			Interaction.end(true);
 			FESR.setActive(false);
 			assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called after deactivation");

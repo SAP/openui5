@@ -7,8 +7,9 @@ sap.ui.define([
 	"./RouterHashChanger",
 	'sap/ui/thirdparty/hasher',
 	"sap/base/Log",
-	"sap/base/util/ObjectPath"
-], function(HashChangerBase, RouterHashChanger, hasher, Log, ObjectPath) {
+	"sap/base/util/ObjectPath",
+	"sap/ui/performance/trace/Interaction"
+], function(HashChangerBase, RouterHashChanger, hasher, Log, ObjectPath, Interaction) {
 	"use strict";
 
 	/**
@@ -91,7 +92,9 @@ sap.ui.define([
 			this._oRouterHashChanger.attachEvent("hashSet", this._onHashModified, this);
 			this._oRouterHashChanger.attachEvent("hashReplaced", this._onHashModified, this);
 		}
-
+		this._oRouterHashChanger.attachEvent("hashChanged", function() {
+			Interaction.notifyNavigation();
+		});
 		return this._oRouterHashChanger;
 	};
 

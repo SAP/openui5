@@ -604,7 +604,7 @@ sap.ui.define([
 	 */
 	Element.prototype.fireEvent = function(sEventId, mParameters, bAllowPreventDefault, bEnableEventBubbling) {
 		if (this.hasListeners(sEventId)) {
-			Interaction.notifyStepStart(this);
+			Interaction.notifyStepStart(sEventId, this);
 		}
 
 		// get optional parameters right

@@ -5,8 +5,9 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/core/UIComponent",
 	"sap/ui/commons/Button",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(jQuery, Device, UIComponent, CommonsButton, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/performance/trace/Interaction"
+], function(jQuery, Device, UIComponent, CommonsButton, createAndAppendDiv, Interaction) {
 	"use strict";
 
 	createAndAppendDiv("target1");
@@ -362,6 +363,7 @@ sap.ui.define([
 		assert.equal(jQuery.sap.measure.filterMeasurements(function(o){return o.categories.indexOf("test1") > -1 ? o : null; }).length,5, "5 test1 measurement filtered");
 		assert.equal(jQuery.sap.measure.filterMeasurements(["test1"]).length,5, "5 test1 measurement retrieved");
 
+		jQuery.sap.measure.setActive(true); // Delete existing categories by activating measurements without specifing category
 	});
 
 	QUnit.module("Interaction", {
@@ -370,12 +372,14 @@ sap.ui.define([
 			jQuery.sap.measure.endInteraction(true);
 			jQuery.sap.measure.clearInteractionMeasurements();
 			jQuery.sap.measure.clear();
+			Interaction.setActive(true);
 		},
 		afterEach: function() {
 			this.oButton.destroy();
 			jQuery.sap.measure.endInteraction(true);
 			jQuery.sap.measure.clearInteractionMeasurements();
 			jQuery.sap.measure.clear();
+			Interaction.setActive(false);
 		}
 	});
 
@@ -386,6 +390,7 @@ sap.ui.define([
 
 	QUnit.test("endInteraction", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
+		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		assert.ok(oMeasurement, "Measurement has been created");
@@ -396,24 +401,30 @@ sap.ui.define([
 		var aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 		assert.ok(Array.isArray(aMeasurements), "An array was returned");
 		assert.strictEqual(aMeasurements.length, 0, "Measurements count is correct");
+		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
 		jQuery.sap.measure.endInteraction(true);
 		aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 		assert.strictEqual(aMeasurements.length, 1, "Measurements count is correct");
 		jQuery.sap.measure.startInteraction("click", this.oButton);
+		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
 		jQuery.sap.measure.endInteraction(true);
 		aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 		assert.strictEqual(aMeasurements.length, 2, "Measurements count is correct");
 		jQuery.sap.measure.startInteraction("click", this.oButton);
+		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
 		aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements(/*bFinalize =*/true);
 		assert.strictEqual(aMeasurements.length, 3, "Measurements count is correct - pending interaction has been added");
 	});
 
 	QUnit.test("filterInteractionMeasurements", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
+		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
 		jQuery.sap.measure.endInteraction(true);
 		jQuery.sap.measure.startInteraction("flick", this.oButton);
+		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
 		jQuery.sap.measure.endInteraction(true);
 		jQuery.sap.measure.startInteraction("click", this.oButton);
+		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
 		jQuery.sap.measure.endInteraction(true);
 		var aFilteredMeasurements = jQuery.sap.measure.filterInteractionMeasurements(jQuery.noop);
 		assert.ok(Array.isArray(aFilteredMeasurements), "Array has been returned");
@@ -437,6 +448,7 @@ sap.ui.define([
 
 	QUnit.test("Interaction properties", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
+		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		assert.equal(oMeasurement.event, "click", "Event type is set");
@@ -451,7 +463,7 @@ sap.ui.define([
 		assert.ok(oMeasurement.duration <= oMeasurement.end - oMeasurement.start, "Duration is set");
 		assert.ok(oMeasurement.navigation === 0, "No navigation");
 		assert.ok(oMeasurement.roundtrip === 0, "No round trip");
-		assert.ok(oMeasurement.processing === 0, "No processing");
+		assert.ok(oMeasurement.processing > 0, "Processing time > 0");
 		assert.ok(oMeasurement.requestTime === 0, "No round trip");
 		assert.ok(oMeasurement.networkTime === 0, "No processing");
 		assert.ok(oMeasurement.bytesSent === 0, "No round trip");
@@ -471,7 +483,7 @@ sap.ui.define([
 		// ignore browsers where no Performance API is present or insufficient
 		if (bStablePerformanceAPI) {
 			assert.equal(oMeasurement.requests.length, 1, "One requests");
-			assert.equal(oMeasurement.measurements.length, 0, "No measurements");
+			assert.equal(oMeasurement.measurements.length, 1, "One measurements");
 			assert.ok(oMeasurement.navigation === oMeasurement.requests[0].requestStart - oMeasurement.requests[0].startTime, "Navigation correct");
 			assert.ok(oMeasurement.roundtrip === oMeasurement.requests[0].responseEnd - oMeasurement.requests[0].startTime, "Roundtrip correct");
 			assert.ok(oMeasurement.processing <= oMeasurement.end - oMeasurement.start, "Processing plausible");
@@ -490,7 +502,7 @@ sap.ui.define([
 		// ignore browsers where no Performance API is present or insufficient
 		if (bStablePerformanceAPI) {
 			assert.equal(oMeasurement.requests.length, 1, "One requests");
-			assert.equal(oMeasurement.measurements.length, 0, "No measurements");
+			assert.equal(oMeasurement.measurements.length, 1, "One measurements");
 			assert.ok(oMeasurement.networkTime === 0, "No sap-perf-fesrec response header");
 			assert.ok(oMeasurement.bytesSent === 0, "Nothing posted/putted");
 			assert.ok(oMeasurement.bytesReceived === 0, "No bytes received when fesr is not active"); //parseInt(oReq.getResponseHeader("content-length"), 10)
