@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/UIComponent",
+	"sap/ui/VersionInfo",
 	"sap/ui/Device",
 	"sap/ui/documentation/sdk/model/models",
 	"sap/ui/documentation/sdk/controller/ErrorHandler",
@@ -20,6 +21,7 @@ sap.ui.define([
 ], function(
 	jQuery,
 	UIComponent,
+	VersionInfo,
 	Device,
 	models,
 	ErrorHandler,
@@ -63,7 +65,7 @@ sap.ui.define([
 				UIComponent.prototype.init.apply(this, arguments);
 
 				// Load VersionInfo model promise
-				this.loadVersionInfo();
+				this.loadVersionInfo().then(this._bindVersionModel.bind(this));
 
 				// create the views based on the url/hash
 				this.getRouter().initialize();
@@ -111,31 +113,7 @@ sap.ui.define([
 			// MODELS
 
 			loadVersionInfo: function () {
-				if (!this._oVersionInfoPromise) {
-					var that = this;
-					this._oVersionInfoPromise = new Promise(function (resolve, reject) {
-						// The URL that we need to version JSON should be
-						// relative to the resource origin - see ResourceUtil.
-						// This way we ensure understanding about distribution
-						// is in sync with data files.
-						var sUrl = ResourcesUtil.getResourceOriginPath('./resources/sap-ui-version.json');
-						jQuery.ajax({
-							// async: false,
-							url : sUrl,
-							dataType : "json",
-							error : function(xhr, status, e) {
-								Log.error("failed to load '" + sUrl + "': " + status + ", " + e);
-								reject(e);
-							},
-							success : function(oData) {
-								that._bindVersionModel(oData);
-								resolve(oData);
-							}
-						});
-					});
-				}
-
-				return this._oVersionInfoPromise;
+				return VersionInfo.load();
 			},
 
 			_bindVersionModel : function (oVersionInfo) {
