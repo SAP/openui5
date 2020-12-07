@@ -557,7 +557,7 @@ function(
 		 * @returns {boolean} Whether the MessagePopover is open
 		 */
 		MessagePopover.prototype.isOpen = function () {
-			return this._oPopover.isOpen();
+			return this._oPopover ? this._oPopover.isOpen() : false;
 		};
 
 		/**

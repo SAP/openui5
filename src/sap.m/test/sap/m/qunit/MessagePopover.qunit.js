@@ -386,6 +386,15 @@ sap.ui.define([
 		assert.strictEqual(this.oMessagePopover.isOpen(), false, "message popover should be closed");
 	});
 
+	QUnit.test("isOpen() should return false if no popover is present", function (assert) {
+		// Arrange
+		this.oMessagePopover._oPopover.destroy();
+		this.oMessagePopover._oPopover = null;
+
+		// Assert
+		assert.strictEqual(this.oMessagePopover.isOpen(), false, "isOpen should not throw an error and should return false");
+	});
+
 	QUnit.test("openBy() should open the popover with arrow", function (assert) {
 		this.oMessagePopover.openBy(this.oButton);
 		this.clock.tick(500);
