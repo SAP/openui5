@@ -284,9 +284,11 @@ sap.ui.define([
 		 * @returns {sap.ui.base.Metadata} Metadata of the control
 		 */
 		_getControlMetadataInXml: function(oControl) {
-			var sControlType = this._getControlTypeInXml(oControl);
-			jQuery.sap.require(sControlType);
-			var ControlType = ObjectPath.get(sControlType);
+			var sControlType = this._getControlTypeInXml(oControl).replace(/\./g, "/");
+			var ControlType = sap.ui.require(sControlType);
+			if (!ControlType) {
+				ControlType = sap.ui.requireSync(sControlType);
+			}
 			return ControlType.getMetadata();
 		},
 

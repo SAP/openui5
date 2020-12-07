@@ -266,6 +266,11 @@ sap.ui.define([
 		addDependencies(oChange, oAppComponent, aChanges, mChangesMap);
 	};
 
+	DependencyHandler.insertChange = function(oChange, mChangesMap, oReferenceChange) {
+		var iIndex = mChangesMap.aChanges.indexOf(oReferenceChange);
+		mChangesMap.aChanges.splice(iIndex + 1, 0, oChange);
+	};
+
 	/**
 	 * Adds a change to the map during runtime and adds the dependencies to the initial changes map
 	 *

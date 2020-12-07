@@ -90,7 +90,7 @@ sap.ui.define([
 
 		var checkView = function(sView) {
 			var aPanelContent = oView.byId(sView).byId("Panel").getContent();
-			assert.strictEqual(aPanelContent.length, 5, "ExtensionPoint content added to" + sView + " view");
+			assert.strictEqual(aPanelContent.length, 7, "ExtensionPoint content added to " + sView + " view");
 			assert.strictEqual(aPanelContent[0].getId(), sReference + "---mainView--" + sView + "--button1", "view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[1].getId(), sReference + "---mainView--" + sView + "--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[2].getId(), sReference + "---mainView--" + sView + "--button2", "view content is in correct order"); // Main
@@ -103,7 +103,7 @@ sap.ui.define([
 			checkView("sync");
 			checkView("async");
 			assert.equal(oSpyApplyExtensionPoint.callCount, 0, "number of applyExtensionPoint called correct");
-			assert.equal(oSpyRegisterExtensionPoints.callCount, 6, "number of registerExtensionPoints called correct in the ExtensionPointRegistry");
+			assert.equal(oSpyRegisterExtensionPoints.callCount, 10, "number of registerExtensionPoints called correct in the ExtensionPointRegistry");
 
 			done();
 		};
@@ -112,7 +112,7 @@ sap.ui.define([
 		var iPoll = setInterval(function() {
 			var aPanelContent1 = oView.byId("sync").byId("Panel").getContent();
 			var aPanelContent2 = oView.byId("async").byId("Panel").getContent();
-			if (aPanelContent1.length === 5 && aPanelContent2.length === 5) {
+			if (aPanelContent1.length === 7 && aPanelContent2.length === 7) {
 				fnAssert();
 				clearInterval(iPoll);
 			}
