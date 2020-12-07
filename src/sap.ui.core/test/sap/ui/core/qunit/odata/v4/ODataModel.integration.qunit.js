@@ -15430,7 +15430,7 @@ sap.ui.define([
 				+ "/concat(aggregate($count as UI5__count),top(99)))", {
 				value : [
 					{CurrencyCode : null, GrossAmount : "12345"},
-					{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"},
+					{"UI5__count" : "2", "UI5__count@odata.type" : "#Decimal"},
 					{CurrencyCode : "EUR", GrossAmount : "1", LifecycleStatus : "Z"},
 					{CurrencyCode : "GBP", GrossAmount : "2", LifecycleStatus : "Y"}
 				]
@@ -15443,6 +15443,63 @@ sap.ui.define([
 			.expectChange("currencyCode", ["", "EUR", "GBP"]);
 
 		return this.createView(assert, sView, oModel);
+	});
+
+	//*********************************************************************************************
+	// Scenario: Data aggregation with grand total, but no visual grouping. Observe the leaves' key
+	// predicates in case all key properties are available. Expect no unnecessary group levels in
+	// there!
+	// JIRA: CPOUI5ODATAV4-700
+	QUnit.test("Data Aggregation: leaves' key predicates", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{path : \'/SalesOrderList\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					GrossAmount : {grandTotal : true}\
+				},\
+				group : {\
+					LifecycleStatus : {},\
+					SalesOrderID : {}\
+				}\
+			}\
+		}}">\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
+	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$apply=concat(aggregate(GrossAmount)"
+				+ ",groupby((LifecycleStatus,SalesOrderID),aggregate(GrossAmount))"
+				+ "/concat(aggregate($count as UI5__count),top(99)))", {
+				value : [
+					{GrossAmount : "12345"},
+					{"UI5__count" : "2", "UI5__count@odata.type" : "#Decimal"},
+					{GrossAmount : "1", LifecycleStatus : "Z", SalesOrderID : "26"},
+					{GrossAmount : "2", LifecycleStatus : "Y", SalesOrderID : "25"}
+				]
+			})
+			.expectChange("isExpanded", [true, undefined, undefined])
+			.expectChange("isTotal", [true, false, false])
+			.expectChange("level", [0, 1, 1])
+			.expectChange("lifecycleStatus", ["", "Z", "Y"])
+			.expectChange("grossAmount", ["12345", "1", "2"])
+			.expectChange("salesOrderID", ["", "26", "25"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oTable = that.oView.byId("table");
+
+			assert.deepEqual(oTable.getBinding("items").getCurrentContexts().map(getPath), [
+				"/SalesOrderList()",
+				"/SalesOrderList('26')", // SalesOrderID is the single key property!
+				"/SalesOrderList('25')"
+			]);
+		});
 	});
 
 	//*********************************************************************************************
@@ -17219,6 +17276,7 @@ sap.ui.define([
 					value : [
 						{SalesNumber : 0},
 						{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"}
+						// ... (don't care)
 					]
 				});
 
@@ -17263,6 +17321,7 @@ sap.ui.define([
 					value : [
 						{SalesNumber : 0},
 						{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"}
+						// ... (don't care)
 					]
 				});
 

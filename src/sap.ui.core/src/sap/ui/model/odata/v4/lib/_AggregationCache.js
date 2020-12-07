@@ -591,8 +591,9 @@ sap.ui.define([
 				oInstance[sName] = oGroupNode[sName];
 			}
 		});
-		sPredicate
-			= _Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath, aGroupBy, true);
+		// prefer real key predicate for leaf
+		sPredicate = bLeaf && _Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath)
+			|| _Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath, aGroupBy, true);
 		_Helper.setPrivateAnnotation(oInstance, "predicate", sPredicate);
 		if (!bLeaf) {
 			_Helper.setPrivateAnnotation(oInstance, "filter",

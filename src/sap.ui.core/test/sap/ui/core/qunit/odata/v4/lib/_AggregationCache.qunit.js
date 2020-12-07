@@ -247,7 +247,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.bHasGrandTotal, bHasGrandTotal);
 		if (!bHasGrandTotal) {
 			assert.deepEqual(oCache.aElements, []);
-			return;
+			return null; // be nice to eslint's "consistent-return" rule
 		}
 		assert.strictEqual(oCache.aElements.length, 1);
 		oGrandTotalPromise = oCache.aElements[0];
@@ -471,24 +471,36 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bLeaf) {
 	[false, true].forEach(function (bParent) {
+		[false, true].forEach(function (bHasRealKeyPredicate) {
+			var sTitle = "calculateKeyPredicate: leaf=" + bLeaf
+					+ ", has real key predicate: " + bHasRealKeyPredicate
+					+ ", parent=" + bParent;
 
-	QUnit.test("calculateKeyPredicate: leaf=" + bLeaf + ", parent=" + bParent, function (assert) {
+			if (bHasRealKeyPredicate && !bLeaf) {
+				return; // ignore useless combination
+			}
+
+	QUnit.test(sTitle, function (assert) {
 		var aAllProperties = ["p1", "p2", "p3", "p4"],
 			oElement = {
 				p2 : "v2"
 			},
+			oElementMatcher = sinon.match(function (o) {
+				return o === oElement && (!bParent || o.p1 === "v1");
+			}),
+			aGroupBy = bParent ? ["p1", "p2"] : ["p2"],
 			oGroupNode = {
 				p1 : "v1",
 				"@$ui5.node.level" : 2
 			},
-			aGroupBy = bParent ? ["p1", "p2"] : ["p2"],
 			oHelperMock = this.mock(_Helper);
 
-		oHelperMock.expects("getKeyPredicate")
-			.withExactArgs(sinon.match(function (o) {
-					return o === oElement && (!bParent || o.p1 === "v1");
-				}), "~sMetaPath~", "~mTypeForMetaPath~", sinon.match.same(aGroupBy), true)
-			.returns("~predicate~");
+		oHelperMock.expects("getKeyPredicate").exactly(bLeaf ? 1 : 0)
+			.withExactArgs(oElementMatcher, "~sMetaPath~", "~mTypeForMetaPath~")
+			.returns(bHasRealKeyPredicate ? "~predicate~" : undefined);
+		oHelperMock.expects("getKeyPredicate").exactly(bHasRealKeyPredicate ? 0 : 1)
+			.withExactArgs(oElementMatcher, "~sMetaPath~", "~mTypeForMetaPath~",
+				sinon.match.same(aGroupBy), true).returns("~predicate~");
 		oHelperMock.expects("setPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "predicate", "~predicate~");
 		oHelperMock.expects("getKeyFilter").exactly(bLeaf ? 0 : 1)
@@ -515,6 +527,7 @@ sap.ui.define([
 		}
 	});
 
+		});
 	});
 });
 
