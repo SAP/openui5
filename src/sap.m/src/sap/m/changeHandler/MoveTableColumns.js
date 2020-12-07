@@ -89,7 +89,7 @@ sap.ui.define(["sap/base/Log", "sap/ui/thirdparty/jquery"], function(Log, jQuery
 
 			iCurrentIndexInAggregation = aColumns.indexOf(oMovedElement);
 			iStoredSourceIndexInChange = mMovedElement.sourceIndex;
-			iTargetIndex = typeof fnIterator === "function" && fnIterator(iCurrentIndexInAggregation);
+			iTargetIndex = typeof fnIterator === "function" && fnIterator(iStoredSourceIndexInChange);
 			iTargetIndex = jQuery.isNumeric(iTargetIndex) ? iTargetIndex : mMovedElement.targetIndex;
 
 			if (iCurrentIndexInAggregation !== iTargetIndex) {
@@ -135,9 +135,9 @@ sap.ui.define(["sap/base/Log", "sap/ui/thirdparty/jquery"], function(Log, jQuery
 	MoveTableColumns.applyChange = function (oChange, oRelevantContainer, mPropertyBag) {
 		var aRevertData = [];
 
-		_applyChange(oChange, oRelevantContainer, mPropertyBag, function (iCurrentIndexInAggregation) {
+		_applyChange(oChange, oRelevantContainer, mPropertyBag, function (iStoredSourceIndexInChange) {
 			aRevertData.unshift({
-				index: iCurrentIndexInAggregation
+				index: iStoredSourceIndexInChange
 			});
 		});
 
