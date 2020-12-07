@@ -3419,5 +3419,21 @@
         ]
       }
     ]
+  },
+  "1.60.32": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "2d7a22536b9e38862ad6109bdc0513b49ba18407",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Paste value behavior fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070423726"
+          }
+        ]
+      }
+    ]
   }
 }

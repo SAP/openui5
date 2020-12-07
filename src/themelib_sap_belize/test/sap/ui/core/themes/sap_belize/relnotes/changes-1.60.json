@@ -5,7 +5,7 @@
       {
         "id": "341f097a5fa58597c26c6c3f22b6664c192c66cc",
         "type": "FIX",
-        "text": "sap.m.ComboBox: Items\u0027 loading indicator returned back",
+        "text": "sap.m.ComboBox: Items' loading indicator returned back",
         "references": [
           {
             "type": "BCP",
@@ -38,7 +38,7 @@
       {
         "id": "9420f87a91bc80aa2ccede39f175d5dd039e43a2",
         "type": "FIX",
-        "text": "Calendar: Picker\u0027s selected month/year style overriding focus in HC fixed",
+        "text": "Calendar: Picker's selected month/year style overriding focus in HC fixed",
         "references": [
           {
             "type": "BCP",
@@ -209,6 +209,26 @@
           {
             "type": "BCP",
             "reference": "1880460732"
+          }
+        ]
+      }
+    ]
+  },
+  "1.60.32": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "3a88c8d56dc09cbd99812f0746a66e22d9d028ad",
+        "type": "FIX",
+        "text": " Belize Theme: add full \"72\" font for special character fallback",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000146942019"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500005908012020"
           }
         ]
       }

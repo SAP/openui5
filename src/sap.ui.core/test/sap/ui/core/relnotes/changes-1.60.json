@@ -1478,5 +1478,25 @@
         ]
       }
     ]
+  },
+  "1.60.32": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "c1dbb476a8a7751d0b998c647dd985c71457bbdb",
+        "type": "FIX",
+        "text": " Configuration: normalize Theme to sap_fiori_3",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400002689182020"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400007405752020"
+          }
+        ]
+      }
+    ]
   }
 }
