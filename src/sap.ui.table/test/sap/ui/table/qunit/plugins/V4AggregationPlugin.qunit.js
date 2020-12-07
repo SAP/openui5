@@ -34,30 +34,52 @@ sap.ui.define([
 				{
 					name: "Info5",
 					path: "prop5",
-					aggregatable: true
+					extension: {
+						defaultAggregate: {}
+					}
 				},
 				{
 					name: "Info6",
 					path: "prop6",
-					aggregatable: true,
-					aggregationDetails: {
-						defaultMethod: {
-							unit: "Info3"
-						}
-					}
+					extension: {
+						defaultAggregate: {}
+					},
+					unit: "Info3"
 				},
 				{
 					name: "Info7",
 					path: "prop7",
-					aggregatable: true,
+					extension: {
+						defaultAggregate: {}
+					},
 					groupable: true
 				},
 				{
 					name: "Info8",
 					path: "prop8",
-					aggregatable: true,
-					aggregationDetails: {
-						contextDefiningProperties: ["Info3", "Info4"]
+					extension: {
+						defaultAggregate: {
+							contextDefiningProperties: ["Info1", "Info3", "Info4"]
+						}
+					}
+				},
+				{
+					name: "Info9",
+					path: "prop9",
+					unit: "Info3",
+					extension: {
+						defaultAggregate: {
+							contextDefiningProperties: []
+						}
+					}
+				},
+				{
+					name: "Info10",
+					path: "prop10",
+					extension: {
+						defaultAggregate: {
+							contextDefiningProperties: ["Info4", "Info5"]
+						}
 					}
 				}
 			]);
@@ -152,6 +174,26 @@ sap.ui.define([
 			},
 			expectedGroup: {prop1:{}, prop2:{}, prop3:{}, prop4: {}},
 			expectedAggregate: {prop8: {}},
+			expectedGroupLevels: []
+		},
+		{
+			label: "Aggregated property with unit and empty context-defining properties",
+			aggregationInfo: {
+				visible: ["Info9"],
+				groupLevels: []
+			},
+			expectedGroup: {prop1:{}, prop2:{}},
+			expectedAggregate: {prop9: {unit: "prop3"}},
+			expectedGroupLevels: []
+		},
+		{
+			label: "Aggregated property - non-groupable context-defining proporties are not kept",
+			aggregationInfo: {
+				visible: ["Info10"],
+				groupLevels: []
+			},
+			expectedGroup: {prop1:{}, prop2:{}, prop4: {}},
+			expectedAggregate: {prop10: {}},
 			expectedGroupLevels: []
 		},
 		{
