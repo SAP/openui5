@@ -1179,7 +1179,7 @@ sap.ui.define([
 		 * @returns {boolean} whether the design mode is active or not.
 		 * @since 1.13.2
 		 * @private
-	 	 * @ui5-restricted sap.watt com.sap.webide
+	 	 * @ui5-restricted sap.watt, com.sap.webide
 		 */
 		getDesignMode : function() {
 			return this["xx-designMode"];
@@ -1191,7 +1191,7 @@ sap.ui.define([
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.13.2
 		 * @private
-	 	 * @ui5-restricted sap.watt com.sap.webide
+	 	 * @ui5-restricted sap.watt, com.sap.webide
 		 */
 		getSuppressDeactivationOfControllerCode : function() {
 			return this["xx-suppressDeactivationOfControllerCode"];
@@ -1203,7 +1203,7 @@ sap.ui.define([
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.26.4
 		 * @private
-	 	 * @ui5-restricted sap.watt com.sap.webide
+	 	 * @ui5-restricted sap.watt, com.sap.webide
 		 */
 		getControllerCodeDeactivated : function() {
 			return this.getDesignMode() && !this.getSuppressDeactivationOfControllerCode();

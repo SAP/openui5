@@ -20,7 +20,7 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp sap.ui.mdc.field.FieldValueHelpMTableWrapper
+	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp, sap.ui.mdc.field.FieldValueHelpMTableWrapper
 	 * @experimental As of version 1.77
 	 * @since 1.77.0
 	 * @alias sap.ui.mdc.field.FieldValueHelpDelegate
@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.field.FieldValueHelp} oFieldHelp Field help instance
 	 * @returns {Promise} Promise that is resolved if the <code>FilterFields</code> property is set
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp sap.ui.mdc.field.FieldValueHelpMTableWrapper
+	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp, sap.ui.mdc.field.FieldValueHelpMTableWrapper
 	 */
 	FieldValueHelpDelegate.determineSearchSupported = function(oPayload, oFieldHelp) {
 
@@ -50,7 +50,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.ListBinding} oListBinding ListBinding
 	 * @returns {boolean} true if $search is supported
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp sap.ui.mdc.field.FieldValueHelpMTableWrapper
+	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp, sap.ui.mdc.field.FieldValueHelpMTableWrapper
 	 */
 	FieldValueHelpDelegate.isSearchSupported = function(oPayload, oListBinding) {
 
@@ -65,7 +65,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.ListBinding} oListBinding ListBinding
 	 * @param {string} sSearch Search string
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp sap.ui.mdc.field.FieldValueHelpMTableWrapper
+	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp, sap.ui.mdc.field.FieldValueHelpMTableWrapper
 	 */
 	FieldValueHelpDelegate.executeSearch = function(oPayload, oListBinding, sSearch) {
 
@@ -82,7 +82,7 @@ sap.ui.define([
 	 * @param {function} fnCallback Callback function after result has been received
 	 * @param {integer} iRequestedItems Number of requested items
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp sap.ui.mdc.field.FieldValueHelpMTableWrapper
+	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp, sap.ui.mdc.field.FieldValueHelpMTableWrapper
 	 * @since 1.81.0
 	 */
 	FieldValueHelpDelegate.executeFilter = function(oPayload, oListBinding, oFilter, fnCallback, iRequestedItems) {
@@ -111,7 +111,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.PropertyBinding[]} aBindings <code>PropertyBinding</code> array to check
 	 * @returns {null|Promise} <code>Promise</code> that is resolved once every <code>PropertyBinding</code> has been updated
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp sap.ui.mdc.field.FieldValueHelpMTableWrapper
+	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp, sap.ui.mdc.field.FieldValueHelpMTableWrapper
 	 * @since 1.80.0
 	 */
 	FieldValueHelpDelegate.checkBindingsPending = function(oPayload, aBindings) {

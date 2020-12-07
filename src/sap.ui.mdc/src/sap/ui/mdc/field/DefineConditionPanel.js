@@ -87,7 +87,7 @@ sap.ui.define([
 	 * @abstract
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.ValueHelpPanel sap.ui.mdc.field.ConditionFieldHelp
+	 * @ui5-restricted sap.ui.mdc.field.ValueHelpPanel, sap.ui.mdc.field.ConditionFieldHelp
 	 */
 	var DefineConditionPanel = Control.extend("sap.ui.mdc.field.DefineConditionPanel", {
 		metadata: {

@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @experimental Since 1.67
 	 * @since 1.67
 	 * @private
-	 * @ui5-restricted ui5 controls, OVP, tests
+	 * @ui5-restricted UI5 controls, OVP, tests
 	 */
 	var FlexRuntimeInfoAPI = /** @lends sap.ui.fl.apply.api.FlexRuntimeInfoAPI */{
 

@@ -437,7 +437,7 @@ sap.ui.define([
 		 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
 		 *
 		 * @private
-		 * @ui5-restricted to be enhanced by operators inherit from operator
+		 * @ui5-restricted Operator subclasses
 		 */
 		Operator.prototype._parseValue = function(sValue, oType) { // needed in EQ operator to be accessed from outside
 

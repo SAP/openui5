@@ -3011,7 +3011,7 @@
 
 	/**
 	 * @private
-	 * @ui5-restricted library-preload files
+	 * @ui5-restricted bundles created with UI5 tooling
 	 * @function
 	 * @ui5-global-only
 	 */

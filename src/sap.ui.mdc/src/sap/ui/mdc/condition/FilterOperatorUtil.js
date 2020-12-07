@@ -921,7 +921,7 @@ function(
 				 * @returns {sap.ui.mdc.condition.Operator} Operator object
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc.Field sap.ui.mdc.field.FieldBase sap.ui.mdc.field.ConditionType
+				 * @ui5-restricted sap.ui.mdc.Field, sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
 				 */
 				getEQOperator: function() {
 
@@ -936,7 +936,7 @@ function(
 				 * @returns {boolean} true if only EQ is supported
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc.field.FieldBase sap.ui.mdc.field.FieldValueHelp sap.ui.mdc.field.ConditionType
+				 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.FieldValueHelp, sap.ui.mdc.field.ConditionType
 				 */
 				onlyEQ: function(aOperators) {
 

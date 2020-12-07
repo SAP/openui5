@@ -139,7 +139,7 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @version ${version}
 	 * @private
-	 * @ui5-restricted UI5 controls and tools creating flexibility changes
+	 * @ui5-restricted UI5 controls, tools creating flexibility changes
 	 */
 	sap.ui.getCore().initLibrary({
 		name: "sap.ui.fl",

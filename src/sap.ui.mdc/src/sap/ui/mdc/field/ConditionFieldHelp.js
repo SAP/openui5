@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @ui5-restricted sap.ui.mdc.field.FieldBase sap.fe
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.fe
 	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.82.0
 	 * @alias sap.ui.mdc.field.ConditionFieldHelp

@@ -1757,7 +1757,7 @@ sap.ui.define([
 		 *              The modules will be loaded first before loading the module itself.
 		 *
 		 * @private
-		 * @ui5-restricted sap.ui.core sap.ui.export sap.ui.vk
+		 * @ui5-restricted sap.ui.core, sap.ui.export, sap.ui.vk
 	  	 * @deprecated Since 1.58, use {@link sap.ui.loader.config} instead
 		 */
 		jQuery.sap.registerModuleShims = function(mShims) {

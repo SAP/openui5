@@ -307,7 +307,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.core.Control} Control to which the <code>FieldHelp</code> element is connected
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getField = function() {
@@ -325,7 +325,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.core.Control} Control to which the <code>FieldHelp</code> element is connected
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getControlForSuggestion = function() {
@@ -347,7 +347,7 @@ sap.ui.define([
 	 *
 	 * @returns {string} FieldPath
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype.getFieldPath = function() {
@@ -644,7 +644,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.m.Popover} Popover
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._createPopover = function() {
@@ -706,7 +706,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.m.Popover} Popover
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._getPopover = function() {
@@ -728,7 +728,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oEvent Event object
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._handleAfterOpen = function(oEvent) {
@@ -741,7 +741,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oEvent Event object
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._handleAfterClose = function(oEvent) {
@@ -916,7 +916,7 @@ sap.ui.define([
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key, key for description or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 *
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @since 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -935,7 +935,7 @@ sap.ui.define([
 	 * @returns {boolean} Flag if backend requests are supported
 	 *
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @since 1.81.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1120,7 +1120,7 @@ sap.ui.define([
 	 * @param {string} oContent Content control to be placed at the <code>Popover</code>
 	 * @returns {sap.ui.mdc.field.FieldHelpBase} Reference to <code>this</code> to allow method chaining
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldHelpBase.prototype._setContent = function(oContent) {
@@ -1198,7 +1198,7 @@ sap.ui.define([
 	 * @param {function} fnCallback Callback function executed after asynchronous execution
 	 * @returns {boolean} True if the field help can be opened synchronously
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @since 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1226,7 +1226,7 @@ sap.ui.define([
 	 * @param {function} fnCallback Callback function executed after asynchronous execution
 	 * @returns {boolean} True if the field help can be opened synchronously
 	 * @private
-	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @ui5-restricted FieldHelp subclasses
 	 * @since 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

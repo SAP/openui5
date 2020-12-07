@@ -1260,7 +1260,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oChanges Changes
 	 * @private
-	 * @ui5-restricted to be enhanced by controls inherit from FieldBase
+	 * @ui5-restricted FieldBase subclasses
 	 */
 	FieldBase.prototype._observeChanges = function(oChanges) {
 
@@ -3417,7 +3417,7 @@ sap.ui.define([
 	 * Updates the FormatOptions of the internal ConditionsType
 	 *
 	 * @private
-	 * @ui5-restricted only for controls inherit from FieldBase
+	 * @ui5-restricted FieldBase subclasses
 	 */
 	FieldBase.prototype._updateConditionType = function() {
 
@@ -3457,7 +3457,7 @@ sap.ui.define([
 	 * @param {any} vValue Value to be checked
  	 * @returns {boolean} true if value is initial
 	 * @private
-	 * @ui5-restricted only for controls inherit from FieldBase
+	 * @ui5-restricted FieldBase subclasses
 	 */
 	FieldBase.prototype._checkValueInitial = function(vValue) {
 
