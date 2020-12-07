@@ -367,5 +367,21 @@
         ]
       }
     ]
+  },
+  "1.85.1": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "161c171397091eeb95dd6c21b9e56a5c2c1c1165",
+        "type": "FIX",
+        "text": " sap.m.Table: Default dummy column handling is reverted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080393880"
+          }
+        ]
+      }
+    ]
   }
 }
