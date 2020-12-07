@@ -246,6 +246,16 @@ sap.ui.define([
 
 		this.mCacheQueryOptions = Object.assign({}, this.oModel.mUriParameters, mQueryOptions);
 		if (this.bRelative) { // quasi-absolute or relative binding
+			// The parent has to be persisted in order to know the key predicates when creating the
+			// child's own cache. Context#isTransient cannot be used exclusively here because it
+			// returns true for ODLB#create w/o bSkipRefresh, unless the refresh for the created
+			// entity is resolved too - but the entity's key predicates are already available.
+			if (oContext.isTransient && oContext.isTransient()
+				&& oContext.getProperty("@$ui5.context.isTransient")) {
+				this.oCache = null;
+				return this.oCache;
+			}
+
 			// mCacheByResourcePath has to be reset if parameters are changing
 			oCache = this.mCacheByResourcePath && this.mCacheByResourcePath[sResourcePath];
 			iReturnValueContextId = oContext.getReturnValueContextId

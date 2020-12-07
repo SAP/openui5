@@ -330,6 +330,7 @@ sap.ui.define([
 			this.aContexts.forEach(function (oContext) {
 				oContext.adjustPredicate(sTransientPredicate, sPredicate, adjustPreviousData);
 			});
+			this.fetchCache(this.oContext);
 		}
 	};
 

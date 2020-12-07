@@ -6393,7 +6393,8 @@ sap.ui.define([
 			oContext1 = {adjustPredicate : function () {}},
 			oContext2 = {adjustPredicate : function () {}},
 			oExpectation1,
-			oExpectation2;
+			oExpectation2,
+			oExpectation3;
 
 		oBinding.aPreviousData = ["/SalesOrderList($uid=1)/SO_2_SOITEM($uid=2)"];
 		oBinding.aContexts = [,, oContext1, oContext2]; // sparse array
@@ -6403,6 +6404,8 @@ sap.ui.define([
 			.withExactArgs("($uid=1)", "('42')", sinon.match.func);
 		oExpectation2 = this.mock(oContext2).expects("adjustPredicate")
 			.withExactArgs("($uid=1)", "('42')", sinon.match.func);
+		oExpectation3 = this.mock(oBinding).expects("fetchCache")
+			.withExactArgs(sinon.match.same(oBinding.oContext));
 
 		// code under test
 		oBinding.adjustPredicate("($uid=1)", "('42')");
@@ -6411,6 +6414,7 @@ sap.ui.define([
 		oExpectation2.args[0][2]("/SalesOrderList($uid=1)/SO_2_SOITEM($uid=3)",
 			"/SalesOrderList('42')/SO_2_SOITEM($uid=3)");
 
+		assert.ok(oExpectation3.calledAfter(oExpectation2));
 		assert.deepEqual(oBinding.aPreviousData, ["/SalesOrderList('42')/SO_2_SOITEM($uid=2)"]);
 		assert.notOk(oBinding.aPreviousData.hasOwnProperty("-1"));
 	});
