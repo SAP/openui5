@@ -2,14 +2,14 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/m/Button", "sap/m/ButtonRenderer", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/library"
-], function(Button, ButtonRenderer, ManagedObjectObserver, CoreLibrary) {
+	"sap/m/OverflowToolbarButton", "sap/m/ButtonRenderer", "sap/ui/base/ManagedObjectObserver", "sap/ui/core/library"
+], function(OverflowToolbarButton, ButtonRenderer, ManagedObjectObserver, CoreLibrary) {
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
 	var ResponsivePopover, List, Bar, SearchField, StandardListItem, InvisibleText, Device, oRb;
 
-	var ChartTypeButton = Button.extend("sap.ui.mdc.chart.ChartTypeButton", {
+	var ChartTypeButton = OverflowToolbarButton.extend("sap.ui.mdc.chart.ChartTypeButton", {
 		metadata: {
 			library: "sap.ui.mdc"
 		},
@@ -23,10 +23,11 @@ sap.ui.define([
 				id: oChart.getId() + "-btnChartType",
 				icon: '{$chart>/getTypeInfo/icon}',
 				tooltip: '{$chart>/getTypeInfo/text}',
+				text: '{$chart>/getTypeInfo/text}',
 				ariaHasPopup: HasPopup.ListBox
 			};
 			this.oChart = oChart;
-			Button.apply(this, [
+			OverflowToolbarButton.apply(this, [
 				mSettings
 			]);
 			this.setModel(this.oChartModel, "$chart");
@@ -230,7 +231,7 @@ sap.ui.define([
 	 * @ui5-restricted Fiori Elements, sap.ui.mdc
 	 */
 	ChartTypeButton.prototype.exit = function() {
-		Button.prototype.exit.apply(this, arguments);
+		OverflowToolbarButton.prototype.exit.apply(this, arguments);
 		if (this.oPopover) {
 			this.oPopover.destroy();
 			this.oPopover = null;

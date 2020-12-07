@@ -80,6 +80,7 @@ sap.ui.define([
 
 				oZoomInButton = new OverflowButton({
 					tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
+					text: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
 					icon: "sap-icon://zoom-in",
 					enabled: "{= ${$mdcChart>/_chart/getZoomInfo/enabled} && ${$mdcChart>/_chart/getZoomInfo/currentZoomLevel} < 1}",
 					press: function onZoomInButtonPressed(oControlEvent) {
@@ -89,6 +90,7 @@ sap.ui.define([
 
 				oZoomOutButton = new OverflowButton({
 					tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"),
+					text: MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"),
 					icon: "sap-icon://zoom-out",
 					enabled: "{= ${$mdcChart>/_chart/getZoomInfo/enabled} && ${$mdcChart>/_chart/getZoomInfo/currentZoomLevel} > 0}",
 					press: function onZoomOutButtonPressed(oControlEvent) {
@@ -112,6 +114,7 @@ sap.ui.define([
 				oChart._oDrillDownBtn = new OverflowButton(oChart.getId() + "-drillDown", {
 					icon: "sap-icon://drill-down",
 					tooltip: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
+					text: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
 					press: [
 						oChart._showDrillDown, oChart
 					]
@@ -136,6 +139,7 @@ sap.ui.define([
 				oToolbar.addEnd(new OverflowButton(oChart.getId() + "-chart_settings", {
 					icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
 					tooltip: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
 					press: function(oEvent) {
 						var oSource = oEvent.getSource();
 						oChart._getPropertyData().then(function(aProperties) {
@@ -150,6 +154,7 @@ sap.ui.define([
 				oToolbar.addEnd(new OverflowButton(oChart.getId() + "-sort_settings", {
 					icon: "sap-icon://sort",
 					tooltip: MDCRb.getText('sort.PERSONALIZATION_DIALOG_TITLE'),
+					text: MDCRb.getText('sort.PERSONALIZATION_DIALOG_TITLE'),
 					press: function(oEvent) {
 						var oSource = oEvent.getSource();
 						oChart._getPropertyData().then(function(aProperties) {
