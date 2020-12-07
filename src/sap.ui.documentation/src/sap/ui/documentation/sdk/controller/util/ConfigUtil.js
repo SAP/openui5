@@ -65,7 +65,17 @@ sap.ui.define([
 		},
 
 		enableUsageTracking: function() {
-			window["swa"] && window["swa"].enable();
+			var swa = window['swa'];
+			if (swa && typeof swa.enable === "function") {
+				swa.enable();
+			}
+		},
+
+		disableUsageTracking: function() {
+			var swa = window['swa'];
+			if (swa && typeof swa.disable === "function") {
+				swa.disable();
+			}
 		},
 
 		_getMasterTargetName: function(sRouteName) {

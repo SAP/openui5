@@ -325,7 +325,7 @@ sap.ui.define([
 				} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 					this.settingsDialogOpen();
 				} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
-					this.cookieSettingsDialogOpen(true);
+					this.cookieSettingsDialogOpen();
 				} else if (sTargetText === CHANGE_VERSION_TEXT) {
 					this.onChangeVersionButtonPress();
 				} else if (sTarget === SITEMAP) {
@@ -684,15 +684,24 @@ sap.ui.define([
 			 * @public
 			 */
 			cookieSettingsDialogOpen: function () {
-				if (this._oCookieSettingsController) {
-					this._oCookieSettingsController.openCookieSettingsDialog(this._oConfigUtil, this.getView());
-					return;
-				}
-
-				Controller.create({name: "sap.ui.documentation.sdk.controller.CookieSettingsDialog"}).then(function(oController) {
-					this._oCookieSettingsController = oController;
+				this.getCookieSettingsController().then(function(oController) {
 					oController.openCookieSettingsDialog(this._oConfigUtil, this.getView());
 				}.bind(this));
+			},
+
+			/**
+			 * Obtains the controller and creates it if no instance created yet
+			 * @returns {Promise<any>}
+			 */
+			getCookieSettingsController: function() {
+				if (!this.oCookieSettingsControllerPromise) {
+					this.oCookieSettingsControllerPromise = new Promise(function(resolve, reject) {
+						Controller.create({name: "sap.ui.documentation.sdk.controller.CookieSettingsDialog"}).then(function(oController) {
+							resolve(oController);
+						});
+					});
+				}
+				return this.oCookieSettingsControllerPromise;
 			},
 
 			/**

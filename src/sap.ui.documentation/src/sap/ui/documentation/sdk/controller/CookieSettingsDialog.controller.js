@@ -126,12 +126,16 @@ sap.ui.define([
 			},
 
 			_saveCookiePreference: function(sCookieName, bEnable) {
-				var sValue = bEnable ? "1" : "0";
+				var sValue = bEnable ? "1" : "0",
+					sOldValue;
 
-				if ((sCookieName === this._oCookieNames.ALLOW_USAGE_TRACKING)
-					&& bEnable
-					&& this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_USAGE_TRACKING) !== "1") {
-					this._oConfigUtil.enableUsageTracking();
+				if (sCookieName === this._oCookieNames.ALLOW_USAGE_TRACKING) {
+					sOldValue = this._oConfigUtil.getCookieValue(sCookieName);
+
+					if (sOldValue !== sValue) {
+						bEnable && this._oConfigUtil.enableUsageTracking();
+						!bEnable && this._oConfigUtil.disableUsageTracking();
+					}
 				}
 
 				this._oConfigUtil.setCookie(sCookieName, sValue);
