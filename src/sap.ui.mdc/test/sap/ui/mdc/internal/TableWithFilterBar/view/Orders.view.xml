@@ -116,7 +116,7 @@
 									dataProperty="customer_ID"
 									width="100%"
 								>
-                            <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{customer/name}" editMode="Display"/>
+                            <mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{customer/name}" width="100%" editMode="Display"/>
                         </mdc:table.Column>
                         <mdc:table.Column
 									id="cCreatedAt"
