@@ -168,6 +168,7 @@ sap.ui.define([
 		CalendarContent.prototype.onBeforeRendering = function () {
 			var oInitiallySelectedDate = this._oCalendar.getSelectedDates().length ? this._oCalendar.getSelectedDates()[0].getStartDate() : this._oCalendar.getStartDate();
 
+			this._setParameters();
 			this._refreshVisibleAppointments(oInitiallySelectedDate);
 
 			this.getModel("parameters").setProperty("/visibleItems", this._iVisibleItems);
@@ -253,6 +254,7 @@ sap.ui.define([
 				oStartOfDay,
 				oEndOfDay,
 				sMaxItemsPath,
+				aBoundAppointments,
 				aAppointmentsCurrentDay,
 				oDateFormat = DateFormat.getDateTimeInstance();
 
@@ -268,15 +270,22 @@ sap.ui.define([
 			oEndOfDay = new Date(oCurrentDate.getFullYear(), oCurrentDate.getMonth(), oCurrentDate.getDate());
 
 			oEndOfDay.setDate(oEndOfDay.getDate() + 1);
-			aAppointmentsCurrentDay = sItemPath ? this.getModel().getProperty(sItemPath).filter(function (oApp) {
-				var iStart = oDateFormat.parse(oApp.start).getTime(),
-					iEnd = oDateFormat.parse(oApp.end).getTime();
-				if ((iStart >= oStartOfDay.getTime() && iStart < oEndOfDay.getTime()) ||
-					(iEnd >= oStartOfDay.getTime() && iEnd < oEndOfDay.getTime()) ||
-					(iStart <= oStartOfDay.getTime() && iEnd > oEndOfDay.getTime())) {
-					return oApp;
-				}
-			}) : [];
+
+			aBoundAppointments = sItemPath && this.getModel().getProperty(sItemPath);
+			if (aBoundAppointments) {
+				aAppointmentsCurrentDay	= aBoundAppointments.filter(function (oApp) {
+					var iStart = oDateFormat.parse(oApp.start).getTime(),
+						iEnd = oDateFormat.parse(oApp.end).getTime();
+					if ((iStart >= oStartOfDay.getTime() && iStart < oEndOfDay.getTime()) ||
+						(iEnd >= oStartOfDay.getTime() && iEnd < oEndOfDay.getTime()) ||
+						(iStart <= oStartOfDay.getTime() && iEnd > oEndOfDay.getTime())) {
+						return oApp;
+					}
+				});
+			} else {
+				aAppointmentsCurrentDay = [];
+			}
+
 			this._iAllItems = aAppointmentsCurrentDay.length;
 
 			if (oConfiguration && typeof oConfiguration.maxItems === "object") {

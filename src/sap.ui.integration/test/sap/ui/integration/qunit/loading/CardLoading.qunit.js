@@ -5,16 +5,24 @@ sap.ui.define([
 		"sap/ui/integration/util/RequestDataProvider",
 		"sap/ui/core/Core",
 		"sap/ui/integration/util/LoadingProvider",
-		"sap/ui/integration/cards/BaseContent"
+		"sap/ui/integration/cards/BaseContent",
+		"sap/ui/integration/cards/Header",
+		"sap/ui/integration/cards/Filter",
+		"sap/ui/integration/library"
 	],
 	function (
 		Card,
 		RequestDataProvider,
 		Core,
 		LoadingProvider,
-		BaseContent
+		BaseContent,
+		Header,
+		Filter,
+		integrationLibrary
 	) {
 		"use strict";
+
+		var CardArea = integrationLibrary.CardArea;
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 
@@ -715,6 +723,46 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_All_Sections_Loading = {
+			"sap.app": {
+				"id": "test.card.loading.card16"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"filters": {
+						"f": {
+							"data": {
+								"request": {
+									"url": "./manifests/manifest.json"
+								}
+							}
+						}
+					}
+				},
+				"header": {
+					"data": {
+						"request": {
+							"url": "./manifests/manifest.json"
+						}
+					},
+					"title": "{some}"
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "./manifests/manifest.json"
+						}
+					},
+					"item": {
+						"title": {
+							"value": "{title}"
+						}
+					}
+				}
+			}
+		};
+
 		function isLoadingIndicatorShowingHeader(oManifest, oCard, bLoading, bExpectedTitle, bExpectedSubtitle, bExpectedAvatar, assert) {
 
 			// Arrange
@@ -729,8 +777,6 @@ sap.ui.define([
 						assert.strictEqual(oHeader._getTitle().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedTitle, "Title has no loading placeholder");
 						assert.strictEqual(oHeader._getSubtitle().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedSubtitle, "Subtitle has a loading placeholder");
 						assert.strictEqual(oHeader._getAvatar().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedAvatar, "Avatar has a loading placeholder");
-						oHeader._oLoadingProvider.removeHeaderPlaceholder(oHeader);
-						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), false, "On header level there no is a 'sapFCardHeaderLoading' CSS class");
 						done();
 					}
 				};
@@ -755,11 +801,9 @@ sap.ui.define([
 						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), bLoading, "On header level there is a 'sapFCardHeaderLoading' CSS class");
 						assert.strictEqual(oHeader._getTitle().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedTitle, "Title has no loading placeholder");
 						assert.strictEqual(oHeader._getSubtitle().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedSubtitle, "Subtitle has no loading placeholder");
-						assert.strictEqual(oHeader._getDetails().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedDetails, "Details has no loading placeholder");
-						assert.strictEqual(oHeader._getMainIndicator().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectMainIndicator, "Main indicator has no loading placeholder");
-						assert.strictEqual(oHeader.getSideIndicators()[0].getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectSideIndicator, "Side indicators has no loading placeholder");
-						oHeader._oLoadingProvider.removeHeaderPlaceholder(oHeader);
-						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), false, "On header level there no is a 'sapFCardHeaderLoading' CSS class");
+						assert.strictEqual(oHeader._getDetails().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedDetails,  "Details has no loading placeholder");
+						assert.strictEqual(oHeader._getMainIndicator().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectMainIndicator,  "Main indicator has no loading placeholder");
+						assert.strictEqual(oHeader.getSideIndicators()[0].getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectSideIndicator,  "Side indicators has no loading placeholder");
 						done();
 					}
 				};
@@ -780,6 +824,7 @@ sap.ui.define([
 				var oDelegate = {
 					onAfterRendering: function () {
 						oCard.removeEventDelegate(oDelegate);
+						Core.applyChanges();
 						var oContent = oCard.getCardContent();
 						if (oContent) {
 							assert.strictEqual(jQuery(sCSSClass).length > 0, bExpected, sMassage);
@@ -899,7 +944,7 @@ sap.ui.define([
 			isLoadingIndicatorShowingHeader(oManifest_CardCase2, this.oCard, true, false, true, true, assert);
 		});
 
-		QUnit.test("Default Header - No loading indicator should be present - card level request, json data on content level", function (assert) {
+		QUnit.test("Default Header - No loading indicator should be present - card level request, json data on header level", function (assert) {
 			isLoadingIndicatorShowingHeader(oManifest_CardCase3_No_Loading, this.oCard, false, false, true, true, assert);
 		});
 
@@ -984,6 +1029,79 @@ sap.ui.define([
 			isLoadingIndicatorShowingContentDataReady(oManifest_List_CardLevel_Error, this.oCard, "Error content is visible", true, ".sapFCardErrorContent", assert);
 		});
 
+		QUnit.module("Placeholders lifecycle", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					baseUrl: "test-resources/sap/ui/integration/qunit/"
+				});
+
+				this.oCard.setManifest(oManifest_All_Sections_Loading);
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Placeholders are shown when the data starts loading", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachManifestReady(function () {
+				var oDelegate = {
+					onAfterRendering: function () {
+						this.oCard.removeEventDelegate(oDelegate);
+
+						var oHeader = this.oCard.getCardHeader();
+						assert.strictEqual(oHeader.isLoading(), true, "Header is loading");
+						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), true, "Header is showing placeholders");
+
+						var oFilterBar = this.oCard.getAggregation("_filterBar");
+						oFilterBar.getItems().forEach(function (oFilter) {
+							assert.strictEqual(oFilter.isLoading(), true, "Filter is loading");
+							assert.strictEqual(oFilter.getDomRef().classList.contains("sapFCardFilterLoading"), true, "Filter is showing a placeholder");
+						});
+
+						var oContent = this.oCard.getCardContent();
+						assert.strictEqual(oContent.isLoading(), true, "Content is loading");
+						assert.notStrictEqual(oContent.getDomRef().querySelector(".sapFCardContentPlaceholder"), null, "Content is showing a placeholder");
+
+						done();
+					}
+				};
+				this.oCard.addEventDelegate(oDelegate, this);
+			}.bind(this));
+
+		});
+
+		QUnit.test("Placeholders are removed when the data loads", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+
+				var oHeader = this.oCard.getCardHeader();
+				assert.strictEqual(oHeader.isLoading(), false, "Header is not loading");
+				assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), false, "Header is not showing placeholders");
+
+				var oFilterBar = this.oCard.getAggregation("_filterBar");
+				oFilterBar.getItems().forEach(function (oFilter) {
+					assert.strictEqual(oFilter.isLoading(), false, "Filter is not loading");
+					assert.strictEqual(oFilter.getDomRef().classList.contains("sapFCardFilterLoading"), false, "Filter is not showing a placeholder");
+				});
+
+				var oContent = this.oCard.getCardContent();
+				assert.strictEqual(oContent.isLoading(), false, "Content is not loading");
+				assert.strictEqual(oContent.getDomRef().querySelector(".sapFCardContentPlaceholder"), null, "Content is not showing a placeholder");
+
+				assert.strictEqual(this.oCard.isLoading(), false, "Card is not loading");
+
+				// Cleanup
+				done();
+			}.bind(this));
+
+		});
+
 		QUnit.module("Loading Provider", {
 			beforeEach: function () {
 				this.oLoadingProvider = new LoadingProvider();
@@ -1053,4 +1171,137 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
+		QUnit.module("Card Loading Placeholder API", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					baseUrl: "test-resources/sap/ui/integration/qunit/"
+				});
+
+				// Act
+				this.oCard.setManifest(oManifest_All_Sections_Loading);
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Placeholders are toggled for individual sections of the card: showLoadingPlaceholders", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Arrange
+				var oSandbox = sinon.createSandbox(),
+					fnShowPlaceholderHeaderSpy = oSandbox.spy(Header.prototype, "showLoadingPlaceholders"),
+					fnShowPlaceholderFiltersSpy = oSandbox.spy(Filter.prototype, "showLoadingPlaceholders"),
+					fnShowPlaceholderContentSpy = oSandbox.spy(BaseContent.prototype, "showLoadingPlaceholders");
+
+				// Act
+				this.oCard.showLoadingPlaceholders();
+
+				setTimeout(function () {
+					// Assert
+					assert.strictEqual(fnShowPlaceholderHeaderSpy.called, true, "Header#showLoadingPlaceholders has been called internally");
+					assert.strictEqual(fnShowPlaceholderContentSpy.called, true, "BaseContent#showLoadingPlaceholders has been called internally");
+					assert.strictEqual(fnShowPlaceholderFiltersSpy.called, true, "Filter#showLoadingPlaceholders has been called internally");
+
+					// Clean-up
+					oSandbox.restore();
+					done();
+
+				}, 200);
+
+			}.bind(this));
+		});
+
+		QUnit.test("Placeholders are toggled for individual sections of the card: hideLoadingPlaceholders", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Arrange
+				var oSandbox = sinon.createSandbox(),
+					fnHidePlaceholderHeaderSpy = oSandbox.spy(Header.prototype, "hideLoadingPlaceholders"),
+					fnHidePlaceholderFiltersSpy = oSandbox.spy(Filter.prototype, "hideLoadingPlaceholders"),
+					fnHidePlaceholderContentSpy = oSandbox.spy(BaseContent.prototype, "hideLoadingPlaceholders");
+
+				// Act
+				this.oCard.hideLoadingPlaceholders();
+
+				setTimeout(function () {
+					// Assert
+					assert.strictEqual(fnHidePlaceholderHeaderSpy.called, true, "Header#hideLoadingPlaceholders has been called internally");
+					assert.strictEqual(fnHidePlaceholderContentSpy.called, true, "BaseContent#hideLoadingPlaceholders has been called internally");
+					assert.strictEqual(fnHidePlaceholderFiltersSpy.called, true, "Filter#hideLoadingPlaceholders has been called internally");
+
+					// Clean-up
+					oSandbox.restore();
+					done();
+
+				}, 200);
+
+			}.bind(this));
+		});
+
+		QUnit.test("Placeholders can be toggled separately for different sections of the card: showLoadingPlaceholders", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Arrange
+				var oSandbox = sinon.createSandbox(),
+					fnShowPlaceholderHeaderSpy = oSandbox.spy(Header.prototype, "showLoadingPlaceholders"),
+					fnShowPlaceholderFiltersSpy = oSandbox.spy(Filter.prototype, "showLoadingPlaceholders"),
+					fnShowPlaceholderContentSpy = oSandbox.spy(BaseContent.prototype, "showLoadingPlaceholders");
+
+				// Act
+				this.oCard.showLoadingPlaceholders(CardArea.Header);
+				this.oCard.showLoadingPlaceholders(CardArea.Content);
+
+				setTimeout(function () {
+					// Assert
+					assert.strictEqual(fnShowPlaceholderHeaderSpy.called, true, "Header#showLoadingPlaceholders has been called internally");
+					assert.strictEqual(fnShowPlaceholderContentSpy.called, true, "BaseContent#showLoadingPlaceholders has been called internally");
+					assert.strictEqual(fnShowPlaceholderFiltersSpy.called, false, "Filter#showLoadingPlaceholders has not been called internally");
+
+					// Clean-up
+					oSandbox.restore();
+					done();
+
+				}, 200);
+
+			}.bind(this));
+		});
+
+		QUnit.test("Placeholders can be toggled separately for different sections of the card: hideLoadingPlaceholders", function (assert) {
+			// Arrange
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Arrange
+				var oSandbox = sinon.createSandbox(),
+					fnHidePlaceholderHeaderSpy = oSandbox.spy(Header.prototype, "hideLoadingPlaceholders"),
+					fnHidePlaceholderFiltersSpy = oSandbox.spy(Filter.prototype, "hideLoadingPlaceholders"),
+					fnHidePlaceholderContentSpy = oSandbox.spy(BaseContent.prototype, "hideLoadingPlaceholders");
+
+				// Act
+				this.oCard.hideLoadingPlaceholders(CardArea.Header);
+				this.oCard.hideLoadingPlaceholders(CardArea.Content);
+
+				setTimeout(function () {
+					// Assert
+					assert.strictEqual(fnHidePlaceholderHeaderSpy.called, true, "Header#hideLoadingPlaceholders has been called internally");
+					assert.strictEqual(fnHidePlaceholderContentSpy.called, true, "BaseContent#hideLoadingPlaceholders has been called internally");
+					assert.strictEqual(fnHidePlaceholderFiltersSpy.called, false, "Filter#hideLoadingPlaceholders has not been called internally");
+
+					// Clean-up
+					oSandbox.restore();
+					done();
+
+				}, 200);
+
+			}.bind(this));
+		});
 	});

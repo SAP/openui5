@@ -47,7 +47,8 @@
 			},
 			"item": {
 				"title": "{cities>name}"
-			}
+			},
+			"maxItems": 4
 		}
 	}
 }

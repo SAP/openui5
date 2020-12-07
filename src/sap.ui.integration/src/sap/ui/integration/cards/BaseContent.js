@@ -49,6 +49,15 @@ sap.ui.define([
 				_content: {
 					multiple: false,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Defines the internally used LoadingProvider.
+				 */
+				_loadingProvider: {
+					type: "sap.ui.core.Element",
+					multiple: false,
+					visibility: "hidden"
 				}
 			},
 			associations: {
@@ -84,7 +93,7 @@ sap.ui.define([
 		this._awaitEvent("_dataReady");
 		this._awaitEvent("_actionContentReady");
 
-		this._oLoadingProvider = new LoadingProvider();
+		this.setAggregation("_loadingProvider", new LoadingProvider());
 	};
 
 	/**
@@ -122,11 +131,6 @@ sap.ui.define([
 		if (this._oActions) {
 			this._oActions.destroy();
 			this._oActions = null;
-		}
-
-		if (this._oLoadingProvider) {
-			this._oLoadingProvider.destroy();
-			this._oLoadingProvider = null;
 		}
 
 		if (this._oLoadingPlaceholder) {
@@ -181,7 +185,7 @@ sap.ui.define([
 			return this;
 		}
 
-		this._oLoadingPlaceholder = this._oLoadingProvider.createContentPlaceholder(oConfiguration, sType);
+		this._oLoadingPlaceholder = this.getAggregation("_loadingProvider").createContentPlaceholder(oConfiguration, sType);
 
 		this._setDataConfiguration(oConfiguration.data);
 
@@ -216,6 +220,8 @@ sap.ui.define([
 		if (this._oDataProviderFactory) {
 			this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 		}
+
+		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
 
 		if (oDataSettings.name) {
 			oModel = this.getModel(oDataSettings.name);
@@ -255,18 +261,72 @@ sap.ui.define([
 		}
 	};
 
-	BaseContent.prototype.destroyPlaceholder = function () {
-		var oContent =  this.getAggregation("_content");
-		if (oContent) {
-			//restore tab chain
-			oContent.removeStyleClass("sapFCardContentHidden");
+	/**
+	 * @protected
+	 */
+	BaseContent.prototype.onDataRequested = function () {
+		this.showLoadingPlaceholders();
+	};
+
+	/**
+	 * @protected
+	 */
+	BaseContent.prototype.onDataRequestComplete = function () {
+		this.fireEvent("_dataReady");
+		this.hideLoadingPlaceholders();
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	BaseContent.prototype.showLoadingPlaceholders = function () {
+		var oLoadingProvider = this.getAggregation("_loadingProvider");
+		if (oLoadingProvider) {
+			oLoadingProvider.setLoading(true);
 		}
 
-		if (this._oLoadingPlaceholder) {
-			this._oLoadingPlaceholder.destroy();
-			this._oLoadingPlaceholder = null;
+		this.hideContent();
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	BaseContent.prototype.hideLoadingPlaceholders = function () {
+		var oLoadingProvider = this.getAggregation("_loadingProvider");
+		if (oLoadingProvider) {
+			oLoadingProvider.setLoading(false);
+		}
+
+		this.showContent();
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	BaseContent.prototype.hideContent = function () {
+		var oContent = this.getAggregation("_content");
+
+		if (oContent) {
+			oContent.addStyleClass("sapFCardContentHidden");
 		}
 	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	BaseContent.prototype.showContent = function () {
+		var oContent = this.getAggregation("_content");
+
+		if (oContent) {
+			// restore tab chain
+			oContent.removeStyleClass("sapFCardContentHidden");
+		}
+	};
+
 
 	/**
 	 * Called when the data for the content was changed either by the content or by the card.
@@ -368,11 +428,11 @@ sap.ui.define([
 		return this;
 	};
 
-	BaseContent.prototype.isLoading  = function () {
-		var oLoadingProvider = this._oLoadingProvider,
+	BaseContent.prototype.isLoading = function () {
+		var oLoadingProvider = this.getAggregation("_loadingProvider"),
 			oCard = this.getCardInstance();
 
-		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || (oCard && oCard.isLoading()));
+		return !oLoadingProvider.isDataProviderJson() && (oLoadingProvider.getLoading() || (oCard && oCard.isLoading()));
 	};
 
 	BaseContent.prototype.attachPress = function () {
@@ -402,7 +462,7 @@ sap.ui.define([
 	 *
 	 * It's called before the request is sent.
 	 *
-	 * @param oFormData {object} Parameters
+	 * @param {object} oFormData Parameters
 	 */
 	BaseContent.prototype.onActionSubmitStart = function (oFormData) {
 	};
@@ -410,29 +470,12 @@ sap.ui.define([
 	/**
 	 * Callback after Submit Action
 	 *
-	 * It's called when the request completes- either successfully or not.
+	 * It's called when the request completes - either successfully or not.
 	 *
-	 * @param oResponse {object} The response from the server
-	 * @param oError {object} The error object
+	 * @param {object} oResponse The response from the server
+	 * @param {object} oError The error object
 	 */
 	BaseContent.prototype.onActionSubmitEnd = function (oResponse, oError) {
-	};
-
-	BaseContent.prototype.onDataRequested = function () {
-		if (this._oLoadingProvider) {
-			this._oLoadingProvider.createLoadingState(this._oDataProvider);
-		}
-	};
-
-	BaseContent.prototype.onDataRequestComplete = function () {
-		this.fireEvent("_dataReady");
-		this.destroyPlaceholder();
-
-		if (this._oLoadingProvider) {
-			this._oLoadingProvider.setLoading(false);
-		}
-
-		this.invalidate();
 	};
 
 	BaseContent.prototype.getCardInstance = function () {

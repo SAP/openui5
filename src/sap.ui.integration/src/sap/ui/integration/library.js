@@ -115,6 +115,31 @@ sap.ui.define([
 	};
 
 	/**
+	 * Defines the areas in a card.
+	 * @enum {string}
+	 * @public
+	 * @since 1.86
+	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.CardArea = {
+		/**
+		 * The header.
+		 * @public
+		 */
+		Header: "Header",
+		/**
+		 * The filters area.
+		 * @public
+		 */
+		Filters: "Filters",
+		/**
+		 * The content area.
+		 * @public
+		 */
+		Content: "Content"
+	};
+
+	/**
 	 * An object type that represents card menu action properties.
 	 * @typedef {Object}
 	 * @public

@@ -84,7 +84,11 @@ sap.ui.define([
 		},
 		metadata: {
 			library: "sap.ui.integration",
-			properties: {
+			aggregations: {
+				/**
+				 * The internally used LoadingProvider.
+				 */
+				_loadingProvider: { type: "sap.ui.core.Element", multiple: false, visibility: "hidden" }
 			}
 		},
 		renderer: FNumericHeaderRenderer
@@ -95,12 +99,11 @@ sap.ui.define([
 	 * @private
 	 */
 	NumericHeader.prototype.init = function () {
-
 		FNumericHeader.prototype.init.call(this);
 
 		this._bReady = false;
 
-		this._oLoadingProvider = new LoadingProvider();
+		this.setAggregation("_loadingProvider", new LoadingProvider());
 
 		this._aReadyPromises = [];
 
@@ -129,11 +132,6 @@ sap.ui.define([
 			this._oActions.destroy();
 			this._oActions = null;
 		}
-
-		if (this._oLoadingProvider) {
-			this._oLoadingProvider.destroy();
-			this._oLoadingProvider = null;
-		}
 	};
 
 
@@ -145,13 +143,12 @@ sap.ui.define([
 		return this._bReady;
 	};
 
-
 	NumericHeader.prototype.isLoading = function () {
-		var oLoadingProvider = this._oLoadingProvider,
+		var oLoadingProvider = this.getAggregation("_loadingProvider"),
 			oCard = this.getParent(),
-			cardLoading = oCard.getMetadata()._sClassName === 'sap.ui.integration.widgets.Card' ? oCard.isLoading() : false;
+			bCardLoading = oCard.isA("sap.ui.integration.widgets.Card") ? oCard.isLoading() : false;
 
-		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || cardLoading);
+		return !oLoadingProvider.isDataProviderJson() && (oLoadingProvider.getLoading() || bCardLoading);
 	};
 
 	/**
@@ -201,6 +198,8 @@ sap.ui.define([
 
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
+		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
+
 		if (oDataSettings && oDataSettings.name) {
 			oModel = this.getModel(oDataSettings.name);
 		} else if (this._oDataProvider) {
@@ -210,7 +209,7 @@ sap.ui.define([
 
 		if (this._oDataProvider) {
 			this._oDataProvider.attachDataRequested(function () {
-				this.onDataRequested();
+				this.showLoadingPlaceholders();
 			}.bind(this));
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
@@ -244,14 +243,25 @@ sap.ui.define([
 		}
 	};
 
-	NumericHeader.prototype.onDataRequested = function () {
-		this._oLoadingProvider.createLoadingState(this._oDataProvider);
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	NumericHeader.prototype.showLoadingPlaceholders = function () {
+		this.getAggregation("_loadingProvider").setLoading(true);
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	NumericHeader.prototype.hideLoadingPlaceholders = function () {
+		this.getAggregation("_loadingProvider").setLoading(false);
 	};
 
 	NumericHeader.prototype.onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
-		this._oLoadingProvider.setLoading(false);
-		this._oLoadingProvider.removeHeaderPlaceholder(this);
+		this.hideLoadingPlaceholders();
 	};
 
 	return NumericHeader;

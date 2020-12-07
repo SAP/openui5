@@ -29,7 +29,6 @@ sap.ui.define([
 	"sap/ui/integration/util/LoadingProvider",
 	"sap/ui/integration/util/HeaderFactory",
 	"sap/ui/integration/util/ContentFactory",
-	"sap/ui/integration/util/BindingHelper",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/ui/integration/util/FilterBarFactory",
@@ -62,7 +61,6 @@ sap.ui.define([
 	LoadingProvider,
 	HeaderFactory,
 	ContentFactory,
-	BindingHelper,
 	BindingResolver,
 	IconFormatter,
 	FilterBarFactory,
@@ -94,6 +92,8 @@ sap.ui.define([
 	var CardDataMode = library.CardDataMode;
 
 	var CARD_DESTROYED_ERROR = "Card is destroyed!";
+
+	var CardArea = library.CardArea;
 
 	/**
 	 * Constructor for a new <code>Card</code>.
@@ -278,6 +278,15 @@ sap.ui.define([
 					type: "sap.ui.integration.Extension",
 					multiple: false,
 					visibility: "hidden"
+				},
+
+				/**
+				 * Defines the internally used LoadingProvider.
+				 */
+				_loadingProvider: {
+					type: "sap.ui.core.Element",
+					multiple: false,
+					visibility: "hidden"
 				}
 			},
 			events: {
@@ -357,6 +366,7 @@ sap.ui.define([
 
 		CardBase.prototype.init.call(this);
 
+		this.setAggregation("_loadingProvider", new LoadingProvider());
 		this.setModel(new JSONModel(), "parameters");
 		this.setModel(new JSONModel(), "filters");
 		this.setModel(new ContextModel(), "context");
@@ -389,8 +399,24 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#destroyActionDefinition as destroyActionDefinition
 		 */
 		this._oLimitedInterface = new Interface(this, [
-			"getParameters", "getCombinedParameters", "getManifestEntry", "resolveDestination", "request", "showMessage", "getBaseUrl", "getTranslatedText", "getModel", "triggerAction",
-			"addActionDefinition", "removeActionDefinition", "insertActionDefinition", "getActionDefinition", "indexOfActionDefinition", "destroyActionDefinition"
+			"getParameters",
+			"getCombinedParameters",
+			"getManifestEntry",
+			"resolveDestination",
+			"request",
+			"showMessage",
+			"getBaseUrl",
+			"getTranslatedText",
+			"getModel",
+			"triggerAction",
+			"addActionDefinition",
+			"removeActionDefinition",
+			"insertActionDefinition",
+			"getActionDefinition",
+			"indexOfActionDefinition",
+			"destroyActionDefinition",
+			"showLoadingPlaceholders",
+			"hideLoadingPlaceholders"
 		]);
 	};
 
@@ -827,11 +853,6 @@ sap.ui.define([
 			this._oDataProvider = null;
 		}
 
-		if (this._oLoadingProvider) {
-			this._oLoadingProvider.destroy();
-			this._oLoadingProvider = null;
-		}
-
 		if (this._oTemporaryContent) {
 			this._oTemporaryContent.destroy();
 			this._oTemporaryContent = null;
@@ -1117,8 +1138,6 @@ sap.ui.define([
 
 		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations, oExtension, this);
 
-		this._oLoadingProvider = new LoadingProvider();
-
 		this._registerCustomModels();
 
 		if (oExtension) {
@@ -1177,6 +1196,8 @@ sap.ui.define([
 
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
+		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
+
 		if (oDataSettings.name) {
 			oModel = this.getModel(oDataSettings.name);
 		} else if (this._oDataProvider) {
@@ -1193,15 +1214,17 @@ sap.ui.define([
 			if (this._createContentPromise) {
 				this._createContentPromise.then(function (oContent) {
 					oContent.onDataChanged();
-				});
+					this.onDataRequestComplete();
+				}.bind(this));
+			} else {
+				this.onDataRequestComplete();
 			}
 
-			this.onDataRequestComplete();
 		}.bind(this));
 
 		if (this._oDataProvider) {
 			this._oDataProvider.attachDataRequested(function () {
-				this.onDataRequested();
+				this._showLoadingPlaceholders();
 			}.bind(this));
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
@@ -1217,28 +1240,6 @@ sap.ui.define([
 		} else {
 			this.fireEvent("_cardReady");
 		}
-	};
-
-	/**
-	 * Handles card loading.
-	 *
-	 * @private
-	 */
-	Card.prototype._handleCardLoading = function () {
-		var oContent = this.getCardContent();
-		if (oContent && !oContent.hasStyleClass("sapFCardErrorContent") && oContent._oLoadingPlaceholder) {
-			var oControlContent = oContent.getAggregation("_content");
-			if (oControlContent) {
-				//restore tab chain
-				oControlContent.removeStyleClass("sapFCardContentHidden");
-			}
-			oContent._oLoadingPlaceholder.destroy();
-		}
-
-		if (this._oLoadingProvider) {
-			this._oLoadingProvider.removeHeaderPlaceholder(this.getCardHeader());
-		}
-		this._oLoadingProvider.setLoading(false);
 	};
 
 	/**
@@ -1473,6 +1474,10 @@ sap.ui.define([
 	 * @param {sap.ui.integration.cards.BaseContent} oContent The card content instance to be configured.
 	 */
 	Card.prototype._setCardContent = function (oContent) {
+		if (this._bShowContentLoadingPlaceholders) {
+			oContent.showLoadingPlaceholders();
+			this._bShowContentLoadingPlaceholders = false;
+		}
 
 		oContent.attachEvent("_error", function (oEvent) {
 			this._handleError(oEvent.getParameter("logMessage"), oEvent.getParameter("displayMessage"));
@@ -1499,9 +1504,8 @@ sap.ui.define([
 		}
 	};
 
-
 	/**
-	 * Sets a temporary content that will show a busy indicator while the actual content is loading.
+	 * Sets a temporary content that will show a loading placeholder while the actual content is loading.
 	 */
 	Card.prototype._setTemporaryContent = function (sCardType, oContentManifest) {
 
@@ -1580,9 +1584,10 @@ sap.ui.define([
 	};
 
 	Card.prototype._getTemporaryContent = function (sCardType, oContentManifest) {
+		var oLoadingProvider = this.getAggregation("_loadingProvider");
 
-		if (!this._oTemporaryContent && this._oLoadingProvider) {
-			this._oTemporaryContent = this._oLoadingProvider.createContentPlaceholder(oContentManifest, sCardType);
+		if (!this._oTemporaryContent && oLoadingProvider) {
+			this._oTemporaryContent = oLoadingProvider.createContentPlaceholder(oContentManifest, sCardType);
 
 			this._oTemporaryContent.addEventDelegate({
 				onAfterRendering: function () {
@@ -1693,12 +1698,106 @@ sap.ui.define([
 	};
 
 	/**
+	 * Displays the loading placeholders on the whole card, or a particular area of the card.
+	 * <b>Note:</b> Only areas that contain binding will receive a loading placeholder.
+	 *
+	 * @public
+	 * @param {sap.ui.integration.CardArea} [eCardArea] Area of the card to show the loading placeholders on. Possible options are 'Header', 'Content', 'Filters'. Leave empty to show loading placeholders on all areas of the card.
+	 */
+	Card.prototype.showLoadingPlaceholders = function (eCardArea) {
+		var oArea;
+
+		switch (eCardArea) {
+			case CardArea.Header:
+				oArea = this.getCardHeader();
+				if (oArea) {
+					oArea.showLoadingPlaceholders();
+				}
+				break;
+
+			case CardArea.Filters:
+				oArea = this.getAggregation("_filterBar");
+				if (oArea) {
+					oArea.getItems().forEach(function (oFilter) {
+						oFilter.showLoadingPlaceholders();
+					});
+				}
+				break;
+
+			case CardArea.Content:
+				if (this._createContentPromise) {
+					this._createContentPromise.then(function (oContent) {
+						oContent.showLoadingPlaceholders();
+					});
+				} else {
+					this._bShowContentLoadingPlaceholders = true;
+				}
+				break;
+
+			default:
+				this.showLoadingPlaceholders(CardArea.Header);
+				this.showLoadingPlaceholders(CardArea.Filters);
+				this.showLoadingPlaceholders(CardArea.Content);
+				this.getAggregation("_loadingProvider").setLoading(true);
+		}
+
+		return this;
+	};
+
+	/**
+	 * Hides the loading placeholders on the whole card, or a particular section of the card.
+	 * @public
+	 * @param {sap.ui.integration.CardArea} [eCardArea] Area of the card to show the loading placeholders on. Possible options are 'Header', 'Content', 'Filters'. Leave empty to hide loading placeholders on all areas of the card.
+	 */
+	Card.prototype.hideLoadingPlaceholders = function (eCardArea) {
+		var oArea;
+
+		switch (eCardArea) {
+			case CardArea.Header:
+				oArea = this.getCardHeader();
+				if (oArea) {
+					oArea.hideLoadingPlaceholders();
+				}
+				break;
+
+			case CardArea.Filters:
+				oArea = this.getAggregation("_filterBar");
+				if (oArea) {
+					oArea.getItems().forEach(function (oFilter) {
+						oFilter.hideLoadingPlaceholders();
+					});
+				}
+				break;
+
+			case CardArea.Content:
+				if (this._createContentPromise) {
+					this._createContentPromise.then(function (oContent) {
+						oContent.hideLoadingPlaceholders();
+					});
+				} else {
+					this._bShowContentLoadingPlaceholders = false;
+				}
+				break;
+
+			default:
+				this.hideLoadingPlaceholders(CardArea.Header);
+				this.hideLoadingPlaceholders(CardArea.Filters);
+				this.hideLoadingPlaceholders(CardArea.Content);
+				this.getAggregation("_loadingProvider").setLoading(false);
+		}
+
+		return this;
+	};
+
+	/**
 	 * Decides if the card needs a loading placeholder based on card level data provider
 	 *
 	 * @returns {Boolean} Should card has a loading placeholder based on card level data provider.
 	 */
 	Card.prototype.isLoading = function () {
-		return this._oLoadingProvider ? this._oLoadingProvider.getLoadingState() : false;
+		var oLoadingProvider = this.getAggregation("_loadingProvider");
+
+		return oLoadingProvider ? oLoadingProvider.getLoading() : false;
 	};
 
 	/**
@@ -1717,16 +1816,13 @@ sap.ui.define([
 		return this.getDomRef();
 	};
 
-	Card.prototype.onDataRequested = function () {
-		this._oLoadingProvider.createLoadingState(this._oDataProvider);
+	Card.prototype._showLoadingPlaceholders = function () {
+		this.getAggregation("_loadingProvider").setLoading(true);
 	};
 
 	Card.prototype.onDataRequestComplete = function () {
 		this.fireEvent("_cardReady");
-		this._handleCardLoading();
-		this._oLoadingProvider.setLoading(false);
-
-		this.invalidate();
+		this.hideLoadingPlaceholders();
 	};
 
 	/**

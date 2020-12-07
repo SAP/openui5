@@ -116,19 +116,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
-	 */
-	ListContent.prototype.destroyPlaceholder = function () {
-		var oLegend = this.getAggregation("_legend");
-
-		if (oLegend) {
-			oLegend.removeStyleClass("sapFCardContentHidden");
-		}
-
-		BaseListContent.prototype.destroyPlaceholder.apply(this, arguments);
-	};
-
-	/**
 	 * Setter for configuring a <code>sap.ui.integration.cards.ListContent</code>.
 	 *
 	 * @public
@@ -159,6 +146,31 @@ sap.ui.define([
 	 */
 	ListContent.prototype.onDataChanged = function () {
 		this._checkHiddenNavigationItems(this.getConfiguration().item);
+	};
+
+	/**
+	 * @override
+	 */
+	ListContent.prototype.hideContent = function () {
+		BaseListContent.prototype.hideContent.call(this);
+
+		var oLegend = this.getAggregation("_legend");
+		if (oLegend) {
+			oLegend.addStyleClass("sapFCardContentHidden");
+		}
+	};
+
+	/**
+	 * @override
+	 */
+	ListContent.prototype.showContent = function () {
+		BaseListContent.prototype.showContent.apply(this, arguments);
+
+		var oLegend = this.getAggregation("_legend");
+
+		if (oLegend) {
+			oLegend.removeStyleClass("sapFCardContentHidden");
+		}
 	};
 
 	/**

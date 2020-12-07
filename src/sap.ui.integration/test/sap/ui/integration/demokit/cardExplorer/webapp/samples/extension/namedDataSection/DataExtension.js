@@ -21,8 +21,11 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 		var oData = this._getRandomCities(),
 			oCard = this.getCard();
 
+		oCard.showLoadingPlaceholders();
+
 		setTimeout(function () {
 			oCard.getModel("cities").setProperty("/", oData);
+			oCard.hideLoadingPlaceholders();
 		}, 2000); // simulate loading delay
 	};
 

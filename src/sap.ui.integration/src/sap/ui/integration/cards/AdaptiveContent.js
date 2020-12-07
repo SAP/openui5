@@ -63,7 +63,7 @@ sap.ui.define([
 			this.setComponentsReady(false);
 			this._bAdaptiveCardElementsReady = false;
 			this._setupCardContent();
-			this._oLoadingProvider = new LoadingProvider();
+			this.setAggregation("_loadingProvider", new LoadingProvider());
 		};
 
 		AdaptiveContent.prototype.onAfterRendering = function () {
@@ -416,8 +416,8 @@ sap.ui.define([
 
 			// Аttaches the data with the card template
 			this._oCardTemplate = this._setTemplating(this._oCardConfig, oData);
-			// Marks the loading as finished manually, because _handleCardLoading() is called too early in this case
-			this._oLoadingProvider.setLoading(false);
+			// Marks the loading as finished manually, because hideLoadingPlaceholders() is called too early in this case
+			this.getAggregation("_loadingProvider").setLoading(false);
 			// Re-renders the card with the new data
 			this.invalidate();
 		};
