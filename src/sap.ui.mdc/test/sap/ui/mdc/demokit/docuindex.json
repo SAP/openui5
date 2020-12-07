@@ -20,7 +20,7 @@
 					"sap.ui.mdc.sample.GridTable",
 					"sap.ui.mdc.sample.TableStateHandling",
 					"sap.ui.mdc.sample.TableFilter",
-					"sap.ui.mdc.sample.V4AnalyticsTableDemo"
+					"sap.ui.mdc.sample.V4Analytics"
 				]
 			}
 		],
@@ -28,23 +28,23 @@
 			{
 				"id": "sap.ui.mdc.sample.ResponsiveTable",
 				"name": "ResponsiveTable",
-				"description": "Basic example with ResponsiveTable"
+				"description": "Basic example with table type 'ResponsiveTable'"
 			}, {
 				"id": "sap.ui.mdc.sample.GridTable",
 				"name": "GridTable",
-				"description": "Basic example with GridTable"
+				"description": "Basic example with table type 'GridTable'"
 			}, {
 				"id": "sap.ui.mdc.sample.TableStateHandling",
-				"name": "TableStateHandling",
-				"description": "Basic example of State Handling"
+				"name": "State handling",
+				"description": "Basic example of state handling"
 			}, {
 				"id": "sap.ui.mdc.sample.TableFilter",
-				"name": "TableFilter",
-				"description": "Basic example with Filter"
+				"name": "Filter",
+				"description": "Basic example with a filter bar"
 			}, {
-				"id": "sap.ui.mdc.sample.V4AnalyticsTableDemo",
-				"name": "V4AnalyticsTableDemo",
-				"description": "Demo example for Analytics"
+				"id": "sap.ui.mdc.sample.V4Analytics",
+				"name": "OData V4",
+				"description": "OData V4 with analytical capabilities like grouping and totals"
 			}
 		]
 	}

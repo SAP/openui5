@@ -5,7 +5,7 @@ sap.ui.define([
 ], function(UIComponent) {
 	"use strict";
 
-	return UIComponent.extend("sap.ui.mdc.sample.V4AnalyticsTableDemo.Component", {
+	return UIComponent.extend("sap.ui.mdc.sample.V4Analytics.Component", {
 		metadata: {
 			manifest: "json"
 		},

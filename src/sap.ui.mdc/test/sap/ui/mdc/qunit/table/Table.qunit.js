@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/mdc/table/Column",
 	"sap/ui/mdc/table/GridTableType",
 	"sap/ui/mdc/table/ResponsiveTableType",
-	"sap/ui/mdc/table/V4AnalyticsTableType",
 	"sap/ui/mdc/FilterBar",
 	"sap/m/Text",
 	"sap/m/Button",
@@ -39,7 +38,6 @@ sap.ui.define([
 	Column,
 	GridTableType,
 	ResponsiveTableType,
-	V4AnalyticsTableType,
 	FilterBar,
 	Text,
 	Button,
@@ -743,61 +741,6 @@ sap.ui.define([
 					assert.ok(!this.oTable._oTemplate);
 					assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
 					assert.equal(this.oTable._oTable.getThreshold(), this.oTable.getThreshold());
-					done();
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
-	});
-
-	// Switch table type to V4AnalyticsTableType
-	QUnit.test("Switch table type to V4AnalyticsTableType", function(assert) {
-		var done = assert.async(), fInnerTableDestroySpy, fInnerTemplateDestroySpy, fRowModeDestroySpy;
-
-		// Switch table immediately to Responsive table to switch it later to V4Analytics Table
-		this.oTable.setType("ResponsiveTable");
-
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable.isA("sap.m.Table"));
-			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
-			fInnerTemplateDestroySpy = sinon.spy(this.oTable._oTemplate, "destroy");
-
-			// Switch table to V4Analytics Table
-			this.oTable.setType(new V4AnalyticsTableType({}));
-			assert.ok(fInnerTableDestroySpy.calledOnce);
-			assert.ok(fInnerTemplateDestroySpy.calledOnce);
-
-			this.oTable.initialized().then(function() {
-				assert.ok(this.oTable._oTable);
-				assert.ok(!this.oTable._oTemplate);
-
-				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
-
-				// Check that the table is V4 Analytics Table that is Grid Table
-				assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-				var that = this;
-				assert.equal(that.oTable._oTable.getDependents().length, 1, "Plugin available");
-				assert.ok(that.oTable._oTable.getDependents()[0].isA("sap.ui.table.plugins.V4Aggregation"), "Plugin is a V4 Plugin");
-				fRowModeDestroySpy = sinon.spy(this.oTable._oTable.getRowMode(), "destroy");
-
-				// Setting same table type only updates properties
-				this.oTable.setType(new V4AnalyticsTableType({
-					rowCountMode: "Fixed"
-				}));
-				assert.ok(fInnerTableDestroySpy.notCalled);
-				assert.ok(fRowModeDestroySpy.calledOnce);
-				// inner table is updated
-				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.FixedRowMode"), "The inner Table has a fixed row mode");
-				assert.equal(this.oTable._oTable.getRowMode().getRowCount(), 10);
-
-				this.oTable.setType("Table");
-
-				// changing type leads to a destroy call
-				assert.ok(fInnerTableDestroySpy.calledOnce);
-				assert.ok(fInnerTemplateDestroySpy.calledOnce);
-				this.oTable.initialized().then(function() {
-					assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-					var that = this;
-					assert.equal(that.oTable._oTable.getDependents().length, 0, "Plugin V4Aggregation is not available");
 					done();
 				}.bind(this));
 			}.bind(this));

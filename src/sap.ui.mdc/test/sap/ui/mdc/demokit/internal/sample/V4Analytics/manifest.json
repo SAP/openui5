@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "sap.ui.mdc.sample.V4AnalyticsTableDemo",
+		"id": "sap.ui.mdc.sample.V4Analytics",
 		"type": "application",
 		"applicationVersion": {
 			"version": "1.0.0"
@@ -8,7 +8,7 @@
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.ui.mdc.sample.V4AnalyticsTableDemo.View",
+			"viewName": "sap.ui.mdc.sample.V4Analytics.View",
 			"type": "XML",
 			"async": true
 		},
@@ -27,7 +27,7 @@
 					"View.controller.js",
 					"Component.js",
 					"manifest.json",
-					"../AnalyticsTableDelegate.js"
+					"TableDelegate.js"
 				]
 			}
 		}

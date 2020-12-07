@@ -3,7 +3,7 @@
  */
 
 sap.ui.define([
-	'sap/ui/mdc/odata/v4/TableDelegateDemo',
+	'sap/ui/mdc/odata/v4/TableDelegate',
 	'sap/ui/mdc/odata/v4/ODataMetaModelUtil',
 	'sap/ui/mdc/odata/TypeUtil',
 	'sap/ui/mdc/table/Column',
@@ -28,7 +28,7 @@ sap.ui.define([
 	 * @private
 	 * @experimental
 	 * @since 1.86
-	 * @alias sap.ui.mdc.sample.AnalyticsTableDelegate
+	 * @alias sap.ui.mdc.sample.V4Analytics.TableDelegate
 	*/
 	var AnalyticsTableDelegate = Object.assign({}, TableDelegate);
 

@@ -12,7 +12,6 @@
 			var uriParams = jQuery.sap.getUriParameters(), bRTA = uriParams.get("rta"), filter = uriParams.get("filter"), sUrl = "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/", view = uriParams.get("view") ? uriParams.get("view") : "Table", tableViewName = {
 				"ResponsiveTable": "Table",
 				"Table": "GridTable",
-				"V4AnalyticsTable": "V4AnalyticsTable",
 				"WithFilter": "TableWithFilter",
 				"State": "TableStateHandling"
 			}, mModelOptions = {

@@ -29,8 +29,8 @@
 					if (sPathname === "testsuite") {
 						sBaseUrl += "documentation.html"
 					}
-					window.open(sBaseUrl + "#/entity/sap.ui.mdc.sample.Table/sample/sap.ui.mdc.sample."
-							+ oEvent.getParameter("listItem").getCells()[0].getText());
+					var sSampleId = oEvent.getParameter("listItem").getBindingContext().getProperty("id");
+					window.open(sBaseUrl + "#/entity/sap.ui.mdc.sample.Table/sample/" + sSampleId);
 				},
 				columns: [
 					new sap.m.Column({
