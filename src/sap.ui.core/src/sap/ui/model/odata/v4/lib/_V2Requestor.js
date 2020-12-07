@@ -651,7 +651,7 @@ sap.ui.define([
 			mSelects = {},
 			that = this;
 
-		/**
+		/*
 		 * Strips all selects to their first segment and adds them to mSelects.
 		 *
 		 * @param {string|string[]} vSelects The selects for the given expand path as
@@ -674,7 +674,7 @@ sap.ui.define([
 			});
 		}
 
-		/**
+		/*
 		 * Converts the V4 $expand options to flat V2 $expand and $select structure.
 		 *
 		 * @param {string[]} aExpands The resulting list of $expand paths

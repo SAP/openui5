@@ -182,7 +182,7 @@ sap.ui.define([
 	function getOrFetchSchema(oMetaModel, mScope, sSchema, fnLog) {
 		var oPromise, sUrl, aUrls, mUrls;
 
-		/**
+		/*
 		 * Include the schema (and all of its children) with namespace <code>sSchema</code> from
 		 * the given referenced scope.
 		 *
@@ -1821,7 +1821,7 @@ sap.ui.define([
 		var that = this,
 			oValueListMetaModel = oValueListModel.getMetaModel();
 
-		/**
+		/*
 		 * Determines the annotation target for the specific overload.
 		 *
 		 * @returns {string} The annotation target

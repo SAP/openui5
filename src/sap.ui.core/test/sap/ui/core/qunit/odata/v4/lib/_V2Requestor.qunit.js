@@ -848,7 +848,7 @@ sap.ui.define([
 		var sTitle = "doConvertSystemQueryOptions (V2): " + i + ", mQueryOptions"
 				+ JSON.stringify(oFixture.queryOptions);
 
-		/**
+		/*
 		 * Executes the test for doConvertSystemQueryOptions.
 		 *
 		 * @param {string} sCurrentTitle The test title

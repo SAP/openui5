@@ -1046,7 +1046,7 @@ sap.ui.define([
 			 * @returns {Promise} A promise on the array of batch responses
 			 */
 			function checkBatch(aRequests) {
-				/**
+				/*
 				 * Processes a request or a change set within a batch/change set.
 				 * @param {number} iChangeSetNo Number of the change set in the current batch
 				 *   starting with 1; a value of 0 indicates that the request is not part of a

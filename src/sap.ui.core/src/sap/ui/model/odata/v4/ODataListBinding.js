@@ -1272,7 +1272,7 @@ sap.ui.define([
 	ODataListBinding.prototype.fetchFilter = function (oContext, sStaticFilter) {
 		var oCombinedFilter, aFilters, oMetaModel, oMetaContext;
 
-		/**
+		/*
 		 * Returns the $filter value for the given single filter using the given Edm type to
 		 * format the filter's operand(s).
 		 *
@@ -1324,7 +1324,7 @@ sap.ui.define([
 			return sFilter;
 		}
 
-		/**
+		/*
 		 * Fetches the $filter value for the given filter.
 		 * @param {sap.ui.model.Filter} oFilter The filter
 		 * @param {object} mLambdaVariableToPath The map from lambda variable to full path
@@ -1384,7 +1384,7 @@ sap.ui.define([
 			});
 		}
 
-		/**
+		/*
 		 * Replaces an optional lambda variable in the first segment of the given path by the
 		 * correct path.
 		 *
@@ -1399,7 +1399,7 @@ sap.ui.define([
 			return aSegments[0] ? aSegments.join("/") : sPath;
 		}
 
-		/**
+		/*
 		 * Wraps the filter string in round brackets if requested.
 		 *
 		 * @param {string} sFilter The filter string
@@ -2267,7 +2267,7 @@ sap.ui.define([
 				that.fireDataRequested();
 			}
 
-			/**
+			/*
 			 * Removes this context from the list bindings collection as it no longer matches the
 			 * filter criteria, see
 			 * {@link sap.ui.model.odata.v4.lib._Cache#refreshSingleWithRemove}.
