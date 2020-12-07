@@ -1,0 +1,8 @@
+<mvc:View controllerName="sap.m.sample.Menu.Page"
+		height="100%"
+		xmlns:mvc="sap.ui.core.mvc"
+		xmlns="sap.m">
+	<VBox class="sapUiSmallMargin">
+		<Button id="button" text="Open Menu" press="onPress"/>
+	</VBox>
+</mvc:View>

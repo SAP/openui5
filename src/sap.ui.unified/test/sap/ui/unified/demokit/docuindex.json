@@ -10,7 +10,7 @@
 		"entities": [
 			{
 				"id": "sap.ui.unified.Menu",
-				"name": "Menu",
+				"name": "Menu (sap.ui.unified)",
 				"category": "Action",
 				"since": "1.22",
 				"samples": [
