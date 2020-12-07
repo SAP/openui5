@@ -17,7 +17,22 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	return Controller.extend("sap.ui.mdc.sample.V4AnalyticsTableDemo.View", {
+	function isLocalhost() {
+		return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+	}
+
+	return Controller.extend("sap.ui.mdc.sample.V4Analytics.View", {
+		onInit: function() {
+			if (isLocalhost()) {
+				var mSettings = JSON.parse(window.localStorage.getItem("settings"));
+
+				if (mSettings) {
+					this.byId("serviceUrl").setValue(mSettings.serviceUrl);
+					this.byId("collectionName").setValue(mSettings.collectionName);
+					this.byId("initiallyVisibleProperties").setValue(mSettings.initiallyVisibleProperties);
+				}
+			}
+		},
 
 		onRefresh: function() {
 
@@ -29,17 +44,27 @@ sap.ui.define([
 				oOldTable.destroy();
 			}
 
-			var sServiceUrl = this.byId("serviceUrl").getValue(),
-				sCollectionName = this.byId("collectionName").getValue(),
-				sInitiallyVisibleProperties = this.byId("initaillyVisibleProperties").getValue();
+			var sServiceUrl = this.byId("serviceUrl").getValue().trim(),
+				sCollectionName = this.byId("collectionName").getValue().trim(),
+				sInitiallyVisibleProperties = this.byId("initiallyVisibleProperties").getValue().trim();
 
 			if (!sServiceUrl || !sCollectionName || !sInitiallyVisibleProperties) {
 				MessageBox.error("Please provide the required Service URL, Collection name & Initially visible properties");
 				return;
 			}
 
-			var sProxyServiceUrl = "./proxy/" + sServiceUrl.replace("://", "/"),
-				aInitiallyVisibleProperties = sInitiallyVisibleProperties.split(",");
+			if (isLocalhost()) {
+				window.localStorage.setItem("settings", JSON.stringify({
+					serviceUrl: sServiceUrl,
+					collectionName: sCollectionName,
+					initiallyVisibleProperties: sInitiallyVisibleProperties
+				}));
+			}
+
+			var sProxyServiceUrl = "./proxy/" + sServiceUrl.replace("://", "/");
+			var aInitiallyVisibleProperties = sInitiallyVisibleProperties.split(",").map(function(sProperty) {
+				return sProperty.trim();
+			});
 
 			this.createTable(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties).then(function(oTable) {
 				oVBox.addItem(oTable);
@@ -54,7 +79,7 @@ sap.ui.define([
 				p13nMode: ["Column", "Filter", "Sort"],
 				noDataText: "This text is shown when no data is present in the table",
 				delegate: {
-					name: "sap/ui/mdc/sample/AnalyticsTableDelegate",
+					name: "sap/ui/mdc/sample/V4Analytics/TableDelegate",
 					payload: {
 						collectionName: sCollectionName
 					}

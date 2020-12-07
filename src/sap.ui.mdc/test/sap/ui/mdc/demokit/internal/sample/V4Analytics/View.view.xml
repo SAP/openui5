@@ -6,11 +6,11 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:variants="sap.ui.fl.variants"
 		xmlns:unified="sap.ui.unified"
-		controllerName="sap.ui.mdc.sample.V4AnalyticsTableDemo.View">
+		controllerName="sap.ui.mdc.sample.V4Analytics.View">
 	<OverflowToolbar>
 		<Input id="serviceUrl" placeholder="Service URL" width="30%"/>
 		<Input id="collectionName" placeholder="Collection name" width="20%"/>
-		<Input id="initaillyVisibleProperties" placeholder="Comma(,) separated initially visible property names without spaces" width="40%"/>
+		<Input id="initiallyVisibleProperties" placeholder="Comma(,) separated initially visible property names" width="40%"/>
 		<ToolbarSpacer/>
 		<OverflowToolbarButton icon="sap-icon://restart" tooltip="Refresh" text="Refresh" press=".onRefresh" />
 	</OverflowToolbar>

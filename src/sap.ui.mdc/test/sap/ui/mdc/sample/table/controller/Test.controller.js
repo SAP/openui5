@@ -2,11 +2,10 @@ sap.ui.define([
 	'sap/ui/core/mvc/Controller',
 	'sap/ui/mdc/table/ResponsiveTableType',
 	'sap/ui/mdc/table/RowSettings',
-	'sap/ui/mdc/table/V4AnalyticsTableType',
 	'sap/ui/mdc/p13n/StateUtil',
 	'sap/m/MessageBox',
 	'sap/m/MessageToast'
-], function(Controller, ResponsiveTableType, RowSettings, V4AnalyticsTableType, StateUtil, MessageBox, MessageToast) {
+], function(Controller, ResponsiveTableType, RowSettings, StateUtil, MessageBox, MessageToast) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.sample.table.controller.Test", {
@@ -94,11 +93,6 @@ sap.ui.define([
 		switchToNonGrowingResponsiveTable: function() {
 			sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType(new ResponsiveTableType({
 				growingMode: 'None'
-			}));
-		},
-
-		setV4AnalyticsTable: function() {
-			sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType(new V4AnalyticsTableType({
 			}));
 		},
 

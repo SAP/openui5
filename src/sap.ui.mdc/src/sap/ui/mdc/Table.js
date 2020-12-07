@@ -7,7 +7,6 @@ sap.ui.define([
 	"./ActionToolbar",
 	"./table/TableSettings",
 	"./table/GridTableType",
-	"./table/V4AnalyticsTableType",
 	"./table/ResponsiveTableType",
 	"./table/PropertyHelper",
 	"./mixin/FilterIntegrationMixin",
@@ -34,7 +33,6 @@ sap.ui.define([
 	ActionToolbar,
 	TableSettings,
 	GridTableType,
-	V4AnalyticsTableType,
 	ResponsiveTableType,
 	PropertyHelper,
 	FilterIntegrationMixin,
@@ -588,8 +586,6 @@ sap.ui.define([
 		} else if (typeof oType === "object") {
 			if (oType.isA("sap.ui.mdc.table.ResponsiveTableType")) {
 				sType = TableType.ResponsiveTable;
-			} else if (oType.isA("sap.ui.mdc.table.V4AnalyticsTableType")) {
-				sType =  "V4AnalyticsTable"; //TableType.V4AnalyticsTable;
 			} else {
 				sType = TableType.Table;
 			}
@@ -604,8 +600,6 @@ sap.ui.define([
 		} else {
 			if (oType === "ResponsiveTable") {
 				oType = ResponsiveTableType;
-			} else if (oType === "V4AnalyticsTable") {
-				oType = V4AnalyticsTableType;
 			} else {
 				oType = GridTableType;
 			}
@@ -1033,8 +1027,6 @@ sap.ui.define([
 		// We also can use here static map instead of if else in the future
 		if (sType === "ResponsiveTable") {
 			oType = ResponsiveTableType;
-		} else if (sType === "V4AnalyticsTable") {
-			oType = V4AnalyticsTableType;
 		} else {
 			oType = GridTableType;
 		}
