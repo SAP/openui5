@@ -47,7 +47,7 @@
 				<items>
 					<Tokenizer id="VHPTokenizer" class="sapMdcTokenizer" width="100%"
 						visible="{path: '$this>/showTokenizer'}"
-						tokenUpdate="_handleTokenUpdate"
+						tokenDelete="_handleTokenDelete"
 						tokens="{path: '$this>/conditions', filters:[{path:'isEmpty', operator:'NE', value1:true}], templateShareable: false}">
 						<Token id="VHPToken" text="{path: '$this>', type: 'sap.ui.mdc.field.ConditionType'}"/>
 						<layoutData>

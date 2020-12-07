@@ -188,7 +188,7 @@ sap.ui.define([
 
 		// remove the token from the Tokenizer
 		var oToken = oValueHelpPanel._oTokenizer.getTokens()[0];
-		oValueHelpPanel._oTokenizer.fireTokenUpdate({ type: "removed", removedTokens: [oToken] });
+		oValueHelpPanel._oTokenizer.fireTokenDelete({ tokens: [oToken] });
 		assert.equal(oConditionModel.getConditions("Quantity").length, 0, "ConditionModel should be empty");
 
 		oDataType.destroy();
