@@ -101,6 +101,9 @@ function(
 
 		/* Internal helper function */
 		function _setBarClass(oBar) {
+			if (!oBar || !oBar.removeStyleClass || !oBar.addStyleClass) {
+				return;
+			}
 			// first removes and then adds alignment class (if needed)
 			oBar.removeStyleClass("sapMBarTitleStart");
 			if (sControlAlignment === TitleAlignment.Start) {
@@ -155,10 +158,10 @@ function(
 
 		var fnExit = oControlPrototype.exit;
 		oControlPrototype.exit = function (sId) {
-			var res = fnExit.apply(this, arguments);
 			this._detachTitleAlignmentEventDelegate();
 			delete this._oTitleAlignmentBarInstances;
-			return res;
+
+			return fnExit.apply(this, arguments);
 		};
 	};
 
