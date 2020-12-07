@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/base/util/includes",
 	"sap/base/util/restricted/_debounce",
 	"sap/ui/thirdparty/sinon-4"
-],
-function (
+], function(
 	jQuery,
 	ManagedObject,
 	DesignTime,
@@ -43,6 +42,10 @@ function (
 	var sStretchStyleClass = Stretch.STRETCHSTYLECLASS;
 
 	function isStretched(oOverlay) {
+		var oElement = oOverlay.getElement();
+		if (oElement.hasStyleClass) {
+			return oElement.hasStyleClass(sStretchStyleClass);
+		}
 		return oOverlay.getAssociatedDomRef().hasClass(sStretchStyleClass);
 	}
 
@@ -153,38 +156,22 @@ function (
 		});
 
 		QUnit.test("when the controls get rerendered", function(assert) {
-			var done = assert.async();
-			var bLayout;
-			var bVBox1;
-			var bVBox2;
-
-			this.oObserver = new MutationObserver(function(aMutations) {
-				aMutations.forEach(function(oMutation) {
-					if (oMutation.target === this.oLayout.getDomRef() && oMutation.attributeName === "class") {
-						assert.ok(isStretched(this.oLayoutOverlay), "the style class was set");
-						bLayout = true;
-					}
-					if (oMutation.target === this.oVBox1.getDomRef() && oMutation.attributeName === "class") {
-						assert.ok(isStretched(this.oVBoxOverlay1), "the style class was set");
-						bVBox1 = true;
-					}
-					if (oMutation.target === this.oVBox2.getDomRef() && oMutation.attributeName === "class") {
-						assert.ok(isStretched(this.oVBoxOverlay2), "the style class was set");
-						bVBox2 = true;
-					}
-				}.bind(this));
-
-				if (bLayout && bVBox1 && bVBox2) {
-					this.oObserver.disconnect();
-					delete this.oObserver;
-					done();
-				}
-			}.bind(this));
-			var oConfig = { attributes: true, childList: false, characterData: false, subtree : true};
-			this.oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
-
 			this.oLayout.getParent().invalidate();
 			sap.ui.getCore().applyChanges();
+
+			assert.ok(isStretched(this.oLayoutOverlay), "the style class is still set");
+			assert.ok(isStretched(this.oVBoxOverlay1), "the style class is still set");
+			assert.ok(isStretched(this.oVBoxOverlay2), "the style class is still set");
+		});
+
+		QUnit.test("when the controls get rerendered while a plugin is busy", function(assert) {
+			sandbox.stub(this.oStretchPlugin.getDesignTime(), "getBusyPlugins").returns([1]);
+			this.oLayout.getParent().invalidate();
+			sap.ui.getCore().applyChanges();
+
+			assert.ok(isStretched(this.oLayoutOverlay), "the style class is still set");
+			assert.ok(isStretched(this.oVBoxOverlay1), "the style class is still set");
+			assert.ok(isStretched(this.oVBoxOverlay2), "the style class is still set");
 		});
 
 		QUnit.test("when the plugin gets deregistered", function(assert) {
@@ -326,10 +313,10 @@ function (
 
 		QUnit.test("When the inner vbox gets destroyed", function(assert) {
 			var done = assert.async();
-			setTimeout(function() {
-				assert.notOk(isStretched(this.oVBoxOverlay1), "the style class was removed");
+			sandbox.stub(this.oVBox1, "removeStyleClass").callsFake(function() {
+				assert.ok(true, "the style class was removed");
 				done();
-			}.bind(this), 0);
+			});
 			this.oVBox2.destroy();
 			sap.ui.getCore().applyChanges();
 		});
