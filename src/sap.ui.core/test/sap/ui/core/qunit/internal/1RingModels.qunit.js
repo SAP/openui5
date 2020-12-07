@@ -47,6 +47,7 @@ sap.ui.require([
 		// "sap/ui/core/qunit/MasterDetail.qunit",
 		"sap/ui/core/qunit/StaticBinding.qunit",
 		"sap/ui/core/qunit/model/Binding.qunit",
+		"sap/ui/core/qunit/model/ClientTreeBindingAdapter.qunit",
 		"sap/ui/core/qunit/model/Context.qunit",
 		"sap/ui/core/qunit/model/ContextBinding.qunit",
 		"sap/ui/core/qunit/model/Model.qunit",
@@ -134,6 +135,8 @@ sap.ui.require([
 		// "sap/ui/core/qunit/odata/v1/ODataModel.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
 		// "sap/ui/core/qunit/odata/v1/ODataSharedMetadata.qunit",
+		//TODO: get test running in 1RingModels.qunit; it uses MockServer
+		// "sap/ui/core/qunit/odata/ODataTreeBindingAdapter.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.odata.v2.* - tests are contained in testsuite.odatav2.qunit.js

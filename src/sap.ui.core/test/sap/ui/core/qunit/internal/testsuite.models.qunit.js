@@ -192,6 +192,11 @@ sap.ui.define(function() {
 					useFakeTimers : true
 				}
 			},
+			ODataTreeBindingAdapter : {
+				// not in 1RingModels.qunit because of MockServer usage
+				title : "sap.ui.model.odata.ODataTreeBindingAdapter",
+				module : ["test-resources/sap/ui/core/qunit/odata/ODataTreeBindingAdapter.qunit"]
+			},
 
 			// *************************************************************************
 			// OData V2 model tests

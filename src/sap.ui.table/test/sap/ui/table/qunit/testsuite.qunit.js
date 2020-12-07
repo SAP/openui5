@@ -35,21 +35,6 @@ sap.ui.define([
 			autostart: true					// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {
-			/* Bindings */
-			"ODataTreeBindingAdapter": {
-				group: "Binding",
-				sinon: false /*uses Mockserver*/,
-				coverage: {
-					only: null /*full report*/
-				}
-			},
-			"ClientTreeBindingAdapter": {
-				group: "Binding",
-				coverage: {
-					only: null /*full report*/
-				}
-			},
-
 			/* Library */
 			"TableLib": {
 				group: "Library",
