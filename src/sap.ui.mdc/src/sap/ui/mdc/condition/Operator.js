@@ -99,6 +99,9 @@ sap.ui.define([
 				// map given properties
 				// TODO: for compatibility reasons just put to this.name... but is a API getName better at the end?
 				this.name = oConfiguration.name;
+				if (oConfiguration.alias) {
+					this.alias = oConfiguration.alias;
+				}
 				this.filterOperator = oConfiguration.filterOperator;
 				this.valueTypes = oConfiguration.valueTypes;
 				this.paramTypes = oConfiguration.paramTypes;

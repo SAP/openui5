@@ -444,8 +444,9 @@ function(
 							return UniversalDateUtils.ranges.lastDays(iDuration);
 						}
 					}),
-					todayXYDays: new RangeOperator({
-						name: "TODAYXYDAYS",
+					todayFromTo: new RangeOperator({
+						alias: "TODAYXYDAYS",
+						name: "TODAYFROMTO",
 						valueTypes: [
 							{name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }},
 							{name: "sap.ui.model.type.Integer", formatOptions: { emptyString: null }}
@@ -480,8 +481,9 @@ function(
 							return UniversalDateUtils.ranges.lastWeek();
 						}
 					}),
-					currentWeek: new RangeOperator({
-						name: "CURRENTWEEK",
+					thisWeek: new RangeOperator({
+						alias: "CURRENTWEEK",
+						name: "THISWEEK",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.currentWeek();
@@ -519,8 +521,9 @@ function(
 							return UniversalDateUtils.ranges.lastMonth();
 						}
 					}),
-					currentMonth: new RangeOperator({
-						name: "CURRENTMONTH",
+					thisMonth: new RangeOperator({
+						alias: "CURRENTMONTH",
+						name: "THISMONTH",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.currentMonth();
@@ -558,8 +561,9 @@ function(
 							return UniversalDateUtils.ranges.lastQuarter();
 						}
 					}),
-					currentQuarter: new RangeOperator({
-						name: "CURRENTQUARTER",
+					thisQuarter: new RangeOperator({
+						alias: "CURRENTQUARTER",
+						name: "THISQUARTER",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.currentQuarter();
@@ -590,29 +594,33 @@ function(
 							return UniversalDateUtils.ranges.nextQuarters(iDuration);
 						}
 					}),
-					firstQuarter: new RangeOperator({
-						name: "FIRSTQUARTER",
+					quarter1: new RangeOperator({
+						alias: "FIRSTQUARTER",
+						name: "QUARTER1",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.quarter(1);
 						}
 					}),
-					secondQuarter: new RangeOperator({
-						name: "SECONDQUARTER",
+					quarter2: new RangeOperator({
+						alias: "SECONDQUARTER",
+						name: "QUARTER2",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.quarter(2);
 						}
 					}),
-					thirdQuarter: new RangeOperator({
-						name: "THIRDQUARTER",
+					quarter3: new RangeOperator({
+						alias: "THIRDQUARTER",
+						name: "QUARTER3",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.quarter(3);
 						}
 					}),
-					fourthQuarter: new RangeOperator({
-						name: "FOURTHQUARTER",
+					quarter4: new RangeOperator({
+						alias: "FOURTHQUARTER",
+						name: "QUARTER4",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.quarter(4);
@@ -625,8 +633,9 @@ function(
 							return UniversalDateUtils.ranges.lastYear();
 						}
 					}),
-					currentYear: new RangeOperator({
-						name: "CURRENTYEAR",
+					thisYear: new RangeOperator({
+						alias: "CURRENTYEAR",
+						name: "THISYEAR",
 						valueTypes: [Operator.ValueType.Static],
 						calcRange: function() {
 							return UniversalDateUtils.ranges.currentYear();
@@ -887,6 +896,13 @@ function(
 					for (var sName in FilterOperatorUtil._mOperators) {
 						var oOperator = FilterOperatorUtil._mOperators[sName];
 						if ( oOperator.name === sOperator) {
+							return oOperator;
+						}
+					}
+
+					for (var sName in FilterOperatorUtil._mOperators) {
+						var oOperator = FilterOperatorUtil._mOperators[sName];
+						if ( oOperator.alias === sOperator) {
 							return oOperator;
 						}
 					}
@@ -1170,35 +1186,35 @@ function(
 				 FilterOperatorUtil._mOperators.today,
 				 FilterOperatorUtil._mOperators.yesterday,
 				 FilterOperatorUtil._mOperators.tomorrow,
-				 FilterOperatorUtil._mOperators.todayXYDays,
+				 FilterOperatorUtil._mOperators.todayFromTo,
 				 FilterOperatorUtil._mOperators.lastDays,
 				 FilterOperatorUtil._mOperators.nextDays,
 
-				 FilterOperatorUtil._mOperators.currentWeek,
+				 FilterOperatorUtil._mOperators.thisWeek,
 				 FilterOperatorUtil._mOperators.lastWeek,
 				 FilterOperatorUtil._mOperators.lastWeeks,
 				 FilterOperatorUtil._mOperators.nextWeek,
 				 FilterOperatorUtil._mOperators.nextWeeks,
 
 				 FilterOperatorUtil._mOperators.specificMonth,
-				 FilterOperatorUtil._mOperators.currentMonth,
+				 FilterOperatorUtil._mOperators.thisMonth,
 				 FilterOperatorUtil._mOperators.lastMonth,
 				 FilterOperatorUtil._mOperators.lastMonths,
 				 FilterOperatorUtil._mOperators.nextMonth,
 				 FilterOperatorUtil._mOperators.nextMonths,
 
-				 FilterOperatorUtil._mOperators.currentQuarter,
+				 FilterOperatorUtil._mOperators.thisQuarter,
 				 FilterOperatorUtil._mOperators.lastQuarter,
 				 FilterOperatorUtil._mOperators.lastQuarters,
 				 FilterOperatorUtil._mOperators.nextQuarter,
 				 FilterOperatorUtil._mOperators.nextQuarters,
 
-				 FilterOperatorUtil._mOperators.firstQuarter,
-				 FilterOperatorUtil._mOperators.secondQuarter,
-				 FilterOperatorUtil._mOperators.thirdQuarter,
-				 FilterOperatorUtil._mOperators.fourthQuarter,
+				 FilterOperatorUtil._mOperators.quarter1,
+				 FilterOperatorUtil._mOperators.quarter2,
+				 FilterOperatorUtil._mOperators.quarter3,
+				 FilterOperatorUtil._mOperators.quarter4,
 
-				 FilterOperatorUtil._mOperators.currentYear,
+				 FilterOperatorUtil._mOperators.thisYear,
 				 FilterOperatorUtil._mOperators.lastYear,
 				 FilterOperatorUtil._mOperators.lastYears,
 				 FilterOperatorUtil._mOperators.nextYear,

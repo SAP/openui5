@@ -129,7 +129,7 @@ sap.ui.define([
 		assert.ok(FilterOperatorUtil._mOperators.notEmpty, "standard NotEmpty operator created");
 
 		assert.ok(FilterOperatorUtil._mOperators.today, "standard today operator created");
-		assert.ok(FilterOperatorUtil._mOperators.currentYear, "standard currentYear operator created");
+		assert.ok(FilterOperatorUtil._mOperators.thisYear, "standard currentYear operator created");
 	});
 
 	QUnit.test("getOperatorsForType", function(assert) {
@@ -150,6 +150,14 @@ sap.ui.define([
 		var oOperator = FilterOperatorUtil.getOperator("EQ");
 		assert.ok(oOperator, "Operator returned");
 		assert.equal(oOperator.name, "EQ", "EQ operator returned");
+
+	});
+
+	QUnit.test("getOperator via alias", function(assert) {
+
+		var oOperator = FilterOperatorUtil.getOperator("FIRSTQUARTER");
+		assert.ok(oOperator, "Operator returned");
+		assert.equal(oOperator.name, "QUARTER1", "QUARTER1 operator returned");
 
 	});
 
@@ -1003,18 +1011,18 @@ sap.ui.define([
 				longText: "Last X days",
 				tokenText: "Last {0} days"
 			}],
-			// "TODAYXYDAYS": [{
-			// 	formatArgs: [Condition.createCondition("TODAYXYDAYS", [4, 6])],
-			// 	formatValue: "Today -4 / +6 days",
-			// 	//parseArgs: ["Last 4 days"],
-			// 	parsedValue: "46",
-			// 	condition: Condition.createCondition("TODAYXYDAYS", [4, 6], undefined, undefined, ConditionValidated.NotValidated),
-			// 	isEmpty: false,
-			// 	valid: true,
-			// 	isSingleValue: false,
-			// 	longText: "Today -X / +Y days",
-			// 	tokenText: "Today -{0} / +{1} days"
-			// }],
+			"TODAYFROMTO": [{
+				formatArgs: [Condition.createCondition("TODAYFROMTO", [4, 6])],
+				formatValue: "Today -4 / +6 days",
+				//parseArgs: ["Last 4 days"],
+				parsedValue: "46",
+				condition: Condition.createCondition("TODAYFROMTO", [4, 6], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: false,
+				longText: "Today -X / +Y days",
+				tokenText: "Today -{0} / +{1} days"
+			}],
 			"NEXTDAYS": [{
 				formatArgs: [Condition.createCondition("NEXTDAYS", [3])],
 				formatValue: "Next 3 days",
@@ -1037,11 +1045,11 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: true
 			}],
-			"CURRENTWEEK": [{
-				formatArgs: [Condition.createCondition("CURRENTWEEK", [undefined])],
+			"THISWEEK": [{
+				formatArgs: [Condition.createCondition("THISWEEK", [undefined])],
 				formatValue: "This week",
 				parsedValue: "",
-				condition: Condition.createCondition("CURRENTWEEK", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition("THISWEEK", [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
@@ -1087,11 +1095,11 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: true
 			}],
-			"CURRENTMONTH": [{
-				formatArgs: [Condition.createCondition("CURRENTMONTH", [undefined])],
+			"THISMONTH": [{
+				formatArgs: [Condition.createCondition("THISMONTH", [undefined])],
 				formatValue: "This month",
 				parsedValue: "",
-				condition: Condition.createCondition("CURRENTMONTH", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition("THISMONTH", [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
@@ -1127,6 +1135,17 @@ sap.ui.define([
 				longText: "Next X months",
 				tokenText: "Next {0} months"
 			}],
+			"SPECIFICMONTHS": [{
+				formatArgs: [Condition.createCondition("SPECIFICMONTHS", [4])],
+				formatValue: "Month (May)",
+				parsedValue: "4",
+				condition: Condition.createCondition("SPECIFICMONTHS", [4], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true,
+				longText: "Month (X)",
+				tokenText: "Month ({0})"
+			}],
 
 			"LASTQUARTER": [{
 				formatArgs: [Condition.createCondition("LASTQUARTER", [undefined])],
@@ -1137,11 +1156,11 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: true
 			}],
-			"CURRENTQUARTER": [{
-				formatArgs: [Condition.createCondition("CURRENTQUARTER", [undefined])],
+			"THISQUARTER": [{
+				formatArgs: [Condition.createCondition("THISQUARTER", [undefined])],
 				formatValue: "This quarter",
 				parsedValue: "",
-				condition: Condition.createCondition("CURRENTQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition("THISQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
@@ -1187,11 +1206,11 @@ sap.ui.define([
 				valid: true,
 				isSingleValue: true
 			}],
-			"CURRENTYEAR": [{
-				formatArgs: [Condition.createCondition("CURRENTYEAR", [undefined])],
+			"THISYEAR": [{
+				formatArgs: [Condition.createCondition("THISYEAR", [undefined])],
 				formatValue: "This year",
 				parsedValue: "",
-				condition: Condition.createCondition("CURRENTYEAR", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition("THISYEAR", [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
@@ -1228,29 +1247,29 @@ sap.ui.define([
 				tokenText: "Next {0} years"
 			}],
 
-			"FIRSTQUARTER": [{
-				formatArgs: [Condition.createCondition("FIRSTQUARTER", [undefined])],
+			"QUARTER1": [{
+				formatArgs: [Condition.createCondition("QUARTER1", [undefined])],
 				formatValue: "First quarter",
 				parsedValue: "",
-				condition: Condition.createCondition("FIRSTQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition("QUARTER1", [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"SECONQUARTER": [{
-				formatArgs: [Condition.createCondition("SECONDQUARTER", [undefined])],
+			"QUARTER2": [{
+				formatArgs: [Condition.createCondition("QUARTER2", [undefined])],
 				formatValue: "Second quarter",
 				parsedValue: "",
-				condition: Condition.createCondition("SECONDQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition("QUARTER2", [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
 			}],
-			"THRIDQUARTER": [{
-				formatArgs: [Condition.createCondition("THIRDQUARTER", [undefined])],
+			"QUARTER3": [{
+				formatArgs: [Condition.createCondition("QUARTER3", [undefined])],
 				formatValue: "Third quarter",
 				parsedValue: "",
-				condition: Condition.createCondition("THIRDQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				condition: Condition.createCondition("QUARTER3", [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
@@ -1260,6 +1279,15 @@ sap.ui.define([
 				formatValue: "Forth quarter",
 				parsedValue: "",
 				condition: Condition.createCondition("FORTHQUARTER", [], undefined, undefined, ConditionValidated.NotValidated),
+				isEmpty: false,
+				valid: true,
+				isSingleValue: true
+			}],
+			"QUARTER4": [{
+				formatArgs: [Condition.createCondition("QUARTER4", [undefined])],
+				formatValue: "Forth quarter",
+				parsedValue: "",
+				condition: Condition.createCondition("QUARTER4", [], undefined, undefined, ConditionValidated.NotValidated),
 				isEmpty: false,
 				valid: true,
 				isSingleValue: true
