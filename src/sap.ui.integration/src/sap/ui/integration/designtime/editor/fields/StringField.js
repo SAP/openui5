@@ -59,8 +59,25 @@ sap.ui.define([
 					};
 				} else if (oConfig.values) {
 					var oItem = new ListItem(oConfig.values.item);
+					/*
 					oVisualization = {
 						type: Select,
+						settings: {
+							busy: { path: 'currentSettings>_loading' },
+							selectedKey: {
+								path: 'currentSettings>value'
+							},
+							editable: oConfig.editable,
+							showSecondaryValues: true,
+							width: "100%",
+							items: {
+								path: "", //empty, because the bindingContext for the undefined model already points to the path
+								template: oItem
+							}
+						}
+					};*/
+					oVisualization = {
+						type: ComboBox,
 						settings: {
 							busy: { path: 'currentSettings>_loading' },
 							selectedKey: {

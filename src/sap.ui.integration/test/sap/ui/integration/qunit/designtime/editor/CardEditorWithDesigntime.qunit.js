@@ -206,7 +206,7 @@ sap.ui.define([
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oField.getAggregation("_field").isA("sap.m.Select"), "Field: Editor is Select");
+					assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Editor is ComboBox");
 					assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: Select items lenght is OK");
 					resolve();
 				}.bind(this));
@@ -243,7 +243,7 @@ sap.ui.define([
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-						assert.ok(oField.getAggregation("_field").isA("sap.m.Select"), "Field: Editor is Select");
+						assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Editor is ComboBox");
 						assert.ok(oField.getAggregation("_field").getItems().length === 5, "Field: Select items lenght is OK");
 						resolve();
 					}.bind(this), 500);
@@ -4591,6 +4591,565 @@ sap.ui.define([
 							resolve();
 						}, 1000);
 					}, 1000);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Linked Dropdown list", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Initalize", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/linkedDropdownList",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"Customer": {
+									"value": ""
+								},
+								"Employee": {
+									"value": ""
+								},
+								"Order": {
+									"value": ""
+								},
+								"Product": {
+									"value": ""
+								},
+								"CustomerWithTopAndSkipOption": {
+									"value": ""
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind",
+									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					setTimeout(function () {
+						var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+						var oField = this.oCardEditor.getAggregation("_formContent")[1];
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+						assert.ok(oLabel.getText() === "Customer", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
+						assert.ok(oField.getAggregation("_field").getItems().length === 21, "Field: Costomer lenght is OK");
+						oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+						oField = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oLabel.getText() === "Employee", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
+						assert.ok(oField.getAggregation("_field").getItems().length === 10, "Field: Employee lenght is OK");
+						oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+						oField = this.oCardEditor.getAggregation("_formContent")[5];
+						assert.ok(oLabel.getText() === "Order", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
+						assert.ok(oField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
+						oLabel = this.oCardEditor.getAggregation("_formContent")[6];
+						oField = this.oCardEditor.getAggregation("_formContent")[7];
+						assert.ok(oLabel.getText() === "Product", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
+						assert.ok(oField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+						oLabel = this.oCardEditor.getAggregation("_formContent")[8];
+						oField = this.oCardEditor.getAggregation("_formContent")[9];
+						assert.ok(oLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
+						assert.ok(oField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+						resolve();
+					}.bind(this), 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Just select Customer, check Order and Product", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/linkedDropdownList",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"Customer": {
+									"value": ""
+								},
+								"Employee": {
+									"value": ""
+								},
+								"Order": {
+									"value": ""
+								},
+								"Product": {
+									"value": ""
+								},
+								"CustomerWithTopAndSkipOption": {
+									"value": ""
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind",
+									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					setTimeout(function () {
+						var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+						var oField = this.oCardEditor.getAggregation("_formContent")[1];
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+						assert.ok(oLabel.getText() === "Customer", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						var oComboBox = oField.getAggregation("_field");
+						assert.ok(oComboBox.isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
+						assert.ok(oComboBox.getItems().length === 21, "Field: Costomer lenght is OK");
+						oComboBox.setSelectedIndex(1);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+						setTimeout(function () {
+							oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+							oField = this.oCardEditor.getAggregation("_formContent")[3];
+							assert.ok(oLabel.getText() === "Employee", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
+							assert.ok(oField.getAggregation("_field").getItems().length === 10, "Field: Employee lenght is OK");
+							oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+							oField = this.oCardEditor.getAggregation("_formContent")[5];
+							assert.ok(oLabel.getText() === "Order", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
+							assert.ok(oField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
+							oLabel = this.oCardEditor.getAggregation("_formContent")[6];
+							oField = this.oCardEditor.getAggregation("_formContent")[7];
+							assert.ok(oLabel.getText() === "Product", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
+							assert.ok(oField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+							oLabel = this.oCardEditor.getAggregation("_formContent")[8];
+							oField = this.oCardEditor.getAggregation("_formContent")[9];
+							assert.ok(oLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
+							assert.ok(oField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+							resolve();
+						}.bind(this), 5000);
+					}.bind(this), 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Just select Employee, check Order and Product", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/linkedDropdownList",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"Customer": {
+									"value": ""
+								},
+								"Employee": {
+									"value": ""
+								},
+								"Order": {
+									"value": ""
+								},
+								"Product": {
+									"value": ""
+								},
+								"CustomerWithTopAndSkipOption": {
+									"value": ""
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind",
+									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					setTimeout(function () {
+						var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+						var oField = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oLabel.getText() === "Employee", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						var oComboBox = oField.getAggregation("_field");
+						assert.ok(oComboBox.isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
+						assert.ok(oComboBox.getItems().length === 10, "Field: Employee lenght is OK");
+						oComboBox.setSelectedIndex(1);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+						setTimeout(function () {
+							oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+							oField = this.oCardEditor.getAggregation("_formContent")[1];
+							assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+							assert.ok(oLabel.getText() === "Customer", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+							oField = this.oCardEditor.getAggregation("_formContent")[5];
+							assert.ok(oLabel.getText() === "Order", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
+							assert.ok(oField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
+							oLabel = this.oCardEditor.getAggregation("_formContent")[6];
+							oField = this.oCardEditor.getAggregation("_formContent")[7];
+							assert.ok(oLabel.getText() === "Product", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
+							assert.ok(oField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+							oLabel = this.oCardEditor.getAggregation("_formContent")[8];
+							oField = this.oCardEditor.getAggregation("_formContent")[9];
+							assert.ok(oLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
+							assert.ok(oField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+							resolve();
+						}.bind(this), 5000);
+					}.bind(this), 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Select Customer and Employee, check Oder", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/linkedDropdownList",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"Customer": {
+									"value": ""
+								},
+								"Employee": {
+									"value": ""
+								},
+								"Order": {
+									"value": ""
+								},
+								"Product": {
+									"value": ""
+								},
+								"CustomerWithTopAndSkipOption": {
+									"value": ""
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind",
+									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					setTimeout(function () {
+						var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+						var oField = this.oCardEditor.getAggregation("_formContent")[1];
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+						assert.ok(oLabel.getText() === "Customer", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						var oComboBox = oField.getAggregation("_field");
+						assert.ok(oComboBox.isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
+						assert.ok(oComboBox.getItems().length === 21, "Field: Costomer lenght is OK");
+						oComboBox.setSelectedIndex(1);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+						oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+						oField = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oLabel.getText() === "Employee", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						oComboBox = oField.getAggregation("_field");
+						assert.ok(oComboBox.isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
+						assert.ok(oComboBox.getItems().length === 10, "Field: Employee lenght is OK");
+						oComboBox.setSelectedIndex(1);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+						setTimeout(function () {
+							oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+							oField = this.oCardEditor.getAggregation("_formContent")[5];
+							assert.ok(oLabel.getText() === "Order", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
+							assert.ok(oField.getAggregation("_field").getItems().length === 3, "Field: Order lenght is OK");
+							oLabel = this.oCardEditor.getAggregation("_formContent")[6];
+							oField = this.oCardEditor.getAggregation("_formContent")[7];
+							assert.ok(oLabel.getText() === "Product", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
+							assert.ok(oField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
+							oLabel = this.oCardEditor.getAggregation("_formContent")[8];
+							oField = this.oCardEditor.getAggregation("_formContent")[9];
+							assert.ok(oLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
+							assert.ok(oField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+							resolve();
+						}.bind(this), 5000);
+					}.bind(this), 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Select Customer, Employee and Oder, check Product 1", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/linkedDropdownList",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"Customer": {
+									"value": ""
+								},
+								"Employee": {
+									"value": ""
+								},
+								"Order": {
+									"value": ""
+								},
+								"Product": {
+									"value": ""
+								},
+								"CustomerWithTopAndSkipOption": {
+									"value": ""
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind",
+									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					setTimeout(function () {
+						var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+						var oField = this.oCardEditor.getAggregation("_formContent")[1];
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+						assert.ok(oLabel.getText() === "Customer", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						var oComboBox = oField.getAggregation("_field");
+						assert.ok(oComboBox.isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
+						assert.ok(oComboBox.getItems().length === 21, "Field: Costomer lenght is OK");
+						oComboBox.setSelectedIndex(2);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[2] });
+						oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+						oField = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oLabel.getText() === "Employee", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						oComboBox = oField.getAggregation("_field");
+						assert.ok(oComboBox.isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
+						assert.ok(oComboBox.getItems().length === 10, "Field: Employee lenght is OK");
+						oComboBox.setSelectedIndex(3);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[3] });
+						setTimeout(function () {
+							oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+							oField = this.oCardEditor.getAggregation("_formContent")[5];
+							assert.ok(oLabel.getText() === "Order", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							oComboBox = oField.getAggregation("_field");
+							assert.ok(oComboBox.isA("sap.m.ComboBox"), "Field: Order is ComboBox");
+							assert.ok(oComboBox.getItems().length === 3, "Field: Order lenght is OK");
+							oComboBox.setSelectedIndex(1);
+							oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+							setTimeout(function () {
+								oLabel = this.oCardEditor.getAggregation("_formContent")[6];
+								oField = this.oCardEditor.getAggregation("_formContent")[7];
+								assert.ok(oLabel.getText() === "Product", "Label: Has static label text");
+								assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+								assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
+								assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: Product lenght is OK");
+								oLabel = this.oCardEditor.getAggregation("_formContent")[8];
+								oField = this.oCardEditor.getAggregation("_formContent")[9];
+								assert.ok(oLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+								assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+								assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
+								assert.ok(oField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+								resolve();
+							}.bind(this), 5000);
+						}.bind(this), 5000);
+					}.bind(this), 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Select Customer, Employee and Oder, check Product 2", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/linkedDropdownList",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"Customer": {
+									"value": ""
+								},
+								"Employee": {
+									"value": ""
+								},
+								"Order": {
+									"value": ""
+								},
+								"Product": {
+									"value": ""
+								},
+								"CustomerWithTopAndSkipOption": {
+									"value": ""
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind",
+									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					setTimeout(function () {
+						var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
+						var oField = this.oCardEditor.getAggregation("_formContent")[1];
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+						assert.ok(oLabel.getText() === "Customer", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						var oComboBox = oField.getAggregation("_field");
+						assert.ok(oComboBox.isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
+						assert.ok(oComboBox.getItems().length === 21, "Field: Costomer lenght is OK");
+						oComboBox.setSelectedIndex(2);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[2] });
+						oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+						oField = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oLabel.getText() === "Employee", "Label: Has static label text");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+						oComboBox = oField.getAggregation("_field");
+						assert.ok(oComboBox.isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
+						assert.ok(oComboBox.getItems().length === 10, "Field: Employee lenght is OK");
+						oComboBox.setSelectedIndex(3);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[3] });
+						setTimeout(function () {
+							oLabel = this.oCardEditor.getAggregation("_formContent")[4];
+							oField = this.oCardEditor.getAggregation("_formContent")[5];
+							assert.ok(oLabel.getText() === "Order", "Label: Has static label text");
+							assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+							oComboBox = oField.getAggregation("_field");
+							assert.ok(oComboBox.isA("sap.m.ComboBox"), "Field: Order is ComboBox");
+							assert.ok(oComboBox.getItems().length === 3, "Field: Order lenght is OK");
+							oComboBox.setSelectedIndex(2);
+							oComboBox.fireChange({ selectedItem: oComboBox.getItems()[2] });
+							setTimeout(function () {
+								oLabel = this.oCardEditor.getAggregation("_formContent")[6];
+								oField = this.oCardEditor.getAggregation("_formContent")[7];
+								assert.ok(oLabel.getText() === "Product", "Label: Has static label text");
+								assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+								assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
+								assert.ok(oField.getAggregation("_field").getItems().length === 2, "Field: Product lenght is OK");
+								oLabel = this.oCardEditor.getAggregation("_formContent")[8];
+								oField = this.oCardEditor.getAggregation("_formContent")[9];
+								assert.ok(oLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
+								assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+								assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
+								assert.ok(oField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+								resolve();
+							}.bind(this), 5000);
+						}.bind(this), 5000);
+					}.bind(this), 5000);
 				}.bind(this));
 			}.bind(this));
 		});

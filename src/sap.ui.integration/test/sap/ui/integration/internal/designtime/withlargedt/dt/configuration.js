@@ -6,10 +6,6 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 		return new Designtime({
 			"form": {
 				"items": {
-					"group": {
-						"label": "Dependent",
-						"type": "group"
-					},
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
 						"defaultValue": "StringValue",
@@ -215,6 +211,24 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
+					"stringWithRequestFromDestinationList": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestDestinationList/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.local}}/stringWithRequestList.json"
+								},
+								"path": "/"
+							},
+							"item": {
+								"text": "{text}",
+								"key": "{key}",
+								"additionalText": "{additionalText}",
+								"icon": "{icon}"
+							}
+						}
+					},
 					"stringArray": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArray/value",
 						"label": "String Array",
@@ -244,7 +258,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string[]"
 					},
 					"iconNotAllowFile": {
-						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFile/value",
+						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFile/src",
 						"defaultValue": "sap-icon://account",
 						"type": "string",
 						"label": "Icon Not Allow File",
@@ -258,7 +272,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"iconNotAllowNone": {
-						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowNone/value",
+						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowNone/src",
 						"defaultValue": "sap-icon://account",
 						"type": "string",
 						"label": "Icon Not Allow None",
@@ -272,7 +286,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						}
 					},
 					"iconNotAllowFileAndNone": {
-						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFileAndNone/value",
+						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFileAndNone/src",
 						"defaultValue": "sap-icon://account",
 						"type": "string",
 						"label": "Icon Not Allow File And None",
@@ -282,6 +296,33 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"value": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}",
 								"allowFile": false,
+								"allowNone": false
+							}
+						}
+					},
+					"iconWithImage": {
+						"manifestpath": "/sap.card/configuration/parameters/iconWithImage/value",
+						"defaultValue": "sap-icon://account",
+						"type": "string",
+						"label": "iconWithImage",
+						"visualization": {
+							"type": "IconSelect",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						}
+					},
+					"iconWithImageNotAllowNone": {
+						"manifestpath": "/sap.card/configuration/parameters/iconWithImageNotAllowNone/value",
+						"defaultValue": "sap-icon://account",
+						"type": "string",
+						"label": "iconWithImage Not Allow None",
+						"visualization": {
+							"type": "IconSelect",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}",
 								"allowNone": false
 							}
 						}
@@ -344,6 +385,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"enabled": "{currentSettings>editable}"
 							}
 						}
+					},
+					"group": {
+						"label": "Dependent",
+						"type": "group"
 					},
 					"string1": {
 						"manifestpath": "/sap.card/configuration/parameters/string1/value",
@@ -423,6 +468,114 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/dependentBoolean3/value",
 						"label": "{= ${items>boolean1/value} === true ? 'dependentBoolean3 True' : 'dependentBoolean3 False' }",
 						"type": "string"
+					},
+					"lickedParameters": {
+						"label": "Licked Parameters",
+						"type": "group"
+					},
+					"Customer": {
+						"manifestpath": "/sap.card/configuration/parameters/Customer/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									}
+								},
+								"path": "/value/"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefind ? ${Country} + ', ' +  ${City} + ', ' + ${Address}: ''}"
+							}
+						}
+					},
+					"Employee": {
+						"manifestpath": "/sap.card/configuration/parameters/Employee/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Employees",
+									"parameters": {
+										"$select": "EmployeeID, FirstName, LastName, Country, Title, HomePhone"
+									}
+								},
+								"path": "/value/"
+							},
+							"item": {
+								"text": "{FirstName} {LastName}",
+								"key": "{EmployeeID}",
+								"additionalText": "{= ${EmployeeID} !== undefind ? ${Country} + ', ' +  ${Title} + ', ' + ${HomePhone}: ''}"
+							}
+						}
+					},
+					"Order": {
+						"manifestpath": "/sap.card/configuration/parameters/Order/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Orders",
+									"parameters": {
+										"$select": "OrderID, OrderDate, CustomerID, EmployeeID",
+										"$filter": "(CustomerID eq '{items>Customer/value}') and (EmployeeID eq {items>Employee/value})"
+									}
+								},
+								"path": "/value/"
+							},
+							"item": {
+								"text": "{= ${OrderID} !== undefind ? ${OrderID} + '-' +  ${CustomerID} + '-' + ${EmployeeID}: ''}",
+								"key": "{OrderID}",
+								"additionalText": "{OrderDate}"
+							}
+						}
+					},
+					"Product": {
+						"manifestpath": "/sap.card/configuration/parameters/Product/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Order_Details",
+									"parameters": {
+										"$expand": "Product",
+										"$filter": "OrderID eq {items>Order/value}"
+									}
+								},
+								"path": "/value/"
+							},
+							"item": {
+								"text": "{= ${OrderID} !== undefind ? ${OrderID} + '-' +  ${ProductID} + ':' + ${Product/ProductName}: ''}",
+								"key": "{ProductID}",
+								"additionalText": "{= ${OrderID} !== undefind ? ${UnitPrice} + ' USD, count: '+ ${Quantity}: ''}"
+							}
+						}
+					},
+					"CustomerWithTopAndSkipOption": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomerWithTopAndSkipOption/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$skip": "5",
+										"$top": "5"
+									}
+								},
+								"path": "/value/"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefind ? ${Country} + ', ' +  ${City} + ', ' + ${Address}: ''}"
+							}
+						}
 					}
 				}
 			},

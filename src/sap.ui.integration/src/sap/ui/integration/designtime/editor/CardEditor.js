@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/theming/Parameters"
+	"sap/ui/core/theming/Parameters",
+	"sap/base/util/ObjectPath"
 ], function (
 	ui5loader,
 	Control,
@@ -47,7 +48,8 @@ sap.ui.define([
 	URI,
 	includeStylesheet,
 	LoaderExtension,
-	Parameters
+	Parameters,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -504,6 +506,7 @@ sap.ui.define([
 			this._settingsModel = new JSONModel(this._oDesigntimeInstance.getSettings());
 			this.setModel(this._settingsModel, "currentSettings");
 			this.setModel(this._settingsModel, "items");
+			this._oProviderCard.setModel(this._settingsModel, "items");
 			this._applyDesigntimeLayers(); //changes done from admin to content on the dt values
 			this._requireFields().then(function () {
 				this._startEditor();
@@ -823,6 +826,7 @@ sap.ui.define([
 				that._bIgnoreUpdates = false;
 			};
 			this._oProviderCard.setVisible(false);
+			this._oProviderCard.setModel(this._settingsModel, "items");
 			this._oProviderCard.onBeforeRendering();
 			if (oCurrentCard && oCurrentCard !== this._oEditorCard) {
 				oCurrentCard.destroy();
@@ -876,15 +880,35 @@ sap.ui.define([
 			oConfig.enum = [""].concat(oConfig.enum);
 		}
 		if (oConfig.values && oConfig.values.data && this._oProviderCard && this._oProviderCard._oDataProviderFactory) {
-			var oValueModel = new JSONModel({}),
-				oPromise = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data).getData();
+			var oValueModel = new JSONModel({});
+			var oDataProvider = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data);
+			oDataProvider.bindObject({
+				path: "items>/form/items"
+			});
+			var oPromise = oDataProvider.getData();
 			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", true);
 			oPromise.then(function (oData) {
 				if (oConfig._cancel) {
 					oConfig._values = [];
 					return;
 				}
-				oData = [{}].concat(oData);
+				var sPath = oConfig.values.data.path;
+				if (sPath && sPath !== "/") {
+					if (sPath.startsWith("/")) {
+						sPath = sPath.substring(1);
+					}
+					if (sPath.endsWith("/")) {
+						sPath = sPath.substring(0, sPath.length - 1);
+					}
+					var aPath = sPath.split("/");
+					var oResult = ObjectPath.get(aPath, oData);
+					if (Array.isArray(oResult) && oResult.length > 0) {
+						oResult = [{}].concat(oResult);
+						ObjectPath.set(aPath, oResult, oData);
+					}
+				} else if (Array.isArray(oData) && oData.length > 0) {
+					oData = [{}].concat(oData);
+				}
 				oConfig._values = oData;
 				oValueModel.setData(oData);
 				oValueModel.checkUpdate(true);
@@ -906,14 +930,22 @@ sap.ui.define([
 			if (!bIgnore) {
 				var sData = JSON.stringify(oConfig.values.data);
 				if (sData) {
-					var destParamRegExp = /parameters\.([^\}\}]+)|destinations\.([^\}\}]+)/g,
+					var destParamRegExp = /parameters\.([^\}\}]+)|destinations\.([^\}\}]+)|\{items\>[\/?\w+]+\}/g,
 						aResult = sData.match(destParamRegExp);
 					if (aResult) {
 						//add the field to dependency to either the parameter or destination
 						for (var i = 0; i < aResult.length; i++) {
-							var sValueKey = aResult[i].indexOf("parameters.") === 0 ? "/value" : "/name",
-								sDependentPath = "/sap.card/configuration/" + aResult[i].replace(".", "/") + sValueKey,
-								oItem = this._mItemsByPaths[sDependentPath];
+							var sValueKey = "/value";
+							var sDependentPath = "/sap.card/configuration/";
+							if (aResult[i].indexOf("destinations.") === 0 || aResult[i].indexOf("parameters.") === 0) {
+								if (aResult[i].indexOf("destinations.") === 0) {
+									sValueKey = "/name";
+								}
+								sDependentPath = sDependentPath + aResult[i].replace(".", "/") + sValueKey;
+							} else if (aResult[i].indexOf("{items>") === 0) {
+								sDependentPath = sDependentPath + "parameters/" + aResult[i].slice(7, -1);
+							}
+							var oItem = this._mItemsByPaths[sDependentPath];
 							if (oItem) {
 								oItem._dependentFields = oItem._dependentFields || [];
 								oItem._dependentFields.push({
