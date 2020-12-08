@@ -1,4 +1,5 @@
 sap.ui.define([
+	"sap/m/library",
 	"sap/ui/demo/cardExplorer/controller/BaseController",
 	"sap/ui/Device",
 	"sap/base/Log",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"../model/DesigntimeNavigationModel",
 	"../model/ExploreSettingsModel"
 ], function (
+	mLibrary,
 	BaseController,
 	Device,
 	Log,
@@ -241,7 +243,7 @@ sap.ui.define([
 		},
 
 		navToHome: function () {
-			window.open('../index.html', '_self');
+			mLibrary.URLHelper.redirect("../index.html");
 		},
 
 		switchCurrentModelAndTab: function (sRouteName) {
