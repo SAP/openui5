@@ -86,7 +86,16 @@ sap.ui.define([
 	 * @ui5-restricted
 	 * @since Since 1.86.0
 	 */
-	var Variant = Change.extend("sap.ui.fl.apply._internal.flexObjects.Variant", /** @lends sap.ui.fl.apply._internal.flexObjects.Variant.prototype */ {});
+	var Variant = Change.extend("sap.ui.fl.apply._internal.flexObjects.Variant", /** @lends sap.ui.fl.apply._internal.flexObjects.Variant.prototype */ {
+		metadata: {
+			properties: {
+				favorite: {
+					type: "boolean",
+					defaultValue: false
+				}
+			}
+		}
+	});
 
 	/**
 	 * Returns <code>true</code> if the current layer is the same as the layer in which the change was created, or if the change is from the end-user layer and was created for this user.

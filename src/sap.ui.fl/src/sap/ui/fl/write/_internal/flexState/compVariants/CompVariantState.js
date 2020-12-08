@@ -329,6 +329,8 @@ sap.ui.define([
 			fileType: oChangeSpecificData.isVariant ? "variant" : "change",
 			packageName: oChangeSpecificData.packageName,
 			layer: determineLayer(oChangeSpecificData),
+			favorite: !!oChangeSpecificData.favorite,
+			executeOnSelect: !!oChangeSpecificData.executeOnSelect,
 			selector: {
 				persistencyKey: mPropertyBag.persistencyKey
 			},

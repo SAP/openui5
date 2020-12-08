@@ -5,6 +5,7 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
 	"sap/ui/fl/apply/_internal/ChangesController",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/registry/Settings",
@@ -13,6 +14,7 @@ sap.ui.define([
 ], function(
 	FlexState,
 	ManifestUtils,
+	CompVariantMerger,
 	ChangesController,
 	Change,
 	Settings,
@@ -30,13 +32,14 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} oControl - SAPUI5 Smart Variant Management control
 	 * @returns {object} <code>persistencyKey</code> map and corresponding changes, or an empty object
+	 * @param {object[]} aVariants - Variant data from other data providers like an OData service
 	 * @private
 	 */
-	function getChangeMap(oControl) {
+	function getVariantsMap(oControl, aVariants) {
 		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
 		var sPersistencyKey = getPersistencyKey(oControl);
 		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
-		return mCompVariantsMap._getOrCreate(sPersistencyKey);
+		return mCompVariantsMap._getOrCreate(sPersistencyKey, aVariants);
 	}
 
 	/**
@@ -68,9 +71,11 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
+		 * @param {object[]} mPropertyBag.variants - Variant data from other data providers like an OData service
 		 * @returns {Promise<sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.Response>} Data for the passed
 		 * <code>sap.ui.comp.smartvariants.SmartVariantManagement</code> control
 		 * @since 1.83
+		 * @deprecated
 		 * @private
 		 * @ui5-restricted
 		 */
@@ -84,7 +89,7 @@ sap.ui.define([
 				manifest: Utils.getAppDescriptor(mPropertyBag.control),
 				componentId: Utils.getAppComponentForControl(mPropertyBag.control).getId()
 			})
-			.then(getChangeMap.bind(undefined, mPropertyBag.control));
+			.then(getVariantsMap.bind(undefined, mPropertyBag.control));
 		},
 
 		/**
@@ -105,6 +110,32 @@ sap.ui.define([
 				});
 		},
 
+		/**
+		 * Calls the back end asynchronously and fetches all {@link sap.ui.fl.Change}s and variants pointing to this control.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variants should be loaded
+		 * @param {string} mPropertyBag.standardVariantTitle - Title of the standard variant;
+		 * a standard variant is created into the response but may be replaced later in case data is loaded afterwards instructing the SVM to do so
+		 * @param {object[]} mPropertyBag.variants - Variant data from other data providers like an OData service
+		 * @returns {Promise<sap.ui.fl._internal.flexObjects.Variant[]>} Array with instances of the variants
+		 */
+		loadVariants: function(mPropertyBag) {
+			return SmartVariantManagementApplyAPI.getCompEntities(mPropertyBag)
+				.then(function(mCompVariants) {
+					// TODO: make this cachable if possible due to the different variants input
+					return CompVariantMerger.merge(mCompVariants, mPropertyBag.standardVariantTitle, mPropertyBag.variants);
+				});
+		},
+
+		/**
+		 * @param mPropertyBag
+		 * @return {*}
+		 * @deprecated
+		 */
 		getEntityById: function (mPropertyBag) {
 			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
 			return FlexState.getCompEntitiesByIdMap(sReference)[mPropertyBag.id];
@@ -187,9 +218,10 @@ sap.ui.define([
 		 * @returns {String} ID of the default variant
 		 * @private
 		 * @ui5-restricted
+		 * @deprecated
 		 */
 		getDefaultVariantId: function(mPropertyBag) {
-			var oChange = getChangeMap(mPropertyBag.control).defaultVariant;
+			var oChange = getVariantsMap(mPropertyBag.control).defaultVariant;
 			return oChange ? oChange.getContent().defaultVariantName : "";
 		},
 
@@ -203,9 +235,10 @@ sap.ui.define([
 		 * @returns {boolean} <code>ExecuteOnSelect</code> flag
 		 * @private
 		 * @ui5-restricted
+		 * @deprecated
 		 */
 		getExecuteOnSelect: function(mPropertyBag) {
-			var oChange = getChangeMap(mPropertyBag.control).standardVariant;
+			var oChange = getVariantsMap(mPropertyBag.control).standardVariant;
 			return oChange ? oChange.getContent().executeOnSelect : null;
 		},
 
