@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+	<meta charset="utf-8" />
+	<title>Editor Test Page with designtime files</title>
+	<script src="../sharedTest.js" localstoragekey="card-designtime-"></script>
+	<script src="../../../../../../resources/sap-ui-integration.js" id="sap-ui-bootstrap"
+		data-sap-ui-theme="sap_fiori_3" data-sap-ui-oninit="init" data-sap-ui-resourceroots='{"testjs":"../"}'></script>
+	<link rel="stylesheet" href="../sharedTest.css" />
+</head>
+
+<body class="sapUiBody sapUiSizeCompact">
+	<div id="global">
+		<h2>Settings</h2>
+		<label>Theme:</label>
+		<select onchange="switchTheme(this)">
+			<option value="sap_fiori_3">sap_fiori_3</option>
+			<option value="sap_fiori_3_dark">sap_fiori_3_dark</option>
+			<option value="sap_hcb">sap_hcb</option>
+		</select>
+	</div>
+	<div id="editor">
+		<h2>Admin Mode (only)</h2>
+		<ui-integration-card-editor id="cardEditorAdmin" mode="admin" allow-dynamic-values="true" allow-settings="true">
+		</ui-integration-card-editor>
+		<div class="buttons">
+			<button onclick="showCurrentValues('cardEditorAdmin')">
+				Show Current Values (Admin Mode)
+			</button>
+			<button onclick="saveCurrentValues('cardEditorAdmin')">
+				Save Current Values (Admin Mode)
+			</button>
+			<button onclick="loadCurrentValues('cardEditorAdmin')">
+				Load Values (Admin Mode)
+			</button>
+			<button onclick="deleteCurrentValues('cardEditorAdmin')">
+				Delete Values (Admin Mode)
+			</button>
+		</div>
+		<h2>Translation Mode (only)</h2>
+		<ui-integration-card-editor id="cardEditorTranslation" card='{
+			}' mode="translation" language="ru" allow-dynamic-values="true" allow-settings="true">
+		</ui-integration-card-editor>
+	</div>
+</body>
+
+</html>

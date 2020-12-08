@@ -23,6 +23,14 @@
 	padding: 0 1rem 0 0.5rem;
 }
 
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorTranslationPanel .sapMPanelContent {
+	padding: 0.625rem 1rem 1.375rem 0rem;
+}
+
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorTranslationSubPanel .sapMPanelContent {
+	padding: 0.625rem 1rem 1.375rem 1rem;
+}
+
 .sapUiIntegrationCardEditor.sapUiIntegrationCardEditorTranslation .sapUiIntegrationCardEditorForm{
 	height: 210px;
 }
@@ -110,6 +118,7 @@
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemLabel {
 	display: block;
 	white-space: nowrap;
+	padding-top: 7px;
 }
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemLabel.description .sapMLabel {
 	max-width: calc(100% - 1.2rem);
@@ -119,8 +128,9 @@
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorDescriptionIcon {
-	margin: 0.20rem 0.5rem;
+	margin: 0.20rem 0.4rem;
 	vertical-align: top;
+	padding-top: 6px;
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapMTitle {

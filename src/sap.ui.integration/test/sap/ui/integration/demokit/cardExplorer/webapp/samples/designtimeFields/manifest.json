@@ -99,6 +99,21 @@
 					"value": [
 						"key1"
 					]
+				},
+				"Customer": {
+					"value": ""
+				},
+				"Employee": {
+					"value": ""
+				},
+				"Order": {
+					"value": ""
+				},
+				"Product": {
+					"value": ""
+				},
+				"CustomerWithTopAndSkipOption": {
+					"value": ""
 				}
 			},
 			"destinations": {
@@ -112,6 +127,10 @@
 				"destLabelTrans": {
 					"name": "SF",
 					"label": "{{TRANSLATED_DESTINATION_LABEL}}"
+				},
+				"northwind": {
+					"name": "Northwind",
+					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
 				}
 			}
 		},

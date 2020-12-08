@@ -106,6 +106,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"boolean": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
 						"defaultValue": false,
+						"description": "Description",
 						"type": "boolean",
 						"visualization": {
 							"type": "sap/m/Switch",
@@ -346,6 +347,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"defaultValue": "",
 						"type": "string",
 						"label": "Icon Background",
+						"description": "Description",
 						"visualization": {
 							"type": "ColorSelect",
 							"settings": {
@@ -360,10 +362,26 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"defaultValue": "Circle",
 						"label": "Icon Shape",
 						"type": "string",
+						"description": "Description",
 						"visualization": {
 							"type": "ShapeSelect",
 							"settings": {
 								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						},
+						"cols": 1
+					},
+					"color1": {
+						"manifestpath": "/sap.card/header/icon/backgroundColor",
+						"defaultValue": "",
+						"type": "string",
+						"description": "Description",
+						"label": "Icon Background",
+						"visualization": {
+							"type": "ColorSelect",
+							"settings": {
+								"enumValue": "{currentSettings>value}",
 								"editable": "{currentSettings>editable}"
 							}
 						},
@@ -387,6 +405,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
+					"color2": {
+						"manifestpath": "/sap.card/header/icon/backgroundColor",
+						"defaultValue": "",
+						"type": "string",
+						"description": "Description",
+						"label": "Icon Background",
+						"visualization": {
+							"type": "ColorSelect",
+							"settings": {
+								"enumValue": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						},
+						"cols": 1
+					},
 					"group": {
 						"label": "Dependent",
 						"type": "group"
@@ -395,7 +428,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/string1/value",
 						"defaultValue": "editable",
 						"label": "String: editable, visible, label",
-						"type": "string"
+						"type": "string",
+						"translatable": true
 					},
 					"dependentString1": {
 						"manifestpath": "/sap.card/configuration/parameters/dependentString1/value",
@@ -477,6 +511,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"Customer": {
 						"manifestpath": "/sap.card/configuration/parameters/Customer/value",
 						"type": "string",
+						"translatable": true,
 						"values": {
 							"data": {
 								"request": {
@@ -517,6 +552,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"Order": {
 						"manifestpath": "/sap.card/configuration/parameters/Order/value",
 						"type": "string",
+						"translatable": true,
 						"values": {
 							"data": {
 								"request": {

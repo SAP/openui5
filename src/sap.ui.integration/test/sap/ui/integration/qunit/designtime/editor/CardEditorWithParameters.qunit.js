@@ -304,10 +304,10 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oTitle = this.oCardEditor.getAggregation("_formContent")[0];
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
 					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
 					var oField = this.oCardEditor.getAggregation("_formContent")[2];
-					assert.ok(oTitle.isA("sap.m.Title"), "Title: Form content contains a Title");
+					assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "dest1", "Label: Has dest1 label from destination settings name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.DestinationField"), "Field: Destination Field");
