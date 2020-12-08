@@ -2378,31 +2378,32 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the kept-alive element.
-	 * This needs to be called before the cache has filled the collection. In that state the
-	 * $byPredicate contains only the kept element.
+	 * Refreshes the kept-alive elements. This needs to be called before the cache has filled the
+	 * collection. In that state the $byPredicate contains only the kept-alive elements.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the group ID
 	 * @param {function} fnOnRemove
-	 *   A function which is called if the kept element does no longer exist
+	 *   A function which is called if a kept-alive element does no longer exist
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise resolving without a defined result, or <code>undefined</code> if there is no
-	 *   kept element, or rejecting with an error if the refresh fails.
+	 *   A promise resolving without a defined result, or rejecting with an error if the refresh
+	 *   fails, or <code>undefined</code> if there are no kept-alive elements.
 	 *
 	 * @public
 	 */
-	_CollectionCache.prototype.refreshKeptElement = function (oGroupLock, fnOnRemove) {
-		var mTypes, that = this;
+	_CollectionCache.prototype.refreshKeptElements = function (oGroupLock, fnOnRemove) {
+		var aPredicates = Object.keys(this.aElements.$byPredicate).sort(),
+			mTypes,
+			that = this;
 
 		/*
-		 * Calculates a query to request the kept-alive element.
+		 * Calculates a query to request the kept-alive elements.
 		 *
 		 * @returns {string}
-		 *   A query to request the kept-alive element
+		 *   A query to request the kept-alive elements
 		 */
-		function calculateKeptElementQuery() {
-			var sKey,
+		function calculateKeptElementsQuery() {
+			var aKeyFilters,
 				mQueryOptions = Object.assign({}, that.mQueryOptions);
 
 			delete mQueryOptions.$count;
@@ -2410,35 +2411,43 @@ sap.ui.define([
 			delete mQueryOptions.$search;
 
 			// Note: at this time only kept-alive elements are in the cache
-			sKey = Object.keys(that.aElements.$byPredicate)[0];
-			mQueryOptions.$filter =
-				_Helper.getKeyFilter(that.aElements.$byPredicate[sKey], that.sMetaPath, mTypes);
+			aKeyFilters = aPredicates.map(function (sPredicate) {
+				return _Helper.getKeyFilter(that.aElements.$byPredicate[sPredicate], that.sMetaPath,
+					mTypes);
+			});
+			mQueryOptions.$filter = aKeyFilters.join(" or ");
+			if (aKeyFilters.length > 1) {
+				// avoid small default page size for server-driven paging
+				mQueryOptions.$top = aKeyFilters.length;
+			}
 
 			return that.sResourcePath
 				+ that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions);
 		}
 
-		if (isEmptyObject(this.aElements.$byPredicate)) {
+		if (aPredicates.length === 0) {
 			return undefined;
 		}
 
 		mTypes = this.fetchTypes().getResult(); // in this stage the promise is resolved
 
-		return this.oRequestor.request("GET", calculateKeptElementQuery(), oGroupLock)
+		return this.oRequestor.request("GET", calculateKeptElementsQuery(), oGroupLock)
 			.then(function (oResponse) {
-				var oElement = oResponse.value[0],
-					sPredicate;
+				var mStillAliveElements;
 
-				if (oElement) {
-					that.visitResponse(oResponse, mTypes, undefined, undefined, undefined, 0);
-					sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
-					_Helper.updateAll(that.mChangeListeners, sPredicate,
-						that.aElements.$byPredicate[sPredicate], oElement);
-				} else {
-					sPredicate = Object.keys(that.aElements.$byPredicate)[0];
-					delete that.aElements.$byPredicate[sPredicate];
-					fnOnRemove(sPredicate);
-				}
+				that.visitResponse(oResponse, mTypes, undefined, undefined, undefined, 0);
+				mStillAliveElements = oResponse.value.$byPredicate || {};
+
+				aPredicates.forEach(function (sPredicate) {
+					if (sPredicate in mStillAliveElements) {
+						_Helper.updateAll(that.mChangeListeners, sPredicate,
+							that.aElements.$byPredicate[sPredicate],
+							mStillAliveElements[sPredicate]);
+					} else {
+						delete that.aElements.$byPredicate[sPredicate];
+						fnOnRemove(sPredicate);
+					}
+				});
 			});
 	};
 

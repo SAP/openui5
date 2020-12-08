@@ -30411,26 +30411,41 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: List binding with one kept-alive context outside of the collection. Refresh
-	// the list binding and see that the kept-alive context is also refreshed.
+	// Scenario: A list binding with one kept-alive context outside the collection and a second one
+	// inside the collection. Refresh the list binding and see that the kept-alive context
+	// outside the collection is also refreshed. Mark a third context as kept-alive context and
+	// refresh again. One of the kept-alive entities does not exist anymore, in that case the
+	// fnOnBeforeDestroy callback is called.
 	// JIRA: CPOUI5ODATAV4-488
+	// JIRA: CPOUI5ODATAV4-579
 	QUnit.test("CPOUI5ODATAV4-488: Refresh w/ kept-alive context", function (assert) {
 		var oListBinding,
+			fnOnBeforeDestroy = sinon.stub(),
+			oTable,
 			that = this;
 
 		return this.createKeepAliveScenario(assert, true).then(function (oKeptContext) {
+			oTable = that.oView.byId("listReport");
+
 			oListBinding = oKeptContext.getBinding();
 
+			// 2nd kept-alive ontext (CPOUI5ODATAV4-579)
+			oTable.getItems()[0].getBindingContext().setKeepAlive(true);
 			that.expectRequest({
 					batchNo : 4,
 					method : "GET",
-					url : "SalesOrderList?$filter=SalesOrderID eq '1'"
-						+ "&$select=GrossAmount,Note,SalesOrderID"
+					url : "SalesOrderList"
+						+ "?$filter=SalesOrderID eq '1' or SalesOrderID eq '2'"
+						+ "&$select=GrossAmount,Note,SalesOrderID&$top=2"
 				}, {
 					value : [{
 						GrossAmount : "50",
 						Note : "After refresh",
 						SalesOrderID : "1"
+					}, {
+						GrossAmount : "149.1",
+						Note : "Note 2",
+						SalesOrderID : "2"
 					}]
 				})
 				.expectChange("objectPageGrossAmount", "50.00")
@@ -30464,7 +30479,62 @@ sap.ui.define([
 
 			oListBinding.refresh();
 
-			return that.waitForChanges(assert, "Step 1: Refresh the list");
+			return that.waitForChanges(assert, "Step 1: Refresh the list (w/ two kept contexts)");
+		}).then(function () {
+			// 3rd kept-alive ontext (CPOUI5ODATAV4-579)
+			oTable.getItems()[1].getBindingContext().setKeepAlive(true, fnOnBeforeDestroy);
+
+			that.expectRequest({
+					batchNo : 5,
+					method : "GET",
+					url : "SalesOrderList?$filter=SalesOrderID eq '1' or SalesOrderID eq '2'"
+						+ " or SalesOrderID eq '3'&$select=GrossAmount,Note,SalesOrderID&$top=3"
+				}, {
+					value : [{
+						GrossAmount : "50.2",
+						Note : "After refresh 2",
+						SalesOrderID : "1"
+					}, {
+						GrossAmount : "149.2",
+						Note : "Note 2",
+						SalesOrderID : "2"
+					}]
+				})
+				.expectChange("objectPageGrossAmount", "50.20")
+				.expectChange("objectPageNote", "After refresh 2")
+				.expectRequest({
+					batchNo : 5,
+					method : "GET",
+					url : "SalesOrderList?$count=true&$filter=GrossAmount gt 123"
+						+ "&$select=GrossAmount,Note,SalesOrderID&$skip=0&$top=2"
+				}, {
+					"@odata.count" : "26",
+					value : [{
+						GrossAmount : "149.2",
+						Note : "Note 2",
+						SalesOrderID : "2"
+					}, {
+						GrossAmount : "789.2",
+						Note : "Note 4",
+						SalesOrderID : "4"
+					}]
+				})
+				.expectChange("id", [, "4"])
+				.expectChange("grossAmount", ["149.20", "789.20"])
+				.expectRequest({
+					batchNo : 5,
+					method : "GET",
+					url : "SalesOrderList('1')/SO_2_SOITEM"
+						+ "?$select=ItemPosition,SalesOrderID&$skip=0&$top=100"
+				}, {
+					value : [/*does not matter*/]
+				});
+
+			oListBinding.refresh();
+
+			return that.waitForChanges(assert, "Step 2: Refresh the list (w/ three kept contexts)");
+		}).then(function () {
+			sinon.assert.called(fnOnBeforeDestroy);
 		});
 	});
 
