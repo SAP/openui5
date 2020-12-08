@@ -94,6 +94,13 @@ sap.ui.define([
 					defaultValue: false
 				}
 			}
+		},
+
+		constructor: function(oFile) {
+			Change.apply(this, arguments);
+			if (oFile.content && oFile.content.favorite) {
+				this.setFavorite(oFile.content.favorite);
+			}
 		}
 	});
 

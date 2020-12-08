@@ -89,6 +89,9 @@ sap.ui.define([
 			} else {
 				var oStandardVariant = new Variant({
 					fileName: "*standard*",
+					content: {
+						favorite: true
+					},
 					texts: {
 						variantName: {
 							value: sStandardVariantTitle
