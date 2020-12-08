@@ -56,7 +56,7 @@
 		},
 		getTitle: function(oToggleFooterButton) {
 			return new sap.f.DynamicPageTitle({
-				heading: [new sap.m.Title({text: "Some title", level: "H1", titleStyle: "H2"})],
+				heading: [new sap.m.Title({text: "Some title", level: "H1", titleStyle: "H2", wrapping: true})],
 				snappedContent: [this.getLabel("Filtered 1042 items based on 'unknown' criteria")],
 				actions: [
 					new sap.m.ToolbarSpacer(),
