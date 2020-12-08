@@ -203,13 +203,16 @@ function(
 						valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
 						validate: function(aValues, oType) {
 							// in Between 2 different Values must be defined
-							if (aValues.length < 2) {
-								throw new ValidateException(oMessageBundle.getText("operator.between.validate.missingValue")); //"Between must have two values"
+							if (aValues.length === 2) { // if aValues has wrong length this is checked in default logic
+								if (_valueIsEmpty(aValues[0]) && _valueIsEmpty(aValues[1])) {
+									return; // let empty condition be valid
+								} else if ((_valueIsEmpty(aValues[0]) || _valueIsEmpty(aValues[1]))) {
+									throw new ValidateException(oMessageBundle.getText("operator.between.validate.missingValue")); //"Between must have two values"
+								} else if (aValues[0] === aValues[1]) {
+									throw new ValidateException(oMessageBundle.getText("operator.between.validate.sameValues")); //"Between must have two different values"
+								}
 							}
-							if (aValues[0] === aValues[1]) {
-								throw new ValidateException(oMessageBundle.getText("operator.between.validate.sameValues")); //"Between must have two different values"
-							}
-							// the comparision of values only works for some types os values. e.g. int, float, some Date types, but not for Int64.
+							// the comparison of values only works for some types of values. e.g. int, float, some Date types, but not for Int64.
 							// we should try to bring such a compare function into the TypeUtils class
 							// if (TypeUtils.compare(aValues[0], aValues[1], oType) === 1 ) {
 							// if (aValues[0] > aValues[1]) {
@@ -1312,6 +1315,13 @@ function(
 			}
 
 			return aResult;
+
+		}
+
+		function _valueIsEmpty(vValue) {
+
+			// TODO: is type specific check needed?
+			return vValue === null || vValue === undefined || vValue === "";
 
 		}
 

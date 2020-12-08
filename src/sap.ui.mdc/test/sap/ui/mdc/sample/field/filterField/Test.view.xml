@@ -254,8 +254,8 @@
 					<m:Label text="multi (2) value field (Quantity)"></m:Label>
 					<mdc:FilterField id="FF11"
 						conditions="{cm>/conditions/Quantity}"
-						dataType="Edm.Decimal"
-						display="Description"
+						dataType="Edm.Int32"
+						display="Value"
 						maxConditions="2"
 						placeholder="{/#Product/Quantity/@sap:label}"
 						change="handleChange"
@@ -266,6 +266,7 @@
 					<m:Label text="multi value field in display mode  (Quantity)"></m:Label>
 					<mdc:FilterField id="FF12"
 						conditions="{cm>/conditions/Quantity}"
+						dataType="Edm.Int32"
 						maxConditions="2"
 						editMode="Display"
 						placeholder="Placeholder"

@@ -20,6 +20,7 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/ui/model/type/String',
+	'sap/ui/core/library',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/ListItem',
 	'sap/ui/layout/Grid',
@@ -47,6 +48,7 @@ sap.ui.define([
 		JSONModel,
 		ResourceModel,
 		StringType,
+		coreLibrary,
 		InvisibleText,
 		ListItem,
 		Grid,
@@ -65,6 +67,7 @@ sap.ui.define([
 	});
 
 	var ButtonType = mLibrary.ButtonType;
+	var ValueState = coreLibrary.ValueState;
 
 	/**
 	 * Constructor for a new <code>DefineConditionPanel</code>.
@@ -405,6 +408,24 @@ sap.ui.define([
 
 				}.bind(this), 0);
 			}
+		},
+
+		cleanUp: function() {
+			// of Dialog is closed all error messages and invalid input should be removed to be clean on reopening
+			var oGrid = this.byId("conditions");
+			var aGridContent = oGrid.getContent();
+			for (var i = 0; i < aGridContent.length; i++) {
+				var oField = aGridContent[i];
+				if (oField instanceof Field && oField.hasOwnProperty("_iValueIndex")) {
+					if (oField._bParseError) { // TODO: better was to find out parsing error
+						oField.setValue(); // to remove invalid value from parsing
+					}
+					if (oField.getValueState() !== ValueState.None) {
+						oField.setValueState(ValueState.None);
+						oField.setValueStateText();
+					}
+				}
+			}
 		}
 
 	});
@@ -468,31 +489,46 @@ sap.ui.define([
 			var oOperator = FilterOperatorUtil.getOperator(sKey);
 			var oOperatorOld = FilterOperatorUtil.getOperator(sOldKey);
 			var oGrid = oField.getParent();
-			var oValueField;
+			var oValue0Field;
+			var oValue1Field;
 			iIndex = oGrid.indexOfContent(oField);
+
+			// find fields and initialize error state
+			oValue0Field = oGrid.getContent()[iIndex + 2];
+			if (oValue0Field && oValue0Field.hasOwnProperty("_iValueIndex") && oValue0Field._iValueIndex === 0) {
+				if (oValue0Field instanceof Field && !oValue0Field._bParseError) { // TODO: better was to find out parsing error // TODO: handle custom controls
+					// if Field is in parsing error state, don't remove error
+					oValue0Field.setValueState(ValueState.None);
+					oValue0Field.setValueStateText();
+				}
+				oValue1Field = oGrid.getContent()[iIndex + 3]; // second field only exists if first field exist
+				if (oValue1Field && oValue1Field.hasOwnProperty("_iValueIndex") && oValue1Field._iValueIndex === 1) {
+					if (oValue1Field instanceof Field && !oValue1Field._bParseError) { // TODO: better was to find out parsing error // TODO: handle custom controls
+						// if Field is in parsing error state, don't remove error
+						oValue1Field.setValueState(ValueState.None);
+						oValue1Field.setValueStateText();
+					}
+				} else {
+					oValue1Field = undefined;
+				}
+			} else {
+				oValue0Field = undefined;
+			}
 
 			if (oOperator.createControl || oOperatorOld.createControl) {
 				// custom control used -> needs to be created new
-				oValueField = oGrid.getContent()[iIndex + 2];
-				if (oValueField && oValueField.hasOwnProperty("_iValueIndex") && oValueField._iValueIndex === 0) {
-					oValueField.destroy();
+				if (oValue0Field) {
+					oValue0Field.destroy();
 				}
-				oValueField = oGrid.getContent()[iIndex + 2];
-				if (oValueField && oValueField.hasOwnProperty("_iValueIndex") && oValueField._iValueIndex === 1) {
-					oValueField.destroy();
+				if (oValue1Field) {
+					oValue1Field.destroy();
 				}
 			} else {
-				if (oOperator.valueTypes[0] !== oOperatorOld.valueTypes[0]) {
-					oValueField = oGrid.getContent()[iIndex + 2];
-					if (oValueField && oValueField.hasOwnProperty("_iValueIndex") && oValueField._iValueIndex === 0) {
-						oValueField.unbindProperty("value");
-					}
+				if (oValue0Field && oOperator.valueTypes[0] !== oOperatorOld.valueTypes[0]) {
+					oValue0Field.unbindProperty("value");
 				}
-				if (oOperator.valueTypes[1] !== oOperatorOld.valueTypes[1] && oOperatorOld.valueTypes[1]) { // 2nd Field only exist if there was a valueType defined
-					oValueField = oGrid.getContent()[iIndex + 3];
-					if (oValueField && oValueField.hasOwnProperty("_iValueIndex") && oValueField._iValueIndex === 1) {
-						oValueField.unbindProperty("value");
-					}
+				if (oValue1Field && oOperator.valueTypes[1] !== oOperatorOld.valueTypes[1] && oOperatorOld.valueTypes[1]) { // 2nd Field only exist if there was a valueType defined
+					oValue1Field.unbindProperty("value");
 				}
 			}
 		}
@@ -565,6 +601,8 @@ sap.ui.define([
 		oControl.setLayoutData(new GridData({span: {path: "$condition>", formatter: _getSpanForValue.bind(this)}}));
 		oControl.setBindingContext(oValueBindingContext, "$this");
 		oControl.setBindingContext(oBindingContext, "$condition");
+		// add fieldGroup to validate Condition only after both Fields are entered.
+		oControl.setFieldGroupIds([oBindingContext.getPath()]); // use path to have a ID for every condition
 
 		return oControl;
 
@@ -850,6 +888,8 @@ sap.ui.define([
 
 		oGrid.addContent(oAddBtn);
 
+		oGrid.attachValidateFieldGroup(_validateFieldGroup, this); // to validate conditions with more than one field
+
 		this.setAggregation("_content", oPanel);
 
 	}
@@ -940,6 +980,10 @@ sap.ui.define([
 		})
 		.setLayoutData(new GridData({span: {path: "$this>/conditions", formatter: _getSpanForOperator.bind(this)}, linebreak: true}))
 		.setBindingContext(oBindingContext, "$this");
+		if (oBindingContext) {
+			// validate only complete condition
+			oOperatorField.setFieldGroupIds([oBindingContext.getPath()]); // use path to have a ID for every condition
+		}
 
 		// as selected key can be changed by reopening dialog listen on property change not on change event
 		this._oObserver.observe(oOperatorField, {
@@ -963,6 +1007,10 @@ sap.ui.define([
 			visibleXL: false
 		}))
 		.setBindingContext(oBindingContext, "$this"); // to find condition on remove
+		if (oBindingContext) {
+			// as Button is between Operatot and Value don't trigger validation on tabbing between
+			oRemoveButton.setFieldGroupIds([oBindingContext.getPath()]); // use path to have a ID for every condition
+		}
 
 		oGrid.insertContent(oRemoveButton, iIndex);
 		iIndex++;
@@ -1095,10 +1143,17 @@ sap.ui.define([
 
 		var oOperatorField = aGridContent[iIndex];
 		oOperatorField.setBindingContext(oBindingContext, "$this");
+		if (oBindingContext) {
+			oOperatorField.setFieldGroupIds([oBindingContext.getPath()]); // use path to have a ID for every condition
+		}
 		iIndex++;
 
 		var oRemoveButton = aGridContent[iIndex];
 		oRemoveButton.setBindingContext(oBindingContext, "$this");
+		if (oBindingContext) {
+			// as Button is between Operatot and Value don't trigger validation on tabbing between
+			oRemoveButton.setFieldGroupIds([oBindingContext.getPath()]); // use path to have a ID for every condition
+		}
 		iIndex++;
 
 		var oValueBindingContext;
@@ -1142,6 +1197,7 @@ sap.ui.define([
 				}
 			} else {
 				oValue0Field.destroy();
+				oValue0Field = undefined;
 				oValue1Field = aGridContent[iIndex + 1];
 				if (oValue1Field && oValue1Field.hasOwnProperty("_iValueIndex") && oValue1Field._iValueIndex === 1) {
 					oValue1Field.destroy();
@@ -1163,6 +1219,73 @@ sap.ui.define([
 		iIndex++;
 
 		return iIndex;
+
+	}
+
+	function _validateFieldGroup(oEvent) {
+
+		// TODO: can there be FieldGroups set from outside?
+		var oField = oEvent.getSource();
+		while (!(oField.getParent() instanceof Grid)) {
+			// event might be fired on inner control -> find Field
+			oField = oField.getParent();
+		}
+
+		_validateCondition.call(this, oField);
+
+	}
+
+	function _validateCondition(oField) {
+
+		var oGrid = oField.getParent();
+		var iIndex = oGrid.indexOfContent(oField);
+		var oBindingContext;
+
+		if (oField.getId().endsWith("-operator")) {
+			// operator field - use first value field fo validate
+			oBindingContext = oField.getBindingContext("$this");
+			iIndex = iIndex + 2; // as remove button is between operator an value field
+			oField = oGrid.getContent()[iIndex];
+		} else {
+			oBindingContext = oField.getBindingContext("$condition");
+		}
+
+		var oField2; // also update second Field if exist
+		var oCondition = oBindingContext.getObject();
+		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+
+		if (oOperator.valueTypes.length > 0 && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
+			// check only not static operators
+			if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1]) {
+				// two fields exist
+				if (oField.hasOwnProperty("_iValueIndex") && oField._iValueIndex === 0) {
+					oField2 = oGrid.getContent()[iIndex + 1];
+				} else if (oField.hasOwnProperty("_iValueIndex") && oField._iValueIndex === 1) {
+					oField2 = oGrid.getContent()[iIndex - 1];
+				}
+			}
+
+			if (oField.getMetadata().getAllProperties().valueState && !oField._bParseError && (!oField2 || !oField2._bParseError)) { // TODO: better was to find out parsing error
+				// if Field is in parsing error state, user entry is not transfered to condition, so validating makes no sense.
+				try {
+					oOperator.validate(oCondition.values, _getType.call(this));
+					oField.setValueState(ValueState.None);
+					oField.setValueStateText();
+					if (oField2 && oField2.getMetadata().getAllProperties().valueState) {
+						oField2.setValueState(ValueState.None);
+						oField2.setValueStateText();
+					}
+				} catch (oException) {
+					oField.setValueState(ValueState.Error);
+					oField.setValueStateText(oException.message);
+					if (oField2 && oField2.getMetadata().getAllProperties().valueState) {
+						oField2.setValueState(ValueState.Error);
+						oField2.setValueStateText(oException.message);
+					}
+				}
+			}
+
+		}
 
 	}
 

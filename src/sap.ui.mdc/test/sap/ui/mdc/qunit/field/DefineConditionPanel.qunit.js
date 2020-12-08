@@ -54,7 +54,7 @@ sap.ui.define([
 	"use strict";
 
 	var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-	var oDefineConditionPanelView;
+	var oDefineConditionPanel;
 	var oModel;
 	var oDataType;
 	var oFormatOptions;
@@ -71,7 +71,7 @@ sap.ui.define([
 		oModel = new ConditionModel();
 		sap.ui.getCore().setModel(oModel, "cm");
 
-		oDefineConditionPanelView = new DefineConditionPanel("DCP1", {
+		oDefineConditionPanel = new DefineConditionPanel("DCP1", {
 			conditions: '{cm>/conditions/Name}',
 			formatOptions: oFormatOptions
 		}).placeAt("content");
@@ -82,7 +82,7 @@ sap.ui.define([
 	};
 
 	var _teardown = function() {
-		oDefineConditionPanelView.destroy();
+		oDefineConditionPanel.destroy();
 		oDataType.destroy();
 		oDataType = undefined;
 		oFormatOptions = undefined;
@@ -100,7 +100,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Basic tests", function(assert) {
-		assert.equal(oDefineConditionPanelView != null, true, "instance can be created");
+		assert.equal(oDefineConditionPanel != null, true, "instance can be created");
 	});
 
 	QUnit.test("bind empty condition Model and add one condition", function(assert) {
@@ -134,9 +134,9 @@ sap.ui.define([
 				delegateName: "sap/ui/mdc/field/FieldBaseDelegate"
 		};
 
-		oDefineConditionPanelView.setFormatOptions(oFormatOptions);
+		oDefineConditionPanel.setFormatOptions(oFormatOptions);
 		oModel.removeAllConditions("Name");
-		oDefineConditionPanelView.rerender(); // to invalidate operator texts
+		oDefineConditionPanel.rerender(); // to invalidate operator texts
 		sap.ui.getCore().applyChanges();
 
 		var fnDone = assert.async();
@@ -155,11 +155,11 @@ sap.ui.define([
 
 	QUnit.test("bind filled condition Model", function(assert) {
 
-		var oFormatOptions = merge({}, oDefineConditionPanelView.getFormatOptions());
+		var oFormatOptions = merge({}, oDefineConditionPanel.getFormatOptions());
 		oFormatOptions.maxConditions = 4;
-		oDefineConditionPanelView.setFormatOptions(oFormatOptions); // to test visibility of add button
+		oDefineConditionPanel.setFormatOptions(oFormatOptions); // to test visibility of add button
 
-		sinon.spy(oDefineConditionPanelView, "updateDefineConditions");
+		sinon.spy(oDefineConditionPanel, "updateDefineConditions");
 		// update twice to test only one call of dummy row
 
 		oModel.setData({
@@ -184,7 +184,7 @@ sap.ui.define([
 
 		setTimeout(function () {
 			sap.ui.getCore().applyChanges();
-			assert.ok(oDefineConditionPanelView.updateDefineConditions.calledOnce, "updateDefineConditions called once");
+			assert.ok(oDefineConditionPanel.updateDefineConditions.calledOnce, "updateDefineConditions called once");
 			assert.equal(oModel.getConditions("Name").length, 3, "3 conditions should exist");
 			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
@@ -277,7 +277,7 @@ sap.ui.define([
 
 			setTimeout(function () { // as model update is async
 				sap.ui.getCore().applyChanges();
-				var aConditions = oDefineConditionPanelView.getConditions();
+				var aConditions = oDefineConditionPanel.getConditions();
 				assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
 				assert.deepEqual(aConditions[0].values, ["Andreas", null], "Values set on condition");
 
@@ -318,7 +318,7 @@ sap.ui.define([
 
 			setTimeout(function () { // as model update is async
 				sap.ui.getCore().applyChanges();
-				var aConditions = oDefineConditionPanelView.getConditions();
+				var aConditions = oDefineConditionPanel.getConditions();
 				assert.equal(aConditions[0].operator, "EQ", "Operator set on condition");
 				assert.deepEqual(aConditions[0].values, ["A"], "Values set on condition");
 
@@ -356,7 +356,7 @@ sap.ui.define([
 
 			setTimeout(function () { // as model update is async
 				sap.ui.getCore().applyChanges();
-				var aConditions = oDefineConditionPanelView.getConditions();
+				var aConditions = oDefineConditionPanel.getConditions();
 				assert.equal(aConditions[0].operator, "Empty", "Operator set on condition");
 				assert.deepEqual(aConditions[0].values, [], "Values set on condition");
 
@@ -366,6 +366,98 @@ sap.ui.define([
 				assert.equal(aContent.length, 4, "One row with no fields created - Grid contains 4 controls");
 
 				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("validate condition on user input", function(assert) {
+
+		oModel.setData({
+			conditions: {
+				Name: [
+					   Condition.createCondition("BT", ["A", "B"], undefined, undefined, ConditionValidated.NotValidated)
+					   ]
+			}
+		});
+
+		var fnDone = assert.async();
+
+		setTimeout(function () { // for model update
+			sap.ui.getCore().applyChanges();
+			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
+
+			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+			var aContent = oGrid.getContent();
+			var oOperatorField = aContent[0];
+			var oField1 = aContent[2];
+			var oField2 = aContent[3];
+			var oButton = aContent[4];
+
+			oField1.focus();
+			setTimeout(function() { // for FieldGroup delay
+				jQuery(oField1.getFocusDomRef()).val("B");
+				qutils.triggerKeyboardEvent(oField1.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+				oButton.focus(); // to leave FieldGroup
+				sap.ui.getCore().applyChanges();
+				setTimeout(function() { // for FieldGroup delay
+
+					assert.equal(oField1.getValueState(), "Error", "first Field has Error state");
+					assert.ok(oField1.getValueStateText(), "first Field has Error state text");
+					assert.equal(oField2.getValueState(), "Error", "second Field has Error state");
+					assert.ok(oField2.getValueStateText(), "second Field has Error state text");
+
+					oField2.focus();
+					setTimeout(function() { // for fieldGroup delay
+						jQuery(oField2.getFocusDomRef()).val("C");
+						qutils.triggerKeyboardEvent(oField2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+						oButton.focus(); // to leave FieldGroup
+						sap.ui.getCore().applyChanges();
+						setTimeout(function() { // for FieldGroup delay
+
+							assert.equal(oField1.getValueState(), "None", "first Field has no Error state");
+							assert.notOk(oField1.getValueStateText(), "first Field has no Error state text");
+							assert.equal(oField2.getValueState(), "None", "second Field has no Error state");
+							assert.notOk(oField2.getValueStateText(), "second Field has no Error state text");
+
+							assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
+							assert.equal(oModel.getConditions("Name")[0].values[0], "B", "condition value0 should be changed");
+							assert.equal(oModel.getConditions("Name")[0].values[1], "C", "condition value1 should be changed");
+
+							oField1.focus();
+							setTimeout(function() { // for FieldGroup delay
+								jQuery(oField1.getFocusDomRef()).val("C");
+								qutils.triggerKeyboardEvent(oField1.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+								oOperatorField.focus();
+								setTimeout(function() { // for FieldGroup delay
+									oButton.focus(); // to leave FieldGroup
+									sap.ui.getCore().applyChanges();
+									setTimeout(function() { // for FieldGroup delay
+
+										assert.equal(oField1.getValueState(), "Error", "first Field has Error state");
+										assert.ok(oField1.getValueStateText(), "first Field has Error state text");
+										assert.equal(oField2.getValueState(), "Error", "second Field has Error state");
+										assert.ok(oField2.getValueStateText(), "second Field has Error state text");
+
+										assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
+										assert.equal(oModel.getConditions("Name")[0].values[0], "C", "condition value0 should be changed");
+										assert.equal(oModel.getConditions("Name")[0].values[1], "C", "condition value1 should be changed");
+
+										oField1._bParseError = true; // fake parse error
+										oDefineConditionPanel.cleanUp();
+										assert.equal(oField1.getValue(), null, "first Field value cleared");
+										assert.equal(oField1.getValueState(), "None", "first Field has no Error state");
+										assert.notOk(oField1.getValueStateText(), "first Field has no Error state text");
+										assert.equal(oField2.getValueState(), "None", "second Field has no Error state");
+										assert.notOk(oField2.getValueStateText(), "second Field has no Error state text");
+
+										fnDone();
+									}, 0);
+								}, 0);
+							}, 0);
+						}, 0);
+					}, 0);
+				}, 0);
 			}, 0);
 		}, 0);
 
@@ -415,7 +507,7 @@ sap.ui.define([
 				delegateName: "sap/ui/mdc/field/FieldBaseDelegate"
 		};
 
-		oDefineConditionPanelView.setFormatOptions(oFormatOptions);
+		oDefineConditionPanel.setFormatOptions(oFormatOptions);
 		sap.ui.getCore().applyChanges();
 
 		var fnDone = assert.async();
@@ -459,7 +551,7 @@ sap.ui.define([
 			var oFH = sap.ui.getCore().byId(oOperatorField.getFieldHelp());
 			var aItems = oFH.getItems();
 			var oField = aContent[2];
-			var aConditions = oDefineConditionPanelView.getConditions();
+			var aConditions = oDefineConditionPanel.getConditions();
 
 			// check for default operator
 			assert.equal(oOperatorField.getValue(), "MyOperator", "Operator value");
@@ -480,7 +572,7 @@ sap.ui.define([
 
 			setTimeout(function () { // as model update is async
 				sap.ui.getCore().applyChanges();
-				aConditions = oDefineConditionPanelView.getConditions();
+				aConditions = oDefineConditionPanel.getConditions();
 				assert.equal(aConditions[0].operator, "BT", "Operator set on condition");
 				assert.deepEqual(aConditions[0].values, [null, null], "Values set on condition");
 
@@ -500,7 +592,7 @@ sap.ui.define([
 
 				setTimeout(function () { // as model update is async
 					sap.ui.getCore().applyChanges();
-					aConditions = oDefineConditionPanelView.getConditions();
+					aConditions = oDefineConditionPanel.getConditions();
 					assert.equal(aConditions[0].operator, "MyOperator", "Operator set on condition");
 					assert.deepEqual(aConditions[0].values, [null], "Values set on condition");
 
@@ -545,7 +637,7 @@ sap.ui.define([
 				delegateName: "sap/ui/mdc/field/FieldBaseDelegate"
 		};
 
-		oDefineConditionPanelView.setFormatOptions(oFormatOptions);
+		oDefineConditionPanel.setFormatOptions(oFormatOptions);
 		sap.ui.getCore().applyChanges();
 
 	};
@@ -845,7 +937,7 @@ sap.ui.define([
 				delegateName: "sap/ui/mdc/field/FieldBaseDelegate"
 		};
 
-		oDefineConditionPanelView.setFormatOptions(oFormatOptions);
+		oDefineConditionPanel.setFormatOptions(oFormatOptions);
 		sap.ui.getCore().applyChanges();
 
 		var fnDone = assert.async();
@@ -876,9 +968,9 @@ sap.ui.define([
 
 	QUnit.test("paste multiple values", function(assert) {
 
-		var oFormatOptions = merge({}, oDefineConditionPanelView.getFormatOptions());
+		var oFormatOptions = merge({}, oDefineConditionPanel.getFormatOptions());
 		oFormatOptions.maxConditions = 3;
-		oDefineConditionPanelView.setFormatOptions(oFormatOptions); // to test with maxConditions
+		oDefineConditionPanel.setFormatOptions(oFormatOptions); // to test with maxConditions
 
 		var fnDone = assert.async();
 		setTimeout(function () { // as model update is async
