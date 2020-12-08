@@ -312,10 +312,10 @@ sap.ui.define([
 
 		},
 
-		_handleTokenUpdate: function(oEvent) {
+		_handleTokenDelete: function(oEvent) {
 
-			if (oEvent.getParameter("type") === "removed") {
-				var aRemovedTokens = oEvent.getParameter("removedTokens");
+			if (oEvent.getParameter("tokens")) {
+				var aRemovedTokens = oEvent.getParameter("tokens");
 				var aConditions = this.getConditions();
 				var i;
 
