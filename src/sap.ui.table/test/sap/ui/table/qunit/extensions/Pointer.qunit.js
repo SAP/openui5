@@ -394,7 +394,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Column Header", function(assert) {
+	QUnit.test("Column header", function(assert) {
 		var oElem = getColumnHeader(0, true);
 		var oColumn = oTable.getColumns()[0];
 		var oColumnMenu = oColumn.getMenu();
@@ -469,7 +469,20 @@ sap.ui.define([
 		assert.ok(oContextMenuEventArgument.isDefaultPrevented(), "Opening of the default context menu was prevented");
 	});
 
-	QUnit.test("Data Cell", function(assert) {
+	QUnit.test("Column header if first row is a summary", function(assert) {
+		return fakeSumRow(0, oTable).then(function() {
+			var oElem = getColumnHeader(0, true);
+			var oColumn = oTable.getColumns()[0];
+			var oColumnMenu = oColumn.getMenu();
+
+			oColumn.setSortProperty("dummy");
+			this.triggerMouseDownEvent(oElem, 0);
+			qutils.triggerMouseEvent(oElem, "click");
+			assert.ok(oColumnMenu.bOpen, "Menu is opened");
+		}.bind(this));
+	});
+
+	QUnit.test("Data cell", function(assert) {
 		var oElem = getCell(0, 0);
 		var oColumn = oTable.getColumns()[0];
 		var oContextMenuEvent = this.spy(this.oPointerExtension._delegate, "oncontextmenu");
@@ -545,7 +558,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Columnheader", function(assert) {
+	QUnit.test("Column header", function(assert) {
 		var done = assert.async();
 		var oColumn = oTable._getVisibleColumns()[3];
 		var bColumnReorderingTriggered = false;
