@@ -581,6 +581,8 @@ sap.ui.define([
 			this._enhanceI18nModel(oCardManifest.getResourceBundle());
 		}
 
+		this.getModel("context").resetHostProperties();
+
 		if (this._hasContextParams()) {
 			this._resolveContextParams().then(function (oContextParameters) {
 				this._oContextParameters = oContextParameters;

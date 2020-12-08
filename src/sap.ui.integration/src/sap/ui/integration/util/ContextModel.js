@@ -42,7 +42,7 @@ sap.ui.define([
 	 */
 	ContextModel.prototype.setHost = function (oHost) {
 		this._oHost = oHost;
-		this._mValues = null;
+		this.resetHostProperties();
 	};
 
 	/**
@@ -82,6 +82,13 @@ sap.ui.define([
 		} else {
 			return JSONModel.prototype.getProperty.apply(this, arguments);
 		}
+	};
+
+	/**
+	 * Cleans any previously obtained host dependent properties.
+	 */
+	ContextModel.prototype.resetHostProperties = function () {
+		this._mValues = {};
 	};
 
 	/**

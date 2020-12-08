@@ -1,16 +1,39 @@
 /*global QUnit, sinon */
 
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/ui/integration/util/ContextModel",
 	"sap/ui/integration/Host",
-	"sap/ui/integration/util/Utils"
+	"sap/ui/integration/util/Utils",
+	"sap/ui/integration/widgets/Card"
 ],
 function (
+	Core,
 	ContextModel,
 	Host,
-	Utils
+	Utils,
+	Card
 ) {
 	"use strict";
+
+	var DOM_RENDER_LOCATION = "qunit-fixture";
+
+	var oManifestSampleWithParameter = {
+		"sap.app": {
+			"id": "card.explorer.integration.hostContext",
+			"type": "card"
+		},
+		"sap.card": {
+			"type": "List",
+			"configuration": {
+				"parameters": {
+					"supplierId": {
+						"value": "{context>/sample/supplier/id/value}"
+					}
+				}
+			}
+		}
+	};
 
 	QUnit.module("Creating instance");
 
@@ -108,5 +131,55 @@ function (
 		// cleanup
 		oModel.destroy();
 		oHost.destroy();
+	});
+
+	QUnit.module("In card context", {
+		beforeEach: function () {
+			this.clock = sinon.useFakeTimers();
+			this.oCard = new Card();
+			this.oHost = new Host();
+
+			this.oCard.setHost(this.oHost);
+		},
+		afterEach:  function () {
+			this.clock.restore();
+			this.oCard.destroy();
+			this.oHost.destroy();
+		}
+	});
+
+	QUnit.test("Calling refresh() must clean the context model", function (assert) {
+		// arrange
+		var done = assert.async(),
+			oCard = this.oCard,
+			oHost = this.oHost,
+			fnGetContextSpy;
+
+		oHost.getContextValue = function (sPath) {
+			return Promise.resolve("value");
+		};
+
+		fnGetContextSpy = sinon.spy(oHost, "getContextValue");
+
+		// assert
+		oCard.attachEventOnce("_ready", function () {
+			assert.ok(fnGetContextSpy.called, "Method getContextValue is called once.");
+
+			fnGetContextSpy.resetHistory();
+
+			oCard.attachEventOnce("_ready", function () {
+				assert.ok(fnGetContextSpy.called, "Method getContextValue is called again after refresh.");
+
+				done();
+			});
+
+			oCard.refresh();
+			Core.applyChanges();
+		});
+
+		// act
+		oCard.setManifest(oManifestSampleWithParameter);
+		oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
 	});
 });
