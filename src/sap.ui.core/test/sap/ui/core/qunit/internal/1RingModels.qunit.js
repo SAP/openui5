@@ -122,21 +122,21 @@ sap.ui.require([
 		//TODO: get test running in 1RingModels.qunit; it uses ODataAnnotationsFakeService
 		// "sap/ui/core/qunit/odata/ODataAnnotations.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
+		// "sap/ui/core/qunit/odata/ODataListBinding.qunit",
+		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
 		// "sap/ui/core/qunit/odata/ODataMessageParser.qunit",
 		"sap/ui/core/qunit/odata/ODataMessageParserNoFakeService.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
 		// "sap/ui/core/qunit/odata/ODataMetadata.qunit",
 		"sap/ui/core/qunit/odata/ODataMetadataNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/ODataMetaModel.qunit",
-		"sap/ui/core/qunit/odata/ODataUtils.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
-		// "sap/ui/core/qunit/odata/v1/ODataListBinding.qunit",
+		// "sap/ui/core/qunit/odata/ODataModel.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
-		// "sap/ui/core/qunit/odata/v1/ODataModel.qunit",
-		//TODO: get test running in 1RingModels.qunit; it uses ODataMessagesFakeService
-		// "sap/ui/core/qunit/odata/v1/ODataSharedMetadata.qunit",
+		// "sap/ui/core/qunit/odata/ODataSharedMetadata.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses MockServer
 		// "sap/ui/core/qunit/odata/ODataTreeBindingAdapter.qunit",
+		"sap/ui/core/qunit/odata/ODataUtils.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.odata.v2.* - tests are contained in testsuite.odatav2.qunit.js
