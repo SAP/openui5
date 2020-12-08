@@ -162,7 +162,7 @@ sap.ui.define([
 		}
 	};
 
-	QUnit.module("ClientBindingAdapter", {
+	QUnit.module("ClientTreeBindingAdapter", {
 		beforeEach: function() {
 			oModel = new JSONModel();
 			oModel.setData(jQuery.extend({}, oData));
@@ -1134,7 +1134,7 @@ sap.ui.define([
 		]
 	};
 
-	QUnit.module("ClientBindingAdapter - Model Data 2", {
+	QUnit.module("ClientTreeBindingAdapter - Model Data 2", {
 		beforeEach: function() {
 			oModel = new JSONModel();
 			oModel.setData(jQuery.extend({}, oData2));

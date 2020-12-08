@@ -39,6 +39,12 @@ sap.ui.define(function() {
 					language: "en-US"
 				}
 			},
+			ClientTreeBindingAdapter: {
+				title: "sap.ui.model.ClientTreeBindingAdapter - QUnit Tests",
+				module: [
+					"test-resources/sap/ui/core/qunit/model/ClientTreeBindingAdapter.qunit"
+				]
+			},
 			CompositeBinding: {
 				title: "sap.ui.model.CompositeBinding - QUnit Tests",
 				ui5: {
@@ -134,6 +140,13 @@ sap.ui.define(function() {
 				title: "sap.ui.model.odata.ODataTreeBinding - QUnit Tests",
 				module: [
 					"test-resources/sap/ui/core/qunit/odata/v1/ODataTreeBinding.qunit"
+				],
+				sinon: 1 // because MockServer is used which has a hard dependency to sinon V1
+			},
+			ODataTreeBindingAdapter: {
+				title: "sap.ui.model.odata.ODataTreeBindingApter - QUnit Tests",
+				module: [
+					"test-resources/sap/ui/core/qunit/odata/ODataTreeBindingAdapter.qunit"
 				],
 				sinon: 1 // because MockServer is used which has a hard dependency to sinon V1
 			},

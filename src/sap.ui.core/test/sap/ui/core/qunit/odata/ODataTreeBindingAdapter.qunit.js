@@ -4,12 +4,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/ODataTreeBindingAdapter",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/model/Sorter",
-	"sap/ui/thirdparty/sinon-qunit" /*Sinon itself already part of MockServer*/
-], function(ODataModel, ODataTreeBindingAdapter, MockServer, Sorter, SinonQUnit) {
+	"sap/ui/model/Sorter"
+], function(ODataModel, ODataTreeBindingAdapter, MockServer, Sorter) {
 	"use strict";
-
-	sinon.config.useFakeTimers = false;
 
 	var sURLPrefix = sap.ui.require.toUrl("sap/ui/core/qunit");
 
