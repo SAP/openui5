@@ -41,7 +41,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			},
 			JSONView: {
 				title: "QUnit Page for sap.ui.core.mvc.JSONView + sap.ui.core.mvc.Controller",
-				sinon: false
+				sinon: true
 			},
 			JSView: {
 				title: "QUnit Page for sap.ui.core.mvc.JSView + sap.ui.core.mvc.Controller",
