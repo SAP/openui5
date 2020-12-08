@@ -6,7 +6,8 @@
 		"title": "OpenUI5 SDK - Demo Kit",
 		"applicationVersion": {
 			"version": "1.0.0"
-		}
+		},
+		"embeddedBy": "../"
 	},
 	"sap.ui": {
 		"technology": "UI5",
