@@ -24,7 +24,7 @@ sap.ui.define([
 					this.getView().byId("termsOfUseText").setText(sTerms);
 				}.bind(this))
 				.fail(function () {
-					this.oRouter.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+					this.onRouteNotFound();
 				}.bind(this));
 		}
 	});

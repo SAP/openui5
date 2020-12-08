@@ -45,7 +45,7 @@ sap.ui.define([
 						this._initTreeUtil("key", "links");
 					}.bind(this))
 					.catch(function () {
-						this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+						this.onRouteNotFound();
 					}.bind(this));
 			},
 

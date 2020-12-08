@@ -182,6 +182,7 @@ sap.ui.define([
 				}.bind(this), 0);
 
 				this.searchResultsButtonVisibilitySwitch(this.byId("apiDetailBackToSearch"));
+				this.appendPageTitle(this._oModel.getProperty("/displayName"));
 			},
 
 			onAfterRendering: function () {

@@ -64,7 +64,8 @@ sap.ui.define([
 					oList = this.byId("allList"),
 					oSection = this._findSectionForCategory(sCategory),
 					sSectionId = oSection ? oSection.getId() : null,
-					sOldQuery = this.getModel().getProperty("/searchTerm");
+					sOldQuery = this.getModel().getProperty("/searchTerm"),
+					sPageTitle = '';
 
 				if (sQuery === sOldQuery) {
 					this.getView().byId("searchPage").setSelectedSection(sSectionId);
@@ -93,6 +94,9 @@ sap.ui.define([
 				if (this.highlighter) {
 					this.highlighter.highlight(sQuery);
 				}
+
+				sPageTitle = this.getModel("i18n").getResourceBundle().getText("SEARCH_PAGE_TITLE", [sQuery]);
+				this.appendPageTitle(sPageTitle);
 			},
 
 			formatTableTitle: function (sPattern, iVisibleItemsCount, iItemsCount) {

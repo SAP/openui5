@@ -12,12 +12,18 @@ sap.ui.define([
 		"sap/ui/Device",
 		"sap/m/library",
 		"sap/ui/documentation/sdk/controller/util/APIInfo",
-		"sap/base/strings/formatMessage"
-	], function (library, Fragment, Controller, History, ResourceModel, Device, mobileLibrary, APIInfo, formatMessage) {
+		"sap/base/strings/formatMessage",
+		"sap/ui/documentation/WebPageTitleUtil"
+	], function (library, Fragment, Controller, History, ResourceModel, Device, mobileLibrary, APIInfo,
+				 formatMessage, WebPageTitleUtil) {
 		"use strict";
 
 		// shortcut for sap.m.SplitAppMode
 		var SplitAppMode = mobileLibrary.SplitAppMode;
+
+		var _oWebPageTitleUtil = new WebPageTitleUtil();
+
+		var _oPageTitle = [];
 
 		return Controller.extend("sap.ui.documentation.sdk.controller.BaseController", {
 
@@ -26,7 +32,21 @@ sap.ui.define([
 
 			formatMessage: formatMessage,
 
+			appendPageTitle: function (sTitle) {
+				if (sTitle === null) {
+					_oPageTitle = [];
+				} else {
+					if (_oPageTitle.indexOf(sTitle) >= 0) {
+						return this;
+					}
+					_oPageTitle.length === 2 ? _oPageTitle[0] = sTitle : _oPageTitle.unshift(sTitle);
+				}
+				_oWebPageTitleUtil.setTitle(_oPageTitle.join(" - "));
+
+				return this;
+			},
 			onInit: function() {
+
 				var oMessageBundle = new ResourceModel({
 					bundleName: "sap.ui.documentation.messagebundle"
 				});
@@ -36,6 +56,7 @@ sap.ui.define([
 				if (Device.system.phone || Device.system.tablet) {
 					this.getOwnerComponent().loadVersionInfo(); // for Desktop is always loaded in <code>Component.js</code>
 				}
+
 			},
 
 			hideMasterSide : function() {
@@ -228,6 +249,14 @@ sap.ui.define([
 					}
 					return findSymbol(aData);
 				});
+			},
+
+			onRouteNotFound: function () {
+				var sNotFoundTitle = this.getModel("i18n").getProperty("NOT_FOUND_TITLE");
+
+				this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+				setTimeout(this.appendPageTitle.call(this, sNotFoundTitle));
+				return;
 			}
 		});
 	}

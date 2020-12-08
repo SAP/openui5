@@ -93,7 +93,7 @@ sap.ui.define([
 					setTimeout(function () {
 						oPage.setBusy(false);
 					}, 0);
-					this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+					this.onRouteNotFound();
 					return;
 				}
 
@@ -119,7 +119,7 @@ sap.ui.define([
 						// If we are here someone probably tried to load a sample in a context that the sample does not
 						// really exist. This can happen if someone tempered with the URL manually. In this case as
 						// such sample does not exist in the context from the URL we redirect to not found page.
-						this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+						this.onRouteNotFound();
 						return;
 					}
 				}
@@ -203,7 +203,7 @@ sap.ui.define([
 				setTimeout(function () {
 					oPage.setBusy(false);
 				}, 0);
-
+				this.appendPageTitle(this.getModel().getProperty("/name"));
 			},
 
 			_updateFileContent: function(sRef, sFile) {

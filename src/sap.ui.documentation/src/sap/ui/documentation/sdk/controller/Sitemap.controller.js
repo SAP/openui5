@@ -135,8 +135,9 @@ sap.ui.define([
 					this.oModel.setData(this._oData);
 				}.bind(this))
 				.catch(function () {
-					this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+					this.onRouteNotFound();
 				}.bind(this));
+			this.appendPageTitle(this.getModel("i18n").getProperty("SITEMAP_TITLE"));
 		},
 
 		/**

@@ -164,7 +164,7 @@ sap.ui.define([
 
 						// route to not found page IF there is NO index entry AND NO docu from server
 						if (!oEntity && !oDoc) {
-							this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+							this.onRouteNotFound();
 							return;
 						}
 						// get view data
@@ -184,6 +184,7 @@ sap.ui.define([
 						this._sId = sNewId;
 
 						updateTabs.call(this);
+						this.appendPageTitle(this.getModel().getProperty("/name"));
 
 					}.bind(this));
 
@@ -191,6 +192,7 @@ sap.ui.define([
 					// get existing data model
 					oData = this.getView().getModel().getData();
 					updateTabs.call(this);
+					this.appendPageTitle(this.getModel().getProperty("/name"));
 				}
 
 			},
