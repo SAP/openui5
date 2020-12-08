@@ -215,6 +215,7 @@ function (jQuery, ManagedObject, Element, Component, Analyzer, CoreFacade,
 
 		CommunicationBus.subscribe(channelNames.OPEN_URL, function (url) {
 			var win = window.open(url, "_blank");
+			win.opener = null;
 			win.focus();
 		}, this);
 

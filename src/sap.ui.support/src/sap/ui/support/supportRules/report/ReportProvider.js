@@ -424,6 +424,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/thirdparty/handlebars', 'sap/ui/supp
 		var a = jQuery('<a style="display: none;"></a>');
 		a.on('click', function () {
 			var reportWindow = window.open('', '_blank');
+			reportWindow.opener = null;
+
 			jQuery(reportWindow.document).ready(function () {
 				// Sometimes document.write overwrites the document html and sometimes it appends to it so we need a wrapper div.
 				if (reportWindow.document.getElementById('sap-report-content')) {
