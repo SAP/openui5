@@ -568,6 +568,64 @@ function($, Core, library, ObjectPageLayout, ObjectPageSubSection, ObjectPageSec
 		assert.equal(oInvalidateSpy.callCount, 1, "section is invalidated");
 	});
 
+	QUnit.module("Private methods", {
+		beforeEach: function() {
+			this.oObjectPageLayout = new ObjectPageLayout("page", {
+				sections: new ObjectPageSection({
+					subSections: [
+						new ObjectPageSubSection({
+							title: "Title",
+							blocks: [new Text({text: "test"})]
+						}),
+						new ObjectPageSubSection({
+							title: "Title",
+							blocks: [new Text({text: "test"})]
+						}),
+						new ObjectPageSubSection({
+							title: "Title",
+							blocks: [new Text({text: "test"})]
+						})
+					]
+				})
+			});
+
+			this.oObjectPageLayout.placeAt('content');
+			Core.applyChanges();
+		},
+		afterEach: function() {
+			this.oObjectPageLayout.destroy();
+		}
+	});
+
+	QUnit.test("_getVisibleSubSections", function (assert) {
+		// Setup
+		var oSection = this.oObjectPageLayout.getSections()[0],
+			aSubSections = oSection.getSubSections();
+
+		// Check
+		assert.equal(oSection._getVisibleSubSections().length, 3, "All sub sections are visible");
+
+		aSubSections[1].setVisible(false);
+		Core.applyChanges();
+
+		// Check
+		assert.equal(oSection._getVisibleSubSections().length, 2, "Two visible sub sections and one sub section with visible=false");
+
+		aSubSections[2].destroyBlocks();
+		this.oObjectPageLayout._applyUxRules();
+		Core.applyChanges();
+
+		// Check
+		assert.equal(oSection._getVisibleSubSections().length, 1, "One visible sub section, one sub section with visible=false"
+			+ "and one sub section with empty content");
+
+		aSubSections[1].setVisible(true);
+		Core.applyChanges();
+
+		// Check
+		assert.equal(oSection._getVisibleSubSections().length, 2, "Two visible sub sections and one sub section with empty content");
+	});
+
 	QUnit.test("Visibility not changed", function (assert) {
 
 		// Setup
