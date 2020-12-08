@@ -15,7 +15,7 @@ sap.ui.define([
 ) {
 	"use strict";
 	/**
-	 * Delegate class for sap.ui.mdc.base.FieldValueHelp.<br>
+	 * @class Delegate class for sap.ui.mdc.base.FieldValueHelp.<br>
 	 * <b>Note:</b> The class is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
 	 *
 	 * @author SAP SE

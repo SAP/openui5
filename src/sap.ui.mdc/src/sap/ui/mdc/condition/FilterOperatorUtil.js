@@ -37,7 +37,7 @@ function(
 		"use strict";
 
 		/**
-		 * Utilities to handle operators of conditions.
+		 * @class Utilities to handle operators of conditions.
 		 *
 		 * @author SAP SE
 		 * @version ${version}

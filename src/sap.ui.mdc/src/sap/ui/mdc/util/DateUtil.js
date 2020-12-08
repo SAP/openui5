@@ -16,7 +16,7 @@ sap.ui.define([
 		var CalendarType = coreLibrary.CalendarType;
 
 		/**
-		 * Utility class with functions for Date conversion
+		 * @class Utility class with functions for Date conversion
 		 *
 		 * @author SAP SE
 		 * @private
