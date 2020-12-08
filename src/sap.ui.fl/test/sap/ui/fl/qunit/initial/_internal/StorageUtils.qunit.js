@@ -12,6 +12,7 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
+	var TEST_CONNECTORS = ["apply/someConnector", "write/someConnector"];
 
 	function sortConnectors (mConnectors) {
 		return mConnectors.sort(function(oConnectorA, oConnectorB) {
@@ -36,6 +37,20 @@ sap.ui.define([
 			variantManagementChanges: [],
 			ui2personalization: {}
 		};
+	}
+
+	function requireConnectorsFake (vDependencies, fnCallback) {
+		if ([].concat(vDependencies).some(function(sDependency) {
+			return (
+				/sap\/ui\/fl.*connectors/i.test(sDependency)
+				|| TEST_CONNECTORS.includes(sDependency)
+			);
+		})) {
+			fnCallback();
+			return undefined;
+		}
+
+		return sap.ui.require.wrappedMethod.apply(this, arguments);
 	}
 
 	QUnit.module("getGroupedFlexObjects (including getEmptyFlexDataResponse)", {
@@ -242,9 +257,7 @@ sap.ui.define([
 			this.oConfigurationStub = sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{applyConnector: "apply/someConnector", writeConnector: "write/someConnector", layers: [Layer.ALL]}
 			]);
-			this.oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function (aModules, fnCallback) {
-				fnCallback();
-			});
+			this.oRequireStub = sandbox.stub(sap.ui, "require").callsFake(requireConnectorsFake);
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -280,9 +293,7 @@ sap.ui.define([
 			this.oConfigurationStub = sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{loadConnector: "apply/someConnector", writeConnector: "write/someConnector", layers: [Layer.ALL]}
 			]);
-			this.oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function (aModules, fnCallback) {
-				fnCallback();
-			});
+			this.oRequireStub = sandbox.stub(sap.ui, "require").callsFake(requireConnectorsFake);
 		},
 		afterEach: function () {
 			sandbox.restore();
@@ -318,9 +329,7 @@ sap.ui.define([
 			this.oConfigurationStub = sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
 				{loadConnector: "apply/someConnector", layers: [Layer.ALL]}
 			]);
-			this.oRequireStub = sandbox.stub(sap.ui, "require").callsFake(function (aModules, fnCallback) {
-				fnCallback();
-			});
+			this.oRequireStub = sandbox.stub(sap.ui, "require").callsFake(requireConnectorsFake);
 		},
 		afterEach: function () {
 			sandbox.restore();
