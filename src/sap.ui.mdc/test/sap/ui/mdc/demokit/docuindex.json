@@ -7,6 +7,9 @@
 			{
 				"namespace": "sap.ui.mdc.sample",
 				"ref": "test-resources/sap/ui/mdc/demokit/internal/sample"
+			}, {
+				"namespace": "delegates",
+				"ref": "test-resources/sap/ui/mdc/delegates"
 			}
 		],
 		"entities": [
@@ -20,31 +23,31 @@
 					"sap.ui.mdc.sample.GridTable",
 					"sap.ui.mdc.sample.TableStateHandling",
 					"sap.ui.mdc.sample.TableFilter",
-					"sap.ui.mdc.sample.V4Analytics"
+					"sap.ui.mdc.sample.TableODataV4Analytics"
 				]
 			}
 		],
 		"samples": [
 			{
 				"id": "sap.ui.mdc.sample.ResponsiveTable",
-				"name": "ResponsiveTable",
-				"description": "Basic example with table type 'ResponsiveTable'"
+				"name": "Table of type \"ResponsiveTable\"",
+				"description": "Basic example with table type \"ResponsiveTable\"."
 			}, {
 				"id": "sap.ui.mdc.sample.GridTable",
-				"name": "GridTable",
-				"description": "Basic example with table type 'GridTable'"
+				"name": "Table of type \"GridTable\"",
+				"description": "Basic example with table type \"GridTable\"."
 			}, {
 				"id": "sap.ui.mdc.sample.TableStateHandling",
-				"name": "State handling",
-				"description": "Basic example of state handling"
+				"name": "Table state handling",
+				"description": "Basic example of state handling."
 			}, {
 				"id": "sap.ui.mdc.sample.TableFilter",
-				"name": "Filter",
-				"description": "Basic example with a filter bar"
+				"name": "Table with FilterBar",
+				"description": "Basic example with a FilterBar."
 			}, {
-				"id": "sap.ui.mdc.sample.V4Analytics",
-				"name": "OData V4",
-				"description": "OData V4 with analytical capabilities like grouping and totals"
+				"id": "sap.ui.mdc.sample.TableODataV4Analytics",
+				"name": "Table with OData V4",
+				"description": "OData V4 with analytical capabilities, e.g. grouping and totals."
 			}
 		]
 	}

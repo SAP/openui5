@@ -44,7 +44,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					paths: {
 						"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
 						"sap/ui/mdc/integration": "test-resources/sap/ui/mdc/integration",
-						"sap/ui/v4demo": "test-resources/sap/ui/mdc/integration/ListReport"
+						"sap/ui/v4demo": "test-resources/sap/ui/mdc/integration/ListReport",
+						"delegates": "test-resources/sap/ui/mdc/delegates"
 					}
 				},
 				qunit: {

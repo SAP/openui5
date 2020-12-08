@@ -64,7 +64,7 @@
 				<uxap:subSections>
 					<uxap:ObjectPageSubSection>
 						<uxap:blocks>
-							<mdc:Table id="childOrderItemsTable" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/mdc/odata/v4/TableDelegateDemo', payload: {collectionName: 'OrderItems', collectionPath: 'Items'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
+							<mdc:Table id="childOrderItemsTable" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'delegates/odata/v4/TableDelegate', payload: {collectionName: 'OrderItems', collectionPath: 'Items'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
 								<mdc:variant>
 									<fl:VariantManagement id="opTableVM" for="childOrderItemsTable"/>
 								</mdc:variant>

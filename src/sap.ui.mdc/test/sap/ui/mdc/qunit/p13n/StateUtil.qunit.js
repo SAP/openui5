@@ -1,6 +1,6 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate","sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil"
+	"../../delegates/TableDelegate","sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil"
 ], function (TableDelegate, StateUtil, FilterBarDelegate, UIComponent, ComponentContainer, FilterField, ChartDelegate, TypeUtil) {
 	"use strict";
 
