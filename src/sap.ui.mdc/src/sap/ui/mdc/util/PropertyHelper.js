@@ -358,7 +358,6 @@ sap.ui.define([
 	 * @version ${version}
 	 *
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
 	 * @experimental
 	 * @since 1.83
 	 * @alias sap.ui.mdc.util.PropertyHelper

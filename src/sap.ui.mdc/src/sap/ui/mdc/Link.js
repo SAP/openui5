@@ -52,7 +52,7 @@ sap.ui.define([
 	 * @experimental As of version 1.74
 	 * @private
 	 * @ui5-restricted sap.fe
-     * MDC_PUBLIC_CANDIDATE
+     * @MDC_PUBLIC_CANDIDATE
 	 */
 	var Link = FieldInfoBase.extend("sap.ui.mdc.Link", /** @lends sap.ui.mdc.Link.prototype */ {
 		metadata: {
@@ -117,7 +117,7 @@ sap.ui.define([
 	 * @returns {Promise} <code>true</code> if <code>FieldInfo</code> is clickable
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Link.prototype.isTriggerable = function() {
 		return this.retrieveLinkType().then(function(oLinkTypeObject) {
@@ -141,7 +141,7 @@ sap.ui.define([
 	 * @returns {Promise} <code>href</code> of direct link navigation, else <code>null</code>
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Link.prototype.getTriggerHref = function() {
 		return this.getDirectLinkHrefAndTarget().then(function(oLinkItem) {
@@ -155,7 +155,7 @@ sap.ui.define([
 	 * @returns {Promise} {Object | null}
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Link.prototype.getDirectLinkHrefAndTarget = function() {
 		return this._retrieveDirectLinkItem().then(function(oDirectLinkItem) {
@@ -202,7 +202,7 @@ sap.ui.define([
 	 * @returns {sap.ui.mdc.link.Panel} Popover panel which is to be displayed after clicking the link
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	*/
 	Link.prototype.getContent = function(fnGetAutoClosedControl) {
 		var oLinkItemsPromise = this.retrieveLinkItems();
@@ -338,7 +338,7 @@ sap.ui.define([
 	 * @returns {object[]} Array of copied property info
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Link.retrieveAllMetadata = function(oPanel) {
 		if (!oPanel.getModel || !oPanel.getModel("$sapuimdcLink")) {
@@ -363,7 +363,7 @@ sap.ui.define([
 	 * @returns {object[]} Array of copied property info
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Link.retrieveBaseline = function(oPanel) {
 		if (!oPanel.getModel || !oPanel.getModel("$sapuimdcLink")) {
@@ -415,7 +415,7 @@ sap.ui.define([
 	 * @returns {Promise} Resolves an array of type {@link sap.ui.base.Control}
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Link.prototype.retrieveAdditionalContent = function() {
 		if (this.awaitControlDelegate()) {
@@ -434,7 +434,7 @@ sap.ui.define([
 	 * @returns {Promise} Returns a {@link sap.ui.mdc.LinkDelegate.LinkType}, once resolved
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Link.prototype.retrieveLinkType = function() {
 		if (this.awaitControlDelegate()) {
@@ -452,7 +452,7 @@ sap.ui.define([
 	 * @returns {Promise} Resolves an array of type {@link sap.ui.mdc.link.LinkItem}
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 */
 	Link.prototype.retrieveLinkItems = function() {
 		var oPayload = Object.assign({}, this.getPayload());

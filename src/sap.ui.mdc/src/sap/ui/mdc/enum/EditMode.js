@@ -11,7 +11,7 @@ sap.ui.define(function() {
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.48.1
 	 * @alias sap.ui.mdc.enum.EditMode
 	 */
@@ -20,28 +20,28 @@ sap.ui.define(function() {
 		 * <code>Field</code> or <code>FilterField</code> is rendered in display mode
 		 * @private
 		 * @ui5-restricted sap.fe
-		 * MDC_PUBLIC_CANDIDATE
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		Display: "Display",
 		/**
 		 * <code>Field</code> or <code>FilterField</code> is rendered in editable mode
 		 * @private
 		 * @ui5-restricted sap.fe
-		 * MDC_PUBLIC_CANDIDATE
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		Editable: "Editable",
 		/**
 		 * <code>Field</code> or <code>FilterField</code> is rendered in read-only mode
 		 * @private
 		 * @ui5-restricted sap.fe
-		 * MDC_PUBLIC_CANDIDATE
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		ReadOnly: "ReadOnly",
 		/**
 		 * <code>Field</code> or <code>FilterField</code> is rendered in disabled mode
 		 * @private
 		 * @ui5-restricted sap.fe
-		 * MDC_PUBLIC_CANDIDATE
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		Disabled: "Disabled",
 		/**
@@ -50,7 +50,7 @@ sap.ui.define(function() {
 		 * @since 1.72.0
 		 * @private
 		 * @ui5-restricted sap.fe
-		 * MDC_PUBLIC_CANDIDATE
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		EditableReadOnly: "EditableReadOnly",
 		/**
@@ -59,7 +59,7 @@ sap.ui.define(function() {
 		 * @since 1.72.0
 		 * @private
 		 * @ui5-restricted sap.fe
-		 * MDC_PUBLIC_CANDIDATE
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		EditableDisplay: "EditableDisplay"
 	};

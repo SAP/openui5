@@ -38,7 +38,7 @@ sap.ui.define([
 			 * @returns {Promise} Promise that is resolved if all content is available
 			 * @private
 			 * @ui5-restricted sap.fe
-			 * MDC_PUBLIC_CANDIDATE
+			 * @MDC_PUBLIC_CANDIDATE
 			 */
 			contentRequest: function(oPayload, oFieldHelp, bSuggestion) {
 

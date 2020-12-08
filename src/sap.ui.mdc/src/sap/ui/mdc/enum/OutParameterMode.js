@@ -11,7 +11,7 @@ sap.ui.define(function() {
 	 * @enum {string}
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.66.0
 	 * @alias sap.ui.mdc.enum.OutParameterMode
 	 */
@@ -20,14 +20,14 @@ sap.ui.define(function() {
 		 * The value in the <code>OutParameter</code> element is always set
 		 * @private
 		 * @ui5-restricted sap.fe
-		 * MDC_PUBLIC_CANDIDATE
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		Always: "Always",
 		/**
 		 * The value in the<code>OutParameter</code> element is only set if it was empty before
 		 * @private
 		 * @ui5-restricted sap.fe
-		 * MDC_PUBLIC_CANDIDATE
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		WhenEmpty: "WhenEmpty"
 	};

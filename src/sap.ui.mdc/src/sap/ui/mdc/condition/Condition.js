@@ -31,7 +31,7 @@ sap.ui.define([
 		 * @private
 		 * @experimental As of version 1.61
 		 * @ui5-restricted sap.ui.fe
-		 * MDC_PUBLIC_CANDIDATE
+		 * @MDC_PUBLIC_CANDIDATE
 		 */
 		var Condition = {
 
@@ -50,7 +50,7 @@ sap.ui.define([
 				 * @property {sap.ui.mdc.util.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the <code>DefineConditionPanel</code> control
 				 * @private
 				 * @ui5-restricted sap.fe
-				 * MDC_PUBLIC_CANDIDATE
+				 * @MDC_PUBLIC_CANDIDATE
 				 */
 
 				/**
@@ -66,7 +66,7 @@ sap.ui.define([
 				 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the EQ operator along with <code>sKey</code> and <code>sDescription</code> as <code>aValues</code>
 				 * @private
 				 * @ui5-restricted sap.fe
-				 * MDC_PUBLIC_CANDIDATE
+				 * @MDC_PUBLIC_CANDIDATE
 				 *
 				 */
 				createItemCondition: function(sKey, sDescription, oInParameters, oOutParameters) {
@@ -91,7 +91,7 @@ sap.ui.define([
 				 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the given operator and values
 				 * @private
 				 * @ui5-restricted sap.fe
-				 * MDC_PUBLIC_CANDIDATE
+				 * @MDC_PUBLIC_CANDIDATE
 				 *
 				 */
 				createCondition: function(sOperator, aValues, oInParameters, oOutParameters, sValidated) {

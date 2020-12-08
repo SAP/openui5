@@ -77,7 +77,7 @@ sap.ui.define([
 		 * @constructor
 		 * @private
 		 * @ui5-restricted sap.fe
-		 * MDC_PUBLIC_CANDIDATE
+		 * @MDC_PUBLIC_CANDIDATE
 		 * @alias sap.ui.mdc.condition.Operator
 		 * @version 1.73.0
 		 * @author SAP SE

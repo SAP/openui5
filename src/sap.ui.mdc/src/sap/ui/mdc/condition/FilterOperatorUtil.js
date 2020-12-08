@@ -46,7 +46,7 @@ function(
 		 *
 		 * @private
 		 * @ui5-restricted sap.fe
-		 * MDC_PUBLIC_CANDIDATE
+		 * @MDC_PUBLIC_CANDIDATE
 		 * @experimental As of version 1.73
 		 */
 		var FilterOperatorUtil = {
@@ -763,7 +763,7 @@ function(
 				 *
 				 * @private
 				 * @ui5-restricted sap.fe
-				 * MDC_PUBLIC_CANDIDATE
+				 * @MDC_PUBLIC_CANDIDATE
 				 */
 				addOperator: function(oOperator) {
 
@@ -780,7 +780,7 @@ function(
 				 *
 				 * @private
 				 * @ui5-restricted sap.fe
-				 * MDC_PUBLIC_CANDIDATE
+				 * @MDC_PUBLIC_CANDIDATE
 				 */
 				setOperatorsForType: function(sType, aOperators, oDefaultOperator) {
 					var aOps = [];
@@ -814,7 +814,7 @@ function(
 				 *
 				 * @private
 				 * @ui5-restricted ap.fe
-				 * MDC_PUBLIC_CANDIDATE
+				 * @MDC_PUBLIC_CANDIDATE
 				 */
 				getOperatorsForType: function(sType) {
 
@@ -837,7 +837,7 @@ function(
 				 *
 				 * @private
 				 * @ui5-restricted sap.fe
-				 * MDC_PUBLIC_CANDIDATE
+				 * @MDC_PUBLIC_CANDIDATE
 				 */
 				getDefaultOperator: function(sType) {
 
@@ -880,7 +880,7 @@ function(
 				 *
 				 * @private
 				 * @ui5-restricted sap.fe
-				 * MDC_PUBLIC_CANDIDATE
+				 * @MDC_PUBLIC_CANDIDATE
 				 */
 				getOperator: function(sOperator) {
 

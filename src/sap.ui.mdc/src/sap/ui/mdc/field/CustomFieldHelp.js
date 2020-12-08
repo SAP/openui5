@@ -18,7 +18,7 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @experimental As of version 1.54
 	 * @since 1.54.0
 	 * @alias sap.ui.mdc.field.CustomFieldHelp
@@ -78,7 +78,7 @@ sap.ui.define([
 	 * @param {object[]} aConditions Selected conditions
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	CustomFieldHelp.prototype.fireSelectEvent = function(aConditions) {

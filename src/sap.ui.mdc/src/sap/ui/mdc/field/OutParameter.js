@@ -25,7 +25,7 @@ sap.ui.define([
 	 * @abstract
 	 * @private
 	 * @ui5-restricted sap.fe
-	 * MDC_PUBLIC_CANDIDATE
+	 * @MDC_PUBLIC_CANDIDATE
 	 * @since 1.66.0
 	 * @alias sap.ui.mdc.field.OutParameter
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
