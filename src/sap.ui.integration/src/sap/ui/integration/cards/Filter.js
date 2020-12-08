@@ -26,6 +26,24 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	/**
+	 * Constructor for a new <code>Filter</code>.
+	 *
+	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
+	 * @param {object} [mSettings] Initial settings for the new control
+	 *
+	 * @class
+	 *
+	 * @extends sap.ui.core.Control
+	 *
+	 * @author SAP SE
+	 * @version ${version}
+	 *
+	 * @constructor
+	 * @private
+	 * @since 1.84
+	 * @alias sap.ui.integration.cards.Filter
+	 */
 	var Filter = Control.extend("sap.ui.integration.cards.Filter", {
 		metadata: {
 

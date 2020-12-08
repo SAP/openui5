@@ -30,6 +30,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @private
+	 * @since 1.84
 	 * @alias sap.ui.integration.util.FilterBarFactory
 	 */
 	var FilterBarFactory = BaseObject.extend("sap.ui.integration.util.FilterBarFactory", {
