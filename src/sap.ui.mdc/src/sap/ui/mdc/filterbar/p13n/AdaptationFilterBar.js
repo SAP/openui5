@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/filterbar/p13n/GroupContainer", "sap/ui/mdc/filterbar/p13n/FilterGroupLayout","sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", "sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/m/Toolbar", "sap/m/ToolbarSpacer"
-], function(GroupContainer, FilterGroupLayout, TableContainer, FilterColumnLayout, FilterBarBase, FilterBarBaseRenderer, FlexRuntimeInfoAPI, Toolbar, ToolbarSpacer) {
+	"sap/ui/mdc/filterbar/p13n/GroupContainer", "sap/ui/mdc/filterbar/p13n/FilterGroupLayout","sap/ui/mdc/filterbar/p13n/TableContainer", "sap/ui/mdc/filterbar/p13n/FilterColumnLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer"
+], function( GroupContainer, FilterGroupLayout, TableContainer, FilterColumnLayout, FilterBarBase, FilterBarBaseRenderer) {
 	"use strict";
 
 	/**
@@ -54,31 +54,9 @@ sap.ui.define([
 		FilterBarBase.prototype.setLiveMode.apply(this, arguments);
 
 		//Dialog
-		if (bLive) {
-			this._createGoToolbar();
-		} else {
+		if (!bLive) {
 			this._oConditionModel.detachPropertyChange(this._handleConditionModelPropertyChange, this);
 		}
-
-		var oAdaptationControl = this.getAdaptationControl();
-
-		var fnOnContainerClose = function(oEvt) {
-			var oContainer = oEvt.getParameter("container");
-			oContainer.removeAllContent();
-
-			if (!bLive) {
-				this._handleModal(oEvt.getParameter("reason"));
-			}
-
-			if (this._checkAdvancedParent(oAdaptationControl)) {
-				this._executeRequestedRemoves();
-			}
-
-			this.getAdaptationController().detachAfterP13nContainerCloses(fnOnContainerClose);
-		}.bind(this);
-
-		//Cleanup after dialog close
-		this.getAdaptationControl()._oAdaptationController.attachEvent("afterP13nContainerCloses", fnOnContainerClose);
 
 		//update adaptationModel while dialog is open
 		this._oConditionModel.attachPropertyChange(function(oEvt){
@@ -98,47 +76,20 @@ sap.ui.define([
 		return this;
 	};
 
-	AdaptationFilterBar.prototype.switchViewMode = function(sView) {
-		this._oFilterBarLayout.getInner().switchViewMode(sView);
-	};
-
-	AdaptationFilterBar.prototype.getViewMode = function(sView) {
-		return this._oFilterBarLayout.getInner().getViewMode();
-	};
-
-	AdaptationFilterBar.prototype._handleModal = function(sCloseReason) {
-
-		var bConfirm = sCloseReason === "Ok";
-
-		//Confirm conditions --> create condition changes
-		if (bConfirm) {
-			var mConditions = this._getModelConditions(this._getConditionModel(), false, true);
-
-			if (this._bPersistValues) {
-				this.getAdaptationController().createConditionChanges(mConditions);
-			} else {
-				//TODO: currently only required once the parent FilterBar has p13nMode 'value' disabled.
-				this.getAdaptationControl()._setXConditions(mConditions, true);
-			}
-
-		//Discard conditions --> set to state once the dialog has been opened
+	AdaptationFilterBar.prototype.createConditionChanges = function() {
+		var mConditions = this._getModelConditions(this._getConditionModel(), false, true);
+		if (this._bPersistValues) {
+			//this.getAdaptationControl(), "Filter", mConditions, true, true
+			return this.getEngine().createChanges({
+				control: this.getAdaptationControl(),
+				key: "Filter",
+				state: mConditions,
+				suppressAppliance: true
+			});
 		} else {
-			this._setXConditions(this.getAdaptationControl().getFilterConditions(), true);
-		}
-	};
-
-	AdaptationFilterBar.prototype._createGoToolbar = function() {
-		if (!this._btnSearch) {
-			var oSearchButton = this._getSearchButton();
-			oSearchButton.attachPress(function(){
-				this.getAdaptationControl().triggerSearch();
-			}.bind(this));
-			this._oFilterBarLayout.getInner().setFooterToolbar(new Toolbar({
-				content: [
-					new ToolbarSpacer(),
-					this._getSearchButton()
-				]
-			}));
+			//TODO: currently only required once the parent FilterBar has p13nMode 'value' disabled.
+			this.getAdaptationControl()._setXConditions(mConditions, true);
+			return Promise.resolve(null);
 		}
 	};
 
@@ -153,17 +104,13 @@ sap.ui.define([
 		this.oAdaptationModel = oP13nModel;
 	};
 
+	AdaptationFilterBar.prototype.getP13nModel = function(oP13nModel) {
+		return this.oAdaptationModel;
+	};
+
 	AdaptationFilterBar.prototype._getWaitForChangesPromise = function() {
 		//Change is applied on parent --> wait for the parent promise not the child
-		return FlexRuntimeInfoAPI.waitForChanges({element: this.getAdaptationControl()});
-	};
-
-	AdaptationFilterBar.prototype.getAdaptationController = function(){
-		return this.getAdaptationControl().getAdaptationController();
-	};
-
-	AdaptationFilterBar.prototype.retrieveAdaptationController = function(){
-		return this.getAdaptationControl().retrieveAdaptationController();
+		return this.getEngine().getModificationHandler().waitForChanges({element: this.getAdaptationControl()});
 	};
 
 	AdaptationFilterBar.prototype.applyConditionsAfterChangesApplied = function() {

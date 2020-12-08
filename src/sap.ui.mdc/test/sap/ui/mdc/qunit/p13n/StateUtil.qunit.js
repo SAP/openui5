@@ -604,11 +604,6 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("checkXStateInterface", function(assert){
-		var bValid = StateUtil.checkXStateInterface(undefined);
-		assert.equal(bValid, false);
-	});
-
 	QUnit.module("API tests for Table", {
 		before: function(){
 			TableDelegate.fetchProperties = fetchProperties;

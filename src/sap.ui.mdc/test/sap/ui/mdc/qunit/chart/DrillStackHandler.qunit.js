@@ -24,6 +24,7 @@
 	QUnit.module("", {
 		beforeEach: function() {
 			this.oChart = new Chart({
+				p13nMode: ["Item"],
 				delegate: {
 					name: "sap/ui/mdc/qunit/chart/Helper"
 				}
@@ -49,10 +50,10 @@
 		.then(function onAfterDrillDownPopoverOpen(oDrillDownPopover) {
 
 			var oFirstListItem = oDrillDownPopover.getContent()[1].getItems()[0],
-				oAdaptationController = this.oChart.getAdaptationController();
+				oEngine = this.oChart.getEngine();
 
 			var oDrillDownPopoverCloseSpy = this.spy(oDrillDownPopover, "close"),
-				oCreateFlexItemChangesSpy = this.spy(oAdaptationController, "createItemChanges");
+				oCreateFlexItemChangesSpy = this.spy(oEngine, "createChanges");
 
 			// act (simulate a press the first list item on the drill down list)
 			QUnitUtils.triggerTouchEvent("tap", oFirstListItem.getDomRef(), {
@@ -68,7 +69,11 @@
 				position: 0
 			}];
 
-			sinon.assert.calledWith(oCreateFlexItemChangesSpy, sinon.match(aFlexChanges));
+			sinon.assert.calledWith(oCreateFlexItemChangesSpy, {
+				control: this.oChart,
+				key: "Item",
+				state: aFlexChanges
+			});
 			done();
 		}.bind(this));
 	});
@@ -97,10 +102,10 @@
 				oDrillBreadcrumb1 = DrillStackHandler.createCrumb(this.oChart, oCrumbSettings1),
 				oDrillBreadcrumb2 = DrillStackHandler.createCrumb(this.oChart, oCrumbSettings2),
 				oInnerChart = this.oChart.getAggregation("_chart"),
-				oAdaptationController = this.oChart.getAdaptationController();
+				oEngine = this.oChart.getEngine();
 
 			var oFireDeselectDataEventSpy = this.spy(oInnerChart, "fireDeselectData"),
-				oCreateFlexItemChangesSpy = this.spy(oAdaptationController, "createItemChanges");
+				oCreateFlexItemChangesSpy = this.spy(oEngine, "createChanges");
 
 			this.stub(oInnerChart, "getDrillStack").callsFake(function() {
 				return [{
@@ -137,7 +142,11 @@
 
 			// assert
 			assert.strictEqual(oFireDeselectDataEventSpy.callCount, 1, 'it should fire the "deselectData" event on the inner Chart');
-			sinon.assert.calledWith(oCreateFlexItemChangesSpy, sinon.match(aFlexChanges));
+			sinon.assert.calledWith(oCreateFlexItemChangesSpy, {
+				control: this.oChart,
+				key: "Item",
+				state: aFlexChanges
+			});
 			done();
 		}.bind(this));
 

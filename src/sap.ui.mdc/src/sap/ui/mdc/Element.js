@@ -30,10 +30,9 @@ sap.ui.define([
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.awaitPropertyHelper as awaitPropertyHelper
 	 * @borrows sap.ui.mdc.mixin.DelegateMixin.getPropertyHelper as getPropertyHelper
 	 *
-	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.retrieveAdaptationController as retrieveAdaptationController
-	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.enhanceAdaptationConfig as enhanceAdaptationConfig
- 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getAdaptationController as getAdaptationController
-	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getAdaptationConfigAttribute as getAdaptationConfigAttribute
+	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getEngine as getInstance
+	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.retrieveInbuiltFilter as retrieveInbuiltFilter
+ 	 * @borrows sap.ui.mdc.mixin.AdaptationMixin.getInbuiltFilter as getInbuiltFilter
 	 *
 	 * @private
 	 * @experimental
@@ -53,17 +52,6 @@ sap.ui.define([
 				delegate: {
 					type: "object",
 					group: "Data"
-				},
-				/**
-				 * Configuration for the inner {@link sap.ui.mdc.p13n.AdaptationController}.<br>
-				 * This object can be used to customize the personalization settings for the MDC Control instance.
-				 *
-				 * @experimental
-				 */
-				adaptationConfig: {
-					type: "object",
-					group: "Data",
-					visiblity: "hidden"
 				}
 			}
 		},

@@ -53,7 +53,7 @@ sap.ui.define([
                     });
 
                     if (mDialogSettings.reset) {
-                        var oCustomHeader = this._createResetHeader({
+                        var oCustomHeader = P13nBuilder._createResetHeader({
                             title: mDialogSettings.title,
                             reset: mDialogSettings.reset.onExecute,
                             idResetButton: mDialogSettings.reset.idButton,
@@ -98,6 +98,7 @@ sap.ui.define([
                         resizable: true,
                         stretch: "{device>/system/phone}",
                         content: oP13nUI,
+                        afterClose: mDialogSettings.afterClose ? mDialogSettings.afterClose : function(){},
                         buttons: [
                             new Button(sId ? sId + "-confirmBtn" : undefined, {
                                 text:  mDialogSettings.confirm && mDialogSettings.confirm.text ?  mDialogSettings.confirm.text : oResourceBundle.getText("p13nDialog.OK"),
@@ -183,61 +184,49 @@ sap.ui.define([
             return oBar;
         },
 
-        /**
-         *
-         * @param {object} oControlState Control state as defined in IxState interface <code>getCurrentState</code> method
-         * @param {sap.ui.mdc.util.PropertyHelper|object[]} vProperties Either an array of properties or a PropertyHelper instance
-         * @param {array} [aIgnoreAttributes] Optional array of key-value pairs to define ignored values <code>[{ignoreKey: "Key", ignoreValue:"Value"}]</code>
-         * @param {string} [sP13nType] Optional p13n type definition - should not be used without AdaptationController
-         *
-         * @returns {object} Object structure to generate a p13n model
-         */
-        prepareP13nData: function(oControlState, vProperties, aIgnoreAttributes, sP13nType) {
+        //TODO: align comp<>mdc
+        prepareP13nData: function(oCurrentState, vProperties, fnEnhace) {
 
 			var oPropertyHelper =
 				vProperties.isA && vProperties.isA("sap.ui.mdc.util.PropertyHelper") ?
 				vProperties : new P13nPropertyHelper(vProperties);
 
-            aIgnoreAttributes = aIgnoreAttributes ? aIgnoreAttributes : [];
             var aItems = [], mItemsGrouped = {};
-            var aItemState = oControlState.items || [];
-            var aSortState = oControlState.sorters || [];
 
+            //TODO----
+            var aItemState = oCurrentState.items || [];
+            var mExistingFilters = oCurrentState.filter || [];
             var mExistingProperties = this.arrayToMap(aItemState);
-            var mExistingSorters = this.arrayToMap(aSortState);
-            var mExistingFilters = oControlState.filter || {};
+            //TODO-----
 
 			oPropertyHelper.getProperties().forEach(function(oProperty) {
-                var mItem = {};
 
-                if (P13nBuilder._isExcludeProperty(oProperty, aIgnoreAttributes)) {
-                    return;
-                }
+                var mItem = merge({}, oProperty, mExistingProperties[oProperty.name]);
 
+                //TODO-----
                 var sKey = oProperty.name;
                 var oExistingProperty = mExistingProperties[sKey];
-
-                //add general information
                 mItem.selected = oExistingProperty ? true : false;
                 mItem.position = oExistingProperty ? oExistingProperty.position : -1;
-                mItem = merge(mItem, oProperty, oExistingProperty);
-
-                // sap.ui.comp compatibility
-				mItem.tooltip = oProperty.hasOwnProperty("tooltip") ? oProperty.tooltip : "";
-                mItem.visibleInDialog = oProperty.hasOwnProperty("visibleInDialog") ? oProperty.visibleInDialog : true;
-
-                //Add sort info
-                if (sP13nType == "Sort"){//TODO: remove workaround for FlexUtil ungeneric changecontent check
-                    mItem.isSorted = mExistingSorters[sKey] ? true : false;
-                    mItem.sortPosition = mExistingSorters[sKey] ? mExistingSorters[sKey].position : -1;
-                    mItem.descending = mExistingSorters[sKey] ? mExistingSorters[sKey].descending : false;
-                }
-
-                if (oControlState.filter){
-                    //Add filter info
+                if (mExistingFilters[sKey]) {
                     var aExistingFilters = mExistingFilters[sKey];
                     mItem.isFiltered = aExistingFilters && aExistingFilters.length > 0 ? true : false;
                 }
+                //TODO------
+
+
+                if (fnEnhace instanceof Function) {
+                    var bIsValid = fnEnhace(mItem, oProperty);
+                    if (!bIsValid) {
+                        return;
+                    }
+                }
+
+                mItem.name = oProperty.name;
+                mItem.label = oProperty.getLabel() || oProperty.name;
+                mItem.tooltip = oProperty.tooltip ? oProperty.tooltip : oProperty.getLabel();
+                mItem.visibleInDialog = oProperty.hasOwnProperty("visibleInDialog") ? oProperty.visibleInDialog : true;
+
                 mItem.group = mItem.group ? mItem.group : "BASIC";
                 mItemsGrouped[mItem.group] = mItemsGrouped[mItem.group] ? mItemsGrouped[mItem.group] : [];
                 mItemsGrouped[mItem.group].push(mItem);
@@ -246,10 +235,6 @@ sap.ui.define([
 
             });
 
-            if (sP13nType){
-                this._sortP13nData(sP13nType, aItems);
-            }
-
             return {
                 items: aItems,
                 itemsGrouped: this._builtGroupStructure(mItemsGrouped)
@@ -257,9 +242,9 @@ sap.ui.define([
         },
 
         //TODO: generify
-        _sortP13nData: function (sP13nType, aItems) {
+        sortP13nData: function (oSorting, aItems) {
 
-            var mP13nTypeSorting = this._getSortAttributes()[sP13nType];
+            var mP13nTypeSorting = oSorting;
 
             var sPositionAttribute = mP13nTypeSorting.position;
             var sSelectedAttribute = mP13nTypeSorting.visible;
@@ -307,7 +292,7 @@ sap.ui.define([
         _builtGroupStructure: function(mItemsGrouped) {
             var aGroupedItems = [];
             Object.keys(mItemsGrouped).forEach(function(sGroupKey){
-                this._sortP13nData("generic", mItemsGrouped[sGroupKey]);
+                this.sortP13nData("generic", mItemsGrouped[sGroupKey]);
                 aGroupedItems.push({
                     group: sGroupKey,
                     groupLabel: mItemsGrouped[sGroupKey][0].groupLabel || oRB.getText("p13nDialog.FILTER_DEFAULT_GROUP"),//Grouplabel might not be necessarily be propagated to every item
@@ -348,7 +333,6 @@ sap.ui.define([
         }
 
     };
-
 
 	return P13nBuilder;
 });

@@ -101,11 +101,14 @@ sap.ui.define([
 				if (oListItem) {
 					//Call flex to capture current state before adding an item to the chart aggregation
 
-					var oAdaptationController = oChart.getAdaptationController();
-					oAdaptationController.createItemChanges([{
-						name: oListItem.data("dim").name,
-						position: oChart.getItems().length
-					}]);
+					oChart.getEngine().createChanges({
+						control: oChart,
+						key: "Item",
+						state: [{
+							name: oListItem.data("dim").name,
+							position: oChart.getItems().length
+						}]
+					});
 				}
 
 				oPopover.close();
@@ -279,7 +282,11 @@ sap.ui.define([
 					};
 				});
 
-				oChart.getAdaptationController().createItemChanges(aFlexItemChanges);
+				oChart.getEngine().createChanges({
+					control: oChart,
+					key: "Item",
+					state: aFlexItemChanges
+				});
 
 				// don't forget to update the bread crumbs control itself
 				this._updateDrillBreadcrumbs(oChart, oDrillBreadcrumbs);

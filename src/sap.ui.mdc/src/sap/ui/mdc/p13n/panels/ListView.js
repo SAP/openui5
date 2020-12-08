@@ -21,6 +21,9 @@ sap.ui.define([
     // shortcut for sap.m.FlexJustifyContent
 	var FlexJustifyContent = mLibrary.FlexJustifyContent;
 
+    // shortcut for sap.m.ListType
+    var ListType = mLibrary.ListType;
+
     /**
 	 * Constructor for a new ListView
 	 *
@@ -60,7 +63,7 @@ sap.ui.define([
 
         var oListViewTemplate = new ColumnListItem({
             selected: "{" + this.P13N_MODEL + ">selected}",
-            type: "Active",
+            type: ListType.Active,
             cells: [
                 new VBox({
                     items: [

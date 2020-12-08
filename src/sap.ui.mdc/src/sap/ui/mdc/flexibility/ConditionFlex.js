@@ -7,8 +7,8 @@ sap.ui.define([
 	"use strict";
 
 	var fDetermineFilterControl = function(oControl) {
-		var oFilterConfig = oControl.getAdaptationConfig ? oControl.getAdaptationConfigAttribute("filterConfig") : null;
-		return oFilterConfig ? oFilterConfig.applyFilterChangeOn : null;
+		var oController = oControl && oControl.getEngine ? oControl.getEngine().getController(oControl, "Filter") : null;
+		return oController ? oController.getFilterControl() : null;
 	};
 
 	var fAddCondition = function(oChange, oChangeContent, oControl, mPropertyBag, bIsRevert) {

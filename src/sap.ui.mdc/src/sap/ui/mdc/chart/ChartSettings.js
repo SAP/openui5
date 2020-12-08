@@ -16,17 +16,15 @@ sap.ui.define([], function () {
 	var ChartSettings = {
 
 		showPanel: function (oControl, sP13nType, oSource, aProperties) {
-			ChartSettings["showP13n" + sP13nType](oControl, oSource);
+			ChartSettings["showUI" + sP13nType](oControl, oSource);
 		},
 
-		showP13nChart: function (oControl, oSource) {
-			var oAdaptationController = oControl.getAdaptationController();
-			oAdaptationController.showP13n(oSource, "Item");
+		showUIChart: function (oControl, oSource) {
+			oControl.getEngine().showUI(oControl, "Item");
 		},
 
-		showP13nSort: function(oControl, oSource){
-			var oAdaptationController = oControl.getAdaptationController();
-			oAdaptationController.showP13n(oSource, "Sort");
+		showUISort: function(oControl, oSource){
+			oControl.getEngine().showUI(oControl, "Sort");
 		}
 
 	};

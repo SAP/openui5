@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/m/Link",
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
-	"sap/ui/mdc/odata/TypeUtil"
+	"sap/ui/mdc/odata/TypeUtil",
+	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler"
 ], function(
 	MDCQUnitUtils,
 	QUtils,
@@ -54,7 +55,8 @@ sap.ui.define([
 	Link,
 	Control,
 	CoreLibrary,
-	TypeUtil
+	TypeUtil,
+	TestModificationHandler
 ) {
 	"use strict";
 
@@ -1190,6 +1192,7 @@ sap.ui.define([
 
 	QUnit.test("Sort Change triggered", function(assert) {
 		var oTable = this.oTable;
+		var done = assert.async();
 
 		this.oTable.setP13nMode(["Sort"]);
 		this.oTable.addColumn(new Column({
@@ -1212,17 +1215,17 @@ sap.ui.define([
 			}
 		]);
 
-		return this.oTable.initialized().then(function() {
+		this.oTable.initialized().then(function() {
 			oTable.setSortConditions({
 				sorters: [
 					{name: "name", descending: true}
 				]
 			});
-			return oTable.retrieveAdaptationController();
-		}).then(function (oAdaptationController) {
-			oAdaptationController._retrievePropertyHelper().then(function() {
-				var FlexUtil_handleChanges_Stub = sinon.stub(FlexUtil, "handleChanges");
-				FlexUtil_handleChanges_Stub.callsFake(function(aChanges) {
+		}).then(function () {
+
+			this.oTable.getEngine().initAdaptation(this.oTable, "Sort").then(function() {
+				var oTestModificationHandler = TestModificationHandler.getInstance();
+				oTestModificationHandler.processChanges = function(aChanges) {
 					assert.equal(aChanges.length, 2);
 					assert.equal(aChanges[0].changeSpecificData.changeType, "removeSort");
 					assert.equal(aChanges[0].changeSpecificData.content.name, "name");
@@ -1230,13 +1233,15 @@ sap.ui.define([
 					assert.equal(aChanges[1].changeSpecificData.changeType, "addSort");
 					assert.equal(aChanges[1].changeSpecificData.content.name, "name");
 					assert.equal(aChanges[1].changeSpecificData.content.descending, false);
-
-					FlexUtil_handleChanges_Stub.restore();
-				});
+					done();
+				};
+				this.oTable.getEngine()._setModificationHandler(this.oTable, oTestModificationHandler);
 
 				TableSettings.createSort(oTable, "name", true);
-			});
-		});
+
+			}.bind(this));
+
+		}.bind(this));
 	});
 
 	QUnit.test("Set filter conditions", function(assert) {

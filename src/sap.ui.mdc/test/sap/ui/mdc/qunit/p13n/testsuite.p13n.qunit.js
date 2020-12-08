@@ -39,6 +39,87 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {
+			"Engine": {
+				group: "Engine",
+				module: "./Engine.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"BaseController": {
+				group: "SubController",
+				module: "./controllers/ControllerGeneric.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"SortController": {
+				group: "SubController",
+				module: "./controllers/ControllerGeneric.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"ColumnController": {
+				group: "SubController",
+				module: "./controllers/ControllerGeneric.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"FilterController": {
+				group: "SubController",
+				module: "./controllers/ControllerGeneric.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"AdaptFiltersController": {
+				group: "SubController",
+				module: "./controllers/ControllerGeneric.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"TableIntegration": {
+				group: "Control Integration",
+				module: "./integration/TableP13n.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"FilterBarIntegration": {
+				group: "Control Integration",
+				module: "./integration/FilterBarP13n.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"ChartIntegration": {
+				group: "Control Integration",
+				module: "./integration/ChartP13n.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"BasePanel": {
 				group: "UI Panels",
 				module: "./BasePanel.qunit",
@@ -105,15 +186,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"ChartItemPanel": {
 				group: "UI Panels",
 				module: "./ChartItemPanel.qunit",
-				ui5: {
-					libs: [
-						"sap.ui.mdc"
-					]
-				}
-			},
-			"AdaptationController": {
-				group: "P13n logic",
-				module: "./AdaptationController.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.mdc"

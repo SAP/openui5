@@ -1,7 +1,9 @@
 /*
  * ! ${copyright}
  */
-sap.ui.define([], function () {
+sap.ui.define([
+	"sap/ui/mdc/p13n/Engine"
+], function (Engine) {
 	"use strict";
 
 	return {
@@ -12,7 +14,7 @@ sap.ui.define([], function () {
 				//RTA expects the settings to be returned as function
 				return {
 					handler: function (oControl, mPropertyBag) {
-						return oControl.getRTASettingsActionHandler(mPropertyBag, "Item");
+						return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "Item");
 					}
 				};
 			}

@@ -20,7 +20,9 @@ sap.ui.define([
 	"sap/ui/mdc/chart/ToolbarHandler",
 	"sap/ui/mdc/mixin/FilterIntegrationMixin",
 	"sap/m/VBox",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/ui/mdc/p13n/subcontroller/ChartItemController",
+	"sap/ui/mdc/p13n/subcontroller/SortController"
 ],
 	function (
 		Core,
@@ -40,7 +42,9 @@ sap.ui.define([
 		ToolbarHandler,
 		FilterIntegrationMixin,
 		VBox,
-		Text
+		Text,
+		ChartItemController,
+		SortController
 	) {
 		"use strict";
 
@@ -74,6 +78,7 @@ sap.ui.define([
 		var Chart = Control.extend("sap.ui.mdc.Chart", /** @lends sap.ui.mdc.Chart.prototype */ {
 			metadata: {
 				library: "sap.ui.mdc",
+				designtime: "sap/ui/mdc/designtime/chart/Chart.designtime",
 				interfaces: [
 					"sap.ui.mdc.IxState"
 				],
@@ -371,7 +376,6 @@ sap.ui.define([
 		 */
 		Chart.prototype.init = function() {
 			this._oObserver = new ManagedObjectObserver(this.update.bind(this));
-			this._oAdaptationController = null;
 
 			this._oObserver.observe(this, {
 				aggregations: [
@@ -382,25 +386,17 @@ sap.ui.define([
 				]
 			});
 
+			this.getEngine().registerAdaptation(this, {
+				controller: {
+					Item: ChartItemController,
+					Sort: SortController
+				}
+			});
+
 			this._oManagedObjectModel = new ManagedObjectModel(this);
 			this.setModel(this._oManagedObjectModel, "$mdcChart");
 			Control.prototype.init.apply(this, arguments);
 
-			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-			this.setProperty("adaptationConfig", {
-				itemConfig: {
-					changeOperations: {
-						add: "addItem",
-						remove: "removeItem",
-						move: "moveItem"
-					},
-					containerSettings: {
-						title: oResourceBundle.getText("chart.PERSONALIZATION_DIALOG_TITLE")
-					},
-					adaptationUI: "sap/ui/mdc/p13n/panels/ChartItemPanel",
-					additionalDeltaAttributes: ["role"]
-				}
-			});
 		};
 
 		/**
@@ -529,12 +525,6 @@ sap.ui.define([
 				}
 
 				return this.getControlDelegate().fetchProperties(this);
-			}.bind(this))
-
-			.then(function retrieveAdaptationController(aProperties) {
-				return this.retrieveAdaptationController().then(function () {
-					return aProperties;
-				});
 			}.bind(this))
 
 			.then(function createInnerChart(aProperties) {
