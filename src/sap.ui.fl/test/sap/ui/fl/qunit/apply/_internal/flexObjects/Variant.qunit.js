@@ -268,12 +268,12 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test(" when no favorite is provided", function(assert) {
+		QUnit.test("when no favorite is provided", function(assert) {
 			var oVariant = new Variant({});
 			assert.equal(oVariant.getFavorite(), false, "then by default it is NOT a favorite");
 		});
 
-		QUnit.test(" when favorite is set to false", function(assert) {
+		QUnit.test("when favorite is set to false", function(assert) {
 			var oVariant = new Variant({
 				content: {
 					favorite: false
@@ -282,13 +282,36 @@ sap.ui.define([
 			assert.equal(oVariant.getFavorite(), false, "then it is NOT a favorite");
 		});
 
-		QUnit.test(" when favorite is set to true", function(assert) {
+		QUnit.test("when favorite is set to true", function(assert) {
 			var oVariant = new Variant({
 				content: {
 					favorite: true
 				}
 			});
 			assert.equal(oVariant.getFavorite(), true, "then it is NOT a favorite");
+		});
+
+		QUnit.test("when no executeOnSelect is provided", function(assert) {
+			var oVariant = new Variant({});
+			assert.equal(oVariant.getExecuteOnSelect(), false, "then by default it is NOT executed on selection");
+		});
+
+		QUnit.test("when executeOnSelect is set to false", function(assert) {
+			var oVariant = new Variant({
+				content: {
+					executeOnSelect: false
+				}
+			});
+			assert.equal(oVariant.getExecuteOnSelect(), false, "then it is NOT executed on selection");
+		});
+
+		QUnit.test("when executeOnSelect is set to true", function(assert) {
+			var oVariant = new Variant({
+				content: {
+					executeOnSelect: true
+				}
+			});
+			assert.equal(oVariant.getExecuteOnSelect(), true, "then it is NOT executed on selection");
 		});
 	});
 

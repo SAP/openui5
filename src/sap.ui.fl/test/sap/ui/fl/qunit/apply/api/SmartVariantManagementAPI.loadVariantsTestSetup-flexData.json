@@ -18,7 +18,8 @@
         "persistencyKey": "variantManagement1"
       },
       "content": {
-        "favorite": true
+        "favorite": true,
+        "executeOnSelect": true
       },
       "texts": {
         "variantName": {

@@ -285,6 +285,9 @@ sap.ui.define([
 			}, {
 				fileName: "variant_4",
 				fileType: "variant",
+				content: {
+					executeOnSelect: true
+				},
 				selector: {
 					persistencyKey: sPersistencyKey
 				},
@@ -317,17 +320,23 @@ sap.ui.define([
 				assert.equal(aEntities.length, 6, "then six entities are returned");
 				assert.equal(aEntities[0].getId(), "*standard*", "the first is the standard variant passed");
 				assert.equal(aEntities[0].getText("variantName"), sStandardVariantTitle, "with the passed title");
+				assert.equal(aEntities[0].getExecuteOnSelect(), false, "and is not executed on selection by default");
 				assert.equal(aEntities[0].getFavorite(), true, "which is by default a favorite");
 				assert.equal(aEntities[1].getId(), "variant_5", "the second is the variant provided from the loadFlexData");
 				assert.equal(aEntities[1].getFavorite(), false, "which is NOT a favorite");
+				assert.equal(aEntities[1].getExecuteOnSelect(), false, "and is not executed on selection by default");
 				assert.equal(aEntities[2].getId(), "variant_4", "the third is the variant provided from the loadFlexData");
 				assert.equal(aEntities[2].getFavorite(), false, "which is NOT a favorite");
+				assert.equal(aEntities[2].getExecuteOnSelect(), true, "and is executed on selection, because it is flagged within the object");
 				assert.equal(aEntities[3].getId(), "variant_1", "the fourth is the variant provided from the loadFlexData");
 				assert.equal(aEntities[3].getFavorite(), false, "which is NOT a favorite, because it was added as a favorite and afterwards removed");
+				assert.equal(aEntities[3].getExecuteOnSelect(), false, "and is not executed on selection by default");
 				assert.equal(aEntities[4].getId(), "variant_2", "the fifth is the variant provided from the loadFlexData");
 				assert.equal(aEntities[4].getFavorite(), true, "which is a favorite, because it is flagged as one within the content");
+				assert.equal(aEntities[4].getExecuteOnSelect(), true, "and is executed on selection, because it is flagged within the content");
 				assert.equal(aEntities[5].getId(), "variant_3", "the six is the variant provided from the loadFlexData");
 				assert.equal(aEntities[5].getFavorite(), true, "which was changed to be a favorite");
+				assert.equal(aEntities[5].getExecuteOnSelect(), false, "and is not executed on selection by default");
 			});
 		});
 
