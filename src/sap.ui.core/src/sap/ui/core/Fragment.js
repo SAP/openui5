@@ -448,8 +448,8 @@ function(
 	 *     });
 	 * });
 	 *
-	 * <b>Note:</b> If the Fragment contains ExtensionPoints you have to pass the optional controller instance of the view
-	 * in which the fragment content will be inserted.
+	 * <b>Note:</b> If the Fragment contains ExtensionPoints you have to pass the parameter 'containingView'.
+	 * The containing view should be the View instance into which the fragment content will be inserted manually.
 	 *
 	 * @param {object} mOptions options map
 	 * @param {string} [mOptions.name] must be supplied if no "definition" parameter is given. The Fragment name must correspond to an XML Fragment which
@@ -463,7 +463,7 @@ function(
 	 * @param {string} [mOptions.id] the ID of the Fragment
 	 * @param {sap.ui.core.mvc.Controller|Object} [mOptions.controller] the Controller or Object which should be used by the controls in the Fragment.
 	 *    Note that some Fragments may not need a Controller while others may need one and certain methods to be implemented by it.
-	 * @param {sap.ui.core.mvc.View} [mOptions.containingView] The view containing the Fragment content
+	 * @param {sap.ui.core.mvc.View} [mOptions.containingView] The view containing the Fragment content. If the Fragment content contains ExtensionPoints this parameter must be given.
 	 * @public
 	 * @static
 	 * @since 1.58
