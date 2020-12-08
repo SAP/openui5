@@ -11,13 +11,13 @@ sap.ui.define([
 ) {
 	"use strict";
 	/**
-	 * Delegate class for sap.ui.mdc.base.FieldHelpBase.<br>
+	 * @class Delegate class for sap.ui.mdc.base.FieldHelpBase.<br>
 	 * <b>Note:</b> The class is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
 	 *
 	 * @author SAP SE
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldHelpBase
-	 * @experimental
+	 * @experimental As of version 1.77
 	 * @since 1.77.0
 	 * @alias sap.ui.mdc.field.FieldHelpBaseDelegate
 	 */

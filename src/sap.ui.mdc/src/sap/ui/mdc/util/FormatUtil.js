@@ -9,10 +9,12 @@ sap.ui.define([], function() {
 	"use strict";
 
 	/**
-	 * Utility class used by mdc controls for formatting related operations
+	 * @class Utility class used by mdc controls for formatting related operations
 	 *
 	 * @private
 	 * @experimental This module is only for internal/experimental use!
+	 * @since 1.62.0
+	 * @alias sap.ui.mdc.util.FormatUtil
 	 */
 	var FormatUtil = {
 

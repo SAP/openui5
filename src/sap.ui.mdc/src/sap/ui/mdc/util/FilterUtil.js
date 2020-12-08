@@ -10,10 +10,12 @@ sap.ui.define(['sap/ui/mdc/util/IdentifierUtil', "sap/ui/mdc/condition/Condition
 	"use strict";
 
 	/**
-	 * Utility class used by mdc controls to create the filter statement
+	 * @class Utility class used by mdc controls to create the filter statement
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
+	 * @since 1.80.0
+	 * @alias sap.ui.mdc.util.FilterUtil
 	 */
 		var FilterUtil = {
 

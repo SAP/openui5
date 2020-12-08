@@ -13,7 +13,7 @@ sap.ui.define([
 	/* global Map */
 
 	/**
-	 * Loads the given module(s).
+	 * @class Loads the given module(s).
 	 *
 	 * @example <caption>Example usage of <code>loadModules</code> module</caption>
 	 *	sap.ui.define(["sap/ui/mdc/util/loadModules"], function(loadModules) {
@@ -44,7 +44,7 @@ sap.ui.define([
 	 *
 	 *	});
 	 *
-	 * @alias module:sap/ui/mdc/util/loadModules
+	 * @alias sap.ui.mdc.util.loadModules
 	 * @param {string|string[]} vModulePaths Pathname(s) of the module(s) to be loaded
 	 * @returns {SyncPromise<function[]>} A <code>Promise</code> object to be fulfilled
 	 * by an array of modules export functions.

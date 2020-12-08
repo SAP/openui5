@@ -9,10 +9,12 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 	"use strict";
 
 	/**
-	 * Utility class used by smart controls for creating stable ids
+	 * @class Utility class used by smart controls for creating stable ids
 	 *
 	 * @private
 	 * @experimental This module is only for internal/experimental use!
+	 * @since 1.61.0
+	 * @alias sap.ui.mdc.util.IdentifierUtil
 	 */
 	var IdentifierUtil = {
 

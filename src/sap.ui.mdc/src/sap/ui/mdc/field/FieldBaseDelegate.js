@@ -14,7 +14,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Delegate class for <code>sap.ui.mdc.base.FieldBase</code>.<br>
+	 * @class Delegate class for <code>sap.ui.mdc.base.FieldBase</code>.<br>
 	 * <b>Note:</b> The class is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
 	 *
 	 * @author SAP SE

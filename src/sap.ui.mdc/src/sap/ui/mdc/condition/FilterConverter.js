@@ -19,7 +19,6 @@ function(
 	/**
 	 *
 	 * @class Utility to convert ConditionModel conditions into sap.ui.model.Filter
-	 * @extends sap.ui.base.Object
 	 *
 	 * @author SAP SE
 	 * @version ${version}
