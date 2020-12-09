@@ -316,7 +316,36 @@
 							change: function() {
 								$("body").toggleClass("sapUiSizeCompact");
 							}
-						})
+						}),
+						new sap.m.Select("localeSelect", {
+							items: [
+									new sap.ui.core.Item({
+									key: "0",
+									text: "en"
+								}),
+
+								new sap.ui.core.Item({
+									key: "1",
+									text: "fr",
+								}),
+
+								new sap.ui.core.Item({
+									key: "2",
+									text: "zh-CN",
+								}),
+
+								new sap.ui.core.Item({
+									key: "3",
+									text: "zh-TW",
+
+								})
+							],
+							change: function (oEvent) {
+								var sLanguage = oEvent.getParameter("selectedItem").getText();
+								sap.ui.getCore().getConfiguration().setLanguage(sLanguage);
+								oPage.rerender();
+							}
+						}),
 					]
 				}),
 				content: [
