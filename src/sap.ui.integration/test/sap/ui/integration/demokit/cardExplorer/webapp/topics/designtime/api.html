@@ -228,13 +228,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						<td>allowDynamicValues</td>
 						<td>boolean</td>
 						<td>No</td>
-						<td>depending</td>
+						<td>false</td>
 						<td>Defines whether the value can be bound to a context value of the host environment.
-							The default value for an administrator and content admin is true. In translation mode this
+							The default value for an administrator and content admin is false. In translation mode this
 							property is ignored.
 							To activate the feature additionally the allowDynamicValues property
 							of the Card Editor control needs to be enabled.
-							<pre class="prettyprint lang-js">translatable : true</pre>
+							<pre class="prettyprint lang-js">allowDynamicValues : true</pre>
 						</td>
 						<td>1.84</td>
 					</tr>
@@ -247,9 +247,44 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							For example the administrator can hide or disable fields for the content mode.
 							To activate the feature additionally the allowSettings property
 							of the Card Editor control needs to be enabled.
-							<pre class="prettyprint lang-js">translatable : true</pre>
+							<pre class="prettyprint lang-js">allowSettings : true</pre>
 						</td>
 						<td>1.84</td>
+					</tr>
+					<tr>
+						<td>placeholder</td>
+						<td>string</td>
+						<td>No</td>
+						<td>none</td>
+						<td>Define a placeholder string that appears within a default input for string parameters.
+
+							<pre class="prettyprint lang-js">placeholder : "My Placeholder"</pre>
+						</td>
+						<td>1.84</td>
+					</tr>
+					<tr>
+						<td>validation</td>
+						<td>object of type Validation</td>
+						<td>No</td>
+						<td>none</td>
+						<td>Defines a validation rule for the value of the field.
+							<pre class="prettyprint lang-js">validation : {
+								//validation settings
+							}</pre>
+						</td>
+						<td>1.86</td>
+					</tr>
+					<tr>
+						<td>validations</td>
+						<td>object[] of type Validation</td>
+						<td>No</td>
+						<td>none</td>
+						<td>Defines a validation rules for the value of the field.
+							<pre class="prettyprint lang-js">validation : {
+													//validation settings
+												}</pre>
+						</td>
+						<td>1.86</td>
 					</tr>
 				</table>
 			</div>
@@ -371,7 +406,189 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 	]
 			</pre>
 			</p>
-
+			<h3>Validation of field input</h3>
+			<p>
+				Validation of input of the users can be added to the validation(s) settings in the configuration of each
+				field.
+				Please ensure that users are not overwhelmed with error and warning messages. Use validation wisely.
+			<pre class="prettyprint lang-js collapsed" caption="String/Integer fields with validations">
+					"string1": {
+						"type": "string",
+						"required": true  //this is a validation rule, it will automaticall check for empty value, no need to define a validation for it.
+						"validation": {
+							"type": "error"
+							"maxLength": 20
+						}
+					},
+					"int1": {
+						"type": "integer",
+						"required": true //this is a validation rule, it will automaticall check for empty value, no need to define a validation
+						for it.
+						"validation": {
+							"type": "error"
+							"maximum": 20,
+							"minimum": 10,
+							"exclusiveMinimum": true
+							"message": "Your message" //optional
+						}
+					},
+					"string2": {
+						"type": "string",
+						"validations": [
+							{
+								"type": "error"
+								"maxLength": 20,
+								"message": "Your message"//optional
+							},
+							{
+								"type": "error"
+								"minLength": 1,
+								"message": "Your message" //optional
+							},
+							{
+								"type": "warning"
+								"pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$", //american phone number
+								"message": "Your message" //optional
+							},
+							{
+								"type": "warning"
+								"validate": function (value) {
+									//do your own checks here
+								}
+								"message": "Your message" //optional
+							}
+						]
+					}
+							</pre>
+			</p>
+			<div class="tableWrapper">
+				<table>
+					<caption>Validation Type</caption>
+					<tr>
+						<th>Property</th>
+						<th>Type</th>
+						<th>Required</th>
+						<th>Default</th>
+						<th>For Type</th>
+						<th>Description</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>type</td>
+						<td>["error","warning"]</td>
+						<td>No</td>
+						<td>error</td>
+						<td>all</td>
+						<td>Defines the type of the message (error or warning) that should appear on the field.
+							<pre class="prettyprint lang-js">type: "error"</pre>
+						</td>
+						<td>1.86</td>
+					</tr>
+					<tr>
+						<td>message</td>
+						<td>string</td>
+						<td>No</td>
+						<td>none</td>
+						<td>all</td>
+						<td>Defines the error message that should apprear. If not given a default message will appear.
+							<pre class="prettyprint lang-js">message: "{i18n>TRANSLATABLE_ERROR_MESSAGE}"</pre>
+						</td>
+						<td>1.86</td>
+					</tr>
+					<tr>
+						<td>minLength</td>
+						<td>integer</td>
+						<td>No</td>
+						<td>0</td>
+						<td>string</td>
+						<td>Minimal length of a string value
+							<pre class="prettyprint lang-js">minLength : 10</pre>
+						</td>
+						<td>1.86</td>
+					</tr>
+					<tr>
+						<td>maxLength</td>
+						<td>integer</td>
+						<td>No</td>
+						<td>unlimited</td>
+						<td>string</td>
+						<td>Maximal length of a string value
+							<pre class="prettyprint lang-js">maxLength : 10</pre>
+						</td>
+						<td>1.86</td>
+					</tr>
+					<tr>
+						<td>pattern</td>
+						<td>Reg Exp string</td>
+						<td>No</td>
+						<td>none</td>
+						<td>string</td>
+						<td>String values are only valid if thex match the given Regular Expression.
+							<pre class="prettyprint lang-js">pattern : "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$"</pre>
+						</td>
+						<td>1.86</td>
+					</tr>
+					<tr>
+						<td>validate</td>
+						<td>function</td>
+						<td>No</td>
+						<td>none</td>
+						<td>all</td>
+						<td>Own implementation function to check values
+							<pre class="prettyprint lang-js">validate : function(value) {
+								return true if value is valid
+							}</pre>
+						</td>
+						<td>1.86</td>
+					</tr>
+					<tr>
+						<td>minimum</td>
+						<td>integer</td>
+						<td>No</td>
+						<td>none</td>
+						<td>integer/number</td>
+						<td>Minimum value for the number
+							<pre class="prettyprint lang-js">minimum : 10</pre>
+						</td>
+						<td>1.86</td>
+					</tr>
+					<tr>
+						<td>maximum</td>
+						<td>integer</td>
+						<td>No</td>
+						<td>none</td>
+						<td>integer/number</td>
+						<td>Maximum value for the number
+							<pre class="prettyprint lang-js">maximum : 20</pre>
+						</td>
+						<td>1.86</td>
+					</tr>
+					<tr>
+						<td>exclusiveMinimum</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>false</td>
+						<td>integer/number</td>
+						<td>Whether the given minimum should be excluded.
+							<pre
+								class="prettyprint lang-js">minimum: 10, exclusiveMinimum : true //10 is not allowed, but 10.00001</pre>
+						</td>
+						<td>1.86</td>
+					</tr>
+					<tr>
+						<td>exclusiveMaximum</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>false</td>
+						<td>integer/number</td>
+						<td>Whether the given maximum should be excluded.
+							<pre
+								class="prettyprint lang-js">maximum: 20, exclusiveMaximum : true //20 is not allowed, but 19.9999</pre>
+						</td>
+						<td>1.86</td>
+					</tr>
+				</table>
+			</div>
 			<div class="navigation">
 				<h4>Table of Contents</h4>
 				<div><a href="#overview">Design-time Configurations and APIs</a></div>

@@ -28,7 +28,9 @@ sap.ui.define([
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
 	"sap/ui/core/theming/Parameters",
-	"sap/base/util/ObjectPath"
+	"sap/base/util/ObjectPath",
+	"sap/m/FormattedText",
+	"sap/m/MessageStrip"
 ], function (
 	ui5loader,
 	Control,
@@ -55,7 +57,9 @@ sap.ui.define([
 	includeStylesheet,
 	LoaderExtension,
 	Parameters,
-	ObjectPath
+	ObjectPath,
+	FormattedText,
+	MessageStrip
 ) {
 	"use strict";
 
@@ -165,6 +169,11 @@ sap.ui.define([
 					type: "sap.ui.integration.designtime.editor.CardPreview",
 					multiple: false,
 					visibility: "hidden"
+				},
+				_messageStrip: {
+					type: "sap.m.MessageStrip",
+					multiple: false,
+					visibility: "hidden"
 				}
 			},
 			events: {
@@ -186,8 +195,12 @@ sap.ui.define([
 				if (oControl.getMode() !== "translation") {
 					oRm.addClass("settingsButtonSpace");
 				}
+
 				oRm.writeClasses();
 				oRm.openEnd();
+				if (oControl.getMode() !== "translation") {
+					oRm.renderControl(oControl.getAggregation("_messageStrip"));
+				}
 				var aItems = oControl.getAggregation("_formContent");
 				var oGeneralSettingsPanel;
 				//render items
@@ -205,14 +218,14 @@ sap.ui.define([
 							baseSize: "0"
 						});
 					};
-					var addColFields = function() {
+					var addColFields = function () {
 						if (oColFields.length > 0) {
 							var iLess = iColSize - oColFields.length;
 							for (var n = 0; n < iLess; n++) {
 								oColFields.push(new VBox().setLayoutData(oLayoutForNotWrapping()));
 							}
 							oPanel.addContent(new HBox({
-								items:oColFields
+								items: oColFields
 							}));
 							oColFields = [];
 						}
@@ -259,24 +272,29 @@ sap.ui.define([
 								oPanel.addStyleClass("sapUiIntegrationCardEditorItem");
 								continue;
 							}
+
 							if (oItem.isA("sap.m.Label")) {
 								oItem.addStyleClass("sapUiIntegrationCardEditorItemLabel");
 								var oDependent = oItem.getDependents() && oItem.getDependents()[0];
 								var oLabelWithDependentHBox = null;
+								oLabelWithDependentHBox = new HBox({
+									items: [
+										oItem.addStyleClass("description")
+									]
+								});
 								if (oDependent) {
-									oLabelWithDependentHBox = new HBox({
-										items:[
-											oItem.addStyleClass("description"),
-											oDependent
-										]
-									});
+									oLabelWithDependentHBox.addItem(oDependent);
 								}
+								if (oItem._oMessageIcon) {
+									oLabelWithDependentHBox.addItem(oItem._oMessageIcon);
+								}
+
 								//add the col fields to panel
 								if (oItem._cols === 1) {
 									//if reach the col size, add the col fields to panel, then empty the col fields list
 									if (oColFields.length === iColSize) {
 										oPanel.addContent(new HBox({
-											items:oColFields
+											items: oColFields
 										}));
 										oColFields = [];
 									}
@@ -293,7 +311,7 @@ sap.ui.define([
 								}
 							} else if (oItem._cols === 1) {
 								oColFields.push(new VBox({
-									items:[
+									items: [
 										olabelItemForCol,
 										oItem
 									]
@@ -304,7 +322,7 @@ sap.ui.define([
 								oItem.setLayoutData(oLayoutForNotWrapping());
 								oLabelItemForNotWrapping.setLayoutData(oLayoutForNotWrapping());
 								oPanel.addContent(new HBox({
-									items:[
+									items: [
 										oLabelItemForNotWrapping,
 										oItem
 									]
@@ -333,6 +351,9 @@ sap.ui.define([
 								oPanel.addStyleClass("sapUiIntegrationCardEditorTranslationSubPanel");
 								continue;
 							}
+							if (oItem.isA("sap.m.FormattedText")) {
+								continue;
+							}
 							if (oItem.isA("sap.m.Label")) {
 								oPanel.addContent(oItem);
 								continue;
@@ -346,7 +367,7 @@ sap.ui.define([
 							oOriginalField.setLayoutData(oLayoutForNotWrapping());
 							oItem.setLayoutData(oLayoutForNotWrapping());
 							var oHBox = new HBox({
-								items:[
+								items: [
 									oOriginalField,
 									oItem
 								]
@@ -377,6 +398,9 @@ sap.ui.define([
 		this._appliedLayerManifestChanges = [];
 		this._currentLayerManifestChanges = {};
 		this._mDestinationDataProviders = {};
+		this.setAggregation("_messageStrip", new MessageStrip({
+			showIcon: false
+		}));
 	};
 	/**
 	 * Returns whether the editor is ready to be used
@@ -880,27 +904,36 @@ sap.ui.define([
 		oLabel._cols = oConfig.cols || 2; //by default 2 cols
 		oLabel._sOriginalType = oConfig.type;
 		if (oConfig.description) {
-			var oIcon = new Icon({
+			var oDescIcon = new Icon({
 				src: "sap-icon://message-information",
 				color: "Marker",
 				size: "12px",
 				useIconTooltip: false,
 				visible: this.getMode() !== "translation"
 			});
-			oIcon.addStyleClass("sapUiIntegrationCardEditorDescriptionIcon");
-			oLabel.addDependent(oIcon);
-			oIcon.onmouseover = function () {
+			oDescIcon.addStyleClass("sapUiIntegrationCardEditorDescriptionIcon");
+			oLabel.addDependent(oDescIcon);
+			oLabel._oDescriptionIcon = oDescIcon;
+			oDescIcon.onmouseover = function (oDescIcon) {
 				this._getPopover().getContent()[0].applySettings({ text: oConfig.description });
-				this._getPopover().openBy(oIcon);
-				oIcon.addDependent(this._getPopover());
-			}.bind(this);
-			oIcon.onmouseout = function () {
+				this._getPopover().openBy(oDescIcon);
+				oDescIcon.addDependent(this._getPopover());
+			}.bind(this, oDescIcon);
+			oDescIcon.onmouseout = function (oDescIcon) {
 				this._getPopover().close();
-				oIcon.removeDependent(this._getPopover());
-			}.bind(this);
+				oDescIcon.removeDependent(this._getPopover());
+			}.bind(this, oDescIcon);
 		}
+		var oMsgIcon = new Icon({
+			src: "sap-icon://message-information",
+			size: "12px",
+			useIconTooltip: false
+		});
+		oMsgIcon.addStyleClass("sapUiIntegrationCardEditorMessageIcon");
+		oLabel._oMessageIcon = oMsgIcon;
 		return oLabel;
 	};
+
 	CardEditor.prototype._getPopover = function () {
 		if (this._oPopover) {
 			return this._oPopover;
@@ -1126,8 +1159,17 @@ sap.ui.define([
 			});
 			this.addAggregation("_formContent", oPanel);
 			oPanel._cols = oConfig.cols || 2; //by default 2 cols
+			if (oConfig.hint) {
+				var sHint = oConfig.hint;
+				sHint = sHint.replace(/<a href/g, "<a target='blank' href");
+				var oFormattedText = new FormattedText({
+					htmlText: sHint
+				});
+				this.addAggregation("_formContent", oFormattedText);
+			}
 			return;
 		}
+		var oNewLabel = null;
 		if (sMode === "translation") {
 			if (typeof oConfig.value === "string" && oConfig.value.indexOf("{") === 0) {
 				//do not show dynamic values for translation
@@ -1154,12 +1196,14 @@ sap.ui.define([
 				//the original language field shows only a text control. If empty we show a dash to avoid empty text.
 				origLangField.value = "-";
 			}
+			var oLabel = this._createLabel(origLangField);
 			this.addAggregation("_formContent",
-				this._createLabel(origLangField)
+				oLabel
 			);
 			var oField = this._createField(origLangField);
 			oField.isOrigLangField = true;
 			this.addAggregation("_formContent", oField);
+
 			oConfig.value = oConfig._translatedDefaultValue || "";
 			//even if a item is not visible or not editable by another layer for translations it should always be editable and visible
 			oConfig.editable = oConfig.visible = oConfig.translatable;
@@ -1173,15 +1217,26 @@ sap.ui.define([
 			oConfig.required = false; //translation is never required
 			//now continue with the default...
 		} else {
+			oNewLabel = this._createLabel(oConfig);
 			this.addAggregation("_formContent",
-				this._createLabel(oConfig)
+				oNewLabel
 			);
+
 		}
 		//default for all modes
 		var oField = this._createField(oConfig);
+		oField.setAssociation("_messageIcon", oNewLabel && oNewLabel._oMessageIcon);
 		this.addAggregation("_formContent",
 			oField
 		);
+		if (oNewLabel) {
+			oNewLabel._oMessageIcon.onmouseover = function (oField) {
+				oField._showMessage();
+			}.bind(this, oField);
+			oNewLabel._oMessageIcon.onmouseout = function (oField) {
+				oField._hideMessage();
+			}.bind(this, oField);
+		}
 		//reset the cols to original
 		oConfig.cols = oConfig.__cols;
 		delete oConfig.__cols;
@@ -1614,6 +1669,9 @@ sap.ui.define([
 			"sapUiTileSeparatorColor",
 			"sapUiHighlight",
 			"sapUiListSelectionBackgroundColor",
+			"sapUiNegativeText",
+			"sapUiCriticalText",
+			"sapUiPositiveText",
 			"sapUiChartScrollbarBorderColor"],
 			oStyle = document.createElement("style");
 		oStyle.setAttribute("id", "sap-ui-integration-editor-style");

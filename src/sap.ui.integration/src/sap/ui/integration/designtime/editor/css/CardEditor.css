@@ -21,6 +21,7 @@
 	overflow-y: auto;
 	overflow-x: hidden;
 	padding: 0 1rem 0 0.5rem;
+	position: relative;
 }
 
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorTranslationPanel .sapMPanelContent {
@@ -91,7 +92,8 @@
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemField .sapUiIntegrationCardEditorEditor {
 	width: 100%;
 }
-.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm.settingsButtonSpace .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemField .sapUiIntegrationCardEditorEditor {
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm.settingsButtonSpace .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemField .sapUiIntegrationCardEditorEditor,
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm.settingsButtonSpace .sapUiIntegrationCardEditorItem .sapUiIntegrationCardEditorItemField .sapUiIntegrationCardEditorHint{
 	width: calc(100% - 2.5rem);
 }
 
@@ -331,4 +333,72 @@
 	background-position: center;
 	color:transparent;
 	vertical-align:top;
+}
+
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip {
+	margin: -0.3rem 0 0 0.1rem;
+	padding: 0 0.5rem;
+	position: absolute;
+	min-height: 1.2rem;
+	opacity: 0;
+	transition: opacity 0.3s;
+	z-index:1;
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapMText{
+	font-size: 0.75rem;
+	vertical-align: middle;
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapUiIcon{
+	font-size: 0.75rem;
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapMMsgStripIcon {
+	width: 1.4rem;
+	margin: 0.20rem 0.4rem;
+	vertical-align: top;
+	padding-top: 6px;
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm .sapMMsgStrip .sapMMsgStripIcon ~ .sapMMsgStripMessage {
+    margin-left: 0.85rem;
+}
+
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorMessageIcon.error,
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorMessageIcon.warning,
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorMessageIcon.success {
+	display: inline-block;
+}
+
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorMessageIcon.error::before {
+	content:"\e0b1" !important;
+	color: var(--sapUiNegativeText, darkred);
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorMessageIcon.warning::before {
+	content:"\e201";
+	color: var(--sapUiCriticalText, darkorange);
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorMessageIcon.success::before {
+	content:"\e203";
+	opacity: 0;
+	transition: opacity 1.4s ease-out;
+	color: var(--sapUiPositiveText, green);
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorMessageIcon {
+	margin: 0.20rem 0.5rem;
+	vertical-align: top;
+	display: none;
+	padding-top: 6px;
+	/*
+	right: 3.2rem;
+    position: absolute;
+    margin-top: 1.2rem;
+    z-index: 5;
+    */
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorHint {
+	padding: 0.1rem 0.1rem 0.2rem
+}
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorHint *{
+	font-size: 0.75rem;
+}
+.sapUiIntegrationCardEditorItem > .sapMFT {
+	margin-bottom:0.5rem;
 }
