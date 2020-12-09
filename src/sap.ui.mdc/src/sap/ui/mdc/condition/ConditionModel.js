@@ -29,7 +29,7 @@ sap.ui.define([
 
 		/**
 		 *
-		 * @class JSON based Model for sap.ui.mdc.FilterField controls. The model stores the entered values as condition objects.
+		 * @class JSON based Model for {@link sap.ui.mdc.FilterField FilterField} controls. The model stores the entered values as {@link sap.ui.mdc.condition.ConditionObject ConditionObjects}.
 		 * @extends sap.ui.model.json.JSONModel
 		 *
 		 * @author SAP SE
@@ -97,9 +97,9 @@ sap.ui.define([
 
 
 		/**
-		 * creates a clone of the ConditionModel which contains the conditions for the sFieldPath
+		 * creates a clone of the <code>ConditionModel</code> which contains the conditions for the <code>sFieldPath</code> parameter
 		 * @param {string} sFieldPath specifies which conditions should be copied into the clone. If not specified all conditions will be copied.
-		 * @returns {sap.ui.mdc.condition.ConditionModel} instance of new ConditionModel
+		 * @returns {sap.ui.mdc.condition.ConditionModel} instance of new <code>ConditionModel</code>
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
@@ -128,9 +128,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * merge conditions from the source conditionModel into this instance
-		 * @param {string} sFieldPath specifies which conditions should be removed and replaced by the conditions from the source ConditionModel
-		 * @param {sap.ui.mdc.condition.ConditionModel} oSourceConditionModel source ConditionModel.
+		 * merge conditions from the source <code>ConditionModel</code> into this instance
+		 * @param {string} sFieldPath specifies which conditions should be removed and replaced by the conditions from the source <code>ConditionModel</code>
+		 * @param {sap.ui.mdc.condition.ConditionModel} oSourceConditionModel source <code>ConditionModel</code>.
 		 * @param {string} sSourceFieldPath specifies which conditions from the source should be merged.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
@@ -154,7 +154,7 @@ sap.ui.define([
 
 
 		/**
-		 * Returns conditions for a specified FieldPath.
+		 * Returns conditions for a specified <codeFieldPath</code>.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @returns {sap.ui.mdc.condition.ConditionObject[]} array of conditions
@@ -214,7 +214,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Determines the index of a condition for a specified FieldPath.
+		 * Determines the index of a condition for a specified <code>FieldPath</code>.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition condition to be searched
@@ -245,7 +245,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Sets conditions. All already existing conditions will be removed
+		 * Sets conditions. All already existing conditions will be removed.
 		 *
 		 * @param {object} oConditions object of conditions for corresponding fieldPaths
 		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
@@ -280,7 +280,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Adds a condition for a specified FieldPath.
+		 * Adds a condition for a specified <code>FieldPath</code>.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition condition to be added
@@ -299,7 +299,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Inserts a condition for a specified FieldPath.
+		 * Inserts a condition for a specified <code>FieldPath</code>.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @param {int} iIndex index where the condition should be inserted
@@ -349,9 +349,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * creates a condition instance for the Item condition
+		 * creates a condition instance for the item-condition
 		 *
-		 * @param {string} sFieldPath the fieldPath name of the condition
+		 * @param {string} sFieldPath the <code>FieldPath</code> name of the condition
 		 * @param {string} sKey the operator for the condition
 		 * @param {string} sDescription the description of the operator
 		 * @returns {sap.ui.mdc.condition.ConditionObject} the new condition object with the given fieldPath, the operator EQ and the sKey and sDescription as aValues.
@@ -365,9 +365,9 @@ sap.ui.define([
 		};
 
 		/**
-		 * creates a condition instance for the condition model
+		 * creates a condition instance
 		 *
-		 * @param {string} sFieldPath the fieldPath name of the condition
+		 * @param {string} sFieldPath the <code>FieldPath</code> name of the condition
 		 * @param {string} sOperator the operator for the condition
 		 * @param {any[]} aValues the array of values for the condition
 		 * @returns {sap.ui.mdc.condition.ConditionObject} the new condition object with the given fieldPath, operator and values.
@@ -381,10 +381,10 @@ sap.ui.define([
 		};
 
 		/**
-		 * Removes a condition for a specified FieldPath.
+		 * Removes a condition for a specified <code>FieldPath</code>.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
-		 * @param {int | {sap.ui.mdc.condition.ConditionObject} vCondition condition or index of the condition
+		 * @param {int|{sap.ui.mdc.condition.ConditionObject} vCondition condition or index of the condition
 		 * @returns {boolean} flag if condition was removed.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
@@ -418,7 +418,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Removes all conditions for a specified FieldPath.
+		 * Removes all conditions for a specified <code>FieldPath</code>.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
@@ -680,4 +680,4 @@ sap.ui.define([
 		}
 
 		return ConditionModel;
-		});
+	});

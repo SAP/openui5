@@ -37,13 +37,15 @@ sap.ui.define([
 		var ConditionConverter = {
 
 			/**
-			 * converts a condition into a unified String
+			 * Converts a condition into a unified String
 			 *
 			 * The condition is not checked for validity. The used values must fit to the used basic type.
 			 *
+			 * <b>Note:</b> Number types are not converted, the number conversion is done by the Flex handling.
+			 *
 			 * @param {object} oCondition Condition
 			 * @param {sap.ui.mdc.TypeConfig} oTypeConfig given dataType mapping configuration
-			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent type util
+			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent <code>TypeUtil</code> implementation
 			 * @returns {object} stringified condition
 			 * @private
 			 * @ui5-restricted sap.ui.mdc
@@ -81,9 +83,11 @@ sap.ui.define([
 			 *
 			 * The condition is not checked for validity. The used values must fit to the used basic type.
 			 *
+			 * <b>Note:</b> Number types are not converted, the number conversion is done by the Flex handling.
+			 *
 			 * @param {object} oCondition stringified condition
 			 * @param {sap.ui.mdc.TypeConfig} oTypeConfig Data type of the condition
-			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent type util
+			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent <code>TypeUtil</code> implementation
 			 * @returns {object} condition
 			 * @private
 			 * @ui5-restricted sap.ui.mdc

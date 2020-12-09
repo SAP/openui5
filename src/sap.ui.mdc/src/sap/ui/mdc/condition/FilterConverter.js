@@ -18,7 +18,7 @@ function(
 
 	/**
 	 *
-	 * @class Utility to convert ConditionModel conditions into sap.ui.model.Filter
+	 * @class Utility to convert {@link sap.ui.mdc.condition.ConditionObject conditions} of a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} into {@link sap.ui.model.Filter Filter}
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -34,7 +34,7 @@ function(
 			/**
 			 * creates a map with the types of the conditions.
 			 *
-			 * @param {object} oConditions map of conditions
+			 * @param {object} oConditions map of {@link sap.ui.mdc.condition.ConditionObject conditions}
 			 * @param {sap.ui.mdc.FilterBar} oFilterBar <code>FilterBar</code> control
 			 * @returns {object} aConditionTypes map containing the types of the condition.
 			 *
@@ -56,12 +56,12 @@ function(
 			},
 
 			/**
-			 * Converts all conditions given in a oConditions map into a Filter statement.
+			 * Converts all conditions given in a oConditions map into a {@link sap.ui.model.Filter Filter} object.
 			 *
-			 * @param {object} oConditions map of conditions
+			 * @param {object} oConditions map of {@link sap.ui.mdc.condition.ConditionObject conditions}
 			 * @param {object} oConditionTypes map containing the types of the condition. Will be used to convert the values of a condition.
 			 * @param {function} [fConvert2FilterCallback] callback function
-			 * @returns {sap.ui.model.Filter} Filter object for filtering a listbinding
+			 * @returns {sap.ui.model.Filter} Filter object for filtering a {@link sap.ui.model.ListBinding ListBinding}
 			 *
 			 * @private
 			 * @ui5-restricted sap.ui.mdc

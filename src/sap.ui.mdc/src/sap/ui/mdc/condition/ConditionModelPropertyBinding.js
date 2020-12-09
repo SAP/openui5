@@ -22,7 +22,7 @@ sap.ui.define([
 	 * Creates a new <code>ConditionModelPropertyBinding</code>.
 	 *
 	 * This constructor must only be called by subclasses or model implementations, not by application or control code.
-	 * Such code should use {@link sap.ui.mdc.condition.ConditionModel#bindProperty ConditionModel#bindProperty} on the corresponding model instance instead.
+	 * Such code should use {@link sap.ui.mdc.condition.ConditionModel#bindProperty ConditionModel.bindProperty} on the corresponding model instance instead.
 	 *
 	 * @param {sap.ui.mdc.condition.ConditionModel} oModel Model instance that this binding is created for and that it belongs to
 	 * @param {string} sPath Binding path to be used for this binding
