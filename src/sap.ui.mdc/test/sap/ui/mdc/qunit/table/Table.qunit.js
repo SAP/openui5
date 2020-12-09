@@ -3189,9 +3189,9 @@ sap.ui.define([
 		var done = assert.async();
 		this.oTable.initialized().then(function(){
 			if (bInbuiltShouldBeActivated) {
-				assert.ok(this.oTable._oP13nFilter.isA("sap.ui.mdc.filterbar.FilterBarBase"), "Inbuilt filtering initialized");
+				assert.ok(this.oTable.getInbuiltFilter().isA("sap.ui.mdc.filterbar.FilterBarBase"), "Inbuilt filtering initialized");
 			} else {
-				assert.ok(!this.oTable._oP13nFilter, "Inbuilt filtering must not be initialized");
+				assert.ok(!this.oTable.getInbuiltFilter(), "Inbuilt filtering must not be initialized");
 			}
 			done();
 		}.bind(this));

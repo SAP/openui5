@@ -176,7 +176,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("addCondition (via AdaptationFilterBar _oP13nFilter)", function(assert){
+	QUnit.test("addCondition (via AdaptationFilterBar)", function(assert){
 		var done = assert.async();
 
 		this.destroyTestObjects();
@@ -221,7 +221,7 @@ sap.ui.define([
 						FlexUtil.handleChanges(aChanges).then(function(){
 							//check updates via changehandler
 							assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
-							assert.deepEqual(this.oTable._oP13nFilter.getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
+							assert.deepEqual(this.oTable.getInbuiltFilter().getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
 							done();
 
 						}.bind(this));
