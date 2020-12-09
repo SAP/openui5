@@ -1837,14 +1837,16 @@ sap.ui.define([
 		// Prepare
 		var oSPC = new SinglePlanningCalendar(),
 			oGrid = oSPC.getAggregation("_grid"),
-			oStartDate = new Date(2017, 1, 1, 1, 1),
-			oStartDateFullDay = new Date(2017, 1, 1, 0, 0),
-			oEndDate = new Date(2017, 1, 2, 2, 2),
-			oEndDateFullDay = new Date(2017, 1, 2, 0, 0);
+			aDates = [
+				new Date(2017, 1, 1, 0, 0, 0),
+				new Date(2017, 1, 1, 15, 0, 0),
+				new Date(2017, 1, 2, 0, 0, 0)
+			];
 
 		// Assert
-		assert.equal(oGrid.isAllDayAppointment(oStartDate, oEndDate), false, "The appointment is not full day");
-		assert.equal(oGrid.isAllDayAppointment(oStartDateFullDay, oEndDateFullDay), true, "The appointment is full day");
+		assert.ok(oGrid.isAllDayAppointment(aDates[0], aDates[2]), "The appointment is an all day event");
+		assert.notOk(oGrid.isAllDayAppointment(aDates[0], aDates[1]), "The appointment isn't an all day event");
+		assert.notOk(oGrid.isAllDayAppointment(aDates[1], aDates[0]), "The appointment isn't an all day event");
 
 		// Clean up
 		oSPC.destroy();

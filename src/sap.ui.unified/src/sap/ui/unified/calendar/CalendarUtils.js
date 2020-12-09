@@ -476,6 +476,16 @@ sap.ui.define([
 			return Math.abs((oNewFirstDate.getTime() - oNewSecondDate.getTime()) / (1000 * 60 * 60));
 		};
 
+		/**
+		 * Evaluates whether a given date time part indicates midniht.
+		 *
+		 * @param {Object} oDate - JavaScript date
+		 * @returns {boolean}
+		 */
+		CalendarUtils._isMidnight = function(oDate) {
+			return oDate.getHours() === 0 && oDate.getMinutes() === 0 && oDate.getSeconds() === 0 && oDate.getMilliseconds() === 0;
+		};
+
 		 // Utilities for working with sap.ui.unified.calendar.CalendarDate
 
 		/**
