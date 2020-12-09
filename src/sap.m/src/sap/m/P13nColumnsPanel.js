@@ -504,12 +504,12 @@ sap.ui.define([
 							return bShowOnlySelectedItems ? oRb.getText('COLUMNSPANEL_SHOW_ALL') : oRb.getText('COLUMNSPANEL_SHOW_SELECTED');
 						}
 					},
-					tooltip: {
+					/*tooltip: {
 						path: '/showOnlySelectedItems',
 						formatter: function(bShowOnlySelectedItems) {
 							return bShowOnlySelectedItems ? oRb.getText('COLUMNSPANEL_SHOW_ALL') : oRb.getText('COLUMNSPANEL_SHOW_SELECTED');
 						}
-					},
+					},*/
 					type: ButtonType.Transparent,
 					press: jQuery.proxy(this._onSwitchButtonShowSelected, this),
 					layoutData: new OverflowToolbarLayoutData({
