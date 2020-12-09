@@ -127,7 +127,8 @@ sap.ui.define([
 
 		this._oObserver.observe(this, {
 			properties: ["filterValue", "conditions"],
-			aggregations: ["items"]
+			aggregations: ["items"],
+			bindings: ["items"]
 		});
 
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -178,6 +179,36 @@ sap.ui.define([
 	function _createList() {
 
 		if (!this._oList && List && DisplayListItem && mLibrary && !this._bListRequested) {
+			var oBindingInfo = this.getBindingInfo("items");
+
+			this._oList = new List(this.getId() + "-List", {
+				width: "100%",
+				showNoData: false,
+				mode: mLibrary.ListMode.SingleSelectMaster,
+				rememberSelections: false,
+				itemPress: _handleItemPress.bind(this) // as selected item can be pressed
+			});
+
+			this._oList.setModel(this._oManagedObjectModel, "$field");
+			this._oList.bindElement({ path: "/", model: "$field" });
+			_bindList.call(this, oBindingInfo);
+
+			this._setContent(this._oList);
+
+			if (this._bNavigate) {
+				this._bNavigate = false;
+				this.navigate(this._iStep);
+				this._iStep = null;
+			}
+		}
+
+	}
+
+	function _bindList(oBindingInfo) {
+
+		if (this._oList) {
+			this._oList.unbindAggregation("items"); // unbind first to destroy old template and items.
+
 			var oItemTemplate = new DisplayListItem(this.getId() + "-item", {
 				type: mLibrary.ListType.Active,
 				label: "{$field>text}",
@@ -189,7 +220,6 @@ sap.ui.define([
 
 			// add sorter only if supported
 			var bUseSorter = false;
-			var oBindingInfo = this.getBindingInfo("items");
 			if (oBindingInfo && oBindingInfo.template && oBindingInfo.template.isA("sap.ui.mdc.field.ListFieldHelpItem")) {
 				bUseSorter = true;
 			} else {
@@ -201,26 +231,9 @@ sap.ui.define([
 
 			var oSorter = bUseSorter && new Sorter("groupKey", false, _suggestGrouping.bind(this));
 
-			this._oList = new List(this.getId() + "-List", {
-				width: "100%",
-				showNoData: false,
-				mode: mLibrary.ListMode.SingleSelectMaster,
-				rememberSelections: false,
-				items: {path: "$field>items", template: oItemTemplate, filters: oFilter, sorter: oSorter},
-				itemPress: _handleItemPress.bind(this) // as selected item can be pressed
-			});
+			this._oList.bindAggregation("items", {path: "$field>items", template: oItemTemplate, filters: oFilter, sorter: oSorter, templateShareable: false});
 
-			this._oList.setModel(this._oManagedObjectModel, "$field");
-			this._oList.bindElement({ path: "/", model: "$field" });
 			_updateSelection.call(this);
-
-			this._setContent(this._oList);
-
-			if (this._bNavigate) {
-				this._bNavigate = false;
-				this.navigate(this._iStep);
-				this._iStep = null;
-			}
 		}
 
 	}
@@ -262,12 +275,18 @@ sap.ui.define([
 		if (oChanges.object === this) {
 			// it's the FieldHelp
 			if (oChanges.name === "items") {
-				if (oChanges.mutation === "insert") {
-					this._oObserver.observe(oChanges.child, {properties: true});
+				if (oChanges.type === "binding") {
+					if (oChanges.mutation === "prepare") {
+						_bindList.call(this, oChanges.bindingInfo);
+					}
 				} else {
-					this._oObserver.unobserve(oChanges.child);
+					if (oChanges.mutation === "insert") {
+						this._oObserver.observe(oChanges.child, {properties: true});
+					} else {
+						this._oObserver.unobserve(oChanges.child);
+					}
+					_fireDataUpdate.call(this);
 				}
-				_fireDataUpdate.call(this);
 			}
 
 			if (oChanges.name === "conditions") {
