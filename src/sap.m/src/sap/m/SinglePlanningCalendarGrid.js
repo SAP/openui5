@@ -64,7 +64,6 @@ sap.ui.define([
 			BLOCKER_ROW_HEIGHT_COMPACT = 25,
 			HALF_HOUR_MS = 3600000 / 2,
 			ONE_MIN_MS = 60 * 1000,
-			MILLISECONDS_IN_A_DAY = 86400000,
 			// Day view only - indicates the special dates
 			// 3px height the marker itself + 2x2px on its top and bottom both on cozy & compact
 			DAY_MARKER_HEIGHT_PX = 7,
@@ -1964,38 +1963,14 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns whether the appointment starts at 00:00 and ends in 00:00 on any day in the future.
+		 * Returns whether an appointment starts at 00:00 and ends in 00:00 on any day in the future.
 		 *
 		 * @param {Object} oAppStartDate - Start date of the appointment
 		 * @param {Object} oAppEndDate - End date of the appointment
 		 * @returns {boolean}
 		 */
 		SinglePlanningCalendarGrid.prototype.isAllDayAppointment = function(oAppStartDate, oAppEndDate) {
-			var bStartDateHours = oAppStartDate.getHours() === 0,
-				bStartDateMinutes = oAppStartDate.getMinutes() === 0,
-				bStartDateSeconds = oAppStartDate.getSeconds() === 0,
-				bStartDateMilliseconds = oAppStartDate.getMilliseconds() === 0,
-				bStartTimeIs0000 = bStartDateHours && bStartDateMinutes && bStartDateSeconds && bStartDateMilliseconds,
-				bAllDay = false;
-
-			if (bStartTimeIs0000) {
-				bAllDay = this._isEndTime0000(oAppStartDate, oAppEndDate);
-			}
-
-			return bAllDay;
-		};
-
-		/**
-		 * When we're inside this method we know for sure that the start time is 00:00.
-		 * It returns whether the end time is also 00:00.
-		 *
-		 * @param {Object} oAppStartDate - Start date of the appointment
-		 * @param {Object} oAppEndDate - End date of the appointment
-		 * @returns {boolean}
-		 */
-		SinglePlanningCalendarGrid.prototype._isEndTime0000 = function(oAppStartDate, oAppEndDate) {
-			var iTimeDifference = CalendarDate.fromLocalJSDate(oAppEndDate).valueOf() - CalendarDate.fromLocalJSDate(oAppStartDate).valueOf();
-			return iTimeDifference % MILLISECONDS_IN_A_DAY === 0;
+			return CalendarUtils._isMidnight(oAppStartDate) && CalendarUtils._isMidnight(oAppEndDate);
 		};
 
 		SinglePlanningCalendarGrid.prototype._createBlockersDndPlaceholders = function (oStartDate, iColumns) {

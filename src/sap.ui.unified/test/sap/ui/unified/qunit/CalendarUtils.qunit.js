@@ -488,6 +488,19 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("_isMidnight", function(assert) {
+
+		assert.throws(function() {
+			CalendarUtils._isMidnight();
+		}, "Without parameters");
+
+		assert.ok(CalendarUtils._isMidnight(new Date(2020, 10, 10)), "Date time part indicates midnight");
+		assert.notOk(CalendarUtils._isMidnight(new Date(2020, 10, 10, 1)), "Date time part doesn't indicate midnight");
+		assert.notOk(CalendarUtils._isMidnight(new Date(2020, 10, 10, 0, 1)), "Date time part doesn't indicate midnight");
+		assert.notOk(CalendarUtils._isMidnight(new Date(2020, 10, 10, 0, 0, 1)), "Date time part doesn't indicate midnight");
+		assert.notOk(CalendarUtils._isMidnight(new Date(2020, 10, 10, 0, 0, 0, 1)), "Date time part doesn't indicate midnight");
+	});
+
 	QUnit.test("_daysBetween", function(assert) {
 
 		assert.throws(function() {
