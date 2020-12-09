@@ -6,6 +6,7 @@
 sap.ui.define([
 	'./library',
 	'sap/ui/core/Control',
+	"sap/ui/Device",
 	'sap/ui/core/Icon',
 	'sap/ui/core/ResizeHandler',
 	'sap/ui/core/ValueStateSupport',
@@ -18,6 +19,7 @@ sap.ui.define([
 	function(
 	library,
 	Control,
+	Device,
 	Icon,
 	ResizeHandler,
 	ValueStateSupport,
@@ -151,6 +153,10 @@ sap.ui.define([
 
 	var bUseAnimations = sap.ui.getCore().getConfiguration().getAnimation();
 
+	ProgressIndicator.prototype.init = function () {
+		this._bIEBrowser = Device.browser.internet_explorer;
+	};
+
 	ProgressIndicator.prototype.onBeforeRendering = function () {
 		this._deRegisterResizeHandler(ProgressIndicator.RESIZE_HANDLER_ID.SELF);
 	};
@@ -228,12 +234,18 @@ sap.ui.define([
 	 * @private
 	 */
 	ProgressIndicator.prototype._updateHoverableScenario = function () {
-		var oDOMPIDisplayValueText = this.$( this.getPercentValue() > 50 ? "textLeft" : "textRight" ).context;
+		var oDOMPIDisplayValueText = this.$(this.getPercentValue() > 50 ? "textLeft" : "textRight")[0],
+			iOffsetWidth = oDOMPIDisplayValueText && oDOMPIDisplayValueText.offsetWidth,
+			iScrollWidth = oDOMPIDisplayValueText && oDOMPIDisplayValueText.scrollWidth;
+
+		// TODO: IE specific code - adding 1px tolerance, because of a know issue with difference b/w offsetWidth and scrollWidth
+		if (this._bIEBrowser) {
+			iOffsetWidth += 1;
+		}
 
 		// By VD if we have displayValue text and the text is truncated, we
 		// need to change the cursor of the ProgressIndicator to "pointer" on hover.
-		this.toggleStyleClass("sapMPIHoverable", this.getDisplayValue() !== "" && oDOMPIDisplayValueText &&
-			oDOMPIDisplayValueText.offsetWidth < oDOMPIDisplayValueText.scrollWidth);
+		this.toggleStyleClass("sapMPIHoverable", this.getDisplayValue() !== "" && iOffsetWidth < iScrollWidth);
 	};
 
 	/**
