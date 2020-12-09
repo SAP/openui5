@@ -7311,7 +7311,7 @@ sap.ui.define([
 					]
 				}).placeAt("qunit-fixture");
 
-				oPanel.getContent()[0].attachEvent('_rowsUpdated', fnReload);
+				oPanel.getContent()[0].attachRowsUpdated(fnReload);
 
 				var oPanel2 =  new Panel({
 					objectBindings: {path: "/ProductSet('AD-1000')"},
@@ -7323,7 +7323,7 @@ sap.ui.define([
 				}).placeAt("qunit-fixture");
 
 				function fnReload() {
-					oPanel.getContent()[0].detachEvent('_rowsUpdated', fnReload);
+					oPanel.getContent()[0].detachRowsUpdated(fnReload);
 					var fnOrig = ODataModel.prototype.read;
 					ODataModel.prototype.read = function() {
 						var that = this;
@@ -7343,7 +7343,7 @@ sap.ui.define([
 								new Filter("ProductID", "EQ", "HT-1000")
 							]
 						});
-						oTable.attachEvent('_rowsUpdated', function() {
+						oTable.attachRowsUpdated(function() {
 							assert.ok(!oTable.getRows()[0].getBindingContext().isPreliminary(), "Context must not be preliminary");
 							assert.strictEqual(oTable.getRows()[0].getCells()[0].getBindingContext().getPath(), "/ProductSet('HT-1000')", "Context propagated correctly");
 							assert.strictEqual(oTable.getRows()[0].getCells()[0].getBinding("text").getContext().getPath(), "/ProductSet('HT-1000')", "Context propagated correctly");

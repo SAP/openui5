@@ -1649,7 +1649,7 @@ sap.ui.define([
 				oViewport.addEventListener("scroll", oScrollExtension._onViewportScrollEventHandler);
 			}
 
-			oTable.attachEvent("_rowsUpdated", VerticalScrollingHelper.onRowsUpdated);
+			oTable.attachRowsUpdated(VerticalScrollingHelper.onRowsUpdated);
 		},
 
 		/**
@@ -1674,7 +1674,7 @@ sap.ui.define([
 				delete oScrollExtension._onViewportScrollEventHandler;
 			}
 
-			oTable.detachEvent("_rowsUpdated", VerticalScrollingHelper.onRowsUpdated);
+			oTable.detachRowsUpdated(VerticalScrollingHelper.onRowsUpdated);
 		},
 
 		/**

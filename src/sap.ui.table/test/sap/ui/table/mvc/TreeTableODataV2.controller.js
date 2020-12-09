@@ -311,7 +311,7 @@ sap.ui.define([
 			var that = this;
 			var fnRowsUpdated = function() {
 				var oViewModel = that.getView().getModel();
-				oTable.detachEvent("_rowsUpdated", fnRowsUpdated);
+				oTable.detachRowsUpdated(fnRowsUpdated);
 
 				var iOverall = Math.round(jQuery.sap.measure.end("createTable").duration * 1) / 1;
 				var iRendering = Math.round(jQuery.sap.measure.getMeasurement("rendering").duration * 1) / 1;
@@ -340,7 +340,7 @@ sap.ui.define([
 				that.aRenderResults.push(oRenderResult);
 			};
 
-			oTable.attachEvent("_rowsUpdated", fnRowsUpdated);
+			oTable.attachRowsUpdated(fnRowsUpdated);
 		},
 
 		/**

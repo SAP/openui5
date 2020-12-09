@@ -73,7 +73,7 @@ sap.ui.define([
 
 			assert.ok(that.oTable);
 			that.oTable.initialized().then(function() {
-				that.oTable._oTable.attachEventOnce("_rowsUpdated", function() {
+				that.oTable._oTable.attachEventOnce("rowsUpdated", function() {
 					// Check default values for settings
 					assert.equal(that.oTable._oTable.getBinding("rows").getLength(), 2, "The table contains 2 rows");
 					assert.equal(that.oTable.getRowSettings(), null, "No row settings defined");
@@ -126,7 +126,7 @@ sap.ui.define([
 
 			assert.ok(that.oTable);
 			that.oTable.initialized().then(function() {
-				that.oTable._oTable.attachEventOnce("_rowsUpdated", function() {
+				that.oTable._oTable.attachEventOnce("rowsUpdated", function() {
 					// Check default values for settings
 					assert.equal(that.oTable._oTable.getBinding("rows").getLength(), 2, "The table contains 2 rows");
 					assert.ok(that.oTable.getRowSettings() != null, "Row settings defined");

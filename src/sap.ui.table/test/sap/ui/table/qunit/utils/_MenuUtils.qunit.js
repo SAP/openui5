@@ -739,7 +739,7 @@ sap.ui.define([
 		oTable.bindRows(oBindingInfo);
 
 		return new Promise(function(resolve) {
-			oTable.attachEventOnce("_rowsUpdated", resolve);
+			oTable.attachEventOnce("rowsUpdated", resolve);
 		}).then(function() {
 			test(createMenuM, sModelName, {
 				target: oCell

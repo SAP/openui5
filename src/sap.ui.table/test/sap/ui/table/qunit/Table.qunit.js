@@ -604,7 +604,7 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 
 				return new Promise(function(resolve) {
-					oTable.attachEventOnce("_rowsUpdated", resolve);
+					oTable.attachEventOnce("rowsUpdated", resolve);
 				});
 			}).then(function() {
 				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
@@ -715,13 +715,13 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		return new Promise(function(resolve) {
-			oTable.attachEventOnce("_rowsUpdated", resolve);
+			oTable.attachEventOnce("rowsUpdated", resolve);
 		}).then(function() {
 			// Updating only the content (property bindings of cells) without a binding change event for the rows is not supported.
 			oTable.getBinding("rows").getModel().getData().modelData[oTable.getRows()[0].getIndex()].height = "88px";
 			oTable.getBinding("rows").getModel().refresh(true);
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", resolve);
+				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
 			var aRowDomRefs = oTable.getRows()[0].getDomRefs();
@@ -777,7 +777,7 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 
 				return new Promise(function(resolve) {
-					oTable.attachEventOnce("_rowsUpdated", resolve);
+					oTable.attachEventOnce("rowsUpdated", resolve);
 				});
 			}).then(function() {
 				var sDensity = mTestSettings.density ? mTestSettings.density.replace("sapUiSize", "") : "undefined";
@@ -979,7 +979,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", resolve);
+				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
 			var aRowDomRefs = oTable.getDomRef().querySelectorAll(".sapUiTableColHdrTr");
@@ -2288,7 +2288,7 @@ sap.ui.define([
 			done();
 		};
 
-		oTable.attachEventOnce("_rowsUpdated", fnHandler);
+		oTable.attachEventOnce("rowsUpdated", fnHandler);
 		sortTable();
 	});
 
@@ -2309,7 +2309,7 @@ sap.ui.define([
 				assert.ok(cell.hasClass("sapUiTableColSorted"), "Sort icon is shown");
 				assert.ok(cell.hasClass("sapUiTableColSortedD"), "Sort icon is descending");
 
-				oTable.detachEvent("_rowsUpdated", fnHandler);
+				oTable.detachRowsUpdated(fnHandler);
 
 				oTable.rerender();
 				cell = aSortedColumns[0].$();
@@ -2324,7 +2324,7 @@ sap.ui.define([
 			}
 		};
 
-		oTable.attachEvent("_rowsUpdated", fnHandler);
+		oTable.attachRowsUpdated(fnHandler);
 		var aColumns = oTable.getColumns();
 		oTable.sort(aColumns[0], SortOrder.Ascending, false);
 		oTable.sort(aColumns[1], SortOrder.Descending, true);
@@ -2342,8 +2342,8 @@ sap.ui.define([
 			assert.ok(aColumns[0].getSorted(), "First column sorted");
 			assert.ok(aColumns[1].getSorted(), "Second column sorted");
 
-			oTable.detachEvent("_rowsUpdated", fnHandler);
-			oTable.attachEvent("_rowsUpdated", fnHandler2);
+			oTable.detachRowsUpdated(fnHandler);
+			oTable.attachRowsUpdated(fnHandler2);
 			// remove sorting
 			oTable.sort();
 		};
@@ -2356,11 +2356,11 @@ sap.ui.define([
 			assert.ok(aColumns[0].getSorted() == false, "First column not sorted");
 			assert.ok(aColumns[1].getSorted() == false, "Second column not sorted");
 
-			oTable.detachEvent("_rowsUpdated", fnHandler2);
+			oTable.detachRowsUpdated(fnHandler2);
 			done();
 		};
 
-		oTable.attachEvent("_rowsUpdated", fnHandler);
+		oTable.attachRowsUpdated(fnHandler);
 		oTable.sort(aColumns[0], SortOrder.Ascending, false);
 		oTable.sort(aColumns[1], SortOrder.Descending, true);
 	});
@@ -2374,9 +2374,9 @@ sap.ui.define([
 			var aSortedColumns = oTable.getSortedColumns();
 
 			if (aSortedColumns.length === 2) {
-				oTable.detachEvent("_rowsUpdated", fnHandler);
+				oTable.detachRowsUpdated(fnHandler);
 				oRemovedColumn = oTable.removeColumn(oTable.getSortedColumns()[0]);
-				oTable.attachEvent("_rowsUpdated", fnHandler2);
+				oTable.attachRowsUpdated(fnHandler2);
 			}
 		};
 
@@ -2385,11 +2385,11 @@ sap.ui.define([
 			assert.strictEqual(aSortedColumns.length, 1, "sorted column deletion.");
 			assert.strictEqual(oRemovedColumn.getSortProperty(), "name", "first name is removed");
 			assert.strictEqual(aSortedColumns[0].getSortProperty(), "lastName", "second column becomes the first column.");
-			oTable.detachEvent("_rowsUpdated", fnHandler2);
+			oTable.detachRowsUpdated(fnHandler2);
 			done();
 		};
 
-		oTable.attachEvent("_rowsUpdated", fnHandler);
+		oTable.attachRowsUpdated(fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
 	});
@@ -2403,20 +2403,20 @@ sap.ui.define([
 			var aSortedColumns = oTable.getSortedColumns();
 
 			if (aSortedColumns.length === 2) {
-				oTable.detachEvent("_rowsUpdated", fnHandler);
+				oTable.detachRowsUpdated(fnHandler);
 				oTable.removeAllColumns();
-				oTable.attachEvent("_rowsUpdated", fnHandler2);
+				oTable.attachRowsUpdated(fnHandler2);
 			}
 		};
 
 		var fnHandler2 = function() {
-			oTable.detachEvent("_rowsUpdated", fnHandler2);
+			oTable.detachRowsUpdated(fnHandler2);
 			var aSortedColumns = oTable.getSortedColumns();
 			assert.strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
 			done();
 		};
 
-		oTable.attachEvent("_rowsUpdated", fnHandler);
+		oTable.attachRowsUpdated(fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
 	});
@@ -2430,20 +2430,20 @@ sap.ui.define([
 			var aSortedColumns = oTable.getSortedColumns();
 
 			if (aSortedColumns.length === 2) {
-				oTable.detachEvent("_rowsUpdated", fnHandler);
+				oTable.detachRowsUpdated(fnHandler);
 				oTable.destroyColumns();
-				oTable.attachEvent("_rowsUpdated", fnHandler2);
+				oTable.attachRowsUpdated(fnHandler2);
 			}
 		};
 
 		var fnHandler2 = function() {
-			oTable.detachEvent("_rowsUpdated", fnHandler2);
+			oTable.detachRowsUpdated(fnHandler2);
 			var aSortedColumns = oTable.getSortedColumns();
 			assert.strictEqual(aSortedColumns.length, 0, "sorted column deletion.");
 			done();
 		};
 
-		oTable.attachEvent("_rowsUpdated", fnHandler);
+		oTable.attachRowsUpdated(fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
 	});
@@ -2458,19 +2458,19 @@ sap.ui.define([
 			var aSortedColumns = oTable.getSortedColumns();
 
 			if (aSortedColumns.length === 2) {
-				oTable.detachEvent("_rowsUpdated", fnHandler);
+				oTable.detachRowsUpdated(fnHandler);
 				oTable._bReorderInProcess = true;
 				oRemovedColumn = oTable.removeColumn(aSortedColumns[1]);
 
-				oTable.attachEvent("_rowsUpdated", fnHandler2);
+				oTable.attachRowsUpdated(fnHandler2);
 			}
 		};
 
 		var fnHandler2 = function() {
-			oTable.detachEvent("_rowsUpdated", fnHandler2);
+			oTable.detachRowsUpdated(fnHandler2);
 			oTable.insertColumn(oRemovedColumn, 0);
 			oTable._bReorderInProcess = false;
-			oTable.attachEvent("_rowsUpdated", fnHandler3);
+			oTable.attachRowsUpdated(fnHandler3);
 		};
 
 		var fnHandler3 = function() {
@@ -2479,11 +2479,11 @@ sap.ui.define([
 			assert.strictEqual(aSortedColumns.length, 2, "2 sorted columns.");
 			assert.strictEqual(aSortedColumns[0].getSortProperty(), "name", "first name stays in first sorted column");
 			assert.strictEqual(aSortedColumns[1].getSortProperty(), "lastName", "last name stays in second sorted column");
-			oTable.detachEvent("_rowsUpdated", fnHandler3);
+			oTable.detachRowsUpdated(fnHandler3);
 			done();
 		};
 
-		oTable.attachEvent("_rowsUpdated", fnHandler);
+		oTable.attachRowsUpdated(fnHandler);
 		sortTable();
 		sap.ui.getCore().applyChanges();
 	});
@@ -2924,7 +2924,7 @@ sap.ui.define([
 		var fnTest = function() {
 			assert.equal(iCallCountUpdateTableCellOnTable, 20, "UpdateTableCell callback called on table ok");
 			assert.equal(iCallCountUpdateTableCell, 20, "UpdateTableCell callback called on cell ok");
-			oTable.attachEventOnce("_rowsUpdated", fnTestScroll);
+			oTable.attachEventOnce("rowsUpdated", fnTestScroll);
 			oTable.setFirstVisibleRow(5);
 		};
 
@@ -2949,7 +2949,7 @@ sap.ui.define([
 		// implement _updateTableCell for table instance
 		oTable._updateTableCell = function() { iCallCountUpdateTableCellOnTable++; };
 
-		oTable.attachEventOnce("_rowsUpdated", fnTest);
+		oTable.attachEventOnce("rowsUpdated", fnTest);
 		var oModel = new JSONModel();
 		oModel.setData({modelData: aData});
 		oTable.setModel(oModel);
@@ -3064,10 +3064,10 @@ sap.ui.define([
 		oTable.attachRowSelectionChange(function() {
 			assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
 
-			oTable.attachEventOnce("_rowsUpdated", function() {
+			oTable.attachEventOnce("rowsUpdated", function() {
 				assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					done();
 				});
@@ -3197,10 +3197,16 @@ sap.ui.define([
 	QUnit.test("_fireRowsUpdated", function(assert) {
 		var done = assert.async();
 		var oTable = new Table();
+		var rowsUpdatedSpy = sinon.spy(oTable, "fireRowsUpdated");
 		var sTestReason = "test_reason";
 
 		oTable.attachEventOnce("_rowsUpdated", function(oEvent) {
 			assert.strictEqual(oEvent.getParameter("reason"), sTestReason, "The event has been fired with the correct reason");
+			assert.ok(rowsUpdatedSpy.notCalled, "The public event rowsUpdated has not been fired yet");
+		});
+
+		oTable.attachEventOnce("rowsUpdated", function() {
+			assert.ok(rowsUpdatedSpy.calledOnce, "The public event rowsUpdated was fired");
 			oTable.destroy();
 			done();
 		});
@@ -3765,7 +3771,7 @@ sap.ui.define([
 
 			return new Promise(function(resolve) {
 				oTable.getBinding("rows").attachEventOnce("change", function() {
-					oTable.attachEventOnce("_rowsUpdated", resolve);
+					oTable.attachEventOnce("rowsUpdated", resolve);
 				});
 			}).then(function() {
 				aFiredReasons = [];
@@ -3849,7 +3855,7 @@ sap.ui.define([
 
 			return new Promise(function(resolve) {
 				oTable.getBinding("rows").attachEventOnce("change", function() {
-					oTable.attachEventOnce("_rowsUpdated", resolve);
+					oTable.attachEventOnce("rowsUpdated", resolve);
 				});
 			}).then(function() {
 				aFiredReasons = [];
@@ -4718,14 +4724,14 @@ sap.ui.define([
 
 		return Promise.race([
 			new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", function() {
-					assert.ok(true, "_rowsUpdated event was fired");
+				oTable.attachEventOnce("rowsUpdated", function() {
+					assert.ok(true, "rowsUpdated event was fired");
 					clearTimeout(iTimeout);
 					resolve();
 				});
 			}), new Promise(function(resolve) {
 				iTimeout = setTimeout(function() {
-					assert.ok(false, "_rowsUpdated event should have been fired");
+					assert.ok(false, "rowsUpdated event should have been fired");
 					resolve();
 				}, 1000);
 			})
@@ -4735,14 +4741,14 @@ sap.ui.define([
 
 			return Promise.race([
 				new Promise(function(resolve) {
-					oTable.attachEventOnce("_rowsUpdated", function() {
-						assert.ok(true, "_rowsUpdated event was fired");
+					oTable.attachEventOnce("rowsUpdated", function() {
+						assert.ok(true, "rowsUpdated event was fired");
 						clearTimeout(iTimeout);
 						resolve();
 					});
 				}), new Promise(function(resolve) {
 					iTimeout = setTimeout(function() {
-						assert.ok(false, "_rowsUpdated event should have been fired");
+						assert.ok(false, "rowsUpdated event should have been fired");
 						resolve();
 					}, 1000);
 				})

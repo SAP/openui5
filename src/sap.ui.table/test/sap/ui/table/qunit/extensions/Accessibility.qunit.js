@@ -413,7 +413,7 @@ sap.ui.define([
 
 		oTreeTable.expand(0);
 		oTreeTable.expand(2);
-		oTreeTable.attachEventOnce("_rowsUpdated", function() {
+		oTreeTable.attachEventOnce("rowsUpdated", function() {
 			setTimeout(function(){
 				$Cell = getCell(0, 0, true, assert, oTreeTable);
 				testAriaDescriptionsForFocusedDataCell($Cell, 0, 0, assert, {firstTime: true, colChange: true, table: oTreeTable}, true);
@@ -850,7 +850,7 @@ sap.ui.define([
 			"The row header of a group row doesn't have row selector text");
 
 		oTreeTable.expand(0);
-		oTreeTable.attachEventOnce("_rowsUpdated", function() {
+		oTreeTable.attachEventOnce("rowsUpdated", function() {
 			setTimeout(function(){
 				that.testAriaLabels($Cell, 0, assert, {group: true, focus: true, rowChange: true, expanded: true, table: oTreeTable});
 				done();
@@ -953,7 +953,7 @@ sap.ui.define([
 		initRowActions(oTreeTable, 1, 1);
 
 		return new Promise(function(resolve) {
-			oTable.attachEventOnce("_rowsUpdated", resolve);
+			oTable.attachEventOnce("rowsUpdated", resolve);
 		}).then(function() {
 			testTitleAndSelectorText(assert, "MultiToggle","RowSelector", 1, true);
 			oTable.clearSelection();
@@ -987,7 +987,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", resolve);
+				oTable.attachEventOnce("rowsUpdated", resolve);
 				oTable.setSelectedIndex(0);
 			});
 		}).then(function() {
@@ -999,7 +999,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", resolve);
+				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
 			testTitleAndSelectorText(assert,"None");
@@ -1008,14 +1008,14 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", resolve);
+				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
 			testTitleAndSelectorText(assert, "MultiToggle", "Row", 0, false);
 			oTable.getModel().setData([]);
 
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", resolve);
+				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
 			assert.ok(!$Cell[0].hasAttribute("title"), "The row has no title because it is empty");
@@ -1213,7 +1213,7 @@ sap.ui.define([
 			"Group row data cells don't have row selector text");
 
 		oTreeTable.expand(1);
-		oTreeTable.attachEventOnce("_rowsUpdated", function() {
+		oTreeTable.attachEventOnce("rowsUpdated", function() {
 			setTimeout(function(){
 				that.testAriaLabels($Cell, 1, assert, {group: true, focus: true, rowChange: true, colChange: true, expanded: true, table: oTreeTable});
 				done();
@@ -1341,7 +1341,7 @@ sap.ui.define([
 	QUnit.test("ARIA Attributes of Tree Table Expand Icon", function(assert) {
 		var done = assert.async();
 
-		oTreeTable.attachEventOnce("_rowsUpdated", function() {
+		oTreeTable.attachEventOnce("rowsUpdated", function() {
 			var $Elem = oTreeTable.$("rows-row0-col0").find(".sapUiTableTreeIcon");
 			assert.strictEqual($Elem.attr("role"), "button", "Tree icon role of expandable row");
 
@@ -1385,7 +1385,7 @@ sap.ui.define([
 		assert.strictEqual($Elem.attr("aria-multiselectable"), "true", "aria-multiselectable");
 		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId(), "aria-labelledby");
 
-		oTable.attachEventOnce("_rowsUpdated", function() {
+		oTable.attachEventOnce("rowsUpdated", function() {
 			assert.strictEqual($Elem.attr("aria-rowcount"), "1", "aria-rowcount after filter is applied");
 
 			oTable.setRowActionTemplate(new sap.ui.table.RowAction());
@@ -1414,7 +1414,7 @@ sap.ui.define([
 		assert.ok(!$Elem.attr("aria-multiselectable"), "aria-multiselectable");
 		assert.strictEqual($Elem.attr("aria-labelledby"), oTreeTable.getAriaLabelledBy() + " " + oTreeTable.getTitle().getId(), "aria-labelledby");
 
-		oTable.attachEventOnce("_rowsUpdated", function() {
+		oTable.attachEventOnce("rowsUpdated", function() {
 			assert.strictEqual($Elem.attr("aria-rowcount"), "1", "aria-rowcount after filter is applied");
 
 			oTreeTable.setRowActionTemplate(new sap.ui.table.RowAction());
@@ -1490,7 +1490,7 @@ sap.ui.define([
 			}
 			done();
 		}
-		oTable.attachEventOnce("_rowsUpdated", onAfterRowsUpdated);
+		oTable.attachEventOnce("rowsUpdated", onAfterRowsUpdated);
 		oTable.setFirstVisibleRow(3);
 	});
 
@@ -1558,7 +1558,7 @@ sap.ui.define([
 			checkAriaCurrent(0);
 			done();
 		}
-		oTable.attachEventOnce("_rowsUpdated", onAfterRowsUpdated);
+		oTable.attachEventOnce("rowsUpdated", onAfterRowsUpdated);
 		oTable.setFirstVisibleRow(1);
 	});
 
@@ -1605,7 +1605,7 @@ sap.ui.define([
 		});
 
 		function onNewModelApplied() {
-			oTable.detachEvent("_rowsUpdated", onNewModelApplied);
+			oTable.detachRowsUpdated(onNewModelApplied);
 			$NoDataCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='nodata']");
 			$NoDataCoveredElements.each(function() {
 				assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
@@ -1623,7 +1623,7 @@ sap.ui.define([
 			done();
 		}
 
-		oTable.attachEvent("_rowsUpdated", onNewModelApplied);
+		oTable.attachRowsUpdated(onNewModelApplied);
 		oTable.setModel(new JSONModel());
 	});
 
