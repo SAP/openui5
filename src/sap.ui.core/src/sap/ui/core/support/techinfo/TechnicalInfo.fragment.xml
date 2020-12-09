@@ -98,13 +98,17 @@
 		<buttons>
 			<Button
 				text="{i18n>TechnInfo.DiagnosticsButton.Text}"
-				press="onOpenDiagnostics"/>
+				press="onOpenDiagnostics">
+				<layoutData>
+					<OverflowToolbarLayoutData priority="Low"/>
+				</layoutData>
+			</Button>
 			<Button
 				id="startTestRecorderButton"
 				text="{i18n>TechnInfo.TestRecorderButton.Text}"
 				press="onOpenTestRecorderInIFrame">
 				<layoutData>
-					<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					<OverflowToolbarLayoutData priority="Low"/>
 				</layoutData>
 			</Button>
 			<Button
@@ -114,7 +118,7 @@
 				class="sapUiDebugTechnicalInfoAssistantButton"
 				type="Emphasized">
 				<layoutData>
-					<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					<OverflowToolbarLayoutData priority="High"/>
 				</layoutData>
 			</Button>
 			<Button
@@ -125,7 +129,7 @@
 				class="sapUiDebugTechnicalInfoAssistantSettingsButton"
 				type="Emphasized">
 				<layoutData>
-					<OverflowToolbarLayoutData priority="NeverOverflow"/>
+					<OverflowToolbarLayoutData priority="High"/>
 				</layoutData>
 			</Button>
 			<Button
