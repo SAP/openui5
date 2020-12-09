@@ -141,15 +141,6 @@ sap.ui.define([
 				 */
 				addItem: function(sPropertyInfoName, oTable) {
 					return Promise.resolve(null);
-				},
-
-				/**
-				 * @deprecated
-				 * @param {Object} oProperty Corresponding property to create a FilterField
-				 * @param {Object} oTable Table instance
-				 */
-				addFilterItem: function(oProperty, oTable) {
-					return Promise.resolve(null);
 				}
 			};
 		},
