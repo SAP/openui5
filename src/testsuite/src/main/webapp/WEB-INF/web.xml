@@ -106,6 +106,10 @@
 		<extension>woff2</extension>
 		<mime-type>application/x-font-woff2</mime-type>
 	</mime-mapping>
+	<mime-mapping>
+		<extension>wasm</extension>
+		<mime-type>application/wasm</mime-type>
+	</mime-mapping>
 
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
