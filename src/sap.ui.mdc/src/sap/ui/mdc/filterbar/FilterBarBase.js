@@ -255,7 +255,7 @@ sap.ui.define([
 			},
 			onReset: function() {
 				this.getAdaptationController().resetP13n().then(function(){
-					this._oP13nFilter._setXConditions(this.getFilterConditions(), true);
+					this.getInbuiltFilter()._setXConditions(this.getFilterConditions(), true);
 				}.bind(this));
 			},
 			filterConfig: {

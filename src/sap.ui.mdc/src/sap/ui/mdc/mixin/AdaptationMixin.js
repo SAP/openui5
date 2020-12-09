@@ -3,9 +3,9 @@
  */
 
 sap.ui.define(
-    ["sap/ui/mdc/util/loadModules", 'sap/base/util/merge'
+    ["sap/ui/mdc/util/loadModules", 'sap/base/util/merge', 'sap/base/Log'
 ],
-    function (loadModules, merge) {
+    function (loadModules, merge, Log) {
         "use strict";
 
         var AdaptationController;
@@ -28,6 +28,8 @@ sap.ui.define(
          * <li><code>retrieveAdaptationController</code> - Provides access to the adaptation controller initialization <code>Promise</code>.</li>
          * <li><code>getAdaptationController</code> - Enhances the adaptationConfig property and keeps <code>_oAdaptationController</code> properties in sync.</li>
          * <li><code>enhanceAdaptationConfig</code> - Returns the adaptation controller instance, if available.</li>
+         * <li><code>retrieveInbuiltFilter</code> - Provides access to the AdaptationFilterBar initialization</li>
+         * <li><code>getInbuiltFilter</code> - Returns the AdaptationFilterBar instance, if available.</li>
 
          * <li><code>getAdaptationConfigAttribute</code> - Returns an adaptationConfig attribute.</li>
          * </ul>
@@ -206,6 +208,9 @@ sap.ui.define(
             return this._oInbuiltFilterPromise;
         };
 
+        AdaptationMixin.getInbuiltFilter = function() {
+            return this._oP13nFilter;
+        };
 
         /**
          * Provides designTime configuration for the runtime adaptation settings action on the given control
@@ -319,6 +324,7 @@ sap.ui.define(
             this.getAdaptationConfigAttribute = AdaptationMixin.getAdaptationConfigAttribute;
             this.getRTASettingsActionHandler = AdaptationMixin.getRTASettingsActionHandler;
             this.retrieveInbuiltFilter = AdaptationMixin.retrieveInbuiltFilter;
+            this.getInbuiltFilter = AdaptationMixin.getInbuiltFilter;
             this.exit = AdaptationMixin.exit(this.exit);
         };
     },
