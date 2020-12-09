@@ -734,17 +734,7 @@ sap.ui.define([
 			var oCellInfo = TableUtils.getCellInfo($Cell);
 			var oRow = this.getRows()[oCellInfo.rowIndex];
 
-			if (oRow && oRow.isSummary()) {
-				// Sum row cannot be selected
-				oEvent.preventDefault();
-				return;
-			} else if ($Target.hasClass("sapUiTableGroupMenuButton")) {
-				// Analytical Table: Mobile group menu button in group header rows.
-				TableUtils.Menu.openContextMenu(this, oEvent.target, oEvent);
-				return;
-			} else if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
-				// Expand/Collapse icon
-				oRow.toggleExpandedState();
+			if (!oCellInfo.isOfType(TableUtils.CELLTYPE.ANY)) {
 				return;
 			}
 
@@ -754,6 +744,15 @@ sap.ui.define([
 					TableUtils.Menu.openContextMenu(this, oEvent.target);
 					delete oPointerExtension._bShowMenu;
 				}
+			} else if (oRow && oRow.isSummary()) {
+				// Sum row cannot be selected
+				oEvent.preventDefault();
+			} else if ($Target.hasClass("sapUiTableGroupMenuButton")) {
+				// Analytical Table: Mobile group menu button in group header rows.
+				TableUtils.Menu.openContextMenu(this, oEvent.target, oEvent);
+			} else if ($Target.hasClass("sapUiTableGroupIcon") || $Target.hasClass("sapUiTableTreeIcon")) {
+				// Expand/Collapse icon
+				oRow.toggleExpandedState();
 			} else {
 				if (ExtensionHelper._skipClick(oEvent, $Target, oCellInfo)) {
 					return;
