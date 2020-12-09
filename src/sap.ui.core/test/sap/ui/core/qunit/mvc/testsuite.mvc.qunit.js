@@ -6,6 +6,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		defaults: {
 			loader: {
 				paths: {
+					"testdata/fragments": "test-resources/sap/ui/core/qunit/testdata/fragments/", // fragments used in views
 					"testdata/mvc": "test-resources/sap/ui/core/qunit/mvc/testdata", // used by async tests
 					"example/mvc": "test-resources/sap/ui/core/qunit/mvc/testdata", // used by sync tests
 					"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/" // used by sync tests
@@ -118,7 +119,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 				title: "sap.ui.core.Fragment",
 				loader: {
 					paths: {
-						"testdata/fragments": "test-resources/sap/ui/core/qunit/testdata/fragments/",
 						"my": "test-resources/sap/ui/core/qunit/fragment/"
 					}
 				},

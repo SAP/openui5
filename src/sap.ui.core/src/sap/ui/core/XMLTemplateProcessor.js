@@ -1123,6 +1123,31 @@ function(
 				}
 
 				return oRequireModules;
+			}).catch(function(oError) {
+				// Errors caught here are expected UI5 issues, e.g. DataType errors, broken BindingSyntax, missing event handler functions etc.
+				// we enrich the error message with XML information, e.g. the node causing the issue
+				if (!oError.isEnriched) {
+					var sType = oView.getMetadata().isA("sap.ui.core.mvc.View") ? "View" : "Fragment";
+					var sNodeSerialization = node && node.cloneNode().outerHTML;
+					// Logging the error like this cuts away the stack trace,
+					// but provides better information for applications.
+					// For Framework debugging, we would have to look at the error object anyway.
+					oError = new Error(
+						"Error found in " + sType + " (id: '" + oView.getId() + "').\nXML node: '" + sNodeSerialization + "':\n" +
+						oError
+					);
+					oError.isEnriched = true;
+
+					// TODO: Can be enriched with additional info for a support rule (not yet implemented)
+					Log.error(oError);
+				}
+
+				// [COMPATIBILITY]
+				// sync: we just log the error and keep on processing
+				// asnyc: throw the error, so the parseTempate Promise will reject
+				if (bAsync) {
+					throw oError;
+				}
 			});
 
 			/**

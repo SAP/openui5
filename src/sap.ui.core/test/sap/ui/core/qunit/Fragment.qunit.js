@@ -1015,4 +1015,75 @@ sap.ui.define([
 			});
 		});
 	});
+
+	QUnit.module("Error handling", {
+		before: function() {
+			this.logSpy = sinon.spy(Log, "error");
+		},
+		afterEach: function() {
+			this.logSpy.reset();
+		},
+		after: function() {
+			this.logSpy.restore();
+		}
+	});
+
+	QUnit.test("Async XML Fragment from string with binding error", function(assert) {
+		return Fragment.load({
+			id: "asyncFragment",
+			definition:
+				'<Panel id="panel" xmlns="sap.m">'
+				+ '<Button id="button1"/>'
+				+ '<Button id="button2" text="{This should cause a parse error"/>'
+				+ '<Button id="button3"/>'
+				+ '</Panel>'
+		}).then(function() {
+			assert.ok(false, "should not succeed");
+		}, function(err) {
+			assert.strictEqual(
+				err.message,
+				"Error found in Fragment (id: 'asyncFragment').\n" +
+				"XML node: '<Button xmlns=\"sap.m\" id=\"button2\" text=\"{This should cause a parse error\"/>':\n" +
+				"SyntaxError: no closing braces found in '{This should cause a parse error' after pos:0"
+			);
+			// The following asserts currently fail: older siblings and grand children are not cleaned up (button 1 in this case).
+			// In the async case if we encounter an error during XML processing, the processing is stopped (forcefully).
+			// We do not (yet) have a way to clean up any controls which have been created until the exception was raised.
+			/*
+			assert.equal(sap.ui.getCore().byId("panel"), null);
+			assert.equal(sap.ui.getCore().byId("button1"), null);
+			assert.equal(sap.ui.getCore().byId("button2"), null);
+			assert.equal(sap.ui.getCore().byId("button3"), null);
+			*/
+		});
+	});
+
+	QUnit.test("Sync XML Fragment from string with binding error", function(assert) {
+		var oFrag = sap.ui.xmlfragment({
+			id: "syncFragment",
+			fragmentContent:
+				'<Panel id="panel" xmlns="sap.m">'
+				+ '<Button id="button4"/>'
+				+ '<Button id="button5" text="{This should cause a parse error"/>'
+				+ '<Button id="button6"/>'
+				+ '</Panel>'
+		});
+
+		// check for error log
+		assert.ok(this.logSpy.calledOnce);
+		assert.deepEqual(
+			this.logSpy.getCall(0).args[0].message,
+			"Error found in Fragment (id: 'syncFragment').\n" +
+			"XML node: '<Button xmlns=\"sap.m\" id=\"button5\" text=\"{This should cause a parse error\"/>':\n" +
+			"SyntaxError: no closing braces found in '{This should cause a parse error' after pos:0",
+			"Correct SyntaxError is logged"
+		);
+
+		// broken controls created via the sync factory should still be available (for compatibility)
+		assert.equal(oFrag.getContent()[1].getId(), "syncFragment--button5", "Button with broken binding string is still available");
+
+		// clean up panel
+		oFrag.destroy();
+	});
+
 });

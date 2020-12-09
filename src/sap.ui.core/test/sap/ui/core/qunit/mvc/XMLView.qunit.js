@@ -1,5 +1,6 @@
 /*global QUnit, sinon */
 sap.ui.define([
+	'sap/base/Log',
 	'sap/base/i18n/ResourceBundle',
 	'sap/ui/core/library',
 	'sap/ui/core/mvc/View',
@@ -12,7 +13,7 @@ sap.ui.define([
 	'sap/m/Panel',
 	'./AnyView.qunit',
 	'jquery.sap.sjax'
-], function(ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, Button, Panel, testsuite) {
+], function(Log, ResourceBundle, coreLibrary, View, XMLView, RenderManager, JSONModel, ResourceModel, VerticalLayout, Button, Panel, testsuite) {
 	"use strict";
 
 	// shortcut for sap.ui.core.mvc.ViewType
@@ -137,7 +138,124 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Error handling", {
+		before: function() {
+			this.logSpyError = sinon.spy(Log, "error");
+			this.logSpyWarning = sinon.spy(Log, "warning");
+		},
+		afterEach: function() {
+			this.logSpyError.reset();
+			this.logSpyWarning.reset();
+		},
+		after: function() {
+			this.logSpyError.restore();
+			this.logSpyWarning.restore();
+		}
+	});
 
+	QUnit.test("[XMLView.create] broken binding string", function(assert) {
+		var oViewPromise = XMLView.create({
+			id: "asyncView1",
+			definition:
+			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:m='sap.m' xmlns:core='sap.ui.core'>" +
+			"    <m:Panel id='aPanel'>" +
+			"       <m:Button id=\"Button1\" text=\"{This should cause a parse error\"></m:Button>" +
+			"    </m:Panel>" +
+			"</mvc:View>"
+		});
+
+		return oViewPromise.then(function(oView) {
+			assert.ok(false, "should not succeed");
+		}, function(err) {
+			assert.strictEqual(
+				err.message,
+				"Error found in View (id: 'asyncView1').\n" +
+				"XML node: '<m:Button xmlns:m=\"sap.m\" id=\"Button1\" text=\"{This should cause a parse error\"/>':\n" +
+				"SyntaxError: no closing braces found in '{This should cause a parse error' after pos:0",
+				"SyntaxError is thrown during parsing of binding string."
+			);
+		});
+	});
+
+	QUnit.test("[XMLView.create] broken binding string, error in nested Fragment", function(assert) {
+		var oViewPromise = XMLView.create({
+			id: "asyncView2",
+			definition:
+			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:m='sap.m' xmlns:core='sap.ui.core'>" +
+			"    <m:Panel id='aPanel'>" +
+			"       <core:Fragment id='innerFragment' fragmentName='testdata.fragments.XMLFragmentWithSyntaxErrors' type='XML'/>" +
+			"    </m:Panel>" +
+			"</mvc:View>"
+		});
+
+		return oViewPromise.then(function(oView) {
+			assert.ok(false, "should not succeed");
+		}, function(err) {
+			assert.strictEqual(
+				err.message,
+				"Error found in Fragment (id: 'asyncView2--innerFragment').\n" +
+				"XML node: '<m:Button xmlns:m=\"sap.m\" id=\"brokenButton\" text=\"{This should cause a parse error\"/>':\n" +
+				"SyntaxError: no closing braces found in '{This should cause a parse error' after pos:0",
+				"SyntaxError is thrown during parsing of binding string."
+			);
+		});
+	});
+
+	QUnit.test("[sap.ui.xmlview] broken binding string, error on top-level", function(assert) {
+		var oView = sap.ui.xmlview({
+			id: "syncView1",
+			viewContent:
+			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:m='sap.m' xmlns:core='sap.ui.core'>" +
+			"    <m:Panel>" +
+			"       <m:Button id=\"brokenButtonInline\" text=\"{This should cause a parse error\"></m:Button>" +
+			"    </m:Panel>" +
+			"</mvc:View>"
+		});
+
+		// check for error log
+		assert.ok(this.logSpyError.calledOnce);
+		assert.strictEqual(
+			this.logSpyError.getCall(0).args[0].message,
+			"Error found in View (id: 'syncView1').\n" +
+			"XML node: '<m:Button xmlns:m=\"sap.m\" id=\"brokenButtonInline\" text=\"{This should cause a parse error\"/>':\n" +
+			"SyntaxError: no closing braces found in '{This should cause a parse error' after pos:0",
+			"Correct SyntaxError is logged"
+		);
+
+		// even "broken" controls should still be available (for compatibility)
+		assert.ok(oView.byId("brokenButtonInline"), "Button with broken binding is still created.");
+
+		// sync cases can be cleaned up
+		oView.destroy();
+	});
+
+	QUnit.test("[sap.ui.xmlview] broken binding string, error in nested Fragment", function(assert) {
+		var oView = sap.ui.xmlview({
+			id: "syncView2",
+			viewContent:
+			"<mvc:View xmlns:mvc='sap.ui.core.mvc' xmlns:m='sap.m' xmlns:core='sap.ui.core'>" +
+			"    <m:Panel>" +
+			"       <core:Fragment id='innerFragment' fragmentName='testdata.fragments.XMLFragmentWithSyntaxErrors' type='XML'/>" +
+			"    </m:Panel>" +
+			"</mvc:View>"
+		});
+
+		// check for error log
+		assert.ok(this.logSpyError.calledOnce);
+		assert.deepEqual(
+			this.logSpyError.getCall(0).args[0].message,
+			"Error found in Fragment (id: 'syncView2--innerFragment').\n" +
+			"XML node: '<m:Button xmlns:m=\"sap.m\" id=\"brokenButton\" text=\"{This should cause a parse error\"/>':\n" +
+			"SyntaxError: no closing braces found in '{This should cause a parse error' after pos:0",
+			"Correct SyntaxError is logged"
+		);
+
+		// controls inside Fragment should still be available (for compatibility)
+		assert.ok(oView.byId("innerFragment--brokenButton"), "Button with broken binding is still created.");
+
+		// sync cases can be cleaned up
+		oView.destroy();
+	});
 
 	QUnit.module("Preserve DOM");
 

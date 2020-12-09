@@ -516,7 +516,12 @@ function(
 		if (this._bAsync) {
 			return this._pContentPromise;
 		}
-		return Promise.resolve(this._pContentPromise.unwrap());
+		// sync path: make sure to reject the Fragment promise if the SyncPromise throws an error
+		try {
+			return Promise.resolve(this._pContentPromise.unwrap());
+		} catch (err) {
+			return Promise.reject(err);
+		}
 	};
 
 	/**
