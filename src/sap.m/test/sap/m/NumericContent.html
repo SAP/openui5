@@ -315,7 +315,16 @@
 			var sTheme = sap.ui.getCore().getConfiguration().getTheme();
 			sap.ui.getCore().applyTheme(sTheme);
 			var url = window.location.href;
-			window.open(url, "", "height=900,width=370,top=0,left=0,toolbar=no,menubar=no");
+			if (sap.ui.Device.browser.msie) {
+				var oNewWindow = window.open("about:blank", "", "height=900,width=370,top=0,left=0,toolbar=no,menubar=no,noopener,noreferrer");
+				if (oNewWindow) {
+					oNewWindow.opener = null;
+					oNewWindow.location.href = url;
+				}
+			} else {
+				//Popup dimensions issue in chrome while using noopener: Chromium bug id=1011688
+				window.open(url, "", "height=900,width=370,top=0,left=0,toolbar=no,menubar=no,noopener,noreferrer");
+			}
 		},
 		enabled: bBtnEnabled,
 		text: "Open new page with small screen size",
