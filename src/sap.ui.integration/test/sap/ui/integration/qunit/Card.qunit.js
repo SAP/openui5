@@ -1467,7 +1467,7 @@ sap.ui.define([
 					oHeader = this.oCard.getAggregation("_header"),
 					oHeaderDomRef = oHeader.getDomRef(),
 					oContentDomRef = document.getElementsByClassName("sapFCardContent")[0],
-					sAriaLabelledByIds = oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader._getAvatar().getId();
+					sAriaLabelledByIds = oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
 
 				// Assert Card Container
 				assert.equal(oCardDomRef.getAttribute("role"), "region", "Card container should have a role - region");
@@ -1505,7 +1505,7 @@ sap.ui.define([
 				// Assert
 				var oHeader = this.oCard.getAggregation("_header"),
 					oHeaderDomRef = oHeader.getDomRef(),
-					sAriaLabelledByIds = oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader._getAvatar().getId();
+					sAriaLabelledByIds = oHeader._getSubtitle().getId() + " " + oHeader.getId() + "-status" + " " + oHeader.getId() + "-ariaAvatarText";
 
 				// Assert Card Header
 				assert.equal(oHeaderDomRef.getAttribute("role"), "button", "Card header should have a role - button");

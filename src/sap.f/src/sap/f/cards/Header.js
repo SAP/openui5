@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/f/Avatar",
 	"sap/ui/Device",
 	"sap/f/cards/HeaderRenderer",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/core/InvisibleText"
 ], function (
 	mLibrary,
 	library,
@@ -18,7 +19,8 @@ sap.ui.define([
 	Avatar,
 	Device,
 	HeaderRenderer,
-	Core
+	Core,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -146,9 +148,17 @@ sap.ui.define([
 	Header.prototype.init = function () {
 		this._oRb = Core.getLibraryResourceBundle("sap.f");
 		this.data("sap-ui-fastnavgroup", "true", true); // Define group for F6 handling
+
+		this._oAriaAvatarText = new InvisibleText({id: this.getId() + "-ariaAvatarText"});
+		this._oAriaAvatarText.setText(this._oRb.getText("ARIA_HEADER_AVATAR_TEXT"));
+
 	};
 
 	Header.prototype.exit = function () {
+		if (this._oAriaAvatarText) {
+			this._oAriaAvatarText.destroy();
+			this._oAriaAvatarText = null;
+		}
 		this._oRb = null;
 	};
 
@@ -226,7 +236,7 @@ sap.ui.define([
 	Header.prototype._getHeaderAccessibility = function () {
 		var sSubtitleId = this._getSubtitle() ? this._getSubtitle().getId() : "",
 			sStatusTextId = this.getStatusText() ? this.getId() + "-status" : "",
-			sAvatarId = this._getAvatar() ? this._getAvatar().getId() : "",
+			sAvatarId = this.getIconSrc() || this.getIconInitials() ? this.getId() + "-ariaAvatarText " : "",
 			sIds = sSubtitleId + " " + sStatusTextId + " " + sAvatarId;
 
 		return sIds.trim();
