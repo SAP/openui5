@@ -216,7 +216,7 @@ sap.ui.define([
 				Device.orientation.attachHandler(this._onOrientationChange, this);
 
 				if (this._oConfigUtil.getCookieValue(this._oCookieNames.APPROVAL_REQUESTED) !== "1") {
-					this.cookieSettingsDialogOpen();
+					this.cookieSettingsDialogOpen({ showCookieDetails: false });
 				}
 			},
 
@@ -325,7 +325,7 @@ sap.ui.define([
 				} else if (sTargetText === CHANGE_SETTINGS_TEXT) {
 					this.settingsDialogOpen();
 				} else if (sTargetText === CHANGE_COOKIE_PREFERENCES_TEXT) {
-					this.cookieSettingsDialogOpen();
+					this.cookieSettingsDialogOpen({ showCookieDetails: true });
 				} else if (sTargetText === CHANGE_VERSION_TEXT) {
 					this.onChangeVersionButtonPress();
 				} else if (sTarget === SITEMAP) {
@@ -683,9 +683,9 @@ sap.ui.define([
 			 * Opens the cookie settings dialog
 			 * @public
 			 */
-			cookieSettingsDialogOpen: function () {
+			cookieSettingsDialogOpen: function (oOptions) {
 				this.getCookieSettingsController().then(function(oController) {
-					oController.openCookieSettingsDialog(this._oConfigUtil, this.getView());
+					oController.openCookieSettingsDialog(this._oConfigUtil, this.getView(), oOptions);
 				}.bind(this));
 			},
 

@@ -45,8 +45,7 @@
 			</layoutData>
 		</Button>
 		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_SAVE_PREFERENCES}" id="btnSavePreferences" type="Emphasized" press="onSaveCookies" visible="{cookieData>/showCookieDetails}"></Button>
-		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_CANCEL_BTN}" press="onCancelEditCookies" visible="{= ${cookieData>/showCookieDetails} &amp;&amp; !${cookieData>/allowShowHideCookieDetails}}"></Button>
-		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_CANCEL_BTN}" press="hideCookieDetails" visible="{= ${cookieData>/showCookieDetails} &amp;&amp; ${cookieData>/allowShowHideCookieDetails}}"></Button>
+		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_CANCEL_BTN}" press="onCancelPress" visible="{= ${cookieData>/showCookieDetails} }"></Button>
 	</buttons>
 	</Dialog>
 </core:FragmentDefinition>

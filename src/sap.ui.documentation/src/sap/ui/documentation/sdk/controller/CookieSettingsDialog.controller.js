@@ -20,13 +20,14 @@ sap.ui.define([
 			constructor: function() {
 				this._oConfigUtil = null;
 				this._oRootView = null;
-				this._oModel = new JSONModel({
-					showCookieDetails: false,
-					allowShowHideCookieDetails: true
-				});
+				this._oInitOptions = null;
+				this._oModel = new JSONModel();
 			},
 
-			openCookieSettingsDialog: function(oConfigUtil, oRootView) {
+			openCookieSettingsDialog: function(oConfigUtil, oRootView, oOptions) {
+				this._oInitOptions = oOptions;
+				this._oModel.setData(oOptions, true);
+
 				if (this._oCookieSettingsDialog) {
 					this._oCookieSettingsDialog.open();
 				} else {
@@ -43,8 +44,6 @@ sap.ui.define([
 			},
 
 			_initDialog: function(oDialog) {
-				var bInitiallyShowCookieDetails;
-
 				oDialog.setModel(this._oModel, "cookieData");
 
 				// connect dialog to the root view of this component (models, lifecycle)
@@ -52,17 +51,8 @@ sap.ui.define([
 
 
 				oDialog.attachBeforeOpen(function() {
-					// if cookie consent was already requested once, then
-					// skip the preview and directly show the detailed view of the dialog
-					bInitiallyShowCookieDetails = this._bAlreadyRequestedCookiesApproval;
-
-
-					this._oModel.setProperty("/showCookieDetails", bInitiallyShowCookieDetails);
-					this._oCookieSettingsDialog.toggleStyleClass("cookiesDetailedView", bInitiallyShowCookieDetails);
-
-					// if the cookie details are not shown initially, then
-					// allow the user to interactively show/hide the cookie details panel
-					this._oModel.setProperty("/allowShowHideCookieDetails", !bInitiallyShowCookieDetails);
+					this._oCookieSettingsDialog.toggleStyleClass("cookiesDetailedView",
+						this._oModel.getProperty("/showCookieDetails"));
 				}, this);
 
 
@@ -110,6 +100,18 @@ sap.ui.define([
 				this._oCookieSettingsDialog.addStyleClass("cookiesDetailedView");
 
 				this._focusButton(Core.byId("btnSavePreferences"));
+			},
+
+			onCancelPress: function() {
+				if (this._oInitOptions.showCookieDetails === true) {
+					// full details were shown upon opening the dialog
+					// => the cancel action should ignore all changes and close the dialog
+					this.onCancelEditCookies();
+				} else {
+					// *no details* were shown upon opening the dialog
+					// => the cancel action should navigate back to the preview
+					this.hideCookieDetails();
+				}
 			},
 
 			hideCookieDetails: function() {
