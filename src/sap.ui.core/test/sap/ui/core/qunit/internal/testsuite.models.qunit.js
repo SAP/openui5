@@ -168,7 +168,7 @@ sap.ui.define(function() {
 			ODataListBinding : {
 				// not in 1RingModels.qunit because of ODataModelFakeService usage
 				title : "sap.ui.model.odata.ODataListBinding",
-				module : ["test-resources/sap/ui/core/qunit/odata/v1/ODataListBinding.qunit"]
+				module : ["test-resources/sap/ui/core/qunit/odata/ODataListBinding.qunit"]
 			},
 			ODataMetadata : {
 				// not in 1RingModels.qunit because of MockServer usage
@@ -182,12 +182,12 @@ sap.ui.define(function() {
 			ODataModel : {
 				// not in 1RingModels.qunit because of ODataModelFakeService usage
 				title : "sap.ui.model.odata.ODataModel",
-				module : ["test-resources/sap/ui/core/qunit/odata/v1/ODataModel.qunit"]
+				module : ["test-resources/sap/ui/core/qunit/odata/ODataModel.qunit"]
 			},
 			ODataSharedMetadata : {
 				// not in 1RingModels.qunit because of ODataModelFakeService usage
 				title : "sap.ui.model.odata.ODataModel (ODataSharedMetadata)",
-				module : ["test-resources/sap/ui/core/qunit/odata/v1/ODataSharedMetadata.qunit"],
+				module : ["test-resources/sap/ui/core/qunit/odata/ODataSharedMetadata.qunit"],
 				sinon : {
 					useFakeTimers : true
 				}

@@ -90,7 +90,7 @@ sap.ui.define(function() {
 			ODataListBinding: {
 				title: "sap.ui.model.odata.ODataListBinding - QUnit Tests",
 				module: [
-					"test-resources/sap/ui/core/qunit/odata/v1/ODataListBinding.qunit"
+					"test-resources/sap/ui/core/qunit/odata/ODataListBinding.qunit"
 				]
 			},
 			ODataMessageParser: {
@@ -124,13 +124,13 @@ sap.ui.define(function() {
 			ODataModel: {
 				title: "sap.ui.model.odata.ODataModel - QUnit Tests",
 				module: [
-					"test-resources/sap/ui/core/qunit/odata/v1/ODataModel.qunit"
+					"test-resources/sap/ui/core/qunit/odata/ODataModel.qunit"
 				]
 			},
 			ODataSharedMetadata: {
 				title: "sap.ui.model.odata.ODataModel - Shared Metadata QUnit Tests",
 				module: [
-					"test-resources/sap/ui/core/qunit/odata/v1/ODataSharedMetadata.qunit"
+					"test-resources/sap/ui/core/qunit/odata/ODataSharedMetadata.qunit"
 				],
 				sinon: {
 					useFakeTimers: true
@@ -139,7 +139,7 @@ sap.ui.define(function() {
 			ODataTreeBinding: {
 				title: "sap.ui.model.odata.ODataTreeBinding - QUnit Tests",
 				module: [
-					"test-resources/sap/ui/core/qunit/odata/v1/ODataTreeBinding.qunit"
+					"test-resources/sap/ui/core/qunit/odata/ODataTreeBinding.qunit"
 				],
 				sinon: 1 // because MockServer is used which has a hard dependency to sinon V1
 			},
