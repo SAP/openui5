@@ -641,7 +641,7 @@ sap.ui.define([
 		 * <pre>
 		 *    "ZH"  -->  "zh-Hans"         // script 'Hans' added to distinguish it from zh-Hant
 		 *    "ZF"  -->  "zh-Hant"         // ZF is not a valid ISO639 code, use the compliant language + script 'Hant'
-		 "    "1Q"  -->  "en-US-x-saptrc"  // special language code for supportability (tracing),
+		 *    "1Q"  -->  "en-US-x-saptrc"  // special language code for supportability (tracing),
 		 *                                    represented as en-US with a private extension
 		 *    "2Q"  -->  "en-US-x-sappsd"  // special language code for supportability (pseudo translation),
 		 *                                    represented as en-US with a private extension
