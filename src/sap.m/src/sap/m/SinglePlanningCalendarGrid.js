@@ -744,16 +744,32 @@ sap.ui.define([
 					var oGrid = oEvent.getParameter("target"),
 						aIntervalPlaceholders = oGrid.getAggregation("_intervalPlaceholders"),
 						oFirstIntervalRectangle = aIntervalPlaceholders[0].getDomRef().getBoundingClientRect(),
-						iIntervalSize = oFirstIntervalRectangle.height,
-						iIntervalIndexOffset = Math.floor((oFirstIntervalRectangle.top - oGrid.getDomRef().getBoundingClientRect().top) / iIntervalSize),
-						iIntervalIndex = Math.floor(oEvent.getParameter("browserEvent").offsetY / iIntervalSize) - iIntervalIndexOffset,
-						oDragSession = oEvent.getParameter("dragSession");
+						iIntervalHeight = oFirstIntervalRectangle.height,
+						iIntervalIndexOffset = Math.floor((oFirstIntervalRectangle.top - oGrid.getDomRef().getBoundingClientRect().top) / iIntervalHeight),
+						oDragSession = oEvent.getParameter("dragSession"),
+						iIndexInColumn  = Math.floor(oEvent.getParameter("browserEvent").offsetY / iIntervalHeight) - iIntervalIndexOffset,
+						iIntervalIndex,
+						oCurrentIntervalBoundingRectangle;
+
+					if (this._iColumns === 1) {
+						iIntervalIndex = iIndexInColumn;
+					} else {
+						var iHeaderSize = 64,
+							iBordersWidth = 2,
+							iIntervalWidth = Math.floor(aIntervalPlaceholders[0].getDomRef().getBoundingClientRect().width) - iBordersWidth,
+							iColumnsFromStart = Math.floor(Math.floor((oEvent.getParameter("browserEvent").clientX - iHeaderSize)) / iIntervalWidth),
+							iIntervalsInColumn = aIntervalPlaceholders.length / this._iColumns;
+
+						iIntervalIndex = iIndexInColumn + ((iColumnsFromStart) * iIntervalsInColumn);
+					}
 
 					if	(iIntervalIndex < 0) {
 						iIntervalIndex = 0;
 					}
 
-					oDragSession.setComplexData("startingRectsDropArea", { top: Math.ceil(iIntervalIndex * iIntervalSize), left: oFirstIntervalRectangle.left });
+					oCurrentIntervalBoundingRectangle = aIntervalPlaceholders[iIntervalIndex].getDomRef().getBoundingClientRect();
+
+					oDragSession.setComplexData("startingRectsDropArea", {top: Math.ceil(iIndexInColumn * iIntervalHeight), left: oCurrentIntervalBoundingRectangle.left});
 					oDragSession.setComplexData("startingDropDate", aIntervalPlaceholders[iIntervalIndex].getDate());
 				}.bind(this),
 
