@@ -284,12 +284,7 @@ sap.ui.define([
 			oFilterFieldPromise = Promise.resolve(mExistingFilterItems[oItem.name]);
 		}else {
 
-			//TODO: remove 'addFilterItem' check
-			if (oFilterDelegate.addFilterItem) {
-				oFilterFieldPromise = oFilterDelegate.addFilterItem({name: oItem.name}, this.getAdaptationControl());
-			} else {
-				oFilterFieldPromise = oFilterDelegate.addItem(oItem.name, this.getAdaptationControl());
-			}
+			oFilterFieldPromise = oFilterDelegate.addItem(oItem.name, this.getAdaptationControl());
 
 			oFilterFieldPromise = oFilterFieldPromise.then(function(oFilterField){
 
