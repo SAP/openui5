@@ -620,7 +620,6 @@ sap.ui.define([
 	});
 
 	var oModel;
-	var oTemplate;
 
 	QUnit.module("grouping with binding", {
 		beforeEach: function() {
@@ -629,7 +628,7 @@ sap.ui.define([
 				       {text: "Item2", key: "I2", additionalText: "Text2", groupKey: "G2", groupText: "Group 2"},
 				       {text: "Item3", key: "I3", additionalText: "Text3", groupKey: "G1", groupText: null}]
 			});
-			oTemplate = new ListFieldHelpItem({
+			var oTemplate = new ListFieldHelpItem({
 				key: "{key}",
 				text: "{text}",
 				additionalText: "{additionalText}",
@@ -638,7 +637,7 @@ sap.ui.define([
 			});
 
 			oFieldHelp = new ListFieldHelp("F1-H", {
-				items:{path: "/items", template: oTemplate},
+				items:{path: "/items", template: oTemplate, templateShareable: false},
 				disconnect: _myDisconnectHandler,
 				select: _mySelectHandler,
 				navigate: _myNavigateHandler,
@@ -651,7 +650,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			oModel.destroy();
-			oTemplate.destroy();
+			oModel = undefined;
 			_teardown();
 		}
 	});
@@ -680,6 +679,34 @@ sap.ui.define([
 			assert.ok(aItems[4] instanceof DisplayListItem, "Item4 is DisplayListItem");
 			assert.equal(aItems[4].getLabel(), "Item2", "Item4: Text assigned to Label");
 			assert.equal(aItems[4].getValue(), "Text2", "Item4: AdditinalText assigned to Value");
+		}
+
+		oFieldHelp.close();
+
+	});
+
+	QUnit.test("changing binding template", function(assert) {
+
+		oFieldHelp.open();
+
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			var oList = oPopover.getContent()[0];
+			assert.ok(oList, "Popover has content");
+			assert.ok(oList instanceof List, "content is List");
+			var aItems = oList.getItems();
+			assert.equal(aItems.length, 5, "List has 5 Items");
+
+			var oNewTemplate = new ListItem({
+				key: "{key}",
+				text: "{text}",
+				additionalText: "{additionalText}"
+			});
+
+			oFieldHelp.bindAggregation("items", {path: "/items", template: oNewTemplate, templateShareable: false});
+
+			aItems = oList.getItems();
+			assert.equal(aItems.length, 3, "List has 3 Items");
 		}
 
 		oFieldHelp.close();
