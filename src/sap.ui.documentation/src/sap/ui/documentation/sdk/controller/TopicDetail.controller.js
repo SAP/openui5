@@ -402,8 +402,7 @@ sap.ui.define([
 			 * @private
 			 */
 			_addIconToExternalUrl: function (aDomRef, sHref) {
-				// Check if the external domain is SAP hosted
-				var bSAPHosted = /^https?:\/\/(?:www.)?[\w.]*(?:sap|hana\.ondemand|sapfioritrial)\.com/.test(sHref),
+				var bSAPHosted = this._isSAPHostedUrl(sHref),
 					sTitle = 'Information published on ' + (bSAPHosted ? '' : 'non ') + 'SAP site',
 					newImage = new Image(),
 					sIconName = bSAPHosted ? 'link-sap' : 'link-external';
@@ -415,6 +414,10 @@ sap.ui.define([
 				newImage.src = './resources/sap/ui/documentation/sdk/images/' + sIconName + '.png';
 				newImage.setAttribute("title", sTitle);
 				newImage.className = "sapUISDKExternalLink";
+			},
+
+			_isSAPHostedUrl: function(sHref) {
+				return /^https?:\/\/([\w.]*\.)?(?:sap|hana\.ondemand|sapfioritrial)\.com/.test(sHref);
 			},
 
 			_scrollContentToTop: function () {
