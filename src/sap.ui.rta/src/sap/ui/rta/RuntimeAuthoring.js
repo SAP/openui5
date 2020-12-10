@@ -912,6 +912,7 @@ function(
 					this.fireStop();
 					if (oReloadInfo.reloadMethod && (oReloadInfo.reloadMethod !== this._RELOAD.NOT_NEEDED)) {
 						oReloadInfo.deleteMaxLayer = true; // true for normal exit, false for reset
+						oReloadInfo.onExit = true;
 						oReloadInfo.triggerHardReload = (oReloadInfo.reloadMethod === this._RELOAD.RELOAD_PAGE); // StandAlone or AppDescriptorChanges case
 						return this._handleUrlParameterOnExit(oReloadInfo);
 					}

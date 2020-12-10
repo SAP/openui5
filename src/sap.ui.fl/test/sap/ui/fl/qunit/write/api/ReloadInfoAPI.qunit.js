@@ -602,7 +602,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("Given that a handleParametersForStandaloneiis called", {
+	QUnit.module("Given that a handleParametersForStandalone is called", {
 		beforeEach: function() {
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(undefined);
 			this.oHandleUrlParameterSpy = sandbox.spy(FlexUtils, "handleUrlParameters");
@@ -683,7 +683,7 @@ sap.ui.define([
 			assert.equal(sParameters, sExpectedParams, "then the parameter was removed");
 		});
 
-		QUnit.test("and the version parameter is not in the url and draft changes exist", function(assert) {
+		QUnit.test("and the version parameter is not in the url and draft changes exist on startup", function(assert) {
 			var sParams = "";
 			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(false);
 
@@ -699,6 +699,25 @@ sap.ui.define([
 			assert.equal(this.oHandleUrlParameterSpy.calledOnce, true, "handleUrlParameter was called");
 			assert.equal(oHasParameterAndValueStub.calledOnce, true, "handleUrlParameter was called");
 			assert.equal(sParameters, sExpectedParams, "then the parameter was added");
+		});
+
+		QUnit.test("and the version parameter is not in the url and draft changes exist on exit", function(assert) {
+			var sParams = "";
+			var oHasParameterAndValueStub = sandbox.stub(FlexUtils, "hasParameterAndValue").returns(false);
+
+			var oReloadInfo = {
+				layer: Layer.CUSTOMER,
+				isDraftAvailable: true,
+				hasHigherLayerChanges: false,
+				parameters: sParams,
+				onExit: true
+			};
+
+			var sExpectedParams = "";
+			var sParameters = ReloadInfoAPI.handleUrlParametersForStandalone(oReloadInfo);
+			assert.equal(this.oHandleUrlParameterSpy.calledOnce, false, "handleUrlParameter was NOT called");
+			assert.equal(oHasParameterAndValueStub.calledOnce, false, "handleUrlParameter was NOT called");
+			assert.equal(sParameters, sExpectedParams, "then the parameter was NOT added");
 		});
 
 		QUnit.test("and the max-layer parameter is not in the url and higherLayer changes exist", function(assert) {
