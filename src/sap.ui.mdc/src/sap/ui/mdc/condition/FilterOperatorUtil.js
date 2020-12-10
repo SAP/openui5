@@ -36,6 +36,13 @@ function(
 	) {
 		"use strict";
 
+		// translation utils
+		var oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		sap.ui.getCore().attachLocalizationChanged(function() {
+			oMessageBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		});
+
+
 		/**
 		 * @class Utilities to handle {@link sap.ui.mdc.condition.Operator Operators} and {@link sap.ui.mdc.condition.ConditionObject conditions}.
 		 *
@@ -195,14 +202,19 @@ function(
 						tokenFormat: "{0}...{1}",
 						valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
 						validate: function(aValues, oType) {
-							// in Between 2 Values must be defined
-							// TODO: check if one greater than the other?
+							// in Between 2 different Values must be defined
 							if (aValues.length < 2) {
-								throw new ValidateException("Between must have two values");
+								throw new ValidateException(oMessageBundle.getText("operator.between.validate.missingValue")); //"Between must have two values"
 							}
 							if (aValues[0] === aValues[1]) {
-								throw new ValidateException("Between must have two different values");
+								throw new ValidateException(oMessageBundle.getText("operator.between.validate.sameValues")); //"Between must have two different values"
 							}
+							// the comparision of values only works for some types os values. e.g. int, float, some Date types, but not for Int64.
+							// we should try to bring such a compare function into the TypeUtils class
+							// if (TypeUtils.compare(aValues[0], aValues[1], oType) === 1 ) {
+							// if (aValues[0] > aValues[1]) {
+							// 	throw new ValidateException(oMessageBundle.getText("operator.between.validate.compare")); //"Between should have a to value which is > the from value"
+							// }
 
 							Operator.prototype.validate.apply(this, [aValues, oType]);
 						}
@@ -215,16 +227,7 @@ function(
 						valueTypes: [Operator.ValueType.Self, Operator.ValueType.Self],
 						exclude: true,
 						validate: function(aValues, oType) {
-							// in Between 2 Values must be defined
-							// TODO: check if one greater than the other?
-							if (aValues.length < 2) {
-								throw new ValidateException("NotBetween must have two values");
-							}
-							if (aValues[0] === aValues[1]) {
-								throw new ValidateException("NotBetween must have two different values");
-							}
-
-							Operator.prototype.validate.apply(this, [aValues, oType]);
+							FilterOperatorUtil._mOperators.between.validate(aValues, oType);
 						}
 					}),
 					lowerThan: new Operator({
