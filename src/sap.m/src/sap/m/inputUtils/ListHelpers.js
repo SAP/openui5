@@ -103,15 +103,20 @@ sap.ui.define([
 			return null;
 		}
 
+		var sTextDirection = oItem.getTextDirection();
+
 		if (oItem.isA("sap.ui.core.SeparatorItem")) {
 			oListItem = new GroupHeaderListItem({
 				title: oItem.getText(),
-				type: ListType.Inactive
+				type: ListType.Inactive,
+				titleTextDirection: sTextDirection
 			});
 		} else if (oItem.isA("sap.ui.core.Item")) {
 			oListItem = new StandardListItem({
 				type: ListType.Active,
-				visible: oItem.getEnabled()
+				visible: oItem.getEnabled(),
+				titleTextDirection: sTextDirection,
+				infoTextDirection: sTextDirection
 			});
 
 			// Constructor does not escape properly curly braces and binding. We need to use the setters instead.

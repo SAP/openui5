@@ -13734,4 +13734,37 @@ sap.ui.define([
 		// Cleanup
 		oComboBox.destroy();
 	});
+
+	QUnit.module("RTL Support");
+
+	QUnit.test("If the sap.ui.core.Item's text direction is set explicitly it should be mapped to the StandardListItem", function (assert) {
+		// Arrange
+		var oComboBox = new ComboBox({
+			items: [
+				new SeparatorItem({
+					text: "Countries",
+					textDirection: TextDirection.RTL
+				}),
+				new Item({
+					key: "GER",
+					text: "Germany",
+					textDirection: TextDirection.RTL
+				}),
+				new Item({
+					key: "GAM",
+					text: "Gambia"
+				})
+			]
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.open();
+		// Assert
+		assert.strictEqual(oComboBox.getSelectableItems()[0].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
+		assert.strictEqual(oComboBox.getSelectableItems()[1].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
+
+		// Clean
+		oComboBox.destroy();
+	});
 });

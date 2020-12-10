@@ -33,8 +33,9 @@
 				"sap/m/Label",
 				"sap/m/FormattedText",
 				"sap/m/Link",
-				"sap/m/Text"
-			], function (JSONModel, Item, SeparatorItem, ListItem, HTML, HorizontalLayout, ComboBox, Label, FormattedText, Link, Text){
+				"sap/m/Text",
+				"sap/ui/core/TextDirection"
+			], function (JSONModel, Item, SeparatorItem, ListItem, HTML, HorizontalLayout, ComboBox, Label, FormattedText, Link, Text, TextDirection){
 				var oModel = new JSONModel();
 				var mData = {
 					"items": [
@@ -844,6 +845,20 @@
 					]
 				});
 
+				var oComboBoxRTL = new ComboBox({
+					items: [
+						new SeparatorItem({text: "Group1"}),
+						new Item({text: "item11", key:"key11", textDirection: TextDirection.RTL}),
+						new Item({text: "item12", key:"key12", textDirection: TextDirection.RTL}),
+						new SeparatorItem({text: "Group2"}),
+						new Item({text: "item21", key:"key21", textDirection: TextDirection.RTL}),
+						new Item({text: "item22", key:"key22", textDirection: TextDirection.RTL}),
+						new SeparatorItem(),
+						new Item({text: "item23", key:"key23", textDirection: TextDirection.RTL}),
+						new Item({text: "item24", key:"key24", textDirection: TextDirection.RTL})
+					]
+				});
+
 				// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
 				var oCustomCssButton = new sap.m.Button ("customCssButton",{
 					text: "Toggle custom CSS for visual test",
@@ -971,6 +986,8 @@
 
 						new HTML({ content: "<h3>ComboBox with Grouping</h3>" }),
 						oComboBoxGrouping,
+						new HTML({ content: "<h3>ComboBox with RTL Items</h3>" }),
+						oComboBoxRTL,
 						new HTML({ content: "<hr>" })
 					]
 				}).addStyleClass("sapUiContentPadding");

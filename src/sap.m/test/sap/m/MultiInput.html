@@ -44,7 +44,8 @@
 					"sap/m/Table",
 					"sap/m/Text",
 					"sap/m/Token",
-				], function (JSONModel, App, Button, Column, ColumnListItem, Label, List, MessageBox, MessageToast, MultiInput, Page, StandardListItem, Table, Text, Token){
+					"sap/ui/core/TextDirection"
+				], function (JSONModel, App, Button, Column, ColumnListItem, Label, List, MessageBox, MessageToast, MultiInput, Page, StandardListItem, Table, Text, Token, TextDirection){
 
 					jQuery.sap.require("sap.ui.table.Table");
 					jQuery.sap.require("sap.ui.table.Row");
@@ -858,6 +859,34 @@
 						template: new sap.ui.core.Item({text: "{name}"})
 					});
 
+					oSuggestionsMultiInputRTL = new MultiInput("mi-RTL", {
+						placeholder: "MultiInput with RTL Suggestion Items",
+						ariaLabelledBy: "suggestionsLabel",
+						suggestionItems: [
+						new sap.ui.core.Item ({
+							text: "Apple", textDirection: TextDirection.RTL
+						}),
+						new sap.ui.core.Item ({
+							text: "Pineapple", textDirection: TextDirection.RTL
+						}),
+						new sap.ui.core.Item({
+							text: "Apricot", textDirection: TextDirection.RTL
+						}),
+						new sap.ui.core.Item({
+							text: "Banana", textDirection: TextDirection.RTL
+						}),
+						new sap.ui.core.SeparatorItem({
+							text: "Veggies", textDirection: TextDirection.RTL
+						}),
+						new sap.ui.core.Item({
+							text: "Tomato", textDirection: TextDirection.RTL
+						}),
+						new sap.ui.core.Item({
+							text: "Asparagus", textDirection: TextDirection.RTL
+						})
+						]
+					});
+
 					// MultiInput with sticky suggestions header
 					var oMultiInputWithStickySuggestions = new MultiInput("multiInputWithStickySuggestions", {
 						showSuggestion: true,
@@ -967,6 +996,8 @@
 							oCondensedTable,
 							new Label("suggestionsLabel", {text: "MultiInput with suggestions", labelFor: "mIWithSuggestions"}),
 							oSuggestionsMultiInput,
+							new Label("suggestionsRTLLabel", {text: "MultiInput with RTL Items", labelFor: "mi-rtl"}),
+							oSuggestionsMultiInputRTL,
 							new Label("stickySuggestionsLabel", {text: "MultiInput with sticky suggestions header", labelFor: "multiInputWithStickySuggestions"}),
 							oMultiInputWithStickySuggestions
 						]
