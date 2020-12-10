@@ -47,7 +47,7 @@ sap.ui.define(['sap/m/ToolbarLayoutData', 'sap/m/library', "sap/base/Log"],
 			stayInOverflow : {type: "boolean", defaultValue: false, deprecated: true},
 
 			/**
-			 * Defines OverflowToolbar items priority, Available priorities ate NeverOverflow, High, Low, Disappear and AlwaysOverflow
+			 * Defines OverflowToolbar items priority. Available priorities are NeverOverflow, High, Low, Disappear and AlwaysOverflow.
 			 *
 			 * @public
 			 * @since 1.32
