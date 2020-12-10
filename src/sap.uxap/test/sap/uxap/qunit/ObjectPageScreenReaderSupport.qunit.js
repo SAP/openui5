@@ -106,7 +106,8 @@ function (jQuery, Core, ObjectPageLayout, ObjectPageSection, XMLView) {
 		var sRoleBundleText = getResourceBundleText("NAVIGATION_ROLE_DESCRIPTION");
 
 		assertCorrectRole(this.oObjectPage.$("anchorBar"), "navigation", "AnchorBar element has appropriate banner role set", assert);
-		assertCorrectRoleDescripiton(this.oObjectPage.$("anchorBar"), sRoleBundleText, "AnchorBar element has appropriate role description set", assert);
+		// aria-roledescription is not read out by some screen readers, so aria-label is set instead
+		assert.strictEqual(this.oObjectPage.$("anchorBar").attr("aria-label"), sRoleBundleText, "AnchorBar element has appropriate role description set");
 	});
 
 	QUnit.test("AnchorBar element aria-label", function (assert) {
