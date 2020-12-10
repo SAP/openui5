@@ -73,6 +73,9 @@ sap.ui.define(function() {
 				title: "ExtensionPoints with ExtensionProvider",
 				qunit: {
 					reorder: false
+				},
+				sinon: {
+					version: 4
 				}
 			},
 			"Customizing_debug": {
