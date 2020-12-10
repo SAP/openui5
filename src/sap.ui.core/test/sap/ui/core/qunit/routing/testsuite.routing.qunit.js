@@ -14,7 +14,8 @@ sap.ui.define(function(require) {
 				paths: {
 					"qunit/view": "./fixture",
 					"test/routing/target": "./fixture",
-					"sap/ui/core/qunit/routing": "./"
+					"sap/ui/core/qunit/routing": "./",
+					"testdata": "../testdata"
 				}
 			}
 		},
