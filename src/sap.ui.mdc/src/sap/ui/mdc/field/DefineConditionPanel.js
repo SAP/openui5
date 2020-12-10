@@ -15,6 +15,7 @@ sap.ui.define([
 	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/mdc/Field',
 	'sap/ui/mdc/field/ListFieldHelp',
+	'sap/ui/mdc/field/ListFieldHelpItem',
 	'sap/ui/model/base/ManagedObjectModel',
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/model/resource/ResourceModel',
@@ -41,6 +42,7 @@ sap.ui.define([
 		ConditionValidated,
 		Field,
 		ListFieldHelp,
+		ListFieldHelpItem,
 		ManagedObjectModel,
 		JSONModel,
 		ResourceModel,
@@ -649,6 +651,22 @@ sap.ui.define([
 
 	}
 
+	function _hasMultipleOperatorGroups() {
+		var firstGroupId;
+		var aOperators = _getOperators.call(this);
+		for (var i = 0; i < aOperators.length; i++) {
+			var sOperator = aOperators[i];
+			var oOperator = FilterOperatorUtil.getOperator(sOperator);
+
+			if (!firstGroupId) {
+				firstGroupId = oOperator.group.id;
+			} else if (firstGroupId !== oOperator.group.id) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	function _updateOperatorModel() {
 
 		if (!this.oOperatorModel) {
@@ -658,9 +676,20 @@ sap.ui.define([
 		var oType = _getType.call(this);
 		// assert(oOperatorConfig == null, "oOperatorConfig does not exist - no operators for Select control can be added");
 		var aOperators = _getOperators.call(this);
-		var sInclude = oMessageBundle.getText("valuehelp.INCLUDE");
-		var sExclude = oMessageBundle.getText("valuehelp.EXCLUDE");
 		var aOperatorsData = [];
+
+		var bHasMultipleGroups = _hasMultipleOperatorGroups.call(this);
+
+		var sFieldHelpId = this.getId() + "--rowSelect-help";
+		var oListFieldHelp = sap.ui.getCore().byId(sFieldHelpId);
+
+		var oTemplate;
+		if (bHasMultipleGroups) {
+			oTemplate = new ListFieldHelpItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}", groupKey: "{om>groupId}", groupText: "{om>groupText}"});
+		} else {
+			oTemplate = new ListItem({key: "{om>key}", text: "{om>text}", additionalText: "{om>additionalText}"});
+		}
+		oListFieldHelp.bindAggregation("items", { path: 'om>/', templateShareable: false, template: oTemplate});
 
 		for (var i = 0; i < aOperators.length; i++) {
 			var sOperator = aOperators[i];
@@ -677,20 +706,22 @@ sap.ui.define([
 				sText = oOperator.longText;
 			}
 
-			//Update the additionalInfo test for the operator
-			var sInfo = oOperator.additionalInfo;
-			if (sInfo === undefined)  {
-				if (sInfo !== "" && oOperator.formatRange)  {
-					sInfo = oOperator.formatRange( oOperator._getRange(undefined, oType), oType);
-				} else {
-					sInfo = oOperator.exclude ? sExclude : sInclude;
+			//Update the additionalInfo text for the operator
+			var sAdditionalText = oOperator.additionalInfo;
+			if (sAdditionalText === undefined)  {
+				if (sAdditionalText !== "" && oOperator.formatRange)  {
+					sAdditionalText = oOperator.formatRange( oOperator._getRange(undefined, oType), oType);
+				} else if (!bHasMultipleGroups) {
+					sAdditionalText = oOperator.group.text;
 				}
 			}
 
 			aOperatorsData.push({
 				key: oOperator.name,
-				additionalText: sText,
-				info: sInfo
+				text: sText,
+				additionalText: sAdditionalText,
+				groupId: oOperator.group.id,
+				groupText: oOperator.group.text
 			});
 		}
 
@@ -786,7 +817,6 @@ sap.ui.define([
 
 		oPanel.addDependent(
 			new ListFieldHelp(this.getId() + "--rowSelect-help", {
-				items: { path:'om>/', templateShareable:false, template: new ListItem({key: "{om>key}", text: "{om>additionalText}", additionalText: "{om>info}"})},
 				filterList: false,
 				useFirstMatch: true
 			})
