@@ -34,6 +34,15 @@
         <raw-module name="sap/ui/integration/sap-ui-integration-config.js" />
         <raw-module name="sap/ui/integration/sap-ui-integration-define-nojQuery.js" depends="ui5loader-autoconfig.js" />
       </module-infos>
+      <all-in-one>
+        <!-- ===========================================================================
+             !! ATTENTION !!
+             The following excludes must be kept in sync with those configured for the
+             'preload-and-merge' plugin execution in the pom.xml of the wrapper library.
+             =========================================================================== -->
+        <exclude name="sap/ui/integration/thirdparty/" />
+        <exclude name="sap/ui/integration/designtime/thirdparty/" />
+      </all-in-one>
     </packaging>
 
     <!-- Thirdparty references -->
