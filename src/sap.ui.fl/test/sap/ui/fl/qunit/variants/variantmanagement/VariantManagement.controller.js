@@ -14,13 +14,13 @@ sap.ui.define([
 	return Controller.extend("sap.ui.fl.sample.variantmanagement.VariantManagement", {
 		onInit: function() {
 			var oModelData = {
-				popoverTitle: "{i18n>POP_OVER_TITLE}",
-				currentVariant: "2",
-				defaultVariant: "2",
+				popoverTitle: "Collective Search",
+				currentVariant: "1",
+				defaultVariant: "1",
 				originalDefaultVariant: "2",
 				modified: false,
-				variantsEditable: true,
-				showFavorites: true,
+				variantsEditable: false,
+				showFavorites: false,
 				variants: [
 					{
 						key: "Standard",
@@ -160,26 +160,21 @@ sap.ui.define([
 			});
 			this.getView().setModel(oResourceModel, "i18n");
 
-			this.oModel = new VariantModel({
-
-				M1: {
-					defaultVariant: "3",
-					currentVariant: "3",
-					modified: false,
-					variantsEditable: false,
-					showFavorites: false,
-					variants: []
-				}
-			});
-
-			this._sModelName = "Sample";
 
 			this.oVM = this.getView().byId("idVariantManagementCtrl");
 
+			var oModel = this.oVM.getModel(this.oVM._sModelName);
+
+			this._sModelName = "Sample";
 			this.oVM.setModelName(this._sModelName);
 
-			this.oModel.oData[this.oVM.getId()] = oModelData;
-			this.oVM.setModel(this.oModel, this._sModelName);
+			oModel.oData[this.oVM.getId()] = oModelData;
+			this.oVM.setModel(oModel, this._sModelName);
+
+			this.oVM.oContext = null;
+			this.oVM._setBindingContext();
+
+			this.oModel = oModel;
 
 			var oCurrentVariantChangeBinding = this.oModel.bindProperty("currentVariant", this.oVM.getBindingContext(this._sModelName));
 			oCurrentVariantChangeBinding.attachChange(function(oEvent) {
@@ -253,7 +248,7 @@ sap.ui.define([
 		},
 
 		onSelect: function(oEvent) {
-			MessageToast.show("currentVariant: " + oEvent.getParameter("key"));
+			MessageToast.show("onSelect currentVariant: " + oEvent.getParameter("key"));
 		},
 
 		onSave: function(oEvent) {
