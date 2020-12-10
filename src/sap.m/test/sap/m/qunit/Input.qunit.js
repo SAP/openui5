@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/m/Table",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/core/Item",
+	"sap/ui/core/TextDirection",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Sorter",
 	"sap/ui/core/ListItem",
@@ -43,6 +44,7 @@ sap.ui.define([
 	Table,
 	EventExtension,
 	Item,
+	TextDirection,
 	JSONModel,
 	Sorter,
 	ListItem,
@@ -6254,6 +6256,36 @@ sap.ui.define([
 		assert.strictEqual(oInput.getValue(), "Locations", "The value should come from the selected key");
 
 		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("If the sap.ui.core.Item's text direction is set explicitly it should be mapped to the StandardListItem", function (assert) {
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new sap.ui.core.SeparatorItem({
+					text: "Countries",
+					textDirection: TextDirection.RTL
+				}),
+				new Item({
+					key: "GER",
+					text: "Germany",
+					textDirection: TextDirection.RTL
+				}),
+				new Item({
+					key: "GAM",
+					text: "Gambia"
+				})
+			]
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSuggestionItems()[0].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
+		assert.strictEqual(oInput.getSuggestionItems()[1].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
+
+		// Clean
 		oInput.destroy();
 	});
 

@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/MultiComboBox",
 	"sap/ui/core/Item",
+	"sap/ui/core/TextDirection",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/ComboBoxBaseRenderer",
 	"sap/ui/Device",
@@ -33,6 +34,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	MultiComboBox,
 	Item,
+	TextDirection,
 	JSONModel,
 	ComboBoxBaseRenderer,
 	Device,
@@ -8660,6 +8662,40 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(oMultiComboBox.getDomRef().classList.contains("sapMMultiComboBoxHasToken"), false, "Should not contain 'sapMMultiComboBoxHasToken' class when there are no tokens");
+
+		// Clean
+		oMultiComboBox.destroy();
+	});
+
+	QUnit.module("RTL Support");
+
+	QUnit.test("If the sap.ui.core.Item's text direction is set explicitly it should be mapped to the StandardListItem", function (assert) {
+		// Arrange
+		var oMultiComboBox = new MultiComboBox({
+			items: [
+				new SeparatorItem({
+					text: "Countries",
+					textDirection: TextDirection.RTL
+				}),
+				new Item({
+					key: "GER",
+					text: "Germany",
+					textDirection: TextDirection.RTL
+				}),
+				new Item({
+					key: "GAM",
+					text: "Gambia"
+				})
+			]
+		}).placeAt("MultiComboBox-content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oMultiComboBox.open();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getSelectableItems()[0].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
+		assert.strictEqual(oMultiComboBox.getSelectableItems()[1].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
 
 		// Clean
 		oMultiComboBox.destroy();
