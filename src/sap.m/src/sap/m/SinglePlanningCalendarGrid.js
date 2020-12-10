@@ -721,6 +721,7 @@ sap.ui.define([
 						return;
 					}
 
+					var oBrowserEvent = oEvent.getParameter("browserEvent");
 					var $SPCGridOverlay = this.$().find(".sapMSinglePCOverlay");
 
 					setTimeout(function () {
@@ -734,8 +735,39 @@ sap.ui.define([
 					});
 
 					if (!Device.browser.msie && !Device.browser.edge) {
-						oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
+						oBrowserEvent.dataTransfer.setDragImage(getResizeGhost(), 0, 0);
 					}
+
+					var oGrid = oEvent.getParameter("target"),
+						aIntervalPlaceholders = oGrid.getAggregation("_intervalPlaceholders"),
+						oFirstIntervalRectangle = aIntervalPlaceholders[0].getDomRef().getBoundingClientRect(),
+						iIntervalHeight = oFirstIntervalRectangle.height,
+						iIntervalIndexOffset = Math.floor((oFirstIntervalRectangle.top - oGrid.getDomRef().getBoundingClientRect().top) / iIntervalHeight),
+						oDragSession = oEvent.getParameter("dragSession"),
+						iIndexInColumn  = Math.floor(oBrowserEvent.offsetY / iIntervalHeight) - iIntervalIndexOffset,
+						iIntervalIndex,
+						oCurrentIntervalBoundingRectangle;
+
+					if (this._iColumns === 1) {
+						iIntervalIndex = iIndexInColumn;
+					} else {
+						var iHeaderSize = 64,
+							iBordersWidth = 2,
+							iIntervalWidth = Math.floor(aIntervalPlaceholders[0].getDomRef().getBoundingClientRect().width) - iBordersWidth,
+							iColumnsFromStart = Math.floor(Math.floor((oBrowserEvent.offsetX - iHeaderSize)) / iIntervalWidth),
+							iIntervalsInColumn = aIntervalPlaceholders.length / this._iColumns;
+
+						iIntervalIndex = iIndexInColumn + ((iColumnsFromStart) * iIntervalsInColumn);
+					}
+
+					if	(iIntervalIndex < 0) {
+						iIntervalIndex = 0;
+					}
+
+					oCurrentIntervalBoundingRectangle = aIntervalPlaceholders[iIntervalIndex].getDomRef().getBoundingClientRect();
+
+					oDragSession.setComplexData("startingRectsDropArea", {top: Math.ceil(iIndexInColumn * iIntervalHeight), left: oCurrentIntervalBoundingRectangle.left});
+					oDragSession.setComplexData("startingDropDate", aIntervalPlaceholders[iIntervalIndex].getDate());
 				}.bind(this),
 
 				dragEnter: function (oEvent) {
