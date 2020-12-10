@@ -74,16 +74,16 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/c
 			if (oButton.getVisible()) {
 				var sButtonText = oButton.getText(),
 					oButtonIcon = oButton.getIcon(),
+					sButtonTooltip = oButton.getTooltip_AsString(),
 					sIconAriaLabel = "",
 					oImage;
 
 				++iVisibleButtonPos;
 				if (oButtonIcon) {
 					oImage = oButton._getImage((oButton.getId() + "-img"), oButtonIcon);
+
 					if (oImage instanceof sap.m.Image) {
 						oControl._overwriteImageOnload(oImage);
-					} else if (!oButton.getTooltip()) { //BCP: 1670076777- Put aria-label only for icon or icon+text
-						sIconAriaLabel = oControl._getIconAriaLabel(oImage);
 					}
 				}
 
@@ -114,10 +114,6 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/c
 				sButtonWidth = oButton.getWidth();
 				oRM.style('width', sButtonWidth);
 
-				sTooltip = oButton.getTooltip_AsString();
-				if (sTooltip) {
-					oRM.attr("title", sTooltip);
-				}
 				oRM.attr("tabindex", oButton.getEnabled() ? "0" : "-1");
 
 				sButtonTextDirection = oButton.getTextDirection();
@@ -125,15 +121,13 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleRenderer", "sap/ui/c
 					oRM.attr("dir", sButtonTextDirection.toLowerCase());
 				}
 
-				// BCP:1570027826 If button has an icon add ARIA label containing the generic icon name
-				if (oImage && sIconAriaLabel !== "") {
-					// If there is text inside the button add it in the aria-label
-					if (sButtonText !== "") {
-						sIconAriaLabel += " " + sButtonText;
-					} else {
-						// if we have no text for the button set tooltip the name of the Icon
-						oRM.attr("title", sIconAriaLabel);
-					}
+				if (oImage && !sButtonText) {
+					sIconAriaLabel = oControl._getIconAriaLabel(oImage);
+					sButtonTooltip = sButtonTooltip || sIconAriaLabel; // Prefer user-provided tooltips, as they bring better semantics
+				}
+
+				if (sButtonTooltip) {
+					oRM.attr("title", sButtonTooltip);
 				}
 
 				// Inner buttons' ARIA
