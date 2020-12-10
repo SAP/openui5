@@ -7,6 +7,9 @@ describe('sap.m.ObjectStatus', function() {
 
 	// Rendered properly
 	it('should be rendered properly', function () {
+		browser.executeScript(function() { // ensure the page is scrolled to top
+			document.getElementById("testPage-cont").scrollTop = 0;
+		});
 		expect(takeScreenshot(element(by.id('testPage')))).toLookAs('objectStatus_page');
 	});
 
@@ -29,6 +32,20 @@ describe('sap.m.ObjectStatus', function() {
 			document.getElementById("testPage-cont").scrollTop = 1550;
 		});
 		expect(takeScreenshot(element(by.id('testPage')))).toLookAs('objectStatus_page4');
+	});
+
+	it('should be rendered properly5', function () {
+		browser.executeScript(function() { // scroll page down
+			document.getElementById("testPage-cont").scrollTop = 2050;
+		});
+		expect(takeScreenshot(element(by.id('testPage')))).toLookAs('objectStatus_page5');
+	});
+
+	it('should be rendered properly6', function () {
+		browser.executeScript(function() { // scroll page down
+			document.getElementById("testPage-cont").scrollTop = 2550;
+		});
+		expect(takeScreenshot(element(by.id('testPage')))).toLookAs('objectStatus_page6');
 	});
 
 	it('should render properly the focus', function () {
