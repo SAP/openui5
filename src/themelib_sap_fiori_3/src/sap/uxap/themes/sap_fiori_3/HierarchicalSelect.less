@@ -20,7 +20,7 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 			background: transparent;
 		}
 
-		&.sapMSltIconOnly.sapMSlt:focus  {
+		&.sapMSltIconOnly.sapMSlt.sapMSltFocused  {
 			outline: none;
 			> .sapMSltIcon {
 					outline: 1px dotted @sapUiContentFocusColor;
@@ -28,7 +28,7 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 				}
 		}
 
-		&.sapMSltIconOnly.sapMSltPressed.sapMSlt:focus > .sapMSltIcon {
+		&.sapMSltIconOnly.sapMSltPressed.sapMSlt.sapMSltFocused > .sapMSltIcon {
 			outline: none;
 		}
 
@@ -161,5 +161,19 @@ html[data-sap-ui-browser^="cr4"].sapUxAPObjectPageLayout-Std-Phone,
 html[data-sap-ui-browser^="cr4"].sap-phone {
 	.sapUxAPHierarchicalSelect .sapMSltLabel {
 		box-shadow: inset 0 -0.0625rem @sapUiSelected;
+	}
+}
+
+html[data-sap-ui-browser^="ie"].sap-desktop,
+html[data-sap-ui-browser^="ed"].sap-desktop {
+	.sapUxAPHierarchicalSelect.sapMSltHoverable.sapMSltIconOnly.sapMSlt.sapMSltFocused:not(.sapMSltPressed) {
+		&::before {
+			border: none;
+		}
+		&> .sapMSltIcon {
+			top: 0.5rem;
+			outline: none;
+			border: 0.0625rem dashed @sapUiContentFocusColor;
+		}
 	}
 }

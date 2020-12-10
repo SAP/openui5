@@ -23,12 +23,12 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 					background: @sapUiButtonHoverBackground;
 				}
 
-				&:focus {
+				&.sapMSltFocused {
 					background: transparent;
 				}
 			}
 
-			&:focus {
+			&.sapMSltFocused {
 				outline: none;
 
 				> .sapMSltIcon {
@@ -136,9 +136,24 @@ html[data-sap-ui-browser^="cr4"].sap-phone {
 /* TODO remove after the end of support for Internet Explorer */
 html[data-sap-ui-browser^="ie"].sap-desktop,
 html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapUxAPHierarchicalSelect.sapMSltHoverable.sapMSltIconOnly.sapMSlt:not(.sapMSltPressed):focus {
-		> .sapMSltIcon:after {
-			border: 0.125rem dashed @sapUiContentFocusColor;
+	.sapUxAPHierarchicalSelect.sapMSltHoverable.sapMSltIconOnly.sapMSlt {
+		border: none;
+		position: absolute;
+		 .sapMSltIcon {
+			line-height: 1.5rem;
+			&::before {
+				position: relative;
+			}
+		}
+		&.sapMSltFocused:not(.sapMSltPressed) {
+			&::before {
+				border: none;
+			}
+			&> .sapMSltIcon {
+				line-height: 1.375rem;
+				outline: none;
+				border: 0.125rem dashed @sapUiContentFocusColor;
+			}
 		}
 	}
 }
