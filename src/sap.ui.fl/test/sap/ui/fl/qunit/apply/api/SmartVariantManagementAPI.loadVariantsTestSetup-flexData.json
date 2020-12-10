@@ -11,6 +11,20 @@
           "value": "B Variant"
         }
       }
+    },{
+      "fileName": "variant_2",
+      "fileType": "variant",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {
+        "favorite": true
+      },
+      "texts": {
+        "variantName": {
+          "value": "B Variant2"
+        }
+      }
     }],
     "changes": [{
       "fileName": "id_1606828544793_204_addFavorite",

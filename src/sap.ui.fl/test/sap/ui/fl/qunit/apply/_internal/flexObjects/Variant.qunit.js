@@ -261,6 +261,37 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("Given the constructor is called", {
+		beforeEach: function () {
+		},
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test(" when no favorite is provided", function(assert) {
+			var oVariant = new Variant({});
+			assert.equal(oVariant.getFavorite(), false, "then by default it is NOT a favorite");
+		});
+
+		QUnit.test(" when favorite is set to false", function(assert) {
+			var oVariant = new Variant({
+				content: {
+					favorite: false
+				}
+			});
+			assert.equal(oVariant.getFavorite(), false, "then it is NOT a favorite");
+		});
+
+		QUnit.test(" when favorite is set to true", function(assert) {
+			var oVariant = new Variant({
+				content: {
+					favorite: true
+				}
+			});
+			assert.equal(oVariant.getFavorite(), true, "then it is NOT a favorite");
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
