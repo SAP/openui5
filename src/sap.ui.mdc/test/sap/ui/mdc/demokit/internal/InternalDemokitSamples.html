@@ -10,50 +10,63 @@
 			data-sap-ui-libs="sap.ui.mdc, sap.m"
 			data-sap-ui-theme="sap_fiori_3"></script>
 	<script>
-		jQuery.sap.require("sap.ui.core.util.LibraryInfo");
-		var oLibraryInfo = new sap.ui.core.util.LibraryInfo();
-		oLibraryInfo._getDocuIndex("sap/ui/mdc", function(res) {
-			var data = {
-				samples: res.explored.samples
-			};
+		sap.ui.getCore().attachInit(function () {
+			sap.ui.require([
+				"sap/ui/core/util/LibraryInfo",
+				"sap/ui/util/openWindow",
+				"sap/ui/model/json/JSONModel",
+				"sap/m/Table",
+				"sap/m/Column",
+				"sap/m/ColumnListItem",
+				"sap/m/Label",
+				"sap/m/Text"
+			], function(LibraryInfo, openWindow, JSONModel, Table, Column, ColumnListItem, Label, Text) {
+				var oLibraryInfo = new LibraryInfo();
 
-			var oModel = new sap.ui.model.json.JSONModel();
-			oModel.setData(data);
+				oLibraryInfo._getDocuIndex("sap/ui/mdc", function(res) {
+					var data = {
+						samples: res.explored.samples
+					};
 
-			var oTable = new sap.m.Table({
-				headerText: "MDC Internal Demokit Samples",
-				mode: "None",
-				itemPress: function(oEvent) {
-					var sPathname = window.location.pathname.split('/')[1];
-					var sBaseUrl = window.location.origin + "/" + sPathname + "/";
-					if (sPathname === "testsuite") {
-						sBaseUrl += "documentation.html"
-					}
-					var sSampleId = oEvent.getParameter("listItem").getBindingContext().getProperty("id");
-					window.open(sBaseUrl + "#/entity/sap.ui.mdc.sample.Table/sample/" + sSampleId);
-				},
-				columns: [
-					new sap.m.Column({
-						header: new sap.m.Label({text: "Name"})
-					}),
-					new sap.m.Column({
-						header: new sap.m.Label({text: "Description"})
-					})
-				],
-				items: {
-					path: "/samples",
-					template: new sap.m.ColumnListItem({
-						cells: [
-							new sap.m.Text({text: "{name}"}),
-							new sap.m.Text({text: "{description}"})
+					var oModel = new JSONModel();
+					oModel.setData(data);
+
+					var oTable = new Table({
+						headerText: "MDC Internal Demokit Samples",
+						mode: "None",
+						itemPress: function(oEvent) {
+							var sPathname = window.location.pathname.split('/')[1];
+							var sBaseUrl = window.location.origin + "/" + sPathname + "/";
+							if (sPathname === "testsuite") {
+								sBaseUrl += "documentation.html"
+							}
+							var sSampleId = oEvent.getParameter("listItem").getBindingContext().getProperty("id");
+							openWindow(sBaseUrl + "#/entity/sap.ui.mdc.sample.Table/sample/" + sSampleId);
+						},
+						columns: [
+							new Column({
+								header: new Label({text: "Name"})
+							}),
+							new Column({
+								header: new Label({text: "Description"})
+							})
 						],
-						type: "Navigation"
-					})
-				}
-			});
+						items: {
+							path: "/samples",
+							template: new ColumnListItem({
+								cells: [
+									new Text({text: "{name}"}),
+									new Text({text: "{description}"})
+								],
+								type: "Navigation"
+							})
+						}
+					});
 
-			oTable.placeAt("content");
-			oTable.setModel(oModel);
+					oTable.placeAt("content");
+					oTable.setModel(oModel);
+				});
+			});
 		});
 	</script>
 
