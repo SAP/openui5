@@ -84,9 +84,7 @@ sap.ui.define([
 		this._ariaText = new InvisibleText({id: this.getId() + "-ariaText"});
 		this._ariaText.setText(this._oRb.getText("ARIA_ROLEDESCRIPTION_CARD"));
 
-		this.initBadgeEnablement({
-			accentColor: "AccentColor6"
-		});
+		this.initBadgeEnablement();
 	};
 
 	CardBase.prototype.exit = function () {
