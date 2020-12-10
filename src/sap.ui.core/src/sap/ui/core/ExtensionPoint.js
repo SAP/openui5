@@ -120,7 +120,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 				if (oView) {
 					// local ID of the fragment (minus the view-id prefix)
 					// Might include ID prefixes for nested Fragments.
-					sFragmentId = oView.getLocalId(sFragmentId);
+					sFragmentId = oView.getLocalId(sFragmentId) || sFragmentId;
 				} else {
 					// Someone could create a Fragment via the factory with a Controller without an associated view,
 					// e.g. by creating a Controller instance via Controller.create().
