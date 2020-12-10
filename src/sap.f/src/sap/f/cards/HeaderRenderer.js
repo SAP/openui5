@@ -55,6 +55,7 @@ sap.ui.define([], function () {
 				oAvatar.addStyleClass("sapFCardHeaderItemBinded");
 			}
 			oRm.renderControl(oAvatar);
+			oRm.renderControl(oHeader._oAriaAvatarText);
 			oRm.close("div");
 		}
 
