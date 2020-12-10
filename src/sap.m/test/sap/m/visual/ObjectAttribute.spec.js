@@ -7,6 +7,9 @@ describe('sap.m.ObjectAttribute', function() {
 
 	// Rendered properly
 	it('should be rendered properly', function () {
+		browser.executeScript(function() { // ensure the page is scrolled to top
+			document.getElementById("testPage-cont").scrollTop = 0;
+		});
 		expect(takeScreenshot(element(by.id('testPage')))).toLookAs('objectAttribute_page');
 	});
 
