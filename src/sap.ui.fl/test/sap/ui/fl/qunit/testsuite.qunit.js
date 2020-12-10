@@ -253,12 +253,6 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/changes/ExtensionPointState"]
 				}
 			},
-			"apply/_internal/flexState/compVariants/CompVariantState": {
-				group: "Apply Internal",
-				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantState"]
-				}
-			},
 			"apply/_internal/flexState/controlVariants/VariantManagementState": {
 				group: "Apply Internal",
 				coverage: {
@@ -430,6 +424,12 @@ sap.ui.define([
 				},
 				ui5: {
 					flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
+				}
+			},
+			"write/_internal/flexState/compVariants/CompVariantState": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState"]
 				}
 			},
 			"write/_internal/connectors/ObjectPathConnector": {
