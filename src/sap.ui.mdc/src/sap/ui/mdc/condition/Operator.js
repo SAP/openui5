@@ -32,45 +32,44 @@ sap.ui.define([
 
 		/**
 		 * Creates an <code>sap.ui.mdc.condition.Operator</code> object.
-		 * This is used in the <code>FilterField</code> control to define which filter operators are supported.
+		 * This is used in the {@link sap.ui.mdc.FilterField FilterField} control to define which filter operators are supported.
 		 *
 		 * If a function or property is initial, the default implementation is used.
 		 *
 		 * @extends sap.ui.base.Object
 		 * @param {object} oConfiguration Properties of the operator
 		 * @param {string} oConfiguration.name Name of the operator used in the condition
-		 * @param {string} [oConfiguration.filterOperator] The operator's default filter operator that is created as defined in <code>sap.ui.model.FilterOperator</code>
+		 * @param {string} oConfiguration.filterOperator The operator's default filter operator that is created as defined in {@link sap.ui.model.FilterOperator FilterOperator}
 		 * @param {string} oConfiguration.tokenParse The string representation of the regular expression that is used by the operator to parse a value
 		 *                 to eliminate the operator and get the data string. A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the
 		 *                 <code>oConfiguration.tokenText</code> property if given.
 		 * @param {string} oConfiguration.tokenFormat The string representation that is used by the operator to format a value
 		 *                 into an output string. For the value placeholder <code>{0}</code> and <code>{1}</code> are used.
 		 *                 A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the <code>oConfiguration.tokenText</code> property if given.
-		 * @param {string[]} oConfiguration.valueTypes Array of type to be used. The length of the array defines the number of values that
+		 * @param {string[]|object[]} oConfiguration.valueTypes Array of type to be used. The length of the array defines the number of values that
 		 *                 need to be entered with the operator.
-		 *                 If set to Operator.ValueType.Self the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.
-		 *                 If set to Operator.ValueType.Static a simple string type is used to display static text.
+		 *                 If set to <code>Operator.ValueType.Self</code> the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.
+		 *                 If set to <code>Operator.ValueType.Static</code> a simple string type is used to display static text.
 		 *                 If set to a name of a data type an instance of this data type will be used.
 		 *                 If set to an object with the properties <code>name</code>, <code>formatOptions</code> and <code>constraints</code>
 		 *                 an instance of the corresponding data type will be used.
-		 * @param {string[]} [oConfiguration.paramTypes] Array of type parameters //TODO
+		 * @param {string[]} [oConfiguration.paramTypes] Array of type parameters regexp
 		 * @param {string} [oConfiguration.longText] String representation of the operator as a long text.
 		 *                If longText is not given , it is looked up in the resource bundle of the <code>sap.ui.mdc</code> library by the key
 		 *                <code>operators.{oConfiguration.name}.longText</code>
 		 * @param {string} [oConfiguration.tokenText] String representation of the operator as a short text.
 		 *                If the token text is not given, it is looked up in the resource bundle of the <code>sap.ui.mdc</code> library by the key
 		 *                <code>operators.{oConfiguration.name}.tokenText</code>
-		 * @param {object} [oConfiguration.displayFormats] Pattern how different <code>displayFormats</code> are rendered
+		 * @param {object} [oConfiguration.displayFormats] Pattern how different {@link sap.ui.mdc.enum.FieldDisplay displayFormats} are rendered
 		 * @param {function} [oConfiguration.format] Function to format condition
 		 * @param {function} [oConfiguration.parse] Function to parse input into condition
 		 * @param {function} [oConfiguration.validate] Function to validate condition
 		 * @param {function} [oConfiguration.getModelFilter] Function create filter for a condition
 		 * @param {function} [oConfiguration.isEmpty] Function to check if condition is empty
-		 * @param {function} [oConfiguration.createControl] Function to create a control
-		 * @param {function} [oConfiguration.splitText] Function to split text // TODO remove
+		 * @param {function} [oConfiguration.createControl] Function to create a control to be used in {@link sap.ui.mdc.field.DefineConditionPanel DefineConditionPanel}
 		 * @param {function} [oConfiguration.getCheckValue] Function to get the value for condition compare
 		 * @param {function} [oConfiguration.getValues] Function to get the real values without operator symbol
-		 * @param {function} [oConfiguration.checkValidated] Function to check if a condition is validated (sets the <code>validated</code> flag
+		 * @param {function} [oConfiguration.checkValidated] Function to check if a condition is validated (sets the <code>validated</code> property)
 		 * @param {boolean} [oConfiguration.exclude] If set, the operator is handled as exclude filter when creating the filters of all conditions
 		 * @param {boolean} [oConfiguration.validateInput] If set, the user input for this operator needs to be validated using a field help
  		 * @param {string} [oConfiguration.additionalInfo] additionalInfo text for the operator. Will be shown in the operator suggest as second column. If not used (undefined) the Include or Exclude information of the operator is used.
@@ -178,9 +177,6 @@ sap.ui.define([
 				}
 				if (oConfiguration.createControl) {
 					this.createControl = oConfiguration.createControl; // TODO move default implementation from DefineConditionPanel to here
-				}
-				if (oConfiguration.splitText) {
-					this.splitText = oConfiguration.splitText; // TODO as only used by EQ remove it from general api
 				}
 				if (oConfiguration.getCheckValue) {
 					this.getCheckValue = oConfiguration.getCheckValue;
@@ -383,7 +379,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sText Text
 		 * @param {sap.ui.model.Type} oType Data type
-		 * @param {string} sDisplayFormat Display format
+		 * @param {sap.ui.mdc.enum.FieldDisplay} sDisplayFormat Display format
 		 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
 		 * @returns {any[]} array of values
 		 * @throws {sap.ui.model.ParseException} if the text cannot be parsed
@@ -542,7 +538,7 @@ sap.ui.define([
 		 * In this function no type validation takes place.
 		 *
 		 * @param {string} sText Text
-		 * @param {string} sDisplayFormat Display format
+		 * @param {sap.ui.mdc.enum.FieldDisplay} sDisplayFormat Display format
 		 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
 		 * @returns {string[]} array of value parts without operator sign
 		 *
@@ -579,7 +575,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sText Text
 		 * @param {sap.ui.model.Type} oType Data type
-		 * @param {string} sDisplayFormat Display format
+		 * @param {sap.ui.mdc.enum.FieldDisplay} sDisplayFormat Display format
 		 * @param {boolean} bDefaultOperator If true, operator is used as default. In this case parsing without operator also works
 		 * @returns {sap.ui.mdc.condition.ConditionObject} The condition for the text
 		 * @throws {sap.ui.model.ParseException} if the text cannot be parsed

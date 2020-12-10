@@ -34,7 +34,7 @@ sap.ui.define([
 	 * If no search is supported, content controls are not needed right now as the field help is not opened in this case.
 	 *
 	 * @param {object} oPayload Payload for delegate
-	 * @param {sap.ui.mdc.base.FieldHelpBase} oFieldHelp Field help instance
+	 * @param {sap.ui.mdc.field.FieldValueHelp} oFieldHelp Field help instance
 	 * @returns {Promise} Promise that is resolved if the <code>FilterFields</code> property is set
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp sap.ui.mdc.field.FieldValueHelpMTableWrapper

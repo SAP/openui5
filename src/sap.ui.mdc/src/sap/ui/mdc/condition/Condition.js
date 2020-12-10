@@ -21,7 +21,8 @@ sap.ui.define([
 
 		/**
 		 *
-		 * @class Utilities to handle operators of conditions
+		 * @class Utilities to create conditions to be used in {@link sap.ui.mdc.FilterField FilterField},
+		 * {@link sap.ui.mdc.FilterBar FilterBar} or {@link sap.ui.mdc.condition.ConditionModel ConditionModel}
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -36,7 +37,7 @@ sap.ui.define([
 		var Condition = {
 
 				/**
-				 * Condition object type.
+				 * Condition object type defining the structure of a condition.
 				 *
 				 * @type {sap.ui.mdc.condition.ConditionObject}
 				 * @static
@@ -46,18 +47,18 @@ sap.ui.define([
 				 * @property {any[]} values Array of values of the condition. Depending on the <code>operator</code>, this contains one or more entries
 				 * @property {object} [inParameters] In parameters of the condition. For each field path, a value is stored
 				 * @property {object} [outParameters] Out parameters of the condition. For each field path, a value is stored
-				 * @property {boolean} [isEmpty] If set, the condition is empty (used as dummy condition in <code>DefineConditionPanel</code>)
-				 * @property {sap.ui.mdc.util.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the <code>DefineConditionPanel</code> control
+				 * @property {boolean} [isEmpty] If set, the condition is empty (used as dummy condition in {@link sap.ui.mdc.field.DefineConditionPanel DefineConditionPanel})
+				 * @property {sap.ui.mdc.util.ConditionValidated} validated If set to <code>ConditionValidated.Validated</code>, the condition is validated (by the field help) and not shown in the {@link sap.ui.mdc.field.DefineConditionPanel DefineConditionPanel} control
 				 * @private
 				 * @ui5-restricted sap.fe
 				 * @MDC_PUBLIC_CANDIDATE
 				 */
 
 				/**
-				 * Creates a condition instance for a strict equal condition.
+				 * Creates a condition instance for a condition representing a item chosen from the field help.
 				 *
-				 * This is a "strict equal" condition with key and description. It is used for entries selected in the value help
-				 * and for everything entered in the <code>Field</code> control.
+				 * This is a "equal" condition with key and description. It is used for entries selected in the field help
+				 * and for everything entered in the {@link sap.ui.mdc.Field Field} control.
 				 *
 				 * @param {string} sKey Operator for the condition
 				 * @param {string} sDescription Description of the operator
@@ -81,7 +82,7 @@ sap.ui.define([
 				},
 
 				/**
-				 * Creates a condition instance for the <code>ConditionModel</code>.
+				 * Creates a condition object.
 				 *
 				 * @param {string} sOperator Operator for the condition
 				 * @param {any[]} aValues Array of values for the condition

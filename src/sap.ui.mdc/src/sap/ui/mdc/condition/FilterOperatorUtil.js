@@ -37,7 +37,7 @@ function(
 		"use strict";
 
 		/**
-		 * @class Utilities to handle operators of conditions.
+		 * @class Utilities to handle {@link sap.ui.mdc.condition.Operator Operators} and {@link sap.ui.mdc.condition.ConditionObject conditions}.
 		 *
 		 * @author SAP SE
 		 * @version ${version}
@@ -819,7 +819,7 @@ function(
 				 * Returns all available default operators for the given type.
 				 *
 				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
-				 * @returns {string[]} an array with the supported filter operators
+				 * @returns {string[]} an array with the supported filter operator names
 				 *
 				 * @private
 				 * @ui5-restricted ap.fe
@@ -842,7 +842,7 @@ function(
 				 * Returns the default operator for the given basic type.
 				 *
 				 * @param {sap.ui.mdc.enum.BaseType} sType Basic type
-				 * @returns {sap.ui.mdc.condition.Operator} the default filter operator for the given type
+				 * @returns {sap.ui.mdc.condition.Operator} the default operator for the given type
 				 *
 				 * @private
 				 * @ui5-restricted sap.fe
@@ -860,7 +860,7 @@ function(
 				 * <b>Note</b> The value must be valid for the current type as this function only checks the operator against values.
 				 * No type check is performed.
 				 *
-				 * @param {string[]} aOperators List of all supported operators
+				 * @param {string[]} aOperators List of all supported operator names
 				 * @param {string} [sValue] Value entered (including operator)
 				 * @returns {sap.ui.mdc.condition.Operator[]} the operator objects suitable for the given input string, depending on the given type
 				 *
@@ -914,7 +914,7 @@ function(
 				/**
 				 * Returns the EQ operator object.
 				 *
-				 * This is required for <code>Field</code>
+				 * This is required for {@link sap.ui.mdc.Field Field}
 				 * @returns {sap.ui.mdc.condition.Operator} Operator object
 				 *
 				 * @private
@@ -927,7 +927,7 @@ function(
 				},
 
 				/**
-				 * Checks if only EQ is supported. (<code>Field</code> case)
+				 * Checks if only EQ is supported. ({@link sap.ui.mdc.Field Field} case)
 				 *
 				 * @param {string[]} aOperators Array with the supported filter operators
 				 * @returns {boolean} true if only EQ is supported
@@ -1034,7 +1034,7 @@ function(
 				 * For EQ conditions, only the key part of the values is compared as the text part
 				 * might be different (if the translation is missing, for example).
 				 *
-				 * <b>Note:</b> If two or more identical conditions are in the array, the index is the first hit.
+				 * <b>Note:</b> If two or more identical conditions are in the array, the index is the first one is used.
 				 *
 				 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition to check
 				 * @param {sap.ui.mdc.condition.ConditionObject[]} aConditions Array of conditions
@@ -1119,7 +1119,7 @@ function(
 				},
 
 				/**
-				 * Checks if a condition is validated and sets the <code>validated</code> flag.
+				 * Checks if a condition is validated and sets the <code>validated</code> property.
 				 *
 				 * For EQ set <code>validated</code> flag if a description is given.
 				 *

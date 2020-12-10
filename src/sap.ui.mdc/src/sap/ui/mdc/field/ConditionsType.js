@@ -44,11 +44,11 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions] Formatting options
 	 * @param {sap.ui.model.Type} [oFormatOptions.valueType] Type of the value of the condition (used for formatting and parsing)
 	 * @param {string[]} [oFormatOptions.operators] Possible operators to be used in the condition
-	 * @param {string} [oFormatOptions.display] DisplayFormat used to visualize value
+	 * @param {sap.ui.mdc.enum.FieldDisplay} [oFormatOptions.display] DisplayFormat used to visualize value
 	 * @param {string} [oFormatOptions.fieldHelpID] ID of the field help, to determine key and description // TODO: async request????
 	 * @param {boolean} [oFormatOptions.hideOperator] If set, only the value of the condition is shown, but no operator //TODO
 	 * @param {int} [oFormatOptions.maxConditions] Maximum number of allowed conditions
-	 * @param {object} [oFormatOptions.bindingContext] BindingContext of field. Used to get key or description from the value help using in/out parameters. (In table, the value help might be connected to different row)
+	 * @param {sap.ui.model.Context} [oFormatOptions.bindingContext] BindingContext of field. Used to get key or description from the value help using in/out parameters. (In table, the value help might be connected to different row)
 	 * @param {sap.ui.model.Type} [oFormatOptions.originalDateType] Type used on field. E.g. for date types internally a different type is used internally to have different <code>formatOptions</code>
 	 * @param {boolean} [oFormatOptions.isUnit] If set, the type is used for the unit part of a field
 	 * @param {function} [oFormatOptions.getConditions] Function to get the existing conditions of the field. Only used if <code>isUnit</code> is set. TODO: better solution

@@ -23,11 +23,7 @@ sap.ui.define([
 		 * If a function or property is initial, the default implementation is used
 		 *
 		 * @extends sap.ui.mdc.condition.Operator
-		 * @param {object} oConfiguration
-		 * @param {string} oConfiguration.name Name of the operator used in the condition
-		 * @param {string} [oConfiguration.filterOperator] should not be set
-		 * @param {string} [oConfiguration.tokenParse]
-		 * @param {string} [oConfiguration.tokenFormat]
+		 * @param {object} oConfiguration Included all parameters of {@link sap.ui.mdc.condition.Operator Operator} and adds some special ones
 		 * @param {string} [oConfiguration.label] additional array of labels for the values of the operator. Will be shown as placeholder text or label on the value fields.
 		 * @param {function} [oConfiguration.calcRange] function to calculate the date range of the operation. the function returns an array of UniversalDates.
 		 * @param {function} [oConfiguration.formatRange] function to format the date range.
@@ -99,7 +95,7 @@ sap.ui.define([
 		/**
 		 * Creates the static text of the operator
 		 *
- 		 * @param {sap.ui.model.Type} oType data type of the used <code>FilterField</code>
+ 		 * @param {sap.ui.model.Type} oType data type of the used {@link sap.ui.mdc.FilterField FilterField}
 		 * @return {string} static text
 		 *
 		 * @private
