@@ -226,6 +226,12 @@ sap.ui.define([
 	}
 
 	function determineLayer(oChangeSpecificData) {
+		// the SmartVariantManagementWriteAPI.addVariant-caller within sap.ui.rta provides a layer ...
+		if (oChangeSpecificData.layer) {
+			return oChangeSpecificData.layer;
+		}
+
+		// ... the SmartVariantManagementWriteAPI.add-caller cannot determine the layer on its own, but provides a isUserDependent flag
 		if (oChangeSpecificData.isUserDependent) {
 			return Layer.USER;
 		}
@@ -311,7 +317,7 @@ sap.ui.define([
 	 * @param {boolean} mPropertyBag.isUserDependent - Indicates if a change is only valid for the current user
 	 * @param {boolean} [mPropertyBag.id] - ID of the change. The ID has to be globally unique and should only be set in exceptional cases, for example
 	 *        downport of variants
-	 * @returns {string} The ID of the newly created change or variant
+	 * @returns {object} The created change or variant
 	 * @public
 	 */
 	CompVariantState.add = function(mPropertyBag) {
@@ -349,7 +355,7 @@ sap.ui.define([
 		var sId = oFlexObject.getId();
 		var mCompVariantsMapById = FlexState.getCompEntitiesByIdMap(mPropertyBag.reference);
 		mCompVariantsMapById[sId] = oFlexObject;
-		return sId;
+		return oFlexObject;
 	};
 
 	/**
