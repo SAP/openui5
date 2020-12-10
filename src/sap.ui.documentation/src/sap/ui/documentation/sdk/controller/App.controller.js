@@ -513,23 +513,23 @@ sap.ui.define([
 
 			getSearchPickerTitle: function(oContext) {
 				var getMessageBundle = Core.getLibraryResourceBundle("sap.ui.documentation"),
-				sFinalString = getMessageBundle.getText("SEARCH_SUGGESTIONS_TITLE");
+				sTitle;
 
 				switch (this.getModel("searchData").getProperty("/routeSection")) {
 					case "topics":
-						sFinalString += " " + getMessageBundle.getText("APP_TABHEADER_ITEM_DOCUMENTATION");
+						sTitle =  getMessageBundle.getText("SEARCH_SUGGESTIONS_TITLE_DOCUMENTATION");
 						break;
 					case "apiref":
-						sFinalString += " " + getMessageBundle.getText("APP_TABHEADER_ITEM_API_REFERENCE");
+						sTitle =  getMessageBundle.getText("SEARCH_SUGGESTIONS_TITLE_API_REFERENCE");
 						break;
 					case "entity":
-						sFinalString += " " + getMessageBundle.getText("APP_TABHEADER_ITEM_SAMPLES");
+						sTitle =  getMessageBundle.getText("SEARCH_SUGGESTIONS_TITLE_SAMPLES");
 						break;
 					default:
-						sFinalString += " " + getMessageBundle.getText("SEARCH_SUGGESTIONS_ALL_SECTION_TITLE");
+						sTitle =  getMessageBundle.getText("SEARCH_SUGGESTIONS_TITLE_ALL");
 				}
 
-				return sFinalString;
+				return sTitle;
 			},
 
 			onSearchResultsSummaryPress: function(oEvent) {
