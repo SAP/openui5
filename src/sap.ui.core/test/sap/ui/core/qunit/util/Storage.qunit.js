@@ -173,7 +173,7 @@ sap.ui.define(["sap/ui/util/Storage"], function(Storage) {
 			var newKeys = [];
 			for (var i = 0; i < this._keys.length; i++) {
 				if (sId != this._keys[i]) {
-					newKeys.push(this._keys[i]);
+					newKeys.unshift(this._keys[i]); // use unshift to force a re-order of the entries
 				}
 			}
 			this._keys = newKeys;
