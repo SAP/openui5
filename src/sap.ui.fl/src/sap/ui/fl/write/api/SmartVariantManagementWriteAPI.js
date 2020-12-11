@@ -51,16 +51,12 @@ sap.ui.define([
 		 * @param {boolean} mPropertyBag.changeSpecificData.isVariant - Indicates if the change is a variant
 		 * @param {string} [mPropertyBag.changeSpecificData.packageName] - Package name for the new entity; default is <code>$tmp</code>
 		 * @param {boolean} mPropertyBag.changeSpecificData.isUserDependent - Indicates if a change is only valid for the current user
-		 * @param {boolean} [mPropertyBag.changeSpecificData.id] - ID of the change; the ID has to be globally unique and should only be set in exceptional cases, for example downport of variants
 		 * @returns {string} ID of the newly created change
 		 * @private
 		 * @ui5-restricted sap.ui.comp
 		 */
 		add: function(mPropertyBag) {
-			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.add)
-				.then(function (oObject) {
-					return oObject.getId();
-				});
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.add).getId();
 		},
 
 		/**
@@ -81,6 +77,43 @@ sap.ui.define([
 		addVariant: function (mPropertyBag) {
 			mPropertyBag.fileType = "variant";
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.add);
+		},
+
+		/**
+		 * Updates a variant; this may result in an update of the variant or the creation of a change.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.reference - Flex reference of the application
+		 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
+		 * @param {string} mPropertyBag.id - ID of the variant
+		 * @param {object} [mPropertyBag.name] - Title of the variant
+		 * @param {object} [mPropertyBag.content] - Content of the new change
+		 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
+		 * @param {object} [mPropertyBag.executeOnSelect] - Flag if the variant should be executed on selection
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
+		 * this either updates the variant from the layer or writes a change to that layer.
+		 * @private
+		 * @ui5-restricted sap.ui.rta.command
+		 */
+		updateVariant: function (mPropertyBag) {
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.updateVariant);
+		},
+
+
+		/**
+		 * Removes a variant; this may result in an deletion of the variant or the creation of a change.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.reference - Flex reference of the application
+		 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
+		 * @param {string} mPropertyBag.id - ID of the variant
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
+		 * this either removes the variant from the layer or writes a change to that layer.
+		 * @private
+		 * @ui5-restricted sap.ui.rta.command
+		 */
+		removeVariant: function (mPropertyBag) {
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.removeVariant);
 		},
 
 		/**
