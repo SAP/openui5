@@ -52,8 +52,6 @@ sap.ui.define([
 		var InputForwardableProperties = ["value", "enabled", "name", "placeholder",
 			"editable", "textAlign", "textDirection", "valueState", "valueStateText"];
 
-		var TextDirection = coreLibrary.TextDirection;
-
 		/**
 		 * Constructor for a new <code>sap.m.ComboBoxBase</code>.
 		 *
@@ -886,12 +884,10 @@ sap.ui.define([
 
 			this._oSuggestionPopover = this._createSuggestionsPopover();
 			oPicker = this._oSuggestionPopover.getPopover();
-
 			// define a parent-child relationship between the control's and the picker pop-up (Popover or Dialog)
 			this.setAggregation("picker", oPicker, true);
-			this.configPicker(oPicker);
 
-			oPicker.addDelegate(this._applyTextDirectionPicker(), this);
+			this.configPicker(oPicker);
 
 			return oPicker;
 		};
@@ -933,34 +929,6 @@ sap.ui.define([
 			this._configureList(oSuggPopover.getItemsContainer());
 
 			return oSuggPopover;
-		};
-
-		/**
-		 * Applies text direction attribute to the picker, after the Pop-up is rendered.
-		 *
-		 * @private
-		 */
-		ComboBoxBase.prototype._applyTextDirectionPicker = function() {
-			var sTextDir = this.getTextDirection();
-			var oSuggPopover = this._getSuggestionsPopover();
-			var oPopover = oSuggPopover.getPopover();
-
-			if (this._pickerTextDirDelegate) {
-				return this._pickerTextDirDelegate;
-			}
-
-			this._pickerTextDirDelegate = {
-				onAfterRendering: function() {
-					if (sTextDir !== TextDirection.Inherit && sTextDir !== oSuggPopover._sTextDir) {
-						oSuggPopover._sTextDir = sTextDir;
-						oPopover.getDomRef().setAttribute("dir", sTextDir.toLowerCase());
-					} else if (sTextDir !== oSuggPopover._sTextDir) {
-						oPopover.getDomRef().removeAttribute("dir");
-					}
-				}
-			};
-
-			return this._pickerTextDirDelegate;
 		};
 
 		ComboBoxBase.prototype.forwardEventHandlersToSuggPopover = function (oSuggPopover) {
