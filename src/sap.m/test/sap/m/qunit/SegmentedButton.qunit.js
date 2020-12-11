@@ -2798,76 +2798,64 @@ sap.ui.define([
 		oSegmentedButton.destroy();
 	});
 
-	QUnit.test("Check aria attributes on SegmentedButton with icons", function(assert) {
-		// Arrange
-		var oSegmentedButton = new SegmentedButton({
-			items : [
-				new SegmentedButtonItem({
-					icon: "sap-icon://home",
-					text: "button 1"
-				}),
-				new SegmentedButtonItem({
-					icon: "sap-icon://attachment"
-				}),
-				new SegmentedButtonItem({
-					text: "button 3"
-				}),
-				new SegmentedButtonItem({
-					text: "button 4",
-					tooltip: "tooltip 4"
-				}),
-				new SegmentedButtonItem({
-					icon: "sap-icon://attachment",
-					tooltip: "tooltip 5"
-				}),
-				new SegmentedButtonItem({
-					icon: "sap-icon://attachment",
-					text: "button 6",
-					tooltip: "tooltip 6"
-				})
-			]
-		});
+	QUnit.test("Text-only SegmentedButtonItem's ARIA", function (assert) {
+		var oItem = new SegmentedButtonItem({ text: "Something" }),
+			oSegmentedButton = new SegmentedButton({ items: oItem }),
+			oItemDomRef;
 
-		// System under Test
 		oSegmentedButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
-		var aButtons = oSegmentedButton.getButtons();
 
-		// Assert
-		assert.strictEqual(aButtons[0].$().attr("aria-label"),
-				IconPool.getIconInfo("sap-icon://home").name + " button 1",
-				"Attribute aria-label on the first button should contain the generic icon name and the text of the button");
+		oItemDomRef = oItem.getDomRef();
+		assert.notOk(oItemDomRef.getAttribute("title"), "Default tooltip isn't added");
+		assert.notOk(oItemDomRef.getAttribute("aria-label"), "aria-label isn't added");
 
-		assert.strictEqual(aButtons[1].$().attr("aria-label"),
-				IconPool.getIconInfo("sap-icon://attachment").name,
-				"Attribute aria-label on the second button should contain only the icon generic name");
+		oSegmentedButton.destroy();
+	});
 
-		assert.strictEqual(aButtons[1].$().attr("title"),
-				IconPool.getIconInfo("sap-icon://attachment").name,
-				"Tooltip on the second button should contain only the icon generic name");
+	QUnit.test("Icon-only SegmentedButtonItem's ARIA", function (assert) {
+		var oDefaultItem = new SegmentedButtonItem({
+				icon: "sap-icon://list"
+			}),
+			oItemWithTooltip = new SegmentedButtonItem({
+				icon: "sap-icon://list",
+				tooltip: "Something"
+			}),
+			oSegmentedButton = new SegmentedButton({
+				items: [
+					oDefaultItem,
+					oItemWithTooltip
+				]
+			}),
+			oDefaultItemDomRef,
+			oItemWithTooltipDomRef;
 
-		assert.strictEqual(aButtons[2].$().attr("aria-label"), undefined,
-				"If we don't have a SAP Icon we don't need the aria-label attribute");
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(aButtons[3].$().attr("aria-label"), undefined,
-				"Don't put aria-label for text and tooltip");
+		oDefaultItemDomRef = oDefaultItem.getDomRef();
+		assert.strictEqual(oDefaultItemDomRef.getAttribute("title"), "list", "Icon's name serves as the tooltip");
+		assert.strictEqual(oDefaultItemDomRef.getAttribute("aria-label"), "list", "Icon's name is added in aria-label");
 
-		assert.strictEqual(aButtons[3].$().attr("title"), "tooltip 4",
-				"For text and tooltip use the later for title attr");
+		oItemWithTooltipDomRef = oItemWithTooltip.getDomRef();
+		assert.strictEqual(oItemWithTooltipDomRef.getAttribute("title"), "Something", "User-provided tooltip is prioritized over icon's name ");
+		assert.strictEqual(oItemWithTooltipDomRef.getAttribute("aria-label"), "list", "Icon's name is added in aria-label");
 
-		assert.strictEqual(aButtons[4].$().attr("aria-label"), undefined,
-				"Don't use aria-label with icon + tooltip");
+		oSegmentedButton.destroy();
+	});
 
-		assert.strictEqual(aButtons[4].$().attr("title"), "tooltip 5",
-				"Read the title attr when icon + tooltip are used");
+	QUnit.test("Combined(text + icon) SegmentedButtonItem's ARIA", function (assert) {
+		var oItem = new SegmentedButtonItem({ text: "Something", icon: "sap-icon://list" }),
+			oSegmentedButton = new SegmentedButton({ items: oItem }),
+			oItemDomRef;
 
-		assert.strictEqual(aButtons[5].$().attr("aria-label"), undefined,
-				"Don't use aria-label with icon, tooltip and text");
+		oSegmentedButton.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(aButtons[5].$().attr("title"), "tooltip 6",
-				"Read the title attr when icon, tooltip and text are used");
+		oItemDomRef = oItem.getDomRef();
+		assert.notOk(oItemDomRef.getAttribute("title"), "Default tooltip isn't added");
+		assert.notOk(oItemDomRef.getAttribute("aria-label"), "aria-label isn't added");
 
-		// Cleanup
 		oSegmentedButton.destroy();
 	});
 
