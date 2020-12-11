@@ -160,6 +160,10 @@ sap.ui.define(
                                     oSomeInstance._oP13nFilter,
                                     "A member field is added."
                                 );
+                                assert.ok(
+                                    oSomeInstance.getInbuiltFilter(),
+                                    "An AdaptationFilterBar instance should be provided"
+                                );
                                 done();
                             });
                     });

@@ -583,7 +583,7 @@ sap.ui.define([
 	QUnit.test("Use bound label property for p13n", function(assert){
 		var done = assert.async();
 
-		this.oParent._oP13nFilter.setP13nModel(new JSONModel({
+		this.oParent.getInbuiltFilter().setP13nModel(new JSONModel({
 			items: [
 				{
 					name: "key1"
@@ -596,7 +596,7 @@ sap.ui.define([
 
 		this.oParent.initControlDelegate().then(function(){
 
-			this.oParent._oP13nFilter.createFilterFields().then(function(oAdaptationFilterBar){
+			this.oParent.getInbuiltFilter().createFilterFields().then(function(oAdaptationFilterBar){
 
 				var aFilterItems = oAdaptationFilterBar.getFilterItems();
 				assert.ok(oAdaptationFilterBar.getModel("$custom"), "Custom model provided in AdaptationFilterBar");
