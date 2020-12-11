@@ -4,8 +4,9 @@ sap.ui.define("sap/ui/core/qunit/Hyphenation.qunit", [
     "sap/ui/core/hyphenation/Hyphenation",
     "sap/ui/core/hyphenation/HyphenationTestingWords",
     "sap/base/Log",
+    "sap/ui/Device",
     "sap/ui/qunit/utils/createAndAppendDiv"
-], function(Hyphenation, HyphenationTestingWords, Log, createAndAppendDiv) {
+], function(Hyphenation, HyphenationTestingWords, Log, Device, createAndAppendDiv) {
     "use strict";
 
 var sSingleLangTest = "de",
@@ -126,6 +127,11 @@ var sSingleLangTest = "de",
 
         oTestDiv.lang = sCurrentLang;
         oTestDiv.innerText = HyphenationTestingWords[sCurrentLang];
+
+        if (Device.os.macintosh && Device.browser.chrome) {
+            return oTestDiv.offsetHeight > 24; // currently chrome on macOS partially supports native hyphenation, but it doesn't hyphenate one word more than once
+        }
+
         return oTestDiv.offsetHeight > 12;
     }
 
