@@ -2507,37 +2507,54 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getHttpHeaders", function (assert) {
-		var oModel = this.createModel(),
-			mHeaders;
+		var oModel = this.createModel();
 
-		// SAP-ContextId is the only header not changeable via #changeHttpHeaders,
-		// that is set to oModel.mHeaders in our coding
+		// code under test
+		assert.deepEqual(oModel.getHttpHeaders(), {"Accept-Language" : "ab-CD"});
+
+		// code under test
+		assert.deepEqual(oModel.getHttpHeaders(true), {"Accept-Language" : "ab-CD"});
+
+		// code under test
+		assert.notStrictEqual(oModel.getHttpHeaders(), oModel.getHttpHeaders(), "no copy on write");
+
+		assert.deepEqual(oModel.mHeaders, {"Accept-Language" : "ab-CD"},
+			"model's headers unchanged");
+
+		// SAP-ContextId is the only header not changeable via #changeHttpHeaders that is set to
+		// oModel.mHeaders in our coding
 		oModel.mHeaders["SAP-ContextId"] = "123";
 		// X-CSRF-Token header is set to null if the response does not contain this header
 		oModel.mHeaders["X-CSRF-Token"] = null;
 
 		// code under test
-		mHeaders = oModel.getHttpHeaders();
+		assert.deepEqual(oModel.getHttpHeaders(), {"Accept-Language" : "ab-CD"});
 
-		assert.deepEqual(mHeaders, {"Accept-Language" : "ab-CD"});
+		// code under test
+		assert.deepEqual(oModel.getHttpHeaders(true),
+			{"Accept-Language" : "ab-CD", "SAP-ContextId" : "123"});
+
 		assert.deepEqual(oModel.mHeaders, {
 			"Accept-Language" : "ab-CD",
 			"SAP-ContextId" : "123",
 			"X-CSRF-Token" : null
-		});
-		assert.notStrictEqual(mHeaders, oModel.mHeaders);
+		}, "model's headers unchanged");
 
 		oModel.mHeaders["X-CSRF-Token"] = "xyz";
 
 		// code under test
-		mHeaders = oModel.getHttpHeaders();
+		assert.deepEqual(oModel.getHttpHeaders(),
+			{"Accept-Language" : "ab-CD", "X-CSRF-Token" : "xyz"});
 
-		assert.deepEqual(mHeaders, {"Accept-Language" : "ab-CD", "X-CSRF-Token" : "xyz"});
+		// code under test
+		assert.deepEqual(oModel.getHttpHeaders(true),
+			{"Accept-Language" : "ab-CD", "SAP-ContextId" : "123", "X-CSRF-Token" : "xyz"});
+
 		assert.deepEqual(oModel.mHeaders, {
 			"Accept-Language" : "ab-CD",
 			"SAP-ContextId" : "123",
 			"X-CSRF-Token" : "xyz"
-		});
+		}, "model's headers unchanged");
 	});
 
 	//*********************************************************************************************
