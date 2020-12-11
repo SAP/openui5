@@ -41,7 +41,18 @@ sap.ui.define(['./library'],
 			this.renderToolbar(oRm, oControl.getAggregation("_toolbar"));
 			this.renderBreadcrumbs(oRm, oControl.getAggregation("_breadcrumbs"));
 			this.renderChart(oRm, oControl.getAggregation("_chart"));
+			this.renderNoDataStruct(oRm, oControl.getAggregation("_noDataStruct"));
 			oRm.close("div");
+		};
+
+		ChartRenderer.renderNoDataStruct = function(oRm, oNoDataStruct) {
+			if (oNoDataStruct) {
+				oRm.openStart("div");
+				oRm.class("sapUiFixFlexFlexibleContainer");
+				oRm.openEnd();
+				oRm.renderControl(oNoDataStruct);
+				oRm.close("div");
+			}
 		};
 
 		ChartRenderer.renderToolbar = function(oRm, oToolbar) {

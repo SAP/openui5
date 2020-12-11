@@ -41,7 +41,7 @@ sap.ui.define([
 		 *
 		 * Creates a new toolbar for the mdc.Chart based on actions
 		 */
-		createToolbar: function(oChart, aUserActions) {
+		createToolbar: function(oChart, aUserActions, bInitNotBound) {
 			aUserActions = aUserActions || [];
 
 			if (!oChart.getAggregation("_toolbar")) {
@@ -56,8 +56,90 @@ sap.ui.define([
 				});
 
 				oChart.setAggregation("_toolbar", oToolbar);
-				this.updateToolbar(oChart);
+
+				if (bInitNotBound){
+					this.initializeToolbarNotBound(oChart);
+				} else {
+					this.updateToolbar(oChart);
+				}
 			}
+		},
+
+		initializeToolbarNotBound: function(oChart) {
+			var oToolbar = oChart.getAggregation("_toolbar");
+
+			if (!oToolbar) {
+				return;
+			}
+
+			if (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.ZoomInOut)) {
+				var oZoomInButton,
+					oZoomOutButton;
+
+
+				oZoomInButton = new OverflowButton({
+					tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
+					icon: "sap-icon://zoom-in",
+					enabled: false
+				});
+
+				oZoomOutButton = new OverflowButton({
+					tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"),
+					icon: "sap-icon://zoom-out",
+					enabled: false
+				});
+
+				oToolbar.addEnd(oZoomInButton);
+				oToolbar.addEnd(oZoomOutButton);
+			}
+
+
+			if (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.DrillDownUp) < 0) {
+				oChart._oDrillDownBtn = new OverflowButton(oChart.getId() + "-drillDown", {
+					icon: "sap-icon://drill-down",
+					enabled: false
+				});
+				oToolbar.addEnd(oChart._oDrillDownBtn);
+			}
+
+			if (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.Legend) < 0) {
+				oToolbar.addEnd(new OverflowToggleButton({
+					type: "Transparent",
+					text: MDCRb.getText("chart.LEGENDBTN_TEXT"),
+					icon: "sap-icon://legend",
+					enabled: false,
+					pressed: false
+				}));
+			}
+
+			//Check p13n mode property on the chart and enable only desired buttons
+			var aP13nMode = oChart.getP13nMode() || [];
+
+			if (aP13nMode.indexOf("Item") > -1) {
+				oToolbar.addEnd(new OverflowButton(oChart.getId() + "-chart_settings", {
+					icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
+					ariaHasPopup: HasPopup.ListBox,
+					enabled: false
+				}));
+			}
+
+			if (aP13nMode.indexOf("Sort") > -1) {
+				oToolbar.addEnd(new OverflowButton(oChart.getId() + "-sort_settings", {
+					icon: "sap-icon://sort",
+					ariaHasPopup: HasPopup.ListBox,
+					enabled: false
+				}));
+			}
+
+			if (aP13nMode.indexOf("Type") > -1) {
+				oToolbar.addEnd(new OverflowButton({
+					id: oChart.getId() + "-btnChartType",
+					icon: 'sap-icon://vertical-bar-chart',
+					enabled: false
+				}));
+			}
+
+			oToolbar.setEnabled(false);
 		},
 
 		/**
@@ -77,6 +159,7 @@ sap.ui.define([
 				var oInnerChart = oChart.getAggregation("_chart"),
 					oZoomInButton,
 					oZoomOutButton;
+
 
 				oZoomInButton = new OverflowButton({
 					tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
@@ -168,6 +251,8 @@ sap.ui.define([
 			if (aP13nMode.indexOf("Type") > -1) {
 				oToolbar.addEnd(new ChartTypeButton(oChart));
 			}
+
+			oToolbar.setEnabled(true);
 		},
 
 		handleInnerChartRenderCompleted: function(oZoomInfo, oZoomInButton, oZoomOutButton) {
