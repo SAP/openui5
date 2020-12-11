@@ -1131,6 +1131,11 @@ sap.ui.define([
 			this._oSelectionOrigin = oFocusedToken;
 		}
 
+		if (oTargetToken && this.hasOneTruncatedToken()) {
+			this._handleNMoreIndicatorPress();
+			return;
+		}
+
 		iFocusIndex = this.indexOfToken(oFocusedToken);
 		iIndex = this.indexOfToken(oTargetToken);
 		iMinIndex = Math.min(iFocusIndex, iIndex);
@@ -1427,8 +1432,7 @@ sap.ui.define([
 		}
 
 		bFireIndicatorHandler = !this.hasStyleClass("sapMTokenizerIndicatorDisabled") &&
-			(oEvent.target === this.getFocusDomRef()
-				|| oEvent.target.classList.contains("sapMTokenizerIndicator"));
+			oEvent.target.classList.contains("sapMTokenizerIndicator");
 
 		if (bFireIndicatorHandler) {
 			this._handleNMoreIndicatorPress();
