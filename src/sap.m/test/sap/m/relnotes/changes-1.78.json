@@ -227,5 +227,32 @@
         ]
       }
     ]
+  },
+  "1.78.14": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "cf87b5b562054496d293de92a587fed131c20541",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Autocapitalization rendering tests are now fixed in FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080404811"
+          }
+        ]
+      },
+      {
+        "id": "de4611a760fe400304c90bc7e47aa57d31ccbccf",
+        "type": "FIX",
+        "text": " sap.m.TitleAlignmentMixin: onThemeChange timing issue",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070497850"
+          }
+        ]
+      }
+    ]
   }
 }
