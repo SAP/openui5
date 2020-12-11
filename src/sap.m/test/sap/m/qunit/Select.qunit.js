@@ -10823,4 +10823,25 @@ sap.ui.define([
 
 			});
 
+		QUnit.module("IconOnly Select");
+
+		QUnit.test("When Select is of iconOnly type, it should have its autoAdjustWidth property set to true.", function (assert) {
+
+			// system under test
+			var oSelect = new Select({
+				type: "IconOnly",
+				icon: "sap-icon://search"
+			});
+
+			// Arrange
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+			// assert
+			assert.equal(oSelect.$().hasClass("sapMSltAutoAdjustedWidth"), true);
+
+			// cleanup
+			oSelect.destroy();
+		});
+
 	});
