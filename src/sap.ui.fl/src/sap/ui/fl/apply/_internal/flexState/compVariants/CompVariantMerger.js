@@ -35,34 +35,45 @@ sap.ui.define([
 		return mChanges;
 	}
 
-	function compareTitle(oVariant1, oVariant2) {
-		var sFirstTitle = oVariant1.getText("variantName");
-		var sSecondTitle = oVariant2.getText("variantName");
-		var sFirstTitleUpperCase = sFirstTitle.toUpperCase();
-		var sSecondTitleUpperCase = sSecondTitle.toUpperCase();
-		if (sFirstTitleUpperCase === sSecondTitleUpperCase) {
-			if (sFirstTitle === sSecondTitle) {
-				return 0;
-			}
-			if (sFirstTitle < sSecondTitle) {
-				return -1;
-			}
-			if (sFirstTitle > sSecondTitle) {
-				return 1;
-			}
-		}
-		if (sFirstTitleUpperCase < sSecondTitleUpperCase) {
-			return -1;
-		}
-		if (sFirstTitleUpperCase > sSecondTitleUpperCase) {
-			return 1;
-		}
-	}
-
 	function logNoChangeHandler(oVariant, oChange) {
 		Log.error("No change handler for change with the ID '" + oChange.getId() +
 			"' and type '" + oChange.getChangeType() + "' defined.\n" +
 			"The variant '" + oVariant.getId() + "'was not modified'");
+	}
+
+	function createVariant(sPersistencyKey, oVariantInput) {
+		var oVariantData = {
+			fileName: oVariantInput.id || "*standard*",
+			content: oVariantInput.content || {},
+			texts: {
+				variantName: {
+					value: oVariantInput.name || ""
+				}
+			},
+			selector: {
+				persistencyKey: sPersistencyKey
+			}
+		};
+
+		if (oVariantInput.favorite !== undefined) {
+			oVariantData.content.favorite = oVariantInput.favorite;
+		}
+
+		if (oVariantInput.executeOnSelect !== undefined) {
+			oVariantData.content.executeOnSelect = oVariantInput.executeOnSelect;
+		}
+
+		return new Variant(oVariantData);
+	}
+
+	function applyChangesOnVariant(mChanges, oVariant) {
+		var sVariantId = oVariant.getId();
+		if (mChanges[sVariantId]) {
+			mChanges[sVariantId].forEach(function (oChange) {
+				var oChangeHandler = mChangeHandlers[oChange.getChangeType()] || logNoChangeHandler;
+				oChangeHandler(oVariant, oChange);
+			});
+		}
 	}
 
 	/**
@@ -76,45 +87,26 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return {
-		merge: function (mCompVariants, sStandardVariantTitle, aVariants) {
+		merge: function (sPersistencyKey, mCompVariants, oStandardVariantInput, aVariants) {
 			aVariants = aVariants || [];
-			aVariants = aVariants.map(function (oVariant) {
-				return new Variant(oVariant);
-			});
+			aVariants = aVariants.map(createVariant.bind(undefined, sPersistencyKey));
 			aVariants = aVariants.concat(mCompVariants.variants);
-			aVariants.sort(compareTitle);
+			var mChanges = getChangesMappedByVariant(mCompVariants);
+			aVariants.forEach(applyChangesOnVariant.bind(undefined, mChanges));
 
 			if (mCompVariants.standardVariant) {
-				aVariants.splice(0, 0, new Variant(mCompVariants.standardVariant));
-			} else {
-				var oStandardVariant = new Variant({
-					fileName: "*standard*",
-					content: {
-						favorite: true
-					},
-					texts: {
-						variantName: {
-							value: sStandardVariantTitle
-						}
-					}
-				});
-				aVariants.splice(0, 0, oStandardVariant);
+				oStandardVariantInput.content = oStandardVariantInput.content || {};
+				oStandardVariantInput.content.executeOnSelect = mCompVariants.standardVariant.getContent().executeOnSelect;
 			}
 
+			oStandardVariantInput.favorite = true;
+			var oStandardVariant = createVariant(sPersistencyKey, oStandardVariantInput);
+			applyChangesOnVariant(mChanges, oStandardVariant);
 
-			var mChanges = getChangesMappedByVariant(mCompVariants);
-
-			aVariants.forEach(function (oVariant) {
-				var sVariantId = oVariant.getId();
-				if (mChanges[sVariantId]) {
-					mChanges[sVariantId].forEach(function (oChange) {
-						var oChangeHandler = mChangeHandlers[oChange.getChangeType()] || logNoChangeHandler;
-						oChangeHandler(oVariant, oChange);
-					});
-				}
-			});
-
-			return aVariants;
+			return {
+				standardVariant: oStandardVariant,
+				variants: aVariants
+			};
 		}
 	};
 });
