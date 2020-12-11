@@ -32,7 +32,7 @@ sap.ui.define([
 	MessageToast,
 	Dialog,
 	Button,
-	library,
+	mLibrary,
 	FormattedText,
 	GridContainerItemLayoutData,
 	Core,
@@ -45,7 +45,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var ButtonType = library.ButtonType;
+	var ButtonType = mLibrary.ButtonType;
 
 	return BaseController.extend("sap.ui.demo.cardExplorer.controller.ExploreSamples", {
 
@@ -580,7 +580,7 @@ sap.ui.define([
 					type: ButtonType.Emphasized,
 					text: "Navigate",
 					press: function () {
-						window.open(mParameters.url, "_blank");
+						mLibrary.URLHelper.redirect(mParameters.url, true);
 						oDialog.close();
 					}
 				}),
