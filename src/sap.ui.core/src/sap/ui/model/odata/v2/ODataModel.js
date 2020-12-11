@@ -80,8 +80,28 @@ sap.ui.define([
 	 *   Set this array to make custom response headers bindable via the entity's
 	 *   "__metadata/headers" property
 	 * @param {boolean} [mParameters.canonicalRequests=false]
-	 *   When setting this flag to <code>true</code> the model tries to calculate a canonical url to
-	 *   the data.
+	 *   Whether the model tries to calculate canonical URLs to request the data.
+	 *
+	 *   <b>For example:</b> An application displays the details of a sales order in a form with an
+	 *   absolute binding path <code>/SalesOrderSet("1")</code>. The form embeds a table for the
+	 *   sales order line items with a relative binding path <code>ToLineItems</code>. If the user
+	 *   selects a sales order line item (e.g. Item "10"), the details of this sales order line item
+	 *   are displayed in another form, which also contains a table for the sales order line item's
+	 *   schedules with a relative binding path <code>ToSchedules</code>.
+	 *
+	 *   If the <code>canonicalRequests</code> parameter has the default value <code>false</code>,
+	 *   then the OData model would request the data for the sales order line item's details form
+	 *   with the following requests:<pre>
+	 *   GET /&lt;serviceUrl&gt;/SalesOrderSet("1")/ToLineItems(SalesOrderID="1",ItemPosition="10")
+	 *   GET /&lt;serviceUrl&gt;/SalesOrderSet("1")/ToLineItems(SalesOrderID="1",ItemPosition="10")/ToSchedules</pre>
+	 *
+	 *   Some back-end implementations do not support more than one navigation property in the
+	 *   resource URL. In this case, set the <code>canonicalRequests</code> parameter to
+	 *   <code>true</code>. The OData model then converts the long resource URLs to canonical URLs
+	 *   and requests the data for the sales order line item's details form with the following
+	 *   requests:<pre>
+	 *   GET /&lt;serviceUrl&gt;/SalesOrderLineItemsSet(SalesOrderID="1",ItemPosition="10")
+	 *   GET /&lt;serviceUrl&gt;/SalesOrderLineItemsSet(SalesOrderID="1",ItemPosition="10")/ToSchedules</pre>
 	 * @param {sap.ui.model.BindingMode} [mParameters.defaultBindingMode=OneWay]
 	 *   Sets the default binding mode for the model
 	 * @param {sap.ui.model.odata.CountMode} [mParameters.defaultCountMode=Request]
@@ -7251,10 +7271,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Check whether the canonical requests calculation is switched on.
-	 * See 'canonicalRequests' parameter of the model constructor.
+	 * Whether the canonical requests calculation is switched on, see the
+	 * <code>canonicalRequests</code> parameter of the model constructor.
 	 *
-	 * @return {boolean} Canonical requests calculation switched on/off
+	 * @return {boolean} Whether the canonical requests calculation is switched on
 	 *
 	 * @public
 	 */
