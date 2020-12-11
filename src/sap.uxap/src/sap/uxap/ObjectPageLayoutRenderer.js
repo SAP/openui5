@@ -34,8 +34,7 @@ sap.ui.define(["sap/ui/Device"],
 				bHeaderLabelSet = oLandmarkInfo && oLandmarkInfo.getHeaderLabel(),
 				bRootRoleSet = oLandmarkInfo && oLandmarkInfo.getRootRole(),
 				bRootLabelSet = oLandmarkInfo && oLandmarkInfo.getRootLabel(),
-				bNavigationRoleSet = oLandmarkInfo && oLandmarkInfo.getNavigationRole(),
-				bNavigationLabelSet = oLandmarkInfo && oLandmarkInfo.getNavigationLabel();
+				bNavigationRoleSet = oLandmarkInfo && oLandmarkInfo.getNavigationRole();
 
 			if (oControl.getShowAnchorBar() && oControl._getInternalAnchorBarVisible()) {
 				oAnchorBar = oControl.getAggregation("_anchorBar");
@@ -101,10 +100,7 @@ sap.ui.define(["sap/ui/Device"],
 			if (!bNavigationRoleSet) {
 				oRm.attr("role", "navigation");
 			}
-			if (!bNavigationLabelSet) {
-				// aria-roledescription is still not read out by some screen readers, so aria-label is set instead
-				oRm.attr("aria-label", oRb.getText("NAVIGATION_ROLE_DESCRIPTION"));
-			}
+			oRm.attr("aria-roledescription", oRb.getText("NAVIGATION_ROLE_DESCRIPTION"));
 
 			if (!oControl._bHeaderInTitleArea) {
 				oRm.attr("aria-hidden", "true");
@@ -151,11 +147,7 @@ sap.ui.define(["sap/ui/Device"],
 			if (!bNavigationRoleSet) {
 				oRm.attr("role", "navigation");
 			}
-
-			if (!bNavigationLabelSet) {
-				// aria-roledescription is still not read out by some screen readers, so aria-label is set instead
-				oRm.attr("aria-label", oRb.getText("NAVIGATION_ROLE_DESCRIPTION"));
-			}
+			oRm.attr("aria-roledescription", oRb.getText("NAVIGATION_ROLE_DESCRIPTION"));
 
 			oRm.class("sapUxAPObjectPageNavigation")
 				.class("ui-helper-clearfix")
