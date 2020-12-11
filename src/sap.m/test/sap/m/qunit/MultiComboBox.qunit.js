@@ -26,6 +26,7 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/m/inputUtils/inputsDefaultFilter",
 	"sap/m/inputUtils/ListHelpers",
+	"sap/m/inputUtils/itemsVisibilityHandler",
 	"sap/ui/core/SeparatorItem",
 	"sap/ui/core/InvisibleText",
 	"sap/m/library"
@@ -55,6 +56,7 @@ sap.ui.define([
 	containsOrEquals,
 	inputsDefaultFilter,
 	ListHelpers,
+	itemsVisibilityHandler,
 	SeparatorItem,
 	InvisibleText,
 	mLibrary
@@ -6684,7 +6686,7 @@ sap.ui.define([
 		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "B", items: this.oMultiComboBox.getItems() });
 
 		assert.ok(fnFilterSpy.called, "Filter should be called");
-		assert.strictEqual(aFilteredItems.length, 0, "Zero items should be filtered");
+		assert.strictEqual(aFilteredItems.items.length, 0, "Zero items should be filtered");
 	});
 
 	QUnit.test("Setting a valid filter should apply on items and their text", function (assert) {
@@ -6692,7 +6694,7 @@ sap.ui.define([
 		this.oMultiComboBox.addItem(new Item({ text: "Bbbb" }));
 
 		// act
-		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "B", items: this.oMultiComboBox.getItems() });
+		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "B", items: this.oMultiComboBox.getItems() }).items;
 
 		// assert
 		assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
@@ -6725,15 +6727,19 @@ sap.ui.define([
 				})
 			]
 		});
-		this.oMultiComboBox.syncPickerContent();
 
+		// Act
+		this.oMultiComboBox.syncPickerContent();
 		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "B", items: this.oMultiComboBox.getItems() });
-		assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
+		itemsVisibilityHandler(this.oMultiComboBox.getItems(), aFilteredItems);
+
+		// Assert
+		assert.strictEqual(aFilteredItems.items.length, 2, "Two items should be filtered");
 		assert.strictEqual(this.oMultiComboBox.getVisibleItems().length, 4, "There are two visible items with their group names");
 	});
 
 	QUnit.test("Default filtering should be per term", function (assert) {
-		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "K", items: this.oMultiComboBox.getItems() });
+		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "K", items: this.oMultiComboBox.getItems() }).items;
 
 		assert.strictEqual(aFilteredItems.length, 1, "One item should be filtered");
 		assert.strictEqual(aFilteredItems[0].getText(), "Hong Kong", "Hong Kong item is matched by 'K'");
@@ -7474,7 +7480,7 @@ sap.ui.define([
 
 	QUnit.test("The groups names are not filtered", function(assert) {
 		this.oMultiComboBox.syncPickerContent();
-		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "A", items: this.oMultiComboBox.getItems() });
+		var aFilteredItems = this.oMultiComboBox.filterItems({ value: "A", items: this.oMultiComboBox.getItems() }).items;
 		assert.strictEqual(aFilteredItems.length, 0, "There is no filtered items");
 	});
 
@@ -7864,10 +7870,10 @@ sap.ui.define([
 		this.multiComboBox.syncPickerContent();
 		// act
 		var bMatched = inputsDefaultFilter("서", this.multiComboBox.getItems()[0]);
-		var aFilteredItems = this.multiComboBox.filterItems({ value: "서", items: this.multiComboBox.getItems() });
+		var aFilteredItems = this.multiComboBox.filterItems({value: "서", items: this.multiComboBox.getItems()}).items;
 
 		// assert
-	assert.ok(bMatched, "'inputsDefaultFilter' should match composite characters");
+		assert.ok(bMatched, "'inputsDefaultFilter' should match composite characters");
 		assert.strictEqual(aFilteredItems.length, 2, "Two items should be filtered");
 		assert.strictEqual(aFilteredItems[0].getText(), "서비스 ID", "Text should start with 서");
 	});

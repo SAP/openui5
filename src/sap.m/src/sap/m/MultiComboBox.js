@@ -26,6 +26,8 @@ sap.ui.define([
 	"sap/m/inputUtils/inputsDefaultFilter",
 	"sap/m/inputUtils/typeAhead",
 	"sap/m/inputUtils/ListHelpers",
+	"sap/m/inputUtils/filterItems",
+	"sap/m/inputUtils/itemsVisibilityHandler",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
@@ -62,6 +64,8 @@ function(
 	inputsDefaultFilter,
 	typeAhead,
 	ListHelpers,
+	filterItems,
+	itemsVisibilityHandler,
 	KeyCodes,
 	deepEqual,
 	assert,
@@ -944,49 +948,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.filterItems = function (mOptions) {
-		var fnFilter = this.fnFilter ? this.fnFilter : inputsDefaultFilter;
-		var aFilteredItems = [];
-		var bGrouped = false;
-		var oGroups = [];
-		var aItems = mOptions.items && ListHelpers.getEnabledItems(mOptions.items);
-
-		aItems.forEach(function(oItem) {
-
-			if (oItem.isA("sap.ui.core.SeparatorItem")) {
-				oGroups.push({
-					separator: oItem
-				});
-
-				ListHelpers.getListItem(oItem).setVisible(false);
-
-				bGrouped = true;
-
-				return;
-			}
-
-			var bMatch = !!fnFilter(mOptions.value, oItem);
-
-			if (mOptions.value === "") {
-				bMatch = true;
-				if (!this.bOpenedByKeyboardOrButton && !this.isPickerDialog()) {
-					// prevent filtering of the picker if it will be closed
-					return;
-				}
-			}
-
-			if (bGrouped && bMatch) {
-				ListHelpers.getListItem(oGroups[oGroups.length - 1].separator).setVisible(true);
-			}
-
-			var oListItem = ListHelpers.getListItem(oItem);
-
-			if (oListItem) {
-				oListItem.setVisible(bMatch);
-				bMatch && aFilteredItems.push(oItem);
-			}
-		}, this);
-
-		return aFilteredItems;
+		return filterItems(this, mOptions.items, mOptions.value, true, false, this.fnFilter || inputsDefaultFilter);
 	};
 
 	/**
@@ -1466,7 +1428,7 @@ function(
 				}
 			}, this);
 		} else {
-			this.filterItems({ value: sValue, items: aItems });
+			itemsVisibilityHandler(this.getItems(), this.filterItems({value: sValue, items: aItems}));
 		}
 	};
 
@@ -3185,7 +3147,7 @@ function(
 				oSelectedButton.setPressed(false);
 			}
 		}
-		this.filterItems({ value: sValue, items: aItemsToCheck });
+		itemsVisibilityHandler(this.getItems(), this.filterItems({ value: sValue, items: aItemsToCheck }));
 
 		this._sOldInput = sValue;
 
@@ -3621,7 +3583,7 @@ function(
 	 */
 	MultiComboBox.prototype.applyShowItemsFilters = function () {
 		this.syncPickerContent();
-		this.filterItems({value: this.getValue() || "_", items: this.getItems()});
+		itemsVisibilityHandler(this.getItems(), this.filterItems({value: this.getValue() || "_", items: this.getItems()}));
 	};
 
 	/**
@@ -3640,7 +3602,7 @@ function(
 			this.syncPickerContent();
 			// Get filtered items and open the popover only when the items array is not empty.
 			this.setFilterFunction(fnFilter || function () { return true; });
-			bHasItemsAfterFiltering = this.filterItems({value: this.getValue() || "_", items: this.getItems()}).length > 0;
+			bHasItemsAfterFiltering = this.filterItems({value: this.getValue() || "_", items: this.getItems()}).items.length > 0;
 			this.setFilterFunction(fnFilterRestore);
 		}
 

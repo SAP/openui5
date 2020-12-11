@@ -35,7 +35,6 @@ sap.ui.define([
 					header: oItem,
 					visible: false
 				});
-				aFilteredItems.push(oItem);
 			} else if (!bFilterItems || fnFilter.call(oInput, sValue, oItem, bFilterSecondaryValues)) {
 				if (aGroups.length) {
 					aGroups[aGroups.length - 1].visible = true;

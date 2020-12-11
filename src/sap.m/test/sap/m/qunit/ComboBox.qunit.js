@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/inputUtils/inputsDefaultFilter",
 	"sap/m/inputUtils/ListHelpers",
+	"sap/m/inputUtils/itemsVisibilityHandler",
 	"sap/ui/Device",
 	"sap/m/InputBase",
 	'sap/ui/core/ValueStateSupport',
@@ -68,6 +69,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	inputsDefaultFilter,
 	ListHelpers,
+	itemsVisibilityHandler,
 	Device,
 	InputBase,
 	ValueStateSupport,
@@ -12265,7 +12267,7 @@ sap.ui.define([
 		var aItems;
 
 		// act
-		this.oComboBox.handleItemsVisibility(this.oComboBox.filterItems("item1"));
+		itemsVisibilityHandler(this.oComboBox.getItems(), this.oComboBox.filterItems("item1"));
 
 		aItems = this.oComboBox.getVisibleItems();
 
