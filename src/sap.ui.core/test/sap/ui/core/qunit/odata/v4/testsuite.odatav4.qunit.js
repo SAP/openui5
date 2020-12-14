@@ -65,6 +65,11 @@ sap.ui.define(function () {
 				module : ["sap/ui/core/sample/odata/v4/DataAggregation/Opa.qunit"],
 				realOData : false // requires stable test data
 			},
+			"OPA.FieldGroups" : {
+				autostart : false,
+				module : ["sap/ui/core/sample/odata/v4/FieldGroups/Opa.qunit"],
+				realOData : false // requires stable test data
+			},
 			"OPA.FlexibleColumnLayout" : {
 				autostart : false,
 				module : ["sap/ui/core/sample/odata/v4/FlexibleColumnLayout/Opa.qunit"],

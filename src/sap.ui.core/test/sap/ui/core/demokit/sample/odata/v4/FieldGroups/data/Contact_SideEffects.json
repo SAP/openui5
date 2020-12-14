@@ -1,0 +1,6 @@
+{
+	"@odata.context" : "$metadata#ContactList(ContactGUID,EmailAddress,FirstName,LastName)/$entity",
+	"@odata.metadataEtag" : "W/\"20201124133433\"",
+	"FirstName" : "Karl*",
+	"LastName" : "Müller*"
+}
