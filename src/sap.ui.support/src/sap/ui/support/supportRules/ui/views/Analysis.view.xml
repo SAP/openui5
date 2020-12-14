@@ -41,30 +41,38 @@
 							</m:contentMiddle>
 						</m:Bar>
 					</m:headerContent>
-						<m:subHeader>
+					<m:subHeader>
 							<m:Bar>
 								<m:contentLeft>
-									<m:Toolbar width="100%">
-										<m:Label text="Rule Preset:" labelFor="presetVariant">
+									<m:HBox renderType="Bare" width="100%">
+										<m:Label text="Rule Preset:" labelFor="presetVariant" class="presetVariantLabel">
 											<m:layoutData>
-												<m:ToolbarLayoutData shrinkable="false" />
+												<m:FlexItemData shrinkFactor="0" />
 											</m:layoutData>
 										</m:Label>
-										<m:Toolbar id="presetVariant" class="sapUiSupportToolVariantCont" width="100%">
+										<m:HBox id="presetVariant" class="sapUiSupportToolVariantCont" renderType="Bare">
+											<m:layoutData>
+												<m:FlexItemData growFactor="1" minWidth="0"/>
+											</m:layoutData>
 											<m:FormattedText
 												id="presetVariantTxt"
 												class="sapUiSupportToolVariantTxt"
 												htmlText="{= ${/selectionPresetsCurrent/isModified} ?
 																'&lt;em&gt;' + ${/selectionPresetsCurrent/title} + '&lt;/em&gt;' :
 																${/selectionPresetsCurrent/title} }"
-												tooltip="Select a Rule Preset"/>
+												tooltip="Select a Rule Preset">
+											</m:FormattedText>
 											<m:Button
 												id="presetVariantBtn"
 												icon="sap-icon://slim-arrow-down"
 												class="sapUiSupportToolVariantBtn"
-												tooltip="Select a Rule Preset"/>
-										</m:Toolbar>
-									</m:Toolbar>
+												tooltip="Select a Rule Preset">
+												<m:layoutData>
+													<m:FlexItemData shrinkFactor="0" />
+												</m:layoutData>
+											</m:Button>
+										</m:HBox>
+									</m:HBox>
 								</m:contentLeft>
 								<m:contentRight>
 									<m:Button id="createRuleBtn" text="Create Rule" icon="sap-icon://add" press="createNewRulePress"/>
