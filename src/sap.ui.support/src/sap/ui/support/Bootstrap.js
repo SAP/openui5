@@ -3,9 +3,11 @@
  */
 
 // Provides control sap.ui.support.Bootstrap.
-sap.ui.define(["jquery.sap.global"],
-	function (jQuery) {
+sap.ui.define(["jquery.sap.global", "sap/base/Log"],
+	function (jQuery, Log) {
 	"use strict";
+
+	Log.setLogEntriesLimit(Infinity);
 
 	var Bootstrap = {
 		initSupportRules: function (aSettings, oDelegates) {
