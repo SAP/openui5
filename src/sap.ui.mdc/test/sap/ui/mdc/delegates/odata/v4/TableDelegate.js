@@ -2,62 +2,74 @@
  * ! ${copyright}
  */
 
-// ---------------------------------------------------------------------------------------
-// Helper class used to help create content in the table/column and fill relevant metadata
-// ---------------------------------------------------------------------------------------
-// ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/ui/mdc/TableDelegate", 'sap/ui/core/Core', 'sap/ui/mdc/util/FilterUtil', 'sap/ui/mdc/odata/v4/util/DelegateUtil', 'sap/ui/mdc/odata/v4/FilterBarDelegate', './ODataMetaModelUtil', 'sap/ui/mdc/odata/v4/TypeUtil', 'sap/ui/model/Filter', 'sap/base/Log'
-], function(TableDelegate, Core, FilterUtil, DelegateUtil, FilterBarDelegate, ODataMetaModelUtil, TypeUtil, Filter, Log) {
+	"../../TableDelegate",
+	"sap/ui/core/Core",
+	"sap/ui/mdc/util/FilterUtil",
+	"sap/ui/mdc/odata/v4/util/DelegateUtil",
+	"sap/ui/mdc/odata/v4/FilterBarDelegate",
+	"sap/ui/mdc/odata/v4/ODataMetaModelUtil",
+	"sap/ui/mdc/odata/v4/TypeUtil",
+	"sap/ui/model/Filter",
+	"sap/base/Log"
+], function(
+	TableDelegate,
+	Core,
+	FilterUtil,
+	DelegateUtil,
+	FilterBarDelegate,
+	ODataMetaModelUtil,
+	TypeUtil,
+	Filter,
+	Log
+) {
 	"use strict";
+
 	/**
-	 * Helper class for sap.ui.mdc.Table.
-	 * <h3><b>Note:</b></h3>
-	 * The class is experimental and the API/behaviour is not finalised and hence this should not be used for productive usage.
-	 *
-	 * @author SAP SE
-	 * @private
-	 * @experimental
-	 * @since 1.60
-	 * @alias sap.ui.mdc.odata.v4.TableDelegateDemo
+	 * Test delegate for OData V4.
 	 */
 	var ODataTableDelegate = Object.assign({}, TableDelegate);
 
-	/**
-	 * Fetches the relevant metadata for the table and returns property info array
-	 *
-	 * @param {Object} oTable - instance of the mdc Table
-	 * @returns {Array} array of property info
-	 */
 	ODataTableDelegate.fetchProperties = function(oTable) {
-		var oMetadataInfo = oTable.getDelegate().payload, oModel;
-		oModel = oTable.getModel(oMetadataInfo.model);
+		var oModel = this._getModel(oTable);
+		var pCreatePropertyInfos;
 
-		return new Promise(function(resolve) {
-			if (!oModel) {
+		if (!oModel) {
+			pCreatePropertyInfos = new Promise(function(resolve) {
 				oTable.attachModelContextChange({
 					resolver: resolve
-				}, onModelContextChange);
-			} else {
-				createPropertyInfos(oTable, oModel).then(resolve);
+				}, onModelContextChange, this);
+			}.bind(this)).then(function(oModel) {
+				return this._createPropertyInfos(oTable, oModel);
+			}.bind(this));
+		} else {
+			pCreatePropertyInfos = this._createPropertyInfos(oTable, oModel);
+		}
+
+		return pCreatePropertyInfos.then(function(aProperties) {
+			if (oTable.data){
+				oTable.data("$tablePropertyInfo", aProperties);
 			}
+			return aProperties;
 		});
 	};
 
 	function onModelContextChange(oEvent, oData) {
 		var oTable = oEvent.getSource();
-		var oMetadataInfo = oTable.getDelegate().payload;
-		var oModel = oTable.getModel(oMetadataInfo.model);
+		var oModel = this._getModel(oTable);
+
 		if (oModel) {
-			createPropertyInfos(oTable, oModel).then(oData.resolver);
 			oTable.detachModelContextChange(onModelContextChange);
+			oData.resolver(oModel);
 		}
 	}
 
-	function createPropertyInfos(oTable, oModel) {
-		var oMetadataInfo = oTable.getDelegate().payload, aProperties = [], oPropertyInfo, oObj, oPropertyAnnotations;
+	ODataTableDelegate._createPropertyInfos = function(oTable, oModel) {
+		var oMetadataInfo = oTable.getDelegate().payload;
+		var aProperties = [];
 		var sEntitySetPath = "/" + oMetadataInfo.collectionName;
 		var oMetaModel = oModel.getMetaModel();
+
 		return Promise.all([
 			oMetaModel.requestObject(sEntitySetPath + "/"), oMetaModel.requestObject(sEntitySetPath + "@")
 		]).then(function(aResults) {
@@ -68,9 +80,9 @@ sap.ui.define([
 			var oFilterRestrictionsInfo = ODataMetaModelUtil.getFilterRestrictionsInfo(oFilterRestrictions);
 
 			for (var sKey in oEntityType) {
-				oObj = oEntityType[sKey];
-				if (oObj && oObj.$kind === "Property") {
+				var oObj = oEntityType[sKey];
 
+				if (oObj && oObj.$kind === "Property") {
 					// ignore (as for now) all complex properties
 					// not clear if they might be nesting (complex in complex)
 					// not clear how they are represented in non-filterable annotation
@@ -80,35 +92,22 @@ sap.ui.define([
 						continue;
 					}
 
-					// TODO: Enhance with more properties as used in MetadataAnalyser and check if this should be made async
-					oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
-					oPropertyInfo = {
+					var oPropertyAnnotations = oMetaModel.getObject(sEntitySetPath + "/" + sKey + "@");
+
+					aProperties.push({
 						name: sKey,
 						label: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Label"] || sKey,
-						description: oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"] && oPropertyAnnotations["@com.sap.vocabularies.Common.v1.Text"].$Path,
-						maxLength: oObj.$MaxLength,
-						precision: oObj.$Precision,
-						scale: oObj.$Scale,
-						type: oObj.$Type,
 						sortable: oSortRestrictionsInfo[sKey] ? oSortRestrictionsInfo[sKey].sortable : true,
-
-						//Required for inbuilt filtering: filterable, typeConfig
-						//Optional: maxConditions, fieldHelp
 						filterable: oFilterRestrictionsInfo[sKey] ? oFilterRestrictionsInfo[sKey].filterable : true,
 						typeConfig: oTable.getTypeUtil().getTypeConfig(oObj.$Type),
-						fieldHelp: undefined,
 						maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1
-					};
-					aProperties.push(oPropertyInfo);
+					});
 				}
-			}
-			if (oTable.data){
-				oTable.data("$tablePropertyInfo",aProperties);
 			}
 
 			return aProperties;
 		});
-	}
+	};
 
 	/**
 	 * Updates the binding info with the relevant path and model from the metadata.
@@ -118,7 +117,6 @@ sap.ui.define([
 	 * @param {Object} oBindingInfo The bindingInfo of the table
 	 */
 	ODataTableDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
-
 		if (!oMDCTable) {
 			return;
 		}
@@ -186,6 +184,11 @@ sap.ui.define([
 
 	ODataTableDelegate.getTypeUtil = function (oPayload) {
 		return TypeUtil;
+	};
+
+	ODataTableDelegate._getModel = function(oTable) {
+		var oMetadataInfo = oTable.getDelegate().payload;
+		return oTable.getModel(oMetadataInfo.model);
 	};
 
 	return ODataTableDelegate;

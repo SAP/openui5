@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/ui/mdc/p13n/FlexUtil",
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/p13n/AdaptationController",
-	"sap/ui/mdc/TableDelegate",
 	"sap/ui/mdc/Control",
 	"sap/ui/mdc/AggregationBaseDelegate",
 	"sap/ui/mdc/util/TypeUtil",
@@ -19,7 +18,6 @@ sap.ui.define([
 	FlexUtil,
 	Table,
 	AdaptationController,
-	TableDelegate,
 	Control,
 	AggregationBaseDelegate,
 	TypeUtil,
@@ -213,11 +211,13 @@ sap.ui.define([
 			sinon.stub(AggregationBaseDelegate, "fetchProperties").returns(oMockedPropertyInfoPromise);
 
 			//Mock 'getFilterDelegate'
-			sinon.stub(AggregationBaseDelegate, "getFilterDelegate").returns({
-				addItem: function(sProperty, oControl) {
-					return Promise.resolve(new FilterField());
-				}
-			});
+			AggregationBaseDelegate.getFilterDelegate = function() {
+				return {
+					addItem: function(sProperty, oControl) {
+						return Promise.resolve(new FilterField());
+					}
+				};
+			};
 
 			//Provide simple 'addItem' hook for testing on 'AggregationBaseDelegate'
 			this.addItem = function(sKey, oControl){
@@ -229,7 +229,7 @@ sap.ui.define([
 		},
 		afterEach: function () {
 			AggregationBaseDelegate.fetchProperties.restore();
-			AggregationBaseDelegate.getFilterDelegate.restore();
+			delete AggregationBaseDelegate.getFilterDelegate;
 			AggregationBaseDelegate.addItem.restore();
 			oAdaptationFilterBar.destroy();
 			this.oParent = null;

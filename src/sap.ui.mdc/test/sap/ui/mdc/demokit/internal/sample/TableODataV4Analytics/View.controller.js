@@ -21,7 +21,7 @@ sap.ui.define([
 		return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
 	}
 
-	return Controller.extend("sap.ui.mdc.sample.V4Analytics.View", {
+	return Controller.extend("sap.ui.mdc.sample.TableODataV4Analytics.View", {
 		onInit: function() {
 			if (isLocalhost()) {
 				var mSettings = JSON.parse(window.localStorage.getItem("settings"));
@@ -79,7 +79,7 @@ sap.ui.define([
 				p13nMode: ["Column", "Filter", "Sort"],
 				noDataText: "This text is shown when no data is present in the table",
 				delegate: {
-					name: "sap/ui/mdc/sample/V4Analytics/TableDelegate",
+					name: "sap/ui/mdc/sample/TableODataV4Analytics/TableDelegate",
 					payload: {
 						collectionName: sCollectionName
 					}
@@ -105,7 +105,7 @@ sap.ui.define([
 					}
 				}, this);
 
-				oTable.rebindTable();
+				oTable.rebind();
 				return oTable;
 			}.bind(this));
 		},

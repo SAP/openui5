@@ -60,6 +60,7 @@ sap.ui.define([
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
 	var aTestedTypes = ["Table", "ResponsiveTable"];
+	var sDelegatePath = "test-resources/sap/ui/mdc/delegates/TableDelegate";
 
 	function wait(iMilliseconds) {
 		return new Promise(function(resolve) {
@@ -143,7 +144,7 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			this.oTable = new Table({
 				delegate: {
-					name: "sap/ui/mdc/TableDelegate",
+					name: sDelegatePath,
 					payload: {
 						collectionPath: "/testPath"
 					}
@@ -517,7 +518,7 @@ sap.ui.define([
 		this.oTable = new Table({
 			type: "ResponsiveTable",
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: "/testPath"
 				}
@@ -568,7 +569,7 @@ sap.ui.define([
 		this.oTable = new Table({
 			type: "ResponsiveTable",
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: "/testPath"
 				}
@@ -588,7 +589,7 @@ sap.ui.define([
 		this.oTable = new Table({
 			type: "ResponsiveTable",
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: "/testPath"
 				}
@@ -861,7 +862,7 @@ sap.ui.define([
 			showRowCount: true,
 			type: "ResponsiveTable",
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: "/testPath"
 				}
@@ -909,7 +910,7 @@ sap.ui.define([
 			showRowCount: true,
 			type: "Table",
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: "/testPath"
 				}
@@ -1384,7 +1385,7 @@ sap.ui.define([
 
 				Core.applyChanges();
 				sap.ui.require([
-					"sap/ui/mdc/TableDelegate"
+					sDelegatePath
 				], function(TableDelegate) {
 
 					sinon.stub(this.oTable, "getCurrentState").returns({
@@ -1462,7 +1463,7 @@ sap.ui.define([
 		this.oTable.destroy();
 		this.oTable = new Table({
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: "/testPath"
 				}
@@ -1636,7 +1637,7 @@ sap.ui.define([
 		this.oTable.destroy();
 		this.oTable = new Table({
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: "/testPath"
 				}
@@ -2146,7 +2147,7 @@ sap.ui.define([
 		this.oTable.destroy();
 		this.oTable = new Table({
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: "/testPath"
 				}
@@ -2562,7 +2563,7 @@ sap.ui.define([
 		this.oTable.destroy();
 		this.oTable = new Table({
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: sCollectionPath
 				}
@@ -2802,7 +2803,7 @@ sap.ui.define([
 		this.oTable.destroy();
 		this.oTable = new Table({
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: sCollectionPath
 				}
@@ -4176,7 +4177,7 @@ sap.ui.define([
 		this.oTable.destroy();
 		this.oTable = new Table({
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: "/testPath"
 				}
@@ -4228,7 +4229,7 @@ sap.ui.define([
 		this.oTable.destroy();
 		this.oTable = new Table({
 			delegate: {
-				name: "sap/ui/mdc/TableDelegate",
+				name: sDelegatePath,
 				payload: {
 					collectionPath: "/testPath"
 				}
