@@ -263,7 +263,7 @@ sap.ui.define([
 							if (oHashChanger instanceof RouterHashChanger && !bIsRouteRelevant) {
 								// reset the hash to allow the match with the previous route after
 								// displaying a target without involving the router
-								oHashChanger.resetHash();
+								oHashChanger.resetHash(this);
 							}
 						}
 					}, this);
@@ -418,6 +418,10 @@ sap.ui.define([
 					if (oHomeRouteEntry) {
 						this._aHistory.push(oHomeRouteEntry);
 					}
+				}
+
+				if (this.oHashChanger instanceof RouterHashChanger) {
+					this.oHashChanger._setActiveRouter(this);
 				}
 
 				this.oHashChanger.init();

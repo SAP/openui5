@@ -177,16 +177,35 @@ sap.ui.define([
 	};
 
 	/**
-	 * Reset the hash
+	 * In case a RouterHashChanger is shared by multiple routers, the router that is latest initialized is saved as the
+	 * active router in the RouterHashChanger in order to allow it to do more actions (such as resetHash) to avoid the
+	 * change from affecting the other routers.
+	 *
+	 * @param {sap.ui.core.routing.Router} oRouter the router that should be saved as the active router
+	 * @return {sap.ui.core.routing.RouterHashChanger} The 'this' instance to chain the call
+	 * @private
+	 */
+	RouterHashChanger.prototype._setActiveRouter = function(oRouter) {
+		if (oRouter.getHashChanger() === this) {
+			this._oActiveRouter = oRouter;
+		}
+		return this;
+	};
+
+	/**
+	 * Reset the hash if the given router is the active router that is saved in this RouterHashChanger
 	 *
 	 * This is needed for allowing to fire the hashChanged event with the previous hash again
 	 * after displaying a Target without involving a Router.
 	 *
+	 * @param {sap.ui.core.routing.Router} oRouter the router from which the resetHash is started
 	 * @return {sap.ui.core.routing.RouterHashChanger} The current RouterHashChanger for chaining the method
 	 * @protected
 	 */
-	RouterHashChanger.prototype.resetHash = function() {
-		this.hash = undefined;
+	RouterHashChanger.prototype.resetHash = function(oRouter) {
+		if (oRouter && this._oActiveRouter === oRouter) {
+			this.hash = undefined;
+		}
 		return this;
 	};
 

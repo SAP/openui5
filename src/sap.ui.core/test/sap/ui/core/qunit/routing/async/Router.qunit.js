@@ -2363,6 +2363,45 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("'resetHash' should be done only for the active router after a target is manually displayed", function(assert) {
+		var that = this;
+		// Arrange
+		this.stub(Views.prototype, "_getView").callsFake(function () {
+			return createXmlView();
+		});
+
+		var oTargetConfig = {
+			myTarget : {
+				controlId: this.oShell.getId()
+			}
+		};
+
+		// System under test
+		this.oRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+		var oSecondRouter = fnCreateRouter(this.oRouterConfig, this.oDefaults, null, oTargetConfig);
+
+		// initialize the secondRouter first and then the this.oRouter
+		// this.oRouter should be the current active router
+		oSecondRouter.initialize();
+		this.oRouter.initialize();
+
+
+		assert.strictEqual(this.oRouter.getHashChanger(), oSecondRouter.getHashChanger(), "Both router share the same hash changer");
+
+		// display a target with the secondRouter manually
+		return oSecondRouter.getTargets().display("myTarget").then(function() {
+			var sHash = oSecondRouter.getHashChanger().getHash();
+			assert.notOk(sHash === undefined, "The hash in the HashChanger shouldn't be reset");
+		}).then(function() {
+			// display a target with this.oRouter manually
+			return that.oRouter.getTargets().display("myTarget");
+		}).then(function() {
+			var sHash = that.oRouter.getHashChanger().getHash();
+			assert.ok(sHash === undefined, "The hash in the HashChanger should be reset");
+			oSecondRouter.destroy();
+		});
+	});
+
 	QUnit.module("getTargets");
 
 	QUnit.test("Should get the created targets instance", function (assert) {
