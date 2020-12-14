@@ -87,11 +87,13 @@ sap.ui.define([
 					fragmentPath: "fragments/" + sEpName + "_" + sLayer + ".fragment.xml"
 				},
 				creation:sCreation || "",
+				projectId: "testProject",
 				selector: {
 					name: sEpName,
 					viewSelector: { id: sReference + "---mainView--" + sViewName, idIsLocal : false}
 				},
 				layer: sLayer,
+				support: {},
 				namespace: "apps/sap.ui.fl.qunit.extensionPoint.testApp/changes"
 			};
 		}
@@ -100,6 +102,8 @@ sap.ui.define([
 			createPoint("EP1", "async", "VENDOR", "2019-02-25T15:35:49.705Z"),
 			createPoint("EP3", "sync", "VENDOR", "2022-02-25T15:35:49.705Z"),
 			createPoint("EP3", "async", "VENDOR", "2023-02-25T15:35:49.705Z"),
+			createPoint("EP4", "sync", "VENDOR", "2024-02-25T15:35:49.705Z"),
+			createPoint("EP4", "async", "VENDOR", "2025-02-25T15:35:49.705Z"),
 			createPoint("EP1", "sync", "CUSTOMER_BASE", "2020-02-25T15:35:49.705Z"),
 			createPoint("EP1", "async", "CUSTOMER_BASE", "2021-02-25T15:35:49.705Z")
 		];
@@ -118,19 +122,25 @@ sap.ui.define([
 		var sReference = bSync ? "sap.ui.fl.qunit.extensionPoint.testApp" : "sap.ui.fl.qunit.extensionPoint.testApp.async";
 		var checkView = function(sView) {
 			var aPanelContent = oView.byId(sView).byId("Panel").getContent();
-			assert.strictEqual(aPanelContent.length, 12, "ExtensionPoint content added to" + sView + " view");
+			assert.strictEqual(aPanelContent.length, 18, "ExtensionPoint content added to" + sView + " view");
 			assert.strictEqual(aPanelContent[0].getId(), sReference + "---mainView--" + sView + "--button1", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[1].getId(), sReference + "---mainView--" + sView + "--undefined.customButton1", "EP1 content is in correct order"); // EP1_CUSTOMER_BASE
-			assert.strictEqual(aPanelContent[2].getId(), sReference + "---mainView--" + sView + "--undefined.customButton2", "EP1 content is in correct order"); // EP1_CUSTOMER_BASE
-			assert.strictEqual(aPanelContent[3].getId(), sReference + "---mainView--" + sView + "--undefined.customButton3", "EP1 content is in correct order"); // EP1_VENDOR
-			assert.strictEqual(aPanelContent[4].getId(), sReference + "---mainView--" + sView + "--undefined.customButton4", "EP1 content is in correct order"); // EP1_VENDOR
+			assert.strictEqual(aPanelContent[1].getId(), sReference + "---mainView--" + sView + "--testProject.customButton1", "EP1 content is in correct order"); // EP1_CUSTOMER_BASE
+			assert.strictEqual(aPanelContent[2].getId(), sReference + "---mainView--" + sView + "--testProject.customButton2", "EP1 content is in correct order"); // EP1_CUSTOMER_BASE
+			assert.strictEqual(aPanelContent[3].getId(), sReference + "---mainView--" + sView + "--testProject.customButton3", "EP1 content is in correct order"); // EP1_VENDOR
+			assert.strictEqual(aPanelContent[4].getId(), sReference + "---mainView--" + sView + "--testProject.customButton4", "EP1 content is in correct order"); // EP1_VENDOR
 			assert.strictEqual(aPanelContent[5].getId(), sReference + "---mainView--" + sView + "--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), sReference + "---mainView--" + sView + "--button2", "view content is in correct order"); // Main
-			assert.strictEqual(aPanelContent[7].getId(), sReference + "---mainView--" + sView + "--undefined.customButton5", "EP3 content is in correct order"); // EP3_VENDOR
-			assert.strictEqual(aPanelContent[8].getId(), sReference + "---mainView--" + sView + "--undefined.customButton6", "EP3 content is in correct order"); // EP3_VENDOR
-			assert.strictEqual(aPanelContent[9].getId(), sReference + "---mainView--" + sView + "--undefined.customButton7", "EP3 content is in correct order"); // EP3_VENDOR
+			assert.strictEqual(aPanelContent[7].getId(), sReference + "---mainView--" + sView + "--testProject.customButton5", "EP3 content is in correct order"); // EP3_VENDOR
+			assert.strictEqual(aPanelContent[8].getId(), sReference + "---mainView--" + sView + "--testProject.customButton6", "EP3 content is in correct order"); // EP3_VENDOR
+			assert.strictEqual(aPanelContent[9].getId(), sReference + "---mainView--" + sView + "--testProject.customButton7", "EP3 content is in correct order"); // EP3_VENDOR
 			assert.strictEqual(aPanelContent[10].getId(), sReference + "---mainView--" + sView + "--button3", "view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[11].getId(), sReference + "---mainView--" + sView + "--button4", "view content is in correct order"); // Main
+			assert.strictEqual(aPanelContent[12].getId(), sReference + "---mainView--" + sView + "--testProject.fragmentWithExtensionPoint1.customButton8", "EP4 content is in correct order"); // EP4_VENDOR
+			assert.strictEqual(aPanelContent[13].getId(), sReference + "---mainView--" + sView + "--testProject.fragmentWithExtensionPoint1.customButton9", "EP4 content is in correct order"); // EP4_VENDOR
+			assert.strictEqual(aPanelContent[14].getId(), sReference + "---mainView--" + sView + "--testProject.fragmentWithExtensionPoint1.customButton10", "EP4 content is in correct order"); // EP4_VENDOR
+			assert.strictEqual(aPanelContent[15].getId(), sReference + "---mainView--" + sView + "--testProject.fragmentWithExtensionPoint2.customButton8", "EP4 content is in correct order"); // EP4_VENDOR
+			assert.strictEqual(aPanelContent[16].getId(), sReference + "---mainView--" + sView + "--testProject.fragmentWithExtensionPoint2.customButton9", "EP4 content is in correct order"); // EP4_VENDOR
+			assert.strictEqual(aPanelContent[17].getId(), sReference + "---mainView--" + sView + "--testProject.fragmentWithExtensionPoint2.customButton10", "EP4 content is in correct order"); // EP4_VENDOR
 		};
 
 		var checkChangesContent = function(sReference) {
@@ -147,7 +157,7 @@ sap.ui.define([
 		};
 
 		var checkApplyOrder = function(bSync) {
-			assert.equal(oSpyAddXMLAtExtensionPointApply.callCount, 6, "number of AddXMLAtExtensionPoint changes applied correct");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.callCount, 10, "number of AddXMLAtExtensionPoint changes applied correct");
 			var sReference = "sap.ui.fl.qunit.extensionPoint.testApp.async";
 			if (bSync) {
 				sReference = "sap.ui.fl.qunit.extensionPoint.testApp";
@@ -155,10 +165,17 @@ sap.ui.define([
 
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(0).args[0].getId(), sReference + "_EP1_sync_VENDOR_addXMLAtExtensionPoint", "first change applied with correct order");
 			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(1).args[0].getId(), sReference + "_EP3_sync_VENDOR_addXMLAtExtensionPoint", "second change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(2).args[0].getId(), sReference + "_EP1_sync_CUSTOMER_BASE_addXMLAtExtensionPoint", "third change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(3).args[0].getId(), sReference + "_EP1_async_VENDOR_addXMLAtExtensionPoint", "fourth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(4).args[0].getId(), sReference + "_EP3_async_VENDOR_addXMLAtExtensionPoint", "fifth change applied with correct order");
-			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(5).args[0].getId(), sReference + "_EP1_async_CUSTOMER_BASE_addXMLAtExtensionPoint", "sixth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(2).args[0].getId(), sReference + "_EP4_sync_VENDOR_addXMLAtExtensionPoint", "third change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(3).args[0].getDefinition().support.sourceChangeFileName, sReference + "_EP4_sync_VENDOR_addXMLAtExtensionPoint", "fourth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(4).args[0].getId(), sReference + "_EP1_sync_CUSTOMER_BASE_addXMLAtExtensionPoint", "fifth change applied with correct order");
+
+			// 'wrong' order due to xml applying of the EP changes in the view directly, the fragment changes come afterwards - not a EP problem but a general one
+			// TODO order should be like the one above, but has to be fixed centrally
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(5).args[0].getId(), sReference + "_EP1_async_VENDOR_addXMLAtExtensionPoint", "sixth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(6).args[0].getId(), sReference + "_EP3_async_VENDOR_addXMLAtExtensionPoint", "seventh change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(7).args[0].getId(), sReference + "_EP1_async_CUSTOMER_BASE_addXMLAtExtensionPoint", "eight change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(8).args[0].getId(), sReference + "_EP4_async_VENDOR_addXMLAtExtensionPoint", "ninth change applied with correct order");
+			assert.equal(oSpyAddXMLAtExtensionPointApply.getCall(9).args[0].getDefinition().support.sourceChangeFileName, sReference + "_EP4_async_VENDOR_addXMLAtExtensionPoint", "tenth change applied with correct order");
 		};
 
 		var fnAssert = function() {
@@ -167,8 +184,8 @@ sap.ui.define([
 			checkView("sync");
 			checkView("async");
 			checkChangesContent(sReference);
-			assert.equal(oSpyApplyExtensionPoint.callCount, 6, "number of applyExtensionPoint called correct");
-			assert.equal(oSpyRegisterExtensionPoint.callCount, 6, "number of registerExtensionPoint called correct in the ExtensionPointRegistry");
+			assert.equal(oSpyApplyExtensionPoint.callCount, 10, "number of applyExtensionPoint called correct");
+			assert.equal(oSpyRegisterExtensionPoint.callCount, 10, "number of registerExtensionPoint called correct in the ExtensionPointRegistry");
 			checkApplyOrder(bSync);
 
 			done();
@@ -178,7 +195,7 @@ sap.ui.define([
 		var iPoll = setInterval(function() {
 			var aPanelContent1 = oView.byId("sync").byId("Panel").getContent();
 			var aPanelContent2 = oView.byId("async").byId("Panel").getContent();
-			if (aPanelContent1.length === 12 && aPanelContent2.length === 12) {
+			if (aPanelContent1.length === 18 && aPanelContent2.length === 18) {
 				fnAssert();
 				clearInterval(iPoll);
 			}
@@ -200,5 +217,9 @@ sap.ui.define([
 
 	QUnit.test("When EPs and addXMLAtExtensionPoint are available in one sync views and one async view", function(assert) {
 		check(ASYNC, assert);
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });
