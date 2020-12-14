@@ -9,8 +9,7 @@ sap.ui.define(function() {
 				version: "edge"
 			},
 			sinon: {
-				version: 4,
-				useFakeTimers: true
+				version: 1
 			},
 			ui5: {
 				language: "en",
