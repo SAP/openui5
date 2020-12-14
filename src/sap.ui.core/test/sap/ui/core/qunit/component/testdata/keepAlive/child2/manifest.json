@@ -1,0 +1,20 @@
+{
+	"sap.app": {
+		"id": "testdata.keepAlive.child2"
+	},
+	"sap.ui5": {
+		"keepAlive": {
+			"supported": true
+		},
+		"dependencies": {
+			"libs": {},
+			"components": {}
+		},
+		"rootView": {
+			"viewName": "testdata.keepAlive.child2.App",
+			"type": "XML",
+			"async": true,
+			"id": "appView"
+		}
+	}
+}
