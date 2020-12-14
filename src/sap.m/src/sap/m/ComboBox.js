@@ -500,6 +500,11 @@ sap.ui.define([
 				}
 
 				this.getListItem(oItem).setVisible(bItemMached);
+
+				if (!oItem.getEnabled()) {
+					this.getListItem(oItem).setVisible(false);
+				}
+
 			}, this);
 
 			aGroups.forEach(function (oGroupItem) {

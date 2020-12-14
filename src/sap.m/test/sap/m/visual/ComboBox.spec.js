@@ -94,4 +94,13 @@ describe("sap.m.ComboBox", function() {
 			expect(takeScreenshot(comboBoxError)).toLookAs("error");
 		});
 	});
+
+	// check ComboBox - Disabled items
+	it("should open ComboBox with Grouping - Disabled items", function() {
+		browser.executeScript('document.getElementById("comboBoxGrouping").scrollIntoView()').then(function() {
+			element(by.id("comboBoxGrouping")).click();
+			browser.actions().sendKeys("item1").perform();
+			expect(takeScreenshot()).toLookAs("box_disabled_items");
+		});
+	});
 });
