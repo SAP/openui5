@@ -32,6 +32,7 @@ sap.ui.define([
 			this.oBasePrototype = BaseType.prototype = {
 				formatValue : function () {},
 				parseValue : function () {},
+				getFormatOptions : function () {},
 				setFormatOptions : function () {}
 			};
 			UnitMixin.prototype.getCustomUnitForKey = function () {};
@@ -610,4 +611,28 @@ sap.ui.define([
 		assert.deepEqual(oUnitType.getPartsIgnoringMessages(), oFixture.aResult);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getFormatOptions", function (assert) {
+		var oBaseUnitMock = this.mock(this.oBasePrototype),
+			oBaseFormatOptions = {
+				emptyString: 0,
+				option : "42",
+				parseAsString : true,
+				unitOptional : true
+			},
+			oFormatOptions = {option : "42", parseAsString : "~parseAsString"},
+			oResult,
+			oType = new UnitMixin(oFormatOptions);
+
+		oBaseUnitMock.expects("getFormatOptions").withExactArgs().returns(oBaseFormatOptions);
+
+		// code under test
+		oResult = oType.getFormatOptions();
+
+		assert.deepEqual(oResult,
+			{emptyString: 0, option : "42", parseAsString : "~parseAsString", unitOptional : true});
+		assert.strictEqual(oResult, oBaseFormatOptions,
+			"base type getFormatOptions creates a copy, do not copy again");
+	});
 });

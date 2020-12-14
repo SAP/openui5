@@ -30,20 +30,29 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setContraints", function (assert) {
+	QUnit.test("c'tor sets constraints and format options", function (assert) {
 		var oConstraints = "~oConstraints",
-			oType = new SimpleType({}, oConstraints);
+			oFormatOptions = "~oFormatOptions",
+			oType;
+
+		// code under test
+		oType = new SimpleType(oFormatOptions, oConstraints);
 
 		assert.strictEqual(oType.oConstraints, oConstraints);
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+
+		// code under test
+		oType = new SimpleType(null, null);
+
+		assert.deepEqual(oType.oConstraints, {});
+		assert.deepEqual(oType.oFormatOptions, {});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getConstraints: with constraints", function (assert) {
+	QUnit.test("getConstraints: with and w/o constraints", function (assert) {
 		var oConstraintsResult,
 			oQux = {qux : "quux"},
-			oType = new SimpleType();
-
-		oType.oConstraints = {foo : "bar", baz : oQux};
+			oType = new SimpleType(undefined, {foo : "bar", baz : oQux});
 
 		// code under test
 		oConstraintsResult = oType.getConstraints();
@@ -51,11 +60,25 @@ sap.ui.define([
 		assert.deepEqual(oConstraintsResult, {foo : "bar", baz : oQux});
 		assert.notStrictEqual(oConstraintsResult, oType.oConstraints);
 		assert.notStrictEqual(oConstraintsResult.baz, oQux);
+
+		// code under test
+		assert.deepEqual(new SimpleType().getConstraints(), {});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getConstraints: without constraints", function (assert) {
+	QUnit.test("getFormatOptions: with and w/o format options", function (assert) {
+		var oFormatOptionsResult,
+			oQux = {qux : "quux"},
+			oType = new SimpleType({foo : "bar", baz : oQux});
+
 		// code under test
-		assert.deepEqual(new SimpleType().getConstraints(), {});
+		oFormatOptionsResult = oType.getFormatOptions();
+
+		assert.deepEqual(oFormatOptionsResult, {foo : "bar", baz : oQux});
+		assert.notStrictEqual(oFormatOptionsResult, oType.oFormatOptions);
+		assert.notStrictEqual(oFormatOptionsResult.baz, oQux);
+
+		// code under test
+		assert.deepEqual(new SimpleType().getFormatOptions(), {});
 	});
 });
