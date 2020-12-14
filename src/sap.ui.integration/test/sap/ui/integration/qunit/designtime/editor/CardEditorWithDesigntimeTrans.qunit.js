@@ -120,43 +120,43 @@ sap.ui.define([
 				});
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oIcon1 = oLabel1.getDependents()[0];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oIcon2 = oLabel2.getDependents()[0];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField3 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oIcon3 = oLabel3.getDependents()[0];
 					wait().then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[0];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[1];
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 						assert.ok(oField1.getAggregation("_field").getValue() === "String 1 English", "Field1: String 1 English");
 						//check the translated description
-						var oIcon = oLabel1.getDependents()[0];
-						oIcon.getDomRef().focus();
-						oIcon.onmouseover();
-						var oPopover = oIcon.getDependents()[0];
-						assert.ok(oPopover.getContent()[0].getText() === "Desc 1 English", "Label2: Desc 1 English");
-					}.bind(this)).then(function () {
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[2];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[3];
+						oIcon1.getDomRef().focus();
+						oIcon1.onmouseover();
+						var oPopover1 = oIcon1.getDependents()[0];
+						assert.ok(oPopover1.getContent()[0].getText() === "Desc 1 English", "Label2: Desc 1 English");
+					}).then(function () {
 						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
 						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Is editable");
 						assert.ok(oField2.getAggregation("_field").getValue() === "String 2 English", "Field2: String 2 English");
 						//check the translated description
-						var oIcon = oLabel2.getDependents()[0];
-						oIcon.getDomRef().focus();
-						oIcon.onmouseover();
-						var oPopover = oIcon.getDependents()[0];
-						assert.ok(oPopover.getContent()[0].getText() === "Desc 2 English", "Label2: Desc 2 English");
-					}.bind(this)).then(function () {
-						var oLabel3 = this.oCardEditor.getAggregation("_formContent")[4];
-						var oField3 = this.oCardEditor.getAggregation("_formContent")[5];
+						oIcon2.getDomRef().focus();
+						oIcon2.onmouseover();
+						var oPopover2 = oIcon2.getDependents()[0];
+						assert.ok(oPopover2.getContent()[0].getText() === "Desc 2 English", "Label2: Desc 2 English");
+					}).then(function () {
 						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
 						assert.ok(oField3.getAggregation("_field").getEditable() === true, "Field3: Is editable");
 						assert.ok(oField3.getAggregation("_field").getValue() === "String 3 English", "Field2: String 3 English");
 						//check the translated description
-						var oIcon = oLabel3.getDependents()[0];
-						oIcon.getDomRef().focus();
-						oIcon.onmouseover();
-						var oPopover = oIcon.getDependents()[0];
-						assert.ok(oPopover.getContent()[0].getText() === "Desc 3 English", "Label3: Desc 2 English");
-					}.bind(this)).then(function () {
+						oIcon3.getDomRef().focus();
+						oIcon3.onmouseover();
+						var oPopover3 = oIcon3.getDependents()[0];
+						assert.ok(oPopover3.getContent()[0].getText() === "Desc 3 English", "Label3: Desc 2 English");
+					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
 					}.bind(this));
@@ -178,43 +178,43 @@ sap.ui.define([
 					});
 					this.oCardEditor.attachReady(function () {
 						assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[0];
+						var oField1 = this.oCardEditor.getAggregation("_formContent")[1];
+						var oIcon1 = oLabel1.getDependents()[0];
+						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[2];
+						var oField2 = this.oCardEditor.getAggregation("_formContent")[3];
+						var oIcon2 = oLabel2.getDependents()[0];
+						var oLabel3 = this.oCardEditor.getAggregation("_formContent")[4];
+						var oField3 = this.oCardEditor.getAggregation("_formContent")[5];
+						var oIcon3 = oLabel3.getDependents()[0];
 						wait().then(function () {
-							var oLabel1 = this.oCardEditor.getAggregation("_formContent")[0];
-							var oField1 = this.oCardEditor.getAggregation("_formContent")[1];
 							assert.ok(oLabel1.getText() === "Label 1 US English", "Label1: Label 1 US English");
 							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 							assert.ok(oField1.getAggregation("_field").getValue() === "String 1 US English", "Field1: String 1 US English");
 							//check the translated description
-							var oIcon = oLabel1.getDependents()[0];
-							oIcon.getDomRef().focus();
-							oIcon.onmouseover();
-							var oPopover = oIcon.getDependents()[0];
-							assert.ok(oPopover.getContent()[0].getText() === "Desc 1 US English", "Label2: Desc 1 US English");
-						}.bind(this)).then(function () {
-							var oLabel2 = this.oCardEditor.getAggregation("_formContent")[2];
-							var oField2 = this.oCardEditor.getAggregation("_formContent")[3];
+							oIcon1.getDomRef().focus();
+							oIcon1.onmouseover();
+							var oPopover1 = oIcon1.getDependents()[0];
+							assert.ok(oPopover1.getContent()[0].getText() === "Desc 1 US English", "Label2: Desc 1 US English");
+						}).then(function () {
 							assert.ok(oLabel2.getText() === "Label 2 US English", "Label2: Label 2 US English");
 							assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Is editable");
 							assert.ok(oField2.getAggregation("_field").getValue() === "String 2 US English", "Field2: String 2 US English");
 							//check the translated description
-							var oIcon = oLabel2.getDependents()[0];
-							oIcon.getDomRef().focus();
-							oIcon.onmouseover();
-							var oPopover = oIcon.getDependents()[0];
-							assert.ok(oPopover.getContent()[0].getText() === "Desc 2 US English", "Label2: Desc 2 US English");
-						}.bind(this)).then(function () {
-							var oLabel3 = this.oCardEditor.getAggregation("_formContent")[4];
-							var oField3 = this.oCardEditor.getAggregation("_formContent")[5];
+							oIcon2.getDomRef().focus();
+							oIcon2.onmouseover();
+							var oPopover2 = oIcon2.getDependents()[0];
+							assert.ok(oPopover2.getContent()[0].getText() === "Desc 2 US English", "Label2: Desc 2 US English");
+						}).then(function () {
 							assert.ok(oLabel3.getText() === "Label 3 US English", "Label3: Label 3 US English");
 							assert.ok(oField3.getAggregation("_field").getEditable() === true, "Field3: Is editable");
 							assert.ok(oField3.getAggregation("_field").getValue() === "String 3 US English", "Field2: String 3 US English");
 							//check the translated description
-							var oIcon = oLabel3.getDependents()[0];
-							oIcon.getDomRef().focus();
-							oIcon.onmouseover();
-							var oPopover = oIcon.getDependents()[0];
-							assert.ok(oPopover.getContent()[0].getText() === "Desc 3 US English", "Label3: Desc 2 US English");
-						}.bind(this)).then(function () {
+							oIcon3.getDomRef().focus();
+							oIcon3.onmouseover();
+							var oPopover3 = oIcon3.getDependents()[0];
+							assert.ok(oPopover3.getContent()[0].getText() === "Desc 3 US English", "Label3: Desc 2 US English");
+						}).then(function () {
 							destroyEditor(this.oCardEditor);
 							resolve();
 						}.bind(this));
@@ -263,43 +263,43 @@ sap.ui.define([
 				});
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[0];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oIcon1 = oLabel1.getDependents()[0];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oIcon2 = oLabel2.getDependents()[0];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField3 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oIcon3 = oLabel3.getDependents()[0];
 					wait().then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[0];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[1];
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
 						assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 						assert.ok(oField1.getAggregation("_field").getValue() === "String 1 English", "Field1: String 1 English");
 						//check the translated description
-						var oIcon = oLabel1.getDependents()[0];
-						oIcon.getDomRef().focus();
-						oIcon.onmouseover();
-						var oPopover = oIcon.getDependents()[0];
-						assert.ok(oPopover.getContent()[0].getText() === "Desc 1 English", "Label2: Desc 1 English");
-					}.bind(this)).then(function () {
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[2];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[3];
+						oIcon1.getDomRef().focus();
+						oIcon1.onmouseover();
+						var oPopover1 = oIcon1.getDependents()[0];
+						assert.ok(oPopover1.getContent()[0].getText() === "Desc 1 English", "Label2: Desc 1 English");
+					}).then(function () {
 						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
 						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Is editable");
 						assert.ok(oField2.getAggregation("_field").getValue() === "String 2 English", "Field2: String 2 English");
 						//check the translated description
-						var oIcon = oLabel2.getDependents()[0];
-						oIcon.getDomRef().focus();
-						oIcon.onmouseover();
-						var oPopover = oIcon.getDependents()[0];
-						assert.ok(oPopover.getContent()[0].getText() === "Desc 2 English", "Label2: Desc 2 English");
-					}.bind(this)).then(function () {
-						var oLabel3 = this.oCardEditor.getAggregation("_formContent")[4];
-						var oField3 = this.oCardEditor.getAggregation("_formContent")[5];
+						oIcon2.getDomRef().focus();
+						oIcon2.onmouseover();
+						var oPopover2 = oIcon2.getDependents()[0];
+						assert.ok(oPopover2.getContent()[0].getText() === "Desc 2 English", "Label2: Desc 2 English");
+					}).then(function () {
 						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
 						assert.ok(oField3.getAggregation("_field").getEditable() === true, "Field3: Is editable");
 						assert.ok(oField3.getAggregation("_field").getValue() === "String 3 English", "Field2: String 3 English");
 						//check the translated description
-						var oIcon = oLabel3.getDependents()[0];
-						oIcon.getDomRef().focus();
-						oIcon.onmouseover();
-						var oPopover = oIcon.getDependents()[0];
-						assert.ok(oPopover.getContent()[0].getText() === "Desc 3 English", "Label3: Desc 2 English");
-					}.bind(this)).then(function () {
+						oIcon3.getDomRef().focus();
+						oIcon3.onmouseover();
+						var oPopover3 = oIcon3.getDependents()[0];
+						assert.ok(oPopover3.getContent()[0].getText() === "Desc 3 English", "Label3: Desc 2 English");
+					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
 					}.bind(this));
@@ -321,43 +321,43 @@ sap.ui.define([
 					});
 					this.oCardEditor.attachReady(function () {
 						assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[0];
+						var oField1 = this.oCardEditor.getAggregation("_formContent")[1];
+						var oIcon1 = oLabel1.getDependents()[0];
+						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[2];
+						var oField2 = this.oCardEditor.getAggregation("_formContent")[3];
+						var oIcon2 = oLabel2.getDependents()[0];
+						var oLabel3 = this.oCardEditor.getAggregation("_formContent")[4];
+						var oField3 = this.oCardEditor.getAggregation("_formContent")[5];
+						var oIcon3 = oLabel3.getDependents()[0];
 						wait().then(function () {
-							var oLabel1 = this.oCardEditor.getAggregation("_formContent")[0];
-							var oField1 = this.oCardEditor.getAggregation("_formContent")[1];
 							assert.ok(oLabel1.getText() === "Label 1 US English", "Label1: Label 1 US English");
 							assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field1: Is editable");
 							assert.ok(oField1.getAggregation("_field").getValue() === "String 1 US English", "Field1: String 1 US English");
 							//check the translated description
-							var oIcon = oLabel1.getDependents()[0];
-							oIcon.getDomRef().focus();
-							oIcon.onmouseover();
-							var oPopover = oIcon.getDependents()[0];
-							assert.ok(oPopover.getContent()[0].getText() === "Desc 1 US English", "Label2: Desc 1 US English");
-						}.bind(this)).then(function () {
-							var oLabel2 = this.oCardEditor.getAggregation("_formContent")[2];
-							var oField2 = this.oCardEditor.getAggregation("_formContent")[3];
+							oIcon1.getDomRef().focus();
+							oIcon1.onmouseover();
+							var oPopover1 = oIcon1.getDependents()[0];
+							assert.ok(oPopover1.getContent()[0].getText() === "Desc 1 US English", "Label2: Desc 1 US English");
+						}).then(function () {
 							assert.ok(oLabel2.getText() === "Label 2 US English", "Label2: Label 2 US English");
 							assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Is editable");
 							assert.ok(oField2.getAggregation("_field").getValue() === "String 2 US English", "Field2: String 2 US English");
 							//check the translated description
-							var oIcon = oLabel2.getDependents()[0];
-							oIcon.getDomRef().focus();
-							oIcon.onmouseover();
-							var oPopover = oIcon.getDependents()[0];
-							assert.ok(oPopover.getContent()[0].getText() === "Desc 2 US English", "Label2: Desc 2 US English");
-						}.bind(this)).then(function () {
-							var oLabel3 = this.oCardEditor.getAggregation("_formContent")[4];
-							var oField3 = this.oCardEditor.getAggregation("_formContent")[5];
+							oIcon2.getDomRef().focus();
+							oIcon2.onmouseover();
+							var oPopover2 = oIcon2.getDependents()[0];
+							assert.ok(oPopover2.getContent()[0].getText() === "Desc 2 US English", "Label2: Desc 2 US English");
+						}).then(function () {
 							assert.ok(oLabel3.getText() === "Label 3 US English", "Label3: Label 3 US English");
 							assert.ok(oField3.getAggregation("_field").getEditable() === true, "Field3: Is editable");
 							assert.ok(oField3.getAggregation("_field").getValue() === "String 3 US English", "Field2: String 3 US English");
 							//check the translated description
-							var oIcon = oLabel3.getDependents()[0];
-							oIcon.getDomRef().focus();
-							oIcon.onmouseover();
-							var oPopover = oIcon.getDependents()[0];
-							assert.ok(oPopover.getContent()[0].getText() === "Desc 3 US English", "Label3: Desc 2 US English");
-						}.bind(this)).then(function () {
+							oIcon3.getDomRef().focus();
+							oIcon3.onmouseover();
+							var oPopover3 = oIcon3.getDependents()[0];
+							assert.ok(oPopover3.getContent()[0].getText() === "Desc 3 US English", "Label3: Desc 2 US English");
+						}).then(function () {
 							destroyEditor(this.oCardEditor);
 							resolve();
 						}.bind(this));
@@ -407,39 +407,34 @@ sap.ui.define([
 				});
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField1Ori = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1Trans = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField2Ori = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2Trans = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oField3Ori = this.oCardEditor.getAggregation("_formContent")[8];
+					var oField3Trans = this.oCardEditor.getAggregation("_formContent")[9];
 					wait().then(function () {
-						var oLanguageTitle = this.oCardEditor.getAggregation("_formContent")[1];
-						assert.ok(oLanguageTitle.getText() === "Français", "Français");
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+						assert.ok(oPanel.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 1 English", "Field1: String 1 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
-						assert.ok(oLabel2.getText() === "Label 1 French", "Label 2: String 1 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "String 1 French", "Field2: String 1 French");
+						assert.ok(oField1Ori.getAggregation("_field").getText() === "String 1 English", "Field1Ori: String 1 English");
+						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "oField1Trans: Editable");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "String 1 French", "Field1Trans: String 1 French");
 					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[6];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[7];
-						assert.ok(oLabel1.getText() === "Label 2 English", "Label1: Label 2 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 2 English", "Field1: String 2 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[8];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[9];
-						assert.ok(oLabel2.getText() === "Label 2 French", "Label 2: String 2 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "String 2 French", "Field2: String 2 French");
-					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[10];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[11];
-						assert.ok(oLabel1.getText() === "Label 3 English", "Label1: Label 3 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 3 English", "Field1: String 3 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[12];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[13];
-						assert.ok(oLabel2.getText() === "Label 3 French", "Label2: String 3 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "String 3 French", "Field2: String 3 French");
-					}.bind(this)).then(function () {
+						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
+						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
+						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "String 2 French", "Field2Trans: String 2 French");
+					}).then(function () {
+						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
+						assert.ok(oField3Ori.getAggregation("_field").getText() === "String 3 English", "Field3Ori: String 3 English");
+						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "String 3 French", "Field3Trans: String 3 French");
+					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
 					}.bind(this));
@@ -495,39 +490,34 @@ sap.ui.define([
 				});
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField1Ori = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1Trans = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField2Ori = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2Trans = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oField3Ori = this.oCardEditor.getAggregation("_formContent")[8];
+					var oField3Trans = this.oCardEditor.getAggregation("_formContent")[9];
 					wait().then(function () {
-						var oLanguageTitle = this.oCardEditor.getAggregation("_formContent")[1];
-						assert.ok(oLanguageTitle.getText() === "Français", "Français");
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+						assert.ok(oPanel.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "stringParameter Value Admin1", "Field1: String 1 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
-						assert.ok(oLabel2.getText() === "Label 1 French", "Label 2: String 1 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "", "Field2: String 1 French");
+						assert.ok(oField1Ori.getAggregation("_field").getText() === "stringParameter Value Admin1", "Field1Ori: String 1 English");
+						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "", "Field1Trans: String 1 French");
 					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[6];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[7];
-						assert.ok(oLabel1.getText() === "Label 2 English", "Label1: Label 2 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 2 English", "Field1: String 2 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[8];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[9];
-						assert.ok(oLabel2.getText() === "Label 2 French", "Label 2: String 2 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "String 2 French", "Field2: String 2 French");
-					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[10];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[11];
-						assert.ok(oLabel1.getText() === "Label 3 English", "Label1: Label 3 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "stringParameter Value Admin3", "Field1: String 3 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[12];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[13];
-						assert.ok(oLabel2.getText() === "Label 3 French", "Label2: String 3 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "", "Field2: Empty");
-					}.bind(this)).then(function () {
+						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
+						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
+						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "String 2 French", "Field2Trans: String 2 French");
+					}).then(function () {
+						assert.ok(oLabel3.getText() === "Label 3 English", "Label1: Label 3 English");
+						assert.ok(oField3Ori.getAggregation("_field").getText() === "stringParameter Value Admin3", "Field3Ori: String 3 English");
+						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "", "Field3Trans: Empty");
+					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
 					}.bind(this));
@@ -583,39 +573,34 @@ sap.ui.define([
 				});
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField1Ori = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1Trans = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField2Ori = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2Trans = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oField3Ori = this.oCardEditor.getAggregation("_formContent")[8];
+					var oField3Trans = this.oCardEditor.getAggregation("_formContent")[9];
 					wait().then(function () {
-						var oLanguageTitle = this.oCardEditor.getAggregation("_formContent")[1];
-						assert.ok(oLanguageTitle.getText() === "Français", "Français");
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+						assert.ok(oPanel.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "stringParameter Value Content1", "Field1: stringParameter Value Content1");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
-						assert.ok(oLabel2.getText() === "Label 1 French", "Label 2: String 1 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "", "Field2: String 1 French");
+						assert.ok(oField1Ori.getAggregation("_field").getText() === "stringParameter Value Content1", "Field1Ori: stringParameter Value Content1");
+						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "", "Field1Trans: String 1 French");
 					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[6];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[7];
-						assert.ok(oLabel1.getText() === "Label 2 English", "Label1: Label 2 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 2 English", "Field1: String 2 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[8];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[9];
-						assert.ok(oLabel2.getText() === "Label 2 French", "Label 2: String 2 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "String 2 French", "Field2: String 2 French");
-					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[10];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[11];
-						assert.ok(oLabel1.getText() === "Label 3 English", "Label1: Label 3 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "stringParameter Value Content3", "Field1: stringParameter Value Content3");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[12];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[13];
-						assert.ok(oLabel2.getText() === "Label 3 French", "Label2: String 3 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "", "Field2: String 3 French");
-					}.bind(this)).then(function () {
+						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
+						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
+						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "String 2 French", "Field2Trans: String 2 French");
+					}).then(function () {
+						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
+						assert.ok(oField3Ori.getAggregation("_field").getText() === "stringParameter Value Content3", "Field3Ori: stringParameter Value Content3");
+						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "", "Field3Trans: String 3 French");
+					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
 					}.bind(this));
@@ -677,39 +662,34 @@ sap.ui.define([
 				});
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField1Ori = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1Trans = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField2Ori = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2Trans = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oField3Ori = this.oCardEditor.getAggregation("_formContent")[8];
+					var oField3Trans = this.oCardEditor.getAggregation("_formContent")[9];
 					wait().then(function () {
-						var oLanguageTitle = this.oCardEditor.getAggregation("_formContent")[1];
-						assert.ok(oLanguageTitle.getText() === "Français", "Français");
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+						assert.ok(oPanel.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "stringParameter Value Admin1", "Field1: stringParameter Value Admin1");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
-						assert.ok(oLabel2.getText() === "Label 1 French", "Label 2: String 1 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "", "Field2: String 1 French");
+						assert.ok(oField1Ori.getAggregation("_field").getText() === "stringParameter Value Admin1", "Field1Ori: stringParameter Value Admin1");
+						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "", "Field1Trans: String 1 French");
 					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[6];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[7];
-						assert.ok(oLabel1.getText() === "Label 2 English", "Label1: Label 2 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 2 English", "Field1: String 2 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[8];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[9];
-						assert.ok(oLabel2.getText() === "Label 2 French", "Label 2: String 2 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "String 2 French", "Field2: String 2 French");
-					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[10];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[11];
-						assert.ok(oLabel1.getText() === "Label 3 English", "Label1: Label 3 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "stringParameter Value Content3", "Field1: stringParameter Value Content3");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[12];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[13];
-						assert.ok(oLabel2.getText() === "Label 3 French", "Label2: String 3 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "", "Field2: String 3 French");
-					}.bind(this)).then(function () {
+						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
+						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
+						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "String 2 French", "Field2Trans: String 2 French");
+					}).then(function () {
+						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
+						assert.ok(oField3Ori.getAggregation("_field").getText() === "stringParameter Value Content3", "Field3Ori: stringParameter Value Content3");
+						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "", "Field3Trans: String 3 French");
+					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
 					}.bind(this));
@@ -777,39 +757,34 @@ sap.ui.define([
 				});
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField1Ori = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1Trans = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField2Ori = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2Trans = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oField3Ori = this.oCardEditor.getAggregation("_formContent")[8];
+					var oField3Trans = this.oCardEditor.getAggregation("_formContent")[9];
 					wait().then(function () {
-						var oLanguageTitle = this.oCardEditor.getAggregation("_formContent")[1];
-						assert.ok(oLanguageTitle.getText() === "Français", "Français");
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+						assert.ok(oPanel.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "stringParameter Value Admin1", "Field1: stringParameter Value Admin1");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
-						assert.ok(oLabel2.getText() === "Label 1 French", "Label 2: String 1 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "stringParameter Value Translation1", "Field2: stringParameter Value Translation1");
+						assert.ok(oField1Ori.getAggregation("_field").getText() === "stringParameter Value Admin1", "Field1Ori: stringParameter Value Admin1");
+						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "stringParameter Value Translation1", "Field1Trans: stringParameter Value Translation1");
 					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[6];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[7];
-						assert.ok(oLabel1.getText() === "Label 2 English", "Label1: Label 2 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 2 English", "Field1: String 2 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[8];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[9];
-						assert.ok(oLabel2.getText() === "Label 2 French", "Label 2: String 2 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "stringParameter Value Translation2", "Field2: stringParameter Value Translation2");
-					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[10];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[11];
-						assert.ok(oLabel1.getText() === "Label 3 English", "Label1: Label 3 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "stringParameter Value Content3", "Field1: stringParameter Value Content3");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[12];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[13];
-						assert.ok(oLabel2.getText() === "Label 3 French", "Label2: String 3 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "", "Field2: String 3 French");
-					}.bind(this)).then(function () {
+						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
+						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
+						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "stringParameter Value Translation2", "Field2Trans: stringParameter Value Translation2");
+					}).then(function () {
+						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
+						assert.ok(oField3Ori.getAggregation("_field").getText() === "stringParameter Value Content3", "Field3Ori: stringParameter Value Content3");
+						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "", "Field3Trans: String 3 French");
+					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
 					}.bind(this));
@@ -866,39 +841,34 @@ sap.ui.define([
 				});
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField1Ori = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1Trans = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField2Ori = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2Trans = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oField3Ori = this.oCardEditor.getAggregation("_formContent")[8];
+					var oField3Trans = this.oCardEditor.getAggregation("_formContent")[9];
 					wait().then(function () {
-						var oLanguageTitle = this.oCardEditor.getAggregation("_formContent")[1];
-						assert.ok(oLanguageTitle.getText() === "Français", "Français");
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+						assert.ok(oPanel.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 1 English", "Field1: String 1 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
-						assert.ok(oLabel2.getText() === "Label 1 French", "Label 2: String 1 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "stringParameter Value Translation1", "Field2: stringParameter Value Translation1");
+						assert.ok(oField1Ori.getAggregation("_field").getText() === "String 1 English", "Field1Ori: String 1 English");
+						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "stringParameter Value Translation1", "Field1Trans: stringParameter Value Translation1");
 					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[6];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[7];
-						assert.ok(oLabel1.getText() === "Label 2 English", "Label1: Label 2 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 2 English", "Field1: String 2 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[8];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[9];
-						assert.ok(oLabel2.getText() === "Label 2 French", "Label 2: String 2 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "stringParameter Value Translation2", "Field2: stringParameter Value Translation2");
-					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[10];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[11];
-						assert.ok(oLabel1.getText() === "Label 3 English", "Label1: Label 3 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 3 English", "Field1: String 3 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[12];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[13];
-						assert.ok(oLabel2.getText() === "Label 3 French", "Label2: String 3 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "String 3 French", "Field2: String 3 French");
-					}.bind(this)).then(function () {
+						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
+						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
+						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "stringParameter Value Translation2", "Field2Trans: stringParameter Value Translation2");
+					}).then(function () {
+						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
+						assert.ok(oField3Ori.getAggregation("_field").getText() === "String 3 English", "Field3Ori: String 3 English");
+						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "String 3 French", "Field3Trans: String 3 French");
+					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
 					}.bind(this));
@@ -955,39 +925,34 @@ sap.ui.define([
 				});
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField1Ori = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1Trans = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField2Ori = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2Trans = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oField3Ori = this.oCardEditor.getAggregation("_formContent")[8];
+					var oField3Trans = this.oCardEditor.getAggregation("_formContent")[9];
 					wait().then(function () {
-						var oLanguageTitle = this.oCardEditor.getAggregation("_formContent")[1];
-						assert.ok(oLanguageTitle.getText() === this.oCardEditor.getMetadata().getClass()._languages["fr_CA"], this.oCardEditor.getMetadata().getClass()._languages["fr_CA"]);
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+						assert.ok(oPanel.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 1 English", "Field1: String 1 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
-						assert.ok(oLabel2.getText() === "Label 1 French", "Label 2: String 1 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "stringParameter Value Translation1", "Field2: stringParameter Value Translation1");
+						assert.ok(oField1Ori.getAggregation("_field").getText() === "String 1 English", "Field1Ori: String 1 English");
+						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "stringParameter Value Translation1", "Field1Trans: stringParameter Value Translation1");
 					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[6];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[7];
-						assert.ok(oLabel1.getText() === "Label 2 English", "Label1: Label 2 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 2 English", "Field1: String 2 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[8];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[9];
-						assert.ok(oLabel2.getText() === "Label 2 French", "Label 2: String 2 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "stringParameter Value Translation2", "Field2: stringParameter Value Translation2");
-					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[10];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[11];
-						assert.ok(oLabel1.getText() === "Label 3 English", "Label1: Label 3 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 3 English", "Field1: String 3 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[12];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[13];
-						assert.ok(oLabel2.getText() === "Label 3 French", "Label2: String 3 French");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "String 3 French CA", "Field2: String 3 French CA");
-					}.bind(this)).then(function () {
+						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
+						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
+						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "stringParameter Value Translation2", "Field2Trans: stringParameter Value Translation2");
+					}).then(function () {
+						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
+						assert.ok(oField3Ori.getAggregation("_field").getText() === "String 3 English", "Field3Ori: String 3 English");
+						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "String 3 French CA", "Field3Trans: String 3 French CA");
+					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
 					}.bind(this));
@@ -1046,51 +1011,42 @@ sap.ui.define([
 				});
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField1Ori = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1Trans = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField2Ori = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2Trans = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oField3Ori = this.oCardEditor.getAggregation("_formContent")[8];
+					var oField3Trans = this.oCardEditor.getAggregation("_formContent")[9];
+					var oLabel4 = this.oCardEditor.getAggregation("_formContent")[10];
+					var oField4Ori = this.oCardEditor.getAggregation("_formContent")[11];
+					var oField4Trans = this.oCardEditor.getAggregation("_formContent")[12];
 					wait().then(function () {
-						var oLanguageTitle = this.oCardEditor.getAggregation("_formContent")[1];
-						assert.ok(oLanguageTitle.getText() === "Español de México", "Español de México");
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+						assert.ok(oPanel.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
 						assert.ok(oLabel1.getText() === "Label 1 English", "Label1: Label 1 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 1 English", "Field1: String 1 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
-
-						assert.ok(oLabel2.getText() === "Label 1 Spanish", "Label 2: Label 1 Spanish");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "stringParameter Value Translation1", "Field2: stringParameter Value Translation1");
+						assert.ok(oField1Ori.getAggregation("_field").getText() === "String 1 English", "Field1Ori: String 1 English");
+						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "stringParameter Value Translation1", "Field1Trans: stringParameter Value Translation1");
 					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[6];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[7];
-						assert.ok(oLabel1.getText() === "Label 2 English", "Label1: Label 2 English");
-
-						assert.ok(oField1.getAggregation("_field").getText() === "String 2 English", "Field1: String 2 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[8];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[9];
-						assert.ok(oLabel2.getText() === "Label 2 Spanish MX", "Label 2: Label 2 Spanish MX");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "String 2 Spanish MX", "Field2: String 2 Spanish MX");
-					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[10];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[11];
-						assert.ok(oLabel1.getText() === "Label 3 English", "Label1: Label 3 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 3 English", "Field1: String 3 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[12];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[13];
-						assert.ok(oLabel2.getText() === "", "Label2: No label in Mexican or Spanish");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "String 3 Spanish", "Field2: String 3 Spanish");
-					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[10];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[11];
-						assert.ok(oLabel1.getText() === "Label 3 English", "Label1: Label 3 English");
-						assert.ok(oField1.getAggregation("_field").getText() === "String 3 English", "Field1: String 3 English");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[12];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[13];
-						assert.ok(oLabel2.getText() === "", "Label2: No label in Mexican or Spanish");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "String 3 Spanish", "Field2: String 3 Spanish");
-					}.bind(this)).then(function () {
+						assert.ok(oLabel2.getText() === "Label 2 English", "Label2: Label 2 English");
+						assert.ok(oField2Ori.getAggregation("_field").getText() === "String 2 English", "Field2Ori: String 2 English");
+						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "String 2 Spanish MX", "Field2Trans: String 2 Spanish MX");
+					}).then(function () {
+						assert.ok(oLabel3.getText() === "Label 3 English", "Label3: Label 3 English");
+						assert.ok(oField3Ori.getAggregation("_field").getText() === "String 3 English", "Field3Ori: String 3 English");
+						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "String 3 Spanish", "Field3Trans: String 3 Spanish");
+					}).then(function () {
+						assert.ok(oLabel4.getText() === "string4label", "Label4: Label 4 English");
+						assert.ok(oField4Ori.getAggregation("_field").getText() === "string4", "Field4Ori: String 4");
+						assert.ok(oField4Trans.getAggregation("_field").getEditable() === true, "Field4Trans: Editable");
+						assert.ok(oField4Trans.getAggregation("_field").getValue() === "", "Field4Trans: Empty");
+					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
 					}.bind(this));
@@ -1172,39 +1128,34 @@ sap.ui.define([
 				});
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField1Ori = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField1Trans = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField2Ori = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2Trans = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oField3Ori = this.oCardEditor.getAggregation("_formContent")[8];
+					var oField3Trans = this.oCardEditor.getAggregation("_formContent")[9];
 					wait().then(function () {
-						var oLanguageTitle = this.oCardEditor.getAggregation("_formContent")[1];
-						assert.ok(oLanguageTitle.getText() === "Español de México", "Español de México");
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+						assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+						assert.ok(oPanel.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
 						assert.ok(oLabel1.getText() === "string1", "Label1: string1");
-						assert.ok(oField1.getAggregation("_field").getText() === "string1", "Field1: string1");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
-						assert.ok(oLabel2.getText() === "", "Label 2: No label");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "stringParameter Value Translation1", "Field2: stringParameter Value Translation1");
+						assert.ok(oField1Ori.getAggregation("_field").getText() === "string1", "Field1Ori: string1");
+						assert.ok(oField1Trans.getAggregation("_field").getEditable() === true, "Field1Trans: Editable");
+						assert.ok(oField1Trans.getAggregation("_field").getValue() === "stringParameter Value Translation1", "Field1Trans: stringParameter Value Translation1");
 					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[6];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[7];
-						assert.ok(oLabel1.getText() === "string2", "Label1: string2");
-						assert.ok(oField1.getAggregation("_field").getText() === "stringParameter Value Admin2", "Field1: stringParameter Value Admin2");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[8];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[9];
-						assert.ok(oLabel2.getText() === "", "Label 2: No Label");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "", "Field2: No Value");
-					}.bind(this)).then(function () {
-						var oLabel1 = this.oCardEditor.getAggregation("_formContent")[10];
-						var oField1 = this.oCardEditor.getAggregation("_formContent")[11];
-						assert.ok(oLabel1.getText() === "string3", "Label1: string3");
-						assert.ok(oField1.getAggregation("_field").getText() === "string3", "Field1: string3");
-						var oLabel2 = this.oCardEditor.getAggregation("_formContent")[12];
-						var oField2 = this.oCardEditor.getAggregation("_formContent")[13];
-						assert.ok(oLabel2.getText() === "", "Label2: No label");
-						assert.ok(oField2.getAggregation("_field").getEditable() === true, "Field2: Editable");
-						assert.ok(oField2.getAggregation("_field").getValue() === "", "Field2: No value");
-					}.bind(this)).then(function () {
+						assert.ok(oLabel2.getText() === "string2", "Label2: string2");
+						assert.ok(oField2Ori.getAggregation("_field").getText() === "stringParameter Value Admin2", "Field2Ori: stringParameter Value Admin2");
+						assert.ok(oField2Trans.getAggregation("_field").getEditable() === true, "Field2Trans: Editable");
+						assert.ok(oField2Trans.getAggregation("_field").getValue() === "", "Field2Trans: No Value");
+					}).then(function () {
+						assert.ok(oLabel3.getText() === "string3", "Label3: string3");
+						assert.ok(oField3Ori.getAggregation("_field").getText() === "string3", "Field3Ori: string3");
+						assert.ok(oField3Trans.getAggregation("_field").getEditable() === true, "Field3Trans: Editable");
+						assert.ok(oField3Trans.getAggregation("_field").getValue() === "", "Field3Trans: No value");
+					}).then(function () {
 						destroyEditor(this.oCardEditor);
 						resolve();
 					}.bind(this));

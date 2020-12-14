@@ -14,6 +14,9 @@ sap.ui.define([
 	"sap/ui/integration/util/CardMerger",
 	"sap/m/Label",
 	"sap/m/Title",
+	"sap/m/Panel",
+	"sap/m/HBox",
+	"sap/m/VBox",
 	"sap/ui/core/Icon",
 	"sap/m/ResponsivePopover",
 	"sap/m/Popover",
@@ -38,6 +41,9 @@ sap.ui.define([
 	CardMerger,
 	Label,
 	Title,
+	Panel,
+	HBox,
+	VBox,
 	Icon,
 	RPopover,
 	Popover,
@@ -183,52 +189,173 @@ sap.ui.define([
 				oRm.writeClasses();
 				oRm.openEnd();
 				var aItems = oControl.getAggregation("_formContent");
+				var oGeneralSettingsPanel;
 				//render items
 				if (aItems) {
-					var oLabel,
-						iCol = 0;
+					var oPanel;
+					var oLanguagePanel;
+					var oLabelItemForNotWrapping;
+					var olabelItemForCol;
+					var oColFields = [];
+					var iColSize = 2;
+					var oOriginalField;
+					var oLayoutForNotWrapping = function () {
+						return new sap.m.FlexItemData({
+							growFactor: 1,
+							baseSize: "0"
+						});
+					};
+					var addColFields = function() {
+						if (oColFields.length > 0) {
+							var iLess = iColSize - oColFields.length;
+							for (var n = 0; n < iLess; n++) {
+								oColFields.push(new VBox().setLayoutData(oLayoutForNotWrapping()));
+							}
+							oPanel.addContent(new HBox({
+								items:oColFields
+							}));
+							oColFields = [];
+						}
+					};
+
+					var iCheckIndex = oControl.getMode() !== "translation" ? 0 : 1;
+					if (Object.keys(aItems).length > iCheckIndex && aItems[Object.keys(aItems)[iCheckIndex]].type !== "group") {
+						//add general settings panel
+						oGeneralSettingsPanel = new Panel({
+							headerText: oResourceBundle.getText("CARDEDITOR_PARAMETERS_GENERALSETTINGS"),
+							visible: true,
+							expandable: true,
+							expanded: true,
+							width: "auto",
+							objectBindings: {
+								currentSettings: {
+									path: "currentSettings>undefined"
+								},
+								items: {
+									path: "items>/form/items"
+								}
+							}
+						}).addStyleClass("sapUiIntegrationCardEditorItem");
+						//bind models for contents in panel
+						oGeneralSettingsPanel.setModel(oControl.getModel("currentSettings"), "currentSettings");
+						oGeneralSettingsPanel.setModel(oControl.getModel("currentSettings"), "items");
+						aItems.splice(iCheckIndex, 0, oGeneralSettingsPanel);
+						//add panel to aggregation of current control, so that getParent() can work later for settings button
+						oControl.addAggregation("_formContent", oGeneralSettingsPanel);
+					}
 					for (var i = 0; i < aItems.length; i++) {
 						var oItem = aItems[i];
-						if (oItem.isA("sap.m.Label")) {
-							oLabel = oItem; //store the label and render it together with the next field
-							continue;
-						}
-						oRm.openStart("div");
-						oRm.addClass("sapUiIntegrationCardEditorItem");
-						if (oControl.getMode() === "translation") {
-							oRm.addClass("language");
-						}
-						//if multiple cols are used in the form, set class sapUiIntegrationCardEditorItemCol1 or sapUiIntegrationCardEditorItemCol2
-						if (oItem._cols === 1) {
-							oRm.addClass("sapUiIntegrationCardEditorItemCol" + (++iCol));
-						} else {
-							iCol = 0;
-						}
-						oRm.writeClasses();
-						oRm.openEnd();
-						if (oItem.isA("sap.m.Title")) {
-							oRm.renderControl(oItem);
-						} else {
-							//render label and field
-							if (oLabel) {
-								var oDependent = oLabel.getDependents() && oLabel.getDependents()[0];
-								oRm.openStart("div");
-								oRm.addClass("sapUiIntegrationCardEditorItemLabel");
-								if (oDependent && oControl.getMode() !== "translation") {
-									oRm.addClass("description");
+						if (oControl.getMode() !== "translation") {
+							if (oItem.isA("sap.m.Panel")) {
+								if (oPanel) {
+									//add current col fields to previous panel, then empty the col fields list
+									addColFields();
+									//render previous panel
+									if (oPanel.getContent().length > 0) {
+										oRm.renderControl(oPanel);
+									}
 								}
-								oRm.openEnd();
-								oRm.renderControl(oLabel);
-								if (oDependent) {
-									oRm.renderControl(oDependent);
-								}
-								oRm.close("div");
+								oPanel = oItem;
+								oPanel.addStyleClass("sapUiIntegrationCardEditorItem");
+								continue;
 							}
-							oRm.renderControl(oItem);
+							if (oItem.isA("sap.m.Label")) {
+								oItem.addStyleClass("sapUiIntegrationCardEditorItemLabel");
+								var oDependent = oItem.getDependents() && oItem.getDependents()[0];
+								var oLabelWithDependentHBox = null;
+								if (oDependent) {
+									oLabelWithDependentHBox = new HBox({
+										items:[
+											oItem.addStyleClass("description"),
+											oDependent
+										]
+									});
+								}
+								//add the col fields to panel
+								if (oItem._cols === 1) {
+									//if reach the col size, add the col fields to panel, then empty the col fields list
+									if (oColFields.length === iColSize) {
+										oPanel.addContent(new HBox({
+											items:oColFields
+										}));
+										oColFields = [];
+									}
+									olabelItemForCol = oLabelWithDependentHBox ? oLabelWithDependentHBox : oItem;
+									continue;
+								}
+								//add current col fields to panel, then empty the col fields list
+								addColFields();
+								//now only Not wrap the label and field of boolean parameters
+								if (oItem._sOriginalType === "boolean") {
+									oLabelItemForNotWrapping = oLabelWithDependentHBox ? oLabelWithDependentHBox : oItem; //store the label of boolean and render it together with the next field
+								} else {
+									oPanel.addContent(oLabelWithDependentHBox ? oLabelWithDependentHBox : oItem);
+								}
+							} else if (oItem._cols === 1) {
+								oColFields.push(new VBox({
+									items:[
+										olabelItemForCol,
+										oItem
+									]
+								}).setLayoutData(oLayoutForNotWrapping()));
+								olabelItemForCol = null;
+							} else if (oLabelItemForNotWrapping) {
+								//render lable and field for NotWrapping parameter
+								oItem.setLayoutData(oLayoutForNotWrapping());
+								oLabelItemForNotWrapping.setLayoutData(oLayoutForNotWrapping());
+								oPanel.addContent(new HBox({
+									items:[
+										oLabelItemForNotWrapping,
+										oItem
+									]
+								}));
+								oLabelItemForNotWrapping = null;
+							} else {
+								oPanel.addContent(oItem);
+							}
+							if (i === aItems.length - 1 && oPanel.getContent().length > 0) {
+								oRm.renderControl(oPanel);
+							}
+						} else {
+							if (i === 0) {
+								//render the top panel of translation
+								oLanguagePanel = oItem;
+								oRm.renderControl(oLanguagePanel);
+								oLanguagePanel.addStyleClass("sapUiIntegrationCardEditorTranslationPanel");
+								continue;
+							}
+							if (oItem.isA("sap.m.Panel")) {
+								//add sub panel if it has content into top panel
+								if (oPanel && oPanel.getContent().length > 0) {
+									oLanguagePanel.addContent(oPanel);
+								}
+								oPanel = oItem;
+								oPanel.addStyleClass("sapUiIntegrationCardEditorTranslationSubPanel");
+								continue;
+							}
+							if (oItem.isA("sap.m.Label")) {
+								oPanel.addContent(oItem);
+								continue;
+							}
+							//oItem.addStyleClass("language");
+							if (oItem.isOrigLangField) {
+								oOriginalField = oItem;
+								continue;
+							}
+							//bind originalField and translation field together
+							oOriginalField.setLayoutData(oLayoutForNotWrapping());
+							oItem.setLayoutData(oLayoutForNotWrapping());
+							var oHBox = new HBox({
+								items:[
+									oOriginalField,
+									oItem
+								]
+							});
+							oPanel.addContent(oHBox);
+							if (i === aItems.length - 1) {
+								oLanguagePanel.addContent(oPanel);
+							}
 						}
-						oRm.close("div");
-						oLabel = null; //reset the label
-						iCol = iCol == 2 ? 0 : iCol; //reset the cols if 2, we only support 2 cols currently
 					}
 				}
 				oRm.close("div");
@@ -751,6 +878,7 @@ sap.ui.define([
 			}
 		});
 		oLabel._cols = oConfig.cols || 2; //by default 2 cols
+		oLabel._sOriginalType = oConfig.type;
 		if (oConfig.description) {
 			var oIcon = new Icon({
 				src: "sap-icon://message-information",
@@ -977,13 +1105,16 @@ sap.ui.define([
 		oConfig.__cols = oConfig.cols || 2;
 
 		//if the item is not visible or translation mode, continue immediately
-		if (oConfig.visible === false || (!oConfig.translatable && sMode === "translation")) {
+		if (oConfig.visible === false || (!oConfig.translatable && sMode === "translation" && oConfig.type !== "group")) {
 			return;
 		}
 		if (oConfig.type === "group") {
-			var oTitle = new Title({
-				text: oConfig.label,
+			var oPanel = new Panel({
+				headerText: oConfig.label,
 				visible: oConfig.visible,
+				expandable: oConfig.expandable !== false,
+				expanded: oConfig.expanded !== false,
+				width: "auto",
 				objectBindings: {
 					currentSettings: {
 						path: "currentSettings>" + oConfig._settingspath
@@ -993,8 +1124,8 @@ sap.ui.define([
 					}
 				}
 			});
-			this.addAggregation("_formContent", oTitle);
-			oTitle._cols = oConfig.cols || 2; //by default 2 cols
+			this.addAggregation("_formContent", oPanel);
+			oPanel._cols = oConfig.cols || 2; //by default 2 cols
 			return;
 		}
 		if (sMode === "translation") {
@@ -1010,6 +1141,8 @@ sap.ui.define([
 			//force a 2 column layout in the form, remember the original to reset
 
 			oConfig.cols = 1;
+			//delete values property of string field
+			delete oConfig.values;
 
 			//create a configuration clone. map the _settingspath setting to _language, and set it to not editable
 			var origLangField = deepClone(oConfig, 10);
@@ -1024,9 +1157,9 @@ sap.ui.define([
 			this.addAggregation("_formContent",
 				this._createLabel(origLangField)
 			);
-			this.addAggregation("_formContent",
-				this._createField(origLangField)
-			);
+			var oField = this._createField(origLangField);
+			oField.isOrigLangField = true;
+			this.addAggregation("_formContent", oField);
 			oConfig.value = oConfig._translatedDefaultValue || "";
 			//even if a item is not visible or not editable by another layer for translations it should always be editable and visible
 			oConfig.editable = oConfig.visible = oConfig.translatable;
@@ -1039,11 +1172,12 @@ sap.ui.define([
 			oConfig.label = oConfig._translatedLabel || "";
 			oConfig.required = false; //translation is never required
 			//now continue with the default...
+		} else {
+			this.addAggregation("_formContent",
+				this._createLabel(oConfig)
+			);
 		}
 		//default for all modes
-		this.addAggregation("_formContent",
-			this._createLabel(oConfig)
-		);
 		var oField = this._createField(oConfig);
 		this.addAggregation("_formContent",
 			oField
@@ -1101,25 +1235,21 @@ sap.ui.define([
 	 */
 	CardEditor.prototype._startEditor = function () {
 		var oSettings = this._settingsModel.getProperty("/");
+		var aItems;
 		if (oSettings.form && oSettings.form.items) {
+			aItems = oSettings.form.items;
 			if (this.getMode() === "translation") {
-				//add 2 group items to show over the columns to avoid language repetition in the labels
+				//add top panel of translation editor
 				this._addItem({
 					type: "group",
-					cols: 1,
 					translatable: true,
-					label: oResourceBundle.getText("CARDEDITOR_ORIGINALLANG")
-				});
-				this._addItem({
-					type: "group",
-					cols: 1,
-					translatable: true,
-					label: CardEditor._languages[this._language] || this.getLanguage()
+					expandable: false,
+					label: oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + (CardEditor._languages[this._language] || this.getLanguage())
 				});
 			}
 			this._mItemsByPaths = {};
-			for (var n in oSettings.form.items) {
-				var oItem = oSettings.form.items[n];
+			for (var n in aItems) {
+				var oItem = aItems[n];
 				if (oItem.manifestpath) {
 					this._mItemsByPaths[oItem.manifestpath] = oItem;
 				}
@@ -1178,8 +1308,8 @@ sap.ui.define([
 			}
 		}
 
-		for (var n in oSettings.form.items) {
-			var oItem = oSettings.form.items[n];
+		for (var n in aItems) {
+			var oItem = aItems[n];
 			this._addItem(oItem);
 		}
 		//add preview

@@ -39,7 +39,9 @@
 				"stringWithTranslatedValue": {
 					"value": "{{TRANSLATED_STRING_VALUE}}"
 				},
-				"stringWithTranslatedDTDefaultValue": {},
+				"stringWithTranslatedDTDefaultValue": {
+					"value": ""
+				},
 				"integer": {
 					"value": 1
 				},

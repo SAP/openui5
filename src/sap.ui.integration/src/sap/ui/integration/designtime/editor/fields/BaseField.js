@@ -274,10 +274,13 @@ sap.ui.define([
 		var oSettingsPanel = this._getSettingsPanel();
 		window.setTimeout(function () {
 			oSettingsPanel.setConfiguration(this.getConfiguration());
+			var oPreview = this.getParent().getParent().getAggregation("_preview")
+				|| this.getParent().getParent().getParent().getAggregation("_preview")
+				|| this.getParent().getParent().getParent().getParent().getAggregation("_preview");
 			oSettingsPanel.open(
 				this.getAggregation("_settingsButton"),
 				this.getAggregation("_settingsButton"),
-				this.getParent().getAggregation("_preview"),
+				oPreview,
 				this.getHost(),
 				this,
 				this._applySettings.bind(this),

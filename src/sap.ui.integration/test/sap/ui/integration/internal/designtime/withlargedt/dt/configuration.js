@@ -106,6 +106,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
 						"defaultValue": false,
 						"type": "boolean",
+						"description": "Description",
 						"visualization": {
 							"type": "sap/m/Switch",
 							"settings": {
@@ -359,6 +360,37 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"defaultValue": "Circle",
 						"label": "Icon Shape",
 						"type": "string",
+						"description": "Description",
+						"visualization": {
+							"type": "ShapeSelect",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						},
+						"cols": 1
+					},
+					"color1": {
+						"manifestpath": "/sap.card/header/icon/backgroundColor",
+						"defaultValue": "",
+						"type": "string",
+						"label": "Icon Background",
+						"description": "Description",
+						"visualization": {
+							"type": "ColorSelect",
+							"settings": {
+								"enumValue": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						},
+						"cols": 1
+					},
+					"shape1": {
+						"manifestpath": "/sap.card/header/icon/shape",
+						"defaultValue": "Circle",
+						"label": "Icon Shape",
+						"type": "string",
+						"description": "Description",
 						"visualization": {
 							"type": "ShapeSelect",
 							"settings": {
@@ -385,6 +417,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"enabled": "{currentSettings>editable}"
 							}
 						}
+					},
+					"color2": {
+						"manifestpath": "/sap.card/header/icon/backgroundColor",
+						"defaultValue": "",
+						"type": "string",
+						"description": "Description",
+						"label": "Icon Background",
+						"visualization": {
+							"type": "ColorSelect",
+							"settings": {
+								"enumValue": "{currentSettings>value}",
+								"editable": "{currentSettings>editable}"
+							}
+						},
+						"cols": 1
 					},
 					"group": {
 						"label": "Dependent",
