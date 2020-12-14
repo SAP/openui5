@@ -15869,23 +15869,27 @@ sap.ui.define([
 	// Expand the first group. After that show more elements of the first group.
 	// After that expand the second group and also show more elements.
 	// JIRA: CPOUI5ODATAV4-177
+	// Filter before aggregation; make sure it is also applied to children when expanding.
+	// JIRA: CPOUI5ODATAV4-180
 	QUnit.test("Data Aggregation: expand and paging on sap.ui.table.Table", function (assert) {
 		var oModel = createAggregationModel(),
 			oTable,
 			sView = '\
-<t:Table id="table" rows="{path : \'/BusinessPartners\',\
-	parameters : {\
-		$$aggregation : {\
-			aggregate : {\
-				SalesAmount : {subtotals : true},\
-				SalesNumber : {}\
-			},\
-			group : {\
-				AccountResponsible : {}\
-			},\
-			groupLevels : [\'Region\']\
-		}\
-	}}" threshold="0" visibleRowCount="3">\
+<t:Table id="table" threshold="0" visibleRowCount="3"\
+	rows="{path : \'/BusinessPartners\',\
+		parameters : {\
+			$$aggregation : {\
+				aggregate : {\
+					SalesAmount : {subtotals : true},\
+					SalesNumber : {}\
+				},\
+				group : {\
+					AccountResponsible : {}\
+				},\
+				groupLevels : [\'Region\']\
+			}\
+		},\
+		filters : {path : \'AccountResponsible\', operator : \'GE\', value1 : \'a\'}}">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
@@ -15896,8 +15900,8 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-				+ "&$count=true&$skip=0&$top=3", {
+		this.expectRequest("BusinessPartners?$apply=filter(AccountResponsible ge 'a')"
+				+ "/groupby((Region),aggregate(SalesAmount))&$count=true&$skip=0&$top=3", {
 				"@odata.count" : "26",
 				value : [
 					{Region : "Z", SalesAmount : "100"},
@@ -15916,7 +15920,8 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 
-			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
+			that.expectRequest("BusinessPartners?$apply="
+					+ "filter(Region eq 'Z' and (AccountResponsible ge 'a'))"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
 					+ "&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "4",
@@ -15939,7 +15944,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand node 'Z'");
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Z')"
+			that.expectRequest("BusinessPartners?$apply="
+					+ "filter(Region eq 'Z' and (AccountResponsible ge 'a'))"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
 					+ "&$count=true&$skip=3&$top=1", {
 					"@odata.count" : "4",
@@ -15961,7 +15967,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "scroll so that 'Z-c' is in first row");
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
+			that.expectRequest("BusinessPartners?$apply="
+					+ "filter(Region eq 'Y' and (AccountResponsible ge 'a'))"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
 					+ "&$count=true&$skip=0&$top=3", {
 					"@odata.count" : "8",
@@ -15979,7 +15986,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "expand node 'Y'");
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
+			that.expectRequest("BusinessPartners?$apply="
+					+ "filter(Region eq 'Y' and (AccountResponsible ge 'a'))"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
 					+ "&$count=true&$skip=7&$top=1", {
 					"@odata.count" : "8",
@@ -15987,7 +15995,8 @@ sap.ui.define([
 						{AccountResponsible : "h", SalesAmount : "80", SalesNumber : 8}
 					]
 				})
-				.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
+				.expectRequest("BusinessPartners?$apply=filter(AccountResponsible ge 'a')"
+					+ "/groupby((Region),aggregate(SalesAmount))"
 					+ "&$count=true&$skip=3&$top=1", {
 					"@odata.count" : "26",
 					value : [
@@ -16009,7 +16018,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert, "scroll to 'Y-h': 'Y-h', 'X' and 'W' visible");
 		}).then(function () {
-			that.expectRequest("BusinessPartners?$apply=filter(Region eq 'Y')"
+			that.expectRequest("BusinessPartners?$apply="
+					+ "filter(Region eq 'Y' and (AccountResponsible ge 'a'))"
 					+ "/groupby((AccountResponsible),aggregate(SalesAmount,SalesNumber))"
 					+ "&$count=true&$skip=3&$top=3", {
 					"@odata.count" : "8",

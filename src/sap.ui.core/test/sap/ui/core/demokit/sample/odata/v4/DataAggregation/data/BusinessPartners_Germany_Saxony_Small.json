@@ -1,0 +1,12 @@
+{
+	"@odata.count" : 2,
+	"value" : [{
+		"@odata.id" : null,
+		"AccountResponsible" : "Michael Meier",
+		"LocalCurrency" : "EUR",
+		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+		"SalesAmountLocalCurrency" : 26450,
+		"SalesNumber@odata.type" : "#Int32",
+		"SalesNumber" : 500
+	}]
+}

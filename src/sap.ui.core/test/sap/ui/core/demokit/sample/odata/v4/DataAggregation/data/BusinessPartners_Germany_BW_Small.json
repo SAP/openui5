@@ -1,0 +1,20 @@
+{
+	"@odata.count" : 2,
+	"value" : [{
+		"@odata.id": null,
+		"AccountResponsible": "Erwin Fischer",
+		"LocalCurrency" : "EUR",
+		"SalesAmountLocalCurrency@odata.type": "#Decimal",
+		"SalesAmountLocalCurrency": 61632,
+		"SalesNumber@odata.type": "#Int32",
+		"SalesNumber": 1032
+	}, {
+		"@odata.id": null,
+		"AccountResponsible": "Winfried Maier",
+		"LocalCurrency" : "EUR",
+		"SalesAmountLocalCurrency@odata.type": "#Decimal",
+		"SalesAmountLocalCurrency": 63461,
+		"SalesNumber@odata.type": "#Int32",
+		"SalesNumber": 1178
+	}]
+}

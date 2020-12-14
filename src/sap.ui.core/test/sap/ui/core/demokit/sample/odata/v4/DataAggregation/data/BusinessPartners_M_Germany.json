@@ -1,0 +1,10 @@
+{
+	"@odata.count" : 1,
+	"value" : [{
+		"@odata.id" : null,
+		"LocalCurrency" : "EUR",
+		"Region" : "Saxony",
+		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
+		"SalesAmountLocalCurrency" : 1161590
+	}]
+}
