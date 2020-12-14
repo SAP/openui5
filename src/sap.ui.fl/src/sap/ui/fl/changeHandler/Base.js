@@ -58,6 +58,13 @@ sap.ui.define([
 			var oView = mPropertyBag.view;
 			var sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
 			var sNamespace = oChange.getProjectId();
+			var sExtensionPointPrefix =
+			oChange.getExtensionPointInfo
+				&& oChange.getExtensionPointInfo()
+				&& oChange.getExtensionPointInfo().fragmentId;
+			if (sExtensionPointPrefix) {
+				sNamespace = sNamespace ? sNamespace + "." + sExtensionPointPrefix : sExtensionPointPrefix;
+			}
 			try {
 				return oModifier.instantiateFragment(sFragment, sNamespace, oView);
 			} catch (oError) {

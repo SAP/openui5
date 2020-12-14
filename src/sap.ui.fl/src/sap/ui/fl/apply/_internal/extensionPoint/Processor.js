@@ -39,7 +39,7 @@ function(
 				return new Promise(function (resolve, reject) {
 					if (Processor.oExtensionPointRegistry) {
 						Processor.oExtensionPointRegistry.registerExtensionPoint(mExtensionPointInfo);
-						return resolve();
+						resolve();
 					} else if (sap.ui.getCore().getConfiguration().getDesignMode()) {
 						sap.ui.require(["sap/ui/fl/write/_internal/extensionPoint/Registry"], function (ExtensionPointRegistry) {
 							Processor.oExtensionPointRegistry = ExtensionPointRegistry;
@@ -92,7 +92,7 @@ function(
 			var oPromise = Processor.registerExtensionPoint(mExtensionPointInfo)
 				.then(FlexState.initialize.bind(FlexState, mPropertyBag))
 				// enhance exiting extension point changes with mExtensionPointInfo
-				.then(ExtensionPointState.enhanceExtensionPointChanges.bind(ExtensionPointState, mPropertyBag, mExtensionPointInfo))
+				.then(ExtensionPointState.enhanceExtensionPointChanges.bind(ExtensionPointState, mPropertyBag, oExtensionPoint))
 				.then(Processor.createDefaultContent.bind(this, oExtensionPoint))
 				.then(Processor.addDefaultContentToExtensionPointInfo.bind(this, mExtensionPointInfo));
 

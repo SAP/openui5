@@ -116,6 +116,18 @@ function(
 			assert.equal(aItems[0].getId(), "projectId.button1", "then the first button in the fragment has the correct index and ID");
 			assert.equal(aItems[1].getId(), "projectId.button2", "then the second button in the fragment has the correct index and ID");
 			assert.equal(aItems[2].getId(), "projectId.button3", "then the third button in the fragment has the correct index and ID");
+			aItems.forEach(function (oItem) { oItem.destroy(); });
+		});
+
+		QUnit.test("When applying the change on a js control tree with multiple root elements and extension point with fragmentId", function(assert) {
+			this.oChange.setModuleName(this.sFragmentMultiplePath);
+			this.oChange.setExtensionPointInfo({ fragmentId: "EPFRAGMENTID" });
+			var aItems = Base.instantiateFragment(this.oChange, this.mPropertyBag);
+			assert.equal(aItems.length, 3, "after the change there are 4 items in the hbox");
+			assert.equal(aItems[0].getId(), "projectId.EPFRAGMENTID.button1", "then the first button in the fragment has the correct index and ID");
+			assert.equal(aItems[1].getId(), "projectId.EPFRAGMENTID.button2", "then the second button in the fragment has the correct index and ID");
+			assert.equal(aItems[2].getId(), "projectId.EPFRAGMENTID.button3", "then the third button in the fragment has the correct index and ID");
+			aItems.forEach(function (oItem) { oItem.destroy(); });
 		});
 	});
 	QUnit.done(function() {
