@@ -1,11 +1,11 @@
 sap.ui.define([
-	'sap/ui/core/mvc/Controller',
-	'sap/m/MessageBox',
-	'sap/ui/model/odata/v4/ODataModel',
-	'sap/ui/mdc/Table',
-	'sap/ui/mdc/table/Column',
-	'sap/m/HBox',
-	'sap/m/Text'
+	"sap/ui/core/mvc/Controller",
+	"sap/m/MessageBox",
+	"sap/ui/model/odata/v4/ODataModel",
+	"sap/ui/mdc/Table",
+	"sap/ui/mdc/table/Column",
+	"sap/m/HBox",
+	"sap/m/Text"
 ], function(
 	Controller,
 	MessageBox,
@@ -66,9 +66,30 @@ sap.ui.define([
 				return sProperty.trim();
 			});
 
-			this.createTable(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties).then(function(oTable) {
-				oVBox.addItem(oTable);
-			});
+			var sUsername = this.byId("username").getValue();
+			var sPassword = this.byId("password").getValue();
+
+			if (sUsername && sPassword) {
+				var sEncodedCredentials = btoa(sUsername + ":" + sPassword);
+				var that = this;
+
+				jQuery.ajax({
+					url: sProxyServiceUrl + sCollectionName,
+					beforeSend: function (xhr) {
+						xhr.setRequestHeader("Authorization", "Basic " + sEncodedCredentials);
+						xhr.setRequestHeader("accept", "*/*");
+					},
+					complete: function() {
+						that.createTable(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties).then(function(oTable) {
+							oVBox.addItem(oTable);
+						});
+					}
+				});
+			} else {
+				this.createTable(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties).then(function(oTable) {
+					oVBox.addItem(oTable);
+				});
+			}
 		},
 
 		createTable: function(sProxyServiceUrl, sCollectionName, aInitiallyVisibleProperties) {
