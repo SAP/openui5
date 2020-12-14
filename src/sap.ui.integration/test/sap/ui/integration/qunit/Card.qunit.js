@@ -866,7 +866,7 @@ sap.ui.define([
 					// Cleanup
 					oCard.destroy();
 					done();
-				}, 100);
+				}, 300);
 			});
 		});
 
