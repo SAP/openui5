@@ -102,6 +102,28 @@ function (ComponentContainer, Shell, Core, BlockBase, ObjectPageLayout, ObjectPa
 		oObjectPageLayout.destroy();
 	});
 
+	QUnit.test("setVisible prevents redundant layout adjustment", function (assert) {
+
+		 var oBlock = new BlockBase(),
+			 bVisible = oBlock.getVisible(),
+			 oMockObjectPage = {
+				 _requestAdjustLayoutAndUxRules: function() {}
+			 },
+			 sandbox = sinon.sandbox.create(),
+			 oSpy = sandbox.spy(oMockObjectPage, "_requestAdjustLayoutAndUxRules");
+
+		sandbox.stub(oBlock, "_getObjectPageLayout", function() {
+			return oMockObjectPage;
+		});
+
+		// Act: call the setter with the existing value
+		oBlock.setVisible(bVisible);
+		assert.equal(oSpy.callCount, 0, "no layout adjustment requested");
+
+		oBlock.destroy();
+		sandbox.restore();
+	});
+
 	QUnit.module("BlockBase Height", {
 
 		beforeEach: function (assert) {
