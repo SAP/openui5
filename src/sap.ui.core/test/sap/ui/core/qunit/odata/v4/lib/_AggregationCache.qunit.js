@@ -20,8 +20,8 @@ sap.ui.define([
 	/**
 	 * Copies the given elements from a cache read into <code>this.aElements</code>.
 	 *
-	 * @param {object[]} aReadElements
-	 *   The elements from a cache read
+	 * @param {object|object[]} aReadElements
+	 *   The elements from a cache read, or just a single one
 	 * @param {number} iOffset
 	 *   The offset within aElements
 	 *
@@ -30,10 +30,16 @@ sap.ui.define([
 	function addElements(aReadElements, iOffset) {
 		var aElements = this.aElements;
 
+		if (!Array.isArray(aReadElements)) {
+			aReadElements = [aReadElements];
+		}
 		aReadElements.forEach(function (oElement, i) {
 			var sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
 
-			// for simplicity, avoid all sanity checks of _AggregationCache#addElements
+			// for simplicity, avoid most sanity checks of _AggregationCache#addElements
+			if (iOffset + i >= aElements.length) {
+				throw new Error("Array index out of bounds: " + (iOffset + i));
+			}
 			aElements[iOffset + i] = oElement;
 			if (sPredicate) { // Note: sometimes, even $byPredicate is missing...
 				aElements.$byPredicate[sPredicate] = oElement;
@@ -60,9 +66,21 @@ sap.ui.define([
 	{},
 	{$$filterBeforeAggregate : "foo", $apply : "bar"}
 ].forEach(function (mQueryOptions, i) {
-	QUnit.test("create: no aggregation " + i, function (assert) {
-		var oAggregation = i ? {groupLevels : []} : null; // improves code coverage
+	QUnit.test("create: no aggregation #" + i, function (assert) {
+		var mAggregate = {},
+			oAggregation = i
+			? {
+				aggregate : mAggregate,
+				group : {},
+				groupLevels : []
+			}
+			: null; // improves code coverage
 
+		this.mock(_AggregationHelper).expects("hasGrandTotal").exactly(i ? 1 : 0)
+			.withExactArgs(sinon.match.same(mAggregate)).returns(false);
+		this.mock(_AggregationHelper).expects("hasMinOrMax").exactly(i ? 1 : 0)
+			.withExactArgs(sinon.match.same(mAggregate)).returns(false);
+		this.mock(_MinMaxHelper).expects("createCache").never();
 		this.mock(_Cache).expects("create")
 			.withExactArgs("~requestor~", "resource/path", sinon.match(function (oParam) {
 					if (i) {
@@ -81,7 +99,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("create: with min/max", function (assert) {
+	QUnit.test("create: min/max", function (assert) {
 		var oAggregation = {
 				aggregate : {},
 				group : {},
@@ -90,6 +108,8 @@ sap.ui.define([
 			},
 			mQueryOptions = {};
 
+		this.mock(_AggregationHelper).expects("hasGrandTotal")
+			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(false);
 		this.mock(_AggregationHelper).expects("hasMinOrMax")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(true);
 		this.mock(_MinMaxHelper).expects("createCache")
@@ -175,9 +195,12 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bHasGrandTotal) {
-	QUnit.test("create: either grandTotal or groupLevels, " + bHasGrandTotal, function (assert) {
-		var oAggregation = { // filled before by buildApply
+["none", "top", "bottom", "top&bottom"].forEach(function (sGrandTotalPosition) {
+	var sTitle = "create: either grandTotal or groupLevels, position = " + sGrandTotalPosition;
+
+	QUnit.test(sTitle, function (assert) {
+		var bHasGrandTotal = sGrandTotalPosition !== "none",
+			oAggregation = { // filled before by buildApply
 				aggregate : {
 					x : {},
 					y : {
@@ -191,16 +214,17 @@ sap.ui.define([
 					b : {}
 				},
 				groupLevels : bHasGrandTotal ? [] : ["a"]
-						},
+			},
 			aAllProperties = [],
 			oCache,
 			oEnhanceCacheWithGrandTotalExpectation,
 			oFirstLevelCache = {},
 			oGrandTotal = {},
-			oGrandTotalPromise,
+			oGrandTotalCopy = {},
 			oGroupLock = {
 				unlock : function () {}
 			},
+			oHelperMock = this.mock(_Helper),
 			mQueryOptions = {
 				$count : bHasGrandTotal,
 				$filter : bHasGrandTotal ? "answer eq 42" : "",
@@ -208,8 +232,14 @@ sap.ui.define([
 				"sap-client" : "123"
 			},
 			oReadPromise,
-			sResourcePath = "Foo";
+			sResourcePath = "Foo",
+			iTopBottomCallCount = sGrandTotalPosition === "top&bottom" ? 1 : 0;
 
+		if (sGrandTotalPosition === "top&bottom") {
+			oAggregation.grandTotalAtBottomOnly = false;
+		} else if (sGrandTotalPosition === "bottom") {
+			oAggregation.grandTotalAtBottomOnly = true;
+		}
 		this.mock(_AggregationHelper).expects("hasGrandTotal")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(bHasGrandTotal);
 		this.mock(_AggregationHelper).expects("hasMinOrMax")
@@ -239,59 +269,72 @@ sap.ui.define([
 		assert.strictEqual(typeof oCache.read, "function");
 		// c'tor itself
 		assert.strictEqual(oCache.oAggregation, oAggregation);
+		assert.deepEqual(oCache.aElements, []);
 		assert.deepEqual(oCache.aElements.$byPredicate, {});
 		assert.ok("$count" in oCache.aElements);
 		assert.strictEqual(oCache.aElements.$count, undefined);
 		assert.strictEqual(oCache.aElements.$created, 0);
 		assert.strictEqual(oCache.oFirstLevel, oFirstLevelCache);
-		assert.strictEqual(oCache.bHasGrandTotal, bHasGrandTotal);
 		if (!bHasGrandTotal) {
-			assert.deepEqual(oCache.aElements, []);
+			assert.strictEqual(oCache.oGrandTotalPromise, undefined);
+			assert.ok("oGrandTotalPromise" in oCache, "be nice to V8");
 			return null; // be nice to eslint's "consistent-return" rule
 		}
-		assert.strictEqual(oCache.aElements.length, 1);
-		oGrandTotalPromise = oCache.aElements[0];
-		assert.ok(oGrandTotalPromise instanceof SyncPromise);
-		assert.strictEqual(oGrandTotalPromise.isPending(), true);
+		assert.ok(oCache.oGrandTotalPromise instanceof SyncPromise);
+		assert.strictEqual(oCache.oGrandTotalPromise.isPending(), true);
 
-		[undefined, 1, 2, 3, 100, Infinity].forEach(function (iPrefetchLength) {
-			assert.throws(function () {
-				// code under test (read grand total row separately, but with iPrefetchLength !== 0)
-				oCache.read(0, 1, iPrefetchLength);
-			}, new Error("Unsupported prefetch length: " + iPrefetchLength));
-		});
+		if (sGrandTotalPosition !== "bottom") {
+			[undefined, 1, 2, 3, 100, Infinity].forEach(function (iPrefetchLength) {
+				assert.throws(function () {
+					// code under test (read grand total row separately, but with iPrefetchLength !== 0)
+					oCache.read(0, 1, iPrefetchLength);
+				}, new Error("Unsupported prefetch length: " + iPrefetchLength));
+			});
 
-		this.mock(oGroupLock).expects("unlock").withExactArgs();
+			this.mock(oGroupLock).expects("unlock").withExactArgs();
 
-		// code under test (read grand total row separately)
-		oReadPromise = oCache.read(0, 1, 0, oGroupLock);
+			// code under test (read grand total row separately)
+			oReadPromise = oCache.read(0, 1, 0, oGroupLock);
 
-		assert.strictEqual(oReadPromise.isPending(), true);
+			assert.strictEqual(oReadPromise.isPending(), true);
+		}
 
 		this.mock(_AggregationHelper).expects("getAllProperties")
 			.withExactArgs(sinon.match.same(oAggregation)).returns(aAllProperties);
 		this.mock(_AggregationHelper).expects("setAnnotations")
 			.withExactArgs(sinon.match.same(oGrandTotal), true, true, 0,
 				sinon.match.same(aAllProperties));
-		this.mock(_Helper).expects("setPrivateAnnotation")
+		this.mock(Object).expects("assign").exactly(iTopBottomCallCount)
+			.withExactArgs({}, sinon.match.same(oGrandTotal), {"@$ui5.node.isExpanded" : undefined})
+			.returns(oGrandTotalCopy);
+		oHelperMock.expects("setPrivateAnnotation").exactly(iTopBottomCallCount)
+			.withExactArgs(sinon.match.same(oGrandTotalCopy), "predicate", "($isTotal=true)");
+		oHelperMock.expects("setPrivateAnnotation").exactly(iTopBottomCallCount)
+			.withExactArgs(sinon.match.same(oGrandTotal), "copy", sinon.match.same(oGrandTotalCopy))
+			;
+		oHelperMock.expects("setPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oGrandTotal), "predicate", "()");
 
 		// code under test (fnGrandTotal)
 		oEnhanceCacheWithGrandTotalExpectation.args[0][2](oGrandTotal);
 
-		assert.strictEqual(oGrandTotalPromise.isFulfilled(), true);
-		assert.strictEqual(oCache.aElements.length, 1);
-		assert.strictEqual(oCache.aElements[0], oGrandTotal);
-		assert.deepEqual(Object.keys(oCache.aElements.$byPredicate), ["()"]);
-		assert.strictEqual(oCache.aElements.$byPredicate["()"], oGrandTotal);
+		assert.strictEqual(oCache.oGrandTotalPromise.isFulfilled(), true);
+		assert.strictEqual(oCache.oGrandTotalPromise.getResult(), oGrandTotal);
+		assert.deepEqual(oCache.aElements, []);
+		assert.deepEqual(oCache.aElements.$byPredicate, {});
+		assert.ok("$count" in oCache.aElements);
+		assert.strictEqual(oCache.aElements.$count, undefined);
+		assert.strictEqual(oCache.aElements.$created, 0);
 
+		if (sGrandTotalPosition === "bottom") {
+			return null; // be nice to eslint's "consistent-return" rule
+		}
 		assert.strictEqual(oReadPromise.isPending(), true, "still async...");
-		oCache.aElements.$count = 42; // simulate 1st level read for actual data
 
 		return oReadPromise.then(function (oReadResult) {
 			assert.deepEqual(oReadResult, {value : [oGrandTotal]});
 			assert.strictEqual(oReadResult.value[0], oGrandTotal);
-			assert.strictEqual(oReadResult.value.$count, 42);
+			assert.notOk("$count" in oReadResult.value, "$count not available here");
 		});
 	});
 });
@@ -600,25 +643,63 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	iFirstLevelIndex : 0,
-	iFirstLevelLength : 3,
+	iIndex : 0,
+	iLength : 3,
 	bHasGrandTotal : false,
-	iIndex : 0
+	iFirstLevelIndex : 0,
+	iFirstLevelLength : 3
 }, {
+	iIndex : 0,
+	iLength : 3,
+	bHasGrandTotal : true,
+	iFirstLevelIndex : 0,
+	iFirstLevelLength : 2
+}, {
+	iIndex : 0,
+	iLength : 3,
+	bHasGrandTotal : true,
+	grandTotalAtBottomOnly : false,
+	iFirstLevelIndex : 0,
+	iFirstLevelLength : 2
+}, {
+	iIndex : 0,
+	iLength : 1,
+	bHasGrandTotal : true,
+	grandTotalAtBottomOnly : true,
+	iFirstLevelIndex : 0,
+	iFirstLevelLength : 1
+}, {
+	iIndex : 10,
+	iLength : 3,
+	bHasGrandTotal : false,
 	iFirstLevelIndex : 10,
-	iFirstLevelLength : 3,
-	bHasGrandTotal : false,
-	iIndex : 10
+	iFirstLevelLength : 3
 }, {
-	iFirstLevelIndex : 0,
-	iFirstLevelLength : 2,
+	iIndex : 10,
+	iLength : 3,
 	bHasGrandTotal : true,
-	iIndex : 0
-}, {
 	iFirstLevelIndex : 9,
-	iFirstLevelLength : 3,
+	iFirstLevelLength : 3
+}, {
+	iIndex : 10,
+	iLength : 3,
 	bHasGrandTotal : true,
-	iIndex : 10
+	grandTotalAtBottomOnly : false,
+	iFirstLevelIndex : 9,
+	iFirstLevelLength : 3
+}, {
+	iIndex : 10,
+	iLength : 3,
+	bHasGrandTotal : true,
+	grandTotalAtBottomOnly : true,
+	iFirstLevelIndex : 10,
+	iFirstLevelLength : 3
+}, {
+	iIndex : 1,
+	iLength : 42,
+	bHasGrandTotal : true,
+	iFirstLevelIndex : 0,
+	iFirstLevelLength : 42
 }].forEach(function (oFixture, i) {
 	QUnit.test("read: 1st time, #" + i, function (assert) {
 		var oAggregation = { // filled before by buildApply
@@ -630,34 +711,70 @@ sap.ui.define([
 			},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oCacheMock = this.mock(oCache),
 			iFirstLevelIndex = oFixture.iFirstLevelIndex,
+			iFirstLevelLength = oFixture.iFirstLevelLength,
+			oGrandTotal = {},
+			oGrandTotalCopy = {},
 			oGroupLock = {
 				unlock : function () {}
 			},
 			iIndex = oFixture.iIndex,
-			iLength = 3,
-			iOffset = oFixture.bHasGrandTotal ? 1 : 0,
+			iLength = oFixture.iLength,
+			iOffset = oFixture.bHasGrandTotal && oFixture.grandTotalAtBottomOnly !== true ? 1 : 0,
 			iPrefetchLength = 100,
 			oReadResult = {
-				value : [{}, {}, {}]
+				value : []
 			},
 			i;
 
 		function checkResult(oResult) {
-			assert.strictEqual(oResult.value.length, 3);
-			assert.strictEqual(oResult.value.$count, 42 + iOffset);
-			assert.strictEqual(oResult.value[0], oCache.aElements[iIndex + 0]);
-			assert.strictEqual(oResult.value[1], oCache.aElements[iIndex + 1]);
-			assert.strictEqual(oResult.value[2], oCache.aElements[iIndex + 2]);
+			assert.strictEqual(oResult.value.length, iLength);
+			assert.strictEqual(oResult.value.$count, oCache.aElements.$count);
+			for (i = 0; i < iLength; i += 1) {
+				assert.strictEqual(oResult.value[i], oCache.aElements[iIndex + i]);
+			}
 		}
 
+		if ("grandTotalAtBottomOnly" in oFixture) {
+			oAggregation.grandTotalAtBottomOnly = oFixture.grandTotalAtBottomOnly;
+		}
+		if (oFixture.bHasGrandTotal) {
+			oCache.oGrandTotalPromise = SyncPromise.resolve(oGrandTotal);
+			_Helper.setPrivateAnnotation(oGrandTotal, "copy", oGrandTotalCopy);
+		}
+		for (i = 0; i < iFirstLevelLength; i += 1) {
+			oReadResult.value.push({});
+		}
 		oReadResult.value.$count = 42;
-
 		this.mock(oCache.oFirstLevel).expects("read")
-			.withExactArgs(iFirstLevelIndex, oFixture.iFirstLevelLength, iPrefetchLength,
+			.withExactArgs(iFirstLevelIndex, iFirstLevelLength, iPrefetchLength,
 				sinon.match.same(oGroupLock), "~fnDataRequested~")
 			.returns(SyncPromise.resolve(Promise.resolve(oReadResult)));
-		this.mock(oCache).expects("addElements")
+		if (oFixture.bHasGrandTotal) {
+			switch (oFixture.grandTotalAtBottomOnly) {
+				case false: // top & bottom
+					oCacheMock.expects("addElements")
+						.withExactArgs(sinon.match.same(oGrandTotal), 0)
+						.callsFake(addElements); // so that oCache.aElements is actually filled
+					oCacheMock.expects("addElements")
+						.withExactArgs(sinon.match.same(oGrandTotalCopy), 43)
+						.callsFake(addElements); // so that oCache.aElements is actually filled
+					break;
+
+				case true: // bottom
+					oCacheMock.expects("addElements")
+						.withExactArgs(sinon.match.same(oGrandTotal), 42)
+						.callsFake(addElements); // so that oCache.aElements is actually filled
+					break;
+
+				default: // top
+					oCacheMock.expects("addElements")
+						.withExactArgs(sinon.match.same(oGrandTotal), 0)
+						.callsFake(addElements); // so that oCache.aElements is actually filled
+			}
+		}
+		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oReadResult.value), iFirstLevelIndex + iOffset,
 				sinon.match.same(oCache.oFirstLevel), iFirstLevelIndex)
 			.callsFake(addElements); // so that oCache.aElements is actually filled
@@ -667,7 +784,7 @@ sap.ui.define([
 				.withExactArgs(1, i, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + i);
 		}
-		for (i = iFirstLevelIndex + 3; i < 42; i += 1) {
+		for (i = iFirstLevelIndex + iFirstLevelLength; i < 42; i += 1) {
 			oAggregationHelperMock.expects("createPlaceholder")
 				.withExactArgs(1, i, sinon.match.same(oCache.oFirstLevel))
 				.returns("~placeholder~" + i);
@@ -679,8 +796,6 @@ sap.ui.define([
 			.then(function (oResult1) {
 				var i;
 
-				assert.strictEqual(oCache.aElements.length, 42 + iOffset);
-				assert.strictEqual(oCache.aElements.$count, 42 + iOffset);
 				assert.strictEqual(oCache.iReadLength, iLength + iPrefetchLength);
 
 				checkResult(oResult1);
@@ -689,8 +804,25 @@ sap.ui.define([
 				for (i = 0; i < iFirstLevelIndex; i += 1) {
 					assert.strictEqual(oCache.aElements[iOffset + i], "~placeholder~" + i);
 				}
-				for (i = iFirstLevelIndex + 3; i < 42; i += 1) {
+				for (i = iFirstLevelIndex + iFirstLevelLength; i < 42; i += 1) {
 					assert.strictEqual(oCache.aElements[iOffset + i], "~placeholder~" + i);
+				}
+
+				if (oFixture.bHasGrandTotal) {
+					switch (oFixture.grandTotalAtBottomOnly) {
+						case false: // top & bottom
+							assert.strictEqual(oCache.aElements.length, 44);
+							assert.strictEqual(oCache.aElements.$count, 44);
+							break;
+
+						case true: // bottom
+						default: // top
+							assert.strictEqual(oCache.aElements.length, 43);
+							assert.strictEqual(oCache.aElements.$count, 43);
+					}
+				} else {
+					assert.strictEqual(oCache.aElements.length, 42);
+					assert.strictEqual(oCache.aElements.$count, 42);
 				}
 
 				// code under test
@@ -1816,6 +1948,31 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("addElements: just a single one", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group: {},
+				groupLevels : ["foo"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oGroupLevelCache = {},
+			oPlaceholder = _AggregationHelper.createPlaceholder(NaN, 42, oGroupLevelCache),
+			aElements = [{}, oPlaceholder, {}],
+			oReadElement = {"@$ui5._" : {predicate : "(1)"}};
+
+		oCache.aElements = aElements.slice();
+		oCache.aElements.$byPredicate = {};
+
+		// code under test
+		oCache.addElements(oReadElement, 1, oGroupLevelCache, 42);
+
+		assert.strictEqual(oCache.aElements[0], aElements[0]);
+		assert.strictEqual(oCache.aElements[1], oReadElement);
+		assert.strictEqual(oCache.aElements[2], aElements[2]);
+		assert.deepEqual(oCache.aElements.$byPredicate, {"(1)" : oReadElement});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("addElements: wrong placeholder", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
@@ -1839,8 +1996,13 @@ sap.ui.define([
 			}, new Error("Wrong placeholder"));
 
 			assert.throws(function () {
-				// code under test (Note: do not try to overwrite again!)
+				// code under test
 				oCache.addElements([{}], 2, {/*wrong cache*/}, 43);
+			}, new Error("Wrong placeholder"));
+
+			assert.throws(function () {
+				// code under test
+				oCache.addElements({}, 2);
 			}, new Error("Wrong placeholder"));
 		});
 

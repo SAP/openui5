@@ -2644,6 +2644,10 @@ sap.ui.define([
 	 *       there is only one, or <code>null</code> otherwise ("multi-unit situation"). (SQL
 	 *       suggestion: <code>CASE WHEN min(Unit) = max(Unit) THEN min(Unit) END</code>)
 	 *   </ul>
+	 * @param {boolean} [oAggregation.grandTotalAtBottomOnly]
+	 *   Tells whether the grand totals for aggregatable properties are displayed at the bottom only
+	 *   (since 1.86.0); <code>true</code> for bottom only, <code>false</code> for top and bottom,
+	 *   the default is top only
 	 * @param {object} [oAggregation.group]
 	 *   A map from groupable property names to empty objects
 	 * @param {string[]} [oAggregation.groupLevels]

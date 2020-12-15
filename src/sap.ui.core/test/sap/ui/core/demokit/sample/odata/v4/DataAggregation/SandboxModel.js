@@ -28,9 +28,6 @@ sap.ui.define([
 				"BusinessPartners?$apply=filter(Country%20eq%20'Germany'%20and%20Region%20eq%20'Baden-W%C3%BCrttemberg')/groupby((Segment),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Segment)&$count=true&$skip=0&$top=5" : {
 					source : "BusinessPartners_Country_Germany_Region_BW_top5.json"
 				},
-				"BusinessPartners?$apply=filter(Country%20eq%20'Germany'%20and%20Region%20eq%20'Baden-W%C3%BCrttemberg'%20and%20Segment%20eq%20'Mid-size')/groupby((AccountResponsible),aggregate(SalesAmountLocalCurrency,LocalCurrency,SalesNumber))/orderby(AccountResponsible)&$count=true&$skip=0&$top=5" : {
-					source : "BusinessPartners_Country_Germany_Region_BW_Segment_MidSize_top5.json"
-				},
 				"BusinessPartners?$apply=filter(Country%20eq%20'Germany'%20and%20Region%20eq%20'Baden-W%C3%BCrttemberg'%20and%20Segment%20eq%20'Small')/groupby((AccountResponsible),aggregate(SalesAmountLocalCurrency,LocalCurrency,SalesNumber))/orderby(AccountResponsible)&$count=true&$skip=0&$top=5" : {
 					source : "BusinessPartners_Country_Germany_Region_BW_Segment_Small_top5.json"
 				}
@@ -38,6 +35,21 @@ sap.ui.define([
 			sFilterBase : "/serviceroot.svc/",
 			sSourceBase : "sap/ui/core/sample/odata/v4/DataAggregation/data"
 		};
+
+	/*
+	 * Adds duplicate entries to fixture where old substring of URL is replaced by new one.
+	 *
+	 * @param {string} sOld - old substring to match
+	 * @param {string} sNew - new replacement substring
+	 */
+	function duplicate(sOld, sNew) {
+		Object.keys(oMockData.mFixture).forEach(function (sOldUrl) {
+			oMockData.mFixture[sOldUrl.replace(sOld, sNew)] = oMockData.mFixture[sOldUrl];
+		});
+	}
+
+	// for simplicity, accept minor differences due to position of grand total row
+	duplicate("$top=5", "$top=4");
 
 	return ODataModel.extend("sap.ui.core.sample.odata.v4.DataAggregation.SandboxModel", {
 		constructor : function (mParameters) {

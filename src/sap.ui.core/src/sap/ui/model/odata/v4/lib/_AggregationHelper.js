@@ -11,16 +11,17 @@ sap.ui.define([
 	"use strict";
 
 	var mAllowedAggregateDetails2Type =  {
-			"grandTotal" : "boolean",
-			"max" : "boolean",
-			"min" : "boolean",
-			"name" : "string",
-			"subtotals" : "boolean",
-			"unit" : "string",
+			grandTotal : "boolean",
+			max : "boolean",
+			min : "boolean",
+			name : "string",
+			subtotals : "boolean",
+			unit : "string",
 			"with" : "string"
 		},
 		mAllowedAggregationKeys2Type = {
 			aggregate : "object",
+			grandTotalAtBottomOnly : "boolean",
 			group : "object",
 			groupLevels : "array"
 		},
@@ -414,15 +415,15 @@ sap.ui.define([
 		/**
 		 * Tells whether grand total values are needed for at least one aggregatable property.
 		 *
-		 * @param {object} [mAggregate]
+		 * @param {object} mAggregate
 		 *   A map from aggregatable property names/aliases to details objects
 		 * @returns {boolean}
-		 *   Whether grand total values are needed for at least one aggregatable property.
+		 *   Whether grand total values are needed for at least one aggregatable property
 		 *
 		 * @public
 		 */
 		hasGrandTotal : function (mAggregate) {
-			return !!mAggregate && Object.keys(mAggregate).some(function (sAlias) {
+			return Object.keys(mAggregate).some(function (sAlias) {
 				return mAggregate[sAlias].grandTotal;
 			});
 		},
@@ -431,16 +432,16 @@ sap.ui.define([
 		 * Tells whether minimum or maximum values are needed for at least one aggregatable
 		 * property.
 		 *
-		 * @param {object} [mAggregate]
+		 * @param {object} mAggregate
 		 *   A map from aggregatable property names/aliases to details objects
 		 * @returns {boolean}
 		 *   Whether minimum or maximum values are needed for at least one aggregatable
-		 *   property.
+		 *   property
 		 *
 		 * @public
 		 */
 		hasMinOrMax : function (mAggregate) {
-			return !!mAggregate && Object.keys(mAggregate).some(function (sAlias) {
+			return Object.keys(mAggregate).some(function (sAlias) {
 				var oDetails = mAggregate[sAlias];
 
 				return oDetails.min || oDetails.max;

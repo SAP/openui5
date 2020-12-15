@@ -105,6 +105,7 @@ sap.ui.define([
 					"with" : "countdistinct"
 				}
 			},
+			grandTotalAtBottomOnly : true, // just to check validation
 			group : {
 				BillToParty : {}
 			}
@@ -609,9 +610,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("hasGrandTotal", function (assert) {
 		// code under test
-		assert.strictEqual(_AggregationHelper.hasGrandTotal(), false);
-
-		// code under test
 		assert.strictEqual(_AggregationHelper.hasGrandTotal({}), false);
 
 		// code under test
@@ -685,9 +683,6 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("hasMinOrMax", function (assert) {
-		// code under test
-		assert.strictEqual(_AggregationHelper.hasMinOrMax(), false);
-
 		// code under test
 		assert.strictEqual(_AggregationHelper.hasMinOrMax({}), false);
 

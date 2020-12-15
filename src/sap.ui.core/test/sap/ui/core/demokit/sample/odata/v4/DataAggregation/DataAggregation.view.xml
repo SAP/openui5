@@ -7,7 +7,8 @@
 
 	<!-- TODO: enable sorting in table -->
 	<!-- TODO: enhance auto type detection for @$ui5.node.*? -->
-	<Table id="table" ariaLabelledBy="title"
+	<!-- Note: keep $$aggregation in sync with controller's onInit -->
+	<Table id="table" ariaLabelledBy="title" fixedRowCount="1"
 		rows="{path : '/BusinessPartners',
 			parameters : {
 				$$aggregation : {
