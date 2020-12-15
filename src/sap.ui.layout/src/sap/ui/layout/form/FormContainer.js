@@ -94,6 +94,7 @@ sap.ui.define([
 			 * <b>Note:</b> If a <code>Toolbar</code> is used, the <code>Title</code> is ignored.
 			 * If a title is needed inside the <code>Toolbar</code> it must be added at content to the <code>Toolbar</code>.
 			 * In this case add the <code>Title</code> to the <code>ariaLabelledBy</code> association.
+			 * Use the right title level to meet the visual requirements. This might be theme-dependent.
 			 * @since 1.36.0
 			 */
 			toolbar : {type : "sap.ui.core.Toolbar", multiple : false},
