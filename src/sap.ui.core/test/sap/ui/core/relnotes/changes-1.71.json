@@ -878,5 +878,62 @@
         ]
       }
     ]
+  },
+  "1.71.25": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "cdd4004e9d202216b496d49af38da60d70c496f5",
+        "type": "FIX",
+        "text": " sap/base/Log: Limit amount of stored log entries",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070360983"
+          }
+        ]
+      },
+      {
+        "id": "6d02e5a86a06c67d33f2cf8fb3829051bf7faa86",
+        "type": "FIX",
+        "text": " base/ManagedObject: Aggregation Bindings in JSON Views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080356736"
+          }
+        ]
+      },
+      {
+        "id": "69cb9b8efab44abb77199c167ebedbd2e42fc71d",
+        "type": "FIX",
+        "text": " routing.History: turn off push state when runs in iframe",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000972652020"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080397396"
+          }
+        ]
+      },
+      {
+        "id": "548de6aec8ab93ac9229e142046b24af41aa7bae",
+        "type": "FIX",
+        "text": " CustomizingConfiguration: respect owner component for configuration",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400005374432020"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070417704"
+          }
+        ]
+      }
+    ]
   }
 }

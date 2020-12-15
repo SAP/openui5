@@ -290,5 +290,21 @@
         ]
       }
     ]
+  },
+  "1.71.25": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "03cd6e0846f1772c01b28ba83578deb57cad8208",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: modal dialog now read only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }

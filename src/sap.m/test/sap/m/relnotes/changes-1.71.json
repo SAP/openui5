@@ -2199,5 +2199,91 @@
         ]
       }
     ]
+  },
+  "1.71.25": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "94e7ec1336d4cc4456fe9fdc529a447e518bfd3f",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Autocapitalization rendering tests are now fixed in FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080404811"
+          }
+        ]
+      },
+      {
+        "id": "3eaeaced0c64705a55f6ee96146e88c3734efdf5",
+        "type": "FIX",
+        "text": " sap.m.Text: Improve copying of text",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500003962412020"
+          }
+        ]
+      },
+      {
+        "id": "c157ecb24eb00823e7085f1cad545c2161f98973",
+        "type": "FIX",
+        "text": " sap.m.Select: Corrected aria-activedescendant",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070099054"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070228461"
+          }
+        ]
+      },
+      {
+        "id": "545d2eccd39ff0f3766a1cdaa669c3749730996f",
+        "type": "FIX",
+        "text": " sap.m.ListBase: Unnecessary scrolling on tab",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070285377"
+          }
+        ]
+      },
+      {
+        "id": "eaa6821644e2e23d3a9ad01992f51710491aeb8f",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: all-day events are now properly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007132172020"
+          }
+        ]
+      },
+      {
+        "id": "801bae8c7284590df03f7e892a62586d64aa0c53",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: pointer events are now disabled for the now marker",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400006539142020"
+          }
+        ]
+      },
+      {
+        "id": "03cd6e0846f1772c01b28ba83578deb57cad8208",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: modal dialog now read only once",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
