@@ -1264,4 +1264,55 @@ sap.ui.require([
 		// cleanup
 		oInput.destroy();
 	});
+
+	QUnit.test("considers marginRight usage for layoutItems and endItem", function(assert) {
+
+		var done = assert.async();
+
+		this.oContentDomRef.style.display = "";
+		this.oContentDomRef.style.width = "600px";
+
+		var oInput1 = new Input();
+		var oInput2 = new Input();
+		this.oAlignedFlowLayout.addContent(oInput1);
+
+		this.oAlignedFlowLayout.addContent(oInput2);
+		var oButton = new Button({
+			width: "200px", // set a fixed width for reliable testing
+			height: "20px" // set a fixed height for reliable testing);
+		});
+
+		this.oAlignedFlowLayout.addEndContent(oButton);
+		this.oAlignedFlowLayout.setMinItemWidth(200 + "px"); // leave room for margin
+		this.oAlignedFlowLayout.setMaxItemWidth(200 + "px");
+
+		this.oAlignedFlowLayout.placeAt(CONTENT_ID);
+		Core.applyChanges();
+
+		// wait some time until the browser layout is finished
+		window.requestAnimationFrame(function() {
+			assert.equal(this.oAlignedFlowLayout.checkItemsWrapping(), false, "items fit without margins");
+
+			var aItems = this.oAlignedFlowLayout.getDomRef().querySelectorAll(".sapUiAFLayoutItem");
+			this.oContentDomRef.style.width = "624px";
+
+			for (var i = 0; i < aItems.length; i++) {
+				aItems[i].style.marginRight = "12px";
+			}
+
+			window.requestAnimationFrame(function() {
+				assert.equal(this.oAlignedFlowLayout.checkItemsWrapping(), false, "items with margin still fit");
+				this.oContentDomRef.style.width = "636px";
+				this.oAlignedFlowLayout.getDomRef("endItem").style.marginRight = "16px";
+				this.oAlignedFlowLayout.getDomRef().querySelector(".sapUiAFLayoutSpacer").style.marginRight = "16px";
+
+				var fnAfterResize = function (params) {
+					assert.equal(this.oAlignedFlowLayout.checkItemsWrapping(), true, "endItem margin too large");
+					done();
+					Core.detachIntervalTimer(fnAfterResize, this);
+				}.bind(this);
+				Core.attachIntervalTimer(fnAfterResize, this);
+			}.bind(this));
+		}.bind(this));
+	});
 });

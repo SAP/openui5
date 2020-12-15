@@ -169,8 +169,7 @@ sap.ui.define([
 				return;
 			}
 
-			var CSS_CLASS_ONE_LINE = this.getRenderer().CSS_CLASS + "OneLine",
-				bEnoughSpaceForEndItem = true;
+			var CSS_CLASS_ONE_LINE = this.getRenderer().CSS_CLASS + "OneLine";
 
 			var oEndItemDomRef = oSettings.endItemDomRef || this.getDomRef("endItem"),
 				oLastItemDomRef = this.getLastItemDomRef();
@@ -194,11 +193,13 @@ sap.ui.define([
 				if (Core.getConfiguration().getRTL()) {
 					iAvailableWidthForEndItem = iLastItemOffsetLeft;
 				} else {
-					var iRightBorderOfLastItem = iLastItemOffsetLeft + oLastItemDomRef.offsetWidth;
+					var iLastItemMarginRight = Number.parseFloat(window.getComputedStyle(oLastItemDomRef).marginRight);
+					var iRightBorderOfLastItem = iLastItemOffsetLeft + oLastItemDomRef.offsetWidth + iLastItemMarginRight;
 					iAvailableWidthForEndItem = oDomRef.offsetWidth - iRightBorderOfLastItem;
 				}
 
-				bEnoughSpaceForEndItem = iAvailableWidthForEndItem >= iEndItemWidth;
+				var iEndItemMarginRight = Number.parseFloat(window.getComputedStyle(oEndItemDomRef).marginRight);
+				var bEnoughSpaceForEndItem = iAvailableWidthForEndItem >= (iEndItemWidth + iEndItemMarginRight);
 
 				// if the end item fits into the line
 				if (bEnoughSpaceForEndItem) {
