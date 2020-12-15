@@ -1,0 +1,43 @@
+/* =========================== */
+/* CSS for control sap.m/ExpandableText  */
+/* Base theme                  */
+/* =========================== */
+
+.sapMExText {
+	box-sizing: border-box;
+	white-space: pre-line;
+	word-wrap: break-word; /* works only if browser knows the width */
+	cursor: text;
+	font-size: @sapMFontMediumSize;
+	font-family: @sapUiFontFamily;
+	line-height: normal;
+	color: @sapUiBaseText;
+	max-width: 100%;
+
+	.sapMLnk {
+		vertical-align: bottom;
+	}
+}
+
+.sapMExTextRenderWhitespaceWrap {
+	white-space: pre-wrap;
+}
+
+.sapMExTextBreakWord {
+	/* to break all words even browser does not know the width */
+	word-break: break-all;
+	word-break: break-word;  /* Non standard for old webkits */
+}
+
+.sapMPopover .sapMText.sapMExTextPopover {
+	max-width: 30rem;
+}
+
+.sapMLIBActionable .sapMExText {
+	cursor: pointer;
+}
+
+/*Necessary to align vertically to labels */
+.sapUiForm .sapMExText {
+	overflow: hidden;
+}

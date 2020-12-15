@@ -262,6 +262,9 @@ sap.ui.define([
 					useFakeTimers: true
 				}
 			},
+			ExpandableText: {
+				title: "QUnit Tests - sap.m.ExpandableText"
+			},
 			ExploredSamples1: {
 				title: "Test Page for 'Explored' samples from sap.m",
 				loader: {
