@@ -202,7 +202,6 @@ sap.ui.define([
 					oRm.renderControl(oControl.getAggregation("_messageStrip"));
 				}
 				var aItems = oControl.getAggregation("_formContent");
-				var oGeneralSettingsPanel;
 				//render items
 				if (aItems) {
 					var oPanel;
@@ -230,32 +229,6 @@ sap.ui.define([
 							oColFields = [];
 						}
 					};
-
-					var iCheckIndex = oControl.getMode() !== "translation" ? 0 : 1;
-					if (Object.keys(aItems).length > iCheckIndex && aItems[Object.keys(aItems)[iCheckIndex]].type !== "group") {
-						//add general settings panel
-						oGeneralSettingsPanel = new Panel({
-							headerText: oResourceBundle.getText("CARDEDITOR_PARAMETERS_GENERALSETTINGS"),
-							visible: true,
-							expandable: true,
-							expanded: true,
-							width: "auto",
-							objectBindings: {
-								currentSettings: {
-									path: "currentSettings>undefined"
-								},
-								items: {
-									path: "items>/form/items"
-								}
-							}
-						}).addStyleClass("sapUiIntegrationCardEditorItem");
-						//bind models for contents in panel
-						oGeneralSettingsPanel.setModel(oControl.getModel("currentSettings"), "currentSettings");
-						oGeneralSettingsPanel.setModel(oControl.getModel("currentSettings"), "items");
-						aItems.splice(iCheckIndex, 0, oGeneralSettingsPanel);
-						//add panel to aggregation of current control, so that getParent() can work later for settings button
-						oControl.addAggregation("_formContent", oGeneralSettingsPanel);
-					}
 					for (var i = 0; i < aItems.length; i++) {
 						var oItem = aItems[i];
 						if (oControl.getMode() !== "translation") {
@@ -1063,11 +1036,11 @@ sap.ui.define([
 					}
 					var aPath = sPath.split("/");
 					var oResult = ObjectPath.get(aPath, oData);
-					if (Array.isArray(oResult) && oResult.length > 0) {
+					if (Array.isArray(oResult) && oResult.length > 0 && oConfig.type !== "string[]") {
 						oResult = [{}].concat(oResult);
 						ObjectPath.set(aPath, oResult, oData);
 					}
-				} else if (Array.isArray(oData) && oData.length > 0) {
+				} else if (Array.isArray(oData) && oData.length > 0 && oConfig.type !== "string[]") {
 					oData = [{}].concat(oData);
 				}
 				oConfig._values = oData;
@@ -1300,6 +1273,25 @@ sap.ui.define([
 					translatable: true,
 					expandable: false,
 					label: oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + (CardEditor._languages[this._language] || this.getLanguage())
+				});
+			}
+			//add general configuration group
+			var bAddGeneralSettingsPanel = false;
+			for (var m in aItems) {
+				var oItem = aItems[m];
+				if (oItem.type === "group") {
+					break;
+				} else if (oItem.visible) {
+					bAddGeneralSettingsPanel = true;
+					break;
+				}
+			}
+			if (bAddGeneralSettingsPanel) {
+				//add general settings panel
+				this._addItem({
+					type: "group",
+					translatable: true,
+					label: oResourceBundle.getText("CARDEDITOR_PARAMETERS_GENERALSETTINGS")
 				});
 			}
 			this._mItemsByPaths = {};

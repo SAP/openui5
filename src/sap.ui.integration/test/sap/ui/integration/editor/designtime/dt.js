@@ -7,8 +7,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 	"use strict";
 	return function () {
 		return new Designtime({
-			form: {
-				items: {
+			"form": {
+				"items": {
 					"generalGroup": {
 						"type": "group",
 						"label": "General",
@@ -715,8 +715,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					}
 				}
 			},
-			preview: {
-				modes: "LiveAbstract"
+			"preview": {
+				"modes": "LiveAbstract"
 			}
 		});
 	};

@@ -177,8 +177,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -193,8 +193,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -229,8 +229,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					setTimeout(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
@@ -265,13 +265,13 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
-					assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: MultiComboBox items lenght is OK");
+					assert.ok(oField.getAggregation("_field").getItems().length === 3, "Field: MultiComboBox items lenght is OK");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -300,15 +300,15 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringArrayParameterNoValues", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Editor is Input");
 					assert.ok(oField.getAggregation("_field").getValue() === "key1", "Field: Select items lenght is OK");
-					oLabel = this.oCardEditor.getAggregation("_formContent")[2];
-					oField = this.oCardEditor.getAggregation("_formContent")[3];
+					oLabel = this.oCardEditor.getAggregation("_formContent")[3];
+					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringArrayParameterNoValuesNotEditable", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
@@ -341,14 +341,14 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					setTimeout(function () {
 						assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
-						assert.ok(oField.getAggregation("_field").getItems().length === 5, "Field: MultiComboBox items lenght is OK");
+						assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: MultiComboBox items lenght is OK");
 						resolve();
 					}, 500);
 				}.bind(this));
@@ -360,8 +360,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -376,8 +376,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -392,8 +392,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -408,8 +408,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_select");
@@ -427,8 +427,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_select");
@@ -447,8 +447,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_select");
@@ -467,8 +467,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					var oSelect = oField.getAggregation("_field").getAggregation("_select");
@@ -487,8 +487,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
@@ -506,8 +506,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
@@ -526,8 +526,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
@@ -546,8 +546,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
@@ -617,8 +617,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
@@ -680,8 +680,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
@@ -739,8 +739,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
@@ -800,8 +800,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
@@ -876,8 +876,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oField.getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Field: Icon Select Field");
 					setTimeout(function () {
@@ -967,8 +967,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -983,8 +983,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -999,8 +999,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -1016,8 +1016,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "integerParameter", "Label: Has integerParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
@@ -1032,8 +1032,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "integerParameter", "Label: Has integerParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
@@ -1048,8 +1048,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "integerParameterLabel", "Label: Has integerParameter label from label");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
@@ -1064,8 +1064,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "integerParameterLabel", "Label: Has integerParameter label from label");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
@@ -1080,8 +1080,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "numberParameter", "Label: Has numberParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.NumberField"), "Field: Number Field");
@@ -1096,8 +1096,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "numberParameter", "Label: Has numberParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.NumberField"), "Field: Number Field");
@@ -1112,8 +1112,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "dateParameter", "Label: Has dateParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.DateField"), "Field: Date Field");
@@ -1136,8 +1136,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "dateParameter", "Label: Has dateParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.DateField"), "Field: Date Field");
@@ -1152,8 +1152,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.DateTimeField"), "Field: DateTime Field");
@@ -1175,8 +1175,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "datetimeParameter", "Label: Has datetimeParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.DateTimeField"), "Field: DateTime Field");
@@ -1193,8 +1193,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "booleanParameter", "Label: Has booleanParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
@@ -1209,8 +1209,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "booleanParameter", "Label: Has booleanParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
@@ -1225,8 +1225,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "booleanParameter", "Label: Has booleanParameter label from parameter name");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
@@ -1259,11 +1259,11 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
-					var oPanel = this.oCardEditor.getAggregation("_formContent")[2];
-					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[3];
-					var oField1 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[4];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[5];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -1282,8 +1282,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StaticLabel", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -1303,16 +1303,18 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
-                    assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+					var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
+					assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+                    assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
 
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
-					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 
-					oField = this.oCardEditor.getAggregation("_formContent")[3];
+					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 
 					resolve();
@@ -1736,8 +1738,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -1752,8 +1754,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -1828,8 +1830,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -1875,8 +1877,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -1926,8 +1928,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -1971,8 +1973,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2019,8 +2021,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2071,8 +2073,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2121,18 +2123,20 @@ sap.ui.define([
             return new Promise(function (resolve, reject) {
                 this.oCardEditor.attachReady(function () {
                     assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-                    var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
-                    assert.ok(oPanel.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
-                    assert.ok(oPanel.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+                    var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
+                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
+                    assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
-                    var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
-                    var oField = this.oCardEditor.getAggregation("_formContent")[2];
+                    var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+                    var oField = this.oCardEditor.getAggregation("_formContent")[3];
                     assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
                     assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
                     assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
                     assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Admin", "Field: Value from Admin change");
 
-                    oField = this.oCardEditor.getAggregation("_formContent")[3];
+                    oField = this.oCardEditor.getAggregation("_formContent")[4];
                     assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
                     resolve();
                 }.bind(this));
@@ -2182,17 +2186,19 @@ sap.ui.define([
                 this.oCardEditor.attachReady(function () {
                     assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
                     var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
-                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
                     assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
-                    var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
-                    var oField = this.oCardEditor.getAggregation("_formContent")[2];
+                    var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+                    var oField = this.oCardEditor.getAggregation("_formContent")[3];
                     assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
                     assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
                     assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
                     assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
 
-                    oField = this.oCardEditor.getAggregation("_formContent")[3];
+                    oField = this.oCardEditor.getAggregation("_formContent")[4];
                     assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
                     resolve();
                 }.bind(this));
@@ -2245,17 +2251,19 @@ sap.ui.define([
                 this.oCardEditor.attachReady(function () {
                     assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
                     var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
-                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
                     assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
-                    var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
-                    var oField = this.oCardEditor.getAggregation("_formContent")[2];
+                    var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+                    var oField = this.oCardEditor.getAggregation("_formContent")[3];
                     assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
                     assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
                     assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
                     assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
 
-                    oField = this.oCardEditor.getAggregation("_formContent")[3];
+                    oField = this.oCardEditor.getAggregation("_formContent")[4];
                     assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
                     assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value from Translate change");
                     resolve();
@@ -2297,8 +2305,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2345,8 +2353,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2397,8 +2405,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2443,8 +2451,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2489,8 +2497,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2534,8 +2542,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2707,8 +2715,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2753,8 +2761,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2802,17 +2810,18 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
-                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
                     assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
-
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
-					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 
-					oField = this.oCardEditor.getAggregation("_formContent")[3];
+					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Input not changed by the Admin change for editable");
 					resolve();
 				}.bind(this));
@@ -2854,8 +2863,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2900,8 +2909,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2946,8 +2955,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -2992,8 +3001,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -3041,8 +3050,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -3094,18 +3103,20 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
-                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
                     assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
-					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 
 					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Admin", "Field: Value from Admin change");
 
-					oField = this.oCardEditor.getAggregation("_formContent")[3];
+					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
 					resolve();
@@ -3155,19 +3166,20 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
-                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
                     assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
-
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
-					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 
 					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
 
-					oField = this.oCardEditor.getAggregation("_formContent")[3];
+					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
 					resolve();
@@ -3220,18 +3232,20 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
-                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
                     assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
-					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 
 					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
 
-					oField = this.oCardEditor.getAggregation("_formContent")[3];
+					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "", "Field: Value in Translate input");
 					resolve();
@@ -3281,17 +3295,19 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
-                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
+                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
                     assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
-					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getText() === "StringParameter Value Trans in i18n", "Field: Value from Translate change");
 
-					oField = this.oCardEditor.getAggregation("_formContent")[3];
+					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
 					resolve();
@@ -3344,18 +3360,20 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
-                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
-					assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
+                    assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
-					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 
 					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Admin", "Field: Value from Admin change");
 
-					oField = this.oCardEditor.getAggregation("_formContent")[3];
+					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
 					resolve();
@@ -3411,18 +3429,20 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
 					var oPanel1 = this.oCardEditor.getAggregation("_formContent")[0];
-                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains a Panel");
-					assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+                    assert.ok(oPanel1.isA("sap.m.Panel"), "Panel: Form content contains 1 Panel");
+                    assert.ok(oPanel1.getHeaderText() === this.oCardEditor._oResourceBundle.getText("CARDEDITOR_ORIGINALLANG") + ": " + CardEditor._languages[this.oCardEditor.getLanguage()], "Panel: has the correct text CARDEDITOR_ORIGINALLANG");
+					var oPanel2 = this.oCardEditor.getAggregation("_formContent")[1];
+					assert.ok(oPanel2.isA("sap.m.Panel"), "Panel: Form content contains 2 Panels");
 
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
-					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[2];
+					var oField = this.oCardEditor.getAggregation("_formContent")[3];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "StringLabelTrans", "Label: Has translated label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 
 					assert.ok(oField.getAggregation("_field").getText() === "stringParameter Value Content", "Field: Value from Content change");
 
-					oField = this.oCardEditor.getAggregation("_formContent")[3];
+					oField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").getValue() === "stringParameter Value Translate", "Field: Value in Translate input");
 					resolve();
@@ -3465,8 +3485,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -3514,8 +3534,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -3566,8 +3586,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -3645,8 +3665,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -3723,8 +3743,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -3803,8 +3823,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -3868,8 +3888,8 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -3937,8 +3957,8 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					var oCardEditor = this.oCardEditor;
 					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = oCardEditor.getAggregation("_formContent")[0];
-					var oField = oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = oCardEditor.getAggregation("_formContent")[1];
+					var oField = oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -4019,8 +4039,8 @@ sap.ui.define([
 				this.oCardEditor.attachReady(function () {
 					var oCardEditor = this.oCardEditor;
 					assert.ok(oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = oCardEditor.getAggregation("_formContent")[0];
-					var oField = oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = oCardEditor.getAggregation("_formContent")[1];
+					var oField = oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oLabel.getText() === "stringParameter", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
@@ -4099,27 +4119,27 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
 					assert.ok(oLabel.getText() === "Integer Label", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Default Input control");
-					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
-					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oLabel1.isA("sap.m.Label"), "Label: Form content contains 2 Labels");
 					assert.ok(oLabel1.getText() === "Integer Label using Slider", "Label: Has label text");
 					assert.ok(oField1.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
 					assert.ok(oField1.getAggregation("_field").isA("sap.m.Slider"), "Field: Slider control");
 					assert.ok(oField1.getAggregation("_field").getValue() === 2, "Field: Value correct");
-					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
-					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oLabel2.isA("sap.m.Label"), "Label: Form content contains 3 Labels");
 					assert.ok(oLabel2.getText() === "Boolean Label", "Label: Has label text");
 					assert.ok(oField2.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField2.getAggregation("_field").isA("sap.m.CheckBox"), "Field: Default CheckBox control");
-					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
-					var oField3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oField3 = this.oCardEditor.getAggregation("_formContent")[8];
 					assert.ok(oLabel3.isA("sap.m.Label"), "Label: Form content contains 4 Labels");
 					assert.ok(oLabel3.getText() === "Boolean Label using Switch", "Label: Has label text");
 					assert.ok(oField3.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
@@ -4158,27 +4178,27 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
 					assert.ok(oLabel.getText() === "Integer Label", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Input"), "Field: Default Input control");
-					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[2];
-					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oLabel1 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oLabel1.isA("sap.m.Label"), "Label: Form content contains 2 Labels");
 					assert.ok(oLabel1.getText() === "Integer Label using Slider", "Label: Has label text");
 					assert.ok(oField1.isA("sap.ui.integration.designtime.editor.fields.IntegerField"), "Field: Integer Field");
 					assert.ok(oField1.getAggregation("_field").isA("sap.m.Slider"), "Field: Slider control");
 					assert.ok(oField1.getAggregation("_field").getValue() === 3, "Field: Value correct");
-					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[4];
-					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oLabel2 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oLabel2.isA("sap.m.Label"), "Label: Form content contains 3 Labels");
 					assert.ok(oLabel2.getText() === "Boolean Label", "Label: Has label text");
 					assert.ok(oField2.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField2.getAggregation("_field").isA("sap.m.CheckBox"), "Field: Default CheckBox control");
-					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
-					var oField3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
+					var oField3 = this.oCardEditor.getAggregation("_formContent")[8];
 					assert.ok(oLabel3.isA("sap.m.Label"), "Label: Form content contains 4 Labels");
 					assert.ok(oLabel3.getText() === "Boolean Label using Switch", "Label: Has label text");
 					assert.ok(oField3.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
@@ -4210,18 +4230,18 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
 					assert.ok(oLabel.getText() === "Boolean Label using Switch", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
 					assert.ok(oField.getAggregation("_field").getState() === true, "Field: Value correct");
-					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
-					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === true, "Field: Value correct");
-					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
 					assert.ok(oLabel3.getText() === "dependentfield3 True", "Label: Value correct");
 
 					oField.getAggregation("_field").setState(false);
@@ -4261,18 +4281,18 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oLabel.isA("sap.m.Label"), "Label: Form content contains 1 Label");
 					assert.ok(oLabel.getText() === "Boolean Label using Switch", "Label: Has label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.Switch"), "Field: Switch control");
 					assert.ok(oField.getAggregation("_field").getState() === false, "Field: Value correct");
-					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
-					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === false, "Field: Value correct");
-					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
 					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
 
 					oField.getAggregation("_field").setState(true);
@@ -4308,13 +4328,13 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oField.getAggregation("_field").getValue() === "editable", "Field: Value correct");
-					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
-					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === false, "Field: Value correct");
-					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
 					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
 
 					oField.getAggregation("_field").setValue("visible");
@@ -4359,13 +4379,13 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oField.getAggregation("_field").getValue() === "visible", "Field: Value correct");
-					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
-					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === true, "Field: Value correct");
-					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
 					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
 
 					oField.getAggregation("_field").setValue("editable");
@@ -4406,13 +4426,13 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oField.getAggregation("_field").getValue() === "1", "Field: Value correct");
-					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField1.getAggregation("_field").getEditable() === false, "Field: Value correct");
-					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === false, "Field: Value correct");
-					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
 					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
 
 					oField.getAggregation("_field").setValue("3");
@@ -4457,13 +4477,13 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oField.getAggregation("_field").getValue() === "4", "Field: Value correct");
-					var oField1 = this.oCardEditor.getAggregation("_formContent")[3];
+					var oField1 = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oField1.getAggregation("_field").getEditable() === true, "Field: Value correct");
-					var oField2 = this.oCardEditor.getAggregation("_formContent")[5];
+					var oField2 = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oField2.getVisible() === false, "Field: Value correct");
-					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[6];
+					var oLabel3 = this.oCardEditor.getAggregation("_formContent")[7];
 					assert.ok(oLabel3.getText() === "dependentfield3 False", "Label: Value correct");
 
 					oField.getAggregation("_field").setValue("1");
@@ -4557,33 +4577,33 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
 
-					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[2];
-					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
-					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[4];
-					var oOrderField = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderField = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
-					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[6];
-					var oProductField = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductField = this.oCardEditor.getAggregation("_formContent")[8];
 					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
-					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[8];
-					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[10];
 					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
@@ -4641,33 +4661,33 @@ sap.ui.define([
 			});
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
-					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
 
-					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[2];
-					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
-					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[4];
-					var oOrderField = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderField = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
-					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[6];
-					var oProductField = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductField = this.oCardEditor.getAggregation("_formContent")[8];
 					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
-					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[8];
-					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[10];
 					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
@@ -4732,33 +4752,33 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
 
-					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[2];
-					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
-					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[4];
-					var oOrderField = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderField = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
-					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[6];
-					var oProductField = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductField = this.oCardEditor.getAggregation("_formContent")[8];
 					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
-					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[8];
-					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[10];
 					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
@@ -4823,33 +4843,33 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
 
-					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[2];
-					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
-					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[4];
-					var oOrderField = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderField = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
-					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[6];
-					var oProductField = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductField = this.oCardEditor.getAggregation("_formContent")[8];
 					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
-					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[8];
-					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[10];
 					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
@@ -4918,33 +4938,33 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
 
-					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[2];
-					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
-					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[4];
-					var oOrderField = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderField = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
-					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[6];
-					var oProductField = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductField = this.oCardEditor.getAggregation("_formContent")[8];
 					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
-					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[8];
-					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[10];
 					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
@@ -5019,33 +5039,33 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[0];
-					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
 
-					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[2];
-					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
 					assert.ok(oEmployeeLabel.getText() === "Employee", "Label: Has static label text");
 					assert.ok(oEmployeeField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
 
-					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[4];
-					var oOrderField = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderLabel = this.oCardEditor.getAggregation("_formContent")[5];
+					var oOrderField = this.oCardEditor.getAggregation("_formContent")[6];
 					assert.ok(oOrderLabel.getText() === "Order", "Label: Has static label text");
 					assert.ok(oOrderField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oOrderField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Order is ComboBox");
 
-					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[6];
-					var oProductField = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductLabel = this.oCardEditor.getAggregation("_formContent")[7];
+					var oProductField = this.oCardEditor.getAggregation("_formContent")[8];
 					assert.ok(oProductLabel.getText() === "Product", "Label: Has static label text");
 					assert.ok(oProductField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oProductField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Product is ComboBox");
 
-					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[8];
-					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitLabel = this.oCardEditor.getAggregation("_formContent")[9];
+					var oCustomerLimitField = this.oCardEditor.getAggregation("_formContent")[10];
 					assert.ok(oCustomerLimitLabel.getText() === "CustomerWithTopAndSkipOption", "Label: Has static label text");
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
@@ -5138,7 +5158,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					assert.ok(this.oCardEditor.getAggregation("_formContent")[1].getAggregation("_field").isA("sap.m.Slider"), "Content of Form contains: Slider ");
+					assert.ok(this.oCardEditor.getAggregation("_formContent")[2].getAggregation("_field").isA("sap.m.Slider"), "Content of Form contains: Slider ");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -5178,7 +5198,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					assert.ok(this.oCardEditor.getAggregation("_formContent")[1].getAggregation("_field").isA("sap.m.Slider"), "Content of Form contains: Slider ");
+					assert.ok(this.oCardEditor.getAggregation("_formContent")[2].getAggregation("_field").isA("sap.m.Slider"), "Content of Form contains: Slider ");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -5207,7 +5227,7 @@ sap.ui.define([
 			return new Promise(function (resolve, reject) {
 				this.oCardEditor.attachReady(function () {
 					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					assert.ok(this.oCardEditor.getAggregation("_formContent")[1].getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Content of Form contains: IconSelect ");
+					assert.ok(this.oCardEditor.getAggregation("_formContent")[2].getAggregation("_field").isA("sap.ui.integration.designtime.editor.fields.viz.IconSelect"), "Content of Form contains: IconSelect ");
 					resolve();
 				}.bind(this));
 			}.bind(this));
