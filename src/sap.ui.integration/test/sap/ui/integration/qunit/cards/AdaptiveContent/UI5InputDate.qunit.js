@@ -37,8 +37,6 @@ function (
 		beforeEach: function () {
 			this.oAdaptiveContent = new AdaptiveContent();
 			this.oAdaptiveContent._oCardConfig = oManifest;
-			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oAdaptiveContent.destroy();
@@ -47,19 +45,31 @@ function (
 	});
 
 	QUnit.test("Properties mapping", function (assert) {
-		//Arrange
-		var oDateInput = document.getElementById("DateVal");
-		var oDateInputWithPlaceholder = document.getElementById("DateInputWithPlaceholder");
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		//Assert
-		assert.strictEqual(oDateInput.tagName.toLowerCase(), "ui5-datepicker", "ui5-datepicker webcomponent is rendered");
-		assert.ok(oDateInput, "The date input is created");
-		assert.strictEqual(oDateInput.placeholder, undefined, "There is no placeholder");
-		assert.strictEqual(oDateInput.value, "", "The is no initial value set");
-		assert.strictEqual(oDateInput.formatPattern, "yyyy-MM-dd", "The correct date format is used");
-		assert.strictEqual(oDateInputWithPlaceholder.value, "2020-01-01", "The value is mapped correctly");
-		assert.strictEqual(oDateInputWithPlaceholder.minDate, "2017-01-01", "The minimum date available for selection is correct");
-		assert.strictEqual(oDateInputWithPlaceholder.maxDate, "2022-01-01", "The maximum date available for selection is correct");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			//Arrange
+			var oDateInput = document.getElementById("DateVal");
+			var oDateInputWithPlaceholder = document.getElementById("DateInputWithPlaceholder");
+
+			//Assert
+			assert.strictEqual(oDateInput.tagName.toLowerCase(), "ui5-datepicker", "ui5-datepicker webcomponent is rendered");
+			assert.ok(oDateInput, "The date input is created");
+			assert.strictEqual(oDateInput.placeholder, undefined, "There is no placeholder");
+			assert.strictEqual(oDateInput.value, "", "The is no initial value set");
+			assert.strictEqual(oDateInput.formatPattern, "yyyy-MM-dd", "The correct date format is used");
+			assert.strictEqual(oDateInputWithPlaceholder.value, "2020-01-01", "The value is mapped correctly");
+			assert.strictEqual(oDateInputWithPlaceholder.minDate, "2017-01-01", "The minimum date available for selection is correct");
+			assert.strictEqual(oDateInputWithPlaceholder.maxDate, "2022-01-01", "The maximum date available for selection is correct");
+
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("internalRender", function (assert) {

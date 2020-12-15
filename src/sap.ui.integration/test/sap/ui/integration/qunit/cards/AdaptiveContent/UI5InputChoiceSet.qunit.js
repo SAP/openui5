@@ -102,8 +102,6 @@ function (
 		beforeEach: function () {
 			this.oAdaptiveContent = new AdaptiveContent();
 			this.oAdaptiveContent._oCardConfig = oManifest;
-			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oAdaptiveContent.destroy();
@@ -112,71 +110,103 @@ function (
 	});
 
 	QUnit.test("style: compact, isMultiSelect: false", function (assert) {
-		//Arrange
-		var oSelect = document.getElementById("CompactSelectValWithValue"),
-			aOptions = oSelect.children,
-			oSelectedOption = aOptions[0],
-			iCount = oSelect.childElementCount;
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		//Assert
-		assert.strictEqual(oSelect.tagName.toLowerCase(), "ui5-select", "ui5-select webcomponent is rendered");
-		assert.strictEqual(iCount, 3, "There are three choices");
-		assert.ok(oSelectedOption.selected, "The correct option is selected");
-		assert.strictEqual(oSelectedOption.innerHTML, "Red", "The choice title is mapped correctly");
-		assert.strictEqual(oSelectedOption.value, "1", "The choice value is mapped correctly");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			//Arrange
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			var oSelect = document.getElementById("CompactSelectValWithValue"),
+				aOptions = oSelect.children,
+				oSelectedOption = aOptions[0],
+				iCount = oSelect.childElementCount;
 
-		for (var i = 0; i < aOptions.length; i++) {
-			var oOption = aOptions[i];
-			assert.strictEqual(oOption.tagName.toLowerCase(), "ui5-option", "ui5-option web component is used for the choices");
-		}
+			//Assert
+			assert.strictEqual(oSelect.tagName.toLowerCase(), "ui5-select", "ui5-select webcomponent is rendered");
+			assert.strictEqual(iCount, 3, "There are three choices");
+			assert.ok(oSelectedOption.selected, "The correct option is selected");
+			assert.strictEqual(oSelectedOption.innerHTML, "Red", "The choice title is mapped correctly");
+			assert.strictEqual(oSelectedOption.value, "1", "The choice value is mapped correctly");
+
+			for (var i = 0; i < aOptions.length; i++) {
+				var oOption = aOptions[i];
+				assert.strictEqual(oOption.tagName.toLowerCase(), "ui5-option", "ui5-option web component is used for the choices");
+			}
+
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("style: expanded, isMultiSelect: false", function (assert) {
-		//Arrange
-		var oRBContainer = document.getElementById("SingleSelectVal"),
-			aRadioButtons = oRBContainer.children,
-			aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[3]._toggleInputs,
-			oSelectedRB = aRadioButtons[1];
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		//Assert
-		assert.strictEqual(oRBContainer.tagName.toLowerCase(), "div", "a container is rendered");
-		assert.ok(oSelectedRB.selected, "The correct option is selected");
-		assert.strictEqual(oSelectedRB.text, "Green", "The choice title is mapped correctly");
-		assert.strictEqual(oSelectedRB.value, "2", "The choice value is mapped correctly");
-		assert.ok(aToggleInputs.length === aRadioButtons.length, "The options are correctly mapped");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			//Arrange
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			var oRBContainer = document.getElementById("SingleSelectVal"),
+				aRadioButtons = oRBContainer.children,
+				aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[3]._toggleInputs,
+				oSelectedRB = aRadioButtons[1];
+
+			//Assert
+			assert.strictEqual(oRBContainer.tagName.toLowerCase(), "div", "a container is rendered");
+			assert.ok(oSelectedRB.selected, "The correct option is selected");
+			assert.strictEqual(oSelectedRB.text, "Green", "The choice title is mapped correctly");
+			assert.strictEqual(oSelectedRB.value, "2", "The choice value is mapped correctly");
+			assert.ok(aToggleInputs.length === aRadioButtons.length, "The options are correctly mapped");
 
 
-		for (var i = 0; i < aRadioButtons.length; i++) {
-			var oRB = aRadioButtons[i];
-			assert.strictEqual(oRB.tagName.toLowerCase(), "ui5-radiobutton", "the container contains only ui5-radiobutton web components");
-			assert.ok(oRB.wrap, "The long text should wrap at some point");
+			for (var i = 0; i < aRadioButtons.length; i++) {
+				var oRB = aRadioButtons[i];
+				assert.strictEqual(oRB.tagName.toLowerCase(), "ui5-radiobutton", "the container contains only ui5-radiobutton web components");
+				assert.ok(oRB.wrap, "The long text should wrap at some point");
+			}
 
-		}
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("isMultiSelect: true", function (assert) {
-		//Arrange
-		var oCBContainer = document.getElementById("MultiSelectVal"),
-			aCheckBoxs = oCBContainer.children,
-			aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[5]._toggleInputs,
-			oFirstCheckedCB = aCheckBoxs[0],
-			oSecondCheckedCB = aCheckBoxs[2];
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		//Assert
-		assert.strictEqual(oCBContainer.tagName.toLowerCase(), "div", "a container is rendered");
-		assert.ok(aToggleInputs.length === aCheckBoxs.length, "The options are correctly mapped");
-		assert.ok(oFirstCheckedCB.checked && oSecondCheckedCB.checked, "The correct options are checked");
-		assert.notOk(aCheckBoxs[1].checked, "The second option is not checked");
-		assert.strictEqual(oFirstCheckedCB.text, "Red", "The choice title is mapped correctly");
-		assert.strictEqual(oFirstCheckedCB.value, "1", "The choice value is mapped correctly");
-		assert.strictEqual(oSecondCheckedCB.text, "Blue", "The choice title is mapped correctly");
-		assert.strictEqual(oSecondCheckedCB.value, "3", "The choice value is mapped correctly");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			//Arrange
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			var oCBContainer = document.getElementById("MultiSelectVal"),
+				aCheckBoxs = oCBContainer.children,
+				aToggleInputs = this.oAdaptiveContent.adaptiveCardInstance._items[5]._toggleInputs,
+				oFirstCheckedCB = aCheckBoxs[0],
+				oSecondCheckedCB = aCheckBoxs[2];
 
-		for (var i = 0; i < aCheckBoxs.length; i++) {
-			var oCB = aCheckBoxs[i];
-			assert.strictEqual(oCB.tagName.toLowerCase(), "ui5-checkbox", "the container contains only ui5-checkbox web components");
-			assert.ok(oCB.wrap, "The long text should wrap at some point");
-		}
+			//Assert
+			assert.strictEqual(oCBContainer.tagName.toLowerCase(), "div", "a container is rendered");
+			assert.ok(aToggleInputs.length === aCheckBoxs.length, "The options are correctly mapped");
+			assert.ok(oFirstCheckedCB.checked && oSecondCheckedCB.checked, "The correct options are checked");
+			assert.notOk(aCheckBoxs[1].checked, "The second option is not checked");
+			assert.strictEqual(oFirstCheckedCB.text, "Red", "The choice title is mapped correctly");
+			assert.strictEqual(oFirstCheckedCB.value, "1", "The choice value is mapped correctly");
+			assert.strictEqual(oSecondCheckedCB.text, "Blue", "The choice title is mapped correctly");
+			assert.strictEqual(oSecondCheckedCB.value, "3", "The choice value is mapped correctly");
+
+			for (var i = 0; i < aCheckBoxs.length; i++) {
+				var oCB = aCheckBoxs[i];
+				assert.strictEqual(oCB.tagName.toLowerCase(), "ui5-checkbox", "the container contains only ui5-checkbox web components");
+				assert.ok(oCB.wrap, "The long text should wrap at some point");
+			}
+
+			done();
+		}.bind(this));
 	});
 
 	QUnit.test("internalRender", function (assert) {

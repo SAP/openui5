@@ -55,8 +55,6 @@ function (
 		beforeEach: function () {
 			this.oAdaptiveContent = new AdaptiveContent();
 			this.oAdaptiveContent._oCardConfig = oManifest;
-			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oAdaptiveContent.destroy();
@@ -65,23 +63,31 @@ function (
 	});
 
 	QUnit.test("Properties mapping", function (assert) {
-		//Arrange
-		var done = assert.async();
-		var oTimeInput = document.getElementById("TimeVal");
-		var oTimeInputWithMinMaxValues = document.getElementById("TimeInputWithMinMaxValues");
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		//Assert
-		assert.strictEqual(oTimeInput.tagName.toLowerCase(), "ui5-timepicker", "ui5-timepicker webcomponent is rendered");
-		assert.ok(oTimeInput, "The time input is created");
-		assert.strictEqual(oTimeInput.value, "", "There is no initial value set");
-		assert.strictEqual(oTimeInput.formatPattern, "HH:mm", "The formatPattern should be HH:mm");
-		assert.strictEqual(oTimeInputWithMinMaxValues.value, "15:30", "The value is mapped correctly");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			//Arrange
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+			var oTimeInput = document.getElementById("TimeVal");
+			var oTimeInputWithMinMaxValues = document.getElementById("TimeInputWithMinMaxValues");
 
-		setTimeout(function () {
-			assert.strictEqual(oTimeInput.valueState, ValueState.None, "We don't show error when the initial value is empty string");
+			//Assert
+			assert.strictEqual(oTimeInput.tagName.toLowerCase(), "ui5-timepicker", "ui5-timepicker webcomponent is rendered");
+			assert.ok(oTimeInput, "The time input is created");
+			assert.strictEqual(oTimeInput.value, "", "There is no initial value set");
+			assert.strictEqual(oTimeInput.formatPattern, "HH:mm", "The formatPattern should be HH:mm");
+			assert.strictEqual(oTimeInputWithMinMaxValues.value, "15:30", "The value is mapped correctly");
 
-			done();
-		}, iTimeoutLength);
+			setTimeout(function () {
+				assert.strictEqual(oTimeInput.valueState, ValueState.None, "We don't show error when the initial value is empty string");
+
+				done();
+			}, iTimeoutLength);
+		}.bind(this));
 	});
 
 	QUnit.test("internalRender", function (assert) {
@@ -98,8 +104,6 @@ function (
 		beforeEach: function () {
 			this.oAdaptiveContent = new AdaptiveContent();
 			this.oAdaptiveContent._oCardConfig = oManifest;
-			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oAdaptiveContent.destroy();
@@ -108,99 +112,131 @@ function (
 	});
 
 	QUnit.test("Min value validation", function (assert) {
-		var done = assert.async();
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		setTimeout(function() {
-			//Arrange
-			var oTimeInputWithMinMaxValues = document.getElementById("TimeInputWithMinMaxValues");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 
-			//Assert
-			assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value bigger than min value should be valid and value state should be None.");
-			// Act
-			oTimeInputWithMinMaxValues.value = "11:00";
-			fireChangeEvent(oTimeInputWithMinMaxValues);
+			setTimeout(function() {
+				//Arrange
+				var oTimeInputWithMinMaxValues = document.getElementById("TimeInputWithMinMaxValues");
 
-			// Assert
-			assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.Error, "The value should be invalid when it is less than min property and value state should be Error.");
+				//Assert
+				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value bigger than min value should be valid and value state should be None.");
+				// Act
+				oTimeInputWithMinMaxValues.value = "11:00";
+				fireChangeEvent(oTimeInputWithMinMaxValues);
 
-			// Act
-			oTimeInputWithMinMaxValues.value = "12:00";
-			fireChangeEvent(oTimeInputWithMinMaxValues);
+				// Assert
+				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.Error, "The value should be invalid when it is less than min property and value state should be Error.");
 
-			// Assert
-			assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value should be valid when it is equal to min property and value state should be None.");
+				// Act
+				oTimeInputWithMinMaxValues.value = "12:00";
+				fireChangeEvent(oTimeInputWithMinMaxValues);
 
-			done();
-		}, iTimeoutLength);
+				// Assert
+				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value should be valid when it is equal to min property and value state should be None.");
+
+				done();
+			}, iTimeoutLength);
+		}.bind(this));
 	});
 
 	QUnit.test("Max value validation", function (assert) {
-		var done = assert.async();
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		setTimeout(function () {
-			//Arrange
-			var oTimeInputWithMinMaxValues = document.getElementById("TimeInputWithMinMaxValues");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 
-			//Assert
-			assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value less than max value should be valid and value state should be None.");
+			setTimeout(function () {
+				//Arrange
+				var oTimeInputWithMinMaxValues = document.getElementById("TimeInputWithMinMaxValues");
 
-			// Act
-			oTimeInputWithMinMaxValues.value = "18:00";
-			fireChangeEvent(oTimeInputWithMinMaxValues);
+				//Assert
+				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value less than max value should be valid and value state should be None.");
 
-			// Assert
-			assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.Error, "The value should be invalid when it is bigger than max property and value state should be Error.");
+				// Act
+				oTimeInputWithMinMaxValues.value = "18:00";
+				fireChangeEvent(oTimeInputWithMinMaxValues);
 
-			// Act
-			oTimeInputWithMinMaxValues.value = "17:00";
-			fireChangeEvent(oTimeInputWithMinMaxValues);
+				// Assert
+				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.Error, "The value should be invalid when it is bigger than max property and value state should be Error.");
 
-			// Assert
-			assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value should be valid when it is equal to max property and value state should be None.");
+				// Act
+				oTimeInputWithMinMaxValues.value = "17:00";
+				fireChangeEvent(oTimeInputWithMinMaxValues);
 
-			done();
-		}, iTimeoutLength);
+				// Assert
+				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value should be valid when it is equal to max property and value state should be None.");
+
+				done();
+			}, iTimeoutLength);
+		}.bind(this));
 	});
 
 	QUnit.test("Check if the value is valid time in HH:mm format", function (assert) {
-		var done = assert.async();
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		setTimeout(function () {
-			//Arrange
-			var oTimeInputWithMinMaxValues = document.getElementById("TimeInputWithMinMaxValues");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 
-			//Assert
-			assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value is valid and value state should be None.");
+			setTimeout(function () {
+				//Arrange
+				var oTimeInputWithMinMaxValues = document.getElementById("TimeInputWithMinMaxValues");
 
-			// Act
-			oTimeInputWithMinMaxValues.value = "ssss";
-			fireChangeEvent(oTimeInputWithMinMaxValues);
+				//Assert
+				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value is valid and value state should be None.");
 
-			// Assert
-			assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.Error, "The value is not valid and value state should be Error.");
+				// Act
+				oTimeInputWithMinMaxValues.value = "ssss";
+				fireChangeEvent(oTimeInputWithMinMaxValues);
 
-			// Act
-			oTimeInputWithMinMaxValues.value = "";
-			fireChangeEvent(oTimeInputWithMinMaxValues);
+				// Assert
+				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.Error, "The value is not valid and value state should be Error.");
 
-			// Assert
-			assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value should be valid when it is empty string and value state should be None.");
+				// Act
+				oTimeInputWithMinMaxValues.value = "";
+				fireChangeEvent(oTimeInputWithMinMaxValues);
 
-			done();
-		}, iTimeoutLength);
+				// Assert
+				assert.strictEqual(oTimeInputWithMinMaxValues.valueState, ValueState.None, "The value should be valid when it is empty string and value state should be None.");
+
+				done();
+			}, iTimeoutLength);
+		}.bind(this));
 	});
 
 	QUnit.test("Check if the min value is bigger than max value", function (assert) {
-		var done = assert.async();
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		setTimeout(function () {
-			//Arrange
-			var TimeInputWithWrongMinMaxValues = document.getElementById("TimeInputWithWrongMinMaxValues");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 
-			// Assert
-			assert.strictEqual(TimeInputWithWrongMinMaxValues.valueState, ValueState.Error, "The min value is bigger than max value and value state should be Error.");
+			setTimeout(function () {
+				//Arrange
+				var TimeInputWithWrongMinMaxValues = document.getElementById("TimeInputWithWrongMinMaxValues");
 
-			done();
-		}, iTimeoutLength);
+				// Assert
+				assert.strictEqual(TimeInputWithWrongMinMaxValues.valueState, ValueState.Error, "The min value is bigger than max value and value state should be Error.");
+
+				done();
+			}, iTimeoutLength);
+		}.bind(this));
 	});
 });

@@ -55,8 +55,6 @@ function (
 		beforeEach: function () {
 			this.oAdaptiveContent = new AdaptiveContent();
 			this.oAdaptiveContent._oCardConfig = oManifest;
-			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 		},
 		afterEach: function () {
 			this.oAdaptiveContent.destroy();
@@ -66,18 +64,29 @@ function (
 
 	QUnit.test("ui5-button should be rendered", function (assert) {
 		//Arrange
-		var aButtons = document.getElementsByClassName("ac-pushButton"),
-			oSubmitAction = aButtons[0],
-			oShowCardAction = aButtons[1];
+		var done = assert.async(),
+			oCardManifestStub = {
+				get: function () { return false; }
+			};
 
-		//Assert
-		assert.strictEqual(aButtons.length, 2, "Two buttons have to be rendered");
+		this.oAdaptiveContent.loadDependencies(oCardManifestStub).then(function () {
+			this.oAdaptiveContent.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 
-		for (var i = 0; i < aButtons.length; i++) {
-			assert.strictEqual(aButtons[i].tagName.toLowerCase(), "ui5-button", "ui5-button webcomponent has to be rendered for an action button");
-		}
+			var aButtons = document.getElementsByClassName("ac-pushButton"),
+				oSubmitAction = aButtons[0],
+				oShowCardAction = aButtons[1];
 
-		assert.strictEqual(oSubmitAction.getAttribute('aria-label'), 'Action.Submit', "Button for submit action");
-		assert.strictEqual(oShowCardAction.getAttribute('aria-label'), 'Action.ShowCard', "Button for show card action");
+			//Assert
+			assert.strictEqual(aButtons.length, 2, "Two buttons have to be rendered");
+
+			for (var i = 0; i < aButtons.length; i++) {
+				assert.strictEqual(aButtons[i].tagName.toLowerCase(), "ui5-button", "ui5-button webcomponent has to be rendered for an action button");
+			}
+
+			assert.strictEqual(oSubmitAction.getAttribute('aria-label'), 'Action.Submit', "Button for submit action");
+			assert.strictEqual(oShowCardAction.getAttribute('aria-label'), 'Action.ShowCard', "Button for show card action");
+			done();
+		}.bind(this));
 	});
 });

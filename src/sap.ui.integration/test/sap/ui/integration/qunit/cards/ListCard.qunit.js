@@ -4,14 +4,12 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/integration/cards/BaseListContent",
-	"sap/ui/integration/util/ContentFactory",
 	"sap/ui/integration/widgets/Card",
 	"sap/ui/qunit/utils/waitForThemeApplied"
 ], function (
 	mLibrary,
 	Core,
 	BaseListContent,
-	ContentFactory,
 	Card,
 	waitForThemeApplied
 ) {
@@ -21,21 +19,7 @@ sap.ui.define([
 
 	var AvatarColor = mLibrary.AvatarColor;
 
-	var pIfMicrochartsAvailable = new Promise(function (resolve, reject) {
-		var oCard = new Card(),
-			oContentFactory = new ContentFactory(oCard);
-		return oContentFactory.create({
-				cardType: "List",
-				contentManifest: {
-					item: {
-						chart: {}
-					}
-				}
-			})
-			.then(resolve)
-			.catch(reject)
-			.finally(oCard.destroy);
-	});
+	var pIfMicrochartsAvailable = Core.loadLibrary("sap.suite.ui.microchart", { async: true });
 
 	var oManifest_ListCard = {
 		"sap.card": {
@@ -1234,8 +1218,8 @@ sap.ui.define([
 				});
 				oCard.setManifest(oManifest);
 			})
-			.catch(function (sErr) {
-				assert.strictEqual(sErr, "The usage of Microcharts is not available with this distribution.");
+			.catch(function () {
+				assert.ok(true, "The usage of Microcharts is not available with this distribution.");
 				done();
 			});
 	}
@@ -1299,8 +1283,8 @@ sap.ui.define([
 				});
 				oCard.setManifest(oManifest);
 			})
-			.catch(function (sErr) {
-				assert.strictEqual(sErr, "The usage of Microcharts is not available with this distribution.");
+			.catch(function () {
+				assert.ok(true, "The usage of Microcharts is not available with this distribution.");
 				done();
 			});
 	}

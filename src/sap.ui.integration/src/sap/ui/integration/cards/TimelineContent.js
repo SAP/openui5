@@ -61,7 +61,7 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
-	TimelineContent.prototype.loadDependencies = function (oConfig) {
+	TimelineContent.prototype.loadDependencies = function (oCardManifest) {
 		return new Promise(function (resolve, reject) {
 			Core.loadLibrary("sap.suite.ui.commons", { async: true })
 				.then(function () {
