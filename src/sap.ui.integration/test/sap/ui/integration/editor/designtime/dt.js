@@ -1,13 +1,19 @@
-// add your copyright here
-
+/*!
+ * ${copyright}
+ */
 sap.ui.define(["sap/ui/integration/Designtime"], function (
 	Designtime
 ) {
 	"use strict";
 	return function () {
 		return new Designtime({
-			"form": {
-				"items": {
+			form: {
+				items: {
+					"generalGroup": {
+						"type": "group",
+						"label": "General",
+						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+					},
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
 						"defaultValue": "StringValue",
@@ -15,6 +21,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"translatable": true,
 						"required": true
 					},
+
 					"stringLabel": {
 						"manifestpath": "/sap.card/configuration/parameters/stringLabel/value",
 						"defaultValue": "StringValue",
@@ -174,6 +181,98 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"Option B",
 							"Option C"
 						]
+					},
+					"validationGroup": {
+						"type": "group",
+						"label": "Validation"
+					},
+					"stringphone": {
+						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"defaultValue": "StringValue",
+						"type": "string",
+						"translatable": false,
+						"required": true,
+						"placeholder": "555-4555",
+						"validation": {
+							"type": "error",
+							"maxLength": 20,
+							"minLength": 1,
+							"pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$",
+							"message": "The string does not match a telefone number"
+						}
+					},
+					"stringphonenomessage": {
+						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"defaultValue": "StringValue",
+						"type": "string",
+						"translatable": false,
+						"required": true,
+						"placeholder": "555-4555",
+						"validation": {
+							"type": "warning",
+							"maxLength": 20,
+							"minLength": 1,
+							"pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$"
+						}
+					},
+					"stringmaxmin": {
+						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"defaultValue": "",
+						"type": "string",
+						"translatable": false,
+						"required": true,
+						"placeholder": "MinMaxlength",
+						"validation": {
+							"type": "warning",
+							"maxLength": 20,
+							"minLength": 1
+						},
+						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+					},
+					"integervalidation": {
+						"manifestpath": "/sap.card/configuration/parameters/integer/value",
+						"defaultValue": 1,
+						"type": "integer",
+						"visualization": {
+							"type": "sap/m/Slider",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"min": 0,
+								"max": 10,
+								"width": "100%",
+								"showAdvancedTooltip": true,
+								"showHandleTooltip": false,
+								"inputsAsTooltips": true,
+								"enabled": "{currentSettings>editable}"
+							}
+						},
+						"validations": [{
+							"type": "warning",
+							"validate": function (value) {
+								return value !== 5;
+							},
+							"message": "5 might not be the best value"
+						},
+						{
+							"type": "error",
+							"maximum": 9,
+							"message": "Maximum is 9"
+						},
+						{
+							"type": "error",
+							"minimum": 1,
+							"exclusiveMinimum": true,
+							"message": "Minimum is 2"
+						},
+						{
+							"type": "error",
+							"multipleOf": 2,
+							"message": "Has to be multiple of 2"
+						}]
+					},
+					"lists": {
+						"type": "group",
+						"label": "Value Selection"
 					},
 					"stringWithStaticList": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithStaticList/value",
@@ -616,8 +715,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					}
 				}
 			},
-			"preview": {
-				"modes": "LiveAbstract"
+			preview: {
+				modes: "LiveAbstract"
 			}
 		});
 	};

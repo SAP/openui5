@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/m/Button",
+	"sap/m/FormattedText",
 	"sap/m/MultiInput",
 	"./Settings",
 	"sap/m/Token",
@@ -11,6 +12,7 @@ sap.ui.define([
 ], function (
 	Control,
 	Button,
+	FormattedText,
 	MultiInput,
 	Settings,
 	Token,
@@ -65,6 +67,18 @@ sap.ui.define([
 				},
 				_dynamicField: {
 					type: "sap.ui.core.Control",
+					multiple: false,
+					visibility: "hidden"
+				},
+				_hint: {
+					type: "sap.m.FormattedText",
+					multiple: false,
+					visibility: "hidden"
+				}
+			},
+			associations: {
+				_messageIcon: {
+					type: "sap.ui.core.Icon",
 					multiple: false,
 					visibility: "hidden"
 				}
@@ -130,6 +144,25 @@ sap.ui.define([
 					oRm.close("span");
 					oRm.close("span");
 				}
+				oRm.openStart("div");
+				oRm.writeAttribute("id", oControl.getId() + "-ms");
+				oRm.addStyle("height", "0");
+				oRm.writeStyles();
+				oRm.openEnd();
+				oRm.close("div");
+
+				//render hint
+				if (oControl.getMode() !== "translation") {
+					var oHint = oControl.getAggregation("_hint");
+					if (oHint) {
+						oRm.openStart("div");
+						oRm.addClass("sapUiIntegrationCardEditorHint");
+						oRm.writeClasses();
+						oRm.openEnd();
+						oRm.renderControl(oHint);
+						oRm.close("div");
+					}
+				}
 			}
 			oRm.close("div");
 
@@ -144,15 +177,330 @@ sap.ui.define([
 
 	BaseField.prototype.setConfiguration = function (oConfig, bSuppress) {
 		if (oConfig !== this.getConfiguration()) {
+			//sanitize configuration
+			this._sanitizeValidationSettings(oConfig);
 			this.setProperty("configuration", oConfig, bSuppress);
 			if (oConfig) {
 				//async to ensure all settings that are applied sync are processed.
 				Promise.resolve().then(function () {
 					this.initEditor(oConfig);
+					if (oConfig.hint) {
+						this._addHint(oConfig.hint);
+					}
 				}.bind(this));
+
 			}
 		}
 		return this;
+	};
+
+	BaseField.prototype._addHint = function (sHint) {
+		sHint = sHint.replace(/<a href/g, "<a target='blank' href");
+		var oFormattedText = new FormattedText({
+			htmlText: sHint
+		});
+		this.setAggregation("_hint", oFormattedText);
+	};
+
+	BaseField.prototype._sanitizeValidationSettings = function (oConfig) {
+		oConfig.validations = oConfig.validations || [];
+		if (oConfig.validation && oConfig.validations && Array.isArray(oConfig.validations)) {
+			oConfig.validations.push(oConfig.validation);
+			delete oConfig.validation;
+		}
+		if (oConfig.validation && !oConfig.validations) {
+			oConfig.validations = [oConfig.validation];
+			delete oConfig.validation;
+		}
+		if (oConfig.required) {
+			oConfig.validations.unshift({
+				"required": true,
+				"type": "error"
+			});
+		}
+	};
+
+	BaseField.prototype._triggerValidation = function (value) {
+		var oConfig = this.getConfiguration();
+		if (oConfig.validations && Array.isArray(oConfig.validations)) {
+			for (var i = 0; i < oConfig.validations.length; i++) {
+				if (!this._handleValidation(oConfig.validations[i], value)) {
+					return false;
+				}
+			}
+		}
+		this._hideValueState();
+		return true;
+	};
+	/*
+		default error messages
+		#XMSG: Validation Error: Does not match pattern
+		CARDEDITOR_VAL_NOMATCH=Value does not match the the validation criteria
+
+		#XMSG: Validation Error: Max length exceeded
+		CARDEDITOR_VAL_MAXLENGTH=Value exceeds the maximum length of {0}
+
+		#XMSG: Validation Error: Min length
+		CARDEDITOR_VAL_MINLENGTH=Value needs to be minimal {0} characters
+
+		#XMSG: Validation Error: Number required
+		CARDEDITOR_VAL_TEXTREQ=Field is required, please enter a text
+
+		#XMSG: Validation Error: Number Maximum Inclusive
+		CARDEDITOR_VAL_MAX_E=Value needs to be {0} or less
+
+		#XMSG: Validation Error: Number Minimum Inclusive
+		CARDEDITOR_VAL_MIN_E=Value needs to be {0} or greater
+
+		#XMSG: Validation Error: Number Maximum Exclusive
+		CARDEDITOR_VAL_MAX_E=Value needs to be less than {0}
+
+		#XMSG: Validation Error: Number Minimum Exclusive
+		CARDEDITOR_VAL_MIN_E=Value needs to be greater than {0}
+
+
+		#XMSG: Validation Error: Number Multiple Of
+		CARDEDITOR_VAL_MULTIPLE=Value needs to be a multiple of {0}
+
+		#XMSG: Validation Error: Number required
+		CARDEDITOR_VAL_NUMBERREQ=Field is required, please enter a number
+	*/
+
+	BaseField.validations = {
+		string: {
+			maxLength: function (v, max) {
+				return v.length <= max;
+			},
+			maxLengthTxt: "CARDEDITOR_VAL_MAXLENGTH",
+			minLength: function (v, min) {
+				return v.length >= min;
+			},
+			minLengthTxt: "CARDEDITOR_VAL_MINLENGTH",
+			pattern: function (v, pattern) {
+				var p = new RegExp(pattern);
+				return p.test(v);
+			},
+			patternTxt: "CARDEDITOR_VAL_NOMATCH",
+			required: function (v, b) {
+				return b && !!v;
+			},
+			requiredTxt: "CARDEDITOR_VAL_TEXTREQ",
+			validateTxt: "CARDEDITOR_VAL_NOMATCH"
+		},
+		integer: {
+			maximum: function (v, valValue, valSettings) {
+				if (valSettings.exclusiveMaximum) {
+					valSettings._txt = "maximumExclusiveTxt";
+					return v < valValue;
+				}
+				return v <= valValue;
+			},
+			maximumTxt: "CARDEDITOR_VAL_MAX",
+			maximumExclusiveTxt: "CARDEDITOR_VAL_MAX_E",
+			minimum: function (v, valValue, valSettings) {
+				if (valSettings.exclusiveMinimum) {
+					valSettings._txt = "minimumExclusiveTxt";
+					return v > valValue;
+				}
+				return v >= valValue;
+			},
+			minimumTxt: "CARDEDITOR_VAL_MIN",
+			minimumExclusiveTxt: "CARDEDITOR_VAL_MIN_E",
+			multipleOf: function (v, valValue) {
+				return (v % valValue) === 0;
+			},
+			multipleOfTxt: "CARDEDITOR_VAL_MULTIPLE",
+			required: function (v, b) {
+				return !isNaN(v);
+			},
+			requiredTxt: "CARDEDITOR_VAL_NUMBERREQ",
+			validateTxt: "CARDEDITOR_VAL_NOMATCH"
+		},
+		number: {
+			maximum: function (v, valValue, valSettings) {
+				if (valSettings.exclusiveMaximum) {
+					valSettings._txt = "maximumExclusiveTxt";
+					return v < valValue;
+				}
+				return v <= valValue;
+			},
+			maximumTxt: "CARDEDITOR_VAL_MAX",
+			maximumExclusiveTxt: "CARDEDITOR_VAL_MAX_E",
+			minimum: function (v, valValue, valSettings) {
+				if (valSettings.exclusiveMinimum) {
+					valSettings._txt = "minimumExclusiveTxt";
+					return v > valValue;
+				}
+				return v >= valValue;
+			},
+			minimumTxt: "CARDEDITOR_VAL_MIN",
+			minimumExclusiveTxt: "CARDEDITOR_VAL_MAX_E",
+			multipleOf: function (v, valValue) {
+				return (v % valValue) === 0;
+			},
+			multipleOfTxt: "CARDEDITOR_VAL_MULTIPLE",
+			required: function (v, b) {
+				return !isNaN(v);
+			},
+			requiredTxt: "CARDEDITOR_VAL_NUMBERREQ",
+			validateTxt: "CARDEDITOR_VAL_NOMATCH"
+		}
+	};
+
+	BaseField.prototype._handleValidation = function (oSettings, oValue) {
+		var oConfig = this.getConfiguration(),
+			oValidations = BaseField.validations[oConfig.type];
+		for (var n in oSettings) {
+			if (oValidations) {
+				var fn = oValidations[n];
+				oSettings._txt = "";
+				if (fn) {
+					if (!fn(oValue, oSettings[n], oSettings)) {
+						var sError = oSettings.message;
+						if (!sError) {
+							if (oSettings._txt) {
+								sError = oResourceBundle.getText(oValidations[oSettings._txt], [oSettings[n]]);
+							} else {
+								sError = oResourceBundle.getText(oValidations[n + "Txt"], [oSettings[n]]);
+							}
+						}
+						this._showValueState(oSettings.type || "error", sError);
+						return false;
+					}
+				}
+			}
+			if (n === "validate") {
+				if (!oSettings[n](oValue, oConfig)) {
+					var sError = oSettings.message;
+					if (!sError) {
+						if (oSettings._txt) {
+							sError = oResourceBundle.getText(oValidations[oSettings._txt], [oSettings[n]]);
+						} else {
+							sError = oResourceBundle.getText(oValidations[n + "Txt"], [oSettings[n]]);
+						}
+					}
+					this._showValueState(oSettings.type || "error", sError);
+					return false;
+				}
+			}
+		}
+		return true;
+	};
+
+	BaseField.prototype.onAfterRendering = function () {
+		this._applyMessage();
+	};
+
+	BaseField.prototype._applyMessage = function () {
+		var oIcon = Core.byId(this.getAssociation("_messageIcon"));
+		if (this.getAssociation("_messageIcon") && oIcon) {
+			var oIconDomRef = oIcon.getDomRef();
+			if (oIconDomRef) {
+				oIconDomRef.classList.remove("error");
+				oIconDomRef.classList.remove("warning");
+				oIconDomRef.classList.remove("success");
+				if (this._message) {
+					oIconDomRef.classList.add(this._message.type);
+				}
+			}
+		}
+	};
+
+	BaseField.prototype._showValueState = function (sType, sMessage) {
+		var oField = this.getAggregation("_field"),
+			sEnumType = sType.substring(0, 1).toUpperCase() + sType.substring(1);
+		this._message = {
+			"enum": sEnumType,
+			"type": sType,
+			"message": sMessage,
+			"atControl": false
+		};
+		if (oField.setValueState) {
+			this._message.atControl = true;
+			if (oField.setShowValueStateMessage) {
+				oField.setShowValueStateMessage(false);
+			}
+			oField.setValueState(sEnumType);
+			oField.setValueStateText(sMessage);
+		}
+		this._applyMessage();
+	};
+
+	BaseField.prototype._hideValueState = function () {
+		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
+		if (this._message) {
+			var oField = this.getAggregation("_field");
+			this._message = {
+				"enum": "Success",
+				"type": "success",
+				"message": "Corrected",
+				"atControl": this._message.atControl
+			};
+
+			if (this._messageto) {
+				clearTimeout(this._messageto);
+			}
+			this._messageto = setTimeout(function () {
+				this._messageto = null;
+				this._applyMessage();
+				if (!this._message && oField.setValueState) {
+					oField.setValueState("None");
+				}
+			}.bind(this), 1500);
+			this._applyMessage();
+			if (oMessageStrip.getDomRef()) {
+				oMessageStrip.getDomRef().style.opacity = "0";
+			}
+			if (oField.setValueState) {
+				oField.setValueState("Success");
+			}
+			oMessageStrip.onAfterRendering = null;
+			this._message = null;
+		}
+
+	};
+	BaseField.prototype.onfocusin = function (oEvent) {
+		if (oEvent && oEvent.target.classList.contains("sapMBtn")) {
+			return;
+		}
+		this._showMessage();
+	};
+	BaseField.prototype.onfocusout = function (oEvent) {
+		this._hideMessage();
+	};
+
+	BaseField.prototype._showMessage = function () {
+		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
+		if (this._message) {
+			oMessageStrip.applySettings({
+				type: this._message.enum,
+				text: this._message.message
+			});
+
+			var that = this;
+			oMessageStrip.onAfterRendering = function () {
+				oMessageStrip.getDomRef().style.opacity = "1";
+				that.getDomRef("ms").appendChild(oMessageStrip.getDomRef());
+				var oField = that.getAggregation("_field");
+				if (that._message && !that._message.atControl) {
+					oMessageStrip.getDomRef().style.marginTop = "0";
+					oMessageStrip.getDomRef().style.marginLeft = "0";
+				}
+				oMessageStrip.getDomRef().style.width = (oField.getDomRef().offsetWidth - 2) + "px";
+			};
+			oMessageStrip.rerender();
+		}
+	};
+
+	BaseField.prototype._hideMessage = function () {
+		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
+
+		var oField = this.getAggregation("_field"),
+			bFocusInField = oField.getDomRef().contains(window.document.activeElement);
+		if (!bFocusInField && oMessageStrip.getDomRef()) {
+			oMessageStrip.getDomRef().style.opacity = "0";
+		}
+		oMessageStrip.onAfterRendering = null;
 	};
 
 	BaseField.prototype.initEditor = function (oConfig) {
@@ -179,6 +527,11 @@ sap.ui.define([
 		}
 		if (oControl instanceof Control) {
 			this.setAggregation("_field", oControl);
+			var oBinding = this.getModel("currentSettings").bindProperty("value", this.getBindingContext("currentSettings"));
+			oBinding.attachChange(function () {
+				this._triggerValidation(oConfig.value);
+			}.bind(this));
+			this._triggerValidation(oConfig.value);
 		}
 		//default is true, Card editor needs set to false for translation and page admin mode if needed
 		var sMode = this.getMode();
