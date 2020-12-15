@@ -95,11 +95,11 @@ sap.ui.define([
 		 * @returns {sap.ui.model.odata.v4.oDataModel} the model
 		 */
 		createModel : function (sQuery, mParameters, bAllowPrerenderingTasks) {
-			mParameters = Object.assign({}, mParameters, {
-				serviceUrl : getServiceUrl() + (sQuery || ""),
-				synchronizationMode : "None"
-			});
-			var oModel = new ODataModel(mParameters);
+			var oModel = new ODataModel(Object.assign({}, mParameters, {
+					serviceUrl : getServiceUrl() + (sQuery || ""),
+					synchronizationMode : "None"
+				}));
+
 			if (!bAllowPrerenderingTasks) {
 				this.stub(oModel, "addPrerenderingTask");
 			}
