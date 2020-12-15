@@ -8,7 +8,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_AggregationHelper",
 	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, Filter, FilterOperator, _AggregationHelper, _Helper) {
-	/*global QUnit*/
+	/*global QUnit, sinon*/
 	/*eslint camelcase: 0, no-warning-comments: 0 */
 	"use strict";
 
@@ -105,7 +105,7 @@ sap.ui.define([
 					"with" : "countdistinct"
 				}
 			},
-			grandTotalAtBottomOnly : true, // just to check validation
+			grandTotalAtBottomOnly : false, // just to check validation
 			group : {
 				BillToParty : {}
 			}
@@ -134,6 +134,7 @@ sap.ui.define([
 					unit : "Currency"
 				}
 			},
+			grandTotalAtBottomOnly : true, // just to check validation
 			group : {
 				BillToParty : {}
 			}
@@ -223,7 +224,8 @@ sap.ui.define([
 			},
 			group : {
 				Region : {}
-			}
+			},
+			subtotalsAtBottomOnly : false // just to check validation
 		},
 		mQueryOptions : {
 			$$filterBeforeAggregate : "Region gt 'E'",
@@ -247,7 +249,8 @@ sap.ui.define([
 			group : {
 				Region : {}
 			},
-			groupLevels : []
+			groupLevels : [],
+			subtotalsAtBottomOnly : true // just to check validation
 		},
 		mQueryOptions : {
 			$count : true,
@@ -580,6 +583,20 @@ sap.ui.define([
 		sError : "Not a boolean value for 'subtotals' at property: A"
 	}, {
 		oAggregation : {
+			aggregate : {A : {}},
+			group : {},
+			subtotalsAtBottomOnly : "true"
+		},
+		sError : "Not a boolean value for 'subtotalsAtBottomOnly'"
+	}, {
+		oAggregation : {
+			aggregate : {A : {}},
+			group : {},
+			grandTotalAtBottomOnly : "true"
+		},
+		sError : "Not a boolean value for 'grandTotalAtBottomOnly'"
+	}, {
+		oAggregation : {
 			aggregate : {},
 			foo : {},
 			group : {}
@@ -785,6 +802,96 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+[false, true].forEach(function (bSubtotalsAtBottomOnly) {
+	QUnit.test("extractSubtotals: at bottom only = " + bSubtotalsAtBottomOnly, function (assert) {
+		var oAggregation = {
+				aggregate : {
+					A : {},
+					B : {unit : "U"},
+					C : {name : "n/a"}
+				},
+				groupLevels : ["D"]
+			},
+			oCollapsed = {},
+			oExpanded = bSubtotalsAtBottomOnly ? {} : null,
+			oGroupNode = {
+				"@$ui5.node.level" : 1,
+				A : "a",
+				B : null,
+				C : "c",
+				"C@odata.type" : "#Decimal",
+				D : "d",
+				U : "u"
+			},
+			sGroupNodeJSON = JSON.stringify(oGroupNode);
+
+		// code under test
+		_AggregationHelper.extractSubtotals(oAggregation, oGroupNode, oCollapsed, oExpanded);
+
+		assert.deepEqual(oCollapsed, {
+			A : "a",
+			B : null,
+			C : "c",
+			U : "u"
+		});
+		if (oExpanded) {
+			assert.deepEqual(oExpanded, {
+				A : null,
+				B : null,
+				C : null,
+				U : null
+			});
+		}
+		assert.strictEqual(JSON.stringify(oGroupNode), sGroupNodeJSON, "unchanged");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("extractSubtotals: unit used as group level", function (assert) {
+		var oAggregation = {
+				aggregate : {
+					A : {unit : "U"},
+					B : {unit : "V"},
+					C : {unit : "W"}
+				},
+				groupLevels : ["U", "V", "W"]
+			},
+			oCollapsed = {},
+			oExpanded = {},
+			oGroupNode = {
+				"@$ui5.node.level" : 2,
+				A : "a",
+				B : null,
+				C : "c",
+				"C@odata.type" : "#Decimal",
+				D : "d",
+				U : "u",
+				V : "v",
+				W : "w"
+			},
+			sGroupNodeJSON = JSON.stringify(oGroupNode);
+
+		// code under test
+		_AggregationHelper.extractSubtotals(oAggregation, oGroupNode, oCollapsed, oExpanded);
+
+		assert.deepEqual(oCollapsed, {
+			A : "a",
+			B : null,
+			C : "c",
+			U : "u",
+			V : "v",
+			W : "w"
+		});
+		assert.deepEqual(oExpanded, {
+			A : null,
+			B : null,
+			C : null,
+			W : null
+		});
+		assert.strictEqual(JSON.stringify(oGroupNode), sGroupNodeJSON, "unchanged");
+	});
+
+	//*********************************************************************************************
 	QUnit.test("filterOrderby", function (assert) {
 		var oAggregation = {
 				aggregate : {
@@ -908,4 +1015,43 @@ sap.ui.define([
 			_AggregationHelper.getAllProperties(oAggregation),
 			["x", "y", "c", "a", "b", "UnitY"]);
 	});
+
+	//*********************************************************************************************
+[undefined, false, true].forEach(function (bSubtotalsAtBottomOnly, i) {
+	var sTitle = "getOrCreateExpandedOject: subtotalsAtBottomOnly = " + bSubtotalsAtBottomOnly;
+
+	QUnit.test(sTitle, function (assert) {
+		var oAggregation = {subtotalsAtBottomOnly : bSubtotalsAtBottomOnly},
+			oCollapsed,
+			oExpanded,
+			oExpectation,
+			oGroupNode = {};
+
+		oExpectation = this.mock(_AggregationHelper).expects("extractSubtotals")
+			.exactly(i ? 1 : 0)
+			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(oGroupNode),
+				/*oCollapsed*/sinon.match.object, i === 2 ? /*oExpanded*/sinon.match.object : null);
+
+		// code under test (1st time)
+		oExpanded = _AggregationHelper.getOrCreateExpandedOject(oAggregation, oGroupNode);
+
+		assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "expanded"), oExpanded);
+		assert.deepEqual(oExpanded, {"@$ui5.node.isExpanded" : true});
+		oCollapsed = _Helper.getPrivateAnnotation(oGroupNode, "collapsed");
+		assert.deepEqual(oCollapsed, {"@$ui5.node.isExpanded" : false});
+		if (i) {
+			assert.strictEqual(oExpectation.args[0][2], oCollapsed);
+		}
+		if (i === 2) {
+			assert.strictEqual(oExpectation.args[0][3], oExpanded);
+		}
+
+		assert.strictEqual(
+			// code under test (2nd time)
+			_AggregationHelper.getOrCreateExpandedOject(oAggregation, oGroupNode),
+			oExpanded);
+
+		assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "collapsed"), oCollapsed);
+	});
+});
 });

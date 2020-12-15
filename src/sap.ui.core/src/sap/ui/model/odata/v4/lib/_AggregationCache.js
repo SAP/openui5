@@ -105,7 +105,7 @@ sap.ui.define([
 	 *   The offset within aElements
 	 * @param {sap.ui.model.odata.v4.lib._CollectionCache} [oCache]
 	 *   The group level cache which the given elements have been read from; omit it only for grand
-	 *   totals
+	 *   totals or separate subtotals
 	 * @param {number} [iStart]
 	 *   The index of the first element within the cache's collection; omit it only if no group
 	 *   level cache is given
@@ -176,13 +176,20 @@ sap.ui.define([
 			iIndex = aElements.indexOf(oGroupNode),
 			i = iIndex + 1;
 
+		function collapse(j) {
+			delete aElements.$byPredicate[_Helper.getPrivateAnnotation(aElements[j], "predicate")];
+			iCount += 1;
+		}
+
 		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode,
-			{"@$ui5.node.isExpanded" : false});
+			_Helper.getPrivateAnnotation(oGroupNode, "collapsed"));
 
 		while (i < aElements.length && aElements[i]["@$ui5.node.level"] > iGroupNodeLevel) {
-			delete aElements.$byPredicate[_Helper.getPrivateAnnotation(aElements[i], "predicate")];
-			iCount += 1;
+			collapse(i);
 			i += 1;
+		}
+		if (this.oAggregation.subtotalsAtBottomOnly !== undefined) {
+			collapse(i); // collapse subtotals at bottom
 		}
 		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aElements.splice(iIndex + 1, iCount));
 		aElements.$count -= iCount;
@@ -191,11 +198,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Creates a cache for the children (next group level or leaves) of the given parent group node.
-	 * Creates the first level cache if there is no parent group node.
+	 * Creates a cache for the children (next group level or leaves) of the given group node.
+	 * Creates the first level cache if there is no group node.
 	 *
-	 * @param {object} [oParentGroupNode]
-	 *   The parent group node or <code>undefined</code> for the first level cache
+	 * @param {object} [oGroupNode]
+	 *   The group node or <code>undefined</code> for the first level cache
 	 * @param {boolean} [bHasGrandTotal]
 	 *   Whether a grand total is needed (use only for the first level cache!)
 	 * @returns {sap.ui.model.odata.v4.lib._CollectionCache}
@@ -203,13 +210,12 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	_AggregationCache.prototype.createGroupLevelCache = function (oParentGroupNode,
-			bHasGrandTotal) {
+	_AggregationCache.prototype.createGroupLevelCache = function (oGroupNode, bHasGrandTotal) {
 		var oAggregation = this.oAggregation,
 			aAllProperties = _AggregationHelper.getAllProperties(oAggregation),
 			oCache, sFilteredOrderby, aGroupBy, bLeaf, iLevel, mQueryOptions, bTotal;
 
-		iLevel = oParentGroupNode ? oParentGroupNode["@$ui5.node.level"] + 1 : 1;
+		iLevel = oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : 1;
 		bLeaf = iLevel > oAggregation.groupLevels.length;
 		aGroupBy = bLeaf
 			? oAggregation.groupLevels.concat(Object.keys(oAggregation.group).sort())
@@ -227,9 +233,9 @@ sap.ui.define([
 			return oAggregation.aggregate[sAlias].subtotals;
 		});
 
-		if (oParentGroupNode) {
+		if (oGroupNode) {
 			mQueryOptions.$$filterBeforeAggregate
-				= _Helper.getPrivateAnnotation(oParentGroupNode, "filter");
+				= _Helper.getPrivateAnnotation(oGroupNode, "filter");
 		}
 		if (!bHasGrandTotal) { // Note: UI5__count currently handled only by _GrandTotalHelper!
 			delete mQueryOptions.$count;
@@ -238,7 +244,7 @@ sap.ui.define([
 		mQueryOptions.$count = true;
 		oCache = _Cache.create(this.oRequestor, this.sResourcePath, mQueryOptions, true);
 		oCache.calculateKeyPredicate = _AggregationCache.calculateKeyPredicate.bind(null,
-			oParentGroupNode, aGroupBy, aAllProperties, bLeaf, bTotal);
+			oGroupNode, aGroupBy, aAllProperties, bLeaf, bTotal);
 
 		return oCache;
 	};
@@ -268,9 +274,8 @@ sap.ui.define([
 
 		if (vGroupNodeOrPath !== oGroupNode) {
 			// Note: this also prevents a 2nd expand of the same node
-			_Helper.updateAll(this.mChangeListeners, vGroupNodeOrPath, oGroupNode, {
-				"@$ui5.node.isExpanded" : true
-			});
+			_Helper.updateAll(this.mChangeListeners, vGroupNodeOrPath, oGroupNode,
+				_AggregationHelper.getOrCreateExpandedOject(this.oAggregation, oGroupNode));
 		} // else: no update needed!
 
 		if (aSpliced) {
@@ -304,6 +309,10 @@ sap.ui.define([
 		// prefetch from the group level cache
 		return oCache.read(0, this.iReadLength, 0, oGroupLock).then(function (oResult) {
 			var iIndex = that.aElements.indexOf(oGroupNode) + 1,
+				iLevel = oGroupNode["@$ui5.node.level"],
+				oSubtotals,
+				// "only or also at bottom"
+				bSubtotalsAtBottom = that.oAggregation.subtotalsAtBottomOnly !== undefined,
 				i;
 
 			if (!oGroupNode["@$ui5.node.isExpanded"]) { // already collapsed again
@@ -317,6 +326,9 @@ sap.ui.define([
 			}
 
 			iCount = oResult.value.$count;
+			if (bSubtotalsAtBottom) {
+				iCount += 1;
+			}
 			if (iIndex === that.aElements.length) { // expanding last node: make room for children
 				that.aElements.length += iCount;
 			} else {
@@ -328,19 +340,28 @@ sap.ui.define([
 			}
 			// fill in the results
 			that.addElements(oResult.value, iIndex, oCache, 0);
-			that.aElements.$count += iCount;
 			// create placeholder
-			for (i = iIndex + oResult.value.length; i < iIndex + iCount; i += 1) {
-				that.aElements[i] = _AggregationHelper.createPlaceholder(
-					oGroupNode["@$ui5.node.level"] + 1, i - iIndex, oCache);
+			for (i = iIndex + oResult.value.length; i < iIndex + oResult.value.$count; i += 1) {
+				that.aElements[i]
+					= _AggregationHelper.createPlaceholder(iLevel + 1, i - iIndex, oCache);
 			}
+			if (bSubtotalsAtBottom) {
+				oSubtotals
+					= Object.assign({}, _Helper.getPrivateAnnotation(oGroupNode, "collapsed"));
+				_AggregationHelper.setAnnotations(oSubtotals, undefined, true, iLevel,
+					_AggregationHelper.getAllProperties(that.oAggregation));
+				_Helper.setPrivateAnnotation(oSubtotals, "predicate",
+					_Helper.getPrivateAnnotation(oGroupNode, "predicate").slice(0, -1)
+						+ ",$isTotal=true)");
+				that.addElements(oSubtotals, iIndex + iCount - 1);
+			}
+			that.aElements.$count += iCount;
 
 			return iCount;
 		}, function (oError) {
 			// Note: typeof vGroupNodeOrPath === "string"
-			_Helper.updateAll(that.mChangeListeners, vGroupNodeOrPath, oGroupNode, {
-				"@$ui5.node.isExpanded" : false
-			});
+			_Helper.updateAll(that.mChangeListeners, vGroupNodeOrPath, oGroupNode,
+				_Helper.getPrivateAnnotation(oGroupNode, "collapsed"));
 
 			throw oError;
 		});
@@ -610,7 +631,7 @@ sap.ui.define([
 	 * element, and sets the node attributes.
 	 *
 	 * @param {object} [oGroupNode]
-	 *   The parent group node or undefined for an element of the first level cache
+	 *   The group node or undefined for an element of the first level cache
 	 * @param {string[]} aGroupBy
 	 *   The ordered list of properties by which this element is grouped; used for the key predicate
 	 *   and the filter

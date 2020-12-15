@@ -69,12 +69,12 @@ sap.ui.define([
 	QUnit.test("create: no aggregation #" + i, function (assert) {
 		var mAggregate = {},
 			oAggregation = i
-			? {
-				aggregate : mAggregate,
-				group : {},
-				groupLevels : []
-			}
-			: null; // improves code coverage
+				? {
+					aggregate : mAggregate,
+					group : {},
+					groupLevels : []
+				}
+				: null; // improves code coverage
 
 		this.mock(_AggregationHelper).expects("hasGrandTotal").exactly(i ? 1 : 0)
 			.withExactArgs(sinon.match.same(mAggregate)).returns(false);
@@ -286,7 +286,8 @@ sap.ui.define([
 		if (sGrandTotalPosition !== "bottom") {
 			[undefined, 1, 2, 3, 100, Infinity].forEach(function (iPrefetchLength) {
 				assert.throws(function () {
-					// code under test (read grand total row separately, but with iPrefetchLength !== 0)
+					// code under test
+					// (read grand total row separately, but with iPrefetchLength !== 0)
 					oCache.read(0, 1, iPrefetchLength);
 				}, new Error("Unsupported prefetch length: " + iPrefetchLength));
 			});
@@ -1403,7 +1404,15 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true, "expanding"].forEach(function (vHasCache) {
-	QUnit.test("expand: read; has cache = " + vHasCache, function (assert) {
+	[undefined, false, true].forEach(function (bSubtotalsAtBottomOnly) {
+		var sTitle = "expand: read; has cache = " + vHasCache
+				+ ", subtotalsAtBottomOnly = " + bSubtotalsAtBottomOnly;
+
+		if (vHasCache && bSubtotalsAtBottomOnly !== undefined) {
+			return; // skip invalid combination
+		}
+
+	QUnit.test(sTitle, function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
@@ -1411,10 +1420,13 @@ sap.ui.define([
 			},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oCacheMock = this.mock(oCache),
 			aElements = [{
 				"@$ui5.node.isExpanded" : vHasCache === "expanding",
-				"@$ui5.node.level" : 0
+				// while 0 would be realistic, we want to test the general case here
+				"@$ui5.node.level" : 23
 			}, {}, {}],
+			oExpanded = {"@$ui5.node.isExpanded" : true},
 			oExpandResult = {
 				value : [{}, {}, {}, {}, {}]
 			},
@@ -1425,13 +1437,21 @@ sap.ui.define([
 				unlock : function () {} // needed for oCache.read() below
 			},
 			oGroupNode = aElements[0],
+			vGroupNodeOrPath = vHasCache === "expanding" ? oGroupNode : "~path~",
+			oHelperMock = this.mock(_Helper),
 			oPromise,
+			bSubtotalsAtBottom = bSubtotalsAtBottomOnly !== undefined,
 			oUpdateAllExpectation,
 			that = this;
 
 		oExpandResult.value.$count = 7;
+		_Helper.setPrivateAnnotation(oGroupNode, "collapsed", "~oCollapsed~");
+		_Helper.setPrivateAnnotation(oGroupNode, "predicate", "(~predicate~)");
 		if (vHasCache) {
 			_Helper.setPrivateAnnotation(oGroupNode, "cache", oGroupLevelCache);
+		}
+		if (bSubtotalsAtBottom) {
+			oAggregation.subtotalsAtBottomOnly = bSubtotalsAtBottomOnly;
 		}
 
 		// simulate a read
@@ -1440,39 +1460,59 @@ sap.ui.define([
 		oCache.aElements.$byPredicate = {};
 		oCache.aElements.$count = 3;
 
-		this.mock(oCache).expects("fetchValue").exactly(vHasCache === "expanding" ? 0 : 1)
+		oCacheMock.expects("fetchValue").exactly(vHasCache === "expanding" ? 0 : 1)
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
 			.returns(SyncPromise.resolve(oGroupNode));
-		oUpdateAllExpectation = this.mock(_Helper).expects("updateAll")
+		this.mock(_AggregationHelper).expects("getOrCreateExpandedOject")
+			.exactly(vHasCache === "expanding" ? 0 : 1)
+			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(oGroupNode))
+			.returns(oExpanded);
+		oUpdateAllExpectation = oHelperMock.expects("updateAll")
 			.exactly(vHasCache === "expanding" ? 0 : 1)
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
-				sinon.match.same(oGroupNode), {"@$ui5.node.isExpanded" : true})
+				sinon.match.same(oGroupNode), sinon.match.same(oExpanded))
 			.callThrough(); // "@$ui5.node.isExpanded" is checked once read has finished
-		this.mock(oCache).expects("createGroupLevelCache").exactly(vHasCache ? 0 : 1)
-			.withExactArgs(sinon.match.same(oGroupNode))
-			.returns(oGroupLevelCache);
+		oCacheMock.expects("createGroupLevelCache").exactly(vHasCache ? 0 : 1)
+			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
+		oHelperMock.expects("setPrivateAnnotation").exactly(vHasCache ? 0 : 1)
+			.withExactArgs(sinon.match.same(oGroupNode), "cache",
+				sinon.match.same(oGroupLevelCache));
 		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(0, oCache.iReadLength, 0, sinon.match.same(oGroupLock))
 			.returns(SyncPromise.resolve(Promise.resolve(oExpandResult)));
-		this.mock(oCache).expects("addElements")
+		oCacheMock.expects("addElements")
 			.withExactArgs(sinon.match.same(oExpandResult.value), 1,
 				sinon.match.same(oGroupLevelCache), 0)
 			.callsFake(addElements); // so that oCache.aElements is actually filled
 		oAggregationHelperMock.expects("createPlaceholder")
-			.withExactArgs(1, 5, sinon.match.same(oGroupLevelCache)).returns("~placeholder~1");
+			.withExactArgs(24, 5, sinon.match.same(oGroupLevelCache)).returns("~placeholder~1");
 		oAggregationHelperMock.expects("createPlaceholder")
-			.withExactArgs(1, 6, sinon.match.same(oGroupLevelCache)).returns("~placeholder~2");
+			.withExactArgs(24, 6, sinon.match.same(oGroupLevelCache)).returns("~placeholder~2");
+		if (bSubtotalsAtBottom) {
+			this.mock(Object).expects("assign").withExactArgs({}, "~oCollapsed~")
+				.returns("~oSubtotals~");
+			oAggregationHelperMock.expects("getAllProperties")
+				.withExactArgs(sinon.match.same(oAggregation)).returns("~aAllProperties~");
+			oAggregationHelperMock.expects("setAnnotations")
+				.withExactArgs("~oSubtotals~", undefined, true, 23, "~aAllProperties~");
+			oHelperMock.expects("setPrivateAnnotation")
+				.withExactArgs("~oSubtotals~", "predicate", "(~predicate~,$isTotal=true)");
+			oCacheMock.expects("addElements").withExactArgs("~oSubtotals~", 8);
+		} else {
+			oAggregationHelperMock.expects("getAllProperties").never();
+			oAggregationHelperMock.expects("setAnnotations").never();
+		}
 
 		// code under test
-		oPromise = oCache.expand(oGroupLock, vHasCache === "expanding" ? oGroupNode : "~path~")
-		.then(function (iResult) {
-			assert.strictEqual(iResult, oExpandResult.value.$count);
+		oPromise = oCache.expand(oGroupLock, vGroupNodeOrPath).then(function (iResult) {
+			var iExpectedCount = bSubtotalsAtBottom ? 8 : 7;
 
-			assert.strictEqual(oCache.aElements.length, 10, ".length");
-			assert.strictEqual(oCache.aElements.$count, 10, ".$count");
+			assert.strictEqual(iResult, iExpectedCount);
+
+			assert.strictEqual(oCache.aElements.length, 3 + iExpectedCount, ".length");
+			assert.strictEqual(oCache.aElements.$count, 3 + iExpectedCount, ".$count");
 			// check parent node
 			assert.strictEqual(oCache.aElements[0], oGroupNode);
-			assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "cache"), oGroupLevelCache);
 
 			// check expanded nodes
 			assert.strictEqual(oCache.aElements[1], oExpandResult.value[0]);
@@ -1486,14 +1526,19 @@ sap.ui.define([
 			assert.strictEqual(oCache.aElements[7], "~placeholder~2");
 
 			// check moved nodes
-			assert.strictEqual(oCache.aElements[8], aElements[1]);
-			assert.strictEqual(oCache.aElements[9], aElements[2]);
+			if (bSubtotalsAtBottom) {
+				assert.strictEqual(oCache.aElements[9], aElements[1]);
+				assert.strictEqual(oCache.aElements[10], aElements[2]);
+			} else {
+				assert.strictEqual(oCache.aElements[8], aElements[1]);
+				assert.strictEqual(oCache.aElements[9], aElements[2]);
+			}
 
 			that.mock(oCache.oFirstLevel).expects("read").never();
 
 			return oCache.read(1, 4, 0, oGroupLock).then(function (oResult) {
 				assert.strictEqual(oResult.value.length, 4);
-				assert.strictEqual(oResult.value.$count, 10);
+				assert.strictEqual(oResult.value.$count, 3 + iExpectedCount);
 				oResult.value.forEach(function (oElement, i) {
 					assert.strictEqual(oElement, oCache.aElements[i + 1], "index " + (i + 1));
 				});
@@ -1503,6 +1548,8 @@ sap.ui.define([
 		oUpdateAllExpectation.verify();
 
 		return oPromise;
+	});
+
 	});
 });
 
@@ -1519,6 +1566,7 @@ sap.ui.define([
 				"@$ui5.node.isExpanded" : false,
 				"@$ui5.node.level" : 0
 			}],
+			oExpanded = {"@$ui5.node.isExpanded" : true},
 			oExpandResult = {
 				value : [{}, {}, {}, {}, {}]
 			},
@@ -1543,9 +1591,12 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
 			.returns(SyncPromise.resolve(oGroupNode));
+		this.mock(_AggregationHelper).expects("getOrCreateExpandedOject")
+			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(oGroupNode))
+			.returns(oExpanded);
 		oUpdateAllExpectation = this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
-				sinon.match.same(oGroupNode), {"@$ui5.node.isExpanded" : true})
+				sinon.match.same(oGroupNode), sinon.match.same(oExpanded))
 			.callThrough(); // "@$ui5.node.isExpanded" is checked once read has finished
 		this.mock(oCache).expects("createGroupLevelCache")
 			.withExactArgs(sinon.match.same(oGroupNode)).returns(oGroupLevelCache);
@@ -1563,10 +1614,10 @@ sap.ui.define([
 
 		// code under test
 		oPromise = oCache.expand(oGroupLock, "~path~").then(function (iResult) {
-			assert.strictEqual(iResult, oExpandResult.value.$count);
+			assert.strictEqual(iResult, 7);
 
-			assert.strictEqual(oCache.aElements.length, 10, ".length");
-			assert.strictEqual(oCache.aElements.$count, 10, ".$count");
+			assert.strictEqual(oCache.aElements.length, 3 + 7, ".length");
+			assert.strictEqual(oCache.aElements.$count, 3 + 7, ".$count");
 			assert.strictEqual(oCache.aElements[0], aElements[0]);
 			assert.strictEqual(oCache.aElements[1], aElements[1]);
 
@@ -1761,6 +1812,7 @@ sap.ui.define([
 				groupLevels : ["foo"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oCollapsed = {"@$ui5.node.isExpanded" : false},
 			oError = new Error(),
 			oGroupLevelCache = {
 				read : function () {}
@@ -1778,9 +1830,11 @@ sap.ui.define([
 		this.mock(oGroupLevelCache).expects("read")
 			.withExactArgs(0, oCache.iReadLength, 0, "~oGroupLock~")
 			.returns(SyncPromise.resolve(Promise.resolve().then(function () {
+				that.mock(_Helper).expects("getPrivateAnnotation")
+					.withExactArgs(sinon.match.same(oGroupNode), "collapsed").returns(oCollapsed);
 				that.mock(_Helper).expects("updateAll")
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
-						sinon.match.same(oGroupNode), {"@$ui5.node.isExpanded" : false});
+						sinon.match.same(oGroupNode), sinon.match.same(oCollapsed));
 
 				throw oError;
 			})));
@@ -1795,13 +1849,24 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bUntilEnd) { // whether the collapsed children span until the end
-	QUnit.test("collapse: until end = " + bUntilEnd, function (assert) {
+	[undefined, false, true].forEach(function (bSubtotalsAtBottomOnly) {
+		var bSubtotalsAtBottom = bSubtotalsAtBottomOnly !== undefined,
+			sTitle = "collapse: until end = " + bUntilEnd
+				+ ", subtotalsAtBottomOnly = " + bSubtotalsAtBottomOnly;
+
+		if (bSubtotalsAtBottom && bUntilEnd) {
+			return; // skip invalid combination
+		}
+
+	QUnit.test(sTitle, function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group : {},
 				groupLevels : ["group"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			bCollapseBottom = bUntilEnd || bSubtotalsAtBottom, // whether bottom line is affected
+			oCollapsed = {"@$ui5.node.isExpanded" : false},
 			aElements = [{
 				// "@$ui5._" : {predicate : "('0')"},
 				// "@$ui5.node.level" : ignored
@@ -1817,6 +1882,7 @@ sap.ui.define([
 				"@$ui5.node.level" : 7 // grandchild
 			}, {
 				"@$ui5._" : {predicate : "('4')"},
+				// Note: for bSubtotalsAtBottom, this represents the extra row for subtotals
 				"@$ui5.node.level" : bUntilEnd ? 6 : 5 // child or sibling (or "uncle" etc.)
 			}],
 			aExpectedElements = [{
@@ -1824,6 +1890,7 @@ sap.ui.define([
 				// "@$ui5.node.level" : ignored
 			}, {
 				"@$ui5._" : {
+					collapsed : oCollapsed,
 					predicate : "('1')",
 					spliced : [aElements[2], aElements[3], aElements[4]]
 				},
@@ -1834,6 +1901,9 @@ sap.ui.define([
 				"@$ui5.node.level" : 5 // sibling
 			}];
 
+		if (bSubtotalsAtBottom) {
+			oAggregation.subtotalsAtBottomOnly = bSubtotalsAtBottomOnly;
+		}
 		oCache.aElements = aElements.slice(); // simulate a read
 		oCache.aElements.$count = aElements.length;
 		oCache.aElements.$byPredicate = {
@@ -1843,19 +1913,20 @@ sap.ui.define([
 			"('3')" : aElements[3],
 			"('4')" : aElements[4]
 		};
+		_Helper.setPrivateAnnotation(/*oGroupNode*/aElements[1], "collapsed", oCollapsed);
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
 			.returns(SyncPromise.resolve(aElements[1]));
 		this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
-				sinon.match.same(aElements[1]), {"@$ui5.node.isExpanded" : false})
+				sinon.match.same(aElements[1]), sinon.match.same(oCollapsed))
 			.callThrough();
 
 		// code under test
-		assert.strictEqual(oCache.collapse("~path~"), bUntilEnd ? 3 : 2,
+		assert.strictEqual(oCache.collapse("~path~"), bCollapseBottom ? 3 : 2,
 			"number of removed elements");
 
-		if (bUntilEnd) { // last element was also a child, not a sibling
+		if (bCollapseBottom) { // last element was also a child, not a sibling
 			aExpectedElements.pop();
 		} else {
 			aExpectedElements[1]["@$ui5._"].spliced.pop();
@@ -1863,9 +1934,9 @@ sap.ui.define([
 		assert.deepEqual(oCache.aElements, aExpectedElements);
 		assert.strictEqual(oCache.aElements[0], aElements[0]);
 		assert.strictEqual(oCache.aElements[1], aElements[1]);
-		assert.strictEqual(oCache.aElements[2], bUntilEnd ? undefined : aElements[4]);
+		assert.strictEqual(oCache.aElements[2], bCollapseBottom ? undefined : aElements[4]);
 		assert.strictEqual(oCache.aElements.$count, aExpectedElements.length);
-		assert.deepEqual(oCache.aElements.$byPredicate, bUntilEnd
+		assert.deepEqual(oCache.aElements.$byPredicate, bCollapseBottom
 			? {
 				"('0')" : aElements[0],
 				"('1')" : aElements[1]
@@ -1874,6 +1945,8 @@ sap.ui.define([
 				"('1')" : aElements[1],
 				"('4')" : aElements[4]
 			});
+	});
+
 	});
 });
 
@@ -1885,6 +1958,7 @@ sap.ui.define([
 				groupLevels : ["group"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			oCollapsed = {"@$ui5.node.isExpanded" : false},
 			aElements = [{
 				"@$ui5.node.isExpanded" : true,
 				"@$ui5.node.level" : 5
@@ -1894,9 +1968,11 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
 			.returns(SyncPromise.resolve(aElements[0]));
+		this.mock(_Helper).expects("getPrivateAnnotation")
+			.withExactArgs(sinon.match.same(aElements[0]), "collapsed").returns(oCollapsed);
 		this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "~path~",
-				sinon.match.same(aElements[0]), {"@$ui5.node.isExpanded" : false})
+				sinon.match.same(aElements[0]), sinon.match.same(oCollapsed))
 			.callThrough();
 
 		// code under test
