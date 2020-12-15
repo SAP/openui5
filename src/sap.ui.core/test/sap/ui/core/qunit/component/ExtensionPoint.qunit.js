@@ -2,8 +2,9 @@ sap.ui.define([
 	'sap/ui/core/Component',
 	'sap/ui/core/ComponentContainer',
 	'sap/ui/core/ExtensionPoint',
-	'sap/ui/core/mvc/XMLView'
-], function(Component, ComponentContainer, ExtensionPoint, XMLView) {
+	'sap/ui/core/mvc/XMLView',
+	'sap/ui/core/Fragment'
+], function(Component, ComponentContainer, ExtensionPoint, XMLView, Fragment) {
 
 	"use strict";
 	/*global QUnit, sinon */
@@ -284,7 +285,57 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("async", function(assert) {
+	QUnit.test("via Fragment Factory: async", function(assert) {
+		assert.expect(4);
+
+		// create (any) view first, so we can pass it to the Fragment
+		return XMLView.create({
+			viewName: "testdata.customizing.customer.ext.Main"
+		}).then(function(oView) {
+
+			// reset the spy before loading the fragment
+			this.oEPSpy.reset();
+
+			// should trigger exactly 1 EP Provider call
+			return Fragment.load({
+				id: "EPInFragment",
+				name: "testdata.customizing.customer.ext.FragmentWithEP",
+				type: "XML",
+				containingView: oView
+			}).then(function(oFragmentContent) {
+				assert.equal(this.oEPSpy.args.length, 1, "1 Call to the EP Provider");
+				// EP in Fragment
+				var oArgsEPInFragment = this.oEPSpy.args[0][0];
+				assert.equal(oArgsEPInFragment.name, "EPInFragment", "EPInFragment");
+				assert.ok(oArgsEPInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPInFragment: View instance is correct");
+				assert.equal(oArgsEPInFragment.fragmentId, "EPInFragment", "Local Fragment-ID is passed for 'EPInFragment'");
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("via Fragment Factory: sync", function(assert) {
+		assert.expect(4);
+
+		// create (any) view first, so we can pass the controller to the Fragment
+		var oView = sap.ui.xmlview({
+			viewName: "testdata.customizing.customer.ext.Main"
+		});
+
+		// reset the spy before loading the fragment
+		this.oEPSpy.reset();
+
+		// should trigger exactly 1 EP Provider call
+		sap.ui.xmlfragment("EPInFragment", "testdata.customizing.customer.ext.FragmentWithEP", oView.getController());
+
+		assert.equal(this.oEPSpy.args.length, 1, "1 Call to the EP Provider");
+		// EP in Fragment
+		var oArgsEPInFragment = this.oEPSpy.args[0][0];
+		assert.equal(oArgsEPInFragment.name, "EPInFragment", "EPInFragment");
+		assert.ok(oArgsEPInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPInFragment: View instance is correct");
+		assert.equal(oArgsEPInFragment.fragmentId, "EPInFragment", "Local Fragment-ID is passed for 'EPInFragment'");
+	});
+
+	QUnit.test("via XMLView: async", function(assert) {
 		assert.expect(19);
 
 		// load the view
@@ -330,7 +381,7 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test("sync", function(assert) {
+	QUnit.test("via XMLView: sync", function(assert) {
 		assert.expect(19);
 
 		// load the view
