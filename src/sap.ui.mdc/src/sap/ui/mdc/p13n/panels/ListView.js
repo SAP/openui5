@@ -12,10 +12,14 @@ sap.ui.define([
     "sap/m/Column",
     "sap/m/Table",
     "sap/m/library"
-], function(BasePanel, Label, ColumnListItem, HBox, VBox, Icon, Text, Column, Table, mlibrary) {
+], function(BasePanel, Label, ColumnListItem, HBox, VBox, Icon, Text, Column, Table, mLibrary) {
 	"use strict";
 
-    var ListKeyboardMode = mlibrary.ListKeyboardMode;
+    // shortcut for sap.m.ListKeyboardMode
+    var ListKeyboardMode = mLibrary.ListKeyboardMode;
+
+    // shortcut for sap.m.FlexJustifyContent
+	var FlexJustifyContent = mLibrary.FlexJustifyContent;
 
     /**
 	 * Constructor for a new ListView
@@ -50,6 +54,7 @@ sap.ui.define([
 
     ListView.prototype.applySettings = function(){
         BasePanel.prototype.applySettings.apply(this, arguments);
+        this.addStyleClass("sapUiMDCListView");
 
         this._aInitializedFields = [];
 
@@ -67,7 +72,7 @@ sap.ui.define([
                     ]
                 }),
                 new HBox({
-                    justifyContent: "Center",
+                    justifyContent: FlexJustifyContent.Center,
                     items: [
                         new Icon({
                             src: "sap-icon://circle-task-2",
@@ -89,28 +94,34 @@ sap.ui.define([
             ]
         });
 
-        this.setShowFactory(false);
+        this._bShowFactory = false;
         this.displayColumns();
 
         var that = this;
 
         if (this.getEnableReorder()) {
-            oListViewTemplate.attachBrowserEvent("mouseenter", function(oEvt){
-                var oIcon = this.getCells()[1].getItems()[0];
-                oIcon.setVisible(false);
-                that._oSelectedItem = this;
-                that._updateEnableOfMoveButtons(this, false);
-                that._addMoveButtons(this);
+
+            oListViewTemplate.addEventDelegate({
+                onmouseover: function(oEvt){
+
+                    var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
+                    that.removeMoveButtons();
+
+                    if (that._oSelectedItem && that._oSelectedItem.getBindingContextPath()){
+                        var bVisible = !!that.getP13nModel().getProperty(that._oSelectedItem.getBindingContextPath()).isFiltered;
+                        var oOldIcon = that._oSelectedItem.getCells()[1].getItems()[0];
+                        oOldIcon.setVisible(bVisible);
+                    }
+
+                    var oIcon = oHoveredItem.getCells()[1].getItems()[0];
+                    oIcon.setVisible(false);
+                    that._oSelectedItem = oHoveredItem;
+                    that._updateEnableOfMoveButtons(oHoveredItem, false);
+                    that._addMoveButtons(oHoveredItem);
+                }
+
             });
 
-            oListViewTemplate.attachBrowserEvent("mouseleave", function(oEvt){
-                var bVisible = !!that.getP13nModel().getProperty(this.getBindingContextPath()).isFiltered;
-                var oIcon = this.getCells()[1].getItems()[0];
-                if (that._oSelectedItem) {
-                    that.removeMoveButtons();
-                }
-                oIcon.setVisible(bVisible);
-            });
             this._setMoveButtonVisibility(true);
         }
 
@@ -130,11 +141,14 @@ sap.ui.define([
 
     ListView.prototype.showFactory = function(bShow) {
 
+        this._bShowFactory = bShow;
         this.displayColumns();
 
         if (bShow){
+            this.removeStyleClass("listViewHover");
             this._addFactoryControl();
         } else {
+            this.addStyleClass("listViewHover");
             this._removeFactoryControl();
         }
     };
@@ -173,17 +187,13 @@ sap.ui.define([
 		return this._bShowFactory;
     };
 
-    ListView.prototype.setShowFactory = function(bShow) {
-		this._bShowFactory = bShow;
-	};
-
     ListView.prototype.displayColumns = function() {
 
         var aColumns = [
             this.getResourceText("p13nDialog.LIST_VIEW_COLUMN")
         ];
 
-        if (!this.getShowFactory()) {
+        if (!this._bShowFactory) {
             aColumns.push(new Column({
                 width: "25%",
                 hAlign: "Center",

@@ -289,8 +289,7 @@ sap.ui.define([
             this._oShowHideBtn = new Button({
                 width: "6rem",
                 press: function(oEvt) {
-                    this.getCurrentViewContent().setShowFactory(!this.getCurrentViewContent().getShowFactory());
-                    this.showFactory(this.getCurrentViewContent().getShowFactory());
+                    this.showFactory(!this.getCurrentViewContent().getShowFactory());
                     var oBtn = oEvt.oSource;
                     var sNewText = oBtn.getText() === sShowText ? sHideText : sShowText;
                     oBtn.setText(sNewText);

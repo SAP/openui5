@@ -3,7 +3,7 @@ sap.ui.define([
     "sap/ui/mdc/p13n/panels/GroupView",
     "sap/ui/mdc/p13n/P13nBuilder",
     "sap/ui/model/json/JSONModel",
-    "sap/ui/mdc/util/PropertyHelper",
+    "sap/ui/mdc/p13n/PropertyHelper",
     "sap/m/VBox"
 ], function(GroupView, P13nBuilder, JSONModel, PropertyHelper, VBox) {
     "use strict";
@@ -14,29 +14,13 @@ sap.ui.define([
                 name: "key1"
             },
             {
-                name: "key2"
+                name: "key2",
+                isFiltered: true
             },
             {
                 name: "key3"
             }
-        ],
-        sorters: [
-            {
-                name: "key1",
-                descending: true
-            }
-        ],
-        filter: {
-            key2: [
-                {
-                    operator: "EQ",
-                    values: [
-                        "Test"
-                    ]
-                }
-            ]
-
-        }
+        ]
     };
 
     var aInfoData = [
@@ -83,7 +67,6 @@ sap.ui.define([
                 return new VBox();
             });
 
-			this.oPropertyHelper = new PropertyHelper(this.aMockInfo);
             this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
 
             this.oGroupView.placeAt("qunit-fixture");
@@ -113,16 +96,49 @@ sap.ui.define([
 
         assert.equal(oOuterList.getItems().length, 2, "2 Groups created");
 
-        var oFirstInnerList = oOuterList.getItems()[0].getCells()[0].getContent()[0];
+        var oFirstInnerList = oOuterList.getItems()[0].getContent()[0].getContent()[0];
         assert.equal(oFirstInnerList.getItems().length, 3, "First inner list contains 3 items");
         assert.ok(oFirstInnerList.getItems()[0].isA("sap.m.CustomListItem"), "Item matches provided factory function");
 
-        var oSecondInnerList = oOuterList.getItems()[1].getCells()[0].getContent()[0];
+        var oSecondInnerList = oOuterList.getItems()[1].getContent()[0].getContent()[0];
         assert.equal(oSecondInnerList.getItems().length, 3, "Second inner list contains 3 items");
         assert.ok(oSecondInnerList.getItems()[0].isA("sap.m.CustomListItem"), "Item matches provided factory function");
     };
 
     QUnit.test("Check Outer and Inner List creation", function(assert){
         fnCheckListCreation.call(this, assert);
+    });
+
+    QUnit.test("Check column toggle", function(assert){
+        this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
+
+        var oOuterList = this.oGroupView._oListControl;
+
+        assert.equal(oOuterList.getInfoToolbar().getContent().length, 1, "Only one column");
+
+        this.oGroupView.showFactory(false);
+        assert.equal(oOuterList.getInfoToolbar().getContent().length, 2, "Two columns");
+
+        this.oGroupView.showFactory(true);
+        assert.equal(oOuterList.getInfoToolbar().getContent().length, 1, "Only one column");
+    });
+
+    QUnit.test("Check 'ctive' icon'", function(assert){
+        this.oGroupView.setP13nModel(new JSONModel(this.oP13nData));
+
+        //Go in 'active' with icon view --> hide filter fields
+        this.oGroupView.showFactory(false);
+
+        assert.ok(this.oGroupView.getPanels()[0].getContent()[0].getItems()[1].getContent()[0].getItems()[1].getItems()[0].getVisible(), "Item is filtered (active)");
+
+        //Mock what happens during runtime if a filter is made inactive
+        this.oP13nData.itemsGrouped[0].items[1].isFiltered = false;
+        this.oGroupView.getP13nModel().refresh();
+        assert.ok(!this.oGroupView.getPanels()[0].getContent()[0].getItems()[1].getContent()[0].getItems()[1].getItems()[0].getVisible(), "Item is NOT filtered (active)");
+
+        //Mock what happens during runtime if a filter is made active
+        this.oP13nData.itemsGrouped[0].items[1].isFiltered = true;
+        this.oGroupView.getP13nModel().refresh();
+        assert.ok(this.oGroupView.getPanels()[0].getContent()[0].getItems()[1].getContent()[0].getItems()[1].getItems()[0].getVisible(), "Item is filtered (active)");
     });
 });
