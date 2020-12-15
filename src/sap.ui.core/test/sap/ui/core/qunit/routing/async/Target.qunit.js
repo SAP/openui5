@@ -334,28 +334,33 @@ sap.ui.define([
 			this.oViews = new Views({async: true});
 
 			// System under test + Arrange
-			this.oTarget = new Target(
-				{
-					_name: "componentTarget",
-					path: "test.routing",
-					name: "target",
-					controlAggregation: "content",
-					controlId: this.oShell.getId(),
-					type: "Component",
-					id: "baz",
-					_async: true,
-					options: {
-						manifest: false
-					}
-				},
-				this.oViews
-			);
+			this.createTarget = function(name) {
+				this.oTarget = new Target(
+					{
+						_name: "componentTarget",
+						name: name,
+						controlAggregation: "content",
+						controlId: this.oShell.getId(),
+						type: "Component",
+						id: "baz",
+						_async: true,
+						options: {
+							manifest: false
+						}
+					},
+					this.oViews
+				);
+			};
 
 			this.sandbox = sinon.sandbox.create();
 		},
 		afterEach: function () {
 			this.oShell.destroy();
-			this.oTarget.destroy();
+
+			if (this.oTarget) {
+				this.oTarget.destroy();
+			}
+
 			this.oViews.destroy();
 			this.sandbox.restore();
 		}
@@ -367,6 +372,8 @@ sap.ui.define([
 			oCreationPromise,
 			bComponentCreated,
 			oCreatedComponent;
+
+		this.createTarget("test.routing.target");
 
 		// Act
 		oDisplayed = this.oTarget.display();
@@ -389,7 +396,23 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("Should return a resolved promise after calling the 'display' function multiple times on the same target", function(assert) {
+		this.createTarget("test.routing.target.routingConfig");
+
+		return this.oTarget.display().then(function(oInfo) {
+			var oComponent = oInfo.view.getComponentInstance();
+			assert.ok(oComponent instanceof UIComponent, "Component is loaded and created correctly");
+
+			// display the same target again
+			return this.oTarget.display().then(function(oSecondInfo) {
+				var oSecondComponent = oSecondInfo.view.getComponentInstance();
+				assert.strictEqual(oSecondComponent, oComponent, "The same component instance should be returned");
+			});
+		}.bind(this));
+	});
+
 	QUnit.test("Should destroy the component container once the component is destroyed", function (assert) {
+		this.createTarget("test.routing.target");
 		var oDisplayed = this.oTarget.display();
 
 		return oDisplayed.then(function (oInfo) {

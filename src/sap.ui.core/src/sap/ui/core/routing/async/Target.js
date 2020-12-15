@@ -208,13 +208,19 @@ sap.ui.define([
 								throw new Error("The router of component '" + oObject.getId() + "' which is loaded via the target '" + that._oOptions._name + "' is defined as synchronous which is not supported using as a nested component.");
 							}
 
-							if (oRouter._oOwner) {
+							if (oRouter._oOwner && oTargetCreateInfo) {
 								// update the flag once the component is displayed again after it's already loaded
 								oRouter._oOwner._bRoutingPropagateTitle = oTargetCreateInfo.propagateTitle;
 							}
 
 							// TODO: offer getter for target info
-							if (oRoute && oRoute._oConfig.target) {
+							//
+							// The router is normally initialized in the UIComponent.prototype.init function and the
+							// init function should be already called before it reaches this place which means that the
+							// router is initialized in most of the cases. If a router is already initialized, we still
+							// need to check whether the route match process is finished. If it's not finished, we are
+							// sure that there will be a "routeMatched" event fired and we can wait for it.
+							if ((!oRouter.isInitialized() || oRouter._bMatchingProcessStarted) && oRoute && oRoute._oConfig.target) {
 								bInstantResolve = false;
 								oRouter.attachRouteMatched(fnResolve);
 							}
