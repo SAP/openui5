@@ -45,13 +45,13 @@ sap.ui.define([
 		// setup
 		jQuery.sap.fesr.setActive(true);
 		assert.ok(jQuery.sap.interaction.getActive(), "Implicit interaction activation successful");
-		jQuery.sap.interaction.notifyStepStart(null, true);
+		jQuery.sap.interaction.notifyStepStart(null, null, true);
 		var oReq = new XMLHttpRequest();
 		// first request without FESR header
 		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
 		jQuery.sap.interaction.notifyStepEnd();
-		jQuery.sap.interaction.notifyStepStart(null, true);
+		jQuery.sap.interaction.notifyStepStart(null, null, true);
 		spy = this.spy(window.XMLHttpRequest.prototype, "setRequestHeader");
 		oReq = new XMLHttpRequest();
 		// second request with FESR header belonging to first interaction
@@ -82,7 +82,7 @@ sap.ui.define([
 		// setup
 		jQuery.sap.interaction.setActive(true);
 		assert.ok(jQuery.sap.interaction.getActive(), "Activation successful");
-		jQuery.sap.interaction.notifyStepStart(null, true);
+		jQuery.sap.interaction.notifyStepStart(null, null, true);
 		var oReq = new XMLHttpRequest();
 		// first request without FESR header
 		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
@@ -138,13 +138,13 @@ sap.ui.define([
 			this.start = function() {
 				this.stub.returns(this.aRequests);
 				jQuery.sap.fesr.setActive(true);
-				jQuery.sap.interaction.notifyStepStart(null, true);
+				jQuery.sap.interaction.notifyStepStart(null, null, true);
 				this.oReq = new XMLHttpRequest();
 				// first request without FESR header
 				this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 				this.oReq.send();
 				jQuery.sap.interaction.notifyStepEnd();
-				jQuery.sap.interaction.notifyStepStart(null, true);
+				jQuery.sap.interaction.notifyStepStart(null, null, true);
 				this.oReq = new XMLHttpRequest();
 				// second request with FESR header belonging to first interaction
 				this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
@@ -319,13 +319,13 @@ sap.ui.define([
 	QUnit.module("Global busy duration measurement",{
 		beforeEach: function() {
 			jQuery.sap.fesr.setActive(true);
-			jQuery.sap.interaction.notifyStepStart(null, true);
+			jQuery.sap.interaction.notifyStepStart(null, null, true);
 			this.oReq = new XMLHttpRequest();
 			// first request without FESR header
 			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
 			jQuery.sap.interaction.notifyStepEnd();
-			jQuery.sap.interaction.notifyStepStart(null, true);
+			jQuery.sap.interaction.notifyStepStart(null, null, true);
 			this.oReq = new XMLHttpRequest();
 			// second request with FESR header belonging to first interaction
 			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
@@ -343,7 +343,7 @@ sap.ui.define([
 		BusyIndicator.show(0);
 		BusyIndicator.hide();
 		jQuery.sap.interaction.notifyStepEnd();
-		jQuery.sap.interaction.notifyStepStart(null, true);
+		jQuery.sap.interaction.notifyStepStart(null, null, true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		assert.ok(oMeasurement.busyDuration >= 0, "Global Busy duration is bigger than or equal to zero.");
 
@@ -366,7 +366,7 @@ sap.ui.define([
 		setTimeout(function() {
 			BusyIndicator.hide();
 			jQuery.sap.interaction.notifyStepEnd();
-			jQuery.sap.interaction.notifyStepStart(null, true);
+			jQuery.sap.interaction.notifyStepStart(null, null, true);
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			assert.ok(oMeasurement.busyDuration > 0, "Global Busy duration is bigger than zero.");
 
@@ -385,13 +385,13 @@ sap.ui.define([
 	QUnit.module("component integration", {
 		beforeEach: function() {
 			jQuery.sap.fesr.setActive(true);
-			jQuery.sap.interaction.notifyStepStart(null, true);
+			jQuery.sap.interaction.notifyStepStart(null, null, true);
 			this.oReq = new XMLHttpRequest();
 			// first request without FESR header
 			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 			this.oReq.send();
 			jQuery.sap.interaction.notifyStepEnd();
-			jQuery.sap.interaction.notifyStepStart(null, true);
+			jQuery.sap.interaction.notifyStepStart(null, null, true);
 			this.oReq = new XMLHttpRequest();
 			// second request with FESR header belonging to first interaction
 			this.oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
@@ -406,7 +406,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("named component", function(assert) {
-		jQuery.sap.interaction.notifyStepStart(null, true);
+		jQuery.sap.interaction.notifyStepStart(null, null, true);
 		var sName = "foo.sap.ui.fesr.test.a.component.name.with.seventy.characters.Component.js";
 
 		try {
@@ -423,7 +423,7 @@ sap.ui.define([
 		// we need to use the timeout here, as the request-timing is not found otherwise
 		setTimeout(function() {
 			jQuery.sap.interaction.notifyStepEnd();
-			jQuery.sap.interaction.notifyStepStart(null, true);
+			jQuery.sap.interaction.notifyStepStart(null, null, true);
 
 			var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 			assert.strictEqual(oMeasurement.component, "undetermined");
