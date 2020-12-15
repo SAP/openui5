@@ -147,7 +147,7 @@ sap.ui.define([
 	 * @alias sap.ui.core.Popup
 	 * @extends sap.ui.base.ManagedObject
 	 */
-	var Popup = ManagedObject.extend("sap.ui.core.Popup", /** @lends sap.ui.core.Popup.prototype */ {
+	var Popup = ManagedObject.extend("sap.ui.core.Popup", {
 		constructor: function (oContent, bModal, bShadow, bAutoClose) {
 			assert(arguments.length == 0 || (oContent && typeof oContent === "object"), "oContent must be an object or there may be no arguments at all");
 			assert((bModal === undefined || bModal === true || bModal === false), "bModal must be true, false, or undefined");
@@ -425,13 +425,15 @@ sap.ui.define([
 	Popup.prototype.preventBrowserFocus = Device.support.touch && !Device.system.combi;
 
 	//****************************************************
-	//Layer et al
+	// Layer et al.
 	//****************************************************
 
 	/**
-	* @class
-	* @private
-	* @name sap.ui.core.Popup.Layer
+	 * This constructor of the Popup.Layer  class
+	 *
+	 * @class
+	 * @private
+	 * @name sap.ui.core.Popup.Layer
 	*/
 	BaseObject.extend("sap.ui.core.Popup.Layer", {
 		constructor: function() {
@@ -441,14 +443,16 @@ sap.ui.define([
 	});
 
 	/**
+	* Initializes the popup layer by adding z-index and visibility to the popup layer
+    * and insert the popup directly after the given <code>oRef</code> element
 	*
-	* @param oRef
-	* @param iZIndex
+	* @param {jQuery} oRef The element as a jQuery object
+	* @param {int} iZIndex The z-index value
 	* @private
 	* @name sap.ui.core.Popup.Layer#init
 	* @function
 	*/
-	Popup.Layer.prototype.init = function(/** jQuery */oRef, iZIndex) {
+	Popup.Layer.prototype.init = function(oRef, iZIndex) {
 		this._$Ref.css({
 			"visibility" : "visible",
 			"z-index" : iZIndex
@@ -458,11 +462,13 @@ sap.ui.define([
 	};
 
 	/**
-	* @param {object} oRef
-	* @param {int} iZIndex
-	* @protected
-	* @name sap.ui.core.Popup.Layer#update
-	* @function
+	 * Update the popup layer with the given <code>iZIndex</code> on the given <code>oRef</code> element
+	 *
+	 * @param {jQuery} oRef The element as a jQuery object
+	 * @param {int} iZIndex The z-index value
+	 * @protected
+	 * @name sap.ui.core.Popup.Layer#update
+	 * @function
 	*/
 	Popup.Layer.prototype.update = function(/** jQuery */oRef, iZIndex){
 		if (oRef.length) {
@@ -501,6 +507,13 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Resets the popup layer by hidding and assigning to the static area
+	 *
+	 * @private
+	 * @name sap.ui.core.Popup.Layer#reset
+	 * @function
+	 */
 	Popup.Layer.prototype.reset = function(){
 		if (this._$Ref.length) {
 			this._$Ref[0].style.display = "none";
@@ -513,6 +526,8 @@ sap.ui.define([
 	/**
 	 * Must be overwritten by sub class.
 	 *
+	 * @abstract
+	 * @returns {string} The DOM string
 	 * @name sap.ui.core.Popup.Layer#getDomString
 	 * @function
 	 */
@@ -522,10 +537,10 @@ sap.ui.define([
 		return "";
 	};
 
-	//End of Layer
+	// End of Layer
 
 	//****************************************************
-	// BlindLayer et al
+	// BlindLayer et al.
 	//****************************************************
 
 	/**
@@ -554,7 +569,7 @@ sap.ui.define([
 	// End of BlindLayer
 
 	//****************************************************
-	//ShieldLayer et al
+	// ShieldLayer et al.
 	//****************************************************
 
 	/**
@@ -606,7 +621,7 @@ sap.ui.define([
 		/**
 		 * Returns the last z-index that has been handed out. does not increase the internal z-index counter.
 		 *
-		 * @returns {number}
+		 * @returns {number} The z-index value
 		 * @public
 		 */
 		Popup.getLastZIndex = function(){
@@ -616,7 +631,7 @@ sap.ui.define([
 		/**
 		 * Returns the last z-index that has been handed out. does not increase the internal z-index counter.
 		 *
-		 * @returns {number}
+		 * @returns {number} Th z-index value
 		 * @public
 		 */
 		Popup.prototype.getLastZIndex = function(){
@@ -942,6 +957,8 @@ sap.ui.define([
 	 * This function is called before or during the Popup opens. Here the registration
 	 * of events and delegates takes place and the corresponding flags for the Popup are set.
 	 *
+	 * @param {boolean} bOpenAnimated Determines if the opening has animation
+	 *
 	 * @private
 	 */
 	Popup.prototype._duringOpen = function(bOpenAnimated) {
@@ -1091,7 +1108,7 @@ sap.ui.define([
 	/**
 	 * Handles the focus/blur events.
 	 *
-	 * @param oBrowserEvent the browser event
+	 * @param {document#event} oBrowserEvent the browser event
 	 * @private
 	 */
 	Popup.prototype.onFocusEvent = function(oBrowserEvent) {
@@ -1531,7 +1548,8 @@ sap.ui.define([
 	/**
 	 * Sets the content this instance of the Popup should render.
 	 * Content must be capable of being positioned via position:absolute;
-	 * @param {sap.ui.core.Control | Element } oContent
+	 *
+	 * @param {sap.ui.core.Control | Element } oContent The content of the popup
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -1574,7 +1592,10 @@ sap.ui.define([
 
 		if (this.eOpenState != OpenState.CLOSED) {
 			this._applyPosition(this._oPosition);
-			this._oBlindLayer && this._oBlindLayer.update(this._$());
+
+			if (this._oBlindLayer) {
+				this._oBlindLayer.update(this._$());
+			}
 		}
 
 		return this;
@@ -1692,6 +1713,7 @@ sap.ui.define([
 	/**
 	 * Applies the given position to the Popup which is assumed to be currently open
 	 *
+	 * @param {object} oPosition position info object describing the desired position of the popup.
 	 * @private
 	 */
 	Popup.prototype._applyPosition = function(oPosition) {
@@ -1789,6 +1811,9 @@ sap.ui.define([
 	 * jQuery UI position() by replacing "begin" and "end" with the respective concrete value, depending on RTL settings.
 	 * The returned object is a clone, the original is unchanged.
 	 *
+	 * @param {object} oPosition position info object describing position of the popup.
+	 * @param {boolean} bRtl Determines if RTL <code>true</code> or LTR <code>false</code> mode is active
+	 * @returns {object} The converted position info object
 	 * @private
 	 */
 	Popup.prototype._convertPositionRTL = function(oPosition, bRtl) {
@@ -1869,7 +1894,7 @@ sap.ui.define([
 	 * - RTL mode and horizontal alignment is right, begin or center
 	 *
 	 * @param {object} oPosition The position
-	 * @param {boolean} bRtl Determines if RTL <code>true</code> or LFT <code>false</code> mode is active
+	 * @param {boolean} bRtl Determines if RTL <code>true</code> or LTR <code>false</code> mode is active
 	 * @private
 	 */
 	Popup.prototype._fixPositioning = function (oPosition, bRtl) {
@@ -1890,7 +1915,7 @@ sap.ui.define([
 	 * Determines if the position of the popup has to be fixed
 	 *
 	 * @param {sap.ui.core.Popup.Dock} sMy The "my" position value
-	 * @param {boolean} bRtl Determines if RTL <code>true</code> or LFT <code>false</code> mode is active
+	 * @param {boolean} bRtl Determines if RTL <code>true</code> or LTR <code>false</code> mode is active
 	 * @returns {boolean} <code>true</code> if position fixing is needed, <code>false</code> if not
 	 * @private
 	 */
@@ -1982,7 +2007,7 @@ sap.ui.define([
 	/**
 	 * Returns the value if a Popup is of modal type
 	 *
-	 * @return {boolean] bModal whether the Popup is of modal type
+	 * @return {boolean} bModal whether the Popup is of modal type
 	 * @public
 	 */
 	Popup.prototype.getModal = function() {
@@ -2052,7 +2077,7 @@ sap.ui.define([
 	 * @since 1.75
 	 */
 	Popup.prototype.setExtraContent = function(aContent) {
-		//TODO: also handle the case when 'aContent' is set with null
+		// TODO: also handle the case when 'aContent' is set with null
 		assert(Array.isArray(aContent), "Extra popup content must be an array which contains either sap.ui.core.Element, DOM Element or an ID");
 
 		if (!this._aExtraContent) {
@@ -2136,8 +2161,8 @@ sap.ui.define([
 	 * - the requested animation duration
 	 * - a function that MUST be called once the animation has completed
 	 *
-	 * @param {function} fnOpen
-	 * @param {function} fnClose
+	 * @param {function} fnOpen The function which executes the custom opening animation
+	 * @param {function} fnClose The function  which executes the custom closing animation
 	 * @return {sap.ui.core.Popup} <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -2182,7 +2207,14 @@ sap.ui.define([
 	};
 
 	Popup.CLOSE_ON_SCROLL = "close_Popup_if_of_is_moved";
+
 	/**
+	 * Closes the popup instance
+	 *
+	 * @param {object} oEventParameters The event parameters
+	 * @param {object} oEventParameters.lastPosition The last position value
+	 * @param {object} oEventParameters.lastOfRect The last rect value
+ 	 * @param {object} oEventParameters.currentOfRect The current rect value
 	 * @private
 	 */
 	Popup.prototype._fnCloseOnScroll = function(oEventParameters) {
@@ -2232,9 +2264,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Determines whether the pop-up should auto closes or not.
+	 * Determines whether the Popup should auto closes or not.
 	 *
-	 * @returns {boolean}
+	 * @returns {boolean} <code>true</code> if auto close is enabled, <code>false</code> if no auto close is configured for this popup instance
 	 * @since 1.16
 	 * @public
 	 */
@@ -2347,9 +2379,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * Adds 'focus' event listeners to the popup
+	 *
 	 * @private
 	 */
-	Popup.prototype._addFocusEventListeners = function(sChannel, sEvent, oEventData) {
+	Popup.prototype._addFocusEventListeners = function() {
 		if (!this.fEventHandler) {
 			this.fEventHandler = jQuery.proxy(this.onFocusEvent, this);
 		}
@@ -2385,9 +2419,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * Removes the 'focus' event listeners from the popup
+	 *
 	 * @private
 	 */
-	Popup.prototype._removeFocusEventListeners = function(sChannel, sEvent, oEventData) {
+	Popup.prototype._removeFocusEventListeners = function() {
 		var $PopupRoot = this._$(/* bForceReRender */false, /* bGetOnly */true);
 
 		// if popup's content isn't rendered yet, focus vent listeners don't need to be removed
@@ -2454,9 +2490,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * Register popup events in the event bus
+	 *
 	 * @private
 	 */
-	Popup.prototype._registerEventBusEvents = function(sChannel, sEvent, oEventData) {
+	Popup.prototype._registerEventBusEvents = function() {
 		var that = this;
 
 		jQuery.each(that._mEvents, function(sEventId, fnListener) {
@@ -2467,9 +2505,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * Unregister popup events from the event bus
+	 *
 	 * @private
 	 */
-	Popup.prototype._unregisterEventBusEvents = function(sChannel, sEvent, oEventData) {
+	Popup.prototype._unregisterEventBusEvents = function() {
 		var that = this;
 
 		jQuery.each(that._mEvents, function(sEventId, fnListener) {
@@ -2487,7 +2527,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sChannel channel of the EventBus
 	 * @param {string} sEvent name of the event
-	 * @param {Object} oFocusable object with an id-property
+	 * @param {object} oEventData object with an id-property of the element which should be added to the focusable area
 	 * @since 1.12.3
 	 * @private
 	 */
@@ -2505,7 +2545,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sChannel channel of the EventBus
 	 * @param {string} sEvent name of the event
-	 * @param {Object} oFocusable object with a property <code>id</code> and if an autoClose mechanism should occur
+	 * @param {Object} oEventData object with an id-property of the element which should be removed from the focusable area
 	 * @since 1.17.0
 	 * @private
 	 */
@@ -2829,6 +2869,7 @@ sap.ui.define([
 	//****************************************************
 	//Focus Handling Delegate function for use with the given content (of type sap.ui.core.Element)
 	//****************************************************
+
 	/**
 	 * Delegate function for handling of touchstart event on sap.ui.core.Elements as content
 	 *
@@ -2837,6 +2878,7 @@ sap.ui.define([
 	 * Mousedown event is fired with 300ms delay and when the event is caught by popup A, the popup B is already opened. Therefore popup A increases its z-index to be on the front.
 	 * When ontouchstart is called, the next mousedown event which comes with a 300ms delay will be ignored.
 	 *
+	 * @param {jQuery.Event} oEvent The event
 	 * @private
 	 */
 	Popup.prototype.ontouchstart = function(oEvent){
@@ -2848,6 +2890,9 @@ sap.ui.define([
 
 	/**
 	 * Delegate function for handling of mousedown event on sap.ui.core.Elements as content
+	 *
+	 * @param {jQuery.Event} oEvent The event
+	 * @param {boolean} bSupressChecking Determines if the retrieved event was fired by another event with that no further checking is needed
 	 * @private
 	 */
 	Popup.prototype.onmousedown = function(oEvent, bSupressChecking) {
@@ -2870,6 +2915,11 @@ sap.ui.define([
 	};
 
 	/**
+	 * Increases the z-index of the popup
+	 *
+	 * @param {string} sChannel channel of the EventBus
+	 * @param {string} sEvent name of the event
+	 * @param {jQuery.Event} oEventData the object containing the event data
 	 * @private
 	 */
 	Popup.prototype._increaseMyZIndex = function(sChannel, sEvent, oEventData) {
@@ -2913,7 +2963,7 @@ sap.ui.define([
 	 * Only active when Popup is opened.
 	 * @private
 	 */
-	Popup.prototype.onAfterRendering = function(oEvent){
+	Popup.prototype.onAfterRendering = function(){
 		var oContent = this.getContent();
 		var $Ref = oContent instanceof Element ? oContent.$() : jQuery(oContent);
 
@@ -2960,7 +3010,7 @@ sap.ui.define([
 	* Delegate function for onBeforeRendering.
 	* @private
 	*/
-	Popup.prototype.onBeforeRendering = function(oEvent) {
+	Popup.prototype.onBeforeRendering = function() {
 		// deregister resize handler
 		if (this._resizeListenerId) {
 			ResizeHandler.deregister(this._resizeListenerId);
@@ -2981,7 +3031,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	Popup.prototype.onresize = function(oEvent) {
+	Popup.prototype.onresize = function() {
 		if (this.eOpenState != OpenState.CLOSED && this._oBlindLayer) {
 			var that = this;
 			setTimeout(function(){
@@ -2998,16 +3048,14 @@ sap.ui.define([
 
 	/**
 	 * Checks if the (optional) given jQuery-object or DOM-node is within a
-	 * Popup. If no object is given the instance of the control will be used
+	 * Popup. If no object is given the popup instance itself will be used
 	 * to check.
 	 *
-	 * @param {jQuery |
-	 *            Node} [oThis] is the object that should be checked
-	 *            (optional)
+	 * @param {jQuery|Node} [oObject=this] is an optional object that should be checked
 	 * @returns {boolean} whether this control instance is part of a Popup
 	 */
-	Popup.prototype.isInPopup = function(oThis) {
-		var $ParentPopup = this.getParentPopup(oThis);
+	Popup.prototype.isInPopup = function(oObject) {
+		var $ParentPopup = this.getParentPopup(oObject);
 
 		return $ParentPopup && $ParentPopup.length > 0;
 	};
@@ -3015,15 +3063,15 @@ sap.ui.define([
 	/**
 	 * This function returns the parent Popup if available.
 	 *
-	 * @param {control}
-	 *            [oThat] is an optional control instance. If another
+	 * @param {sap.ui.core.Control}
+	 *            [oControl=this] is an optional control instance. If another
 	 *            instance than "this" is given the corresponding control
 	 *            instance will be used to fetch the Popup.
 	 * @returns {jQuery} [ParentPopup]
 	 */
-	Popup.prototype.getParentPopup = function(oThat) {
+	Popup.prototype.getParentPopup = function(oControl) {
 		// use either given object (control or DOM-ref) or this instance
-		var oThis = oThat ? oThat : this;
+		var oThis = oControl ? oControl : this;
 
 		// if oThis is an element use its DOM-ref to look for a Popup. Else
 		// 'oThis' is a DOM-ref therefore simply use it
@@ -3036,14 +3084,14 @@ sap.ui.define([
 	/**
 	 * This returns the corresponding unique ID of the parent Popup.
 	 *
-	 * @param {control}
-	 *            [oThat] is an optional control instance. If another
+	 * @param {sap.ui.core.Control}
+	 *            [oControl=this] is an optional control instance. If another
 	 *            instance than "this" is given the corresponding control
 	 *            instance will be used to fetch the Popup.
 	 * @returns {string} ParentPopupId
 	 */
-	Popup.prototype.getParentPopupId = function(oThis) {
-		var $ParentPopup = this.getParentPopup(oThis);
+	Popup.prototype.getParentPopupId = function(oControl) {
+		var $ParentPopup = this.getParentPopup(oControl);
 		return $ParentPopup.attr("data-sap-ui-popup");
 	};
 
