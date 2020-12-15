@@ -1499,6 +1499,11 @@ function(
 					&& !this._oTimePicker._isCharAllowed(sChar, iPlacePosition)
 					&& this.aAllowedHours.indexOf(this.sLeadingChar + sChar) !== -1) {
 				return this.sLeadingChar + sChar;
+			} else if (iPlacePosition === this.iHourNumber2Index && sCurrentInputValue[this.iHourNumber1Index] === PLACEHOLDER_SYMBOL) {
+				// fill the first hour number with the leading character,
+				// in order to enable setting the second hour number directly
+				this._oTimePicker._oTempValue.setCharAt(this.sLeadingChar, this.iHourNumber1Index);
+				return sChar;
 			} else if (iPlacePosition === this.iHourNumber2Index //the second hour number
 					&& this.aAllowedHours.indexOf(sCurrentInputValue[this.iHourNumber1Index] + sChar) === -1) { //allow it only if the whole hour string is a valid hour
 				return ""; //which is invalid and won't pass the test
