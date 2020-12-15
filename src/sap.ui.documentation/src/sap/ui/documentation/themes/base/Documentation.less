@@ -202,6 +202,19 @@
 
     }
 
+    .imagemap_sidebyside:not(.stacked) {
+        display: flex;
+
+        > p {
+            display: none;
+        }
+
+        .imagemap {
+            flex-shrink: 0;
+            margin-right: 1.5rem;
+        }
+    }
+
     .light-overlays .imagemap {
         .shape {
             fill: rgba(255, 255, 255, 0.5);

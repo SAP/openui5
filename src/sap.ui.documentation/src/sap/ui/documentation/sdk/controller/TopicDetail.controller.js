@@ -13,13 +13,14 @@ sap.ui.define([
 		"sap/ui/documentation/sdk/util/ToggleFullScreenHandler",
 		"sap/ui/documentation/sdk/util/Resources",
 		"sap/ui/documentation/sdk/controller/util/ResponsiveImageMap",
+		"sap/ui/documentation/sdk/controller/util/SidyBySideImageMap",
 		"sap/ui/core/HTML",
 		"sap/base/Log",
 		"sap/m/LightBox",
 		"sap/m/LightBoxItem",
 		"./util/DataTableHelper",
 		"./util/DataTable"
-	], function (jQuery, ResizeHandler, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler, ResourcesUtil, ResponsiveImageMap, HTML, Log, LightBox, LightBoxItem, DataTableHelper, DataTable) {
+	], function (jQuery, ResizeHandler, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler, ResourcesUtil, ResponsiveImageMap, SidyBySideImageMap, HTML, Log, LightBox, LightBoxItem, DataTableHelper, DataTable) {
 		"use strict";
 
 		var GIT_HUB_DOCS_URL = "https://sap.github.io/openui5-docs/#/",
@@ -244,7 +245,8 @@ sap.ui.define([
 				this._getDataTableHelper().destroyDatatables();
 
 				var oSection,
-					aImagemaps = this.oPage.$().find('#d4h5-main-container .imagemap'),
+					aImagemaps = this.oPage.$().find('#d4h5-main-container :not(.imagemap_sidebyside)>.imagemap'),
+					aSideBySideImagemaps = this.oPage.$().find('#d4h5-main-container .imagemap_sidebyside'),
 					aDataTables = this.oPage.$().find('#d4h5-main-container table.datatable'),
 					oDomRef = this.oLayout.getDomRef();
 
@@ -275,15 +277,21 @@ sap.ui.define([
 					this._enableImageMap(image);
 				}.bind(this));
 
+				aSideBySideImagemaps.each(function (index, image) {
+					this._enableImageMap(image, true);
+				}.bind(this));
 			},
 
-			_enableImageMap: function (image) {
+			_enableImageMap: function (image, bIsSideBySide) {
 				var newImage,
 					aSrcResult,
-					rex = /<img[^>]+src="([^">]+)/g;
+					rex = /<img[^>]+src="([^">]+)/g,
+					fnComple = bIsSideBySide ? this._addSidyBySideImageMap : this._addResponsiveImageMap;
+
+				fnComple = fnComple.bind(this);
 
 				if (image.complete) {
-					this._addResponsiveImageMap(image);
+					fnComple(image);
 				} else {
 					// Image still not loaded
 					// If the src is already set, then the event is firing in the cached case,
@@ -293,8 +301,8 @@ sap.ui.define([
 					newImage = new Image();
 
 					newImage.onload = function () {
-						this._addResponsiveImageMap(image);
-					}.bind(this);
+						fnComple(image);
+					};
 
 					aSrcResult = rex.exec(image.innerHTML);
 					if (aSrcResult) {
@@ -326,6 +334,10 @@ sap.ui.define([
 					data.querySelector('map'),
 					data.querySelector('img')
 				));
+			},
+
+			_addSidyBySideImageMap: function (data) {
+				this.aResponsiveImageMaps.push(new SidyBySideImageMap(data));
 			},
 
 			/**

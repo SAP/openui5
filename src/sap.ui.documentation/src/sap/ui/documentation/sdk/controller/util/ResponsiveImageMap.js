@@ -5,9 +5,11 @@
 sap.ui.define(["./overlay/Overlay", "./Tooltip"], function (Overlay, Tooltip) {
     "use strict";
 
-	var TOOLTIP_POINTER_OFFSET = 30;
+    var TOOLTIP_POINTER_OFFSET = 30;
 
-	var ResponsiveImageMap = function (oMap, oImg) {
+    var rgxTargetTemplate = /.+\/(.+)/;
+
+	var ResponsiveImageMap = function (oMap, oImg, fnClickCallback) {
         this.oImg = oImg;
         this.oOverlay = new Overlay(this.oImg.parentNode);
         this.oToolTip = new Tooltip(this.oImg.parentNode);
@@ -17,7 +19,12 @@ sap.ui.define(["./overlay/Overlay", "./Tooltip"], function (Overlay, Tooltip) {
 	        // when we attach the handler on the map, event.target does
 	        // not propagate from the area element, but from the map
 	        oArea.addEventListener("mouseenter", this.onmouseenter.bind(this));
-	        oArea.addEventListener("mouseleave", this.onmouseleave.bind(this));
+            oArea.addEventListener("mouseleave", this.onmouseleave.bind(this));
+            if (fnClickCallback) {
+                oArea.addEventListener("click", function (oEvent) {
+                    this.onclick(oEvent, fnClickCallback);
+                }.bind(this));
+            }
 
             return  {
                 element: oArea,
@@ -26,6 +33,13 @@ sap.ui.define(["./overlay/Overlay", "./Tooltip"], function (Overlay, Tooltip) {
         }, this);
 
         this.resize();
+    };
+
+    ResponsiveImageMap.prototype.onclick = function(oEvent, fnClickCallback) {
+        var sTargetId = oEvent.target.alt.match(rgxTargetTemplate)[1];
+
+        oEvent.preventDefault();
+        fnClickCallback(sTargetId);
     };
 
     ResponsiveImageMap.prototype.resize = function() {
