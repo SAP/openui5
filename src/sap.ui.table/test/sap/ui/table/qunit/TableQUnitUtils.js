@@ -134,7 +134,7 @@ sap.ui.define([
 			}.bind(this);
 		}.bind(this);
 
-		// Add wrappers and hooks for functions that inevitably trigger a "_rowsUpdated" event.
+		// Add wrappers and hooks for functions that inevitably trigger a "rowsUpdated" event.
 		wrapForRenderingDetection(oTable, "invalidate");
 		wrapForRenderingDetection(oTable, "rerender");
 	};
@@ -312,13 +312,13 @@ sap.ui.define([
 
 	function addAsyncHelpers(oTable, oHelperPlugin) {
 		/**
-		 * Returns a promise that resolves when the next <code>_rowsUpdated</code> event is fired.
+		 * Returns a promise that resolves when the next <code>rowsUpdated</code> event is fired.
 		 *
 		 * @returns {Promise<Object>} A promise. Resolves with the event parameters.
 		 */
 		oTable.qunit.whenNextRowsUpdated = function() {
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", function(oEvent) {
+				oTable.attachEventOnce("rowsUpdated", function(oEvent) {
 					resolve(oEvent.getParameters());
 				});
 			});
@@ -341,7 +341,7 @@ sap.ui.define([
 				return waitForRowsUpdatedAndFinalDomUpdates();
 			}
 
-			// A table without binding does not fire _rowsUpdated events.
+			// A table without binding does not fire rowsUpdated events.
 			return new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
 					if (oTable.getBinding("rows")) { // In case the table has been bound in the meanwhile.
@@ -1547,7 +1547,7 @@ sap.ui.define([
 
 		oTableInstance.rerender();
 		return new Promise(function(resolve) {
-			oTable.attachEventOnce("_rowsUpdated", function() {
+			oTable.attachEventOnce("rowsUpdated", function() {
 				resolve(getRowDomRefs(oTableInstance, iRow));
 			});
 		});
@@ -1566,7 +1566,7 @@ sap.ui.define([
 
 		oTableInstance.rerender();
 		return new Promise(function(resolve) {
-			oTable.attachEventOnce("_rowsUpdated", function() {
+			oTable.attachEventOnce("rowsUpdated", function() {
 				resolve(getRowDomRefs(oTableInstance, iRow));
 			});
 		});

@@ -34,14 +34,14 @@ sap.ui.define([
 			var fnTest = function() {
 				iCalled++;
 				if (iSkipCalls === iCalled) {
-					oControl.detachEvent("_rowsUpdated", fnEventHandler);
-					oControl.attachEventOnce("_rowsUpdated", fnHandler, that);
+					oControl.detachRowsUpdated(fnEventHandler);
+					oControl.attachEventOnce("rowsUpdated", fnHandler, that);
 				}
 			};
 			Promise.resolve().then(fnTest.bind(this));
 		};
 
-		oControl.attachEvent("_rowsUpdated", fnEventHandler);
+		oControl.attachRowsUpdated(fnEventHandler);
 	}
 
 	function attachRowsUpdatedOnce(oControl, fnHandler, that) {
@@ -49,7 +49,7 @@ sap.ui.define([
 			Promise.resolve().then(fnHandler.bind(this));
 		};
 
-		oControl.attachEventOnce("_rowsUpdated", fnEventHandler, that);
+		oControl.attachEventOnce("rowsUpdated", fnEventHandler, that);
 	}
 
 	function createTable(mSettings) {
@@ -532,13 +532,13 @@ sap.ui.define([
 					i += this.oTable.getVisibleRowCount();
 					this.oTable.setFirstVisibleRow(i);
 				} else {
-					this.oTable.detachEvent("_rowsUpdated", fnVisibleRowHandler);
+					this.oTable.detachRowsUpdated(fnVisibleRowHandler);
 					assert.equal(this.oTable.getSelectedIndices().length, 55, "55 Nodes in Tree, all selected");
 					done();
 				}
 			};
 
-			this.oTable.attachEvent("_rowsUpdated", fnVisibleRowHandler, this);
+			this.oTable.attachRowsUpdated(fnVisibleRowHandler, this);
 			this.oTable.setFirstVisibleRow(i);
 		};
 

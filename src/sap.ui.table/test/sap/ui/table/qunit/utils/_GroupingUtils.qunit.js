@@ -275,7 +275,7 @@ sap.ui.define([
 					done();
 				};
 
-				oTreeTable.attachEventOnce("_rowsUpdated", fnUnbindHandler);
+				oTreeTable.attachEventOnce("rowsUpdated", fnUnbindHandler);
 				oTreeTable.unbindRows();
 			}
 		};
@@ -283,7 +283,7 @@ sap.ui.define([
 		fnHandler();
 
 		bSecondPass = true;
-		oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
+		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
 		oTreeTable.getRows()[0].expand();
 	});
 
@@ -347,7 +347,7 @@ sap.ui.define([
 					done();
 				};
 
-				oTreeTable.attachEventOnce("_rowsUpdated", fnUnbindHandler);
+				oTreeTable.attachEventOnce("rowsUpdated", fnUnbindHandler);
 				oTreeTable.unbindRows();
 			}
 		};
@@ -358,7 +358,7 @@ sap.ui.define([
 		fnHandler();
 
 		bSecondPass = true;
-		oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
+		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
 		oTreeTable.getRows()[0].expand();
 	});
 
@@ -426,13 +426,13 @@ sap.ui.define([
 
 				function onAfterRendering() {
 					oTable.removeEventDelegate(oOnAfterRenderingDelegate);
-					oTable.attachEventOnce("_rowsUpdated", onRowsUpdated);
+					oTable.attachEventOnce("rowsUpdated", onRowsUpdated);
 				}
 
 				if (mTestConfig.onAfterRendering) {
 					oTable.addEventDelegate(oOnAfterRenderingDelegate);
 				} else {
-					oTable.attachEventOnce("_rowsUpdated", onRowsUpdated);
+					oTable.attachEventOnce("rowsUpdated", onRowsUpdated);
 				}
 
 				mTestConfig.act();

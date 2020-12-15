@@ -93,7 +93,7 @@ sap.ui.define([
 		},
 		testAsync: function(mTestConfig) {
 			return new Promise(function(resolve) {
-				this.table.attachEventOnce("_rowsUpdated", function() {
+				this.table.attachEventOnce("rowsUpdated", function() {
 					mTestConfig.test();
 					resolve();
 				});
@@ -420,11 +420,11 @@ sap.ui.define([
 		oTable.attachRowSelectionChange(function() {
 			assert.ok(!oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is checked.");
 
-			oTable.attachEventOnce("_rowsUpdated", function() {
+			oTable.attachEventOnce("rowsUpdated", function() {
 				assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 
 				/*eslint-disable max-nested-callbacks */
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					assert.ok(oTable.$("selall").hasClass("sapUiTableSelAll"), "Select all icon is not checked.");
 					done();
 				});

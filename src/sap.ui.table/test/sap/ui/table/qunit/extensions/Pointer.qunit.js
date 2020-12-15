@@ -289,7 +289,7 @@ sap.ui.define([
 		moveResizer(oColumn, assert, true, 1);
 
 		return new Promise(function(resolve) {
-			oTable.attachEventOnce("_rowsUpdated", resolve);
+			oTable.attachEventOnce("rowsUpdated", resolve);
 		}).then(function() {
 			// drag resizer to resize column
 			$Resizer = oTable.$("rsz");
@@ -302,7 +302,7 @@ sap.ui.define([
 			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeHandlerLeft + 90 + 40, iResizeHandlerTop, 0);
 
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", resolve);
+				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
 			var iNewWidth = oColumn.getDomRef().offsetWidth;
@@ -334,7 +334,7 @@ sap.ui.define([
 			qutils.triggerMouseEvent($Resizer, "mouseup", 1, 1, iResizeButtonLeft + 90 + 40, iResizeHandlerTop, 0);
 
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", resolve);
+				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}
 
@@ -343,7 +343,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		return new Promise(function(resolve) {
-			oTable.attachEventOnce("_rowsUpdated", resolve);
+			oTable.attachEventOnce("rowsUpdated", resolve);
 		}).then(resize).then(function() {
 			var iExpectedWidth = iWidthBeforeResize + 110;
 			assert.ok(Math.abs(oColumn.getDomRef().offsetWidth - iExpectedWidth) < 5,
@@ -353,7 +353,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", resolve);
+				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(resize).then(function() {
 			var iExpectedWidth = iWidthBeforeResize + 110;
@@ -631,7 +631,7 @@ sap.ui.define([
 			done();
 		};
 
-		oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
+		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
 		var $Icon = jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0").find(".sapUiTableTreeIcon");
 		qutils.triggerMouseEvent($Icon, "click");
 	});
@@ -660,7 +660,7 @@ sap.ui.define([
 			done();
 		};
 
-		oTreeTable.attachEventOnce("_rowsUpdated", fnHandler);
+		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
 		var $GroupHdr = jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-groupHeader");
 		qutils.triggerMouseEvent($GroupHdr, "click");
 	});

@@ -844,6 +844,18 @@ sap.ui.define([
 					 */
 					data : {type : "string[][]"}
 				}
+			},
+
+			/**
+			 * This event is fired after the table rows have been updated due to rendering, a model update, or a user
+			 * interaction, for example.
+			 *
+			 * <b>Note</b>: This event is fired often and must not be used for performance-critical tasks.
+			 *
+			 * @since 1.86
+			 */
+			rowsUpdated : {
+
 			}
 		},
 		designtime:  "sap/ui/table/designtime/Table.designtime"
@@ -1743,7 +1755,7 @@ sap.ui.define([
 	 *     Shortcut for <code>suppressScrolling=true</code>, <code>suppressEvent=true</code>, and <code>suppressRendering=true</code>.
 	 *     Overrules other settings.
 	 * @returns {boolean}
-	 *     Whether the <code>_rowsUpdated</code> event will be fired.
+	 *     Whether the <code>rowsUpdated</code> event will be fired.
 	 * @private
 	 */
 	Table.prototype._setFirstVisibleRowIndex = function(iRowIndex, mOptions) {
@@ -4267,11 +4279,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Fires the <code>_rowsUpdated</code> event asynchronously.
+	 * Fires the <code>rowsUpdated</code> event asynchronously.
 	 *
 	 * @param {sap.ui.table.utils.TableUtils.RowsUpdateReason} [sReason=sap.ui.table.utils.TableUtils.RowsUpdateReason.Unknown]
 	 * The reason why the rows have been updated.
-	 * @fires Table#_rowsUpdated
+	 * @fires Table#rowsUpdated
 	 * @private
 	 */
 	Table.prototype._fireRowsUpdated = function(sReason) {
@@ -4296,6 +4308,7 @@ sap.ui.define([
 			 * @private
 			 */
 			this.fireEvent("_rowsUpdated", mParameters);
+			this.fireRowsUpdated();
 		}.bind(this), 0);
 	};
 

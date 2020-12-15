@@ -388,7 +388,7 @@ sap.ui.define([
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
 		oTable.attachFirstVisibleRowChanged(oFirstVisibleRowChangedSpy);
-		oTable.attachEvent("_rowsUpdated", oRowsUpdatedSpy);
+		oTable.attachRowsUpdated(oRowsUpdatedSpy);
 
 		return new Promise(function(resolve) {
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
@@ -422,7 +422,7 @@ sap.ui.define([
 				assert.equal(oTable.getFirstVisibleRow(), 4, "The firstVisibleRow is correct");
 				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 				assert.ok(oFirstVisibleRowChangedSpy.calledOnce, "The \"firstVisibleRowChanged\" event was fired");
-				assert.ok(oRowsUpdatedSpy.calledOnce, "The \"_rowsUpdated\" event was fired");
+				assert.ok(oRowsUpdatedSpy.calledOnce, "The \"rowsUpdated\" event was fired");
 			});
 
 		}).then(function() {
@@ -443,7 +443,7 @@ sap.ui.define([
 				assert.equal(oTable.getFirstVisibleRow(), 9, "The firstVisibleRow is correct");
 				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
 				assert.ok(oFirstVisibleRowChangedSpy.calledOnce, "The \"firstVisibleRowChanged\" event was fired");
-				assert.ok(oRowsUpdatedSpy.calledOnce, "The \"_rowsUpdated\" event was fired");
+				assert.ok(oRowsUpdatedSpy.calledOnce, "The \"rowsUpdated\" event was fired");
 			});
 		});
 	});
@@ -967,7 +967,7 @@ sap.ui.define([
 			}, 100);
 		}).then(function() {
 			return new Promise(function(resolve) {
-				that.oTable.attachEventOnce("_rowsUpdated", function() {
+				that.oTable.attachEventOnce("rowsUpdated", function() {
 					assert.ok(oSelectionSpy.calledTwice, "The selection was added and then the table was scrolled");
 					assert.equal(that.oTable.getFirstVisibleRow(), 4, "Table is scrolled at the correct position");
 					resolve();
@@ -1012,7 +1012,7 @@ sap.ui.define([
 			}, 100);
 		}).then(function() {
 			return new Promise(function(resolve) {
-				that.oTable.attachEventOnce("_rowsUpdated", function() {
+				that.oTable.attachEventOnce("rowsUpdated", function() {
 					assert.ok(oSelectionSpy.calledTwice, "The selection was added and then the table was scrolled");
 					assert.equal(that.oTable.getFirstVisibleRow(), 3, "Table is scrolled at the correct position");
 					resolve();

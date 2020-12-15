@@ -55,7 +55,7 @@ sap.ui.define([
 			this.bindTable();
 			this.renderTable();
 
-			this.oTable.attachEventOnce("_rowsUpdated", function() {
+			this.oTable.attachEventOnce("rowsUpdated", function() {
 				this.destroyTable();
 				this.clearTestResult();
 
@@ -340,7 +340,7 @@ sap.ui.define([
 
 	function detectRenderingFinished(oController) {
 		if (oController.fnRowsUpdated) {
-			oController.oTable.detachEvent("_rowsUpdated", oController.fnRowsUpdated);
+			oController.oTable.detachRowsUpdated(oController.fnRowsUpdated);
 			delete oController.fnRowsUpdated;
 		}
 
@@ -351,7 +351,7 @@ sap.ui.define([
 		};
 
 		if (oController.oTable.getBinding("rows")) {
-			oController.oTable.attachEventOnce("_rowsUpdated", oController.fnRowsUpdated);
+			oController.oTable.attachEventOnce("rowsUpdated", oController.fnRowsUpdated);
 		} else {
 			oController.fnRowsUpdated();
 		}

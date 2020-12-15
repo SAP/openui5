@@ -318,7 +318,7 @@ sap.ui.define([
 		assert.ok(!containsOrHasFocus(), "focus is not on the table after setShowOverlay");
 		oTable.focus();
 		assert.ok(containsOrHasFocus("overlay"), "focus is on overlay after focus");
-		oTable.attachEventOnce("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.attachEventOnce("rowsUpdated", doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 
@@ -345,7 +345,7 @@ sap.ui.define([
 		}
 
 		oTable.getCreationRow().resetFocus();
-		oTable.attachEventOnce("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.attachEventOnce("rowsUpdated", doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 

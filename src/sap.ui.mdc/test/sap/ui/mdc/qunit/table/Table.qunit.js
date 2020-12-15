@@ -1480,7 +1480,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		this.oTable.initialized().then(function() {
-			this.oTable._oTable.attachEventOnce("_rowsUpdated", function() {
+			this.oTable._oTable.attachEventOnce("rowsUpdated", function() {
 				var that = this;
 				var oSelectionPlugin = this.oTable._oTable.getPlugins()[0];
 				var iSelectionCount = -1;
@@ -2179,7 +2179,7 @@ sap.ui.define([
 			return oTable._fullyInitialized();
 		}).then(function() {
 			return new Promise(function(resolve) {
-				oTable._oTable.attachEventOnce("_rowsUpdated", resolve);
+				oTable._oTable.attachEventOnce("rowsUpdated", resolve);
 			});
 		}).then(function() {
 			checkRowPress(false, oTable, oTable._oTable.getRows()[0]);

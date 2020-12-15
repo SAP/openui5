@@ -292,7 +292,7 @@ sap.ui.define([
 		}
 
 		if (bActionModeNavigation || fnFocus) {
-			oTable.attachEventOnce("_rowsUpdated", function() {
+			oTable.attachEventOnce("rowsUpdated", function() {
 				if (fnFocus) {
 					fnFocus();
 				} else {

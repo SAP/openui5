@@ -106,7 +106,7 @@ sap.ui.define([
 		return new Promise(function(resolve) {
 			simulateTabEvent(document.activeElement, bBackward);
 			if (bScrolled) {
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						resolve();
 					}, 10);
@@ -3801,7 +3801,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
-			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.detachRowsUpdated(doAfterNoDataDisplayed);
 
 			var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
 			simulateTabEvent(oElem, false);
@@ -3814,7 +3814,7 @@ sap.ui.define([
 			done();
 		}
 
-		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 
@@ -3822,7 +3822,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
-			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.detachRowsUpdated(doAfterNoDataDisplayed);
 
 			var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
 			simulateTabEvent(oElem, false);
@@ -3835,7 +3835,7 @@ sap.ui.define([
 
 		oTable.setColumnHeaderVisible(false);
 		sap.ui.getCore().applyChanges();
-		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 
@@ -3843,7 +3843,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
-			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.detachRowsUpdated(doAfterNoDataDisplayed);
 
 			var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
 			simulateTabEvent(oElem, false);
@@ -3863,7 +3863,7 @@ sap.ui.define([
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		sap.ui.getCore().applyChanges();
-		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 
@@ -3871,7 +3871,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
-			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.detachRowsUpdated(doAfterNoDataDisplayed);
 
 			var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus2");
 			simulateTabEvent(oElem, true);
@@ -3884,7 +3884,7 @@ sap.ui.define([
 			done();
 		}
 
-		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 
@@ -3892,7 +3892,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
-			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.detachRowsUpdated(doAfterNoDataDisplayed);
 
 			var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus2");
 			simulateTabEvent(oElem, true);
@@ -3912,7 +3912,7 @@ sap.ui.define([
 		oTable.addExtension(new TestControl("Extension", {text: "Extension", tabbable: true}));
 		oTable.setFooter(new TestControl("Footer", {text: "Footer", tabbable: true}));
 		sap.ui.getCore().applyChanges();
-		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 
@@ -3920,7 +3920,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
-			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.detachRowsUpdated(doAfterNoDataDisplayed);
 
 			var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
 			simulateTabEvent(oElem, false);
@@ -3939,7 +3939,7 @@ sap.ui.define([
 			done();
 		}
 
-		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 
@@ -3956,7 +3956,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
-			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.detachRowsUpdated(doAfterNoDataDisplayed);
 			var sId = "noDataCnt";
 
 			while (sId) {
@@ -3995,7 +3995,7 @@ sap.ui.define([
 			done();
 		}
 
-		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 
@@ -4003,7 +4003,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
-			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.detachRowsUpdated(doAfterNoDataDisplayed);
 
 			var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
 			simulateTabEvent(oElem, false);
@@ -4015,7 +4015,7 @@ sap.ui.define([
 		}
 
 		oTable.setShowOverlay(true);
-		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 
@@ -4023,7 +4023,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doAfterNoDataDisplayed() {
-			oTable.detachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+			oTable.detachRowsUpdated(doAfterNoDataDisplayed);
 
 			var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus2");
 			simulateTabEvent(oElem, true);
@@ -4035,7 +4035,7 @@ sap.ui.define([
 		}
 
 		oTable.setShowOverlay(true);
-		oTable.attachEvent("_rowsUpdated", doAfterNoDataDisplayed);
+		oTable.attachRowsUpdated(doAfterNoDataDisplayed);
 		oTable.setModel(new JSONModel());
 	});
 
@@ -6742,7 +6742,7 @@ sap.ui.define([
 			simulateTabEvent(oElem, false);
 			oElem = checkFocus(oTable.qunit.getRowHeaderCell(2), assert);
 			simulateTabEvent(oElem, false);
-			oTable.attachEventOnce("_rowsUpdated", function() {
+			oTable.attachEventOnce("rowsUpdated", function() {
 				setTimeout(function() {
 					assert.equal(oTable.getRows()[2].getIndex(), 3, "The table is scrolled");
 					assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -6755,7 +6755,7 @@ sap.ui.define([
 				simulateTabEvent(oElem, false);
 				oElem = checkFocus(oTable.getRows()[2].getCells()[1].getDomRef(), assert);
 				simulateTabEvent(oElem, false);
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						assert.equal(oTable.getRows()[2].getIndex(), 4, "The table is scrolled");
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -6773,7 +6773,7 @@ sap.ui.define([
 				simulateTabEvent(oElem, true);
 				oElem = checkFocus(oTable.qunit.getRowHeaderCell(0), assert);
 				simulateTabEvent(oElem, true);
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						assert.equal(oTable.getRows()[0].getIndex(), 1, "The table is scrolled");
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -6785,7 +6785,7 @@ sap.ui.define([
 		}).then(function(oElem){
 			return new Promise(function(resolve){
 				simulateTabEvent(oElem, true);
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						assert.equal(oTable.getRows()[0].getIndex(), 0, "The table is scrolled");
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -6809,7 +6809,7 @@ sap.ui.define([
 
 				oElem.focus();
 				simulateTabEvent(oElem, false);
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						assert.equal(oTable.getRows()[2].getIndex(), 3, "The table is scrolled");
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -6821,7 +6821,7 @@ sap.ui.define([
 		}).then(function(oElem){
 			return new Promise(function(resolve){
 				simulateTabEvent(oElem, false);
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						assert.equal(oTable.getRows()[2].getIndex(), 4, "The table is scrolled");
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -6833,7 +6833,7 @@ sap.ui.define([
 		}).then(function(oElem){
 			return new Promise(function(resolve){
 				simulateTabEvent(oElem, false);
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						assert.equal(oTable.getRows()[2].getIndex(), 5, "The table is scrolled");
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -6849,7 +6849,7 @@ sap.ui.define([
 				simulateTabEvent(oElem, true);
 				oElem = checkFocus(oTable.getRows()[0].getCells()[1].getDomRef(), assert);
 				simulateTabEvent(oElem, true);
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						assert.equal(oTable.getRows()[0].getIndex(), 2, "The table is scrolled");
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -6861,7 +6861,7 @@ sap.ui.define([
 		}).then(function(oElem){
 			return new Promise(function(resolve){
 				simulateTabEvent(oElem, true);
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						assert.equal(oTable.getRows()[0].getIndex(), 1, "The table is scrolled");
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -6873,7 +6873,7 @@ sap.ui.define([
 		}).then(function(oElem){
 			return new Promise(function(resolve){
 				simulateTabEvent(oElem, true);
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						assert.equal(oTable.getRows()[0].getIndex(), 0, "The table is scrolled");
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), "Table is in Action Mode");
@@ -6913,7 +6913,7 @@ sap.ui.define([
 			mSettings.act();
 
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						mSettings.assert();
 						resolve();
@@ -7792,7 +7792,7 @@ sap.ui.define([
 			fnAct();
 
 			return new Promise(function(resolve) {
-				oTable.attachEventOnce("_rowsUpdated", function() {
+				oTable.attachEventOnce("rowsUpdated", function() {
 					setTimeout(function() {
 						oCellContent = oTable.getRows()[0].getCells()[0].getDomRef();
 						assert.ok(oTable._getKeyboardExtension().isInActionMode(), sTitle + ": Table is in Action Mode");
@@ -7806,7 +7806,7 @@ sap.ui.define([
 		oCellContent.focus();
 
 		return new Promise(function(resolve) {
-			oTable.attachEventOnce("_rowsUpdated", resolve);
+			oTable.attachEventOnce("rowsUpdated", resolve);
 		}).then(function() {
 			return test("Arrow down", ["sapfocusleave", "focusin"], function() {
 				qutils.triggerKeydown(document.activeElement, Key.Arrow.DOWN, false, false, false);

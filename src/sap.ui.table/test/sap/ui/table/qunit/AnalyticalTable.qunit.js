@@ -39,17 +39,17 @@ sap.ui.define([
 			var fnTest = function() {
 				iCalled++;
 				if (iSkipCalls === iCalled) {
-					oControl.detachEvent("_rowsUpdated", fnEventHandler);
-					oControl.attachEventOnce("_rowsUpdated", fnHandler, that);
+					oControl.detachRowsUpdated(fnEventHandler);
+					oControl.attachEventOnce("rowsUpdated", fnHandler, that);
 				}
 			};
 			Promise.resolve().then(fnTest.bind(this));
 		};
 
 		if (iSkipCalls === 0) {
-			oControl.attachEventOnce("_rowsUpdated", fnHandler, that);
+			oControl.attachEventOnce("rowsUpdated", fnHandler, that);
 		} else {
-			oControl.attachEvent("_rowsUpdated", fnEventHandler);
+			oControl.attachRowsUpdated(fnEventHandler);
 		}
 	}
 
