@@ -74,7 +74,7 @@ sap.ui.define(function() {
 				qunit: {
 					reorder: false
 				},
-				sinon: false
+				sinon: true
 			},
 			JSView: {
 				title: "QUnit Page for sap.ui.core.mvc.JSView + sap.ui.core.mvc.Controller",

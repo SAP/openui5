@@ -1,8 +1,9 @@
-/*global QUnit */
+/*global sinon QUnit */
 sap.ui.define([
 	'sap/ui/core/library',
-	'./AnyView.qunit'
-], function(coreLibrary, testsuite) {
+	'./AnyView.qunit',
+	'sap/ui/base/ManagedObject'
+], function(coreLibrary, testsuite, ManagedObject) {
 	"use strict";
 
 	var ViewType = coreLibrary.mvc.ViewType;
@@ -34,6 +35,39 @@ sap.ui.define([
 		assert.ok(typeof oBindingInfo.formatter === 'function', "formatter should have been resolved");
 		assert.ok(oBindingInfo.formatter(42) === 'formatted-42', "formatter should be the one form the controller"); // TODO test should involve instance
 		oView.destroy();
+	});
+
+	QUnit.test("JSONView: Aggregation Binding with value property", function(assert) {
+		var done = assert.async();
+		sap.ui.require(["sap/ui/table/Table"], function(Table) {
+			var oExtractBindingInfoSpy = sinon.spy(ManagedObject.prototype, "extractBindingInfo");
+
+			var json = JSON.stringify({
+				"Type": "sap.ui.core.mvc.JSONView",
+				"content": [
+					{
+						"Type": "sap.ui.table.Table",
+						"columns": [
+							{
+								"Type": "sap.ui.table.Column",
+								"template": {
+									"Type": "sap.m.DatePicker",
+									"value": {
+										"path": "Date",
+										"type": "sap.ui.model.type.String"
+									}
+								}
+							}
+						]
+					}
+				]
+			});
+
+			sap.ui.jsonview({ viewContent: json });
+			assert.equal(oExtractBindingInfoSpy.callCount, 3, "ManagedObject#extractBindingInfo called three times");
+			assert.equal(oExtractBindingInfoSpy.getCall(2).returnValue, undefined, "ManagedObject#extractBindingInfo should return undefined");
+			done();
+		});
 	});
 
 });
