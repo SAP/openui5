@@ -9,8 +9,8 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/m/OverflowToolbarButton", "sap/m/OverflowToolbarLayoutData", "sap/base/util/merge", "sap/m/library", "sap/m/MenuButton", "sap/ui/core/library"
-], function(OverflowToolbarButton, OverflowToolbarLayoutData, merge, MLibrary, MenuButton, CoreLibrary) {
+	"sap/m/OverflowToolbarButton", "sap/m/library", "sap/m/MenuButton", "sap/ui/core/library"
+], function(OverflowToolbarButton, MLibrary, MenuButton, CoreLibrary) {
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
@@ -38,9 +38,6 @@ sap.ui.define([
 				text: oRb.getText("table.SETTINGS_SORT"),
 				press: aEventInfo,
 				tooltip: oRb.getText("table.SETTINGS_SORT"),
-				layoutData: new OverflowToolbarLayoutData({
-					closeOverflowOnInteraction: false
-				}),
 				ariaHasPopup: HasPopup.Dialog
 			});
 		},
@@ -53,9 +50,6 @@ sap.ui.define([
 				text: oRb.getText("table.SETTINGS_COLUMN"),
 				press: aEventInfo,
 				tooltip: oRb.getText("table.SETTINGS_COLUMN"),
-				layoutData: new OverflowToolbarLayoutData({
-					closeOverflowOnInteraction: false
-				}),
 				ariaHasPopup: HasPopup.Dialog
 			});
 		},
@@ -68,9 +62,6 @@ sap.ui.define([
 				text: oRb.getText("filter.PERSONALIZATION_DIALOG_TITLE"),
 				press: aEventInfo,
 				tooltip: oRb.getText("filter.PERSONALIZATION_DIALOG_TITLE"),
-				layoutData: new OverflowToolbarLayoutData({
-					closeOverflowOnInteraction: false
-				}),
 				ariaHasPopup: HasPopup.Dialog
 			});
 		},
