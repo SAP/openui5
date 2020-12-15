@@ -74,25 +74,28 @@ sap.ui.define(["sap/ui/core/library"],
 		oRm.close("div");
 	};
 
-	ObjectAttributeRenderer.renderActiveTitle = function (oRm, oOA) {
+	ObjectAttributeRenderer.renderActiveTitle = function(oRm, oOA) {
+		var sColon;
+
 		if (!oOA.getProperty("title")) {
 			return;
 		}
 
-		var oCore = sap.ui.getCore();
+		sColon = ": ";
 
 		oRm.openStart("span", oOA.getId() + "-title");
 		oRm.class("sapMObjectAttributeTitle");
 		oRm.openEnd();
 		oRm.text(oOA.getProperty("title"));
-		if (oCore.getConfiguration().getLocale().getLanguage().toLowerCase() === "fr") {
-			oRm.unsafeHtml("&nbsp;");
-		}
 		oRm.close("span");
+
 		oRm.openStart("span", oOA.getId() + "-colon");
 		oRm.class("sapMObjectAttributeColon");
 		oRm.openEnd();
-		oRm.unsafeHtml(":&nbsp;");
+		if (sap.ui.getCore().getConfiguration().getLocale().getLanguage().toLowerCase() === "fr") {
+			sColon = " " + sColon;
+		}
+		oRm.text(sColon);
 		oRm.close("span");
 	};
 
