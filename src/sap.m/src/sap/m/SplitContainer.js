@@ -850,7 +850,21 @@ function(
 		}
 	};
 
-
+	/**
+	 * Proxy to the _safeBackToPage methods of the internal nav containers
+	 * @param pageId
+	 * @param transitionName
+	 * @param backData
+	 * @param oTransitionParameters
+	 * @private
+	 */
+	SplitContainer.prototype._safeBackToPage = function(pageId, transitionName, backData, oTransitionParameters) {
+		if (this._oMasterNav.getPage(pageId)) {
+			this._oMasterNav._safeBackToPage(pageId, transitionName, backData, oTransitionParameters);
+		} else {
+			this._oDetailNav._safeBackToPage(pageId, transitionName, backData, oTransitionParameters);
+		}
+	};
 
 	/**
 	 * Inserts the page/control with the specified ID into the navigation history stack of the NavContainer.
