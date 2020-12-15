@@ -1,0 +1,75 @@
+{
+	"_version": "1.28.0",
+	"sap.app": {
+		"id": "card.explorer.format.text.card",
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"title": "Sample of Text Formatting",
+		"subTitle": "Sample of Text Formatting",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"shortTitle": "A short title for this Card",
+		"info": "Additional information about this Card",
+		"description": "A long description for this Card",
+		"tags": {
+			"keywords": [
+				"Translation",
+				"Card",
+				"Sample"
+			]
+		}
+	},
+	"sap.card": {
+		"configuration": {
+			"parameters": {
+				"subtitleText": {
+					"description": "Subtitle of the card with placeholders that will be filled",
+					"type": "string",
+					"label": "Subtitle",
+					"value": "Showing {0} of {1} items"
+				}
+			}
+		},
+		"data": {
+			"json": {
+				"items": [
+					{
+						"name": "Comfort Easy",
+						"available": 5,
+						"total": 11
+					},
+					{
+						"name": "ITelO Vault",
+						"available": 7,
+						"total": 23
+					},
+					{
+						"name": "Notebook Basic",
+						"available": 17,
+						"total": 23
+					}
+				]
+			}
+		},
+		"type": "List",
+		"designtime": "dt/Configuration",
+		"header": {
+			"title": "My Products",
+			"subTitle": "{= format.text('{{parameters.subtitleText}}', ['2', ${/items}.length]) }",
+			"icon": {
+				"src": "sap-icon://product"
+			}
+		},
+		"content": {
+			"data": {
+				"path": "/items"
+			},
+			"maxItems": 2,
+			"item": {
+				"title": "{name}",
+				"description": "{= format.text(${i18n>availabilityStatus}, [${available}, ${total}, 'S2']) }"
+			}
+		}
+	}
+}

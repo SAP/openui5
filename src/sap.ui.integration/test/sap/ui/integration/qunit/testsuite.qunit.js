@@ -121,7 +121,8 @@ sap.ui.define(function () {
 					"./formatters/CardFormatters.qunit",
 					"./formatters/DateTimeFormatter.qunit",
 					"./formatters/IconFormatter.qunit",
-					"./formatters/NumberFormatter.qunit"
+					"./formatters/NumberFormatter.qunit",
+					"./formatters/TextFormatter.qunit"
 				]
 			},
 			"CardHostAndExtension": {},

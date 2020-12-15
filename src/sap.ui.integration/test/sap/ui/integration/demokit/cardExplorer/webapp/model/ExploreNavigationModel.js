@@ -22,7 +22,6 @@ sap.ui.define([
 							{
 								title: 'Card',
 								key: 'adaptive',
-								manifestUrl: '/samples/adaptive/adaptive.json',
 								files: [
 									{
 										url: '/samples/adaptive/adaptive.json',
@@ -39,7 +38,6 @@ sap.ui.define([
 							{
 								title: 'RichTextBlock',
 								key: 'richtext',
-								manifestUrl: '/samples/adaptive/richtext.json',
 								files: [
 									{
 										url: '/samples/adaptive/richtext.json',
@@ -56,7 +54,6 @@ sap.ui.define([
 							{
 								title: 'Form',
 								key: 'form',
-								manifestUrl: '/samples/adaptive/form.json',
 								files: [
 									{
 										url: '/samples/adaptive/form.json',
@@ -73,7 +70,6 @@ sap.ui.define([
 							{
 								title: 'Templating',
 								key: 'templating',
-								manifestUrl: '/samples/adaptive/templating.json',
 								files: [
 									{
 										url: '/samples/adaptive/templating.json',
@@ -111,7 +107,6 @@ sap.ui.define([
 							{
 								title: 'Markdown',
 								key: 'markdown',
-								manifestUrl: '/samples/adaptive/markdown.json',
 								files: [
 									{
 										url: '/samples/adaptive/markdown.json',
@@ -128,7 +123,6 @@ sap.ui.define([
 							{
 								title: 'Submit Action',
 								key: 'adaptive-action-submit',
-								manifestUrl: '/samples/adaptive/action-submit.json',
 								files: [
 									{
 										url: '/samples/adaptive/action-submit.json',
@@ -145,7 +139,6 @@ sap.ui.define([
 							{
 								title: 'Submit with Extension',
 								key: 'extension',
-								manifestUrl: '/samples/adaptive/extensionSample/manifest.json',
 								files: [
 									{
 										url: '/samples/adaptive/extensionSample/manifest.json',
@@ -172,7 +165,6 @@ sap.ui.define([
 							{
 								title: 'Open URL Action',
 								key: 'adaptive-action-openurl',
-								manifestUrl: '/samples/adaptive/action-openurl.json',
 								files: [
 									{
 										url: '/samples/adaptive/action-openurl.json',
@@ -200,7 +192,6 @@ sap.ui.define([
 									rows: 5,
 									columns: 4
 								},
-								manifestUrl: '/samples/analytical/line.json',
 								files: [
 									{
 										url: '/samples/analytical/line.json',
@@ -221,7 +212,6 @@ sap.ui.define([
 									rows: 5,
 									columns: 4
 								},
-								manifestUrl: '/samples/analytical/stackedColumn.json',
 								files: [
 									{
 										url: '/samples/analytical/stackedColumn.json',
@@ -242,7 +232,6 @@ sap.ui.define([
 									rows: 3,
 									columns: 3
 								},
-								manifestUrl: '/samples/analytical/donut.json',
 								files: [
 									{
 										url: '/samples/analytical/donut.json',
@@ -262,7 +251,6 @@ sap.ui.define([
 						title: 'Calendar',
 						target: 'exploreSamples',
 						key: 'calendar',
-						manifestUrl: '/samples/calendar/calendar.json',
 						settings: {
 							columns: 7
 						},
@@ -495,7 +483,6 @@ sap.ui.define([
 							{
 								title: 'Highlight',
 								key: 'highlight',
-								manifestUrl: '/samples/list/highlight.json',
 								files: [
 									{
 										url: '/samples/list/highlight.json',
@@ -512,7 +499,6 @@ sap.ui.define([
 							{
 								title: 'Icon',
 								key: 'icon',
-								manifestUrl: '/samples/list/icon.json',
 								files: [
 									{
 										url: '/samples/list/icon.json',
@@ -529,7 +515,6 @@ sap.ui.define([
 							{
 								title: 'Numeric',
 								key: 'numeric',
-								manifestUrl: '/samples/list/numeric.json',
 								files: [
 									{
 										url: '/samples/list/numeric.json',
@@ -549,7 +534,6 @@ sap.ui.define([
 								settings: {
 									columns: 3
 								},
-								manifestUrl: '/samples/list/quickLinks.json',
 								files: [
 									{
 										url: '/samples/list/quickLinks.json',
@@ -648,7 +632,6 @@ sap.ui.define([
 							{
 								title: 'Object',
 								key: 'object1',
-								manifestUrl: '/samples/object/object.json',
 								settings: {
 									columns: 5
 								},
@@ -668,7 +651,6 @@ sap.ui.define([
 							{
 								title: 'Visible Object Attributes',
 								key: 'visibleObjects',
-								manifestUrl: '/samples/object/visibleObject.json',
 								settings: {
 									columns: 5
 								},
@@ -695,7 +677,6 @@ sap.ui.define([
 							{
 								title: 'Table',
 								key: 'table1',
-								manifestUrl: '/samples/table/table.json',
 								settings: {
 									columns: 6
 								},
@@ -715,7 +696,6 @@ sap.ui.define([
 							{
 								title: 'Visible Columns',
 								key: 'visibleColumns',
-								manifestUrl: '/samples/table/visibleColumns.json',
 								settings: {
 									columns: 5
 								},
@@ -776,7 +756,6 @@ sap.ui.define([
 							{
 								title: 'Upcoming Activities',
 								key: 'general',
-								manifestUrl: '/samples/timeline/activities.json',
 								settings: {
 									columns: 3
 								},
@@ -847,7 +826,6 @@ sap.ui.define([
 						settings: {
 							columns: 3
 						},
-						manifestUrl: '/samples/cardActions.json',
 						files: [
 							{
 								url: '/samples/cardActions.json',
@@ -869,7 +847,6 @@ sap.ui.define([
 							{
 								title: 'Basic Data Request',
 								key: 'basic',
-								manifestUrl: '/samples/data/basic/manifest.json',
 								files: [
 									{
 										url: '/samples/data/basic/manifest.json',
@@ -887,7 +864,6 @@ sap.ui.define([
 								title: 'Using GraphQL',
 								key: 'graphql',
 								mockServer: true,
-								manifestUrl: '/samples/data/graphql/manifest.json',
 								files: [
 									{
 										url: '/samples/data/graphql/manifest.json',
@@ -912,7 +888,6 @@ sap.ui.define([
 								title: 'Top Products',
 								key: 'topProducts',
 								mockServer: true,
-								manifestUrl: '/samples/dataSources/topProducts.json',
 								files: [
 									{
 										url: '/samples/dataSources/topProducts.json',
@@ -961,7 +936,6 @@ sap.ui.define([
 						settings: {
 							columns: 7
 						},
-						manifestUrl: '/samples/dateRange.json',
 						files: [
 							{
 								url: '/samples/dateRange.json',
@@ -1098,7 +1072,6 @@ sap.ui.define([
 							{
 								title: 'Dynamically Defined Filter',
 								key: 'dynamicFilter',
-								manifestUrl: '/samples/filters/dynamicFilter.json',
 								files: [
 									{
 										url: '/samples/filters/dynamicFilter.json',
@@ -1116,7 +1089,6 @@ sap.ui.define([
 								title: 'Using Static Items',
 								key: 'usingStaticItems',
 								mockServer: true,
-								manifestUrl: '/samples/filters/usingStaticItems.json',
 								files: [
 									{
 										url: '/samples/filters/usingStaticItems.json',
@@ -1136,7 +1108,6 @@ sap.ui.define([
 						key: 'parameters',
 						target: 'exploreSamples',
 						title: 'Parameters',
-						manifestUrl: '/samples/parameters.json',
 						files: [
 							{
 								url: '/samples/parameters.json',
@@ -1185,7 +1156,6 @@ sap.ui.define([
 						key: 'currency',
 						target: 'exploreSamples',
 						title: 'Currency',
-						manifestUrl: "/samples/formatters/currency/manifest.json",
 						files: [
 							{
 								url: '/samples/formatters/currency/manifest.json',
@@ -1203,7 +1173,6 @@ sap.ui.define([
 						key: 'dateAndTime',
 						target: 'exploreSamples',
 						title: 'Date and Time',
-						manifestUrl: "/samples/formatters/dateAndTime/manifest.json",
 						files: [
 							{
 								url: '/samples/formatters/dateAndTime/manifest.json',
@@ -1221,7 +1190,6 @@ sap.ui.define([
 						key: 'float',
 						target: 'exploreSamples',
 						title: 'Float',
-						manifestUrl: "/samples/formatters/float/manifest.json",
 						files: [
 							{
 								url: '/samples/formatters/float/manifest.json',
@@ -1239,7 +1207,6 @@ sap.ui.define([
 						key: 'integer',
 						target: 'exploreSamples',
 						title: 'Integer',
-						manifestUrl: "/samples/formatters/integer/manifest.json",
 						files: [
 							{
 								url: '/samples/formatters/integer/manifest.json',
@@ -1257,7 +1224,6 @@ sap.ui.define([
 						key: 'percent',
 						target: 'exploreSamples',
 						title: 'Percent',
-						manifestUrl: "/samples/formatters/percent/manifest.json",
 						files: [
 							{
 								url: '/samples/formatters/percent/manifest.json',
@@ -1272,10 +1238,36 @@ sap.ui.define([
 						]
 					},
 					{
+						key: 'text',
+						target: 'exploreSamples',
+						title: 'Text',
+						files: [
+							{
+								url: '/samples/formatters/text/manifest.json',
+								name: 'manifest.json',
+								key: 'manifest.json'
+							},
+							{
+								url: '/samples/formatters/text/dt/Configuration.js',
+								name: 'dt/Configuration.js',
+								key: 'designtime.js'
+							},
+							{
+								url: '/samples/formatters/text/i18n/i18n.properties',
+								name: 'i18n.properties',
+								key: 'i18n.properties'
+							},
+							{
+								url: '/samples/formatters/text/i18n/i18n_de.properties',
+								name: 'i18n_de.properties',
+								key: 'i18n_de.properties'
+							}
+						]
+					},
+					{
 						key: 'unit',
 						target: 'exploreSamples',
 						title: 'Unit of Measurement',
-						manifestUrl: "/samples/formatters/unit/manifest.json",
 						files: [
 							{
 								url: '/samples/formatters/unit/manifest.json',
