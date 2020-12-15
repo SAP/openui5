@@ -276,14 +276,13 @@ sap.ui.define([
 			for (j = aChildNodes.length - 1; j >= 0; j -= 1) {
 				oChildNode = aChildNodes[j];
 				switch (oChildNode.nodeName) {
-					case "columns":
+					case "columns" :
 						bHasColumns = true;
 						break;
-					case "items":
+					case "items" :
 						throw new Error("Do not use <items> in sap.m.Table");
-					case "ColumnListItem":
+					case "ColumnListItem" :
 						aColumnNodes = oChildNode.childNodes;
-
 						bHasListItem = true;
 						for (k = aColumnNodes.length - 1; k >= 0; k -= 1) {
 							if (aColumnNodes[k].nodeType === Node.ELEMENT_NODE) {
@@ -1657,12 +1656,12 @@ sap.ui.define([
 				sMessage = "Enter a text with a maximum of 5 characters and spaces";
 
 			this.expectMessages([{
-				message : sMessage,
-				persistent : false,
-				target : this.oView.createId("budgetCurrency/value"),
-				technical : false,
-				type : "Error"
-			}]);
+					message : sMessage,
+					persistent : false,
+					target : this.oView.createId("budgetCurrency/value"),
+					technical : false,
+					type : "Error"
+				}]);
 
 			// Note: Because the invalid value has to be set via control, changes for that control
 			// cannot be observed via expectChanges
@@ -2251,13 +2250,13 @@ sap.ui.define([
 					[new Filter("Name", FilterOperator.GE, "M")]);
 
 			that.expectRequest("Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT"
-				+ "?$filter=Name ge 'M'&$skip=0&$top=3", {
-				value : [
-					{ID : 1},
-					{ID : 2},
-					{ID : 3}
-				]
-			});
+					+ "?$filter=Name ge 'M'&$skip=0&$top=3", {
+					value : [
+						{ID : 1},
+						{ID : 2},
+						{ID : 3}
+					]
+				});
 
 			// code under test
 			return Promise.all([
@@ -2423,7 +2422,8 @@ sap.ui.define([
 					[, "refresh", {reason : "refresh"}],
 					[, "change", {reason : "change"}],
 					[, "dataReceived", {data : {}}]
-				]).expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
+				])
+				.expectRequest("SalesOrderList?$select=Note,SalesOrderID&$skip=0&$top=3", {
 					value : [
 						{SalesOrderID : "01", Note : "Note 1"},
 						{SalesOrderID : "02", Note : "Note 2"},
@@ -2447,7 +2447,7 @@ sap.ui.define([
 	// BCP: 2070470932: see that sap-client is handled properly
 	QUnit.test("ODCB: late property", function (assert) {
 		var oFormContext,
-			oModel = createModel(sSalesOrderService + "?sap-client=123",{autoExpandSelect : true}),
+			oModel = createModel(sSalesOrderService + "?sap-client=123", {autoExpandSelect : true}),
 			sView = '\
 <FlexBox id="form" binding="{/SalesOrderList(\'1\')/SO_2_BP}">\
 	<Text id="city" text="{Address/City}"/>\
@@ -2735,7 +2735,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
-			+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,SalesOrderID)", {
 				SO_2_SOITEM : [
 					{ItemPosition : "0010", SalesOrderID : "1"}
 				]
@@ -2746,9 +2746,8 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 
-			that.expectRequest(
-				"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
-				+ "?$select=Quantity", {
+			that.expectRequest("SalesOrderList('1')"
+					+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')?$select=Quantity", {
 					Quantity : "5"
 				})
 				.expectChange("quantity", "5.000");
@@ -3000,8 +2999,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest(
-				"TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM?sap-client=123"
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES('2')/EMPLOYEE_2_TEAM?sap-client=123"
 					+ "&$select=Budget,Team_Id", {
 					"@odata.etag" : "etag1",
 					Budget : "12.45",
@@ -3022,8 +3020,8 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$search=foo"
-				+ "&$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
-				+ "&$expand=EMPLOYEE_2_MANAGER($select=ID)&$skip=2&$top=2", {
+					+ "&$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
+					+ "&$expand=EMPLOYEE_2_MANAGER($select=ID)&$skip=2&$top=2", {
 					value : [
 						{ID : "4", Name : "Peter Burke", EMPLOYEE_2_MANAGER : {ID : "5"}}
 					]
@@ -3036,8 +3034,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name" +
-				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name"
+					+ "&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
 					value : [
 						{AGE : 43, ID : "2", Name : "Frederic Fall *"},
 						{AGE : 29, ID : "3", Name : "Jonathan Smith *"},
@@ -3062,8 +3060,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name" +
-				"&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
+			that.expectRequest("TEAMS('1')/TEAM_2_EMPLOYEES?sap-client=123&$select=AGE,ID,Name"
+					+ "&$filter=ID eq '2' or ID eq '3' or ID eq '4'&$top=3", {
 					value : [
 						{AGE : 44, ID : "2", Name : "Frederic Fall **"},
 						{AGE : 30, ID : "3", Name : "Jonathan Smith **"},
@@ -3319,8 +3317,8 @@ sap.ui.define([
 					SalesOrderID : "SO1"
 				})
 				.expectRequest("SalesOrderList('SO1')/SO_2_SOITEM?sap-client=123"
-						+ "&$select=GrossAmount,ItemPosition,Note,Quantity,SalesOrderID"
-						+ "&$skip=0&$top=100", {
+					+ "&$select=GrossAmount,ItemPosition,Note,Quantity,SalesOrderID"
+					+ "&$skip=0&$top=100", {
 					value : [{
 						GrossAmount : "42.1",
 						ItemPosition : "0010",
@@ -3400,27 +3398,27 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')/SO_2_SOITEM?sap-client=123"
-			+ "&$select=ItemPosition,SalesOrderID"
-			+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)&$skip=0&$top=100", {
-			value : [{
-				"@odata.etag" : "etag0",
-				ItemPosition : "0010",
-				SalesOrderID : "1",
-				SOITEM_2_PRODUCT : {
-					"@odata.etag" : "etag1",
-					Name : "Notebook Basic 15",
-					ProductID : "HT-1000"
-				}
-			}]
-		})
+				+ "&$select=ItemPosition,SalesOrderID"
+				+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)&$skip=0&$top=100", {
+				value : [{
+					"@odata.etag" : "etag0",
+					ItemPosition : "0010",
+					SalesOrderID : "1",
+					SOITEM_2_PRODUCT : {
+						"@odata.etag" : "etag1",
+						Name : "Notebook Basic 15",
+						ProductID : "HT-1000"
+					}
+				}]
+			})
 			.expectChange("product", ["Notebook Basic 15"])
 			.expectChange("businessPartner");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			that.expectRequest(
-				"SalesOrderList('1')/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
-				+ "/SOITEM_2_PRODUCT?sap-client=123&$select=ProductID"
-				+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)", {
+			that.expectRequest("SalesOrderList('1')"
+					+ "/SO_2_SOITEM(SalesOrderID='1',ItemPosition='0010')"
+					+ "/SOITEM_2_PRODUCT?sap-client=123&$select=ProductID"
+					+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)", {
 					"@odata.etag" : "etag1",
 					ProductID : "HT-1000",
 					PRODUCT_2_BP : {
@@ -3452,8 +3450,8 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')/SO_2_SOITEM('0010')?sap-client=123"
-			+ "&$select=ItemPosition,SalesOrderID"
-			+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)", {
+				+ "&$select=ItemPosition,SalesOrderID"
+				+ "&$expand=SOITEM_2_PRODUCT($select=Name,ProductID)", {
 				ItemPosition : "0010",
 				SalesOrderID : "1",
 				SOITEM_2_PRODUCT : {
@@ -3467,8 +3465,8 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM('0010')/SOITEM_2_PRODUCT"
-				+ "?sap-client=123&$select=ProductID"
-				+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)", {
+					+ "?sap-client=123&$select=ProductID"
+					+ "&$expand=PRODUCT_2_BP($select=BusinessPartnerID,CompanyName)", {
 					"@odata.etag" : "ETag",
 					ProductID : "HT-1000",
 					PRODUCT_2_BP : {
@@ -3840,8 +3838,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("EMPLOYEES?foo=bar"
-					+ "&$filter=(AGE gt 42) and ID eq '0'"
+			that.expectRequest("EMPLOYEES?foo=bar&$filter=(AGE gt 42) and ID eq '0'"
 					+ "&$select=AGE,ID,Name", {value : []})
 				.expectChange("text", ["Jonathan Smith", "Peter Burke"])
 				.expectChange("age", ["50", "77"]);
@@ -3851,8 +3848,7 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("EMPLOYEES?foo=bar"
-					+ "&$filter=(AGE gt 42) and ID eq '1'"
+			that.expectRequest("EMPLOYEES?foo=bar&$filter=(AGE gt 42) and ID eq '1'"
 					+ "&$select=AGE,ID,Name", {
 					value : [{
 						ID : "1",
@@ -3913,7 +3909,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("EMPLOYEES?$select=ID,__CT__FAKE__Message/__FAKE__Messages"
-					+ "&$skip=0&$top=100", {
+				+ "&$skip=0&$top=100", {
 				value : [{
 					ID : "0",
 					__CT__FAKE__Message : {
@@ -3949,8 +3945,7 @@ sap.ui.define([
 		}).then(function () {
 			var oContext = oTable.getItems()[0].getBindingContext();
 
-			that.expectRequest("EMPLOYEES('0')"
-						+ "?$select=ID,__CT__FAKE__Message/__FAKE__Messages", {
+			that.expectRequest("EMPLOYEES('0')?$select=ID,__CT__FAKE__Message/__FAKE__Messages", {
 					ID : "0",
 					__CT__FAKE__Message : {
 						__FAKE__Messages : [oResponseMessage0AfterRefresh]
@@ -4278,8 +4273,8 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest(
-			"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
+		this.expectRequest("EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
+				+ "&$skip=0&$top=100", {
 				value : [{
 					ID : "1",
 					Name : "Jonathan Smith",
@@ -4312,8 +4307,8 @@ sap.ui.define([
 			return that.checkValueState(assert, oTable.getItems()[0].getCells()[0], "Warning",
 				"Text");
 		}).then(function () {
-			that.expectRequest(
-				"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
+			that.expectRequest("EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
+					+ "&$skip=0&$top=100", {
 					value : [{
 						Name : "Frederic Fall",
 						__CT__FAKE__Message : {__FAKE__Messages : []}
@@ -4359,8 +4354,8 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest(
-			"EMPLOYEES?$select=Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=2", {
+		this.expectRequest("EMPLOYEES?$select=Name,__CT__FAKE__Message/__FAKE__Messages"
+				+ "&$skip=0&$top=2", {
 				value : [{
 					Name : "Jonathan Smith",
 					__CT__FAKE__Message : {__FAKE__Messages : []}
@@ -4386,8 +4381,8 @@ sap.ui.define([
 			return that.checkValueState(assert, oTable.getRows()[1].getCells()[0],
 				"Warning", "Text");
 		}).then(function () {
-			that.expectRequest(
-				"EMPLOYEES?$select=Name,__CT__FAKE__Message/__FAKE__Messages&$skip=2&$top=1", {
+			that.expectRequest("EMPLOYEES?$select=Name,__CT__FAKE__Message/__FAKE__Messages"
+					+ "&$skip=2&$top=1", {
 					value : [{
 						Name : "Peter Burke",
 						__CT__FAKE__Message : {
@@ -4461,7 +4456,7 @@ sap.ui.define([
 			that.oLogMock.expects("error").withExactArgs("Failed to read path /EMPLOYEES('2')/Name",
 				sinon.match(oError.message), "sap.ui.model.odata.v4.ODataPropertyBinding");
 			that.expectRequest(
-				"EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", oError)
+					"EMPLOYEES('2')?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages", oError)
 				.expectChange("text", null)
 				.expectMessages([{
 					code : "CODE",
@@ -5227,8 +5222,8 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList?$select=SalesOrderID&$filter=SalesOrderID gt"
-					+ " '0500000001'&$skip=0&$top=100",
+			that.expectRequest("SalesOrderList?$select=SalesOrderID"
+					+ "&$filter=SalesOrderID gt '0500000001'&$skip=0&$top=100",
 					{value : [{SalesOrderID : "0500000002"}]}
 				)
 				.expectChange("count", "1")
@@ -5762,8 +5757,8 @@ sap.ui.define([
 			// Respond with one employee less to show that the refresh must destroy the bindings for
 			// the last row. Otherwise the property binding for that row will cause a "Failed to
 			// drill down".
-			that.expectRequest(
-				"SalesOrderList('0500000001')?$expand=SO_2_SOITEM($select=ItemPosition)", {
+			that.expectRequest("SalesOrderList('0500000001')"
+					+ "?$expand=SO_2_SOITEM($select=ItemPosition)", {
 					SalesOrderID : "0500000001",
 					SO_2_SOITEM : [
 						{ItemPosition : "0000000010"},
@@ -5853,11 +5848,11 @@ sap.ui.define([
 					{SalesOrderID : "0500000001", Note : "refreshed"})
 				.expectRequest("SalesOrderList('0500000001')/SO_2_SOITEM?$select=ItemPosition,"
 					+ "SalesOrderID&$skip=0&$top=100", {
-						value : [
-							{ItemPosition : "0000000010"},
-							{ItemPosition : "0000000020"},
-							{ItemPosition : "0000000030"}
-						]
+					value : [
+						{ItemPosition : "0000000010"},
+						{ItemPosition : "0000000020"},
+						{ItemPosition : "0000000030"}
+					]
 				})
 				.expectChange("count", "3")
 				.expectChange("note", "refreshed")
@@ -5996,7 +5991,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("As(1)?$select=AtoEntityWithComplexKey"
-				+ "&$expand=AtoEntityWithComplexKey($select=Key/P1,Key/P2,Value)", {
+					+ "&$expand=AtoEntityWithComplexKey($select=Key/P1,Key/P2,Value)", {
 					AtoEntityWithComplexKey : {
 						Key : {
 							P1 : "p1",
@@ -7268,7 +7263,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList?$filter=contains(Note,'SalesOrder')"
-					+ "&$select=Note,SalesOrderID&$skip=0&$top=2", {
+				+ "&$select=Note,SalesOrderID&$skip=0&$top=2", {
 				value : [{
 					Note : "First SalesOrder",
 					SalesOrderID : "42"
@@ -7379,9 +7374,7 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("SalesOrderList?$filter=(contains(Note,'SalesOrder'))"
 					+ " and not (SalesOrderID eq '46' or SalesOrderID eq '44')"
-					+ "&$select=Note,SalesOrderID&$skip=2&$top=2", {
-					value : []
-				});
+					+ "&$select=Note,SalesOrderID&$skip=2&$top=2", {value : []});
 
 			that.oView.byId("table-trigger").firePress();
 
@@ -7484,9 +7477,7 @@ sap.ui.define([
 			assert.strictEqual(oTable.getRows()[1].getBindingContext(), oCreatedContext1);
 
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
-						+ "&$filter=SalesOrderID eq '44'", {
-					value : []
-				})
+					+ "&$filter=SalesOrderID eq '44'", {value : []})
 				.expectChange("id", null) // for the deleted row
 				.expectChange("note", null)
 				.expectChange("id", [, "43"])
@@ -8132,7 +8123,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
-					+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
+				+ "&$expand=BP_2_SO($select=Note,SalesOrderID)", {
 				BusinessPartnerID : "4711",
 				BP_2_SO : [{
 					Note : "First SalesOrder",
@@ -8444,7 +8435,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartnerList('4711')?$select=BusinessPartnerID"
-			+ "&$expand=BP_2_SO($count=true;$select=Note,SalesOrderID)", {
+				+ "&$expand=BP_2_SO($count=true;$select=Note,SalesOrderID)", {
 				BusinessPartnerID : "4711",
 				"BP_2_SO@odata.count" : "1",
 				BP_2_SO : [{
@@ -8534,7 +8525,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList"
-			+ "?$count=true&$select=Note,SalesOrderID&$skip=0&$top=20", {
+				+ "?$count=true&$select=Note,SalesOrderID&$skip=0&$top=20", {
 				"@odata.count" : "1",
 				value : [{
 					Note : "First SalesOrder",
@@ -8599,9 +8590,7 @@ sap.ui.define([
 			assert.strictEqual(oTable.getItems()[2].getBindingContext(), oCreatedContext1);
 
 			that.expectRequest("SalesOrderList?$select=Note,SalesOrderID"
-				+ "&$filter=SalesOrderID eq '44'", {
-					value : []
-				});
+					+ "&$filter=SalesOrderID eq '44'", {value : []});
 
 			return Promise.all([
 				oCreatedContext1.refresh("$auto", true/*bAllowRemoval*/),
@@ -8647,7 +8636,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartnerList('4711')/BP_2_SO?$count=true"
-			+ "&$select=Note,SalesOrderID&$skip=0&$top=20", {
+				+ "&$select=Note,SalesOrderID&$skip=0&$top=20", {
 				"@odata.count" : "1",
 				value : [{
 					Note : "First SalesOrder",
@@ -8748,7 +8737,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList"
-			+ "?$count=true&$select=Note,SalesOrderID&$skip=0&$top=102", {
+				+ "?$count=true&$select=Note,SalesOrderID&$skip=0&$top=102", {
 				"@odata.count" : "1",
 				value : [{
 					Note : "First SalesOrder",
@@ -8807,7 +8796,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectChange("id", [, "43", "44"])
-				.expectChange("note", [,"New 1", "New 2"]);
+				.expectChange("note", [, "New 1", "New 2"]);
 
 			oTable.setFirstVisibleRow(1);
 
@@ -8855,8 +8844,8 @@ sap.ui.define([
 
 			that = this;
 
-		this.expectRequest("BusinessPartnerList?$select=Address/City,Address/GeoLocation/Longitude,"
-					+ "BusinessPartnerID&$skip=0&$top=100", {
+		this.expectRequest("BusinessPartnerList?$select=Address/City,Address/GeoLocation/Longitude"
+				+ ",BusinessPartnerID&$skip=0&$top=100", {
 				value : [{
 					Address : {
 						City : "Walldorf",
@@ -8902,8 +8891,8 @@ sap.ui.define([
 					BusinessPartnerID : "43"
 				})
 				// Note: This additional request will be eliminated by CPOUI5UISERVICESV3-1436
-				.expectRequest("BusinessPartnerList('43')?$select=Address/City,"
-						+ "Address/GeoLocation/Longitude,BusinessPartnerID", {
+				.expectRequest("BusinessPartnerList('43')?$select=Address/City"
+						+ ",Address/GeoLocation/Longitude,BusinessPartnerID", {
 					Address : {
 						City : "Heidelberg",
 						GeoLocation : {Longitude : "8.69"}
@@ -8935,8 +8924,8 @@ sap.ui.define([
 			oTable,
 			that = this;
 
-		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,Quantity,"
-			+ "QuantityUnit,SalesOrderID&$skip=0&$top=100", {
+		this.expectRequest("SalesOrderList('42')/SO_2_SOITEM?$select=ItemPosition,Quantity"
+				+ ",QuantityUnit,SalesOrderID&$skip=0&$top=100", {
 				value : [{
 					SalesOrderID : "42",
 					ItemPosition : "0010",
@@ -8976,9 +8965,9 @@ sap.ui.define([
 					QuantityUnit : "EA"
 				})
 				// Note: This additional request will be eliminated by CPOUI5UISERVICESV3-1436
-				.expectRequest("SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',"
-						+ "ItemPosition='0020')?$select=ItemPosition,Quantity,QuantityUnit,"
-						+ "SalesOrderID", {
+				.expectRequest("SalesOrderList('42')"
+					+ "/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0020')"
+					+ "?$select=ItemPosition,Quantity,QuantityUnit,SalesOrderID", {
 					SalesOrderID : "42",
 					ItemPosition : "0020",
 					Quantity : "2.000",
@@ -9007,7 +8996,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('42')?$select=SalesOrderID"
-			+ "&$expand=SO_2_SOITEM($select=ItemPosition,ProductID,SalesOrderID)", {
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,ProductID,SalesOrderID)", {
 				SalesOrderID : "42",
 				SO_2_SOITEM : []
 			});
@@ -9086,7 +9075,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartnerList('1')/BP_2_SO('42')/SO_2_SOITEM('0010')"
-			+ "?$select=ItemPosition,Messages,Quantity,QuantityUnit,SalesOrderID", {
+				+ "?$select=ItemPosition,Messages,Quantity,QuantityUnit,SalesOrderID", {
 				SalesOrderID : "42",
 				ItemPosition : "0010",
 				Quantity : "1.000",
@@ -9257,7 +9246,7 @@ sap.ui.define([
 					GrossAmount : "1000.00",
 					Note : "Note0",
 					SalesOrderID : "41"
-				},{
+				}, {
 					"@odata.etag" : "ETag1",
 					GrossAmount : "150.00",
 					Note : "Note1",
@@ -9342,7 +9331,7 @@ sap.ui.define([
 					"@odata.etag" : "ETag0",
 					GrossAmount : "4.1",
 					SalesOrderID : "41"
-				},{
+				}, {
 					"@odata.etag" : "ETag1",
 					GrossAmount : "4.2",
 					SalesOrderID : "42"
@@ -10597,7 +10586,8 @@ sap.ui.define([
 						target : "Name"
 					}],
 					Name : "Queen"
-				}).expectMessages([{
+				})
+				.expectMessages([{
 					code : "23",
 					message : "Just A Message",
 					target : "/Artists(ArtistID='ABC',IsActiveEntity=false)/Name",
@@ -11252,8 +11242,8 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("TEAMS('TEAM_01')?$select=Budget,BudgetCurrency,Team_Id",
-					{Budget : "456", BudgetCurrency : "EUR", Team_Id : "Team_01"})
-				.expectChange("budget", "456");
+				{Budget : "456", BudgetCurrency : "EUR", Team_Id : "Team_01"})
+			.expectChange("budget", "456");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			return that.setInvalidBudgetCurrency(assert);
@@ -11449,7 +11439,7 @@ sap.ui.define([
 			oListBinding = that.oView.byId("teamSet").getBinding("items");
 
 			that.expectRequest(
-				"TEAMS('1')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100", {
+					"TEAMS('1')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100", {
 					value : [
 						{ID : "01"},
 						{ID : "02"}
@@ -11485,7 +11475,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest(
-				"TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100", {
+					"TEAMS('2')/TEAM_2_EMPLOYEES?$orderby=Name&$select=ID&$skip=0&$top=100", {
 					value : [
 						{ID : "03"},
 						{ID : "04"}
@@ -13822,7 +13812,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("Equipments(Category='Electronics',ID=1)?$select=Category,ID,Name"
-			+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,MANAGER_ID,Name)", {
+				+ "&$expand=EQUIPMENT_2_EMPLOYEE($select=ID,MANAGER_ID,Name)", {
 				Category : "Electronics",
 				ID : 1,
 				EQUIPMENT_2_EMPLOYEE : {
@@ -13904,7 +13894,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("TEAMS('TEAM_01')?$select=MEMBER_COUNT,Team_Id"
-				+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name),TEAM_2_MANAGER($select=ID)", {
+					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name),TEAM_2_MANAGER($select=ID)", {
 					MEMBER_COUNT : 2,
 					Team_Id : "TEAM_01",
 					TEAM_2_EMPLOYEES : [{
@@ -13944,7 +13934,7 @@ sap.ui.define([
 			oFormBinding.suspend();
 			oListBinding.filter(new Filter("AGE", FilterOperator.GT, 42));
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name"
-				+ "&$filter=AGE gt 42&$skip=0&$top=100", {
+					+ "&$filter=AGE gt 42&$skip=0&$top=100", {
 					value : [{
 						AGE : 52,
 						ID : "1",
@@ -13964,17 +13954,17 @@ sap.ui.define([
 			oFormBinding.suspend();
 			oListBinding.sort(new Sorter("Name"));
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name"
-				+ "&$filter=AGE gt 42&$orderby=Name&$skip=0&$top=100", {
-				value : [{
-					AGE : 52,
-					ID : "1",
-					Name : "Frederic Fall"
-				}, {
-					AGE : 56,
-					ID : "3",
-					Name : "Jonathan Smith"
-				}]
-			});
+					+ "&$filter=AGE gt 42&$orderby=Name&$skip=0&$top=100", {
+					value : [{
+						AGE : 52,
+						ID : "1",
+						Name : "Frederic Fall"
+					}, {
+						AGE : 56,
+						ID : "3",
+						Name : "Jonathan Smith"
+					}]
+				});
 
 			// code under test
 			oFormBinding.resume();
@@ -13984,17 +13974,17 @@ sap.ui.define([
 			oFormBinding.suspend();
 			oListBinding.changeParameters({custom : "foo"});
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?$select=AGE,ID,Name"
-				+ "&$filter=AGE gt 42&$orderby=Name&custom=foo&$skip=0&$top=100", {
-				value : [{
-					AGE : 52,
-					ID : "1",
-					Name : "Frederic Fall"
-				}, {
-					AGE : 56,
-					ID : "3",
-					Name : "Jonathan Smith"
-				}]
-			});
+					+ "&$filter=AGE gt 42&$orderby=Name&custom=foo&$skip=0&$top=100", {
+					value : [{
+						AGE : 52,
+						ID : "1",
+						Name : "Frederic Fall"
+					}, {
+						AGE : 56,
+						ID : "3",
+						Name : "Jonathan Smith"
+					}]
+				});
 
 			// code under test
 			oFormBinding.resume();
@@ -14005,16 +13995,16 @@ sap.ui.define([
 			oListBinding.setAggregation({aggregate : {AGE : {}}});
 			that.expectRequest("TEAMS('TEAM_01')/TEAM_2_EMPLOYEES?custom=foo&$apply=aggregate(AGE)"
 					+ "&$orderby=Name&$filter=AGE gt 42&$skip=0&$top=100", {
-				value : [{
-					AGE : 52,
-					ID : "1",
-					Name : "Frederic Fall"
-				}, {
-					AGE : 56,
-					ID : "3",
-					Name : "Jonathan Smith"
-				}]
-			});
+					value : [{
+						AGE : 52,
+						ID : "1",
+						Name : "Frederic Fall"
+					}, {
+						AGE : 56,
+						ID : "3",
+						Name : "Jonathan Smith"
+					}]
+				});
 
 			// code under test
 			oFormBinding.resume();
@@ -14030,21 +14020,21 @@ sap.ui.define([
 
 			that.expectRequest("TEAMS('TEAM_01')?custom=foo&$select=MEMBER_COUNT,Team_Id"
 					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name),TEAM_2_MANAGER($select=ID)", {
-				MEMBER_COUNT : 2,
-				Team_Id : "TEAM_01",
-				TEAM_2_EMPLOYEES : [{
-					AGE : 52,
-					ID : "1",
-					Name : "Frederic Fall"
-				}, {
-					AGE : 56,
-					ID : "3",
-					Name : "Jonathan Smith"
-				}],
-				TEAM_2_MANAGER : {
-					ID : "4711"
-				}
-			});
+					MEMBER_COUNT : 2,
+					Team_Id : "TEAM_01",
+					TEAM_2_EMPLOYEES : [{
+						AGE : 52,
+						ID : "1",
+						Name : "Frederic Fall"
+					}, {
+						AGE : 56,
+						ID : "3",
+						Name : "Jonathan Smith"
+					}],
+					TEAM_2_MANAGER : {
+						ID : "4711"
+					}
+				});
 
 			// code under test
 			oFormBinding.resume();
@@ -14104,7 +14094,7 @@ sap.ui.define([
 					TEAM_ID : "TEAM_01"
 				})
 				.expectRequest("TEAMS('TEAM_01')?custom=bar&$select=MEMBER_COUNT,Team_Id"
-						+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)", {
+					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)", {
 					MEMBER_COUNT : 2,
 					Team_Id : "TEAM_01",
 					TEAM_2_EMPLOYEES : [{
@@ -14130,22 +14120,22 @@ sap.ui.define([
 			that.expectRequest("TEAMS('TEAM_01')?custom=foo&$select=MEMBER_COUNT,Team_Id"
 					+ "&$expand=TEAM_2_EMPLOYEES($select=AGE,ID,Name)"
 						+ ",TEAM_2_MANAGER($select=ID,TEAM_ID)", {
-				MEMBER_COUNT : 2,
-				Team_Id : "TEAM_01",
-				TEAM_2_EMPLOYEES : [{
-					AGE : 52,
-					ID : "1",
-					Name : "Frederic Fall"
-				}, {
-					AGE : 56,
-					ID : "3",
-					Name : "Jonathan Smith"
-				}],
-				TEAM_2_MANAGER : {
-					ID : "4711",
-					TEAM_ID : "TEAM_01"
-				}
-			});
+					MEMBER_COUNT : 2,
+					Team_Id : "TEAM_01",
+					TEAM_2_EMPLOYEES : [{
+						AGE : 52,
+						ID : "1",
+						Name : "Frederic Fall"
+					}, {
+						AGE : 56,
+						ID : "3",
+						Name : "Jonathan Smith"
+					}],
+					TEAM_2_MANAGER : {
+						ID : "4711",
+						TEAM_ID : "TEAM_01"
+					}
+				});
 
 			// code under test
 			oFormBinding.resume();
@@ -14550,8 +14540,8 @@ sap.ui.define([
 					[, "dataReceived", {data : {}}]
 				])
 				.expectRequest("BusinessPartnerList?$filter=BusinessPartnerRole eq '01' "
-				+ "and (BusinessPartnerID gt '0100000001')&$orderby=CompanyName"
-				+ "&$select=BusinessPartnerID&$skip=0&$top=99", {
+					+ "and (BusinessPartnerID gt '0100000001')&$orderby=CompanyName"
+					+ "&$select=BusinessPartnerID&$skip=0&$top=99", {
 					value : [{
 						BusinessPartnerID : "0100000002"
 					}, {
@@ -14626,7 +14616,7 @@ sap.ui.define([
 					[, "dataReceived", {data : {}}]
 				])
 				.expectRequest("BusinessPartnerList?$apply=groupby((BusinessPartnerRole))"
-				+ "&$count=true&$skip=0&$top=100", {
+					+ "&$count=true&$skip=0&$top=100", {
 					value : [{
 						BusinessPartnerRole : "01"
 					}, {
@@ -14761,7 +14751,7 @@ sap.ui.define([
 </FlexBox>';
 
 		this.expectRequest("GetSOContactList(SalesOrderID='0500000001')"
-			+ "?$select=ContactGUID,Nickname", {
+				+ "?$select=ContactGUID,Nickname", {
 				value : [
 					{ContactGUID : "fa163e7a-d4f1-1ee8-84ac-11f9c591d177", Nickname : "a"},
 					{ContactGUID : "fa163e7a-d4f1-1ee8-84ac-11f9c591f177", Nickname : "b"},
@@ -15833,11 +15823,11 @@ sap.ui.define([
 					]
 				})
 				.expectRequest("BusinessPartners?$apply=groupby((Region),aggregate(SalesAmount))"
-						+ "&$count=true&$skip=3&$top=1", {
-						"@odata.count" : "26",
-						value : [
-							{Region : "W", SalesAmount : "400"}
-						]
+					+ "&$count=true&$skip=3&$top=1", {
+					"@odata.count" : "26",
+					value : [
+						{Region : "W", SalesAmount : "400"}
+					]
 				})
 				.expectResets(oTable, 2, 1)
 				.expectChange("isExpanded", [,,,,,,,,,,,,, /*undefined*/, false, false])
@@ -17177,8 +17167,8 @@ sap.ui.define([
 				]);
 
 				that.expectRequest("BusinessPartners?$apply="
-					+ "groupby((Country,Region),aggregate(SalesNumber))"
-					+ "/filter(SalesNumber gt 0)/orderby(Region desc)/top(1)", {
+						+ "groupby((Country,Region),aggregate(SalesNumber))"
+						+ "/filter(SalesNumber gt 0)/orderby(Region desc)/top(1)", {
 						value : [
 							{Country : "a", Region : "Z", SalesNumber : 1}
 						]
@@ -17414,9 +17404,9 @@ sap.ui.define([
 			oListBinding.setContext(that.oModel.createBindingContext("/"));
 
 			that.expectRequest("BusinessPartners?custom=foo&$apply=filter(Name eq 'Foo')"
-				+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
-				+ "/filter(SalesNumber gt 0)/orderby(SalesNumber)"
-				+ "/concat(aggregate($count as UI5__count),top(99)))", {
+					+ "/concat(aggregate(SalesNumber),groupby((Region),aggregate(SalesNumber))"
+					+ "/filter(SalesNumber gt 0)/orderby(SalesNumber)"
+					+ "/concat(aggregate($count as UI5__count),top(99)))", {
 					value : [
 						{SalesNumber : 0},
 						{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"}
@@ -17459,9 +17449,9 @@ sap.ui.define([
 			]);
 
 			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
-				+ "/concat(aggregate(SalesNumber)"
-				+ ",groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
-				+ "/concat(aggregate($count as UI5__count),top(99)))", {
+					+ "/concat(aggregate(SalesNumber)"
+					+ ",groupby((Region),aggregate(SalesNumber))/filter(SalesNumber gt 0)"
+					+ "/concat(aggregate($count as UI5__count),top(99)))", {
 					value : [
 						{SalesNumber : 0},
 						{"UI5__count" : "26", "UI5__count@odata.type" : "#Decimal"}
@@ -17504,9 +17494,8 @@ sap.ui.define([
 			});
 
 			that.expectRequest("BusinessPartners?$apply=filter(Name eq 'Foo')"
-				+ "/groupby((Region),aggregate(SalesNumber))&$filter=SalesNumber gt 0"
-				+ "&$skip=0&$top=100",
-				{value : [{}]});
+					+ "/groupby((Region),aggregate(SalesNumber))&$filter=SalesNumber gt 0"
+					+ "&$skip=0&$top=100", {value : [{}]});
 
 			return Promise.all([
 				oListBinding.requestContexts(),
@@ -17587,7 +17576,7 @@ sap.ui.define([
 				}
 				// w/o min/max: no _MinMaxHelper, system query options are used
 				that.expectRequest("SalesOrderList?" + (bCount ? "$count=true&" : "")
-					+ "$apply=aggregate(GrossAmount)&$skip=0&$top=1", oResponse)
+						+ "$apply=aggregate(GrossAmount)&$skip=0&$top=1", oResponse)
 					.expectChange("grossAmount", ["2"]);
 
 				oTable.getBinding("rows").setAggregation({
@@ -17670,7 +17659,8 @@ sap.ui.define([
 			oListBinding.setAggregation();
 
 			that.expectRequest("SalesOrderList"
-				+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))&$skip=0&$top=100", {
+					+ "?$apply=groupby((LifecycleStatus),aggregate(GrossAmount))"
+					+ "&$skip=0&$top=100", {
 					value : [{GrossAmount : "4"}]
 				})
 				.expectChange("grossAmount", ["4"]);
@@ -17807,8 +17797,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100",
-					{value : [{Region : "A"}]});
+					+ "&$skip=0&$top=100", {value : [{Region : "A"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$NavigationPropertyPath : ""}]),
@@ -17816,8 +17805,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100",
-					{value : [{Region : "A"}]});
+					+ "&$skip=0&$top=100", {value : [{Region : "A"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "SalesAmount"}]),
@@ -17825,8 +17813,7 @@ sap.ui.define([
 			]);
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=groupby((Region))&$count=true"
-					+ "&$skip=0&$top=100",
-					{value : [{Region : "A"}]});
+					+ "&$skip=0&$top=100", {value : [{Region : "A"}]});
 
 			return Promise.all([
 				oHeaderContext.requestSideEffects([{$PropertyPath : "Region"}]),
@@ -17894,12 +17881,12 @@ sap.ui.define([
 					"sap.ui.model.odata.v4.ODataPropertyBinding");
 
 			that.expectMessages([{
-				message : "/MANAGERS('1')/@$ui5.foo: Read-only path must not be updated",
-				persistent : true,
-				technical : true,
-				technicalDetails : {}, // we do NOT expect technicalDetails for JS Errors
-				type : "Error"
-			}]);
+					message : "/MANAGERS('1')/@$ui5.foo: Read-only path must not be updated",
+					persistent : true,
+					technical : true,
+					technicalDetails : {}, // we do NOT expect technicalDetails for JS Errors
+					type : "Error"
+				}]);
 
 			// code under test
 			oPropertyBinding.setValue(0);
@@ -17989,8 +17976,7 @@ sap.ui.define([
 				.exactly(sPrefix !== "" ? 2 : 3); // binding, getProperty, requestObject
 		}
 
-		this.expectRequest("MANAGERS('1')?$expand=Manager_to_Team",
-			{
+		this.expectRequest("MANAGERS('1')?$expand=Manager_to_Team", {
 				ID : "1",
 				Manager_to_Team : {
 					Team_Id : "42"
@@ -18491,7 +18477,8 @@ sap.ui.define([
 						transition : true,
 						target : "Name"
 					}]
-				}).expectMessages([{
+				})
+				.expectMessages([{
 					code : "23",
 					message : "Just A Message",
 					target : "/Artists(ArtistID='42',IsActiveEntity=false)/Name",
@@ -18591,7 +18578,7 @@ sap.ui.define([
 
 		function expectArtistRequest(sId, bIsActive) {
 			that.expectRequest("Artists(ArtistID='" + sId + "',IsActiveEntity=" + bIsActive
-				+ ")?$select=ArtistID,IsActiveEntity,Name", {
+					+ ")?$select=ArtistID,IsActiveEntity,Name", {
 					ArtistID : sId,
 					IsActiveEntity : bIsActive,
 					Name : mNames[sId]
@@ -18603,7 +18590,7 @@ sap.ui.define([
 
 		function expectPublicationRequest(sId, bIsActive) {
 			that.expectRequest("Artists(ArtistID='" + sId + "',IsActiveEntity=" + bIsActive
-				+ ")/_Publication?$select=Price,PublicationID&$skip=0&$top=100", {
+					+ ")/_Publication?$select=Price,PublicationID&$skip=0&$top=100", {
 					value : [{
 						Price : mPrices[sId],
 						PublicationID : "42-0"
@@ -18692,7 +18679,7 @@ sap.ui.define([
 
 		// start here :-)
 		this.expectRequest("Artists?$filter=IsActiveEntity&$select=ArtistID,IsActiveEntity"
-			+ "&$skip=0&$top=100", {
+				+ "&$skip=0&$top=100", {
 				value : [{ArtistID : "42", IsActiveEntity : true}]
 			})
 			.expectChange("listId", ["42"])
@@ -18874,7 +18861,7 @@ sap.ui.define([
 		if (!i) {
 			sView = sTable + sView;
 			this.expectRequest("Artists?$select=ArtistID,IsActiveEntity"
-				+ "&$skip=0&$top=100", {
+					+ "&$skip=0&$top=100", {
 					value : [{ArtistID : "42", IsActiveEntity : true}]
 				})
 				.expectChange("listId", ["42"]);
@@ -18899,8 +18886,8 @@ sap.ui.define([
 			oCreationRow = that.oView.byId("creationRow");
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
-				+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
-				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 					ArtistID : "42",
 					BestFriend : {
 						ArtistID : "23",
@@ -18992,7 +18979,7 @@ sap.ui.define([
 			// that the creation row is untouched.
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
-				+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name", {
 					ArtistID : "42",
 					IsActiveEntity : false,
 					Name : "The Beatles"
@@ -19090,8 +19077,8 @@ sap.ui.define([
 
 			// two late property requests (one had only a $expand, so BestFriend is selected too)
 			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)"
-				+ "?$select=BestFriend,Name"
-				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+					+ "?$select=BestFriend,Name"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 					Name : "DJ Bobo",
 					BestFriend : {
 						ArtistID : "32",
@@ -19129,8 +19116,8 @@ sap.ui.define([
 			// that the creation row is untouched
 
 			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)"
-				+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
-				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 					ArtistID : "23",
 					IsActiveEntity : false,
 					Name : "DJ Bobo",
@@ -19182,8 +19169,8 @@ sap.ui.define([
 
 				// two late property requests (one had only a $expand, so BestFriend is selected)
 				that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)"
-					+ "?$select=BestFriend,Name"
-					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+						+ "?$select=BestFriend,Name"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
 						Name : "DJ Bobo",
 						BestFriend : {
 							ArtistID : "32",
@@ -19560,8 +19547,8 @@ sap.ui.define([
 			that.oView.byId("name").getBinding("value").setValue("TAFKAP");
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=false)"
-				+ "?$select=DraftAdministrativeData"
-				+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
+					+ "?$select=DraftAdministrativeData"
+					+ "&$expand=DraftAdministrativeData($select=DraftID,InProcessByUser)", {
 					DraftAdministrativeData : {
 						DraftID : "1",
 						InProcessByUser : "bar"
@@ -19653,7 +19640,7 @@ sap.ui.define([
 			that = this;
 
 		that.expectRequest("SalesOrderList('42')?$select=LifecycleStatusDesc,SalesOrderID"
-					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 				SalesOrderID : "42",
 				LifecycleStatusDesc : "New",
 				SO_2_BP : {
@@ -20075,9 +20062,7 @@ sap.ui.define([
 		}).then(function () {
 			// set context for line items after sales order is created
 			that.expectRequest("SalesOrderList('43')/SO_2_SOITEM?$select=ItemPosition,"
-					+ "SalesOrderID&$skip=0&$top=100", {
-					value : []
-				});
+					+ "SalesOrderID&$skip=0&$top=100", {value : []});
 			oItemBinding = that.oView.byId("LineItems").getBinding("items");
 			oItemBinding.setContext(oCreatedSOContext);
 
@@ -21291,8 +21276,7 @@ sap.ui.define([
 </FlexBox>',
 			that = this;
 
-		this.expectRequest(
-			"TEAMS('TEAM_01')"
+		this.expectRequest("TEAMS('TEAM_01')"
 				+ "?$expand=TEAM_2_EMPLOYEES($select=ID,Name,__CT__FAKE__Message/__FAKE__Messages)"
 				+ "&$select=Team_Id", {
 				Team_Id : "TEAM_01",
@@ -21376,8 +21360,8 @@ sap.ui.define([
 </Table>',
 			that = this;
 
-		this.expectRequest(
-			"EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages&$skip=0&$top=100", {
+		this.expectRequest("EMPLOYEES?$select=ID,Name,__CT__FAKE__Message/__FAKE__Messages"
+				+ "&$skip=0&$top=100", {
 				value : [{
 					ID : "1",
 					Name : "Jonathan Smith",
@@ -21455,7 +21439,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('42')?sap-client=123"
-					+ "&$select=GrossAmount,NetAmount,SalesOrderID", {
+				+ "&$select=GrossAmount,NetAmount,SalesOrderID", {
 				"@odata.etag" : "ETag0",
 				GrossAmount : "119.00",
 				NetAmount : "100.00",
@@ -21840,7 +21824,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
-			+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 				SalesOrderID : "1",
 				SO_2_BP : null
 			})
@@ -21848,7 +21832,7 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("SalesOrderList('1')?$select=SO_2_BP"
-				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
 					SO_2_BP : {
 						"@odata.etag" : "ETag",
 						BusinessPartnerID : "42",
@@ -21876,9 +21860,9 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList('1')?$select=SO_2_BP"
-				+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
-				SO_2_BP : null
-			})
+					+ "&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)", {
+					SO_2_BP : null
+				})
 			.expectChange("company", null);
 
 			return Promise.all([
@@ -22524,7 +22508,7 @@ sap.ui.define([
 			var o2ndRowContext = oTableBinding.getCurrentContexts()[1];
 
 			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/BestFriend"
-				+ "/_Publication('42-1')?$select=CurrencyCode,Price,PublicationID", {
+					+ "/_Publication('42-1')?$select=CurrencyCode,Price,PublicationID", {
 					CurrencyCode : "JPY",
 					Price : "123", // side effect
 					PublicationID : "42-1"
@@ -22613,7 +22597,7 @@ sap.ui.define([
 						PublicationID : "42-1"
 					}]
 				})
-				.expectChange("price", [,"1.12"]);
+				.expectChange("price", [, "1.12"]);
 
 			return Promise.all([
 				// code under test: request side effects on "not-created" entity from server
@@ -22918,14 +22902,14 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
-					+ "?$select=ArtistID,IsActiveEntity,Name", {
+				+ "?$select=ArtistID,IsActiveEntity,Name", {
 				ArtistID : "42",
 				IsActiveEntity : true,
 				Name : "Cher"
 			})
 			.expectChange("outerName", "Cher")
 			.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
-					+ "?$select=ArtistID,IsActiveEntity,Name", {
+				+ "?$select=ArtistID,IsActiveEntity,Name", {
 				ArtistID : "42",
 				IsActiveEntity : true,
 				Name : "Cher"
@@ -23558,7 +23542,8 @@ sap.ui.define([
 						"@odata.etag" : "ETag1",
 						AGE : 67,
 						ROOM_ID : "23"
-					}).expectMessages([{
+					})
+					.expectMessages([{
 						code : "CODE",
 						message : "Request intentionally failed",
 						persistent : true,
@@ -23648,12 +23633,12 @@ sap.ui.define([
 
 			function reject() {
 				that.expectMessages([{
-					code : "CODE",
-					message : "Request intentionally failed",
-					persistent : true,
-					technical : true,
-					type : "Error"
-				}]);
+						code : "CODE",
+						message : "Request intentionally failed",
+						persistent : true,
+						technical : true,
+						type : "Error"
+					}]);
 				that.oLogMock.expects("error").twice(); // don't care about console here
 
 				fnReject(createError({code : "CODE", message : "Request intentionally failed"}));
@@ -23858,7 +23843,7 @@ sap.ui.define([
 					BusinessPartnerID : "23"
 				})
 				.expectRequest(sEntityPath + "/BP_2_PRODUCT?$select=Name,ProductID&$skip=0"
-						+ "&$top=100", {
+					+ "&$top=100", {
 					value : [{
 						"@odata.etag" : "ETag",
 						ProductID : "1",
@@ -24316,11 +24301,11 @@ sap.ui.define([
 		this.oLogMock.restore();
 		this.stub(Log, "error"); // the exact errors do not interest
 		this.expectMessages([{
-			message : "Could not load metadata: 500 Internal Server Error",
-			persistent : true,
-			technical : true,
-			type : "Error"
-		}]);
+				message : "Could not load metadata: 500 Internal Server Error",
+				persistent : true,
+				technical : true,
+				type : "Error"
+			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			// check that the first error message complains about the metadata access
@@ -24395,11 +24380,11 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectMessages([{
-				code : "42",
-				message : "Warning for WeightUnit",
-				target : "/ProductList('HT-1000')/WeightUnit",
-				type : "Warning"
-			}]);
+					code : "42",
+					message : "Warning for WeightUnit",
+					target : "/ProductList('HT-1000')/WeightUnit",
+					type : "Warning"
+				}]);
 
 			// simulate messages for unit of measure as sales order model does not declare a message
 			// property for products
@@ -24464,10 +24449,10 @@ sap.ui.define([
 			assert.strictEqual(oControl.getValue(), "0.00000 KG");
 
 			that.expectMessages([{
-				message : "Enter a number with a maximum of 5 decimal places",
-				target : oControl.getId() + "/value",
-				type : "Error"
-			}]);
+					message : "Enter a number with a maximum of 5 decimal places",
+					target : oControl.getId() + "/value",
+					type : "Error"
+				}]);
 
 			// code under test
 			oControl.setValue("12.123456 KG");
@@ -24547,11 +24532,11 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectMessages([{
-				code : "43",
-				message : "Info for CurrencyCode",
-				target : "/ProductList('HT-1000')/CurrencyCode",
-				type : "Information"
-			}]);
+					code : "43",
+					message : "Info for CurrencyCode",
+					target : "/ProductList('HT-1000')/CurrencyCode",
+					type : "Information"
+				}]);
 
 			// simulate messages for currency code as sales order model does not declare a message
 			// property for products
@@ -24623,10 +24608,10 @@ sap.ui.define([
 			assert.strictEqual(oControl.getValue(), "0\u00a0JPY");
 
 			that.expectMessages([{
-				message : "Enter a number with no decimal places",
-				target : oControl.getId() + "/value",
-				type : "Error"
-			}]);
+					message : "Enter a number with no decimal places",
+					target : oControl.getId() + "/value",
+					type : "Error"
+				}]);
 
 			// code under test
 			oControl.setValue("12.1");
@@ -25331,7 +25316,8 @@ sap.ui.define([
 							transition : false
 						}]
 					}
-				}).expectMessages([{
+				})
+				.expectMessages([{
 					code : "CODE",
 					message : "What a stupid name!",
 					target : "/TEAMS('TEAM_01')/Name",
@@ -25590,7 +25576,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')?$select=CurrencyCode,SalesOrderID"
-					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
 				"@odata.etag" : "ETag",
 				CurrencyCode : "EUR",
 				SalesOrderID : "1",
@@ -25653,7 +25639,7 @@ sap.ui.define([
 				SalesOrderID : "1"
 			})
 			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Note,SalesOrderID"
-					+ "&$skip=0&$top=100", {
+				+ "&$skip=0&$top=100", {
 				value : [{
 					ItemPosition : "10",
 					Note : "Foo",
@@ -25730,7 +25716,7 @@ sap.ui.define([
 </FlexBox>';
 
 		this.expectRequest("As(1)?$select=AID,AValue"
-			+ "&$expand=AtoB($select=BID;$expand=BtoDs($select=DID))", {
+				+ "&$expand=AtoB($select=BID;$expand=BtoDs($select=DID))", {
 				AID : 1,
 				AValue : 42,
 				AtoB : {
@@ -25830,7 +25816,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
-			+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
 				"@odata.etag" : "ETag",
 				SalesOrderID : "1",
 				SO_2_SOITEM : [{
@@ -25885,7 +25871,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("Bs(1)?$select=BID,BValue&$expand=BtoA($select=AID"
-			+ ";$expand=AtoB($select=BID;$expand=BtoDs($select=DID,DValue)))", {
+				+ ";$expand=AtoB($select=BID;$expand=BtoDs($select=DID,DValue)))", {
 				BID : 1,
 				BValue : 101,
 				BtoA : {
@@ -25904,7 +25890,7 @@ sap.ui.define([
 			var oListBinding = that.oView.byId("table").getBinding("items");
 
 			that.expectRequest("Bs(1)/BtoA/AtoB/BtoDs?$select=DID,DValue&$orderby=DValue"
-				+ "&$skip=0&$top=100", {
+					+ "&$skip=0&$top=100", {
 					value : [
 						{DID : 3, DValue : 98},
 						{DID : 2, DValue : 99}
@@ -26037,7 +26023,7 @@ sap.ui.define([
 				SalesOrderID : "1"
 			})
 			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Note,SalesOrderID"
-					+ "&$skip=0&$top=100", {
+				+ "&$skip=0&$top=100", {
 				value : [{
 					ItemPosition : "10",
 					Note : "Foo",
@@ -26065,7 +26051,7 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			that.expectRequest("SalesOrderList('1')/SO_2_SOITEM"
-						+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
+					+ "?$select=ItemPosition,Note,SalesOrderID&$skip=0&$top=100", {
 					value : [{
 						ItemPosition : "10*", // key property has changed
 						Note : "Foo - side effect",
@@ -26130,7 +26116,7 @@ sap.ui.define([
 				SalesOrderID : "1"
 			})
 			.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Note,SalesOrderID"
-					+ "&$skip=0&$top=100", {
+				+ "&$skip=0&$top=100", {
 				value : [{
 					ItemPosition : "10",
 					Note : "Foo",
@@ -26257,8 +26243,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("BusinessPartnerList?$select=Address/AddressType,Address/City"
-			+ ",BusinessPartnerID,CompanyName&$skip=0&$top=100",
-				{value : []})
+				+ ",BusinessPartnerID,CompanyName&$skip=0&$top=100", {value : []})
 			.expectChange("city", [])
 			.expectChange("type", [])
 			.expectChange("company", []);
@@ -27058,9 +27043,9 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList"
-			+ "?$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)"
-			+ "&$select=Note,SalesOrderID"
-			+ "&$skip=0&$top=100", {
+				+ "?$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)"
+				+ "&$select=Note,SalesOrderID"
+				+ "&$skip=0&$top=100", {
 				value : [{
 					Note : "SO_1",
 					SalesOrderID : "1",
@@ -27254,7 +27239,7 @@ sap.ui.define([
 			that = this;
 
 		this.expectRequest("SalesOrderList('1')?$select=SalesOrderID"
-			+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
+				+ "&$expand=SO_2_SOITEM($select=ItemPosition,Note,SalesOrderID)", {
 				SalesOrderID : "1",
 				SO_2_SOITEM : [{
 					ItemPosition : "10",
@@ -29577,7 +29562,7 @@ sap.ui.define([
 	text="{/Artists(ArtistUUID=xyz,IsActiveEntity=false)/BestPublication/CurrencyCode}"/>';
 
 		this.expectRequest("Artists(ArtistUUID=xyz,IsActiveEntity=false)/BestPublication"
-			+ "?$select=Price,PublicationID")
+				+ "?$select=Price,PublicationID")
 			.expectRequest("Artists(ArtistUUID=xyz,IsActiveEntity=false)/BestPublication"
 				+ "/CurrencyCode")
 			.expectChange("price", null)
@@ -30217,7 +30202,7 @@ sap.ui.define([
 		this.oLogMock.expects("error").withArgs("Failed to drill-down into"
 			+ " _Publication('foo')/PublicationID, invalid segment: _Publication('foo')");
 		this.expectRequest("Artists(ArtistID=\'ABC\',IsActiveEntity=false)"
-			+ "?$expand=_Friend,_Publication", {
+				+ "?$expand=_Friend,_Publication", {
 				ArtistID : "ABC",
 				IsActiveEntity : false,
 				_Friend : [{
