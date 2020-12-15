@@ -322,7 +322,8 @@ sap.ui.define([
 				iAvailableWidthForEndItem = oDomRef.offsetWidth - iRightBorderOfLastItem;
 			}
 
-			var bEnoughSpaceForEndItem = iAvailableWidthForEndItem >= iEndItemWidth;
+			var iEndItemMarginRight = Number.parseFloat(window.getComputedStyle(oEndItemDomRef).marginRight);
+			var bEnoughSpaceForEndItem = iAvailableWidthForEndItem >= (iEndItemWidth + iEndItemMarginRight);
 
 			// if the end item fits into the line
 			if (bEnoughSpaceForEndItem) {
