@@ -60,6 +60,8 @@ sap.ui.define([
 		oInvisibleText.bindObject("/");
 		assert.strictEqual(oInvisibleText.getText(),
 			oInvisibleText.validateProperty("text", vResult));
+
+		oInvisibleText.destroy();
 	}
 
 	/**
@@ -649,12 +651,14 @@ sap.ui.define([
 			models : oModel
 		});
 		assert.strictEqual(oIcon.getDecorative(), true);
+		oIcon.destroy();
 
 		oIcon = new Icon({
 			decorative : "{= !!${/IsActiveEntity} }",
 			models : oModel
 		});
 		assert.strictEqual(oIcon.getDecorative(), false);
+		oIcon.destroy();
 
 		oIcon = new Icon({
 			decorative : "{= ${/IsActiveEntity} }",
@@ -663,6 +667,7 @@ sap.ui.define([
 		assert.strictEqual(oIcon.getDecorative(), true, "default value used!");
 		assert.strictEqual(oIcon.validateProperty("decorative", undefined), true,
 			"default value used!");
+		oIcon.destroy();
 	});
 
 	//*********************************************************************************************
@@ -849,6 +854,8 @@ sap.ui.define([
 
 		assert.strictEqual(oInvisibleText.getText(),
 			oInvisibleText.validateProperty("text", "'T%201000'"));
+
+		oInvisibleText.destroy();
 	});
 
 	//*********************************************************************************************
