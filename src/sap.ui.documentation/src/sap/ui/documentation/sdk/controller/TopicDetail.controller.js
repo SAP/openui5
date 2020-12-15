@@ -248,6 +248,7 @@ sap.ui.define([
 					aImagemaps = this.oPage.$().find('#d4h5-main-container :not(.imagemap_sidebyside)>.imagemap'),
 					aSideBySideImagemaps = this.oPage.$().find('#d4h5-main-container .imagemap_sidebyside'),
 					aDataTables = this.oPage.$().find('#d4h5-main-container table.datatable'),
+					aImgs = this.oPage.$().find('#d4h5-main-container img'),
 					oDomRef = this.oLayout.getDomRef();
 
 				this._fixExternalLinks(oDomRef);
@@ -280,6 +281,11 @@ sap.ui.define([
 				aSideBySideImagemaps.each(function (index, image) {
 					this._enableImageMap(image, true);
 				}.bind(this));
+
+				aImgs.each(function (index, image) {
+					var sSrc = image.getAttribute("src");
+					image.setAttribute("src", ResourcesUtil.getResourceOriginPath(sSrc));
+				});
 			},
 
 			_enableImageMap: function (image, bIsSideBySide) {

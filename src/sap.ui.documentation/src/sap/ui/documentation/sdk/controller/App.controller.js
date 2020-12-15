@@ -29,7 +29,8 @@ sap.ui.define([
 	"sap/m/ResponsivePopover",
 	"sap/ui/documentation/sdk/controller/util/Highlighter",
 	"sap/m/Button",
-	"sap/m/Toolbar"
+	"sap/m/Toolbar",
+	"sap/ui/documentation/sdk/util/Resources"
 ], function(
 	jQuery,
 	BaseController,
@@ -57,7 +58,8 @@ sap.ui.define([
 	ResponsivePopover,
 	Highlighter,
 	Button,
-	Toolbar
+	Toolbar,
+	ResourcesUtil
 ) {
 		"use strict";
 
@@ -69,7 +71,7 @@ sap.ui.define([
 
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper,
-			sNeoAppJsonPath = "/neo-app.json", /* Load neo-app.json always from root URL */
+			sNeoAppJsonPath = ResourcesUtil.getResourceOriginPath("/neo-app.json"), /* Load neo-app.json always from root URL */
 			ABOUT_TEXT = "about",
 			FEEDBACK_TEXT = "feedback",
 			CHANGE_VERSION_TEXT = "change_version",

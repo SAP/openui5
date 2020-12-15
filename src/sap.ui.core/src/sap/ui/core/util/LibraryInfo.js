@@ -50,7 +50,9 @@ sap.ui.define([
 		var that = this,
 		    sUrl,
 		    sLibraryType,
-		    aParts = /themelib_(.*)/i.exec(sLibraryName);
+		    aParts = /themelib_(.*)/i.exec(sLibraryName),
+		    sRequestUrl;
+
 		if (!aParts) {
 			// UI library
 			sLibraryType = ".library";
@@ -61,8 +63,10 @@ sap.ui.define([
 			sUrl = sap.ui.require.toUrl("sap/ui/core/themes/" + aParts[1] + "/");
 		}
 
+		sRequestUrl = typeof that.getResourceUrl === "function" ? that.getResourceUrl(sUrl) : sUrl;
+
 		jQuery.ajax({
-			url : sUrl + sLibraryType,
+			url : sRequestUrl + sLibraryType,
 			dataType : "xml",
 			error : function(xhr, status, e) {
 				Log.error("failed to load library details from '" + sUrl + sLibraryType + ": " + status + ", " + e);
@@ -125,6 +129,7 @@ sap.ui.define([
 
 
 	LibraryInfo.prototype._getDocuIndex = function(sLibraryName, fnCallback) {
+		var that = this;
 		this._loadLibraryMetadata(sLibraryName, function(oData){
 			var lib = oData.name,
 				libUrl = oData.url,
@@ -147,6 +152,10 @@ sap.ui.define([
 				sUrl = oData.url + sUrl;
 			}
 
+			if (typeof that.getResourceUrl === "function") {
+				sUrl = that.getResourceUrl(sUrl);
+			}
+
 			jQuery.ajax({
 				url : sUrl,
 				dataType : "json",
@@ -164,6 +173,7 @@ sap.ui.define([
 	};
 
 	LibraryInfo.prototype._getReleaseNotes = function(sLibraryName, sVersion, fnCallback) {
+		var that = this;
 		this._loadLibraryMetadata(sLibraryName, function(oData){
 
 			if (!oData.data) {
@@ -181,6 +191,8 @@ sap.ui.define([
 
 			var $Doc = jQuery(oData.data).find("appData").find("releasenotes");
 			var sUrl = $Doc.attr("url");
+
+			var bResourceUrlAvailable = typeof that.getResourceUrl === "function";
 
 			if (!sUrl) {
 				Log.warning("failed to load release notes for library " + sLibraryName );
@@ -201,7 +213,7 @@ sap.ui.define([
 			// if the URL should be resolved against the library the URL
 			// is relative to the library root path
 
-			var sBaseUrl = window.location.href,
+			var sBaseUrl = bResourceUrlAvailable ? that.getResourceUrl("") : window.location.href,
 				regexBaseUrl = /\/\d.\d{1,2}.\d{1,2}\//;
 
 			if ($Doc.attr("resolve") == "lib") {
@@ -216,6 +228,11 @@ sap.ui.define([
 			sUrl = sUrl.replace(/\{major\}/g, iMajor);
 			sUrl = sUrl.replace(/\{minor\}/g, iMinor);
 			sUrl = sUrl.replace(/\{patch\}/g, iPatch);
+
+
+			if (bResourceUrlAvailable) {
+				sUrl = that.getResourceUrl(sUrl);
+			}
 
 			// load the changelog/releasenotes
 			jQuery.ajax({

@@ -8,11 +8,13 @@
 sap.ui.define([
     "sap/ui/thirdparty/jquery",
     'sap/ui/core/util/LibraryInfo',
-	"sap/base/Log",
+    "sap/base/Log",
+    "sap/ui/documentation/sdk/util/Resources",
+    "sap/base/util/Version",
     'sap/ui/core/library',
-	'sap/m/library'
+    'sap/m/library'
 ], // library dependency
-	function(jQuery, LibraryInfo, Log) {
+	function(jQuery, LibraryInfo, Log, ResourcesUtil, Version) {
 
 	'use strict';
 
@@ -52,7 +54,13 @@ sap.ui.define([
 
 	var _libraryInfoSingleton;
 
-	thisLibrary._getLicense = function () {
+	var DocumentationLibraryInfo = LibraryInfo.extend("sap.ui.documentation.DocumentationLibraryInfo", {});
+
+		DocumentationLibraryInfo.prototype.getResourceUrl = function(sUrl) {
+			return ResourcesUtil.getResourceOriginPath(sUrl);
+		};
+
+		thisLibrary._getLicense = function () {
 		var sUrl = "./LICENSE.txt";
 
 		return jQuery.ajax({
@@ -63,6 +71,7 @@ sap.ui.define([
 
 	thisLibrary._getAppInfo = function(fnCallback) {
 		var sUrl = sap.ui.resource("", "sap-ui-version.json");
+			sUrl = ResourcesUtil.getResourceOriginPath(sUrl);
 
 		jQuery.ajax({
 			url: sUrl,
@@ -91,7 +100,7 @@ sap.ui.define([
 	 */
 	thisLibrary._getLibraryInfoSingleton = function () {
 		if (!_libraryInfoSingleton) {
-			_libraryInfoSingleton = new LibraryInfo();
+			_libraryInfoSingleton = new DocumentationLibraryInfo();
 		}
 
 		return _libraryInfoSingleton;
