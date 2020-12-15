@@ -524,9 +524,6 @@ function(
 		InputBase.prototype.init.call(this);
 		this._fnFilter = inputsDefaultFilter;
 
-		// Show suggestions in a full screen dialog on phones:
-		this._bFullScreen = Device.system.phone;
-
 		// Counter for concurrent issues with setValue:
 		this._iSetCount = 0;
 
@@ -560,7 +557,8 @@ function(
 			this._oSuggestionTable = null;
 		}
 
-		if (this._oSuggPopover) {
+		if (this._isSuggestionsPopoverInitiated()) {
+			this._oSuggestionPopup = null;
 			this._oSuggPopover.destroy();
 			this._oSuggPopover = null;
 		}
@@ -590,10 +588,11 @@ function(
 			aEndIcons = this.getAggregation("_endIcon") || [],
 
 			oIcon = aEndIcons[0],
-			oPopupInput,
-			bSuggestionsPopoverIsOpen = this._isSuggestionsPopoverOpen(),
-			sValueStateHeaderText = bSuggestionsPopoverIsOpen ?  this._oSuggPopover._getValueStateHeader().getText() : null,
-			sValueStateHeaderValueState = bSuggestionsPopoverIsOpen ?  this._oSuggPopover._getValueStateHeader().getValueState() : "";
+			oSuggestionsPopover = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover(),
+			bSuggestionsPopoverIsOpen = oSuggestionsPopover && this._isSuggestionsPopoverOpen(),
+			oPopupInput = oSuggestionsPopover && oSuggestionsPopover.getInput(),
+			sValueStateHeaderText = bSuggestionsPopoverIsOpen ?  oSuggestionsPopover._getValueStateHeader().getText() : null,
+			sValueStateHeaderValueState = bSuggestionsPopoverIsOpen ?  oSuggestionsPopover._getValueStateHeader().getValueState() : "";
 
 		InputBase.prototype.onBeforeRendering.call(this);
 
@@ -610,7 +609,6 @@ function(
 				this._removeShowMoreButton();
 			}
 
-			oPopupInput = this._oSuggPopover._oPopupInput;
 			// setting the property "type" of the Input inside the Suggestion popover
 			if (oPopupInput) {
 				oPopupInput.setType(this.getType());
@@ -686,7 +684,7 @@ function(
 
 		var sKey = this.getSelectedKey(),
 			bHasSelectedItem,
-			oList = this._oSuggPopover && this._oSuggPopover.getItemsContainer();
+			oList = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover().getItemsContainer();
 
 		if (sKey === '') {
 			return;
@@ -893,13 +891,14 @@ function(
 	 * @returns {sap.m.FormattedText} Aggregation used for value state message that can contain links.
 	 * @since 1.78
 	 */
-	Input.prototype._getFormattedValueStateText = function() {
+	Input.prototype._getFormattedValueStateText = function () {
 		var bSuggestionsPopoverIsOpen = this._isSuggestionsPopoverOpen(),
-			oValueStateHeaderFormattedText = bSuggestionsPopoverIsOpen ?  this._oSuggPopover._getValueStateHeader().getFormattedText() : null;
+			oValueStateHeaderFormattedText = bSuggestionsPopoverIsOpen ?
+				this._getSuggestionsPopover()._getValueStateHeader().getFormattedText() : null;
 
 		if (bSuggestionsPopoverIsOpen && oValueStateHeaderFormattedText) {
 			return oValueStateHeaderFormattedText;
-		} else  {
+		} else {
 			return InputBase.prototype.getFormattedValueStateText.call(this);
 		}
 	};
@@ -1065,7 +1064,7 @@ function(
 		// The goal is to provide a value in the value help event, which can be used to filter the opened Value Help Dialog.
 		var sTypedInValue = "";
 
-		if (this.getShowSuggestion() && this._oSuggPopover) {
+		if (this.getShowSuggestion() && this._isSuggestionsPopoverInitiated()) {
 			sTypedInValue = this._sTypedInValue || "";
 		} else {
 			sTypedInValue = this.getDOMValue();
@@ -1109,7 +1108,7 @@ function(
 			 && this.getEditable()
 			 && this.getEnabled()
 			 && this.getShowSuggestion()
-			 && this._oSuggPopover
+			 && this._isSuggestionsPopoverInitiated()
 			 && oEvent.target.id != this.getId() + "-vhi") {
 				this._openSuggestionsPopover();
 		}
@@ -1275,7 +1274,7 @@ function(
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
 	Input.prototype.onsapfocusleave = function(oEvent) {
-		var oSuggPopover = this._oSuggPopover,
+		var oSuggPopover = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover(),
 			oPopup = oSuggPopover && oSuggPopover.getPopover(),
 			oFocusedControl = oEvent.relatedControlId && sap.ui.getCore().byId(oEvent.relatedControlId),
 			oFocusDomRef = oFocusedControl && oFocusedControl.getFocusDomRef(),
@@ -1392,7 +1391,7 @@ function(
 	Input.prototype._deregisterEvents = function() {
 		this._deregisterPopupResize();
 
-		if (this.isMobileDevice() && this._oSuggPopover && this._oSuggPopover.getPopover()) {
+		if (this.isMobileDevice() && this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover().getPopover()) {
 			this.$().off("click");
 		}
 	};
@@ -1441,7 +1440,7 @@ function(
 	 * @param {string} sValue User input.
 	 */
 	Input.prototype._triggerSuggest = function(sValue) {
-		var oList = this._oSuggPopover.getItemsContainer();
+		var oList = this._getSuggestionsPopover().getItemsContainer();
 
 		this.cancelPendingSuggest();
 		this._bShouldRefreshListItems = true;
@@ -1499,17 +1498,21 @@ function(
 		 * @return {sap.m.Input} this Input instance for chaining.
 		 */
 		Input.prototype.setShowSuggestion = function(bValue){
+			var oSuggestionsPopover;
 			this.setProperty("showSuggestion", bValue, true);
 			if (bValue) {
-				this._oSuggPopover = this._getSuggestionsPopover();
-				if (!this._oSuggPopover.getPopover()) {
+				oSuggestionsPopover = this._getSuggestionsPopover();
+				this._oSuggPopover = oSuggestionsPopover;
+
+				if (!oSuggestionsPopover.getPopover()) {
 					this._createSuggestionsPopoverPopup();
 					this._synchronizeSuggestions();
 					this._createSuggestionPopupContent();
 				}
 			} else {
-				if (this._oSuggPopover) {
-					this._oSuggPopover._destroySuggestionPopup();
+				if (this._isSuggestionsPopoverInitiated()) {
+					oSuggestionsPopover = this._getSuggestionsPopover();
+					oSuggestionsPopover._destroySuggestionPopup();
 					this._oButtonToolbar = null;
 					this._oShowMoreButton = null;
 				}
@@ -1538,7 +1541,7 @@ function(
 		Input.prototype.setShowTableSuggestionValueHelp = function(bValue) {
 			this.setProperty("showTableSuggestionValueHelp", bValue, true);
 
-			if (!(this._oSuggPopover && this._oSuggPopover.getPopover())) {
+			if (!(this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover().getPopover())) {
 				return this;
 			}
 
@@ -1642,7 +1645,7 @@ function(
 			clearTimeout(this._iRefreshListTimeout);
 
 			this._iRefreshListTimeout = setTimeout(function () {
-				if (this._oSuggPopover) {
+				if (this._isSuggestionsPopoverInitiated()) {
 					this._refreshListItems();
 				}
 			}.bind(this), 0);
@@ -1655,7 +1658,7 @@ function(
 		 * @private
 		 */
 		Input.prototype._clearSuggestionPopupItems = function () {
-			var oList = this._oSuggPopover.getItemsContainer();
+			var oList = this._getSuggestionsPopover().getItemsContainer();
 			if (!oList) {
 				return;
 			}
@@ -1674,8 +1677,9 @@ function(
 		 * @private
 		 */
 		Input.prototype._hideSuggestionPopup = function () {
-			var oPopup = this._oSuggPopover.getPopover(),
-				oList = this._oSuggPopover.getItemsContainer();
+			var oSuggestionsPopover = this._getSuggestionsPopover(),
+				oPopup = oSuggestionsPopover.getPopover(),
+				oList = oSuggestionsPopover.getItemsContainer();
 
 			// The IE moves the cursor position at the beginning when there is a binding and delay from the back-end
 			// The workaround is to save the focus info which includes position and reset it after updating the DOM
@@ -1722,7 +1726,7 @@ function(
 				if (!this._isSuggestionsPopoverOpen() && !this._sOpenTimer && bOpenCondition !== false) {
 					this._sOpenTimer = setTimeout(function () {
 						this._sOpenTimer = null;
-						this._oSuggPopover && this._openSuggestionsPopover();
+						this._isSuggestionsPopoverInitiated() && this._openSuggestionsPopover();
 					}.bind(this), 0);
 				}
 			}
@@ -1820,7 +1824,7 @@ function(
 		Input.prototype.addSuggestionItem = function(oItem) {
 			this.addAggregation("suggestionItems", oItem, true);
 
-			if (!this._oSuggPopover) {
+			if (!this._isSuggestionsPopoverInitiated()) {
 				this._getSuggestionsPopover();
 			}
 
@@ -1841,7 +1845,7 @@ function(
 		Input.prototype.insertSuggestionItem = function(oItem, iIndex) {
 			this.insertAggregation("suggestionItems", iIndex, oItem, true);
 
-			if (!this._oSuggPopover) {
+			if (!this._isSuggestionsPopoverInitiated()) {
 				this._getSuggestionsPopover();
 			}
 
@@ -1971,10 +1975,10 @@ function(
 		 */
 		Input.prototype._closeSuggestionPopup = function() {
 
-			if (this._oSuggPopover) {
+			if (this._isSuggestionsPopoverInitiated()) {
 				this._bShouldRefreshListItems = false;
 				this.cancelPendingSuggest();
-				this._isSuggestionsPopoverOpen() && this._oSuggPopover.getPopover().close();
+				this._isSuggestionsPopoverOpen() && this._getSuggestionsPopover().getPopover().close();
 
 				// Ensure the valueStateMessage is opened after the suggestion popup is closed.
 				// Only do this for desktop (not required for mobile) when the focus is on the input.
@@ -1994,10 +1998,13 @@ function(
 		 * @private
 		 */
 		Input.prototype._synchronizeSuggestions = function() {
-			var oPopupInput = this.isMobileDevice() && this._oSuggPopover && this._oSuggPopover._oPopupInput.getFocusDomRef();
+			var oSuggestionsPopover = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover(),
+				oPopupInput = oSuggestionsPopover && oSuggestionsPopover.getInput(),
+				oPopupInputDomRef = oPopupInput && oPopupInput.getFocusDomRef();
+
 			// Trigger the ListItems refresh only when the focus is on the input field or the device is phone.
 			// In all other cases this instantiates list population and it might not be needed at all.
-			if (document.activeElement === this.getFocusDomRef() || document.activeElement === oPopupInput) {
+			if (document.activeElement === this.getFocusDomRef() || document.activeElement === oPopupInputDomRef) {
 				this._bShouldRefreshListItems = true;
 				this._refreshItemsDelayed();
 			}
@@ -2330,8 +2337,9 @@ function(
 	 */
 	Input.prototype.updateInputField = function(sNewValue) {
 		if (this._isSuggestionsPopoverOpen() && this.isMobileDevice()) {
-			this._oSuggPopover._oPopupInput.setValue(sNewValue);
-			this._oSuggPopover._oPopupInput._doSelect();
+			this._getSuggestionsPopover().getInput()
+				.setValue(sNewValue)
+				._doSelect();
 		} else {
 			// call _getInputValue to apply the maxLength to the typed value
 			sNewValue = this._getInputValue(sNewValue);
@@ -2462,7 +2470,7 @@ function(
 	 * @param{boolean} [bTabular] optional parameter to force override the tabular suggestions check
 	 */
 	Input.prototype._addShowMoreButton = function(bTabular) {
-		var oPopup = this._oSuggPopover && this._oSuggPopover.getPopover();
+		var oPopup = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover().getPopover();
 
 		if (!oPopup || !bTabular && !this._hasTabularSuggestions()) {
 			return;
@@ -2485,7 +2493,7 @@ function(
 	 * @private
 	 */
 	Input.prototype._removeShowMoreButton = function() {
-		var oPopup = this._oSuggPopover && this._oSuggPopover.getPopover();
+		var oPopup = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover().getPopover();
 
 		if (!oPopup || !this._hasTabularSuggestions()) {
 			return;
@@ -2524,12 +2532,13 @@ function(
 	 * @private
 	 */
 	Input.prototype._createSuggestionPopupContent = function(bTabular) {
+		var oSuggestionsPopover = this._getSuggestionsPopover();
 		// only initialize the content once
-		if (this._bIsBeingDestroyed || this._getSuggestionsPopover().getItemsContainer()) {
+		if (this._bIsBeingDestroyed || !oSuggestionsPopover || oSuggestionsPopover.getItemsContainer()) {
 			return;
 		}
 
-		this._oSuggPopover.initContent(bTabular ? this._getSuggestionsTable() : null);
+		this._getSuggestionsPopover().initContent(bTabular ? this._getSuggestionsTable() : null);
 
 		if (!this._hasTabularSuggestions() && !bTabular) {
 			this._decorateSuggestionsPopoverList(this._getSuggestionsPopover().getItemsContainer());
@@ -2599,53 +2608,45 @@ function(
 	};
 
 	/**
-	 * Creates input that will be used inside a dialog.
-	 *
-	 * @returns {sap.m.Input}
-	 * @private
-	 */
-	Input.prototype._createPopupInput = function() {
-		var oPopupInput = new Input(this.getId() + "-popup-input", {
-			width: "100%",
-			valueLiveUpdate: true,
-			showValueStateMessage: false,
-			valueState: this.getValueState(),
-			showValueHelp: this.getShowValueHelp(),
-			valueHelpRequest: function (oEvent) {
-				// it is the same behavior as by ShowMoreButton:
-				this.fireValueHelpRequest({fromSuggestions: true});
-				this._closeSuggestionPopup();
-			}.bind(this),
-			liveChange: function (oEvent) {
-				var sValue = oEvent.getParameter("newValue");
-				// call _getInputValue to apply the maxLength to the typed value
-				this.setDOMValue(this
-					._getInputValue(this._oSuggPopover._oPopupInput
-						.getValue()));
-
-				this._triggerSuggest(sValue);
-
-				// make sure the live change handler on the original input is also called
-				this.fireLiveChange({
-					value: sValue,
-
-					// backwards compatibility
-					newValue: sValue
-				});
-			}.bind(this)
-		});
-
-		return this._modifyPopupInput(oPopupInput);
-	};
-
-	/**
 	 * Modifies Dialog's Input instance
 	 *
 	 * @param oInput {sap.m.Input}
 	 * @returns {sap.m.Input}
 	 * @private
+	 * @ui5-restricted
 	 */
-	Input.prototype._modifyPopupInput = function (oInput) {
+	Input.prototype._decoratePopupInput = function (oInput) {
+		if (!oInput) {
+			return;
+		}
+
+		oInput.setValueLiveUpdate(true);
+		oInput.setValueState(this.getValueState());
+		oInput.setShowValueHelp(this.getShowValueHelp());
+
+		oInput.attachValueHelpRequest(function () {
+			// it is the same behavior as by ShowMoreButton:
+			this.fireValueHelpRequest({fromSuggestions: true});
+			this._getSuggestionsPopover().iPopupListSelectedIndex = -1;
+			this._closeSuggestionPopup();
+		}.bind(this));
+
+		oInput.attachLiveChange(function (oEvent) {
+			var sValue = oEvent.getParameter("newValue");
+			// call _getInputValue to apply the maxLength to the typed value
+			this.setDOMValue(this._getInputValue(this._getSuggestionsPopover().getInput().getValue()));
+
+			this._triggerSuggest(sValue);
+
+			// make sure the live change handler on the original input is also called
+			this.fireLiveChange({
+				value: sValue,
+
+				// backwards compatibility
+				newValue: sValue
+			});
+		}.bind(this));
+
 		oInput._handleTypeAhead = function () {
 			Input.prototype._handleTypeAhead.call(oInput, this);
 		}.bind(this);
@@ -2675,14 +2676,10 @@ function(
 	 * @private
 	 */
 	Input.prototype._getSuggestionsPopover = function () {
-		if (!this._oSuggPopover) {
+		if (!this._isSuggestionsPopoverInitiated()) {
 			var oSuggPopover = this._oSuggPopover = new SuggestionsPopover(this);
 
-			if (this.isMobileDevice()) {
-				oSuggPopover._oPopupInput = this._createPopupInput();
-			}
-
-			this._oSuggPopover.setInputLabels(this.getLabels.bind(this));
+			oSuggPopover.setInputLabels(this.getLabels.bind(this));
 			this._createSuggestionsPopoverPopup();
 
 			this.forwardEventHandlersToSuggPopover(oSuggPopover);
@@ -2713,13 +2710,14 @@ function(
 	 * @private
 	 */
 	Input.prototype._createSuggestionsPopoverPopup = function () {
-		if (!this._oSuggPopover) {
+		if (!this._isSuggestionsPopoverInitiated()) {
 			return;
 		}
 
-		var oSuggPopover = this._oSuggPopover;
+		var oSuggPopover = this._getSuggestionsPopover();
 		var oPopover;
 		oSuggPopover.createSuggestionPopup({ showSelectedButton: this._hasShowSelectedButton() });
+		this._decoratePopupInput(oSuggPopover.getInput());
 
 		oPopover = oSuggPopover.getPopover();
 		oPopover.attachBeforeOpen(function () {
@@ -2735,7 +2733,7 @@ function(
 				.attachBeforeClose(function () {
 					// call _getInputValue to apply the maxLength to the typed value
 					this.setDOMValue(this
-						._getInputValue(oSuggPopover._oPopupInput
+						._getInputValue(oSuggPopover.getInput()
 							.getValue()));
 					this.onChange();
 				}, this)
@@ -2757,16 +2755,16 @@ function(
 					this._refreshListItems();
 				}, this)
 				.attachBeforeOpen(function() {
+					var oSuggestionsInput = oSuggPopover.getInput();
 					// set the same placeholder and maxLength as the original input
-					oSuggPopover._oPopupInput.setPlaceholder(this.getPlaceholder());
-					oSuggPopover._oPopupInput.setMaxLength(this.getMaxLength());
-
-					oSuggPopover._oPopupInput.setValue(this.getValue());
+					oSuggestionsInput.setPlaceholder(this.getPlaceholder());
+					oSuggestionsInput.setMaxLength(this.getMaxLength());
+					oSuggestionsInput.setValue(this.getValue());
 				}, this);
 		} else {
 			oPopover
 				.attachAfterClose(function() {
-					var oList = this._oSuggPopover.getItemsContainer(),
+					var oList = this._getSuggestionsPopover().getItemsContainer(),
 						oSelectedItem = oList && oList.getSelectedItem();
 
 					if (this.getSelectionUpdatedFromList()) {
@@ -2828,8 +2826,11 @@ function(
 	 * @private
 	 */
 	Input.prototype._registerPopupResize = function () {
-		if (this._oSuggPopover) {
-			this._sPopupResizeHandler = ResizeHandler.register(this, this._oSuggPopover.resizePopup.bind(this._oSuggPopover, this));
+		var oSuggestionsPopover;
+
+		if (this._isSuggestionsPopoverInitiated()) {
+			oSuggestionsPopover = this._getSuggestionsPopover();
+			this._sPopupResizeHandler = ResizeHandler.register(this, oSuggestionsPopover.resizePopup.bind(oSuggestionsPopover, this));
 		}
 	};
 
@@ -2900,8 +2901,18 @@ function(
 	 * @return {boolean} whether the suggestions popover is currently opened
 	 * @private
 	 */
-	Input.prototype._isSuggestionsPopoverOpen = function() {
-		return this._oSuggPopover && this._oSuggPopover.isOpen();
+	Input.prototype._isSuggestionsPopoverOpen = function () {
+		return this._isSuggestionsPopoverInitiated() &&
+			this._getSuggestionsPopover().isOpen();
+	};
+
+	/**
+	 * Checks whether the SuggestionsPopover is initiated;
+	 * @returns {boolean}
+	 * @private
+	 */
+	Input.prototype._isSuggestionsPopoverInitiated = function() {
+		return !!this._oSuggPopover;
 	};
 
 	/**
@@ -2922,7 +2933,7 @@ function(
 	Input.prototype._openSuggestionsPopover = function() {
 		this.closeValueStateMessage();
 		this._updateSuggestionsPopoverValueState();
-		this._oSuggPopover.getPopover().open();
+		this._getSuggestionsPopover().getPopover().open();
 	};
 
 	/**
@@ -2931,7 +2942,7 @@ function(
 	 * @private
 	 */
 	Input.prototype._updateSuggestionsPopoverValueState = function() {
-		var oSuggPopover = this._oSuggPopover,
+		var oSuggPopover = this._getSuggestionsPopover(),
 			sValueState = this.getValueState(),
 			bNewValueState = this.getValueState() !== oSuggPopover._getValueStateHeader().getValueState(),
 			oNewFormattedValueStateText = this.getFormattedValueStateText(),
@@ -2945,20 +2956,23 @@ function(
 		onBeforeClose of the SuggestionsPopover. Switch the value state aggregation's
 		parent from the ValueStateHeader to the Input control */
 		if (this._isSuggestionsPopoverOpen() && !oNewFormattedValueStateText && !bNewValueState) {
-			this.setFormattedValueStateText(this._oSuggPopover._getValueStateHeader().getFormattedText());
+			this.setFormattedValueStateText(oSuggPopover._getValueStateHeader().getFormattedText());
 		}
 
 		oSuggPopover.updateValueState(sValueState, (oNewFormattedValueStateText || sValueStateText), this.getShowValueStateMessage());
 
 		if (this.isMobileDevice()) {
-			oSuggPopover._oPopupInput.setValueState(sValueState);
+			oSuggPopover.getInput().setValueState(sValueState);
 		}
 	};
 
-	Input.prototype.setShowValueHelp = function(bShowValueHelp) {
+	Input.prototype.setShowValueHelp = function (bShowValueHelp) {
+		var oSuggestionsPopoverInput = this._isSuggestionsPopoverInitiated() &&
+			this._getSuggestionsPopover().getInput();
+
 		this.setProperty("showValueHelp", bShowValueHelp);
-		if (this._oSuggPopover && this._oSuggPopover._oPopupInput) {
-			this._oSuggPopover._oPopupInput.setShowValueHelp(bShowValueHelp);
+		if (oSuggestionsPopoverInput) {
+			oSuggestionsPopoverInput.setShowValueHelp(bShowValueHelp);
 		}
 
 		return this;
@@ -2992,7 +3006,7 @@ function(
 		var oFilterResults,
 			aItems = this.getSuggestionItems(),
 			aTabularRows = this.getSuggestionRows(),
-			oList = this._oSuggPopover.getItemsContainer();
+			oList = this._getSuggestionsPopover().getItemsContainer();
 
 		if (this._hasTabularSuggestions()) {
 			// show list on phone (is hidden when search string is empty)
@@ -3078,8 +3092,7 @@ function(
 			aGroups = oFilterResults.groups,
 			aMappedGroups = aGroups.map(function (aGroupItem) { return aGroupItem.header; }),
 			bIsAnySuggestionAlreadySelected = false,
-			oSuggestionsPopover = this._oSuggPopover,
-			oList = oSuggestionsPopover && oSuggestionsPopover.getItemsContainer(),
+			oList = this._getSuggestionsPopover().getItemsContainer(),
 			oListItem, iGroupItemIndex;
 
 		aItems

@@ -150,7 +150,7 @@ sap.ui.define([
 			oList = this.getItemsContainer();
 
 		mOptions = mOptions || [];
-		oPopover = this.createPopover(oInput, this._oPopupInput, mOptions);
+		oPopover = this.createPopover(oInput, mOptions);
 
 		this.setPopover(oPopover);
 		oPopover.addStyleClass(CSS_CLASS_SUGGESTIONS_POPOVER);
@@ -613,8 +613,8 @@ sap.ui.define([
 			return this;
 		}
 
-		if (this._oPopupInput) {
-			this._oPopupInput.setValueState(sValueState);
+		if (this.getInput()) {
+			this.getInput().setValueState(sValueState);
 		}
 
 		this._getValueStateHeader().setValueState(sValueState);
@@ -735,6 +735,15 @@ sap.ui.define([
 	 * These are the common interfaces between the Dialog and the Popover.
 	 * Mixins should overwrite those methods if they need that functionality.
 	 */
+
+	/**
+	 * Retrieves Popup's input
+	 *
+	 * @returns {sap.m.Input|null}
+	 */
+	SuggestionsPopover.prototype.getInput = function () {
+		return null;
+	};
 
 	/**
 	 * Returns a reference to the title inside the dialog

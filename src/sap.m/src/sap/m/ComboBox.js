@@ -1958,10 +1958,15 @@ sap.ui.define([
 		 *
 		 * @returns {sap.m.Input} The modified input control
 		 * @private
+		 * @ui5-restricted
 		 * @function
 		 */
-		ComboBox.prototype._modifyPopupInput = function (oInput) {
-			ComboBoxBase.prototype._modifyPopupInput.apply(this, arguments);
+		ComboBox.prototype._decoratePopupInput = function (oInput) {
+			ComboBoxBase.prototype._decoratePopupInput.apply(this, arguments);
+
+			if (!oInput || !oInput.isA(["sap.m.InputBase"])) {
+				return;
+			}
 
 			oInput.addEventDelegate({
 				onsapenter: function() {
@@ -1975,6 +1980,7 @@ sap.ui.define([
 					}
 				}
 			}, this);
+
 			return oInput;
 		};
 

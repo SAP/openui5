@@ -1112,9 +1112,14 @@ function(
 	 *
 	 * @returns {sap.m.Input} The modified input control
 	 * @private
+	 * @ui5-restricted
 	 */
-	MultiComboBox.prototype._modifyPopupInput = function(oInput) {
-		ComboBoxBase.prototype._modifyPopupInput.apply(this, arguments);
+	MultiComboBox.prototype._decoratePopupInput = function(oInput) {
+		ComboBoxBase.prototype._decoratePopupInput.apply(this, arguments);
+
+		if (!oInput || !oInput.isA(["sap.m.InputBase"])) {
+			return;
+		}
 
 		oInput.attachSubmit(function (oEvent) {
 			var sValue = oInput.getValue();
