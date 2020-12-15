@@ -2567,6 +2567,25 @@ sap.ui.define([
 		this.typeAndCheckValueForDisplayFormat("h:mm", "12", "12:--");
 	});
 
+	QUnit.test("allows input to the second hour number by preceding the fitst hour number with 0 - hh format, pos 1", function(assert) {
+		// prepare
+		var oTimePicker = new TimePicker({
+			displayFormat: "HH:mm"
+		}).placeAt("qunit-fixture");
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		qutils.triggerKeydown(jQuery(oTimePicker.getFocusDomRef()), jQuery.sap.KeyCodes.ARROW_RIGHT);
+		triggerMultipleKeypress(oTimePicker, "830");
+
+		// assert
+		assert.equal(jQuery("#" + oTimePicker.getId() + "-inner").val(), "08:30", "$input.val() ok");
+
+		// cleanup
+		oTimePicker.destroy();
+	});
+
 
 
 	QUnit.test("do not allow numbers > 3 for 2nd number in hour if 1st === 2 - HH format", function(assert) {
