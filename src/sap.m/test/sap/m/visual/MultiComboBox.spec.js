@@ -38,14 +38,12 @@ describe('sap.m.MultiComboBox', function() {
 
 	//MultiComboBox - After arrow navigation
 	it("should visualize MultiComboBox after navigating between tokens with arrow key.", function(){
-		var defaultMultiComboBox = element(by.id("MultiComboBox1")),
-			defaultMultiComboBoxArrow = element(by.id("MultiComboBox1-arrow"));
-		defaultMultiComboBox.click();
+		var defaultMultiComboBox = element(by.id("MultiComboBox1"));
 
+		defaultMultiComboBox.click();
 		browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
 		browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
-		expect(takeScreenshot()).toLookAs("multicombobox-after-left-arrow-navigation");
-		defaultMultiComboBoxArrow.click();
+		expect(takeScreenshot()).toLookAs("multicombobox-left-arrow-navigation");
 	});
 
 	//MultiComboBox - Filtering
@@ -67,13 +65,9 @@ describe('sap.m.MultiComboBox', function() {
 
 	//MultiComboBox with cropped tokens
 	it("should visualize a MultiComboBox with cropped tokens", function(){
-		browser.executeScript('sap.ui.getCore().byId("MultiComboBox1").getAggregation("tokenizer").setRenderMode("Loose");')
-			.then(function () {
-				expect(takeScreenshot( element(by.id("MultiComboBox1")))).toLookAs("cropped_tokens");
-			})
-			.then(function () {
-				browser.executeScript('sap.ui.getCore().byId("MultiComboBox1").getAggregation("tokenizer").setRenderMode("Narrow");');
-			});
+		var croppedTokensMultiComboBox = element(by.id("MultiComboBox1"));
+		croppedTokensMultiComboBox.click();
+		expect(takeScreenshot( element(by.id("MultiComboBox1")))).toLookAs("cropped_tokens");
 	});
 
 	//MultiComboBox with selectable disabled list item
