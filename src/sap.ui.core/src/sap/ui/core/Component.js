@@ -2661,7 +2661,7 @@ sap.ui.define([
 					// check whether component controller is included in a library preload
 					oTransitiveDependencies = VersionInfo._getTransitiveDependencyForComponent(sComponentName);
 
-					if (oTransitiveDependencies) {
+					if (oTransitiveDependencies && !oTransitiveDependencies.hasOwnPreload) {
 						aLibs = [oTransitiveDependencies.library];
 						// add all dependencies to aLibs
 						Array.prototype.push.apply(aLibs, oTransitiveDependencies.dependencies);
