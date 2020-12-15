@@ -149,7 +149,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			"PersonalizationChart": {
 				group: "Chart UI Test",
-				module: "./OpaTests/PersonalizationChart.opa.qunit",
+				autostart: false,
+				module: "./OpaTests/P13nOpa.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.fl", "sap.ui.mdc"
@@ -158,7 +159,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			},
 			"PersonalizationChartVariants": {
 				group: "Chart UI Test",
-				module: "./OpaTests/PersonalizationChartVariants.opa.qunit",
+				autostart: false,
+				module: "./OpaTests/P13nOpa.qunit",
 				ui5: {
 					libs: [
 						"sap.ui.fl", "sap.ui.mdc"
