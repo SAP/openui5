@@ -118,7 +118,7 @@
 							<Label id="sapUiRtaAddIFrameDialog_EditUrlLabel" labelFor="sapUiRtaAddIFrameDialog_EditUrlTA"
 								   class="sapUiRtaAddIFrameDialogEditUrlLabel" text="{/text/editUrlLabel}" design="Bold" />
 							<TextArea id="sapUiRtaAddIFrameDialog_EditUrlTA" ariaLabelledBy="sapUiRtaAddIFrameDialog_EditUrlLabel"
-									  class="sapUiRtaAddIFrameDialog_EditUrlTA" liveChange="onURLChange"
+									  class="sapUiRtaAddIFrameDialog_EditUrlTA"
 									  valueLiveUpdate="true" value="{/frameUrl/value}" rows="11" width="100%" />
 						</items>
 					</VBox>
@@ -149,8 +149,8 @@
 									class="sapUiRtaAddIFrameDialogPreviewLinkTitle"
 									text="{/text/previewUrlLabel}" />
 								<ToolbarSpacer />
-								<Button id="sapUiRtaAddIFrameDialog_PreviewButton" enabled="{= !!${/frameUrl/value} }"
-										text="{/text/previewButtonText}" type="Emphasized" press="onShowPreview"
+								<Button id="sapUiRtaAddIFrameDialog_PreviewButton" enabled="{=${/previewUrl/value} !== ${/frameUrl/value} }"
+										text="{=${/previewUrl/value} === '' ? ${/text/showPreviewButton} : ${/text/updatePreviewButton} }" press="onShowPreview"
 										class="sapUiTinyMarginTop sapUiRtaAddIFrameDialogPreviewButton" />
 							</OverflowToolbar>
 						</headerToolbar>
