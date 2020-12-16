@@ -1,9 +1,12 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool", "sap/ui/Device"],
-	function(Element, Icon, IconPool, Device) {
+sap.ui.define(["sap/ui/core/Element", "sap/ui/core/library", "sap/ui/core/Icon", "sap/ui/core/IconPool", "sap/ui/Device"],
+	function(Element, coreLibrary, Icon, IconPool, Device) {
 		"use strict";
+
+		// shortcut for sap.ui.core.TextDirection
+		var TextDirection = coreLibrary.TextDirection;
 
 		/**
 		 * SelectList renderer.
@@ -95,6 +98,13 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool"
 			}
 		};
 
+		SelectListRenderer.renderDirAttr = function(oRm, sTextDir) {
+			// check if textDirection property is not set to default "Inherit" and add "dir" attribute
+			if (sTextDir !== TextDirection.Inherit) {
+				oRm.attr("dir", sTextDir.toLowerCase());
+			}
+		};
+
 		/**
 		 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 		 *
@@ -114,9 +124,14 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool"
 				oSelectedItem = oList.getSelectedItem(),
 				CSS_CLASS = SelectListRenderer.CSS_CLASS,
 				sTooltip = oItem.getTooltip_AsString(),
+				sTextDir = oItem.getTextDirection(),
 				bShowSecondaryValues = oList.getShowSecondaryValues();
 
 			oRm.openStart("li", mStates.elementData ? oItem : null);
+
+			if (!bShowSecondaryValues) {
+				this.renderDirAttr(oRm, sTextDir);
+			}
 
 			if (oItem.getIcon && oItem.getIcon()) {
 				oRm.class("sapMSelectListItemWithIcon");
@@ -174,6 +189,8 @@ sap.ui.define(["sap/ui/core/Element", "sap/ui/core/Icon", "sap/ui/core/IconPool"
 				oRm.class(CSS_CLASS + "Cell");
 				oRm.class(CSS_CLASS + "FirstCell");
 				oRm.attr("disabled", "disabled"); // fixes span obtaining focus in IE
+				this.renderDirAttr(oRm, sTextDir);
+
 				oRm.openEnd();
 
 				this._renderIcon(oRm, oItem);
