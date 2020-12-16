@@ -767,9 +767,10 @@
 		oSpecialCharsComboBox.setModel(oSpecialCharsModel);
 
 		var oComboBoxGrouping = new sap.m.ComboBox({
+			id: "comboBoxGrouping",
 			items: [
 				new sap.ui.core.SeparatorItem({text: "Group1"}),
-				new sap.ui.core.Item({text: "item11", key:"key11"}),
+				new sap.ui.core.Item({text: "item11", key:"key11", enabled: false}),
 				new sap.ui.core.Item({text: "item12", key:"key12"}),
 				new sap.ui.core.SeparatorItem({text: "Group2"}),
 				new sap.ui.core.Item({text: "item21", key:"key21"}),
