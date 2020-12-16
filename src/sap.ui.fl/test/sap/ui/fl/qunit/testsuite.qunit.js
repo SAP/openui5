@@ -151,6 +151,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith"]
 				}
 			},
+			"apply/_internal/changes/descriptor/ui5/AddComponentUsages": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddComponentUsages"]
+				}
+			},
 			"apply/_internal/changes/descriptor/app/ChangeDataSource": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {

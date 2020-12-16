@@ -48,6 +48,7 @@ sap.ui.define([
 				"appdescr_ui_setIcon",
 				"appdescr_ui_setDeviceTypes",
 				"appdescr_ui5_addLibraries",
+				"appdescr_ui5_addComponentUsages",
 				"appdescr_ui5_setFlexExtensionPointEnabled",
 				"appdescr_url_setUri",
 				"appdescr_fiori_setRegistrationIds",
