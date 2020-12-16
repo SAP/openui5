@@ -213,6 +213,48 @@
 					})
 				]
 			});
+
+			var oVL3 = new sap.ui.layout.VerticalLayout({
+				id: "oVL3",
+				content: [
+					new sap.m.Label({text: "textDirection=Inherit", design: "Bold"}),
+					new sap.m.Label({
+						required: "{/globalRequired}",
+						text: "כמה שפות אתה מדבר? English ועברית.",
+						textDirection: "Inherit"
+					}),
+					new sap.m.Label({
+						required: "{/globalRequired}",
+						text: "Do you speak any RTL languages? כן אני כן.",
+						textDirection: "Inherit"
+					}),
+
+					new sap.m.Label({text: "textDirection=LTR", design: "Bold"}),
+					new sap.m.Label({
+						required: "{/globalRequired}",
+						text: "כמה שפות אתה מדבר? English ועברית.",
+						textDirection: "LTR"
+					}),
+					new sap.m.Label({
+						required: "{/globalRequired}",
+						text: "Do you speak any RTL languages? כן אני כן.",
+						textDirection: "LTR"
+					}),
+
+					new sap.m.Label({text: "textDirection=RTL", design: "Bold"}),
+					new sap.m.Label({
+						required: "{/globalRequired}",
+						text: "כמה שפות אתה מדבר? English ועברית.",
+						textDirection: "RTL"
+					}),
+					new sap.m.Label({
+						required: "{/globalRequired}",
+						text: "Do you speak any RTL languages? כן אני כן.",
+						textDirection: "RTL"
+					})
+				]
+			});
+
 			var sf = new sap.ui.layout.form.SimpleForm("simpleForm", {
 				layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
 				editable: true,
@@ -228,6 +270,7 @@
 					new sap.m.Input
 				]
 			});
+
 			var sf2 = new sap.ui.layout.form.SimpleForm("simpleForm2", {
 				width: "300px",
 				layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
@@ -244,7 +287,6 @@
 					new sap.m.Input
 				]
 			});
-
 
 			var oPage = new sap.m.Page("myPage", {
 				title: "sap.m.Label Test Page",
@@ -277,15 +319,16 @@
 					]
 				}),
 				content: [
-                    new sap.ui.layout.VerticalLayout ({
+					new sap.ui.layout.VerticalLayout ({
 						width: "100%",
-                        content: [
+						content: [
 							oVL,
 							oVL2,
-                            sf, sf2
-                        ]
-                    })
-                ]
+							oVL3,
+							sf, sf2
+						]
+					})
+				]
 			});
 
 			oPage.addContent(new sap.m.Label({text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true, wrapping: false}));

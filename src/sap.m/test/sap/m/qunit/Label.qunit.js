@@ -154,7 +154,7 @@ sap.ui.define([
 	QUnit.test("TextDirectionOk", function(assert) {
 		assert.strictEqual(l1.getTextDirection(), oTextDirectionDefault, "l1.getTextDirection() returns result: " + l1.getTextDirection());
 		assert.strictEqual(l2.getTextDirection(), oTextDirectionRTL, "l2.getTextDirection() returns result: " + l2.getTextDirection());
-		assert.strictEqual(l2.$().attr("dir"), "rtl", "l2 has correct attribute 'dir' for RTL mode");
+		assert.strictEqual(l2.$().find("bdi").attr("dir"), "rtl", "l2 has correct attribute 'dir' for RTL mode");
 	});
 
 	QUnit.test("DesignOk", function(assert) {
