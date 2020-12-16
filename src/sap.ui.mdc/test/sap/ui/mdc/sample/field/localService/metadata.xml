@@ -132,7 +132,11 @@
 					sap:sortable="true"
 					sap:filterable="true" />
 				<Property Name="CityId" Type="Edm.String" Nullable="false"
-					MaxLength="3"  sap:label="City"
+					MaxLength="2"  sap:label="City"
+					sap:sortable="true"
+					sap:filterable="true" />
+				<Property Name="CityInfo" Type="Edm.String" Nullable="false"
+					MaxLength="100"  sap:label="CityInfo"
 					sap:sortable="true"
 					sap:filterable="true" />
 			</EntityType>
@@ -222,11 +226,15 @@
 					sap:sortable="true"
 					sap:filterable="true" />
 				<Property Name="cityId" Type="Edm.String" Nullable="false"
-					MaxLength="3"  sap:label="City"
+					MaxLength="2"  sap:label="City"
 					sap:sortable="true"
 					sap:filterable="true" />
 				<Property Name="text" Type="Edm.String" Nullable="false"
 					MaxLength="20" sap:label="Name"
+					sap:sortable="true"
+					sap:filterable="true" />
+				<Property Name="info" Type="Edm.String" Nullable="false"
+					MaxLength="100" sap:label="Information"
 					sap:sortable="true"
 					sap:filterable="true" />
 			</EntityType>

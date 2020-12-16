@@ -56,6 +56,18 @@ sap.ui.define([
 		}
 	});
 
+	/**
+	 * If set, an initial value of the <code>InParameter</code> leads to filtering for <code>empty</code>.
+	 *
+	 * <b>Note:</b> This property has no effect on <code>OutParameter</code> elements.
+	 *
+	 * @param {boolean} bInitialValueFilterEmpty New value for property <code>initialValueFilterEmpty</code>
+	 * @returns {sap.ui.mdc.field.OutParameter} Reference to <code>this</code> to allow method chaining
+	 * @private
+	 * @name sap.ui.mdc.field.OutParameter#setInitialValueFilterEmpty
+	 * @function
+	 */
+
 	return OutParameter;
 
 });

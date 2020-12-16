@@ -42,7 +42,8 @@ sap.ui.define([
 				 */
 				value: {
 					type: "any",
-					byValue: true
+					byValue: true,
+					defaultValue: null // otherwise null will be converted to undefined what could lead to issues with comparing values
 				},
 				/**
 				 * Name of the field in the <code>ListBinding</code> used in the value help.
@@ -51,6 +52,22 @@ sap.ui.define([
 				 */
 				helpPath: {
 					type: "string"
+				},
+				/**
+				 * If set, an initial value of the <code>InParameter</code> leads to filtering for <code>empty</code>
+				 *
+				 * <b>Note:</b> If used for a <code>FilterField</code> and bound to a <code>ConditionModel</code> this property must not be used.
+				 * In this case the empty filtering must be set by the assigned conditions.
+				 *
+				 * <b>Note:</b> This property must only be set if the used data type supports filtering for empty.
+				 *
+				 * <b>Note:</b> Do not set this property if an empty string is a valid key for the used <code>InParameter</code>.
+				 *
+				 * @since 1.86.0
+				 */
+				initialValueFilterEmpty: {
+					type: "boolean",
+					defaultValue: false
 				}
 			},
 			defaultProperty: "value"
@@ -155,6 +172,32 @@ sap.ui.define([
 		}
 
 		return bUseCondition;
+
+	};
+
+	/**
+	 * Returns the used data type.
+	 *
+	 * @returns {sap.ui.model.Type} data type
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.86.0
+	 */
+	InParameter.prototype.getDataType = function() {
+
+		var oType;
+
+		// TODO: how to provide type if ConditionModel is used?
+		if (!this.getUseConditions()) {
+			var oBinding = this.getBinding("value");
+			if (oBinding) {
+				oType = oBinding.getType();
+			}
+		}
+
+		return oType;
 
 	};
 

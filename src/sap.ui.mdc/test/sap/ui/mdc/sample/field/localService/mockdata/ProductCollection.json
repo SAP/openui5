@@ -29,7 +29,8 @@
 	"MatrUnit": "",
 	"CountryId": "USA",
 	"RegionId": "01",
-	"CityId": "02"
+	"CityId": "02",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "2212-121-828",
@@ -60,7 +61,8 @@
 	"MatrUnit": "G",
 	"CountryId": "DE",
 	"RegionId": "01",
-	"CityId": "01"
+	"CityId": "01",
+	"CityInfo": "Test"
 	},
 	{
 	"ProductId": "K47322.1",
@@ -91,7 +93,8 @@
 	"MatrUnit": "KG",
 	"CountryId": "DE",
 	"RegionId": "02",
-	"CityId": "02"
+	"CityId": "02",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "22134T",
@@ -122,7 +125,8 @@
 	"MatrUnit": "",
 	"CountryId": "USA",
 	"RegionId": "02",
-	"CityId": "02"
+	"CityId": "02",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "P1239823",
@@ -153,7 +157,8 @@
 	"MatrUnit": "TO",
 	"CountryId": "DE",
 	"RegionId": "03",
-	"CityId": "01"
+	"CityId": "01",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "214-121-828",
@@ -184,7 +189,8 @@
 	"MatrUnit": "",
 	"CountryId": "FR",
 	"RegionId": "01",
-	"CityId": "01"
+	"CityId": "01",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "XKP-312548",
@@ -215,7 +221,8 @@
 	"MatrUnit": "TO",
 	"CountryId": "FR",
 	"RegionId": "02",
-	"CityId": "01"
+	"CityId": "01",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "KTZ-12012.V2",
@@ -246,7 +253,8 @@
 	"MatrUnit": "",
 	"CountryId": "USA",
 	"RegionId": "01",
-	"CityId": "01"
+	"CityId": "01",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "89932-922",
@@ -277,7 +285,8 @@
 	"MatrUnit": "",
 	"CountryId": "DE",
 	"RegionId": "02",
-	"CityId": "02"
+	"CityId": "02",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "38094020.1",
@@ -308,7 +317,8 @@
 	"MatrUnit": "",
 	"CountryId": "DE",
 	"RegionId": "02",
-	"CityId": "02"
+	"CityId": "02",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "870394932",
@@ -339,7 +349,8 @@
 	"MatrUnit": "",
 	"CountryId": "DE",
 	"RegionId": "02",
-	"CityId": "02"
+	"CityId": "02",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "282948303-02",
@@ -370,7 +381,8 @@
 	"MatrUnit": "",
 	"CountryId": "DE",
 	"RegionId": "02",
-	"CityId": "02"
+	"CityId": "02",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "OP-38800002",
@@ -401,7 +413,8 @@
 	"MatrUnit": "",
 	"CountryId": "DE",
 	"RegionId": "02",
-	"CityId": "02"
+	"CityId": "02",
+	"CityInfo": ""
 	},
 	{
 	"ProductId": "977700-11",
@@ -432,6 +445,7 @@
 	"MatrUnit": "",
 	"CountryId": "DE",
 	"RegionId": "02",
-	"CityId": "02"
+	"CityId": "02",
+	"CityInfo": ""
 	}
 ]
