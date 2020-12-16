@@ -123,9 +123,10 @@ tr.sapMListTblHeaderNone > .sapMTableTH {
 	padding-left: 1rem;
 }
 
-.sapMListHighlight .sapMListTblHighlightCol{
-	width: 0.375rem;
-	min-width: 0.375rem;
+// 0.0625rem -> border-right width for highlight
+.sapMListHighlight .sapMListTblHighlightCol {
+	width: 0.375rem + 0.0625rem;
+	min-width: 0.375rem + 0.0625rem;
 }
 
 .sapMListNavigated .sapMListTblNavigatedCol {

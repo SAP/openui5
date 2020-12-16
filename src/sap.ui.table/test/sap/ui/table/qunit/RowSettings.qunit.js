@@ -200,7 +200,7 @@ sap.ui.define([
 				var oHighlightElement = oRow.getDomRef("highlight");
 
 				if (iRowIndex < iRowsWithHighlight) {
-					assert.strictEqual(oHighlightElement.getBoundingClientRect().width, 6,
+					assert.strictEqual(oHighlightElement.getBoundingClientRect().width, 7,
 						sDensity + ": The highlight element of row " + (iRowIndex + 1) + " has the correct width"
 					);
 				} else {
@@ -216,7 +216,7 @@ sap.ui.define([
 			for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
 				var oRowHeaderElement = oTable.getDomRef("rowsel" + iRowIndex);
 
-				assert.strictEqual(oRowHeaderElement.getBoundingClientRect().width, iStandardRowHeaderWidth + 6,
+				assert.strictEqual(oRowHeaderElement.getBoundingClientRect().width, iStandardRowHeaderWidth + 7,
 					sDensity + ": The header element of row " + (iRowIndex + 1) + " has the correct width"
 				);
 			}
