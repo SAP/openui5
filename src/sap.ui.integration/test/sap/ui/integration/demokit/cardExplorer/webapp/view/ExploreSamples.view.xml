@@ -31,7 +31,7 @@
 			<l:SplitPane requiredParentWidth="1">
 				<Page id="editPage">
 					<customHeader>
-						<OverflowToolbar>
+						<OverflowToolbar id="toolbar">
 							<Button class="sapUiSmallMarginBegin" text="Run" type="Emphasized" icon="sap-icon://media-play" press="onRunPressed" enabled="{settings>/editable}">
 								<layoutData>
 									<OverflowToolbarLayoutData priority="High" />
@@ -51,27 +51,60 @@
 							<MenuButton id="downloadSampleButton" icon="sap-icon://download" tooltip="Download" text="Download" type="Transparent">
 								<menu>
 									<Menu>
-										<MenuItem text="Manifest File" icon="sap-icon://document-text" press="onDownloadManifestFile" />
-										<MenuItem text="{= ${settings>/isApplication} ? 'All files as .zip' : 'Bundle as card.zip'}" icon="sap-icon://attachment-zip-file" press="onDownloadZip" />
+										<MenuItem text="Manifest File" icon="sap-icon://document-text" press=".onDownloadManifestFile" />
+										<MenuItem text="{= ${settings>/isApplication} ? 'All files as .zip' : 'Bundle as card.zip'}" icon="sap-icon://attachment-zip-file" press=".onDownloadZip" />
 									</Menu>
 								</menu>
 								<layoutData>
 									<OverflowToolbarLayoutData priority="High" />
 								</layoutData>
 							</MenuButton>
-							<Button press="onChangeEditorClick" tooltip="Design-time editor" icon="sap-icon://developer-settings" enabled="{settings>/editable}" type="Transparent" visible="{= ${settings>/editable} &amp;&amp; ${settings>/internal} }">
+							<MenuButton id="openCardEditorButton" text="Card Editor" type="Transparent" visible="{settings>/editable}">
+								<menu>
+									<Menu>
+										<MenuItem text="Administrator" press=".onOpenConfigurationEditor">
+											<customData><core:CustomData key="mode" value="admin"></core:CustomData></customData>
+										</MenuItem>
+										<MenuItem text="Page/Content Administrator" press=".onOpenConfigurationEditor">
+											<customData><core:CustomData key="mode" value="content"></core:CustomData></customData>
+										</MenuItem>
+										<MenuItem text="Translator" press=".onOpenConfigurationEditor">
+											<customData><core:CustomData key="mode" value="translator"></core:CustomData></customData>
+										</MenuItem>
+									</Menu>
+								</menu>
+								<layoutData>
+									<OverflowToolbarLayoutData priority="High" />
+								</layoutData>
+							</MenuButton>
+							<OverflowToolbarButton
+								text="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Visual Editor' : 'Switch to Text Editor'}"
+								tooltip="{= ${settings>/editorType} === 'TEXT' ? 'Switch to Visual Editor' : 'Switch to Text Editor'}"
+								icon="sap-icon://developer-settings"
+								enabled="{settings>/editable}"
+								type="Transparent"
+								visible="{= ${settings>/editable} &amp;&amp; ${settings>/internal} }"
+								press=".onChangeEditor"
+							>
 								<layoutData>
 									<OverflowToolbarLayoutData priority="Low" />
 								</layoutData>
-							</Button>
-							<Button class="orientationBtn" press="onChangeSplitterOrientation" tooltip="Change position" icon="sap-icon://header" type="Transparent">
+							</OverflowToolbarButton>
+							<OverflowToolbarButton
+								text="Change Position"
+								tooltip="Change Position"
+								class="orientationBtn"
+								icon="sap-icon://header"
+								type="Transparent"
+								press=".onChangeSplitterOrientation"
+							>
 								<layoutData>
 									<OverflowToolbarLayoutData priority="Low" />
 								</layoutData>
-							</Button>
+							</OverflowToolbarButton>
 						</OverflowToolbar>
 					</customHeader>
-					<cardExplorer:FileEditor id="fileEditor" manifestChange="onFileEditorManifestChange" designtimeChange="onFileEditorDesigntimeChange" fileSwitch="onFileSwitch" visible="{= ${settings>/editorType} === 'text' }" />
+					<cardExplorer:FileEditor id="fileEditor" manifestChange="onFileEditorManifestChange" designtimeChange="onFileEditorDesigntimeChange" fileSwitch="onFileSwitch" visible="{= ${settings>/editorType} === 'TEXT' }" />
 				</Page>
 			</l:SplitPane>
 		</l:PaneContainer>

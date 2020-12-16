@@ -2,13 +2,12 @@
 
 sap.ui.define([
 	"sap/ui/test/Opa5",
-	"sap/ui/test/matchers/Properties",
-	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/actions/Press",
 	"sap/ui/core/util/File",
 	"sap/ui/thirdparty/jszip",
-	"sap/ui/Device"
-], function(Opa5, Properties, Ancestor, Press, File, JSZip, Device) {
+	"sap/ui/Device",
+	"sap/ui/events/KeyCodes"
+], function(Opa5, Press, File, JSZip, Device, KeyCodes) {
 	"use strict";
 
 	var sViewName = "ExploreSamples",
@@ -23,34 +22,26 @@ sap.ui.define([
 					return this.waitFor({
 						viewName: sViewName,
 						id: "downloadSampleButton",
-						actions: function (oButton) {
-								oFileSaveStub = sinon.stub(File, "save");
-								oJSZipFileStub = sinon.stub(JSZip.prototype, "file");
-								oButton._getButtonControl().firePress();
+						actions: function (oMenuBtn) {
+							oFileSaveStub = sinon.stub(File, "save");
+							oJSZipFileStub = sinon.stub(JSZip.prototype, "file");
+							oMenuBtn._getButtonControl().firePress();
 						},
 						errorMessage: "Could not find tab with name download sample menu",
-						success: function (oMenu) {
+						success: function (oMenuBtn) {
 							return this.waitFor({
 								viewName: sViewName,
 								controlType: "sap.ui.unified.MenuItem",
 								actions: new Press(),
-								matchers: [
-									new Ancestor(oMenu),
-									new Properties({ text: sDownloadType })
-								],
+								matchers: {
+									ancestor: oMenuBtn,
+									properties: {
+										text: sDownloadType
+									}
+								},
 								errorMessage: "Could not find MenuItem with text: " + sDownloadType
 							});
 						}
-					});
-				},
-				iChangeFileEditorValue: function (sValue) {
-					return this.waitFor({
-						viewName: sViewName,
-						id: "fileEditor",
-						actions: function (oFileEditor) {
-							oFileEditor.setManifestContent(sValue);
-						},
-						errorMessage: "Could not edit CodeEditor"
 					});
 				},
 				iChangeDropdownValue: function (sText) {
@@ -79,15 +70,106 @@ sap.ui.define([
 						success: function(oComboBox) {
 							this.waitFor({
 								controlType: "sap.m.StandardListItem",
-								matchers: [
-									new Ancestor(oComboBox),
-									new Properties({ title: sText})
-								],
+								matchers: {
+									ancestor: oComboBox,
+									properties: {
+										title: sText
+									}
+								},
 								actions: new Press(),
 								errorMessage: "Cannot select " + sText + " from the ComboBox"
 							});
 						},
 						errorMessage: "Could not open the ComboBox"
+					});
+				},
+				// opens the overflow of the toolbar, in case the button we need has been placed there
+				iPressOnToolbarOverflowIfButtonIsThere: function (sBtnId) {
+					return this.waitFor({
+						viewName: sViewName,
+						id: sBtnId,
+						visible: false,
+						success: function (oBtn) {
+							if (oBtn.getDomRef() && Opa5.getJQuery()(oBtn.getDomRef()).is(":visible")) {
+								Opa5.assert.ok(true, sBtnId + " is not in the overflow, no need to expand it");
+							} else {
+								this.waitFor({
+									id: "toolbar",
+									viewName: sViewName,
+									success: function (oToolbar) {
+										this.waitFor({
+											controlType: "sap.m.ToggleButton",
+											matchers: {
+												ancestor: oToolbar
+											},
+											actions: new Press()
+										});
+									}
+								});
+							}
+						}
+					});
+				},
+				iPressOpenAdministratorEditor: function () {
+					var sMenuBtnId = "openCardEditorButton";
+
+					return this.iPressOnToolbarOverflowIfButtonIsThere(sMenuBtnId).and.waitFor({
+						viewName: sViewName,
+						id: sMenuBtnId,
+						actions: function (oMenuBtn) {
+							oMenuBtn._getButtonControl().firePress();
+						},
+						success: function (oMenuBtn) {
+							return this.waitFor({
+								viewName: sViewName,
+								controlType: "sap.ui.unified.MenuItem",
+								actions: new Press(),
+								matchers: {
+									ancestor: oMenuBtn,
+									properties: {
+										text: "Administrator"
+									}
+								},
+								errorMessage: "Could not find MenuItem with text: 'Administrator'"
+							});
+						}
+					});
+				},
+				iSelectFile: function (sName) {
+					return this.waitFor({
+						controlType: "sap.m.IconTabFilter",
+						viewName: sViewName,
+						properties: {
+							text: sName
+						},
+						actions: new Press()
+					});
+				},
+				iEnterValueInTextEditor: function (sValue) {
+					return this.waitFor({
+						id: "fileEditor",
+						viewName: sViewName,
+						success: function (oFileEditor) {
+							this.waitFor({
+								controlType: "sap.ui.codeeditor.CodeEditor",
+								matchers: {
+									ancestor: oFileEditor
+								},
+								actions: function(oCodeEditor) {
+									oCodeEditor.setValue(sValue);
+								},
+								errorMessage: "Couldn't enter value in the text editor"
+							});
+						}
+					});
+				},
+				iPressEscape: function() {
+					return this.waitFor({
+						searchOpenDialogs: true,
+						controlType: "sap.m.Dialog",
+						actions: function (oDialog) {
+							Opa5.getUtils().triggerKeydown(oDialog.getDomRef(), KeyCodes.ESCAPE);
+						}
 					});
 				}
 			},
@@ -137,7 +219,11 @@ sap.ui.define([
 					return this.waitFor({
 						viewName: sViewName,
 						controlType: "sap.m.Title",
-						matchers: new Properties({text: sTitle}),
+						matchers: {
+							properties: {
+								text: sTitle
+							}
+						},
 						success: function () {
 							Opa5.assert.ok(true, "The navigation ended on the correct topic: " + sTitle);
 						},
@@ -148,12 +234,38 @@ sap.ui.define([
 					return this.waitFor({
 						viewName: sViewName,
 						controlType: "sap.m.ComboBox",
-
-						matchers: new Properties({selectedKey: sKey}),
+						matchers: {
+							properties: {
+								selectedKey: sKey
+							}
+						},
 						success: function () {
 							Opa5.assert.ok(true, "The navigation ended on the correct sub sample: " + sKey);
 						},
 						errorMessage: "The navigation isn't ended on the correct sub sample: " + sKey
+					});
+				},
+				iShouldSeeAdministratorEditorDialog: function () {
+					return this.waitFor({
+						controlType: "sap.ui.integration.designtime.editor.CardEditor",
+						searchOpenDialogs: true,
+						success: function () {
+							Opa5.assert.ok("Successfully opened Administrator Editor");
+						},
+						errorMessage: "Administrator Editor didn't open"
+					});
+				},
+				iShouldSeeGeneralSettingsInAdministratorDialog: function () {
+					return this.waitFor({
+						controlType: "sap.m.Panel",
+						properties: {
+							headerText: "General Settings"
+						},
+						searchOpenDialogs: true,
+						success: function () {
+							Opa5.assert.ok("Configuration is visible in Administrator Editor");
+						},
+						errorMessage: "Settings didn't appear in the Administrator Editor"
 					});
 				}
 			}

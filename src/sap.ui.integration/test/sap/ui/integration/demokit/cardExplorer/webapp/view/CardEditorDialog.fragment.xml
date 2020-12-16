@@ -1,0 +1,26 @@
+<core:FragmentDefinition
+	xmlns:w="sap.ui.integration.widgets"
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core"
+	xmlns:editor="sap.ui.integration.designtime.editor">
+		<Dialog title="{config>/title}" class="sapUiSizeCompact sapUiResponsiveContentPadding">
+			<subHeader>
+				<Bar>
+					<contentLeft>
+						<FormattedText htmlText="{config>/subTitle}"></FormattedText>
+					</contentLeft>
+				</Bar>
+			</subHeader>
+			<MessageStrip type="Information" text="Modifications of values in this editor are not saved, neither included in the card bundle zip."></MessageStrip>
+			<editor:CardEditor
+				card="{config>/cardId}"
+				mode="{config>/mode}"
+				designtime="{config>/designtime}"
+				allowSettings="true"
+				allowDynamicValues="true"
+			></editor:CardEditor>
+			<endButton>
+				<Button text="Close" press=".onEditorDialogClose"></Button>
+			</endButton>
+		</Dialog>
+</core:FragmentDefinition>
