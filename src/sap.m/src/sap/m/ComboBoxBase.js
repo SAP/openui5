@@ -1351,6 +1351,19 @@ sap.ui.define([
 		};
 
 		/**
+		 * Gets the enabled items from the aggregation named <code>items</code>.
+		 *
+		 * @param {sap.ui.core.Item[]} [aItems=getItems()] Items to filter.
+		 * @returns {sap.ui.core.Item[]} An array containing the enabled items.
+		 * @public
+		 * @deprecated As of version 1.86. The enabled items should be managed by the application.
+		 */
+		ComboBoxBase.prototype.getEnabledItems = function(aItems) {
+			// for backward compatibility
+			return ListHelpers.getEnabledItems(aItems || this.getItems());
+		};
+
+		/**
 		 * Gets the item with the given key from the aggregation named <code>items</code>.<br>
 		 * <b>Note:</b> If duplicate keys exist, the first item matching the key is returned.
 		 *
