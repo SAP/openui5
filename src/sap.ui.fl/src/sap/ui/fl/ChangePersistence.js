@@ -295,7 +295,7 @@ sap.ui.define([
 			//Since starting RTA does not recreate ChangePersistence instance, resets changes map is required to filter personalized changes
 			this._mChanges = DependencyHandler.createEmptyDependencyMap();
 
-			aChanges.forEach(this._addChangeAndUpdateDependencies.bind(this, oAppComponent));
+			aChanges.forEach(this.addChangeAndUpdateDependencies.bind(this, oAppComponent));
 
 			this._mChangesInitial = merge({}, this._mChanges);
 
@@ -364,10 +364,20 @@ sap.ui.define([
 		return this._mChanges;
 	};
 
-	ChangePersistence.prototype._addChangeAndUpdateDependencies = function(oAppComponent, oChange) {
+	/**
+	 * Adds a new change into changes map positioned right after the referenced change and updates the change dependencies
+	 *
+	 * @param {sap.ui.core.Component} oAppComponent - Application component for the view
+	 * @param {sap.ui.fl.changeObject} oChange - Change instance
+	 * @param {sap.ui.fl.changeObject} [oReferenceChange] - Refernce change. New change is positioned right after this one in the changes map
+	 */
+	ChangePersistence.prototype.addChangeAndUpdateDependencies = function(oAppComponent, oChange, oReferenceChange) {
 		// the change status should always be initial when it gets added to the map / dependencies
 		// if the component gets recreated the status of the change might not be initial
 		oChange.setInitialApplyState();
+		if (oReferenceChange) {
+			DependencyHandler.insertChange(oChange, this._mChanges, oReferenceChange);
+		}
 		DependencyHandler.addChangeAndUpdateDependencies(oChange, oAppComponent, this._mChanges);
 	};
 
