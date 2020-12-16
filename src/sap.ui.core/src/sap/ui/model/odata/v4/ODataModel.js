@@ -929,6 +929,7 @@ sap.ui.define([
 	 *   once, a header value is invalid, or there are open requests.
 	 *
 	 * @public
+	 * @see #getHttpHeaders
 	 * @since 1.71.0
 	 */
 	ODataModel.prototype.changeHttpHeaders = function (mHeaders) {
@@ -1268,18 +1269,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a map of HTTP headers used for data and metadata requests.
+	 * Returns a map of HTTP headers used for data and metadata requests. While the "X-CSRF-Token"
+	 * header is not used for metadata requests, it is still included here if available. The
+	 * "SAP-ContextId" header is only included if requested explicitly (@since 1.86.0).
 	 *
+	 * @param {boolean} [bIncludeContextId]
+	 *   Whether to include the "SAP-ContextId" header (@since 1.86.0)
 	 * @returns {object}
 	 *   The map of HTTP headers
 	 *
 	 * @public
+	 * @see #changeHttpHeaders
 	 * @since 1.71
 	 */
-	ODataModel.prototype.getHttpHeaders = function () {
+	ODataModel.prototype.getHttpHeaders = function (bIncludeContextId) {
 		var mHeadersCopy = Object.assign({}, this.mHeaders);
 
-		delete mHeadersCopy["SAP-ContextId"];
+		if (!bIncludeContextId) {
+			delete mHeadersCopy["SAP-ContextId"];
+		}
 		if (mHeadersCopy["X-CSRF-Token"] === null) { // no security token available
 			delete mHeadersCopy["X-CSRF-Token"];
 		}
