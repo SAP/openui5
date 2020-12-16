@@ -427,6 +427,9 @@ sap.ui.define([
 	};
 
 	BaseField.prototype._hideValueState = function () {
+		if (!this.getParent()) {
+			return;
+		}
 		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
 		if (this._message) {
 			var oField = this.getAggregation("_field");
@@ -470,6 +473,9 @@ sap.ui.define([
 	};
 
 	BaseField.prototype._showMessage = function () {
+		if (!this.getParent()) {
+			return;
+		}
 		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
 		if (this._message) {
 			oMessageStrip.applySettings({
