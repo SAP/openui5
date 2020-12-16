@@ -649,6 +649,7 @@ sap.ui.define([
 			this._settingsModel = new JSONModel(this._oDesigntimeInstance.getSettings());
 			this.setModel(this._settingsModel, "currentSettings");
 			this.setModel(this._settingsModel, "items");
+			this._oProviderCard.setModel(this._settingsModel, "currentSettings");
 			this._oProviderCard.setModel(this._settingsModel, "items");
 			this._applyDesigntimeLayers(); //changes done from admin to content on the dt values
 			this._requireFields().then(function () {
@@ -980,6 +981,7 @@ sap.ui.define([
 			};
 			this._oProviderCard.setVisible(false);
 			this._oProviderCard.setModel(this._settingsModel, "items");
+			this._oProviderCard.setModel(this._settingsModel, "currentSettings");
 			this._oProviderCard.onBeforeRendering();
 			if (oCurrentCard && oCurrentCard !== this._oEditorCard) {
 				oCurrentCard.destroy();
@@ -1030,10 +1032,17 @@ sap.ui.define([
 	 */
 	CardEditor.prototype._addValueListModel = function (oConfig, oField, bIgnore) {
 		if (oConfig.values && oConfig.values.data && this._oProviderCard && this._oProviderCard._oDataProviderFactory) {
-			var oValueModel = new JSONModel({});
+			var oValueModel = oField.getModel();
+			if (!oValueModel) {
+				oValueModel = new JSONModel({});
+				oField.setModel(oValueModel, undefined);
+			}
 			var oDataProvider = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data);
 			oDataProvider.bindObject({
 				path: "items>/form/items"
+			});
+			oDataProvider.bindObject({
+				path: "currentSettings>" + oConfig._settingspath
 			});
 			var oPromise = oDataProvider.getData();
 			this._settingsModel.setProperty(oConfig._settingspath + "/_loading", true);
@@ -1045,6 +1054,7 @@ sap.ui.define([
 				oConfig._values = oData;
 				oValueModel.setData(oData);
 				oValueModel.checkUpdate(true);
+				oValueModel.firePropertyChange();
 				this._settingsModel.setProperty(oConfig._settingspath + "/_loading", false);
 			}.bind(this)).catch(function () {
 				oConfig._values = {};
@@ -1056,14 +1066,13 @@ sap.ui.define([
 			//in the designtime the item bindings will not use a named model, therefore we add a unnamed model for the field
 			//to carry the values, also we use the binding context to connect the given path from oConfig.values.data.path
 			//with that the result of the data request can be have also other structures.
-			oField.setModel(oValueModel, undefined);
 			oField.bindObject({
 				path: oConfig.values.data.path || "/"
 			});
 			if (!bIgnore) {
 				var sData = JSON.stringify(oConfig.values.data);
 				if (sData) {
-					var destParamRegExp = /parameters\.([^\}\}]+)|destinations\.([^\}\}]+)|\{items\>[\/?\w+]+\}/g,
+					var destParamRegExp = /parameters\.([^\}\}]+)|destinations\.([^\}\}]+)|\{items\>[\/?\w+]+\}|\{currentSettings\>[\/?\w+]+\}/g,
 						aResult = sData.match(destParamRegExp);
 					if (aResult) {
 						//add the field to dependency to either the parameter or destination
@@ -1077,6 +1086,12 @@ sap.ui.define([
 								sDependentPath = sDependentPath + aResult[i].replace(".", "/") + sValueKey;
 							} else if (aResult[i].indexOf("{items>") === 0) {
 								sDependentPath = sDependentPath + "parameters/" + aResult[i].slice(7, -1);
+							} else if (aResult[i].indexOf("{currentSettings>") === 0) {
+								if (aResult[i].endsWith("suggestValue}")) {
+									sDependentPath = sDependentPath + "parameters/" + oConfig._settingspath.substring(oConfig._settingspath.lastIndexOf("/") + 1) + "/value";
+								} else {
+									sDependentPath = sDependentPath + "parameters/" + aResult[i].slice(17, -1);
+								}
 							}
 							var oItem = this._mItemsByPaths[sDependentPath];
 							if (oItem) {
@@ -1306,6 +1321,30 @@ sap.ui.define([
 				var oItem = aItems[n];
 				if (oItem.manifestpath) {
 					this._mItemsByPaths[oItem.manifestpath] = oItem;
+				}
+				if (oItem.values && oItem.values.data && oItem.values.data.filterBackend && oItem.values.data.filterBackend.columns && oItem.values.data.filterBackend.columns.length > 0) {
+					//add filter param into request
+					if (oItem.values.data.request) {
+						var sFilterParam = "";
+						var sFilterOperator = oItem.values.data.filterBackend.operator ? oItem.values.data.filterBackend.operator : "contains";
+						for (var column in oItem.values.data.filterBackend.columns) {
+							sFilterParam += sFilterOperator + "(" + oItem.values.data.filterBackend.columns[column] + ",'{currentSettings>suggestValue}') or ";
+						}
+						if (sFilterParam.endsWith(" or ")) {
+							sFilterParam = sFilterParam.slice(0, -4);
+						}
+						if (oItem.values.data.request.parameters) {
+							if (oItem.values.data.request.parameters.$filter) {
+								oItem.values.data.request.parameters.$filter = "(" + oItem.values.data.request.parameters.$filter + ") and (" + sFilterParam + ")";
+							} else {
+								oItem.values.data.request.parameters.$filter = sFilterParam;
+							}
+						} else {
+							oItem.values.data.request.parameters = {
+								"$filter": sFilterParam
+							};
+						}
+					}
 				}
 				if (oItem) {
 					//force a label setting, set it to the name of the item
