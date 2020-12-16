@@ -38,7 +38,7 @@ sap.ui.define([
 			isChangeMapCreated: function () {
 				return bChangeMapCreated || false;
 			},
-			_addChangeAndUpdateDependencies: fnAddChangeAndUpadateDependencies || function () {}
+			addChangeAndUpdateDependencies: fnAddChangeAndUpadateDependencies || function () {}
 		};
 		sandbox.stub(ChangePersistenceFactory, "getChangePersistenceForControl").returns(oChangePersistence);
 		return oChangePersistence;
