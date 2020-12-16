@@ -26,7 +26,8 @@ sap.ui.define([
 			dataReceived : true,
 			dataRequested : true,
 			DataStateChange : true
-		};
+		},
+		sVirtualPath = "/" + Context.VIRTUAL; // a snippet indicating a virtual path
 
 	/**
 	 * Do <strong>NOT</strong> call this private constructor, but rather use
@@ -282,8 +283,8 @@ sap.ui.define([
 					// checkUpdateInternal
 					return undefined;
 				}
-				if (that.bRelative && that.oContext.iIndex === Context.VIRTUAL) {
-					// virtual parent context: no change event
+				if (that.bRelative && that.sReducedPath.includes(sVirtualPath)) {
+					// below virtual context: no change event
 					oCallToken.forceUpdate = false;
 				}
 				if (!bIsMeta) { // relative data binding

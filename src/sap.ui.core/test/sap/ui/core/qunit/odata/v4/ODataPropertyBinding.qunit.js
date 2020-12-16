@@ -394,13 +394,35 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("checkUpdateInternal(true): no change event for virtual context", function (assert) {
-		var oVirtualContext = Context.create(this.oModel, {/*list binding*/}, "/...",
-				Context.VIRTUAL),
+		var oVirtualContext = Context.create(this.oModel, {/*list binding*/},
+				"/.../" + Context.VIRTUAL, Context.VIRTUAL),
 			oBinding = this.oModel.bindProperty("relative", oVirtualContext);
 
 		// Note: it is important that automatic type determination runs as soon as possible
 		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
-			.withExactArgs("/.../relative")
+			.withExactArgs("/.../" + Context.VIRTUAL + "/relative")
+			.returns(SyncPromise.resolve());
+		oBinding.attachChange(function () {
+			assert.ok(false, "no change event for virtual context");
+		});
+
+		// code under test
+		return oBinding.checkUpdateInternal(true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdateInternal(true): no change event in virtual row", function (assert) {
+		// a Context dependent to a virtual context
+		var oVirtualContext = Context.create(this.oModel, {/*list binding*/},
+				"/EMPLOYEES/" + Context.VIRTUAL + "/EMPLOYEE_2_MANAGER"),
+			oBinding = this.oModel.bindProperty("relative", oVirtualContext),
+			sResolvedPath = "/EMPLOYEES/" + Context.VIRTUAL + "/EMPLOYEE_2_MANAGER/relative";
+
+		// Note: it is important that automatic type determination runs as soon as possible
+		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type").withExactArgs(sResolvedPath)
+			.returns(SyncPromise.resolve());
+		// The parent virtual context ensures that there is no cache access
+		this.mock(oVirtualContext).expects("fetchValue").withExactArgs(sResolvedPath, oBinding)
 			.returns(SyncPromise.resolve());
 		oBinding.attachChange(function () {
 			assert.ok(false, "no change event for virtual context");
