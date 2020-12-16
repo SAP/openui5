@@ -272,71 +272,50 @@ sap.ui.define([
 			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
 
 			var aVariants = [{
-				fileName: "variant_3",
-				fileType: "variant",
-				selector: {
-					persistencyKey: sPersistencyKey
-				},
-				texts: {
-					variantName: {
-						value: "C variant"
-					}
-				}
+				id: "variant_3",
+				name: "C variant"
 			}, {
-				fileName: "variant_4",
-				fileType: "variant",
-				content: {
-					executeOnSelect: true
-				},
-				selector: {
-					persistencyKey: sPersistencyKey
-				},
-				texts: {
-					variantName: {
-						value: "A variant"
-					}
-				}
+				id: "variant_4",
+				executeOnSelect: true,
+				name: "A variant"
 			}, {
-				fileName: "variant_5",
-				fileType: "variant",
-				selector: {
-					persistencyKey: sPersistencyKey
-				},
-				texts: {
-					variantName: {
-						value: "A Variant"
-					}
-				}
+				id: "variant_5",
+				name: "A Variant"
 			}];
 
 			var sStandardVariantTitle = "this is a localized standard variant title";
 
 			return SmartVariantManagementApplyAPI.loadVariants({
 				control: this.oControl,
-				standardVariantTitle: sStandardVariantTitle,
+				standardVariant: {
+					name: sStandardVariantTitle
+				},
 				variants: aVariants
 			})
-			.then(function (aEntities) {
-				assert.equal(aEntities.length, 6, "then six entities are returned");
-				assert.equal(aEntities[0].getId(), "*standard*", "the first is the standard variant passed");
-				assert.equal(aEntities[0].getText("variantName"), sStandardVariantTitle, "with the passed title");
-				assert.equal(aEntities[0].getExecuteOnSelect(), false, "and is not executed on selection by default");
-				assert.equal(aEntities[0].getFavorite(), true, "which is by default a favorite");
-				assert.equal(aEntities[1].getId(), "variant_5", "the second is the variant provided from the loadFlexData");
-				assert.equal(aEntities[1].getFavorite(), false, "which is NOT a favorite");
-				assert.equal(aEntities[1].getExecuteOnSelect(), false, "and is not executed on selection by default");
-				assert.equal(aEntities[2].getId(), "variant_4", "the third is the variant provided from the loadFlexData");
-				assert.equal(aEntities[2].getFavorite(), false, "which is NOT a favorite");
-				assert.equal(aEntities[2].getExecuteOnSelect(), true, "and is executed on selection, because it is flagged within the object");
-				assert.equal(aEntities[3].getId(), "variant_1", "the fourth is the variant provided from the loadFlexData");
-				assert.equal(aEntities[3].getFavorite(), false, "which is NOT a favorite, because it was added as a favorite and afterwards removed");
-				assert.equal(aEntities[3].getExecuteOnSelect(), false, "and is not executed on selection by default");
-				assert.equal(aEntities[4].getId(), "variant_2", "the fifth is the variant provided from the loadFlexData");
-				assert.equal(aEntities[4].getFavorite(), true, "which is a favorite, because it is flagged as one within the content");
-				assert.equal(aEntities[4].getExecuteOnSelect(), true, "and is executed on selection, because it is flagged within the content");
-				assert.equal(aEntities[5].getId(), "variant_3", "the six is the variant provided from the loadFlexData");
-				assert.equal(aEntities[5].getFavorite(), true, "which was changed to be a favorite");
-				assert.equal(aEntities[5].getExecuteOnSelect(), false, "and is not executed on selection by default");
+			.then(function (oResponse) {
+				var oStandardVariant = oResponse.standardVariant;
+				assert.equal(oStandardVariant.getId(), "*standard*", "the first is the standard variant passed");
+				assert.equal(oStandardVariant.getText("variantName"), sStandardVariantTitle, "with the passed title");
+				assert.equal(oStandardVariant.getExecuteOnSelect(), true, "and is executed on selection by a standardVariant change");
+				assert.equal(oStandardVariant.getFavorite(), true, "which is by default a favorite");
+
+				var aVariants = oResponse.variants;
+				assert.equal(aVariants.length, 5, "then five entities are returned");
+				assert.equal(aVariants[0].getId(), "variant_3", "the six is the variant provided from the loadFlexData");
+				assert.equal(aVariants[0].getFavorite(), true, "which was changed to be a favorite");
+				assert.equal(aVariants[0].getExecuteOnSelect(), false, "and is not executed on selection by default");
+				assert.equal(aVariants[1].getId(), "variant_4", "the third is the variant provided from the loadFlexData");
+				assert.equal(aVariants[1].getFavorite(), false, "which is NOT a favorite");
+				assert.equal(aVariants[1].getExecuteOnSelect(), true, "and is executed on selection, because it is flagged within the object");
+				assert.equal(aVariants[2].getId(), "variant_5", "the second is the variant provided from the loadFlexData");
+				assert.equal(aVariants[2].getFavorite(), false, "which is NOT a favorite");
+				assert.equal(aVariants[2].getExecuteOnSelect(), false, "and is not executed on selection by default");
+				assert.equal(aVariants[3].getId(), "variant_1", "the fourth is the variant provided from the loadFlexData");
+				assert.equal(aVariants[3].getFavorite(), false, "which is NOT a favorite, because it was added as a favorite and afterwards removed");
+				assert.equal(aVariants[3].getExecuteOnSelect(), false, "and is not executed on selection by default");
+				assert.equal(aVariants[4].getId(), "variant_2", "the fifth is the variant provided from the loadFlexData");
+				assert.equal(aVariants[4].getFavorite(), true, "which is a favorite, because it is flagged as one within the content");
+				assert.equal(aVariants[4].getExecuteOnSelect(), true, "and is executed on selection, because it is flagged within the content");
 			});
 		});
 

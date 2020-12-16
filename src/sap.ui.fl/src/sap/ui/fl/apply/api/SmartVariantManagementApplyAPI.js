@@ -111,6 +111,21 @@ sap.ui.define([
 		},
 
 		/**
+		 * @typedef {object} sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsInput
+		 * @param {string} id - ID of the variant
+		 * @param {string} name - Title of the variant
+		 * @param {boolean} [favorite=false] - Flag if the favorite property should be set
+		 * @param {boolean} [executeOnSelect=false] - Flag if the favorite property should be set
+		 * @param {object} [content={}] - Filter values of the variant
+		 */
+
+		/**
+		 * @typedef {object} sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsResponse
+		 * @property {sap.ui.fl._internal.flexObjects.Variant} standardVariant - The instance of the passed or exchanged standard variant
+		 * @property {sap.ui.fl._internal.flexObjects.Variant[]} variants - instances of the passed, loaded and changed variants
+		 */
+
+		/**
 		 * Calls the back end asynchronously and fetches all {@link sap.ui.fl.Change}s and variants pointing to this control.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
@@ -118,16 +133,16 @@ sap.ui.define([
 		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
 		 * 			sap.ui.comp.smarttable.SmartTable|
 		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variants should be loaded
-		 * @param {string} mPropertyBag.standardVariantTitle - Title of the standard variant;
+		 * @param {sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsInput} mPropertyBag.standardVariant - The standard variant of the control;
 		 * a standard variant is created into the response but may be replaced later in case data is loaded afterwards instructing the SVM to do so
-		 * @param {object[]} mPropertyBag.variants - Variant data from other data providers like an OData service
-		 * @returns {Promise<sap.ui.fl._internal.flexObjects.Variant[]>} Array with instances of the variants
+		 * @param {sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsInput[]} mPropertyBag.variants - Variant data from other data providers like an OData service
+		 * @returns {Promise<sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsResponse>} Object with the standard variant and the variants
 		 */
 		loadVariants: function(mPropertyBag) {
 			return SmartVariantManagementApplyAPI.getCompEntities(mPropertyBag)
 				.then(function(mCompVariants) {
-					// TODO: make this cachable if possible due to the different variants input
-					return CompVariantMerger.merge(mCompVariants, mPropertyBag.standardVariantTitle, mPropertyBag.variants);
+					var sPersistencyKey = getPersistencyKey(mPropertyBag.control);
+					return CompVariantMerger.merge(sPersistencyKey, mCompVariants, mPropertyBag.standardVariant, mPropertyBag.variants);
 				});
 		},
 
