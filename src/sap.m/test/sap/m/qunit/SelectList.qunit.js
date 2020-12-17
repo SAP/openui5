@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/SeparatorItem",
 	"sap/m/SelectListRenderer",
 	"sap/m/library",
+	"sap/ui/core/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Select",
 	"sap/ui/model/Filter",
@@ -24,6 +25,7 @@ sap.ui.define([
 	SeparatorItem,
 	SelectListRenderer,
 	mobileLibrary,
+	coreLibrary,
 	JSONModel,
 	Select,
 	Filter,
@@ -31,6 +33,9 @@ sap.ui.define([
 ) {
 	// shortcut for sap.m.SelectListKeyboardNavigationMode
 	var SelectListKeyboardNavigationMode = mobileLibrary.SelectListKeyboardNavigationMode;
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	createAndAppendDiv("content");
 
@@ -350,6 +355,63 @@ sap.ui.define([
 		property: "maxWidth",
 		output: "125pt",
 		description: 'The "maxWidth" is "125pt"'
+	});
+
+	QUnit.module("textDirection");
+
+	QUnit.test("textDirection value is set to the item elements' dir attribute", function(assert) {
+		// system under test
+		var oItem,
+			oSelectList = new SelectList({
+				items: [
+					oItem = new Item({
+						id: "item-id1",
+						key: "0",
+						text: "item 0",
+						textDirection: TextDirection.RTL
+					})
+				]
+			});
+
+		// arrange
+		oSelectList.placeAt("content");
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oItem.getDomRef().getAttribute("dir") === TextDirection.RTL.toLowerCase());
+
+		// cleanup
+		oSelectList.destroy();
+	});
+
+	QUnit.test("textDirection value is set to the item elements' dir attribute - 2 column layout", function(assert) {
+		// system under test
+		var sFirstCellSelector = ".sapMSelectListFirstCell",
+			oItemFirstCellDomRef,
+			oItem,
+			oSelectList = new SelectList({
+				showSecondaryValues: true,
+				items: [
+					oItem = new ListItem({
+						id: "item-id2",
+						key: "1",
+						text: "item 1",
+						additionalText: "add text",
+						textDirection: TextDirection.RTL
+					})
+				]
+			});
+
+		// arrange
+		oSelectList.placeAt("content");
+		Core.applyChanges();
+
+		oItemFirstCellDomRef = oItem.getDomRef().querySelector(sFirstCellSelector);
+		// assert
+		assert.ok(oItemFirstCellDomRef.getAttribute("dir") === TextDirection.RTL.toLowerCase());
+
+		// cleanup
+		oSelectList.destroy();
 	});
 
 	QUnit.module("getSelectedItem()");
