@@ -1607,7 +1607,7 @@ sap.ui.define([
 										break;
 									}
 								}
-								if (!bFound && oBindingContext && oBinding.getContext() !== oBindingContext && oBinding.getContext() === oMyBindingContext) {
+								if (!bFound && oBindingContext && (!oBinding.getContext() || (oBinding.getContext() !== oBindingContext && oBinding.getContext() === oMyBindingContext))) {
 									// no new binding created and different BindingContext -> use propery from BindingConext (was already read before)
 									vValue = oBindingContext.getProperty(oBinding.getPath());
 								}
