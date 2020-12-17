@@ -464,6 +464,7 @@ sap.ui.define([
 	ChangePersistence.prototype.addChange = function(vChange, oAppComponent) {
 		var oChange = this.addDirtyChange(vChange);
 		this._addRunTimeCreatedChangeAndUpdateDependencies(oAppComponent, oChange);
+		this._mChangesEntries[oChange.getFileName()] = oChange;
 		this._addPropagationListener(oAppComponent);
 		return oChange;
 	};
