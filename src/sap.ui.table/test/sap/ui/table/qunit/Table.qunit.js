@@ -1829,6 +1829,39 @@ sap.ui.define([
 		assert.strictEqual(oTable.getFocusDomRef(), null, "Not rendered");
 	});
 
+	QUnit.test("#getBinding", function(assert) {
+		var oRowsBinding = oTable.getBinding("rows");
+		var oColumnsBinding = oTable.bindColumns({path: "/", template: new Column()}).getBinding("columns");
+		var oGetBinding = sinon.spy(Control.prototype, "getBinding");
+
+		assert.strictEqual(oTable.getBinding(), oRowsBinding, "Without arguments: returned the rows binding");
+		assert.ok(oGetBinding.calledOnce, "Without arguments: Called once on the base class");
+		assert.ok(oGetBinding.calledWithExactly("rows"), "Without arguments: Called with 'rows'");
+		assert.ok(oGetBinding.calledOn(oTable), "Without arguments: Called with the correct context");
+
+		oGetBinding.reset();
+		assert.strictEqual(oTable.getBinding(null), oRowsBinding, "With 'null': returned the rows binding");
+		assert.ok(oGetBinding.calledOnce, "With 'null': Called once on the base class");
+		assert.ok(oGetBinding.calledWithExactly("rows"), "With 'null': Called with 'rows'");
+		assert.ok(oGetBinding.calledOn(oTable), "With 'null': Called with the correct context");
+
+		oGetBinding.reset();
+		assert.strictEqual(oTable.getBinding("rows"), oRowsBinding, "With 'rows': returned the rows binding");
+		assert.ok(oGetBinding.calledOnce, "With 'rows': Called once on the base class");
+		assert.ok(oGetBinding.calledWithExactly("rows"), "With 'rows': Called with 'rows'");
+		assert.ok(oGetBinding.calledOn(oTable), "With 'rows': Called with the correct context");
+
+		oGetBinding.reset();
+		assert.strictEqual(oTable.getBinding("columns"), oColumnsBinding, "With 'columns': returned the columns binding");
+		assert.ok(oGetBinding.calledOnce, "With 'columns': Called once on the base class");
+		assert.ok(oGetBinding.calledWithExactly("columns"), "With 'columns': Called with 'columns'");
+		assert.ok(oGetBinding.calledOn(oTable), "With 'columns': Called with the correct context");
+
+		assert.notStrictEqual(oRowsBinding, oColumnsBinding, "Returned bindings for rows and columns are not the same object");
+
+		oGetBinding.restore();
+	});
+
 	QUnit.module("Fixed rows and columns", {
 		beforeEach: function() {
 			createTable({
