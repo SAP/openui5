@@ -9,7 +9,7 @@
 @_sap_m_ListItemBase_SelectionControlHeight: 3rem;
 @_sap_m_ListItemBase_compact_SelectionControlHeight: 2rem;
 @_sap_m_ListItemBase_Highlight_InformationColor: @sapUiInformationBorder;
-@_sap_m_ListItemBase_Navigated: @sapUiSelected;
+@_sap_m_ListItemBase_Navigated: @sapUiListSelectionBorderColor;
 @_sap_m_ListItemBase_Detail_Delete_MarginLeft: 0.125rem;
 
 .sapMLIB,
@@ -101,6 +101,8 @@
 	bottom: 0;
 	left: 0;
 	top: 0;
+	border-right: 0.0625rem solid @sapUiListBackground;
+	box-sizing: border-box;
 }
 
 .sapMLIBHighlight + .sapMLIBContent,

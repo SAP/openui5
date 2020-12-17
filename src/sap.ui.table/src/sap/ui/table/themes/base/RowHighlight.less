@@ -18,8 +18,13 @@
 
 .sapUiTableRowHighlight {
 	height: 100%;
-	width: @_sap_ui_table_RowHighlightWidth;
+	width: @_sap_ui_table_RowHighlightIndicatorWidth;
 	border-bottom: @_sap_ui_table_BaseBorderWidth solid @sapUiListBorderColor;
+	border-right: @_sap_ui_table_RowHighlightBorderRightWidth solid @sapUiListBackground;
+
+	&.sapUiTableRowHighlightNone {
+		border-right-color: transparent;
+	}
 
 	.sapUiTableRowLastFixedTop > &,
 	.sapUiTableRowLastScrollable > & {
