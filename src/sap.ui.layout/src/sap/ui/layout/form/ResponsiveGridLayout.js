@@ -1335,6 +1335,37 @@ sap.ui.define([
 
 	}
 
+	ResponsiveGridLayout.prototype.getLayoutDataForDelimiter = function() {
+
+		return new GridData({spanS: 1, spanM: 1, spanL: 1, spanXL: 1});
+
+	};
+
+	ResponsiveGridLayout.prototype.getLayoutDataForSemanticField = function(iFields, iIndex, oLayoutData) {
+
+		// on large size calculate the with to fill one row
+		// on small size use always 7 to align fields
+		var iCells = 8 - (iFields - 1); // number of available cells (remove delimiters)
+		iCells = Math.floor(iCells / iFields);
+		if (iFields === iIndex) {
+			// last field gets the remaining cells
+			iCells = iCells + 8 - ((iFields - 1) + iFields * iCells);
+		}
+
+		if (oLayoutData) {
+			if (oLayoutData.isA("sap.ui.layout.GridData")) {
+				oLayoutData.setSpanS(11).setSpanM(iCells).setSpanL(iCells).setSpanXL(iCells);
+				return oLayoutData;
+			} else {
+				// LayoutData from other Layout -> destroy and create new one
+				oLayoutData.destroy();
+			}
+		}
+
+		return new GridData({spanS: 11, spanM: iCells, spanL: iCells, spanXL: iCells});
+
+	};
+
 	return ResponsiveGridLayout;
 
 });

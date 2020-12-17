@@ -138,22 +138,7 @@ sap.ui.define([
 		this.setAggregation("label", vAny);
 		var oLabel = vAny;
 		if (typeof oLabel === "string") {
-			if (!this._oLabel) {
-				this._oLabel = library.form.FormHelper.createLabel(oLabel, this.getId() + "-label");
-				this.setAggregation("_label", this._oLabel, true); // use Aggregation to allow model inheritance
-				this._oLabel.disableRequiredChangeCheck(true);
-				if (this._oLabel.isRequired) {
-					this._oLabel.isRequired = _labelIsRequired;
-				}
-				if (this._oLabel.isDisplayOnly) {
-					this._oLabel.isDisplayOnly = _labelIsDisplayOnly;
-				}
-				if (this._oLabel.setWrapping) {
-					this._oLabel.setWrapping(true);
-				}
-			} else {
-				this._oLabel.setText(oLabel);
-			}
+			this._setInternalLabel(oLabel);
 		} else {
 			if (this._oLabel) {
 				this._oLabel.destroy();
@@ -172,11 +157,34 @@ sap.ui.define([
 				oLabel._sapuiIsWrapping = oLabel.isWrapping;
 				oLabel.isWrapping = _labelIsWrapping;
 			}
+
+			_updateLabelFor.call(this);
+		}
+
+		return this;
+
+	};
+
+	FormElement.prototype._setInternalLabel = function(sText) {
+
+		if (!this._oLabel) {
+			this._oLabel = library.form.FormHelper.createLabel(sText, this.getId() + "-label");
+			this.setAggregation("_label", this._oLabel, true); // use Aggregation to allow model inheritance
+			this._oLabel.disableRequiredChangeCheck(true);
+			if (this._oLabel.isRequired) {
+				this._oLabel.isRequired = _labelIsRequired;
+			}
+			if (this._oLabel.isDisplayOnly) {
+				this._oLabel.isDisplayOnly = _labelIsDisplayOnly;
+			}
+			if (this._oLabel.setWrapping) {
+				this._oLabel.setWrapping(true);
+			}
+		} else {
+			this._oLabel.setText(sText);
 		}
 
 		_updateLabelFor.call(this);
-
-		return this;
 
 	};
 
@@ -356,8 +364,8 @@ sap.ui.define([
 	 * Determines what fields must be rendered.
 	 *
 	 * @returns {sap.ui.core.Control[]} Array of fields to be rendered
-	 * @public
-	 * @restricted sap.ui.layout.form.Form
+	 * @private
+	 * @ui5-restricted sap.ui.layout.form.Form
 	 * @since 1.74.0
 	 */
 	FormElement.prototype.getFieldsForRendering = function(){

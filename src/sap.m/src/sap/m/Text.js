@@ -46,7 +46,7 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 	 * to <code>true</code>.
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent
+	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -64,6 +64,7 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 			interfaces: [
 				"sap.ui.core.IShrinkable",
 				"sap.ui.core.IFormContent",
+				"sap.ui.core.ISemanticFormContent",
 				"sap.m.IHyphenation"
 			],
 			library: "sap.m",

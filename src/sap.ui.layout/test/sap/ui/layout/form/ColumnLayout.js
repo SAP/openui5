@@ -5,6 +5,7 @@ sap.ui.require([
 	"sap/ui/layout/form/Form",
 	"sap/ui/layout/form/FormContainer",
 	"sap/ui/layout/form/FormElement",
+	"sap/ui/layout/form/SemanticFormElement",
 	"sap/ui/layout/form/ColumnLayout",
 	"sap/ui/layout/form/ColumnElementData",
 	"sap/ui/layout/form/ColumnContainerData",
@@ -36,6 +37,7 @@ sap.ui.require([
 		Form,
 		FormContainer,
 		FormElement,
+		SemanticFormElement,
 		ColumnLayout,
 		ColumnElementData,
 		ColumnContainerData,
@@ -248,12 +250,12 @@ sap.ui.require([
 						label: new Label({text:"First Name"}),
 						fields: [new Input({value: "Max", required: true})]
 					}),
-					new FormElement({
+					new SemanticFormElement({
 						label: "Street / Number",
 						fields: [new Input({value: "Musterstraße"}),
 										 new Input({value: "1", layoutData: new ColumnElementData({cellsSmall: 2, cellsLarge: 1})})]
 					}),
-					new FormElement({
+					new SemanticFormElement({
 						label: new Label({text: "Post code / City"}),
 						fields: [new Input({value: "12345", layoutData: new ColumnElementData({cellsSmall: 3, cellsLarge: 2})}),
 										 new Input({value: "Musterstadt"})]
@@ -490,21 +492,21 @@ sap.ui.require([
 			new FormContainer("C8",{
 				title: "Container 2",
 				formElements: [
-					new FormElement({
+					new SemanticFormElement({
 						label: "Label 1",
 						fields: [new Text({text: "Text 1"})]
 					}),
-					new FormElement({
+					new SemanticFormElement({
 						label: "Label 2",
-						fields: [new Text({text: "Text 2"})]
+						fields: [new Text({text: "Text 2"}), new Text({text: "Text 2a"})]
 					}),
-					new FormElement({
+					new SemanticFormElement({
 						label: "Label 3",
-						fields: [new Text({text: "Text 3"})]
+						fields: [new Text({text: "Text 3"}), new Text({text: "Text 3a"}), new Text({text: "Text 3b"})]
 					}),
-					new FormElement({
+					new SemanticFormElement({
 						label: "Label 4",
-						fields: [new Text({text: "Text 4"})]
+						fields: [new Text({text: "Text 4"}), new Text({text: "Text 4a"}), new Text({text: "Text 4b"}), new Text({text: "Text 4c"})]
 					})
 				]
 			}),
