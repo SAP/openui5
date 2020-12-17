@@ -701,7 +701,7 @@ sap.ui.define([
 			var aDraggedRowContexts = oDragSession.getComplexData("hierarchymaintenance").draggedRowContexts;
 
 			if (aDraggedRowContexts.length > 0) {
-				var oBinding = oTable.getBinding("rows");
+				var oBinding = oTable.getBinding();
 				var oNewParentContext = oTable.getContextByIndex(oDroppedRow.getIndex());
 
 				if (oNewParentContext != null) {

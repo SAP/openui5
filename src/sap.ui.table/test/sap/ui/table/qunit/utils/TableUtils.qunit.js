@@ -930,7 +930,7 @@ sap.ui.define([
 		assert.ok(TableUtils.canUsePendingRequestsCounter(oTable), "Rows not bound: Returned true");
 		oTable.getBinding.restore();
 
-		var oBinding = oTable.getBinding("rows");
+		var oBinding = oTable.getBinding();
 		this.stub(oBinding, "isA");
 
 		oBinding.isA.withArgs("sap.ui.model.analytics.AnalyticalBinding").returns(true);

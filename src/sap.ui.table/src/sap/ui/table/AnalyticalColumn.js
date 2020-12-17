@@ -146,7 +146,7 @@ sap.ui.define([
 			if (!this._oBindingLabel) {
 				var oParent = this.getParent();
 				if (isInstanceOfAnalyticalTable(oParent)) {
-					var oBinding = oParent.getBinding("rows");
+					var oBinding = oParent.getBinding();
 					if (oBinding) {
 						this._oBindingLabel = library.TableHelper.createLabel();
 						this.addDependent(this._oBindingLabel);
@@ -169,7 +169,7 @@ sap.ui.define([
 		if (!sProperty) {
 			var oParent = this.getParent();
 			if (isInstanceOfAnalyticalTable(oParent)) {
-				var oBinding = oParent.getBinding("rows");
+				var oBinding = oParent.getBinding();
 				var sLeadingProperty = this.getLeadingProperty();
 				if (oBinding && oBinding.getFilterablePropertyNames().indexOf(sLeadingProperty) > -1) {
 					sProperty = sLeadingProperty;
@@ -187,7 +187,7 @@ sap.ui.define([
 		if (!sProperty) {
 			var oParent = this.getParent();
 			if (isInstanceOfAnalyticalTable(oParent)) {
-				var oBinding = oParent.getBinding("rows");
+				var oBinding = oParent.getBinding();
 				var sLeadingProperty = this.getLeadingProperty();
 				if (oBinding && oBinding.getSortablePropertyNames().indexOf(sLeadingProperty) > -1) {
 					sProperty = sLeadingProperty;
@@ -205,7 +205,7 @@ sap.ui.define([
 		if (!vFilterType) {
 			var oParent = this.getParent();
 			if (isInstanceOfAnalyticalTable(oParent)) {
-				var oBinding = oParent.getBinding("rows");
+				var oBinding = oParent.getBinding();
 				var sLeadingProperty = this.getLeadingProperty(),
 					oProperty = oBinding && oBinding.getProperty(sLeadingProperty);
 				if (oProperty) {
@@ -284,7 +284,7 @@ sap.ui.define([
 	AnalyticalColumn.prototype._getDefaultTooltip = function() {
 		var oParent = this.getParent();
 		if (isInstanceOfAnalyticalTable(oParent)) {
-			var oBinding = oParent.getBinding("rows");
+			var oBinding = oParent.getBinding();
 			if (oBinding && this.getLeadingProperty()) {
 				return oBinding.getPropertyQuickInfo(this.getLeadingProperty());
 			}
@@ -299,7 +299,7 @@ sap.ui.define([
 	AnalyticalColumn.prototype._menuHasItems = function() {
 		var fnMenuHasItems = function() {
 			var oTable = this.getParent();
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 			var oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
 			return  (oTable && oResultSet && oResultSet.findMeasureByPropertyName(this.getLeadingProperty())); // totals menu entry
 		}.bind(this);
@@ -331,7 +331,7 @@ sap.ui.define([
 
 		var oParent = this.getParent();
 		if (isInstanceOfAnalyticalTable(oParent)) {
-			var oBinding = oParent.getBinding("rows");
+			var oBinding = oParent.getBinding();
 			// metadata must be evaluated which can only be done when the collection is known and the metadata is loaded
 			// this is usually the case when a binding exists.
 			if (oBinding) {
@@ -367,7 +367,7 @@ sap.ui.define([
 	AnalyticalColumn.prototype.isGroupable = function() {
 		var oParent = this.getParent();
 		if (isInstanceOfAnalyticalTable(oParent)) {
-			var oBinding = oParent.getBinding("rows");
+			var oBinding = oParent.getBinding();
 			if (oBinding) {
 				var oResultSet = oBinding.getAnalyticalQueryResult();
 				if (oResultSet && oResultSet.findDimensionByPropertyName(this.getLeadingProperty())

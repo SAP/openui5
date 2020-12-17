@@ -370,7 +370,7 @@ sap.ui.define([
 		 * @returns {boolean} Whether the table has data.
 		 */
 		hasData: function(oTable) {
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 			var iTotalRowCount = oTable._getTotalRowCount();
 			var bHasData = iTotalRowCount > 0;
 
@@ -435,7 +435,7 @@ sap.ui.define([
 		 * @returns {boolean} Returns <code>true</code>, if the table can use a counter for pending request detection.
 		 */
 		canUsePendingRequestsCounter: function(oTable) {
-			var oBinding = oTable ? oTable.getBinding("rows") : null;
+			var oBinding = oTable ? oTable.getBinding() : null;
 
 			if (TableUtils.isA(oBinding, "sap.ui.model.analytics.AnalyticalBinding")) {
 				return oBinding.bUseBatchRequests;
@@ -471,7 +471,7 @@ sap.ui.define([
 		 */
 		toggleRowSelection: function(oTable, vRowIndicator, bSelect, fnDoSelect) {
 			if (!oTable ||
-				!oTable.getBinding("rows") ||
+				!oTable.getBinding() ||
 				oTable.getSelectionMode() === SelectionMode.None ||
 				vRowIndicator == null) {
 
@@ -1110,7 +1110,7 @@ sap.ui.define([
 		getFirstFixedBottomRowIndex: function(oTable) {
 			var mRowCounts = oTable._getRowCounts();
 
-			if (!oTable.getBinding("rows") || mRowCounts.fixedBottom === 0) {
+			if (!oTable.getBinding() || mRowCounts.fixedBottom === 0) {
 				return -1;
 			}
 

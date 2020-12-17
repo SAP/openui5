@@ -75,7 +75,7 @@ sap.ui.define([
 
 		clearAllSortings : function(oEvent) {
 			var oTable = this.byId("table");
-			oTable.getBinding("rows").sort(null);
+			oTable.getBinding().sort(null);
 			this._resetSortingState();
 		},
 
@@ -134,7 +134,7 @@ sap.ui.define([
 				return 0;
 			};
 
-			this.byId("table").getBinding("rows").sort(oSorter);
+			this.byId("table").getBinding().sort(oSorter);
 		},
 
 		_resetSortingState : function() {

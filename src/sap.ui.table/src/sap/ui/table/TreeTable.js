@@ -184,7 +184,7 @@ sap.ui.define([
 	};
 
 	function updateRowState(oState) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		var oNode = oState.context;
 
 		oState.context = oNode.context; // The TreeTable requests nodes from the binding.
@@ -245,7 +245,7 @@ sap.ui.define([
 	 */
 	function toggleGroupHeader(oTable, vRowIndex, bExpand) {
 		var aIndices = [];
-		var oBinding = oTable.getBinding("rows");
+		var oBinding = oTable.getBinding();
 
 		if (!oBinding || vRowIndex == null) {
 			return null;
@@ -358,7 +358,7 @@ sap.ui.define([
 	};
 
 	TreeTable.prototype._getContexts = function(iStartIndex, iLength, iThreshold) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			// first call getContexts to trigger data load but return nodes instead of contexts
 			return oBinding.getNodes(iStartIndex, iLength, iThreshold);
@@ -421,7 +421,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeTable.prototype.collapseAll = function() {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			oBinding.collapseToLevel(0);
 			this.setFirstVisibleRow(0);
@@ -444,7 +444,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeTable.prototype.expandToLevel = function(iLevel) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 
 		assert(oBinding && oBinding.expandToLevel, "TreeTable.expandToLevel is not supported with your current Binding. Please check if you are running on an ODataModel V2.");
 
@@ -464,7 +464,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	TreeTable.prototype.isExpanded = function(iRowIndex) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			return oBinding.isExpanded(iRowIndex);
 		}
@@ -555,7 +555,7 @@ sap.ui.define([
 	 */
 
 	TreeTable.prototype.getContextByIndex = function(iRowIndex) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			return oBinding.getContextByIndex(iRowIndex);
 		}
@@ -571,7 +571,7 @@ sap.ui.define([
 	TreeTable.prototype.setRootLevel = function(iRootLevel) {
 		this.setFirstVisibleRow(0);
 
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			assert(oBinding.setRootLevel, "rootLevel is not supported by the used binding");
 			if (oBinding.setRootLevel) {
@@ -589,7 +589,7 @@ sap.ui.define([
 	 * @param {boolean} bCollapseRecursive
 	 */
 	TreeTable.prototype.setCollapseRecursive = function(bCollapseRecursive) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			assert(oBinding.setCollapseRecursive, "Collapse Recursive is not supported by the used binding");
 			if (oBinding.setCollapseRecursive) {

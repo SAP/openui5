@@ -38,7 +38,7 @@ sap.ui.define([
 			oView.setModel(oDataModel);
 
 			var oTable = oView.byId("table");
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 			var oBusyIndicator = oTable.getNoData();
 			oBinding.attachDataRequested(function(){
 				oTable.setNoData(oBusyIndicator);

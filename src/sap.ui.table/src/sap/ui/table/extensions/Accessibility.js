@@ -818,7 +818,7 @@ sap.ui.define([
 							"title": "",
 							"role": ""
 						};
-						if (oTable.getBinding("rows")) {
+						if (oTable.getBinding()) {
 							if (mParams && mParams.row) {
 								if (mParams.row.isExpandable()) {
 									var sText = TableUtils.getResourceText(mParams.row.isExpanded() ? "TBL_COLLAPSE" : "TBL_EXPAND");

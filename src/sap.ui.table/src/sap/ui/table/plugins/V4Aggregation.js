@@ -54,7 +54,7 @@ sap.ui.define([
 
 	V4Aggregation.prototype.onActivate = function(oTable) {
 		// Only activate if OData V4
-		var oBinding = oTable.getBinding("rows");
+		var oBinding = oTable.getBinding();
 		if (oBinding && !oBinding.getModel().isA("sap.ui.model.odata.v4.ODataModel")) {
 			return;
 		}
@@ -73,7 +73,7 @@ sap.ui.define([
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Expand, this.expandRow, this);
 		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Collapse, this.collapseRow, this);
 
-		var oBinding = oTable.getBinding("rows");
+		var oBinding = oTable.getBinding();
 		if (oBinding) {
 			oBinding.setAggregation();
 		}

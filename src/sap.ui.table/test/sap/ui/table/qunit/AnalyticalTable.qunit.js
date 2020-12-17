@@ -189,7 +189,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doTest(oTable) {
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 			oBinding.getTotalSize = function() {
 				assert.ok(true, "getTotalSize on Binding called");
 				return 5;
@@ -208,7 +208,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doTest(oTable) {
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 			var bCollapseRecursive = false;
 			oBinding.setCollapseRecursive = function(bParam) {
 				assert.equal(bParam, bCollapseRecursive, "setCollapseRecursive on Binding called");
@@ -235,7 +235,7 @@ sap.ui.define([
 
 		function doTest(oTable) {
 			oTable.setFirstVisibleRow(2);
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 			oBinding.collapseToLevel = function(iLevel) {
 				assert.ok(true, "collapseToLevel on Binding called ...");
 				assert.equal(iLevel, 0, "... with level 0");
@@ -257,7 +257,7 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doTest(oTable) {
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 			var oExpandLevelSpy = sinon.spy(oBinding, "expandToLevel");
 			var oClearSelectionSpy = sinon.spy(oTable._getSelectionPlugin(), "clearSelection");
 
@@ -412,7 +412,7 @@ sap.ui.define([
 			}
 		});
 
-		var oBinding = this.oTable.getBinding("rows");
+		var oBinding = this.oTable.getBinding();
 		oBinding.fireEvent("change");
 		oDataRequestedSpy.reset(); // The AnalyticalBinding tends to send multiple requests initially.
 		oBinding.fireEvent("dataRequested");
@@ -634,7 +634,7 @@ sap.ui.define([
 			this.oTable = createTable.call(this);
 
 			var fnHandler1 = function() {
-				var oBinding = this.oTable.getBinding("rows");
+				var oBinding = this.oTable.getBinding();
 
 				assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "NumberOfExpandedLevels is 0");
 

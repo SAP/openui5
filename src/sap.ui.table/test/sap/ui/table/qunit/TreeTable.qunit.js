@@ -291,7 +291,7 @@ sap.ui.define([
 			}
 		});
 
-		var oBinding = this.table.getBinding("rows");
+		var oBinding = this.table.getBinding();
 		oBinding.fireEvent("dataRequested");
 		oBinding.fireEvent("dataReceived");
 
@@ -710,7 +710,7 @@ sap.ui.define([
 				models: new TableQUnitUtils.createJSONModel(8),
 				visibleRowCount: 5
 			});
-			var oBinding = this.oTable.getBinding("rows");
+			var oBinding = this.oTable.getBinding();
 
 			this.oBindingExpandSpy = sinon.spy(oBinding, "expand");
 			this.oBindingCollapseSpy = sinon.spy(oBinding, "collapse");

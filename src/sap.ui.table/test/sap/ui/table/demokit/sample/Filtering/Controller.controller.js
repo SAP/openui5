@@ -88,7 +88,7 @@ sap.ui.define([
 				oFilter = this._oPriceFilter;
 			}
 
-			this.byId("table").getBinding("rows").filter(oFilter, "Application");
+			this.byId("table").getBinding().filter(oFilter, "Application");
 		},
 
 		filterGlobally : function(oEvent) {

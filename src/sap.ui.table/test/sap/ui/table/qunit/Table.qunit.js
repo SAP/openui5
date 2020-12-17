@@ -297,7 +297,7 @@ sap.ui.define([
 		var oColFirstName = oTable.getColumns()[1];
 		var oColMoney = oTable.getColumns()[7];
 
-		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount beforeFiltering ok");
+		assert.equal(oTable.getBinding().iLength, 200, "RowCount beforeFiltering ok");
 		oTable.filter(oColFirstName, "M*");
 
 		// check that the column menu filter input field was updated
@@ -313,36 +313,36 @@ sap.ui.define([
 			assert.equal(oFilterField.getValue(), "D*", "Filter value is M* in column menu");
 		}
 
-		assert.equal(oTable.getBinding("rows").iLength, 20, "RowCount after filtering FirstName 'M*'");
+		assert.equal(oTable.getBinding().iLength, 20, "RowCount after filtering FirstName 'M*'");
 		oTable.filter(oColFirstName, "Mo*");
-		assert.equal(oTable.getBinding("rows").iLength, 10, "RowCount after filtering FirstName 'Mo*''");
+		assert.equal(oTable.getBinding().iLength, 10, "RowCount after filtering FirstName 'Mo*''");
 		assert.equal(oColFirstName.getFiltered(), true, "Column FirstName is filtered");
 		oTable.filter(oColFirstName, "");
 		assert.equal(oColFirstName.getFiltered(), false, "Column FirstName is not filtered anymore");
-		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
+		assert.equal(oTable.getBinding().iLength, 200, "RowCount after removing filter");
 
 		oTable.filter(oColMoney, ">10");
-		assert.equal(oTable.getBinding("rows").iLength, 120, "RowCount after filtering money >10");
+		assert.equal(oTable.getBinding().iLength, 120, "RowCount after filtering money >10");
 		oTable.filter(oColMoney, "> 123,45");
-		assert.equal(oTable.getBinding("rows").iLength, 70, "RowCount after filtering money >123,45");
+		assert.equal(oTable.getBinding().iLength, 70, "RowCount after filtering money >123,45");
 		oTable.filter(oColMoney, "<50,55");
-		assert.equal(oTable.getBinding("rows").iLength, 100, "RowCount after filtering money <50,55");
+		assert.equal(oTable.getBinding().iLength, 100, "RowCount after filtering money <50,55");
 		oTable.filter(oColMoney, "9.35");
-		assert.equal(oTable.getBinding("rows").iLength, 0, "RowCount after filtering money 9.35");
+		assert.equal(oTable.getBinding().iLength, 0, "RowCount after filtering money 9.35");
 		oTable.filter(oColMoney, "5,67");
-		assert.equal(oTable.getBinding("rows").iLength, 10, "RowCount after filtering money 5,67");
+		assert.equal(oTable.getBinding().iLength, 10, "RowCount after filtering money 5,67");
 		oTable.filter(oColMoney, "= 32,7600");
-		assert.equal(oTable.getBinding("rows").iLength, 10, "RowCount after filtering money = 32,7600");
+		assert.equal(oTable.getBinding().iLength, 10, "RowCount after filtering money = 32,7600");
 		assert.equal(oColMoney.getFiltered(), true, "Column Money is filtered");
 		oTable.filter(oColFirstName, "Do*");
-		assert.equal(oTable.getBinding("rows").iLength, 10, "RowCount after filtering FirstName 'Do*' and money 32,76");
+		assert.equal(oTable.getBinding().iLength, 10, "RowCount after filtering FirstName 'Do*' and money 32,76");
 		assert.equal(oColFirstName.getFiltered() && oColMoney.getFiltered(), true, "Column FirstName and Money are filtered");
 		oTable.filter(oColFirstName, "Mo*");
-		assert.equal(oTable.getBinding("rows").iLength, 0, "RowCount after filtering FirstName 'Mo*' and money 32,76");
+		assert.equal(oTable.getBinding().iLength, 0, "RowCount after filtering FirstName 'Mo*' and money 32,76");
 		oTable.filter(oColFirstName);
 		oTable.filter(oColMoney, null);
 		assert.equal(oColFirstName.getFiltered() && oColMoney.getFiltered(), false, "Column FirstName and Money are not filtered anymore");
-		assert.equal(oTable.getBinding("rows").iLength, 200, "RowCount after removing filter");
+		assert.equal(oTable.getBinding().iLength, 200, "RowCount after removing filter");
 
 		assert.throws(
 			function() {
@@ -516,11 +516,11 @@ sap.ui.define([
 		oTable.setFirstVisibleRow(-1);
 		assert.equal(oTable.getFirstVisibleRow(), 0, "FirstVisibleRow is: 0");
 
-		oTable.getBinding("rows").fireEvent("refresh");
+		oTable.getBinding().fireEvent("refresh");
 		oTable.setFirstVisibleRow(iMaxRowIndex + 1);
 		assert.equal(oTable.getFirstVisibleRow(), iMaxRowIndex + 1, "FirstVisibleRow is: " + (iMaxRowIndex + 1));
 
-		oTable.getBinding("rows").fireEvent("change");
+		oTable.getBinding().fireEvent("change");
 		oTable.setFirstVisibleRow(iMaxRowIndex + 1);
 		assert.equal(oTable.getFirstVisibleRow(), iMaxRowIndex, "FirstVisibleRow is: " + iMaxRowIndex);
 
@@ -718,8 +718,8 @@ sap.ui.define([
 			oTable.attachEventOnce("rowsUpdated", resolve);
 		}).then(function() {
 			// Updating only the content (property bindings of cells) without a binding change event for the rows is not supported.
-			oTable.getBinding("rows").getModel().getData().modelData[oTable.getRows()[0].getIndex()].height = "88px";
-			oTable.getBinding("rows").getModel().refresh(true);
+			oTable.getBinding().getModel().getData().modelData[oTable.getRows()[0].getIndex()].height = "88px";
+			oTable.getBinding().getModel().refresh(true);
 			return new Promise(function(resolve) {
 				oTable.attachEventOnce("rowsUpdated", resolve);
 			});
@@ -2590,9 +2590,9 @@ sap.ui.define([
 
 			// Temporary fix for the Support Assistant hacks. Support Assistant should implement a selection plugin.
 			// TODO: Before we recommend to implement a selection plugin -> Complete BLI CPOUIFTEAMB-1464
-			//oTable.getBinding("rows").fireEvent("change");
-			//oTable.getBinding("rows").fireEvent("dataRequested");
-			//oTable.getBinding("rows").fireEvent("dataReceived");
+			//oTable.getBinding().fireEvent("change");
+			//oTable.getBinding().fireEvent("dataRequested");
+			//oTable.getBinding().fireEvent("dataReceived");
 			//assert.ok(oOnBindingChange.calledOnce, "The change event listener was called once");
 			//assert.ok(oOnBindingChange.calledOn(oTable), "The change event listener was called with the correct context");
 			//assert.ok(oOnBindingDataRequested.calledOnce, "The dataRequested event listener was called once");
@@ -2622,9 +2622,9 @@ sap.ui.define([
 			assert.ok(oDestroyRows.notCalled, "Set the model - destroyRows was not called");
 			resetSpies();
 
-			oTable.getBinding("rows").fireEvent("change");
-			oTable.getBinding("rows").fireEvent("dataRequested");
-			oTable.getBinding("rows").fireEvent("dataReceived");
+			oTable.getBinding().fireEvent("change");
+			oTable.getBinding().fireEvent("dataRequested");
+			oTable.getBinding().fireEvent("dataReceived");
 			assert.ok(oOnBindingChange.calledOnce, "The change event listener was called once");
 			assert.ok(oOnBindingChange.calledOn(oTable), "The change event listener was called with the correct context");
 			assert.ok(oOnBindingDataRequested.calledOnce, "The dataRequested event listener was called once");
@@ -2640,9 +2640,9 @@ sap.ui.define([
 			assert.ok(oDestroyRows.notCalled, "Change the model - destroyRows was not called");
 			resetSpies();
 
-			oTable.getBinding("rows").fireEvent("change");
-			oTable.getBinding("rows").fireEvent("dataRequested");
-			oTable.getBinding("rows").fireEvent("dataReceived");
+			oTable.getBinding().fireEvent("change");
+			oTable.getBinding().fireEvent("dataRequested");
+			oTable.getBinding().fireEvent("dataReceived");
 			assert.ok(oOnBindingChange.calledOnce, "The change event listener was called once");
 			assert.ok(oOnBindingChange.calledOn(oTable), "The change event listener was called with the correct context");
 			assert.ok(oOnBindingDataRequested.calledOnce, "The dataRequested event listener was called once");
@@ -2683,27 +2683,27 @@ sap.ui.define([
 			oExternalDataRequestedSpy.reset();
 			oExternalDataReceivedSpy.reset();
 
-			oTable.getBinding("rows").fireEvent("change");
-			oTable.getBinding("rows").fireEvent("dataRequested");
-			oTable.getBinding("rows").fireEvent("dataReceived");
+			oTable.getBinding().fireEvent("change");
+			oTable.getBinding().fireEvent("dataRequested");
+			oTable.getBinding().fireEvent("dataReceived");
 			assert.ok(oOnBindingChange.calledOnce, "The change event listener was called once");
 			assert.ok(oOnBindingChange.calledOn(oTable), "The change event listener was called with the correct context");
 			assert.ok(oExternalChangeSpy.calledOnce, "The external change event listener was called once");
-			assert.ok(oExternalChangeSpy.calledOn(oTable.getBinding("rows")),
+			assert.ok(oExternalChangeSpy.calledOn(oTable.getBinding()),
 				"The external change event listener was called with the correct context");
 			assert.ok(sinon.calledInOrder(oOnBindingChange, oExternalChangeSpy),
 				"The change event listener of the table was called before the external change spy");
 			assert.ok(oOnBindingDataRequested.calledOnce, "The dataRequested event listener was called once");
 			assert.ok(oOnBindingDataRequested.calledOn(oTable), "The dataRequested event listener was called with the correct context");
 			assert.ok(oExternalDataRequestedSpy.calledOnce, "The external dataRequested event listener was called once");
-			assert.ok(oExternalDataRequestedSpy.calledOn(oTable.getBinding("rows")),
+			assert.ok(oExternalDataRequestedSpy.calledOn(oTable.getBinding()),
 				"The external dataRequested event listener was called with the correct context");
 			assert.ok(sinon.calledInOrder(oOnBindingDataRequested, oExternalDataRequestedSpy),
 				"The dataRequested event listener of the table was called before the external dataRequested spy");
 			assert.ok(oOnBindingDataReceived.calledOnce, "The dataReceived event listener was called once");
 			assert.ok(oOnBindingDataReceived.calledOn(oTable), "The dataReceived event listener was called with the correct context");
 			assert.ok(oExternalDataReceivedSpy.calledOnce, "The external dataReceived event listener was called once");
-			assert.ok(oExternalDataReceivedSpy.calledOn(oTable.getBinding("rows")),
+			assert.ok(oExternalDataReceivedSpy.calledOn(oTable.getBinding()),
 				"The external dataReceived event listener was called with the correct context");
 			assert.ok(sinon.calledInOrder(oOnBindingDataReceived, oExternalDataReceivedSpy),
 				"The dataReceived event listener of the table was called before the external dataReceived spy");
@@ -2874,7 +2874,7 @@ sap.ui.define([
 		var iInitialRowCount = oTable.getRows().length;
 		var oUpdateRowsHookSpy = sinon.spy();
 		var oInvalidateSpy = sinon.spy(oTable, "invalidate");
-		var oBinding = oTable.getBinding("rows");
+		var oBinding = oTable.getBinding();
 
 		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Table.UpdateRows, oUpdateRowsHookSpy);
 
@@ -2927,7 +2927,7 @@ sap.ui.define([
 
 	QUnit.test("Filter", function(assert) {
 		oTable.setFirstVisibleRow(1);
-		oTable.getBinding("rows").filter(new Filter({
+		oTable.getBinding().filter(new Filter({
 			path: "modelData>money",
 			operator: "LT",
 			value1: 5
@@ -2937,7 +2937,7 @@ sap.ui.define([
 
 	QUnit.test("Sort", function(assert) {
 		oTable.setFirstVisibleRow(1);
-		oTable.getBinding("rows").sort(new Sorter({
+		oTable.getBinding().sort(new Sorter({
 			path: "modelData>money",
 			descending: true
 		}));
@@ -3803,13 +3803,13 @@ sap.ui.define([
 			});
 
 			return new Promise(function(resolve) {
-				oTable.getBinding("rows").attachEventOnce("change", function() {
+				oTable.getBinding().attachEventOnce("change", function() {
 					oTable.attachEventOnce("rowsUpdated", resolve);
 				});
 			}).then(function() {
 				aFiredReasons = [];
 				oTable.invalidate();
-				oTable.getBinding("rows").refresh(true);
+				oTable.getBinding().refresh(true);
 				sap.ui.getCore().applyChanges();
 
 				return that.checkRowsUpdated(assert, aFiredReasons, [
@@ -3887,12 +3887,12 @@ sap.ui.define([
 			});
 
 			return new Promise(function(resolve) {
-				oTable.getBinding("rows").attachEventOnce("change", function() {
+				oTable.getBinding().attachEventOnce("change", function() {
 					oTable.attachEventOnce("rowsUpdated", resolve);
 				});
 			}).then(function() {
 				aFiredReasons = [];
-				oTable.getBinding("rows").refresh(true);
+				oTable.getBinding().refresh(true);
 
 				return that.checkRowsUpdated(assert, aFiredReasons, [
 					TableUtils.RowsUpdateReason.Change
@@ -3950,7 +3950,7 @@ sap.ui.define([
 			});
 
 			return new Promise(function(resolve) {
-				oTable.getBinding("rows").attachEventOnce("change", function() {
+				oTable.getBinding().attachEventOnce("change", function() {
 					oTable.attachEventOnce("_rowsUpdated", resolve);
 				});
 			}).then(function() {
@@ -4013,7 +4013,7 @@ sap.ui.define([
 			});
 
 			return new Promise(function(resolve) {
-				oTable.getBinding("rows").attachEventOnce("change", function() {
+				oTable.getBinding().attachEventOnce("change", function() {
 					oTable.attachEventOnce("_rowsUpdated", resolve);
 				});
 			}).then(function() {
@@ -4275,7 +4275,7 @@ sap.ui.define([
 				table: oTable
 			});
 			oPersoController.refresh();
-			oTable.getBinding("rows").fireEvent("dataRequested");
+			oTable.getBinding().fireEvent("dataRequested");
 
 			return new Promise(function(resolve) {
 				window.requestAnimationFrame(function() {
@@ -4738,7 +4738,7 @@ sap.ui.define([
 
 	QUnit.test("#_onPersoApplied", function(assert) {
 		var oColumn = oTable.getColumns()[0];
-		var oBinding = oTable.getBinding("rows");
+		var oBinding = oTable.getBinding();
 		var oBindingSort = sinon.spy(oBinding, "sort");
 		var iTimeout;
 
@@ -4801,7 +4801,7 @@ sap.ui.define([
 			onBusyStateChangedEventHandler.parameters = null;
 		};
 		var oEvent = {};
-		var oBinding = oTable.getBinding("rows");
+		var oBinding = oTable.getBinding();
 		oEvent.getSource = function() {
 			return oBinding;
 		};
@@ -5054,30 +5054,30 @@ sap.ui.define([
 		assert.strictEqual(oTable._getTotalRowCount(), 200, "On rebind, the last known binding length of the previous binding is returned");
 
 		return new Promise(function(resolve) {
-			oTable.getBinding("rows").attachEventOnce("change", function() {
+			oTable.getBinding().attachEventOnce("change", function() {
 				assert.strictEqual(oTable._getTotalRowCount(), 16, "After rebind, the new binding length is returned");
 				resolve();
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
-				oTable.getBinding("rows").refresh();
+				oTable.getBinding().refresh();
 				assert.strictEqual(oTable._getTotalRowCount(), 16, "On refresh, the last known binding length is returned");
-				oTable.getBinding("rows").attachEventOnce("change", function() {
+				oTable.getBinding().attachEventOnce("change", function() {
 					assert.strictEqual(oTable._getTotalRowCount(), 16, "After refresh, the new binding length is returned");
 					resolve();
 				});
 			});
 		}).then(function() {
 			return new Promise(function(resolve) {
-				oTable.getBinding("rows").filter(new Filter({
+				oTable.getBinding().filter(new Filter({
 					path: "Category",
 					operator: "EQ",
 					value1: "GC"
 				}));
 				assert.strictEqual(oTable._getTotalRowCount(), 16, "On filter, the last known binding length is returned");
-				oTable.getBinding("rows").attachEventOnce("change", function() {
+				oTable.getBinding().attachEventOnce("change", function() {
 					assert.strictEqual(oTable._getTotalRowCount(), 3, "After filter, the new binding length is returned");
-					oTable.getBinding("rows").refresh();
+					oTable.getBinding().refresh();
 					resolve();
 				});
 			});
@@ -5085,16 +5085,16 @@ sap.ui.define([
 			return new Promise(function(resolve) {
 				oTable.bindRows({path: "/Products", length: 5});
 				assert.strictEqual(oTable._getTotalRowCount(), 5, "The \"length\" parameter in the binding info overrides Binding#getLength");
-				oTable.getBinding("rows").attachEventOnce("change", function() {
+				oTable.getBinding().attachEventOnce("change", function() {
 					assert.strictEqual(oTable._getTotalRowCount(), 5, "After data is received, still the \"length\" parameter is returned");
 					resolve();
 				});
 			});
 		}).then(function() {
 				return new Promise(function(resolve) {
-					oTable.getBinding("rows").refresh();
+					oTable.getBinding().refresh();
 					assert.strictEqual(oTable._getTotalRowCount(), 5, "On refresh, still the \"length\" parameter is returned");
-					oTable.getBinding("rows").attachEventOnce("change", function() {
+					oTable.getBinding().attachEventOnce("change", function() {
 						assert.strictEqual(oTable._getTotalRowCount(), 5, "After refresh, still the \"length\" parameter is returned");
 						resolve();
 					});
@@ -5710,7 +5710,7 @@ sap.ui.define([
 
 		this.oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(1));
 		assert.equal(oRowsBoundSpy.callCount, 1, "Set model: 'RowsBound' hook was called once");
-		assert.ok(oRowsBoundSpy.calledWithExactly(this.oTable.getBinding("rows")), "Set model: 'RowsBound' hook was correctly called");
+		assert.ok(oRowsBoundSpy.calledWithExactly(this.oTable.getBinding()), "Set model: 'RowsBound' hook was correctly called");
 	});
 
 	QUnit.test("UnbindRows", function(assert) {
@@ -5770,12 +5770,12 @@ sap.ui.define([
 		this.oTable.setModel(TableQUnitUtils.createJSONModelWithEmptyRows(1));
 		this.oTable.bindRows({path: "/"});
 
-		this.oTable.getBinding("rows").fireEvent("refresh", {reason: ChangeReason.Refresh});
+		this.oTable.getBinding().fireEvent("refresh", {reason: ChangeReason.Refresh});
 		assert.equal(oRefreshRowsSpy.callCount, 1, "Binding refresh with reason: 'RefreshRows' hook was called once");
 		assert.ok(oRefreshRowsSpy.calledWithExactly(ChangeReason.Refresh), "Binding refresh with reason: 'RefreshRows' hook was correctly called");
 		oRefreshRowsSpy.reset();
 
-		this.oTable.getBinding("rows").fireEvent("refresh");
+		this.oTable.getBinding().fireEvent("refresh");
 		assert.equal(oRefreshRowsSpy.callCount, 1, "Binding refresh without reason: 'RefreshRows' hook was called once");
 		assert.ok(oRefreshRowsSpy.calledWithExactly(TableUtils.RowsUpdateReason.Unknown),
 			"Binding refresh without reason: 'RefreshRows' hook was correctly called");
@@ -5789,12 +5789,12 @@ sap.ui.define([
 		this.oTable.bindRows({path: "/"});
 		oUpdateRowsSpy.reset();
 
-		this.oTable.getBinding("rows").fireEvent("change", {reason: ChangeReason.Change});
+		this.oTable.getBinding().fireEvent("change", {reason: ChangeReason.Change});
 		assert.equal(oUpdateRowsSpy.callCount, 1, "Binding change with reason: 'UpdateRows' hook was called once");
 		assert.ok(oUpdateRowsSpy.calledWithExactly(ChangeReason.Change), "Binding change with reason: 'UpdateRows' hook was correctly called");
 		oUpdateRowsSpy.reset();
 
-		this.oTable.getBinding("rows").fireEvent("change");
+		this.oTable.getBinding().fireEvent("change");
 		assert.equal(oUpdateRowsSpy.callCount, 1, "Binding change without reason: 'UpdateRows' hook was called once");
 		assert.ok(oUpdateRowsSpy.calledWithExactly(TableUtils.RowsUpdateReason.Unknown),
 			"Binding change without reason: 'UpdateRows' hook was correctly called");
@@ -5972,7 +5972,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Update visibility", function(assert) {
-		var oBinding = this.oTable.getBinding("rows");
+		var oBinding = this.oTable.getBinding();
 		var oGetBindingLength = sinon.stub(oBinding, "getLength");
 		var oBindingIsA = sinon.stub(oBinding, "isA");
 		var oClock = sinon.useFakeTimers();

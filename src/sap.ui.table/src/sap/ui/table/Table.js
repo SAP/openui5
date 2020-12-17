@@ -1378,7 +1378,7 @@ sap.ui.define([
 		}
 
 		this._cleanUpTimers();
-		this.getBinding("rows"); // Initializes the experimental grouping functionality (just in case it is required).
+		this.getBinding(); // Initializes the experimental grouping functionality (just in case it is required).
 		this._aTableHeaders = []; // free references to DOM elements
 	};
 
@@ -1773,7 +1773,7 @@ sap.ui.define([
 
 		var bFirstVisibleRowChanged = this.getFirstVisibleRow() !== iRowIndex;
 		var iOldFirstRenderedRowIndex = this._getFirstRenderedRowIndex();
-		var iNewFirstRenderedRowIndex = this.getBinding("rows") ? Math.min(iRowIndex, this._getMaxFirstRenderedRowIndex()) : iRowIndex;
+		var iNewFirstRenderedRowIndex = this.getBinding() ? Math.min(iRowIndex, this._getMaxFirstRenderedRowIndex()) : iRowIndex;
 		var oScrollExtension = this._getScrollExtension();
 
 		this.setProperty("firstVisibleRow", iRowIndex, true);
@@ -1792,13 +1792,13 @@ sap.ui.define([
 			});
 		}
 
-		if (!this.getBinding("rows")) {
+		if (!this.getBinding()) {
 			oScrollExtension.updateVerticalScrollPosition();
 			return false;
 		}
 
 		var bExpectRowsUpdatedEvent = false;
-		var bRowsUpdateRequired = this.getBinding("rows") != null && iNewFirstRenderedRowIndex !== iOldFirstRenderedRowIndex;
+		var bRowsUpdateRequired = this.getBinding() != null && iNewFirstRenderedRowIndex !== iOldFirstRenderedRowIndex;
 
 		if (bRowsUpdateRequired) {
 			if (!mOptions.suppressRendering) {
@@ -1892,7 +1892,7 @@ sap.ui.define([
 		if (sName === "rows") {
 			TableUtils.Grouping.setupExperimentalGrouping(this);
 
-			var oBinding = this.getBinding("rows");
+			var oBinding = this.getBinding();
 			var oModel = oBinding ? oBinding.getModel() : null;
 
 			this._bRowsBeingBound = false;
@@ -2174,7 +2174,7 @@ sap.ui.define([
 		}
 
 		iVisibleRowCount = this.validateProperty("visibleRowCount", iVisibleRowCount);
-		if (this.getBinding("rows") && this._getTotalRowCount() <= iVisibleRowCount) {
+		if (this.getBinding() && this._getTotalRowCount() <= iVisibleRowCount) {
 			this.setFirstVisibleRow(0);
 		}
 		this.setProperty("visibleRowCount", iVisibleRowCount);
@@ -2258,7 +2258,7 @@ sap.ui.define([
 	};
 
 	Table.prototype._getContexts = function(iStartIndex, iLength, iThreshold) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			return oBinding.getContexts(iStartIndex, iLength, iThreshold);
 		} else {
@@ -2277,7 +2277,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getRowContexts = function(iRequestLength, bSuppressAdjustToBindingLength, bSecondCall) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		var iRowCount = this.getRows().length;
 
 		iRequestLength = iRequestLength == null ? iRowCount : iRequestLength;
@@ -2376,7 +2376,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._adjustToTotalRowCount = function() {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		var iTotalRowCount = this._getTotalRowCount();
 		var oScrollExtension = this._getScrollExtension();
 
@@ -2733,7 +2733,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getTotalRowCount = function() {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		var oBindingInfo = this.getBindingInfo("rows");
 
 		if (!oBinding) {
@@ -3055,7 +3055,7 @@ sap.ui.define([
 				this._aSortedColumns[i].setSorted(false);
 			}
 
-			var oBinding = this.getBinding("rows");
+			var oBinding = this.getBinding();
 			if (oBinding) {
 				oBinding.sort();
 			}
@@ -3203,7 +3203,7 @@ sap.ui.define([
 	Table.prototype.getContextByIndex = function(iIndex) {
 		// TODO: ODataListBinding needs to make sure to prevent loading multiple times
 		// index must not be smaller than 0! otherwise the ODataModel fails
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		return iIndex >= 0 && oBinding ? oBinding.getContexts(iIndex, 1)[0] : null;
 	};
 
@@ -3802,7 +3802,7 @@ sap.ui.define([
 		mSettings = mSettings || {};
 
 		if (!mSettings.rows) {
-			var oBinding = this.getBinding("rows"),
+			var oBinding = this.getBinding(),
 				oBindingInfo = this.getBindingInfo("rows");
 
 			var aFilters = oBinding.aFilters.concat(oBinding.aApplicationFilters);
@@ -3874,7 +3874,7 @@ sap.ui.define([
 			}
 		}
 
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			if (aSorters.length > 0) {
 				oBinding.sort(aSorters);
@@ -3934,7 +3934,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._onBindingDataRequested = function(oEvent) {
-		if (oEvent.getSource() != this.getBinding("rows") || oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
+		if (oEvent.getSource() != this.getBinding() || oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
 			return;
 		}
 
@@ -3960,7 +3960,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._onBindingDataReceived = function(oEvent) {
-		if (oEvent.getSource() != this.getBinding("rows") || oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
+		if (oEvent.getSource() != this.getBinding() || oEvent.getParameter("__simulateAsyncAnalyticalBinding")) {
 			return;
 		}
 

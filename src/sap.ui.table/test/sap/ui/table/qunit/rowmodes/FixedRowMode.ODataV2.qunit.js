@@ -102,7 +102,7 @@ sap.ui.define([
 						   });
 
 		return pReady.then(function() {
-			oTable.getBinding("rows").refresh();
+			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Binding#getContexts called 2 times"); // refreshRows, updateRows
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100),
@@ -122,7 +122,7 @@ sap.ui.define([
 						   });
 
 		return pReady.then(function() {
-			oTable.getBinding("rows").refresh();
+			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Binding#getContexts called 2 times"); // refreshRows, updateRows
 			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 11, 100),

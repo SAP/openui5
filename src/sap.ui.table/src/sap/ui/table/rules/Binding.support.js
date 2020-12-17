@@ -41,7 +41,7 @@ sap.ui.define([
 				if (sBindingId && !oIssues[sAnalyticalErrorId + "-" + sBindingId]) {
 					var oBinding;
 					for (var i = 0; i < aTables.length; i++) {
-						oBinding = aTables[i].getBinding("rows");
+						oBinding = aTables[i].getBinding();
 						if (oBinding && oBinding.__supportUID === sBindingId) {
 							oIssues[sAnalyticalErrorId + "-" + sBindingId] = true; // Ensure is only reported once
 							SupportHelper.reportIssue(oIssueManager, "Analytical Binding reports 'No deviating units found...'",
