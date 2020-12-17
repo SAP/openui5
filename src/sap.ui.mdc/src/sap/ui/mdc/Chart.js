@@ -543,12 +543,6 @@ sap.ui.define([
 					return SyncPromise.reject();
 				}
 
-				if (this.getAutoBindOnInit()){
-					ToolbarHandler.createToolbar(this, aActions);
-				} else {
-					ToolbarHandler.updateToolbar(this);
-				}
-
 				var mItems = {};
 				aProperties.forEach(function(oProperty) {
 					mItems[oProperty.name] = oProperty;
@@ -564,6 +558,13 @@ sap.ui.define([
 			}.bind(this))
 
 			.then(function createDrillBreadcrumbs(oInnerChart) {
+
+				if (this.getAutoBindOnInit()){
+					ToolbarHandler.createToolbar(this, aActions);
+				} else {
+					ToolbarHandler.updateToolbar(this);
+				}
+
 				this._createDrillBreadcrumbs();
 				this._toggleChartTooltipVisibility(this.getShowChartTooltip());
 				this._tempResolve(oInnerChart);
