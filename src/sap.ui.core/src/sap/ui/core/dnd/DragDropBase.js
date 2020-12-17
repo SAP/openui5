@@ -21,7 +21,7 @@ sap.ui.define([
 	 * @class
 	 * Provides the base class for all drag-and-drop configurations.
 	 * This feature enables a native HTML5 drag-and-drop API for the controls, therefore it is limited to browser support.
-	 * <h3>Limitations</h3>
+	 * <h3>Restrictions</h3>
 	 * <ul>
 	 *   <li>There is no mobile device that supports drag and drop.</li>
 	 *   <li>There is no accessible alternative for drag and drop. Applications which use the drag-and-drop functionality must provide an
