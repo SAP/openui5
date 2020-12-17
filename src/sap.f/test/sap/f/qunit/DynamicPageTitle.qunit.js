@@ -397,6 +397,66 @@ function (
 		oSandbox.restore();
 	});
 
+
+	QUnit.module("DynamicPageTitle - focus span visual state");
+
+	QUnit.test("Focus class is set", function (assert) {
+		// Arrange
+		var oDynamicPage = oFactory.getDynamicPage(),
+			oDynamicPageTitle = oDynamicPage.getTitle(),
+			$title,
+			$focusSpan;
+
+		// Act
+		oUtil.renderObject(oDynamicPage);
+		Core.applyChanges();
+
+		$title  = oDynamicPageTitle.$();
+		$focusSpan = oDynamicPageTitle._getFocusSpan();
+		$focusSpan.trigger("focus");
+
+		// Assert
+		assert.strictEqual($title.hasClass("sapFDynamicPageTitleFocus"), true, "focus class is added");
+
+		// Act
+		$focusSpan.trigger("blur");
+
+		// Assert
+		assert.strictEqual($title.hasClass("sapFDynamicPageTitleFocus"), false, "focus class is removed");
+
+		// Clean up
+		oDynamicPage.destroy();
+	});
+
+	QUnit.test("Focus class is set when the parent is invalidated", function (assert) {
+		// Arrange
+		var oDynamicPage = oFactory.getDynamicPage(),
+			oDynamicPageTitle = oDynamicPage.getTitle(),
+			$title,
+			$focusSpan;
+
+		// Act
+		oUtil.renderObject(oDynamicPage);
+		Core.applyChanges();
+
+		$title  = oDynamicPageTitle.$();
+		$focusSpan = oDynamicPageTitle._getFocusSpan();
+		$focusSpan.trigger("focus");
+
+		// Assert
+		assert.strictEqual($title.hasClass("sapFDynamicPageTitleFocus"), true, "focus class is added");
+
+		// Act
+		oDynamicPage.invalidate();
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual($title.hasClass("sapFDynamicPageTitleFocus"), true, "focus class is set after invalidation of the parent");
+
+		// Clean up
+		oDynamicPage.destroy();
+	});
+
 	QUnit.module("DynamicPage - Rendering - Title heading, snappedHeading and expandedHeading");
 
 	QUnit.test("Focus span rendered correctly with and without header", function (assert) {
