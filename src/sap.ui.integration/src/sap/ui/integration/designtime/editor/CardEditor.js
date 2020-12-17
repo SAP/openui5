@@ -304,8 +304,12 @@ sap.ui.define([
 							} else {
 								oPanel.addContent(oItem);
 							}
-							if (i === aItems.length - 1 && oPanel.getContent().length > 0) {
-								oRm.renderControl(oPanel);
+							if (i === aItems.length - 1) {
+								//add current col fields to panel, then empty the col fields list
+								addColFields();
+								if (oPanel.getContent().length > 0) {
+									oRm.renderControl(oPanel);
+								}
 							}
 						} else {
 							if (i === 0) {
