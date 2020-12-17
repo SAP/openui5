@@ -813,8 +813,9 @@ sap.ui.define([
 	Table.prototype.setFilterConditions = function(mConditions) {
 		this.setProperty("filterConditions", mConditions, true);
 
-		if (this._oP13nFilter) {
-			this._oP13nFilter.setFilterConditions(mConditions);
+		var oP13nFilter = this.getInbuiltFilter();
+		if (oP13nFilter) {
+			oP13nFilter.setFilterConditions(mConditions);
 		}
 
 		updateFilterInfoBar(this);
@@ -1149,7 +1150,7 @@ sap.ui.define([
 	 */
 	Table.prototype.getConditions = function() {
 		//may only return conditions if the inner FilterBar has already been initialized
-		return this._oP13nFilter ? this._oP13nFilter.getConditions() : [];
+		return this.getInbuiltFilter() ? this.getInbuiltFilter().getConditions() : [];
 	};
 
 	Table.prototype._getSortedProperties = function() {
@@ -2162,8 +2163,6 @@ sap.ui.define([
 		if (this._oTemplate) {
 			this._oTemplate.destroy();
 		}
-
-		this._oP13nFilter = null;
 
 		this._oTemplate = null;
 		this._oTable = null;

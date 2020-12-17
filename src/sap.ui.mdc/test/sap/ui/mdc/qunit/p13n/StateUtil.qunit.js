@@ -629,13 +629,13 @@ sap.ui.define([
 			this.oTable.removeAllColumns();
 
 			return this.oTable.retrieveInbuiltFilter().then(function(){
-				sinon.stub(this.oTable._oP13nFilter, "_toInternal").callsFake(function(oProperty, oXCondition) {
+				sinon.stub(this.oTable.getInbuiltFilter(), "_toInternal").callsFake(function(oProperty, oXCondition) {
 					return oXCondition;
 				});
 			}.bind(this));
 		},
 		afterEach: function(){
-			this.oTable._oP13nFilter._toInternal.restore();
+			this.oTable.getInbuiltFilter()._toInternal.restore();
 			this.oTable.setSortConditions(undefined);
 		},
 		after: function(){
