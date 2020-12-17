@@ -20,7 +20,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-
 	/**
 	 * Constructor for a new <code>NumericHeader</code>.
 	 *
@@ -188,7 +187,9 @@ sap.ui.define([
 	 * @param {object} oDataSettings The data settings
 	 */
 	NumericHeader.prototype._setDataConfiguration = function (oDataSettings) {
-		var sPath = "/";
+		var sPath = "/",
+			oModel;
+
 		if (oDataSettings && oDataSettings.path) {
 			sPath = oDataSettings.path;
 
@@ -199,19 +200,22 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 		}
 
-
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-		if (this._oDataProvider) {
-			// If a data provider is created use an own model. Otherwise bind to the one propagated from the card.
-			this.setModel(new JSONModel());
+		if (oDataSettings && oDataSettings.name) {
+			oModel = this.getModel(oDataSettings.name);
+		} else if (this._oDataProvider) {
+			oModel = new JSONModel();
+			this.setModel(oModel);
+		}
 
+		if (this._oDataProvider) {
 			this._oDataProvider.attachDataRequested(function () {
 				this.onDataRequested();
 			}.bind(this));
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
-				this._updateModel(oEvent.getParameter("data"));
+				oModel.setData(oEvent.getParameter("data"));
 				this.onDataRequestComplete();
 			}.bind(this));
 
@@ -224,10 +228,6 @@ sap.ui.define([
 		} else {
 			this.fireEvent("_dataReady");
 		}
-	};
-
-	NumericHeader.prototype._updateModel = function (oData) {
-		this.getModel().setData(oData);
 	};
 
 	NumericHeader.prototype._handleError = function (sLogMessage) {

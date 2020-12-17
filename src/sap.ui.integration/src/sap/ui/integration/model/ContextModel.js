@@ -26,9 +26,9 @@ sap.ui.define([
 	 * @version ${version}
 	 * @constructor
 	 * @private
-	 * @alias sap.ui.integration.util.ContextModel
+	 * @alias sap.ui.integration.model.ContextModel
 	 */
-	var ContextModel = JSONModel.extend("sap.ui.integration.util.ContextModel", {
+	var ContextModel = JSONModel.extend("sap.ui.integration.model.ContextModel", {
 		constructor: function (oData, bObserve) {
 			JSONModel.apply(this, arguments);
 

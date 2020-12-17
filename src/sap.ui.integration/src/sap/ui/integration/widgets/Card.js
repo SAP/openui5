@@ -11,13 +11,15 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/merge",
 	"sap/base/util/deepEqual",
+	"sap/base/util/isPlainObject",
 	"sap/ui/integration/util/DataProviderFactory",
 	"sap/m/HBox",
 	"sap/ui/core/Icon",
 	"sap/m/Text",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/integration/model/ObservableModel",
 	"sap/ui/model/resource/ResourceModel",
-	"sap/ui/integration/util/ContextModel",
+	"sap/ui/integration/model/ContextModel",
 	"sap/base/util/LoaderExtensions",
 	"sap/f/CardRenderer",
 	"sap/f/CardBase",
@@ -42,11 +44,13 @@ sap.ui.define([
 	Log,
 	merge,
 	deepEqual,
+	isPlainObject,
 	DataProviderFactory,
 	HBox,
 	Icon,
 	Text,
 	JSONModel,
+	ObservableModel,
 	ResourceModel,
 	ContextModel,
 	LoaderExtensions,
@@ -79,6 +83,11 @@ sap.ui.define([
 		DESTINATIONS: "/sap.card/configuration/destinations",
 		FILTERS: "/sap.card/configuration/filters"
 	};
+
+	/**
+	 * @const A list of model names which are used internally by the card.
+	 */
+	var RESERVED_MODEL_NAMES = ["parameters", "filters", "context", "i18n"];
 
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
 
@@ -565,7 +574,7 @@ sap.ui.define([
 
 				resolve();
 			}.bind(this), function (vErr) {
-				Log.error("Failed to load " + sExtensionPath + ". Check if the path is correct.");
+				Log.error("Failed to load " + sExtensionPath + ". Check if the path is correct. Reason: " + vErr);
 				reject(vErr);
 			});
 		}.bind(this));
@@ -838,6 +847,8 @@ sap.ui.define([
 		this.getModel("filters").setData({});
 
 		this._oContextParameters = null;
+
+		this._deregisterCustomModels();
 	};
 
 	/**
@@ -1095,6 +1106,8 @@ sap.ui.define([
 
 		this._oLoadingProvider = new LoadingProvider();
 
+		this._registerCustomModels();
+
 		if (oExtension) {
 			oExtension.onCardReady();
 		}
@@ -1135,7 +1148,8 @@ sap.ui.define([
 	};
 
 	Card.prototype._applyDataManifestSettings = function () {
-		var oDataSettings = this._oCardManifest.get(MANIFEST_PATHS.DATA);
+		var oDataSettings = this._oCardManifest.get(MANIFEST_PATHS.DATA),
+			oModel;
 
 		if (!oDataSettings) {
 			this.fireEvent("_cardReady");
@@ -1150,22 +1164,36 @@ sap.ui.define([
 
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
-		if (this._oDataProvider) {
-			this.setModel(new JSONModel());
+		if (oDataSettings.name) {
+			oModel = this.getModel(oDataSettings.name);
+		} else if (this._oDataProvider) {
+			oModel = new ObservableModel();
+			this.setModel(oModel);
+		}
 
+		if (!oModel) {
+			this.fireEvent("_cardReady");
+			return;
+		}
+
+		oModel.attachEvent("change", function () {
+			if (this._createContentPromise) {
+				this._createContentPromise.then(function (oContent) {
+					oContent.onDataChanged();
+				});
+			}
+
+			this.onDataRequestComplete();
+		}.bind(this));
+
+		if (this._oDataProvider) {
 			this._oDataProvider.attachDataRequested(function () {
 				this.onDataRequested();
 			}.bind(this));
 
 			this._oDataProvider.attachDataChanged(function (oEvent) {
-				this.getModel().setData(oEvent.getParameter("data"));
-				if (this._createContentPromise) {
-					this._createContentPromise.then(function (oContent) {
-						oContent.onDataChanged();
-					});
-				}
-				this.onDataRequestComplete();
-			}.bind(this));
+				oModel.setData(oEvent.getParameter("data"));
+			});
 
 			this._oDataProvider.attachError(function (oEvent) {
 				this._handleError("Data service unavailable. " + oEvent.getParameter("message"));
@@ -1173,9 +1201,10 @@ sap.ui.define([
 			}.bind(this));
 
 			this._oDataProvider.triggerDataUpdate();
+		} else {
+			this.fireEvent("_cardReady");
 		}
 	};
-
 
 	/**
 	 * Handles card loading.
@@ -1683,6 +1712,8 @@ sap.ui.define([
 		this.fireEvent("_cardReady");
 		this._handleCardLoading();
 		this._oLoadingProvider.setLoading(false);
+
+		this.invalidate();
 	};
 
 	/**
@@ -1778,6 +1809,56 @@ sap.ui.define([
 		}
 
 		return mNamespaces;
+	};
+
+	/**
+	 * Creates an individual model for each named data section in the manifest.
+	 * @private
+	 */
+	Card.prototype._registerCustomModels = function () {
+		var aDataSections = this._oCardManifest.findDataSections();
+
+		if (!this._aCustomModels) {
+			this._aCustomModels = [];
+		}
+
+		aDataSections.forEach(function (oDataSettings) {
+			var sModelName = oDataSettings && oDataSettings.name;
+
+			if (!sModelName) {
+				return;
+			}
+
+			if (RESERVED_MODEL_NAMES.indexOf(sModelName) > 0) {
+				Log.error("The model name (data section name) '" + sModelName + "' is reserved for cards. Can not be used for creating a custom model.");
+				return;
+			}
+
+			if (this._aCustomModels.indexOf(sModelName) > 0) {
+				Log.error("The model name (data section name) '" + sModelName + "' is already used.");
+				return;
+			}
+
+			this.setModel(new ObservableModel(), sModelName);
+			this._aCustomModels.push(sModelName);
+		}.bind(this));
+	};
+
+	/**
+	 * Remove all models registered with _registerCustomModels
+	 * @private
+	 */
+	Card.prototype._deregisterCustomModels = function () {
+		if (!this._aCustomModels) {
+			return;
+		}
+
+		this._aCustomModels.forEach(function (sModelName) {
+			this.getModel(sModelName).destroy();
+			this.setModel(null, sModelName);
+		}.bind(this));
+
+		this._aCustomModels = [];
 	};
 
 	return Card;
