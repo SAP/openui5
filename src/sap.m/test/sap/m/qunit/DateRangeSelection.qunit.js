@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/test/TestUtils",
 	"sap/ui/model/json/JSONModel",
+	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/DateTypeRange",
 	"sap/m/DateRangeSelection",
 	"sap/m/DatePicker",
@@ -23,6 +24,7 @@ sap.ui.define([
 	DateFormat,
 	TestUtils,
 	JSONModel,
+	CalendarDate,
 	DateTypeRange,
 	DateRangeSelection,
 	DatePicker,
@@ -61,9 +63,6 @@ sap.ui.define([
 
 
 	var Log = sap.ui.require("sap/base/Log");
-
-	var JSONModel = sap.ui.model.json.JSONModel;
-	var DateRangeSelection = sap.m.DateRangeSelection;
 
 	var oDefaultMinDate = new DatePicker()._oMinDate;
 	var oDefaultMaxDate = new DatePicker()._oMaxDate;
@@ -331,6 +330,30 @@ sap.ui.define([
 		//Cleanup
 		qutils.triggerEvent("click", oDRS.getId() + "-icon"); //closes picker
 		oDRS.destroy();
+	});
+
+	QUnit.test("Choosing a range in month with 4 weeks is possible", function(assert) {
+		//Prepare
+		var oDRS = new DateRangeSelection({
+			dateValue: new Date(2021, 1, 1)
+		}).placeAt("qunit-fixture");
+		sap.ui.getCore().getConfiguration().setLanguage("en-GB"); // ensure that there are 4 weeks
+		sap.ui.getCore().applyChanges();
+
+		//Act
+		qutils.triggerEvent("click", oDRS.getId() + "-icon");
+
+		try {
+			oDRS._getCalendar().getAggregation("month")[0]._selectDay(CalendarDate.fromLocalJSDate(new Date(2021, 1, 10)));
+			//Assert
+			assert.ok(1, "The control doesn't throw error when the the user selects a date range");
+		} catch (e) {
+			assert.ok(0, "The control throws an error " + e.stack);
+		}
+
+		//Cleanup
+		oDRS.destroy();
+		sap.ui.getCore().getConfiguration().setLanguage("en-US");
 	});
 
 	QUnit.test("focused element after picker close", function(assert) {
