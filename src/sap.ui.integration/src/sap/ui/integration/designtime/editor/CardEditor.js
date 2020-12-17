@@ -1125,6 +1125,7 @@ sap.ui.define([
 				expandable: oConfig.expandable !== false,
 				expanded: oConfig.expanded !== false,
 				width: "auto",
+				backgroundDesign: "Transparent",
 				objectBindings: {
 					currentSettings: {
 						path: "currentSettings>" + oConfig._settingspath
