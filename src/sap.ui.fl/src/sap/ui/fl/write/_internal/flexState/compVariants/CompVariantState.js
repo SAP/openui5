@@ -251,6 +251,11 @@ sap.ui.define([
 		return bPublicLayerAvailable ? Layer.PUBLIC : Layer.CUSTOMER;
 	}
 
+	function getVariantById(mPropertyBag) {
+		var mCompVariantsByIdMap = FlexState.getCompEntitiesByIdMap(mPropertyBag.reference);
+		return mCompVariantsByIdMap[mPropertyBag.id];
+	}
+
 	/**
 	 * CompVariant state class to handle the state of the compVariants and its changes.
 	 * This class is in charge of updating the maps stored in the <code>sap.ui.fl.apply._internal.flexState.FlexState</code>.
@@ -356,6 +361,72 @@ sap.ui.define([
 		var mCompVariantsMapById = FlexState.getCompEntitiesByIdMap(mPropertyBag.reference);
 		mCompVariantsMapById[sId] = oFlexObject;
 		return oFlexObject;
+	};
+
+	/**
+	 * Updates a variant; this may result in an update of the variant or the creation of a change.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - Flex reference of the application
+	 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
+	 * @param {string} mPropertyBag.id - ID of the variant
+	 * @param {object} [mPropertyBag.name] - Title of the variant
+	 * @param {object} [mPropertyBag.content] - Content of the new change
+	 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
+	 * @param {object} [mPropertyBag.executeOnSelect] - Flag if the variant should be executed on selection
+	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
+	 * this either updates the variant from the layer or writes a change to that layer.
+	 */
+	CompVariantState.updateVariant = function (mPropertyBag) {
+		var oVariant = getVariantById(mPropertyBag);
+
+		// TODO: update non-fl variants and remove limitation
+		if (!oVariant) {
+			throw new Error("Variant to be modified is not persisted via sap.ui.fl.");
+		}
+
+		// TODO: check if it is an update or create corresponding changes
+		if (mPropertyBag.name) {
+			oVariant.setText("variantName", mPropertyBag.name);
+		}
+		var oContent = oVariant.getContent();
+		var bExecuteOnSelect = oContent.executeOnSelect;
+		var bFavorite = oContent.favorite;
+		var oContentToBeWritten = mPropertyBag.content || oContent;
+
+		if (mPropertyBag.favorite !== undefined) {
+			oContentToBeWritten.favorite = mPropertyBag.favorite;
+		} else if (bFavorite !== undefined) {
+			oContentToBeWritten.favorite = bFavorite;
+		}
+
+		if (mPropertyBag.executeOnSelect !== undefined) {
+			oContentToBeWritten.executeOnSelect = mPropertyBag.executeOnSelect;
+		} else if (bExecuteOnSelect !== undefined) {
+			oContentToBeWritten.executeOnSelect = bExecuteOnSelect;
+		}
+
+		oVariant.setContent(oContentToBeWritten);
+		// also update the runtime instance
+		oVariant.setFavorite(!!oContentToBeWritten.favorite);
+		oVariant.setExecuteOnSelect(!!oContentToBeWritten.executeOnSelect);
+	};
+
+	/**
+	 * Removes a variant; this may result in an deletion of the existing variant or the creation of a change.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - Flex reference of the application
+	 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
+	 * @param {string} mPropertyBag.id - ID of the variant
+	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
+	 * this either removes the variant from the layer or writes a change to that layer.
+	 */
+	CompVariantState.removeVariant = function (mPropertyBag) {
+		var oVariant = getVariantById(mPropertyBag);
+
+		// TODO: check if it is an deletion or create corresponding changes
+		oVariant.markForDeletion();
 	};
 
 	/**
