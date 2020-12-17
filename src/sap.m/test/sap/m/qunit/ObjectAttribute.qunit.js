@@ -440,13 +440,12 @@ sap.ui.define([
 	QUnit.module("Events");
 
 	QUnit.test("TestTap", function(assert) {
-		assert.expect(3);
-		qutils.triggerEvent("tap", oa1.$().children()[2]); //click on the link part of the OA should fire event
-		qutils.triggerEvent("tap", oa2.$().children()[0]); //we dont't have title on this one, so 0 is the link part and should fire event
-		qutils.triggerEvent("tap", oa3.$().children()[0]); //we dont't have title on this one, so 0 is the link part and should fire event
+		assert.expect(2);
+		qutils.triggerEvent("tap", oa1.getDomRef().querySelector(".sapMObjectAttributeText")); //click on the link part of the OA should fire event
+		qutils.triggerEvent("tap", oa1.getDomRef().querySelector(".sapMObjectAttributeText > bdi")); //click on the text element of the link part of the OA should fire event
 
-		qutils.triggerEvent("tap", oa1.$().children()[0]); //click on the title part of the OA should not fire event
-		qutils.triggerEvent("tap", oa1.$().children()[1]); //click on the "dots" part of the OA should not fire event
+		qutils.triggerEvent("tap", oa1.getDomRef().querySelector(".sapMObjectAttributeTitle")); //click on the title part of the OA should not fire event
+		qutils.triggerEvent("tap", oa1.getDomRef().querySelector(".sapMObjectAttributeColon")); //click on the "dots" part of the OA should not fire event
 		qutils.triggerEvent("tap", oa4.getId()); //should not fire event
 		qutils.triggerEvent("tap", oa5.getId()); //should not fire event
 		qutils.triggerEvent("tap", oa6.getId()); //should not fire event
@@ -454,7 +453,7 @@ sap.ui.define([
 
 	QUnit.test("Test table row is not clickable when ObjectAttribute is active", function(assert) {
 		assert.expect(1);
-		qutils.triggerEvent("tap", oa7.$().children()[0]);
+		qutils.triggerEvent("tap", oa7.getDomRef().querySelector(".sapMObjectAttributeText"));
 		qutils.triggerEvent("tap", "table-item");
 	});
 
@@ -466,6 +465,32 @@ sap.ui.define([
 		setTimeout( function() {
 			done();
 		}, 500);
+	});
+
+	QUnit.test("Press event fired, when active attribute is set to 'true'", function(assert) {
+		// prepare
+		var oObjectAttribute = new ObjectAttribute({
+				active: true,
+				text: "test"
+			}),
+			oFakeEvent = {
+				target: {
+					parentElement: {
+						id:  oObjectAttribute.getId() + "-text"
+					}
+				}
+			},
+			oFirePressSpy = this.spy(oObjectAttribute, "firePress");
+
+		// act
+		oObjectAttribute.ontap(oFakeEvent);
+
+		// assert
+		assert.ok(oFirePressSpy.calledOnce, "firePress event is called once");
+
+		// cleanup
+		oObjectAttribute.destroy();
+		oFirePressSpy.restore();
 	});
 
 	QUnit.module("Keyboard handling");
