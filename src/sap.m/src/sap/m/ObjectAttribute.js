@@ -181,8 +181,10 @@ function(library, Control, coreLibrary, Text, KeyCodes, ObjectAttributeRenderer,
 	 * @param {object} oEvent The fired event
 	 */
 	ObjectAttribute.prototype.ontap = function(oEvent) {
+		var oTarget = oEvent.target;
+		oTarget = oTarget.id ? oTarget : oTarget.parentElement;
 		//event should only be fired if the click is on the text (acting like a link)
-		if (this._isSimulatedLink() && (oEvent.target.id === this.getId() + "-text")) {
+		if (this._isSimulatedLink() && (oTarget.id === this.getId() + "-text")) {
 			this.firePress({
 				domRef : this.getDomRef()
 			});
