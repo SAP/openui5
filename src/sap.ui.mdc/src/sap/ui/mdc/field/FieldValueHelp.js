@@ -93,7 +93,13 @@ sap.ui.define([
 				},
 
 				/**
-				 * The fields for which the table data is filtered. As default a <code>$search</code> request is used for filtering.
+				 * The fields based on which the table data is filtered. For filtering the value of the <code>filterValue</code> property is used.
+				 *
+				 * If set to <code>$search</code> and the used binding supports search requests, a $search request is used for filtering.
+				 *
+				 * If set to one or more properties, the filters for these properties are used for filtering.
+				 * These filters are set on the <code>ListBinding</code> used.
+				 * The properties need to be separated by commas and enclosed by "*" characters. (<code>"*Property1,Property2*"</code>)
 				 *
 				 * If it is empty, no suggestion is available.
 				 */
