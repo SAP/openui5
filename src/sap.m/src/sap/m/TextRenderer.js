@@ -70,9 +70,8 @@ sap.ui.define([
 
 			// write style and attributes
 			sWidth ? oRm.style("width", sWidth) : oRm.class("sapMTextMaxWidth");
-			if (sTextDir !== TextDirection.Inherit){
-				oRm.attr("dir", sTextDir.toLowerCase());
-			}
+			oRm.attr("dir", sTextDir !== TextDirection.Inherit ? sTextDir.toLowerCase() : "auto");
+
 			sTooltip && oRm.attr("title", sTooltip);
 			if (sTextAlign) {
 				sTextAlign = Renderer.getTextAlign(sTextAlign, sTextDir);
@@ -131,13 +130,7 @@ sap.ui.define([
 		 */
 		TextRenderer.renderText = function(oRm, oText) {
 			var sText = HyphenationSupport.getTextForRender(oText, "main");
-
-			oRm.openStart("bdi");
-			oRm.openEnd();
-
 			oRm.text(sText);
-
-			oRm.close("bdi");
 		};
 
 		return TextRenderer;

@@ -81,7 +81,8 @@ sap.ui.define(["sap/ui/core/library"],
 	};
 
 	ObjectAttributeRenderer.renderActiveTitle = function(oRm, oOA) {
-		var sColon;
+		var sColon,
+			bRenderBDI = oOA.getTextDirection() === TextDirection.Inherit;
 
 		if (!oOA.getProperty("title")) {
 			return;
@@ -92,10 +93,18 @@ sap.ui.define(["sap/ui/core/library"],
 		oRm.openStart("span", oOA.getId() + "-title");
 		oRm.class("sapMObjectAttributeTitle");
 		oRm.openEnd();
-		oRm.openStart("bdi");
-		oRm.openEnd();
+
+		if (bRenderBDI) {
+			oRm.openStart("bdi");
+			oRm.openEnd();
+		}
+
 		oRm.text(oOA.getProperty("title"));
-		oRm.close("bdi");
+
+		if (bRenderBDI) {
+			oRm.close("bdi");
+		}
+
 		oRm.close("span");
 
 		oRm.openStart("span", oOA.getId() + "-colon");
@@ -109,7 +118,8 @@ sap.ui.define(["sap/ui/core/library"],
 	};
 
 	ObjectAttributeRenderer.renderActiveText = function (oRm, oOA, oParent) {
-		var oAttrAggregation = oOA.getAggregation("customContent");
+		var oAttrAggregation = oOA.getAggregation("customContent"),
+			bRenderBDI = oOA.getTextDirection() === TextDirection.Inherit;
 
 		oRm.openStart("span", oOA.getId() + "-text");
 		oRm.class("sapMObjectAttributeText");
@@ -123,10 +133,16 @@ sap.ui.define(["sap/ui/core/library"],
 			}
 			oRm.renderControl(oAttrAggregation);
 		} else {
-			oRm.openStart("bdi");
-			oRm.openEnd();
+			if (bRenderBDI) {
+				oRm.openStart("bdi");
+				oRm.openEnd();
+			}
+
 			oRm.text(oOA.getProperty("text"));
-			oRm.close("bdi");
+
+			if (bRenderBDI) {
+				oRm.close("bdi");
+			}
 		}
 		oRm.close("span");
 	};

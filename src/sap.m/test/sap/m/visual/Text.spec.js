@@ -175,4 +175,11 @@ describe("sap.m.Text", function() {
 			expect(takeScreenshot(txt14)).toLookAs("14_hyphenation");
 		});
 	});
+
+	it("should respect the textDirection setting", function() {
+		var txt15 = element(by.id('text15'));
+		browser.executeScript('document.getElementById("text15").scrollIntoView()').then(function() {
+			expect(takeScreenshot(txt15)).toLookAs("15_rtl_support");
+		});
+	});
 });

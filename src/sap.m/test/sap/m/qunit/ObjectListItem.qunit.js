@@ -268,7 +268,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		assert.equal($('#showTextDir-intro>span').attr("dir"), "rtl", "intro has attribute dir=rtl");
-		assert.equal($('#showTextDir-titleText').attr("dir"), undefined, "title has no dir attribute");
+		assert.equal($('#showTextDir-titleText').attr("dir"), "auto", "title has no dir attribute");
 		assert.equal($('#showTextDir-ObjectNumber').attr("dir"), undefined, "ObjectNumber has no dir attribute");
 	});
 
