@@ -50,10 +50,12 @@ sap.ui.define([
 		setText("<ul><li>1</li><li>2</li><li>3</li></ul>");
 		assert.strictEqual(oFT.$().find("ul").length, 1, "One ul element is rendered");
 		assert.strictEqual(oFT.$().find("li").length, 3, "There are 3 li elements");
+		setText("<span><bdi>123 456</bdi></span>");
+		assert.strictEqual(oFT.$().find("bdi").length, 1, "There is 1 bdi element");
 	});
 
 	QUnit.test("attributes", function(assert) {
-		var $a;
+		var $a, $span;
 		setText('<a id="AAA" class="aaa" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
 		$a = oFT.$().find("a");
 		assert.ok(!$a.attr("id"), "id is not rendered");
@@ -70,6 +72,9 @@ sap.ui.define([
 		assert.strictEqual($a.attr("class"), "aaa", "a::class is rendered");
 		assert.strictEqual($a[0].style.color, "red", "a::style is rendered");
 		assert.ok(!$a.attr("target"), "span::target is not rendered");
+		setText("<span dir=\'rtl\'><bdi>123 456</bdi></span>");
+		$span = oFT.$().find("span");
+		assert.strictEqual($span.attr("dir"), "rtl", "span::dir is rendered");
 	});
 
 	QUnit.test("css classes", function(assert) {
@@ -85,6 +90,21 @@ sap.ui.define([
 		setText('<a id="AAA" class="abc" style="color:red;" href="' +  sFT + '" target="_top">"' + sFT + '</a>');
 		$a = oFT.$().find("a");
 		assert.strictEqual($a.attr("class"), "sapMLnk abc", "a::class is rendered correctly");
+	});
+
+	QUnit.test("textDirection and textAlign properties", function(assert) {
+		var oFormattedText = new FormattedText({
+				textDirection: "RTL",
+				textAlign: "Center"
+			}).placeAt("content"),
+			$FormattedText;
+
+		sap.ui.getCore().applyChanges();
+
+		$FormattedText = oFormattedText.$();
+
+		assert.strictEqual($FormattedText.attr("dir"), "rtl", "a::class is rendered correctly");
+		assert.strictEqual($FormattedText[0].style["text-align"], "center", "a::class is rendered correctly");
 	});
 
 	QUnit.module("_setUseLimitedRenderingRules restricted method", {
