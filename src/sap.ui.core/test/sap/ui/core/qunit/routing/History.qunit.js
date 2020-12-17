@@ -272,6 +272,35 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Keep existing history state", function(assert){
+		var oHistoryStub = sinon.stub(History, "getInstance");
+
+		oHistoryStub.callsFake(function(){
+			return undefined;
+		});
+
+		this.oExtendedHashChanger.setHash("hash3");
+		history.pushState({
+			sap: {
+				history: ["/hash1", "/hash2", "/hash3"]
+			}
+		}, "", "");
+		var oNewHistory = new History(this.oExtendedHashChanger);
+
+		if (!History._bUsePushState) {
+			assert.equal(History._aStateHistory.length, 1, "There's one history state entry");
+			assert.strictEqual(History._aStateHistory[0], "", "The first history state entry is correctly an empty string");
+		} else {
+			assert.equal(History._aStateHistory.length, 3, "There are three new history state entries");
+			assert.strictEqual(History._aStateHistory[0], "/hash1", "The first history state entry is correctly '/hash1'");
+			assert.strictEqual(History._aStateHistory[1], "/hash2", "The second history state entry is correctly '/hash2'");
+			assert.strictEqual(History._aStateHistory[2], "/hash3", "The third history state entry is correctly '/hash3'");
+			assert.strictEqual(oNewHistory.getPreviousHash(), undefined, "The previous hash is correctly undefined");
+		}
+
+		oHistoryStub.restore();
+	});
+
 	QUnit.module("history management", {
 		before: fnBeforeHistoryModule,
 		after: fnAfterHistoryModule,
