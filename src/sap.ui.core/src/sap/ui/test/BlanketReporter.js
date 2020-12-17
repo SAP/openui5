@@ -482,7 +482,8 @@ sap.ui.define([
 				aTestedModules && aTestedModules.map(convertToFile));
 			oDiv = getDiv();
 
-			if (oUriParameters.get("filter") || oUriParameters.get("testId")
+			if (oCoverageData.stats.failures
+				|| oUriParameters.get("filter") || oUriParameters.get("testId")
 				|| aTestedModules && !aTestedModules.every(isSingleClass)) {
 				// do not fail due to coverage
 				createViewAndPlaceAt(oModel, oDiv);

@@ -661,7 +661,7 @@
 
 		mHooks.after = function (assert) {
 			if (window.blanket && !sFilter && !sTestId && !this.__ignoreIsolatedCoverage__
-					&& iThreshold >= 100) {
+					&& iThreshold >= 100 && !assert.test.module.stats.bad) {
 				checkIsolatedCoverage(this, assert);
 			}
 
