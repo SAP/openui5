@@ -103,15 +103,34 @@ sap.ui.define([
 	 * @public
 	*/
 	RecordReplay.findDOMElementByControlSelector = function (oOptions) {
-		// TODO: have greater control over result in case of multiple controls or DOM elements
+		return RecordReplay.findAllDOMElementsByControlSelector(oOptions)
+			.then(function (aElements) {
+				if (aElements.length) {
+					return aElements[0];
+				} else {
+					throw new Error("No DOM element found using the control selector " + JSON.stringify(oOptions.selector));
+				}
+			});
+	};
+
+	/**
+	 * Find DOM element representations of all controls specified by a selector object.
+	 * Useful when the selector matches multiple controls and you want all the results.
+	 *
+	 * @param {object} oOptions Options for the search
+	 * @param {sap.ui.test.RecordReplay.ControlSelector} oOptions.selector Control selector for this control
+	 * Could be the result of {@link sap.ui.test.RecordReplay.findControlSelectorByDOMElement}
+	 * If the selector matches multiple controls, all of their representations will be included in the result.
+	 * If the selector contains ID suffix for a DOM element, the result will include the first DOM element with a matching ID (one DOM element per control).
+	 * Otherwise, the result will include the first DOM element with ID matching the control's ID, or the DOM element that usually receives focus events (one DOM element per control).
+	 * @returns {Promise<array|Error>} Promise to be resolved with an array of DOM elements or rejected with Error when no suitable DOM elements are found
+	 * @public
+	*/
+	RecordReplay.findAllDOMElementsByControlSelector = function (oOptions) {
 		return new Promise(function (resolve, reject) {
 			try {
-				var oElement = _ControlFinder._findElements(oOptions.selector)[0];
-				if (oElement) {
-					resolve(oElement);
-				} else {
-					reject(new Error("No DOM element found using the control selector " + JSON.stringify(oOptions.selector)));
-				}
+				var aElements = _ControlFinder._findElements(oOptions.selector);
+				resolve(aElements);
 			} catch (oError) {
 				reject(new Error("No DOM element found using the control selector " + JSON.stringify(oOptions.selector) + ". Error: " + oError));
 			}
