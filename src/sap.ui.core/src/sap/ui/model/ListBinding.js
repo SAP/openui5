@@ -84,6 +84,13 @@ sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
 	 * @name sap.ui.model.ListBinding.prototype.getContexts
 	 * @param {int} [iStartIndex=0] the startIndex where to start the retrieval of contexts
 	 * @param {int} [iLength=length of the list] determines how many contexts to retrieve beginning from the start index.
+	 * @param {int} [iMaximumPrefetchSize]
+	 *   The maximum number of contexts to read before and after the given range; with this,
+	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
+	 *   table. This parameter is model-specific and not implemented by all models.
+	 * @param {boolean} [bKeepCurrent]
+	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.86.0.
+	 *   This parameter is model-specific and not implemented by all models.
 	 * @return {sap.ui.model.Context[]} the array of contexts for each row of the bound list
 	 *
 	 * @protected

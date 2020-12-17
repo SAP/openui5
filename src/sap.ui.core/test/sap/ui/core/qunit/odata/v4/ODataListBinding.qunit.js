@@ -1378,25 +1378,30 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bAsync) {
 	[false, true].forEach(function (bChanged) {
+		[undefined, true].forEach(function (bKeepCurrent) {
+			var sTitle = "getContexts: async=" + bAsync + ", changed=" + bChanged
+					+ ", bKeepCurrent=" + bKeepCurrent;
 
-	QUnit.test("getContexts: async=" + bAsync + ", changed=" + bChanged, function (assert) {
+	QUnit.test(sTitle, function (assert) {
 		var oBinding = this.bindList("n/a"),
 			aContexts = [],
 			oFetchContextsPromise = bAsync
 				? SyncPromise.resolve(Promise.resolve(bChanged))
 				: SyncPromise.resolve(bChanged),
+			iMaximumPrefetchSize = bKeepCurrent ? 0 : 100,
 			aResults;
 
 		oBinding.oReadGroupLock = undefined;
-		oBinding.iCurrentBegin = 0;
-		oBinding.iCurrentEnd = 0;
+		oBinding.iCurrentBegin = 2;
+		oBinding.iCurrentEnd = 7;
 		this.oLogMock.expects("debug")
-			.withExactArgs(oBinding + "#getContexts(5, 10, 100)", undefined, sClassName);
+			.withExactArgs(oBinding + "#getContexts(5, 10, " + iMaximumPrefetchSize + ")",
+				undefined, sClassName);
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
 		this.mock(oBinding).expects("getDiff").never();
 		this.mock(oBinding).expects("fetchContexts")
-			.withExactArgs(5, 10, 100, undefined, false, sinon.match.func)
+			.withExactArgs(5, 10, iMaximumPrefetchSize, undefined, false, sinon.match.func)
 			.returns(oFetchContextsPromise);
 		this.mock(oBinding).expects("resolveRefreshPromise")
 			.withExactArgs(sinon.match.same(oFetchContextsPromise));
@@ -1408,15 +1413,16 @@ sap.ui.define([
 			.withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
-		aResults = oBinding.getContexts(5, 10, 100);
+		aResults = oBinding.getContexts(5, 10, iMaximumPrefetchSize, bKeepCurrent);
 
 		assert.strictEqual(aResults, aContexts);
-		assert.strictEqual(oBinding.iCurrentBegin, 5);
-		assert.strictEqual(oBinding.iCurrentEnd, 15);
+		assert.strictEqual(oBinding.iCurrentBegin, bKeepCurrent ? 2 : 5);
+		assert.strictEqual(oBinding.iCurrentEnd, bKeepCurrent ? 7 : 15);
 
 		return oFetchContextsPromise;
 	});
 
+		});
 	});
 });
 
@@ -2573,6 +2579,11 @@ sap.ui.define([
 			oBinding.getDistinctValues();
 		}, new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues"));
 
+		assert.throws(function () {
+			oBinding.getContexts(0, 10, 100, true);
+		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, must not use both"
+				+ " iMaximumPrefetchSize and bKeepCurrent"));
+
 		oBinding.enableExtendedChangeDetection();
 		assert.throws(function () { //TODO implement?
 			oBinding.getContexts(0, 42, 0);
@@ -2583,6 +2594,11 @@ sap.ui.define([
 			oBinding.getContexts(42);
 		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, first parameter "
 			+ "must be 0 if extended change detection is enabled, but is 42"));
+
+		assert.throws(function () {
+			oBinding.getContexts(0, 10, undefined, true);
+		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, must not use"
+			+ " bKeepCurrent if extended change detection is enabled"));
 	});
 	//TODO errors on _fireFilter(mArguments) and below in Wiki
 
