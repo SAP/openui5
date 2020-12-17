@@ -35,15 +35,26 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 	ObjectNumberRenderer.render = function(oRm, oON) {
 		var sTooltip = oON.getTooltip_AsString(),
 			sTextDir = oON.getTextDirection(),
-			sTextAlign = oON.getTextAlign();
+			sTextAlign = oON.getTextAlign(),
+			oAccAttributes = {};
 
 		oRm.openStart("div", oON);
 		oRm.class("sapMObjectNumber");
+
+		if (oON._isActive()) {
+			oRm.class("sapMObjectNumberActive");
+			oRm.attr("tabindex", "0");
+			oAccAttributes.role = "button";
+		}
 
 		oRm.class(_sCSSPrefixObjNumberStatus + oON.getState());
 
 		if (oON.getEmphasized()) {
 			oRm.class("sapMObjectNumberEmph");
+		}
+
+		if (oON.getInverted()) {
+			oRm.class("sapMObjectNumberInverted");
 		}
 
 		if (sTooltip) {
@@ -60,13 +71,18 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 			oRm.style("text-align", sTextAlign);
 		}
 
-		oRm.accessibilityState(oON);
+		oRm.accessibilityState(oON, oAccAttributes);
 
 		oRm.openEnd();
 
+		oRm.openStart("span", oON.getId() + "-inner");
+		oRm.class("sapMObjectNumberInner");
+		oRm.openEnd();
+
 		this.renderText(oRm, oON);
-		oRm.text("  "); // space between the number text and unit
 		this.renderUnit(oRm, oON);
+
+		oRm.close("span");
 
 		this.renderEmphasizedInfoElement(oRm, oON);
 		this.renderHiddenARIAElement(oRm, oON);
@@ -75,10 +91,14 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 	};
 
 	ObjectNumberRenderer.renderText = function(oRm, oON) {
-		oRm.openStart("span");
+		var sUnit = oON.getUnit() || oON.getNumberUnit();
+		oRm.openStart("span", oON.getId() + "-number");
 		oRm.class("sapMObjectNumberText");
 		oRm.openEnd();
 		oRm.text(oON.getNumber());
+		if (sUnit !== "") {
+			oRm.text(" ");
+		}
 		oRm.close("span");
 	};
 
@@ -86,7 +106,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 		var sUnit = oON.getUnit() || oON.getNumberUnit();
 
 		if (sUnit !== "") {
-			oRm.openStart("span");
+			oRm.openStart("span", oON.getId() + "-unit");
 			oRm.class("sapMObjectNumberUnit");
 			oRm.openEnd();
 			oRm.text(sUnit);

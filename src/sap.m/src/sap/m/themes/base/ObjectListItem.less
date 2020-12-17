@@ -69,6 +69,10 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 .sapMObjLNumberDiv {
 	float: right;
 	padding-left: 1rem;
+
+	.sapMObjectNumber {
+		line-height: initial;
+	}
 }
 
 .sapMObjLNumberDiv .sapMObjectNumber.sapMObjectNumberStatusNone {
@@ -79,6 +83,7 @@ html .sapUiContainer-Narrow .sapMText.sapMObjLTitle {
 	font-family: @sapUiFontHeaderFamily;
 	font-size: 1.375rem;
 	font-weight: @sapUiFontHeaderWeight;
+	white-space: nowrap;
 }
 
 .sapMObjLNumberDiv .sapMObjectNumber .sapMObjectNumberUnit {
@@ -156,7 +161,7 @@ html[dir=rtl] .sapMObjLStatusDiv {
 }
 
 .sapMObjLAttrRow .sapMObjStatus {
-	overflow: hidden;
+	overflow: visible;
 	white-space: nowrap;
 	text-overflow: ellipsis;
 	width: 100%;

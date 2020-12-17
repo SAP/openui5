@@ -7,6 +7,19 @@
 	font-size: @sapMFontMediumSize;
 	color: @sapUiNeutralText;
 	display: inline-block;
+	vertical-align: top;
+	line-height: 0.875rem;
+	overflow: visible;
+	margin: 2px 0px;
+	line-height: 0.875rem;
+	min-height: 1rem;
+	&.sapMObjectStatusLarge {
+		font-size: 1rem;
+		min-height: 2rem;
+		&:not(.sapMObjStatusInverted) {
+			margin-top: 3px;
+		}
+	}
 	.sapMObjStatusIcon {
 		width: 1rem;
 		text-align: center;
@@ -163,15 +176,19 @@
 }
 
 .sapMObjStatusInverted {
-	&.sapMObjectStatusLarge .sapMObjStatusText,
-	&.sapMObjectStatusLarge .sapMObjStatusIcon {
-		font-family: @sapUiFontLightFamily;
-		font-size: 1.25rem;
-		font-weight: normal;
-		color: @sapUiContentContrastTextColor;
-		& > .sapUiIcon {
+	min-height: 1rem;
+	&.sapMObjectStatusLarge {
+		vertical-align: top;
+		.sapMObjStatusText,
+		.sapMObjStatusIcon {
+			font-family: @sapUiFontLightFamily;
 			font-size: 1.25rem;
-			line-height: 2rem;
+			font-weight: normal;
+			color: @sapUiContentContrastTextColor;
+			& > .sapUiIcon {
+				font-size: 1.25rem;
+				line-height: 2rem;
+			}
 		}
 	}
 }
@@ -554,21 +571,46 @@ html.sap-desktop .sapMObjStatusActive:focus .sapMObjStatusLink {
 	display: inline-block;
 }
 
-html.sap-desktop .sapMObjStatusActive:focus .sapMObjStatusLink::after {
-	pointer-events: none;
-	display: block;
-	content: "";
-	position: absolute;
-	top: 1px;
-	left: 1px;
-	bottom: 1px;
-	right: 1px;
-	outline: 1px dotted @sapUiContentFocusColor;
+html.sap-desktop .sapMObjStatusActive:focus {
+	.sapMObjStatusLink::after {
+		pointer-events: none;
+		display: block;
+		content: "";
+		position: absolute;
+		top: -1px;
+		left: 1px;
+		bottom: -1px;
+		right: 1px;
+		outline: 1px dotted @sapUiContentFocusColor;
+	}
+
+	&.sapMObjectStatusLarge {
+
+		.sapMObjStatusLink::after {
+			top: 1px;
+			left: 1px;
+			bottom: 1px;
+			right: 1px;
+		}
+
+		&.sapMObjStatusInverted .sapMObjStatusLink::after {
+			top: 3px;
+			left: 3px;
+			bottom: 3px;
+			right: 3px;
+			outline: 1px dotted @sapContent_ContrastFocusColor;
+		}
+
+	}
+
 }
 
 html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 	.sapMObjStatusActive:focus .sapMObjStatusLink::after {
 		outline-style: dashed;
+	}
+	.sapMObjStatusInverted .sapMObjStatusText {
+		margin-left: -1px;
 	}
 }
 

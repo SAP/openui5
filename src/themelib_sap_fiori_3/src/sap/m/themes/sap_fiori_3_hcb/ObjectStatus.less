@@ -180,7 +180,7 @@ html.sap-desktop .sapMObjStatusActive:focus .sapMObjStatusLink::after {
 
 .sapMObjectStatusLarge.sapMObjStatusInverted {
 	.sapMObjStatusIcon > .sapUiIcon {
-		vertical-align: baseline;
+		vertical-align: top;
 		font-size: 1.25rem;
 		padding-left: 0;
 		padding-right: 0;
@@ -189,7 +189,41 @@ html.sap-desktop .sapMObjStatusActive:focus .sapMObjStatusLink::after {
 		padding-left: 0;
 		padding-right: 0;
 	}
-	.sapMObjStatusText {
-		padding-left: 0;
+}
+
+html.sap-desktop .sapMObjStatusActive:focus {
+
+	.sapMObjStatusLink::after {
+		top: -2px;
+		left: 1px;
+		bottom: -2px;
+		right: 1px;
+		outline: 2px dotted @sapUiContentFocusColor;
+	}
+
+	&.sapMObjStatusInverted .sapMObjStatusLink::after {
+		top: -1px;
+		left: 2px;
+		bottom: -1px;
+		right: 2px;
+	}
+
+	&.sapMObjectStatusLarge {
+
+		.sapMObjStatusLink::after {
+			top: 1px;
+			left: 2px;
+			bottom: 1px;
+			right: 2px;
+		}
+
+		&.sapMObjStatusInverted .sapMObjStatusLink::after {
+			top: 4px;
+			left: 4px;
+			bottom: 4px;
+			right: 4px;
+			outline: 2px dotted @sapContent_ContrastFocusColor;
+		}
+
 	}
 }
