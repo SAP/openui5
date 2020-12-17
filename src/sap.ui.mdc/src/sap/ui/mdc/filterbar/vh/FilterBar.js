@@ -50,6 +50,12 @@ sap.ui.define(
 							type: "boolean",
 							defaultValue: true
 						}
+
+						// delegate: {
+						// 	type: "object",
+						// 	group: "Data",
+						// 	defaultValue: {name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate'}
+						// }
 					}
 				},
 

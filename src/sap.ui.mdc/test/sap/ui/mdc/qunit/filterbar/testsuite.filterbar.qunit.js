@@ -58,6 +58,10 @@ sap.ui.define([
 			"FilterBarFlex": {
 				group: "FilterBar",
 				module: "./FilterBarFlex.qunit"
+			},
+			"GenericFilterBarDelegate": {
+				group: "FilterBar",
+				module: "./vh/GenericFilterBarDelegate.qunit"
 			}
 		}
 	};
