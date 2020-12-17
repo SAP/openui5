@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+	<edmx:DataServices>
+		<Schema Namespace="com.sap.gateway.default.zui5_epm_sample.v0002" Alias="SAP__self">
+			<EntityType Name="Contact">
+				<Key>
+					<PropertyRef Name="ContactGUID"/>
+				</Key>
+				<Property Name="ContactGUID" Type="Edm.Guid" Nullable="false"/>
+				<Property Name="FirstName" Type="Edm.String" Nullable="false" MaxLength="40"/>
+				<Property Name="LastName" Type="Edm.String" Nullable="false" MaxLength="40"/>
+				<Property Name="EmailAddress" Type="Edm.String" Nullable="false" MaxLength="255"/>
+			</EntityType>
+			<EntityContainer Name="Container">
+				<EntitySet Name="ContactList" EntityType="com.sap.gateway.default.zui5_epm_sample.v0002.Contact">
+					<NavigationPropertyBinding Path="CONTACT_2_BP" Target="BusinessPartnerList"/>
+				</EntitySet>
+			</EntityContainer>
+		</Schema>
+	</edmx:DataServices>
+</edmx:Edmx>
