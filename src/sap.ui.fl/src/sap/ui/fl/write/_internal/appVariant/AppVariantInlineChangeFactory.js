@@ -743,6 +743,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Creates an inline change of change type <code>appdescr_ui5_addComponentUsages</code>.
+	 *
+	 * @param {object} mPropertyBag Parameters of the change type
+	 * @param {string} mPropertyBag.changeType Inline change type of an app variant
+	 * @param {object} mPropertyBag.content Content of an inline change
+	 * @param {object} mPropertyBag.content.componentUsages component usages to be added
+	 *
+	 * @return {Promise} Resolving when creating the app variant inline change was successful (without back end access)
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.rta
+	 */
+	AppVariantInlineChangeFactory.create_ui5_addComponentUsages = function(mPropertyBag) {
+		Utils.checkParameterAndType(mPropertyBag.content, "componentUsages", "object");
+		return _createAppVariantInlineChange(mPropertyBag);
+	};
+
+	/**
 	 * Creates an inline change of change type <code>appdescr_ui5_setMinUI5Version</code>.
 	 *
 	 * @param {object} mPropertyBag Parameters of the change type

@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/Applier",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ApplyStrategyFactory",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddLibrary",
+	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddComponentUsages",
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/SetTitle",
 	"sap/ui/fl/apply/_internal/changes/descriptor/app/ChangeDataSource",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModelEnhanceWith",
@@ -16,6 +17,7 @@ function (
 	Applier,
 	ApplyStrategyFactory,
 	AddLibrary,
+	AddComponentUsages,
 	SetTitle,
 	ChangeDataSource,
 	AddNewModelEnhanceWith,
@@ -50,6 +52,7 @@ function (
 			}.bind(this));
 
 			this.fnAddLibrarySpy = sandbox.spy(AddLibrary, "applyChange");
+			this.fnAddComponentUsageSpy = sandbox.spy(AddComponentUsages, "applyChange");
 			this.fnSetTitleSpy = sandbox.spy(SetTitle, "applyChange");
 			this.fnChangeDataSourceSpy = sandbox.spy(ChangeDataSource, "applyChange");
 			this.fnAddNewModelEnhanceWithSpy = sandbox.spy(AddNewModelEnhanceWith, "applyChange");
@@ -152,6 +155,18 @@ function (
 					texts: {
 						i18n:  "resources/i18n/i18n.properties"
 					}
+				}, {//buildtime change
+					changeType: "appdescr_ui5_addComponentUsages",
+					content: {
+						componentUsages: {
+							newusage: {
+								name: "my.used",
+								lazy: false,
+								settings: {},
+								componentData: {}
+							}
+						}
+					}
 				}
 			];
 
@@ -159,9 +174,10 @@ function (
 
 			return Applier.applyChanges(this.oManifest, aChanges, this.RuntimeStrategy).then(function() {
 				assert.equal(this.fnAddLibrarySpy.callCount, 1, "AddLibrary.applyChange is called once");
+				assert.equal(this.fnAddComponentUsageSpy.callCount, 0, "AddComponentUsages.applyChange is not called");
 				assert.equal(this.fnChangeDataSourceSpy.callCount, 0, "ChangeDataSource.applyChange is not called");
 				assert.equal(this.fnAddNewModelEnhanceWithSpy.callCount, 0, "AddNewModelEnhanceWith.applyChange is not called");
-				assert.equal(this.fnLogSpy.callCount, 2, "two errors were logged");
+				assert.equal(this.fnLogSpy.callCount, 3, "three errors were logged");
 			}.bind(this));
 		});
 
@@ -281,6 +297,7 @@ function (
 			}.bind(this));
 
 			this.fnAddLibrarySpy = sandbox.spy(AddLibrary, "applyChange");
+			this.fnAddComponentUsageSpy = sandbox.spy(AddComponentUsages, "applyChange");
 			this.fnSetTitleSpy = sandbox.spy(SetTitle, "applyChange");
 			this.fnChangeDataSourceSpy = sandbox.spy(ChangeDataSource, "applyChange");
 			this.fnAddNewModelEnhanceWithSpy = sandbox.spy(AddNewModelEnhanceWith, "applyChange");
@@ -337,6 +354,18 @@ function (
 					texts: {
 						i18n:  "resources/i18n/i18n.properties"
 					}
+				}, {
+					changeType: "appdescr_ui5_addComponentUsages",
+					content: {
+						componentUsages: {
+							newusage: {
+								name: "my.used",
+								lazy: false,
+								settings: {},
+								componentData: {}
+							}
+						}
+					}
 				}
 			];
 
@@ -348,6 +377,7 @@ function (
 			return Applier.applyChanges(this.oManifest, aChanges, mStrategy).then(function() {
 				assert.equal(fnProcessTextsSpy.callCount, 0, "BuildStrategy.processTexts is not called");
 				assert.equal(this.fnAddLibrarySpy.callCount, 1, "AddLibrary.applyChange is called once");
+				assert.equal(this.fnAddComponentUsageSpy.callCount, 1, "AddComponentUsages.applyChange is called once");
 				assert.equal(this.fnChangeDataSourceSpy.callCount, 1, "ChangeDataSource.applyChange is called once");
 				assert.equal(this.fnAddNewModelEnhanceWithSpy.callCount, 1, "AddNewModelEnhanceWith.applyChange is called once");
 			}.bind(this));

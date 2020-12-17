@@ -149,6 +149,49 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("create_ui5_addComponentUsages", function(assert) {
+			var _oDescriptorInlineChange;
+			var _oVariant;
+			var mParameter = {
+				componentUsages: {
+					"descriptor.mocha133": {
+						name: "my.used",
+						lazy: false,
+						settings: {},
+						componentData: {}
+					}
+				}
+			};
+			return AppVariantInlineChangeFactory.create_ui5_addComponentUsages({
+				changeType: "appdescr_ui5_addComponentUsages",
+				content: mParameter
+			}).then(function(oDescriptorInlineChange) {
+				assert.ok(oDescriptorInlineChange, "Descriptor Inline Change created");
+				_oDescriptorInlineChange = oDescriptorInlineChange;
+				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_addComponentUsages");
+				return AppVariantFactory.prepareCreate({
+					id : "a.id",
+					reference: "a.reference"
+				});
+			}).then(function(oVariant) {
+				_oVariant = oVariant;
+				return oVariant.addDescriptorInlineChange(_oDescriptorInlineChange);
+			}).then(function() {
+				assert.ok(_oVariant.getDefinition().content[0].content.componentUsages['descriptor.mocha133'], 'Component usage is added');
+				assert.deepEqual(_oVariant.getDefinition().content[0].content, mParameter, 'Added component usage properties are equal to parameters set in factory method');
+			});
+		});
+
+		QUnit.test("create_ui5_addComponentUsages failure", function (assert) {
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_ui5_addComponentUsages({
+					content: {
+						componentUsages : "a.id"
+					}
+				});
+			});
+		});
+
 		QUnit.test("create_app_setShortTitle", function(assert) {
 			var _oDescriptorInlineChange;
 			var _oVariant;
