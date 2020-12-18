@@ -317,41 +317,46 @@ sap.ui.define([
 
 	var _switchToDate = function(oPC, oInterval, iDay, iMonth, iYear) {
 		var bWizardUsesDaysPicker = (oPC.getViewKey() === "Days" || oPC.getViewKey() === "1 Week" || oPC.getViewKey() === "Hours"),
-			sCalendarPickerId =  oPC._getHeader().getAggregation("_calendarPicker").getId(),
-			sMonthPickerId =  oPC._getHeader().getAggregation("_monthPicker").getId(),
-			sYearPickerId =  oPC._getHeader().getAggregation("_yearPicker").getId(),
+			sCalendarPickerId =  oPC._getHeader()._oCalendar.getId(),
+			sMonthPickerId =  oPC._getHeader()._oMonthPicker.getId(),
+			sYearPickerId =  oPC._getHeader()._oYearPicker.getId(),
 			sCalendarPickerYearId = sCalendarPickerId + "--YP",
 			sCalendarPickerMonthId = sCalendarPickerId + "--MP",
 			sDate,
 			$Date;
 
 		qutils.triggerEvent("tap", oPC.getId() + "-Header-NavToolbar-PickerBtn");
+		sap.ui.getCore().applyChanges();
 
 		if (iYear !== undefined) {
 			// click on Year button inside current picker
 			qutils.triggerEvent("click", sMonthPickerId + "--Head-B2");
+			sap.ui.getCore().applyChanges();
 
 			// click on the wanted year
 			$Date = jQuery("#" + sMonthPickerId + "--YP-y" + iYear + "0101");
 			$Date.trigger("focus");
-			oPC._getHeader().getAggregation("_monthPicker").getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iYear);
+			oPC._getHeader()._oMonthPicker.getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iYear);
 			sap.ui.getCore().applyChanges();
 			qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+			sap.ui.getCore().applyChanges();
 		}
 
 		if (iMonth !== undefined) {
 			if (bWizardUsesDaysPicker) { //we want to choose month, but the day picker is opened. Click on the month button atop
 				// click on Month button inside calendar picker
 				qutils.triggerEvent("tap", sMonthPickerId + "--Head-B1");
+				sap.ui.getCore().applyChanges();
 			}
 
 			// click on the wanted month
 			$Date = jQuery("#" + sMonthPickerId + "--MP-m" + iMonth);
 			$Date.trigger("focus");
 			// sets February
-			oPC._getHeader().getAggregation("_monthPicker").getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iMonth);
+			oPC._getHeader()._oMonthPicker.getAggregation("monthPicker")._oItemNavigation.setFocusedIndex(iMonth);
 			sap.ui.getCore().applyChanges();
 			qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+			sap.ui.getCore().applyChanges();
 		}
 
 		if (bWizardUsesDaysPicker && iDay != undefined) {
@@ -360,6 +365,7 @@ sap.ui.define([
 			$Date = jQuery("#" + sCalendarPickerId + "--Month0-" + sDate);
 			$Date.trigger("focus");
 			qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+			sap.ui.getCore().applyChanges();
 		}
 	};
 
@@ -624,10 +630,12 @@ sap.ui.define([
 
 		_clickInterval: function(oRow, iInterval) {
 			jQuery(this._getIntervalDom(oRow, iInterval)).trigger('tap');
+			sap.ui.getCore().applyChanges();
 		},
 
 		_clickAppointment: function(oAppointment) {
 			oAppointment.$().trigger('tap');
+			sap.ui.getCore().applyChanges();
 		}
 	});
 

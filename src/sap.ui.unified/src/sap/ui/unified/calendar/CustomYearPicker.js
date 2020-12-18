@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Renderer",
 	"sap/ui/unified/Calendar",
 	"sap/ui/unified/CalendarRenderer",
+	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/calendar/Header",
 	"sap/ui/unified/DateRange"
 ],
@@ -14,6 +15,7 @@ sap.ui.define([
 		Renderer,
 		Calendar,
 		CalendarRenderer,
+		CalendarDate,
 		Header,
 		DateRange
 	) {
@@ -28,6 +30,45 @@ sap.ui.define([
 		},
 		renderer: CustomYearPickerRenderer
 	});
+
+	/*
+	 * Possible values for the "_currentPicker" aggregation: yearPicker.
+	 */
+
+	CustomYearPicker.prototype.init = function(){
+		Calendar.prototype.init.apply(this, arguments);
+		this.setProperty("_currentPicker", "yearPicker");
+		this._bNamesLengthChecked = true;
+	};
+
+	CustomYearPicker.prototype.onBeforeRendering = function () {
+		var oFirstCYPSelDate = this.getSelectedDates()[0],
+			oFocusedCalDate = new CalendarDate(this._getFocusedDate()),
+			oYearPicker = this._getYearPicker(),
+			oCYPSelCalDate;
+
+		oFocusedCalDate.setMonth(0, 1);
+
+		if (oFirstCYPSelDate.getStartDate()) {
+			oCYPSelCalDate = CalendarDate.fromLocalJSDate(oFirstCYPSelDate.getStartDate());
+			oCYPSelCalDate.setMonth(0, 1);
+
+			if (oFocusedCalDate.isSame(oCYPSelCalDate)) {
+				oYearPicker.setDate(oFirstCYPSelDate.getStartDate());
+			}
+		} else {
+			oYearPicker.setProperty("_middleDate", this._getFocusedDate());
+		}
+
+		Calendar.prototype.onBeforeRendering.call(this, arguments);
+	};
+
+	CustomYearPicker.prototype.exit = function(){
+		Calendar.prototype.exit.apply(this, arguments);
+		if (this._fnYPDelegate) {
+			this.getAggregation("yearPicker").removeDelegate(this._fnYPDelegate);
+		}
+	};
 
 	CustomYearPicker.prototype._initializeHeader = function() {
 		var oHeader = new Header(this.getId() + "--Head", {
@@ -45,20 +86,10 @@ sap.ui.define([
 		this.setAggregation("header",oHeader);
 	};
 
-	CustomYearPicker.prototype.onBeforeRendering = function () {
-		var oHeader = this.getAggregation("header");
-		Calendar.prototype.onBeforeRendering.call(this, arguments);
-		oHeader.setVisibleButton1(false);
-		oHeader.setVisibleButton2(true);
-	};
+	CustomYearPicker.prototype._closePickers = function(){
+		this.setProperty("_currentPicker", "yearPicker");
 
-	CustomYearPicker.prototype.onAfterRendering = function () {
-		Calendar.prototype.onAfterRendering.apply(this, arguments);
-		this._showYearPicker(); //Opens the calendar picker always at the Year Picker page instead of the default one
-	};
-
-	CustomYearPicker.prototype.onThemeChanged = function () {
-		Calendar.prototype.onThemeChanged.apply(this, arguments);
+		this._togglePrevNexYearPicker();
 	};
 
 	CustomYearPicker.prototype._selectYear = function () {

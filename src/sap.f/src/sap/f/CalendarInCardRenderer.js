@@ -68,21 +68,21 @@ sap.ui.define([
 			oRm.openStart("div", sId + "-content");
 			oRm.class("sapUiCalContent");
 			oRm.openEnd();
-			oRm.renderControl(aMonths[0]);
-			switch (oCal._iMode) {
-				case 1: // month picker
+			switch (oCal.getProperty("_currentPicker")) {
+				case "month": // month picker
+						oRm.renderControl(aMonths[0]);
+					break;
+				case "monthPicker": // month picker
 					oRm.renderControl(oCal._getMonthPicker());
 					break;
-				case 2: // year picker
+				case "yearPicker": // year picker
 					oRm.renderControl(oCal._getYearPicker());
 					break;
-				case 3: // year picker
+				case "yearRangePicker": // year picker
 					oRm.renderControl(oCal._getYearRangePicker());
 					break;
 				// no default
 			}
-
-			this.renderCalContentOverlay(oRm, oCal, sId);
 
 			oRm.close("div");
 

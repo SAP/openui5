@@ -70,15 +70,15 @@ sap.ui.define([
 			this._bShowOneMonth = true;
 		};
 
-		CalendarOneMonthInterval.prototype._getCalendarPicker = function (){
-			var oCalPicker = this.getAggregation("calendarPicker");
+		CalendarOneMonthInterval.prototype._getCalendar = function (){
+			var oCalendar;
 
-			if (!oCalPicker) {
-				oCalPicker = new CustomMonthPicker(this.getId() + "--Cal");
-				oCalPicker.setPopupMode(true);
+			if (!this._oCalendar) {
+				oCalendar = new CustomMonthPicker(this.getId() + "--Cal");
+				oCalendar.setPopupMode(true);
 
-				oCalPicker.attachEvent("select", function () {
-					var oCalPicker = this._getCalendarPicker(),
+				oCalendar.attachEvent("select", function () {
+					var oCalPicker = this._getCalendar(),
 						oCalPickerFocusedDate = oCalPicker._getFocusedDate(),
 						oNewStartDate = CalendarUtils._getFirstDateOfMonth(oCalPickerFocusedDate);
 					var oOneMonthDateRow = this.getAggregation("month")[0];
@@ -94,8 +94,8 @@ sap.ui.define([
 					this._closeCalendarPicker(true);// true means do not focus, as we set the this._oFocusDateOneMonth and focus will happen in .focusDateExtend
 					this._focusDate(oCalPickerFocusedDate, false, true); //true means don't fire event (we already did it in setStartDate())
 				}, this);
-				oCalPicker.attachEvent("cancel", function (oEvent) {
-					var oCalPicker = this._getCalendarPicker(),
+				oCalendar.attachEvent("cancel", function (oEvent) {
+					var oCalPicker = this._getCalendar(),
 						oCalPickerFocusedDate = oCalPicker._getFocusedDate();
 
 					this._closeCalendarPicker(true);
@@ -107,9 +107,9 @@ sap.ui.define([
 						oDomRefB1.focus();
 					}
 				}, this);
-				this.setAggregation("calendarPicker", oCalPicker);
+				this._oCalendar = oCalendar;
 			}
-			return oCalPicker;
+			return this._oCalendar;
 		};
 
 		/**

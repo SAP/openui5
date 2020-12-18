@@ -18,7 +18,7 @@ sap.ui.define([
 		calendarType: sap.ui.core.CalendarType.Gregorian
 	});
 
-	var oCal1 = new Calendar("Cal1", {}).placeAt("content");
+	var oCal1;
 
 	function initializeCalendar(sSelectedDate) {
 		var oDate = oFormat.parse(sSelectedDate, true);
@@ -103,6 +103,7 @@ sap.ui.define([
 	function checkMonthPicker(sSelectedDate, iExpectedMonth, assert) {
 		initializeCalendar(sSelectedDate);
 		oCal1.$("-Head-B1").trigger("click");
+		sap.ui.getCore().applyChanges();
 
 		var aMonths = oCal1.$("-MP").find(".sapUiCalItem"),
 			$Month,
@@ -124,7 +125,15 @@ sap.ui.define([
 		}
 	}
 
-	QUnit.module("Dates");
+	QUnit.module("Dates", {
+		beforeEach: function () {
+			oCal1 = new Calendar("Cal1", {}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach:  function () {
+			oCal1.destroy();
+		}
+	});
 
 	QUnit.test("20150701", function(assert) {
 		checkDate("20150701", 14, 9, 1436, 4, 1, assert);
@@ -138,7 +147,15 @@ sap.ui.define([
 		checkDate("20150805", 19, 10, 1436, 6, 0, assert);
 	});
 
-	QUnit.module("Navigation to next/previous Month");
+	QUnit.module("Navigation to next/previous Month", {
+		beforeEach: function () {
+			oCal1 = new Calendar("Cal1", {}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach:  function () {
+			oCal1.destroy();
+		}
+	});
 
 	QUnit.test("20150701 -> next", function(assert) {
 		checkMonthNavigation("20150701", 9, true, assert);
@@ -148,7 +165,15 @@ sap.ui.define([
 		checkMonthNavigation("20150701", 9, false, assert);
 	});
 
-	QUnit.module("Monthpicker");
+	QUnit.module("Monthpicker", {
+		beforeEach: function () {
+			oCal1 = new Calendar("Cal1", {}).placeAt("content");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach:  function () {
+			oCal1.destroy();
+		}
+	});
 
 	QUnit.test("20150701 Monthpicker", function(assert) {
 		checkMonthPicker("20150701", 9, assert);
@@ -159,7 +184,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("20150805 Monthpicker", function(assert) {
-		checkMonthPicker("20150801", 9, assert);
+		checkMonthPicker("20150801", 10, assert);
 	});
 
 });

@@ -93,7 +93,17 @@ sap.ui.define([
 			 * If not set, the calendar type of the global configuration is used.
 			 * @since 1.34.0
 			 */
-			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"}
+			primaryCalendarType : {type : "sap.ui.core.CalendarType", group : "Appearance"},
+
+			/**
+			 * The first displayed month. The value must be between 0 and 11
+			 */
+			_firstMonth : {type : "int", group : "Data", visibility: "hidden", defaultValue: 0},
+
+			/**
+			 * The focused month. The value must be between 0 and 11
+			 */
+			_focusedMonth : {type : "int", group : "Data", visibility: "hidden"}
 		},
 		aggregations : {
 
@@ -138,12 +148,14 @@ sap.ui.define([
 		// check if day names are too big -> use smaller ones
 		_checkNamesLength.call(this);
 
+		this._oItemNavigation.focusItem(this.getProperty("_focusedMonth") % this.getMonths());
 	};
 
 	MonthPicker.prototype.setMonth = function(iMonth){
 
-		// no rerendering needed, just select new month
-		this.setProperty("month", iMonth, true);
+		this.setProperty("month", iMonth);
+		this.setProperty("_focusedMonth", iMonth);
+		this.setProperty("_firstMonth", Math.floor(iMonth / this.getMonths()) * this.getMonths());
 		iMonth = this.getProperty("month"); // to have type conversion, validation....
 
 		if (iMonth < 0 || iMonth > 11) {
@@ -154,14 +166,13 @@ sap.ui.define([
 			this._oItemNavigation && this._oItemNavigation.focusItem(iMonth);
 			return this;
 		}
-
 		if (this.getDomRef()) {
 			if (this.getMonths() < 12) {
 				var iStartMonth = this.getStartMonth();
 				if (iMonth >= iStartMonth && iMonth <= iStartMonth + this.getMonths() - 1) {
 					this._selectMonth(iMonth, true);
 					this._oItemNavigation.focusItem(iMonth - iStartMonth);
-				}else {
+				} else {
 					_updateMonths.call(this, iMonth);
 				}
 			} else {
@@ -217,7 +228,7 @@ sap.ui.define([
 	};
 
 	MonthPicker.prototype.getFocusDomRef = function(){
-		return this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()];
+		return this.getDomRef() && this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()];
 	};
 
 	/**
@@ -411,6 +422,8 @@ sap.ui.define([
 		}
 		_updateMonths.call(this, iMonth);
 
+		this.setProperty("_firstMonth", (this.getStartMonth() + this.getMonths()) % MONTHS_IN_YEAR);
+
 		return this;
 
 	};
@@ -434,6 +447,9 @@ sap.ui.define([
 			iMonth = 0;
 		}
 		_updateMonths.call(this, iMonth);
+
+		this.setProperty("_firstMonth", (this.getStartMonth() - this.getMonths()) % MONTHS_IN_YEAR);
+
 		return this;
 
 	};
@@ -493,14 +509,7 @@ sap.ui.define([
 	};
 
 	MonthPicker.prototype.getStartMonth = function(){
-
-		if (this.getMonths() < MONTHS_IN_YEAR) {
-			var oFirstMonth = this._oItemNavigation.getItemDomRefs()[0];
-			return parseInt( oFirstMonth.id.slice( this.getId().length + 2));
-		} else {
-			return 0;
-		}
-
+		return this.getProperty("_firstMonth");
 	};
 
 	/**
@@ -757,14 +766,9 @@ sap.ui.define([
 	}
 
 	MonthPicker.prototype._selectMonth = function(iMonth, bDontSetMonth) {
-		var aDomRefs = this._oItemNavigation.getItemDomRefs(),
-			oSelectedDates = this._getSelectedDates()[0],
+		var oSelectedDates = this._getSelectedDates()[0],
 			oMonthPickerSelectedDates = this.getAggregation("selectedDates"),
-			oStartDate, oFocusedDate,
-			$DomRef, i,
-			bApplySelection,
-			bApplySelectionBetween,
-			oCurrentDate;
+			oStartDate, oFocusedDate;
 
 		// Marking internally the focused month
 		this._focusedMonth = iMonth;
@@ -773,7 +777,7 @@ sap.ui.define([
 			return;
 		}
 
-		!bDontSetMonth && this.setProperty("month", iMonth, true);
+		!bDontSetMonth && this.setProperty("month", iMonth);
 
 		oFocusedDate = CalendarDate.fromLocalJSDate(new Date(), this.getPrimaryCalendarType());
 		oFocusedDate.setMonth(iMonth, 1);
@@ -800,33 +804,6 @@ sap.ui.define([
 			} else {
 				oSelectedDates.setStartDate(oFocusedDate.toLocalJSDate());
 				oSelectedDates.setEndDate(undefined);
-			}
-		}
-
-		for (i = 0; i < aDomRefs.length; i++) {
-			$DomRef = jQuery(aDomRefs[i]);
-			oCurrentDate = CalendarDate.fromLocalJSDate(new Date(), this.getPrimaryCalendarType());
-			oCurrentDate.setMonth(this._extractMonth(aDomRefs[i]), 1);
-			this._iYear && oCurrentDate.setYear(this._iYear);
-
-			bApplySelection = this._fnShouldApplySelection(oCurrentDate);
-			bApplySelectionBetween = this._fnShouldApplySelectionBetween(oCurrentDate);
-
-			if (bApplySelection) {
-				$DomRef.addClass("sapUiCalItemSel");
-				$DomRef.removeClass("sapUiCalItemSelBetween");
-				$DomRef.attr("aria-selected", "true");
-			}
-
-			if (bApplySelectionBetween) {
-				$DomRef.addClass("sapUiCalItemSelBetween");
-				$DomRef.attr("aria-selected", "true");
-			}
-
-			if (!bApplySelection && !bApplySelectionBetween) {
-				$DomRef.removeClass("sapUiCalItemSel");
-				$DomRef.removeClass("sapUiCalItemSelBetween");
-				$DomRef.attr("aria-selected", "false");
 			}
 		}
 	};
@@ -894,70 +871,11 @@ sap.ui.define([
 
 	function _updateMonths(iMonth, bFireEvent, iOffset){
 
-		var aMonths = this._oItemNavigation.getItemDomRefs(),
-			oLocaleData = this._getLocaleData(),
-			aMonthNames = [],
-			aMonthNamesWide = [],
-			sCalendarType = this.getPrimaryCalendarType(),
-			// Month blocks should start with multiple of number of displayed months
-			iMonths = aMonths.length,
-			iStartMonth = Math.floor( iMonth / iMonths) * iMonths,
-			oSelectedDates = this._getSelectedDates()[0],
+		var oSelectedDates = this._getSelectedDates()[0],
 			oStartDate,
-			oFocusedDate,
-			oCurrentDate,
-			iCurrentMonth,
-			$DomRef, i,
-			bApplySelection,
-			bApplySelectionBetween;
+			oFocusedDate;
 
-		// Month blocks should start with multiple number of displayed months
-		if (iStartMonth + iMonths > MONTHS_IN_YEAR) {
-			iStartMonth = MONTHS_IN_YEAR - iMonths;
-		}
-
-		if (this._bLongMonth || !this._bNamesLengthChecked) {
-			aMonthNames = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
-		} else {
-			aMonthNames = oLocaleData.getMonthsStandAlone("abbreviated", sCalendarType);
-			aMonthNamesWide = oLocaleData.getMonthsStandAlone("wide", sCalendarType);
-		}
-
-		for (i = 0; i < aMonths.length; i++) {
-			$DomRef = jQuery(aMonths[i]);
-			iCurrentMonth = i + iStartMonth;
-
-			$DomRef.text(aMonthNames[iCurrentMonth]);
-			$DomRef.attr("id", this.getId() + "-m" + iCurrentMonth);
-
-			oCurrentDate = CalendarDate.fromLocalJSDate(new Date(), this.getPrimaryCalendarType());
-			oCurrentDate.setMonth(iCurrentMonth, 1);
-			this._iYear && oCurrentDate.setYear(this._iYear);
-
-			if (!this._bLongMonth) {
-				$DomRef.attr("aria-label", aMonthNamesWide[iCurrentMonth]);
-			}
-
-			bApplySelection = this._fnShouldApplySelection(oCurrentDate);
-			bApplySelectionBetween = this._fnShouldApplySelectionBetween(oCurrentDate);
-
-			if (bApplySelection) {
-				$DomRef.addClass("sapUiCalItemSel");
-				$DomRef.removeClass("sapUiCalItemSelBetween");
-				$DomRef.attr("aria-selected", "true");
-			}
-
-			if (bApplySelectionBetween) {
-				$DomRef.addClass("sapUiCalItemSelBetween");
-				$DomRef.attr("aria-selected", "true");
-			}
-
-			if (!bApplySelection && !bApplySelectionBetween) {
-				$DomRef.removeClass("sapUiCalItemSel");
-				$DomRef.removeClass("sapUiCalItemSelBetween");
-				$DomRef.attr("aria-selected", "false");
-			}
-		}
+		this.setProperty("_focusedMonth", iMonth);
 
 		if (oSelectedDates && oSelectedDates.getStartDate()) {
 			oStartDate = CalendarDate.fromLocalJSDate(oSelectedDates.getStartDate(), this.getPrimaryCalendarType());
@@ -973,7 +891,6 @@ sap.ui.define([
 			oFocusedDate.setMonth(iMonth, 1);
 		}
 
-		this._oItemNavigation.focusItem(iMonth - iStartMonth);
 		this._isSelectionInProgress() && this._markInterval(oStartDate, oFocusedDate);
 
 		if (bFireEvent) {

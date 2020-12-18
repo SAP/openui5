@@ -137,7 +137,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 		CalendarWeekInterval.prototype._showCalendarPicker = function() {
 			var oCalNewFocusDate = this._getFocusedDate(),
 				oCalFirstWeekDate = this._getStartDate(),
-				oCalPicker = this._getCalendarPicker(),
+				oCalPicker = this._getCalendar(),
 				oSelectedRange = new DateRange(),
 				oCalEndDate;
 
@@ -154,11 +154,10 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 			oCalPicker.setMaxDate(this.getMaxDate());
 
 			this._openPickerPopup(oCalPicker);
-			this._showOverlay();
 		};
 
 		CalendarWeekInterval.prototype._handleCalendarPickerDateSelect = function(oEvent) {
-			var oCalPicker = this._getCalendarPicker(),
+			var oCalPicker = this._getCalendar(),
 				oSelectedDate = oCalPicker.getSelectedDates()[0].getStartDate(),
 				oFocusedDate = CalendarDate.fromLocalJSDate(oSelectedDate),
 				oFirstWeekDate;

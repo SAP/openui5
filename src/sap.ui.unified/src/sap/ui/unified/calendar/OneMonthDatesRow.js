@@ -143,7 +143,7 @@ sap.ui.define([
 		//prevent item navigation to focus the 1st visible item, because this item may correspond to an item from other month
 		interruptEvent(oEvent);
 
-		this._setDate(oCalStartDate);//Can we reuse setDate (see checkDateFocusable that prevents setting the date).
+		this.setDate(oCalStartDate.toLocalJSDate());//Can we reuse setDate (see checkDateFocusable that prevents setting the date).
 		this._focusDate(oCalStartDate);
 
 		this.fireFocus({date: oCalStartDate.toLocalJSDate(), otherMonth: false});
@@ -163,7 +163,7 @@ sap.ui.define([
 		//prevent item navigation to focus the last visible item, because this item may correspond to an item from other month
 		interruptEvent(oEvent);
 
-		this._setDate(oLastDay); //Can we reuse setDate (see checkDateFocusable that prevents setting the date).
+		this.setDate(oLastDay.toLocalJSDate()); //Can we reuse setDate (see checkDateFocusable that prevents setting the date).
 		this._focusDate(oLastDay);
 
 		this.fireFocus({date: oLastDay.toLocalJSDate(), otherMonth: false});

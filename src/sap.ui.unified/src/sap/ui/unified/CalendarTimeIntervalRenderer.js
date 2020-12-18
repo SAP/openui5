@@ -23,11 +23,8 @@ sap.ui.define([],
 	 */
 	CalendarTimeIntervalRenderer.render = function(oRm, oCal){
 
-		oCal._iMode = 0; // it's rendered always as TimesRow
-
 		var sId = oCal.getId();
 		var sTooltip = oCal.getTooltip_AsString();
-		var oTimesRow = oCal.getAggregation("timesRow");
 
 		oRm.openStart("div", oCal);
 		oRm.class("sapUiCal");
@@ -66,7 +63,7 @@ sap.ui.define([],
 		oRm.openStart("div", sId + "-content");
 		oRm.class("sapUiCalContent");
 		oRm.openEnd();
-		oRm.renderControl(oTimesRow);
+		oRm.renderControl(oCal.getAggregation(oCal.getProperty("_currentPicker")));
 
 		oRm.close("div");
 

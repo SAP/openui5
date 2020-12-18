@@ -63,6 +63,11 @@ sap.ui.define([
 	 * If 3 a year range picker is shown.
 	 */
 
+	CalendarInCard.prototype.init = function() {
+		Calendar.prototype.init.apply(this, arguments);
+		this.setProperty("_currentPicker", "month");
+	};
+
 	CalendarInCard.prototype.onBeforeRendering = function() {
 		var aMonths = this.getAggregation("month"),
 			oFocusedDate = this._getFocusedDate().toLocalJSDate();
@@ -293,14 +298,9 @@ sap.ui.define([
 		var oDate = this._getFocusedDate(),
 			oMonthPicker = this._getMonthPicker();
 
-		this._iMode === 2 && this._hideYearPicker(true);
-
-		oMonthPicker.setVisible(true);
-		this._renderPicker(oMonthPicker);
+		this.setProperty("_currentPicker", "monthPicker");
 
 		oMonthPicker._setYear(oDate.getYear());
-
-		this._showOverlay();
 
 		if (!bSkipFocus){
 			oMonthPicker.setMonth(oDate.getMonth());
@@ -322,26 +322,9 @@ sap.ui.define([
 	 */
 	CalendarInCard.prototype._showYearPicker = function () {
 		var oDate = this._getFocusedDate(),
-			oYearPicker = this._getYearPicker(),
-			oMonth, aDomRefs;
+			oYearPicker = this._getYearPicker();
 
-		this._iMode === 1 && this._hideMonthPicker(true);
-
-		oYearPicker.getDomRef() ? oYearPicker.$().css("display", "") : this._renderPicker(oYearPicker);
-
-		this._showOverlay();
-
-		// check special case if only 4 weeks are displayed (e.g. February 2021) -> top padding must be removed
-		// can only happen if only one month is displayed -> otherwise at least one month has more than 28 days.
-		if (_getMonths.call(this) == 1) {
-			oMonth = this.getAggregation("month")[0];
-			aDomRefs = oMonth.$("days").find(".sapUiCalItem");
-			if (aDomRefs.length == 28) {
-				oYearPicker.$().addClass("sapUiCalYearNoTop");
-			}else {
-				oYearPicker.$().removeClass("sapUiCalYearNoTop");
-			}
-		}
+		this.setProperty("_currentPicker", "yearPicker");
 
 		this._togglePrevNexYearPicker();
 		this._iMode = 2;
@@ -359,7 +342,6 @@ sap.ui.define([
 	 * @override
 	 */
 	CalendarInCard.prototype._showYearRangePicker = function () {
-		this._hideYearPicker();
 		Calendar.prototype._showYearRangePicker.apply(this, arguments);
 		this._oPickerBtn.setVisible(false);
 	};
@@ -407,17 +389,11 @@ sap.ui.define([
 		oFocusedDate.setYear(oStartDate.getYear());
 		this._setFocusedDate(oFocusedDate);
 
-		this._hideYearRangePicker();
 		this._showYearPicker();
 
 		this._oPickerBtn.setVisible(true)
 			.setText(this._formatYearPickerText());
 		this._updateTodayButtonState();
-	};
-
-	CalendarInCard.prototype._hideYearRangePicker = function() {
-		Calendar.prototype._hideYearRangePicker.apply(this, arguments);
-		this._renderMonth(); // to focus date
 	};
 
 	/**
@@ -522,7 +498,7 @@ sap.ui.define([
 
 	CalendarInCard.prototype.onsapescape = function() {
 		this.fireCancel();
-		this._closedPickers();
+		this._closePickers();
 		this._oPickerBtn.setVisible(true);
 		this._oPickerBtn.setText(this._formatPickerText());
 	};
@@ -574,10 +550,6 @@ sap.ui.define([
 	 * @override
 	 */
 	CalendarInCard.prototype._setHeaderText = function() {};
-
-	function _getMonths (){
-		return 1;
-	}
 
 	return CalendarInCard;
 

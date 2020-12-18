@@ -342,6 +342,7 @@ sap.ui.define([
 
 		//Act
 		qutils.triggerEvent("click", oDRS.getId() + "-icon");
+		sap.ui.getCore().applyChanges();
 
 		try {
 			oDRS._getCalendar().getAggregation("month")[0]._selectDay(CalendarDate.fromLocalJSDate(new Date(2021, 1, 10)));
@@ -364,6 +365,7 @@ sap.ui.define([
 		sap.ui.Device.support.touch = false;
 		sap.ui.Device.system.desktop = true;
 		qutils.triggerEvent("click", "DRS2-icon");
+		sap.ui.getCore().applyChanges();
 		jQuery("#DRS2-cal--Month0-20140406").trigger("focus");
 		qutils.triggerKeyboardEvent("DRS2-cal--Month0-20140406", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		jQuery("#DRS2-cal--Month0-20140409").trigger("focus");
@@ -1160,6 +1162,7 @@ sap.ui.define([
 
 			//Act
 			oDRS.$().find(".sapUiIcon").trigger("click"); //to open the calendar popoup
+			sap.ui.getCore().applyChanges();
 			//Simulate the user has selected 10 - 20 Dec 2017.
 			oCalendar = oDRS._oPopup.getContent()[0];
 			var $EventTarget1 = oCalendar.$().find("[data-sap-day='20171210']"),

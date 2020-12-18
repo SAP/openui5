@@ -1127,6 +1127,7 @@ sap.ui.define([
 		sap.ui.Device.system.desktop = true;
 		sap.ui.getCore().byId("DP5").focus();
 		qutils.triggerEvent("click", "DP5-icon");
+		sap.ui.getCore().applyChanges();
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
 		qutils.triggerKeyboardEvent("DP5-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
 		assert.equal(document.activeElement.id, "DP5-inner", "Focus is on the input field after date selection");
@@ -1177,6 +1178,7 @@ sap.ui.define([
 		oDP3.focus();
 		qutils.triggerEvent("mousedown", "DP3-icon");
 		qutils.triggerEvent("click", "DP3-icon");
+		sap.ui.getCore().applyChanges();
 		assert.ok(sap.ui.require("sap/ui/unified/Calendar"), "sap.ui.unified.Calendar now loaded");
 		assert.ok(sap.ui.getCore().byId("DP3-cal"), "DP3: calender exists");
 		assert.ok(oDP3._oPopup, "DP3: popup exists");
@@ -1208,6 +1210,7 @@ sap.ui.define([
 		oDP3.focus();
 		qutils.triggerEvent("mousedown", "DP3-icon");
 		qutils.triggerEvent("click", "DP3-icon");
+		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery("#DP3-cal").is(":visible"), "Readonly DatePicker: calendar is not visible");
 
 		oDP3.setEditable(true);
@@ -1215,6 +1218,7 @@ sap.ui.define([
 
 		oDP5.focus();
 		qutils.triggerEvent("click", "DP5-icon");
+		sap.ui.getCore().applyChanges();
 		assert.equal(oDP5._getCalendar().getPrimaryCalendarType(), "Islamic", "DP5: Primary calendar type set");
 		assert.equal(oDP5._getCalendar().getSecondaryCalendarType(), "Gregorian", "DP5: Secondary calendar type set");
 		jQuery("#DP5-cal--Month0-20151124").trigger("focus");
@@ -1223,6 +1227,7 @@ sap.ui.define([
 
 		oDP7.focus();
 		qutils.triggerEvent("click", "DP7-icon");
+		sap.ui.getCore().applyChanges();
 		assert.equal(oDP7._getCalendar().getPrimaryCalendarType(), "Islamic", "DP7: Primary calendar type set");
 		jQuery("#DP7-cal--Month0-20151124").trigger("focus");
 		qutils.triggerKeyboardEvent("DP7-cal--Month0-20151124", jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -1248,6 +1253,7 @@ sap.ui.define([
 		sId = "";
 		qutils.triggerEvent("mousedown", "DP3-icon");
 		qutils.triggerEvent("click", "DP3-icon");
+		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery("#DP3-cal")[0], "calendar rendered");
 		assert.ok(jQuery("#DP3-cal").is(":visible"), "calendar is visible");
 		jQuery("#DP3-cal--Month0-20140410").trigger("focus");
@@ -1484,6 +1490,7 @@ sap.ui.define([
 		oDP.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 		oDP.toggleOpen();
+		sap.ui.getCore().applyChanges();
 
 		oYP = oDP._getCalendar()._getYearPicker();
 		oItemNavigationStub = this.stub(oYP._oItemNavigation, "getFocusedIndex", function () { return iFocusedIndex; });
@@ -1504,7 +1511,9 @@ sap.ui.define([
 
 		// Act
 		oYP.onmousedown({});
+		sap.ui.getCore().applyChanges();
 		oYP.onmouseup(oFakeEvent);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.ok(fnFireSelectSpy.notCalled, "'fireSelect' is not called");
@@ -2228,6 +2237,7 @@ sap.ui.define([
 		setTimeout(function () {
 			// Open month picker
 			qutils.triggerEvent("click", "SDP-cal--Head-B1");
+			sap.ui.getCore().applyChanges();
 
 			// Click on March
 			that.clickOnMonth(2);
@@ -2245,6 +2255,7 @@ sap.ui.define([
 		setTimeout(function () {
 			// Open month picker
 			qutils.triggerEvent("click", "SDP-cal--Head-B2");
+			sap.ui.getCore().applyChanges();
 
 			// Click on 2015
 			that.clickOnYear(2015);
@@ -2372,6 +2383,7 @@ sap.ui.define([
 	function simulateSelectionOnTheCalendar(){
 		oDP2.focus();
 		qutils.triggerEvent("click", "DP2-icon");
+		sap.ui.getCore().applyChanges();
 		var $Date = jQuery("#DP2-cal--Month0-20140401");
 		$Date.trigger("focus");
 		qutils.triggerKeyboardEvent($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
@@ -2616,6 +2628,7 @@ sap.ui.define([
 		var fnDone = assert.async(),
 			oHeader = this.oDP._oCalendar.getAggregation("header");
 
+		sap.ui.getCore().applyChanges();
 		var afterRenderDelegate = {
 			onAfterRendering: function () {
 				// Assert
@@ -2629,9 +2642,10 @@ sap.ui.define([
 
 		// Open month picker
 		qutils.triggerEvent("click", "SDP-cal--Head-B1");
+		sap.ui.getCore().applyChanges();
 
 		assert.equal(oHeader.getVisibleButton1(), false, "Month button is hidden after the Month Picker opening");
-		oHeader.addDelegate(afterRenderDelegate);
+		this.oDP._oCalendar.addDelegate(afterRenderDelegate);
 
 		// Click on March
 		this.clickOnMonth(2);
@@ -2718,7 +2732,7 @@ sap.ui.define([
 
 		// act
 		this.oDRS.toggleOpen();
-		oSpy = sinon.spy(this.oDRS._getCalendar(), "_closedPickers");
+		oSpy = sinon.spy(this.oDRS._getCalendar(), "_closePickers");
 		this.oDRS._getCalendar().onsapshow(this.oFakeEvent);
 		sap.ui.getCore().applyChanges();
 

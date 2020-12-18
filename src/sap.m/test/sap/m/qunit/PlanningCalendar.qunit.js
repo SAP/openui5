@@ -3160,8 +3160,12 @@ sap.ui.define([
 
 		//arrange
 		sap.ui.getCore().getConfiguration().setFormatLocale('en_US');
+		sap.ui.getCore().applyChanges();
 		this.oPC2.setStartDate(new Date(2016, 11, 31));
+		sap.ui.getCore().applyChanges();
 		this.oPC2.setViewKey(CalendarIntervalType.Week);
+		sap.ui.getCore().applyChanges();
+
 
 		aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");
 		oNextTarget = aDays[aDays.length - 1];
@@ -3228,6 +3232,7 @@ sap.ui.define([
 		_switchToView(CalendarIntervalType.Hour, this.oPC2);
 		sap.ui.getCore().applyChanges();
 		qutils.triggerEvent("tap", "startDateAtTheMiddleOfTheWeek-Header-NavToolbar-PickerBtn");
+		sap.ui.getCore().applyChanges();
 
 		var $Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160902");
 		$Day.trigger("focus");
@@ -3235,6 +3240,7 @@ sap.ui.define([
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160902");
 			qutils.triggerKeyboardEvent($Day.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+			sap.ui.getCore().applyChanges();
 			assert.ok($Day.hasClass("sapUiCalItemSel"), "Day marked as selected");
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
@@ -3268,6 +3274,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		qutils.triggerEvent("tap", "startDateAtTheMiddleOfTheWeek-Header-NavToolbar-PickerBtn");
+		sap.ui.getCore().applyChanges();
 
 		var $Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160830");
 
@@ -3276,6 +3283,7 @@ sap.ui.define([
 		setTimeout(function(){
 			$Day = jQuery("#startDateAtTheMiddleOfTheWeek-Header-Cal--Month0-20160830");
 			qutils.triggerKeyboardEvent($Day.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
+			sap.ui.getCore().applyChanges();
 
 			this.oPC2Interval = oPC2.getAggregation("table").getAggregation("infoToolbar").getContent()[1];
 			aDays = this.oPC2Interval.getDomRef().querySelectorAll(".sapUiCalItem");

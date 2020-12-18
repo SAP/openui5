@@ -277,7 +277,7 @@ sap.ui.define([
 	};
 
 	Month.prototype.getFocusDomRef = function(){
-		return this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()];
+		return this.getDomRef() && this._oItemNavigation.getItemDomRefs()[this._oItemNavigation.getFocusedIndex()];
 	};
 
 	Month.prototype.onAfterRendering = function(){
@@ -424,18 +424,12 @@ sap.ui.define([
 	 * @return {sap.ui.unified.calendar.Month} <code>this</code> for method chaining
 	 */
 	Month.prototype.setDate = function(oDate){
-		var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
-		_changeDate.call(this, oCalDate, false);
+		if (oDate) {
+			var oCalDate = CalendarDate.fromLocalJSDate(oDate, this.getPrimaryCalendarType());
+			_changeDate.call(this, oCalDate, false);
+		}
 
-		return this;
-
-	};
-
-	Month.prototype._setDate = function(oDate){
-
-		var oLocaleDate = oDate.toLocalJSDate();
-		this.setProperty("date", oLocaleDate, true);
-		this._oDate = oDate;
+		return this.setProperty("date", oDate);
 
 	};
 
@@ -487,8 +481,7 @@ sap.ui.define([
 	Month.prototype.setSecondaryCalendarType = function(sCalendarType){
 
 		this._bSecondaryCalendarTypeSet = true; // as property can not be empty but we use it only if set
-		this.setProperty("secondaryCalendarType", sCalendarType); // rerender as month can change completely (class changes on root DOM)
-		this.invalidate(); // Invalidate in every case even if the type was set to the default one.
+		this.setProperty("secondaryCalendarType", sCalendarType);
 
 		this._oFormatSecondaryLong = DateFormat.getInstance({style: "long", calendarType: sCalendarType});
 
@@ -952,23 +945,7 @@ sap.ui.define([
 
 		if ($Target.hasClass("sapUiCalItem")) {
 			var oOldFocusedDate = this._getDate();
-			if (!containsOrEquals(this.getDomRef(), oEvent.target)) {
-				// in multi month mode day can be in other month
-				var aSelectedDates = this.getSelectedDates();
-
-				if (aSelectedDates.length > 0 && this.getSingleSelection()) {
-					var oStartDate = aSelectedDates[0].getStartDate();
-					if (oStartDate) {
-						oStartDate = CalendarDate.fromLocalJSDate(oStartDate, this.getPrimaryCalendarType());
-					}
-					var oEndDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($Target.attr("data-sap-day")));
-					if (oEndDate.isSameOrAfter(oStartDate)) {
-						_updateSelection.call(this, oStartDate, oEndDate);
-					}else {
-						_updateSelection.call(this, oEndDate, oStartDate);
-					}
-				}
-			} else {
+			if (containsOrEquals(this.getDomRef(), oEvent.target)) {
 				var oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($Target.attr("data-sap-day")), this.getPrimaryCalendarType());
 
 				if (!oFocusedDate.isSame(oOldFocusedDate)) {
@@ -976,7 +953,7 @@ sap.ui.define([
 						// in other month -> change month
 						this.fireFocus({date: oFocusedDate.toLocalJSDate(), otherMonth: true});
 					} else {
-						this._setDate(oFocusedDate);
+						this._oDate = oFocusedDate;
 						var bSelected = this._selectDay(oFocusedDate, true);
 						if (bSelected) {
 							// remember last selected enabled date
@@ -1152,31 +1129,6 @@ sap.ui.define([
 
 		// cancel the event otherwise the browser select some text
 		oEvent.preventDefault();
-
-	};
-
-	/*
-	 * called from the calendar in multi-month case to update the interval visualization
-	 * for all months.
-	 */
-	Month.prototype._updateSelection = function(){
-
-		var aSelectedDates = this.getSelectedDates();
-
-		if (aSelectedDates.length > 0) {
-			var sCalendarType = this.getPrimaryCalendarType();
-			var aCalStartDates = aSelectedDates.map(function(oSelectedDate) {
-				var oStartDate = oSelectedDate.getStartDate();
-				if (oStartDate) {
-					return CalendarDate.fromLocalJSDate(oStartDate, sCalendarType);
-				}
-			});
-			var oEndDate = aSelectedDates[0].getEndDate();
-			if (oEndDate) {
-				oEndDate = CalendarDate.fromLocalJSDate(oEndDate, sCalendarType);
-			}
-			_updateSelection.call(this, aCalStartDates, oEndDate);
-		}
 
 	};
 
@@ -1369,19 +1321,7 @@ sap.ui.define([
 	 * @returns {sap.ui.unified.calendar.Month} <code>this</code> for method chaining.
 	 */
 	Month.prototype.applyFocusInfo = function(oInfo){
-		this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex());
 		return this;
-	};
-
-	Month.prototype._renderHeader = function(){
-
-		if (this._getShowHeader()) {
-			var oDate = this._getDate();
-			var oLocaleData = this._getLocaleData();
-			var aMonthNames = oLocaleData.getMonthsStandAlone("wide", this.getPrimaryCalendarType());
-			this.$("Head").text(aMonthNames[oDate.getMonth()]);
-		}
-
 	};
 
 	/*
@@ -1887,23 +1827,19 @@ sap.ui.define([
 					oStartDate = oDate;
 					if (!bMove) {
 						// in move mode do not set date. this bring problems if on backward move the start date would be cahnged
-						oDateRange.setProperty("startDate", oStartDate.toLocalJSDate(), true); // no-rerendering
-						oDateRange.setProperty("endDate", oEndDate.toLocalJSDate(), true); // no-rerendering
+						oDateRange.setProperty("startDate", oStartDate.toLocalJSDate()); // no-rerendering
+						oDateRange.setProperty("endDate", oEndDate.toLocalJSDate()); // no-rerendering
 					}
 				} else if (oDate.isSameOrAfter(oStartDate)) {
 					// single day ranges are allowed
 					oEndDate = oDate;
 					if (!bMove) {
-						oDateRange.setProperty("endDate", oEndDate.toLocalJSDate(), true); // no-rerendering
+						oDateRange.setProperty("endDate", oEndDate.toLocalJSDate()); // no-rerendering
 					}
 				}
-				_updateSelection.call(this, oStartDate, oEndDate);
 			} else {
-				// single day selection or start a new interval
-				_updateSelection.call(this, oDate);
-
-				oDateRange.setProperty("startDate", oDate.toLocalJSDate(), true); // no-rerendering
-				oDateRange.setProperty("endDate", undefined, true); // no-rerendering
+				oDateRange.setProperty("startDate", oDate.toLocalJSDate()); // no-rerendering
+				oDateRange.setProperty("endDate", undefined); // no-rerendering
 			}
 		} else {
 			// multiple selection
@@ -2077,7 +2013,7 @@ sap.ui.define([
 			}else {
 				// not if clicked on week number
 				oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day")), this.getPrimaryCalendarType());
-				this._setDate(oFocusedDate);
+				this._oDate = oFocusedDate;
 			}
 			this._sTouchstartYyyyMMdd = undefined;
 		}
@@ -2150,7 +2086,7 @@ sap.ui.define([
 		if (!this.getDate() || !oDate.isSame(CalendarDate.fromLocalJSDate(this.getDate(), oDate.getCalendarType()))) {
 			var oCalDate = new CalendarDate(oDate);
 			bFocusable = this.checkDateFocusable(oDate.toLocalJSDate());
-			this.setProperty("date", oDate.toLocalJSDate(), true);
+			this.setProperty("date", oDate.toLocalJSDate());
 			this._oDate = oCalDate;
 		}
 
@@ -2158,7 +2094,7 @@ sap.ui.define([
 			if (bFocusable) {
 				this._focusDate(this._oDate, true, bNoFocus);
 			} else {
-				_renderMonth.call(this, bNoFocus);
+				this.setDate(oDate.toLocalJSDate());
 			}
 		}
 
@@ -2196,210 +2132,6 @@ sap.ui.define([
 		}
 
 	};
-
-	function _renderMonth(bNoFocus){
-
-		var oDate = this.getRenderer().getStartDate(this),
-			oContainer = this.getDomRef(),
-			oWeeks = this.getDomRef().querySelector(".sapUiCalRowWeekNumbers"),
-			aDomRefs,
-			i = 0,
-			iLastIndex = 0;
-
-		if (this._sLastTargetId) {
-			// new month during mousemove -> get index of last moving taget to ignore move on same area
-			aDomRefs = this._oItemNavigation.getItemDomRefs();
-			for ( i = 0; i < aDomRefs.length; i++) {
-				if (aDomRefs[i].id === this._sLastTargetId) {
-					iLastIndex = i;
-					break;
-				}
-			}
-		}
-
-		if (oContainer) {
-			var oRm = sap.ui.getCore().createRenderManager();
-			this.getRenderer().renderMonth(oRm, this, oDate);
-			oRm.flush(oContainer);
-
-			if (oWeeks) {
-				this.getRenderer().renderWeekNumbers(oRm, this);
-				oRm.flush(oWeeks);
-			}
-
-			oRm.destroy();
-		}
-
-		this._renderHeader();
-
-		// fire internal event for DatePicker for with number of rendered days. If Calendar becomes larger maybe popup must change position
-		this.fireEvent("_renderMonth", {days: oContainer.querySelectorAll(".sapUiCalItem").length});
-
-		_initItemNavigation.call(this);
-		if (!bNoFocus) {
-			this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex());
-		}
-
-		if (this._sLastTargetId) {
-			// new month during mousemove -> get index of last moving taget to ignore move on same area
-			aDomRefs = this._oItemNavigation.getItemDomRefs();
-			if (iLastIndex <= aDomRefs.length - 1) {
-				this._sLastTargetId = aDomRefs[iLastIndex].id;
-			}
-		}
-
-	}
-
-	/*
-	 * Toggles the selected class for the currently selected date.
-	 *
-	 * @param {sap.ui.unified.calendar.CalendarDate[]} aStartDate multiple selected dates or a single start date of a range
-	 * @param {sap.ui.unified.calendar.CalendarDate} oEndDate end of a range
-	 * @private
-	 */
-
-	function _updateSelection(aStartDate, oEndDate){
-		if (!Array.isArray(aStartDate)) {
-			aStartDate = [aStartDate];
-		}
-
-		var aDomRefs = this.getDomRef() ? this.getDomRef().querySelectorAll(".sapUiCalItem:not(.sapUiCalDummy)") : [];
-		var $DomRef;
-		var i = 0;
-		var bStart = false;
-		var bEnd = false;
-
-		if (!oEndDate) {
-			// start of interval, single date or multiple dates
-			var aCalFormattedStartDates = aStartDate.map(function(oSD) {
-				return this._oFormatYyyymmdd.format(oSD.toUTCJSDate(), true);
-			}, this);
-			for ( i = 0; i < aDomRefs.length; i++) {
-				$DomRef = jQuery(aDomRefs[i]);
-				bStart = false;
-				bEnd = false;
-				if (aCalFormattedStartDates.indexOf($DomRef.attr("data-sap-day")) > -1) {
-					$DomRef.addClass("sapUiCalItemSel");
-					$DomRef.attr("aria-selected", "true");
-					bStart = true;
-				} else if ($DomRef.hasClass("sapUiCalItemSel")) {
-					$DomRef.removeClass("sapUiCalItemSel");
-					$DomRef.attr("aria-selected", "false");
-				}
-				if ($DomRef.hasClass("sapUiCalItemSelStart")) {
-					$DomRef.removeClass("sapUiCalItemSelStart");
-				} else if ($DomRef.hasClass("sapUiCalItemSelBetween")) {
-					$DomRef.removeClass("sapUiCalItemSelBetween");
-				} else if ($DomRef.hasClass("sapUiCalItemSelEnd")) {
-					$DomRef.removeClass("sapUiCalItemSelEnd");
-				}
-				_updateARIADesrcibedby.call(this, $DomRef, bStart, bEnd);
-			}
-		} else {
-			var oDay;
-			for ( i = 0; i < aDomRefs.length; i++) {
-				$DomRef = jQuery(aDomRefs[i]);
-				bStart = false;
-				bEnd = false;
-				oDay = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse($DomRef.attr("data-sap-day")), CalendarType.Gregorian);
-				if (oDay.isSame(aStartDate[0])) {
-					$DomRef.addClass("sapUiCalItemSelStart");
-					bStart = true;
-					$DomRef.addClass("sapUiCalItemSel");
-					$DomRef.attr("aria-selected", "true");
-					if (oEndDate && oDay.isSame(oEndDate)) {
-						// start day and end day are the same
-						$DomRef.addClass("sapUiCalItemSelEnd");
-						bEnd = true;
-					}
-					$DomRef.removeClass("sapUiCalItemSelBetween");
-				} else if (oEndDate && CalendarUtils._isBetween(oDay, aStartDate[0], oEndDate)) {
-					$DomRef.addClass("sapUiCalItemSel");
-					$DomRef.attr("aria-selected", "true");
-					$DomRef.addClass("sapUiCalItemSelBetween");
-					$DomRef.removeClass("sapUiCalItemSelStart");
-					$DomRef.removeClass("sapUiCalItemSelEnd");
-				} else if (oEndDate && oDay.isSame(oEndDate)) {
-					$DomRef.addClass("sapUiCalItemSelEnd");
-					bEnd = true;
-					$DomRef.addClass("sapUiCalItemSel");
-					$DomRef.attr("aria-selected", "true");
-					$DomRef.removeClass("sapUiCalItemSelStart");
-					$DomRef.removeClass("sapUiCalItemSelBetween");
-				} else {
-					if ($DomRef.hasClass("sapUiCalItemSel")) {
-						$DomRef.removeClass("sapUiCalItemSel");
-						$DomRef.attr("aria-selected", "false");
-					}
-					if ($DomRef.hasClass("sapUiCalItemSelStart")) {
-						$DomRef.removeClass("sapUiCalItemSelStart");
-					} else if ($DomRef.hasClass("sapUiCalItemSelBetween")) {
-						$DomRef.removeClass("sapUiCalItemSelBetween");
-					} else if ($DomRef.hasClass("sapUiCalItemSelEnd")) {
-						$DomRef.removeClass("sapUiCalItemSelEnd");
-					}
-				}
-				_updateARIADesrcibedby.call(this, $DomRef, bStart, bEnd);
-			}
-		}
-
-	}
-
-	function _updateARIADesrcibedby($DomRef, bStart, bEnd){
-
-		if (!this.getIntervalSelection()) {
-			return;
-		}
-
-		var sDescribedBy = "";
-		var aDescribedBy = [];
-		var sId = this.getId();
-		var bChanged = false;
-
-		sDescribedBy = $DomRef.attr("aria-describedby");
-		if (sDescribedBy) {
-			aDescribedBy = sDescribedBy.split(" ");
-		}
-
-		var iStartIndex = -1;
-		var iEndIndex = -1;
-		for (var i = 0; i < aDescribedBy.length; i++) {
-			var sDescrId = aDescribedBy[i];
-			if (sDescrId === (sId + "-Start")) {
-				iStartIndex = i;
-			}
-			if (sDescrId === (sId + "-End")) {
-				iEndIndex = i;
-			}
-		}
-
-		if (iStartIndex >= 0 && !bStart) {
-			aDescribedBy.splice(iStartIndex, 1);
-			bChanged = true;
-			if (iEndIndex > iStartIndex) {
-				iEndIndex--;
-			}
-		}
-		if (iEndIndex >= 0 && !bEnd) {
-			aDescribedBy.splice(iEndIndex, 1);
-			bChanged = true;
-		}
-
-		if (iStartIndex < 0 && bStart) {
-			aDescribedBy.push(sId + "-Start");
-			bChanged = true;
-		}
-		if (iEndIndex < 0 && bEnd) {
-			aDescribedBy.push(sId + "-End");
-			bChanged = true;
-		}
-
-		if (bChanged) {
-			sDescribedBy = aDescribedBy.join(" ");
-			$DomRef.attr("aria-describedby", sDescribedBy);
-		}
-
-	}
 
 	function _fireSelect(){
 

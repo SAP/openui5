@@ -15,6 +15,7 @@ sap.ui.define([
 	'./Toolbar',
 	'./AssociativeOverflowToolbar',
 	'./Button',
+	'./Popover',
 	'./Title',
 	'./ToolbarSpacer',
 	'./SegmentedButton',
@@ -23,7 +24,6 @@ sap.ui.define([
 	'sap/ui/unified/calendar/CustomMonthPicker',
 	'sap/ui/unified/calendar/CustomYearPicker',
 	'sap/ui/core/format/DateFormat',
-	'sap/ui/core/Popup',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/core/library',
@@ -36,6 +36,7 @@ function(
 	Toolbar,
 	AssociativeOverflowToolbar,
 	Button,
+	Popover,
 	Title,
 	ToolbarSpacer,
 	SegmentedButton,
@@ -44,7 +45,6 @@ function(
 	CustomMonthPicker,
 	CustomYearPicker,
 	DateFormat,
-	Popup,
 	IconPool,
 	InvisibleText,
 	coreLibrary,
@@ -278,6 +278,13 @@ function(
 		oCalendarPicker.attachEvent("cancel", this._handlePickerCancelEvent, this);
 		oCalendarPicker.setPopupMode(true);
 		this.setAggregation("_calendarPicker", oCalendarPicker);
+		this._oCalendarAfterRenderDelegate = {
+			onAfterRendering: function() {
+				oCalendarPicker.focus();
+			}
+		};
+		oCalendarPicker.addDelegate(this._oCalendarAfterRenderDelegate);
+		this._oCalendar = oCalendarPicker;
 
 		this.setAssociation("currentPicker", oCalendarPicker);
 
@@ -288,6 +295,7 @@ function(
 		oMonthPicker.attachEvent("cancel", this._handlePickerCancelEvent, this);
 		oMonthPicker.setPopupMode(true);
 		this.setAggregation("_monthPicker", oMonthPicker);
+		this._oMonthPicker = oMonthPicker;
 
 		oYearPicker = new CustomYearPicker(sOPHId + "-YearCal", {
 			ariaLabelledBy: InvisibleText.getStaticId("sap.m", "PCH_RANGE_PICKER")
@@ -296,6 +304,7 @@ function(
 		oYearPicker.attachEvent("cancel", this._handlePickerCancelEvent, this);
 		oYearPicker.setPopupMode(true);
 		this.setAggregation("_yearPicker", oYearPicker);
+		this._oYearPicker = oYearPicker;
 
 		this._oPickerBtn = new Button(sNavToolbarId + "-PickerBtn", {
 			text: this.getPickerText(),
@@ -339,6 +348,9 @@ function(
 			this._oViewSwitch = null;
 		}
 		if (this._oPopup) {
+			if (this._oCalendarAfterRenderDelegate) {
+				this._oCalendar.removeDelegate(this._oCalendarAfterRenderDelegate);
+			}
 			this._oPopup.destroy();
 			this._oPopup = null;
 		}
@@ -529,16 +541,37 @@ function(
 	 * @private
 	 */
 	PlanningCalendarHeader.prototype._openCalendarPickerPopup = function(oPicker){
-		var eDock;
+		var aContent, oContent;
 
 		if (!this._oPopup) {
 			this._oPopup = this._createPopup();
 		}
 
-		this._oPopup.setContent(oPicker);
+		aContent = this._oPopup.getContent();
+		if (aContent.length) {
+			oContent = this._oPopup.getContent()[0];
+			if (oContent.isA("sap.ui.unified.internal.CustomYearPicker")) {
+				this.setAggregation("_yearPicker", this._oPopup.removeAllContent()[0]);
+			} else if (oContent.isA("sap.ui.unified.internal.CustomMonthPicker")) {
+				this.setAggregation("_monthPicker", this._oPopup.removeAllContent()[0]);
+			} else if (oPicker !== oContent) {
+				this.setAggregation("_calendarPicker", this._oPopup.removeAllContent()[0]);
+			}
+		}
+		this._oPopup.addContent(oPicker);
 
-		eDock = Popup.Dock;
-		this._oPopup.open(0, eDock.CenterTop, eDock.CenterTop, this._oPickerBtn, null, "flipfit", true);
+		this._oPopup.attachAfterOpen(function () {
+			var $Popover = this._oPopup.$();
+			var iOffsetX = Math.floor(($Popover.width() - this._oPickerBtn.$().width()) / 2);
+
+			this._oPopup.setOffsetX(sap.ui.getCore().getConfiguration().getRTL() ? iOffsetX : -iOffsetX);
+
+			var iOffsetY = this._oPickerBtn.$().height();
+
+			this._oPopup.setOffsetY(this._oPopup._getCalculatedPlacement() === "Top" ? iOffsetY : -iOffsetY);
+		}, this);
+
+		this._oPopup.openBy(this._oPickerBtn.getDomRef());
 	};
 
 	/**
@@ -547,18 +580,21 @@ function(
 	 * @private
 	 */
 	PlanningCalendarHeader.prototype._createPopup = function () {
-		var oPopup = new Popup();
+		var oPopover = new Popover({
+			placement: "VerticalPreferredBottom",
+			showHeader: false,
+			showArrow: false,
+			verticalScrolling: false
+		});
 
-		oPopup.setAutoClose(true);
-		oPopup.setDurations(0, 0); // no animations
-		oPopup.onsapescape = function(oEvent) {
-			this.onsapescape(oEvent);
-		}.bind(this);
+		oPopover.oPopup.setDurations(0, 0); // no animations
+		oPopover.addDelegate({
+			onsapescape: this.onsapescape
+		}, this);
 
-		oPopup.attachEvent("opened", this._handlePopupOpenedEvent, this);
-		oPopup.attachEvent("closed", this._handlePopupClosedEvent, this);
+		this._oPopup = oPopover;
 
-		return oPopup;
+		return this._oPopup;
 	};
 
 	/**
@@ -594,22 +630,6 @@ function(
 		this.fireCancel();
 		this._closeCalendarPickerPopup();
 		oPickerBtnDomRef && oPickerBtnDomRef.focus();
-	};
-
-	/**
-	 * Ensures the focus is corretly set after the popup is opened
-	 * @private
-	 */
-	PlanningCalendarHeader.prototype._handlePopupOpenedEvent = function() {
-		Element.registry.get(this.getAssociation("currentPicker")).focus();
-	};
-
-	/**
-	 * Ensures that the picker mode is correct after a popup close.
-	 * @private
-	 */
-	PlanningCalendarHeader.prototype._handlePopupClosedEvent = function() {
-		this.getAggregation("_calendarPicker")._closedPickers();
 	};
 
 	/**
