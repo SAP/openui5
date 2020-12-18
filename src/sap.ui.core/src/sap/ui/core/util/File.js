@@ -95,6 +95,7 @@ sap.ui.define(['jquery.sap.global'],
 						// macOS Safari < 10.1 / iOS Safari
 						// (user has to save the file manually)
 						var oWindow = window.open(sType + "," + sData);
+						oWindow.opener = null;
 						if (!oWindow) {
 							throw new Error("Could not download the file, please deactivate your pop-up blocker.");
 						}

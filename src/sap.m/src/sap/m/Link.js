@@ -88,9 +88,9 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/ui/core/InvisibleText', 
 			target : {type : "string", group : "Behavior", defaultValue : null},
 
 			/**
-			 * Specifies the value of the HTML <code>rel<code> attribute.
+			 * Specifies the value of the HTML <code>rel</code> attribute.
 			 *
-			 * <b>Note:</b> A default value of <code>noopener noreferrer<code> is set only to links that have a cross-origin URL
+			 * <b>Note:</b> A default value of <code>noopener noreferrer</code> is set only to links that have a cross-origin URL
 			 * and a specified <code>target</code> with value other than <code>_self</code>.
 			 * @since 1.52.49
 			 */

@@ -432,6 +432,7 @@ sap.ui.define([
 		 */
 		PDFViewer.prototype.downloadPDF = function () {
 			var oWindow = window.open(this.getSource());
+			oWindow.opener = null;
 			oWindow.focus();
 		};
 
