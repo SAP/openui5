@@ -89,4 +89,24 @@ describe("sap.m.LabelRTL", function() {
 		element(by.id('cozySwitch')).click();
 	});
 
+	it("should visualize textDirection property", function(){
+
+		var oVL3 = element(by.id("oVL3"));
+		browser.executeScript("document.getElementById('oVL3').scrollIntoView()").then(function() {
+			expect(takeScreenshot(oVL3)).toLookAs('17_oVL3_compact');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(oVL3)).toLookAs('18_oVL3_compact_required_all');
+		});
+
+		element(by.id('requiredSwitch')).click();
+		browser.executeScript("document.getElementById('oVL3').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			expect(takeScreenshot(oVL3)).toLookAs('19_oVL3_cozy');
+			element(by.id('requiredSwitch')).click();
+			expect(takeScreenshot(oVL3)).toLookAs('20_oVL3_cozy_required_all');
+		});
+		element(by.id('requiredSwitch')).click();
+		element(by.id('cozySwitch')).click();
+	});
+
 });

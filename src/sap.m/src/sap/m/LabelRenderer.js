@@ -122,6 +122,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/library', 'sap/ui/core/library', '
 
 		// write the label text
 		rm.openStart("bdi", oLabel.getId() + "-bdi");
+
+		// text direction
+		if (sTextDir !== TextDirection.Inherit){
+			rm.attr("dir", sTextDir.toLowerCase());
+		}
+
 		rm.openEnd();
 
 		if (sLabelText) {

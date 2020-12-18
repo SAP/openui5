@@ -463,9 +463,9 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assertions
-		assert.strictEqual(oRadioButton1.$('label').css('direction'),'ltr','The text is with left ro right direction');
+		assert.strictEqual(oRadioButton1.$('label').find('bdi').css('direction'),'ltr','The text is with left ro right direction');
 		assert.strictEqual(oRadioButton2.getTextDirection(), 'RTL', 'The Text Direction should be right to left');
-		assert.equal(oRadioButton2.$('label').css('direction'), 'rtl', 'The Text Direction should be rtl');
+		assert.equal(oRadioButton2.$('label').find('bdi').css('direction'), 'rtl', 'The Text Direction should be rtl');
 
 		// cleanup
 		oRadioButton1.destroy();
