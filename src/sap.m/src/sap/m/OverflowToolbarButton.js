@@ -50,6 +50,16 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 			return "";
 	};
 
+	OverflowToolbarButton.prototype._getTooltip = function() {
+			var sTooltip = Button.prototype._getTooltip.call(this);
+
+			if (this._bInOverflow) {
+				return this._getText() === sTooltip ? "" : sTooltip;
+			}
+
+			return sTooltip;
+	};
+
 	return OverflowToolbarButton;
 
 });
