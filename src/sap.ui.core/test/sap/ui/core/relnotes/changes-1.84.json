@@ -87,5 +87,21 @@
         ]
       }
     ]
+  },
+  "1.84.3": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "3f2d1c124f81f13743a136a9082fe7365d29c632",
+        "type": "FIX",
+        "text": " base/ManagedObject: Aggregation Bindings in JSON Views",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080356736"
+          }
+        ]
+      }
+    ]
   }
 }

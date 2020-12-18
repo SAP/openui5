@@ -167,5 +167,121 @@
         ]
       }
     ]
+  },
+  "1.84.3": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "d9d0e5c322dae81d793f4d904691e657daa1af5a",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: icon isn't clipped in a table cell now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080400658"
+          }
+        ]
+      },
+      {
+        "id": "5fc7cd5db68701c1026f965aea3ec34274c4b00c",
+        "type": "FIX",
+        "text": " ObjectAttribute: No error during rendering in french",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080429647"
+          }
+        ]
+      },
+      {
+        "id": "94077d1068c1769fc0c115df81b7d73530e577b4",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Proper interaction for NMore popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080400946"
+          }
+        ]
+      },
+      {
+        "id": "7d7ef99de9baaa4f1b1477dfe2fb70f3fd1fedfe",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed sync with sap.m.Label",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070395939"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070472681"
+          }
+        ]
+      },
+      {
+        "id": "c58c5f59aa64603f74afbe5de9e6c2aedc202046",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Autocapitalization rendering tests are now fixed in FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080404811"
+          }
+        ]
+      },
+      {
+        "id": "d86f60592880a712883654bde6dc21a0f6a53971",
+        "type": "FIX",
+        "text": " sap.m.Select: Fixed behavior in InputListItem",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070482964"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070496857"
+          }
+        ]
+      },
+      {
+        "id": "fedc76d1c1612e7802a431322930f61c63e35a87",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Adding & removing the hasToken class now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070473470"
+          },
+          {
+            "type": "BCP",
+            "reference": "2080386995"
+          }
+        ]
+      },
+      {
+        "id": "b8848c799b6eb6b845624e8f9a9f0cbff0d6cec5",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: Fix rounding issue with GenericTags",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070141690"
+          }
+        ]
+      },
+      {
+        "id": "91da4a55cfc7616beb240e04faafb24f18a7410c",
+        "type": "FIX",
+        "text": " sap.m.ProgressIndicator: Failing QUnit on IE is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070469581"
+          }
+        ]
+      }
+    ]
   }
 }

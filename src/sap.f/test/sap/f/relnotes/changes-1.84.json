@@ -25,5 +25,32 @@
         ]
       }
     ]
+  },
+  "1.84.3": {
+    "date": "December 2020",
+    "notes": [
+      {
+        "id": "1498cf898380b3bf6381b7ac6c5c266416ab7420",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: HeaderExpanded redundant space fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008032622020"
+          }
+        ]
+      },
+      {
+        "id": "6befb146edf1fbde238a1d07e8de0b928b2823c2",
+        "type": "FIX",
+        "text": " sap.f.CalendarInCard: fixed failing qunit tests in IE11",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080401186"
+          }
+        ]
+      }
+    ]
   }
 }
