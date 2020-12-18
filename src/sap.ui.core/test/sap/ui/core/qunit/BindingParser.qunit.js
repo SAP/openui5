@@ -600,6 +600,8 @@ sap.ui.define([
 		oControl.bindProperty("text", oBindingInfo);
 		assert.strictEqual(oControl.getText(), "hello>world *hello* world<hello");
 		checkTextFragments(assert, oBindingInfo.formatter);
+
+		oControl.destroy();
 	});
 
 	QUnit.test("mergeParts w/o any formatter", function (assert) {
@@ -621,6 +623,8 @@ sap.ui.define([
 		oControl.bindProperty("text", oBindingInfo);
 		assert.strictEqual(oControl.getText(), "hello world world hello");
 		checkTextFragments(assert, oBindingInfo.formatter);
+
+		oControl.destroy();
 	});
 
 	QUnit.test("mergeParts w/ root formatter", function (assert) {
@@ -645,6 +649,8 @@ sap.ui.define([
 		oControl.bindProperty("text", oBindingInfo);
 		assert.strictEqual(oControl.getText(), "*hello>world,hello,world<hello*");
 		checkTextFragments(assert, oBindingInfo.formatter);
+
+		oControl.destroy();
 	});
 
 	QUnit.test("mergeParts w/ root formatter JSON.stringify", function (assert) {
@@ -670,6 +676,8 @@ sap.ui.define([
 		oControl.bindProperty("text", oBindingInfo);
 		assert.strictEqual(oControl.getText(), '["hello>world","hello",42]');
 		checkTextFragments(assert, oBindingInfo.formatter);
+
+		oControl.destroy();
 	});
 
 	QUnit.test("mergeParts w/ root formatter: 'textFragments' kept", function (assert) {
@@ -758,6 +766,8 @@ sap.ui.define([
 		oControl.setBindingContext(oModel.createBindingContext('/baz'));
 		assert.strictEqual(oControl.getText(), JSON.stringify(aExpectedArray));
 		checkTextFragments(assert, oBindingInfo.formatter);
+
+		oControl.destroy();
 	});
 
 	QUnit.test("mergeParts with constants only", function (assert) {
@@ -776,6 +786,8 @@ sap.ui.define([
 		oControl.bindProperty("text", oBindingInfo);
 		assert.strictEqual(oControl.getText(), " false 0");
 		checkTextFragments(assert, oBindingInfo.formatter);
+
+		oControl.destroy();
 	});
 
 	QUnit.test("mergeParts with single constant", function (assert) {
@@ -796,6 +808,8 @@ sap.ui.define([
 
 			oControl.bindProperty("text", oBindingInfo);
 			assert.strictEqual(oControl.getText(), oControl.validateProperty("text", vConstant));
+
+			oControl.destroy();
 		});
 	});
 
@@ -887,6 +901,8 @@ sap.ui.define([
 		oControl.bindProperty("text", oBindingInfo);
 
 		assert.strictEqual(oControl.getText(), "prefix 0,foo,bar", "prefix 0,foo,bar");
+
+		oControl.destroy();
 	});
 
 	QUnit.test("Expression binding: use global context", function (assert) {
@@ -902,6 +918,8 @@ sap.ui.define([
 		oControl.bindProperty("text", oBindingInfo);
 
 		assert.strictEqual(oControl.getText(), "bar", "bar");
+
+		oControl.destroy();
 	});
 
 	QUnit.test("parseExpression: uses Expression.parse", function (assert) {
@@ -944,6 +962,8 @@ sap.ui.define([
 
 		oModel.setProperty("/blue", true);
 		assert.strictEqual(oInvisibleText.getText(), "blue");
+
+		oInvisibleText.destroy();
 	});
 
 	QUnit.test("Expression binding: one time binding", function (assert) {
@@ -958,6 +978,8 @@ sap.ui.define([
 
 		oInvisibleText.bindProperty("text", parse("{/blue} {:= 'green' }"));
 		assert.strictEqual(oInvisibleText.getText(), "true green");
+
+		oInvisibleText.destroy();
 	});
 
 	QUnit.test("Expression binding: one time binding inside composite binding", function (assert) {
@@ -969,6 +991,8 @@ sap.ui.define([
 
 		oModel.setProperty("/blue", true);
 		assert.strictEqual(oInvisibleText.getText(), "*red*", "one time binding -> value unchanged");
+
+		oInvisibleText.destroy();
 	});
 
 	QUnit.test("Local functions are bound to context", function (assert) {
@@ -1117,6 +1141,8 @@ sap.ui.define([
 		assert.strictEqual(oInvisibleText.getText(), "0,1");
 		oModel.setProperty("/bar", 42);
 		assert.strictEqual(oInvisibleText.getText(), "0,1", "one time binding -> value unchanged");
+
+		oInvisibleText.destroy();
 	});
 
 	QUnit.test("Single expression binding, no mergeParts needed", function (assert) {
@@ -1131,6 +1157,8 @@ sap.ui.define([
 		assert.strictEqual(oInvisibleText.getText(), "1");
 		oModel.setProperty("/foo", 42);
 		assert.strictEqual(oInvisibleText.getText(), "1", "one time binding -> value unchanged");
+
+		oInvisibleText.destroy();
 	});
 
 	QUnit.test("BindingParser.simpleParser.escape", function (assert) {
