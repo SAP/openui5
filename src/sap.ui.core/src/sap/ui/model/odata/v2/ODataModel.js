@@ -1949,49 +1949,144 @@ sap.ui.define([
 	/**
 	 * Creates a new tree binding for this model.
 	 *
-	 * @see sap.ui.model.Model.prototype.bindTree
-	 * @param {string} sPath Binding path, either absolute or relative to a given <code>oContext</code>
-	 * @param {sap.ui.model.Context} [oContext] Binding context referring to this model
-	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} [aFilters] Predefined filters, can be either a filter or an array of filters
-	 * @param {object} [mParameters] Map of parameters for the tree binding
-	 * @param {object} [mParameters.treeAnnotationProperties] This parameter defines the mapping between data properties and
-	 *														the hierarchy used to visualize the tree, if not provided by the services metadata.
-	 *														For correct metadata annotation, please check the "SAP Annotations for OData Version 2.0" Specification.
-	 * @param {int} [mParameters.treeAnnotationProperties.hierarchyLevelFor] Mapping to the property holding the level information,
-	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyNodeFor] Mapping to the property holding the hierarchy node ID,
-	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyParentNodeFor] Mapping to the property holding the parent node ID,
-	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyDrillStateFor] Mapping to the property holding the drill state for the node,
-	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyNodeDescendantCountFor] Mapping to the property holding the descendant count for the node.
-	 * @param {object} [mParameters.navigation] A map describing the navigation properties between entity sets, which should be used for constructing and paging the tree.
-	 * @param {int} [mParameters.numberOfExpandedLevels=0] This property defines the number of levels, which will be expanded initially.
-	 *												   Please be aware, that this property leads to multiple backend requests. Default value is 0.
-	 * @param {int} [mParameters.rootLevel=0] The root level is the level of the topmost tree nodes, which will be used as an entry point for OData services.
-	 *										Conforming to the "SAP Annotations for OData Version 2.0" Specification, the root level must start at 0.
-	 *										Default value is therefore 0.
-	 * @param {string} [mParameters.batchGroupId] Deprecated - use <code>groupId</code> instead: sets the batch group ID to be used for requests originating from this binding
-	 * @param {string} [mParameters.groupId] ID of a request group; requests belonging to the same group will be bundled in one batch request
-	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode] Operation mode for this binding; defaults to the model's default operation mode when not specified
-	 * @param {int} [mParameters.threshold] A threshold, which will be used if the operation mode is set to <code>Auto</code>.
-	 * 										In case of <code>OperationMode.Auto</code>, the binding tries to fetch (at least) as many entries as the threshold.
-	 * 										Also see API documentation for {@link sap.ui.model.odata.OperationMode.Auto}.
-	 * @param {boolean} [mParameters.useServersideApplicationFilters] Set this flag if <code>$filter</code> statements should be used for the <code>$count/$inlinecount</code> and data retrieval in the <code>OperationMode.Auto</code>.
-	 * 													 Only use this if your backend supports prefiltering the tree and is capable of responding a complete tree hierarchy,
-	 * 													 including all inner nodes. To construct the hierarchy on the client, it is mandatory that all filter matches include their complete
-	 * 													 parent chain up to the root level.
-	 * 													 <code>OperationMode.Client</code> will still request the complete collection without filters, since they will be applied on the client.
-	 * @param {boolean} [mParameters.treeState] A tree state handle can be given to the <code>ODataTreeBinding</code> when two conditions are met:
-	 * 											 The binding is running in <code>OperationMode.Client</code> AND the <code>sap.ui.table.TreeTable</code> is used.
-	 * 											 The feature is only available when using the <code>ODataTreeBindingAdapter</code>, which is automatically applied when using the <code>sap.ui.table.TreeTable</code>.
-	 * 											 The tree state handle will contain all necessary information to expand the tree to the given state.
-	 * 											 This feature is not supported in <code>OperationMode.Server</code> and <code>OperationMode.Auto</code>.
-	 * 											 Please see also the {@link sap.ui.model.odata.ODataTreeBindingAdapter#getCurrentTreeState getCurrentTreeState} function in the
-	 * 											 class <code>ODataTreeBindingAdapter</code>.
-	 * @param {sap.ui.model.Sorter[]} [aSorters] An array of predefined sorters
-	 * @returns {sap.ui.model.TreeBinding} The new tree binding
+	 * <h3>Hierarchy Annotations</h3>
+	 * To use the v2.ODataTreeBinding with an OData service which exposes hierarchy annotations, see
+	 * the <b>"SAP Annotations for OData Version 2.0"</b> specification. The required property
+	 * annotations as well as accepted / default values are documented in this specification.
+	 *
+	 * Services which include the <code>hierarchy-node-descendant-count-for</code> annotation and
+	 * expose the data points sorted in a depth-first, pre-order manner, can use an optimized
+	 * auto-expand feature by specifying the <code>numberOfExpandedLevels</code> in the binding
+	 * parameters. This will pre-expand the hierarchy to the given number of levels, with only a
+	 * single initial OData request.
+	 *
+	 * For services without the <code>hierarchy-node-descendant-count-for</code> annotation, the
+	 * <code>numberOfExpandedLevels</code> property is not supported and deprecated.
+	 *
+	 * <h3>Operation Modes</h3>
+	 * For a full definition and explanation of all OData binding operation modes, see
+	 * {@link sap.ui.model.odata.OperationMode}.
+	 *
+	 * <h4>OperationMode.Server</h4>
+	 * Filtering on the <code>ODataTreeBinding</code> is only supported with
+	 * {@link sap.ui.model.FilterType.Application application filters}. Be aware that this applies
+	 * only to filters which do not prevent the creation of a hierarchy. So filtering on a property
+	 * (e.g. a "Customer") is fine, as long as the application ensures that the responses from the
+	 * back end are sufficient to create a valid hierarchy on the client. Subsequent paging requests
+	 * for sibling and child nodes must also return responses, since the filters are sent with every
+	 * request. Using control-defined filters (see {@link sap.ui.model.FilterType.Control}) via the
+	 * {@link #filter} function is not supported for the operation mode <code>Server</code>.
+	 *
+	 * <h4>OperationMode.Client and OperationMode.Auto</h4>
+	 * The ODataTreeBinding supports control-defined filters only in operation modes
+	 * <code>Client</code> and <code>Auto</code>. With these operation modes, the filters and
+	 * sorters are applied on the client, like for the
+	 * {@link sap.ui.model.odata.v2.ODataListBinding}.
+	 *
+	 * The operation modes <code>Client</code> and <code>Auto</code> are only supported for services
+	 * which expose the hierarchy annotations mentioned above, but do <b>not</b> expose the
+	 * <code>hierarchy-node-descendant-count-for</code> annotation. Services with hierarchy
+	 * annotations including the <code>hierarchy-node-descendant-count-for</code> annotation, do
+	 * <b>not</b> support the operation modes <code>Client</code> and <code>Auto</code>.
+	 *
+	 * @param {string} sPath
+	 *   The binding path, either absolute or relative to a given <code>oContext</code>
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The parent context which is required as base for a relative path
+	 * @param {sap.ui.model.Filter | sap.ui.model.Filter[]} [vFilters]
+	 *   The application filters to be used initially; depending on the operation mode, there are
+	 *   restrictions for using filters, see above
+	 * @param {object} [mParameters]
+	 *   Map of binding parameters
+	 * @param {object} [mParameters.treeAnnotationProperties]
+	 *   The mapping between data properties and the hierarchy used to visualize the tree, if not
+	 *   provided by the service's metadata. For the correct metadata annotations, check the
+	 *   "SAP Annotations for OData Version 2.0" specification
+	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyLevelFor]
+	 *   The property name in the same type holding the hierarchy level information; the type of the
+	 *   referenced property has to be an integer type
+	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyNodeFor]
+	 *   The property name in the same type holding the hierarchy node id
+	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyParentNodeFor]
+	 *   The property name in the same type holding the parent node id
+	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyDrillStateFor]
+	 *   The property name in the same type holding the drill state for the node; the referenced
+	 *   property may have the values "collapsed", "expanded" or "leaf"
+	 * @param {string} [mParameters.treeAnnotationProperties.hierarchyNodeDescendantCountFor]
+	 *   The property name in the same type holding the descendant count for the node; the type of
+	 *   the referenced property has to be an integer type
+	 * @param {number} [mParameters.numberOfExpandedLevels=0]
+	 *   The number of levels that are auto-expanded initially. Setting this property might lead to
+	 *   multiple back-end requests. The auto-expand feature is <b>deprecated for services without
+	 *   the <code>hierarchy-node-descendant-count-for</code> annotation</b>
+	 * @param {number} [mParameters.rootLevel=0]
+	 *   The level of the topmost tree nodes
+	 * @param {string} [mParameters.groupId]
+	 *   The group id to be used for requests originating from this binding
+	 * @param {sap.ui.model.odata.OperationMode} [mParameters.operationMode]
+	 *   The operation mode for this binding; defaults to the model's default operation mode if not
+	 *   specified. {@link sap.ui.model.odata.OperationMode.Auto OperationMode.Auto} is only
+	 *   supported for services which expose the hierarchy annotations, yet do <b>NOT</b> expose the
+	 *   <code>hierarchy-node-descendant-count-for</code> annotation.
+	 * @param {number} [mParameters.threshold]
+	 *   The threshold used if the operation mode is set to
+	 *   {@link sap.ui.model.odata.OperationMode.Auto OperationMode.Auto}. The binding tries to
+	 *   fetch (at least) as many entries as specified by the threshold value.
+	 * @param {boolean} [mParameters.useServersideApplicationFilters]
+	 *   Whether <code>$filter</code> statements should be used for the <code>$count</code> /
+	 *   <code>$inlinecount</code> requests and for the data request if the operation mode is
+	 *   {@link sap.ui.model.odata.OperationMode.Auto OperationMode.Auto}. Use this feature only
+	 *   if your back end supports pre-filtering the tree and is capable of responding with
+	 *   a complete tree hierarchy, including all inner nodes. To construct the hierarchy on the
+	 *   client, it is mandatory that all filter matches include their complete parent chain up to
+	 *   the root level. If {@link sap.ui.model.odata.OperationMode.Client OperationMode.Client} is
+	 *   used, the complete collection without filters is requested; filters are applied on the
+	 *   client side.
+	 * @param {any} [mParameters.treeState]
+	 *   A tree state handle can be given to the <code>ODataTreeBinding</code> when two conditions
+	 *   are met: <ul>
+	 *   <li>The binding is running in {@link sap.ui.model.odata.OperationMode.Client
+	 *     OperationMode.Client}, and</li>
+	 *   <li>the {@link sap.ui.table.TreeTable} is used.</li>
+	 *   </ul>
+	 *   The feature is only available when using the <code>ODataTreeBindingAdapter</code>, which is
+	 *   automatically applied when using the <code>sap.ui.table.TreeTable</code>. The tree state
+	 *   handle will contain all necessary information to expand the tree to the given state.
+	 *
+	 *   This feature is not supported if
+	 *   {@link sap.ui.model.odata.OperationMode.Server OperationMode.Server} or
+	 *   {@link sap.ui.model.odata.OperationMode.Auto OperationMode.Auto} is used. See also
+	 *   {@link sap.ui.model.odata.ODataTreeBindingAdapter#getCurrentTreeState}
+	 *  @param {sap.ui.model.odata.CountMode} [mParameters.countMode]
+	 *    Defines the count mode of this binding; if not specified, the default count mode of the
+	 *    binding's model is applied. The resulting count mode must not be
+	 *    {@link sap.ui.model.odata.CountMode.None}.
+	 *  @param {boolean} [mParameters.usePreliminaryContext]
+	 *    Whether a preliminary context is used; defaults to the value of the parameter
+	 *    <code>preliminaryContext</code> given on construction of the binding's model, see
+	 *    {@link sap.ui.model.odata.v2.ODataModel}
+	 * @param {string} [mParameters.batchGroupId]
+	 *   <b>Deprecated</b>, use <code>groupId</code> instead. Sets the batch group id to be used
+	 *   for requests originating from this binding
+	 * @param {object} [mParameters.navigation]
+	 *   A map describing the navigation properties between entity sets, which is used for
+	 *   constructing and paging the tree. Keys in this object are entity names, whereas the values
+	 *   name the navigation properties.
+	 *
+	 *   <b>Deprecated: since 1.44</b> The use of navigation properties to build up the hierarchy
+	 *   structure is deprecated. It is recommended to use the hierarchy annotations mentioned above
+	 *   instead.
+	 * @param {sap.ui.model.Sorter | sap.ui.model.Sorter[]} [vSorters]
+	 *   The dynamic sorters to be used initially
+	 *
+	 * @returns {sap.ui.model.odata.v2.ODataTreeBinding}
+	 *   The new tree binding
 	 * @public
+	 * @see {@link https://wiki.scn.sap.com/wiki/display/EmTech/SAP+Annotations+for+OData+Version+2.0
+	 *   "SAP Annotations for OData Version 2.0" Specification}
 	 */
-	ODataModel.prototype.bindTree = function(sPath, oContext, aFilters, mParameters, aSorters) {
-		var oBinding = new ODataTreeBinding(this, sPath, oContext, aFilters, mParameters, aSorters);
+	ODataModel.prototype.bindTree = function(sPath, oContext, vFilters, mParameters, vSorters) {
+		var oBinding = new ODataTreeBinding(this, sPath, oContext, vFilters, mParameters, vSorters);
 		return oBinding;
 	};
 
