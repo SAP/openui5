@@ -54,14 +54,14 @@ sap.ui.define([
 					type: "string"
 				},
 				/**
-				 * If set, an initial value of the <code>InParameter</code> leads to filtering for <code>empty</code>
+				 * If set, an initial value of <code>InParameter</code> starts a filtering for the <code>empty</code> operator.
 				 *
-				 * <b>Note:</b> If used for a <code>FilterField</code> and bound to a <code>ConditionModel</code> this property must not be used.
-				 * In this case the empty filtering must be set by the assigned conditions.
+				 * <b>Note:</b> This property must not be used for <code>FilterField</code> and if bound to <code>ConditionModel</code>.
+				 * In this case, a filtering for the empty operator must be defined by the assigned conditions.
 				 *
-				 * <b>Note:</b> This property must only be set if the used data type supports filtering for empty.
+				 * <b>Note:</b> This property must only be set if the data type used supports a filtering for the empty operator.
 				 *
-				 * <b>Note:</b> Do not set this property if an empty string is a valid key for the used <code>InParameter</code>.
+				 * <b>Note:</b> Do not set this property if an empty string is a valid key for the <code>InParameter</code> used.
 				 *
 				 * @since 1.86.0
 				 */
