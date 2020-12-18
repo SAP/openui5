@@ -108,6 +108,9 @@ sap.ui.define([
 			this._bRootMissing = false;
 			this.bSkipDataEvents = false;
 
+			if (vSorters instanceof Sorter) {
+				vSorters = [vSorters];
+			}
 			this.aSorters = vSorters || [];
 			this.sFilterParams = "";
 

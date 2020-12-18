@@ -790,7 +790,8 @@ sap.ui.define([
 		oBinding.getRootContexts(1, 4);
 	});
 
-	QUnit.test("Sorting: Initial Sorter", function(assert) {
+[[new Sorter("FirstName", true)], new Sorter("FirstName", true)].forEach(function (vSorter, i) {
+	QUnit.test("Sorting: Initial Sorter; # " + i, function(assert) {
 		var done = assert.async();
 		createTreeBinding("/Employees", null, [], {
 				navigation: {
@@ -799,7 +800,7 @@ sap.ui.define([
 				},
 				displayRootNode: true
 			},
-			[new Sorter("FirstName", true)]
+			vSorter
 		);
 
 		//change handler for getRootContexts() call
@@ -848,6 +849,7 @@ sap.ui.define([
 		oBinding.attachChange(handler1);
 		oBinding.getRootContexts(0, 10);
 	});
+});
 
 	QUnit.test("Sorting: sort() call on binding", function(assert) {
 		var done = assert.async();
