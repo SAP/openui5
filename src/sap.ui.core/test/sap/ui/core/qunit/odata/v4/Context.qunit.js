@@ -178,6 +178,14 @@ sap.ui.define([
 
 		// simulate ODataListBinding#create (4x at the end)
 		oBinding.bCreatedAtEnd = true;
+		oBinding.iCreatedContexts = 4;
+
+		// code under test
+		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", -1).getIndex(), 0);
+		assert.strictEqual(Context.create(null/*oModel*/, oBinding, "/foo", -4).getIndex(), 3);
+
+		// simulate a read
+		oBinding.bLengthFinal = true;
 		oBinding.iMaxLength = 6;
 
 		// code under test

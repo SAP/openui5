@@ -29291,6 +29291,43 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: create at end w/ $count, before read is finished
+	// BCP: 2070486792
+	QUnit.test("ODLB: create at end w/ $count before read", function (assert) {
+		var sView = '\
+<Table id="table" items="{path : \'EMPLOYEES\', parameters : {$count : true}}">\
+	<Text id="name" text="{Name}"/>\
+</Table>',
+			that = this;
+
+		this.expectChange("name", []);
+
+		return this.createView(assert, sView).then(function () {
+			var oBinding = that.oView.byId("table").getBinding("items");
+
+			that.expectChange("name", ["John Doe"])
+				.expectRequest("EMPLOYEES?$count=true&$skip=0&$top=100", {
+					"@odata.count" : "1",
+					value : [{Name : "Frederic Fall"}]
+				})
+				.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : {Name : "John Doe"}
+				}) // response does not matter here
+				.expectChange("name", ["Frederic Fall", "John Doe"]);
+
+			oBinding.setContext(that.oModel.createBindingContext("/"));
+
+			return Promise.all([
+				// code under test
+				oBinding.create({Name : "John Doe"}, true, true),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Create a model with metadataUrlParams. See that the main $metadata request contains
 	// sap-context-token, sap-language, and sap-client -> see above TestUtils.useFakeServer().
 	// Further requests for $metadata references must not use sap-context-token.

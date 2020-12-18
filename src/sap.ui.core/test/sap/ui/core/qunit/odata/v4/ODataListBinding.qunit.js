@@ -4091,6 +4091,23 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("create: bAtEnd with $count, but before read", function (assert) {
+		var oBinding = this.bindList("/EMPLOYEES", null, null, null, {$count : true});
+
+		this.mock(oBinding).expects("checkSuspended").thrice().withExactArgs();
+		this.mock(oBinding).expects("createInCache").thrice().returns(SyncPromise.resolve({}));
+
+		// code under test
+		oBinding.create(undefined, true, true);
+		oBinding.create(undefined, true, true);
+		oBinding.create(undefined, true, true);
+
+		assert.strictEqual(oBinding.getModelIndex(0), 2);
+		assert.strictEqual(oBinding.getModelIndex(1), 1);
+		assert.strictEqual(oBinding.getModelIndex(2), 0);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("create and delete with bAtEnd varying", function (assert) {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
@@ -6293,6 +6310,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.getModelIndex(5), 5);
 		assert.strictEqual(oBinding.getModelIndex(42), 42);
 
+		oBinding.bLengthFinal = true;
 		oBinding.iCreatedContexts = 1;
 
 		// code under test

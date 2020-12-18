@@ -726,7 +726,7 @@ sap.ui.define([
 		this.checkSuspended();
 
 		bAtEnd = !!bAtEnd; // normalize to simplify comparisons
-		if (bAtEnd && !this.bLengthFinal) {
+		if (bAtEnd && !(this.bLengthFinal || this.mParameters.$count)) {
 			throw new Error(
 				"Must know the final length to create at the end. Consider setting $count");
 		}
@@ -1949,6 +1949,9 @@ sap.ui.define([
 	ODataListBinding.prototype.getModelIndex = function (iViewIndex) {
 		if (!this.bCreatedAtEnd) {
 			return iViewIndex;
+		}
+		if (!this.bLengthFinal) { // created at end, but the read is pending and $count unknown yet
+			return this.aContexts.length - iViewIndex - 1;
 		}
 		return iViewIndex < this.getLength() - this.iCreatedContexts
 			? iViewIndex + this.iCreatedContexts
