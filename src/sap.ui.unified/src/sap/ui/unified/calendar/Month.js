@@ -2263,7 +2263,7 @@ sap.ui.define([
 			aStartDate = [aStartDate];
 		}
 
-		var aDomRefs = this._oItemNavigation.getItemDomRefs();
+		var aDomRefs = this.getDomRef() ? this.getDomRef().querySelectorAll(".sapUiCalItem:not(.sapUiCalDummy)") : [];
 		var $DomRef;
 		var i = 0;
 		var bStart = false;
