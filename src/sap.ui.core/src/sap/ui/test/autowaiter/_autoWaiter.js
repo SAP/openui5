@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/test/autowaiter/_promiseWaiter",
 	"sap/ui/test/autowaiter/_navigationContainerWaiter",
 	"sap/ui/test/autowaiter/_UIUpdatesWaiter",
-	"sap/ui/test/autowaiter/_moduleWaiter"
+	"sap/ui/test/autowaiter/_moduleWaiter",
+	"sap/ui/test/autowaiter/_resourceWaiter"
 ], function(
 	jQueryDOM,
 	UI5Object,
@@ -21,7 +22,8 @@ sap.ui.define([
 	_promiseWaiter,
 	_navigationContainerWaiter,
 	_UIUpdatesWaiter,
-	_moduleWaiter
+	_moduleWaiter,
+	_resourceWaiter
 ) {
 	"use strict";
 
@@ -102,7 +104,8 @@ sap.ui.define([
 		promiseWaiter: _promiseWaiter,
 		navigationWaiter: _navigationContainerWaiter,
 		uiUpdatesWaiter: _UIUpdatesWaiter,
-		moduleWaiter: _moduleWaiter
+		moduleWaiter: _moduleWaiter,
+		resourceWaiter: _resourceWaiter
 	};
 
 	Object.keys(mDefaultWaiters).forEach(function (sWaiter) {
