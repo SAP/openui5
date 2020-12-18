@@ -82,8 +82,7 @@ sap.ui.define([
 
 	/**
 	 * @override
-	 * @see sap.ui.model.SimpleType
-	 * @ui5-restricted sap.ui.mdc
+	 * @see sap.ui.model.SimpleType#getConstraints
 	 */
 	DateTime.prototype.getConstraints = function () {
 		var oConstraints = DateTimeBase.prototype.getConstraints.call(this);

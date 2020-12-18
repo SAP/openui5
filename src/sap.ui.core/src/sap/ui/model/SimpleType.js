@@ -154,10 +154,9 @@ sap.ui.define([
 
 	/**
 	 * Returns a deep copy of the constraints of this type. The returned constraints can be used to
-	 * create a new instance of the type with equivalent constraints. Classes inheriting from
-	 * <code>sap.ui.model.SimpleType</code> may need to override this method in case the constraints
-	 * are not stored at <code>this.oConstraints</code> or if the constraints are stored in a format
-	 * that does not allow for creating an equivalent instance of the inheriting class.
+	 * create a new instance of the type with equivalent constraints.
+	 *
+	 * Subclasses may need to override this method.
 	 *
 	 * @return {object} The constraints of this type or an empty object
 	 *
