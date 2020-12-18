@@ -96,6 +96,8 @@ function(
 			/**
 			 * Aggregation of items to be displayed. The items set in this aggregation are used as an interface for the buttons displayed by the control.
 			 * The "items" and "buttons" aggregations should NOT be used simultaneously as it causes the control to work incorrectly.
+			 * Note: If <code>width</code> is supplied in percetange to <code>SegmentedButtonItem</code> instances and
+			 * the sum of all percentages exeeds 100%, then the buttons display could overlap other elements in the page.
 			 * @since 1.28
 			 */
 			items : { type : "sap.m.SegmentedButtonItem", multiple : true, singularName : "item", bindable : "bindable" },
