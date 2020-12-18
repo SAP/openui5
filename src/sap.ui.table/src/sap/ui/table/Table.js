@@ -6,7 +6,6 @@
 sap.ui.define([
 	'sap/ui/Device',
 	'sap/ui/core/Control',
-	'sap/ui/core/Element',
 	'sap/ui/core/IconPool',
 	'sap/ui/core/util/PasteHelper',
 	'sap/ui/model/ChangeReason',
@@ -34,7 +33,6 @@ sap.ui.define([
 	function(
 		Device,
 		Control,
-		Element,
 		IconPool,
 		PasteHelper,
 		ChangeReason,
@@ -1633,7 +1631,7 @@ sap.ui.define([
 		if (sId) {
 			return {customId: sId};
 		} else {
-			return Element.prototype.getFocusInfo.apply(this, arguments);
+			return Control.prototype.getFocusInfo.apply(this, arguments);
 		}
 	};
 
@@ -1644,7 +1642,7 @@ sap.ui.define([
 		if (mFocusInfo && mFocusInfo.customId) {
 			jQuery(document.getElementById(mFocusInfo.customId)).trigger("focus");
 		} else {
-			Element.prototype.applyFocusInfo.apply(this, arguments);
+			Control.prototype.applyFocusInfo.apply(this, arguments);
 		}
 		return this;
 	};
@@ -1892,6 +1890,8 @@ sap.ui.define([
 		Control.prototype._bindAggregation.call(this, sName, oBindingInfo);
 
 		if (sName === "rows") {
+			TableUtils.Grouping.setupExperimentalGrouping(this);
+
 			var oBinding = this.getBinding("rows");
 			var oModel = oBinding ? oBinding.getModel() : null;
 
@@ -3426,12 +3426,21 @@ sap.ui.define([
 		}
 
 		// set the new group by column (TODO: undefined doesn't work!)
-		return this.setAssociation("groupBy", oGroupByColumn);
+		this.setAssociation("groupBy", oGroupByColumn);
+		TableUtils.Grouping.setupExperimentalGrouping(this);
+
+		return this;
 	};
 
+	/**
+	 * Get the binding object for a specific aggregation/property.
+	 *
+	 * @param {string} [sName="rows"] Name of the property or aggregation
+	 * @return {sap.ui.model.Binding} The binding for the given name
+	 * @public
+	 */
 	Table.prototype.getBinding = function(sName) {
-		TableUtils.Grouping.setupExperimentalGrouping(this);
-		return Element.prototype.getBinding.call(this, [sName || "rows"]);
+		return Control.prototype.getBinding.call(this, sName == null ? "rows" : sName);
 	};
 
 	/*
@@ -3446,7 +3455,11 @@ sap.ui.define([
 			oGroupedByColumn.setGrouped(bEnableGrouping);
 		}
 
-		TableUtils.Grouping.resetExperimentalGrouping(this);
+		if (bEnableGrouping) {
+			TableUtils.Grouping.setupExperimentalGrouping(this);
+		} else {
+			TableUtils.Grouping.resetExperimentalGrouping(this);
+		}
 
 		// update the column headers
 		this._invalidateColumnMenus();

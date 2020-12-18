@@ -9,7 +9,6 @@ sap.ui.define([
 	'sap/ui/model/ClientTreeBindingAdapter',
 	'sap/ui/model/TreeBindingCompatibilityAdapter',
 	'./library',
-	'sap/ui/core/Element',
 	'./utils/TableUtils',
 	"./plugins/BindingSelection",
 	"sap/base/Log",
@@ -21,7 +20,6 @@ sap.ui.define([
 		ClientTreeBindingAdapter,
 		TreeBindingCompatibilityAdapter,
 		library,
-		Element,
 		TableUtils,
 		BindingSelectionPlugin,
 		Log,
@@ -336,12 +334,12 @@ sap.ui.define([
 		if (sName === "rows") {
 			return true;
 		}
-		return Element.prototype.isTreeBinding.apply(this, arguments);
+		return Table.prototype.isTreeBinding.apply(this, arguments);
 	};
 
 	TreeTable.prototype.getBinding = function(sName) {
-		sName = sName || "rows";
-		var oBinding = Element.prototype.getBinding.call(this, sName);
+		sName = sName == null ? "rows" : sName;
+		var oBinding = Table.prototype.getBinding.call(this, sName);
 
 		if (oBinding && sName === "rows" && !oBinding.getLength) {
 			if (oBinding.isA("sap.ui.model.odata.ODataTreeBinding")) {

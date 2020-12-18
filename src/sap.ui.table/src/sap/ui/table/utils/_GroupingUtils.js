@@ -4,12 +4,10 @@
 
 // Provides helper sap.ui.table.utils._GroupingUtils.
 sap.ui.define([
-	"sap/ui/core/Element",
 	"sap/ui/model/Sorter",
 	"sap/ui/Device",
-	"../library",
 	"sap/ui/thirdparty/jquery"
-], function(Element, Sorter, Device, library, jQuery) {
+], function(Sorter, Device, jQuery) {
 	"use strict";
 
 	/**
@@ -312,7 +310,7 @@ sap.ui.define([
 		 */
 		updateGroups: function(oTable) {
 			if (GroupingUtils.isGroupMode(oTable) || GroupingUtils.isTreeMode(oTable)) {
-				var oBinding = oTable.getBinding("rows");
+				var oBinding = oTable.getBinding();
 
 				if (oBinding) {
 					oTable.getRows().forEach(function(oRow) {
@@ -354,7 +352,7 @@ sap.ui.define([
 				return;
 			}
 
-			var oBinding = Element.prototype.getBinding.call(oTable, "rows");
+			var oBinding = oTable.getBinding();
 
 			// check for grouping being supported or not (only for client ListBindings!!)
 			var oGroupBy = sap.ui.getCore().byId(oTable.getGroupBy());
@@ -481,7 +479,7 @@ sap.ui.define([
 		 * @param {sap.ui.table.Table} oTable Instance of the table.
 		 */
 		resetExperimentalGrouping: function(oTable) {
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 			var Hook = GroupingUtils.TableUtils.Hook;
 
 			if (oBinding && oBinding._modified) {
