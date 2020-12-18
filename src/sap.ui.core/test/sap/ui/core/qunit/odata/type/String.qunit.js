@@ -41,7 +41,7 @@ sap.ui.define([
 		function (assert) {
 			var oType = new StringType(null, null);
 
-			assert.deepEqual(oType.oFormatOptions, undefined, "no format options");
+			assert.deepEqual(oType.oFormatOptions, null, "no format options");
 			assert.deepEqual(oType.oConstraints, undefined, "default constraints");
 	});
 
@@ -60,6 +60,20 @@ sap.ui.define([
 		});
 
 		assert.deepEqual(oType.oConstraints, {maxLength : 12});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("w/ format options", function (assert) {
+		var oFormatOptions = {parseKeepsEmptyString : true},
+			oResultFormatOptions,
+			oType = new StringType(oFormatOptions, {});
+
+		// code under test
+		oResultFormatOptions = oType.getFormatOptions();
+
+		assert.strictEqual(oType.oFormatOptions, oFormatOptions);
+		assert.deepEqual(oResultFormatOptions, oFormatOptions);
+		assert.notStrictEqual(oResultFormatOptions, oFormatOptions);
 	});
 
 	//*********************************************************************************************

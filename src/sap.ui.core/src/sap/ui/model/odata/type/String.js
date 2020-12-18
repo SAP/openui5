@@ -123,6 +123,7 @@ sap.ui.define([
 						= oFormatOptions ? oFormatOptions.parseKeepsEmptyString : undefined;
 
 				ODataType.apply(this, arguments);
+				this.oFormatOptions = oFormatOptions;
 				setConstraints(this, oConstraints);
 
 				this._sParsedEmptyString = null;

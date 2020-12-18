@@ -151,6 +151,18 @@ sap.ui.define([
 		}
 
 		/**
+		 * @override
+		 * @see sap.ui.model.SimpleType#getFormatOptions
+		 */
+		function getFormatOptions() {
+			var oBaseFormatOptions = fnBaseType.prototype.getFormatOptions.call(this);
+
+			oBaseFormatOptions.parseAsString = this.bParseAsString;
+
+			return oBaseFormatOptions;
+		}
+
+		/**
 		 * Gets an array of indices that determine which parts of this type shall not propagate
 		 * their model messages to the attached control. Prerequisite is that the corresponding
 		 * binding supports this feature, see {@link sap.ui.model.Binding#supportsIgnoreMessages}.
@@ -299,6 +311,7 @@ sap.ui.define([
 		// remember the constructor which has access to this local scope
 		oPrototype._applyUnitMixin = UnitMixin;
 		oPrototype.formatValue = formatValue;
+		oPrototype.getFormatOptions = getFormatOptions;
 		oPrototype.getInterface = getInterface;
 		oPrototype.getPartsIgnoringMessages = getPartsIgnoringMessages;
 		oPrototype.parseValue = parseValue;

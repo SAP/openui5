@@ -181,6 +181,22 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a deep copy of the format options of this type. The returned format options can be
+	 * used to create a new instance of the type with equivalent format options.
+	 *
+	 * Subclasses may need to override this method.
+	 *
+	 * @return {object} The format options of this type or an empty object
+	 *
+	 * @private
+	 * @since 1.86.0
+	 * @ui5-restricted sap.ui.mdc
+	 */
+	SimpleType.prototype.getFormatOptions = function () {
+		return merge({}, this.oFormatOptions);
+	};
+
+	/**
 	 * Sets format options for this type, which are used for formatting and parsing values.
 	 *
 	 * @param {object} oFormatOptions The format options as defined by concrete subclasses
