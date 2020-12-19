@@ -700,7 +700,7 @@ sap.ui.define([
 		var oSpy = sinon.spy(this.oCal, "_getFocusedDate");
 
 		//Act
-		this.oCal.setStartDate(new Date(2000, 1, 4));
+		this.oCal.setStartDate(new Date(2000, 2, 4));
 
 		assert.ok(oSpy.getCall(0).args[0], "When .setStartDate is called, _getFocusedDate is always forcing recalculation");
 
