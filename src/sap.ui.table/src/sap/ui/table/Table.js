@@ -253,7 +253,7 @@ sap.ui.define([
 			 * In the <code>"Auto"</code> mode, the <code>visibleRowCount</code> property is changed by the table automatically. It will then
 			 * adjust its row count to the space it is allowed to cover (limited by the surrounding container), but it cannot have less than
 			 * defined in the <code>minAutoRowCount</code> property. The <code>visibleRowCount</code> property cannot be set manually.
-			 * <h3>Limitations</h3>
+			 * <h3>Restrictions</h3>
 			 * <ul>
 			 *   <li>All rows need to have the same height.</li>
 			 *   <li>The table must be rendered without siblings in its parent DOM element. The only exception is if the parent element is a CSS flex

@@ -238,7 +238,7 @@ function(
 			 * <li>Firefox lower than version 59</li>
 			 * </ul>
 			 *
-			 * There are also some known limitations. A few are given below:
+			 * There are also some known restrictions. A few are given below:
 			 * <ul>
 			 * <li>If the control is placed in layout containers that have the <code>overflow: hidden</code> or <code>overflow: auto</code> style definition, this can
 			 * prevent the sticky elements of the control from becoming fixed at the top of the viewport.</li>
