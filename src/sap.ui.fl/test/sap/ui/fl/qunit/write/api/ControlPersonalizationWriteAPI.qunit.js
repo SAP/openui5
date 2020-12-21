@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/ChangeHandlerRegistration",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
+	"sap/ui/fl/registry/Settings",
 	"sap/m/App",
 	"sap/m/Dialog",
 	"sap/ui/base/ManagedObject",
@@ -29,6 +30,7 @@ sap.ui.define([
 	ChangeHandlerRegistration,
 	VariantModel,
 	ControlPersonalizationWriteAPI,
+	Settings,
 	App,
 	Dialog,
 	ManagedObject,
@@ -181,6 +183,12 @@ sap.ui.define([
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach : function(assert) {
 			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").resolves({
+				isVariantPersonalizationEnabled: function () {
+					return true;
+				}
+			});
 
 			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null,
 			function(viewContent) {
@@ -444,6 +452,12 @@ sap.ui.define([
 	QUnit.module("Given an instance of VariantModel on a dialog", {
 		beforeEach : function(assert) {
 			var done = assert.async();
+
+			sandbox.stub(Settings, "getInstance").resolves({
+				isVariantPersonalizationEnabled: function () {
+					return true;
+				}
+			});
 
 			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null,
 			function(viewContent) {

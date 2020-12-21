@@ -41,7 +41,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/library",
 	"sap/m/library",
-	"sap/ui/fl/Utils"
+	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/Settings"
 ], function(
 	Context,
 	PropertyBinding,
@@ -80,7 +81,8 @@ sap.ui.define([
 	KeyCodes,
 	coreLibrary,
 	mobileLibrary,
-	flUtils
+	flUtils,
+	flSettings
 ) {
 	"use strict";
 
@@ -461,6 +463,8 @@ sap.ui.define([
 		this.setModel(oModel, VariantManagement.INNER_MODEL_NAME);
 
 		this._bindProperties();
+
+		this._updateInnerModelWithShowSaveAsProperty();
 	};
 
 	VariantManagement.prototype._bindProperties = function() {
@@ -472,6 +476,12 @@ sap.ui.define([
 			path: "/editable",
 			model: VariantManagement.INNER_MODEL_NAME
 		});
+	};
+
+	VariantManagement.prototype._updateInnerModelWithShowSaveAsProperty = function() {
+		flSettings.getInstance().then(function (oSettings) {
+			this.getModel(VariantManagement.INNER_MODEL_NAME).setProperty("/showSaveAs", oSettings.isVariantPersonalizationEnabled());
+		}.bind(this));
 	};
 
 	VariantManagement.prototype._getShowExecuteOnSelection = function() {
@@ -944,7 +954,11 @@ sap.ui.define([
 			}.bind(this),
 			layoutData: new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
-			})
+			}),
+			visible: {
+				path: "/showSaveAs",
+				model: VariantManagement.INNER_MODEL_NAME
+			}
 		});
 
 		this._oVariantList = new SelectList(this.getId() + "-list", {
