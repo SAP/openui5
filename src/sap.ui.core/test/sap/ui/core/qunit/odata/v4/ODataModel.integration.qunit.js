@@ -14524,6 +14524,9 @@ sap.ui.define([
 		this.expectChange("id", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
+			// avoid that the metadata request disturbs the timing
+			return oModel.getMetaModel().requestObject("/");
+		}).then(function () {
 			var oBinding = that.oView.byId("table").getBinding("items");
 
 			oBinding.filter(new Filter("BusinessPartnerRole", FilterOperator.EQ, "01"))
@@ -14533,9 +14536,9 @@ sap.ui.define([
 			that.expectEvents(assert, oBinding, [
 					[, "change", {detailedReason : "AddVirtualContext", reason : "filter"}],
 					[, "change", {reason : "add"}], //TODO does this really work as expected?
+					[, "dataRequested"],
 					[, "change", {detailedReason : "RemoveVirtualContext", reason : "change"}],
 					[, "refresh", {reason : "refresh"}],
-					[, "dataRequested"], //TODO why not before RemoveVirtualContext?
 					[, "change", {reason : "change"}],
 					[, "dataReceived", {data : {}}]
 				])
@@ -14548,12 +14551,7 @@ sap.ui.define([
 						BusinessPartnerID : "0100000003"
 					}]
 				})
-				.expectChange("id", "", -1) //TODO fix Context#getIndex to not return -1;
-				.expectChange("id", [
-					,
-					"0100000002",
-					"0100000003"
-				]);
+				.expectChange("id", ["", "0100000002", "0100000003"]);
 
 			// code under test
 			oBinding.resume();
