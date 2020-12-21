@@ -54,13 +54,12 @@ sap.ui.define([
 			 * Provides easier methods to create sap.m.Dialog with type sap.m.DialogType.Message, such as standard alerts,
 			 * confirmation dialogs, or arbitrary message dialogs.
 			 *
-			 * As <code>MessageBox</code> is a static class, a <code>sap.ui.require("sap/m/MessageBox");</code> statement
-			 * must be explicitly executed before the class can be used.
-			 * MessageBox provides several functions.
+			 * Because the <code>MessageBox</code> is a static class, a <code>sap.ui.require("sap/m/MessageBox");</code> statement
+			 * must be explicitly executed prior using the class.
+			 * MessageBox provides several functions:
 			 * <ul>
-			 * <li>show() - open a generic MessageBox. You can customize its contents thought the options described below in function option section.</li>
-			 * <li>alert(), confirm(), error(), information(), success() and warning() - predefined templates of MessageBoxes of the corresponding type with predefined action buttons and icon.
-			 * Only the recommended options are documented for those functions.
+			 * <li><code>show()</code> - This is the generic way to open a message dialog. You can customize its contents through the <code>mOptions</code> parameter described below.</li>
+			 * <li><code>alert()</code>, <code>confirm()</code>, <code>error()</code>, <code>information()</code>, <code>success()</code> and <code>warning()</code> - predefined templates of message dialogs. Each value type is coming with action buttons and an icon that are corresponding to its semantic. Although the full set of <code>mOptions</code> (applicable to <code>show()</code>) are available to them, it is recommended to only use the documented options.</li>
 			 * </ul>
 			 *
 			 * <b>NOTE:</b> All options of show() are available for the other template functions as well, but it is recommended to use show() only in more specific scenarios.<br />
