@@ -36,7 +36,12 @@ sap.ui.define([
 	 * the <code>execute</code> event is fired.
 	 *
 	 * When using commands, the component will create a model named <code>$cmd</code>.
-	 * The model data provides the enabled state of all CommandExecution.
+	 * The model data provides the enabled and visible state of all CommandExecutions.
+	 * With that, action-triggering controls (e.g. a button) can be bound to the enable/visible property
+	 * of the CommandExecution to centrally control their state.
+	 *
+	 * <b>Note: The usage of the <code>$cmd</code> model is restricted to <code>sap.suite.ui.generic</code></b>
+	 *
 	 * When binding a button's enabled state to this model, it follows the
 	 * enabled state of the CommandExecution. The binding path must be relative
 	 * like <code>myCommand/enabled</code>:
@@ -45,7 +50,21 @@ sap.ui.define([
 	 * &lt;Button press="cmd:MyCommand" enabled="$cmd&gt;MyCommand/enabled" /&gt;
 	 * </pre>
 	 *
-	 * <b>Note: The usage of the <code>$cmd</code> model is restricted to <code>sap.suite.ui.generic</code></b>
+	 * A CommandExecution can have three states:
+	 * <ul>
+	 *  <li>the CommandExecution is visible and enabled. If the configured shortcut is executed,
+	 *  the configured event handler of this CommandExecution is called
+	 *  </li>
+	 *  <li>the CommandExecution is visible but not enabled. If the configured shortcut is executed,
+	 *  neither the configured event handler of this CommandExecution nor any event handler configured on CommandExecutions
+	 *  in the ancestor chain is called
+	 *  </li>
+	 *  <li>the CommandExecution is not visible. If the configured shortcut is executed,
+	 *  the configured event handler of this CommandExecution is not called, but the event is propagated
+	 *  to its parent, which can then handle the event by a configured CommandExecution or propagate the event to its parent,
+	 *  until no parent exits anymore and the browser can handle the executed shortcut
+	 *  </li>
+	 * </ul>
 	 *
 	 * @class
 	 * @alias sap.ui.core.CommandExecution
@@ -63,12 +82,19 @@ sap.ui.define([
 				 */
 				command: { type: "string" },
 				/**
-				 * Whether the CommandExecution is enabled or not. By default, it is enabled
+				 * Whether the CommandExecution is enabled or not. By default, it is enabled.
+				 * If the CommandExecution is disabled, the CommandExecution processes the event,
+				 * but the event handler for it will not be called.
+				 * Therefore, also no event handler configured on CommandExecutions on ancestors is called.
 				 */
 				enabled: { type: "boolean" , defaultValue: true},
 				/**
 				 * Whether the CommandExecution is visible, or not. By default, it is visible.
-				 * If not visible, the CommandExecution will not be triggered even if it is enabled.
+				 * If not visible, the CommandExecution won't process the event, and
+				 * the event handler for it will not be called, regardless of the enabled state.
+				 * Therefore, the configured event handler on the next CommandExecution in the ancestor chain or,
+				 * if no ancestor in the ancestor chain has any CommandExecutions configured for this shortcut,
+				 * the event handler of the browser is called.
 				 */
 				visible: { type: "boolean" , defaultValue: true}
 			},
@@ -329,7 +355,7 @@ sap.ui.define([
 		/**
 		 * Sets whether the <code>CommandExecution</code> is enabled, or not. If set to
 		 * false, the <code>CommandExecution</code> will still register the shortcut.
-		 * This will block the default behavior for that shortcut.
+		 * This will block any configured CommandExecutions on any ancestors for that shortcut.
 		 *
 		 * @param {boolean} bValue Whether the CommandExecution is enabled, or not.
 		 * @returns {sap.ui.core.Element} The CommandExecution
