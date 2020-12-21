@@ -53,7 +53,6 @@ sap.ui.define(function () {
 						"sap/f/cards/NumericSideIndicatorRenderer",
 						"sap/ui/integration/widgets/Card",
 						"sap/ui/integration/util/CardActions",
-						"sap/ui/integration/util/ContextModel",
 						"sap/ui/integration/util/CardManifest",
 						"sap/ui/integration/util/ServiceManager",
 						"sap/ui/integration/customElements/",
@@ -64,12 +63,8 @@ sap.ui.define(function () {
 						"sap/ui/integration/util/JSONBindingHelper",
 						"sap/ui/integration/util/BindingResolver",
 						"sap/ui/integration/cards/ComponentContent",
-						"sap/ui/integration/util/DataProvider",
-						"sap/ui/integration/util/DataProviderFactory",
 						"sap/ui/integration/cards/ListContent",
 						"sap/ui/integration/cards/ObjectContent",
-						"sap/ui/integration/util/RequestDataProvider",
-						"sap/ui/integration/util/ServiceDataProvider",
 						"sap/ui/integration/cards/TableContent",
 						"sap/ui/integration/cards/BaseContent",
 						"sap/ui/integration/cards/AnalyticsCloudContent"
@@ -84,14 +79,11 @@ sap.ui.define(function () {
 					'./util/BindingHelper.qunit',
 					'./util/JSONBindingHelper.qunit',
 					'./util/BindingResolver.qunit',
-					'./util/DataProvider.qunit',
 					'./util/CardActions.qunit',
-					'./model/ContextModel.qunit',
 					'./cardbundle/CardStaticResources.qunit',
 					'./cards/BaseContent.qunit',
 					'./bindingFeatures/DateRange.qunit',
 					'./CardHost.qunit',
-					'./CardFiltering.qunit',
 					'./cards/AnalyticsCloudContent.qunit'
 				]
 			},
@@ -211,6 +203,7 @@ sap.ui.define(function () {
 			"CardFiltering": {
 				coverage: {
 					only: [
+						"sap/ui/integration/cards/Filter",
 						"sap/ui/integration/widgets/Card",
 						"sap/ui/integration/util/FilterBarFactory"
 					]
