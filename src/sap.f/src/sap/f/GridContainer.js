@@ -828,7 +828,8 @@ sap.ui.define([
 		if (hasItemAutoHeight(oItem)) {
 			var $item = oItem.$(),
 				oSettings = this.getActiveLayoutSettings(),
-				iRows = oSettings.calculateRowsForItem($item.outerHeight());
+				fHeight = oItem.getDomRef() ? oItem.getDomRef().getBoundingClientRect().height : 0,
+				iRows = oSettings.calculateRowsForItem(Math.round(fHeight));
 
 			if (!iRows) {
 				// if the rows can not be calculated correctly, don't do anything
