@@ -105,6 +105,7 @@ sap.ui.define([
 									type: "string",
 									label: "{i18n>string1label}",
 									required: true,
+									allowSettings: true,
 									validation: {
 										maxLength: 10
 									}
@@ -112,6 +113,7 @@ sap.ui.define([
 								string2: {
 									type: "string",
 									label: "{i18n>string2label}",
+									allowSettings: true,
 									validations: [{
 										type: "warning",
 										minLength: 1,
@@ -237,6 +239,7 @@ sap.ui.define([
 									type: "integer",
 									label: "{i18n>int1label}",
 									required: true,
+									allowSettings: true,
 									validations: [{
 										maximum: 10
 									},
@@ -248,6 +251,7 @@ sap.ui.define([
 									type: "integer",
 									label: "{i18n>int1label}",
 									required: true,
+									allowSettings: true,
 									validations: [
 										{
 											minimum: 2,
@@ -262,6 +266,7 @@ sap.ui.define([
 								int3: {
 									type: "integer",
 									label: "{i18n>int1label}",
+									allowSettings: true,
 									validations: [{
 										type: "warning",
 										minimum: 1,
