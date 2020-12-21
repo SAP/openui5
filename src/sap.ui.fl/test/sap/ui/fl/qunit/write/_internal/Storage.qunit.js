@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Variant",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/initial/_internal/StorageUtils",
 	"sap/ui/fl/initial/_internal/connectors/Utils",
@@ -20,6 +21,7 @@ sap.ui.define([
 	sinon,
 	Layer,
 	Change,
+	Variant,
 	Storage,
 	StorageUtils,
 	InitialUtils,
@@ -406,7 +408,9 @@ sap.ui.define([
 						content: {
 							prop: "some Content 2"
 						}
-					}}]
+					}}],
+					ctrl_variant_change: [],
+					ctrl_variant_management_change: []
 				}
 			};
 			var mPropertyBag = {
@@ -470,7 +474,9 @@ sap.ui.define([
 								prop: "some Content 2"
 							}}
 						}
-					]
+					],
+					ctrl_variant_change: [],
+					ctrl_variant_management_change: []
 				}
 			};
 			var mPropertyBag = {
@@ -503,7 +509,9 @@ sap.ui.define([
 					change: []
 				},
 				create: {
-					change: []
+					change: [],
+					ctrl_variant_change: [],
+					ctrl_variant_management_change: []
 				}
 			};
 			var mPropertyBag = {
@@ -561,7 +569,9 @@ sap.ui.define([
 								prop: "some Content 2"
 							}}
 						}
-					]
+					],
+					ctrl_variant_change: [],
+					ctrl_variant_management_change: []
 				}
 			};
 			var mPropertyBag = {
@@ -608,13 +618,165 @@ sap.ui.define([
 								prop: "some Content 0"
 							}}
 						}
-					]
+					],
+					ctrl_variant_change: [],
+					ctrl_variant_management_change: []
 				}
 			};
 			var mPropertyBag = {
 				layer: this.sLayer,
 				allChanges: aAllChanges,
 				condensedChanges: [aAllChanges[0]],
+				reference: "reference"
+			};
+
+			var oWriteStub = sandbox.stub(WriteLrepConnector, "condense").resolves({});
+
+			return Storage.condense(mPropertyBag).then(function () {
+				var oWriteCallArgs = oWriteStub.getCall(0).args[0];
+				assert.propEqual(oWriteCallArgs.flexObjects, mCondenseExpected, "then flexObject is filled correctly");
+			});
+		});
+
+		QUnit.test("and changes belonging to a variant are provided", function (assert) {
+			var oChange0 = new Change({
+				fileType: "change",
+				layer: Layer.CUSTOMER,
+				fileName: "0",
+				namespace: "a.name.space",
+				changeType: "labelChange",
+				reference: "",
+				variantReference: "variant_0",
+				selector: {},
+				dependentSelector: {},
+				content: {
+					prop: "some Content 0"
+				}
+			});
+			var oChange1 = new Change({
+				fileType: "ctrl_variant_change",
+				layer: Layer.CUSTOMER,
+				fileName: "1",
+				namespace: "a.name.space",
+				changeType: "setTitle",
+				reference: "",
+				variantReference: "variant_0",
+				selector: {},
+				dependentSelector: {},
+				content: {
+					prop: "some Content 1"
+				}
+			});
+			var oChange2 = new Change({
+				fileType: "ctrl_variant_management_change",
+				layer: Layer.CUSTOMER,
+				fileName: "2",
+				namespace: "a.name.space",
+				changeType: "setDefault",
+				reference: "",
+				variantReference: "variant_0",
+				variantManagementReference : "variantManagementId",
+				selector: {},
+				dependentSelector: {},
+				content: {
+					prop: "some Content 2"
+				}
+			});
+			var oChange3 = new Change({
+				fileType: "change",
+				layer: Layer.CUSTOMER,
+				fileName: "3",
+				namespace: "a.name.space",
+				changeType: "labelChange",
+				reference: "",
+				variantReference: "variant_0",
+				selector: {},
+				dependentSelector: {},
+				content: {
+					prop: "some Content 3"
+				}
+			});
+			oChange3.setState(Change.states.PERSISTED);
+			var oVariant = new Variant({
+				content: {
+					layer: Layer.CUSTOMER,
+					fileName: "newVariant",
+					fileType: "ctrl_variant",
+					namespace: "a.name.space",
+					variantReference: "variant_0",
+					content: "some Variant Content"
+				}
+			});
+
+			var aAllChanges = [oVariant, oChange0, oChange1, oChange2, oChange3];
+			var mCondenseExpected = {
+				namespace: "a.name.space",
+				layer: this.sLayer,
+				"delete": {
+					change: []
+				},
+				update: {
+					change: []
+				},
+				reorder: {
+					change: []
+				},
+				create: {
+					change: [
+						{0: {
+							fileType: "change",
+							layer: this.sLayer,
+							fileName: "0",
+							namespace: "a.name.space",
+							changeType: "labelChange",
+							reference: "",
+							variantReference: "variant_0",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 0"
+							}}
+						}
+					],
+					ctrl_variant_change: [
+						{1: {
+							fileType: "ctrl_variant_change",
+							layer: this.sLayer,
+							fileName: "1",
+							namespace: "a.name.space",
+							changeType: "setTitle",
+							reference: "",
+							variantReference: "variant_0",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 1"
+							}}
+						}
+					],
+					ctrl_variant_management_change: [
+						{2: {
+							fileType: "ctrl_variant_management_change",
+							layer: this.sLayer,
+							fileName: "2",
+							namespace: "a.name.space",
+							changeType: "setDefault",
+							reference: "",
+							variantManagementReference : "variantManagementId",
+							variantReference: "variant_0",
+							selector: {},
+							dependentSelector: {},
+							content: {
+								prop: "some Content 2"
+							}}
+						}
+					]
+				}
+			};
+			var mPropertyBag = {
+				layer: this.sLayer,
+				allChanges: aAllChanges,
+				condensedChanges: aAllChanges,
 				reference: "reference"
 			};
 

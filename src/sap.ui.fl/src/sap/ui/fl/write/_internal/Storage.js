@@ -124,13 +124,19 @@ sap.ui.define([
 					change: []
 				},
 				create: {
-					change: []
+					change: [],
+					ctrl_variant_change: [],
+					ctrl_variant_management_change: []
 				}
 			};
 
 			var iOffset = 0;
 			var bAlreadyReordered = false;
 			mPropertyBag.allChanges.forEach(function(oChange, index) {
+				if (oChange.getFileType() === "ctrl_variant") {
+					return;
+				}
+				var iChangeCreateIndex = mCondense.create[oChange.getFileType()].length;
 				if (oChange.condenserState) {
 					var bDifferentOrder = false;
 					if (oChange.condenserState === "delete") {
@@ -149,7 +155,6 @@ sap.ui.define([
 						bAlreadyReordered = true;
 					}
 					if (oChange.condenserState === "select" && oChange.getProperty("state") === "NEW") {
-						var iChangeCreateIndex = mCondense.create.change.length;
 						mCondense.create.change[iChangeCreateIndex] = {};
 						mCondense.create.change[iChangeCreateIndex][oChange.getFileName()] = oChange.getDefinition();
 					} else if (oChange.condenserState === "update") {
@@ -161,6 +166,9 @@ sap.ui.define([
 					}
 
 					delete oChange.condenserState;
+				} else if (oChange.getProperty("state") === "NEW") {
+					mCondense.create[oChange.getFileType()][iChangeCreateIndex] = {};
+					mCondense.create[oChange.getFileType()][iChangeCreateIndex][oChange.getId()] = oChange.getDefinition();
 				}
 			});
 		}
