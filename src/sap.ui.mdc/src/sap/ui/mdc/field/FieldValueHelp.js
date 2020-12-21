@@ -2394,6 +2394,16 @@ sap.ui.define([
 
 	};
 
+	FieldValueHelp.prototype.getValueHelpEnabled = function() {
+
+		if (this.getNoDialog()) {
+			return false;
+		} else {
+			return true;
+		}
+
+	};
+
 	return FieldValueHelp;
 
 });

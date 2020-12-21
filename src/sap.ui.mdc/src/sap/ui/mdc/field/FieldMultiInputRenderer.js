@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/m/MultiInputRenderer'],
-		function(Renderer, MultiInputRenderer) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/m/MultiInputRenderer', 'sap/ui/mdc/field/FieldInputRenderUtil'],
+		function(Renderer, MultiInputRenderer, FieldInputRenderUtil) {
 	"use strict";
 
 	/**
@@ -22,44 +22,19 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/m/MultiInputRenderer'],
 
 	FieldMultiInputRenderer.getAriaRole = function (oMultiInput) {
 
-		var oAriaAttributes = oMultiInput.getAriaAttributes();
-
-		if (oAriaAttributes.role) {
-			return oAriaAttributes.role;
-		} else {
-			return MultiInputRenderer.getAriaRole.apply(this, arguments);
-		}
+		return FieldInputRenderUtil.getAriaRole.call(this, oMultiInput, MultiInputRenderer);
 
 	};
 
 	FieldMultiInputRenderer.getAccessibilityState = function (oMultiInput) {
 
-		var oAriaAttributes = oMultiInput.getAriaAttributes();
-		var mAccessibilityState = MultiInputRenderer.getAccessibilityState.apply(this, arguments);
-
-		// add aria attributes
-		if (oAriaAttributes.aria) {
-			for (var sAttribute in oAriaAttributes.aria) {
-				mAccessibilityState[sAttribute] = oAriaAttributes.aria[sAttribute];
-			}
-		}
-
-		return mAccessibilityState;
+		return FieldInputRenderUtil.getAccessibilityState.call(this, oMultiInput, MultiInputRenderer);
 
 	};
 
 	FieldMultiInputRenderer.writeInnerAttributes = function(oRm, oMultiInput) {
 
-		MultiInputRenderer.writeInnerAttributes.apply(this, arguments);
-
-		var oAriaAttributes = oMultiInput.getAriaAttributes();
-
-		// add all not aria specific attributes
-		for (var sAttribute in oAriaAttributes) {
-			if (sAttribute !== "aria" && sAttribute !== "role") {
-				oRm.attr(sAttribute, oAriaAttributes[sAttribute]);
-			}
-		}
+		return FieldInputRenderUtil.writeInnerAttributes.call(this, oRm, oMultiInput, MultiInputRenderer);
 
 	};
 

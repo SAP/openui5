@@ -146,6 +146,7 @@ sap.ui.define([
 		assert.ok(oFieldHelp.openByTyping(), "openByTyping");
 		assert.notOk(oFieldHelp.isFocusInHelp(), "isFocusInHelp");
 		assert.ok(oFieldHelp.isUsableForValidation(), "isUsableForValidation");
+		assert.notOk(oFieldHelp.getValueHelpEnabled(), "getValueHelpEnabled");
 
 	});
 

@@ -847,6 +847,15 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getValueHelpEnabled", function(assert) {
+
+		assert.ok(oFieldHelp.getValueHelpEnabled(), "true if dialog used");
+
+		oFieldHelp.setNoDialog(true);
+		assert.notOk(oFieldHelp.getValueHelpEnabled(), "false if no dialog used");
+
+	});
+
 	QUnit.module("Connect", {
 		beforeEach: _initFieldHelp,
 		afterEach: _teardown
