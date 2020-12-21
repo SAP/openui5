@@ -6,9 +6,14 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/m/Toolbar",
-	"sap/ui/core/Title"
-], function (createAndAppendDiv, Title, mobileLibrary, coreLibrary, Toolbar, coreTitle) {
+	"sap/ui/core/Title",
+	"sap/ui/core/Core",
+	"sap/ui/core/Renderer"
+], function (createAndAppendDiv, Title, mobileLibrary, coreLibrary, Toolbar, coreTitle, Core, Renderer) {
 	"use strict";
+
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
@@ -80,7 +85,7 @@ sap.ui.define([
 				tooltip : "Tooltip"
 			});
 			this.title.placeAt("uiArea");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.title.destroy();
@@ -92,7 +97,7 @@ sap.ui.define([
 	QUnit.test("When width is not set max-width should apply to control", function(assert){
 		assert.ok(this.title.$().hasClass("sapMTitleMaxWidth"), "Title has max width restriction for the trunctation.");
 		this.title.setWidth("100%");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(!this.title.$().hasClass("sapMTitleMaxWidth"), "Title has width and does not have max width restriction.");
 	});
 
@@ -111,7 +116,7 @@ sap.ui.define([
 	QUnit.test("Wrapping", function(assert){
 		this.title.setText("Some very very very very long text");
 		this.title.setWidth("100px");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.title.$().css("line-height", "1.2rem");
 
 		var iHeight = this.title.$().outerHeight();
@@ -119,7 +124,7 @@ sap.ui.define([
 		assert.ok(this.title.$().hasClass("sapMTitleNoWrap"), "Title has class sapMTitleNoWrap.");
 		this.title.setWrapping(true);
 
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.title.$().css("line-height", "1.2rem");
 
 		assert.ok(this.title.$().hasClass("sapMTitleWrap"), "Title has class sapMTitleWrap.");
@@ -129,13 +134,13 @@ sap.ui.define([
 	QUnit.test("Title wrappingType (Hyphenation)", function(assert){
 		var done = assert.async();
 		this.title.setText("pneumonoultramicroscopicsilicovolcanoconiosis");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.title.$().css("line-height", "1.2rem");
 		var iHeight = this.title.$().outerHeight();
 		this.title.setWidth("200px");
 		this.title.setWrapping(true);
 		this.title.setWrappingType(mobileLibrary.WrappingType.Hyphenated);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		this.title.$().css("line-height", "1.2rem");
 
 		var fnIsHyphenated = function () {
@@ -163,19 +168,41 @@ sap.ui.define([
 	QUnit.test("TitleStyle correct", function(assert){
 		for (var level in TitleLevel) {
 			this.title.setTitleStyle(level);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 			assert.ok(this.title.$().hasClass("sapMTitleStyle" + level), "Title has correct class for style level " + level);
 		}
 	});
 
-	QUnit.test("Alignment correct", function(assert){
-		for (var align in TextAlign) {
-			this.title.setTextAlign(align);
-			sap.ui.getCore().applyChanges();
-			if (align == TextAlign.Initial) {
-				assert.ok(!this.title.$().hasClass("sapMTitleAlignInitial"), "No class for alignment " + align);
-			} else {
-				assert.ok(this.title.$().hasClass("sapMTitleAlign" + align), "Title has correct class for alignment " + align);
+	QUnit.test("Text direction correct", function(assert) {
+		var oTitle = this.title,
+			sTextDir,
+			sExpectedDir;
+
+		for (sTextDir in TextDirection) {
+			oTitle.setTextDirection(sTextDir);
+			Core.applyChanges();
+
+			sExpectedDir = sTextDir !== TextDirection.Inherit ? sTextDir.toLowerCase() : "auto";
+
+			assert.strictEqual(oTitle.$("inner").attr("dir"), sExpectedDir, "Title has correct dir property for " + sTextDir);
+		}
+	});
+
+	QUnit.test("Alignment correct", function(assert) {
+		var oTitle = this.title,
+			sTextDir,
+			sAlign,
+			sExpectedAlign;
+
+		for (sTextDir in TextDirection) {
+			for (sAlign in TextAlign) {
+				oTitle.setTextDirection(sTextDir);
+				oTitle.setTextAlign(sAlign);
+				Core.applyChanges();
+
+				sExpectedAlign = Renderer.getTextAlign(sAlign, sTextDir);
+
+				assert.strictEqual(oTitle.getDomRef().style["text-align"], sExpectedAlign, "Title has correct text-align for alignment " + sAlign + " in direction " + sTextDir);
 			}
 		}
 	});
@@ -185,7 +212,7 @@ sap.ui.define([
 
 		for (var level in TitleLevel) {
 			this.title.setLevel(level);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			if (level === TitleLevel.Auto) {
 				sExpectedTag = "DIV";
@@ -204,7 +231,7 @@ sap.ui.define([
 		var oToolbar = new Toolbar();
 		oToolbar.addContent(this.title);
 		oToolbar.placeAt("uiArea");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.ok(this.title.$().hasClass("sapMTitleTB"), "Title has toolbar class");
 		this.title = oToolbar; // Correct cleanup in teardown
 	});
@@ -225,7 +252,7 @@ sap.ui.define([
 				title : this.coreTitle
 			});
 			this.title.placeAt("uiArea");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.title.destroy();
@@ -240,28 +267,28 @@ sap.ui.define([
 	QUnit.test("Should render a text", function(assert) {
 		assert.strictEqual(this.title.$().text(), "Hello2", "Text got rendered");
 		this.coreTitle.setText("Hello3");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.title.$().text(), "Hello3", "Text got rendered");
 		this.title.setTitle(this.anotherTitle);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.title.$().text(), "Hello4", "Text got rendered");
 		this.anotherTitle.destroy();
 		this.anotherTitle = null;
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.title.$().text(), "Hello", "Text got rendered");
 	});
 
 	QUnit.test("Should render a tooltip", function(assert) {
 		assert.strictEqual(this.title.$().attr("title"), "Tooltip2", "Tooltip got rendered");
 		this.coreTitle.setTooltip("Tooltip3");
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.title.$().attr("title"), "Tooltip3", "Tooltip got rendered");
 		this.title.setTitle(this.anotherTitle);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.title.$().attr("title"), "Tooltip4", "Tooltip got rendered");
 		this.anotherTitle.destroy();
 		this.anotherTitle = null;
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.title.$().attr("title"), "Tooltip", "Tooltip got rendered");
 	});
 
@@ -270,7 +297,7 @@ sap.ui.define([
 
 		for (var level in TitleLevel) {
 			this.coreTitle.setLevel(level);
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 
 			if (level === TitleLevel.Auto) {
 				sExpectedTag = "DIV";
@@ -290,7 +317,7 @@ sap.ui.define([
 				text : "Hello"
 			});
 			this.title.placeAt("uiArea");
-			sap.ui.getCore().applyChanges();
+			Core.applyChanges();
 		},
 		afterEach : function() {
 			this.title.destroy();
@@ -321,7 +348,7 @@ sap.ui.define([
 		assert.strictEqual(this.title.$().attr("aria-level"), "2", "The aria-level of a non semantically states title should be 2 by default");
 
 		this.title.setTitleStyle(TitleLevel.H5);
-		sap.ui.getCore().applyChanges();
+		Core.applyChanges();
 		assert.strictEqual(this.title.$().attr("aria-level"), "5", "The aria-level should be '5' when 'titleStyle' is set to 'H5'");
 	});
 });

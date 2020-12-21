@@ -48,6 +48,7 @@
 							visible: true,
 							wrapping: false,
 							wrappingType: "Normal",
+							dir: "Inherit",
 							align: "Initial",
 							level: "Auto"
 						};
@@ -71,6 +72,15 @@
 							new Input("setting2_width", {value: "{/width}"}),
 							new Label({text: "Visible"}),
 							new CheckBox("setting3_visible", {selected: "{/visible}"}),
+							new Label({text: "Text direction"}),
+							new ComboBox("setting_dir", {
+								value: "{/dir}",
+								items: [
+									new Item({text: "Inherit", key: "Inherit"}),
+									new Item({text: "LTR", key: "LTR"}),
+									new Item({text: "RTL", key: "RTL"})
+								]
+							}),
 							new Label({text: "Align"}),
 							new ComboBox("setting4_align", {
 								value: "{/align}",
@@ -134,6 +144,7 @@
 							visible: "{/visible}",
 							wrapping: "{/wrapping}",
 							wrappingType: "{/wrappingType}",
+							textDirection: "{/dir}",
 							textAlign: "{/align}",
 							level: "{/level}"
 						});
@@ -142,6 +153,31 @@
 						oContent.addItem(oTitle);
 						iIdCounter++;
 					}
+
+					// Tests rtl support with mixed texts
+					var aMixedTexts = [
+							"כמה שפות אתה מדבר? English ועברית.",
+							"Do you speak any RTL languages? כן אני כן."
+						],
+						oContentMixedTexts = new VBox("content-mixed-texts");
+
+					aMixedTexts.forEach(function (sMixedText, iInd) {
+						var oTitle = new Title("titleMixed" + iInd, {
+							tooltip: "Title for testing mixed ltr and rtl languages",
+							text: sMixedText,
+							width: "{/width}",
+							visible: "{/visible}",
+							wrapping: "{/wrapping}",
+							wrappingType: "{/wrappingType}",
+							textDirection: "{/dir}",
+							textAlign: "{/align}"
+						});
+
+						oContentMixedTexts.addItem(oTitle);
+					});
+
+					oContent.addItem(new HTML({ content: "<hr/>"}));
+					oContent.addItem(oContentMixedTexts);
 
 					var oApp = new App({
 						pages : [oPage]

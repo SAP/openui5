@@ -3,15 +3,13 @@
  */
 sap.ui.define([
 	'sap/ui/core/library',
+	"sap/ui/core/Renderer",
 	"sap/ui/util/defaultLinkTypes",
 	'sap/ui/Device',
 	'sap/m/Toolbar',
 	'sap/m/Title'
-], function(coreLibrary, defaultLinkTypes, Device, Toolbar, Title) {
+], function(coreLibrary, Renderer, defaultLinkTypes, Device, Toolbar, Title) {
 	"use strict";
-
-	// shortcut for sap.ui.core.TextAlign
-	var TextAlign = coreLibrary.TextAlign;
 
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
@@ -157,6 +155,7 @@ sap.ui.define([
 			var oAssoTitle = oTitle._getTitle(),
 				sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oTitle.getLevel()) || coreLibrary.TitleLevel.Auto,
 				bAutoLevel = sLevel == TitleLevel.Auto,
+				sTextAlign = Renderer.getTextAlign(oTitle.getTextAlign()),
 				sTag = bAutoLevel ? "div" : sLevel;
 
 			oRm.openStart(sTag.toLowerCase(), oTitle)
@@ -180,9 +179,8 @@ sap.ui.define([
 				oRm.style("width", sWidth);
 			}
 
-			var sTextAlign = oTitle.getTextAlign();
-			if (sTextAlign && sTextAlign != TextAlign.Initial) {
-				oRm.class("sapMTitleAlign" + sTextAlign);
+			if (sTextAlign) {
+				oRm.style("text-align", sTextAlign);
 			}
 
 			if (oTitle.getParent().isA("sap.m.Toolbar")) {
