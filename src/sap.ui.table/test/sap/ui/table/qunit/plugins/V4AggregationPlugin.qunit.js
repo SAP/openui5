@@ -163,7 +163,7 @@ sap.ui.define([
 				visible: ["Info7"]
 			},
 			expectedGroup: {prop1:{}, prop2:{}, prop7:{}},
-			expectedAggregate: {prop7: {}},
+			expectedAggregate: {},
 			expectedGroupLevels: []
 		},
 		{
@@ -203,7 +203,7 @@ sap.ui.define([
 				groupLevels: ["Info7", "Info3"]
 			},
 			expectedGroup: {prop1:{}, prop2:{}, prop3:{}, prop7:{}},
-			expectedAggregate: {prop7: {}},
+			expectedAggregate: {},
 			expectedGroupLevels: ["prop7", "prop3"]
 		}
 	];

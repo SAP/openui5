@@ -1614,10 +1614,6 @@ sap.ui.define([
 	};
 
 	Table.prototype._onColumnPress = function(oColumn) {
-		if (!this.isSortingEnabled()) {
-			return;
-		}
-
 		var iIndex,
 			oParent = oColumn.getParent(),
 			oMDCColumn;
@@ -1627,36 +1623,53 @@ sap.ui.define([
 		oMDCColumn = this.getColumns()[iIndex];
 
 		this._fullyInitialized().then(function() {
-			var aSortItems = this.getPropertyHelper().getSortableProperties(oMDCColumn.getDataProperty()).map(function(oProperty) {
-				return new Item({
-					text: oProperty.getLabel(),
-					key: oProperty.getName()
+			if (this.isSortingEnabled()) {
+				var aSortItems = this.getPropertyHelper().getSortableProperties(oMDCColumn.getDataProperty()).map(function(oProperty) {
+					return new Item({
+						text: oProperty.getLabel(),
+						key: oProperty.getName()
+					});
 				});
-			});
 
-			// create ColumnHeaderPopover
-			if (aSortItems.length > 0) {
-				// TODO: introduce a WeakMap and save reference to ColumnHeaderPopover there to enable re-use
-				if (this._oPopover) {
-					// currently the inner popover can not be accessed from outside
-					// there should be only one CHP instance for all MDC Table instances
-					this._oPopover.destroy();
+				// create ColumnHeaderPopover
+				if (aSortItems.length > 0) {
+					// TODO: introduce a WeakMap and save reference to ColumnHeaderPopover there to enable re-use
+					if (this._oPopover) {
+						// currently the inner popover can not be accessed from outside
+						// there should be only one CHP instance for all MDC Table instances
+						this._oPopover.destroy();
+					}
+					this._oPopover = new ColumnHeaderPopover({
+						items: [
+							new ColumnPopoverSortItem({
+								items: aSortItems,
+								sort: [
+									this._onCustomSort, this
+								]
+							})
+						]
+					});
+					oColumn.addDependent(this._oPopover);
 				}
-				this._oPopover = new ColumnHeaderPopover({
-					items: [
-						new ColumnPopoverSortItem({
-							items: aSortItems,
-							sort: [
-								this._onCustomSort, this
-							]
-						})
-					]
-				});
-
-				this._oPopover.openBy(oColumn);
-				oColumn.addDependent(this._oPopover);
 			}
+			var oDelegate = this.getControlDelegate();
+			var aResult = oDelegate.addColumnMenuItems && oDelegate.addColumnMenuItems(this, oMDCColumn);
+			aResult && aResult.forEach(function(item) {
+				item && this._createPopover(item, oColumn);
+			}.bind(this));
+			this._oPopover && this._oPopover.openBy(oColumn);
 		}.bind(this));
+	};
+
+	Table.prototype._createPopover = function(oItem, oColumn) {
+		if (this._oPopover) {
+			this._oPopover.addItem(oItem);
+		} else {
+			this._oPopover = new ColumnHeaderPopover({
+				items: oItem
+			});
+			oColumn.addDependent(this._oPopover);
+		}
 	};
 
 	Table.prototype._onCustomSort = function(oEvent) {

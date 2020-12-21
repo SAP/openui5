@@ -204,6 +204,10 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 				},
 				module: "./table/Table.qunit"
 			},
+			"TableDelegate": {
+				group: "Delegates",
+				module: "./odata/v4/TableDelegate.qunit"
+			},
 			"Column": {
 				group: "Table",
 				coverage: {
