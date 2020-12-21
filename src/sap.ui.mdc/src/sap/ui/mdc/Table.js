@@ -1685,6 +1685,8 @@ sap.ui.define([
 
 		var oColumn = this._createColumn(oMDCColumn);
 		this._setColumnTemplate(oMDCColumn, oColumn, iIndex);
+		var oDelegate = this.getControlDelegate();
+		oDelegate && oDelegate._onColumnChange && oDelegate._onColumnChange(this);
 
 		if (iIndex === undefined) {
 			this._oTable.addColumn(oColumn);
@@ -1809,7 +1811,8 @@ sap.ui.define([
 		if (this._oTable) {
 			var oColumn = this._oTable.removeColumn(oMDCColumn.getId() + "-innerColumn");
 			oColumn.destroy(); // TODO: avoid destroy
-
+			var oDelegate = this.getControlDelegate();
+			oDelegate && oDelegate._onColumnChange && oDelegate._onColumnChange(this);
 			// update template for ResponsiveTable
 			if (this._bMobileTable) {
 				this._updateColumnTemplate(oMDCColumn, -1);

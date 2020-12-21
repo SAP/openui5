@@ -278,6 +278,15 @@ sap.ui.define([
 		return aVisibleProperties;
 	};
 
+	Delegate._onColumnChange = function(oTable) {
+		if (!TableMap.get(oTable)) {
+			return;
+		}
+		var aGroupLevel = TableMap.get(oTable)["group"] || [];
+		var aAggregate  = TableMap.get(oTable)["aggregate"] || [];
+		this._setAggregation(oTable, aGroupLevel, aAggregate);
+	};
+
 	function enrichGridTable(oTable, that) {
 		// The property helper is initialized after the table "initialized" promise resolves. So we can only wait for the property helper.
 		return Promise.all([
