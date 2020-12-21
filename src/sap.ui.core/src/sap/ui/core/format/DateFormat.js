@@ -1720,7 +1720,7 @@ sap.ui.define([
 			iRepeat,
 			oDateValue;
 
-		// Try out with all possible patterns until succesfully parse has been done or the end of the array is reached
+		// Try out with all possible patterns until successfully parse has been done or the end of the array is reached
 		this.intervalPatterns.some(function(sPattern) {
 			var aFormatArray = this.parseCldrDatePattern(sPattern);
 
