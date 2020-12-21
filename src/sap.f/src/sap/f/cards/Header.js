@@ -2,9 +2,9 @@
  * ${copyright}
  */
 sap.ui.define([
+	"./BaseHeader",
 	"sap/m/library",
 	"sap/f/library",
-	"sap/ui/core/Control",
 	"sap/m/Text",
 	"sap/f/Avatar",
 	"sap/ui/Device",
@@ -12,9 +12,9 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/InvisibleText"
 ], function (
+	BaseHeader,
 	mLibrary,
 	library,
-	Control,
 	Text,
 	Avatar,
 	Device,
@@ -44,7 +44,7 @@ sap.ui.define([
 	 * <li>To show a KPI or any numeric information, use {@link sap.f.cards.NumericHeader} instead.</li>
 	 * <ul>
 	 *
-	 * @extends sap.ui.core.Control
+	 * @extends sap.f.cards.BaseHeader
 	 * @implements sap.f.cards.IHeader
 	 *
 	 * @author SAP SE
@@ -56,7 +56,7 @@ sap.ui.define([
 	 * @alias sap.f.cards.Header
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var Header = Control.extend("sap.f.cards.Header", {
+	var Header = BaseHeader.extend("sap.f.cards.Header", {
 		metadata: {
 			library: "sap.f",
 			interfaces: ["sap.f.cards.IHeader"],
@@ -107,13 +107,6 @@ sap.ui.define([
 				iconBackgroundColor: { type: "sap.m.AvatarColor", defaultValue: AvatarColor.Transparent }
 			},
 			aggregations: {
-
-				/**
-				 * Defines the toolbar.
-				 * @experimental Since 1.75
-				 * @since 1.75
-				 */
-				toolbar: { type: "sap.ui.core.Control", multiple: false },
 
 				/**
 				 * Defines the inner title control.
@@ -213,6 +206,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Header.prototype.onBeforeRendering = function () {
+		BaseHeader.prototype.onBeforeRendering.apply(this, arguments);
+
 		var oAvatar = this._getAvatar();
 
 		this._getTitle().setText(this.getTitle());
@@ -301,7 +296,7 @@ sap.ui.define([
 		var aMyArgs = Array.prototype.slice.apply(arguments);
 		aMyArgs.unshift("press");
 
-		Control.prototype.attachEvent.apply(this, aMyArgs);
+		BaseHeader.prototype.attachEvent.apply(this, aMyArgs);
 
 		this.invalidate();
 
@@ -312,7 +307,7 @@ sap.ui.define([
 		var aMyArgs = Array.prototype.slice.apply(arguments);
 		aMyArgs.unshift("press");
 
-		Control.prototype.detachEvent.apply(this, aMyArgs);
+		BaseHeader.prototype.detachEvent.apply(this, aMyArgs);
 
 		this.invalidate();
 

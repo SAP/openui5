@@ -2,13 +2,13 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Control",
+	"./BaseHeader",
 	"sap/m/NumericContent",
 	"sap/m/Text",
 	"sap/f/cards/NumericHeaderRenderer",
 	"sap/ui/core/Core"
 ], function (
-	Control,
+	BaseHeader,
 	NumericContent,
 	Text,
 	NumericHeaderRenderer,
@@ -36,7 +36,7 @@ sap.ui.define([
 	 * <li>To show only basic information, use {@link sap.f.cards.Header Header} instead.</li>
 	 * </ul>
 	 *
-	 * @extends sap.ui.core.Control
+	 * @extends sap.f.cards.BaseHeader
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -47,7 +47,7 @@ sap.ui.define([
 	 * @alias sap.f.cards.NumericHeader
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var NumericHeader = Control.extend("sap.f.cards.NumericHeader", {
+	var NumericHeader = BaseHeader.extend("sap.f.cards.NumericHeader", {
 		metadata: {
 			library: "sap.f",
 			interfaces: ["sap.f.cards.IHeader"],
@@ -104,13 +104,6 @@ sap.ui.define([
 				details: { "type": "string", group: "Appearance" }
 			},
 			aggregations: {
-
-				/**
-				 * Defines the toolbar.
-				 * @experimental Since 1.75
-				 * @since 1.75
-				 */
-				toolbar: { type: "sap.ui.core.Control", multiple: false },
 
 				/**
 				 * Additional side number indicators. For example "Deviation" and "Target". Not more than two side indicators should be used.
@@ -172,6 +165,8 @@ sap.ui.define([
 	 * @private
 	 */
 	NumericHeader.prototype.onBeforeRendering = function () {
+		BaseHeader.prototype.onBeforeRendering.apply(this, arguments);
+
 		this._setAccessibilityAttributes();
 	};
 
@@ -461,7 +456,7 @@ sap.ui.define([
 		var aMyArgs = Array.prototype.slice.apply(arguments);
 		aMyArgs.unshift("press");
 
-		Control.prototype.attachEvent.apply(this, aMyArgs);
+		BaseHeader.prototype.attachEvent.apply(this, aMyArgs);
 
 		this.invalidate();
 
@@ -472,7 +467,7 @@ sap.ui.define([
 		var aMyArgs = Array.prototype.slice.apply(arguments);
 		aMyArgs.unshift("press");
 
-		Control.prototype.detachEvent.apply(this, aMyArgs);
+		BaseHeader.prototype.detachEvent.apply(this, aMyArgs);
 
 		this.invalidate();
 

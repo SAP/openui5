@@ -101,7 +101,7 @@ sap.ui.define([], function () {
 
 		if (oToolbar) {
 			oRm.openStart("div")
-				.class("sapFCardHeaderToolbar")
+				.class("sapFCardHeaderToolbarCont")
 				.openEnd();
 
 			oRm.renderControl(oToolbar);
