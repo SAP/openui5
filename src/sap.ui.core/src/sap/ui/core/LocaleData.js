@@ -1253,7 +1253,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 
 		/**
 		 * Returns the relative day resource pattern (like "Today", "Yesterday", "{0} days ago") based on the given
-		 * difference of days (0 means today, 1 means tommorrow, -1 means yesterday, ...).
+		 * difference of days (0 means today, 1 means tomorrow, -1 means yesterday, ...).
 		 *
 		 * @param {int} iDiff the difference in days
 		 * @param {string} [sStyle="wide"] @since 1.32.10, 1.34.4 the style of the pattern. The valid values are "wide", "short" and "narrow"
