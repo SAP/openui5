@@ -4165,6 +4165,43 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("test detailsButtonSetting - overwrite default configuration of showDetailsButton", function(assert) {
+		var done = assert.async();
+		var clock = sinon.useFakeTimers();
+
+		// save original state
+		var bDesktop = Device.system.desktop;
+		var bTablet = Device.system.tablet;
+		var bPhone = Device.system.phone;
+
+		// overwrite for our test case
+		Device.system.desktop = false;
+		Device.system.tablet = false;
+		Device.system.phone = true;
+
+		this.oType.setDetailsButtonSetting(["Medium", "High"]);
+
+		return this.oTable.initialized().then(function() {
+			this.oType._oShowDetailsButton.firePress();
+			clock.tick(1);
+			this.oType._oShowDetailsButton.firePress();
+			clock.tick(1);
+
+			var aImportance = this.oTable._oTable.getHiddenInPopin();
+			assert.strictEqual(aImportance.length, 2, "ResponsiveTable property hiddenInPopin.length = 2");
+			assert.notEqual(aImportance[0], "Low", "Default importance 'Low' is overwritten");
+			assert.notEqual(aImportance[1], "Medium", "Default importance 'Medium' is overwritten");
+			assert.strictEqual(aImportance[0], "Medium", "ResponsiveTable property hiddenInPopin[0] = 'Medium'");
+			assert.strictEqual(aImportance[1], "High", "ResponsiveTable property hiddenInPopin[1] = 'High'");
+
+			// reset original state
+			Device.system.desktop = bDesktop;
+			Device.system.tablet = bTablet;
+			Device.system.phone = bPhone;
+			done();
+		}.bind(this));
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach: function() {
 			this.oTable = new Table();

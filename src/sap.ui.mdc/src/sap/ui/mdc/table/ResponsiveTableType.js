@@ -56,10 +56,31 @@ sap.ui.define([
 					type: "boolean",
 					group: "Misc",
 					defaultValue: false
+				},
+				/**
+				 * Defines which columns should be hidden instead of moved into the pop-in area
+				 * depending on their importance.
+				 * See {@link sap.m.Column#getImportance} and {@link sap.m.Table#getHiddenInPopin} for more details.
+				 *
+				 * <b>Note:</b> To hide columns based on their importance, it's mandatory to set <code>showDetailsButton="true"</code>.
+				 * If no priority is given, the default configuration of {@link sap.ui.mdc.table.ResponsiveTableType#getShowDetailsButton} is used.
+				 * If this property is changed after the <code>SmartTable</code> has been initialized, the new changes take effect only when the
+				 * Show / Hide Details button is pressed a second time.
+				 *
+				 * @since 1.86
+				 */
+				detailsButtonSetting: {
+					type: "sap.ui.core.Priority[]",
+					group: "Behavior"
 				}
 			}
 		}
 	});
+
+	ResponsiveTableType.prototype.setDetailsButtonSetting = function(aPriorities) {
+		this.setProperty("detailsButtonSetting", aPriorities, true);
+		return this;
+	};
 
 	ResponsiveTableType.prototype.updateRelevantTableProperty = function(oTable, sProperty, vValue) {
 		if (oTable && oTable.isA("sap.m.Table")) {
@@ -167,11 +188,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Set property 'hiddenInPopin' to ['Low'] on the ResponsiveTable
-	 * if {@param bValue} is set to {true} to hide columns with 'Low' importance property.
+	 * Set property 'hiddenInPopin' on the inner ResponsiveTable to hide columns based on SmartTable configuration
+	 * of 'showDetailsButton' and 'detailsButtonSetting' if {@param bValue} is set to {true}.
 	 * Otherwise an empty array is set to show all columns.
 	 *
-	 * @param {boolean} bValue - indicator to hide details of not
+	 * @param {boolean} bValue - indicator to hide details or not
 	 * @private
 	 */
 	ResponsiveTableType.prototype._toggleShowDetails = function(bValue) {
@@ -181,7 +202,12 @@ sap.ui.define([
 
 		var oTable = this.getRelevantTable();
 		this.bHideDetails = bValue;
-		this.bHideDetails ? oTable.setHiddenInPopin(["Low"]) : oTable.setHiddenInPopin([]);
+
+		if (this.bHideDetails) {
+			oTable.setHiddenInPopin(this._getImportanceToHide());
+		} else {
+			oTable.setHiddenInPopin([]);
+		}
 		this._renderShowDetailsButton();
 	};
 
@@ -196,6 +222,26 @@ sap.ui.define([
 			});
 		}
 		return this._oShowDetailsButton;
+	};
+
+	/**
+	 * Helper function to get the importance of the columns that should be hidden based on
+	 * SmartTable configuration.
+	 *
+	 * @returns {array} sap.ui.core.Priority[]
+	 * @private
+	 */
+	ResponsiveTableType.prototype._getImportanceToHide = function() {
+		var aDetailsButtonSetting = this.getDetailsButtonSetting() || [];
+		var aImportanceToHide = [];
+
+		if (aDetailsButtonSetting.length) {
+			aImportanceToHide = aDetailsButtonSetting;
+		} else {
+			aImportanceToHide = Device.system.phone ? ["Low", "Medium"] : ["Low"];
+		}
+
+		return aImportanceToHide;
 	};
 
 	/**
