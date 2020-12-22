@@ -464,7 +464,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Resolve relative url", function (assert) {
-
 		var done = assert.async();
 
 		// Arrange
@@ -481,17 +480,12 @@ sap.ui.define([
 		this.oCard.setManifest({
 			"sap.app": {
 				"type": "card",
-				"id": "card1"
+				"id": "test.dataProvider.card1"
 			},
 			"sap.card": {
 				"type": "List",
 				"header": {
-					"title": "List Card",
-					"subTitle": "Card subtitle",
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"status": "100 of 200"
+					"title": "List Card"
 				},
 				"content": {
 					"data": {
@@ -500,16 +494,9 @@ sap.ui.define([
 						}
 					},
 					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
 						"title": {
 							"value": "{Name}"
-						},
-						"description": {
-							"value": "{Description}"
-						},
-						"highlight": "{highlight}"
+						}
 					}
 				}
 			}

@@ -95,13 +95,12 @@ function (
 			assert.strictEqual(oModel.getProperty(sSamplePath), sSampleResult, "The property returns the sample result the second time.");
 			assert.ok(fnSpy.calledOnce, "Host#getContextValue is called once.");
 
+			// cleanup
+			oModel.destroy();
+			oHost.destroy();
+			fnSpy.restore();
 			done();
 		});
-
-		// cleanup
-		oModel.destroy();
-		oHost.destroy();
-		fnSpy.restore();
 	});
 
 	QUnit.test("Call #getProperty with Host which never resolves", function (assert) {
@@ -122,15 +121,15 @@ function (
 
 		oModel.waitForPendingProperties().then(function () {
 			assert.strictEqual(oModel.getProperty(sSamplePath), null, "The property is null. The promise has timed out.");
+
+			// cleanup
+			oModel.destroy();
+			oHost.destroy();
 			done();
 		});
 
 		// act
 		this.clock.tick(Utils.DEFAULT_PROMISE_TIMEOUT + 100);
-
-		// cleanup
-		oModel.destroy();
-		oHost.destroy();
 	});
 
 	QUnit.module("In card context", {
