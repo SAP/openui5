@@ -47,6 +47,24 @@ sap.ui.define([
 	/**
 	 * @override
 	 */
+	BaseListContent.prototype.init = function () {
+		BaseContent.prototype.init.apply(this, arguments);
+
+		this._oAwaitingPromise = null;
+	};
+
+	/**
+	 * @override
+	 */
+	BaseListContent.prototype.exit = function () {
+		BaseContent.prototype.exit.apply(this, arguments);
+
+		this._oAwaitingPromise = null;
+	};
+
+	/**
+	 * @override
+	 */
 	BaseListContent.prototype.setConfiguration = function (oConfiguration, sType) {
 		if (!oConfiguration) {
 			return this;
@@ -114,9 +132,9 @@ sap.ui.define([
 			oModel = oBindingInfo.getModel(),
 			sPath = oBindingInfo.getPath(),
 			aItems = oModel.getProperty(sPath),
+			aPromises = [],
 			oAction = mItemConfig.actions[0],
 			sBasePath = sPath.trim().replace(/\/$/, ""),
-			aPromises = [],
 			sActionName;
 
 		if (!(oAction && oAction.service && oAction.type === "Navigation")) {
@@ -129,42 +147,52 @@ sap.ui.define([
 			sActionName = oAction.service;
 		}
 
+		// create new promises
 		aItems.forEach(function (oItem, iIndex) {
 			var mParameters = BindingResolver.resolveValue(
 				oAction.parameters,
 				this,
 				sBasePath + "/" + iIndex
 			);
-			if (oItem._card_item_hidden !== undefined) {
-				return;
-			}
+
 			oItem._card_item_hidden = false;
 
-			aPromises.push(this._oServiceManager.getService(sActionName)
-				.then(function (oNavigationService) {
-					if (!oNavigationService.hidden) {
-						return Promise.resolve();
-					}
+			aPromises.push(
+				this._oServiceManager
+					.getService(sActionName)
+					.then(function (oNavigationService) {
+						if (!oNavigationService.hidden) {
+							return Promise.resolve();
+						}
 
-					return oNavigationService
-						.hidden({
-							parameters: mParameters
-						})
-						.then(function (bHidden) {
-							oItem._card_item_hidden = bHidden;
-							oModel.checkUpdate(true);
-						});
-				})
-				.catch(function (sMessage) {
-					Log.error(sMessage);
-				})
+						return oNavigationService.hidden({ parameters: mParameters });
+					})
+					.then(function (bHidden) {
+						oItem._card_item_hidden = bHidden;
+						oModel.checkUpdate(true);
+					})
+					.catch(function (sMessage) {
+						Log.error(sMessage);
+					})
 			);
 		}.bind(this));
 
 		oModel.checkUpdate(true);
+		this._awaitPromises(aPromises);
+	};
 
-		Promise.all(aPromises).then(function () {
-			this.fireEvent("_filterNavItemsReady");
+	/**
+	 * Awaits the promises for the current items and then fires "_filterNavItemsReady" event.
+	 * @param {Promise[]} aPromises The current promises
+	 */
+	BaseListContent.prototype._awaitPromises = function (aPromises) {
+		var pCurrent = this._oAwaitingPromise = Promise.all(aPromises);
+
+		pCurrent.then(function () {
+			// cancel if promises changed in the meantime
+			if (this._oAwaitingPromise === pCurrent) {
+				this.fireEvent("_filterNavItemsReady");
+			}
 		}.bind(this));
 	};
 

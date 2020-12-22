@@ -216,6 +216,13 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"cards/BaseListContent": {
+				coverage: {
+					only: [
+						"sap/ui/integration/cards/BaseListContent"
+					]
+				}
+			},
 			"controls/ActionsToolbar": {},
 			"controls/ListContentItem": {},
 			"controls/Microchart": {},
