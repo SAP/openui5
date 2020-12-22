@@ -107,8 +107,7 @@ sap.ui.define([
 	GenericTagRenderer._getAriaLabelledBy = function(oControl) {
 		var aLabelledBy = [],
 			sId = oControl.getId(),
-			sTagValueId = this._getTagValueId(oControl),
-			sTagValueState = this._getTagValueState(oControl);
+			sTagValueId = this._getTagValueId(oControl);
 
 		if (oControl.getStatus() !== ValueState.None) {
 			aLabelledBy.push(sId + "-status");
@@ -119,10 +118,6 @@ sap.ui.define([
 		aLabelledBy.push(
 			oControl.getValueState() === GenericTagValueState.Error ? sId + "-errorIcon" : sTagValueId
 		);
-
-		if (sTagValueState && sTagValueState !== ValueState.None) {
-			aLabelledBy.push(sTagValueId + '-state');
-		}
 
 		return aLabelledBy;
 	};
@@ -155,12 +150,6 @@ sap.ui.define([
 		var oValue = oControl.getValue();
 
 		return oValue ? oValue.getId() : "";
-	};
-
-	GenericTagRenderer._getTagValueState = function(oControl) {
-		var oValue = oControl.getValue();
-
-		return oValue ? oValue.getState() : "";
 	};
 
 	return GenericTagRenderer;
