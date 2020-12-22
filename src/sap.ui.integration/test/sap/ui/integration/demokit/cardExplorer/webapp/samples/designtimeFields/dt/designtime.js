@@ -219,12 +219,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"values": {
 							"data": {
-								"json": [
-									{ "text": "From JSON 1", "key": "key1" },
-									{ "text": "From JSON 2", "key": "key2" },
-									{ "text": "From JSON 3", "key": "key3" }
-								],
-								"path": "/"
+								"json": {
+									"values": [
+										{ "text": "From JSON 1", "key": "key1" },
+										{ "text": "From JSON 2", "key": "key2" },
+										{ "text": "From JSON 3", "key": "key3" }
+									]
+								},
+								"path": "/values"
 							},
 							"item": {
 								"text": "{text}",
@@ -240,7 +242,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"request": {
 									"url": "./dt/listdata.json"
 								},
-								"path": "/"
+								"path": "/values"
 							},
 							"item": {
 								"text": "{text}",
