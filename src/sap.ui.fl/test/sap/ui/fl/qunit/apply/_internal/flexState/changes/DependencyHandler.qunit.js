@@ -147,6 +147,25 @@ sap.ui.define([
 			assert.deepEqual(mChangesMap, mExpectedChangesMap, "the callback was added to the changes map");
 		});
 
+		QUnit.test("'insertChange' is called", function (assert) {
+			var oReferenceChange = this.mChangesMap.aChanges[2];
+			var sReferenceChangeFileName = oReferenceChange.getFileName();
+			var oNewFileName = "newChangeFileName";
+			var oNewChange = createChange({ fileName: oNewFileName });
+			DependencyHandler.insertChange(oNewChange, this.mChangesMap, oReferenceChange);
+			assert.strictEqual(this.mChangesMap.aChanges[2].getFileName(), sReferenceChangeFileName, "then the reference change is still on the same position in the map");
+			assert.strictEqual(this.mChangesMap.aChanges[3].getFileName(), oNewFileName, "then the newly created change is positioned right after the reference change");
+		});
+
+		QUnit.test("'insertChange' is called and the refernce change is not in the changes map", function (assert) {
+			var sReferenceChangeFileName = "referenceChangeFileName";
+			var sNewFileName = "newChangeFileName";
+			var oReferenceChange = createChange({ fileName: sReferenceChangeFileName });
+			var oNewChange = createChange({ fileName: sNewFileName });
+			DependencyHandler.insertChange(oNewChange, this.mChangesMap, oReferenceChange);
+			assert.strictEqual(this.mChangesMap.aChanges.indexOf(oNewChange), -1, "then the new change is not inserted to the changes map");
+		});
+
 		QUnit.test("addChangeAndUpdateDependencies: when the changes are added to the map", function(assert) {
 			var mChangesMap = getInitialChangesMap();
 			var mExpectedChangesMap = getInitialChangesMap({

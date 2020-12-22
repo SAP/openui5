@@ -88,7 +88,7 @@ sap.ui.define([
 						//If the component creation is async, the changesMap already created without changes on EP --> it need to be updated
 						//Otherwise, update the selector of changes is enough, change map will be created later correctly
 						if (oChangePersistence.isChangeMapCreated()) {
-							oChangePersistence._addChangeAndUpdateDependencies(mPropertyBag.appComponent, oChange);
+							oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oChange);
 						}
 					}
 				});
