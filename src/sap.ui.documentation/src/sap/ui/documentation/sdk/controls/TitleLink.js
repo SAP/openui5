@@ -3,11 +3,11 @@
  */
 sap.ui.define([
 	'sap/ui/core/library',
+	'sap/ui/util/defaultLinkTypes',
 	'sap/ui/Device',
 	'sap/m/Toolbar',
-	'sap/m/Title',
-	'jquery.sap.script'
-], function(coreLibrary, Device, Toolbar, Title, jQuery) {
+	'sap/m/Title'
+], function(coreLibrary, defaultLinkTypes, Device, Toolbar, Title) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextAlign
@@ -128,7 +128,7 @@ sap.ui.define([
 		},
 
 		setTarget : function(sTarget){
-			var sRelToRender = jQuery.sap.defaultLinkTypes(this.getRel(), this.getHref(), this.getTarget());
+			var sRelToRender = defaultLinkTypes(this.getRel(), this.getHref(), this.getTarget());
 			this.setProperty("target", sTarget, true);
 			if (!sTarget) {
 				this.$().removeAttr("target");
@@ -212,7 +212,7 @@ sap.ui.define([
 			if (oTitle.getTarget()) {
 				oRm.writeAttributeEscaped("target", oTitle.getTarget());
 			}
-			var sRelToRender = jQuery.sap.defaultLinkTypes(oTitle.getRel(), oTitle.getHref(), oTitle.getTarget());
+			var sRelToRender = defaultLinkTypes(oTitle.getRel(), oTitle.getHref(), oTitle.getTarget());
 			if (sRelToRender) {
 				oRm.writeAttributeEscaped("rel", sRelToRender);
 			}

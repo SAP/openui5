@@ -14,10 +14,11 @@ sap.ui.define([
 	'sap/base/util/JSTokenizer',
 	'sap/base/util/merge',
 	'sap/base/util/UriParameters',
-	"sap/ui/Device",
-	'sap/ui/thirdparty/URI'
+	'sap/ui/util/openWindow',
+	'sap/ui/util/isCrossOriginURL',
+	'sap/ui/util/defaultLinkTypes'
 ], function(jQuery, uid, hash, uniqueSort, deepEqual, each, diff, JSTokenizer, merge, UriParameters,
-			Device, URI) {
+			openWindow, isCrossOriginURL, defaultLinkTypes) {
 	"use strict";
 
 	/**
@@ -574,23 +575,9 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 * @since 1.60.33
+	 * @deprecated since 1.60 use the <code>sap/ui/util/openWindow</code> module instead
 	 */
-	jQuery.sap.openWindow = function(sUrl, sWindowName) {
-		var sWindowFeatures;
-		if (sWindowName !== "_self" && jQuery.sap.isCrossOriginURL(sUrl)) {
-			sWindowFeatures = "noopener,noreferrer";
-			// ensure that, in IE11, opener cannot be accessed by early code
-			if (Device.browser.msie || Device.browser.edge) {
-				var oNewWindow = window.open("about:blank", sWindowName, sWindowFeatures);
-				if (oNewWindow) {
-					oNewWindow.opener = null;
-					oNewWindow.location.href = sUrl;
-				}
-				return null;
-			}
-		}
-		return window.open(sUrl, sWindowName, sWindowFeatures);
-	};
+	jQuery.sap.openWindow = openWindow;
 
 	/**
 	 * Determines default link types for an &lt;a&gt; tag that comply with
@@ -607,17 +594,9 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 * @since 1.60.33
+	 * @deprecated since 1.60 use the <code>sap/ui/util/defaultLinkTypes</code> module instead
 	 */
-	jQuery.sap.defaultLinkTypes = function(sRel, sHref, sTarget) {
-		// trim rel and finally return the trimmed value
-		sRel = typeof sRel === "string" ? sRel.trim() : sRel;
-		// if the app already specified a non-empty value for rel, or when there's no need
-		// to restrict access to the opener, then leave rel unchanged
-		if (!sRel && sTarget && sTarget !== "_self" && jQuery.sap.isCrossOriginURL(sHref)) {
-			return "noopener noreferrer";
-		}
-		return sRel;
-	};
+	jQuery.sap.defaultLinkTypes = defaultLinkTypes;
 
 	/**
 	 * If the given URL is cross-origin, checks whether its origin is different from
@@ -628,16 +607,9 @@ sap.ui.define([
 	 * @private
 	 * @ui5-restricted
 	 * @since 1.60.33
+	 * @deprecated since 1.60 use the <code>sap/ui/util/isCrossOriginURL</code> module instead
 	 */
-	jQuery.sap.isCrossOriginURL = function(sHref) {
-		// Code can be similfied during IE11 cleanup as URL API can handle URNs without errors:
-		// --> new URL("mailto:info.germany@sap.com', document.baseURI).toString()
-		var oURI = new URI(sHref),
-			oURI = oURI.is("relative") ? oURI.absoluteTo(document.baseURI) : oURI,
-			sOrigin = window.location.origin || new URI().origin();
-
-		return oURI.origin() !== sOrigin;
-	};
+	jQuery.sap.isCrossOriginURL = isCrossOriginURL;
 
 	return jQuery;
 
