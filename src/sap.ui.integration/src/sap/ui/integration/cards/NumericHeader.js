@@ -41,10 +41,9 @@ sap.ui.define([
 	 */
 	var NumericHeader = FNumericHeader.extend("sap.ui.integration.cards.NumericHeader", {
 
-		constructor: function (mConfiguration, oActionsToolbar, sAppId) {
+		constructor: function (mConfiguration, oActionsToolbar) {
 
 			mConfiguration = mConfiguration || {};
-			this._sAppId = sAppId;
 
 			this._bIsEmpty = isEmptyObject(mConfiguration);
 

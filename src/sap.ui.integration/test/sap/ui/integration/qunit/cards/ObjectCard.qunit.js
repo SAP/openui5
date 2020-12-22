@@ -31,11 +31,11 @@ sap.ui.define([
 					"position": "Sales Executive",
 					"phone": "+1 202 555 5555",
 					"email": "my@mymail.com",
-					"photo": "./images/Woman_avatar_01.png",
+					"photo": "images/Woman_avatar_01.png",
 					"manager": {
 						"firstName": "John",
 						"lastName": "Miller",
-						"photo": "./images/Woman_avatar_01.png"
+						"photo": "images/Woman_avatar_01.png"
 					},
 					"company": {
 						"name": "Robert Brown Entertainment",
@@ -137,11 +137,11 @@ sap.ui.define([
 					"position": "Sales Executive",
 					"phone": "+1 202 555 5555",
 					"email": "my@mymail.com",
-					"photo": "./images/Woman_avatar_01.png",
+					"photo": "images/Woman_avatar_01.png",
 					"manager": {
 						"firstName": "John",
 						"lastName": "Miller",
-						"photo": "./images/Woman_avatar_02.png"
+						"photo": "images/Woman_avatar_02.png"
 					},
 					"company": {
 						"name": "Robert Brown Entertainment",
