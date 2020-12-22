@@ -514,12 +514,14 @@ sap.ui.define([
 	VariantModel.prototype.removeChange = function(oChange) {
 		var sVariantReference = oChange.getVariantReference();
 		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference).variantManagementReference;
-		return VariantManagementState.removeChangeFromVariant({
+		var bRemoved = VariantManagementState.removeChangeFromVariant({
 			reference: this.sFlexReference,
 			change: oChange,
 			vmReference: sVariantManagementReference,
 			vReference: sVariantReference
 		});
+		this.checkDirtyStateForControlModels([sVariantManagementReference]);
+		return bRemoved;
 	};
 
 	VariantModel.prototype._getVariantTitleCount = function(sNewText, sVariantManagementReference) {
@@ -1045,9 +1047,9 @@ sap.ui.define([
 		}
 		oControl.detachManage(this.fnManageClick, this); /* attach done below */
 
-		if (bDesignTimeModeToBeSet) {
+		if (bDesignTimeModeToBeSet && this.oData[sVariantManagementReference]._isEditable) {
 			// Key user adaptation settings
-			this.oData[sVariantManagementReference].variantsEditable = false;
+			this.oData[sVariantManagementReference].variantsEditable = true;
 
 			// Properties for variant management control's internal model
 			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
@@ -1104,10 +1106,36 @@ sap.ui.define([
 		};
 	};
 
-	VariantModel.prototype._handleSave = function(oEvent) {
-		var oVariantManagementControl = oEvent.getSource();
+	function _handleDirtyChanges(oFlexController, aCopiedVariantDirtyChanges, sVariantManagementReference, oAppComponent) {
+		if (!this._bDesignTimeMode) {
+			return oFlexController.saveSequenceOfDirtyChanges(aCopiedVariantDirtyChanges, oAppComponent)
+				.then(function(oResponse) {
+					if (oResponse) {
+						var oResponseData = oResponse.response[0];
+						this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
+							if (oVariant.key === oResponseData.fileName) {
+								oVariant.author = oResponseData.support.user;
+							}
+						});
+					}
+				}.bind(this));
+		}
+		return Promise.resolve();
+	}
+
+	VariantModel.prototype._handleSaveEvent = function(oEvent) {
+		if (!this._bDesignTimeMode) {
+			var oVariantManagementControl = oEvent.getSource();
+			var mParameters = oEvent.getParameters();
+			return this._handleSave(oVariantManagementControl, mParameters);
+		}
+		return Promise.resolve();
+	};
+
+	VariantModel.prototype._handleSave = function(oVariantManagementControl, mParameters) {
 		var oAppComponent = Utils.getAppComponentForControl(oVariantManagementControl);
 		var sVMReference = this.getLocalId(oVariantManagementControl.getId(), oAppComponent);
+		var aNewVariantDirtyChanges;
 
 		return _setVariantModelBusy(function(sVariantManagementReference, oAppComponent, mParameters) {
 			var bSetDefault = mParameters.def;
@@ -1130,12 +1158,14 @@ sap.ui.define([
 					}.bind(this));
 			}
 
+			var sLayer = mParameters.layer || Layer.USER;
+
 			// handle triggered "SaveAs" button
-			var sNewVariantReference = Utils.createDefaultFileName();
+			var sNewVariantReference = mParameters.newVariantReference || Utils.createDefaultFileName();
 			var mPropertyBag = {
 				variantManagementReference: sVariantManagementReference,
 				appComponent: oAppComponent,
-				layer: Layer.USER,
+				layer: sLayer,
 				title: mParameters["name"],
 				sourceVariantReference: sSourceVariantReference,
 				newVariantReference: sNewVariantReference
@@ -1149,7 +1179,7 @@ sap.ui.define([
 							defaultVariant: sNewVariantReference,
 							originalDefaultVariant: this.oData[sVariantManagementReference].defaultVariant,
 							appComponent: oAppComponent,
-							layer: Layer.USER,
+							layer: sLayer,
 							variantManagementReference: sVariantManagementReference
 						};
 						var oSetDefaultChange = this.setVariantProperties(sVariantManagementReference, mPropertyBagSetDefault, true);
@@ -1161,7 +1191,7 @@ sap.ui.define([
 							executeOnSelect: true,
 							variantReference: sNewVariantReference,
 							appComponent: oAppComponent,
-							layer: Layer.USER,
+							layer: sLayer,
 							variantManagementReference: sVariantManagementReference
 						};
 						var oSetExecuteChange = this.setVariantProperties(sVariantManagementReference, mPropertyBagSetExecute, true);
@@ -1169,6 +1199,7 @@ sap.ui.define([
 					}
 					this.oData[sVariantManagementReference].modified = false;
 					this.checkUpdate(true);
+					aNewVariantDirtyChanges = aCopiedVariantDirtyChanges;
 					// unsaved changes on the source variant are removed before copied variant changes are saved
 					return _eraseDirtyChanges({
 						changes: aSourceVariantChanges,
@@ -1176,19 +1207,12 @@ sap.ui.define([
 						vReference: sSourceVariantReference,
 						model: this
 					})
-						.then(this.oFlexController.saveSequenceOfDirtyChanges.bind(this.oFlexController, aCopiedVariantDirtyChanges, oAppComponent))
-						.then(function(oResponse) {
-							if (oResponse) {
-								var oResponseData = oResponse.response[0];
-								this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
-									if (oVariant.key === oResponseData.fileName) {
-										oVariant.author = oResponseData.support.user;
-									}
-								});
-							}
-						}.bind(this));
+						.then(_handleDirtyChanges.bind(this, this.oFlexController, aCopiedVariantDirtyChanges, sVariantManagementReference, oAppComponent));
 				}.bind(this));
-		}.bind(this, sVMReference, oAppComponent, oEvent.getParameters()), this, sVMReference);
+		}.bind(this, sVMReference, oAppComponent, mParameters), this, sVMReference)
+			.then(function() {
+				return aNewVariantDirtyChanges;
+			});
 	};
 
 	VariantModel.prototype.getLocalId = function(sId, oAppComponent) {
@@ -1246,7 +1270,7 @@ sap.ui.define([
 		}, _variantSelectHandler);
 
 		// save / saveAs
-		oVariantManagementControl.attachSave(this._handleSave, this);
+		oVariantManagementControl.attachSave(this._handleSaveEvent, this);
 
 		// set model's properties specific to control's appearance
 		this.setModelPropertiesForControl(sVariantManagementReference, false, oVariantManagementControl);
@@ -1298,7 +1322,7 @@ sap.ui.define([
 		});
 
 		return this.oChangePersistence.getDirtyChanges().filter(function(oChange) {
-			return includes(aChangeFileNames, oChange.getId());
+			return includes(aChangeFileNames, oChange.getId()) && !oChange.assignedToVariant;
 		});
 	};
 

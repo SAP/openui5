@@ -77,7 +77,7 @@ sap.ui.define([
 	});
 
 	/**
-	 * Register an overlay
+	 * Registers an overlay.
 	 *
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
 	 * @override
@@ -129,7 +129,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Top-down approach for setting VariantManagement reference to all children overlays
+	 * Top-down approach for setting VariantManagement reference to all children overlays.
 	 *
 	 * @param {sap.ui.dt.Overlay} oParentElementOverlay overlay object for which children overlays are computed
 	 * @param {string} sVariantManagementReference VariantManagement reference to be set
@@ -149,7 +149,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Bottom-up approach for setting VariantManagement reference from parent ElementOverlays
+	 * Bottom-up approach for setting VariantManagement reference from parent ElementOverlays.
 	 *
 	 * @param {sap.ui.dt.Overlay} oOverlay overlay object for which VariantManagement reference is to be set
 	 * @returns {string} VariantManagement reference
@@ -203,9 +203,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if variant switch is available for oOverlay
+	 * Checks if variant switch is available for oOverlay.
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay object
-	 * @return {boolean} true if available
+	 * @return {boolean} <code>true</code> if available
 	 * @public
 	 */
 	ControlVariant.prototype.isVariantSwitchAvailable = function (oElementOverlay) {
@@ -213,9 +213,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if Variant Switch is enabled for oOverlay
+	 * Checks if Variant Switch is enabled for oOverlay.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
-	 * @return {boolean} true if enabled
+	 * @return {boolean} <code>true</code> if enabled
 	 * @public
 	 */
 	ControlVariant.prototype.isVariantSwitchEnabled = function (aElementOverlays) {
@@ -250,10 +250,10 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if variant rename is available for the overlay
+	 * Checks if variant rename is available for the overlay.
 	 *
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay object
-	 * @return {boolean} true if available
+	 * @return {boolean} <code>true</code> if available
 	 * @public
 	 */
 	ControlVariant.prototype.isRenameAvailable = function (oElementOverlay) {
@@ -261,9 +261,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if variant rename is enabled for the overlays
+	 * Checks if variant rename is enabled for the overlays.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
-	 * @return {boolean} true if available
+	 * @return {boolean} <code>true</code> if available
 	 * @public
 	 */
 	ControlVariant.prototype.isRenameEnabled = function (aElementOverlays) {
@@ -271,34 +271,49 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if variant duplicate is available for the overlay
+	 * Checks if variant Save is available for the overlay.
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay object
-	 * @return {boolean} true if available
+	 * @return {boolean} <code>true</code> if available
 	 * @public
 	 */
-	ControlVariant.prototype.isVariantDuplicateAvailable = function (oElementOverlay) {
+	ControlVariant.prototype.isVariantSaveAvailable = function (oElementOverlay) {
 		return this._isVariantManagementControl(oElementOverlay);
 	};
 
 	/**
-	 * Checks if variant duplicate is enabled for the overlays
+	 * Checks if variant Save is enabled for the overlays.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
-	 * @return {boolean} true if available
+	 * @return {boolean} <code>true</code> if available
 	 * @public
 	 */
-	ControlVariant.prototype.isVariantDuplicateEnabled = function (aElementOverlays) {
-		var oElementOverlay = aElementOverlays[0];
-		var sVariantManagementReference = oElementOverlay.getVariantManagement ? oElementOverlay.getVariantManagement() : undefined;
-		if (!sVariantManagementReference || !this._isVariantManagementControl(oElementOverlay)) {
-			return false;
-		}
-		return true;
+	ControlVariant.prototype.isVariantSaveEnabled = function (aElementOverlays) {
+		return this._isVariantManagementControl(aElementOverlays[0]);
 	};
 
 	/**
-	 * Checks if variant configure is available for the overlay
+	 * Checks if variant SaveAs is available for the overlay.
 	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay object
-	 * @return {boolean} true if available
+	 * @return {boolean} <code>true</code> if available
+	 * @public
+	 */
+	ControlVariant.prototype.isVariantSaveAsAvailable = function (oElementOverlay) {
+		return this._isVariantManagementControl(oElementOverlay);
+	};
+
+	/**
+	 * Checks if variant SaveAs is enabled for the overlays.
+	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
+	 * @return {boolean} <code>true</code> if available
+	 * @public
+	 */
+	ControlVariant.prototype.isVariantSaveAsEnabled = function (aElementOverlays) {
+		return this._isVariantManagementControl(aElementOverlays[0]);
+	};
+
+	/**
+	 * Checks if variant configure is available for the overlay.
+	 * @param {sap.ui.dt.ElementOverlay} oElementOverlay - Overlay object
+	 * @return {boolean} <code>true</code> if available
 	 * @public
 	 */
 	ControlVariant.prototype.isVariantConfigureAvailable = function (oElementOverlay) {
@@ -306,9 +321,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Checks if variant configure is enabled for oOverlay
+	 * Checks if variant configure is enabled for oOverlay.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
-	 * @return {boolean} true if available
+	 * @return {boolean} <code>true</code> if available
 	 * @public
 	 */
 	ControlVariant.prototype.isVariantConfigureEnabled = function (aElementOverlays) {
@@ -316,7 +331,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Performs a variant switch
+	 * Performs a variant switch.
 	 *
 	 * @param {object} oTargetOverlay Target variant management overlay
 	 * @param {String} sNewVariantReference The new variant reference
@@ -344,7 +359,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Performs a variant set title
+	 * Performs a variant set title.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @public
 	 */
@@ -355,52 +370,54 @@ sap.ui.define([
 	};
 
 	ControlVariant.prototype.startEdit = function(oVariantManagementOverlay) {
-		var oVariantManagementControl = oVariantManagementOverlay.getElement();
 		var vDomRef = oVariantManagementOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
-		var oVariantTitleElement = oVariantManagementControl.getTitle();
-		var sPreviousText = oVariantTitleElement.getText();
 		var fnHandleStartEdit = RenameHandler.startEdit.bind(this, {
 			overlay: oVariantManagementOverlay,
 			domRef: vDomRef,
 			pluginMethodName: "plugin.ControlVariant.startEdit"
 		});
 
-		if (oVariantManagementOverlay._triggerDuplicate) {
-			var sCustomTextForDuplicate = this._getVariantTitleForCopy(
-				sPreviousText,
-				oVariantManagementOverlay.getVariantManagement(),
-				this._getVariantModel(oVariantManagementControl).getData()
-			);
-
-			oVariantManagementControl.getTitle().setText(sCustomTextForDuplicate);
-
-			if (oVariantManagementOverlay.hasStyleClass(RenameHandler.errorStyleClass)) {
-				fnHandleStartEdit();
-			} else {
-				oVariantManagementOverlay.attachEventOnce("geometryChanged", function() {
-					fnHandleStartEdit();
-				}, this);
-			}
-		} else {
-			fnHandleStartEdit();
-		}
+		fnHandleStartEdit();
 	};
 
 	ControlVariant.prototype.stopEdit = function (bRestoreFocus) {
-		if (this._oEditedOverlay._triggerDuplicate) {
-			if (!this._oEditedOverlay.hasStyleClass(RenameHandler.errorStyleClass)) {
-				delete this._oEditedOverlay._triggerDuplicate;
-			}
-		}
-
 		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.ControlVariant.stopEdit");
 	};
 
-	ControlVariant.prototype._createDuplicateCommand = function (mPropertyBag) {
-		return this.getCommandFactory().getCommandFor(mPropertyBag.element, "duplicate", {
-			sourceVariantReference: mPropertyBag.currentVariantReference,
-			newVariantTitle: mPropertyBag.newVariantTitle
-		}, mPropertyBag.designTimeMetadata, mPropertyBag.variantManagementReference);
+	ControlVariant.prototype.createSaveCommand = function (aElementOverlays) {
+		var oOverlay = aElementOverlays[0];
+		var oElement = oOverlay.getElement();
+		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+		var oModel = this._getVariantModel(oElement);
+		var sVariantManagementReference = oOverlay.getVariantManagement();
+
+		return this.getCommandFactory().getCommandFor(oElement, "save", {
+			model: oModel
+		}, oDesignTimeMetadata, sVariantManagementReference)
+			.then(function(oSaveCommand) {
+				this.fireElementModified({
+					command: oSaveCommand
+				});
+			}.bind(this));
+	};
+
+	ControlVariant.prototype.createSaveAsCommand = function (aElementOverlays) {
+		var oOverlay = aElementOverlays[0];
+		var oElement = oOverlay.getElement();
+		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
+		var oModel = this._getVariantModel(oElement);
+		var sVariantManagementReference = oOverlay.getVariantManagement();
+		var sCurrentVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
+
+		return this.getCommandFactory().getCommandFor(oElement, "saveAs", {
+			sourceVariantReference: sCurrentVariantReference,
+			model: oModel
+		}, oDesignTimeMetadata, sVariantManagementReference)
+			.then(function(oSaveAsCommand) {
+				this.fireElementModified({
+					command: oSaveAsCommand
+				});
+			}.bind(this));
 	};
 
 	/**
@@ -419,7 +436,6 @@ sap.ui.define([
 		var bNewEntry = bTextChanged || oOverlay._triggerDuplicate;
 		var iDuplicateCount = bNewEntry ? oModel._getVariantTitleCount(sText, sVariantManagementReference) : 0;
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-		var sCurrentVariantReference = oModel.getCurrentVariantReference(sVariantManagementReference);
 
 		oOverlay.removeStyleClass(RenameHandler.errorStyleClass);
 
@@ -437,30 +453,8 @@ sap.ui.define([
 			})
 
 			.then(function(oSetTitleCommand) {
-				if (oOverlay._triggerDuplicate) {
-					return this._createDuplicateCommand({
-						currentVariantReference: sCurrentVariantReference,
-						designTimeMetadata: oDesignTimeMetadata,
-						variantManagementReference: sVariantManagementReference,
-						element: oRenamedElement,
-						newVariantTitle: this.getOldValue()})
-
-					.then(function(oDuplicateCommand) {
-						return new CompositeCommand({
-							commands: [oDuplicateCommand]
-						});
-					})
-
-					.then(function(oCompositeCommand) {
-						return bTextChanged ? oCompositeCommand.addCommand(oSetTitleCommand) : oCompositeCommand;
-					});
-				}
-				return oSetTitleCommand;
-			}.bind(this))
-
-			.then(function(oCommand) {
 				this.fireElementModified({
-					command: oCommand
+					command: oSetTitleCommand
 				});
 			}.bind(this))
 
@@ -496,88 +490,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Calculates title string for a duplicated variant
-	 *
-	 * For single copy - {0} is filled with the source variant title
-	 * E.g. if resource bundle text pattern is {0} Copy;
-	 * Duplicate (Source = 'Standard') -> 'Standard Copy'
-	 *
-	 * For multiple copies - {0} is filled with source variant title (no copy/counter) and {1} is filled with the highest counter of source variant tile
-	 * E.g. if resource bundle text pattern is {0} Copy {1};
-	 * Duplicate (Source = 'Standard Copy 1', with 'Standard Copy 5' already existing) -> 'Standard Copy 6'
-	 *
-	 * @param {String} sSourceVariantTitle Source variant title
-	 * @param {String} sVariantManagementReference Variant management reference belonging to the variants
-	 * @param {object} oData Variant Model (sap.ui.fl.variants.VariantModel) data
-	 * @returns {String} Returns the duplicate variant title
-	 * @private
-	 */
-	ControlVariant.prototype._getVariantTitleForCopy = function(sSourceVariantTitle, sVariantManagementReference, oData) {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl");
-		// \ ^ $ * + ? . ( ) | { } [ ] escaped for regex
-		var sCopyTextSingle =
-			oResourceBundle.getText("VARIANT_COPY_SINGLE_TEXT")
-				.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
-				.replace("\\{0\\}", "(.*)");
-
-		var sCopyTextMultiple =
-			oResourceBundle.getText("VARIANT_COPY_MULTIPLE_TEXT")
-				.replace(/[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|]/g, "\\$&")
-				.replace("\\{0\\}", "(.*)")
-				.replace("\\{1\\}", "([0-9]+)");
-
-		var regexForCopy = new RegExp(sCopyTextSingle + "+");
-		var regexForIncrement = new RegExp(sCopyTextMultiple);
-		var sTitleTrimmed;
-		// calculate index for counter and title
-		var iIndexForCounter = sCopyTextMultiple.lastIndexOf("(.*)") > sCopyTextMultiple.lastIndexOf("([0-9]+)") ? 1 : 2;
-		var iIndexForTrimmedTitle = (iIndexForCounter === 1) ? 2 : 1;
-		var iTitleCounter = 0;
-
-		if (regexForIncrement.test(sSourceVariantTitle)) { /* Case 1: when Copy already has a counter in the end of string */
-			sTitleTrimmed = regexForIncrement.exec(sSourceVariantTitle)[iIndexForTrimmedTitle];
-		} else {
-			sTitleTrimmed =
-				regexForCopy.test(sSourceVariantTitle)
-					? regexForCopy.exec(sSourceVariantTitle)[1] /* Case 2: when Copy already exists at the end of string */
-					: sSourceVariantTitle; /* Case 3: when there is no copy or counter in the end of string */
-		}
-
-		var aRegexExecOnVariantTitle = [];
-		oData[sVariantManagementReference].variants.forEach(function(oVariant) {
-			if (oVariant.visible) {
-				aRegexExecOnVariantTitle =
-					regexForIncrement.test(oVariant.title)
-						? regexForIncrement.exec(oVariant.title)
-						: regexForCopy.exec(oVariant.title);
-
-				if (!aRegexExecOnVariantTitle) {
-					return;
-				}
-				/* First copy with counter is matched, if not, then only copy is matched */
-				if (
-					aRegexExecOnVariantTitle.length === 3
-					&& sTitleTrimmed === aRegexExecOnVariantTitle[iIndexForTrimmedTitle]
-					&& iTitleCounter <= parseInt(aRegexExecOnVariantTitle[iIndexForCounter])
-				) {
-					// Extract integer part & increment counter
-					iTitleCounter =
-						aRegexExecOnVariantTitle[iIndexForCounter]
-							? (parseInt(aRegexExecOnVariantTitle[iIndexForCounter]) + 1)
-							: iTitleCounter;
-				} else if (aRegexExecOnVariantTitle.length === 2
-					&& sTitleTrimmed === aRegexExecOnVariantTitle[1]) {
-					iTitleCounter = iTitleCounter === 0 ? 1 : iTitleCounter;
-				}
-			}
-		});
-		return iTitleCounter > 0
-			? oResourceBundle.getText("VARIANT_COPY_MULTIPLE_TEXT", [sTitleTrimmed, iTitleCounter])
-			: oResourceBundle.getText("VARIANT_COPY_SINGLE_TEXT", [sTitleTrimmed]);
-	};
-
-	/**
-	 * sets the domref text, creates a setTitle command and fires element modified
+	 * Sets the domref text, creates a setTitle command and fires element modified.
 	 * @param {map} mPropertyBag - (required) contains required properties to create the command
 	 * @returns {object} setTitle command
 	 * @private
@@ -595,7 +508,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * prepares overlay for showing a value state message
+	 * Prepares overlay for showing a value state message.
 	 * @param {object} oOverlay Overlay which needs be prepared
 	 * @param {string} sValueStateText value state text that needs to be set
 	 * @private
@@ -614,7 +527,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Opens a dialog for Variant configuration
+	 * Opens a dialog for Variant configuration.
 	 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
 	 * @public
 	 */
@@ -666,7 +579,7 @@ sap.ui.define([
 		if (this.isRenameAvailable(oElementOverlay)) {
 			aMenuItems.push({
 				id: "CTX_VARIANT_SET_TITLE",
-				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_RENAME'),
+				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_RENAME"),
 				handler: this.renameVariant.bind(this),
 				enabled: this.isRenameEnabled.bind(this),
 				rank: 210,
@@ -674,16 +587,24 @@ sap.ui.define([
 			});
 		}
 
-		if (this.isVariantDuplicateAvailable(oElementOverlay)) {
+		if (this.isVariantSaveAvailable(oElementOverlay)) {
 			aMenuItems.push({
-				id: "CTX_VARIANT_DUPLICATE",
-				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_DUPLICATE'),
-				handler: function (aElementOverlays) {
-					aElementOverlays[0]._triggerDuplicate = true;
-					this.renameVariant(aElementOverlays);
-				}.bind(this),
-				enabled: this.isVariantDuplicateEnabled.bind(this),
+				id: "CTX_VARIANT_SAVE",
+				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_VARIANT_SAVE"),
+				handler: this.createSaveCommand.bind(this),
+				enabled: this.isVariantSaveEnabled.bind(this),
 				rank: 220,
+				icon: "sap-icon://save"
+			});
+		}
+
+		if (this.isVariantSaveAsAvailable(oElementOverlay)) {
+			aMenuItems.push({
+				id: "CTX_VARIANT_SAVEAS",
+				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_VARIANT_SAVEAS"),
+				handler: this.createSaveAsCommand.bind(this),
+				enabled: this.isVariantSaveAsEnabled.bind(this),
+				rank: 225,
 				icon: "sap-icon://duplicate"
 			});
 		}
@@ -691,7 +612,7 @@ sap.ui.define([
 		if (this.isVariantConfigureAvailable(oElementOverlay)) {
 			aMenuItems.push({
 				id: "CTX_VARIANT_MANAGE",
-				text: sap.ui.getCore().getLibraryResourceBundle('sap.ui.rta').getText('CTX_VARIANT_MANAGE'),
+				text: sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta").getText("CTX_VARIANT_MANAGE"),
 				handler: this.configureVariants.bind(this),
 				enabled: this.isVariantConfigureEnabled.bind(this),
 				startSection: true,

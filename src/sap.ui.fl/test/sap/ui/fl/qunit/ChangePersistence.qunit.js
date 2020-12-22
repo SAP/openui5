@@ -467,6 +467,7 @@ function(
 				.callThrough()
 				.withArgs({
 					vReference: "variantManagementId",
+					vmReference: "variantManagementId",
 					reference: this.oChangePersistence.getComponentName()
 				})
 				.returns(oVariant);
@@ -480,6 +481,7 @@ function(
 		QUnit.test("when getChangesForComponent is called with a currentLayer parameter and includeCtrlVariants set to true", function(assert) {
 			var oVariant = mockVariableChangesAndGetVariant.call(this);
 			sandbox.stub(LayerUtils, "getMaxLayer").returns(Layer.CUSTOMER);
+			sandbox.stub(VariantManagementState, "getVariantManagementReferences").returns(["variantManagementId"]);
 
 			return this.oChangePersistence.getChangesForComponent({includeCtrlVariants: true}).then(function(aChanges) {
 				assert.equal(aChanges.length, 5, "only changes which are under max layer are returned");
@@ -498,6 +500,7 @@ function(
 
 		QUnit.test("when getChangesForComponent is called without a max layer parameter and includeCtrlVariants set to true", function(assert) {
 			var oVariant = mockVariableChangesAndGetVariant.call(this);
+			sandbox.stub(VariantManagementState, "getVariantManagementReferences").returns(["variantManagementId"]);
 
 			return this.oChangePersistence.getChangesForComponent().then(function(aChanges) {
 				assert.strictEqual(aChanges.length, 5, "then correct no. of changes were returned");

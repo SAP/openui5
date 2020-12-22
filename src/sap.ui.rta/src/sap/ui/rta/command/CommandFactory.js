@@ -316,8 +316,11 @@ function(
 		"switch": {
 			clazz: 'sap.ui.rta.command.ControlVariantSwitch'
 		},
-		duplicate: {
-			clazz: 'sap.ui.rta.command.ControlVariantDuplicate'
+		save: {
+			clazz: 'sap.ui.rta.command.ControlVariantSave'
+		},
+		saveAs: {
+			clazz: 'sap.ui.rta.command.ControlVariantSaveAs'
 		},
 		setTitle: {
 			clazz: 'sap.ui.rta.command.ControlVariantSetTitle'

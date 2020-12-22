@@ -194,7 +194,7 @@ sap.ui.define([
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is initially true");
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, false, "the parameter variantsEditable is set to false for bDesignTimeMode = true");
+			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is set to true for bDesignTimeMode = true");
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is set to true for bDesignTimeMode = false");
 		});
@@ -1291,6 +1291,27 @@ sap.ui.define([
 			}), "then function to add change to variant in variants map was called");
 		});
 
+		QUnit.test("when calling 'removeChange'", function(assert) {
+			var oRemoveVariantStub = sandbox.stub(VariantManagementState, "removeChangeFromVariant");
+			var oCheckDirtyStateSpy = sandbox.spy(this.oModel, "checkDirtyStateForControlModels");
+			var oChange = {
+				fileName: "ChangeToBeRemoved",
+				getVariantReference: function() {
+					return "variant1";
+				}
+			};
+			this.oModel.removeChange(oChange);
+			assert.equal(oRemoveVariantStub.callCount, 1, "then function for removing change from variant was called once");
+			assert.ok(oRemoveVariantStub.calledWith({
+				change: oChange,
+				vmReference: "variantMgmtId1",
+				vReference: oChange.getVariantReference(),
+				reference: this.oModel.sFlexReference
+			}), "then function to remove change from variant in variants map was called");
+			assert.equal(oCheckDirtyStateSpy.callCount, 1, "then dirty state check has been called");
+			assert.ok(oCheckDirtyStateSpy.calledWith(["variantMgmtId1"]), "then dirty state check has been called with the correct vm reference");
+		});
+
 		QUnit.test("when calling 'collectModelChanges'", function(assert) {
 			this.oModel.getData()["variantMgmtId1"].variants[1].title = "test";
 			this.oModel.getData()["variantMgmtId1"].variants[1].favorite = false;
@@ -1362,7 +1383,37 @@ sap.ui.define([
 			assert.ok(this.oModel.fnManageClick, "the function 'this.fnManageClick' is available afterwards");
 		});
 
-		QUnit.test("when calling '_handleSave' with parameter from SaveAs button and default/execute box checked", function(assert) {
+		QUnit.test("when calling '_getDirtyChangesFromVariantChanges'", function(assert) {
+			var oChange1 = new Change({
+				fileName: "change1",
+				selector: {
+					id: "abc123"
+				}
+			});
+			var oChange2 = new Change({
+				fileName: "change2",
+				selector: {
+					id: "abc123"
+				}
+			});
+			var oChange3 = new Change({
+				fileName: "change3",
+				selector: {
+					id: "abc123"
+				}
+			});
+			oChange2.assignedToVariant = true;
+			var aControlChanges = [oChange1, oChange2, oChange3];
+
+			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns(aControlChanges);
+
+			var aDirtyChanges = this.oModel._getDirtyChangesFromVariantChanges(aControlChanges);
+			assert.equal(aDirtyChanges.length, 2, "only two of the given changes are returned as dirty by the model");
+			assert.equal(aDirtyChanges[0].getFileName(), "change1", "change1 is dirty");
+			assert.equal(aDirtyChanges[1].getFileName(), "change3", "change3 is dirty");
+		});
+
+		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default/execute box checked", function(assert) {
 			var done = assert.async();
 			var sVMReference = "variantMgmtId1";
 			var oChange1 = new Change({
@@ -1430,7 +1481,7 @@ sap.ui.define([
 			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves(oResponse);
 			sandbox.spy(Utils, "createDefaultFileName");
 
-			return this.oModel._handleSave(oEvent)
+			return this.oModel._handleSaveEvent(oEvent)
 				.then(function() {
 					var sNewVariantReference = Utils.createDefaultFileName.getCall(0).returnValue;
 					assert.strictEqual(Utils.createDefaultFileName.getCall(0).args.length, 0, "then no argument was passed to sap.ui.fl.Utils.createDefaultFileName");
@@ -1446,7 +1497,7 @@ sap.ui.define([
 
 					assert.equal(this.oModel.setVariantProperties.callCount, 2, "then setVariantProperties() was called twice; for setDefault and setExecuteOnSelect");
 					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.callCount, 1, "then dirty changes were saved");
-					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.args[0][2].length, 6, "then five dirty changes were saved (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change");
+					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.args[0][2].length, 6, "then six dirty changes were saved (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change");
 					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.args[0][2][4].fileName, "changeWithSetDefault", "the last change was 'setDefault'");
 					assert.notOk(this.oModel.getData()[sVMReference].modified, "finally the model property 'modified' was set to false");
 					assert.ok(this.oModel.oFlexController.deleteChange.calledBefore(this.oModel.oChangePersistence.saveDirtyChanges), "the changes were deleted from default variant before the copied variant wass saved");
@@ -1469,7 +1520,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("when calling '_handleSave' with parameter from SaveAs button and default box unchecked", function(assert) {
+		QUnit.test("when calling '_handleSaveEvent' with parameter from SaveAs button and default box unchecked", function(assert) {
 			var done = assert.async();
 			var sVMReference = "variantMgmtId1";
 			var oChange1 = new Change({
@@ -1533,7 +1584,7 @@ sap.ui.define([
 			sandbox.stub(this.oModel, "setVariantProperties").returns({fileName: "changeWithSetDefault"});
 			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves();
 
-			return this.oModel._handleSave(oEvent).then(function() {
+			return this.oModel._handleSaveEvent(oEvent).then(function() {
 				assert.equal(this.oModel.copyVariant.callCount, 1, "then copyVariant() was called once");
 				assert.equal(this.oModel.setVariantProperties.callCount, 0, "then setVariantProperties() was not called");
 				assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.callCount, 1, "then dirty changes were saved");
@@ -1553,7 +1604,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling '_handleSave' with parameter from Save button, which calls 'checkDirtyStateForControlModels' later, with no dirty changes existing after Save", function(assert) {
+		QUnit.test("when calling '_handleSaveEvent' with parameter from Save button, which calls 'checkDirtyStateForControlModels' later, with no dirty changes existing after Save", function(assert) {
 			var sVMReference = "variantMgmtId1";
 			var oChange1 = new Change({
 				fileName: "change1",
@@ -1596,7 +1647,7 @@ sap.ui.define([
 				.callThrough()
 				.onFirstCall().returns([oChange1, oChange2]);
 
-			return this.oModel._handleSave(oEvent).then(function() {
+			return this.oModel._handleSaveEvent(oEvent).then(function() {
 				assert.equal(fnCopyVariantStub.callCount, 0, "CopyVariant is not called");
 				assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");
 				assert.ok(fnSaveDirtyChangesStub.calledOnce, "SaveAll is called");
@@ -1605,7 +1656,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		QUnit.test("when calling '_handleSave' with parameter from Save button, which calls 'checkDirtyStateForControlModels' later, with dirty changes still existing after Save", function(assert) {
+		QUnit.test("when calling '_handleSaveEvent' with parameter from Save button, which calls 'checkDirtyStateForControlModels' later, with dirty changes still existing after Save", function(assert) {
 			var sVMReference = "variantMgmtId1";
 			var oChange1 = new Change({
 				fileName: "change1",
@@ -1645,13 +1696,139 @@ sap.ui.define([
 			// dirty changes always present are not saved
 			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns([oChange1]);
 
-			return this.oModel._handleSave(oEvent).then(function() {
+			return this.oModel._handleSaveEvent(oEvent).then(function() {
 				assert.equal(fnCopyVariantStub.callCount, 0, "CopyVariant is not called");
 				assert.equal(fnSetVariantPropertiesStub.callCount, 0, "SetVariantProperties is not called");
 				assert.ok(fnSaveDirtyChangesStub.calledOnce, "SaveAll is called");
 				assert.ok(this.oModel.getData()[sVMReference].modified, "the model property 'modified' is still set to true");
 				oVariantManagement.destroy();
 			}.bind(this));
+		});
+
+		QUnit.test("when calling '_handleSaveEvent' with bDesignTimeMode set to true", function(assert) {
+			var done = assert.async();
+			var sVMReference = "variantMgmtId1";
+			var oVariantManagement = new VariantManagement(sVMReference);
+			var oEvent = {
+				getParameters: function() {
+					return {
+						overwrite: false,
+						name: "Test",
+						def: false
+					};
+				},
+				getSource: function() {
+					return oVariantManagement;
+				}
+			};
+
+			this.oModel._bDesignTimeMode = true;
+			this.oModel.getData()[sVMReference].modified = true;
+
+			var oHandleSaveSpy = sandbox.spy(this.oModel, "_handleSave");
+
+			return this.oModel._handleSaveEvent(oEvent).then(function() {
+				assert.equal(oHandleSaveSpy.callCount, 0, "then _handleSave() was not called");
+				oVariantManagement.destroy();
+				done();
+			});
+		});
+
+		QUnit.test("when calling '_handleSave' with with bDesignTimeMode set to true and parameters from SaveAs button and default/execute box checked", function(assert) {
+			var done = assert.async();
+			var sVMReference = "variantMgmtId1";
+			var sNewVariantReference = "variant2";
+			var oChange1 = new Change({
+				fileName: "change1",
+				selector: {
+					id: "abc123"
+				}
+			});
+			var oChange2 = new Change({
+				fileName: "change2",
+				selector: {
+					id: "abc123"
+				}
+			});
+			var oChange3 = new Change({
+				fileName: "change3",
+				selector: {
+					id: "abc123"
+				}
+			});
+
+			var oVariantManagement = new VariantManagement(sVMReference);
+			var sCopyVariantName = "variant1";
+			var oCopiedVariantContent = {
+				content: {
+					title: "Key User Test Variant",
+					variantManagementReference: sVMReference,
+					variantReference: sCopyVariantName,
+					layer: Layer.CUSTOMER
+				}
+			};
+			var oCopiedVariant = new Variant(oCopiedVariantContent);
+			var mParameters = {
+				overwrite: false,
+				name: "Key User Test Variant",
+				def: true,
+				execute: true,
+				layer: Layer.CUSTOMER,
+				newVariantReference: sNewVariantReference
+			};
+			var sUserName = "testUser";
+			var oResponse = {response : [{fileName: sCopyVariantName, support: {user: sUserName}}]};
+			this.oModel.getData()[sVMReference].modified = true;
+			this.oModel._bDesignTimeMode = true;
+
+			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
+			sandbox.stub(VariantManagementState, "getControlChangesForVariant")
+				.callThrough()
+				.withArgs({
+					vmReference: sVMReference,
+					vReference: this.oModel.oData[sVMReference].currentVariant,
+					reference: this.oModel.sFlexReference,
+					changeInstance: true
+				})
+				.returns([oChange1, oChange2, oChange3]);
+			sandbox.stub(this.oModel.oChangePersistence, "getDirtyChanges").returns([oCopiedVariant, oChange1, oChange2, oChange3]);
+			sandbox.stub(VariantManagementState, "removeChangeFromVariant");
+			sandbox.stub(this.oModel.oFlexController, "deleteChange");
+			sandbox.stub(this.oModel, "copyVariant").resolves([oCopiedVariant, {fileName: "change1"}, {fileName: "change2"}, {fileName: "change3"}]);
+			sandbox.stub(this.oModel, "setVariantProperties").returns({fileName: "changeWithSetDefault"});
+			sandbox.stub(this.oModel.oChangePersistence, "saveDirtyChanges").resolves(oResponse);
+			sandbox.spy(Utils, "createDefaultFileName");
+
+			return this.oModel._handleSave(oVariantManagement, mParameters)
+				.then(function(aDirtyChanges) {
+					assert.equal(this.oModel.copyVariant.called, 1, "then copyVariant() was called once");
+					assert.ok(this.oModel.copyVariant.calledWith({
+						appComponent: this.oComponent,
+						layer: Layer.CUSTOMER,
+						newVariantReference: sNewVariantReference,
+						sourceVariantReference: oCopiedVariant.getVariantReference(),
+						title: "Key User Test Variant",
+						variantManagementReference: sVMReference
+					}), "then copyVariant() was called with the right parameters");
+					assert.equal(this.oModel.setVariantProperties.callCount, 2, "then setVariantProperties() was called twice; for setDefault and setExecuteOnSelect");
+					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.callCount, 0, "then dirty changes were not saved");
+					assert.equal(aDirtyChanges.length, 6, "then six dirty changes were created (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change");
+					assert.equal(aDirtyChanges[5].fileName, "changeWithSetDefault", "the last change was 'setDefault'");
+					assert.equal(aDirtyChanges[0].getLayer(), Layer.CUSTOMER, "the ctrl change has the correct layer");
+					assert.notOk(this.oModel.getData()[sVMReference].modified, "finally the model property 'modified' was set to false");
+					assert.ok(this.oModel.oFlexController.deleteChange.calledBefore(this.oModel.oChangePersistence.saveDirtyChanges), "the changes were deleted from default variant before the copied variant wass saved");
+					[oChange1, oChange2, oChange3].forEach(function(oDirtyChange) {
+						assert.ok(VariantManagementState.removeChangeFromVariant.calledWith({
+							change: oDirtyChange,
+							vmReference: oCopiedVariantContent.content.variantManagementReference,
+							vReference: oCopiedVariantContent.content.variantReference,
+							reference: this.oModel.sFlexReference
+						}), "then dirty changes were removed from the source variant");
+						assert.ok(this.oModel.oFlexController.deleteChange.calledWith(oDirtyChange, this.oComponent), "then dirty changes from source variant were deleted from the persistence");
+					}.bind(this));
+					oVariantManagement.destroy();
+					done();
+				}.bind(this));
 		});
 
 		QUnit.test("when calling '_getVariantTitleCount' with a title having 2 occurrences", function(assert) {

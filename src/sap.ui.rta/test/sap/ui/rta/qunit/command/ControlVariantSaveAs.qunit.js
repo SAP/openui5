@@ -92,7 +92,8 @@ function (
 				selector: {
 					id: "abc123"
 				},
-				reference: "Dummy.Component"
+				reference: "Dummy.Component",
+				variantReference: "variantMgmtId1"
 			});
 			var oChange2 = new Change({
 				fileName: "change45",
@@ -100,14 +101,15 @@ function (
 				selector: {
 					id: "abc123"
 				},
-				reference: "Dummy.Component"
+				reference: "Dummy.Component",
+				variantReference: "variantMgmtId1"
 			});
 
 			this.oVariant = {
 				content: {
 					fileName: "variant0",
 					content: {
-						title: "variant A"
+						title: "myNewVariant"
 					},
 					layer: Layer.CUSTOMER,
 					variantReference: "variant00",
@@ -119,11 +121,15 @@ function (
 				controlChanges: [oChange1, oChange2]
 			};
 
+			this.oModel.oData["variantMgmtId1"].variantsEditable = true;
+			this.oModel.oData["variantMgmtId1"].modified = true;
+
 			this.oGetCurrentLayerStub = sinon.stub(FlLayerUtils, "getCurrentLayer").returns(Layer.CUSTOMER);
 			sinon.stub(VariantManagementState, "getControlChangesForVariant").returns([oChange1, oChange2]);
 			sinon.stub(this.oModel, "getVariant").returns(this.oVariant);
 			sinon.stub(VariantManagementState, "addVariantToVariantManagement").returns(1);
 			sinon.stub(VariantManagementState, "removeVariantFromVariantManagement").returns(1);
+			sinon.stub(VariantManagementState, "addChangeToVariant").returns(true);
 			sinon.stub(VariantManagementState, "getContent").returns({});
 		},
 		after: function() {
@@ -141,50 +147,64 @@ function (
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when calling command factory for duplicate variants and undo", function(assert) {
+		QUnit.test("when calling command factory for saveAs variants and undo", function(assert) {
 			var oOverlay = new ElementOverlay({element: this.oVariantManagement});
 			var fnCreateDefaultFileNameSpy = sandbox.spy(FlUtils, "createDefaultFileName");
+			sandbox.stub(this.oModel.oFlexController, "applyChange");
 			sandbox.stub(OverlayRegistry, "getOverlay").returns(oOverlay);
 			sandbox.stub(oOverlay, "getVariantManagement").returns("idMain1--variantManagementOrdersTable");
+			var fnCreateSaveAsDialog = this.oVariantManagement._createSaveAsDialog;
+			sandbox.stub(this.oVariantManagement, "_createSaveAsDialog").callsFake(function() {
+				fnCreateSaveAsDialog.call(this.oVariantManagement);
+				this.oVariantManagement.oSaveAsDialog.attachEventOnce("afterOpen", function() {
+					this.oVariantManagement._handleVariantSaveAs("myNewVariant");
+				}.bind(this));
+			}.bind(this));
 
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({data: {}});
 			var mFlexSettings = {layer: Layer.CUSTOMER};
-			var oControlVariantDuplicateCommand;
-			var oDuplicateVariant;
+			var oControlVariantSaveAsCommand;
+			var oSaveAsVariant;
 			var aPreparedChanges;
+			var aDirtyChanges;
 			var iDirtyChangesCount;
-			return CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
+			return CommandFactory.getCommandFor(this.oVariantManagement, "saveAs", {
 				sourceVariantReference: this.oVariant.content.variantReference,
-				newVariantTitle: "variant A Copy"
+				model: this.oModel
 			}, oDesignTimeMetadata, mFlexSettings)
 				.then(function(oCommand) {
-					oControlVariantDuplicateCommand = oCommand;
-					assert.ok(oControlVariantDuplicateCommand, "control variant duplicate command exists for element");
-					return oControlVariantDuplicateCommand.execute();
+					oControlVariantSaveAsCommand = oCommand;
+					assert.ok(oControlVariantSaveAsCommand, "control variant saveAs command exists for element");
+					return oControlVariantSaveAsCommand.execute();
 				})
 				.then(function() {
-					oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
-					aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
+					oSaveAsVariant = oControlVariantSaveAsCommand.getVariantChange();
+					aPreparedChanges = oControlVariantSaveAsCommand.getPreparedChange();
 					assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
 					assert.strictEqual(fnCreateDefaultFileNameSpy.callCount, 3, "then sap.ui.fl.Utils.createDefaultFileName() called thrice; once for variant duplicate and twice for the copied changes");
-					assert.strictEqual(fnCreateDefaultFileNameSpy.returnValues[0], oDuplicateVariant.getId(), "then the duplicated variant has the correct ID");
-					assert.equal(oDuplicateVariant.getVariantReference(), this.oVariant.content.variantReference, "then variant reference correctly duplicated");
-					assert.equal(oDuplicateVariant.getTitle(), "variant A" + " Copy", "then variant reference correctly duplicated");
-					assert.equal(oDuplicateVariant.getControlChanges().length, 2, "then 2 changes duplicated");
-					assert.equal(oDuplicateVariant.getControlChanges()[0].getDefinition().support.sourceChangeFileName, this.oVariant.controlChanges[0].getDefinition().fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
+					assert.strictEqual(fnCreateDefaultFileNameSpy.returnValues[0], oSaveAsVariant.getId(), "then the saveAs variant has the correct ID");
+					assert.equal(oSaveAsVariant.getVariantReference(), this.oVariant.content.variantReference, "then variant reference is correctly set");
+					assert.equal(oSaveAsVariant.getTitle(), "myNewVariant", "then variant reference correctly set");
+					assert.equal(oSaveAsVariant.getControlChanges().length, 2, "then 2 changes duplicated");
+					assert.equal(oSaveAsVariant.getControlChanges()[0].getDefinition().support.sourceChangeFileName, this.oVariant.controlChanges[0].getDefinition().fileName, "then changes duplicated with source filenames in Change.support.sourceChangeFileName");
 					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 3, "then there are three dirty changes in the flex persistence");
-					return oControlVariantDuplicateCommand.undo();
+					assert.notOk(this.oModel.oData["variantMgmtId1"].modified, "the diry flag is set to false");
+					return oControlVariantSaveAsCommand.undo();
 				}.bind(this))
 				.then(function() {
-					oDuplicateVariant = oControlVariantDuplicateCommand.getVariantChange();
-					aPreparedChanges = oControlVariantDuplicateCommand.getPreparedChange();
+					oSaveAsVariant = oControlVariantSaveAsCommand.getVariantChange();
+					aPreparedChanges = oControlVariantSaveAsCommand.getPreparedChange();
 					assert.notOk(aPreparedChanges, "then no prepared changes are available after undo");
+					aDirtyChanges = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent});
 					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
-					assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
-					assert.notOk(oDuplicateVariant, "then duplicate variant from command unset");
-					assert.notOk(oControlVariantDuplicateCommand._oVariantChange, "then _oVariantChange property was unset for the command");
-					return oControlVariantDuplicateCommand.undo();
+					assert.strictEqual(iDirtyChangesCount, 2, "then there are two dirty changes in the flex persistence");
+					assert.strictEqual(aDirtyChanges[0].getFileName(), "change44", "the first change is the first dirty control change");
+					assert.strictEqual(aDirtyChanges[1].getFileName(), "change45", "the second change is the second dirty control change");
+					assert.notOk(oSaveAsVariant, "then saveAs variant from command unset");
+					assert.notOk(oControlVariantSaveAsCommand._oVariantChange, "then _oVariantChange property was unset for the command");
+					assert.ok(this.oModel.oData["variantMgmtId1"].modified, "the diry flag is set to true again");
+					return oControlVariantSaveAsCommand.undo();
 				}.bind(this))
 				.then(function() {
 					assert.ok(true, "then by default a Promise.resolve() is returned on undo(), even if no changes exist for the command");

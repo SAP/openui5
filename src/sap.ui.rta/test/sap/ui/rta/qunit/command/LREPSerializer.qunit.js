@@ -852,6 +852,7 @@ sap.ui.define([
 			this.oVariantManagement = new VariantManagement("variantMgmtId1");
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
 			this.oDesignTimeMetadata = new DesignTimeMetadata({data: {}});
+			oModel._bDesignTimeMode = true;
 
 			this.oSerializer = new CommandSerializer({
 				commandStack: this.oCommandStack,
@@ -889,10 +890,17 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when the LREPSerializer.clearCommandStack gets called with 4 different ctrl variant commands created containing one or more changes and this is booked for a new app variant with different id", function(assert) {
 			sandbox.stub(VariantManagementState, "getVariant").returns(oVariant);
+			var fnCreateSaveAsDialog = this.oVariantManagement._createSaveAsDialog;
+			sandbox.stub(this.oVariantManagement, "_createSaveAsDialog").callsFake(function() {
+				fnCreateSaveAsDialog.call(this.oVariantManagement);
+				this.oVariantManagement.oSaveAsDialog.attachEventOnce("afterOpen", function() {
+					this.oVariantManagement._handleVariantSaveAs("newVariant");
+				}.bind(this));
+			}.bind(this));
 			var fnAssertWrite = RtaQunitUtils.spySessionStorageWrite(sandbox, assert);
 			var oControlVariantConfigureCommand;
 			var oControlVariantSwitchCommand;
-			var oControlVariantDuplicateCommand;
+			var oControlVariantSaveAsCommand;
 			var oControlVariantSetTitleCommand;
 
 			var oTitleChange = {
@@ -935,14 +943,14 @@ sap.ui.define([
 
 				.then(function(oCommand) {
 					oControlVariantSwitchCommand = oCommand;
-					return CommandFactory.getCommandFor(this.oVariantManagement, "duplicate", {
+					return CommandFactory.getCommandFor(this.oVariantManagement, "saveAs", {
 						sourceVariantReference: "variant0",
-						newVariantTitle: "newTitle"
+						model: oModel
 					}, this.oDesignTimeMetadata, {layer: Layer.CUSTOMER});
 				}.bind(this))
 
 				.then(function(oCommand) {
-					oControlVariantDuplicateCommand = oCommand;
+					oControlVariantSaveAsCommand = oCommand;
 					return CommandFactory.getCommandFor(this.oVariantManagement, "setTitle", {
 						newText: "newText"
 					}, this.oDesignTimeMetadata, {layer: Layer.CUSTOMER});
@@ -953,7 +961,7 @@ sap.ui.define([
 					this.oCommandStack.attachCommandExecuted(function(oEvent) {
 						if (oEvent.getParameters().command === oControlVariantSetTitleCommand) {
 							var aUIChanges = oControlVariantConfigureCommand.getPreparedChange()
-								.concat(oControlVariantDuplicateCommand.getPreparedChange())
+								.concat(oControlVariantSaveAsCommand.getPreparedChange())
 								.concat([oControlVariantSetTitleCommand.getPreparedChange()]);
 							aUIChanges.forEach(function(oChange) {
 								// Change the reference of UI changes
@@ -981,7 +989,7 @@ sap.ui.define([
 				}.bind(this))
 
 				.then(function() {
-					return this.oCommandStack.pushAndExecute(oControlVariantDuplicateCommand);
+					return this.oCommandStack.pushAndExecute(oControlVariantSaveAsCommand);
 				}.bind(this))
 
 				.then(function() {
