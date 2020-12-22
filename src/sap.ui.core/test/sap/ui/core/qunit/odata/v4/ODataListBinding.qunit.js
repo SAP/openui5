@@ -2337,6 +2337,42 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("refreshInternal: bKeepCacheOnError & canceled", function (assert) {
+		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, null, null,
+				{$$ownRequest : true}),
+			oError = new Error(),
+			oNewCache = {refreshKeptElement : function () {}};
+
+		oError.canceled = true;
+		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+		this.mock(oBinding).expects("refreshSuspended").never();
+		this.mock(oBinding).expects("isRoot").withExactArgs().returns("bIsRoot");
+		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", "bIsRoot");
+		this.mock(oBinding).expects("removeCachesAndMessages").withExactArgs("path");
+		this.mock(oBinding).expects("fetchCache").withExactArgs(sinon.match.same(oContext))
+			.callsFake(function () {
+				oBinding.oCache = oNewCache;
+				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
+			});
+		this.mock(oBinding).expects("createRefreshPromise").withExactArgs().rejects(oError);
+		this.mock(oBinding).expects("reset").withExactArgs(ChangeReason.Refresh);
+		this.mock(this.oModel).expects("getDependentBindings")
+			.withExactArgs(sinon.match.same(oBinding)).returns([]);
+		this.mock(oBinding).expects("fetchResourcePath").never();
+
+		// code under test
+		return oBinding.refreshInternal("path", "myGroup", /*bCheckUpdate (ignored)*/false, true)
+			.then(function () {
+				assert.ok(false);
+			}, function (oReturnedError) {
+				assert.strictEqual(oReturnedError, oError);
+				assert.strictEqual(oBinding.oCache, oNewCache);
+				assert.strictEqual(oBinding.oCachePromise.getResult(), oNewCache);
+			});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("refreshInternal: relative without own cache", function (assert) {
 		var oBinding = this.bindList("TEAM_2_EMPLOYEES",
 				Context.create(this.oModel, {}, "/TEAMS('1')"));

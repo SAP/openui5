@@ -2215,6 +2215,9 @@ sap.ui.define([
 				oPromise = that.createRefreshPromise();
 				if (bKeepCacheOnError) {
 					oPromise = oPromise.catch(function (oError) {
+						if (oError.canceled) {
+							throw oError;
+						}
 						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
 							if (!that.bRelative || oCache.$resourcePath === sResourcePath) {
 								that.oCache = oCache;
