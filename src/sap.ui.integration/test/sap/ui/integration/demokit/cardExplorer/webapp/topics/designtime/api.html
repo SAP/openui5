@@ -142,14 +142,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						<td>"string"</td>
 						<td>Type of the value in the manifest that is edited. Currently "string", "integer", "number",
 							"date", "datetime", "boolean", "string[]" are supported.<br>
-							type="group" in an item will allow to set a group title within the form to cluster elements.
+							type="group" in an item will allow to set an expandable panel within the form.
+							It will contains all the parameters behind it and before the next item which type is "group" too.
 							For a group typed item the manifestpath setting can be omitted. A label should be provided.
 							<pre class="prettyprint lang-js">type : "string"</pre>
 						</td>
 						<td>1.83</td>
 					</tr>
 					<tr>
-
 						<td>label</td>
 						<td>string</td>
 						<td>No</td>
@@ -170,7 +170,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							property is empty.
 							<pre
 								class="prettyprint
-								lang-js">defaultValue : "stringValue" //string type<br>defaultValue : true //boolean type<br>"<br>defaultValue : "{i18n>translatedDefaultKey}" //trnaslatedDefaultValue for strings</pre>
+								lang-js">defaultValue : "stringValue" //string type<br>defaultValue : true //boolean type<br>defaultValue : "{i18n>translatedDefaultKey}" //trnaslatedDefaultValue for strings</pre>
 						</td>
 						<td>1.83</td>
 					</tr>
@@ -200,6 +200,20 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						<td>1.83</td>
 					</tr>
 					<tr>
+						<td>editable</td>
+						<td>boolean</td>
+						<td>No</td>
+						<td>true</td>
+						<td>Defines whether the value is editable in the editor or not. For technical parameters it might
+							be needed to make them consistent from the user.
+							In future version an administrator is able to change the editable property for the
+							page/content administrator. This will only apply for
+							parameters that are editable to the administrator.
+							<pre class="prettyprint lang-js">editable : true</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
 						<td>translatable</td>
 						<td>boolean</td>
 						<td>No</td>
@@ -213,6 +227,17 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						<td>1.83</td>
 					</tr>
 					<tr>
+						<td>description</td>
+						<td>string</td>
+						<td>No</td>
+						<td></td>
+						<td>Defines the description of current field.
+							<pre
+								class="prettyprint lang-js">description : "Description of current field"</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
 						<td>cols</td>
 						<td>1 or 2</td>
 						<td>No</td>
@@ -221,6 +246,18 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							sibling items,
 							will allow to align two fields next to each other
 							<pre class="prettyprint lang-js">cols : 1</pre>
+						</td>
+						<td>1.83</td>
+					</tr>
+					<tr>
+						<td>Visualization</td>
+						<td>object of type Visualization</td>
+						<td>No</td>
+						<td>none</td>
+						<td>Defines a visualization for the field. It will render the field using the new control defined in visualization.
+							<pre class="prettyprint lang-js">visualization : {
+	//visualization settings
+}</pre>
 						</td>
 						<td>1.83</td>
 					</tr>
@@ -242,7 +279,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						<td>allowSettings</td>
 						<td>boolean</td>
 						<td>No</td>
-						<td>depending</td>
+						<td>false</td>
 						<td>Defines whether the administrator is allowed to change the settings of the field.
 							For example the administrator can hide or disable fields for the content mode.
 							To activate the feature additionally the allowSettings property
@@ -269,8 +306,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						<td>none</td>
 						<td>Defines a validation rule for the value of the field.
 							<pre class="prettyprint lang-js">validation : {
-								//validation settings
-							}</pre>
+	//validation settings
+}</pre>
 						</td>
 						<td>1.86</td>
 					</tr>
@@ -280,9 +317,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						<td>No</td>
 						<td>none</td>
 						<td>Defines a validation rules for the value of the field.
-							<pre class="prettyprint lang-js">validation : {
-													//validation settings
-												}</pre>
+							<pre class="prettyprint lang-js">validations : {
+	//validations settings
+}</pre>
 						</td>
 						<td>1.86</td>
 					</tr>
@@ -293,8 +330,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 				To allow a selection of values for fields of type "string", you can add a values section.
 				Similar to the Card data section, the list can be filled with a static json or a request.
 				The item section in the values definition links the data. The "key" property of the item is used as
-				the value for the setting referred by the "manifestPath".
-				<strong>Static Data List</strong>
+				the value for the setting referred by the "manifestPath".</p>
+			<strong>Static Data List</strong>
 
 			<pre class="prettyprint lang-js collapsed" lines="4-18" caption="Static Values">
 "stringWithStaticList": {

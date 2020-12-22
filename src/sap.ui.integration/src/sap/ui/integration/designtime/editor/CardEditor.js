@@ -243,6 +243,13 @@ sap.ui.define([
 								}
 								oPanel = oItem;
 								oPanel.addStyleClass("sapUiIntegrationCardEditorItem");
+								if (i === aItems.length - 1) {
+									//add current col fields to panel, then empty the col fields list
+									addColFields();
+									if (oPanel.getContent().length > 0) {
+										oRm.renderControl(oPanel);
+									}
+								}
 								continue;
 							}
 
