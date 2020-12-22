@@ -279,7 +279,7 @@ sap.ui.define([
 			assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 		});
 		return oSelectionPlugin.addSelectionInterval(0, 4).then(function() {
-			assert.ok(fnGetContexts.calledWithExactly(0, 5), "getContexts was called with the correct parameters");
+			assert.ok(fnGetContexts.calledWithExactly(0, 5, 0, true), "getContexts was called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4],
 				"Range selection is possible for number of items below limit");
@@ -293,7 +293,7 @@ sap.ui.define([
 			fnGetContexts.reset();
 			oSelectionChangeSpy.reset();
 			return oSelectionPlugin.addSelectionInterval(-1, 5).then(function() {
-				assert.ok(fnGetContexts.calledWithExactly(1, 5), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(1, 5, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
 					"Multiple selections are possible. When indexFrom is already selected, the selection starts from the next index");
@@ -306,7 +306,7 @@ sap.ui.define([
 				oSelectionChangeSpy.reset();
 				oSelectionPlugin.addSelectionInterval(5, 5);
 				setTimeout(function () {
-					assert.ok(fnGetContexts.calledWithExactly(5, 1), "getContexts was called with the correct parameters");
+					assert.ok(fnGetContexts.calledWithExactly(5, 1, 0, true), "getContexts was called with the correct parameters");
 					assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5],
 						"The selection is not changed because the index was already selected");
@@ -324,7 +324,7 @@ sap.ui.define([
 			fnGetContexts.reset();
 			oSelectionChangeSpy.reset();
 			return oSelectionPlugin.addSelectionInterval(iSelectableCount - 1, iSelectableCount + 100).then(function() {
-				assert.ok(fnGetContexts.calledWithExactly(iSelectableCount - 1, 1), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(iSelectableCount - 1, 1, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4, 5, iSelectableCount - 1],
 					"Range selection is possible for number of items below limit");
@@ -346,7 +346,7 @@ sap.ui.define([
 
 		return new Promise(function(resolve) {
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-				assert.ok(fnGetContexts.calledWithExactly(5, 5), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(5, 5, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oEvent.getParameters().rowIndices, [5, 6, 7, 8, 9], "rowIndices parameter is correct");
 				assert.notOk(oEvent.getParameters().limitReached, "limitReached parameter is correct");
@@ -359,7 +359,7 @@ sap.ui.define([
 		}).then(function() {
 			return new Promise(function(resolve) {
 				oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-					assert.ok(fnGetContexts.calledWithExactly(4, 5), "getContexts was called with the correct parameters");
+					assert.ok(fnGetContexts.calledWithExactly(4, 5, 0, true), "getContexts was called with the correct parameters");
 					assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 					assert.deepEqual(oEvent.getParameters().rowIndices, [4], "rowIndices parameter is correct");
 					assert.notOk(oEvent.getParameters().limitReached, "limitReached parameter is correct");
@@ -392,7 +392,7 @@ sap.ui.define([
 
 		return new Promise(function(resolve) {
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
-				assert.ok(fnGetContexts.calledWithExactly(0, 1), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(0, 1, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0], "First row is selected");
 				assert.deepEqual(oEvent.getParameters().rowIndices, [0], "rowIndices parameter is correct");
@@ -409,7 +409,7 @@ sap.ui.define([
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 				assert.deepEqual(oEvent.getParameters().rowIndices, [1, 2, 3, 4, 5], "rowIndices parameter is correct");
 				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
-				assert.ok(fnGetContexts.calledWithExactly(1, 6), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(1, 6, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			});
 			fnGetContexts.reset();
@@ -430,7 +430,7 @@ sap.ui.define([
 			oSelectionPlugin.attachEventOnce("selectionChange", function(oEvent) {
 				assert.deepEqual(oEvent.getParameters().rowIndices, [6, 7, 8, 9, 10], "rowIndices parameter is correct");
 				assert.ok(oEvent.getParameters().limitReached, "limitReached parameter is correct");
-				assert.ok(fnGetContexts.calledWithExactly(6, 6), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(6, 6, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			});
 			fnGetContexts.reset();
@@ -521,7 +521,7 @@ sap.ui.define([
 		oSelectionChangeSpy.reset();
 
 		return oSelectionPlugin.setSelectionInterval(-1, 10).then(function() {
-			assert.ok(fnGetContexts.calledWithExactly(0, 6), "getContexts was called with the correct parameters");
+			assert.ok(fnGetContexts.calledWithExactly(0, 6, 0, true), "getContexts was called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [0, 1, 2, 3, 4], "Selection is cut down to the possible limit");
 			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
@@ -535,7 +535,7 @@ sap.ui.define([
 			fnGetContexts.reset();
 			oSelectionChangeSpy.reset();
 			return oSelectionPlugin.setSelectionInterval(5, 15).then(function() {
-				assert.ok(fnGetContexts.calledWithExactly(5, 6), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(5, 6, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "Selection is cut down to the possible limit");
 				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
@@ -547,7 +547,7 @@ sap.ui.define([
 				oSelectionChangeSpy.reset();
 				oSelectionPlugin.setSelectionInterval(5, 10); // Limit reached
 				setTimeout(function () {
-					assert.ok(fnGetContexts.calledWithExactly(5, 6), "getContexts was called with the correct parameters");
+					assert.ok(fnGetContexts.calledWithExactly(5, 6, 0, true), "getContexts was called with the correct parameters");
 					assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "The selection did not change");
 					assert.ok(oSelectionChangeSpy.notCalled, "The selectionChange event was not fired");
@@ -561,7 +561,7 @@ sap.ui.define([
 				oSelectionChangeSpy.reset();
 				oSelectionPlugin.setSelectionInterval(5, 9); // Limit not reached
 				setTimeout(function () {
-					assert.ok(fnGetContexts.calledWithExactly(5, 5), "getContexts was called with the correct parameters");
+					assert.ok(fnGetContexts.calledWithExactly(5, 5, 0, true), "getContexts was called with the correct parameters");
 					assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 					assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5, 6, 7, 8, 9], "The selection did not change");
 					assert.ok(oSelectionChangeSpy.notCalled, "The selectionChange event was not fired");
@@ -578,7 +578,7 @@ sap.ui.define([
 			fnGetContexts.reset();
 			oSelectionChangeSpy.reset();
 			return oSelectionPlugin.setSelectionInterval(iSelectableCount - 1, iSelectableCount + 100).then(function() {
-				assert.ok(fnGetContexts.calledWithExactly(iSelectableCount - 1, 1), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(iSelectableCount - 1, 1, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [iSelectableCount - 1], "The correct index is selected");
 				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
@@ -661,7 +661,7 @@ sap.ui.define([
 			assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 		});
 		return oSelectionPlugin.setSelectedIndex(3).then(function() {
-			assert.ok(fnGetContexts.calledWithExactly(3, 1), "getContexts was called with the correct parameters");
+			assert.ok(fnGetContexts.calledWithExactly(3, 1, 0, true), "getContexts was called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [3], "The selection is correct");
 			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
@@ -674,7 +674,7 @@ sap.ui.define([
 			fnGetContexts.reset();
 			oSelectionChangeSpy.reset();
 			return oSelectionPlugin.setSelectedIndex(5).then(function() {
-				assert.ok(fnGetContexts.calledWithExactly(5, 1), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(5, 1, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [5], "The selection is correct");
 				assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
@@ -922,7 +922,7 @@ sap.ui.define([
 			assert.notOk(oEvent.getParameters().limitReached, "selectionChange event: \"limitReached\" parameter is correct");
 		});
 		return oSelectionPlugin.selectAll().then(function() {
-			assert.ok(fnGetContexts.calledWithExactly(0, iHighestSelectableIndex + 1), "getContexts was called with the correct parameters");
+			assert.ok(fnGetContexts.calledWithExactly(0, iHighestSelectableIndex + 1, 0, true), "getContexts was called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices().length, iHighestSelectableIndex + 1, "The correct indices are selected");
 			assert.ok(oSelectionChangeSpy.calledOnce, "The \"selectionChange\" event was fired once");
@@ -1049,12 +1049,12 @@ sap.ui.define([
 		assert.ok(!oCell.hasChildNodes(), "No DeselectAll icon");
 
 		oSelectionPlugin.attachEventOnce("selectionChange", function() {
-			assert.ok(fnGetContexts.calledWithExactly(9, 1), "getContexts was called with the correct parameters");
+			assert.ok(fnGetContexts.calledWithExactly(9, 1, 0, true), "getContexts was called with the correct parameters");
 			assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 			assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [9], "Only one item is selected (iIndexTo)");
 
 			oSelectionPlugin.attachEventOnce("selectionChange", function() {
-				assert.ok(fnGetContexts.calledWithExactly(4, 1), "getContexts was called with the correct parameters");
+				assert.ok(fnGetContexts.calledWithExactly(4, 1, 0, true), "getContexts was called with the correct parameters");
 				assert.ok(fnGetContexts.calledOnce, "getContexts was called once");
 				assert.deepEqual(oSelectionPlugin.getSelectedIndices(), [4], "Only one item is selected (iIndexTo)");
 

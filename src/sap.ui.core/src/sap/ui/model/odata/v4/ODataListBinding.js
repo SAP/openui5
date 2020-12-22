@@ -1550,18 +1550,23 @@ sap.ui.define([
 	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
 	 *   table. Negative values will be treated as 0. Supported since 1.39.0; <code>Infinity</code>
 	 *   may be used since 1.53.0 to prefetch all data and thus disable paging.
+	 * @param {boolean} [bKeepCurrent]
+	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.86.0.
 	 * @returns {sap.ui.model.odata.v4.Context[]}
 	 *   The array of already created contexts with the first entry containing the context for
 	 *   <code>iStart</code>
 	 * @throws {Error}
-	 *   If the binding's root binding is suspended, if extended change detection is enabled and
-	 *   <code>iMaximumPrefetchSize</code> is set or <code>iStart</code> is not 0
+	 *   If the binding's root binding is suspended, if <code>iMaximumPrefetchSize</code> and
+	 *   <code>bKeepCurrent</code> are set, if extended change detection is enabled and
+	 *   <code>iMaximumPrefetchSize</code> or <code>bKeepCurrent</code> is set or
+	 *   <code>iStart</code> is not 0
 	 *
 	 * @protected
 	 * @since 1.37.0
 	 */
 	// @override @see sap.ui.model.ListBinding#getContexts
-	ODataListBinding.prototype.getContexts = function (iStart, iLength, iMaximumPrefetchSize) {
+	ODataListBinding.prototype.getContexts = function (iStart, iLength, iMaximumPrefetchSize,
+			bKeepCurrent) {
 		var sChangeReason,
 			aContexts,
 			bDataRequested = false,
@@ -1585,9 +1590,20 @@ sap.ui.define([
 				+ iStart);
 		}
 
-		if (iMaximumPrefetchSize !== undefined && this.bUseExtendedChangeDetection) {
+		if (this.bUseExtendedChangeDetection) {
+			if (iMaximumPrefetchSize !== undefined) {
+				throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
+					+ " third parameter must not be set if extended change detection is enabled");
+			}
+			if (bKeepCurrent) {
+				throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
+					+ " must not use bKeepCurrent if extended change detection is enabled");
+			}
+		}
+
+		if (iMaximumPrefetchSize && bKeepCurrent) {
 			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
-				+ " third parameter must not be set if extended change detection is enabled");
+				+ " must not use both iMaximumPrefetchSize and bKeepCurrent");
 		}
 
 		if (!this.isResolved()) { // unresolved relative binding
@@ -1685,8 +1701,10 @@ sap.ui.define([
 			// in case of asynchronous processing ensure to fire a change event
 			bFireChange = true;
 		}
-		this.iCurrentBegin = iStart;
-		this.iCurrentEnd = iStart + iLength;
+		if (!bKeepCurrent) {
+			this.iCurrentBegin = iStart;
+			this.iCurrentEnd = iStart + iLength;
+		}
 		aContexts = this.getContextsInViewOrder(iStart, iLength);
 		if (this.bUseExtendedChangeDetection) {
 			if (this.oDiff && iLength !== this.oDiff.iLength) {
