@@ -69,7 +69,7 @@ function createCardEditorTag(id, changes, mode, language, designtime) {
 		"baseUrl": baseUrl
 	};
 	if (designtime && designtime !== "") {
-		manifest["sap.card"].designtime = "designtime/withPreview/" + designtime;
+		manifest["sap.card"].designtime = "withPreview/" + designtime;
 		card.manifest = manifest;
 	}
 	return '<ui-integration-card-editor id="' + id +

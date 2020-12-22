@@ -27,6 +27,7 @@
 	},
 	"sap.card": {
 		"type": "Table",
+		"designtime": "dt/Configuration",
 		"configuration": {
 			"parameters": {
 				"country": {

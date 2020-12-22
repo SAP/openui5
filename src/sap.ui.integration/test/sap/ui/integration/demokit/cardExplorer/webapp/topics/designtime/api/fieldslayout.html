@@ -306,21 +306,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 	"use strict";
 	return function () {
 		return new Designtime({
-			form: {
-				items: {
-					manifestpath: "/sap.card/.../boolean/value",
-					defaultValue: false,
-					type: "boolean",
-					visualization: {
-						type: "sap/m/Slider",
-						settings: {
-							value: "{currentSettings>value}",
-							min: 0,
-							max: 10,
-							width: "100%",
-							showAdvancedTooltip: true,
-							showHandleTooltip: false,
-							inputsAsTooltips: true
+			"form": {
+				"items": {
+					"manifestpath": "/sap.card/.../boolean/value",
+					"defaultValue": false,
+					"type": "boolean",
+					"visualization": {
+						"type": "sap/m/Slider",
+						"settings": {
+							"value: "{currentSettings>value}",
+							"min": 0,
+							"max": 10,
+							"width": "100%",
+							"showAdvancedTooltip": true,
+							"showHandleTooltip": false,
+							"inputsAsTooltips": true
 						}
 					}
 				}
@@ -347,17 +347,17 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 	"use strict";
 	return function () {
 		return new Designtime({
-			form: {
-				items: {
-					manifestpath: "/sap.card/.../boolean/value",
-					defaultValue: false,
-					type: "boolean",
-					visualization: {
-						type: "sap/m/Switch",
-						settings: {
-							state: "{currentSettings>value}",
-							customTextOn: "Yes",
-							customTextOff": "No"
+			"form": {
+				"items": {
+					"manifestpath": "/sap.card/.../boolean/value",
+					"defaultValue": false,
+					"type": "boolean",
+					"visualization": {
+						"type": "sap/m/Switch",
+						"settings": {
+							"state": "{currentSettings>value}",
+							"customTextOn": "Yes",
+							"customTextOff": "No"
 						}
 					}
 				}

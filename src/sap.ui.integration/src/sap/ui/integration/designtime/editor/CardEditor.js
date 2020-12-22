@@ -24,7 +24,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI",
 	"sap/ui/dom/includeStylesheet",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/core/theming/Parameters"
+	"sap/ui/core/theming/Parameters",
+	"sap/base/util/ObjectPath"
 ], function (
 	ui5loader,
 	Control,
@@ -47,7 +48,8 @@ sap.ui.define([
 	URI,
 	includeStylesheet,
 	LoaderExtension,
-	Parameters
+	Parameters,
+	ObjectPath
 ) {
 	"use strict";
 
@@ -884,7 +886,23 @@ sap.ui.define([
 					oConfig._values = [];
 					return;
 				}
-				oData = [{}].concat(oData);
+				var sPath = oConfig.values.data.path;
+				if (sPath && sPath !== "/") {
+					if (sPath.startsWith("/")) {
+						sPath = sPath.substring(1);
+					}
+					if (sPath.endsWith("/")) {
+						sPath = sPath.substring(0, sPath.length - 1);
+					}
+					var aPath = sPath.split("/");
+					var oResult = ObjectPath.get(aPath, oData);
+					if (Array.isArray(oResult) && oResult.length > 0 && oConfig.type !== "string[]") {
+						oResult = [{}].concat(oResult);
+						ObjectPath.set(aPath, oResult, oData);
+					}
+				} else if (Array.isArray(oData) && oData.length > 0 && oConfig.type !== "string[]") {
+					oData = [{}].concat(oData);
+				}
 				oConfig._values = oData;
 				oValueModel.setData(oData);
 				oValueModel.checkUpdate(true);
@@ -938,7 +956,7 @@ sap.ui.define([
 		if (this.getAllowDynamicValues() === false || !oConfig.allowDynamicValues) {
 			oConfig.allowDynamicValues = false;
 		}
-		if (this.getAllowSettings() === false) {
+		if (this.getAllowSettings() === false || !oConfig.allowSettings) {
 			oConfig.allowSettings = false;
 		}
 		oConfig._beforeValue = this._beforeManifestModel.getProperty(oConfig.manifestpath);

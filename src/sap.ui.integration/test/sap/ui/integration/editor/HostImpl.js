@@ -5,10 +5,8 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 		resolveDestination: function (name) {
 			if (name === "local") {
 				//resolve local to local path
-				return Promise.resolve("./");
-
+				return "./";
 			}
-			return Promise.resolve("https://" + name);
 		}
 	});
 

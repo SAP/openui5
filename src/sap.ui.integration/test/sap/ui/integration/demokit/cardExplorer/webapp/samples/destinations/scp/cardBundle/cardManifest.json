@@ -21,6 +21,7 @@
 	},
 	"sap.card": {
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"data": {
 			"request": {
 				"url": "{{destinations.Northwind}}/Products",

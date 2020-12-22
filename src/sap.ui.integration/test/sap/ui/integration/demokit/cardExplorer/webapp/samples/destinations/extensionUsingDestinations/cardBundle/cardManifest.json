@@ -22,6 +22,7 @@
 	"sap.card": {
 		"extension": "./DataExtension",
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"data": {
 			"extension": {
 				"method": "getDataFromDestination"

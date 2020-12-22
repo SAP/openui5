@@ -3,9 +3,9 @@ sap.ui.define(["sap/ui/integration/Designtime"
 	"use strict";
 	return function () {
 		return new Designtime({
-			form: {
-				items: {
-					stringArrayParameter: {
+			"form": {
+				"items": {
+					"stringArrayParameter": {
 						"manifestpath": "/sap.card/configuration/parameters/stringArrayParameter/value",
 						"defaultValue": ["key1"],
 						"description": "String Array",
@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								"request": {
 									"url": "test-resources/sap/ui/integration/qunit/designtime/editor/cards/withDesigntime/1stringWithRequestValues.json"
 								},
-								"path": "/"
+								"path": "/values"
 							},
 							"item": {
 								"text": "{text}",

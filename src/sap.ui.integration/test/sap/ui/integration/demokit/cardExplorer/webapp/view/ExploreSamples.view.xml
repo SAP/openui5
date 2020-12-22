@@ -71,7 +71,7 @@
 							</Button>
 						</OverflowToolbar>
 					</customHeader>
-					<cardExplorer:FileEditor id="fileEditor" manifestChange="onFileEditorManifestChange" fileSwitch="onFileSwitch" visible="{= ${settings>/editorType} === 'text' }" />
+					<cardExplorer:FileEditor id="fileEditor" manifestChange="onFileEditorManifestChange" designtimeChange="onFileEditorDesigntimeChange" fileSwitch="onFileSwitch" visible="{= ${settings>/editorType} === 'text' }" />
 				</Page>
 			</l:SplitPane>
 		</l:PaneContainer>

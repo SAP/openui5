@@ -53,7 +53,8 @@ sap.ui.define([
 
 		constructor: function () {
 			this.onFileEditorManifestChangeDebounced = _debounce(this.onFileEditorManifestChangeDebounced, Constants.DEBOUNCE_TIME);
-			this.onCardEditorChangeDebounced = _debounce(this.onCardEditorChangeDebounced, Constants.DEBOUNCE_TIME);
+			this.onFileEditorDesigntimeChangeDebounced = _debounce(this.onFileEditorDesigntimeChangeDebounced, Constants.DEBOUNCE_TIME);
+			this.onCardEditorConfigurationChangeDebounced = _debounce(this.onCardEditorConfigurationChangeDebounced, Constants.DEBOUNCE_TIME);
 			this._sEditSource = null;
 
 			BaseController.apply(this, arguments);
@@ -85,17 +86,13 @@ sap.ui.define([
 		/**
 		 * Syncs CodeEditor & CardEditor. Updates the manifest of the card, if autoRun is enabled. Validates the schema, if enabled.
 		 * @param {string} sValue Current value of the CodeEditor
+		 * @param {boolean} bRerender If in rerender model
 		 */
-		onFileEditorManifestChangeDebounced: function (sValue) {
-			if (!this._sEditSource) {
-				this._sEditSource = "codeEditor";
-			}
-
-			if (this._oCardEditor) {
+		onFileEditorManifestChangeDebounced: function (sValue, bRerender) {
+			if ((this._sEditSource !== "cardEditor" || bRerender === true) && this._oCardEditor) {
+				this._oCardEditor.setJson({});
 				this._oCardEditor.setJson(sValue);
 			}
-
-			this._sEditSource = null;
 
 			if (exploreSettingsModel.getProperty("/schemaValidation")) {
 				this.validateManifest();
@@ -107,27 +104,50 @@ sap.ui.define([
 		},
 
 		onFileEditorManifestChange: function (oEvent) {
-			if (this._sEditSource !== "cardEditor") {
+			var bRerender = oEvent.getParameter("reRender");
+			if (this._sEditSource !== "cardEditor" || bRerender === true) {
 				var sValue = oEvent.getParameter("value");
-				this.onFileEditorManifestChangeDebounced(sValue);
+				this.onFileEditorManifestChangeDebounced(sValue, bRerender);
 			}
 		},
 
-		onCardEditorChangeDebounced: function (mValue) {
-			if (!this._sEditSource) {
-				this._sEditSource = "cardEditor";
+		/**
+		 * Syncs CodeEditor & CardEditor. Updates the designtime of the card.
+		 * @param {string} sValue Current designtime value of the CodeEditor
+		 * @param {boolean} bRerender If in rerender model
+		 */
+		onFileEditorDesigntimeChangeDebounced: function (sValue, bRerender) {
+			if ((this._sEditSource !== "cardEditor" || bRerender === true) && this._oCardEditor) {
+				var oDesigntimeMetadata = JSON.parse(sValue.slice(137, -11));
+				this._oCardEditor.updateDesigntimeMetadata(oDesigntimeMetadata);
+				var oJson = this._oCardEditor.getJson();
+				this._oCardEditor.setJson({});
+				this._oCardEditor.setJson(oJson);
 			}
-
-			var sValue = JSON.stringify(mValue, '\t', 4);
-			this._fileEditor.setManifestContent(sValue);
-			this._updateSample(sValue);
-			this._sEditSource = null;
 		},
 
-		onCardEditorChange: function (oEvent) {
-			if (this._sEditSource !== "codeEditor") {
-				var mValue = oEvent.getParameter("json");
-				this.onCardEditorChangeDebounced(mValue);
+		onFileEditorDesigntimeChange: function (oEvent) {
+			var bRerender = oEvent.getParameter("reRender");
+			if (this._sEditSource !== "cardEditor" || bRerender === true) {
+				var sValue = oEvent.getParameter("value");
+				this.onFileEditorDesigntimeChangeDebounced(sValue, bRerender);
+			}
+		},
+
+		onCardEditorConfigurationChange: function (oEvent) {
+			if (this._sEditSource === "cardEditor") {
+				this.onCardEditorConfigurationChangeDebounced(oEvent.mParameters);
+			}
+		},
+
+		onCardEditorConfigurationChangeDebounced: function (oValues) {
+			if (this._sEditSource === "cardEditor") {
+				var sManifest = JSON.stringify(oValues.manifest, '\t', 4);
+				this._fileEditor.setManifestContent(sManifest);
+				var sDesigntimeHeader = "sap.ui.define([\"sap/ui/integration/Designtime\"], function (\n	Designtime\n) {\n	\"use strict\";\n	return function () {\r		return new Designtime(";
+				var sDesigntime = sDesigntimeHeader + oValues.configurationstring + ");\n	};\n});\n";
+				this._fileEditor.setDesigntimeContent(sDesigntime);
+				this._updateSample(sManifest);
 			}
 		},
 
@@ -143,9 +163,11 @@ sap.ui.define([
 			var sEditorType = exploreSettingsModel.getProperty("/editorType");
 			if (sEditorType === "text") {
 				exploreSettingsModel.setProperty("/editorType", "card");
+				this._sEditSource = "cardEditor";
 				this._initCardEditor();
 			} else {
 				exploreSettingsModel.setProperty("/editorType", "text");
+				this._sEditSource = "codeEditor";
 			}
 		},
 
@@ -207,19 +229,27 @@ sap.ui.define([
 
 		_initCardEditor: function () {
 			var oPage = this.byId("editPage");
-
+			var	sBaseUrl = this._oCardSample.getBaseUrl();
+			if (!sBaseUrl || sBaseUrl === "") {
+				sBaseUrl = this._fileEditor.getManifestFile().url;
+				var sManifestFileName = sBaseUrl.split("/").pop(),
+				sBaseUrl = "." + sBaseUrl.substring(0, sBaseUrl.length - sManifestFileName.length);
+			}
+			var sJson;
 			this._pLoadCardEditor = this._pLoadCardEditor || loadCardEditor(); // only trigger request once
-
 			this._pLoadCardEditor
 				.then(function (CardEditor) {
 					if (this._oCardEditor) {
 						// already initialized
+						this._bCardEditorInitialized = true;
 						return;
 					}
 
+					this._bCardEditorInitialized = false;
 					this._oCardEditor = new CardEditor({
 						visible: "{= ${settings>/editorType} === 'card' }",
-						jsonChange: this.onCardEditorChange.bind(this)
+						configurationChange: this.onCardEditorConfigurationChange.bind(this),
+						baseUrl: sBaseUrl
 					});
 
 					this._oCardEditor.addStyleClass("sapUiSmallMargin");
@@ -228,7 +258,19 @@ sap.ui.define([
 				.then(function () {
 					return this._fileEditor.getManifestContent();
 				}.bind(this))
-				.then(function (sJson) {
+				.then(function (sManifestContent) {
+					sJson = sManifestContent;
+					if (this._bCardEditorInitialized) {
+						this._oCardEditor._bDesigntimeInit = true;
+						return this._fileEditor.getDesigntimeContent();
+					}
+					return undefined;
+				}.bind(this))
+				.then(function (sDesigntimeContent) {
+					if (sDesigntimeContent) {
+						var oDesigntimeMetadata = JSON.parse(sDesigntimeContent.slice(137, -11));
+						this._oCardEditor.updateDesigntimeMetadata(oDesigntimeMetadata);
+					}
 					this._oCardEditor.setJson(sJson);
 				}.bind(this));
 		},

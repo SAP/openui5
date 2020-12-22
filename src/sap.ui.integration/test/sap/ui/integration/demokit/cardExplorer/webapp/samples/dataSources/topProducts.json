@@ -27,6 +27,7 @@
 			}
 		},
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Top {{parameters.numberOfProducts}} products",
 			"subTitle": "Ordered by rating",
