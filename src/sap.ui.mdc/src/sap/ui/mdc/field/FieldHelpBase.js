@@ -419,6 +419,24 @@ sap.ui.define([
 	};
 
 	/**
+	 * Checks if a "valueHelp enabled" text should be rendered for screenreader.
+	 *
+	 * If a complex value help exists on a field a corresponding text needs to be read out by screen readers.
+	 * For simple "combobox" cases this is not needed. So this depends on the specific value help.
+	 *
+	 * @returns {boolean} If set, value help text needs to be rendered
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldBase
+	 * @since 1.86.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype.getValueHelpEnabled = function() {
+
+		return true;
+
+	};
+
+	/**
 	 * Opens the field help for the <code>Field</code> control
 	 * to which the <code>FieldHelp</code> element is connected.
 	 *

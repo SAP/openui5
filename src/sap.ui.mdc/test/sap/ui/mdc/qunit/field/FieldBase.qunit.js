@@ -46,6 +46,7 @@ sap.ui.define([
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/odata/type/String",
 	"sap/ui/core/Icon",
+	"sap/ui/core/InvisibleText",
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/Device"
 ], function(
@@ -92,6 +93,7 @@ sap.ui.define([
 	Currency,
 	StringType,
 	Icon,
+	InvisibleText,
 	containsOrEquals,
 	Device
 ) {
@@ -3842,6 +3844,7 @@ sap.ui.define([
 		var $FocusDomRef = jQuery(oField.getFocusDomRef());
 		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		var sText = oResourceBundle.getText("MULTIINPUT_ARIA_ROLE_DESCRIPTION");
+		var sValueHelpEnabledID = InvisibleText.getStaticId("sap.m", "INPUT_VALUEHELP");
 
 		oField.focus(); // as FieldHelp is connected with focus
 
@@ -3852,6 +3855,7 @@ sap.ui.define([
 		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "aria-expanded set to false");
 		assert.notOk($FocusDomRef.attr("aria-controls"), "aria-controls not set");
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "aria-activedescendant not set");
+		assert.ok($FocusDomRef.attr("aria-describedby") && $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) >= 0, "ValueHelpEnabled text set");
 
 		// open FieldHelp
 		var oClock = sinon.useFakeTimers();
@@ -3869,6 +3873,7 @@ sap.ui.define([
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Open: aria-activedescendant not set");
 
+		sinon.stub(oFieldHelp, "getValueHelpEnabled").returns(false); // fake no dialog
 		oFieldHelp.close();
 		oClock.tick(400); // fake closing time
 		oFieldHelp.fireAfterClose();
@@ -3877,6 +3882,7 @@ sap.ui.define([
 		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "Closed: aria-expanded set to false");
 		assert.notOk($FocusDomRef.attr("aria-controls"), "Closed: aria-controls not set");
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Closed: aria-activedescendant not set");
+		assert.notOk($FocusDomRef.attr("aria-describedby") && $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) >= 0, "ValueHelpEnabled text not set");
 
 		oFieldHelp.fireNavigate({ value: "Item 3", key: "I3", itemId: "ItemId"});
 		sap.ui.getCore().applyChanges();
@@ -3910,6 +3916,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		var oVHIcon = oContent && oContent.getAggregation("_endIcon")[0];
 		var $FocusDomRef = jQuery(oField.getFocusDomRef());
+		var sValueHelpEnabledID = InvisibleText.getStaticId("sap.m", "INPUT_VALUEHELP");
 
 		oField.focus(); // as FieldHelp is connected with focus
 
@@ -3919,6 +3926,7 @@ sap.ui.define([
 		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "aria-expanded set to false");
 		assert.notOk($FocusDomRef.attr("aria-controls"), "aria-controls not set");
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "aria-activedescendant not set");
+		assert.ok($FocusDomRef.attr("aria-describedby") && $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) >= 0, "ValueHelpEnabled text set");
 
 		// open FieldHelp
 		var oClock = sinon.useFakeTimers();
@@ -3931,6 +3939,7 @@ sap.ui.define([
 		assert.equal($FocusDomRef.attr("aria-controls"), "Test", "Open: aria-controls set");
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Open: aria-activedescendant not set");
 
+		sinon.stub(oFieldHelp, "getValueHelpEnabled").returns(false); // fake no dialog
 		oFieldHelp.close();
 		oClock.tick(400); // fake closing time
 		oFieldHelp.fireAfterClose();
@@ -3939,6 +3948,7 @@ sap.ui.define([
 		assert.equal($FocusDomRef.attr("aria-expanded"), "false", "Closed: aria-expanded set to false");
 		assert.notOk($FocusDomRef.attr("aria-controls"), "Closed: aria-controls not set");
 		assert.notOk($FocusDomRef.attr("aria-activedescendant"), "Closed: aria-activedescendant not set");
+		assert.notOk($FocusDomRef.attr("aria-describedby") && $FocusDomRef.attr("aria-describedby").search(sValueHelpEnabledID) >= 0, "ValueHelpEnabled text not set");
 
 		oFieldHelp.fireNavigate({ value: "Item 3", key: "I3", itemId: "ItemId"});
 		sap.ui.getCore().applyChanges();

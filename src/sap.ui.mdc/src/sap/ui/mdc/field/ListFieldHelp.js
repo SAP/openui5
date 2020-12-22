@@ -335,6 +335,12 @@ sap.ui.define([
 
 	};
 
+	ListFieldHelp.prototype.getValueHelpEnabled = function() {
+
+		return false;
+
+	};
+
 	ListFieldHelp.prototype.navigate = function(iStep) {
 
 		var oPopover = this._getPopover();

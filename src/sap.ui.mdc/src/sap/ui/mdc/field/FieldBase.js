@@ -352,7 +352,7 @@ sap.ui.define([
 				 * Sets the ARIA attributes added to the inner control.
 				 *
 				 * The object contains ARIA attribudes in an <code>aria</code> node.
-				 * Additional attributes, such as <code>role</code> or <code>autocomplete</code>, are added on root level.
+				 * Additional attributes, such as <code>role</code>, <code>autocomplete</code> or <code>valueHelpEnabled</code>, are added on root level.
 				 */
 				_ariaAttributes: {
 					type: "object",
@@ -1569,6 +1569,7 @@ sap.ui.define([
 			} else {
 				oAttributes.aria["expanded"] = "false";
 			}
+			oAttributes["valueHelpEnabled"] = oFieldHelp.getValueHelpEnabled();
 		}
 
 		this.setProperty("_ariaAttributes", oAttributes, true);
