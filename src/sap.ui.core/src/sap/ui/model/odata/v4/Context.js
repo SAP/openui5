@@ -566,9 +566,12 @@ sap.ui.define([
 	 */
 	Context.prototype.getIndex = function () {
 		if (this.oBinding.bCreatedAtEnd) {
-			return this.iIndex < 0
-				? this.oBinding.iMaxLength - this.iIndex - 1
-				: this.iIndex;
+			if (this.iIndex < 0) { // this does not include undefined for a kept-alive context
+				return this.oBinding.bLengthFinal
+					? this.oBinding.iMaxLength - this.iIndex - 1
+					: -this.iIndex - 1;
+			}
+			return this.iIndex;
 		}
 		return this.getModelIndex();
 	};
