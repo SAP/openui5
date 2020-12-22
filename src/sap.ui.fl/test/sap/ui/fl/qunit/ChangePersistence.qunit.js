@@ -1878,7 +1878,7 @@ function(
 			});
 
 			this.oWriteStub = sandbox.stub(WriteStorage, "write").resolves();
-			this.oCondenseStub = sandbox.stub(WriteStorage, "condense").resolves();
+			this.oStorageCondenseStub = sandbox.stub(WriteStorage, "condense").resolves();
 			this.oRemoveStub = sandbox.stub(WriteStorage, "remove").resolves();
 			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 
@@ -1920,7 +1920,7 @@ function(
 
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 				assert.equal(this.oWriteStub.callCount, 0);
-				assert.equal(this.oCondenseStub.callCount, 1, "the condense route of the storage is called");
+				assert.equal(this.oStorageCondenseStub.callCount, 1, "the condense route of the storage is called");
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 			}.bind(this));
 		});
@@ -1941,6 +1941,65 @@ function(
 			return this.oChangePersistence.saveDirtyChanges().then(function() {
 				assert.equal(this.oWriteStub.callCount, 1);
 				assert.equal(this.oCondenserStub.callCount, 0, "the condenser was not called with only one change");
+			}.bind(this));
+		});
+
+		[true, false].forEach(function(bBackendEnablement) {
+			var sName = "Shall not call condenser when there are multiple namespaces present";
+			if (bBackendEnablement.length) {
+				sName += " with backend condensing enabled";
+			}
+			QUnit.test(sName, function(assert) {
+				var oChangeContent1 = {
+					fileName: "Gizorillus1",
+					layer: Layer.CUSTOMER,
+					fileType: "change",
+					changeType: "addField",
+					selector: {id: "control1"},
+					content: {},
+					originalLanguage: "DE",
+					namespace: "namespace1"
+				};
+				var oChangeContent2 = {
+					fileName: "Gizorillus2",
+					layer: Layer.CUSTOMER,
+					fileType: "change",
+					changeType: "addField",
+					selector: {id: "control1"},
+					content: {},
+					originalLanguage: "DE",
+					namespace: "namespace2"
+				};
+				if (bBackendEnablement) {
+					sandbox.stub(Settings, "getInstanceOrUndef").returns({
+						isCondensingEnabled: function() {
+							return true;
+						}
+					});
+				}
+
+				this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
+				this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
+
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+					assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+					assert.equal(this.oWriteStub.callCount, 1, "the write function was called");
+					assert.equal(this.oStorageCondenseStub.callCount, 0, "the condenser route was not called");
+				}.bind(this));
+			});
+		});
+
+		QUnit.test("Shall not do backend condensing with 'bSkipUpdateCache' flag present", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, true).then(function() {
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+				assert.equal(this.oWriteStub.callCount, 1, "the write function was called");
+				assert.equal(this.oStorageCondenseStub.callCount, 0, "the condenser route was not called");
 			}.bind(this));
 		});
 

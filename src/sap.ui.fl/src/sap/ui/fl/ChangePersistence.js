@@ -537,6 +537,17 @@ sap.ui.define([
 		}.bind(this));
 	};
 
+	function checkIfOnlyOne(aChanges, sFunctionName) {
+		var aProperties = aChanges.map(function(oChange) {
+			return oChange[sFunctionName]();
+		});
+		var aUniqueProperties = aProperties.filter(function(sValue, iIndex, aProperties) {
+			return aProperties.indexOf(sValue) === iIndex;
+		});
+
+		return aUniqueProperties.length === 1;
+	}
+
 	function shouldCondensingBeEnabled(oAppComponent, aChanges) {
 		var bCondenserEnabled = false;
 
@@ -544,18 +555,12 @@ sap.ui.define([
 			return false;
 		}
 
-		var aLayers = aChanges.map(function(oChange) {
-			return oChange.getLayer();
-		});
-		var aUniqueLayers = aLayers.filter(function(sValue, iIndex, aLayers) {
-			return aLayers.indexOf(sValue) === iIndex;
-		});
-
-		if (aUniqueLayers.length > 1) {
+		if (!checkIfOnlyOne(aChanges, "getLayer")) {
 			return false;
 		}
 
-		if (aUniqueLayers[0] === "CUSTOMER" || aUniqueLayers[0] === "USER") {
+		var sLayer = aChanges[0].getLayer();
+		if (sLayer === "CUSTOMER" || sLayer === "USER") {
 			bCondenserEnabled = true;
 		}
 
@@ -567,13 +572,26 @@ sap.ui.define([
 		return bCondenserEnabled;
 	}
 
+	function isBackendCondensingEnabled(aChanges, bSkipUpdateCache) {
+		var bEnabled = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().isCondensingEnabled();
+
+		// bSkipUpdateCache is set in the SaveAs scenario which has to be disabled for now
+		if (bEnabled && bSkipUpdateCache) {
+			bEnabled = false;
+		}
+		if (bEnabled && !checkIfOnlyOne(aChanges, "getNamespace")) {
+			bEnabled = false;
+		}
+
+		return bEnabled;
+	}
+
 	function updateCacheAndDeleteUnsavedChanges(aAllChanges, aCondensedChanges, bSkipUpdateCache) {
 		this._massUpdateCacheAndDirtyState(aCondensedChanges, bSkipUpdateCache);
 		this._deleteNotSavedChanges(aAllChanges, aCondensedChanges);
 	}
 
-	function getAllRelevantChangesForCondensing(aPassedChanges) {
-		var aDirtyChanges = aPassedChanges || this._aDirtyChanges;
+	function getAllRelevantChangesForCondensing(aDirtyChanges) {
 		if (!aDirtyChanges.length) {
 			return [];
 		}
@@ -599,18 +617,15 @@ sap.ui.define([
 	 */
 	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, nParentVersion) {
 		var aAllChanges;
-		var aDirtyChanges;
-		var bBackendCondensingEnabled = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().isCondensingEnabled();
+		var aDirtyChanges = aChanges || this._aDirtyChanges;
+		var bBackendCondensingEnabled = isBackendCondensingEnabled(aDirtyChanges, bSkipUpdateCache);
 		var bIsCondensingEnabled = false;
 		if (bBackendCondensingEnabled) {
-			aAllChanges = getAllRelevantChangesForCondensing.call(this, aChanges);
+			aAllChanges = getAllRelevantChangesForCondensing.call(this, aDirtyChanges);
 			bIsCondensingEnabled = shouldCondensingBeEnabled(oAppComponent, aAllChanges);
 		}
-		if (bIsCondensingEnabled) {
-			aDirtyChanges = aChanges || this._aDirtyChanges;
-		} else {
-			aAllChanges = aChanges || this._aDirtyChanges;
-			aDirtyChanges = aAllChanges;
+		if (!bIsCondensingEnabled) {
+			aAllChanges = aDirtyChanges;
 		}
 		var aChangesClone = aAllChanges.slice(0);
 		var aDirtyChangesClone = aDirtyChanges.slice(0);
