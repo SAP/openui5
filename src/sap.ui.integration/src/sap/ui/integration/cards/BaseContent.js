@@ -173,7 +173,7 @@ sap.ui.define([
 				this._bReady = true;
 				this.fireEvent("_ready");
 			}
-		});
+		}.bind(this));
 	};
 
 
@@ -203,7 +203,8 @@ sap.ui.define([
 	 * @param {Object} oDataSettings The data part of the configuration object
 	 */
 	BaseContent.prototype._setDataConfiguration = function (oDataSettings) {
-		var oModel;
+		var oCard = this.getCardInstance(),
+			oModel;
 
 		if (!oDataSettings) {
 			this._sContentBindingPath = null;
@@ -224,7 +225,7 @@ sap.ui.define([
 		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
 
 		if (oDataSettings.name) {
-			oModel = this.getModel(oDataSettings.name);
+			oModel = oCard.getModel(oDataSettings.name);
 		} else if (this._oDataProvider) {
 			oModel = new ObservableModel();
 			this.setModel(oModel);
@@ -336,44 +337,8 @@ sap.ui.define([
 	BaseContent.prototype.onDataChanged = function () { };
 
 	/**
-	 * Helper function to bind an aggregation.
-	 *
-	 * @param {string} sAggregation The name of the aggregation to bind.
-	 * @param {sap.ui.core.Control} oControl The control which aggregation is going to be bound.
-	 * @param {Object} oBindingInfo The binding info.
-	 */
-	function _bind(sAggregation, oControl, oBindingInfo) {
-		var oBindingContext = this.getBindingContext(),
-			oAggregation = oControl.getAggregation(sAggregation);
-
-		if (oBindingContext) {
-			oBindingInfo.path = oBindingInfo.path || this._sContentBindingPath || oBindingContext.getPath();
-
-			oControl.bindAggregation(sAggregation, oBindingInfo);
-
-			if (this.getModel("parameters") && oAggregation) {
-				this.getModel("parameters").setProperty("/visibleItems", oAggregation.length);
-			}
-
-			if (!this._mObservers[sAggregation]) {
-				this._mObservers[sAggregation] = new ManagedObjectObserver(function (oChanges) {
-					if (oChanges.name === sAggregation && (oChanges.mutation === "insert" || oChanges.mutation === "remove")) {
-						var oAggregation = oControl.getAggregation(sAggregation);
-						var iLength = oAggregation ? oAggregation.length : 0;
-						if (this.getModel("parameters")) {
-							this.getModel("parameters").setProperty("/visibleItems", iLength);
-						}
-					}
-				}.bind(this));
-				this._mObservers[sAggregation].observe(oControl, {
-					aggregations: [sAggregation]
-				});
-			}
-		}
-	}
-
-	/**
-	 * Binds an aggregation to the binding context path of the BaseContent.
+	 * Binds an aggregation to the binding path of the BaseContent.
+	 * Observes the aggregation to update parameters>/visibleItems.
 	 *
 	 * NOTE:
 	 * For now items will always be bound to the content's binding context path.
@@ -387,17 +352,65 @@ sap.ui.define([
 	 * @param {Object} oBindingInfo The binding info.
 	 */
 	BaseContent.prototype._bindAggregationToControl = function (sAggregation, oControl, oBindingInfo) {
-		var bAggregation = sAggregation && typeof sAggregation === "string";
-		var bBindingInfo = oBindingInfo && typeof oBindingInfo === "object";
-		if (!bAggregation || !oControl || !bBindingInfo) {
+		var oCardBindingContext;
+
+		if (!oBindingInfo) {
 			return;
 		}
 
-		if (this.getBindingContext()) {
-			_bind.apply(this, arguments);
-		} else {
-			oControl.attachModelContextChange(_bind.bind(this, sAggregation, oControl, oBindingInfo));
+		if (!oBindingInfo.path) {
+			oBindingInfo.path = this._sContentBindingPath;
 		}
+
+		if (!oBindingInfo.path) {
+			// path is given only on card level, so take it from there
+			oCardBindingContext = this.getCardInstance().getBindingContext();
+			oBindingInfo.path = oCardBindingContext && oCardBindingContext.getPath();
+		}
+
+		if (!oBindingInfo.path) {
+			return;
+		}
+
+		oControl.bindAggregation(sAggregation, oBindingInfo);
+
+		this._observeAggregation(sAggregation, oControl);
+	};
+
+	/**
+	 * Observes the specified aggregation for changes and updates parameters>/visibleItems.
+	 * @param {string} sAggregation The name of the aggregation to bind.
+	 * @param {sap.ui.core.Control} oControl The control which aggregation is going to be bound.
+	 */
+	BaseContent.prototype._observeAggregation = function (sAggregation, oControl) {
+		var oParamsModel = this.getCardInstance().getModel("parameters"),
+			oObserver;
+
+		if (this._mObservers[sAggregation]) {
+			// already observed
+			return;
+		}
+
+		oObserver = new ManagedObjectObserver(function (oChanges) {
+			var oAggregation;
+
+			if (oChanges.name !== sAggregation) {
+				return;
+			}
+
+			if (!(oChanges.mutation === "insert" || oChanges.mutation === "remove")) {
+				return;
+			}
+
+			oAggregation = oControl.getAggregation(sAggregation);
+			oParamsModel.setProperty("/visibleItems", oAggregation.length);
+		});
+
+		oObserver.observe(oControl, {
+			aggregations: [sAggregation]
+		});
+
+		this._mObservers[sAggregation] = oObserver;
 	};
 
 	/**

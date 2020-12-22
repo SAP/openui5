@@ -92,6 +92,8 @@ sap.ui.define([
 				break;
 		}
 
+		oHeader.setCard(oCard);
+
 		if (mConfiguration.status &&
 			mConfiguration.status.text &&
 			mConfiguration.status.text.format) {
