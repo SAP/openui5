@@ -821,6 +821,57 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getFormValueProperty", function(assert) {
+
+		assert.equal(oField.getFormValueProperty(), "conditions", "Conditions are value property for Form");
+
+	});
+
+	QUnit.test("getFormFormattedValue", function(assert) {
+
+		var oCondition = Condition.createItemCondition("1", "Text");
+		oCM.addCondition("Name", oCondition);
+		oCM.checkUpdate(true, false); // update model syncronous
+		oField.setDisplay(FieldDisplay.Description);
+		oField.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oField.getFormFormattedValue(), "Text", "Formatted Value");
+
+	});
+
+	QUnit.test("getFormFormattedValue with unit", function(assert) {
+
+		oField.setDataType("sap.ui.model.type.Currency");
+		var oCondition = Condition.createItemCondition([123.45, "USD"]);
+		oCM.addCondition("Name", oCondition);
+		oCM.checkUpdate(true, false); // update model syncronous
+		oField.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oType = new Currency();
+		sValue = oType.formatValue([123.45, "USD"], "string"); // because of special whitspaces and local dependend
+
+		assert.equal(oField.getFormFormattedValue(), sValue, "Formatted Value");
+
+	});
+
+	QUnit.test("getFormFormattedValue with date", function(assert) {
+
+		oField.setDataType("sap.ui.model.type.Date");
+		oField.setDataTypeFormatOptions({pattern: "dd/MM/yyyy"});
+		oField.setMaxConditions(1);
+		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
+		var oCondition = Condition.createCondition("EQ", [new Date(2020, 11, 18)]);
+		oCM.addCondition("Name", oCondition);
+		oCM.checkUpdate(true, false); // update model syncronous
+		oField.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oField.getFormFormattedValue(), "18/12/2020", "Formatted Value");
+
+	});
+
 	var oFieldEditMulti, oFieldEditSingle, oFieldDisplay, oFieldSearch;
 
 	QUnit.module("conditions & properties", {
@@ -900,7 +951,7 @@ sap.ui.define([
 
 	QUnit.test("description", function(assert) {
 
-		oFieldEditMulti.setDisplay("DescriptionValue");
+		oFieldEditMulti.setDisplay(FieldDisplay.DescriptionValue);
 		var oCondition = Condition.createCondition("EQ", ["Test", "Hello"]);
 		oCM.addCondition("Name", oCondition);
 		sap.ui.getCore().applyChanges();
@@ -1191,7 +1242,7 @@ sap.ui.define([
 
 		var oCondition = Condition.createCondition("EQ", [true], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
-		oFieldEditSingle.setDisplay("Description");
+		oFieldEditSingle.setDisplay(FieldDisplay.Description);
 		oFieldEditSingle.setDataType("Edm.Boolean");
 		oFieldDisplay.setMaxConditions(1);
 		oFieldDisplay.setDataType("Edm.Boolean");
@@ -1229,7 +1280,7 @@ sap.ui.define([
 
 		var oCondition = Condition.createCondition("EQ", [true], undefined, undefined, ConditionValidated.Validated);
 		oCM.addCondition("Name", oCondition);
-		oFieldEditSingle.setDisplay("Description");
+		oFieldEditSingle.setDisplay(FieldDisplay.Description);
 		oFieldEditSingle.setDataType("Edm.Boolean");
 		oFieldDisplay.setMaxConditions(1);
 		oFieldDisplay.setDataType("Edm.Boolean");
@@ -1607,7 +1658,7 @@ sap.ui.define([
 	QUnit.test("with multi value", function(assert) {
 
 		var fnDone = assert.async();
-		oField.setDisplay("DescriptionValue");
+		oField.setDisplay(FieldDisplay.DescriptionValue);
 		sap.ui.getCore().applyChanges();
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
@@ -2463,7 +2514,7 @@ sap.ui.define([
 
 	QUnit.test("value help enabled", function(assert) {
 
-		oField.setDisplay("DescriptionValue");
+		oField.setDisplay(FieldDisplay.DescriptionValue);
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
 		sinon.spy(oFieldHelp, "onFieldChange");
 		sap.ui.getCore().applyChanges();
@@ -2510,7 +2561,7 @@ sap.ui.define([
 
 	QUnit.test("with single value field", function(assert) {
 
-		oField.setDisplay("DescriptionValue");
+		oField.setDisplay(FieldDisplay.DescriptionValue);
 		sinon.stub(oField, "_getOperators").callsFake(fnOnlyEQ); // fake Field
 		oField.setMaxConditions(1);
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
@@ -2628,7 +2679,7 @@ sap.ui.define([
 
 	QUnit.test("Skip opening FieldHelp with pending content on focus loss", function (assert) {
 
-		oField.setDisplay("DescriptionValue");
+		oField.setDisplay(FieldDisplay.DescriptionValue);
 
 		var oIconContent = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }); // just dummy handler to make Icon focusable
 		var oAlternateFocusTarget = new FieldBase("F4");
@@ -2846,7 +2897,7 @@ sap.ui.define([
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
 		oFieldHelp.setValidateInput(false); // to show keys if not found in help
 		assert.ok(oFieldHelp.getTextForKey.calledWith("I2"), "getTextForKey called");
-		oField.setDisplay("DescriptionValue");
+		oField.setDisplay(FieldDisplay.DescriptionValue);
 		sap.ui.getCore().applyChanges();
 		oField.focus(); // as FieldHelp is connected with focus
 		var aContent = oField.getAggregation("_content");
@@ -3133,7 +3184,7 @@ sap.ui.define([
 
 	QUnit.test("filtering", function(assert) {
 
-		oField.setDisplay("DescriptionValue");
+		oField.setDisplay(FieldDisplay.DescriptionValue);
 		var oFieldHelp = sap.ui.getCore().byId(oField.getFieldHelp());
 		oFieldHelp.setConditions([Condition.createItemCondition("I1", "Item1")]); // should stay on multi-value-suggestion
 		sap.ui.getCore().applyChanges();

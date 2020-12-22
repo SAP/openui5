@@ -84,7 +84,7 @@ sap.ui.define([
 	 * It must not be used stand-alone.
 	 *
 	 * @extends sap.ui.mdc.Control
-	 * @implements sap.ui.core.IFormContent
+	 * @implements sap.ui.core.IFormContent, sap.ui.core.ISemanticFormContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -100,7 +100,7 @@ sap.ui.define([
 	 */
 	var FieldBase = Control.extend("sap.ui.mdc.field.FieldBase", /* @lends sap.ui.mdc.field.FieldBase.prototype */ {
 		metadata: {
-			interfaces: ["sap.ui.core.IFormContent"],
+			interfaces: ["sap.ui.core.IFormContent", "sap.ui.core.ISemanticFormContent"],
 			library: "sap.ui.mdc",
 			properties: {
 				/**
@@ -1437,6 +1437,37 @@ sap.ui.define([
 		} else {
 			return this.getMaxConditions();
 		}
+
+	};
+
+	/*
+	 * If Field is inside of a SemanticFormElement return formatted value in display mode
+	 */
+	FieldBase.prototype.getFormFormattedValue = function() {
+
+		var aConditions = this.getConditions();
+
+		if (this._bIsMeasure && this._oUnitOriginalType) {
+			// in unit case use original data type for formatting (as internal type hides unit)
+			var aValue = aConditions.length > 0 ? aConditions[0].values[0] : [0, null]; // TODO: support multiple conditions or other operator than EQ?
+			return this._oUnitOriginalType.formatValue(aValue, "string");
+		} else if (this._oDateOriginalType) {
+			// in date case use original data type for formatting (as internal type formats to ISO format)
+			var vValue = aConditions.length > 0 ? aConditions[0].values[0] : null; // TODO: support multiple conditions or other operator than EQ?
+			return this._oDateOriginalType.formatValue(vValue, "string");
+		} else {
+			var oConditionsType = _getConditionsType.call(this);
+			return oConditionsType.formatValue(aConditions);
+		}
+
+	};
+
+	/*
+	 * If Field is inside of a SemanticFormElement return value holding property (don't use "value" property of Field as conditions are updares async)
+	 */
+	FieldBase.prototype.getFormValueProperty = function() {
+
+		return "conditions";
 
 	};
 
