@@ -6464,5 +6464,32 @@
 			"A",
 			"arrows"
 		]
+	},
+	"clear-all": {
+		"tags": [
+			"clear",
+			"clear-all",
+			"square",
+			"x",
+			"delete",
+			"remove",
+			"check",
+			"uncheck"
+		]
+	},
+	"command-line-interfaces": {
+		"tags": [
+			"command",
+			"command-line",
+			"interfaces",
+			"code",
+			"develop",
+			"source",
+			"source-code",
+			"write",
+			"syntax",
+			"programming",
+			"technical"
+		]
 	}
 }

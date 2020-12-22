@@ -710,7 +710,9 @@ sap.ui.define([
 				'feedback': 0xe288,
 				'information': 0xe289,
 				's4hana': 0x1e28A,
-				'translate': 0x1e28B
+				'translate': 0x1e28B,
+				'clear-all': 0xe28C,
+				'command-line-interfaces': 0xe28D
 			}
 		};
 

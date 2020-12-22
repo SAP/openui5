@@ -334,7 +334,8 @@
 				{ "name" : "chevron-phase-2" },
 				{ "name" : "program-triangles" },
 				{ "name" : "table-row" },
-				{ "name" : "table-column" }
+				{ "name" : "table-column" },
+				{ "name" : "clear-all" }
 			]
 		},
 		{
