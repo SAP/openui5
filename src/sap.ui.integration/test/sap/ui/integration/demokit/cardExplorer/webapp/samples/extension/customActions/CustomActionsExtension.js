@@ -18,7 +18,7 @@ sap.ui.define(["sap/ui/integration/Extension", "sap/ui/integration/ActionDefinit
 
 		// Actions can be added at any time, for example after response from a backend
 		oCard.request({
-				url: sap.ui.require.toUrl("card/explorer/extension/customActions/urlInfo.json")
+				url: "./urlInfo.json"
 			}).then(function (oRes) {
 				oCard.addActionDefinition(new ActionDefinition({
 					type: "Navigation",
