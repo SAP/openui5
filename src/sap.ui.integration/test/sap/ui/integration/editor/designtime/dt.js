@@ -1,14 +1,13 @@
-/*!
- * ${copyright}
- */
+// add your copyright here
+
 sap.ui.define(["sap/ui/integration/Designtime"], function (
 	Designtime
 ) {
 	"use strict";
 	return function () {
 		return new Designtime({
-			form: {
-				items: {
+			"form": {
+				"items": {
 					"string": {
 						"manifestpath": "/sap.card/configuration/parameters/string/value",
 						"defaultValue": "StringValue",
@@ -203,7 +202,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"request": {
 									"url": "./stringWithRequestList.json"
 								},
-								"path": "/"
+								"path": "/values"
 							},
 							"item": {
 								"text": "{text}",
@@ -221,7 +220,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"request": {
 									"url": "{{destinations.local}}/stringWithRequestList.json"
 								},
-								"path": "/"
+								"path": "/values"
 							},
 							"item": {
 								"text": "{text}",
@@ -238,12 +237,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string[]",
 						"values": {
 							"data": {
-								"json": [
-									{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
-									{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
-									{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
-								],
-								"path": "/"
+								"json": {
+									"values": [
+										{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+										{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+										{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
+									]
+								},
+								"path": "/values"
 							},
 							"item": {
 								"text": "{text}",
@@ -473,8 +474,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					}
 				}
 			},
-			preview: {
-				modes: "LiveAbstract"
+			"preview": {
+				"modes": "LiveAbstract"
 			}
 		});
 	};

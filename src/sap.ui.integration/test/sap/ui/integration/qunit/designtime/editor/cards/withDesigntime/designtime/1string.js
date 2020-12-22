@@ -3,13 +3,14 @@ sap.ui.define(["sap/ui/integration/Designtime"
 	"use strict";
 	return function () {
 		return new Designtime({
-			form: {
-				items: {
-					stringParameter: {
+			"form": {
+				"items": {
+					"stringParameter": {
 						"manifestpath": "/sap.card/configuration/parameters/stringParameter/value",
 						"type": "string",
 						"defaultValue": "stringParameterDefaultValue",
-						"allowDynamicValues": true
+						"allowDynamicValues": true,
+						"allowSettings": true
 					}
 				}
 			}

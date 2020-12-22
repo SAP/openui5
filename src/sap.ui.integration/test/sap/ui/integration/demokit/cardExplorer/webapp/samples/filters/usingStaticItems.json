@@ -49,6 +49,7 @@
 			}
 		},
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Products by category",
 			"subTitle": "Category {filters>/productCategory/selectedItem/title}",

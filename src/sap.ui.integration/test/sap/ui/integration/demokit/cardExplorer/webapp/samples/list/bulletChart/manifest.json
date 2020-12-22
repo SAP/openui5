@@ -27,6 +27,7 @@
 	},
 	"sap.card": {
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Actual income from products",
 			"icon": {

@@ -33,6 +33,7 @@
 			}
 		},
 		"type": "AdaptiveCard",
+		"designtime": "dt/Configuration",
 		"content": {
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 			"type": "AdaptiveCard",

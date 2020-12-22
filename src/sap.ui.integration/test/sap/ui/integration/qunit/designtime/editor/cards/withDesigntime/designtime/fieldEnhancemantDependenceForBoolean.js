@@ -5,8 +5,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 	"use strict";
 	return function () {
 		return new Designtime({
-			form: {
-				items: {
+			"form": {
+				"items": {
 					"booleanVisualization": {
 						"manifestpath": "/sap.card/configuration/parameters/boolean/value",
 						"defaultValue": true,

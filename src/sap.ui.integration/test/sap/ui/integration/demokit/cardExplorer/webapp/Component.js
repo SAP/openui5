@@ -32,6 +32,9 @@ sap.ui.define([
 			// call the base component's init function
 			UIComponent.prototype.init.apply(this, arguments);
 
+			// specify the only supported language
+			sap.ui.getCore().getConfiguration().setLanguage("en");
+
 			// register TNT icon font
 			IconPool.registerFont({
 				fontFamily: "SAP-icons-TNT",

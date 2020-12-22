@@ -27,6 +27,7 @@
 	},
 	"sap.card": {
 		"type": "Object",
+		"designtime": "dt/Configuration",
 		"data": {
 			"json": {
 				"showContactDetails": false,

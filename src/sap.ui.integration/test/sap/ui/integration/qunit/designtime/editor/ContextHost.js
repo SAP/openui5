@@ -3,7 +3,10 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 	return function (id) {
 		var oHost = new Host(id, {
 			resolveDestination: function (name) {
-				return Promise.resolve("https://" + name);
+				if (name === "local") {
+					//resolve local to local path
+					return "./";
+				}
 			}
 		});
 
