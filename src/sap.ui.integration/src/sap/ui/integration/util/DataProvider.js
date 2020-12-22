@@ -1,8 +1,8 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/base/ManagedObject"],
-	function (ManagedObject) {
+sap.ui.define(["sap/ui/base/ManagedObject", "sap/ui/core/Core"],
+	function (ManagedObject, Core) {
 	"use strict";
 
 	/**
@@ -39,12 +39,15 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 				 */
 				settingsJson: {
 					type: "string"
-				},
+				}
+			},
+			associations : {
 				/**
 				 * The card.
 				 */
 				card: {
-					type: "sap.ui.integration.widgets.Card"
+					type : "sap.ui.integration.widgets.Card",
+					multiple: false
 				}
 			},
 			events: {
@@ -158,6 +161,10 @@ sap.ui.define(["sap/ui/base/ManagedObject"],
 		}
 
 		return pDataUpdate;
+	};
+
+	DataProvider.prototype.getCardInstance = function () {
+		return Core.byId(this.getCard());
 	};
 
 	DataProvider.prototype._triggerDataUpdate = function () {

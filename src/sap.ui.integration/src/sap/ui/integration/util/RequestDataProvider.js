@@ -97,7 +97,7 @@ sap.ui.define([
 			}
 
 			var vData = oRequestConfig.parameters,
-				oCard = this.getCard(),
+				oCard = this.getCardInstance(),
 				sUrl = oRequestConfig.url;
 
 			if (oCard && !sUrl.startsWith("/")) {
