@@ -253,6 +253,20 @@ sap.ui.define([
 	};
 
 	/**
+	 * Insert Change into changes map positioned right after the referenced change
+	 *
+	 * @param {sap.ui.fl.changeObject} oChange - Change instance
+	 * @param {object} mChangesMap - Map with changes and dependencies
+	 * @param {sap.ui.fl.changeObject} oReferenceChange - Refernce change. New change is positioned right after this one in the changes map
+	 */
+	DependencyHandler.insertChange = function(oChange, mChangesMap, oReferenceChange) {
+		var iIndex = mChangesMap && mChangesMap.aChanges && mChangesMap.aChanges.indexOf(oReferenceChange);
+		if (iIndex > -1) {
+			mChangesMap.aChanges.splice(iIndex + 1, 0, oChange);
+		}
+	};
+
+	/**
 	 * Adds a change to the map during runtime and adds the dependencies to the initial changes map
 	 *
 	 * @param {sap.ui.fl.changeObject} oChange - Change instance

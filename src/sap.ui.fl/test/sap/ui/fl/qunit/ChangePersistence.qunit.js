@@ -1561,6 +1561,18 @@ function(
 		});
 	});
 
+	function createChange(sId) {
+		return new Change(
+			Change.createInitialFileContent({
+				id: sId || "fileNameChange0",
+				layer: Layer.USER,
+				reference: "appComponentReference",
+				namespace: "namespace",
+				selector: {id: "control1"}
+			})
+		);
+	}
+
 	QUnit.module("sap.ui.fl.ChangePersistence addChange", {
 		beforeEach: function() {
 			sandbox.stub(FlexState, "initialize").resolves();
@@ -1594,7 +1606,25 @@ function(
 			assert.equal(oCheckDependenciesStub.lastCall.args[2], this._oAppComponentInstance, "the app component instance was passed");
 		});
 
-		QUnit.test("When call addChange 3 times, 4 new changes are returned and the dependencies map also got updated", function(assert) {
+		QUnit.test("'addChangeAndUpdateDependencies' function is called", function (assert) {
+			var oChange = createChange("fileNameChange0");
+			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChange);
+			assert.strictEqual(this.oChangePersistence._mChanges.aChanges[0].getId(), oChange.getId(), "then the change is added to the change persistence");
+		});
+
+		QUnit.test("'addChangeAndUpdateDependencies' function is called with referenced change", function (assert) {
+			var oChange0 = createChange("fileNameChange0");
+			var oChange1 = createChange("fileNameChange1");
+			var oChangeInBetween = createChange("fileNameChangeInBetween");
+			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChange0);
+			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChange1);
+			this.oChangePersistence.addChangeAndUpdateDependencies(this._oComponentInstance, oChangeInBetween, oChange0);
+			assert.strictEqual(this.oChangePersistence._mChanges.aChanges[0].getId(), oChange0.getId(), "then the first change is added to the change persistence on first position");
+			assert.strictEqual(this.oChangePersistence._mChanges.aChanges[1].getId(), oChangeInBetween.getId(), "then the third change is added to the change persistence on second position");
+			assert.strictEqual(this.oChangePersistence._mChanges.aChanges[2].getId(), oChange1.getId(), "then the second change is added to the change persistence on third position");
+		});
+
+		QUnit.test("When call addChange 3 times, 3 new changes are returned and the dependencies map also got updated", function(assert) {
 			var oChangeContent1;
 			var oChangeContent2;
 			var oChangeContent3;
