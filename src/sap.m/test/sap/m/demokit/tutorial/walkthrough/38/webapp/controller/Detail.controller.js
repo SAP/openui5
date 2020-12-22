@@ -2,9 +2,8 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/routing/History",
 	"sap/m/MessageToast",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/UIComponent"
-], function (Controller, History, MessageToast, JSONModel, UIComponent) {
+	"sap/ui/model/json/JSONModel"
+], function (Controller, History, MessageToast, JSONModel) {
 	"use strict";
 
 	return Controller.extend("sap.ui.demo.walkthrough.controller.Detail", {
@@ -15,7 +14,7 @@ sap.ui.define([
 			});
 			this.getView().setModel(oViewModel, "view");
 
-			var oRouter = UIComponent.getRouterFor(this);
+			var oRouter = this.getOwnerComponent().getRouter();
 			oRouter.getRoute("detail").attachPatternMatched(this._onObjectMatched, this);
 		},
 
@@ -34,7 +33,7 @@ sap.ui.define([
 			if (sPreviousHash !== undefined) {
 				window.history.go(-1);
 			} else {
-				var oRouter = UIComponent.getRouterFor(this);
+				var oRouter = this.getOwnerComponent().getRouter();
 				oRouter.navTo("overview", {}, true);
 			}
 		},
