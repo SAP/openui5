@@ -224,14 +224,14 @@ sap.ui.define([
 		var bSecondPass = false;
 
 		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
-		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
+		assert.ok(!oTreeTable.getBinding().isExpanded(0), "!Expanded");
 
 		var fnHandler = function() {
 			var iCount = iNumberOfRows + 1;
 
 			if (bSecondPass) {
 				iCount++;
-				assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+				assert.ok(oTreeTable.getBinding().isExpanded(0), "Expanded");
 				assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			}
 
@@ -292,14 +292,14 @@ sap.ui.define([
 		var bSecondPass = false;
 
 		assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows, "Row count before expand");
-		assert.ok(!oTreeTable.getBinding("rows").isExpanded(0), "!Expanded");
+		assert.ok(!oTreeTable.getBinding().isExpanded(0), "!Expanded");
 
 		var fnHandler = function() {
 			var iCount = iNumberOfRows + 1;
 
 			if (bSecondPass) {
 				iCount++;
-				assert.ok(oTreeTable.getBinding("rows").isExpanded(0), "Expanded");
+				assert.ok(oTreeTable.getBinding().isExpanded(0), "Expanded");
 				assert.equal(oTreeTable._getTotalRowCount(), iNumberOfRows + 1, "Row count after expand");
 			}
 
@@ -441,7 +441,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Activate / Deactivate", function(assert) {
-		var oBinding = oTable.getBinding("rows");
+		var oBinding = oTable.getBinding();
 		var that = this;
 
 		assert.equal(oBinding.getLength(), 8, "Row count before Grouping");

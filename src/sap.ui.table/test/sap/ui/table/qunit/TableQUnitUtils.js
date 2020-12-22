@@ -337,14 +337,14 @@ sap.ui.define([
 		}
 
 		function waitForFullRendering() {
-			if (oTable.getBinding("rows")) {
+			if (oTable.getBinding()) {
 				return waitForRowsUpdatedAndFinalDomUpdates();
 			}
 
 			// A table without binding does not fire rowsUpdated events.
 			return new Promise(function(resolve) {
 				TableQUnitUtils.addDelegateOnce(oTable, "onAfterRendering", function() {
-					if (oTable.getBinding("rows")) { // In case the table has been bound in the meanwhile.
+					if (oTable.getBinding()) { // In case the table has been bound in the meanwhile.
 						waitForRowsUpdatedAndFinalDomUpdates().then(function(mParameters) {
 							resolve(mParameters);
 						});
@@ -435,7 +435,7 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.whenBindingRefresh = function() {
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 
 			if (!oBinding) {
 				return Promise.resolve();
@@ -452,7 +452,7 @@ sap.ui.define([
 		 * @returns {Promise} A promise.
 		 */
 		oTable.qunit.whenBindingChange = function() {
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 
 			if (!oBinding) {
 				return Promise.resolve();

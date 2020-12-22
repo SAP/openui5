@@ -936,7 +936,7 @@
 					action: function(oTable, bValue) {
 						if (bValue) {
 							sap.ui.require(["sap/ui/table/CreationRow"], function(CreationRow) {
-								var oBinding = oTable.getBinding("rows");
+								var oBinding = oTable.getBinding();
 								var oModel = oBinding ? oBinding.getModel() : null;
 								var oCreationContext = oModel ? oModel.createBindingContext("/new") : null;
 

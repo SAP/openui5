@@ -824,7 +824,7 @@ function(
 				oTable._resetColumnHeaderHeights();
 				oTable._updateRowHeights(oTable._collectRowHeights(true), true);
 
-				var oBinding = oTable.getBinding("rows");
+				var oBinding = oTable.getBinding();
 				if (oBinding) {
 					// For the AnalyticalTable with an AnalyticalColumn.
 					if (this._updateTableAnalyticalInfo) {
@@ -1003,7 +1003,7 @@ function(
 						aFilters.push(oFilter);
 					}
 				}
-				oTable.getBinding("rows").filter(aFilters, FilterType.Control);
+				oTable.getBinding().filter(aFilters, FilterType.Control);
 
 				this._updateIcons();
 			}

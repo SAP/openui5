@@ -320,7 +320,7 @@
 			}));
 
 			oTable.setModel(oTable.getModel(), "headerContext");
-			oTable.getExtension()[0].setBindingContext(oTable.getBinding("rows").getHeaderContext(), "headerContext");
+			oTable.getExtension()[0].setBindingContext(oTable.getBinding().getHeaderContext(), "headerContext");
 
 			oTable.bindRows({
 				path: "/BusinessPartners",

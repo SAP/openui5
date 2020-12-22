@@ -83,7 +83,7 @@ sap.ui.define(['./ColumnMenu', "sap/ui/unified/MenuRenderer", './library', "sap/
 	AnalyticalColumnMenu.prototype._addSumMenuItem = function() {
 		var oColumn = this._oColumn,
 			oTable = this._oTable,
-			oBinding = oTable.getBinding("rows"),
+			oBinding = oTable.getBinding(),
 			oResultSet = oBinding && oBinding.getAnalyticalQueryResult();
 
 		if (oTable && oResultSet && oResultSet.findMeasureByPropertyName(oColumn.getLeadingProperty())) {

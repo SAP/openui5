@@ -1391,7 +1391,7 @@ sap.ui.define([
 
 			oTable.__iBindingLength = iLength;
 			oTable._getTotalRowCount = function() {
-				var oBinding = oTable.getBinding("rows");
+				var oBinding = oTable.getBinding();
 				if (oBinding) {
 					oBinding.getLength = function() {
 						return oTable.__iBindingLength;
@@ -1401,7 +1401,7 @@ sap.ui.define([
 			};
 			oTable._getContexts = function(iStartIndex, iLength) {
 				var aContexts = [];
-				if (this.getBinding("rows")) {
+				if (this.getBinding()) {
 					var iBindingLength = oTable.__iBindingLength;
 					var iCount = iStartIndex + iLength > iBindingLength ? iBindingLength - iStartIndex : iLength;
 					var bVariableHeights = TableUtils.isVariableRowHeightEnabled(oTable);
@@ -1414,7 +1414,7 @@ sap.ui.define([
 				return aContexts;
 			};
 			oTable.getContextByIndex = function(iIndex) {
-				return iIndex >= 0 && this.getBinding("rows") ? oTable._getContexts(iIndex, 1)[0] : null;
+				return iIndex >= 0 && this.getBinding() ? oTable._getContexts(iIndex, 1)[0] : null;
 			};
 		},
 		changeRowHeights: function(iHeightA, iHeightB) {
@@ -1440,7 +1440,7 @@ sap.ui.define([
 			}
 
 			var iOldLength = this.oTable._getTotalRowCount();
-			var oBinding = this.oTable.getBinding("rows");
+			var oBinding = this.oTable.getBinding();
 
 			this.oTable.__iBindingLength = iNewLength;
 
@@ -1450,13 +1450,13 @@ sap.ui.define([
 			}
 		},
 		fakeODataBindingChange: function() {
-			var oBinding = this.oTable ? this.oTable.getBinding("rows") : null;
+			var oBinding = this.oTable ? this.oTable.getBinding() : null;
 			if (oBinding) {
 				oBinding.fireEvent("change", {reason: ChangeReason.Change});
 			}
 		},
 		fakeODataBindingRefresh: function(iNewLength) {
-			var oBinding = this.oTable ? this.oTable.getBinding("rows") : null;
+			var oBinding = this.oTable ? this.oTable.getBinding() : null;
 
 			if (!oBinding) {
 				return;

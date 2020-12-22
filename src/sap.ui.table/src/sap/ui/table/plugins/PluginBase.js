@@ -65,7 +65,7 @@ sap.ui.define([
 	PluginBase.prototype.onActivate = function(oTable) {
 		TableUtils.Hook.install(oTable, oHookInstallation, this);
 
-		var oTableBinding = oTable.getBinding("rows");
+		var oTableBinding = oTable.getBinding();
 		if (oTableBinding) {
 			this.onTableRowsBound(oTableBinding);
 		}
@@ -166,7 +166,7 @@ sap.ui.define([
 	 */
 	PluginBase.prototype.getTableBinding = function() {
 		var oTable = this.getTable();
-		var oBinding = oTable ? oTable.getBinding("rows") : null;
+		var oBinding = oTable ? oTable.getBinding() : null;
 
 		return oBinding ? oBinding : null;
 	};

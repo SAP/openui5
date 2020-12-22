@@ -137,7 +137,7 @@
 
 		oConfigModel.setProperty("/rowHeight", iHeight === 0 ? "auto" : iHeight + "px");
 		oRowModel.setProperty("/custom/", aData);
-		oTable.getBinding("rows").refresh(true);
+		oTable.getBinding().refresh(true);
 	}
 
 	// Variable row heights test control
@@ -354,10 +354,10 @@
 	oTable.setModel(oRowModel);
 	oTable.setModel(oConfigModel, "config");
 	oTable.bindRows("/");
-	oTable.getBinding("rows").getLength = function() {
+	oTable.getBinding().getLength = function() {
 		return oConfigModel.getProperty("/rowCount");
 	};
-	oTable.getBinding("rows").getContexts = function(iStartIndex, iLength) {
+	oTable.getBinding().getContexts = function(iStartIndex, iLength) {
 		var aContexts = [];
 		var iBindingLength = this.getLength();
 		var iCount = iStartIndex + iLength > iBindingLength ? iBindingLength - iStartIndex : iLength;

@@ -60,7 +60,7 @@ sap.ui.define([
 				return;
 			}
 
-			var oModel = oTreeTable.getBinding("rows").getModel();
+			var oModel = oTreeTable.getBinding().getModel();
 			var oNewParent = oNewParentContext.getProperty();
 
 			// In the JSON data of this example the children of a node are inside an array with the name "categories".
@@ -85,7 +85,7 @@ sap.ui.define([
 		onCut: function(oEvent) {
 			var oTreeTable = this.byId("TreeTable");
 			var aSelectedIndices = oTreeTable.getSelectedIndices();
-			var oModel = oTreeTable.getBinding("rows").getModel();
+			var oModel = oTreeTable.getBinding().getModel();
 
 			if (aSelectedIndices.length === 0) {
 				MessageToast.show("Select at least one row first.");
@@ -113,7 +113,7 @@ sap.ui.define([
 		onPaste: function(oEvent) {
 			var oTreeTable = this.byId("TreeTable");
 			var aSelectedIndices = oTreeTable.getSelectedIndices();
-			var oModel = oTreeTable.getBinding("rows").getModel();
+			var oModel = oTreeTable.getBinding().getModel();
 
 			if (aSelectedIndices.length !== 1) {
 				MessageToast.show("Select exactly one row first.");

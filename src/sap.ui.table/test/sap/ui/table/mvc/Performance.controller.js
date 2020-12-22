@@ -350,7 +350,7 @@ sap.ui.define([
 			oController.createTestResult();
 		};
 
-		if (oController.oTable.getBinding("rows")) {
+		if (oController.oTable.getBinding()) {
 			oController.oTable.attachEventOnce("rowsUpdated", oController.fnRowsUpdated);
 		} else {
 			oController.fnRowsUpdated();

@@ -481,7 +481,7 @@ sap.ui.define([
 	 */
 	RowMode.prototype.initTableRowsAfterDataRequested = function(iRowCount) {
 		var oTable = this.getTable();
-		var oBinding = oTable.getBinding("rows");
+		var oBinding = oTable.getBinding();
 
 		clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
 
@@ -528,7 +528,7 @@ sap.ui.define([
 		var bRowsAggregationChanged = false;
 
 		// There is no need to have rows in the aggregation if the NoData overlay is enabled and no binding is available.
-		if (TableUtils.isNoDataVisible(oTable) && !oTable.getBinding("rows")) {
+		if (TableUtils.isNoDataVisible(oTable) && !oTable.getBinding()) {
 			iNewNumberOfRows = 0;
 		} else if (TableUtils.isVariableRowHeightEnabled(oTable)) {
 			// TODO: Move this to VariableRowMode#getComputedRowCounts

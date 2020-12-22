@@ -1399,7 +1399,7 @@ sap.ui.define([
 			done();
 		});
 
-		var oBinding = oTable.getBinding("rows");
+		var oBinding = oTable.getBinding();
 		var oFilter = new Filter("A", FilterOperator.EQ, "A1");
 		oBinding.filter(oFilter);
 	});
@@ -1437,7 +1437,7 @@ sap.ui.define([
 			done();
 		});
 
-		var oBinding = oTreeTable.getBinding("rows");
+		var oBinding = oTreeTable.getBinding();
 		var oFilter = new Filter("A", FilterOperator.EQ, "A1");
 		oBinding.filter(oFilter);
 	});

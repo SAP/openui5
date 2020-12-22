@@ -174,7 +174,7 @@ sap.ui.define([
 	 * @overrides
 	 */
 	AnalyticalTable.prototype._getFixedBottomRowContexts = function() {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			return [oBinding.getGrandTotalNode()];
 		}
@@ -431,7 +431,7 @@ sap.ui.define([
 	};
 
 	function updateRowState(oState) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		var oBindingInfo = this.getBindingInfo("rows");
 		var oNode = oState.context;
 
@@ -465,7 +465,7 @@ sap.ui.define([
 		Table.prototype.onRowsUpdated.apply(this, arguments);
 
 		var aRows = this.getRows();
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		var oFirstVisibleColumn = this._getVisibleColumns()[0];
 
 		for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
@@ -680,7 +680,7 @@ sap.ui.define([
 					// Why -1? Because the "Collapse Level" Menu Entry should collapse TO the given level - 1
 					// So collapsing level 1 means actually all nodes up TO level 0 will be collapsed.
 					// Potential negative values are handled by the binding.
-					that.getBinding("rows").collapseToLevel(that._iGroupedLevel - 1);
+					that.getBinding().collapseToLevel(that._iGroupedLevel - 1);
 					that.setFirstVisibleRow(0); //scroll to top after collapsing (so no rows vanish)
 					that._getSelectionPlugin().clearSelection();
 				}
@@ -692,7 +692,7 @@ sap.ui.define([
 			this._mGroupHeaderMenuItems["collapseall"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_COLLAPSE_ALL"),
 				select: function() {
-					that.getBinding("rows").collapseToLevel(0);
+					that.getBinding().collapseToLevel(0);
 					that.setFirstVisibleRow(0); //scroll to top after collapsing (so no rows vanish)
 					that._getSelectionPlugin().clearSelection();
 				}
@@ -704,7 +704,7 @@ sap.ui.define([
 			this._mGroupHeaderMenuItems["expand"] = new MenuItem({
 				text: TableUtils.getResourceText("TBL_EXPAND_LEVEL"),
 				select: function() {
-					that.getBinding("rows").expandToLevel(that._iGroupedLevel);
+					that.getBinding().expandToLevel(that._iGroupedLevel);
 					that.setFirstVisibleRow(0);
 					that._getSelectionPlugin().clearSelection();
 				}
@@ -765,12 +765,12 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AnalyticalTable.prototype.getContextByIndex = function(iIndex) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		return iIndex >= 0 && oBinding ? oBinding.getContextByIndex(iIndex) : null;
 	};
 
 	AnalyticalTable.prototype.getContextInfoByIndex = function(iIndex) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		return iIndex >= 0 && oBinding ? oBinding.getNodeByIndex(iIndex) : null;
 	};
 
@@ -880,7 +880,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			var aColumnInfo = this._getColumnInformation();
 			var iNumberOfExpandedLevels = oBinding.getNumberOfExpandedLevels() || 0;
@@ -908,7 +908,7 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._updateTotalRow = function(bSuppressInvalidate) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		var iNewFixedBottomRowCount = 0;
 		var oRowMode = this.getRowMode();
 
@@ -928,7 +928,7 @@ sap.ui.define([
 			return;
 		}
 
-		var oBinding = this.getBinding("rows"),
+		var oBinding = this.getBinding(),
 			oResult = oBinding && oBinding.getAnalyticalQueryResult();
 
 		if (oResult) {
@@ -1010,7 +1010,7 @@ sap.ui.define([
 	};
 
 	AnalyticalTable.prototype._getFirstMeasureColumnIndex = function() {
-		var oBinding = this.getBinding("rows"),
+		var oBinding = this.getBinding(),
 			oResultSet = oBinding && oBinding.getAnalyticalQueryResult(),
 			aColumns = this._getVisibleColumns();
 
@@ -1036,7 +1036,7 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	AnalyticalTable.prototype.getTotalSize = function() {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			return oBinding.getTotalSize();
 		}
@@ -1079,7 +1079,7 @@ sap.ui.define([
 	 * @param {boolean} bCollapseRecursive
 	 */
 	AnalyticalTable.prototype.setCollapseRecursive = function(bCollapseRecursive) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			assert(oBinding.setCollapseRecursive, "Collapse Recursive is not supported by the used binding");
 			if (oBinding.setCollapseRecursive) {
@@ -1242,7 +1242,7 @@ sap.ui.define([
 	 * @since 1.70
 	 */
 	AnalyticalTable.prototype.expandAll = function() {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		if (oBinding) {
 			oBinding.expandToLevel(this._aGroupedColumns.length);
 			this.setFirstVisibleRow(0);
@@ -1293,7 +1293,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.comp
 	 */
 	AnalyticalTable.prototype.getAnalyticalInfoOfRow = function(oRow) {
-		var oBinding = this.getBinding("rows");
+		var oBinding = this.getBinding();
 		var oContext = oRow ? oRow.getRowBindingContext() : null;
 
 		if (!TableUtils.isA(oRow, "sap.ui.table.Row") || oRow.getParent() !== this || !oBinding || !oContext) {

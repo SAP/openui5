@@ -93,7 +93,7 @@ sap.ui.define([
 		this.oTable = createTable.call(this, {rootLevel: 1});
 
 		var fnHandler1 = function() {
-			var oBinding = this.oTable.getBinding("rows");
+			var oBinding = this.oTable.getBinding();
 
 			// test some defaults
 			assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels is 0");
@@ -130,7 +130,7 @@ sap.ui.define([
 
 		// test expand root
 		var fnHandler1 = function() {
-			oBinding = this.oTable.getBinding("rows");
+			oBinding = this.oTable.getBinding();
 			assert.ok(oBinding.isA("sap.ui.model.odata.v2.ODataTreeBinding"), "treeBinding class check");
 
 			assert.equal(jQuery("#table0").find(".sapUiTableTreeIconNodeClosed").length, 1,
@@ -321,7 +321,7 @@ sap.ui.define([
 		var oBinding;
 
 		var fnHandler1 = function() {
-			oBinding = this.oTable.getBinding("rows");
+			oBinding = this.oTable.getBinding();
 			// test some defaults
 			assert.equal(oBinding.mParameters.numberOfExpandedLevels, 1, "Number of expanded levels is 1");
 			assert.equal(oBinding.mParameters.rootLevel, 1, "RootLevel is 1");
@@ -364,7 +364,7 @@ sap.ui.define([
 
 		var fnHandler1 = function() {
 			// test some defaults
-			oBinding = this.oTable.getBinding("rows");
+			oBinding = this.oTable.getBinding();
 			assert.equal(oBinding.mParameters.numberOfExpandedLevels, 0, "Number of expanded levels is 0");
 			assert.equal(oBinding.mParameters.rootLevel, 2, "RootLevel is 2");
 			assert.ok(!this.oTable.getExpandFirstLevel(), "Expand first Level is false");
@@ -401,7 +401,7 @@ sap.ui.define([
 
 		var fnHandler1 = function() {
 
-			oBinding = this.oTable.getBinding("rows");
+			oBinding = this.oTable.getBinding();
 			// the selection is already handled by the ODataTreeBindingAdapter.qunit.html
 			// just do some basic check to ensure the API is called correctly
 			this.oTable.setSelectedIndex(1);
@@ -552,7 +552,7 @@ sap.ui.define([
 		var oBinding;
 
 		var fnHandler1 = function() {
-			oBinding = this.oTable.getBinding("rows");
+			oBinding = this.oTable.getBinding();
 			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
 			assert.equal(this.oTable.getRootLevel(), 2, "Root Level is 2");
 			attachRowsUpdatedOnce(this.oTable, fnHandler2, this);
@@ -579,7 +579,7 @@ sap.ui.define([
 		 * This is only for validation that the table works as before when setting a binding context later.
 		 */
 		var fnHandler1 = function() {
-			oBinding = this.oTable.getBinding("rows");
+			oBinding = this.oTable.getBinding();
 			assert.equal(this.oTable.getRootLevel(), oBinding.getRootLevel(), "Root Level OK");
 			assert.equal(this.oTable.getRootLevel(), 2, "Root Level is 2");
 			attachRowsUpdatedOnce(this.oTable, fnHandler2, this);

@@ -85,7 +85,7 @@ sap.ui.define([
 		initBindingEventHandler : function(){
 			var oBusyIndicator = this.oBusyIndicator;
 			var oTable = this.getTable();
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 
 			oBinding.attachDataRequested(function(){
 				oTable.setNoData(oBusyIndicator);

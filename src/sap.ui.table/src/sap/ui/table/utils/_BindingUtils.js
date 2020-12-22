@@ -27,7 +27,7 @@ sap.ui.define([], function() {
 		 * @returns {Promise} A promise on the metadata loaded state.
 		 */
 		metadataLoaded: function(oTable) {
-			var oBinding = oTable.getBinding("rows");
+			var oBinding = oTable.getBinding();
 			var oModel = oBinding ? oBinding.getModel() : null;
 			var fResolvePromise = null;
 			var fRejectPromise = null;

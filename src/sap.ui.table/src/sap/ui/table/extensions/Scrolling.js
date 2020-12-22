@@ -1070,7 +1070,7 @@ sap.ui.define([
 			var iViewportScrollRange = VerticalScrollingHelper.getScrollRangeOfViewport(oTable);
 			var aRowHeights = oTable._aRowHeights;
 
-			if (!oViewport || !oTable.getBinding("rows")) {
+			if (!oViewport || !oTable.getBinding()) {
 				log("VerticalScrollingHelper.fixScrollPosition: Aborted - Viewport or binding not available", oTable);
 				return Promise.resolve();
 			}
@@ -2025,7 +2025,7 @@ sap.ui.define([
 				oScrollExtension.updateVerticalScrollbarHeight();
 				oScrollExtension.updateVerticalScrollHeight();
 			} else {
-				VerticalScrollingHelper.restoreScrollPosition(this, this.getBinding("rows") != null);
+				VerticalScrollingHelper.restoreScrollPosition(this, this.getBinding() != null);
 			}
 
 			HorizontalScrollingHelper.restoreScrollPosition(this);
@@ -2547,7 +2547,7 @@ sap.ui.define([
 
 		bExpectRowsUpdatedEvent = bExpectRowsUpdatedEvent === true;
 
-		if (bExpectRowsUpdatedEvent || oTable.getBinding("rows")) {
+		if (bExpectRowsUpdatedEvent || oTable.getBinding()) {
 			VerticalScrollingHelper.performUpdateFromFirstVisibleRow(oTable, bExpectRowsUpdatedEvent);
 		} else {
 			VerticalScrollingHelper.adjustScrollPositionToFirstVisibleRow(oTable);

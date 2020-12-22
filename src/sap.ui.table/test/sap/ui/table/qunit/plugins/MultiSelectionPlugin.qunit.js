@@ -102,7 +102,7 @@ sap.ui.define([
 				json: true
 			}));
 		}).then(oTable.qunit.whenBindingChange).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.ok(oTable.getBinding("rows").getLength() > 0, "After bindRows: Table has data");
+			assert.ok(oTable.getBinding().getLength() > 0, "After bindRows: Table has data");
 			assert.strictEqual($SelectAll.attr("role"), "button", "role attribute is set to button");
 			assert.ok($SelectAll.attr("aria-disabled"), "After bindRows: aria-disabled is set to true");
 			assert.ok($SelectAll.hasClass("sapUiTableSelAllDisabled"), "After bindRows: Deselect All is disabled");
@@ -210,7 +210,7 @@ sap.ui.define([
 
 	QUnit.test("Selection using addSelectionInterval: Selection not possible", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
 		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
@@ -267,7 +267,7 @@ sap.ui.define([
 
 	QUnit.test("Selection using addSelectionInterval: Number of items in range below limit", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
 		var iSelectableCount = oSelectionPlugin.getSelectableCount();
 
@@ -340,7 +340,7 @@ sap.ui.define([
 
 	QUnit.test("Reverse selection using addSelectionInterval: Number of items in range below limit", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 
 		oSelectionPlugin.setLimit(5);
 
@@ -377,7 +377,7 @@ sap.ui.define([
 	QUnit.test("Selection using addSelectionInterval: Number of items in range above limit", function(assert) {
 		var oTable = this.oTable;
 		var oSelectionPlugin = oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(oTable.getBinding(), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
 		var oFirstVisibleRowChangedSpy = sinon.spy();
 		var oRowsUpdatedSpy = sinon.spy();
@@ -450,7 +450,7 @@ sap.ui.define([
 
 	QUnit.test("Selection using setSelectionInterval: Selection not possible", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
 		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
@@ -507,7 +507,7 @@ sap.ui.define([
 
 	QUnit.test("Selection using setSelectionInterval", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
 		var iSelectableCount = oSelectionPlugin.getSelectableCount();
 
@@ -593,7 +593,7 @@ sap.ui.define([
 
 	QUnit.test("Selection using setSelectedIndex: Selection not possible", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
 		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
@@ -650,7 +650,7 @@ sap.ui.define([
 
 	QUnit.test("Selection using setSelectedIndex", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
 
 		oSelectionPlugin.setLimit(5);
@@ -760,7 +760,7 @@ sap.ui.define([
 			oSelectionPlugin.setLimit(0);
 
 			return pressHeaderSelector().then(function() {
-				assert.equal(oSelectionPlugin.getSelectedIndices().length, oTable.getBinding("rows").getLength(),
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, oTable.getBinding().getLength(),
 					"Limit disabled: Pressing the header selector selects everything if not everything is selected");
 			}).then(pressHeaderSelector).then(function() {
 				assert.equal(oSelectionPlugin.getSelectedIndices().length, 0,
@@ -829,7 +829,7 @@ sap.ui.define([
 			oSelectionPlugin.setLimit(0);
 
 			return pressKeyboardShortcut("toggle").then(function() {
-				assert.equal(oSelectionPlugin.getSelectedIndices().length, oTable.getBinding("rows").getLength(),
+				assert.equal(oSelectionPlugin.getSelectedIndices().length, oTable.getBinding().getLength(),
 					"Limit disabled: The \"toggle\" shortcut selects everything if not everything is selected");
 			}).then(function() {
 				return pressKeyboardShortcut("toggle");
@@ -856,7 +856,7 @@ sap.ui.define([
 
 	QUnit.test("Selection using SelectAll: Selection not possible", function(assert) {
 		var oSelectionPlugin = this.oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
 
 		oSelectionPlugin.attachSelectionChange(oSelectionChangeSpy);
@@ -903,7 +903,7 @@ sap.ui.define([
 	QUnit.test("Select All", function(assert) {
 		var oTable = this.oTable;
 		var oSelectionPlugin = oTable._getSelectionPlugin();
-		var fnGetContexts = sinon.spy(oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(oTable.getBinding(), "getContexts");
 		var oSelectionChangeSpy = sinon.spy();
 		var iHighestSelectableIndex = oSelectionPlugin._getHighestSelectableIndex();
 
@@ -1042,7 +1042,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oCell = this.oTable.getDomRef("selall");
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 
 		assert.ok(!oCell.hasAttribute("role"), "DeselectAll role is not set");
 		assert.ok(!oCell.hasAttribute("title"), "DeselectAll title is not set");
@@ -1078,7 +1078,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oCell = this.oTable.getDomRef("selall");
-		var fnGetContexts = sinon.spy(this.oTable.getBinding("rows"), "getContexts");
+		var fnGetContexts = sinon.spy(this.oTable.getBinding(), "getContexts");
 
 		assert.ok(!oCell.hasAttribute("role"), "DeselectAll role is not set");
 		assert.ok(!oCell.hasAttribute("title"), "DeselectAll title is not set");
