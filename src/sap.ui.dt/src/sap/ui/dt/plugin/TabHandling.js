@@ -67,8 +67,10 @@ sap.ui.define([
 				this._oMutationObserver.attachDomChanged(this._onDomChanged, this);
 			}
 		} else {
-			this._oMutationObserver.detachDomChanged(this._onDomChanged, this);
-			delete this._oMutationObserver;
+			if (this._oMutationObserver) {
+				this._oMutationObserver.detachDomChanged(this._onDomChanged, this);
+				delete this._oMutationObserver;
+			}
 			this.restoreTabIndex();
 		}
 	};

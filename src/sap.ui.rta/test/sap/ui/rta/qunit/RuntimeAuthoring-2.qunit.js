@@ -193,17 +193,18 @@ sap.ui.define([
 
 			this.oRta = new RuntimeAuthoring({
 				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
-				showToolbars : false,
-				plugins : {
-					remove : this.oRemovePlugin,
-					contextMenu : this.oContextMenuPlugin
-				}
+				showToolbars : false
 			});
 
-			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
+			this.oRta.setPlugins({
+				remove : this.oRemovePlugin,
+				contextMenu : this.oContextMenuPlugin
+			});
+
+			this.oPreparePluginsSpy = sinon.spy(this.oRta.getPluginManager(), "preparePlugins");
 
 			return RtaQunitUtils.clear()
-			.then(this.oRta.start.bind(this.oRta));
+				.then(this.oRta.start.bind(this.oRta));
 		},
 		afterEach : function() {
 			this.oContextMenuPlugin.destroy();
@@ -215,61 +216,9 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when we check the plugins on RTA", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			assert.equal(this.oRta.getPlugins()['contextMenu'], this.oContextMenuPlugin, " then the custom ContextMenuPlugin is set");
+			assert.equal(this.oRta.getPlugins()['contextMenu'].getId(), this.oContextMenuPlugin.getId(), " then the custom ContextMenuPlugin is set");
 			assert.equal(this.oRta.getPlugins()['rename'], undefined, " and the default plugins are not loaded");
-			assert.equal(this.fnDestroy.callCount, 1, " and _destroyDefaultPlugins have been called 1 time after oRta.start()");
-
-			return this.oRta.stop(false).then(function() {
-				this.oRta.destroy();
-				assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
-			}.bind(this));
-		});
-	});
-
-	QUnit.module("Given that RuntimeAuthoring is started with one different (non-default) plugin (using setPlugins method)...", {
-		beforeEach : function(assert) {
-			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
-
-			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
-				showToolbars : false
-			});
-			this.fnDestroy = sinon.spy(this.oRta, "_destroyDefaultPlugins");
-			var mPlugins = this.oRta.getDefaultPlugins();
-
-			assert.ok(mPlugins, " then default plugins are supplied by getDefaultPlugins methode");
-			delete mPlugins['rename'];
-			mPlugins['contextMenu'] = this.oContextMenuPlugin;
-			this.oRta.setPlugins(mPlugins);
-
-			return RtaQunitUtils.clear()
-			.then(this.oRta.start.bind(this.oRta))
-			.then(function() {
-				assert.throws(function () {
-					this.oRta.setPlugins(mPlugins);
-				}.bind(this), /Cannot replace plugins/, " and setPlugins cannot be called after DT start");
-				assert.equal(this.oRta.getPlugins()['rename'], undefined, " and a custom rename plugin does not exist");
-				assert.ok(this.oRta.getDefaultPlugins()['rename'].bIsDestroyed, " and the default rename plugin has been destroyed");
-				assert.ok(this.oRta.getDefaultPlugins()['contextMenu'].bIsDestroyed, " and the default context menu plugin has been destroyed");
-				assert.equal(this.oRta.getPlugins()['contextMenu'].getId(), this.oContextMenuPlugin.getId(), " and the context menu plugin is used");
-			}.bind(this));
-		},
-		afterEach : function() {
-			this.oContextMenuPlugin.destroy();
-			this.oRta.destroy();
-			return RtaQunitUtils.clear();
-		}
-	}, function() {
-		QUnit.test("when we check the plugins on RTA", function (assert) {
-			var done = assert.async();
-			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
-			this.oRta.attachStop(function() {
-				this.oRta.destroy();
-				assert.equal(this.fnDestroy.callCount, 2, " and _destroyDefaultPlugins have been called once again after oRta.stop()");
-				done();
-			}.bind(this));
-
-			this.oRta.stop(false);
+			assert.equal(this.oPreparePluginsSpy.callCount, 1, " and getPluginManager.preparePlugins() have been called 1 time on oRta.start()");
 		});
 	});
 
@@ -1037,24 +986,6 @@ sap.ui.define([
 			this.oRta._showMessageToast("myMessage");
 			assert.equal(oMessageToastStub.callCount, 1, "then one message toast was opened");
 			assert.equal(oMessageToastStub.lastCall.args[0], "myMessage", "and the message was set correctly");
-		});
-
-		QUnit.test("when _onElementEditableChange is called", function(assert) {
-			assert.equal(this.oRta.iEditableOverlaysCount, 0, "initially the counter is 0");
-
-			this.oRta._onElementEditableChange({
-				getParameter: function() {
-					return true;
-				}
-			});
-			assert.equal(this.oRta.iEditableOverlaysCount, 1, "the counter is now 1");
-
-			this.oRta._onElementEditableChange({
-				getParameter: function() {
-					return false;
-				}
-			});
-			assert.equal(this.oRta.iEditableOverlaysCount, 0, "the counter is now 0 again");
 		});
 	});
 
