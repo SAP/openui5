@@ -1,38 +1,26 @@
 /* global QUnit, sinon */
 
 sap.ui.define([
+	"../services/SampleServices",
 	"sap/ui/integration/library",
 	"sap/ui/integration/widgets/Card",
-	"sap/ui/integration/cards/ListContent",
 	"sap/ui/integration/util/RequestDataProvider",
 	"sap/ui/integration/Host",
 	"sap/ui/core/Core",
-	"sap/f/cards/NumericSideIndicator",
-	"sap/ui/integration/cards/NumericHeader",
-	"sap/ui/integration/cards/Header",
 	"sap/base/Log",
-	"sap/ui/core/ComponentContainer",
 	"sap/ui/integration/util/CardActions",
-	"sap/ui/qunit/QUnitUtils",
-	"../services/SampleServices",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/qunit/QUnitUtils"
 ],
 	function (
+		SampleServices,
 		library,
 		Card,
-		ListContent,
 		RequestDataProvider,
 		Host,
 		Core,
-		NumericSideIndicator,
-		NumericHeader,
-		Header,
 		Log,
-		ComponentContainer,
 		CardActions,
-		qutils,
-		SampleServices,
-		KeyCodes
+		qutils
 	) {
 		"use strict";
 
