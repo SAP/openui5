@@ -49,6 +49,13 @@ sap.ui.define(
 						expandFilterFields: {
 							type: "boolean",
 							defaultValue: true
+						},
+						/**
+						 * Number of FilterItems which will be shown via Show Filters.<br>
+						 */
+						filterFieldThreshold: {
+							type: "int",
+							defaultValue: 8
 						}
 
 						// delegate: {
@@ -68,7 +75,7 @@ sap.ui.define(
 		FilterBar.prototype._createInnerLayout = function () {
 			this._cLayoutItem = FilterItemLayout;
 
-			this._oFilterBarLayout = new FilterContainer(this.getId() + "-innerLayout");
+			this._oFilterBarLayout = new FilterContainer(this.getId() + "-innerLayout", {});
 			this.setAggregation("layout", this._oFilterBarLayout, true);
 
 
@@ -111,16 +118,29 @@ sap.ui.define(
 				})
 			);
 
+
+			this._oShowAllFiltersBtn = new Button(this.getId() + "-btnShowAllFilters", {
+				type: ButtonType.Transparent,
+				press: this._onShowAllFilters.bind(this),
+				text: this._oRb.getText("valuehelp.SHOWALLFILTERS")
+			});
+
+			this._oFilterBarLayout.addEndContent(this._oShowAllFiltersBtn);
 		};
 
 		FilterBar.prototype.exit = function() {
 			FilterBarBase.prototype.exit.apply(this, arguments);
 			this._oBasicSearchField = null;
 			this._oBtnFilters = null;
+			this._oShowAllFiltersBtn = null;
 		};
 
 		FilterBar.prototype._onToggleFilters = function (oEvent) {
-			this.setProperty("expandFilterFields", !this.getProperty("expandFilterFields"), true);
+			this.setExpandFilterFields(!this.getExpandFilterFields());
+		};
+
+		FilterBar.prototype._onShowAllFilters = function (oEvent) {
+			this._oFilterBarLayout._updateFilterBarLayout(true);
 		};
 
 		FilterBar.prototype.setBasicSearchField = function (oBasicSearchField) {
