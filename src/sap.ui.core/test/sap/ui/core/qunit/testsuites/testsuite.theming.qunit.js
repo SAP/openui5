@@ -7,6 +7,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			loader: {
 				paths: {
 					"sap/ui/testlib": "test-resources/sap/ui/core/qunit/testdata/uilib/",
+					"testlibs/themeParameters": "test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters",
 					"testdata/core": "test-resources/sap/ui/core/qunit/"
 				}
 			},
@@ -53,9 +54,13 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 					libs: "sap.ui.legacy.testlib",
 					theme: "sap_hcb"
 				},
+				qunit: {
+					reorder: false
+				},
 				loader: {
 					paths: {
-						"sap/ui/legacy/testlib": "test-resources/sap/ui/core/qunit/testdata/legacy-uilib/"
+						"sap/ui/legacy/testlib": "test-resources/sap/ui/core/qunit/testdata/legacy-uilib/",
+						"testlibs/themeParameters": "test-resources/sap/ui/core/qunit/testdata/libraries/themeParameters"
 					}
 				}
 			}
