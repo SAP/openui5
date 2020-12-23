@@ -19,6 +19,7 @@ sap.ui.define([
 
 	var oManifest_ObjectCard = {
 		"sap.app": {
+			"id": "test.cards.object.card1",
 			"type": "card"
 		},
 		"sap.card": {
@@ -30,11 +31,11 @@ sap.ui.define([
 					"position": "Sales Executive",
 					"phone": "+1 202 555 5555",
 					"email": "my@mymail.com",
-					"photo": "./Woman_avatar_01.png",
+					"photo": "./images/Woman_avatar_01.png",
 					"manager": {
 						"firstName": "John",
 						"lastName": "Miller",
-						"photo": "./Woman_avatar_02.png"
+						"photo": "./images/Woman_avatar_01.png"
 					},
 					"company": {
 						"name": "Robert Brown Entertainment",
@@ -123,6 +124,7 @@ sap.ui.define([
 
 	var oManifest_ObjectCard_Visible = {
 		"sap.app": {
+			"id": "test.cards.object.card2",
 			"type": "card"
 		},
 		"sap.card": {
@@ -135,11 +137,11 @@ sap.ui.define([
 					"position": "Sales Executive",
 					"phone": "+1 202 555 5555",
 					"email": "my@mymail.com",
-					"photo": "./Woman_avatar_01.png",
+					"photo": "./images/Woman_avatar_01.png",
 					"manager": {
 						"firstName": "John",
 						"lastName": "Miller",
-						"photo": "./Woman_avatar_02.png"
+						"photo": "./images/Woman_avatar_02.png"
 					},
 					"company": {
 						"name": "Robert Brown Entertainment",
@@ -222,7 +224,8 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCard = new Card({
 				width: "400px",
-				height: "600px"
+				height: "600px",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
@@ -254,7 +257,7 @@ sap.ui.define([
 			// Header assertions
 			assert.equal(oHeader.getTitle(), oData.firstName + " " + oData.lastName, "Should have correct header title.");
 			assert.equal(oHeader.getSubtitle(), oData.position, "Should have correct header subtitle.");
-			assert.equal(oHeader.getIconSrc(), oData.photo, "Should have correct header icon source.");
+			assert.equal(oHeader.getIconSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Woman_avatar_01.png", "Should have correct header icon source.");
 
 			// Group 1 assertions
 			assert.equal(aGroups[0].getItems().length, 9, "Should have 9 items.");
@@ -270,7 +273,7 @@ sap.ui.define([
 			// Group 2 assertions
 			assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");
 			assert.equal(aGroups[1].getItems()[0].getText(), oManifestContent.groups[1].title, "Should have correct group title.");
-			assert.equal(aGroups[1].getItems()[1].getItems()[0].getSrc(), oData.manager.photo, "Should have correct image source.");
+			assert.equal(aGroups[1].getItems()[1].getItems()[0].getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Woman_avatar_01.png", "Should have correct image source.");
 			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[0].getText(), oManifestContent.groups[1].items[0].label + ":", "Should have correct item label");
 			assert.equal(aGroups[1].getItems()[1].getItems()[1].getItems()[1].getText(), oData.manager.firstName + " " + oData.manager.lastName, "Should have correct item value.");
 
@@ -370,6 +373,7 @@ sap.ui.define([
 		var done = assert.async(),
 			oManifest = {
 				"sap.app": {
+					"id": "test.cards.object.visibleItemsWithBinding",
 					"type": "card"
 				},
 				"sap.card": {

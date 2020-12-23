@@ -1,6 +1,8 @@
 {
 	"sap.app": {
-		"type": "card"
+		"type": "card",
+		"i18n": "i18n/i18n.properties",
+		"id": "test.manifest.translation.card1"
 	},
 	"sap.card": {
 		"data": {
@@ -8,7 +10,6 @@
 				"items": [
 					{
 						"title": "Laurent Dubois",
-						"icon": "../images/Elena_Petrova.png",
 						"description": "I am Laurent. I put great attention to detail.",
 						"infoState": "Error",
 						"info": "Manager",
@@ -19,7 +20,6 @@
 					},
 					{
 						"title": "Alain Chevalier",
-						"icon": "../images/Alain_Chevalier.png",
 						"description": "I am Alain. I put great attention to detail.",
 						"infoState": "Success",
 						"info": "Credit Analyst",
@@ -27,7 +27,6 @@
 					},
 					{
 						"title": "Alain Chevalier",
-						"icon": "../images/Monique_Legrand.png",
 						"description": "I am Alain. I put great attention to detail.",
 						"infoState": "Information",
 						"info": "Configuration Expert",
@@ -35,13 +34,11 @@
 					},
 					{
 						"title": "Alain Chevalier",
-						"icon": "../images/Alain_Chevalier.png",
 						"description": "I am Alain. I put great attention to detail.",
 						"highlight": "Warning"
 					},
 					{
 						"title": "Laurent Dubois",
-						"icon": "../images/Elena_Petrova.png",
 						"description": "I am Laurent. I put great attention to detail.",
 						"infoState": "Error",
 						"info": "Manager",
@@ -56,7 +53,8 @@
 		},
 		"type": "List",
 		"header": {
-			"title": "Test default translations",
+			"title": "{{TITLE}}",
+			"subTitle": "{{SUBTITLE}}",
 			"icon": {
 				"src": "sap-icon://business-objects-experience"
 			},
@@ -78,9 +76,6 @@
 			},
 			"maxItems": 2,
 			"item": {
-				"icon": {
-					"src": "{icon}"
-				},
 				"title": {
 					"value": "{title}"
 				},

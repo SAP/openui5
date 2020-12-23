@@ -17,6 +17,9 @@ sap.ui.define([
 	var AvatarColor = mLibrary.AvatarColor;
 
 	var oManifest_TableCard = {
+		"sap.app": {
+			"id": "test.cards.table.card1"
+		},
 		"sap.card": {
 			"type": "Table",
 			"header": {
@@ -56,28 +59,6 @@ sap.ui.define([
 							"percent": 55,
 							"percentValue": "55GB of 100",
 							"progressState": "Warning",
-							"iconSrc": "sap-icon://help"
-						},
-						{
-							"salesOrder": "5000010053",
-							"customer": "Quimica Madrilenos",
-							"status": "Delivered",
-							"statusState": "Success",
-							"orderUrl": "http://www.sap.com",
-							"percent": 10,
-							"percentValue": "10GB",
-							"progressState": "Error",
-							"iconSrc": "sap-icon://help"
-						},
-						{
-							"salesOrder": "5000010054",
-							"customer": "Development Para O Governo",
-							"status": "Delivered",
-							"statusState": "Success",
-							"orderUrl": "http://www.sap.com",
-							"percent": 100,
-							"percentValue": "100%",
-							"progressState": "Success",
 							"iconSrc": "sap-icon://help"
 						}
 					]
@@ -288,6 +269,9 @@ sap.ui.define([
 		};
 
 	var oManifest_TableCard_WithCardLevelData = {
+		"sap.app": {
+			"id": "test.cards.table.card3"
+		},
 		"sap.card": {
 			"type": "Table",
 			"data": {
@@ -395,64 +379,27 @@ sap.ui.define([
 	};
 
 	var oManifest_TableCard_MaxItems = {
+		"sap.app": {
+			"id": "test.cards.table.card4"
+		},
 		"sap.card": {
 			"type": "Table",
 			"data": {
 				"json": [
 					{
-						"salesOrder": "5000010050",
-						"customer": "Robert Brown Entertainment",
-						"status": "Delivered",
-						"statusState": "Success",
-						"orderUrl": "http://www.sap.com",
-						"percent": 30,
-						"percentValue": "30%",
-						"progressState": "Error",
-						"iconSrc": "sap-icon://help"
+						"customer": "Robert Brown Entertainment"
 					},
 					{
-						"salesOrder": "5000010051",
-						"customer": "Entertainment Argentinia",
-						"status": "Canceled",
-						"statusState": "Error",
-						"orderUrl": "http://www.sap.com",
-						"percent": 70,
-						"percentValue": "70 of 100",
-						"progressState": "Success",
-						"iconSrc": "sap-icon://help"
+						"customer": "Entertainment Argentinia"
 					},
 					{
-						"salesOrder": "5000010052",
-						"customer": "Brazil Technologies",
-						"status": "In Progress",
-						"statusState": "Warning",
-						"orderUrl": "http://www.sap.com",
-						"percent": 55,
-						"percentValue": "55GB of 100",
-						"progressState": "Warning",
-						"iconSrc": "sap-icon://help"
+						"customer": "Brazil Technologies"
 					},
 					{
-						"salesOrder": "5000010053",
-						"customer": "Quimica Madrilenos",
-						"status": "Delivered",
-						"statusState": "Success",
-						"orderUrl": "http://www.sap.com",
-						"percent": 10,
-						"percentValue": "10GB",
-						"progressState": "Error",
-						"iconSrc": "sap-icon://help"
+						"customer": "Quimica Madrilenos"
 					},
 					{
-						"salesOrder": "5000010054",
-						"customer": "Development Para O Governo",
-						"status": "Delivered",
-						"statusState": "Success",
-						"orderUrl": "http://www.sap.com",
-						"percent": 100,
-						"percentValue": "100%",
-						"progressState": "Success",
-						"iconSrc": "sap-icon://help"
+						"customer": "Development Para O Governo"
 					}
 				]
 			},
@@ -464,37 +411,8 @@ sap.ui.define([
 				"row": {
 					"columns": [
 						{
-							"label": "Sales Order",
-							"value": "{salesOrder}",
-							"identifier": true
-						},
-						{
 							"label": "Customer",
 							"value": "{customer}"
-						},
-						{
-							"label": "Status",
-							"value": "{status}",
-							"state": "{statusState}"
-						},
-						{
-							"label": "Order ID",
-							"value": "{orderUrl}",
-							"url": "{orderUrl}"
-						},
-						{
-							"label": "Progress",
-							"progressIndicator": {
-								"percent": "{percent}",
-								"text": "{percentValue}",
-								"state": "{progressState}"
-							}
-						},
-						{
-							"label": "Avatar",
-							"icon": {
-								"src": "{iconSrc}"
-							}
 						}
 					]
 				}
@@ -503,6 +421,9 @@ sap.ui.define([
 	};
 
 	var oManifest_TableCard_StaticContent = {
+		"sap.app": {
+			"id": "test.cards.table.card5"
+		},
 		"sap.card": {
 			"type": "Table",
 			"header": {
@@ -529,11 +450,6 @@ sap.ui.define([
 					{
 						"cells": [
 							{
-								"icon": {
-									"src": "../images/Woman_avatar_01.png"
-								}
-							},
-							{
 								"value": "Petra"
 							},
 							{
@@ -550,12 +466,6 @@ sap.ui.define([
 					},
 					{
 						"cells": [
-							{
-								"width": "12%",
-								"icon": {
-									"src": "../images/Woman_avatar_02.png"
-								}
-							},
 							{
 								"value": "Anna"
 							},
@@ -752,7 +662,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.oCard = new Card({
 				width: "800px",
-				baseUrl: "test-resources/sap/ui/integration/qunit/"
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 			});
 
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
@@ -797,7 +707,7 @@ sap.ui.define([
 		this.oCard.attachEvent("_ready", function () {
 			var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
 
-			assert.strictEqual(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/images/Image_1.png", "Should have correct avatar src");
+			assert.strictEqual(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/testResources/images/Image_1.png", "Should have correct avatar src");
 			assert.strictEqual(oAvatar.getDisplayShape(), oManifest["sap.card"].content.row.columns[0].icon.shape, "Should have 'Circle' shape");
 			assert.strictEqual(oAvatar.getTooltip_AsString(), oManifest["sap.card"].content.row.columns[0].icon.alt, "Should have tooltip set");
 			assert.strictEqual(oAvatar.getInitials(), oManifest["sap.card"].content.row.columns[0].icon.text, "Should have initials set");

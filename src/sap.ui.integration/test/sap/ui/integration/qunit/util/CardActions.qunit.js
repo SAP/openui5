@@ -32,6 +32,7 @@ sap.ui.define([
 		var oManifest_Header_Service = {
 			"_version": "1.8.0",
 			"sap.app": {
+				"id": "test.card.actions.card1",
 				"type": "card"
 			},
 			"sap.ui5": {
@@ -68,6 +69,7 @@ sap.ui.define([
 		var oManifest_Header_Url = {
 			"_version": "1.8.0",
 			"sap.app": {
+				"id": "test.card.actions.card2",
 				"type": "card"
 			},
 			"sap.card": {
@@ -92,6 +94,7 @@ sap.ui.define([
 		var oManifest__Action_Disabled = {
 			"_version": "1.8.0",
 			"sap.app": {
+				"id": "test.card.actions.card3",
 				"type": "card"
 			},
 			"sap.card": {
@@ -117,31 +120,23 @@ sap.ui.define([
 		var oManifest_ListCard_No_Actions = {
 			"_version": "1.8.0",
 			"sap.app": {
+				"id": "test.card.actions.card4",
 				"type": "card"
 			},
 			"sap.card": {
 				"type": "List",
 				"header": {
 					"title": "Request list content Card",
-					"subTitle": "Card Subtitle",
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"status": {
-						"text": "100 of 200"
-					}
+					"subTitle": "Card Subtitle"
 				},
 				"content": {
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/someitems_services.json"
+							"url": "items.json"
 						},
 						"path": "/"
 					},
 					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
 						"title": {
 							"value": "{Name}"
 						},
@@ -156,6 +151,7 @@ sap.ui.define([
 		var oManifest_ListCard_Actions_Missing_Type = {
 			"_version": "1.8.0",
 			"sap.app": {
+				"id": "test.card.actions.card5",
 				"type": "card"
 			},
 			"sap.ui5": {
@@ -170,12 +166,6 @@ sap.ui.define([
 				"header": {
 					"title": "Request list content Card",
 					"subTitle": "Card Subtitle",
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"status": {
-						"text": "100 of 200"
-					},
 					"actions": [
 						{
 							"url": "https://www.sap.com"
@@ -185,14 +175,11 @@ sap.ui.define([
 				"content": {
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/someitems_services.json"
+							"url": "items.json"
 						},
 						"path": "/"
 					},
 					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
 						"title": {
 							"value": "{Name}"
 						},
@@ -217,6 +204,7 @@ sap.ui.define([
 		var oManifest_ListCard_CONTENT_ACTION = {
 			"_version": "1.8.0",
 			"sap.app": {
+				"id": "test.card.actions.card6",
 				"type": "card"
 			},
 			"sap.ui5": {
@@ -241,14 +229,11 @@ sap.ui.define([
 				"content": {
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/someitems_services.json"
+							"url": "items.json"
 						},
 						"path": "/"
 					},
 					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
 						"title": {
 							"value": "{Name}"
 						},
@@ -274,24 +259,19 @@ sap.ui.define([
 		var oManifest_ListCard_Action_Enabled = {
 			"_version": "1.8.0",
 			"sap.app": {
+				"id": "test.card.actions.card7",
 				"type": "card"
 			},
 			"sap.card": {
 				"type": "List",
 				"header": {
 					"title": "Request list content Card",
-					"subTitle": "Card Subtitle",
-					"icon": {
-						"src": "sap-icon://accept"
-					},
-					"status": {
-						"text": "100 of 200"
-					}
+					"subTitle": "Card Subtitle"
 				},
 				"content": {
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/someitems_services_action_enabled.json"
+							"url": "someitems_services_action_enabled.json"
 						},
 						"path": "/"
 					},
@@ -321,6 +301,7 @@ sap.ui.define([
 		var oManifest_ListCard_No_Request = {
 			"_version": "1.8.0",
 			"sap.app": {
+				"id": "test.card.actions.card8",
 				"type": "card"
 			},
 			"sap.ui5": {
@@ -334,13 +315,7 @@ sap.ui.define([
 				"type": "List",
 				"header": {
 					"title": "List Card",
-					"subTitle": "With static list items",
-					"icon": {
-						"src": "sap-icon://business-objects-experience"
-					},
-					"status": {
-						"text": "5 of 17"
-					}
+					"subTitle": "With static list items"
 				},
 				"content": {
 					"data": {
@@ -376,6 +351,7 @@ sap.ui.define([
 		var oManifest_List_Binded_Items = {
 			"_version": "1.8.0",
 			"sap.app": {
+				"id": "test.card.actions.card9",
 				"type": "card"
 			},
 			"sap.ui5": {
@@ -400,9 +376,8 @@ sap.ui.define([
 				"content": {
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/someitems_services2.json"
-						},
-						"path": "/items"
+							"url": "items.json"
+						}
 					},
 					"item": {
 						"title": {
@@ -426,6 +401,7 @@ sap.ui.define([
 		var oManifest_List_Hidden_Items = {
 			"_version": "1.8.0",
 			"sap.app": {
+				"id": "test.card.actions.card10",
 				"type": "card"
 			},
 			"sap.ui5": {
@@ -450,7 +426,7 @@ sap.ui.define([
 				"content": {
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/items.json"
+							"url": "items.json"
 						}
 					},
 					"item": {
@@ -475,6 +451,7 @@ sap.ui.define([
 
 		var objectContent_service = {
 			"sap.app": {
+				"id": "test.card.actions.card11",
 				"type": "card"
 			},
 			"sap.ui5": {
@@ -488,13 +465,10 @@ sap.ui.define([
 				"type": "Object",
 				"data": {
 					"request": {
-						"url": "test-resources/sap/ui/integration/qunit/manifests/datahandling_employee.json"
+						"url": "employee.json"
 					}
 				},
 				"header": {
-					"data": {
-						"path": "/nested_level_1/nested_level_2"
-					},
 					"icon": {
 						"src": "{photo}"
 					},
@@ -502,32 +476,29 @@ sap.ui.define([
 					"subTitle": "{position}"
 				},
 				"content": {
-					"data": {
-						"path": "/nested_level_1/nested_level_2"
-					},
 					"groups": [
 						{
-							"title": "{{contactDetails}}",
+							"title": "Contact Details",
 							"items": [
 								{
-									"label": "{{firstName}}",
+									"label": "First Name",
 									"value": "{firstName}"
 								},
 								{
-									"label": "{{lastName}}",
+									"label": "Last Name",
 									"value": "{lastName}"
 								},
 								{
-									"label": "{{phone}}",
+									"label": "Phone",
 									"value": "{phone}"
 								}
 							]
 						},
 						{
-							"title": "{{organizationalDetails}}",
+							"title": "Organization Details",
 							"items": [
 								{
-									"label": "{{directManager}}",
+									"label": "Direct Manager",
 									"value": "{manager/firstName} {manager/lastName}",
 									"icon": {
 										"src": "{manager/photo}"
@@ -536,18 +507,18 @@ sap.ui.define([
 							]
 						},
 						{
-							"title": "{{companyDetails}}",
+							"title": "Company Details",
 							"items": [
 								{
-									"label": "{{companyName}}",
+									"label": "Company Name",
 									"value": "{company/name}"
 								},
 								{
-									"label": "{{address}}",
+									"label": "Address",
 									"value": "{company/address}"
 								},
 								{
-									"label": "{{website}}",
+									"label": "Website",
 									"type": "link",
 									"value": "{company/website}"
 								}
@@ -568,13 +539,14 @@ sap.ui.define([
 
 		var objectCotnent_url = {
 			"sap.app": {
+				"id": "test.card.actions.card12",
 				"type": "card"
 			},
 			"sap.card": {
 				"type": "Object",
 				"data": {
 					"request": {
-						"url": "test-resources/sap/ui/integration/qunit/manifests/employee.json"
+						"url": "employee.json"
 					}
 				},
 				"header": {
@@ -594,27 +566,27 @@ sap.ui.define([
 				"content": {
 					"groups": [
 						{
-							"title": "{{contactDetails}}",
+							"title": "Contact Details",
 							"items": [
 								{
-									"label": "{{firstName}}",
+									"label": "Fist Name",
 									"value": "{firstName}"
 								},
 								{
-									"label": "{{lastName}}",
+									"label": "Last Name",
 									"value": "{lastName}"
 								},
 								{
-									"label": "{{phone}}",
+									"label": "Phone",
 									"value": "{phone}"
 								}
 							]
 						},
 						{
-							"title": "{{organizationalDetails}}",
+							"title": "Organization Details",
 							"items": [
 								{
-									"label": "{{directManager}}",
+									"label": "Direct Manager",
 									"value": "{manager/firstName} {manager/lastName}",
 									"icon": {
 										"src": "{manager/photo}"
@@ -623,18 +595,18 @@ sap.ui.define([
 							]
 						},
 						{
-							"title": "{{companyDetails}}",
+							"title": "Company Details",
 							"items": [
 								{
-									"label": "{{companyName}}",
+									"label": "Company Name",
 									"value": "{company/name}"
 								},
 								{
-									"label": "{{address}}",
+									"label": "Address",
 									"value": "{company/address}"
 								},
 								{
-									"label": "{{website}}",
+									"label": "Website",
 									"link": "{company/website}"
 								}
 							]
@@ -684,6 +656,9 @@ sap.ui.define([
 		};
 
 		var oIntegrationCardManifest = {
+			"sap.app": {
+				"id": "test.card.actions.card13"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -733,11 +708,9 @@ sap.ui.define([
 							"src": "{icon}"
 						},
 						"title": {
-							"label": "{{title_label}}",
 							"value": "{Name}"
 						},
 						"description": {
-							"label": "{{description_label}}",
 							"value": "{Description}"
 						},
 						"highlight": "{state}",
@@ -756,20 +729,11 @@ sap.ui.define([
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
 					Log.error(LOG_MESSAGE);
-				}),
-				oCard = new Card({
-					manifest: oManifest,
-					width: "400px",
-					height: "600px"
 				});
 
-			// Act
-			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			oCard.attachEvent("_ready", function () {
+			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
-				var oCardListItems = oCard.getCardContent()._getList().getItems();
+				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 
 				// Assert
 				assert.ok(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
@@ -785,30 +749,26 @@ sap.ui.define([
 				// Cleanup
 				oStubOpenUrl.restore();
 				oActionSpy.restore();
-				oCard.destroy();
+
 				done();
-			});
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest);
 		}
 
 		function testActionOnContentService(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () { }),
-				oCard = new Card({
-					width: "400px",
-					height: "600px",
-					manifest: oManifest
-				});
-			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () { });
 
-			oCard.attachEvent("_ready", function () {
+			this.oCard.attachEvent("_ready", function () {
 
 				Core.applyChanges();
-				var oCardLContent = oCard.getCardContent();
+				var oCardLContent = this.oCard.getCardContent();
 
-				oCard.attachAction(function (oEvent) {
+				this.oCard.attachAction(function (oEvent) {
 
 					oEvent.preventDefault();
 
@@ -819,33 +779,29 @@ sap.ui.define([
 					// Cleanup
 					oStubOpenUrl.restore();
 					oActionSpy.restore();
-					oCard.destroy();
+
 					done();
 				});
 
 				//Act
 				oCardLContent.firePress();
 				Core.applyChanges();
-			});
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest);
 		}
 
 		function testActionOnContentUrl(oManifest, assert) {
 			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () { }),
-				oCard = new Card({
-					width: "400px",
-					height: "600px",
-					manifest: oManifest
-				});
-			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () { });
 
-			oCard.attachEvent("_ready", function () {
+			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
-				var oCardLContent = oCard.getCardContent(),
-					oCardHeader = oCard.getCardHeader();
+				var oCardLContent = this.oCard.getCardContent(),
+					oCardHeader = this.oCard.getCardHeader();
 
 				// Assert
 				assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
@@ -862,18 +818,23 @@ sap.ui.define([
 				// Cleanup
 				oStubOpenUrl.restore();
 				oActionSpy.restore();
-				oCard.destroy();
+
 				done();
-			});
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest);
 		}
 
 		QUnit.module("Action Enablement - Header", {
 			beforeEach: function () {
 				this.oCard = new Card({
 					width: "400px",
-					height: "600px"
+					height: "600px",
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 				});
 
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -886,11 +847,6 @@ sap.ui.define([
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oLogSpy = sinon.spy(Log, "error");
-
-			// Act
-			this.oCard.setManifest(oManifest_Header_Service);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -913,6 +869,9 @@ sap.ui.define([
 				Core.applyChanges();
 
 			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_Header_Service);
 		});
 
 		QUnit.test("Action URL should navigate", function (assert) {
@@ -921,11 +880,6 @@ sap.ui.define([
 				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
-
-			// Act
-			this.oCard.setManifest(oManifest_Header_Url);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -945,6 +899,9 @@ sap.ui.define([
 				done();
 
 			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_Header_Url);
 		});
 
 		QUnit.test("Action URL should navigate without parameters", function (assert) {
@@ -952,11 +909,6 @@ sap.ui.define([
 				oStubOpenUrl = sinon.stub(CardActions, "openUrl").callsFake(function () {
 					Log.error(LOG_MESSAGE);
 				});
-
-			// Act
-			this.oCard.setManifest(oIntegrationCardManifest);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -975,16 +927,14 @@ sap.ui.define([
 				done();
 
 			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oIntegrationCardManifest);
 		});
 
 		QUnit.test("Enabled property of actions is set to false", function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction");
-
-			// Act
-			this.oCard.setManifest(oManifest__Action_Disabled);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -1004,16 +954,14 @@ sap.ui.define([
 				done();
 
 			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest__Action_Disabled);
 		});
 
 		QUnit.test("No actions available", function (assert) {
 			var done = assert.async(),
 				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
-
-			// Act
-			this.oCard.setManifest(oManifest_ListCard_No_Actions);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -1027,16 +975,14 @@ sap.ui.define([
 				oAttachNavigationSpy.restore();
 				done();
 			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard_No_Actions);
 		});
 
 		QUnit.test("No action type available", function (assert) {
 			var done = assert.async(),
 				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
-
-			// Act
-			this.oCard.setManifest(oManifest_ListCard_Actions_Missing_Type);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -1050,16 +996,14 @@ sap.ui.define([
 				oAttachNavigationSpy.restore();
 				done();
 			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard_Actions_Missing_Type);
 		});
 
 		QUnit.test("Actions 'enabled' is set to false", function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction");
-
-			// Act
-			this.oCard.setManifest(oManifest_ListCard_CONTENT_ACTION);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -1078,65 +1022,62 @@ sap.ui.define([
 				done();
 
 			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard_CONTENT_ACTION);
 		});
 
-		QUnit.module("Navigation Service - List Content");
+		QUnit.module("Navigation Service - List Content", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px",
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+				});
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+			}
+		});
 
 		QUnit.test("List should be actionable ", function (assert) {
 
-			testNavigationServiceListContent(oManifest_ListCard_CONTENT_ACTION, assert);
+			testNavigationServiceListContent.call(this, oManifest_ListCard_CONTENT_ACTION, assert);
 		});
 
 		QUnit.test("Static Data - List should be actionable ", function (assert) {
 
-			testNavigationServiceListContent(oManifest_ListCard_No_Request, assert);
+			testNavigationServiceListContent.call(this, oManifest_ListCard_No_Request, assert);
 		});
 
 		QUnit.test("Card items with url should be hidden", function (assert) {
+			var done = assert.async();
 
-			var done = assert.async(),
-
-				oCard = new Card({
-					manifest: oManifest_List_Hidden_Items,
-					width: "400px",
-					height: "600px"
-				});
-
-			// Act
-			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			oCard.attachEvent("_ready", function () {
-				var oCardListItems = oCard.getCardContent()._getList().getItems();
+			this.oCard.attachEvent("_ready", function () {
+				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 
 				//Assert
 				assert.ok(oCardListItems.length === 1, "There should be only one item");
 				assert.ok(oCardListItems[1] === undefined, "There should be no second item");
-				oCard.destroy();
+
 				done();
-			});
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_List_Hidden_Items);
 		});
 
 		QUnit.test("No service URL in navigation actions", function (assert) {
-
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
-				oLogSpy = sinon.spy(Log, "error"),
-				oCard = new Card({
-					manifest: oManifest_List_Binded_Items,
-					width: "400px",
-					height: "600px"
-				});
+				oLogSpy = sinon.spy(Log, "error");
 
-			// Act
-			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			oCard.attachEvent("_ready", function () {
+			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
-				var oCardListItems = oCard.getCardContent()._getList().getItems();
+				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 
-				oCard.attachAction(function () {
+				this.oCard.attachAction(function () {
 					// Assert
 					assert.ok(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
 					assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
@@ -1146,37 +1087,30 @@ sap.ui.define([
 					//Clean up
 					oLogSpy.restore();
 					oActionSpy.restore();
-					oCard.destroy();
+
 					done();
 				});
 
 				//Act
 				oCardListItems[0].firePress();
 				Core.applyChanges();
+			}.bind(this));
 
-			});
+			// Act
+			this.oCard.setManifest(oManifest_List_Binded_Items);
 		});
 
 		QUnit.test("Action enabled/disabled in template, no service", function (assert) {
-
+			// Arrange
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction"),
 				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {
 					Log.error(LOG_MESSAGE);
-				}),
-				oCard = new Card({
-					manifest: oManifest_ListCard_Action_Enabled,
-					width: "400px",
-					height: "600px"
 				});
 
-			// Act
-			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			oCard.attachEvent("_ready", function () {
+			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
-				var oCardListItems = oCard.getCardContent()._getList().getItems();
+				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 
 				//Act
 				oCardListItems[3].firePress();
@@ -1194,28 +1128,22 @@ sap.ui.define([
 				//Clean up
 				oStubOpenUrl.restore();
 				oActionSpy.restore();
-				oCard.destroy();
+
 				done();
-			});
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard_Action_Enabled);
 		});
 
 		QUnit.test("No actions available", function (assert) {
-
+			// Arrange
 			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction"),
-				oCard = new Card({
-					manifest: oManifest_ListCard_No_Actions,
-					width: "400px",
-					height: "600px"
-				});
+				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
 
-			// Act
-			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			oCard.attachEvent("_ready", function () {
+			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
-				var oCardListItems = oCard.getCardContent()._getList().getItems();
+				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 				// Assert
 				assert.notOk(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
 				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
@@ -1223,28 +1151,22 @@ sap.ui.define([
 
 				//Clean up
 				oAttachNavigationSpy.restore();
-				oCard.destroy();
+
 				done();
-			});
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard_No_Actions);
 		});
 
 		QUnit.test("No action type available", function (assert) {
-
+			// Arrange
 			var done = assert.async(),
-				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction"),
-				oCard = new Card({
-					manifest: oManifest_ListCard_Actions_Missing_Type,
-					width: "400px",
-					height: "600px"
-				});
+				oAttachNavigationSpy = sinon.spy(CardActions.prototype, "_attachAction");
 
-			// Act
-			oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
-
-			oCard.attachEvent("_ready", function () {
+			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
-				var oCardListItems = oCard.getCardContent()._getList().getItems();
+				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
 				// Assert
 				assert.notOk(oCardListItems[0].getType() === CardActionType.Navigation, "Card list item is actionable");
 				assert.notOk(oCardListItems[1].getType() === CardActionType.Navigation, "Card list item is NOT actionable");
@@ -1252,9 +1174,12 @@ sap.ui.define([
 
 				//Clean up
 				oAttachNavigationSpy.restore();
-				oCard.destroy();
+
 				done();
-			});
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_ListCard_Actions_Missing_Type);
 		});
 
 		QUnit.module("Navigation Action - List Content", {
@@ -1312,9 +1237,11 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oCard = new Card({
 					width: "400px",
-					height: "600px"
+					height: "600px",
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 				});
 
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
 			},
 			afterEach: function () {
 				this.oCard.destroy();
@@ -1324,21 +1251,17 @@ sap.ui.define([
 
 		QUnit.test("Object content should be actionable - service", function (assert) {
 
-			testActionOnContentService(objectContent_service, assert);
+			testActionOnContentService.call(this, objectContent_service, assert);
 		});
 
 		QUnit.test("Object content should be actionable - url", function (assert) {
 
-			testActionOnContentUrl(objectCotnent_url, assert);
+			testActionOnContentUrl.call(this, objectCotnent_url, assert);
 		});
 
 		QUnit.test("On pressing link, action should not be fired", function (assert) {
 			var done = assert.async(),
 				oActionSpy = sinon.spy(CardActions, "fireAction");
-
-			this.oCard.setManifest(objectContent_service);
-			this.oCard.placeAt(DOM_RENDER_LOCATION);
-			Core.applyChanges();
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
@@ -1356,6 +1279,9 @@ sap.ui.define([
 				oActionSpy.restore();
 				done();
 			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(objectContent_service);
 		});
 
 		QUnit.module("Action Handlers", {

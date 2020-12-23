@@ -1,7 +1,8 @@
 {
 	"sap.app": {
 		"type": "card",
-		"i18n": "i18n/i18n.properties"
+		"i18n": "i18n/i18n.properties",
+		"id": "test.manifest.translation.card2"
 	},
 	"sap.card": {
 		"data": {
@@ -9,7 +10,6 @@
 				"items": [
 					{
 						"title": "Laurent Dubois",
-						"icon": "../images/Elena_Petrova.png",
 						"description": "I am Laurent. I put great attention to detail.",
 						"infoState": "Error",
 						"info": "Manager",
@@ -20,7 +20,6 @@
 					},
 					{
 						"title": "Alain Chevalier",
-						"icon": "../images/Alain_Chevalier.png",
 						"description": "I am Alain. I put great attention to detail.",
 						"infoState": "Success",
 						"info": "Credit Analyst",
@@ -28,7 +27,6 @@
 					},
 					{
 						"title": "Alain Chevalier",
-						"icon": "../images/Monique_Legrand.png",
 						"description": "I am Alain. I put great attention to detail.",
 						"infoState": "Information",
 						"info": "Configuration Expert",
@@ -36,13 +34,11 @@
 					},
 					{
 						"title": "Alain Chevalier",
-						"icon": "../images/Alain_Chevalier.png",
 						"description": "I am Alain. I put great attention to detail.",
 						"highlight": "Warning"
 					},
 					{
 						"title": "Laurent Dubois",
-						"icon": "../images/Elena_Petrova.png",
 						"description": "I am Laurent. I put great attention to detail.",
 						"infoState": "Error",
 						"info": "Manager",
@@ -65,7 +61,7 @@
 			"status": {
 				"text": {
 					"format": {
-						"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+						"translationKey": "i18n>COUNT_X_OF_Y",
 						"parts": [
 							"parameters>/visibleItems",
 							"/count"
@@ -80,9 +76,6 @@
 			},
 			"maxItems": 2,
 			"item": {
-				"icon": {
-					"src": "{icon}"
-				},
 				"title": {
 					"value": "{title}"
 				},

@@ -51,7 +51,6 @@
 		"type": "List",
 		"header": {
 			"title": "{= format.text(${i18n>textWithPlaceholders}, [${i18n>world}, 'card header'])}",
-			"subTitle": "Translation with model. {i18n>SUBTITLE}",
 			"icon": {
 				"src": "sap-icon://product"
 			}

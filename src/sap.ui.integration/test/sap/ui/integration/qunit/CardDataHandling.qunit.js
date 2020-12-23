@@ -21,6 +21,9 @@ function (
 	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	var oManifest_CardCase1 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card1"
+		},
 		"sap.card": {
 			"type": "List",
 			"data": {
@@ -31,6 +34,9 @@ function (
 		}
 	};
 	var oManifest_CardCase2 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card2"
+		},
 		"sap.card": {
 			"type": "List",
 			"data": {
@@ -41,11 +47,17 @@ function (
 		}
 	};
 	var oManifest_CardCase3 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card3"
+		},
 		"sap.card": {
 			"type": "List"
 		}
 	};
 	var oManifest_CardCase4 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card4"
+		},
 		"sap.card": {
 			"type": "List",
 			"data": {
@@ -54,6 +66,9 @@ function (
 		}
 	};
 	var oManifest_CardCase5 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card5"
+		},
 		"sap.card": {
 			"type": "List",
 			"data": {
@@ -97,6 +112,9 @@ function (
 		}
 	};
 	var oManifest_CardCase_OverridingModel = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card6"
+		},
 		"sap.card": {
 			"type": "List",
 			"data": {
@@ -158,6 +176,9 @@ function (
 		}
 	};
 	var oManifest_HeaderCase1 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card7"
+		},
 		"sap.card": {
 			"type": "List",
 			"header": {
@@ -168,6 +189,9 @@ function (
 		}
 	};
 	var oManifest_HeaderCase2 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card8"
+		},
 		"sap.card": {
 			"type": "List",
 			"header": {
@@ -177,6 +201,9 @@ function (
 		}
 	};
 	var oManifest_HeaderCase3 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card9"
+		},
 		"sap.card": {
 			"type": "List",
 			"header": {
@@ -189,6 +216,9 @@ function (
 		}
 	};
 	var oManifest_HeaderCase4 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card10"
+		},
 		"sap.card": {
 			"type": "List",
 			"header": {
@@ -201,12 +231,18 @@ function (
 		}
 	};
 	var oManifest_HeaderCase5 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card11"
+		},
 		"sap.card": {
 			"type": "List",
 			"header": {}
 		}
 	};
 	var oManifest_ContentCase1 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card12"
+		},
 		"sap.card": {
 			"type": "List",
 			"content": {
@@ -222,6 +258,9 @@ function (
 		}
 	};
 	var oManifest_ContentCase2 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card13"
+		},
 		"sap.card": {
 			"type": "List",
 			"content": {
@@ -235,6 +274,9 @@ function (
 		}
 	};
 	var oManifest_ContentCase3 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card14"
+		},
 		"sap.card": {
 			"type": "List",
 			"content": {
@@ -253,6 +295,9 @@ function (
 		}
 	};
 	var oManifest_ContentCase4 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card15"
+		},
 		"sap.card": {
 			"type": "List",
 			"content": {
@@ -271,6 +316,9 @@ function (
 		}
 	};
 	var oManifest_ContentCase5 = {
+		"sap.app": {
+			"id": "test.card.dataHandling.card16"
+		},
 		"sap.card": {
 			"type": "List",
 			"content": {
@@ -668,6 +716,9 @@ function (
 
 		// Act
 		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.dataHandling.dataRequestOnCardLevel"
+			},
 			"sap.card": {
 				"type": "List",
 				"data": {
@@ -703,6 +754,9 @@ function (
 
 		// Act
 		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.dataHandling.dataRequestOnHeaderLevel"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -739,6 +793,9 @@ function (
 
 		// Act
 		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.dataHandling.dataRequestOnFilterLevel"
+			},
 			"sap.card": {
 				"configuration": {
 					"filters": {
@@ -772,6 +829,9 @@ function (
 
 		// Act
 		this.oCard.setManifest({
+			"sap.app": {
+				"id": "test.card.dataHandling.dataRequestOnContentLevel"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {

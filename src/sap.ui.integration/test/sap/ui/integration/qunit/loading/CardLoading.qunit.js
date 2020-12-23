@@ -19,12 +19,15 @@ sap.ui.define([
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 
 		var oManifest_CardCase1 = {
+			"sap.app": {
+				"id": "test.card.loading.card1"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
+							"url": "items.json"
 						}
 					},
 					"title": "Some title",
@@ -37,19 +40,23 @@ sap.ui.define([
 					}
 				}
 			}
-		},
-			oManifest_CardCase2 = {
+		};
+
+		var oManifest_CardCase2 = {
+			"sap.app": {
+				"id": "test.card.loading.card2"
+			},
 			"sap.card": {
 				"type": "List",
 				"data": {
 					"request": {
-						"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
+						"url": "items.json"
 					}
 				},
 				"header": {
-				   "data": {
-					   "path": "/"
-				   },
+					"data": {
+						"path": "/"
+					},
 					"title": "Some title",
 					"subTitle": "{some}",
 					"icon": {
@@ -60,402 +67,423 @@ sap.ui.define([
 					}
 				}
 			}
-		},
-			oManifest_CardCase3_No_Loading = {
+		};
+
+		var oManifest_CardCase3_No_Loading = {
+			"sap.app": {
+				"id": "test.card.loading.card3"
+			},
 			"sap.card": {
 				"type": "List",
 				"data": {
 					"request": {
-						"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
+						"url": "items.json"
 					}
 				},
 				"header": {
 					"data": {
 						"json": {
-							"some": "test"
+							"some": "test",
+							"img": "./images/Image_1.png"
 						}
 					},
 					"title": "Some title",
 					"subTitle": "{some}",
 					"icon": {
-						"src": "{some}"
+						"src": "{img}"
 					},
 					"status": {
 						"text": "{some} of 200"
 					}
 				}
 			}
-		},
-			oManifest_NumericHeader_ContentLevel = {
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"type": "Numeric",
-						"data": {
-							"request": {
-								"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
-							}
-						},
-						"title": "Project Cloud Transformation {n}",
-						"subTitle": "Depending on {n}",
-						"unitOfMeasurement": "{n}",
-						"mainIndicator": {
-							"number": "{n}",
-							"unit": "{u}",
-							"trend": "{trend}",
-							"state": "{valueColor}"
-						},
-						"details": "{n}",
-						"sideIndicators": [
-							{
-								"title": "{n}",
-								"number": "{n}",
-								"unit": "K"
-							},
-							{
-								"title": "{n}",
-								"number": "22.43",
-								"unit": "%"
-							}
-						]
-					}
-				}
+		};
+
+		var oManifest_NumericHeader_ContentLevel = {
+			"sap.app": {
+				"id": "test.card.loading.card4"
 			},
-			oManifest_NumericHeader_CardLevel = {
-				"sap.card": {
-					"type": "List",
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"type": "Numeric",
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
+							"url": "items.json"
 						}
 					},
-					"header": {
-						"type": "Numeric",
-						"data": {
-							"path": "/"
-						},
-						"title": "Project Cloud Transformation {n}",
-						"subTitle": "Depending on {n}",
-						"unitOfMeasurement": "{n}",
-						"mainIndicator": {
-							"number": "{n}",
-							"unit": "{u}",
-							"trend": "{trend}",
-							"state": "{valueColor}"
-						},
-						"details": "{n}",
-						"sideIndicators": [
-							{
-								"title": "{n}",
-								"number": "{n}",
-								"unit": "K"
-							},
-							{
-								"title": "{n}",
-								"number": "{n}",
-								"unit": "%"
-							}
-						]
-					}
-				}
-			},
-			oManifest_NumericHeader_CardLevel_ContentJson = {
-				"sap.card": {
-					"type": "List",
-					"data": {
-						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
-						}
+					"title": "Project Cloud Transformation {n}",
+					"subTitle": "Depending on {n}",
+					"unitOfMeasurement": "{n}",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
 					},
-					"header": {
-						"type": "Numeric",
-						 "data": {
-							"json": {
-								"n": "56",
-								"u": "%",
-								"trend": "Up",
-								"valueColor": "Good"
-							}
-						},
-						"title": "Project Cloud Transformation {n}",
-						"subTitle": "Depending on {n}",
-						"unitOfMeasurement": "{n}",
-						"mainIndicator": {
+					"details": "{n}",
+					"sideIndicators": [{
+							"title": "{n}",
 							"number": "{n}",
-							"unit": "{u}",
-							"trend": "{trend}",
-							"state": "{valueColor}"
+							"unit": "K"
 						},
-						"details": "{n}",
-						"sideIndicators": [
-							{
-								"title": "{n}",
-								"number": "{n}",
-								"unit": "K"
-							},
-							{
-								"title": "{n}",
-								"number": "22.43",
-								"unit": "%"
-							}
-						]
-					}
+						{
+							"title": "{n}",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
 				}
+			}
+		};
+
+		var oManifest_NumericHeader_CardLevel = {
+			"sap.app": {
+				"id": "test.card.loading.card5"
 			},
-			oManifest_List_CardLevel = {
-			 "sap.app": {
-				 "type": "card"
-			 },
-			 "sap.card": {
-				 "data": {
-					 "request": {
-						 "url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
-					 }
-				 },
-				 "type": "List",
-				 "header": {
-					 "title": "Title",
-					 "subTitle": "Test Subtitle",
-					 "icon": {
-						 "src": "sap-icon://business-objects-experience"
-					 },
-					 "status": {
-						 "text": {
-							 "format": {
-								 "translationKey": "i18n>CARD.COUNT_X_OF_Y",
-								 "parts": [
-									 "parameters>/visibleItems",
-									 "/count"
-								 ]
-							 }
-						 }
-					 }
-				 },
-				 "content": {
-					 "data": {
-						 "path": "/items"
-					 },
-					 "maxItems": 2,
-					 "item": {
-						 "icon": {
-							 "src": "{icon}"
-						 },
-						 "title": {
-							 "value": "{title}"
-						 },
-						 "description": {
-							 "value": "{description}"
-						 },
-						 "highlight": "{highlight}",
-						 "info": {
-							 "state": "{infoState}"
-						 }
-					 }
-				 }
-			 }
-		 },
-			oManifest_List_CardLevel_Error = {
-				"sap.app": {
-					"type": "card"
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"request": {
+						"url": "items.json"
+					}
 				},
-				"sap.card": {
+				"header": {
+					"type": "Numeric",
 					"data": {
-						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/manifes.json"
+						"path": "/"
+					},
+					"title": "Project Cloud Transformation {n}",
+					"subTitle": "Depending on {n}",
+					"unitOfMeasurement": "{n}",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
+					},
+					"details": "{n}",
+					"sideIndicators": [{
+							"title": "{n}",
+							"number": "{n}",
+							"unit": "K"
+						},
+						{
+							"title": "{n}",
+							"number": "{n}",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		};
+
+		var oManifest_NumericHeader_CardLevel_ContentJson = {
+			"sap.app": {
+				"id": "test.card.loading.card6"
+			},
+			"sap.card": {
+				"type": "List",
+				"data": {
+					"request": {
+						"url": "items.json"
+					}
+				},
+				"header": {
+					"type": "Numeric",
+					"data": {
+						"json": {
+							"n": "56",
+							"u": "%",
+							"trend": "Up",
+							"valueColor": "Good"
 						}
 					},
-					"type": "List",
-					"header": {
-						"title": "Title",
-						"subTitle": "Test Subtitle",
-						"icon": {
-							"src": "sap-icon://business-objects-experience"
-						},
-						"status": {
-							"text": {
-								"format": {
-									"translationKey": "i18n>CARD.COUNT_X_OF_Y",
-									"parts": [
-										"parameters>/visibleItems",
-										"/count"
-									]
-								}
-							}
-						}
+					"title": "Project Cloud Transformation {n}",
+					"subTitle": "Depending on {n}",
+					"unitOfMeasurement": "{n}",
+					"mainIndicator": {
+						"number": "{n}",
+						"unit": "{u}",
+						"trend": "{trend}",
+						"state": "{valueColor}"
 					},
-					"content": {
-						"data": {
-							"path": "/items"
+					"details": "{n}",
+					"sideIndicators": [{
+							"title": "{n}",
+							"number": "{n}",
+							"unit": "K"
 						},
-						"maxItems": 2,
-						"item": {
-							"icon": {
-								"src": "{icon}"
-							},
-							"title": {
-								"value": "{title}"
-							},
-							"description": {
-								"value": "{description}"
-							},
-							"highlight": "{highlight}",
-							"info": {
-								"state": "{infoState}"
+						{
+							"title": "{n}",
+							"number": "22.43",
+							"unit": "%"
+						}
+					]
+				}
+			}
+		};
+
+		var oManifest_List_CardLevel = {
+			"sap.app": {
+				"id": "test.card.loading.card7"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "items.json"
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "Title",
+					"subTitle": "Test Subtitle",
+					"icon": {
+						"src": "sap-icon://business-objects-experience"
+					},
+					"status": {
+						"text": {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"/count"
+								]
 							}
 						}
 					}
-				}
-			},
-			oManifest_List_CardLevel_No_Loading = {
-				"sap.app": {
-					"type": "card"
 				},
-				"sap.card": {
+				"content": {
 					"data": {
-						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
-						}
+						"path": "/items"
 					},
-					"type": "List",
-					"header": {
-						"title": "Title",
-						"subTitle": "Test Subtitle",
+					"maxItems": 2,
+					"item": {
 						"icon": {
-							"src": "sap-icon://business-objects-experience"
+							"src": "{icon}"
 						},
-						"status": {
-							"text": {
-								"format": {
-									"translationKey": "i18n>CARD.COUNT_X_OF_Y",
-									"parts": [
-										"parameters>/visibleItems",
-										"/count"
-									]
-								}
+						"title": {
+							"value": "{title}"
+						},
+						"description": {
+							"value": "{description}"
+						},
+						"highlight": "{highlight}",
+						"info": {
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		};
+
+		var oManifest_List_CardLevel_Error = {
+			"sap.app": {
+				"id": "test.card.loading.card8"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "some/invalid.data.json"
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "Title",
+					"subTitle": "Test Subtitle",
+					"icon": {
+						"src": "sap-icon://business-objects-experience"
+					},
+					"status": {
+						"text": {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"/count"
+								]
 							}
 						}
+					}
+				},
+				"content": {
+					"data": {
+						"path": "/items"
 					},
-					"content": {
-						"data": {
-							"json": {
-								"items": [
-									{
-										"title": "Laurent Dubois",
-										"icon": "../images/Elena_Petrova.png",
-										"description": "I am Laurent. I put great attention to detail.",
-										"infoState": "Error",
-										"info": "Manager",
-										"highlight": "Success",
-										"action": {
-											"url": "https://www.w3schools.com"
-										}
-									},
-									{
-										"title": "Alain Chevalier",
-										"icon": "../images/Alain_Chevalier.png",
-										"description": "I am Alain. I put great attention to detail.",
-										"infoState": "Success",
-										"info": "Credit Analyst",
-										"highlight": "Error"
-									},
-									{
-										"title": "Alain Chevalier",
-										"icon": "../images/Monique_Legrand.png",
-										"description": "I am Alain. I put great attention to detail.",
-										"infoState": "Information",
-										"info": "Configuration Expert",
-										"highlight": "Information"
-									},
-									{
-										"title": "Alain Chevalier",
-										"icon": "../images/Alain_Chevalier.png",
-										"description": "I am Alain. I put great attention to detail.",
-										"highlight": "Warning"
-									},
-									{
-										"title": "Laurent Dubois",
-										"icon": "../images/Elena_Petrova.png",
-										"description": "I am Laurent. I put great attention to detail.",
-										"infoState": "Error",
-										"info": "Manager",
-										"highlight": "Success",
-										"action": {
-											"url": "https://www.w3schools.com"
-										}
+					"maxItems": 2,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"value": "{title}"
+						},
+						"description": {
+							"value": "{description}"
+						},
+						"highlight": "{highlight}",
+						"info": {
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		};
+
+		var oManifest_List_CardLevel_No_Loading = {
+			"sap.app": {
+				"id": "test.card.loading.card9"
+			},
+			"sap.card": {
+				"data": {
+					"request": {
+						"url": "items.json"
+					}
+				},
+				"type": "List",
+				"header": {
+					"title": "Title",
+					"subTitle": "Test Subtitle",
+					"icon": {
+						"src": "sap-icon://business-objects-experience"
+					},
+					"status": {
+						"text": {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"/count"
+								]
+							}
+						}
+					}
+				},
+				"content": {
+					"data": {
+						"json": {
+							"items": [{
+									"title": "Laurent Dubois",
+									"icon": "../images/Elena_Petrova.png",
+									"description": "I am Laurent. I put great attention to detail.",
+									"infoState": "Error",
+									"info": "Manager",
+									"highlight": "Success",
+									"action": {
+										"url": "https://www.w3schools.com"
 									}
-								],
-								"count": 115
-							}
-						},
-						"maxItems": 2,
-						"item": {
-							"icon": {
-								"src": "{icon}"
-							},
-							"title": {
-								"value": "{title}"
-							},
-							"description": {
-								"value": "{description}"
-							},
-							"highlight": "{highlight}",
-							"info": {
-								"state": "{infoState}"
-							}
-						}
-					}
-				}
-			},
-			oManifest_List_ContentLevel = {
-				"sap.app": {
-					"type": "card"
-				},
-				"sap.card": {
-					"type": "List",
-					"header": {
-						"title": "Title",
-						"subTitle": "Test Subtitle",
-						"icon": {
-							"src": "sap-icon://business-objects-experience"
-						},
-						"status": {
-							"text": {
-								"format": {
-									"translationKey": "i18n>CARD.COUNT_X_OF_Y",
-									"parts": [
-										"parameters>/visibleItems",
-										"/count"
-									]
+								},
+								{
+									"title": "Alain Chevalier",
+									"icon": "../images/Alain_Chevalier.png",
+									"description": "I am Alain. I put great attention to detail.",
+									"infoState": "Success",
+									"info": "Credit Analyst",
+									"highlight": "Error"
+								},
+								{
+									"title": "Alain Chevalier",
+									"icon": "../images/Monique_Legrand.png",
+									"description": "I am Alain. I put great attention to detail.",
+									"infoState": "Information",
+									"info": "Configuration Expert",
+									"highlight": "Information"
+								},
+								{
+									"title": "Alain Chevalier",
+									"icon": "../images/Alain_Chevalier.png",
+									"description": "I am Alain. I put great attention to detail.",
+									"highlight": "Warning"
+								},
+								{
+									"title": "Laurent Dubois",
+									"icon": "../images/Elena_Petrova.png",
+									"description": "I am Laurent. I put great attention to detail.",
+									"infoState": "Error",
+									"info": "Manager",
+									"highlight": "Success",
+									"action": {
+										"url": "https://www.w3schools.com"
+									}
 								}
-							}
+							],
+							"count": 115
 						}
 					},
-					"content": {
-						"data": {
-							"request": {
-								"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
-							}
+					"maxItems": 2,
+					"item": {
+						"icon": {
+							"src": "{icon}"
 						},
-						"maxItems": 2,
-						"item": {
-							"icon": {
-								"src": "{icon}"
-							},
-							"title": {
-								"value": "{title}"
-							},
-							"description": {
-								"value": "{description}"
-							},
-							"highlight": "{highlight}",
-							"info": {
-								"state": "{infoState}"
-							}
+						"title": {
+							"value": "{title}"
+						},
+						"description": {
+							"value": "{description}"
+						},
+						"highlight": "{highlight}",
+						"info": {
+							"state": "{infoState}"
 						}
 					}
 				}
+			}
+		};
+
+		var oManifest_List_ContentLevel = {
+			"sap.app": {
+				"id": "test.card.loading.card10"
 			},
-			oManifest_AnalyticalCard = {
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Title",
+					"subTitle": "Test Subtitle",
+					"icon": {
+						"src": "sap-icon://business-objects-experience"
+					},
+					"status": {
+						"text": {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"/count"
+								]
+							}
+						}
+					}
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "items.json"
+						}
+					},
+					"maxItems": 2,
+					"item": {
+						"icon": {
+							"src": "{icon}"
+						},
+						"title": {
+							"value": "{title}"
+						},
+						"description": {
+							"value": "{description}"
+						},
+						"highlight": "{highlight}",
+						"info": {
+							"state": "{infoState}"
+						}
+					}
+				}
+			}
+		};
+
+		var oManifest_AnalyticalCard = {
+			"sap.app": {
+				"id": "test.card.loading.card11"
+			},
 			"sap.card": {
 				"type": "Analytical",
 				"header": {
@@ -496,17 +524,14 @@ sap.ui.define([
 					"dimensionAxis": "categoryAxis",
 					"data": {
 						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
+							"url": "items.json"
 						}
 					},
-					"dimensions": [
-						{
-							"label": "Weeks",
-							"value": "{Week}"
-						}
-					],
-					"measures": [
-						{
+					"dimensions": [{
+						"label": "Weeks",
+						"value": "{Week}"
+					}],
+					"measures": [{
 							"label": "{measures/revenueLabel}",
 							"value": "{Revenue}"
 						},
@@ -517,16 +542,17 @@ sap.ui.define([
 					]
 				}
 			}
-		},
-			oManifest_ObjectCard = {
+		};
+
+		var oManifest_ObjectCard = {
 			"sap.app": {
-				"type": "card"
+				"id": "test.card.loading.card12"
 			},
 			"sap.card": {
 				"type": "Object",
 				"data": {
 					"request": {
-						"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
+						"url": "items.json"
 					}
 				},
 				"header": {
@@ -537,11 +563,9 @@ sap.ui.define([
 					"subTitle": "{position}"
 				},
 				"content": {
-					"groups": [
-						{
+					"groups": [{
 							"title": "Contact Details",
-							"items": [
-								{
+							"items": [{
 									"label": "First Name",
 									"value": "{firstName}"
 								},
@@ -563,20 +587,17 @@ sap.ui.define([
 						},
 						{
 							"title": "Organizational Details",
-							"items": [
-								{
-									"label": "Direct Manager",
-									"value": "{manager/firstName} {manager/lastName}",
-									"icon": {
-										"src": "{manager/photo}"
-									}
+							"items": [{
+								"label": "Direct Manager",
+								"value": "{manager/firstName} {manager/lastName}",
+								"icon": {
+									"src": "{manager/photo}"
 								}
-							]
+							}]
 						},
 						{
 							"title": "Company Details",
-							"items": [
-								{
+							"items": [{
 									"label": "Company Name",
 									"value": "{company/name}"
 								},
@@ -601,95 +622,106 @@ sap.ui.define([
 					]
 				}
 			}
-		},
-			Manifest_TableCard_WithCardLevelData = {
-				"sap.card": {
-					"type": "Table",
-					"data": {
-						"request": {
-							"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
-						}
-					},
-					"header": {
-						"title": "Sales Orders for Key Accounts"
-					},
-					"content": {
-						"row": {
-							"columns": [
-								{
-									"label": "Sales Order",
-									"value": "{salesOrder}",
-									"identifier": true
-								},
-								{
-									"label": "Customer",
-									"value": "{customer}"
-								},
-								{
-									"label": "Status",
-									"value": "{status}",
-									"state": "{statusState}"
-								},
-								{
-									"label": "Order ID",
-									"value": "{orderUrl}",
-									"url": "{orderUrl}"
-								},
-								{
-									"label": "Progress",
-									"progressIndicator": {
-										"percent": "{percent}",
-										"text": "{percentValue}",
-										"state": "{progressState}"
-									}
-								},
-								{
-									"label": "Avatar",
-									"icon": {
-										"src": "{iconSrc}"
-									}
-								}
-							]
-						}
-					}
-				}
-			},
-			oManifest_Filter = {
-				"sap.card": {
-					"type": "List",
-					"configuration": {
-						"filters": {
-							"f": {
-								"data": {
-									"request": {
-										"url": "test-resources/sap/ui/integration/qunit/manifests/manifest.json"
-									}
-								}
-							}
-						}
-					}
-				}
-			},
-			oManifest_Filter_Static_Items = {
-				"sap.card": {
-					"type": "List",
-					"configuration": {
-						"filters": {
-							"f": {
-								"items": []
-							}
-						}
-					}
-				}
-			};
+		};
 
-		function isLoadingIndicatorShowingHeader(oManifest, oCard, bLoading, bExpectedTitle, bExpectedSubtitle, bExpectedAvatar, assert)  {
+		var Manifest_TableCard_WithCardLevelData = {
+			"sap.app": {
+				"id": "test.card.loading.card13"
+			},
+			"sap.card": {
+				"type": "Table",
+				"data": {
+					"request": {
+						"url": "items.json"
+					}
+				},
+				"header": {
+					"title": "Sales Orders for Key Accounts"
+				},
+				"content": {
+					"row": {
+						"columns": [{
+								"label": "Sales Order",
+								"value": "{salesOrder}",
+								"identifier": true
+							},
+							{
+								"label": "Customer",
+								"value": "{customer}"
+							},
+							{
+								"label": "Status",
+								"value": "{status}",
+								"state": "{statusState}"
+							},
+							{
+								"label": "Order ID",
+								"value": "{orderUrl}",
+								"url": "{orderUrl}"
+							},
+							{
+								"label": "Progress",
+								"progressIndicator": {
+									"percent": "{percent}",
+									"text": "{percentValue}",
+									"state": "{progressState}"
+								}
+							},
+							{
+								"label": "Avatar",
+								"icon": {
+									"src": "{iconSrc}"
+								}
+							}
+						]
+					}
+				}
+			}
+		};
+
+		var oManifest_Filter = {
+			"sap.app": {
+				"id": "test.card.loading.card14"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"filters": {
+						"f": {
+							"data": {
+								"request": {
+									"url": "items.json"
+								}
+							}
+						}
+					}
+				}
+			}
+		};
+
+		var oManifest_Filter_Static_Items = {
+			"sap.app": {
+				"id": "test.card.loading.card15"
+			},
+			"sap.card": {
+				"type": "List",
+				"configuration": {
+					"filters": {
+						"f": {
+							"items": []
+						}
+					}
+				}
+			}
+		};
+
+		function isLoadingIndicatorShowingHeader(oManifest, oCard, bLoading, bExpectedTitle, bExpectedSubtitle, bExpectedAvatar, assert) {
 
 			// Arrange
 			var done = assert.async();
 			oCard.attachManifestReady(function () {
 				var oDelegate = {
-					onAfterRendering: function() {
+					onAfterRendering: function () {
 						oCard.removeEventDelegate(oDelegate);
 						var oHeader = oCard.getCardHeader();
 						assert.strictEqual(oHeader.isLoading(), bLoading, "isLoading should be 'true'");
@@ -709,22 +741,23 @@ sap.ui.define([
 			oCard.setManifest(oManifest);
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		}
-		function isLoadingIndicatorShowingNumericHeader(oManifest, oCard, bLoading, bExpectedTitle, bExpectedSubtitle, bExpectedDetails, bExpectMainIndicator, bExpectSideIndicator, assert)  {
+
+		function isLoadingIndicatorShowingNumericHeader(oManifest, oCard, bLoading, bExpectedTitle, bExpectedSubtitle, bExpectedDetails, bExpectMainIndicator, bExpectSideIndicator, assert) {
 
 			// Arrange
 			var done = assert.async();
 			oCard.attachManifestReady(function () {
 				var oDelegate = {
-					onAfterRendering: function() {
+					onAfterRendering: function () {
 						oCard.removeEventDelegate(oDelegate);
 						var oHeader = oCard.getCardHeader();
 						assert.strictEqual(oHeader.isLoading(), bLoading, "isLoading should be 'true'");
 						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), bLoading, "On header level there is a 'sapFCardHeaderLoading' CSS class");
 						assert.strictEqual(oHeader._getTitle().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedTitle, "Title has no loading placeholder");
 						assert.strictEqual(oHeader._getSubtitle().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedSubtitle, "Subtitle has no loading placeholder");
-						assert.strictEqual(oHeader._getDetails().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedDetails,  "Details has no loading placeholder");
-						assert.strictEqual(oHeader._getMainIndicator().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectMainIndicator,  "Main indicator has no loading placeholder");
-						assert.strictEqual(oHeader.getSideIndicators()[0].getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectSideIndicator,  "Side indicators has no loading placeholder");
+						assert.strictEqual(oHeader._getDetails().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectedDetails, "Details has no loading placeholder");
+						assert.strictEqual(oHeader._getMainIndicator().getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectMainIndicator, "Main indicator has no loading placeholder");
+						assert.strictEqual(oHeader.getSideIndicators()[0].getDomRef().classList.contains("sapFCardHeaderItemBinded"), bExpectSideIndicator, "Side indicators has no loading placeholder");
 						oHeader._oLoadingProvider.removeHeaderPlaceholder(oHeader);
 						assert.strictEqual(oHeader.getDomRef().classList.contains("sapFCardHeaderLoading"), false, "On header level there no is a 'sapFCardHeaderLoading' CSS class");
 						done();
@@ -739,7 +772,7 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		}
 
-		function isLoadingIndicatorShowingContent(oManifest, oCard, sMassage, bExpected, sCSSClass,  assert) {
+		function isLoadingIndicatorShowingContent(oManifest, oCard, sMassage, bExpected, sCSSClass, assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -763,17 +796,17 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		}
 
-		function isLoadingIndicatorShowingContentDataReady(oManifest, oCard, sMassage, bExpected, sCSSClass,  assert)  {
+		function isLoadingIndicatorShowingContentDataReady(oManifest, oCard, sMassage, bExpected, sCSSClass, assert) {
 
 			// Arrange
 			var done = assert.async();
 			oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
-					var oContent = oCard.getCardContent();
-					if (oContent) {
-						assert.strictEqual(jQuery(sCSSClass).length > 0, bExpected, sMassage);
-						done();
-					}
+				var oContent = oCard.getCardContent();
+				if (oContent) {
+					assert.strictEqual(jQuery(sCSSClass).length > 0, bExpected, sMassage);
+					done();
+				}
 			});
 
 			// Act
@@ -781,7 +814,7 @@ sap.ui.define([
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		}
 
-		function isLoadingPlaceholderCorrectType(oLoadingProvider, oConfiguration, sType, sPlaceholderType, sMessage,  assert) {
+		function isLoadingPlaceholderCorrectType(oLoadingProvider, oConfiguration, sType, sPlaceholderType, sMessage, assert) {
 
 			// Arrange
 			var oPlaceholder = oLoadingProvider.createContentPlaceholder(oConfiguration, sType);
@@ -790,7 +823,7 @@ sap.ui.define([
 			assert.ok(oPlaceholder.getMetadata().getName().indexOf(sPlaceholderType) > -1, sMessage);
 		}
 
-		function isLoadingIndicatorShowingFilter(oManifest, oCard, sMassage, bExpected, sCSSClass,  assert) {
+		function isLoadingIndicatorShowingFilter(oManifest, oCard, sMassage, bExpected, sCSSClass, assert) {
 
 			// Arrange
 			var done = assert.async();
@@ -822,7 +855,7 @@ sap.ui.define([
 
 						var oRequest = {
 							"mode": oRequestConfig.mode || "cors",
-							"url": oRequestConfig.url,
+							"url": "test-resources/sap/ui/integration/qunit/testResources/" + oRequestConfig.url,
 							"method": (oRequestConfig.method && oRequestConfig.method.toUpperCase()) || "GET",
 							"data": oRequestConfig.parameters,
 							"headers": oRequestConfig.headers,
@@ -836,7 +869,7 @@ sap.ui.define([
 							oRequest.dataType = "json";
 						}
 						jQuery.ajax(oRequest).done(function (oData) {
-							setTimeout(function() {
+							setTimeout(function () {
 								resolve(oData);
 							}, 150000000);
 						}).fail(function (jqXHR, sTextStatus, sError) {
@@ -845,7 +878,9 @@ sap.ui.define([
 					});
 				};
 
-				this.oCard = new Card();
+				this.oCard = new Card({
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+				});
 				this._fnRequestStub = sinon.stub(RequestDataProvider.prototype, "_fetch").callsFake(fnFake);
 			},
 			afterEach: function () {
@@ -906,7 +941,9 @@ sap.ui.define([
 
 		QUnit.module("Loading with loaded data", {
 			beforeEach: function () {
-				this.oCard = new Card();
+				this.oCard = new Card({
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+				});
 
 			},
 			afterEach: function () {
@@ -950,7 +987,9 @@ sap.ui.define([
 		QUnit.module("Loading Provider", {
 			beforeEach: function () {
 				this.oLoadingProvider = new LoadingProvider();
-				this.oCard = new Card();
+				this.oCard = new Card({
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+				});
 
 			},
 			afterEach: function () {
@@ -963,8 +1002,8 @@ sap.ui.define([
 
 		QUnit.test("Loading provider should provide correct loading placeholder", function (assert) {
 			var oConfiguration = {
-				"maxItems": 2
-			},
+					"maxItems": 2
+				},
 				sType = "List";
 
 			isLoadingPlaceholderCorrectType(this.oLoadingProvider, oConfiguration, sType, "List", "Loading placeholder is of type ListPlaceholder", assert);

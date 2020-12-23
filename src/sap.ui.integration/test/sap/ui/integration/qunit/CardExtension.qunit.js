@@ -18,7 +18,7 @@ sap.ui.define([
 	QUnit.module("Extension Instantiated by a Card", {
 		beforeEach: function () {
 			this.oCard = new Card({
-				baseUrl: "test-resources/sap/ui/integration/qunit/"
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
 			});
 		},
 		afterEach: function () {
@@ -36,7 +36,7 @@ sap.ui.define([
 			},
 			"sap.card": {
 				"type": "List",
-				"extension": "./testResources/extensions/Extension1",
+				"extension": "./extensions/Extension1",
 				"data": {
 					"extension": {
 						"method": "getData"
@@ -123,7 +123,7 @@ sap.ui.define([
 			},
 			"sap.card": {
 				"type": "List",
-				"extension": "./testResources/extensions/Extension1",
+				"extension": "./extensions/Extension1",
 				"data": {
 					"extension": {
 						"method": "getData"
@@ -158,7 +158,7 @@ sap.ui.define([
 			},
 			"sap.card": {
 				"type": "List",
-				"extension": "./testResources/extensions/Extension1",
+				"extension": "./extensions/Extension1",
 				"header": {
 					"data": {
 						"extension": {
@@ -189,7 +189,7 @@ sap.ui.define([
 			},
 			"sap.card": {
 				"type": "List",
-				"extension": "./testResources/extensions/Extension1",
+				"extension": "./extensions/Extension1",
 				"content": {
 					"data": {
 						"extension": {
@@ -242,7 +242,7 @@ sap.ui.define([
 					}
 				},
 				"type": "List",
-				"extension": "./testResources/extensions/Extension1",
+				"extension": "./extensions/Extension1",
 				"data": {
 					"extension": {
 						"method": "getData"
@@ -287,7 +287,7 @@ sap.ui.define([
 			},
 			"sap.card": {
 				"type": "List",
-				"extension": "./testResources/extensions/Extension1",
+				"extension": "./extensions/Extension1",
 				"content": {
 					"data": {
 						"extension": {
@@ -321,7 +321,7 @@ sap.ui.define([
 	QUnit.module("Actions - Legacy", {
 		beforeEach: function () {
 			this.oCard = new Card({
-				baseUrl: "test-resources/sap/ui/integration/qunit/",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
 				manifest: {
 					"sap.app": {
 						"id": "test"
@@ -332,7 +332,7 @@ sap.ui.define([
 							"title": "Title",
 							"subTitle": "Sub Title"
 						},
-						"extension": "./testResources/extensions/ExtensionLegacy"
+						"extension": "./extensions/ExtensionLegacy"
 					}
 				}
 			});
@@ -420,14 +420,14 @@ sap.ui.define([
 	QUnit.module("Custom Formatters", {
 		beforeEach: function () {
 			this.oCard = new Card({
-				baseUrl: "test-resources/sap/ui/integration/qunit/",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
 				manifest: {
 					"sap.app": {
 						"id": "sap.ui.integration.test"
 					},
 					"sap.card": {
 						"type": "List",
-						"extension": "./testResources/extensions/Extension1",
+						"extension": "./extensions/Extension1",
 						"data": {
 							"extension": {
 								"method": "getData"
@@ -491,14 +491,14 @@ sap.ui.define([
 		// arrange
 		var done = assert.async(),
 			oCard2 = new Card({
-				baseUrl: "test-resources/sap/ui/integration/qunit/",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
 				manifest: {
 					"sap.app": {
 						"id": "sap.ui.integration.test.card2"
 					},
 					"sap.card": {
 						"type": "List",
-						"extension": "./testResources/extensions/Extension2",
+						"extension": "./extensions/Extension2",
 						"content": {
 							"item": {
 								"title": "{= extension.formatters.toUpperCase2(${city}) }"
@@ -532,14 +532,14 @@ sap.ui.define([
 			this.fnOnCardReadyStub = sinon.stub(Extension.prototype, "onCardReady");
 
 			this.oCard = new Card({
-				baseUrl: "test-resources/sap/ui/integration/qunit/",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
 				manifest: {
 					"sap.app": {
 						"id": "test"
 					},
 					"sap.card": {
 						"type": "List",
-						"extension": "./testResources/extensions/ExtensionSample"
+						"extension": "./extensions/ExtensionSample"
 					}
 				}
 			});
@@ -584,15 +584,15 @@ sap.ui.define([
 			this.fnOnCardReadyStub = sinon.stub(Extension.prototype, "onCardReady");
 
 			this.oCard = new Card({
-				baseUrl: "test-resources/sap/ui/integration/qunit/",
+				baseUrl: "test-resources/sap/ui/integration/qunit/testResources/",
 				manifest: {
 					"sap.app": {
 						"id": "test",
-						"i18n": "manifests/translation/i18n/i18n.properties"
+						"i18n": "cardWithTranslationsCustomCounter/i18n/i18n.properties"
 					},
 					"sap.card": {
 						"type": "List",
-						"extension": "./testResources/extensions/ExtensionSample"
+						"extension": "./extensions/ExtensionSample"
 					}
 				}
 			});

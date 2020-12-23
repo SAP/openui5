@@ -31,6 +31,9 @@ sap.ui.define([
 		var AvatarColor = mLibrary.AvatarColor;
 
 		var oManifest_Header = {
+			"sap.app": {
+				"id": "test.card.card1"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -70,7 +73,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1000",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Information",
 								"info": "27.45 EUR",
 								"infoState": "Success"
@@ -80,18 +82,15 @@ sap.ui.define([
 								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1001",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "27.45 EUR",
 								"infoState": "Success"
-
 							},
 							{
 								"Name": "Notebook Basic 18",
 								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1002",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Warning",
 								"info": "9.45 EUR",
 								"infoState": "Error"
@@ -101,7 +100,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1003",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Error",
 								"info": "9.45 EUR",
 								"infoState": "Error"
@@ -111,7 +109,6 @@ sap.ui.define([
 								"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
 								"Id": "HT-1007",
 								"SubCategoryId": "PDAs & Organizers",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -121,7 +118,6 @@ sap.ui.define([
 								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 								"Id": "HT-1010",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -131,7 +127,6 @@ sap.ui.define([
 								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 								"Id": "HT-1022",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -141,7 +136,6 @@ sap.ui.define([
 								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 								"Id": "HT-1024",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -149,9 +143,6 @@ sap.ui.define([
 						]
 					},
 					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
 						"title": {
 							"label": "Title",
 							"value": "{Name}"
@@ -171,6 +162,9 @@ sap.ui.define([
 		};
 
 		var oManifest_ListCard2 = {
+			"sap.app": {
+				"id": "test.card.card3"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -184,7 +178,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1000",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Information",
 								"info": "27.45 EUR",
 								"infoState": "Success"
@@ -194,7 +187,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1001",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "27.45 EUR",
 								"infoState": "Success"
@@ -205,7 +197,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1002",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Warning",
 								"info": "9.45 EUR",
 								"infoState": "Error"
@@ -215,7 +206,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1003",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Error",
 								"info": "9.45 EUR",
 								"infoState": "Error"
@@ -225,7 +215,6 @@ sap.ui.define([
 								"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
 								"Id": "HT-1007",
 								"SubCategoryId": "PDAs & Organizers",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -235,7 +224,6 @@ sap.ui.define([
 								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 								"Id": "HT-1010",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -245,7 +233,6 @@ sap.ui.define([
 								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 								"Id": "HT-1022",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -255,7 +242,6 @@ sap.ui.define([
 								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 								"Id": "HT-1024",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -284,7 +270,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1000",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Information",
 								"info": "27.45 EUR",
 								"infoState": "Success"
@@ -294,7 +279,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1001",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "27.45 EUR",
 								"infoState": "Success"
@@ -305,7 +289,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 18 with 2,80 GHz quad core, 18\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1002",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Warning",
 								"info": "9.45 EUR",
 								"infoState": "Error"
@@ -315,7 +298,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 19 with 2,80 GHz quad core, 19\" LCD, 8 GB DDR3 RAM, 1000 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1003",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Error",
 								"info": "9.45 EUR",
 								"infoState": "Error"
@@ -325,7 +307,6 @@ sap.ui.define([
 								"Description": "Digital Organizer with State-of-the-Art Storage Encryption",
 								"Id": "HT-1007",
 								"SubCategoryId": "PDAs & Organizers",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -335,7 +316,6 @@ sap.ui.define([
 								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 								"Id": "HT-1010",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -345,7 +325,6 @@ sap.ui.define([
 								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 								"Id": "HT-1022",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -355,7 +334,6 @@ sap.ui.define([
 								"Description": "Notebook Professional 15 with 2,80 GHz quad core, 15\" Multitouch LCD, 8 GB DDR3 RAM, 500 GB SSD - DVD-Writer (DVD-R/+R/-RW/-RAM),Windows 8 Pro",
 								"Id": "HT-1024",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "29.45 EUR",
 								"infoState": "Success"
@@ -363,9 +341,6 @@ sap.ui.define([
 						]
 					},
 					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
 						"title": {
 							"label": "Title",
 							"value": "{Name}"
@@ -385,6 +360,9 @@ sap.ui.define([
 		};
 
 		var oManifest_DefaultParameters = {
+			"sap.app": {
+				"id": "test.card.card5"
+			},
 			"sap.card": {
 				"configuration": {
 					"parameters": {
@@ -424,7 +402,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1000",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Information",
 								"info": "27.45 EUR",
 								"infoState": "Success"
@@ -434,7 +411,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1001",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "27.45 EUR",
 								"infoState": "Success"
@@ -443,9 +419,6 @@ sap.ui.define([
 						]
 					},
 					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
 						"title": {
 							"label": "{{title_label}}",
 							"value": "{Name}, {{parameters.TODAY_ISO}}"
@@ -461,6 +434,9 @@ sap.ui.define([
 		};
 
 		var oManifest_WithoutParameters = {
+			"sap.app": {
+				"id": "test.card.card6"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -475,7 +451,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 15 with 2,80 GHz quad core, 15\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1000",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Information",
 								"info": "27.45 EUR",
 								"infoState": "Success"
@@ -485,7 +460,6 @@ sap.ui.define([
 								"Description": "Notebook Basic 17 with 2,80 GHz quad core, 17\" LCD, 4 GB DDR3 RAM, 500 GB Hard Disc, Windows 8 Pro",
 								"Id": "HT-1001",
 								"SubCategoryId": "Notebooks",
-								"icon": "../images/Woman_avatar_01.png",
 								"state": "Success",
 								"info": "27.45 EUR",
 								"infoState": "Success"
@@ -494,9 +468,6 @@ sap.ui.define([
 						]
 					},
 					"item": {
-						"icon": {
-							"src": "{icon}"
-						},
 						"title": {
 							"label": "{{title_label}}",
 							"value": "{Name}, {{parameters.TODAY_ISO}}"
@@ -629,6 +600,9 @@ sap.ui.define([
 		};
 
 		var oManifest_AvatarHeader = {
+			"sap.app": {
+				"id": "test.card.card8"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -654,6 +628,9 @@ sap.ui.define([
 		};
 
 		var oManifest_NumericHeader = {
+			"sap.app": {
+				"id": "test.card.card9"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -693,6 +670,9 @@ sap.ui.define([
 		};
 
 		var oManifest_NumericHeader2 = {
+			"sap.app": {
+				"id": "test.card.card10"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -724,6 +704,9 @@ sap.ui.define([
 		};
 
 		var oManifest_NumericHeader_OnlyTitleAndSubtitle = {
+			"sap.app": {
+				"id": "test.card.card11"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -750,6 +733,9 @@ sap.ui.define([
 		};
 
 		var oManifest_Today_Parameter = {
+			"sap.app": {
+				"id": "test.card.card13"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -760,6 +746,9 @@ sap.ui.define([
 		};
 
 		var oManifest_Today_And_Location_Parameter = {
+			"sap.app": {
+				"id": "test.card.card14"
+			},
 			"sap.card": {
 				"type": "List",
 				"header": {
@@ -959,7 +948,7 @@ sap.ui.define([
 					done();
 				});
 
-				this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest.json");
+				this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslations/manifest.json");
 
 			}.bind(this));
 
@@ -972,6 +961,9 @@ sap.ui.define([
 			var done = assert.async(),
 				oCard = this.oCard,
 				oManifest = {
+					"sap.app": {
+						"id": "test.card.deepStructure"
+					},
 					"sap.card": {
 						"type": "List",
 						"data": {
@@ -1168,6 +1160,9 @@ sap.ui.define([
 			}.bind(this));
 
 			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.backgroundColorWithIconSrc"
+				},
 				"sap.card": {
 					"type": "List",
 					"header": {
@@ -1195,6 +1190,9 @@ sap.ui.define([
 			}.bind(this));
 
 			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.backgroundColorWithInitials"
+				},
 				"sap.card": {
 					"type": "List",
 					"header": {
@@ -1590,6 +1588,9 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest({
+				"sap.app": {
+					"id": "test.card.badDataUrl"
+				},
 				"sap.card": {
 					"type": "List",
 					"header": {},
@@ -1901,6 +1902,9 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oCard = new Card();
 				this.oManifest = {
+					"sap.app": {
+						"id": "test.card.refreshing.card1"
+					},
 					"sap.card": {
 						"type": "List",
 						"content": {
@@ -1954,6 +1958,9 @@ sap.ui.define([
 			beforeEach: function () {
 				this.oCard = new Card();
 				this.oManifest = {
+					"sap.app": {
+						"id": "test.card.dataMode.card1"
+					},
 					"sap.card": {
 						"type": "List",
 						"content": {
@@ -2075,7 +2082,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest.json");
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsOwnCounter/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
@@ -2096,7 +2103,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest2.json");
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsCustomCounter/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
@@ -2117,7 +2124,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 
-			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest3.json");
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsOwnCounter/manifest.json");
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
@@ -2477,7 +2484,7 @@ sap.ui.define([
 				done();
 			});
 
-			oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/translation/manifest.json");
+			oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithTranslationsCustomCounter/manifest.json");
 			oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 

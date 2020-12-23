@@ -29,7 +29,7 @@ function (
 		var done = assert.async(),
 			fnCardReadySpy = sinon.spy(Designtime.prototype, "onCardReady");
 
-		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/cardWithDesigntime/manifest.json");
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/cardWithDesigntime/manifest.json");
 
 		this.oCard.loadDesigntime().then(function (oResult) {
 			assert.ok(oResult instanceof Designtime, "Design time is loaded.");
