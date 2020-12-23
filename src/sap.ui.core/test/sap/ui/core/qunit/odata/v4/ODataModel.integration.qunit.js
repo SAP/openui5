@@ -28136,6 +28136,65 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Two concurrent requestSideEffects refreshing the same list. The first
+	// requestSideEffects will then fail because its cache is no longer active, but it must not
+	// destroy the second one.
+	// BCP: 2080439734
+	QUnit.test("BCP: 2080439734: concurrent requestSideEffects", function (assert) {
+		var oHeaderContext,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oPromise1,
+			oPromise2,
+			oRefreshResponse = {
+				value : [
+					{Name : "Team 01*", Team_Id : "01"}
+				]
+			},
+			fnResolve,
+			sView = '\
+<Table id="table" items="{/TEAMS}">\
+	<Input id="name" value="{Name}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", {
+				value : [
+					{Name : "Team 01", Team_Id : "01"}
+				]
+			})
+			.expectChange("name", ["Team 01"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100",
+					new Promise(function (resolve) {fnResolve = resolve;})
+				);
+
+			oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
+
+			// code under test
+			oPromise1 = oHeaderContext.requestSideEffects([""]);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("TEAMS?$select=Name,Team_Id&$skip=0&$top=100", oRefreshResponse)
+				.expectChange("name", ["Team 01*"]);
+
+			// code under test
+			oPromise2 = oHeaderContext.requestSideEffects([""]);
+			// now respond the first request
+			fnResolve(oRefreshResponse);
+
+			return Promise.all([
+				oPromise1.catch(function (oError) {
+					assert.ok(oError.canceled);
+				}),
+				oPromise2,
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: AnnotationHelper.format is called for an annotation that points to a property typed
 	// with an EDM type that is not mapped to a UI5 type
 	// BCP: 2080062941
