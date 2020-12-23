@@ -4,9 +4,13 @@
 
 sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
+	"sap/ui/fl/Change",
+	"sap/base/util/restricted/_omit",
 	"sap/base/Log"
 ], function(
 	ChangePersistenceFactory,
+	Change,
+	_omit,
 	Log
 ) {
 	"use strict";
@@ -29,6 +33,24 @@ sap.ui.define([
 			return false;
 		}
 		return oChangePersistence.changesHavingCorrectViewPrefix(mPropertyBag, oChange);
+	}
+
+	function isValidForRuntimeOnlyChanges(oChange, mExtensionPointInfo) {
+		if (mExtensionPointInfo.fragmentId) {
+			var oExtensionPointFromChange = oChange.getExtensionPointInfo && oChange.getExtensionPointInfo();
+			if (oExtensionPointFromChange) {
+				return mExtensionPointInfo.fragmentId !== oExtensionPointFromChange.fragmentId;
+			}
+			return true;
+		}
+		return false;
+	}
+
+	function createSelectorWithTargetControl(oChange, oExtensionPoint) {
+		var oSelector = oChange.getSelector();
+		oSelector.id = oExtensionPoint.targetControl.getId();
+		oSelector.idIsLocal = false;
+		return oSelector;
 	}
 
 	/**
@@ -76,20 +98,28 @@ sap.ui.define([
 			.then(function (aChanges) {
 				aChanges.forEach(function (oChange) {
 					//Only continue process if the change has not been applied, such as in case of XMLPreprocessing of an async view
-					if (oChange.isInInitialState()) {
+					if (oChange.isInInitialState() && !(oChange.getExtensionPointInfo && oChange.getExtensionPointInfo())) {
 						oChange.setExtensionPointInfo(mExtensionPointInfo);
 
-						//Set correct selector from targetControl's ID
-						var oSelector = oChange.getSelector();
-						oSelector.id = mExtensionPointInfo.targetControl.getId();
-						oSelector.idIsLocal = false;
-						oChange.setSelector(oSelector);
+						//Set correct selector from extension point targetControl's ID
+						oChange.setSelector(createSelectorWithTargetControl(oChange, mExtensionPointInfo));
 
 						//If the component creation is async, the changesMap already created without changes on EP --> it need to be updated
 						//Otherwise, update the selector of changes is enough, change map will be created later correctly
 						if (oChangePersistence.isChangeMapCreated()) {
 							oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oChange);
 						}
+					} else if (isValidForRuntimeOnlyChanges(oChange, mExtensionPointInfo)) {
+						//Change is applied but we need to create additional runtime only changes
+						//in case of duplicate extension points with different fragment id (fragment as template)
+						var oChangeDefinition = oChange.getDefinition();
+						var mChangeSpecificData = _omit(oChangeDefinition, ["fileName"]);
+						mChangeSpecificData.support.sourceChangeFileName = oChangeDefinition.fileName || "";
+						var oRuntimeOnlyChange = new Change(Change.createInitialFileContent(mChangeSpecificData));
+						oRuntimeOnlyChange.getDefinition().creation = oChangeDefinition.creation;
+						oRuntimeOnlyChange.setSelector(createSelectorWithTargetControl(oRuntimeOnlyChange, mExtensionPointInfo));
+						oRuntimeOnlyChange.setExtensionPointInfo(mExtensionPointInfo);
+						oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oRuntimeOnlyChange, oChange);
 					}
 				});
 				return aChanges;
