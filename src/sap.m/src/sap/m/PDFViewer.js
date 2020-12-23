@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/assert",
 	"sap/base/security/URLWhitelist",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/openWindow"
 ],
 	function(
 		library,
@@ -25,7 +26,8 @@ sap.ui.define([
 		Log,
 		assert,
 		URLWhitelist,
-		jQuery
+		jQuery,
+		openWindow
 	) {
 		"use strict";
 
@@ -429,7 +431,7 @@ sap.ui.define([
 		 * @public
 		 */
 		PDFViewer.prototype.downloadPDF = function () {
-			var oWindow = window.open(this.getSource());
+			var oWindow = openWindow(this.getSource());
 			oWindow.focus();
 		};
 
@@ -530,7 +532,7 @@ sap.ui.define([
 		 * @private
 		 */
 		PDFViewer.prototype._openOnMobile = function () {
-			var oWindow = window.open(this.getSource());
+			var oWindow = openWindow(this.getSource());
 			oWindow.focus();
 		};
 
