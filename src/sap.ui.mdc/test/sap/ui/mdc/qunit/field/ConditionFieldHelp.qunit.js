@@ -229,6 +229,45 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("invalid condition", function(assert) {
+
+		oFieldHelp.connect(oField);
+
+		var oClock = sinon.useFakeTimers();
+		oFieldHelp.open();
+		oClock.tick(500); // fake opening time
+
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			var aContent = oPopover._getAllContent();
+			if (aContent.length > 0) {
+				var oDCP = aContent[0];
+				var oButtonOK = oPopover.getFooter().getContent()[1];
+				assert.ok(oButtonOK.getEnabled(), "OK-Button is enabled");
+
+				var oCondition = Condition.createCondition("BT", ["2020-12-08", "2020-12-08"], undefined, undefined, ConditionValidated.NotValidated);
+				oDCP.setConditions([oCondition]);
+				oClock.tick(1); // as validation is async
+				assert.notOk(oButtonOK.getEnabled(), "OK-Button is disabled");
+
+				oCondition = Condition.createCondition("BT", ["2020-12-08", "2020-12-09"], undefined, undefined, ConditionValidated.NotValidated);
+				oDCP.setConditions([oCondition]);
+				oClock.tick(1); // as validation is async
+				assert.ok(oButtonOK.getEnabled(), "OK-Button is enabled");
+
+				sinon.spy(oFieldHelp._oDefineConditionPanel, "cleanUp");
+
+				oFieldHelp.close();
+				oClock.tick(500); // fake closing time
+
+				assert.ok(oFieldHelp._oDefineConditionPanel.cleanUp.called, "DefineConditionPanel cleanUp used on closing");
+			}
+		}
+
+		oClock.restore();
+
+	});
+
 	QUnit.test("press OK", function(assert) {
 
 		oFieldHelp.connect(oField);

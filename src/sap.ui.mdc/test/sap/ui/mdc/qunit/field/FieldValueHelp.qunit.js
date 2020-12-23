@@ -2479,6 +2479,35 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("invalid condition", function(assert) {
+
+		oFieldHelp.setShowConditionPanel(true);
+		oFieldHelp.open(false);
+		oClock.tick(iDialogDuration); // fake opening time
+
+		var oDialog = oFieldHelp.getAggregation("_dialog");
+		var oVHP = oDialog.getContent()[0];
+		var oButtonOK = oDialog.getButtons()[0];
+		assert.ok(oButtonOK.getEnabled(), "OK-Button is enabled");
+
+		oFieldHelp.setConditions([Condition.createCondition("BT", ["A", "A"])]); // fake setting from DefineConditionPanel
+		oClock.tick(1); // as validation is async
+		assert.notOk(oButtonOK.getEnabled(), "OK-Button is disabled");
+
+		oFieldHelp.setConditions([Condition.createCondition("BT", ["A", "B"])]); // fake setting from DefineConditionPanel
+		oClock.tick(1); // as validation is async
+		assert.ok(oButtonOK.getEnabled(), "OK-Button is enabled");
+
+		sinon.spy(oVHP._oDefineConditionPanel, "cleanUp");
+
+		oFieldHelp.close();
+		oClock.tick(iDialogDuration); // fake closing time
+
+		assert.ok(oVHP._oDefineConditionPanel.cleanUp.called, "DefineConditionPanel cleanUp used on closing");
+
+	});
+
+
 	var oFilterBar;
 	var oFilterField;
 

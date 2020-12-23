@@ -383,11 +383,14 @@ sap.ui.define([
 			var iCount = this.valueTypes.length;
 			for (var i = 0; i < iCount; i++) {
 				if (this.valueTypes[i] !== Operator.ValueType.Static) {
-					var v = aValues[i] !== undefined && aValues[i] !== null ? aValues[i] : "";
 					if (this.valueTypes[i] !== Operator.ValueType.Self) {
 						oType = this._createLocalType(this.valueTypes[i], oType);
 					}
-					var sReplace = oType ? oType.formatValue(v, "string") : v;
+					var vValue = aValues[i];
+					if (vValue === undefined || vValue === null) {
+						vValue = oType ? oType.parseValue("", "string") : ""; // for empty value use initial value of type
+					}
+					var sReplace = oType ? oType.formatValue(vValue, "string") : vValue;
 					// the regexp will replace placeholder like $0, 0$ and {0}
 					sTokenText = sTokenText.replace(new RegExp("\\$" + i + "|" + i + "\\$" + "|" + "\\{" + i + "\\}", "g"), sReplace);
 				}
@@ -492,13 +495,20 @@ sap.ui.define([
 		Operator.prototype.validate = function(aValues, oType) {
 
 			var iCount = this.valueTypes.length;
+
 			for (var i = 0; i < iCount; i++) {
-				var vValue = aValues[i] !== undefined && aValues[i] !== null ? aValues[i] : "";
 				if (this.valueTypes[i] && this.valueTypes[i] !== Operator.ValueType.Static) { // do not validate Description in EQ case
 					if ([Operator.ValueType.Self, Operator.ValueType.Static].indexOf(this.valueTypes[i]) === -1) {
 						oType = this._createLocalType(this.valueTypes[i], oType);
 					}
+					if (aValues.length < i + 1) {
+						throw new Error("value " + i + " for operator " + this.getName() + " missing"); // no ValidateException as this error must not occur from user input
+					}
 					if (oType) {
+						var vValue = aValues[i];
+						if (vValue === undefined || vValue === null) {
+							vValue = oType ? oType.parseValue("", "string") : ""; // for empty value use initial value of type
+						}
 						oType.validateValue(vValue);
 					}
 				}

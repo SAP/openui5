@@ -159,6 +159,16 @@ sap.ui.define([
 					type: "boolean",
 					group: "Appearance",
 					defaultValue: false
+				},
+
+				/**
+				 * Internal property to bind the OK button to enable or disable it.
+				 */
+				_enableOK: {
+					type: "boolean",
+					group: "Appearance",
+					defaultValue: true,
+					visibility: "hidden"
 				}
 			},
 			aggregations: {
@@ -270,7 +280,7 @@ sap.ui.define([
 		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
 
 		this._oObserver.observe(this, {
-			properties: ["filterValue", "conditions", "showConditionPanel", "title", "filterFields"],
+			properties: ["filterValue", "conditions", "showConditionPanel", "filterFields"],
 			aggregations: ["content", "filterBar", "_filterBar", "inParameters"]
 		});
 
@@ -307,6 +317,11 @@ sap.ui.define([
 		if (this._iSearchFieldTimer) {
 			clearTimeout(this._iSearchFieldTimer);
 			this._iSearchFieldTimer = null;
+		}
+
+		if (this._iConditionsTimer) {
+			clearTimeout(this._iConditionsTimer);
+			this._iConditionsTimer = null;
 		}
 
 	};
@@ -508,6 +523,9 @@ sap.ui.define([
 				// use FilterBar filters
 				_updateFiltersFromFilterBar.call(this);
 
+				// use FieldGropuIDs of field, to not leave group if focus moves to field help
+				oDialog.setFieldGroupIds(this._oField.getFieldGroupIds());
+
 				var oValueHelpPanel = oDialog.getContent()[0];
 				oValueHelpPanel.setShowTokenizer(this.getMaxConditions() !== 1 && !!oWrapper);
 				oValueHelpPanel.setFormatOptions(this._getFormatOptions());
@@ -581,6 +599,9 @@ sap.ui.define([
 				var oValueHelpPanel = oDialog.getContent()[0];
 				// remove binding of conditions to prevent updates on ValueHelpPanel and DefineConditionPanel while closed. (e.g. empty row)
 				oValueHelpPanel.unbindProperty("conditions", true);
+				if (oValueHelpPanel._oDefineConditionPanel) { //TODO: use API?
+					oValueHelpPanel._oDefineConditionPanel.cleanUp();
+				}
 			}
 
 			this._bReopen = false;
@@ -699,13 +720,6 @@ sap.ui.define([
 
 			if (oChanges.name === "showConditionPanel") {
 				_toggleDefineConditions.call(this, oChanges.current);
-			}
-
-			if (oChanges.name === "title") {
-				oDialog = this.getAggregation("_dialog");
-				if (oDialog) {
-					oDialog.setTitle(oChanges.current);
-				}
 			}
 
 			if (oChanges.name === "filterFields") {
@@ -1196,8 +1210,9 @@ sap.ui.define([
 
 	function _updateConditions(aConditions) {
 
-		// validate flag must be set in the right way to show rght conditions on DefineConditionPanel
+		// validate flag must be set in the right way to show right conditions on DefineConditionPanel
 		var bUpdate = false;
+		var bCheckConditions = this.isOpen() && this.getShowConditionPanel(); // only check if open and ConditionPanel used, don't check conditions set if closed
 		for (var i = 0; i < aConditions.length; i++) {
 			var oCondition = aConditions[i];
 			if (!oCondition.validated) {
@@ -1206,11 +1221,37 @@ sap.ui.define([
 			}
 		}
 
+		if (bCheckConditions && !this._iConditionsTimer) {
+			// as conditions are updated by ManagedObjectModel on every value change in DefineDonditionPanel do it async after DefineConditionPanel logic
+			this._iConditionsTimer = setTimeout(function () {
+				this._iConditionsTimer = null;
+				_checkConditions.call(this);
+			}.bind(this), 0);
+		}
+
 		if (bUpdate) {
 			this.setConditions(aConditions);
 		} else {
 			_updateSelectedItems.call(this);
 		}
+
+	}
+
+	function _checkConditions() {
+
+		var bInvalidCondition = false;
+		var aConditions = this.getConditions(); // use current conditions
+		for (var i = 0; i < aConditions.length; i++) {
+			var oCondition = aConditions[i];
+			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+			try {
+				oOperator.validate(oCondition.values, this._getFormatOptions().valueType);
+			} catch (oException) {
+				bInvalidCondition = true; // real error handling is done in DefineConditionPanel
+			}
+		}
+
+		this.setProperty("_enableOK", !bInvalidCondition, true);
 
 	}
 
@@ -1906,6 +1947,7 @@ sap.ui.define([
 
 			var oButtonOK = new Button(this.getId() + "-ok", {
 				text: this._oResourceBundle.getText("valuehelp.OK"),
+				enabled: "{$help>/_enableOK}",
 				type: ButtonType.Emphasized,
 				press: _dialogOk.bind(this)
 			});
@@ -1924,14 +1966,14 @@ sap.ui.define([
 				contentWidth: _getContentWidth(),
 				horizontalScrolling: false,
 				verticalScrolling: false,
-				title: this.getTitle(),
+				title: "{$help>/title}",
 				resizable: true,
 				draggable: true,
 				content: [oValueHelpPanel],
 				afterOpen: _handleDialogAfterOpen.bind(this),
 				afterClose: _handleDialogAfterClose.bind(this),
 				buttons: [oButtonOK, oButtonCancel]
-			});
+			}).setModel(this._oManagedObjectModel, "$help");
 
 			oDialog.isPopupAdaptationAllowed = function () {
 				return false;
@@ -2125,6 +2167,13 @@ sap.ui.define([
 			this.fireSelect({conditions: aConditions, add: false, close: true});
 		}
 		this._bOK = undefined;
+
+		this.setProperty("_enableOK", true, true); // initialize
+
+		if (this._iConditionsTimer) { // not longer needed if closed
+			clearTimeout(this._iConditionsTimer);
+			this._iConditionsTimer = null;
+		}
 
 	}
 

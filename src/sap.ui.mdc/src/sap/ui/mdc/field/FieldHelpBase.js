@@ -465,6 +465,9 @@ sap.ui.define([
 						oPopover.setInitialFocus(this._getControlForSuggestion());
 					}
 
+					// use FieldGropuIDs of field, to not leave group if focus moves to field help
+					oPopover.setFieldGroupIds(oField.getFieldGroupIds());
+
 					var fnOpen = function() {
 						if (this._bOpenAfterPromise) {
 							delete this._bOpenAfterPromise;

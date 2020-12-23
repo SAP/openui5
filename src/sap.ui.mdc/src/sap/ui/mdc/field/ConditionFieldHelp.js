@@ -67,9 +67,17 @@ sap.ui.define([
 					type: "string",
 					group: "Appearance",
 					defaultValue: ""
+				},
+
+				/**
+				 * Internal property to bind the OK button to enable or disable it.
+				 */
+				_enableOK: {
+					type: "boolean",
+					group: "Appearance",
+					defaultValue: true,
+					visibility: "hidden"
 				}
-
-
 			}
 		}
 	});
@@ -81,7 +89,7 @@ sap.ui.define([
 		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
 
 		this._oObserver.observe(this, {
-			properties: ["title"]
+			properties: ["title", "conditions"]
 		});
 
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -104,6 +112,11 @@ sap.ui.define([
 
 		this._oObserver.disconnect();
 		this._oObserver = undefined;
+
+		if (this._iConditionsTimer) {
+			clearTimeout(this._iConditionsTimer);
+			this._iConditionsTimer = null;
+		}
 
 	};
 
@@ -171,6 +184,7 @@ sap.ui.define([
 
 			var oButtonOK = new Button(this.getId() + "-ok", {
 				text: this._oResourceBundle.getText("valuehelp.OK"),
+				enabled: "{$help>/_enableOK}",
 				type: ButtonType.Emphasized,
 				press: _handleOk.bind(this)
 			});
@@ -182,7 +196,7 @@ sap.ui.define([
 
 			var oToolbar = new Toolbar(this.getId() + "-TB", {
 				content: [new ToolbarSpacer(this.getId() + "-Spacer"), oButtonOK, oButtonCancel]
-			});
+			}).setModel(this._oManagedObjectModel, "$help");
 
 			var oPopover = this.getAggregation("_popover");
 			if (oPopover) {
@@ -225,6 +239,14 @@ sap.ui.define([
 	ConditionFieldHelp.prototype._handleAfterClose = function(oEvent) {
 
 		this._oDefineConditionPanel.getBinding("conditions").suspend();
+		this._oDefineConditionPanel.cleanUp();
+
+		this.setProperty("_enableOK", true, true); // initialize
+
+		if (this._iConditionsTimer) { // not longer needed if closed
+			clearTimeout(this._iConditionsTimer);
+			this._iConditionsTimer = null;
+		}
 
 		FieldHelpBase.prototype._handleAfterClose.apply(this, arguments);
 
@@ -252,6 +274,10 @@ sap.ui.define([
 			}
 		}
 
+		if (oChanges.name === "conditions") {
+			_updateConditions.call(this, oChanges.current);
+		}
+
 	}
 
 	ConditionFieldHelp.prototype.isValidationSupported = function() {
@@ -274,6 +300,36 @@ sap.ui.define([
 		} else {
 			return {};
 		}
+
+	}
+
+	function _updateConditions(aConditions) {
+
+		if (this.isOpen() && !this._iConditionsTimer) { // only check if open, don't check conditions set if closed
+			// as conditions are updated by ManagedObjectModel on every value change in DefineDonditionPanel do it async after DefineConditionPanel logic
+			this._iConditionsTimer = setTimeout(function () {
+				this._iConditionsTimer = null;
+				_checkConditions.call(this);
+			}.bind(this), 0);
+		}
+
+	}
+
+	function _checkConditions() {
+
+		var bInvalidCondition = false;
+		var aConditions = this.getConditions(); // use current conditions
+		for (var i = 0; i < aConditions.length; i++) {
+			var oCondition = aConditions[i];
+			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+			try {
+				oOperator.validate(oCondition.values, _getFormatOptions.call(this).valueType);
+			} catch (oException) {
+				bInvalidCondition = true; // real error handling is done in DefineConditionPanel
+			}
+		}
+
+		this.setProperty("_enableOK", !bInvalidCondition, true);
 
 	}
 
