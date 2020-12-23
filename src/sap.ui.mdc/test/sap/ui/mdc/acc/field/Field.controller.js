@@ -1,7 +1,18 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/model/json/JSONModel"
-], function(Controller, JSONModel) {
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/mdc/field/FieldInput", // to have content controls initially loaded and prevent async. effects for ACC test
+	"sap/ui/mdc/field/FieldMultiInput",
+	"sap/ui/mdc/odata/v4/FieldBaseDelegate",
+	"sap/m/DatePicker"
+], function(
+	Controller,
+	JSONModel,
+	FieldInput,
+	FieldMultiInput,
+	FieldBaseDelegate,
+	DatePicker
+) {
 	"use strict";
 
 	return Controller.extend("sap.ui.mdc.acc.field.Field", {
