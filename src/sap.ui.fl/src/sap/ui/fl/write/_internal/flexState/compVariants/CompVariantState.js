@@ -83,7 +83,7 @@ sap.ui.define([
 				oChangeParameter.support.generator.compositeCommand = mPropertyBag.compositeCommand;
 			}
 
-			var oChange = new Change(oChangeParameter);
+			var oChange = new Change(Change.createInitialFileContent(oChangeParameter));
 			mCompVariantsByIdMap[sChangeType] = oChange;
 			FlexState.getCompEntitiesByIdMap(mPropertyBag.reference)[oChange.getId()] = oChange;
 		}
