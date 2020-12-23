@@ -88,6 +88,8 @@ sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
 	 *   The maximum number of contexts to read before and after the given range; with this,
 	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
 	 *   table. This parameter is model-specific and not implemented by all models.
+	 * @param {any} [_reserved]
+	 *   Reserved, do not use. Set it to <code>undefined</code>.
 	 * @param {boolean} [bKeepCurrent]
 	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.86.0.
 	 *   This parameter is model-specific and not implemented by all models.
