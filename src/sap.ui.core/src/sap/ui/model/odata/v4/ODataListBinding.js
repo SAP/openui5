@@ -1550,6 +1550,8 @@ sap.ui.define([
 	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a
 	 *   table. Negative values will be treated as 0. Supported since 1.39.0; <code>Infinity</code>
 	 *   may be used since 1.53.0 to prefetch all data and thus disable paging.
+	 * @param {any} [_reserved]
+	 *   Reserved, do not use. Set it to <code>undefined</code>.
 	 * @param {boolean} [bKeepCurrent]
 	 *   Whether this call keeps the result of {@link #getCurrentContexts} untouched; since 1.86.0.
 	 * @returns {sap.ui.model.odata.v4.Context[]}
@@ -1566,7 +1568,7 @@ sap.ui.define([
 	 */
 	// @override @see sap.ui.model.ListBinding#getContexts
 	ODataListBinding.prototype.getContexts = function (iStart, iLength, iMaximumPrefetchSize,
-			bKeepCurrent) {
+			_reserved, bKeepCurrent) {
 		var sChangeReason,
 			aContexts,
 			bDataRequested = false,
