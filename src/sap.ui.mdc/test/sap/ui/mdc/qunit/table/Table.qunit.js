@@ -2978,69 +2978,126 @@ sap.ui.define([
 	});
 
 	QUnit.test("test scrollToIndex", function(assert) {
-		var done = assert.async(), oTableStub, oTable = this.oTable;
+		var done = assert.async(), oScrollStub, oTable = this.oTable, n = 0;
 
 		assert.ok(oTable, "sap.ui.mdc.Table initialized");
 
+		function testScroll(iIndex) {
+			return new Promise(function(resolve) {
+				oTable.scrollToIndex(iIndex).then(function () {
+					if (oTable._getStringType() === "Table" && iIndex === -1) {
+						iIndex = oTable._oTable.getBinding('rows') ? oTable._oTable.getBinding('rows').getLength() : 0;
+					}
+
+					n++;
+					assert.ok(oScrollStub.called, oScrollStub.propName + " was called");
+					assert.equal(oScrollStub.callCount, n, oScrollStub.propName + " was called only once");
+					assert.ok(oScrollStub.calledWith(iIndex), oScrollStub.propName + " was called with the correct parameter");
+					resolve();
+				});
+			});
+		}
+
 		oTable.initialized().then(function() {
-			var iBindingLength = oTable._oTable.getBinding('rows') ? oTable._oTable.getBinding('rows').getLength() : 0,
-				iIndex;
+			oScrollStub = sinon.stub(oTable._oTable, "_setFirstVisibleRowIndex");
 
-			oTableStub = sinon.stub(oTable._oTable, "setFirstVisibleRow");
-			assert.notOk(oTableStub.called, "setFirstVisibleRow was not called yet");
-
-			iIndex = 0;
-			oTable.scrollToIndex(iIndex);
-			assert.ok(oTableStub.called, "setFirstVisibleRow was called");
-			assert.ok(oTableStub.calledOnce, "setFirstVisibleRow was called only once");
-			assert.ok(oTableStub.calledWith(iIndex), "setFirstVisibleRow was called with the correct parameter");
-
-			iIndex = 5;
-			oTable.scrollToIndex(iIndex);
-			assert.ok(oTableStub.calledTwice, "setFirstVisibleRow was called a second time");
-			assert.ok(oTableStub.calledWith(iIndex), "setFirstVisibleRow was called with the correct parameter");
-
-			iIndex = -1;
-			oTable.scrollToIndex(iIndex);
-			assert.ok(oTableStub.calledThrice, "setFirstVisibleRow was called a third time");
-			assert.ok(oTableStub.calledWith(iBindingLength), "setFirstVisibleRow was called with the correct parameter");
-
-			iIndex = 10000;
-			oTable.scrollToIndex(iIndex);
-			assert.ok(oTableStub.callCount === 4, "setFirstVisibleRow was called a fourth time");
-			assert.ok(oTableStub.calledWith(iIndex), "setFirstVisibleRow was called with the correct parameter");
-
-			oTableStub.restore();
-
+			return new Promise(function(resolve) {
+				resolve();
+			}).then(function() {
+				return testScroll(0);
+			}).then(function () {
+				return testScroll(5);
+			}).then(function () {
+				return testScroll(-1);
+			}).then(function () {
+				return testScroll(10000);
+			}).then(function () {
+				oScrollStub.restore();
+				return Promise.resolve();
+			});
+		}).then(function() {
 			oTable.setType("ResponsiveTable").initialized().then(function() {
 
-				oTableStub = sinon.stub(oTable._oTable, "scrollToIndex");
-				assert.notOk(oTableStub.called, "scrollToIndex was not called yet");
+				oScrollStub = sinon.stub(oTable._oTable, "scrollToIndex");
+				oScrollStub.resolves();
+				n = 0;
 
-				iIndex = 0;
-				oTable.scrollToIndex(iIndex);
-				assert.ok(oTableStub.called, "scrollToIndex was called");
-				assert.ok(oTableStub.calledOnce, "scrollToIndex was called only once");
-				assert.ok(oTableStub.calledWith(iIndex), "scrollToIndex was called with the correct parameter");
+				return new Promise(function(resolve) {
+					resolve();
+				}).then(function() {
+					return testScroll(0);
+				}).then(function () {
+					return testScroll(5);
+				}).then(function () {
+					return testScroll(-1);
+				}).then(function () {
+					return testScroll(10000);
+				}).then(function () {
+					oScrollStub.restore();
+					done();
+				});
+			});
+		});
+	});
 
-				iIndex = 5;
-				oTable.scrollToIndex(iIndex);
-				assert.ok(oTableStub.calledTwice, "scrollToIndex was called a second time");
-				assert.ok(oTableStub.calledWith(iIndex), "scrollToIndex was called with the correct parameter");
+	QUnit.test("test focusRow", function(assert) {
+		var done = assert.async(), oScrollStub, oFocusStub, oTable = this.oTable, n = 0;
 
-				iIndex = -1;
-				oTable.scrollToIndex(iIndex);
-				assert.ok(oTableStub.calledThrice, "scrollToIndex was called a third time");
-				assert.ok(oTableStub.calledWith(iIndex), "scrollToIndex was called with the correct parameter");
+		assert.ok(oTable, "sap.ui.mdc.Table initialized");
 
-				iIndex = 10000;
-				oTable.scrollToIndex(iIndex);
-				assert.ok(oTableStub.callCount === 4, "scrollToIndex was called a fourth time");
-				assert.ok(oTableStub.calledWith(iIndex), "scrollToIndex was called with the correct parameter");
+		function testFocusRow(iIndex, bFirstInteractiveElement) {
+			return new Promise(function(resolve) {
+				oTable.focusRow(iIndex, bFirstInteractiveElement).then(function () {
+					n++;
+					assert.ok(oFocusStub.called, oFocusStub.propName + " was called");
+					assert.equal(oFocusStub.callCount, n, oFocusStub.propName + " was called only once");
+					assert.ok(oFocusStub.calledWith(iIndex, bFirstInteractiveElement), oFocusStub.propName + " was called with the correct parameter");
+					resolve();
+				});
+			});
+		}
 
-				oTableStub.restore();
+		oTable.initialized().then(function() {
+			oFocusStub = sinon.stub(oTable._oTable, "_setFocus");
+			oFocusStub.resolves();
 
-				done();
+			return new Promise(function(resolve) {
+				resolve();
+			}).then(function() {
+				return testFocusRow(0, true);
+			}).then(function () {
+				return testFocusRow(5, true);
+			}).then(function () {
+				return testFocusRow(-1, false);
+			}).then(function () {
+				return testFocusRow(10000, false);
+			}).then(function () {
+				oFocusStub.restore();
+				return Promise.resolve();
+			});
+		}).then(function() {
+			oTable.setType("ResponsiveTable").initialized().then(function() {
+				oFocusStub = sinon.stub(oTable._oTable, "_setFocus");
+				oFocusStub.resolves();
+				oScrollStub = sinon.stub(oTable._oTable, "scrollToIndex");
+				oScrollStub.resolves();
+				n = 0;
+
+				return new Promise(function(resolve) {
+					resolve();
+				}).then(function() {
+					return testFocusRow(0, false);
+				}).then(function () {
+					return testFocusRow(5, false);
+				}).then(function () {
+					return testFocusRow(-1, true);
+				}).then(function () {
+					return testFocusRow(10000, true);
+				}).then(function () {
+					oFocusStub.restore();
+					oScrollStub.restore();
+					done();
+				});
 			});
 		});
 	});

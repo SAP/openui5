@@ -2621,20 +2621,37 @@ function(
 	 * new items when scrolling to the bottom of the list.
 	 *
 	 * @param {number} iIndex The list item index that must be scrolled into the viewport
+	 * @returns {Promise} A <code>Promise</code> that resolves after the table scrolls to the row
+	 * with the given index
 	 *
 	 * @public
 	 */
 	ListBase.prototype.scrollToIndex = function(iIndex) {
-		var aItems, iRowCount, oItem, oScrollDelegate;
+		return new Promise(function(resolve, reject) {
+			var oItem, oScrollDelegate;
 
-		oScrollDelegate = library.getScrollDelegate(this, true);
+			oScrollDelegate = library.getScrollDelegate(this, true);
 
-		if (!oScrollDelegate) {
-			return;
-		}
+			if (!oScrollDelegate) {
+				return reject();
+			}
 
-		aItems = this.getVisibleItems();
-		iRowCount = aItems.length;
+			oItem = getItemAtIndex(this, iIndex);
+			if (!oItem) {
+				return reject();
+			}
+
+			// adding timeout of 0 ensures the DOM is ready in case of rerendering
+			setTimeout(function() {
+				oScrollDelegate.scrollToElement(oItem.getDomRef(), null, [0, this._getStickyAreaHeight() * -1]);
+				return resolve();
+			}.bind(this), 0);
+		}.bind(this));
+	};
+
+	function getItemAtIndex(oList, iIndex) {
+		var aItems = oList.getVisibleItems();
+		var iRowCount = aItems.length;
 
 		if (typeof iIndex !== 'number' || iIndex < -1) {
 			iIndex = 0;
@@ -2644,18 +2661,43 @@ function(
 			iIndex = iRowCount - 1;
 		}
 
-		oItem = aItems[iIndex];
+		return aItems[iIndex];
+	}
 
-		if (!oItem) {
-			return;
-		}
+	/**
+	 * Sets the focus on the item. If <code>bFirstInteractiveElement</code> is <code>true</code> and there are
+	 * interactive elements inside the item, sets the focus on the first interactive element. Otherwise sets
+	 * the focus on the entire item.
+	 *
+	 * If the given index is not in the visible area, the table scrolls to it automatically.
+	 *
+	 * @param {number} iIndex The index of the item that is to be focused
+	 * @param {boolean} [bFirstInteractiveElement=false] Indicates whether to set the focus on the first
+	 * interactive element inside the item
+	 *
+	 * @returns {Promise} A <code>Promise</code> that resolves after the focus has been set
+	 * @private
+	 */
+	ListBase.prototype._setFocus = function(iIndex, bFirstInteractiveElement) {
+		return new Promise(function(resolve, reject) {
+			var oItem = getItemAtIndex(this, iIndex);
+			if (!oItem) {
+				return reject();
+			}
 
-		// adding timeout of 0 ensures the DOM is ready in case of rerendering
-		setTimeout(function() {
-			oScrollDelegate.scrollToElement(oItem.getDomRef(), null, [0, this._getStickyAreaHeight() * -1]);
-		}.bind(this), 0);
+			if (bFirstInteractiveElement === true) {
+				var $InteractiveElements = oItem.getTabbables();
+				if ($InteractiveElements.length) {
+					$InteractiveElements[0].focus();
+					return resolve();
+				}
+			}
 
+			oItem.focus();
+			return resolve();
+		}.bind(this));
 	};
+
 	/**
 	 * Returns the height of the sticky area in px. The height depends on the sticky configuration.
 	 *

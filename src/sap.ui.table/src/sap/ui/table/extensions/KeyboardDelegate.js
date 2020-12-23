@@ -686,29 +686,11 @@ sap.ui.define([
 	 * @static
 	 */
 	KeyboardDelegate._getFirstInteractiveElement = function(oRow) {
-		if (!oRow) {
+		var oElem = TableUtils.getFirstInteractiveElement(oRow, true);
+		if (!oElem) {
 			return null;
 		}
-
-		var oTable = oRow.getParent();
-		var aCells = oRow.getCells();
-		var $Cell;
-		var $InteractiveElements;
-
-		if (TableUtils.hasRowActions(oTable)) {
-			aCells.push(oRow.getRowAction());
-		}
-
-		for (var i = 0; i < aCells.length; i++) {
-			$Cell = TableUtils.getParentCell(oTable, aCells[i].getDomRef());
-			$InteractiveElements = TableUtils.getInteractiveElements($Cell);
-
-			if ($InteractiveElements) {
-				return $InteractiveElements.first();
-			}
-		}
-
-		return null;
+		return jQuery(oElem);
 	};
 
 	/**

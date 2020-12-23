@@ -63,8 +63,7 @@ sap.ui.define([
 				 * The navigated state of a row.
 				 *
 				 * If set to <code>true</code>, a navigation indicator is displayed at the end of the row.
-				 * <b>Note:</b> The navigation indicator is only visible if row actions are available.
-				 * In addition this property must be set for <b>one</b> row item only.
+				 * <b>Note:</b> This property must be set for <b>one</b> row only.
 				 */
 				navigated : {type : "boolean", group : "Appearance", defaultValue : false}
 			}

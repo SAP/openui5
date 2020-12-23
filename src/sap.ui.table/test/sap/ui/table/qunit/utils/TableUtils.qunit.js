@@ -1294,6 +1294,26 @@ sap.ui.define([
 		assert.strictEqual($InteractiveElements, null, "(HTMLElement) Tree icon cell of leaf node: No element was returned");
 	});
 
+	QUnit.test("getFirstInteractiveElement", function(assert) {
+		var oRow = oTable.getRows()[0];
+		assert.equal(TableUtils.getFirstInteractiveElement(undefined), null, "The row instance is undefined: returns null");
+		assert.equal(TableUtils.getFirstInteractiveElement(null), null, "The row instance is equal to null: returns null");
+		assert.equal(TableUtils.getFirstInteractiveElement(oRow), null, "There are no interactive elements: returns null");
+
+		initRowActions(oTable, 2, 2);
+
+		assert.equal(TableUtils.getFirstInteractiveElement(oRow, false), null, "");
+		var $RowActionCell = getRowAction(0);
+		var $RowActionIcons = $RowActionCell.find(".sapUiTableActionIcon:visible");
+		oRow = oTable.getRows()[0];
+		assert.equal(TableUtils.getFirstInteractiveElement(oRow, false), null, "ActionCells are not taken in consideration");
+		assert.equal(TableUtils.getFirstInteractiveElement(oRow, true), $RowActionIcons[0], "ActionCells are taken in consideration");
+
+		oRow.getCells()[0].$().attr("tabindex", 0);
+		oRow.getCells()[1].$().attr("tabindex", 0);
+		assert.equal(TableUtils.getFirstInteractiveElement(oRow, true), oRow.getCells()[0].getDomRef(), "Returns the first interactive element");
+	});
+
 	QUnit.test("convertCSSSizeToPixel", function(assert) {
 		assert.equal(TableUtils.convertCSSSizeToPixel("10em", true), "160px", "10em converted to pixel string correctly.");
 		assert.equal(TableUtils.convertCSSSizeToPixel("10rem"), 160, "10rem converted to pixel integer correctly.");

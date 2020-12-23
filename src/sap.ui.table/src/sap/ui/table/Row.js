@@ -192,6 +192,25 @@ sap.ui.define([
 	};
 
 	/**
+	 * If <code>bFirstInteractiveElement</code> is <code>true</code> and there are interactive elements in the
+	 * data cells, sets the focus on the first interactive element. Otherwise sets the focus on the first
+	 * data cell.
+	 *
+	 * @param {boolean} [bFirstInteractiveElement=false] Indicates whether to set the focus on the first
+	 * interactive element
+	 * @private
+	 */
+	Row.prototype._setFocus = function(bFirstInteractiveElement) {
+		var oFirstInteractiveElement = TableUtils.getFirstInteractiveElement(this);
+
+		if (bFirstInteractiveElement === true && oFirstInteractiveElement) {
+			oFirstInteractiveElement.focus();
+		} else {
+			this.getDomRef("col0").focus();
+		}
+	};
+
+	/**
 	 * @private
 	 */
 	Row.prototype.addStyleClass = function(sStyleClass) {

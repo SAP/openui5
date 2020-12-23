@@ -49,7 +49,7 @@ sap.ui.define([
 		 *******************************************************************************/
 
 		// helper variables
-		var oList = null;
+		var oList = null, oScrollContainer;
 		var iItemCount = 0,
 			data1 = { // 0 items
 				items : [ ]
@@ -1045,7 +1045,7 @@ sap.ui.define([
 
 			var oMutationObserver, observedDomRef;
 			var done = assert.async();
-			var oScrollContainer = new ScrollContainer({
+			oScrollContainer = new ScrollContainer({
 				vertical: true,
 				height: "300px",
 				content: [oList, new Toolbar({height: "100px"})]
@@ -1336,25 +1336,34 @@ sap.ui.define([
 		/********************************************************************************/
 		QUnit.module("Other API methods", {
 			beforeEach: function() {
-				oList = new List();
+				var aListItems = [], i;
+
+				for (i = 0; i < 50; i++) {
+					aListItems.push(createListItem());
+				}
+
+				oList = new List({
+					items: aListItems
+				});
+
+				oScrollContainer = new ScrollContainer({
+					vertical: true,
+					content: oList
+				});
+
+				oScrollContainer.placeAt("qunit-fixture");
+
+				Core.applyChanges();
 			},
 			afterEach: function() {
+				oScrollContainer.destroy();
 				oList.destroy();
 			}
 		});
 		/********************************************************************************/
 
 		QUnit.test("Function scrollToIndex", function(assert) {
-			this.clock = sinon.useFakeTimers();
-			var aListItems = [], i;
-
-			for (i = 0; i < 50; i++) {
-				aListItems.push(createListItem());
-			}
-
-			var oList = new List({
-				items: aListItems
-			});
+			var done = assert.async();
 
 			var oHeaderToolbar = new Toolbar({
 				content: [
@@ -1382,44 +1391,91 @@ sap.ui.define([
 			oList.setHeaderToolbar(oHeaderToolbar);
 			oList.setInfoToolbar(oInfoToolbar);
 
-			var oScrollContainer = new ScrollContainer({
-				vertical: true,
-				content: oList
-			});
-
-			oScrollContainer.placeAt("qunit-fixture");
 			Core.applyChanges();
 
-			var oItem,
-				oScrollDelegate = library.getScrollDelegate(oList, true),
+			var oScrollDelegate = library.getScrollDelegate(oList, true),
 				oSpy = sinon.spy(oScrollDelegate, "scrollToElement");
 
-			oList.scrollToIndex(0);
-			this.clock.tick(0);
-			assert.ok(oSpy.called, "The scroll delegate was called");
-			assert.ok(oSpy.calledOnce, "The scroll delegate was called exactly once");
-
-			oList.scrollToIndex(oList.getVisibleItems().length / 2);
-			oItem = oList.getVisibleItems()[oList.getVisibleItems().length / 2];
-			this.clock.tick(0);
-			assert.ok(oSpy.calledTwice, "The scroll delegate was called exactly twice");
-			assert.ok(oSpy.lastCall.calledWithExactly(oItem.getDomRef(), null, [0, 0]), "Scroll delegate was called with correct parameters");
-
-			oList.scrollToIndex(-1);
-			oItem = oList.getVisibleItems()[oList.getVisibleItems().length - 1];
-			this.clock.tick(0);
-			assert.ok(oSpy.calledThrice, "The scroll delegate was called exactly three times");
-			assert.ok(oSpy.lastCall.calledWithExactly(oItem.getDomRef(), null, [0, 0]), "Scroll delegate was called with correct parameters");
-
-			oList.setSticky(['HeaderToolbar']);
-			oList.scrollToIndex(0);
-			oItem = oList.getVisibleItems()[0];
-			this.clock.tick(0);
-			assert.ok(oSpy.lastCall.calledWithExactly(oItem.getDomRef(), null, [0, oList._getStickyAreaHeight() * -1]), "Scroll delegate was called with correct parameters");
-
-			oSpy.restore();
-			oScrollContainer.destroy();
 			this.clock.restore();
+
+			function testScroll(iIndex) {
+				return new Promise(function(resolve) {
+					if (iIndex === -1) {
+						iIndex = oList.getVisibleItems().length - 1;
+					}
+
+					oList.scrollToIndex(iIndex).then(function() {
+						assert.ok(oSpy.called, "The scroll delegate was called");
+						assert.ok(oSpy.calledOnce, "The scroll delegate was called exactly once");
+						assert.ok(oSpy.calledWithExactly(oList.getVisibleItems()[iIndex].getDomRef(), null, [0, oList._getStickyAreaHeight() * -1]),
+							"Scroll delegate was called with correct parameters");
+						oSpy.reset();
+						resolve();
+					});
+				});
+			}
+
+			return new Promise(function(resolve) {
+				resolve();
+			}).then(function() {
+				return testScroll(0);
+			}).then(function() {
+				return testScroll(oList.getVisibleItems().length / 2);
+			}).then(function() {
+				return testScroll(-1);
+			}).then(function() {
+				oList.setSticky(['HeaderToolbar']);
+				return testScroll(0);
+			}).then(function() {
+				oSpy.restore();
+				oScrollContainer.destroy();
+				done();
+			});
+		});
+
+		QUnit.test("Function _setFocus", function(assert) {
+			function testFocus(iIndex, bFirstInteractiveElement) {
+				return new Promise(function(resolve) {
+					if (iIndex === -1) {
+						iIndex = oList.getVisibleItems().length - 1;
+					}
+
+					iIndex = Math.min(iIndex, oList.getVisibleItems().length - 1);
+
+					oList._setFocus(iIndex, bFirstInteractiveElement).then(function() {
+						var oItem = oList.getVisibleItems()[iIndex];
+						var $Elem = (bFirstInteractiveElement && oItem.getTabbables().length) ? oItem.getTabbables()[0] : oItem.getDomRef();
+						assert.deepEqual(document.activeElement, $Elem, "The focus was set correctly");
+						resolve();
+					});
+				});
+			}
+
+			function setItemFocusable(oItem) {
+				oItem.getTabbables().first().attr("tabindex", 0);
+			}
+
+			return new Promise(function(resolve) {
+				resolve();
+			}).then(function() {
+				return testFocus(100, false);
+			}).then(function() {
+				return testFocus(0, false);
+			}).then(function() {
+				return testFocus(oList.getVisibleItems().length / 2, false);
+			}).then(function() {
+				return testFocus(-1, false);
+			}).then(function() {
+				return testFocus(100, true);
+			}).then(function() {
+				setItemFocusable(oList.getVisibleItems()[0]);
+				return testFocus(0, true);
+			}).then(function() {
+				setItemFocusable(oList.getVisibleItems()[oList.getVisibleItems().length / 2]);
+				return testFocus(oList.getVisibleItems().length / 2, true);
+			}).then(function() {
+				return testFocus(-1, true);
+			});
 		});
 
 		/********************************************************************************/
@@ -2976,7 +3032,7 @@ sap.ui.define([
 				});
 
 				sut.setInfoToolbar(oInfoToolbar);
-				var oScrollContainer = new ScrollContainer({
+				oScrollContainer = new ScrollContainer({
 					vertical: true,
 					content: sut
 				});
@@ -3067,7 +3123,7 @@ sap.ui.define([
 				});
 
 				sut.setHeaderToolbar(oHeaderToolbar);
-				var oScrollContainer = new ScrollContainer({
+				oScrollContainer = new ScrollContainer({
 					vertical: true,
 					content: sut
 				});
@@ -3180,7 +3236,7 @@ sap.ui.define([
 
 				sut.setInfoToolbar(oInfoToolbar);
 
-				var oScrollContainer = new ScrollContainer({
+				oScrollContainer = new ScrollContainer({
 					vertical: true,
 					content: sut
 				});
@@ -3291,7 +3347,7 @@ sap.ui.define([
 			oList.setHeaderToolbar(oHeaderToolbar);
 			oList.setInfoToolbar(oInfoToolbar);
 
-			var oScrollContainer = new ScrollContainer({
+			oScrollContainer = new ScrollContainer({
 				vertical: true,
 				content: oList
 			});
