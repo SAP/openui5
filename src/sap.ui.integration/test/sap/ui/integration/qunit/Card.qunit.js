@@ -2552,5 +2552,41 @@ sap.ui.define([
 			oCard.startManifestProcessing();
 		});
 
+		QUnit.module("Destroy", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				});
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Destroy card while manifest is loading", function (assert) {
+			// Arrange
+			var oSpy = sinon.spy(Card.prototype, "_registerManifestModulePath"),
+				done = assert.async();
+
+			this.oCard.setManifest("test-resources/sap/ui/integration/qunit/testResources/listCard.manifest.json");
+			Core.applyChanges();
+
+			assert.ok(this.oCard._oCardManifest, "There is Manifest instance");
+
+			// Act
+			this.oCard.destroy();
+
+			setTimeout(function () {
+				// Assert
+				assert.ok(oSpy.notCalled, "Method is not called if the card is destroyed");
+
+				oSpy.restore();
+				done();
+			}, 500);
+		});
+
 	}
 );
