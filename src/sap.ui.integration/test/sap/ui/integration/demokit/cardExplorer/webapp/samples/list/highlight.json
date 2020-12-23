@@ -28,6 +28,7 @@
 	},
 	"sap.card": {
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "List Card with Top 5 Products",
 			"subTitle": "These are the top sellers this month",

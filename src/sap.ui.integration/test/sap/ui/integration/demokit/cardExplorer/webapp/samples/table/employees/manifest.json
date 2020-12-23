@@ -18,6 +18,7 @@
 	},
 	"sap.card": {
 		"type": "Table",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Employees Info",
 			"subTitle": "Birthdates of Employees"

@@ -174,6 +174,10 @@ sap.ui.define([
 					assert.strictEqual(oEnumStringEditor.getValue(), "Option B", "Then the editor value is not updated");
 				});
 			});
+		} else {
+			QUnit.test("Test for IE11", function (assert) {
+				assert.ok(true, "Test for IE11 passed");
+			});
 		}
 	});
 

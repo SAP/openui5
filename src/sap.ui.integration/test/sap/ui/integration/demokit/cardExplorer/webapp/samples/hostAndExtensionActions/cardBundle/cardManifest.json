@@ -30,6 +30,7 @@
 	"sap.card": {
 		"extension": "./ActionsExtension",
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Available Trainings",
 			"icon": {

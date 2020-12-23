@@ -28,6 +28,7 @@
 	},
 	"sap.card": {
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"type": "Numeric",
 			"data": {

@@ -279,7 +279,7 @@ sap.ui.define([
 					assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
-					assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: MultiComboBox items lenght is OK");
+					assert.ok(oField.getAggregation("_field").getItems().length === 3, "Field: MultiComboBox items lenght is OK");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -356,7 +356,7 @@ sap.ui.define([
 						assert.ok(oLabel.getText() === "stringArrayParameter", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.MultiComboBox"), "Field: Editor is MultiComboBox");
-						assert.ok(oField.getAggregation("_field").getItems().length === 5, "Field: MultiComboBox items lenght is OK");
+						assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: MultiComboBox items lenght is OK");
 						resolve();
 					}.bind(this), 500);
 				}.bind(this));
@@ -4627,8 +4627,8 @@ sap.ui.define([
 		QUnit.test("Slider is created from  dt json inline", function (assert) {
 
 			var dt = {
-				form: {
-					items: {
+				"form": {
+					"items": {
 						"integer": {
 							"manifestpath": "/sap.card/configuration/parameters/integer/value",
 							"defaultValue": 1,
@@ -4666,8 +4666,8 @@ sap.ui.define([
 			var dt = function () {
 				return new Designtime(
 					{
-						form: {
-							items: {
+						"form": {
+							"items": {
 								"integer": {
 									"manifestpath": "/sap.card/configuration/parameters/integer/value",
 									"defaultValue": 1,
@@ -4705,8 +4705,8 @@ sap.ui.define([
 			var dt = function () {
 				return new Designtime(
 					{
-						form: {
-							items: {
+						"form": {
+							"items": {
 								"icon": {
 									"manifestpath": "/sap.card/configuration/parameters/integer/value",
 									"defaultValue": "sap-icon://accept",
