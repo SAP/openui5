@@ -56,6 +56,24 @@ sap.ui.define([
 		 */
 		getKnownDefaultDelegateLibraries: function () {
 			return DelegateMediator.getKnownDefaultDelegateLibraries();
+		},
+
+		/**
+		 * Returns a list of required libraries for the given default delegate.
+		 * If it is not a default delegate, an empty list is returned.
+		 *
+		 * @param {object} mPropertyBag - Property bag
+		 * @param {string} mPropertyBag.sDelegateName - Name of the delegate
+		 * @param {sap.ui.core.Element} mPropertyBag.oControl - Control for which the corresponding delegate was returned
+		 * @param {string} [mPropertyBag.sModelType] - Model type, if none is provided the default model of oControl is taken instead
+		 * @returns {string[]} Required libraries
+		 */
+		getRequiredLibrariesForDefaultDelegate: function (mPropertyBag) {
+			return DelegateMediator.getRequiredLibrariesForDefaultDelegate(
+				mPropertyBag.delegateName,
+				mPropertyBag.control,
+				mPropertyBag.modelType
+			);
 		}
 	};
 

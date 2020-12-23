@@ -1175,6 +1175,77 @@ sap.ui.define([
 				}.bind(this));
 		});
 
+		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate and the default delegate is not available", function (assert) {
+			sandbox.stub(sap.ui.getCore(), "loadLibrary").callsFake(function (sLibraryName) {
+				if (DelegateMediatorAPI.getKnownDefaultDelegateLibraries().includes(sLibraryName)) {
+					return Promise.reject();
+				}
+				return sap.ui.getCore().loadLibrary.wrappedMethod.apply(this, arguments);
+			});
+
+			return createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate: {
+						changeType: "addFields"
+					},
+					custom: {
+						getItems: getCustomItems.bind(null, 2)
+					}
+				},
+				reveal: {
+					changeType: "unhideControl"
+				},
+				responsibleElement: {
+					target: this.oSibling,
+					source: this.oPseudoPublicParent,
+					actionsFromResponsibleElement: ["reveal"]
+				}
+			}, ON_CONTAINER)
+				.then(function (oCreatedOverlay) {
+					return this.oPlugin._getActions(true, oCreatedOverlay);
+				}.bind(this)).then(function (mActions) {
+					assert.notOk(mActions.hasOwnProperty("addViaDelegate"), "then the invalid add via delegate action is filtered");
+					assert.ok(mActions.hasOwnProperty("reveal"), "then the reveal action is still available");
+					assert.ok(mActions.hasOwnProperty("addViaCustom"), "then the custom add action is still available");
+				});
+		});
+
+		QUnit.test("when the control's dt metadata has an instance-specific delegate and an unavailable default delegate", function (assert) {
+			sandbox.stub(sap.ui.getCore(), "loadLibrary").callsFake(function (sLibraryName) {
+				if (DelegateMediatorAPI.getKnownDefaultDelegateLibraries().includes(sLibraryName)) {
+					return Promise.reject();
+				}
+				return sap.ui.getCore().loadLibrary.wrappedMethod.apply(this, arguments);
+			});
+
+			var oRequireStub = sandbox.stub(sap.ui, "require");
+			oRequireStub
+				.withArgs(["path/to/instancespecific/delegate"])
+				.callsFake(function (sModuleName, fnCallback) {
+					fnCallback();
+				});
+			oRequireStub.callThrough();
+
+			return createOverlayWithAggregationActions.call(this, {
+				add: {
+					delegate: {
+						changeType: "addFields"
+					}
+				},
+				responsibleElement: {
+					target: this.oSibling,
+					source: this.oPseudoPublicParent,
+					actionsFromResponsibleElement: ["reveal"]
+				},
+				delegateModulePath: "path/to/instancespecific/delegate"
+			}, ON_CONTAINER)
+				.then(function (oCreatedOverlay) {
+					return this.oPlugin._getActions(true, oCreatedOverlay);
+				}.bind(this)).then(function (mActions) {
+					assert.ok(mActions.hasOwnProperty("addViaDelegate"), "then the add via delegate action for the instance-sepcific delegate is available");
+				});
+		});
+
 		function whenOverlayHasNoStableId(oOverlayWithoutStableID) {
 			sandbox.stub(this.oPlugin, "hasStableId").callsFake(function (oOverlay) {
 				if (oOverlay === oOverlayWithoutStableID) {
