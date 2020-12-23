@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/Core",
 	"sap/ui/core/Configuration",
+	"sap/ui/dom/units/Rem",
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control",
 	// jQuery Plugin "firstFocusableDomRef", "lastFocusableDomRef"
@@ -57,7 +58,8 @@ function(
 	Log,
 	jQuery,
 	Core,
-	Configuration
+	Configuration,
+	Rem
 ) {
 		"use strict";
 
@@ -86,6 +88,8 @@ function(
 
 		// HTML container scrollbar width
 		var iScrollbarWidth = 17;
+
+		var DRAGRESIZE_STEP = Rem.toPx(1);
 
 		/**
 		* Constructor for a new Dialog.
@@ -761,7 +765,7 @@ function(
 			} else if (oSourceDomRef.id === this.getId() + "-lastfe") {
 				//Check if the invisible LAST focusable element (suffix '-lastfe') has gained focus
 				//First check if header content is available
-				var oFirstFocusableDomRef = (this._getAnyHeader() && this._getAnyHeader().$().firstFocusableDomRef()) || (this.getSubHeader() && this.getSubHeader().$().firstFocusableDomRef()) || this.$("cont").firstFocusableDomRef() || this.$("footer").firstFocusableDomRef();
+				var oFirstFocusableDomRef = this._getFocusableHeader() || (this._getAnyHeader() && this._getAnyHeader().$().firstFocusableDomRef()) || (this.getSubHeader() && this.getSubHeader().$().firstFocusableDomRef()) || this.$("cont").firstFocusableDomRef() || this.$("footer").firstFocusableDomRef();
 				if (oFirstFocusableDomRef) {
 					oFirstFocusableDomRef.focus();
 				}
@@ -859,6 +863,102 @@ function(
 			if (this._isSpaceOrEnter(oEvent)) {
 				this._isSpaceOrEnterPressed = true;
 			}
+
+			this._handleKeyboardDragResize(oEvent);
+		};
+
+		/**
+		 * Handles the keyboard drag/resize functionality
+		 *
+		 * @param {jQuery.Event} oEvent The event object
+		 * @private
+		 */
+		Dialog.prototype._handleKeyboardDragResize = function (oEvent) {
+
+			if (oEvent.target !== this._getFocusableHeader() ||
+				[KeyCodes.ARROW_LEFT,
+					KeyCodes.ARROW_RIGHT,
+					KeyCodes.ARROW_UP,
+					KeyCodes.ARROW_DOWN].indexOf(oEvent.keyCode) === -1) {
+				return;
+			}
+
+			if ((!this.getResizable() && oEvent.shiftKey) ||
+				(!this.getDraggable() && !oEvent.shiftKey)) {
+				return;
+			}
+
+			var $this = this._$dialog,
+				mOffset = $this.offset(),
+				iWindowWidth = window.innerWidth,
+				iWindowHeight = window.innerHeight,
+				iDialogWidth = $this.width(),
+				iDialogHeight = $this.height(),
+				iDialogOuterHeight = $this.outerHeight(true),
+				bResize = oEvent.shiftKey,
+				mStyles,
+				iMaxHeight;
+
+
+			this._bDisableRepositioning = true;
+			$this.addClass('sapDialogDisableTransition');
+
+			if (bResize) {
+				this._oManuallySetSize = true;
+				this.$('cont').height('').width('');
+			}
+
+			switch (oEvent.keyCode) {
+				case KeyCodes.ARROW_LEFT:
+					if (bResize) {
+						iDialogWidth -= DRAGRESIZE_STEP;
+					} else {
+						mOffset.left -= DRAGRESIZE_STEP;
+					}
+					break;
+				case KeyCodes.ARROW_RIGHT:
+					if (bResize) {
+						iDialogWidth += DRAGRESIZE_STEP;
+					} else {
+						mOffset.left += DRAGRESIZE_STEP;
+					}
+					break;
+				case KeyCodes.ARROW_UP:
+					if (bResize) {
+						iDialogHeight -= DRAGRESIZE_STEP;
+					} else {
+						mOffset.top -= DRAGRESIZE_STEP;
+					}
+					break;
+				case KeyCodes.ARROW_DOWN:
+					if (bResize) {
+						iDialogHeight += DRAGRESIZE_STEP;
+					} else {
+						mOffset.top += DRAGRESIZE_STEP;
+					}
+					break;
+			}
+
+			if (bResize) {
+
+				iMaxHeight = iWindowHeight - mOffset.top - iDialogOuterHeight + iDialogHeight;
+
+				if (oEvent.keyCode === KeyCodes.ARROW_DOWN) {
+					iMaxHeight -= DRAGRESIZE_STEP;
+				}
+
+				mStyles = {
+					width: Math.min(iDialogWidth, iWindowWidth - mOffset.left),
+					height: Math.min(iDialogHeight, iMaxHeight)
+				};
+			} else {
+				mStyles = {
+					left: Math.min(Math.max(0, mOffset.left), iWindowWidth - iDialogWidth),
+					top: Math.min(Math.max(0, mOffset.top), iWindowHeight - iDialogOuterHeight)
+				};
+			}
+
+			$this.css(mStyles);
 		};
 
 		/**
@@ -1179,7 +1279,8 @@ function(
 				return document.getElementById(sInitialFocusId);
 			}
 
-			return this._getFirstFocusableContentSubHeader()
+			return this._getFocusableHeader()
+				|| this._getFirstFocusableContentSubHeader()
 				|| this._getFirstFocusableContentElement()
 				|| this._getFirstVisibleButtonDomRef()
 				|| this.getDomRef();
@@ -1210,6 +1311,20 @@ function(
 			}
 
 			return oButtonDomRef;
+		};
+
+		/**
+		 * Returns the focusable header if any
+		 * @returns {HTMLElement}
+		 * @private
+		 */
+		Dialog.prototype._getFocusableHeader = function () {
+
+			if (!this._isDraggableOrResizable()) {
+				return null;
+			}
+
+			return this.$().find('header.sapMDialogTitle')[0];
 		};
 
 		/**
@@ -1570,6 +1685,14 @@ function(
 			}
 		};
 
+		/**
+		 * Returns if the Dialog is draggable or resizable
+		 * @private
+		 */
+		Dialog.prototype._isDraggableOrResizable = function () {
+			return !this.getStretch() && (this.getDraggable() || this.getResizable());
+		};
+
 		/* =========================================================== */
 		/*                      end: private functions                 */
 		/* =========================================================== */
@@ -1786,7 +1909,7 @@ function(
 				if (e.which === 3) {
 					return; // on right click don't reposition the dialog
 				}
-				if (this.getStretch() || (!this.getDraggable() && !this.getResizable())) {
+				if (!this._isDraggableOrResizable()) {
 					return;
 				}
 
@@ -1864,6 +1987,8 @@ function(
 				if (isHeaderClicked(e.target) && this.getDraggable()) {
 					mouseMoveHandler = function (event) {
 
+						event.preventDefault();
+
 						if (event.buttons === 0) {
 							mouseUpHandler();
 							return;
@@ -1935,7 +2060,6 @@ function(
 
 				$w.on("mouseup", mouseUpHandler);
 
-				e.preventDefault();
 				e.stopPropagation();
 			};
 		}
