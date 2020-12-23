@@ -62,6 +62,10 @@ sap.ui.define([
 			"GenericFilterBarDelegate": {
 				group: "FilterBar",
 				module: "./vh/GenericFilterBarDelegate.qunit"
+			},
+			"valueHelp.FilterBar": {
+				group: "FilterBar",
+				module: "./vh/FilterBar.qunit"
 			}
 		}
 	};

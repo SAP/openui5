@@ -93,7 +93,12 @@
 													<mdcf:FieldValueHelp filterFields="$search" title="Date of Birth" id="FH2" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}" />
 												</mdc:dependents>
 											</mdc:FilterField>
-											<!-- <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 2" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" visible="false" /> -->
+											<!-- <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 2" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 3" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 4" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 5" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 6" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" />
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="ID 7" dataType= "Edm.Int32" conditions= "{$filters>/conditions/ID}" /> -->
 										</vhfb:filterItems>
 									</vhfb:FilterBar>
 								</mdcf:filterBar>
