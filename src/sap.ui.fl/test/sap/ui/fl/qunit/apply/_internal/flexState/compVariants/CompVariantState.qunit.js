@@ -270,7 +270,8 @@ sap.ui.define([
 				assert.equal(oRemoveStub.callCount, 0, "and no delete was called");
 				assert.equal(oCompVariantStateMapForPersistencyKey.variants[0].getState(), Change.states.PERSISTED, "the variant is persisted");
 				assert.equal(oCompVariantStateMapForPersistencyKey.changes[0].getState(), Change.states.PERSISTED, "the addFavorite change is persisted");
-				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant.getState(), Change.states.PERSISTED, "the default variant is persisted");
+				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant.getState(), Change.states.PERSISTED, "the set default variant change is persisted");
+				assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant.getNamespace(), "apps/the.app.component/changes/", "the set default variant change has namespace in the content");
 				assert.equal(oCompVariantStateMapForPersistencyKey.standardVariant.getState(), Change.states.PERSISTED, "the standard variant is persisted");
 			})
 			.then(function () {
