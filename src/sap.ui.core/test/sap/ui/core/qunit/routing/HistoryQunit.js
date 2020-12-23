@@ -474,8 +474,8 @@ sap.ui.define([
 		// eslint-disable-next-line no-new
 		new History(oHashChanger);
 
-		if (Device.browser.msie) {
-			assert.strictEqual(History._aStateHistory[History._aStateHistory.length - 1], undefined, "The push state isn't supported in IE");
+		if (!History._bUsePushState) {
+			assert.strictEqual(History._aStateHistory[History._aStateHistory.length - 1], undefined, "The push state isn't supported");
 		} else {
 			assert.ok(History._aStateHistory[History._aStateHistory.length - 1].charAt(0) !== "#", "The hash with no leading # is inserted");
 		}
