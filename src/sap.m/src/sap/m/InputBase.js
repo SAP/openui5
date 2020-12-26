@@ -566,7 +566,6 @@ function(
 	 * @returns {boolean|undefined} true when change event is fired
 	 */
 	InputBase.prototype.onChange = function(oEvent, mParameters, sNewValue) {
-
 		mParameters = mParameters || this.getChangeEventParams();
 
 		// check the control is editable or not
@@ -657,11 +656,9 @@ function(
 	 * @private
 	 */
 	InputBase.prototype.onsapenter = function(oEvent) {
-
 		// Ignore the change event in IE & Safari when value is selected from IME popover via Enter keypress
 		if ((Device.browser.safari || Device.browser.msie) && this.isComposingCharacter()) {
 			oEvent.setMarked("invalid");
-
 			return;
 		}
 

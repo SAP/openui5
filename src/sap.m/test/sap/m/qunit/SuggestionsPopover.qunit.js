@@ -88,7 +88,7 @@ sap.ui.define([
 			]
 		}),
 			oSuggPopover = oInput._getSuggestionsPopover(),
-			oSpy = sinon.spy(oSuggPopover, "_onsaparrowkey");
+			oSpy = sinon.spy(oSuggPopover, "handleListNavigation");
 
 		// Act
 		oInput._bIsComposingCharacter = true;
@@ -101,7 +101,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
 
 		// Assert
-		assert.strictEqual(oSpy.callCount, 0, "_onsaparrowkey is not called.");
+		assert.strictEqual(oSpy.callCount, 0, "handleListNavigation is not called.");
 
 		//Cleanup
 		oInput.destroy();

@@ -2209,40 +2209,6 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.test("aria-activedescendant attribute should removed on focusleave", function (assert) {
-		var oComboBox = new ComboBox({
-			items: [
-				new Item("focusedItem", {
-					key: "GER",
-					text: "Germany"
-				})
-			]
-		});
-
-		// Arrange
-		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// Act
-		oComboBox.open();
-		this.clock.tick();
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
-		this.clock.tick();
-
-		// Assert
-		assert.strictEqual(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), ListHelpers.getListItem(oComboBox.getSelectedItem()).getId(), 'The "aria-activedescendant" attribute is set to the focused item');
-
-		// Act
-		oComboBox.getFocusDomRef().blur();
-		this.clock.tick();
-
-		// Assert
-		assert.notOk(jQuery(oComboBox.getFocusDomRef()).attr("aria-activedescendant"), 'The "aria-activedescendant" attribute is not set after focus out(when the active descendant list item is not focused)');
-
-		// Cleanup
-		oComboBox.destroy();
-	});
-
 		QUnit.test("aria-activedescendant attribute should not be set if an item is selected but the picker is not opened", function (assert) {
 		var oComboBox = new ComboBox({
 			items: [
@@ -3071,211 +3037,6 @@ sap.ui.define([
 		oComboBox.destroy();
 	});
 
-	QUnit.module("findFirstEnabledItem()");
-
-	QUnit.test("findFirstEnabledItem()", function (assert) {
-
-		// system under test
-		var oExpectedItem;
-		var aItems = [
-			oExpectedItem = new Item({
-				key: "0",
-				text: "item 0"
-			}),
-
-			new Item({
-				key: "1",
-				text: "item 1"
-			}),
-
-			new Item({
-				key: "2",
-				text: "item 2",
-				enabled: false
-			})
-		];
-
-		var oComboBox = new ComboBox({
-			items: aItems
-		});
-
-		// arrange
-		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// act
-		var oFirstEnabledItem = oComboBox.findFirstEnabledItem(aItems);
-
-		// assert
-		assert.ok(oFirstEnabledItem === oExpectedItem);
-
-		// cleanup
-		oComboBox.destroy();
-	});
-
-	QUnit.test("findFirstEnabledItem()", function (assert) {
-
-		// system under test
-		var aItems = [
-			new Item({
-				key: "0",
-				text: "item 0",
-				enabled: false
-			}),
-
-			new Item({
-				key: "1",
-				text: "item 1",
-				enabled: false
-			}),
-
-			new Item({
-				key: "2",
-				text: "item 2",
-				enabled: false
-			})
-		];
-
-		var oComboBox = new ComboBox({
-			items: aItems
-		});
-
-		// arrange
-		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// act
-		var oFirstEnabledItem = oComboBox.findFirstEnabledItem(aItems);
-
-		// assert
-		assert.ok(oFirstEnabledItem === null);
-
-		// cleanup
-		oComboBox.destroy();
-	});
-
-	QUnit.test("findFirstEnabledItem()", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox();
-
-		// arrange
-		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// act
-		var oFirstEnabledItem = oComboBox.findFirstEnabledItem([]);
-
-		// assert
-		assert.ok(oFirstEnabledItem === null);
-
-		// cleanup
-		oComboBox.destroy();
-	});
-
-	QUnit.module("findLastEnabledItem()");
-
-	QUnit.test("findLastEnabledItem()", function (assert) {
-
-		// system under test
-		var oExpectedItem;
-		var aItems = [
-			new Item({
-				key: "0",
-				text: "item 0",
-				enabled: false
-			}),
-
-			new Item({
-				key: "1",
-				text: "item 1",
-				enabled: false
-			}),
-
-			oExpectedItem = new Item({
-				key: "2",
-				text: "item 2"
-			})
-		];
-
-		var oComboBox = new ComboBox({
-			items: aItems
-		});
-
-		// arrange
-		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// act
-		var oLastEnabledItem = oComboBox.findLastEnabledItem(aItems);
-
-		// assert
-		assert.ok(oLastEnabledItem === oExpectedItem);
-
-		// cleanup
-		oComboBox.destroy();
-	});
-
-	QUnit.test("findLastEnabledItem()", function (assert) {
-
-		// system under test
-		var aItems = [
-			new Item({
-				key: "0",
-				text: "item 0",
-				enabled: false
-			}),
-
-			new Item({
-				key: "1",
-				text: "item 1",
-				enabled: false
-			}),
-
-			new Item({
-				key: "2",
-				text: "item 2",
-				enabled: false
-			})
-		];
-
-		var oComboBox = new ComboBox({
-			items: aItems
-		});
-
-		// arrange
-		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// act
-		var oLastEnabledItem = oComboBox.findLastEnabledItem(aItems);
-
-		// assert
-		assert.ok(oLastEnabledItem === null, 'The last enabled item is "null"');
-
-		// cleanup
-		oComboBox.destroy();
-	});
-
-	QUnit.test("findLastEnabledItem()", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox();
-
-		// arrange
-		oComboBox.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		// act
-		var oLastEnabledItem = oComboBox.findLastEnabledItem([]);
-
-		// assert
-		assert.ok(oLastEnabledItem === null, 'The last enabled item is "null"');
-
-		// cleanup
-		oComboBox.destroy();
-	});
-
 	QUnit.module("setSelectedIndex()");
 
 	var setSelectedIndexTestCase = function (sTestName, mOptions) {
@@ -3704,26 +3465,14 @@ sap.ui.define([
 		oErrorComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		oErrorComboBox.open();
-		this.clock.tick(1000);
-		assert.ok(!document.getElementById("errorcombobox-message"), "error message popup is not open when list is open");
-
-		oErrorComboBox.close();
-		this.clock.tick(1000);
-
-		/* TODO remove after the end of support for Internet Explorer */
-		// workaround to fix failing test in IE9-11
-		if (Device.browser.msie) {
-			oErrorComboBox.focus();
-			this.clock.tick(1000);
-		}
-
-		assert.ok(document.getElementById("errorcombobox-message"), "error message popup is open when list is closed and focus is back to input");
-
+		// act
 		oErrorComboBox.focus();
 		this.clock.tick(500);
 		assert.ok(document.getElementById("errorcombobox-message"), "error message popup is open when focusin");
-		assert.equal(oErrorComboBox.getValueStateText(), "Error Message", "error message is correct");
+
+		sap.ui.test.qunit.triggerKeydown(oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick(500);
+		assert.ok(!document.getElementById("errorcombobox-message"), "error message popup is not open when list is open");
 
 		oErrorComboBox.getFocusDomRef().blur();
 		this.clock.tick(500);
@@ -5468,7 +5217,7 @@ sap.ui.define([
 		this.clock.tick(1000); // wait 1s after the close animation is completed
 
 		// assert
-		assert.strictEqual(oComboBox.getVisibleItems().length, 4, "The filter is cleared");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 4, "The filter is cleared");
 
 		// cleanup
 		oComboBox.destroy();
@@ -5826,7 +5575,7 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(fnEscapeSpy.callCount, 1, "onsapescape() method was called exactly once");
 		assert.strictEqual(fnCloseSpy.callCount, 1, "close() method was called exactly once");
-		assert.strictEqual(oComboBox.getVisibleItems().length, 4, "The filter is cleared");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 4, "The filter is cleared");
 
 		// cleanup
 		oComboBox.destroy();
@@ -5942,7 +5691,7 @@ sap.ui.define([
 		this.clock.tick(1000);	// wait 1s after the close animation is completed
 
 		// assert
-		assert.strictEqual(oComboBox.getVisibleItems().length, 4, "The filter is cleared");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 4, "The filter is cleared");
 
 		// cleanup
 		oComboBox.destroy();
@@ -7125,11 +6874,12 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
 		this.clock.tick(0);	// tick the clock ahead 0ms millisecond to make sure the async call to .selectText() on the focusin event handler does not override the type ahead
-		oComboBox.open();
-		this.clock.tick(1000);	// wait after the open animation is completed
 		var sExpectedActiveDescendantId = ListHelpers.getListItem(oExpectedItem).getId();
 
+
 		// act
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.F4);
+		this.clock.tick(0);
 		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.HOME);
 		sap.ui.getCore().applyChanges();
 
@@ -8216,7 +7966,7 @@ sap.ui.define([
 		// assert
 		assert.strictEqual(fnOpenSpy.callCount, 1, "open() method was called exactly once");
 		assert.strictEqual(fnFireSelectionChangeSpy.callCount, 1, 'The "selectionChange" event is fired');
-		assert.strictEqual(oComboBox.getVisibleItems().length, 3, "Three items are visible");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 3, "Three items are visible");
 		assert.strictEqual(oComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), null, "The 'aria-activedescendant' attribute is not set if the visual focus is not on the item");
 
 		// cleanup
@@ -8581,7 +8331,7 @@ sap.ui.define([
 		assert.strictEqual(oComboBox.getSelectedItem().getKey(), "id_11");
 		assert.strictEqual(oComboBox.getSelectedKey(), "id_11");
 		assert.strictEqual(oComboBox.getItems().length, 16, "the items are loaded");
-		assert.strictEqual(oComboBox.getVisibleItems().length, 3, "the suggestion list is filtered");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 3, "the suggestion list is filtered");
 		assert.ok(oComboBox.isOpen());
 
 		// cleanup
@@ -8901,8 +8651,8 @@ sap.ui.define([
 		});
 		this.clock.tick(1000); // tick the clock ahead 1 second, after the open animation is completed
 
-		assert.strictEqual(oComboBox.getVisibleItems().length, 1, "One item should be visible");
-		assert.strictEqual(oComboBox.getVisibleItems()[0].getText(), "Test", "Visible item text should be 'Test'");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 1, "One item should be visible");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems())[0].getText(), "Test", "Visible item text should be 'Test'");
 
 		// act (clear input value)
 		oPickerTextFieldDomRef.value = "";
@@ -8913,7 +8663,7 @@ sap.ui.define([
 		// wait for the word completion feature
 		this.clock.tick(0);
 
-		assert.strictEqual(oComboBox.getVisibleItems().length, 2, "All items should be visible");
+		assert.strictEqual(ListHelpers.getVisibleItems(oComboBox.getItems()).length, 2, "All items should be visible");
 
 		oComboBox.close();
 		this.clock.tick(300);
@@ -10309,7 +10059,7 @@ sap.ui.define([
 		// act
 		oComboBox.getFocusDomRef().value = "D";
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oComboBox.getFocusDomRef());
-		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		sap.ui.test.qunit.triggerKeydown(oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		oComboBox.getFocusDomRef().blur();
 		this.clock.tick(0);	// when a blur event occurs the "sapfocusleave" is fired async
 
@@ -10361,7 +10111,7 @@ sap.ui.define([
 		var oItem;
 		var oComboBox = new ComboBox({
 			items: [
-				oItem = new ListItem({
+				oItem = new Item({
 					text: "lorem ipsum"
 				})
 			]
@@ -10371,6 +10121,8 @@ sap.ui.define([
 		oComboBox.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oComboBox.focus();
+		oComboBox.open();
+		this.clock.tick(0);
 		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
 		oComboBox.updateDomValue("change the value");
 		var oControlEvent = new Event("selectionChange", oComboBox._getList(), {
@@ -12262,12 +12014,6 @@ sap.ui.define([
 		assert.strictEqual(oInvisibleText.getText(), oExpectedLabel, "The correct invisible text is associated with the group item.");
 	});
 
-
-	QUnit.test("getNonSeparatorSelectableItems should return array with non separator items only.", function (assert) {
-		var aItems = this.oComboBox.getNonSeparatorSelectableItems(this.oComboBox.getSelectableItems());
-		assert.strictEqual(aItems.length, 4, "Items of type sap.ui.core.Separator items are filtered out.");
-	});
-
 	QUnit.test("Group header shown when filtering", function (assert) {
 		assert.expect(4);
 		var aItems;
@@ -12275,7 +12021,7 @@ sap.ui.define([
 		// act
 		itemsVisibilityHandler(this.oComboBox.getItems(), this.oComboBox.filterItems("item1"));
 
-		aItems = this.oComboBox.getVisibleItems();
+		aItems = ListHelpers.getVisibleItems(this.oComboBox.getItems());
 
 		// assert
 		this.fnCheckFilterWithGrouping(assert, aItems);
@@ -12332,10 +12078,13 @@ sap.ui.define([
 
 		// arrange
 		this.oComboBox.focus();
-		this.clock.tick(0);
+		this.oComboBox.open();
+		this.clock.tick(500);
 
 		// act
-		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.F4);
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick(500);
 
 		assert.ok(this.oComboBox.isOpen(), "The combo box's picker is opened.");
@@ -12413,11 +12162,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("onsapup when key already selected and picker is closed should move visual focus to the previous item and skip group items", function (assert) {
-		assert.expect(6);
+		assert.expect(4);
 		var oExpectedItem = this.oComboBox.getItems()[2],
 			oInitiallySelectedItem = this.oComboBox.getItems()[4],
-			oExpectedListItem,
-			oInitiallySelectedListItem,
 			sExpectedValue = "item12";
 
 		// arrange
@@ -12430,12 +12177,9 @@ sap.ui.define([
 
 		// act
 		sap.ui.test.qunit.triggerKeydown(this.oComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
-		oExpectedListItem = ListHelpers.getListItem(oExpectedItem);
-		oInitiallySelectedListItem = ListHelpers.getListItem(oInitiallySelectedItem);
 
 		// assert
 		this.fnCheckSelectedItemAndValue(assert, oExpectedItem, sExpectedValue);
-		this.fnCheckVisualFocusedMoved(assert, oInitiallySelectedListItem, oExpectedListItem);
 	});
 
 	QUnit.test("when focusing group header item with some input in the text field the input should stay", function (assert) {
@@ -12536,23 +12280,6 @@ sap.ui.define([
 		// assert
 		assert.ok(oExpectedListItem.hasStyleClass("sapMLIBFocused"), "The item has visual focus");
 		assert.ok(!oExpectedListGroupHeader.hasStyleClass("sapMLIBFocused"), "The group header does not have visual focus");
-	});
-
-	QUnit.test("No exception should be thrown when setting the initial visual focus after picker opening", function (assert) {
-		// Act
-		this.oComboBox.open();
-
-		// Arrange
-		var oGetFocusDomRefStub = this.stub(this.oComboBox, "getFocusDomRef", function() { return null; });
-
-		// Act
-		this.oComboBox.handleListItemsVisualFocus();
-
-		// Assert
-		assert.ok(true, "item11", "No exception is thrown if no control has been rendered in the dom the but initial focus is tried to be added after opening");
-
-		// Cleanup
-		oGetFocusDomRefStub.restore();
 	});
 
 	QUnit.test("Grouping with models", function (assert) {
@@ -12981,7 +12708,7 @@ sap.ui.define([
 
 		// Act
 		this.oErrorComboBox.focus();
-		this.clock.tick();
+		this.clock.tick(300);
 
 		assert.strictEqual(document.querySelector("#" + this.oErrorComboBox.getValueStateMessageId() + " div").textContent, "Value state message containing a link", "Formatted text value state message popup is displayed on focus");
 		assert.strictEqual(document.querySelectorAll("#" + this.oErrorComboBox.getValueStateMessageId() + " a").length, 1, "Value state message link is rendered");
@@ -13002,95 +12729,59 @@ sap.ui.define([
 			msie: false
 		});
 
-		var oFakeEvent = {
-			getEnabled: function () { return true; },
-			setMarked: function () { },
-			srcControl: this.oErrorComboBox,
-			preventDefault: function() { return false; }
-		};
-
 		// Act
 		this.oErrorComboBox.focus();
 		this.clock.tick();
 
-		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
 
-		this.oErrorComboBox.onsapup(oFakeEvent);
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
 
 		// Assert
 		assert.ok(this.oErrorComboBox.getPicker().getCustomHeader().$().hasClass("sapMPseudoFocus"), "Pseudo focus is on value state header");
-		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().getId(), "Area attribute of input is the ID of the formatted value state text");
-	});
-
-	QUnit.test("Arrow up when the first item is selected should place visible pseudo focus on the formatted text value state message DOM on IE", function (assert) {
-		this.stub(Device, "browser", {
-			msie: true
-		});
-
-		// Arrange
-		var oFakeEvent = {
-			getEnabled: function () { return true; },
-			setMarked: function () { },
-			srcControl: this.oErrorComboBox,
-			preventDefault: function() { return false; }
-		};
-
-		// Act
-		this.oErrorComboBox.focus();
-		this.clock.tick();
-
-		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
-		this.oErrorComboBox.onsapup(oFakeEvent);
-		this.clock.tick();
-
-		// Assert
-		assert.ok(this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().$().hasClass("sapMPseudoFocus"), "Pseudo focus is on formatted text value state message");
-		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().getId(), "Area attribute of input is the ID of the formatted value state text");
+		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().getId(), "Aria attribute of input is the ID of the formatted value state text");
 	});
 
 	QUnit.test("Arrow down when the formatted state value text is selected should set the first item", function (assert) {
-		// Arrange
-		var oFakeEvent = {
-			getEnabled: function () { return true; },
-			setMarked: function () { },
-			srcControl: this.oErrorComboBox,
-			preventDefault: function() { return false; }
-		};
-
 		// Act
 		this.oErrorComboBox.focus();
 		this.clock.tick();
 
-		sap.ui.test.qunit.triggerKeyboardEvent(document.activeElement, KeyCodes.ARROW_DOWN, false, true);
-		this.oErrorComboBox.onsapup(oFakeEvent);
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
-		this.oErrorComboBox.onsapdown(oFakeEvent);
+
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
+		this.clock.tick();
+
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick();
 
 		// Assert
 		assert.ok(ListHelpers.getListItem(this.oErrorComboBox.getItems()[0]).$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
-		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), ListHelpers.getListItem(this.oErrorComboBox.getItems()[0]).getId(), "Area attribute of input is the ID of the formatted value state text");
+		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), ListHelpers.getListItem(this.oErrorComboBox.getItems()[0]).getId(), "Aria attribute of input is the ID of selected item");
 	});
 
-	QUnit.test("Arrow down when the visible focus is on the input should move it to the first suggested item", function (assert) {
+	QUnit.test("Arrow down when the visible focus is on the input should move it to the Value State Header", function (assert) {
 		// Arrange
-		var oFakeEvent = {
-			getEnabled: function () { return true; },
-			setMarked: function () { },
-			srcControl: this.oErrorComboBox,
-			preventDefault: function() { return false; }
-		};
+		this.stub(Device, "browser", {
+			msie: false
+		});
 
 		// Act
 		this.oErrorComboBox.open();
-		this.oErrorComboBox.onsapdown(oFakeEvent);
-		this.clock.tick();
+		this.clock.tick(500);
+		sap.ui.getCore().applyChanges();
+
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+
+		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.ok(ListHelpers.getListItem(this.oErrorComboBox.getItems()[0]).$().hasClass("sapMLIBFocused"), "The visual pseudo focus is on the first item");
-		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), ListHelpers.getListItem(this.oErrorComboBox.getItems()[0]).getId(), "Area attribute of input is the ID of the formatted value state text");
+		assert.ok(this.oErrorComboBox.getPicker().getCustomHeader().$().hasClass("sapMPseudoFocus"), "The visual pseudo focus is on the first item");
+		assert.strictEqual(this.oErrorComboBox.getFocusDomRef().getAttribute("aria-activedescendant"), this.oErrorComboBox.getPicker().getCustomHeader().getFormattedText().getId(), "Aria attribute of input is the ID of the formatted value state text");
 	});
 
 	QUnit.test("Tapping on the input shoould apply the visual focus", function (assert) {
@@ -13226,7 +12917,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oSuggPopoverHeaderValueState, "Another value state message containing multiple links", "New FormattedText value state message is correcrtly set in the popover's value state header");
 	});
-	QUnit.test("Change to the formatted text InputBase aggregation should should be forwarded to the value state header", function (assert) {
+	QUnit.test("Change to the formatted text InputBase aggregation should be forwarded to the value state header", function (assert) {
 		// Arrange
 		var	oSuggPopoverHeaderValueState;
 
@@ -13296,12 +12987,7 @@ sap.ui.define([
 
 	QUnit.test("onsaphome should move the visual focus on the value state header if links exists", function (assert) {
 		// Arrange
-		var	oValueStateHeader,
-			oEventMock = {
-				srcControl: this.oErrorComboBox,
-				setMarked: function () { },
-				preventDefault: function() { return false; }
-			};
+		var	oValueStateHeader;
 
 		this.stub(Device, "browser", {
 			msie: false
@@ -13312,7 +12998,7 @@ sap.ui.define([
 		this.clock.tick();
 		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick();
-		this.oErrorComboBox.onsaphome(oEventMock);
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.HOME);
 		this.clock.tick();
 
 		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
@@ -13325,13 +13011,7 @@ sap.ui.define([
 
 	QUnit.test("onsapdown on a link in a value state header message should move the visual focus to the first suggested item", function (assert) {
 		// Arrange
-		var	oValueStateHeader,
-			oEventMock = {
-				srcControl: this.oErrorComboBox,
-				setMarked: function () { },
-				preventDefault: function() { return false; }
-			};
-
+		var	oValueStateHeader;
 
 		// Act
 		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
@@ -13346,7 +13026,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oValueStateHeader.getFormattedText().getControls()[0].getDomRef(), document.activeElement, "The link in the value state header has the real focus");
 
-		this.oErrorComboBox.onsapdown(oEventMock);
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick();
 
 		// Assert
@@ -13358,12 +13038,7 @@ sap.ui.define([
 	QUnit.test("When the FormattedText in the value state header is focused onsapend should move the focus to the last item", function (assert) {
 		// Arrange
 		var	oValueStateHeader,
-			iLastItemIndex,
-			oEventMock = {
-				srcControl: this.oErrorComboBox,
-				setMarked: function () { },
-				preventDefault: function() { return false; }
-			};
+			iLastItemIndex;
 
 			// Act
 		sap.ui.test.qunit.triggerKeyboardEvent(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_DOWN, false, true);
@@ -13373,7 +13048,7 @@ sap.ui.define([
 
 		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.ARROW_UP);
 		this.clock.tick();
-		this.oErrorComboBox.onsapend(oEventMock);
+		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.END);
 		this.clock.tick();
 
 		oValueStateHeader = this.oErrorComboBox._getSuggestionsPopover()._getValueStateHeader();
@@ -13405,6 +13080,7 @@ sap.ui.define([
 		var	oEventMock = {
 				keyCode: KeyCodes.Z,
 				srcControl: this.oErrorComboBox,
+				stopPropagation: function () {},
 				isMarked: function () { },
 				target: {}
 			};
@@ -13431,6 +13107,8 @@ sap.ui.define([
 	QUnit.test("Tapping on the input while valeu state header is focused shoould apply the visual focus on the input and remove it from the header", function (assert) {
 		var oFakeEvent = {
 			getEnabled: function () { return true; },
+			isMarked: function () {},
+			stopPropagation: function () {},
 			setMarked: function () { },
 			srcControl: this.oErrorComboBox,
 			preventDefault: function() { return false; }
@@ -13459,7 +13137,6 @@ sap.ui.define([
 		// Assert
 		assert.notOk(oFirstListItem.hasStyleClass("sapMLIBFocused"), "The visual pseudo focus is removed when the input field is on focus");
 		assert.notOk(oValueStateHeader.hasStyleClass("sapMLIBFocused"), "The visual pseudo focus is removed when the input field is on focus");
-		assert.strictEqual(this.oErrorComboBox.getFormattedTextFocused(), false, "The visual focus is on the input field");
 		assert.ok(this.oErrorComboBox.$().hasClass("sapMFocus"), "The visual focus is on the input field");
 		assert.strictEqual(jQuery(this.oErrorComboBox.getFocusDomRef()).attr("aria-activedescendant"), undefined, 'The "aria-activedescendant" attribute is removed when the input field is on focus');
 	});
@@ -13769,8 +13446,8 @@ sap.ui.define([
 		// Act
 		oComboBox.open();
 		// Assert
-		assert.strictEqual(oComboBox.getSelectableItems()[0].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
-		assert.strictEqual(oComboBox.getSelectableItems()[1].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
+		assert.strictEqual(oComboBox._getList().getItems()[0].getTitleTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.SeparatorItem to sap.m.GroupHeaderListItem');
+		assert.strictEqual(oComboBox._getList().getItems()[1].getTitleTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
 
 		// Clean
 		oComboBox.destroy();

@@ -59,8 +59,8 @@ sap.ui.define([
 
 		sDataName = ListHelpers.CSS_CLASS + sDataName;
 
-		if (!Array.isArray(aItems)) {
-			return;
+		if (!Array.isArray(aItems) || !oDataObject) {
+			return null;
 		}
 
 		for (var i = 0; i < aItems.length; i++) {
@@ -86,6 +86,43 @@ sap.ui.define([
 
 		return aItems.filter(function (oItem) {
 			return oItem.getEnabled && oItem.getEnabled();
+		});
+	};
+
+	/**
+	 * Gets the selectable items from the aggregation named <code>items</code>.
+	 *
+	 * @returns {sap.ui.core.Item[]} An array containing the selectables items.
+	 */
+	ListHelpers.getSelectableItems = function(aItems) {
+		if (!Array.isArray(aItems)) {
+			return [];
+		}
+
+		var aVisibleItems = this.getEnabledItems(this.getVisibleItems(aItems));
+
+		return aVisibleItems && aVisibleItems.filter(function(oListItem){
+			return !oListItem.isA("sap.ui.core.SeparatorItem");
+		});
+	};
+
+	/*
+	* Gets the visible items from the aggregation named <code>items</code>.
+	*
+	* @return {sap.ui.core.Item[]}
+	* @protected
+	*/
+	ListHelpers.getVisibleItems = function(aItems) {
+		var oListItem;
+
+		if (!Array.isArray(aItems)) {
+			return [];
+		}
+
+		return aItems.filter(function(oItem) {
+			oListItem = ListHelpers.getListItem(oItem);
+
+			return oListItem && oListItem.getVisible();
 		});
 	};
 

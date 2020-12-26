@@ -34,9 +34,9 @@ sap.ui.define([
 					horizontalScrolling: true,
 					beforeClose: function () {
 						// If the popover is closed while the pseudo focus is on value state header containing links
-						if (that.bMessageValueStateActive) {
+						if (that.getValueStateActiveState()) {
 							that._getValueStateHeader().removeStyleClass("sapMPseudoFocus");
-							that.bMessageValueStateActive = false;
+							that.setValueStateActiveState(false);
 						}
 					}
 				});

@@ -68,18 +68,19 @@ sap.ui.define(['./ComboBoxBaseRenderer', 'sap/ui/core/Renderer', 'sap/m/inputUti
 		 */
 		ComboBoxRenderer.writeInnerAttributes = function(oRm, oControl) {
 			var oSelectedItem = oControl.getSelectedItem(),
-				oSelectedListItem = oSelectedItem && ListHelpers.getListItem(oSelectedItem),
-				bOpen = oControl.isOpen(),
-				bFormattedTextHeaderFocused = oControl.getProperty("formattedTextFocused");
+				oSelectedListItem = oSelectedItem && ListHelpers.getListItem(oSelectedItem);
 
 			ComboBoxBaseRenderer.writeInnerAttributes.apply(this, arguments);
-			oRm.attr("aria-expanded", bOpen);
+
+			if (!oControl.isOpen()) {
+				return;
+			}
 
 			// Aria-activedescendant attributed must be added only if there is selected item
 			// and the visual focus is on it or the visual focus is on the formatted text value state header
-			if (bFormattedTextHeaderFocused) {
+			if (oControl._getSuggestionsPopover().getValueStateActiveState()) {
 				oRm.attr("aria-activedescendant", oControl._getFormattedValueStateText().getId());
-			} else if (bOpen && oSelectedListItem && oSelectedListItem.hasStyleClass("sapMLIBFocused") && oControl.getFocusDomRef() === document.activeElement) {
+			} else if (oSelectedListItem && oSelectedListItem.hasStyleClass("sapMLIBFocused") && oControl.getFocusDomRef() === document.activeElement) {
 				oRm.attr("aria-activedescendant", oSelectedListItem.getId());
 			}
 		};
