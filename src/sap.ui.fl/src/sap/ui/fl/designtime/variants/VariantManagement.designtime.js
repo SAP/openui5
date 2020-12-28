@@ -61,6 +61,26 @@ sap.ui.define([
 				var bDesignTimeMode = false;
 				fnSetControlAttributes(oVariantManagement, bDesignTimeMode);
 			}
+		},
+		actions: {
+			controlVariant: function(oVariantManagement) {
+				var oAppComponent = flUtils.getAppComponentForControl(oVariantManagement);
+				var sControlId = oVariantManagement.getId();
+				var oModel = oAppComponent.getModel(flUtils.VARIANT_MODEL_NAME);
+				var sVariantManagementReference = oAppComponent.getLocalId(sControlId) || sControlId;
+				return {
+					validators: [
+						"noEmptyText",
+						{
+							validatorFunction: function(sNewText) {
+								var iDuplicateCount = oModel._getVariantTitleCount(sNewText, sVariantManagementReference) || 0;
+								return iDuplicateCount === 0;
+							},
+							errorMessage: sap.ui.getCore().getLibraryResourceBundle("sap.ui.fl").getText("VARIANT_MANAGEMENT_ERROR_DUPLICATE")
+						}
+					]
+				};
+			}
 		}
 	};
 });

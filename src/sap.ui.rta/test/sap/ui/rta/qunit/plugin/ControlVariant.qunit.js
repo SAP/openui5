@@ -11,7 +11,6 @@ sap.ui.define([
 	"sap/ui/rta/command/ControlVariantSaveAs",
 	"sap/ui/rta/command/ControlVariantSetTitle",
 	"sap/ui/rta/command/ControlVariantConfigure",
-	"sap/ui/rta/command/CompositeCommand",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/ElementOverlay",
 	"sap/ui/fl/registry/ChangeRegistry",
@@ -40,7 +39,6 @@ sap.ui.define([
 	ControlVariantSaveAs,
 	ControlVariantSetTitle,
 	ControlVariantConfigure,
-	CompositeCommand,
 	OverlayRegistry,
 	ElementOverlay,
 	ChangeRegistry,
@@ -84,18 +82,14 @@ sap.ui.define([
 		};
 	}
 
-	var fnCheckErrorRequirements = function(assert, oOverlay, fnMessageBoxShowStub, oPlugin, sTextKey, bShowError, bCheckHandlerEdit) {
+	var fnCheckErrorRequirements = function(assert, fnMessageBoxShowStub, oPlugin, bShowError) {
 		assert.strictEqual(oPlugin._createSetTitleCommand.callCount, 0, "then _createSetTitleCommand() was not called");
-		assert.ok(oPlugin.stopEdit.calledOnce, "then stopEdit() was called once");
+		assert.equal(oPlugin.stopEdit.callCount, 1, "then stopEdit() was called once");
 
 		if (bShowError) {
 			assert.notOk(oPlugin._bBlurOrKeyDownStarted, "then flag for blur / keydown is unset");
-			assert.ok(oPlugin.startEdit.calledOnce, "then startEdit() was called once");
 			assert.ok(oPlugin.stopEdit.calledBefore(oPlugin.startEdit), "then startEdit() was called after stopEdit() was called");
-			assert.ok(fnMessageBoxShowStub.calledOnce, "then RtaUtils.showMessageBox was called once");
-			if (bCheckHandlerEdit) {
-				assert.ok(RenameHandler.startEdit.calledOnce, "then startEdit of the RenameHandler was called once");
-			}
+			assert.equal(fnMessageBoxShowStub.callCount, 1, "then RtaUtils.showMessageBox was called once");
 		}
 	};
 
@@ -765,7 +759,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true, true));
+				.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true, true));
 		});
 
 		QUnit.test("when variant is RENAMED with the TITLE OF ANOTHER INVISIBLE VARIANT, after which _handlePostRename is called", function(assert) {
@@ -827,7 +821,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, this.oControlVariantPlugin, "BLANK_ERROR_TEXT", true));
+				.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true));
 		});
 
 		QUnit.test("when variant RENAMED with the an EXISTING VARIANT TITLE, after which _handlePostRename is called", function(assert) {
@@ -854,7 +848,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			return RenameHandler._handlePostRename.call(this.oControlVariantPlugin)
-				.then(fnCheckErrorRequirements.bind(this, assert, this.oVariantManagementOverlay, fnMessageBoxShowStub, this.oControlVariantPlugin, "DUPLICATE_ERROR_TEXT", true));
+				.then(fnCheckErrorRequirements.bind(this, assert, fnMessageBoxShowStub, this.oControlVariantPlugin, true));
 		});
 
 		QUnit.test("when variant is RENAMED with a new variant title and NO PREVIOUS EXISTENCE, after which _handlePostRename is called", function(assert) {

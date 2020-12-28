@@ -31,7 +31,11 @@ sap.ui.define([
 	// this key is used as replacement for an empty string to not break anything. It's the same as &nbsp (no-break space)
 	var sEmptyTextKey = "\xa0";
 
-	function checkPreconditionsAndThrowError(sNewText) {
+	function checkPreconditionsAndThrowError(sNewText, sOldText) {
+		if (sOldText === sNewText) {
+			throw Error("sameTextError");
+		}
+
 		var oBindingParserResult;
 		var bError;
 		try {
@@ -329,6 +333,12 @@ sap.ui.define([
 				return Promise.resolve()
 				.then(RenameHandler._validateNewText.bind(this))
 				.then(this._emitLabelChangeEvent.bind(this))
+				.catch(function(oError) {
+					if (oError.message === "sameTextError") {
+						return;
+					}
+					throw oError;
+				})
 				.then(function (fnErrorHandler) {
 					this.stopEdit(bRestoreFocus);
 					// ControlVariant rename handles the validation itself
@@ -359,7 +369,7 @@ sap.ui.define([
 			var sErrorText;
 			var sNewText = RenameHandler._getCurrentEditableFieldText.call(this);
 
-			checkPreconditionsAndThrowError(sNewText);
+			checkPreconditionsAndThrowError(sNewText, this.getOldValue());
 
 			var oResponsibleOverlay = this.getResponsibleElementOverlay(this._oEditedOverlay);
 			var oRenameAction = this.getAction(oResponsibleOverlay);
