@@ -49,7 +49,8 @@ sap.ui.define([
 		TOKEN: "/actions/getcsrftoken/",
 		APPVARIANTS: "/appdescr_variants/",
 		APPVARIANTS_OVERVIEW: "/app_variant_overview/",
-		UI2PERSONALIZATION: "/ui2personalization/"
+		UI2PERSONALIZATION: "/ui2personalization/",
+		CONTEXTS: "/flex/contexts/"
 	};
 
 	/**
@@ -301,6 +302,27 @@ sap.ui.define([
 
 			var sDataUrl = InitialUtils.getUrl(ROUTES.FLEX_INFO, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sDataUrl).then(function (oResult) {
+				return oResult.response;
+			});
+		},
+
+		/**
+		 * Gets the variant management context information.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {string} mPropertyBag.type Type of context, currently only 'role' is supported
+		 * @param {string} [mPropertyBag.$skip] Offset for paginated request
+		 * @param {string} [mPropertyBag.$filter] Filters full raw data
+		 * @returns {Promise<object>} Promise resolves as soon as context has been retrieved
+		 */
+		getContexts: function (mPropertyBag) {
+			var aParameters = ["type", "$skip", "$filter"];
+			var mParameters = _pick(mPropertyBag, aParameters);
+
+			InitialConnector._addClientInfo(mParameters);
+
+			var sContextsUrl = InitialUtils.getUrl(ROUTES.CONTEXTS, mPropertyBag, mParameters);
+			return InitialUtils.sendRequest(sContextsUrl).then(function (oResult) {
 				return oResult.response;
 			});
 		},

@@ -1061,9 +1061,9 @@ sap.ui.define([
 			]);
 
 			return Storage.reset(mPropertyBag)
-			.catch(function (oError) {
-				assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
-			});
+				.catch(function (oError) {
+					assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
+				});
 		});
 
 		QUnit.test("then it fails in case no connector is available for the layer by default layer settings of the connector", function (assert) {
@@ -1076,9 +1076,9 @@ sap.ui.define([
 			]);
 
 			return Storage.reset(mPropertyBag)
-			.catch(function (oError) {
-				assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
-			});
+				.catch(function (oError) {
+					assert.equal(oError.message, "No Connector configuration could be found to write into layer: CUSTOMER");
+				});
 		});
 
 		QUnit.test("then it fails in case multiple connectors are available for the layer", function (assert) {
@@ -1093,10 +1093,10 @@ sap.ui.define([
 			]);
 
 			return Storage.reset(mPropertyBag)
-			.catch(function (oError) {
-				assert.equal(oError.message, "sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: " +
+				.catch(function (oError) {
+					assert.equal(oError.message, "sap.ui.core.Configuration 'flexibilityServices' has a misconfiguration: " +
 					"Multiple Connector configurations were found to write into layer: VENDOR");
-			});
+				});
 		});
 
 		QUnit.test("with valid mPropertyBag and Connector: LrepConnector aiming for USER layer", function (assert) {
@@ -1254,6 +1254,29 @@ sap.ui.define([
 				assert.deepEqual(oGetResetUrlCallArgs[2], mParameter, "with correct parameters input");
 				assert.equal(oSendRequestCallArgs[1], sExpectedMethod, "with correct method");
 				assert.equal(oStubSendRequest.callCount, 1, "sendRequest is called once");
+			});
+		});
+	});
+
+
+	QUnit.module("Given Storage when getContexts is called", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("and a response is returned", function (assert) {
+			var mPropertyBag = {
+				type: "role",
+				layer: Layer.CUSTOMER
+			};
+
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: {lastHitReached: true}});
+			var oStubGetUrl = sandbox.spy(InitialUtils, "getUrl");
+
+			return Storage.getContexts(mPropertyBag).then(function (oResponse) {
+				assert.equal(oStubSendRequest.callCount, 1, "send request was called once");
+				assert.equal(oStubGetUrl.returnValues[0], "/sap/bc/lrep/flex/contexts/?type=role", "url is correct");
+				assert.ok(oResponse.lastHitReached, "response is as expected");
 			});
 		});
 	});
