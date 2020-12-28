@@ -18,7 +18,7 @@
 				visibleRowCount="7"
 				ariaLabelledBy="title">
 				<extension>
-					<m:OverflowToolbar>
+					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:Select id="select" items="{modes>/items}" selectedKey="Navigation" change="onBehaviourModeChange">

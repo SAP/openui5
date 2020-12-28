@@ -169,10 +169,13 @@ sap.ui.define([
 		assert.ok(this.oTable);
 		assert.ok(!this.oTable._oTable);
 		assert.ok(!this.oTable._oTemplate);
+		assert.ok(!this.oTable._oToolbar);
 
 		this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable);
 			assert.ok(!this.oTable._oTemplate);
+			assert.ok(this.oTable._oToolbar);
+			assert.equal(this.oTable._oToolbar.getStyle(), "Clear", "Default toolbar style is set");
 			done();
 		}.bind(this));
 	});
@@ -365,11 +368,14 @@ sap.ui.define([
 		assert.ok(this.oTable);
 		assert.ok(!this.oTable._oTable);
 		assert.ok(!this.oTable._oTemplate);
+		assert.ok(!this.oTable._oToolbar);
 
 		this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oTable);
 			assert.ok(this.oTable._oTemplate);
 			assert.ok(this.oTable._oTable.getAutoPopinMode(), "autoPopinMode is true");
+			assert.ok(this.oTable._oToolbar);
+			assert.equal(this.oTable._oToolbar.getStyle(), "Standard", "Default toolbar style is set");
 			done();
 		}.bind(this));
 

@@ -18,7 +18,7 @@
 					enableSelectAll="false"
 					ariaLabelledBy="title">
 				<extension>
-					<m:OverflowToolbar>
+					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Clothing"/>
 						<m:Button id="cut" text="Cut" icon="sap-icon://scissors" press="onCut"/>
 						<m:Button id="paste" text="Paste" icon="sap-icon://paste" press="onPaste" enabled="false"/>

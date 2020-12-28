@@ -18,7 +18,7 @@
 				paste="onPaste"
 				ariaLabelledBy="title">
 				<extension>
-					<m:OverflowToolbar>
+					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Products"/>
 					</m:OverflowToolbar>
 				</extension>

@@ -19,7 +19,7 @@
 					setEnableGrouping="true"
 					ariaLabelledBy="title">
 				<extension>
-					<m:OverflowToolbar>
+					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:Label text="SelectionMode:"/>

@@ -61,6 +61,7 @@ sap.ui.define([
 	var TableType = library.TableType;
 	var RowAction = library.RowAction;
 	var ToolbarDesign = MLibrary.ToolbarDesign;
+	var ToolbarStyle = MLibrary.ToolbarStyle;
 	var sFilterInterface = "sap.ui.mdc.IFilter";
 	var internalMap = new window.WeakMap();
 	var internal = function(oTable) {
@@ -1198,7 +1199,8 @@ sap.ui.define([
 			});
 			// Create Toolbar
 			this._oToolbar = new ActionToolbar(this.getId() + "-toolbar", {
-				design: "Transparent",
+				design: ToolbarDesign.Transparent,
+				style: this._getStringType() === TableType.ResponsiveTable ? ToolbarStyle.Standard : ToolbarStyle.Clear,
 				begin: [
 					this._oTitle
 				],
