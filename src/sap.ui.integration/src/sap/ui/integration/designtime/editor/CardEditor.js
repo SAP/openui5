@@ -956,7 +956,7 @@ sap.ui.define([
 		if (this.getAllowDynamicValues() === false || !oConfig.allowDynamicValues) {
 			oConfig.allowDynamicValues = false;
 		}
-		if (this.getAllowSettings() === false || !oConfig.allowSettings) {
+		if (this.getAllowSettings() === false) {
 			oConfig.allowSettings = false;
 		}
 		oConfig._beforeValue = this._beforeManifestModel.getProperty(oConfig.manifestpath);
