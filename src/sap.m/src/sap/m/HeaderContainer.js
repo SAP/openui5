@@ -989,6 +989,18 @@ sap.ui.define([
 					}
 				}
 
+				//Traverse through the ScrollContainer Contents and remove the Contents which does not contain any Inner Items.
+				var aContentsToRemove = [];
+				this._oScrollCntr.getContent().forEach(function (oContent, index) {
+					if (!oContent.getItem()) {
+						aContentsToRemove.push(index);
+					}
+				});
+
+				for (var i = 0; i < aContentsToRemove.length; i++ ) {
+					this._oScrollCntr.removeContent(aContentsToRemove[i]);
+				}
+
 				var vResult = this._oScrollCntr[sFunctionName].apply(this._oScrollCntr, args.slice(1));
 
 				if (sFunctionName !== "removeAllAggregation") {
