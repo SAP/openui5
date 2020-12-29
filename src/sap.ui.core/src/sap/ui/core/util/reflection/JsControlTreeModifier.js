@@ -358,7 +358,7 @@ sap.ui.define([
 		 */
 		updateAggregation: function (oControl, sAggregationName) {
 			var oAggregation = this.findAggregation(oControl, sAggregationName);
-			if (oAggregation) {
+			if (oAggregation && oControl.getBinding(sAggregationName)) {
 				oControl[oAggregation._sDestructor]();
 				oControl.updateAggregation(sAggregationName);
 			}
