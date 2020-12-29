@@ -79,7 +79,7 @@ sap.ui.define([
 			this._rows = [];
 
 			this._bIsRegistered = false;
-			this._proxyComputeWidths = jQuery.proxy(computeWidths, this);
+			this._proxyComputeWidths = computeWidths.bind(this);
 
 			this._iRowCounter = 0;
 		};
@@ -503,7 +503,7 @@ sap.ui.define([
 			}
 		};
 
-		var computeWidths = function(bInitial) {
+		var computeWidths = function() {
 			this._iRowCounter = 0;
 
 			this._oDomRef = this.getDomRef();
@@ -530,9 +530,6 @@ sap.ui.define([
 						if (oRowRect && oPrevRect) {
 							bRender = bRender || (oRowRect.width !== oPrevRect.width) && (oRowRect.height !== oPrevRect.height);
 						}
-
-						// if this should be the initial rendering -> do it
-						bRender = bRender || (typeof (bInitial) === "boolean" && bInitial);
 
 						if (this._bLayoutDataChanged || bRender) {
 
@@ -588,16 +585,17 @@ sap.ui.define([
 		 * If the layout should be responsive, it is necessary to fix the width of the content
 		 * items to correspond to the width of the layout.
 		 */
-		ResponsiveFlowLayout.prototype.onAfterRendering = function(oEvent) {
+		ResponsiveFlowLayout.prototype.onAfterRendering = function() {
 			this._oDomRef = this.getDomRef();
 			this._$DomRef = jQuery(this._oDomRef);
 
-			// Initial Width Adaptation
-			this._proxyComputeWidths(true);
+			this._proxyComputeWidths();
 
 			if (this.getResponsive()) {
 				if (!this._resizeHandlerComputeWidthsID) {
-					this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, this._proxyComputeWidths);
+					// Triggering invalidation when the control gets resized so the width recalculations
+					// are handled in the on after rendering hook the same way as the initial width calculations.
+					this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.invalidate.bind(this));
 				}
 			} else {
 				if (this._resizeHandlerComputeWidthsID) {
@@ -612,7 +610,9 @@ sap.ui.define([
 				this._bLayoutDataChanged = true;
 			}
 			if (!this._resizeHandlerComputeWidthsID) {
-				this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, this._proxyComputeWidths);
+				// Triggering invalidation when the control gets resized so the width recalculations
+				// are handled in the on after rendering hook the same way as the initial width calculations.
+				this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.invalidate.bind(this));
 			}
 
 			updateRows(this);
