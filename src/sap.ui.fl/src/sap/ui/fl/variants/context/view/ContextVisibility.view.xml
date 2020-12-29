@@ -1,0 +1,39 @@
+<mvc:View
+	controllerName="sap.ui.fl.variants.context.controller.ContextVisibility"
+	xmlns:mvc="sap.ui.core.mvc"
+	displayBlock="true"
+	xmlns="sap.m">
+	<Panel class="sapUiMediumMarginTop"  id="visibilityPanel">
+		<headerToolbar>
+			<Toolbar id="visbilityToolbar">
+				<Label labelFor="visibilityRadioButtonGroup" text="{i18n>RADIO_BUTTON_GROUP_LABEL}" design="Bold" />
+			</Toolbar>
+		</headerToolbar>
+		<content>
+			<RadioButtonGroup id="visibilityRadioButtonGroup" >
+				<RadioButton id="publicRadioButton" text="{i18n>RADIO_BUTTON_PUBLIC}"/>
+				<RadioButton id="restrictedRadioButton" text="{i18n>RADIO_BUTTON_RESTRICTED}" select=".onSelectRestrictedRadioButton"/>
+			</RadioButtonGroup>
+			<List
+				id="selectedContextsList"
+				visible="false"
+				showNoData="false"
+				mode="Delete"
+				delete=".onDeleteContext"
+				growing="true"
+				items="{selectedContexts>/selected}">
+				<headerToolbar>
+					<Toolbar style="Clear" id="restrictedToolbar">
+						<Label labelFor="selectedContextsList" text="{i18n>SELECTED_CONTEXT_LIST_TITLE}" design="Bold"/>
+						<ToolbarSpacer />
+						<Button id="removeAllButton" text="{i18n>REMOVE_ALL_BUTTON}" press=".removeAll"/>
+						<Button id="addContextsButton" text="{i18n>ADD_CONTEXTS_BUTTON}" press=".onAddContextsHandler"/>
+					</Toolbar>
+				</headerToolbar>
+				<StandardListItem
+					title="{selectedContexts>id}"
+					tooltip="{selectedContexts>description}"/>
+			</List>
+		</content>
+	</Panel>
+</mvc:View>

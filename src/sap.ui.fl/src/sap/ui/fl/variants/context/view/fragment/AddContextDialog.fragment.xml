@@ -1,0 +1,22 @@
+<core:FragmentDefinition
+	xmlns="sap.m"
+	xmlns:core="sap.ui.core">
+	<SelectDialog
+		id="selectContexts"
+		noDataText="{i18n>TABLE_NO_DATA_TEXT}"
+		multiSelect="true"
+		resizable="true"
+		draggable="true"
+		growing="true"
+		growingThreshold="100"
+		title="{i18n>TABLE_SELECTION_DIALOG_TITLE}"
+		search=".onSearch"
+		confirm=".onSelectContexts"
+		items="{contexts>/values}">
+		<StandardListItem
+			title="{contexts>id}"
+			description="{contexts>description}"
+			wrapping="true"
+			selected="{ parts: ['contexts>', 'selectedContexts>/selected'], formatter: '.isSelected' }"/>
+	</SelectDialog>
+</core:FragmentDefinition>

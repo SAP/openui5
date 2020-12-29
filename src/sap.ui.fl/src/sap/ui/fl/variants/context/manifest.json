@@ -1,0 +1,56 @@
+{
+	"_version": "1.28.0",
+	"sap.app": {
+		"id": "sap.ui.fl.variants.context",
+		"type": "component",
+		"i18n": "i18n/i18n.properties",
+		"applicationVersion": {
+			"version": "1.0.0"
+		},
+		"title": "",
+		"description": "",
+		"resources": "resources.json",
+		"ach": "CA-UI5-ABA-AIDX"
+	},
+	"sap.ui": {
+		"technology": "UI5",
+		"deviceTypes": {
+			"desktop": true,
+			"tablet": true,
+			"phone": true
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.fl.variants.context.view.ContextVisibility",
+			"type": "XML",
+			"async": true,
+			"id": "ContextVisibility"
+		},
+		"dependencies": {
+			"minUI5Version": "1.87.0",
+			"libs": {
+				"sap.ui.core": {},
+				"sap.m": {}
+			}
+		},
+		"contentDensities": {
+			"compact": true,
+			"cozy": true
+		},
+		"models": {
+			"i18n": {
+				"type": "sap.ui.model.resource.ResourceModel",
+				"settings": {
+					"bundleName": "sap.ui.fl.variants.context.i18n.i18n"
+				}
+			},
+			"contexts": {
+				"type": "sap.ui.model.json.JSONModel"
+			},
+			"selectedContexts": {
+				"type": "sap.ui.model.json.JSONModel"
+			}
+		}
+	}
+}

@@ -802,6 +802,18 @@ sap.ui.define([
 					only: ["sap/ui/fl/variants/VariantModel"]
 				}
 			},
+			"variants/context/ContextVisibility.controller": {
+				group: "Variants",
+				coverage: {
+					only: ["sap/ui/fl/variants/context/controller/"]
+				}
+			},
+			"variants/context/ContextVisibilityIntegration": {
+				group: "Variants",
+				coverage: {
+					only: ["sap/ui/fl/variants/context/"]
+				}
+			},
 
 			// CLOUD IOI tests:
 			Cache: {
