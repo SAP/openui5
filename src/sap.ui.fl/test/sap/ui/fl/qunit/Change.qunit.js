@@ -816,56 +816,47 @@ function(
 			var oInstance = new Change(this.oChangeDef);
 			var sControlId = "control1Id";
 			var oControl = new Control("control2Id");
-			var aControl = [
+			var aControls = [
 				new Control("control3Id"),
 				new Control("control4Id"),
 				new Control("control5Id")
 			];
-			var aControlId = ["control6Id", "control7Id", "undefined", "control1Id"]; //Control 1 duplicate. Should not be included.
-			var sId;
+			var aControlIds = ["control6Id", "control7Id", "undefined", "control1Id"]; //Control 1 duplicate. Should not be included.
 
-			var oJsControlTreeModifierGetSelectorStub = sandbox.stub(JsControlTreeModifier, "getSelector");
-			oJsControlTreeModifierGetSelectorStub.onCall(0).returns({
-				id: "control1",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(1).returns({
-				id: "control2",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(2).returns({
-				id: "control3",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(3).returns({
-				id: "control4",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(4).returns({
-				id: "control5",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(5).returns({
-				id: "control6",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(6).returns({
-				id: "control7",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(7).returns({});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(8).returns({
-				id: "control1",
-				idIsLocal: true
-			});
+			sandbox.stub(JsControlTreeModifier, "getSelector")
+				.onCall(0).returns({
+					id: "control1",
+					idIsLocal: true
+				})
+				.onCall(1).returns({
+					id: "control2",
+					idIsLocal: true
+				})
+				.onCall(2).returns({
+					id: "control3",
+					idIsLocal: true
+				})
+				.onCall(3).returns({
+					id: "control4",
+					idIsLocal: true
+				})
+				.onCall(4).returns({
+					id: "control5",
+					idIsLocal: true
+				})
+				.onCall(5).returns({
+					id: "control6",
+					idIsLocal: true
+				})
+				.onCall(6).returns({
+					id: "control7",
+					idIsLocal: true
+				})
+				.onCall(7).returns({})
+				.onCall(8).returns({
+					id: "control1",
+					idIsLocal: true
+				});
 
 			var oReturnedControl = new Control("control1Id");
 			var oJsControlTreeModifierBySelectorStub = sandbox.stub(JsControlTreeModifier, "bySelector");
@@ -875,15 +866,14 @@ function(
 
 			oInstance.addDependentControl(sControlId, "element", {modifier: JsControlTreeModifier});
 			oInstance.addDependentControl(oControl, "anotherSource", {modifier: JsControlTreeModifier});
-			oInstance.addDependentControl(aControl, "anotherTarget", {modifier: JsControlTreeModifier});
-			oInstance.addDependentControl(aControlId, "anotherTargetWithId", {modifier: JsControlTreeModifier});
+			oInstance.addDependentControl(aControls, "anotherTarget", {modifier: JsControlTreeModifier});
+			oInstance.addDependentControl(aControlIds, "anotherTargetWithId", {modifier: JsControlTreeModifier});
 
 			var oDependentControl = oInstance.getDependentControl("source", {modifier: JsControlTreeModifier}, {});
-			sId = oDependentControl.getId();
-			assert.equal(sId, "control1Id");
+			assert.equal(oDependentControl.getId(), "control1Id");
 
-			var aDependentControl = oInstance.getDependentControl("anotherTarget", {modifier: JsControlTreeModifier}, {});
-			assert.equal(aDependentControl.length, aControl.length);
+			var aDependentControls = oInstance.getDependentControl("anotherTarget", {modifier: JsControlTreeModifier}, {});
+			assert.equal(aDependentControls.length, aControls.length);
 
 			var oAppComponent = {
 				createId: function (sId) {return sId + "---local";}
@@ -894,91 +884,18 @@ function(
 			assert.equal(aDependentIdList.length, 9);
 		});
 
-		QUnit.test("Operations add and get dependent control do not break when working with old changes (without dependentSelector)", function(assert) {
-			var oChange = jQuery.extend({}, this.oChangeDef);
-			delete oChange.dependentSelector;
-			var oInstance = new Change(oChange);
-			var sControlId = "control1IdB";
-			var oControl = new Control("control2IdB");
-			var aControl = [
-				new Control("control3IdB"),
-				new Control("control4IdB"),
-				new Control("control5IdB")
-			];
-			var aControlId = ["control6IdB", "undefined", "control7IdB"];
-			var sId;
-
-			var oJsControlTreeModifierGetSelectorStub = sandbox.stub(JsControlTreeModifier, "getSelector");
-			oJsControlTreeModifierGetSelectorStub.onCall(0).returns({
-				id: "control1",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(1).returns({
-				id: "control2",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(2).returns({
-				id: "control3",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(3).returns({
-				id: "control4",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(4).returns({
-				id: "control5",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(5).returns({
-				id: "control6",
-				idIsLocal: true
-			});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(6).returns({});
-
-			oJsControlTreeModifierGetSelectorStub.onCall(7).returns({
-				id: "control7",
-				idIsLocal: true
-			});
-
-			var oReturnedControl = new Control("control1IdB");
-			var oJsControlTreeModifierBySelectorStub = sandbox.stub(JsControlTreeModifier, "bySelector");
-			oJsControlTreeModifierBySelectorStub.onCall(0).returns(oReturnedControl);
-
-			oJsControlTreeModifierBySelectorStub.returns({});
-
-			var oDependentControl = oInstance.getDependentControl("source", {modifier: JsControlTreeModifier}, {});
-			assert.equal(oDependentControl, undefined);
-
-			var aDependentIdList = oInstance.getDependentSelectorList({});
-			assert.equal(aDependentIdList.length, 1);
-			aDependentIdList = oInstance.getDependentControlSelectorList({});
-			assert.equal(aDependentIdList.length, 0);
-
-			oInstance.addDependentControl(sControlId, "element", {modifier: JsControlTreeModifier});
-			oInstance.addDependentControl(oControl, "anotherSource", {modifier: JsControlTreeModifier});
-			oInstance.addDependentControl(aControl, "anotherTarget", {modifier: JsControlTreeModifier});
-			oInstance.addDependentControl(aControlId, "anotherTargetWithId", {modifier: JsControlTreeModifier});
-
-			oDependentControl = oInstance.getDependentControl("source", {modifier: JsControlTreeModifier}, {});
-			sId = oDependentControl.getId();
-			assert.equal(sId, "control1IdB");
-
-			var aDependentControl = oInstance.getDependentControl("anotherTarget", {modifier: JsControlTreeModifier}, {});
-			assert.equal(aDependentControl.length, aControl.length);
-
-			var oAppComponent = {
-				createId: function (sId) {return sId + "---local";}
+		QUnit.test("dependent Selectors with 'originalSelector' as one of them", function(assert) {
+			this.oChangeDef.dependentSelector["originalSelector"] = {
+				id: "original",
+				idIsLocal: false
 			};
-			aDependentIdList = oInstance.getDependentSelectorList(oAppComponent);
-			assert.equal(aDependentIdList.length, 8);
-			aDependentIdList = oInstance.getDependentControlSelectorList(oAppComponent);
-			assert.equal(aDependentIdList.length, 7);
+			var oControl = new Control("original");
+			var oChange = new Change(this.oChangeDef);
+			assert.equal(oChange.getDependentControlSelectorList().length, 0, "no controls are in the list");
+			assert.equal(oChange.getDependentSelectorList().length, 1, "only the selector is in the list");
+			assert.equal(oChange.getDependentSelectorList()[0].id, "control1");
+			assert.equal(Object.keys(oChange.getDefinition().dependentSelector).length, 3, "there are 3 dependent selectors defined in the change");
+			assert.deepEqual(oChange.getDependentControl("originalSelector", {modifier: JsControlTreeModifier}), oControl, "the 'getDependentControl' function still returns the original selector");
 		});
 
 		QUnit.test("revertData", function(assert) {
