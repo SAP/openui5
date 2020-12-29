@@ -253,7 +253,6 @@
 					},
 					path : '',
 					parameters : {
-						$select : 'Messages',
 						$$updateGroupId : 'SalesOrderUpdateGroup'
 					}
 				}">
@@ -372,7 +371,6 @@
 								}
 							},
 							$orderby : 'ItemPosition',
-							$select : 'Messages',
 							$$updateGroupId : 'SalesOrderUpdateGroup'
 						},
 						path : 'SO_2_SOITEM',

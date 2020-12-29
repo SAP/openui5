@@ -1,5 +1,5 @@
 {
-	"@odata.context" : "../$metadata#SalesOrderList('NEW3')/SO_2_SOITEM(DeliveryDate,GrossAmount,ItemPosition,Messages,Note,ProductID,Quantity,QuantityUnit,SalesOrderID,SOITEM_2_PRODUCT(Category,Name,ProductID,SupplierName,TypeCode,PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber,BP_2_CONTACT(ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber))))/$entity",
+	"@odata.context" : "../$metadata#SalesOrderList('NEW3')/SO_2_SOITEM(DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID,SOITEM_2_PRODUCT(Category,Name,ProductID,SupplierName,TypeCode,PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber,BP_2_CONTACT(ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber))))/$entity",
 	"@odata.metadataEtag" : "W/\"20190521151559\"",
 	"SalesOrderID" : "NEW3",
 	"ItemPosition" : "0000000010",
@@ -9,7 +9,6 @@
 	"Quantity" : "1.000",
 	"QuantityUnit" : "EA",
 	"ProductID" : "HT-1000",
-	"Messages" : [],
 	"SOITEM_2_PRODUCT" : {
 		"@odata.etag" : "W/\"20190528112225.1000280 \"",
 		"ProductID" : "HT-1000",

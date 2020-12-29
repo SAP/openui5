@@ -1,5 +1,5 @@
 {
-	"@odata.context" : "../$metadata#SOLineItemList(SOITEM_2_PRODUCT(PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber)))",
+	"@odata.context" : "../$metadata#SalesOrderList('0500000006')/SO_2_SOITEM(DeliveryDate,GrossAmount,ItemPosition,Note,ProductID,Quantity,QuantityUnit,SalesOrderID,SOITEM_2_PRODUCT(Category,Name,ProductID,SupplierName,TypeCode,PRODUCT_2_BP(BusinessPartnerID,CompanyName,LegalForm,PhoneNumber,BP_2_CONTACT(ContactGUID,DateOfBirth,EmailAddress,FirstName,LastName,PhoneNumber))))",
 	"@odata.count" : "8",
 	"value" : [
 		{
@@ -45,8 +45,7 @@
 					"PhoneNumber" : "2208791738",
 					"BP_2_CONTACT" : []
 				}
-			},
-			"Messages" : []
+			}
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -91,15 +90,7 @@
 					"PhoneNumber" : "4440238917",
 					"BP_2_CONTACT" : []
 				}
-			},
-			"Messages" : [{
-				"code" : "STATE/4713",
-				"longtextUrl" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/Messages(2)",
-				"message" : "Minimum order quantity is 2",
-				"numericSeverity" : 4,
-				"target" : "Quantity",
-				"transition" : false
-			}]
+			}
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -144,8 +135,7 @@
 					"PhoneNumber" : "6328490087",
 					"BP_2_CONTACT" : []
 				}
-			},
-			"Messages" : []
+			}
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -190,8 +180,7 @@
 					"PhoneNumber" : "4050378468",
 					"BP_2_CONTACT" : []
 				}
-			},
-			"Messages" : []
+			}
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -236,8 +225,7 @@
 					"PhoneNumber" : "6065470312",
 					"BP_2_CONTACT" : []
 				}
-			},
-			"Messages" : []
+			}
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -282,8 +270,7 @@
 					"PhoneNumber" : "7980023486",
 					"BP_2_CONTACT" : []
 				}
-			},
-			"Messages" : []
+			}
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -328,8 +315,7 @@
 					"PhoneNumber" : "3629731486",
 					"BP_2_CONTACT" : []
 				}
-			},
-			"Messages" : []
+			}
 		},
 		{
 			"SalesOrderID" : "0500000001",
@@ -374,7 +360,6 @@
 					"PhoneNumber" : "3206580974",
 					"BP_2_CONTACT" : []
 				}
-			},
-			"Messages" : []
+			}
 		}]
 }

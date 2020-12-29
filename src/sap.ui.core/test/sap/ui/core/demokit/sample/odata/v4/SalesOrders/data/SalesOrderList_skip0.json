@@ -1,5 +1,5 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(CurrencyCode,GrossAmount,Note,SalesOrderID)",
+	"@odata.context" : "$metadata#SalesOrderList(BuyerID,ChangedAt,CurrencyCode,GrossAmount,LifecycleStatus,LifecycleStatusDesc,Messages,Note,SalesOrderID,SO_2_BP(BusinessPartnerID,CompanyName))",
 	"@odata.count" : 10,
 	"value" : [{
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
@@ -44,6 +44,27 @@
 		"GrossAmount" : "5631.08",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
+		"Messages" : [{
+			"code" : "CODE/1234",
+			"@Common.Application" : {
+				"ComponentId" : "OPU-GW-COR",
+				"ServiceRepository" : "DEFAULT"
+			},
+			"@Common.TransactionId" : "A9DFB82A2D7B0240E0058CB109CEBFBC",
+			"@Common.Timestamp" : "20170320071538.918157",
+			"longtextUrl" : "SalesOrderList('0500000001')/Messages(1)",
+			"message" : "Enter customer reference if available",
+			"numericSeverity" : 3,
+			"target" : "Note",
+			"transition" : false
+		},{
+			"code" : "STATE/4713",
+			"longtextUrl" : "/sap/opu/odata4/sap/zui5_testv4/default/sap/zui5_epm_sample/0002/Messages(2)",
+			"message" : "Minimum order quantity is 2",
+			"numericSeverity" : 4,
+			"target" : "SO_2_SOITEM(SalesOrderID='0500000001',ItemPosition='0000000020')/Quantity",
+			"transition" : false
+		}],
 		"Note" : "Note with message",
 		"SalesOrderID" : "0500000001",
 		"SO_2_BP" : {
@@ -71,21 +92,7 @@
 					"Latitude" : "51.940081800000"
 				}
 			}
-		},
-		"Messages" : [{
-			"code" : "CODE/1234",
-			"@Common.Application" : {
-				"ComponentId" : "OPU-GW-COR",
-				"ServiceRepository" : "DEFAULT"
-			},
-			"@Common.TransactionId" : "A9DFB82A2D7B0240E0058CB109CEBFBC",
-			"@Common.Timestamp" : "20170320071538.918157",
-			"longtextUrl" : "SalesOrderList('0500000001')/Messages(1)",
-			"message" : "Enter customer reference if available",
-			"numericSeverity" : 3,
-			"target" : "Note",
-			"transition" : false
-		}]
+		}
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
@@ -93,6 +100,7 @@
 		"GrossAmount" : "250.73",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
+		"Messages" : [],
 		"Note" : "EPM DG: SO ID 0500000002 Deliver as fast as possible",
 		"SalesOrderID" : "0500000002",
 		"SO_2_BP" : {
@@ -120,8 +128,7 @@
 					"Latitude" : "52.382990802599"
 				}
 			}
-		},
-		"Messages" : []
+		}
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
@@ -129,10 +136,10 @@
 		"GrossAmount" : "10311.35",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
+		"Messages" : [],
 		"Note" : "EPM DG: SO ID 0500000007 Deliver as fast as possible",
 		"SalesOrderID" : "0500000003",
-		"SO_2_BP" : null,
-		"Messages" : []
+		"SO_2_BP" : null
 	}, {
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
 		"ChangedAt" : "2015-11-07T23:00:00.000000Z",
@@ -140,6 +147,7 @@
 		"GrossAmount" : "195.16",
 		"LifecycleStatus" : "N",
 		"LifecycleStatusDesc" : "New",
+		"Messages" : [],
 		"Note" : "EPM DG: SO ID 0500000008 Deliver as fast as possible",
 		"SalesOrderID" : "0500000004",
 		"SO_2_BP" : {
@@ -167,7 +175,6 @@
 					"Latitude" : "-34.864871900000"
 				}
 			}
-		},
-		"Messages" : []
+		}
 	}]
 }
