@@ -218,25 +218,27 @@
 		<h4>Highlight scenario</h4>
 		<ul>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
-				<code>3</code>.</li>
+				<code>2</code>.</li>
 			<li>Press the 'More' button of the sales order table.</li>
-			<li><b>Check:</b>A message strip is displayed above the table indicating that there are
+			<li><b>Check:</b> A message strip is displayed above the table indicating that there are
 				issues for the table.</li>
 			<li><b>Check:</b> The row of the sales order with the ID <code>0500000006</code> is
 				highlighted as an error.</li>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
-				<code>3</code>.</li>
+				<code>4</code>.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is displayed containing 3 messages: a warning message with
-				the text "Enter customer reference if available" and an error message with the text
-				"Minimum order quantity is 2" and an error "Enter a Note".</li>
+			<li><b>Check:</b> A popover is displayed containing 4 messages: a warning message with
+				the text "Enter customer reference if available", an error message with the text
+				"Minimum order quantity is 2", an warning "Enter a Note" and another error message
+				with the text "Minimum order quantity is 2".</li>
 			<li>Close the message popover.</li>
 			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
 				<code>0500000006</code>.</li>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
-				still <code>3</code>.</li>
-			<li>Enter 'EPM DG: SO ID 0500000006 Item 0000000010' in the note of the first sales
-				order item.</li>
+				still <code>4</code>.</li>
+			<li>Enter any text in the note input field of the first sales order item.</li>
+			<li>Enter a quantity higher than 1 in the quantity input field of the second sales order
+				item.</li>
 			<li>Press the <code>Save sales order</code> button in the
 				<code>Sales Order Details</code> section.</li>
 			<li><b>Check:</b> The row of the sales order with the ID <code>0500000006</code> is
@@ -244,7 +246,8 @@
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
 				<code>2</code>.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> The error "Enter a Note" has disappeared.</li>
+			<li><b>Check:</b> The messages "Enter a Note" and "Minimum order quantity is 2" now are
+				gone.</li>
 			<li>Close the message popover.</li>
 		</ul>
 	</body>
