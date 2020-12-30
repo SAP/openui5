@@ -1980,9 +1980,10 @@ function(
 		 * @private
 		 */
 		Input.prototype._synchronizeSuggestions = function() {
-			// Trigger the ListItems refresh only when the focus is on the input field.
+			var oPopupInput = this.isMobileDevice() && this._oSuggPopover && this._oSuggPopover._oPopupInput.getFocusDomRef();
+			// Trigger the ListItems refresh only when the focus is on the input field or the device is phone.
 			// In all other cases this instantiates list population and it might not be needed at all.
-			if (document.activeElement === this.getFocusDomRef()) {
+			if (document.activeElement === this.getFocusDomRef() || document.activeElement === oPopupInput) {
 				this._bShouldRefreshListItems = true;
 				this._refreshItemsDelayed();
 			}
