@@ -130,6 +130,25 @@ sap.ui.define([
 		},
 
 		/**
+		 * Interface to retrieve the variant management context information.
+		 * The context information is a JSON object that has boolean property 'lasthitreached'
+		 * indicating that the result is paginated and whether there are more contexts that can be fetched from the backend.
+		 * The context information also has JSON object 'types' which has a string property 'type' denoting the type of context (e.g. 'ROLE')
+		 * and an array property 'values' containing the id and description of each context.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer
+		 * @param {string} mPropertyBag.type Type of context, currently only 'role' is supported
+		 * @param {string} [mPropertyBag.$skip] Offset for paginated request
+		 * @param {string} [mPropertyBag.$filter] Filters full raw data
+		 * @param {string} [mPropertyBag.url] Configured url for the connector
+		 * @returns {Promise<object>} Promise resolves as soon as context has been retrieved
+		 */
+		getContexts: function (/* mPropertyBag */) {
+			return Promise.resolve({});
+		},
+
+		/**
 		 * Interface called to get the flex feature.
 		 *
 		 * @returns {Promise<object>} Resolves with an object containing the data for the flex features

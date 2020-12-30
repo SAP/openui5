@@ -130,6 +130,31 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("given a mock server, when get contexts is triggered", function (assert) {
+			var oExpectedResponse = {
+				types: [
+					{
+						type: "ROLE",
+						values: [
+							{
+								id: "/IWBEP/RT_MGW_DSP",
+								description: "Role for accessing remote system from Service Builder at design time"
+							}]
+					}
+				],
+				lastHitReached: true
+			};
+			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
+
+			var mPropertyBag = {url: "/sap/bc/lrep", type: "role", $skip: 100, $filter: "SAP"};
+			var sUrl = "/sap/bc/lrep/flex/contexts/?type=role&%24skip=100&%24filter=SAP";
+			return WriteLrepConnector.getContexts(mPropertyBag).then(function (oResponse) {
+				assert.equal(sandbox.server.getRequest(0).method, "GET", "request method is GET");
+				assert.equal(sandbox.server.getRequest(0).url, sUrl, "a getContexts request is send containing the type and layer as query parameters");
+				assert.deepEqual(oResponse, oExpectedResponse, "getContexts response flow is correct");
+			});
+		});
+
 		QUnit.test("when calling publish successfully", function(assert) {
 			var oMockTransportInfo = {
 				packageName : "PackageName",
