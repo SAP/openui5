@@ -1861,26 +1861,35 @@ function(
 		};
 
 		/**
-		 * Applies Suggestion Acc
+		 * Applies Suggestion Accessibility
+		 *
+		 * Adds the aria-desribedby text with the number of available suggestions.
 		 *
 		 * @param {Integer} iNumItems
 		 * @private
 		 */
-		Input.prototype._applySuggestionAcc = function (iNumItems) {
+		Input.prototype._applySuggestionAcc = function(iNumItems) {
 			var sAriaText = "",
 				oRb = this._oRb;
 
-			// add items to list
-			if (iNumItems === 1) {
-				sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT");
-			} else if (iNumItems > 1) {
-				sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS", iNumItems);
-			} else {
-				sAriaText = oRb.getText("INPUT_SUGGESTIONS_NO_HIT");
-			}
+			// Timeout is used because sometimes when we have suggestions
+			// that are fetched from the backend and filtered with a delay this function
+			// could be called twice - the first time with no available results.
+			// In that case the second DOM update of the invisible text element
+			// do not occur if it is synchronous. BCP #2070466087
+			setTimeout(function () {
+				// add items to list
+				if (iNumItems === 1) {
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_ONE_HIT");
+				} else if (iNumItems > 1) {
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_MORE_HITS", iNumItems);
+				} else {
+					sAriaText = oRb.getText("INPUT_SUGGESTIONS_NO_HIT");
+				}
 
-			// update Accessibility text for suggestion
-			this.$("SuggDescr").text(sAriaText);
+				// update Accessibility text for suggestion
+				this.$("SuggDescr").text(sAriaText);
+			}.bind(this), 0);
 		};
 
 		/**
