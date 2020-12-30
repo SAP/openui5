@@ -263,7 +263,7 @@ sap.ui.define([
 
 				if (oItem.icon) {
 					var vSrc = BindingHelper.formattedProperty(oItem.icon.src, function (sValue) {
-						return this._oIconFormatter.formatSrc(sValue, this._sAppId);
+						return this._oIconFormatter.formatSrc(sValue);
 					}.bind(this));
 
 					var oAvatar = new Avatar({

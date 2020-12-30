@@ -56,7 +56,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 
 				// Assert
 				assert.equal(oHeader.getTitle(), "Card Bundle", "Should have loaded the i18n files and used them for translating the title.");
-				assert.equal(oHeader._getAvatar().getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/icons/edit.png", "Should have set correct relative URL.");
+				assert.equal(oHeader._getAvatar().getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 
 				// Clean up
 				done();
@@ -96,7 +96,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 
 				// Assert
 				var oHeader = this.oCard.getAggregation("_header");
-				assert.strictEqual(oHeader.getAggregation("_avatar").getSrc(), sBaseUrl + "test-src", "Card header avatar src is correct.");
+				assert.strictEqual(oHeader.getAggregation("_avatar").getSrc(), sBaseUrl + "./test-src", "Card header avatar src is correct.");
 				done();
 			}.bind(this));
 
@@ -145,7 +145,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
 
 				// Assert
-				assert.equal(oListItem.getIcon(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/icons/edit.png", "Should have set correct relative URL.");
+				assert.equal(oListItem.getIcon(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 
 				// Clean up
 				done();
@@ -220,7 +220,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
 
 				// Assert
-				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/icons/edit.png", "Should have set correct relative URL.");
+				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 
 				// Clean up
 				done();
@@ -278,7 +278,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getContent()[0].getItems()[1].getItems()[0];
 
 				// Assert
-				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/icons/edit.png", "Should have set correct relative URL.");
+				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 
 				// Clean up
 				done();
@@ -364,7 +364,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 
 				// Assert
 				assert.equal(oHeader.getTitle(), "Card Bundle", "Should have loaded the i18n files and used them for translating the title.");
-				assert.equal(oHeader._getAvatar().getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/icons/edit.png", "Should have set correct relative URL.");
+				assert.equal(oHeader._getAvatar().getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 
 				// Clean up
 				done();
@@ -385,7 +385,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				var oListItem = this.oCard.getCardContent().getAggregation("_content").getItems()[0];
 
 				// Assert
-				assert.equal(oListItem.getIcon(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/icons/edit.png", "Should have set correct relative URL.");
+				assert.equal(oListItem.getIcon(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 
 				// Clean up
 				done();
@@ -406,7 +406,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getItems()[0].getCells()[0];
 
 				// Assert
-				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/icons/edit.png", "Should have set correct relative URL.");
+				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 
 				// Clean up
 				done();
@@ -427,7 +427,7 @@ sap.ui.define(["sap/ui/integration/widgets/Card", "sap/ui/core/Core"
 				var oAvatar = this.oCard.getCardContent().getAggregation("_content").getContent()[0].getItems()[1].getItems()[0];
 
 				// Assert
-				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/icons/edit.png", "Should have set correct relative URL.");
+				assert.equal(oAvatar.getSrc(), "test-resources/sap/ui/integration/qunit/cardbundle/bundle/./icons/edit.png", "Should have set correct relative URL.");
 
 				// Clean up
 				done();

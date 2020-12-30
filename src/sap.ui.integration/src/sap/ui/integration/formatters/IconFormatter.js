@@ -2,18 +2,32 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/base/Object",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Core",
 	"sap/ui/core/IconPool"
-], function (BaseObject, IconPool) {
+], function (ManagedObject, Core, IconPool) {
 	"use strict";
 
 	/**
 	 * @private
 	 */
-	var IconFormatter = BaseObject.extend("sap.ui.integration.util.Destinations", {
-		constructor: function (oDestinations) {
-			BaseObject.call(this);
-			this._oDestinations = oDestinations;
+	var IconFormatter = ManagedObject.extend("sap.ui.integration.formatters.IconFormatter", {
+		metadata: {
+			library: "sap.ui.integration",
+			properties: {
+				destinations: {
+					type: "object"
+				}
+			},
+			associations : {
+				/**
+				 * The card.
+				 */
+				card: {
+					type : "sap.ui.integration.widgets.Card",
+					multiple: false
+				}
+			}
 		}
 	});
 
@@ -22,36 +36,33 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {string} sUrl The URL to format.
-	 * @param {string} sAppId The ID in the "sap.app" namespace of the manifest.
 	 * @returns {string|Promise} The formatted URL or a Promise which resolves with the formatted url.
 	 */
-	IconFormatter.prototype.formatSrc = function (sUrl, sAppId) {
-		var iIndex = 0;
-
-		if (!sUrl || !sAppId) {
+	IconFormatter.prototype.formatSrc = function (sUrl) {
+		if (!sUrl) {
 			return sUrl;
 		}
 
-		if (sUrl.startsWith("data:")) {
+		if (sUrl.startsWith("data:") || IconPool.isIconURI(sUrl)) {
 			return sUrl;
 		}
 
-		if (this._oDestinations.hasDestination(sUrl)) {
-			return this._oDestinations.processString(sUrl);
+		if (this.getDestinations().hasDestination(sUrl)) {
+			return this.getDestinations().processString(sUrl)
+				.then(function (sResolvedUrl) {
+					return this._format(sResolvedUrl);
+				}.bind(this));
 		}
 
-		// Do not format absolute icon sources.
-		if (IconPool.isIconURI(sUrl) || sUrl.startsWith("http://") || sUrl.startsWith("https://") || sUrl.startsWith("//")) {
-			return sUrl;
-		}
+		return this._format(sUrl);
+	};
 
-		if (sUrl.startsWith("..")) {
-			iIndex = 2;
-		} else if (sUrl.startsWith(".")) {
-			iIndex = 1;
-		}
+	IconFormatter.prototype._format = function (sUrl) {
+		return this._getCardInstance().getRuntimeUrl(sUrl);
+	};
 
-		return sap.ui.require.toUrl(sAppId.replace(/\./g, "/") + sUrl.slice(iIndex, sUrl.length));
+	IconFormatter.prototype._getCardInstance = function () {
+		return Core.byId(this.getCard());
 	};
 
 	return IconFormatter;

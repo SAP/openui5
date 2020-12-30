@@ -16,7 +16,8 @@ sap.ui.define([
 
 		var DOM_RENDER_LOCATION = "qunit-fixture";
 
-		var sResourcePath = "./qunit/manifests/",
+		var sResourcePath = "qunit/testResources/cardWithDestinations/",
+			sImagesResourcePath = "qunit/testResources/images/",
 			sBaseUrl = "test-resources/sap/ui/integration/";
 
 		var oManifest_Valid = {
@@ -32,6 +33,9 @@ sap.ui.define([
 						},
 						"headerDestination": {
 							"name": "headerDestination"
+						},
+						"imageDestination": {
+							"name": "imageDestination"
 						}
 					}
 				},
@@ -52,7 +56,7 @@ sap.ui.define([
 					"item": {
 						"title": "{Name}",
 						"icon": {
-							"src": "{{destinations.contentDestination}}/{Image}"
+							"src": "{{destinations.imageDestination}}/{Image}"
 						}
 					}
 				}
@@ -157,14 +161,11 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 				var aItems = this.oCard.getCardContent().getInnerList().getItems(),
 					sFirstItemIcon = aItems[0].getIcon(),
-					sExpectedIcon = "./qunit/manifests/Image1.png";
+					sExpectedIcon = sBaseUrl + "qunit/testResources/images/Woman_avatar_01.png";
 
 				// Assert
 				assert.ok(aItems.length, "The data request is successful.");
-
 				assert.strictEqual(this.oCard.getCardHeader().getTitle(), "Card Title", "header destination is resolved successfully");
-
-				// Assert
 				assert.strictEqual(sFirstItemIcon, sExpectedIcon, "The icon path is correct.");
 
 				done();
@@ -235,6 +236,8 @@ sap.ui.define([
 							case "contentDestination":
 							case "headerDestination":
 								return sResourcePath;
+							case "imageDestination":
+								return sImagesResourcePath;
 							default:
 								Log.error("Unknown destination.");
 								break;
@@ -277,6 +280,8 @@ sap.ui.define([
 										resolve(sResourcePath);
 									}, 10);
 								});
+							case "imageDestination":
+								return sImagesResourcePath;
 							default:
 								Log.error("Unknown destination.");
 								break;

@@ -160,7 +160,7 @@ sap.ui.define([
 		// settings that need a formatter
 		if (mItem.ownerImage && mItem.ownerImage.value) {
 			mSettings.userPicture = BindingHelper.formattedProperty(mItem.ownerImage.value, function (sValue) {
-				return this._oIconFormatter.formatSrc(sValue, this._sAppId);
+				return this._oIconFormatter.formatSrc(sValue);
 			}.bind(this));
 		}
 

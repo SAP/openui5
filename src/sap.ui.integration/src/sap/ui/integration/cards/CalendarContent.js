@@ -428,7 +428,7 @@ sap.ui.define([
 			}
 			if (mItem.template.icon && mItem.template.icon.src) {
 				mAppointmentSettings.icon = BindingHelper.formattedProperty(mItem.template.icon.src, function (sValue) {
-					return this._oIconFormatter.formatSrc(sValue, this._sAppId);
+					return this._oIconFormatter.formatSrc(sValue);
 				}.bind(this));
 			}
 			this._oAppointmentTemplate = new CalendarAppointment(mAppointmentSettings);

@@ -17,7 +17,7 @@ sap.ui.define([
 							// return Promise.resolve("https://services.odata.org/V3/Northwind/Northwind.svc");
 						case "NorthwindImages":
 							// Simulate path to images. In real use case it will be the same as the path to 'Northwind'.
-							return "../../images";
+							return window.location.origin + "/test-resources/sap/ui/integration/demokit/cardExplorer/webapp/samples/images/";
 						default:
 							Log.error("Unknown destination.");
 						break;

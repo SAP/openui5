@@ -1100,7 +1100,10 @@ sap.ui.define([
 		}
 
 		this._oDestinations = new Destinations(this.getHostInstance(), this._oCardManifest.get(MANIFEST_PATHS.DESTINATIONS));
-		this._oIconFormatter = new IconFormatter(this._oDestinations);
+		this._oIconFormatter = new IconFormatter({
+			destinations: this._oDestinations,
+			card: this
+		});
 
 		this._oDataProviderFactory = new DataProviderFactory(this._oDestinations, oExtension, this);
 

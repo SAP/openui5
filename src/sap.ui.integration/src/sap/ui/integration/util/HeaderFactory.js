@@ -88,10 +88,10 @@ sap.ui.define([
 
 		switch (mConfiguration.type) {
 			case "Numeric":
-				oHeader = new NumericHeader(mConfiguration, oToolbar, oCard._sAppId);
+				oHeader = new NumericHeader(mConfiguration, oToolbar);
 				break;
 			default:
-				oHeader = new Header(mConfiguration, oToolbar, oCard._sAppId, oCard._oIconFormatter);
+				oHeader = new Header(mConfiguration, oToolbar, oCard._oIconFormatter);
 				break;
 		}
 

@@ -44,10 +44,9 @@ sap.ui.define([
 	 */
 	var Header = FHeader.extend("sap.ui.integration.cards.Header", {
 
-		constructor: function (mConfiguration, oActionsToolbar, sAppId, oIconFormatter) {
+		constructor: function (mConfiguration, oActionsToolbar, oIconFormatter) {
 
 			mConfiguration = mConfiguration || {};
-			this._sAppId = sAppId;
 
 			this._bIsEmpty = isEmptyObject(mConfiguration);
 
@@ -70,7 +69,7 @@ sap.ui.define([
 
 			if (mSettings.iconSrc) {
 				mSettings.iconSrc = BindingHelper.formattedProperty(mSettings.iconSrc, function (sValue) {
-					return oIconFormatter.formatSrc(sValue, sAppId);
+					return oIconFormatter.formatSrc(sValue);
 				});
 			}
 

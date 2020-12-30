@@ -685,7 +685,7 @@ sap.ui.define([
 					"type": "Table",
 					"data": {
 						"json": [{
-							"avatar": "./images/Image_1.png"
+							"avatar": "images/Image_1.png"
 						}]
 					},
 					"content": {

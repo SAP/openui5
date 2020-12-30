@@ -305,7 +305,7 @@ sap.ui.define([
 
 		if (oColumn.icon) {
 			var vSrc = BindingHelper.formattedProperty(oColumn.icon.src, function (sValue) {
-				return this._oIconFormatter.formatSrc(sValue, this._sAppId);
+				return this._oIconFormatter.formatSrc(sValue);
 			}.bind(this));
 
 			return new Avatar({
