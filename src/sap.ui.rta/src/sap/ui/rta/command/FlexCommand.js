@@ -197,9 +197,13 @@ sap.ui.define([
 		mChangeSpecificData.generator = "sap.ui.rta FlexCommand";
 		return ChangesWriteAPI.create({changeSpecificData: mChangeSpecificData, selector: this._validateControlForChange(mFlexSettings)})
 			.then(function(oChange) {
+				// originalSelector is only present when making a change on/inside a template; the selector does not work with the JS propagation hook (the template has no parent),
+				// therefore the selector is changed to the parent (already the selector of the command) and the original selector saved as dependent.
+				// Also 'boundAggregation' property gets saved in the change content
+				// ATTENTION! the change gets applied as soon as the parent is available, so there might be possible side effects with lazy loading
 				if (mFlexSettings && mFlexSettings.originalSelector) {
 					oChange.addDependentControl(mFlexSettings.originalSelector, "originalSelector", {modifier: JsControlTreeModifier, appComponent: this.getAppComponent()});
-					oChange.getDefinition().selector = Object.assign(oChange.getDefinition().selector, JsControlTreeModifier.getSelector(this.getSelector().id, this.getSelector().appComponent));
+					oChange.getDefinition().selector = Object.assign(oChange.getDefinition().selector, JsControlTreeModifier.getSelector(this.getSelector().id, this.getAppComponent()));
 					oChange.setContent(Object.assign({}, oChange.getContent(), mFlexSettings.content));
 				}
 				return oChange;
