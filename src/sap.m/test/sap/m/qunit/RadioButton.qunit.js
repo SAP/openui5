@@ -1,8 +1,7 @@
 /*global QUnit, sinon */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/RadioButton",
 	"sap/ui/core/library",
 	"sap/ui/core/Core",
@@ -13,7 +12,6 @@ sap.ui.define([
 	"sap/ui/core/message/Message"
 ], function (
 	qutils,
-	createAndAppendDiv,
 	RadioButton,
 	coreLibrary,
 	Core,
@@ -23,6 +21,8 @@ sap.ui.define([
 	JSONModel,
 	Message
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
@@ -32,7 +32,7 @@ sap.ui.define([
 	// shortcut for sap.ui.core.message.MessageType
 	var MessageType = coreLibrary.MessageType;
 
-	createAndAppendDiv("content");
+	var DOM_RENDER_LOCATION = "qunit-fixture";
 
 	Mobile.init();
 
@@ -1002,7 +1002,7 @@ sap.ui.define([
 
 		oRadioButton.placeAt("qunit-fixture");
 		Core.applyChanges();
-		oSvg = oRadioButton.getDomRef().getElementsByClassName('sapMRbSvg')[0];
+		var oSvg = oRadioButton.getDomRef().getElementsByClassName('sapMRbSvg')[0];
 
 		assert.strictEqual(oSvg.getAttribute('role'), "presentation", "The SVG icon should have a role=presentation");
 
@@ -1076,5 +1076,50 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(this.oRadioButton.$("Descr").text(), sMessage, "The error message should be shown in the tooltip");
+	});
+
+	QUnit.module("Value state", {
+		beforeEach: function () {
+			this.oRB = new RadioButton();
+			this.oRB.placeAt(DOM_RENDER_LOCATION);
+
+			this.mStateClass = {
+				"Error": "sapMRbErr",
+				"Warning": "sapMRbWarn",
+				"Success": "sapMRbSucc",
+				"Information": "sapMRbInfo"
+			};
+		},
+		afterEach: function () {
+			this.oRB.destroy();
+		}
+	});
+
+	QUnit.test("Disabled radio button", function (assert) {
+		// arrange
+		this.oRB.setEnabled(false);
+
+		// act
+		for (var sState in this.mStateClass) {
+			var sClass = this.mStateClass[sState];
+			this.oRB.setValueState(sState);
+			Core.applyChanges();
+
+			assert.notOk(this.oRB.$().hasClass(sClass), sClass + " class is not added when radio button is disabled");
+		}
+	});
+
+	QUnit.test("Enabled radio button, not editable", function (assert) {
+		// arrange
+		this.oRB.setEditable(false);
+
+		// act
+		for (var sState in this.mStateClass) {
+			var sClass = this.mStateClass[sState];
+			this.oRB.setValueState(sState);
+			Core.applyChanges();
+
+			assert.notOk(this.oRB.$().hasClass(sClass), sClass + " class is not added when radio button isn't editable");
+		}
 	});
 });

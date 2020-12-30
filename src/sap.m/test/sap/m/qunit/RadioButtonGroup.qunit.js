@@ -367,16 +367,19 @@ sap.ui.define([
 	});
 
 	QUnit.test("setValueState", function (assert) {
-		var aButtons = this.rbg.getButtons();
+		var aButtons = this.rbg.getButtons(),
+			oDisabledRB = aButtons[0],
+			oReadOnlyRB = aButtons[1],
+			oNormalRB = aButtons[2];
 
 		// act
 		this.rbg.setValueState(ValueState.Error);
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		for (var i = 0; i < aButtons.length; i++) {
-			assert.ok(aButtons[i].$().hasClass("sapMRbErr"), "Setting state to the group should also set state to all the buttons.");
-		}
+		assert.notOk(oDisabledRB.$().hasClass("sapMRbErr"), "Setting state to the group doesn't modify disabled buttons");
+		assert.notOk(oReadOnlyRB.$().hasClass("sapMRbErr"), "Setting state to the group doesn't modify read-only buttons");
+		assert.ok(oNormalRB.$().hasClass("sapMRbErr"), "Setting state to the group also sets state to normal buttons");
 	});
 
 	QUnit.module("Methods", {
