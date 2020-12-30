@@ -313,10 +313,11 @@ sap.ui.define([
 
 		QUnit.test("When the inner vbox gets destroyed", function(assert) {
 			var done = assert.async();
-			sandbox.stub(this.oVBox1, "removeStyleClass").callsFake(function() {
+			var fnDebounced = _debounce(function() {
 				assert.ok(true, "the style class was removed");
 				done();
 			});
+			sandbox.stub(this.oVBox1, "removeStyleClass").callsFake(fnDebounced);
 			this.oVBox2.destroy();
 			sap.ui.getCore().applyChanges();
 		});
