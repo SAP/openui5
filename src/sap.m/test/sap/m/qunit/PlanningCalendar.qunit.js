@@ -743,6 +743,26 @@ sap.ui.define([
 
 	QUnit.module("rendering");
 
+	QUnit.test("Resizing the calendar triggers pickers selection update", function(assert) {
+		// prepare
+		var oPlanningCalendar = new PlanningCalendar();
+		oPlanningCalendar.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		var oUpdatePickerStateSpy = sinon.spy(oPlanningCalendar, "_updatePickerSelection");
+
+		// act
+		oPlanningCalendar.setWidth("400px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oUpdatePickerStateSpy.calledTwice, "Calendar picker is properly updated.");
+
+		// clean
+		oUpdatePickerStateSpy.restore();
+		oPlanningCalendar.destroy();
+	});
+
 	QUnit.test("table", function(assert) {
 		var oTable = sap.ui.getCore().byId("PC1-Table");
 

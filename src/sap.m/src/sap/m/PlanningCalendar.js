@@ -724,7 +724,7 @@ sap.ui.define([
 
 		this.setStartDate(new Date());
 
-		this._resizeProxy = jQuery.proxy(handleResize, this);
+		this._resizeProxy = handleResize.bind(this);
 		this._fnCustomSortedAppointments = undefined; //transfers a custom appointments sorter function to the CalendarRow
 		this.iWidth = 0;
 	};
@@ -2810,6 +2810,7 @@ sap.ui.define([
 			}
 
 			positionSelectAllCheckBox.call(this);
+			this._updatePickerSelection();
 		}else if (!bNoRowResize) {
 			for (i = 0; i < aRows.length; i++) {
 				oRow = aRows[i];
