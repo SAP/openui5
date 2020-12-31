@@ -19,8 +19,10 @@ sap.ui.define([
 				"sap/ui/thirdparty/jszip"
 			], function (JSZip) {
 
-				var oZipFile = new JSZip(),
-					oFolder = oZipFile.folder(sFolderName);
+				var oZip = new JSZip(),
+					oFolder = oZip.folder(sFolderName);
+
+				oFolder.folder(".card");
 
 				aFiles.forEach(function (oFile) {
 					if (oFileUtils.isBlob(oFile.name)) {
@@ -31,7 +33,7 @@ sap.ui.define([
 					}
 				});
 
-				var blobData = oZipFile.generate({ type: "blob" });
+				var blobData = oZip.generate({ type: "blob" });
 
 				oFileUtils.downloadFile(blobData, sFolderName, sExtension, "application/zip");
 			});
