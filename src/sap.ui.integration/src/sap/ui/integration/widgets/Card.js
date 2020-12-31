@@ -93,6 +93,8 @@ sap.ui.define([
 
 	var CardDataMode = library.CardDataMode;
 
+	var CARD_DESTROYED_ERROR = "Card is destroyed!";
+
 	/**
 	 * Constructor for a new <code>Card</code>.
 	 *
@@ -543,6 +545,10 @@ sap.ui.define([
 		this._oCardManifest
 			.load(mOptions)
 			.then(function () {
+				if (this.bIsDestroyed) {
+					throw new Error(CARD_DESTROYED_ERROR);
+				}
+
 				this._registerManifestModulePath();
 				this._isManifestReady = true;
 				this.fireManifestReady();
@@ -550,7 +556,11 @@ sap.ui.define([
 				return this._loadExtension();
 			}.bind(this))
 			.then(this._applyManifest.bind(this))
-			.catch(this._applyManifest.bind(this));
+			.catch(function (e) {
+				if (e.message !== CARD_DESTROYED_ERROR) {
+					this._applyManifest();
+				}
+			}.bind(this));
 	};
 
 	/**
