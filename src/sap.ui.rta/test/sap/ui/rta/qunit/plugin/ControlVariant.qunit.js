@@ -258,12 +258,16 @@ sap.ui.define([
 			assert.notOk(this.oControlVariantPlugin.isVariantSaveAvailable(this.oLayoutOuterOverlay), "then save not available for a non VariantManagement control overlay without variantReference");
 		});
 
-		QUnit.test("when isVariantSaveEnabled is called with VariantManagement overlay", function(assert) {
-			this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
-			var bVMEnabled = this.oControlVariantPlugin.isVariantSaveEnabled([this.oVariantManagementOverlay]);
-			var bButtonEnabled = this.oControlVariantPlugin.isVariantSaveEnabled([this.oButtonOverlay]);
-			assert.ok(bVMEnabled, "then variant save is enabled for VariantManagement control");
-			assert.notOk(bButtonEnabled, "then variant save is not enabled for a non VariantManagement control");
+		[
+			["variant management is modified", true, "enabled"],
+			["variant management is not modified", false, "disabled"]
+		].forEach(function (obj) {
+			QUnit.test("when isVariantSaveEnabled is called with VariantManagement overlay and " + obj[0], function(assert) {
+				this.oModel.oData[this.sLocalVariantManagementId].modified = obj[1];
+				this.oControlVariantPlugin.registerElementOverlay(this.oVariantManagementOverlay);
+				var bVMEnabled = this.oControlVariantPlugin.isVariantSaveEnabled([this.oVariantManagementOverlay]);
+				assert.strictEqual(bVMEnabled, obj[1], "then variant save is " + obj[2] + " for VariantManagement control");
+			});
 		});
 
 		QUnit.test("when isVariantSaveAsAvailable is called with different overlays", function(assert) {
@@ -473,6 +477,7 @@ sap.ui.define([
 			var createSaveAsCommandDone = assert.async();
 			var configureDone = assert.async();
 			var switchDone = assert.async();
+			this.oModel.oData[this.sLocalVariantManagementId].modified = true;
 
 			sandbox.stub(this.oControlVariantPlugin, "renameVariant").callsFake(function (aElementOverlays) {
 				// Rename
