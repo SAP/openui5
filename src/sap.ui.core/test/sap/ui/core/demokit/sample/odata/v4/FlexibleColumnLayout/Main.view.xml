@@ -82,7 +82,11 @@
 							<Button enabled="true" icon="sap-icon://delete" id="deleteSalesOrder"
 								press="onDeleteSalesOrder" tooltip="Delete sales order"/>
 							<Button enabled="true" icon="sap-icon://refresh" id="refreshSalesOrder"
-									press="onRefreshSalesOrder" tooltip="Refresh Sales Order"/>
+								press="onRefreshSalesOrder" tooltip="Refresh Sales Order"/>
+							<Button enabled="true" icon="sap-icon://trend-up"
+								id="increaseSalesOrderItemsQuantity"
+								press="onIncreaseSalesOrderItemsQuantity"
+								tooltip="Increase all Sales Order Items' Quantities by 1"/>
 						</Toolbar>
 					</form:toolbar>
 					<Label labelFor="SalesOrder::id" text="Sales Order ID"/>

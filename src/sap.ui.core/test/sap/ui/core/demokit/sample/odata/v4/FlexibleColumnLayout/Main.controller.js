@@ -48,7 +48,7 @@ sap.ui.define([
 			this.getView().getModel().resetChanges("UpdateGroup");
 		},
 
-		onCreateLineItem : function (oEvent) {
+		onCreateLineItem : function () {
 			var oContext,
 				oDeliveryDate = new Date();
 
@@ -97,6 +97,31 @@ sap.ui.define([
 			oBinding.filter(sQuery ? new Filter("GrossAmount", FilterOperator.GT, sQuery) : null);
 		},
 
+		onIncreaseSalesOrderItemsQuantity : function () {
+			var oContext = this.byId("objectPage").getBindingContext(),
+				oView = this.getView(),
+				oAction = oView.getModel().bindContext("com.sap.gateway.default.zui5_epm_sample"
+					+ ".v0002.SalesOrderIncreaseItemsQuantity(...)", oContext,
+					{$select : ["GrossAmount", "Note"]});
+
+			oView.setBusy(true);
+			oAction.execute().then(function () {
+				MessageToast.show("All items' quantities increased by 1, "
+					+ "sales order gross amount is now: "
+					+ oAction.getBoundContext().getProperty("GrossAmount"));
+			}, function (oError) {
+				MessageToast.show(oError.message);
+			});
+			oContext.requestSideEffects([
+					"SO_2_SOITEM/Quantity",
+					"SO_2_SOITEM/GrossAmount"
+				], "$auto")
+				.catch(function () {/*may fail because of previous requests*/})
+				.finally(function () {
+					oView.setBusy(false);
+				});
+		},
+
 		onInit : function () {
 			this.initMessagePopover("showMessages");
 			this.oUIModel = new JSONModel({
@@ -115,7 +140,7 @@ sap.ui.define([
 				"headerContext");
 		},
 
-		onRefreshSalesOrder : function (oEvent) {
+		onRefreshSalesOrder : function () {
 			var oBinding = this.byId("objectPage").getBindingContext();
 
 			if (this.hasPendingChanges(oBinding, "refreshing")) {
@@ -124,7 +149,7 @@ sap.ui.define([
 			oBinding.refresh(undefined, true);
 		},
 
-		onRefreshSalesOrderList : function (oEvent) {
+		onRefreshSalesOrderList : function () {
 			var oBinding = this.byId("SalesOrderList").getBinding("items");
 
 			if (this.hasPendingChanges(oBinding, "refreshing")) {
