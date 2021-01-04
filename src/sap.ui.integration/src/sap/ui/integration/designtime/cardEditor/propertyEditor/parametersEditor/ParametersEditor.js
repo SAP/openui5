@@ -73,7 +73,7 @@ sap.ui.define([
 		var sManifestpath = oConfigValue.value.manifestpath || vItemMetadata.manifestpath || "";
 		var sDescription = oConfigValue.value.description || vItemMetadata.description || "";
 		var bTranslatable = (oConfigValue.value.translatable || vItemMetadata.translatable) === true;
-		var bAllowSettings = (oConfigValue.value.allowSettings || vItemMetadata.allowSettings) === true;
+		var bAllowSettings = (oConfigValue.value.allowSettings || vItemMetadata.allowSettings) !== false;
 		var bAllowDynamicValues = (oConfigValue.value.allowDynamicValues || vItemMetadata.allowDynamicValues) === true;
 		var oVisualization = oConfigValue.value.visualization || vItemMetadata.visualization;
 		var oValues = oConfigValue.value.values || vItemMetadata.values;
