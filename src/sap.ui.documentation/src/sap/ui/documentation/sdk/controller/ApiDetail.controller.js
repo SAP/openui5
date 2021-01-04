@@ -365,9 +365,12 @@ sap.ui.define([
 					oModel,
 					oUi5Metadata,
 					fnSort = function (a, b) {
-						if (a.name > b.name) {
+						a = a.toLowerCase();
+						b = b.toLowerCase();
+
+						if (a > b) {
 							return 1;
-						} else if (a.name < b.name) {
+						} else if (a < b) {
 							return -1;
 						}
 						return 0;
@@ -403,15 +406,15 @@ sap.ui.define([
 				};
 
 				if (oControlData.borrowed.properties.length) {
-					oUi5Metadata.properties = (oUi5Metadata.properties || []).concat(oControlData.borrowed.properties).sort(fnSort);
+					oUi5Metadata.properties = (oUi5Metadata.properties || []).concat(oControlData.borrowed.properties);
 				}
 
 				if (oControlData.borrowed.aggregations.length) {
-					oUi5Metadata.aggregations = (oUi5Metadata.aggregations || []).concat(oControlData.borrowed.aggregations).sort(fnSort);
+					oUi5Metadata.aggregations = (oUi5Metadata.aggregations || []).concat(oControlData.borrowed.aggregations);
 				}
 
 				if (oControlData.borrowed.associations.length) {
-					oUi5Metadata.associations = (oUi5Metadata.associations || []).concat(oControlData.borrowed.associations).sort(fnSort);
+					oUi5Metadata.associations = (oUi5Metadata.associations || []).concat(oControlData.borrowed.associations);
 				}
 
 				// Filter and leave only visible elements
@@ -431,30 +434,44 @@ sap.ui.define([
 
 				if (oUi5Metadata) {
 					oControlData.dnd = oUi5Metadata.dnd;
-					if (oUi5Metadata.properties) {
-						oUi5Metadata.properties = this.transformElements(oUi5Metadata.properties, fnIsAllowedMember);
-						oControlData.hasControlProperties = !!oUi5Metadata.properties.length;
+					oControlData.hasControlProperties = !!(oUi5Metadata.properties && oUi5Metadata.properties.length);
+					oControlData.hasAssociations = !!(oUi5Metadata.associations && oUi5Metadata.associations.length);
+					oControlData.hasAggregations = !!(oUi5Metadata.aggregations && oUi5Metadata.aggregations.length);
+					oControlData.hasSpecialSettings = !!(oUi5Metadata.specialSettings && oUi5Metadata.specialSettings.length);
+					oControlData.hasAnnotations = !!(oUi5Metadata.annotations && oUi5Metadata.annotations.length);
+
+					if (oControlData.hasControlProperties) {
+						oUi5Metadata.properties = this.transformElements(oUi5Metadata.properties, fnIsAllowedMember).sort(function(a,b) {
+							return fnSort(a.name, b.name);
+						});
 					}
 
-					if (oUi5Metadata.associations) {
-						oUi5Metadata.associations = this.transformElements(oUi5Metadata.associations, fnIsAllowedMember);
-						oControlData.hasAssociations = !!oUi5Metadata.associations.length;
+					if (oControlData.hasAssociations) {
+						oUi5Metadata.associations = this.transformElements(oUi5Metadata.associations, fnIsAllowedMember).sort(function(a,b) {
+							return fnSort(a.name, b.name);
+						});
 					}
 
-					if (oUi5Metadata.aggregations) {
-						oUi5Metadata.aggregations = this.transformElements(oUi5Metadata.aggregations, fnIsAllowedMember);
-						oControlData.hasAggregations = !!oUi5Metadata.aggregations.length;
+					if (oControlData.hasAggregations) {
+						oUi5Metadata.aggregations = this.transformElements(oUi5Metadata.aggregations, fnIsAllowedMember).sort(function(a,b) {
+							return fnSort(a.name, b.name);
+						});
 						oControlData.hasAggregationAltTypes = oUi5Metadata.aggregations.some(function (oElement) {
 							return !!oElement.altTypes;
 						});
 					}
 
-					if (oUi5Metadata.specialSettings) {
-						oUi5Metadata.specialSettings = this.transformElements(oUi5Metadata.specialSettings, fnIsAllowedMember);
-						oControlData.hasSpecialSettings = !!oUi5Metadata.specialSettings.length;
+					if (oControlData.hasSpecialSettings) {
+						oUi5Metadata.specialSettings = this.transformElements(oUi5Metadata.specialSettings, fnIsAllowedMember).sort(function(a,b) {
+							return fnSort(a.name, b.name);
+						});
 					}
 
-					oControlData.hasAnnotations = !!(oUi5Metadata.annotations && oUi5Metadata.annotations.length);
+					if (oControlData.hasAnnotations) {
+						oUi5Metadata.annotations = (oUi5Metadata.annotations).sort(function(a,b) {
+							return fnSort(a.annotation, b.annotation);
+						});
+					}
 				}
 
 				oControlData.hasChildren = !!oControlData.nodes;
