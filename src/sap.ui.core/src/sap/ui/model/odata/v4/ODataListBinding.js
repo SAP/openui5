@@ -796,8 +796,6 @@ sap.ui.define([
 	 *
 	 * @param {number} iStart
 	 *   The start index of the range
-	 * @param {number} iLength
-	 *   The number of contexts in the range
 	 * @param {object[]} aResults
 	 *   The OData entities read from the cache for the given range
 	 * @returns {boolean}
@@ -806,7 +804,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataListBinding.prototype.createContexts = function (iStart, iLength, aResults) {
+	ODataListBinding.prototype.createContexts = function (iStart, aResults) {
 		var bChanged = false,
 			oContext,
 			sContextPath,
@@ -1164,7 +1162,7 @@ sap.ui.define([
 		}
 
 		return oPromise.then(function (oResult) {
-			return oResult && that.createContexts(iStart, iLength, oResult.value);
+			return oResult && that.createContexts(iStart, oResult.value);
 		}, function (oError) {
 			oGroupLock.unlock(true);
 			throw oError;
