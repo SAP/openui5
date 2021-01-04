@@ -2,22 +2,34 @@
  * ${copyright}
  */
 sap.ui.define([
+	"./delegate/GridItemNavigation",
+	"./GridListRenderer",
+	"./GridNavigationMatrix",
 	"./library",
-	"sap/ui/events/KeyCodes",
 	"sap/m/ListBase",
 	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/core/Core",
+	"sap/ui/core/delegate/ItemNavigation",
+	"sap/ui/Device",
 	"sap/ui/layout/cssgrid/GridLayoutDelegate",
-	"sap/ui/layout/cssgrid/GridLayoutBase",
-	"./GridListRenderer"
+	"sap/ui/layout/cssgrid/GridLayoutBase"
+
 ], function(
+	GridItemNavigation,
+	GridListRenderer,
+	GridNavigationMatrix,
 	library,
-	KeyCodes,
 	ListBase,
 	ManagedObjectObserver,
+	Core,
+	ItemNavigation,
+	Device,
 	GridLayoutDelegate,
 	GridLayoutBase
 ) {
 	"use strict";
+
+	var NavigationDirection = library.NavigationDirection;
 
 	/**
 	 * Constructor for a new GridList.
@@ -70,10 +82,16 @@ sap.ui.define([
 	 * Both <code>{@link sap.ui.core.dnd.DropInfo}</code> and <code>{@link sap.f.dnd.GridDropInfo}</code> can be used to configure drag and drop.
 	 * The difference is that the <code>{@link sap.f.dnd.GridDropInfo}</code> will provide a drop indicator, which mimics the size of the dragged item and shows the potential drop position inside the grid.
 	 *
+	 * <h3>Keyboard Navigation:</h3>
+	 * <code>GridList</code> provides support for two-dimensional keyboard navigation through its contained controls.
+	 * Navigating up/down or left/right using the arrow keys follows the configurable two-dimensional grid mesh.
+	 * This provides stable navigation paths in the cases when there are items of different sizes.
+	 * When the user presses an arrow key in a direction outward of the <code>GridList</code>, a <code>borderReached</code> event will be fired.
+	 * The implementation of the <code>borderReached</code> event allows the application developer to control where the focus goes, and depending on the surrounding layout pass the focus to a specific place in a neighboring <code>GridList</code> using the method {@link #focusItemByDirection}.
+	 *
 	 * <h3>Current Limitations</h3>
 	 * <ul>
 	 * <li>For Microsoft Internet Explorer some layouts are not supported, due to browser specifics.</li>
-	 * <li>For Microsoft Edge 15 and older versions some layouts are not supported, due to browser specifics.</li>
 	 * </ul>
 	 *
 	 * @see {@link topic:32d4b9c2b981425dbc374d3e9d5d0c2e Grid Controls}
@@ -103,6 +121,35 @@ sap.ui.define([
 			 * Defines a custom grid layout
 			 */
 			customLayout: { type: "sap.ui.layout.cssgrid.GridLayoutBase", multiple: false }
+		},
+		events: {
+			/**
+			 * Fires if the border of the visualizations is reached
+			 * so that an application can react on this.
+			 */
+			borderReached: {
+				parameters: {
+
+					/**
+					 * Event that leads to the focus change.
+					 */
+					event: { type: "jQuery.Event" },
+					/**
+					 * The navigation direction that is used to reach the border.
+					 */
+					direction: {type: "sap.f.NavigationDirection"},
+
+					/**
+					 * The row index, from which the border is reached.
+					 */
+					row: {type: "integer"},
+
+					/**
+					 * The the column index, from which the border is reached.
+					 */
+					column: {type: "integer"}
+				}
+			}
 		}
 	}});
 
@@ -134,6 +181,32 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	GridList.prototype.onAfterPageLoaded = function () {
+		if (this._oItemNavigation) {
+			this._oItemNavigation.resetFocusPosition();
+		}
+	};
+
+	/**
+	 * Fires when border of the <code>sap.f.GridList</code> is reached.
+	 * @param {object} mParameters a set of parameters
+	 * @private
+	 * @ui5-restricted
+	 */
+	GridList.prototype.onItemNavigationBorderReached = function (mParameters) {
+		var oGrowingInfo = this.getGrowingInfo();
+
+		// don't fire border reached if there is more button
+		if (mParameters.direction === NavigationDirection.Down && oGrowingInfo && oGrowingInfo.actual !== oGrowingInfo.total) {
+			return;
+		}
+
+		this.fireEvent("borderReached", mParameters);
+	};
+
+	/**
 	 * =================== END of lifecycle methods & delegate handling ===================
 	 */
 
@@ -148,12 +221,80 @@ sap.ui.define([
 	};
 
 	/**
+	 * Focuses an item in the given direction - up, down, left or right,
+	 * from the starting position specified by row and column.
+	 *
+	 * If the direction is up or down, the method focuses
+	 * the nearest item in the same column, located in the specified direction.
+	 *
+	 * If the direction is left or right, the method focuses
+	 * the nearest item at the same row, in the specified direction.
+	 *
+	 * <b>Note:</b>Should be called after the rendering of <code>GridList</code> is ready.
+	 *
+	 * @public
+	 * @experimental Since 1.87. Behavior might change.
+	 * @param {sap.f.NavigationDirection} sDirection The navigation direction.
+	 * @param {integer} iRow The row index of the starting position.
+	 * @param {integer} iColumn The column index of the starting position.
+	 */
+	GridList.prototype.focusItemByDirection = function (sDirection, iRow, iColumn) {
+		this._oItemNavigation.focusItemByDirection(this, sDirection, iRow, iColumn);
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	GridList.prototype.getNavigationMatrix = function () {
+		if (!Core.isThemeApplied()) {
+			return null;
+		}
+
+		var aItemsDomRefs = this.getItems().reduce(function (aAcc, oItem) {
+			if (oItem.getVisible()) {
+				aAcc.push(oItem.getDomRef());
+			}
+
+			return aAcc;
+		}, []);
+
+		return GridNavigationMatrix.create(this.getItemsContainerDomRef(), aItemsDomRefs, this._getActiveLayoutSizes());
+	};
+
+	/**
 	 * Implements IGridConfigurable interface.
 	 *
 	 * @returns {sap.ui.layout.cssgrid.GridLayoutBase} The grid layout
 	 * @protected
 	 */
 	GridList.prototype.getGridLayoutConfiguration = GridList.prototype.getCustomLayout;
+
+	/**
+	 * @override
+	 */
+	GridList.prototype._startItemNavigation = function (bIfNeeded) {
+		if (!this._oItemNavigation) {
+			if (Device.browser.msie && (!this.getCustomLayout() || !this.getCustomLayout().hasGridPolyfill())) {
+				this._oItemNavigation = new ItemNavigation();
+			} else {
+				this._oItemNavigation = new GridItemNavigation();
+			}
+			this._oItemNavigation.setCycling(false)
+				.setDisabledModifiers({
+					sapnext : ["alt"],
+					sapprevious : ["alt"]
+				})
+				.setFocusedIndex(0);
+
+			this.addDelegate(this._oItemNavigation);
+
+			// set the tab index of active items
+			this._setItemNavigationTabIndex(0);
+		}
+
+		ListBase.prototype._startItemNavigation.apply(this, arguments);
+	};
 
 	/**
 	 * Adds the GridLayoutDelegate.
@@ -227,54 +368,22 @@ sap.ui.define([
 		GridLayoutBase.setItemStyles(oEvent.srcControl);
 	};
 
-	/**
-	 * Handles the onsapnext event
-	 * Right arrow focus to the next item
-	 *
-	 * @param {jQuery.Event} oEvent the browser event
-	 * @private
-	 */
-	GridList.prototype.onsapnext = function (oEvent) {
+	GridList.prototype._getActiveLayoutSizes = function () {
+		var oGridDomRef = this.getItemsContainerDomRef(),
+			mGridStyles = window.getComputedStyle(oGridDomRef),
+			oCl = this.getCustomLayout();
 
-		var oItemNavigation = this._oItemNavigation;
-		if (!oItemNavigation) {
-			return;
+		if (Device.browser.msie && oCl) {
+			return oCl.getPolyfillSizes(this);
+		} else {
+			return {
+				gap: parseFloat(mGridStyles.rowGap),
+				rows: mGridStyles.gridTemplateRows.split(/\s+/),
+				columns: mGridStyles.gridTemplateColumns.split(/\s+/)
+			};
 		}
 
-		if (oEvent.keyCode === KeyCodes.ARROW_RIGHT) {
-			oItemNavigation.onsapnext({
-				keyCode: KeyCodes.ARROW_DOWN,
-				target: oEvent.target,
-				preventDefault: oEvent.preventDefault,
-				stopPropagation: oEvent.stopPropagation
-			});
-		}
-	};
-
-	/**
-	 * Handles the onsapprevious event
-	 * Left arrow the previous item
-	 *
-	 * @param {jQuery.Event} oEvent the browser event
-	 * @private
-	 */
-	GridList.prototype.onsapprevious = function (oEvent) {
-
-		var oItemNavigation = this._oItemNavigation;
-		if (!oItemNavigation) {
-			return;
-		}
-
-		if (oEvent.keyCode === KeyCodes.ARROW_LEFT) {
-			oItemNavigation.onsapprevious({
-				keyCode: KeyCodes.ARROW_UP,
-				target: oEvent.target,
-				preventDefault: oEvent.preventDefault,
-				stopPropagation: oEvent.stopPropagation
-			});
-		}
 	};
 
 	return GridList;
-
 });

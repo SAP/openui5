@@ -43,8 +43,9 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var EDGE_VERSION_WITH_GRID_SUPPORT = 16;
-	var bBrowserSupportGrid = !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
+	var DOM_RENDER_LOCATION = "qunit-fixture";
+
+	var bBrowserSupportGrid = !Device.browser.msie;
 
 	function getGridSettings() {
 		return {
@@ -429,7 +430,7 @@ sap.ui.define([
 			}
 		});
 
-		oGridList.placeAt("qunit-fixture");
+		oGridList.placeAt(DOM_RENDER_LOCATION);
 		sap.ui.getCore().applyChanges();
 
 		var id = "#" + oGridList.sId + "-listUl";
@@ -442,7 +443,6 @@ sap.ui.define([
 			assert.equal(sGridAutoRows, undefined,  "CSS Grid is not supported for this browser version. Height of the rows are calculated");
 		}
 	});
-
 
 	QUnit.test("When (GridList control) is without Grouping", function (assert) {
 		var oGridBoxLayout = new GridBoxLayout();
@@ -464,7 +464,7 @@ sap.ui.define([
 			}
 		});
 
-		oGridList.placeAt("qunit-fixture");
+		oGridList.placeAt(DOM_RENDER_LOCATION);
 		sap.ui.getCore().applyChanges();
 
 		var id = "#" + oGridList.sId + "-listUl";
@@ -484,7 +484,7 @@ sap.ui.define([
 			customLayout: oGridBoxLayout
 		});
 
-		oGridList.placeAt("qunit-fixture");
+		oGridList.placeAt(DOM_RENDER_LOCATION);
 		sap.ui.getCore().applyChanges();
 
 		var id = "#" + oGridList.sId + "-listUl";
@@ -522,13 +522,13 @@ sap.ui.define([
 			}
 		});
 
-		oGridList.placeAt("qunit-fixture");
+		oGridList.placeAt(DOM_RENDER_LOCATION);
 		sap.ui.getCore().applyChanges();
 
 		var id = oGridList.sId + "-listUl";
 
 		assert.equal(document.getElementById(id).childElementCount, 1,  "there is one item in the list");
-		sap.ui.test.qunit.triggerKeydown(document.getElementById("gListGrowing-trigger"), KeyCodes.ENTER);
+		qutils.triggerKeydown(document.getElementById("gListGrowing-trigger"), KeyCodes.ENTER);
 		assert.equal(document.getElementById(id).childElementCount, 2,  "there are two items in the list");
 	});
 
@@ -554,11 +554,65 @@ sap.ui.define([
 			}
 		});
 
-		oGridList.placeAt("qunit-fixture");
+		oGridList.placeAt(DOM_RENDER_LOCATION);
 		sap.ui.getCore().applyChanges();
 
 		assert.equal(oGridList.getItems()[0].getDomRef().clientWidth, 100, "boxWidth is set correctly to the GridBoxLayout");
 	});
+
+	if (!bBrowserSupportGrid) {
+		QUnit.test("Rows and cols with 'boxWidth'", function (assert) {
+			// Arrange
+			var oLayout = new GridBoxLayout({boxWidth: "80px"}),
+				oGridList = new GridList({
+					customLayout: oLayout,
+					width: "200px",
+					items: [
+						new CustomListItem(),
+						new CustomListItem(),
+						new CustomListItem(),
+						new CustomListItem()
+					]
+				});
+			oGridList.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			var oSizes = oLayout.getPolyfillSizes(oGridList);
+
+			// Assert
+			assert.strictEqual(oSizes.rows.length, 2, "There are 2 rows");
+			assert.strictEqual(oSizes.columns.length, 2, "There are 2 columns");
+
+			// Clean up
+			oGridList.destroy();
+		});
+
+		QUnit.test("Rows and cols with 'boxesPerRowConfig'", function (assert) {
+			// Arrange
+			var oLayout = new GridBoxLayout({boxesPerRowConfig: "XL3 L3 M3 S3"}),
+				oGridList = new GridList({
+					customLayout: oLayout,
+					width: "100px",
+					items: [
+						new CustomListItem(),
+						new CustomListItem(),
+						new CustomListItem(),
+						new CustomListItem()
+					]
+				});
+			oGridList.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			var oSizes = oLayout.getPolyfillSizes(oGridList);
+
+			// Assert
+			assert.strictEqual(oSizes.rows.length, 2, "There are 2 rows");
+			assert.strictEqual(oSizes.columns.length, 3, "There are 3 columns");
+
+			// Clean up
+			oGridList.destroy();
+		});
+	}
 
 	QUnit.module("ResponsiveColumnLayout", {
 		beforeEach: function () {
@@ -673,7 +727,7 @@ sap.ui.define([
 				columns: 2
 			});
 			this.oItem = this.oGrid.getItems()[0];
-			this.oGrid.placeAt("qunit-fixture");
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
 			Core.applyChanges();
 		},
 		afterEach: function () {

@@ -3,12 +3,20 @@
  */
 
 sap.ui.define([
+	"sap/ui/dom/units/Rem",
 	"sap/ui/layout/cssgrid/GridLayoutBase",
 	"sap/ui/layout/cssgrid/GridSettings",
 	"sap/ui/layout/cssgrid/GridBoxLayoutStyleHelper",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/jquery"
-], function (GridLayoutBase, GridSettings, GridBoxLayoutStyleHelper, Device, jQuery) {
+], function (
+	Rem,
+	GridLayoutBase,
+	GridSettings,
+	GridBoxLayoutStyleHelper,
+	Device,
+	jQuery
+) {
 	"use strict";
 
 	var SPAN_PATTERN = /^([X][L](?:[1-9]|1[0-2]))? ?([L](?:[1-9]|1[0-2]))? ?([M](?:[1-9]|1[0-2]))? ?([S](?:[1-9]|1[0-2]))?$/i;
@@ -29,6 +37,8 @@ sap.ui.define([
 		"M": "sapUiLayoutCSSGridBoxLayoutSpanM4",
 		"S": "sapUiLayoutCSSGridBoxLayoutSpanS2"
 	};
+
+	var GRID_GAP = "0.5rem";
 
 	/**
 	 * Constructor for a new GridBoxLayout.
@@ -81,8 +91,48 @@ sap.ui.define([
 	GridBoxLayout.prototype.getActiveGridSettings = function () {
 		return new GridSettings({
 			gridTemplateColumns: this._getTemplateColumns(),
-			gridGap: "0.5rem 0.5rem"
+			gridGap: GRID_GAP + " " + GRID_GAP
 		});
+	};
+
+	/**
+	 * @override
+	 */
+	GridBoxLayout.prototype.hasGridPolyfill = function () {
+		return true;
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	GridBoxLayout.prototype.getPolyfillSizes = function (oGrid) {
+		var aItems = oGrid.getItems(),
+			oBox = aItems.find(function (oItem) {
+				return !oItem.isA("sap.m.GroupHeaderListItem");
+			}),
+			iGridWith = oGrid.$().width(),
+			iBoxWidth = oBox.$().outerWidth(),
+			iCols = Math.floor(iGridWith / iBoxWidth),
+			aCssRows = [],
+			i = 0;
+
+		while (i < aItems.length) {
+			aCssRows.push(aItems[i].$().outerHeight() + "px");
+
+			// jump to the next row
+			if (aItems[i].isA("sap.m.GroupHeaderListItem")) {
+				i += 1; // header list items take entire row
+			} else {
+				i += iCols;
+			}
+		}
+
+		return {
+			gap: Rem.toPx(GRID_GAP),
+			rows: aCssRows,
+			columns: new Array(iCols).fill(iBoxWidth + "px")
+		};
 	};
 
 	/**

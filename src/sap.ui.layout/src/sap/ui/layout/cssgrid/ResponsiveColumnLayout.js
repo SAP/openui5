@@ -170,6 +170,33 @@ sap.ui.define([
 	};
 
 	/**
+	 * @override
+	 */
+	ResponsiveColumnLayout.prototype.hasGridPolyfill = function () {
+		return true;
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	ResponsiveColumnLayout.prototype.getPolyfillSizes = function (oGrid) {
+		var $grid = oGrid.$(),
+			iWidth = $grid.parent().outerWidth(),
+			oRange = Device.media.getCurrentRange("StdExt", iWidth),
+			iColumnsCount = mSizeColumns[oRange.name],
+			iInnerWidth = $grid.innerWidth(),
+			iGapSize = oRange.name === "Phone" ? iPhoneGridGap : iStandardGidGap,
+			iColumnSize = Math.floor((iInnerWidth - iGapSize * (iColumnsCount - 1) ) / iColumnsCount);
+
+		return {
+			gap: iGapSize,
+			rows: this._oVirtualGrid.rowsHeights.map(function (iHeight) { return iHeight + "px"; }),
+			columns: new Array(iColumnsCount).fill(iColumnSize + "px")
+		};
+	};
+
+	/**
 	 * Changes the active layout if it's different than the currently active one.
 	 *
 	 * @param {sap.ui.layout.cssgrid.IGridConfigurable} oGrid The grid which layout is going to be updated
@@ -266,6 +293,7 @@ sap.ui.define([
 		}
 
 		var oVirtualGrid = new VirtualGrid();
+		this._oVirtualGrid = oVirtualGrid;
 		oVirtualGrid.init({
 			numberOfCols: iColumnsCount,
 			cellWidth: iColumnSize,

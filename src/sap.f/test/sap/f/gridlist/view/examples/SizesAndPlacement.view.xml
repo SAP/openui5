@@ -27,7 +27,7 @@
 					<Image src="../images/Woman_avatar_01.png" />
 					<VBox>
 						<Title text="Patagonia Men's Triolet Jacket" wrapping="true"/>
-						<Label text="{Patagonia" wrapping="true"/>
+						<Label text="Patagonia" wrapping="true"/>
 						<Text wrapping="true" text="The PowSlaer Hacket is lightweight, packable, optimized for backcountry touring and features a minimalist design.
 													The GORE-Text Pro fabric package includes the first ever 100% recycled nylon face fabric to deliver the highest
 													level of durable waterproof/breathable"/>
@@ -45,7 +45,7 @@
 				<Image src="../images/Woman_avatar_01.png" />
 				<VBox>
 					<Title text="Patagonia Men's Triolet Jacket" wrapping="true"/>
-					<Label text="{Patagonia" wrapping="true"/>
+					<Label text="Patagonia" wrapping="true"/>
 					<Text wrapping="true" text="The PowSlaer Hacket is lightweight, packable, optimized for backcountry touring and features a minimalist design.."/>
 				</VBox>
 			</HBox>
@@ -59,7 +59,7 @@
 					<Image src="../images/Woman_avatar_01.png" />
 					<VBox>
 						<Title text="Patagonia Men's Triolet Jacket" wrapping="true"/>
-						<Label text="{Patagonia" wrapping="true"/>
+						<Label text="Patagonia" wrapping="true"/>
 						<Text wrapping="true" text="The PowSlaer Hacket is lightweight, packable, optimized for backcountry touring and features a minimalist design.."/>
 					</VBox>
 				</HBox>
@@ -71,7 +71,7 @@
 			</f:layoutData>
 			<VBox class="sapUiSmallMargin">
 				<Title text="Patagonia Men's Triolet Jacket" wrapping="true"/>
-				<Label text="{Patagonia" wrapping="true"/>
+				<Label text="Patagonia" wrapping="true"/>
 				<Text wrapping="true" text="The PowSlaer Hacket is lightweight, packable, optimized for backcountry touring and features a minimalist design.."/>
 			</VBox>
 		</f:GridListItem>

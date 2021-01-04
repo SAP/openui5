@@ -20,8 +20,6 @@ sap.ui.define([
 		gridAutoFlow: "grid-auto-flow"
 	};
 
-	var EDGE_VERSION_WITH_GRID_SUPPORT = 16;
-
 	var mGridAutoFlow = {
 		Row: "row",
 		Column: "column",
@@ -241,7 +239,16 @@ sap.ui.define([
 	 * @returns {boolean} If native grid is supported by the browser
 	 */
 	GridLayoutBase.prototype.isGridSupportedByBrowser = function () {
-		return !Device.browser.msie && !(Device.browser.edge && Device.browser.version < EDGE_VERSION_WITH_GRID_SUPPORT);
+		return !Device.browser.msie;
+	};
+
+	/**
+	 * @returns {boolean} If the layout provides grid support for browsers that don't have native support
+	 * @private
+	 * @ui5-restricted
+	 */
+	GridLayoutBase.prototype.hasGridPolyfill = function () {
+		return false;
 	};
 
 	/**

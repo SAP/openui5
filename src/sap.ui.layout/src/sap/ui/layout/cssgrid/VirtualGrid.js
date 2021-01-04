@@ -45,7 +45,7 @@ sap.ui.define([
 	 * Constructor for a new <code>sap.f.VirtualGrid</code>.
 	 *
 	 * Use to calculate item positions in a way that they mimic a CSS grid.
-	 * This class is a part of polyfill of CSS grid for IE and Edge (version < 16).
+	 * This class is a part of polyfill of CSS grid for IE.
 	 *
 	 * @class
 	 * @private

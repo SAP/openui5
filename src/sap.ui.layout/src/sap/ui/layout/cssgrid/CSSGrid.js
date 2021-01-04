@@ -86,7 +86,6 @@ sap.ui.define([
 	 * <h3>Current Limitations</h3>
 	 * <ul>
 	 * <li>No support for IE11.</li>
-	 * <li>No support for Edge version 15.</li>
 	 * <li>No alignment and ordering</li>
 	 * <li>No Named grid areas and lines</li>
 	 * </ul>
@@ -120,28 +119,28 @@ sap.ui.define([
 			/**
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-columns MDN web docs: grid-template-columns}
 			 *
-			 * <b>Note:</b> Not supported in IE11, Edge 15.
+			 * <b>Note:</b> Not supported in IE11.
 			 */
 			gridTemplateColumns: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-template-rows MDN web docs: grid-template-rows}
 			 *
-			 * <b>Note:</b> Not supported in IE11, Edge 15.
+			 * <b>Note:</b> Not supported in IE11.
 			 */
 			gridTemplateRows: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-row-gap MDN web docs: grid-row-gap}
 			 *
-			 * <b>Note:</b> Not supported in IE11, Edge 15.
+			 * <b>Note:</b> Not supported in IE11.
 			 */
 			gridRowGap: { type: "sap.ui.core.CSSSize", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-column-gap MDN web docs: grid-column-gap}
 			 *
-			 * <b>Note:</b> Not supported in IE11, Edge 15.
+			 * <b>Note:</b> Not supported in IE11.
 			 */
 			gridColumnGap: { type: "sap.ui.core.CSSSize", defaultValue: "" },
 
@@ -149,28 +148,28 @@ sap.ui.define([
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-gap MDN web docs: grid-gap}
 			 * It is a shorthand for gridRowGap and gridColumnGap. If some of them is set, the gridGap value will have less priority and will be overwritten.
 			 *
-			 * <b>Note:</b> Not supported in IE11, Edge 15.
+			 * <b>Note:</b> Not supported in IE11.
 			 */
 			gridGap: { type: "sap.ui.layout.cssgrid.CSSGridGapShortHand", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-rows MDN web docs: grid-auto-rows}
 			 *
-			 * <b>Note:</b> Not supported in IE11, Edge 15.
+			 * <b>Note:</b> Not supported in IE11.
 			 */
 			gridAutoRows: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-columns MDN web docs: grid-auto-columns}
 			 *
-			 * <b>Note:</b> Not supported in IE11, Edge 15.
+			 * <b>Note:</b> Not supported in IE11.
 			 */
 			gridAutoColumns: { type: "sap.ui.layout.cssgrid.CSSGridTrack", defaultValue: "" },
 
 			/**
 			 * Sets the value for the CSS display:grid property {@link https://developer.mozilla.org/en-US/docs/Web/CSS/grid-auto-flow MDN web docs: grid-auto-flow}
 			 *
-			 * <b>Note:</b> Not supported in IE11, Edge 15.
+			 * <b>Note:</b> Not supported in IE11.
 			 */
 			gridAutoFlow: { type: "sap.ui.layout.cssgrid.CSSGridAutoFlow", defaultValue: "Row" }
 		},

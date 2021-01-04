@@ -1761,7 +1761,7 @@ function (
 
 	QUnit.test("Creating grid matrix", function (assert) {
 		// Arrange
-		var aMatrix = GridContainerUtils.makeMatrix(this.oGrid);
+		var aMatrix = this.oGrid.getNavigationMatrix();
 
 		// Assert
 		assert.strictEqual(aMatrix.length, bIsGridSupported ? 6 : 8, "Matrix created with the expected number of rows");
@@ -1772,19 +1772,29 @@ function (
 		// Arrange
 		this.oGrid.setInlineBlockLayout(true);
 		Core.applyChanges();
-		var aMatrix = GridContainerUtils.makeMatrix(this.oGrid);
+		var aMatrix = this.oGrid.getNavigationMatrix();
 
 		// Assert
 		assert.strictEqual(aMatrix.length, bIsGridSupported ? 2 : 8, "Matrix created with the expected number of rows");
 		assert.strictEqual(aMatrix[0].length, 6, "Matrix created with the expected number of columns");
 	});
 
+	QUnit.test("Creating grid matrix when theme is not loaded", function (assert) {
+		// Arrange
+		sinon.stub(Core, "isThemeApplied").returns(false);
+
+		// Assert
+		assert.strictEqual(this.oGrid.getNavigationMatrix(), null, "'null' is returned when theme is not yet loaded");
+
+		// Clean up
+		Core.isThemeApplied.restore();
+	});
+
 	QUnit.test("Grid matrix should not include items with visible=false", function (assert) {
 		// Arrange
 		var oInvisibleItem = this.oGrid.getItems()[0].setVisible(false),
 			oItemWrapper = GridContainerUtils.getItemWrapper(oInvisibleItem),
-			aMatrix = GridContainerUtils.makeMatrix(this.oGrid),
-
+			aMatrix = this.oGrid.getNavigationMatrix(),
 			bExists = aMatrix.some(function (aRow) {
 				return aRow.some(function (oItemAtColumn) {
 					return oItemAtColumn === oItemWrapper;

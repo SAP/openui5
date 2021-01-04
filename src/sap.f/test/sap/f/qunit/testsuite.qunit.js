@@ -166,6 +166,11 @@ sap.ui.define(function () {
 					only: ["sap/f/GridListItem"]
 				}
 			},
+			"GridNavigationMatrix": {
+				coverage: {
+					only: ["sap/f/GridNavigationMatrix"]
+				}
+			},
 			"ProductSwitchItem": {
 				coverage: {
 					only: ["sap/f/ProductSwitchItem"]

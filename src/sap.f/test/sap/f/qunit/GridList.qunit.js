@@ -3,6 +3,7 @@
 sap.ui.define([
 	"sap/ui/Device",
 	"sap/f/GridList",
+	"sap/f/library",
 	"sap/ui/layout/cssgrid/GridBoxLayout",
 	"sap/m/CustomListItem",
 	"sap/f/GridListItem",
@@ -19,6 +20,7 @@ sap.ui.define([
 function (
 	Device,
 	GridList,
+	fLibrary,
 	GridBoxLayout,
 	CustomListItem,
 	GridListItem,
@@ -35,6 +37,8 @@ function (
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
+
+	var NavigationDirection = fLibrary.NavigationDirection;
 
 	QUnit.module("Init");
 
@@ -365,6 +369,18 @@ function (
 		}
 	});
 
+	QUnit.test("Focus position is reset after pressing on 'More' button", function (assert) {
+		// Arrange
+		var oListTrigger = this.oGrid._oGrowingDelegate._getTrigger();
+
+		// Act
+		oListTrigger.ontap(new jQuery.Event());
+		this.clock.tick(500);
+
+		// Assert
+		assert.strictEqual(this.oGrid._oItemNavigation._mCurrentPosition, null, "Position is reset after growing");
+	});
+
 	function checkHeights (oGrid, assert) {
 		var bEqualHeights = true;
 		var iHeight = oGrid.getItems()[1].$().outerHeight(); // Take the first non-group header item.
@@ -421,13 +437,18 @@ function (
 		beforeEach: function () {
 			this.oGridList = new GridList({
 				customLayout: new GridBoxLayout({
-					boxWidth: "200px"
+					boxesPerRowConfig: "XL2 L2 M2 S2"
 				}),
 				items: [
 					new GridListItem({
 						content: [
 							new Text({ text: "This is the content"}),
 							new Button({ text: "Button" })
+						]
+					}),
+					new GridListItem({
+						content: [
+							new Text({ text: "This is the content"})
 						]
 					}),
 					new GridListItem({
@@ -454,45 +475,43 @@ function (
 	QUnit.test("Right/Down Arrow navigating trough grid list", function (assert) {
 
 		// Arrange
-		var oItem = this.oGridList.getItems()[0],
-			oItem1 = this.oGridList.getItems()[1],
-			oItem2 = this.oGridList.getItems()[2];
-		oItem.$().focus();
-		Core.applyChanges();
+		var oItem1 = this.oGridList.getItems()[0],
+			oItem2 = this.oGridList.getItems()[1],
+			oItem4 = this.oGridList.getItems()[3];
+		this.oGridList.$().trigger("focusin");
 
 		// Act
-		qutils.triggerKeydown(oItem.$(), KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeydown(oItem1.$(), KeyCodes.ARROW_RIGHT, false, false, false);
 
 		// Assert
-		assert.strictEqual(document.activeElement === oItem1.getFocusDomRef(), true, "Focus should be on the second GridListItem");
+		assert.strictEqual(document.activeElement, oItem2.getFocusDomRef(), "Focus moved from first to second");
 
 		// Act
-		qutils.triggerKeydown(oItem1.$(), KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeydown(oItem2.$(), KeyCodes.ARROW_DOWN, false, false, false);
 
 		// Assert
-		assert.strictEqual(document.activeElement === oItem2.getFocusDomRef(), true,  "Focus should be on the third GridListItem");
+		assert.strictEqual(document.activeElement, oItem4.getFocusDomRef(), "Focus moved from second to fourth item");
 	});
 
 	QUnit.test("Left/Up Arrow navigating trough grid list", function (assert) {
 
 		// Arrange
-		var oItem = this.oGridList.getItems()[0],
-			oItem1 = this.oGridList.getItems()[1],
-			oItem2 = this.oGridList.getItems()[2];
-		oItem2.$().focus();
-		Core.applyChanges();
+		var oItem1 = this.oGridList.getItems()[0],
+			oItem3 = this.oGridList.getItems()[2],
+			oItem4 = this.oGridList.getItems()[3];
+		this.oGridList.$().trigger("focusin");
 
 		// Act
-		qutils.triggerKeydown(oItem2.$(), KeyCodes.ARROW_LEFT, false, false, false);
+		qutils.triggerKeydown(oItem4.$(), KeyCodes.ARROW_LEFT, false, false, false);
 
 		// Assert
-		assert.strictEqual(document.activeElement === oItem1.getFocusDomRef(), true, "Focus should be on the second GridListItem");
+		assert.strictEqual(document.activeElement, oItem3.getFocusDomRef(), "Focus moved from fourth to third item");
 
 		// Act
-		qutils.triggerKeydown(oItem1.$(), KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeydown(oItem3.$(), KeyCodes.ARROW_UP, false, false, false);
 
 		// Assert
-		assert.strictEqual(document.activeElement === oItem.getFocusDomRef(), true,  "Focus should be on the first GridListItem");
+		assert.strictEqual(document.activeElement, oItem1.getFocusDomRef(), "Focus moved from third to first item");
 	});
 
 	QUnit.test("Left/Right Arrow when the focus is inside an item", function (assert) {
@@ -514,5 +533,169 @@ function (
 
 		// Assert
 		assert.strictEqual(document.activeElement, oButton.getFocusDomRef(), "Focus should remains on the button");
+	});
+
+	QUnit.module("Keyboard handling with grouping", {
+		beforeEach: function () {
+			this.oGrid = new GridList({
+				customLayout: new GridBoxLayout({
+					boxesPerRowConfig: "XL2 L2 M2 S2"
+				}),
+				items: {
+					path: "/Objects",
+					sorter: new Sorter("Category", false, true),
+					template: new CustomListItem({
+						content: new VBox({
+							items: new Text({
+								text: "{Name}"
+							})
+						})
+					})
+				}
+			});
+
+			var oData = {
+				Objects: [
+					{ Name: "1", Category: "A" },
+					{ Name: "2", Category: "A" },
+					{ Name: "3", Category: "B" },
+					{ Name: "4", Category: "B" }
+				]
+			};
+			this.oGrid.setModel(new JSONModel(oData));
+			this.oGrid.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGrid.destroy();
+		}
+	});
+
+	QUnit.test("Down Arrow when focus goes through group header", function (assert) {
+		// Arrange
+		var oItemName2 = this.oGrid.getItems()[2],
+			oGroupHeader = this.oGrid.getItems()[3],
+			oItemName4 = this.oGrid.getItems()[5];
+		this.oGrid.$().trigger("focusin");
+
+		// Act
+		qutils.triggerKeydown(oItemName2.$(), KeyCodes.ARROW_DOWN, false, false, false);
+
+		// Assert
+		assert.strictEqual(document.activeElement, oGroupHeader.getFocusDomRef(), "Focus moved from second item to group header (column is preserved)");
+
+		// Act
+		qutils.triggerKeydown(oGroupHeader.$(), KeyCodes.ARROW_DOWN, false, false, false);
+
+		// Assert
+		assert.strictEqual(document.activeElement, oItemName4.getFocusDomRef(), "Focus moved from group header to fourth item (column is preserved)");
+	});
+
+	QUnit.test("Up Arrow when focus goes through group header", function (assert) {
+		// Arrange
+		var oItemName2 = this.oGrid.getItems()[2],
+			oGroupHeader = this.oGrid.getItems()[3],
+			oItemName4 = this.oGrid.getItems()[5];
+		this.oGrid.$().trigger("focusin");
+
+		// Act
+		qutils.triggerKeydown(oItemName4.$(), KeyCodes.ARROW_UP, false, false, false);
+
+		// Assert
+		assert.strictEqual(document.activeElement, oGroupHeader.getFocusDomRef(), "Focus moved from fourth item to group header (column is preserved)");
+
+		// Act
+		qutils.triggerKeydown(oGroupHeader.$(), KeyCodes.ARROW_UP, false, false, false);
+
+		// Assert
+		assert.strictEqual(document.activeElement, oItemName2.getFocusDomRef(), "Focus moved from group header to second item (column is preserved)");
+	});
+
+
+	QUnit.module("Events");
+
+	QUnit.test("'borderReached' event is fired at all directions", function (assert) {
+		// Arrange
+		var oGridList = new GridList();
+
+		[
+			NavigationDirection.Down,
+			NavigationDirection.Left,
+			NavigationDirection.Right,
+			NavigationDirection.Up
+		].forEach(function (sDir) {
+			var oSpy = sinon.spy();
+			oGridList.attachBorderReached(oSpy);
+
+			// Act
+			oGridList.onItemNavigationBorderReached({
+				direction: sDir
+			});
+
+			// Assert
+			assert.strictEqual(oSpy.callCount, 1, "'borderReached' event is fired");
+		});
+
+		// Clean up
+		oGridList.destroy();
+	});
+
+	QUnit.test("'borderReached' event when Arrow Down is pressed and growing is enabled", function (assert) {
+		// Arrange
+		var oGridList = new GridList({
+			growing: true,
+			growingThreshold: 4,
+			items: {
+				path: "/",
+				template: new GridListItem({
+					content: [
+						new Text({ text: "This is the content"})
+					]
+				})
+			}
+		});
+
+		oGridList.setModel(new JSONModel([
+			"item1", "item2", "item3", "item4",
+			"item5", "item6", "item7", "item8"
+		]));
+
+		var oSpy = sinon.spy();
+		oGridList.attachBorderReached(oSpy);
+		oGridList.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Act
+		oGridList.onItemNavigationBorderReached({
+			direction: NavigationDirection.Down
+		});
+
+		// Assert
+		assert.ok(oSpy.notCalled, "'borderReached' event is not fired when there is 'More' button");
+
+		// Clean up
+		oGridList.destroy();
+	});
+
+	QUnit.module("Navigation matrix", {
+		beforeEach: function () {
+			this.oGridList = new GridList();
+			this.oGridList.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+		},
+		afterEach: function () {
+			this.oGridList.destroy();
+		}
+	});
+
+	QUnit.test("Matrix creation", function (assert) {
+		// Arrange
+		sinon.stub(Core, "isThemeApplied").returns(false);
+
+		// Assert
+		assert.strictEqual(this.oGridList.getNavigationMatrix(), null, "'null' is returned when theme is not yet loaded");
+
+		// Clean up
+		Core.isThemeApplied.restore();
 	});
 });

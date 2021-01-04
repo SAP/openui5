@@ -5,6 +5,7 @@ sap.ui.define([
 	"./GridContainerRenderer",
 	"./GridContainerSettings",
 	"./GridContainerUtils",
+	"./GridNavigationMatrix",
 	"./delegate/GridContainerItemNavigation",
 	"./library",
 	"./dnd/GridKeyboardDragAndDrop",
@@ -21,6 +22,7 @@ sap.ui.define([
 	GridContainerRenderer,
 	GridContainerSettings,
 	GridContainerUtils,
+	GridNavigationMatrix,
 	GridContainerItemNavigation,
 	library,
 	GridKeyboardDragAndDrop,
@@ -960,6 +962,7 @@ sap.ui.define([
 		}
 
 		var virtualGrid = new VirtualGrid();
+		this._oVirtualGrid = virtualGrid;
 		virtualGrid.init({
 			numberOfCols: Math.max(1, columnsCount),
 			cellWidth: columnSize,
@@ -1042,11 +1045,6 @@ sap.ui.define([
 				height: virtualGridItem.height
 			});
 		});
-
-		this.virtualGrid = virtualGrid;
-		this.IeColumns = virtualGrid.numberOfCols;
-		this.IeRows = virtualGrid.virtualGridMatrix.length;
-
 
 		// width and height has to be set for the grid because the items inside are absolute positioned and the grid will not have dimensions
 		$that.css("height", virtualGrid.getHeight() + "px");
@@ -1310,6 +1308,44 @@ sap.ui.define([
 	 */
 	GridContainer.prototype.focusItemByDirection = function (sDirection, iRow, iColumn) {
 		this._oItemNavigation.focusItemByDirection(this, sDirection, iRow, iColumn);
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	GridContainer.prototype.getNavigationMatrix = function () {
+		if (!Core.isThemeApplied()) {
+			return null;
+		}
+
+		var aCssRows,
+			aCssColumns,
+			oLayoutSettings = this.getActiveLayoutSettings();
+
+		if (GridContainerUtils.isGridSupportedByBrowser()) {
+			var mGridStyles = window.getComputedStyle(this.getDomRef());
+			aCssRows = mGridStyles.gridTemplateRows.split(/\s+/);
+			aCssColumns = mGridStyles.gridTemplateColumns.split(/\s+/);
+		} else {
+			var iRows = this._oVirtualGrid.getMatrix().length;
+			var iCols = this._oVirtualGrid.getMatrix()[0].length;
+			aCssRows = new Array(iRows).fill(oLayoutSettings.getRowSizeInPx() + "px");
+			aCssColumns = new Array(iCols).fill(oLayoutSettings.getColumnSizeInPx() + "px");
+		}
+
+		var aItemsDomRefs = this.getItems().reduce(function (aAcc, oItem) {
+			if (oItem.getVisible()) {
+				aAcc.push(GridContainerUtils.getItemWrapper(oItem));
+			}
+			return aAcc;
+		}, []);
+
+		return GridNavigationMatrix.create(this.getDomRef(), aItemsDomRefs, {
+					gap: oLayoutSettings.getGapInPx(),
+					rows: aCssRows,
+					columns: aCssColumns
+				});
 	};
 
 	GridContainer.prototype._isItemWrapper = function (oElement) {

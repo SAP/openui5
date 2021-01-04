@@ -2,13 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/f/GridContainerUtils",
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/events/KeyCodes",
 	"sap/base/Log",
 	"sap/f/library"
 ], function (
-	GridContainerUtils,
 	ItemNavigation,
 	KeyCodes,
 	Log,
@@ -50,20 +48,31 @@ sap.ui.define([
 		}
 	});
 
+	GridItemNavigation.prototype.resetFocusPosition = function () {
+		this._mCurrentPosition = null;
+	};
+
 	GridItemNavigation.prototype.onfocusin = function (oEvent) {
 		ItemNavigation.prototype.onfocusin.call(this, oEvent);
 
-		var oGridControl = jQuery(this.oDomRef).control(0),
-			aMatrix = GridContainerUtils.makeMatrix(oGridControl);
+		var aMatrix = this._getGridInstance().getNavigationMatrix();
 
-		if (oEvent.target === this.oDomRef) {
+		if (aMatrix && oEvent.target === this.oDomRef) {
 			this._mCurrentPosition = this._findPositionInMatrix(aMatrix, this.getItemDomRefs().indexOf(this.iFocusedIndex));
 		}
 	};
 
 	GridItemNavigation.prototype.onsapfocusleave = function (oEvent) {
 		ItemNavigation.prototype.onsapfocusleave.call(this, oEvent);
-		this._mCurrentPosition = null;
+
+		if (oEvent.target === this.oDomRef) {
+			this.resetFocusPosition();
+		}
+	};
+
+	GridItemNavigation.prototype.ontap = function (oEvent) {
+		// reset focus position when navigation is performed without keyboard
+		this.resetFocusPosition();
 	};
 
 	/**
@@ -99,8 +108,7 @@ sap.ui.define([
 		oEvent.preventDefault();
 
 		var oCurrentItem = oEvent.target,
-			oGridControl = oEvent.srcControl,
-			aMatrix = GridContainerUtils.makeMatrix(oGridControl),
+			aMatrix = this._getGridInstance().getNavigationMatrix(),
 			oStartPosition = this._findPositionInMatrix(aMatrix, oCurrentItem);
 
 		if (!this._mCurrentPosition) {
@@ -126,6 +134,8 @@ sap.ui.define([
 			default:
 				break;
 		}
+
+		Log.info("Grid matrix position: (" + oStartPosition.row + ", " + oStartPosition.column + ")");
 	};
 
 	GridItemNavigation.prototype._moveFocusDown = function (oStartPosition, aMatrix, oCurrentItem, oEvent) {
@@ -144,8 +154,6 @@ sap.ui.define([
 			this._onBorderReached(oEvent);
 			return;
 		}
-
-		Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.column);
 
 		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
 		if (oNextFocusItem) {
@@ -172,8 +180,6 @@ sap.ui.define([
 			return;
 		}
 
-		Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.column);
-
 		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
 		if (oNextFocusItem) {
 			this._mCurrentPosition = oStartPosition;
@@ -198,8 +204,6 @@ sap.ui.define([
 			this._onBorderReached(oEvent);
 			return;
 		}
-
-		Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.column);
 
 		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
 		if (oNextFocusItem) {
@@ -231,8 +235,6 @@ sap.ui.define([
 			this._onBorderReached(oEvent);
 			return;
 		}
-
-		Log.info("Grid matrix position:"  + oStartPosition.row, oStartPosition.column);
 
 		oNextFocusItem = aMatrix[oStartPosition.row][oStartPosition.column];
 		if (oNextFocusItem) {
@@ -269,8 +271,7 @@ sap.ui.define([
 	};
 
 	GridItemNavigation.prototype._onBorderReached = function (oEvent) {
-		var oGridControl = oEvent.srcControl,
-			sDirection;
+		var sDirection;
 
 		switch (oEvent.keyCode) {
 			case KeyCodes.ARROW_RIGHT:
@@ -287,7 +288,7 @@ sap.ui.define([
 				break;
 		}
 
-		oGridControl.onItemNavigationBorderReached({
+		this._getGridInstance().onItemNavigationBorderReached({
 			event: oEvent,
 			row: this._mCurrentPosition.row,
 			column: this._mCurrentPosition.column,
@@ -297,7 +298,7 @@ sap.ui.define([
 
 	GridItemNavigation.prototype.focusItemByDirection = function (oGrid, sDirection, iRow, iColumn) {
 		var oCurrentItem,
-			aMatrix = GridContainerUtils.makeMatrix(oGrid),
+			aMatrix = oGrid.getNavigationMatrix(),
 			aRow,
 			iRowIndex,
 			iColIndex;
@@ -361,6 +362,10 @@ sap.ui.define([
 		};
 
 		oCurrentItem.focus();
+	};
+
+	GridItemNavigation.prototype._getGridInstance = function () {
+		return jQuery(this.oDomRef).control(0);
 	};
 
 	return GridItemNavigation;
