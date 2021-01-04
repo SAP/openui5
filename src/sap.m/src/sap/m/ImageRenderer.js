@@ -3,12 +3,15 @@
  */
 
 // Provides default renderer for control sap.m.Image
-sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS"],
-	function(library, encodeCSS) {
+sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS", "sap/ui/core/library"],
+	function(library, encodeCSS, coreLibrary) {
 	"use strict";
 
 	// shortcut for sap.m.ImageMode
 	var ImageMode = library.ImageMode;
+
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	/**
 	 * Image renderer.
@@ -37,7 +40,8 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS"],
 			aDescribedBy = oImage.getAriaDescribedBy(),
 			aDetails = oImage.getAriaDetails(),
 			bIsImageMode = sMode === ImageMode.Image,
-			bLazyLoading = oImage.getLazyLoading();
+			bLazyLoading = oImage.getLazyLoading(),
+			sAriaHasPopup = oImage.getAriaHasPopup();
 
 		// Additional element for Image with LightBox
 		if (oLightBox) {
@@ -121,6 +125,10 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS"],
 
 		if (tooltip) {
 			oRm.attr("title", tooltip);
+		}
+
+		if (sAriaHasPopup !== AriaHasPopup.None) {
+			oRm.attr("aria-haspopup", sAriaHasPopup.toLowerCase());
 		}
 
 		if (bHasPressHandlers) {
