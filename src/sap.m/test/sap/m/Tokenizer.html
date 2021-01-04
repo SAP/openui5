@@ -161,7 +161,7 @@
 		var oTokenizer7 = new sap.m.Tokenizer("tokenizerLongToken", {
 			width: "200px",
 			tokens: [
-				new sap.m.Token({text:"Very long long long long long long long text"})
+				new sap.m.Token("longToken", {text:"Very long long long long long long long text"})
 			],
 		});
 		oTokenizer7.setRenderMode(sap.m.TokenizerRenderMode.Narrow);
@@ -170,7 +170,7 @@
 			width: "200px",
 			editable: false,
 			tokens: [
-				new sap.m.Token({text:"Very long long long long long long long text"})
+				new sap.m.Token("longTokenNotEditable", {text:"Very long long long long long long long text"})
 			],
 		});
 		oTokenizer8.setRenderMode(sap.m.TokenizerRenderMode.Narrow);
