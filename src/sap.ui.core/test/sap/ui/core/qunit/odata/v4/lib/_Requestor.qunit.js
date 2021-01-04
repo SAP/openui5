@@ -1972,10 +1972,10 @@ sap.ui.define([
 
 			return oRequestor.sendBatch(aBatchRequests, sGroupId)
 				.then(function (oPayload) {
-					assert.ok(sMessage === null ? true : false, "unexpected success");
+					assert.ok(sMessage === null, "unexpected success");
 					assert.strictEqual(oPayload, aExpectedResponses);
 				}, function (oError) {
-					assert.ok(sMessage !== null ? true : false, "unexpected error");
+					assert.ok(sMessage !== null, "unexpected error");
 					assert.ok(oError instanceof Error);
 					assert.strictEqual(oError.message,
 						"Unexpected 'sap-messages' response header for batch request");
