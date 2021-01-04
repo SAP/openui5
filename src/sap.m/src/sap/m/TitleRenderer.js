@@ -3,17 +3,15 @@
  */
 
 // Provides default renderer for control sap.m.Title
-sap.ui.define(["sap/ui/core/library", "sap/m/HyphenationSupport"],
-	function(coreLibrary, HyphenationSupport) {
+sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/library", "sap/m/HyphenationSupport"],
+	function(Renderer, coreLibrary, HyphenationSupport) {
 	"use strict";
 
-
-	// shortcut for sap.ui.core.TextAlign
-	var TextAlign = coreLibrary.TextAlign;
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
 
 	// shortcut for sap.ui.core.TitleLevel
 	var TitleLevel = coreLibrary.TitleLevel;
-
 
 	/**
 	 * Title renderer.
@@ -33,7 +31,9 @@ sap.ui.define(["sap/ui/core/library", "sap/m/HyphenationSupport"],
 			sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oTitle.getLevel()) || TitleLevel.Auto,
 			bAutoLevel = sLevel == TitleLevel.Auto,
 			sTag = bAutoLevel ? "div" : sLevel.toLowerCase(),
-			sText = HyphenationSupport.getTextForRender(oTitle, "main");
+			sText = HyphenationSupport.getTextForRender(oTitle, "main"),
+			sTextDir = oTitle.getTextDirection(),
+			sTextAlign = Renderer.getTextAlign(oTitle.getTextAlign(), sTextDir);
 
 		oRm.openStart(sTag, oTitle);
 		oRm.class("sapMTitle");
@@ -48,9 +48,8 @@ sap.ui.define(["sap/ui/core/library", "sap/m/HyphenationSupport"],
 			oRm.style("width", sWidth);
 		}
 
-		var sTextAlign = oTitle.getTextAlign();
-		if (sTextAlign && sTextAlign != TextAlign.Initial) {
-			oRm.class("sapMTitleAlign" + sTextAlign);
+		if (sTextAlign) {
+			oRm.style("text-align", sTextAlign);
 		}
 
 		if (oTitle.getParent() instanceof sap.m.Toolbar) {
@@ -71,6 +70,9 @@ sap.ui.define(["sap/ui/core/library", "sap/m/HyphenationSupport"],
 
 		oRm.openEnd();
 		oRm.openStart("span", oTitle.getId() + "-inner");
+
+		oRm.attr("dir", sTextDir !== TextDirection.Inherit ? sTextDir.toLowerCase() : "auto");
+
 		oRm.openEnd();
 
 		oRm.text(sText);

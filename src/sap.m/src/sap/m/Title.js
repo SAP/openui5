@@ -17,6 +17,9 @@ sap.ui.define([
 	function(Control, library, coreLibrary, TitleRenderer, HyphenationSupport) {
 	"use strict";
 
+	// shortcut for sap.ui.core.TextDirection
+	var TextDirection = coreLibrary.TextDirection;
+
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
@@ -112,6 +115,11 @@ sap.ui.define([
 			 * larger than the displayed text.
 			 */
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Initial},
+
+			/**
+			 * Options for the text direction are RTL and LTR. Alternatively, the control can inherit the text direction from its parent container.
+			 */
+			textDirection : {type : "sap.ui.core.TextDirection", group : "Appearance", defaultValue : TextDirection.Inherit},
 
 			/**
 			 * Enables text wrapping.

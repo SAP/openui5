@@ -86,4 +86,52 @@ describe("sap.m.Title", function() {
 		element(by.id("setting6_wrapping")).click();
 		expect(takeScreenshot(element(by.id("title1")))).toLookAs("10_no_wrapping");
 	});
+
+	// different text directions
+	it("text direction: ltr", function () {
+		var	oContent = element(by.id("content-mixed-texts"));
+		browser.executeScript("sap.ui.getCore().byId('setting_dir').setSelectedKey('LTR');");
+
+		expect(takeScreenshot(oContent)).toLookAs("12_dir_ltr");
+	});
+
+	it("text direction: rtl", function () {
+		var	oContent = element(by.id("content-mixed-texts"));
+		browser.executeScript("sap.ui.getCore().byId('setting_dir').setSelectedKey('RTL');");
+
+		expect(takeScreenshot(oContent)).toLookAs("13_dir_rtl");
+	});
+
+	it("text direction: default (auto)", function () {
+		var	oContent = element(by.id("content-mixed-texts"));
+		browser.executeScript("sap.ui.getCore().byId('setting_dir').setSelectedKey('Inherit');");
+
+		expect(takeScreenshot(oContent)).toLookAs("11_dir_auto");
+	});
+
+	it("text direction and text align: default", function () {
+		var	oContent = element(by.id("content-mixed-texts"));
+
+		browser.executeScript("sap.ui.getCore().byId('setting2_width').setValue('800px');");
+
+		expect(takeScreenshot(oContent)).toLookAs("14_dir_and_align_default");
+	});
+
+	it("text direction and text align: default", function () {
+		var	oContent = element(by.id("content-mixed-texts"));
+
+		browser.executeScript("sap.ui.getCore().byId('setting_dir').setSelectedKey('RTL');");
+		browser.executeScript("sap.ui.getCore().byId('setting4_align').setSelectedKey('Begin');");
+
+		expect(takeScreenshot(oContent)).toLookAs("15_dir_and_align_rtl_begin");
+	});
+
+	it("text direction and text align: default", function () {
+		var	oContent = element(by.id("content-mixed-texts"));
+
+		browser.executeScript("sap.ui.getCore().byId('setting_dir').setSelectedKey('RTL');");
+		browser.executeScript("sap.ui.getCore().byId('setting4_align').setSelectedKey('End');");
+
+		expect(takeScreenshot(oContent)).toLookAs("16_dir_and_align_rtl_end");
+	});
 });
