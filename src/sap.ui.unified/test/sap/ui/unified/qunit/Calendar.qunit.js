@@ -2062,73 +2062,55 @@ QUnit.module("Misc");
 
 	QUnit.module("Month Button Label");
 
-	QUnit.test("When months are 1 or 2, the label of first month button must contain only one month name", function (assert) {
+	QUnit.test("When there is one month, the label of the button must contain only one month name", function (assert) {
 		// arrange
-		var oMP,
-			oLocaleData,
-			aMonthNames,
-			iSelectedMonth,
-			sSelectedMonth,
-			oStartDate,
-			oCal1 = new Calendar("Cal_1").placeAt("content"),
-			oCal2 = new Calendar("Cal_2",{ months: 2 }).placeAt("content");
+		var iAugust = 7,
+			oCal1 = new Calendar("Cal_1").placeAt("content");
 
-		// setup #1
-		iSelectedMonth = 7; // August
-		oMP = oCal1.getAggregation("monthPicker");
-		oLocaleData = oCal1._getLocaleData();
-		aMonthNames = oLocaleData.getMonthsStandAlone("wide", oCal1.getPrimaryCalendarType());
-		aMonthNames = aMonthNames.concat(aMonthNames); // just in case that some of the last monht is selected for start month
-		sSelectedMonth = aMonthNames[iSelectedMonth];
+		sap.ui.getCore().applyChanges();
 
 		// act: click on month select button
 		qutils.triggerEvent("click", "Cal_1--Head-B1");
 		sap.ui.getCore().applyChanges();
 
-		// act: select a month (February)
-		oMP.setMonth(iSelectedMonth);
-		oCal1._selectMonth(oMP.getMonth());
+		// act: select a month
+		oCal1.getAggregation("monthPicker").setMonth(iAugust);
+		oCal1._selectMonth();
+
+		// assert
+		assert.equal(oCal1.getAggregation("header").getTextButton1(), "August", "One month calendar, August selected, 'August' shown as label");
+
+		// cleanup
+		oCal1.destroy();
+	});
+
+	QUnit.test("When there are 2 months, the label of first month button must contain only one month name", function(assert) {
+		// arrange
+		var iFebruary = 1,
+			o1June2021 = new Date(2021, 5, 1),
+			oCal2 = new Calendar("Cal_2", {
+				months: 2
+			}).placeAt("content");
+
+		oCal2.addSelectedDate(new DateRange({
+			startDate: o1June2021
+		}));
 		sap.ui.getCore().applyChanges();
-
-		// assert setup #1
-		assert.equal(jQuery("#Cal_1--Head-B1").text(), sSelectedMonth, "One month calendar, " + sSelectedMonth + " selected, '" + sSelectedMonth + "' shown as label");
-
-		// setup #2 (This case will fail without the Gerrit change #4435753)
-		iSelectedMonth = new Date().getMonth();
-		if (iSelectedMonth === 0){
-			iSelectedMonth += 1;
-		} else {
-			iSelectedMonth -= 1;
-		}
-
-		oStartDate = new Date();
-		oStartDate.setMonth(iSelectedMonth);
-		oCal1.addAggregation("selectedDates", new DateRange({ startDate: oStartDate }));
-		oMP = oCal2.getAggregation("monthPicker");
-		oLocaleData = oCal2._getLocaleData();
-		aMonthNames = oLocaleData.getMonthsStandAlone("wide", oCal2.getPrimaryCalendarType());
-		aMonthNames = aMonthNames.concat(aMonthNames); // just in case that some of the last monht is selected for start month
-		sSelectedMonth = aMonthNames[iSelectedMonth];
 
 		// act: click on month select button
 		qutils.triggerEvent("click", "Cal_2--Head-B1");
 		sap.ui.getCore().applyChanges();
 
 		// act: select a month (February)
-		oMP.setMonth(iSelectedMonth);
-		oCal2._selectMonth(oMP.getMonth());
-		sap.ui.getCore().applyChanges();
+		oCal2.getAggregation("monthPicker").setMonth(iFebruary);
+		oCal2._selectMonth();
 
-		// assert setup #2
-		assert.equal(jQuery("#Cal_2--Head-B1").text(), sSelectedMonth, "Two months calendar, " + sSelectedMonth + " selected, '" + sSelectedMonth + "' shown as label");
+		// assert
+		assert.equal(oCal2.getAggregation("header").getTextButton1(), "February",
+			"Two months calendar, February selected, 'February' shown as label");
 
 		// cleanup
-		oMP.destroy();
-		oCal1.destroy();
 		oCal2.destroy();
-		oCal1 = null;
-		oCal2 = null;
-		oMP = null;
 	});
 
 	QUnit.test("When months are > 2, the label of first month button must contain 'start_month - end_month' names", function (assert) {
