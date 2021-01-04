@@ -3,8 +3,8 @@
  */
 
 // Provides control sap.ui.mdc.filterbar.p13n.FilterGroupLayout.
-sap.ui.define(['sap/m/VBox', 'sap/m/VBoxRenderer', 'sap/m/Label'
-], function(VBox, VBoxRenderer, Label) {
+sap.ui.define(['sap/ui/core/Control',  'sap/m/Label'
+], function(Control,  Label) {
 	"use strict";
 
 	/**
@@ -20,8 +20,17 @@ sap.ui.define(['sap/m/VBox', 'sap/m/VBoxRenderer', 'sap/m/Label'
 	 * @alias sap.ui.mdc.filterbar.p13n.FilterGroupLayout
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	var FilterGroupLayout = VBox.extend("sap.ui.mdc.filterbar.p13n.FilterGroupLayout", {
-		renderer: VBoxRenderer
+	var FilterGroupLayout = Control.extend("sap.ui.mdc.filterbar.p13n.FilterGroupLayout", {
+		renderer: {
+			apiVersion: 2,
+			render: function(oRm, oControl) {
+				oRm.openStart("div", oControl);
+				oRm.style("height", "100%");
+				oRm.openEnd();
+				oRm.renderControl(oControl.getItems()[0]);
+				oRm.close("div");
+			}
+		}
 	});
 
 	FilterGroupLayout.prototype._getFieldPath = function () {
@@ -40,7 +49,7 @@ sap.ui.define(['sap/m/VBox', 'sap/m/VBoxRenderer', 'sap/m/Label'
 	};
 
 	FilterGroupLayout.prototype.exit = function () {
-		VBox.prototype.exit.apply(this, arguments);
+		Control.prototype.exit.apply(this, arguments);
 		this._oFilterField = null;
 		this._sFieldPath = null;
 	};
