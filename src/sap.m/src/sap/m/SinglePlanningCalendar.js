@@ -1262,6 +1262,8 @@ function(
 	 */
 	SinglePlanningCalendar.prototype._updateCalendarPickerSelection = function() {
 		var oRangeDates = this._getFirstAndLastRangeDate(),
+			oHeader = this._getHeader(),
+			oCalPicker = oHeader.getAggregation("_calendarPicker") ? oHeader.getAggregation("_calendarPicker") : oHeader._oPopup.getContent()[0],
 			oSelectedRange;
 
 		oSelectedRange = new DateRange({
@@ -1269,8 +1271,8 @@ function(
 			endDate: oRangeDates.oEndDate.toLocalJSDate()
 		});
 
-		this._getHeader().getAggregation("_calendarPicker").removeAllSelectedDates();
-		this._getHeader().getAggregation("_calendarPicker").addSelectedDate(oSelectedRange);
+		oCalPicker.removeAllSelectedDates();
+		oCalPicker.addSelectedDate(oSelectedRange);
 	};
 
 	/**
