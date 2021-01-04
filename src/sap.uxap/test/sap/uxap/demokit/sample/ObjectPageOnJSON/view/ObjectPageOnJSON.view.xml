@@ -22,7 +22,10 @@
 				</breadcrumbs>
 
 				<expandedHeading>
+					<m:HBox>
 						<m:Title text="Denise Smith" wrapping="true"/>
+						<m:ObjectMarker type="Favorite" class="sapUiTinyMarginBegin"/>
+					</m:HBox>
 				</expandedHeading>
 
 				<snappedHeading>
