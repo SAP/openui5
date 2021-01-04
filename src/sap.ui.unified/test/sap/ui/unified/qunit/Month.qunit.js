@@ -91,15 +91,21 @@ sap.ui.define([
 
 		QUnit.test("Corner case for December 9999", function (assert) {
 			// Act
-			this.oM.setDate(createDate(9999, 11, 1));
+			var oMonth = new Month({
+			}).placeAt("qunit-fixture");
+
+			oMonth.setDate(createDate(9999, 11, 1));
 			sap.ui.getCore().applyChanges();
 
-			var aItems = this.oM.$().find(".sapUiCalItem"),
+			var aItems = oMonth.$().find(".sapUiCalItem"),
 				$LastDay = jQuery(aItems[aItems.length - 1]);
 
 			// Assert
 			assert.strictEqual($LastDay.data("sap-day"), 99991231, "The last rendered day should be 9999-12-31");
 			assert.strictEqual($LastDay.text(), "31", "The last rendered day should contain the string 31");
+
+			// Clean
+			oMonth.destroy();
 		});
 
 		QUnit.module("_getVisibleDays", {
