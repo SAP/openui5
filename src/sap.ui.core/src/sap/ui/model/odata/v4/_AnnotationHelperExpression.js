@@ -18,7 +18,6 @@ sap.ui.define([
 	var sAnnotationHelper = "sap.ui.model.odata.v4.AnnotationHelper",
 		aPerformanceCategories = [sAnnotationHelper],
 		sPerformanceGetExpression = sAnnotationHelper + "/getExpression",
-		Expression,
 		// a simple binding (see sap.ui.base.BindingParser.simpleParser) to "@i18n" model
 		// w/o bad chars (see _AnnotationHelperBasics: rBadChars) inside path!
 		rI18n = /^\{@i18n>[^\\\{\}:]+\}$/,
@@ -72,7 +71,45 @@ sap.ui.define([
 			"number" : false,
 			"string" : false,
 			"TimeOfDay" : false
-		};
+		},
+		/**
+		 * This object contains helper functions to process an expression in OData V4 annotations.
+		 *
+		 * The handler functions corresponding to nodes of an annotation expression all use
+		 * a parameter <code>oPathValue</code>. This parameter contains the following properties:
+		 * <ul>
+		 *   <li> <code>asExpression</code>: {boolean} parser state: if this property is
+		 *     <code>true</code>, an embedded <code>concat</code> must be rendered as an expression
+		 *     binding and not a composite binding.
+		 *   <li> <code>complexBinding</code>: {boolean} parser state: if this property is
+		 *     <code>true</code>, bindings shall have type and constraints information
+		 *   <li> <code>ignoreAsPrefix</code>: {string} an optional prefix to be ignored in a path
+		 *     expression (for example, binding parameter name)
+		 *   <li> <code>model</code>: {sap.ui.model.odata.v4.ODataMetaModel} the metamodel
+		 *   <li> <code>path</code>: {string} the path in the metamodel that leads to the value
+		 *   <li> <code>prefix</code>: {string} used in a path expression as a prefix for the
+		 *     value; is either an empty string or a path ending with a "/"
+		 *   <li> <code>value</code>: {any} the value of the (sub) expression from the metamodel
+		 * </ul>
+		 *
+		 * Unless specified otherwise all functions return a result object with the following
+		 * properties:
+		 * <ul>
+		 *   <li> <code>result</code>: "binding", "composite", "constant" or "expression"
+		 *   <li> <code>value</code>: depending on <code>result</code>:
+		 *     <ul>
+		 *       <li> when "binding": {string} the binding path
+		 *       <li> when "composite": {string} the binding string incl. the curly braces
+		 *       <li> when "constant": {any} the constant value (not escaped if string)
+		 *       <li> when "expression": {string} the expression unwrapped (no "{=" and "}")
+		 *     </ul>
+		 *   <li> <code>type</code>:  the EDM data type (like "Edm.String") if it could be determined
+		 *   <li> <code>constraints</code>: {object} type constraints if result is "binding"
+		 * </ul>
+		 *
+		 * @private
+		 */
+		Expression;
 
 	/*
 	 * Logs the given error message for the given path and returns a sync promise that rejects with
@@ -99,41 +136,6 @@ sap.ui.define([
 		Basics.error(oPathValue, sMessage, sAnnotationHelper);
 	}
 
-	/**
-	 * This object contains helper functions to process an expression in OData V4 annotations.
-	 *
-	 * The handler functions corresponding to nodes of an annotation expression all use
-	 * a parameter <code>oPathValue</code>. This parameter contains the following properties:
-	 * <ul>
-	 *   <li> <code>asExpression</code>: {boolean} parser state: if this property is
-	 *     <code>true</code>, an embedded <code>concat</code> must be rendered as an expression
-	 *     binding and not a composite binding.
-	 *   <li> <code>complexBinding</code>: {boolean} parser state: if this property is
-	 *     <code>true</code>, bindings shall have type and constraints information
-	 *   <li> <code>ignoreAsPrefix</code>: {string} an optional prefix to be ignored in a path
-	 *     expression (for example, binding parameter name)
-	 *   <li> <code>model</code>: {sap.ui.model.odata.v4.ODataMetaModel} the metamodel
-	 *   <li> <code>path</code>: {string} the path in the metamodel that leads to the value
-	 *   <li> <code>prefix</code>: {string} used in a path expression as a prefix for the
-	 *     value; is either an empty string or a path ending with a "/"
-	 *   <li> <code>value</code>: {any} the value of the (sub) expression from the metamodel
-	 * </ul>
-	 *
-	 * Unless specified otherwise all functions return a result object with the following
-	 * properties:
-	 * <ul>
-	 *   <li> <code>result</code>: "binding", "composite", "constant" or "expression"
-	 *   <li> <code>value</code>: depending on <code>result</code>:
-	 *     <ul>
-	 *       <li> when "binding": {string} the binding path
-	 *       <li> when "composite": {string} the binding string incl. the curly braces
-	 *       <li> when "constant": {any} the constant value (not escaped if string)
-	 *       <li> when "expression": {string} the expression unwrapped (no "{=" and "}")
-	 *     </ul>
-	 *   <li> <code>type</code>:  the EDM data type (like "Edm.String") if it could be determined
-	 *   <li> <code>constraints</code>: {object} type constraints if result is "binding"
-	 * </ul>
-	 */
 	Expression = {
 		/**
 		 * Adjusts the second operand so that both have the same category, if possible.
