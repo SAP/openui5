@@ -89,8 +89,8 @@ sap.ui.define([
 					editable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 					/**
-					 * The value state to be displayed for the radio button. Possible values are: sap.ui.core.ValueState.Error,
-					 * sap.ui.core.ValueState.Warning, sap.ui.core.ValueState.Success and sap.ui.core.ValueState.None.
+					 * Marker for the correctness of the current value e.g., Error, Success, etc.
+					 * Changing this property will also change the state of all radio buttons inside the group.
 					 * Note: Setting this attribute to sap.ui.core.ValueState.Error when the accessibility feature is enabled,
 					 * sets the value of the invalid property for the whole RadioButtonGroup to "true".
 					 */
@@ -103,7 +103,7 @@ sap.ui.define([
 					selectedIndex : {type : "int", group : "Data", defaultValue : 0},
 
 					/**
-					 * Switches the enabled state of the control. All Radio Buttons inside a disabled group are disabled. Default value is "true".
+					 * Switches the enabled state of the control. All radio buttons inside a disabled group are disabled.
 					 */
 					enabled : {type : "boolean", group : "Behavior", defaultValue : true},
 

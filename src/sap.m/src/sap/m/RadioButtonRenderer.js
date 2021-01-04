@@ -48,7 +48,7 @@ sap.ui.define([
 			bEnabled = oRadioButton.getEnabled(),
 			bNonEditableParent = !oRadioButton.getProperty("editableParent"),
 			bNonEditable = !oRadioButton.getEditable() || bNonEditableParent,
-			oValueState = oRadioButton.getValueState();
+			sValueState = oRadioButton.getValueState();
 
 		oRM.openStart("div", oRadioButton)
 			.class("sapMRb");
@@ -68,7 +68,7 @@ sap.ui.define([
 			selected: null, // Avoid output aria-selected
 			checked: oRadioButton.getSelected(), // aria-checked must be set explicitly
 			disabled: bNonEditable ? true : undefined, // Avoid output aria-disabled=false when the button is editable
-			invalid: oValueState === ValueState.Error ? true : null,
+			invalid: sValueState === ValueState.Error ? true : null,
 			labelledby: { value: sId + "-label", append: true },
 			describedby: { value: (sTooltipWithStateMessage ? sId + "-Descr" : undefined), append: true }
 		});
@@ -85,20 +85,8 @@ sap.ui.define([
 			oRM.class("sapMRbRo");
 		}
 
-		if (oValueState === ValueState.Error) {
-			oRM.class("sapMRbErr");
-		}
-
-		if (oValueState === ValueState.Warning) {
-			oRM.class("sapMRbWarn");
-		}
-
-		if (oValueState === ValueState.Success) {
-			oRM.class("sapMRbSucc");
-		}
-
-		if (oValueState === ValueState.Information) {
-			oRM.class("sapMRbInfo");
+		if (!this.isButtonReadOnly(oRadioButton)) {
+			this.addValueStateClass(oRM, sValueState);
 		}
 
 		if (bEnabled) {
@@ -205,6 +193,25 @@ sap.ui.define([
 			return (sTooltipText ? sTooltipText + " - " : "") + sValueStateText;
 		} else {
 			return ValueStateSupport.enrichTooltip(oRadioButton, sTooltipText);
+		}
+	};
+
+	RadioButtonRenderer.addValueStateClass = function (oRM, sValueState) {
+		switch (sValueState) {
+			case ValueState.Error:
+				oRM.class("sapMRbErr");
+				break;
+			case ValueState.Warning:
+				oRM.class("sapMRbWarn");
+				break;
+			case ValueState.Success:
+				oRM.class("sapMRbSucc");
+				break;
+			case ValueState.Information:
+				oRM.class("sapMRbInfo");
+				break;
+			default:
+				break;
 		}
 	};
 

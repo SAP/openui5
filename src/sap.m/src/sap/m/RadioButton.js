@@ -145,8 +145,7 @@ function(
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
 
 			/**
-			 *
-			 * Enumeration sap.ui.core.ValueState provides state values Error, Success, Warning, Information, None
+			 * Marker for the correctness of the current value e.g., Error, Success, etc.
 			 * @since 1.25
 			 */
 			valueState : {type : "sap.ui.core.ValueState", group : "Data", defaultValue : ValueState.None},

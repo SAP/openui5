@@ -43,10 +43,6 @@ sap.ui.define([
 		oRM.openStart("div", oRBGroup)
 			.class("sapMRbG");
 
-		if (!oRBGroup.getEditable()) {
-			oRM.class("sapMRbGRo");
-		}
-
 		if (iColumns > 1) {
 			if (iColumns == aVisibleRBs.length) {
 				oRM.class("sapMRbG1Row");
