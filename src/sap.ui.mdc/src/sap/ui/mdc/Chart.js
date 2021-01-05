@@ -428,8 +428,6 @@ sap.ui.define([
 					return SyncPromise.reject();
 				}
 
-				ToolbarHandler.createToolbar(this, aActions);
-
 				var mItems = {};
 				aProperties.forEach(function(oProperty) {
 					mItems[oProperty.name] = oProperty;
@@ -440,6 +438,7 @@ sap.ui.define([
 
 			.then(function createDrillBreadcrumbs(oInnerChart) {
 				this._createDrillBreadcrumbs();
+				ToolbarHandler.createToolbar(this, aActions);
 				return oInnerChart;
 			}.bind(this))
 
