@@ -58,26 +58,9 @@
 
 	<Title text="Grid Table" titleStyle="H1" />
 
-	<!-- Note: keep parameters in sync with controller's onInit -->
-	<table:Table fixedRowCount="1" firstVisibleRow="1" id="tTable"
-		rows="{path : '/BusinessPartners',
-			parameters : {
-				$$aggregation : {
-					aggregate : {
-						AmountPerSale : {grandTotal : true, unit : 'Currency'},
-						SalesAmount : {grandTotal : true, unit : 'Currency'},
-						SalesAmountLocalCurrency : {grandTotal : true, unit : 'LocalCurrency'},
-						SalesNumberSum : {grandTotal : true, name : 'SalesNumber', with : 'sum'}
-					},
-					group : {
-						Region : {}
-					}
-				},
-				$count : true,
-				$filter : 'SalesNumberSum gt 0',
-				$orderby : 'Region desc'
-			},
-			suspended : true}" selectionMode="None" threshold="0" visibleRowCount="5">
+	<!-- Note: for $$aggregation, see controller's onInit! -->
+	<table:Table id="tTable" rows="{path : '/BusinessPartners', suspended : true}"
+			selectionMode="None" threshold="0" visibleRowCount="5">
 		<table:extension>
 			<Toolbar class="sapMTBHeader-CTX">
 				<Title text="Sales Number by Region ({headerContext>$count})" titleStyle="H2" />

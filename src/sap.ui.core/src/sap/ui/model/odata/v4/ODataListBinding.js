@@ -2678,6 +2678,11 @@ sap.ui.define([
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
 	 *   filtering or with the system query option <code>$count</code>.
+	 * @param {boolean} [oAggregation.subtotalsAtBottomOnly]
+	 *   Tells whether subtotals for aggregatable properties are displayed at the bottom only, as a
+	 *   separate row after all children, when a group level node is expanded (since 1.86.0);
+	 *   <code>true</code> for bottom only, <code>false</code> for top and bottom, the default is
+	 *   top only (that is, as part of the group level node)
 	 * @throws {Error}
 	 *   If the given data aggregation object is unsupported, if the system query option
 	 *   <code>$apply</code> has been specified explicitly before, or if there are pending changes

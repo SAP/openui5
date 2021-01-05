@@ -7,25 +7,12 @@
 
 	<!-- TODO: enable sorting in table -->
 	<!-- TODO: enhance auto type detection for @$ui5.node.*? -->
-	<!-- Note: keep $$aggregation in sync with controller's onInit -->
+	<!-- Note: for $$aggregation, see controller's onInit! -->
 	<Table id="table" ariaLabelledBy="title" fixedRowCount="1"
-		rows="{path : '/BusinessPartners',
-			parameters : {
-				$$aggregation : {
-					aggregate : {
-						SalesAmountLocalCurrency
-							: {grandTotal : true, subtotals : true, unit : 'LocalCurrency'},
-						SalesNumber : {}
-					},
-					group : {
-						AccountResponsible : {}
-					},
-					groupLevels : ['Country', 'Region', 'Segment']
-				},
+		rows="{path : '/BusinessPartners', parameters : {
 				$count : false,
 				$orderby : 'Country desc,Region desc,Segment,AccountResponsible'
-			},
-			suspended : true}" selectionMode="None" threshold="0"
+			}, suspended : true}" selectionMode="None" threshold="0"
 		visibleRowCount="{ui>/iVisibleRowCount}">
 		<extension>
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
@@ -80,7 +67,7 @@
 			<m:Label text="Sales Number"/>
 		</Column>
 		<Column hAlign="Center" width="5em">
-			<m:Label text="Subtotal"/>
+			<m:Label text="Is Total"/>
 			<template>
 				<m:CheckBox selected="{= %{@$ui5.node.isTotal} }" editable="false"/>
 			</template>

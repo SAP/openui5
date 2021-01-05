@@ -16312,6 +16312,190 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: sap.m.Table with aggregation, visual grouping, grand total at top and bottom, and
+	// subtotals at both top and bottom - or at bottom only. Expand and collapse the last node.
+	// JIRA: CPOUI5ODATAV4-681
+[false, true].forEach(function (bSubtotalsAtBottomOnly) {
+	var sTitle = "Data Aggregation: subtotalsAtBottomOnly=" + bSubtotalsAtBottomOnly;
+
+	QUnit.test(sTitle, function (assert) {
+		var oListBinding,
+			oModel = createAggregationModel(),
+			oTable,
+			sView = '\
+<Table id="table" items="{path : \'/BusinessPartners\', parameters : {\
+		$$aggregation : {\
+			aggregate : {\
+				SalesAmountLocalCurrency :\
+					{grandTotal : true, subtotals : true, unit : \'LocalCurrency\'}\
+			},\
+			grandTotalAtBottomOnly : false,\
+			groupLevels : [\'Country\',\'LocalCurrency\',\'Region\'],\
+			subtotalsAtBottomOnly : ' + bSubtotalsAtBottomOnly + '\
+		}\
+	}}">\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="country" text="{Country}"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="salesAmountLocalCurrency" text="{= %{SalesAmountLocalCurrency} }"/>\
+	<Text id="localCurrency" text="{LocalCurrency}"/>\
+</Table>',
+			that = this;
+
+		function checkTable(sTitle, aExpectedPaths, aExpectedContent) {
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+			assert.strictEqual(oListBinding.getLength(), aExpectedPaths.length, sTitle);
+			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), aExpectedPaths);
+
+			aExpectedContent = aExpectedContent.map(function (aTexts) {
+				return aTexts.map(function (vText) {
+					return vText !== undefined ? String(vText) : "";
+				});
+			});
+			assert.deepEqual(oTable.getItems().map(function (oItem) {
+				return oItem.getCells().map(function (oCell) {
+					return oCell.getText();
+				});
+			}), aExpectedContent, sTitle);
+		}
+
+		function subtotalAtTop(sText) {
+			return bSubtotalsAtBottomOnly ? "" : sText;
+		}
+
+		this.expectRequest("BusinessPartners"
+				+ "?$apply=concat(aggregate(SalesAmountLocalCurrency,LocalCurrency)"
+				+ ",groupby((Country),aggregate(SalesAmountLocalCurrency,LocalCurrency))"
+				+ "/concat(aggregate($count as UI5__count),top(99)))", {
+				value : [{
+					LocalCurrency : null,
+					SalesAmountLocalCurrency : "3510" // 1/2 * 26 * 27 * 10
+				}, {
+					UI5__count : "1",
+					"UI5__count@odata.type" : "#Decimal"
+				}, {
+					Country : "A",
+					LocalCurrency : "EUR",
+					SalesAmountLocalCurrency : "10"
+				}]
+			})
+			.expectChange("level", [0, 1, 0]); //TODO needed to make test stable, but why?
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("items");
+
+			checkTable("initial state", [
+				"/BusinessPartners()",
+				"/BusinessPartners(Country='A')",
+				"/BusinessPartners($isTotal=true)"
+			], [
+				[true, true, 0, "", "", "3510", ""],
+				[false, true, 1, "A", "", "10", "EUR"],
+				[undefined, true, 0, "", "", "3510", ""]
+			]);
+
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'A')"
+					+ "/groupby((LocalCurrency),aggregate(SalesAmountLocalCurrency))"
+					+ "&$count=true&$skip=0&$top=100", {
+					value : [{
+						LocalCurrency : "EUR",
+						SalesAmountLocalCurrency : "10"
+					}]
+				})
+				.expectChange("level", [,, 2, 1, 0]);
+
+			// code under test
+			oListBinding.getCurrentContexts()[1].expand();
+
+			return that.waitForChanges(assert, "expand node 'A'");
+		}).then(function () {
+			checkTable("node 'A' expanded", [
+				"/BusinessPartners()",
+				"/BusinessPartners(Country='A')",
+				"/BusinessPartners(Country='A',LocalCurrency='EUR')",
+				"/BusinessPartners(Country='A',$isTotal=true)",
+				"/BusinessPartners($isTotal=true)"
+			], [
+				[true, true, 0, "", "", "3510", ""],
+				[true, true, 1, "A", "", subtotalAtTop("10"), subtotalAtTop("EUR")],
+				[false, true, 2, "A", "", "10", "EUR"],
+				[undefined, true, 1, "", "", "10", "EUR"],
+				[undefined, true, 0, "", "", "3510", ""]
+			]);
+
+			that.expectRequest("BusinessPartners"
+					+ "?$apply=filter(Country eq 'A' and LocalCurrency eq 'EUR')"
+					+ "/groupby((Region),aggregate(SalesAmountLocalCurrency,LocalCurrency))"
+					+ "&$count=true&$skip=0&$top=100", {
+					value : [{
+						LocalCurrency : "EUR",
+						Region : "a",
+						SalesAmountLocalCurrency : "1"
+					}, {
+						LocalCurrency : "EUR",
+						Region : "b",
+						SalesAmountLocalCurrency : "2"
+					}, {
+						LocalCurrency : "EUR",
+						Region : "c",
+						SalesAmountLocalCurrency : "3"
+					}]
+				})
+				.expectChange("level", [,,, 3, 3, 3, 2, 1, 0]);
+
+			// code under test
+			oListBinding.getCurrentContexts()[2].expand();
+
+			return that.waitForChanges(assert, "expand node 'A/EUR'");
+		}).then(function () {
+			checkTable("node 'A/EUR' expanded", [
+				"/BusinessPartners()",
+				"/BusinessPartners(Country='A')",
+				"/BusinessPartners(Country='A',LocalCurrency='EUR')",
+				"/BusinessPartners(Country='A',LocalCurrency='EUR',Region='a')",
+				"/BusinessPartners(Country='A',LocalCurrency='EUR',Region='b')",
+				"/BusinessPartners(Country='A',LocalCurrency='EUR',Region='c')",
+				"/BusinessPartners(Country='A',LocalCurrency='EUR',$isTotal=true)",
+				"/BusinessPartners(Country='A',$isTotal=true)",
+				"/BusinessPartners($isTotal=true)"
+			], [
+				[true, true, 0, "", "", "3510", ""],
+				[true, true, 1, "A", "", subtotalAtTop("10"), subtotalAtTop("EUR")],
+				// Note: "localCurrency" must not disappear here!
+				[true, true, 2, "A", "", subtotalAtTop("10"), "EUR"],
+				[false, true, 3, "A", "a", "1", "EUR"],
+				[false, true, 3, "A", "b", "2", "EUR"],
+				[false, true, 3, "A", "c", "3", "EUR"],
+				[undefined, true, 2, "", "", "10", "EUR"],
+				[undefined, true, 1, "", "", "10", "EUR"],
+				[undefined, true, 0, "", "", "3510", ""]
+			]);
+
+			that.expectChange("level", [,, 0]);
+
+			// code under test
+			oListBinding.getCurrentContexts()[1].collapse();
+
+			// Note: table's content is NOT updated synchronously
+			return that.waitForChanges(assert, "collapse node 'A'");
+		}).then(function () {
+			checkTable("node 'A' collapsed", [
+				"/BusinessPartners()",
+				"/BusinessPartners(Country='A')",
+				"/BusinessPartners($isTotal=true)"
+			], [
+				[true, true, 0, "", "", "3510", ""],
+				[false, true, 1, "A", "", "10", "EUR"],
+				[undefined, true, 0, "", "", "3510", ""]
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: sap.ui.table.Table with aggregation, visual grouping, and grand total at bottom
 	// only while just two rows are visible at all: do not confuse data row with grand total row!
 	// JIRA: CPOUI5ODATAV4-558

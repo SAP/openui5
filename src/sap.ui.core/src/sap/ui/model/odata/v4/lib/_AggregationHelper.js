@@ -23,7 +23,8 @@ sap.ui.define([
 			aggregate : "object",
 			grandTotalAtBottomOnly : "boolean",
 			group : "object",
-			groupLevels : "array"
+			groupLevels : "array",
+			subtotalsAtBottomOnly : "boolean"
 		},
 		// "required white space"
 		rComma = /,|%2C|%2c/,
@@ -351,6 +352,47 @@ sap.ui.define([
 		},
 
 		/**
+		 * Extract subtotals and their units from the given group node, so that they can be used
+		 * for an extra row showing subtotals at the bottom and also to restore them when
+		 * collapsing. If requested, adds corresponding <code>null</code> updates for expansion.
+		 *
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation;
+		 *   (see {@link .buildApply})
+		 * @param {object} oGroupNode
+		 *   The group node which is about to be expanded
+		 * @param {object} oCollapsed
+		 *   An object to be filled with subtotals and their units from the given group node
+		 * @param {object} [oExpanded]
+		 *   An object to be filled with <code>null</code> updates for subtotals and their units;
+		 *   useful if subtotals are shown at the bottom only
+		 */
+		extractSubtotals : function (oAggregation, oGroupNode, oCollapsed, oExpanded) {
+			var iLevel = oGroupNode["@$ui5.node.level"];
+
+			Object.keys(oAggregation.aggregate).forEach(function (sAlias) {
+				var iIndex, sUnit;
+
+				oCollapsed[sAlias] = oGroupNode[sAlias];
+				if (oExpanded) {
+					oExpanded[sAlias] = null; // subtotals not shown here
+					// Note: no need to remove "<sAlias>@odata.type"
+				}
+				sUnit = oAggregation.aggregate[sAlias].unit;
+				if (sUnit) {
+					oCollapsed[sUnit] = oGroupNode[sUnit];
+					if (oExpanded) {
+						iIndex = oAggregation.groupLevels.indexOf(sUnit);
+						if (iIndex < 0 || iIndex >= iLevel) {
+							// unit not used as a groupLevel up to here
+							oExpanded[sUnit] = null;
+						}
+					}
+				}
+			});
+		},
+
+		/**
 		 * Returns the "$orderby" system query option filtered in such a way that only aggregatable
 		 * or groupable properties contained in the given aggregation information are used.
 		 *
@@ -410,6 +452,37 @@ sap.ui.define([
 			});
 
 			return aAllProperties;
+		},
+
+		/**
+		 * Gets an object with property updates to be applied when expanding the given group node,
+		 * creating it when needed for the first time. Creates a corresponding object to be applied
+		 * when collapsing the node again. Takes placement of subtotals into account.
+		 *
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation;
+		 *   (see {@link .buildApply})
+		 * @param {object} oGroupNode
+		 *   The group node which is about to be expanded
+		 * @returns {object}
+		 *   An object with property updates to be applied when expanding the given group node
+		 */
+		getOrCreateExpandedOject : function (oAggregation, oGroupNode) {
+			var oCollapsed,
+				oExpanded = _Helper.getPrivateAnnotation(oGroupNode, "expanded");
+
+			if (!oExpanded) {
+				oCollapsed = {"@$ui5.node.isExpanded" : false};
+				_Helper.setPrivateAnnotation(oGroupNode, "collapsed", oCollapsed);
+				oExpanded = {"@$ui5.node.isExpanded" : true};
+				_Helper.setPrivateAnnotation(oGroupNode, "expanded", oExpanded);
+				if (oAggregation.subtotalsAtBottomOnly !== undefined) { // "only or also at bottom"
+					_AggregationHelper.extractSubtotals(oAggregation, oGroupNode, oCollapsed,
+						oAggregation.subtotalsAtBottomOnly ? oExpanded : null);
+				}
+			}
+
+			return oExpanded;
 		},
 
 		/**

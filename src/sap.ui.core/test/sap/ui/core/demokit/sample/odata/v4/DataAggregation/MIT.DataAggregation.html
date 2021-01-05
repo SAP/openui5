@@ -42,7 +42,7 @@
 					<th>Sales Amount</th>
 					<th>Local Currency</th>
 					<th>Sales Number</th>
-					<th>Subtotal</th>
+					<th>Is Total</th>
 				</tr>
 				<tr>
 					<td>0</td>
@@ -154,7 +154,7 @@
 						<th>Sales Amount</th>
 						<th>Local Currency</th>
 						<th>Sales Number</th>
-						<th>Subtotal</th>
+						<th>Is Total</th>
 					</tr>
 					<tr>
 						<td>0</td>
@@ -257,6 +257,29 @@
 				the top and bottom, but everything else works the same.
 			</li>
 			<li><b>Check:</b>The grand total row copy at the bottom is shown as a leaf.</li>
+		</ol>
+
+		<h3>9. Subtotals at Bottom Only</h3>
+		<ol>
+			<li>Add the URL parameters <code>&subtotalsAtBottomOnly=true</code> to the original URL
+				and repeat the above steps 0 through 6.
+			</li>
+			<li><b>Check:</b> Whenever a node is expanded, subtotals are not shown in the same row
+				anymore, but as a separate row after all children. It has the same level, is marked
+				as a total row, and is a leaf. Everything else works the same.
+			</li>
+		</ol>
+
+		<h3>10. Subtotals at Top and Bottom</h3>
+		<ol>
+			<li>Add the URL parameters <code>&subtotalsAtBottomOnly=false</code> to the original URL
+				and repeat the above steps 0 through 6.
+			</li>
+			<li><b>Check:</b> Whenever a node is expanded, subtotals are still shown in the same row
+				as before and as a separate row after all children. It has the same level, is marked
+				as a total row, and is a leaf. Everything else works the same.
+			</li>
+			<li>Feel free to test any combination of grand total and subtotals placement.</li>
 		</ol>
 	</body>
 </html>
