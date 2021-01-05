@@ -1332,7 +1332,7 @@ sap.ui.define([
 		}
 
 		this.bSuspended = true;
-		this.oResumePromise = new SyncPromise(function (resolve, reject) {
+		this.oResumePromise = new SyncPromise(function (resolve) {
 			fnResolve = resolve;
 		});
 		this.oResumePromise.$resolve = fnResolve;

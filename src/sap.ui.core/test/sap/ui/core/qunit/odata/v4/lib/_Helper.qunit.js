@@ -962,7 +962,7 @@ sap.ui.define([
 			jQuery.ajax(sResolvedServiceUrl + "BusinessPartnerList?"
 				+ "$filter=CompanyName eq + " + _Helper.formatLiteral("Becker Berlin", "Edm.String")
 				, { method : "GET"}
-			).then(function (oData, sTextStatus, jqXHR) {
+			).then(function (oData) {
 				assert.strictEqual(oData.value[0].CompanyName, "Becker Berlin");
 				done();
 			});
@@ -2177,20 +2177,20 @@ sap.ui.define([
 
 		oHelperMock.expects("addChildrenWithAncestor")
 			.withExactArgs(sinon.match.same(aPaths), sinon.match.same(aCacheSelects), {})
-			.callsFake(function (aChildren, aAncestors, mChildren0) {
+			.callsFake(function (_aChildren, _aAncestors, mChildren0) {
 				mChildren = mChildren0;
 				mChildren["A/a"] = true;
 			});
 		oHelperMock.expects("addChildrenWithAncestor")
 			.withExactArgs(sinon.match.same(aCacheSelects), sinon.match.same(aPaths),
 				sinon.match.object)
-			.callsFake(function (aChildren, aAncestors, mChildren0) {
+			.callsFake(function (_aChildren, _aAncestors, mChildren0) {
 				assert.strictEqual(mChildren0, mChildren);
 				mChildren["B/b"] = true;
 			});
 		oHelperMock.expects("addChildrenWithAncestor")
 			.withExactArgs(["to1"], sinon.match.same(aPaths), {})
-			.callsFake(function (aChildren, aAncestors, mSet) {
+			.callsFake(function (_aChildren, _aAncestors, mSet) {
 				mSet.to1 = true;
 			});
 		oHelperMock.expects("selectKeyProperties").exactly(i % 2)
@@ -2232,21 +2232,22 @@ sap.ui.define([
 		},
 		aPaths : ["toN/a"],
 		sNavigationProperty : "/Me/toN"
-	}].forEach(function (o, i) {
-		var sMessage = "Unsupported collection-valued navigation property " + o.sNavigationProperty;
+	}].forEach(function (oFixture) {
+		var sMessage = "Unsupported collection-valued navigation property "
+			+ oFixture.sNavigationProperty;
 
 		QUnit.test("intersectQueryOptions: " + sMessage, function (assert) {
 			var mCacheQueryOptions = {
-					$expand : o.$expand,
+					$expand : oFixture.$expand,
 					$select : ["A"]
 				},
 				sCacheQueryOptions = JSON.stringify(mCacheQueryOptions),
 				mMetaPath2Type = {};
 
-			mMetaPath2Type[o.sNavigationProperty] = "N";
+			mMetaPath2Type[oFixture.sNavigationProperty] = "N";
 			assert.throws(function () {
 				// code under test
-				_Helper.intersectQueryOptions(mCacheQueryOptions, o.aPaths,
+				_Helper.intersectQueryOptions(mCacheQueryOptions, oFixture.aPaths,
 					getFetchMetadata(mMetaPath2Type), "/Me", {});
 				// Note: this error might be used by the caller to resort to other measures...
 			}, new Error(sMessage));

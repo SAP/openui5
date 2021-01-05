@@ -8,9 +8,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
-	"sap/ui/model/odata/v4/lib/_Requestor",
-	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, _Cache, _GroupLock, _Helper, _Parser, _Requestor, TestUtils) {
+	"sap/ui/model/odata/v4/lib/_Requestor"
+], function (Log, SyncPromise, _Cache, _GroupLock, _Helper, _Parser, _Requestor) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -46,7 +45,7 @@ sap.ui.define([
 	/*
 	 * Simulation of {@link sap.ui.model.odata.v4.ODataModel#getGroupProperty}
 	 */
-	function defaultGetGroupProperty(sGroupId, sPropertyName) {
+	function defaultGetGroupProperty(sGroupId) {
 		if (sGroupId === "$direct") {
 			return "Direct";
 		}
@@ -1955,7 +1954,7 @@ sap.ui.define([
 		// code under test
 		oCacheUpdatePromise = oCache.update(oGroupLock, "Address/City", "Walldorf", fnError,
 				"/~/BusinessPartnerList('0')", "('0')/path/to/entity")
-			.then(function (oResult) {
+			.then(function () {
 				assert.ok(false);
 			}, function (oResult) {
 				sinon.assert.calledOnce(fnError);
@@ -2016,7 +2015,7 @@ sap.ui.define([
 		// code under test
 		return oCache.update(oGroupLock, "Address/City", "Walldorf",
 				/*fnErrorCallback*/undefined, "/~/BusinessPartnerList('0')", "('0')/path/to/entity")
-			.then(function (oResult) {
+			.then(function () {
 				assert.ok(false);
 			}, function (oResult) {
 				assert.strictEqual(oResult, oError);
@@ -4078,7 +4077,7 @@ sap.ui.define([
 
 		// Code under test
 		return oCache.fetchLateProperty(oGroupLock, oEntity, "", "property", "property")
-			.then(function (oResult) {
+			.then(function () {
 				assert.ok(false);
 			}, function (oResult) {
 				assert.strictEqual(oResult, oError);
@@ -4149,7 +4148,7 @@ sap.ui.define([
 
 		// Code under test
 		return oCache.fetchLateProperty(oGroupLock, oCacheData, "", "property", "property")
-			.then(function (oResult) {
+			.then(function () {
 				assert.ok(false);
 			}, function (oError) {
 				assert.strictEqual(oError.message,
@@ -4335,7 +4334,7 @@ sap.ui.define([
 		this.mock(oCache).expects("getFilterExcludingCreated").withExactArgs().returns("~filter~");
 		this.mock(this.oRequestor).expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match.object)
-			.callsFake(function (sMetaPath, mQueryOptions) {
+			.callsFake(function (_sMetaPath, mQueryOptions) {
 				assert.deepEqual(Object.keys(mQueryOptions), ["$count", "$filter", "$top"]);
 				return "?~";
 			});
@@ -4530,12 +4529,11 @@ sap.ui.define([
 			fnDataRequested = function () {},
 			oGroupLock = {},
 			fnResolve,
-			oPendingRequestsPromise = new SyncPromise(function (resolve) {
-				fnResolve = resolve;
-			}),
 			oPromise;
 
-		oCache.oPendingRequestsPromise = oPendingRequestsPromise;
+		oCache.oPendingRequestsPromise = new SyncPromise(function (resolve) {
+			fnResolve = resolve;
+		});
 		oCache.aElements.$tail = new Promise(function () {}); // never resolved, must be ignored
 		this.mock(oCache).expects("getReadRange").never();
 		this.mock(oCache).expects("requestElements").never();
@@ -5052,7 +5050,7 @@ sap.ui.define([
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "Employees", sinon.match.same(oReadGroupLock0),
 				/*mHeaders*/undefined, /*oPayload*/undefined, /*fnSubmit*/undefined)
-			.returns(new Promise(function (resolve, reject) {
+			.returns(new Promise(function (resolve) {
 				fnResolve = resolve;
 			}));
 
@@ -5812,7 +5810,7 @@ sap.ui.define([
 			oPromise,
 			fnResolve;
 
-		oCache.aElements.$tail = new Promise(function (resolve, reject) {
+		oCache.aElements.$tail = new Promise(function (resolve) {
 			fnResolve = resolve;
 		});
 		this.mock(oCache).expects("getReadRange").never(); // not yet
@@ -6299,7 +6297,7 @@ sap.ui.define([
 			that = this;
 
 		return this.mockRequestAndRead(oCache, 0, "Employees", 0, 5, 5, undefined, 26)
-			.then(function (oResult) {
+			.then(function () {
 				var oDeleteGroupLock = {
 						getUnlockedCopy : function () {},
 						unlock : function () {}
@@ -6350,7 +6348,7 @@ sap.ui.define([
 				}]
 			});
 
-		return oCache.read(0, 5, 0, oGroupLock).then(function (oResult) {
+		return oCache.read(0, 5, 0, oGroupLock).then(function () {
 			var oDeleteGroupLock = {
 					getUnlockedCopy : function () {},
 					unlock : function () {}
@@ -7005,7 +7003,7 @@ sap.ui.define([
 				sinon.match.same(oCreateGroupLock0), null, sinon.match.object,
 				sinon.match.func, sinon.match.func, undefined, "Employees" + sTransientPredicate)
 			// Note: fnSubmit - see below
-			.returns(oFailedPostPromise = new Promise(function (resolve, reject) {
+			.returns(oFailedPostPromise = new Promise(function (_resolve, reject) {
 				fnRejectPost = reject;
 			}));
 		this.mock(oCache).expects("fetchTypes")
@@ -8055,7 +8053,7 @@ sap.ui.define([
 					.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('c')",
 						sinon.match.same(oCache.aElements[2]), sinon.match.same(oNewValue),
 						sinon.match.func)
-					.callsFake(function (mChangeListeners, sPath, oTarget, oSource,
+					.callsFake(function (_mChangeListeners, _sPath, _oTarget, _oSource,
 								fnCheckKeyPredicate) {
 							if (fnCheckKeyPredicate("('c')/" + oFixture.path)) {
 								throw oError;
@@ -8143,12 +8141,11 @@ sap.ui.define([
 			mNavigationPropertyPaths = {},
 			aPaths = [],
 			fnResolve,
-			oPendingRequestsPromise = new SyncPromise(function (resolve) {
-				fnResolve = resolve;
-			}),
 			oPromise;
 
-		oCache.oPendingRequestsPromise = oPendingRequestsPromise;
+		oCache.oPendingRequestsPromise = new SyncPromise(function (resolve) {
+			fnResolve = resolve;
+		});
 		this.mock(oCache).expects("fetchTypes").withExactArgs()
 			.returns(SyncPromise.resolve({})); // this call is allowed, it should be cheap
 		this.mock(_Helper).expects("intersectQueryOptions").never();
@@ -8799,7 +8796,7 @@ sap.ui.define([
 			// code under test
 			oPromise = oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
 					sReadPath)
-				.then(function (vResult) {
+				.then(function () {
 					assert.ok(oVisitResponseExpectation.calledBefore(oUpdateAllExpectation));
 				});
 
@@ -8881,10 +8878,11 @@ sap.ui.define([
 		this.mock(_Helper).expects("updateAll")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 				sinon.match.same(oOldValue), sinon.match.same(oNewValue), sinon.match.func)
-			.callsFake(function (mChangeListeners, sPath, oTarget, oSource, fnCheckKeyPredicate) {
-				if (fnCheckKeyPredicate(oFixture.path)) {
-					throw oError;
-				}
+			.callsFake(function (_mChangeListeners, _sPath, _oTarget, _oSource,
+				fnCheckKeyPredicate) {
+					if (fnCheckKeyPredicate(oFixture.path)) {
+						throw oError;
+					}
 			});
 
 		// code under test

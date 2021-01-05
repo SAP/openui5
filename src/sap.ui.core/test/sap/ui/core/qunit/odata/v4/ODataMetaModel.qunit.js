@@ -18,8 +18,6 @@ sap.ui.define([
 	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode",
-	"sap/ui/model/odata/type/Int64",
-	"sap/ui/model/odata/type/Raw",
 	"sap/ui/model/odata/v4/AnnotationHelper",
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/ODataMetaModel",
@@ -30,8 +28,8 @@ sap.ui.define([
 	"sap/ui/thirdparty/URI"
 ], function (Log, JSTokenizer, uid, SyncPromise, BindingMode, ChangeReason, ClientListBinding,
 		BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, Model, PropertyBinding,
-		Sorter, OperationMode, Int64, Raw, AnnotationHelper, Context, ODataMetaModel, ODataModel,
-		ValueListType, _Helper, TestUtils, URI) {
+		Sorter, OperationMode, AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType,
+		_Helper, TestUtils, URI) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
@@ -1201,7 +1199,7 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 
 			this.oModel = {
-				reportError : function (sLogMessage, sReportingClassName, oError) {
+				reportError : function (_sLogMessage, _sReportingClassName, oError) {
 					throw oError;
 				},
 				resolve : ODataModel.prototype.resolve
@@ -1501,7 +1499,7 @@ sap.ui.define([
 		"/foo/|$kind" : "/foo/$kind",
 		"/foo|./$kind" : "/foo/$kind",
 		"/foo/|./$kind" : "/foo/$kind"
-	}, function (sPath, sResolvedPath, sContextPath, sMetaPath) {
+	}, function (_sPath, sResolvedPath, sContextPath, sMetaPath) {
 		QUnit.test("resolve: " + sContextPath + " > " + sMetaPath, function (assert) {
 			var oContext = sContextPath && this.oMetaModel.getContext(sContextPath);
 

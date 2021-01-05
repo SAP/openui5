@@ -721,7 +721,7 @@ sap.ui.define([
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataBinding#doCreateCache
 	 */
-	ODataContextBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, oContext,
+	ODataContextBinding.prototype.doCreateCache = function (sResourcePath, mQueryOptions, _oContext,
 			sDeepResourcePath) {
 		return _Cache.createSingle(this.oModel.oRequestor, sResourcePath, mQueryOptions,
 			this.oModel.bAutoExpandSelect, this.oModel.bSharedRequests, function () {

@@ -1937,7 +1937,7 @@ sap.ui.define([
 		this.mock(this.oModel).expects("reportError")
 			.withExactArgs("Failed to execute /TEAMS('42')/name.space.Operation(...)",
 				sClassName, sinon.match.same(oError))
-			.callsFake(function (sLogMessage, sReportingClassName, oError) {
+			.callsFake(function (_sLogMessage, _sReportingClassName, oError) {
 				assert.strictEqual(oError.resourcePath, "~"); // unchanged
 				assert.deepEqual(oError.error, oFixture.reported);
 			});
@@ -2013,7 +2013,7 @@ sap.ui.define([
 		this.mock(this.oModel).expects("reportError")
 			.withExactArgs("Failed to execute /ActionImport(...)",
 				sClassName, sinon.match.same(oError))
-			.callsFake(function (sLogMessage, sReportingClassName, oError) {
+			.callsFake(function (_sLogMessage, _sReportingClassName, oError) {
 				assert.strictEqual(oError.resourcePath, "~"); // unchanged
 				assert.deepEqual(oError.error, oFixture.reported);
 			});
@@ -2717,7 +2717,7 @@ sap.ui.define([
 
 		// code under test
 		return oBinding.refreshInternal(sPath, sGroupId, bCheckUpdate, bKeepCacheOnError)
-			.then(function (oResult) {
+			.then(function () {
 				assert.strictEqual(bDependentsRefreshed, true);
 			});
 	});
@@ -3055,7 +3055,7 @@ sap.ui.define([
 
 			assert.strictEqual(oBinding.oReadGroupLock, undefined);
 
-			return oPromise.then(function (oResult) {
+			return oPromise.then(function () {
 				assert.strictEqual(bExecuted, bAction === false);
 			});
 		});
@@ -3695,7 +3695,7 @@ sap.ui.define([
 			oBinding.refreshReturnValueContext(oBinding.getBoundContext(), "group"),
 			null);
 
-		return oRefreshPromise.then(function (oResult) {
+		return oRefreshPromise.then(function () {
 			assert.strictEqual(bDependentsRefreshed, true);
 		});
 	});
@@ -3732,13 +3732,13 @@ sap.ui.define([
 				this.mock(oCache).expects("requestSideEffects")
 					.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
 						bWithContext ? "Me" : undefined)
-					.callsFake(function (oGroupLock, aPaths, mNavigationPropertyPaths) {
+					.callsFake(function (_oGroupLock, aPaths, mNavigationPropertyPaths) {
 						that.mock(oBinding).expects("visitSideEffects")
 							.withExactArgs(sGroupId, sinon.match.same(aPaths),
 								sinon.match.same(oContext),
 								sinon.match.same(mNavigationPropertyPaths), [oPromise])
-							.callsFake(function (sGroupId, aPaths, oContext,
-									mNavigationPropertyPaths, aPromises) {
+							.callsFake(function (_sGroupId, _aPaths, _oContext,
+									_mNavigationPropertyPaths, aPromises) {
 								aPromises.push(Promise.resolve());
 								if (bRecursionRejects) {
 									aPromises.push(Promise.reject(oError));
@@ -3808,7 +3808,7 @@ sap.ui.define([
 			.withExactArgs("Failed to request side effects", sClassName, sinon.match.same(oError));
 
 		// code under test
-		return oBinding.requestSideEffects(sGroupId, aPaths, oContext).then(function (vResult) {
+		return oBinding.requestSideEffects(sGroupId, aPaths, oContext).then(function () {
 				assert.ok(false, "unexpected success");
 			}, function (oError0) {
 				assert.strictEqual(oError0, oError);

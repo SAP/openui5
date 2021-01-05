@@ -3,7 +3,6 @@
  */
 sap.ui.define([
 	"sap/base/Log",
-	"sap/ui/base/ManagedObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
@@ -24,10 +23,10 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils"
-], function (Log, ManagedObject, SyncPromise, Binding, ChangeReason, Filter, FilterOperator,
-		FilterProcessor, FilterType, ListBinding, Sorter, OperationMode, Context, ODataListBinding,
-		ODataModel, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock,
-		_Helper, TestUtils) {
+], function (Log, SyncPromise, Binding, ChangeReason, Filter, FilterOperator, FilterProcessor,
+		FilterType, ListBinding, Sorter, OperationMode, Context, ODataListBinding, ODataModel,
+		asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock, _Helper,
+		TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
 	"use strict";
@@ -1985,14 +1984,13 @@ sap.ui.define([
 	QUnit.test("setContext: relative path", function (assert) {
 		var oBinding = this.bindList("Suppliers", Context.create(this.oModel, {}, "/foo")),
 			oBindingMock = this.mock(oBinding),
-			sChangeReason = "sChangeReason",
 			oContext = Context.create(this.oModel, {}, "/bar"),
 			oFetchCacheCall,
 			oNewHeaderContext = Context.create(this.oModel, oBinding, "/bar/Suppliers"),
 			oOldHeaderContext = oBinding.getHeaderContext(),
 			oResetKeepAliveCall;
 
-		oBinding.sChangeReason = sChangeReason;
+		oBinding.sChangeReason = "sChangeReason";
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		oBindingMock.expects("reset").withExactArgs();
 		oResetKeepAliveCall = oBindingMock.expects("resetKeepAlive").withExactArgs();
@@ -3255,14 +3253,13 @@ sap.ui.define([
 			oContext1 = Context.create(this.oModel, oBinding, "/EMPLOYEES/1", 1),
 			oContext2 = Context.create(this.oModel, oBinding, "/EMPLOYEES/2", 2),
 			oContext3 = {},
-			oContextMock = this.mock(Context),
-			mPreviousContextsByPath = {
-				"/EMPLOYEES/0" : {},
-				"/EMPLOYEES/1" : oContext1,
-				"/EMPLOYEES/2" : oContext2
-			};
+			oContextMock = this.mock(Context);
 
-		oBinding.mPreviousContextsByPath = mPreviousContextsByPath;
+		oBinding.mPreviousContextsByPath = {
+			"/EMPLOYEES/0" : {},
+			"/EMPLOYEES/1" : oContext1,
+			"/EMPLOYEES/2" : oContext2
+		};
 		this.mock(oContext1).expects("checkUpdate").withExactArgs();
 		this.mock(oContext2).expects("checkUpdate").withExactArgs();
 		oContextMock.expects("create")
@@ -3945,7 +3942,7 @@ sap.ui.define([
 					sinon.match(rTransientPredicate), sinon.match.same(oFixture.oInitialData),
 					sinon.match.func, sinon.match.func)
 				.returns(oCreateInCachePromise);
-			oCreateInCachePromise.then(function (oEntityCreated) {
+			oCreateInCachePromise.then(function () {
 				that.mock(_Helper).expects("getPrivateAnnotation")
 					.exactly(oFixture.sPredicate || oFixture.bGetPredicate ? 1 : 0)
 					.withExactArgs(sinon.match.same(oCreatedEntity), "predicate")
@@ -6174,11 +6171,11 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
 				bHeader ? 3 : 42,
 				bHeader ? 7 : undefined)
-			.callsFake(function (oGroupLock, aPaths, mNavigationPropertyPaths) {
+			.callsFake(function (_oGroupLock, aPaths, mNavigationPropertyPaths) {
 				that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
 						sinon.match.same(aPaths), bHeader ? undefined : sinon.match.same(oContext),
 						sinon.match.same(mNavigationPropertyPaths), [oPromise])
-					.callsFake(function (sGroupId, aPaths, oContext, mNavigationPropertyPaths,
+					.callsFake(function (_sGroupId, _aPaths, _oContext, _mNavigationPropertyPaths,
 							aPromises) {
 						aPromises.push(Promise.resolve());
 						if (bRecursionRejects) {

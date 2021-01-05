@@ -225,7 +225,7 @@ sap.ui.define([
 
 			// needed so that we can safely call the forEach
 			Basics.expectType(oPathValue, "array");
-			oPathValue.value.forEach(function (oUnused, i) {
+			oPathValue.value.forEach(function (_oValue, i) {
 				// an embedded concat must use expression binding
 				oResult = Expression.parameter(oInterface, oPathValue, i);
 				// if any parameter is type expression, the concat must become expression, too

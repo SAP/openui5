@@ -164,7 +164,7 @@ sap.ui.define([
 	QUnit.test("traverse: __postProcessor", function (assert) {
 		var oXML = xml(assert, "<And><Bool>true</Bool><Bool>false</Bool></And>"),
 			oResult = new _MetadataConverter().traverse(oXML.documentElement, {
-				__postProcessor : function (oElement, aResults) {
+				__postProcessor : function (_oElement, aResults) {
 					return {$And : aResults};
 				},
 				"Bool" : {
@@ -212,7 +212,7 @@ sap.ui.define([
 			that = this;
 
 		this.mock(oMetadataConverter).expects("resolveAlias").withExactArgs("f.Action")
-			.callsFake(function (sName) {
+			.callsFake(function () {
 				// avoid mock for "code under test"
 				that.mock(oMetadataConverter).expects("resolveAliasInParentheses")
 					.withArgs(true, "")
@@ -233,7 +233,7 @@ sap.ui.define([
 			that = this;
 
 		this.mock(oMetadataConverter).expects("resolveAlias").withExactArgs("f.Action")
-			.callsFake(function (sName) {
+			.callsFake(function () {
 				// avoid mock for "code under test"
 				that.mock(oMetadataConverter).expects("resolveAliasInParentheses")
 					.withArgs(true, "b.Type")
@@ -254,7 +254,7 @@ sap.ui.define([
 			oMetadataConverterMock = this.mock(oMetadataConverter);
 
 		oMetadataConverterMock.expects("resolveAlias").withExactArgs("f.Action")
-			.callsFake(function (sName) {
+			.callsFake(function () {
 				// avoid mock for "code under test"
 				oMetadataConverterMock.expects("resolveAliasInParentheses")
 					.withArgs(true, "b.Type")

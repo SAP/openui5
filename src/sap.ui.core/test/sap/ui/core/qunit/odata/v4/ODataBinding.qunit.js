@@ -509,7 +509,7 @@ sap.ui.define([
 
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		oExpectation = oBindingMock.expects("resetChangesForPath").withExactArgs("", [])
-			.callsFake(function (sPath, aPromises) {
+			.callsFake(function (_sPath, aPromises) {
 				aPromises.push(oResetChangesForPathPromise);
 			});
 		oBindingMock.expects("resetChangesInDependents")

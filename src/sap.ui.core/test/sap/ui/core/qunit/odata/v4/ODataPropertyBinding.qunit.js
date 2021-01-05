@@ -99,7 +99,7 @@ sap.ui.define([
 			var oControl = new TestControl({models : this.oModel}),
 				that = this;
 
-			return new Promise(function (fnResolve, fnReject) {
+			return new Promise(function (fnResolve) {
 				var oBinding,
 					oContextBindingMock,
 					fnFetchValue;
@@ -987,7 +987,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.object, "EntitySet('foo')", {"sap-client" : "111"}, false,
 				false, sinon.match.func)
 			.returns({
-				fetchValue : function (sGroupId, sPath) {
+				fetchValue : function (_sGroupId, sPath) {
 					assert.strictEqual(sPath, "property");
 					return Promise.resolve("value");
 				}
@@ -1026,7 +1026,7 @@ sap.ui.define([
 				var bAbsolute = sPath[0] === "/",
 					oValue = "foo",
 					oCache = {
-						fetchValue : function (oGroupLock, sReadPath, fnDataRequested) {
+						fetchValue : function (_oGroupLock, _sReadPath, fnDataRequested) {
 							return Promise.resolve().then(function () {
 								fnDataRequested();
 							}).then(function () {
@@ -1115,7 +1115,7 @@ sap.ui.define([
 		QUnit.test("bindProperty with non-primitive " + JSON.stringify(oValue), function (assert) {
 			var oBinding,
 				oCache = {
-					fetchValue : function (sGroupId, sPath, fnDataRequested) {
+					fetchValue : function (_sGroupId, _sPath, fnDataRequested) {
 						fnDataRequested();
 						return Promise.resolve(oValue);
 					}
@@ -1123,7 +1123,7 @@ sap.ui.define([
 				oCacheMock = this.mock(_Cache),
 				oControl = new TestControl({models : this.oModel}),
 				fnDone,
-				oDataReceivedPromise = new Promise(function (resolve, reject) {
+				oDataReceivedPromise = new Promise(function (resolve) {
 					fnDone = resolve;
 				}),
 				sPath = "/path",
@@ -1170,7 +1170,7 @@ sap.ui.define([
 	QUnit.test("dataReceived with error", function (assert) {
 		var oError = new Error("Expected read failure"),
 			oCache = {
-				fetchValue : function (sGroupId, sPath, fnDataRequested) {
+				fetchValue : function (_sGroupId, _sPath, fnDataRequested) {
 					fnDataRequested();
 					return Promise.reject(oError);
 				}
@@ -1409,7 +1409,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.object, "EntitySet('foo')", {}, false, false,
 				sinon.match.func)
 			.returns({
-				fetchValue : function (sGroupId, sPath) {
+				fetchValue : function () {
 					return oPromise;
 				}
 			});
@@ -1589,7 +1589,7 @@ sap.ui.define([
 		});
 
 		// Wait until control received value from service before calling setText
-		oControl.getBinding("text").attachChange(function (oEvent) {
+		oControl.getBinding("text").attachChange(function () {
 			that.mock(oControl.getBinding("text").oCachePromise.getResult())
 				.expects("update").never();
 			// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
@@ -1624,7 +1624,7 @@ sap.ui.define([
 		oControl.setBindingContext(this.oModel.createBindingContext("/ProductList('HT-1000')"));
 
 		// Wait until control received value from service before calling setText
-		oControl.getBinding("text").attachChange(function (oEvent) {
+		oControl.getBinding("text").attachChange(function () {
 			that.mock(oControl.getBinding("text").oCachePromise.getResult())
 				.expects("update").never();
 			// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!

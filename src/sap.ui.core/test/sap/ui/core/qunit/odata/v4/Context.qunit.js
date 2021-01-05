@@ -57,7 +57,7 @@ sap.ui.define([
 
 		// code under test
 		oContext = Context.create(oModel, oBinding, sPath, 42,
-			new Promise(function (resolve, reject) {
+			new Promise(function (resolve) {
 				fnResolve = resolve;
 			}));
 
@@ -396,7 +396,7 @@ sap.ui.define([
 		assert.notOk(oContext.isTransient(), "no created Promise -> not transient");
 
 		oContext = Context.create(null, oBinding, "/foo", 42,
-			new Promise(function (resolve, reject) {
+			new Promise(function (resolve) {
 				fnResolve = resolve;
 			}));
 
@@ -989,7 +989,7 @@ sap.ui.define([
 		// code under test
 		return oContext.delete(sGroupId).then(function () {
 			assert.ok(true);
-		}, function (oError0) {
+		}, function () {
 			assert.notOk(true);
 		});
 	});
@@ -1185,7 +1185,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bfnOnBeforeDestroy, i) {
+[false, true].forEach(function (bfnOnBeforeDestroy) {
 	var sTitle = "destroy" + (bfnOnBeforeDestroy ? ", with onBeforeDestroy call back" : "");
 
 	QUnit.test(sTitle, function (assert) {
@@ -2020,7 +2020,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[false, true].forEach(function (bBinding, i) {
+[false, true].forEach(function (bBinding) {
 	var sTitle = "requestSideEffectsInternal: delegate up"
 			+ (bBinding ? " and request on binding" : "");
 
@@ -2242,9 +2242,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[function (oModelMock, oBinding, oBindingMock, fnErrorCallback, fnPatchSent, oError) {
+[function (_oModelMock, _oBinding, _oBindingMock, _fnErrorCallback, _fnPatchSent, oError) {
 	return Promise.reject(oError); // #update fails
-}, function (oModelMock, oBinding, oBindingMock, fnErrorCallback, fnPatchSent, oError) {
+}, function (_oModelMock, oBinding, oBindingMock, _fnErrorCallback, fnPatchSent, oError) {
 	// simulate a failed PATCH via Context#setProperty
 	oBindingMock.expects("firePatchSent").on(oBinding).withExactArgs();
 

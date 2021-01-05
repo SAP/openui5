@@ -664,10 +664,10 @@ sap.ui.define([
 	/**
 	 * Post-processing of an Schema element.
 	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
+	 * @param {Element} _oElement The element
+	 * @param {any[]} _aResult The results from child elements
 	 */
-	_V2MetadataConverter.prototype.postProcessSchema = function (oElement, aResult) {
+	_V2MetadataConverter.prototype.postProcessSchema = function (_oElement, _aResult) {
 		var mAnnotations,
 			oEntityContainer,
 			sEntityContainerName,
@@ -1025,9 +1025,9 @@ sap.ui.define([
 	/**
 	 * Processes an End element below an Association element.
 	 *
-	 * @param {Element} oElement The element
+	 * @param {Element} _oElement The element
 	 */
-	_V2MetadataConverter.prototype.processReferentialConstraint = function (oElement) {
+	_V2MetadataConverter.prototype.processReferentialConstraint = function (_oElement) {
 		this.association.referentialConstraint = {};
 	};
 

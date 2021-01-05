@@ -307,11 +307,11 @@ sap.ui.define([
 	/**
 	 * Post-processing of a Collection element.
 	 *
-	 * @param {Element} oElement The element
+	 * @param {Element} _oElement The element
 	 * @param {any[]} aResult The results from child elements
 	 * @returns {object} The value for the JSON
 	 */
-	_MetadataConverter.prototype.postProcessCollection = function (oElement, aResult) {
+	_MetadataConverter.prototype.postProcessCollection = function (_oElement, aResult) {
 		return aResult;
 	};
 
@@ -335,10 +335,10 @@ sap.ui.define([
 	 * Post-processing of a LabeledElementReference element within an Annotation element.
 	 *
 	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
+	 * @param {any[]} _aResult The results from child elements
 	 * @returns {any} The value for the JSON
 	 */
-	_MetadataConverter.prototype.postProcessLabeledElementReference = function (oElement, aResult) {
+	_MetadataConverter.prototype.postProcessLabeledElementReference = function (oElement, _aResult) {
 		return {
 			"$LabeledElementReference" : this.resolveAlias(oElement.textContent)
 		};
@@ -348,21 +348,21 @@ sap.ui.define([
 	 * Post-processing of a leaf element within an Annotation element.
 	 *
 	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
+	 * @param {any[]} _aResult The results from child elements
 	 * @returns {any} The constant value for the JSON
 	 */
-	_MetadataConverter.prototype.postProcessLeaf = function (oElement, aResult) {
+	_MetadataConverter.prototype.postProcessLeaf = function (oElement, _aResult) {
 		return this.getAnnotationValue(oElement.localName, oElement.textContent);
 	};
 
 	/**
 	 * Post-processing of a Not element within an Annotation element.
 	 *
-	 * @param {Element} oElement The element
+	 * @param {Element} _oElement The element
 	 * @param {any[]} aResult The results from child elements
 	 * @returns {object} The value for the JSON
 	 */
-	_MetadataConverter.prototype.postProcessNot = function (oElement, aResult) {
+	_MetadataConverter.prototype.postProcessNot = function (_oElement, aResult) {
 		var oResult = this.oAnnotatable.target;
 
 		oResult.$Not = aResult[0];
@@ -372,11 +372,11 @@ sap.ui.define([
 	/**
 	 * Post-processing of a Null element within an Annotation element.
 	 *
-	 * @param {Element} oElement The element
-	 * @param {any[]} aResult The results from child elements
+	 * @param {Element} _oElement The element
+	 * @param {any[]} _aResult The results from child elements
 	 * @returns {object} The value for the JSON
 	 */
-	_MetadataConverter.prototype.postProcessNull = function (oElement, aResult) {
+	_MetadataConverter.prototype.postProcessNull = function (_oElement, _aResult) {
 		var oAnnotatable = this.oAnnotatable,
 			vResult = null;
 
@@ -441,11 +441,11 @@ sap.ui.define([
 	/**
 	 * Post-processing of a UrlRef element within an Annotation element.
 	 *
-	 * @param {Element} oElement The element
+	 * @param {Element} _oElement The element
 	 * @param {any[]} aResult The results from child elements
 	 * @returns {object} The constant value for the JSON
 	 */
-	_MetadataConverter.prototype.postProcessUrlRef = function (oElement, aResult) {
+	_MetadataConverter.prototype.postProcessUrlRef = function (_oElement, aResult) {
 		return {$UrlRef : aResult[0]};
 	};
 
@@ -465,9 +465,9 @@ sap.ui.define([
 	/**
 	 * Processes an element of an annotatable expression.
 	 *
-	 * @param {Element} oElement The element
+	 * @param {Element} _oElement The element
 	 */
-	_MetadataConverter.prototype.processAnnotatableExpression = function (oElement) {
+	_MetadataConverter.prototype.processAnnotatableExpression = function (_oElement) {
 		this.annotatable({});
 	};
 

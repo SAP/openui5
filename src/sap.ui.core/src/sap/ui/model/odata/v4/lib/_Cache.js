@@ -854,14 +854,14 @@ sap.ui.define([
 	/*
 	 * Returns the requested data if available synchronously.
 	 *
-	 * @param {string} [sPath]
+	 * @param {string} [_sPath]
 	 *   Relative path to drill-down into
 	 * @returns {any}
 	 *   The requested data or <code>undefined</code> if the data is not yet available
 	 *
 	 * @public
 	 */
-	_Cache.prototype.getValue = function (sPath) {
+	_Cache.prototype.getValue = function (_sPath) {
 		throw new Error("Unsupported operation");
 	};
 
@@ -1975,7 +1975,7 @@ sap.ui.define([
 	 *   request will be created
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
-	 * @param {function} [fnDataRequested]
+	 * @param {function} [_fnDataRequested]
 	 *   The function is called just before the back-end request is sent; unused in CollectionCache
 	 *   since no request will be created
 	 * @param {object} [oListener]
@@ -1989,7 +1989,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_CollectionCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested,
+	_CollectionCache.prototype.fetchValue = function (oGroupLock, sPath, _fnDataRequested,
 			oListener, bCreateOnDemand) {
 		var aElements,
 			sFirstSegment = sPath.split("/")[0],
@@ -2690,7 +2690,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group that is associated with the request;
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
-	 * @param {string} [sPath]
+	 * @param {string} [_sPath]
 	 *   ignored for property caches, should be empty
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back-end request is sent.
@@ -2709,7 +2709,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	_PropertyCache.prototype.fetchValue = function (oGroupLock, sPath, fnDataRequested, oListener,
+	_PropertyCache.prototype.fetchValue = function (oGroupLock, _sPath, fnDataRequested, oListener,
 			bCreateOnDemand) {
 		var that = this;
 
