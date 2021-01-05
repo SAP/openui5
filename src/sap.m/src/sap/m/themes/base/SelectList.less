@@ -17,8 +17,7 @@
 
 /* disabled */
 
-.sapMSelectListDisabled,
-.sapMSelectListItemBaseDisabled {
+.sapMSelectListDisabled {
 	pointer-events: none;
 }
 
@@ -76,6 +75,11 @@ li.sapMSelectListItemBaseInvisible {
 	display: none;
 }
 
+/* disabled */
+.sapMSelectListItemBaseDisabled {
+	cursor: unset;
+}
+
 /* hover */
 .sapMSelectListItemBaseHoverable:hover {
 	background: @sapUiListHoverBackground;
@@ -87,8 +91,8 @@ li.sapMSelectListItemBaseInvisible {
 }
 
 /* pressed and pressed selected */
-.sapMSelectListItemBase.sapMSelectListItemBasePressed,
-.sapMSelectListItemBase.sapMSelectListItemBasePressed.sapMSelectListItemBaseSelected {
+:not(.sapMSelectListItemBaseDisabled).sapMSelectListItemBase.sapMSelectListItemBasePressed,
+:not(.sapMSelectListItemBaseDisabled).sapMSelectListItemBase.sapMSelectListItemBasePressed.sapMSelectListItemBaseSelected {
 	color: @sapUiListActiveTextColor;
 	background: @sapUiListActiveBackground;
 }

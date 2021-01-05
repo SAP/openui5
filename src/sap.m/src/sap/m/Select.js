@@ -2052,8 +2052,12 @@ function(
 			}).addStyleClass(this.getRenderer().CSS_CLASS + "List-CTX")
 			.addEventDelegate({
 				ontap: function(oEvent) {
-					this._checkSelectionChange();
-					this.close();
+					var oItem = oEvent.srcControl;
+
+					if (oItem.getEnabled()) {
+						this._checkSelectionChange();
+						this.close();
+					}
 				}
 			}, this)
 			.attachSelectionChange(this.onSelectionChange, this);
