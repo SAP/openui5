@@ -30,6 +30,13 @@ sap.ui.define([
 		rRws = new RegExp(_Parser.sWhitespace + "+"),
 		rODataIdentifier = new RegExp("^" + _Parser.sODataIdentifier
 			+ "(?:" + _Parser.sWhitespace + "+(?:asc|desc))?$"),
+		/**
+		 * Collection of helper methods for data aggregation.
+		 *
+		 * @alias sap.ui.model.odata.v4.lib._AggregationHelper
+		 * @author SAP SE
+		 * @private
+		 */
 		_AggregationHelper;
 
 	/*
@@ -141,13 +148,6 @@ sap.ui.define([
 		return aTransformations.join("/");
 	}
 
-	/**
-	 * Collection of helper methods for data aggregation.
-	 *
-	 * @alias sap.ui.model.odata.v4.lib._AggregationHelper
-	 * @author SAP SE
-	 * @private
-	 */
 	_AggregationHelper = {
 		/**
 		 * Builds the value for a "$apply" system query option based on the given data aggregation
