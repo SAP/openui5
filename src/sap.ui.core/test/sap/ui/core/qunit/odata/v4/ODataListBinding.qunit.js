@@ -2113,15 +2113,15 @@ sap.ui.define([
 		var oBinding,
 			oBindingMock = this.mock(ODataListBinding.prototype),
 			oCache0 = {setActive : function () {}},
-			oCache1 = {refreshKeptElement : function () {}},
+			oCache1 = {refreshKeptElements : function () {}},
 			oCache = oCache0,
 			oContext = Context.create(this.oModel, {}, "/TEAMS('1')"),
 			oError = new Error(),
 			oKeptContext = {resetKeepAlive : function() {}},
 			sPath = {/*TEAMS('1')*/},
-			oRefreshKeptElementCall,
-			oRefreshKeptElementGroupLock = {},
-			oRefreshKeptElementPromise = SyncPromise.resolve({}),
+			oRefreshKeptElementsCall,
+			oRefreshKeptElementsGroupLock = {},
+			oRefreshKeptElementsPromise = SyncPromise.resolve({}),
 			oRefreshResult,
 			that = this;
 
@@ -2146,10 +2146,10 @@ sap.ui.define([
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false);
 		this.mock(oBinding).expects("lockGroup").withExactArgs("myGroup")
-			.returns(oRefreshKeptElementGroupLock);
-		oRefreshKeptElementCall = this.mock(oCache1).expects("refreshKeptElement")
-			.withExactArgs(sinon.match.same(oRefreshKeptElementGroupLock), sinon.match.func)
-			.returns(oRefreshKeptElementPromise);
+			.returns(oRefreshKeptElementsGroupLock);
+		oRefreshKeptElementsCall = this.mock(oCache1).expects("refreshKeptElements")
+			.withExactArgs(sinon.match.same(oRefreshKeptElementsGroupLock), sinon.match.func)
+			.returns(oRefreshKeptElementsPromise);
 		this.mock(oBinding).expects("removeCachesAndMessages")
 			.withExactArgs(sinon.match.same(sPath));
 		this.mock(oBinding).expects("createRefreshPromise").withExactArgs().callThrough();
@@ -2168,12 +2168,12 @@ sap.ui.define([
 				that.mock(oKeptContext).expects("resetKeepAlive").withExactArgs();
 
 				// code under test
-				oRefreshKeptElementCall.firstCall.args[1]("('42')");
+				oRefreshKeptElementsCall.firstCall.args[1]("('42')");
 			}
 
 			assert.ok(oFixture.success);
 			assert.strictEqual(oBinding.oCachePromise.getResult(), oCache1);
-			assert.strictEqual(oResult[1], oRefreshKeptElementPromise.getResult());
+			assert.strictEqual(oResult[1], oRefreshKeptElementsPromise.getResult());
 			assert.strictEqual(oBinding.mPreviousContextsByPath["/resolved/path('42')"],
 				oKeptContext);
 		}, function (oError0) {
@@ -2286,7 +2286,7 @@ sap.ui.define([
 				{$$ownRequest : true}),
 			oError = new Error(),
 			bIsRoot = "false,true",
-			oNewCache = {refreshKeptElement : function () {}},
+			oNewCache = {refreshKeptElements : function () {}},
 			oOldCache = oBinding.oCachePromise.getResult(),
 			oRefreshPromise = Promise.reject(oError),
 			oYetAnotherError = new Error(),
@@ -2340,7 +2340,7 @@ sap.ui.define([
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, null, null,
 				{$$ownRequest : true}),
 			oError = new Error(),
-			oNewCache = {refreshKeptElement : function () {}};
+			oNewCache = {refreshKeptElements : function () {}};
 
 		oError.canceled = true;
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);

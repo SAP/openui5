@@ -2174,8 +2174,8 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataBinding#refreshInternal
 	 */
 	ODataListBinding.prototype.refreshInternal = function (sResourcePathPrefix, sGroupId,
-			_bCheckUpdate, bKeepCacheOnError) {
-		var oKeptElementPromise, that = this;
+			bCheckUpdate, bKeepCacheOnError) {
+		var oKeptElementsPromise, that = this;
 
 		function onRemove(sPredicate) {
 			var sPath = that.oModel.resolve(that.sPath, that.oContext);
@@ -2209,8 +2209,8 @@ sap.ui.define([
 			if (oCache && !oPromise) { // do not refresh twice
 				that.removeCachesAndMessages(sResourcePathPrefix);
 				that.fetchCache(that.oContext);
-				oKeptElementPromise = that.oCachePromise.then(function (oNewCache) {
-					return oNewCache.refreshKeptElement(that.lockGroup(sGroupId), onRemove);
+				oKeptElementsPromise = that.oCachePromise.then(function (oNewCache) {
+					return oNewCache.refreshKeptElements(that.lockGroup(sGroupId), onRemove);
 				});
 				oPromise = that.createRefreshPromise();
 				if (bKeepCacheOnError) {
@@ -2235,7 +2235,7 @@ sap.ui.define([
 			aDependentBindings = that.getDependentBindings();
 			that.reset(ChangeReason.Refresh); // this may reset that.oRefreshPromise
 			return SyncPromise.all(
-				refreshAll(aDependentBindings).concat(oPromise, oKeptElementPromise)
+				refreshAll(aDependentBindings).concat(oPromise, oKeptElementsPromise)
 			);
 		});
 	};

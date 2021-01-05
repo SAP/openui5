@@ -9647,84 +9647,144 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[false, true].forEach(function (bDeleted) {
-	var sTitle = "refreshKeptElements" + (bDeleted ? ";after refresh kept element is deleted" : "");
-
-	QUnit.test(sTitle, function (assert) {
-		var oCache = _Cache.create(this.oRequestor, "Employees", {}),
+[{
+	sTitle : "refreshKeptElements with one kept context",
+	mKeptAliveElementsByPredicate : {
+		"('Foo')" : { key : "Foo" }
+	},
+	sFilter : "~Foo~"
+}, {
+	sTitle : "refreshKeptElements with two kept contexts",
+	mKeptAliveElementsByPredicate : {
+		"('Foo')" : { key : "Foo" },
+		"('Bar')" : { key : "Bar" }
+	},
+	sFilter : "~Bar~ or ~Foo~",
+	iTop : 2
+}, {
+	sTitle : "refreshKeptElements with one kept context; after refresh kept element is deleted",
+	mKeptAliveElementsByPredicate : {
+		"('Foo')" : { bDeleted : true, key : "Foo" }
+	},
+	sFilter : "~Foo~"
+}, {
+	sTitle : "refreshKeptElements with two kept contexts;"
+		+ " after refresh one kept element is deleted",
+	mKeptAliveElementsByPredicate : {
+		"('Foo')" : { bDeleted : true, key : "Foo" },
+		"('Bar')" : { key : "Bar" }
+	},
+	sFilter : "~Bar~ or ~Foo~",
+	iTop : 2
+}, {
+	sTitle : "refreshKeptElements with two kept contexts;"
+		+ " after refresh all kept elements are deleted",
+	mKeptAliveElementsByPredicate : {
+		"('Foo')" : { bDeleted : true, key : "Foo" },
+		"('Bar')" : { bDeleted : true, key : "Bar" }
+	},
+	sFilter : "~Bar~ or ~Foo~",
+	iTop : 2
+}].forEach(function (oFixture){
+	QUnit.test(oFixture.sTitle, function (assert) {
+		var mByPredicate = {},
+			oCache = _Cache.create(this.oRequestor, "Employees", {}),
 			oCacheMock = this.mock(oCache),
-			oElement = {},
-			oEntity = {},
+			oGroupLock = {},
+			oHelperMock = this.mock(_Helper),
 			mQueryOptionsCopy = {
 				$count : true,
 				$orderby : "~orderby~",
 				$search : "~search~"
 			},
-			oGroupLock = {},
 			fnOnRemove = sinon.spy(),
-			oResponse = {value : bDeleted ? [] : [oElement]},
+			oResponse = {
+				value : []
+			},
 			mTypes = {};
 
-		oCache.aElements.$byPredicate = {
-			"('Foo')" : oEntity,
-			"('Fux')" : "untouched"
-		};
+		Object.keys(oFixture.mKeptAliveElementsByPredicate).forEach(function (sPredicate) {
+			var oElement = oFixture.mKeptAliveElementsByPredicate[sPredicate];
+
+			oCache.aElements.$byPredicate[sPredicate] = oElement;
+
+			oHelperMock.expects("getKeyFilter")
+				.withExactArgs(sinon.match.same(oElement), oCache.sMetaPath,
+					sinon.match.same(mTypes))
+				.returns("~" + oElement.key + "~");
+
+			if (!oElement.bDeleted) {
+				// this is only needed in case the kept entity is still available after refresh
+				oResponse.value.push(oElement);
+				mByPredicate[sPredicate] = oElement;
+
+				oHelperMock.expects("updateAll")
+					.withExactArgs(sinon.match.same(oCache.mChangeListeners), sPredicate,
+						sinon.match.same(oElement), sinon.match.same(oElement));
+			}
+		});
 
 		// calculateKeptElementQuerry
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(oCache.mQueryOptions))
 			.returns(mQueryOptionsCopy);
-		this.mock(_Helper).expects("getKeyFilter")
-			.withExactArgs(sinon.match.same(oEntity), oCache.sMetaPath, sinon.match.same(mTypes))
-			.returns("~filter~");
+
 		this.mock(oCache.oRequestor).expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match(function (oValue) {
 				return oValue === mQueryOptionsCopy
-					&& oValue.$filter === "~filter~"
+					&& oValue.$filter === oFixture.sFilter
+					&& "$top" in oValue === "iTop" in oFixture
+					&& oValue.$top === oFixture.iTop
 					&& !("$count" in oValue)
 					&& !("$orderby" in oValue)
 					&& !("$search" in oValue);
 			}))
-			.returns("?$filter=~filter~");
+			.returns("?$filter=" + oFixture.sFilter);
 
-		// refreshKeptElement
+		// refreshKeptElements
 		oCacheMock.expects("fetchTypes").returns(SyncPromise.resolve(mTypes));
 		this.mock(this.oRequestor).expects("request")
-			.withExactArgs("GET", "Employees?$filter=~filter~", sinon.match.same(oGroupLock))
+			.withExactArgs("GET", "Employees?$filter=" + oFixture.sFilter,
+				sinon.match.same(oGroupLock))
 			.returns(Promise.resolve(oResponse));
 		oCacheMock.expects("visitResponse")
-			.exactly(bDeleted ? 0 : 1)
 			.withExactArgs(sinon.match.same(oResponse), sinon.match.same(mTypes), undefined,
-				undefined, undefined, 0);
-		this.mock(_Helper).expects("getPrivateAnnotation")
-			.exactly(bDeleted ? 0 : 1)
-			.withExactArgs(sinon.match.same(oElement), "predicate")
-			.returns("('Foo')");
-		this.mock(_Helper).expects("updateAll")
-			.exactly(bDeleted ? 0 : 1)
-			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "('Foo')",
-				sinon.match.same(oEntity), sinon.match.same(oElement));
+				undefined, undefined, 0)
+			.callsFake(function () {
+				if (Object.keys(mByPredicate).length > 0) {
+					oResponse.value.$byPredicate = mByPredicate;
+				}
+			});
 
 		// code under test
-		return oCache.refreshKeptElement(oGroupLock, fnOnRemove).then(function (oResult) {
+		return oCache.refreshKeptElements(oGroupLock, fnOnRemove).then(function (oResult) {
+			var mByPredicateAfterRefresh  = {},
+				iCallCount = 0;
+
 			assert.deepEqual(oResult, undefined);
-			if (bDeleted) {
-				sinon.assert.calledOnce(fnOnRemove);
-				sinon.assert.calledWithExactly(fnOnRemove, "('Foo')");
-				assert.deepEqual(oCache.aElements.$byPredicate, {"('Fux')" : "untouched"});
-			}
+			Object.keys(oFixture.mKeptAliveElementsByPredicate).forEach(function (sPredicate) {
+				if (!oFixture.mKeptAliveElementsByPredicate[sPredicate].bDeleted) {
+					mByPredicateAfterRefresh [sPredicate]
+						= oFixture.mKeptAliveElementsByPredicate[sPredicate];
+				} else {
+					iCallCount += 1;
+					sinon.assert.calledWithExactly(fnOnRemove, sPredicate);
+				}
+			});
+			sinon.assert.callCount(fnOnRemove, iCallCount);
+			assert.deepEqual(oCache.aElements.$byPredicate, mByPredicateAfterRefresh);
 		});
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("refreshKeptElement w/o kept-alive element", function (assert) {
+	QUnit.test("refreshKeptElements w/o kept-alive element", function (assert) {
 		var oCache = _Cache.create(this.oRequestor, "Employees", {});
 
 		this.mock(oCache.oRequestor).expects("request").never();
 
 		// code under test
-		assert.deepEqual(oCache.refreshKeptElement({/*GroupLock*/}), undefined);
+		assert.deepEqual(oCache.refreshKeptElements({/*GroupLock*/}), undefined);
 	});
 });
 //TODO: resetCache if error in update?

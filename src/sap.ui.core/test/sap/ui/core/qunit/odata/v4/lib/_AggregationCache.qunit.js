@@ -2156,7 +2156,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshKeptElement", function (assert) {
+	QUnit.test("refreshKeptElements", function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group: {},
@@ -2164,6 +2164,6 @@ sap.ui.define([
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 
-		assert.strictEqual(oCache.refreshKeptElement(), undefined);
+		assert.strictEqual(oCache.refreshKeptElements(), undefined);
 	});
 });

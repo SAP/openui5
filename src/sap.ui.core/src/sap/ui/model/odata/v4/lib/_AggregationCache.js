@@ -598,12 +598,12 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the kept-alive element. Nothing to do here, we have no kept-alive element.
+	 * Refreshes the kept-alive elements. Nothing to do here, we have no kept-alive elements.
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElement
+	 * @see sap.ui.model.odata.v4.lib._CollectionCache#refreshKeptElements
 	 */
-	_AggregationCache.prototype.refreshKeptElement = function () {};
+	_AggregationCache.prototype.refreshKeptElements = function () {};
 
 	/**
 	 * Returns the cache's URL (ignoring dynamic parameters $skip/$top).
