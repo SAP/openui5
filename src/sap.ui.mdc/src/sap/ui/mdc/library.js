@@ -44,7 +44,8 @@ sap.ui.define([
 			"sap.ui.mdc.FilterField",
 			"sap.ui.mdc.link.Panel",
 			"sap.ui.mdc.link.ContactDetails",
-			"sap.ui.mdc.ui.Container"
+			"sap.ui.mdc.ui.Container",
+			"sap.ui.mdc.ChartNew"
 			],
 		elements: [
 			"sap.ui.mdc.table.Column",
@@ -87,6 +88,7 @@ sap.ui.define([
 			flChangeHandlers: {
 				"sap.ui.mdc.Table": "sap/ui/mdc/flexibility/Table",
 				"sap.ui.mdc.Chart": "sap/ui/mdc/flexibility/Chart",
+				"sap.ui.mdc.ChartNew": "sap/ui/mdc/flexibility/Chart",
 				"sap.ui.mdc.FilterBar": "sap/ui/mdc/flexibility/FilterBar",
 				"sap.ui.mdc.filterbar.p13n.AdaptationFilterBar": "sap/ui/mdc/flexibility/FilterBar",
 				"sap.ui.mdc.link.PanelItem": "sap/ui/mdc/flexibility/PanelItem",
