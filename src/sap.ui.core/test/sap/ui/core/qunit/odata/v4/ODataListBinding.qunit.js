@@ -809,8 +809,8 @@ sap.ui.define([
 		oBinding = this.bindList("/EMPLOYEES");
 
 		// set members which should be reset to arbitrary values
-		oBinding.createContexts(0, 2, [{}, {}]);
-		oBinding.createContexts(3, 1, [{}]);
+		oBinding.createContexts(0, [{}, {}]);
+		oBinding.createContexts(3, [{}]);
 		aPreviousContexts = oBinding.aContexts.slice();
 		oBinding.aContexts.unshift(oCreatedContext);
 		oBinding.iCurrentBegin = 10;
@@ -1156,7 +1156,7 @@ sap.ui.define([
 				sinon.match.same(fnDataRequested))
 			.returns(SyncPromise.resolve(oResult));
 		this.mock(oBinding).expects("createContexts")
-			.withExactArgs(1, 2, sinon.match.same(oResult.value))
+			.withExactArgs(1, sinon.match.same(oResult.value))
 			.returns(SyncPromise.resolve(bChanged));
 
 		// code under test
@@ -1193,7 +1193,7 @@ sap.ui.define([
 				sinon.match.same(fnDataRequested))
 			.returns(SyncPromise.resolve(oResult));
 		this.mock(oBinding).expects("createContexts")
-			.withExactArgs(iReadStart, 2, sinon.match.same(oResult.value))
+			.withExactArgs(iReadStart, sinon.match.same(oResult.value))
 			.returns(SyncPromise.resolve(bChanged));
 
 		// code under test
@@ -2977,7 +2977,7 @@ sap.ui.define([
 
 		if (oFixture.bHasRead) {
 			// simulate 1 entity read from server
-			oBinding.createContexts(0, 1, aData);
+			oBinding.createContexts(0, aData);
 			oContext0FromServer = oBinding.aContexts[0];
 			oBinding.iCurrentEnd = 1;
 		}
@@ -3102,14 +3102,14 @@ sap.ui.define([
 				}
 
 				// code under test
-				assert.strictEqual(oBinding.createContexts(iStart, 3, aResults), true);
+				assert.strictEqual(oBinding.createContexts(iStart, aResults), true);
 
 				for (i = iStart; i < iStart + aResults.length; i += 1) {
 					assert.strictEqual(oBinding.aContexts[i], aContexts[i - iStart]);
 				}
 
 				// code under test : no second change event
-				assert.strictEqual(oBinding.createContexts(iStart, 3, aResults), false);
+				assert.strictEqual(oBinding.createContexts(iStart, aResults), false);
 			});
 		});
 	});
@@ -3142,7 +3142,7 @@ sap.ui.define([
 			// code under test: set length and length final flag
 			// Note: short reads are handled by _Cache and set $count!
 			assert.strictEqual(
-				oBinding.createContexts(20 + iCreatedContexts, 30, result(29, 20 + 29)),
+				oBinding.createContexts(20 + iCreatedContexts, result(29, 20 + 29)),
 				true);
 
 			assert.strictEqual(oBinding.bLengthFinal, true,
@@ -3157,7 +3157,7 @@ sap.ui.define([
 			}
 			// code under test: delete obsolete contexts
 			assert.strictEqual(
-				oBinding.createContexts(20 + iCreatedContexts, 30, result(17, 20 + 17)),
+				oBinding.createContexts(20 + iCreatedContexts, result(17, 20 + 17)),
 				true);
 
 			assert.strictEqual(oBinding.isLengthFinal(), true);
@@ -3167,7 +3167,7 @@ sap.ui.define([
 
 			// code under test
 			assert.strictEqual(
-				oBinding.createContexts(20 + iCreatedContexts, 17, result(17)),
+				oBinding.createContexts(20 + iCreatedContexts, result(17)),
 				false,
 				"do not modify upper boundary if same data is read (no short read)");
 
@@ -3179,7 +3179,7 @@ sap.ui.define([
 			// code under test: reset upper boundary
 //TODO cannot happen with our _Cache; _Cache doesn't read more than final length elements
 			assert.strictEqual(
-				oBinding.createContexts(20 + iCreatedContexts, 30, result(30)),
+				oBinding.createContexts(20 + iCreatedContexts, result(30)),
 				true);
 
 			assert.strictEqual(oBinding.isLengthFinal(), false);
@@ -3189,7 +3189,7 @@ sap.ui.define([
 
 			// code under test: no data for some other page is not a change
 			assert.strictEqual(
-				oBinding.createContexts(10000 + iCreatedContexts, 30, result(0)),
+				oBinding.createContexts(10000 + iCreatedContexts, result(0)),
 				false);
 
 			assert.strictEqual(oBinding.isLengthFinal(), false);
@@ -3202,7 +3202,7 @@ sap.ui.define([
 
 			// code under test: no data for *next* page is a change (bLengthFinal changes)
 			assert.strictEqual(
-				oBinding.createContexts(50 + iCreatedContexts, 30, result(0)),
+				oBinding.createContexts(50 + iCreatedContexts, result(0)),
 				true);
 
 			assert.strictEqual(oBinding.isLengthFinal(), true);
@@ -3212,7 +3212,7 @@ sap.ui.define([
 
 			// code under test
 			assert.strictEqual(
-				oBinding.createContexts(30 + iCreatedContexts, 20, result(0)),
+				oBinding.createContexts(30 + iCreatedContexts, result(0)),
 				true);
 
 			assert.strictEqual(oBinding.isLengthFinal(), true);
@@ -3222,7 +3222,7 @@ sap.ui.define([
 
 			// code under test: preparation for following test for server-side paging: create a gap
 			assert.strictEqual(
-				oBinding.createContexts(100 + iCreatedContexts, 20, result(20)),
+				oBinding.createContexts(100 + iCreatedContexts, result(20)),
 				true);
 
 			assert.strictEqual(oBinding.isLengthFinal(), false);
@@ -3237,7 +3237,7 @@ sap.ui.define([
 
 			// code under test: gap is not read completely
 			assert.strictEqual(
-				oBinding.createContexts(0 + iCreatedContexts, 160, aResults),
+				oBinding.createContexts(0 + iCreatedContexts, aResults),
 				true);
 
 			assert.strictEqual(oBinding.isLengthFinal(), false);
@@ -3271,7 +3271,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("destroyPreviousContexts").withExactArgs();
 
 		// code under test
-		oBinding.createContexts(1, 3, [{}, {}, {}]);
+		oBinding.createContexts(1, [{}, {}, {}]);
 
 		assert.strictEqual(oBinding.aContexts[1], oContext1);
 		assert.strictEqual(oBinding.aContexts[2], oContext2);
@@ -3328,7 +3328,7 @@ sap.ui.define([
 				.withExactArgs();
 
 			// code under test
-			oBinding.createContexts(iStart, 3, [{
+			oBinding.createContexts(iStart, [{
 				"@$ui5._" : {"predicate" : "('1')"}
 			}, {
 				"@$ui5._" : {"transientPredicate" : "($uid=id-1-23)"}
@@ -3353,7 +3353,7 @@ sap.ui.define([
 		this.mock(this.oModel).expects("addPrerenderingTask").never();
 
 		// code under test
-		oBinding.createContexts(1, 1, 0);
+		oBinding.createContexts(1, 0);
 	});
 
 	//*********************************************************************************************
@@ -3370,7 +3370,7 @@ sap.ui.define([
 		this.mock(oContext).expects("destroy").withExactArgs();
 
 		// code under test
-		oBinding.createContexts(1, 1, aResults);
+		oBinding.createContexts(1, aResults);
 
 		assert.deepEqual(oBinding.aContexts, []);
 		assert.strictEqual(oBinding.bLengthFinal, true);
@@ -3396,7 +3396,7 @@ sap.ui.define([
 			.withExactArgs(sinon.match.func).callsArg(0);
 		this.mock(oCreatedContext).expects("destroy").withExactArgs();
 
-		oBinding.createContexts(0, 1, [{
+		oBinding.createContexts(0, [{
 			"@$ui5._" : {"predicate" : "('1')"}
 		}]);
 
@@ -3426,9 +3426,9 @@ sap.ui.define([
 				that = this;
 
 			// [-1, 0, 1, 2, undefined, 4, 5]
-			oBinding.createContexts(0, 3, aData.slice(0, 3));
+			oBinding.createContexts(0, aData.slice(0, 3));
 			aData2.$count = 6; // non-empty short read adds $count
-			oBinding.createContexts(4, 10, aData2);
+			oBinding.createContexts(4, aData2);
 			oBinding.aContexts.unshift(oCreatedContext);
 			oBinding.iCreatedContexts = 1;
 			aPreviousContexts = oBinding.aContexts.slice();
@@ -4106,14 +4106,14 @@ sap.ui.define([
 			oBinding.create(undefined, true, true);
 		}, new Error(sError));
 
-		oBinding.createContexts(3, 0, createData(3, 0, true)); // simulate a read
+		oBinding.createContexts(3, createData(3, 0, true)); // simulate a read
 
 		// code under test
 		assert.throws(function () {
 			oBinding.create(undefined, true, true);
 		}, new Error(sError));
 
-		oBinding.createContexts(6, 3, createData(1, 3, true, 1)); // simulate a short read
+		oBinding.createContexts(6, createData(1, 3, true, 1)); // simulate a short read
 		this.mock(oBinding).expects("createInCache").returns(SyncPromise.resolve({}));
 
 		oBinding.create(undefined, true, true);
@@ -4225,7 +4225,7 @@ sap.ui.define([
 			oContext;
 
 		// initialize with 3 contexts and bLengthFinal===true
-		oBinding.createContexts(0, 4, createData(3, 0, true, 3));
+		oBinding.createContexts(0, createData(3, 0, true, 3));
 
 		// remove request mock, all operations on client
 		oBinding.oCachePromise.getResult().oRequestor.request.restore();
@@ -5413,7 +5413,7 @@ sap.ui.define([
 			that = this;
 
 		// initialize with 3 contexts and bLengthFinal===true
-		oBinding.createContexts(0, 4, createData(3, 0, true, 3));
+		oBinding.createContexts(0, createData(3, 0, true, 3));
 
 		oContext = oBinding.aContexts[2];
 		oBinding.oCache = oCache;
@@ -5504,8 +5504,8 @@ sap.ui.define([
 
 				// initialize with 6 contexts, bLengthFinal===true and bKeyPredicates===true
 				// [-2, -1, 0, 1, 2, undefined, 4, 5]
-				oBinding.createContexts(0, 3, createData(3, 0, true, 3, true));
-				oBinding.createContexts(4, 10, createData(2, 4, true, 6, true));
+				oBinding.createContexts(0, createData(3, 0, true, 3, true));
+				oBinding.createContexts(4, createData(2, 4, true, 6, true));
 				assert.strictEqual(oBinding.iMaxLength, 6);
 				// simulate create
 				oBinding.aContexts.unshift(
@@ -5694,7 +5694,7 @@ sap.ui.define([
 			oGroupLock = {getGroupId : function () {}};
 
 		// initialize with 3 contexts and bLengthFinal===true
-		oBinding.createContexts(0, 4, createData(3, 0, true, 3));
+		oBinding.createContexts(0, createData(3, 0, true, 3));
 
 		oContext = oBinding.aContexts[2];
 		oBinding.oCache = oCache;
@@ -6696,8 +6696,8 @@ sap.ui.define([
 		oBinding.oCache = { // simulate an aggregation cache
 			expand : function () {}
 		};
-		oBinding.createContexts(0, 2, createData(2, 0, true, 5));
-		oBinding.createContexts(3, 2, createData(2, 3, true, 5));
+		oBinding.createContexts(0, createData(2, 0, true, 5));
+		oBinding.createContexts(3, createData(2, 3, true, 5));
 		aContextsBefore = oBinding.aContexts.slice();
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
