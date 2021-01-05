@@ -493,6 +493,13 @@ sap.ui.define([
 			assert.ok(this.oVariantManagement.oLabelKey.getVisible());
 		});
 
+		QUnit.test("Checking openSaveAsDialogForKeyUser", function(assert) {
+			var sSyleClassName = "testStyle";
+			this.oVariantManagement.openSaveAsDialogForKeyUser(sSyleClassName);
+			assert.ok(this.oVariantManagement.oSaveAsDialog, "then save as dialog is created");
+			assert.ok(this.oVariantManagement.oSaveAsDialog.hasStyleClass(sSyleClassName), "then save as dialog is extended by the rta styleclass");
+		});
+
 		QUnit.test("Checking _handleVariantSaveAs", function(assert) {
 			sinon.stub(oModel, "_handleSave");
 			this.oVariantManagement.setModel(oModel, flUtils.VARIANT_MODEL_NAME);
