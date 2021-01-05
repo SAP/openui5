@@ -14,5 +14,23 @@
 		<Button id="button4"></Button>
 		<core:Fragment id="fragmentWithExtensionPoint1" fragmentName="sap.ui.fl.qunit.extensionPoint.testApp.fragments.WithExtensionPoint" type="XML" />
 		<core:Fragment id="fragmentWithExtensionPoint2" fragmentName="sap.ui.fl.qunit.extensionPoint.testApp.fragments.WithExtensionPoint" type="XML" />
+		<core:Fragment id="fragmentWithExtensionPoint3" fragmentName="sap.ui.fl.qunit.extensionPoint.testApp.fragments.TableWithExtensionPointInTemplate" type="XML" />
+		<core:ExtensionPoint name="EP6_outer">
+			<core:ExtensionPoint name="EP7_inner">
+				<Button id="button5"></Button>
+				<core:ExtensionPoint name="EP8_inner">
+					<Button id="EPinEPButton6"></Button>
+					<Button id="EPinEPButton7"></Button>
+				</core:ExtensionPoint>
+				<core:ExtensionPoint name="EP9_inner">
+					<Button id="EPinEPButton8"></Button>
+				</core:ExtensionPoint>
+				<core:ExtensionPoint name="EP10_inner">
+					<Button id="EPinEPButton9"></Button>
+				</core:ExtensionPoint>
+				<Button id="button7"></Button>
+			</core:ExtensionPoint>
+			<Button id="button8"></Button>
+		</core:ExtensionPoint>
 	</Panel>
 </mvc:View>
