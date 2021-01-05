@@ -15,16 +15,11 @@
 	box-sizing: border-box;
 	font-size: @sapMFontMediumSize;
 	padding-left: @_sap_m_Token_LeftPadding;
-	padding-inline-start:  @_sap_m_Token_LeftPadding;
 	height: 1.625rem;
 	background: @sapUiButtonBackground;
 	border: 1px solid @sapUiButtonBorderColor;
 	border-radius: 0.125rem;
 	color: @sapUiButtonTextColor;
-}
-
-html[data-sap-ui-browser^="ie"] .sapMToken[dir="rtl"] {
-	padding-right: @_sap_m_Token_LeftPadding;
 }
 
 .sapMToken.sapMHiddenToken {
@@ -120,7 +115,6 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapUiSizeCondensed .sapMTokenIcon {
 .sapUiSizeCompact .sapMToken {
 	font-size: @sapMFontSmallSize;
 	padding-left: @_sap_m_Token_TokenCompactPadding;
-	padding-inline-start:  @_sap_m_Token_LeftPadding;
 	height: 1.25rem;
 }
 
