@@ -37,13 +37,15 @@ describe('sap.m.Tokenizer', function() {
 
 	// Editable tokenizer with one long token
 	it("should show editable Tokenzier with single long token", function () {
-		element(by.id("tokenizerLongToken")).click();
+		element(by.id("longToken")).click();
 		expect(takeScreenshot(element(by.id("tokenizerLongToken")))).toLookAs("tokenizer-long-token");
+		element(by.id("longToken")).click();
 	});
 
 	// Not editable tokenizer with one long token
 	it("should show non-editable Tokenzier with single long token", function () {
-		element(by.id("tokenizerReadOnlyLongToken")).click();
+		element(by.id("longTokenNotEditable")).click();
 		expect(takeScreenshot(element(by.id("tokenizerReadOnlyLongToken")))).toLookAs("tokenizer-long-token-read-only");
+		element(by.id("longTokenNotEditable")).click();
 	});
 });
