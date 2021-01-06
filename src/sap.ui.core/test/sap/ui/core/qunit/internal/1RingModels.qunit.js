@@ -51,6 +51,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/model/Context.qunit",
 		"sap/ui/core/qunit/model/ContextBinding.qunit",
 		"sap/ui/core/qunit/model/Model.qunit",
+		"sap/ui/core/qunit/model/TreeBindingAdapter.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.analytics.* - tests are contained in testsuite.databinding.qunit.js

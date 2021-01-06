@@ -396,9 +396,43 @@ sap.ui.define([
 		};
 
 		/**
-		 * Retrieves the requested part from the tree.
+		 * Gets an array of contexts for the requested part of the tree.
+		 *
+		 * @param {number} [iStartIndex=0]
+		 *   The index of the first requested context
+		 * @param {number} [iLength]
+		 *   The maximum number of returned contexts; if not given the model's size limit is used;
+		 *   see {@link sap.ui.model.Model#setSizeLimit}
+		 * @param {number} [iThreshold=0]
+		 *   The maximum number of contexts to read to read additionally as buffer
+		 * @return {sap.ui.model.Context[]}
+		 *   The requested tree contexts
+		 *
+		 * @protected
 		 */
-		TreeBindingAdapter.prototype.getContexts = function(iStartIndex, iLength, iThreshold, bReturnNodes) {
+		TreeBindingAdapter.prototype.getContexts = function (iStartIndex, iLength, iThreshold) {
+			return this._getContextsOrNodes(false, iStartIndex, iLength, iThreshold);
+		};
+
+		/**
+		 * Gets an array of either node objects or contexts for the requested part of the tree.
+		 *
+		 * @param {boolean} bReturnNodes
+		 *   Whether to return node objects or contexts
+		 * @param {number} [iStartIndex=0]
+		 *   The index of the first requested node or context
+		 * @param {number} [iLength]
+		 *   The maximum number of returned nodes or contexts; if not given the model's size limit
+		 *   is used; see {@link sap.ui.model.Model#setSizeLimit}
+		 * @param {number} [iThreshold=0]
+		 *   The maximum number of nodes or contexts to read additionally as buffer
+		 * @return {object[]|sap.ui.model.Context[]}
+		 *   The requested tree nodes or contexts
+		 *
+		 * @private
+		 */
+		TreeBindingAdapter.prototype._getContextsOrNodes = function (bReturnNodes, iStartIndex,
+				iLength, iThreshold) {
 
 			//step out if the binding is initial (as long as the metadata is not yet loaded)
 			if (this.isInitial()) {
@@ -483,15 +517,22 @@ sap.ui.define([
 		};
 
 		/**
-		 * Retrieves the requested part from the tree and returns node objects.
-		 * @param {int} iStartIndex
-		 * @param {int} iLength
-		 * @param {int} iThreshold
-		 * @return {Object} Tree Node
+		 * Gets an array of nodes for the requested part of the tree.
+		 *
+		 * @param {number} iStartIndex
+		 *   The index of the first requested node
+		 * @param {number} iLength
+		 *   The maximum number of returned nodes; if not given the model's size limit is used; see
+		 *   {@link sap.ui.model.Model#setSizeLimit}
+		 * @param {number} [iThreshold=0]
+		 *   The maximum number of nodes to read additionally as buffer
+		 * @return {object[]}
+		 *   The requested tree nodes
+		 *
 		 * @protected
 		 */
 		TreeBindingAdapter.prototype.getNodes = function (iStartIndex, iLength, iThreshold) {
-			return this.getContexts(iStartIndex, iLength, iThreshold, true);
+			return this._getContextsOrNodes(true, iStartIndex, iLength, iThreshold);
 		};
 
 		/**

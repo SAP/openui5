@@ -81,4 +81,30 @@ sap.ui.define([
 		assert.strictEqual(bResult, true);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getContexts: delegates to _getContextsOrNodes", function (assert) {
+		this.mock(ODataTreeBindingFlat.prototype).expects("_getContextsOrNodes")
+			.withExactArgs(false, "~iStartIndex", "~iLength", "~iThreshold")
+			.returns("~result");
+
+		// code under test
+		assert.strictEqual(
+			ODataTreeBindingFlat.prototype.getContexts.call(ODataTreeBindingFlat.prototype,
+				"~iStartIndex", "~iLength", "~iThreshold"),
+			"~result");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getNodes: delegates to _getContextsOrNodes", function (assert) {
+		this.mock(ODataTreeBindingFlat.prototype).expects("_getContextsOrNodes")
+			.withExactArgs(true, "~iStartIndex", "~iLength", "~iThreshold")
+			.returns("~result");
+
+		// code under test
+		assert.strictEqual(
+			ODataTreeBindingFlat.prototype.getNodes.call(ODataTreeBindingFlat.prototype,
+				"~iStartIndex", "~iLength", "~iThreshold"),
+			"~result");
+	});
 });

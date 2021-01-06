@@ -151,13 +151,25 @@ sap.ui.define([
 		return oNode.isLeaf && !oNode.isArtificial;
 	};
 
-	/*
-	 * Retrieves the requested part from the tree.
-	 * @param {int} iStartIndex the first index to be retrieved
-	 * @param {int} iLength the number of entries to be retrieved, starting at iStartIndex
-	 * @param {int} iThreshold the number of additional entries, which will be loaded after (iStartIndex + iLength) as a buffer
+	/**
+	 * Gets an array of either node objects or contexts for the requested part of the tree.
+	 *
+	 * @param {boolean} bReturnNodes
+	 *   Whether to return node objects or contexts
+	 * @param {number} iStartIndex
+	 *   The index of the first requested node or context
+	 * @param {number} [iLength]
+	 *   The maximum number of returned nodes or contexts; if not given the model's size limit is
+	 *   used; see {@link sap.ui.model.Model#setSizeLimit}
+	 * @param {number} [iThreshold=0]
+	 *   The maximum number of nodes or contexts to read additionally as buffer
+	 * @return {object[]|sap.ui.model.Context[]}
+	 *   The requested tree nodes or contexts
+	 *
+	 * @private
 	 */
-	AnalyticalTreeBindingAdapter.prototype.getContexts = function(iStartIndex, iLength, iThreshold, bReturnNodes) {
+	AnalyticalTreeBindingAdapter.prototype._getContextsOrNodes = function (bReturnNodes,
+			iStartIndex, iLength, iThreshold) {
 		if (!iLength) {
 			iLength = this.oModel.iSizeLimit;
 		}
