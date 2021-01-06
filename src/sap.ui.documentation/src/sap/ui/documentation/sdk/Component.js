@@ -89,16 +89,15 @@ sap.ui.define([
 			 * This method can be called to determine whether the sapUiSizeCompact or sapUiSizeCozy
 			 * design mode class should be set, which influences the size appearance of some controls.
 			 * @public
-			 * @return {string} css class, either 'sapUiSizeCompact' or 'sapUiSizeCozy' - or an empty string if no css class should be set
+			 * @return {string} css class, either 'sapUiSizeCompact' or 'sapUiSizeCozy'
 			 */
-			getContentDensityClass : function() {
-				if (this._sContentDensityClass === undefined) {
-					// check whether FLP has already set the content density class; do nothing in this case
-					if (jQuery(document.body).hasClass("sapUiSizeCozy") || jQuery(document.body).hasClass("sapUiSizeCompact")) {
-						this._sContentDensityClass = "";
+			getContentDensityClass : function () {
+				if (!this._sContentDensityClass) {
+					if (!Device.support.touch) {
+						this._sContentDensityClass = "sapUiSizeCompact";
+					} else {
+						this._sContentDensityClass = "sapUiSizeCozy";
 					}
-					// The default density class for the sap.ui.documentation project will be compact
-					this._sContentDensityClass = "sapUiSizeCompact";
 				}
 				return this._sContentDensityClass;
 			},
