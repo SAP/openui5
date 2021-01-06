@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/m/InputBaseRenderer",
 	"sap/ui/Device",
 	"sap/ui/base/ManagedObject",
-	"sap/ui/core/Icon"
+	"sap/ui/core/Icon",
+	"sap/ui/events/KeyCodes"
 ], function(
 	qutils,
 	createAndAppendDiv,
@@ -37,7 +38,8 @@ sap.ui.define([
 	InputBaseRenderer,
 	Device,
 	ManagedObject,
-	Icon
+	Icon,
+	KeyCodes
 ) {
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
@@ -1705,6 +1707,33 @@ sap.ui.define([
 
 		// assertion
 		assert.ok(true, "opening the message popup is canceled");
+	});
+
+	QUnit.test("onkeydown preventDefault handling", function(assert) {// TODO remove after the end of support for Internet Explorer
+		// system under test
+		var oInput = new InputBase().placeAt("content"),
+			oSpy = this.spy(),
+			oFakeEvent = {
+				preventDefault: oSpy,
+				keyCode: KeyCodes.BACKSPACE
+			},
+			oStub = sinon.stub(oInput, "getDomRef").returns(undefined);
+
+		sap.ui.getCore().applyChanges();
+
+		try {
+			// act
+			oInput.onkeydown(oFakeEvent);
+			// assertion
+			assert.ok(true, "onkeydown() should not throw if no DOM reference is present");
+		} catch (vError) {
+			// assertion
+			assert.ok(false, "onkeydown() should not throw if no DOM reference is present");
+		} finally {
+			// clean
+			oStub.restore();
+			oInput.destroy();
+		}
 	});
 
 	/* =========================================================== */

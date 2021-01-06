@@ -724,7 +724,7 @@ function(
 	InputBase.prototype.onkeydown = function(oEvent) {
 
 		// Prevents browser back to previous page in IE // TODO remove after the end of support for Internet Explorer
-		if (this.getDomRef("inner").getAttribute("readonly") && oEvent.keyCode == KeyCodes.BACKSPACE) {
+		if (this.getDomRef("inner") && this.getDomRef("inner").getAttribute("readonly") && oEvent.keyCode == KeyCodes.BACKSPACE) {
 			oEvent.preventDefault();
 		}
 	};
