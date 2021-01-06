@@ -451,7 +451,7 @@ sap.ui.define([
 					.catch(function () {/*avoid "Uncaught (in promise)"*/});
 			}
 		} else if (this.oOperation.bAction === false) {
-			this.execute();
+			this.execute().catch(function () {/*avoid "Uncaught (in promise)"*/});
 		}
 	};
 

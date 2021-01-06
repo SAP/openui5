@@ -156,7 +156,7 @@ sap.ui.define([
 		 * Calls CollectionCache#read after mocking the corresponding request. The response is
 		 * limited to 26 items.
 		 *
-		 * @param {sap.ui.model.odata.v4.lib._Cache} oCache The collection cache
+		 * @param {sap.ui.model.odata.v4.lib._CollectionCache} oCache The collection cache
 		 * @param {number} iStartOffset The start offset to compute index within the cache
 		 * @param {string} sUrl The service URL
 		 * @param {number} iStart The index of the first item of the response ($skip)
@@ -3981,7 +3981,6 @@ sap.ui.define([
 			mQueryOptionsFoo = {$select: []},
 			mQueryOptionsBar = {$select: []},
 			mQueryOptionsForPath = {},
-			oRequestGroupLock,
 			mTypeForMetaPath = {
 				"/Employees" : {}
 			};
@@ -4011,10 +4010,10 @@ sap.ui.define([
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions), true)
 			.returns("?~");
-		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~groupLock~");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("GET", "Employees('31')?~",
-				sinon.match.same(oRequestGroupLock), undefined,
+				sinon.match.same("~groupLock~"), undefined,
 				undefined, undefined, undefined, oCache.sMetaPath, undefined, false,
 				sinon.match.same(mQueryOptionsFoo))
 			.resolves(oData);
@@ -4046,8 +4045,7 @@ sap.ui.define([
 				getUnlockedCopy : function () {}
 			},
 			mQueryOptions = {$select: []},
-			mQueryOptionsForPath = {},
-			oRequestGroupLock;
+			mQueryOptionsForPath = {};
 
 		oCache.fetchValue = function () {};
 
@@ -4067,9 +4065,9 @@ sap.ui.define([
 		this.oRequestorMock.expects("buildQueryString")
 			.withExactArgs(oCache.sMetaPath, sinon.match.same(oCache.mQueryOptions), true)
 			.returns("?~2");
-		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns(oRequestGroupLock);
+		this.mock(oGroupLock).expects("getUnlockedCopy").withExactArgs().returns("~groupLock~");
 		this.oRequestorMock.expects("request")
-			.withExactArgs("GET", "Employees('31')?~2", sinon.match.same(oRequestGroupLock),
+			.withExactArgs("GET", "Employees('31')?~2", sinon.match.same("~groupLock~"),
 				undefined, undefined, undefined, undefined, oCache.sMetaPath, undefined, false,
 				sinon.match.same(mQueryOptions))
 			.rejects(oError);
@@ -4396,9 +4394,8 @@ sap.ui.define([
 	].forEach(function (oFixture) {
 		QUnit.test("CollectionCache#read(" + oFixture.index + ", " + oFixture.length + ")",
 				function (assert) {
-			var sResourcePath = "Employees",
-				oCache = this.createCache(sResourcePath),
-				oCacheMock = this.mock(oCache),
+			var oCache,
+				oCacheMock,
 				aData = [{key : "a"}, {key : "b"}, {key : "c"}],
 				oMockResult = {
 					"@odata.context" : "$metadata#TEAMS",
@@ -4412,6 +4409,7 @@ sap.ui.define([
 				},
 				oReadGroupLock1 = {unlock : function () {}},
 				oRequestGroupLock = {},
+				sResourcePath = "Employees",
 				mTypeForMetaPath = oFixture.types ? {
 					"/Employees" : {
 						$Key : ["key"],

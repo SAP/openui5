@@ -2663,7 +2663,7 @@ sap.ui.define([
 					.exactly(vValue ? 0 : 1)
 					.returns(SyncPromise.resolve(oFetchUpdateDataResult));
 
-				if (vValue == undefined) {
+				if (vValue === undefined) {
 					oModelMock.expects("resolve")
 						.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
 						.returns("/resolved/binding/path");

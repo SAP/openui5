@@ -8,7 +8,7 @@ sap.ui.define([
 ], function (Expression) {
 	"use strict";
 
-	var rBadChars = /[\\\{\}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
+	var rBadChars = /[\\{}:]/, // @see sap.ui.base.BindingParser: rObject, rBindingChars
 		rCount = /\/\$count$/,
 		rPaths = /\$(?:(?:Annotation)|(?:(?:Navigation)?Property))?Path/,
 		rSplitPathSegment = /^(.+?\/(\$(?:Annotation)?Path))(\/?)(.*)$/,

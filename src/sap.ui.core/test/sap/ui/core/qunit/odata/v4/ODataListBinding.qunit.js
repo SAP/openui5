@@ -802,12 +802,13 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("reset", function (assert) {
 		var oBinding,
-			oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
-				Promise.resolve()),
+			oCreatedContext,
 			aPreviousContexts;
 
 		// code under test: reset called from ODLB constructor
 		oBinding = this.bindList("/EMPLOYEES");
+		oCreatedContext = Context.create(this.oModel, oBinding, "/EMPLOYEES($uid=id-1-23)", -1,
+			Promise.resolve());
 
 		// set members which should be reset to arbitrary values
 		oBinding.createContexts(0, [{}, {}]);
@@ -7055,7 +7056,7 @@ sap.ui.define([
 			oListBindingMock = this.mock(ODataListBinding),
 			that = this;
 
-		aFilters = oFixture.predicates.map(function(sPredicate) {
+		aFilters = oFixture.predicates.map(function () {
 			return new Filter("does", "NOT", "matter");
 		});
 
@@ -7081,7 +7082,7 @@ sap.ui.define([
 			});
 
 		if (oFixture.callbackReturns !== undefined) {
-			fnCallback = sinon.spy(function (oMessage) {return oFixture.callbackReturns;});
+			fnCallback = sinon.spy(function () { return oFixture.callbackReturns; });
 		}
 
 		// code under test
