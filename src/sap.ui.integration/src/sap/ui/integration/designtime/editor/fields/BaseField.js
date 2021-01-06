@@ -235,7 +235,7 @@ sap.ui.define([
 	/*
 		default error messages
 		#XMSG: Validation Error: Does not match pattern
-		CARDEDITOR_VAL_NOMATCH=Value does not match the the validation criteria
+		CARDEDITOR_VAL_NOMATCH=Value does not match the validation criteria
 
 		#XMSG: Validation Error: Max length exceeded
 		CARDEDITOR_VAL_MAXLENGTH=Value exceeds the maximum length of {0}
