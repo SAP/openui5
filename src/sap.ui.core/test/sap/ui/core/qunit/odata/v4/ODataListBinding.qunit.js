@@ -1414,7 +1414,7 @@ sap.ui.define([
 			.withExactArgs({reason : ChangeReason.Change});
 
 		// code under test
-		aResults = oBinding.getContexts(5, 10, iMaximumPrefetchSize, undefined, bKeepCurrent);
+		aResults = oBinding.getContexts(5, 10, iMaximumPrefetchSize, bKeepCurrent);
 
 		assert.strictEqual(aResults, aContexts);
 		assert.strictEqual(oBinding.iCurrentBegin, bKeepCurrent ? 2 : 5);
@@ -2616,7 +2616,7 @@ sap.ui.define([
 		}, new Error("Unsupported operation: v4.ODataListBinding#getDistinctValues"));
 
 		assert.throws(function () {
-			oBinding.getContexts(0, 10, 100, undefined, true);
+			oBinding.getContexts(0, 10, 100, true);
 		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, must not use both"
 				+ " iMaximumPrefetchSize and bKeepCurrent"));
 
@@ -2632,7 +2632,7 @@ sap.ui.define([
 			+ "must be 0 if extended change detection is enabled, but is 42"));
 
 		assert.throws(function () {
-			oBinding.getContexts(0, 10, undefined, undefined, true);
+			oBinding.getContexts(0, 10, undefined, true);
 		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, must not use"
 			+ " bKeepCurrent if extended change detection is enabled"));
 	});
