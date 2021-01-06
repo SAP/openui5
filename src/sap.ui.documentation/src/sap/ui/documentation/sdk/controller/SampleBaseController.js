@@ -6,84 +6,19 @@
 sap.ui.define([
 	"sap/ui/documentation/sdk/controller/BaseController",
 	"sap/ui/thirdparty/URI",
-	"sap/base/Log"
-], function (BaseController, URI, Log) {
+	"sap/base/Log",
+	"sap/ui/documentation/sdk/controller/util/ResourceDownloadUtil"
+], function (BaseController, URI, Log, ResourceDownloadUtil) {
 	"use strict";
 
 		var TMPL_REF = sap.ui.require.toUrl("sap/ui/documentation/sdk/tmpl"),
 			MOCK_DATA_REF = sap.ui.require.toUrl("sap/ui/demo/mock");
 
-		var AJAXUtils = {
-
-			_fetchPromises: {},
-
-			fetch: function (sUrl) {
-				if (!(sUrl in this._fetchPromises)) {
-					this._fetchPromises[sUrl] = this._fetch(sUrl);
-				}
-				return this._fetchPromises[sUrl];
-			},
-
-			_fetch: function(sUrl) {
-				return new Promise(function(resolve, reject) {
-					var oReq,
-						bSuccess,
-						sResponseType = this._getExpectedResponseType(sUrl);
-
-					function fnHandler(oEvent) {
-						// Note for a URL using file:// protocol, a status code of 0 is reported on success
-						bSuccess = oEvent.type === "load" && (oReq.status === 200 || oReq.status === 0);
-
-						if (!bSuccess) {
-							reject(new Error("could not fetch '" + sUrl + "': " + oReq.status));
-							return;
-						}
-
-						resolve(AJAXUtils._readResponse(oReq));
-					}
-
-					oReq = new XMLHttpRequest();
-					oReq.open("GET", sUrl, true);
-					oReq.responseType = sResponseType;
-					oReq.onload =
-					oReq.onerror = fnHandler;
-
-					oReq.send();
-				}.bind(this));
-			},
-
-			_readResponse: function(oReq) {
-				var sRespType = oReq.responseType,
-					oResult = (sRespType === "text") ? oReq.responseText : oReq.response;
-
-				if (sRespType === "arraybuffer") {
-					try {
-						oResult = new Uint8Array(oResult);
-					} catch (e) {
-						// IE11 does not support Uint8Array from response array,
-						// in that case it is enough to keep the raw response
-						// (to be able to add it to the download zip, if download is requested)
-					}
-				}
-
-				return oResult;
-			},
-
-			_getExpectedResponseType: function(sResourceUrl) {
-				if (sResourceUrl.match(/.+(.vds|.pdf)$/i)) { // supported binary types
-					return "arraybuffer";
-				}
-				return "text"; // default
-			}
-
-		};
-
-
 	return BaseController.extend("sap.ui.documentation.sdk.controller.SampleBaseController", {
 		_aMockFiles: ["products.json", "supplier.json", "img.json"],
 
-		fetchSourceFile: function (sUrl) {
-			return AJAXUtils.fetch(sUrl).catch(function (e) {
+		fetchSourceFile: function (sUrl, bTreatAsText) {
+			return ResourceDownloadUtil.fetch(sUrl, bTreatAsText).catch(function (e) {
 				Log.warning(e);
 				return "File not loaded"; // substitute content to display in the editor
 			});
@@ -148,7 +83,7 @@ sap.ui.define([
 						formatter: function(sIndexFile) {
 							return this._changeIframeBootstrapToCloud(this._formatIndexHtmlFile(sIndexFile, oData));
 						}.bind(this)
-					}, oZipFile));
+					}, oZipFile, true));
 
 
 					if (!bHasManifest) {
@@ -158,7 +93,7 @@ sap.ui.define([
 							formatter: function(sIndexJsFile) {
 								return this._changeIframeBootstrapToCloud(this._formatIndexJsFile(sIndexJsFile, oData));
 							}.bind(this)
-						}, oZipFile));
+						}, oZipFile, true));
 					}
 				}
 
@@ -196,12 +131,12 @@ sap.ui.define([
 			});
 		},
 
-		_addFileToZip: function  (oFileInfo, oZipFile) {
+		_addFileToZip: function  (oFileInfo, oZipFile, bTreatAsText) {
 			var sFileName = oFileInfo.name,
 				sUrl = oFileInfo.url,
 				fnFileFormatter = oFileInfo.formatter;
 
-			return this.fetchSourceFile(sUrl)
+			return this.fetchSourceFile(sUrl, bTreatAsText)
 				.then(function(vRawFile) {
 					if (fnFileFormatter) {
 						vRawFile = fnFileFormatter(vRawFile);

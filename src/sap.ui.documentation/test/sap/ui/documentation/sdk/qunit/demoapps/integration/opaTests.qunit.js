@@ -223,9 +223,10 @@ sap.ui.getCore().attachInit(function() {
 			// download all apps
 			When.waitFor({
 				viewName: sViewName,
-				controlType: "sap.m.ListItemBase",
+				controlType: "sap.m.Button",
+				matchers: new Properties({ text: "Download" }),
 				searchOpenDialogs: true,
-				success: function (aListItems) {
+				success: function (aDownloadButtons) {
 					// close dialog
 					When.waitFor({
 						viewName: sViewName,
@@ -234,8 +235,10 @@ sap.ui.getCore().attachInit(function() {
 						actions: new Press()
 					});
 
+					When.waitFor(oDownloadButton);
+
 					// loop over the demo apps and download each
-					aListItems.forEach(function (oListItem) {
+					aDownloadButtons.forEach(function (oButton) {
 						Then.waitFor({
 							success: function () {
 								sinon.assert.notCalled(fnHandleError);
@@ -245,12 +248,10 @@ sap.ui.getCore().attachInit(function() {
 							}
 						});
 
-						When.waitFor(oDownloadButton);
-
 						When.waitFor({
 							viewName: sViewName,
-							controlType: "sap.m.ListItemBase",
-							matchers: new BindingPath({path: oListItem.getBindingContext().getPath()}),
+							controlType: "sap.m.Button",
+							matchers: new Properties({ id: oButton.getId() }),
 							actions: new Press()
 						});
 					});

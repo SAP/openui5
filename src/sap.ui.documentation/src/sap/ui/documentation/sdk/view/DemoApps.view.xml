@@ -117,25 +117,30 @@
 			</ScrollContainer>
 		</content>
 		<dependents>
-			<SelectDialog id="downloadDialog"
-				items="{/demoApps}"
-				title="{i18n>DEMO_APPS_DOWNLOAD_DIALOG_TITLE}"
-				liveChange=".onSearch"
-				growing="false"
-				confirm=".onDownloadPress">
-				<InputListItem
-					visible="{= !!${config} }"
-					label="{name}"
-					type="Active">
-					<customData>
-						<core:CustomData key="config" value="{config}"/>
-					</customData>
-					<Button
-						text="{i18n>DEMO_APPS_DOWNLOAD_BTN}"
-						type="Emphasized"
-						press=".onDownloadPress"/>
-				</InputListItem>
-			</SelectDialog>
+			<Dialog id="downloadDialog"
+				title="{i18n>DEMO_APPS_DOWNLOAD_DIALOG_TITLE}">
+				<subHeader>
+					<Toolbar>
+						<SearchField id="downloadDialogSearch" liveChange=".onSearch"/>
+					</Toolbar>
+				</subHeader>
+				<List items="{/demoApps}" id="downloadDialogList">
+					<InputListItem
+						visible="{= !!${config} }"
+						label="{name}">
+						<customData>
+							<core:CustomData key="config" value="{config}"/>
+						</customData>
+						<Button
+							text="{i18n>DEMO_APPS_DOWNLOAD_BTN}"
+							type="Emphasized"
+							press=".onDownloadPress"/>
+					</InputListItem>
+				</List>
+				<buttons>
+					<Button text="{i18n>DEMO_APPS_DOWNLOAD_DIALOG_CANCEL_BTN}" press=".onCloseDialog" />
+				</buttons>
+			</Dialog>
 		</dependents>
 	</Page>
 </mvc:View>

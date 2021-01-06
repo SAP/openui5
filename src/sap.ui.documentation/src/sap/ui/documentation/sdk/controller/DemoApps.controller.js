@@ -9,7 +9,7 @@ sap.ui.define([
 		"sap/ui/model/resource/ResourceModel",
 		"sap/ui/Device",
 		"sap/ui/model/json/JSONModel",
-		"sap/ui/documentation/sdk/model/sourceFileDownloader",
+		"sap/ui/documentation/sdk/controller/util/ResourceDownloadUtil",
 		"sap/ui/documentation/sdk/model/formatter",
 		"sap/m/MessageBox",
 		"sap/m/MessageToast",
@@ -17,7 +17,8 @@ sap.ui.define([
 		"sap/ui/model/FilterOperator",
 		'sap/ui/documentation/sdk/model/libraryData',
 		"sap/base/Log"
-	], function(jQuery, BaseController, ResourceModel, Device, JSONModel, sourceFileDownloader, formatter, MessageBox, MessageToast, Filter, FilterOperator, libraryData, Log) {
+	], function(jQuery, BaseController, ResourceModel, Device, JSONModel, ResourceDownloadUtil, formatter, MessageBox,
+			MessageToast, Filter, FilterOperator, libraryData, Log) {
 		"use strict";
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.DemoApps", {
@@ -161,13 +162,12 @@ sap.ui.define([
 			 * @public
 			 */
 			onDownloadButtonPress: function (oEvent) {
-				var oDownloadDialog = this.byId("downloadDialog");
+				var oDownloadDialog = this.byId("downloadDialog"),
+					oDownloadDialogList = this.byId("downloadDialogList");
 				this._oDownloadButton = oEvent.getSource();
 
-				oDownloadDialog.getBinding("items").filter([]);
+				oDownloadDialogList.getBinding("items").filter([]);
 				oDownloadDialog.open();
-				// hack: override of the SelectDialog's internal dialog height
-				oDownloadDialog._oDialog.setContentHeight("");
 			},
 
 			/**
@@ -185,9 +185,20 @@ sap.ui.define([
 			 * @public
 			 */
 			onSearch: function (oEvent) {
-				oEvent.getParameters().itemsBinding.filter([
-					new Filter("name", FilterOperator.Contains, oEvent.getParameters().value)
+				var oDownloadDialogList = this.byId("downloadDialogList"),
+					sQuery = oEvent.getParameter("newValue");
+
+				oDownloadDialogList.getBinding("items").filter([
+					new Filter("name", FilterOperator.Contains, sQuery)
 				]);
+			},
+
+			onCloseDialog: function() {
+				var oDownloadDialog = this.byId("downloadDialog"),
+					oDownloadDialogSearch = this.byId("downloadDialogSearch");
+
+				oDownloadDialog.close();
+				oDownloadDialogSearch.setValue("");
 			},
 
 			/**
@@ -214,7 +225,7 @@ sap.ui.define([
 
 						// add extra download files
 						aFiles.forEach(function(sFilePath) {
-							var oPromise = sourceFileDownloader(oConfig.cwd + sFilePath);
+							var oPromise = ResourceDownloadUtil.fetch(oConfig.cwd + sFilePath);
 
 							oPromise.then(function (oContent) {
 								if (oContent.errorMessage) {
@@ -231,9 +242,9 @@ sap.ui.define([
 						});
 
 						// add generic license file
-						var oLicensePromise = sourceFileDownloader(sap.ui.require.toUrl("LICENSE.txt")); // FIXME: this needs to go up one directory
+						var oLicensePromise = ResourceDownloadUtil.fetch(sap.ui.require.toUrl("LICENSE.txt")); // FIXME: this needs to go up one directory
 						oLicensePromise.then(function (oContent) {
-							oZipFile.file("LICENSE.txt", oContent, { base64: false, binary: true });
+							oZipFile.file("LICENSE.txt", oContent);
 						});
 						aPromises.push(oLicensePromise);
 
