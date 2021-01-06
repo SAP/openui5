@@ -68,8 +68,9 @@ sap.ui.define([
 		var sKey = oConfigValue.key;
 		var sType = oConfigValue.value.type;
 		var vItemMetadata = this.getNestedDesigntimeMetadataValue(sKey);
-		var sVisible = (oConfigValue.value.visible || vItemMetadata.visible) !== false;
-		var sEditable = (oConfigValue.value.editable || vItemMetadata.editable) !== false;
+		var bVisible = (oConfigValue.value.visible || vItemMetadata.visible) !== false;
+		var bEditable = (oConfigValue.value.editable || vItemMetadata.editable) !== false;
+		var bExpanded = (oConfigValue.value.expanded || vItemMetadata.expanded) !== false;
 		var sManifestpath = oConfigValue.value.manifestpath || vItemMetadata.manifestpath || "";
 		var sDescription = oConfigValue.value.description || vItemMetadata.description || "";
 		var bTranslatable = (oConfigValue.value.translatable || vItemMetadata.translatable) === true;
@@ -130,7 +131,7 @@ sap.ui.define([
 			{
 				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VISIBLE"),
 				path: "visible",
-				value: sVisible,
+				value: bVisible,
 				allowBindings: true,
 				type: "boolean",
 				itemKey: sKey
@@ -139,9 +140,19 @@ sap.ui.define([
 				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.EDITABLE"),
 				path: "editable",
 				allowBindings: true,
-				value: sEditable,
+				value: bEditable,
 				enabled: true,
 				visible: sType !== "group",
+				type: "boolean",
+				itemKey: sKey
+			},
+			{
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.EXPANDED"),
+				path: "expanded",
+				allowBindings: true,
+				value: bExpanded,
+				enabled: true,
+				visible: sType === "group",
 				type: "boolean",
 				itemKey: sKey
 			},
