@@ -1823,7 +1823,7 @@ sap.ui.define([
 			sXml = sXml
 			// Note: IE > 8 does not add all namespaces at root level, but deeper inside the tree!
 			// Note: Chrome adds all namespaces at root level, but before other attributes!
-				.replace(/ xmlns.*?=\".*?\"/g, "")
+				.replace(/ xmlns.*?=".*?"/g, "")
 				// Note: browsers differ in whitespace for empty HTML(!) tags
 				.replace(/ \/>/g, '/>')
 				// Replace all tabulators
@@ -1857,7 +1857,7 @@ sap.ui.define([
 	/**
 	 * Creates a QUnit.test which tests that the template output is as expected.
 	 *
-	 * @param {sString} sTitle The title of the test case
+	 * @param {string} sTitle The title of the test case
 	 * @param {object} oXMLPreprocessorConfig Holds a preprocessor configuration for type "xml",
 	 *    see {@link sap.ui.core.mvc.View.create}
 	 * @param {string} sTemplate The template used to generate the expected view as XML
@@ -12950,10 +12950,11 @@ sap.ui.define([
 				.expectChange("name", "Frederic Winter")
 				.expectChange("title", "Fourth Title");
 
-			// code under test
-			oActionBinding.setParameter("TeamID", "TEAM_02").execute();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				oActionBinding.setParameter("TeamID", "TEAM_02").execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -13027,10 +13028,11 @@ sap.ui.define([
 				.expectChange("enabled", 0)
 				.expectChange("name", "Frederic Winter");
 
-			// code under test
-			oActionBinding.setParameter("TeamID", "TEAM_02").execute();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				oActionBinding.setParameter("TeamID", "TEAM_02").execute(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
@@ -13073,10 +13075,11 @@ sap.ui.define([
 				.expectChange("enabled", 0)
 				.expectChange("title", null);
 
-			// code under test
-			oActionBinding.execute();
-
-			return that.waitForChanges(assert);
+			return Promise.all([
+				// code under test
+				oActionBinding.execute(),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			that.expectRequest({
 					method : "POST",
@@ -28477,9 +28480,8 @@ sap.ui.define([
 					payload : {Name : "Team 00", Team_Id : "Team_00"}
 				}, {Name : "Team 00", Team_Id : "Team_00"});
 
-			oModel.submitBatch("update");
-
 			return Promise.all([
+				oModel.submitBatch("update"),
 				oNewContext.created(),
 				that.waitForChanges(assert)
 			]);

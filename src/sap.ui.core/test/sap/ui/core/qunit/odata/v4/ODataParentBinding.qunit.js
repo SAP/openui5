@@ -1085,7 +1085,7 @@ sap.ui.define([
 				setQueryOptions : function () {}
 			},
 			oCache0Mock = this.mock(oCache0),
-			oCache1,
+			oCache1 = {},
 			oCachePromise = SyncPromise.resolve(oCache0),
 			fnFetchMetadata = {/*function*/},
 			oBinding = new ODataParentBinding({
@@ -2053,7 +2053,7 @@ sap.ui.define([
 				getUpdateGroupId : function () {},
 				oModel : {isAutoGroup : function () {}, isDirectGroup : function () {}}
 			}),
-			oETagEntity,
+			oETagEntity = {},
 			oGroupLock = {getGroupId : function () {}},
 			oGroupLockMock = this.mock(oGroupLock),
 			oModelMock = this.mock(oBinding.oModel),

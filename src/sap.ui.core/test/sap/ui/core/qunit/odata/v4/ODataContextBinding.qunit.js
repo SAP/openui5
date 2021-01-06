@@ -256,7 +256,8 @@ sap.ui.define([
 				oBindingMock.expects("refreshInternal").never();
 				oBindingMock.expects("checkUpdate").never();
 				oBindingMock.expects("execute").exactly(bSuspended || bAction !== false ? 0 : 1)
-					.withExactArgs();
+					.withExactArgs()
+					.rejects(new Error()); // simulate that the request failed
 
 				// code under test (as called by ODataParentBinding#changeParameters)
 				oBinding.applyParameters(mParameters, ChangeReason.Filter);

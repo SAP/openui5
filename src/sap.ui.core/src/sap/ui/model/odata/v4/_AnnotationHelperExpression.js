@@ -20,7 +20,7 @@ sap.ui.define([
 		sPerformanceGetExpression = sAnnotationHelper + "/getExpression",
 		// a simple binding (see sap.ui.base.BindingParser.simpleParser) to "@i18n" model
 		// w/o bad chars (see _AnnotationHelperBasics: rBadChars) inside path!
-		rI18n = /^\{@i18n>[^\\\{\}:]+\}$/,
+		rI18n = /^{@i18n>[^\\{}:]+}$/,
 		mOData2JSOperators = { // mapping of OData operator to JavaScript operator
 			And : "&&",
 			Eq : "===",
