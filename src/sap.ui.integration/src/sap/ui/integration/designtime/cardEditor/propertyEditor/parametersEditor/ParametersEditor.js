@@ -70,6 +70,7 @@ sap.ui.define([
 		var vItemMetadata = this.getNestedDesigntimeMetadataValue(sKey);
 		var bVisible = (oConfigValue.value.visible || vItemMetadata.visible) !== false;
 		var bEditable = (oConfigValue.value.editable || vItemMetadata.editable) !== false;
+		var bRequired = (oConfigValue.value.required || vItemMetadata.required) === true;
 		var bExpanded = (oConfigValue.value.expanded || vItemMetadata.expanded) !== false;
 		var sManifestpath = oConfigValue.value.manifestpath || vItemMetadata.manifestpath || "";
 		var sDescription = oConfigValue.value.description || vItemMetadata.description || "";
@@ -143,6 +144,16 @@ sap.ui.define([
 				value: bEditable,
 				enabled: true,
 				visible: sType !== "group",
+				type: "boolean",
+				itemKey: sKey
+			},
+			{
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.REQUIRED"),
+				path: "required",
+				allowBindings: true,
+				value: bRequired,
+				visible: sType !== "group",
+				enabled: true,
 				type: "boolean",
 				itemKey: sKey
 			},
