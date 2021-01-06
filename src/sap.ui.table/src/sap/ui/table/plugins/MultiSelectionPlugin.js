@@ -566,7 +566,7 @@ sap.ui.define([
 	}
 
 	function loadContexts(oBinding, iStartIndex, iLength, fResolve) {
-		var aContexts = oBinding.getContexts(iStartIndex, iLength, 0, undefined, true);
+		var aContexts = oBinding.getContexts(iStartIndex, iLength, 0, true);
 		var bLoadItems = false;
 
 		for (var i = 0; i < aContexts.length; i++) {
