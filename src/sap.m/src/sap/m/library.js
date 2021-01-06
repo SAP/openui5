@@ -123,6 +123,7 @@ sap.ui.define([
 			"sap.m.QuickViewGroupElementType",
 			"sap.m.RatingIndicatorVisualMode",
 			"sap.m.ScreenSize",
+			"sap.m.SelectColumnRatio",
 			"sap.m.SelectionDetailsActionLevel",
 			"sap.m.SelectListKeyboardNavigationMode",
 			"sap.m.SelectType",
@@ -2307,6 +2308,21 @@ sap.ui.define([
 					return CoreLibrary.CSSColor.isValid(Parameters.get(vValue));
 				}
 			}
+		}
+	}, DataType.getType("string"));
+
+	/**
+	 * @classdesc A string type that represents column ratio.
+	 *
+	 * Allowed values are strings that follow the number:number (3:2) format.
+	 * @namespace
+	 * @public
+	 * @since 1.86
+	 * @ui5-metamodel This simple type also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.SelectColumnRatio = DataType.createType("sap.m.SelectColumnRatio", {
+		isValid : function (vValue) {
+			return /^([0-9]+:[0-9]+)$/.test(vValue);
 		}
 	}, DataType.getType("string"));
 

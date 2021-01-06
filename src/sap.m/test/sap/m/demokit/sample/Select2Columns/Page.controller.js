@@ -7,80 +7,50 @@ sap.ui.define([
 	var PageController = Controller.extend("sap.m.sample.Select2Columns.Page", {
 
 		onInit: function () {
-			var oData = {
-				"ProductCollection": [
-					{
-						"ProductId": "HT-1000",
-						"Name": "Notebook Basic 15",
-						"CurrencyCode": "EUR",
-						"Price": 956
-					},
-					{
-						"ProductId": "HT-1001",
-						"Name": "Notebook Basic 17",
-						"CurrencyCode": "EUR",
-						"Price": 1249
-					},
-					{
-						"ProductId": "HT-1002",
-						"Name": "Notebook Basic 18",
-						"CurrencyCode": "EUR",
-						"Price": 1570
-					},
-					{
-						"ProductId": "HT-1003",
-						"Name": "Notebook Basic 19",
-						"CurrencyCode": "EUR",
-						"Price": 1650
-					},
-					{
-						"ProductId": "HT-1007",
-						"Name": "ITelO Vault",
-						"CurrencyCode": "EUR",
-						"Price": 299
-					},
-					{
-						"ProductId": "HT-1010",
-						"Name": "Notebook Professional 15",
-						"CurrencyCode": "EUR",
-						"Price": 1999
-					},
-					{
-						"ProductId": "HT-1011",
-						"Name": "Notebook Professional 17",
-						"CurrencyCode": "EUR",
-						"Price": 2299
-					},
-					{
-						"ProductId": "HT-1020",
-						"Name": "ITelO Vault Net",
-						"CurrencyCode": "EUR",
-						"Price": 459
-					},
-					{
-						"ProductId": "HT-1021",
-						"Name": "ITelO Vault SAT",
-						"CurrencyCode": "EUR",
-						"Price": 149
-					},
-					{
-						"ProductId": "HT-1022",
-						"Name": "Comfort Easy",
-						"CurrencyCode": "EUR",
-						"Price": 1679
-					},
-					{
-						"ProductId": "HT-1023",
-						"Name": "Comfort Senior",
-						"CurrencyCode": "EUR",
-						"Price": 512
-					}
-				]
-			};
+			var aItems = [];
 
-			// set explored app's demo model on this sample
-			var oModel = new JSONModel(oData);
+			for (var i = 1; i <= 10; i++) {
+				aItems.push({
+					firstColumnText: "First column text ".repeat(5) + " " + i,
+					secondColumnText: "Second column text ".repeat(5) + " " + i
+				});
+			}
+
+			var oModel = new JSONModel({items: aItems});
 			this.getView().setModel(oModel);
+		},
+
+		fnFirstSliderChange: function(event) {
+			var iSecondSliderValue = this.byId("secondSlider").getValue(),
+				iFirstSliderNewValue = event.getParameter("value");
+
+			this.setCorrectData(iFirstSliderNewValue, iSecondSliderValue);
+		},
+
+		fnSwitch: function(event) {
+			var oSelect = this.byId("select");
+
+			oSelect.setWrapItemsText(event.getParameter("state"));
+		},
+
+		fnSecondSliderChange: function(event) {
+			var iSecondSliderValue = event.getParameter("value"),
+				iFirstSliderNewValue = this.byId("firstSlider").getValue();
+
+			this.setCorrectData(iFirstSliderNewValue, iSecondSliderValue);
+		},
+
+		setCorrectData: function(iFirstColumnRatio, iSecondColumnRatio) {
+			var oSelect = this.byId("select"),
+				oRatioText = this.byId("text1"),
+				oPercentagesText = this.byId("text2"),
+				iTotalProportions = iFirstColumnRatio + iSecondColumnRatio,
+				iFirstColumnProportion = Math.round(iFirstColumnRatio / iTotalProportions * 100),
+				iSecondColumnProportion = 100 - iFirstColumnProportion;
+
+			oSelect.setColumnRatio(iFirstColumnRatio + ":" + iSecondColumnRatio);
+			oRatioText.setText(iFirstColumnRatio + ":" + iSecondColumnRatio);
+			oPercentagesText.setText(iFirstColumnProportion + "%:" + iSecondColumnProportion + "%");
 		}
 	});
 

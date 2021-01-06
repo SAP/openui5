@@ -3822,4 +3822,57 @@ sap.ui.define([
 
 		oSelectList.destroy();
 	});
+
+	QUnit.module("columnRatio property");
+
+	QUnit.test("columnRatio is correctly tranformed to percentages", function (assert) {
+		//Arrange
+		var oSelect = new Select({
+				items : [
+					new ListItem({
+						text: "First item text",
+						additionalText: "First item additional text"
+					}),
+					new ListItem({
+						text: "Second item text",
+						additionalText: "Second item additional text"
+					})
+				]
+			}),
+			oList = oSelect.getList();
+
+		//Act
+		oSelect.setShowSecondaryValues(true);
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(oList._getColumnsPercentages().firstColumn, "60%", "Ratio is 3:2. First column percentage is calculated correctly");
+		assert.equal(oList._getColumnsPercentages().secondColumn, "40%", "Ratio is 3:2. First column percentage is calculated correctly");
+
+		//Act
+		oSelect.setColumnRatio("2:2");
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(oList._getColumnsPercentages().firstColumn, "50%", "Ratio is 2:2. First column percentage is calculated correctly");
+		assert.equal(oList._getColumnsPercentages().secondColumn, "50%", "Ratio is 2:2. First column percentage is calculated correctly");
+
+		//Act
+		oSelect.setColumnRatio("1:9");
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(oList._getColumnsPercentages().firstColumn, "10%", "Ratio is 1:9. First column percentage is calculated correctly");
+		assert.equal(oList._getColumnsPercentages().secondColumn, "90%", "Ratio is 1:9. First column percentage is calculated correctly");
+
+		//Act
+		oSelect.setShowSecondaryValues(false);
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(oList._getColumnsPercentages(), undefined, "Second column is not show, we should not have columns percentages");
+
+		//Clean
+		oSelect.destroy();
+	});
 });
