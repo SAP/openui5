@@ -283,7 +283,7 @@ sap.ui.define([
 					// checkUpdateInternal
 					return undefined;
 				}
-				if (that.bRelative && that.sReducedPath.includes(sVirtualPath)) {
+				if (sResolvedPath.includes(sVirtualPath)) {
 					// below virtual context: no change event
 					oCallToken.forceUpdate = false;
 				}
