@@ -603,8 +603,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "{= ${items>boolean1/value} === true ? 'dependentBoolean3 True' : 'dependentBoolean3 False' }",
 						"type": "string"
 					},
-					"lickedParameters": {
-						"label": "Licked Parameters",
+					"linkedParameters": {
+						"label": "Linked Parameters",
 						"type": "group"
 					},
 					"Customer": {
