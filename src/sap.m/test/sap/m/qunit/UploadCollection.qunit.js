@@ -1837,6 +1837,56 @@ sap.ui.define([
 		assert.notOk(bActual, "The check successfully recognizes that there are no files in the event data");
 	});
 
+	/* --------------------------------------- */
+	/* Test events                             */
+	/* --------------------------------------- */
+	QUnit.module("Drag and drop in instantUpload false", {
+		beforeEach: function() {
+			this.$RootNode = jQuery(document.body);
+			this.oSpyOnChange = sinon.spy(UploadCollection.prototype, "_onChange");
+			this.oUploadCollection = new UploadCollection("uploadCollection", {
+				items: {
+					path: "/items",
+					template: createItemTemplate(),
+					templateShareable: false
+				},
+				multiple: true,
+				instantUpload:false,
+				headerParameters:[new UploadCollectionParameter({
+					name:"abc",
+					value:"abcValue"
+				})]
+			}).setModel(new JSONModel(oData));
+			this.oUploadCollection.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oSpyOnChange.restore();
+			this.oUploadCollection.destroy();
+			this.oUploadCollection = null;
+		}
+	});
+
+	QUnit.test("Drag and drop file in UploadCollection with header parameters", function(assert) {
+		var $DragDropArea = this.oUploadCollection.$("drag-drop-area");
+		var oFileList = [
+			{
+				name: "file1"
+			}
+		];
+		var oEvent = jQuery.Event("drop", {
+			originalEvent: {
+				dataTransfer: {
+					files: oFileList,
+					types:["Files"]
+				}
+			}
+		});
+		$DragDropArea.trigger(oEvent);
+		assert.ok(this.oUploadCollection._oFileUploader.getHeaderParameters().length > 0, "FileUploader for UploadCollection has headers");
+	});
+
+
 	QUnit.module("Event tests", {
 		beforeEach: function() {
 			this.oUploadCollection = new UploadCollection({
