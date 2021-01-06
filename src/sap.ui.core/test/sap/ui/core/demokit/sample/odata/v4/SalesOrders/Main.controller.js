@@ -6,16 +6,18 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/m/MessageToast",
 	"sap/ui/core/format/DateFormat",
+	"sap/ui/core/library",
 	"sap/ui/core/sample/common/Controller",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterType",
 	"sap/ui/model/Sorter"
-], function (Log, MessageBox, MessageToast, DateFormat, Controller, Filter, FilterOperator,
+], function (Log, MessageBox, MessageToast, DateFormat, library, Controller, Filter, FilterOperator,
 		FilterType, Sorter) {
 	"use strict";
 
 	var oDateFormat = DateFormat.getTimeInstance({pattern : "HH:mm"}),
+		MessageType = library.MessageType,
 		sServiceNamespace = "com.sap.gateway.default.zui5_epm_sample.v0002.";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.SalesOrders.Main", {
@@ -313,6 +315,31 @@ sap.ui.define([
 			oBinding.filter(sQuery
 				? new Filter("SOITEM_2_PRODUCT/ProductID", FilterOperator.EQ, sQuery)
 				: null);
+		},
+
+		onFilterMessages : function (oEvent) {
+			var oBinding = this.byId("SO_2_SOITEM").getBinding("items"),
+				fnFilter,
+				oSelect = oEvent.getSource(),
+				sMessageType = oSelect.getSelectedKey();
+
+			if (sMessageType !== "Show All") {
+				if (sMessageType !== "With Any Message") {
+					fnFilter = function (oMessage) {
+						return oMessage.type === sMessageType;
+					};
+				}
+				oBinding.requestFilterForMessages(fnFilter).then(function (oFilter) {
+					if (!oFilter) {
+						MessageBox.information("There is no item with a message of type '"
+							+ sMessageType + "'; showing all items");
+						oSelect.setSelectedKey(MessageType.None);
+					}
+					oBinding.filter(oFilter, FilterType.Control); // preserve application filter
+				});
+			} else {
+				oBinding.filter(undefined, FilterType.Control); // preserve application filter
+			}
 		},
 
 		onInit : function () {

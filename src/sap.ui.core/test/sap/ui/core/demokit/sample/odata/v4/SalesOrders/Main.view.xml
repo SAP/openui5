@@ -393,6 +393,11 @@
 							id="deleteSalesOrderLineItem" press="onDeleteSalesOrderLineItem"
 							tooltip="Delete sales order line item"/>
 						<ToolbarSpacer />
+						<Label labelFor="itemFilter" text="Filter"/>
+						<Select change="onFilterMessages" id="itemFilter"
+							items="{ui>/itemFilter}" selectedKey="Show all">
+							<core:ListItem icon="{ui>icon}" key="{ui>type}" text="{ui>text}"/>
+						</Select>
 						<SearchField
 							enabled="{ui>/bRealOData}"
 							placeholder="Filter by ProductID"

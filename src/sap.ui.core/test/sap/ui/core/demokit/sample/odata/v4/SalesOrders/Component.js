@@ -18,8 +18,8 @@ sap.ui.define([
 ], function (Log, HBox, library, UIComponent, View, JSONModel, TestUtils) {
 	"use strict";
 
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = library.mvc.ViewType;
+	var MessageType = library.MessageType, // shortcut for sap.ui.core.MessageType
+		ViewType = library.mvc.ViewType; // shortcut for sap.ui.core.mvc.ViewType
 
 	return UIComponent.extend("sap.ui.core.sample.odata.v4.SalesOrders.Component", {
 		metadata : {
@@ -40,7 +40,33 @@ sap.ui.define([
 			// simulate a Fiori Elements app, where the view is only created after
 			// $metadata has been loaded
 			oModel.getMetaModel().requestObject("/SalesOrderList/").then(function () {
-				var oLastModified = oModel.getMetaModel().getLastModified();
+				var aItemFilter = [{
+						icon : "",
+						text : "Show All",
+						type : "Show All"
+					}, {
+						icon : "",
+						text : "With Any Message",
+						type : "With Any Message"
+					}, {
+						icon : "sap-icon://message-error",
+						text : "With Error Messages",
+						type : MessageType.Error
+					}, {
+						icon : "sap-icon://message-warning",
+						text : "With Warning Messages",
+						type : MessageType.Warning
+					}, {
+						icon : "sap-icon://message-success",
+						text : "With Success Messages",
+						type : MessageType.Success
+					}, {
+						icon : "sap-icon://message-information",
+						text : "With Information Messages",
+						type : MessageType.Information
+					}],
+					oLastModified = oModel.getMetaModel().getLastModified();
+
 
 				Log.debug("Last-Modified: " + oLastModified,
 					oLastModified && oLastModified.toISOString(),
@@ -54,6 +80,7 @@ sap.ui.define([
 							bCreateItemPending : false,
 							filterProductID : "",
 							filterValue : "",
+							itemFilter : aItemFilter,
 							bLineItemSelected : false,
 							iMessages : 0,
 							bRealOData : TestUtils.isRealOData(),

@@ -22,11 +22,12 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
+	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/test/TestUtils"
 ], function (Log, SyncPromise, Binding, ChangeReason, Filter, FilterOperator, FilterProcessor,
 		FilterType, ListBinding, Sorter, OperationMode, Context, ODataListBinding, ODataModel,
 		asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock, _Helper,
-		TestUtils) {
+		_Parser, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
 	"use strict";
@@ -6995,6 +6996,188 @@ sap.ui.define([
 
 		// code under test - no resolved path
 		oBinding._checkDataStateMessages(oDataState);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestFilterForMessages, (with unresolved binding)", function (assert) {
+		var oBinding = this.bindList("TEAM_2_EMPLOYEES");
+
+		// code under test
+		return oBinding.requestFilterForMessages().then(function (oFilter) {
+			assert.strictEqual(oFilter, null);
+		});
+	});
+
+	//*********************************************************************************************
+[{
+	messages : [], predicates : []
+},{
+	messages : [{
+		getTargets : function () {return ["/TEAMS('1')/foo"];}
+	}, {
+		getTargets : function () {return ["/TEAMS('1')/bar"];}
+	}],
+	predicates : ["('1')"]
+}, {
+	messages : [{
+		getTargets : function () {return ["/TEAMS('1')/foo", "/TEAMS('1')/bar"];}
+	}, {
+		getTargets : function () {return ["/TEAMS('2')/bar"];}
+	}, {
+		getTargets : function () {return ["/TEAMS($uid='xyz')"];}
+	}],
+	predicates : ["('1')", "('2')"]
+}, {
+	callbackReturns : true,
+	messages : [{
+		getTargets : function () {return ["/TEAMS('1')/foo"];}
+	}, {
+		getTargets : function () {return ["/TEAMS('2')/bar"];}
+	}],
+	predicates : ["('1')", "('2')"]
+}, {
+	callbackReturns : false,
+	messages : [{
+		getTargets : function () {return ["/TEAMS('1')/foo"];}
+	}, {
+		getTargets : function () {return ["/TEAMS('2')/bar"];}
+	}],
+	predicates : []
+}].forEach(function (oFixture) {
+	var sTitle = "requestFilterForMessages; messages: " + oFixture.messages.length
+		+ " predicates: " + oFixture.predicates
+		+ " callbackReturns: " + oFixture.callbackReturns;
+
+	QUnit.test(sTitle, function (assert) {
+		var fnCallback,
+			oBinding = this.bindList("/TEAMS"),
+			aFilters = [],
+			oListBindingMock = this.mock(ODataListBinding),
+			that = this;
+
+		aFilters = oFixture.predicates.map(function(sPredicate) {
+			return new Filter("does", "NOT", "matter");
+		});
+
+		this.mock(oBinding.oHeaderContext).expects("getPath").withExactArgs()
+			.returns("/TEAMS");
+		this.mock(this.oModel.oMetaModel).expects("getMetaPath").withExactArgs("/TEAMS")
+			.returns("~meta~path~");
+		this.mock(this.oModel.oMetaModel).expects("requestObject").withExactArgs("~meta~path~/")
+			.callsFake(function () {
+				that.mock(that.oModel).expects("getMessagesByPath")
+					.withExactArgs("/TEAMS", true).returns(oFixture.messages);
+				if (oFixture.predicates.length === 0) {
+					oListBindingMock.expects("getFilterForPredicate").never();
+				} else {
+					oFixture.predicates.map(function (sPredicate, i) {
+						oListBindingMock.expects("getFilterForPredicate")
+							.withExactArgs(sPredicate, "~entity~type~",
+								sinon.match.same(that.oModel.oMetaModel), "~meta~path~")
+							.returns(aFilters[i]);
+					});
+				}
+				return Promise.resolve("~entity~type~");
+			});
+
+		if (oFixture.callbackReturns !== undefined) {
+			fnCallback = sinon.spy(function (oMessage) {return oFixture.callbackReturns;});
+		}
+
+		// code under test
+		return oBinding.requestFilterForMessages(fnCallback).then(function (oFilter) {
+			if (oFixture.predicates.length === 0 || oFixture.callbackReturns === false) {
+				assert.strictEqual(oFilter, null);
+
+				return;
+			}
+			if (oFixture.predicates.length === 1) {
+				assert.strictEqual(oFilter, aFilters[0]);
+
+				return;
+			}
+			assert.strictEqual(oFilter.aFilters.length, oFixture.predicates.length);
+			assert.notOk(oFilter.bAnd);
+			oFixture.predicates.forEach(function (sPredicate, i) {
+				assert.strictEqual(oFilter.aFilters[i], aFilters[i]);
+			});
+			if (fnCallback) {
+				oFixture.messages.forEach(function(oMessage) {
+					assert.ok(fnCallback.calledWithExactly(oMessage));
+				});
+			}
+		});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("getFilterForPredicate (one key property)", function (assert) {
+		var oEntityType = {
+				$Key : ["key"]
+			},
+			oFilter,
+			oMetaModel = {
+				getObject : function () {}
+			};
+
+		this.mock(_Parser).expects("parseKeyPredicate").withExactArgs("('value')")
+			.returns({"" : "'value'"});
+		this.mock(oMetaModel).expects("getObject").withExactArgs("~meta~path~/key/$Type")
+			.returns("type");
+		this.mock(window).expects("decodeURIComponent").withExactArgs("'value'")
+			.returns("decoded value");
+		this.mock(_Helper).expects("parseLiteral").withExactArgs("decoded value", "type", "key")
+			.returns("parsed value");
+
+		// code under test
+		oFilter = ODataListBinding.getFilterForPredicate("('value')", oEntityType, oMetaModel,
+			"~meta~path~");
+
+		assert.ok(oFilter instanceof Filter);
+		assert.deepEqual(oFilter, new Filter("key", FilterOperator.EQ, "parsed value"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getFilterForPredicate (more key properties, aliases)", function (assert) {
+		var oEntityType = {
+				$Key : ["key1", "key2", {alias : "key3/p"}]
+			},
+			oFilter,
+			oHelperMock = this.mock(_Helper),
+			oMetaModel = {
+				getObject : function () {}
+			},
+			oMetaModelMock = this.mock(oMetaModel);
+
+		this.mock(_Parser).expects("parseKeyPredicate")
+			.withExactArgs("(key1='42',key2=43,alias='44')")
+			.returns({key1 : "'42'", key2 : "43", alias : "'44'"});
+		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/key1/$Type")
+			.returns("type1");
+		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/key2/$Type")
+			.returns("type2");
+		oMetaModelMock.expects("getObject").withExactArgs("~meta~path~/key3/p/$Type")
+			.returns("type3");
+		oHelperMock.expects("parseLiteral").withExactArgs("'42'", "type1", "key1")
+			.returns("42");
+		oHelperMock.expects("parseLiteral").withExactArgs("43", "type2", "key2")
+			.returns(43);
+		oHelperMock.expects("parseLiteral").withExactArgs("'44'", "type3", "key3/p")
+			.returns("44");
+
+		// code under test
+		oFilter = ODataListBinding.getFilterForPredicate("(key1='42',key2=43,alias='44')",
+			oEntityType, oMetaModel, "~meta~path~");
+
+		assert.ok(oFilter instanceof Filter);
+		assert.deepEqual(oFilter, new Filter({
+			and : true,
+			filters : [
+				new Filter("key1", FilterOperator.EQ, "42"),
+				new Filter("key2", FilterOperator.EQ, 43),
+				new Filter("key3/p", FilterOperator.EQ, "44")
+			]})
+		);
 	});
 });
 

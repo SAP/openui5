@@ -11,11 +11,13 @@ sap.ui.define([
 	"./lib/_Cache",
 	"./lib/_GroupLock",
 	"./lib/_Helper",
+	"./lib/_Parser",
 	"sap/base/Log",
 	"sap/base/util/uid",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
+	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/FilterType",
@@ -23,8 +25,8 @@ sap.ui.define([
 	"sap/ui/model/Sorter",
 	"sap/ui/model/odata/OperationMode"
 ], function (Context, asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache,
-		_GroupLock, _Helper, Log, uid, SyncPromise, Binding, ChangeReason, FilterOperator,
-		FilterProcessor, FilterType, ListBinding, Sorter, OperationMode) {
+		_GroupLock, _Helper, _Parser, Log, uid, SyncPromise, Binding, ChangeReason, Filter,
+		FilterOperator, FilterProcessor, FilterType, ListBinding, Sorter, OperationMode) {
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataListBinding",
@@ -2460,6 +2462,69 @@ sap.ui.define([
 	ODataListBinding.prototype.requestDownloadUrl = _Helper.createRequestMethod("fetchDownloadUrl");
 
 	/**
+	 * Requests a {@link sap.ui.model.Filter} object which can be used to filter the list binding by
+	 * entries with model messages. With the filter callback, you can define if a message is
+	 * considered when creating the filter for entries with messages.
+	 *
+	 * The resulting filter does not consider application or control filters specified for this list
+	 * binding in its constructor or in its {@link #filter} method; add filters which you want to
+	 * keep with the "and" conjunction to the resulting filter before calling {@link #filter}.
+	 *
+	 * @param {function(sap.ui.core.message.Message):boolean} [fnFilter]
+	 *   A callback function to filter only relevant messages. The callback returns whether the
+	 *   given {@link sap.ui.core.message.Message} is considered. If no callback function is given,
+	 *   all messages are considered.
+	 * @returns {Promise<sap.ui.model.Filter>}
+	 *   A Promise that resolves with a {@link sap.ui.model.Filter} representing the entries with
+	 *   messages; it resolves with <code>null</code> if the binding is not resolved or if there is
+	 *   no message for any entry
+	 *
+	 * @protected
+	 * @see sap.ui.model.ListBinding#requestFilterForMessages
+	 * @since 1.86.0
+	 */
+	// @override sap.ui.model.ListBinding#requestFilterForMessages
+	ODataListBinding.prototype.requestFilterForMessages = function (fnFilter) {
+		var oMetaModel = this.oModel.getMetaModel(),
+			sMetaPath,
+			sResolvedPath = this.oHeaderContext && this.oHeaderContext.getPath(),
+			that = this;
+
+		if (!sResolvedPath) {
+			return Promise.resolve(null);
+		}
+
+		sMetaPath = oMetaModel.getMetaPath(sResolvedPath);
+		return oMetaModel.requestObject(sMetaPath + "/").then(function (oEntityType) {
+			var aFilters,
+				mPredicates = {};
+
+			that.oModel.getMessagesByPath(sResolvedPath, true).filter(function (oMessage) {
+				return !fnFilter || fnFilter(oMessage);
+			}).forEach(function (oMessage) {
+				oMessage.getTargets().forEach(function(sTarget) {
+					var sPredicate = sTarget.slice(sResolvedPath.length).split("/")[0];
+
+					if (!sPredicate.startsWith("($uid=")) {
+						 mPredicates[sPredicate] = true;
+					}
+				});
+			});
+
+			aFilters = Object.keys(mPredicates).map(function (sPredicate) {
+				return ODataListBinding.getFilterForPredicate(sPredicate, oEntityType,
+					oMetaModel, sMetaPath);
+			});
+
+			if (aFilters.length === 0) {
+				return null;
+			}
+
+			return aFilters.length === 1 ? aFilters[0] : new Filter({filters : aFilters});
+		});
+	};
+
+	/**
 	 * @override
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#requestSideEffects
 	 */
@@ -2936,6 +3001,50 @@ sap.ui.define([
 					}))
 			};
 		}
+	};
+
+	//*********************************************************************************************
+	// "static" functions
+	//*********************************************************************************************
+
+	/**
+	 * Calculates the filter for the given key predicate.
+	 *
+	 * @param {string} sPredicate The key predicate of a message target
+	 * @param {object} oEntityType The metadata for the entity type
+	 * @param {sap.ui.model.odata.v4.ODataMetaModel} oMetaModel The meta model
+	 * @param {string} sMetaPath The meta path
+	 * @returns {sap.ui.model.Filter} a {@link sap.ui.model.Filter} for the given key predicate
+	 *
+	 * @private
+	 */
+	ODataListBinding.getFilterForPredicate = function (sPredicate, oEntityType, oMetaModel,
+			sMetaPath) {
+		var aFilters,
+			mValueByKeyOrAlias = _Parser.parseKeyPredicate(sPredicate);
+
+		if ("" in mValueByKeyOrAlias) {
+			// unnamed key e.g. {"" : ('42')} => replace it by the name of the only key property
+			mValueByKeyOrAlias[oEntityType.$Key[0]] = mValueByKeyOrAlias[""];
+			delete mValueByKeyOrAlias[""];
+		}
+
+		aFilters = oEntityType.$Key.map(function (vKey) {
+			var sKeyOrAlias, sKeyPath;
+
+			if (typeof vKey === "string") {
+				sKeyPath = sKeyOrAlias = vKey;
+			} else {
+				sKeyOrAlias = Object.keys(vKey)[0]; // alias
+				sKeyPath = vKey[sKeyOrAlias];
+			}
+
+			return new Filter(sKeyPath, FilterOperator.EQ,
+				_Helper.parseLiteral(decodeURIComponent(mValueByKeyOrAlias[sKeyOrAlias]),
+					oMetaModel.getObject(sMetaPath + "/" + sKeyPath + "/$Type"), sKeyPath));
+		});
+
+		return aFilters.length === 1 ? aFilters[0] : new Filter({and : true, filters : aFilters});
 	};
 
 	return ODataListBinding;
