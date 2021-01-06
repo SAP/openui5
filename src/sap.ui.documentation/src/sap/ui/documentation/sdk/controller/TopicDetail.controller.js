@@ -128,6 +128,10 @@ sap.ui.define([
 			},
 
 			onExit: function() {
+				this.aResponsiveImageMaps.forEach(function(oResponsiveImgMap) {
+					oResponsiveImgMap.removeEventListeners();
+				});
+
 				ResizeHandler.deregister(this._onResize.bind(this));
 				Device.orientation.detachHandler(this._onOrientationChange, this);
 			},
@@ -261,6 +265,10 @@ sap.ui.define([
 						oSection.scrollIntoView(true);
 					}
 				}
+
+				this.aResponsiveImageMaps.forEach(function(oResponsiveImgMap) {
+					oResponsiveImgMap.removeEventListeners();
+				});
 
 				this.aResponsiveImageMaps = [];
 
