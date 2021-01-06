@@ -172,7 +172,18 @@ sap.ui.define([
 			* It takes effect only when the <code>mode</code> property is set to <code>sap.m.ImageMode.Background</code>.
 			* @since 1.30.0
 			*/
-			backgroundRepeat : {type : "string", group : "Appearance", defaultValue : "no-repeat"}
+			backgroundRepeat : {type : "string", group : "Appearance", defaultValue : "no-repeat"},
+			/**
+			* Enables lazy loading for images that are offscreen. If set to <code>true</code>, the property
+			* ensures that offscreen images are loaded early enough so that they have finished loading once
+			* the user scrolls near them.
+			*
+			* <b>Note:</b> Keep in mind that the property uses the loading attribute of HTML <code>&lt;img&gt;</code> element
+			* which is not supported for Internet Explorer.
+			*
+			* @since 1.87
+			*/
+			lazyLoading : {type : "boolean", defaultValue : false }
 		},
 		aggregations : {
 			/**

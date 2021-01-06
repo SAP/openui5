@@ -9,12 +9,14 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/Core",
-	"sap/ui/Device"
-], function(Image, jQuery, mobileLibrary, LightBox, Text, KeyCodes, QUtils, Core, Device) {
+	"sap/ui/Device",
+	"sap/m/VBox",
+	"sap/ui/qunit/utils/createAndAppendDiv"
+], function(Image, jQuery, mobileLibrary, LightBox, Text, KeyCodes, QUtils, Core, Device, VBox, createAndAppendDiv) {
 	// shortcut for sap.m.ImageMode
 	var ImageMode = mobileLibrary.ImageMode;
 
-
+	createAndAppendDiv("content");
 
 	var IMAGE_PATH = "test-resources/sap/m/images/",
 		sSrc = IMAGE_PATH + "SAPLogo.jpg",
@@ -1120,4 +1122,57 @@ sap.ui.define([
 		oImage.placeAt("qunit-fixture");
 		Core.applyChanges();
 	});
+
+	QUnit.module("Attribute");
+
+	QUnit.test("Lazy loading", function(assert) {
+		// Arrange
+		var oImage = createImage({
+			lazyLoading: true
+		});
+
+		// System under test
+		oImage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		assert.equal(document.getElementById(sControlId).getAttribute("loading"), "lazy", "loading attribute should be lazy");
+
+		// Clean up
+		oImage.destroy();
+	});
+
+	QUnit.module("Load event");
+
+	QUnit.test("fired with lazyLoading set to true", function(assert) {
+		// Arrange
+		var oBox = new VBox({
+			height: "3000px"
+		}),
+			oImage = createImage({
+				lazyLoading: true
+		}),
+			oPage = new sap.m.Page({
+				content: [oBox, oImage]
+		}),
+			done = assert.async(),
+			oLoadSpy = sinon.spy(oImage, "fireLoad");
+
+		// System under test
+		oPage.placeAt("content");
+		document.getElementById("content").style.height = "500px";
+
+		assert.strictEqual(oLoadSpy.callCount, 0, "load event isn`t fired");
+
+		oPage.scrollToElement(oImage);
+		oImage.attachLoad(function(){
+			assert.strictEqual(oLoadSpy.callCount, 1, "load event is fired");
+			done();
+
+		// Clean up
+		oPage.destroy();
+		});
+
+
+	});
+
 });
