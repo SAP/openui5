@@ -38,7 +38,7 @@ describe('sap.m.MultiComboBox', function() {
 
 	//MultiComboBox - After arrow navigation
 	it("should visualize MultiComboBox after navigating between tokens with arrow key.", function(){
-		var defaultMultiComboBox = element(by.id("MultiComboBox1"));
+		var defaultMultiComboBox = element(by.id("MultiComboBox1-inner"));
 
 		defaultMultiComboBox.click();
 		browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
@@ -65,7 +65,7 @@ describe('sap.m.MultiComboBox', function() {
 
 	//MultiComboBox with cropped tokens
 	it("should visualize a MultiComboBox with cropped tokens", function(){
-		var croppedTokensMultiComboBox = element(by.id("MultiComboBox1"));
+		var croppedTokensMultiComboBox = element(by.id("MultiComboBox1-inner"));
 		croppedTokensMultiComboBox.click();
 		expect(takeScreenshot( element(by.id("MultiComboBox1")))).toLookAs("cropped_tokens");
 	});
