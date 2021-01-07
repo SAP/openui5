@@ -18,7 +18,7 @@ sap.ui.define([
 				path: "author/name",
 				precision: undefined,
 				scale: undefined,
-				sortable: true,
+				sortable: false,
 				type: "Edm.String",
 				typeConfig: oTable.getTypeUtil().getTypeConfig("Edm.String")
 			}];
@@ -33,7 +33,7 @@ sap.ui.define([
 
 	BooksTableDelegate._createColumnTemplate = function (oInfo) {
 
-		var oProps = { value: "{" + (oInfo.path || oInfo.name) + "}", editMode: "Display", multipleLines: false };
+		var oProps = { value: "{" + (oInfo.path || oInfo.name) + "}", editMode: "Display", width:"100%", multipleLines: false };
 
 
 		if (oInfo.name === "price") {

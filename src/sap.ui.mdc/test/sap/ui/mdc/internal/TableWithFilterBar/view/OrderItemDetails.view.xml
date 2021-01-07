@@ -43,7 +43,7 @@
 								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 
 								<Label text="amount"></Label>
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{amount}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
+								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{path: 'amount', type:'sap.ui.model.odata.type.Int32'}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
 
 								<Label text="netAmount"></Label>
 								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{netAmount}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}"></mdc:Field>
