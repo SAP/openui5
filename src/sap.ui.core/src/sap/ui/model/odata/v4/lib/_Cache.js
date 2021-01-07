@@ -2514,15 +2514,14 @@ sap.ui.define([
 	 * @param {object} mNavigationPropertyPaths
 	 *   Hash set of collection-valued navigation property meta paths (relative to this cache's
 	 *   root) which need to be refreshed, maps string to <code>true</code>; is modified
-	 * @param {number} iStart
-	 *   The array index of the first element to request side effects for
-	 * @param {number} [iLength]
-	 *   The number of elements to request side effects for; <code>Infinity</code> is supported.
-	 *   If <code>undefined</code>, only the side effects for the element at <code>iStart</code> are
-	 *   requested; the other elements are not discarded in this case.
+	 * @param {string[]} aPredicates
+	 *   The key predicates of the root elements to request side effects for
+	 * @param {boolean} bSingle
+	 *   Whether only the side effects for a single element are requested; no element is discarded
+	 *   in this case
 	 * @returns {Promise|sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
-	 *   effects fails, or <code>null</code> if a key property is missing.
+	 *   effects fails
 	 * @throws {Error}
 	 *   If group ID is '$cached' (the error has a property <code>$cached = true</code> then) or if
 	 *   the cache is shared
@@ -2530,36 +2529,22 @@ sap.ui.define([
 	 * @public
 	 */
 	_CollectionCache.prototype.requestSideEffects = function (oGroupLock, aPaths,
-			mNavigationPropertyPaths, iStart, iLength) {
-		var oElement,
-			aFilters = [],
+			mNavigationPropertyPaths, aPredicates, bSingle) {
+		var aElements,
+			iMaxIndex = -1,
 			mMergeableQueryOptions,
 			mQueryOptions,
+			mPredicates = {}, // a set of the predicates (as map to true) to speed up the search
 			sResourcePath,
 			mTypeForMetaPath = this.fetchTypes().getResult(),
-			that = this,
-			i;
-
-		/*
-		 * Adds the filter for the given element to the array of filters.
-		 *
-		 * @param {object} oFilterElement The element for which a filter is computed
-		 * @returns {string} The filter for the given element; <code>undefined</code> if a key
-		 *   property for the element is missing.
-		 */
-		function addFilter(oFilterElement) {
-			var sFilter = _Helper.getKeyFilter(oFilterElement, that.sMetaPath, mTypeForMetaPath);
-
-			aFilters.push(sFilter);
-			return sFilter;
-		}
+			that = this;
 
 		this.checkSharedRequest();
 
 		if (this.oPendingRequestsPromise) {
 			return this.oPendingRequestsPromise.then(function () {
 				return that.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
-					iStart, iLength);
+					aPredicates, bSingle);
 			});
 		}
 
@@ -2571,39 +2556,43 @@ sap.ui.define([
 			return SyncPromise.resolve(); // micro optimization: use *sync.* promise which is cached
 		}
 
-		if (iLength === undefined) {
-			if (!addFilter(this.aElements[iStart])) {
-				return null; // missing key property
-			}
+		if (bSingle) {
+			aElements = [this.aElements.$byPredicate[aPredicates[0]]];
 		} else {
-			// collect key filters and discard elements outside of range
-			for (i = 0; i < this.aElements.length; i += 1) {
-				oElement = this.aElements[i];
+			aPredicates.forEach(function (sPredicate) {
+				mPredicates[sPredicate] = true;
+			});
+
+			aElements = this.aElements.filter(function (oElement, i) {
+				var sPredicate;
+
 				if (!oElement || _Helper.hasPrivateAnnotation(oElement, "transient")) {
-					continue;
+					iMaxIndex = i;
+					return false; // keep, but do not request
 				}
-				if ((i < iStart || i >= iStart + iLength)
-					&& !_Helper.hasPrivateAnnotation(oElement, "transientPredicate"))  {
-					delete this.aElements.$byPredicate[
-						_Helper.getPrivateAnnotation(oElement, "predicate")];
-					delete this.aElements[i];
-					continue;
+
+				sPredicate = _Helper.getPrivateAnnotation(oElement, "predicate");
+				if (mPredicates[sPredicate]
+						|| _Helper.hasPrivateAnnotation(oElement, "transientPredicate")) {
+					iMaxIndex = i;
+					return true; // keep and request
 				}
-				if (!addFilter(oElement)) {
-					return null; // missing key property
-				}
-			}
-			this.aElements.length = iLength
-				? Math.min(iStart + iLength, this.aElements.length) // do not increase length
-				: this.aElements.$created;
-			if (!aFilters.length) {
+
+				delete that.aElements[i];
+				delete that.aElements.$byPredicate[sPredicate];
+				return false;
+			});
+			this.aElements.length = iMaxIndex + 1;
+			if (!aElements.length) {
 				return SyncPromise.resolve(); // micro optimization: use cached *sync.* promise
 			}
 		}
-
-		mQueryOptions.$filter = aFilters.join(" or ");
-		if (aFilters.length > 1) { // avoid small default page size for server-driven paging
-			mQueryOptions.$top = aFilters.length;
+		mQueryOptions.$filter = aElements.map(function (oElement) {
+			// all elements have a key predicate, so we will get a key filter
+			return _Helper.getKeyFilter(oElement, that.sMetaPath, mTypeForMetaPath);
+		}).join(" or ");
+		if (aElements.length > 1) { // avoid small default page size for server-driven paging
+			mQueryOptions.$top = aElements.length;
 		}
 		_Helper.selectKeyProperties(mQueryOptions, mTypeForMetaPath[this.sMetaPath]);
 		delete mQueryOptions.$count;
@@ -2626,8 +2615,8 @@ sap.ui.define([
 					});
 				}
 
-				if (oResult.value.length !== aFilters.length) {
-					throw new Error("Expected " + aFilters.length + " row(s), but instead saw "
+				if (oResult.value.length !== aElements.length) {
+					throw new Error("Expected " + aElements.length + " row(s), but instead saw "
 						+ oResult.value.length);
 				}
 				// Note: iStart makes no sense here (use NaN instead), but is not needed because

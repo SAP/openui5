@@ -2528,12 +2528,15 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
 		var bAllContextsTransient,
+			bMissingPredicate,
 			oModel = this.oModel,
 			// Hash set of collection-valued navigation property meta paths (relative to the cache's
 			// root) which need to be refreshed, maps string to <code>true</code>
 			mNavigationPropertyPaths = {},
-			oPromise,
+			aPredicates,
 			aPromises,
+			// since this is called from a context or a parent binding, the binding is resolved
+			iResolvedPathLength = this.oHeaderContext.getPath().length,
 			bSingle = oContext && oContext !== this.oHeaderContext,
 			that = this;
 
@@ -2565,12 +2568,16 @@ sap.ui.define([
 		}
 
 		if (aPaths.indexOf("") < 0) {
-			oPromise = this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths,
-				mNavigationPropertyPaths,
-				/*iStart*/bSingle ? oContext.getModelIndex() : this.iCurrentBegin,
-				/*iLength*/bSingle ? undefined : this.iCurrentEnd - this.iCurrentBegin);
-			if (oPromise) {
-				aPromises = [oPromise];
+			aPredicates = (bSingle ? [oContext] : this.getCurrentContexts())
+				.map(function (oContext) {
+					return oContext.getPath().slice(iResolvedPathLength);
+				});
+			bMissingPredicate = aPredicates.some(function (sPredicate) {
+				return sPredicate[0] !== "(";
+			});
+			if (!bMissingPredicate) {
+				aPromises = [this.oCache.requestSideEffects(this.lockGroup(sGroupId), aPaths,
+					mNavigationPropertyPaths, aPredicates, bSingle)];
 				this.visitSideEffects(sGroupId, aPaths, bSingle ? oContext : undefined,
 					mNavigationPropertyPaths, aPromises);
 

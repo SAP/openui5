@@ -7708,6 +7708,7 @@ sap.ui.define([
 						mNavigationPropertyPaths = {},
 						aPaths = ["ROOM_ID"],
 						sPredicate,
+						aPredicates,
 						mQueryOptions = {},
 						mQueryOptions0 = {
 							$apply : "A.P.P.L.E.",
@@ -7734,6 +7735,7 @@ sap.ui.define([
 							"key" : "@"
 						},
 						oResult = {value : oFixture.aValues},
+						bSingle = iLength === undefined,
 						oTransient = {
 							"@$ui5._" : {
 								"transient" : true,
@@ -7816,9 +7818,13 @@ sap.ui.define([
 							});
 					}
 
+					aPredicates = aTestData.map(function (sKey) { return "('" + sKey + "')"; });
+					if ("bTransientElement" in oFixture) {
+						aPredicates.unshift(sTransientPredicate);
+					}
 					// code under test
 					return oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
-							iStart, iLength)
+							aPredicates.slice(iStart, iStart + (bSingle ? 1 : iLength)), bSingle)
 						.then(function () {
 							var oElement,
 								sKeys = "",
@@ -7930,37 +7936,6 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[1, undefined].forEach(function (iLength) {
-	[0, 3].forEach(function (iStart) {
-	var sTitle = "CollectionCache#requestSideEffects: Missing key property @" + iStart
-		+ ", iLength=" + iLength;
-
-	QUnit.test(sTitle, function (assert) {
-		var oCache = this.createCache("TEAMS('42')/Foo"),
-			oInstance = {},
-			mTypeForMetaPath = {};
-
-		// cache preparation
-		oCache.aElements[iStart] = oInstance;
-
-		this.mock(oCache).expects("fetchTypes").withExactArgs()
-			.returns(SyncPromise.resolve(mTypeForMetaPath));
-		this.mock(_Helper).expects("intersectQueryOptions").returns({/*don't care*/});
-		this.mock(_Helper).expects("getKeyFilter")
-			.withExactArgs(sinon.match.same(oInstance), "/TEAMS/Foo",
-				sinon.match.same(mTypeForMetaPath))
-			.returns(undefined); // at least one key property is undefined
-		this.mock(_Helper).expects("selectKeyProperties").never();
-		this.oRequestorMock.expects("buildQueryString").never();
-		this.oRequestorMock.expects("request").never();
-
-		// code under test
-		assert.strictEqual(oCache.requestSideEffects(null, null, {}, iStart, iLength), null);
-	});
-	});
-});
-
-	//*********************************************************************************************
 	QUnit.test("CollectionCache#requestSideEffects: no data to update", function (assert) {
 		var sResourcePath = "TEAMS('42')/Foo",
 			oCache = this.createCache(sResourcePath, null, true),
@@ -7980,7 +7955,7 @@ sap.ui.define([
 				that.oRequestorMock.expects("request").never();
 
 				// code under test
-				assert.strictEqual(oCache.requestSideEffects(null, null, {}, 2, 0),
+				assert.strictEqual(oCache.requestSideEffects(null, null, {}, [], false),
 					SyncPromise.resolve());
 
 				assert.deepEqual(oCache.aElements, [], "all elements discarded");
@@ -8059,7 +8034,8 @@ sap.ui.define([
 						});
 
 				// code under test
-				return oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, 2, 1)
+				return oCache
+					.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, ["('c')"])
 					.then(function () {
 						assert.notOk(oFixture.error);
 					}, function (oResult) {
@@ -8086,10 +8062,11 @@ sap.ui.define([
 				that = this;
 
 			// Note: fill cache with more than just "visible" rows
-			return this.mockRequestAndRead(oCache, 0, sResourcePath, 0, 4, 4, undefined, "26")
+			return this.mockRequestAndRead(oCache, 0, sResourcePath, 1, 4, 4, undefined, "26")
 				.then(function () {
 					var mTypeForMetaPath = {};
 
+					oCache.aElements[0] = undefined; // can result from a failed requestElements
 					that.mock(oCache).expects("fetchTypes").withExactArgs()
 						.returns(SyncPromise.resolve(mTypeForMetaPath));
 					that.mock(Object).expects("assign")
@@ -8119,7 +8096,7 @@ sap.ui.define([
 
 					// code under test
 					return oCache
-						.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, 2, 1)
+						.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths, ["('c')"])
 						.then(function () {
 							assert.ok(false);
 						}, function (oError) {

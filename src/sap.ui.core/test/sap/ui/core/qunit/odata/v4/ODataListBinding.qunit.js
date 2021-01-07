@@ -6108,7 +6108,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: call refreshInternal for relative binding", function (assert) {
-		var oBinding = this.bindList("relative"),
+		var oBinding = this.bindList("relative", this.oModel.createBindingContext("/")),
 			oContext = oBinding.getHeaderContext(),
 			oResult = {};
 
@@ -6128,7 +6128,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: call refreshSingle for relative binding", function (assert) {
-		var oBinding = this.bindList("relative"),
+		var oBinding = this.bindList("relative", this.oModel.createBindingContext("/")),
 			oContext = Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
 			oGroupLock = {},
 			oResult = {};
@@ -6156,7 +6156,7 @@ sap.ui.define([
 			oBinding = this.bindList("/Set"),
 			oContext = bHeader
 				? oBinding.getHeaderContext()
-				: { getModelIndex : function () { return 42; } },
+				: { getPath : function () { return "/Set('foo')"; } },
 			oError = new Error(),
 			sGroupId = "group",
 			oGroupLock = {},
@@ -6165,14 +6165,15 @@ sap.ui.define([
 			oResult,
 			that = this;
 
+		oBinding.createContexts(3, createData(8, 3, true, 8, true));
 		oBinding.iCurrentBegin = 3;
-		oBinding.iCurrentEnd = 10;
+		oBinding.iCurrentEnd = 8;
 
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
 		oCacheMock.expects("requestSideEffects")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
-				bHeader ? 3 : 42,
-				bHeader ? 7 : undefined)
+				bHeader ? ["('3')", "('4')", "('5')", "('6')", "('7')"] : ["('foo')"],
+				!bHeader)
 			.callsFake(function (_oGroupLock, aPaths, mNavigationPropertyPaths) {
 				that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
 						sinon.match.same(aPaths), bHeader ? undefined : sinon.match.same(oContext),
@@ -6217,14 +6218,14 @@ sap.ui.define([
 			oBinding = this.bindList("/Set"),
 			oError = new Error(),
 			sGroupId = "group",
-			oGroupLock = {},
 			aPaths = ["A"];
 
 		oBinding.aContexts.push({isTransient : function () {}});
-		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
-		oCacheMock.expects("requestSideEffects")
-			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {}, 0, 0)
-			.returns(null); // "Missing key property"
+		oBinding.createContexts(3, createData(8, 3, true)); // no key predicates
+		oBinding.iCurrentBegin = 3;
+		oBinding.iCurrentEnd = 8;
+		this.mock(oBinding).expects("lockGroup").never();
+		oCacheMock.expects("requestSideEffects").never();
 		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oBinding).expects("refreshInternal").withExactArgs("", sGroupId, false, true)
 			.rejects(oError);
