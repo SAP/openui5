@@ -586,39 +586,97 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		var oInfo = TableUtils.getRowColCell(oTable, 0, 0, false);
-		assert.strictEqual(oInfo.row, oTable.getRows()[0], "Row 0");
-		assert.strictEqual(oInfo.column, oTable.getColumns()[0], "Column 0");
-		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[0], "Cell 0,0");
-		assert.strictEqual(oInfo.cell.getText(), "A1", "Cell 0,0");
+		assert.strictEqual(oInfo.row, oTable.getRows()[0], "Row 1");
+		assert.strictEqual(oInfo.column, oTable.getColumns()[0], "Column 1");
+		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[0], "Cell 1,1");
+		assert.strictEqual(oInfo.cell.getText(), "A1", "Cell 1,1");
 
 		oInfo = TableUtils.getRowColCell(oTable, 1, 1, false);
-		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
-		assert.strictEqual(oInfo.column, oTable.getColumns()[1], "Column 1");
-		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[1], "Cell 1,1");
-		assert.strictEqual(oInfo.cell.getText(), "B2", "Cell 1,1");
+		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 2");
+		assert.strictEqual(oInfo.column, oTable.getColumns()[1], "Column 2");
+		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[1], "Cell 2,2");
+		assert.strictEqual(oInfo.cell.getText(), "B2", "Cell 2,2");
 
 		oInfo = TableUtils.getRowColCell(oTable, 2, 2, false);
-		assert.strictEqual(oInfo.row, oTable.getRows()[2], "Row 2");
-		assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 3 (Visible Column 2)");
-		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 2,2");
-		assert.strictEqual(oInfo.cell.getText(), "D3", "Cell 2,2");
+		assert.strictEqual(oInfo.row, oTable.getRows()[2], "Row 3");
+		assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 4 (Column 3 is invisible)");
+		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 3,3");
+		assert.strictEqual(oInfo.cell.getText(), "D3", "Cell 3,3");
 
 		oInfo = TableUtils.getRowColCell(oTable, 1, 1, true);
-		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
-		assert.strictEqual(oInfo.column, oTable.getColumns()[1], "Column 1");
-		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[1], "Cell 1,1");
-		assert.strictEqual(oInfo.cell.getText(), "B2", "Cell 1,1");
+		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 2");
+		assert.strictEqual(oInfo.column, oTable.getColumns()[1], "Column 2");
+		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[1], "Cell 2,2");
+		assert.strictEqual(oInfo.cell.getText(), "B2", "Cell 2,2");
 
 		oInfo = TableUtils.getRowColCell(oTable, 2, 2, true);
-		assert.strictEqual(oInfo.row, oTable.getRows()[2], "Row 2");
-		assert.strictEqual(oInfo.column, oTable.getColumns()[2], "Column 2");
-		assert.ok(!oInfo.cell, "Cell 2,2");
+		assert.strictEqual(oInfo.row, oTable.getRows()[2], "Row 3");
+		assert.strictEqual(oInfo.column, oTable.getColumns()[2], "Column 3");
+		assert.ok(!oInfo.cell, "Cell 3,3");
 
 		oInfo = TableUtils.getRowColCell(oTable, 2, 3, true);
-		assert.strictEqual(oInfo.row, oTable.getRows()[2], "Row 2");
-		assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 3 (Visible Column 2)");
-		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 2,2");
-		assert.strictEqual(oInfo.cell.getText(), "D3", "Cell 2,2");
+		assert.strictEqual(oInfo.row, oTable.getRows()[2], "Row 3");
+		assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 4 (Column 3 is invisible)");
+		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 3,3");
+		assert.strictEqual(oInfo.cell.getText(), "D3", "Cell 3,3");
+
+		oInfo = TableUtils.getRowColCell(oTable, -1, -1, true);
+		assert.strictEqual(oInfo.row, null, "Row not found");
+		assert.strictEqual(oInfo.column, null, "Column not found");
+		assert.strictEqual(oInfo.cell, null, "Cell not found");
+
+		oInfo = TableUtils.getRowColCell(oTable, -1, -1, false);
+		assert.strictEqual(oInfo.row, null, "Row not found");
+		assert.strictEqual(oInfo.column, null, "Column not found");
+		assert.strictEqual(oInfo.cell, null, "Cell not found");
+
+		oInfo = TableUtils.getRowColCell(oTable, oTable.getRows().length, oTable.getColumns().length, true);
+		assert.strictEqual(oInfo.row, null, "Row not found");
+		assert.strictEqual(oInfo.column, null, "Column not found");
+		assert.strictEqual(oInfo.cell, null, "Cell not found");
+
+		oInfo = TableUtils.getRowColCell(oTable, oTable.getRows().length, oTable._getVisibleColumns().length, false);
+		assert.strictEqual(oInfo.row, null, "Row not found");
+		assert.strictEqual(oInfo.column, null, "Column not found");
+		assert.strictEqual(oInfo.cell, null, "Cell not found");
+
+		oTable.setEnableGrouping(true);
+		oTable.setGroupBy(oTable.getColumns()[1]);
+		sap.ui.getCore().applyChanges();
+
+		oInfo = TableUtils.getRowColCell(oTable, 1, 0, false);
+		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 2");
+		assert.strictEqual(oInfo.column, oTable.getColumns()[0], "Column 1");
+		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[0], "Cell 2,1");
+		assert.strictEqual(oInfo.cell.getText(), "A1", "Cell 2,1");
+
+		oInfo = TableUtils.getRowColCell(oTable, 1, 1, false);
+		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 2");
+		assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 4 (Column 2 is grouped, Column 3 is invisible)");
+		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 2,3");
+		assert.strictEqual(oInfo.cell.getText(), "D1", "Cell 2,3");
+
+		oInfo = TableUtils.getRowColCell(oTable, 1, 2, false);
+		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
+		assert.strictEqual(oInfo.column, oTable.getColumns()[4], "Column 5 (Column 2 is grouped, Column 3 is invisible)");
+		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[3], "Cell 2,4");
+		assert.strictEqual(oInfo.cell.getText(), "E1", "Cell 2,4");
+
+		oInfo = TableUtils.getRowColCell(oTable, 1, 3, false);
+		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
+		assert.strictEqual(oInfo.column, null, "Column not found");
+		assert.strictEqual(oInfo.cell, null, "Cell not found");
+
+		oInfo = TableUtils.getRowColCell(oTable, 1, 2, true);
+		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
+		assert.strictEqual(oInfo.column, oTable.getColumns()[2], "Column 3");
+		assert.strictEqual(oInfo.cell, null, "Cell not found");
+
+		oInfo = TableUtils.getRowColCell(oTable, 1, 3, true);
+		assert.strictEqual(oInfo.row, oTable.getRows()[1], "Row 1");
+		assert.strictEqual(oInfo.column, oTable.getColumns()[3], "Column 4");
+		assert.strictEqual(oInfo.cell, oInfo.row.getCells()[2], "Cell 2,3");
+		assert.strictEqual(oInfo.cell.getText(), "D1", "Cell 2,3");
 	});
 
 	QUnit.test("getFirstFixedBottomRowIndex", function(assert) {
