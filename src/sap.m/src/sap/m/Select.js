@@ -10,6 +10,7 @@ sap.ui.define([
 	'sap/ui/core/Core',
 	'sap/ui/core/Control',
 	'sap/ui/core/EnabledPropagator',
+	'sap/ui/core/LabelEnablement',
 	'sap/ui/core/Icon',
 	'sap/ui/core/IconPool',
 	'./Button',
@@ -37,6 +38,7 @@ function(
 	Core,
 	Control,
 	EnabledPropagator,
+	LabelEnablement,
 	Icon,
 	IconPool,
 	Button,
@@ -2446,17 +2448,15 @@ function(
 		 * @since 1.40.5
 		 */
 		Select.prototype.getLabels = function() {
-			var aLabelIDs = this.getAriaLabelledBy().map(function(sLabelID) {
+			var aLabelIDs = this.getAriaLabelledBy()
+				.concat(LabelEnablement.getReferencingLabels(this));
+
+			aLabelIDs = aLabelIDs.filter(function(sId, iIndex) {
+				return aLabelIDs.indexOf(sId) === iIndex;
+			})
+			.map(function(sLabelID) {
 				return Core.byId(sLabelID);
 			});
-
-			var oLabelEnablement = sap.ui.require("sap/ui/core/LabelEnablement");
-
-			if (oLabelEnablement) {
-				aLabelIDs = aLabelIDs.concat(oLabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
-					return Core.byId(sLabelID);
-				}));
-			}
 
 			return aLabelIDs;
 		};
