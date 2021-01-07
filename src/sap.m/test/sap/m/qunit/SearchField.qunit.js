@@ -675,7 +675,7 @@ sap.ui.define([
 		QunitUtils.triggerTouchEvent("tap", jQuery(".sapMDialog .sapMDialogFooter .sapMBtn")[0]);
 	});
 
-	QUnit.module("Suggestions aria-selected", {
+	QUnit.module("Suggestions aria attributes", {
 		beforeEach: function () {
 			this.oSearchField = new SearchField("sf8", {
 				enableSuggestions: true,
@@ -707,5 +707,10 @@ sap.ui.define([
 			assert.strictEqual(oSuggestionItems[0].getDomRef().getAttribute("aria-selected"), "false", "Aria-selected is set to false");
 			done();
 		}, 300); // requires that timeout to work on IE
+	});
+
+	QUnit.test("Aria-haspopup is listbox when there are suggestions", function (assert) {
+		// Act
+		assert.strictEqual(this.oSearchField.$("I").attr("aria-haspopup"), "listbox", "Aria-haspopup is set to listbox.");
 	});
 });

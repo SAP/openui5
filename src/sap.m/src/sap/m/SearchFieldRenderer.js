@@ -2,10 +2,14 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
-	function(Device, InvisibleText) {
+sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText", "sap/ui/core/library"],
+	function(Device, InvisibleText, coreLibrary) {
 	"use strict";
 
+	/**
+	 * @const Shortcut to sap.ui.core.library.aria.HasPopup
+	 */
+	var HasPopup = coreLibrary.aria.HasPopup;
 
 	/**
 	 * SearchField renderer.
@@ -83,6 +87,10 @@ sap.ui.define(["sap/ui/Device", "sap/ui/core/InvisibleText"],
 				.class("sapMSFI")
 				.attr("type", "search")
 				.attr("autocomplete", "off");
+
+			if (oSF.getEnableSuggestions()) {
+				rm.attr("aria-haspopup", HasPopup.ListBox.toLowerCase());
+			}
 
 			if (Device.browser.safari) {
 				rm.attr("autocorrect", "off");
