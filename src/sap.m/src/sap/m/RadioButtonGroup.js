@@ -173,17 +173,11 @@ sap.ui.define([
 			 */
 			RadioButtonGroup.prototype.onBeforeRendering = function() {
 				var aButtons = this.getButtons();
-				var iButtonCount = aButtons.length;
 				var bEditable = this.getEditable();
 
 				aButtons.forEach(function (oRadioButton) {
 					oRadioButton._setEditableParent(bEditable);
 				});
-
-				if (this.getSelectedIndex() > iButtonCount) {
-					Log.warning("Invalid index, set to 0");
-					this.setSelectedIndex(0);
-				}
 
 				if (this.aRBs){
 					var oValueState = this.getValueState();
@@ -239,8 +233,8 @@ sap.ui.define([
 				this._oItemNavigation.setItemDomRefs(aDomRefs);
 				this._oItemNavigation.setCycling(true);
 				this._oItemNavigation.setColumns(this.getColumns());
-				this._oItemNavigation.setSelectedIndex(this.getSelectedIndex());
-				this._oItemNavigation.setFocusedIndex(this.getSelectedIndex());
+				this._oItemNavigation.setSelectedIndex(this._getSelectedIndexInRange());
+				this._oItemNavigation.setFocusedIndex(this._getSelectedIndexInRange());
 				this._oItemNavigation.setDisabledModifiers({
 					sapnext : ["alt", "meta"],
 					sapprevious : ["alt", "meta"]
@@ -497,10 +491,6 @@ sap.ui.define([
 
 				this.destroyAggregation("buttons");
 
-				if (!this._bUpdateButtons) {
-					this.setSelectedIndex(-1);
-				}
-
 				if (this.aRBs) {
 					while (this.aRBs.length > 0) {
 						this.aRBs[0].destroy();
@@ -619,6 +609,17 @@ sap.ui.define([
 						selectedIndex : iIndex
 					});
 				}
+			};
+
+			RadioButtonGroup.prototype._getSelectedIndexInRange = function(oControlEvent) {
+				var iLength = this.getButtons().length,
+					iInd = this.getSelectedIndex();
+
+				if (iInd >= -1  && iInd < iLength) {
+					return iInd;
+				}
+
+				return -1;
 			};
 
 			return RadioButtonGroup;

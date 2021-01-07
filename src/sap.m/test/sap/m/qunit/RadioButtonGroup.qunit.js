@@ -1,22 +1,22 @@
-/*global QUnit */
-/*eslint no-undef:1, no-unused-vars:1, strict: 1 */
+/*global QUnit, sinon */
+
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/thirdparty/jquery-mobile-custom",
-	"jquery.sap.global",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/core/library",
 	"sap/m/RadioButtonGroup",
 	"sap/m/RadioButton",
 	"sap/ui/core/Core"
 ], function(
 	qutils,
-	jqueryMobileCustom,
 	jQuery,
 	coreLibrary,
 	RadioButtonGroup,
 	RadioButton,
 	Core
 ) {
+	"use strict";
+
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
@@ -37,12 +37,7 @@ sap.ui.define([
 		var bEnabled = true;
 		var bEditable = true;
 		var bVisible = true;
-		var bSelected = false;
 		var nColumns = 1;
-		var sName = "";
-		var sText = "";
-		var sTextDirection = TextDirection.Inherit;
-		var sWidth = "";
 		var oValueState = ValueState.None;
 		var nSelectedIndex = 0;
 
@@ -189,7 +184,7 @@ sap.ui.define([
 		});
 
 		for (var i = 0; i < iRadiosCount; i++) {
-			oRadioButton = new RadioButton("option1-" + i);
+			var oRadioButton = new RadioButton("option1-" + i);
 			oRadioButton.setText("Option " + i);
 			oRadioButton.setTooltip("Tooltip " + i);
 			oRBGroup.addButton(oRadioButton);
@@ -450,6 +445,32 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("#destroyButtons should NOT modify the 'selectedIndex'", function (assert) {
+		// arrange
+		var iSelectedIndex = 1;
+		this.rbg.insertButton(new RadioButton({text: "radio 2"}));
+		this.rbg.setSelectedIndex(iSelectedIndex);
+
+		// act
+		this.rbg.destroyButtons();
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(this.rbg.getSelectedIndex(), iSelectedIndex, "Selected index is preserved after destroying buttons");
+	});
+
+	QUnit.test("#_getSelectedIndexInRange", function (assert) {
+		assert.strictEqual(this.rbg._getSelectedIndexInRange(), 0, "Returns the actual selected button index");
+	});
+
+	QUnit.test("#_getSelectedIndexInRange", function (assert) {
+		// act
+		this.rbg.setSelectedIndex(5000);
+
+		// assert
+		assert.strictEqual(this.rbg._getSelectedIndexInRange(), -1, "Returns -1 when no button is selected");
+	});
+
 	QUnit.module("Events", {
 		beforeEach: function() {
 			this.rbg = new RadioButtonGroup({
@@ -506,6 +527,34 @@ sap.ui.define([
 		// cleanup
 		oRadioButton1.destroy();
 		oRadioButton2.destroy();
+		oRBGroup.destroy();
+	});
+
+	QUnit.test("'selectedIndex' should NOT be modified onBeforeRendering", function (assert) {
+		// arrange
+		var oRBGroup =  new RadioButtonGroup({
+			buttons: [
+				new RadioButton(),
+				new RadioButton()
+			]
+		});
+
+		oRBGroup.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// act
+		oRBGroup.setSelectedIndex(100);
+
+		// assert
+		assert.strictEqual(oRBGroup.getSelectedIndex(), 100, "'selectedIndex' is set on the group");
+
+		// act
+		Core.applyChanges();
+
+		// assert
+		assert.strictEqual(oRBGroup.getSelectedIndex(), 100, "'selectedIndex' is kept after rendering");
+
+		// cleanup
 		oRBGroup.destroy();
 	});
 });
