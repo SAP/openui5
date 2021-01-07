@@ -1006,6 +1006,7 @@ sap.ui.define([
 
 		var frameType = this.getFrameType();
 		var aTileContent = this.getTileContent();
+		var bIsImageContent = false;
 
 		if (frameType === FrameType.TwoByHalf || frameType === FrameType.OneByHalf) {
 			if (aTileContent.length) {
@@ -1013,6 +1014,7 @@ sap.ui.define([
 					var aTileCnt = aTileContent[i].getAggregation('content');
 					if (aTileCnt !== null) {
 						if ((frameType === FrameType.OneByHalf && aTileCnt.getMetadata()._sClassName === "sap.m.ImageContent")) {
+							bIsImageContent = true;
 							this._oTitle.setProperty("maxLines", 2, true);
 							break;
 						} else {
@@ -1031,7 +1033,7 @@ sap.ui.define([
 			this._oTitle.setProperty("maxLines", 3, true);
 		}
 
-		this._changeTileContentContentVisibility(true);
+		this._changeTileContentContentVisibility(true, frameType, bIsImageContent);
 	};
 
 	/**
@@ -1040,12 +1042,17 @@ sap.ui.define([
 	 * @param {boolean} visible Determines if the content should be made visible or not
 	 * @private
 	 */
-	GenericTile.prototype._changeTileContentContentVisibility = function (visible) {
+	GenericTile.prototype._changeTileContentContentVisibility = function (visible, frameType, bIsImageContent) {
 		var aTileContent;
 
 		aTileContent = this.getTileContent();
 		for (var i = 0; i < aTileContent.length; i++) {
-			aTileContent[i].setRenderContent(visible);
+			//Hide ImageContent for FrameType OneByHalf
+			if ( frameType == FrameType.OneByHalf && bIsImageContent ) {
+				aTileContent[i].setRenderContent(false);
+			} else {
+				aTileContent[i].setRenderContent(visible);
+			}
 		}
 	};
 

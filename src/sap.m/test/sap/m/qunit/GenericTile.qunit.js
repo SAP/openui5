@@ -3003,8 +3003,8 @@ QUnit.test("Content Proritisation - No Content rendered in OneByHalf in case of 
 	this.oGenericTile.destroyTileContent();
 	this.oGenericTile.addTileContent(tileContent);
 	sap.ui.getCore().applyChanges();
-	var display = getComputedStyle(this.oGenericTile.getTileContent()[0].getDomRef().querySelector(".sapMImageContent")).display;
-	assert.equal(display, "none");
+	var tileContentChildren = this.oGenericTile.getTileContent()[0].getDomRef().children.length;
+	assert.equal(tileContentChildren, 0);
 	assert.notEqual(this.oGenericTile._oTitle.getDomRef(), null);
 	assert.notEqual(this.oGenericTile._oSubTitle.getDomRef(), null);
 	assert.equal(this.oGenericTile.getTileContent()[0]._bRenderFooter, false);
@@ -3184,4 +3184,114 @@ QUnit.test("Check for visibilty of content in header mode in 2*1 tile ", functio
 	sap.ui.getCore().applyChanges();
 	assert.ok(oVisibilitySpy.calledWith(false), "The visibility is changed to not visible");
 	});
+
+	QUnit.module("GenericTile Overlay", {
+		beforeEach: function() {
+			this.oGenericTile = new GenericTile("generic-tile", {
+				header: "header text of GenericTile",
+				subheader: "subheader text of GenericTile",
+				tileContent: []
+			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oGenericTile.destroy();
+			this.oGenericTile = null;
+		}
+	});
+
+	QUnit.test("OneByHalf Tile with NumericContent", function(assert){
+		this.oGenericTile.setFrameType("OneByHalf");
+		var oTileContent =  new TileContent("tile-cont-two-by-half", {
+			unit: "EUR",
+			footer: "Current Quarter",
+			content: new NumericContent("numeric-cnt", {
+				state: LoadState.Loaded,
+				scale: "M",
+				indicator: DeviationIndicator.Up,
+				truncateValueTo: 4,
+				value: 20,
+				nullifyValue: true,
+				formatterValue: false,
+				valueColor: ValueColor.Good,
+				icon: "sap-icon://customer-financial-fact-sheet"
+			})
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(oTileContent);
+		sap.ui.getCore().applyChanges();
+		var tileContentChildren = (this.oGenericTile.getTileContent()[0].getDomRef().children.length) > 0;
+		assert.equal(this.oGenericTile.getTileContent().length, 1, "Single Tile content is added to GenericTile.");
+		assert.equal(this.oGenericTile.getTileContent()[0].getAggregation('content').getMetadata()._sClassName, "sap.m.NumericContent", "Tile Content contains NumericContent.");
+		assert.equal(this.oGenericTile.getTileContent()[0].getVisible(), true, "Tile Content with NumericContent is rendered for the GenericTile.");
+		assert.ok(tileContentChildren, "Tile Content with NumericContent does add overlay on the GenericTile.");
+	});
+
+	QUnit.test("OneByHalf Tile with ImageContent", function(assert){
+		this.oGenericTile.setFrameType("OneByHalf");
+		var oTileContent =  new TileContent("tile-cont-two-by-half", {
+			unit: "EUR",
+			footer: "Current Quarter",
+			content: new ImageContent('image-cnt', {
+				src: IMAGE_PATH + "headerImg1.png",
+				description: "image descriptions ..."
+			})
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(oTileContent);
+		sap.ui.getCore().applyChanges();
+		var tileContentChildren = this.oGenericTile.getTileContent()[0].getDomRef().children.length;
+		assert.equal(this.oGenericTile.getTileContent().length, 1, "Single Tile content is added to GenericTile.");
+		assert.equal(this.oGenericTile.getTileContent()[0].getAggregation('content').getMetadata()._sClassName, "sap.m.ImageContent", "Tile Content contains ImageContent.");
+		assert.equal(this.oGenericTile.getTileContent()[0].getVisible(), true, "Tile Content with ImageContent is not rendered for the GenericTile.");
+		assert.equal(tileContentChildren, 0, "Tile Content with ImageContent does not add overlay on the GenericTile.");
+	});
+
+	QUnit.test("TwoByHalf Tile with NumericContent", function(assert){
+		this.oGenericTile.setFrameType("TwoByHalf");
+		var oTileContent =  new TileContent("tile-cont-two-by-half", {
+			unit: "EUR",
+			footer: "Current Quarter",
+			content: new NumericContent("numeric-cnt", {
+				state: LoadState.Loaded,
+				scale: "M",
+				indicator: DeviationIndicator.Up,
+				truncateValueTo: 4,
+				value: 20,
+				nullifyValue: true,
+				formatterValue: false,
+				valueColor: ValueColor.Good,
+				icon: "sap-icon://customer-financial-fact-sheet"
+			})
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(oTileContent);
+		sap.ui.getCore().applyChanges();
+		var tileContentChildren = (this.oGenericTile.getTileContent()[0].getDomRef().children.length) > 0;
+		assert.equal(this.oGenericTile.getTileContent().length, 1, "Single Tile content is added to GenericTile.");
+		assert.equal(this.oGenericTile.getTileContent()[0].getAggregation('content').getMetadata()._sClassName, "sap.m.NumericContent", "Tile Content contains NumericContent.");
+		assert.equal(this.oGenericTile.getTileContent()[0].getVisible(), true, "Tile Content with NumericContent is rendered for the GenericTile.");
+		assert.ok(tileContentChildren, "Tile Content with NumericContent does add overlay on the GenericTile.");
+	});
+
+	QUnit.test("TwoByHalf Tile with ImageContent", function(assert){
+		this.oGenericTile.setFrameType("TwoByHalf");
+		var oTileContent =  new TileContent("tile-cont-two-by-half", {
+			unit: "EUR",
+			footer: "Current Quarter",
+			content: new ImageContent('image-cnt', {
+				src: IMAGE_PATH + "headerImg1.png",
+				description: "image descriptions ..."
+			})
+		});
+		this.oGenericTile.destroyTileContent();
+		this.oGenericTile.addTileContent(oTileContent);
+		sap.ui.getCore().applyChanges();
+		var tileContentChildren = (this.oGenericTile.getTileContent()[0].getDomRef().children.length) > 0;
+		assert.equal(this.oGenericTile.getTileContent().length, 1, "Single Tile content is added to GenericTile.");
+		assert.equal(this.oGenericTile.getTileContent()[0].getAggregation('content').getMetadata()._sClassName, "sap.m.ImageContent", "Tile Content contains ImageContent.");
+		assert.equal(this.oGenericTile.getTileContent()[0].getVisible(), true, "Tile Content with ImageContent is rendered for the GenericTile.");
+		assert.ok(tileContentChildren, "Tile Content with ImageContent does not add overlay on the GenericTile.");
+	});
+
 });

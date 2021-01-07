@@ -1528,6 +1528,7 @@ sap.ui.define([
 
 		/**
 		 * The 4x1 frame type.
+		 * <b>Note:</b> The 4x1 frame type is currently only supported for Generic tile.
 		 * @public
 		 * @since 1.83
 		 */
@@ -1535,6 +1536,7 @@ sap.ui.define([
 
 		/**
 		 * The 2x1 frame type.
+		 * <b>Note:</b> The 2x1 frame type is currently only supported for Generic tile.
 		 * @public
 		 * @since 1.83
 		 */
