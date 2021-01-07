@@ -1475,7 +1475,7 @@ sap.ui.define([
 	 * @private
 	 */
 	UploadCollection.prototype._getListHeader = function(count) {
-		var oFileUploader, i;
+		var oFileUploader, i, j;
 		this._setNumberOfAttachmentsTitle(count);
 		if (!this._oHeaderToolbar) {
 			if (!!this._oFileUploader && !this.getInstantUpload()) {
@@ -1508,6 +1508,20 @@ sap.ui.define([
 			for (i = iPendingUploadsNumber - 1; i >= 0; i--) {
 				if (this._aFileUploadersForPendingUpload[i].getId() === this._oFileUploader.getId()) {
 					oFileUploader = this._getFileUploader();
+					var aHeaderParameters = this.getAggregation("headerParameters");
+					var sRequestValue = this._requestIdValue.toString();
+					if (aHeaderParameters) {
+						for (j = 0; j < aHeaderParameters.length; j++) {
+							oFileUploader.addHeaderParameter(new FileUploaderParameter({
+								name: aHeaderParameters[j].getProperty("name"),
+								value: aHeaderParameters[j].getProperty("value")
+							}));
+						}
+						oFileUploader.addHeaderParameter(new FileUploaderParameter({
+							name: this._headerParamConst.requestIdName,
+							value: sRequestValue
+						}));
+					}
 					this._oHeaderToolbar.insertAggregation("content", oFileUploader, this._iFileUploaderPH, true);
 					break;
 				}
