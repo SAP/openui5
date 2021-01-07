@@ -585,4 +585,29 @@ function (
 
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
+
+	QUnit.test("Actions toolbar button has aria-haspopup=menu", function(assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oHost.setActions([
+			{
+				type: 'Custom',
+				text: 'Test'
+			}
+		]);
+		this.oCard.setHost(this.oHost);
+
+		this.oCard.attachEvent("_ready", function () {
+			var oToolbar = this.oCard.getCardHeader().getToolbar();
+			Core.applyChanges();
+
+			assert.strictEqual(oToolbar.$("overflowButton").attr("aria-haspopup"), "menu", "The menu button has aria-haspopup=menu.");
+
+			done();
+		}.bind(this));
+
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+	});
 });
