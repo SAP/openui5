@@ -3,13 +3,14 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/unified/FileUploader",
+	"sap/ui/unified/FileUploaderParameter",
 	"sap/ui/unified/FileUploaderHttpRequestMethod",
 	"sap/ui/core/TooltipBase",
 	"sap/ui/core/InvisibleText",
 	"sap/m/Label",
 	"sap/m/Text",
 	"sap/ui/Device"
-], function(qutils, FileUploader, FileUploaderHttpRequestMethod, TooltipBase, InvisibleText, Label, Text, Device) {
+], function(qutils, FileUploader, FileUploaderParameter, FileUploaderHttpRequestMethod, TooltipBase, InvisibleText, Label, Text, Device) {
 	"use strict";
 
 	/**
@@ -1111,7 +1112,7 @@ sap.ui.define([
 				text: "Select Document",
 				labelFor: "fu"
 			}),
-			oFileUploader = new sap.ui.unified.FileUploader("fu");
+			oFileUploader = new FileUploader("fu");
 
 		// act
 		oLabel.placeAt("qunit-fixture");
@@ -1136,7 +1137,7 @@ sap.ui.define([
 				text: "Select Document",
 				labelFor: "fu"
 			}),
-			oFileUploader = new sap.ui.unified.FileUploader("fu");
+			oFileUploader = new FileUploader("fu");
 
 		// act
 		oLabel.placeAt("qunit-fixture");
@@ -1162,7 +1163,7 @@ sap.ui.define([
 
 	QUnit.test("Description for default FileUploader", function (assert) {
 		// Setup
-		var oFileUploader = new sap.ui.unified.FileUploader("fu"),
+		var oFileUploader = new FileUploader("fu"),
 			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified");
 
 		oFileUploader.placeAt("qunit-fixture");
@@ -1178,7 +1179,7 @@ sap.ui.define([
 
 	QUnit.test("Description for FileUploader with tooltip and placeholder", function (assert) {
 		// Setup
-		var oFileUploader = new sap.ui.unified.FileUploader("fu", {
+		var oFileUploader = new FileUploader("fu", {
 				tooltip: "the-tooltip",
 				placeholder: "the-placeholder"
 			}),
@@ -1201,7 +1202,7 @@ sap.ui.define([
 		// Setup
 		var sInitialTooltip = "initial-tooltip",
 			sUpdatedTooltip = "updated-tooltip",
-			oFileUploader = new sap.ui.unified.FileUploader("fu", {
+			oFileUploader = new FileUploader("fu", {
 				tooltip: sInitialTooltip
 			}),
 			sAccDescription;
@@ -1225,7 +1226,7 @@ sap.ui.define([
 		// Setup
 		var sInitialPlaceholder = "initial-placeholder",
 			sUpdatedPlaceholder = "updated-placeholder",
-			oFileUploader = new sap.ui.unified.FileUploader("fu", {
+			oFileUploader = new FileUploader("fu", {
 				placeholder: sInitialPlaceholder
 			}),
 			sAccDescription;
@@ -1248,7 +1249,7 @@ sap.ui.define([
 	QUnit.test("Description for required FileUploader", function (assert) {
 		// Setup
 		var oLabel = new sap.m.Label({ text: "Label", labelFor: "fu", required: true }),
-			oFileUploader = new sap.ui.unified.FileUploader("fu"),
+			oFileUploader = new FileUploader("fu"),
 			sRequiredText = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("FILEUPLOAD_REQUIRED");
 
 		oLabel.placeAt("qunit-fixture");
@@ -1286,7 +1287,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Internal hidden label for the Input", function (assert) {
-		var oFileUploader = new sap.ui.unified.FileUploader(),
+		var oFileUploader = new FileUploader(),
 			sExpectedLabelId = InvisibleText.getStaticId("sap.ui.unified", "FILEUPLOAD_FILENAME"),
 			aInputLabels;
 
@@ -1302,7 +1303,7 @@ sap.ui.define([
 	QUnit.test("Click focuses the fileuploader button", function (assert) {
 		//Arrange
 		this.stub(Device, "browser", {"safari": true});
-		var oFileUploader = new sap.ui.unified.FileUploader("fu"),
+		var oFileUploader = new FileUploader("fu"),
 			oSpy = this.spy(oFileUploader.oBrowse, "focus");
 
 		oFileUploader.placeAt("qunit-fixture");
@@ -1322,12 +1323,12 @@ sap.ui.define([
 
 		//Arrange
 		var oSetRequestHeaderSpy = this.spy(XMLHttpRequest.prototype, "setRequestHeader");
-		var oFileUploader = new sap.ui.unified.FileUploader("fu", {
+		var oFileUploader = new FileUploader("fu", {
 			uploadUrl: "test",
 			sendXHR: true,
 			useMultipart: false,
 			headerParameters: [
-				new sap.ui.unified.FileUploaderParameter({ name: "Content-Type", value: "application/pdf" })
+				new FileUploaderParameter({ name: "Content-Type", value: "application/pdf" })
 			]
 		});
 		var oFiles = [
