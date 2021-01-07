@@ -497,7 +497,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Start / Stop / Destroy all", function (assert) {
-		assert.expect(8);
+		assert.expect(10);
 		var oMockServer1 = new MockServer({
 			rootUri: "/myservice",
 			requests: [{
@@ -537,7 +537,7 @@ sap.ui.define([
 		assert.ok(oMockServer2.isStarted(), "Mock server 2 is started");
 
 		MockServer.stopAll();
-		assert.ok(!oMockServer2.isStarted(), "Mock server 2 is stopped");
+		assert.ok(!oMockServer1.isStarted(), "Mock server 1 is stopped");
 		assert.ok(!oMockServer2.isStarted(), "Mock server 2 is stopped");
 
 		MockServer.startAll();
@@ -545,8 +545,10 @@ sap.ui.define([
 		assert.ok(oMockServer2.isStarted(), "Mock server 2 is started");
 
 		MockServer.destroyAll();
+		assert.ok(!oMockServer1.isStarted(), "Mock server 1 is stopped");
 		assert.ok(!oMockServer2.isStarted(), "Mock server 2 is stopped");
-		assert.ok(!oMockServer2.isStarted(), "Mock server 2 is stopped");
+		assert.ok(oMockServer1.bIsDestroyed, "Mock server 1 is destroyed");
+		assert.ok(oMockServer2.bIsDestroyed, "Mock server 2 is destroyed");
 	});
 
 	QUnit.test("Test Config: autoRespondAfter & async", function (assert) {

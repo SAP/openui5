@@ -3707,8 +3707,12 @@ sap.ui
 			 */
 			MockServer.destroyAll = function() {
 				this.stopAll();
-				for (var i = 0; i < this._aServers.length; i++) {
-					this._aServers[i].destroy();
+				while (this._aServers.length > 0) {
+					/* When destroying a server instance the instance is removed from static MockServer._aServers.
+					 * With that, the remaining instances might be moved by 1 index position to the left in MockServer._aServers.
+					 * Therefore, we destroy everytime the first instance in MockServer._aServers until no instance is left.
+					 */
+					this._aServers[0].destroy();
 				}
 			};
 
