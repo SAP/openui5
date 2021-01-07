@@ -69,6 +69,7 @@
 		jQuery.map(sap.m.MessageBox.Action, function (value, key) {
 			oHL.addContent(new sap.m.Button("button" + key, {
 				text: value + "(Action)",
+				ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 				press: function () {
 					sap.m.MessageBox.show(sMessage, {
 						icon: oSelect.getSelectedItem().getProperty("key"),
@@ -82,6 +83,7 @@
 
 		oHL.addContent(new sap.m.Button("buttonConfirm", {
 			text: "Confirm",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.confirm("Confirmation dialog is opened?", {
 					id: "mBoxConfirm",
@@ -94,6 +96,7 @@
 
 		oHL.addContent(new sap.m.Button("buttonAlert", {
 			text: "Alert",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.alert("Alert some message", {
 					id: "mBoxAlert"
@@ -112,6 +115,7 @@
 		oVL.addContent(new sap.m.Button({
 			text: "Action",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.confirm("Initial button focus is set by attribute \n initialFocus: sap.m.MessageBox.Action.CANCEL", {
 					onClose: function (bConfirmed) {
@@ -127,6 +131,7 @@
 		oVL.addContent(new sap.m.Button({
 			text: "Custom button text",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.show("Initial button focus is set by attribute \n initialFocus: \"Custom button text\" \n Note: The name is not case sensitive", {
 					icon: sap.m.MessageBox.Icon.INFORMATION,
@@ -146,6 +151,7 @@
 		oVL.addContent(new sap.m.Button("btnEmphasizedAction", {
 			text: "Custom actions with emphasizedAction",
 			width: "300px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.alert("MessageBox with custom actions and emphasizedAction set to YES", {
 					title: "This is an alert",
@@ -159,6 +165,7 @@
 		oVL.addContent(new sap.m.Button("btnNoEmphasizedAction", {
 			text: "Custom actions with no emphasizedAction",
 			width: "300px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.alert("MessageBox with custom actions and emphasizedAction set to null", {
 					title: "This is an alert",
@@ -180,6 +187,7 @@
 		oVL.addContent(new sap.m.Button("buttonLongText", {
 			text: "Long text",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.show(sLongText, {
 					icon: sap.m.MessageBox.Icon.WARNING,
@@ -206,6 +214,7 @@
 		oVL.addContent(new sap.m.Button("buttonDetails", {
 			text: "Show details",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.show("Ask for more...", {
 					icon: sap.m.MessageBox.Icon.INFORMATION,
@@ -227,6 +236,7 @@
 		oVL.addContent(new sap.m.Button({
 			text: "Show JSON details in control",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				var oJSON = {
 					"success": false,
@@ -252,6 +262,7 @@
 		oVL.addContent(new sap.m.Button("buttonResponsivePadding", {
 			text: "Responsive Padding",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.show(sLongText, {
 					id: "messageBoxId",
@@ -272,6 +283,7 @@
 		oVL.addContent(new sap.m.Button({
 			text: "Show",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.show("MessageBox dialog is opened?",
 						sap.m.MessageBox.Icon.INFORMATION,
@@ -287,6 +299,7 @@
 		oVL.addContent(new sap.m.Button({
 			text: "Alert",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				// fnCallback, sTitle, sDialogId, sStyleClass
 				sap.m.MessageBox.alert("Alert dialog is opened?",
@@ -302,6 +315,7 @@
 		oVL.addContent(new sap.m.Button({
 			text: "Confirm",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				// fnCallback, sTitle, sDialogId, sStyleClass
 				sap.m.MessageBox.confirm("Confirmation dialog is opened?",
@@ -316,6 +330,7 @@
 		oVL.addContent(new sap.m.Button({
 			text: "Error",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.error("This is an error message!")
 		}}));
@@ -323,6 +338,7 @@
 		oVL.addContent(new sap.m.Button({
 			text: "Information",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.information("This is an info message!")
 			}}));
@@ -330,6 +346,7 @@
 		oVL.addContent(new sap.m.Button({
 			text: "Warning",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.warning("This is a warning message!")
 			}}));
@@ -337,6 +354,7 @@
 		oVL.addContent(new sap.m.Button({
 			text: "Success",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.success("This is a success message!")
 			}}));
@@ -349,6 +367,7 @@
 			text: "Phone number (default)",
 			width: "300px",
 			textDirection: "LTR",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function(){
 				// MessageBox.confirm(message, callback, title, dialogId, class , initialFocus)
 				sap.m.MessageBox.show("(012) 345 678", {
@@ -363,6 +382,7 @@
 			text: "Phone number in LTR (corrected)",
 			width: "300px",
 			textDirection: "LTR",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function(){
 				// MessageBox.confirm(message, callback, title, dialogId, class , initialFocus)
 				sap.m.MessageBox.show("(012) 345 678", {
@@ -382,6 +402,7 @@
 		oVL.addContent(new sap.m.Button({
 			text: "Simple show with title",
 			width: "270px",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				sap.m.MessageBox.show("Hello curly { brace", {title: "Simple Title"});
 			}

@@ -8,24 +8,28 @@
 			text="Employee QuickView"
 			width="200px"
 			press=".handleEmployeeQuickViewPress"
-			class="sapUiSmallMarginBottom" />
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 		<Button
 			id="showQuickView"
 			text="Company QuickView"
 			width="200px"
 			press=".handleCompanyQuickViewPress"
-			class="sapUiSmallMarginBottom" />
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 		<Button
 			id="genericQuickView"
 			text="Generic QuickView"
 			width="200px"
 			press=".handleGenericQuickViewPress"
-			class="sapUiSmallMarginBottom" />
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 		<Button
 			id="genericQuickViewNoHeader"
 			text="Generic QuickView No Header Set"
 			width="250px"
 			press=".handleGenericNoHeaderQuickViewPress"
-			class="sapUiSmallMarginBottom" />
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 	</VBox>
 </mvc:View>

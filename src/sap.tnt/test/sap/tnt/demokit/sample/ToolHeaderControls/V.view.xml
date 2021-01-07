@@ -21,7 +21,7 @@
 			<core:Item text="Option 1" key="o1" />
 			<core:Item text="Option 2" key="o2" />
 		</Select>
-		<Button text="Alan Smith" type="Transparent" press=".onUserNamePress">
+		<Button text="Alan Smith" type="Transparent" press=".onUserNamePress" ariaHasPopup="Menu">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
 			</layoutData>

@@ -63,7 +63,7 @@
 						<OverflowToolbarLayoutData priority="NeverOverflow" minWidth="20px" />
 					</layoutData>
 				</ToolbarSpacer>
-				<Button text="Alan Smith" type="Transparent" press=".handleUserNamePress">
+				<Button text="Alan Smith" type="Transparent" press=".handleUserNamePress" ariaHasPopup="Menu">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="NeverOverflow" />
 					</layoutData>

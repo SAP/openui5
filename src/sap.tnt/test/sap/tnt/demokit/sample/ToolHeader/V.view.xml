@@ -61,7 +61,7 @@
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
 			</layoutData>
 		</SearchField>
-		<Button text="Alan Smith" type="Transparent" press=".onUserNamePress">
+		<Button text="Alan Smith" type="Transparent" press=".onUserNamePress" ariaHasPopup="Menu">
 			<layoutData>
 				<OverflowToolbarLayoutData priority="NeverOverflow" />
 			</layoutData>

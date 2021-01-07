@@ -12,6 +12,7 @@
 			text="Employee QuickView"
 			width="200px"
 			press=".handleButtonPress"
-			class="sapUiSmallMarginBottom" />
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 	</Page>
 </mvc:View>

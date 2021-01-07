@@ -291,6 +291,7 @@
 
 		var oButton = new sap.m.Button("QVButton", {
 			text: "Open Quick View with binding",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function() {
 				oQuickView.openBy(this);
 			}
@@ -298,6 +299,7 @@
 
 		var oModifyJsonButton = new sap.m.Button({
 			text: "Modify binded data",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function() {
 				for(var i in mData.pages[0].groups[1].elements) {
 					var element = mData.pages[0].groups[1].elements[i];
@@ -312,6 +314,7 @@
 
 		var oSinglePageQuickViewButton = new sap.m.Button("SinglePageQVButton", {
 			text: "Open a single page quick view",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function() {
 				oQuickView2.openBy(this);
 			}
@@ -609,6 +612,7 @@
 
 		var oButton3 = new sap.m.Button({
 			text: "Open Quick View with binding and fallback images",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function() {
 				oQuickView3.openBy(this);
 			}
@@ -616,6 +620,7 @@
 
 		var oButton4 = new sap.m.Button({
 			text: "Open Quick View with links as title - ONE line",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function() {
 				oQuickView4.openBy(this);
 			}
@@ -623,6 +628,7 @@
 
 		var oButton5 = new sap.m.Button({
 			text: "Open Quick View with links as title - TWO lines",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function() {
 				oQuickView5.openBy(this);
 			}

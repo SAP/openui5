@@ -156,6 +156,7 @@
 
 		var oButton3 = new sap.m.Button("Button3", {
 			text: "Open TableSelectDialog with destroy call in close event & late binding",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function (evt) {
 				oTableSelectDialog3.open();
 
@@ -185,6 +186,7 @@
 
 		var oButton11 = new sap.m.Button("Button11", {
 			text: "Open TableSelectDialog with property growing false",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function () {
 				oTableSelectDialog11.open();
 				// then set model & bind Aggregation

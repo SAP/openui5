@@ -9,11 +9,13 @@
 			text="Action"
 			class="sapUiSmallMarginBottom"
 			press=".onInitialFocusOnAction"
-			width="250px" />
+			width="250px"
+			ariaHasPopup="Dialog" />
 		<Button
 			text="Custom action"
 			class="sapUiSmallMarginBottom"
 			press=".onInitialFocusOnCustomAction"
-			width="250px" />
+			width="250px"
+			ariaHasPopup="Dialog" />
 	</l:VerticalLayout>
 </mvc:View>
