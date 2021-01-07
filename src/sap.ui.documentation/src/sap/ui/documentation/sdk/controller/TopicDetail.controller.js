@@ -225,7 +225,7 @@ sap.ui.define([
 			 */
 			_onTopicMatched: function (event) {
 				//TODO: global jquery call found
-				var sId = event.getParameter("arguments").id,
+				var sId = decodeURIComponent(event.getParameter("arguments").id),
 					aUrlParts = sId.split("#"),
 					sTopicId = aUrlParts[0],
 					sSubTopicId = aUrlParts[1];
