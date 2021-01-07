@@ -394,9 +394,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("checkUpdateInternal(true): no change event for virtual context", function (assert) {
-		var oVirtualContext = Context.create(this.oModel, {/*list binding*/},
-				"/.../" + Context.VIRTUAL, Context.VIRTUAL),
-			oBinding = this.oModel.bindProperty("relative", oVirtualContext);
+		var oBinding,
+			oVirtualContext = Context.create(this.oModel, {/*list binding*/},
+				"/.../" + Context.VIRTUAL, Context.VIRTUAL);
+
+		this.mock(ODataPropertyBinding.prototype).expects("fetchCache")
+			.withExactArgs(sinon.match.same(oVirtualContext))
+			.callsFake(function () {
+				this.sReducedPath = "~reduced~";
+			});
+		oBinding = this.oModel.bindProperty("relative", oVirtualContext);
 
 		// Note: it is important that automatic type determination runs as soon as possible
 		this.mock(this.oModel.getMetaModel()).expects("fetchUI5Type")
