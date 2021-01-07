@@ -752,7 +752,11 @@ sap.ui.define([
 		assert.equal(this.oHeaderContainer.indexOfAggregation("content", aContent[0]), 1, "The inserted content should be on second position now");
 		assert.equal(this.oHeaderContainer._callMethodInManagedObject("indexOfAggregation", "content", aContent[0]), 1, "The inserted kpi should be on second position now");
 		this.oHeaderContainer.removeAllAggregation("content", true);
-		assert.equal(this.oHeaderContainer.getAggregation("content"), undefined, "All content should be removed");
+		var bContentsRemoved = false;
+		if ( !this.oHeaderContainer.getAggregation("content") || this.oHeaderContainer.getAggregation("content").length == 0) {
+			bContentsRemoved = true;
+		}
+		assert.equal(bContentsRemoved, true, "All content should be removed");
 	});
 
 	QUnit.module("Wrapping and unwrapping HeaderContainerItemContainer", {
@@ -1074,5 +1078,185 @@ sap.ui.define([
 			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
 			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
 		}
+	});
+
+	QUnit.module("Handle deleted HeaderContainer Contents", {
+		beforeEach: function () {
+			this.oHeaderContainer = new HeaderContainer("headerContainer");
+			this.oHeaderContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oHeaderContainer.destroy();
+			this.oHeaderContainer = null;
+		}
+	});
+
+	QUnit.test("Content deleted at the beginning.", function (assert) {
+		var iCount = 5,
+			i;
+
+		for (i = 0; i < iCount; i++) {
+			this.oHeaderContainer.addContent(new Text("testID" + i));
+		}
+
+		sap.ui.getCore().applyChanges();
+
+		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is 5");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
+		sap.ui.getCore().byId("testID0").destroy();
+
+		this.oHeaderContainer.rerender();
+
+		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 1");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
+		sap.ui.getCore().byId("testID1").destroy();
+
+		this.oHeaderContainer.rerender();
+
+		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 2");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
+		sap.ui.getCore().byId("testID2").destroy();
+
+		this.oHeaderContainer.rerender();
+
+		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 3");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
+	});
+
+	QUnit.test("Content deleted at the end.", function (assert) {
+		var iCount = 5,
+			i;
+
+		for (i = 0; i < iCount; i++) {
+			this.oHeaderContainer.addContent(new Text("testID" + i));
+		}
+
+		sap.ui.getCore().applyChanges();
+
+		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is 5");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
+		sap.ui.getCore().byId("testID4").destroy();
+
+		this.oHeaderContainer.rerender();
+
+		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 1");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
+		sap.ui.getCore().byId("testID3").destroy();
+
+		this.oHeaderContainer.rerender();
+
+		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 2");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
+		sap.ui.getCore().byId("testID2").destroy();
+
+		this.oHeaderContainer.rerender();
+
+		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 3");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
+	});
+
+	QUnit.test("Content deleted at Random.", function (assert) {
+		var iCount = 5,
+			i;
+
+		for (i = 0; i < iCount; i++) {
+			this.oHeaderContainer.addContent(new Text("testID" + i));
+		}
+
+		sap.ui.getCore().applyChanges();
+
+		var $items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is 5");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
+		sap.ui.getCore().byId("testID0").destroy();
+
+		this.oHeaderContainer.rerender();
+
+		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 1");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
+		sap.ui.getCore().byId("testID2").destroy();
+
+		this.oHeaderContainer.rerender();
+
+		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 2");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
+		sap.ui.getCore().byId("testID4").destroy();
+
+		this.oHeaderContainer.rerender();
+
+		$items = this.oHeaderContainer.$().find(".sapMHrdrCntrInner");
+		assert.equal($items.length, this.oHeaderContainer.getContent().length, "Length of the Header Container Contents is reduced by 3");
+
+		for (i = 0; i < $items.length; i++) {
+			assert.equal($items.eq(i).attr("aria-posinset"), i + 1,  "aria-posinset is " + (i + 1));
+			assert.equal($items.eq(i).attr("aria-setsize"), $items.length, "aria-setsize is " + $items.length );
+		}
+
 	});
 });
