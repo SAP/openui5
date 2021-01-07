@@ -152,6 +152,34 @@ sap.ui.define([
 		Log.warning(sWarningMessage, undefined, "sap.ui.fl.apply._internal.changes.Applier");
 	}
 
+	function adjustOriginalSelector(oChange, oControl, oAppComponent) {
+		var oPropertyBag = {
+			appComponent: oAppComponent,
+			modifier: JsControlTreeModifier
+		};
+		var oCurrentOriginalControl = JsControlTreeModifier.bySelector(oChange.originalSelectorToBeAdjusted, oAppComponent);
+		var oActualOriginalControl = oControl.getBindingInfo(oChange.getContent().boundAggregation).template;
+
+		// no parent means that the control is the template iteself
+		if (oCurrentOriginalControl.getParent()) {
+			var aStack = [];
+			var oTempControl = oCurrentOriginalControl;
+			do {
+				aStack.push({
+					aggregation: oTempControl.sParentAggregationName,
+					index: oTempControl.getParent().getAggregation(oTempControl.sParentAggregationName).indexOf(oTempControl)
+				});
+				oTempControl = oTempControl.getParent();
+			} while (oTempControl.getParent());
+
+			aStack.reverse();
+			aStack.forEach(function(oInfo) {
+				oActualOriginalControl = oActualOriginalControl.getAggregation(oInfo.aggregation)[oInfo.index];
+			});
+		}
+		oChange.addDependentControl(oActualOriginalControl, "originalSelector", oPropertyBag);
+	}
+
 	var Applier = {
 		/**
 		 * Sets a specific precondition, which has to be fulfilled before applying all changes on control.
@@ -258,6 +286,11 @@ sap.ui.define([
 				}
 
 				aChangesForControl.forEach(function (oChange) {
+					// in the ExtensionPoint scenario changes can get cloned, in case of a template change the original selector has to be adjusted
+					if (oChange.originalSelectorToBeAdjusted) {
+						adjustOriginalSelector(oChange, oControl, oAppComponent);
+						delete oChange.originalSelectorToBeAdjusted;
+					}
 					mChangesMap = _checkAndAdjustChangeStatus(oControl, oChange, mChangesMap, oFlexController, mPropertyBag);
 					if (oChange._ignoreOnce) {
 						delete oChange._ignoreOnce;
