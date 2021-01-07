@@ -2496,13 +2496,15 @@ function(
 		 * @since 1.40.5
 		 */
 		Select.prototype.getLabels = function() {
-			var aLabelIDs = this.getAriaLabelledBy().map(function(sLabelID) {
+			var aLabelIDs = this.getAriaLabelledBy()
+				.concat(LabelEnablement.getReferencingLabels(this));
+
+			aLabelIDs = aLabelIDs.filter(function(sId, iIndex) {
+				return aLabelIDs.indexOf(sId) === iIndex;
+			})
+			.map(function(sLabelID) {
 				return Core.byId(sLabelID);
 			});
-
-			aLabelIDs = aLabelIDs.concat(LabelEnablement.getReferencingLabels(this).map(function(sLabelID) {
-				return Core.byId(sLabelID);
-			}));
 
 			return aLabelIDs;
 		};
