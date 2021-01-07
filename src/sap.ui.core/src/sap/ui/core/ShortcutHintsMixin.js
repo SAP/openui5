@@ -380,19 +380,21 @@ sap.ui.define([
 			return;
 		}
 
+		oControl = Element.registry.get(this.sControlId);
+
+		if (!oControl.getAriaDescribedBy) {
+			return;
+		}
+
 		oInvText = getInvisibleText();
 		sInvTextId = oInvText.getId();
 
 		oInvText.setText(_getShortcutHintText(oHintInfo.id));
 
-		oControl = Element.registry.get(this.sControlId);
-
-		if (oInvText.getText()) {
-			if (oControl.getAriaDescribedBy().indexOf(sInvTextId) === -1) {
-				oControl.addAriaDescribedBy(sInvTextId);
-			}
-		} else {
+		if (!oInvText.getText()) {
 			oControl.removeAriaDescribedBy(sInvTextId);
+		} else if (oControl.getAriaDescribedBy().indexOf(sInvTextId) === -1) {
+			oControl.addAriaDescribedBy(sInvTextId);
 		}
 	};
 
