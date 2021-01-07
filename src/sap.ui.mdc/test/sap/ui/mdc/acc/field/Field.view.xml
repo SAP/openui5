@@ -3,6 +3,7 @@
 	xmlns:m="sap.m"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcField="sap.ui.mdc.field"
+	xmlns:mdcVH="sap.ui.mdc.filterbar.vh"
 	xmlns:l="sap.ui.layout"
 	xmlns:form="sap.ui.layout.form"
 	xmlns:c="sap.ui.core">
@@ -11,23 +12,26 @@
 		<m:Page id="P0" title="Field Samples" titleLevel="H1">
 			<form:SimpleForm layout="ColumnLayout" editable="true"
 				labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="3" columnsL="2" columnsM="1"
-				singleContainerFullSize="false" adjustLabelSpan="false" title="Sample data">
-				<c:Title text="Product"></c:Title>
+				singleContainerFullSize="false" adjustLabelSpan="false">
+				<form:title>
+					<c:Title text="Sample data" level="H2"/>
+				</form:title>
+				<c:Title text="Product" level="H3"/>
 
 				<m:Label text="{/#Product/ProductId/@sap:label}"/>
-				<mdc:Field id="F-ID" value="{ProductId}" editMode="Display"></mdc:Field>
+				<mdc:Field id="F-ID" value="{ProductId}" editMode="Display"/>
 				<m:Label text="{/#Product/Name/@sap:label}"/>
-				<mdc:Field id="F-Name" value="{Name}"></mdc:Field>
+				<mdc:Field id="F-Name" value="{Name}"/>
 				<m:Label text="{/#Product/Description/@sap:label}"/>
-				<mdc:Field id="F-Description" value="{Description}" editMode="Editable" multipleLines="true"></mdc:Field>
+				<mdc:Field id="F-Description" value="{Description}" editMode="Editable" multipleLines="true"/>
 				<m:Label text="{/#Product/Category/@sap:label}"/>
-				<mdc:Field id="F-Category" value="{Category}" editMode="ReadOnly"></mdc:Field>
+				<mdc:Field id="F-Category" value="{Category}" editMode="ReadOnly"/>
 				<m:Label text="{/#Product/Date/@sap:label}"/>
-				<mdc:Field id="F-Date" value="{path:'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'medium'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}"></mdc:Field>
+				<mdc:Field id="F-Date" value="{path:'Date', type:'sap.ui.model.odata.type.DateTime', formatOptions: {style: 'medium'}, constraints: {displayFormat: 'Date'}, targetType: 'string'}"/>
 
-				<c:Title text="Parameters"></c:Title>
+				<c:Title text="Parameters" level="H3"/>
 				<m:Label text="{/#Product/Status/@sap:label}"/>
-				<mdc:Field id="F-Status" value="{Status}" display="DescriptionValue" fieldHelp="FH-Status">
+				<mdc:Field id="F-Status" value="{path: 'Status', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2}}" display="DescriptionValue" fieldHelp="FH-Status">
 					<mdc:dependents>
 						<mdcField:FieldValueHelp id="FH-Status"
 							noDialog="true"
@@ -38,16 +42,16 @@
 								<m:Table items="{path: '/StatusCollection'}" width="30rem">
 									<m:columns>
 										<m:Column>
-											<m:Label text="{/#Status/StatusId/@sap:label}"></m:Label>
+											<m:Label text="{/#Status/StatusId/@sap:label}"/>
 										</m:Column>
 										<m:Column width="10rem">
-											<m:Label text="{/#Status/Name/@sap:label}"></m:Label>
+											<m:Label text="{/#Status/Name/@sap:label}"/>
 										</m:Column>
 									</m:columns>
 									<m:items>
 										<m:ColumnListItem type="Active">
-											<m:Text text="{StatusId}"></m:Text>
-											<m:Text text="{Name}"></m:Text>
+											<m:Text text="{path: 'StatusId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 2}}"/>
+											<m:Text text="{Name}"/>
 										</m:ColumnListItem>
 									</m:items>
 								</m:Table>
@@ -59,7 +63,7 @@
 				<m:Label text="{/#Product/MatrId/@sap:label}"/>
 				<mdc:Field
 					id="F-Material"
-					value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 10, search: '^(|[0-9])+$', nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"
+					value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"
 					display="ValueDescription"
 					fieldHelp="FH-Material">
 					<mdc:dependents>
@@ -75,20 +79,20 @@
 									<m:Table items="{path: '/MaterialCollection'}" width="26rem">
 										<m:columns>
 											<m:Column>
-												<m:Label text="{/#Material/MatrId/@sap:label}"></m:Label>
+												<m:Label text="{/#Material/MatrId/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="{/#Material/Text/@sap:label}"></m:Label>
+												<m:Label text="{/#Material/Text/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="{/#Material/defaultUnit/@sap:label}"></m:Label>
+												<m:Label text="{/#Material/defaultUnit/@sap:label}"/>
 											</m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem type="Active">
-												<m:Text text="{MatrId}"></m:Text>
-												<m:Text text="{Text}"></m:Text>
-												<m:Text text="{defaultUnit}"></m:Text>
+												<m:Text text="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"/>
+												<m:Text text="{Text}"/>
+												<m:Text text="{defaultUnit}"/>
 											</m:ColumnListItem>
 										</m:items>
 									</m:Table>
@@ -111,43 +115,54 @@
 								descriptionPath="text"
 								filterFields="*unit,text*">
 								<mdcField:inParameters>
-									<mdcField:InParameter id="FH-Quantity_In-Material" value="{MatrId}" helpPath="MatrId"/>
+									<mdcField:InParameter id="FH-Quantity_In-Material" value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}" helpPath="MatrId"/>
 								</mdcField:inParameters>
 								<mdcField:outParameters>
-									<mdcField:OutParameter id="FH-Quantity_Out-Material" value="{MatrId}" helpPath="MatrId"/>
+									<mdcField:OutParameter id="FH-Quantity_Out-Material" value="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}" helpPath="MatrId"/>
 								</mdcField:outParameters>
 								<mdcField:filterBar>
-									<mdc:FilterBar
+									<mdcVH:FilterBar
 										liveMode= "true">
 										<mdc:FilterField
-											id="VHFBTextFF"
+											id="VHFBMaterialFF"
 											label= "{/#ODataUnits/MatrId/@sap:label}"
+											editMode= "Editable"
+											display= "ValueDescription"
+											dataType="sap.ui.model.odata.type.String"
+											dataTypeConstraints="{maxLength: 1, nullable: false}"
+											dataTypeFormatOptions="{'parseKeepsEmptyString': true}"
+											width="100%"
+											conditions="{$filters>/conditions/MatrId}">
+										</mdc:FilterField>
+										<mdc:FilterField
+											id="VHFBTextFF"
+											label= "{/#ODataUnits/text/@sap:label}"
 											editMode= "Editable"
 											display= "ValueDescription"
 											dataType="sap.ui.model.type.String"
 											width="100%"
-											conditions="{$filters>/conditions/MatrId}">
+											conditions="{$filters>/conditions/text}">
 										</mdc:FilterField>
-									</mdc:FilterBar>
+									</mdcVH:FilterBar>
 								</mdcField:filterBar>
 								<mdcField:FieldValueHelpMTableWrapper>
 									<m:Table items="{/weightODataUnits}" width="26rem">
 										<m:columns>
 											<m:Column width="10rem">
-												<m:Label text="{/#ODataUnits/MatrId/@sap:label}"></m:Label>
+												<m:Label text="{/#ODataUnits/MatrId/@sap:label}"/>
 											</m:Column>
 											<m:Column width="3rem">
-												<m:Label text="{/#ODataUnits/unit/@sap:label}"></m:Label>
+												<m:Label text="{/#ODataUnits/unit/@sap:label}"/>
 											</m:Column>
 											<m:Column >
-												<m:Label text="{/#ODataUnits/text/@sap:label}"></m:Label>
+												<m:Label text="{/#ODataUnits/text/@sap:label}"/>
 											</m:Column>
 										</m:columns>
 										<m:items>
 											<m:ColumnListItem type="Active">
-												<m:Text text="{MatrId}"></m:Text>
-												<m:Text text="{unit}"></m:Text>
-												<m:Text text="{text}"></m:Text>
+												<m:Text text="{path: 'MatrId', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 1, nullable: false}, formatOptions:{'parseKeepsEmptyString': true}}"/>
+												<m:Text text="{unit}"/>
+												<m:Text text="{text}"/>
 											</m:ColumnListItem>
 										</m:items>
 									</m:Table>
