@@ -1633,29 +1633,32 @@ sap.ui.define([
 	function _selectAppointment(oAppointment, bRemoveOldSelection) {
 
 		var i = 0;
-		var oOtherAppointment;
+		var oApp;
 		var sAriaLabel;
 		var sAriaLabelNotSelected;
 		var sAriaLabelSelected;
 		var sSelectedTextId = InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
+		var bSelect = !oAppointment.getSelected();
 
 		if (bRemoveOldSelection) {
 			var aAppointments = this.getAppointments();
 			var aGroupAppointments = this.getAggregation("groupAppointments", []);
 			jQuery.merge(aAppointments, aGroupAppointments);
+
+			// update the other appointments
 			for (i = 0; i < aAppointments.length; i++) {
-				oOtherAppointment = aAppointments[i];
-				if (oOtherAppointment.getId() !== oAppointment.getId() && oOtherAppointment.getSelected()) {
-					oOtherAppointment.setProperty("selected", false, true); // do not invalidate CalendarRow
-					oOtherAppointment.$().removeClass("sapUiCalendarAppSel");
+				oApp = aAppointments[i];
+				if (oApp.getId() !== oAppointment.getId() && oApp.getSelected()) {
+					oApp.setProperty("selected", false, true); // do not invalidate CalendarRow
+					oApp.$().removeClass("sapUiCalendarAppSel");
 					for (var i = 0; i < this.aSelectedAppointments.length; i++) {
-						if (this.aSelectedAppointments[i] !== oOtherAppointment.getId()){
+						if (this.aSelectedAppointments[i] !== oApp.getId()){
 							this.aSelectedAppointments.splice(i);
 						}
 					}
-					sAriaLabel = oOtherAppointment.$().attr("aria-labelledby");
+					sAriaLabel = oApp.$().attr("aria-labelledby");
 					sAriaLabelNotSelected = sAriaLabel ? sAriaLabel.replace(sSelectedTextId, "") : "";
-					oOtherAppointment.$().attr("aria-labelledby", sAriaLabelNotSelected);
+					oApp.$().attr("aria-labelledby", sAriaLabelNotSelected);
 				}
 			}
 		}
@@ -1663,7 +1666,7 @@ sap.ui.define([
 		sAriaLabelSelected = oAppointment.$().attr("aria-labelledby") + " " + sSelectedTextId;
 		sAriaLabelNotSelected = oAppointment.$().attr("aria-labelledby").replace(sSelectedTextId, "").trim();
 
-		if (oAppointment.getSelected()){
+		if (oAppointment.getSelected()) {
 			oAppointment.setProperty("selected", false, true); // do not invalidate CalendarRow
 			oAppointment.$().removeClass("sapUiCalendarAppSel");
 			oAppointment.$().attr("aria-labelledby", sAriaLabelNotSelected);
@@ -1680,10 +1683,10 @@ sap.ui.define([
 		if (oAppointment._aAppointments) {
 			// it's a group Appointment
 			for (i = 0; i < oAppointment._aAppointments.length; i++) {
-				oOtherAppointment = oAppointment._aAppointments[i];
-				oOtherAppointment.setProperty("selected", true, true); // do not invalidate CalendarRow
-				sAriaLabelSelected = oOtherAppointment.$().attr("aria-labelledby") + " " + sSelectedTextId;
-				oOtherAppointment.$().attr("aria-labelledby", sAriaLabelSelected);
+				oApp = oAppointment._aAppointments[i];
+				oApp.setProperty("selected", bSelect, true); // do not invalidate CalendarRow
+				sAriaLabelSelected = oApp.$().attr("aria-labelledby") + " " + sSelectedTextId;
+				oApp.$().attr("aria-labelledby", sAriaLabelSelected);
 			}
 			this.fireSelect({
 				appointments: oAppointment._aAppointments,

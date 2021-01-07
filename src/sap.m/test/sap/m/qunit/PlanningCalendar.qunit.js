@@ -2309,6 +2309,36 @@ sap.ui.define([
 		oSelectedAppointment = undefined;
 	});
 
+	QUnit.test("appointmentSelect for group appointments", function(assert) {
+		// arrange
+		var oPC = createPlanningCalendar("PC9").placeAt("qunit-fixture"),
+			aSelectedAppointments;
+
+		oPC.attachEvent("appointmentSelect", function(oEvent) {
+			aSelectedAppointments = oEvent.getParameter("appointments");
+		});
+
+		oPC.setViewKey(CalendarIntervalType.Month);
+		sap.ui.getCore().applyChanges();
+
+		// act
+		qutils.triggerEvent("tap", "PC9-Row1-CalRow-Group0");
+
+		// assert
+		assert.ok(aSelectedAppointments[0].getSelected(), "The appointment is selected as part of a group");
+		assert.ok(aSelectedAppointments[1].getSelected(), "The appointment is selected as part of a group");
+
+		// act
+		qutils.triggerEvent("tap", "PC9-Row1-CalRow-Group0");
+
+		// assert
+		assert.notOk(aSelectedAppointments[0].getSelected(), "The appointment is deselected as part of a group");
+		assert.notOk(aSelectedAppointments[1].getSelected(), "The appointment is deselected as part of a group");
+
+		// clean
+		oPC.destroy();
+	});
+
 	QUnit.test("rowSelectionChange", function(assert) {
 		assert.equal(oPC1.getSelectedRows().length, 0, "No rows selected");
 
