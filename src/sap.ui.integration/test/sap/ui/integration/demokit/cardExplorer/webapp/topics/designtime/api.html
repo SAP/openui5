@@ -462,21 +462,21 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 			<pre class="prettyprint lang-js collapsed" caption="String/Integer fields with validations">
 					"string1": {
 						"type": "string",
-						"required": true  //this is a validation rule, it will automaticall check for empty value, no need to define a validation for it.
+						"required": true,  //this is a validation rule, it will automaticall check for empty value, no need to define a validation for it.
 						"validation": {
-							"type": "error"
+							"type": "error",
 							"maxLength": 20
 						}
 					},
 					"int1": {
 						"type": "integer",
-						"required": true //this is a validation rule, it will automaticall check for empty value, no need to define a validation
+						"required": true, //this is a validation rule, it will automaticall check for empty value, no need to define a validation
 						for it.
 						"validation": {
-							"type": "error"
+							"type": "error",
 							"maximum": 20,
 							"minimum": 10,
-							"exclusiveMinimum": true
+							"exclusiveMinimum": true,
 							"message": "Your message" //optional
 						}
 					},
@@ -484,25 +484,25 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"validations": [
 							{
-								"type": "error"
+								"type": "error",
 								"maxLength": 20,
 								"message": "Your message"//optional
 							},
 							{
-								"type": "error"
+								"type": "error",
 								"minLength": 1,
 								"message": "Your message" //optional
 							},
 							{
-								"type": "warning"
+								"type": "warning",
 								"pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$", //american phone number
 								"message": "Your message" //optional
 							},
 							{
-								"type": "warning"
+								"type": "warning",
 								"validate": function (value) {
 									//do your own checks here
-								}
+								},
 								"message": "Your message" //optional
 							}
 						]
