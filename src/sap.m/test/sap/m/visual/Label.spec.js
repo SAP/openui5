@@ -104,7 +104,59 @@ describe("sap.m.Label", function() {
 			expect(takeScreenshot(oVL3)).toLookAs('20_oVL3_cozy_required_all');
 		});
 		element(by.id('requiredSwitch')).click();
+	});
+	it("should visualize the French language", function(){
+
+		var oVL2 = element(by.id("oVL2"));
+		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
+			element(by.id('localeSelect')).setSelectedKey("1");
+			expect(takeScreenshot(oVL2)).toLookAs('17_oVL2_compact');
+			expect(takeScreenshot(oVL2)).toLookAs('18_oVL2_compact_French');
+		});
+
+		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			element(by.id('localeSelect')).setSelectedKey("1");
+			expect(takeScreenshot(oVL2)).toLookAs('19_oVL2_cozy');
+			expect(takeScreenshot(oVL2)).toLookAs('20_oVL2_cozy_French');
+		});
 		element(by.id('cozySwitch')).click();
 	});
 
+	it("should visualize the Chinese language (zh_CN)", function(){
+
+		var oVL2 = element(by.id("oVL2"));
+		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
+			element(by.id('localeSelect')).setSelectedKey("2");
+			expect(takeScreenshot(oVL2)).toLookAs('17_oVL2_compact');
+			expect(takeScreenshot(oVL2)).toLookAs('18_oVL2_compact_zh_CN');
+		});
+
+		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			element(by.id('localeSelect')).setSelectedKey("2");
+			expect(takeScreenshot(oVL2)).toLookAs('19_oVL2_cozy');
+			expect(takeScreenshot(oVL2)).toLookAs('20_oVL2_cozy_zh_CN');
+		});
+		element(by.id('cozySwitch')).click();
+	});
+
+	it("should visualize the Chinese language (zh_TW)", function(){
+
+		var oVL2 = element(by.id("oVL2"));
+		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
+			element(by.id('localeSelect')).setSelectedKey("3");
+			expect(takeScreenshot(oVL2)).toLookAs('21_oVL2_compact');
+			expect(takeScreenshot(oVL2)).toLookAs('22_oVL2_compact_zh_TW');
+		});
+
+		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
+			element(by.id('cozySwitch')).click();
+			element(by.id('localeSelect')).setSelectedKey("3");
+			expect(takeScreenshot(oVL2)).toLookAs('23_oVL2_cozy');
+			expect(takeScreenshot(oVL2)).toLookAs('24_oVL2_cozy_zh_TW');
+		});
+
+		element(by.id('cozySwitch')).click();
+	});
 });
