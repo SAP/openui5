@@ -482,22 +482,6 @@
 					+ " on " + this);
 		}
 	});
-
-	var oMultiComboBoxRTL = new sap.m.MultiComboBox({
-		id : "MultiComboBox-rtl",
-		placeholder : "MultiComboBox with textDirection 'right'",
-		width : "50%",
-		textDirection: sap.ui.core.TextDirection.RTL,
-		items : {
-			path : "/items",
-			template : oItemTemplate
-		},
-		selectedKeys : {
-			path : "/selected",
-			template : "{selected}"
-		},
-	});
-
 	var oMultiComboBox2 = new sap.m.MultiComboBox({
 		id : "MultiComboBox2",
 		width : "400px",
@@ -954,7 +938,7 @@
 				}),
 				oCustomCssButton,
 		],
-		content : [theCompactMode,oMultiComboBox2, oMultiComboBox, oMultiComboBoxRTL, oMultiComboBox1,
+		content : [theCompactMode,oMultiComboBox2, oMultiComboBox, oMultiComboBox1,
 				oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
 				oMultiComboBoxErrorWithLink, oMultiComboBoxWarningWithLinks, oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
 				oMultiComboBoxSuccess, oMultiComboBoxOneToken, readOnlyButtonOneToken, MultiComboBoxFourItems,

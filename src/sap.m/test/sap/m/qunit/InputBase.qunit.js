@@ -1348,7 +1348,7 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(oInput.getDomRef().getAttribute("dir"), "rtl", "text direction attribute is added correctly to the outer element");
+		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "rtl");
 
 		oInput.destroy();
 
@@ -1364,7 +1364,7 @@ sap.ui.define([
 		oInput.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(oInput.getDomRef().getAttribute("dir"), "ltr", "text direction attribute is added correctly to the outer element");
+		assert.strictEqual(jQuery(oInput.getFocusDomRef()).attr("dir"), "ltr");
 
 		oInput.destroy();
 
@@ -1383,7 +1383,7 @@ sap.ui.define([
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 
-		assert.strictEqual(oInput.getDomRef().getAttribute("dir"), "rtl", "text direction attribute is added correctly to the outer element");
+		assert.strictEqual($Input.attr("dir"), "rtl", "Dir attribute is set to rtl");
 		assert.strictEqual($Input.css("text-align"), "right", "Text align style is shifted to right");
 
 		oInput.destroy();
@@ -1403,7 +1403,7 @@ sap.ui.define([
 
 		var $Input = jQuery(oInput.getFocusDomRef());
 
-		assert.strictEqual(oInput.getDomRef().getAttribute("dir"), "ltr", "text direction attribute is added correctly to the outer element");
+		assert.strictEqual($Input.attr("dir"), "ltr", "Dir attribute is set to ltr");
 		assert.strictEqual($Input.css("text-align"), "right", "Text align style is shifted to right");
 
 		oInput.destroy();
