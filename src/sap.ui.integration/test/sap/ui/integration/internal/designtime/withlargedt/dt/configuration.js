@@ -433,6 +433,94 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						"cols": 1
 					},
+					"validationGroup": {
+						"type": "group",
+						"label": "Validation"
+					},
+					"stringphone": {
+						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"defaultValue": "StringValue",
+						"type": "string",
+						"translatable": false,
+						"required": true,
+						"placeholder": "555-4555",
+						"validations": [{
+							"type": "error",
+							"maxLength": 20,
+							"minLength": 1,
+							"pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$",
+							"message": "The string does not match a telefone number"
+						}]
+					},
+					"stringphonenomessage": {
+						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"defaultValue": "StringValue",
+						"type": "string",
+						"translatable": false,
+						"required": true,
+						"placeholder": "555-4555",
+						"validations": [{
+							"type": "warning",
+							"maxLength": 20,
+							"minLength": 1,
+							"pattern": "^(\\([0-9]{3}\\))?[0-9]{3}-[0-9]{4}$"
+						}]
+					},
+					"stringmaxmin": {
+						"manifestpath": "/sap.card/configuration/parameters/string/value",
+						"defaultValue": "",
+						"type": "string",
+						"translatable": false,
+						"required": true,
+						"placeholder": "MinMaxlength",
+						"validations": [{
+							"type": "warning",
+							"maxLength": 20,
+							"minLength": 1
+						}],
+						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
+					},
+					"integervalidation": {
+						"manifestpath": "/sap.card/configuration/parameters/integer/value",
+						"defaultValue": 1,
+						"type": "integer",
+						"visualization": {
+							"type": "sap/m/Slider",
+							"settings": {
+								"value": "{currentSettings>value}",
+								"min": 0,
+								"max": 10,
+								"width": "100%",
+								"showAdvancedTooltip": true,
+								"showHandleTooltip": false,
+								"inputsAsTooltips": true,
+								"enabled": "{currentSettings>editable}"
+							}
+						},
+						"validations": [{
+							"type": "warning",
+							"validate": function (value) {
+								return value !== 5;
+							},
+							"message": "5 might not be the best value"
+						},
+						{
+							"type": "error",
+							"maximum": 9,
+							"message": "Maximum is 9"
+						},
+						{
+							"type": "error",
+							"minimum": 1,
+							"exclusiveMinimum": true,
+							"message": "Minimum is 2"
+						},
+						{
+							"type": "error",
+							"multipleOf": 2,
+							"message": "Has to be multiple of 2"
+						}]
+					},
 					"group": {
 						"label": "Dependent",
 						"type": "group"
@@ -516,8 +604,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "{= ${items>boolean1/value} === true ? 'dependentBoolean3 True' : 'dependentBoolean3 False' }",
 						"type": "string"
 					},
-					"lickedParameters": {
-						"label": "Licked Parameters",
+					"linkedParameters": {
+						"label": "Linked Parameters",
 						"type": "group"
 					},
 					"Customer": {

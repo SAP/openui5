@@ -81,6 +81,7 @@ sap.ui.define([
 		var oValues = oConfigValue.value.values || vItemMetadata.values;
 		var sLabel = oConfigValue.value.label || vItemMetadata.label;
 		var sPlaceholder = oConfigValue.value.placeholder || vItemMetadata.placeholder || "";
+		var oValidations = oConfigValue.value.validations || vItemMetadata.validations;
 		//var oTemplate = oConfigValue.value.template || vItemMetadata.template || {};
 /*
 		if (sType === "array") {
@@ -211,6 +212,16 @@ sap.ui.define([
 				value: oVisualization,
 				visible: sType !== "group",
 				placeholder: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VISUALIZATION.PLACEHOLDER"),
+				type: "textArea",
+				itemKey: sKey
+			},
+			{
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VALIDATIONS"),
+				path: "validations",
+				allowBindings: true,
+				value: oValidations,
+				visible: sType !== "group" && sType !== "boolean" && sType !== "date" && sType !== "datetime",
+				placeholder: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VALIDATIONS.PLACEHOLDER"),
 				type: "textArea",
 				itemKey: sKey
 			},

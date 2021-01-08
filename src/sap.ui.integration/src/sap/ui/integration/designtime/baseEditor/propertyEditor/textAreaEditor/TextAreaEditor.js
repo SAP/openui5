@@ -4,13 +4,11 @@
 sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/propertyEditor/BasePropertyEditor",
 	"sap/base/util/restricted/_isNil",
-	"sap/base/util/isPlainObject",
-	"sap/ui/integration/designtime/baseEditor/validator/IsJSONObject"
+	"sap/base/util/isPlainObject"
 ], function (
 	BasePropertyEditor,
 	_isNil,
-	isPlainObject,
-	isJSONObject
+	isPlainObject
 ) {
 	"use strict";
 
@@ -90,9 +88,6 @@ sap.ui.define([
 					config: {
 						maxLength: oConfig.maxLength
 					}
-				},
-				isJSONObject: {
-					type: "isJSONObject"
 				}
 			}
 		);

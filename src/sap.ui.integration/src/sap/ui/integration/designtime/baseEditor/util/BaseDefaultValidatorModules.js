@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/integration/designtime/baseEditor/validator/IsStringList",
 	"sap/ui/integration/designtime/baseEditor/validator/IsUniqueList",
 	"sap/ui/integration/designtime/baseEditor/validator/MaxLength",
-	"sap/ui/integration/designtime/baseEditor/validator/IsPatternMatch",
-	"sap/ui/integration/designtime/baseEditor/validator/IsJSONObject"
+	"sap/ui/integration/designtime/baseEditor/validator/IsPatternMatch"
 ], function (
 	NotABinding,
 	IsValidBinding,
@@ -27,8 +26,7 @@ sap.ui.define([
 	IsStringList,
 	IsUniqueList,
 	MaxLength,
-	IsPatternMatch,
-	IsJSONObject
+	IsPatternMatch
 ) {
 	"use strict";
 
@@ -44,7 +42,6 @@ sap.ui.define([
 		"isUniqueList": IsUniqueList,
 		"isStringList": IsStringList,
 		"maxLength": MaxLength,
-		"pattern": IsPatternMatch,
-		"isJSONObject": IsJSONObject
+		"pattern": IsPatternMatch
 	};
 });
