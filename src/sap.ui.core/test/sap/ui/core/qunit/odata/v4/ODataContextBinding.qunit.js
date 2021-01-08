@@ -257,7 +257,7 @@ sap.ui.define([
 				oBindingMock.expects("checkUpdate").never();
 				oBindingMock.expects("execute").exactly(bSuspended || bAction !== false ? 0 : 1)
 					.withExactArgs()
-					.rejects(new Error()); // simulate that the request failed
+					.rejects(new Error()); // avoid "Uncaught (in promise)"
 
 				// code under test (as called by ODataParentBinding#changeParameters)
 				oBinding.applyParameters(mParameters, ChangeReason.Filter);

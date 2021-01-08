@@ -816,6 +816,34 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a promise to be resolved with the requested data.
+	 *
+	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
+	 *   A lock for the group to associate the request with;
+	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
+	 * @param {string} [sPath]
+	 *   Relative path to drill-down into
+	 * @param {function} [fnDataRequested]
+	 *   The function is called just before the back-end request is sent, unless only a single
+	 *   property is requested late
+	 * @param {object} [oListener]
+	 *   A change listener that is added for the given path. Its method <code>onChange</code> is
+	 *   called with the new value if the property at that path is modified later
+	 * @param {boolean} [bCreateOnDemand]
+	 *   Whether to create missing objects on demand, in order to avoid drill-down errors
+	 * @returns {sap.ui.base.SyncPromise}
+	 *   A promise to be resolved with the requested data. It is rejected if the request for the
+	 *   data failed.
+	 * @throws {Error}
+	 *   If the group ID is '$cached' and the value is not cached (the error has a property
+	 *   <code>$cached = true</code> then); implementing classes may have further preconditions
+	 *
+	 * @abstract
+	 * @name sap.ui.model.odata.v4.lib._Cache#fetchValue
+	 * @public
+	 */
+
+	/**
 	 * Returns a URL by which the complete content of the list with the given path can be downloaded
 	 * in JSON format.
 	 *
@@ -1971,21 +1999,24 @@ sap.ui.define([
 	 * requested data.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the group to associate the request with; unused in CollectionCache since no
-	 *   request will be created
+	 *   A lock for the group to associate the request with
+	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
 	 * @param {function} [_fnDataRequested]
 	 *   The function is called just before the back-end request is sent; unused in CollectionCache
-	 *   since no request will be created
+	 *   as only late property requests may occur
 	 * @param {object} [oListener]
-	 *   An optional change listener that is added for the given path. Its method
-	 *   <code>onChange</code> is called with the new value if the property at that path is modified
-	 *   via {@link #update} later.
+	 *   A change listener that is added for the given path. Its method <code>onChange</code> is
+	 *   called with the new value if the property at that path is modified later
 	 * @param {boolean} [bCreateOnDemand]
 	 *   Whether to create missing objects on demand, in order to avoid drill-down errors
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise to be resolved with the requested data.
+	 *   A promise to be resolved with the requested data. It is rejected if the request for the
+	 *   data failed.
+	 * @throws {Error}
+	 *   If the group ID is '$cached' and the value is not cached (the error has a property
+	 *   <code>$cached = true</code> then)
 	 *
 	 * @public
 	 */
@@ -2287,6 +2318,7 @@ sap.ui.define([
 
 	/**
 	 * Returns a promise to be resolved with an OData object for a range of the requested data.
+	 * Calculates the key predicates for all entities in the result before the promise is resolved.
 	 *
 	 * @param {number} iIndex
 	 *   The start index of the range
@@ -2683,27 +2715,25 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise to be resolved with an OData object for the requested data.
+	 * Returns a promise to be resolved with an OData object for the requested property value.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the ID of the group that is associated with the request;
+	 *   A lock for the group to associate the request with
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [_sPath]
 	 *   ignored for property caches, should be empty
 	 * @param {function} [fnDataRequested]
 	 *   The function is called just before the back-end request is sent.
-	 *   If no back-end request is needed, the function is not called.
 	 * @param {object} [oListener]
-	 *   An optional change listener that is added for the given path. Its method
-	 *   <code>onChange</code> is called with the new value if the property at that path is modified
-	 *   via {@link #update} later.
+	 *   A change listener that is added for the given path. Its method <code>onChange</code> is
+	 *   called with the new value if the property at that path is modified later
 	 * @param {boolean} [bCreateOnDemand]
 	 *   Unsupported
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise to be resolved with the element.
+	 *   A promise to be resolved with the value. It is rejected if the request for the data failed.
 	 * @throws {Error}
-	 *   If <code>bCreateOnDemand</code> is set or if group ID is '$cached' (the error
-	 *   has a property <code>$cached = true</code> then)
+	 *   If <code>bCreateOnDemand</code> is set or if group ID is '$cached' and the value is not
+	 *   cached (the error has a property <code>$cached = true</code> then)
 	 *
 	 * @public
 	 */
@@ -2795,7 +2825,7 @@ sap.ui.define([
 	 * the key predicates for all entities in the result before the promise is resolved.
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
-	 *   A lock for the ID of the group that is associated with the request;
+	 *   A lock for the group to associate the request with
 	 *   see {sap.ui.model.odata.v4.lib._Requestor#request} for details
 	 * @param {string} [sPath]
 	 *   Relative path to drill-down into
@@ -2803,16 +2833,17 @@ sap.ui.define([
 	 *   The function is called just before the back-end request is sent.
 	 *   If no back-end request is needed, the function is not called.
 	 * @param {object} [oListener]
-	 *   An optional change listener that is added for the given path. Its method
-	 *   <code>onChange</code> is called with the new value if the property at that path is modified
-	 *   via {@link #update} later.
+	 *   A change listener that is added for the given path. Its method <code>onChange</code> is
+	 *   called with the new value if the property at that path is modified later
 	 * @param {boolean} [bCreateOnDemand]
 	 *   Whether to create missing objects on demand, in order to avoid drill-down errors
 	 * @returns {sap.ui.base.SyncPromise}
-	 *   A promise to be resolved with the element.
+	 *   A promise to be resolved with the element. It is rejected if the request for the data
+	 *   failed.
 	 * @throws {Error}
 	 *   If the cache is using POST but no POST request has been sent yet, or if group ID is
-	 *   '$cached' (the error has a property <code>$cached = true</code> then)
+	 *   '$cached' and the value is not cached (the error has a property <code>$cached = true</code>
+	 *   then)
 	 *
 	 * @public
 	 */

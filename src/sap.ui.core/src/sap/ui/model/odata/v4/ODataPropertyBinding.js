@@ -124,8 +124,7 @@ sap.ui.define([
 	 *       changed.
 	 *   </ul>
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#change
+	 * @event sap.ui.model.odata.v4.ODataPropertyBinding#change
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -153,8 +152,7 @@ sap.ui.define([
 	 * @param {Error} [oEvent.getParameters().error] The error object if a back-end request failed.
 	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataReceived
+	 * @event sap.ui.model.odata.v4.ODataPropertyBinding#dataReceived
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -167,8 +165,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataPropertyBinding#dataRequested
+	 * @event sap.ui.model.odata.v4.ODataPropertyBinding#dataRequested
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -663,7 +660,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Type} oType
 	 *   The type for this binding
-	 * @param {string} sInternalType
+	 * @param {string} _sInternalType
 	 *   The internal type of the element property which owns this binding, for example "any",
 	 *   "boolean", "float", "int", "string"; see {@link sap.ui.model.odata.type} for more
 	 *   information
@@ -673,7 +670,7 @@ sap.ui.define([
 	 * @since 1.43.0
 	 */
 	// @override sap.ui.model.PropertyBinding#setType
-	ODataPropertyBinding.prototype.setType = function (oType) {
+	ODataPropertyBinding.prototype.setType = function (oType, _sInternalType) {
 		var oOldType = this.oType;
 
 		if (oType && oType.getName() === "sap.ui.model.odata.type.DateTimeOffset") {

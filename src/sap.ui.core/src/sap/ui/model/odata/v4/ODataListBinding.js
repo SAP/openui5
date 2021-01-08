@@ -205,7 +205,7 @@ sap.ui.define([
 	 *   defaults to <code>getUpdateGroupId()</code>()
 	 * @param {string} sEditUrl
 	 *   The edit URL to be used for the DELETE request
-	 * @param {number} oContext
+	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context to be deleted
 	 * @param {object} [oETagEntity]
 	 *   An entity with the ETag of the binding for which the deletion was requested. This is
@@ -411,8 +411,7 @@ sap.ui.define([
 	 *   with detailed reason "AddVirtualContext" and then removed with detailed reason
 	 *   "RemoveVirtualContext" (since 1.69.0); <code>undefined</code> is used in all other cases
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#change
+	 * @event sap.ui.model.odata.v4.ODataListBinding#change
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -431,8 +430,7 @@ sap.ui.define([
 	 *   Whether the POST was successfully processed; in case of an error, the error is already
 	 *   reported to the {@link sap.ui.core.message.MessageManager}
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#createCompleted
+	 * @event sap.ui.model.odata.v4.ODataListBinding#createCompleted
 	 * @public
 	 * @since 1.66.0
 	 */
@@ -448,8 +446,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.odata.v4.Context} oEvent.getParameters().context
 	 *   The context for the created entity
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#createSent
+	 * @event sap.ui.model.odata.v4.ODataListBinding#createSent
 	 * @public
 	 * @since 1.66.0
 	 */
@@ -478,8 +475,7 @@ sap.ui.define([
 	 * @param {Error} [oEvent.getParameters().error] The error object if a back-end request failed.
 	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#dataReceived
+	 * @event sap.ui.model.odata.v4.ODataListBinding#dataReceived
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -492,8 +488,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#dataRequested
+	 * @event sap.ui.model.odata.v4.ODataListBinding#dataRequested
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -510,8 +505,7 @@ sap.ui.define([
 	 * @param {boolean} oEvent.getParameters().success
 	 *   Whether all PATCHes are successfully processed
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#patchCompleted
+	 * @event sap.ui.model.odata.v4.ODataListBinding#patchCompleted
 	 * @public
 	 * @since 1.59.0
 	 */
@@ -525,8 +519,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataListBinding} oEvent.getSource() This binding
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#patchSent
+	 * @event sap.ui.model.odata.v4.ODataListBinding#patchSent
 	 * @public
 	 * @since 1.59.0
 	 */
@@ -562,8 +555,7 @@ sap.ui.define([
 	 *   {@link sap.ui.model.ChangeReason.Refresh Refresh},
 	 *   {@link sap.ui.model.ChangeReason.Change Change}.
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataListBinding#refresh
+	 * @event sap.ui.model.odata.v4.ODataListBinding#refresh
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -930,7 +922,7 @@ sap.ui.define([
 	/**
 	 * Removes the given context for a created entity from the list of contexts and destroys it.
 	 *
-	 * @param {sap.ui.model.Context} oContext
+	 * @param {sap.ui.model.odata.v4.Context} oContext
 	 *   The context instance for the created entity to be destroyed
 	 * @param {boolean} bDestroyLater
 	 *   Whether to destroy the context later so that the control has time to handle the context's

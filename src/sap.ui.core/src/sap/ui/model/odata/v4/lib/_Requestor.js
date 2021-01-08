@@ -252,7 +252,7 @@ sap.ui.define([
 	 *   the internal map is deleted
 	 *
 	 * @private
-	 * @see #batchResponseSent
+	 * @see #batchRequestSent
 	 * @see #hasPendingChanges
 	 * @see #waitForRunningChangeRequests
 	 */
@@ -1773,8 +1773,8 @@ sap.ui.define([
 	 *   completely, no matter if they succeed or fail
 	 *
 	 * @public
+	 * @see #batchRequestSent
 	 * @see #batchResponseReceived
-	 * @see #batchResponseSent
 	 */
 	_Requestor.prototype.waitForRunningChangeRequests = function (sGroupId) {
 		return this.mRunningChangeRequests[sGroupId] || SyncPromise.resolve();
