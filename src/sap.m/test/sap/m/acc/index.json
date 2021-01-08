@@ -28,7 +28,7 @@
 		{
 			"control": "sap.m.BusyIndicator",
 			"url": "BusyIndicator.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.Button",
@@ -148,12 +148,12 @@
 		{
 			"control": "sap.m.InputBase",
 			"url": "../InputBase.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.Input",
 			"url": "Input.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-RIL"
 		},
 		{
 			"control": "sap.m.Label",
@@ -349,7 +349,7 @@
 		{
 			"control": "sap.m.RadioButton",
 			"url": "RadioButton.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.RadioButtonGroup",
@@ -389,7 +389,7 @@
 		{
 			"control": "sap.m.SelectDialog",
 			"url": "SelectDialog.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.SelectList",
