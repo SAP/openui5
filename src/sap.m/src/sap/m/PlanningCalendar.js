@@ -1613,11 +1613,11 @@ sap.ui.define([
 			&& sOldViewKey === PlanningCalendarBuiltInView.OneMonth
 			&& this._oOneMonthsRow.getSelectedDates().length) {
 			oSelectedDate = this._oOneMonthsRow.getSelectedDates()[0].getStartDate();
-			oSelectedDate.setHours(this._oOldStartDate.getHours());
-			oSelectedDate.setMinutes(this._oOldStartDate.getMinutes());
-			oSelectedDate.setSeconds(this._oOldStartDate.getSeconds());
-			oSelectedDate.setMilliseconds(this._oOldStartDate.getMilliseconds());
 			if (oSelectedDate) {
+				oSelectedDate.setHours(this._oOldStartDate.getHours());
+				oSelectedDate.setMinutes(this._oOldStartDate.getMinutes());
+				oSelectedDate.setSeconds(this._oOldStartDate.getSeconds());
+				oSelectedDate.setMilliseconds(this._oOldStartDate.getMilliseconds());
 				this.setStartDate(oSelectedDate);
 			}
 		}

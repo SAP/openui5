@@ -1825,6 +1825,35 @@ sap.ui.define([
 			"planning calendar is the first assigned");
 	});
 
+	QUnit.test("Changing from OneMonth to another view doesn't throw an error", function(assert) {
+		// prepare
+		var done = assert.async(),
+			$Date,
+			oPC = new PlanningCalendar({
+				startDate: new Date("2018", "6", "9"),
+				viewKey: CalendarIntervalType.OneMonth,
+				intervalSelect: function (oEvent) {
+					var oStartDate = oEvent.getParameter("startDate"),
+					oCalendar = oEvent.getSource();
+					if (oCalendar.getViewKey() === "One Month") {
+						oCalendar.setViewKey("Hour");
+						oCalendar.setStartDate(oStartDate);
+					}
+					// assert
+					assert.ok(true, "Error is not thrown");
+					// cleanup
+					oPC.destroy();
+					done();
+				}
+			}).placeAt("bigUiArea");
+		sap.ui.getCore().applyChanges();
+		// act
+		$Date = jQuery("#" + oPC.getId() + "-OneMonthsRow-20180701");
+		$Date.trigger("focus");
+		qutils.triggerKeydown($Date[0], jQuery.sap.KeyCodes.ENTER, false, false, false);
+		sap.ui.getCore().applyChanges();
+	 });
+
 	QUnit.module('CalendarAppointment');
 
 	QUnit.test('_getComparer', function(assert) {
