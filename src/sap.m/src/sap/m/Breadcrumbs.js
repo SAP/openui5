@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/core/delegate/ItemNavigation",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/IconPool",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"jquery.sap.script"
 ], function (Control, Text, Link, Select, Item, ItemNavigation, ResizeHandler, IconPool, Device) {
 	"use strict";
 
@@ -275,7 +276,8 @@ sap.ui.define([
 
 		if (sLinkHref) {
 			if (sLinkTarget) {
-				window.open(sLinkHref, sLinkTarget);
+				// TODO: take oLink.getRel() value into account ('links' is a public aggregation)
+				jQuery.sap.openWindow(sLinkHref, sLinkTarget);
 			} else {
 				window.location.href = sLinkHref;
 			}

@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
+sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool', 'jquery.sap.script'],
 	function(jQuery, IconPool) {
 	"use strict";
 
@@ -544,6 +544,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 					oRM.writeAttributeEscaped("href", oOH.getTitleHref());
 					if (oOH.getTitleTarget()) {
 						oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
+						oRM.writeAttributeEscaped("rel", jQuery.sap.defaultLinkTypes('', oOH.getTitleTarget()));
 					}
 				} else {
 					/*eslint-disable no-script-url */
@@ -1376,6 +1377,7 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/core/IconPool'],
 				oRM.writeAttributeEscaped("href", oOH.getTitleHref());
 				if (oOH.getTitleTarget()) {
 					oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
+					oRM.writeAttributeEscaped("rel", jQuery.sap.defaultLinkTypes('', oOH.getTitleTarget()));
 				}
 			} else {
 				/*eslint-disable no-script-url */

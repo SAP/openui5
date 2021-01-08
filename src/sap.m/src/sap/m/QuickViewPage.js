@@ -22,6 +22,8 @@ sap.ui.define([
 					CustomData, SimpleFormLayout) {
 			"use strict";
 
+			// shortcut for sap.m.URLHelper
+			var URLHelper = library.URLHelper;
 			/**
 			* Constructor for a new QuickViewPage.
 			*
@@ -509,7 +511,7 @@ sap.ui.define([
 							sap.m.URLHelper.redirect(href);
 						}
 					} else  if (that.getTitleUrl()) {
-						window.open(that.getTitleUrl(), "_blank");
+						URLHelper.redirect(that.getTitleUrl(), true);
 					}
 				};
 			};
