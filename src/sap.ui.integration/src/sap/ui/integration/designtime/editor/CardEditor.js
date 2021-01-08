@@ -1145,12 +1145,7 @@ sap.ui.define([
 			this.addAggregation("_formContent", oPanel);
 			oPanel._cols = oConfig.cols || 2; //by default 2 cols
 			if (oConfig.hint) {
-				var sHint = oConfig.hint;
-				sHint = sHint.replace(/<a href/g, "<a target='blank' href");
-				var oFormattedText = new FormattedText({
-					htmlText: sHint
-				});
-				this.addAggregation("_formContent", oFormattedText);
+				this._addHint(oConfig.hint);
 			}
 			return;
 		}
@@ -1214,6 +1209,10 @@ sap.ui.define([
 		this.addAggregation("_formContent",
 			oField
 		);
+		//add hint in the new row for boolean data type.
+		if (oConfig.hint && oConfig.type === "boolean") {
+			this._addHint(oConfig.hint);
+		}
 		if (oNewLabel) {
 			oNewLabel._oMessageIcon.onmouseover = function (oField) {
 				oField._showMessage();
@@ -1225,6 +1224,14 @@ sap.ui.define([
 		//reset the cols to original
 		oConfig.cols = oConfig.__cols;
 		delete oConfig.__cols;
+	};
+
+	CardEditor.prototype._addHint = function (sHint) {
+		sHint = sHint.replace(/<a href/g, "<a target='blank' href");
+		var oFormattedText = new FormattedText({
+			htmlText: sHint
+		});
+		this.addAggregation("_formContent", oFormattedText);
 	};
 	/**
 	 * Returns the current language specific text for a given key or "" if no translation for the key exists
