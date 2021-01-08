@@ -2926,8 +2926,8 @@ sap.ui.define([
 	};
 
 	thisLib.P13nConditionOperationType = {
-		Include: "Incl",
-		Exclude: "Excl"
+		Include: "Include",
+		Exclude: "Exclude"
 	};
 
 	/**
