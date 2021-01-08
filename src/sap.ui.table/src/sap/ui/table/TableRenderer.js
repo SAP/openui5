@@ -498,6 +498,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			sHeaderId = sHeaderId + "_" + iHeader;
 			rm.openStart("td", sHeaderId);
 		}
+		rm.attr('data-sap-ui-related', oColumn.getId());
 		rm.attr('data-sap-ui-colid', oColumn.getId());
 		rm.attr("data-sap-ui-colindex", iIndex);
 

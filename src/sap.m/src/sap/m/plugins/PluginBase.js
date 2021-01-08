@@ -86,10 +86,12 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 *
 	 * @param {string} sKey The configuration key
 	 * @param {string} [vDefaultValue] Default value if the configuration key is not found
-	 * @returns {*}
+	 * @param {any} [vParam1] The first parameter if the sKey is a function
+	 * @param {any} [vParam2] The second parameter if the sKey is a function
+	 * @returns {*} The plugin configuration of the control
 	 * @protected
 	 */
-	PluginBase.prototype.getControlPluginConfig = function(sKey, vDefaultValue) {
+	PluginBase.prototype.getControlPluginConfig = function(sKey, vDefaultValue, vParam1, vParam2) {
 		var oControl = this.getControl();
 		if (!oControl) {
 			return vDefaultValue;
@@ -99,14 +101,17 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 		var sControlName = oControl.getMetadata().getName();
 		var mPluginConfig = mPluginControlConfigs[sPluginName] || {};
 		var mControlConfig = mPluginConfig[sControlName] || {};
+		var fnReturn = function(mConfig) {
+			return (typeof mConfig[sKey] == "function") ? mConfig[sKey].call(mConfig, vParam1, vParam2) : mConfig[sKey];
+		};
 
 		if (sKey in mControlConfig) {
-			return mControlConfig[sKey];
+			return fnReturn(mControlConfig);
 		}
 
 		for (var sControlType in mPluginConfig) {
 			if (oControl.isA(sControlType) && sKey in mPluginConfig[sControlType]) {
-				return mPluginConfig[sControlType][sKey];
+				return fnReturn(mPluginConfig[sControlType]);
 			}
 		}
 
@@ -115,12 +120,12 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 		var mGlobalControlConfig = mGlobalPluginConfig[sControlName] || {};
 
 		if (sKey in mGlobalControlConfig) {
-			return mGlobalControlConfig[sKey];
+			return fnReturn(mGlobalControlConfig);
 		}
 
 		for (var sControlType in mGlobalPluginConfig) {
 			if (oControl.isA(sControlType) && sKey in mGlobalPluginConfig[sControlType]) {
-				return mGlobalPluginConfig[sControlType][sKey];
+				return fnReturn(mGlobalPluginConfig[sControlType]);
 			}
 		}
 
@@ -219,6 +224,7 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	PluginBase.prototype._activate = function() {
 		if (!this.isActive()) {
 			this.onActivate(this.getControl());
+			this.getControlPluginConfig("onActivate", undefined, this.getControl(), this);
 			this._bIsActive = true;
 		}
 	};
@@ -229,6 +235,7 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	PluginBase.prototype._deactivate = function() {
 		if (this.isActive()) {
 			this.onDeactivate(this.getControl());
+			this.getControlPluginConfig("onDeactivate", undefined, this.getControl(), this);
 			this._bIsActive = false;
 		}
 	};
