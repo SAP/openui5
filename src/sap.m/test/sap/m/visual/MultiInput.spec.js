@@ -171,7 +171,7 @@ describe('sap.m.MultiInput', function() {
 
 	// MultiInput with sticky header suggestions
 	it("Should visualize multiInput with sticky header suggestions", function () {
-		var oMultiInput = element(by.id("multiInputWithStickySuggestions"));
+		var oMultiInput = element(by.id("multiInputWithStickySuggestions-inner"));
 		browser.executeScript("document.getElementById('multiInputWithStickySuggestions').scrollIntoView()").then(function() {
 			oMultiInput.click();
 			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_sticky_suggestions_focused");
