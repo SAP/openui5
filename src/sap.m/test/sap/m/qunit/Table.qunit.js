@@ -2212,17 +2212,18 @@ sap.ui.define([
 
 		// apply static widths to all columns
 		this.sut.getColumns().forEach(function(oColumn, iIndex) {
-			oColumn.setWidth("15rem");
 			if (iIndex === 1) {
 				oColumn.setMinScreenWidth("48000px");
 				oColumn.setDemandPopin(true);
+			} else {
+				oColumn.setWidth("15rem");
 			}
 		});
 		Core.applyChanges();
 
 		assert.ok(this.sut.hasPopin(), "Table has popins");
 		var aTHElements = this.sut.$("tblHeader").children();
-		assert.notOk(aTHElements[aTHElements.length - 1].classList.contains("sapMListTblDummyCol"), "Dummy column not rendered as the last TH element since table has popins");
+		assert.notOk(aTHElements[aTHElements.length - 1].classList.contains("sapMListTblDummyCell"), "Dummy column not rendered as the last TH element since table has popins");
 	});
 
 	QUnit.test("Dummy cell test for GroupHeaderListItem", function(assert) {

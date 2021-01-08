@@ -235,7 +235,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		});
 
 		if (hasPopin && bShouldRenderDummyColumn) {
-			createBlankCell("DummyCol", type + "DummyCol", true);
+			createBlankCell("DummyCell", type + "DummyCell", true);
 		}
 
 		createBlankCell("NavCol", type + "Nav", true);

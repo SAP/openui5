@@ -375,7 +375,7 @@ sap.ui.define([
 		}
 
 		return this.getColumns().some(function(oCurrentColumn) {
-			if (oCurrentColumn.getVisible()) {
+			if (oCurrentColumn.getVisible() && !oCurrentColumn.isPopin()) {
 				var sWidth = oColumn && oColumn == oCurrentColumn ? sColumnWidth : oCurrentColumn.getWidth();
 				return !sWidth || sWidth == "auto";
 			}
@@ -1275,11 +1275,11 @@ sap.ui.define([
 	};
 
 	Table.prototype._setFirstLastVisibleCells = function(oDomRef) {
-		if (this.hasPopin() || !this.shouldRenderDummyColumn()) {
+		var $DomRef = jQuery(oDomRef);
+		if (!$DomRef.hasClass("sapMTableRowCustomFocus")) {
 			return;
 		}
 
-		var $DomRef = jQuery(oDomRef);
 		$DomRef.find(".sapMTblLastVisibleCell").removeClass("sapMTblLastVisibleCell");
 		$DomRef.find(".sapMTblFirstVisibleCell").removeClass("sapMTblFirstVisibleCell");
 		for (var oFirst = oDomRef.firstChild; oFirst && !oFirst.clientWidth; oFirst = oFirst.nextSibling) {/* empty */}

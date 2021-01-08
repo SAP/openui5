@@ -295,6 +295,10 @@ html[data-sap-ui-browser^="sf"] .sapMSticky > .sapMListTbl {
 	font-weight: bold;
 }
 
+.sapMListTblDummyCell{
+	padding: 0;
+}
+
 .sapMListTblDummyCell:last-child {
 	background-color: @sapBackgroundColor;
 	border-left: 1px solid @sapList_TableFixedBorderColor;
@@ -416,7 +420,7 @@ html[data-sap-ui-browser^="sf"] .sapMSticky > .sapMListTbl {
 .sapMTableRowCustomFocus:focus {
 	outline: none;
 
-	.sapMListTblCell > * {
+	.sapMListTblCell > :first-child {
 		position: relative;
 	}
 
