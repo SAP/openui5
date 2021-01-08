@@ -644,7 +644,8 @@ sap.ui.define([
 			aContent = oPopover && oPopover.getContent();
 
 		return aContent && aContent.filter(function (oControl) {
-			return oControl.isA("sap.m.List") || oControl.isA("sap.m.Table");
+			return (oControl.isA("sap.m.List") && oControl.getId().indexOf("-popup-list") > -1)
+				|| oControl.isA("sap.m.Table");
 		})[0];
 	};
 
