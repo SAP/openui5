@@ -184,7 +184,7 @@ sap.ui.define([
 				//async to ensure all settings that are applied sync are processed.
 				Promise.resolve().then(function () {
 					this.initEditor(oConfig);
-					if (oConfig.hint) {
+					if (oConfig.hint && oConfig.type !== "boolean") {
 						this._addHint(oConfig.hint);
 					}
 				}.bind(this));
