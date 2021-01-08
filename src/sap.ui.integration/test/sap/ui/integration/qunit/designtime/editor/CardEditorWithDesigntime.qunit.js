@@ -188,6 +188,66 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("1 hint below a group (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: {
+				"sap.app": {
+					"id": "test.sample",
+					"i18n": "i18n/i18n.properties"
+				},
+				"sap.card": {
+					"designtime": "designtime/1hintbelowgroup",
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"stringParameter": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		});
+		return new Promise(function (resolve, reject) {
+			this.oCardEditor.attachReady(function () {
+				assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				var oHint = this.oCardEditor.getAggregation("_formContent")[1];
+				assert.ok(oHint.isA("sap.m.FormattedText"), "Hint: Form content contains a Hint");
+				assert.ok(oHint.getHtmlText() === 'Please refer to the <a target="blank" href="https://www.sap.com" class="sapMLnk">documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a target="blank" href="https://www.sap.com" class="sapMLnk">two links</a>. good?', "Hint: Has html hint text");
+				resolve();
+			}.bind(this));
+		}.bind(this));
+		});
+
+		QUnit.test("1 hint below an item (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: {
+				"sap.app": {
+					"id": "test.sample",
+					"i18n": "i18n/i18n.properties"
+				},
+				"sap.card": {
+					"designtime": "designtime/1hintbelowgroup",
+					"type": "List",
+					"configuration": {
+						"parameters": {
+							"stringParameter": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		});
+		return new Promise(function (resolve, reject) {
+			this.oCardEditor.attachReady(function () {
+				assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+				var oHint = this.oCardEditor.getAggregation("_formContent")[3].mAggregations._hint;
+				assert.ok(oHint.isA("sap.m.FormattedText"), "Hint: Form content contains a Hint");
+				assert.ok(oHint.getHtmlText() === 'Please refer to the <a target="blank" href="https://www.sap.com" class="sapMLnk">documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a target="blank" href="https://www.sap.com" class="sapMLnk">two links</a>. good?', "Hint: Has html hint text");
+				resolve();
+			}.bind(this));
+		}.bind(this));
+		});
+
 		QUnit.test("1 string parameter with values and no label (as json)", function (assert) {
 			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1stringwithvalues", "type": "List", "configuration": { "parameters": { "stringParameterWithValues": { "type": "string" } } } } } });
 			return new Promise(function (resolve, reject) {

@@ -82,6 +82,7 @@ sap.ui.define([
 		var sLabel = oConfigValue.value.label || vItemMetadata.label;
 		var sPlaceholder = oConfigValue.value.placeholder || vItemMetadata.placeholder || "";
 		var oValidations = oConfigValue.value.validations || vItemMetadata.validations;
+		var sHint = oConfigValue.value.hint || vItemMetadata.hint || "";
 		//var oTemplate = oConfigValue.value.template || vItemMetadata.template || {};
 /*
 		if (sType === "array") {
@@ -119,6 +120,15 @@ sap.ui.define([
 				value: sDescription,
 				allowBindings: true,
 				visible: sType !== "group",
+				type: "string",
+				itemKey: sKey
+			},
+			{
+				label: this.getI18nProperty("CARD_EDITOR.PARAMETERS.HINT"),
+				path: "hint",
+				value: sHint,
+				allowBindings: true,
+				enabled: true,
 				type: "string",
 				itemKey: sKey
 			},
