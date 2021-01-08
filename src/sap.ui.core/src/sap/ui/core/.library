@@ -254,28 +254,28 @@
             <license url="http://jQuery.org/license" type="MIT"/>
             <copyright>JS Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jquery.js</pattern>
-            <pattern partial="true">sap/base/util/isPlainObject.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="isPlainObject.js is overall written by SAP, but contains a modified implementation of jQuery.isPlainObject taken from jQuery 3.5.1">sap/base/util/isPlainObject.js</pattern>
         </lib>
         <lib name="jquery-1" displayName="jQuery 1" version="1.7.1" homepage="https://jquery.com">
             <license url="http://jQuery.org/license" type="MIT"/>
             <copyright>2011, John Resig</copyright>
-            <pattern partial="true">sap/ui/Device.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="Device.js is overall written by SAP, but contains code taken from jQuery 1.7.1 (see the respective comment)">sap/ui/Device.js</pattern>
         </lib>
         <lib name="jquery_UI_1-8-17" displayName="jQuery UI 1.8" version="1.8.17" homepage="https://jqueryui.com">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>2014 jQuery Foundation and other contributors</copyright>
-            <pattern partial="true">sap/ui/dom/jquery/Selectors.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="Selectors.js is overall written by SAP, but contains code taken from jQuery UI (see the respective comments)">sap/ui/dom/jquery/Selectors.js</pattern>
         </lib>
         <lib name="jquery_UI-1-10-4" displayName="jQuery UI 1.10" version="1.10.4" homepage="https://jqueryui.com">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>2014 jQuery Foundation and other contributors</copyright>
             <pattern>sap/ui/thirdparty/jqueryui/*</pattern>
-            <pattern partial="true">jquery.sap.dom.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="jquery.sap.dom.js is overall written by SAP, but contains code taken from jQuery UI Core (see the respective comment)">jquery.sap.dom.js</pattern>
         </lib>
         <lib name="jquery_UI_1-11-1" displayName="jQuery UI 1.11" version="1.11.1" homepage="https://jqueryui.com">
             <license url="http://jQuery.org/license" type="MIT" />
             <copyright>2014 jQuery Foundation and other contributors</copyright>
-            <pattern partial="true">sap/ui/dom/jquery/zIndex.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="zIndex.js is overall written by SAP, but contains an implementation of the function 'fnzIndex' which is taken from jQuery UI Datepicker 1.11.1">sap/ui/dom/jquery/zIndex.js</pattern>
         </lib>
         <lib name="qunit" displayName="QUnit" version="1.18.0" homepage="https://qunitjs.com">
             <license url="http://jQuery.org/license" type="MIT" />
@@ -300,7 +300,7 @@
         <lib name="jquery.rtl-scroll-type" displayName="jQuery.rtl-scroll-type" version="2.0.0" homepage="https://github.com/othree/jquery.rtl-scroll-type">
             <license url="https://github.com/othree/jquery.rtl-scroll-type/blob/master/LICENSE" type="MIT" />
             <copyright>2012 Wei-Ko Kao</copyright>
-            <pattern partial="true">sap/ui/util/_FeatureDetection.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="_FeatureDetection.js is overall written by SAP, but contains code which is inspired by jQuery.rtl-scroll-type">sap/ui/util/_FeatureDetection.js</pattern>
         </lib>
         <lib name="qunit-composite" displayName="QUnit Composite" version="1.0.2-pre" homepage="https://github.com/jquery/qunit-composite">
             <!-- version is "1.0.2-pre", in PPMS as "1.0.2" -->
@@ -457,14 +457,14 @@
         <lib name="json-in-js" displayName="JSON in JS" version="ff55d8d451" homepage="">
             <license url="https://github.com/douglascrockford/JSON-js/blob/master/json2.js" type="LicenseRef-JSONinJSPublicDomain" />
             <copyright>Douglas Crockford</copyright>
-            <pattern partial="true">sap/base/util/JSTokenizer.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="JSTokenizer.js is overall written by SAP, but contains code has been taken from the component JSON in JavaScript (https://github.com/douglascrockford/JSON-js/blob/master/json2.js) from Douglas Crockford which is licensed under Public Domain">sap/base/util/JSTokenizer.js</pattern>
         </lib>
         <lib name="tdop" displayName="Top Down Operator Precedence" version="unknown" homepage="https://github.com/douglascrockford/TDOP">
             <license url="http://www.apache.org/licenses/LICENSE-2.0" type="Apache-2.0" />
             <comment>License granted to SAP by Douglas Crockford</comment>
             <!-- there was mail exchange to get the module granted under Apache license -->
             <copyright>2010 Douglas Crockford</copyright>
-            <pattern partial="true">sap/ui/base/ExpressionParser.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="ExpressionParser.js is overall written by SAP, but contains code taken from or inspired by TDOP by Douglas Crockford (see the respective comment)">sap/ui/base/ExpressionParser.js</pattern>
         </lib>
         <lib name="es6-promise" displayName="es6-promise" version="4.2.4" homepage="https://github.com/stefanpenner/es6-promise/">
             <license url="https://github.com/stefanpenner/es6-promise/blob/master/LICENSE" type="MIT" />
@@ -474,27 +474,27 @@
         <lib name="es6-string-method-startsWith" displayName="String.prototype Polyfill (startsWith)" version="0.2.0" homepage="https://github.com/mathiasbynens/String.prototype.startsWith">
             <license url="https://github.com/mathiasbynens/String.prototype.startsWith/blob/master/LICENSE-MIT.txt" type="MIT" />
             <copyright>Mathias Bynens</copyright>
-            <pattern partial="true">sap/ui/thirdparty/es6-string-methods.js</pattern>
+            <pattern partial="true" otherContent="es6-string-methods-endsWith es6-string-methods-includes es6-string-methods-repeat es6-string-methods-pad" explanation="es6-string-methods.js contains String polyfills from different third-party libraries">sap/ui/thirdparty/es6-string-methods.js</pattern>
         </lib>
         <lib name="es6-string-methods-endsWith" displayName="String.prototype Polyfill (endsWith)" version="0.2.0" homepage="https://github.com/mathiasbynens/String.prototype.endsWith">
             <license url="https://github.com/mathiasbynens/String.prototype.endsWith/blob/master/LICENSE-MIT.txt" type="MIT" />
             <copyright>Mathias Bynens</copyright>
-            <pattern partial="true">sap/ui/thirdparty/es6-string-methods.js</pattern>
+            <pattern partial="true" otherContent="es6-string-method-startsWith es6-string-methods-includes es6-string-methods-repeat es6-string-methods-pad" explanation="es6-string-methods.js contains String polyfills from different third-party libraries">sap/ui/thirdparty/es6-string-methods.js</pattern>
         </lib>
         <lib name="es6-string-methods-includes" displayName="String.prototype Polyfill (includes)" version="1.0.0" homepage="https://github.com/mathiasbynens/String.prototype.includes">
             <license url="https://github.com/mathiasbynens/String.prototype.includes/blob/master/LICENSE-MIT.txt" type="MIT" />
             <copyright>Mathias Bynens</copyright>
-            <pattern partial="true">sap/ui/thirdparty/es6-string-methods.js</pattern>
+            <pattern partial="true" otherContent="es6-string-method-startsWith es6-string-methods-endsWith es6-string-methods-repeat es6-string-methods-pad" explanation="es6-string-methods.js contains String polyfills from different third-party libraries">sap/ui/thirdparty/es6-string-methods.js</pattern>
         </lib>
         <lib name="es6-string-methods-repeat" displayName="String.prototype Polyfill (repeat)" version="0.2.0" homepage="https://github.com/mathiasbynens/String.prototype.repeat">
             <license url="https://github.com/mathiasbynens/String.prototype.repeat/blob/master/LICENSE-MIT.txt" type="MIT" />
             <copyright>Mathias Bynens</copyright>
-            <pattern partial="true">sap/ui/thirdparty/es6-string-methods.js</pattern>
+            <pattern partial="true" otherContent="es6-string-method-startsWith es6-string-methods-endsWith es6-string-methods-includes es6-string-methods-pad" explanation="es6-string-methods.js contains String polyfills from different third-party libraries">sap/ui/thirdparty/es6-string-methods.js</pattern>
         </lib>
         <lib name="es6-string-methods-pad" displayName="String.prototype Polyfills (padStart/padEnd)" version="1.0.1" homepage="https://github.com/uxitten/polyfill">
             <license url="https://github.com/uxitten/polyfill/blob/master/License.md" type="MIT" />
             <copyright>2017 Behnam Mohammadi (بهنام محمدی)</copyright>
-            <pattern partial="true">sap/ui/thirdparty/es6-string-methods.js</pattern>
+            <pattern partial="true" otherContent="es6-string-method-startsWith es6-string-methods-endsWith es6-string-methods-includes es6-string-methods-repeat" explanation="es6-string-methods.js contains String polyfills from different third-party libraries">sap/ui/thirdparty/es6-string-methods.js</pattern>
         </lib>
         <lib name="klayjs" displayName="KLayJS" version="0.4.1" homepage="https://github.com/OpenKieler/klayjs">
             <license url="https://github.com/OpenKieler/klayjs/blob/master/LICENSE" type="EPL-1.0" />
@@ -524,18 +524,18 @@
         <lib name="p-cancelable" displayName="p-cancelable" version="2.0.0" homepage="https://github.com/sindresorhus/p-cancelable/tree/v2.0.0">
             <license url="https://github.com/sindresorhus/p-cancelable/blob/v2.0.0/license" type="MIT" />
             <copyright>Sindre Sorhus &lt;sindresorhus@gmail.com&gt;</copyright>
-            <pattern>sap/ui/base/util/restricted/_CancelablePromise.js</pattern>
+            <pattern partial="true" otherContent="@babel/helpers" explanation="_CancelablePromise.js is derived from p-cancelable by Sindre Sorhus and was transpiled with Babel, so the resulting file contains Babel code fragments">sap/ui/base/util/restricted/_CancelablePromise.js</pattern>
         </lib>
         <lib name="@babel/helpers" displayName="@babel/helpers" version="7.10.4" homepage="https://github.com/babel/babel/tree/v7.10.4">
             <license url="https://github.com/babel/babel/blob/v7.10.4/LICENSE" type="MIT" />
             <copyright>2014-present Sebastian McKenzie and other contributors</copyright>
-            <pattern partial="true">sap/ui/base/util/restricted/_CancelablePromise.js</pattern>
+            <pattern partial="true" otherContent="p-cancelable" explanation="_CancelablePromise.js is derived from p-cancelable by Sindre Sorhus and was transpiled with Babel, so the resulting file contains Babel code fragments">sap/ui/base/util/restricted/_CancelablePromise.js</pattern>
             <!-- Babel transformation added some helper code, hence Babel is mentioned here -->
         </lib>
         <lib name="jalaali" displayName="Jalaali JS" version="unknown" homepage="https://github.com/jalaali/jalaali-js/">
             <license url="https://github.com/jalaali/jalaali-js/blob/master/LICENSE" type="MIT" />
             <copyright>Behrang Norouzinia</copyright>
-            <pattern partial="true">sap/ui/core/date/Persian.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="Persian.js is overall written by SAP, but the calculation is taken from jalaali-js">sap/ui/core/date/Persian.js</pattern>
         </lib>
         <lib name="vkbeautify" displayName="vkBeautify" version="0.99.00.beta" homepage="http://www.eslinstructor.net/vkbeautify/">
             <license url="https://github.com/vkiryukhin/vkBeautify/blob/master/LICENSE" type="MIT" />
@@ -545,7 +545,7 @@
         <lib name="node-lru-cache" displayName="node-lru-cache" version="2.7.3" homepage="https://github.com/isaacs/node-lru-cache">
             <license url="https://github.com/isaacs/node-lru-cache/blob/master/LICENSE" type="ISC" />
             <copyright>Isaac Z. Schlueter and Contributors</copyright>
-            <pattern partial="true">sap/ui/core/cache/LRUPersistentCache.js</pattern>
+            <pattern partial="true" otherContent="SAP" explanation="LRUPersistentCache.js is overall written by SAP, but portions ('Least Recently Used' logic) are taken from the node-lru-cache project (see https://github.com/isaacs/node-lru-cache/blob/v2.7.3/README.md) and modified.">sap/ui/core/cache/LRUPersistentCache.js</pattern>
         </lib>
     </thirdparty>
 

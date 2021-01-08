@@ -59,8 +59,8 @@ abandoned completely.
         <lib name="jquery-fix-clone" displayName="jquery.fix.clone" version="unknown" homepage="https://github.com/spencertipping/jquery.fix.clone">
             <license url="https://github.com/spencertipping/jquery.fix.clone" type="MIT" />
             <copyright>Spencer Tipping</copyright>
-            <pattern partial="true">sap/ui/commons/Carousel.js</pattern>
-        </lib>
+            <pattern partial="true" otherContent="SAP" explanation="Carousel.js is authored by SAP, but contains an improved implementation of the clone function which is taken from jquery-fix-clone">sap/ui/commons/Carousel.js</pattern>
+		</lib>
     </thirdparty>
   </appData>
 
