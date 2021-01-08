@@ -191,4 +191,32 @@ sap.ui.define([
 		//Cleanup
 		oMultiComboBox.destroy();
 	});
+
+	QUnit.test("Get the proper list", function (assert) {
+		var oSuggPopover, oInput;
+
+		// Arrange
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// Setup
+		oInput = new Input();
+		oSuggPopover = oInput._getSuggestionsPopover();
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oSuggPopover.addContent(new List());
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oSuggPopover.getItemsContainer(), "This is not the items container, but a custom list");
+		assert.ok(oSuggPopover.getPopover().getContent()[0].isA("sap.m.List"), "The content has the custom list");
+
+		// Cleanup
+		oInput.destroy();
+		oSuggPopover.destroy();
+	});
 });
