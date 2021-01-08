@@ -173,7 +173,7 @@ sap.ui.define([
 				path: "required",
 				allowBindings: true,
 				value: bRequired,
-				visible: sType !== "group",
+				visible: sType !== "group" && sType !== "boolean" && sType !== "date" && sType !== "datetime",
 				enabled: true,
 				type: "boolean",
 				itemKey: sKey
