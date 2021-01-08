@@ -4549,13 +4549,16 @@ sap.ui.define([
 			 * @public
 			 */
 			redirect: function (sURL, bNewWindow) {
+				var oWindow;
 				assert(isValidString(sURL), this + "#redirect: URL must be a string" );
 				this.fireEvent("redirect", sURL);
 				if (!bNewWindow) {
 					window.location.href = sURL;
 				} else {
-					var oWindow = window.open(sURL, "_blank");
-					if (!oWindow) {
+					oWindow = window.open(sURL, "_blank");
+					if (oWindow) {
+						oWindow.opener = null;
+					} else {
 						Log.error(this + "#redirect: Could not open " + sURL);
 						if (Device.os.windows_phone || (Device.browser.edge && Device.browser.mobile)) {
 							Log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");

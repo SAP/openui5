@@ -6,9 +6,9 @@
 sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core/Icon',
 		'./NavigationList', 'sap/ui/core/InvisibleText', 'sap/ui/core/Renderer', 'sap/ui/core/IconPool', "sap/ui/events/KeyCodes", "sap/ui/core/library",
 		// jQuery Plugin "addAriaLabelledBy"
-		"sap/ui/dom/jquery/Aria"],
+		"sap/ui/util/openWindow", "sap/ui/util/defaultLinkTypes", "sap/ui/dom/jquery/Aria"],
 	function(library, Core, Item, Icon,
-			 NavigationList, InvisibleText, Renderer, IconPool, KeyCodes, coreLibrary) {
+			 NavigationList, InvisibleText, Renderer, IconPool, KeyCodes, coreLibrary, openWindow, defaultLinkTypes) {
 		"use strict";
 
 
@@ -325,7 +325,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 			var href = this.getHref();
 
 			if (href) {
-				window.open(href, this.getTarget() || '_self');
+				openWindow(href, this.getTarget() || '_self');
 			}
 		};
 
@@ -567,6 +567,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 			if (target) {
 				rm.attr('target', target);
+				rm.attr('rel', defaultLinkTypes('', target));
 			}
 
 			rm.openEnd();
@@ -717,6 +718,7 @@ sap.ui.define(["./library", 'sap/ui/core/Core', "sap/ui/core/Item", 'sap/ui/core
 
 			if (target) {
 				rm.attr('target', target);
+				rm.attr('rel', defaultLinkTypes('', target));
 			}
 
 			rm.openEnd();

@@ -5,6 +5,7 @@
 // Provides control sap.m.Breadcrumbs.
 sap.ui.define([
 	"sap/ui/core/Control",
+	"sap/ui/util/openWindow",
 	"sap/m/Text",
 	"sap/m/Link",
 	"sap/m/Select",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"./BreadcrumbsRenderer"
 ], function(
 	Control,
+	openWindow,
 	Text,
 	Link,
 	Select,
@@ -342,7 +344,8 @@ sap.ui.define([
 
 		if (sLinkHref) {
 			if (sLinkTarget) {
-				window.open(sLinkHref, sLinkTarget);
+				// TODO: take oLink.getRel() value into account ('links' is a PUBLIC aggregation)
+				openWindow(sLinkHref, sLinkTarget);
 			} else {
 				window.location.href = sLinkHref;
 			}
