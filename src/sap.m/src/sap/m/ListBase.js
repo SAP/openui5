@@ -2082,10 +2082,11 @@ function(
 			this._oItemNavigation.setTableMode(true, true).setColumns(1);
 
 			// alt + up/down will be used for section navigation
-			// notify item navigation not to handle alt key modifiers
+			// alt/meta + left/right in the browser is used by default for navigating backwards or forwards in the browser history
+			// notify item navigation not to handle alt, meta key modifiers
 			this._oItemNavigation.setDisabledModifiers({
-				sapnext : ["alt"],
-				sapprevious : ["alt"]
+				sapnext : ["alt", "meta"],
+				sapprevious : ["alt", "meta"]
 			});
 		}
 
