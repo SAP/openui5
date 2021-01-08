@@ -14,6 +14,19 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 	"use strict";
 	var Helper;
 
+	/**
+	 * Compares the IDs of two different controls lexicographically.
+	 *
+	 * @param {sap.ui.core.Control} oControl1 - The first control
+	 * @param {sap.ui.core.Control} oControl2 - The second control
+	 * @returns {number}
+	 *   <code>-1</code> if the ID of the first control is lexicographically smaller than the ID
+	 *   of the second control; <code>1</code> otherwise.
+	 */
+	function compareByID(oControl1, oControl2) {
+		return oControl1.getId() < oControl2.getId() ? -1 : 1;
+	}
+
 	// Helper functions used within sap.ui.core.sample.common namespace
 	Helper = {
 
@@ -248,6 +261,18 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 		},
 
 		/**
+		 * Checks the text of the 'More' button for a sap.m.Table.
+		 *
+		 * @param {sap.m.Button} oTrigger - The 'More' trigger button
+		 * @param {string} sExpectedCount - The expected count as text w/o "More" without spaces,
+		 *    e.g. "[5/10]"
+		 */
+		checkMoreButtonCount : function (oTrigger, sExpectedCount) {
+			Opa5.assert.strictEqual(oTrigger.getDomRef().innerText.replace(/\s/g, ""),
+				"More" + sExpectedCount, "'More' button has text " + sExpectedCount);
+		},
+
+		/**
 		 * Decides whether given log is related to OData V4 topic and has a log level which is at
 		 * least WARNING
 		 *
@@ -348,6 +373,28 @@ sap.ui.define("sap/ui/core/sample/common/Helper", [
 				},
 				viewName : sViewName
 			});
+		},
+
+		/**
+		 * Waits for several controls and sorts the resulting controls by their IDs before the
+		 * success handler is called, see {@link sap.ui.test.Opa5#waitFor}.
+		 *
+		 * @param {sap.ui.test.Opa5} oOpa5
+		 *   An instance of Opa5 to access the current page object
+		 * @param {object} options
+		 *   The options containing the success callback, see {@link sap.ui.test.Opa5#waitFor}
+		 * @returns {jQuery.promise}
+		 *  A promise resolved by {@link sap.ui.test.Opa5#waitFor}
+		 */
+		waitForSortedByID : function (oOpa5, options) {
+			var fnSuccess = options.success;
+
+			options.success = function (aControls) {
+				aControls.sort(compareByID);
+				fnSuccess(aControls);
+			};
+
+			return oOpa5.waitFor(options);
 		},
 
 		/**
