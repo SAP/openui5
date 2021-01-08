@@ -186,4 +186,15 @@ describe('sap.m.MultiInput', function() {
 			expect(takeScreenshot()).toLookAs("MI_with_sticky_suggestions_table_visible");
 		});
 	});
+
+		// MultiInput with long suggestions and 100% popover width
+		it("Should visualize MultiInput with long suggestions and 100% popover width", function () {
+			var oMultiInput = element(by.id("mi-long-sugg-small-width"));
+			browser.executeScript("document.getElementById('mi-long-sugg-small-width').scrollIntoView()").then(function() {
+				oMultiInput.click();
+				browser.actions().sendKeys("S").perform();
+
+				expect(takeScreenshot()).toLookAs("suggestions_popover_margins");
+			});
+		});
 });

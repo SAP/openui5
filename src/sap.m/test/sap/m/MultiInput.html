@@ -831,7 +831,7 @@
 					oCondensedTable.addStyleClass("sapUiSizeCondensed");
 
 					// MultiInput with suggestions
-					var aData = [
+					var aData2 = [
 						{
 							name: "Apple", group: "Fruits"
 						}, {
@@ -863,28 +863,52 @@
 						placeholder: "MultiInput with RTL Suggestion Items",
 						ariaLabelledBy: "suggestionsLabel",
 						suggestionItems: [
-						new sap.ui.core.Item ({
-							text: "Apple", textDirection: TextDirection.RTL
-						}),
-						new sap.ui.core.Item ({
-							text: "Pineapple", textDirection: TextDirection.RTL
-						}),
-						new sap.ui.core.Item({
-							text: "Apricot", textDirection: TextDirection.RTL
-						}),
-						new sap.ui.core.Item({
-							text: "Banana", textDirection: TextDirection.RTL
-						}),
-						new sap.ui.core.SeparatorItem({
-							text: "Veggies", textDirection: TextDirection.RTL
-						}),
-						new sap.ui.core.Item({
-							text: "Tomato", textDirection: TextDirection.RTL
-						}),
-						new sap.ui.core.Item({
-							text: "Asparagus", textDirection: TextDirection.RTL
-						})
+							new sap.ui.core.Item ({
+								text: "Apple", textDirection: TextDirection.RTL
+							}),
+							new sap.ui.core.Item ({
+								text: "Pineapple", textDirection: TextDirection.RTL
+							}),
+							new sap.ui.core.Item({
+								text: "Apricot", textDirection: TextDirection.RTL
+							}),
+							new sap.ui.core.Item({
+								text: "Banana", textDirection: TextDirection.RTL
+							}),
+							new sap.ui.core.SeparatorItem({
+								text: "Veggies", textDirection: TextDirection.RTL
+							}),
+							new sap.ui.core.Item({
+								text: "Tomato", textDirection: TextDirection.RTL
+							}),
+							new sap.ui.core.Item({
+								text: "Asparagus", textDirection: TextDirection.RTL
+							})
 						]
+					});
+
+					// MultiInput with suggestions
+					var aData2 = [
+						{ text: "Long Suggestions Item 1: Cras at eros eleifend, fringilla lectus eu, luctus justo. Mauris vehicula ac dui quis finibus. Curabitur vel auctor mi. Morbi pulvinar consectetur tortor sit amet luctus. Nullam condimentum justo sit amet diam malesuada, eu rutrum lorem facilisis." },
+						{ text: "Long Suggestions Item 2: Quisque sollicitudin libero id aliquam accumsan. Pellentesque a pellentesque lectus. Nullam consequat quam dapibus diam vulputate, iaculis sollicitudin lorem bibendum. Curabitur nec massa vel sem molestie euismod. Curabitur suscipit velit malesuada vulputate tristique. " },
+						{ text: "Long Suggestions Item 3: Phasellus lobortis tempor elit, quis ultrices ante hendrerit vel. Nam convallis sit amet ligula lacinia eleifend. Sed tincidunt pharetra ipsum. Aliquam euismod vestibulum elit in finibus." },
+						{ text: "Long Suggestions Item 4: Ut vehicula, velit et rhoncus cursus, eros augue ornare ipsum, nec pulvinar nunc orci ut justo. Vivamus eget nisi interdum, faucibus eros et, pulvinar tortor. Maecenas imperdiet porttitor orci ac dignissim. Phasellus lacinia blandit elit. In sollicitudin tristique orci nec varius." }
+					],
+
+					oSuggMultiInputPopoverWidth = new MultiInput("mi-long-sugg-small-width", {
+						ariaLabelledBy: "suggestionsLabel",
+						placeholder: "MultiInput with long suggestion and limited width, type 'L'",
+						maxSuggestionWidth: "100%",
+						width: "50%"
+					});
+
+					var oModel = new JSONModel();
+
+					oModel.setData(aData2);
+					oSuggMultiInputPopoverWidth.setModel(oModel);
+					oSuggMultiInputPopoverWidth.bindAggregation("suggestionItems", {
+						path: "/",
+						template: new sap.ui.core.Item({text: "{text}"})
 					});
 
 					// MultiInput with sticky suggestions header
@@ -999,7 +1023,9 @@
 							new Label("suggestionsRTLLabel", {text: "MultiInput with RTL Items", labelFor: "mi-rtl"}),
 							oSuggestionsMultiInputRTL,
 							new Label("stickySuggestionsLabel", {text: "MultiInput with sticky suggestions header", labelFor: "multiInputWithStickySuggestions"}),
-							oMultiInputWithStickySuggestions
+							oMultiInputWithStickySuggestions,
+							new Label("longSuggestionsLabel", {text: "MultiInput with small width and long suggestions", width:"100%", labelFor: "mi-long-sugg-small-width"}),
+							oSuggMultiInputPopoverWidth
 						]
 					}).addStyleClass("sapUiContentPadding");
 
