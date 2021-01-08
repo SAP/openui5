@@ -155,7 +155,9 @@ sap.ui.define([
 				sBasePath + "/" + iIndex
 			);
 
-			oItem._card_item_hidden = false;
+			if (oItem._card_item_hidden === undefined) {
+				oItem._card_item_hidden = false;
+			}
 
 			aPromises.push(
 				this._oServiceManager

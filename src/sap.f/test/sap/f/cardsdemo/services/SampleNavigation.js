@@ -45,16 +45,12 @@ sap.ui.define(["sap/ui/integration/services/Navigation"], function (Navigation) 
 	};
 
 	SampleNavigation.prototype.hidden = function (oContext) {
-		if (!oContext) {
-			return Promise.resolve(false);
-		}
-
-		var bHidden = !!oContext.parameters.hidden;
-		if (bHidden) {
-			return Promise.resolve(true);
-		} else {
-			return Promise.resolve(false);
-		}
+		return new Promise(function(resolve){
+			setTimeout(function(){
+				var bHidden = !!oContext.parameters.hidden;
+				resolve(bHidden);
+			},2000);
+		});
 	};
 	return SampleNavigation;
 });
