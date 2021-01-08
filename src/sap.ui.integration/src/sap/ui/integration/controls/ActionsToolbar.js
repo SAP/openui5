@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/base/strings/capitalize",
 	"sap/ui/core/Control",
 	"sap/m/library",
+	"sap/ui/core/library",
 	"sap/m/Button",
 	"sap/m/ActionSheet",
 	"sap/ui/base/ManagedObjectObserver",
@@ -19,6 +20,7 @@ sap.ui.define([
 	capitalize,
 	Control,
 	mLibrary,
+	coreLibrary,
 	Button,
 	ActionSheet,
 	ManagedObjectObserver,
@@ -29,6 +31,8 @@ sap.ui.define([
 	/* global Map */
 
 	var ButtonType = mLibrary.ButtonType;
+
+	var HasPopup = coreLibrary.aria.HasPopup;
 
 	function setButtonProperty(oButton, sPropertyName, oValue, oCard) {
 
@@ -205,6 +209,7 @@ sap.ui.define([
 				id: this.getId() + "-overflowButton",
 				icon: 'sap-icon://overflow',
 				type: ButtonType.Transparent,
+				ariaHasPopup: HasPopup.Menu,
 				press: function (oEvent) {
 					this._open();
 				}.bind(this)
