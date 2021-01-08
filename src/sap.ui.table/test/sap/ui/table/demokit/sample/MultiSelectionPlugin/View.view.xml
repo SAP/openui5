@@ -30,7 +30,7 @@
 						selectionChange="onSelectionChange"/>
 				</plugins>
 				<extension>
-					<m:OverflowToolbar>
+					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:Label text="Selection Mode" labelFor="select1"/>

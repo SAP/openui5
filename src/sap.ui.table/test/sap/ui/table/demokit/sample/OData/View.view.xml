@@ -27,7 +27,7 @@
 					<m:BusyIndicator class="sapUiMediumMargin"/>
 				</noData>
 				<extension>
-					<m:OverflowToolbar>
+					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:Button

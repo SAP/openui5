@@ -24,7 +24,7 @@
 							<m:Title text="Shopping Portal" titleStyle="H3" class="sapUiTinyMarginBeginEnd"/>
 						</m:items>
 					</m:HBox>
-					<m:OverflowToolbar>
+					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Products"/>
 						<m:ToolbarSpacer/>
 						<m:SearchField

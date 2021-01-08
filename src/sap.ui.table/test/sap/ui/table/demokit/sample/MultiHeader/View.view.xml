@@ -18,7 +18,7 @@
 				enableColumnFreeze="true"
 				showColumnVisibilityMenu="true">
 				<extension>
-					<m:OverflowToolbar>
+					<m:OverflowToolbar style="Clear">
 						<m:Title id="title" text="Contacts"/>
 					</m:OverflowToolbar>
 				</extension>

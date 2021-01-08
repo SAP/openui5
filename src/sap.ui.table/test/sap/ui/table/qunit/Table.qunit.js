@@ -87,6 +87,7 @@ sap.ui.define([
 	var NavigationMode = library.NavigationMode;
 	var SharedDomRef = library.SharedDomRef;
 	var ToolbarDesign = MLibrary.ToolbarDesign;
+	var ToolbarStyle = MLibrary.ToolbarStyle;
 
 	// mapping of global function calls
 	var getCell = window.getCell;
@@ -2282,9 +2283,10 @@ sap.ui.define([
 		oTable.destroy();
 	});
 
-	QUnit.test("Table should respect the design property of the Toolbar when it is set", function(assert) {
+	QUnit.test("Table toolbar design and style properties are set", function(assert) {
 		var oToolbar = new Toolbar({
-			design: "Solid"
+			design: "Solid",
+			style: "Standard"
 		});
 		var oTable = new Table({
 			toolbar: oToolbar
@@ -2293,6 +2295,8 @@ sap.ui.define([
 
 		assert.strictEqual(ToolbarDesign.Solid, oToolbar.getDesign(), "Design property of the Toolbar is Solid");
 		assert.strictEqual(ToolbarDesign.Solid, oToolbar.getActiveDesign(), "Active design of the Toolbar is Solid as well");
+
+		assert.strictEqual(ToolbarStyle.Standard, oToolbar.getStyle(), "Style property of the Toolbar is Standard");
 
 		oTable.destroy();
 	});

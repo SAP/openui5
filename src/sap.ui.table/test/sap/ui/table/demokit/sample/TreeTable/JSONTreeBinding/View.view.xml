@@ -17,7 +17,7 @@
                     enableSelectAll="false"
                     ariaLabelledBy="title">
                 <extension>
-                    <m:OverflowToolbar>
+                    <m:OverflowToolbar style="Clear">
                         <m:Title id="title" text="Clothing"/>
                         <m:ToolbarSpacer/>
                         <m:Button text="Collapse all" press="onCollapseAll"/>
