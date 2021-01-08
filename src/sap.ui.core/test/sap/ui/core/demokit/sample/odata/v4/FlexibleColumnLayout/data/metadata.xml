@@ -297,6 +297,14 @@
 				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder"
 							Nullable="false"/>
 			</Action>
+			<Action Name="SalesOrderIncreaseItemsQuantity" EntitySetPath="SalesOrder"
+					IsBound="true">
+				<Parameter Name="SalesOrder"
+					Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder"
+					Nullable="false"/>
+				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrder"
+					Nullable="false"/>
+			</Action>
 			<Function Name="FuGetCreatedByBP">
 				<Parameter Name="SalesOrderID" Type="Edm.String" Nullable="false" MaxLength="10"/>
 				<ReturnType Type="com.sap.gateway.default.zui5_epm_sample.v0002.BusinessPartner"/>
