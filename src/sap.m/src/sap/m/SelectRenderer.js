@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueStateSupport', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/Device', 'sap/ui/core/InvisibleText', 'sap/ui/core/library'],
-	function(Renderer, Core, ValueStateSupport, IconPool, library, Device, InvisibleText, coreLibrary) {
+sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 'sap/ui/Device', 'sap/ui/core/library'],
+	function(Renderer, IconPool, library, Device, coreLibrary) {
 		"use strict";
 
 		// shortcut for sap.ui.core.TextDirection
@@ -99,7 +99,10 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueSta
 			}
 
 			oRm.openEnd();
-			this.renderHiddenSelect(oRm, oSelect);
+			// Used to benefit from the div[role="combobox"]. Direct textNode is the value of the div and no other elements should be placed inside.
+			this.renderFocusElement(oRm, oSelect);
+			// Used in case control is in a form submitted by input[type="submit"].
+			this.renderHiddenInput(oRm, oSelect);
 			this.renderLabel(oRm, oSelect);
 
 			switch (sType) {
@@ -124,51 +127,60 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueSta
 			oRm.close("div");
 		};
 
-		SelectRenderer.renderHiddenSelect = function (oRm, oSelect) {
-			var oList = oSelect.getList(),
-				aItems,
-				i;
-
-			oRm.openStart("select", oSelect.getId() + "-hiddenSelect");
+		/**
+		 * Renders the element, which receives the focus. This is needed because when using [role="combobox"] we benefit from the direct textNode
+		 * which serves as a VALUE and is read out by screen readers when it changes.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
+		 * @private
+		 */
+		SelectRenderer.renderFocusElement = function (oRm, oSelect) {
+			var oSelectedItem = oSelect.getSelectedItem();
+			oRm.openStart("div", oSelect.getId() + "-hiddenSelect");
 
 			this.writeAccessibilityState(oRm, oSelect);
-
-			if (oSelect._isRequired()) {
-				oRm.attr("required", "required");
-			}
-
-			if (!oSelect.getEnabled()) {
-				oRm.attr("disabled", "disabled");
-			}
-
-			oRm.attr("name", oSelect.getName());
-			oRm.attr("value", oSelect.getSelectedKey());
 
 			// Classes
 			oRm.class("sapUiPseudoInvisibleText");
 			oRm.class(SelectRenderer.CSS_CLASS + "HiddenSelect");
 
+			// Attributes
+			if (oSelect.getEnabled()) {
+				oRm.attr("tabindex", "0");
+			}
+
 			oRm.openEnd();
 
-			if (oSelect.getForceSelection()) {
-				oRm.openStart("option");
-				oRm.attr("hidden", true);
-				oRm.attr("disabled", true);
-				oRm.attr("selected", true);
-				oRm.openEnd();
-				oRm.close("option");
+			if (oSelectedItem) {
+				oRm.text(oSelectedItem.getText());
 			}
 
-			for (i = 0, aItems = oList.getItems(); i < aItems.length; i++) {
-				oRm.openStart("option");
-				oRm.attr("value", aItems[i].getText());
-				oRm.openEnd();
-				oRm.text(aItems[i].getText());
-				oRm.close("option");
-			}
+			oRm.close('div');
+		};
 
-			oRm.close('select');
+		/**
+		 * Renders the input element, which receives the name and value attributes. This is needed because when select is inside a form
+		 * submitted by input[type="submit"] the attributes will be taken from this input.
+		 *
+		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
+		 * @private
+		 */
+		SelectRenderer.renderHiddenInput = function (oRm, oSelect) {
+			oRm.voidStart("input", oSelect.getId() + "-hiddenInput");
 
+			// Attributes
+			oRm.attr("name", oSelect.getName());
+			oRm.attr("value", oSelect.getSelectedKey());
+			oRm.attr("aria-readonly", "true");
+			oRm.attr("tabindex", "-1");
+			oRm.attr("aria-hidden", "true");
+
+			// Classes
+			oRm.class("sapUiPseudoInvisibleText");
+
+			oRm.voidEnd();
 		};
 
 		/**
@@ -325,34 +337,13 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueSta
 		SelectRenderer.getAriaRole = function(oSelect) {
 			switch (oSelect.getType()) {
 				case SelectType.Default:
-					return "listbox";
+					return "combobox";
 
 				case SelectType.IconOnly:
 					return "button";
 
 				// no default
 			}
-		};
-
-		/**
-		 * Returns the id of the InvisibleText containing information about the value state of the Select
-		 * @param oSelect
-		 * @returns {string}
-		 * @private
-		 */
-		SelectRenderer._getValueStateString = function(oSelect) {
-			var sCoreLib = "sap.ui.core";
-
-			switch (oSelect.getValueState()) {
-				case ValueState.Success:
-					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS");
-				case ValueState.Warning:
-					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING");
-				case ValueState.Information:
-					return InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_INFORMATION");
-			}
-
-			return "";
 		};
 
 		/**
@@ -363,7 +354,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueSta
 		 * @param {sap.ui.core.Control} oSelect An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.writeAccessibilityState = function(oRm, oSelect) {
-			var sValueState = this._getValueStateString(oSelect),
+			var sValueState = oSelect.getValueState(),
 				oSelectedItem = oSelect.getSelectedItem(),
 				bIconOnly = oSelect.getType() === SelectType.IconOnly,
 				oValueIcon = oSelect._getValueIcon(),
@@ -391,13 +382,12 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueSta
 				}
 			}
 
-			if (sDesc && oValueIcon) {
-				sValueState = oValueIcon.getId();
+			if (sValueState !== ValueState.None) {
+				sAriaDescribedBy = oSelect.getValueStateMessageId() + "-sr";
 			}
 
-			if (sValueState) {
-				aAriaLabelledBy.push(sValueState);
-				sAriaDescribedBy = oSelect.getValueStateMessageId() + "-sr";
+			if (sDesc && oValueIcon) {
+				aAriaLabelledBy.push(oValueIcon.getId());
 			}
 
 			if (aLabels.length) {
@@ -413,6 +403,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueSta
 				role: this.getAriaRole(oSelect),
 				roledescription: oSelect._sAriaRoleDescription,
 				readonly: bIconOnly ? undefined : oSelect.getEnabled() && !oSelect.getEditable(),
+				required: oSelect._isRequired() || undefined,
+				disabled: !oSelect.getEnabled() || undefined,
 				expanded: oSelect.isOpen(),
 				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
 				labelledby: (bIconOnly || oAriaLabelledBy.value === "") ? undefined : oAriaLabelledBy,
@@ -429,24 +421,20 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/Core', 'sap/ui/core/ValueSta
 		 * @param {sap.ui.core.Control} oControl An object representation of the control that should be rendered.
 		 */
 		SelectRenderer.renderAccessibilityDomNodes = function (oRm, oControl) {
-			var sValueState = oControl.getValueState();
+			var sValueState = oControl.getValueState(),
+				sValueStateText;
 
 			if (sValueState === ValueState.None) {
 				return;
 			}
 
-			var sValueStateTypeText = Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + sValueState.toUpperCase());
+			sValueStateText = oControl._getValueStateText();
 
 			oRm.openStart("div", oControl.getValueStateMessageId() + "-sr")
-				.class("sapUiPseudoInvisibleText").attr("aria-live", "assertive")
-				// Tells screen readers to announce the live region as a whole even if only part of it is changed.
-				// This is needed because of the way semantic renderer works - it won't replace text content if it is the same -
-				// the so called in-place DOM patching - and the control will get rerendered when value state is not changed.
-				// For example if only the value state type is changed and not the text, if aria-atomic is not set to 'true'
-				// the value state text won't be announced.
-				.attr("aria-atomic", "true").openEnd()
-				.text(sValueStateTypeText + " ")
-				.text(oControl.getValueStateText() || ValueStateSupport.getAdditionalText(oControl))
+				.class("sapUiPseudoInvisibleText")
+				.attr("aria-hidden", true)
+				.openEnd()
+				.text(sValueStateText)
 				.close("div");
 		};
 
