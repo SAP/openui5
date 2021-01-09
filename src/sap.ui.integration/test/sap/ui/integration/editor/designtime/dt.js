@@ -229,6 +229,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
+					"integerrequired": {
+						"manifestpath": "/sap.card/configuration/parameters/integer/value",
+						"defaultValue": 2,
+						"type": "integer",
+						"translatable": false,
+						"required": true
+					},
 					"integervalidation": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
 						"defaultValue": 1,
@@ -269,6 +276,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"multipleOf": 2,
 							"message": "Has to be multiple of 2"
 						}]
+					},
+					"numberrequired": {
+						"manifestpath": "/sap.card/configuration/parameters/number/value",
+						"defaultValue": 2.5,
+						"type": "number",
+						"translatable": false,
+						"required": true
 					},
 					"lists": {
 						"type": "group",

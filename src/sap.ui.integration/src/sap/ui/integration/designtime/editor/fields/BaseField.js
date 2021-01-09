@@ -311,7 +311,7 @@ sap.ui.define([
 			},
 			multipleOfTxt: "CARDEDITOR_VAL_MULTIPLE",
 			required: function (v, b) {
-				return !isNaN(v);
+				return !isNaN(v) && v !== "";
 			},
 			requiredTxt: "CARDEDITOR_VAL_NUMBERREQ",
 			validateTxt: "CARDEDITOR_VAL_NOMATCH"
@@ -340,7 +340,7 @@ sap.ui.define([
 			},
 			multipleOfTxt: "CARDEDITOR_VAL_MULTIPLE",
 			required: function (v, b) {
-				return !isNaN(v);
+				return !isNaN(v) && v !== "";
 			},
 			requiredTxt: "CARDEDITOR_VAL_NUMBERREQ",
 			validateTxt: "CARDEDITOR_VAL_NOMATCH"
@@ -533,6 +533,11 @@ sap.ui.define([
 		}
 		if (oControl instanceof Control) {
 			this.setAggregation("_field", oControl);
+			if (oControl.attachChange) {
+				oControl.attachChange(function (oEvent) {
+					this._triggerValidation(oEvent.getParameter("value"));
+				}.bind(this));
+			}
 			var oBinding = this.getModel("currentSettings").bindProperty("value", this.getBindingContext("currentSettings"));
 			oBinding.attachChange(function () {
 				this._triggerValidation(oConfig.value);
