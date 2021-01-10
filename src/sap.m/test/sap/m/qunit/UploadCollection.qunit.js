@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/m/MessageBox",
 	"sap/ui/unified/FileUploader",
 	"sap/m/ObjectMarker",
+	"sap/m/ObjectStatus",
 	"sap/ui/base/Event",
 	"sap/m/UploadCollectionParameter",
 	"sap/ui/model/Sorter",
@@ -24,7 +25,7 @@ sap.ui.define([
 	"jquery.sap.keycodes"
 ], function(jQuery, UploadCollection, UploadCollectionItem, Toolbar, Label, UploadCollectionRenderer,
             ListItemBaseRenderer, Dialog, Device, JSONModel, ManagedObject, OverflowToolbar,
-            MessageBox, FileUploader, ObjectMarker, Event, UploadCollectionParameter, Sorter, Element, library) {
+            MessageBox, FileUploader, ObjectMarker, ObjectStatus, Event, UploadCollectionParameter, Sorter, Element, library) {
 	"use strict";
 
 	// shortcut for sap.m.ListMode
@@ -52,6 +53,18 @@ sap.ui.define([
 						"type": "Locked",
 						"visibility": "IconAndText"
 					}
+				],
+				"statuses": [
+					{
+						"title": "Status",
+						"text": "Warning",
+						"visible": true
+					},
+					{
+						"title": "Status",
+						"text": "Error",
+						"visible": true
+					}
 				]
 			}, {
 				"contributor": "John Smith",
@@ -66,6 +79,18 @@ sap.ui.define([
 					{
 						"type": "Locked",
 						"visibility": "IconAndText"
+					}
+				],
+				"statuses": [
+					{
+						"title": "Status",
+						"text": "Warning",
+						"visible": true
+					},
+					{
+						"title": "Status",
+						"text": "Error",
+						"visible": false
 					}
 				]
 			}, {
@@ -115,6 +140,11 @@ sap.ui.define([
 				path: "markers",
 				template: createMarkerTemplate(),
 				templateShareable: false
+			},
+			statuses: {
+				path: "statuses",
+				template: createStatusTemplate(),
+				templateShareable: false
 			}
 		});
 	}
@@ -123,6 +153,14 @@ sap.ui.define([
 		return new ObjectMarker({
 			type: "{type}",
 			visibility: "{visibility}"
+		});
+	}
+
+	function createStatusTemplate() {
+		return new ObjectStatus({
+			title: "{title}",
+			text: "{text}",
+			visible: '{visible}'
 		});
 	}
 
@@ -255,6 +293,21 @@ sap.ui.define([
 		assert.ok($IconItem.hasClass("sapMUCItemIconInactive"), "Css class 'sapMUCItemIconInactive' is present");
 		assert.ok(!$IconItem.hasClass("sapMUCItemPlaceholder"), "Css class 'sapMUCItemPlaceholder' is not present");
 		assert.ok(!$IconItem.hasClass("sapMUCItemPlaceholderInactive"), "Css class 'sapMUCItemPlaceholderInactive' is not present");
+	});
+
+	QUnit.test("Item with statuses is rendered properly", function(assert) {
+		//Arrange
+		//Act
+		//Assert
+		var oFirstItem = this.oUploadCollection.getItems()[0];
+		var oDomRef = oFirstItem.getStatuses()[0].getDomRef();
+		var oSibling = oDomRef.nextSibling;
+		assert.ok(oSibling.classList.contains("sapMUCSeparator"), "Status separator is visible");
+
+		var oSecondItem = this.oUploadCollection.getItems()[1];
+		oDomRef = oSecondItem.getStatuses()[0].getDomRef();
+		oSibling = oDomRef.nextSibling;
+		assert.ok(!oSibling, "Status separator is not visible");
 	});
 
 	QUnit.test("hideUploadButton hideTerminateUploadButton properties are initialized correctly", function(assert) {
