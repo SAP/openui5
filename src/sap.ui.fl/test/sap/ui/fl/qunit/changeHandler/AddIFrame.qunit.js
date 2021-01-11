@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/XMLHelper",
 	"sap/ui/fl/changeHandler/AddIFrame",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
@@ -11,6 +12,7 @@ sap.ui.define([
 	"sap/m/Button"
 ], function(
 	jQuery,
+	XMLHelper,
 	AddIFrame,
 	Change,
 	JsControlTreeModifier,
@@ -243,7 +245,7 @@ sap.ui.define([
 				'</items>' +
 				'</HBox>' +
 				'</mvc:View>';
-			this.oXmlView = jQuery.sap.parseXML(this.oXmlString, "application/xml").documentElement;
+			this.oXmlView = XMLHelper.parse(this.oXmlString, "application/xml").documentElement;
 			this.oHBox = this.oXmlView.childNodes[0];
 
 			this.mPropertyBag = {

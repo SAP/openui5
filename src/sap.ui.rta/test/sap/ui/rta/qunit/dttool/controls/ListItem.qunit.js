@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/core/Item",
 	"sap/m/Select",
 	"sap/m/Input",
+	"sap/base/util/ObjectPath",
 	"sap/ui/rta/dttool/controls/DTToolListItem"
 ], function (
 	Table,
@@ -15,6 +16,7 @@ sap.ui.define([
 	Item,
 	Select,
 	Input,
+	ObjectPath,
 	DTToolListItem
 ) {
 	"use strict";
@@ -69,8 +71,8 @@ sap.ui.define([
 					vValue = vValue === "true";
 					assert.ok(oControl.getItems()[0].getText(), "first item is true");
 					assert.ok(oControl.getItems()[1].getText(), "second item is false");
-				} else if (jQuery.isPlainObject(jQuery.sap.getObject(aTypes[i1]))) {
-					var oEnum = jQuery.sap.getObject(aTypes[i1]);
+				} else if (jQuery.isPlainObject(ObjectPath.get(aTypes[i1]))) {
+					var oEnum = ObjectPath.get(aTypes[i1]);
 					assert.strictEqual(oControl.getItems().length, Object.keys(oEnum).length, "right number of enum values");
 					Object.keys(oEnum).forEach(fnCheckEnumVals.bind(this, oControl));
 				} else if (aTypes[i1] === "int") {

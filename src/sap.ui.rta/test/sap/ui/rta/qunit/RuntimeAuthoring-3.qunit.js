@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/rta/service/index",
 	"sap/ui/dt/Util",
 	"sap/ui/base/ManagedObjectMetadata",
+	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	UIComponent,
@@ -19,6 +20,7 @@ sap.ui.define([
 	mServicesDictionary,
 	DtUtil,
 	ManagedObjectMetadata,
+	Log,
 	sinon
 ) {
 	"use strict";
@@ -463,7 +465,7 @@ sap.ui.define([
 					},
 					function (vError) {
 						assert.ok(false, "this should never be called");
-						jQuery.sap.log.error(DtUtil.errorToString(vError));
+						Log.error(DtUtil.errorToString(vError));
 					}
 				);
 		});

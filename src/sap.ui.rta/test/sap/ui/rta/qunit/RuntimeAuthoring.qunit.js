@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
 	"sap/base/util/isEmptyObject",
+	"sap/ui/events/KeyCodes",
 	"qunit/RtaQunitUtils",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
@@ -61,6 +62,7 @@ sap.ui.define([
 	Log,
 	UriParameters,
 	isEmptyObject,
+	KeyCodes,
 	RtaQunitUtils,
 	QUnitUtils,
 	PersistenceWriteAPI,
@@ -389,14 +391,14 @@ sap.ui.define([
 			this.oContextMenu2 = jQuery('<button class="sapUiDtContextMenu" ></button>').appendTo('#qunit-fixture').get(0);
 
 			this.oUndoEvent = new Event("dummyEvent", new EventProvider());
-			this.oUndoEvent.keyCode = jQuery.sap.KeyCodes.Z;
+			this.oUndoEvent.keyCode = KeyCodes.Z;
 			this.oUndoEvent.ctrlKey = true;
 			this.oUndoEvent.shiftKey = false;
 			this.oUndoEvent.altKey = false;
 			this.oUndoEvent.stopPropagation = function() {};
 
 			this.oRedoEvent = new Event("dummyEvent", new EventProvider());
-			this.oRedoEvent.keyCode = jQuery.sap.KeyCodes.Y;
+			this.oRedoEvent.keyCode = KeyCodes.Y;
 			this.oRedoEvent.ctrlKey = true;
 			this.oRedoEvent.shiftKey = false;
 			this.oRedoEvent.altKey = false;
@@ -496,7 +498,7 @@ sap.ui.define([
 			RuntimeAuthoring.prototype._onKeyDown.call(this.mContext, this.oUndoEvent);
 			assert.equal(this.fnUndoStub.callCount, 1, "then _onUndo was called once");
 
-			this.oRedoEvent.keyCode = jQuery.sap.KeyCodes.Z;
+			this.oRedoEvent.keyCode = KeyCodes.Z;
 			this.oRedoEvent.ctrlKey = false;
 			this.oRedoEvent.metaKey = true;
 			this.oRedoEvent.shiftKey = true;
@@ -649,10 +651,10 @@ sap.ui.define([
 
 			//undo -> _unExecute -> fireModified
 			document.activeElement.blur(); // reset focus to body
-			triggerKeydown(this.oRootControlOverlay.getDomRef(), jQuery.sap.KeyCodes.Z, false, false, false, true);
+			triggerKeydown(this.oRootControlOverlay.getDomRef(), KeyCodes.Z, false, false, false, true);
 
 			//redo -> execute -> fireModified (inside promise)
-			triggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Z, true, false, false, true);
+			triggerKeydown(this.oElement2Overlay.getDomRef(), KeyCodes.Z, true, false, false, true);
 		});
 
 		QUnit.test("when cut is triggered by keydown-event on rootElementOverlay, with no macintosh device and ctrlKey is pushed", function(assert) {
@@ -674,10 +676,10 @@ sap.ui.define([
 
 			//undo -> _unExecute -> fireModified
 			document.activeElement.blur(); // reset focus to body
-			triggerKeydown(this.oRootControlOverlay.getDomRef(), jQuery.sap.KeyCodes.Z, false, false, true, false);
+			triggerKeydown(this.oRootControlOverlay.getDomRef(), KeyCodes.Z, false, false, true, false);
 
 			//redo -> execute -> fireModified (inside promise)
-			triggerKeydown(this.oElement2Overlay.getDomRef(), jQuery.sap.KeyCodes.Y, false, false, true, false);
+			triggerKeydown(this.oElement2Overlay.getDomRef(), KeyCodes.Y, false, false, true, false);
 		});
 
 		QUnit.test("when _handleElementModified is called if a create container command was executed on a simple form", function(assert) {

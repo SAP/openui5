@@ -4,6 +4,7 @@ QUnit.config.autostart = false;
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/XMLHelper",
 	"sap/ui/core/util/reflection/XmlTreeModifier",
 	"sap/ui/core/Component",
 	"sap/ui/fl/initial/_internal/Storage",
@@ -16,6 +17,7 @@ sap.ui.define([
 ],
 function(
 	jQuery,
+	XMLHelper,
 	XmlTreeModifier,
 	Component,
 	Storage,
@@ -267,7 +269,7 @@ function(
 					var oCacheManagerCall = oCacheManagerSpy.getCall(0);
 					var sCachedXml = oCacheManagerCall.args[1].xml;
 					//as cached xml string will vary in different browsers (especially namespace handling), we will parse the xml again (without tabs and newlines to reduce unwanted text nodes)
-					var oCachedXmlDocument = jQuery.sap.parseXML(sCachedXml.replace(/[\n\t]/g, '')).documentElement;
+					var oCachedXmlDocument = XMLHelper.parse(sCachedXml.replace(/[\n\t]/g, '')).documentElement;
 					assert.equal(oCachedXmlDocument.localName, "View", "the view is included in the cache");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].localName, "SimpleForm", "the simple form is included in the cache");
 					assert.equal(oCachedXmlDocument.childNodes[0].childNodes[0].childNodes.length, 4, "the simple form content includes the new nodes from the change");

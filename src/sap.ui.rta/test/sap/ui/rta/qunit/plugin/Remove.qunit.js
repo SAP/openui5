@@ -1,6 +1,7 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/events/KeyCodes",
 	"sap/ui/rta/plugin/Remove",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/command/CommandFactory",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
+	KeyCodes,
 	RemovePlugin,
 	Utils,
 	CommandFactory,
@@ -289,7 +291,7 @@ function (
 				done();
 			}, this);
 
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.DELETE);
 			assert.ok(true, "... when plugin removeElement is called ...");
 		});
 
@@ -319,7 +321,7 @@ function (
 			}.bind(this));
 			sandbox.stub(Utils, "openRemoveConfirmationDialog").resolves(false);
 
-			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), jQuery.sap.KeyCodes.DELETE);
+			QUnitUtils.triggerKeydown(this.oButtonOverlay.getDomRef(), KeyCodes.DELETE);
 			assert.ok(true, "... when plugin removeElement is called ...");
 		});
 

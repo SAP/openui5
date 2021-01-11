@@ -1,7 +1,9 @@
 sap.ui.require([
-	"sap/ui/core/ComponentContainer"
+	"sap/ui/core/ComponentContainer",
+	"sap/ui/performance/Measurement"
 ], function(
-	ComponentContainer
+	ComponentContainer,
+	Measurement
 ) {
 	"use strict";
 
@@ -11,7 +13,7 @@ sap.ui.require([
 	window.onAppReady = new Promise(function (fnResolve) {
 		window.fnResolve = fnResolve;
 	});
-	jQuery.sap.measure.setActive(true);
+	Measurement.setActive(true);
 
 	var oComponentContainer = new ComponentContainer({
 		id: "componentContainer",

@@ -1,9 +1,11 @@
 sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
-	"sap/ui/rta/plugin/Plugin"
+	"sap/ui/rta/plugin/Plugin",
+	"sap/base/Log"
 ], function(
 	RuntimeAuthoring,
-	Plugin
+	Plugin,
+	Log
 ) {
 	"use strict";
 
@@ -30,7 +32,7 @@ sap.ui.define([
 				window.performance.mark("rta.start.ends");
 				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
 				sap.ui.rta.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-				jQuery.sap.log.info(sMeasureName, sap.ui.rta.startTime + "ms");
+				Log.info(sMeasureName, sap.ui.rta.startTime + "ms");
 				//visual change at the end
 				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oHorizontalLayout);
 				oOverlay.setSelected(true);
@@ -56,7 +58,7 @@ sap.ui.define([
 				window.performance.mark("rta.start.ends");
 				window.performance.measure(sMeasureName, "rta.start.starts", "rta.start.ends");
 				sap.ui.rta.startTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-				jQuery.sap.log.info(sMeasureName, sap.ui.rta.startTime + "ms");
+				Log.info(sMeasureName, sap.ui.rta.startTime + "ms");
 				//visual change at the end
 				var oOverlay = sap.ui.dt.OverlayRegistry.getOverlay(oRootControl);
 				oOverlay.setSelected(true);
@@ -82,7 +84,7 @@ sap.ui.define([
 			window.performance.mark("rta.init.ends");
 			window.performance.measure(sMeasureName, "rta.init.starts", "rta.init.ends");
 			sap.ui.rta.creationTime = window.performance.getEntriesByName(sMeasureName)[0].duration;
-			jQuery.sap.log.info(sMeasureName, sap.ui.rta.creationTime + "ms");
+			Log.info(sMeasureName, sap.ui.rta.creationTime + "ms");
 		}
 	};
 

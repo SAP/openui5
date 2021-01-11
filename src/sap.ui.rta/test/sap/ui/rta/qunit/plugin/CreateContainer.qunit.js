@@ -14,6 +14,7 @@ sap.ui.define([
 	"sap/ui/layout/form/SimpleForm",
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/core/Title",
+	"sap/base/util/uid",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function (
@@ -30,6 +31,7 @@ function (
 	SimpleForm,
 	CreateContainerPlugin,
 	Title,
+	uid,
 	sinon
 ) {
 	"use strict";
@@ -104,7 +106,7 @@ function (
 
 				sap.ui.getCore().applyChanges();
 
-				this.sNewControlID = oMockedViewWithStableId.createId(jQuery.sap.uid());
+				this.sNewControlID = oMockedViewWithStableId.createId(uid());
 				this.oNewFormContainerStub = new FormContainer(this.sNewControlID);
 				this.oForm.addFormContainer(this.oNewFormContainerStub);
 

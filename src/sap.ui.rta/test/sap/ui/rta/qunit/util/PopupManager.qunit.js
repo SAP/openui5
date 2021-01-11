@@ -466,10 +466,10 @@ function(
 				} else {
 					fnCheckOnAfterRendering();
 				}
-				jQuery.sap.focus(oPopup.oContent);
-				jQuery.sap.delayedCall(0, this, function() {
+				oPopup.oContent.getDomRef().focus();
+				setTimeout(function() {
 					vPopupElement.blur();
-				});
+				}, 0);
 			}.bind(this));
 			this.oPopover.openBy(oComponentContainer);
 		});
