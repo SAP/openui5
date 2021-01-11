@@ -966,10 +966,6 @@
 					//******************************************
 					var oPage = new Page("page1", {
 						headerContent: [
-							new Label({
-								labelFor: theCompactMode.getId(), text: "Compact Mode"
-							}),
-							theCompactMode,
 							new sap.m.ToolbarSpacer({
 								width: "500px"
 							}),
@@ -982,6 +978,8 @@
 							oCustomCssButton,
 						],
 						content: [
+							new Label({labelFor: theCompactMode.getId(), text: "Compact Mode"}),
+							theCompactMode,
 							oMultiInputCustomValidator,
 							oCheckBoxAcceptValidation,
 							oMultiInputCustomAsyncValidator,
