@@ -907,7 +907,15 @@ sap.ui.define([
 
 		if (!this._aDependentSelectorList) {
 			if (this._oDefinition.dependentSelector) {
-				Object.keys(this._oDefinition.dependentSelector).forEach(function(sAlias) {
+				Object.keys(this._oDefinition.dependentSelector).some(function(sAlias) {
+					// if there is an 'originalSelector' as dependent the change is made inside a template; this means that the
+					// dependent selectors point to the specific clones of the template; those clones don't go through the
+					// propagation listener and will never be cleaned up from the dependencies, thus blocking the JS Change Applying
+					// therefore all the dependents have to be ignored and the dependents reset to the initial state (only selector)
+					if (sAlias === "originalSelector") {
+						aDependentSelectors = [this.getSelector()];
+						return true;
+					}
 					var aCurrentSelector = that._oDefinition.dependentSelector[sAlias];
 					if (!Array.isArray(aCurrentSelector)) {
 						aCurrentSelector = [aCurrentSelector];
@@ -918,7 +926,7 @@ sap.ui.define([
 							aDependentSelectors.push(oCurrentSelector);
 						}
 					});
-				});
+				}.bind(this));
 			}
 			this._aDependentSelectorList = aDependentSelectors;
 		}
