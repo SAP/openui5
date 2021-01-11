@@ -874,6 +874,19 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getFormFormattedValue with showEmptyIndicator", function(assert) {
+
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		oField.setShowEmptyIndicator(true);
+		oField.setDisplay(FieldDisplay.Description);
+		oField.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.equal(oField.getFormFormattedValue(), oResourceBundle.getText("field.EMPTY_INDICATOR"), "Formatted Value");
+
+	});
+
+
 	var oFieldEditMulti, oFieldEditSingle, oFieldDisplay, oFieldSearch;
 
 	QUnit.module("conditions & properties", {
