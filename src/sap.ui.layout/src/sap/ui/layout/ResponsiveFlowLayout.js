@@ -593,9 +593,9 @@ sap.ui.define([
 
 			if (this.getResponsive()) {
 				if (!this._resizeHandlerComputeWidthsID) {
-					// Triggering invalidation when the control gets resized so the width recalculations
+					// Trigger rerendering when the control is resized so width recalculations
 					// are handled in the on after rendering hook the same way as the initial width calculations.
-					this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.invalidate.bind(this));
+					this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.rerender.bind(this));
 				}
 			} else {
 				if (this._resizeHandlerComputeWidthsID) {
@@ -610,9 +610,9 @@ sap.ui.define([
 				this._bLayoutDataChanged = true;
 			}
 			if (!this._resizeHandlerComputeWidthsID) {
-				// Triggering invalidation when the control gets resized so the width recalculations
+				// Trigger rerendering when the control is resized so width recalculations
 				// are handled in the on after rendering hook the same way as the initial width calculations.
-				this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.invalidate.bind(this));
+				this._resizeHandlerComputeWidthsID = ResizeHandler.register(this, ResponsiveFlowLayout.prototype.rerender.bind(this));
 			}
 
 			updateRows(this);
