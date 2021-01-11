@@ -2,14 +2,19 @@
  * ${copyright}
  */
 
- sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library', "sap/ui/util/defaultLinkTypes"],
+ sap.ui.define([
+	 "sap/ui/core/Renderer",
+	 "sap/ui/core/library",
+	 "sap/ui/util/defaultLinkTypes"
+	],
 	function(Renderer, coreLibrary, defaultLinkTypes) {
 	"use strict";
-
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	/**
 	 * Link renderer
@@ -30,10 +35,12 @@
 		var sTextDir = oControl.getTextDirection(),
 			sTextAlign = Renderer.getTextAlign(oControl.getTextAlign(), sTextDir),
 			bShouldHaveOwnLabelledBy = oControl._determineSelfReferencePresence(),
+			sHasPopupType = oControl.getAriaHasPopup(),
 			sHref = oControl.getHref(),
 			sRel = defaultLinkTypes(oControl.getRel(), oControl.getTarget()),
 			oAccAttributes =  {
-				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
+				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined,
+				haspopup: (sHasPopupType === AriaHasPopup.None) ? null : sHasPopupType.toLowerCase()
 			},
 			bIsValid = sHref && oControl._isHrefValid(sHref),
 			bEnabled = oControl.getEnabled(),

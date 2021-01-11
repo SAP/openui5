@@ -309,77 +309,99 @@ sap.ui.define([
 
 	// ARIA specific tests
 	QUnit.test("ARIA specific test", function(assert) {
-		var oLink1 = new Link("l1", {
-			text : sText,
-			href: "x.html",
-			target: "_blank",
-			width : "200px",
-			press:function() {
-				assert.ok(true, "This should be executed when the link is triggered");
-			}
-		}).placeAt("uiArea1");
-		sap.ui.getCore().applyChanges();
+		var oLink = new Link({
+				text : sText,
+				href: "x.html",
+				target: "_blank",
+				width : "200px",
+				press: function() {
+					assert.ok(true, "This should be executed when the link is triggered");
+				}
+			}).placeAt("uiArea1"),
+			AriaHasPopup = coreLibrary.aria.HasPopup,
+			oLinkDomRef;
 
-		var $oLink = oLink1.$();
+		sap.ui.getCore().applyChanges();
+		oLinkDomRef = oLink.getDomRef();
 
 		// ARIA role
-		assert.notOk($oLink.attr("role"), "Attribute 'role' is redundant on an anchor tag");
+		assert.notOk(oLinkDomRef.getAttribute("role"), "Attribute 'role' is redundant on an anchor tag");
 
-		oLink1.setHref("");
+		oLink.setHref("");
 		sap.ui.getCore().applyChanges();
-		assert.notOk($oLink.attr("role"), "Links without href shouldn't have a role too");
-		assert.strictEqual($oLink.attr("href"), "", "Links without href should have an empty href attribute");
+		assert.notOk(oLinkDomRef.getAttribute("role"), "Links without href shouldn't have a role too");
+		assert.strictEqual(oLinkDomRef.getAttribute("href"), "", "Links without href should have an empty href attribute");
 
 		// ARIA disabled
-		oLink1.setEnabled(false);
+		oLink.setEnabled(false);
 		sap.ui.getCore().applyChanges();
 
-		assert.ok($oLink.attr("aria-disabled"), "Attribute 'aria-disabled' should be placed on disabled links");
-		oLink1.setEnabled(true);
+		assert.ok(oLinkDomRef.getAttribute("aria-disabled"), "Attribute 'aria-disabled' should be placed on disabled links");
+		oLink.setEnabled(true);
 		sap.ui.getCore().applyChanges();
 
-		assert.notOk($oLink.attr("aria-disabled"), "Attribute 'aria-disabled' should not exist for non-disabled links");
+		assert.notOk(oLinkDomRef.getAttribute("aria-disabled"), "Attribute 'aria-disabled' should not exist for non-disabled links");
 
 		// ARIA describedby for Subtle link
-		oLink1.setSubtle(true);
+		oLink.setSubtle(true);
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual($oLink.attr("aria-describedby"). length > 0, true, "Property 'aria-describedby' should exist");
-		assert.strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkSubtleId)) !== -1), true,
-			"Subtle ID: " + oLink1._sAriaLinkSubtleId + " should be included in aria-describedby");
+		assert.strictEqual(oLinkDomRef.getAttribute("aria-describedby"). length > 0, true, "Property 'aria-describedby' should exist");
+		assert.strictEqual(((oLinkDomRef.getAttribute("aria-describedby").indexOf(oLink._sAriaLinkSubtleId)) !== -1), true,
+			"Subtle ID: " + oLink._sAriaLinkSubtleId + " should be included in aria-describedby");
 
-		oLink1.setSubtle(false);
+		oLink.setSubtle(false);
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
+		assert.notOk(oLinkDomRef.getAttribute("aria-describedby"), "Property 'aria-describedby' should not exist");
 
 		// ARIA describedby for Emphasized link
-		oLink1.setEmphasized(true);
+		oLink.setEmphasized(true);
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual($oLink.attr("aria-describedby").length > 0, true, "Property 'aria-describedby' should exist");
-		assert.strictEqual((($oLink.attr("aria-describedby").indexOf(oLink1._sAriaLinkEmphasizedId)) !== -1), true,
-			"Emphasized ID: " + oLink1._sAriaLinkEmphasizedId + " should be included in aria-describedby");
+		assert.strictEqual(oLinkDomRef.getAttribute("aria-describedby").length > 0, true, "Property 'aria-describedby' should exist");
+		assert.strictEqual(((oLinkDomRef.getAttribute("aria-describedby").indexOf(oLink._sAriaLinkEmphasizedId)) !== -1), true,
+			"Emphasized ID: " + oLink._sAriaLinkEmphasizedId + " should be included in aria-describedby");
 
-		oLink1.setEmphasized(false);
+		oLink.setEmphasized(false);
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual($oLink.attr("aria-describedby"), undefined, "Property 'aria-describedby' should not exist");
+		assert.notOk(oLinkDomRef.getAttribute("aria-describedby"), "Property 'aria-describedby' should not exist");
 
-		oLink1.addAriaLabelledBy("id1");
+		oLink.addAriaLabelledBy("id1");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(oLink1.$().attr("aria-labelledby"), "id1 " + oLink1.getId(),
+		assert.strictEqual(oLinkDomRef.getAttribute("aria-labelledby"), "id1 " + oLink.getId(),
 			"Property 'aria-labelledby' should contain the link ID");
 
-		oLink1.removeAriaLabelledBy("id1");
+		oLink.removeAriaLabelledBy("id1");
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual(oLink1.$().attr("aria-labelledby"), undefined, "Property 'aria-labelledby' should not exist");
+		assert.notOk(oLinkDomRef.getAttribute("aria-labelledby"), "Property 'aria-labelledby' should not exist");
 
-		oLink1.setText("");
+		// check initial aria-haspopup state
+		assert.notOk(oLinkDomRef.getAttribute("aria-haspopup"), "There is no aria-haspopup attribute initially.");
+
+		// act
+		oLink.setAriaHasPopup(AriaHasPopup.Menu);
 		sap.ui.getCore().applyChanges();
-		assert.strictEqual($oLink.attr("href"), undefined, "Empty links don't have href");
 
-		oLink1.destroy();
+		// check if aria-haspopup appears
+		assert.equal(oLinkDomRef.getAttribute("aria-haspopup"), AriaHasPopup.Menu.toLowerCase(),
+			"There is aria-haspopup attribute with proper value after the link property is being set to something different than None.");
+
+		// act
+		oLink.setAriaHasPopup(AriaHasPopup.None);
+		sap.ui.getCore().applyChanges();
+
+		// check if aria-haspopup disappears
+		assert.notOk(oLinkDomRef.getAttribute("aria-haspopup"),
+			"There is no aria-haspopup attribute after the link property is being set to None.");
+
+		// check ih href disappears if there is no text
+		oLink.setText("");
+		sap.ui.getCore().applyChanges();
+		assert.notOk(oLinkDomRef.getAttribute("href"), "Empty links don't have href");
+
+		oLink.destroy();
 	});
 
 	QUnit.test("textAlign set to END", function(assert) {
