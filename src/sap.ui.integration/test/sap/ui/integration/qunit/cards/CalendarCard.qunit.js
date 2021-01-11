@@ -808,7 +808,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("Only appointments", function (assert) {
+		QUnit.test("3 out of 5 appointments shown", function (assert) {
 			// Arrange
 			var done = assert.async();
 			this.oCard.setManifest(oManifest_3OutOf5Apps);
@@ -816,14 +816,19 @@ sap.ui.define([
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
 				// Assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 2 visible appointments.");
-				assert.equal(this.oCard.getModel("parameters").getData().allItems, 5, "Should have total of 2 appointments.");
+				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
+				assert.equal(this.oCard.getModel("parameters").getData().allItems, 5, "Should have total of 5 appointments.");
+
+				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+
+				// Assert
+				assert.equal(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
 
 				done();
 			}.bind(this));
 		});
 
-		QUnit.test("Only appointments", function (assert) {
+		QUnit.test("3 out of 3 appointments shown", function (assert) {
 			// Arrange
 			var done = assert.async();
 			this.oCard.setManifest(oManifest_3OutOf3Apps);
@@ -834,11 +839,16 @@ sap.ui.define([
 				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
 				assert.equal(this.oCard.getModel("parameters").getData().allItems, 3, "Should have total of 3 appointments.");
 
+				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+
+				// Assert
+				assert.equal(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
+
 				done();
 			}.bind(this));
 		});
 
-		QUnit.test("Only appointments", function (assert) {
+		QUnit.test("2 out of 2 appointments shown", function (assert) {
 			// Arrange
 			var done = assert.async();
 			this.oCard.setManifest(oManifest_2OutOf2Apps);
@@ -849,56 +859,16 @@ sap.ui.define([
 				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 2, "Should have 2 visible appointments.");
 				assert.equal(this.oCard.getModel("parameters").getData().allItems, 2, "Should have total of 2 appointments.");
 
-				done();
-			}.bind(this));
-		});
+				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
 
-		QUnit.test("Appointments", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.setManifest(oManifest_3OutOf5Apps);
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
 				// Assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 2 visible appointments.");
-				assert.equal(this.oCard.getModel("parameters").getData().allItems, 5, "Should have total of 2 appointments.");
+				assert.equal(aAppointmentsRefs.length, 2, "Should have 2 rendered appointments.");
 
 				done();
 			}.bind(this));
 		});
 
-		QUnit.test("Appointments", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.setManifest(oManifest_3OutOf3Apps);
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				// Assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
-				assert.equal(this.oCard.getModel("parameters").getData().allItems, 3, "Should have total of 3 appointments.");
-
-				done();
-			}.bind(this));
-		});
-
-		QUnit.test("Appointments", function (assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.setManifest(oManifest_2OutOf2Apps);
-
-			this.oCard.attachEvent("_ready", function () {
-				Core.applyChanges();
-				// Assert
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 2, "Should have 2 visible appointments.");
-				assert.equal(this.oCard.getModel("parameters").getData().allItems, 2, "Should have total of 2 appointments.");
-
-				done();
-			}.bind(this));
-		});
-
-		QUnit.test("No appointments", function (assert) {
+		QUnit.test("No appointments shown", function (assert) {
 			// Arrange
 			var done = assert.async();
 			this.oCard.setManifest(oManifest_NoApps);
@@ -908,6 +878,11 @@ sap.ui.define([
 				// Assert
 				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 0, "Should have 0 visible appointments.");
 				assert.equal(this.oCard.getModel("parameters").getData().allItems, 0, "Should have total of 0 appointments.");
+
+				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+
+				// Assert
+				assert.equal(aAppointmentsRefs.length, 0, "Should have 0 rendered appointments.");
 
 				done();
 			}.bind(this));
@@ -924,18 +899,6 @@ sap.ui.define([
 				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
 				assert.equal(this.oCard.getModel("parameters").getData().allItems, 3, "Should have total of 3 appointments.");
 
-				done();
-			}.bind(this));
-		});
-
-		QUnit.test("The correct number of appointments are rendered", function(assert) {
-			// Arrange
-			var done = assert.async();
-			this.oCard.setManifest(oManifest_3OutOf5Apps);
-
-			this.oCard.attachEvent("_ready", function() {
-				Core.applyChanges();
-
 				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
 
 				// Assert
@@ -945,7 +908,7 @@ sap.ui.define([
 			}.bind(this));
 		});
 
-		// creates 3 apointments before, one at the current hour, and 3 more after
+		// creates 3 appointments before, one at the current hour, and 3 more after
 		function createAppointmentsForToday(oFormatter) {
 			var oStart = new Date(),
 				oEnd = new Date(),
@@ -981,6 +944,9 @@ sap.ui.define([
 
 			this.oCard.attachEvent("_ready", function() {
 				Core.applyChanges();
+
+				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
+				assert.equal(this.oCard.getModel("parameters").getData().allItems, 7, "Should have total of 7 appointments.");
 
 				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
 

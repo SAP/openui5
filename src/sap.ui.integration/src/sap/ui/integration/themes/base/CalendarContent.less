@@ -28,9 +28,15 @@
 		padding-right: 0;
 	}
 
+	.sapFCalCardLineSeparator {
+		border-top: 0.0625rem solid @sapGroup_ContentBorderColor;
+		margin-bottom: 1rem;
+	}
+
 	.sapUiCalendarAppContainer > .sapUiCalendarAppContainerLeft {
 		padding: 0;
 		width: 15%;
+		margin: 0 0.75rem 0 0;
 		.sapUiCalendarAppStart {
 			font-size: @sapMFontMediumSize;
 			color: @sapUiBaseText;
@@ -81,8 +87,9 @@
 		margin: 0;
 	}
 	.sapUiCalLegMoreText {
-		font-size: 0.9rem;
+		font-size: @sapFontSize;
 		color: @sapUiLinkActive;
+		margin-left: 0.25rem;
 		&>.sapUiUnifiedLegendSquare {
 			display: none;
 		}
@@ -96,6 +103,10 @@
 
 	.sapUiCalendarApp:active {
 		background-color: transparent;
+	}
+
+	.sapUiUnifiedLegend {
+		padding: 1rem 0.5rem;
 	}
 }
 
@@ -141,6 +152,10 @@
 .sapFCardCalendarContent.sapMPCInCardTwoColumns {
 	.sapFCalCardLayout {
 		display: flex;
+	}
+
+	.sapFCalCardLineSeparator {
+		display: none;
 	}
 	.sapFCalCardLeftSide,
 	.sapFCalCardRightSide {

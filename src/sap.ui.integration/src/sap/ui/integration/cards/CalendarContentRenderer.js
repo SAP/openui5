@@ -50,6 +50,11 @@ sap.ui.define(["./BaseContentRenderer",
 		oRm.renderControl(oCalendarContent._oLegend);
 		oRm.close("div"); // card-legend
 
+		oRm.openStart("div", "card-line-separator");
+		oRm.class("sapFCalCardLineSeparator");
+		oRm.openEnd();
+		oRm.close("div");
+
 		oRm.close("div"); // left-side
 
 		oRm.openStart("div", "right-side");

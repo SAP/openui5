@@ -108,6 +108,7 @@ sap.ui.define([
 
 	QUnit.test("Navigating in the pickers", function(assert) {
 		var oCalendar = this.oCal,
+			oPickerBtn = oCalendar._oPickerBtn,
 			oYearPicker = oCalendar._getYearPicker(),
 			oYearRangePicker = oCalendar._getYearRangePicker();
 
@@ -118,12 +119,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.equal(oCalendar.getStartDate().getTime(), new Date(2020, 8, 1).getTime(), "startDate set correct");
+		assert.equal(oPickerBtn.getText(), "2020", "picker text is correct");
 
 		// Act
 		oCalendar._handlePrevious();
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.equal(oCalendar.getStartDate().getTime(), new Date(2019, 8, 1).getTime(), "startDate set correct");
+		assert.equal(oPickerBtn.getText(), "2019", "picker text is correct");
 
 		// Act
 		oCalendar._handlePickerButtonPress();
@@ -132,12 +135,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.equal(oYearPicker.getFirstRenderedDate().getFullYear(), 2029, "year set correct");
+		assert.equal(oPickerBtn.getText(), "2029 - 2048", "picker text is correct");
 
 		// Act
 		oCalendar._handlePrevious();
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.equal(oYearPicker.getFirstRenderedDate().getFullYear(), 2009, "year set correct");
+		assert.equal(oPickerBtn.getText(), "2009 - 2028", "picker text is correct");
 
 		// Act
 		oCalendar._handlePickerButtonPress();
@@ -161,6 +166,7 @@ sap.ui.define([
 			oOldDate = new Date(2019, 11, 1),
 			clock = sinon.useFakeTimers(oFakeNow.getTime()),
 			oCalendar = this.oCal,
+			oPickerBtn = oCalendar._oPickerBtn,
 			oMonthPicker = oCalendar._getMonthPicker(),
 			oYearPicker = oCalendar._getYearPicker(),
 			oYearRangePicker = oCalendar._getYearRangePicker();
@@ -170,6 +176,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.equal(oCalendar.getSelectedDates()[0].getStartDate().getTime(), oFakeNow.getTime(), "startDate set correct");
+		assert.equal(oPickerBtn.getText(), "January 2020", "picker text is correct");
 
 		// Arrange
 		oCalendar.getSelectedDates()[0].setStartDate(oOldDate);
@@ -181,6 +188,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.equal(oMonthPicker.getMonth(), 0, "month set correct");
+		assert.equal(oPickerBtn.getText(), "2020", "picker text is correct");
 
 		// Arrange
 		oCalendar.getSelectedDates()[0].setStartDate(oOldDate);
@@ -191,6 +199,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.equal(oYearPicker.getYear(), 2020, "year set correct");
+		assert.equal(oPickerBtn.getText(), "2010 - 2029", "picker text is correct");
 
 		// Arrange
 		oCalendar.getSelectedDates()[0].setStartDate(oOldDate);
@@ -201,6 +210,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		// Assert
 		assert.equal(oYearRangePicker.getYear(), 2010, "year range set correct");
+		assert.notOk(oPickerBtn.getVisible(), "picker button is not visible");
 
 		// Cleanup
 		clock.restore();

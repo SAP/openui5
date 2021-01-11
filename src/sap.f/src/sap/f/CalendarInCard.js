@@ -372,7 +372,7 @@ sap.ui.define([
 	 */
 	CalendarInCard.prototype._handlePrevious = function() {
 		Calendar.prototype._handlePrevious.apply(this, arguments);
-		this._handleArrowNavigation(1);
+		this._handleArrowNavigation(-1);
 	};
 
 	/**
@@ -383,7 +383,7 @@ sap.ui.define([
 	 */
 	CalendarInCard.prototype._handleNext = function() {
 		Calendar.prototype._handleNext.apply(this, arguments);
-		this._handleArrowNavigation(-1);
+		this._handleArrowNavigation(1);
 	};
 
 	/**
