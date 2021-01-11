@@ -234,8 +234,13 @@ sap.ui.define([
 		});
 
 		if (oGroupNode) {
+			// Note: parent filter is just eq/and, no need for parentheses, but
+			// $$filterBeforeAggregate is a black box! Put specific filter 1st for performance!
 			mQueryOptions.$$filterBeforeAggregate
-				= _Helper.getPrivateAnnotation(oGroupNode, "filter");
+				= _Helper.getPrivateAnnotation(oGroupNode, "filter")
+					+ (mQueryOptions.$$filterBeforeAggregate
+						? " and (" + mQueryOptions.$$filterBeforeAggregate + ")"
+						: "");
 		}
 		if (!bHasGrandTotal) { // Note: UI5__count currently handled only by _GrandTotalHelper!
 			delete mQueryOptions.$count;

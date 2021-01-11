@@ -363,8 +363,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Using PICT /r:42152
+	// Using PICT /r:4848
 	//
+	// sFilterBeforeAggregate: "", "~filterBeforeAggregate~"
 	// sFilteredOrderBy: "", "~filteredOrderBy~"
 	// bHasGrandTotal:   false, true
 	// bLeaf:            false, true
@@ -374,41 +375,47 @@ sap.ui.define([
 	// IF [oParentGroupNode] = "undefined" THEN [bLeaf] = "false";
 	// IF [oParentGroupNode] = "{}" THEN [bHasGrandTotal] = "false";
 [{
-	sFilteredOrderBy : "",
-	bHasGrandTotal : false,
-	bLeaf : true,
-	oParentGroupNode : {},
-	bSubtotals : false
-}, {
-	sFilteredOrderBy : "",
+	sFilterBeforeAggregate : "",
+	sFilteredOrderBy : "~filteredOrderBy~",
 	bHasGrandTotal : true,
 	bLeaf : false,
 	oParentGroupNode : undefined,
-	bSubtotals : true
+	bSubtotals : false
 }, {
-	sFilteredOrderBy : "~filteredOrderBy~",
+	sFilterBeforeAggregate : "",
+	sFilteredOrderBy : "",
 	bHasGrandTotal : false,
 	bLeaf : false,
 	oParentGroupNode : {},
 	bSubtotals : true
 }, {
-	sFilteredOrderBy : "~filteredOrderBy~",
-	bHasGrandTotal : false,
-	bLeaf : false,
-	oParentGroupNode : undefined,
-	bSubtotals : false
-}, {
+	sFilterBeforeAggregate : "",
 	sFilteredOrderBy : "~filteredOrderBy~",
 	bHasGrandTotal : false,
 	bLeaf : true,
 	oParentGroupNode : {},
 	bSubtotals : false
 }, {
+	sFilterBeforeAggregate : "~filterBeforeAggregate~",
 	sFilteredOrderBy : "~filteredOrderBy~",
+	bHasGrandTotal : false,
+	bLeaf : false,
+	oParentGroupNode : undefined,
+	bSubtotals : true
+}, {
+	sFilterBeforeAggregate : "~filterBeforeAggregate~",
+	sFilteredOrderBy : "",
+	bHasGrandTotal : false,
+	bLeaf : true,
+	oParentGroupNode : {},
+	bSubtotals : false
+}, {
+	sFilterBeforeAggregate : "~filterBeforeAggregate~",
+	sFilteredOrderBy : "",
 	bHasGrandTotal : true,
 	bLeaf : false,
 	oParentGroupNode : undefined,
-	bSubtotals : false
+	bSubtotals : true
 }].forEach(function (oPICT) {
 	QUnit.test("createGroupLevelCache: " + JSON.stringify(oPICT), function (assert) {
 		var oAggregation = { // filled before by buildApply
@@ -435,8 +442,26 @@ sap.ui.define([
 			aGroupBy = ["a"],
 			iLevel = oPICT.oParentGroupNode ? 3 : 1,
 			mQueryOptions = {
+				$$filterBeforeAggregate : oPICT.sFilterBeforeAggregate,
 				$orderby : "~orderby~"
 			};
+
+		function isFilterBeforeAggregateOK(o) {
+			if (oPICT.oParentGroupNode) {
+				return o.$$filterBeforeAggregate === (oPICT.sFilterBeforeAggregate
+					? "~filter~ and (~filterBeforeAggregate~)"
+					: "~filter~");
+			}
+
+			return o.$$filterBeforeAggregate === oPICT.sFilterBeforeAggregate;
+		}
+
+		function isOK(o) {
+			return isFilterBeforeAggregateOK(o)
+				&& (oPICT.sFilteredOrderBy
+					? o.$orderby === oPICT.sFilteredOrderBy
+					: !("$orderby" in o));
+		}
 
 		if (!oPICT.bHasGrandTotal) {
 			mQueryOptions.$count = "n/a";
@@ -469,14 +494,7 @@ sap.ui.define([
 		} else {
 			this.mock(_AggregationHelper).expects("buildApply")
 				.withExactArgs(sinon.match.same(oAggregation), sinon.match(function (o) {
-						return o === mQueryOptions
-							&& !("$count" in o)
-							&& (oPICT.oParentGroupNode
-								? o.$$filterBeforeAggregate === "~filter~"
-								: !("$$filterBeforeAggregate" in o))
-							&& (oPICT.sFilteredOrderBy
-								? o.$orderby === oPICT.sFilteredOrderBy
-								: !("$orderby" in o));
+						return !("$count" in o) && o === mQueryOptions && isOK(o);
 					}), iLevel)
 				.returns(mCacheQueryOptions);
 			this.mock(_GrandTotalHelper).expects("enhanceCacheWithGrandTotal").never();
@@ -485,8 +503,10 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oAggregationCache.oRequestor), "Foo",
 				sinon.match(function (o) {
 					// Note: w/o grand total, buildApply determines the query options to be used!
-					return o === (oPICT.bHasGrandTotal ? mQueryOptions : mCacheQueryOptions)
-						&& o.$count;
+					return o.$count
+						&& (oPICT.bHasGrandTotal
+							? o === mQueryOptions && isOK(o)
+							: o === mCacheQueryOptions);
 				}), true)
 			.returns(oCache);
 
@@ -509,8 +529,6 @@ sap.ui.define([
 			"~sPredicate~");
 	});
 });
-	// Q: Can there already be a $$filterBeforeAggregate when creating a group level cache?
-	// A: Yes, but it does not matter anymore to fetch the children of a given parent!
 
 	//*********************************************************************************************
 [false, true].forEach(function (bLeaf) {

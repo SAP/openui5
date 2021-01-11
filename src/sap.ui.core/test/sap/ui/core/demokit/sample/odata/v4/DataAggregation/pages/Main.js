@@ -75,8 +75,10 @@ sap.ui.define([
 						errorMessage : "Could not select row: " + iRow,
 						id : "table",
 						success : function (oTable) {
-							Opa5.assert.strictEqual(oTable.getFirstVisibleRow(), iRow,
-								"Scrolled table to row: " + iRow + ". " + sComment);
+							if (iRow < Infinity) {
+								Opa5.assert.strictEqual(oTable.getFirstVisibleRow(), iRow,
+									"Scrolled table to row: " + iRow + ". " + sComment);
+							} // scrolled to the end
 						},
 						viewName : sViewName
 					});

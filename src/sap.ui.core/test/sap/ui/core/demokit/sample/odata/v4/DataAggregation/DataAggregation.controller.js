@@ -4,9 +4,10 @@
 sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/core/sample/common/Controller",
+	"sap/ui/model/Filter",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/test/TestUtils"
-], function (UriParameters, Controller, JSONModel, TestUtils) {
+], function (UriParameters, Controller, Filter, JSONModel, TestUtils) {
 	"use strict";
 
 	return Controller.extend("sap.ui.core.sample.odata.v4.DataAggregation.DataAggregation", {
@@ -31,6 +32,9 @@ sap.ui.define([
 					groupLevels : ['Country', 'Region', 'Segment']
 				},
 				oUriParameters = UriParameters.fromQuery(location.search),
+				sFilter = TestUtils.retrieveData( // controlled by OPA
+						"sap.ui.core.sample.odata.v4.DataAggregation.filter")
+					|| oUriParameters.get("filter"),
 				sGrandTotalAtBottomOnly = TestUtils.retrieveData( // controlled by OPA
 						"sap.ui.core.sample.odata.v4.DataAggregation.grandTotalAtBottomOnly")
 					|| oUriParameters.get("grandTotalAtBottomOnly"),
@@ -62,6 +66,18 @@ sap.ui.define([
 				oAggregation.subtotalsAtBottomOnly = sSubtotalsAtBottomOnly === "true";
 			}
 			oRowsBinding.setAggregation(oAggregation);
+			if (sFilter) { // e.g. "LocalCurrency GT G,Region LT S"
+				oRowsBinding.filter(sFilter.split(",").map(function (sSingleFilter) {
+					var aPieces = sSingleFilter.split(" ");
+
+					return new Filter({
+						path : aPieces[0],
+						operator : aPieces[1],
+						value1 : aPieces[2],
+						value2 : aPieces[3]
+					});
+				}));
+			}
 			oRowsBinding.resume(); // now that "ui" model is available...
 		},
 
