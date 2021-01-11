@@ -1,4 +1,4 @@
-<mvc:View 
+<mvc:View
 	controllerName="sap.m.sample.QuickViewNavOrigin.C"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
@@ -12,6 +12,7 @@
 				text="Open QuickView"
 				width="200px"
 				press=".handleQuickViewBtnPress"
-				class="sapUiSmallMarginBottom" />
+				class="sapUiSmallMarginBottom"
+				ariaHasPopup="Dialog" />
 	</Page>
 </mvc:View>

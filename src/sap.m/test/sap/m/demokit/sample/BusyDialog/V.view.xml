@@ -7,6 +7,7 @@
 		<Button
 			text="Show Busy Dialog"
 			press="onOpenDialog"
-			class="sapUiSmallMarginBottom" />
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 	</l:VerticalLayout>
 </mvc:View>

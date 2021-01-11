@@ -18,11 +18,13 @@
 		<Button
 			class="sapUiSmallMarginBottom"
 			text="Show Table Select Dialog"
-			press=".handleTableSelectDialogPress" />
+			press=".handleTableSelectDialogPress"
+			ariaHasPopup="Dialog" />
 		<Button
 			class="sapUiSmallMarginBottom"
 			text="Show Table Select Dialog (Multi)"
-			press=".handleTableSelectDialogPress">
+			press=".handleTableSelectDialogPress"
+			ariaHasPopup="Dialog">
 			<customData>
 				<core:CustomData key="multi" value="true" />
 			</customData>
@@ -30,7 +32,8 @@
 		<Button
 			class="sapUiSmallMarginBottom"
 			text="Show Table Select Dialog (draggable=true)"
-			press=".handleTableSelectDialogPress">
+			press=".handleTableSelectDialogPress"
+			ariaHasPopup="Dialog">
 			<customData>
 				<core:CustomData key="multi" value="true" />
 				<core:CustomData key="draggable" value="true" />
@@ -39,7 +42,8 @@
 		<Button
 			text="Show Table Select Dialog (resizable=true)"
 			class="sapUiSmallMarginBottom"
-			press=".handleTableSelectDialogPress">
+			press=".handleTableSelectDialogPress"
+			ariaHasPopup="Dialog">
 			<customData>
 				<core:CustomData key="multi" value="true" />
 				<core:CustomData key="resizable" value="true" />
@@ -48,7 +52,8 @@
 		<Button
 			class="sapUiSmallMarginBottom"
 			text="Show Table Select Dialog (Remember)"
-			press=".handleTableSelectDialogPress">
+			press=".handleTableSelectDialogPress"
+			ariaHasPopup="Dialog">
 			<customData>
 				<core:CustomData key="multi" value="true" />
 				<core:CustomData key="remember" value="true" />
@@ -57,7 +62,8 @@
 		<Button
 			text="Show Table Select Dialog (Custom confirmation button text)"
 			class="sapUiSmallMarginBottom"
-			press=".handleTableSelectDialogPress">
+			press=".handleTableSelectDialogPress"
+			ariaHasPopup="Dialog">
 			<customData>
 				<core:CustomData key="multi" value="true" />
 				<core:CustomData key="confirmButtonText" value="Save" />
@@ -66,7 +72,8 @@
 		<Button
 			text="Show Table Select Dialog with Responsive Padding"
 			class="sapUiSmallMarginBottom"
-			press=".handleTableSelectDialogPress">
+			press=".handleTableSelectDialogPress"
+			ariaHasPopup="Dialog">
 			<customData>
 				<core:CustomData key="resizable" value="true" />
 				<core:CustomData key="draggable" value="true" />

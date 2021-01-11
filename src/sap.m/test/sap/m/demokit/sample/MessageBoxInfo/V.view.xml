@@ -8,16 +8,19 @@
 			text="Show Details - Text"
 			press=".onShowTextInfo"
 			width="250px"
-			class="sapUiSmallMarginBottom" />
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 		<Button
 			text="Show Details - FormattedText"
 			press=".onShowFormattedTextInfo"
 			width="250px"
-			class="sapUiSmallMarginBottom" />
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 		<Button
 			text="Show Details - JSON"
 			press=".onShowJSONInfo"
 			width="250px"
-			class="sapUiSmallMarginBottom" />
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 	</l:VerticalLayout>
 </mvc:View>

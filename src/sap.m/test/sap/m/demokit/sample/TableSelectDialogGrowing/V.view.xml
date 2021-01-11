@@ -8,7 +8,8 @@
 		<Button
 			class="sapUiSmallMarginBottom"
 			text="Show Table Select Dialog (Growing: True)"
-			press=".handleTableSelectDialogPress">
+			press=".handleTableSelectDialogPress"
+			ariaHasPopup="Dialog">
 			<customData>
 				<core:CustomData key="growing" value="true" />
 			</customData>
@@ -16,6 +17,7 @@
 		<Button
 			class="sapUiSmallMarginBottom"
 			text="Show Table Select Dialog (Growing: False)"
-			press=".handleTableSelectDialogPress" />
+			press=".handleTableSelectDialogPress"
+			ariaHasPopup="Dialog" />
 	</l:VerticalLayout>
 </mvc:View>

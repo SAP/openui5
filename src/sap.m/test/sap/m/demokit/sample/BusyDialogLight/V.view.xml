@@ -11,6 +11,7 @@
 		<Button
 			text="Show Light Busy Dialog"
 			press="handlePress"
-			class="sapUiSmallMarginBottom" />
+			class="sapUiSmallMarginBottom"
+			ariaHasPopup="Dialog" />
 	</l:VerticalLayout>
 </mvc:View>

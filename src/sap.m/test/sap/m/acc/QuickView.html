@@ -57,6 +57,7 @@
 
 		var oSinglePageQuickViewButton = new sap.m.Button("SinglePageQVButton", {
 			text: "Open a single page quick view",
+			ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 			press: function() {
 				oQuickView2.openBy(this);
 			}

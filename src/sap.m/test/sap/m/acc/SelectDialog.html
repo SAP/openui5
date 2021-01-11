@@ -111,6 +111,7 @@
 			}),
 				oButton1 = new sap.m.Button("Button1", {
 					text: "SelectDialog in single selection mode",
+					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 					press: function (oEvent) {
 						// initiate model
 						oSelectDialog1.setModel(oModelList);
@@ -150,6 +151,7 @@
 
 				oButton2 = new sap.m.Button("Button4", {
 					text: "SelectDialog in multi selection mode",
+					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 					press: function () {
 						// prefilter dialog
 						var itemsBinding = oSelectDialog2.getBinding("items");
