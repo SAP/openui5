@@ -52,5 +52,32 @@
         ]
       }
     ]
+  },
+  "1.84.4": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "680281c041056a1149f9d17cf07d9edd8222026d",
+        "type": "FIX",
+        "text": " Fixed MDCChart Toolbar not having reference to inner sap.chart.Chart",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180004512"
+          }
+        ]
+      },
+      {
+        "id": "8d1972a50ad75f5be43664feea21650d972e81aa",
+        "type": "FIX",
+        "text": " Field: Currency field brings error if no custom currencies",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180000278"
+          }
+        ]
+      }
+    ]
   }
 }

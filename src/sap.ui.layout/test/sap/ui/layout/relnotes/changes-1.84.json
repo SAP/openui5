@@ -47,5 +47,21 @@
         ]
       }
     ]
+  },
+  "1.84.4": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "9fec5500f42f390a48b441c59c0584516da4081f",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: now rendered properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080397424"
+          }
+        ]
+      }
+    ]
   }
 }

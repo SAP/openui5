@@ -47,5 +47,25 @@
         ]
       }
     ]
+  },
+  "1.84.4": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "0d5412105f6ff06f5c6c1b8b795597a63a9f8d2e",
+        "type": "FIX",
+        "text": " sap.uxap.ObjectPageLayout: Prevent console error",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070494606"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070496484"
+          }
+        ]
+      }
+    ]
   }
 }

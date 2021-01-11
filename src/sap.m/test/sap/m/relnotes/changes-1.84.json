@@ -283,5 +283,32 @@
         ]
       }
     ]
+  },
+  "1.84.4": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "998f4a5caf7f519fd1dd97aea1151bb12298b257",
+        "type": "FIX",
+        "text": " sap.m.Link: new API exposed to set aria-haspopup according to ARIA 1.1",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "cebb0cb4d0925a1ead18e26ed114e093c58224a8",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: second hour number now properly typed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007998632020"
+          }
+        ]
+      }
+    ]
   }
 }
