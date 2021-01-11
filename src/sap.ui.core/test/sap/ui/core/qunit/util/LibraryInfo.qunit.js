@@ -7,6 +7,27 @@ sap.ui.define([
 ], function(LibraryInfo, Log, URI) {
 	"use strict";
 
+	var ResourcesUtil = {
+		getResourceOriginPath: function (sPath) {
+			var oConfig, sOrigin,
+				oUri = URI(sPath);
+			if (oUri && oUri.is("absolute")) {
+				return sPath;
+			}
+			oConfig = window['sap-ui-documentation-config'];
+			sOrigin = (oConfig && oConfig.demoKitResourceOrigin) || '.';
+			return sOrigin + this._formatPath(sPath);
+		},
+		_formatPath: function(sPath) {
+			sPath = sPath.replace(/^\.\//, '/');
+
+			if (!sPath.match(/^\//)) {
+				sPath = "/" + sPath;
+			}
+			return sPath;
+		}
+	};
+
 	QUnit.assert.sameURL = function(actual, expected, message) {
 		this.equal(
 			new URI(actual).normalize().toString(),
@@ -365,6 +386,29 @@ sap.ui.define([
 
 	QUnit.test("getInterface", function(assert) {
 		assert.equal(this.oLibraryInfo.getInterface(), this.oLibraryInfo, "Should return the instance");
+	});
+
+	QUnit.module("Resource URL", {
+		beforeEach: function() {
+			this.oExternalLibInfo = new LibraryInfo();
+		},
+		afterEach: function() {
+			this.oExternalLibInfo.destroy();
+		}
+	});
+
+	QUnit.test("Data loaded from external resource URL", function(assert) {
+		var fFallback = function() {
+			assert.equal(arguments[0].data != null, true, "The resource URL can be hooked from LibraryInfo extension");
+			done();
+		},
+		done = assert.async();
+		this.oExternalLibInfo.getResourceUrl = function(sUrl) {
+			return ResourcesUtil.getResourceOriginPath(sUrl);
+		};
+
+		this.oExternalLibInfo._loadLibraryMetadata("sap.ui.core", fFallback);
+
 	});
 
 });

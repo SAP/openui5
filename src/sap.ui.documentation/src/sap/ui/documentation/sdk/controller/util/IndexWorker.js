@@ -6,8 +6,30 @@
 	"use strict";
 	/* global lunr, importScripts, XMLHttpRequest, JSON, Object */
 
+	self.importScripts("../../../../../../../documentation-config.js");
+
+	var ResourcesUtil = {
+		/**
+		 *
+		 * @param {string} sPath Relative path to resources
+		 */
+		getResourceOriginPath: function (sPath) {
+			var oConfig = self['sap-ui-documentation-config'],
+				sOrigin = (oConfig && oConfig.demoKitResourceOrigin) || '.';
+			return sOrigin + this._formatPath(sPath);
+		},
+		_formatPath: function(sPath) {
+			sPath = sPath.replace(/^\.\//, '/');
+
+			if (!sPath.match(/^\//)) {
+				sPath = "/" + sPath;
+			}
+			return sPath;
+		}
+	};
+
 	var URL = {
-		SEARCH_INDEX: "../../../../../../../searchindex.json",
+		SEARCH_INDEX: ResourcesUtil.getResourceOriginPath("../../../../../../../searchindex.json"),
 		SEARCH_LIB: "../../thirdparty/elasticlunr.js",
 		PROMISE_POLYFIL_LIB: "../../../../../../sap/ui/thirdparty/es6-promise.js"
 	};

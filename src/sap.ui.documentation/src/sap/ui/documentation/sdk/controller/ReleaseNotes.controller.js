@@ -9,12 +9,13 @@ sap.ui.define([
     "sap/ui/model/json/JSONModel",
     "sap/ui/documentation/library",
     "sap/base/util/Version",
-    "sap/base/Log"
-], function(jQuery, BaseController, JSONModel, library, Version, Log) {
+    "sap/base/Log",
+    "sap/ui/documentation/sdk/util/Resources"
+], function(jQuery, BaseController, JSONModel, library, Version, Log, ResourcesUtil) {
 		"use strict";
 
-		var sNeoAppJsonPath = "neo-app.json",
-			sSapUiVersionJsonPath = "resources/sap-ui-version.json";
+		var sNeoAppJsonPath = ResourcesUtil.getResourceOriginPath("neo-app.json"),
+			sSapUiVersionJsonPath = ResourcesUtil.getResourceOriginPath("resources/sap-ui-version.json");
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.ReleaseNotes", {
 
