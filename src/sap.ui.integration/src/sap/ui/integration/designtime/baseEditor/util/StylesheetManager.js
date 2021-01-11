@@ -20,7 +20,7 @@ sap.ui.define([
 	 * @typedef {object} StoreItem
 	 * @private
 	 * @property {string} id - DOM Node ID
-	 * @property {integer} counter - Indicates how many users the loaded file has
+	 * @property {int} counter - Indicates how many users the loaded file has
 	 * @property {'SUCCESS'|'FAIL'|'PENDING'} status - Loading status
 	 */
 

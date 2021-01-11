@@ -198,7 +198,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.variants.VariantModel} mPropertyBag.model - Variant management model
 	 *
 	 * @returns {object} oParametersWithIndex - Return object
-	 * @returns {integer} oParametersWithIndex.index - The index in the array of variant URL parameters
+	 * @returns {int} oParametersWithIndex.index - The index in the array of variant URL parameters
 	 * @returns {undefined | string[]} [oParametersWithIndex.parameters] - array of variant URL parameters or undefined when no shell is present
 	 *
 	 * @private
@@ -330,7 +330,7 @@ sap.ui.define([
 		 * @param {sap.ui.fl.variants.VariantModel} mPropertyBag.model - Variant management model
 		 *
 		 * @returns {object} oParametersWithIndex - Return object
-		 * @returns {integer} oParametersWithIndex.index - The index at which the URL parameter is present
+		 * @returns {int} oParametersWithIndex.index - The index at which the URL parameter is present
 		 * @returns {undefined | string[]} [oParametersWithIndex.parameters] - array of variant URL parameters after removing the desired parameter
 		 *
 		 * @private

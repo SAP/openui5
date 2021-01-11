@@ -50,7 +50,7 @@ sap.ui.define(['sap/m/PlanningCalendarLegend', 'sap/ui/unified/CalendarLegendIte
 
 		/**
 		 * Makes or returns the object, defining how many legend items are hidden.
-		 * @param {integer} iItemsLeft the number of hidden legend items
+		 * @param {int} iItemsLeft the number of hidden legend items
 		 * @returns {sap.ui.unified.CalendarLegendItem} the object
 		 */
 		PlanningCalendarInCardLegend.prototype._getMoreItemsText = function (iItemsLeft) {

@@ -303,12 +303,12 @@ sap.ui.define([
 						/**
 						 * The row index, from which the border is reached.
 						 */
-						row: {type: "integer"},
+						row: {type: "int"},
 
 						/**
-						 * The the column index, from which the border is reached.
+						 * The column index, from which the border is reached.
 						 */
-						column: {type: "integer"}
+						column: {type: "int"}
 					}
 				}
 			},
@@ -1305,8 +1305,8 @@ sap.ui.define([
 	 * @public
 	 * @experimental Since 1.85. Behavior might change.
 	 * @param {sap.f.NavigationDirection} sDirection The navigation direction.
-	 * @param {integer} iRow The row index of the starting position.
-	 * @param {integer} iColumn The column index of the starting position.
+	 * @param {int} iRow The row index of the starting position.
+	 * @param {int} iColumn The column index of the starting position.
 	 */
 	GridContainer.prototype.focusItemByDirection = function (sDirection, iRow, iColumn) {
 		this._oItemNavigation.focusItemByDirection(this, sDirection, iRow, iColumn);

@@ -198,9 +198,9 @@ sap.ui.define([
 
 			/**
 			 * Decreases the drop index.
-			 * @param {integer} iBeginDragIndex Index of dragged control
+			 * @param {int} iBeginDragIndex Index of dragged control
 			 * @param {sap.m.IconTabFilter[]} aItems All items in the header/select list
-			 * @returns {integer} The new index of the item
+			 * @returns {int} The new index of the item
 			 * @private
 			 */
 			_decreaseDropIndex: function (iBeginDragIndex, aItems) {
@@ -225,10 +225,10 @@ sap.ui.define([
 
 			/**
 			 * Increases the drop index.
-			 * @param {integer} iBeginDragIndex Index of dragged control
+			 * @param {int} iBeginDragIndex Index of dragged control
 			 * @param {array} aItems All items in the header
-			 * @param {integer} iMaxIndex Maximum allowed index. For the header this is the end of the tab strip.
-			 * @returns {integer} The new index of the item
+			 * @param {int} iMaxIndex Maximum allowed index. For the header this is the end of the tab strip.
+			 * @returns {int} The new index of the item
 			 * @private
 			 */
 			_increaseDropIndex: function (iBeginDragIndex, aItems, iMaxIndex) {
@@ -254,7 +254,7 @@ sap.ui.define([
 			 *
 			 * @param {object} oDraggedControl Control that is going to be moved
 			 * @param {number} iKeyCode Key code
-			 * @param {integer} iMaxIndex Maximum allowed index. For the header this is the end of the tab strip.
+			 * @param {int} iMaxIndex Maximum allowed index. For the header this is the end of the tab strip.
 			 * @returns {boolean} returns true is scrolling will be needed
 			 */
 			moveItem: function (oDraggedControl, iKeyCode, iMaxIndex) {

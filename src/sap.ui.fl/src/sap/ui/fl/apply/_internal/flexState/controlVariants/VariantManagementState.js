@@ -253,7 +253,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.reference - Component reference
 	 *
-	 * @returns {integer} Index at which the variant was added
+	 * @returns {int} Index at which the variant was added
 	 * @private
 	 * @ui5-restricted
 	 */
@@ -281,7 +281,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.reference - Component reference
 	 *
-	 * @returns {integer} Index from which the variant was removed
+	 * @returns {int} Index from which the variant was removed
 	 * @private
 	 * @ui5-restricted
 	 */
@@ -309,9 +309,9 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.variantData - Variant data
 	 * @param {string} mPropertyBag.vmReference - Variant management reference
 	 * @param {string} mPropertyBag.reference - Component reference
-	 * @param {integer} mPropertyBag.previousIndex - Previous index of variant object
+	 * @param {int} mPropertyBag.previousIndex - Previous index of variant object
 	 *
-	 * @returns {integer} The updated index for the passed variant data
+	 * @returns {int} The updated index for the passed variant data
 	 * @private
 	 * @ui5-restricted
 	 */

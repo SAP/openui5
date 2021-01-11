@@ -229,7 +229,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/ui/thirdparty/jquery", "sap/base/Log"]
 
 	/**
 	 * Is the drag still active or it has ended.
-	 * @returns {bool} True if the drag is still active, false if it was ended.
+	 * @returns {boolean} True if the drag is still active, false if it was ended.
 	 */
 	GridDragOver.prototype._isDragActive = function() {
 		return this._oDragControl && this._oDropContainer;

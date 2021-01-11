@@ -876,7 +876,7 @@ function(
 	/**
 	 * A callback executed on this._validateToken call
 	 *
-	 * @param {integer} iOldLength Prior validation length of the Tokens
+	 * @param {int} iOldLength Prior validation length of the Tokens
 	 * @param {boolean} bValidated Is token/input successfully validated
 	 * @private
 	 */

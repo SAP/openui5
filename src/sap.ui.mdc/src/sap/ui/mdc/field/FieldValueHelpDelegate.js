@@ -80,7 +80,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.ListBinding} oListBinding List binding
 	 * @param {sap.ui.model.Filter} oFilter Filter
 	 * @param {function} fnCallback Callback function after result has been received
-	 * @param {integer} iRequestedItems Number of requested items
+	 * @param {int} iRequestedItems Number of requested items
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp, sap.ui.mdc.field.FieldValueHelpMTableWrapper
 	 * @since 1.81.0

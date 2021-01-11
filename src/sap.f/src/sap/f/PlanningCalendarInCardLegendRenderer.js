@@ -69,8 +69,8 @@ sap.ui.define(['sap/m/PlanningCalendarLegendRenderer', 'sap/ui/core/Renderer'],
 		/**
 		 * Determines how many custom items will be rendered.
 		 * @param {sap.ui.unified.CalendarLegend} oLeg an object representation of the legend that should be rendered
-		 * @param {integer} iCustomItemsLength the length of the custom items
-		 * @returns {integer} the length of the custom items to be rendered
+		 * @param {int} iCustomItemsLength the length of the custom items
+		 * @returns {int} the length of the custom items to be rendered
 		 * @override
 		 */
 		PlanningCalendarInCardLegendRenderer.defineItemsLength = function(oLeg, iCustomItemsLength) {

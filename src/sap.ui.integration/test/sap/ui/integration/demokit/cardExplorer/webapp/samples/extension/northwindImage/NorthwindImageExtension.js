@@ -4,7 +4,7 @@ sap.ui.define(["sap/ui/integration/Extension"], function (Extension) {
 	/**
 	 * The length of the Northwind specific OLE header inside images.
 	 * Calculated in base64 encoded string.
-	 * @const {integer}
+	 * @const {int}
 	 */
 	var NORTHWIND_OLE_HEADER_LENGTH = 104;
 

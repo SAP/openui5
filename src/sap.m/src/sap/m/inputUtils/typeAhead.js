@@ -49,8 +49,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	 * Selects part of the text in the input if the input is focused.
 	 *
 	 * @param oInput {sap.m.Input}
-	 * @param iStart {integer} From which character to start.
-	 * @param iEnd {integer} Which character to end with.
+	 * @param iStart {int} From which character to start.
+	 * @param iEnd {int} Which character to end with.
 	 */
 	function _selectTextIfFocused(oInput, iStart, iEnd) {
 		if (document.activeElement === oInput.getFocusDomRef()) {

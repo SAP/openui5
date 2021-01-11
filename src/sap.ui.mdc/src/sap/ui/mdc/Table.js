@@ -769,7 +769,7 @@ sap.ui.define([
 	/**
 	 * Sets the delay in milliseconds, after which the busy indicator will show up for the inner table.
 	 *
-	 * @param {integer} iDelay the delay in milliseconds
+	 * @param {int} iDelay the delay in milliseconds
 	 * @returns {sap.ui.mdc.Table} Returns <code>this</code> to allow method chaining
 	 */
 	Table.prototype.setBusyIndicatorDelay = function(iDelay) {

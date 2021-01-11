@@ -69,7 +69,7 @@ sap.ui.define([
 
 	/**
 	 * The time between tab activation and the disappearance of the badge.
-	 * @constant {integer}
+	 * @constant {int}
 	 */
 	var BADGE_AUTOHIDE_TIME = 3000;
 

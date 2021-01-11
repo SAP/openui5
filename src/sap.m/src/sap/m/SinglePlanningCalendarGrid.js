@@ -1103,7 +1103,7 @@ sap.ui.define([
 		 * the next or preveous day or week
 		 *
 		 * @param {sap.ui.unified.CalendarDate} oCellStartDate The start date the cell or the visible part of the appointment
-		 * @param {integer} iDirection The key the was pressed
+		 * @param {int} iDirection The key the was pressed
 		 * @returns {boolean} Idicator if the gird border is reached
 		 * @private
 		 */

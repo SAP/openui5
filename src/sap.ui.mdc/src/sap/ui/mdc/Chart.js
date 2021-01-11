@@ -665,7 +665,7 @@ sap.ui.define([
 
 		/**
 		 * Sets the visibility of the legend
-		 * @param {bool} bVisible true to show legend, false to hide
+		 * @param {boolean} bVisible true to show legend, false to hide
 		 *
 		 * @experimental
 		 * @private
@@ -828,7 +828,7 @@ sap.ui.define([
 		 * Adds a Item to the chart
 		 *
 		 * @param {sap.ui.mdc.chart.Item} oItem a chart Item
-		 * @param {bool} bSuppressInvalidate Suppress invalidation of the control
+		 * @param {boolean} bSuppressInvalidate Suppress invalidation of the control
 		 *
 		 * @private
 		 * @experimental
@@ -861,7 +861,7 @@ sap.ui.define([
 		 * Inserts an Item into the chart
 		 * @param {sap.ui.mdc.chart.Item} oItem a chart Item
 		 * @param {int} iIndex the index
-		 * @param {bool} bSuppressInvalidate Suppress invalidation of the control
+		 * @param {boolean} bSuppressInvalidate Suppress invalidation of the control
 		 *
 		 * @experimental
 		 * @private
@@ -1460,7 +1460,7 @@ sap.ui.define([
 
 		/**
 		 * Adds/Removes the overlay shown above the inner chart
-		 * @param {bool} bShow true to show overlay, false to hide
+		 * @param {boolean} bShow true to show overlay, false to hide
 		 *
 		 * @experimental
 		 * @private
@@ -1703,7 +1703,7 @@ sap.ui.define([
 
 		/**
 		 * Sets the ShowChartTooltip Property
-		 * @param {bool} bValue new value
+		 * @param {boolean} bValue new value
 		*/
 		Chart.prototype.setShowChartTooltip = function (bValue) {
 			this.setProperty("showChartTooltip", bValue);

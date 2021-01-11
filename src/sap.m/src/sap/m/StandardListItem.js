@@ -240,7 +240,7 @@ sap.ui.define([
 	 * Measures the info text width.
 	 * @param {boolean} bThemeChanged Indicated whether font style should be reinitialized if theme is changed
 	 *
-	 * @returns {integer} Info text width
+	 * @returns {int} Info text width
 	 * @private
 	 */
 	StandardListItem.prototype._measureInfoTextWidth = function(bThemeChanged) {

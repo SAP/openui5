@@ -1401,8 +1401,8 @@ sap.ui.define([
 	 * Moves a tab by a specific key code
 	 *
 	 * @param {object} oTab The event object
-	 * @param {integer} iKeyCode Key code
-	 * @param {integer} iMaxIndex The end of the tab strip`
+	 * @param {int} iKeyCode Key code
+	 * @param {int} iMaxIndex The end of the tab strip`
 	 * @private
 	 */
 	IconTabHeader.prototype._moveTab = function (oTab, iKeyCode, iMaxIndex) {
