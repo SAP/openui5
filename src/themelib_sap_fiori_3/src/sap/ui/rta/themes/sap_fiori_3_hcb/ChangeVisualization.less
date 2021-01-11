@@ -1,0 +1,106 @@
+/******************************************************************
+	Style of the RTA Change Visualization - Quartz hcb theme
+*******************************************************************/
+@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColor: @sapUiAccent6;  // #6bd3ff
+@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolid: @sapUiAccent5; // #8CA7D5
+@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorFocus: white;
+@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorHover: @sapUiAccent8; // #B2E484
+@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolidHover: @sapUiHcEnhancedForeground; // #03B803
+@_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColor: @sapUiAccent1; // #FFC847
+@_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid: @sapUiAccent2; // #ED884A
+@_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorFocus: white;
+@_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolidHover:@sapUiAccent4; // #E269C9
+@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorTextColor: black;
+
+.sapUiRtaChangeIndicator{
+	height: 100%;
+	width: 100%;
+	border-radius: 25px;
+	z-index: 1000;
+	position: relative;
+	cursor: pointer;
+}
+
+.sapUiRtaChangeIndicator-change{
+	border: 1px solid @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColor;
+	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColor 72%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolid 100%);
+}
+
+.sapUiRtaChangeIndicator-change:focus{
+	border: 1px solid @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorFocus!important;
+	outline: none;
+}
+
+.sapUiRtaChangeIndicator-change:hover{
+	border: 1px solid @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorHover;
+	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorHover 72%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolidHover 100%);
+}
+
+.sapUiRtaChangeIndicator-change:hover .sapUiRtaChangeIndicatorText {
+	background: @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorHover;
+	color: @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorTextColor;
+}
+
+.sapUiRtaChangeIndicator-change-solid{
+	background: radial-gradient(circle, black 41%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColor 72%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolid 100%);
+}
+
+.sapUiRtaChangeIndicator-change-solid:hover{
+	background: radial-gradient(circle, black 41%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorHover 72%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolidHover 100%);
+}
+
+.sapUiRtaChangeIndicator-dependent{
+	border: 1px solid @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColor;
+	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid 72%,@_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid 100%);
+}
+
+.sapUiRtaChangeIndicator-dependent:focus{
+	border: 1px solid @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorFocus;
+	outline: none;
+}
+.sapUiRtaChangeIndicator-dependent:hover{
+	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolidHover 62%, @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid 100%);
+}
+.sapUiRtaChangeIndicatorText{
+	top: 0;
+	left: 0;
+	position: absolute;
+	width: 50%;
+	height: 50%;
+	border-radius: 50%;
+	background: @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColor;
+	color: @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorTextColor;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	opacity: 0.8;
+	cursor: pointer;
+}
+
+.sapUiRtaChangeIndicatorIcon{
+	top: 0;
+	left: 0;
+	position: absolute;
+	width: 100%;
+	height: 100%;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	cursor: pointer;
+	color: @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid;
+}
+
+.sapUiRtaMode {
+	.sapUiRtaPopover {
+		.sapUiRtaChangesList {
+			// Visualize Changes: Total Count bold
+			ul > li:first-child .sapMLIBCounter {
+				font-weight: bold;
+			}
+			// Visualize Changes: gray out items with no changes
+			li.sapMLIBTypeInactive{
+				opacity: 0.5;
+			}
+		}
+	}
+}

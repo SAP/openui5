@@ -101,9 +101,9 @@
 					</layoutData>
 				</Button>
 				<Button
-					id="sapUiRta_showChanges"
+					id="sapUiRta_toggleChangeVisualizationButton"
 					icon="sap-icon://key-user-settings"
-					press=".showChangesPopover"
+					press=".toggleChangeVisualization"
 					enabled="{= ${controls>/modeSwitcher} === 'adaptation'}"
 					type="Transparent"
 					tooltip="{i18n>BUT_CHANGEVISUALIZATION_SHOWCHANGES}"
