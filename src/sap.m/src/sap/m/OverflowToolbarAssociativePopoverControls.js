@@ -117,7 +117,7 @@ sap.ui.define(['sap/ui/base/Object', './OverflowToolbarButton', './OverflowToolb
 			"sap.m.Button": {
 				canOverflow: true,
 				listenForEvents: ["press"],
-				noInvalidationProps: ["enabled", "type"]
+				noInvalidationProps: ["enabled"]
 			},
 			"sap.m.MenuButton": {
 				canOverflow: true,
