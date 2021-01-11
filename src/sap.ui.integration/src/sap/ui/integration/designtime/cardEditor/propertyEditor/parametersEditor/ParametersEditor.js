@@ -173,7 +173,7 @@ sap.ui.define([
 				path: "required",
 				allowBindings: true,
 				value: bRequired,
-				visible: sType !== "group" && sType !== "boolean" && sType !== "date" && sType !== "datetime",
+				visible: sType === "string" || sType === "number" || sType === "integer",
 				enabled: true,
 				type: "boolean",
 				itemKey: sKey
@@ -230,7 +230,7 @@ sap.ui.define([
 				path: "validations",
 				allowBindings: true,
 				value: oValidations,
-				visible: sType !== "group" && sType !== "boolean" && sType !== "date" && sType !== "datetime",
+				visible: sType === "string" || sType === "number" || sType === "integer",
 				placeholder: this.getI18nProperty("CARD_EDITOR.PARAMETERS.VALIDATIONS.PLACEHOLDER"),
 				type: "textArea",
 				itemKey: sKey

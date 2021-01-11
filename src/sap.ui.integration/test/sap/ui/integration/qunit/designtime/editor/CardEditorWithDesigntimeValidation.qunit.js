@@ -402,6 +402,318 @@ sap.ui.define([
 					}.bind(this));
 				}.bind(this));
 			});
+
+			QUnit.test("Check string required", function (assert) {
+				var oManifest = {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18nvalidation/i18n.properties"
+					},
+					"sap.card": {
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"string1": {
+									"value": ""
+								}
+							}
+						}
+					}
+				};
+
+				return new Promise(function (resolve, reject) {
+					this.oCardEditor = createEditor({
+						form: {
+							items: {
+								string1: {
+									type: "string",
+									label: "{i18n>string1label}",
+									required: true,
+									allowSettings: true,
+									manifestpath: "/sap.card/configuration/parameters/string1/value"
+								}
+							}
+						}
+					});
+					//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+					Core.getConfiguration().setLanguage("en");
+					assert.ok(true, "Set language to en");
+					this.oCardEditor.setMode("admin");
+					this.oCardEditor.setAllowSettings(true);
+					this.oCardEditor.setAllowDynamicValues(true);
+					this.oCardEditor.setCard({
+						baseUrl: sBaseUrl,
+						host: "contexthost",
+						manifest: oManifest
+					});
+					this.oCardEditor.attachReady(function () {
+						assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+						return new Promise(function (resolve) {
+							wait(100).then(function () {
+								var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+								oField1.getAggregation("_settingsButton").focus();
+								wait(1000).then(function () {
+									oField1.getAggregation("_field").focus();
+									var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+									var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+									assert.ok(oDefaultBundle.getText("CARDEDITOR_VAL_TEXTREQ") === oMsgStrip.getText(), "Default Required String Text");
+									oField1.getAggregation("_settingsButton").focus();
+									oField1.getAggregation("_field").setValue("aa");
+									wait(100).then(function () {
+										oField1.getAggregation("_field").focus();
+										assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+										resolve();
+									});
+								}.bind(this));
+							}.bind(this));
+						}.bind(this)).then(function () {
+							destroyEditor(this.oCardEditor);
+							resolve();
+						}.bind(this));
+					}.bind(this));
+				}.bind(this));
+			});
+
+			QUnit.test("Check string select required", function (assert) {
+				var oManifest = {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18nvalidation/i18n.properties"
+					},
+					"sap.card": {
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"string1": {
+									"value": ""
+								}
+							}
+						}
+					}
+				};
+
+				return new Promise(function (resolve, reject) {
+					this.oCardEditor = createEditor({
+						form: {
+							items: {
+								string1: {
+									type: "string",
+									label: "{i18n>string1label}",
+									required: true,
+									allowSettings: true,
+									manifestpath: "/sap.card/configuration/parameters/string1/value",
+									values: {
+										"data": {
+											"json": [
+												{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+												{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+												{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
+											],
+											"path": "/"
+										},
+										"item": {
+											"text": "{text}",
+											"key": "{key}",
+											"additionalText": "{additionalText}",
+											"icon": "{icon}"
+										}
+									}
+								}
+							}
+						}
+					});
+					//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+					Core.getConfiguration().setLanguage("en");
+					assert.ok(true, "Set language to en");
+					this.oCardEditor.setMode("admin");
+					this.oCardEditor.setAllowSettings(true);
+					this.oCardEditor.setAllowDynamicValues(true);
+					this.oCardEditor.setCard({
+						baseUrl: sBaseUrl,
+						host: "contexthost",
+						manifest: oManifest
+					});
+					this.oCardEditor.attachReady(function () {
+						assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+						return new Promise(function (resolve) {
+							wait(100).then(function () {
+								var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getContent()[1];
+								oField1.getAggregation("_settingsButton").focus();
+								wait(1000).then(function () {
+									oField1.getAggregation("_field").focus();
+									var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+									var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+									assert.ok(oDefaultBundle.getText("CARDEDITOR_VAL_TEXTREQ") === oMsgStrip.getText(), "Default Required String Text");
+									oField1.getAggregation("_field").setSelectedIndex(1);
+									oField1.getAggregation("_field").fireChange({ selectedItem: oField1.getAggregation("_field").getItems()[1] });
+									wait(100).then(function () {
+										oField1.getAggregation("_field").focus();
+										assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+										resolve();
+									});
+								}.bind(this));
+							}.bind(this));
+						}.bind(this)).then(function () {
+							destroyEditor(this.oCardEditor);
+							resolve();
+						}.bind(this));
+					}.bind(this));
+				}.bind(this));
+			});
+
+			QUnit.test("Check integer required", function (assert) {
+				var oManifest = {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18nvalidation/i18n.properties"
+					},
+					"sap.card": {
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"integer": {
+									"value": 2
+								}
+							}
+						}
+					}
+				};
+
+				return new Promise(function (resolve, reject) {
+					this.oCardEditor = createEditor({
+						form: {
+							items: {
+								integer: {
+									type: "integer",
+									label: "{i18n>int1label}",
+									required: true,
+									allowSettings: true,
+									manifestpath: "/sap.card/configuration/parameters/integer/value"
+								}
+							}
+						}
+					});
+					//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+					Core.getConfiguration().setLanguage("en");
+					assert.ok(true, "Set language to en");
+					this.oCardEditor.setMode("admin");
+					this.oCardEditor.setAllowSettings(true);
+					this.oCardEditor.setAllowDynamicValues(true);
+					this.oCardEditor.setCard({
+						baseUrl: sBaseUrl,
+						host: "contexthost",
+						manifest: oManifest
+					});
+					this.oCardEditor.attachReady(function () {
+						assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+						return new Promise(function (resolve) {
+							wait(100).then(function () {
+								var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+								oField1.getAggregation("_settingsButton").focus();
+								oField1.getAggregation("_field").setValue("");
+								oField1.getAggregation("_field").fireChange({ value: ""});
+								wait(1000).then(function () {
+									oField1.getAggregation("_field").focus();
+									var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+									var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+									assert.ok(oDefaultBundle.getText("CARDEDITOR_VAL_NUMBERREQ") === oMsgStrip.getText(), "Default Required Integer Text");
+									oField1.getAggregation("_settingsButton").focus();
+									oField1.getAggregation("_field").setValue("11");
+									wait(100).then(function () {
+										oField1.getAggregation("_field").focus();
+										assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+										resolve();
+									});
+								}.bind(this));
+							}.bind(this));
+						}.bind(this)).then(function () {
+							destroyEditor(this.oCardEditor);
+							resolve();
+						}.bind(this));
+					}.bind(this));
+				}.bind(this));
+			});
+
+			QUnit.test("Check number required", function (assert) {
+				var oManifest = {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18nvalidation/i18n.properties"
+					},
+					"sap.card": {
+						"type": "List",
+						"configuration": {
+							"parameters": {
+								"number": {
+									"value": 2.2
+								}
+							}
+						}
+					}
+				};
+
+				return new Promise(function (resolve, reject) {
+					this.oCardEditor = createEditor({
+						form: {
+							items: {
+								number: {
+									type: "number",
+									label: "{i18n>number1}",
+									required: true,
+									allowSettings: true,
+									manifestpath: "/sap.card/configuration/parameters/number/value"
+								}
+							}
+						}
+					});
+					//set language to de_DE the language does not exist we expect fallback english to be shown from i18n_en.properties
+					Core.getConfiguration().setLanguage("en");
+					assert.ok(true, "Set language to en");
+					this.oCardEditor.setMode("admin");
+					this.oCardEditor.setAllowSettings(true);
+					this.oCardEditor.setAllowDynamicValues(true);
+					this.oCardEditor.setCard({
+						baseUrl: sBaseUrl,
+						host: "contexthost",
+						manifest: oManifest
+					});
+					this.oCardEditor.attachReady(function () {
+						assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+						return new Promise(function (resolve) {
+							wait(100).then(function () {
+								var oField1 = this.oCardEditor.getAggregation("_formContent")[0].getAggregation("content")[1];
+								oField1.getAggregation("_settingsButton").focus();
+								oField1.getAggregation("_field").setValue("");
+								oField1.getAggregation("_field").fireChange({ value: ""});
+								wait(1000).then(function () {
+									oField1.getAggregation("_field").focus();
+									var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
+									var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+									assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
+									assert.ok(oMsgStrip.getType() === "Error", "Message strip Error");
+									assert.ok(oDefaultBundle.getText("CARDEDITOR_VAL_NUMBERREQ") === oMsgStrip.getText(), "Default Required Number Text");
+									oField1.getAggregation("_settingsButton").focus();
+									oField1.getAggregation("_field").setValue("1.1");
+									wait(100).then(function () {
+										oField1.getAggregation("_field").focus();
+										assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip not visible");
+										resolve();
+									});
+								}.bind(this));
+							}.bind(this));
+						}.bind(this)).then(function () {
+							destroyEditor(this.oCardEditor);
+							resolve();
+						}.bind(this));
+					}.bind(this));
+				}.bind(this));
+			});
 		} else {
 			QUnit.test("Test for IE11", function (assert) {
 				assert.ok(true, "Test for IE11 passed");

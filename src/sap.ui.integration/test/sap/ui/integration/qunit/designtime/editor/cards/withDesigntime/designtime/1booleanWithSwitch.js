@@ -8,7 +8,16 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					"booleanParameter": {
 						"manifestpath": "/sap.card/configuration/parameters/booleanParameter/value",
 						"description": "Description",
-						"type": "boolean"
+						"type": "boolean",
+						"visualization": {
+							"type": "sap/m/Switch",
+							"settings": {
+								"state": "{currentSettings>value}",
+								"customTextOn": "Yes",
+								"customTextOff": "No",
+								"enabled": "{currentSettings>editable}"
+							}
+						}
 					}
 				}
 			}

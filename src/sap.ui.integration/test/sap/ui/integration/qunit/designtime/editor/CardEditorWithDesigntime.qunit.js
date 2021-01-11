@@ -34,6 +34,15 @@ sap.ui.define([
 	var sBaseUrl = "test-resources/sap/ui/integration/qunit/designtime/editor/cards/withDesigntime/";
 
 	document.body.className = document.body.className + " sapUiSizeCompact ";
+
+	function wait(ms) {
+		return new Promise(function (resolve) {
+			setTimeout(function () {
+				resolve();
+			}, ms || 1000);
+		});
+	}
+
 	QUnit.module("Create an editor based on card with designtime module", {
 		beforeEach: function () {
 			this.oHost = new Host("host");
@@ -5356,6 +5365,169 @@ sap.ui.define([
 						assert.ok(oField.getAggregation("_field").getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
 						resolve();
 					}, 1500);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Expanded groups", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Default group", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: sBaseUrl + "1stringparameter.json" });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					assert.ok(oPanel.isA("sap.m.Panel"), "Label: Form content contains a Panel");
+					var oDefaultBundle = Core.getLibraryResourceBundle("sap.ui.integration");
+					assert.ok(oDefaultBundle.getText("CARDEDITOR_PARAMETERS_GENERALSETTINGS") === oPanel.getHeaderText(), "Default group text");
+					assert.ok(oPanel.getExpanded(), "Group expanded by default");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("No default group", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: sBaseUrl + "noDefaultGroup.json" });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					assert.ok(oPanel.isA("sap.m.Panel"), "Label: Form content contains a Panel");
+					assert.ok( oPanel.getHeaderText() === "no default group", "Group text");
+					assert.ok(oPanel.getExpanded(), "Group expanded by default");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Group collapsed by setting", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: sBaseUrl + "groupCollapsed.json" });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+					assert.ok(oPanel.isA("sap.m.Panel"), "Label: Form content contains a Panel");
+					assert.ok( oPanel.getHeaderText() === "no default group", "Group text");
+					assert.ok(!oPanel.getExpanded(), "Group collapsed by seting");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Label and control in one line for boolean parameter", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Label and default checkbox are in one line", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1boolean", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					wait(1000).then(function () {
+						assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+						var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+						var oHBox = oPanel.getContent()[0];
+						assert.ok(oHBox.isA("sap.m.HBox"), "Label: Panel contains a HBox");
+						var oHBox1 = oHBox.getItems()[0];
+						assert.ok(oHBox1.isA("sap.m.HBox"), "Label: HBox contains a sub HBox");
+						var oLabel = oHBox1.getItems()[0];
+						var oDescription = oHBox1.getItems()[1];
+						var oField = oHBox.getItems()[1];
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: VBox contains a Label");
+						assert.ok(oLabel.getText() === "booleanParameter", "Label: Has integerParameter label from label");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
+						assert.ok(!oField.getAggregation("_field").getSelected(), "Field: Value false since No Value and Default Value");
+						oDescription.onmouseover();
+						var oDescriptionText = this.oCardEditor._getPopover().getContent()[0];
+						assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
+						assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
+						oDescription.onmouseout();
+						resolve();
+					}.bind(this));
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Label and switch are in one line", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "designtime": "designtime/1booleanWithSwitch", "type": "List", "configuration": { "parameters": { "booleanParameter": {} } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					wait(1000).then(function () {
+						assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+						var oPanel = this.oCardEditor.getAggregation("_formContent")[0];
+						var oHBox = oPanel.getContent()[0];
+						assert.ok(oHBox.isA("sap.m.HBox"), "Label: Panel contains a HBox");
+						var oHBox1 = oHBox.getItems()[0];
+						assert.ok(oHBox1.isA("sap.m.HBox"), "Label: HBox contains a sub HBox");
+						var oLabel = oHBox1.getItems()[0];
+						var oDescription = oHBox1.getItems()[1];
+						var oField = oHBox.getItems()[1];
+						assert.ok(oLabel.isA("sap.m.Label"), "Label: VBox contains a Label");
+						assert.ok(oLabel.getText() === "booleanParameter", "Label: Has integerParameter label from label");
+						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.BooleanField"), "Field: Boolean Field");
+						assert.ok(!oField.getAggregation("_field").getState(), "Field: Value false since No Value and Default Value");
+						oDescription.onmouseover();
+						var oDescriptionText = this.oCardEditor._getPopover().getContent()[0];
+						assert.ok(oDescriptionText.isA("sap.m.Text"), "Text: Text Field");
+						assert.ok(oDescriptionText.getText() === "Description", "Text: Description OK");
+						oDescription.onmouseout();
+						resolve();
+					}.bind(this));
 				}.bind(this));
 			}.bind(this));
 		});

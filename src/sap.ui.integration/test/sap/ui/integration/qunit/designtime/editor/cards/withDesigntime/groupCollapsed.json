@@ -1,0 +1,14 @@
+{
+	"sap.app": {
+		"id": "test.sample"
+	},
+	"sap.card": {
+		"designtime": "designtime/groupCollapsed",
+		"type": "List",
+		"configuration": {
+			"parameters": {
+				"stringParameter": {}
+			}
+		}
+	}
+}
