@@ -42,10 +42,6 @@ sap.ui.define([], function () {
 			.class("sapContrastPlus")
 			.class("sapMITHBackgroundDesign" + oControl.getBackgroundDesign());
 
-		if (aItems.length) {
-			oRM.class("sapMITHOverflowList");
-		}
-
 		// Check for upperCase property on IconTabBar
 		if (bUpperCase) {
 			oRM.class("sapMITBTextUpperCase");

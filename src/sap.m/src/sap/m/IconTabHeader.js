@@ -896,6 +896,9 @@ sap.ui.define([
 		var iTabStripWidth = oTabStrip.offsetWidth,
 			i,
 			oSelectedItemDomRef = (oSelectedItem._getRootTab() || oSelectedItem).getDomRef(),
+			oOverflow = this._getOverflow(),
+			bOverflowVisible = oOverflow.$().hasClass("sapMITHOverflowVisible"),
+			iOverflowContainerWidth = this.$().find(".sapMITHOverflow").outerWidth(true),
 			aItems = this.getItems()
 				.filter(function (oItem) { return oItem.getDomRef(); })
 				.map(function (oItem) { return oItem.getDomRef(); });
@@ -916,7 +919,11 @@ sap.ui.define([
 			iSelectedItemSize = this._getItemSize(oSelectedItemDomRef),
 			oSelectedSeparator,
 			iSelectedSeparatorSize = 0,
-			iSelectedCombinedSize;
+			iSelectedCombinedSize,
+			iTotalWidthItems = aItems.reduce(function (iSum, oDomRef) {
+				return iSum + jQuery(oDomRef).outerWidth(true);
+			}, 0);
+
 
 		if (aItems[iSelectedItemIndex - 1] && aItems[iSelectedItemIndex - 1].classList.contains("sapMITBSep")) {
 			oSelectedSeparator = aItems[iSelectedItemIndex - 1];
@@ -938,13 +945,27 @@ sap.ui.define([
 			aItems.splice(iSelectedItemIndex - 1, 1);
 		}
 
+		// if the overflow is visible, but all items can fit into the tab strip without the overflow,
+		// then the overflow will be hidden. add the space that the overflow would otherwise take to the tab strip
+		if (bOverflowVisible && iTotalWidthItems < iTabStripWidth + iOverflowContainerWidth) {
+			iTabStripWidth += iOverflowContainerWidth;
+		}
+
 		var iLastVisible = this._findLastVisibleItem(aItems, iTabStripWidth, iSelectedCombinedSize);
+
+		// if the last visible item is not the last item and the overflow is not visible already,
+		// then the overflow will be shown. find the last visible item again with this assumption
+		if (iLastVisible < aItems.length - 1 && !bOverflowVisible) {
+			iTabStripWidth -= iOverflowContainerWidth;
+			iLastVisible = this._findLastVisibleItem(aItems, iTabStripWidth, iSelectedCombinedSize);
+		}
+
 		for (i = iLastVisible + 1; i < aItems.length; i++) {
 			aItems[i].classList.add("sapMITBFilterHidden");
 		}
 
-		this._getOverflow()._updateExpandButtonBadge();
-		this._getOverflow().$().toggleClass("sapMITHOverflowVisible", iLastVisible + 1 !== aItems.length);
+		oOverflow._updateExpandButtonBadge();
+		oOverflow.$().toggleClass("sapMITHOverflowVisible", iLastVisible + 1 !== aItems.length);
 		this.$().toggleClass("sapMITHOverflowList", iLastVisible + 1 !== aItems.length);
 	};
 
