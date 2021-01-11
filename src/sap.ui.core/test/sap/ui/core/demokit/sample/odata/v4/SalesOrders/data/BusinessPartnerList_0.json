@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#BusinessPartnerList/$entity",
 	"@odata.etag" : "W/\"20160420143945.0000000\"",
 	"BusinessPartnerID" : "0100000000",
 	"BusinessPartnerRole" : "01",

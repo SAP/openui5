@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "../$metadata#SalesOrderList('0500000003')/SO_2_SCHDL(DeliveryDate,ScheduleKey)",
 	"@odata.metadataEtag" : "W/\"20191008145915\"",
 	"value" : [{
 		"ScheduleKey" : "005056A71E3D1ED68DDA8CB5CA1B8B46",

@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,GrossAmount,Messages,Note,SalesOrderID)",
 	"@odata.count" : 10,
 	"value" : [{
 		"@odata.etag" : "W/\"20160619220000.0000000\"",
