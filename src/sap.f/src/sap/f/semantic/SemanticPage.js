@@ -3,7 +3,6 @@
  */
 sap.ui.define([
     "sap/ui/core/Control",
-    "sap/ui/base/ManagedObject",
     "sap/f/library",
     "sap/f/DynamicPage",
     "sap/f/DynamicPageTitle",
@@ -17,7 +16,6 @@ sap.ui.define([
     "./SemanticPageRenderer"
 ], function(
     Control,
-	ManagedObject,
 	library,
 	DynamicPage,
 	DynamicPageTitle,
@@ -755,10 +753,10 @@ sap.ui.define([
 				this._onAddAggregation(oObject, sType);
 			}
 
-			return ManagedObject.prototype.setAggregation.call(this, sAggregationName, oObject, true);
+			return Control.prototype.setAggregation.call(this, sAggregationName, oObject, true);
 		}
 
-		return ManagedObject.prototype.setAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
+		return Control.prototype.setAggregation.call(this, sAggregationName, oObject, bSuppressInvalidate);
 	};
 
 	SemanticPage.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
@@ -771,7 +769,7 @@ sap.ui.define([
 		}
 
 		if (sType && SemanticConfiguration.isKnownSemanticType(sType)) {
-			oObject = ManagedObject.prototype.getAggregation.call(this, sAggregationName);
+			oObject = Control.prototype.getAggregation.call(this, sAggregationName);
 
 			if (oObject) {
 				sPlacement = SemanticConfiguration.getPlacement(sType);
@@ -780,7 +778,7 @@ sap.ui.define([
 			}
 		}
 
-		return ManagedObject.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
+		return Control.prototype.destroyAggregation.call(this, sAggregationName, bSuppressInvalidate);
 	};
 
 

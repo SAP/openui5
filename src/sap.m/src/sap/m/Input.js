@@ -16,7 +16,6 @@ sap.ui.define([
 	'./library',
 	'sap/ui/core/IconPool',
 	'sap/ui/Device',
-	'sap/ui/core/Control',
 	'./SuggestionsPopover',
 	'./Toolbar',
 	'./ToolbarSpacer',
@@ -50,7 +49,6 @@ function(
 	library,
 	IconPool,
 	Device,
-	Control,
 	SuggestionsPopover,
 	Toolbar,
 	ToolbarSpacer,
@@ -1396,7 +1394,7 @@ function(
 	 */
 	Input.prototype.invalidate = function() {
 		if (!this._bSuspendInvalidate) {
-			Control.prototype.invalidate.apply(this, arguments);
+			InputBase.prototype.invalidate.apply(this, arguments);
 		}
 	};
 
@@ -2257,7 +2255,7 @@ function(
 	 * @returns {sap.m.Input} Cloned input.
 	 */
 	Input.prototype.clone = function() {
-		var oInputClone = Control.prototype.clone.apply(this, arguments);
+		var oInputClone = InputBase.prototype.clone.apply(this, arguments);
 
 		oInputClone.setRowResultFunction(this._fnRowResultFilter);
 

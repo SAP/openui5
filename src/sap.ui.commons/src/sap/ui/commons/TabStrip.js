@@ -673,12 +673,10 @@ sap.ui.define([
 	/*
 	 * Overwrites the Invalidate function to set the invalidate flag.
 	 */
-	TabStrip.prototype._originalInvalidate = TabStrip.prototype.invalidate;
-
 	TabStrip.prototype.invalidate = function() {
 
 		this.invalidated = true;
-		TabStrip.prototype._originalInvalidate.apply(this,arguments);
+		Control.prototype.invalidate.apply(this, arguments);
 
 	};
 

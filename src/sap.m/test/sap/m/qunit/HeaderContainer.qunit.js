@@ -750,7 +750,7 @@ sap.ui.define([
 		this.oHeaderContainer.insertAggregation("content", aContent[0], 1, true);
 		assert.equal(this.oHeaderContainer.getAggregation("content").length, 4, "There should be 12 kpis now");
 		assert.equal(this.oHeaderContainer.indexOfAggregation("content", aContent[0]), 1, "The inserted content should be on second position now");
-		assert.equal(this.oHeaderContainer._callMethodInManagedObject("indexOfAggregation", "content", aContent[0]), 1, "The inserted kpi should be on second position now");
+		assert.equal(this.oHeaderContainer._callSuperMethod("indexOfAggregation", "content", aContent[0]), 1, "The inserted kpi should be on second position now");
 		this.oHeaderContainer.removeAllAggregation("content", true);
 		var bContentsRemoved = false;
 		if ( !this.oHeaderContainer.getAggregation("content") || this.oHeaderContainer.getAggregation("content").length == 0) {

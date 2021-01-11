@@ -1364,7 +1364,7 @@ function(
 
 			if (sValue !== this._sLastChangeValue) {
 				this._sLastChangeValue = sValue;
-				InputBase.prototype.fireChangeEvent.call(this, sValue, oParams);
+				DateTimeField.prototype.fireChangeEvent.call(this, sValue, oParams);
 			}
 		};
 
@@ -1714,7 +1714,7 @@ function(
 		 */
 		TimePicker.prototype.getAccessibilityInfo = function() {
 			var oRenderer = this.getRenderer();
-			var oInfo = InputBase.prototype.getAccessibilityInfo.apply(this, arguments);
+			var oInfo = DateTimeField.prototype.getAccessibilityInfo.apply(this, arguments);
 			var sValue = this.getValue() || "";
 			if (this._bValid) {
 				var oDate = this.getDateValue();

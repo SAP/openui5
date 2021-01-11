@@ -12,7 +12,6 @@ sap.ui.define([
 		'sap/ui/core/delegate/ItemNavigation',
 		'sap/ui/core/library',
 		'sap/ui/core/IntervalTrigger',
-		'sap/ui/base/ManagedObject',
 		'sap/ui/core/Icon',
 		'./HeaderContainerRenderer',
 		"sap/base/Log",
@@ -38,7 +37,6 @@ sap.ui.define([
 		ItemNavigation,
 		coreLibrary,
 		IntervalTrigger,
-		ManagedObject,
 		Icon,
 		HeaderContainerRenderer,
 		Log,
@@ -431,39 +429,39 @@ sap.ui.define([
 		};
 
 		HeaderContainer.prototype.validateAggregation = function (sAggregationName, oObject, bMultiple) {
-			return this._callMethodInManagedObject("validateAggregation", sAggregationName, oObject, bMultiple);
+			return this._callSuperMethod("validateAggregation", sAggregationName, oObject, bMultiple);
 		};
 
 		HeaderContainer.prototype.getAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-			return this._callMethodInManagedObject("getAggregation", sAggregationName, oObject, bSuppressInvalidate);
+			return this._callSuperMethod("getAggregation", sAggregationName, oObject, bSuppressInvalidate);
 		};
 
 		HeaderContainer.prototype.setAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-			return this._callMethodInManagedObject("setAggregation", sAggregationName, oObject, bSuppressInvalidate);
+			return this._callSuperMethod("setAggregation", sAggregationName, oObject, bSuppressInvalidate);
 		};
 
 		HeaderContainer.prototype.indexOfAggregation = function (sAggregationName, oObject) {
-			return this._callMethodInManagedObject("indexOfAggregation", sAggregationName, oObject);
+			return this._callSuperMethod("indexOfAggregation", sAggregationName, oObject);
 		};
 
 		HeaderContainer.prototype.insertAggregation = function (sAggregationName, oObject, iIndex, bSuppressInvalidate) {
-			return this._callMethodInManagedObject("insertAggregation", sAggregationName, oObject, iIndex, bSuppressInvalidate);
+			return this._callSuperMethod("insertAggregation", sAggregationName, oObject, iIndex, bSuppressInvalidate);
 		};
 
 		HeaderContainer.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-			return this._callMethodInManagedObject("addAggregation", sAggregationName, oObject, bSuppressInvalidate);
+			return this._callSuperMethod("addAggregation", sAggregationName, oObject, bSuppressInvalidate);
 		};
 
 		HeaderContainer.prototype.removeAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
-			return this._callMethodInManagedObject("removeAggregation", sAggregationName, oObject, bSuppressInvalidate);
+			return this._callSuperMethod("removeAggregation", sAggregationName, oObject, bSuppressInvalidate);
 		};
 
 		HeaderContainer.prototype.removeAllAggregation = function (sAggregationName, bSuppressInvalidate) {
-			return this._callMethodInManagedObject("removeAllAggregation", sAggregationName, bSuppressInvalidate);
+			return this._callSuperMethod("removeAllAggregation", sAggregationName, bSuppressInvalidate);
 		};
 
 		HeaderContainer.prototype.destroyAggregation = function (sAggregationName, bSuppressInvalidate) {
-			return this._callMethodInManagedObject("destroyAggregation", sAggregationName, bSuppressInvalidate);
+			return this._callSuperMethod("destroyAggregation", sAggregationName, bSuppressInvalidate);
 		};
 
 		/* =========================================================== */
@@ -972,17 +970,17 @@ sap.ui.define([
 			return wrapped;
 		};
 
-		HeaderContainer._AGGREGATION_FUNCTIONS = ["validateAggregation", "validateAggregation", "getAggregation", "setAggregation", "indexOfAggregation", "removeAggregation"];
+		HeaderContainer._AGGREGATION_FUNCTIONS = ["validateAggregation", "getAggregation", "setAggregation", "indexOfAggregation", "removeAggregation"];
 		HeaderContainer._AGGREGATION_FUNCTIONS_FOR_INSERT = ["insertAggregation", "addAggregation"];
-		HeaderContainer.prototype._callMethodInManagedObject = function (sFunctionName, sAggregationName) {
+		HeaderContainer.prototype._callSuperMethod = function (sFunctionName, sAggregationName) {
 			var args = Array.prototype.slice.call(arguments);
 			if (sAggregationName === "content") {
 				var oContent = args[2];
 				args[1] = "content";
 				if (oContent instanceof Control) {
-					if (((HeaderContainer._AGGREGATION_FUNCTIONS ? Array.prototype.indexOf.call(HeaderContainer._AGGREGATION_FUNCTIONS, sFunctionName) : -1)) > -1 && oContent.getParent() instanceof HeaderContainerItemContainer) {
+					if (HeaderContainer._AGGREGATION_FUNCTIONS.indexOf(sFunctionName) > -1 && oContent.getParent() instanceof HeaderContainerItemContainer) {
 						args[2] = oContent.getParent();
-					} else if (((HeaderContainer._AGGREGATION_FUNCTIONS_FOR_INSERT ? Array.prototype.indexOf.call(HeaderContainer._AGGREGATION_FUNCTIONS_FOR_INSERT, sFunctionName) : -1)) > -1) {
+					} else if (HeaderContainer._AGGREGATION_FUNCTIONS_FOR_INSERT.indexOf(sFunctionName) > -1) {
 						args[2] = new HeaderContainerItemContainer({
 							item: oContent
 						});
@@ -1026,8 +1024,12 @@ sap.ui.define([
 
 				return this._unWrapHeaderContainerItemContainer(vResult);
 			} else {
-				return ManagedObject.prototype[sFunctionName].apply(this, args.slice(1));
+				return Control.prototype[sFunctionName].apply(this, args.slice(1));
 			}
+		};
+
+		HeaderContainer.prototype._callMethodInManagedObject = function() {
+			throw new TypeError("Method no longer exists: HeaderContainer.prototype._callMethodInManagedObject");
 		};
 
 		HeaderContainer.prototype._getParentCell = function (oDomElement) {

@@ -416,9 +416,6 @@ sap.ui.define([
 		this.aStoredTooltips = null;
 	};
 
-	/* Store reference to original setParent function */
-	TooltipBase.prototype._setParent = TooltipBase.prototype.setParent;
-
 	/**
 	 * Defines the new parent of this TooltipBase using {@link sap.ui.core.Element#setParent}.
 	 * Additionally closes the Tooltip.
@@ -433,7 +430,7 @@ sap.ui.define([
 		if (_oPopup && _oPopup.isOpen()) {
 			this.closePopup();
 		}
-		this._setParent.apply(this, arguments);
+		Control.prototype.setParent.apply(this, arguments);
 	};
 	/**
 	 * Handle the key down event Ctrl+i and ESCAPE.

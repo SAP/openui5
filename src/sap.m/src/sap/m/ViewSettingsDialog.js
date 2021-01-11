@@ -2787,7 +2787,7 @@ function(
 		if (this._vContentPage === 3 && this._oContentItem) {
 			resetFilterPage.call(this);
 		}
-		return ManagedObject.prototype.setModel.call(this, oModel, sName);
+		return Control.prototype.setModel.call(this, oModel, sName);
 	};
 
 	/**

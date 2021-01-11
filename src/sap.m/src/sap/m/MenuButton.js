@@ -578,7 +578,7 @@ sap.ui.define([
 		 * @return {sap.m.MenuButton} This instance for chaining
 		 */
 		MenuButton.prototype.setText = function (sValue) {
-			Button.prototype.setProperty.call(this, 'text', sValue);
+			Control.prototype.setProperty.call(this, 'text', sValue);
 			this._getButtonControl().setText(sValue);
 			return this;
 		};
@@ -590,7 +590,7 @@ sap.ui.define([
 		 * @return {sap.m.MenuButton} This instance for chaining
 		 */
 		MenuButton.prototype.setType = function (sValue) {
-			Button.prototype.setProperty.call(this, 'type', sValue);
+			Control.prototype.setProperty.call(this, 'type', sValue);
 			this._getButtonControl().setType(sValue);
 			return this;
 		};
@@ -602,7 +602,7 @@ sap.ui.define([
 		 * @return {sap.m.MenuButton} This instance for chaining
 		 */
 		MenuButton.prototype.setIcon = function (vValue) {
-			Button.prototype.setProperty.call(this, 'icon', vValue);
+			Control.prototype.setProperty.call(this, 'icon', vValue);
 			this._getButtonControl().setIcon(vValue);
 			return this;
 		};

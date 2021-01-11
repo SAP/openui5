@@ -7,7 +7,6 @@ sap.ui.define([
 	"./Link",
 	"./library",
 	"./FormattedText",
-	"sap/ui/core/Control",
 	"sap/ui/core/IconPool",
 	"sap/m/Button",
 	"sap/ui/Device",
@@ -18,7 +17,6 @@ function(
 	Link,
 	library,
 	FormattedText,
-	Control,
 	IconPool,
 	Button,
 	Device,
@@ -307,7 +305,7 @@ function(
 	};
 
 	FeedListItem.prototype.invalidate = function() {
-		Control.prototype.invalidate.apply(this, arguments);
+		ListItemBase.prototype.invalidate.apply(this, arguments);
 		var sMoreLabel = FeedListItem._sTextShowMore;
 		if (this.getMoreLabel()) {
 			sMoreLabel = this.getMoreLabel();

@@ -4,7 +4,6 @@
 
 // Provides control sap.m.ObjectListItem.
 sap.ui.define([
-	'sap/ui/core/Control',
 	'sap/ui/base/ManagedObjectObserver',
 	'./ListItemBase',
 	'./library',
@@ -16,7 +15,6 @@ sap.ui.define([
 	'./ObjectListItemRenderer'
 ],
 function(
-	Control,
 	ManagedObjectObserver,
 	ListItemBase,
 	library,
@@ -321,17 +319,17 @@ function(
 		ObjectListItem.prototype.addAttribute = function(oObject) {
 			this._startObservingItem(oObject);
 
-			return Control.prototype.addAggregation.call(this, "attributes", oObject);
+			return ListItemBase.prototype.addAggregation.call(this, "attributes", oObject);
 		};
 
 		ObjectListItem.prototype.insertAttribute = function(oObject, iIndex) {
 			this._startObservingItem(oObject);
 
-			return Control.prototype.insertAggregation.call(this, "attributes", oObject, iIndex);
+			return ListItemBase.prototype.insertAggregation.call(this, "attributes", oObject, iIndex);
 		};
 
 		ObjectListItem.prototype.removeAttribute = function(vObject) {
-			var oObject = Control.prototype.removeAggregation.call(this, "attributes", vObject);
+			var oObject = ListItemBase.prototype.removeAggregation.call(this, "attributes", vObject);
 
 			this._stopObservingItem(oObject);
 
@@ -339,7 +337,7 @@ function(
 		};
 
 		ObjectListItem.prototype.removeAllAttributes = function() {
-			var aItems = Control.prototype.removeAllAggregation.call(this, "attributes");
+			var aItems = ListItemBase.prototype.removeAllAggregation.call(this, "attributes");
 
 			for (var i = 0; i < aItems.length; i++) {
 				this._stopObservingItem(aItems[i]);
@@ -353,7 +351,7 @@ function(
 				this._stopObservingItem(oAttribute);
 			}, this);
 
-			return Control.prototype.destroyAggregation.call(this, "attributes");
+			return ListItemBase.prototype.destroyAggregation.call(this, "attributes");
 		};
 
 		/**
@@ -555,17 +553,17 @@ function(
 		ObjectListItem.prototype.addMarker = function(oObject) {
 			this._startObservingItem(oObject);
 
-			return Control.prototype.addAggregation.call(this, "markers", oObject);
+			return ListItemBase.prototype.addAggregation.call(this, "markers", oObject);
 		};
 
 		ObjectListItem.prototype.insertMarker = function(oObject, iIndex) {
 			this._startObservingItem(oObject);
 
-			return Control.prototype.insertAggregation.call(this, "markers", oObject, iIndex);
+			return ListItemBase.prototype.insertAggregation.call(this, "markers", oObject, iIndex);
 		};
 
 		ObjectListItem.prototype.removeMarker = function(vObject) {
-			var oObject = Control.prototype.removeAggregation.call(this, "markers", vObject);
+			var oObject = ListItemBase.prototype.removeAggregation.call(this, "markers", vObject);
 
 			this._stopObservingItem(oObject);
 
@@ -573,7 +571,7 @@ function(
 		};
 
 		ObjectListItem.prototype.removeAllMarkers = function() {
-			var aItems = Control.prototype.removeAllAggregation.call(this, "markers");
+			var aItems = ListItemBase.prototype.removeAllAggregation.call(this, "markers");
 
 			for (var i = 0; i < aItems.length; i++) {
 				this._stopObservingItem(aItems[i]);
@@ -587,7 +585,7 @@ function(
 				this._stopObservingItem(oMarker);
 			}, this);
 
-			return Control.prototype.destroyAggregation.call(this, "markers");
+			return ListItemBase.prototype.destroyAggregation.call(this, "markers");
 		};
 
 		ObjectListItem.prototype._observerObjectItemChanges = function (oChanges) {

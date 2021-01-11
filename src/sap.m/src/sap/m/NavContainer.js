@@ -1635,22 +1635,12 @@ sap.ui.define([
 
 	// ----------------- code for tracking and avoiding invalidation --------------------------
 
-	/**
-	 * Forces invalidation and rerendering (.invalidate() is disabled)
-	 * @private
-	 */
-	NavContainer.prototype.forceInvalidation = NavContainer.prototype.invalidate;
-
 	NavContainer.prototype.invalidate = function (oSource) {
 
 		/*eslint-disable no-empty */
 		if (oSource == this) {
 			/*eslint-enable no-empty */
 			// does not happen because the source is only given when propagating to a parent
-
-		} else if (!oSource) {
-			// direct invalidation of the NavContainer; this means a property has been modified
-			this.forceInvalidation(); // let invalidation occur
 
 		} else if (oSource instanceof Control) {
 			// an aggregated control is invalidated
@@ -1666,12 +1656,13 @@ sap.ui.define([
 			}
 
 			if ((!bIsInPages || oSource === this.getCurrentPage()) && !this._isInsideAPopup()) {
-				this.forceInvalidation();
+				Control.prototype.invalidate.call(this, oSource);
 			} // else : the invalidation source is a non-current page, so do not rerender anything
 
 		} else {
-			// TODO: which cases are ending up here?
-			this.forceInvalidation();
+			// either direct invalidation of the NavContainer; this means a property has been modified
+			// or a child which is not a control (e.g. an Element) has been invalidated
+			Control.prototype.invalidate.call(this, oSource);
 
 		}
 	};

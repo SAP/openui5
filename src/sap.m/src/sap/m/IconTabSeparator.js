@@ -103,9 +103,7 @@ sap.ui.define([
 			this._oImageControl.destroy();
 		}
 
-		if (Item.prototype.exit) {
-			Item.prototype.exit.call(this, oEvent);
-		}
+		Element.prototype.exit.call(this, oEvent);
 	};
 
 	/**
