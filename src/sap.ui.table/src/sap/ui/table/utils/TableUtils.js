@@ -834,30 +834,22 @@ sap.ui.define([
 		 *                                  aggregation or in the list of visible columns (<code>false</code>).
 		 * @returns {Object} An object containing references to the row, column and cell.
 		 * @type {Object}
-		 * @property {sap.ui.table.Row} row Row of the table.
-		 * @property {sap.ui.table.Column} column Column of the table.
-		 * @property {sap.ui.core.Control} cell Cell control of row/column.
+		 * @property {sap.ui.table.Row | null} row Row of the table.
+		 * @property {sap.ui.table.Column | null} column Column of the table.
+		 * @property {sap.ui.core.Control | null} cell Cell control of row/column.
 		 */
 		getRowColCell: function(oTable, iRowIdx, iColIdx, bIdxInColumnAgg) {
-			var oRow = iRowIdx >= 0 && iRowIdx < oTable.getRows().length ? oTable.getRows()[iRowIdx] : null;
+			var oRow = oTable.getRows()[iRowIdx] || null;
 			var aColumns = bIdxInColumnAgg ? oTable.getColumns() : oTable._getVisibleColumns();
-			var oColumn = iColIdx >= 0 && iColIdx < aColumns.length ? aColumns[iColIdx] : null;
+			var oColumn = aColumns[iColIdx] || null;
 			var oCell = null;
 
 			if (oRow && oColumn) {
-				if (bIdxInColumnAgg) {
-					if (oColumn.shouldRender()) {
-						var aVisibleColumns = oTable._getVisibleColumns();
-						for (var i = 0; i < aVisibleColumns.length; i++) {
-							if (aVisibleColumns[i] === oColumn) {
-								oCell = oRow.getCells()[i];
-								break;
-							}
-						}
-					}
-				} else {
-					oCell = oRow.getCells()[iColIdx];
-				}
+				var Column = oColumn.getMetadata().getClass();
+
+				oCell = oRow.getCells().find(function(oCell) {
+					return oColumn === Column.ofCell(oCell);
+				}) || null;
 			}
 
 			return {row: oRow, column: oColumn, cell: oCell};
