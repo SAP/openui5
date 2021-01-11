@@ -314,7 +314,7 @@
 		{
 			"id": "sap.m.ComparisonPattern",
 			"name": "Comparison Pattern",
-			"category": "Pattern",
+			"category": "Floorplans & Patterns",
 			"since": "1.63",
 			"formFactors": "-",
 			"samples": ["sap.m.sample.ComparisonPattern"]
@@ -610,7 +610,7 @@
 		{
 		  "id": "sap.m.InitialPagePattern",
 		  "name": "Initial Page Floorplan",
-		  "category": "Pattern",
+		  "category": "Floorplans & Patterns",
 		  "since": "1.75",
 		  "formFactors": "-",
 		  "samples": ["sap.m.sample.InitialPagePattern"]

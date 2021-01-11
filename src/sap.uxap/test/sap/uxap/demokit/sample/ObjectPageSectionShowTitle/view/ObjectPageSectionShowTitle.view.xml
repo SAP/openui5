@@ -55,7 +55,7 @@
 
 					<m:HBox class="sapUiTinyMarginBottom" renderType="Bare">
 						<m:Label text="Factory" class="sapUiTinyMarginEnd" />
-						<m:Text text=" Orlando, FL" />
+						<m:Text text=" Orlando, Florida" />
 					</m:HBox>
 
 					<m:HBox>

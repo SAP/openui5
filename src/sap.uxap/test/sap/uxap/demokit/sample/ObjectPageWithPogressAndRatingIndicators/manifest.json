@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.uxap.sample.Sample2",
+		"id": "sap.uxap.sample.ObjectPageWithPogressAndRatingIndicators",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.uxap.sample.Sample2.view.Sample2",
+			"viewName": "sap.uxap.sample.ObjectPageWithPogressAndRatingIndicators.view.ObjectPageWithPogressAndRatingIndicators",
 			"type": "XML",
 			"async": true
 		},
@@ -20,7 +20,7 @@
 			"sample": {
 				"stretch": true,
 				"files": [
-					"view/Sample2.view.xml",
+					"view/ObjectPageWithPogressAndRatingIndicators.view.xml",
 					"../SharedBlocks/employment/EmploymentBlockJob.js",
 					"../SharedBlocks/employment/EmploymentBlockJobCollapsed.view.xml",
 					"../SharedBlocks/employment/EmploymentBlockJobExpanded.view.xml",
