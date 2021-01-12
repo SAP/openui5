@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,Messages,Note,SalesOrderID)/$entity",
 	"@odata.metadataEtag" : "W/\"20200826092600\"",
 	"@odata.etag" : "W/\"20200827200558.2641450 \"",
 	"ChangedAt" : "2020-08-27T20:05:58.264145Z",

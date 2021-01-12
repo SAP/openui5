@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#SalesOrderList(ChangedAt,Note,SalesOrderID,SO_2_SCHDL(DeliveryDate,ScheduleKey))/$entity",
 	"@odata.metadataEtag" : "W/\"20190827145402\"",
 	"@odata.etag" : "W/\"20160619220000.0000000\"",
 	"ChangedAt" : "2016-06-26T22:00:00.000000Z",

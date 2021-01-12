@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "../$metadata#FOO1",
 	"@odata.etag" : "W/\"20160613065313.0000000\"",
 	"BusinessPartnerID" : "0100000001",
 	"CompanyName" : "Becker Berlin",

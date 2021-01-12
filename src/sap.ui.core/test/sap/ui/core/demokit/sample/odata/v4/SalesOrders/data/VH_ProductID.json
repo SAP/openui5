@@ -1,5 +1,4 @@
 {
-	"@odata.context" : "$metadata#H_EPM_PR_SH_Set(LANGU,NODE_KEY,PRODUCT_ID,SUPPLIER_ID,SUPPLIER_KEY,TEXT)",
 	"@odata.metadataEtag" : "W/\"20200722082553\"",
 	"value" : [
 		{
