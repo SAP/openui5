@@ -63,20 +63,30 @@ sap.ui.define([
 		}
 	});
 
+	ParametersEditor.prototype.getBoolenValue = function (bValue1, bValue2, bDefaultValue) {
+		if (typeof bValue1 === "boolean") {
+			return bValue1;
+		}
+		if (typeof bValue2 === "boolean") {
+			return bValue2;
+		}
+		return bDefaultValue;
+	};
+
 	ParametersEditor.prototype.formatItemConfig = function (oConfigValue) {
 		var oMapItemConfig = MapEditor.prototype.formatItemConfig.apply(this, arguments);
 		var sKey = oConfigValue.key;
 		var sType = oConfigValue.value.type;
 		var vItemMetadata = this.getNestedDesigntimeMetadataValue(sKey);
-		var bVisible = (oConfigValue.value.visible || vItemMetadata.visible) !== false;
-		var bEditable = (oConfigValue.value.editable || vItemMetadata.editable) !== false;
-		var bRequired = (oConfigValue.value.required || vItemMetadata.required) === true;
-		var bExpanded = (oConfigValue.value.expanded || vItemMetadata.expanded) !== false;
+		var bVisible = this.getBoolenValue(oConfigValue.value.visible, vItemMetadata.visible, true);
+		var bEditable = this.getBoolenValue(oConfigValue.value.editable, vItemMetadata.editable, true);
+		var bRequired = this.getBoolenValue(oConfigValue.value.required, vItemMetadata.required, false);
+		var bExpanded = this.getBoolenValue(oConfigValue.value.expanded, vItemMetadata.expanded, true);
 		var sManifestpath = oConfigValue.value.manifestpath || vItemMetadata.manifestpath || "";
 		var sDescription = oConfigValue.value.description || vItemMetadata.description || "";
-		var bTranslatable = (oConfigValue.value.translatable || vItemMetadata.translatable) === true;
-		var bAllowSettings = (oConfigValue.value.allowSettings || vItemMetadata.allowSettings) !== false;
-		var bAllowDynamicValues = (oConfigValue.value.allowDynamicValues || vItemMetadata.allowDynamicValues) === true;
+		var bTranslatable = this.getBoolenValue(oConfigValue.value.translatable, vItemMetadata.translatable, false);
+		var bAllowSettings = this.getBoolenValue(oConfigValue.value.allowSettings, vItemMetadata.allowSettings, true);
+		var bAllowDynamicValues = this.getBoolenValue(oConfigValue.value.allowDynamicValues, vItemMetadata.allowDynamicValues, false);
 		var oVisualization = oConfigValue.value.visualization || vItemMetadata.visualization;
 		var oValues = oConfigValue.value.values || vItemMetadata.values;
 		var sLabel = oConfigValue.value.label || vItemMetadata.label;

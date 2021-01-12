@@ -608,6 +608,13 @@ sap.ui.define([
 	BASEditor.prototype.setDestinations = function (oDestinations) {
 		if (Array.isArray(oDestinations) && oDestinations.length > 0) {
 			var oConfig = this.getConfig();
+			if (!oConfig.properties) {
+				oConfig.properties = {
+					destinations: {}
+				};
+			} else if (!oConfig.properties.destinations) {
+				oConfig.properties.destinations = {};
+			}
 			oConfig.properties.destinations.allowedValues = oDestinations;
 			this.setConfig(oConfig);
 		}
