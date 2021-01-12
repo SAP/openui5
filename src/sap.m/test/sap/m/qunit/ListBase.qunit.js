@@ -2176,6 +2176,37 @@ sap.ui.define([
 			assert.strictEqual(sap.ui.getCore().byId(sSelectionItemId).getText(), "Item Selection", "Invisible text added to Static area");
 		});
 
+		QUnit.test("InputListItem: inner control should have ariaLabelledBy association", function(assert) {
+			var oList = new List();
+			var oInputListItem = new InputListItem({
+				label: "Label",
+				content : [
+					new Input({
+						value: "Content"
+					}),
+					new VBox({
+						items: [
+							new Input({
+								value: "value"
+							})
+						]
+					})
+				]
+			});
+
+			oList.addItem(oInputListItem);
+			oList.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+			var oControl = oInputListItem.getContent()[0];
+			var oControl1 = oInputListItem.getContent()[1];
+
+			assert.ok(oControl.addAriaLabelledBy, "Control has ariaLabelledBy association");
+			assert.strictEqual(document.getElementById(oControl.getId() + "-inner").getAttribute("aria-labelledby"), oInputListItem.getId() + "-label", "aria-lablledBy is added to the control");
+			assert.notOk(oControl1.addAriaLabelledBy, "Control does not have ariaLabelledBy association");
+			assert.notOk(document.getElementById(oControl1.getId()).getAttribute("aria-labelledby"), "aria-lablledBy is not added to the control" );
+			oList.destroy();
+		});
+
 		QUnit.module("Context Menu");
 
 		QUnit.test("Context Menu", function(assert) {
