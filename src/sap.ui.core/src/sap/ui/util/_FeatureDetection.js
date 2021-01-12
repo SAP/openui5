@@ -4,7 +4,7 @@
 
 /**
  * This module is overall:
- * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+ * SPDX-FileCopyrightText: 2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
  * SPDX-License-Identifier: Apache-2.0
  *
  * but contains code which is inspired by jQuery.rtl-scroll-type, which is:
