@@ -79,6 +79,11 @@ sap.ui.define([
 						value: { type: "string" }
 					}
 				},
+				designtimeChange: {
+					parameters: {
+						value: { type: "string" }
+					}
+				},
 				fileSwitch: {
 					parameters: {
 						editable: { type: "boolean" }
@@ -298,8 +303,16 @@ sap.ui.define([
 					this._aFiles[i].content = sData;
 				}.bind(this));
 
+				if (this.getDesigntimeFile()) {
+					this.fireDesigntimeChange({
+						value: this.getDesigntimeFile().content,
+						reRender: true
+					});
+				}
+
 				this.fireManifestChange({
-					value: this.getManifestFile().content
+					value: this.getManifestFile().content,
+					reRender: true
 				});
 
 				this._getHeader().setSelectedKey(this._aFiles[0].key);
@@ -323,16 +336,20 @@ sap.ui.define([
 			return;
 		}
 
-		// for now only editing the manifest is allowed
-		if (this._getHeader().getSelectedKey() !== this.getManifestFile().key) {
+		// for now only editing the manifest and designtime files is allowed
+		if (this._getHeader().getSelectedKey() === this.getManifestFile().key) {
+			this.getManifestFile().content = oEvent.getParameter("value");
+			this.fireManifestChange({
+				value: oEvent.getParameter("value")
+			});
+		} else if (this._getHeader().getSelectedKey() === "designtime.js") {
+			this.getDesigntimeFile().content = oEvent.getParameter("value");
+			this.fireDesigntimeChange({
+				value: oEvent.getParameter("value")
+			});
+		} else {
 			return;
 		}
-
-		this.getManifestFile().content = oEvent.getParameter("value");
-
-		this.fireManifestChange({
-			value: oEvent.getParameter("value")
-		});
 	};
 
 	/**
@@ -343,7 +360,7 @@ sap.ui.define([
 	 */
 	FileEditor.prototype._isFileEditable = function (oFile) {
 		return !oFile.isApplicationManifest
-			&& (oFile.name.endsWith("manifest.json") || oFile.name.endsWith("cardManifest.json"));
+			&& (oFile.name.endsWith("manifest.json") || oFile.name.endsWith("cardManifest.json") || oFile.key === "designtime.js");
 	};
 
 	FileEditor.prototype._findIndex = function (sName) {
@@ -412,13 +429,39 @@ sap.ui.define([
 
 	FileEditor.prototype.getManifestFile = function () {
 		return this._aFiles.find(function (oFile) {
-			return this._isFileEditable(oFile);
+			if (oFile.key !== "designtime.js" && this._isFileEditable(oFile)) {
+				return oFile;
+			}
 		}.bind(this));
 	};
 
 	FileEditor.prototype.setManifestContent = function (sValue) {
 		this.getManifestFile().content = sValue;
 		this._update();
+	};
+
+	FileEditor.prototype.getDesigntimeFile = function () {
+		return this._aFiles.find(function (oFile) {
+			if (oFile.key === "designtime.js") {
+				return oFile;
+			}
+		});
+	};
+
+	FileEditor.prototype.setDesigntimeContent = function (sValue) {
+		this.getDesigntimeFile().content = sValue;
+		this._update();
+	};
+
+	FileEditor.prototype.getDesigntimeContent = function () {
+		var oDesigntimeFile = this.getDesigntimeFile();
+
+		// always try to return the content first, in case it is already loaded and edited
+		if (oDesigntimeFile.content) {
+			return Promise.resolve(oDesigntimeFile.content);
+		} else {
+			return oDesigntimeFile.promise;
+		}
 	};
 
 	FileEditor.prototype.getFilesWithContent = function () {

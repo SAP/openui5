@@ -21,6 +21,7 @@
 	},
 	"sap.card": {
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Products",
 			"subTitle": "In Stock Information",

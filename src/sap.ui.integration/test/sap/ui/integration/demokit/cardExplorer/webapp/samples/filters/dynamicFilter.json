@@ -57,6 +57,7 @@
 			"path": "/value/"
 		},
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Orders by shipper {filters>/shipper/selectedItem/title}",
 			"icon": {

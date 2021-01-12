@@ -5,8 +5,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 	var AdvancedDesigntime = Designtime.extend("card.test.AdvancedDesigntime");
 	AdvancedDesigntime.prototype.create = function () {
 		return {
-			form: {
-				items: {
+			"form": {
+				"items": {
 					"groupheader1": {
 						"label": "General Settings",
 						"type": "group"
@@ -33,8 +33,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 					}
 				}
 			},
-			preview: {
-				modes: "Abstract"
+			"preview": {
+				"modes": "Abstract"
 			}
 		};
 	};

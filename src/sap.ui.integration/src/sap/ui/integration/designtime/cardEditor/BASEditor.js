@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/merge",
 	"sap/base/util/deepClone",
+	"sap/base/util/deepEqual",
 	"sap/base/util/ObjectPath",
 	"./CardEditor",
 	"sap/ui/integration/designtime/baseEditor/BaseEditor",
@@ -20,6 +21,7 @@ sap.ui.define([
 	_omit,
 	merge,
 	deepClone,
+	deepEqual,
 	ObjectPath,
 	CardEditor,
 	BaseEditor,
@@ -88,11 +90,21 @@ sap.ui.define([
 			var oNewItems = {};
 			var aItems = [];
 			var oItem;
+			if (!ObjectPath.get(["sap.card", "configuration"], oJson)) {
+				ObjectPath.set(["sap.card", "configuration"],
+					{
+						"parameters" : {}
+					},
+					oJson
+				);
+			} else if (!ObjectPath.get(["sap.card", "configuration", "parameters"], oJson)) {
+				ObjectPath.set(["sap.card", "configuration", "parameters"], {}, oJson);
+			}
+			var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
 			if (oJson) {
 				//parameters content changed added, removed
-				var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
 				var mParametersInDesigntime = ObjectPath.get(["sap.card", "configuration", "parameters"], this._oDesigntimeMetadataModel.getData());
-				if (!mParameters) {
+				if (deepEqual(mParameters, {}) && !mParametersInDesigntime) {
 					this._oDesigntimeJSConfig.form.items = {};
 					this._oCurrent = {
 						configuration: this._cleanConfig(this._oDesigntimeJSConfig),
@@ -125,19 +137,44 @@ sap.ui.define([
 							delete oCopyConfig.form.items[n];
 							continue;
 						}
+					}  else if (oItem.manifestpath && !oItem.manifestpath.startsWith("/sap.card/configuration/parameters")) {
+						var sPath = oItem.manifestpath;
+						if (sPath.startsWith("/")) {
+							sPath = sPath.substring(1);
+						}
+						var aPath = sPath.split("/");
+						var vValue = ObjectPath.get(aPath, oJson);
+						var vInitialValue = ObjectPath.get(aPath, this._oInitialJson);
+						if (!_isEqual(vValue, vInitialValue)) {
+							mParameters[n].value = vValue;
+						} else {
+							ObjectPath.set(aPath, mParameters[n].value, oJson);
+						}
 					}
 					var iIndex = aCurrentKeys.indexOf(n);
 					if (iIndex > -1) {
 						aCurrentKeys.splice(iIndex, 1);
 					}
 					var oViz;
-					if (oCopyConfig.form.items[n].visualization) {
+					if (mParameters[n].visualization) {
 						oViz = mParameters[n].visualization;
 					}
+					var oValues;
+					if (mParameters[n].values) {
+						oValues = mParameters[n].values;
+					}
 					oCopyConfig.form.items[n] = merge(oItem, mParameters[n]);
-					if (oViz) {
+					if (!mParametersInDesigntime[n].__value.visualization) {
+						delete oCopyConfig.form.items[n].visualization;
+					} else if (oViz) {
 						oCopyConfig.form.items[n].visualization = oViz;
 						oViz = null;
+					}
+					if (!mParametersInDesigntime[n].__value.values) {
+						delete oCopyConfig.form.items[n].values;
+					} else if (oValues) {
+						oCopyConfig.form.items[n].values = oValues;
+						oValues = null;
 					}
 					if (oItem.type === "group") {
 						delete oCopyConfig.form.items[n].manifestpath;
@@ -165,7 +202,6 @@ sap.ui.define([
 				}
 			}
 			if (oMetadata) {
-				var mParameters = ObjectPath.get(["sap.card", "configuration", "parameters"], oJson);
 				if (oCopyConfig) {
 					for (var n in oMetadata) {
 						var oMetaItem = oMetadata[n];
@@ -177,6 +213,10 @@ sap.ui.define([
 						var oViz;
 						if (oOriginalItem.visualization) {
 							oViz = oOriginalItem.visualization;
+						}
+						var oValues;
+						if (oOriginalItem.values) {
+							oValues = oOriginalItem.values;
 						}
 
 						oItem = merge(oOriginalItem, mParameters[sKey]);
@@ -204,6 +244,10 @@ sap.ui.define([
 						if (oViz) {
 							oItem.visualization = oViz;
 							oViz = null;
+						}
+						if (oValues) {
+							oItem.values = oValues;
+							oValues = null;
 						}
 						oItem.__key = sKey;
 						aItems[oItem.position] = oItem;
@@ -234,6 +278,7 @@ sap.ui.define([
 			};
 			this._oDataModel.setData(this._prepareData(oJson));
 			this.fireConfigurationChange(this._oCurrent);
+			this._oInitialJson = oJson;
 		}.bind(this), 500);
 	};
 
@@ -302,6 +347,9 @@ sap.ui.define([
 						if (oParamConfig.type === "simpleicon") {
 							oParamConfig.type = "string";
 						}
+						if (oParamConfig.type === "string[]") {
+							oParamConfig.type = "array";
+						}
 						ObjectPath.set(sPath.split("/"), oParamConfig.value, oJson);
 						delete mParameters[n];
 						continue;
@@ -335,6 +383,13 @@ sap.ui.define([
 				}
 				oItem.type = "string";
 			}
+			//If is array
+			if (oItem.type === "array") {
+				oItem.type = "string[]";
+			}
+			if (oItem.type !== "string[]" && oItem.type != "string") {
+				delete oItem.values;
+			}
 			delete oItem.value;
 		}
 		if (bString) {
@@ -367,6 +422,9 @@ sap.ui.define([
 					if (oMetaItem.visualization.type === "IconSelect") {
 						oMetaItem.type = "simpleicon";
 					}
+				}
+				if (oMetaItem.type === "string[]") {
+					oMetaItem.type = "array";
 				}
 
 				if (oMetaItem.manifestpath && (!oMetaItem.manifestpath.startsWith("/sap.card/configuration/parameters/") || !ObjectPath.get(aPath, this._oInitialJson))) {
@@ -543,7 +601,16 @@ sap.ui.define([
 
 	BASEditor.prototype.updateDesigntimeMetadata = function (oDesigntimeJSConfig, bIsInitialMetadata) {
 		var oDesigntimeMetadata = this._generateMetadataFromJSConfig(oDesigntimeJSConfig);
+		this._oInitialDesigntimeMetadata = oDesigntimeMetadata;
 		this.setDesigntimeMetadata(formatImportedDesigntimeMetadata(oDesigntimeMetadata), bIsInitialMetadata);
+	};
+
+	BASEditor.prototype.setDestinations = function (oDestinations) {
+		if (Array.isArray(oDestinations) && oDestinations.length > 0) {
+			var oConfig = this.getConfig();
+			oConfig.properties.destinations.allowedValues = oDestinations;
+			this.setConfig(oConfig);
+		}
 	};
 
 	function formatImportedDesigntimeMetadata(oFlatMetadata) {

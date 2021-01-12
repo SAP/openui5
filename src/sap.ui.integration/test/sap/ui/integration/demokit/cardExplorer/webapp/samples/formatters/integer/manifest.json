@@ -22,6 +22,7 @@
 	},
 	"sap.card": {
 		"type": "List",
+		"designtime": "dt/Configuration",
 		"header": {
 			"title": "Number of devices",
 			"subTitle": "Devices exceeding {= format.integer(50)} items are highlighted as important",

@@ -31,7 +31,8 @@ sap.ui.define([
 		"datetime": "BASE_EDITOR.MAP.TYPES.DATETIME",
 		"icon": "BASE_EDITOR.MAP.TYPES.ICON",
 		"simpleicon": "BASE_EDITOR.MAP.TYPES.SIMPLEICON",
-		"group": "BASE_EDITOR.MAP.TYPES.GROUP"
+		"group": "BASE_EDITOR.MAP.TYPES.GROUP",
+		"array": "BASE_EDITOR.MAP.TYPES.ARRAY"
 	};
 
 	/**
@@ -541,6 +542,10 @@ sap.ui.define([
 					delete oEditorValue[sKey].visualization;
 				}
 
+				if (sNewType !== "array" && sNewType !== "string") {
+					delete oEditorValue[sKey].values;
+				}
+
 				this._mTypes[sKey] = sNewType;
 				this.setValue(oEditorValue);
 
@@ -556,6 +561,9 @@ sap.ui.define([
 						};
 					} else {
 						delete oDesigntime[sKey].__value.visualization;
+					}
+					if (sNewType !== "array" && sNewType !== "string") {
+						delete oDesigntime[sKey].__value.values;
 					}
 					oDesigntime[sKey].__value.type = sNewType;
 					this.setDesigntimeMetadata(oDesigntime);

@@ -10,6 +10,7 @@
 			"subTitle": "This is a sample of the inline templating feature of MS Adaptive Cards."
 		},
 		"type": "AdaptiveCard",
+		"designtime": "dt/Configuration",
 		"content": {
 			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
 			"type": "AdaptiveCard",

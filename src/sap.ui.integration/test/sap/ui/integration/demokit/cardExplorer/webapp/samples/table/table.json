@@ -27,6 +27,7 @@
 	},
 	"sap.card": {
 		"type": "Table",
+		"designtime": "dt/Configuration",
 		"data": {
 			"json": [{
 					"salesOrder": "5000010050",

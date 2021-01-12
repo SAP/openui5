@@ -5,8 +5,8 @@ sap.ui.define(["sap/ui/integration/Designtime"
 	"use strict";
 	return function () {
 		return new Designtime({
-			form: {
-				items: {
+			"form": {
+				"items": {
 					"integer": {
 						"manifestpath": "/sap.card/configuration/parameters/integer/value",
 						"defaultValue": 1,
