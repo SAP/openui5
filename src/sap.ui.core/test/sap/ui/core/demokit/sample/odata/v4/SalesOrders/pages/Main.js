@@ -12,11 +12,12 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Press",
+	"sap/ui/test/matchers/Ancestor",
 	"sap/ui/test/matchers/Interactable",
 	"sap/ui/test/matchers/Properties",
 	"sap/ui/test/matchers/PropertyStrictEquals"
 ], function (MessageBox, Helper, Filter, FilterOperator, ODataUtils, Opa, Opa5, TestUtils,
-		EnterText, Press, Interactable, Properties, PropertyStrictEquals) {
+		EnterText, Press, Ancestor, Interactable, Properties, PropertyStrictEquals) {
 	"use strict";
 	var COMPANY_NAME_COLUMN_INDEX = 1,
 		GROSS_AMOUNT_COLUMN_INDEX = 2,
@@ -623,6 +624,25 @@ sap.ui.define([
 						success : function (aControls) {
 							new Press().executeOn(aControls[0]);
 							Opa5.assert.ok(true, "Sales Order selected: " + sSalesOrderId);
+						},
+						viewName : sViewName
+					});
+				},
+				setFilter : function (sFilterKey) {
+					return this.waitFor({
+						actions : new Press(),
+						id : "itemFilter",
+						success : function (oFilter) {
+							return this.waitFor({
+								actions: new Press(),
+								controlType: "sap.ui.core.ListItem",
+								matchers: [
+									new Ancestor(oFilter), new Properties({key : sFilterKey})
+								],
+								success : function () {
+									Opa5.assert.ok(true, "Filter applied to " + sFilterKey);
+								}
+							});
 						},
 						viewName : sViewName
 					});

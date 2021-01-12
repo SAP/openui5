@@ -113,10 +113,12 @@ sap.ui.define([
 		// being sent
 		this.oPendingRequestsPromise = null;
 		this.mPostRequests = {}; // map from path to an array of entity data (POST bodies)
+		this.sReportedMessagesPath = undefined;
 		this.oRequestor = oRequestor;
 		// whether a request has been sent and the query options are final
 		this.bSentRequest = false;
 		this.bSortExpandSelect = bSortExpandSelect;
+
 		this.setResourcePath(sResourcePath);
 		this.setQueryOptions(mQueryOptions);
 		this.bSharedRequest = bSharedRequest; // must be set after the functions!
@@ -1223,6 +1225,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Removes bound messages from the message model if this cache already has reported messages
+	 *
+	 * @public
+	 */
+	_Cache.prototype.removeMessages = function () {
+		if (this.sReportedMessagesPath) {
+			this.oRequestor.getModelInterface().reportBoundMessages(this.sReportedMessagesPath, {});
+			this.sReportedMessagesPath = undefined;
+		}
+	};
+
+	/**
 	 * Removes one from the count of pending (that is, "currently being sent to the server")
 	 * requests.
 	 *
@@ -1882,8 +1896,9 @@ sap.ui.define([
 			visitInstance(oRoot, sRootMetaPath || this.sMetaPath, sRootPath || "", sRequestUrl);
 		}
 		if (bHasMessages) {
-			this.oRequestor.getModelInterface().reportBoundMessages(
-				this.getOriginalResourcePath(oRoot), mPathToODataMessages, aCachePaths);
+			this.sReportedMessagesPath = this.getOriginalResourcePath(oRoot);
+			this.oRequestor.getModelInterface().reportBoundMessages(this.sReportedMessagesPath,
+				mPathToODataMessages, aCachePaths);
 		}
 	};
 

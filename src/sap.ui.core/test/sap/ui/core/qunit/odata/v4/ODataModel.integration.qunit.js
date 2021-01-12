@@ -6137,6 +6137,84 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Select messages for business object scope via a root binding, i.e. the messages for
+	// a dependent binding are selected via the root binding.
+	// Use #requestFilterForMessages on the dependent list binding, filter the list binding, and
+	// check that no messages in the message model are touched.
+	//
+	// JIRA: CPOUI5ODATAV4-717
+	QUnit.test("requestFilterForMessages on a relative list binding", function (assert) {
+		var oBinding,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{path : \'/SalesOrderList(\\\'42\\\')\', \
+		parameters : {$select : \'Messages\'}}">\
+	<Text id="salesOrderID" text="{SalesOrderID}"/>\
+	<Table id="table" items="{path : \'SO_2_SOITEM\', parameters : {$$ownRequest : true}, \
+			templateShareable : false}">\
+		<Text id="quantity" text="{Quantity}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('42')?$select=Messages,SalesOrderID", {
+				Messages : [{
+					code : "23",
+					message : "Enter a minimum quantity of 2",
+					numericSeverity : 3,
+					target : "SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')/Quantity"
+				}],
+				SalesOrderID : "42"
+			})
+			.expectRequest("SalesOrderList('42')/SO_2_SOITEM"
+				+ "?$select=ItemPosition,Quantity,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					ItemPosition : "0010",
+					SalesOrderID : "42",
+					Quantity :  "1"
+				}, {
+					ItemPosition : "0020",
+					SalesOrderID : "42",
+					Quantity :  "3"
+				}]
+			})
+			.expectChange("salesOrderID", "42")
+			.expectChange("quantity", ["1.000", "3.000"])
+			.expectMessages([{
+				code : "23",
+				message : "Enter a minimum quantity of 2",
+				persistent : false,
+				target : "/SalesOrderList('42')/SO_2_SOITEM(SalesOrderID='42',ItemPosition='0010')"
+					+ "/Quantity",
+				technical : false,
+				type : "Warning"
+			}]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+
+			// code under test
+			return oBinding.requestFilterForMessages();
+		}).then(function (oFilter) {
+			that.expectRequest("SalesOrderList('42')/SO_2_SOITEM"
+				+ "?$select=ItemPosition,Quantity,SalesOrderID"
+				+ "&$filter=SalesOrderID eq '42' and ItemPosition eq '0010'"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					ItemPosition : "0010",
+					Quantity :  "1",
+					SalesOrderID : "42"
+				}]
+			});
+
+			// code under test
+			oBinding.filter(oFilter);
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Request Late property with navigation properties in entity with key aliases
 	// JIRA: CPOUI5ODATAV4-122
 	QUnit.test("Late property in entity with key aliases", function (assert) {
@@ -20949,7 +21027,7 @@ sap.ui.define([
 						{SalesOrderID : "0500000348"}
 					]
 				})
-				.expectMessages([]);
+				.expectMessages([oExpectedMessage0]);
 
 			that.oView.byId("tableSalesOrder").getBinding("items").refresh();
 
@@ -20957,7 +21035,7 @@ sap.ui.define([
 		}).then(function () {
 			return that.checkValueState(assert,
 				that.oView.byId("tableSOItems2").getItems()[0].getCells()[0],
-				"None", "");
+				"Warning", "Message0");
 		}).then(function () {
 			// select the same sales order again in the binding hierarchy, new request is sent;
 			//TODO if Binding.refresh considers unbound bindings this request is expected.

@@ -241,6 +241,8 @@ sap.ui.define([
 		assert.strictEqual(oCache.bSentRequest, false);
 		assert.strictEqual(oCache.bSharedRequest, "bSharedRequest");
 		assert.strictEqual(oCache.oTypePromise, undefined);
+		assert.strictEqual(oCache.sReportedMessagesPath , undefined);
+		assert.ok(oCache.hasOwnProperty("sReportedMessagesPath"));
 
 		assert.throws(function () {
 			// code under test
@@ -2998,6 +3000,9 @@ sap.ui.define([
 
 		// code under test
 		oCache.visitResponse(oData, mTypeForMetaPath);
+
+		assert.strictEqual(oCache.sReportedMessagesPath,
+			bReturnsOriginalResourcePath ? sOriginalResourcePath : sResourcePath);
 	});
 });
 
@@ -3022,6 +3027,26 @@ sap.ui.define([
 			assert.strictEqual(vResult, oCacheValue);
 		});
 	});
+
+	//*********************************************************************************************
+[undefined, "~"].forEach(function (sReportedMessagesPath) {
+	var sTitle = "_Cache#removeMessages, sReportedMessagesPath = " + sReportedMessagesPath;
+	QUnit.test(sTitle, function (assert) {
+		var oCache = new _Cache(this.oRequestor, "TEAMS('42')");
+
+		oCache.sReportedMessagesPath = sReportedMessagesPath;
+
+		this.oModelInterfaceMock.expects("reportBoundMessages")
+			.exactly(sReportedMessagesPath ? 1 : 0)
+			.withExactArgs(sReportedMessagesPath, {});
+
+		// code under test
+		oCache.removeMessages();
+
+		assert.strictEqual(oCache.sReportedMessagesPath, undefined);
+		assert.ok(oCache.hasOwnProperty("sReportedMessagesPath"));
+	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("_Cache#addPendingRequest, _Cache#removePendingRequest", function (assert) {

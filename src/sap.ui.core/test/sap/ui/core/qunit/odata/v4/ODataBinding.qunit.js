@@ -2191,105 +2191,78 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-[{
-	mExpectedCacheByResourcePath : {},
-	aDeepPathsForReportBoundMessages : ["A/B(42)/C", "A/B(42)/CD", "A/B(43)/D"],
-	sPrefix : "A"
-}, {
-	mExpectedCacheByResourcePath : {
-		"A/B(42)/CD" : {
-			$deepResourcePath : "A/B(42)/CD"
-		},
-		"B(43)/D" : {
-			$deepResourcePath : "A/B(43)/D"
-		}
-	},
-	aDeepPathsForReportBoundMessages : ["A/B(42)/C"],
-	sPrefix : "A/B(42)/C"
-}, {
-	mExpectedCacheByResourcePath : {
-		"B(43)/D" : {
-			$deepResourcePath : "A/B(43)/D"
-		}
-	},
-	aDeepPathsForReportBoundMessages : ["A/B(42)/C", "A/B(42)/CD"],
-	sPrefix : "A/B(42)"
-}, {
-	mExpectedCacheByResourcePath : {},
-	aDeepPathsForReportBoundMessages : ["A/B(42)/C", "A/B(42)/CD", "A/B(43)/D"],
-	sPrefix : "A/B"
-}, {
-	mExpectedCacheByResourcePath : {},
-	aDeepPathsForReportBoundMessages : ["A/B(42)/C", "A/B(42)/CD", "A/B(43)/D"],
-	sPrefix : ""
-}].forEach(function (oFixture) {
-	[true, false, undefined].forEach(function (bCachesOnly) {
-	var sTitle = "removeCachesAndMessages: sPrefix=" + oFixture.sPrefix + ", bCachesOnly="
-			+ bCachesOnly;
+[true, false, undefined].forEach(function (bCachesOnly) {
+	var sTitle = "removeCachesAndMessages: bCachesOnly=" + bCachesOnly;
 
 	QUnit.test(sTitle, function (assert) {
 		var oBinding = new ODataBinding({
-				oContext : {},
-				oModel : {
-					reportBoundMessages : function () {},
-					resolve : function () {}
-				},
-				sPath : {/*string*/}
+				oCache : {removeMessages : function () {}}
 			}),
 			mCacheByResourcePath = {
-				"A/B(42)/C" : {
-					$deepResourcePath : "A/B(42)/C"
+				"foo1" : {
+					$deepResourcePath : "fooDeep1"
 				},
-				"A/B(42)/CD" : {
-					$deepResourcePath : "A/B(42)/CD"
+				"foo2" : {
+					$deepResourcePath : "fooDeep2",
+					removeMessages : function () {}
 				},
-				"B(43)/D" : {
-					$deepResourcePath : "A/B(43)/D"
+				"foo3" : {
+					$deepResourcePath : "fooDeep3"
 				}
 			},
-			oModelMock = this.mock(oBinding.oModel);
+			oCacheMock = this.mock(oBinding.oCache),
+			oHelperMock = this.mock(_Helper),
+			that = this;
 
 		oBinding.mCacheByResourcePath = undefined;
-		this.mock(oBinding.oModel).expects("resolve").exactly(bCachesOnly !== true ? 2 : 0)
-			.withExactArgs(sinon.match.same(oBinding.sPath), sinon.match.same(oBinding.oContext))
-			.returns("/~");
-		oModelMock.expects("reportBoundMessages").exactly(bCachesOnly !== true ? 2 : 0)
-			.withExactArgs("~", {});
+		oCacheMock.expects("removeMessages").exactly(bCachesOnly !== true ? 1 : 0)
+			.withExactArgs();
 
 		// code under test
-		oBinding.removeCachesAndMessages(oFixture.sPrefix, bCachesOnly);
+		oBinding.removeCachesAndMessages("~base~path", bCachesOnly);
 
 		oBinding.mCacheByResourcePath = mCacheByResourcePath;
-		oFixture.aDeepPathsForReportBoundMessages.forEach(function (sDeepPath) {
-			oModelMock.expects("reportBoundMessages").exactly(bCachesOnly !== true ? 1 : 0)
-				.withExactArgs(sDeepPath, {});
-		});
+
+		oCacheMock.expects("removeMessages").exactly(bCachesOnly !== true ? 1 : 0)
+			.withExactArgs();
+
+		oHelperMock.expects("hasPathPrefix").withExactArgs("fooDeep1", "~base~path~")
+			.returns(false);
+		oHelperMock.expects("hasPathPrefix").withExactArgs("fooDeep2", "~base~path~")
+			.returns(true);
+		that.mock(mCacheByResourcePath["foo2"]).expects("removeMessages")
+			.exactly(bCachesOnly !== true ? 1 : 0)
+			.withExactArgs();
+		oHelperMock.expects("hasPathPrefix").withExactArgs("fooDeep3", "~base~path~")
+			.returns(false);
 
 		// code under test
-		oBinding.removeCachesAndMessages(oFixture.sPrefix, bCachesOnly);
+		oBinding.removeCachesAndMessages("~base~path~", bCachesOnly);
 
-		assert.deepEqual(oBinding.mCacheByResourcePath, oFixture.mExpectedCacheByResourcePath);
-	});
+		assert.deepEqual(oBinding.mCacheByResourcePath, {
+			"foo1" : {$deepResourcePath : "fooDeep1"},
+			"foo3" : {$deepResourcePath : "fooDeep3"}
+		});
 	});
 });
 
 	//*********************************************************************************************
-	QUnit.test("removeCachesAndMessages: with unresolved path", function (assert) {
+	QUnit.test("removeCachesAndMessages: w/o mCacheByResourcePath", function (assert) {
 		var oBinding = new ODataBinding({
-				oContext : {},
-				oModel : {
-					reportBoundMessages : function () {},
-					resolve : function () {}
-				},
-				sPath : "TEAM_2_EMPLOYEES"
+				oCache : {removeMessages : function () {}}
 			});
 
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
-			.returns(undefined);
-		this.mock(oBinding.oModel).expects("reportBoundMessages").never();
+		this.mock(oBinding.oCache).expects("removeMessages").withExactArgs();
 
-		// code under test
+		// code under test (has cache)
+		oBinding.removeCachesAndMessages("");
+
+		// code under test (only cache)
+		oBinding.removeCachesAndMessages("", true);
+
+		oBinding.oCache = undefined;
+
+		// code under test (no cache)
 		oBinding.removeCachesAndMessages("");
 	});
 

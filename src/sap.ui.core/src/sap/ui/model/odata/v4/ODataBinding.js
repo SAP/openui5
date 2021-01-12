@@ -939,41 +939,31 @@ sap.ui.define([
 	 */
 
 	/**
-	 * Remove this binding's caches and non-persistent messages. Only caches with a deep resource
-	 * path starting with the given resource path prefix and messages with a target path starting
-	 * with the given prefix are removed.
+	 * Remove this binding's caches and non-persistent messages. The binding's active cache removes
+	 * only its own messages. Inactive caches with a deep resource path starting with the given
+	 * resource path prefix are removed and they also remove only their own messages.
 	 *
 	 * @param {string} sResourcePathPrefix
-	 *   The resource path prefix which is used to delete the dependent caches and corresponding
-	 *   messages; may be "" but not <code>undefined</code>
+	 *   The resource path prefix which is used to delete inactive caches and their messages; may be
+	 *   "" but not <code>undefined</code>
 	 * @param {boolean} [bCachesOnly] Whether to keep messages untouched
 	 *
 	 * @private
 	 */
 	ODataBinding.prototype.removeCachesAndMessages = function (sResourcePathPrefix, bCachesOnly) {
-		var oModel = this.oModel,
-			sResolvedPath,
-			that = this;
+		var that = this;
 
-		if (!bCachesOnly) {
-			sResolvedPath = oModel.resolve(this.sPath, this.oContext);
-			if (sResolvedPath) {
-				// The caller of this function replaces the current cache just after this function
-				// call; remove only the related messages
-				oModel.reportBoundMessages(sResolvedPath.slice(1), {});
-			}
+		if (!bCachesOnly && this.oCache) {
+			this.oCache.removeMessages();
 		}
 		if (this.mCacheByResourcePath) {
 			Object.keys(this.mCacheByResourcePath).forEach(function (sResourcePath) {
 				var oCache = that.mCacheByResourcePath[sResourcePath],
-					sDeepResourcePath = that.mCacheByResourcePath[sResourcePath].$deepResourcePath;
+					sDeepResourcePath = oCache.$deepResourcePath;
 
-				if (sResourcePathPrefix === ""
-						|| sDeepResourcePath === sResourcePathPrefix
-						|| sDeepResourcePath.startsWith(sResourcePathPrefix + "/")
-						|| sDeepResourcePath.startsWith(sResourcePathPrefix + "(")) {
+				if (_Helper.hasPathPrefix(sDeepResourcePath, sResourcePathPrefix)) {
 					if (!bCachesOnly) {
-						oModel.reportBoundMessages(oCache.$deepResourcePath, {});
+						oCache.removeMessages();
 					}
 					delete that.mCacheByResourcePath[sResourcePath];
 				}
