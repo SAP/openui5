@@ -1,6 +1,7 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/layout/VerticalLayout",
@@ -29,6 +30,7 @@ sap.ui.define([
 	"sap/ui/rta/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	KeyCodes,
 	flUtils,
 	Layer,
 	VerticalLayout,
@@ -335,7 +337,7 @@ sap.ui.define([
 				this.oControlVariantPlugin._$oEditableControlDomRef.text("Test");
 				this.oControlVariantPlugin._$editableField.text(this.oControlVariantPlugin._$oEditableControlDomRef.text());
 				var $Event = jQuery.Event("keydown"); // eslint-disable-line new-cap
-				$Event.keyCode = jQuery.sap.KeyCodes.ENTER;
+				$Event.keyCode = KeyCodes.ENTER;
 				this.oControlVariantPlugin._$editableField.trigger($Event);
 				sap.ui.getCore().applyChanges();
 				done2();

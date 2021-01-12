@@ -15,6 +15,7 @@ sap.ui.define([
 	"sap/ui/rta/plugin/iframe/AddIFrameDialog",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/base/util/includes",
+	"sap/base/util/uid",
 	"sap/m/Button"
 ],
 function (
@@ -32,6 +33,7 @@ function (
 	AddIFrameDialog,
 	sinon,
 	includes,
+	uid,
 	Button
 ) {
 	"use strict";
@@ -117,7 +119,7 @@ function (
 
 				sap.ui.getCore().applyChanges();
 
-				this.sNewControlID = oMockedViewWithStableId.createId(jQuery.sap.uid());
+				this.sNewControlID = oMockedViewWithStableId.createId(uid());
 				this.oNewObjectPageSection = new ObjectPageSection(this.sNewControlID);
 				this.oObjectPageLayout.addSection(this.oNewObjectPageSection);
 

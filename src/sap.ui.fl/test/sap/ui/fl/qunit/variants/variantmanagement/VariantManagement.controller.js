@@ -2,12 +2,14 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/variants/VariantManagement",
-	"sap/m/MessageToast"
+	"sap/m/MessageToast",
+	"sap/base/Log"
 ], function(
 	Controller,
 	VariantModel,
 	VariantManagement,
-	MessageToast
+	MessageToast,
+	Log
 ) {
 	"use strict";
 
@@ -258,7 +260,7 @@ sap.ui.define([
 
 			var sMessage = sMode + "Name: " + params.name + "\nDefault: " + params.def + "\nOverwrite:" + params.overwrite + "\nSelected Item Key: " + params.key + "\nExecute:" + params.execute;
 			MessageToast.show(sMessage);
-			jQuery.sap.log.error("\n" + sMessage);
+			Log.error("\n" + sMessage);
 		},
 		onManage: function() {
 			var oModel = this.oVM.getModel(this._sModelName);

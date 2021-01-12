@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/XMLHelper",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/fl/changeHandler/AddXMLAtExtensionPoint",
 	"sap/ui/fl/Change",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
+	XMLHelper,
 	XMLView,
 	AddXMLAtExtensionPoint,
 	Change,
@@ -64,7 +66,7 @@ sap.ui.define([
 		'</mvc:View>';
 
 	function _createXMLViewWithExtensionPoints() {
-		return jQuery.sap.parseXML(sXmlString, "application/xml").documentElement;
+		return XMLHelper.parse(sXmlString, "application/xml").documentElement;
 	}
 
 	function _createAddXMLAtExtensionPointChange(sPath, sSelectorExtensionName, sProjectId) {

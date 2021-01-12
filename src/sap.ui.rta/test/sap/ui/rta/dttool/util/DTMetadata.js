@@ -174,7 +174,7 @@ sap.ui.define([
 				if (oControlClass && oControlClass.getMetadata() && (oControlClass.getMetadata().getStereotype() === "control" || oControlClass.getMetadata().getStereotype() === "element")) {
 					var oMetadata = oControlClass.getMetadata();
 					if (oMetadata.isAbstract()) {
-						jQuery.sap.log.debug("Abstract class not available in design time " + oMetadata.getName());
+						Log.debug("Abstract class not available in design time " + oMetadata.getName());
 						resolve(null);
 					}
 					// load the library designtime.json
@@ -191,7 +191,7 @@ sap.ui.define([
 					});
 				}
 			}, function() {
-				jQuery.sap.log.debug("Designtime data for " + sName + " cannot be loaded");
+				Log.debug("Designtime data for " + sName + " cannot be loaded");
 				resolve(null);
 			});
 		});

@@ -2,12 +2,14 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/ODataModel",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/base/Log"
 ], function(
 	Controller,
 	MockServer,
 	ODataModel,
-	JSONModel
+	JSONModel,
+	Log
 ) {
 	"use strict";
 
@@ -53,7 +55,7 @@ sap.ui.define([
 						}
 						//else if *Other types can be inserted here, like Annotations*
 						oMockServer.start();
-						jQuery.sap.log.info("Running the app with mock data for " + property);
+						Log.info("Running the app with mock data for " + property);
 
 						if (property === "mainService") {
 							var oModel;
@@ -93,7 +95,7 @@ sap.ui.define([
 							}
 						}
 					} else {
-						jQuery.sap.log.error("Running the app with mock data for " + property);
+						Log.error("Running the app with mock data for " + property);
 					}
 				}
 			}

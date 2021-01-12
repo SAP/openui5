@@ -1,11 +1,13 @@
 sap.ui.require([
 	"sap/m/Shell",
 	"sap/ui/core/ComponentContainer",
+	"sap/ui/performance/Measurement",
 	"fl/performance/utils/FlexPerformanceTestUtil" // needs to be defined, it is called externally
 ],
 function (
 	Shell,
-	ComponentContainer
+	ComponentContainer,
+	Measurement
 ) {
 	"use strict";
 	/**
@@ -21,7 +23,7 @@ function (
 	window.onAppReady = new Promise(function (fnResolve) {
 		window.fnResolve = fnResolve;
 	});
-	jQuery.sap.measure.setActive(true);
+	Measurement.setActive(true);
 
 	var oComponentContainer = new ComponentContainer({
 		id: "componentContainer",

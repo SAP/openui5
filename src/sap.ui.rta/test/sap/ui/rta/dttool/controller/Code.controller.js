@@ -308,9 +308,9 @@ sap.ui.define([
 			// set the <code>CodeEditor</code> scroll pos to line 0
 			oAceInstance.gotoLine(/*line*/0, /*column*/0, /*animate*/false);
 
-			jQuery.sap.delayedCall(0, this, function() {
+			setTimeout(function() {
 				oAceInstance.resize(true);
-			});
+			}, 0);
 		},
 
 		/**
