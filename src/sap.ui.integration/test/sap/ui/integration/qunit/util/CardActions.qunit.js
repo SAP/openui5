@@ -626,7 +626,7 @@ sap.ui.define([
 		var oManifestActionSubmit = {
 			"_version": "1.8.0",
 			"sap.app": {
-				"id": "adativecard.embedded",
+				"id": "adaptivecard.embedded",
 				"type": "card"
 			},
 			"sap.card": {
