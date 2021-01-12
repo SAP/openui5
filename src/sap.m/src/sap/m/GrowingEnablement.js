@@ -660,7 +660,7 @@ sap.ui.define([
 				}
 
 				// show, update or hide the growing button
-				if (!iItemsLength || !this._iLimit ||
+				if (!iItemsLength || !this._iLimit || !iBindingLength ||
 					(bLengthFinal && this._iLimit >= iBindingLength) ||
 					(bHasScrollToLoad && this._getHasScrollbars())) {
 					oControl.$("triggerList").css("display", "none");
