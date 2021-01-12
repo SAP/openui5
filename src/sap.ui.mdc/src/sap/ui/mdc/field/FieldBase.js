@@ -1446,8 +1446,11 @@ sap.ui.define([
 	FieldBase.prototype.getFormFormattedValue = function() {
 
 		var aConditions = this.getConditions();
+		var bShowEmptyIndicator = this.getShowEmptyIndicator() && aConditions.length === 0 && !this.getContent() && !this.getContentDisplay();
 
-		if (this._bIsMeasure && this._oUnitOriginalType) {
+		if (bShowEmptyIndicator) {
+			return this._oResourceBundle.getText("field.EMPTY_INDICATOR"); // TODO: clarify accessibility support for semantic conected fields
+		} else if (this._bIsMeasure && this._oUnitOriginalType) {
 			// in unit case use original data type for formatting (as internal type hides unit)
 			var aValue = aConditions.length > 0 ? aConditions[0].values[0] : [0, null]; // TODO: support multiple conditions or other operator than EQ?
 			return this._oUnitOriginalType.formatValue(aValue, "string");

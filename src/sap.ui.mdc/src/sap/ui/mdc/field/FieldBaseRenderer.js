@@ -55,7 +55,7 @@ sap.ui.define([
 			// element for empty indicator
 			oRm.openStart("span");
 			oRm.attr("aria-hidden", "true");
-			oRm.attr("emptyIndicator", oField._oResourceBundle.getText("field.EMPTY_INDICATOR"));
+			oRm.attr("emptyindicator", oField._oResourceBundle.getText("field.EMPTY_INDICATOR"));
 			oRm.class("sapMText");
 			oRm.class("sapUiSelectable");
 			oRm.class("sapMTextMaxWidth");

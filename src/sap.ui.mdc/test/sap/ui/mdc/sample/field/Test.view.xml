@@ -1103,6 +1103,12 @@
 						<mdc:Field id="F4-13" value="{parts: [{path: 'Height'}, {path: 'DimUnit'}], type: 'sap.ui.model.type.Unit'}" placeholder="{/#Product/Width/@sap:label}" display="Description" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit"/>
 					</form:SemanticFormElement>
 				</form:FormContainer>
+				<form:FormContainer title="empty indicator">
+					<form:SemanticFormElement label="String Fields">
+					<mdc:Field id="F4-14" value="" showEmptyIndicator="true" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"></mdc:Field>
+					<mdc:Field id="F4-15" value="" showEmptyIndicator="true" display="Value" editMode="{= ${view>/editModeSemantic} ? 'Editable' : 'Display' }" change="handleChange" liveChange="handleLiveChange" submit="handleSubmit" press="handlePress"></mdc:Field>
+					</form:SemanticFormElement>
+				</form:FormContainer>
 			</form:Form>
 		</m:Page>
 
