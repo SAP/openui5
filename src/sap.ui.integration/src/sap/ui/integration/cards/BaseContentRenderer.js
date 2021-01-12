@@ -56,7 +56,7 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 
 			//Removing content from the tab chain
 			if (sType !== "AnalyticalContent" && sType !== "TimelineContent") {
-				this.hideContent(oCardContent);
+				oCardContent.hideContent();
 			}
 		}
 
@@ -72,17 +72,6 @@ sap.ui.define(["sap/ui/core/Renderer"], function (Renderer) {
 	 */
 	BaseContentRenderer.renderContent = function (oRm, oCardContent) {
 		oRm.renderControl(oCardContent.getAggregation("_content"));
-	};
-
-	/**
-	 * @protected
-	 * @param {sap.ui.integration.cards.BaseContent} oCardContent an object representation of the control that should be rendered
-	 */
-	BaseContentRenderer.hideContent = function (oCardContent) {
-
-		if (oCardContent.isLoading()) {
-			oCardContent.getAggregation("_content").addStyleClass("sapFCardContentHidden");
-		}
 	};
 
 	/**

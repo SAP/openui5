@@ -84,7 +84,12 @@ sap.ui.define([
 
 		metadata: {
 			library: "sap.ui.integration",
-			properties: {
+
+			aggregations: {
+				/**
+				 * The internally used LoadingProvider.
+				 */
+				_loadingProvider: { type: "sap.ui.core.Element", multiple: false, visibility: "hidden" }
 			}
 		},
 		renderer: FHeaderRenderer
@@ -95,7 +100,9 @@ sap.ui.define([
 		FHeader.prototype.init.call(this);
 
 		this._bReady = false;
-		this._oLoadingProvider = new LoadingProvider();
+
+		this.setAggregation("_loadingProvider", new LoadingProvider());
+
 		this._aReadyPromises = [];
 
 		// So far the ready event will be fired when the data is ready. But this can change in the future.
@@ -114,11 +121,6 @@ sap.ui.define([
 
 		this._oServiceManager = null;
 		this._oDataProviderFactory = null;
-
-		if (this._oLoadingProvider) {
-			this._oLoadingProvider.destroy();
-			this._oLoadingProvider = null;
-		}
 
 		if (this._oDataProvider) {
 			this._oDataProvider.destroy();
@@ -140,11 +142,11 @@ sap.ui.define([
 	};
 
 	Header.prototype.isLoading = function () {
-		var oLoadingProvider = this._oLoadingProvider,
+		var oLoadingProvider = this.getAggregation("_loadingProvider"),
 			oCard = this.getParent(),
-			cardLoading = oCard.getMetadata()._sClassName === 'sap.ui.integration.widgets.Card' ? oCard.isLoading() : false;
+			bCardLoading = oCard.isA("sap.ui.integration.widgets.Card") ? oCard.isLoading() : false;
 
-		return !oLoadingProvider.getDataProviderJSON() && (oLoadingProvider.getLoadingState() || cardLoading);
+		return !oLoadingProvider.isDataProviderJson() && (oLoadingProvider.getLoading() || bCardLoading);
 	};
 
 	Header.prototype._handleError = function (sLogMessage) {
@@ -209,6 +211,8 @@ sap.ui.define([
 
 		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
 
+		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
+
 		if (oDataSettings && oDataSettings.name) {
 			oModel = this.getModel(oDataSettings.name);
 		} else if (this._oDataProvider) {
@@ -218,10 +222,9 @@ sap.ui.define([
 
 		if (this._oDataProvider) {
 			this._oDataProvider.attachDataRequested(function () {
-				this.onDataRequested();
+				this.showLoadingPlaceholders();
 			}.bind(this));
 
-			//TODO Designers to decide if we have to keep loading status when an error occurs during loading
 			this._oDataProvider.attachDataChanged(function (oEvent) {
 				oModel.setData(oEvent.getParameter("data"));
 				this.onDataRequestComplete();
@@ -238,14 +241,25 @@ sap.ui.define([
 		}
 	};
 
-	Header.prototype.onDataRequested = function () {
-		this._oLoadingProvider.createLoadingState(this._oDataProvider);
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	Header.prototype.showLoadingPlaceholders = function () {
+		this.getAggregation("_loadingProvider").setLoading(true);
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	Header.prototype.hideLoadingPlaceholders = function () {
+		this.getAggregation("_loadingProvider").setLoading(false);
 	};
 
 	Header.prototype.onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
-		this._oLoadingProvider.setLoading(false);
-		this._oLoadingProvider.removeHeaderPlaceholder(this);
+		this.hideLoadingPlaceholders();
 	};
 
 	return Header;

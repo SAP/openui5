@@ -159,11 +159,10 @@ sap.ui.define([
 	QUnit.test("Create a Highchart chart", function (assert) {
 		// Arrange
 		var done = assert.async(),
-			oCard = this.oCard,
 			fnLoadStub = this.fnLoadStub,
 			fnChartStub = this.fnChartStub;
 
-		oCard.attachEvent("_ready", function () {
+		setTimeout(function () {
 			Core.applyChanges();
 
 			// Assert
@@ -172,7 +171,8 @@ sap.ui.define([
 			assert.strictEqual(fnChartStub.getCall(0).args[1], "my-chart-options", "window.Highcharts.Chart() is called with correct arguments.");
 
 			done();
-		});
+		}, 300);
+
 	});
 
 });

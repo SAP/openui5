@@ -747,13 +747,13 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("#destroyPlaceholder - Placeholder is destroyed after loading has completed", function (assert) {
+	QUnit.test("#hideLoadingPlaceholders - Placeholder is hidden after loading has completed", function (assert) {
 		// Arrange
 		var done = assert.async(),
-			spy = sinon.spy(BaseListContent.prototype, "destroyPlaceholder"),
+			spy = sinon.spy(BaseListContent.prototype, "hideLoadingPlaceholders"),
 			oManifest = {
 				"sap.app": {
-					"id": "test.cards.list.card.destroyPlaceholder"
+					"id": "test.cards.list.card.hidePlaceholder"
 				},
 				"sap.card": {
 					"type": "List",
@@ -772,7 +772,7 @@ sap.ui.define([
 			};
 
 		this.oCard.attachEvent("_ready", function () {
-			assert.ok(spy.called, "The method in the base class for destroying placeholder is called.");
+			assert.ok(spy.called, "The method in the base class for hiding placeholder is called.");
 			done();
 		});
 

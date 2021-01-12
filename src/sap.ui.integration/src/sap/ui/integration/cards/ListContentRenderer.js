@@ -28,17 +28,6 @@ sap.ui.define(["./BaseContentRenderer"], function (BaseContentRenderer) {
 	/**
 	 * @override
 	 */
-	ListContentRenderer.hideContent = function (oListContent) {
-		BaseContentRenderer.hideContent(oListContent);
-
-		if (oListContent.getAggregation("_legend")) {
-			oListContent.getAggregation("_legend").addStyleClass("sapFCardContentHidden");
-		}
-	};
-
-	/**
-	 * @override
-	 */
 	ListContentRenderer.getMinHeight = function (oConfiguration, oContent) {
 		if (!oConfiguration) {
 			return this.DEFAULT_MIN_HEIGHT;

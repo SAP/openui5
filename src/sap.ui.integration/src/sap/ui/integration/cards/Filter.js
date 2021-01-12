@@ -70,7 +70,12 @@ sap.ui.define([
 				/**
 				 * The internally used sap.m.Select control instance.
 				 */
-				_select: { type: "sap.m.Select", multiple: false, visibility: "hidden" }
+				_select: { type: "sap.m.Select", multiple: false, visibility: "hidden" },
+
+				/**
+				 * The internally used LoadingProvider.
+				 */
+				_loadingProvider: { type: "sap.ui.core.Element", multiple: false, visibility: "hidden" }
 			},
 
 			associations: {
@@ -108,7 +113,7 @@ sap.ui.define([
 	});
 
 	Filter.prototype.init = function () {
-		this._oLoadingProvider = new LoadingProvider();
+		this.setAggregation("_loadingProvider", new LoadingProvider());
 
 		this.attachEventOnce("_dataReady", function () {
 			this.fireEvent("_ready");
@@ -120,15 +125,12 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 			this._oDataProvider = null;
 		}
-
-		if (this._oLoadingProvider) {
-			this._oLoadingProvider.destroy();
-			this._oLoadingProvider = null;
-		}
 	};
 
 	Filter.prototype.isLoading = function () {
-		return !this._oLoadingProvider.getDataProviderJSON() && this._oLoadingProvider.getLoadingState();
+		var oLoadingProvider = this.getAggregation("_loadingProvider");
+
+		return !oLoadingProvider.isDataProviderJson() && oLoadingProvider.getLoading();
 	};
 
 	Filter.prototype._getSelect = function () {
@@ -167,12 +169,23 @@ sap.ui.define([
 
 	Filter.prototype._onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
-		this._oLoadingProvider.setLoading(false);
-		this.invalidate();
+		this.hideLoadingPlaceholders();
 	};
 
-	Filter.prototype._onDataRequested = function () {
-		this._oLoadingProvider.createLoadingState(this._oDataProvider);
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	Filter.prototype.showLoadingPlaceholders = function () {
+		this.getAggregation("_loadingProvider").setLoading(true);
+	};
+
+	/**
+	 * @private
+	 * @ui5-restricted
+	 */
+	Filter.prototype.hideLoadingPlaceholders = function () {
+		this.getAggregation("_loadingProvider").setLoading(false);
 	};
 
 	Filter.prototype._onDataChanged = function () {
@@ -202,6 +215,8 @@ sap.ui.define([
 		var oCard = Core.byId(this.getCard());
 		this._oDataProvider = oCard._oDataProviderFactory.create(oDataConfig, null, true);
 
+		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
+
 		if (oDataConfig.name) {
 			oModel = this.getModel(oDataConfig.name);
 		} else if (this._oDataProvider) {
@@ -214,7 +229,7 @@ sap.ui.define([
 		}.bind(this));
 
 		this._oDataProvider.attachDataRequested(function () {
-			this._onDataRequested();
+			this.showLoadingPlaceholders();
 		}.bind(this));
 
 		this._oDataProvider.attachDataChanged(function (oEvent) {

@@ -2,10 +2,11 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/base/ManagedObject",
+	"sap/ui/integration/library",
+	"sap/ui/core/Element",
 	"sap/f/cards/loading/GenericPlaceholder",
 	"sap/f/cards/loading/ListPlaceholder"
-], function (ManagedObject, GenericPlaceholder, ListPlaceholder) {
+], function (library, Element, GenericPlaceholder, ListPlaceholder) {
 	"use strict";
 
 	/**
@@ -16,7 +17,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 *
-	 * @extends sap.ui.base.ManagedObject
+	 * @extends sap.ui.core.Element
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -25,66 +26,44 @@ sap.ui.define([
 	 * @private
 	 * @alias sap.f.cards.LoadingProvider
 	 */
-	var LoadingProvider = ManagedObject.extend("sap.ui.integration.util.LoadingProvider", {
+	var LoadingProvider = Element.extend("sap.ui.integration.util.LoadingProvider", {
 		metadata: {
-			library: "sap.ui.integration"
+			library: "sap.ui.integration",
+
+			properties: {
+				/**
+				 * The current loading state.
+				 */
+				loading: { type: "boolean", defaultValue: false }
+			}
 		}
 	});
 
-	/**
-	 * Creates initial loading state.
-	 *
-	 * @private
-	 * @param {Object} oDataProvider Data Provider
-	 */
-	LoadingProvider.prototype.createLoadingState = function (oDataProvider) {
-		this._bLoading = true;
-		this._bJSON = false;
-
-		if (oDataProvider) {
-
-			//loading not needed
-			if (oDataProvider.getSettings()['json']) {
-				this._bJSON = true;
-			}
-
-		} else {
-			this._bLoading = false;
-		}
-	};
-
-	LoadingProvider.prototype.getDataProviderJSON = function () {
-		return this._bJSON;
-	};
-
 	LoadingProvider.prototype.setLoading = function (bLoading) {
-		this._bLoading = bLoading;
-
-		return this._bLoading;
-	};
-
-	LoadingProvider.prototype.getLoadingState = function () {
-
-		return this._bLoading;
-	};
-
-	LoadingProvider.prototype.removeHeaderPlaceholder = function (oControl) {
-		if (oControl && oControl.getDomRef()) {
-			oControl.removeStyleClass("sapFCardHeaderLoading");
-			oControl.getDomRef().classList.remove("sapFCardHeaderLoading");
+		if (this.isDataProviderJson()) {
+			return;
 		}
+
+		this.setProperty("loading", bLoading);
+	};
+
+	LoadingProvider.prototype.isDataProviderJson = function () {
+		return !!(this._oDataProvider && this._oDataProvider.getSettings() && this._oDataProvider.getSettings()["json"]);
+	};
+
+	LoadingProvider.prototype.setDataProvider = function (oDataProvider) {
+		this._oDataProvider = oDataProvider;
 	};
 
 	LoadingProvider.prototype.destroy = function () {
-		this._bLoading = null;
-		this._bJSON = null;
-
 		if (this._oContentPlaceholder) {
 			this._oContentPlaceholder.destroy();
 			this._oContentPlaceholder = null;
 		}
 
-		ManagedObject.prototype.destroy.apply(this, arguments);
+		this._oDataProvider = null;
+
+		Element.prototype.destroy.apply(this, arguments);
 	};
 
 	LoadingProvider.prototype.createContentPlaceholder = function (oConfiguration, sType) {
