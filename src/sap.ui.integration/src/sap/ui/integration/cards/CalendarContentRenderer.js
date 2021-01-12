@@ -27,24 +27,25 @@ sap.ui.define(["./BaseContentRenderer",
 	 * @override
 	 */
 	CalendarContentRenderer.renderContent = function(oRm, oCalendarContent) {
-		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.integration");
+		var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.integration"),
+			sId = oCalendarContent.getId();
 
-		oRm.openStart("div", "card-group");
+		oRm.openStart("div", sId + "card-group");
 		oRm.attr("role", "group");
 		oRm.attr("aria-label", oRB.getText("CARDS_CALENDAR"));
 		oRm.class("sapFCalCard");
 		oRm.openEnd();
 
-		oRm.openStart("div", "card-layout");
+		oRm.openStart("div", sId + "card-layout");
 		oRm.class("sapFCalCardLayout");
 		oRm.openEnd();
 
-		oRm.openStart("div", "left-side");
+		oRm.openStart("div", sId + "left-side");
 		oRm.class("sapFCalCardLeftSide");
 		oRm.openEnd();
 		oRm.renderControl(oCalendarContent._oCalendar);
 
-		oRm.openStart("div", "card-legend");
+		oRm.openStart("div", sId + "card-legend");
 		oRm.attr("aria-label", oRB.getText("CARDS_CALENDAR_LEGEND"));
 		oRm.openEnd();
 		oRm.renderControl(oCalendarContent._oLegend);
@@ -52,7 +53,7 @@ sap.ui.define(["./BaseContentRenderer",
 
 		oRm.close("div"); // left-side
 
-		oRm.openStart("div", "right-side");
+		oRm.openStart("div", sId + "right-side");
 		oRm.class("sapFCalCardRightSide");
 		oRm.openEnd();
 		CalendarContentRenderer.renderAppointments(oRm, oCalendarContent);
@@ -71,7 +72,7 @@ sap.ui.define(["./BaseContentRenderer",
 			oCurrentAppointment = oCalendarContent._getCurrentAppointment(),
 			oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.integration");
 
-		oRm.openStart("div", "appointments-list");
+		oRm.openStart("div", oCalendarContent.getId() + "appointments-list");
 		oRm.attr("role", "list");
 		oRm.attr("aria-label", oRB.getText("CARDS_CALENDAR_APPOINTMENTS"));
 		oRm.class("sapFCalCardAppList");
