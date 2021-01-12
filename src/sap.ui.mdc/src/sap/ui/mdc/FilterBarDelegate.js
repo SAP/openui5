@@ -9,7 +9,7 @@
 sap.ui.define(["sap/ui/mdc/AggregationBaseDelegate"], function(AggregationBaseDelegate) {
 	"use strict";
 	/**
-	 * Base Delegate for {@link sap.ui.mdc.FilterBar FilterBar}. Extend this object in your project to use all functionalites of the {@link sap.ui.mdc.FilterBar FilterBar}.
+	 * @class Base Delegate for {@link sap.ui.mdc.FilterBar FilterBar}. Extend this object in your project to use all functionalites of the {@link sap.ui.mdc.FilterBar FilterBar}.
 	 * <b>Note:</b>
 	 * The class is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
 	 * @author SAP SE

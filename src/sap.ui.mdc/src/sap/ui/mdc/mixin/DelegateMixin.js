@@ -30,7 +30,7 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 	 * @namespace
 	 * @name sap.ui.mdc.mixin
 	 * @private
-	 * @experimental
+	 * @experimental As of version 1.82.0
 	 * @ui5-restricted sap.ui.mdc
 	 */
 
