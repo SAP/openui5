@@ -835,8 +835,9 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype._fillList = function() {
-			var oFilterResults, oLastSelectedItem, aItems, oListItem,
-				oList = this._getList();
+			var oFilterResults, oLastSelectedItem, oListItem,
+				oList = this._getList(),
+				aEnabledItems = ListHelpers.getEnabledItems(this.getItems());
 
 			if (!oList) {
 				return;
@@ -846,7 +847,7 @@ sap.ui.define([
 			// Also we need to know the last selected item so that we can determine what will be the next
 			// item which should be focused upon navigation.
 			if (this._oLastFocusedListItem) {
-				oLastSelectedItem = ListHelpers.getItemByListItem(this.getItems(), this._oLastFocusedListItem);
+				oLastSelectedItem = ListHelpers.getItemByListItem(aEnabledItems, this._oLastFocusedListItem);
 			}
 
 			oList.destroyItems();
@@ -855,20 +856,18 @@ sap.ui.define([
 			// otherwise show all items
 			if (this._sInputValueBeforeOpen) {
 				oFilterResults = this.filterItems(this._sInputValueBeforeOpen);
-				aItems = oFilterResults.items;
-			} else {
-				aItems = this.getItems();
+				aEnabledItems = oFilterResults.items;
 			}
 
 			// map the items to list items and add them to the list
-			aItems.forEach(function (oItem) {
+			aEnabledItems.forEach(function (oItem) {
 				oListItem = this._mapItemToListItem(oItem).setVisible(true);
 				oList.addItem(oListItem);
 			}.bind(this));
 
 			// handle the visibility of list items, depending on the filtering result
 			if (this._sInputValueBeforeOpen) {
-				itemsVisibilityHandler(this.getItems(), oFilterResults);
+				itemsVisibilityHandler(aEnabledItems, oFilterResults);
 			}
 
 			if (oLastSelectedItem) {
