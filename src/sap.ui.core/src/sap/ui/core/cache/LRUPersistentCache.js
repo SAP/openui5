@@ -8,7 +8,7 @@
  *
  * So the overall file is under:
  * SPDX-License-Identifier: Apache-2.0
- * SPDX-FileCopyrightText: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+ * SPDX-FileCopyrightText: 2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
  *
  * But the logic of these portions is used under the following license and copyright:
  * SPDX-License-Identifier: ISC

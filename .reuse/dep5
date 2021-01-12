@@ -28,7 +28,7 @@ Disclaimer: The code in this project may include calls to APIs (“API Calls”)
 # OpenUI5 code
 
 Files: *
-Copyright: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+Copyright: 2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
 License: Apache-2.0
 
 
@@ -47,7 +47,7 @@ License: Apache-2.0
 
 # this is an SAP-created resource in thirdparty folder
 Files: src/sap.ui.core/src/sap/ui/thirdparty/baseuri.js
-Copyright: 2009-2020 SAP SE or an SAP affiliate company and OpenUI5 contributors
+Copyright: 2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
 License: Apache-2.0
 
 
