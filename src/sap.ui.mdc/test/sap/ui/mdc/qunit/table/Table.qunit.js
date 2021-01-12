@@ -961,9 +961,15 @@ sap.ui.define([
 	});
 
 	// General tests --> relevant for both table types
-	QUnit.test("check for intial column index", function(assert) {
+	QUnit.test("check for initial column index", function(assert) {
 		this.oTable.destroy();
 		this.oTable = new Table({
+			delegate: {
+				name: sDelegatePath,
+				payload: {
+					collectionPath: "/testPath"
+				}
+			},
 			type: "ResponsiveTable",
 			columns: [
 				new Column({
@@ -982,17 +988,23 @@ sap.ui.define([
 					})
 				})
 
-			]
+			],
+			models: new JSONModel({
+				testPath: new Array(10).fill({})
+			})
 		});
 
-		return this.oTable.initialized().then(function() {
+		return this.oTable._fullyInitialized().then(function() {
+			return waitForBinding(this.oTable);
+		}.bind(this)).then(function() {
 			var aMDCColumns = this.oTable.getColumns();
 			var aInnerColumns = this.oTable._oTable.getColumns();
 			var oInnerColumnListItem = this.oTable._oTemplate;
+			var oFirstInnerItem = this.oTable._oTable.getItems()[0];
+
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
 			assert.equal(aInnerColumns[0].getHeader().getText(), "Test0");
 			assert.equal(aInnerColumns[1].getHeader().getText(), "Test1");
-			// Check cells
 			assert.equal(oInnerColumnListItem.getCells()[0].getText(), "template0");
 			assert.equal(oInnerColumnListItem.getCells()[1].getText(), "template1");
 
@@ -1002,39 +1014,33 @@ sap.ui.define([
 					text: "template2"
 				})
 			}), 1);
-			// Intial index no longer used
 			aMDCColumns = this.oTable.getColumns();
 			aInnerColumns = this.oTable._oTable.getColumns();
-			oInnerColumnListItem = this.oTable._oTemplate;
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
 			assert.equal(aInnerColumns[0].getHeader().getText(), "Test0");
 			assert.equal(aInnerColumns[1].getHeader().getText(), "Test2");
 			assert.equal(aInnerColumns[2].getHeader().getText(), "Test1");
-			// Check cells
 			assert.equal(oInnerColumnListItem.getCells()[0].getText(), "template0");
 			assert.equal(oInnerColumnListItem.getCells()[1].getText(), "template2");
 			assert.equal(oInnerColumnListItem.getCells()[2].getText(), "template1");
+			assert.equal(oFirstInnerItem.getCells().length, 3, "Inner items have 3 cells");
+			assert.ok(oFirstInnerItem.getCells()[1].isA("sap.ui.core.InvisibleText"), 3,
+				"A placeholder cell is added to the inner items for the inserted column");
 
 			this.oTable.removeColumn("foo0");
-			// Intial index no longer used
 			aMDCColumns = this.oTable.getColumns();
 			aInnerColumns = this.oTable._oTable.getColumns();
-			oInnerColumnListItem = this.oTable._oTemplate;
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
 			assert.equal(aInnerColumns[0].getHeader().getText(), "Test2");
 			assert.equal(aInnerColumns[1].getHeader().getText(), "Test1");
-			// Check cells
 			assert.equal(oInnerColumnListItem.getCells()[0].getText(), "template2");
 			assert.equal(oInnerColumnListItem.getCells()[1].getText(), "template1");
 
 			this.oTable.removeColumn("foo1");
-			// Intial index no longer used
 			aMDCColumns = this.oTable.getColumns();
 			aInnerColumns = this.oTable._oTable.getColumns();
-			oInnerColumnListItem = this.oTable._oTemplate;
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
 			assert.equal(aInnerColumns[0].getHeader().getText(), "Test2");
-			// Check cells
 			assert.equal(oInnerColumnListItem.getCells()[0].getText(), "template2");
 		}.bind(this));
 	});

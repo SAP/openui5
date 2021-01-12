@@ -27,7 +27,8 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/strings/capitalize",
 	"sap/base/util/deepEqual",
-	"sap/ui/core/InvisibleMessage"
+	"sap/ui/core/InvisibleMessage",
+	"sap/ui/core/InvisibleText"
 ], function(
 	Control,
 	ActionToolbar,
@@ -53,7 +54,8 @@ sap.ui.define([
 	containsOrEquals,
 	capitalize,
 	deepEqual,
-	InvisibleMessage
+	InvisibleMessage,
+	InvisibleText
 ) {
 	"use strict";
 
@@ -1719,7 +1721,7 @@ sap.ui.define([
 		}
 
 		var oColumn = this._createColumn(oMDCColumn);
-		this._setColumnTemplate(oMDCColumn, oColumn, iIndex);
+		setColumnTemplate(this, oMDCColumn, oColumn, iIndex);
 		var oDelegate = this.getControlDelegate();
 		oDelegate && oDelegate._onColumnChange && oDelegate._onColumnChange(this);
 
@@ -1751,16 +1753,14 @@ sap.ui.define([
 		}, this);
 	};
 
-	Table.prototype._setColumnTemplate = function(oMDCColumn, oColumn, iIndex) {
-		var oCellTemplate = oMDCColumn.getTemplate(true), oCreationTemplateClone;
-		if (!this._bMobileTable) {
-			// TODO: move creationRow stuff into own method --> out of here.
-			oCreationTemplateClone = oMDCColumn.getCreationTemplate(true);
+	function setColumnTemplate(oTable, oColumn, oInnerColumn, iIndex) {
+		var oCellTemplate = oColumn.getTemplate(true);
+
+		if (!oTable._bMobileTable) {
+			var oCreationTemplateClone = oColumn.getCreationTemplate(true);
 
 			// Grid Table content cannot be wrapped!
-			[
-				oCellTemplate, oCreationTemplateClone
-			].forEach(function(oTemplate) {
+			[oCellTemplate, oCreationTemplateClone].forEach(function(oTemplate) {
 				if (!oTemplate) {
 					return;
 				}
@@ -1774,14 +1774,19 @@ sap.ui.define([
 				}
 			});
 
-			oColumn.setTemplate(oCellTemplate);
-			oColumn.setCreationTemplate(oCreationTemplateClone);
+			oInnerColumn.setTemplate(oCellTemplate);
+			oInnerColumn.setCreationTemplate(oCreationTemplateClone);
 		} else if (iIndex >= 0) {
-			this._oTemplate.insertCell(oCellTemplate, iIndex);
+			oTable._oTemplate.insertCell(oCellTemplate, iIndex);
+			oTable._oTable.getItems().forEach(function(oItem) {
+				// Add lightweight placeholders that can be rendered - if they cannot be rendered, there will be errors in the console.
+				// The actual cells are created after rebind.
+				oItem.insertAggregation("cells", new InvisibleText(), iIndex, true);
+			});
 		} else {
-			this._oTemplate.addCell(oCellTemplate);
+			oTable._oTemplate.addCell(oCellTemplate);
 		}
-	};
+	}
 
 	/**
 	 * Creates and returns a Column that can be added to the grid table, based on the provided MDCColumn
