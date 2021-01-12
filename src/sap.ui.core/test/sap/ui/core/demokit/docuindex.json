@@ -382,11 +382,11 @@
 			},
 		    {
 				"id": "sap.ui.core.tutorial.mockserver",
-				"name": "Mock Server",
+				"name": "OData V2 Mock Server",
 				"category": "Tutorial",
 				"since": "1.34",
 				"formFactors": "-",
-				"description": "In this tutorial, we will explore some advanced features of the mock server.",
+				"description": "In this tutorial, we will explore some advanced features of the OData V2 mock server.",
 				"docuLink": "#/topic/3a9728ec31f94ca18a7d543ce419d85d",
 				"samplesAsSteps": [
 				  "Initial App Without Data",
@@ -684,7 +684,7 @@
 			{
 				"id": "sap.ui.core.sample.MessageManager.BasicODataMessages",
 				"name": "Basic OData Messages",
-				"description": "Uses the MockServer to simulate an OData response containing different types of server side messages (error, warning, info, success)."
+				"description": "Uses the OData V2 mock server to simulate an OData response containing different types of server side messages (error, warning, info, success)."
 			},
 			{
 				"id": "sap.ui.core.sample.MessageManager.ODataBackendMessagesComp",
