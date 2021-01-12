@@ -5,9 +5,10 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/FakeLrepConnectorSessionStorage",
-	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/write/api/ChangesWriteAPI",
+	"sap/ui/fl/write/api/PersistenceWriteAPI",
+	"sap/ui/fl/FakeLrepConnectorSessionStorage",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/RuntimeAuthoring"
 ], function(
@@ -17,9 +18,10 @@ sap.ui.define([
 	KeyCodes,
 	Layer,
 	flUtils,
-	FakeLrepConnectorSessionStorage,
-	PersistenceWriteAPI,
+	FlexState,
 	ChangesWriteAPI,
+	PersistenceWriteAPI,
+	FakeLrepConnectorSessionStorage,
 	QUnitUtils,
 	RuntimeAuthoring
 ) {
@@ -80,37 +82,41 @@ sap.ui.define([
 		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || sap.ui.getCore().getComponent("Comp1");
 		var aCustomerChanges;
 
-		return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.CUSTOMER})
-			.then(function (aChanges) {
-				aCustomerChanges = aChanges;
-				return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.USER});
-			})
-			.then(function (aUserChangesChanges) {
-				if (bRevert) {
-					return aCustomerChanges.concat(aUserChangesChanges).reverse()
-						.filter(function (oChange) {
-							//skip descriptor changes
-							return !oChange.getDefinition().appDescriptorChange;
-						})
-						.reduce(function (oPreviousPromise, oChange) {
-							var oElementToBeReverted = JsControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
-							return ChangesWriteAPI.revert({
-								element: oElementToBeReverted,
-								change: oChange
-							});
-						}, new flUtils.FakePromise());
-				}
-			})
-			.then(PersistenceWriteAPI.reset.bind(undefined, {
-				selector: oComponent,
-				layer: Layer.CUSTOMER,
-				generator: "Change.createInitialFileContent"
-			}))
-			.then(PersistenceWriteAPI.reset.bind(undefined, {
-				selector: oComponent,
-				layer: Layer.USER,
-				generator: "Change.createInitialFileContent"
-			}));
+		return FlexState.initialize({
+			componentId: oComponent.getId()
+		}).then(function() {
+			return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.CUSTOMER});
+		})
+		.then(function (aChanges) {
+			aCustomerChanges = aChanges;
+			return PersistenceWriteAPI.save({selector: oComponent, layer: Layer.USER});
+		})
+		.then(function (aUserChangesChanges) {
+			if (bRevert) {
+				return aCustomerChanges.concat(aUserChangesChanges).reverse()
+					.filter(function (oChange) {
+						//skip descriptor changes
+						return !oChange.getDefinition().appDescriptorChange;
+					})
+					.reduce(function (oPreviousPromise, oChange) {
+						var oElementToBeReverted = JsControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
+						return ChangesWriteAPI.revert({
+							element: oElementToBeReverted,
+							change: oChange
+						});
+					}, new flUtils.FakePromise());
+			}
+		})
+		.then(PersistenceWriteAPI.reset.bind(undefined, {
+			selector: oComponent,
+			layer: Layer.CUSTOMER,
+			generator: "Change.createInitialFileContent"
+		}))
+		.then(PersistenceWriteAPI.reset.bind(undefined, {
+			selector: oComponent,
+			layer: Layer.USER,
+			generator: "Change.createInitialFileContent"
+		}));
 	};
 
 	RtaQunitUtils.getNumberOfChangesForTestApp = function () {

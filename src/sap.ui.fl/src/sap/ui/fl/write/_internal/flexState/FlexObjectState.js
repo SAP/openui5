@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/ChangesController",
+	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
@@ -15,6 +16,7 @@ sap.ui.define([
 	FlexState,
 	ManifestUtils,
 	ChangesController,
+	CompVariantState,
 	ChangePersistenceFactory,
 	LayerUtils,
 	Utils
@@ -34,7 +36,7 @@ sap.ui.define([
 		mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
 
 		return FlexState.initialize({
-			componentId: Utils.getAppComponentForControl(mPropertyBag.selector).getId(),
+			componentId: mPropertyBag.componentId || Utils.getAppComponentForControl(mPropertyBag.selector).getId(),
 			reference: mPropertyBag.reference,
 			componentData: {},
 			manifest: {}
@@ -49,6 +51,11 @@ sap.ui.define([
 		return LayerUtils.filterChangeOrChangeDefinitionsByCurrentLayer(aEntities, mPropertyBag.currentLayer);
 	}
 
+	function saveCompEntities(mPropertyBag) {
+		var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.selector);
+		return CompVariantState.persistAll(sReference);
+	}
+
 	function getChangePersistence(mPropertyBag) {
 		if (!mPropertyBag.reference) {
 			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
@@ -60,6 +67,14 @@ sap.ui.define([
 	function getChangePersistenceEntities(mPropertyBag) {
 		var oChangePersistence = getChangePersistence(mPropertyBag);
 		return oChangePersistence.getChangesForComponent(_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache);
+	}
+
+	function saveChangePersistenceEntities(mPropertyBag, oAppComponent) {
+		var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
+		var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
+
+		return oFlexController.saveAll(oAppComponent, mPropertyBag.skipUpdateCache, mPropertyBag.draft)
+			.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, oAppComponent, mPropertyBag.skipUpdateCache, mPropertyBag.draft));
 	}
 
 	/**
@@ -86,6 +101,36 @@ sap.ui.define([
 						.concat(aEntities[1]); // ChangePersistence entities (change, ctrl_variant, ctrl_variant_change, ctrl_variant_management_change)
 				});
 			});
+	};
+
+	/**
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.fl.Selector} mPropertyBag.selector - Selector to retrieve the associated flex persistence
+	 * @param {object} [mPropertyBag.appDescriptor] - Manifest that belongs to the current running component
+	 * @param {string} [mPropertyBag.siteId] - ID of the site belonging to the current running component
+	 * @param {string} [mPropertyBag.layer] - Specifies a single layer for loading change; if this parameter is set, the max layer filtering is not applied
+	 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that changes are to be loaded without layer filtering
+	 * @param {boolean} [mPropertyBag.includeVariants] - Indicates that smart variants are to be included
+	 * @param {string} [mPropertyBag.cacheKey] - Key to validate the cache entry stored on client side
+	 * @param {boolean} [mPropertyBag.invalidateCache] - Indicates whether the cache is to be invalidated
+	 */
+	FlexObjectState.saveFlexObjects = function(mPropertyBag) {
+		var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
+		return Promise.all([
+			saveCompEntities(mPropertyBag),
+			saveChangePersistenceEntities(mPropertyBag, oAppComponent)
+		])
+		.then(function() {
+			if (mPropertyBag.layer) {
+				//TODO: sync the layer parameter name with new persistence and remove this line
+				mPropertyBag.currentLayer = mPropertyBag.layer;
+			}
+			// with invalidation more parameters are required to make a new storage request
+			mPropertyBag.componentId = oAppComponent.getId();
+			mPropertyBag.invalidateCache = true;
+			return FlexObjectState.getFlexObjects(_omit(mPropertyBag, "skipUpdateCache"));
+		});
 	};
 
 	return FlexObjectState;

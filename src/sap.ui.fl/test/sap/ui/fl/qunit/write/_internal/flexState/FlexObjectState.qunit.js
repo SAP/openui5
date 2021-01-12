@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -26,6 +27,7 @@ sap.ui.define([
 	ChangePersistenceFactory,
 	Change,
 	Layer,
+	Utils,
 	Settings,
 	sinon
 ) {
@@ -39,11 +41,25 @@ sap.ui.define([
 		addPropagationListener: function() {},
 		getManifest: function() {},
 		setModel: function() {},
-		getId: function() {},
+		getId: function() { return "id"; },
 		getComponentData: function() {}
 	};
 
-	QUnit.module("getFlexObjects", {
+	function addChangesToChangePersistence(oChangePersistence) {
+		var oChangeInPersistence1 = new Change({
+			selector: {},
+			changeType: "renameField",
+			layer: Layer.USER
+		});
+		var oChangeInPersistence2 = new Change({
+			selector: {},
+			changeType: "addGroup",
+			layer: Layer.USER
+		});
+		sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([oChangeInPersistence1, oChangeInPersistence2]);
+	}
+
+	QUnit.module("getFlexObjects / saveFlexObjects", {
 		before: function () {
 			return Settings.getInstance();
 		},
@@ -67,7 +83,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given no flex objects are present", function(assert) {
+		QUnit.test("Get - Given no flex objects are present", function(assert) {
 			return FlexObjectState.getFlexObjects({
 				selector: this.appComponent,
 				currentLayer: Layer.CUSTOMER
@@ -77,7 +93,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("Given flex objects are present in the CompVariantState", function(assert) {
+		QUnit.test("Get - Given flex objects are present in the CompVariantState", function(assert) {
 			var sPersistencyKey = "persistency.key";
 
 			CompVariantState.add({
@@ -106,7 +122,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("Given flex objects of different layers are present in the CompVariantState and currentLayer set", function(assert) {
+		QUnit.test("Get - Given flex objects of different layers are present in the CompVariantState and currentLayer set", function(assert) {
 			var sPersistencyKey = "persistency.key";
 
 			CompVariantState.add({
@@ -149,7 +165,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("Given flex objects of different layers are present in the CompVariantState and currentLayer not set", function(assert) {
+		QUnit.test("Get - Given flex objects of different layers are present in the CompVariantState and currentLayer not set", function(assert) {
 			var sPersistencyKey = "persistency.key";
 
 			CompVariantState.add({
@@ -185,20 +201,9 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("Given flex objects are present in the ChangePersistence", function(assert) {
+		QUnit.test("Get - Given flex objects are present in the ChangePersistence", function(assert) {
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-
-			var oChangeInPersistence1 = new Change({
-				selector: {},
-				changeType: "renameField",
-				layer: Layer.USER
-			});
-			var oChangeInPersistence2 = new Change({
-				selector: {},
-				changeType: "addGroup",
-				layer: Layer.USER
-			});
-			sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([oChangeInPersistence1, oChangeInPersistence2]);
+			addChangesToChangePersistence(oChangePersistence);
 
 			return oChangePersistence.saveDirtyChanges(oComponent)
 			.then(FlexObjectState.getFlexObjects.bind(undefined, {
@@ -210,9 +215,9 @@ sap.ui.define([
 				assert.equal(aFlexObjects[1].getChangeType(), "addGroup", "the second change from the persistence is present");
 			});
 		});
-		QUnit.test("Given flex objects are present in the ChangePersistence and in the CompVariantState", function(assert) {
-			var sPersistencyKey = "persistency.key";
 
+		QUnit.test("Get - Given flex objects are present in the ChangePersistence and in the CompVariantState", function(assert) {
+			var sPersistencyKey = "persistency.key";
 			CompVariantState.add({
 				changeSpecificData: {
 					type: "addFavorite"
@@ -230,18 +235,7 @@ sap.ui.define([
 			});
 
 			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-
-			var oChangeInPersistence1 = new Change({
-				selector: {},
-				changeType: "renameField",
-				layer: Layer.USER
-			});
-			var oChangeInPersistence2 = new Change({
-				selector: {},
-				changeType: "addGroup",
-				layer: Layer.USER
-			});
-			sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([oChangeInPersistence1, oChangeInPersistence2]);
+			addChangesToChangePersistence(oChangePersistence);
 
 			return oChangePersistence.saveDirtyChanges(oComponent)
 				.then(FlexObjectState.getFlexObjects.bind(undefined, {
@@ -254,6 +248,48 @@ sap.ui.define([
 					assert.equal(aFlexObjects[2].getChangeType(), "renameField", "the first change from the persistence is present");
 					assert.equal(aFlexObjects[3].getChangeType(), "addGroup", "the second change from the persistence is present");
 				});
+		});
+
+		QUnit.test("Save", function(assert) {
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
+			sandbox.stub(Utils, "getAppIdFromManifest").returns("id");
+			sandbox.stub(Utils, "getComponentClassName").returns("name");
+			var oPersistAllStub = sandbox.stub(CompVariantState, "persistAll");
+			var oFlexController = ChangesController.getFlexControllerInstance(oComponent);
+			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(oComponent);
+			var oSaveAllStub1 = sandbox.stub(oFlexController, "saveAll").resolves();
+			var oSaveAllStub2 = sandbox.stub(oDescriptorFlexController, "saveAll").resolves();
+			var oGetFlexObjectsStub = sandbox.stub(FlexObjectState, "getFlexObjects").resolves("foo");
+
+			return FlexObjectState.saveFlexObjects({
+				selector: oComponent,
+				skipUpdateCache: true,
+				draft: true,
+				layer: Layer.USER
+			}).then(function(sReturn) {
+				assert.equal(sReturn, "foo", "the function returns whatever getFlexObjects returns");
+				assert.equal(oPersistAllStub.callCount, 1, "the CompVariant changes were saved");
+
+				assert.equal(oSaveAllStub1.callCount, 1, "the UI Changes were saved");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[0], oComponent, "the component was passed");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[1], true, "the skipUpdateCache flag was passed");
+				assert.deepEqual(oSaveAllStub1.firstCall.args[2], true, "the draft flag was passed");
+				assert.equal(oSaveAllStub2.callCount, 1, "the descriptor Changes were saved");
+				assert.deepEqual(oSaveAllStub2.firstCall.args[0], oComponent, "the component was passed");
+				assert.deepEqual(oSaveAllStub2.firstCall.args[1], true, "the skipUpdateCache flag was passed");
+				assert.deepEqual(oSaveAllStub2.firstCall.args[2], true, "the draft flag was passed");
+
+				assert.equal(oGetFlexObjectsStub.callCount, 1, "the changes were retrieved at the end");
+				var oExpectedParameters = {
+					componentId: "id",
+					selector: oComponent,
+					draft: true,
+					layer: Layer.USER,
+					currentLayer: Layer.USER,
+					invalidateCache: true
+				};
+				assert.deepEqual(oGetFlexObjectsStub.firstCall.args[0], oExpectedParameters, "the parameters for getFlexObjects are correct");
+			});
 		});
 	});
 

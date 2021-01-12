@@ -133,16 +133,7 @@ sap.ui.define([
 	 	 * @ui5-restricted
 		 */
 		save: function (mPropertyBag) {
-			var oFlexController = ChangesController.getFlexControllerInstance(mPropertyBag.selector);
-			var oDescriptorFlexController = ChangesController.getDescriptorFlexControllerInstance(mPropertyBag.selector);
-
-			// with invalidation more parameters are required to make a new storage request
-			mPropertyBag.invalidateCache = true;
-			var oAppComponent = ChangesController.getAppComponentForSelector(mPropertyBag.selector);
-			mPropertyBag.componentId = oAppComponent.getId();
-			return oFlexController.saveAll(oAppComponent, mPropertyBag.skipUpdateCache, mPropertyBag.draft, oAppComponent)
-				.then(oDescriptorFlexController.saveAll.bind(oDescriptorFlexController, oAppComponent, mPropertyBag.skipUpdateCache, mPropertyBag.draft))
-				.then(PersistenceWriteAPI._getUIChanges.bind(null, _omit(mPropertyBag, "skipUpdateCache")));
+			return FlexObjectState.saveFlexObjects(mPropertyBag);
 		},
 
 		/**
