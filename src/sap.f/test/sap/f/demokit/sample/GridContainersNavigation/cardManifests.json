@@ -59,7 +59,7 @@
 	"adaptiveContent": {
 		"summary": {
 			"sap.app": {
-				"id": "adativecard.embedded",
+				"id": "adaptivecard.embedded",
 				"type": "card"
 			},
 			"sap.card": {
