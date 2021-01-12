@@ -429,8 +429,9 @@ sap.ui.define([
 			sCount = this.getCount(),
 			sText = this.getText(),
 			oIcon = this.getIcon(),
-			oIconColor = this.getIconColor(),
-			bShouldReadIconColor = oIconColor === 'Positive' || oIconColor === 'Critical' || oIconColor === 'Negative' || oIconColor === 'Neutral',
+			sIconColor = this.getIconColor(),
+			bEnabled = this.getEnabled(),
+			bShouldReadIconColor = bEnabled && (sIconColor == "Positive" || sIconColor == "Critical" || sIconColor == "Negative" || sIconColor == "Neutral"),
 			bHorizontalDesign = this.getDesign() === IconTabFilterDesign.Horizontal,
 			bTextOnly = oIconTabHeader._bTextOnly,
 			bInLine = oIconTabHeader._bInLine || oIconTabHeader.isInlineMode(),
@@ -490,8 +491,11 @@ sap.ui.define([
 		if (bShowAll) {
 			oRM.class("sapMITBAll");
 		} else {
-			oRM.class("sapMITBFilter")
-				.class("sapMITBFilter" + oIconColor);
+			oRM.class("sapMITBFilter");
+		}
+
+		if (!bShowAll && bEnabled) {
+			oRM.class("sapMITBFilter" + sIconColor);
 		}
 
 		if (oIconTabHeader._isUnselectable(this)) {
@@ -502,7 +506,7 @@ sap.ui.define([
 			oRM.class("sapMITBFilterWithItems");
 		}
 
-		if (!this.getEnabled()) {
+		if (!bEnabled) {
 			oRM.class("sapMITBDisabled")
 				.attr("aria-disabled", true);
 		}
@@ -534,11 +538,16 @@ sap.ui.define([
 					oRM.openStart("div", sId + "-iconColor")
 						.style("display", "none")
 						.openEnd()
-						.text(oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase()))
+						.text(oResourceBundle.getText("ICONTABBAR_ICONCOLOR_" + sIconColor.toUpperCase()))
 						.close("div");
 				}
 
-				oRM.renderControl(this._getImageControl(['sapMITBFilterIcon', "sapMITBBadgeHolder", 'sapMITBFilter' + oIconColor], oIconTabHeader, IconTabFilter._aAllIconColors));
+				var aCssClasses = ["sapMITBFilterIcon", "sapMITBBadgeHolder"];
+				if (bEnabled) {
+					aCssClasses.push("sapMITBFilter" + sIconColor);
+				}
+
+				oRM.renderControl(this._getImageControl(aCssClasses, oIconTabHeader, IconTabFilter._aAllIconColors));
 			}
 
 			if (!bShowAll && !oIcon && !bTextOnly) {
@@ -663,7 +672,9 @@ sap.ui.define([
 
 		var bTextOnly = true,
 			bIconOnly = oSelectList._bIconOnly,
-			oIconTabHeader = oSelectList._oIconTabHeader;
+			oIconTabHeader = oSelectList._oIconTabHeader,
+			sIconColor = this.getIconColor(),
+			bEnabled = this.getEnabled();
 
 		if (oIconTabHeader) {
 			bTextOnly = oIconTabHeader._bTextOnly;
@@ -693,7 +704,7 @@ sap.ui.define([
 			oRM.class("sapMITHUnselectable");
 		}
 
-		if (!this.getEnabled()) {
+		if (!bEnabled) {
 			oRM.class("sapMITBDisabled")
 				.attr("aria-disabled", true);
 		}
@@ -704,12 +715,12 @@ sap.ui.define([
 			oRM.attr("aria-selected", true);
 		}
 
-		var oIconColor = this.getIconColor();
-		oRM.class("sapMITBFilter" + oIconColor);
-
+		if (bEnabled) {
+			oRM.class("sapMITBFilter" + sIconColor);
+		}
 
 		var sItemId = this.getId(),
-			bShouldReadIconColor = oIconColor == 'Positive' || oIconColor == 'Critical' || oIconColor == 'Negative' || oIconColor == 'Neutral',
+			bShouldReadIconColor = bEnabled && (sIconColor == "Positive" || sIconColor == "Critical" || sIconColor == "Negative" || sIconColor == "Neutral"),
 			aLabelledByIds = [];
 
 		if (!bIconOnly) {
@@ -722,7 +733,7 @@ sap.ui.define([
 
 		if (bShouldReadIconColor) {
 			this._invisibleText = new InvisibleText({
-				text: oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + oIconColor.toUpperCase())
+				text: oResourceBundle.getText('ICONTABBAR_ICONCOLOR_' + sIconColor.toUpperCase())
 			});
 
 			aLabelledByIds.push(this._invisibleText.getId());

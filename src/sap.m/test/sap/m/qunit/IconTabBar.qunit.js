@@ -980,6 +980,52 @@ sap.ui.define([
 		oIconTabBar.destroy();
 	});
 
+	QUnit.test("Disabled tab should not show its icon color", function (assert) {
+		// Arrange
+		var oIconTabBar = new IconTabBar({
+			items: [
+				new IconTabFilter({
+					enabled: false,
+					iconColor: IconColor.Positive
+				}),
+				new IconTabFilter({
+					enabled: false,
+					iconColor: IconColor.Negative
+				}),
+				new IconTabFilter({
+					enabled: false,
+					iconColor: IconColor.Neutral
+				}),
+				new IconTabFilter({
+					enabled: false,
+					iconColor: IconColor.Critical
+				})
+			]
+		});
+
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.m");
+
+		// System under test
+		oIconTabBar.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oIconTabBar.getItems().forEach(function (oTab) {
+			var $Tab = oTab.$(),
+				sIconColor = oTab.getIconColor(),
+				sIconColorLabel = oResourceBundle.getText("ICONTABBAR_ICONCOLOR_" + sIconColor.toUpperCase());
+
+			// Assert
+			assert.strictEqual(oTab.getEnabled(), false, "tab is disabled");
+			assert.strictEqual($Tab.hasClass("sapMITBFilter" + sIconColor), false, "iconColor class is not set on the tab");
+			assert.strictEqual($Tab.find(".sapMITBFilter" + sIconColor).length, 0, "iconColor class is not set on any element in the tab");
+			// debugger
+			assert.strictEqual($Tab.text().includes(sIconColorLabel), false, "iconColor text is not conveyed");
+		});
+
+		// Clean up
+		oIconTabBar.destroy();
+	});
+
 	QUnit.module("rerendering");
 
 	QUnit.test("filter text changing", function(assert) {
