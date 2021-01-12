@@ -10745,7 +10745,9 @@ sap.ui.define([
 				items: [
 					new Item({key: "A", text: "Amount"}),
 					new Item({key: "C", text: "Checkbox"}),
-					new Item({key: "D", text: "Date"})
+					new Item({key: "D", text: "Date"}),
+					new Item({key: "D1", text: "Disabled 1", enabled: false}),
+					new Item({key: "D2", text: "Disabled 2", enabled: false})
 				]
 			});
 		oComboBox.placeAt("content");
@@ -10759,7 +10761,11 @@ sap.ui.define([
 		oComboBox.syncPickerContent();
 
 		// Assert
-		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "On init the List item should be the same as core items");
+		assert.strictEqual(oComboBox.getItems().length - 2, oComboBox._getList().getItems().length, "On init the List item should be the same as the enabled core items");
+
+		// Act
+		oComboBox.open();
+		assert.strictEqual(oComboBox.getVisibleItems().length, oComboBox._getList().getItems().length, "ComboBox should not display disabled items as a suggestions");
 
 		// Act
 		vTemp = oComboBox.removeAllItems();
@@ -10767,7 +10773,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
 		assert.strictEqual(oComboBox.getItems().length, 0, "The Items aggregation should be empty");
-		assert.strictEqual(vTemp.length, 3, "The items from the combobox should be returned by the removeAllItems method");
+		assert.strictEqual(vTemp.length, 5, "The items from the combobox should be returned by the removeAllItems method");
 
 		// Act
 		vTemp = aItems.pop();
