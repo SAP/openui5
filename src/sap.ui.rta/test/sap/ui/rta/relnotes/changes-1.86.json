@@ -1,0 +1,12 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "c44d92025c41de5e89bf8f721992940fb56b4206",
+        "type": "FIX",
+        "text": ": RTA add iframe zero size correction"
+      }
+    ]
+  }
+}

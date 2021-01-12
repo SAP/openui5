@@ -1,0 +1,18 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "627cf8459c667a8205a8734ec38e146ce24898ed",
+        "type": "FIX",
+        "text": ": RTA - Contextmenu text position in RTL",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070470912"
+          }
+        ]
+      }
+    ]
+  }
+}
