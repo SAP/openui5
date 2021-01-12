@@ -1264,7 +1264,9 @@ sap.ui.define([
 				return false;
 			}
 
-			this.initControlDelegate();
+			if (!this.bDelegateInitialized && !this.bDelegateLoading) {
+				this.initControlDelegate();
+			}
 
 			if (this.bDelegateInitialized) {
 				var oPromise = this.getControlDelegate().contentRequest(this.getPayload(), this, bSuggestion);

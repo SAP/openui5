@@ -749,7 +749,7 @@ sap.ui.define([
 
 	FieldBase.prototype.applySettings = function() {
 		Control.prototype.applySettings.apply(this, arguments);
-		if (!this.bDelegateInitialized && !this.bDelegateLoaded) {
+		if (!this.bDelegateInitialized && !this.bDelegateLoading) {
 			this.initControlDelegate();
 		}
 		return this;
@@ -1361,7 +1361,7 @@ sap.ui.define([
 			_contentChanged.call(this, oChanges.child, oChanges.mutation, oChanges.name);
 		}
 
-		if (oChanges.name === "delegate" && !this.bDelegateInitialized && !this.bDelegateLoaded) {
+		if (oChanges.name === "delegate" && !this.bDelegateInitialized && !this.bDelegateLoading) {
 			this.initControlDelegate.call(this);
 		}
 
