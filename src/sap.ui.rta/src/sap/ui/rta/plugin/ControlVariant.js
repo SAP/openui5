@@ -282,7 +282,11 @@ sap.ui.define([
 	 * @public
 	 */
 	ControlVariant.prototype.isVariantSaveEnabled = function (aElementOverlays) {
-		return this._isVariantManagementControl(aElementOverlays[0]);
+		var oOverlay = aElementOverlays[0];
+		var oElement = oOverlay.getElement();
+		var oModel = this._getVariantModel(oElement);
+		var sVariantManagementReference = oOverlay.getVariantManagement();
+		return oModel.oData[sVariantManagementReference] && oModel.oData[sVariantManagementReference].modified;
 	};
 
 	/**
