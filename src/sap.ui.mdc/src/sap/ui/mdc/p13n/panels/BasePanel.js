@@ -236,7 +236,7 @@ sap.ui.define([
 			rememberSelections: false,
 			itemPress: [this._onItemPressed, this],
 			selectionChange: [this._onSelectionChange, this],
-			sticky: ["HeaderToolbar", "ColumnHeaders"],
+			sticky: ["HeaderToolbar", "ColumnHeaders", "InfoToolbar"],
 			dragDropConfig: this._getDragDropConfig()
 		};
 	};

@@ -26,12 +26,6 @@ sap.ui.define([
                 name: "key3"
             }
         ],
-        sorters: [
-            {
-                name: "key1",
-                descending: true
-            }
-        ],
         filter: {
             key2: [
                 {
@@ -367,7 +361,7 @@ sap.ui.define([
 
         this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
-        var oSecondPanel = this.oAFPanel.getCurrentViewContent()._oListControl.getItems()[1].getCells()[0];
+        var oSecondPanel = this.oAFPanel.getCurrentViewContent()._oListControl.getItems()[1].getContent()[0];
         assert.ok(!oSecondPanel.getExpanded(), "Panel is initially collapsed");
 
         this.oAFPanel.setGroupExpanded("G2", true);
@@ -427,7 +421,7 @@ sap.ui.define([
         this.oAFPanel.setP13nModel(new JSONModel(this.oP13nData));
 
         var aGroups = this.oAFPanel.getCurrentViewContent()._oListControl.getItems();
-        var oFirstGroup = aGroups[0].getCells()[0];
+        var oFirstGroup = aGroups[0].getContent()[0];
         var oFirstList = oFirstGroup.getContent()[0];
 
         //List created via template 'oTestFactory'

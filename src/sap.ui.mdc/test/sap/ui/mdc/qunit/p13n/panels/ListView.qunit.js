@@ -14,29 +14,13 @@ sap.ui.define([
                 name: "key1"
             },
             {
-                name: "key2"
+                name: "key2",
+                isFiltered: true
             },
             {
                 name: "key3"
             }
-        ],
-        sorters: [
-            {
-                name: "key1",
-                descending: true
-            }
-        ],
-        filter: {
-            key2: [
-                {
-                    operator: "EQ",
-                    values: [
-                        "Test"
-                    ]
-                }
-            ]
-
-        }
+        ]
     };
 
     var aInfoData = [
@@ -83,8 +67,7 @@ sap.ui.define([
                 return new VBox();
             });
 
-			this.oPropertyHelper = new PropertyHelper(this.aMockInfo);
-            this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.oPropertyHelper.getProperties());
+            this.oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo);
 
             this.oListView.placeAt("qunit-fixture");
             sap.ui.getCore().applyChanges();
@@ -95,7 +78,6 @@ sap.ui.define([
             this.oP13nData = null;
             this.aMockInfo = null;
             this.oListView.destroy();
-            this.oPropertyHelper.destroy();
         }
     });
 
@@ -103,6 +85,60 @@ sap.ui.define([
         assert.ok(this.oListView, "Panel created");
         this.oListView.setP13nModel(new JSONModel(this.oP13nData));
         assert.ok(this.oListView.getModel(this.oListView.P13N_MODEL).isA("sap.ui.model.json.JSONModel"), "Model has been set");
+    });
+
+    QUnit.test("Check column toggle", function(assert){
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+
+        var oList = this.oListView._oListControl;
+
+        assert.equal(oList.getColumns().length, 2, "Two columns");
+
+        this.oListView.showFactory(true);
+        assert.equal(oList.getColumns().length, 1, "One column");
+
+        this.oListView.showFactory(false);
+        assert.equal(oList.getColumns().length, 2, "Two columns");
+    });
+
+    QUnit.test("Check 'active' icon'", function(assert){
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+
+        assert.ok(this.oListView._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is filtered (active)");
+
+        //Mock what happens during runtime if a filter is made inactive
+        this.oP13nData.items[1].isFiltered = false;
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+        assert.ok(!this.oListView._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is NOT filtered (active)");
+
+        //Mock what happens during runtime if a filter is made active
+        this.oP13nData.items[1].isFiltered = true;
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+        assert.ok(this.oListView._oListControl.getItems()[1].getCells()[1].getItems()[0].getVisible(), "Item is filtered (active)");
+    });
+
+    QUnit.test("Check 'getSelectedFields' ", function(assert){
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+        assert.equal(this.oListView.getSelectedFields().length, oMockExisting.items.length, "Amount of selected fields is equal to initially visible fields");
+    });
+
+    QUnit.test("Check '_addMoveButtons' ", function(assert){
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+
+        this.oListView._oSelectedItem = this.oListView._oListControl.getItems()[0];
+
+        this.oListView._addMoveButtons();
+        assert.equal(this.oListView._oSelectedItem.getCells()[1].getItems().length, 5, "Item does contain move buttons after being selected");
+    });
+
+    QUnit.test("Check 'removeButtons' ", function(assert){
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+
+        this.oListView._oSelectedItem = this.oListView._oListControl.getItems()[0];
+
+        this.oListView._addMoveButtons();
+        this.oListView.removeMoveButtons();
+        assert.equal(this.oListView._oSelectedItem.getCells()[1].getItems().length, 1, "Item does not contain move buttons");
     });
 
 });

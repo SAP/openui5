@@ -9,14 +9,20 @@ sap.ui.define([
 	"sap/m/List",
 	"sap/m/Panel",
 	"sap/m/Toolbar",
-	"sap/m/Table",
 	"sap/m/Text",
-	"sap/m/ColumnListItem",
-	"sap/m/Column",
 	"sap/ui/core/Icon",
-	"sap/m/HBox"
-], function(BasePanel, Label, deepEqual, CustomListItem, List, Panel, Toolbar, Table, Text, ColumnListItem, Column, Icon, HBox) {
+	"sap/ui/core/library",
+	"sap/m/HBox",
+	"sap/m/library"
+], function(BasePanel, Label, deepEqual, CustomListItem, List, Panel, Toolbar,Text, Icon, coreLibrary, HBox, mLibrary) {
 	"use strict";
+
+
+	// shortcut for sap.ui.core.IconColor
+	var IconColor = coreLibrary.IconColor;
+
+	// shortcut for sap.m.FlexJustifyContent
+	var FlexJustifyContent = mLibrary.FlexJustifyContent;
 
 	/**
 	 * Constructor for a new GroupView
@@ -43,15 +49,17 @@ sap.ui.define([
 	GroupView.prototype.init = function() {
 		// Initialize the BasePanel
 		BasePanel.prototype.init.apply(this, arguments);
+		this.addStyleClass("sapUiMDCGroupView");
 
-		var oGroupPanelTemplate = new ColumnListItem({
+		var oGroupPanelTemplate = new CustomListItem({
 			visible: "{" + this.P13N_MODEL + ">groupVisible}",
-			cells: [
-				this._createGroupPanelTemplate(this._createGroupListTemplate())
+			accDescription: "{" + this.P13N_MODEL + ">groupLabel}", //Do not read the whole content
+			content: [
+				this._createGroupPanelTemplate()
 			]
 		});
 
-		this.setShowFactory(true);
+		this._bShowFactory = true;
 		this.displayColumns();
 
 		this._aInitializedLists = [];
@@ -64,37 +72,17 @@ sap.ui.define([
 		return this._bShowFactory;
 	};
 
-	GroupView.prototype.setShowFactory = function(bShow) {
-		this._bShowFactory = bShow;
-	};
-
 	GroupView.prototype.getPanels = function() {
 		var aPanels = [];
 
 		this._oListControl.getItems().forEach(function(oItem){
-			aPanels.push(oItem.getCells()[0]);
+			aPanels.push(oItem.getContent()[0]);
 		});
 
 		return aPanels;
 	};
 
-    GroupView.prototype._createGroupListTemplate = function() {
-		return new List({
-			selectionChange: function(oBindingInfo) {
-				var sPath = oBindingInfo.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
-				var oItem = this.getP13nModel().getProperty(sPath);
-				this.fireChange({
-					reason: oItem.selected ? "Add" : "Remove",
-					item: oItem
-				});
-			}.bind(this),
-			showSeparators: "None",
-			items: this._getItemsBinding(false),
-			mode: "MultiSelect"
-		});
-	};
-
-    GroupView.prototype._createGroupPanelTemplate = function(oInnerListTemplate) {
+    GroupView.prototype._createGroupPanelTemplate = function() {
 		var P13N_MODEL = this.P13N_MODEL;
 		return new Panel({
 			expandable: true,
@@ -134,9 +122,28 @@ sap.ui.define([
 				})
 			],
 			content: [
-				oInnerListTemplate
+				this._createGroupListTemplate()
 			]
 		});
+	};
+
+	GroupView.prototype._createGroupListTemplate = function() {
+		var oList = new List({
+			selectionChange: function(oBindingInfo) {
+				var sPath = oBindingInfo.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
+				var oItem = this.getP13nModel().getProperty(sPath);
+				this.fireChange({
+					reason: oItem.selected ? "Add" : "Remove",
+					item: oItem
+				});
+			}.bind(this),
+			showSeparators: "None",
+			mode: "MultiSelect"
+		});
+
+		oList.bindItems(this._getItemsBinding());
+
+		return oList;
 	};
 
 	GroupView.prototype._addFactoryControl = function(oList) {
@@ -161,8 +168,9 @@ sap.ui.define([
 	};
 
     GroupView.prototype._createInnerListControl = function() {
-		var oList =  new Table(this.getId() + "-innerGroupViewTable", Object.assign(this._getListControlConfig(), {
+		var oList =  new List(this.getId() + "-innerGroupViewList", Object.assign(this._getListControlConfig(), {
 			mode: "None",
+			infoToolbar: new Toolbar(),
 			updateStarted: function(oEvt) {
 				this._checkAllPanels();
 			}.bind(this)
@@ -171,14 +179,14 @@ sap.ui.define([
 		return oList;
 	};
 
-    GroupView.prototype._getItemsBinding = function(bAddFilterField) {
+    GroupView.prototype._getItemsBinding = function() {
 
-		var fnCreatePlain = function(sId, oContext) {
+		var fnCreatePlain = function() {
 
 			var aInnerListItemContent = [
 				new HBox({
 					width: "100%",
-					justifyContent: "SpaceBetween",
+					justifyContent: FlexJustifyContent.SpaceBetween,
 					items: [
 						//Icon dynamically added to the HBox
 						new Label({
@@ -200,33 +208,38 @@ sap.ui.define([
 
 		return {
 			path: this.P13N_MODEL + ">items",
-			key: "name",
 			templateShareable: false,
 			template: fnCreatePlain()
 		};
 	};
 
 	GroupView.prototype._getIconTemplate = function() {
-		return new Icon({
-			src: "sap-icon://circle-task-2",
-			size: "0.5rem",
-			color: sap.ui.core.IconColor.Neutral,
-			visible: {
-				path: this.P13N_MODEL + ">isFiltered",
-				formatter: function(bIsFiltered) {
-					if (bIsFiltered){
-						return true;
-					} else {
-						return false;
+		return new HBox({
+			width: "18.5%",
+			justifyContent: FlexJustifyContent.Center,
+			items: [
+				new Icon({
+					src: "sap-icon://circle-task-2",
+					size: "0.5rem",
+					color: IconColor.Neutral,
+					visible: {
+						path: this.P13N_MODEL + ">isFiltered",
+						formatter: function(bIsFiltered) {
+							if (bIsFiltered){
+								return true;
+							} else {
+								return false;
+							}
+						}
 					}
-				}
-			}
+				})
+			]
 		});
 	};
 
 	GroupView.prototype._loopGroupList = function(fnCallback) {
 		this._oListControl.getItems().forEach(function(oOuterItem){
-			var oPanel = oOuterItem.getCells()[0];
+			var oPanel = oOuterItem.getContent()[0];
 			var oInnerList = oPanel.getContent()[0];
 			this._loopItems(oInnerList, function(oItem, sKey){
 				fnCallback(oItem, sKey);
@@ -285,7 +298,7 @@ sap.ui.define([
 	GroupView.prototype.getSelectedFields = function() {
 		var aSelectedItems = [];
 		this._oListControl.getItems().forEach(function(oOuterItem){
-			var oPanel = oOuterItem.getCells()[0];
+			var oPanel = oOuterItem.getContent()[0];
 			var oInnerList = oPanel.getContent()[0];
 			this._loopItems(oInnerList, function(oItem, sKey){
 				if (oItem.getSelected()){
@@ -305,7 +318,7 @@ sap.ui.define([
 		var aInitializedGroups = this._removeFactoryControl();
 
 		this._oListControl.getItems().forEach(function(oOuterItem){
-			var oPanel = oOuterItem.getCells()[0];
+			var oPanel = oOuterItem.getContent()[0];
 			var oInnerList = oPanel.getContent()[0];
 
 			if (oInnerList.getBinding("items")){
@@ -323,6 +336,7 @@ sap.ui.define([
 
 	GroupView.prototype.showFactory = function(bShow) {
 
+		this._bShowFactory = bShow;
 		this.displayColumns();
 
         if (bShow){
@@ -337,14 +351,14 @@ sap.ui.define([
 
 	GroupView.prototype._checkAllPanels = function () {
 		this._oListControl.getItems().forEach(function(oOuterItem){
-			var oPanel = oOuterItem.getCells()[0];
+			var oPanel = oOuterItem.getContent()[0];
 			this._togglePanelVisibility(oPanel);
 		}.bind(this));
 	};
 
 	GroupView.prototype.setGroupExpanded = function(sGroup, bExpand){
 		this._oListControl.getItems().forEach(function(oOuterItem){
-			var oPanel = oOuterItem.getCells()[0];
+			var oPanel = oOuterItem.getContent()[0];
 			var sBindingPath = oPanel.getBindingContext(this.P13N_MODEL).sPath;
 			var oItem = this.getP13nModel().getProperty(sBindingPath);
 			if (oItem.group === sGroup) {
@@ -377,7 +391,7 @@ sap.ui.define([
 			this._oListControl.getItems().length > 0
 			){
 				this._bInitialized = true;
-				var oFirstList = this._oListControl.getItems()[0].getCells()[0].getContent()[0];
+				var oFirstList = this._oListControl.getItems()[0].getContent()[0].getContent()[0];
 				this._addFactoryControl(oFirstList);
 				this._addInitializedList(oFirstList);
 			}
@@ -385,37 +399,25 @@ sap.ui.define([
 
 	GroupView.prototype.displayColumns = function() {
 
-		var oHeader = new HBox({
-			width: "100%",
-			justifyContent: "SpaceBetween",
-			items:[
-				new HBox({
-					items: [
-						new Text({
-							text: this.getResourceText("p13nDialog.LIST_VIEW_COLUMN")
-						})
-					]
-				}).addStyleClass("sapUiMDCPaddingPanelLeft")
-			]
+		var aPrior = this._oListControl.getInfoToolbar().removeAllContent();
+
+		aPrior.forEach(function(oControl){
+			oControl.destroy();
 		});
 
-		if (!this.getShowFactory()) {
-			oHeader.addItem(new HBox({
-				width: "23.25%",
-				justifyContent: "Center",
-				items: [
-					new Text({
-						text: this.getResourceText("p13nDialog.LIST_VIEW_ACTIVE")
-					})
-				]
-			}));
+		this._oListControl.getInfoToolbar().addContent(new Text({
+			width: "75%",
+			text: this.getResourceText("p13nDialog.LIST_VIEW_COLUMN")
+		}).addStyleClass("firstColumnPadding"));
+
+		if (!this._bShowFactory) {
+			this._oListControl.getInfoToolbar().addContent(new Text({
+				textAlign: "Center",
+				width: "25%",
+				text: this.getResourceText("p13nDialog.LIST_VIEW_ACTIVE")
+			}).addStyleClass("firstColumnPadding"));
 		}
 
-        var oColumn = new Column({
-			header: oHeader
-		});
-
-        this.setPanelColumns(oColumn);
     };
 
 	GroupView.prototype.setP13nModel = function(oModel) {
@@ -428,8 +430,8 @@ sap.ui.define([
     GroupView.prototype._bindListItems = function () {
         this._oListControl.bindItems(Object.assign({
 			path: this.P13N_MODEL + ">/itemsGrouped",
-			key: "name",
 			templateShareable: false,
+			key: "group",
 			template: this.getTemplate().clone()
 		}));
 	};

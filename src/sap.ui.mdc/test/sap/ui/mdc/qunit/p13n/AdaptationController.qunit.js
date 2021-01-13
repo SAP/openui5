@@ -679,7 +679,7 @@ sap.ui.define([
 			var oFirstGroup = oList.getItems()[0];
 			assert.ok(oFirstGroup.isA("sap.m.ListItemBase"), "ListItem for grup presentation");
 
-			var oFirstGroupList = oFirstGroup.getCells()[0].getContent()[0];
+			var oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
 			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
 			assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
 
@@ -700,7 +700,7 @@ sap.ui.define([
 			var oFirstGroup = oList.getItems()[0];
 
 			//3 items, 2 initially selected
-			var oFirstGroupList = oFirstGroup.getCells()[0].getContent()[0];
+			var oFirstGroupList = oFirstGroup.getContent()[0].getContent()[0];
 			assert.equal(oFirstGroupList.getItems().length, 3, "3 items created");
 			assert.equal(oFirstGroupList.getSelectedItems().length, 2, "2 items selected");
 

@@ -41,7 +41,7 @@ sap.ui.define([
 					success: function(aColumnListItems) {
 						//Opa5.assert.strictEqual(aColumnListItems.length, 1, 'The ColumnListItem was found');
 						if (typeof oSettings.success === "function") {
-							var oColumnListItem = aColumnListItems[0];
+							var oColumnListItem = aColumnListItems[aColumnListItems.length - 1];
 							oSettings.success.call(this, oColumnListItem);
 						}
 					},

@@ -215,12 +215,13 @@ sap.ui.define([
 				modal: typeof bModal === "boolean" ? bModal : true,
 				itemNameSpace: bFilter ? "sap.m.CustomListItem" : undefined,
 				success: function(aColumnListItems) {
-					var oCheckBox = aColumnListItems[0].getMultiSelectControl();
+					var oColumnListItem = aColumnListItems[aColumnListItems.length - 1];
+					var oCheckBox = oColumnListItem.getMultiSelectControl();
 					new Press().executeOn(oCheckBox);
 
 					//optional array update
 					if (aP13nItems){
-						var iIndex = aColumnListItems[0].getParent().getItems().indexOf(aColumnListItems[0]);
+						var iIndex = oColumnListItem.getParent().getItems().indexOf(oColumnListItem);
 						aP13nItems[iIndex].selected = oCheckBox.getSelected();
 					}
 				}
