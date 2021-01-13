@@ -30,6 +30,12 @@ sap.ui.define([
 			preferViewId: false,
 			formatAsPOMethod: true,
 			multipleSnippets: false
+		},
+		elementTree: {
+			search: "",
+			filter: false,
+			attributes: false,
+			namespaces: true
 		}
 	});
 

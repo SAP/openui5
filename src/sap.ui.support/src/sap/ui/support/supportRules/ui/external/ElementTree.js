@@ -581,6 +581,10 @@ sap.ui.define(["jquery.sap.global"],
 					this._treeContainer.setAttribute("show-filtered-elements", true);
 				} else {
 					this._treeContainer.removeAttribute("show-filtered-elements");
+					var selectedElement = this._ElementTreeContainer.querySelector("[selected]");
+					if (selectedElement) {
+						this._scrollToElement(selectedElement, window);
+					}
 				}
 			}
 
