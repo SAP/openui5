@@ -7,6 +7,7 @@
 @_sap_tnt_ToolHeader_Icon_Height: 0.75rem;
 @_sap_tnt_ToolHeader_AvatarBackground: @sapUiAccent6;
 @_sap_tnt_ToolHeader_AvatarColor: @sapUiContentContrastTextColor;
+@_sap_tnt_ToolHeader_DisabledOpacity: @sapUiContentDisabledOpacity;
 
 .sapTntToolHeader {
 	&.sapMTB {
@@ -159,7 +160,7 @@
 	}
 
 	.sapMBtn.sapMBtnDisabled {
-		opacity: 0.4;
+		opacity: @_sap_tnt_ToolHeader_DisabledOpacity;
 	}
 
 	.sapMSB .sapMSBArrow:not(.sapMBtnDisabled) .sapMBtnTransparent:not(.sapMToggleBtnPressed),
@@ -354,7 +355,7 @@ html.sap-desktop .sapTntToolHeader .sapMSlt:not(.sapMSltExpanded):not(.sapMSltDi
 	}
 
 	.sapMSltDisabled {
-		opacity: 0.4;
+		opacity: @_sap_tnt_ToolHeader_DisabledOpacity;
 	}
 }
 
@@ -424,7 +425,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop .sapTntToolHeader .sapMSltPressed.sa
 	}
 
 	.sapMSFDisabled {
-		opacity: 0.4;
+		opacity: @_sap_tnt_ToolHeader_DisabledOpacity;
 	}
 
 	.sapMSF:not(.sapMSFDisabled) .sapMSFF:hover {
@@ -514,7 +515,7 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	}
 
 	.sapMITH .sapMITBDisabled {
-		opacity: 0.4;
+		opacity: @_sap_tnt_ToolHeader_DisabledOpacity;
 	}
 
 	.sapMITH {
