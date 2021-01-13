@@ -7,7 +7,7 @@ sap.ui.define([
 
 	var TableController = Controller.extend("sap.m.sample.Table.Table", {
 		onInit: function () {
-			var oModel = new JSONModel(jQuery.sap.getModulePath("sap.m.sample.Table", "/products.json"));
+			var oModel = new JSONModel(sap.ui.require.toUrl("sap/m/sample/Table/products.json"));
 			this.getView().setModel(oModel);
 		},
 

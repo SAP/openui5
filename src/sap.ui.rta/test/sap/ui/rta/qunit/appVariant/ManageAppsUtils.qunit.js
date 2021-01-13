@@ -522,7 +522,7 @@ sap.ui.define([
 			AppVariantUtils.setNewAppVariantId("id1");
 
 			var oResourceBundlePromise = jQuery.sap.resources({
-				url: jQuery.sap.getModulePath("sap.ui.rta.appVariant.manageApps.webapp.i18n", "/i18n.properties"),
+				url: sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/webapp/i18n/i18n.properties"),
 				async: true
 			});
 
@@ -589,7 +589,7 @@ sap.ui.define([
 			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
 			var oResourceBundlePromise = jQuery.sap.resources({
-				url: jQuery.sap.getModulePath("sap.ui.rta.appVariant.manageApps.webapp.i18n", "/i18n.properties"),
+				url: sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/webapp/i18n/i18n.properties"),
 				async: true
 			});
 
