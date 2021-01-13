@@ -25,6 +25,17 @@
         ]
       },
       {
+        "id": "41a57b93bb5f493e8704f1fffbef45ab09f0e3d8",
+        "type": "FIX",
+        "text": " sap.ui.unified.CalendarDateInterval: Tests are now passing on Safari 13",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070459081"
+          }
+        ]
+      },
+      {
         "id": "bedbd4f4e46fff809af3d167fbb97cb880a7e63b",
         "type": "FIX",
         "text": " sap.m.DateRangeSelection: can select a range in month with 4 weeks",
