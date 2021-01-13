@@ -149,6 +149,15 @@ sap.ui.define([
 		},
 
 		/**
+		 * Interface called to check if variant management context sharing is enabled.
+		 *
+		 * @returns {Promise<object>} Resolves with an object containing the data for the flex features
+		 */
+		isContextSharingEnabled: function () {
+			return Promise.resolve(false);
+		},
+
+		/**
 		 * Interface called to get the flex feature.
 		 *
 		 * @returns {Promise<object>} Resolves with an object containing the data for the flex features

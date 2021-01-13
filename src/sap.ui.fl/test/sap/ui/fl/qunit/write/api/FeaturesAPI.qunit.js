@@ -76,6 +76,17 @@ sap.ui.define([
 						assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
 					});
 			});
+
+
+			QUnit.test("when isContextSharingEnabled() is called for " + (bValueToBeSet ? "a" : "not a") + " abap key user", function (assert) {
+				sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
+					bValueToBeSet ? {connector: "LrepConnector"} : {connector: "NeoLrepConnector"}
+				]);
+				return FeaturesAPI.isContextSharingEnabled(Layer.CUSTOMER)
+					.then(function (bReturnValue) {
+						assert.strictEqual(bReturnValue, bValueToBeSet, "then " + bValueToBeSet + " is returned");
+					});
+			});
 		});
 	});
 });

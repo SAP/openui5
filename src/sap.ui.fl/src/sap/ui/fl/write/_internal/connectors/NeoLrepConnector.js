@@ -25,6 +25,15 @@ sap.ui.define([
 	 */
 	return merge({}, LrepConnector, /** @lends sap.ui.fl.write._internal.connectors.NeoLrepConnector */ {
 		initialConnector: InitialConnector,
-		layers: InitialConnector.layers
+		layers: InitialConnector.layers,
+
+		/**
+		 * Check if context sharing is enabled in the backend.
+		 *
+		 * @returns {Promise<boolean>} Promise resolves with false
+		 */
+		isContextSharingEnabled: function () {
+			return Promise.resolve(false);
+		}
 	});
 }, true);
