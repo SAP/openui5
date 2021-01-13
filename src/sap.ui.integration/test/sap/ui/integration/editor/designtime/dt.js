@@ -230,8 +230,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"hint": "Please refer to the <a href='https://www.sap.com'>documentation</a> lets see how this will behave if the text is wrapping to the next line and has <a href='https://www.sap.com'>two links</a>. good?"
 					},
 					"integerrequired": {
-						"manifestpath": "/sap.card/configuration/parameters/integer/value",
-						"defaultValue": 2,
+						"manifestpath": "/sap.card/configuration/parameters/integerrequired/value",
 						"type": "integer",
 						"translatable": false,
 						"required": true
