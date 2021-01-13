@@ -44,7 +44,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment",
-	"sap/ui/rta/util/validateFlexEnabled"
+	"sap/ui/rta/util/validateFlexEnabled",
+	"sap/ui/rta/util/changeVisualization/ChangeVisualization"
 ],
 function(
 	jQuery,
@@ -87,7 +88,8 @@ function(
 	KeyCodes,
 	JSONModel,
 	Fragment,
-	validateFlexEnabled
+	validateFlexEnabled,
+	ChangeVisualization
 ) {
 	"use strict";
 
@@ -230,6 +232,13 @@ function(
 			if (this.getShowToolbars()) {
 				this.getPopupManager().attachOpen(this.onPopupOpen, this);
 				this.getPopupManager().attachClose(this.onPopupClose, this);
+
+				var oUriParams = UriParameters.fromQuery(window.location.search);
+				var bChangeVisualizationAvailable = oUriParams.get("sap-ui-rta-xx-changeVisualization") === "true";
+				if (bChangeVisualizationAvailable) {
+					// Change visualization can only be triggered from the toolbar
+					this.addDependent(new ChangeVisualization(), "changeVisualization");
+				}
 			}
 
 			if (window.parent !== window) {
@@ -520,6 +529,11 @@ function(
 				if (this.getShowToolbars()) {
 					// the show() method of the toolbar relies on this RTA instance being set on the PopupManager
 					return this.getToolbar().show();
+				}
+			}.bind(this))
+			.then(function () {
+				if (this.getShowToolbars() && this.getChangeVisualization) {
+					this.getChangeVisualization().setRootControlId(this.getRootControl());
 				}
 			}.bind(this))
 			.then(function () {
@@ -1038,7 +1052,10 @@ function(
 					saveAs: RtaAppVariantFeature.onSaveAs.bind(RtaAppVariantFeature, true, true, this.getLayer(), null),
 					activate: this._onActivate.bind(this),
 					discardDraft: this._onDiscardDraft.bind(this),
-					switchVersion: this._onSwitchVersion.bind(this)
+					switchVersion: this._onSwitchVersion.bind(this),
+					toggleChangeVisualization: this.getChangeVisualization
+						? this.getChangeVisualization().toggleActive.bind(this.getChangeVisualization())
+						: function () {}
 				});
 			}
 			this.addDependent(oToolbar, "toolbar");
@@ -1048,6 +1065,7 @@ function(
 				var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
 				var oUriParams = UriParameters.fromQuery(window.location.search);
 				var bShowChangesVisible = oUriParams.get("sap-ui-rta-xx-changeVisualization") === "true";
+
 
 				this._oToolbarControlsModel = new JSONModel({
 					undoEnabled: false,
@@ -1062,7 +1080,6 @@ function(
 					manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
 					manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
 					showChangesVisible: bShowChangesVisible,
-					rtaRootControlId: this.getRootControl(),
 					modeSwitcher: this.getMode()
 				});
 

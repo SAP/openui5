@@ -1,0 +1,74 @@
+<core:FragmentDefinition
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:l="sap.ui.layout">
+	<Popover
+		title="{= ${details>/}.length > 1 ? ${i18n>TIT_CHANGEVISUALIZATION_CHANGES} : ${details>/0/changeTitle}}"
+		placement="PreferredTopOrFlip"
+		class="sapUiRtaPopover">
+		<Table
+			items="{details>/}"
+			inset="false"
+			fixedLayout="false"
+			width="auto"
+			visible="{= ${details>/}.length > 1}">
+			<columns>
+				<Column
+					width="auto">
+					<Text text="{i18n>TIT_CHANGEVISUALIZATION_CHANGE}" />
+				</Column>
+				<Column
+					width="auto">
+					<Text text="{i18n>TIT_CHANGEVISUALIZATION_DESCRIPTION}" />
+				</Column>
+				<Column
+					width="auto">
+					<Text text="{i18n>TIT_CHANGEVISUALIZATION_DATE}" />
+				</Column>
+				<Column
+					width="auto">
+					<Text text="{i18n>TIT_CHANGEVISUALIZATION_DETAILS}" />
+				</Column>
+			</columns>
+			<items>
+				<ColumnListItem>
+					<cells>
+						<Text
+							text="{details>changeTitle}" />
+						<Text
+							text="{details>description}" />
+						<Text
+							text="{details>date}" />
+						<Button
+							visible="{details>enableDetailButton}"
+							icon="sap-icon://display"
+							press="._showDependentElements"/>
+					</cells>
+				</ColumnListItem>
+			</items>
+		</Table>
+		<l:VerticalLayout
+			visible="{= ${details>/}.length === 1}">
+			<Text
+				text="{details>/0/description}"
+				class="sapUiTinyMargin"/>
+			<Text
+				text="{details>/0/date}"
+				class="sapUiTinyMargin"/>
+		</l:VerticalLayout>
+		<footer>
+			<FlexBox
+				direction="RowReverse"
+				visible="{= ${details>/}.length === 1}">
+				<items>
+					<Button
+						visible="{details>/0/enableDetailButton}"
+						text="{i18n>TIT_CHANGEVISUALIZATION_DETAILS}"
+						icon="sap-icon://display"
+						press="._showDependentElements"
+						class="sapUiTinyMargin"/>
+				</items>
+			</FlexBox>
+		</footer>
+	</Popover>
+</core:FragmentDefinition>

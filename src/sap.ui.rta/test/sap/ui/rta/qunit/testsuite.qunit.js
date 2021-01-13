@@ -111,18 +111,6 @@ sap.ui.define([
 					only: ["sap/ui/rta/toolbar/FioriLike"]
 				}
 			},
-			"toolbar/ChangeVisualization": {
-				group: "Toolbar",
-				coverage: {
-					only: ["sap/ui/rta/toolbar/ChangeVisualization"]
-				}
-			},
-			"toolbar/ChangeIndicator": {
-				group: "Toolbar",
-				coverage: {
-					only: ["sap/ui/rta/toolbar/ChangeIndicator"]
-				}
-			},
 
 			// Plugins
 			"plugin/additionalElements/AddElementsDialog": {
@@ -587,6 +575,37 @@ sap.ui.define([
 						only: ["sap/ui/rta/util/showMessageBox"]
 					}
 				},
+				"util/ChangeVisualization": {
+					coverage: {
+						only: [
+							"sap/ui/rta/util/changeVisualization/ChangeVisualization",
+							"sap/ui/rta/util/changeVisualization/ChangeIndicator"
+						]
+					},
+					ui5: {
+						resourceroots: {
+							qunit: "test-resources/sap/ui/rta/qunit/",
+							"sap.ui.rta.qunitrta": "test-resources/sap/ui/rta/internal/testdata/qunit_rta/",
+							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
+						}
+					}
+				},
+				"util/ChangeIndicator": {
+					coverage: {
+						only: [
+							"sap/ui/rta/util/changeVisualization/ChangeIndicator"
+						]
+					}
+				},
+
+				"util/ChangeIndicatorRegistry": {
+					coverage: {
+						only: [
+							"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry"
+						]
+					}
+				},
+
 				ContextMenu: { // Integration
 					ui5: {
 						resourceroots: {
