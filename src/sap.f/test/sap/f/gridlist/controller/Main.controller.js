@@ -42,6 +42,8 @@ sap.ui.define([
 
 			if (oNextGrid) {
 				oNextGrid.focusItemByDirection(sDirection, iRow, iColumn);
+			} else {
+				Log.warning("Couldn't find next grid");
 			}
 		},
 

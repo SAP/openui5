@@ -10,6 +10,8 @@ sap.ui.define([], function () {
 	"use strict";
 
 	return {
+		EMPTY_CELL: false,
+
 		/**
 		 * Creates a matrix (2D array) of dom refs representing the grid items ordered as rendered on the page
 		 * @param {HTMLElement} oGridDomRef The grid
@@ -24,8 +26,8 @@ sap.ui.define([], function () {
 			var aMatrix = Array.from(
 				new Array(oLayoutSizes.rows.length),
 				function () {
-					return new Array(oLayoutSizes.columns.length).fill(false);
-				}
+					return new Array(oLayoutSizes.columns.length).fill(this.EMPTY_CELL);
+				}.bind(this)
 			);
 
 			aItemsDomRefs.forEach(function (oItemDomRef) {

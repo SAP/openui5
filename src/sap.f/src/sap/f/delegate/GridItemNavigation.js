@@ -334,21 +334,25 @@ sap.ui.define([
 			case NavigationDirection.Down:
 				iRowIndex = -1;
 				iColIndex = iColumn;
-				do {
-					oCurrentItem = aMatrix[++iRowIndex][iColumn];
-				} while (!oCurrentItem);
+
+				while (!oCurrentItem && aMatrix[++iRowIndex] && aMatrix[iRowIndex][iColumn] !== undefined) {
+					oCurrentItem = aMatrix[iRowIndex][iColumn];
+				}
 				break;
 			case NavigationDirection.Up:
 				iRowIndex = aMatrix.length;
 				iColIndex = iColumn;
-				do {
-					oCurrentItem = aMatrix[--iRowIndex][iColumn];
-				} while (!oCurrentItem);
+
+				while (!oCurrentItem && aMatrix[--iRowIndex] && aMatrix[iRowIndex][iColumn] !== undefined) {
+					oCurrentItem = aMatrix[iRowIndex][iColumn];
+				}
 
 				// move to the upper top row index
 				while (oCurrentItem && iRowIndex > 0 && aMatrix[iRowIndex - 1][iColumn] === oCurrentItem) {
 					iRowIndex--;
 				}
+				break;
+			default:
 				break;
 		}
 
