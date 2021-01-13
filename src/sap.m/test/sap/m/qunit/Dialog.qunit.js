@@ -1908,6 +1908,169 @@ sap.ui.define([
 		assert.strictEqual($dialogContent.height(), 400, "Dialog height should be 400px");
 	});
 
+	QUnit.module("Keyboard drag and resize",{
+		beforeEach: function() {
+			var aListItems = [];
+			for (var i = 0; i < 10; i++) {
+				aListItems.push(new StandardListItem({
+					title : "Title" + i
+				}));
+			}
+			this.oDialog = new Dialog({
+				title: 'Available Products',
+				draggable: true,
+				resizable: true,
+				contentWidth: "550px",
+				contentHeight: "400px",
+				content: new List({
+					items: aListItems
+				})
+			});
+		},
+		afterEach: function() {
+			this.oDialog.destroy();
+		}
+	});
+
+	QUnit.test("header focus", function(assert) {
+		// act
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var oTitle = this.oDialog._getFocusableHeader();
+
+		assert.strictEqual(document.activeElement, oTitle, "header is focused");
+
+		// act
+		this.oDialog.close();
+		this.clock.tick(500);
+
+		// act
+		this.oDialog.setResizable(false);
+		this.oDialog.setDraggable(false);
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		oTitle = this.oDialog._getFocusableHeader();
+
+		assert.notOk(oTitle, "header is not focused");
+	});
+
+
+	QUnit.test("drag", function(assert) {
+		// act
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var oTitle = this.oDialog._getFocusableHeader();
+		var mOffset1 = this.oDialog.$().offset();
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		var mOffset2 = this.oDialog.$().offset();
+		assert.ok(mOffset1.top < mOffset2.top, "the dialog is moved");
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_UP);
+		this.clock.tick(500);
+		mOffset1 = this.oDialog.$().offset();
+		assert.ok(mOffset1.top < mOffset2.top, "the dialog is moved");
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_RIGHT);
+		this.clock.tick(500);
+		mOffset2 = this.oDialog.$().offset();
+		assert.ok(mOffset1.left < mOffset2.left, "the dialog is moved");
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_LEFT);
+		this.clock.tick(500);
+		mOffset1 = this.oDialog.$().offset();
+		assert.ok(mOffset1.left < mOffset2.left, "the dialog is moved");
+	});
+
+	QUnit.test("resize", function(assert) {
+		// act
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var oTitle = this.oDialog._getFocusableHeader();
+		var width1 = this.oDialog.$().width();
+		var height1 = this.oDialog.$().height();
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_DOWN, true);
+		this.clock.tick(500);
+		var height2 = this.oDialog.$().height();
+		assert.ok(height2 > height1, "dialog is resized");
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_UP, true);
+		this.clock.tick(500);
+		height1 = this.oDialog.$().height();
+		assert.ok(height2 > height1, "dialog is resized");
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_RIGHT, true);
+		this.clock.tick(500);
+		var width2 = this.oDialog.$().width();
+		assert.ok(width2 > width1, "dialog is resized");
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_LEFT, true);
+		this.clock.tick(500);
+		width1 = this.oDialog.$().width();
+		assert.ok(width2 > width1, "dialog is resized");
+	});
+
+	QUnit.test("change draggable/resizable", function(assert) {
+
+		this.oDialog.setDraggable(false);
+
+		// act
+		this.oDialog.open();
+		this.clock.tick(500);
+
+		var oTitle = this.oDialog._getFocusableHeader();
+		var mOffset = this.oDialog.$().offset();
+		var height = this.oDialog.$().height();
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		assert.strictEqual(mOffset.top, this.oDialog.$().offset().top, "dialog is not moved");
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_DOWN, true);
+		this.clock.tick(500);
+		assert.ok(height < this.oDialog.$().height(), "dialog is resized");
+
+		this.oDialog.setResizable(false);
+		this.oDialog.setDraggable(true);
+		Core.applyChanges();
+
+		oTitle = this.oDialog._getFocusableHeader();
+
+		mOffset = this.oDialog.$().offset();
+		height = this.oDialog.$().height();
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		assert.ok(mOffset.top < this.oDialog.$().offset().top, "dialog is moved");
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_DOWN, true);
+		this.clock.tick(500);
+		assert.strictEqual(height, this.oDialog.$().height(), "dialog is not resized");
+
+
+		this.oDialog.setDraggable(false);
+		Core.applyChanges();
+
+		oTitle = this.oDialog._getFocusableHeader();
+
+		mOffset = this.oDialog.$().offset();
+		height = this.oDialog.$().height();
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		assert.strictEqual(mOffset.top, this.oDialog.$().offset().top, "dialog is not moved");
+
+		qutils.triggerKeydown(oTitle, KeyCodes.ARROW_DOWN, true);
+		this.clock.tick(500);
+		assert.strictEqual(height, this.oDialog.$().height(), "dialog is not resized");
+	});
+
 	QUnit.module("Setting Dialogs button origin",{
 		beforeEach: function() {
 			this.oCloseButton = new Button("closeButton", {

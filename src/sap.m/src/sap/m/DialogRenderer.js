@@ -168,8 +168,13 @@ sap.ui.define([
 		if (oHeader) {
 			oHeader._applyContextClassFor("header");
 			oRM.openStart("header")
-				.class("sapMDialogTitle")
-				.openEnd()
+				.class("sapMDialogTitle");
+
+			if (oDialog._isDraggableOrResizable()) {
+				oRM.attr("tabindex", 0);
+			}
+
+			oRM.openEnd()
 				.renderControl(oHeader)
 				.close("header");
 		}
