@@ -8,7 +8,7 @@ sap.ui.define([
 	var oAdaptationController = new AdaptationController();
 
 	/**
-	 *  Utility class for state handling of MDC Controls.
+	 *  @class Utility class for state handling of MDC Controls.
 	 *  The StateUtil is offering a generic way to retrieve and apply a desired state to a given MDC Control.
 	 *  The StateUtil class is tightly coupled to the flex integration of MDC Controls,
 	 *  to use Stateutil API's the given MDC Control instance needs to fully enable all available p13nMode
@@ -18,6 +18,8 @@ sap.ui.define([
 	 *
 	 * @author SAP SE
 	 * @public
+	 * @ui5-restricted sap.fe
+	 * @experimental As of version 1.77.0
 	 * @since 1.77.0
 	 * @alias sap.ui.mdc.p13n.StateUtil
 	 */

@@ -14,9 +14,10 @@ sap.ui.define([
 		/**
 		 * @namespace
 		 * @name sap.ui.mdc.condition
+		 * @since 1.61.0
 		 * @private
-		 * @experimental
-		 * @ui5-restricted
+		 * @experimental As of version 1.61
+		 * @ui5-restricted sap.ui.fe
 		 */
 
 		/**
