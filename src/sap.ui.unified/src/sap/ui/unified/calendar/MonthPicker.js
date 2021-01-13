@@ -688,6 +688,7 @@ sap.ui.define([
 							this.firePageChange({ offset: OFFSET.OneYearForward });
 							this._oItemNavigation.focusItem(iMonth % iColumns);
 							oFocusedDate.setMonth(iMonth % iColumns, 1);
+							this.setProperty("_focusedMonth", iMonth % iColumns);
 							this._isSelectionInProgress() && this._markInterval(oStartDate, oFocusedDate);
 						} else {
 							_updateMonths.call(this, iMonth % iColumns, true, OFFSET.OneYearForward);
@@ -717,6 +718,7 @@ sap.ui.define([
 							this.firePageChange({ offset: OFFSET.OneYearBackward });
 							this._oItemNavigation.focusItem(iMonths - iColumns + iMonth);
 							oFocusedDate.setMonth(iMonths - iColumns + iMonth, 1);
+							this.setProperty("_focusedMonth", iMonths - iColumns + iMonth);
 							this._isSelectionInProgress() && this._markInterval(oStartDate, oFocusedDate);
 						} else {
 							_updateMonths.call(this, MONTHS_IN_YEAR - iColumns + iMonth, true, OFFSET.OneYearBackward);
