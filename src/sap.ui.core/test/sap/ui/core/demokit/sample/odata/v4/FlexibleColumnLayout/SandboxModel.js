@@ -76,6 +76,13 @@ sap.ui.define([
 				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000004'&$select=ChangedAt,CreatedAt,CurrencyCode,GrossAmount,LifecycleStatusDesc,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)" : {
 					source : "SalesOrderList('0500000004')-Refresh_Existence.json"
 				},
+				"SalesOrderList?$filter=SalesOrderID%20eq%20'0500000000'&$select=GrossAmount,SalesOrderID" : {
+					message : {"value":[{
+						"@odata.etag" : "W/\"20210113145715.2782530 \"",
+						"GrossAmount" : "24540.06",
+						"SalesOrderID" : "0500000000"
+					}]}
+				},
 				//TODO The following request contains unnecessary properties, should look like:
 				// "SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5"
 				// CPOUI5ODATAV4-544
