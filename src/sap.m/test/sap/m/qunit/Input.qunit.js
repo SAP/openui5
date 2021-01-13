@@ -4299,6 +4299,43 @@ sap.ui.define([
 		assert.strictEqual(this.oInput.getMaxSuggestionWidth(), this.oInput._oSuggPopover._sPopoverContentWidth, "Input and Popover widths should be the same.");
 	});
 
+	QUnit.test("calling _synchronizeSuggestions", function (assert) {
+		// arrange
+		var oStub = this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		}),
+			oInput = new Input({
+				showSuggestion: true,
+				filterSuggests: false,
+				suggestionItems: [
+					new Item({text: "Germany"}),
+					new Item({text: "Bulgaria"})
+				]
+			}).placeAt("content"),
+			oSpy = sinon.spy(oInput, "_refreshListItems"),
+			oPopupInput = oInput._getSuggestionsPopover()._oPopupInput,
+			oPopover = oInput._getSuggestionsPopover();
+
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oPopover.getPopover().open();
+		oPopupInput._$input.trigger("focus").trigger("keydown").val("g").trigger("input");
+		this.clock.tick(500);
+		oSpy.reset();
+		oInput._synchronizeSuggestions();
+		this.clock.tick(500);
+
+		// assert
+		assert.ok(oSpy.calledOnce, "_refreshListItems should be called once");
+
+		// clean
+		oInput.destroy();
+		oStub.restore();
+	});
+
 	QUnit.module("Input in a Dialog", {
 		beforeEach: function () {
 			this.dialog = new Dialog({
