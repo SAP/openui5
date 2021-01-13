@@ -762,6 +762,26 @@ sap.ui.define([
 			assert.equal(oElement.textContent, "5", "Text is applied");
 		});
 
+		this.html("<div>A<i id='i'>B</i>C</div>").patch(function() {
+			Patcher.openStart("div").openEnd().
+				text("A").
+				unsafeHtml("<i id='i'>D</i>", "i").
+				text("C").
+			close("div");
+		}, function(aMutations, oElement) {
+			assert.equal(aMutations.length, 2, "<i> tag is replaced");
+			assert.equal(oElement.textContent, "ADC", "Content is valid");
+		});
+
+		this.html("<div>ABC</div>").patch(function() {
+			Patcher.openStart("div").openEnd().
+				text("A").
+				unsafeHtml("DC").
+			close("div");
+		}, function(aMutations, oElement) {
+			assert.equal(oElement.textContent, "ADC", "Even though not suggested, unsafeHtml works with text content");
+		});
+
 	});
 
 	QUnit.test("Patching context", function(assert) {
