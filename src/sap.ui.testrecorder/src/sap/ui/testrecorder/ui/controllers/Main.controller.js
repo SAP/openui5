@@ -38,7 +38,8 @@ sap.ui.define([
 					search: true
 				},
 				onSelectionChanged: this._onTreeSelectionChanged.bind(this),
-				onContextMenu: this._onTreeContextMenu.bind(this)
+				onContextMenu: this._onTreeContextMenu.bind(this),
+				onInitialRendering: this._onElementTreeInitialRendering.bind(this)
 			});
 
 			this._setupModels();
@@ -258,6 +259,35 @@ sap.ui.define([
 				highlight: false
 			};
 			ContextMenu.show(mData);
+		},
+		_onElementTreeInitialRendering: function () {
+			var oFilterContainer = this.elementTree._filterContainer;
+			var fnOnSearchInput = oFilterContainer.onkeyup;
+			var fnOnOptionsChange = oFilterContainer.onchange;
+			var aOptions = ["filter", "attributes", "namespaces"];
+			var oModel = this.model;
+
+			aOptions.forEach(function (sOption) {
+				var elem = oFilterContainer.querySelector("[" + sOption + "]");
+				elem.checked = oModel.getProperty("/elementTree/" + sOption);
+				$(elem).change();
+			});
+			var searchInput = oFilterContainer.querySelector("[search]");
+			searchInput.value = oModel.getProperty("/elementTree/search");
+			$(searchInput).keyup();
+
+			oFilterContainer.onchange = function (event) {
+				aOptions.forEach(function (sOption) {
+					if (event.target.getAttribute(sOption) !== null) {
+						oModel.setProperty("/elementTree/" + sOption, event.target.checked);
+					}
+				});
+				fnOnOptionsChange.apply(this, arguments);
+			};
+			oFilterContainer.onkeyup = function (event) {
+				oModel.setProperty("/elementTree/search", event.target.value);
+				fnOnSearchInput.apply(this, arguments);
+			};
 		},
 		_clearControlData: function () {
 			this.getView().getModel("controls").setProperty("/properties", {});
