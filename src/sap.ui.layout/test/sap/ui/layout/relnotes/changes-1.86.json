@@ -1,0 +1,23 @@
+{
+  "1.86.0": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "050270c874d37134602eb60fbe1edbbdc0cc610b",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveFlowLayout: now rendered properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080397424"
+          }
+        ]
+      },
+      {
+        "id": "e8b20856d67feb5b44fdb63eacda0fcda00a044c",
+        "type": "FEATURE",
+        "text": " SemanticFormElement: Semantically connected fields supported"
+      }
+    ]
+  }
+}

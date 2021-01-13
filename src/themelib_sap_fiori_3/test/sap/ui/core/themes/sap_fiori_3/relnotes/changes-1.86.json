@@ -1,7 +1,34 @@
 {
   "1.86.0": {
-    "date": "November 2020",
+    "date": "January 2021",
     "notes": [
+      {
+        "id": "4dc59031e279b346342d77c244c405c7959ef7f4",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: Colors in list/table context fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080399165"
+          }
+        ]
+      },
+      {
+        "id": "0f6c45c5ade6239923146c90123f43f7e8f1d157",
+        "type": "FEATURE",
+        "text": " sap.m.ObjectNumber: Inverted states and interactivity are added"
+      },
+      {
+        "id": "0d75f3b1a3b59a10f57f9837ee50106776bcd9dd",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Fixed button's focus on all themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070468666"
+          }
+        ]
+      },
       {
         "id": "ef25a4c310d8c97a4e64ad4e9f12cd760b3b26ef",
         "type": "FIX",
@@ -12,65 +39,6 @@
             "reference": "2080382626"
           }
         ]
-      },
-      {
-        "id": "c5827126286daca34bc0f3e58498507d43241204",
-        "type": "FEATURE",
-        "text": " Table: Dummy column to fill up free space"
-      },
-      {
-        "id": "0361c60c9fb39b037f77a6d5bb887e184d3af4e5",
-        "type": "FEATURE",
-        "text": " sap.m.SinglePlanningCalendar: Special dates visualisation in Month view"
-      },
-      {
-        "id": "0814d832b840264212136198a235d70eac17ad1f",
-        "type": "FIX",
-        "text": " sap.m.ObjectStatus: Fixing height of object status text and icon",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2070436175"
-          }
-        ]
-      },
-      {
-        "id": "db6b74e8b811f657a4383635c8be7c47898c0521",
-        "type": "FIX",
-        "text": " sap.m.InputBase, sap.m.ComboBox: Interactive states CSS fixes",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2070447998"
-          }
-        ]
-      },
-      {
-        "id": "a19bf46be1c2225b940d9f97b263c8ab8cdfeb51",
-        "type": "FIX",
-        "text": "sap.m.Slider: Vertical alignment of the handle is now fixed",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2070449730"
-          }
-        ]
-      },
-      {
-        "id": "8bcf8cdc79734d4c3f74fc502dfc2348ed28dcf2",
-        "type": "FIX",
-        "text": " sap.m.Panel: Adjust background color according to specifications",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2070444868"
-          }
-        ]
-      },
-      {
-        "id": "0f96705e16efd98ff05facdeaccf641497f6abb1",
-        "type": "FEATURE",
-        "text": " sap.m.Bar, other controls: added title alignment functionality"
       }
     ]
   }
