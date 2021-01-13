@@ -3,7 +3,7 @@
 describe("sap.f.CalendarInCard", function () {
 	"use strict";
 
-	browser.testrunner.currentSuite.meta.controlName = "sap.ui.integration.widgets.CalendarInCard";
+	browser.testrunner.currentSuite.meta.controlName = "sap.f.CalendarInCard";
 
 	function navigateTo(sTitle) {
 		element(by.control({
