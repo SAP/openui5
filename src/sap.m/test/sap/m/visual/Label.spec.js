@@ -109,14 +109,14 @@ describe("sap.m.Label", function() {
 
 		var oVL2 = element(by.id("oVL2"));
 		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
-			element(by.id('localeSelect')).setSelectedKey("1");
+			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(1);");
 			expect(takeScreenshot(oVL2)).toLookAs('17_oVL2_compact');
 			expect(takeScreenshot(oVL2)).toLookAs('18_oVL2_compact_French');
 		});
 
 		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
 			element(by.id('cozySwitch')).click();
-			element(by.id('localeSelect')).setSelectedKey("1");
+			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(1);");
 			expect(takeScreenshot(oVL2)).toLookAs('19_oVL2_cozy');
 			expect(takeScreenshot(oVL2)).toLookAs('20_oVL2_cozy_French');
 		});
@@ -127,14 +127,14 @@ describe("sap.m.Label", function() {
 
 		var oVL2 = element(by.id("oVL2"));
 		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
-			element(by.id('localeSelect')).setSelectedKey("2");
+			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(2);");
 			expect(takeScreenshot(oVL2)).toLookAs('17_oVL2_compact');
 			expect(takeScreenshot(oVL2)).toLookAs('18_oVL2_compact_zh_CN');
 		});
 
 		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
 			element(by.id('cozySwitch')).click();
-			element(by.id('localeSelect')).setSelectedKey("2");
+			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(2);");
 			expect(takeScreenshot(oVL2)).toLookAs('19_oVL2_cozy');
 			expect(takeScreenshot(oVL2)).toLookAs('20_oVL2_cozy_zh_CN');
 		});
@@ -145,18 +145,30 @@ describe("sap.m.Label", function() {
 
 		var oVL2 = element(by.id("oVL2"));
 		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
-			element(by.id('localeSelect')).setSelectedKey("3");
+			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(3);");
 			expect(takeScreenshot(oVL2)).toLookAs('21_oVL2_compact');
 			expect(takeScreenshot(oVL2)).toLookAs('22_oVL2_compact_zh_TW');
 		});
 
 		browser.executeScript("document.getElementById('oVL2').scrollIntoView()").then(function() {
 			element(by.id('cozySwitch')).click();
-			element(by.id('localeSelect')).setSelectedKey("3");
+			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(3);");
 			expect(takeScreenshot(oVL2)).toLookAs('23_oVL2_cozy');
 			expect(takeScreenshot(oVL2)).toLookAs('24_oVL2_cozy_zh_TW');
 		});
 
 		element(by.id('cozySwitch')).click();
+	});
+
+	it("required label in French language", function() {
+		var oRequiredLabel = element(by.id("lbl2"));
+
+		browser.executeScript("document.getElementById('lbl2').scrollIntoView()").then(function() {
+			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(1);");
+			expect(takeScreenshot(oRequiredLabel)).toLookAs('25_required_label_French');
+
+			// clean up - reset language
+			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(0);");
+		});
 	});
 });
