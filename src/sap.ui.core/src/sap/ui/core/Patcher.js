@@ -3,7 +3,7 @@
  */
 
 // Provides the Patcher for RenderManager
-sap.ui.define(["sap/ui/Device"], function(Device) {
+sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQuery) {
 	"use strict";
 
 
@@ -41,7 +41,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	/**
 	 * Creates an HTML element from the given tag name and parent namespace
 	 */
-	function createElement(sTagName, oParent) {
+	var createElement = function (sTagName, oParent) {
 		if (sTagName == "svg") {
 			return document.createElementNS("http://www.w3.org/2000/svg", "svg");
 		}
@@ -52,7 +52,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		}
 
 		return document.createElementNS(sNamespaceURI, sTagName);
-	}
+	};
 
 	/**
 	 * Provides an API for an in-place DOM patching.
@@ -64,10 +64,11 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 * @ui5-restricted sap.ui.core
 	 */
 	var Patcher = {
-		_sStyles: "",                     // Style collection of the current node
-		_sClasses: "",                    // Class name collection of the current node
-		_aContexts: [],                   // Context stack of the Patcher
-		_mAttributes: Object.create(null) // Set of all attributes name-value pair
+		_sStyles: "",                                    // Style collection of the current node
+		_sClasses: "",                                   // Class name collection of the current node
+		_aContexts: [],                                  // Context stack of the Patcher
+		_mAttributes: Object.create(null),               // Set of all attributes name-value pair
+		_oTemplate: document.createElement("template")   // template element to convert HTML strings to fragment
 	};
 
 	/**
@@ -526,8 +527,18 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 		} else {
 			oReference = this._oCurrent.nextSibling;
 			if (sHtml) {
-				this._oCurrent.insertAdjacentHTML("afterend", sHtml);
-				this._oCurrent = oReference ? oReference.previousSibling : this._oCurrent.parentNode.lastChild;
+				var oParent = this._oCurrent.parentNode;
+				if (this._oCurrent.nodeType == 1) {
+					this._oCurrent.insertAdjacentHTML("afterend", sHtml);
+				} else if ("content" in this._oTemplate) {
+					this._oTemplate.innerHTML = sHtml;
+					oParent.insertBefore(this._oTemplate.content, oReference);
+				} else {
+					jQuery.parseHTML(sHtml).forEach(function(oNode) {
+						oParent.insertBefore(oNode, oReference);
+					});
+				}
+				this._oCurrent = oReference ? oReference.previousSibling : oParent.lastChild;
 			}
 		}
 
