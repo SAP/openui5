@@ -30,7 +30,12 @@ sap.ui.define([
 			oVisualization = {
 				type: Input,
 				settings: {
-					value: { path: 'currentSettings>value', type: new IntType() },
+					value: {
+						path: 'currentSettings>value',
+						type: new IntType({
+							emptyString: ""
+						})
+					},
 					editable: { path: 'currentSettings>editable' },
 					type: "Number"
 				}
