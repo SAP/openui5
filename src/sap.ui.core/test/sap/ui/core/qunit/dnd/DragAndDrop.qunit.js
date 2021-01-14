@@ -153,25 +153,6 @@ sap.ui.define([
 		return oEvent;
 	}
 
-	function assertIndicatorVisible(assert, $Indicator, bVisible, sMessage) {
-		sMessage = sMessage ? sMessage + ": " : "";
-
-		if (bVisible) {
-			assert.ok($Indicator.is(":visible"), sMessage + "Indicator is visible");
-		} else {
-			assert.ok($Indicator.is(":hidden"), sMessage + "Indicator is hidden");
-		}
-
-		var $IndicatorWrapper = $Indicator.parent(".sapUiDnDIndicatorWrapper");
-		if ($IndicatorWrapper.length) {
-			if (bVisible) {
-				assert.ok($IndicatorWrapper.is(":visible"), sMessage + "Indicator wrapper is visible");
-			} else {
-				assert.ok($IndicatorWrapper.is(":hidden"), sMessage + "Indicator wrapper is hidden");
-			}
-		}
-	}
-
 	QUnit.module("DragSession", {
 		beforeEach: function() {
 			this.oControl = new DragAndDropControl({
@@ -181,7 +162,7 @@ sap.ui.define([
 					})
 				]
 			});
-			this.oControl.placeAt("qunit-fixture");
+			this.oControl.addStyleClass("sapUiScrollDelegate").placeAt("qunit-fixture");
 			Core.applyChanges();
 		},
 		afterEach: function() {
@@ -589,11 +570,11 @@ sap.ui.define([
 
 		// drop
 		oDiv2.$().trigger("drop");
-		assertIndicatorVisible(assert, $Indicator, true, "After drop");
+		assert.ok($Indicator.is(":visible"), "Indicator is still visible after drop");
 
 		// cleanup
 		oDiv2.$().trigger("dragend");
-		assertIndicatorVisible(assert, $Indicator, false, "After dragend");
+		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after dragend");
 	});
 
 	QUnit.module("Drop on empty aggregation", {
@@ -652,7 +633,7 @@ sap.ui.define([
 
 		// clean up
 		oTargetDomRef.dispatchEvent(createNativeDragEventDummy("dragend"));
-		assertIndicatorVisible(assert, $Indicator, false, "After dragend");
+		assert.ok($Indicator.is(":hidden"), "Indicator is hidden after dragend");
 	});
 
 	QUnit.test("cleanup", function(assert) {
@@ -671,7 +652,7 @@ sap.ui.define([
 		oEvent.originalEvent = createNativeDragEventDummy("dragenter");
 		jQuery(oTargetDomRef).trigger(oEvent);
 		$Indicator = jQuery(oEvent.dragSession.getIndicator());
-		assertIndicatorVisible(assert, $Indicator, true, "After dragenter");
+		assert.ok($Indicator.is(":visible"), "Indicator is visible after dragenter");
 
 		// drop handling indicator
 		oTargetDomRef.focus();
@@ -679,7 +660,7 @@ sap.ui.define([
 
 		// assert
 		window.requestAnimationFrame(function() {
-			assertIndicatorVisible(assert, $Indicator, false, "After drop without dragend");
+			assert.ok($Indicator.is(":hidden"), "Indicator is hidden after drop without dragend");
 			done();
 		});
 	});
@@ -873,76 +854,4 @@ sap.ui.define([
 		assert.ok(this.fnDropSpy.calledOnce, "drop event is called once.");
 	});
 
-	QUnit.module("DropIndicator DOM wrapper", {
-		beforeEach: function() {
-			this.oControl = new DragAndDropControl({
-				topItems: [new DivControl(), new DivControl()],
-				dragDropConfig: [
-					new DragDropInfo({
-						sourceAggregation: "topItems",
-						targetAggregation: "topItems"
-					})
-				]
-			});
-			this.oControl.placeAt("qunit-fixture");
-			Core.applyChanges();
-		},
-		afterEach: function() {
-			this.oControl.destroy();
-		}
-	});
-
-	if (Device.browser.msie) {
-		QUnit.test("Drop Indicator DOM wrapper structure for IE browser", function(assert) {
-			var oEvent, $Indicator;
-			var oDiv1 = this.oControl.getTopItems()[0];
-			var oDiv2 = this.oControl.getTopItems()[1];
-
-			// init drag session
-			oEvent = createjQueryDragEventDummy("dragstart", oDiv1);
-			oEvent.target.focus();
-			DragAndDrop.preprocessEvent(oEvent);
-
-			// validation
-			oEvent = createjQueryDragEventDummy("dragenter", oDiv2);
-			oEvent.target.focus();
-			DragAndDrop.preprocessEvent(oEvent);
-			oDiv2.$().trigger(oEvent);
-			$Indicator = jQuery(oEvent.dragSession.getIndicator());
-
-			assert.notOk($Indicator.parent().hasClass("sapUiDnDIndicatorWrapper"), "sapUiDnDIndicatorWrapper div wrapper not created for IE browser");
-
-			// cleanup
-			// drop
-			oDiv2.$().trigger("drop");
-			// dragend
-			oDiv2.$().trigger("dragend");
-		});
-	} else {
-		QUnit.test("Drop Indicator DOM wrapper structure for non IE browsers", function(assert) {
-			var oEvent, $Indicator;
-			var oDiv1 = this.oControl.getTopItems()[0];
-			var oDiv2 = this.oControl.getTopItems()[1];
-
-			// init drag session
-			oEvent = createjQueryDragEventDummy("dragstart", oDiv1);
-			oEvent.target.focus();
-			DragAndDrop.preprocessEvent(oEvent);
-
-			// validation
-			oEvent = createjQueryDragEventDummy("dragenter", oDiv2);
-			oEvent.target.focus();
-			DragAndDrop.preprocessEvent(oEvent);
-			oDiv2.$().trigger(oEvent);
-			$Indicator = jQuery(oEvent.dragSession.getIndicator());
-
-			assert.ok($Indicator.parent().hasClass("sapUiDnDIndicatorWrapper"), "sapUiDnDIndicatorWrapper div wrapper created for non IE browsers");
-
-			// cleanup
-			// drop
-			oDiv2.$().trigger("drop");
-			// dragend
-			oDiv2.$().trigger("dragend");
-		});
-	}
 });

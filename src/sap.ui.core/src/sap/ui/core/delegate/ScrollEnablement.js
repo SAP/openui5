@@ -665,6 +665,7 @@ sap.ui.define([
 				var $Container = this._$Container = this._sContainerId ? jQuery(document.getElementById(this._sContainerId)) : jQuery(document.getElementById(this._sContentId)).parent();
 				var _fnRefresh = jQuery.proxy(this._refresh, this);
 				var bElementVisible = $Container.is(":visible");
+				$Container.addClass("sapUiScrollDelegate");
 
 				this._setOverflow();
 
