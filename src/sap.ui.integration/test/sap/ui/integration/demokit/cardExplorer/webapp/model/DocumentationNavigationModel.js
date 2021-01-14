@@ -124,8 +124,7 @@ sap.ui.define([
 					{
 						title: 'Extension',
 						target: 'learnDetail',
-						key: 'extension',
-						experimental: true
+						key: 'extension'
 					},
 					{
 						title: 'Filters',

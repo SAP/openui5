@@ -975,7 +975,6 @@ sap.ui.define([
 						key: 'extension',
 						target: 'exploreSamples',
 						title: 'Extension',
-						experimental: true,
 						subSamples: [
 							{
 								title: 'Getting Data From Multiple Sources',
