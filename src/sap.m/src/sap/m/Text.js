@@ -24,6 +24,9 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 	// shortcut for sap.m.WrappingType
 	var WrappingType = library.WrappingType;
 
+	// shortcut for sap.m.EmptyIndicator
+	var EmptyIndicatorMode = library.EmptyIndicatorMode;
+
 	/**
 	 * Constructor for a new Text.
 	 *
@@ -119,7 +122,14 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 				 *
 				 * @since 1.51
 				 */
-				renderWhitespace: { type: "boolean", group: "Appearance", defaultValue: false }
+				renderWhitespace: { type: "boolean", group: "Appearance", defaultValue: false },
+
+				/**
+				 * Specifies if an empty indicator should be displayed when there is no text.
+				 *
+				 * @since 1.87
+				 */
+				emptyIndicator: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
 			},
 
 			designtime: "sap/m/designtime/Text.designtime"

@@ -617,6 +617,37 @@ sap.ui.define([
 
 
 	/**
+	 * Modes in which a control will render empty indicator if its content is empty.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.87
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.EmptyIndicatorMode = {
+
+		/**
+		 * Empty indicator is rendered always when the control's content is empty.
+		 * @public
+		 */
+		On : "On",
+
+		/**
+		 * Empty indicator is never rendered.
+		 * @public
+		 */
+		Off : "Off",
+
+		/**
+		 * Empty indicator will be rendered depending on the context in which the control is placed.
+		 * If one of the parents has the context class sapMShowEmpty-CTX then the empty indicator will be shown.
+		 * @public
+		 */
+		Auto : "Auto"
+
+	};
+
+	/**
 	 * Types of badge rendering style.
 	 *
 	 * @enum {string}
