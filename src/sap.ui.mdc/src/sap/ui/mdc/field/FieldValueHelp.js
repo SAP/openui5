@@ -757,7 +757,9 @@ sap.ui.define([
 			// Only call delegate once. FilterFields must not be changed after set once.
 			// Only check if not already opened. If opened everything must be set. While opening we still
 			// waiting for the settings, so calling again makes no sense.
-			this.initControlDelegate();
+			if (!this.bDelegateInitialized && !this.bDelegateLoading) {
+				this.initControlDelegate();
+			}
 
 			if (this.bDelegateInitialized) {
 				return _checkSearchSupported.call(this);
@@ -1026,7 +1028,9 @@ sap.ui.define([
 			return null;
 		}
 
-		this.initControlDelegate();
+		if (!this.bDelegateInitialized && !this.bDelegateLoading) {
+			this.initControlDelegate();
+		}
 
 		if (this.bDelegateInitialized) {
 			return this.getControlDelegate().checkBindingsPending(this.getPayload(), aBindings);
