@@ -2,7 +2,7 @@ sap.ui.define(["sap/ui/integration/Extension", 'sap/m/MessageToast'
 ], function (Extension, MessageToast) {
 	"use strict";
 
-	var CustomizedActionsExtension = Extension.extend("adativecard.embedded.CustomizedActionsExtension");
+	var CustomizedActionsExtension = Extension.extend("adaptivecard.embedded.CustomizedActionsExtension");
 
 	CustomizedActionsExtension.prototype.init = function () {
 		Extension.prototype.init.apply(this, arguments);

@@ -1341,7 +1341,7 @@
 		"adaptive1": {
 			"_version": "1.17.0",
 			"sap.app": {
-				"id": "adativecard.embedded",
+				"id": "adaptivecard.embedded",
 				"type": "card"
 			},
 			"sap.card": {
@@ -1468,7 +1468,7 @@
 		"adaptive2": {
 			"_version": "1.17.0",
 			"sap.app": {
-				"id": "adativecard.embedded",
+				"id": "adaptivecard.embedded",
 				"type": "card"
 			},
 			"sap.card": {
@@ -1542,7 +1542,7 @@
 		"adaptive3": {
 			"_version": "1.17.0",
 			"sap.app": {
-				"id": "adativecard.embedded",
+				"id": "adaptivecard.embedded",
 				"type": "card"
 			},
 			"sap.card": {

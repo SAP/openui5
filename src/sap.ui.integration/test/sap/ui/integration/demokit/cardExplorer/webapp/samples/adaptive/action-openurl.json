@@ -1,7 +1,7 @@
 {
 	"_version": "1.17.0",
 	"sap.app": {
-		"id": "adativecard.embedded",
+		"id": "adaptivecard.embedded",
 		"type": "card",
 		"title": "Sample of an Adaptive Card with Customized Actions",
 		"subTitle": "Sample of an Adaptive Card with Customized Actions",
