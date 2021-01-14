@@ -1181,7 +1181,7 @@ sap.ui.define([
 					originalLanguage: "EN",
 					conditions: {},
 					support: {
-						generator: "Change.createInitialFileContent",
+						generator: "myFancyGenerator",
 						service: "",
 						user: ""
 					}
@@ -1195,7 +1195,8 @@ sap.ui.define([
 
 			var mPropertyBag = {
 				variantManagementReference: "variantMgmtId1",
-				appComponent: this.oComponent
+				appComponent: this.oComponent,
+				generator: "myFancyGenerator"
 			};
 			return this.oModel.copyVariant(mPropertyBag).then(function(aChanges) {
 				var oVariantDefinition = aChanges[0].getDefinitionWithChanges();
@@ -1206,7 +1207,7 @@ sap.ui.define([
 				oVariantData.content.support.sapui5Version = sap.ui.version;
 				oVariantData.content.self = oVariantData.content.namespace + oVariantData.content.fileName + "." + "ctrl_variant";
 
-				assert.deepEqual(oVariantDefinition, oVariantData, "then ctrl_variant change prepared with the correct content");
+				assert.deepEqual(oVariantDefinition.content, oVariantData.content, "then ctrl_variant change prepared with the correct content");
 
 				// mocking "visible" and "favorite" property only required in variants map
 				oVariantDefinition.content.content.visible = true;
@@ -1486,14 +1487,15 @@ sap.ui.define([
 					var sNewVariantReference = Utils.createDefaultFileName.getCall(0).returnValue;
 					assert.strictEqual(Utils.createDefaultFileName.getCall(0).args.length, 0, "then no argument was passed to sap.ui.fl.Utils.createDefaultFileName");
 					assert.equal(this.oModel.copyVariant.called, 1, "then copyVariant() was called once");
-					assert.ok(this.oModel.copyVariant.calledWith({
+					assert.deepEqual(this.oModel.copyVariant.lastCall.args[0], {
 						appComponent: this.oComponent,
 						layer: Layer.USER,
+						generator: undefined,
 						newVariantReference: sNewVariantReference,
 						sourceVariantReference: oCopiedVariant.getVariantReference(),
 						title: "Test",
 						variantManagementReference: sVMReference
-					}), "then copyVariant() was called with the right parameters");
+					}, "then copyVariant() was called with the right parameters");
 
 					assert.equal(this.oModel.setVariantProperties.callCount, 2, "then setVariantProperties() was called twice; for setDefault and setExecuteOnSelect");
 					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.callCount, 1, "then dirty changes were saved");
@@ -1774,7 +1776,8 @@ sap.ui.define([
 				def: true,
 				execute: true,
 				layer: Layer.CUSTOMER,
-				newVariantReference: sNewVariantReference
+				newVariantReference: sNewVariantReference,
+				generator: "myFancyGenerator"
 			};
 			var sUserName = "testUser";
 			var oResponse = {response : [{fileName: sCopyVariantName, support: {user: sUserName}}]};
@@ -1802,14 +1805,15 @@ sap.ui.define([
 			return this.oModel._handleSave(oVariantManagement, mParameters)
 				.then(function(aDirtyChanges) {
 					assert.equal(this.oModel.copyVariant.called, 1, "then copyVariant() was called once");
-					assert.ok(this.oModel.copyVariant.calledWith({
+					assert.deepEqual(this.oModel.copyVariant.lastCall.args[0], {
 						appComponent: this.oComponent,
 						layer: Layer.CUSTOMER,
+						generator: "myFancyGenerator",
 						newVariantReference: sNewVariantReference,
 						sourceVariantReference: oCopiedVariant.getVariantReference(),
 						title: "Key User Test Variant",
 						variantManagementReference: sVMReference
-					}), "then copyVariant() was called with the right parameters");
+					}, "then copyVariant() was called with the right parameters");
 					assert.equal(this.oModel.setVariantProperties.callCount, 2, "then setVariantProperties() was called twice; for setDefault and setExecuteOnSelect");
 					assert.equal(this.oModel.oChangePersistence.saveDirtyChanges.callCount, 0, "then dirty changes were not saved");
 					assert.equal(aDirtyChanges.length, 6, "then six dirty changes were created (new variant, 3 copied ctrl changes, setDefault change, setExecuteOnSelect change");

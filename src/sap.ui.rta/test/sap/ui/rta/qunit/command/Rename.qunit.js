@@ -97,7 +97,7 @@ sap.ui.define([
 			.then(function() {
 				assert.equal(this.fnCompleteChangeContentSpy.callCount, 1, "then completeChangeContent is called once");
 				// generator tested as part of testing the sap/ui/rta/command/FlexCommand.js
-				assert.equal(this.fnCompleteChangeContentSpy.getCall(0).args[1].generator, "sap.ui.rta FlexCommand", "the generator is set correct");
+				assert.equal(this.fnCompleteChangeContentSpy.getCall(0).args[1].generator, sap.ui.rta.GENERATOR_NAME, "the generator is set correct");
 				assert.equal(this.fnApplyChangeSpy.callCount, 1, "then applyChange is called once");
 			}.bind(this))
 

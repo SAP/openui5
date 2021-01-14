@@ -30,6 +30,12 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
+	function checkGeneratorInChanges(aChanges, assert) {
+		aChanges.forEach(function(oChange) {
+			assert.equal(oChange.getDefinition().support.generator, sap.ui.rta.GENERATOR_NAME, "the generator was correctly set");
+		});
+	}
+
 	QUnit.module("Given a variant management control ...", {
 		before: function() {
 			var oManifestObj = {
@@ -167,6 +173,7 @@ function(
 					var aConfigureChanges = oControlVariantConfigureCommand.getChanges();
 					aPreparedChanges = oControlVariantConfigureCommand.getPreparedChange();
 					assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
+					checkGeneratorInChanges(aPreparedChanges, assert);
 					assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].title, oTitleChange.title, "then title is correctly set in model");
 					assert.equal(this.oData["variantMgmtId1"].variants[1].favorite, oFavoriteChange.favorite, "then favorite is correctly set in model");
@@ -220,8 +227,9 @@ function(
 					assert.deepEqual(aConfigureChanges, aChanges, "then the changes are correctly set in change");
 					var oData = oControlVariantConfigureCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].defaultVariant, oDefaultChange.defaultVariant, "then default variant is correctly set in the model");
-					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
-					assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
+					var aDirtyChanges = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent});
+					checkGeneratorInChanges(aDirtyChanges, assert);
+					assert.strictEqual(aDirtyChanges.length, 1, "then there is one dirty change in the flex persistence");
 					return oControlVariantConfigureCommand.undo();
 				}.bind(this))
 				.then(function() {

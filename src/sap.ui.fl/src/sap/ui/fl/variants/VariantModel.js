@@ -608,12 +608,14 @@ sap.ui.define([
 	 * @param {sap.ui.core.Component} mPropertyBag.appComponent - Model's app component
 	 * @param {String} mPropertyBag.layer - Layer on which the new variant should be created
 	 * @param {String} mPropertyBag.newVariantReference - <code>variantReference</code> for the new variant
-	 * @param {String} mPropertyBag.sourceVariantReference - >code>variantReference</code> of the source variant
+	 * @param {String} mPropertyBag.sourceVariantReference - <code>variantReference</code> of the source variant
+	 * @param {String} mPropertyBag.generator - Information about who created the change
 	 * @returns {Promise} Promise resolving to dirty changes created during variant copy
 	 * @private
 	 */
 	VariantModel.prototype.copyVariant = function(mPropertyBag) {
 		var oDuplicateVariantData = this._duplicateVariant(mPropertyBag);
+		oDuplicateVariantData.generator = mPropertyBag.generator;
 		var oVariantModelData = {
 			key: oDuplicateVariantData.content.fileName,
 			layer: mPropertyBag.layer,
@@ -917,6 +919,7 @@ sap.ui.define([
 			//create new change object
 			mNewChangeData.changeType = mPropertyBag.changeType;
 			mNewChangeData.layer = mPropertyBag.layer;
+			mNewChangeData.generator = mPropertyBag.generator;
 
 			if (mPropertyBag.changeType === "setDefault") {
 				mNewChangeData.fileType = "ctrl_variant_management_change";
@@ -1168,7 +1171,8 @@ sap.ui.define([
 				layer: sLayer,
 				title: mParameters["name"],
 				sourceVariantReference: sSourceVariantReference,
-				newVariantReference: sNewVariantReference
+				newVariantReference: sNewVariantReference,
+				generator: mParameters.generator
 			};
 
 			return this.copyVariant(mPropertyBag)

@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	// needs to be included so that the ElementOverlay prototype is enhanced
 	"sap/ui/rta/plugin/ControlVariant"
-],
-function (
+], function(
 	Layer,
 	FlUtils,
 	FlLayerUtils,
@@ -179,6 +178,7 @@ function (
 				})
 				.then(function() {
 					oSaveAsVariant = oControlVariantSaveAsCommand.getVariantChange();
+					assert.equal(oSaveAsVariant.getDefinition().support.generator, sap.ui.rta.GENERATOR_NAME, "the generator was correctly set");
 					aPreparedChanges = oControlVariantSaveAsCommand.getPreparedChange();
 					assert.equal(aPreparedChanges.length, 3, "then the prepared changes are available");
 					assert.strictEqual(fnCreateDefaultFileNameSpy.callCount, 3, "then sap.ui.fl.Utils.createDefaultFileName() called thrice; once for variant duplicate and twice for the copied changes");

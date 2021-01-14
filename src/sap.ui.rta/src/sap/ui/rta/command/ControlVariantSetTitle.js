@@ -21,18 +21,18 @@ sap.ui.define([
 	 * @alias sap.ui.rta.command.ControlVariantSetTitle
 	 */
 	var ControlVariantSetTitle = BaseCommand.extend("sap.ui.rta.command.ControlVariantSetTitle", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				oldText : {
-					type : "string"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				oldText: {
+					type: "string"
 				},
-				newText : {
-					type : "string"
+				newText: {
+					type: "string"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 
@@ -70,18 +70,19 @@ sap.ui.define([
 		this.setOldText(sCurrentTitle);
 
 		var mPropertyBag = {
-			appComponent : this.oAppComponent,
-			variantReference : this.sCurrentVariant,
-			changeType : "setTitle",
-			title : this.getNewText(),
-			layer : this.sLayer
+			appComponent: this.oAppComponent,
+			variantReference: this.sCurrentVariant,
+			changeType: "setTitle",
+			title: this.getNewText(),
+			layer: this.sLayer,
+			generator: sap.ui.rta.GENERATOR_NAME
 		};
 
 		return Promise.resolve(this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, true))
-						.then(function(oChange) {
-							this._oVariantChange = oChange;
-							oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
-						}.bind(this));
+			.then(function(oChange) {
+				this._oVariantChange = oChange;
+				oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
+			}.bind(this));
 	};
 
 	/**
@@ -92,17 +93,17 @@ sap.ui.define([
 	ControlVariantSetTitle.prototype.undo = function() {
 		var oVariantManagementControlBinding = this.getElement().getTitle().getBinding("text");
 		var mPropertyBag = {
-			variantReference : this.sCurrentVariant,
-			changeType : "setTitle",
-			title : this.getOldText(),
+			variantReference: this.sCurrentVariant,
+			changeType: "setTitle",
+			title: this.getOldText(),
 			change: this._oVariantChange
 		};
 
 		return Promise.resolve(this.oModel.setVariantProperties(this.sVariantManagementReference, mPropertyBag, false))
-						.then(function(oChange) {
-							this._oVariantChange = oChange;
-							oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
-						}.bind(this));
+			.then(function(oChange) {
+				this._oVariantChange = oChange;
+				oVariantManagementControlBinding.checkUpdate(true); /*Force Update as binding key stays same*/
+			}.bind(this));
 	};
 
 	return ControlVariantSetTitle;

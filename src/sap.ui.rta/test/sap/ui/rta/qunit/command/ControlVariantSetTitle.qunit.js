@@ -12,7 +12,7 @@ sap.ui.define([
 	"test-resources/sap/ui/fl/api/FlexTestAPI",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
 	Layer,
 	flUtils,
 	Manifest,
@@ -147,8 +147,9 @@ sap.ui.define([
 				.then(function() {
 					var oTitleChange = oControlVariantSetTitleCommand.getVariantChange();
 					var oPreparedChange = oControlVariantSetTitleCommand.getPreparedChange();
-					assert.equal(oPreparedChange, oTitleChange, "then the prepared change is available");
+					assert.deepEqual(oPreparedChange, oTitleChange, "then the prepared change is available");
 					assert.equal(oTitleChange.getText("title"), sNewText, "then title is correctly set in change");
+					assert.equal(oTitleChange.getDefinition().support.generator, sap.ui.rta.GENERATOR_NAME, "the generator was correctly set");
 					var oData = oControlVariantSetTitleCommand.oModel.getData();
 					assert.equal(oData["variantMgmtId1"].variants[1].title, sNewText, "then title is correctly set in model");
 					assert.equal(this.oVariantManagement.getTitle().getText(), sNewText, "then title is correctly set in variant management control");
