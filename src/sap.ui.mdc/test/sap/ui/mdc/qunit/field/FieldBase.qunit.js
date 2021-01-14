@@ -2971,6 +2971,8 @@ sap.ui.define([
 		oCondition = Condition.createItemCondition("I2", "Item2");
 		iCount = 0;
 		sValue = ""; bValid = undefined;
+		oField.setValueState("Error"); // simulate wrong input before
+		oField.setValueStateText("Error");
 		oContent.setDOMValue("I"); // to test clearing of content
 		oFieldHelp.fireSelect({ conditions: [oCondition], add: true, close: false });
 		assert.equal(iCount, 1, "Change Event fired once");
@@ -2985,6 +2987,8 @@ sap.ui.define([
 		assert.equal(aConditions[1] && aConditions[1].operator, "EQ", "condition operator");
 		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
 		assert.equal(oContent.getDOMValue(), "I", "value still shown in inner control");
+		assert.equal(oField.getValueState(), "None", "No ValueState");
+		assert.equal(oField.getValueStateText(), "", "No ValueStateText");
 
 		// simulate close: Filter value must be removed but no change fired.
 		iCount = 0;

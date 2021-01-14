@@ -3170,6 +3170,10 @@ sap.ui.define([
 			} else {
 				this._bIgnoreInputValue = true; // after something is selected, the value just stays for filtering -> don't use to create token
 			}
+
+			// after selection input cannot be wrong
+			this._bParseError = false;
+			_removeUIMessage.call(this);
 		}
 
 		var aConditionsOld = this.getConditions();
