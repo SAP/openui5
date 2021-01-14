@@ -1259,12 +1259,12 @@ sap.ui.define([
 	});
 
 
-	QUnit.module("Given Storage when getContexts is called", {
+	QUnit.module("Given Storage when variant management context sharing is called", {
 		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("and a response is returned", function (assert) {
+		QUnit.test("and a response is returned for getContexts", function (assert) {
 			var mPropertyBag = {
 				type: "role",
 				layer: Layer.CUSTOMER
@@ -1276,6 +1276,24 @@ sap.ui.define([
 			return Storage.getContexts(mPropertyBag).then(function (oResponse) {
 				assert.equal(oStubSendRequest.callCount, 1, "send request was called once");
 				assert.equal(oStubGetUrl.returnValues[0], "/sap/bc/lrep/flex/contexts/?type=role", "url is correct");
+				assert.ok(oResponse.lastHitReached, "response is as expected");
+			});
+		});
+
+		QUnit.test("and a response is returned for loadContextDescriptions", function (assert) {
+			var mPropertyBag = {
+				flexObjects: {role: ["/IWBEP/RT_MGW_DSP"]},
+				layer: Layer.CUSTOMER
+			};
+
+			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: {lastHitReached: true}});
+			var oStubGetUrl = sandbox.spy(InitialUtils, "getUrl");
+
+			return Storage.loadContextDescriptions(mPropertyBag).then(function (oResponse) {
+				assert.equal(oStubSendRequest.callCount, 1, "send request was called once");
+				assert.equal(oStubGetUrl.callCount, 2, "getUrl was called twice");
+				assert.equal(oStubGetUrl.returnValues[1], "/sap/bc/lrep/actions/getcsrftoken/", "token url is correct");
+				assert.equal(oStubGetUrl.returnValues[0], "/sap/bc/lrep/flex/contexts/?sap-language=en", "post url is correct");
 				assert.ok(oResponse.lastHitReached, "response is as expected");
 			});
 		});

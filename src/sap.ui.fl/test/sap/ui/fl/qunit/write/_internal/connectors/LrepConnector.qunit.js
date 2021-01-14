@@ -155,6 +155,33 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("given a mock server, when post requst to get contexts description is triggered", function (assert) {
+			var oExpectedResponse = {
+				types: [
+					{
+						type: "ROLE",
+						values: [
+							{
+								id: "/IWBEP/RT_MGW_DSP",
+								description: "Role for accessing remote system from Service Builder at design time"
+							}]
+					}
+				],
+				lastHitReached: true
+			};
+			fnReturnData(200, { "Content-Type": "application/json" }, JSON.stringify(oExpectedResponse));
+
+			var mPropertyBag = {url: "/sap/bc/lrep", flexObjects: {role: ["/IWBEP/RT_MGW_DSP"]}};
+			var sUrl = "/sap/bc/lrep/flex/contexts/?sap-language=en";
+			return WriteLrepConnector.loadContextDescriptions(mPropertyBag).then(function (oResponse) {
+				assert.equal(sandbox.server.getRequest(0).method, "HEAD", "first request method is HEAD");
+				assert.equal(sandbox.server.getRequest(0).url, "/sap/bc/lrep/actions/getcsrftoken/", "request is send containing the correct url");
+				assert.equal(sandbox.server.getRequest(1).method, "POST", "second request method is POST");
+				assert.equal(sandbox.server.getRequest(1).url, sUrl, "request is send containing the correct url");
+				assert.deepEqual(oResponse, oExpectedResponse, "response flow is correct");
+			});
+		});
+
 		QUnit.test("when calling publish successfully", function(assert) {
 			var oMockTransportInfo = {
 				packageName : "PackageName",

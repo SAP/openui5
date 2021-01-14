@@ -149,6 +149,17 @@ sap.ui.define([
 		},
 
 		/**
+		 * Interface to retrieve the variant management context description in the correct language based on the browser configuration.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {string} mPropertyBag.flexObjects Payload for the post request
+		 * @returns {Promise<object>} Promise resolves as soon as context descriptions have has been retrieved
+		 */
+		loadContextDescriptions: function (/* mPropertyBag */) {
+			return Promise.resolve({});
+		},
+
+		/**
 		 * Interface called to check if variant management context sharing is enabled.
 		 *
 		 * @returns {Promise<object>} Resolves with an object containing the data for the flex features

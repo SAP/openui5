@@ -311,6 +311,17 @@ sap.ui.define([
 	};
 
 	/**
+	 * Loads the variant management context description in the correct language based on the browser configuration.
+	 *
+	 * @param {object} mPropertyBag Property bag
+	 * @param {string} mPropertyBag.flexObjects Payload for the post request
+	 * @returns {Promise<object>} Promise resolves as soon as context descriptions have been retrieved
+	 */
+	Storage.loadContextDescriptions = function(mPropertyBag) {
+		return _executeActionByName("loadContextDescriptions", mPropertyBag);
+	};
+
+	/**
 	 * Checks if variant management context sharing is enabled.
 	 *
 	 * @param {object} mPropertyBag - Property bag
