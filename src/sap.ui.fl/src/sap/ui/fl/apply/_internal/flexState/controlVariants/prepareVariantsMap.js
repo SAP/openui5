@@ -219,6 +219,7 @@ sap.ui.define([
 			content: {
 				fileName: sVariantId,
 				variantManagementReference: sVariantId,
+				variantReference: "",
 				content: {
 					title: oResourceBundle.getText("STANDARD_VARIANT_TITLE"),
 					favorite: true,

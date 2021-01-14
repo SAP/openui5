@@ -702,7 +702,8 @@
 					"support": {
 						"user": "SAP"
 					},
-					"variantManagementReference": "nonExistingVariant1"
+					"variantManagementReference": "nonExistingVariant1",
+					"variantReference": ""
 				},
 				"controlChanges": [],
 				"variantChanges": {
@@ -759,7 +760,8 @@
 					"support": {
 						"user": "SAP"
 					},
-					"variantManagementReference": "nonExistingVariant2"
+					"variantManagementReference": "nonExistingVariant2",
+					"variantReference": ""
 				},
 				"controlChanges": [
 					{
