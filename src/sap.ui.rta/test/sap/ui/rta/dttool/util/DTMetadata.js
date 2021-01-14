@@ -3,9 +3,11 @@
  */
 // Provides the Design Time Metadata for the sap.m.Button control
 sap.ui.define([
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/base/i18n/ResourceBundle"
 ], function (
-	Log
+	Log,
+	ResourceBundle
 ) {
 	"use strict";
 	var DTMetadata = function() {
@@ -52,7 +54,7 @@ sap.ui.define([
 				return fnResolve(mLibraryData[sLibraryName]);
 			}
 
-			jQuery.sap.resources({url : sURL, async: true})
+			ResourceBundle.create({url : sURL, async: true})
 
 				.then(function(oResourceBundle) {
 					var aPromises = [];
