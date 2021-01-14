@@ -4,13 +4,15 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/base/util/includes"
 ],
 function(
 	sinon,
 	QUnitUtils,
 	ChangeIndicator,
-	JSONModel
+	JSONModel,
+	includes
 ) {
 	"use strict";
 
@@ -180,13 +182,13 @@ function(
 		QUnit.test("when a dependent change indicator is created", function (assert) {
 			sap.ui.getCore().applyChanges();
 			assert.notOk(
-				this.oChangeIndicator.getDomRef().className.split(" ").includes("sapUiRtaChangeIndicator-dependent"),
+				includes(this.oChangeIndicator.getDomRef().className.split(" "), "sapUiRtaChangeIndicator-dependent"),
 				"then by default the dependent style class is not added"
 			);
 			this.oChangeIndicator.setMode("dependent");
 			sap.ui.getCore().applyChanges();
 			assert.ok(
-				this.oChangeIndicator.getDomRef().className.split(" ").includes("sapUiRtaChangeIndicator-dependent"),
+				includes(this.oChangeIndicator.getDomRef().className.split(" "), "sapUiRtaChangeIndicator-dependent"),
 				"then the appropriate style class is added"
 			);
 		});

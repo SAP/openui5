@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/base/util/isEmptyObject",
 	"sap/base/util/merge",
+	"sap/base/util/includes",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
@@ -50,6 +51,7 @@ sap.ui.define([
 	uid,
 	isEmptyObject,
 	merge,
+	includes,
 	JsControlTreeModifier,
 	JSONModel,
 	DelegateMediatorAPI,
@@ -1177,7 +1179,7 @@ sap.ui.define([
 
 		QUnit.test("when the control's dt metadata has a reveal and addViaDelegate and the default delegate is not available", function (assert) {
 			sandbox.stub(sap.ui.getCore(), "loadLibrary").callsFake(function (sLibraryName) {
-				if (DelegateMediatorAPI.getKnownDefaultDelegateLibraries().includes(sLibraryName)) {
+				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
 					return Promise.reject();
 				}
 				return sap.ui.getCore().loadLibrary.wrappedMethod.apply(this, arguments);
@@ -1212,7 +1214,7 @@ sap.ui.define([
 
 		QUnit.test("when the control's dt metadata has an instance-specific delegate and an unavailable default delegate", function (assert) {
 			sandbox.stub(sap.ui.getCore(), "loadLibrary").callsFake(function (sLibraryName) {
-				if (DelegateMediatorAPI.getKnownDefaultDelegateLibraries().includes(sLibraryName)) {
+				if (includes(DelegateMediatorAPI.getKnownDefaultDelegateLibraries(), sLibraryName)) {
 					return Promise.reject();
 				}
 				return sap.ui.getCore().loadLibrary.wrappedMethod.apply(this, arguments);

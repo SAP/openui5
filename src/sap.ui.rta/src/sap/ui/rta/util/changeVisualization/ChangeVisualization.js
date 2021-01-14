@@ -397,8 +397,8 @@ sap.ui.define([
 				}
 
 				oIndicators[sSelectorId] = {
-					posX: parseInt(oOverlay.getDomRef().getClientRects()[0].x),
-					posY: parseInt(oOverlay.getDomRef().getClientRects()[0].y),
+					posX: parseInt(oOverlay.getDomRef().getClientRects()[0].left),
+					posY: parseInt(oOverlay.getDomRef().getClientRects()[0].top),
 					changes: this._filterRelevantChanges(aChanges)
 				};
 
