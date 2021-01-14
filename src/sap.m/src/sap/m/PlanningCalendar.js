@@ -606,6 +606,35 @@ sap.ui.define([
 		TABLET: "1024"
 	};
 
+	// Holds the possible values for the "_currentPicker" property in the currentPicker association of the header
+	var CURRENT_PICKERS = {
+		MONTH: "month", // represents the "month" aggregation
+		MONTH_PICKER: "monthPicker",  // represents the "monthPicker" aggregation
+		YEAR_PICKER: "yearPicker",  // represents the "yearPicker" aggregation
+		YEAR_RANGE_PICKER: "yearRangePicker"  // represents the "yearRangePicker" aggregation
+	};
+
+	var MONTH_DELEGATE = {
+		onAfterRendering: function () {
+			this.setProperty("_currentPicker", CURRENT_PICKERS.MONTH);
+			this.removeDelegate(MONTH_DELEGATE);
+		}
+	};
+
+	var MONTH_PICKER_DELEGATE = {
+		onAfterRendering: function () {
+			this.setProperty("_currentPicker", CURRENT_PICKERS.MONTH_PICKER);
+			this.removeDelegate(MONTH_PICKER_DELEGATE);
+		}
+	};
+
+	var YEAR_PICKER_DELEGATE = {
+		onAfterRendering: function () {
+			this.setProperty("_currentPicker", CURRENT_PICKERS.YEAR_PICKER);
+			this.removeDelegate(YEAR_PICKER_DELEGATE);
+		}
+	};
+
 	var aIntervalRepresentatives = [
 		"sap.ui.unified.calendar.TimesRow",
 		"sap.ui.unified.calendar.DatesRow",
@@ -1495,6 +1524,7 @@ sap.ui.define([
 					}
 					this._insertInterval(this._oTimesRow);
 					oAssociation = oHeader.getAggregation("_calendarPicker") ? oHeader.getAggregation("_calendarPicker") : oHeader._oPopup.getContent()[0];
+					oAssociation.addDelegate(MONTH_DELEGATE, oAssociation);
 					oHeader.setAssociation("currentPicker", oAssociation);
 					break;
 
@@ -1538,9 +1568,11 @@ sap.ui.define([
 					if (sIntervalType === CalendarIntervalType.OneMonth) {
 						oAssociation = oHeader.getAggregation("_monthPicker") ? oHeader.getAggregation("_monthPicker") : oHeader._oPopup.getContent()[0];
 						oHeader.setAssociation("currentPicker", oAssociation);
+						oAssociation.addDelegate(MONTH_PICKER_DELEGATE, oAssociation);
 					} else {
 						oAssociation = oHeader.getAggregation("_calendarPicker") ? oHeader.getAggregation("_calendarPicker") : oHeader._oPopup.getContent()[0];
 						oHeader.setAssociation("currentPicker", oAssociation);
+						oAssociation.addDelegate(MONTH_DELEGATE, oAssociation);
 					}
 					break;
 
@@ -1570,6 +1602,7 @@ sap.ui.define([
 					this._insertInterval(this._oMonthsRow);
 					oAssociation = oHeader.getAggregation("_yearPicker") ? oHeader.getAggregation("_yearPicker") : oHeader._oPopup.getContent()[0];
 					oHeader.setAssociation("currentPicker", oAssociation);
+					oAssociation.addDelegate(YEAR_PICKER_DELEGATE, oAssociation);
 					break;
 
 				default:
