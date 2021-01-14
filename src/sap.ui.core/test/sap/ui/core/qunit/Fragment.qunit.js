@@ -1035,4 +1035,15 @@ sap.ui.define([
 			assert.ok(oControl instanceof sap.ui.layout.HorizontalLayout, "Correct fragment content loaded");
 		});
 	});
+
+	QUnit.test("Try to load non existing XML Fragment", function (assert) {
+		assert.expect(3);
+		return Fragment.load({
+			name: "testdata.fragments.NonExistingXMLFragment"
+		}).catch(function (oError) {
+			assert.ok(oError instanceof Error, "Error should be thrown");
+			assert.equal(this.loadTemplatePromiseSpy.callCount, 1, "XMLTemplateProcessor.loadTemplatePromise should be called once");
+			assert.equal(this.parseTemplatePromiseSpy.callCount, 0, "XMLTemplateProcessor.parseTemplatePromise shouldn't be called");
+		}.bind(this));
+	});
 });
