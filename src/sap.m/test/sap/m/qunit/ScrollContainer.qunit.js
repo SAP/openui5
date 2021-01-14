@@ -127,6 +127,8 @@ sap.ui.define([
 		assert.ok(document.getElementById("sc1"), "ScrollContainer 1 should be rendered");
 		assert.ok(document.getElementById("sc2"), "ScrollContainer 2 should be rendered");
 		assert.ok(!document.getElementById("sc3"), "ScrollContainer 3 should not be rendered");
+		assert.ok(document.getElementById("sc1").classList.contains("sapUiScrollDelegate"), "ScrollContainer 1 is marked with sapUiScrollDelegate class");
+		assert.ok(document.getElementById("sc2").classList.contains("sapUiScrollDelegate"), "ScrollContainer 2 is marked with sapUiScrollDelegate class");
 	});
 
 	// Gets the scroll position of ScrolLContainer with id: sScrollContainerId in sDirection(left/top)

@@ -4,12 +4,11 @@
 sap.ui.define([
 	"sap/ui/Device",
 	"../UIArea",
-	'sap/base/util/extend',
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control"
 ],
-function(Device, UIArea, extend, jQuery) {
+function(Device, UIArea, jQuery) {
 	"use strict";
 
 	/**
@@ -29,7 +28,6 @@ function(Device, UIArea, extend, jQuery) {
 		aValidDropInfos = [],		// valid DropInfos configured for the current drop target
 		oDragSession = null,		// stores active drag session throughout a drag activity
 		$DropIndicator,				// drop position indicator
-		$DropIndicatorWrapper,		//  drop position indicator wrapper
 		$GhostContainer,			// container to place custom ghosts
 		sCalculatedDropPosition,	// calculated position of the drop action relative to the valid dropped control.
 		iTargetEnteringTime,		// timestamp of drag enter
@@ -294,26 +292,15 @@ function(Device, UIArea, extend, jQuery) {
 			return $DropIndicator;
 		}
 
-		// not adding the div wrapper around DndIndicator as it prevents IE from scrolling
-		if (!Device.browser.msie) {
-			$DropIndicatorWrapper = jQuery("<div class='sapUiDnDIndicatorWrapper'></div>");
-		}
-
 		$DropIndicator = jQuery("<div class='sapUiDnDIndicator'></div>");
-
-		if (!$DropIndicatorWrapper) {
-			jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicator);
-		} else {
-			jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicatorWrapper);
-			$DropIndicator.appendTo($DropIndicatorWrapper);
-		}
+		jQuery(sap.ui.getCore().getStaticAreaRef()).append($DropIndicator);
 		return $DropIndicator;
 	}
 
 	function hideDropIndicator() {
 		if ($DropIndicator) {
 			$DropIndicator.removeAttr("style");
-			($DropIndicatorWrapper || $DropIndicator).hide();
+			$DropIndicator.hide();
 			mLastIndicatorStyle = {};
 		}
 	}
@@ -421,8 +408,8 @@ function(Device, UIArea, extend, jQuery) {
 			mLastIndicatorStyle.height != mStyle.height) {
 			$Indicator.attr("data-drop-layout", sDropLayout);
 			$Indicator.attr("data-drop-position", sDropPosition);
-			$Indicator.css(extend(mStyle, mIndicatorConfig));
-			($DropIndicatorWrapper || $Indicator).show();
+			$Indicator.css(Object.assign(mStyle, mIndicatorConfig));
+			$Indicator.show();
 			mLastIndicatorStyle = mStyle;
 		}
 
@@ -593,8 +580,10 @@ function(Device, UIArea, extend, jQuery) {
 		// set dragging class of the drag source
 		addStyleClass(oDragControl, "sapUiDnDDragging");
 
-		// prevent HTML element from scrolling during drag-and-drop
-		jQuery("html").addClass("sapUiDnDNoScrolling");
+		// prevent HTML element from scrolling during drag-and-drop if the drag control is already in a scroll container
+		if (jQuery(oEvent.target).closest(".sapUiScrollDelegate")[0]) {
+			jQuery("html").addClass("sapUiDnDNoScrolling");
+		}
 	};
 
 	DnD.onbeforedragenter = function(oEvent) {
