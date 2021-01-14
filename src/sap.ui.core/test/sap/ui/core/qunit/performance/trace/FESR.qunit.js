@@ -231,14 +231,27 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 		QUnit.test("Beacon strategy", function(assert) {
 			assert.expect(9);
+			this.clock = sinon.useFakeTimers();
+			window.performance.getEntriesByType = function() { return []; };
 			var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
 			var fileReader = new FileReader();
 			var done = assert.async();
+			// In order to offer protection against timing attacks and fingerprinting, the precision of performance.now() might get rounded depending on browser settings.
+			// In Firefox, the privacy.reduceTimerPrecision preference is enabled by default and defaults to 1ms. (see https://developer.mozilla.org/en-US/docs/Web/API/Performance/now#reduced_time_precision)
+			// Therefore it's necessary to add some fake processing time to avoid filtering of zero duration records
+			var addFakeProcessingTime = function () {
+				// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
+				var notifyAsyncStepCallback;
+
+				notifyAsyncStepCallback = Interaction.notifyAsyncStep();
+				this.clock.tick(1);
+				notifyAsyncStepCallback();
+			}.bind(this);
 
 			FESR.setActive(true, "example.url");
 			for (var index = 0; index < 10; index++) {
 				Interaction.start();
-				Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
+				addFakeProcessingTime();
 				Interaction.end(true);
 			}
 
@@ -265,6 +278,7 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 
 			FESR.setActive(false);
 			sendBeaconStub.restore();
+			this.clock.restore();
 		});
 
 		QUnit.test("Beacon timeout", function(assert) {
