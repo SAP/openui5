@@ -397,6 +397,8 @@ sap.ui.define([
 		 * @borrows sap.ui.integration.widgets.Card#getActionDefinition as getActionDefinition
 		 * @borrows sap.ui.integration.widgets.Card#indexOfActionDefinition as indexOfActionDefinition
 		 * @borrows sap.ui.integration.widgets.Card#destroyActionDefinition as destroyActionDefinition
+		 * @borrows sap.ui.integration.widgets.Card#showLoadingPlaceholders as showLoadingPlaceholders
+		 * @borrows sap.ui.integration.widgets.Card#hideLoadingPlaceholders as hideLoadingPlaceholders
 		 */
 		this._oLimitedInterface = new Interface(this, [
 			"getParameters",
