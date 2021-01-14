@@ -116,20 +116,21 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 				sFragmentId = oView._sExplicitId;
 				// determine actual containing view instance
 				var oController = oView.getController();
-				oView = oController && oController.getView();
+				oView = oController && oController instanceof sap.ui.core.mvc.Controller && oController.getView();
 				if (oView) {
 					// local ID of the fragment (minus the view-id prefix)
 					// Might include ID prefixes for nested Fragments.
 					sFragmentId = oView.getLocalId(sFragmentId) || sFragmentId;
-				} else {
+				}
+			}
+
+			if (sExtensionProvider) {
+				if (!oView) {
 					// Someone could create a Fragment via the factory with a Controller without an associated view,
 					// e.g. by creating a Controller instance via Controller.create().
 					Log.warning("View instance could not be passed to ExtensionPoint Provider for extension point '" + sExtName + "' " +
 								"in fragment '" + sFragmentId + "'.");
 				}
-			}
-
-			if (sExtensionProvider) {
 				/**
 				 * In case we have an ExtensionProvider assigned, we return a marker object.
 				 * This marker object will be used later during the View processing to apply the ExtensionProvider
