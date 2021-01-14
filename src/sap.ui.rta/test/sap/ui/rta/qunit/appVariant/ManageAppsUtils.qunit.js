@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/api/AppVariantWriteAPI",
-	"sap/ui/thirdparty/jquery",
+	"sap/base/i18n/ResourceBundle",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	AppVariantOverviewUtils,
@@ -14,7 +14,7 @@ sap.ui.define([
 	Layer,
 	Settings,
 	AppVariantWriteAPI,
-	jQuery,
+	ResourceBundle,
 	sinon
 ) {
 	"use strict";
@@ -521,7 +521,7 @@ sap.ui.define([
 			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 			AppVariantUtils.setNewAppVariantId("id1");
 
-			var oResourceBundlePromise = jQuery.sap.resources({
+			var oResourceBundlePromise = ResourceBundle.create({
 				url: sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/webapp/i18n/i18n.properties"),
 				async: true
 			});
@@ -588,7 +588,7 @@ sap.ui.define([
 
 			var sendRequestStub = sandbox.stub(AppVariantWriteAPI, "listAllAppVariants").resolves(oResult);
 
-			var oResourceBundlePromise = jQuery.sap.resources({
+			var oResourceBundlePromise = ResourceBundle.create({
 				url: sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/webapp/i18n/i18n.properties"),
 				async: true
 			});
