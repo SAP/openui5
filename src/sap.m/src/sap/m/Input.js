@@ -1252,15 +1252,13 @@ function(
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
 		this.cancelPendingSuggest();
 
-		if (this._isSuggestionsPopoverOpen()) {
-			if (!this.isComposingCharacter()) {
-				this._closeSuggestionPopup();
-				iValueLength = this.getDOMValue().length;
-				this.selectText(iValueLength, iValueLength); // Remove text selection
-			}
+		if (this._isSuggestionsPopoverOpen() && !this.isComposingCharacter()) {
+			this._closeSuggestionPopup();
+			iValueLength = this.getDOMValue() ? this.getDOMValue().length : null;
+			this.selectText(iValueLength, iValueLength); // Remove text selection
+		} else {
+			InputBase.prototype.onsapenter.apply(this, arguments);
 		}
-
-		InputBase.prototype.onsapenter.apply(this, arguments);
 
 		if (this.getEnabled() && this.getEditable() && !(this.getValueHelpOnly() && this.getShowValueHelp())) {
 			this.fireSubmit({value: this.getValue()});
