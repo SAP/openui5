@@ -94,6 +94,9 @@
 					<m:Label text="multi value field (Description)"></m:Label>
 					<mdc:FilterField id="FF5"
 						conditions="{cm>/conditions/Description}"
+						dataType="sap.ui.model.odata.type.String"
+						dataTypeConstraints="{nullable: false}"
+						delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate'}"
 						maxConditions="3"
 						placeholder="{/#Product/Description/@sap:label}"
 						change="handleChange"
@@ -255,6 +258,7 @@
 					<mdc:FilterField id="FF11"
 						conditions="{cm>/conditions/Quantity}"
 						dataType="Edm.Int32"
+						dataTypeConstraints="{nullable: false}"
 						display="Value"
 						maxConditions="2"
 						placeholder="{/#Product/Quantity/@sap:label}"

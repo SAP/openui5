@@ -2490,12 +2490,10 @@ sap.ui.define([
 		var oButtonOK = oDialog.getButtons()[0];
 		assert.ok(oButtonOK.getEnabled(), "OK-Button is enabled");
 
-		oFieldHelp.setConditions([Condition.createCondition("BT", ["A", "A"])]); // fake setting from DefineConditionPanel
-		oClock.tick(1); // as validation is async
+		oVHP.setInputOK(false); // fake setting from DefineConditionPanel
 		assert.notOk(oButtonOK.getEnabled(), "OK-Button is disabled");
 
-		oFieldHelp.setConditions([Condition.createCondition("BT", ["A", "B"])]); // fake setting from DefineConditionPanel
-		oClock.tick(1); // as validation is async
+		oVHP.setInputOK(true); // fake setting from DefineConditionPanel
 		assert.ok(oButtonOK.getEnabled(), "OK-Button is enabled");
 
 		sinon.spy(oVHP._oDefineConditionPanel, "cleanUp");

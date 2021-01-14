@@ -113,6 +113,7 @@ sap.ui.define([
 		assert.ok(oIconTabBar.hasStyleClass("sapMdcNoHeader"), "Header of IconTabBar invisible");
 		assert.ok(oDefineConditions.getBinding("formatOptions"), "DefineConditions formatOptions Bound");
 		assert.ok(oDefineConditions.getBinding("conditions"), "DefineConditions conditions Bound");
+		assert.ok(oDefineConditions.getBinding("inputOK"), "DefineConditions inputOK Bound");
 
 		oValueHelpPanel.setDefineConditions(null);
 		assert.equal(oValueHelpPanel._oDefineConditionPanel == null, true, "defineCondition should be removed");

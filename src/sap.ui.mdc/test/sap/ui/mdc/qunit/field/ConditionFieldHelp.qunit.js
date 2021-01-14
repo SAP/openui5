@@ -245,14 +245,10 @@ sap.ui.define([
 				var oButtonOK = oPopover.getFooter().getContent()[1];
 				assert.ok(oButtonOK.getEnabled(), "OK-Button is enabled");
 
-				var oCondition = Condition.createCondition("BT", ["2020-12-08", "2020-12-08"], undefined, undefined, ConditionValidated.NotValidated);
-				oDCP.setConditions([oCondition]);
-				oClock.tick(1); // as validation is async
+				oDCP.setInputOK(false);
 				assert.notOk(oButtonOK.getEnabled(), "OK-Button is disabled");
 
-				oCondition = Condition.createCondition("BT", ["2020-12-08", "2020-12-09"], undefined, undefined, ConditionValidated.NotValidated);
-				oDCP.setConditions([oCondition]);
-				oClock.tick(1); // as validation is async
+				oDCP.setInputOK(true);
 				assert.ok(oButtonOK.getEnabled(), "OK-Button is enabled");
 
 				sinon.spy(oFieldHelp._oDefineConditionPanel, "cleanUp");

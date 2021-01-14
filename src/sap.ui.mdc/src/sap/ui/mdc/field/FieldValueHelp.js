@@ -319,11 +319,6 @@ sap.ui.define([
 			this._iSearchFieldTimer = null;
 		}
 
-		if (this._iConditionsTimer) {
-			clearTimeout(this._iConditionsTimer);
-			this._iConditionsTimer = null;
-		}
-
 	};
 
 	FieldValueHelp.prototype.invalidate = function(oOrigin) {
@@ -1212,7 +1207,6 @@ sap.ui.define([
 
 		// validate flag must be set in the right way to show right conditions on DefineConditionPanel
 		var bUpdate = false;
-		var bCheckConditions = this.isOpen() && this.getShowConditionPanel(); // only check if open and ConditionPanel used, don't check conditions set if closed
 		for (var i = 0; i < aConditions.length; i++) {
 			var oCondition = aConditions[i];
 			if (!oCondition.validated) {
@@ -1221,37 +1215,11 @@ sap.ui.define([
 			}
 		}
 
-		if (bCheckConditions && !this._iConditionsTimer) {
-			// as conditions are updated by ManagedObjectModel on every value change in DefineDonditionPanel do it async after DefineConditionPanel logic
-			this._iConditionsTimer = setTimeout(function () {
-				this._iConditionsTimer = null;
-				_checkConditions.call(this);
-			}.bind(this), 0);
-		}
-
 		if (bUpdate) {
 			this.setConditions(aConditions);
 		} else {
 			_updateSelectedItems.call(this);
 		}
-
-	}
-
-	function _checkConditions() {
-
-		var bInvalidCondition = false;
-		var aConditions = this.getConditions(); // use current conditions
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-			try {
-				oOperator.validate(oCondition.values, this._getFormatOptions().valueType);
-			} catch (oException) {
-				bInvalidCondition = true; // real error handling is done in DefineConditionPanel
-			}
-		}
-
-		this.setProperty("_enableOK", !bInvalidCondition, true);
 
 	}
 
@@ -2036,7 +2004,8 @@ sap.ui.define([
 		var oValueHelpPanel = new ValueHelpPanel(this.getId() + "-VHP", {
 			height: "100%",
 			showFilterbar: !!oFilterBar,
-			formatOptions: this._getFormatOptions()
+			formatOptions: this._getFormatOptions(),
+			inputOK: "{$help>/_enableOK}"
 		});
 		oValueHelpPanel.setModel(this._oManagedObjectModel, "$help");
 
@@ -2169,11 +2138,6 @@ sap.ui.define([
 		this._bOK = undefined;
 
 		this.setProperty("_enableOK", true, true); // initialize
-
-		if (this._iConditionsTimer) { // not longer needed if closed
-			clearTimeout(this._iConditionsTimer);
-			this._iConditionsTimer = null;
-		}
 
 	}
 

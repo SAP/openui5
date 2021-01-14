@@ -89,7 +89,7 @@ sap.ui.define([
 		this._oObserver = new ManagedObjectObserver(_observeChanges.bind(this));
 
 		this._oObserver.observe(this, {
-			properties: ["title", "conditions"]
+			properties: ["title"]
 		});
 
 		this._oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -112,11 +112,6 @@ sap.ui.define([
 
 		this._oObserver.disconnect();
 		this._oObserver = undefined;
-
-		if (this._iConditionsTimer) {
-			clearTimeout(this._iConditionsTimer);
-			this._iConditionsTimer = null;
-		}
 
 	};
 
@@ -178,7 +173,8 @@ sap.ui.define([
 			this._oDefineConditionPanel = new DefineConditionPanel(this.getId() + "-DCP", {
 				conditions: {path: "$help>/conditions"},
 				formatOptions: _getFormatOptions.call(this),
-				label: "{$help>/label}"
+				label: "{$help>/label}",
+				inputOK: "{$help>/_enableOK}"
 			}).setModel(this._oManagedObjectModel, "$help");
 			this._setContent(this._oDefineConditionPanel);
 
@@ -243,11 +239,6 @@ sap.ui.define([
 
 		this.setProperty("_enableOK", true, true); // initialize
 
-		if (this._iConditionsTimer) { // not longer needed if closed
-			clearTimeout(this._iConditionsTimer);
-			this._iConditionsTimer = null;
-		}
-
 		FieldHelpBase.prototype._handleAfterClose.apply(this, arguments);
 
 	};
@@ -274,10 +265,6 @@ sap.ui.define([
 			}
 		}
 
-		if (oChanges.name === "conditions") {
-			_updateConditions.call(this, oChanges.current);
-		}
-
 	}
 
 	ConditionFieldHelp.prototype.isValidationSupported = function() {
@@ -300,36 +287,6 @@ sap.ui.define([
 		} else {
 			return {};
 		}
-
-	}
-
-	function _updateConditions(aConditions) {
-
-		if (this.isOpen() && !this._iConditionsTimer) { // only check if open, don't check conditions set if closed
-			// as conditions are updated by ManagedObjectModel on every value change in DefineDonditionPanel do it async after DefineConditionPanel logic
-			this._iConditionsTimer = setTimeout(function () {
-				this._iConditionsTimer = null;
-				_checkConditions.call(this);
-			}.bind(this), 0);
-		}
-
-	}
-
-	function _checkConditions() {
-
-		var bInvalidCondition = false;
-		var aConditions = this.getConditions(); // use current conditions
-		for (var i = 0; i < aConditions.length; i++) {
-			var oCondition = aConditions[i];
-			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-			try {
-				oOperator.validate(oCondition.values, _getFormatOptions.call(this).valueType);
-			} catch (oException) {
-				bInvalidCondition = true; // real error handling is done in DefineConditionPanel
-			}
-		}
-
-		this.setProperty("_enableOK", !bInvalidCondition, true);
 
 	}
 

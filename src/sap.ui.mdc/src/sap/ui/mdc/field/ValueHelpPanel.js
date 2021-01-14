@@ -90,6 +90,19 @@ sap.ui.define([
 				},
 
 				/**
+				 * If set there is no invalid user input.
+				 *
+				 * <b>Note:</b> This property must not set from outside. It just is a property because in this case it can be bound to the
+				 * <code>ManagedObjectModel</code> of the calling field help and automatically update it.
+				 *
+				 * @since 1.87.0
+				 */
+				inputOK: {
+					type: "boolean",
+					defaultValue: true
+				},
+
+				/**
 				 * Internal property to bind corresponding controls to the visibility of the <code>FilterBar</code> section
 				 */
 				_filterBarVisible: {
@@ -483,6 +496,9 @@ sap.ui.define([
 				}
 				if (oMetadata.hasProperty("conditions") && !this._oDefineConditionPanel.getBindingPath("conditions") && this._oDefineConditionPanel.isPropertyInitial("conditions")) {
 					this._oDefineConditionPanel.bindProperty("conditions", {path: "$VHP>/conditions"});
+				}
+				if (oMetadata.hasProperty("inputOK") && !this._oDefineConditionPanel.getBindingPath("inputOK") && this._oDefineConditionPanel.isPropertyInitial("inputOK")) {
+					this._oDefineConditionPanel.bindProperty("inputOK", {path: "$VHP>/inputOK"});
 				}
 			}
 			// add content only after binding, otherwise onBeforeRendering type is missing

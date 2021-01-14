@@ -386,6 +386,7 @@ sap.ui.define([
 		setTimeout(function () { // for model update
 			sap.ui.getCore().applyChanges();
 			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
+			assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set as default");
 
 			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
@@ -406,6 +407,7 @@ sap.ui.define([
 					assert.ok(oField1.getValueStateText(), "first Field has Error state text");
 					assert.equal(oField2.getValueState(), "Error", "second Field has Error state");
 					assert.ok(oField2.getValueStateText(), "second Field has Error state text");
+					assert.notOk(oDefineConditionPanel.getInputOK(), "InputOK not set");
 
 					oField2.focus();
 					setTimeout(function() { // for fieldGroup delay
@@ -419,6 +421,7 @@ sap.ui.define([
 							assert.notOk(oField1.getValueStateText(), "first Field has no Error state text");
 							assert.equal(oField2.getValueState(), "None", "second Field has no Error state");
 							assert.notOk(oField2.getValueStateText(), "second Field has no Error state text");
+							assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set");
 
 							assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
 							assert.equal(oModel.getConditions("Name")[0].values[0], "B", "condition value0 should be changed");
@@ -438,6 +441,7 @@ sap.ui.define([
 										assert.ok(oField1.getValueStateText(), "first Field has Error state text");
 										assert.equal(oField2.getValueState(), "Error", "second Field has Error state");
 										assert.ok(oField2.getValueStateText(), "second Field has Error state text");
+										assert.notOk(oDefineConditionPanel.getInputOK(), "InputOK not set");
 
 										assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
 										assert.equal(oModel.getConditions("Name")[0].values[0], "C", "condition value0 should be changed");
@@ -450,6 +454,7 @@ sap.ui.define([
 										assert.notOk(oField1.getValueStateText(), "first Field has no Error state text");
 										assert.equal(oField2.getValueState(), "None", "second Field has no Error state");
 										assert.notOk(oField2.getValueStateText(), "second Field has no Error state text");
+										assert.ok(oDefineConditionPanel.getInputOK(), "InputOK set");
 
 										fnDone();
 									}, 0);
