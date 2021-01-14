@@ -163,5 +163,24 @@
 				shows new data and the sales order '0500000004' appears again in the
 				<code>New Sales Orders</code> list.</li>
 		</ol>
+		<h3>Increase sales order line items' quantities</h3>
+		<ol>
+			<li>Select the first sales order in the list report.</li>
+			<li><b>Check:</b> An object page <code>Sales Order Details</code> for the selected
+				sales order appears.</li>
+			<li>Select the first sales order line item on the object page.</li>
+			<li><b>Check:</b> A sub-object page with item details appears.</li>
+			<li>Press the <code>Gross Amount</code> button.</li>
+			<li><b>Check:</b> The sales order item list is sorted by the <code>GrossAmount</code>
+				and the selected sales order item is no longer part of the items list. In the
+				sub-object page it is still present.</li>
+			<li>Press the <code>Increase all Sales Order Items' Quantities by 1</code> button.</li>
+			<li><b>Check:</b> The quantity on the sub-object page and all quantities for line items
+				in the object page are increased by one.</li>
+			<li><b>Check:</b> The gross amount and the note for the selected sales order in the
+				list report and object page changed too.</li>
+		</ol>
+		<i>Technical background: requestSideEffects must also update the item in the sub-object
+			page even if it is not in the list currently.</i>
 	</body>
 </html>

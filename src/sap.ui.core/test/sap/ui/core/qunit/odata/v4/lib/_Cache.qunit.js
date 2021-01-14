@@ -7666,13 +7666,14 @@ sap.ui.define([
 		iLength : 2,
 		iStart : 3,
 		aValues : [{key : "e"}, {key : "d"}]
-	}, { // short read and infinite length (should both work, independently)
+	}, { // short read and kept-alive entities
 		sExpectedKeys : "........................yz",
 		iExpectedLength : 26,
-		sFilter : "key eq 'a24' or key eq 'a25'",
-		iLength : Infinity,
+		sFilter : "key eq 'a24' or key eq 'a25' or key eq 'a6' or key eq 'a7'",
+		aKeptAliveKeys : ["g", "h"],
+		iLength : 40,
 		iStart : 24,
-		aValues : [{key : "y"}, {key : "z"}] // short read
+		aValues : [{key : "y"}, {key : "z"}, {key : "g"}, {key : "h"}]
 	}, { // single row, requestSideEffects on element from server
 		sExpectedKeys : "abcdefghij",
 		iExpectedLength : 10,
@@ -7777,8 +7778,10 @@ sap.ui.define([
 					}
 
 					aTestData[-1] = "@"; // predecessor of "A"
+					aPredicates = aTestData.map(function (sKey) { return "('" + sKey + "')"; });
 					if ("bTransientElement" in oFixture) { // add created element
 						oCreatedElement = oFixture.bTransientElement ? oTransient : oPersisted;
+						aPredicates.unshift("('@')");
 						oCache.aElements.unshift(oCreatedElement);
 						oCache.aElements.$created = 1;
 						if (!oFixture.bTransientElement) {
@@ -7788,6 +7791,16 @@ sap.ui.define([
 					} else {
 						oCache.aElements.$created = 0;
 					}
+					aPredicates = aPredicates.slice(iStart, iStart + (bSingle ? 1 : iLength));
+					if (oFixture.bTransientElement && iStart === 0) {
+						aPredicates.shift(); // transient element not requested from binding
+					}
+					(oFixture.aKeptAliveKeys || []).forEach(function (sKey) {
+						var sPredicate = "('" + sKey + "')";
+
+						oCache.aElements.$byPredicate[sPredicate] = {key : sKey};
+						aPredicates.push(sPredicate);
+					});
 					iExpectedByPredicateLength = iLength === undefined
 						? Object.keys(oCache.aElements.$byPredicate).length
 						: iReceivedLength + (oCreatedElement ? 1 : 0);
@@ -7843,13 +7856,9 @@ sap.ui.define([
 							});
 					}
 
-					aPredicates = aTestData.map(function (sKey) { return "('" + sKey + "')"; });
-					if ("bTransientElement" in oFixture) {
-						aPredicates.unshift(sTransientPredicate);
-					}
 					// code under test
 					return oCache.requestSideEffects(oGroupLock, aPaths, mNavigationPropertyPaths,
-							aPredicates.slice(iStart, iStart + (bSingle ? 1 : iLength)), bSingle)
+							aPredicates, bSingle)
 						.then(function () {
 							var oElement,
 								sKeys = "",

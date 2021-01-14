@@ -83,6 +83,12 @@ sap.ui.define([
 						"SalesOrderID" : "0500000000"
 					}]}
 				},
+				"POST SalesOrderList('0500000000')/com.sap.gateway.default.zui5_epm_sample.v0002.SalesOrderIncreaseItemsQuantity?$select=GrossAmount,Note" : {
+					source : "SalesOrderList('0500000000')-IncreaseItemQuantity.json"
+				},
+				"SalesOrderList('0500000000')/SO_2_SOITEM?$select=GrossAmount,ItemPosition,Quantity,SalesOrderID&$filter=SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000080'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000090'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000050'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000030'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000100'%20or%20SalesOrderID%20eq%20'0500000000'%20and%20ItemPosition%20eq%20'0000000010'&$top=6" : {
+					source : "SalesOrderList('0500000000')-requestSideEffects.json"
+				},
 				//TODO The following request contains unnecessary properties, should look like:
 				// "SalesOrderList?$count=true&$filter=GrossAmount%20gt%201000&$select=CurrencyCode,GrossAmount,Note,SalesOrderID&$expand=SO_2_BP($select=BusinessPartnerID,CompanyName)&$skip=0&$top=5"
 				// CPOUI5ODATAV4-544

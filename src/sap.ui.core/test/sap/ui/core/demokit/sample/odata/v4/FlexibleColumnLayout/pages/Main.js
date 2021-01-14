@@ -174,6 +174,9 @@ sap.ui.define([
 						viewName : sViewName
 					});
 				},
+				increaseSalesOrderItemsQuantity : function () {
+					return Helper.pressButton(this, sViewName, "increaseSalesOrderItemsQuantity");
+				},
 				refresh : function () {
 					return Helper.pressButton(this, sViewName, "refreshSalesOrder");
 				},
@@ -206,6 +209,10 @@ sap.ui.define([
 				}
 			},
 			assertions : {
+				checkGrossAmount : function (sGrossAmount) {
+					Helper.checkInputValue(this, sViewName, "SalesOrder::grossAmount",
+						sGrossAmount);
+				},
 				checkNote : function (sNote) {
 					Helper.checkInputValue(this, sViewName, "SalesOrder::note", sNote);
 				},

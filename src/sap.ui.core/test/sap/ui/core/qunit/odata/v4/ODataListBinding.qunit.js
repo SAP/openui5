@@ -6061,7 +6061,7 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true].forEach(function (bHeader) {
 	QUnit.test("requestSideEffects: refresh needed, refresh fails, " + bHeader, function (assert) {
-		var oCacheMock = this.getCacheMock(),
+		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = this.bindList("/Set"),
 			oContext = bHeader ? oBinding.getHeaderContext() : undefined,
 			oError = new Error(),
@@ -6085,7 +6085,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: refreshSingle needed, refreshSingle fails", function (assert) {
-		var oCacheMock = this.getCacheMock(),
+		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oContext = {},
 			oBinding = this.bindList("/Set"),
 			oError = new Error(),
@@ -6152,7 +6152,7 @@ sap.ui.define([
 				+ ", reject=" + bRecursionRejects;
 
 	QUnit.test(sTitle, function (assert) {
-		var oCacheMock = this.getCacheMock(),
+		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = this.bindList("/Set"),
 			oContext = bHeader
 				? oBinding.getHeaderContext()
@@ -6160,19 +6160,32 @@ sap.ui.define([
 			oError = new Error(),
 			sGroupId = "group",
 			oGroupLock = {},
+			oPreviousContext6,
+			oPreviousContext7,
+			oPreviousContext8,
 			aPaths = ["A"],
 			oPromise = SyncPromise.resolve(),
 			oResult,
 			that = this;
 
-		oBinding.createContexts(3, createData(8, 3, true, 8, true));
+		oBinding.createContexts(3, createData(9, 3, true, 9, true));
 		oBinding.iCurrentBegin = 3;
-		oBinding.iCurrentEnd = 8;
+		oBinding.iCurrentEnd = 5;
+		oBinding.mPreviousContextsByPath["('6')"] = oPreviousContext6 = oBinding.aContexts[6];
+		oBinding.mPreviousContextsByPath["('7')"] = oPreviousContext7 = oBinding.aContexts[7];
+		oBinding.mPreviousContextsByPath["('8')"] = oPreviousContext8 = oBinding.aContexts[8];
+		oBinding.aContexts.length = 5;
 
 		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
+		this.mock(oPreviousContext6).expects("isKeepAlive").exactly(bHeader ?  1 : 0)
+			.returns(true);
+		this.mock(oPreviousContext7).expects("isKeepAlive").exactly(bHeader ?  1 : 0)
+			.returns(false);
+		this.mock(oPreviousContext8).expects("isKeepAlive").exactly(bHeader ?  1 : 0)
+			.returns(true);
 		oCacheMock.expects("requestSideEffects")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
-				bHeader ? ["('3')", "('4')", "('5')", "('6')", "('7')"] : ["('foo')"],
+				bHeader ? ["('3')", "('4')", "('6')", "('8')"] : ["('foo')"],
 				!bHeader)
 			.callsFake(function (_oGroupLock, aPaths, mNavigationPropertyPaths) {
 				that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
@@ -6213,8 +6226,48 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("requestSideEffects: transient context", function (assert) {
+		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
+			oBinding = this.bindList("/Set"),
+			sGroupId = "group",
+			oGroupLock = {},
+			aPaths = ["A"],
+			oPromise = SyncPromise.resolve(),
+			that = this;
+
+		oBinding.createContexts(0, createData(1, 0, true, 1, true));
+		oBinding.aContexts.unshift({isTransient : function () {}});
+		oBinding.iCreatedContexts = 1;
+		oBinding.iCurrentBegin = 0;
+		oBinding.iCurrentEnd = 2;
+
+		this.mock(oBinding).expects("lockGroup").withExactArgs(sGroupId).returns(oGroupLock);
+		this.mock(oBinding.aContexts[0]).expects("isTransient").withExactArgs().returns(true);
+		this.mock(oBinding.aContexts[1]).expects("isTransient").withExactArgs().returns(false);
+		oCacheMock.expects("requestSideEffects")
+			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(aPaths), {},
+				["('0')"], undefined)
+			.callsFake(function (_oGroupLock, aPaths, mNavigationPropertyPaths) {
+				that.mock(oBinding).expects("visitSideEffects").withExactArgs(sGroupId,
+						sinon.match.same(aPaths), undefined,
+						sinon.match.same(mNavigationPropertyPaths), [oPromise]);
+				that.mock(oBinding).expects("refreshDependentListBindingsWithoutCache")
+					.withExactArgs().resolves("~");
+
+				return oPromise;
+			});
+		this.mock(oBinding).expects("refreshInternal").never();
+
+		// code under test
+		return oBinding.requestSideEffects(sGroupId, aPaths).then(function (vValue) {
+			assert.strictEqual(vValue, "~",
+				"refreshDependentListBindingsWithoutCache finished");
+		});
+	});
+
+	//*********************************************************************************************
 	QUnit.test("requestSideEffects: fallback to refresh", function (assert) {
-		var oCacheMock = this.getCacheMock(),
+		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = this.bindList("/Set"),
 			oError = new Error(),
 			sGroupId = "group",
@@ -6243,7 +6296,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: all contexts transient => no refresh", function (assert) {
-		var oCacheMock = this.getCacheMock(),
+		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = this.bindList("/Set"),
 			j;
 
@@ -6261,7 +6314,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestSideEffects: no contexts => do refresh", function (assert) {
-		var oCacheMock = this.getCacheMock(),
+		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = this.bindList("/Set");
 
 		this.mock(oBinding).expects("lockGroup").never();

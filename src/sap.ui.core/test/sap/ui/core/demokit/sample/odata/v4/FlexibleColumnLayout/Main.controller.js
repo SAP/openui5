@@ -125,8 +125,8 @@ sap.ui.define([
 				MessageToast.show(oError.message);
 			});
 			oContext.requestSideEffects([
-					"SO_2_SOITEM/Quantity",
-					"SO_2_SOITEM/GrossAmount"
+					"SO_2_SOITEM/GrossAmount",
+					"SO_2_SOITEM/Quantity"
 				], "$auto")
 				.catch(function () {/*may fail because of previous requests*/})
 				.finally(function () {
