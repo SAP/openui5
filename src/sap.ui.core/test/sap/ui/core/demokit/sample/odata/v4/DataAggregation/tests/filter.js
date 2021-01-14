@@ -9,7 +9,7 @@ sap.ui.define([
 	"use strict";
 
 	return function (Given, When, Then) {
-		TestUtils.setData("sap.ui.core.sample.odata.v4.DataAggregation.filter", "Region GT M");
+		TestUtils.setData("sap.ui.core.sample.odata.v4.DataAggregation.filter", "RegionText GT M");
 		When.onAnyPage.applySupportAssistant();
 		Given.iStartMyUIComponent({
 			autoWait : true,

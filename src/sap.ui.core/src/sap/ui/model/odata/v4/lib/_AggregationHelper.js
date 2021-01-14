@@ -10,27 +10,33 @@ sap.ui.define([
 ], function (_Helper, _Parser, Filter) {
 	"use strict";
 
-	var mAllowedAggregateDetails2Type =  {
-			grandTotal : "boolean",
-			max : "boolean",
-			min : "boolean",
-			name : "string",
-			subtotals : "boolean",
-			unit : "string",
-			"with" : "string"
-		},
-		mAllowedAggregationKeys2Type = {
-			aggregate : "object",
+	var mAggregationType = {
+			aggregate : {
+				"*" : {
+					grandTotal : "boolean",
+					max : "boolean",
+					min : "boolean",
+					name : "string",
+					subtotals : "boolean",
+					unit : "string",
+					"with" : "string"
+				}
+			},
 			grandTotalAtBottomOnly : "boolean",
-			group : "object",
-			groupLevels : "array",
+			group : {
+				"*" : {
+					additionally : ["string"]
+				}
+			},
+			groupLevels : ["string"],
 			subtotalsAtBottomOnly : "boolean"
 		},
-		// "required white space"
 		rComma = /,|%2C|%2c/,
-		rRws = new RegExp(_Parser.sWhitespace + "+"),
-		rODataIdentifier = new RegExp("^" + _Parser.sODataIdentifier
-			+ "(?:" + _Parser.sWhitespace + "+(?:asc|desc))?$"),
+		// Example: "Texts/Country asc"
+		// capture groups: 1 - the property path
+		rOrderbyItem = new RegExp("^(" + _Parser.sODataIdentifier
+			+ "(?:/" + _Parser.sODataIdentifier + ")*"
+			+ ")(?:" + _Parser.sWhitespace + "+(?:asc|desc))?$"),
 		/**
 		 * Collection of helper methods for data aggregation.
 		 *
@@ -66,59 +72,6 @@ sap.ui.define([
 		if (sUnit && aAggregate.indexOf(sUnit) < 0 && aAliases.indexOf(sUnit, i + 1) < 0
 				&& aGroupBy.indexOf(sUnit) < 0) {
 			aAggregate.push(sUnit);
-		}
-	}
-
-	/*
-	 * Checks that the given details object has only allowed keys.
-	 *
-	 * @param {object} oDetails
-	 *   The details object
-	 * @param {string[]} [mAllowedKeys2Type]
-	 *   Maps keys which are allowed for the details objects to the expected type name
-	 * @param {string} [sName]
-	 *   The name of the property to which the details object belongs
-	 * @throws {Error}
-	 *   In case an unsupported key is found
-	 */
-	function checkKeys(oDetails, mAllowedKeys2Type, sName) {
-		var sKey;
-
-		function error(sMessage) {
-			if (sName) {
-				sMessage += " at property: " + sName;
-			}
-			throw new Error(sMessage);
-		}
-
-		function typeOf(vValue) {
-			return Array.isArray(vValue) ? "array" : typeof vValue;
-		}
-
-		for (sKey in oDetails) {
-			if (!(mAllowedKeys2Type && sKey in mAllowedKeys2Type)) {
-				error("Unsupported '" + sKey + "'");
-			} else if (typeOf(oDetails[sKey]) !== mAllowedKeys2Type[sKey]) {
-				error("Not a " + mAllowedKeys2Type[sKey] + " value for '" + sKey + "'");
-			}
-		}
-	}
-
-	/*
-	 * Checks that all details objects in the given map have only allowed keys.
-	 *
-	 * @param {object} mMap
-	 *   Map from name to details object (for a groupable or aggregatable property)
-	 * @param {string[]} [mAllowedKeys2Type]
-	 *   Maps keys which are allowed for the details objects to the expected type name
-	 * @throws {Error}
-	 *   In case an unsupported key is found
-	 */
-	function checkKeys4AllDetails(mMap, mAllowedKeys2Type) {
-		var sName;
-
-		for (sName in mMap) {
-			checkKeys(mMap[sName], mAllowedKeys2Type, sName);
 		}
 	}
 
@@ -252,23 +205,21 @@ sap.ui.define([
 			mQueryOptions = Object.assign({}, mQueryOptions);
 			iLevel = iLevel || 1;
 
-			checkKeys(oAggregation, mAllowedAggregationKeys2Type);
+			_AggregationHelper.checkTypeof(oAggregation, mAggregationType, "$$aggregation");
 			oAggregation.groupLevels = oAggregation.groupLevels || [];
 			bIsLeafLevel = iLevel > oAggregation.groupLevels.length;
 
 			oAggregation.group = oAggregation.group || {};
-			checkKeys4AllDetails(oAggregation.group);
 			oAggregation.groupLevels.forEach(function (sGroup) {
 				oAggregation.group[sGroup] = oAggregation.group[sGroup] || {};
 			});
 			aGroupBy = bIsLeafLevel
-				? Object.keys(oAggregation.group).sort().filter(function (sGroupable) {
-					return oAggregation.groupLevels.indexOf(sGroupable) < 0;
+				? Object.keys(oAggregation.group).sort().filter(function (sGroup) {
+					return oAggregation.groupLevels.indexOf(sGroup) < 0;
 				})
 				: [oAggregation.groupLevels[iLevel - 1]];
 
 			oAggregation.aggregate = oAggregation.aggregate || {};
-			checkKeys4AllDetails(oAggregation.aggregate, mAllowedAggregateDetails2Type);
 			aAliases = Object.keys(oAggregation.aggregate).sort();
 			if (iLevel <= 1 && !bFollowUp) {
 				aAliases.filter(function (sAlias) {
@@ -293,6 +244,13 @@ sap.ui.define([
 			}
 
 			if (aGroupBy.length) {
+				aGroupBy.forEach(function (sGroup) {
+					var aAdditionally = oAggregation.group[sGroup].additionally;
+
+					if (aAdditionally) {
+						aGroupBy.push.apply(aGroupBy, aAdditionally);
+					}
+				});
 				sApply = "groupby((" + aGroupBy.join(",") + (sApply ? ")," + sApply + ")" : "))");
 			}
 
@@ -333,6 +291,50 @@ sap.ui.define([
 		},
 
 		/**
+		 * Checks that the given value is of the given type. If <code>vType</code> is a string, then
+		 * <code>typeof vValue === vType<code> must hold. If <code>vType</code> is an array (of
+		 * length 1!), then <code>vValue</code> must be an array as well and each element is checked
+		 * recursively. If <code>vType</code> is an object, then <code>vValue</code> must be an
+		 * object (not an array, not <code>null</code>) as well, with a subset of keys, and each
+		 * property is checked recursively. If <code>vType</code> is an object with a (single)
+		 * property "*", it is deemed a map; in this case <code>vValue</code> must be an object (not
+		 * an array, not <code>null</code>) as well, with an arbitrary set of keys, and each
+		 * property is checked recursively against the type specified for "*".
+		 *
+		 * @param {any} vValue - Any value
+		 * @param {string|string[]} vType - The expected type
+		 * @param {string} [sPath] - The path which lead to the given value
+		 * @throws {Error} If the value is not of the given type
+		 *
+		 * @private
+		 */
+		checkTypeof : function (vValue, vType, sPath) {
+			if (Array.isArray(vType)) {
+				if (!Array.isArray(vValue)) {
+					throw new Error("Not an array value for '" + sPath + "'");
+				}
+				vValue.forEach(function (vElement, i) {
+					_AggregationHelper.checkTypeof(vElement, vType[0], sPath + "/" + i);
+				});
+			} else if (typeof vType === "object") {
+				var bIsMap = "*" in vType;
+
+				if (typeof vValue !== "object" || !vValue || Array.isArray(vValue)) {
+					throw new Error("Not an object value for '" + sPath + "'");
+				}
+				Object.keys(vValue).forEach(function (sKey) {
+					if (!bIsMap && !(sKey in vType)) {
+						throw new Error("Unsupported property: '" + sPath + "/" + sKey + "'");
+					}
+					_AggregationHelper.checkTypeof(vValue[sKey], vType[bIsMap ? "*" : sKey],
+						sPath + "/" + sKey);
+				});
+			} else if (typeof vValue !== vType) {
+				throw new Error("Not a " + vType + " value for '" + sPath + "'");
+			}
+		},
+
+		/**
 		 * Creates a placeholder.
 		 *
 		 * @param {number} iLevel - The level
@@ -366,6 +368,8 @@ sap.ui.define([
 		 * @param {object} [oExpanded]
 		 *   An object to be filled with <code>null</code> updates for subtotals and their units;
 		 *   useful if subtotals are shown at the bottom only
+		 *
+		 * @private
 		 */
 		extractSubtotals : function (oAggregation, oGroupNode, oCollapsed, oExpanded) {
 			var iLevel = oGroupNode["@$ui5.node.level"];
@@ -394,7 +398,10 @@ sap.ui.define([
 
 		/**
 		 * Returns the "$orderby" system query option filtered in such a way that only aggregatable
-		 * or groupable properties contained in the given aggregation information are used.
+		 * or groupable properties, or additionally requested properties are used, provided they are
+		 * contained in the given aggregation information and are relevant for the given level.
+		 * Items which cannot be parsed (that is, everything more complicated than a simple path
+		 * followed by an optional "asc"/"desc") are not filtered out.
 		 *
 		 * @param {string} [sOrderby]
 		 *   The original "$orderby" system query option
@@ -406,22 +413,52 @@ sap.ui.define([
 		 * @returns {string}
 		 *   The filtered "$orderby" system query option
 		 *
-		 * @private
+		 * @public
 		 */
 		filterOrderby : function (sOrderby, oAggregation, iLevel) {
-			var bIsLeafLevel = iLevel > oAggregation.groupLevels.length;
+			var bIsLeaf = iLevel > oAggregation.groupLevels.length;
+
+			/*
+			 * Tells whether the given property name is used for some leaf group.
+			 *
+			 * @param {string} sName - A property name
+			 * @returns {boolean} Whether it is used for some leaf group
+			 */
+			function isUsedAtLeaf(sName) {
+				if (sName in oAggregation.group && oAggregation.groupLevels.indexOf(sName) < 0) {
+					return true; // "quick path"
+				}
+
+				return Object.keys(oAggregation.group).some(function (sGroup) {
+					return oAggregation.groupLevels.indexOf(sGroup) < 0
+						&& isUsedFor(sName, sGroup);
+				});
+			}
+
+			/*
+			 * Tells whether the given property name is used for the given group.
+			 *
+			 * @param {string} sName - A property name
+			 * @param {string} sGroup - A group name
+			 * @returns {boolean} Whether it is used for the given group
+			 */
+			function isUsedFor(sName, sGroup) {
+				return sName === sGroup
+					|| oAggregation.group[sGroup].additionally
+					&& oAggregation.group[sGroup].additionally.indexOf(sName) >= 0;
+			}
 
 			if (sOrderby) {
 				return sOrderby.split(rComma).filter(function (sOrderbyItem) {
-					var sName;
+					var aMatches = rOrderbyItem.exec(sOrderbyItem),
+						sName;
 
-					if (rODataIdentifier.test(sOrderbyItem)) {
-						sName = sOrderbyItem.split(rRws)[0]; // drop optional asc/desc
+					if (aMatches) {
+						sName = aMatches[1]; // drop optional asc/desc
 						return sName in oAggregation.aggregate
-								&& (bIsLeafLevel || oAggregation.aggregate[sName].subtotals)
-							|| bIsLeafLevel && sName in oAggregation.group
-								&& oAggregation.groupLevels.indexOf(sName) < 0
-							|| !bIsLeafLevel && oAggregation.groupLevels[iLevel - 1] === sName;
+								&& (bIsLeaf || oAggregation.aggregate[sName].subtotals)
+							|| bIsLeaf && isUsedAtLeaf(sName)
+							|| !bIsLeaf && isUsedFor(sName, oAggregation.groupLevels[iLevel - 1]);
 					}
 					return true;
 				}).join(",");
@@ -434,20 +471,34 @@ sap.ui.define([
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation;
 		 *   (see {@link .buildApply})
-		 * @returns {string[]}
-		 *   An unsorted list of all aggregatable or groupable properties, including units
+		 * @returns {Array<(string|Array<string>)>}
+		 *   An unsorted list of all aggregatable or groupable properties, including units and
+		 *   additional properties (where paths are given as arrays of segments)
 		 *
-		 * @private
+		 * @public
 		 */
 		getAllProperties : function (oAggregation) {
-			var aAllProperties
-				= Object.keys(oAggregation.aggregate).concat(Object.keys(oAggregation.group));
+			var aAggregates = Object.keys(oAggregation.aggregate),
+				aGroups = Object.keys(oAggregation.group),
+				aAllProperties = aAggregates.concat(aGroups);
 
-			Object.keys(oAggregation.aggregate).forEach(function (sAlias) {
+			aAggregates.forEach(function (sAlias) {
 				var sUnit = oAggregation.aggregate[sAlias].unit;
 
 				if (sUnit) {
 					aAllProperties.push(sUnit);
+				}
+			});
+
+			aGroups.forEach(function (sGroup) {
+				var aAdditionally = oAggregation.group[sGroup].additionally;
+
+				if (aAdditionally) {
+					aAdditionally.forEach(function (sAdditionally) {
+						aAllProperties.push(sAdditionally.includes("/")
+							? sAdditionally.split("/")
+							: sAdditionally);
+					});
 				}
 			});
 
@@ -466,6 +517,8 @@ sap.ui.define([
 		 *   The group node which is about to be expanded
 		 * @returns {object}
 		 *   An object with property updates to be applied when expanding the given group node
+		 *
+		 * @public
 		 */
 		getOrCreateExpandedOject : function (oAggregation, oGroupNode) {
 			var oCollapsed,
@@ -534,6 +587,8 @@ sap.ui.define([
 		 *   The paths to request side effects for
 		 * @returns {boolean}
 		 *   <code>true</code> if the binding is affected
+		 *
+		 * @public
 		 */
 		isAffected : function (oAggregation, aFilters, aSideEffectPaths) {
 			// returns true if the side effect path affects the property path
@@ -583,20 +638,26 @@ sap.ui.define([
 		 *   The new value of "@$ui5.node.isTotal"
 		 * @param {number} iLevel
 		 *   The new value of "@$ui5.node.level"
-		 * @param {string[]} aAllProperties
+		 * @param {string[]} [aAllProperties=[]]
 		 *   A list of all properties that might be missing in the given element and thus have to be
 		 *   nulled to avoid drill-down errors
+		 *
+		 * @public
 		 */
 		setAnnotations : function (oElement, bIsExpanded, bIsTotal, iLevel, aAllProperties) {
 			oElement["@$ui5.node.isExpanded"] = bIsExpanded;
 			oElement["@$ui5.node.isTotal"] = bIsTotal;
 			oElement["@$ui5.node.level"] = iLevel;
-			// avoid "Failed to drill-down" for missing properties
-			aAllProperties.forEach(function (sProperty) {
-				if (!(sProperty in oElement)) {
-					oElement[sProperty] = null;
-				}
-			});
+			if (aAllProperties) {
+				// avoid "Failed to drill-down" for missing properties
+				aAllProperties.forEach(function (vProperty) {
+					if (Array.isArray(vProperty)) {
+						_Helper.createMissing(oElement, vProperty);
+					} else if (!(vProperty in oElement)) {
+						oElement[vProperty] = null;
+					}
+				});
+			}
 		},
 
 		/**
@@ -613,6 +674,8 @@ sap.ui.define([
 		 *   An array that consists of two filters, the first one has to be applied after and the
 		 *   second one has to be applied before aggregating the data. Both can be
 		 *   <code>undefined</code>.
+		 *
+		 * @public
 		 */
 		splitFilter : function (oFilter, oAggregation) {
 			var aFiltersAfterAggregate = [],

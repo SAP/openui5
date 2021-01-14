@@ -641,18 +641,18 @@ sap.ui.define([
 	 *   The ordered list of properties by which this element is grouped; used for the key predicate
 	 *   and the filter
 	 * @param {string[]} aAllProperties
-	 *   A list of all properties that might be missing in the result and thus have to be nulled to
-	 *   avoid drill-down errors
+	 *   A list of all properties that might be missing in the result and thus have to be inherited
+	 *   from the group node or nulled, in order to avoid drill-down errors
 	 * @param {boolean} bLeaf
 	 *   Whether this element is a leaf
 	 * @param {boolean} bTotal
 	 *   Whether this element is a (sub)total
-	 * @param {object} oInstance
-	 *   The instance for which to calculate the key predicate
+	 * @param {object} oElement
+	 *   The element for which to calculate the key predicate
 	 * @param {object} mTypeForMetaPath
-	 *   A map from meta path to the entity type (as delivered by {@link #fetchTypes})
+	 *   A map from meta paths to entity types (as delivered by {@link #fetchTypes})
 	 * @param {string} sMetaPath
-	 *   The meta path for the entity
+	 *   The meta path for the given element
 	 * @returns {string}
 	 *   The key predicate or <code>undefined</code>, if key predicate cannot be determined
 	 *
@@ -660,26 +660,35 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#calculateKeyPredicate
 	_AggregationCache.calculateKeyPredicate = function (oGroupNode, aGroupBy, aAllProperties, bLeaf,
-			bTotal, oInstance, mTypeForMetaPath, sMetaPath) {
+			bTotal, oElement, mTypeForMetaPath, sMetaPath) {
 		var sPredicate;
 
-		// set grouping values for the levels above
-		aGroupBy.forEach(function (sName) {
-			if (!(sName in oInstance)) {
-				oInstance[sName] = oGroupNode[sName];
-			}
-		});
+		if (!(sMetaPath in mTypeForMetaPath)) {
+			return undefined; // nested object
+		}
+
+		if (oGroupNode) {
+			// inherit grouping (and additional and null) values from the level above
+			aAllProperties.forEach(function (vProperty) {
+				if (Array.isArray(vProperty)) {
+					_Helper.inheritPathValue(vProperty, oGroupNode, oElement);
+				} else if (!(vProperty in oElement)) {
+					oElement[vProperty] = oGroupNode[vProperty];
+				}
+			});
+		}
 		// prefer real key predicate for leaf
-		sPredicate = bLeaf && _Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath)
-			|| _Helper.getKeyPredicate(oInstance, sMetaPath, mTypeForMetaPath, aGroupBy, true);
-		_Helper.setPrivateAnnotation(oInstance, "predicate", sPredicate);
+		sPredicate = bLeaf && _Helper.getKeyPredicate(oElement, sMetaPath, mTypeForMetaPath)
+			|| _Helper.getKeyPredicate(oElement, sMetaPath, mTypeForMetaPath, aGroupBy, true);
+		_Helper.setPrivateAnnotation(oElement, "predicate", sPredicate);
 		if (!bLeaf) {
-			_Helper.setPrivateAnnotation(oInstance, "filter",
-				_Helper.getKeyFilter(oInstance, sMetaPath, mTypeForMetaPath, aGroupBy));
+			_Helper.setPrivateAnnotation(oElement, "filter",
+				_Helper.getKeyFilter(oElement, sMetaPath, mTypeForMetaPath, aGroupBy));
 		}
 		// set the node values
-		_AggregationHelper.setAnnotations(oInstance, bLeaf ? undefined : false, bTotal,
-			oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : 1, aAllProperties);
+		_AggregationHelper.setAnnotations(oElement, bLeaf ? undefined : false, bTotal,
+			oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : 1,
+			oGroupNode ? null : aAllProperties);
 
 		return sPredicate;
 	};

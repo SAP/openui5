@@ -3296,4 +3296,168 @@ sap.ui.define([
 			$select : "~"
 		});
 	});
+
+	//*********************************************************************************************
+	QUnit.test("createMissing: simple properties", function (assert) {
+		var oObject = {bar : undefined};
+
+		// code under test
+		_Helper.createMissing(oObject, ["bar"]);
+
+		assert.deepEqual(oObject, {bar : undefined});
+
+		assert.throws(function () {
+			// code under test
+			_Helper.createMissing(oObject, ["bar", "invalid"]);
+		}, TypeError);
+
+		// code under test
+		_Helper.createMissing(oObject, ["foo"]);
+
+		assert.deepEqual(oObject, {bar : undefined, foo : null});
+
+		// code under test (idempotency)
+		_Helper.createMissing(oObject, ["foo"]);
+
+		assert.deepEqual(oObject, {bar : undefined, foo : null});
+
+		assert.throws(function () {
+			// code under test
+			_Helper.createMissing(oObject, ["foo", "invalid"]);
+		}, TypeError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createMissing: paths", function (assert) {
+		var oEmpty = {},
+			oObject = {foo : oEmpty};
+
+		// code under test
+		_Helper.createMissing(oObject, ["foo"]);
+
+		assert.deepEqual(oObject, {foo : {}});
+		assert.strictEqual(oObject.foo, oEmpty);
+
+		// code under test
+		_Helper.createMissing(oObject, ["foo", "bar"]);
+
+		assert.deepEqual(oObject, {foo : {bar : null}});
+		assert.strictEqual(oObject.foo, oEmpty, "originally empty object has been modified");
+
+		assert.throws(function () {
+			// code under test
+			_Helper.createMissing(oObject, ["foo", "bar", "invalid"]);
+		}, TypeError);
+
+		// code under test
+		_Helper.createMissing(oObject, ["a", "b", "c"]);
+
+		assert.deepEqual(oObject, {
+			a : {
+				b : {
+					c : null
+				}
+			},
+			foo : {
+				bar : null
+			}
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inheritPathValue: simple properties", function (assert) {
+		var oSource = {bar : "<bar>", foo : "<foo>"},
+			sSource = JSON.stringify(oSource),
+			oTarget = {bar : undefined};
+
+		// code under test
+		_Helper.inheritPathValue(["foo"], oSource, oTarget);
+
+		assert.deepEqual(oTarget, {bar : undefined, foo : "<foo>"});
+
+		// code under test
+		_Helper.inheritPathValue(["bar"], oSource, oTarget);
+
+		assert.deepEqual(oTarget, {bar : undefined, foo : "<foo>"});
+		assert.strictEqual(JSON.stringify(oSource), sSource, "unchanged");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inheritPathValue: paths", function (assert) {
+		var oEmpty = {},
+			oSource = {
+				foo : {
+					bar : "<bar>"
+				}
+			},
+			sSource = JSON.stringify(oSource),
+			oTarget0 = {},
+			oTarget1 = {
+				foo : oEmpty
+			},
+			oTarget2 = {
+				foo : {
+					bar : undefined
+				}
+			};
+
+		// code under test
+		_Helper.inheritPathValue(["foo", "bar"], oSource, oTarget0);
+
+		assert.deepEqual(oTarget0, {
+			foo : {
+				bar : "<bar>"
+			}
+		});
+
+		// code under test
+		_Helper.inheritPathValue(["foo", "baz"], oSource, oTarget0);
+
+		assert.deepEqual(oTarget0, {
+			foo : {
+				bar : "<bar>",
+				baz : undefined // we don't care that "baz" was actually missing in source
+			}
+		});
+
+		// code under test
+		_Helper.inheritPathValue(["foo", "bar"], oSource, oTarget1);
+
+		assert.deepEqual(oTarget1, {
+			foo : {
+				bar : "<bar>"
+			}
+		});
+		assert.strictEqual(oTarget1.foo, oEmpty, "originally empty object has been modified");
+
+		// code under test
+		_Helper.inheritPathValue(["foo", "bar"], oSource, oTarget2);
+
+		assert.deepEqual(oTarget2, {
+			foo : {
+				bar : undefined
+			}
+		});
+
+		assert.strictEqual(JSON.stringify(oSource), sSource, "unchanged");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("inheritPathValue: errors", function (assert) {
+		var oSource = {
+				foo : {
+					bar : "<bar>"
+				}
+			};
+
+		assert.throws(function () {
+			// code under test
+			_Helper.inheritPathValue(["foo", "bar"], oSource, {foo : null});
+		}, TypeError);
+
+		assert.throws(function () {
+			// code under test
+			_Helper.inheritPathValue(["bar", "foo"], oSource, {});
+		}, TypeError);
+	});
 });

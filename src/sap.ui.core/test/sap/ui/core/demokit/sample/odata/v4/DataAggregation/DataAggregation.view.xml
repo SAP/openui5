@@ -11,7 +11,7 @@
 	<Table id="table" ariaLabelledBy="title" fixedRowCount="1"
 		rows="{path : '/BusinessPartners', parameters : {
 				$count : false,
-				$orderby : 'Country desc,Region desc,Segment,AccountResponsible'
+				$orderby : 'CountryText desc,RegionText desc,Segment,AccountResponsible'
 			}, suspended : true}" selectionMode="None" threshold="0"
 		visibleRowCount="{ui>/iVisibleRowCount}">
 		<extension>
@@ -45,10 +45,10 @@
 					/>
 			</template>
 		</Column>
-		<Column template="Country">
+		<Column template="CountryText">
 			<m:Label text="Country"/>
 		</Column>
-		<Column template="Region">
+		<Column template="RegionText">
 			<m:Label text="Region"/>
 		</Column>
 		<Column template="Segment">

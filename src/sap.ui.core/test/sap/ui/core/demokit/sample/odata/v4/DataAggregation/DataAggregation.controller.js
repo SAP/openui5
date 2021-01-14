@@ -27,7 +27,9 @@ sap.ui.define([
 						SalesNumber : {}
 					},
 					group : {
-						AccountResponsible : {}
+						AccountResponsible : {},
+						Country : {additionally : ['CountryText']},
+						Region : {additionally : ['RegionText']}
 					},
 					groupLevels : ['Country', 'Region', 'Segment']
 				},

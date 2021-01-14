@@ -479,6 +479,18 @@ sap.ui.define([
 		},
 		sApply : "filter(Name eq 'Foo')/groupby((Region),aggregate(SalesNumber))"
 			+ "/filter(SalesNumber ge 0)"
+	}, {
+		oAggregation : {
+			aggregate : {
+				SalesNumber : {}
+			},
+			group : {
+				Country : {additionally : ["CountryText", "Texts/Country"]},
+				Region : {additionally : ["RegionText", "Texts/Region"]}
+			}
+		},
+		sApply : "groupby((Country,Region,CountryText,Texts/Country,RegionText,Texts/Region)"
+			+ ",aggregate(SalesNumber))"
 	}].forEach(function (oFixture) {
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
 			var mAlias2MeasureAndMethod = {},
@@ -563,65 +575,167 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	[{
-		oAggregation : {
-			aggregate : {},
-			group : {A : {foo : "bar"}}
-		},
-		sError : "Unsupported 'foo' at property: A"
-	}, {
-		oAggregation : {
-			aggregate : {A : {foo : "bar"}},
-			group : {}
-		},
-		sError : "Unsupported 'foo' at property: A"
-	}, {
-		oAggregation : {
-			aggregate : {A : {subtotals : "true"}},
-			group : {}
-		},
-		sError : "Not a boolean value for 'subtotals' at property: A"
-	}, {
-		oAggregation : {
-			aggregate : {A : {}},
-			group : {},
-			subtotalsAtBottomOnly : "true"
-		},
-		sError : "Not a boolean value for 'subtotalsAtBottomOnly'"
-	}, {
-		oAggregation : {
-			aggregate : {A : {}},
-			group : {},
-			grandTotalAtBottomOnly : "true"
-		},
-		sError : "Not a boolean value for 'grandTotalAtBottomOnly'"
-	}, {
-		oAggregation : {
-			aggregate : {},
-			foo : {},
-			group : {}
-		},
-		sError : "Unsupported 'foo'"
-	}, {
-		oAggregation : {
-			aggregate : {},
-			group : []
-		},
-		sError : "Not a object value for 'group'"
-	}, {
-		oAggregation : {
-			aggregate : {},
-			group : {},
-			groupLevels : {}
-		},
-		sError : "Not a array value for 'groupLevels'"
-	}].forEach(function (oFixture) {
-		QUnit.test("buildApply: " + oFixture.sError, function (assert) {
-			assert.throws(function () {
-				// code under test
-				_AggregationHelper.buildApply(oFixture.oAggregation);
-			}, new Error(oFixture.sError));
-		});
+	QUnit.test("buildApply: checkTypeof", function (assert) {
+		var oAggregation = {},
+			oError = new Error();
+
+		this.mock(_AggregationHelper).expects("checkTypeof")
+			.withExactArgs(sinon.match.same(oAggregation), {
+				aggregate : {
+					"*" : {
+						grandTotal : "boolean",
+						max : "boolean",
+						min : "boolean",
+						name : "string",
+						subtotals : "boolean",
+						unit : "string",
+						"with" : "string"
+					}
+				},
+				grandTotalAtBottomOnly : "boolean",
+				group : {
+					"*" : {
+						additionally : ["string"]
+					}
+				},
+				groupLevels : ["string"],
+				subtotalsAtBottomOnly : "boolean"
+			}, "$$aggregation")
+			.throws(oError);
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply(oAggregation);
+		}, oError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkTypeof: primitive types", function (assert) {
+		// code under test
+		_AggregationHelper.checkTypeof(false, "boolean");
+
+		// code under test
+		_AggregationHelper.checkTypeof(0, "number");
+
+		// code under test
+		_AggregationHelper.checkTypeof("", "string");
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkTypeof(undefined, "boolean", "some/path");
+		}, new Error("Not a boolean value for 'some/path'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkTypeof(undefined, "number", "some/path");
+		}, new Error("Not a number value for 'some/path'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkTypeof(undefined, "string", "some/path");
+		}, new Error("Not a string value for 'some/path'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkTypeof(undefined, ["boolean"], "some/path");
+		}, new Error("Not an array value for 'some/path'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkTypeof(null, ["boolean"], "some/path");
+		}, new Error("Not an array value for 'some/path'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkTypeof(undefined, {}, "some/path");
+		}, new Error("Not an object value for 'some/path'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkTypeof([], {}, "some/path");
+		}, new Error("Not an object value for 'some/path'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkTypeof(null, {}, "some/path");
+		}, new Error("Not an object value for 'some/path'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.checkTypeof({invalid : "n/a"}, {}, "some/path");
+		}, new Error("Unsupported property: 'some/path/invalid'"));
+	});
+	//TODO Allow for alternative types, e.g. @param {string|string[]}? --> ["string", ["string"]]
+	// Idea: Any array with more than one entry would be a list of alternatives.
+	// --> [["string", ["string"]]] means @param {Array<(string|Array<string>)>} ;-)
+
+	//*********************************************************************************************
+	QUnit.test("checkTypeof: array", function (assert) {
+		var oAggregationHelperMock = this.mock(_AggregationHelper),
+			aValue = [{}, {}, {}];
+
+		oAggregationHelperMock.expects("checkTypeof")
+			.withExactArgs(sinon.match.same(aValue), ["~type~"], "some/path")
+			.callThrough(); // start the recursion
+		oAggregationHelperMock.expects("checkTypeof")
+			.withExactArgs(sinon.match.same(aValue[0]), "~type~", "some/path/0");
+		// Note: we use a slash separated path syntax here, like JSONModel, not a JS syntax like
+		// some.path[0] which might lead to strange effects for keys which are not identifiers...
+		oAggregationHelperMock.expects("checkTypeof")
+			.withExactArgs(sinon.match.same(aValue[1]), "~type~", "some/path/1");
+		oAggregationHelperMock.expects("checkTypeof")
+			.withExactArgs(sinon.match.same(aValue[2]), "~type~", "some/path/2");
+
+		// code under test
+		_AggregationHelper.checkTypeof(aValue, ["~type~"], "some/path");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkTypeof: object", function (assert) {
+		var oAggregationHelperMock = this.mock(_AggregationHelper),
+			oType = {
+				bar : "~bar~",
+				foo : "~foo~",
+				ignored : "n/a"
+			},
+			oValue = {
+				bar : {},
+				foo : {}
+			};
+
+		oAggregationHelperMock.expects("checkTypeof")
+			.withExactArgs(sinon.match.same(oValue), sinon.match.same(oType), "some/path")
+			.callThrough(); // start the recursion
+		oAggregationHelperMock.expects("checkTypeof")
+			.withExactArgs(sinon.match.same(oValue.bar), "~bar~", "some/path/bar");
+		oAggregationHelperMock.expects("checkTypeof")
+			.withExactArgs(sinon.match.same(oValue.foo), "~foo~", "some/path/foo");
+
+		// code under test
+		_AggregationHelper.checkTypeof(oValue, oType, "some/path");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkTypeof: map", function (assert) {
+		var oAggregationHelperMock = this.mock(_AggregationHelper),
+			oType = {
+				"*" : "~type~"
+			},
+			mValue = {
+				bar : {},
+				foo : {}
+			};
+
+		oAggregationHelperMock.expects("checkTypeof")
+			.withExactArgs(sinon.match.same(mValue), sinon.match.same(oType), "some/path")
+			.callThrough(); // start the recursion
+		oAggregationHelperMock.expects("checkTypeof")
+			.withExactArgs(sinon.match.same(mValue.bar), "~type~", "some/path/bar");
+		oAggregationHelperMock.expects("checkTypeof")
+			.withExactArgs(sinon.match.same(mValue.foo), "~type~", "some/path/foo");
+
+		// code under test
+		_AggregationHelper.checkTypeof(mValue, oType, "some/path");
 	});
 
 	//*********************************************************************************************
@@ -898,7 +1012,7 @@ sap.ui.define([
 					Measure : {}
 				},
 				group : {
-					Dimension : {}
+					Dimension : {additionally : ["Texts/Dimension"]}
 				},
 				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
 			},
@@ -909,12 +1023,14 @@ sap.ui.define([
 				},
 				group : { // Note: added by _AggregationHelper.buildApply before
 					Country : {},
-					Region : {},
-					Segment : {}
+					Region : {additionally : ["RegionText", "Texts/Region"]},
+					Segment : {additionally : ["SegmentText", "Texts/Segment"]}
 				},
 				groupLevels : ["Country", "Region"]
 			},
-			sOrderby = "SalesAmount desc,SalesNumber,Country desc,Region,Segment asc";
+			sOrderby = "SalesAmount desc,SalesNumber,Country desc,Region,Segment asc",
+			sOrderbyAdditionally
+				= "Country,RegionText desc,Texts/Region asc,SegmentText desc,Texts/Segment asc";
 
 		// code under test
 		assert.strictEqual(
@@ -941,6 +1057,11 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Texts/Dimension", oAggregation, 1),
+			"Texts/Dimension");
+
+		// code under test
+		assert.strictEqual(
 			_AggregationHelper.filterOrderby(sOrderby, oAggregationWithLevels, 1),
 			"SalesAmount desc,Country desc");
 
@@ -953,6 +1074,21 @@ sap.ui.define([
 		assert.strictEqual(
 			_AggregationHelper.filterOrderby(sOrderby, oAggregationWithLevels, 3),
 			"SalesAmount desc,SalesNumber,Segment asc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby(sOrderbyAdditionally, oAggregationWithLevels, 1),
+			"Country");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby(sOrderbyAdditionally, oAggregationWithLevels, 2),
+			"RegionText desc,Texts/Region asc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby(sOrderbyAdditionally, oAggregationWithLevels, 3),
+			"SegmentText desc,Texts/Segment asc");
 	});
 	//TODO Also support orderbyItems that start with a type cast?
 	// See "11.2.5.2 System Query Option $orderby":
@@ -981,8 +1117,22 @@ sap.ui.define([
 			};
 
 		// code under test
+		_AggregationHelper.setAnnotations(oElement, "~bIsExpanded~", "~bIsTotal~", "~iLevel~");
+
+		assert.deepEqual(oElement, {
+			"@$ui5.node.isExpanded" : "~bIsExpanded~",
+			"@$ui5.node.isTotal" : "~bIsTotal~",
+			"@$ui5.node.level" : "~iLevel~",
+			group : "~group~",
+			measure : "~measure~"
+		});
+
+		this.mock(_Helper).expects("createMissing")
+			.withExactArgs(sinon.match.same(oElement), ["Texts", "A"]);
+
+		// code under test
 		_AggregationHelper.setAnnotations(oElement, "~bIsExpanded~", "~bIsTotal~", "~iLevel~",
-			["foo", "bar", "group", "measure"]);
+			["foo", "bar", "group", "measure", ["Texts", "A"]]);
 
 		assert.deepEqual(oElement, {
 			"@$ui5.node.isExpanded" : "~bIsExpanded~",
@@ -1004,7 +1154,7 @@ sap.ui.define([
 				},
 				group: {
 					c : {}, // intentionally out of ABC order
-					a : {},
+					a : {additionally : ["TextA", "Texts/A"]},
 					b : {}
 				}
 				// groupLevels : ["a", "b"]
@@ -1013,7 +1163,7 @@ sap.ui.define([
 		assert.deepEqual(
 			// code under test
 			_AggregationHelper.getAllProperties(oAggregation),
-			["x", "y", "c", "a", "b", "UnitY"]);
+			["x", "y", "c", "a", "b", "UnitY", "TextA", ["Texts", "A"]]);
 	});
 
 	//*********************************************************************************************

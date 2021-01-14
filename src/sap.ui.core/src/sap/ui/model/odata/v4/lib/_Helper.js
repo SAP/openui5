@@ -338,6 +338,28 @@ sap.ui.define([
 		},
 
 		/**
+		 * Drills down into the given object according to the given path, creating missing objects
+		 * along the way, and setting a <code>null<code> value at the end in case the final
+		 * property is missing.
+		 *
+		 * @param {object} oObject
+		 *   The object to start at
+		 * @param {string[]} aSegments
+		 *   Relative path to drill-down into, as array of segments
+		 * @throws {Error}
+		 *   If a property along the way exists, but has an <code>undefined</code> or
+		 *   <code>null</code> value
+		 */
+		createMissing : function (oObject, aSegments) {
+			aSegments.reduce(function (oCurrent, sSegment, i) {
+				if (!(sSegment in oCurrent)) { // Note: TypeError if !oCurrent
+					oCurrent[sSegment] = i + 1 < aSegments.length ? {} : null;
+				}
+				return oCurrent[sSegment];
+			}, oObject);
+		},
+
+		/**
 		 * Returns a "request*" method corresponding to the given "fetch*" method.
 		 *
 		 * @param {string} sFetch
@@ -420,20 +442,20 @@ sap.ui.define([
 		},
 
 		/**
-		 * Drills down into the given object according to <code>aPath</code>.
+		 * Drills down into the given object according to the given path.
 		 *
-		 * @param {object} oData
+		 * @param {object} oObject
 		 *   The object to start at
-		 * @param {string[]} aPath
+		 * @param {string[]} aSegments
 		 *   Relative path to drill-down into, as array of segments
 		 * @returns {*}
-		 *   The result matching to <code>aPath</code> or <code>undefined</code> if the path leads
+		 *   The result matching to the given path, or <code>undefined</code> if the path leads
 		 *   into void
 		 */
-		drillDown : function (oData, aPath) {
-			return aPath.reduce(function (oData, sSegment) {
-				return (oData && sSegment in oData) ? oData[sSegment] : undefined;
-			}, oData);
+		drillDown : function (oObject, aSegments) {
+			return aSegments.reduce(function (oCurrent, sSegment) {
+				return (oCurrent && sSegment in oCurrent) ? oCurrent[sSegment] : undefined;
+			}, oObject);
 		},
 
 		/**
@@ -729,7 +751,7 @@ sap.ui.define([
 
 			aKeyProperties = aKeyProperties || mTypeForMetaPath[sMetaPath].$Key;
 			bFailed = aKeyProperties.some(function (vKey) {
-				var sKey, sKeyPath, aPath, sPropertyName, oType, vValue;
+				var sKey, sKeyPath, sPropertyName, aSegments, oType, vValue;
 
 				if (typeof vKey === "string") {
 					sKey = sKeyPath = vKey;
@@ -740,17 +762,17 @@ sap.ui.define([
 						sKey = sKeyPath;
 					}
 				}
-				aPath = sKeyPath.split("/");
+				aSegments = sKeyPath.split("/");
 
-				vValue = _Helper.drillDown(oInstance, aPath);
+				vValue = _Helper.drillDown(oInstance, aSegments);
 				if (vValue === undefined) {
 					return true;
 				}
 
 				// the last path segment is the name of the simple property
-				sPropertyName = aPath.pop();
+				sPropertyName = aSegments.pop();
 				// find the type containing the simple property
-				oType = mTypeForMetaPath[_Helper.buildPath(sMetaPath, aPath.join("/"))];
+				oType = mTypeForMetaPath[_Helper.buildPath(sMetaPath, aSegments.join("/"))];
 				vValue = _Helper.formatLiteral(vValue, oType[sPropertyName].$Type);
 				mKey2Value[sKey] = vValue;
 			});
@@ -925,6 +947,42 @@ sap.ui.define([
 					}
 				});
 			}
+		},
+
+		/**
+		 * Inherits a property value according to the given path from the given source object to the
+		 * given target. That is, the value is copied unless the target already has a value. Creates
+		 * missing objects along the way.
+		 *
+		 * Like the following, but for paths ;-)
+		 * if (!(sProperty in oTarget)) {
+		 *     oTarget[sProperty] = oSource[sProperty];
+		 * }
+		 *
+		 * @param {string[]} aSegments
+		 *   Relative path to drill-down into, as array of segments
+		 * @param {object} oSource
+		 *   The source object to inherit from
+		 * @param {object} oTarget
+		 *   The target object to inherit into
+		 * @throws {Error}
+		 *   If a property along the way exists, but has an <code>undefined</code> or
+		 *   <code>null</code> value
+		 */
+		inheritPathValue : function (aSegments, oSource, oTarget) {
+			aSegments.forEach(function (sSegment, i) {
+				var bMissing = !(sSegment in oTarget); // Note: TypeError if !oTarget
+
+				if (i + 1 < aSegments.length) { // intermediate step
+					if (bMissing) {
+						oTarget[sSegment] = {};
+					}
+					oSource = oSource[sSegment];
+					oTarget = oTarget[sSegment];
+				} else if (bMissing) {
+					oTarget[sSegment] = oSource[sSegment];
+				}
+			});
 		},
 
 		/**
