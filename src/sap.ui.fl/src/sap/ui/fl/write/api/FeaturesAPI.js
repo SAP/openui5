@@ -4,11 +4,11 @@
 
 sap.ui.define([
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Utils",
+	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/Layer"
 ], function(
 	Settings,
-	FlexUtils,
+	Storage,
 	Layer
 ) {
 	"use strict";
@@ -94,6 +94,17 @@ sap.ui.define([
 				.then(function (oSettings) {
 					return oSettings.isVersioningEnabled(sLayer);
 				});
+		},
+
+		/**
+		 * Checks if context sharing is enbaled.
+		 *
+		 * @param {string} sLayer - Layer to get correct connector
+		 * @returns {Promise<boolean>} Resolves to a boolean indicating if context sharing is enabled
+		 * @public
+		 */
+		isContextSharingEnabled: function (sLayer) {
+			return Storage.isContextSharingEnabled({layer: sLayer});
 		}
 	};
 

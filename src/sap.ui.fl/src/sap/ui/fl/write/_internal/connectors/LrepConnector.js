@@ -328,6 +328,15 @@ sap.ui.define([
 		},
 
 		/**
+		 * Check if context sharing is enabled in the backend.
+		 *
+		 * @returns {Promise<boolean>} Promise resolves with true
+		 */
+		isContextSharingEnabled: function () {
+			return Promise.resolve(true);
+		},
+
+		/**
 		 * Called to get the flex features.
 		 *
 		 * @param {object} mPropertyBag Property bag
