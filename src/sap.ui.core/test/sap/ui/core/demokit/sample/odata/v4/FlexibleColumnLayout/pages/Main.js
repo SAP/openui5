@@ -13,24 +13,6 @@ sap.ui.define([
 	var LayoutType = library.LayoutType,
 		sViewName = "sap.ui.core.sample.odata.v4.FlexibleColumnLayout.Main";
 
-	function checkMoreButtonCount(oTrigger, sExpected) {
-		Opa5.assert.strictEqual(oTrigger.getDomRef().innerText.replace(/\s/g, ""),
-			"More" + sExpected);
-	}
-
-	/**
-	 * Compares the IDs of two different controls lexicographically.
-	 *
-	 * @param {sap.ui.core.Control} oControl1 - The first control
-	 * @param {sap.ui.core.Control} oControl2 - The second control
-	 * @returns {number}
-	 *   <code>-1</code> if the ID of the first control is lexicographically smaller than the ID
-	 *   of the second control; <code>1</code> otherwise.
-	 */
-	function compareByID(oControl1, oControl2) {
-		return oControl1.getId() < oControl2.getId() ? -1 : 1;
-	}
-
 	Opa5.createPageObjects({
 		onTheApplication : {
 			actions : {
@@ -123,16 +105,17 @@ sap.ui.define([
 			},
 			assertions : {
 				checkSalesOrder : function (iRow, sSalesOrderID, sNote) {
-					this.waitFor({
+					Helper.waitForSortedByID(this, {
 						controlType : "sap.m.Text",
 						id : /salesOrderId|salesOrderNote/,
 						matchers : function (oControl) {
 							return oControl.getBindingContext().getIndex() === iRow;
 						},
 						success : function (aControls) {
-							aControls.sort(compareByID);
-							Opa5.assert.strictEqual(aControls[0].getText(), sSalesOrderID);
-							Opa5.assert.strictEqual(aControls[1].getText(), sNote);
+							Opa5.assert.strictEqual(aControls[0].getText(), sSalesOrderID,
+								"Sales Order Id is " + sSalesOrderID);
+							Opa5.assert.strictEqual(aControls[1].getText(), sNote,
+								"Note is " + sNote);
 						},
 						viewName : sViewName
 					});
@@ -152,13 +135,12 @@ sap.ui.define([
 					});
 				},
 				checkSalesOrdersCount : function (iCount) {
-					this.waitFor({
+					Helper.waitForSortedByID(this, {
 						id : /SalesOrderList-trigger|salesOrderListTitle/,
 						success : function (aControls) {
-							aControls.sort(compareByID);
-							checkMoreButtonCount(aControls[0], "[5/" + iCount + "]");
+							Helper.checkMoreButtonCount(aControls[0], "[5/" + iCount + "]");
 							Opa5.assert.strictEqual(aControls[1].getText(),
-								iCount + " New Sales Orders");
+								iCount + " New Sales Orders", "Count in title is " + iCount);
 						},
 						viewName : sViewName
 					});
@@ -231,16 +213,17 @@ sap.ui.define([
 					Helper.checkInputValue(this, sViewName, "SalesOrder::id", sSalesOrderID);
 				},
 				checkSalesOrderItem : function (iRow, sItemPosition, sQuantity) {
-					this.waitFor({
+					Helper.waitForSortedByID(this, {
 						controlType : "sap.m.Text",
 						id : /itemPosition|itemQuantity/,
 						matchers : function (oControl) {
 							return oControl.getBindingContext().getIndex() === iRow;
 						},
 						success : function (aControls) {
-							aControls.sort(compareByID);
-							Opa5.assert.strictEqual(aControls[0].getText(), sItemPosition);
-							Opa5.assert.strictEqual(aControls[1].getText(), sQuantity);
+							Opa5.assert.strictEqual(aControls[0].getText(), sItemPosition,
+								"Item position is " + sItemPosition);
+							Opa5.assert.strictEqual(aControls[1].getText(), sQuantity,
+								"Quantity is " + sQuantity);
 						},
 						viewName : sViewName
 					});
@@ -253,20 +236,19 @@ sap.ui.define([
 							Opa5.assert.ok(
 								aControls.every(function (oControl) {
 									return oControl.getText() !== sItemPosition;
-								}), "Item'" + sItemPosition + "' not found"
+								}), "Item '" + sItemPosition + "' not found"
 							);
 						},
 						viewName : sViewName
 					});
 				},
 				checkSalesOrderItemsCount : function (iCount) {
-					this.waitFor({
+					Helper.waitForSortedByID(this, {
 						id : /SO_2_SOITEM-trigger|lineItemsTitle/,
 						success : function (aControls) {
-							aControls.sort(compareByID);
-							checkMoreButtonCount(aControls[0], "[5/" + iCount + "]");
+							Helper.checkMoreButtonCount(aControls[0], "[5/" + iCount + "]");
 							Opa5.assert.strictEqual(aControls[1].getText(),
-								iCount + " Sales Order Line Items");
+								iCount + " Sales Order Line Items", "Count in title is " + iCount);
 						},
 						viewName : sViewName
 					});
