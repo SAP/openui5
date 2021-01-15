@@ -97,6 +97,7 @@ sap.ui.define([
 		 * @param {sap.ui.core.Control} mPropertyBag.selector - Control to retrieve the associated flex persistence
 		 * @param {string} [mPropertyBag.upToLayer] - Layer to compare with
 		 * @param {boolean} [mPropertyBag.ignoreMaxLayerParameter] - Indicates that personalization is to be checked without max layer filtering
+		 * @param {boolean} [mPropertyBag.includeCtrlVariants] - Indicates that control variant changes shall be included
 		 * @returns {Promise<boolean>} Promise that resolves to a boolean, indicating if a personalization change that was created during runtime is active in the application
 
 		 * @private

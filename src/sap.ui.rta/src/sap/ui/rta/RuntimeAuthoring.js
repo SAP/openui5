@@ -1633,7 +1633,8 @@ function(
 			isDraftAvailable: false,
 			layer: this.getLayer(),
 			selector: this.getRootControlInstance(),
-			ignoreMaxLayerParameter: false
+			ignoreMaxLayerParameter: false,
+			includeCtrlVariants: true
 		};
 		return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo)
 		.then(function (oReloadInfo) {

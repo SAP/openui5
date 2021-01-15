@@ -69,6 +69,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {sap.ui.fl.Control} mPropertyBag.control - Retrieves the associated flex persistence
 	 * @param {boolean} mPropertyBag.invalidateCache - Flag if the cache should be invalidated
+	 * @param {boolean} mPropertyBag.includeCtrlVariants - Flag if control variant change should be included
 	 * @returns {Promise<sap.ui.fl.Change[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
 	FlexObjectState.getFlexObjects = function (mPropertyBag) {

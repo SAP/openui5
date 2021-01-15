@@ -137,6 +137,7 @@ sap.ui.define([
 				layer : this.oRta.getLayer(),
 				selector : this.oRta.getRootControlInstance(),
 				ignoreMaxLayerParameter : false,
+				includeCtrlVariants: true,
 				parsedHash : {params : {}}
 			};
 
@@ -170,6 +171,7 @@ sap.ui.define([
 					selector : this.oReloadInfo.selector,
 					reference: "sap.ui.rta.qunitrta.Component",
 					ignoreMaxLayerParameter : this.oReloadInfo.ignoreMaxLayerParameter,
+					includeCtrlVariants: this.oReloadInfo.includeCtrlVariants,
 					upToLayer: "CUSTOMER"
 				}, "then hasHigherLayerChanges is called with the correct parameters");
 
@@ -230,6 +232,7 @@ sap.ui.define([
 				layer : this.oRta.getLayer(),
 				selector : this.oRta.getRootControlInstance(),
 				ignoreMaxLayerParameter : false,
+				includeCtrlVariants: true,
 				parsedHash : this.mParsedHash
 			};
 		},
@@ -270,6 +273,7 @@ sap.ui.define([
 				layer : this.oRta.getLayer(),
 				selector : this.oRta.getRootControlInstance(),
 				ignoreMaxLayerParameter : false,
+				includeCtrlVariants: true,
 				parsedHash : this.mParsedHash
 			};
 		},
@@ -301,6 +305,7 @@ sap.ui.define([
 					selector : this.oReloadInfo.selector,
 					reference: "sap.ui.rta.qunitrta.Component",
 					ignoreMaxLayerParameter : this.oReloadInfo.ignoreMaxLayerParameter,
+					includeCtrlVariants: this.oReloadInfo.includeCtrlVariants,
 					upToLayer: "CUSTOMER"
 				}, "then hasHigherLayerChanges is called with the correct parameters");
 
