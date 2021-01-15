@@ -5368,6 +5368,25 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
+
+		QUnit.test("Check default destination", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var DestinationSelect = this.oCardEditor.getAggregation("_formContent")[2].getAggregation("_field");
+					assert.ok(this.oCardEditor.getAggregation("_formContent")[2].isA("sap.ui.integration.designtime.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(DestinationSelect.getBusy() === true, "Content of Form contains: Destination Field that is busy");
+					setTimeout(function () {
+						//should resolve the destination within 1000ms
+						assert.ok(DestinationSelect.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
+						assert.ok(DestinationSelect.getSelectedItem().getKey() === "Northwind", "Content of Form contains: Destination Field selectedItem Key");
+						assert.ok(DestinationSelect.getSelectedItem().getText() === "Northwind", "Content of Form contains: Destination Field selectedItem Text");
+						resolve();
+					}, 1500);
+				}.bind(this));
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("Expanded groups", {

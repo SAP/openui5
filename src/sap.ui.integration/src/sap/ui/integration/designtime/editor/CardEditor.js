@@ -1585,7 +1585,7 @@ sap.ui.define([
 					value: oConfiguration.destinations[n].name,
 					defaultValue: oConfiguration.destinations[n].defaultUrl,
 					_settingspath: "/form/items/" + [n + ".destinaton"],
-					_values: _values,
+					_values: [],
 					_destinationName: n
 				}, oConfiguration.destinations[n]);
 				if (typeof oItems[n + ".destinaton"].label === "undefined") {
@@ -1596,7 +1596,6 @@ sap.ui.define([
 					this._oEditorCard.getHostInstance().getDestinations().then(function (n, a) {
 						oItems[n + ".destinaton"]._values = _values.concat(a);
 						oItems[n + ".destinaton"]._loading = false;
-						oItems[n + ".destinaton"].value = oConfiguration.destinations[n].name;
 						this._settingsModel.checkUpdate(true);
 					}.bind(this, n)); //pass in n as first parameter
 				}
