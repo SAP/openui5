@@ -5,12 +5,10 @@
 sap.ui.define(["./overlay/Overlay", "./Tooltip"], function (Overlay, Tooltip) {
 	"use strict";
 
-	var TOOLTIP_POINTER_OFFSET = 30;
-
 	var ResponsiveImageMap = function (oMap, oImg) {
 		this.oImg = oImg;
 		this.oOverlay = new Overlay(this.oImg.parentNode);
-		this.oToolTip = new Tooltip(this.oImg.parentNode);
+		this.oToolTip = new Tooltip();
 		this.fnHandlers = {
 			areaMouseenter: this.onmouseenter.bind(this),
 			areaMouseleave: this.onmouseleave.bind(this)
@@ -49,8 +47,7 @@ sap.ui.define(["./overlay/Overlay", "./Tooltip"], function (Overlay, Tooltip) {
 
 	ResponsiveImageMap.prototype.onmouseenter = function (oEvent) {
 		var sCoords = oEvent.target.coords,
-			sShape = oEvent.target.getAttribute("shape"),
-			oRect = this.oImg.getBoundingClientRect();
+			sShape = oEvent.target.getAttribute("shape");
 
 		this.sTitle = oEvent.target.getAttribute('title');
 		oEvent.target.setAttribute('title', ''); // prevent browser showing the title as tooltip
@@ -60,11 +57,7 @@ sap.ui.define(["./overlay/Overlay", "./Tooltip"], function (Overlay, Tooltip) {
 
 		if (this.sTitle) {
 			this.oToolTip.setText(this.sTitle);
-			this.oToolTip.setPosition({
-				top: (oEvent.clientY - oRect.top) - (this.oToolTip.getBounds().offsetHeight + TOOLTIP_POINTER_OFFSET),
-				left: (oEvent.clientX - oRect.left) - (this.oToolTip.getBounds().offsetWidth / 2)
-			});
-			this.oToolTip.show();
+			this.oToolTip.show(this.oOverlay.getCurrentShape().oContainer);
 		}
 	};
 
@@ -75,7 +68,7 @@ sap.ui.define(["./overlay/Overlay", "./Tooltip"], function (Overlay, Tooltip) {
 		this.oToolTip.hide();
 	};
 
-	ResponsiveImageMap.prototype.removeEventListeners = function() {
+	ResponsiveImageMap.prototype.removeEventListeners = function () {
 		this.areas.forEach(function (oArea) {
 			oArea.element.removeEventListener("mouseenter", this.fnHandlers.areaMouseenter);
 			oArea.element.removeEventListener("mouseleave", this.fnHandlers.areaMouseleave);

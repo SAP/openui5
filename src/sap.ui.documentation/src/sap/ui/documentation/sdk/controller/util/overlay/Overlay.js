@@ -53,6 +53,7 @@ sap.ui.define(["sap/base/Log",  "./shapes/ShapeFactory"], function (Log, ShapeFa
 		if (!oShape) {
 			// new type of shape
 			oShape = ShapeFactory.create(sShape, sCoords);
+			oShape.setPosition(sCoords);
 
 			this.oShapes[sShape] = oShape;
 			this.oContainer.appendChild(oShape.oContainer);
