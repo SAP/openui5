@@ -274,7 +274,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarUtils', 'sap/ui/unified/calendar
 
 			this.renderDay(oRm, oMonth, aDays[i], oHelper, true, bWeekNum, -1);
 
-			if (i % 7 === 6) {
+			if (i % 7 === 6 || i === iLength - 1) {
 				oRm.close("div");
 			}
 		}

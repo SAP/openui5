@@ -93,6 +93,7 @@ sap.ui.define([
 			// Act
 			var oMonth = new Month({
 			}).placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
 
 			oMonth.setDate(createDate(9999, 11, 1));
 			sap.ui.getCore().applyChanges();
