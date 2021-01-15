@@ -207,7 +207,7 @@ sap.ui.define([
 		}
 
 		aSelectors.forEach(function (oSelector) {
-			if (!oChange[sPropertyKey].includes(oSelector.getId())) {
+			if (!includes(oChange[sPropertyKey], oSelector.getId())) {
 				oChange[sPropertyKey].push(oSelector.getId());
 			}
 		});
