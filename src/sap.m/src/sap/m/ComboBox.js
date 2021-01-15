@@ -224,66 +224,6 @@ sap.ui.define([
 		/* =========================================================== */
 		/* Private methods                                             */
 		/* =========================================================== */
-
-		function fnHandleKeyboardNavigation(oControl, oItem) {
-
-			if (!oItem) {
-				return;
-			}
-
-			var oDomRef = oControl.getFocusDomRef(),
-				iSelectionStart = oControl._getSelectionRange().start,
-				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
-				bShouldResetSelectionStart = oControl._shouldResetSelectionStart(oItem),
-				oSelectedItem = oControl.getSelectedItem(),
-				bGroupHeaderItem = oItem.isA("sap.ui.core.SeparatorItem"),
-				oListItem = ListHelpers.getListItem(oItem);
-
-
-			oControl.handleListItemsVisualFocus(oListItem);
-
-			oControl.setSelection(oItem);
-
-			if (oItem !== oSelectedItem && !bGroupHeaderItem) {
-				oControl.updateDomValue(oItem.getText());
-
-				oControl.fireSelectionChange({ selectedItem: oItem });
-
-				// update the selected item after the change event is fired (the selection may change)
-				oItem = oControl.getSelectedItem();
-				oListItem = ListHelpers.getListItem(oItem);
-
-				if (bShouldResetSelectionStart) {
-					iSelectionStart = 0;
-				}
-
-				oControl.selectText(iSelectionStart, oDomRef.value.length);
-
-				oControl._bIsLastFocusedItemHeader = false;
-			}
-
-			if (bGroupHeaderItem) {
-				// when visual focus moves to the group header item
-				// we should deselect and leave only the input typed in by the user
-				oControl.setSelectedItem(null);
-				oControl.fireSelectionChange({ selectedItem: null });
-
-				oControl.updateDomValue(sTypedValue);
-				oControl._bIsLastFocusedItemHeader = true;
-
-				oControl._getGroupHeaderInvisibleText().setText(oControl._oRb.getText("LIST_ITEM_GROUP_HEADER") + " " + oItem.getText());
-			}
-
-			if (oControl.isOpen()) {
-				oControl.removeStyleClass("sapMFocus");
-				oControl._getList().addStyleClass("sapMListFocus");
-			} else {
-				oControl.addStyleClass("sapMFocus");
-			}
-
-			scrollToItem(oListItem, oControl.getPicker());
-		}
-
 		function fnSelectedItemOnViewPort(bIsListHidden) {
 			var oItem = this.getSelectedItem(),
 				oListItem = ListHelpers.getListItem(oItem),
@@ -392,51 +332,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Returns the next focusable item when keyboard navigation is in place.
-		 *
-		 * @param {boolean} bDirectionDown The direction of next selected item. <code>true</code> = down, <code>false</code> = up
-		 * @returns {sap.ui.core.Item|sap.ui.core.SeparatorItem} The next item to be focused.
-		 * @private
-		 */
-		ComboBox.prototype.getNextFocusableItem = function (bDirectionDown) {
-			var aAllSelectableItems = this.getSelectableItems(),
-				aSelectableNotSeparatorItems = this.getNonSeparatorSelectableItems(aAllSelectableItems),
-				bFocusInInput = this.hasStyleClass("sapMFocus"),
-				oItemToUse = this.getSelectedItem() || ListHelpers.getItemByListItem(this.getItems(), this._oLastFocusedListItem),
-				bMessageValueStateActive = this.getFormattedTextFocused(),
-				oNextSelectableItem;
-
-			if ((bFocusInInput && this.isOpen()) || bMessageValueStateActive) {
-				// Visual focus on input or formatted text value state header and the picker is opened
-				oNextSelectableItem = aAllSelectableItems[0];
-			} else if (bFocusInInput && !this.getValueStateLinks().length) {
-				oNextSelectableItem = aSelectableNotSeparatorItems[aSelectableNotSeparatorItems.indexOf(oItemToUse) + (bDirectionDown ? 1 : -1)];
-			} else {
-				// Visual focus is on the list
-				oNextSelectableItem = aAllSelectableItems[aAllSelectableItems.indexOf(oItemToUse) + (bDirectionDown ? 1 : -1)];
-			}
-
-			if (bMessageValueStateActive || (!bMessageValueStateActive && oItemToUse === aAllSelectableItems[0] && !bDirectionDown && this.getValueStateLinks().length)) {
-				this.setProperty("formattedTextFocused", !bMessageValueStateActive);
-			}
-
-			return oNextSelectableItem;
-		};
-
-		/**
-		 * Filters out the separator items form the selectable items of the ComboBox.
-		 *
-		 * @param {sap.ui.core.Item[]} aItems Array of items to be filtered.
-		 * @returns {sap.ui.core.Item[]} Array of non separator items.
-		 * @private
-		 */
-		ComboBox.prototype.getNonSeparatorSelectableItems = function (aItems) {
-			return aItems.filter(function (oItem) {
-				return !oItem.isA("sap.ui.core.SeparatorItem");
-			});
-		};
-
-		/**
 		 * Checks whether the text of the item starts with the input in the text field of the control.
 		 *
 		 * @param {sap.ui.core.Item} oItem The item to be checked against.
@@ -496,27 +391,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Handles the change of the visual focus from the previous to the next list item.
-		 *
-		 * @param {sap.m.ListItemBase} oListItem The list item to be focused.
-		 * @private
-		 */
-		ComboBox.prototype.handleListItemsVisualFocus = function (oListItem) {
-			if (this._oLastFocusedListItem) {
-				this._oLastFocusedListItem.removeStyleClass("sapMLIBFocused");
-				this._oLastFocusedListItem = null;
-			} else if (this.isOpen() && this.getFocusDomRef()) {
-				// Add aria-activedescendant because the control is not rerendered when focusing the initially selected item
-				this.getFocusDomRef().setAttribute("aria-activedescendant", oListItem.getId());
-			}
-
-			if (oListItem) {
-				this._oLastFocusedListItem = oListItem;
-				oListItem.addStyleClass("sapMLIBFocused");
-			}
-		};
-
-		/**
 		 * Updates and synchronizes the <code>selectedItem</code> association, <code>selectedItemId</code>
 		 * and <code>selectedKey</code> properties.
 		 *
@@ -525,7 +399,6 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.setSelection = function(vItem) {
 			var oList = this._getList(),
-				oSuggestionPopover = this._getSuggestionsPopover(),
 				oListItem, sKey;
 
 			this.setAssociation("selectedItem", vItem);
@@ -547,10 +420,6 @@ sap.ui.define([
 
 			sKey = vItem ? vItem.getKey() : "";
 			this._setPropertyProtected("selectedKey", sKey);
-
-			if (oSuggestionPopover) {
-				oSuggestionPopover._iPopupListSelectedIndex = this.getItems().indexOf(vItem);
-			}
 		};
 
 		/**
@@ -678,7 +547,7 @@ sap.ui.define([
 			}
 
 			// holds reference to the last focused GroupHeaderListItem if such exists
-			this._oLastFocusedListItem = null;
+			this.setLastFocusedListItem(null);
 			this._bIsLastFocusedItemHeader = null;
 
 			this._oItemObserver = new ManagedObjectObserver(this._forwardItemProperties.bind(this));
@@ -691,27 +560,10 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onBeforeRendering = function() {
 			ComboBoxBase.prototype.onBeforeRendering.apply(this, arguments);
-
-			var oSelectedItem = this.getSelectedItem(),
-				oList = this._getList(),
-				oSelectedListItem = oSelectedItem && ListHelpers.getListItem(oSelectedItem),
-				bFormattedTextHeaderFocused = this.getProperty("formattedTextFocused"),
-				oCustomHeader = this.getPicker() && this.getPicker().getCustomHeader(),
-				oPseudoFocusedElement = (Device.browser.msie && oCustomHeader && oCustomHeader.getFormattedText) ?  oCustomHeader.getFormattedText() : oCustomHeader;
-
 			this.synchronizeSelection();
 
-			if (!this.getOpen() && document.activeElement === this.getFocusDomRef() && this.getEnabled()) {
+			if (!this.isOpen() && document.activeElement === this.getFocusDomRef() && this.getEnabled()) {
 				this.addStyleClass("sapMFocus");
-			}
-
-			if (bFormattedTextHeaderFocused) {
-				oPseudoFocusedElement.addStyleClass("sapMPseudoFocus");
-				oList.removeStyleClass("sapMListFocus");
-				oSelectedListItem.removeStyleClass("sapMLIBFocused");
-				this.removeStyleClass("sapMFocus");
-			} else if (oPseudoFocusedElement) {
-				oPseudoFocusedElement.removeStyleClass("sapMPseudoFocus");
 			}
 		};
 
@@ -725,7 +577,7 @@ sap.ui.define([
 			this._oRb = null;
 
 			this._oSelectedItemBeforeOpen = null;
-			this._oLastFocusedListItem = null;
+			this.setLastFocusedListItem(null);
 
 			if (this._oItemObserver) {
 				this._oItemObserver.disconnect();
@@ -763,7 +615,6 @@ sap.ui.define([
 		 * @protected
 		 */
 		ComboBox.prototype.onBeforeRenderingList = function() {
-
 			if (this.bProcessingLoadItemsEvent) {
 				var oList = this._getList(),
 					oFocusDomRef = this.getFocusDomRef();
@@ -812,7 +663,7 @@ sap.ui.define([
 
 			if (oSelectedItem) {
 				oList.setSelectedItem(oSelectedListItem);
-				this.handleListItemsVisualFocus(oSelectedListItem);
+				this.setLastFocusedListItem(oSelectedListItem);
 			}
 
 			if (oList) {
@@ -846,8 +697,8 @@ sap.ui.define([
 			// As the list items are destroyed, the reference kept here will prevent the item's destruction.
 			// Also we need to know the last selected item so that we can determine what will be the next
 			// item which should be focused upon navigation.
-			if (this._oLastFocusedListItem) {
-				oLastSelectedItem = ListHelpers.getItemByListItem(aEnabledItems, this._oLastFocusedListItem);
+			if (this.getLastFocusedListItem()) {
+				oLastSelectedItem = ListHelpers.getItemByListItem(aEnabledItems, this.getLastFocusedListItem());
 			}
 
 			oList.destroyItems();
@@ -870,9 +721,7 @@ sap.ui.define([
 				itemsVisibilityHandler(aEnabledItems, oFilterResults);
 			}
 
-			if (oLastSelectedItem) {
-				this._oLastFocusedListItem = ListHelpers.getListItem(oLastSelectedItem);
-			}
+			oLastSelectedItem && this.setLastFocusedListItem(ListHelpers.getListItem(oLastSelectedItem));
 		};
 
 		/**
@@ -941,13 +790,12 @@ sap.ui.define([
 				this.open();
 			}
 
-			if (this._oLastFocusedListItem) {
-				this._oLastFocusedListItem.removeStyleClass("sapMLIBFocused");
-				this._oLastFocusedListItem = null;
+			if (this.getLastFocusedListItem()) {
+				this.getLastFocusedListItem().removeStyleClass("sapMLIBFocused");
+				this.setLastFocusedListItem(null);
 			}
 
 			// always focus input field when typing in it
-			this.setFormattedTextFocused(false);
 			this.addStyleClass("sapMFocus");
 			this._getList().removeStyleClass("sapMListFocus");
 
@@ -978,7 +826,7 @@ sap.ui.define([
 			if (bEmptyValue && !this.bOpenedByKeyboardOrButton && !this.isPickerDialog()) {
 				aVisibleItems = this.getItems();
 			} else {
-				aVisibleItems = this.getNonSeparatorSelectableItems(oFilterResults.items);
+				aVisibleItems = ListHelpers.getSelectableItems(oFilterResults.items);
 				itemsVisibilityHandler(this.getItems(), oFilterResults);
 			}
 
@@ -1078,7 +926,7 @@ sap.ui.define([
 				mParam = this.getChangeEventParams(),
 				bSelectedItemChanged = (oItem !== this.getSelectedItem());
 
-			this.updateDomValue(oItem.getText());
+			oItem && this.updateDomValue(oItem.getText());
 			this.setSelection(oItem);
 			this.fireSelectionChange({
 				selectedItem: this.getSelectedItem()
@@ -1107,7 +955,7 @@ sap.ui.define([
 				return;
 			}
 
-			this.handleListItemsVisualFocus(oListItem);
+			this.setLastFocusedListItem(oListItem);
 			this.updateDomValue(sText);
 
 			// if a highlighted item is pressed fire change event
@@ -1136,8 +984,6 @@ sap.ui.define([
 			var fnPickerTypeBeforeOpen = this["onBeforeOpen" + this.getPickerType()],
 				oDomRef = this.getFocusDomRef();
 
-			this.setProperty("open", true);
-
 			// the dropdown list can be opened by calling the .open() method (without
 			// any end user interaction), in this case if items are not already loaded
 			// and there is an {@link #loadItems} event listener attached, the items should be loaded
@@ -1150,7 +996,7 @@ sap.ui.define([
 				// expose a parent/child contextual relationship to assistive technologies,
 				// notice that the "aria-controls" attribute is set when the popover opened.
 				oDomRef.setAttribute("aria-controls", this.getPicker().getId());
-
+				oDomRef.setAttribute("aria-expanded", true);
 			}
 
 			// call the hook to add additional content to the list
@@ -1207,12 +1053,15 @@ sap.ui.define([
 		ComboBox.prototype.onBeforeClose = function() {
 			ComboBoxBase.prototype.onBeforeClose.apply(this, arguments);
 			var oDomRef = this.getFocusDomRef();
-			this.setProperty("open", false);
-			this.setProperty("formattedTextFocused", false);
 
 			if (oDomRef) {
 				// notice that the "aria-controls" attribute is removed when the popover is closed.
 				oDomRef.removeAttribute("aria-controls");
+				oDomRef.setAttribute("aria-expanded", false);
+			}
+
+			if (document.activeElement === oDomRef) {
+				this.updateFocusOnClose();
 			}
 
 			// remove the active state of the control's field
@@ -1336,39 +1185,26 @@ sap.ui.define([
 		};
 
 		/**
-		 * Handles the <code>sapdown</code> pseudo event when the Down arrow key is pressed.
+		 * Handles the <code>sapup</code>, <code>sapdown</code>, <code>sappageup</code>, <code>sappagedown</code>,
+		 * <code>saphome</code>, <code>sapend</code> pseudo events when the Up/Down/Page Up/Page Down/Home/End key is pressed.
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
 		 * @private
 		 */
-		ComboBox.prototype.onsapdown = function(oEvent) {
-			var oControl = oEvent.srcControl;
-
-			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!oControl.getEnabled() || !oControl.getEditable()) {
-				return;
-			}
-
-			this.syncPickerContent();
-
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-
-
-			// prevent document scrolling when arrow keys are pressed
-			oEvent.preventDefault();
-			this.loadItems(function navigateToNextSelectableItem() {
-				fnHandleKeyboardNavigation.call(this, oControl, this.getNextFocusableItem(true /*Direction down*/));
-			});
-		};
+		["onsapup", "onsapdown", "onsappageup", "onsappagedown", "onsaphome", "onsapend"].forEach(function(sName) {
+			ComboBox.prototype[sName] = function (oEvent) {
+				this.handleListNavigation(oEvent, sName);
+			};
+		});
 
 		/**
-		 * Handles the <code>sapup</code> pseudo event when the Up arrow key is pressed.
+		 * Handles the list navigation
 		 *
 		 * @param {jQuery.Event} oEvent The event object.
+		 * @param {string} sName The event name.
 		 * @private
 		 */
-		ComboBox.prototype.onsapup = function(oEvent) {
+		ComboBox.prototype.handleListNavigation = function (oEvent, sName) {
 			var oControl = oEvent.srcControl;
 
 			// in case of a non-editable or disabled combo box, the selection cannot be modified
@@ -1377,155 +1213,132 @@ sap.ui.define([
 			}
 
 			this.syncPickerContent();
-
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-
-			// prevent document scrolling when arrow keys are pressed
-			oEvent.preventDefault();
-
-			this.loadItems(function navigateToPrevSelectableItem() {
-				fnHandleKeyboardNavigation.call(this, oControl, this.getNextFocusableItem(false /*Direction up*/));
-			});
-		};
-
-		/**
-		 * Handles the <code>saphome</code> pseudo event when the Home key is pressed.
-		 *
-		 * The first selectable item is selected and the input field is updated accordingly.
-		 *
-		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
-		 */
-		ComboBox.prototype.onsaphome = function(oEvent) {
-			var oControl = oEvent.srcControl;
-
-			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!oControl.getEnabled() || !oControl.getEditable()) {
-				return;
-			}
-
-			this.syncPickerContent();
-
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-
-			if (this.getValueStateLinks().length) {
-				this.setProperty("formattedTextFocused", true);
-			}
-
-			// prevent document scrolling when Home key is pressed
-			oEvent.preventDefault();
-
-			this.loadItems(function navigateToFirstSelectableItem() {
-				var oFirstSelectableItem = this.getSelectableItems()[0];
-				fnHandleKeyboardNavigation.call(this, oControl, oFirstSelectableItem);
-			});
-		};
-
-		/**
-		 * Handles the <code>sapend</code> pseudo event when the End key is pressed.
-		 *
-		 * The last selectable item is selected and the input field is updated accordingly.
-		 *
-		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
-		 */
-		ComboBox.prototype.onsapend = function(oEvent) {
-			var oControl = oEvent.srcControl;
-
-			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!oControl.getEnabled() || !oControl.getEditable()) {
-				return;
-			}
-
-			this.syncPickerContent();
-
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-
-			// prevent document scrolling when End key is pressed
-			oEvent.preventDefault();
-
-			if (this.getValueStateLinks().length && this.getFormattedTextFocused()) {
-				this.setProperty("formattedTextFocused", false);
-			}
-
-			this.loadItems(function navigateToLastSelectableItem() {
-				var oLastSelectableItem = this.findLastEnabledItem(this.getSelectableItems());
-				fnHandleKeyboardNavigation.call(this, oControl, oLastSelectableItem);
-			});
-		};
-
-		/**
-		 * Handles the <code>sappagedown</code> pseudo event when the Page Down key is pressed.
-		 *
-		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
-		 */
-		ComboBox.prototype.onsappagedown = function(oEvent) {
-			var oControl = oEvent.srcControl;
-
-			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!oControl.getEnabled() || !oControl.getEditable()) {
-				return;
-			}
-
-			this.syncPickerContent();
-
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
-
-			// prevent document scrolling when page down key is pressed
-			oEvent.preventDefault();
-
-			if (this.getValueStateLinks().length && this.getFormattedTextFocused()) {
-				this.setProperty("formattedTextFocused", false);
-			}
-			this.loadItems(function() {
-				var aSelectableItems = this.getNonSeparatorSelectableItems(this.getSelectableItems()),
-					iIndex = aSelectableItems.indexOf(this.getSelectedItem()) + 10,
-					oItem;
-
-				// constrain the index
-				iIndex = (iIndex > aSelectableItems.length - 1) ? aSelectableItems.length - 1 : Math.max(0, iIndex);
-				oItem = aSelectableItems[iIndex];
-				fnHandleKeyboardNavigation.call(this, oControl, oItem);
-			});
-		};
-
-		/**
-		 * Handles the <code>sappageup</code> pseudo event when the Page Up key is pressed.
-		 *
-		 * @param {jQuery.Event} oEvent The event object.
-		 * @private
-		 */
-		ComboBox.prototype.onsappageup = function(oEvent) {
-			var oControl = oEvent.srcControl;
-
-			// in case of a non-editable or disabled combo box, the selection cannot be modified
-			if (!oControl.getEnabled() || !oControl.getEditable()) {
-				return;
-			}
-
-			this.syncPickerContent();
-
-			// mark the event for components that needs to know if the event was handled
-			oEvent.setMarked();
 
 			// prevent document scrolling when page up key is pressed
 			oEvent.preventDefault();
 
 			this.loadItems(function() {
-				var aSelectableItems = this.getNonSeparatorSelectableItems(this.getSelectableItems()),
-					iIndex = aSelectableItems.indexOf(this.getSelectedItem()) - 10,
-					oItem;
+				if (!this.isOpen()) {
+					this.handleInlineListNavigation(sName);
+				} else {
+					var oSuggestionsPopover = this._getSuggestionsPopover();
+					oSuggestionsPopover && oSuggestionsPopover.handleListNavigation(oEvent, sName);
+				}
 
-				// constrain the index
-				iIndex = (iIndex > aSelectableItems.length - 1) ? aSelectableItems.length - 1 : Math.max(0, iIndex);
-				oItem = aSelectableItems[iIndex];
-				fnHandleKeyboardNavigation.call(this, oControl, oItem);
+				// mark the event for components that needs to know if the event was handled
+				oEvent.setMarked();
 			});
+		};
+
+		/**
+		 * Handles the list navigation, when the picker is closed.
+		 *
+		 * @param {string} sName The event name.
+		 * @private
+		 */
+		ComboBox.prototype.handleInlineListNavigation = function (sName) {
+			var aItems = this.getItems(),
+				aSelectableItems = ListHelpers.getSelectableItems(aItems),
+				oSelectedItem = this.getSelectedItem(),
+				iIndex;
+
+			// calculates the index of the next item, depending on the pressed key
+			switch (sName) {
+				case "onsapdown":
+					iIndex = aSelectableItems.indexOf(oSelectedItem) + 1;
+					break;
+				case "onsapup":
+					iIndex = oSelectedItem ? aSelectableItems.indexOf(oSelectedItem) - 1 : aSelectableItems.length - 1;
+					break;
+				case "onsapend":
+					iIndex = aSelectableItems.length - 1;
+					break;
+				case "onsaphome":
+					iIndex = 0;
+					break;
+				case "onsappagedown":
+					iIndex = Math.min(aSelectableItems.length - 1,  aSelectableItems.indexOf(oSelectedItem) + 10);
+					break;
+				case "onsappageup":
+					iIndex = Math.max(0, aSelectableItems.indexOf(oSelectedItem) - 10);
+					break;
+			}
+
+			this.handleSelectionFromList(aSelectableItems[iIndex]);
+		};
+
+		/**
+		 * Handles the list selection.
+		 *
+		 * @param {sap.ui.core.Item | sap.m.StandardListItem | sap.m.GroupHeaderListItem} oItem The item to be selected
+		 * @private
+		 */
+		ComboBox.prototype.handleSelectionFromList = function (oItem) {
+			if (!oItem) {
+				return;
+			}
+
+			var oDomRef = this.getFocusDomRef(),
+				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
+				oSelectedItem = this.getSelectedItem(),
+				oListItem;
+
+			// if the navigation is inline, the passed item will be a core item,
+			// otherwise it is a list item
+			if (oItem.isA("sap.m.StandardListItem") || oItem.isA("sap.m.GroupHeaderListItem")) {
+				oListItem = oItem;
+				oItem = ListHelpers.getItemByListItem(this.getItems(), oItem);
+			} else {
+				oListItem = ListHelpers.getListItem(oItem);
+			}
+
+			this.setSelection(oItem);
+			this.setLastFocusedListItem(oListItem);
+
+			if (oItem.isA("sap.ui.core.SeparatorItem")) {
+				// when visual focus moves to the group header item
+				// we should deselect and leave only the input typed in by the user
+				this.setSelectedItem(null);
+
+				this.updateDomValue(sTypedValue);
+				this.fireSelectionChange({ selectedItem: null });
+				this._bIsLastFocusedItemHeader = true;
+
+				this._getGroupHeaderInvisibleText().setText(this._oRb.getText("LIST_ITEM_GROUP_HEADER") + " " + oItem.getText());
+				return;
+			}
+
+			if (oItem !== oSelectedItem) {
+				var iSelectionStart = this._shouldResetSelectionStart(oItem) ? 0 : this._getSelectionRange().start;
+
+				this.updateDomValue(oItem.getText());
+				this.fireSelectionChange({ selectedItem: oItem });
+				this._bIsLastFocusedItemHeader = false;
+
+				// update the selected item after the change event is fired (the selection may change)
+				oItem = this.getSelectedItem();
+
+				this.selectText(iSelectionStart, oDomRef.value.length);
+			}
+		};
+
+		/**
+		 * Sets the last focused list item.
+		 *
+		 * @param {sap.m.StandardListItem | sap.m.GroupHeaderListItem} oListItem The item that is focused.
+		 * @private
+		 */
+		ComboBox.prototype.setLastFocusedListItem = function(oListItem) {
+			this._oLastFocusedListItem = oListItem;
+		};
+
+		/**
+		 * Gets the last focused list item.
+		 *
+		 * @private
+		 */
+		ComboBox.prototype.getLastFocusedListItem = function() {
+			return this._oLastFocusedListItem;
 		};
 
 		/**
@@ -1543,16 +1356,15 @@ sap.ui.define([
 			this.syncPickerContent();
 
 			if (!this.getValue() && bEditable) {
-				aSelectableItems = this.getSelectableItems();
-				oItem = this.getNonSeparatorSelectableItems(aSelectableItems)[0];
+				aSelectableItems = ListHelpers.getSelectableItems(this.getItems());
+				oItem = aSelectableItems[0];
 
 				if (oItem) {
 					oListItem = ListHelpers.getListItem(oItem);
 
 					if (this.isOpen()) {
-						this.removeStyleClass("sapMFocus");
-						this._getList().addStyleClass("sapMListFocus");
-						this.handleListItemsVisualFocus(oListItem);
+						this._getSuggestionsPopover().updateFocus(oListItem);
+						this.setLastFocusedListItem(oListItem);
 					} else {
 						this.addStyleClass("sapMFocus");
 					}
@@ -1590,19 +1402,22 @@ sap.ui.define([
 				return;
 			}
 
+			this.updateFocusOnClose();
+		};
+
+
+		ComboBox.prototype.updateFocusOnClose = function() {
 			var oDomRef = this.getFocusDomRef(),
-				sActivedescendant = "aria-activedescendant";
+				oSuggestionsPopover = this._getSuggestionsPopover();
 
-			this.addStyleClass("sapMFocus");
+			this.setLastFocusedListItem(null);
 
-			if (this.getFormattedTextFocused()) {
-				this.setFormattedTextFocused(false);
-			} else if ((this.getOpen() && this._getList().hasStyleClass("sapMListFocus")) || this._oLastFocusedListItem) {
-				this._getList().removeStyleClass("sapMListFocus");
-				this._oLastFocusedListItem.removeStyleClass("sapMLIBFocused");
-				this._oLastFocusedListItem = null;
-				oDomRef.removeAttribute(sActivedescendant);
+			if (oSuggestionsPopover) {
+				oSuggestionsPopover.setValueStateActiveState(false);
+				oSuggestionsPopover.updateFocus();
 			}
+
+			oDomRef.removeAttribute( "aria-activedescendant");
 		};
 
 		/**
@@ -1701,7 +1516,7 @@ sap.ui.define([
 			oRelatedControl = core.byId(oEvent.relatedControlId);
 			oFocusDomRef = oRelatedControl && oRelatedControl.getFocusDomRef();
 
-			if (containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet && !this.getFormattedTextFocused()) {
+			if (containsOrEquals(oPicker.getFocusDomRef(), oFocusDomRef) && !bTablet && !(this._getSuggestionsPopover().getValueStateActiveState())) {
 
 				// force the focus to stay in the input field
 				this.focus();
@@ -1842,8 +1657,6 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.selectText = function(iSelectionStart, iSelectionEnd) {
 			ComboBoxBase.prototype.selectText.apply(this, arguments);
-			this.textSelectionStart = iSelectionStart;
-			this.textSelectionEnd = iSelectionEnd;
 			return this;
 		};
 
@@ -1894,14 +1707,9 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.open = function() {
 			this.syncPickerContent();
-
-			var oList = this._getList();
 			ComboBoxBase.prototype.open.call(this);
 
-			if (this.getSelectedItem()) {
-				oList.addStyleClass("sapMListFocus");
-				this.removeStyleClass("sapMFocus");
-			}
+			this._getSuggestionsPopover() && this._getSuggestionsPopover().updateFocus(ListHelpers.getListItem(this.getSelectedItem()));
 
 			return this;
 		};

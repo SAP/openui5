@@ -713,31 +713,6 @@ function(
 	};
 
 	/**
-	 * Updates selectedItem or selectedRow from the suggestion list or table.
-	 *
-	 * @private
-	 * @returns {boolean} Indicates if an item or row is selected
-	 */
-	Input.prototype._updateSelectionFromList = function () {
-		if (this._oSuggPopover._iPopupListSelectedIndex  < 0) {
-			return false;
-		}
-
-		var oList = this._oSuggPopover.getItemsContainer(),
-			oSelectedItem = oList && oList.getSelectedItem();
-
-		if (oSelectedItem) {
-			if (this._hasTabularSuggestions()) {
-				this.setSelectionRow(oSelectedItem, true);
-			} else {
-				this.setSelectionItem(ListHelpers.getItemByListItem(this.getSuggestionItems(), oSelectedItem), true);
-			}
-		}
-
-		return true;
-	};
-
-	/**
 	 * Updates and synchronizes the <code>selectedItem</code> association and <code>selectedKey</code> properties.
 	 *
 	 * @private
@@ -753,8 +728,6 @@ function(
 			this.setValue('');
 			return;
 		}
-
-		this._oSuggPopover._iPopupListSelectedIndex = -1;
 
 		var iCount = this._iSetCount,
 			sNewValue;
@@ -940,13 +913,10 @@ function(
 	 * @param {boolean} bInteractionChange Specifies if the change is triggered by user interaction.
 	 */
 	Input.prototype.setSelectionRow = function (oListItem, bInteractionChange) {
-
 		if (!oListItem) {
 			this.setAssociation("selectedRow", null, true);
 			return;
 		}
-
-		this._oSuggPopover._iPopupListSelectedIndex = -1;
 
 		this._bSelectingItem = true;
 
@@ -1250,22 +1220,14 @@ function(
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
 	Input.prototype.onsapescape = function(oEvent) {
-		var lastValue;
-
 		if (this._isSuggestionsPopoverOpen()) {
 			// mark the event as already handled
 			oEvent.originalEvent._sapui_handledByControl = true;
-			this._oSuggPopover._iPopupListSelectedIndex = -1;
 			this._closeSuggestionPopup();
 
 			// restore the initial value that was there before suggestion dialog
-			if (this._sBeforeSuggest !== undefined) {
-				if (this._sBeforeSuggest !== this.getValue()) {
-					lastValue = this.getLastValue();
-					this.setValue(this._sBeforeSuggest);
-					this.setLastValue(lastValue); // override InputBase.onsapescape()
-				}
-				this._sBeforeSuggest = undefined;
+			if (this.getBeforeSuggestValue() !== this.getValue()) {
+				this.setValue(this.getBeforeSuggestValue());
 			}
 			return; // override InputBase.onsapescape()
 		}
@@ -1292,16 +1254,14 @@ function(
 		this.cancelPendingSuggest();
 
 		if (this._isSuggestionsPopoverOpen()) {
-			if (!this._updateSelectionFromList() && !this.isComposingCharacter()) {
+			if (!this.isComposingCharacter()) {
 				this._closeSuggestionPopup();
 				iValueLength = this.getDOMValue().length;
 				this.selectText(iValueLength, iValueLength); // Remove text selection
 			}
 		}
 
-		if (InputBase.prototype.onsapenter) {
-			InputBase.prototype.onsapenter.apply(this, arguments);
-		}
+		InputBase.prototype.onsapenter.apply(this, arguments);
 
 		if (this.getEnabled() && this.getEditable() && !(this.getValueHelpOnly() && this.getShowValueHelp())) {
 			this.fireSubmit({value: this.getValue()});
@@ -1324,7 +1284,7 @@ function(
 				&& containsOrEquals(oPopup.getDomRef(), oFocusDomRef);
 
 		if (oPopup instanceof Popover) {
-			if (bFocusInPopup && !oSuggPopover.bMessageValueStateActive) {
+			if (bFocusInPopup && !oSuggPopover.getValueStateActiveState()) {
 				// set the flag that the focus is currently in the Popup
 				this._bPopupHasFocus = true;
 				if (Device.system.desktop && deepEqual(oPopup.getFocusDomRef(), oFocusDomRef) || oFocusedControl.isA("sap.m.GroupHeaderListItem")) {
@@ -1358,6 +1318,70 @@ function(
 		if (this._isSuggestionsPopoverOpen()) {
 			oEvent.stopPropagation();
 		}
+	};
+
+	/**
+	 * Handles the <code>sappageup</code>, <code>sappagedown</code>, <code>saphome</code>, <code>sapend</code>,
+	 * <code>sapup</code> and <code>sapdown</code> pseudo events when the Page Up/Page Down/Home/End key is pressed.
+	 *
+	 * @param {jQuery.Event} oEvent The event object.
+	 * @private
+	 */
+	["onsapup", "onsapdown", "onsappageup", "onsappagedown", "onsaphome", "onsapend"].forEach(function(sName){
+		Input.prototype[sName] = function (oEvent) {
+			if ((sName === "onsapup" || sName === "onsapdown") && this.isComposingCharacter()) {
+				return;
+			}
+
+			if (this.getShowSuggestion()){
+				this._getSuggestionsPopover().handleListNavigation(oEvent);
+
+				if (this._isIncrementalType()) {
+					oEvent.setMarked();
+				}
+
+				this.setSelectionUpdatedFromList(true);
+			}
+		};
+	});
+
+	/**
+	 * Determines whether the selection is updated from the list, while navigating.
+	 * This is needed, since otherwise a double selection update will be done,
+	 * when closing the picker.
+	 *
+	 * @param {boolean} bUpdated True, if the selection is updated from the list.
+	 * @private
+	 */
+	Input.prototype.setSelectionUpdatedFromList = function (bUpdated) {
+		this._bSelectionUpdatedFromList = bUpdated;
+	};
+
+	/**
+	 * Gets the selection updated from list state.
+	 *
+	 * @private
+	 */
+	Input.prototype.getSelectionUpdatedFromList = function () {
+		return this._bSelectionUpdatedFromList;
+	};
+
+	/**
+	 * Updates the selection, when the picker is closed and the suggestions selection
+	 * was updated, while navigating.
+	 *
+	 * @param {sap.m.StandardListItem | sap.m.ColumnListItem | sap.m.GroupHeaderListItem} oSelectedItem The selected from navigation item
+	 * @private
+	 */
+	Input.prototype.updateSelectionFromList = function (oSelectedItem) {
+		if (this._hasTabularSuggestions() && (this.getSelectedRow() !== oSelectedItem)) {
+			this.setSelectionRow(oSelectedItem, true);
+		} else {
+			var oNewItem = ListHelpers.getItemByListItem(this.getSuggestionItems(), oSelectedItem);
+			oNewItem && (this.getSelectedItem() !== oNewItem.getId()) && this.setSelectionItem(oNewItem, true);
+		}
+
+		this.setSelectionUpdatedFromList(false);
 	};
 
 	/**
@@ -1460,7 +1484,6 @@ function(
 			setTimeout(function () {
 				var sNewValue = this.getDOMValue() || '';
 				if (sNewValue < this.getStartSuggestion()) {
-					this._oSuggPopover._iPopupListSelectedIndex = -1;
 					this._closeSuggestionPopup();
 				}
 			}.bind(this), 0);
@@ -1479,7 +1502,6 @@ function(
 			this.setProperty("showSuggestion", bValue, true);
 			if (bValue) {
 				this._oSuggPopover = this._getSuggestionsPopover();
-				this._oSuggPopover._iPopupListSelectedIndex = -1;
 				if (!this._oSuggPopover.getPopover()) {
 					this._createSuggestionsPopoverPopup();
 					this._synchronizeSuggestions();
@@ -1488,7 +1510,6 @@ function(
 			} else {
 				if (this._oSuggPopover) {
 					this._oSuggPopover._destroySuggestionPopup();
-					this._oSuggPopover._iPopupListSelectedIndex = -1;
 					this._oButtonToolbar = null;
 					this._oShowMoreButton = null;
 				}
@@ -1585,11 +1606,11 @@ function(
 				this._triggerSuggest(sValue);
 
 				// If the visual focus is on a selected item, or if it is on a value state containing a link
-				if (oList && !oSuggestionsPopover.bMessageValueStateActive) {
+				if (oList && !oSuggestionsPopover.getValueStateActiveState()) {
 					oSelectedItem = oList && oList.getSelectedItem();
 					oList.removeStyleClass("sapMListFocus");
 					oSelectedItem && oSelectedItem.removeStyleClass("sapMLIBFocused");
-				} else if (oSuggestionsPopover.bMessageValueStateActive && document.activeElement.tagName !== "A") {
+				} else if (oSuggestionsPopover.getValueStateActiveState() && document.activeElement.tagName !== "A") {
 					oSuggestionsPopover._getValueStateHeader().removeStyleClass("sapMPseudoFocus");
 				}
 			}
@@ -1671,9 +1692,6 @@ function(
 			if (!this.isMobileDevice()) {
 				if (this._isSuggestionsPopoverOpen()) {
 					this._sCloseTimer = setTimeout(function () {
-						if (this._oSuggPopover) {
-							this._oSuggPopover._iPopupListSelectedIndex = -1;
-						}
 						this.cancelPendingSuggest();
 						if (this._sTypedInValue) {
 							_setDomValue.call(this, this._sTypedInValue);
@@ -1763,8 +1781,6 @@ function(
 				sTypedChars = this._bDoTypeAhead ? this._sTypedInValue : (this.getDOMValue() || ""),
 				oFilterResults,
 				iSuggestionsLength;
-
-			this._oSuggPopover._iPopupListSelectedIndex = -1;
 
 			if (!bShowSuggestion ||
 				!this._bShouldRefreshListItems ||
@@ -2435,7 +2451,6 @@ function(
 			}
 
 			this._fireValueHelpRequest(true);
-			this._oSuggPopover._iPopupListSelectedIndex = -1;
 			this._closeSuggestionPopup();
 		}
 	};
@@ -2599,7 +2614,6 @@ function(
 			valueHelpRequest: function (oEvent) {
 				// it is the same behavior as by ShowMoreButton:
 				this.fireValueHelpRequest({fromSuggestions: true});
-				this._oSuggPopover._iPopupListSelectedIndex = -1;
 				this._closeSuggestionPopup();
 			}.bind(this),
 			liveChange: function (oEvent) {
@@ -2752,11 +2766,12 @@ function(
 		} else {
 			oPopover
 				.attachAfterClose(function() {
+					var oList = this._oSuggPopover.getItemsContainer(),
+						oSelectedItem = oList && oList.getSelectedItem();
 
-					this._updateSelectionFromList();
-
-					var oList = oSuggPopover.getItemsContainer(),
-						oSelectedItem = oList.getSelectedItem();
+					if (this.getSelectionUpdatedFromList()) {
+						this.updateSelectionFromList(oSelectedItem);
+					}
 
 					if (!oList) {
 						return;
@@ -2774,9 +2789,8 @@ function(
 				}, this)
 				.attachBeforeOpen(function () {
 					oSuggPopover._sPopoverContentWidth = this.getMaxSuggestionWidth();
-					oSuggPopover._bIsInputIncrementalType = this._isIncrementalType();
 
-					this._sBeforeSuggest = this.getValue();
+					this.setBeforeSuggestValue(this._sTypedInValue || this.getValue());
 					oSuggPopover.resizePopup(this);
 					this._registerPopupResize();
 				}, this);
@@ -2786,6 +2800,26 @@ function(
 		this.setAggregation("_suggestionPopup", oPopover);
 
 		this._oSuggestionPopup = oPopover; // for backward compatibility (used in some other controls)
+	};
+
+	/**
+	 * Sets the input value before the suggest.
+	 *
+	 * @param {string} sValue The value to be set
+	 * @private
+	 */
+	Input.prototype.setBeforeSuggestValue = function (sValue) {
+		this._sBeforeSuggest = sValue;
+	};
+
+	/**
+	 * Gets the input value before the suggest.
+	 *
+	 * @returns {string} The string value before the sugger
+	 * @private
+	 */
+	Input.prototype.getBeforeSuggestValue = function () {
+		return this._sBeforeSuggest;
 	};
 
 	/**

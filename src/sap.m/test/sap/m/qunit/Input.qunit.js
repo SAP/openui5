@@ -1176,9 +1176,8 @@ sap.ui.define([
 		//trigger selection
 		var oList = oPopup1.getContent()[0];
 		var oListItem = oList.getItems()[0];
-		oList.fireItemPress({
-			listItem : oListItem
-		});
+		oListItem.ontap(new jQuery.Event());
+		this.clock.tick(400);
 
 		assert.ok(!oPopup1.isOpen(), "Two Value Suggestion Popup is closed");
 		assert.equal(oInput7.getValue(), aNames[0], "Input value is set to first value of selected suggestion item");
@@ -5393,72 +5392,6 @@ sap.ui.define([
 		assert.strictEqual(oRenderedValueStateMessage, "New value state message containing a link", "The updated FormattedText aggregation is also correctly displayed in the Input's value state popup after the suggestion popover is closed");
 	});
 
-	QUnit.test("Arrow up when the first item is selected should place visible pseudo focus on the formatted text value state message DOM on IE", function (assert) {
-		// Arrange
-		this.stub(Device, "browser", {
-			msie: true
-		});
-		this.oInput.setValueState("Error");
-		var oFormattedValueStateText = new FormattedText({
-			htmlText: "Value state message containing a %%0",
-			controls: new Link({
-				text: "link",
-				href: "#"
-			})
-		});
-		var	oHeaderValueFormattedText;
-
-		// Act
-		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
-
-		this.oInput._$input.trigger("focus").val("on").trigger("input");
-		this.clock.tick(300);
-
-		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
-		this.clock.tick();
-
-		oHeaderValueFormattedText = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText();
-
-		// Assert
-		assert.ok(oHeaderValueFormattedText.$().hasClass("sapMPseudoFocus"), "Pseudo focus is on formatted text value state message");
-		assert.strictEqual(this.oInput.getFocusDomRef().getAttribute("aria-activedescendant"), oHeaderValueFormattedText.getId(), "Aria attribute of input is the ID of the formatted value state text");
-		assert.notOk(this.oInput._oSuggPopover.getItemsContainer().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
-	});
-
-	QUnit.test("Arrow up when the first item is selected should place visible pseudo focus on the value state header DOM on browsers different from IE", function (assert) {
-		// Arrange
-		this.stub(Device, "browser", {
-			msie: false
-		});
-		this.oInput.setValueState("Error");
-		var oFormattedValueStateText = new FormattedText({
-			htmlText: "Value state message containing a %%0",
-			controls: new Link({
-				text: "link",
-				href: "#"
-			})
-		});
-		var	oValueStateHeader;
-
-		// Act
-		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
-		sap.ui.getCore().applyChanges();
-
-		this.oInput._$input.trigger("focus").val("on").trigger("input");
-		this.clock.tick(300);
-
-		sap.ui.test.qunit.triggerKeydown(this.oInput.getFocusDomRef(), KeyCodes.ARROW_UP);
-		this.clock.tick();
-
-		oValueStateHeader = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader();
-
-		// Assert
-		assert.ok(oValueStateHeader.$().hasClass("sapMPseudoFocus"), "Pseudo focus is on the value state header");
-		assert.strictEqual(this.oInput.getFocusDomRef().getAttribute("aria-activedescendant"), oValueStateHeader.getFormattedText().getId(), "Aria attribute of input is the ID of the formatted value state text");
-		assert.notOk(this.oInput._oSuggPopover.getItemsContainer().getItems()[0].$().hasClass("sapMLIBFocused"), "The visual pseudo focus is not on the first item");
-	});
-
 	QUnit.test("Should move the visual focus from value state header to the input when the user starts typing", function (assert) {
 		// Arrange
 		var oFormattedValueStateText = new FormattedText({
@@ -5538,7 +5471,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Change event should be fired if entered value is not part of the suggestion list", function(assert) {
-
 		var fnFireChangeSpy = this.spy(this.oInput, "fireChange");
 		this.oInput.onfocusin();
 		this.oInput._$input.trigger("focus").val("u2").trigger("input");
@@ -5701,7 +5633,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Keyboard selection of group header", function () {
-		var aVisibleItems, oGroupHeader;
+		var aVisibleItems;
 
 		this.oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		this.oInput._$input.trigger("focus").val("A").trigger("input");
@@ -5710,7 +5642,6 @@ sap.ui.define([
 		aVisibleItems = this.oInput._oSuggPopover.getItemsContainer().getItems().filter(function(oItem){
 			return oItem.getVisible();
 		});
-		oGroupHeader = aVisibleItems[0];
 
 		// act
 		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
@@ -5719,7 +5650,6 @@ sap.ui.define([
 		// assert
 		// go to the header group item
 		assert.strictEqual(this.oInput.getValue(), "", "The value is cleared.");
-		assert.ok(oGroupHeader.hasStyleClass("sapMInputFocusedHeaderGroup"), "Styling is applied on the selected group header.");
 
 		// act
 		// go to the next list item
@@ -5728,7 +5658,6 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(this.oInput.getValue(), aVisibleItems[1].getTitle(), "The value is populated again.");
-		assert.notOk(oGroupHeader.hasStyleClass("sapMInputFocusedHeaderGroup"), "Styling is removed from the unselected group header.");
 	});
 
 	QUnit.test("Selection of group header", function(assert) {

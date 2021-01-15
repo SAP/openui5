@@ -2675,8 +2675,8 @@ sap.ui.define([
 		oMultiComboBox.setValue("t");
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(oMultiComboBox.getSelectableItems().length, 1, "1 item should be available");
-		assert.strictEqual(oMultiComboBox.getSelectableItems()[0].getText(), "test", "selectable item should be test");
+		assert.strictEqual(ListHelpers.getSelectableItems(oMultiComboBox.getItems()).length, 1, "1 item should be available");
+		assert.strictEqual(ListHelpers.getSelectableItems(oMultiComboBox.getItems())[0].getText(), "test", "selectable item should be test");
 
 		oMultiComboBox.destroy();
 		this.clock.reset();
@@ -5620,7 +5620,7 @@ sap.ui.define([
 		aItems = this.oMultiComboBox.getItems();
 
 		// Assert
-		assert.strictEqual(oNextItem.getText(), 'Group Header', "Should return the first item");
+		assert.strictEqual(oNextItem.getText(), 'Item1', "Should return the first item");
 		assert.strictEqual(oPreviousItem.getText(), 'Item3', "Should return the last item");
 
 		// Act
@@ -5631,7 +5631,7 @@ sap.ui.define([
 		oNextItem = this.oMultiComboBox._getNextTraversalItem();
 		oPreviousItem = this.oMultiComboBox._getPreviousTraversalItem();
 		assert.ok(oNextItem.getText() !== 'Item1', "Should not return the first item anymore as it's selected already");
-		assert.ok(oNextItem.getText() === 'Group Header', "Should return the group header item's text");
+		assert.ok(oNextItem.getText() === 'Item2', "Should return the group header item's text");
 		assert.ok(oPreviousItem.getText() !== 'Item3', "Should not return the last item anymore as it's selected already");
 	});
 
@@ -5865,14 +5865,14 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		this.clock.tick(nPopoverAnimationTick);
 
-		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 1, "Only one item should be visible");
+		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 1, "Only one item should be visible");
 		assert.strictEqual(oSelectedButton.getPressed(),true,"the SelectedButton is pressed");
 
 		oMultiComboBox.fireChange({ value: "I" });
 		oMultiComboBox.oninput(oFakeEvent);
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 3, "All three items are visible");
+		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 3, "All three items are visible");
 		assert.strictEqual(oSelectedButton.getPressed(), false, "the SelectedButton is not pressed");
 		this.clock.tick(nPopoverAnimationTick);
 
@@ -5926,13 +5926,13 @@ sap.ui.define([
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 1, "There is one selected item");
-		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 2, "Only one item should be visible");
+		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 2, "Only one item should be visible");
 		assert.strictEqual(oSelectedButton.getPressed(),true,"the SelectedButton is pressed");
 
 		oMultiComboBox.oninput(oFakeEvent);
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 5, "All three items are visible");
+		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 5, "All three items are visible");
 		assert.strictEqual(oSelectedButton.getPressed(), false, "the SelectedButton is not pressed");
 		this.clock.tick(nPopoverAnimationTick);
 
@@ -6724,7 +6724,7 @@ sap.ui.define([
 
 		// Assert
 		assert.strictEqual(aFilteredItems.items.length, 2, "Two items should be filtered");
-		assert.strictEqual(this.oMultiComboBox.getVisibleItems().length, 4, "There are two visible items with their group names");
+		assert.strictEqual(ListHelpers.getVisibleItems(this.oMultiComboBox.getItems()).length, 4, "There are two visible items with their group names");
 	});
 
 	QUnit.test("Default filtering should be per term", function (assert) {
@@ -6997,7 +6997,7 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(this.oMCB1.getSelectedItems().length, 2, "There are two selected items");
-		assert.strictEqual(this.oMCB1.getVisibleItems().length, 4, "The selected items are shown grouped");
+		assert.strictEqual(ListHelpers.getVisibleItems(this.oMCB1.getItems()).length, 4, "The selected items are shown grouped");
 	});
 
 	QUnit.test("Phone: Selected items are grouped when picker is opened", function (assert) {
@@ -7027,7 +7027,7 @@ sap.ui.define([
 
 		//assert
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "There are two selected items");
-		assert.strictEqual(oMultiComboBox.getVisibleItems().length, 4, "The selected items are shown grouped");
+		assert.strictEqual(ListHelpers.getVisibleItems(oMultiComboBox.getItems()).length, 4, "The selected items are shown grouped");
 
 
 
@@ -8689,8 +8689,8 @@ sap.ui.define([
 		oMultiComboBox.open();
 
 		// Assert
-		assert.strictEqual(oMultiComboBox.getSelectableItems()[0].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
-		assert.strictEqual(oMultiComboBox.getSelectableItems()[1].getTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
+		assert.strictEqual(ListHelpers.getListItem(oMultiComboBox.getItems()[0]).getTitleTextDirection(),  "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
+		assert.strictEqual(ListHelpers.getListItem(oMultiComboBox.getItems()[1]).getTitleTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
 
 		// Clean
 		oMultiComboBox.destroy();

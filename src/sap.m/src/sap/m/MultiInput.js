@@ -930,6 +930,8 @@ function(
 		if (!this.getFocusDomRef().selectionStart) {
 			Tokenizer.prototype.onsaphome.apply(this.getAggregation("tokenizer"), arguments);
 		}
+
+		Input.prototype.onsaphome.apply(this, arguments);
 	};
 
 	/**
@@ -942,6 +944,8 @@ function(
 		if (oEvent.isMarked("forwardFocusToParent")) {
 			this.focus();
 		}
+
+		Input.prototype.onsapend.apply(this, arguments);
 	};
 
 	/**
@@ -951,9 +955,7 @@ function(
 	 * @param {jQuery.Event} oEvent The event object
 	 */
 	MultiInput.prototype.onsapenter = function (oEvent) {
-		if (Input.prototype.onsapenter) {
-			Input.prototype.onsapenter.apply(this, arguments);
-		}
+		Input.prototype.onsapenter.apply(this, arguments);
 
 		var bValidateFreeText = true,
 			oTokenizer = this.getAggregation("tokenizer");

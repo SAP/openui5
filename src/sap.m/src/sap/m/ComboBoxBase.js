@@ -87,28 +87,6 @@ sap.ui.define([
 						type: "boolean",
 						group: "Misc",
 						defaultValue: false
-					},
-
-					/**
-					 * Indicates whether the formatted text is focused.
-					 *
-					 * @private
-					 */
-					formattedTextFocused: {
-						type: "boolean",
-						defaultValue: false,
-						hidden: true
-					},
-
-					/**
-					 * Indicates whether the picker is opened.
-					 *
-					 * @private
-					 */
-					open: {
-						type: "boolean",
-						defaultValue: false,
-						hidden: true
 					}
 				},
 				aggregations: {
@@ -487,7 +465,7 @@ sap.ui.define([
 		};
 
 		ComboBoxBase.prototype.onBeforeRendering = function () {
-			var bSuggestionsPopoverIsOpen =  this.getOpen(),
+			var bSuggestionsPopoverIsOpen =  this.isOpen(),
 			sValueStateHeaderText = bSuggestionsPopoverIsOpen ?  this._getSuggestionsPopover()._getValueStateHeader().getText() : null,
 			sValueStateHeaderValueState = bSuggestionsPopoverIsOpen ?  this._getSuggestionsPopover()._getValueStateHeader().getValueState() : null;
 
@@ -1092,35 +1070,6 @@ sap.ui.define([
 		ComboBoxBase.prototype.syncPickerContent = function () {};
 
 		/**
-		 * Retrieves the first enabled item from the aggregation named <code>items</code>.
-		 *
-		 * @param {array} [aItems] The items array
-		 * @returns {sap.ui.core.Item | null} The first enabled item
-		 */
-		ComboBoxBase.prototype.findFirstEnabledItem = function(aItems) {
-			aItems = aItems || this.getItems();
-
-			for (var i = 0; i < aItems.length; i++) {
-				if (aItems[i].getEnabled()) {
-					return aItems[i];
-				}
-			}
-
-			return null;
-		};
-
-		/**
-		 * Retrieves the last enabled item from the aggregation named <code>items</code>.
-		 *
-		 * @param {array} [aItems] The items array
-		 * @returns {sap.ui.core.Item | null} The last enabled item
-		 */
-		ComboBoxBase.prototype.findLastEnabledItem = function(aItems) {
-			aItems = aItems || this.getItems();
-			return this.findFirstEnabledItem(aItems.reverse());
-		};
-
-		/**
 		 * Opens the control's picker popup.
 		 *
 		 * @returns {sap.m.ComboBoxBase} <code>this</code> to allow method chaining.
@@ -1143,15 +1092,7 @@ sap.ui.define([
 		 * @protected
 		 */
 		ComboBoxBase.prototype.getVisibleItems = function() {
-			for (var i = 0, oListItem, aItems = this.getItems(), aVisibleItems = []; i < aItems.length; i++) {
-				oListItem = ListHelpers.getListItem(aItems[i]);
-
-				if (oListItem && oListItem.getVisible()) {
-					aVisibleItems.push(aItems[i]);
-				}
-			}
-
-			return aVisibleItems;
+			return ListHelpers.getVisibleItems(this.getItems());
 		};
 
 		/*
@@ -1181,15 +1122,6 @@ sap.ui.define([
 			}
 
 			return aKeys;
-		};
-
-		/**
-		 * Gets the selectable items from the aggregation named <code>items</code>.
-		 *
-		 * @returns {sap.ui.core.Item[]} An array containing the selectables items.
-		 */
-		ComboBoxBase.prototype.getSelectableItems = function() {
-			return ListHelpers.getEnabledItems(this.getVisibleItems());
 		};
 
 		/**

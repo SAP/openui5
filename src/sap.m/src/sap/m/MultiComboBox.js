@@ -318,7 +318,7 @@ function(
 		// If list is open then go to the first visible list item. Set this item
 		// into the visual viewport.
 		// If list is closed...
-		var aItems = this.getSelectableItems();
+		var aItems = ListHelpers.getSelectableItems(this.getItems());
 		var oItem = aItems[0];
 
 		// If there is a link in the value state message
@@ -494,7 +494,11 @@ function(
 			this.focus();
 		},
 		onsapdown: function() {
-			this.getSelectableItems()[0].focus();
+			var aSelectableItems = ListHelpers.getSelectableItems(this.getItems());
+
+			if (aSelectableItems.length) {
+				aSelectableItems[0].focus();
+			}
 		}
 	};
 
@@ -1404,7 +1408,7 @@ function(
 		var oSource = oEvent.oSource, oListItem, bMatch,
 			sValue = this.getPickerTextField() ? this.getPickerTextField().getValue() :  "",
 			bShowSelectedOnly = (oSource && oSource.getPressed && oSource.getPressed()) || bForceShowSelected,
-			aVisibleItems = this.getVisibleItems(),
+			aVisibleItems = ListHelpers.getVisibleItems(this.getItems()),
 			aItems = this.getItems(),
 			aSelectedItems = this.getSelectedItems(),
 			oLastGroupListItem = null;
@@ -1840,7 +1844,7 @@ function(
 					oEvent.setMarked();
 					oEvent.preventDefault();
 
-					var aVisibleItems = this.getSelectableItems();
+					var aVisibleItems = ListHelpers.getSelectableItems(this.getItems());
 					var aSelectedItems = this._getSelectedItemsOf(aVisibleItems);
 
 					if (aSelectedItems.length !== aVisibleItems.length) {
@@ -1921,7 +1925,7 @@ function(
 					return;
 				}
 
-				var aVisibleItems = this.getSelectableItems();
+				var aVisibleItems = ListHelpers.getSelectableItems(this.getItems());
 				var oItem = aVisibleItems[0];
 
 				// Scrolls an item into the visual viewport
@@ -1935,7 +1939,7 @@ function(
 
 				// note: prevent document scrolling when End key is pressed
 				oEvent.preventDefault();
-				var aVisibleItems = this.getSelectableItems();
+				var aVisibleItems = ListHelpers.getSelectableItems(this.getItems());
 				var oItem = aVisibleItems[aVisibleItems.length - 1];
 
 				// Scrolls an item into the visual viewport
@@ -1950,7 +1954,7 @@ function(
 				// note: prevent document scrolling when arrow keys are pressed
 				oEvent.preventDefault();
 
-				var aVisibleItems = this.getSelectableItems();
+				var aVisibleItems = ListHelpers.getSelectableItems(this.getItems());
 				var oItemFirst = aVisibleItems[0];
 				var oItemCurrent = jQuery(document.activeElement).control()[0];
 
@@ -2149,7 +2153,7 @@ function(
 
 		this._removeSelection(aTokens);
 
-		if (aItemsBeforeRemoval.length !== this.getSelectableItems()) {
+		if (aItemsBeforeRemoval.length !== ListHelpers.getSelectableItems(this.getItems())) {
 			!this.isPickerDialog() && !this.isFocusInTokenizer() && this.focus();
 			this.fireChangeEvent("");
 			this.setProperty("hasSelection", !!this.getSelectedItems().length);
@@ -2280,7 +2284,7 @@ function(
 		var aSeparatedText = sOriginalText.split(/\r\n|\r|\n/g);
 
 		if (aSeparatedText && aSeparatedText.length > 0) {
-			this.getSelectableItems().forEach(function(oItem) {
+			ListHelpers.getSelectableItems(this.getItems()).forEach(function(oItem) {
 
 				if (aSeparatedText.indexOf(oItem.getText()) > -1) {
 					this.setSelection({
@@ -2472,7 +2476,7 @@ function(
 	 */
 	MultiComboBox.prototype._getItemsStartingWithPerTerm = function(sText, bInput) {
 		var aItems = [],
-			selectableItems = bInput ? ListHelpers.getEnabledItems(this.getItems()) : this.getSelectableItems(),
+			selectableItems = bInput ? ListHelpers.getEnabledItems(this.getItems()) : ListHelpers.getSelectableItems(this.getItems()),
 			fnFilter = this.fnFilter ? this.fnFilter : inputsDefaultFilter;
 
 		selectableItems.forEach(function(oItem) {
@@ -2495,7 +2499,7 @@ function(
 	 */
 	MultiComboBox.prototype._getItemsStartingWith = function(sText, bInput) {
 		var aItems = [],
-			selectableItems = bInput ? ListHelpers.getEnabledItems(this.getItems()) : this.getSelectableItems();
+			selectableItems = bInput ? ListHelpers.getEnabledItems(this.getItems()) : ListHelpers.getSelectableItems(this.getItems());
 
 		selectableItems.forEach(function(oItem) {
 
@@ -2575,7 +2579,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._getNextVisibleItemOf = function(oItem) {
-		var aItems = this.getSelectableItems();
+		var aItems = ListHelpers.getSelectableItems(this.getItems());
 		var iIndex = aItems.indexOf(oItem) + 1;
 
 		if (iIndex <= 0 || iIndex > aItems.length - 1) {
@@ -2593,7 +2597,7 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._getPreviousVisibleItemOf = function(oItem) {
-		var aItems = this.getSelectableItems();
+		var aItems = ListHelpers.getSelectableItems(this.getItems());
 		var iIndex = aItems.indexOf(oItem) - 1; // {-2,-1,0,1,2,3,...}
 
 		if (iIndex < 0) {
@@ -2923,7 +2927,7 @@ function(
 	 * @since 1.26.0
 	 */
 	MultiComboBox.prototype._getUnselectedItems = function() {
-		var aItems =  jQuery(this.getSelectableItems()).not(this.getSelectedItems()).get();
+		var aItems =  jQuery(ListHelpers.getSelectableItems(this.getItems())).not(this.getSelectedItems()).get();
 
 		// If the MultiComboBox is not opened, we want to skip any items that
 		// represent group headers or separators.
@@ -3422,9 +3426,13 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._getItemByValue = function (sValue) {
-		return this.getSelectableItems().find(function (oItem) {
-			return oItem.getText().toLowerCase() === sValue.toLowerCase();
-		});
+		var oSelectableItems = ListHelpers.getSelectableItems(this.getItems());
+
+		for (var i = 0; i < oSelectableItems.length; i++) {
+			if (oSelectableItems[i].getText().toLowerCase() === sValue.toLowerCase()) {
+				return oSelectableItems[i];
+			}
+		}
 	};
 
 	/**
@@ -3442,7 +3450,7 @@ function(
 		var iItemToFocus, oItemToFocus,
 			oCurrentlyFocusedObject = core.byId(document.activeElement.id),
 			aSelectedItems = this.getSelectedItems(),
-			aSelectableItems = this.getSelectableItems(),
+			aSelectableItems = ListHelpers.getSelectableItems(this.getItems()),
 			oList = this._getList(),
 			oItemNavigation = oList && oList.getItemNavigation(),
 			sValue = this.getValue(),
