@@ -5,6 +5,7 @@
 /**
  * Initialization Code and shared classes of library sap.m.
  */
+
 sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	'sap/ui/core/library', // library dependency
 	'jquery.sap.mobile', // referenced here in case the Core decides to throw it out - shall always be available when using the mobile lib.
@@ -12,7 +13,6 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 	function(jQuery, Device, DataType, CoreLibrary) {
 
 	"use strict";
-
 
 	/**
 	 * The main UI5 control library, with responsive controls that can be used in touch devices as well as desktop browsers.
@@ -3465,6 +3465,8 @@ sap.ui.define(['jquery.sap.global', 'sap/ui/Device', 'sap/ui/base/DataType',
 							jQuery.sap.log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");
 							window.location.href = sURL;
 						}
+					} else {
+						oWindow.opener = null;
 					}
 				}
 			},

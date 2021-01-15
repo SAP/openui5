@@ -13,8 +13,10 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/core/IconPool",
 	"sap/ui/Device",
-	"sap/m/library"
+	"sap/m/library",
+	"jquery.sap.script"
 ], function (Control, Text, Link, Select, Item, ItemNavigation, ResizeHandler, IconPool, Device, library) {
+
 	"use strict";
 
 	// shortcut for sap.m.SelectType
@@ -292,7 +294,8 @@ sap.ui.define([
 
 		if (sLinkHref) {
 			if (sLinkTarget) {
-				window.open(sLinkHref, sLinkTarget);
+				// TODO: take oLink.getRel() value into account ('links' is a public aggregation)
+				jQuery.sap.openWindow(sLinkHref, sLinkTarget);
 			} else {
 				window.location.href = sLinkHref;
 			}

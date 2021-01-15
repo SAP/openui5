@@ -13,7 +13,8 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/Device",
 	"./library",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"jquery.sap.script"
 ], function (Link, Select, Control, ResizeHandler, ItemNavigation, Item, Icon, Device, library, InvisibleText) {
 	"use strict";
 
@@ -219,7 +220,7 @@ sap.ui.define([
 			if (sLinkHref) {
 				sLinkTarget = oControl.getTarget();
 				if (sLinkTarget) {
-					window.open(sLinkHref, sLinkTarget);
+					jQuery.sap.openWindow(sLinkHref, sLinkTarget);
 				} else {
 					window.location.href = sLinkHref;
 				}
