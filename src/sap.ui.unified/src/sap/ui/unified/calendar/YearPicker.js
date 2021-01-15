@@ -789,6 +789,7 @@ sap.ui.define([
 
 					//same column in first row of next group (only if more than one row)
 					this._updatePage(true, iIndex - iYears + iColumns, true);
+					this._iSelectedIndex = iIndex - iYears + iColumns;
 				} else {
 					sYyyymmdd = aDomRefs[0].getAttribute("data-sap-year-start");
 					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());
@@ -806,6 +807,7 @@ sap.ui.define([
 
 					//same column in last row of previous group (only if more than one row)
 					this._updatePage(false, iYears - iColumns + iIndex, true);
+					this._iSelectedIndex = iYears - iColumns + iIndex;
 				} else {
 					sYyyymmdd = aDomRefs[iYears - 1].getAttribute("data-sap-year-start");
 					oFocusedDate = CalendarDate.fromLocalJSDate(this._oFormatYyyymmdd.parse(sYyyymmdd), this.getPrimaryCalendarType());

@@ -132,10 +132,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 			oRm.style("width", sWidth);
 			oRm.accessibilityState(null, mAccProps);
 			oRm.openEnd(); // div element
-			if (oDate.getYear() === oCurrentDate.getYear()) {
-				// calculate which is the selected year in order to focus it after rendering
-				oYP._iSelectedIndex = i;
-			}
 			// to render era in Japanese, UniversalDate is used, since CalendarDate.toUTCJSDate() will convert the date in Gregorian
 			oRm.text(oYP._oYearFormat.format(UniversalDate.getInstance(oCurrentDate.toUTCJSDate(), oCurrentDate.getCalendarType()))); // to render era in Japanese
 			oRm.close("div");
