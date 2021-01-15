@@ -212,14 +212,83 @@ sap.ui.define([
 
 		return oSomeInstance.initControlDelegate().then(function(_oDelegate) {
 			oDelegate = _oDelegate;
-			oDelegate.initPropertyHelper = function() {
+			oDelegate.fetchPropertyHelper = function() {
+				return Promise.resolve(PropertyHelperSubclass);
+			};
+			return oSomeInstance.initPropertyHelper();
+		}).then(function(oPropertyHelper) {
+			assert.ok(oPropertyHelper instanceof PropertyHelperSubclass, "Property helper type");
+		}).finally(function() {
+			delete oDelegate.fetchPropertyHelper;
+		});
+	});
+
+	QUnit.test("PropertyHelper initialization from delegate with valid class and property extensions", function(assert) {
+		var oDelegate;
+		var fnFetchProperties;
+		var fnFetchPropertyExtensions;
+		var fnFetchPropertyHelper;
+		var oFetchPropertiesSpy = sinon.spy();
+		var oFetchPropertyExtensionsSpy = sinon.spy();
+		var oFetchPropertyHelperSpy = sinon.spy();
+		var oPropertyHelperConstructorSpy = sinon.spy();
+		var PropertyHelperStub = PropertyHelperSubclass.extend("sap.ui.mdc.mixin.test.PropertyHelperStub", {
+			constructor: function() {
+				oPropertyHelperConstructorSpy.apply(this, arguments);
+				PropertyHelperSubclass.call(this, []);
+			}
+		});
+		var aProperties = [];
+		var mExtensions = {};
+
+		oSomeInstance = new TestClassWithFetchProperties();
+
+		return oSomeInstance.initControlDelegate().then(function(_oDelegate) {
+			oDelegate = _oDelegate;
+			fnFetchProperties = oDelegate.fetchProperties;
+			oDelegate.fetchProperties = function() {
+				oFetchPropertiesSpy.apply(this, arguments);
+				return Promise.resolve(aProperties);
+			};
+			fnFetchPropertyExtensions = oDelegate.fetchPropertyExtensions;
+			oDelegate.fetchPropertyExtensions = function() {
+				oFetchPropertyExtensionsSpy.apply(this, arguments);
+				return Promise.resolve(mExtensions);
+			};
+			fnFetchPropertyHelper = oDelegate.fetchPropertyHelper;
+			oDelegate.fetchPropertyHelper = function() {
+				oFetchPropertyHelperSpy.apply(this, arguments);
+				return Promise.resolve(PropertyHelperStub);
+			};
+			return oSomeInstance.initPropertyHelper();
+		}).then(function(oPropertyHelper) {
+			assert.ok(oPropertyHelper instanceof PropertyHelperStub, "Property helper type");
+			assert.ok(oFetchPropertiesSpy.calledOnceWithExactly(oSomeInstance), "Delegate.fetchProperties");
+			assert.ok(oFetchPropertyExtensionsSpy.calledOnceWithExactly(oSomeInstance, aProperties), "Delegate.fetchPropertyExtensions");
+			assert.ok(oFetchPropertyHelperSpy.calledOnceWithExactly(oSomeInstance, aProperties, mExtensions), "Delegate.fetchPropertyHelper");
+			assert.ok(oPropertyHelperConstructorSpy.calledOnceWithExactly(aProperties, mExtensions, oSomeInstance), "PropertyHelper constructor");
+		}).finally(function() {
+			oDelegate.fetchProperties = fnFetchProperties;
+			oDelegate.fetchPropertyExtensions = fnFetchPropertyExtensions;
+			oDelegate.fetchPropertyHelper = fnFetchPropertyHelper;
+		});
+	});
+
+	QUnit.test("PropertyHelper initialization from delegate with valid instance", function(assert) {
+		var oDelegate;
+
+		oSomeInstance = new TestClassWithFetchProperties();
+
+		return oSomeInstance.initControlDelegate().then(function(_oDelegate) {
+			oDelegate = _oDelegate;
+			oDelegate.fetchPropertyHelper = function() {
 				return Promise.resolve(new PropertyHelperSubclass([]));
 			};
 			return oSomeInstance.initPropertyHelper();
 		}).then(function(oPropertyHelper) {
 			assert.ok(oPropertyHelper instanceof PropertyHelperSubclass, "Property helper type");
 		}).finally(function() {
-			delete oDelegate.initPropertyHelper;
+			delete oDelegate.fetchPropertyHelper;
 		});
 	});
 
@@ -230,7 +299,27 @@ sap.ui.define([
 
 		return oSomeInstance.initControlDelegate().then(function(_oDelegate) {
 			oDelegate = _oDelegate;
-			oDelegate.initPropertyHelper = function() {
+			oDelegate.fetchPropertyHelper = function() {
+				return Promise.resolve(PropertyHelper);
+			};
+			return oSomeInstance.initPropertyHelper(PropertyHelperSubclass);
+		}).then(function() {
+			assert.ok(false, "Error thrown");
+		}).catch(function() {
+			assert.ok(true, "Error thrown");
+		}).finally(function() {
+			delete oDelegate.fetchPropertyHelper;
+		});
+	});
+
+	QUnit.test("PropertyHelper initialization from delegate with invalid instance", function(assert) {
+		var oDelegate;
+
+		oSomeInstance = new TestClassWithFetchProperties();
+
+		return oSomeInstance.initControlDelegate().then(function(_oDelegate) {
+			oDelegate = _oDelegate;
+			oDelegate.fetchPropertyHelper = function() {
 				return Promise.resolve(new PropertyHelper([]));
 			};
 			return oSomeInstance.initPropertyHelper(PropertyHelperSubclass);
@@ -239,7 +328,7 @@ sap.ui.define([
 		}).catch(function() {
 			assert.ok(true, "Error thrown");
 		}).finally(function() {
-			delete oDelegate.initPropertyHelper;
+			delete oDelegate.fetchPropertyHelper;
 		});
 	});
 

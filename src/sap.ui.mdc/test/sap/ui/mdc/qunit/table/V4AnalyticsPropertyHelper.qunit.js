@@ -14,42 +14,38 @@ sap.ui.define([
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "propA",
 				label: "Property A",
-				unit: "unit",
-				extension: {
-					defaultAggregate: {
-						contextDefiningProperties: ["propB"]
-					}
-				}
+				unit: "unit"
 			}, {
 				name: "propB",
-				label: "Property B",
-				extension: {}
+				label: "Property B"
 			}, {
 				name: "propC",
-				label: "Property C",
-				extension: {
-					defaultAggregate: {}
-				}
+				label: "Property C"
 			}, {
 				name: "complexPropA",
 				label: "Complex property A",
-				propertyInfos: ["propA"],
-				extension: {}
+				propertyInfos: ["propA"]
 			}, {
 				name: "complexPropB",
 				label: "Complex property B",
-				propertyInfos: ["propB"],
-				extension: {}
+				propertyInfos: ["propB"]
 			}, {
 				name: "complexPropC",
 				label: "Complex property C",
-				propertyInfos: ["propA", "propB", "propC"],
-				extension: {}
+				propertyInfos: ["propA", "propB", "propC"]
 			}, {
 				name: "unit",
-				label: "Unit",
-				extension: {}
-			}]);
+				label: "Unit"
+			}], {
+				propA: {
+					defaultAggregate: {
+						contextDefiningProperties: ["propB"]
+					}
+				},
+				propC: {
+					defaultAggregate: {}
+				}
+			});
 			this.aProperties = this.oPropertyHelper.getProperties();
 		},
 		afterEach: function() {
@@ -106,7 +102,7 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate({}), null, "Empty object");
 		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate("propA"), {
 			contextDefiningProperties: [this.aProperties[1]],
-			unit: this.aProperties[2]
+			unit: this.aProperties[6]
 		}, "Name of a simple property with a default aggregate with unit and context defining properties");
 		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate("propC"), {
 			contextDefiningProperties: [],
@@ -121,37 +117,35 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getDefaultAggregate("propA"), null, "After destruction");
 	});
 
-	QUnit.module("Property facade", {
+	QUnit.module("Property", {
 		before: function() {
 			this.aExpectedMethods = [
 				"isAggregatable", "getAggregatableProperties", "getDefaultAggregate"
 			];
 			this.oPropertyHelper = new PropertyHelper([{
 				name: "prop",
-				label: "Property",
-				extension: {}
+				label: "Property"
 			}, {
 				name: "complexProp",
 				label: "Complex property",
-				propertyInfos: ["prop"],
-				extension: {}
+				propertyInfos: ["prop"]
 			}]);
 		},
 		after: function() {
 			this.oPropertyHelper.destroy();
 		},
-		assertFacade: function(assert, oPropertyFacade) {
+		assertProperty: function(assert, oProperty) {
 			for (var i = 0; i < this.aExpectedMethods.length; i++) {
 				var sMethod = this.aExpectedMethods[i];
-				assert.equal(typeof oPropertyFacade[sMethod], "function", "Has function '" + sMethod + "'");
+				assert.equal(typeof oProperty[sMethod], "function", "Has function '" + sMethod + "'");
 			}
 		},
-		assertCalls: function(assert, oPropertyFacade, sPropertyName) {
+		assertCalls: function(assert, oProperty, sPropertyName) {
 			for (var i = 0; i < this.aExpectedMethods.length; i++) {
 				var sMethod = this.aExpectedMethods[i];
 				var oSpy = sinon.spy(this.oPropertyHelper, sMethod);
 
-				oPropertyFacade[sMethod]();
+				oProperty[sMethod]();
 				assert.ok(oSpy.calledOnceWithExactly(sPropertyName), "'" + sMethod + "' called once with the correct arguments");
 
 				oSpy.restore();
@@ -161,19 +155,19 @@ sap.ui.define([
 
 	QUnit.test("Simple property", function(assert) {
 		var oProperty = this.oPropertyHelper.getProperties()[0];
-		this.assertFacade(assert, oProperty);
+		this.assertProperty(assert, oProperty);
 		this.assertCalls(assert, oProperty, "prop");
 	});
 
 	QUnit.test("Complex property", function(assert) {
 		var oProperty = this.oPropertyHelper.getProperties()[1];
-		this.assertFacade(assert, oProperty);
+		this.assertProperty(assert, oProperty);
 		this.assertCalls(assert, oProperty, "complexProp");
 	});
 
 	QUnit.test("Property referenced by complex property", function(assert) {
 		var oProperty = this.oPropertyHelper.getProperties()[1].getReferencedProperties()[0];
-		this.assertFacade(assert, oProperty);
+		this.assertProperty(assert, oProperty);
 		this.assertCalls(assert, oProperty, "prop");
 	});
 });

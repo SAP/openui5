@@ -35,76 +35,114 @@ sap.ui.define([
 	 *     Whether this attribute must be provided.
 	 * - allowedForComplexProperty (optional, default=false)
 	 *     Whether it is allowed to provide this attribute for a complex property.
-	 * - defaultValue (optional):
+	 * - valueForComplexProperty (optional):
+	 *     For a complex property, this defines the value of an attribute that is not allowed for complex properties.
+	 * - defaultValue (optional)
 	 *     This can either be a value, or a reference to another attribute in the form "attribute:x", with x being the name of the other
 	 *     attribute. The default value of this attribute is then the value of the other attribute. This works only one level deep.
 	 *     Examples: "attribute:name", "attribute:attributeName.subAttributeName"
 	 */
 	var mAttributeMetadata = {
-		name: {
+		// Common
+		name: { // Unique key
+			type: "string", // TODO: sap.ui.core.ID cannot be used currently, because some OPA tests fail
+			mandatory: true,
+			allowedForComplexProperty: true
+		},
+		label: { // Translatable text describing the property.
 			type: "string",
 			mandatory: true,
 			allowedForComplexProperty: true
 		},
-		label: {
-			type: "string",
-			mandatory: true,
-			allowedForComplexProperty: true
-		},
-		path: {
-			type: "string",
-			defaultValue: "attribute:name"
-		},
-		key: {
-			type: "boolean"
-		},
-		visible: {
+		visible: { // Whether the property is visible in the "Items" personalization.
 			type: "boolean",
 			defaultValue: true,
 			allowedForComplexProperty: true
 		},
-		filterable: {
-			type: "boolean",
-			defaultValue: true
+		// TODO: Is there a valid use-case for name !== path? Can two properties having the same path cause problems (e.g. for sort/filter)?
+		path: { // The technical path for a data source property.
+			type: "string",
+			defaultValue: "attribute:name",
+			valueForComplexProperty: null
 		},
-		sortable: {
-			type: "boolean",
-			defaultValue: true
+		// TODO: Is it possible to reduce the required information by integrating/using TypeUtil (obtained from delegate) here?
+		typeConfig: {
+			type: {
+				className: {
+					type: "string"
+				},
+				baseType: {
+					type: "string"
+				},
+				// TODO: Avoid instances in property infos. Create them on demand, poss. in a getter.
+				typeInstance: {
+					type: "object" // sap.ui.model.SimpleType
+				}
+			},
+			//defaultValue: ?? TODO: Is there a default value (e.g. type string), or is it even mandatory?
+			valueForComplexProperty: null
 		},
-		groupable: {
-			type: "boolean"
+		// TODO: What's the meaning? type = boolean? Is used only once in FilterBarBase: oProperty.maxConditions !== -1
+		maxConditions: {
+			type: "int",
+			defaultValue: -1,
+			valueForComplexProperty: null
 		},
-		propertyInfos: {
-			type: "PropertyReference[]",
-			allowedForComplexProperty: true
-		},
-		unit: {
-			type: "PropertyReference"
-		},
-		groupLabel: {
+		group: { // Key of the group the property is inside. Used to visually group properties in personalization dialogs.
 			type: "string",
 			allowedForComplexProperty: true
 		},
-		exportSettings: {
+		groupLabel: { // Translatable text of the group.
+			type: "string",
+			allowedForComplexProperty: true
+		},
+
+		// Table, Chart, P13N
+		filterable: { // Whether it is possible to filter by this property.
+			type: "boolean",
+			defaultValue: true,
+			valueForComplexProperty: false
+		},
+		sortable: { // Whether it is possible to sort by this property.
+			type: "boolean",
+			defaultValue: true,
+			valueForComplexProperty: false
+		},
+
+		// Table
+		key: { // Whether the property is a key or part of a key in the data.
+			type: "boolean",
+			valueForComplexProperty: false
+		},
+		groupable: { // Whether it is possible to group by this property.
+			type: "boolean",
+			valueForComplexProperty: false
+		},
+		propertyInfos: { // List of names of simple properties. If this attribute is set, the property is a "complex property".
+			type: "PropertyReference[]",
+			allowedForComplexProperty: true
+		},
+		unit: { // Name of the property that is the unit of this property.
+			type: "PropertyReference"
+		},
+		exportSettings: { // Export settings as specified by sap.ui.export.Spreadsheet.
 			type: "object",
 			allowedForComplexProperty: true
 		},
-		typeConfig: {
-			type: "object"
-		},
-		maxConditions: {
-			type: "int",
-			defaultValue: -1
-		},
-		fieldHelp: {
-			type: "string"
+
+		// Chart
+
+		// FilterBar
+		required:  { // Whether there must be a filter condition for this property before firing a "search" event.
+			type: "boolean"
 		}
+
+		// Reserved attributes
+		// extension - Used to add model-specific information. For example, for analytics in OData, see sap.ui.mdc.odata.v4.TableDelegate.
 	};
 
-	var aMandatoryAttributes = Object.keys(mAttributeMetadata).filter(function(sAttribute) {
-		return mAttributeMetadata[sAttribute].mandatory;
-	});
-	var aPropertyFacadeMethods = [];
+	var aCommonAttributes = ["name", "label", "visible", "path", "typeConfig", "maxConditions", "group", "groupLabel"];
+	var aPropertyMethods = [];
 	var _private = new WeakMap();
 
 	function stringifyPlainObject(oObject) {
@@ -121,38 +159,19 @@ sap.ui.define([
 	}
 
 	function throwInvalidPropertyError(sMessage, oAdditionalInfo) {
-		var sAdditionalInfo = stringifyPlainObject(oAdditionalInfo);
+		var sAdditionalInfo = oAdditionalInfo ? stringifyPlainObject(oAdditionalInfo) : null;
 		throw new Error("Invalid property definition: " + sMessage + (sAdditionalInfo ? "\n" + sAdditionalInfo : ""));
 	}
 
-	function cloneProperties(aProperties) {
-		return aProperties.map(function(oProperty) {
-			return merge({}, oProperty);
-		});
-	}
-
-	function createPropertyFacades(oPropertyHelper, aProperties) {
-		var aPropertyFacades = aProperties.map(function(oProperty) {
-			var oFacade = {};
-
-			aPropertyFacadeMethods.forEach(function(sMethod) {
-				Object.defineProperty(oFacade, sMethod, {
+	function enrichProperties(oPropertyHelper, aProperties) {
+		aProperties.map(function(oProperty) {
+			aPropertyMethods.forEach(function(sMethod) {
+				Object.defineProperty(oProperty, sMethod, {
 					value: function() {
 						return oPropertyHelper[sMethod].call(oPropertyHelper, oProperty.name);
 					}
 				});
 			});
-
-			return oFacade;
-		});
-
-		return Object.freeze(aPropertyFacades);
-	}
-
-	function finalizePropertyFacades(oPropertyHelper, aFacades) {
-		aFacades.forEach(function(oFacade) {
-			oPropertyHelper.onCreatePropertyFacade(oFacade);
-			Object.freeze(oFacade);
 		});
 	}
 
@@ -187,36 +206,34 @@ sap.ui.define([
 		}, oObject);
 	}
 
-	function getAttributeDataType(mAttributeSection) {
+	function getAttributeDataType(vAttributeType) {
 		var sType;
 
-		if (typeof mAttributeSection.type === "object") {
+		if (typeof vAttributeType === "object") {
 			sType = "object";
 		} else {
-			sType = mAttributeSection.type.replace("PropertyReference", "string");
+			sType = vAttributeType.replace("PropertyReference", "string");
 		}
 
 		return DataType.getType(sType);
 	}
 
-	function prepareProperties(oPropertyHelper, aProperties, mProperties) {
+	function getTypeDefault(vAttributeType) {
+		var oDataType = getAttributeDataType(vAttributeType);
+
+		if (oDataType.isArrayType()) {
+			return oDataType.getBaseType().getDefaultValue();
+		} else {
+			return oDataType.getDefaultValue();
+		}
+	}
+
+	function prepareProperties(oPropertyHelper, aProperties) {
 		aProperties.forEach(function(oProperty) {
-			var aDependenciesForDefaults = preparePropertyDeep(oPropertyHelper, oProperty, mProperties);
-
-			aDependenciesForDefaults.forEach(function(mDependency) {
-				var oPropertySection = deepFind(oProperty, mDependency.targetPath);
-
-				if (oPropertySection) {
-					oPropertySection[mDependency.targetAttribute] = deepFind(oProperty, mDependency.source);
-
-					if (mDependency.isPropertyReference) {
-						preparePropertyReferences(oPropertySection, mDependency.targetAttribute, mProperties);
-					}
-				}
-			});
-
-			deepFreeze(oProperty);
+			oPropertyHelper.prepareProperty(oProperty);
 		});
+
+		deepFreeze(aProperties);
 	}
 
 	function preparePropertyDeep(oPropertyHelper, oProperty, mProperties, sPath, oPropertySection, mAttributeSection) {
@@ -239,6 +256,9 @@ sap.ui.define([
 			var vValue = oPropertySection[sAttribute];
 
 			if (bIsComplex && !mAttribute.allowedForComplexProperty) {
+				if ("valueForComplexProperty" in mAttribute) {
+					oPropertySection[sAttribute] = mAttribute.valueForComplexProperty;
+				}
 				continue;
 			}
 
@@ -292,7 +312,7 @@ sap.ui.define([
 					source: mAttributeSection.defaultValue.substring(mAttributeSection.defaultValue.indexOf(":") + 1),
 					targetPath: sSection,
 					targetAttribute: sAttribute,
-					isPropertyReference: typeof mAttributeSection.type === "string" && mAttributeSection.type.startsWith("PropertyReference")
+					targetType: mAttributeSection.type
 				});
 			} else if (typeof mAttributeSection.defaultValue === "object" && mAttributeSection.defaultValue !== null) {
 				oPropertySection[sAttribute] = merge({}, mAttributeSection.defaultValue);
@@ -300,24 +320,15 @@ sap.ui.define([
 				oPropertySection[sAttribute] = mAttributeSection.defaultValue;
 			}
 		} else {
-			var oDataType = getAttributeDataType(mAttributeSection);
-
-			if (oDataType.isArrayType()) {
-				oPropertySection[sAttribute] = oDataType.getBaseType().getDefaultValue();
-			} else {
-				oPropertySection[sAttribute] = oDataType.getDefaultValue();
-			}
+			oPropertySection[sAttribute] = getTypeDefault(mAttributeSection.type);
 		}
 	}
 
-	function createPropertyMap(aProperties, aFacades) {
-		var mProperties = {};
-
-		aProperties.forEach(function(oProperty, iIndex) {
-			mProperties[oProperty.name] = aFacades ? aFacades[iIndex] : oProperty;
-		});
-
-		return Object.freeze(mProperties);
+	function createPropertyMap(aProperties) {
+		return Object.freeze(aProperties.reduce(function(mMap, oProperty) {
+			mMap[oProperty.name] = oProperty;
+			return mMap;
+		}, {}));
 	}
 
 	function extractProperties(oPropertyHelper, sPropertyName, fnFilter) {
@@ -338,14 +349,46 @@ sap.ui.define([
 		return [];
 	}
 
+	function mergeExtensionsIntoProperties(aProperties, mExtensions) {
+		var iMatchingExtensions = 0;
+
+		mExtensions = mExtensions || {};
+
+		for (var i = 0; i < aProperties.length; i++) {
+			if ("extension" in aProperties[i]) {
+				throwInvalidPropertyError("Property contains invalid attribute 'extension'.", aProperties[i]);
+			}
+
+			if (aProperties[i].name in mExtensions) {
+				aProperties[i].extension = mExtensions[aProperties[i].name];
+				iMatchingExtensions++;
+			} else {
+				aProperties[i].extension = {};
+			}
+		}
+
+		if (iMatchingExtensions !== Object.keys(mExtensions).length) {
+			throw new Error("At least one property extension does not point to an existing property.");
+		}
+	}
+
 	/**
 	 * Constructor for a new helper for the given properties.
 	 *
-	 * @param {object[]} aProperties The properties to process in this helper
-	 * @param {sap.ui.base.ManagedObject} [oParent] A reference to an instance that will act as the parent of this helper
-	 * @param {object} [mAttributeMetadataExtension]
-	 *      Attribute metadata for additional property information in an <code>extension</code> attribute. The property infos may contain an
-	 *      <code>extension</code> attribute only attribute metadata is provided for it.
+	 * @param {object[]} aProperties
+	 *     The properties to process in this helper
+	 * @param {object<string, object>} [mExtensions]
+	 *     Key-value map, where the key is the name of the property and the value is the extension containing mode-specific information.
+	 *     The extension of a property is stored in a reserved <code>extension</code> attribute and its attributes must be specified with
+	 *     <code>mExtensionAttributeMetadata</code>.
+	 * @param {sap.ui.base.ManagedObject} [oParent]
+	 *     A reference to an instance that will act as the parent of this helper
+     * @param {string[]} [aAllowedAttributes]
+	 *     List of attributes the property infos may contain.
+	 *     The following common attributes are always allowed:
+	 *     name, label, visible, path, typeConfig, maxConditions, group, groupLabel
+	 * @param {object} [mExtensionAttributeMetadata]
+	 *     The attribute metadata for the model-specific property extension
 	 *
 	 * @class
 	 * Property helpers give this library a consistent and standardized view on properties and their attributes.
@@ -364,51 +407,77 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PropertyHelper = BaseObject.extend("sap.ui.mdc.util.PropertyHelper", {
-		constructor: function(aProperties, oParent, mAttributeMetadataExtension) {
+		constructor: function(aProperties, mExtensions, oParent, aAllowedAttributes, mExtensionAttributeMetadata) {
 			BaseObject.call(this);
 
-			var bParentIsValid = BaseObject.isA(oParent, ["sap.ui.base.ManagedObject"]);
-			var mPrivate = {};
-
-			if (oParent && !bParentIsValid) {
-				throw new Error("The type of the parent is invalid");
+			if (!Array.isArray(aProperties)) {
+				throwInvalidPropertyError("Property infos must be an array.");
 			}
 
-			_private.set(this, mPrivate);
+			if (mExtensions) {
+				if (!mExtensionAttributeMetadata) {
+					throw new Error("Property extensions are not supported.");
+				} else if (!isPlainObject(mExtensions)) {
+					throw new Error("Property extensions must be a plain object.");
+				}
+			}
 
-			if (mAttributeMetadataExtension) {
+			if (oParent && !BaseObject.isA(oParent, "sap.ui.base.ManagedObject")) {
+				throw new Error("The type of the parent is invalid.");
+			}
+
+			if (this._mExperimentalAdditionalAttributes) {
+				Object.keys(mAttributeMetadata).concat("extension").forEach(function(sAttribute) {
+					if (sAttribute in this._mExperimentalAdditionalAttributes) {
+						throw new Error("The attribute '" + sAttribute + "' is reserved and cannot be overridden by additional attributes.");
+					}
+				}.bind(this));
+			}
+
+			var mPrivate = {};
+			var mInstanceAttributeMetadata = aCommonAttributes.concat(aAllowedAttributes || []).reduce(function(mMetadata, sAttribute) {
+				if (sAttribute in mAttributeMetadata) {
+					mMetadata[sAttribute] = mAttributeMetadata[sAttribute];
+				}
+				return mMetadata;
+			}, Object.assign({}, this._mExperimentalAdditionalAttributes));
+
+			if (mExtensionAttributeMetadata) {
 				mPrivate.mAttributeMetadata = Object.assign({
 					extension: {
-						type: mAttributeMetadataExtension,
+						type: mExtensionAttributeMetadata,
 						mandatory: true,
 						allowedForComplexProperty: true
 					}
-				}, mAttributeMetadata);
-				mPrivate.aMandatoryAttributes = aMandatoryAttributes.concat("extension");
-				mPrivate.aMandatoryExtensionAttributes = Object.keys(mAttributeMetadataExtension).filter(function(sAttribute) {
-					return mAttributeMetadataExtension[sAttribute].mandatory;
+				}, mInstanceAttributeMetadata);
+				mPrivate.aMandatoryExtensionAttributes = Object.keys(mExtensionAttributeMetadata).filter(function(sAttribute) {
+					return mExtensionAttributeMetadata[sAttribute].mandatory;
 				});
 			} else {
-				mPrivate.mAttributeMetadata = mAttributeMetadata;
-				mPrivate.aMandatoryAttributes = aMandatoryAttributes;
+				mPrivate.mAttributeMetadata = mInstanceAttributeMetadata;
 				mPrivate.aMandatoryExtensionAttributes = [];
 			}
 
-			this.validateProperties(aProperties);
+			mPrivate.aMandatoryAttributes = Object.keys(mPrivate.mAttributeMetadata).filter(function(sAttribute) {
+				return mPrivate.mAttributeMetadata[sAttribute].mandatory;
+			});
 
-			var aClonedProperties = cloneProperties(aProperties);
-			var aPropertyFacades = createPropertyFacades(this, aClonedProperties);
+			var aClonedProperties = merge([], aProperties);
 			var mProperties = createPropertyMap(aClonedProperties);
-			var mPropertyFacades = createPropertyMap(aClonedProperties, aPropertyFacades);
+
+			if (mExtensionAttributeMetadata) {
+				mergeExtensionsIntoProperties(aClonedProperties, merge({}, mExtensions));
+			}
+
+			_private.set(this, mPrivate);
+			this.validateProperties(aClonedProperties);
 
 			mPrivate.oParent = oParent || null;
 			mPrivate.aProperties = aClonedProperties;
 			mPrivate.mProperties = mProperties;
-			mPrivate.aPropertyFacades = aPropertyFacades;
-			mPrivate.mPropertyFacades = mPropertyFacades;
 
-			prepareProperties(this, aClonedProperties, mPropertyFacades);
-			finalizePropertyFacades(this, aPropertyFacades);
+			enrichProperties(this, aClonedProperties);
+			prepareProperties(this, aClonedProperties);
 		}
 	});
 
@@ -424,10 +493,6 @@ sap.ui.define([
 	 * @protected
 	 */
 	PropertyHelper.prototype.validateProperties = function(aProperties) {
-		if (!Array.isArray(aProperties)) {
-			throwInvalidPropertyError("Property infos must be an array.");
-		}
-
 		var oUniquePropertiesSet = new Set();
 
 		for (var i = 0; i < aProperties.length; i++) {
@@ -441,14 +506,14 @@ sap.ui.define([
 	};
 
 	/**
-	 * Validates a single property. The entire array properties needs to be provided for validation of a complex property.
+	 * Validates a property. The entire array of properties needs to be provided for validation of a complex property.
 	 *
 	 * <b>Note for classes that override this method:</b>
 	 * No other method of the helper may be called from here. The properties are not yet stored in the helper, and therefore
 	 * any method that tries to access them might not work as expected.
 	 *
 	 * @param {object} oProperty The property to validate
-	 * @param {aProperties} aProperties The entire array properties
+	 * @param {object[]} aProperties The entire array properties
 	 * @throws {Error} If the property is invalid
 	 * @protected
 	 */
@@ -503,7 +568,7 @@ sap.ui.define([
 				validatePropertyDeep(
 					oPropertyHelper, oProperty, aProperties, sAttributePath, vValue, mAttribute.type
 				);
-			} else if (vValue != null && !getAttributeDataType(mAttribute).isValid(vValue)) {
+			} else if (vValue != null && !getAttributeDataType(mAttribute.type).isValid(vValue)) {
 				// Optional attributes may have null or undefined as value.
 				throwInvalidPropertyError("The value of '" + sAttributePath + "' is invalid.", oProperty);
 			} else if (vValue && typeof mAttribute.type === "string" && mAttribute.type.startsWith("PropertyReference")) {
@@ -541,10 +606,39 @@ sap.ui.define([
 	}
 
 	/**
+	 * Applies defaults and resolves property references.
+	 *
+	 * @param {object} oProperty The property to prepare
+	 * @protected
+	 */
+	PropertyHelper.prototype.prepareProperty = function(oProperty) {
+		var mProperties = this.getPropertyMap();
+		var aDependenciesForDefaults = preparePropertyDeep(this, oProperty, mProperties);
+
+		aDependenciesForDefaults.forEach(function(mDependency) {
+			var oPropertySection = deepFind(oProperty, mDependency.targetPath);
+
+			if (oPropertySection) {
+				var vValue = deepFind(oProperty, mDependency.source);
+
+				if (vValue == null) {
+					vValue = getTypeDefault(mDependency.targetType);
+				}
+
+				oPropertySection[mDependency.targetAttribute] = vValue;
+
+				if (typeof mDependency.targetType === "string" && mDependency.targetType.startsWith("PropertyReference")) {
+					preparePropertyReferences(oPropertySection, mDependency.targetAttribute, mProperties);
+				}
+			}
+		});
+	};
+
+	/**
 	 * If available, it gets the instance that acts as the parent of this helper. This may not reflect the UI5 object relationship tree.
 	 *
 	 * @returns {sap.ui.base.ManagedObject|null} The parent if one was passed to the constructor, <code>null</code> otherwise.
-	 * @protected
+	 * @public
 	 */
 	PropertyHelper.prototype.getParent = function() {
 		var oPrivate = _private.get(this);
@@ -559,7 +653,7 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.getProperties = function() {
 		var oPrivate = _private.get(this);
-		return oPrivate ? oPrivate.aPropertyFacades : [];
+		return oPrivate ? oPrivate.aProperties : [];
 	};
 
 	/**
@@ -570,7 +664,7 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.getPropertyMap = function() {
 		var oPrivate = _private.get(this);
-		return oPrivate ? oPrivate.mPropertyFacades : {};
+		return oPrivate ? oPrivate.mProperties : {};
 	};
 
 	/**
@@ -582,29 +676,6 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.getProperty = function(sName) {
 		return this.getPropertyMap()[sName] || null;
-	};
-
-	/**
-	 * Gets the array of raw property infos.
-	 *
-	 * @returns {Array|null} the array of propertyInfos
-	 * @public
-	 */
-	PropertyHelper.prototype.getRawPropertyInfos = function() {
-		var mPrivate = _private.get(this);
-		return mPrivate && mPrivate.aProperties;
-	};
-
-	/**
-	 * Gets the raw property by its name.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {object|null} The raw property, or <code>null</code> if it is unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.getRawProperty = function(sName) {
-		var mPrivate = _private.get(this);
-		return mPrivate && mPrivate.mProperties[sName] ? mPrivate.mProperties[sName] : null;
 	};
 
 	/**
@@ -627,14 +698,13 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.isComplex = function(sName) {
-		var oRawProperty = this.getRawProperty(sName);
-		return oRawProperty ? this.isPropertyComplex(oRawProperty) : null;
+		var oProperty = this.getProperty(sName);
+		return oProperty ? this.isPropertyComplex(oProperty) : null;
 	};
-	aPropertyFacadeMethods.push("isComplex");
+	aPropertyMethods.push("isComplex");
 
 	/**
-	 * Checks whether a property is a complex property. Works with any raw property info object. Does not work with property objects that are
-	 * returned by the property helper. Used during initialization.
+	 * Checks whether a property is a complex property. Works with any property info, even if unknown to the property helper.
 	 *
 	 * @see #isComplex
 	 * @param {object} oProperty A property info object
@@ -653,10 +723,10 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getReferencedProperties = function(sName) {
-		var oRawProperty = this.getRawProperty(sName);
-		return (oRawProperty && oRawProperty._propertyInfos) || [];
+		var oProperty = this.getProperty(sName);
+		return (oProperty && oProperty._propertyInfos) || [];
 	};
-	aPropertyFacadeMethods.push("getReferencedProperties");
+	aPropertyMethods.push("getReferencedProperties");
 
 	/**
 	 * Gets the unit property.
@@ -666,10 +736,10 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getUnitProperty = function(sName) {
-		var oRawProperty = this.getRawProperty(sName);
-		return (oRawProperty && oRawProperty._unit) || null;
+		var oProperty = this.getProperty(sName);
+		return (oProperty && oProperty._unit) || null;
 	};
-	aPropertyFacadeMethods.push("getUnitProperty");
+	aPropertyMethods.push("getUnitProperty");
 
 	/**
 	 * Checks whether a property is sortable.
@@ -680,14 +750,9 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.isSortable = function(sName) {
 		var oProperty = this.getProperty(sName);
-
-		if (oProperty) {
-			return oProperty.isComplex() ? false : this.getRawProperty(sName).sortable;
-		}
-
-		return null;
+		return oProperty ? oProperty.sortable : null;
 	};
-	aPropertyFacadeMethods.push("isSortable");
+	aPropertyMethods.push("isSortable");
 
 	/**
 	 * Gets all sortable properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
@@ -700,7 +765,7 @@ sap.ui.define([
 	PropertyHelper.prototype.getSortableProperties = function(sName) {
 		return extractProperties(this, sName, this.isSortable);
 	};
-	aPropertyFacadeMethods.push("getSortableProperties");
+	aPropertyMethods.push("getSortableProperties");
 
 	/**
 	 * Gets all sortable, non-complex properties.
@@ -723,14 +788,9 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.isFilterable = function(sName) {
 		var oProperty = this.getProperty(sName);
-
-		if (oProperty) {
-			return oProperty.isComplex() ? false : this.getRawProperty(sName).filterable;
-		}
-
-		return null;
+		return oProperty ? oProperty.filterable : null;
 	};
-	aPropertyFacadeMethods.push("isFilterable");
+	aPropertyMethods.push("isFilterable");
 
 	/**
 	 * Gets all filterable properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
@@ -743,7 +803,7 @@ sap.ui.define([
 	PropertyHelper.prototype.getFilterableProperties = function(sName) {
 		return extractProperties(this, sName, this.isFilterable);
 	};
-	aPropertyFacadeMethods.push("getFilterableProperties");
+	aPropertyMethods.push("getFilterableProperties");
 
 	/**
 	 * Gets all filterable, non-complex properties.
@@ -767,14 +827,9 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.isGroupable = function(sName) {
 		var oProperty = this.getProperty(sName);
-
-		if (oProperty) {
-			return oProperty.isComplex() ? false : this.getRawProperty(sName).groupable;
-		}
-
-		return null;
+		return oProperty ? oProperty.groupable : null;
 	};
-	aPropertyFacadeMethods.push("isGroupable");
+	aPropertyMethods.push("isGroupable");
 
 	/**
 	 * Gets all groupable properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
@@ -787,7 +842,7 @@ sap.ui.define([
 	PropertyHelper.prototype.getGroupableProperties = function(sName) {
 		return extractProperties(this, sName, this.isGroupable);
 	};
-	aPropertyFacadeMethods.push("getGroupableProperties");
+	aPropertyMethods.push("getGroupableProperties");
 
 	/**
 	 * Gets all groupable properties.
@@ -809,10 +864,10 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getLabel = function(sName) {
-		var oRawProperty = this.getRawProperty(sName);
-		return oRawProperty ? oRawProperty.label : null;
+		var oProperty = this.getProperty(sName);
+		return oProperty ? oProperty.label : null;
 	};
-	aPropertyFacadeMethods.push("getLabel");
+	aPropertyMethods.push("getLabel");
 
 	/**
 	 * Gets the label of the group a property is in.
@@ -822,10 +877,10 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getGroupLabel = function(sName) {
-		var oRawProperty = this.getRawProperty(sName);
-		return oRawProperty ? oRawProperty.groupLabel : null;
+		var oProperty = this.getProperty(sName);
+		return oProperty ? oProperty.groupLabel : null;
 	};
-	aPropertyFacadeMethods.push("getGroupLabel");
+	aPropertyMethods.push("getGroupLabel");
 
 	/**
 	 * Gets the binding path of a property.
@@ -836,14 +891,9 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.getPath = function(sName) {
 		var oProperty = this.getProperty(sName);
-
-		if (oProperty) {
-			return oProperty.isComplex() ? null : this.getRawProperty(sName).path;
-		}
-
-		return null;
+		return oProperty ? oProperty.path : null;
 	};
-	aPropertyFacadeMethods.push("getPath");
+	aPropertyMethods.push("getPath");
 
 	/**
 	 * Checks whether a property is part of the key of its entity.
@@ -854,14 +904,9 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.isKey = function(sName) {
 		var oProperty = this.getProperty(sName);
-
-		if (oProperty) {
-			return oProperty.isComplex() ? false : this.getRawProperty(sName).key;
-		}
-
-		return null;
+		return oProperty ? oProperty.key : null;
 	};
-	aPropertyFacadeMethods.push("isKey");
+	aPropertyMethods.push("isKey");
 
 	/**
 	 * Gets all key properties.
@@ -883,10 +928,10 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.isVisible = function(sName) {
-		var oRawProperty = this.getRawProperty(sName);
-		return oRawProperty ? oRawProperty.visible : null;
+		var oProperty = this.getProperty(sName);
+		return oProperty ? oProperty.visible : null;
 	};
-	aPropertyFacadeMethods.push("isVisible");
+	aPropertyMethods.push("isVisible");
 
 	/**
 	 * Gets all visible properties referenced by a complex property. For convenience, the name of a non-complex property can be given that is then
@@ -899,7 +944,7 @@ sap.ui.define([
 	PropertyHelper.prototype.getVisibleProperties = function(sName) {
 		return extractProperties(this, sName, this.isVisible);
 	};
-	aPropertyFacadeMethods.push("getVisibleProperties");
+	aPropertyMethods.push("getVisibleProperties");
 
 	/**
 	 * Gets all visible properties.
@@ -922,10 +967,10 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getExportSettings = function(sName) {
-		var oRawProperty = this.getRawProperty(sName);
-		return oRawProperty && oRawProperty.exportSettings ? oRawProperty.exportSettings : null;
+		var oProperty = this.getProperty(sName);
+		return oProperty ? oProperty.exportSettings : null;
 	};
-	aPropertyFacadeMethods.push("getExportSettings");
+	aPropertyMethods.push("getExportSettings");
 
 	/**
 	 * Gets the unique name (key) of a property.
@@ -937,10 +982,10 @@ sap.ui.define([
 	 * @public
 	 */
 	PropertyHelper.prototype.getName = function(sName) {
-		var oRawProperty = this.getRawProperty(sName);
-		return oRawProperty ? oRawProperty.name : null;
+		var oProperty = this.getProperty(sName);
+		return oProperty ? oProperty.name : null;
 	};
-	aPropertyFacadeMethods.push("getName");
+	aPropertyMethods.push("getName");
 
 	/**
 	 * Gets the maximum possible conditions of a property.
@@ -951,14 +996,9 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.getMaxConditions = function(sName) {
 		var oProperty = this.getProperty(sName);
-
-		if (oProperty) {
-			return oProperty.isComplex() ? null : this.getRawProperty(sName).maxConditions;
-		}
-
-		return null;
+		return oProperty ? oProperty.maxConditions : null;
 	};
-	aPropertyFacadeMethods.push("getMaxConditions");
+	aPropertyMethods.push("getMaxConditions");
 
 	/**
 	 * Gets the type config of a property.
@@ -969,42 +1009,9 @@ sap.ui.define([
 	 */
 	PropertyHelper.prototype.getTypeConfig = function(sName) {
 		var oProperty = this.getProperty(sName);
-
-		if (oProperty) {
-			return oProperty.isComplex() ? null : this.getRawProperty(sName).typeConfig;
-		}
-
-		return null;
+		return oProperty ? oProperty.typeConfig : null;
 	};
-	aPropertyFacadeMethods.push("getTypeConfig");
-
-	/**
-	 * Gets the field help of a property.
-	 *
-	 * @param {string} sName Name of a property
-	 * @returns {string|null} The field help of the property, or <code>null</code> if it is complex or unknown
-	 * @public
-	 */
-	PropertyHelper.prototype.getFieldHelp = function(sName) {
-		var oProperty = this.getProperty(sName);
-
-		if (oProperty) {
-			return oProperty.isComplex() ? null : this.getRawProperty(sName).fieldHelp;
-		}
-
-		return null;
-	};
-	aPropertyFacadeMethods.push("getFieldHelp");
-
-	/**
-	 * This hook is called when a new property facade is created. Can be used to add information to the facade, but not to remove or change
-	 * information.
-	 *
-	 * @param {object} oFacade The property facade
-	 * @protected
-	 * @virtual
-	 */
-	PropertyHelper.prototype.onCreatePropertyFacade = function(oFacade) {};
+	aPropertyMethods.push("getTypeConfig");
 
 	/**
 	 * @override

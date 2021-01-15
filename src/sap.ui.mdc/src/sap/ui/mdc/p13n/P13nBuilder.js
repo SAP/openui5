@@ -208,28 +208,23 @@ sap.ui.define([
             var mExistingFilters = oControlState.filter || {};
 
 			oPropertyHelper.getProperties().forEach(function(oProperty) {
-				var oRawPropertyInfo = merge({}, oPropertyHelper.getRawProperty(oProperty.getName()), {
-					sortable: oProperty.isSortable(),
-					filterable: oProperty.isFilterable(),
-					visible: oProperty.isVisible()
-				});
                 var mItem = {};
 
-                if (P13nBuilder._isExcludeProperty(oRawPropertyInfo, aIgnoreAttributes)) {
+                if (P13nBuilder._isExcludeProperty(oProperty, aIgnoreAttributes)) {
                     return;
                 }
 
-                //use key for the item determiniation --> use the path as fallback
-                var sKey = oProperty.getName();
+                var sKey = oProperty.name;
                 var oExistingProperty = mExistingProperties[sKey];
 
                 //add general information
                 mItem.selected = oExistingProperty ? true : false;
                 mItem.position = oExistingProperty ? oExistingProperty.position : -1;
-                mItem = merge(mItem, oRawPropertyInfo, oExistingProperty);
-                mItem.label = oProperty.getLabel() || oProperty.getName();
-                mItem.tooltip = oRawPropertyInfo.tooltip ? oRawPropertyInfo.tooltip : oProperty.getLabel();
-                mItem.visibleInDialog = oRawPropertyInfo.hasOwnProperty("visibleInDialog") ? oRawPropertyInfo.visibleInDialog : true;
+                mItem = merge(mItem, oProperty, oExistingProperty);
+
+                // sap.ui.comp compatibility
+				mItem.tooltip = oProperty.hasOwnProperty("tooltip") ? oProperty.tooltip : "";
+                mItem.visibleInDialog = oProperty.hasOwnProperty("visibleInDialog") ? oProperty.visibleInDialog : true;
 
                 //Add sort info
                 if (sP13nType == "Sort"){//TODO: remove workaround for FlexUtil ungeneric changecontent check

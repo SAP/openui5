@@ -12,8 +12,14 @@ sap.ui.define([
 	/**
 	 * Constructor for a new table property helper for V4 analytics.
 	 *
-	 * @param {object[]} aProperties The properties to process in this helper
-	 * @param {sap.ui.base.ManagedObject} [oParent] A reference to an instance that will act as the parent of this helper
+	 * @param {object[]} aProperties
+	 *     The properties to process in this helper
+	 * @param {object<string, object>} [mExtensions]
+	 *     Key-value map, where the key is the name of the property and the value is the extension containing mode-specific information.
+	 *     The extension of a property is stored in a reserved <code>extension</code> attribute and its attributes must be specified with
+	 *     <code>mExtensionAttributeMetadata</code>.
+	 * @param {sap.ui.base.ManagedObject} [oParent]
+	 *     A reference to an instance that will act as the parent of this helper
 	 *
 	 * @class
 	 * @extends sap.ui.mdc.table.PropertyHelper
@@ -28,8 +34,8 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var PropertyHelper = TablePropertyHelper.extend("sap.ui.mdc.table.V4AnalyticsPropertyHelper", {
-		constructor: function(aProperties, oParent) {
-			TablePropertyHelper.call(this, aProperties, oParent, {
+		constructor: function(aProperties, mExtensions, oParent) {
+			TablePropertyHelper.call(this, aProperties, mExtensions, oParent, {
 				defaultAggregate: {
 					type: {
 						contextDefiningProperties: {type: "PropertyReference[]"}
@@ -43,14 +49,14 @@ sap.ui.define([
 	 * @inheritDoc
 	 * @override
 	 */
-	PropertyHelper.prototype.onCreatePropertyFacade = function(oFacade) {
-		var sPropertyName = oFacade.getName();
+	PropertyHelper.prototype.prepareProperty = function(oProperty) {
+		var sPropertyName = oProperty.getName();
 		var that = this;
 
-		TablePropertyHelper.prototype.onCreatePropertyFacade.apply(this, arguments);
+		TablePropertyHelper.prototype.prepareProperty.apply(this, arguments);
 
 		["isAggregatable", "getAggregatableProperties", "getDefaultAggregate"].forEach(function(sMethod) {
-			Object.defineProperty(oFacade, sMethod, {
+			Object.defineProperty(oProperty, sMethod, {
 				value: function() {
 					return that[sMethod].call(that, sPropertyName);
 				}
@@ -59,8 +65,8 @@ sap.ui.define([
 	};
 
 	function getExtensionAttribute(oPropertyHelper, sPropertyName, sAttributeName) {
-		var oRawProperty = oPropertyHelper.getRawProperty(sPropertyName);
-		return oRawProperty ? oRawProperty.extension[sAttributeName] : null;
+		var oProperty = oPropertyHelper.getProperty(sPropertyName);
+		return oProperty ? oProperty.extension[sAttributeName] : null;
 	}
 
 	/**

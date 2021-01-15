@@ -15,7 +15,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("sap.ui.mdc.Table", {
-		beforeEach: function(assert) {
+		beforeEach: function() {
 			this.oTable = new Table({
 				delegate: {
 					name: "sap/ui/mdc/odata/v4/TableDelegate",
@@ -24,22 +24,22 @@ sap.ui.define([
 					}
 				}
 			});
-			this.oTable.placeAt("qunit-fixture");
-			Core.applyChanges();
 			this.oTable.addColumn(new Column({
 				template: new Text(),
 				dataProperty: "Name"
 			}));
-
 			this.oTable.addColumn(new Column({
 				template: new Text(),
 				dataProperty: "Country"
 			}));
-
 			this.oTable.addColumn(new Column({
 				template: new Text(),
 				dataProperty: "name_country"
 			}));
+
+			this.oTable.placeAt("qunit-fixture");
+			Core.applyChanges();
+
 			this.aPropertyInfo = [
 				{
 					name: "Name",
@@ -59,12 +59,13 @@ sap.ui.define([
 					propertyInfos: ["Name", "Country"]
 				}
 			];
+
 			MDCQUnitUtils.stubPropertyInfos(this.oTable, this.aPropertyInfo);
-			var mExtensions = {};
-			mExtensions["Name"] = {
-				defaultAggregate: {}
-			};
-			MDCQUnitUtils.stubPropertyExtension(this.oTable, mExtensions);
+			MDCQUnitUtils.stubPropertyExtension(this.oTable, {
+				Name: {
+					defaultAggregate: {}
+				}
+			});
 		},
 		afterEach: function() {
 			MDCQUnitUtils.restorePropertyInfos(this.oTable);
@@ -76,8 +77,8 @@ sap.ui.define([
 	QUnit.test("Allowed analytics in the columns", function(assert) {
 		var fColumnPressSpy = sinon.spy(this.oTable, "_onColumnPress");
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
-		assert.ok(this.oTable);
 		var oTable = this.oTable;
+
 		return oTable._fullyInitialized().then(function() {
 			var oFirstInnerColumn = oTable._oTable.getColumns()[0];
 
@@ -89,11 +90,16 @@ sap.ui.define([
 			return oTable._fullyInitialized();
 		}).then(function() {
 			var oThirdInnerColumn = oTable._oTable.getColumns()[2];
-			assert.strictEqual(oTable._oPopover.getItems()[0].getLabel(), oResourceBundle.getText("table.SETTINGS_GROUP"), "The first column has group menu item");
-			assert.strictEqual(oTable._oPopover.getItems()[1].getLabel(), oResourceBundle.getText("table.SETTINGS_AGGREGATE"), "The first column has aggregate menu item");
+
+			assert.strictEqual(oTable._oPopover.getItems()[0].getLabel(), oResourceBundle.getText("table.SETTINGS_GROUP"),
+				"The first column has group menu item");
+			assert.strictEqual(oTable._oPopover.getItems()[1].getLabel(), oResourceBundle.getText("table.SETTINGS_AGGREGATE"),
+				"The first column has aggregate menu item");
+
 			oTable._oTable.fireEvent("columnSelect", {
 				column: oThirdInnerColumn
 			});
+
 			return oTable._fullyInitialized();
 		}).then(function() {
 			assert.strictEqual(fColumnPressSpy.callCount, 2, "Third Column pressed");
@@ -103,29 +109,30 @@ sap.ui.define([
 
 	QUnit.test("Grouping enabled on column press", function(assert) {
 		var oTable = this.oTable;
-		var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
-		assert.ok(oTable);
+
 		return oTable._fullyInitialized().then(function() {
 			var oInnerColumn = oTable._oTable.getColumns()[0];
+			var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
+
 			oTable._oTable.fireEvent("columnSelect", {
 				column: oInnerColumn
 			});
-			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
+			assert.ok(fColumnPressSpy.calledOnce, "First column pressed");
 			fColumnPressSpy.restore();
+
 			return oTable._fullyInitialized();
 		}).then(function() {
 			var oPlugin = oTable._oTable.getDependents()[0];
 			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 			var oDelegate = oTable.getControlDelegate();
-			var params = {
+
+			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
+			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 				visible: oDelegate._getVisibleProperties(oTable),
 				groupLevels: ["Name"],
 				grandTotal: [],
 				subtotals: []
-			};
-			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
-			assert.ok(fSetAggregationSpy.calledOnce, "Plugin Set aggregation called for grouping");
-			assert.ok(fSetAggregationSpy.calledWith(params), "Plugin called with right parameters");
+			}), "Plugin#setAggregationInfo call");
 
 			fSetAggregationSpy.restore();
 		});
@@ -133,29 +140,30 @@ sap.ui.define([
 
 	QUnit.test("Aggregation enabled on column press", function(assert) {
 		var oTable = this.oTable;
-		var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
-		assert.ok(oTable);
+
 		return oTable._fullyInitialized().then(function() {
 			var oInnerColumn = oTable._oTable.getColumns()[0];
+			var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
+
 			oTable._oTable.fireEvent("columnSelect", {
 				column: oInnerColumn
 			});
 			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
 			fColumnPressSpy.restore();
+
 			return oTable._fullyInitialized();
 		}).then(function() {
 			var oDelegate = oTable.getControlDelegate();
 			var oPlugin = oTable._oTable.getDependents()[0];
 			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-			var params = {
+
+			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[1].firePress();
+			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 				visible: oDelegate._getVisibleProperties(oTable),
 				groupLevels: [],
 				grandTotal: ["Name"],
 				subtotals: ["Name"]
-			};
-			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[1].firePress();
-			assert.ok(fSetAggregationSpy.calledWith(params), "Plugin called with right parameters");
-			assert.ok(fSetAggregationSpy.calledOnce, "First column is aggregated");
+			}), "Plugin#setAggregationInfo call");
 			fSetAggregationSpy.restore();
 		});
 	});
@@ -163,28 +171,29 @@ sap.ui.define([
 	QUnit.test("Grouping and Aggregation on two columns", function(assert) {
 		var oTable = this.oTable;
 		var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
-		assert.ok(oTable);
+
 		return oTable._fullyInitialized().then(function() {
 			var oInnerColumn = oTable._oTable.getColumns()[0];
+
 			oTable._oTable.fireEvent("columnSelect", {
 				column: oInnerColumn
 			});
 			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
+
 			return oTable._fullyInitialized();
 		}).then(function() {
 			var oDelegate = oTable.getControlDelegate();
 			var oPlugin = oTable._oTable.getDependents()[0];
 			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
 			var oInnerSecondColumn = oTable._oTable.getColumns()[1];
-			var params = {
+
+			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
+			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 				visible: oDelegate._getVisibleProperties(oTable),
 				groupLevels: ["Name"],
 				grandTotal: [],
 				subtotals: []
-			};
-			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
-			assert.ok(fSetAggregationSpy.calledWith(params), "Plugin called with right parameters");
-			assert.ok(fSetAggregationSpy.calledOnce, "First column is Grouped");
+			}), "Plugin#setAggregationInfo call");
 
 			oTable._oTable.fireEvent("columnSelect", {
 				column: oInnerSecondColumn
@@ -195,16 +204,14 @@ sap.ui.define([
 			var oDelegate = oTable.getControlDelegate();
 			var oPlugin = oTable._oTable.getDependents()[0];
 			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-			var params = {
+
+			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
+			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 				visible: oDelegate._getVisibleProperties(oTable),
 				groupLevels: ["Name","Country"],
 				grandTotal: [],
 				subtotals: []
-			};
-			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
-			assert.ok(fSetAggregationSpy.calledWith(params), "Plugin called with right parameters");
-			assert.ok(fSetAggregationSpy.callCount, 2, "Second column is Grouped");
-
+			}), "Plugin#setAggregationInfo call");
 			fColumnPressSpy.restore();
 			fSetAggregationSpy.restore();
 		});
@@ -212,10 +219,11 @@ sap.ui.define([
 
 	QUnit.test("Grouping and forced aggregation", function(assert) {
 		var oTable = this.oTable;
-		assert.ok(oTable);
 		var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
+
 		return oTable._fullyInitialized().then(function() {
 			var oInnerColumn = oTable._oTable.getColumns()[0];
+
 			oTable._oTable.fireEvent("columnSelect", {
 				column: oInnerColumn
 			});
@@ -226,26 +234,26 @@ sap.ui.define([
 			var oDelegate = oTable.getControlDelegate();
 			var oPlugin = oTable._oTable.getDependents()[0];
 			var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
-			var param1 = {
+
+			sinon.stub(sap.m.MessageBox, "warning");
+			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
+			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 				visible: oDelegate._getVisibleProperties(oTable),
 				groupLevels: ["Name"],
 				grandTotal: [],
 				subtotals: []
-			};
-			sinon.stub(sap.m.MessageBox, "warning");
-			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
-			assert.ok(fSetAggregationSpy.calledWith(param1), "Plugin called with right parameters");
-			assert.ok(fSetAggregationSpy.calledOnce, "First column is grouped");
-			var param2 = {
+			}), "Plugin#setAggregationInfo call");
+
+			fSetAggregationSpy.reset();
+			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[1].firePress();
+			oDelegate._forceAnalytics("Aggregate", oTable, "Name");
+			assert.ok(fSetAggregationSpy.calledOnceWithExactly({
 				visible: oDelegate._getVisibleProperties(oTable),
 				groupLevels: [],
 				grandTotal: ["Name"],
 				subtotals: ["Name"]
-			};
-			oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[1].firePress();
-			oDelegate._forceAnalytics("Aggregate", oTable, "Name");
-			assert.ok(fSetAggregationSpy.calledWith(param2), "Plugin called with right parameters");
-			assert.strictEqual(fSetAggregationSpy.callCount, 2, "First column is aggregated");
+			}), "Plugin#setAggregationInfo call");
+
 			fColumnPressSpy.restore();
 			fSetAggregationSpy.restore();
 		});

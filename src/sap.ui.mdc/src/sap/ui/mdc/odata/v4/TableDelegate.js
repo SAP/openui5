@@ -23,6 +23,7 @@ sap.ui.define([
 
 	var TableType = library.TableType;
 	var TableMap = new window.WeakMap(); // To store table-related information for easy access in the delegate.
+
 	/**
 	 * Delegate class for sap.ui.mdc.Table and ODataV4.
 	 * Enables additional analytical capabilities.
@@ -38,42 +39,18 @@ sap.ui.define([
 	var Delegate = Object.assign({}, TableDelegate);
 
 	/**
-	 * Initializes a new table property helper for V4 analytics with the property extensions merged into the property infos.
+	 * Fetches the model-specific property helper class or instance.
 	 *
-	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table.
-	 * @returns {Promise<sap.ui.mdc.table.V4AnalyticsPropertyHelper>} A promise that resolves with the property helper.
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {object[]} aProperties The property infos
+	 * @param {Promise<object<string, object>|null>} mExtensions The property extensions
+	 * @returns {Promise<sap.ui.mdc.table.V4AnalyticsPropertyHelper>} A promise that resolves with the property helper class or instance
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
 	 */
-	Delegate.initPropertyHelper = function(oTable) {
-		// TODO: Do this in the DelegateMixin, or provide a function in the base delegate to merge properties and extensions
-		return Promise.all([
-			this.fetchProperties(oTable),
-			loadModules("sap/ui/mdc/table/V4AnalyticsPropertyHelper")
-		]).then(function(aResult) {
-			return Promise.all(aResult.concat(this.fetchPropertyExtensions(oTable, aResult[0])));
-		}.bind(this)).then(function(aResult) {
-			var aProperties = aResult[0];
-			var PropertyHelper = aResult[1][0];
-			var mExtensions = aResult[2];
-			var iMatchingExtensions = 0;
-			var aPropertiesWithExtension = [];
-
-			for (var i = 0; i < aProperties.length; i++) {
-				aPropertiesWithExtension.push(Object.assign({}, aProperties[i], {
-					extension: mExtensions[aProperties[i].name] || {}
-				}));
-
-				if (aProperties[i].name in mExtensions) {
-					iMatchingExtensions++;
-				}
-			}
-
-			if (iMatchingExtensions !== Object.keys(mExtensions).length) {
-				throw new Error("At least one property extension does not point to an existing property");
-			}
-
-			return new PropertyHelper(aPropertiesWithExtension, oTable);
+	Delegate.fetchPropertyHelper = function(oTable, aProperties, mExtensions) {
+		return loadModules("sap/ui/mdc/table/V4AnalyticsPropertyHelper").then(function(aResult) {
+			return aResult[0];
 		});
 	};
 
@@ -83,11 +60,11 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
 	 * @param {object[]} aProperties The property infos
-	 * @returns {Promise<object<string, object>>} Key-value map, where the key is the name of the property, and the value is the extension
+	 * @returns {Promise<object<string, object>|null>} Key-value map, where the key is the name of the property, and the value is the extension
 	 * @protected
 	 */
 	Delegate.fetchPropertyExtensions = function(oTable, aProperties) {
-		return Promise.resolve({});
+		return Promise.resolve(null);
 	};
 
 	Delegate.preInit = function(oTable) {
@@ -305,7 +282,7 @@ sap.ui.define([
 			});
 
 			// Configure the plugin with the propertyInfos
-			oPlugin.setPropertyInfos(oPropertyHelper.getRawPropertyInfos());
+			oPlugin.setPropertyInfos(oPropertyHelper.getProperties());
 			that._setAggregation(oTable, [], []);
 		});
 	}
