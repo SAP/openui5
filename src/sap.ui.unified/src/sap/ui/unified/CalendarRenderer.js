@@ -39,11 +39,6 @@ sap.ui.define([],
 			rb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified"),
 			mAccProps = {labelledby: {value: "", append: false}};
 
-		if (oCal._bPoupupMode) {
-			mAccProps.role = "dialog";
-			mAccProps.modal = true;
-		}
-
 		oRm.openStart("div", oCal);
 		oRm.class("sapUiCal");
 		if (aMonths.length > 1) {

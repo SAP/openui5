@@ -2662,27 +2662,6 @@ sap.ui.define([
 
 	QUnit.module("Accessibility");
 
-	QUnit.test("CalendarMonthInterval has Calendar aggregation which is wrapped in popup with role dialog where aria-modal attribute value should be true", function(assert) {
-		// Arrange
-		var oCalP = new CalendarMonthInterval("CalP", {
-			pickerPopup: true
-		}).placeAt("qunit-fixture");
-
-		sap.ui.getCore().applyChanges();
-
-		// Act
-		qutils.triggerEvent("click", "CalP--Head-B2");
-
-		// Assert
-		assert.strictEqual(jQuery("#CalP--Cal").attr("aria-modal"), "true", "aria-modal attribute is true");
-
-		// close calendarPicker
-		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ESCAPE);
-
-		// Clean
-		oCalP.destroy();
-	});
-
 	QUnit.test("Day picker DOM ref has aria-roledescription='Calendar'", function(assert) {
 		// prepare
 		var oCal = new Calendar(),
