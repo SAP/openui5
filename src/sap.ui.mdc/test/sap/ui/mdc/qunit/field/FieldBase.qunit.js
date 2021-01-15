@@ -3018,6 +3018,8 @@ sap.ui.define([
 		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
 		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
 
+		oIcon.destroy();
+
 	});
 
 	QUnit.test("select on single field", function(assert) {
@@ -4707,6 +4709,114 @@ sap.ui.define([
 					assert.equal(oCloneContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used on Clone");
 
 					oClone.destroy();
+					fnDone();
+				}, 0);
+			}, 0);
+		}, 0);
+
+	});
+
+	var oField2;
+	var oIcon;
+	var aFieldGroupIds;
+	var sFieldGroupControl;
+	var validateFieldGroup = function(oEvent) {
+		aFieldGroupIds = oEvent.getParameters().fieldGroupIds;
+		sFieldGroupControl = oEvent.getSource().getId();
+	};
+
+	QUnit.module("FieldGroup handling", {
+		beforeEach: function() {
+			oField = new FieldBase("F1", {
+				fieldGroupIds: "MyFieldGroup",
+				validateFieldGroup: validateFieldGroup
+			}).placeAt("content");
+
+			oField2 = new FieldBase("F2", {
+				dataType: "sap.ui.model.type.Currency",
+				maxConditions: 1,
+				fieldGroupIds: "MyFieldGroup",
+				validateFieldGroup: validateFieldGroup
+			}).placeAt("content");
+
+			oIcon = new Icon("I3", { src: "sap-icon://sap-ui5", decorative: false, press: function(oEvent) {} }).placeAt("content"); // just dummy handler to make Icon focusable
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			oField.destroy();
+			oField = undefined;
+			oField2.destroy();
+			oField2 = undefined;
+			oIcon.destroy();
+			oIcon = undefined;
+			FieldBase._init();
+			aFieldGroupIds = undefined;
+			sFieldGroupControl = undefined;
+		}
+	});
+
+	QUnit.test("normal Field leave FieldGroup", function(assert) {
+
+		var fnDone = assert.async();
+		oField.focus();
+		setTimeout(function() { // for fieldGroup delay
+			oIcon.focus();
+			setTimeout(function() { // for fieldGroup delay
+				assert.equal(sFieldGroupControl, "F1", "Field is source for FieldGroup change");
+				assert.equal(aFieldGroupIds && aFieldGroupIds.length, 1, "One FieldGroupId");
+				assert.equal(aFieldGroupIds && aFieldGroupIds[0], "MyFieldGroup", "FieldGroupId");
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("normal Field stay in FieldGroup", function(assert) {
+
+		var fnDone = assert.async();
+		oField.focus();
+		setTimeout(function() { // for fieldGroup delay
+			oField2.focus();
+			setTimeout(function() { // for fieldGroup delay
+				assert.notOk(sFieldGroupControl, "no FieldGroup change");
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("currency Field leave FieldGroup", function(assert) {
+
+		var fnDone = assert.async();
+		var aContent = oField2.getAggregation("_content");
+		var oContent2 = aContent && aContent.length > 1 && aContent[1];
+		oContent2.focus();
+		setTimeout(function() { // for fieldGroup delay
+			oIcon.focus();
+			setTimeout(function() { // for fieldGroup delay
+				assert.equal(sFieldGroupControl, "F2", "Field is source for FieldGroup change");
+				assert.equal(aFieldGroupIds && aFieldGroupIds.length, 1, "One FieldGroupId");
+				assert.equal(aFieldGroupIds && aFieldGroupIds[0], "MyFieldGroup", "FieldGroupId");
+				fnDone();
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("currency Field stay in FieldGroup", function(assert) {
+
+		var fnDone = assert.async();
+		var aContent = oField2.getAggregation("_content");
+		var oContent1 = aContent && aContent.length > 1 && aContent[1];
+		var oContent2 = aContent && aContent.length > 1 && aContent[1];
+		oContent2.focus();
+		setTimeout(function() { // for fieldGroup delay
+			oContent1.focus();
+			setTimeout(function() { // for fieldGroup delay
+				assert.notOk(sFieldGroupControl, "no FieldGroup change on navigating between currency and number");
+				oField.focus();
+				setTimeout(function() { // for fieldGroup delay
+					assert.notOk(sFieldGroupControl, "no FieldGroup change");
 					fnDone();
 				}, 0);
 			}, 0);

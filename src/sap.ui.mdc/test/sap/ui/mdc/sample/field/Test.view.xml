@@ -10,7 +10,7 @@
 	xmlns:legend="sap.ui.core.feature.legend"
 	xmlns:custom="sap.ui.mdc.sample.field.lib">
 
-	<m:App id="MyApp" defaultTransitionName="show">
+	<m:App id="MyApp" defaultTransitionName="show" validateFieldGroup="validateFieldGroup">
 		<m:Page id="P0" title="Simple Fields" titleLevel="H1">
 			<form:SimpleForm layout="ColumnLayout" editable="true"
 				labelSpanXL="5" labelSpanL="5" labelSpanM="4" columnsXL="3" columnsL="2" columnsM="1"
@@ -590,7 +590,8 @@
 					change="handleChange"
 					liveChange="handleLiveChange"
 					submit="handleSubmit"
-					fieldHelp="IOFVH1">
+					fieldHelp="IOFVH1"
+					fieldGroupIds="MyFieldGroup">
 					<mdc:dependents>
 							<mdcField:FieldValueHelp id="IOFVH1"
 								title="Material"
@@ -635,7 +636,8 @@
 					display="Value" change="handleChange"
 					liveChange="handleLiveChange"
 					submit="handleSubmit"
-					fieldHelp="FVH-WeightUnit4">
+					fieldHelp="FVH-WeightUnit4"
+					fieldGroupIds="MyFieldGroup">
 					<mdc:dependents>
 							<mdcField:FieldValueHelp id="FVH-WeightUnit4"
 								title="Quantity Unit"

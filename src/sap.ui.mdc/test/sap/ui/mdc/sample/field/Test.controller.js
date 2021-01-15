@@ -232,6 +232,14 @@ sap.ui.define([
 					oWrapper.setTable(oTable);
 				}
 			}.bind(this), 100);
+		},
+
+		validateFieldGroup: function(oEvent) {
+			var aFieldGroup = oEvent.getParameters().fieldGroupIds;
+			if (aFieldGroup.indexOf("MyFieldGroup") > -1) { //own FieldGroup
+				var oField = oEvent.getSource();
+				MessageToast.show("FieldGroup left on " + oField.getId());
+			}
 		}
 
 	});
