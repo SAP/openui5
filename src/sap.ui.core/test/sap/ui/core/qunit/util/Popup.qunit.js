@@ -288,7 +288,7 @@ sap.ui.define([
 		var fnOpened = function() {
 			this.oPopup.detachOpened(fnOpened, this);
 
-			assert.equal(oBlurSpy.callCount, 0, "The previous focused element isn't blurred");
+			assert.equal(oBlurSpy.callCount, 0, "The previous focused element isn't blurred actively");
 
 			assert.equal(this.oPopup.isOpen(), true, "Popup should be open after opening");
 			// initial focus should be on second element
@@ -310,7 +310,12 @@ sap.ui.define([
 		this.oPopup.setInitialFocusId("secondpopupcontent");
 		this.oPopup.open(50);
 
-		assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
+		if (this.oPopup.touchEnabled) {
+			assert.equal(document.activeElement.id, "focusableElement2", "The previous DOM element should not be blurred after calling open method");
+		} else {
+			assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
+		}
+
 	});
 
 
@@ -342,7 +347,11 @@ sap.ui.define([
 
 		this.oPopup.open();
 
-		assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
+		if (this.oPopup.touchEnabled) {
+			assert.equal(document.activeElement.id, "focusableElement2", "The previous DOM element should not be blurred after calling open method");
+		} else {
+			assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
+		}
 	});
 
 	QUnit.test("Initial Focus in modal mode with no open animation, auto", function(assert) {
@@ -373,7 +382,11 @@ sap.ui.define([
 
 		this.oPopup.open(0);
 
-		assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
+		if (this.oPopup.touchEnabled) {
+			assert.equal(document.activeElement.id, "focusableElement2", "The previous DOM element should not be blurred after calling open method");
+		} else {
+			assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
+		}
 	});
 
 	QUnit.test("Initial Focus in modal mode, set", function(assert) {
@@ -428,7 +441,11 @@ sap.ui.define([
 
 		this.oPopup.open();
 
-		assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
+		if (this.oPopup.touchEnabled) {
+			assert.equal(document.activeElement.id, "focusableElement2", "The previous DOM element should not be blurred after calling open method");
+		} else {
+			assert.notEqual(document.activeElement.id, "focusableElement2", "The previous DOM element should be blurred after calling open method");
+		}
 	});
 
 	QUnit.test("Check if focus is inside the Popup", function(assert) {

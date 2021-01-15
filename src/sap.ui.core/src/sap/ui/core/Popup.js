@@ -923,10 +923,13 @@ sap.ui.define([
 			this._showBlockLayer();
 		}
 
-		// When the open process is animated, the focus should be moved out of the previous focused element during the
-		// opening animation. Otherwise, it's not needed to shift the focus because the focus will be set into the popup
-		// in the same call stack in function "_opened"
-		if (bOpenAnimated
+		// When it runs on a mobile device, the focus doesn't need to be set into the popup area immediately after opening
+		// the popup. It even causes some rendering problem in iOS safari when the focus is set here.
+		if (!this.touchEnabled
+			// When the open process is animated, the focus should be moved out of the previous focused element during the
+			// opening animation. Otherwise, it's not needed to shift the focus because the focus will be set into the popup
+			// in the same call stack in function "_opened"
+			&& bOpenAnimated
 			// some application or test create the static UIArea div by itself and therefore the first focusable element
 			// is not available
 			&& oFirstFocusableInStaticArea
