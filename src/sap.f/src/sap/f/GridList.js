@@ -274,6 +274,10 @@ sap.ui.define([
 	 * @override
 	 */
 	GridList.prototype._startItemNavigation = function (bIfNeeded) {
+		if (!Device.system.desktop) {
+			return;
+		}
+
 		if (!this._oItemNavigation) {
 			if (Device.browser.msie && (!this.getCustomLayout() || !this.getCustomLayout().hasGridPolyfill())) {
 				this._oItemNavigation = new ItemNavigation();

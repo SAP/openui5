@@ -99,7 +99,8 @@
 			"sap.f.sample.GridListBoxContainerGrouping",
 			"sap.f.sample.GridListBoxContainerReal",
 			"sap.f.sample.GridListDragAndDrop",
-			"sap.f.sample.GridListResponsiveColumnLayout"
+			"sap.f.sample.GridListResponsiveColumnLayout",
+			"sap.f.sample.GridListKeyboardArrowsNavigation"
 		  ]
 		},
 		{
@@ -249,8 +250,13 @@
 		},
 		{
 		  "id": "sap.f.sample.GridListResponsiveColumnLayout",
-		  "name": "GridList with Responsive Column Layout",
+		  "name": "Grid List with Responsive Column Layout",
 		  "description": "This layout displays a variable number of grid columns depending on available screen size. Grid row's height is dynamically determined by the height of the highest grid element on this row."
+		},
+		{
+			"id": "sap.f.sample.GridListKeyboardArrowsNavigation",
+			"name": "Navigation with keyboard arrows between multiple GridLists",
+			"description": "This sample demonstrates the keyboard navigation between multiple grids"
 		},
 		{
 		  "id": "sap.f.sample.ShellBar",
