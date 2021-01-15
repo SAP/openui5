@@ -66,6 +66,13 @@ sap.ui.define([
 					sSectionId = oSection ? oSection.getId() : null,
 					sOldQuery = this.getModel().getProperty("/searchTerm");
 
+				try {
+					this.hideMasterSide();
+				} catch (e) {
+					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
+					Log.error(e);
+				}
+
 				if (sQuery === sOldQuery) {
 					this.getView().byId("searchPage").setSelectedSection(sSectionId);
 					return;
@@ -73,13 +80,6 @@ sap.ui.define([
 
 				this.getModel().setProperty("/searchTerm", sQuery);
 				this._modelRefresh();
-
-				try {
-					this.hideMasterSide();
-				} catch (e) {
-					// try-catch due to a bug in UI5 SplitApp, CL 1898264 should fix it
-					Log.error(e);
-				}
 
 				oList.setBusy(true);
 				SearchUtil.search(sQuery).then(function(result) {
