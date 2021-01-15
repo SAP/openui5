@@ -248,11 +248,7 @@ sap.ui.define([
 
 					if (aMatchingOperators.length === 0) {
 						// use default operator if nothing found
-						oOperator = FilterOperatorUtil.getDefaultOperator(_getBaseType.call(this, oType)); // TODO: How to configure default for application
-						if (oOperator && aOperators.indexOf(oOperator.name) < 0) {
-							// default operator not valid -> cannot use
-							oOperator = undefined;
-						}
+						oOperator = _getDefaultOperator.call(this, aOperators, oType);
 
 						if (bInputValidationEnabled && !_isCompositeType.call(this, oType) && aOperators.indexOf("EQ") >= 0) {
 							// try first to use EQ and find it in FieldHelp. If not found try later with default operator
@@ -472,7 +468,7 @@ sap.ui.define([
 
 	function _parseUseDefaultOperator(oType, aOperators, vValue, sDisplay) {
 
-		var oOperator = FilterOperatorUtil.getDefaultOperator(_getBaseType.call(this, oType));
+		var oOperator = _getDefaultOperator.call(this, aOperators, oType);
 		var oCondition;
 
 		if (oOperator && aOperators.indexOf(oOperator.name) >= 0) {
@@ -754,6 +750,25 @@ sap.ui.define([
 		} else if (oFieldHelp) {
 			return oFieldHelp.getTextForKey(vKey, oInParameters, oOutParameters, oBindingContext);
 		}
+
+	}
+
+	function _getDefaultOperator(aOperators, oType) {
+
+		var oOperator = FilterOperatorUtil.getDefaultOperator(_getBaseType.call(this, oType)); // TODO: How to configure default for application
+		if (oOperator && aOperators.indexOf(oOperator.name) < 0) {
+			// default operator not valid -> cannot use -> use first include-operator
+			for (var i = 0; i < aOperators.length; i++) {
+				oOperator = FilterOperatorUtil.getOperator(aOperators[i]);
+				if (oOperator.exclude) {
+					oOperator = undefined;
+				} else {
+					break;
+				}
+			}
+		}
+
+		return oOperator;
 
 	}
 
