@@ -533,13 +533,17 @@ sap.ui.define([
 		}
 	};
 
-	ChangePersistence.prototype._deleteNotSavedChanges = function(aChanges, aCondensedChanges) {
+	ChangePersistence.prototype._deleteNotSavedChanges = function(aChanges, aCondensedChanges, bAlreadyDeletedViaCondense) {
 		aChanges.filter(function(oChange) {
 			return !aCondensedChanges.some(function(oCondensedChange) {
 				return oChange.getId() === oCondensedChange.getId();
 			});
 		}).forEach(function(oChange) {
-			this.deleteChange(oChange, true);
+			if (bAlreadyDeletedViaCondense) {
+				this.removeChange(oChange);
+			} else {
+				this.deleteChange(oChange);
+			}
 		}.bind(this));
 	};
 
@@ -592,9 +596,9 @@ sap.ui.define([
 		return bEnabled;
 	}
 
-	function updateCacheAndDeleteUnsavedChanges(aAllChanges, aCondensedChanges, bSkipUpdateCache) {
+	function updateCacheAndDeleteUnsavedChanges(aAllChanges, aCondensedChanges, bSkipUpdateCache, bAlreadyDeletedViaCondense) {
 		this._massUpdateCacheAndDirtyState(aCondensedChanges, bSkipUpdateCache);
-		this._deleteNotSavedChanges(aAllChanges, aCondensedChanges);
+		this._deleteNotSavedChanges(aAllChanges, aCondensedChanges, bAlreadyDeletedViaCondense);
 	}
 
 	function getAllRelevantChangesForCondensing(aDirtyChanges) {
@@ -655,7 +659,7 @@ sap.ui.define([
 						isLegacyVariant: false,
 						parentVersion: nParentVersion
 					}).then(function(oResponse) {
-						updateCacheAndDeleteUnsavedChanges.call(this, aAllChanges, aCondensedChanges, bSkipUpdateCache);
+						updateCacheAndDeleteUnsavedChanges.call(this, aAllChanges, aCondensedChanges, bSkipUpdateCache, true);
 						return oResponse;
 					}.bind(this));
 				}
@@ -841,6 +845,15 @@ sap.ui.define([
 		oChange.markForDeletion();
 		this.addDirtyChange(oChange);
 		this._deleteChangeInMap(oChange, bRunTimeCreatedChange);
+	};
+
+	ChangePersistence.prototype.removeChange = function(oChange) {
+		var nIndexInDirtyChanges = this._aDirtyChanges.indexOf(oChange);
+
+		if (nIndexInDirtyChanges > -1) {
+			this._aDirtyChanges.splice(nIndexInDirtyChanges, 1);
+		}
+		this._deleteChangeInMap(oChange);
 	};
 
 	/**

@@ -848,6 +848,27 @@ function(
 				}.bind(this));
 		});
 
+		QUnit.test("removeChange with dirty and not dirty changes", function(assert) {
+			var oDeleteChangeInMapStub = sandbox.stub(this.oChangePersistence, "_deleteChangeInMap");
+			sandbox.stub(WriteStorage, "write").resolves();
+			sandbox.stub(this.oChangePersistence, "_updateCacheAndDirtyState");
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+
+				addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+
+				this.oChangePersistence.removeChange(this.oChangePersistence._mChanges.aChanges[0]);
+				this.oChangePersistence.removeChange(this.oChangePersistence._mChanges.aChanges[1]);
+				this.oChangePersistence.removeChange(this.oChangePersistence._mChanges.aChanges[2]);
+				this.oChangePersistence.removeChange(this.oChangePersistence._mChanges.aChanges[3]);
+
+				assert.equal(this.oChangePersistence._aDirtyChanges.length, 0, "both dirty changes were removed from the persistence");
+				assert.equal(oDeleteChangeInMapStub.callCount, 4, "all changes got removed from the map");
+			}.bind(this));
+		});
+
 		QUnit.test("when getChangesForView is called with a view ID and an app component", function(assert) {
 			var oAppComponent = {
 				getLocalId: function() {
@@ -1860,8 +1881,11 @@ function(
 			originalLanguage: "DE"
 		};
 
-		oChangePersistence.addChange(oChangeContent, oComponentInstance);
-		oChangePersistence.addChange(oChangeContent1, oComponentInstance);
+
+		return [
+			oChangePersistence.addChange(oChangeContent, oComponentInstance),
+			oChangePersistence.addChange(oChangeContent1, oComponentInstance)
+		];
 	}
 
 	QUnit.module("sap.ui.fl.ChangePersistence saveChanges", {
@@ -2131,8 +2155,7 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("Shall not call the storage when the condenser returns no change", function(assert) {
-			setURLParameterForCondensing("true");
+		QUnit.test("With two dirty changes, shall not call the storage when the condenser returns no change", function(assert) {
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.USER);
 			this.oCondenserStub.resolves([]);
 
@@ -2140,6 +2163,36 @@ function(
 				assert.equal(this.oWriteStub.callCount, 0);
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
 				assert.equal(this.oChangePersistence._aDirtyChanges.length, 0, "both dirty changes were removed from the persistence");
+			}.bind(this));
+		});
+
+		QUnit.test("With two persisted changes, shall not call the storage when the condenser returns no change", function(assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+			var oDeleteSpy = sandbox.spy(this.oChangePersistence, "deleteChange");
+			var oRemoveSpy = sandbox.spy(this.oChangePersistence, "removeChange");
+			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+				assert.equal(this.oWriteStub.callCount, 0);
+				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
+				assert.equal(oDeleteSpy.callCount, 0, "no change got deleted");
+				assert.equal(oRemoveSpy.callCount, 0, "no change got deleted");
+
+				addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
+				this.oCondenserStub.resolves([]);
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance);
+			}.bind(this))
+			.then(function() {
+				assert.equal(this.oWriteStub.callCount, 0);
+				assert.equal(this.oCondenserStub.callCount, 2, "the condenser was called again");
+				assert.equal(this.oChangePersistence._aDirtyChanges.length, 0, "both dirty changes were removed from the persistence");
+				assert.equal(oDeleteSpy.callCount, 0, "no change got deleted");
+				assert.equal(oRemoveSpy.callCount, 4, "four changes got deleted");
 			}.bind(this));
 		});
 
