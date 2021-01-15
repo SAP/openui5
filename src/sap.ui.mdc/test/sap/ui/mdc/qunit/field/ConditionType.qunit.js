@@ -204,22 +204,18 @@ sap.ui.define([
 
 	QUnit.test("Parsing: limited operators - simple string", function(assert) {
 
-		oConditionType.setFormatOptions({operators: ["GT", "LT"]});
+		oConditionType.setFormatOptions({operators: ["NOTGT", "GT", "NOTLT", "LT"]});
 		var oCondition = oConditionType.parseValue(">Test");
 		assert.equal(oCondition.operator, "GT", "Operator");
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "Test", "Values entry");
 
-		var oException;
-
-		try {
-			oCondition = oConditionType.parseValue("Test");
-		} catch (e) {
-			oException = e;
-		}
-
-		assert.ok(oException, "exception fired");
+		oCondition = oConditionType.parseValue("Test");
+		assert.equal(oCondition.operator, "GT", "Operator"); // first include operator should be used as default
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], "Test", "Values entry");
 
 	});
 
@@ -884,6 +880,18 @@ sap.ui.define([
 		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
 
 		// invalid default operator
+		oFieldHelp.getItemForValue.reset();
+		oConditionType.oFormatOptions.operators = ["GT", "EQ"]; // fake setting directly
+		oCondition = oConditionType.parseValue("X");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "GT", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], "X", "Values entry1");
+		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getItemForValue called");
+
+		// only one operator
 		oFieldHelp.getItemForValue.reset();
 		oConditionType.oFormatOptions.operators = ["EQ"]; // fake setting directly
 		var oException;
