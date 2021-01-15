@@ -127,6 +127,19 @@ sap.ui.define([
 				label: {
 					type: "string",
 					defaultValue: ""
+				},
+
+				/**
+				 * If set there is no invalid user input.
+				 *
+				 * <b>Note:</b> This property must not set from outside. It just is a property because in this case it can be bound to the
+				 * <code>ManagedObjectModel</code> of the calling field help and automatically update it.
+				 *
+				 * @since 1.87.0
+				 */
+				inputOK: {
+					type: "boolean",
+					defaultValue: true
 				}
 
 			},
@@ -426,6 +439,7 @@ sap.ui.define([
 					}
 				}
 			}
+			this.setProperty("inputOK", true, true); // do not invalidate whole DefineConditionPanel
 		}
 
 	});
@@ -553,7 +567,7 @@ sap.ui.define([
 		for (var i = 0; i < aOperatorsData.length; i++) {
 			var oOperatorData = aOperatorsData[i];
 			if (oOperatorData.key === sKey) {
-				sDescription = oOperatorData.additionalText;
+				sDescription = oOperatorData.text;
 				break;
 			}
 		}
@@ -626,36 +640,15 @@ sap.ui.define([
 
 		var sType = bStaticText ? BaseType.String : _getBaseType.call(this, oDataType);
 		var oNullableType;
-		var Type;
-		var oFormatOptions;
-		var oConstraints;
 
 		switch (sType) {
-			case BaseType.Boolean:
-				// normally boolean makes no sense for DefineConditionPanel
-				// in sap.ui.model.odata.type.Boolean nullable is default, if set to false try to create nullable type
-				if (oDataType.oConstraints && oDataType.oConstraints.hasOwnProperty("nullable") && oDataType.oConstraints.nullable === false) {
-					// "clone" type and make nullable
-					Type = sap.ui.require(oDataType.getMetadata().getName().replace(/\./g, "/")); // type is already loaded because instance is provided
-					oFormatOptions = merge({}, oDataType.oFormatOptions);
-					oConstraints = merge(oDataType.oConstraints, { nullable: true });
-					oNullableType = new Type(oFormatOptions, oConstraints);
-				} else {
-					// given type can be used
-					oNullableType = oDataType;
-				}
-
-				break;
 			case BaseType.Numeric:
 				if (oDataType.oFormatOptions && oDataType.oFormatOptions.hasOwnProperty("emptyString") && oDataType.oFormatOptions.emptyString === null) {
 					// given type can be used
 					oNullableType = oDataType;
 				} else {
 					// "clone" type and make nullable
-					Type = sap.ui.require(oDataType.getMetadata().getName().replace(/\./g, "/")); // type is already loaded because instance is provided
-					oFormatOptions = merge(oDataType.oFormatOptions, { emptyString: null });
-					//TODO oConstraints like maximum are not used inside the Double type
-					oNullableType = new Type(oFormatOptions, oDataType.oConstraints);
+					oNullableType = _createNullableType(oDataType, { emptyString: null });
 				}
 
 				break;
@@ -667,11 +660,31 @@ sap.ui.define([
 				break;
 			//TODO: how to handle unit fields?
 			default:
-				oNullableType = oDataType; // use given type or default string type
+				if (oDataType.getConstraints() && oDataType.getConstraints().hasOwnProperty("nullable") && oDataType.getConstraints().nullable === false) {
+					// "clone" type and make nullable
+					oNullableType = _createNullableType(oDataType);
+				} else {
+					oNullableType = oDataType; // use given type or default string type
+				}
 				break;
 		}
 
 		return oNullableType;
+
+	}
+
+	function _createNullableType(oType, oNewFormatOprtions, oNewConstraints) {
+
+		var Type = sap.ui.require(oType.getMetadata().getName().replace(/\./g, "/")); // type is already loaded because instance is provided
+		var oFormatOptions = merge(oType.getFormatOptions(), oNewFormatOprtions || {});
+		var oConstraints = merge(oType.getConstraints(), oNewConstraints || {});
+
+		if (oConstraints.hasOwnProperty("nullable") && oConstraints.nullable === false) {
+			oConstraints.nullable = true; // make nullable
+		}
+
+		//TODO oConstraints like maximum are not used inside the Double type
+		return new Type(oFormatOptions, oConstraints);
 
 	}
 
@@ -1253,6 +1266,7 @@ sap.ui.define([
 		var oField2; // also update second Field if exist
 		var oCondition = oBindingContext.getObject();
 		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+		var bInvalid = false;
 
 		if (oOperator.valueTypes.length > 0 && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
 			// check only not static operators
@@ -1267,8 +1281,9 @@ sap.ui.define([
 
 			if (oField.getMetadata().getAllProperties().valueState && !oField._bParseError && (!oField2 || !oField2._bParseError)) { // TODO: better was to find out parsing error
 				// if Field is in parsing error state, user entry is not transfered to condition, so validating makes no sense.
+				var oType = oField.getBinding("value").getType(); // use nullable data type from Field - don't create new type for each check
 				try {
-					oOperator.validate(oCondition.values, _getType.call(this));
+					oOperator.validate(oCondition.values, oType);
 					oField.setValueState(ValueState.None);
 					oField.setValueStateText();
 					if (oField2 && oField2.getMetadata().getAllProperties().valueState) {
@@ -1276,6 +1291,7 @@ sap.ui.define([
 						oField2.setValueStateText();
 					}
 				} catch (oException) {
+					bInvalid = true;
 					oField.setValueState(ValueState.Error);
 					oField.setValueStateText(oException.message);
 					if (oField2 && oField2.getMetadata().getAllProperties().valueState) {
@@ -1286,6 +1302,29 @@ sap.ui.define([
 			}
 
 		}
+
+		// check if at least one condition has an error
+		_checkInvalidInput.call(this, bInvalid);
+
+	}
+
+	function _checkInvalidInput(bInvalid) {
+
+		if (bInvalid !== true) {
+			// if already known that invalid input exist -> no additional check needed
+			var oGrid = this.byId("conditions");
+			var aContent = oGrid.getContent();
+			bInvalid = false;
+			for (var i = 0; i < aContent.length; i++) {
+				var oControl = aContent[i];
+				if (oControl instanceof Field && oControl.hasOwnProperty("_iValueIndex") && oControl.getValueState() === ValueState.Error) {
+					bInvalid = true;
+					break;
+				}
+			}
+		}
+
+		this.setProperty("inputOK", !bInvalid, true); // do not invalidate whole DefineConditionPanel
 
 	}
 
