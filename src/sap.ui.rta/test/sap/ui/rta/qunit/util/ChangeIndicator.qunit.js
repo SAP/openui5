@@ -182,13 +182,13 @@ function(
 		QUnit.test("when a dependent change indicator is created", function (assert) {
 			sap.ui.getCore().applyChanges();
 			assert.notOk(
-				includes(this.oChangeIndicator.getDomRef().className.split(" "), "sapUiRtaChangeIndicator-dependent"),
+				includes(this.oChangeIndicator.getDomRef().className.split(" "), "sapUiRtaChangeIndicatorDependent"),
 				"then by default the dependent style class is not added"
 			);
 			this.oChangeIndicator.setMode("dependent");
 			sap.ui.getCore().applyChanges();
 			assert.ok(
-				includes(this.oChangeIndicator.getDomRef().className.split(" "), "sapUiRtaChangeIndicator-dependent"),
+				includes(this.oChangeIndicator.getDomRef().className.split(" "), "sapUiRtaChangeIndicatorDependent"),
 				"then the appropriate style class is added"
 			);
 		});

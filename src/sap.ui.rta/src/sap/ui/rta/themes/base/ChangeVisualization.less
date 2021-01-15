@@ -1,62 +1,66 @@
 /******************************************************************
 	Style of the RTA Change Visualization - base theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColor: rgba(131, 201, 233, 0.75);
-@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolid: rgb(131, 201, 233);
-@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorFocus: #1c678a;
-@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorHover: rgba(14, 138, 195, 0.75);
-@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolidHover: #0f648b;
-@_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColor: rgba(219,149,51,0.75);
-@_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid: rgb(219, 149, 51);
-@_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorFocus: #a67026;
-@_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolidHover: #b67a26;
-@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorTextColor: #1c678a;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColor: rgba(131, 201, 233, 0.75);
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorFocus: #1c678a;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorHover: rgba(14, 138, 195, 0.75);
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolid: rgb(131, 201, 233);
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidBG: white;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidHover: #0f648b;
+@_sap_ui_rta_ChangeVisualization_DependentIndicatorColor: rgba(219,149,51,0.75);
+@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorFocus: #a67026;
+@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid: rgb(219, 149, 51);
+@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolidHover: #b67a26;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorTextColor: #1c678a;
 
 .sapUiRtaChangeIndicator{
-	height: 100%;
-	width: 100%;
 	border-radius: 25px;
 	z-index: 1000;
 	position: relative;
 	cursor: pointer;
 }
 
-.sapUiRtaChangeIndicator-change{
-	border: 1px solid @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColor;
+.sapUiRtaChangeIndicatorChange{
+	border: 1px solid @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColor;
 	background: white;
-	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColor 72%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolid 100%);
+	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColor 72%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolid 100%);
+
+	&:focus{
+		border: 1px solid @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorFocus;
+		outline: none;
+	}
+
+	&:hover{
+		background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorHover 62%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidHover 100%);
+
+		.sapUiRtaChangeIndicatorText{
+			color:white;
+		}
+	}
 }
 
-.sapUiRtaChangeIndicator-change:focus{
-	border: 1px solid @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorFocus;
-	outline: none;
+.sapUiRtaChangeIndicatorDependent{
+	border: 1px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColor;
+	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid 72%,@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid 100%);
+
+	&:focus{
+		border: 1px solid @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorFocus;
+		outline: none;
+	}
+
+	&:hover{
+		background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolidHover 62%, @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid 100%);
+	}
 }
 
-.sapUiRtaChangeIndicator-change:hover{
-	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorHover 72%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolidHover 100%);
+.sapUiRtaChangeIndicatorChangeSolid{
+	background: radial-gradient(circle, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidBG 41%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolid 72%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolid 100%);
+
+	&:hover{
+		background: radial-gradient(circle, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidBG 41%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorHover 62%, @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidHover 100%);
+	}
 }
 
-.sapUiRtaChangeIndicator-change:hover .sapUiRtaChangeIndicatorText {
-	color:white;
-}
-
-.sapUiRtaChangeIndicator-change-solid{
-	background: radial-gradient(circle, white 41%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolid 72%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolid 100%);
-}
-
-.sapUiRtaChangeIndicator-dependent{
-	border: 1px solid @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColor;
-	background: white;
-	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid 72%,@_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid 100%);
-}
-
-.sapUiRtaChangeIndicator-dependent:focus{
-	border: 1px solid @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorFocus;
-	outline: none;
-}
-.sapUiRtaChangeIndicator-dependent:hover{
-	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolidHover 62%, @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid 100%);
-}
 .sapUiRtaChangeIndicatorText{
 	top: 0;
 	left: 0;
@@ -64,7 +68,7 @@
 	width: 50%;
 	height: 50%;
 	border-radius: 50%;
-	background: @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolid;
+	background: @_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolid;
 	color: black;
 	display: flex;
 	justify-content: center;
@@ -83,7 +87,7 @@
 	justify-content: center;
 	align-items: center;
 	cursor: pointer;
-	color: @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid;
+	color: @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid;
 }
 
 .sapUiRtaMode {

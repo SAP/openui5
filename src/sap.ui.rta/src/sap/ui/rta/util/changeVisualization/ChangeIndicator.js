@@ -9,7 +9,8 @@ sap.ui.define([
 	"sap/m/Text",
 	"sap/ui/core/format/DateFormat",
 	"sap/ui/core/Icon",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/events/KeyCodes",
+	"sap/base/strings/capitalize"
 ], function(
 	Fragment,
 	JSONModel,
@@ -17,7 +18,8 @@ sap.ui.define([
 	Text,
 	DateFormat,
 	Icon,
-	KeyCodes
+	KeyCodes,
+	capitalize
 ) {
 	"use strict";
 
@@ -121,14 +123,14 @@ sap.ui.define([
 			render: function(oRm, oControl) {
 				oRm.openStart("div", oControl);
 				oRm.class("sapUiRtaChangeIndicator");
-				oRm.class("sapUiRtaChangeIndicator-" + oControl.getMode());
+				oRm.class("sapUiRtaChangeIndicator" + capitalize(oControl.getMode()));
 				if (
 					oControl.getMode() === "change"
 					&& oControl.getModel()
 					&& !!oControl.getModel().getData().selectedChange
 				) {
 					// Root selector of dependent selection
-					oRm.class("sapUiRtaChangeIndicator-change-solid");
+					oRm.class("sapUiRtaChangeIndicatorChangeSolid");
 				}
 				oRm.style("width", oControl._getSize() + "px");
 				oRm.style("height", oControl._getSize() + "px");
