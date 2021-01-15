@@ -128,7 +128,6 @@ sap.ui.define([
 			textAlign: "End",
 			type: "String",
 			width: "",
-			displayUnit: true,
 			property: "propB"
 		}], "Expected column export settings returned");
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropA), [{
@@ -182,6 +181,7 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropA, true), [{
 			columnId: "columnComplexPropA",
 			label: "Export label",
+			displayUnit: false,
 			property: "propAPath",
 			textAlign: "Begin",
 			type: "Number",
@@ -189,6 +189,7 @@ sap.ui.define([
 			}, {
 			columnId: "columnComplexPropA-additionalProperty1",
 			label: "Property B",
+			displayUnit: false,
 			property: "propB",
 			textAlign: "Begin",
 			type: "String",
@@ -197,6 +198,7 @@ sap.ui.define([
 		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropB, true), [{
 			columnId: "columnComplexPropB",
 			label: "Property B",
+			displayUnit: false,
 			property: "propB",
 			textAlign: "Begin",
 			type: "String",
@@ -214,6 +216,7 @@ sap.ui.define([
 			}, {
 			columnId: "priceColumn-additionalProperty",
 			label: "Currency",
+			displayUnit: false,
 			property: "currency",
 			textAlign: "End",
 			type: "String",

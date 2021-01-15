@@ -83,7 +83,7 @@ sap.ui.define([
 		if (oProperty.isComplex()) {
 			aPropertiesFromComplexProperty = oProperty.getReferencedProperties();
 			if (!bSplitCells && oExportSettings) {
-				oColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oProperty, oExportSettings);
+				oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings, bSplitCells);
 				aPropertiesFromComplexProperty.forEach(function(oProperty) {
 					aPaths.push(oProperty.getPath());
 				});
@@ -93,7 +93,7 @@ sap.ui.define([
 				// when there are no exportSettings given for a ComplexProperty or when the splitCells=true
 				aPropertiesFromComplexProperty.forEach(function(oProperty, iIndex) {
 					var oCurrentExportSettings = oProperty.getExportSettings(),
-						oCurrentColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oProperty, oCurrentExportSettings);
+						oCurrentColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oCurrentExportSettings, bSplitCells);
 					oCurrentColumnExportSettings.property = oProperty.getPath();
 					if (iIndex > 0) {
 						oCurrentColumnExportSettings.columnId = oColumn.getId() + "-additionalProperty" + iIndex;
@@ -103,13 +103,12 @@ sap.ui.define([
 			}
 		} else if (!bSplitCells && oExportSettings) {
 			// called for basic propertyInfo having exportSettings
-			oColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oProperty, oExportSettings);
+			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings, bSplitCells);
 			oColumnExportSettings.property = oProperty.getPath();
 			aColumnExportSettings.push(oColumnExportSettings);
 		} else {
-			oColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oProperty, oExportSettings);
+			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings, bSplitCells);
 			oColumnExportSettings.property = oProperty.getPath();
-			oColumnExportSettings.displayUnit = !bSplitCells;
 			aColumnExportSettings.push(oColumnExportSettings);
 
 			// get Additional path in case of split cells
@@ -118,7 +117,7 @@ sap.ui.define([
 			if (sAdditionalPath) {
 				oAdditionalProperty = getAdditionalProperty(this, sAdditionalPath);
 				oAdditionExportSettings = oAdditionalProperty.getExportSettings();
-				oAdditionalColumnExportSettings = getColumnExportSettingsObject(this, oColumn, oAdditionalProperty, oAdditionExportSettings);
+				oAdditionalColumnExportSettings = getColumnExportSettingsObject(oColumn, oAdditionalProperty, oAdditionExportSettings, bSplitCells);
 				oAdditionalColumnExportSettings.property = oAdditionalProperty.getPath();
 				oAdditionalColumnExportSettings.columnId = oColumn.getId() + "-additionalProperty";
 				aColumnExportSettings.push(oAdditionalColumnExportSettings);
@@ -155,21 +154,27 @@ sap.ui.define([
 	/**
 	 * Sets defaults to export settings and returns a new export settings object.
 	 *
-	 * @param {sap.ui.mdc.table.PropertyHelper} oPropertyHelper Property helper instance
 	 * @param {sap.ui.mdc.table.Column} oColumn The column from which to get default values
 	 * @param {object} oProperty The property from which to get default values
 	 * @param {object} oExportSettings The export settings for which to set defaults
+	 * @param {boolean} bSplitCells Whether the <code>splitCells</code> configuration is enabled
 	 * @returns {object} The new export settings object
 	 * @private
 	 */
-	function getColumnExportSettingsObject(oPropertyHelper, oColumn, oProperty, oExportSettings) {
-		return Object.assign({
+	function getColumnExportSettingsObject(oColumn, oProperty, oExportSettings, bSplitCells) {
+	var oExportObj = Object.assign({
 			columnId: oColumn.getId(),
 			label: oProperty.getLabel(),
 			width: getColumnWidthNumber(oColumn.getWidth()),
 			textAlign: oColumn.getHAlign(),
 			type: "String"
 		}, oExportSettings);
+
+		if (bSplitCells) {
+			oExportObj.displayUnit = false;
+		}
+
+		return oExportObj;
 	}
 
 	return PropertyHelper;

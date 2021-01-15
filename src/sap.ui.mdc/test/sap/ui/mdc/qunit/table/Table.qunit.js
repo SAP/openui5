@@ -2676,8 +2676,7 @@ sap.ui.define([
 				type: "String",
 				label: "Last name",
 				width: 10,
-				textAlign: "Begin",
-				displayUnit: true
+				textAlign: "Begin"
 			},
 			{
 				columnId: "fullName",
@@ -2882,6 +2881,7 @@ sap.ui.define([
 			},
 			{
 				columnId: "price-additionalProperty",
+				displayUnit: false,
 				label: "Currency Code",
 				property: "currencyCode",
 				type: "String",
@@ -2890,6 +2890,7 @@ sap.ui.define([
 			},
 			{
 				columnId: "company",
+				displayUnit: false,
 				label: "Company Name",
 				property: "companyName",
 				textAlign: "Begin",
@@ -2898,6 +2899,7 @@ sap.ui.define([
 			},
 			{
 				columnId: "company-additionalProperty1",
+				displayUnit: false,
 				label: "Company Code",
 				property: "companyCode",
 				textAlign: "Begin",
