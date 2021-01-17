@@ -200,7 +200,9 @@ sap.ui.define([
 			oStringInterface = {},         // holds old string based rendering API and the string implementation of the new semantic rendering API
 			oDomInterface = {},            // semantic rendering API for the controls whose renderer provides apiVersion=2 marker
 			aRenderingStyles = [],         // during string-based rendering, stores the styles that couldn't be set via style attribute due to CSP restrictions
-			oPatcher = new Patcher();      // the Patcher instance to handle in-place DOM patching
+			oPatcher = new Patcher(),      // the Patcher instance to handle in-place DOM patching
+			sLastStyleMethod,
+			sLastClassMethod;
 
 		/**
 		 * Sets the focus handler to be used by the RenderManager.
@@ -217,6 +219,7 @@ sap.ui.define([
 		 * Reset all rendering related buffers.
 		 */
 		function reset() {
+			assert(!(sLastStyleMethod = sLastClassMethod = ""));
 			aBuffer = that.aBuffer = [];
 			aRenderedControls = that.aRenderedControls = [];
 			aStyleStack = that.aStyleStack = [{}];
@@ -245,14 +248,21 @@ sap.ui.define([
 
 		function assertValidAttr(sAttr) {
 			assertValidName(sAttr, "attr");
-			assert(sAttr != "class" && sAttr != "style", "Attributes 'class' and 'style' must not be written, instead use dedicated 'class' or 'style' method");
+			assert((sAttr != "class" || sLastClassMethod != "class" && (sLastClassMethod = "attr"))
+				&& (sAttr != "style" || sLastStyleMethod != "style" && (sLastStyleMethod = "attr")),
+				"Attributes 'class' and 'style' must not be written when the methods with the same name"
+				+ " have been called for the same element already");
 		}
 
 		function assertValidClass(sClass) {
+			assert(sLastClassMethod != "attr" && (sLastClassMethod = "class"),
+				"Method class() must not be called after the 'class' attribute has been written for the same element");
 			assert(typeof sClass == "string" && !/\s/.test(sClass) && arguments.length === 1, "Method 'class' must be called with exactly one class name");
 		}
 
 		function assertValidStyle(sStyle) {
+			assert(sLastStyleMethod != "attr" && (sLastStyleMethod = "style"),
+				"Method style() must not be called after the 'style' attribute has been written for the same element");
 			assert(sStyle && typeof sStyle == "string" && !/\s/.test(sStyle), "Method 'style' must be called with a non-empty string name");
 		}
 
@@ -477,6 +487,7 @@ sap.ui.define([
 		this.openStart = function(sTagName, vControlOrId) {
 			assertValidName(sTagName, "tag");
 			assertOpenTagHasEnded();
+			assert(!(sLastStyleMethod = sLastClassMethod = ""));
 			sOpenTag = sTagName;
 
 			this.write("<" + sTagName);
@@ -639,7 +650,11 @@ sap.ui.define([
 		this.attr = function(sName, vValue) {
 			assertValidAttr(sName);
 
-			this.writeAttributeEscaped(sName, vValue);
+			if (sName == "style") {
+				aStyleStack[aStyleStack.length - 1].aStyle = [vValue];
+			} else {
+				this.writeAttributeEscaped(sName, vValue);
+			}
 			return this;
 		};
 
@@ -793,6 +808,7 @@ sap.ui.define([
 		oDomInterface.openStart = function(sTagName, vControlOrId) {
 			assertValidName(sTagName, "tag");
 			assertOpenTagHasEnded();
+			assert(!(sLastStyleMethod = sLastClassMethod = ""));
 			sOpenTag = sTagName;
 
 			if (!vControlOrId) {

@@ -289,6 +289,11 @@ sap.ui.define([], function() {
 	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.prototype.attr = function(sAttr, vValue) {
+		if (sAttr === "style") {
+			this._sStyles = vValue;
+			return this;
+		}
+
 		if (this._iTagOpenState == 1 /* Tag is Open and Created */) {
 			this._oCurrent.setAttribute(sAttr, vValue);
 			return this;

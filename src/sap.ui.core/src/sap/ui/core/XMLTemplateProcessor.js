@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-/*global HTMLTemplateElement, DocumentFragment, Promise*/
+/*global HTMLTemplateElement, Promise */
 
 sap.ui.define([
 	'sap/ui/thirdparty/jquery',
@@ -165,6 +165,12 @@ function(
 	 * @private
 	 */
 	var PREPROCESSOR_NAMESPACE_PREFIX = "http://schemas.sap.com/sapui5/preprocessorextension/";
+
+	/**
+	 * Pattern that matches the names of all HTML void tags.
+	 * @private
+	 */
+	var rVoidTags = /^(?:area|base|br|col|embed|hr|img|input|link|meta|param|source|track|wbr)$/;
 
 	/**
 	 * Creates a function based on the passed mode and callback which applies a callback to each child of a node.
@@ -353,7 +359,7 @@ function(
 				// TODO: might be refactored into resolveResultPromises()?
 				if (Array.isArray(args[0])) {
 					 args[0] = args[0].filter(function(e) {
-						return !e._isExtensionPoint;
+						return e == null || !e._isExtensionPoint;
 					 });
 				 }
 				return args[0];
@@ -540,10 +546,42 @@ function(
 		// later this intermediate state with promises gets resolved to a flat array containing only strings and controls
 		var aResult = [],
 			sInternalPrefix = findNamespacePrefix(xmlNode, UI5_INTERNAL_NAMESPACE, "__ui5"),
-			pResultChain = parseAndLoadRequireContext(xmlNode, bAsync) || SyncPromise.resolve();
-
-		// define internal namespace on root node
-		xmlNode.setAttributeNS(XMLNS_NAMESPACE, "xmlns:" + sInternalPrefix, UI5_INTERNAL_NAMESPACE);
+			pResultChain = parseAndLoadRequireContext(xmlNode, bAsync) || SyncPromise.resolve(),
+			rm = {
+				openStart: function(tagName, sId) {
+					aResult.push(["openStart", [tagName, sId]]);
+				},
+				voidStart: function(tagName, sId) {
+					aResult.push(["voidStart", [tagName, sId]]);
+				},
+				style: function(name, value) {
+					aResult.push(["style", [name, value]]);
+				},
+				"class": function(clazz) {
+					aResult.push(["class", [clazz]]);
+				},
+				attr: function(name, value) {
+					aResult.push(["attr", [name, value]]);
+				},
+				openEnd: function() {
+					aResult.push(["openEnd"]);
+				},
+				voidEnd: function() {
+					aResult.push(["voidEnd"]);
+				},
+				text: function(str) {
+					aResult.push(["text", [str]]);
+				},
+				unsafeHtml: function(str) {
+					aResult.push(["unsafeHtml", [str]]);
+				},
+				close: function(tagName) {
+					aResult.push(["close", [tagName]]);
+				},
+				renderControl: function(content) {
+					aResult.push(pResultChain);
+				}
+			};
 
 		bAsync = bAsync && !!oView._sProcessingMode;
 		Log.debug("XML processing mode is " + (oView._sProcessingMode || "default") + ".", "", "XMLTemplateProcessor");
@@ -576,6 +614,10 @@ function(
 				// it's not <core:View>, it's <mvc:View> !!!
 				Log.warning("XMLView root node must have the 'sap.ui.core.mvc' namespace, not '" + xmlNode.namespaceURI + "'" + (sCurrentName ? " (View name: " + sCurrentName + ")" : ""));
 			}
+
+			// define internal namespace on root node
+			xmlNode.setAttributeNS(XMLNS_NAMESPACE, "xmlns:" + sInternalPrefix, UI5_INTERNAL_NAMESPACE);
+
 			parseChildren(xmlNode, false, false, pResultChain);
 		}
 
@@ -636,38 +678,59 @@ function(
 			if ( xmlNode.nodeType === 1 /* ELEMENT_NODE */ ) {
 
 				var sLocalName = localName(xmlNode);
-				if (xmlNode.namespaceURI === XHTML_NAMESPACE || xmlNode.namespaceURI === SVG_NAMESPACE) {
+				var bXHTML = xmlNode.namespaceURI === XHTML_NAMESPACE;
+				if (bXHTML || xmlNode.namespaceURI === SVG_NAMESPACE) {
+					// determine ID
+					var sId = xmlNode.getAttribute("id");
+					if ( sId == null ) {
+						sId = bRoot === true ? oView.getId() : undefined;
+					} else {
+						sId = getId(oView, xmlNode);
+					}
+					if ( sLocalName === "style" ) {
+						// avoid encoding of style content by writing the whole tag as unsafeHtml
+						// for compatibility reasons, apply the same ID rewriting as for other tags
+						xmlNode = xmlNode.cloneNode(true);
+						if ( sId != null ) {
+							xmlNode.setAttribute("id", sId);
+						}
+						if ( bRoot === true ) {
+							xmlNode.setAttribute("data-sap-ui-preserve", oView.getId());
+						}
+						rm.unsafeHtml(xmlNode.outerHTML);
+						return;
+					}
 					// write opening tag
-					aResult.push("<" + sLocalName + " ");
+					var bVoid = rVoidTags.test(sLocalName);
+					if ( bVoid ) {
+						rm.voidStart(sLocalName, sId);
+					} else {
+						rm.openStart(sLocalName, sId);
+					}
 					// write attributes
-					var bHasId = false;
 					for (var i = 0; i < xmlNode.attributes.length; i++) {
 						var attr = xmlNode.attributes[i];
-						var value = attr.value;
-						if (attr.name === "id") {
-							bHasId = true;
-							value = getId(oView, xmlNode);
+						if ( attr.name !== "id" ) {
+							rm.attr(bXHTML ? attr.name.toLowerCase() : attr.name, attr.value);
 						}
-						aResult.push(attr.name + "=\"" + encodeXML(value) + "\" ");
 					}
 					if ( bRoot === true ) {
-						aResult.push("data-sap-ui-preserve" + "=\"" + oView.getId() + "\" ");
-						if (!bHasId) {
-							aResult.push("id" + "=\"" + oView.getId() + "\" ");
+						rm.attr("data-sap-ui-preserve", oView.getId());
+					}
+					if ( bVoid ) {
+						rm.voidEnd();
+						if ( xmlNode.firstChild ) {
+							Log.error("Content of void HTML element '" + sLocalName + "' will be ignored");
 						}
+					} else {
+						rm.openEnd();
+
+						// write children
+						// For HTMLTemplateElement nodes, skip the associated DocumentFragment node
+						var oContent = xmlNode instanceof HTMLTemplateElement ? xmlNode.content : xmlNode;
+						parseChildren(oContent, false, false, pRequireContext);
+						rm.close(sLocalName);
 					}
-					aResult.push(">");
-
-					// write children
-					var oContent = xmlNode;
-					if (window.HTMLTemplateElement && xmlNode instanceof HTMLTemplateElement && xmlNode.content instanceof DocumentFragment) {
-						// <template> support (HTMLTemplateElement has no childNodes, but a content node which contains the childNodes)
-						oContent = xmlNode.content;
-					}
-
-					parseChildren(oContent, false, false, pRequireContext);
-					aResult.push("</" + sLocalName + ">");
-
 
 				} else if (sLocalName === "FragmentDefinition" && xmlNode.namespaceURI === CORE_NAMESPACE) {
 					// a Fragment element - which is not turned into a control itself. Only its content is parsed.
@@ -718,20 +781,13 @@ function(
 							return aChildControls;
 						});
 					});
-					aResult.push(pResultChain);
+					rm.renderControl(pResultChain);
 
 				}
 
 			} else if (xmlNode.nodeType === 3 /* TEXT_NODE */ && !bIgnoreTopLevelTextNodes) {
 
-				var text = xmlNode.textContent || xmlNode.text,
-					parentName = localName(xmlNode.parentNode);
-				if (text) {
-					if (parentName != "style") {
-						text = encodeXML(text);
-					}
-					aResult.push(text);
-				}
+				rm.text(xmlNode.textContent);
 
 			}
 		}

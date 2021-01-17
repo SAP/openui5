@@ -803,29 +803,89 @@ sap.ui.define([
 		assert.equal(this.oAssertionSpy.callCount, 1);
 	});
 
-	QUnit.test("RenderManager.class", function (assert) {
-		this.oRM.openStart("div").attr("class");
-		assert.equal(this.oAssertionSpy.callCount, 1);
-	});
-
-	QUnit.test("RenderManager.class", function (assert) {
+	QUnit.test("RenderManager.class('a b')", function (assert) {
 		this.oRM.openStart("div").class("class1 class2");
-		assert.equal(this.oAssertionSpy.callCount, 1);
+		assert.equal(this.oAssertionSpy.callCount, 1, "writing multiple classes should fail assertion");
 	});
 
-	QUnit.test("RenderManager.class", function (assert) {
+	QUnit.test("RenderManager.class('a', 'b')", function (assert) {
 		this.oRM.openStart("div").class("class1", "class2");
-		assert.equal(this.oAssertionSpy.callCount, 1);
+		assert.equal(this.oAssertionSpy.callCount, 1, "writing multiple classes with one call should fail assertion");
 	});
 
-	QUnit.test("RenderManager.style", function (assert) {
+	QUnit.test("RenderManager.attr('class', ...)", function (assert) {
+		this.oRM.openStart("div").attr("class");
+		assert.equal(this.oAssertionSpy.callCount, 0, "writing class attribute alone should be fine");
+	});
+
+	QUnit.test("RenderManager.class(...).attr('class', ...)", function (assert) {
+		this.oRM.openStart("div").class("class1").attr("class", "class2");
+		assert.equal(this.oAssertionSpy.callCount, 1, "writing class attribute after calling class() should fail assertion");
+	});
+
+	QUnit.test("RenderManager.attr('class', ...).class(...)", function (assert) {
+		this.oRM.openStart("div").attr("class", "class2").class("class1");
+		assert.equal(this.oAssertionSpy.callCount, 1, "calling class() after writing class attribute should fail assertion");
+	});
+
+	QUnit.test("RenderManager.class(...).openEnd().openStart().attr('class',...)", function (assert) {
+		this.oRM.openStart("div").class("class1").openEnd().openStart("div").attr("class", "class2");
+		assert.equal(this.oAssertionSpy.callCount, 0, "writing class attribute in new tag should pass assertion");
+	});
+
+	QUnit.test("RenderManager.attr('class',...).openEnd().openStart().class(...)", function (assert) {
+		this.oRM.openStart("div").attr("class", "class1").openEnd().openStart("div").class("class2");
+		assert.equal(this.oAssertionSpy.callCount, 0, "adding a class in new tag should pass assertion");
+	});
+
+	QUnit.test("RenderManager.class(...).openEnd().voidStart().attr('class',...)", function (assert) {
+		this.oRM.openStart("div").class("class1").openEnd().voidStart("div").attr("class", "class2");
+		assert.equal(this.oAssertionSpy.callCount, 0, "writing class attribute in new void tag should pass assertion");
+	});
+
+	QUnit.test("RenderManager.attr('class',...).openEnd().voidStart().class(...)", function (assert) {
+		this.oRM.openStart("div").attr("class", "class1").openEnd().voidStart("div").class("class2");
+		assert.equal(this.oAssertionSpy.callCount, 0, "adding a class in new void tag should pass assertion");
+	});
+
+	QUnit.test("RenderManager.style (no style prop name)", function (assert) {
 		this.oRM.openStart("div").style("", "100px");
 		assert.equal(this.oAssertionSpy.callCount, 1);
 	});
 
-	QUnit.test("RenderManager.style", function (assert) {
+	QUnit.test("RenderManager.attr('style')", function (assert) {
 		this.oRM.openStart("div").attr("style", "width: 100%");
-		assert.equal(this.oAssertionSpy.callCount, 1);
+		assert.equal(this.oAssertionSpy.callCount, 0, "writing style attribute alone should be fine");
+	});
+
+	QUnit.test("RenderManager.style(...).attr('style',...)", function (assert) {
+		this.oRM.openStart("div").style("width", "100%").attr("style", "height: 100%");
+		assert.equal(this.oAssertionSpy.callCount, 1, "writing style attribute after style prop should fail assertion");
+	});
+
+	QUnit.test("RenderManager.attr('style',...).style(...)", function (assert) {
+		this.oRM.openStart("div").attr("style", "height: 100%").style("width", "100%");
+		assert.equal(this.oAssertionSpy.callCount, 1, "setting style property after style attribute should fail assertion");
+	});
+
+	QUnit.test("RenderManager.style(...).openEnd().openStart().attr('style',...)", function (assert) {
+		this.oRM.openStart("div").style("width", "100%").openEnd().openStart("div").attr("style", "height: 100%");
+		assert.equal(this.oAssertionSpy.callCount, 0, "writing style attribute in new tag should pass assertion");
+	});
+
+	QUnit.test("RenderManager.attr('style',...).openEnd().openStart().style(...)", function (assert) {
+		this.oRM.openStart("div").attr("style", "height: 100%").openEnd().openStart("div").style("width", "100%");
+		assert.equal(this.oAssertionSpy.callCount, 0, "setting style property in new tag should pass assertion");
+	});
+
+	QUnit.test("RenderManager.style(...).openEnd().voidStart().attr('style',...)", function (assert) {
+		this.oRM.openStart("div").style("width", "100%").openEnd().voidStart("input").attr("style", "height: 100%");
+		assert.equal(this.oAssertionSpy.callCount, 0, "writing style attribute in new void tag should pass assertion");
+	});
+
+	QUnit.test("RenderManager.attr('style',...).openEnd().voidStart().style(...)", function (assert) {
+		this.oRM.openStart("div").attr("style", "height: 100%").openEnd().voidStart("input").style("width", "100%");
+		assert.equal(this.oAssertionSpy.callCount, 0, "setting style property in new void tag should pass assertion");
 	});
 
 	QUnit.test("Valid syntax No API assertion", function (assert) {
