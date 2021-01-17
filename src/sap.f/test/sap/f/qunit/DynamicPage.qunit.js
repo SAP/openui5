@@ -298,6 +298,26 @@ function (
 		assert.ok(this.oDynamicPage.$("vertSB")[0], "DynamicPage ScrollBar has rendered successfully");
 	});
 
+	QUnit.test("_updateFitContainer is called onAfterRendering", function (assert) {
+		var oDeviceStub = this.stub(Device, "system",  {
+			desktop: false,
+			phone: false,
+			tablet: true
+		}),
+		oSpy = this.spy(this.oDynamicPage, "_updateFitContainer"),
+		done = assert.async();
+
+		//Act
+		this.oDynamicPage.onAfterRendering();
+
+		//Check
+		setTimeout(function() {
+			assert.ok(oSpy.called, "_updateFitContainer is called");
+			oDeviceStub.restore();
+			done();
+		}, 0);
+	});
+
 	QUnit.test("BCP: 1870261908 Header title cursor CSS reset is applied", function (assert) {
 		// Arrange
 		var $MainHeading = this.oDynamicPage.$().find(".sapFDynamicPageTitleMainHeading"),
