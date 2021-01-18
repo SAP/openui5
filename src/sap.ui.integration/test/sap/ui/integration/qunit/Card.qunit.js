@@ -859,6 +859,21 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("Rendered classes", function (assert) {
+			// Arrange
+			var oCard = new Card();
+
+			// Act
+			oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
+
+			// Assert
+			assert.ok(oCard.$().hasClass("sapUiIntCard"), "Class is added to the root div");
+
+			// Clean up
+			oCard.destroy();
+		});
+
 		QUnit.module("Methods", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -2331,7 +2346,7 @@ sap.ui.define([
 			}
 		});
 
-		QUnit.test("sapFCardAnalytical is added only when the type is 'Analytical'", function (assert) {
+		QUnit.test("'sapUiIntCardAnalytical' is added only when the type is 'Analytical'", function (assert) {
 			// Arrange
 			var done = assert.async(),
 				oAnalyticalManifest = {
@@ -2354,11 +2369,11 @@ sap.ui.define([
 			// Act
 			this.oCard.attachEventOnce("_ready", function () {
 				// Assert
-				assert.ok(this.oCard.hasStyleClass("sapFCardAnalytical"), "'sapFCardAnalytical' class should be set.");
+				assert.ok(this.oCard.$().hasClass("sapUiIntCardAnalytical"), "'sapUiIntCardAnalytical' class should be set.");
 
 				this.oCard.attachEventOnce("_ready", function () {
 					// Assert
-					assert.notOk(this.oCard.hasStyleClass("sapFCardAnalytical"), "'sapFCardAnalytical' class should NOT be set.");
+					assert.notOk(this.oCard.$().hasClass("sapUiIntCardAnalytical"), "'sapUiIntCardAnalytical' class should NOT be set.");
 					done();
 				}.bind(this));
 

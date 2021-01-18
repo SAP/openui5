@@ -61,7 +61,7 @@ sap.ui.define([
 
 		this.oMicrochartLegend.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
-		var oFirstBarBackground = this.oMicrochartLegend.$().find(".sapUiIntegrationMicrochartLegendItem :first-child")[0].style.background;
+		var oFirstBarBackground = this.oMicrochartLegend.$().find(".sapUiIntMicrochartLegendItem :first-child")[0].style.background;
 
 		// assert
 		assert.strictEqual(oFirstBarBackground, sExpectedBackground, "The item should have expected background from chart color palette.");
@@ -74,17 +74,17 @@ sap.ui.define([
 		this.oMicrochartLegend.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
-		var oSecondBar = this.oMicrochartLegend.$().find(".sapUiIntegrationMicrochartLegendItem > :first-child")[1];
+		var oSecondBar = this.oMicrochartLegend.$().find(".sapUiIntMicrochartLegendItem > :first-child")[1];
 
 		// assert
-		assert.ok(oSecondBar.classList.contains("sapUiIntegrationMicrochartLegendItemGood"), "The item should have correct background class set.");
+		assert.ok(oSecondBar.classList.contains("sapUiIntMicrochartLegendItemGood"), "The item should have correct background class set.");
 	});
 
 	QUnit.test("Legend item color as CSS value", function (assert) {
 		this.oMicrochartLegend.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
-		var oThirdBarBackground = this.oMicrochartLegend.$().find(".sapUiIntegrationMicrochartLegendItem > :first-child")[2].style.background;
+		var oThirdBarBackground = this.oMicrochartLegend.$().find(".sapUiIntMicrochartLegendItem > :first-child")[2].style.background;
 
 		// assert
 		assert.strictEqual(oThirdBarBackground, this.COLOR_CSS, "The item should have background set as CSS value.");
@@ -120,7 +120,7 @@ sap.ui.define([
 		oMicrochartLegend.placeAt(DOM_RENDER_LOCATION);
 		Core.applyChanges();
 
-		var aMinWidths = oMicrochartLegend.$().children(".sapUiIntegrationMicrochartLegendItem").map(function () {
+		var aMinWidths = oMicrochartLegend.$().children(".sapUiIntMicrochartLegendItem").map(function () {
 			return this.style.minWidth;
 		}).toArray();
 

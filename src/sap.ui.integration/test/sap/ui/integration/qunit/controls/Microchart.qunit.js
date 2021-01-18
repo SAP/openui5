@@ -25,7 +25,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assert
-		assert.ok(oMicrochart.$().find(".sapUiIntegrationMicrochartValue" + oMicrochart.getValueColor()).length, "The value div should have 'Good' class.");
+		assert.ok(oMicrochart.$().find(".sapUiIntMicrochartValue" + oMicrochart.getValueColor()).length, "The value div should have 'Good' class.");
 
 		// clean up
 		oMicrochart.destroy();

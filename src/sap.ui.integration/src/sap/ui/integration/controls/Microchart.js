@@ -59,15 +59,15 @@ sap.ui.define([
 		renderer: {
 			apiVersion: 2,
 			render: function (oRm, oMicrochart) {
-				var sValueClass = "sapUiIntegrationMicrochartValue" + oMicrochart.getValueColor();
+				var sValueClass = "sapUiIntMicrochartValue" + oMicrochart.getValueColor();
 
 				oRm.openStart("div", oMicrochart)
-					.class("sapUiIntegrationMicrochartChartWrapper")
+					.class("sapUiIntMicrochartChartWrapper")
 					.openEnd();
 
 				// chart
 				oRm.openStart("div")
-					.class("sapUiIntegrationMicrochartChart")
+					.class("sapUiIntMicrochartChart")
 					.openEnd()
 					.renderControl(oMicrochart.getChart())
 					.close("div");

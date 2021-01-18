@@ -56,7 +56,7 @@ sap.ui.define([
 	};
 
 	MicrochartLegend.prototype._equalizeWidths = function () {
-		var $items = this.$().children(".sapUiIntegrationMicrochartLegendItem"),
+		var $items = this.$().children(".sapUiIntMicrochartLegendItem"),
 			fMaxWidth = 0;
 
 		$items.css("width", "");

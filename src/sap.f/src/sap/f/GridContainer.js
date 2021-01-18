@@ -1072,7 +1072,7 @@ sap.ui.define([
 
 		// height is explicitly set to 100% for analytical card
 		// so we need to use the scrollHeight for it
-		if ($item.hasClass("sapFCardAnalytical")) {
+		if ($item.hasClass("sapUiIntCardAnalytical")) {
 			iItemHeight = $item[0].scrollHeight;
 		} else {
 			iItemHeight = $item.outerHeight();

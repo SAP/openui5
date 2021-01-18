@@ -21,11 +21,11 @@ sap.ui.define([
 	ListContentItemRenderer.renderLIAttributes = function(rm, oLI) {
 		StandardListItemRenderer.renderLIAttributes.apply(this, arguments);
 
-		rm.class("sapUiIntegrationLCI");
-		rm.class("sapUiIntegrationLCIIconSize" + oLI.getIconSize());
+		rm.class("sapUiIntLCI");
+		rm.class("sapUiIntLCIIconSize" + oLI.getIconSize());
 
 		if (oLI.getMicrochart()) {
-			rm.class("sapUiIntegrationLCIWithChart");
+			rm.class("sapUiIntLCIWithChart");
 		}
 	};
 

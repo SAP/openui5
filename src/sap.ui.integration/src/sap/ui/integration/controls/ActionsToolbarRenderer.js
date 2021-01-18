@@ -23,7 +23,7 @@ sap.ui.define([], function () {
 	 */
 	ActionsToolbarRenderer.render = function(oRm, oActionsToolbar) {
 		oRm.openStart("div", oActionsToolbar)
-			.class("sapUIActionsToolbar")
+			.class("sapUiIntActionsToolbar")
 			.openEnd();
 
 		oRm.renderControl(oActionsToolbar._getToolbar());

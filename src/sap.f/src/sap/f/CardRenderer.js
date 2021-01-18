@@ -4,8 +4,10 @@
 
 // Provides default renderer for control sap.f.Card
 sap.ui.define([
+	"sap/ui/core/Renderer",
 	"sap/f/library"
 ], function (
+	Renderer,
 	library
 ) {
 	"use strict";
@@ -16,9 +18,9 @@ sap.ui.define([
 	 * @author SAP SE
 	 * @namespace
 	 */
-	var CardRenderer = {
+	var CardRenderer = Renderer.extend("sap.f.CardRenderer", {
 		apiVersion: 2
-	};
+	});
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -28,13 +30,42 @@ sap.ui.define([
 	 */
 	CardRenderer.render = function (oRm, oCard) {
 		var oHeader = oCard.getCardHeader(),
-			sHeight = oCard.getHeight(),
-			bCardHeaderBottom = oHeader && oCard.getCardHeaderPosition() === HeaderPosition.Bottom,
-			sTooltip = oCard.getTooltip_AsString(),
-			oFilterBar = oCard.getAggregation("_filterBar");
+			bHeaderTop = oHeader && oCard.getCardHeaderPosition() === HeaderPosition.Top;
 
-		oRm.openStart("div", oCard)
-			.class("sapFCard")
+		oRm.openStart("div", oCard);
+		this.renderContainerAttributes(oRm, oCard);
+		oRm.openEnd();
+
+		// header at the top
+		if (bHeaderTop) {
+			oRm.renderControl(oHeader);
+		}
+
+		// content
+		this.renderContentSection(oRm, oCard);
+
+		// header at the bottom
+		if (!bHeaderTop) {
+			oRm.renderControl(oHeader);
+		}
+
+		oRm.renderControl(oCard._ariaText);
+		oRm.renderControl(oCard._ariaContentText);
+
+		oRm.close("div");
+	};
+
+	/**
+	 * @protected
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.ui.core.Control} oCard An object representation of the control that should be rendered.
+	 */
+	CardRenderer.renderContainerAttributes = function (oRm, oCard) {
+		var sHeight = oCard.getHeight(),
+			sTooltip = oCard.getTooltip_AsString(),
+			bCardHeaderBottom = oCard.getCardHeader() && oCard.getCardHeaderPosition() === HeaderPosition.Bottom;
+
+		oRm.class("sapFCard")
 			.style("width", oCard.getWidth());
 
 		if (!oCard.getCardContent()) {
@@ -58,41 +89,13 @@ sap.ui.define([
 			role: "region",
 			labelledby: { value: oCard._getAriaLabelledIds(), append: true }
 		});
-		oRm.openEnd();
-
-		//header at the top
-		if (oHeader && oCard.getCardHeaderPosition() === HeaderPosition.Top) {
-			oRm.renderControl(oHeader);
-		}
-
-		if (oFilterBar) {
-			oRm.openStart("div")
-				.class("sapFCardFilterBar")
-				.openEnd();
-
-			oRm.renderControl(oFilterBar);
-
-			oRm.close("div");
-		}
-
-		//content
-		CardRenderer.renderContentSection(oRm, oCard);
-
-		//header at the bottom
-		if (bCardHeaderBottom) {
-			oRm.renderControl(oHeader);
-		}
-
-		oRm.renderControl(oCard._ariaText);
-		oRm.renderControl(oCard._ariaContentText);
-
-		oRm.close("div");
 	};
 
 	/**
 	 * Render content section.
 	 * Will be overwritten by subclasses.
 	 *
+	 * @protected
 	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 	 * @param {sap.ui.core.Control} oCard An object representation of the control that should be rendered.
 	 */

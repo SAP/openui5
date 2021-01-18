@@ -29,12 +29,12 @@ sap.ui.define([
 		}
 
 		oRm.openStart("div", oMicrochartLegend)
-			.class("sapUiIntegrationMicrochartLegend")
+			.class("sapUiIntMicrochartLegend")
 			.openEnd();
 
 		aLegendColors.forEach(function (sColor, i) {
 			oRm.openStart("div")
-				.class("sapUiIntegrationMicrochartLegendItem")
+				.class("sapUiIntMicrochartLegendItem")
 				.openEnd();
 
 			oRm.openStart("div");
@@ -51,7 +51,7 @@ sap.ui.define([
 
 	MicrochartLegendRenderer.addColor = function (oRm, sColor) {
 		if (ValueColor[sColor]) {
-			oRm.class("sapUiIntegrationMicrochartLegendItem" + sColor);
+			oRm.class("sapUiIntMicrochartLegendItem" + sColor);
 		} else {
 			var sColorAsCSSValue = Parameters.get(sColor) || sColor; // A value from the chart palette OR any CSS value.
 			oRm.style("background", sColorAsCSSValue);
