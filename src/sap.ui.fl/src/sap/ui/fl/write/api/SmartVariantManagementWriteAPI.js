@@ -139,6 +139,7 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.defaultVariantId - ID of the new default variant
 		 * @param {string} [mPropertyBag.generator] - ID for the creating class / use case of the setDefault
 		 * @param {string} [mPropertyBag.compositeCommand] - Name of the composite command triggering the setting of the default
+		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer = Layer.USER] - Enables setDefault for the given layer
 		 * @returns {object} Default variant change
 		 * @private
 		 * @ui5-restricted

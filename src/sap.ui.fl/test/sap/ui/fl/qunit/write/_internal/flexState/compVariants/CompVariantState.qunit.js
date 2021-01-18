@@ -418,23 +418,27 @@ sap.ui.define([
 			var oChange = CompVariantState.setDefault({
 				reference: sComponentId,
 				defaultVariantId: sVariantId1,
-				persistencyKey: sPersistencyKey
+				persistencyKey: sPersistencyKey,
+				layer: Layer.CUSTOMER
 			});
 			assert.equal(oChange.getContent().defaultVariantName, sVariantId1);
 			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange,
 				"the change is set under the persistencyKey");
 			assert.equal(oChange.getContent().defaultVariantName, sVariantId1, "the change content is correct");
 			assert.equal(Object.keys(oCompVariantStateById).length, 1, "one entity is present");
+			assert.equal(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is set to CUSTOMER");
 
 			CompVariantState.setDefault({
 				reference: sComponentId,
 				defaultVariantId: sVariantId2,
-				persistencyKey: sPersistencyKey
+				persistencyKey: sPersistencyKey,
+				layer: Layer.CUSTOMER
 			});
 			assert.equal(oChange.getContent().defaultVariantName, sVariantId2, "the change content was updated");
 			assert.equal(oCompVariantStateMapForPersistencyKey.defaultVariant, oChange,
 				"the change is set under the persistencyKey");
 			assert.equal(Object.keys(oCompVariantStateById).length, 1, "still only one entity is present");
+			assert.equal(oChange.getDefinition().layer, Layer.CUSTOMER, "The default layer is still set to CUSTOMER");
 		});
 	});
 
