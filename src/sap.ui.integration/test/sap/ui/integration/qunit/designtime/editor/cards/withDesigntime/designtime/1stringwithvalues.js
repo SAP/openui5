@@ -10,12 +10,14 @@ sap.ui.define(["sap/ui/integration/Designtime"
 						"type": "string",
 						"values": {
 							"data": {
-								"json": [
-									{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
-									{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
-									{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
-								],
-								"path": "/"
+								"json": {
+									"values": [
+										{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+										{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+										{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
+									]
+								},
+								"path": "/values"
 							},
 							"item": {
 								"text": "{text}",

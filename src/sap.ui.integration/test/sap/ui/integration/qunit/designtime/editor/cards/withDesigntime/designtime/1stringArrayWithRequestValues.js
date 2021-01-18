@@ -15,7 +15,7 @@ sap.ui.define(["sap/ui/integration/Designtime"
 								"request": {
 									"url": "./1stringWithRequestValues.json"
 								},
-								"path": "/"
+								"path": "/values"
 							},
 							"item": {
 								"text": "{text}",

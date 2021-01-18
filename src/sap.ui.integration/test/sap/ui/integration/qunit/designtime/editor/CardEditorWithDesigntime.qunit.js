@@ -268,7 +268,16 @@ sap.ui.define([
 					assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Editor is ComboBox");
-					assert.ok(oField.getAggregation("_field").getItems().length === 4, "Field: Select items lenght is OK");
+					var aItems = oField.getAggregation("_field").getItems();
+					assert.ok(aItems.length === 4, "Field: Select items lenght is OK");
+					assert.ok(aItems[0].getKey() === "", "Field: Select item 0 Key is OK");
+					assert.ok(aItems[0].getText() === "", "Field: Select item 0 Text is OK");
+					assert.ok(aItems[1].getKey() === "key1", "Field: Select item 1 Key is OK");
+					assert.ok(aItems[1].getText() === "text1", "Field: Select item 1 Text is OK");
+					assert.ok(aItems[2].getKey() === "key2", "Field: Select item 2 Key is OK");
+					assert.ok(aItems[2].getText() === "text2", "Field: Select item 2 Text is OK");
+					assert.ok(aItems[3].getKey() === "key3", "Field: Select item 3 Key is OK");
+					assert.ok(aItems[3].getText() === "text3", "Field: Select item 3 Text is OK");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -305,7 +314,18 @@ sap.ui.define([
 						assert.ok(oLabel.getText() === "stringParameterWithValues", "Label: Has static label text");
 						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Editor is ComboBox");
-						assert.ok(oField.getAggregation("_field").getItems().length === 5, "Field: Select items lenght is OK");
+						var aItems = oField.getAggregation("_field").getItems();
+						assert.ok(aItems.length === 5, "Field: Select items lenght is OK");
+						assert.ok(aItems[0].getKey() === "", "Field: Select item 0 Key is OK");
+						assert.ok(aItems[0].getText() === "", "Field: Select item 0 Text is OK");
+						assert.ok(aItems[1].getKey() === "key1", "Field: Select item 1 Key is OK");
+						assert.ok(aItems[1].getText() === "text1req", "Field: Select item 1 Text is OK");
+						assert.ok(aItems[2].getKey() === "key2", "Field: Select item 2 Key is OK");
+						assert.ok(aItems[2].getText() === "text2req", "Field: Select item 2 Text is OK");
+						assert.ok(aItems[3].getKey() === "key3", "Field: Select item 3 Key is OK");
+						assert.ok(aItems[3].getText() === "text3req", "Field: Select item 3 Text is OK");
+						assert.ok(aItems[4].getKey() === "key4", "Field: Select item 4 Key is OK");
+						assert.ok(aItems[4].getText() === "text4req", "Field: Select item 4 Text is OK");
 						resolve();
 					}, 500);
 				}.bind(this));
@@ -5380,8 +5400,10 @@ sap.ui.define([
 					setTimeout(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationSelect.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
-						assert.ok(DestinationSelect.getSelectedItem().getKey() === "Northwind", "Content of Form contains: Destination Field selectedItem Key");
-						assert.ok(DestinationSelect.getSelectedItem().getText() === "Northwind", "Content of Form contains: Destination Field selectedItem Text");
+						assert.ok(DestinationSelect.getItems().length === 5, "Content of Form contains: Destination Field items lengh OK");
+						assert.ok(DestinationSelect.getSelectedIndex() === 4, "Content of Form contains: Destination Field selectedItem: Index OK");
+						assert.ok(DestinationSelect.getSelectedItem().getKey() === "Northwind", "Content of Form contains: Destination Field selectedItem: Key OK");
+						assert.ok(DestinationSelect.getSelectedItem().getText() === "Northwind", "Content of Form contains: Destination Field selectedItem: Text OK");
 						resolve();
 					}, 1500);
 				}.bind(this));
