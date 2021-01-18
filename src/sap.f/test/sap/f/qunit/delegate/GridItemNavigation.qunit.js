@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/f/delegate/GridItemNavigation",
 	"sap/f/GridContainer",
 	"sap/f/GridNavigationMatrix",
+	"sap/f/library",
 	"sap/m/GenericTile",
 	"sap/ui/core/Core",
 	"sap/ui/events/KeyCodes",
@@ -12,6 +13,7 @@ sap.ui.define([
 	GridItemNavigation,
 	GridContainer,
 	GridNavigationMatrix,
+	fLibrary,
 	GenericTile,
 	Core,
 	KeyCodes,
@@ -20,6 +22,8 @@ sap.ui.define([
 	"use strict";
 
 	var DOM_RENDER_LOCATION = "qunit-fixture";
+	var NavigationDirection = fLibrary.NavigationDirection;
+	var EMPTY_CELL = GridNavigationMatrix.EMPTY_CELL;
 
 	QUnit.module("Events", {
 		beforeEach: function () {
@@ -145,5 +149,180 @@ sap.ui.define([
 		});
 
 		assert.ok(true, "There is no attempt to access 'null' matrix (no error thrown)");
+	});
+
+	QUnit.module("#focusItemByDirection", {
+		beforeEach: function () {
+			this.$grid = jQuery(
+				"<div></div>"
+			);
+
+			this.$grid.appendTo("#" + DOM_RENDER_LOCATION);
+			this.oItemNavigation = new GridItemNavigation();
+			this.oItemNavigation.setRootDomRef(this.$grid[0]);
+		},
+		afterEach: function () {
+			this.$grid.detach();
+		}
+	});
+
+	QUnit.test("DOWN direction. Search column when there are no rows", function (assert) {
+		// arrange
+		var oFakeGrid = {
+			getNavigationMatrix: function () {
+				return GridNavigationMatrix.create(this.$grid[0], this.$grid.children().get(), {
+					gap: 8,
+					columns: [],
+					rows: [] // no rows
+				});
+			}.bind(this)
+		};
+
+		// act
+		this.oItemNavigation.focusItemByDirection(oFakeGrid, NavigationDirection.Down, null, 1);
+
+		// assert
+		assert.ok(true, "There is no error when there are no rows");
+	});
+
+	QUnit.test("DOWN direction. Search column out of range", function (assert) {
+		// arrange
+		var oFakeGrid = {
+			getNavigationMatrix: function () {
+				return GridNavigationMatrix.create(this.$grid[0], this.$grid.children().get(), {
+					gap: 8,
+					columns: [], // no columns
+					rows: ["120px"]
+				});
+			}.bind(this)
+		};
+		var iOutOfRange = 100000;
+
+		// act
+		this.oItemNavigation.focusItemByDirection(oFakeGrid, NavigationDirection.Down, null, iOutOfRange);
+
+		// assert
+		assert.ok(true, "There is no attempt to access column" + iOutOfRange + ". No error thrown");
+	});
+
+	QUnit.test("UP direction. Search column when there are no rows", function (assert) {
+		// arrange
+		var oFakeGrid = {
+			getNavigationMatrix: function () {
+				return GridNavigationMatrix.create(this.$grid[0], this.$grid.children().get(), {
+					gap: 8,
+					columns: [],
+					rows: [] // no rows
+				});
+			}.bind(this)
+		};
+
+		// act
+		this.oItemNavigation.focusItemByDirection(oFakeGrid, NavigationDirection.Up, null, 1);
+
+		// assert
+		assert.ok(true, "There is no error when there are no rows");
+	});
+
+	QUnit.test("UP direction. Search column out of range", function (assert) {
+		// arrange
+		var oFakeGrid = {
+			getNavigationMatrix: function () {
+				return GridNavigationMatrix.create(this.$grid[0], this.$grid.children().get(), {
+					gap: 8,
+					columns: [], // no columns
+					rows: ["120px"]
+				});
+			}.bind(this)
+		};
+		var iOutOfRange = 0;
+
+		// act
+		this.oItemNavigation.focusItemByDirection(oFakeGrid, NavigationDirection.Up, null, iOutOfRange);
+
+		// assert
+		assert.ok(true, "There is no attempt to access row " + iOutOfRange + ". No error thrown");
+	});
+
+	QUnit.test("DOWN direction. Row found is correct", function (assert) {
+		// arrange
+		var oFakeItem = document.createElement("div");
+		var oFakeGrid = {
+			getNavigationMatrix: function () {
+				return [
+					[oFakeItem],
+					[EMPTY_CELL]
+				];
+			}
+		};
+
+		// act
+		this.oItemNavigation.focusItemByDirection(oFakeGrid, NavigationDirection.Down, null, 0);
+
+		// assert
+		assert.strictEqual(this.oItemNavigation._mCurrentPosition.row, 0, "Row index is correct");
+	});
+
+	QUnit.test("DOWN direction. Row found is correct when there are empty cells", function (assert) {
+		// arrange
+		var oFakeItem = document.createElement("div");
+		var oFakeGrid = {
+			getNavigationMatrix: function () {
+				return [
+					[EMPTY_CELL],
+					[EMPTY_CELL],
+					[EMPTY_CELL],
+					[oFakeItem],
+					[EMPTY_CELL]
+				];
+			}
+		};
+
+		// act
+		this.oItemNavigation.focusItemByDirection(oFakeGrid, NavigationDirection.Down, null, 0);
+
+		// assert
+		assert.strictEqual(this.oItemNavigation._mCurrentPosition.row, 3, "Row index is correct");
+	});
+
+	QUnit.test("UP direction. Row found is correct", function (assert) {
+		// arrange
+		var oFakeItem = document.createElement("div");
+		var oFakeGrid = {
+			getNavigationMatrix: function () {
+				return [
+					[EMPTY_CELL],
+					[oFakeItem]
+				];
+			}
+		};
+
+		// act
+		this.oItemNavigation.focusItemByDirection(oFakeGrid, NavigationDirection.Up, null, 0);
+
+		// assert
+		assert.strictEqual(this.oItemNavigation._mCurrentPosition.row, 1, "Row index is correct");
+	});
+
+	QUnit.test("UP direction. Row found is correct when there are empty cells", function (assert) {
+		// arrange
+		var oFakeItem = document.createElement("div");
+		var oFakeGrid = {
+			getNavigationMatrix: function () {
+				return [
+					[EMPTY_CELL],
+					[oFakeItem],
+					[oFakeItem],
+					[EMPTY_CELL],
+					[EMPTY_CELL]
+				];
+			}
+		};
+
+		// act
+		this.oItemNavigation.focusItemByDirection(oFakeGrid, NavigationDirection.Up, null, 0);
+
+		// assert
+		assert.strictEqual(this.oItemNavigation._mCurrentPosition.row, 1, "Row index is correct");
 	});
 });
