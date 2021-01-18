@@ -19,7 +19,8 @@ sap.ui.define([
 		"sap/m/library",
 		"sap/f/cards/BindingResolver",
 		"sap/f/cards/BindingHelper",
-		"sap/f/cards/IconFormatter"
+		"sap/f/cards/IconFormatter",
+		"sap/ui/util/openWindow"
 	], function (
 		library,
 		ManagedObject,
@@ -37,7 +38,8 @@ sap.ui.define([
 		mobileLibrary,
 		BindingResolver,
 		BindingHelper,
-		IconFormatter
+		IconFormatter,
+		openWindow
 	) {
 		"use strict";
 
@@ -196,7 +198,7 @@ sap.ui.define([
 
 					if (oAction.url) {
 						oItem.attachPress(function () {
-							window.open(oAction.url, oAction.target || "_blank");
+							openWindow(oAction.url, oAction.target || "_blank");
 						});
 					}
 				}
@@ -263,7 +265,7 @@ sap.ui.define([
 						sTarget = BindingResolver.resolveValue(oColumn.identifier.target, oModel, sPath);
 
 						if (sUrl) {
-							window.open(sUrl, sTarget || "_blank");
+							openWindow(sUrl, sTarget || "_blank");
 						}
 					});
 				}
