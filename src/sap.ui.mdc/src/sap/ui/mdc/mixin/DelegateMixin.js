@@ -141,8 +141,6 @@ sap.ui.define(["sap/ui/mdc/util/loadModules", "sap/base/Log"], function (loadMod
 				this.bDelegateLoading = true;
 				loadModules(oDelegate.name).then(_fnInitDelegate.bind(this)).catch(_fnInitDelegate.bind(this));
 			}
-		} else {
-			Log.warning("Delegate module already initialized.");
 		}
 
 		return this._oDelegateInitialized;
