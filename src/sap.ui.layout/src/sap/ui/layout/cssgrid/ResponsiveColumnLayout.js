@@ -128,7 +128,7 @@ sap.ui.define([
 	 * @param {sap.ui.layout.cssgrid.IGridConfigurable} oGrid The grid
 	 */
 	ResponsiveColumnLayout.prototype.onGridAfterRendering = function (oGrid) {
-		this._applyLayout(oGrid, false);
+		this._applyLayout(oGrid);
 	};
 
 
@@ -153,7 +153,7 @@ sap.ui.define([
 			return;
 		}
 
-		this._applyLayout(oEvent.control, true);
+		this._applyLayout(oEvent.control);
 	};
 
 	/**
@@ -200,10 +200,9 @@ sap.ui.define([
 	 * Changes the active layout if it's different than the currently active one.
 	 *
 	 * @param {sap.ui.layout.cssgrid.IGridConfigurable} oGrid The grid which layout is going to be updated
-	 * @param {boolean} bTriggerLayoutChange If changing the active layout should trigger layoutChange event
 	 * @private
 	 */
-	ResponsiveColumnLayout.prototype._applyLayout = function (oGrid, bTriggerLayoutChange) {
+	ResponsiveColumnLayout.prototype._applyLayout = function (oGrid) {
 		var iWidth = oGrid.$().parent().outerWidth(),
 			oRange = Device.media.getCurrentRange("StdExt", iWidth),
 			sClassName = mSizeClasses[oRange.name],
@@ -223,12 +222,9 @@ sap.ui.define([
 		}
 
 		this._sCurrentLayoutClassName = sClassName;
-
-		if (bTriggerLayoutChange) {
-			this.fireLayoutChange({
-				layout: oRange.name
-			});
-		}
+		this.fireLayoutChange({
+			layout: oRange.name
+		});
 	};
 
 	/**
