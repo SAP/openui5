@@ -106,6 +106,9 @@ function(
 		* A Dialog consists of a title, optional subtitle, content area and a footer for action buttons.
 		* The Dialog is usually displayed at the center of the screen. Its size and position can be changed by the user.
 		* To enable this, you need to set the properties <code>resizable</code> and <code>draggable</code> accordingly.
+		* In that case the dialog title bar can be focused.
+		* While the keyboard focus is located on the title bar, the dialog can be moved
+		* with the arrow keys and resized with shift+arrow keys.
 		*
 		* There are other specialized types of dialogs:
 		* <ul>
