@@ -2862,6 +2862,7 @@ sap.ui.define([
 		// in order to set or remove the sticky class in special cases like 1MonthView or phone landscape
 		// otherwise nothing should be updated
 		if (this.getStickyHeader()) {
+			this._adjustColumnHeadersTopOffset();
 			this._updateStickyHeader();
 		}
 	}
