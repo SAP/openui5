@@ -22,11 +22,11 @@ sap.ui.define([
 						if (sLicense !== "") {
 							this.getView().byId("licenseText").setText(sLicense);
 						} else {
-							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+							this.onRouteNotFound();
 						}
 					}.bind(this))
 					.fail(function () {
-						this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+						this.onRouteNotFound();
 					}.bind(this));
 			}
 		});

@@ -7,5 +7,6 @@ sap.ui.define([
 ], function (BaseController) {
 	"use strict";
 
-	return BaseController.extend("sap.ui.documentation.sdk.controller.NotFound", {});
+	return BaseController.extend("sap.ui.documentation.sdk.controller.NotFound", {
+	});
 });

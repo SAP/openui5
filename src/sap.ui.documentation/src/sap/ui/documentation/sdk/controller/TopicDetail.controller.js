@@ -193,7 +193,7 @@ sap.ui.define([
 
 				if (!htmlContent) {
 					setTimeout(function () {
-						this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+						this.onRouteNotFound();
 					}.bind(this), 0);
 					return;
 				}
@@ -215,6 +215,8 @@ sap.ui.define([
 				setTimeout(window.prettyPrint, 0);
 
 				this.searchResultsButtonVisibilitySwitch(this.byId("topicDetailBackToSearch"));
+
+				this.appendPageTitle(this.getModel().getProperty("/topictitle1"));
 			},
 
 			/**

@@ -23,7 +23,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/Version",
 	"sap/ui/core/syncStyleClass",
-	"sap/ui/documentation/WebPageTitleUtil",
 	"sap/ui/core/Core",
 	"sap/ui/documentation/sdk/model/formatter",
 	"sap/m/ResponsivePopover",
@@ -52,7 +51,6 @@ sap.ui.define([
 	Log,
 	Version,
 	syncStyleClass,
-	WebPageTitleUtil,
 	Core,
 	globalFormatter,
 	ResponsivePopover,
@@ -150,7 +148,8 @@ sap.ui.define([
 						api: "API Reference - " + MAIN_WEB_PAGE_TITLE,
 						controls: "Samples - " + MAIN_WEB_PAGE_TITLE,
 						demoapps: "Demo Apps - " + MAIN_WEB_PAGE_TITLE,
-						tools: "Tools - " + MAIN_WEB_PAGE_TITLE
+						tools: "Tools - " + MAIN_WEB_PAGE_TITLE,
+						home: MAIN_WEB_PAGE_TITLE
 					};
 				}.bind(this));
 
@@ -174,7 +173,6 @@ sap.ui.define([
 				this._selectHeader = this._oView.byId("selectHeader");
 				this._tabHeader = this._oView.byId("tabHeader");
 
-				this._oWebPageTitleUtil = new WebPageTitleUtil();
 				this._oConfigUtil = this.getOwnerComponent().getConfigUtil();
 				this._oCookieNames = this._oConfigUtil.COOKIE_NAMES;
 
@@ -214,6 +212,7 @@ sap.ui.define([
 				}
 
 				this.initSearch();
+
 			},
 
 			onBeforeRendering: function() {
@@ -264,7 +263,6 @@ sap.ui.define([
 					sMasterViewId;
 
 				this._setHeaderSelectedKey(sKey);
-				this._oWebPageTitleUtil.setTitle(WEB_PAGE_TITLE[sKey]);
 
 				oViewModel.setProperty("/bHasMaster", bHasMaster);
 
@@ -281,11 +279,7 @@ sap.ui.define([
 				// hide master on route change
 				this.byId("splitApp").hideMaster();
 				oViewModel.setProperty("/bIsShownMaster", false);
-			},
-
-			onRouteNotFound: function () {
-				this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
-				return;
+				this.appendPageTitle(null).appendPageTitle(WEB_PAGE_TITLE[sKey]);
 			},
 
 			toggleMaster: function(oEvent) {
@@ -1388,7 +1382,6 @@ sap.ui.define([
 				this._selectHeader.setSelectedKey(sKey);
 				this._tabHeader.setSelectedKey(sKey);
 			}
-
 		});
 	}
 );

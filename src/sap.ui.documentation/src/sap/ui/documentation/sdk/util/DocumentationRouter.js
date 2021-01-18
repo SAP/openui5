@@ -64,7 +64,7 @@ sap.ui.define([
 					oNavigationObject;
 
 				if (!oSample) {
-					this.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+					this.onRouteNotFound();
 				}
 
 				oNavigationObject = {

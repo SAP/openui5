@@ -54,7 +54,7 @@ sap.ui.define([
 				// If there is no sample or the context from the URL is for the wrong sample we redirect to not found page
 				// If you modify this expression please check with both class and tutorial which won't have a context.
 				if (!oSample || (oSample.contexts && !oSample.contexts[this._sEntityId])) {
-					this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+					this.onRouteNotFound();
 					return;
 				}
 
@@ -116,7 +116,7 @@ sap.ui.define([
 				}
 
 				if (this._aFilesAvailable.indexOf(sFileName) === -1) {
-					this.router.myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+					this.onRouteNotFound();
 					return;
 				}
 
@@ -130,6 +130,8 @@ sap.ui.define([
 				// scroll to the top of the page
 				var page = this.byId("page");
 				page.scrollTo(0);
+
+				this.appendPageTitle(this.getModel().getProperty("/title"));
 			},
 
 			_updateFileContent: function(sRef, sFile) {

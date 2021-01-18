@@ -74,6 +74,8 @@ sap.ui.define([
 					iMinor = iMinor - (iMinor <= 60 ? 2 : 1);
 				}
 				this._oVersionModel.setData(oVersions);
+
+				this.appendPageTitle(this.getModel("i18n").getProperty("RELEASE_NOTES_TITLE"));
 			},
 			_processLibInfo: function (aLibs, oLibInfos) {
 				var iReleaseNotes,

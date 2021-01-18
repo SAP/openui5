@@ -95,7 +95,7 @@ sap.ui.define([
 						// If the symbol does not exist in the available libs we redirect to the not found page
 						if (vReason === this.NOT_FOUND) {
 							this._oContainerPage.setBusy(false);
-							this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
+							this.onRouteNotFound();
 						} else if (typeof vReason === "string") {
 							Log.error(vReason);
 						} else if (vReason.name) {
