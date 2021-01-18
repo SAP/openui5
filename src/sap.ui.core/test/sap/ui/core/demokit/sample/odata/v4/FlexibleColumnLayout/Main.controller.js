@@ -46,6 +46,8 @@ sap.ui.define([
 
 		onCancel : function () {
 			this.getView().getModel().resetChanges("UpdateGroup");
+			this.setSelectionMode("SingleSelectMaster");
+			this.mChangedSalesOrders = {};
 		},
 
 		onCreateLineItem : function () {
@@ -67,6 +69,8 @@ sap.ui.define([
 					throw oError;
 				}
 			});
+			this.rememberChangedSalesOrderContext();
+			this.setSelectionMode("None");
 		},
 
 		onDeleteSalesOrder : function (oEvent) {
@@ -76,6 +80,9 @@ sap.ui.define([
 		},
 
 		onDeleteSalesOrderItem : function (oEvent) {
+			this.byId("objectPage").getBindingContext().requestSideEffects(["GrossAmount"], "$auto")
+					.catch(function () {/*may fail because of previous request*/});
+
 			oEvent.getSource().getBindingContext().delete("$auto").then(function () {
 				MessageBox.success("Sales order line item deleted");
 			});
@@ -104,6 +111,11 @@ sap.ui.define([
 					+ ".v0002.SalesOrderIncreaseItemsQuantity(...)", oContext,
 					{$select : ["GrossAmount", "Note"]});
 
+			if (this.hasPendingChanges(this.byId("SalesOrderList").getBinding("items"),
+					"invoking action")) {
+				return;
+			}
+
 			oView.setBusy(true);
 			oAction.execute().then(function () {
 				MessageToast.show("All items' quantities increased by 1, "
@@ -123,6 +135,7 @@ sap.ui.define([
 		},
 
 		onInit : function () {
+			this.mChangedSalesOrders = {};
 			this.initMessagePopover("showMessages");
 			this.oUIModel = new JSONModel({
 					iMessages : 0,
@@ -226,6 +239,11 @@ sap.ui.define([
 			this.oUIModel.setProperty("/sSortSalesOrderIDIcon", oSortOrder.sNewIcon);
 		},
 
+		rememberChangedSalesOrderContext : function () {
+			var oContext = this.byId("objectPage").getBindingContext();
+				this.mChangedSalesOrders[oContext.getPath()] = oContext;
+		},
+
 		setSalesOrderLineItemBindingContext : function (oContext) {
 			var oSubObjectPage = this.byId("subObjectPage"),
 				that = this;
@@ -253,12 +271,33 @@ sap.ui.define([
 			this.oUIModel.setProperty("/bSalesOrderItemSelected", !!oContext);
 		},
 
+		setSelectionMode : function (sMode) {
+			var oTable = this.getView().byId("SalesOrderList");
+
+			if (sMode === "SingleSelectMaster") {
+				oTable.setMode(sMode);
+				oTable.setSelectedItem(oTable.getItems()[this.iSelectedSalesOrder]);
+				this.iSelectedSalesOrder = undefined;
+			} else {
+				this.iSelectedSalesOrder = this.iSelectedSalesOrder
+					|| oTable.getSelectedItem().getBindingContext().getIndex();
+				oTable.setMode("None");
+			}
+		},
+
 		submitBatch : function (sGroupId) {
-			var oView = this.getView();
+			var oView = this.getView(),
+				that = this;
 
 			oView.setBusy(true);
+			// request new ETag for each sales order touched by changes on item level (containment)
+			Object.keys(this.mChangedSalesOrders).forEach(function (sPath) {
+				that.mChangedSalesOrders[sPath].requestSideEffects(["GrossAmount"])
+					.catch(function () {/*may fail because of previous request*/});
+			});
 			return oView.getModel().submitBatch(sGroupId).finally(function () {
 				oView.setBusy(false);
+				that.setSelectionMode("SingleSelectMaster");
 			});
 		}
 	});
