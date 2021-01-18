@@ -5,15 +5,18 @@
 sap.ui.define([
 	"sap/ui/integration/cards/BaseContent",
 	"sap/ui/integration/util/BindingResolver",
+	"sap/ui/integration/library",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/base/Log"
-], function (BaseContent,
-			BindingResolver,
-			Filter,
-			FilterOperator,
-			Log
-			){
+], function (
+	BaseContent,
+	BindingResolver,
+	library,
+	Filter,
+	FilterOperator,
+	Log
+) {
 	"use strict";
 
 	/**
@@ -49,7 +52,6 @@ sap.ui.define([
 	 */
 	BaseListContent.prototype.init = function () {
 		BaseContent.prototype.init.apply(this, arguments);
-
 		this._oAwaitingPromise = null;
 	};
 
@@ -66,12 +68,15 @@ sap.ui.define([
 	 * @override
 	 */
 	BaseListContent.prototype.setConfiguration = function (oConfiguration, sType) {
+		BaseContent.prototype.setConfiguration.apply(this, arguments);
+
 		if (!oConfiguration) {
 			return this;
 		}
 
 		var oList = this.getInnerList(),
 			maxItems = oConfiguration.maxItems;
+
 		if (oList && maxItems) {
 			oList.setGrowing(true);
 			//If pass trough parameters maxItems is a string
@@ -79,7 +84,7 @@ sap.ui.define([
 			oList.addStyleClass("sapFCardMaxItems");
 		}
 
-		return BaseContent.prototype.setConfiguration.apply(this, arguments);
+		return this;
 	};
 
 	/**

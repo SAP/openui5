@@ -34,7 +34,14 @@
 						{
 							"label": "{{phone}}",
 							"value": "{phone}",
-							"type": "phone"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:{phone}"
+									}
+								}
+							]
 						}
 					]
 				},
@@ -64,8 +71,14 @@
 						{
 							"label": "{{website}}",
 							"value": "{company/website}",
-							"url": "{company/website}",
-							"type": "link"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/website}"
+									}
+								}
+							]
 						}
 					]
 				}

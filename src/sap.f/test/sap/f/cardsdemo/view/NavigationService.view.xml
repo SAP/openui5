@@ -19,59 +19,59 @@
 				<VBox class="sapUiMediumMarginLeft">
 					<Text text="Cards using navigation service. - List and Table Content" />
 				</VBox>
-				<HBox>
+				<HBox wrap="Wrap">
 					<w:Card
 						action=".onActionLog"
 						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationService.json"
 						width="400px"
-						class="sapUiMediumMargin" />
+						class="sapUiSmallMargin" />
 					<w:Card
 						action=".onActionLog"
 						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationService2.json"
 						width="400px"
-						class="sapUiMediumMargin" />
+						class="sapUiSmallMargin" />
 					<w:Card
 						action=".onActionLog"
 						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationService3.json"
 						width="400px"
-						class="sapUiMediumMargin" />
+						class="sapUiSmallMargin" />
 					<w:Card
 						action=".onActionLog"
 						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationService4.json"
 						width="400px"
-						class="sapUiMediumMargin" />
+						class="sapUiSmallMargin" />
 				</HBox>
 				<VBox class="sapUiMediumMarginLeft">
 					<Text text="Cards using navigation service with hidden items. - List, Table and TimeLine Content" />
 				</VBox>
-				<HBox>
+				<HBox wrap="Wrap">
 					<w:Card
 						width="400px"
 						action=".onActionLog"
 						manifest="./cardsdemo/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_list.json"
-						class="sapUiMediumMargin" />
+						class="sapUiSmallMargin" />
 					<w:Card
 						width="400px"
 						action=".onActionLog"
 						manifest="./cardsdemo/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_table.json"
-						class="sapUiMediumMargin" />
+						class="sapUiSmallMargin" />
 					<w:Card
 						width="400px"
 						action=".onActionLog"
 						manifest="./cardsdemo/cardcontent/navigationService/hiddenItems/manifest_navigation_hidden_timeline.json"
-						class="sapUiMediumMargin" />
+						class="sapUiSmallMargin" />
 				</HBox>
 				<VBox class="sapUiMediumMarginLeft">
 					<Text text="Cards using navigation service. - Analytical Content" />
 				</VBox>
-				<HBox>
+				<HBox wrap="Wrap">
 					<w:Card
-						class="sapUiMediumMargin"
+						class="sapUiSmallMargin"
 						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationAction_url_analyticalContent.json"
 						height="500px"
 						width="500px" />
 					<w:Card
-						class="sapUiMediumMargin"
+						class="sapUiSmallMargin"
 						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationAction_service_analyticalContent.json"
 						height="500px"
 						width="500px" />
@@ -79,12 +79,12 @@
 				<VBox class="sapUiMediumMarginLeft">
 					<Text text="Cards using navigation service. - Object Content" />
 				</VBox>
-				<HBox>
+				<HBox wrap="Wrap">
 					<w:Card
 						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigation_objectContent.json"
 						height="500px"
 						width="500px"
-						class="sapUiMediumMargin" />
+						class="sapUiSmallMargin" />
 					<w:Card
 						class="sapUiMediumMargin"
 						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigation_object_service.json"
@@ -94,25 +94,25 @@
 				<VBox class="sapUiMediumMarginLeft">
 					<Text text="Cards using navigation action event." />
 				</VBox>
-				<HBox>
+				<HBox wrap="Wrap">
 					<w:Card
 						action=".onAction"
 						width="400px"
 						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationAction.json"
-						class="sapUiMediumMargin" />
+						class="sapUiSmallMargin" />
 					<w:Card
 						action=".onAction"
 						width="400px"
 						manifest="./cardsdemo/cardcontent/navigationService/manifest_navigationActionTable.json"
-						class="sapUiMediumMargin" />
+						class="sapUiSmallMargin" />
 				</HBox>
 				<VBox class="sapUiMediumMarginLeft">
 					<Text text="Cards using navigation service. - Timeline Content" />
 				</VBox>
-				<HBox>
+				<HBox wrap="Wrap">
 					<w:Card
 						id="timeline"
-						class="sapUiMediumMargin"
+						class="sapUiSmallMargin"
 						manifest="{manifests>/timelineContent/card0}"
 						width="300px" />
 				</HBox>

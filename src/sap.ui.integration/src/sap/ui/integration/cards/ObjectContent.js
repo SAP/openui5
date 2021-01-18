@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/m/Avatar",
 	"sap/m/Link",
 	"sap/m/Label",
+	"sap/base/Log",
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
@@ -26,8 +27,9 @@ sap.ui.define([
 	Text,
 	Title,
 	Avatar,
-	Link ,
+	Link,
 	Label,
+	Log,
 	ResizeHandler,
 	AlignedFlowLayout,
 	Rem,
@@ -36,8 +38,6 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var AreaType = library.AreaType;
-
 	// shortcut for sap.m.AvatarSize
 	var AvatarSize = mLibrary.AvatarSize;
 
@@ -45,6 +45,9 @@ sap.ui.define([
 	var AvatarColor = mLibrary.AvatarColor;
 
 	var FlexRendertype = mLibrary.FlexRendertype;
+
+	// shortcut for sap.ui.integration.CardActionArea
+	var ActionArea = library.CardActionArea;
 
 	/**
 	 * Constructor for a new <code>ObjectContent</code>.
@@ -179,8 +182,9 @@ sap.ui.define([
 	};
 
 	ObjectContent.prototype._addGroups = function (oConfiguration) {
-		var oContainer = this._getRootContainer();
-		var aGroups = oConfiguration.groups || [];
+		var oContainer = this._getRootContainer(),
+			aGroups = oConfiguration.groups || [];
+
 		aGroups.forEach(function (oGroup) {
 			var vVisible;
 
@@ -205,11 +209,11 @@ sap.ui.define([
 
 			oGroup.items.forEach(function (oItem) {
 
-				var oItemValue,
-					vLabel = oItem.label,
+				var vLabel = oItem.label,
 					vValue = oItem.value,
+					oLabel,
 					vVisible,
-					oItemLabel,
+					oControl,
 					vHref,
 					aBindingParts = [];
 
@@ -222,18 +226,33 @@ sap.ui.define([
 				if (vLabel) {
 					// Checks if the label ends with ":" and if not we just add the ":"
 					vLabel = BindingHelper.formattedProperty(vLabel, function (sValue) {
-						return sValue && sValue[sValue.length - 1] === ":" ? sValue : sValue += ":";
+						return sValue && sValue[sValue.length - 1] === ":" ? sValue : sValue + ":";
 					});
-					oItemLabel = new Label({
+					oLabel = new Label({
 						text: vLabel,
 						visible: vVisible
 					}).addStyleClass("sapFCardObjectItemLabel");
 				}
 
-				if (vValue) {
+				if (vValue && oItem.actions) {
+					oControl = new Link({
+						text: vValue,
+						visible: BindingHelper.reuse(vVisible)
+					});
+					this._oActions.attach({
+						area: ActionArea.ContentItemDetail,
+						actions: oItem.actions,
+						control: oControl,
+						enabledPropertyName: "enabled"
+					});
+				}
+
+				if (vValue && !oItem.actions && oItem.type) {
+					Log.warning("Usage of Object Group Item property 'type' is deprecated. Use Card Actions for navigation.", null, "sap.ui.integration.widgets.Card");
+
 					switch (oItem.type) {
 						case 'link':
-							oItemValue = new Link({
+							oControl = new Link({
 								href: oItem.url || vValue,
 								text: vValue,
 								target: oItem.target || '_blank',
@@ -256,7 +275,7 @@ sap.ui.define([
 									}
 								});
 
-							oItemValue = new Link({
+							oControl = new Link({
 								href: vHref,
 								text: vValue,
 								visible: BindingHelper.reuse(vVisible)
@@ -266,23 +285,25 @@ sap.ui.define([
 							vHref = BindingHelper.formattedProperty(vValue, function (sValue) {
 								return "tel:" + sValue;
 							});
-							oItemValue = new Link({
+							oControl = new Link({
 								href: vHref,
 								text: vValue,
 								visible: BindingHelper.reuse(vVisible)
 							});
 							break;
 						default:
-							oItemValue = new Text({
-								text:  vValue,
-								visible: BindingHelper.reuse(vVisible)
-							});
-							break;
 					}
 				}
 
-				if (oItemValue) {
-					oItemValue.addStyleClass("sapFCardObjectItemText");
+				if (vValue && !oControl) {
+					oControl = new Text({
+						text: vValue,
+						visible: BindingHelper.reuse(vVisible)
+					});
+				}
+
+				if (oControl) {
+					oControl.addStyleClass("sapFCardObjectItemText");
 				}
 
 				if (oItem.icon) {
@@ -301,8 +322,8 @@ sap.ui.define([
 
 					var oVbox = new VBox({
 						items: [
-							oItemLabel,
-							oItemValue
+							oLabel,
+							oControl
 						]
 					});
 					var oHBox = new HBox({
@@ -314,15 +335,18 @@ sap.ui.define([
 					});
 					oGroupContainer.addItem(oHBox);
 				} else {
-					oGroupContainer.addItem(oItemLabel);
-					oGroupContainer.addItem(oItemValue);
+					oGroupContainer.addItem(oLabel);
+					oGroupContainer.addItem(oControl);
 				}
 			}, this);
 			oContainer.addContent(oGroupContainer);
 		}, this);
 
-		this._oActions.setAreaType(AreaType.Content);
-		this._oActions.attach(oConfiguration, this);
+		this._oActions.attach({
+			area: ActionArea.Content,
+			actions: oConfiguration.actions,
+			control: this
+		});
 	};
 
 	return ObjectContent;

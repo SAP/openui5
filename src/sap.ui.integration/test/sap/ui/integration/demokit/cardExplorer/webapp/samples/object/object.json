@@ -36,6 +36,7 @@
 				"phone": "+1 202 555 5555",
 				"email": "my@mymail.com",
 				"photo": "./DonnaMoore.png",
+				"agendaUrl": "/agenda",
 				"manager": {
 					"firstName": "Alain",
 					"lastName": "Chevalier",
@@ -47,7 +48,7 @@
 					"email": "mail@mycompany.com",
 					"emailSubject": "Subject",
 					"website": "www.company_a.example.com",
-					"url": "http://www.company_a.example.com"
+					"url": "https://www.company_a.example.com"
 				}
 			}
 		},
@@ -74,12 +75,39 @@
 						{
 							"label": "Phone",
 							"value": "{phone}",
-							"type": "phone"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:{phone}"
+									}
+								}
+							]
 						},
 						{
 							"label": "Email",
 							"value": "{email}",
-							"type": "email"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:{email}"
+									}
+								}
+							]
+						},
+						{
+							"label": "Agenda",
+							"value": "Book a meeting",
+							"actions": [
+								{
+									"type": "Navigation",
+									"enabled": "{= ${agendaUrl}}",
+									"parameters": {
+										"url": "{agendaUrl}"
+									}
+								}
+							]
 						}
 					]
 				},
@@ -97,20 +125,32 @@
 						{
 							"label": "Email",
 							"value": "{company/email}",
-							"emailSubject": "{company/emailSubject}",
-							"type": "email"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:{company/email}?subject={company/emailSubject}"
+									}
+								}
+							]
 						},
 						{
 							"label": "Website",
 							"value": "{company/website}",
-						  	"url": "{company/url}",
-							"type": "link"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/url}"
+									}
+								}
+							]
 						}
 					]
 				},
 				{
-				  "title": "Organizational Details",
-				  "items": [
+					"title": "Organizational Details",
+					"items": [
 						{
 							"label": "Direct Manager",
 							"value": "{manager/firstName} {manager/lastName}",
@@ -118,7 +158,7 @@
 								"src": "{manager/photo}"
 							}
 						}
-				  ]
+					]
 				}
 			]
 		}

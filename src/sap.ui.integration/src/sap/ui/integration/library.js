@@ -102,16 +102,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Specifies different card area types.
+	 * Specifies different areas of a card where actions can be attached.
 	 *
 	 * @private
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.AreaType = {
-		None: 'None',
-		ContentItem: 'ContentItem',
-		Content: 'Content',
-		Header: 'Header'
+	thisLib.CardActionArea = {
+		None: "None",
+		Content: "Content",
+		ContentItem: "ContentItem",
+		ContentItemDetail: "ContentItemDetail",
+		Header: "Header"
 	};
 
 	/**

@@ -20,35 +20,35 @@
 					{
 						"Name": "Comfort Easy",
 						"Category": "PDA & Organizers",
-						"url": "https://www.sap.com",
-						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"NameUrl": "https://www.sap.com",
+						"ActionUrl": "https://www.sap.com/corporate/en/company/innovation.html",
 						"Number": "356865544"
 					},
 					{
 						"Name": "ITelO Vault",
 						"Category": "PDA & Organizers",
-						"url": "https://www.sap.com",
-						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"NameUrl": "https://www.sap.com",
+						"ActionUrl": "https://www.sap.com/corporate/en/company/innovation.html",
 						"Number": "356865544"
 					},
 					{
 						"Name": "Notebook Professional 15",
 						"Category": "Notebooks",
-						"url": "https://www.sap.com",
-						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"NameUrl": "https://www.sap.com",
+						"ActionUrl": "https://www.sap.com/corporate/en/company/innovation.html",
 						"Number": "356865544"
 					},
 					{
 						"Name": "Ergo Screen E-I",
 						"Category": "Monitors",
-						"url": "https://www.sap.com",
+						"NameUrl": "https://www.sap.com",
 						"Number": "356865544"
 					},
 					{
 						"Name": "Laser Professional Eco",
 						"Category": "Printers",
-						"url": "https://www.sap.com",
-						"identifierUrl": "https://www.sap.com/corporate/en/company/innovation.html",
+						"NameUrl": "https://www.sap.com",
+						"ActionUrl": "https://www.sap.com/corporate/en/company/innovation.html",
 						"Number": "356865544"
 					}
 				]
@@ -62,7 +62,7 @@
 					{
 						"title": "Link",
 						"value": "{Name}",
-						"url": "{url}"
+						"url": "{NameUrl}"
 					},
 					{
 						"title": "Category",
@@ -71,17 +71,24 @@
 					{
 						"title": "Number",
 						"value": "{Number}",
-						"identifier": {
-							"url": "{identifierUrl}"
-						}
+						"identifier": true,
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": "{= ${ActionUrl}}",
+								"parameters": {
+									"url": "{ActionUrl}"
+								}
+							}
+						]
 					}
 				],
 				"actions": [
 					{
 						"type": "Navigation",
-						"enabled": "{= ${url}}",
+						"enabled": "{= ${NameUrl}}",
 						"parameters": {
-							"url": "{url}"
+							"url": "{NameUrl}"
 						}
 					}
 				]

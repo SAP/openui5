@@ -584,12 +584,26 @@ sap.ui.define([
 								{
 									"label": "Phone",
 									"value": "{phone}",
-									"type": "phone"
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "tel:{phone}"
+											}
+										}
+									]
 								},
 								{
 									"label": "Email",
 									"value": "{email}",
-									"type": "email"
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "mailto:{email}"
+											}
+										}
+									]
 								}
 							]
 						},
@@ -616,14 +630,26 @@ sap.ui.define([
 								{
 									"label": "Email",
 									"value": "{company/email}",
-									"emailSubject": "{company/emailSubject}",
-									"type": "email"
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "mailto:{company/email}?subject={company/emailSubject}"
+											}
+										}
+									]
 								},
 								{
 									"label": "Website",
 									"value": "{company/website}",
-									"url": "{company/url}",
-									"type": "link"
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "{company/url}"
+											}
+										}
+									]
 								}
 							]
 						}

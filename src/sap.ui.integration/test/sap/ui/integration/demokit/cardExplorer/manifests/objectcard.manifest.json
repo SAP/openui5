@@ -19,17 +19,38 @@
 						{
 							"label": "Mobile",
 							"value": "+001 6101 34869-0",
-							"type": "phone"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:+001 6101 34869-0"
+									}
+								}
+							]
 						},
 						{
 							"label": "Phone",
 							"value": "+001 4231 5424 0231",
-							"type": "phone"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:+001 4231 5424 0231"
+									}
+								}
+							]
 						},
 						{
 							"label": "Email",
 							"value": "sabine@cardadventure.com",
-							"type": "email"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:sabine@cardadventure.com"
+									}
+								}
+							]
 						}
 					]
 				},
@@ -46,12 +67,26 @@
 						{
 							"label": "Phone",
 							"value": "+001 4242 4242 0873",
-							"type": "phone"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:+001 4242 4242 0873"
+									}
+								}
+							]
 						},
 						{
 							"label": "Email",
 							"value": "madams@cardadventure.com",
-							"type": "email"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:madams@cardadventure.com"
+									}
+								}
+							]
 						}
 					]
 				}

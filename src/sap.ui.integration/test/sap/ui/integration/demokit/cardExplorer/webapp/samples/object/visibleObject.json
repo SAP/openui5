@@ -79,13 +79,27 @@
 							"visible": "{= !!${phone}}",
 							"label": "Phone",
 							"value": "{phone}",
-							"type": "phone"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:{phone}"
+									}
+								}
+							]
 						},
 						{
 							"visible": "{= !!${email}}",
 							"label": "Email",
 							"value": "{email}",
-							"type": "email"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:{email}"
+									}
+								}
+							]
 						}
 					]
 				},
@@ -107,15 +121,27 @@
 							"visible": "{= !!${company/email}}",
 							"label": "Email",
 							"value": "{company/email}",
-							"emailSubject": "{company/emailSubject}",
-							"type": "email"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:{company/email}?subject={company/emailSubject}"
+									}
+								}
+							]
 						},
 						{
 							"visible": "{= !!${company/website}}",
 							"label": "Website",
 							"value": "{company/website}",
-							"url": "{company/url}",
-							"type": "link"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/url}"
+									}
+								}
+							]
 						}
 					]
 				},

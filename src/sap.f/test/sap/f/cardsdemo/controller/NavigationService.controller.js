@@ -7,6 +7,9 @@ sap.ui.define([
 	return Controller.extend("sap.f.cardsdemo.controller.NavigationService", {
 
 		onAction: function (oEvent) {
+			// informs CardActions that the action was handled and no further processing is needed on CardActions' end
+			oEvent.preventDefault();
+
 			var oParameters = oEvent.getParameter("parameters");
 			// Header is clicked there is no semantic object so directly use the URL
 			var sUrl;

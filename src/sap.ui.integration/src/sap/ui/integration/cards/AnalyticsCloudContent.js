@@ -12,10 +12,7 @@ sap.ui.define([
 ], function (AnalyticsCloudContentRenderer, BaseContent, library, HTML, BindingResolver, Log) {
 	"use strict";
 
-	/**
-	 * Actions area type enumeration
-	 */
-	var AreaType = library.AreaType;
+	var ActionArea = library.CardActionArea;
 
 	/**
 	 * Constructor for a new <code>AnalyticsCloudContent</code>.
@@ -90,8 +87,11 @@ sap.ui.define([
 	 */
 	AnalyticsCloudContent.prototype.setConfiguration = function (oConfiguration) {
 		BaseContent.prototype.setConfiguration.apply(this, arguments);
-		this._oActions.setAreaType(AreaType.Content);
-		this._oActions.attach(oConfiguration, this);
+		this._oActions.attach({
+			area: ActionArea.Content,
+			actions: oConfiguration.actions,
+			control: this
+		});
 	};
 
 	/**

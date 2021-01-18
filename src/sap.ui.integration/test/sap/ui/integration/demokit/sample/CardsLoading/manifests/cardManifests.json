@@ -524,7 +524,15 @@
 			  },
 			  {
 				"label": "Phone",
-				"value": "{phone}"
+				"value": "{phone}",
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"url": "tel:{phone}"
+						}
+					}
+				]
 			  }
 			]
 		  },
@@ -553,7 +561,15 @@
 			  },
 			  {
 				"label": "{website}",
-				"link": "{company/website}"
+				"value": "{company/website}",
+				"actions": [
+					{
+						"type": "Navigation",
+						"parameters": {
+							"url": "{company/website}"
+						}
+					}
+				]
 			  }
 			]
 		  }

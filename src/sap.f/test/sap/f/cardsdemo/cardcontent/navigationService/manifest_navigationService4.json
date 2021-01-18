@@ -23,7 +23,8 @@
 		},
 		"content": {
 				"data": {
-					"json": [{
+					"json": [
+						{
 							"Name": "Comfort Easy",
 							"Category": "PDA & Organizers",
 							"url": "https://www.sap.com",
@@ -59,15 +60,30 @@
 						},
 						{
 							"title": "Category",
-							"value": "{Category}"
+							"value": "{Category}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"enabled": true,
+									"parameters": {
+										"url": "{url}"
+									}
+								}
+							]
 						},
 						{
 							"title": "Number",
 							"value": "356865544",
-							"identifier": {
-								"url": "{identifierUrl}",
-								"target": "_blank"
-							}
+							"identifier": true,
+							"actions": [
+								{
+									"type": "Navigation",
+									"enabled": "{= ${identifierUrl}}",
+									"parameters": {
+										"url": "{identifierUrl}"
+									}
+								}
+							]
 						}
 					],
 					"actions": [

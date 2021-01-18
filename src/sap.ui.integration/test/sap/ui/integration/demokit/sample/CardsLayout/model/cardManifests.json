@@ -209,17 +209,38 @@
 							{
 								"label": "Mobile",
 								"value": "{mobile}",
-								"type": "phone"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "tel:{mobile}"
+										}
+									}
+								]
 							},
 							{
 								"label": "Phone",
 								"value": "{phone}",
-								"type": "phone"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "tel:{phone}"
+										}
+									}
+								]
 							},
 							{
 								"label": "Email",
 								"value": "{email}",
-								"type": "email"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "mailto:{email}"
+										}
+									}
+								]
 							}
 						]
 					}

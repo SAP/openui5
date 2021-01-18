@@ -45,7 +45,7 @@ sap.ui.define([
 		CalendarLegendItem) {
 		"use strict";
 
-		var AreaType = library.AreaType;
+		var ActionArea = library.CardActionArea;
 
 		/**
 		 * Constructor for a new <code>CalendarContent</code>.
@@ -166,11 +166,6 @@ sap.ui.define([
 				this._oAppointmentLegendItemTemplate = null;
 			}
 
-			if (this._oActions) {
-				this._oActions.destroy();
-				this._oActions = null;
-			}
-
 			if (this._bDataInitiallyLoaded) {
 				this._bDataInitiallyLoaded = null;
 			}
@@ -258,8 +253,11 @@ sap.ui.define([
 			}
 
 			if (oConfiguration.moreItems && oConfiguration.moreItems.actions) {
-				this._oActions.setAreaType(AreaType.Content);
-				this._oActions.attach(oConfiguration.moreItems, this._getMoreButton());
+				this._oActions.attach({
+					area: ActionArea.Content,
+					actions: oConfiguration.moreItems.actions,
+					control: this._getMoreButton()
+				});
 			}
 
 			return this;

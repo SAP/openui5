@@ -18,7 +18,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var AreaType = library.AreaType;
+	var ActionArea = library.CardActionArea;
 
 	/**
 	 * Binds the statusText of a header to the provided format configuration.
@@ -77,14 +77,11 @@ sap.ui.define([
 	HeaderFactory.prototype.create = function (mConfiguration, oToolbar) {
 		var oHeader,
 			oCard = this._oCard,
-			oActions;
+			oActions = new CardActions({
+				card: oCard
+			});
 
 		mConfiguration = this.createBindingInfos(mConfiguration, oCard.getBindingNamespaces());
-
-		oActions = new CardActions({
-			card: oCard,
-			areaType: AreaType.Header
-		});
 
 		switch (mConfiguration.type) {
 			case "Numeric":
@@ -109,7 +106,11 @@ sap.ui.define([
 		oHeader.setDataProviderFactory(oCard._oDataProviderFactory);
 		oHeader._setDataConfiguration(mConfiguration.data);
 
-		oActions.attach(mConfiguration, oHeader);
+		oActions.attach({
+			area: ActionArea.Header,
+			actions: mConfiguration.actions,
+			control: oHeader
+		});
 		oHeader._oActions = oActions;
 
 		if (oHeader._bIsEmpty) {

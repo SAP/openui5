@@ -4,6 +4,7 @@
 	"position": "Sales Executive",
 	"phone": "+1 202 555 5555",
 	"photo": "./images/Woman_avatar_01.png",
+	"agendaUrl": "/agenda",
 	"manager": {
 		"firstName": "John",
 		"lastName": "Miller",
@@ -12,6 +13,6 @@
 	"company": {
 		"name": "Company A",
 		"address": "481 West Street, Anytown OH 45066, USA",
-		"website": "www.company_a.example.com"
+		"website": "https://www.company_a.example.com"
 	}
 }
