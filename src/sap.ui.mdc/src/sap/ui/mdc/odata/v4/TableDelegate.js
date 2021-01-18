@@ -163,7 +163,7 @@ sap.ui.define([
 			bForcedAnalytics = false,
 			sPath = oEvent.getParameter("property");
 
-		if (aAnalytics.includes(sPath)) {
+		if (aAnalytics.indexOf(sPath) > -1) {
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			bForcedAnalytics = true;
 			MessageBox.warning(oResourceBundle.getText("table.SETTINGS_MESSAGE") + "\n"

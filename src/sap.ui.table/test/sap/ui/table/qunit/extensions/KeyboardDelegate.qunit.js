@@ -4329,7 +4329,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Resize - VisibleRowCountMode = Auto", function(assert) {
+	QUnit[Device.browser.msie ? "skip" : "test"]("Resize - VisibleRowCountMode = Auto", function(assert) {
 		var oTable = this.oTable;
 
 		oTable.setVisibleRowCountMode(VisibleRowCountMode.Auto);
