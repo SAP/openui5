@@ -667,7 +667,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Resize", function (assert) {
-
 		// Arrange
 		var $GridMock = jQuery("<div><div id='cssGrid'></div></div>");
 
@@ -692,30 +691,30 @@ sap.ui.define([
 			control: oGridMock
 		};
 
-
-
 		$GridMock.css({padding: 100});
-		$GridMock.width(1300);
 
-		this.oGridLayout.onGridResize(oResizeEventMock);
-		assert.ok(this.fnLayoutChangeHandler.calledOnce, "Trigger layoutChange onAfterRendering of the grid");
-		assert.ok(this.oGridLayout._applyLayout.calledOnce, "Should add size class when layout is applied");
-		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSResponsiveColumnLayoutXL", "XL class name is correct");
+		[
+			{ width: 2500, expectedClass: "XXXL"},
+			{ width: 1700, expectedClass: "XXL"},
+			{ width: 1400, expectedClass: "XL"},
+			{ width: 1200, expectedClass: "L"},
+			{ width: 1000, expectedClass: "ML"},
+			{ width: 800, expectedClass: "M"},
+			{ width: 300, expectedClass: "S"}
+		].forEach(function (oCfg) {
+			// Act
+			$GridMock.width(oCfg.width);
+			this.oGridLayout.onGridResize(oResizeEventMock);
 
-		$GridMock.width(900);
-		this.oGridLayout.onGridResize(oResizeEventMock);
-		assert.ok(this.fnLayoutChangeHandler.calledTwice, "Trigger layoutChange");
-		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSResponsiveColumnLayoutL", "L class name is correct");
+			// Assert
+			assert.ok(this.fnLayoutChangeHandler.calledOnce, "Trigger layoutChange onAfterRendering of the grid");
+			assert.strictEqual(this.oGridLayout._applyLayout.callCount, 1, "Should add size class when layout is applied");
+			assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSGridRCL-Layout" + oCfg.expectedClass, "Class name for current range is correct");
 
-		$GridMock.width(800);
-		this.oGridLayout.onGridResize(oResizeEventMock);
-		assert.strictEqual(this.fnLayoutChangeHandler.callCount, 3, "Trigger layoutChange");
-		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSResponsiveColumnLayoutM", "M class name is correct");
-
-		$GridMock.width(300);
-		this.oGridLayout.onGridResize(oResizeEventMock);
-		assert.strictEqual(this.fnLayoutChangeHandler.callCount, 4, "Trigger layoutChange");
-		assert.equal(this.oGridLayout._sCurrentLayoutClassName, "sapUiLayoutCSSResponsiveColumnLayoutS", "S class name is correct");
+			// Clean up
+			this.fnLayoutChangeHandler.reset();
+			this.oGridLayout._applyLayout.reset();
+		}.bind(this));
 	});
 
 	QUnit.module("ResponsiveColumnItemLayoutData", {

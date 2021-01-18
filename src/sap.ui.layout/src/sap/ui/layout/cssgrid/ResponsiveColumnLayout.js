@@ -5,35 +5,33 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/layout/cssgrid/GridLayoutBase",
-	"sap/ui/layout/cssgrid/GridSettings",
 	"sap/ui/layout/cssgrid/VirtualGrid",
+	"sap/ui/dom/units/Rem",
 	"sap/ui/Device",
 	"sap/ui/layout/library"
-], function (Core,
-			 GridLayoutBase,
-			 GridSettings,
-			 VirtualGrid,
-			 Device) {
+], function (
+	Core,
+	GridLayoutBase,
+	VirtualGrid,
+	Rem,
+	Device
+) {
 	"use strict";
 
-	var iStandardGidGap = 16;
-	var iPhoneGridGap = 8;
-
+	var iGridGap = Rem.toPx(1);
 	var bRtl = Core.getConfiguration().getRTL();
-
-	var mSizeClasses = {
-		"Phone": "sapUiLayoutCSSResponsiveColumnLayoutS",
-		"Tablet": "sapUiLayoutCSSResponsiveColumnLayoutM",
-		"Desktop": "sapUiLayoutCSSResponsiveColumnLayoutL",
-		"LargeDesktop": "sapUiLayoutCSSResponsiveColumnLayoutXL"
-	};
-
 	var mSizeColumns = {
-		"Phone": 4,
-		"Tablet": 8,
-		"Desktop": 12,
-		"LargeDesktop": 16
+		S: 4,
+		M: 8,
+		ML: 12,
+		L: 12,
+		XL: 16,
+		XXL: 20,
+		XXXL: 20
 	};
+	var RCL_RANGE_SET = "RCLRangeSet";
+
+	Device.media.initRangeSet(RCL_RANGE_SET, [600, 1024, 1280, 1440, 1620, 1920], "px", ["S", "M", "ML", "L", "XL", "XXL", "XXXL"], true);
 
 	/**
 	 * Gets the columns property from the item's layout data.
@@ -96,7 +94,7 @@ sap.ui.define([
 					parameters: {
 
 						/**
-						 * The name of the newly active layout - "Phone", "Tablet", "Desktop" or "LargeDesktop".
+						 * The name of the newly active layout - "S", "M", "ML", "L", "XL", "XXL" or "XXXL".
 						 */
 						layout: { type: "string" }
 					}
@@ -163,9 +161,9 @@ sap.ui.define([
 	 */
 	ResponsiveColumnLayout.prototype.renderSingleGridLayout = function (oRM) {
 		if (this.isGridSupportedByBrowser()) {
-			oRM.class("sapUiLayoutCSSResponsiveColumnLayoutGrid");
+			oRM.class("sapUiLayoutCSSGridRCL");
 		} else {
-			oRM.class("sapUiLayoutCSSResponsiveColumnLayoutGridPolyfill");
+			oRM.class("sapUiLayoutCSSGridRCLPolyfill");
 		}
 	};
 
@@ -183,14 +181,13 @@ sap.ui.define([
 	ResponsiveColumnLayout.prototype.getPolyfillSizes = function (oGrid) {
 		var $grid = oGrid.$(),
 			iWidth = $grid.parent().outerWidth(),
-			oRange = Device.media.getCurrentRange("StdExt", iWidth),
+			oRange = Device.media.getCurrentRange(RCL_RANGE_SET, iWidth),
 			iColumnsCount = mSizeColumns[oRange.name],
 			iInnerWidth = $grid.innerWidth(),
-			iGapSize = oRange.name === "Phone" ? iPhoneGridGap : iStandardGidGap,
-			iColumnSize = Math.floor((iInnerWidth - iGapSize * (iColumnsCount - 1) ) / iColumnsCount);
+			iColumnSize = Math.floor((iInnerWidth - iGridGap * (iColumnsCount - 1) ) / iColumnsCount);
 
 		return {
-			gap: iGapSize,
+			gap: iGridGap,
 			rows: this._oVirtualGrid.rowsHeights.map(function (iHeight) { return iHeight + "px"; }),
 			columns: new Array(iColumnsCount).fill(iColumnSize + "px")
 		};
@@ -204,8 +201,8 @@ sap.ui.define([
 	 */
 	ResponsiveColumnLayout.prototype._applyLayout = function (oGrid) {
 		var iWidth = oGrid.$().parent().outerWidth(),
-			oRange = Device.media.getCurrentRange("StdExt", iWidth),
-			sClassName = mSizeClasses[oRange.name],
+			oRange = Device.media.getCurrentRange(RCL_RANGE_SET, iWidth),
+			sClassName = "sapUiLayoutCSSGridRCL-Layout" + oRange.name,
 			bGridSupportedByBrowser = this.isGridSupportedByBrowser();
 
 		if (!bGridSupportedByBrowser) {
@@ -264,8 +261,7 @@ sap.ui.define([
 		var iColumnsCount = mSizeColumns[oRange.name],
 			iInnerWidth = $grid.innerWidth(),
 			aItems = oGrid.getItems(),
-			iGapSize = oRange.name === "Phone" ? iPhoneGridGap : iStandardGidGap,
-			iColumnSize = Math.floor((iInnerWidth - iGapSize * (iColumnsCount - 1) ) / iColumnsCount),
+			iColumnSize = Math.floor((iInnerWidth - iGridGap * (iColumnsCount - 1) ) / iColumnsCount),
 			iColumns,
 			iRows,
 			oItem,
@@ -284,7 +280,7 @@ sap.ui.define([
 			$item.css({
 				position: 'absolute',
 				height: 'auto',
-				width: iColumnSize * iColumns + iGapSize * (iColumns - 1)
+				width: iColumnSize * iColumns + iGridGap * (iColumns - 1)
 			});
 		}
 
@@ -294,7 +290,7 @@ sap.ui.define([
 			numberOfCols: iColumnsCount,
 			cellWidth: iColumnSize,
 			unitOfMeasure: "px",
-			gapSize: iGapSize,
+			gapSize: iGridGap,
 			topOffset: 0,
 			leftOffset: 0,
 			allowDenseFill: false,
