@@ -1243,6 +1243,15 @@ function(
 		return true;
 	};
 
+	/*
+	 * This hook method is called from GrowingEnablement to determine whether
+	 * growing should suppress List invalidation
+	 * @protected
+	 */
+	ListBase.prototype.shouldGrowingSuppressInvalidation = function() {
+		return true;
+	};
+
 	// when new items binding we should turn back to initial state
 	ListBase.prototype._resetItemsBinding = function() {
 		if (this.isBound("items")) {

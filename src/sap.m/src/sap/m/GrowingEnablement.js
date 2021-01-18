@@ -531,7 +531,7 @@ sap.ui.define([
 			} else if (!aDiff || !aItems.length && aDiff.length) {
 				// new records need to be applied from scratch
 				if (oControl.shouldRenderItems()) {
-					this.rebuildListItems(aContexts, oBindingInfo, true);
+					this.rebuildListItems(aContexts, oBindingInfo, oControl.shouldGrowingSuppressInvalidation());
 				}
 			} else if (oBinding.isGrouped() || oControl.checkGrowingFromScratch()) {
 
