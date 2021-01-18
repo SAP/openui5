@@ -11,6 +11,10 @@
 	<script>
 		function init() {
 			sap.ui.require(["testjs/genericHost", "sap-ui-integration-editor"], function () {
+				customElements.whenDefined("ui-integration-card").then(function () {
+					document.getElementById("card").setAttribute("host", "host");
+				});
+
 				sap.ui.require(["sap/m/Button", "sap/m/Dialog", "sap/ui/integration/designtime/editor/CardEditor"], function (Button, Dialog, CardEditor) {
 					var oButton = new Button({
 						text: "Show Card Editor for Administrator",
@@ -86,7 +90,7 @@
 
 <body class="sapUiBody sapUiSizeCompact" style="margin:3rem;width:calc(100% - 6rem)">
 	<div id="content">
-		<ui-integration-card id="card" manifest="./manifest.json" host="host">
+		<ui-integration-card id="card" manifest="./manifest.json">
 		</ui-integration-card>
 
 	</div>

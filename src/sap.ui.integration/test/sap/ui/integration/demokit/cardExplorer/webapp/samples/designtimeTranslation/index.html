@@ -11,6 +11,10 @@
 	<script>
 		function init() {
 			sap.ui.require(["testjs/genericHost", "sap-ui-integration-editor"], function () {
+				customElements.whenDefined("ui-integration-card").then(function () {
+					document.getElementById("card").setAttribute("host", "host");
+				});
+
 				sap.ui.require(["sap/m/Button", "sap/m/Dialog", "sap/m/Select", "sap/ui/core/ListItem", "sap/ui/model/json/JSONModel", "sap/ui/integration/designtime/editor/CardEditor", "sap/base/util/LoaderExtensions"], function (Button, Dialog, Select, ListItem, JSONModel, CardEditor, LoaderExtensions) {
 					var aLanguages = [],
 						oLanguageModel = new JSONModel();
