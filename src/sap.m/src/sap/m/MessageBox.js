@@ -591,7 +591,7 @@ sap.ui.define([
 				 *     onClose: null,                                       // default
 				 *     styleClass: "",                                      // default
 				 *     actions: [ sap.m.MessageBox.Action.OK,
-				 *                sap.m.MessageBox.Action.Cancel ],         // default
+				 *                sap.m.MessageBox.Action.CANCEL ],         // default
 				 *     emphasizedAction: sap.m.MessageBox.Action.OK,        // default
 				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
@@ -606,7 +606,7 @@ sap.ui.define([
 				 *
 				 * where oAction is set by one of the following three values:
 				 * 1. sap.m.MessageBox.Action.OK: OK (confirmed) button is tapped.
-				 * 2. sap.m.MessageBox.Action.Cancel: Cancel (unconfirmed) button is tapped.
+				 * 2. sap.m.MessageBox.Action.CANCEL: Cancel (unconfirmed) button is tapped.
 				 * 3. null: Confirm dialog is closed by calling <code>sap.m.InstanceManager.closeAllDialogs()</code>
 				 *
 				 * The confirmation dialog opened by this method is processed asynchronously.
