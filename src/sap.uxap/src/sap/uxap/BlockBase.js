@@ -727,6 +727,10 @@ sap.ui.define([
 		BlockBase.prototype.setVisible = function (bValue, bSuppressInvalidate) {
 			var oParentObjectPageLayout = this._getObjectPageLayout();
 
+			if (bValue === this.getVisible()) {
+				return this;
+			}
+
 			this.setProperty("visible", bValue, bSuppressInvalidate);
 			oParentObjectPageLayout && oParentObjectPageLayout._requestAdjustLayoutAndUxRules();
 
