@@ -1456,7 +1456,7 @@ sap.ui.define([
 			});
 
 			this.oManagementSave = new Button(this.getId() + "-managementsave", {
-				text: this._oRb.getText("VARIANT_MANAGEMENT_OK"),
+				text: this._oRb.getText("VARIANT_MANAGEMENT_SAVE"),
 				enabled: true,
 				type: ButtonType.Emphasized,
 				press: function() {

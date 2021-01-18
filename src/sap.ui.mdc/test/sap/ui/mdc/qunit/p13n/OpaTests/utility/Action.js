@@ -416,7 +416,7 @@ sap.ui.define([
 														controlType: "sap.m.Button",
 														matchers: new PropertyStrictEquals({
 															name: "text",
-															value: "OK",
+															value: "Save",
 															actions: new Press()
 														}),
 														actions: new Press()
