@@ -70,6 +70,7 @@ sap.ui.define([
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper,
 			sNeoAppJsonPath = "/neo-app.json", /* Load neo-app.json always from root URL */
+			sVersionOverviewJsonPath = "/versionoverview.json", /* Load versionoverview.json always from root URL */
 			ABOUT_TEXT = "about",
 			FEEDBACK_TEXT = "feedback",
 			CHANGE_VERSION_TEXT = "change_version",
@@ -1008,45 +1009,78 @@ sap.ui.define([
 				});
 			},
 
+			_processVersionOverview: function(oVersionOverviewJson) {
+				var aVersions = oVersionOverviewJson.versions,
+					aResult = [];
+
+				aVersions = aVersions.filter(function(oVersion) {
+					return !!oVersion.hidden;
+				}).forEach(function(oVersion) {
+					var aHiddenVersions = oVersion.hidden.split(",").map(function(sVersion) {
+						return sVersion.trim();
+					});
+
+					aResult = aResult.concat(aHiddenVersions);
+				});
+
+				return aResult;
+			},
+
+			_processNeoAppJSON: function(oNeoAppJson) {
+				var oVersionModel = this.getModel("versionData"),
+					bIsInternal = oVersionModel.getProperty("/isInternal"),
+					bIsSnapshotVersion = oVersionModel.getProperty("/isSnapshotVersion"),
+					aRoutes = [];
+
+				if (!(oNeoAppJson && oNeoAppJson.routes)) {
+					Log.warning("No versions were found");
+					return;
+				}
+
+				aRoutes = oNeoAppJson.routes;
+
+				// Current version would be displayed for a second time as the last element,
+				// therefore we should skip it to avoid duplicate items in the dialog.
+				aRoutes.pop();
+
+				// Store needed data
+				if (!bIsInternal && !bIsSnapshotVersion) {
+					aRoutes = aRoutes.filter(function(oRoute) {
+						return oRoute.target.version.indexOf("-beta") === -1;
+					});
+				}
+
+				aRoutes = aRoutes.map(function(oRoute) {
+					var oVersion = Version(oRoute.target.version),
+						oVersionSummary = {};
+
+					// Add the following properties, in order use them for grouping later
+					oVersionSummary.patchVersion = oVersion.getPatch(); // E.g: Extract 5 from "1.52.5"
+					oVersionSummary.groupTitle = oVersion.getMajor() + "." + oVersion.getMinor(); // E.g: Extract "1.52" from "1.52.5"
+					oVersionSummary.version = oVersion.toString();
+					oVersionSummary.path = oRoute.path;
+
+					return oVersionSummary;
+				});
+
+				return aRoutes;
+			},
+
 			_requestVersionInfo: function () {
-				Promise.resolve(jQuery.ajax(sNeoAppJsonPath)).then(
+				Promise.all([
+						jQuery.ajax(sNeoAppJsonPath),
+						jQuery.ajax(sVersionOverviewJsonPath)
+					]).then(
 					// Success
-					function(oNeoAppJson) {
-						var oVersionModel = this.getModel("versionData"),
-							bIsInternal = oVersionModel.getProperty("/isInternal"),
-							bIsSnapshotVersion = oVersionModel.getProperty("/isSnapshotVersion");
+					function(oValues) {
+						var aNeoAppVersions = this._processNeoAppJSON(oValues[0]),
+							aHiddenValues = this._processVersionOverview(oValues[1]);
 
-						if (!(oNeoAppJson && oNeoAppJson.routes)) {
-							Log.warning("No versions were found");
-							return;
-						}
-
-						// Current version would be displayed for a second time as the last element,
-						// therefore we should skip it to avoid duplicate items in the dialog.
-						oNeoAppJson.routes.pop();
-
-						this._aNeoAppVersions = oNeoAppJson.routes;
-
-						// Store needed data
-						if (!bIsInternal && !bIsSnapshotVersion) {
-							this._aNeoAppVersions = this._aNeoAppVersions.filter(function(oRoute) {
-								return oRoute.target.version.indexOf("-beta") === -1;
-							});
-						}
-
-						this._aNeoAppVersions = this._aNeoAppVersions.map(function(oRoute) {
-							var oVersion = Version(oRoute.target.version),
-								oVersionSummary = {};
-
-							// Add the following properties, in order use them for grouping later
-							oVersionSummary.patchVersion = oVersion.getPatch(); // E.g: Extract 5 from "1.52.5"
-							oVersionSummary.groupTitle = oVersion.getMajor() + "." + oVersion.getMinor(); // E.g: Extract "1.52" from "1.52.5"
-							oVersionSummary.version = oVersion.toString();
-							oVersionSummary.path = oRoute.path;
-
-							return oVersionSummary;
+						aNeoAppVersions = aNeoAppVersions.filter(function(oVersion) {
+							return aHiddenValues.indexOf(oVersion.version) === -1;
 						});
 
+						this._aNeoAppVersions = aNeoAppVersions;
 						// Make version select visible
 						this._updateVersionSwitchVisibility();
 					}.bind(this),
@@ -1056,7 +1090,6 @@ sap.ui.define([
 					}
 				);
 			},
-
 
 			onDemoKitThemeChanged: function() {
 				this.getModel("appView").setProperty("/oThemeScrollContainerHeight",
