@@ -60,6 +60,7 @@ sap.ui.define([
 	};
 
 	Factory.prototype.getOverflowToolbar = function () {
+		var oAcc = this._oAcc;
 		if (!this._oControls.oOverflowToolbar) {
 			this._oControls.oOverflowToolbar = new OverflowToolbar({
 				design: ToolbarDesign.Transparent,
@@ -76,6 +77,10 @@ sap.ui.define([
 			._setEnableAccessibilty(false);
 			this._oControls.oOverflowToolbar._getOverflowButton().addStyleClass("sapFShellBarItem sapFShellBarOverflowButton");
 		}
+
+		this._oControls.oOverflowToolbar._getOverflowButton()._updateBadgeInvisibleText = function(vValue) {
+			this._getBadgeInvisibleText().setText(vValue + oAcc.getEntityTooltip("NOTIFICATIONS"));
+		};
 		return this._oControls.oOverflowToolbar;
 	};
 
@@ -227,12 +232,13 @@ sap.ui.define([
 	};
 
 	Factory.prototype.getNotifications = function () {
+		var oAcc = this._oAcc;
 		if (!this._oControls.oNotifications) {
 			this._oControls.oNotifications = new OverflowToolbarButton({
 				text: "Notifications",
 				icon: "sap-icon://bell",
 				type: ButtonType.Transparent,
-				tooltip: this._oAcc.getEntityTooltip("NOTIFICATIONS"),
+				tooltip: oAcc.getEntityTooltip("NOTIFICATIONS"),
 				press: function () {
 					this._oContext.fireEvent("notificationsPressed", {button: this._oControls.oNotifications});
 				}.bind(this)
@@ -241,6 +247,11 @@ sap.ui.define([
 			.setLayoutData(new OverflowToolbarLayoutData({
 				priority: OverflowToolbarPriority.Low
 			}));
+
+			this._oControls.oNotifications._updateBadgeInvisibleText = function(vValue) {
+				this._getBadgeInvisibleText().setText(vValue + oAcc.getEntityTooltip("NOTIFICATIONS"));
+			};
+
 		}
 		return this._oControls.oNotifications;
 	};
