@@ -242,7 +242,7 @@ sap.ui.define([
 				 *   function (oAction);
 				 *
 				 * where <code>oAction</code> is the button that the user has tapped. For example, when the user has pressed the close button,
-				 * an sap.m.MessageBox.Action.Close is returned.
+				 * an sap.m.MessageBox.Action.CLOSE is returned.
 				 *
 				 * @param {string} vMessage Message to be displayed in the alert dialog. The usage of sap.core.Control as vMessage is deprecated since version 1.30.4.
 				 * @param {object} [mOptions] Other options (optional)
@@ -591,7 +591,7 @@ sap.ui.define([
 				 *     onClose: null,                                       // default
 				 *     styleClass: "",                                      // default
 				 *     actions: [ sap.m.MessageBox.Action.OK,
-				 *                sap.m.MessageBox.Action.Cancel ],         // default
+				 *                sap.m.MessageBox.Action.CANCEL ],         // default
 				 *     emphasizedAction: sap.m.MessageBox.Action.OK,        // default
 				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
@@ -606,7 +606,7 @@ sap.ui.define([
 				 *
 				 * where oAction is set by one of the following three values:
 				 * 1. sap.m.MessageBox.Action.OK: OK (confirmed) button is tapped.
-				 * 2. sap.m.MessageBox.Action.Cancel: Cancel (unconfirmed) button is tapped.
+				 * 2. sap.m.MessageBox.Action.CANCEL: Cancel (unconfirmed) button is tapped.
 				 * 3. null: Confirm dialog is closed by calling <code>sap.m.InstanceManager.closeAllDialogs()</code>
 				 *
 				 * The confirmation dialog opened by this method is processed asynchronously.
@@ -670,7 +670,7 @@ sap.ui.define([
 				 *     title: "Error",                                      // default
 				 *     onClose: null,                                       // default
 				 *     styleClass: "",                                      // default
-				 *     actions: sap.m.MessageBox.Action.Close,              // default
+				 *     actions: sap.m.MessageBox.Action.CLOSE,              // default
 				 *     emphasizedAction: null,                              // default
 				 *     initialFocus: null,                                  // default
 				 *     textDirection: sap.ui.core.TextDirection.Inherit     // default
