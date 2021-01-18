@@ -935,5 +935,32 @@
         ]
       }
     ]
+  },
+  "1.71.26": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "2928a296b5bb4ff1c15708c9408b87101b4ff0cf",
+        "type": "FIX",
+        "text": " Locale: Remove mapping from 'SH' to 'SR' for logon language",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007189712020"
+          }
+        ]
+      },
+      {
+        "id": "c1bb0d67780eaafe4e34e6425fa8678a66e066d2",
+        "type": "FIX",
+        "text": " routing.History: use the new state flag in qUnit test",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080444210"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -2285,5 +2285,58 @@
         ]
       }
     ]
+  },
+  "1.71.26": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "0015ec6a0c2a6e7f11704c55ee5bb4de8055063c",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: New appointment in Hours view gets proper start/end times",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008424612020"
+          }
+        ]
+      },
+      {
+        "id": "223e23a7e487685df04df90ceab9accf0cb3664e",
+        "type": "FIX",
+        "text": " sap.m.InputBase, sap.m.Input: Removed aria-disabled and aria-readonly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080352974"
+          }
+        ]
+      },
+      {
+        "id": "1340b2a380a3691bb01a1bbcb3030e092f2e9446",
+        "type": "FIX",
+        "text": " sap.m.TimePicker: second hour number now properly typed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007998632020"
+          }
+        ]
+      },
+      {
+        "id": "6e94b2a22a152370dc26ad5821c132b780b591bc",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Disabled items no longer displayed inside the popover",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007350132020"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500008068082020"
+          }
+        ]
+      }
+    ]
   }
 }
