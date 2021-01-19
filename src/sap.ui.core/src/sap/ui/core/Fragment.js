@@ -390,6 +390,8 @@ function(
 						oType.load(mSettings).then(function (vContent) {
 							mSettings.fragmentContent = vContent;
 							resolve(fnCreateInstance());
+						}).catch(function (oError) {
+							reject(oError);
 						});
 					});
 				} else { // in case there is no 'fragmentName' but a 'definition' for the fragment provided or in case there is no load function available (sync use case)
