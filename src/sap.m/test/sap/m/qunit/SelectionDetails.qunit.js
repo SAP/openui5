@@ -230,14 +230,14 @@ sap.ui.define([
 		var oPopover = this.oSelectionDetails._getPopover.apply(this.oSelectionDetails, this._aGetPopoverArgs);
 		var oInnerControlSpy = sinon.spy(oPopover._oControl, "setProperty");
 		var oModalSpy = sinon.spy(oPopover._oControl, "setModal");
-		var oManagedObjectSpy = sinon.spy(ManagedObject.prototype, "setProperty");
+		var oControlSpy = sinon.spy(Control.prototype, "setProperty");
 		//Act
 		var oReturn = this.oSelectionDetails._setPopoverProperty.call(oPopover, "visible", true);
 		this.oSelectionDetails._setPopoverProperty.call(oPopover, "modal", true);
 		//Assert
 		assert.equal(oInnerControlSpy.callCount, 2, "Method 'setProperty' of inner control called twice");
 		assert.equal(oModalSpy.callCount, 1, "Method 'setModal' of inner control called twice, in case of property 'modal'");
-		assert.equal(oManagedObjectSpy.callCount, 2, "Method 'setProperty' of MangedObject called twice");
+		assert.equal(oControlSpy.callCount, 2, "Method 'setProperty' of Control called twice");
 		assert.equal(oReturn, oPopover, "Popover instance returned");
 	});
 
