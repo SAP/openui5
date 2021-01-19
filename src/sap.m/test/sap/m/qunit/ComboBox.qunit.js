@@ -11616,22 +11616,55 @@ sap.ui.define([
 	});
 
 	QUnit.test("forwards custom data to StandardListItem.", function (assert) {
-		// system under test
+		//default scenario using strings
 		var oItem = new Item({
-				text: "text",
-				key: "key"
-			}).addCustomData(new CustomData({
-				key: "customInfo",
-				value: "first-item",
-				writeToDom: true
-			})),
-			oListItem = this.oComboBox._mapItemToListItem(oItem);
+			text: "text",
+			key: "key"
+		}).addCustomData(new CustomData({
+			key: "customInfo",
+			value: "first-item",
+			writeToDom: true
+		})),
+		oListItem = this.oComboBox._mapItemToListItem(oItem);
 
 		// assert
 		assert.strictEqual(oListItem.data("customInfo"), "first-item", "The custom data is forwarded.");
 
+		// data binding scenario
+		var oData = {
+				items: [
+					{key: "0", text: "Lorem", value: "bindingValue"}
+				]
+			}, oModel = new JSONModel(oData);
+
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/items",
+				template: new Item({
+					key: "{key}",
+					text: "{text}",
+					customData: [
+						new CustomData({
+							key:"bindingKey",
+							value:"{value}",
+							writeToDom: true
+						})
+					]})
+			}
+		}).setModel(oModel);
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var oItem1 = oComboBox.getItems()[0],
+			oListItem1 = oComboBox._mapItemToListItem(oItem1);
+
+		// assert
+		assert.strictEqual(oListItem1.data("bindingKey"), "bindingValue", "The binding was resolved and the resulting value was properly set.");
+
 		oItem.destroy();
 		oListItem.destroy();
+		oListItem1.destroy();
+		oComboBox.destroy();
 	});
 
 	QUnit.module("Property forwarding from Item to ListItem", {

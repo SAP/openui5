@@ -166,7 +166,7 @@ sap.ui.define([
 
 		oItem.data(ListHelpers.CSS_CLASS + "ListItem", oListItem);
 		oItem.getCustomData().forEach(function (oCustomData) {
-			oListItem.addCustomData(oCustomData.clone());
+			oListItem.addCustomData(oCustomData.clone(null, null, {cloneBindings: false}));
 		});
 
 		return oListItem;
