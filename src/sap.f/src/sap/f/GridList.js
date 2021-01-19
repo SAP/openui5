@@ -235,8 +235,8 @@ sap.ui.define([
 	 * @public
 	 * @experimental Since 1.87. Behavior might change.
 	 * @param {sap.f.NavigationDirection} sDirection The navigation direction.
-	 * @param {integer} iRow The row index of the starting position.
-	 * @param {integer} iColumn The column index of the starting position.
+	 * @param {int} iRow The row index of the starting position.
+	 * @param {int} iColumn The column index of the starting position.
 	 */
 	GridList.prototype.focusItemByDirection = function (sDirection, iRow, iColumn) {
 		this._oItemNavigation.focusItemByDirection(this, sDirection, iRow, iColumn);
