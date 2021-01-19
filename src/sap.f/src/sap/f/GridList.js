@@ -142,12 +142,12 @@ sap.ui.define([
 					/**
 					 * The row index, from which the border is reached.
 					 */
-					row: {type: "integer"},
+					row: {type: "int"},
 
 					/**
 					 * The the column index, from which the border is reached.
 					 */
-					column: {type: "integer"}
+					column: {type: "int"}
 				}
 			}
 		}

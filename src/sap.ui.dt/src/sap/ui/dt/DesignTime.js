@@ -183,7 +183,7 @@ function (
 						id: {type: "string"},
 
 						// index of element overlay in the target aggregation overlay
-						targetIndex: {type: "integer"},
+						targetIndex: {type: "int"},
 
 						// id of target aggregation overlay
 						targetId: {type: "string"},
@@ -202,7 +202,7 @@ function (
 						id: {type: "string"},
 
 						// index of element overlay in the target aggregation overlay
-						targetIndex: {type: "integer"},
+						targetIndex: {type: "int"},
 
 						// id of target aggregation overlay
 						targetId: {type: "string"},
