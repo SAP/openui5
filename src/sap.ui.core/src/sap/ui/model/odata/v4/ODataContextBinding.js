@@ -833,7 +833,7 @@ sap.ui.define([
 			if (this.oContext.isTransient && this.oContext.isTransient()) {
 				throw new Error("Execute for transient context not allowed: " + sResolvedPath);
 			}
-			if (this.oContext.getPath().indexOf("(...)") >= 0) {
+			if (this.oContext.getPath().includes("(...)")) {
 				throw new Error("Nested deferred operation bindings not supported: "
 					+ sResolvedPath);
 			}
@@ -1120,7 +1120,7 @@ sap.ui.define([
 		return oMetadata.$IsBound // case 1
 			&& oMetadata.$ReturnType && !oMetadata.$ReturnType.$isCollection
 				&& oMetadata.$EntitySetPath // case 2
-			&& oMetadata.$EntitySetPath.indexOf("/") < 0; // case 3
+			&& !oMetadata.$EntitySetPath.includes("/"); // case 3
 	};
 
 	/**

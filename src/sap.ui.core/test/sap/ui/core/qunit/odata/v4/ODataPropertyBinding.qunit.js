@@ -2256,7 +2256,7 @@ sap.ui.define([
 			return new Promise(function (resolve) {
 				//TODO cannot use "dataReceived" because oControl.getText() === undefined then...
 				oBinding.attachEventOnce("change", function () {
-					var sPhoneNumber = oControl.getText().indexOf("/") < 0
+					var sPhoneNumber = !oControl.getText().includes("/")
 							? "06227/34567"
 							: "0622734567";
 

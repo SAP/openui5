@@ -665,7 +665,7 @@ sap.ui.define([
 			vSelects.forEach(function (sSelect) {
 				var iIndex = sSelect.indexOf("/");
 
-				if (iIndex >= 0 && sSelect.indexOf(".") < 0) {
+				if (iIndex >= 0 && !sSelect.includes(".")) {
 					// only strip if there is no type cast and no bound action (avoid "correcting"
 					// unsupported selects in V2)
 					sSelect = sSelect.slice(0, iIndex);

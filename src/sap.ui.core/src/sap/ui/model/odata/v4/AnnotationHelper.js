@@ -406,10 +406,10 @@ sap.ui.define([
 					sPath = sPath.slice(0, -1);
 				}
 
-				if (sPath.indexOf(".") > -1) {
+				if (sPath.includes(".")) {
 					sPath = sPath.split("/")
 						.filter(function (sSegment) { // remove type casts
-							return sSegment.indexOf(".") < 0;
+							return !sSegment.includes(".");
 						}).join("/");
 				}
 
