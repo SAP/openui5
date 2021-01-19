@@ -82,7 +82,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(12);
+		assert.expect(27);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
@@ -99,8 +99,23 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[4].getId(), "ExtComponent---mainView--button3", "Main.view content is in correct order"); // Main
 			assert.strictEqual(aPanelContent[5].getId(), "ExtComponent---mainView--defaultFragment--defaultButton", "EP2 default content is in correct order"); // EP2
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
-			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
-			assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--ButtonInRootEP", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--EPinEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[17].getId(), "ExtComponent---mainView--EPinEPButton2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[18].getId(), "ExtComponent---mainView--EPinEPButton3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[19].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[20].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[21].getId(), "ExtComponent---mainView--ButtonInRootEP2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[22].getId(), "ExtComponent---mainView--ButtonInRootEP3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[23].getId(), "ExtComponent---mainView--EPinEPButton4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[24].getId(), "ExtComponent---mainView--ButtonInRootEP4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[25].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[26].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[27].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[28].getId(), "ExtComponent---mainView--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[30].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[31].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
@@ -108,13 +123,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("ExtensionPoint on top-level of XMLView", function(assert) {
-		assert.expect(30);
+		assert.expect(44);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
 			var aViewContent = oView.getContent();
-			assert.strictEqual(aViewContent.length, 18, "Correct # of controls inside View content aggregation");
+			assert.strictEqual(aViewContent.length, 32, "Correct # of controls inside View content aggregation");
 
 			// View Content Aggregation
 			assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 content is in correct order"); // EP0
@@ -132,9 +147,23 @@ sap.ui.define([
 			assert.strictEqual(aViewContent[12].getId(), "ExtComponent---mainView--tn1--customButton2", "tn1 Fragment is in correct order"); // tn1 Fragment customButton2
 			assert.strictEqual(aViewContent[13].getId(), "ExtComponent---mainView--myTable", "Table is in correct order"); // myTable
 			assert.strictEqual(aViewContent[14].getId(), "ExtComponent---mainView--myListItem", "ColumnListItem is in correct order"); // myListItem
-			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
-			assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
-			assert.strictEqual(aViewContent[17].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--ButtonInRootEP", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--EPinEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[17].getId(), "ExtComponent---mainView--EPinEPButton2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[18].getId(), "ExtComponent---mainView--EPinEPButton3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[19].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[20].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[21].getId(), "ExtComponent---mainView--ButtonInRootEP2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[22].getId(), "ExtComponent---mainView--ButtonInRootEP3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[23].getId(), "ExtComponent---mainView--EPinEPButton4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[24].getId(), "ExtComponent---mainView--ButtonInRootEP4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[25].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[26].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[27].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[28].getId(), "ExtComponent---mainView--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[30].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[31].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
 
 			var oTable = aViewContent[13];
 			var aTableItems = oTable.getItems();
@@ -165,13 +194,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(26);
+		assert.expect(40);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.strictEqual(ExtensionPoint._fnExtensionProvider(), undefined, "ExtensionPointProvider exists, but no module returned");
 
 			var aViewContent = oView.getContent();
-			assert.strictEqual(aViewContent.length, 16, "Correct # of controls inside View content aggregation");
+			assert.strictEqual(aViewContent.length, 30, "Correct # of controls inside View content aggregation");
 
 			assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 is not included: default content is in correct order"); // EP0
 			assert.strictEqual(aViewContent[1].getId(), "ExtComponent---mainView--button0", "button0 is in correct order"); // Button0
@@ -186,9 +215,23 @@ sap.ui.define([
 			assert.strictEqual(aViewContent[10].getId(), "ExtComponent---mainView--tn1--customButton2", "EP23 is not included: default content is in correct order"); // tn1 Fragment customButton2
 			assert.strictEqual(aViewContent[11].getId(), "ExtComponent---mainView--myTable", "Table is in correct order"); // myTable
 			assert.strictEqual(aViewContent[12].getId(), "ExtComponent---mainView--myListItem", "ColumnListItem is in correct order"); // myListItem
-			assert.strictEqual(aViewContent[13].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
-			assert.strictEqual(aViewContent[14].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
-			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[13].getId(), "ExtComponent---mainView--ButtonInRootEP", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[14].getId(), "ExtComponent---mainView--EPinEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPinEPButton2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--EPinEPButton3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[17].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[18].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[19].getId(), "ExtComponent---mainView--ButtonInRootEP2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[20].getId(), "ExtComponent---mainView--ButtonInRootEP3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[21].getId(), "ExtComponent---mainView--EPinEPButton4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[22].getId(), "ExtComponent---mainView--ButtonInRootEP4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[23].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[24].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[25].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[26].getId(), "ExtComponent---mainView--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[27].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[28].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
 
 			// table
 			var oTable = aViewContent[11];
@@ -217,13 +260,13 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(26);
+		assert.expect(37);
 		var oView = oComponent.getRootControl();
 		return oView.loaded().then(function() {
 			assert.ok(!ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
 			var aViewContent = oView.getContent();
-			assert.strictEqual(aViewContent.length, 16, "Correct # of controls inside View content aggregation");
+			assert.strictEqual(aViewContent.length, 30, "Correct # of controls inside View content aggregation");
 
 			assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 is not included: default content is in correct order"); // EP0
 			assert.strictEqual(aViewContent[1].getId(), "ExtComponent---mainView--button0", "button0 is in correct order"); // Button0
@@ -235,12 +278,23 @@ sap.ui.define([
 			assert.strictEqual(aViewContent[7].getId(), "ExtComponent---mainView--shifty--customButton2", "shifty Fragment content is in correct order"); // shifty Fragment customButton2
 			assert.strictEqual(aViewContent[8].getId(), "ExtComponent---mainView--button7", "button7 is in correct order"); // button7
 			assert.strictEqual(aViewContent[9].getId(), "ExtComponent---mainView--tn1--customButton1", "EP23 is not included: default content is in correct order"); // tn1 Fragment customButton1
-			assert.strictEqual(aViewContent[10].getId(), "ExtComponent---mainView--tn1--customButton2", "EP23 is not included: default content is in correct order"); // tn1 Fragment customButton2
-			assert.strictEqual(aViewContent[11].getId(), "ExtComponent---mainView--myTable", "Table is in correct order"); // myTable
-			assert.strictEqual(aViewContent[12].getId(), "ExtComponent---mainView--myListItem", "ColumnListItem is in correct order"); // myListItem
-			assert.strictEqual(aViewContent[13].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "EPRootFragment is in correct order and contains a Button (default content)"); // Main
-			assert.strictEqual(aViewContent[14].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "NestingFragment--EPRootFragment (default) content is in correct order"); // Main
-			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[13].getId(), "ExtComponent---mainView--ButtonInRootEP", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[14].getId(), "ExtComponent---mainView--EPinEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPinEPButton2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--EPinEPButton3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[17].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[18].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[19].getId(), "ExtComponent---mainView--ButtonInRootEP2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[20].getId(), "ExtComponent---mainView--ButtonInRootEP3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[21].getId(), "ExtComponent---mainView--EPinEPButton4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[22].getId(), "ExtComponent---mainView--ButtonInRootEP4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[23].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[24].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[25].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[26].getId(), "ExtComponent---mainView--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[27].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[28].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
 
 			// table
 			var oTable = aViewContent[11];
@@ -312,7 +366,6 @@ sap.ui.define([
 				assert.equal(oArgsEPInFragment.name, "EPInFragment", "EPInFragment");
 				assert.ok(oArgsEPInFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPInFragment: View instance is correct");
 				assert.equal(oArgsEPInFragment.fragmentId, "EPInFragment", "Local Fragment-ID is passed for 'EPInFragment'");
-
 				oFragmentContent.destroy();
 			}.bind(this));
 		}.bind(this));
@@ -343,7 +396,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("via XMLView: async", function(assert) {
-		assert.expect(31);
+		assert.expect(35);
 
 		// load the view
 		return XMLView.create({
@@ -351,7 +404,7 @@ sap.ui.define([
 			id: "myView"
 		}).then(function(oView) {
 			// inspect EP Provider calls
-			assert.equal(this.oEPSpy.args.length, 11, "11 Calls to the EP Provider");
+			assert.equal(this.oEPSpy.args.length, 13, "13 Calls to the EP Provider");
 			// EP 1
 			var oArgsEP1 = this.oEPSpy.args[0][0];
 			assert.equal(oArgsEP1.name, "EP1", "EP1");
@@ -394,22 +447,31 @@ sap.ui.define([
 			var oArgsEPTable = this.oEPSpy.args[8][0];
 			assert.equal(oArgsEPTable.name, "EPTable", "EPTable");
 			assert.ok(oArgsEPTable.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPTable: View instance is correct");
+			//EPinEPRoot
+			var oArgsEPinEP = this.oEPSpy.args[9][0];
+			assert.equal(oArgsEPinEP.name, "EPinEPRoot", "EPinEPRoot");
+			assert.ok(oArgsEPinEP.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPinEPRoot: View instance is correct");
+			//EPinRootFragmentRoot
+			var oArgsEPinRootFragment = this.oEPSpy.args[10][0];
+			assert.equal(oArgsEPinRootFragment.name, "EPinRootFragment", "EPinRootFragment");
+			assert.ok(oArgsEPinRootFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPinRootFragment: View instance is correct");
 			// EP Root
-			var oArgsEPRoot = this.oEPSpy.args[9][0];
+			var oArgsEPRoot = this.oEPSpy.args[11][0];
 			assert.equal(oArgsEPRoot.name, "EPRoot", "EPRoot");
 			assert.ok(oArgsEPRoot.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPRoot: View instance is correct");
 			assert.equal(oArgsEPRoot.fragmentId, "EPRootFragment", "Local Fragment-ID is passed for 'EPRootFragment'");
 			// NestingFragment --> EP Root
-			var oArgsEPRootNested = this.oEPSpy.args[10][0];
+			var oArgsEPRootNested = this.oEPSpy.args[12][0];
 			assert.equal(oArgsEPRootNested.name, "EPRoot", "EPRoot");
 			assert.ok(oArgsEPRootNested.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPRoot: View instance is correct");
 			assert.equal(oArgsEPRootNested.fragmentId, "NestingFragment--EPRootFragment", "Local Fragment-ID is passed for 'EPRootFragment'");
 			oView.destroy();
 		}.bind(this));
+
 	});
 
 	QUnit.test("via XMLView: sync", function(assert) {
-		assert.expect(31);
+		assert.expect(35);
 
 		// load the view
 		var oView = sap.ui.xmlview({
@@ -417,7 +479,7 @@ sap.ui.define([
 			id: "myView"
 		});
 		// inspect EP Provider calls
-		assert.equal(this.oEPSpy.args.length, 11, "11 Calls to the EP Provider");
+		assert.equal(this.oEPSpy.args.length, 13, "10 Calls to the EP Provider");
 		// EP 1
 		var oArgsEP1 = this.oEPSpy.args[0][0];
 		assert.equal(oArgsEP1.name, "EP1", "EP1");
@@ -460,13 +522,21 @@ sap.ui.define([
 		var oArgsEPTable = this.oEPSpy.args[8][0];
 		assert.equal(oArgsEPTable.name, "EPTable", "EPTable");
 		assert.ok(oArgsEPTable.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPTable: View instance is correct");
+		//EPinEPRoot
+		var oArgsEPinEP = this.oEPSpy.args[9][0];
+		assert.equal(oArgsEPinEP.name, "EPinEPRoot", "EPinEPRoot");
+		assert.ok(oArgsEPinEP.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPinEPRoot: View instance is correct");
+		//EPinRootFragmentRoot
+		var oArgsEPinRootFragment = this.oEPSpy.args[10][0];
+		assert.equal(oArgsEPinRootFragment.name, "EPinRootFragment", "EPinRootFragment");
+		assert.ok(oArgsEPinRootFragment.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPinRootFragment: View instance is correct");
 		// EP Root
-		var oArgsEPRoot = this.oEPSpy.args[9][0];
+		var oArgsEPRoot = this.oEPSpy.args[11][0];
 		assert.equal(oArgsEPRoot.name, "EPRoot", "EPRoot");
 		assert.ok(oArgsEPRoot.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPRoot: View instance is correct");
 		assert.equal(oArgsEPRoot.fragmentId, "EPRootFragment", "Local Fragment-ID is passed for 'EPRootFragment'");
 		// NestingFragment --> EP Root
-		var oArgsEPRootNested = this.oEPSpy.args[10][0];
+		var oArgsEPRootNested = this.oEPSpy.args[12][0];
 		assert.equal(oArgsEPRootNested.name, "EPRoot", "EPRoot");
 		assert.ok(oArgsEPRootNested.view.getMetadata().isA("sap.ui.core.mvc.View"), "EPRoot: View instance is correct");
 		assert.equal(oArgsEPRootNested.fragmentId, "NestingFragment--EPRootFragment", "Local Fragment-ID is passed for 'EPRootFragment'");
@@ -479,7 +549,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(12);
+		assert.expect(27);
 		var done = assert.async();
 
 		var oView = oComponent.getRootControl();
@@ -501,8 +571,23 @@ sap.ui.define([
 			assert.strictEqual(aPanelContent[6].getId(), "ExtComponent---mainView--button4", "Main.view content is in correct order"); // Main
 
 			// view Content
-			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
-			assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--ButtonInRootEP", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--EPinEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[17].getId(), "ExtComponent---mainView--EPinEPButton2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[18].getId(), "ExtComponent---mainView--EPinEPButton3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[19].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[20].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[21].getId(), "ExtComponent---mainView--ButtonInRootEP2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[22].getId(), "ExtComponent---mainView--ButtonInRootEP3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[23].getId(), "ExtComponent---mainView--EPinEPButton4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[24].getId(), "ExtComponent---mainView--ButtonInRootEP4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[25].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[26].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[27].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[28].getId(), "ExtComponent---mainView--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[30].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[31].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
 
 			var oOwnerComponent = Component.getOwnerComponentFor(oPanel);
 			assert.strictEqual(oOwnerComponent.getId(), "ExtComponent", "Panel has the correct OwnerComponent");
@@ -522,7 +607,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("ExtensionPoint on top-level of XMLView", function(assert) {
-		assert.expect(29);
+		assert.expect(44);
 		var done = assert.async();
 
 		var oView = oComponent.getRootControl();
@@ -531,7 +616,7 @@ sap.ui.define([
 			assert.ok(ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider was added");
 
 			var aViewContent = oView.getContent();
-			assert.strictEqual(aViewContent.length, 18, "Correct # of controls inside View content aggregation");
+			assert.strictEqual(aViewContent.length, 32, "Correct # of controls inside View content aggregation");
 
 			// View Content Aggregation
 			assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 content is in correct order"); // EP0
@@ -549,8 +634,23 @@ sap.ui.define([
 			assert.strictEqual(aViewContent[12].getId(), "ExtComponent---mainView--tn1--customButton2", "tn1 Fragment is in correct order"); // tn1 Fragment customButton2
 			assert.strictEqual(aViewContent[13].getId(), "ExtComponent---mainView--myTable", "Table is in correct order"); // myTable
 			assert.strictEqual(aViewContent[14].getId(), "ExtComponent---mainView--myListItem", "ColumnListItem is in correct order"); // myListItem
-			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
-			assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--ButtonInRootEP", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--EPinEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[17].getId(), "ExtComponent---mainView--EPinEPButton2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[18].getId(), "ExtComponent---mainView--EPinEPButton3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[19].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[20].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[21].getId(), "ExtComponent---mainView--ButtonInRootEP2", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[22].getId(), "ExtComponent---mainView--ButtonInRootEP3", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[23].getId(), "ExtComponent---mainView--EPinEPButton4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[24].getId(), "ExtComponent---mainView--ButtonInRootEP4", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[25].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[26].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[27].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[28].getId(), "ExtComponent---mainView--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[30].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+			assert.strictEqual(aViewContent[31].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
 
 			// table
 			var oTable = aViewContent[13];
@@ -579,7 +679,7 @@ sap.ui.define([
 		// we poll for the panels aggregation content until all ExtensionPoints have been resolved
 		var iPoll = setInterval(function() {
 			var aViewContent = oView.getContent();
-			if (aViewContent.length == 18) {
+			if (aViewContent.length == 32) {
 				fnAssert();
 				clearInterval(iPoll);
 			}
@@ -598,13 +698,13 @@ sap.ui.define([
 	 * since the default content in this test is inserted sync anyway.
 	 */
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(26);
+		assert.expect(40);
 		var oView = oComponent.getRootControl();
 
 		assert.strictEqual(ExtensionPoint._fnExtensionProvider(), undefined, "ExtensionPointProvider exists, but no module returned");
 
 		var aViewContent = oView.getContent();
-		assert.strictEqual(aViewContent.length, 16, "Correct # of controls inside View content aggregation");
+		assert.strictEqual(aViewContent.length, 30, "Correct # of controls inside View content aggregation");
 
 		assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 is not included: default content is in correct order"); // EP0
 		assert.strictEqual(aViewContent[1].getId(), "ExtComponent---mainView--button0", "button0 is in correct order"); // Button0
@@ -619,9 +719,23 @@ sap.ui.define([
 		assert.strictEqual(aViewContent[10].getId(), "ExtComponent---mainView--tn1--customButton2", "EP23 is not included: default content is in correct order"); // tn1 Fragment customButton2
 		assert.strictEqual(aViewContent[11].getId(), "ExtComponent---mainView--myTable", "Table is in correct order"); // myTable
 		assert.strictEqual(aViewContent[12].getId(), "ExtComponent---mainView--myListItem", "ColumnListItem is in correct order"); // myListItem
-		assert.strictEqual(aViewContent[13].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
-		assert.strictEqual(aViewContent[14].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
-		assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[13].getId(), "ExtComponent---mainView--ButtonInRootEP", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[14].getId(), "ExtComponent---mainView--EPinEPButton", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPinEPButton2", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--EPinEPButton3", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[17].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[18].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting2", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[19].getId(), "ExtComponent---mainView--ButtonInRootEP2", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[20].getId(), "ExtComponent---mainView--ButtonInRootEP3", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[21].getId(), "ExtComponent---mainView--EPinEPButton4", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[22].getId(), "ExtComponent---mainView--ButtonInRootEP4", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[23].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[24].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[25].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[26].getId(), "ExtComponent---mainView--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[27].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[28].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
 
 		// table
 		var oTable = aViewContent[11];
@@ -655,13 +769,13 @@ sap.ui.define([
 	 * since the default content in this test is inserted sync anyway.
 	 */
 	QUnit.test("simple resolution", function(assert) {
-		assert.expect(26);
+		assert.expect(40);
 		var oView = oComponent.getRootControl();
 
 		assert.ok(!ExtensionPoint._fnExtensionProvider, "ExtensionPointProvider added");
 
 		var aViewContent = oView.getContent();
-		assert.strictEqual(aViewContent.length, 16, "Correct # of controls inside View content aggregation");
+		assert.strictEqual(aViewContent.length, 30, "Correct # of controls inside View content aggregation");
 
 		assert.strictEqual(aViewContent[0].getId(), "ExtComponent---mainView--zero--defaultButton", "EP0 is not included: default content is in correct order"); // EP0
 		assert.strictEqual(aViewContent[1].getId(), "ExtComponent---mainView--button0", "button0 is in correct order"); // Button0
@@ -676,9 +790,23 @@ sap.ui.define([
 		assert.strictEqual(aViewContent[10].getId(), "ExtComponent---mainView--tn1--customButton2", "EP23 is not included: default content is in correct order"); // tn1 Fragment customButton2
 		assert.strictEqual(aViewContent[11].getId(), "ExtComponent---mainView--myTable", "Table is in correct order"); // myTable
 		assert.strictEqual(aViewContent[12].getId(), "ExtComponent---mainView--myListItem", "ColumnListItem is in correct order"); // myListItem
-		assert.strictEqual(aViewContent[13].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
-		assert.strictEqual(aViewContent[14].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
-		assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[13].getId(), "ExtComponent---mainView--ButtonInRootEP", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[14].getId(), "ExtComponent---mainView--EPinEPButton", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[15].getId(), "ExtComponent---mainView--EPinEPButton2", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[16].getId(), "ExtComponent---mainView--EPinEPButton3", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[17].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[18].getId(), "ExtComponent---mainView--EPinEPButtonDeepNesting2", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[19].getId(), "ExtComponent---mainView--ButtonInRootEP2", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[20].getId(), "ExtComponent---mainView--ButtonInRootEP3", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[21].getId(), "ExtComponent---mainView--EPinEPButton4", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[22].getId(), "ExtComponent---mainView--ButtonInRootEP4", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[23].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[24].getId(), "ExtComponent---mainView--EPinEPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[25].getId(), "ExtComponent---mainView--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[26].getId(), "ExtComponent---mainView--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[27].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButton", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[28].getId(), "ExtComponent---mainView--NestingFragment--EPRootFragment--extEPButtonChild", "Main.view content is in correct order"); // Main
+		assert.strictEqual(aViewContent[29].getId(), "ExtComponent---mainView--EPinBinding--supplier_panel", "Main.view content is in correct order"); // Main
 
 		// table
 		var oTable = aViewContent[11];
