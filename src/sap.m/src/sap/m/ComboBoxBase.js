@@ -5,6 +5,7 @@
 sap.ui.define([
 	'./ComboBoxTextField',
 	'./SuggestionsPopover',
+	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/core/SeparatorItem',
 	'sap/ui/core/InvisibleText',
 	'sap/ui/base/ManagedObject',
@@ -14,12 +15,16 @@ sap.ui.define([
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
+	"sap/base/security/encodeXML",
+	"sap/base/strings/escapeRegExp",
+	"sap/m/inputUtils/forwardItemProperties",
 	"sap/m/inputUtils/highlightDOMElements",
 	"sap/m/inputUtils/ListHelpers"
 ],
 	function(
 		ComboBoxTextField,
 		SuggestionsPopover,
+		ManagedObjectObserver,
 		SeparatorItem,
 		InvisibleText,
 		ManagedObject,
@@ -29,6 +34,9 @@ sap.ui.define([
 		containsOrEquals,
 		KeyCodes,
 		jQuery,
+		encodeXML,
+		escapeRegExp,
+		forwardItemProperties,
 		highlightDOMElements,
 		ListHelpers
 	) {
@@ -157,6 +165,12 @@ sap.ui.define([
 			this.bItemsUpdated = true;
 
 			if (this.hasLoadItemsEventListeners()) {
+
+				if (this.isOpen()) {
+					ListHelpers.fillList(this.getItems(), this._getList(), this._mapItemToListItem.bind(this));
+					this.setRecreateItems(false);
+				}
+
 				this.onItemsLoaded();
 			}
 		};
@@ -459,6 +473,64 @@ sap.ui.define([
 
 			// a method to define whether an item should be filtered in the picker
 			this.fnFilter = null;
+
+			var oItemsAggregationObserver = new ManagedObjectObserver(function(oChange) {
+				var sMutation = oChange.mutation;
+				var oItem = oChange.child;
+				var oEventMapping = {
+					"remove": "detachEvent",
+					"insert": "attachEvent"
+				};
+				var callbackMapping = {
+					"remove": "handleItemRemoval",
+					"insert": "handleItemInsertion"
+				};
+
+				if (!oItem[oEventMapping[sMutation]] || !this[callbackMapping[sMutation]]) {
+					return;
+				}
+
+				// attach / detach a _change event to items on insert / remove events
+				oItem[oEventMapping[sMutation]]("_change", this.onItemChange, this);
+
+				// mark the list items to be recreated
+				this.setRecreateItems(true);
+
+				// call handle Inserttion / Removal of items
+				this[callbackMapping[sMutation]](oItem);
+			}.bind(this));
+
+			oItemsAggregationObserver.observe(this, { aggregations: ["items"] });
+		};
+
+		/**
+		 * Fires when an object gets removed from the items aggregation
+		 *
+		 * @protected
+		 */
+		ComboBoxBase.prototype.handleItemRemoval = function (oItem) {};
+
+		/**
+		 * Fires when an object gets inserted in the items aggregation
+		 *
+		 * @protected
+		 */
+		ComboBoxBase.prototype.handleItemInsertion = function (oItem) {};
+
+		/**
+		 * Sets whether the list items should be recreated
+		 * @protected
+		 */
+		ComboBoxBase.prototype.setRecreateItems = function (bRecreate) {
+			this._bRecreateItems = bRecreate;
+		};
+
+		/**
+		 * Gets the flag indicating whether the list items should be recreated
+		 * @protected
+		 */
+		ComboBoxBase.prototype.getRecreateItems = function () {
+			return this._bRecreateItems;
 		};
 
 		ComboBoxBase.prototype.onBeforeRendering = function () {
@@ -1155,13 +1227,19 @@ sap.ui.define([
 
 		/**
 		 * Handles properties' changes of items in the aggregation named <code>items</code>.
-		 * To be overwritten by subclasses.
 		 *
-		 * @experimental
+		 * @protected
 		 * @param {sap.ui.base.Event} oControlEvent The change event
-		 * @since 1.30
+		 * @param {boolean} bShowSecondaryValues Indicates whether second values should be shown
+		 * @since 1.90
 		 */
-		ComboBoxBase.prototype.onItemChange = function(oControlEvent) {};
+		ComboBoxBase.prototype.onItemChange = function(oControlEvent, bShowSecondaryValues) {
+			forwardItemProperties({
+				item: oControlEvent.getSource(),
+				propName: oControlEvent.getParameter("name"),
+				propValue: oControlEvent.getParameter("newValue")
+			}, bShowSecondaryValues);
+		};
 
 		/**
 		 * Clears the selection.
@@ -1184,52 +1262,6 @@ sap.ui.define([
 		/* ----------------------------------------------------------- */
 		/* public methods                                              */
 		/* ----------------------------------------------------------- */
-
-		/**
-		 * Adds an item to the aggregation named <code>items</code>.
-		 *
-		 * @param {sap.ui.core.Item} oItem The item to be added; if empty, nothing is added.
-		 * @returns {this} <code>this</code> to allow method chaining.
-		 * @public
-		 */
-		ComboBoxBase.prototype.addItem = function(oItem) {
-			this.addAggregation("items", oItem);
-
-			if (oItem) {
-				oItem.attachEvent("_change", this.onItemChange, this);
-			}
-
-			if (this._getList()) {
-				this._getList().addItem(this._mapItemToListItem(oItem));
-			}
-
-			return this;
-		};
-
-		/**
-		 * Inserts an item into the aggregation named <code>items</code>.
-		 *
-		 * @param {sap.ui.core.Item} oItem The item to be inserted; if empty, nothing is inserted.
-		 * @param {int} iIndex The <code>0</code>-based index the item should be inserted at; for
-		 *             a negative value of <code>iIndex</code>, the item is inserted at position 0; for a value
-		 *             greater than the current size of the aggregation, the item is inserted at the last position.
-		 * @returns {this} <code>this</code> to allow method chaining.
-		 * @public
-		 */
-		ComboBoxBase.prototype.insertItem = function(oItem, iIndex) {
-			this.insertAggregation("items", oItem, iIndex, true);
-
-			if (oItem) {
-				oItem.attachEvent("_change", this.onItemChange, this);
-			}
-
-			if (this._getList()) {
-				this._getList().insertItem(this._mapItemToListItem(oItem), iIndex);
-			}
-
-			this._scheduleOnItemsLoadedOnce();
-			return this;
-		};
 
 		/**
 		 * Gets the item from the aggregation named <code>items</code> at the given 0-based index.
@@ -1348,35 +1380,6 @@ sap.ui.define([
 		 * @returns {sap.ui.core.Item} The removed item or null.
 		 * @public
 		 */
-		ComboBoxBase.prototype.removeItem = function(vItem) {
-			vItem = this.removeAggregation("items", vItem);
-
-			if (vItem) {
-				vItem.detachEvent("_change", this.onItemChange, this);
-			}
-
-			return vItem;
-		};
-
-		/**
-		 * Removes all the controls in the aggregation named <code>items</code>.
-		 * Additionally unregisters them from the hosting UIArea and clears the selection.
-		 *
-		 * @returns {sap.ui.core.Item[]} An array of the removed items (might be empty).
-		 * @public
-		 */
-		ComboBoxBase.prototype.removeAllItems = function() {
-			var aItems = this.removeAllAggregation("items");
-
-			// clear the selection
-			this.clearSelection();
-
-			for (var i = 0; i < aItems.length; i++) {
-				aItems[i].detachEvent("_change", this.onItemChange, this);
-			}
-
-			return aItems;
-		};
 
 		/**
 		 * Finds the common items of two arrays

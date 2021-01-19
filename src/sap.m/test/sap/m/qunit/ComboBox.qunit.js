@@ -1330,9 +1330,13 @@ sap.ui.define([
 			selectedKey: "CU"
 		});
 
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
 		// act
 		oItem.setKey("GER");
 		oItem.setText("Germany");
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.strictEqual(oComboBox.getSelectedKey(), "GER");
@@ -1395,6 +1399,9 @@ sap.ui.define([
 		// system under test
 		var oComboBox = new ComboBox();
 
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
 		// arrange
 		var fnAddItemSpy = this.spy(oComboBox, "addItem");
 		var oItem = new Item({
@@ -1404,6 +1411,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.addItem(oItem);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
@@ -1449,6 +1457,9 @@ sap.ui.define([
 		// system under test
 		var oComboBox = new ComboBox();
 
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
 		// arrange
 		var fnInsertItem = this.spy(oComboBox, "insertItem");
 		var oItem = new Item({
@@ -1458,6 +1469,7 @@ sap.ui.define([
 
 		// act
 		oComboBox.insertItem(oItem, 0);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getFirstItem() === oItem);
@@ -2352,30 +2364,6 @@ sap.ui.define([
 
 	QUnit.module("removeItem()");
 
-	QUnit.test("removeItem() it should return null when called with an invalid input argument value", function (assert) {
-
-		// system under test
-		var oComboBox = new ComboBox();
-
-		// arrange
-		oComboBox.syncPickerContent();
-		var fnRemoveAggregationSpy = this.spy(oComboBox._getList(), "removeAggregation");
-		var fnRemoveItemSpy = this.spy(oComboBox, "removeItem");
-		var fnFireChangeSpy = this.spy(oComboBox, "fireChange");
-
-		// act
-		oComboBox.removeItem(undefined);
-
-		// assert
-		assert.strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.List.removeAggregation() method was called");
-		assert.ok(fnRemoveAggregationSpy.calledWith("items", null), "sap.m.List.prototype.removeAggregation() method was called with the expected argument");
-		assert.strictEqual(fnFireChangeSpy.callCount, 0, "The change event is not fired");
-		assert.ok(fnRemoveItemSpy.returned(null), "sap.m.ComboBox.prototype.removeItem() method returns null");
-
-		// cleanup
-		oComboBox.destroy();
-	});
-
 	QUnit.test("removeItem() it should remove the selected item and change the selection (test case 1)", function (assert) {
 
 		// system under test
@@ -2394,10 +2382,7 @@ sap.ui.define([
 			}
 		});
 
-		// arrange
-		oComboBox.syncPickerContent();
 		var oModel = new JSONModel();
-		var fnRemoveAggregationSpy = this.spy(oComboBox._getList(), "removeAggregation");
 		var mData = {
 			"items": [
 				{
@@ -2452,15 +2437,24 @@ sap.ui.define([
 		oModel.setData(mData);
 		sap.ui.getCore().setModel(oModel);
 		oComboBox.placeAt("content");
+
 		var oSelectedItem = oComboBox.getItemByKey("8");
 		sap.ui.getCore().applyChanges();
 
+		var oEvent = new jQuery.Event("input", {
+			target: oComboBox.getFocusDomRef()
+		});
+
+		oComboBox.oninput(oEvent);
+
+		var fnDestroyItems = this.spy(oComboBox._getList(), "destroyItems");
+
 		// act
-		var oExpectedItem = oComboBox.removeItem(8);
+		oComboBox.removeItem(8);
+		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(fnRemoveAggregationSpy.callCount, 1, "sap.m.List.prototype.removeAggregation() method was called");
-		assert.ok(fnRemoveAggregationSpy.calledWith("items", ListHelpers.getListItem(oExpectedItem)), "sap.m.List.prototype.removeAggregation() method was called with the expected argument");
+		assert.strictEqual(fnDestroyItems.callCount, 1, "sap.m.List.prototype.destroyItems() method was called");
 		assert.ok(oComboBox.getSelectedItem() === null);
 		assert.strictEqual(oComboBox.getSelectedItemId(), "");
 		assert.strictEqual(oComboBox.getSelectedKey(), "");
@@ -4913,7 +4907,7 @@ sap.ui.define([
 		});
 
 		oComboBox.setModel(oModel);
-		oComboBox._fillList(); // Simulate before open of the popover
+		oComboBox.syncPickerContent(); // Simulate before open of the popover
 		sap.ui.getCore().applyChanges();
 
 		// assert
@@ -6171,6 +6165,7 @@ sap.ui.define([
 			},
 			loadItems: function () {
 				oComboBox.setModel(oModel);
+				sap.ui.getCore().applyChanges();
 			}
 		});
 
@@ -6190,6 +6185,7 @@ sap.ui.define([
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
 		this.clock.tick(iAutoRespondAfter + 1);
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oComboBox.getItems().length > 0, "the items are loaded");
@@ -8286,6 +8282,7 @@ sap.ui.define([
 			},
 			loadItems: function () {
 				oComboBox.setModel(oModel);
+				sap.ui.getCore().applyChanges();
 			}
 		});
 
@@ -8305,10 +8302,12 @@ sap.ui.define([
 		oTarget.value = "F";
 		sap.ui.qunit.QUnitUtils.triggerKeydown(oTarget, KeyCodes.F);
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oTarget);
+		sap.ui.getCore().applyChanges();
 
 		oTarget.value = "Fl";
 		sap.ui.qunit.QUnitUtils.triggerKeydown(oTarget, KeyCodes.L);
 		sap.ui.qunit.QUnitUtils.triggerEvent("input", oTarget);
+		sap.ui.getCore().applyChanges();
 
 		// tick the clock ahead some ms millisecond (it should be at least more than the auto respond setting
 		// to make sure that the data from the OData model is available)
@@ -10456,6 +10455,7 @@ sap.ui.define([
 
 		// Act (init the SuggestionPopover with the List)
 		oComboBox.syncPickerContent();
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length - 2, oComboBox._getList().getItems().length, "On init the List item should be the same as the enabled core items");
@@ -10463,9 +10463,12 @@ sap.ui.define([
 		// Act
 		oComboBox.open();
 		assert.strictEqual(oComboBox.getVisibleItems().length, oComboBox._getList().getItems().length, "ComboBox should not display disabled items as a suggestions");
+		sap.ui.getCore().applyChanges();
 
 		// Act
 		vTemp = oComboBox.removeAllItems();
+		oComboBox.syncPickerContent();
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10475,6 +10478,7 @@ sap.ui.define([
 		// Act
 		vTemp = aItems.pop();
 		oComboBox.addItem(vTemp);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10482,6 +10486,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.removeItem(vTemp);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10491,6 +10496,7 @@ sap.ui.define([
 		oComboBox.insertItem(aItems[0]);
 		oComboBox.insertItem(aItems[1]);
 		oComboBox.insertItem(aItems[2], 1);
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");
@@ -10499,6 +10505,7 @@ sap.ui.define([
 
 		// Act
 		oComboBox.destroyItems();
+		sap.ui.getCore().applyChanges();
 
 		// Assert
 		assert.strictEqual(oComboBox.getItems().length, oComboBox._getList().getItems().length, "The List item should be the same as core items");

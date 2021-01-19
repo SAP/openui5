@@ -179,20 +179,7 @@ sap.ui.define([
 			});
 		}
 
-		if (Device.system.phone) {
-			// oList needs to be manually rendered otherwise it triggers a rerendering of the whole
-			// dialog and may close the opened on screen keyboard
-			oPopover.addAggregation("content", oList, true);
-			var oRenderTarget = oPopover.$("scrollCont")[0];
-			if (oRenderTarget) {
-				var rm = sap.ui.getCore().createRenderManager();
-				rm.renderControl(oList);
-				rm.flush(oRenderTarget);
-				rm.destroy();
-			}
-		} else {
-			this.addContent(oList);
-		}
+		this.addContent(oList);
 	};
 
 	/**

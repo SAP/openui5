@@ -87,6 +87,12 @@ sap.ui.define([
 		return oPopup.isA("sap.m.Popover") ? aContents[0] : aContents[1];
 	}
 
+	function getVisibleItems (oPopup) {
+		return getPopupItemsContent(oPopup).getItems().filter(function (oItem) {
+			return oItem.getVisible();
+		});
+	}
+
 	var i1;
 	var i2;
 	var value = "value";
@@ -488,6 +494,7 @@ sap.ui.define([
 
 		// change event should be fired only when the input is on focus
 		oInput.onfocusin();
+		sap.ui.getCore().applyChanges();
 
 		function checkSubmit(sText, bSubmitExpected, bChangeExpected, sExpectedValue) {
 			var e = "";
@@ -514,23 +521,37 @@ sap.ui.define([
 
 		checkSubmit("Enter pressed without change", true, false, "");
 		oInput.$("inner").val("hello");
+		sap.ui.getCore().applyChanges();
+
 		checkSubmit("Enter pressed after change", true, true, "hello");
 		oInput.setEnabled(false);
+		sap.ui.getCore().applyChanges();
+
 		checkSubmit("Enter pressed on disabled field", false, false);
 		oInput.setEnabled(true);
 		oInput.setEditable(false);
+		sap.ui.getCore().applyChanges();
+
 		checkSubmit("Enter pressed on readonly field", false, false);
 		oInput.setEditable(true);
 		oInput.setShowValueHelp(true);
+		sap.ui.getCore().applyChanges();
+
 		checkSubmit("Enter pressed on field with value help", true, false, "hello");
 		oInput.setValueHelpOnly(true);
+		sap.ui.getCore().applyChanges();
+
 		checkSubmit("Enter pressed on field with value help only", false, false);
 		oInput.setShowValueHelp(false);
 		oInput.setValueHelpOnly(false);
+		sap.ui.getCore().applyChanges();
+
 
 		// Enter on Suggestions
 		if (Device.system.desktop) {
 			oInput.setShowSuggestion(true);
+			sap.ui.getCore().applyChanges();
+
 			var aItemsAdded = [];
 			oInput.attachSuggest(function() {
 				var aNames = ["abcTom", "abcPhilips", "abcAnna"];
@@ -546,6 +567,7 @@ sap.ui.define([
 			oInput.onfocusin();
 			oInput._$input.trigger("focus").val("abc").trigger("input");
 			this.clock.tick(300);
+			sap.ui.getCore().applyChanges();
 
 			assert.ok(oInput._getSuggestionsPopover() && oInput._getSuggestionsPopover().getPopover().isOpen && oInput._getSuggestionsPopover().getPopover().isOpen(), "Suggestion Popup is open now");
 			qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
@@ -1050,6 +1072,8 @@ sap.ui.define([
 			}
 		});
 
+		sap.ui.getCore().applyChanges();
+
 		oInput6.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput6._$input.trigger("focus").val("abc").trigger("input");
 
@@ -1064,13 +1088,12 @@ sap.ui.define([
 		oInput6._$input.trigger("focus").val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		assert.equal(getPopupItemsContent(oPopup).getItems().length, 1, "Suggestions are filtered");
+		assert.equal(getVisibleItems(oPopup).length, 1, "Suggestions are filtered");
 
 		//close the popoup when nothing is typed in input
 		oInput6._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(300);
 		assert.ok(!oPopup.isOpen(), "Suggestion Popup is closed");
-		assert.equal(getPopupItemsContent(oPopup).getItems().length, 0, "Suggestions are destroyed");
 
 		oInput6.destroy();
 	});
@@ -1298,7 +1321,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Two Value Suggestion on Desktop", function(assert){
-		var $Input = oInput7.$(),
+
+		var oInput = new Input({
+			showSuggestion: true
+		});
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		var $Input = oInput.$(),
 			oPopup1,
 			aItems,
 			aNames = ["abcTom", "abcPhilips", "abcAnna"],
@@ -1306,20 +1337,23 @@ sap.ui.define([
 			aItemAdded = [],
 			i;
 
-		oInput7.attachSuggest(function(){
+		oInput.attachSuggest(function(){
 			for (i = 0 ; i < aNames.length ; i++){
 				if (jQuery.inArray(aNames[i], aItemAdded) === -1){
-					oInput7.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i]}));
+					oInput.addSuggestionItem(new ListItem({text: aNames[i], additionalText: aDescription[i]}));
 					aItemAdded.push(aNames[i]);
 				}
 			}
+
+			sap.ui.getCore().applyChanges();
 		});
 
-		oInput7.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput7._$input.trigger("focus").val("abc").trigger("input");
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.trigger("focus").val("abc").trigger("input");
+		sap.ui.getCore().applyChanges();
 
 		this.clock.tick(300);
-		oPopup1 = oInput7._getSuggestionsPopover().getPopover();
+		oPopup1 = oInput._getSuggestionsPopover().getPopover();
 		aItems = oPopup1.getContent()[0].getItems();
 
 		assert.ok(oPopup1 instanceof sap.m.Popover, "Two Value Suggestion Popup is created and is a Popover instance");
@@ -1329,12 +1363,12 @@ sap.ui.define([
 		assert.ok(aItems[0].getTitle(), aNames[0], "Suggestion item has a title set equal to the ListItem's text");
 		assert.ok(aItems[0].getInfo(), aDescription[0], "Suggestion item has an info set equal to the ListItem's additionalText");
 
-		oInput7._$input.trigger("focus").val("abcT").trigger("input");
+		oInput._$input.trigger("focus").val("abcT").trigger("input");
 		this.clock.tick(400);
 
 		aItems = oPopup1.getContent()[0].getItems();
 		assert.ok(oPopup1.isOpen(), "Two Value Suggestion Popup is still open now");
-		assert.equal(aItems.length, 1, "Suggestions are filtered");
+		assert.equal(getVisibleItems(oPopup1).length, 1, "Suggestions are filtered");
 
 		//trigger selection
 		var oList = oPopup1.getContent()[0];
@@ -1343,17 +1377,16 @@ sap.ui.define([
 		this.clock.tick(400);
 
 		assert.ok(!oPopup1.isOpen(), "Two Value Suggestion Popup is closed");
-		assert.equal(oInput7.getValue(), aNames[0], "Input value is set to first value of selected suggestion item");
+		assert.equal(oInput.getValue(), aNames[0], "Input value is set to first value of selected suggestion item");
 
 		//close the popoup when nothing is typed in input
-		oInput7._$input.trigger("focus").val("").trigger("input");
+		oInput._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(300);
 
 		aItems = oPopup1.getContent()[0].getItems();
 		assert.ok(!oPopup1.isOpen(), "Two Value Suggestion Popup is closed");
-		assert.equal(aItems.length, 0, "Suggestions are destroyed");
 
-		oInput7.destroy();
+		oInput.destroy();
 	});
 
 	QUnit.test("Two Value Suggestions with disabled items on Desktop", function(assert){
@@ -1597,12 +1630,12 @@ sap.ui.define([
 		oInput._getSuggestionsPopover().getInput()._$input.trigger("focus").val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		assert.equal(getPopupItemsContent(oPopup).getItems().length, 1, "Suggestions are filtered");
+		assert.equal(getVisibleItems(oPopup).length, 1, "Suggestions are filtered");
 
 		oInput._getSuggestionsPopover().getInput()._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is still open now");
-		assert.equal(getPopupItemsContent(oPopup).getItems().length, 0, "Suggestions are destroyed");
+		assert.equal(getVisibleItems(oPopup).length, 0, "All Suggestions are hidden");
 
 		oInput._getSuggestionsPopover().getInput()._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(400);
@@ -1719,12 +1752,12 @@ sap.ui.define([
 		oInput._getSuggestionsPopover().getInput()._$input.trigger("focus").val("abcT").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Two value Suggestion Popup is still open now");
-		assert.equal(getPopupItemsContent(oPopup).getItems().length, 1, "Suggestions are filtered");
+		assert.equal(getVisibleItems(oPopup).length, 1, "Suggestions are filtered");
 
 		oInput._getSuggestionsPopover().getInput()._$input.trigger("focus").val("").trigger("input");
 		this.clock.tick(400);
 		assert.ok(oPopup.isOpen(), "Two value Suggestion Popup is still open now");
-		assert.equal(getPopupItemsContent(oPopup).getItems().length, 0, "Suggestions are destroyed");
+		assert.equal(getVisibleItems(oPopup).length, 0, "All Suggestions are hidden");
 
 		oInput._getSuggestionsPopover().getInput()._$input.trigger("focus").val("abc").trigger("input");
 		this.clock.tick(400);
@@ -1767,48 +1800,6 @@ sap.ui.define([
 		oInput._getSuggestionsPopover().getInput()._$input.trigger("focus").val("abc").trigger("input");
 
 		assert.equal(fnLC1.callCount, 1, "liveChange handler on original input is called");
-
-		oInput.destroy();
-	});
-
-	QUnit.test("SuggestionPopup shouldn't invalidate when insert suggest item on phone", function(assert){
-		var oSystem = {
-				desktop: false,
-				phone: true,
-				tablet: false
-			};
-
-		this.stub(Device, "system", oSystem);
-
-		var oInput = new Input({
-			showSuggestion: true,
-			suggest: function(oEvent) {
-				var sValue = oEvent.getParameter("suggestValue");
-				if (sValue) {
-					this.addSuggestionItem(new Item({
-						text: sValue
-					}));
-				}
-			}
-		});
-
-		oInput.placeAt("content");
-		sap.ui.getCore().applyChanges();
-
-		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
-		oInput.ontap({
-			target: {
-				id: oInput.getId()
-			}
-		});
-		this.clock.tick(500);
-		var oSpy = this.spy(oInput._getSuggestionsPopover().getPopover(), "invalidate");
-		oInput._getSuggestionsPopover().getInput()._$input.trigger("focus").val("abc").trigger("input");
-		this.clock.tick(400);
-
-		assert.equal(oInput.getSuggestionItems().length, 1, "Suggestion Item is inserted");
-
-		assert.equal(oSpy.callCount, 0, "invalidate isn't called on dialog instance");
 
 		oInput.destroy();
 	});
@@ -2384,8 +2375,7 @@ sap.ui.define([
 			}
 		});
 
-		// set up a spy on the dialog's renderer
-		oDialogRendererSpy = sinon.spy(DialogRenderer, "render");
+
 
 		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
 		oInput.ontap({
@@ -2399,6 +2389,8 @@ sap.ui.define([
 		assert.ok(oPopup instanceof Dialog, "Suggestion Popup is created and is a Dialog instance");
 		assert.ok(oPopup.isOpen(), "Suggestion Popup is open now");
 
+		// set up a spy on the dialog's renderer
+		oDialogRendererSpy = sinon.spy(DialogRenderer, "render");
 		oInput._getSuggestionsPopover().getInput()._$input.trigger("focus").val("Product").trigger("input");
 		this.clock.tick(400);
 		assert.equal(getPopupItemsContent(oPopup).getItems().length, oSuggestionData.tabularSuggestionItems.length, "Suggestions are inserted");
@@ -3049,8 +3041,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.setShowSuggestion(true);
+		sap.ui.getCore().applyChanges();
 
-		assert.ok(oInput._getSuggestionsPopover().getItemsContainer(), "List instance is created");
 		assert.ok(oInput._getSuggestionsPopover().getPopover(), "Suggestion Popup instance is created");
 		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
 		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
@@ -3155,7 +3147,6 @@ sap.ui.define([
 
 		oInput.setShowSuggestion(true);
 
-		assert.ok(oInput._getSuggestionsPopover().getItemsContainer(), "List instance is created");
 		assert.ok(oInput._getSuggestionsPopover().getPopover(), "Suggestion Popup instance is created");
 		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter() instanceof sap.m.Toolbar, "Suggestion Popup has Toolbar footer");
 		assert.ok(oInput._getSuggestionsPopover().getPopover().getFooter().getContent()[1] instanceof Button, "Suggestion Popup has showMoreButton");
@@ -3187,8 +3178,12 @@ sap.ui.define([
 			suggestionItems: [new Item({text: "test"})]
 		});
 
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
 		// act
 		oInput.setShowSuggestion(true); // set show suggestion after items are added
+		sap.ui.getCore().applyChanges();
 
 		// assert
 		assert.ok(oInput._getSuggestionsPopover().getItemsContainer(), "List should be created when enabling suggestions");
@@ -3515,38 +3510,55 @@ sap.ui.define([
 		assert.equal(oInput.getValue(), "", "Initially when the input has selected key but no suggestion items it's value has to be empty");
 
 		oInput.setModel(oModelData);
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(oInput.getValue(), "a1", "After a json model is set and one of the items has key that item has to be selected");
 
 
 		oInput.setSelectedKey("a3");
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(oInput.getValue(), "", "After setting new selected key which is not in the list items the value should be empyt");
 
 		oInput.setValue("New value");
 
 		oInput.setSelectedKey("");
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(oInput.getValue(), "", "After the selected key to empty string, the value should be cleared");
 
 		oInput.setSelectedKey("a3");
 
 		oInput.setValue('');
 		oInput.addSuggestionItem(new Item({text: "a3", key: "a3"}));
+		sap.ui.getCore().applyChanges();
 
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.removeAllSuggestionItems();
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(oInput.getValue(), "", "The value must be cleared after removing all items");
 
 		oInput.addSuggestionItem(new Item({text: "a3", key: "a3"}));
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.destroySuggestionItems();
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(oInput.getValue(), "", "The value must be cleared after destroying all items");
 
 		var oItem = new Item({text: "a3", key: "a3"});
 		oInput.addSuggestionItem(oItem);
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(oInput.getValue(), "a3", "The value must be set to the selected key");
 
 		oInput.removeSuggestionItem(oItem);
+		sap.ui.getCore().applyChanges();
+
 		assert.equal(oInput.getValue(), "", "The value must be cleared after removing item");
 
 		oItem.destroy();
@@ -4883,7 +4895,7 @@ sap.ui.define([
 		assert.ok(oPopupInput._bDoTypeAhead, "Type ahead should be allowed when pressing 'B'.");
 		assert.strictEqual(oPopupInput.getValue(), "united Kingdom", "Input value should be autocompleted and character casing should be preserved.");
 		assert.strictEqual(oPopupInput.getSelectedText(), "ted Kingdom", "Suggested value should be selected");
-		assert.strictEqual(oPopover.getPopover().getContent()[1].getItems()[2].getSelected(), true, "Correct item in the Suggested list is selected");
+		assert.strictEqual(getVisibleItems(oPopover.getPopover())[2].getSelected(), true, "Correct item in the Suggested list is selected");
 
 		// act
 		qutils.triggerKeydown(oPopupInput._$input, KeyCodes.ENTER);
@@ -4916,6 +4928,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oInput.onsapright();
+		sap.ui.getCore().applyChanges();
 
 		assert.equal(fnLiveChange.callCount, 0, "liveChange handler is not fired");
 
@@ -5690,13 +5703,15 @@ sap.ui.define([
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
 		sap.ui.getCore().applyChanges();
 
+		this.oInput._getSuggestionsPopover().getPopover().attachAfterOpen(function () {
+			oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
+
+			// Assert
+			assert.strictEqual(oSuggPopoverHeaderValueState, "Another value state message containing multiple links", "New FormattedText value state message is correcrtly set in the popover's value state header");
+		}, this);
+
 		this.oInput._openSuggestionsPopover();
-		this.clock.tick();
-
-		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
-
-		// Assert
-		assert.strictEqual(oSuggPopoverHeaderValueState, "Another value state message containing multiple links", "New FormattedText value state message is correcrtly set in the popover's value state header");
+		this.clock.tick(300);
 	});
 
 	QUnit.test("Change to the formatted text input aggregation should also be change in the value state header", function (assert) {
@@ -5713,17 +5728,20 @@ sap.ui.define([
 
 		// Act
 		this.oInput.setFormattedValueStateText(oFormattedValueStateText);
+		sap.ui.getCore().applyChanges();
 
 		this.oInput._getFormattedValueStateText().setHtmlText("New value state message containing a %%0");
 		sap.ui.getCore().applyChanges();
 
+		this.oInput._getSuggestionsPopover().getPopover().attachAfterOpen(function () {
+			oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
+
+			// Assert
+			assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly updated in the popover's value state header");
+		}, this);
+
 		this.oInput._openSuggestionsPopover();
-		this.clock.tick();
-
-		oSuggPopoverHeaderValueState = this.oInput._getSuggestionsPopover().getPopover().getCustomHeader().getFormattedText().getDomRef().textContent;
-
-		// Assert
-		assert.strictEqual(oSuggPopoverHeaderValueState, "New value state message containing a link", "The FormattedText aggregation is correctly updated in the popover's value state header");
+		this.clock.tick(300);
 	});
 
 	QUnit.test("Change to the formatted text input aggregation should also be reflected in the value state header while it is open", function (assert) {
@@ -6138,8 +6156,10 @@ sap.ui.define([
 		this.oInput.showItems();
 		sap.ui.getCore().applyChanges();
 
+		this.clock.tick(500);
+
 		// Assert
-		assert.strictEqual(this.oInput._getSuggestionsPopover().getItemsContainer().getItems().length, 5, "Shows all items");
+		assert.strictEqual(getVisibleItems(this.oInput._getSuggestionsPopover().getPopover()).length, 5, "Shows all items");
 	});
 
 	QUnit.test("Should filter the items", function (assert) {
@@ -6150,7 +6170,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oInput._getSuggestionsPopover().getItemsContainer().getItems().length, 1, "Show only the matching items");
+		assert.strictEqual(getVisibleItems(this.oInput._getSuggestionsPopover().getPopover()).length, 1, "Show only the matching items");
 	});
 
 	QUnit.module("showItems functionality: Table", {
