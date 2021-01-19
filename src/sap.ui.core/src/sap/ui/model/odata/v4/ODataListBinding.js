@@ -1586,14 +1586,14 @@ sap.ui.define([
 
 		if (iStart !== 0 && this.bUseExtendedChangeDetection) {
 			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
-				+ " first parameter must be 0 if extended change detection is enabled, but is "
-				+ iStart);
+				+ " iStart must be 0 if extended change detection is enabled, but is " + iStart);
 		}
 
 		if (this.bUseExtendedChangeDetection) {
 			if (iMaximumPrefetchSize !== undefined) {
 				throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
-					+ " third parameter must not be set if extended change detection is enabled");
+					+ " iMaximumPrefetchSize must not be set if extended change detection is"
+					+ " enabled");
 			}
 			if (bKeepCurrent) {
 				throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"

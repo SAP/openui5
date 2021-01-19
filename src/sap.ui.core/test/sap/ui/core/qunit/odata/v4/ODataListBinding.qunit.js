@@ -2623,13 +2623,13 @@ sap.ui.define([
 		oBinding.enableExtendedChangeDetection();
 		assert.throws(function () { //TODO implement?
 			oBinding.getContexts(0, 42, 0);
-		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, third"
-				+ " parameter must not be set if extended change detection is enabled"));
+		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, iMaximumPrefetchSize"
+				+ " must not be set if extended change detection is enabled"));
 
 		assert.throws(function () {
 			oBinding.getContexts(42);
-		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, first parameter "
-			+ "must be 0 if extended change detection is enabled, but is 42"));
+		}, new Error("Unsupported operation: v4.ODataListBinding#getContexts, iStart must be 0"
+			+ " if extended change detection is enabled, but is 42"));
 
 		assert.throws(function () {
 			oBinding.getContexts(0, 10, undefined, true);
