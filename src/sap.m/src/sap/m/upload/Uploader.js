@@ -70,12 +70,12 @@ sap.ui.define([
 						 * The number of bytes transferred since the beginning of the operation.
 						 * This doesn't include headers and other overhead, but only the content itself
 						 */
-						loaded: {type: "long"},
+						loaded: {type: "int"},
 						/**
 						 * The total number of bytes of content that will be transferred during the operation.
 						 * If the total size is unknown, this value is zero.
 						 */
-						total: {type: "long"}
+						total: {type: "int"}
 					}
 				},
 				/**
