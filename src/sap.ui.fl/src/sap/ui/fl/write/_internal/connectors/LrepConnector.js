@@ -63,7 +63,8 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.url Configured url for the connector
 	 * @param {string} [mPropertyBag.transport] The transport ID
 	 * @param {boolean} [mPropertyBag.isLegacyVariant] Whether the new flex data has file type .variant or not
-	 * @param {boolean} [mPropertyBag.isAppVariant] indicator whether this is an app variant
+	 * @param {boolean} [mPropertyBag.isAppVariant] Indicator whether this is an app variant
+	 * @param {boolean} [mPropertyBag.isContextSharing] Indicator whether this is a request for context sharing
 	 * @param {boolean} [mPropertyBag.skipIam=false] - Indicates whether the default IAM item creation and registration is skipped. This is S4/Hana specific flag passed by only Smart Business
 	 * @private
 	 * @returns {Promise} Promise resolves as soon as the writing was completed
@@ -74,6 +75,8 @@ sap.ui.define([
 			sRoute = ROUTES.VARIANTS;
 		} else if (mPropertyBag.isAppVariant) {
 			sRoute = ROUTES.APPVARIANTS;
+		} else if (mPropertyBag.isContextSharing) {
+			sRoute = ROUTES.CONTEXTS;
 		} else if (mPropertyBag.isCondensingEnabled) {
 			sRoute = ROUTES.CONDENSE;
 		} else {
@@ -323,6 +326,21 @@ sap.ui.define([
 
 			var sContextsUrl = InitialUtils.getUrl(ROUTES.CONTEXTS, mPropertyBag, mParameters);
 			return InitialUtils.sendRequest(sContextsUrl).then(function (oResult) {
+				return oResult.response;
+			});
+		},
+
+		/**
+		 * Loads the variant management context description in the correct language based on the browser configuration.
+		 *
+		 * @param {object} mPropertyBag Property bag
+		 * @param {string} mPropertyBag.flexObjects Payload for the post request
+		 * @returns {Promise<object>} Promise resolves as soon as context descriptions have been retrieved
+		 */
+		loadContextDescriptions: function (mPropertyBag) {
+			mPropertyBag.method = "POST";
+			mPropertyBag.isContextSharing = true;
+			return _doWrite(mPropertyBag).then(function (oResult) {
 				return oResult.response;
 			});
 		},

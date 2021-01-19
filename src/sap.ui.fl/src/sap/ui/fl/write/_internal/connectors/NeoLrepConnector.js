@@ -34,6 +34,23 @@ sap.ui.define([
 		 */
 		isContextSharingEnabled: function () {
 			return Promise.resolve(false);
+		},
+		/**
+		 * Loads the variant management context description in the correct language based on the browser configuration.
+		 *
+		 * @returns {Promise<object>} Promise rejects
+		 */
+		loadContextDescriptions: function(/* mPropertyBag */) {
+			return Promise.reject("loadContextsDescriptions is not implemented");
+		},
+
+		/**
+		 * Gets the variant management context information.
+		 *
+		 * @returns {Promise<object>} Promise rejects
+		 */
+		getContexts: function(/* mPropertyBag */) {
+			return Promise.reject("getContexts is not implemented");
 		}
 	});
 }, true);
