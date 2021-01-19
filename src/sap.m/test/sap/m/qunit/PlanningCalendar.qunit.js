@@ -1934,7 +1934,25 @@ sap.ui.define([
 		// cleanup
 		oPC.destroy();
 	});
+	QUnit.test("Sticky header resizing", function (assert) {
+		// arrange
+		var oPCWithSticky = new PlanningCalendar({
+			stickyHeader: true
+		});
+		oPCWithSticky.placeAt("bigUiArea");
+		sap.ui.getCore().applyChanges();
 
+		//act
+		var oResizingSpy = sinon.spy(oPCWithSticky, "_adjustColumnHeadersTopOffset");
+		oPCWithSticky.setWidth("800px");
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oResizingSpy.calledThrice, "_adjustColumnHeadersTopOffset is called three times");
+
+		// cleanup
+		oPCWithSticky.destroy();
+	});
 
 	QUnit.test("singleSelection setter", function() {
 		var oTable = sap.ui.getCore().byId("SelectionMode-Table");
