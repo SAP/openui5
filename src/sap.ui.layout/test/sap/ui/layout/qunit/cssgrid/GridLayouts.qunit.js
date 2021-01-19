@@ -635,8 +635,7 @@ sap.ui.define([
 		assert.notOk(this.oGridLayout.getActiveGridSettings(), "Should have no Grid settings");
 	});
 
-	QUnit.test("onGridAfterRendering", function (assert) {
-
+	QUnit.test("'layoutChange' event is fired once initially", function (assert) {
 		// Arrange
 		var $GridMock = jQuery("<div></div>", { width: 500 });
 		var oGridMock = {
@@ -657,8 +656,14 @@ sap.ui.define([
 		this.oGridLayout.onGridAfterRendering(oGridMock);
 
 		// Assert
-		assert.ok(this.fnLayoutChangeHandler.notCalled, "Should not trigger layoutChange onAfterRendering of the grid");
-		assert.ok(this.oGridLayout._applyLayout.calledOnce, "Should add size class when layout is applied");
+		assert.ok(this.fnLayoutChangeHandler.called, "'layoutChange' event is fired initially");
+
+		// Act
+		this.fnLayoutChangeHandler.reset();
+		this.oGridLayout.onGridAfterRendering(oGridMock);
+
+		// Assert
+		assert.ok(this.fnLayoutChangeHandler.notCalled, "'layoutChange' event is NOT fired if layout didn't change");
 	});
 
 	QUnit.test("Resize", function (assert) {
