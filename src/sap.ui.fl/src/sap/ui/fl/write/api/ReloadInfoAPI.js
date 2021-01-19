@@ -21,6 +21,11 @@ sap.ui.define([
 	"use strict";
 
 	function isDraftAvailable(oReloadInfo) {
+		var bUrlHasVersionParameter = !!Utils.getParameter(sap.ui.fl.Versions.UrlParameter);
+		if (bUrlHasVersionParameter) {
+			return Promise.resolve(false);
+		}
+
 		return FeaturesAPI.isVersioningEnabled(oReloadInfo.layer).then(function(bVersioningAvailable) {
 			return bVersioningAvailable && VersionsAPI.isDraftAvailable({
 				selector: oReloadInfo.selector,
@@ -30,15 +35,17 @@ sap.ui.define([
 	}
 
 	function areHigherLayerChangesAvailable(oReloadInfo) {
+		var bUrlHasMaxLayerParameter = this.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
 		var bUserLayer = oReloadInfo.layer === Layer.USER;
-		if (bUserLayer) {
+		if (bUserLayer || bUrlHasMaxLayerParameter) {
 			return Promise.resolve(false);
 		}
 
 		return PersistenceWriteAPI.hasHigherLayerChanges({
 			selector: oReloadInfo.selector,
 			ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
-			upToLayer: oReloadInfo.layer
+			upToLayer: oReloadInfo.layer,
+			includeCtrlVariants: oReloadInfo.includeCtrlVariants
 		});
 	}
 
@@ -64,14 +71,9 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolving to an object with the reload reasons
 		 */
 		getReloadReasonsForStart: function(oReloadInfo) {
-			var bUrlHasMaxLayerParameter = ReloadInfoAPI.hasMaxLayerParameterWithValue({value: oReloadInfo.layer});
-			var bUrlHasVersionParameter = !!Utils.getParameter(sap.ui.fl.Versions.UrlParameter);
-
 			return Promise.all([
-				(!bUrlHasMaxLayerParameter) ?
-					areHigherLayerChangesAvailable(oReloadInfo) : false,
-				(!bUrlHasVersionParameter) ?
-					isDraftAvailable(oReloadInfo) : false
+				areHigherLayerChangesAvailable.call(this, oReloadInfo),
+				isDraftAvailable(oReloadInfo)
 			]).then(function(aReasons) {
 				oReloadInfo.hasHigherLayerChanges = aReasons[0];
 				oReloadInfo.isDraftAvailable = aReasons[1];
