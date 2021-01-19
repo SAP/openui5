@@ -90,9 +90,9 @@ sap.ui.define([
 				},
 
 				/**
-				 * If set there is no invalid user input.
+				 * If set, there has been no invalid user input.
 				 *
-				 * <b>Note:</b> This property must not set from outside. It just is a property because in this case it can be bound to the
+				 * <b>Note:</b> This property must not be set from outside. It is a property because that way it can be bound to the
 				 * <code>ManagedObjectModel</code> of the calling field help and automatically update it.
 				 *
 				 * @since 1.87.0
