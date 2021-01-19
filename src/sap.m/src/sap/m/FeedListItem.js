@@ -272,6 +272,8 @@ function(
 			oActionSheet.addButton(new Button({
 				icon: oAction.getIcon(),
 				text: oAction.getText(),
+				visible: oAction.getVisible(),
+				enabled: oAction.getEnabled(),
 				press: oAction.firePress.bind(oAction, { "item": this })
 			}));
 		}
