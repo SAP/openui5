@@ -63,6 +63,14 @@ sap.ui.define([
 		assert.ok(bResult, "Should match control with exact property path and model name");
 	});
 
+	QUnit.test("Should not match if binding is static", function (assert) {
+		var oBindingPath = new BindingPath({
+			propertyPath: "hello"
+		});
+		var bResult = oBindingPath.isMatching(this.oStaticPropertyText);
+		assert.ok(!bResult, "Should not match and not throw an exception when binding is static");
+	});
+
 	QUnit.test("Should not match property path if model name is different", function (assert) {
 		var oBindingPath = new BindingPath({
 			modelName: "name",
