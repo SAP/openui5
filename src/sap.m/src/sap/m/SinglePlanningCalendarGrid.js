@@ -724,6 +724,7 @@ sap.ui.define([
 						return;
 					}
 
+					var oBrowserEvent = oEvent.getParameter("browserEvent");
 					var $SPCGridOverlay = this.$().find(".sapMSinglePCOverlay");
 
 					setTimeout(function () {
@@ -737,7 +738,7 @@ sap.ui.define([
 					});
 
 					if (!Device.browser.msie && !Device.browser.edge) {
-						oEvent.getParameter("browserEvent").dataTransfer.setDragImage(getResizeGhost(), 0, 0);
+						oBrowserEvent.dataTransfer.setDragImage(getResizeGhost(), 0, 0);
 					}
 
 					var oGrid = oEvent.getParameter("target"),
@@ -746,7 +747,7 @@ sap.ui.define([
 						iIntervalHeight = oFirstIntervalRectangle.height,
 						iIntervalIndexOffset = Math.floor((oFirstIntervalRectangle.top - oGrid.getDomRef().getBoundingClientRect().top) / iIntervalHeight),
 						oDragSession = oEvent.getParameter("dragSession"),
-						iIndexInColumn  = Math.floor(oEvent.getParameter("browserEvent").offsetY / iIntervalHeight) - iIntervalIndexOffset,
+						iIndexInColumn  = Math.floor(oBrowserEvent.offsetY / iIntervalHeight) - iIntervalIndexOffset,
 						iIntervalIndex,
 						oCurrentIntervalBoundingRectangle;
 
@@ -756,7 +757,7 @@ sap.ui.define([
 						var iHeaderSize = 64,
 							iBordersWidth = 2,
 							iIntervalWidth = Math.floor(aIntervalPlaceholders[0].getDomRef().getBoundingClientRect().width) - iBordersWidth,
-							iColumnsFromStart = Math.floor(Math.floor((oEvent.getParameter("browserEvent").clientX - iHeaderSize)) / iIntervalWidth),
+							iColumnsFromStart = Math.floor(Math.floor((oBrowserEvent.offsetX - iHeaderSize)) / iIntervalWidth),
 							iIntervalsInColumn = aIntervalPlaceholders.length / this._iColumns;
 
 						iIntervalIndex = iIndexInColumn + ((iColumnsFromStart) * iIntervalsInColumn);
