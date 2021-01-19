@@ -121,13 +121,16 @@ sap.ui.define([
 		 *
 		 * @override
 		 * @param oInput
-		 * @param oPopupInput
 		 * @param mOptions
 		 * @returns {sap.m.Dialog}
 		 */
-		this.createPopover = function (oInput, oPopupInput, mOptions) {
+		this.createPopover = function (oInput, mOptions) {
 			var oMessageBundle = Core.getLibraryResourceBundle("sap.m"),
-				that = this;
+				that = this,
+				oPopupInput = new sap.m.Input(oInput.getId() + "-popup-input", {
+					width: "100%",
+					showValueStateMessage: false
+				});
 
 			return new Dialog(oInput.getId() + "-popup", {
 				beginButton: new Button(oInput.getId() + "-popup-closeButton", {
@@ -153,6 +156,16 @@ sap.ui.define([
 					library.closeKeyboard();
 				}
 			});
+		};
+
+		this.getInput = function () {
+			var oPopover = this.getPopover(),
+				aSubHeader = oPopover && oPopover.getSubHeader(),
+				aSubHeaderContent = aSubHeader && aSubHeader.getContent();
+
+			return aSubHeaderContent && aSubHeaderContent.filter(function (oControl) {
+				return oControl.isA("sap.m.InputBase");
+			})[0];
 		};
 
 		/**

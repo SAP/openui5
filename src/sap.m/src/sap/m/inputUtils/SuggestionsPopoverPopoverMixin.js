@@ -20,11 +20,9 @@ sap.ui.define([
 		 *
 		 * @override
 		 * @param oInput
-		 * @param oPopupInput
-		 * @param mOptions
 		 * @returns {sap.m.Popover}
 		 */
-		this.createPopover = function (oInput, oPopupInput, mOptions) {
+		this.createPopover = function (oInput) {
 			var that = this,
 				oPopover = new Popover(oInput.getId() + "-popup", {
 					showArrow: false,

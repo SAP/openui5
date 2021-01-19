@@ -571,7 +571,7 @@ function(
 				oScroll.scrollTo(0, 0, 0);
 			}
 
-			this._getSuggestionsPopoverInstance()._oPopupInput.focus();
+			this._getSuggestionsPopoverInstance().getInput().focus();
 		}
 		this._bTokenIsAdded = false;
 	};
@@ -888,8 +888,8 @@ function(
 		if (bValidated) {
 			this.setValue("");
 			this._bTokenIsValidated = true;
-			if (this.isMobileDevice() && oSuggestionsPopover && oSuggestionsPopover._oPopupInput && (iOldLength < iNewLength)) {
-				oSuggestionsPopover._oPopupInput.setValue("");
+			if (this.isMobileDevice() && oSuggestionsPopover && oSuggestionsPopover.getInput() && (iOldLength < iNewLength)) {
+				oSuggestionsPopover.getInput().setValue("");
 			}
 		}
 	};
@@ -1331,8 +1331,8 @@ function(
 
 		this.setDOMValue('');
 
-		if (oSuggestionsPopover._oPopupInput) {
-			oSuggestionsPopover._oPopupInput.setDOMValue('');
+		if (oSuggestionsPopover.getInput()) {
+			oSuggestionsPopover.getInput().setDOMValue('');
 		}
 	};
 
@@ -1387,8 +1387,21 @@ function(
 		return oInfo;
 	};
 
-	MultiInput.prototype._modifyPopupInput = function (oPopupInput) {
+	/**
+	 * Decorates Input
+	 *
+	 * @param oPopupInput {sap.m.InputBase}
+	 * @returns {*}
+	 * @private
+	 * @ui5-restricted
+	 */
+	MultiInput.prototype._decoratePopupInput = function (oPopupInput) {
+		Input.prototype._decoratePopupInput.apply(this, arguments);
 		var that = this;
+
+		if (!oPopupInput) {
+			return;
+		}
 
 		oPopupInput.addEventDelegate({
 			oninput: that._manageListsVisibility.bind(that, false),

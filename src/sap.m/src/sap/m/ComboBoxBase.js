@@ -215,8 +215,18 @@ sap.ui.define([
 			highlightDOMElements(aListItemsDOM, sValue);
 		};
 
-		ComboBoxBase.prototype._modifyPopupInput = function (oInput) {
-			this.setTextFieldHandler(oInput);
+		/**
+		 * Decorates the Input
+		 *
+		 * @param oInput {sap.m.InputBase}
+		 * @returns {*}
+		 * @private
+		 * @ui5-restricted
+		 */
+		ComboBoxBase.prototype._decoratePopupInput = function (oInput) {
+			if (oInput) {
+				this.setTextFieldHandler(oInput);
+			}
 			return oInput;
 		};
 
@@ -806,21 +816,6 @@ sap.ui.define([
 			return bTablet;
 		};
 
-		/**
-		 * Creates an instance of <code>sap.m.ComboBoxTextField</code>.
-		 *
-		 * @returns {sap.m.ComboBoxTextField} The TextField instance
-		 * @private
-		 */
-		ComboBoxBase.prototype.createPickerTextField = function() {
-			var oInput = new Input({
-				width: "100%",
-				showValueStateMessage: false
-			});
-
-			return oInput;
-		};
-
 		/*
 		 * Gets the dropdown default settings.
 		 * @returns {object} A map object with the default settings
@@ -889,18 +884,11 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBoxBase.prototype._createSuggestionsPopover = function () {
-			var bUseDialog = this.isPickerDialog(),
-				oSuggPopover;
-
-			oSuggPopover = new SuggestionsPopover(this);
-
-			if (bUseDialog) {
-				var oInput = this.createPickerTextField();
-				oSuggPopover._oPopupInput = this._modifyPopupInput(oInput);
-			}
+			var oSuggPopover = new SuggestionsPopover(this);
 
 			// Creates the internal controls of the <code>SuggestionsPopover</code>
 			oSuggPopover.createSuggestionPopup({showSelectedButton: this._hasShowSelectedButton()});
+			this._decoratePopupInput(oSuggPopover.getInput());
 			oSuggPopover.initContent();
 			this.forwardEventHandlersToSuggPopover(oSuggPopover);
 
@@ -1019,10 +1007,9 @@ sap.ui.define([
 		 * @protected
 		 * @since 1.42
 		 */
-		ComboBoxBase.prototype.getPickerTextField = function() {
-			var oPicker = this.getPicker(),
-				oSubHeader = oPicker && oPicker.getSubHeader();
-			return oSubHeader && oSubHeader.getContent()[0] || null;
+		ComboBoxBase.prototype.getPickerTextField = function () {
+			var oSuggestionsPopover = this._getSuggestionsPopover();
+			return oSuggestionsPopover ? oSuggestionsPopover.getInput() : null;
 		};
 
 		/*

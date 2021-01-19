@@ -1375,7 +1375,7 @@ sap.ui.define([
 		assert.ok(oMI._getSuggestionsPopoverPopup().isOpen(), "The dialog is opened");
 
 		// Act
-		oPickerTextFieldDomRef = oMI._getSuggestionsPopoverInstance()._oPopupInput.getFocusDomRef();
+		oPickerTextFieldDomRef = oMI._getSuggestionsPopoverInstance().getInput().getFocusDomRef();
 
 		sap.ui.test.qunit.triggerCharacterInput(oPickerTextFieldDomRef, "test");
 		qutils.triggerKeydown(oPickerTextFieldDomRef, KeyCodes.ENTER);
@@ -1432,8 +1432,8 @@ sap.ui.define([
 		assert.ok(oSpy.called, "_togglePopup is called when N-more is pressed");
 
 		// Act
-		sap.ui.test.qunit.triggerCharacterInput(oMI._getSuggestionsPopoverInstance()._oPopupInput.getFocusDomRef(), "d");
-		qutils.triggerEvent("input", oMI._getSuggestionsPopoverInstance()._oPopupInput.getFocusDomRef());
+		sap.ui.test.qunit.triggerCharacterInput(oMI._getSuggestionsPopoverInstance().getInput().getFocusDomRef(), "d");
+		qutils.triggerEvent("input", oMI._getSuggestionsPopoverInstance().getInput().getFocusDomRef());
 		this.clock.tick(100);
 
 		// Assert
@@ -1474,7 +1474,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// assert
-		assert.strictEqual(oMI._getSuggestionsPopoverInstance()._oPopupInput.getValue(), "", "The dialog's input is cleared.");
+		assert.strictEqual(oMI._getSuggestionsPopoverInstance().getInput().getValue(), "", "The dialog's input is cleared.");
 
 		// clean up
 		oMI.destroy();
@@ -1685,9 +1685,9 @@ sap.ui.define([
 
 		// Act
 		oMultiInput._openSuggestionsPopover({});
-		oMultiInput._getSuggestionsPopoverInstance()._oPopupInput.focus();
-		oMultiInput._getSuggestionsPopoverInstance()._oPopupInput.updateDomValue("123");
-		qutils.triggerKeydown(oMultiInput._getSuggestionsPopoverInstance()._oPopupInput.getFocusDomRef(), KeyCodes.ENTER);
+		oMultiInput._getSuggestionsPopoverInstance().getInput().focus();
+		oMultiInput._getSuggestionsPopoverInstance().getInput().updateDomValue("123");
+		qutils.triggerKeydown(oMultiInput._getSuggestionsPopoverInstance().getInput().getFocusDomRef(), KeyCodes.ENTER);
 		this.clock.tick(nPopoverAnimationTick);
 
 		assert.strictEqual(oMultiInput.getAggregation("tokenizer").getTokens().length, 1, "Just a single token gets created");
