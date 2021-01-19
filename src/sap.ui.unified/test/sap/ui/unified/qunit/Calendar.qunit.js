@@ -300,19 +300,41 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// de-DE
-		aMonths = jQuery("#Cal2-content").children(".sapUiCalMonthView");
-		aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
-
-		assert.equal(jQuery(aWeekNumbers[0]).text(), "1", "week number 2011 first week for de-DE");
-		assert.equal(jQuery(aWeekNumbers[1]).text(), "2", "week number 2011 second week for de-DE");
-		this.oCal2.focusDate(new Date(2014, 0, 10));
+		// Prepare
+		sap.ui.getCore().getConfiguration().setLanguage("de-DE");
+		sap.ui.getCore().applyChanges();
+		this.oCal12 = new Calendar("Cal12",{
+			width: "400px"
+		}).placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
+		// Act
+		this.oCal12.focusDate(new Date(2011, 0, 10));
+		sap.ui.getCore().applyChanges();
+		aMonths = jQuery("#Cal12-content").children(".sapUiCalMonthView");
 		aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
-		assert.equal(jQuery(aWeekNumbers[0]).text(), "1", "week number 2011 first week for de-DE");
-		assert.equal(jQuery(aWeekNumbers[1]).text(), "2", "week number 2011 second week for de-DE");
 
+		// Assert
+		assert.equal(jQuery(aWeekNumbers[0]).text(), "52", "week number 2011 first week for de-DE");
+		assert.equal(jQuery(aWeekNumbers[1]).text(), "1", "week number 2011 second week for de-DE");
+
+		// Act
+		this.oCal12.focusDate(new Date(2014, 0, 10));
+		sap.ui.getCore().applyChanges();
+		aMonths = jQuery("#Cal12-content").children(".sapUiCalMonthView");
+		aWeekNumbers = jQuery(aMonths[0]).find(".sapUiCalWeekNum");
+
+		// Assert
+		assert.equal(jQuery(aWeekNumbers[0]).text(), "1", "week number 2014 first week for de-DE");
+		assert.equal(jQuery(aWeekNumbers[1]).text(), "2", "week number 2014 second week for de-DE");
+
+		// Act
+		sap.ui.getCore().getConfiguration().setLanguage("en-US");
+		sap.ui.getCore().applyChanges();
 		this.oCal2.focusDate(new Date(2011, 0, 10));
+
+		// Clean
+		this.oCal12.destroy();
 	});
 
 	QUnit.test("special days", function(assert) {
