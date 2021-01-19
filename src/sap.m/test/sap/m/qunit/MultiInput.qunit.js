@@ -2449,12 +2449,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		if (Device.browser.internet_explorer) {
-			this.multiInput.getAggregation("tokenizer").$().trigger("click");
-		} else {
-			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
-		}
-
+		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 		this.clock.tick(1);
 
 		// assert
@@ -2479,12 +2474,7 @@ sap.ui.define([
 
 		Core.applyChanges();
 
-		// act
-		if (Device.browser.internet_explorer) {
-			this.multiInput.getAggregation("tokenizer").$().trigger("click");
-		} else {
-			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
-		}
+		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 
 		oPicker = this.multiInput.getAggregation("tokenizer").getTokensPopup();
 		this.clock.tick(100);
@@ -2594,12 +2584,9 @@ sap.ui.define([
 		assert.ok(oTokenizerSpy.calledOnce, "setRenderMode should be triggered");
 		assert.strictEqual(oTokenizer.getRenderMode(), TokenizerRenderMode.Loose, "renderMode property should be set when the focus is on the input");
 
-		// Act. Click on the nMore
-		if (Device.browser.msie) {
-			oTokenizer.$().trigger("click");
-		} else {
-			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
-		}
+		// Act
+		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
+
 		// Focus first item in the popover.
 		oTokenizer.getTokensPopup().getContent()[0].getItems()[0].$().trigger("focus");
 		Core.applyChanges();
@@ -2929,11 +2916,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		if (Device.browser.msie) {
-			oTokenizer.$().trigger("click");
-		} else {
-			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
-		}
+		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 
 		oPicker = oTokenizer.getTokensPopup();
 
@@ -2955,11 +2938,7 @@ sap.ui.define([
 		Core.applyChanges();
 
 		// act
-		if (Device.browser.msie) {
-			oTokenizer.$().trigger("click");
-		} else {
-			this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
-		}
+		this.multiInput.$().find(".sapMTokenizerIndicator")[0].click();
 
 		oPicker = oTokenizer.getTokensPopup();
 
