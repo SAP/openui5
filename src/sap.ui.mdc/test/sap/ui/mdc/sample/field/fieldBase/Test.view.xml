@@ -561,6 +561,57 @@
 							</m:CheckBox>
 						</form:FormElement>
 
+						<form:FormElement label="custom operators">
+							<mdcField:FieldBase id="FB-MatrId"
+								conditions="{cm>/conditions/MatrId}"
+								dataType="sap.ui.model.type.String"
+								dataTypeConstraints="{maxLength: 5, search: '^(|[0-9])+$'}"
+								maxConditions="-1"
+								editMode="Editable"
+								display="ValueDescription"
+								placeholder="{/#Product/MatrId/@sap:label}"
+								liveChange="handleLiveChange"
+								submit="handleSubmit"
+								fieldHelp="FVH-MatrId">
+								<mdcField:dependents>
+									<mdcField:FieldValueHelp id="FVH-MatrId"
+										title="Material"
+										filterFields="*MatrId,Text*"
+										keyPath="MatrId"
+										descriptionPath="Text"
+										showConditionPanel="true">
+										<mdcField:FieldValueHelpMTableWrapper>
+											<m:Table items="{path: '/MaterialCollection'}" width="26rem">
+												<m:columns>
+													<m:Column>
+														<m:Label text="{/#Material/MatrId/@sap:label}"/>
+													</m:Column>
+													<m:Column>
+														<m:Label text="{/#Material/Text/@sap:label}"/>
+													</m:Column>
+												</m:columns>
+												<m:items>
+													<m:ColumnListItem type="Active">
+														<m:Text text="{MatrId}"></m:Text>
+														<m:Text text="{Text}"></m:Text>
+													</m:ColumnListItem>
+												</m:items>
+											</m:Table>
+										</mdcField:FieldValueHelpMTableWrapper>
+									</mdcField:FieldValueHelp>
+									<mdcField:ListFieldHelp id="LFH-MatrId"
+											items="{path: '/MaterialCollection'}" >
+										<c:ListItem key="{MatrId}" text="{Text}" additionalText="{MatrId}"/>
+									</mdcField:ListFieldHelp>
+								</mdcField:dependents>
+							</mdcField:FieldBase>
+							<m:ToggleButton id="B-MatrId" text="ListFieldHelp" pressed="false" press="toggleFH">
+								<m:layoutData>
+									<form:ColumnElementData cellsLarge="3" cellsSmall="3"/>
+								</m:layoutData>
+							</m:ToggleButton>
+						</form:FormElement>
+
 					</form:FormContainer>
 
 					<form:FormContainer title="Condition Model">
@@ -619,6 +670,9 @@
 						<m:Column width="3rem" minScreenWidth="Desktop" demandPopin="true">
 							<m:Label text="{/#Product/CountryId/@sap:label}"></m:Label>
 						</m:Column>
+					<m:Column width="7rem" minScreenWidth="Desktop" demandPopin="true">
+						<m:Label text="{/#Product/MatrId/@sap:label}"></m:Label>
+					</m:Column>
 					</m:columns>
 					<m:items>
 						<m:ColumnListItem type="Active">
@@ -633,6 +687,7 @@
 							<m:CheckBox id="CB-F8" selected="{Important}" displayOnly="true"></m:CheckBox>
 							<m:Text id="T-F9" text="{parts: ['WeightMeasure', 'WeightUnit'], type: 'sap.ui.model.type.Unit'}"/>
 							<m:Text id="T-F10" text="{CountryId}"/>
+							<m:Text id="T-F11" text="{MatrId}"/>
 						</m:ColumnListItem>
 					</m:items>
 				</m:Table>

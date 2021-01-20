@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldHelpBase",
 	"sap/ui/mdc/field/FieldBaseDelegate",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/model/type/Integer",
 	"sap/ui/model/type/Currency",
@@ -20,6 +21,7 @@ sap.ui.define([
 		FieldHelpBase,
 		FieldBaseDelegate,
 		FilterOperatorUtil,
+		Operator,
 		ConditionValidated,
 		IntegerType,
 		CurrencyType,
@@ -146,9 +148,28 @@ sap.ui.define([
 		assert.equal(oCondition.values.length, 1, "Values length");
 		assert.equal(oCondition.values[0], "1", "Values entry");
 
+		// Default operator not in list of operators
+		oConditionType.setFormatOptions({operators: ["GT", "LT"]});
+
+		oCondition = oConditionType.parseValue("Test");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "GT", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], "Test", "Values entry");
+
+		oCondition = oConditionType.parseValue(1, "int");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "GT", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], "1", "Values entry");
+
 	});
 
-	QUnit.test("Parsing: EQ - simple String", function(assert) {
+	QUnit.test("Parsing: only EQ - simple String", function(assert) {
 
 		oConditionType.setFormatOptions({operators: ["EQ"]});
 		var oCondition = oConditionType.parseValue("Test");
@@ -166,18 +187,6 @@ sap.ui.define([
 		assert.ok(Array.isArray(oCondition.values), "values are array");
 		assert.equal(oCondition.values.length, 1, "Values length"); // second value not set right now TODO: validate for help too?
 		assert.equal(oCondition.values[0], "1", "Values entry");
-
-		// invalid default condition
-		oConditionType.setFormatOptions({operators: ["GT", "LT"]});
-		var oException;
-
-		try {
-			oCondition = oConditionType.parseValue(1, "int");
-		} catch (e) {
-			oException = e;
-		}
-
-		assert.ok(oException, "Parse excetion fired");
 
 	});
 
@@ -918,6 +927,79 @@ sap.ui.define([
 		assert.ok(oFieldHelp.getItemForValue.calledOnce, "getKeyForText called");
 
 		FilterOperatorUtil.getDefaultOperator.restore();
+
+	});
+
+	QUnit.test("Parsing: description -> key (from help) with custom Operator", function(assert) {
+
+		var oOperator = new Operator({
+			name: "MyContains",
+			filterOperator: "Contains",
+			tokenParse: "^\\*(.*)\\*$",
+			tokenFormat: "*{0}*",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: false
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+
+		oOperator = new Operator({
+			name: "MyInclude",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+
+		oOperator = new Operator({ // test excluding operator with validation
+			name: "MyExclude",
+			filterOperator: "NE",
+			tokenParse: "^!=(.+)$",
+			tokenFormat: "!(={0})",
+			valueTypes: [Operator.ValueType.Self],
+			exclude: true,
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+
+		oConditionType.oFormatOptions.operators = ["MyExclude", "MyContains", "MyInclude"]; // fake setting directly
+
+		// existing value
+		var oCondition = oConditionType.parseValue("Item3");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "MyInclude", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], "I3", "Values entry0");
+		assert.notOk(oCondition.inParameters, "no in-parameters returned");
+		assert.notOk(oCondition.outParameters, "no out-parameters returned");
+		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+
+		// not existing value
+		oCondition = oConditionType.parseValue("X");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "MyContains", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], "X", "Values entry1");
+		assert.equal(oCondition.validated, ConditionValidated.NotValidated, "condition not validated");
+
+		// exlude value
+		oCondition = oConditionType.parseValue("!=Item3");
+		assert.ok(oCondition, "Result returned");
+		assert.equal(typeof oCondition, "object", "Result is object");
+		assert.equal(oCondition.operator, "MyExclude", "Operator");
+		assert.ok(Array.isArray(oCondition.values), "values are array");
+		assert.equal(oCondition.values.length, 1, "Values length");
+		assert.equal(oCondition.values[0], "I3", "Values entry1");
+		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+
+		delete FilterOperatorUtil._mOperators["MyContains"]; // TODO API to remove operator
+		delete FilterOperatorUtil._mOperators["MyInclude"]; // TODO API to remove operator
+		delete FilterOperatorUtil._mOperators["MyExclude"]; // TODO API to remove operator
 
 	});
 

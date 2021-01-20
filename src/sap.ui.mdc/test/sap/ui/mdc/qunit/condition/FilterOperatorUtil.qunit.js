@@ -153,6 +153,31 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("getEQOperator", function(assert) {
+
+		var oMyOperator = new Operator({
+			name: "MyEqual",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oMyOperator);
+
+		var oOperator = FilterOperatorUtil.getEQOperator();
+		assert.equal(oOperator && oOperator.name, "EQ", "EQ operator returned");
+
+		oOperator = FilterOperatorUtil.getEQOperator(["GT", oMyOperator.name, "LT"]);
+		assert.equal(oOperator && oOperator.name, oMyOperator.name, "custom operator returned");
+
+		oOperator = FilterOperatorUtil.getEQOperator(["GT", "LT"]);
+		assert.equal(oOperator && oOperator.name, "EQ", "EQ operator returned");
+
+		delete FilterOperatorUtil._mOperators[oMyOperator.name]; // TODO API to remove operator
+
+	});
+
 	QUnit.test("getOperator via alias", function(assert) {
 
 		var oOperator = FilterOperatorUtil.getOperator("FIRSTQUARTER");

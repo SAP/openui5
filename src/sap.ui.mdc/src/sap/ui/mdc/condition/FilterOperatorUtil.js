@@ -918,15 +918,28 @@ function(
 				},
 
 				/**
-				 * Returns the EQ operator object.
+				 * Returns the "equal to" (EQ) operator object.
 				 *
-				 * This is required for {@link sap.ui.mdc.Field Field}
+				 * If an array of operators is given, and an EQ-like operator exists there, this is returned.
+				 * Otherwise the EQ operator is returned.
+				 *
+				 * This is required for {@link sap.ui.mdc.Field Field}.
+				 * @param {string[]} [aOperators] Array with the supported filter operators
 				 * @returns {sap.ui.mdc.condition.Operator} Operator object
 				 *
 				 * @private
-				 * @ui5-restricted sap.ui.mdc.Field, sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
+				 * @ui5-restricted sap.ui.mdc.Field, sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType, sap.ui.mdc.field.FieldHelpBase
 				 */
-				getEQOperator: function() {
+				getEQOperator: function(aOperators) {
+
+					if (aOperators) {
+						for (var i = 0; i < aOperators.length; i++) {
+							var oOperator = this.getOperator(aOperators[i]);
+							if (oOperator && oOperator.validateInput && !oOperator.exclude && oOperator.valueTypes[0] && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
+								return oOperator;
+							}
+						}
+					}
 
 					return FilterOperatorUtil._mOperators.equal;
 

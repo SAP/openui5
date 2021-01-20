@@ -40,7 +40,10 @@ sap.ui.define([
 			// load local mock data
 			oMockServer.simulate(sPath + "/metadata.xml", {
 				sMockdataBaseUrl: sPath + "/mockdata",
-				bGenerateMissingMockData: true
+				bGenerateMissingMockData: true,
+				aEntitySetsNames: [
+				                   "ProductCollection", "StatusCollection", "weightODataUnits", "weightUnits", "currencies", "MaterialCollection", "CountryCollection", "RegionCollection", "CityCollection"
+				                   ]
 			});
 
 			// start

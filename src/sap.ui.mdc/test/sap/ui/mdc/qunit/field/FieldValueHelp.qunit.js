@@ -12,6 +12,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/ConditionModel",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enum/BaseType",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/mdc/field/InParameter",
@@ -41,6 +42,7 @@ sap.ui.define([
 		Condition,
 		ConditionModel,
 		FilterOperatorUtil,
+		Operator,
 		BaseType,
 		ConditionValidated,
 		InParameter,
@@ -1336,6 +1338,44 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("navigate in suggestion with custom operator", function(assert) {
+
+		var oOperator = new Operator({
+			name: "MyTest",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+		oFieldHelp._oOperator = oOperator; // fake operator determination
+
+		oFieldHelp.navigate(1);
+		oClock.tick(iPopoverDuration); // fake opening time
+
+		oWrapper.fireNavigate({key: "I1", description: "Item 1", itemId: "Item1"});
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			assert.equal(iNavigate, 1, "Navigate event fired");
+			assert.equal(sNavigateValue, "Item 1", "Navigate event value");
+			assert.equal(sNavigateKey, "I1", "Navigate event key");
+			assert.ok(oNavigateCondition, "NavigateEvent condition");
+			assert.equal(oNavigateCondition.operator, oOperator.name, "NavigateEvent condition operator");
+			assert.equal(oNavigateCondition.values.length, 1, "NavigateEvent condition values length");
+			assert.equal(oNavigateCondition.values[0], "I1", "NavigateEvent condition key");
+			assert.notOk(oNavigateCondition.hasOwnProperty("inParameters"), "no in-parameters set");
+			assert.notOk(oNavigateCondition.hasOwnProperty("outParameters"), "no out-parameters set");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+			assert.equal(sNavigateItemId, "Item1", "Navigate itemId");
+		}
+		oFieldHelp.close();
+		oClock.tick(iPopoverDuration); // fake closing time
+
+		delete FilterOperatorUtil._mOperators[oOperator.name]; // TODO API to remove operator
+
+	});
+
 	QUnit.test("select item in suggestion", function(assert) {
 
 		oFieldHelp.open(true);
@@ -1348,8 +1388,8 @@ sap.ui.define([
 			assert.equal(iSelect, 1, "Select event fired");
 			assert.equal(aSelectConditions.length, 1, "one condition returned");
 			assert.equal(aSelectConditions[0].operator, "EQ", "Condition operator");
-			assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0}");
-			assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1}");
+			assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0]");
+			assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1]");
 			assert.notOk(aSelectConditions[0].inParameters, "Condition no in-parameters");
 			assert.notOk(aSelectConditions[0].outParameters, "Condition no out-parameters");
 			assert.equal(aSelectConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
@@ -1372,8 +1412,8 @@ sap.ui.define([
 			assert.equal(iSelect, 1, "Select event fired");
 			assert.equal(aSelectConditions.length, 1, "one condition returned");
 			assert.equal(aSelectConditions[0].operator, "EQ", "Condition operator");
-			assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0}");
-			assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1}");
+			assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0]");
+			assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1]");
 			assert.notOk(aSelectConditions[0].inParameters, "Condition no in-parameters");
 			assert.notOk(aSelectConditions[0].outParameters, "Condition no out-parameters");
 			assert.equal(aSelectConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
@@ -1387,14 +1427,14 @@ sap.ui.define([
 			assert.equal(iSelect, 2, "Select event fired");
 			assert.equal(aSelectConditions.length, 2, "two conditions returned");
 			assert.equal(aSelectConditions[0].operator, "EQ", "Condition0 operator");
-			assert.equal(aSelectConditions[0].values[0], "I2", "Condition0 values[0}");
-			assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition0 values[1}");
+			assert.equal(aSelectConditions[0].values[0], "I2", "Condition0 values[0]");
+			assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition0 values[1]");
 			assert.notOk(aSelectConditions[0].inParameters, "Condition0 no in-parameters");
 			assert.notOk(aSelectConditions[0].outParameters, "Condition0 no out-parameters");
 			assert.equal(aSelectConditions[0].validated, ConditionValidated.Validated, "Condition0 is validated");
 			assert.equal(aSelectConditions[1].operator, "EQ", "Condition1 operator");
-			assert.equal(aSelectConditions[1].values[0], "I1", "Condition1 values[0}");
-			assert.equal(aSelectConditions[1].values[1], "Item 1", "Condition1 values[1}");
+			assert.equal(aSelectConditions[1].values[0], "I1", "Condition1 values[0]");
+			assert.equal(aSelectConditions[1].values[1], "Item 1", "Condition1 values[1]");
 			assert.notOk(aSelectConditions[1].inParameters, "Condition1 no in-parameters");
 			assert.notOk(aSelectConditions[1].outParameters, "Condition1 no out-parameters");
 			assert.equal(aSelectConditions[1].validated, ConditionValidated.Validated, "Condition1 is validated");
@@ -1420,8 +1460,8 @@ sap.ui.define([
 			assert.equal(iSelect, 1, "Select event fired");
 			assert.equal(aSelectConditions.length, 1, "one condition returned");
 			assert.equal(aSelectConditions[0].operator, "EQ", "Condition operator");
-			assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0}");
-			assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1}");
+			assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0]");
+			assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1]");
 			assert.ok(aSelectConditions[0].inParameters, "Condition in-parameters set");
 			assert.ok(aSelectConditions[0].inParameters && aSelectConditions[0].inParameters.hasOwnProperty("testIn"), "Condition in-parameters has 'testIn'");
 			assert.equal(aSelectConditions[0].inParameters && aSelectConditions[0].inParameters.testIn, "X", "Condition in-parameters 'test'");
@@ -1435,6 +1475,43 @@ sap.ui.define([
 			assert.ok(bSelectClose, "FieldHelp closed in Event as MaxConditions = 1");
 			assert.notOk(oPopover.isOpen(), "Field help closed");
 		}
+
+	});
+
+	QUnit.test("select item in suggestion using customOperator", function(assert) {
+
+		var oOperator = new Operator({
+			name: "MyTest",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+		oFieldHelp._oOperator = oOperator; // fake operator determination
+
+		oFieldHelp.open(true);
+		oClock.tick(iPopoverDuration); // fake opening time
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			oWrapper.fireSelectionChange({selectedItems: [{key: "I2", description: "Item 2"}]});
+			oClock.tick(iPopoverDuration); // fake closing time
+
+			assert.equal(iSelect, 1, "Select event fired");
+			assert.equal(aSelectConditions.length, 1, "one condition returned");
+			assert.equal(aSelectConditions[0].operator, oOperator.name, "Condition operator");
+			assert.equal(aSelectConditions[0].values.length, 1, "Condition values length");
+			assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0]");
+			assert.notOk(aSelectConditions[0].inParameters, "Condition no in-parameters");
+			assert.notOk(aSelectConditions[0].outParameters, "Condition no out-parameters");
+			assert.equal(aSelectConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
+			assert.ok(bSelectAdd, "Items should be added");
+			assert.ok(bSelectClose, "FieldHelp closed in Event as MaxConditions = 1");
+			assert.notOk(oPopover.isOpen(), "Field help closed");
+		}
+
+		delete FilterOperatorUtil._mOperators[oOperator.name]; // TODO API to remove operator
 
 	});
 
@@ -2072,6 +2149,50 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("selected item in dialog using custom operator", function(assert) {
+
+		var oOperator = new Operator({
+			name: "MyTest",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+		oFieldHelp._oOperator = oOperator; // fake operator determination
+
+		oOperator = new Operator({ // test excluding operator with validation
+			name: "MyTest2",
+			filterOperator: "NE",
+			tokenParse: "^!=(.+)$",
+			tokenFormat: "!(={0})",
+			valueTypes: [Operator.ValueType.Self],
+			exclude: true,
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+
+		oFieldHelp.setConditions([
+		                          Condition.createCondition("MyTest", ["I2"], undefined, undefined, ConditionValidated.Validated),
+		                          Condition.createCondition("MyTest2", ["I2"], undefined, undefined, ConditionValidated.Validated),
+		                          Condition.createCondition("GT", ["I1"], undefined, undefined, ConditionValidated.NotValidated)
+		                          ]);
+		oFieldHelp.open(false);
+		oClock.tick(iDialogDuration); // fake opening time
+
+		var aItems = oWrapper.getSelectedItems();
+		assert.equal(aItems.length, 1, "Wrapper: one selected item");
+		assert.equal(aItems[0].key, "I2", "Item key");
+
+		oFieldHelp.close(false);
+		oClock.tick(iDialogDuration); // fake closing time
+
+		delete FilterOperatorUtil._mOperators["MyTest"]; // TODO API to remove operator
+		delete FilterOperatorUtil._mOperators["MyTest2"]; // TODO API to remove operator
+
+	});
+
 	QUnit.test("select item in dialog", function(assert) {
 
 		oFieldHelp.setConditions([Condition.createItemCondition("I1", "Item 1")]);
@@ -2092,8 +2213,8 @@ sap.ui.define([
 		assert.equal(iSelect, 1, "Select event fired after OK");
 		assert.equal(aSelectConditions.length, 1, "one condition returned");
 		assert.equal(aSelectConditions[0].operator, "EQ", "Condition operator");
-		assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0}");
-		assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1}");
+		assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0]");
+		assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1]");
 		assert.notOk(aSelectConditions[0].inParameters, "Condition no in-parameters");
 		assert.notOk(aSelectConditions[0].outParameters, "Condition no out-parameters");
 		assert.equal(aSelectConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
@@ -2103,8 +2224,8 @@ sap.ui.define([
 		var aConditions = oFieldHelp.getConditions();
 		assert.equal(aConditions.length, 1, "one condition set");
 		assert.equal(aConditions[0].operator, "EQ", "Condition operator");
-		assert.equal(aConditions[0].values[0], "I2", "Condition values[0}");
-		assert.equal(aConditions[0].values[1], "Item 2", "Condition values[1}");
+		assert.equal(aConditions[0].values[0], "I2", "Condition values[0]");
+		assert.equal(aConditions[0].values[1], "Item 2", "Condition values[1]");
 		assert.notOk(aConditions[0].inParameters, "Condition no in-parameters");
 		assert.notOk(aConditions[0].outParameters, "Condition no out-parameters");
 		assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
@@ -2130,8 +2251,8 @@ sap.ui.define([
 		assert.equal(iSelect, 1, "Select event fired after OK");
 		assert.equal(aSelectConditions.length, 1, "one condition returned");
 		assert.equal(aSelectConditions[0].operator, "EQ", "Condition operator");
-		assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0}");
-		assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1}");
+		assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0]");
+		assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1]");
 		assert.ok(aSelectConditions[0].inParameters, "Condition in-parameters set");
 		assert.ok(aSelectConditions[0].inParameters && aSelectConditions[0].inParameters.hasOwnProperty("testIn"), "Condition in-parameters has 'testIn'");
 		assert.equal(aSelectConditions[0].inParameters && aSelectConditions[0].inParameters.testIn, "X", "Condition in-parameters 'testIn'");
@@ -2145,8 +2266,8 @@ sap.ui.define([
 		var aConditions = oFieldHelp.getConditions();
 		assert.equal(aConditions.length, 1, "one condition set");
 		assert.equal(aConditions[0].operator, "EQ", "Condition operator");
-		assert.equal(aConditions[0].values[0], "I2", "Condition values[0}");
-		assert.equal(aConditions[0].values[1], "Item 2", "Condition values[1}");
+		assert.equal(aConditions[0].values[0], "I2", "Condition values[0]");
+		assert.equal(aConditions[0].values[1], "Item 2", "Condition values[1]");
 		assert.ok(aConditions[0].inParameters, "Condition in-parameters set");
 		assert.ok(aConditions[0].inParameters && aConditions[0].inParameters.hasOwnProperty("testIn"), "Condition in-parameters has 'testIn'");
 		assert.equal(aConditions[0].inParameters && aConditions[0].inParameters.testIn, "X", "Condition in-parameters 'testIn'");
@@ -2154,6 +2275,54 @@ sap.ui.define([
 		assert.ok(aConditions[0].outParameters && aConditions[0].outParameters.hasOwnProperty("testOut"), "Condition out-parameters has 'testOut'");
 		assert.equal(aConditions[0].outParameters && aConditions[0].outParameters.testOut, "Y", "Condition out-parameters 'testOut'");
 		assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
+
+	});
+
+	QUnit.test("select item in dialog using custom operator", function(assert) {
+
+		var oOperator = new Operator({
+			name: "MyTest",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+		oFieldHelp._oOperator = oOperator; // fake operator determination
+
+		oFieldHelp.open(false);
+		oClock.tick(iDialogDuration); // fake opening time
+
+		var oDialog = oFieldHelp.getAggregation("_dialog");
+		oWrapper.fireSelectionChange({selectedItems: [{key: "I2", description: "Item 2"}]});
+		assert.equal(iSelect, 0, "Select event not fired");
+
+		var aButtons = oDialog.getButtons();
+		aButtons[0].firePress(); // simulate button press
+		oClock.tick(iDialogDuration); // fake closing time
+
+		assert.equal(iSelect, 1, "Select event fired after OK");
+		assert.equal(aSelectConditions.length, 1, "one condition returned");
+		assert.equal(aSelectConditions[0].operator, oOperator.name, "Condition operator");
+		assert.equal(aSelectConditions[0].values.length, 1, "Condition values length");
+		assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0]");
+		assert.notOk(aSelectConditions[0].inParameters, "Condition no in-parameters");
+		assert.notOk(aSelectConditions[0].outParameters, "Condition no out-parameters");
+		assert.equal(aSelectConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
+		assert.notOk(bSelectAdd, "Items should not be added");
+		assert.ok(bSelectClose, "FieldHelp closed in Event");
+		assert.notOk(oDialog.isOpen(), "Field help closed");
+		var aConditions = oFieldHelp.getConditions();
+		assert.equal(aConditions.length, 1, "one condition set");
+		assert.equal(aConditions[0].operator, oOperator.name, "Condition operator");
+		assert.equal(aConditions[0].values.length, 1, "Condition values length");
+		assert.equal(aConditions[0].values[0], "I2", "Condition values[0]");
+		assert.notOk(aConditions[0].inParameters, "Condition no in-parameters");
+		assert.notOk(aConditions[0].outParameters, "Condition no out-parameters");
+		assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
+
+		delete FilterOperatorUtil._mOperators[oOperator.name]; // TODO API to remove operator
 
 	});
 
@@ -2180,18 +2349,18 @@ sap.ui.define([
 		assert.equal(iSelect, 1, "Select event fired after OK");
 		assert.equal(aSelectConditions.length, 4, "four conditions returned");
 		assert.equal(aSelectConditions[0].operator, "EQ", "Condition operator");
-		assert.equal(aSelectConditions[0].values[0], "I1", "Condition values[0}");
-		assert.equal(aSelectConditions[0].values[1], "Item 1", "Condition values[1}");
+		assert.equal(aSelectConditions[0].values[0], "I1", "Condition values[0]");
+		assert.equal(aSelectConditions[0].values[1], "Item 1", "Condition values[1]");
 		assert.equal(aSelectConditions[1].operator, "EQ", "Condition operator");
-		assert.equal(aSelectConditions[1].values[0], "I2", "Condition values[0}");
-		assert.equal(aSelectConditions[1].values[1], "Item 2", "Condition values[1}");
+		assert.equal(aSelectConditions[1].values[0], "I2", "Condition values[0]");
+		assert.equal(aSelectConditions[1].values[1], "Item 2", "Condition values[1]");
 		assert.equal(aSelectConditions[1].validated, ConditionValidated.Validated, "Condition is validated");
 		assert.equal(aSelectConditions[2].operator, "StartsWith", "Condition operator");
-		assert.equal(aSelectConditions[2].values[0], "X", "Condition values[0}");
+		assert.equal(aSelectConditions[2].values[0], "X", "Condition values[0]");
 		assert.equal(aSelectConditions[2].validated, ConditionValidated.NotValidated, "Condition is not validated");
 		assert.equal(aSelectConditions[3].operator, "EQ", "Condition operator");
-		assert.equal(aSelectConditions[3].values[0], "I3", "Condition values[0}");
-		assert.equal(aSelectConditions[3].values[1], "Item 3", "Condition values[1}");
+		assert.equal(aSelectConditions[3].values[0], "I3", "Condition values[0]");
+		assert.equal(aSelectConditions[3].values[1], "Item 3", "Condition values[1]");
 		assert.equal(aSelectConditions[3].validated, ConditionValidated.Validated, "Condition is validated");
 		assert.notOk(bSelectAdd, "Items should not be added");
 		assert.ok(bSelectClose, "FieldHelp closed in Event");
@@ -2199,18 +2368,18 @@ sap.ui.define([
 		var aConditions = oFieldHelp.getConditions();
 		assert.equal(aConditions.length, 4, "4 conditions set");
 		assert.equal(aConditions[0].operator, "EQ", "Condition operator");
-		assert.equal(aConditions[0].values[0], "I1", "Condition values[0}");
-		assert.equal(aConditions[0].values[1], "Item 1", "Condition values[1}");
+		assert.equal(aConditions[0].values[0], "I1", "Condition values[0]");
+		assert.equal(aConditions[0].values[1], "Item 1", "Condition values[1]");
 		assert.equal(aConditions[1].operator, "EQ", "Condition operator");
-		assert.equal(aConditions[1].values[0], "I2", "Condition values[0}");
-		assert.equal(aConditions[1].values[1], "Item 2", "Condition values[1}");
+		assert.equal(aConditions[1].values[0], "I2", "Condition values[0]");
+		assert.equal(aConditions[1].values[1], "Item 2", "Condition values[1]");
 		assert.equal(aConditions[1].validated, ConditionValidated.Validated, "Condition is validated");
 		assert.equal(aConditions[2].operator, "StartsWith", "Condition operator");
-		assert.equal(aConditions[2].values[0], "X", "Condition values[0}");
+		assert.equal(aConditions[2].values[0], "X", "Condition values[0]");
 		assert.equal(aConditions[2].validated, ConditionValidated.NotValidated, "Condition is not validated");
 		assert.equal(aConditions[3].operator, "EQ", "Condition operator");
-		assert.equal(aConditions[3].values[0], "I3", "Condition values[0}");
-		assert.equal(aConditions[3].values[1], "Item 3", "Condition values[1}");
+		assert.equal(aConditions[3].values[0], "I3", "Condition values[0]");
+		assert.equal(aConditions[3].values[1], "Item 3", "Condition values[1]");
 		assert.equal(aConditions[3].validated, ConditionValidated.Validated, "Condition is validated");
 
 	});
@@ -2232,22 +2401,22 @@ sap.ui.define([
 		var aConditions = oFieldHelp.getConditions();
 		assert.equal(aConditions.length, 2, "2 conditions set");
 		assert.equal(aConditions[0].operator, "EQ", "Condition operator");
-		assert.equal(aConditions[0].values[0], "I2", "Condition values[0}");
-		assert.equal(aConditions[0].values[1], "Item 2", "Condition values[1}");
+		assert.equal(aConditions[0].values[0], "I2", "Condition values[0]");
+		assert.equal(aConditions[0].values[1], "Item 2", "Condition values[1]");
 		assert.equal(aConditions[1].operator, "EQ", "Condition operator");
-		assert.equal(aConditions[1].values[0], "I3", "Condition values[0}");
-		assert.equal(aConditions[1].values[1], "Item 3", "Condition values[1}");
+		assert.equal(aConditions[1].values[0], "I3", "Condition values[0]");
+		assert.equal(aConditions[1].values[1], "Item 3", "Condition values[1]");
 
 		oClock.tick(iDialogDuration); // fake closing time
 		assert.equal(iSelect, 1, "Select event fired after OK");
 		assert.equal(aSelectConditions.length, 2, "2 conditions returned");
 		assert.equal(aSelectConditions[0].operator, "EQ", "Condition operator");
-		assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0}");
-		assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1}");
+		assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0]");
+		assert.equal(aSelectConditions[0].values[1], "Item 2", "Condition values[1]");
 		assert.equal(aSelectConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
 		assert.equal(aSelectConditions[1].operator, "EQ", "Condition operator");
-		assert.equal(aSelectConditions[1].values[0], "I3", "Condition values[0}");
-		assert.equal(aSelectConditions[1].values[1], "Item 3", "Condition values[1}");
+		assert.equal(aSelectConditions[1].values[0], "I3", "Condition values[0]");
+		assert.equal(aSelectConditions[1].values[1], "Item 3", "Condition values[1]");
 		assert.equal(aSelectConditions[1].validated, ConditionValidated.Validated, "Condition is validated");
 		assert.notOk(bSelectAdd, "Items should not be added");
 		assert.ok(bSelectClose, "FieldHelp closed in Event");

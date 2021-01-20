@@ -532,8 +532,9 @@ sap.ui.define([
 			var sFilterValue = this.getFilterValue();
 			var bUseFirstMatch = this.getUseFirstMatch();
 			var bFistFilterItemSelected = false;
+			var oOperator = this._getOperator();
 
-			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === "EQ")) {
+			if (aConditions.length > 0 && (aConditions[0].validated === ConditionValidated.Validated || aConditions[0].operator === oOperator.name)) {
 				vSelectedKey = aConditions[0].values[0];
 			}
 
@@ -575,8 +576,7 @@ sap.ui.define([
 
 		this._bConditionUpdate = true;
 
-		var oCondition = Condition.createItemCondition(vKey, sValue);
-		oCondition.validated = ConditionValidated.Validated; // validated even if no description (e.g. display value mode)
+		var oCondition = this._createCondition(vKey, sValue);
 		this.setProperty("conditions", [oCondition], true);
 
 		this._bConditionUpdate = false;

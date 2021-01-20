@@ -11,6 +11,7 @@ sap.ui.define([
 	'sap/ui/model/type/String',
 	'sap/ui/mdc/enum/FieldDisplay',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
+	'sap/ui/mdc/condition/Operator',
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enum/BaseType',
 	'sap/ui/mdc/enum/ConditionValidated',
@@ -25,6 +26,7 @@ sap.ui.define([
 		StringType,
 		FieldDisplay,
 		FilterOperatorUtil,
+		Operator,
 		Condition,
 		BaseType,
 		ConditionValidated,
@@ -134,8 +136,10 @@ sap.ui.define([
 			case "string":
 			case "any":
 				var sDisplay = _getDisplay.call(this);
+				var aOperators = _getOperators.call(this);
+				var oEQOperator = FilterOperatorUtil.getEQOperator(aOperators);
 
-				if (!bPreventGetDescription && oCondition.operator === "EQ" && sDisplay !== FieldDisplay.Value &&
+				if (!bPreventGetDescription && oCondition.operator === oEQOperator.name && sDisplay !== FieldDisplay.Value &&
 						oCondition.validated === ConditionValidated.Validated && !oCondition.values[1]) {
 					// handle sync case and async case similar
 					var oBindingContext = this.oFormatOptions.bindingContext;
@@ -250,10 +254,13 @@ sap.ui.define([
 						// use default operator if nothing found
 						oOperator = _getDefaultOperator.call(this, aOperators, oType);
 
-						if (bInputValidationEnabled && !_isCompositeType.call(this, oType) && aOperators.indexOf("EQ") >= 0) {
+						if (bInputValidationEnabled && !_isCompositeType.call(this, oType)) {
 							// try first to use EQ and find it in FieldHelp. If not found try later with default operator
-							bCheckForDefault = !!oOperator && oOperator.name !== "EQ"; // only if default operator exists and is different
-							oOperator = FilterOperatorUtil.getEQOperator();
+							var oEQOperator = FilterOperatorUtil.getEQOperator(aOperators);
+							if (aOperators.indexOf(oEQOperator.name) >= 0) { // as EQ is returned if not in List
+								bCheckForDefault = !!oOperator && oOperator.name !== oEQOperator.name; // only if default operator exists and is different
+								oOperator = oEQOperator;
+							}
 						}
 
 						bUseDefaultOperator = true;
@@ -312,9 +319,8 @@ sap.ui.define([
 						// only one operator supported -> use it
 						sDefaultOperator = aOperators[0];
 					} else {
-						sDefaultOperator = FilterOperatorUtil.getDefaultOperator(_getBaseType.call(this, oType)).name;
-						if (sDefaultOperator && aOperators.indexOf(sDefaultOperator) < 0) {
-							// default operator not valid -> cannot use
+						sDefaultOperator = _getDefaultOperator.call(this, aOperators, oType).name;
+						if (aOperators.indexOf(sDefaultOperator) < 0) { // as EQ is returned if not in List
 							sDefaultOperator = undefined;
 						}
 					}
@@ -431,7 +437,12 @@ sap.ui.define([
 
 		var fnSuccess = function(oResult) {
 			if (oResult) {
-				return Condition.createCondition(oOperator.name, [oResult.key, oResult.description], oResult.inParameters, oResult.outParameters, ConditionValidated.Validated);
+				var aValues = [oResult.key];
+				if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1] !== Operator.ValueType.Static) {
+					// description is supported
+					aValues.push(oResult.description);
+				}
+				return Condition.createCondition(oOperator.name, aValues, oResult.inParameters, oResult.outParameters, ConditionValidated.Validated);
 			} else if (vValue === "") {
 				// no empty key -> no condition
 				return null;
@@ -488,9 +499,12 @@ sap.ui.define([
 		if (aOperators.length === 1) {
 			// just use the one supported type
 			oOperator = FilterOperatorUtil.getOperator(aOperators[0]);
-		} else if (aOperators.indexOf("EQ") >= 0) {
+		} else {
 			// use EQ operator
-			oOperator = FilterOperatorUtil.getOperator("EQ");
+			oOperator = FilterOperatorUtil.getEQOperator(aOperators);
+			if (aOperators.indexOf(oOperator.name) < 0) { // as EQ is returned if not in List
+				oOperator = undefined;
+			}
 		}
 
 		if (!oOperator) {

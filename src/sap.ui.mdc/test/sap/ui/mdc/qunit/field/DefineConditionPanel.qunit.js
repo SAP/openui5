@@ -176,7 +176,7 @@ sap.ui.define([
 			conditions: {
 				Name: [
 					   Condition.createCondition("EQ", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated),
-					   Condition.createCondition("EQ", ["Martin"], undefined, undefined, ConditionValidated.NotValidated),
+					   Condition.createCondition("EQ", ["Martin"], undefined, undefined, ConditionValidated.Validated), // will be hidden
 					   Condition.createCondition("EQ", ["Peter"], undefined, undefined, ConditionValidated.NotValidated)
 					   ]
 			}
@@ -190,7 +190,7 @@ sap.ui.define([
 			assert.equal(oModel.getConditions("Name").length, 3, "3 conditions should exist");
 			var oGrid = sap.ui.getCore().byId("DCP1--conditions");
 			var aContent = oGrid.getContent();
-			assert.equal(aContent.length, 13, "three rows with one field created - Grid contains 13 controls");
+			assert.equal(aContent.length, 9, "two rows with one field created - Grid contains 9 controls");
 
 
 			var oAddBtn = sap.ui.getCore().byId("DCP1--addBtn");
@@ -201,7 +201,7 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 				assert.equal(oModel.getConditions("Name").length, 4, "4 conditions should exist");
 				aContent = oGrid.getContent();
-				assert.equal(aContent.length, 17, "four rows with one field created - Grid contains 17 controls");
+				assert.equal(aContent.length, 13, "three rows with one field created - Grid contains 13 controls");
 				assert.notOk(oGridData.getVisibleL(), "Add-Button is not visible");
 
 				var oRemoveBtn = sap.ui.getCore().byId("DCP1--2--removeBtnLarge");
@@ -212,10 +212,65 @@ sap.ui.define([
 					assert.ok(oGridData.getVisibleL(), "Add-Button is visible");
 					assert.ok(oAddBtn.getVisible(), "Button is visible");
 					aContent = oGrid.getContent();
-					assert.equal(aContent.length, 13, "three rows with one field created - Grid contains 13 controls");
+					assert.equal(aContent.length, 9, "two rows with one field created - Grid contains 9 controls");
 
 					fnDone();
 				}, 0);
+			}, 0);
+		}, 0);
+
+	});
+
+	QUnit.test("show conditions with custom Operator", function(assert) {
+
+		var oOperator = new Operator({
+			name: "MyInclude",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+
+		oOperator = new Operator({ // test excluding operator with validation
+			name: "MyExclude",
+			filterOperator: "NE",
+			tokenParse: "^!=(.+)$",
+			tokenFormat: "!(={0})",
+			valueTypes: [Operator.ValueType.Self],
+			exclude: true,
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+
+		var oFormatOptions = merge({}, oDefineConditionPanel.getFormatOptions());
+		oFormatOptions.maxConditions = 4;
+		oFormatOptions.operators = ["MyInclude", "BT", "MyExclude"];
+		oDefineConditionPanel.setFormatOptions(oFormatOptions); // to test visibility of add button
+
+		oModel.setData({
+			conditions: {
+				Name: [
+					   Condition.createCondition("MyInclude", ["Andreas"], undefined, undefined, ConditionValidated.NotValidated),
+					   Condition.createCondition("MyExclude", ["Martin"], undefined, undefined, ConditionValidated.Validated), // will not be hidden
+					   Condition.createCondition("MyInclude", ["Peter"], undefined, undefined, ConditionValidated.Validated) // will be hidden
+					   ]
+			}
+		});
+
+		var fnDone = assert.async();
+
+		setTimeout(function () { // for model update
+			sap.ui.getCore().applyChanges();
+			setTimeout(function () { // for internal Controls update via ManagedObjectModel
+				var oGrid = sap.ui.getCore().byId("DCP1--conditions");
+				var aContent = oGrid.getContent();
+				assert.equal(aContent.length, 9, "two rows with one field created - Grid contains 9 controls");
+
+				delete FilterOperatorUtil._mOperators["MyInclude"]; // TODO API to remove operator
+				delete FilterOperatorUtil._mOperators["MyExclude"]; // TODO API to remove operator
+				fnDone();
 			}, 0);
 		}, 0);
 

@@ -9,6 +9,9 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldHelpBaseDelegate",
 	"sap/ui/mdc/field/CustomFieldHelp",
 	"sap/ui/mdc/condition/Condition",
+	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/mdc/condition/Operator",
+	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/core/Icon",
 	"sap/ui/model/Context",
 	"sap/ui/model/FormatException",
@@ -20,6 +23,9 @@ sap.ui.define([
 		FieldHelpBaseDelegate,
 		CustomFieldHelp,
 		Condition,
+		FilterOperatorUtil,
+		Operator,
+		ConditionValidated,
 		Icon,
 		Context,
 		FormatException,
@@ -141,6 +147,70 @@ sap.ui.define([
 		oFieldHelp.connect(oField2);
 		oMyField = oFieldHelp._getField();
 		assert.equal(oMyField.getId(), "I2", "field using connect");
+
+	});
+
+	QUnit.test("_getOperator", function(assert) {
+
+		var oOperator = new Operator({
+			name: "MyTest",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+
+		assert.equal(oFieldHelp._getOperator().name, "EQ", "Default operator");
+
+		oField._getOperators = function() {return ["GT", "LT", oOperator.name];};
+		oFieldHelp.connect(oField);
+		assert.equal(oFieldHelp._getOperator().name, oOperator.name, "Custom operator used");
+
+		delete FilterOperatorUtil._mOperators[oOperator.name]; // TODO API to remove operator
+
+	});
+
+	QUnit.test("_createCondition", function(assert) {
+
+		var oOperator = new Operator({
+			name: "MyTest",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+		FilterOperatorUtil.addOperator(oOperator);
+
+		var oCondition = oFieldHelp._createCondition("1", "Text1", {inParameter: "2"}, undefined);
+		assert.ok(oCondition, "Condition created");
+		if (oCondition) {
+			assert.equal(oCondition && oCondition.operator, "EQ", "Condition Operator");
+			assert.equal(oCondition.values.length, 2, "Condition values length");
+			assert.equal(oCondition.values[0], "1", "Condition values[0]");
+			assert.equal(oCondition.values[1], "Text1", "Condition values[1]");
+			assert.deepEqual(oCondition.inParameters, {inParameter: "2"}, "Condition in-parameters");
+			assert.notOk(oCondition.outParameters, "Condition no out-parameters");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "Condition is validated");
+		}
+
+		oField._getOperators = function() {return ["GT", "LT", oOperator.name];};
+		oFieldHelp.connect(oField);
+
+		oCondition = oFieldHelp._createCondition("1", "Text1", {inParameter: "2"}, undefined);
+		assert.ok(oCondition, "Condition created");
+		if (oCondition) {
+			assert.equal(oCondition && oCondition.operator, oOperator.name, "Condition Operator");
+			assert.equal(oCondition.values.length, 1, "Condition values length");
+			assert.equal(oCondition.values[0], "1", "Condition values[0]");
+			assert.deepEqual(oCondition.inParameters, {inParameter: "2"}, "Condition in-parameters");
+			assert.notOk(oCondition.outParameters, "Condition no out-parameters");
+			assert.equal(oCondition.validated, ConditionValidated.Validated, "Condition is validated");
+		}
+
+		delete FilterOperatorUtil._mOperators[oOperator.name]; // TODO API to remove operator
 
 	});
 

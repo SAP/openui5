@@ -350,8 +350,9 @@ sap.ui.define([
 			var vSelectedKey;
 			var sText;
 			var aItems = this._oList.getItems();
+			var oOperator = this._getOperator();
 
-			if (aConditions.length > 0 && (aConditions[0].operator === "EQ")) {
+			if (aConditions.length > 0 && (aConditions[0].operator === oOperator.name)) {
 				vSelectedKey = aConditions[0].values[0];
 				sText = this.getTextForKey(vSelectedKey);
 			}
@@ -390,7 +391,7 @@ sap.ui.define([
 		var sText = this.getTextForKey(vKey);
 
 		if (sText) {
-			oCondition = Condition.createItemCondition(vKey, sText);
+			oCondition = this._createCondition(vKey, sText);
 		}
 
 		return oCondition;
