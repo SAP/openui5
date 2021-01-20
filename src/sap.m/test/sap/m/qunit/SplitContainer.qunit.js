@@ -1431,4 +1431,51 @@ sap.ui.define([
 		oSplitContainer.destroy();
 	});
 
+	QUnit.module("Initial master page rendering", {
+
+		beforeEach : function () {
+			this.page = new sap.m.Page("page", {
+				title: "Page",
+				showNavButton: true,
+				enableScrolling: false,
+				content : [
+					new sap.m.SplitContainer("splitContainer", {
+						initialDetail: "detail1",
+						initialMaster: "initialMaster",
+						masterPages: [
+							new sap.m.Page("secondaryMaster", {
+								title: "Master 2",
+								content: [
+									new sap.m.Text("secondaryMaster_text", {text: "Master page 2"})
+								]
+							}),
+							new sap.m.Page("initialMaster", {
+								title: "Master 1",
+								content: [
+									new sap.m.Text("initialMaster_text", {text: "Master page 1"})
+								]
+							})
+						]
+					})
+				]
+			});
+			this.page.placeAt("content");
+			Core.applyChanges();
+		},
+		afterEach : function () {
+			this.page.destroy();
+			this.page = null;
+		}
+	});
+
+	QUnit.test("Proper initial master page is rendered", function(assert) {
+
+		// arrange
+		var oSplitContainer = this.page.getContent()[0];
+
+		// assert
+		assert.strictEqual(oSplitContainer._aMasterPages[1].getDomRef().id, "initialMaster", "initialMaster should be rendered");
+		assert.strictEqual(oSplitContainer._aMasterPages[0].getDomRef(), null, "secondaryMaster should not be rendered");
+	});
+
 });

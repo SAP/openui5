@@ -602,10 +602,10 @@ function(
 			this._bMasterisOpen = false;
 		}
 
-		this._updateMasterButtonTooltip();
-
 		this._oMasterNav.setInitialPage(sap.ui.getCore().byId(this.getInitialMaster()));
 		this._oMasterNav.setDefaultTransitionName(this.getDefaultTransitionNameMaster());
+
+		this._updateMasterButtonTooltip();
 
 		if (!Device.system.phone) {
 			this._oDetailNav.setInitialPage(sap.ui.getCore().byId(this.getInitialDetail()));
