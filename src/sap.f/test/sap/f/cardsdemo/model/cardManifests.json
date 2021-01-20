@@ -2435,6 +2435,17 @@
 					]
 				}
 			}
+		},
+		"noContent": {
+			"sap.app": {
+				"id": "cardsdemo.minHeight.noContentCard"
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "No Content. Default min-height of Card is 5rem"
+				}
+			}
 		}
 	},
 	"preview": {

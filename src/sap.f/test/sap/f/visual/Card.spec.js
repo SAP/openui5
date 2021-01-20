@@ -286,7 +286,7 @@ describe("sap.f.Card", function () {
 	it("Min-height", function () {
 		navigateTo("Min-height of the Card Content");
 
-		var aCardIds = ["lineChart", "stackedColumnChart", "stackedBarChart", "donutChart", "smallList", "mediumList", "largeList", "staticData"];
+		var aCardIds = ["lineChart", "stackedColumnChart", "stackedBarChart", "donutChart", "smallList", "mediumList", "largeList", "staticData", "noContent", "sapFCardMinHeight"];
 
 		aCardIds.forEach(function (sId) {
 			takePictureOfElement({

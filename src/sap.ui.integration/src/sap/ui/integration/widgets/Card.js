@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"./CardRenderer",
 	"../controls/ActionsToolbar",
 	"sap/ui/base/Interface",
 	"sap/ui/thirdparty/jquery",
@@ -21,7 +22,6 @@ sap.ui.define([
 	"sap/ui/model/resource/ResourceModel",
 	"sap/ui/integration/model/ContextModel",
 	"sap/base/util/LoaderExtensions",
-	"sap/f/CardRenderer",
 	"sap/f/CardBase",
 	"sap/f/library",
 	"sap/ui/integration/library",
@@ -34,6 +34,7 @@ sap.ui.define([
 	"sap/ui/integration/util/FilterBarFactory",
 	"sap/ui/integration/util/CardActions"
 ], function (
+	CardRenderer,
 	ActionsToolbar,
 	Interface,
 	jQuery,
@@ -53,7 +54,6 @@ sap.ui.define([
 	ResourceModel,
 	ContextModel,
 	LoaderExtensions,
-	FCardRenderer,
 	CardBase,
 	fLibrary,
 	library,
@@ -355,7 +355,7 @@ sap.ui.define([
 				host: {}
 			}
 		},
-		renderer: FCardRenderer
+		renderer: CardRenderer
 	});
 
 	/**
@@ -1463,19 +1463,6 @@ sap.ui.define([
 		mContentConfig.cardManifest = this._oCardManifest;
 
 		return this._oContentFactory.create(mContentConfig);
-	};
-
-	/**
-	 * Called on after rendering of the control.
-	 * @private
-	 */
-	Card.prototype.onAfterRendering = function () {
-		var sCardType;
-		if (this._oCardManifest && this._oCardManifest.get(MANIFEST_PATHS.TYPE)) {
-			sCardType = this._oCardManifest.get(MANIFEST_PATHS.TYPE).toLowerCase();
-		}
-
-		this.toggleStyleClass("sapFCardAnalytical", sCardType === "analytical");
 	};
 
 	/**
