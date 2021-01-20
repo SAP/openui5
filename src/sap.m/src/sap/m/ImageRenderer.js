@@ -36,7 +36,8 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS"],
 			aLabelledBy = oImage.getAriaLabelledBy(),
 			aDescribedBy = oImage.getAriaDescribedBy(),
 			aDetails = oImage.getAriaDetails(),
-			bIsImageMode = sMode === ImageMode.Image;
+			bIsImageMode = sMode === ImageMode.Image,
+			bLazyLoading = oImage.getLazyLoading();
 
 		// Additional element for Image with LightBox
 		if (oLightBox) {
@@ -50,6 +51,10 @@ sap.ui.define(['sap/m/library', "sap/base/security/encodeCSS"],
 
 		if (bIsImageMode) {
 			oRm.voidStart("img", !oLightBox ? oImage : oImage.getId() + "-inner");
+			if (bLazyLoading) {
+				oRm.attr("loading", "lazy");
+			}
+
 		} else {
 			oRm.openStart("span", !oLightBox ? oImage : oImage.getId() + "-inner");
 		}
