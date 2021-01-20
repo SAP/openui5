@@ -537,6 +537,15 @@ sap.ui.define([
 
 		var oHostInstance = this.getHostInstance();
 
+		if (vHost && !oHostInstance) {
+			Log.error(
+				"Host with id '" + vHost + "' is not available during card initialization. It must be available for host specific features to work.",
+				"Make sure that the host already exists, before assigning it to the card.",
+				"sap.ui.integration.widgets.Card"
+			);
+			return this;
+		}
+
 		this.getModel("context").setHost(oHostInstance);
 
 		if (this._oDestinations) {
