@@ -105,9 +105,12 @@
 		<sap.ui5.eslint.failonerror>true</sap.ui5.eslint.failonerror>
 		<!-- only validate the changed files -->
 		<sap.ui5.eslint.onlyChangedFiles>true</sap.ui5.eslint.onlyChangedFiles>
+		<!-- send eslint result as Gerrit inline comment -->
+		<sap.ui5.eslint.sendGerritComment>true</sap.ui5.eslint.sendGerritComment>
 		<!-- quite or verbose execution -->
 		<sap.ui5.eslint.quite>true</sap.ui5.eslint.quite>
-
+		<!-- Eslint tools version -->
+		<sap.ui5.eslint.tools.version>0.0.2</sap.ui5.eslint.tools.version>
  	</properties>
 
 
@@ -318,7 +321,7 @@
 					<plugin>
 						<groupId>com.sap.ui5.tools.maven</groupId>
 						<artifactId>eslintnode-maven-plugin</artifactId>
-						<version>0.2.0-SNAPSHOT</version>
+						<version>0.2.2</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
@@ -342,6 +345,8 @@
 							</formatters>
 							<failOnError>${sap.ui5.eslint.failonerror}</failOnError>
 							<onlyChangedFiles>${sap.ui5.eslint.onlyChangedFiles}</onlyChangedFiles>
+							<sendGerritComment>${sap.ui5.eslint.sendGerritComment}</sendGerritComment>
+							<eslintToolsVersion>${sap.ui5.eslint.tools.version}</eslintToolsVersion>
 							<quiet>${sap.ui5.eslint.quite}</quiet>
 							<skip>${sap.ui5.eslint.skip.validation}</skip>
 						</configuration>
@@ -364,7 +369,8 @@
 
 				<!-- validate all files for the nightly build (attention: profile nightly.build must stay after eslint.build!) -->
 				<sap.ui5.eslint.onlyChangedFiles>false</sap.ui5.eslint.onlyChangedFiles>
-
+				<!-- don't send Gerrit comment in nightly build -->
+				<sap.ui5.eslint.sendGerritComment>false</sap.ui5.eslint.sendGerritComment>
 			</properties>
 
 		</profile>
