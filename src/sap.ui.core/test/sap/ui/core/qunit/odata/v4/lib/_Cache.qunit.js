@@ -240,7 +240,6 @@ sap.ui.define([
 		assert.strictEqual(oCache.bSortExpandSelect, "bSortExpandSelect");
 		assert.strictEqual(oCache.bSentRequest, false);
 		assert.strictEqual(oCache.bSharedRequest, "bSharedRequest");
-		assert.strictEqual(oCache.oTypePromise, undefined);
 		assert.strictEqual(oCache.sReportedMessagesPath , undefined);
 		assert.ok(oCache.hasOwnProperty("sReportedMessagesPath"));
 
@@ -266,6 +265,7 @@ sap.ui.define([
 		assert.strictEqual(oCache.sResourcePath, "TEAMS('23')");
 		assert.strictEqual(oCache.sMetaPath, "/TEAMS");
 		assert.strictEqual(oCache.oTypePromise, undefined);
+		assert.ok(oCache.hasOwnProperty("oTypePromise"));
 		assert.strictEqual(oCache.mLateQueryOptions, null);
 		assert.deepEqual(oCache.mPropertyRequestByPath, {});
 	});
