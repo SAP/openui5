@@ -460,6 +460,13 @@ sap.ui.define([
 		// Assert
 		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCSmallFontSize", sNewLanguage);
 		// Arrange
+		sNewLanguage = "de-de";
+		sap.ui.getCore().getConfiguration().setLanguage(sNewLanguage);
+		this.oNumericContent.invalidate();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		this.fnAssertFontSizeClassesForLanguage(assert, "sapMNCSmallFontSize", sNewLanguage);
+		// Arrange
 		this.oNumericContent.setAdaptiveFontSize(false);
 		this.oNumericContent.invalidate();
 		sap.ui.getCore().applyChanges();

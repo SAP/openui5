@@ -23,6 +23,7 @@ sap.ui.define([
 		"cs": 4,
 		"da": 4,
 		"de": 8,
+		"de-de": 8,
 		"de_at": 8,
 		"de_ch": 8,
 		"el": 4,
