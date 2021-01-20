@@ -14,6 +14,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._V4MetadataConverter
 	 * @constructor
+	 * @extends sap.ui.model.odata.v4.lib._MetadataConverter
 	 */
 	function _V4MetadataConverter() {
 		this.enumType = null; // the current EnumType

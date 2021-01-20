@@ -259,7 +259,7 @@ sap.ui.define([
 	 * Creates an annotatable that is able to consume V2 annotations and set V4 annotations for the
 	 * correct target. It ensures that the target for the annotations is only created when needed.
 	 *
-	 * @param {_V2MetadataConverter} oConverter The converter
+	 * @param {sap.ui.model.odata.v4.lib._V2MetadataConverter} oConverter The converter
 	 * @param {string} sTarget
 	 *   The target name to which the V4 annotations shall be added. The target path is constructed
 	 *   from the path of the top annotatable of the stack in oConverter (if there is one yet) and
@@ -368,6 +368,7 @@ sap.ui.define([
 	 *
 	 * @alias sap.ui.model.odata.v4.lib._V2MetadataConverter
 	 * @constructor
+	 * @extends sap.ui.model.odata.v4.lib._MetadataConverter
 	 */
 	function _V2MetadataConverter() {
 		this.association = null; // the current association

@@ -192,7 +192,7 @@ sap.ui.define([
 	 *   defaults to <code>getUpdateGroupId()</code>
 	 * @param {string} sEditUrl
 	 *   The edit URL to be used for the DELETE request
-	 * @returns {Promise}
+	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise which is resolved without a result in case of success, or rejected with an
 	 *   instance of <code>Error</code> in case of failure.
 	 *
@@ -476,8 +476,7 @@ sap.ui.define([
 	 *       deleted (see {@link sap.ui.model.odata.v4.Context#delete}).
 	 *   </ul>
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#change
+	 * @event sap.ui.model.odata.v4.ODataContextBinding#change
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -509,8 +508,7 @@ sap.ui.define([
 	 * @param {Error} [oEvent.getParameters().error] The error object if a back-end request failed.
 	 *   If there are multiple failed back-end requests, the error of the first one is provided.
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataReceived
+	 * @event sap.ui.model.odata.v4.ODataContextBinding#dataReceived
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -525,8 +523,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.base.Event} oEvent
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#dataRequested
+	 * @event sap.ui.model.odata.v4.ODataContextBinding#dataRequested
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -543,8 +540,7 @@ sap.ui.define([
 	 * @param {boolean} oEvent.getParameters().success
 	 *   Whether all PATCHes are successfully processed
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#patchCompleted
+	 * @event sap.ui.model.odata.v4.ODataContextBinding#patchCompleted
 	 * @public
 	 * @since 1.59.0
 	 */
@@ -558,8 +554,7 @@ sap.ui.define([
 	 * @param {sap.ui.base.Event} oEvent The event object
 	 * @param {sap.ui.model.odata.v4.ODataContextBinding} oEvent.getSource() This binding
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataContextBinding#patchSent
+	 * @event sap.ui.model.odata.v4.ODataContextBinding#patchSent
 	 * @public
 	 * @since 1.59.0
 	 */

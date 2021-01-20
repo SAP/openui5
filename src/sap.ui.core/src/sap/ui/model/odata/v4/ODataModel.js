@@ -366,8 +366,7 @@ sap.ui.define([
 	/**
 	 * The 'parseError' event is not supported by this model.
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataModel#parseError
+	 * @event sap.ui.model.odata.v4.ODataModel#parseError
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -375,8 +374,7 @@ sap.ui.define([
 	/**
 	 * The 'propertyChange' event is not supported by this model.
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataModel#propertyChange
+	 * @event sap.ui.model.odata.v4.ODataModel#propertyChange
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -384,8 +382,7 @@ sap.ui.define([
 	/**
 	 * The 'requestCompleted' event is not supported by this model.
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataModel#requestCompleted
+	 * @event sap.ui.model.odata.v4.ODataModel#requestCompleted
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -393,8 +390,7 @@ sap.ui.define([
 	/**
 	 * The 'requestFailed' event is not supported by this model.
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataModel#requestFailed
+	 * @event sap.ui.model.odata.v4.ODataModel#requestFailed
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -402,8 +398,7 @@ sap.ui.define([
 	/**
 	 * The 'requestSent' event is not supported by this model.
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataModel#requestSent
+	 * @event sap.ui.model.odata.v4.ODataModel#requestSent
 	 * @public
 	 * @since 1.37.0
 	 */
@@ -412,8 +407,7 @@ sap.ui.define([
 	 * The 'sessionTimeout' event is fired when the server has created a session for the model and
 	 * this session ran into a timeout due to inactivity.
 	 *
-	 * @event
-	 * @name sap.ui.model.odata.v4.ODataModel#sessionTimeout
+	 * @event sap.ui.model.odata.v4.ODataModel#sessionTimeout
 	 * @public
 	 * @since 1.66.0
 	 */
