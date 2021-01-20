@@ -356,7 +356,12 @@ sap.ui.define([
 				oSettings._txt = "";
 				if (fn) {
 					if (!fn(oValue, oSettings[n], oSettings)) {
-						var sError = oSettings.message;
+						var sError;
+						if (typeof oSettings.message === "function") {
+							sError = oSettings.message(oValue, oConfig);
+						} else {
+							sError = oSettings.message;
+						}
 						if (!sError) {
 							if (oSettings._txt) {
 								sError = oResourceBundle.getText(oValidations[oSettings._txt], [oSettings[n]]);
@@ -371,7 +376,12 @@ sap.ui.define([
 			}
 			if (n === "validate") {
 				if (!oSettings[n](oValue, oConfig)) {
-					var sError = oSettings.message;
+					var sError;
+					if (typeof oSettings.message === "function") {
+						sError = oSettings.message(oValue, oConfig);
+					} else {
+						sError = oSettings.message;
+					}
 					if (!sError) {
 						if (oSettings._txt) {
 							sError = oResourceBundle.getText(oValidations[oSettings._txt], [oSettings[n]]);

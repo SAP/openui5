@@ -244,7 +244,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"settings": {
 								"value": "{currentSettings>value}",
 								"min": 0,
-								"max": 10,
+								"max": 15,
 								"width": "100%",
 								"showAdvancedTooltip": true,
 								"showHandleTooltip": false,
@@ -261,8 +261,25 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						},
 						{
 							"type": "error",
+							"validate": function (value) {
+								return value > 5;
+							},
+							"message": function (value) {
+								if (value <= 2) {
+									return "value might not smaller than 2";
+								}
+								return "value might not smaller than 5";
+							}
+						},
+						{
+							"type": "error",
 							"maximum": 9,
-							"message": "Maximum is 9"
+							"message": function (value) {
+								if (value > 11) {
+									return "value out of range 11";
+								}
+								return "Maximum is 9";
+							}
 						},
 						{
 							"type": "error",
