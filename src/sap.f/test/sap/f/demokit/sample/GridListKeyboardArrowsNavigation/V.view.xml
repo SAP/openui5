@@ -1,0 +1,92 @@
+<mvc:View
+	height="100%"
+	controllerName="sap.f.sample.GridListKeyboardArrowsNavigation.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:f="sap.f"
+	xmlns:cssgrid="sap.ui.layout.cssgrid">
+	<App>
+		<Page class="sapUiResponsivePadding--content" showHeader="false">
+			<ToggleButton id="revealGrid" text="Reveal Grids" press=".onRevealGrids" class="sapUiSmallMargin" />
+			<MessageStrip
+				class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
+				type="Information"
+				text="Note: This sample is not supported by Microsoft Internet Explorer." />
+			<Slider value="100" liveChange=".onSliderMoved" />
+
+			<cssgrid:CSSGrid id="container">
+				<cssgrid:customLayout >
+					<cssgrid:GridResponsiveLayout containerQuery="true">
+						<cssgrid:layout>
+							<cssgrid:GridSettings gridGap="1rem" gridTemplateColumns="repeat(2, 1fr)"></cssgrid:GridSettings>
+						</cssgrid:layout>
+						<cssgrid:layoutS>
+							<cssgrid:GridSettings gridGap="1rem" gridTemplateColumns="1fr"></cssgrid:GridSettings>
+						</cssgrid:layoutS>
+					</cssgrid:GridResponsiveLayout>
+				</cssgrid:customLayout>
+
+				<f:GridList id="gridList1" headerText="GridList 1" borderReached=".onBorderReached" items="{path: '/items1'}">
+					<f:customLayout>
+						<cssgrid:GridBasicLayout gridAutoRows="5rem" gridTemplateColumns="repeat(auto-fill, minmax(5rem, 1fr))" gridGap="0.5rem"></cssgrid:GridBasicLayout>
+					</f:customLayout>
+					<f:GridListItem>
+						<f:layoutData>
+							<cssgrid:GridItemLayoutData gridRow="span 2" gridColumn="span 2"/>
+						</f:layoutData>
+						<VBox class="sapUiSmallMargin">
+							<Title text="{title}" wrapping="true" />
+							<Label text="Subtitle" wrapping="true" />
+						</VBox>
+					</f:GridListItem>
+				</f:GridList>
+
+				<f:GridList id="gridList2" headerText="GridList 2" borderReached=".onBorderReached" items="{path: '/items2'}">
+					<f:customLayout>
+						<cssgrid:GridBasicLayout gridAutoRows="5rem" gridTemplateColumns="repeat(auto-fill, minmax(5rem, 1fr))" gridGap="0.5rem"></cssgrid:GridBasicLayout>
+					</f:customLayout>
+					<f:GridListItem>
+						<f:layoutData>
+							<cssgrid:GridItemLayoutData gridRow="span 1" gridColumn="span 3"/>
+						</f:layoutData>
+						<VBox class="sapUiSmallMargin">
+							<Title text="{title}" wrapping="true" />
+							<Label text="Subtitle" wrapping="true" />
+						</VBox>
+					</f:GridListItem>
+				</f:GridList>
+
+				<f:GridList id="gridList3" headerText="GridList 3" borderReached=".onBorderReached" items="{path: '/items3'}">
+					<f:customLayout>
+						<cssgrid:GridBasicLayout gridAutoRows="5rem" gridTemplateColumns="repeat(auto-fill, minmax(5rem, 1fr))" gridGap="0.5rem"></cssgrid:GridBasicLayout>
+					</f:customLayout>
+					<f:GridListItem>
+						<f:layoutData>
+							<cssgrid:GridItemLayoutData gridRow="span 2" gridColumn="span 3" />
+						</f:layoutData>
+						<VBox class="sapUiSmallMargin">
+							<Title text="{title}" wrapping="true" />
+							<Label text="Subtitle" wrapping="true" />
+						</VBox>
+					</f:GridListItem>
+				</f:GridList>
+
+				<f:GridList id="gridList4" headerText="GridList 4" borderReached=".onBorderReached" items="{path: '/items4'}">
+					<f:customLayout>
+						<cssgrid:GridBasicLayout gridAutoRows="5rem" gridTemplateColumns="repeat(auto-fill, minmax(5rem, 1fr))" gridGap="0.5rem"></cssgrid:GridBasicLayout>
+					</f:customLayout>
+					<f:GridListItem>
+						<f:layoutData>
+							<cssgrid:GridItemLayoutData gridRow="span 3" gridColumn="span 2" />
+						</f:layoutData>
+						<VBox class="sapUiSmallMargin">
+							<Title text="{title}" wrapping="true" />
+							<Label text="Subtitle" wrapping="true" />
+						</VBox>
+					</f:GridListItem>
+				</f:GridList>
+
+			</cssgrid:CSSGrid>
+		</Page>
+	</App>
+</mvc:View>

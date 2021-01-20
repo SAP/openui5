@@ -7,7 +7,7 @@
 	<MessageStrip
 		class="sapUiSmallMarginBeginEnd sapUiSmallMarginTop"
 		type="Information"
-		text="Note: This layout is not supported by Microsoft Internet Explorer and Microsoft Edge 15 and older versions." />
+		text="Note: This layout is not supported by Microsoft Internet Explorer." />
 	<Slider value="100" liveChange="onSliderMoved" />
 	<Panel id="panelForGridList">
 		<headerToolbar>
