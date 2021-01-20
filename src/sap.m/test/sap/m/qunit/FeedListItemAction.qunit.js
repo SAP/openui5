@@ -26,4 +26,12 @@ sap.ui.define([
 		assert.equal(this.oAction.getProperty("key"), "", "Default value is correct");
 	});
 
+	QUnit.test("Default value of property enabled", function(assert) {
+		assert.equal(this.oAction.getProperty("enabled"), true, "Default value is correct");
+	});
+
+	QUnit.test("Default value of property visible", function(assert) {
+		assert.equal(this.oAction.getProperty("visible"), true, "Default value is correct");
+	});
+
 });

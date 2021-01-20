@@ -42,7 +42,15 @@ sap.ui.define(["sap/ui/core/Element"],
 				/**
 				 * The key of the item.
 				 */
-				key: { type: "string", group: "Misc", defaultValue: "" }
+				key: { type: "string", group: "Misc", defaultValue: "" },
+				/**
+				 * Determines whether the control should be visible on the screen.
+				 */
+				visible: { type: "boolean", group: "Appearance", defaultValue: true },
+				/**
+				 * Determines whether the Button is enabled (default is set to true). A disabled Button has different color depending on the theme.
+				 */
+				enabled: { type: "boolean", group: "Appearance", defaultValue: true }
 			},
 			events: {
 				/**
