@@ -17,6 +17,7 @@
 		}
 	},
 	"sap.card": {
+		"extension": "DataExtensionImpl",
 		"designtime": "dt",
 		"type": "List",
 		"configuration": {
@@ -94,6 +95,12 @@
 					"value": "key1"
 				},
 				"stringWithRequestList": {
+					"value": "key1"
+				},
+				"stringWithRequestExtentionList": {
+					"value": "Quality Management"
+				},
+				"stringWithRequestDestinationList": {
 					"value": "key1"
 				},
 				"stringArray": {

@@ -292,12 +292,14 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"type": "string",
 						"values": {
 							"data": {
-								"json": [
-									{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
-									{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
-									{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
-								],
-								"path": "/"
+								"json": {
+									"values": [
+										{ "text": "text1", "key": "key1", "additionalText": "addtext1", "icon": "sap-icon://accept" },
+										{ "text": "text2", "key": "key2", "additionalText": "addtext2", "icon": "sap-icon://cart" },
+										{ "text": "text3", "key": "key3", "additionalText": "addtext3", "icon": "sap-icon://zoom-in" }
+									]
+								},
+								"path": "/values"
 							},
 							"item": {
 								"text": "{text}",
@@ -322,6 +324,23 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"key": "{key}",
 								"additionalText": "{additionalText}",
 								"icon": "{icon}"
+							}
+						}
+					},
+					"stringWithRequestExtentionList": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestExtentionList/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"extension": {
+									"method": "getData"
+								},
+								"path": "/values"
+							},
+							"item": {
+								"text": "{trainer}",
+								"key": "{title}",
+								"additionalText": "{location}"
 							}
 						}
 					},
@@ -632,7 +651,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 										"$select": "CustomerID, CompanyName, Country, City, Address"
 									}
 								},
-								"path": "/value/"
+								"path": "/value"
 							},
 							"item": {
 								"text": "{CompanyName}",
@@ -652,7 +671,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 										"$select": "EmployeeID, FirstName, LastName, Country, Title, HomePhone"
 									}
 								},
-								"path": "/value/"
+								"path": "/value"
 							},
 							"item": {
 								"text": "{FirstName} {LastName}",
@@ -674,7 +693,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 										"$filter": "(CustomerID eq '{items>Customer/value}') and (EmployeeID eq {items>Employee/value})"
 									}
 								},
-								"path": "/value/"
+								"path": "/value"
 							},
 							"item": {
 								"text": "{= ${OrderID} !== undefind ? ${OrderID} + '-' +  ${CustomerID} + '-' + ${EmployeeID}: ''}",
@@ -695,7 +714,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 										"$filter": "OrderID eq {items>Order/value}"
 									}
 								},
-								"path": "/value/"
+								"path": "/value"
 							},
 							"item": {
 								"text": "{= ${OrderID} !== undefind ? ${OrderID} + '-' +  ${ProductID} + ':' + ${Product/ProductName}: ''}",
@@ -717,7 +736,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 										"$top": "5"
 									}
 								},
-								"path": "/value/"
+								"path": "/value"
 							},
 							"item": {
 								"text": "{CompanyName}",
