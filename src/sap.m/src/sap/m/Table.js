@@ -1090,7 +1090,9 @@ sap.ui.define([
 				mPrioColumns[sImportance].push(oColumn);
 			});
 
-		var aPrioColumns = Object.values(mPrioColumns);
+		var aPrioColumns = Object.keys(mPrioColumns).map(function(sPriority) {
+			return mPrioColumns[sPriority];
+		});
 		var oMostImportantColumn = aPrioColumns.find(String)[0];
 
 		aPrioColumns.reduce(function(fTotalWidth, aColumns) {
