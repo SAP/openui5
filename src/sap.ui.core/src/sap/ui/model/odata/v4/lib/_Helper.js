@@ -831,8 +831,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the relative path for a given (absolute) path by stripping off the base path.
-		 * Note that the resulting path may start with a key predicate.
+		 * Returns the path suffix of <code>sPath</code> which is relative to
+		 * <code>sBasePath</code>. Either both paths have to be absolute or none of them. Note that
+		 * the resulting path may start with a key predicate.
 		 *
 		 * Examples: (The base path is "/foo/bar"):
 		 * "/foo/bar/baz" -> "baz"
@@ -844,24 +845,27 @@ sap.ui.define([
 		 * @param {string} sPath
 		 *   A path
 		 * @param {string} sBasePath
-		 *   The (absolute) base path to strip off
+		 *   The base path to strip off
 		 * @returns {string}
-		 *   The path relative to the base path or <code>undefined</code> if the path does not start
-		 *   with the base path
+		 *   The path suffix of <code>sPath</code> which is relative to <code>sBasePath</code>, or
+		 *   <code>undefined</code> if there is no such suffix, or <code>sPath</code> if
+		 *   <code>sBasePath</code> is empty.
 		 *
 		 * @see .hasPathPrefix
 		 */
 		getRelativePath : function (sPath, sBasePath) {
-			if (!sPath.startsWith(sBasePath)) {
-				return undefined;
-			}
-			sPath = sPath.slice(sBasePath.length);
-			if (sPath) {
-				if (sPath[0] === "/") {
-					return sPath.slice(1);
-				}
-				if (sPath[0] !== "(") {
+			if (sBasePath.length) {
+				if (!sPath.startsWith(sBasePath)) {
 					return undefined;
+				}
+				sPath = sPath.slice(sBasePath.length);
+				if (sPath) {
+					if (sPath[0] === "/") {
+						return sPath.slice(1);
+					}
+					if (sPath[0] !== "(") {
+						return undefined;
+					}
 				}
 			}
 			return sPath;

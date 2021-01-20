@@ -215,25 +215,46 @@
 			<li>Close the message popover.</li>
 		</ol>
 
-		<h4>Highlight scenario</h4>
+		<h4>MessageStrip, highlight and filter entities by messages scenario</h4>
 		<ul>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
 				<code>2</code>.</li>
-			<li>Press the 'More' button of the sales order table.</li>
 			<li><b>Check:</b> A message strip is displayed above the table indicating that there are
 				issues for the table.</li>
+			<li><b>Check:</b> The row of the sales order with the ID <code>0500000001</code> is
+				highlighted as an error.</li>
+			<li>Press the 'More' button of the <code>New Sales Orders</code> table.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages now is
+				<code>4</code>.</li>
 			<li><b>Check:</b> The row of the sales order with the ID <code>0500000006</code> is
 				highlighted as an error.</li>
-			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
-				<code>4</code>.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> A popover is displayed containing 4 messages: a warning message with
-				the text "Enter customer reference if available", an error message with the text
-				"Minimum order quantity is 2", an warning "Enter a Note" and another error message
-				with the text "Minimum order quantity is 2".</li>
+			<li><b>Check:</b> A popover is displayed containing 4 messages:</li>
+			<ul>
+				<li>a warning message with the text "Enter customer reference if available"</li>
+				<li>an error message with the text "Minimum order quantity is 2"</li>
+				<li>a warning "Enter a Note" and</li>
+				<li>another error message with the text "Minimum order quantity is 2".</li>
+			</ul>
 			<li>Close the message popover.</li>
 			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
 				<code>0500000006</code>.</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				still <code>4</code>.</li>
+			<li>In the <code>New Sales Orders</code> table select the sales order with the ID
+				<code>0500000006</code>.</li>
+			<li><b>Check:</b> There are 8 line items, one with an value state error "Enter a Note"
+				</li>
+			<li>Change the <code>Filter</code> value in the <code>Sales Order Line Items</code>
+				table from <code>Show All</code> to <code>With Error Messages</code>.<br />
+				<b>Check:</b> Only the line item with the error is displayed.<br />
+			</li>
+			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
+				still <code>4</code>.</li>
+			<li>Change the <code>Filter</code> value in the <code>Sales Order Line Items</code>
+				table from <code>With Error Messages</code> to <code>Show All</code>.<br />
+				<b>Check:</b> All 8 line items are displayed again.<br />
+			</li>
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
 				still <code>4</code>.</li>
 			<li>Enter any text in the note input field of the first sales order item.</li>
@@ -246,8 +267,8 @@
 			<li><b>Check:</b> On the <code>Show messages</code> button the number of messages is
 				<code>2</code>.</li>
 			<li>Click on the <code>Show Messages</code> button.</li>
-			<li><b>Check:</b> The messages "Enter a Note" and "Minimum order quantity is 2" now are
-				gone.</li>
+			<li><b>Check:</b> The warning "Enter a Note" and one error "Minimum order quantity is 2"
+				now are gone.</li>
 			<li>Close the message popover.</li>
 		</ul>
 	</body>

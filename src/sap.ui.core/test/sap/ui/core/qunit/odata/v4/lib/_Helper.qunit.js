@@ -3134,6 +3134,14 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("getRelativePath with empty sBasePath", function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.getRelativePath("/Teams('42')", ""), "/Teams('42')");
+		// code under test
+		assert.strictEqual(_Helper.getRelativePath("Teams('42')", ""), "Teams('42')");
+	});
+
+	//*********************************************************************************************
 [{
 	aggregated : {$select : ["Name"]},
 	additional : {$select : ["ID"]},

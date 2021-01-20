@@ -250,13 +250,13 @@ sap.ui.define([
 			When.onTheSimulateDiscountDialog.close();
 			When.onTheMessagePopover.close(); // opened automatically (due to error)
 
-			// Highlight scenario
+			// MessageStrip, highlight and filter entities by messages scenario
 			Then.onTheMainPage.checkMessagesButtonCount(2);
-			When.onTheMainPage.pressMoreButton();
 			Then.onTheMainPage.checkMessageStrip("Error");
-			Then.onTheMainPage.checkHighlight(6, "Error");
+			Then.onTheMainPage.checkHighlight(1, "Error");
+			When.onTheMainPage.pressMoreButton(); // 0500000006 has further messages
 			Then.onTheMainPage.checkMessagesButtonCount(4);
-
+			Then.onTheMainPage.checkHighlight(6, "Error");
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMessagePopover.checkMessages([{
 				message : sNoteWarning,
@@ -272,14 +272,21 @@ sap.ui.define([
 				type : MessageType.Error
 			}]);
 			When.onTheMessagePopover.close();
-
 			When.onTheMainPage.selectSalesOrder(6);
 			Then.onTheMainPage.checkMessagesButtonCount(4);
-
+			Then.onTheMainPage.checkTableLength(8, "SO_2_SOITEM");
+			When.onTheMainPage.setFilter("Error");
+			Then.onTheMainPage.checkMessagesButtonCount(4); // messages still existing
+			Then.onTheMainPage.checkTableLength(1, "SO_2_SOITEM");
+			Then.onTheMainPage.checkSalesOrderLineItemQuantityValueState(0, "Error",
+				sQuantityError);
+			When.onTheMainPage.setFilter("Show All");
+			Then.onTheMainPage.checkTableLength(8, "SO_2_SOITEM");
+			Then.onTheMainPage.checkMessagesButtonCount(4);
 			When.onTheMainPage.changeNoteInLineItem(0, "EPM DG: SO ID 0500000006 Item 0000000010");
 			When.onTheMainPage.changeQuantityInLineItem(0, "2");
 			When.onTheMainPage.pressSaveSalesOrderButton();
-			Then.onTheMainPage.checkHighlight(6, "None");
+			Then.onTheMainPage.checkHighlight(6, "None"); // messages for 0500000006 are gone
 			Then.onTheMainPage.checkMessagesButtonCount(2);
 			When.onTheMainPage.pressMessagesButton();
 			Then.onTheMessagePopover.checkMessages([{
