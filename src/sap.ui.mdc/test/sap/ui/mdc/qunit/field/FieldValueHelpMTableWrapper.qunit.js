@@ -364,6 +364,8 @@ sap.ui.define([
 
 	QUnit.test("fieldHelpOpen / fieldHelpClose", function(assert) {
 
+		sinon.spy(oTable, "scrollToIndex");
+
 		oWrapper.fieldHelpOpen(true); //suggestion
 		assert.equal(oTable.getMode(), "MultiSelect", "Table mode in suggestion");
 		assert.equal(oTable.getWidth(), "26rem", "Table width in suggestion");
@@ -373,6 +375,8 @@ sap.ui.define([
 		assert.equal(aSelectedItems.length, 1, "1 item selected");
 		assert.equal(aSelectedItems[0].getCells()[0].getText(), "I2", "selected item");
 		assert.ok(oWrapper._bSuggestion, "Sugestion mode stored internally");
+		assert.ok(oTable.scrollToIndex.calledWith(1), "Table scrolled to selected item");
+		oTable.scrollToIndex.reset();
 
 		oWrapper.fieldHelpClose();
 		assert.notOk(oWrapper._bSuggestion, "Sugestion mode not longer stored internally");
@@ -384,6 +388,8 @@ sap.ui.define([
 		aSelectedItems = oTable.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "1 item selected");
 		assert.equal(aSelectedItems[0].getCells()[0].getText(), "I2", "selected item");
+		assert.notOk(oTable.scrollToIndex.calledWith(1), "Table not scrolled to selected item");
+		oTable.scrollToIndex.reset();
 
 		// Single Selection case
 		oWrapper.fieldHelpClose();
@@ -392,7 +398,7 @@ sap.ui.define([
 		oWrapper.fieldHelpOpen(true); //suggestion
 		assert.equal(oTable.getMode(), "SingleSelectMaster", "Table mode in suggestion");
 		assert.equal(oTable.getWidth(), "26rem", "Table width in suggestion");
-		var aSelectedItems = oTable.getSelectedItems();
+		aSelectedItems = oTable.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "1 item selected");
 		assert.equal(aSelectedItems[0].getCells()[0].getText(), "I2", "selected item");
 		assert.ok(oWrapper._bSuggestion, "Sugestion mode stored internally");
@@ -406,6 +412,20 @@ sap.ui.define([
 		aSelectedItems = oTable.getSelectedItems();
 		assert.equal(aSelectedItems.length, 1, "1 item selected");
 		assert.equal(aSelectedItems[0].getCells()[0].getText(), "I2", "selected item");
+
+		oWrapper.fieldHelpClose();
+
+		oTable.scrollToIndex.reset();
+		aSelectedItems[0].setSelected(false); // deselect item
+		oWrapper.setSelectedItems([]); // remove selection
+		oWrapper.fieldHelpOpen(true); //suggestion
+		assert.equal(oTable.getMode(), "SingleSelectMaster", "Table mode in suggestion");
+		aSelectedItems = oTable.getSelectedItems();
+		assert.equal(aSelectedItems.length, 0, "no item selected");
+		assert.notOk(oTable.scrollToIndex.called, "Table not scrolled to selected item");
+		oTable.scrollToIndex.reset();
+
+		oWrapper.fieldHelpClose();
 
 	});
 

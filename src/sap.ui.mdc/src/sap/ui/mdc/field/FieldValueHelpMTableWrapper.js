@@ -224,7 +224,9 @@ sap.ui.define([
 			_updateSelectedItems.call(this); // as selection mode might be changed
 			if (bSuggestion) {
 				var oSelectedItem = oTable.getSelectedItem();
-				oTable.scrollToIndex(oTable.indexOfItem(oSelectedItem));
+				if (oSelectedItem) {
+					oTable.scrollToIndex(oTable.indexOfItem(oSelectedItem));
+				}
 			}
 		}
 
