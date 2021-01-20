@@ -152,7 +152,22 @@ td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel{
 .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel{
 	text-align: end !important; /* to overwrite setting on label */
 	width: 100%; /* to react on touch/click on whole label cell */
-	max-width: calc(~"100% - (@{_sap_m_Label_AsteriskWidth} - 0.125rem)");
+
+	/* accommodate space for asterisk in French*/
+	&:lang(fr) {
+		max-width: calc(~"100% - (@{_sap_m_Label_AsteriskWidth})");
+		padding-left: 0.5rem;
+	}
+	/* accommodate space for asterisk in Chinese (zh-TW) */
+	&:lang(zh-TW) {
+		max-width: calc(~"100% - (@{_sap_m_Label_AsteriskWidth})");
+		padding-left: 0.375rem;
+	}
+	/* accommodate space for asterisk in Chinese (zh-CN) */
+	&:lang(zh-CN) {
+		max-width: calc(~"100% - (@{_sap_m_Label_AsteriskWidth})");
+		padding-left: 0.125rem;
+	}
 	position: relative;
 }
 
