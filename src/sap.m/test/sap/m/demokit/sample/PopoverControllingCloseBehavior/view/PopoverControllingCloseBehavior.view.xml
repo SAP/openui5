@@ -53,7 +53,8 @@
 									<ObjectIdentifier title="{Name}" />
 									<Link
 										text="{ProductId}"
-										press="handlePopoverPress" />
+										press="handlePopoverPress"
+										ariaHasPopup="Dialog"/>
 									<Input value="{Quantity}" type="{Text}" description="{UoM}" fieldWidth="{60%}"/>
 									<ObjectNumber
 										number="{WeightMeasure}"
