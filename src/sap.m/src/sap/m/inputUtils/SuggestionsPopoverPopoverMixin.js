@@ -69,6 +69,37 @@ sap.ui.define([
 		};
 
 		/**
+		 * Gets Show More button from <code>SuggestionsPopover</code>'s Popover.
+		 *
+		 * @return {sap.m.Button} Show more button.
+		 * @public
+		 */
+		this.getShowMoreButton = function() {
+			return this.getPopover().getFooter() && this.getPopover().getFooter().getContent()[1];
+		};
+
+		/**
+		 * Sets Show More button to <code>SuggestionsPopover</code>'s Popover.
+		 *
+	 	 * @param {sap.m.Toolbar} oButtonToolbar The "Show More" button toolbar for the Popover's <code>footer</code> aggregation
+		 * @public
+		 */
+		this.setShowMoreButton = function(oButtonToolbar) {
+			this.getPopover().setFooter(oButtonToolbar);
+			return this;
+		};
+
+		/**
+		 * Destroys Show More button from <code>SuggestionsPopover</code>'s Popover.
+		 *
+		 * @public
+		 */
+		this.removeShowMoreButton = function() {
+			this.getPopover().destroyAggregation("footer");
+			return this;
+		};
+
+		/**
 		 * Helper function that overwrites popover in the Input.
 		 */
 		function _patchPopover(oPopover, oInput) {
