@@ -10,19 +10,22 @@
 		"UI5__count" : "3"
 	}, {
 		"@odata.id" : null,
-		"Country" : "United Kingdom",
+		"Country" : "2",
+		"CountryText" : "United Kingdom",
 		"LocalCurrency" : "GBP",
 		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
 		"SalesAmountLocalCurrency" : "14548502"
 	}, {
 		"@odata.id" : null,
-		"Country" : "USA",
+		"Country" : "1",
+		"CountryText" : "USA",
 		"LocalCurrency" : "USD",
 		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
 		"SalesAmountLocalCurrency" : "40405175"
 	}, {
 		"@odata.id" : null,
-		"Country" : "Germany",
+		"Country" : "3",
+		"CountryText" : "Germany",
 		"LocalCurrency" : "EUR",
 		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
 		"SalesAmountLocalCurrency" : "24489638"

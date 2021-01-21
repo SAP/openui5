@@ -42,6 +42,7 @@
 						<String>Country</String>
 					</Annotation>
 				</Property>
+				<Property Name="CountryText" Type="Edm.String" />
 				<Property Name="Region" Type="Edm.String" Nullable="false">
 					<Annotation Term="Aggregation.Groupable">
 						<Bool>true</Bool>
@@ -50,6 +51,7 @@
 						<String>Region</String>
 					</Annotation>
 				</Property>
+				<Property Name="RegionText" Type="Edm.String" />
 				<Property Name="Segment" Type="Edm.String" Nullable="false">
 					<Annotation Term="Aggregation.Groupable">
 						<Bool>true</Bool>

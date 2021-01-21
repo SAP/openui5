@@ -39,7 +39,15 @@
 						<Bool>true</Bool>
 					</Annotation>
 					<Annotation Term="Common.Label">
-						<String>Country</String>
+						<String>Country Key</String>
+					</Annotation>
+				</Property>
+				<Property Name="CountryText" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Country Text</String>
 					</Annotation>
 				</Property>
 				<Property Name="Region" Type="Edm.String" Nullable="false">
@@ -47,7 +55,15 @@
 						<Bool>true</Bool>
 					</Annotation>
 					<Annotation Term="Common.Label">
-						<String>Region</String>
+						<String>Region Key</String>
+					</Annotation>
+				</Property>
+				<Property Name="RegionText" Type="Edm.String" Nullable="false">
+					<Annotation Term="Aggregation.Groupable">
+						<Bool>true</Bool>
+					</Annotation>
+					<Annotation Term="Common.Label">
+						<String>Region Text</String>
 					</Annotation>
 				</Property>
 				<Property Name="Segment" Type="Edm.String" Nullable="false">
@@ -250,6 +266,12 @@
 				</Annotation>
 				<Annotation Term="Aggregation.CustomAggregate" Qualifier="NumberOfCustomers">
 					<String>Edm.Int32</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="LocalCurrency">
+					<String>Edm.String</String>
+				</Annotation>
+				<Annotation Term="Aggregation.CustomAggregate" Qualifier="Currency">
+					<String>Edm.String</String>
 				</Annotation>
 			</Annotations>
 		</Schema>

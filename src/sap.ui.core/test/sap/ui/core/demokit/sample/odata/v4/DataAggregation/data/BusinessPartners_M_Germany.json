@@ -3,7 +3,8 @@
 	"value" : [{
 		"@odata.id" : null,
 		"LocalCurrency" : "EUR",
-		"Region" : "Saxony",
+		"Region" : "6",
+		"RegionText" : "Saxony",
 		"SalesAmountLocalCurrency@odata.type" : "#Decimal",
 		"SalesAmountLocalCurrency" : 1161590
 	}]

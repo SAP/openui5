@@ -15662,6 +15662,9 @@ sap.ui.define([
 	// BCP: 2080089628
 	// Use a unit for the grand total.
 	// JIRA: CPOUI5ODATAV4-583
+	//
+	// Show additional text property even w/o group levels.
+	// JIRA: CPOUI5ODATAV4-680
 	QUnit.test("Data Aggregation: $$aggregation w/ grand total w/ unit", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
@@ -15672,7 +15675,7 @@ sap.ui.define([
 					GrossAmount : {grandTotal : true, unit : \'CurrencyCode\'}\
 				},\
 				group : {\
-					LifecycleStatus : {}\
+					LifecycleStatus : {additionally : [\'LifecycleStatusDesc\']}\
 				}\
 			}\
 		}}">\
@@ -15680,24 +15683,29 @@ sap.ui.define([
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
 	<Text id="lifecycleStatus" text="{LifecycleStatus}"/>\
+	<Text id="lifecycleStatusDesc" text="{LifecycleStatusDesc}"/>\
 	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
 	<Text id="currencyCode" text="{CurrencyCode}"/>\
 </Table>';
 
 		this.expectRequest("SalesOrderList?$apply=concat(aggregate(GrossAmount,CurrencyCode)"
-				+ ",groupby((LifecycleStatus),aggregate(GrossAmount,CurrencyCode))"
+				+ ",groupby((LifecycleStatus,LifecycleStatusDesc)"
+					+ ",aggregate(GrossAmount,CurrencyCode))"
 				+ "/concat(aggregate($count as UI5__count),top(99)))", {
 				value : [
 					{CurrencyCode : null, GrossAmount : "12345"},
 					{"UI5__count" : "2", "UI5__count@odata.type" : "#Decimal"},
-					{CurrencyCode : "EUR", GrossAmount : "1", LifecycleStatus : "Z"},
-					{CurrencyCode : "GBP", GrossAmount : "2", LifecycleStatus : "Y"}
+					{CurrencyCode : "EUR", GrossAmount : "1", LifecycleStatus : "Z",
+						LifecycleStatusDesc : "<Z>"},
+					{CurrencyCode : "GBP", GrossAmount : "2", LifecycleStatus : "Y",
+						LifecycleStatusDesc : "<Y>"}
 				]
 			})
 			.expectChange("isExpanded", [true, undefined, undefined])
 			.expectChange("isTotal", [true, false, false])
 			.expectChange("level", [0, 1, 1])
 			.expectChange("lifecycleStatus", ["", "Z", "Y"])
+			.expectChange("lifecycleStatusDesc", ["", "<Z>", "<Y>"])
 			.expectChange("grossAmount", ["12345", "1", "2"])
 			.expectChange("currencyCode", ["", "EUR", "GBP"]);
 
@@ -16898,6 +16906,9 @@ sap.ui.define([
 	// JIRA: CPOUI5ODATAV4-179
 	// JIRA: CPOUI5ODATAV4-378
 	// JIRA: CPOUI5ODATAV4-597
+	//
+	// Show additional text properties for group levels.
+	// JIRA: CPOUI5ODATAV4-680
 	QUnit.test("Data Aggregation: expand three levels, expand after collapse", function (assert) {
 		var oModel = createAggregationModel(),
 			oRowsBinding,
@@ -16912,7 +16923,9 @@ sap.ui.define([
 				SalesNumber : {}\
 			},\
 			group : {\
-				AccountResponsible : {}\
+				AccountResponsible : {},\
+				Country : {additionally : [\'CountryText\']},\
+				Region : {additionally : [\'RegionText\']}\
 			},\
 			groupLevels : [\'Country\', \'Region\', \'Segment\']\
 		}\
@@ -16921,7 +16934,9 @@ sap.ui.define([
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
 	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
 	<Text id="country" text="{Country}"/>\
+	<Text id="countryText" text="{CountryText}"/>\
 	<Text id="region" text="{Region}"/>\
+	<Text id="regionText" text="{RegionText}"/>\
 	<Text id="segment" text="{Segment}"/>\
 	<Text id="accountResponsible" text="{AccountResponsible}"/>\
 	<Text id="salesAmount" text="{= %{SalesAmount} }"/>\
@@ -16929,21 +16944,23 @@ sap.ui.define([
 </t:Table>',
 			that = this;
 
-		this.expectRequest("BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))"
-				+ "&$count=true&$skip=0&$top=4", {
+		this.expectRequest("BusinessPartners?$apply=groupby((Country,CountryText)"
+				+ ",aggregate(SalesAmount))&$count=true&$skip=0&$top=4", {
 				"@odata.count" : "26",
 				value : [
-					{Country : "US", SalesAmount : "100"},
-					{Country : "UK", SalesAmount : "200"},
-					{Country : "DE", SalesAmount : "300"},
-					{Country : "IT", SalesAmount : "400"}
+					{Country : "US", CountryText : "<US>", SalesAmount : "100"},
+					{Country : "UK", CountryText : "<UK>", SalesAmount : "200"},
+					{Country : "DE", CountryText : "<DE>", SalesAmount : "300"},
+					{Country : "IT", CountryText : "<IT>", SalesAmount : "400"}
 				]
 			})
 			.expectChange("isExpanded", [false, false, false, false])
 			.expectChange("isTotal", [true, true, true, true])
 			.expectChange("level", [1, 1, 1, 1])
 			.expectChange("country", ["US", "UK", "DE", "IT"])
+			.expectChange("countryText", ["<US>", "<UK>", "<DE>", "<IT>"])
 			.expectChange("region", ["", "", "", ""])
+			.expectChange("regionText", ["", "", "", ""])
 			.expectChange("segment", ["", "", "", ""])
 			.expectChange("accountResponsible", ["", "", "", ""])
 			.expectChange("salesAmount", ["100", "200", "300", "400"])
@@ -16956,18 +16973,21 @@ sap.ui.define([
 			assert.strictEqual(oRowsBinding.getLength(), 26);
 
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
-					+ "/groupby((Region),aggregate(SalesAmount))&$count=true&$skip=0&$top=4", {
+					+ "/groupby((Region,RegionText),aggregate(SalesAmount))"
+					+ "&$count=true&$skip=0&$top=4", {
 					"@odata.count" : "3",
 					value : [
-						{Region : "Z", SalesAmount : "10"},
-						{Region : "Y", SalesAmount : "20"},
-						{Region : "X", SalesAmount : "30"}
+						{Region : "Z", RegionText : "<Z>", SalesAmount : "10"},
+						{Region : "Y", RegionText : "<Y>", SalesAmount : "20"},
+						{Region : "X", RegionText : "<X>", SalesAmount : "30"}
 					]
 				})
 				.expectChange("isExpanded", [true])
 				.expectChange("level", [, 2, 2, 2])
 				.expectChange("country", [, "US", "US", "US"])
+				.expectChange("countryText", [, "<US>", "<US>", "<US>"])
 				.expectChange("region", [, "Z", "Y", "X"])
+				.expectChange("regionText", [, "<Z>", "<Y>", "<X>"])
 				.expectChange("salesAmount", [, "10", "20", "30"]);
 
 			// code under test
@@ -16988,6 +17008,7 @@ sap.ui.define([
 				.expectChange("isExpanded", [, true])
 				.expectChange("level", [,, 3, 3])
 				.expectChange("region", [,, "Z", "Z"])
+				.expectChange("regionText", [,, "<Z>", "<Z>"])
 				.expectChange("segment", [,, "z", "y"])
 				.expectChange("salesAmount", [,, "10", "20"]);
 
@@ -17026,7 +17047,9 @@ sap.ui.define([
 				.expectChange("isTotal", [,,, true])
 				.expectChange("level", [, 1, 1, 1])
 				.expectChange("country", [, "UK", "DE", "IT"])
+				.expectChange("countryText", [, "<UK>", "<DE>", "<IT>"])
 				.expectChange("region", [, "", "", ""])
+				.expectChange("regionText", [, "", "", ""])
 				.expectChange("segment", [,, "", ""])
 				.expectChange("accountResponsible", [,,, ""])
 				.expectChange("salesAmount", [, "200", "300", "400"])
@@ -17045,7 +17068,9 @@ sap.ui.define([
 				.expectChange("isTotal", [,,, false])
 				.expectChange("level", [, 2, 3, 4])
 				.expectChange("country", [, "US", "US", "US"])
+				.expectChange("countryText", [, "<US>", "<US>", "<US>"])
 				.expectChange("region", [, "Z", "Z", "Z"])
+				.expectChange("regionText", [, "<Z>", "<Z>", "<Z>"])
 				.expectChange("segment", [,, "z", "z"])
 				.expectChange("accountResponsible", [,,, "a"])
 				.expectChange("salesAmount", [, "10", "10", "10"])
@@ -17074,6 +17099,7 @@ sap.ui.define([
 				.expectChange("isTotal", [,,, true])
 				.expectChange("level", [,, 2, 2])
 				.expectChange("region", [,, "Y", "X"])
+				.expectChange("regionText", [,, "<Y>", "<X>"])
 				.expectChange("segment", [,, "", ""])
 				.expectChange("accountResponsible", [,,, ""])
 				.expectChange("salesAmount", [,, "20", "30"])
@@ -17083,6 +17109,138 @@ sap.ui.define([
 			oTable.getRows()[1].getBindingContext().collapse();
 
 			return that.waitForChanges(assert, "collapse 'US-Z'");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: sap.ui.table.Table with aggregation and visual grouping. Show additional text
+	// properties for group levels via navigation. Expand all levels.
+	//
+	// JIRA: CPOUI5ODATAV4-680
+	QUnit.test("Data Aggregation: additionally via navigation", function (assert) {
+		var oTable,
+			sView = '\
+<t:Table id="table" rows="{path : \'/Artists\',\
+	parameters : {\
+		$$aggregation : {\
+			aggregate : {\
+				sendsAutographs : {}\
+			},\
+			group : {\
+				ArtistID : {additionally : [\'Address/City\']},\
+				IsActiveEntity : {\
+					additionally : [\'BestPublication/DraftAdministrativeData/InProcessByUser\']\
+				},\
+				Name : {additionally : [\'BestFriend/Name\']}\
+			},\
+			groupLevels : [\'IsActiveEntity\', \'Name\']\
+		},\
+		$orderby :\
+\'BestPublication/DraftAdministrativeData/InProcessByUser desc,BestFriend/Name,Address/City asc\'\
+	}}" threshold="0" visibleRowCount="6">\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="isActiveEntity" text="{= %{IsActiveEntity} }"/>\
+	<Text id="inProcessByUser" text="{BestPublication/DraftAdministrativeData/InProcessByUser}"/>\
+	<Text id="name" text="{Name}"/>\
+	<Text id="bestFriendName" text="{BestFriend/Name}"/>\
+	<Text id="artistID" text="{ArtistID}"/>\
+	<Text id="city" text="{Address/City}"/>\
+	<Text id="sendsAutographs" text="{= %{sendsAutographs} }"/>\
+</t:Table>',
+			that = this;
+
+		this.expectRequest("Artists?$apply=groupby"
+				+ "((IsActiveEntity,BestPublication/DraftAdministrativeData/InProcessByUser))"
+				+ "/orderby(BestPublication/DraftAdministrativeData/InProcessByUser%20desc)"
+				+ "&$count=true&$skip=0&$top=6", {
+				"@odata.count" : "2",
+				value : [{
+					BestPublication : {
+						DraftAdministrativeData : {
+							InProcessByUser : "JOHNDOE"
+						}
+					},
+					IsActiveEntity : false
+				}, {
+					BestPublication : {
+						DraftAdministrativeData : {
+							InProcessByUser : null
+						}
+					},
+					IsActiveEntity : true
+				}]
+			})
+			.expectChange("isExpanded", [false, false])
+			.expectChange("isTotal", [false, false])
+			.expectChange("level", [1, 1])
+			.expectChange("isActiveEntity", [false, true])
+			.expectChange("inProcessByUser", ["JOHNDOE", ""])
+			.expectChange("name", ["", ""])
+			.expectChange("bestFriendName", ["", ""])
+			.expectChange("artistID", ["", ""])
+			.expectChange("city", ["", ""])
+			.expectChange("sendsAutographs", [null, null]);
+
+		return this.createView(assert, sView, createSpecialCasesModel()).then(function () {
+			oTable = that.oView.byId("table");
+
+			that.expectRequest("Artists?$apply=filter(IsActiveEntity eq true)"
+					+ "/groupby((Name,BestFriend/Name))/orderby(BestFriend/Name)"
+					+ "&$count=true&$skip=0&$top=6", {
+					"@odata.count" : "2",
+					value : [
+						{BestFriend : {Name : "A's best friend"}, Name : "A"},
+						{BestFriend : {Name : "B's best friend"}, Name : "B"}
+					]
+				})
+				.expectChange("isExpanded", [, true, false, false])
+				.expectChange("isTotal", [,, false, false])
+				.expectChange("level", [,, 2, 2])
+				.expectChange("isActiveEntity", [,, true, true])
+				.expectChange("inProcessByUser", [,, "", ""])
+				.expectChange("name", [,, "A", "B"])
+				.expectChange("bestFriendName", [,, "A's best friend", "B's best friend"])
+				.expectChange("artistID", [,, "", ""])
+				.expectChange("city", [,, "", ""])
+				.expectChange("sendsAutographs", [,, null, null]);
+
+			// code under test
+			oTable.getRows()[1].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "1st expand");
+		}).then(function () {
+			that.expectRequest("Artists?$apply=filter(IsActiveEntity eq true and Name eq 'B')"
+					+ "/groupby((ArtistID,Address/City),aggregate(sendsAutographs))"
+					+ "/orderby(Address/City asc)&$count=true&$skip=0&$top=6", {
+					"@odata.count" : "2",
+					value : [{
+						Address : {City : "Liverpool"},
+						ArtistID : "1",
+						// Note: think of "sendsAutographs" as a weird custom aggregate ;-)
+						sendsAutographs : false
+					}, {
+						Address : {City : "London"},
+						ArtistID : "2",
+						sendsAutographs : true
+					}]
+				})
+				.expectChange("isExpanded", [,,, true, undefined, undefined])
+				.expectChange("isTotal", [,,,, false, false])
+				.expectChange("level", [,,,, 3, 3])
+				.expectChange("isActiveEntity", [,,,, true, true])
+				.expectChange("inProcessByUser", [,,,, "", ""])
+				.expectChange("name", [,,,, "B", "B"])
+				.expectChange("bestFriendName", [,,,, "B's best friend", "B's best friend"])
+				.expectChange("artistID", [,,,, "1", "2"])
+				.expectChange("city", [,,,, "Liverpool", "London"])
+				.expectChange("sendsAutographs", [,,,, false, true]);
+
+			// code under test
+			oTable.getRows()[3].getBindingContext().expand();
+
+			return that.waitForChanges(assert, "2nd expand");
 		});
 	});
 

@@ -543,55 +543,85 @@ sap.ui.define([
 			}
 
 	QUnit.test(sTitle, function (assert) {
-		var aAllProperties = ["p1", "p2", "p3", "p4"],
+		var aAllProperties = ["p1", "p2", ["a", "b"], "p3", "p4", ["c", "d"]],
 			oElement = {
-				p2 : "v2"
+				p2 : "v2",
+				p4 : "v4"
 			},
 			oElementMatcher = sinon.match(function (o) {
-				return o === oElement && (!bParent || o.p1 === "v1");
+				return o === oElement && (bParent
+					? o.p1 === "v1" && o.p2 === "v2" && o.p3 === "v3" && o.p4 === "v4"
+					: !("p1" in o) && o.p2 === "v2" && !("p3" in o) && o.p4 === "v4");
 			}),
-			aGroupBy = bParent ? ["p1", "p2"] : ["p2"],
+			aGroupBy = [/*does not matter*/],
 			oGroupNode = {
 				p1 : "v1",
+				p2 : "n/a",
+				p3 : "v3",
 				"@$ui5.node.level" : 2
 			},
-			oHelperMock = this.mock(_Helper);
+			oHelperMock = this.mock(_Helper),
+			mTypeForMetaPath = {"/meta/path" : {}};
 
+		oHelperMock.expects("inheritPathValue").exactly(bParent ? 1 : 0)
+			.withExactArgs(["a", "b"], sinon.match.same(oGroupNode), sinon.match.same(oElement));
+		oHelperMock.expects("inheritPathValue").exactly(bParent ? 1 : 0)
+			.withExactArgs(["c", "d"], sinon.match.same(oGroupNode), sinon.match.same(oElement));
 		oHelperMock.expects("getKeyPredicate").exactly(bLeaf ? 1 : 0)
-			.withExactArgs(oElementMatcher, "~sMetaPath~", "~mTypeForMetaPath~")
+			.withExactArgs(oElementMatcher, "/meta/path", sinon.match.same(mTypeForMetaPath))
 			.returns(bHasRealKeyPredicate ? "~predicate~" : undefined);
 		oHelperMock.expects("getKeyPredicate").exactly(bHasRealKeyPredicate ? 0 : 1)
-			.withExactArgs(oElementMatcher, "~sMetaPath~", "~mTypeForMetaPath~",
+			.withExactArgs(oElementMatcher, "/meta/path", sinon.match.same(mTypeForMetaPath),
 				sinon.match.same(aGroupBy), true).returns("~predicate~");
 		oHelperMock.expects("setPrivateAnnotation")
 			.withExactArgs(sinon.match.same(oElement), "predicate", "~predicate~");
 		oHelperMock.expects("getKeyFilter").exactly(bLeaf ? 0 : 1)
-			.withExactArgs(sinon.match(function (o) {
-					return o === oElement && (!bParent || o.p1 === "v1");
-				}), "~sMetaPath~", "~mTypeForMetaPath~", sinon.match.same(aGroupBy))
+			.withExactArgs(oElementMatcher, "/meta/path", sinon.match.same(mTypeForMetaPath),
+				sinon.match.same(aGroupBy))
 			.returns("~filter~");
 		oHelperMock.expects("setPrivateAnnotation").exactly(bLeaf ? 0 : 1)
 			.withExactArgs(sinon.match.same(oElement), "filter", "~filter~");
 		this.mock(_AggregationHelper).expects("setAnnotations")
 			.withExactArgs(sinon.match.same(oElement), bLeaf ? undefined : false, "~bTotal~",
-				bParent ? 3 : 1, aAllProperties);
+				bParent ? 3 : 1, bParent ? null : aAllProperties);
 
 		assert.strictEqual(
 			// code under test
 			_AggregationCache.calculateKeyPredicate(bParent ? oGroupNode : undefined, aGroupBy,
-				aAllProperties, bLeaf, "~bTotal~", oElement, "~mTypeForMetaPath~", "~sMetaPath~"),
+				aAllProperties, bLeaf, "~bTotal~", oElement, mTypeForMetaPath, "/meta/path"),
 			"~predicate~");
 
-		if (bParent) {
-			assert.strictEqual(oElement.p1, "v1");
-		} else {
-			assert.notOk("p1" in oElement);
-		}
+		assert.deepEqual(oElement, bParent ? {
+			p1 : "v1",
+			p2 : "v2",
+			p3 : "v3",
+			p4 : "v4"
+		} : {
+			p2 : "v2",
+			p4 : "v4"
+		});
 	});
 
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("calculateKeyPredicate: nested object", function (assert) {
+		var mTypeForMetaPath = {"/Artists" : {}};
+
+		this.mock(_Helper).expects("inheritPathValue").never();
+		this.mock(_Helper).expects("getKeyPredicate").never();
+		this.mock(_Helper).expects("setPrivateAnnotation").never();
+		this.mock(_Helper).expects("getKeyFilter").never();
+		this.mock(_AggregationHelper).expects("setAnnotations").never();
+
+		assert.strictEqual(
+			// code under test
+			_AggregationCache.calculateKeyPredicate(null, null, null, undefined, undefined, null,
+				mTypeForMetaPath, "/Artists/BestFriend"),
+			undefined);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("fetchValue: not $count", function (assert) {

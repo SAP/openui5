@@ -17,31 +17,31 @@ sap.ui.define([
 				"$metadata" : {
 					source : "metadata.xml"
 				},
-				"BusinessPartners?$apply=concat(aggregate(SalesAmountLocalCurrency,LocalCurrency),groupby((Country),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Country%20desc)/concat(aggregate($count%20as%20UI5__count),top(4)))" : {
+				"BusinessPartners?$apply=concat(aggregate(SalesAmountLocalCurrency,LocalCurrency),groupby((Country,CountryText),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(CountryText%20desc)/concat(aggregate($count%20as%20UI5__count),top(4)))" : {
 					source : "BusinessPartners_L1.json"
 				},
-				"BusinessPartners?$apply=filter(Country%20eq%20'Germany')/groupby((Region),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Region%20desc)&$count=true&$skip=0&$top=5" : {
+				"BusinessPartners?$apply=filter(Country%20eq%20'3')/groupby((Region,RegionText),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(RegionText%20desc)&$count=true&$skip=0&$top=5" : {
 					source : "BusinessPartners_Germany_top5.json"
 				},
-				"BusinessPartners?$apply=filter(Country%20eq%20'Germany')/groupby((Region),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Region%20desc)&$count=true&$skip=5&$top=2" : {
+				"BusinessPartners?$apply=filter(Country%20eq%20'3')/groupby((Region,RegionText),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(RegionText%20desc)&$count=true&$skip=5&$top=2" : {
 					source : "BusinessPartners_Germany_skip5.json"
 				},
-				"BusinessPartners?$apply=filter(Country%20eq%20'Germany'%20and%20Region%20eq%20'Baden-W%C3%BCrttemberg')/groupby((Segment),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Segment)&$count=true&$skip=0&$top=5" : {
+				"BusinessPartners?$apply=filter(Country%20eq%20'3'%20and%20Region%20eq%20'1')/groupby((Segment),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Segment)&$count=true&$skip=0&$top=5" : {
 					source : "BusinessPartners_Germany_BW.json"
 				},
-				"BusinessPartners?$apply=filter(Country%20eq%20'Germany'%20and%20Region%20eq%20'Baden-W%C3%BCrttemberg'%20and%20Segment%20eq%20'Small')/groupby((AccountResponsible),aggregate(SalesAmountLocalCurrency,LocalCurrency,SalesNumber))/orderby(AccountResponsible)&$count=true&$skip=0&$top=5" : {
+				"BusinessPartners?$apply=filter(Country%20eq%20'3'%20and%20Region%20eq%20'1'%20and%20Segment%20eq%20'Small')/groupby((AccountResponsible),aggregate(SalesAmountLocalCurrency,LocalCurrency,SalesNumber))/orderby(AccountResponsible)&$count=true&$skip=0&$top=5" : {
 					source : "BusinessPartners_Germany_BW_Small.json"
 				},
-				"BusinessPartners?$apply=filter(Region%20gt%20'M')/concat(aggregate(SalesAmountLocalCurrency,LocalCurrency),groupby((Country),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Country%20desc)/concat(aggregate($count%20as%20UI5__count),top(4)))" : {
+				"BusinessPartners?$apply=filter(RegionText%20gt%20'M')/concat(aggregate(SalesAmountLocalCurrency,LocalCurrency),groupby((Country,CountryText),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(CountryText%20desc)/concat(aggregate($count%20as%20UI5__count),top(4)))" : {
 					source : "BusinessPartners_M_L1.json"
 				},
-				"BusinessPartners?$apply=filter(Country%20eq%20'Germany'%20and%20(Region%20gt%20'M'))/groupby((Region),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Region%20desc)&$count=true&$skip=0&$top=5" : {
+				"BusinessPartners?$apply=filter(Country%20eq%20'3'%20and%20(RegionText%20gt%20'M'))/groupby((Region,RegionText),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(RegionText%20desc)&$count=true&$skip=0&$top=5" : {
 					source : "BusinessPartners_M_Germany.json"
 				},
-				"BusinessPartners?$apply=filter(Country%20eq%20'Germany'%20and%20Region%20eq%20'Saxony'%20and%20(Region%20gt%20'M'))/groupby((Segment),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Segment)&$count=true&$skip=0&$top=5" : {
+				"BusinessPartners?$apply=filter(Country%20eq%20'3'%20and%20Region%20eq%20'6'%20and%20(RegionText%20gt%20'M'))/groupby((Segment),aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Segment)&$count=true&$skip=0&$top=5" : {
 					source : "BusinessPartners_Germany_Saxony.json"
 				},
-				"BusinessPartners?$apply=filter(Country%20eq%20'Germany'%20and%20Region%20eq%20'Saxony'%20and%20Segment%20eq%20'Small'%20and%20(Region%20gt%20'M'))/groupby((AccountResponsible),aggregate(SalesAmountLocalCurrency,LocalCurrency,SalesNumber))/orderby(AccountResponsible)&$count=true&$skip=0&$top=5" : {
+				"BusinessPartners?$apply=filter(Country%20eq%20'3'%20and%20Region%20eq%20'6'%20and%20Segment%20eq%20'Small'%20and%20(RegionText%20gt%20'M'))/groupby((AccountResponsible),aggregate(SalesAmountLocalCurrency,LocalCurrency,SalesNumber))/orderby(AccountResponsible)&$count=true&$skip=0&$top=5" : {
 					source : "BusinessPartners_Germany_Saxony_Small.json"
 				}
 			},

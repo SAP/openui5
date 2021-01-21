@@ -2735,7 +2735,14 @@ sap.ui.define([
 	 *   (since 1.86.0); <code>true</code> for bottom only, <code>false</code> for top and bottom,
 	 *   the default is top only
 	 * @param {object} [oAggregation.group]
-	 *   A map from groupable property names to empty objects
+	 *   A map from groupable property names to objects containing the following details:
+	 *   <ul>
+	 *     <li> <code>additionally</code>: An optional list of strings that provides the paths to
+	 *       properties (like texts or attributes) related to this groupable property in a 1:1
+	 *       relation (since 1.87.0). They are requested additionally via <code>groupby<code> and
+	 *       must not change the actual grouping; a <code>unit</code> for an aggregatable property
+	 *       must not be repeated here.
+	 *   </ul>
 	 * @param {string[]} [oAggregation.groupLevels]
 	 *   A list of groupable property names used to determine group levels. They may, but don't need
 	 *   to, be repeated in <code>oAggregation.group</code>. Group levels cannot be combined with
