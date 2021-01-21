@@ -453,7 +453,6 @@ sap.ui.define([
 			// indicates if the picker should be closed when toggling the opener icon
 			this._bShouldClosePicker = false;
 
-			this._oPickerValueStateText = null;
 			this.bProcessingLoadItemsEvent = false;
 			this.iLoadItemsEventInitialProcessingTimeoutID = -1;
 			this.aMessageQueue = [];

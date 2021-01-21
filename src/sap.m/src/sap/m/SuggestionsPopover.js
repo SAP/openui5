@@ -211,11 +211,6 @@ sap.ui.define([
 		this.destroyPopover();
 
 		this._oValueStateHeader = null; // The value state header is destroyed by the Popover
-
-		if (this._oPickerValueStateText) {
-			this._oPickerValueStateText.destroy();
-			this._oPickerValueStateText = null;
-		}
 	};
 
 	/**
