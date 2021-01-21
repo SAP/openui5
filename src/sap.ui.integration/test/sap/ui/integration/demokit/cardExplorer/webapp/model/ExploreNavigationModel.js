@@ -1043,6 +1043,7 @@ sap.ui.define([
 							{
 								title: 'Named Data Section',
 								key: 'namedDataSection',
+								experimental: true,
 								files: [
 									{
 										url: '/samples/extension/namedDataSection/manifest.json',
