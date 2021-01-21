@@ -5,6 +5,7 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/ui/Device",
 	"sap/m/Input",
+	"sap/m/InputBase",
 	"sap/m/Table",
 	"sap/ui/events/jquery/EventExtension",
 	"sap/ui/core/Item",
@@ -41,6 +42,7 @@ sap.ui.define([
 	createAndAppendDiv,
 	Device,
 	Input,
+	InputBase,
 	Table,
 	EventExtension,
 	Item,
@@ -3202,6 +3204,31 @@ sap.ui.define([
 		assert.equal(fnCallback.callCount, 1, "change event handler only called once");
 		assert.equal(oInput.getSelectedKey(), "1", "selected key is correct");
 
+		oInput.destroy();
+	});
+
+	QUnit.test("Set selection with 'ENTER' key press", function(assert) {
+		// Arrange
+		var oInput = createInputWithSuggestions();
+		var fnOnChangeSpy = this.spy(InputBase.prototype, 'onChange');
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput._$input.trigger("focus").val("It").trigger("input");
+		this.clock.tick(300);
+
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick();
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(fnOnChangeSpy.calledOnce, true, "change event handler only called once");
+
+		// Clean
+		fnOnChangeSpy.restore();
 		oInput.destroy();
 	});
 
