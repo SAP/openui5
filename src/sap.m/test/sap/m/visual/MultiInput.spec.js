@@ -103,6 +103,18 @@ describe('sap.m.MultiInput', function() {
 		});
 	});
 
+	//  MultiInput with one long token - navigation
+	it("Should visualize MultiInput after navigating with arrow key", function () {
+		var oMultiInput = element(by.id("multiInputWithOneLongToken"));
+		browser.executeScript("document.getElementById('multiInputWithOneLongToken').scrollIntoView()").then(function() {
+			oMultiInput.click();
+			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_one_long_token_focused_in");
+
+			browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
+			expect(takeScreenshot()).toLookAs("MI_left_arrow_navigation");
+		});
+	});
+
 	// Multiinput read-only
 	it("should show MultiInput in read-only state", function () {
 		browser.executeScript('document.getElementById("multiInputReadOnlyInitial").scrollIntoView()').then(function() {
@@ -152,20 +164,9 @@ describe('sap.m.MultiInput', function() {
 
 			browser.actions().sendKeys("A").perform();
 			expect(takeScreenshot()).toLookAs("input_field_focused");
-		});
-	});
 
-	//  MultiInput with one long token
-	it("Should truncate one long token and not show the n-more label", function () {
-		var oMultiInput = element(by.id("multiInputWithOneLongToken"));
-		browser.executeScript("document.getElementById('multiInputWithOneLongToken').scrollIntoView()").then(function() {
-			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_one_long_token");
-
-			oMultiInput.click();
-			expect(takeScreenshot(oMultiInput)).toLookAs("MI_with_one_long_token_focused_in");
-
-			browser.actions().sendKeys(protractor.Key.ARROW_LEFT).perform();
-			expect(takeScreenshot()).toLookAs("MI_with_one_long_token_focused_with_arrowkey");
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
 		});
 	});
 

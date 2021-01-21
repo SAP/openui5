@@ -7,9 +7,4 @@ describe("sap.m.InputDescriptionVisualTests", function() {
 	it("should load test page", function () {
 		expect(takeScreenshot()).toLookAs("1_initial");
 	});
-
-	it("should load second half of the test page", function () {
-		browser.executeScript('document.getElementById("last").scrollIntoView()');
-		expect(takeScreenshot()).toLookAs("2_initial");
-	});
 });

@@ -74,6 +74,9 @@ describe("sap.m.InputVisualTests", function() {
 
 			browser.actions().sendKeys("A").perform();
 			expect(takeScreenshot()).toLookAs("input_field_focused");
+
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
 		});
 	});
 
