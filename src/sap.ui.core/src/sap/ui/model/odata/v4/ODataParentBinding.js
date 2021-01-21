@@ -646,7 +646,7 @@ sap.ui.define([
 				? oContext.getPath()
 				: this.oModel.resolve(this.sPath, this.oContext),
 			// whether this binding is an operation or depends on one
-			bDependsOnOperation = sResolvedPath.indexOf("(...)") >= 0,
+			bDependsOnOperation = sResolvedPath.includes("(...)"),
 			that = this;
 
 		/*

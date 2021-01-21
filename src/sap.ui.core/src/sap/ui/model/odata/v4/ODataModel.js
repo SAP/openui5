@@ -1713,7 +1713,7 @@ sap.ui.define([
 		}
 
 		sDetails = oError.stack || oError.message;
-		if (sDetails.indexOf(oError.message) < 0) {
+		if (!sDetails.includes(oError.message)) {
 			sDetails = oError.message + "\n" + oError.stack;
 		}
 
@@ -1948,7 +1948,7 @@ sap.ui.define([
 		if (sResolvedPath
 				&& sResolvedPath !== "/"
 				&& sResolvedPath[sResolvedPath.length - 1] === "/"
-				&& sResolvedPath.indexOf("#") < 0) {
+				&& !sResolvedPath.includes("#")) {
 			sResolvedPath = sResolvedPath.slice(0, sResolvedPath.length - 1);
 		}
 

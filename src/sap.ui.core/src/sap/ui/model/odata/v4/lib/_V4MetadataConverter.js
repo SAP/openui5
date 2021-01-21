@@ -529,7 +529,7 @@ sap.ui.define([
 		sPath = this.resolveAliasInPath(sPath);
 		iSlash = sPath.indexOf("/");
 
-		if (iSlash >= 0 && sPath.indexOf("/", iSlash + 1) < 0) { // there is exactly one slash
+		if (iSlash >= 0 && !sPath.includes("/", iSlash + 1)) { // there is exactly one slash
 			if (sPath.slice(0, iSlash) === this.result.$EntityContainer) {
 				return sPath.slice(iSlash + 1);
 			}

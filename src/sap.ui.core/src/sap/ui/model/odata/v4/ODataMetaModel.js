@@ -256,7 +256,7 @@ sap.ui.define([
 			return "";
 		}
 		if (sTerm.startsWith(sExpectedTerm) && sTerm[sExpectedTerm.length] === "#"
-				&& sTerm.indexOf("@", sExpectedTerm.length) < 0) {
+				&& !sTerm.includes("@", sExpectedTerm.length)) {
 			return sTerm.slice(sExpectedTerm.length + 1);
 		}
 	}
@@ -1322,7 +1322,7 @@ sap.ui.define([
 						} else {
 							if (bSplitSegment) {
 								// no special preparations needed, but handle overloads below!
-							} else if (sSegment[0] !== "@" && sSegment.indexOf(".") > 0) {
+							} else if (sSegment[0] !== "@" && sSegment.includes(".", 1)) {
 								// "17.3 QualifiedName": scope lookup
 								return scopeLookup(sSegment);
 							} else if (vResult && "$Type" in vResult) {

@@ -1087,7 +1087,7 @@ sap.ui.define([
 			sType = aMatches[1];
 		}
 		// according to the XSD simple types do not (necessarily) have the namespace "Edm."
-		if (sType.indexOf(".") < 0) {
+		if (!sType.includes(".")) {
 			sType = "Edm." + sType;
 		}
 		switch (sType) {
