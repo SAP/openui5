@@ -26,7 +26,6 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since 1.75
 	 * @since 1.75
 	 * @alias sap.ui.integration.Extension
 	 * @ui5-metamodel This control/element will also be described in the UI5 (legacy) designtime metamodel
