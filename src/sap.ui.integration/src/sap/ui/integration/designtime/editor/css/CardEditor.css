@@ -6,7 +6,7 @@
 }
 
 .sapUiIntegrationCardEditor.sapUiIntegrationCardEditorTranslation {
-	width: 430px;
+	width: 713px;
 }
 
 .sapUiIntegrationCardEditor.sapUiIntegrationCardEditorPreview {
@@ -16,6 +16,17 @@
 .sapUiIntegrationCardEditor .sapUiIntegrationCardEditorForm {
 	height: 350px;
 	min-width: 400px;
+	box-sizing: border-box;
+	margin:0 0.5rem;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 0;
+	position: relative;
+}
+
+.sapUiIntegrationCardEditor .sapUiIntegrationCardEditorTranslationForm {
+	height: 350px;
+	min-width: 680px;
 	box-sizing: border-box;
 	margin:0 0.5rem;
 	overflow-y: auto;
