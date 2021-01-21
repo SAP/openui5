@@ -81,4 +81,7 @@
 
 	<!-- Fragment contains another Fragment with an ExtensionPoint -->
 	<core:Fragment id="NestingFragment" fragmentName="testdata.customizing.customer.ext.NestingFragment" type="XML" />
+
+	<!-- Fragment with EP in binding template-->
+	<core:Fragment id="EPinBinding" fragmentName="testdata.customizing.customer.ext.EPinBinding" type="XML" />
 </mvc:View>

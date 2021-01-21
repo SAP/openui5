@@ -163,13 +163,13 @@ function(
 	function getHandleChildrenStrategy(bAsync, fnCallback) {
 
 		// sync strategy ensures processing order by just being sync
-		function syncStrategy(node, oAggregation, mAggregations, pRequireContext) {
+		function syncStrategy(node, oAggregation, mAggregations, pRequireContext, oClosestBinding) {
 			var childNode,
 				vChild,
 				aChildren = [];
 
 			for (childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
-				vChild = fnCallback(node, oAggregation, mAggregations, childNode, false, pRequireContext);
+				vChild = fnCallback(node, oAggregation, mAggregations, childNode, false, pRequireContext, oClosestBinding);
 				if (vChild) {
 					aChildren.push(vChild.unwrap());
 				}
@@ -178,13 +178,13 @@ function(
 		}
 
 		// async strategy ensures processing order by chaining the callbacks
-		function asyncStrategy(node, oAggregation, mAggregations, pRequireContext) {
+		function asyncStrategy(node, oAggregation, mAggregations, pRequireContext, oClosestBinding) {
 			var childNode,
 				pChain = Promise.resolve(),
 				aChildPromises = [pRequireContext];
 
 			for (childNode = node.firstChild; childNode; childNode = childNode.nextSibling) {
-				pChain = pChain.then(fnCallback.bind(null, node, oAggregation, mAggregations, childNode, false, pRequireContext));
+				pChain = pChain.then(fnCallback.bind(null, node, oAggregation, mAggregations, childNode, false, pRequireContext, oClosestBinding));
 				aChildPromises.push(pChain);
 			}
 			return Promise.all(aChildPromises);
@@ -786,7 +786,7 @@ function(
 		 * @return {Promise} resolving to an array with 0..n controls
 		 * @private
 		 */
-		function createControls(node, pRequireContext) {
+		function createControls(node, pRequireContext, oClosestBinding) {
 			// differentiate between SAPUI5 and plain-HTML children
 			if (node.namespaceURI === XHTML_NAMESPACE || node.namespaceURI === SVG_NAMESPACE ) {
 				var id = node.attributes['id'] ? node.attributes['id'].textContent || node.attributes['id'].text : null;
@@ -831,7 +831,7 @@ function(
 
 			} else {
 				// non-HTML (SAPUI5) control
-				return createControlOrExtension(node, pRequireContext);
+				return createControlOrExtension(node, pRequireContext, oClosestBinding);
 			}
 		}
 
@@ -845,7 +845,7 @@ function(
 		 * @return {Promise} resolving to an array with 0..n controls created from a node
 		 * @private
 		 */
-		function createControlOrExtension(node, pRequireContext) { // this will also be extended for Fragments with multiple roots
+		function createControlOrExtension(node, pRequireContext, oClosestBinding) { // this will also be extended for Fragments with multiple roots
 
 			if (localName(node) === "ExtensionPoint" && node.namespaceURI === CORE_NAMESPACE) {
 
@@ -870,7 +870,7 @@ function(
 							var oChildNode = children[i];
 							if (oChildNode.nodeType === 1 /* ELEMENT_NODE */) { // text nodes are ignored - plaintext inside extension points is not supported; no warning log because even whitespace is a text node
 								// chain the child node creation for sequential processing
-								pChild = pChild.then(createControls.bind(null, oChildNode, pRequireContext));
+								pChild = pChild.then(createControls.bind(null, oChildNode, pRequireContext, oClosestBinding));
 								aChildControlPromises.push(pChild);
 							}
 						}
@@ -892,11 +892,11 @@ function(
 				var vClass = findControlClass(node.namespaceURI, localName(node));
 				if (vClass && typeof vClass.then === 'function') {
 					return vClass.then(function (fnClass) {
-						return createRegularControls(node, fnClass, pRequireContext);
+						return createRegularControls(node, fnClass, pRequireContext, oClosestBinding);
 					});
 				} else {
 					// class has already been loaded
-					return createRegularControls(node, vClass, pRequireContext);
+					return createRegularControls(node, vClass, pRequireContext, oClosestBinding);
 				}
 			}
 		}
@@ -909,7 +909,7 @@ function(
 		 * @return {Promise} resolving to an array with 0..n controls created from a node
 		 * @private
 		 */
-		function createRegularControls(node, oClass, pRequireContext) {
+		function createRegularControls(node, oClass, pRequireContext, oClosestBinding) {
 			var ns = node.namespaceURI,
 				mSettings = {},
 				mAggregationsWithExtensionPoints = {},
@@ -1138,9 +1138,10 @@ function(
 			 * @return {Promise} resolving to an array with 0..n controls created from a node
 			 * @private
 			 */
-			function handleChild(node, oAggregation, mAggregations, childNode, bActivate, pRequireContext) {
+			function handleChild(node, oAggregation, mAggregations, childNode, bActivate, pRequireContext, oClosestBinding) {
 				var oNamedAggregation,
 					fnCreateStashedControl;
+
 				// inspect only element nodes
 				if (childNode.nodeType === 1 /* ELEMENT_NODE */) {
 
@@ -1148,13 +1149,12 @@ function(
 						mSettings[localName(childNode)] = childNode.querySelector("*");
 						return;
 					}
-
 					// check for a named aggregation (must have the same namespace as the parent and an aggregation with the same name must exist)
 					oNamedAggregation = childNode.namespaceURI === ns && mAggregations && mAggregations[localName(childNode)];
+
 					if (oNamedAggregation) {
 						// the children of the current childNode are aggregated controls (or HTML) below the named aggregation
-						return handleChildren(childNode, oNamedAggregation, false, pRequireContext);
-
+						return handleChildren(childNode, oNamedAggregation, false, pRequireContext, oClosestBinding);
 					} else if (oAggregation) {
 						// TODO consider moving this to a place where HTML and SVG nodes can be handled properly
 						// create a StashedControl for inactive controls, which is not placed in an aggregation
@@ -1178,7 +1178,7 @@ function(
 										bAsync = false;
 
 										try {
-											return handleChild(node, oAggregation, mAggregations, oStashedNode, true, pRequireContext).unwrap();
+											return handleChild(node, oAggregation, mAggregations, oStashedNode, true, pRequireContext, oClosestBinding).unwrap();
 										} finally {
 											// EVO-Todo:revert back to the original async/sync behavior
 											// if we moved to the sync path for the stashed control, we might now go back to the async path.
@@ -1199,9 +1199,19 @@ function(
 							childNode.setAttribute("visible", "false");
 						}
 
+						// whether the created controls will be the template for a list binding
+						if ( mSettings[oAggregation.name] &&
+							mSettings[oAggregation.name].path &&
+							typeof mSettings[oAggregation.name].path === "string") {
+							oClosestBinding = {
+								aggregation: oAggregation.name,
+								id: mSettings.id
+							};
+						}
+
 						// child node name does not equal an aggregation name,
 						// so this child must be a control (or HTML) which is aggregated below the DEFAULT aggregation
-						return createControls(childNode, pRequireContext).then(function(aControls) {
+						return createControls(childNode, pRequireContext, oClosestBinding).then(function(aControls) {
 							for (var j = 0; j < aControls.length; j++) {
 								var oControl = aControls[j];
 								// append the child to the aggregation
@@ -1221,6 +1231,8 @@ function(
 									// if the aggregation already exists we get the
 									oControl.index = mSettings[name].length;
 									oControl.aggregationName = name;
+									oControl.closestAggregationBindingCarrier = oClosestBinding && oClosestBinding.id; // TODO can we safely assume that this has an "id"?
+									oControl.closestAggregationBinding = oClosestBinding && oClosestBinding.aggregation;
 
 									// connect extension points
 									var oLast = aExtensionPointList[aExtensionPointList.length - 1];
@@ -1265,7 +1277,7 @@ function(
 			var oAggregation = oMetadata.getDefaultAggregation();
 			var mAggregations = oMetadata.getAllAggregations();
 
-			return handleChildren(node, oAggregation, mAggregations, pRequireContext).then(function() {
+			return handleChildren(node, oAggregation, mAggregations, pRequireContext, oClosestBinding).then(function() {
 				// apply the settings to the control
 				var vNewControlInstance;
 				var pProvider = SyncPromise.resolve();
