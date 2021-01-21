@@ -1297,6 +1297,34 @@ sap.ui.define([
 				assert.ok(oResponse.lastHitReached, "response is as expected");
 			});
 		});
+
+		QUnit.test("and a response is rejected for loadContextDescriptions when using not LrepConnector", function (assert) {
+			var mPropertyBag = {
+				flexObjects: {role: ["/IWBEP/RT_MGW_DSP"]},
+				layer: Layer.CUSTOMER
+			};
+
+			var oSpySendRequest = sandbox.spy(WriteUtils, "sendRequest");
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
+
+			return Storage.loadContextDescriptions(mPropertyBag).catch(function () {
+				assert.equal(oSpySendRequest.callCount, 0, "no request was send");
+			});
+		});
+
+		QUnit.test("and a response is rejected for getContexts when using not LrepConnector", function (assert) {
+			var mPropertyBag = {
+				flexObjects: {role: ["/IWBEP/RT_MGW_DSP"]},
+				layer: Layer.CUSTOMER
+			};
+
+			var oSpySendRequest = sandbox.spy(WriteUtils, "sendRequest");
+			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([{connector: "KeyUserConnector"}, {connector: "NeoLrepConnector"}]);
+
+			return Storage.getContexts(mPropertyBag).catch(function () {
+				assert.equal(oSpySendRequest.callCount, 0, "no request was send");
+			});
+		});
 	});
 
 	QUnit.done(function () {

@@ -145,7 +145,7 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolves as soon as context has been retrieved
 		 */
 		getContexts: function (/* mPropertyBag */) {
-			return Promise.resolve({});
+			return Promise.reject("getContexts is not implemented");
 		},
 
 		/**
@@ -156,7 +156,7 @@ sap.ui.define([
 		 * @returns {Promise<object>} Promise resolves as soon as context descriptions have has been retrieved
 		 */
 		loadContextDescriptions: function (/* mPropertyBag */) {
-			return Promise.resolve({});
+			return Promise.reject("loadContextDescriptions is not implemented");
 		},
 
 		/**
