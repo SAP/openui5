@@ -56,7 +56,6 @@ sap.ui.define([
 					jQuery.sap.require("sap.ui.documentation.sdk.thirdparty.google-code-prettify.prettify");
 				}
 
-				jQuery.sap.includeStyleSheet("resources/sap/ui/thirdparty/jqueryui/themes/base/jquery.ui.all.css");
 				jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/DataTables-1.10.15/css/dataTables.jqueryui.css");
 				jQuery.sap.includeStyleSheet("resources/sap/ui/documentation/sdk/thirdparty/DataTables/Buttons-1.4.0/css/buttons.jqueryui.css");
 
