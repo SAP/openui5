@@ -200,6 +200,7 @@
 @sapContent_HelpColor: #006500; //<=new
 @sapContent_LabelColor: @sapTextColor;
 @sapContent_MonospaceFontFamily: lucida console, monospace; //<=new
+@sapContent_MonospaceBoldFontFamily: @sapContent_MonospaceFontFamily;
 @sapContent_DisabledTextColor: #666;
 @sapContent_DisabledOpacity: 0.5; //<=new
 @sapContent_ContrastTextThreshold: 0.65;
@@ -234,6 +235,7 @@
 @sapShell_InteractiveTextColor: @sapShell_TextColor;
 @sapShell_InteractiveBorderColor: @sapField_BorderColor;
 @sapShell_GroupTitleTextColor: @sapTitleColor;
+@sapShell_GroupTitleTextShadow: none;
 @sapShell_Hover_Background: @sapHighlightColor;
 @sapShell_Active_Background: @sapActiveColor;
 @sapShell_Active_TextColor: contrast(@sapShell_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
@@ -249,6 +251,11 @@
 @sapShell_Navigation_Active_TextColor: contrast(@sapShell_Navigation_Active_Background, @sapTextColor, @sapContent_ContrastTextColor, @sapContent_ContrastTextThreshold);
 @sapShell_Navigation_Active_Background: @sapShell_Active_Background;
 @sapShell_Shadow: 0 0.125rem 0 0 @sapShell_BorderColor;
+@sapShell_NegativeColor: @sapNegativeColor;
+@sapShell_CriticalColor: @sapCriticalColor;
+@sapShell_PositiveColor: @sapPositiveColor;
+@sapShell_InformativeColor: @sapInformativeColor;
+@sapShell_NeutralColor: @sapNeutralColor;
 
 @sapButton_BorderWidth: @sapElement_BorderWidth; //<=new
 @sapButton_BorderCornerRadius: 2px; //<=new

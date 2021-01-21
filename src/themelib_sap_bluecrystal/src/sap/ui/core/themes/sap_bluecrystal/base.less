@@ -174,7 +174,7 @@
 @sapLegendBackgroundColor16: #e7e8ea;
 @sapLegendBackgroundColor17: #d7eaea;
 @sapLegendBackgroundColor18: #e6edd1;
-@sapLegendBackgroundColor19: #f0f7fa;
+@sapLegendBackgroundColor19: #cfebf7;
 @sapLegendBackgroundColor20: #f0f7fa;
 
 
@@ -554,6 +554,8 @@
 // [Tags "Base", "Content", "Font", "Protected"]
 @sapContent_MonospaceFontFamily: lucida console, monospace;
 
+@sapContent_MonospaceBoldFontFamily: @sapContent_MonospaceFontFamily;
+
 // [Label "Content Disabled Text Color"]
 // [Description "The color of texts on disabled screen elements in the content area."]
 // [Tags "Base", "Content", "Color", "Font"]
@@ -666,6 +668,8 @@
 
 @sapShell_GroupTitleTextColor: @sapTitleColor;
 
+@sapShell_GroupTitleTextShadow: 0 0 0.125rem contrast(@sapShell_GroupTitleTextColor, @sapContent_ShadowColor, @sapContent_ContrastShadowColor, @sapContent_ContrastTextThreshold);
+
 @sapShell_Hover_Background: @sapShellColor;
 
 @sapShell_Active_Background: @sapShellColor;
@@ -698,6 +702,16 @@
 @sapShell_Navigation_Active_Background: @sapShell_Active_Background;
 
 @sapShell_Shadow: none;
+
+@sapShell_NegativeColor: @sapNegativeColor;
+
+@sapShell_CriticalColor: @sapCriticalColor;
+
+@sapShell_PositiveColor: @sapPositiveColor;
+
+@sapShell_InformativeColor: @sapInformativeColor;
+
+@sapShell_NeutralColor: @sapNeutralColor;
 
 // [Label "Button Border Thickness"]
 // [Description "The thickness of button borders."]
