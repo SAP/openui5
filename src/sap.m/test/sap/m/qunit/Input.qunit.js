@@ -4438,7 +4438,6 @@ sap.ui.define([
 		oInput = null;
 	});
 
-
 	QUnit.test("Auto complete should not be allowed when it is set to false", function (assert) {
 		// Arrange
 		var oInput = new Input({
@@ -4780,6 +4779,64 @@ sap.ui.define([
 
 		// assert
 		assert.strictEqual(stub.callCount, 0, "Should NOT call 'setSelectedRow' when aggregation is destroyed after a proposed item was found.");
+	});
+
+	QUnit.test("Typeahead should select the correct formatter", function (assert) {
+		var oPopupInput;
+
+		// Arange
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		// Setup
+		var oInput = new Input({
+			showSuggestion: true,
+			showTableSuggestionValueHelp: false,
+			suggestionColumns: [
+				new sap.m.Column({
+					popinDisplay: "Inline",
+					demandPopin: true,
+					content: [
+						new sap.m.Label({text: "My text label"})
+					]
+				})
+			],
+			suggestionRows: [
+				new sap.m.ColumnListItem({
+					content: [
+						new sap.m.Label({text: "My text label"})
+					]
+				})
+			]
+		}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput._getSuggestionsPopover().getPopover().open();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		oPopupInput = oInput._getSuggestionsPopover().getInput();
+		oPopupInput.setValue("My");
+		oPopupInput._bDoTypeAhead = true;
+		oPopupInput.focus();
+		sap.ui.getCore().applyChanges();
+
+		oPopupInput._handleTypeAhead();
+
+		// Assert
+		assert.ok(true, "Calling Dialog's Input _handleTypeAhead does not trigger an exception");
+
+		// clean up
+		oInput._getSuggestionsPopover().getPopover().close();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		oInput.destroy();
+		oInput = null;
 	});
 
 	QUnit.module("Input with Suggestions and Value State, but not Value State Message", {
