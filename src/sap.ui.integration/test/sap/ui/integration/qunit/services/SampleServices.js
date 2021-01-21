@@ -17,7 +17,20 @@ sap.ui.define([
 	var oNavigationFactory = new NavigationFactory();
 	ServiceFactoryRegistry.register("test.service.SampleNavigationFactory", oNavigationFactory);
 
+	var BrokenNavigationFactory = ServiceFactory.extend("test.service.BrokenNavigationFactory", {
+		createInstance: function (oServiceContext) {
+			return new Promise(function (resolve) {
+				sap.ui.require(["test-resources/sap/ui/integration/qunit/services/BrokenNavigation"], function (BrokenNavigation) {
+					resolve(new BrokenNavigation(oServiceContext));
+				});
+			});
+		}
+	});
+	var oBrokenNavigationFactory = new BrokenNavigationFactory();
+	ServiceFactoryRegistry.register("test.service.BrokenNavigationFactory", oBrokenNavigationFactory);
+
 	return {
-		"navigation": oNavigationFactory
+		"navigation": oNavigationFactory,
+		"brokenNavigation": oBrokenNavigationFactory
 	};
 }, true);
