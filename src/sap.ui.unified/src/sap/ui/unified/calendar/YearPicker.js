@@ -538,7 +538,7 @@ sap.ui.define([
 					if (iSelectedIndex > iYears - 1) {
 						iSelectedIndex = iYears - 1;
 					}
-					oFirstDate = this._oMaxDate;
+					oFirstDate = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
 					this._oDate.setMonth(0, 1);
 				}
 			} else {
