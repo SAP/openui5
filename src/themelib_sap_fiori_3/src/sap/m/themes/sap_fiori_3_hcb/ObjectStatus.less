@@ -20,11 +20,14 @@
 	}
 }
 
+.sapMObjStatus:not(.sapMObjStatusInverted) .sapMObjStatusIcon {
+	height: 1rem;
+}
+
 .sapMObjStatusInverted .sapMObjStatusText,
 .sapMObjStatusInverted .sapMObjStatusIcon {
-	line-height: 1rem;
-	min-height: 1rem;
-	max-height: 1rem;
+	line-height: 0.875rem;
+	min-height: 0.875rem;
 }
 
 .sapMObjStatusIcon > .sapUiIcon {
@@ -46,6 +49,7 @@
 }
 
 .sapMObjStatusInverted {
+	box-sizing: border-box;
 	& .sapMObjStatusText,
 	& .sapMObjStatusIcon.sapMObjStatusIconOnly,
 	& .sapMObjStatusIcon .sapMObjStatusIconOnly,
@@ -209,9 +213,9 @@ html.sap-desktop .sapMObjStatusActive:focus .sapMObjStatusLink::after {
 html.sap-desktop .sapMObjStatusActive:focus {
 
 	.sapMObjStatusLink::after {
-		top: -2px;
+		top: -1px;
 		left: 1px;
-		bottom: -2px;
+		bottom: -1px;
 		right: 1px;
 		outline: 2px dotted @sapUiContentFocusColor;
 	}
