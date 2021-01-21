@@ -81,7 +81,6 @@ sap.ui.define([
 
 		this.oDomTable = oTable;
 		this.oConfig = this.getConfig(sId, oConfig);
-
 		// create datatable
 		var API = $(oTable)
 			.DataTable(
@@ -280,7 +279,8 @@ sap.ui.define([
 			}
 
 			if (oConfig['paginate']) {
-				oNewConfig.pageLength = oConfig['paginate'] > 0 ? oConfig['paginate'] : -1;
+				var iPaginate = parseInt(oConfig['paginate']);
+				oNewConfig.pageLength = iPaginate > 0 ? iPaginate : -1;
 			}
 
 			oNewConfig.columns = oConfig.columns.map(function (aColumnParams, iColIndex) {
