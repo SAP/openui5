@@ -686,7 +686,7 @@ sap.ui.define([
 			oItem.data(oRenderer.CSS_CLASS_COMBOBOXBASE + "ListItem", oListItem);
 
 			oItem.getCustomData().forEach(function(oCustomData){
-				oListItem.addCustomData(oCustomData.clone());
+				oListItem.addCustomData(oCustomData.clone(null, null, {cloneBindings: false}));
 			});
 
 			this._oItemObserver.observe(oItem, {properties: ["text", "additionalText", "enabled", "tooltip"]});
