@@ -132,11 +132,13 @@
 @sapUiContentShadow1: 0 0.125rem 0.5rem 0 fade(@sapUiContentShadowColor, 20), @sapUiContentShadow0;
 @sapUiContentShadow2: 0 0.25rem 2rem 0 fade(@sapUiContentContrastShadowColor, 60), 0 0 0 2px @sapUiContentShadowColor;
 @sapUiContentShadow3: 0 0.625rem 4rem 0 fade(@sapUiContentContrastShadowColor, 80), 0 0 0 2px @sapUiContentShadowColor;
-@sapUiContentTextShadow: none;
+@sapUiContentTextShadow: -1px 0 #000, 0 1px #000, 1px 0 #000, 0 -1px #000;
 @sapUiContentHeaderShadow: inset 0 -0.125rem #FFFFFF;
 @sapUiContentSearchHighlightColor: #7A5100;
 @sapUiContentHelpColor: #03B803;
 @sapUiContentLabelColor: #FFFFFF;
+@sapUiContentMonospaceFontFamily: lucida console, monospace;
+@sapUiContentMonospaceBoldFontFamily: lucida console, monospace;
 @sapUiContentDisabledTextColor: #666666;
 @sapUiContentDisabledOpacity: 0.5;
 @sapUiContentContrastTextThreshold: 0.65;
@@ -171,6 +173,7 @@
 @sapUiShellInteractiveTextColor: #FFFFFF;
 @sapUiShellInteractiveBorderColor: #FFFFFF;
 @sapUiShellGroupTitleTextColor: #FFFFFF;
+@sapUiShellGroupTitleTextShadow: -1px 0 #000000, 0 1px #000000, 1px 0 #000000, 0 -1px #000000;
 @sapUiShellHoverBackground: #7A5100;
 @sapUiShellActiveBackground: #7A5100;
 @sapUiShellActiveTextColor: #FFFFFF;
@@ -186,6 +189,11 @@
 @sapUiShellNavigationActiveTextColor: #FFFFFF;
 @sapUiShellNavigationActiveBackground: #7A5100;
 @sapUiShellShadow: 0 0.125rem 0 0 #FFFFFF;
+@sapUiShellNegativeColor: #FF5E5E;
+@sapUiShellCriticalColor: #FFAB1D;
+@sapUiShellPositiveColor: #9C9;
+@sapUiShellInformativeColor: #7a5100;
+@sapUiShellNeutralColor: #FFF;
 
 @sapUiButtonBorderWidth: 1px;
 @sapUiButtonBorderCornerRadius: 2px;
