@@ -15,11 +15,36 @@ sap.ui.define(['sap/ui/core/Fragment'],
          * @returns {Promise} a Promise which resolves once the
          */
         applyExtensionPoint: function(oExtensionPoint) {
+            return ExtensionPointProvider.doIt(oExtensionPoint, true);
+        },
+        doIt: function(oExtensionPoint, bInsert) {
             var pLoaded;
 
+            var checkForExtensionPoint = function(aControls) {
+                var pNested = [];
+                aControls.forEach(function(oControl, i) {
+                    if (oControl._isExtensionPoint) {
+                        //pass aggregationBinding info, fragmentID, view instance, ... to next level EP? If so simply do it!
+                        pNested.push(ExtensionPointProvider.doIt(oControl).then(function(aNestedControls) {
+                            aControls.splice(i,1);
+                            aNestedControls.forEach(function(oNestedControl, j) {
+                                aControls.splice(i + j, 0, oNestedControl );
+                            });
+                            return aControls;
+                        }));
+                    }
+                });
+                if (pNested.length > 0) {
+                    return Promise.all(pNested).then(function() {
+                        return aControls;
+                    });
+                } else {
+                    return Promise.resolve(aControls);
+                }
+            };
             var fnInsert = function(aControls) {
                 aControls.forEach(function(oControl, i) {
-                    oExtensionPoint.targetControl.insertAggregation(oExtensionPoint.aggregationName, oControl, oExtensionPoint.index + i);
+                   oExtensionPoint.targetControl.insertAggregation(oExtensionPoint.aggregationName, oControl, oExtensionPoint.index + i);
                 });
             };
 
@@ -50,21 +75,29 @@ sap.ui.define(['sap/ui/core/Fragment'],
                     if (!Array.isArray(vControls)) {
                         vControls = [vControls];
                     }
-                    fnInsert(vControls);
-                    oExtensionPoint.ready(vControls);
+                    return checkForExtensionPoint(vControls);
+                }).then(function(vControls) {
+                    if (bInsert) {
+                        fnInsert(vControls);
+                        oExtensionPoint.ready(vControls);
+                    }
                 });
             } else {
                 pLoaded = new Promise(function(resolve, reject) {
                     // NOTE:
                     // createDefault() can also return an array of controls synchronously!
                     oExtensionPoint.createDefault().then(function(aControls) {
-                        fnInsert(aControls);
-                        oExtensionPoint.ready(aControls);
+                        return checkForExtensionPoint(aControls);
+                    }).then(function(aControls) {
+                        //insert and move indices only once at first level EP
+                        if (bInsert) {
+                            fnInsert(aControls);
+                            oExtensionPoint.ready(aControls);
+                        }
                         resolve(aControls);
                     });
                 });
             }
-
             return pLoaded;
         }
     };
