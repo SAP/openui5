@@ -222,7 +222,14 @@ sap.ui.define([
 
 	BaseField.prototype._triggerValidation = function (value) {
 		var oConfig = this.getConfiguration();
-		if (oConfig.validations && Array.isArray(oConfig.validations)) {
+		//check if trigger validation
+		var doValidation = true;
+		if (!oConfig.required && oConfig.type === "string" && !value) {
+			doValidation = false;
+		} else if (!oConfig.required && (isNaN(value) || value === "") && (oConfig.type === "integer" || oConfig.type === "number")) {
+			doValidation = false;
+		}
+		if (oConfig.validations && Array.isArray(oConfig.validations) && doValidation) {
 			for (var i = 0; i < oConfig.validations.length; i++) {
 				if (!this._handleValidation(oConfig.validations[i], value)) {
 					return false;
@@ -399,6 +406,10 @@ sap.ui.define([
 
 	BaseField.prototype.onAfterRendering = function () {
 		this._applyMessage();
+		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
+		if (oMessageStrip && oMessageStrip.getDomRef()) {
+			oMessageStrip.getDomRef().style.opacity = "0";
+		}
 	};
 
 	BaseField.prototype._applyMessage = function () {
@@ -425,6 +436,7 @@ sap.ui.define([
 			"message": sMessage,
 			"atControl": false
 		};
+		var oMessageStrip = this.getParent().getAggregation("_messageStrip") || this.getParent().getParent().getAggregation("_messageStrip");
 		if (oField.setValueState) {
 			this._message.atControl = true;
 			if (oField.setShowValueStateMessage) {
@@ -432,6 +444,8 @@ sap.ui.define([
 			}
 			oField.setValueState(sEnumType);
 			oField.setValueStateText(sMessage);
+		} else if (oMessageStrip && oMessageStrip.getVisible()) {
+			this._showMessage();
 		}
 		this._applyMessage();
 	};

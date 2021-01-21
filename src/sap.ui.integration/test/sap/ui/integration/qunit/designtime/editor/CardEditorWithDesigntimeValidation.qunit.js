@@ -182,9 +182,7 @@ sap.ui.define([
 								oField1.getAggregation("_field").focus();
 								var oMsgStrip = this.oCardEditor.getAggregation("_messageStrip");
 								var oI18nBundle = oField1.getModel("i18n").getResourceBundle();
-								assert.ok(oMsgStrip.getDomRef().style.opacity === "1", "Message strip visible");
-								assert.ok(oMsgStrip.getType() === "Warning", "Message strip Warning");
-								assert.ok(oI18nBundle.getText("string2err1", [1]) === oMsgStrip.getText(), "Custom Min Val text");
+								assert.ok(oMsgStrip.getDomRef().style.opacity === "0", "Message strip invisible");
 								oField1.getAggregation("_settingsButton").focus();
 								oField1.getAggregation("_field").setValue("a");
 								wait(100).then(function () {
