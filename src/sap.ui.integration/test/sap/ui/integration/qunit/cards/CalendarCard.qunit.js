@@ -907,56 +907,5 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		});
-
-		// creates 3 appointments before, one at the current hour, and 3 more after
-		function createAppointmentsForToday(oFormatter) {
-			var oStart = new Date(),
-				oEnd = new Date(),
-				aResult = [];
-
-			oStart.setHours(oStart.getHours() - 3, 0, 0, 0);
-			oEnd.setHours(oEnd.getHours() - 2, 0, 0, 0);
-
-			for (var i = 0; i < 7; i++) {
-				aResult.push({
-					"start": oFormatter.format(oStart),
-					"end": oFormatter.format(oEnd),
-					"title": "App" + i
-				});
-
-				oStart.setHours(oStart.getHours() + 1);
-				oEnd.setHours(oEnd.getHours() + 1);
-			}
-
-			return aResult;
-		}
-
-		QUnit.test("The correct appointments are rendered for today", function(assert) {
-			// Arrange
-			var done = assert.async();
-			var oManifest_3OutOf5Apps_New = JSON.parse(JSON.stringify(oManifest_3OutOf5Apps)),
-				oFormatter = DateFormat.getDateTimeInstance({ pattern: "yyyy-MM-ddTHH:mm" });
-
-			oManifest_3OutOf5Apps_New["sap.card"].data.json.item = createAppointmentsForToday(oFormatter);
-			oManifest_3OutOf5Apps_New["sap.card"].data.json.date = oFormatter.format(new Date());
-
-			this.oCard.setManifest(oManifest_3OutOf5Apps_New);
-
-			this.oCard.attachEvent("_ready", function() {
-				Core.applyChanges();
-
-				assert.equal(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
-				assert.equal(this.oCard.getModel("parameters").getData().allItems, 7, "Should have total of 7 appointments.");
-
-				var aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
-
-				// Assert
-				assert.equal(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments");
-				assert.equal(aAppointmentsRefs.eq(0).find(".sapUiCalendarAppTitle").text(), "App3", "The first appointment is correct");
-				assert.equal(aAppointmentsRefs.eq(2).find(".sapUiCalendarAppTitle").text(), "App5", "The last appointment is correct");
-
-				done();
-			}.bind(this));
-		});
 	}
 );
