@@ -34,6 +34,53 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.equal(oFormat.format([-123456.789, "JPY"]), "JPY" + "\ufeff" + "-123,457", "-123456.789 JPY");
 	});
 
+	QUnit.test("Currency format with showNumber false and showMeasure false", function (assert) {
+		var oLocale = new Locale("en-US", oLocale);
+		var oFormat = getCurrencyInstance({showNumber: false, showMeasure: false}, oLocale);
+		assert.equal(oFormat.format(123456.789, "EUR"), "", "nothing shown");
+	});
+
+	QUnit.test("Currency format with showNumber", function (assert) {
+		var oLocale = new Locale("en-US", oLocale);
+		var oFormat = getCurrencyInstance({showNumber: false}, oLocale);
+		assert.equal(oFormat.format(123456.789, "EUR"), "EUR", "only currency EUR is displayed");
+		assert.equal(oFormat.format([123456.789, "EUR"]), "EUR", "only currency EUR is displayed");
+		assert.equal(oFormat.format(-123456.789, "EUR"), "EUR", "only currency EUR is displayed");
+		assert.equal(oFormat.format([-123456.789, "EUR"]), "EUR", "only currency EUR is displayed");
+		assert.equal(oFormat.format(123456.789, "JPY"), "JPY", "only currency JPY is displayed");
+		assert.equal(oFormat.format([123456.789, "JPY"]), "JPY", "only currency JPY is displayed");
+		assert.equal(oFormat.format(-123456.789, "JPY"), "JPY", "only currency JPY is displayed");
+		assert.equal(oFormat.format([-123456.789, "JPY"]), "JPY", "only currency JPY is displayed");
+	});
+
+	QUnit.test("Currency format with showNumber and currency symbols", function (assert) {
+		var oLocale = new Locale("en-US", oLocale);
+		var oFormat = getCurrencyInstance({showNumber: false, currencyCode: false}, oLocale);
+		assert.equal(oFormat.format(0, "EUR"), "\u20ac", "only currency symbol for EUR is displayed");
+		assert.equal(oFormat.format(0, "JPY"), "\u00a5", "only currency symbol for JPY is displayed");
+		assert.equal(oFormat.format(0, "INR"), "\u20b9", "only currency symbol for INR is displayed");
+	});
+
+	QUnit.test("Currency parse with showNumber and currency symbols", function (assert) {
+		var oLocale = new Locale("en-US", oLocale);
+		var oFormat = getCurrencyInstance({showNumber: false, currencyCode: false}, oLocale);
+		assert.deepEqual(oFormat.parse("\u20ac"), [undefined, "EUR"], "only currency symbol for EUR is displayed");
+		assert.deepEqual(oFormat.parse("\u00a5"), [undefined, "JPY"], "only currency symbol for JPY is displayed");
+		assert.deepEqual(oFormat.parse("\u20b9"), [undefined, "INR"], "only currency symbol for INR is displayed");
+		assert.deepEqual(oFormat.parse("A$"), [undefined, "AUD"], "only currency symbol for AUD is displayed");
+		assert.deepEqual(oFormat.parse("$"), [undefined, "USD"], "only currency symbol for USD is displayed");
+		assert.deepEqual(oFormat.parse("x"), [undefined, undefined], "unknown unit");
+	});
+
+	QUnit.test("Currency parse with showNumber and currency codes", function (assert) {
+		var oLocale = new Locale("en-US", oLocale);
+		var oFormat = getCurrencyInstance({showNumber: false, currencyCode: false}, oLocale);
+		assert.deepEqual(oFormat.parse("EUR"), [undefined, "EUR"], "only currency code for EUR is displayed");
+		assert.deepEqual(oFormat.parse("JPY"), [undefined, "JPY"], "only currency code for JPY is displayed");
+		assert.deepEqual(oFormat.parse("INR"), [undefined, "INR"], "only currency code for INR is displayed");
+		assert.deepEqual(oFormat.parse("USD"), [undefined, "USD"], "only currency code for USD is displayed");
+	});
+
 	QUnit.test("Currency format with sMeasure and style", function (assert) {
 		var oLocale = new Locale("en-US");
 		var oFormat = getCurrencyInstance({style: "long"}, oLocale);

@@ -1448,6 +1448,7 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 
 	QUnit.module("Unit Format using configuration", {
 		beforeEach: function (assert) {
+			this.oLogWarningSpy = sinon.spy(Log, "warning");
 
 			//ensure custom unit mappings and custom units are reset
 			this.oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
@@ -1463,6 +1464,8 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 
 			assert.equal(this.oFormatSettings.getCustomUnits(), undefined, "units must be undefined");
 			assert.equal(this.oFormatSettings.getUnitMappings(), undefined, "unit mappings must be undefined");
+
+			this.oLogWarningSpy.restore();
 		}
 	});
 
@@ -1581,6 +1584,132 @@ sap.ui.define(["sap/ui/core/format/NumberFormat", "sap/ui/core/Locale", "sap/ui/
 		assert.deepEqual(oFormat.parse("1 H"), [1, "electric-inductance"], "1 H");
 
 		oFormatSettings.setCustomUnits(undefined);
+	});
+
+	QUnit.test("Unit format showNumber false", function (assert) {
+		var oLocale = new Locale("en");
+		var oFormat = NumberFormat.getUnitInstance({showNumber: false}, oLocale);
+
+		assert.equal(oFormat.format(20, "duration-day").toString(), "days", "20 days");
+		assert.equal(oFormat.format(1, "duration-day").toString(), "day", "1 day");
+		assert.equal(oFormat.format(20, "duration-hour").toString(), "hr", "20 hr");
+		assert.equal(oFormat.format(1, "duration-hour").toString(), "hr", "1 hr");
+		assert.equal(oFormat.format(20, "duration-day-non-existing").toString(), "", "not existing");
+	});
+
+	QUnit.test("Unit parse showNumber false", function (assert) {
+		var oLocale = new Locale("en");
+		var oFormat = NumberFormat.getUnitInstance({showNumber: false}, oLocale);
+
+		assert.deepEqual(oFormat.parse("days"), [undefined, "duration-day"], "days");
+		assert.deepEqual(oFormat.parse("day"), [undefined, "duration-day"], "day");
+		assert.deepEqual(oFormat.parse("hr"), [undefined, "duration-hour"], "hr");
+		// ambiguous
+		assert.deepEqual(oFormat.parse("c"), null, "days");
+	});
+
+	QUnit.test("Unit format showNumber false custom Units from global configuration with only other pattern", function (assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oConfigObject = {
+			"electric-inductance": {
+				"displayName": "H",
+				"unitPattern-count-other": "{0} Hs"
+			}
+		};
+		oFormatSettings.setCustomUnits(oConfigObject);
+
+		var oFormat = NumberFormat.getUnitInstance({showNumber: false});
+
+		// test custom unit in config
+		assert.equal(oFormat.format(1, "electric-inductance").toString(), "Hs", "1 H");
+
+		oFormatSettings.setCustomUnits(undefined);
+	});
+
+	QUnit.test("Unit format showNumber false custom Units from global configuration", function (assert) {
+		var oFormatSettings = sap.ui.getCore().getConfiguration().getFormatSettings();
+		var oConfigObject = {
+			"electric-inductance": {
+				"displayName": "H",
+				"unitPattern-count-one": "{0} H",
+				"unitPattern-count-other": "{0} Hs"
+			}
+		};
+		oFormatSettings.setCustomUnits(oConfigObject);
+
+		var oFormat = NumberFormat.getUnitInstance({showNumber: false});
+
+		// test custom unit in config
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "ha", "20 ha");
+		assert.equal(oFormat.format(20, "electric-inductance").toString(), "Hs", "20 H");
+		assert.equal(oFormat.format(1, "electric-inductance").toString(), "H", "1 H");
+
+		oFormatSettings.setCustomUnits(undefined);
+	});
+
+	QUnit.test("Unit format showNumber false custom Units from customUnits parameter", function (assert) {
+		var oFormat = NumberFormat.getUnitInstance({showNumber: false, customUnits: {
+				"electric-inductance": {
+					"displayName": "H",
+					"unitPattern-count-one": "{0} H",
+					"unitPattern-count-other": "{0} Hs"
+				}
+			}});
+
+		assert.equal(oFormat.format(20, "area-hectare").toString(), "", "20 ha");
+		assert.equal(oFormat.format(20, "electric-inductance").toString(), "Hs", "20 H");
+		assert.equal(oFormat.format(1, "electric-inductance").toString(), "H", "1 H");
+	});
+
+	QUnit.test("Unit format showNumber false custom Units from customUnits parameter without unit", function (assert) {
+		var oFormat = NumberFormat.getUnitInstance({showNumber: false, customUnits: {
+				// only other pattern contains number placeholder {0}
+				"beer-volume": {
+					"displayName": "Seidel",
+					"unitPattern-count-one": "Ein Glas Bier",
+					"unitPattern-count-two": "Ein Maß",
+					"unitPattern-count-other": "{0} Seidel"
+				},
+				// No pattern contains number placeholder {0}
+				"house-size": {
+					"displayName": "House size",
+					"unitPattern-count-one": "Einfamilienhaus",
+					"unitPattern-count-two": "Zweifamilienhaus",
+					"unitPattern-count-other": "Mehrfamilienhaus"
+				},
+				// No pattern contains number placeholder {0} and other pattern does not exist
+				"bike-size": {
+					"displayName": "Bike size",
+					"unitPattern-count-one": "Fahrrad",
+					"unitPattern-count-two": "Tandem"
+				}
+			}});
+
+
+		// uses other pattern because the "one" pattern does not contain the number placeholder {0}
+		assert.equal(oFormat.format(1, "beer-volume").toString(), "Seidel", "1 Glas Bier");
+		// uses other pattern because the "two" pattern does not contain the number placeholder {0}
+		assert.equal(oFormat.format(2, "beer-volume").toString(), "Seidel", "1 Maß");
+
+		assert.equal(oFormat.format(20, "beer-volume").toString(), "Seidel", "20 Seidel");
+
+		// House size (no pattern includes number placeholder)
+		// there is no pattern with the number placeholder therefore it cannot be split into number and unit
+		// Note: this does not exist in CLDR data but just in case
+		assert.equal(this.oLogWarningSpy.callCount, 0, "No warning logs should be called");
+		assert.equal(oFormat.format(1, "house-size").toString(), "", "Einfamilienhaus");
+		assert.equal(oFormat.format(2, "house-size").toString(), "", "Zweifamilienhaus");
+		assert.equal(oFormat.format(20, "house-size").toString(), "", "Mehrfamilienhaus");
+		assert.equal(this.oLogWarningSpy.callCount, 3, "Warning logs should be called");
+		assert.equal(this.oLogWarningSpy.getCall(0).args[0], "Cannot separate the number from the unit because unitPattern-count-other 'Mehrfamilienhaus' does not include the number placeholder '{0}' for unit 'house-size'", "Warning message");
+		assert.equal(this.oLogWarningSpy.getCall(1).args[0], "Cannot separate the number from the unit because unitPattern-count-other 'Mehrfamilienhaus' does not include the number placeholder '{0}' for unit 'house-size'", "Warning message");
+		assert.equal(this.oLogWarningSpy.getCall(2).args[0], "Cannot separate the number from the unit because unitPattern-count-other 'Mehrfamilienhaus' does not include the number placeholder '{0}' for unit 'house-size'", "Warning message");
+
+		// Bike Size (no pattern includes number placeholder, other pattern not present)
+		assert.equal(oFormat.format(1, "bike-size").toString(), "", "Fahrrad");
+		assert.equal(oFormat.format(2, "bike-size").toString(), "", "Tandem");
+		assert.equal(oFormat.format(3, "bike-size").toString(), "", "(does not exist))");
+
 	});
 
 
