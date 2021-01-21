@@ -449,6 +449,57 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_List_Broken_Navigation = {
+			"_version": "1.8.0",
+			"sap.app": {
+				"id": "test.card.actions.card21",
+				"type": "card"
+			},
+			"sap.ui5": {
+				"services": {
+					"IntentBasedNavigation": {
+						"factoryName": "test.service.BrokenNavigationFactory"
+					}
+				}
+			},
+			"sap.card": {
+				"type": "List",
+				"header": {
+					"title": "Sales Orders",
+					"subTitle": "Static Data",
+					"icon": {
+						"src": "sap-icon://sales-order"
+					},
+					"status": {
+						"text": "100 of 200"
+					}
+				},
+				"content": {
+					"data": {
+						"request": {
+							"url": "items.json"
+						}
+					},
+					"item": {
+						"title": {
+							"value": "{Name}"
+						},
+						"actions": [
+							{
+								"type": "Navigation",
+								"service": "IntentBasedNavigation",
+								"parameters": {
+									"intentSemanticObject": "SalesOrder",
+									"name": "{Name}",
+									"hidden": "{url}"
+								}
+							}
+						]
+					}
+				}
+			}
+		};
+
 		var objectContent_service = {
 			"sap.app": {
 				"id": "test.card.actions.card11",
@@ -1066,6 +1117,22 @@ sap.ui.define([
 
 			// Act
 			this.oCard.setManifest(oManifest_List_Hidden_Items);
+		});
+
+		QUnit.test("Card items should be visible if service does not implement method 'hidden'", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				var oCardListItems = this.oCard.getCardContent()._getList().getItems();
+
+				//Assert
+				assert.strictEqual(oCardListItems.length, 2, "All items should be visible if 'hidden' is not implemented.");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(oManifest_List_Broken_Navigation);
 		});
 
 		QUnit.test("No service URL in navigation actions", function (assert) {

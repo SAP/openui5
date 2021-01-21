@@ -164,13 +164,13 @@ sap.ui.define([
 					.getService(sActionName)
 					.then(function (oNavigationService) {
 						if (!oNavigationService.hidden) {
-							return Promise.resolve();
+							return false;
 						}
 
 						return oNavigationService.hidden({ parameters: mParameters });
 					})
 					.then(function (bHidden) {
-						oItem._card_item_hidden = bHidden;
+						oItem._card_item_hidden = !!bHidden;
 						oModel.checkUpdate(true);
 					})
 					.catch(function (sMessage) {
