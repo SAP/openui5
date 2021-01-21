@@ -253,6 +253,14 @@ sap.ui.define([
 								continue;
 							}
 
+							// add style class for the hint under group and checkbox/toggle
+							if (oItem.isA("sap.m.FormattedText")) {
+								oPanel.addContent(new HBox({
+									items: oItem
+								}).addStyleClass("sapUiIntegrationCardEditorHint"));
+								continue;
+							}
+
 							if (oItem.isA("sap.m.Label")) {
 								oItem.addStyleClass("sapUiIntegrationCardEditorItemLabel");
 								var oDependent = oItem.getDependents() && oItem.getDependents()[0];
