@@ -2765,7 +2765,7 @@ function(
 					var oList = this._getSuggestionsPopover().getItemsContainer(),
 						oSelectedItem = oList && oList.getSelectedItem();
 
-					if (this.getSelectionUpdatedFromList()) {
+					if (this.getSelectionUpdatedFromList() || this._sProposedItemText) {
 						this.updateSelectionFromList(oSelectedItem);
 					}
 

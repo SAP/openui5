@@ -1083,6 +1083,33 @@ sap.ui.define([
 		oNextInput.destroy();
 	});
 
+	QUnit.test("Autocomplete should set selectedkey to the input control", function(assert){
+		// Arrange
+		var oInput = new Input({
+			showSuggestion: true,
+			suggestionItems: [
+				new Item({key: "UK", text: "United Kingdom"})
+			]
+		}),	oSpy = sinon.spy(oInput, "updateSelectionFromList");
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput._$input.trigger("focus").trigger("keydown").val("U").trigger("input");
+		this.clock.tick(300);
+		oInput.getFocusDomRef().blur();
+		oInput._getSuggestionsPopover().getPopover().close();
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oSpy.callCount, 1, "Suggestion Popup is open now");
+
+		// Clean up
+		oInput.destroy();
+		oSpy.restore();
+	});
+
 	QUnit.test("Suggestion on Desktop should allow focus to be set into the suggestion item", function(assert){
 		var oPopup;
 
