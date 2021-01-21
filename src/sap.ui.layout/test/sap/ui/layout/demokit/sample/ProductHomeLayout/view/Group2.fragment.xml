@@ -1,0 +1,76 @@
+<core:FragmentDefinition
+	xmlns:cards="sap.f.cards"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:cssgrid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f">
+	<f:GridContainer id="group2">
+		<f:layout>
+			<f:GridContainerSettings rowSize="4rem" columnSize="4rem" />
+		</f:layout>
+		<f:layoutData>
+			<cssgrid:ResponsiveColumnItemLayoutData columns="{home>/layout/group2/columns/current}" />
+		</f:layoutData>
+		<HBox alignItems="End" height="100%">
+			<Title text="Frequent Operations" titleStyle="H4" />
+			<layoutData>
+				<f:GridContainerItemLayoutData columns="40"/>
+			</layoutData>
+		</HBox>
+		<f:Card height="100%">
+			<f:content>
+				<VBox alignItems="Center" justifyContent="Center" width="100%">
+					<Avatar src="sap-icon://SAP-icons-TNT/application-service" press=".onTilePress" />
+					<Link text="Create Application" press=".onTilePress"/>
+				</VBox>
+			</f:content>
+			<f:layoutData>
+				<f:GridContainerItemLayoutData columns="2" minRows="2"/>
+			</f:layoutData>
+		</f:Card>
+		<f:Card height="100%">
+			<f:content>
+				<VBox alignItems="Center" justifyContent="Center" width="100%">
+					<Avatar src="sap-icon://developer-settings" press=".onTilePress" />
+					<Link text="Configure Tenant" press=".onTilePress"/>
+				</VBox>
+			</f:content>
+			<f:layoutData>
+				<f:GridContainerItemLayoutData columns="2" minRows="2"/>
+			</f:layoutData>
+		</f:Card>
+		<f:Card height="100%">
+			<f:content>
+				<VBox alignItems="Center" justifyContent="Center" width="100%">
+					<Avatar src="sap-icon://customer" press=".onTilePress" />
+					<Link text="Create User" press=".onTilePress"/>
+				</VBox>
+			</f:content>
+			<f:layoutData>
+				<f:GridContainerItemLayoutData columns="2" minRows="2"/>
+			</f:layoutData>
+		</f:Card>
+		<f:Card height="100%">
+			<f:content>
+				<VBox alignItems="Center" justifyContent="Center" width="100%">
+					<Avatar src="sap-icon://feedback" press=".onTilePress" />
+					<Link text="Give Feedback" press=".onTilePress"/>
+				</VBox>
+			</f:content>
+			<f:layoutData>
+				<f:GridContainerItemLayoutData columns="2" minRows="2"/>
+			</f:layoutData>
+		</f:Card>
+		<f:Card height="100%">
+			<f:content>
+				<VBox alignItems="Center" justifyContent="Center" width="100%">
+					<Avatar src="sap-icon://family-care" press=".onTilePress" />
+					<Link text="Create Flow" press=".onTilePress"/>
+				</VBox>
+			</f:content>
+			<f:layoutData>
+				<f:GridContainerItemLayoutData columns="2" minRows="2"/>
+			</f:layoutData>
+		</f:Card>
+	</f:GridContainer>
+</core:FragmentDefinition>

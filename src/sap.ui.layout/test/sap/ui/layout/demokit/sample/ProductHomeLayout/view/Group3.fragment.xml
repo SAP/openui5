@@ -1,0 +1,40 @@
+<core:FragmentDefinition 
+	xmlns:cards="sap.f.cards"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m" 
+	xmlns:cssgrid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f"
+	xmlns:widgets="sap.ui.integration.widgets" >
+	<f:GridContainer id="group3">
+		<f:layout>
+			<f:GridContainerSettings rowSize="4rem" columnSize="4rem" />
+		</f:layout>
+		<f:layoutData>
+			<cssgrid:ResponsiveColumnItemLayoutData columns="{home>/layout/group3/columns/current}" />
+		</f:layoutData>
+		<HBox alignItems="End" height="100%">
+			<Title text="Usage and Logs" titleStyle="H4" />
+			<layoutData>
+				<f:GridContainerItemLayoutData columns="40"/>
+			</layoutData>
+		</HBox>
+		<widgets:Card id="logonRequestsCard" height="100%">
+			<widgets:layoutData>
+				<f:GridContainerItemLayoutData columns="4" minRows="4"/>
+			</widgets:layoutData>
+		</widgets:Card>
+		<f:Card height="100%">
+			<f:header>
+				<cards:Header title="Audit Logs"/>
+			</f:header>
+			<f:content>
+				<HBox alignItems="Center" justifyContent="Center" width="100%">
+					<Text text="Unable to load the data."/>
+				</HBox>
+			</f:content>
+			<f:layoutData>
+				<f:GridContainerItemLayoutData columns="4" minRows="4"/>
+			</f:layoutData>
+		</f:Card>
+	</f:GridContainer>
+</core:FragmentDefinition>
