@@ -23,9 +23,9 @@ describe('sap.m.Tokenizer', function() {
 
 	// Tokenizer with editable and not editable tokens
 	it("should select not editable Tokenzier", function () {
-		expect(takeScreenshot(element(by.id("editableAndNotEditable")))).toLookAs("tokenizer-editable-and-not-editalbe-tokens");
+		expect(takeScreenshot(element(by.id("editableAndNotEditable")))).toLookAs("editable-and-not-editable-tokens");
 		element(by.id("tokenToSelect2")).click();
-		expect(takeScreenshot(element(by.id("editableAndNotEditable")))).toLookAs("tokenizer-editable-and-not-editalbe-token-selected");
+		expect(takeScreenshot(element(by.id("editableAndNotEditable")))).toLookAs("editable-and-not-editable-selected");
 	});
 
 	// Tokenizer with defined width
