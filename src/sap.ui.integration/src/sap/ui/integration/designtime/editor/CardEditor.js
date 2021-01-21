@@ -191,7 +191,7 @@ sap.ui.define([
 			if (oControl.isReady()) {
 				//surrounding div tag for form <div class="sapUiIntegrationCardEditorForm"
 				oRm.openStart("div");
-				oRm.addClass("sapUiIntegrationCardEditorForm");
+				oControl.getMode() === "translation" ? oRm.addClass("sapUiIntegrationCardEditorTranslationForm") : oRm.addClass("sapUiIntegrationCardEditorForm");
 				if (oControl.getMode() !== "translation") {
 					oRm.addClass("settingsButtonSpace");
 				}
