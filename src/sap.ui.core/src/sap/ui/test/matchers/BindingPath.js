@@ -187,7 +187,7 @@ sap.ui.define([
 				oMatcherRegex = vMatcherPath;
 			}
 			return oMatcherRegex.test(sPath);
-		} else {
+		} else if (sPath) {
 			var bHasDelimiter = sPath.charAt(0) === "/";
 			if (bWithContext && bHasDelimiter) {
 				vMatcherPath = vMatcherPath.substr(1);
@@ -195,6 +195,8 @@ sap.ui.define([
 				vMatcherPath = "/" + vMatcherPath;
 			}
 			return sPath === vMatcherPath;
+		} else {
+			return false;
 		}
 	}
 
