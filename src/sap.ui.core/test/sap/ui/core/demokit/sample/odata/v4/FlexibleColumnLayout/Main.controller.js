@@ -34,8 +34,8 @@ sap.ui.define([
 			return {bDescending : bDescending, sNewIcon : sNewIcon};
 		},
 
-		hasPendingChanges : function (oBinding, sVerb) {
-			if (oBinding.hasPendingChanges()) {
+		hasPendingChanges : function (vBindingOrContext, sVerb) {
+			if (vBindingOrContext.hasPendingChanges()) {
 				MessageBox.error("There are unsaved changes; save or reset changes before "
 					+ sVerb);
 
@@ -154,12 +154,12 @@ sap.ui.define([
 		},
 
 		onRefreshSalesOrder : function () {
-			var oBinding = this.byId("objectPage").getBindingContext();
+			var oContext = this.byId("objectPage").getBindingContext();
 
-			if (this.hasPendingChanges(oBinding, "refreshing")) {
+			if (this.hasPendingChanges(oContext, "refreshing")) {
 				return;
 			}
-			oBinding.refresh(undefined, true);
+			oContext.refresh(undefined, true);
 		},
 
 		onRefreshSalesOrderList : function () {
