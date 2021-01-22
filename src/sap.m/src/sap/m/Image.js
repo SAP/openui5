@@ -200,7 +200,7 @@ sap.ui.define([
 			 * the container role/type and map the value of <code>ariaHasPopup</code> accordingly.</li>
 			 * </ul>
 			 *
-			 * @since 1.86.0
+			 * @since 1.87.0
 			 */
 			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
 		},
