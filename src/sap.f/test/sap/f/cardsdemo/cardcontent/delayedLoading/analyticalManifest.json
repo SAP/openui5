@@ -1,6 +1,6 @@
 {
 	"sap.app": {
-		"id": "cardsdemo.samples.analytical1",
+		"id": "cardsdemo.samples.donut1",
 		"type": "card"
 	},
 	"sap.card": {
@@ -8,82 +8,64 @@
 		"header": {
 			"type": "Numeric",
 			"data": {
-				"request": {
-					"url": "https://newsapi.org/v2/everything?from={{parameters.TODAY_ISO}}&q={{parameters.city}}&sortBy=relevancy&apiKey=da959b2d34334e1db76c53f54a1303aa&language=en&pageSize=10"
-				},
-				"path": "/articles"
+				"json": {
+					"n": 6547394.45496,
+					"u": "M $",
+					"trend": "Down",
+					"valueColor": "Critical"
+				}
 			},
-			"title": "{details}",
-			"subTitle": "Analytical Card",
-			"unitOfMeasurement": "EUR",
+			"subTitle": "Success Rate",
 			"mainIndicator": {
-				"number": "{number}",
-				"unit": "{unit}",
+				"number": "{n}",
+				"unit": "{u}",
 				"trend": "{trend}",
-				"state": "{state}"
-			},
-			"details": "{details}",
-			"status": {
-				"text": "2 of {count}"
+				"state": "{valueColor}"
 			},
 			"sideIndicators": [
 				{
-					"title": "Target",
-					"number": "{target/number}",
-					"unit": "{target/unit}"
-				},
-				{
-					"title": "Deviation",
-					"number": "{deviation/number}",
-					"unit": "%"
+					"title": "Decrease",
+					"number": "24",
+					"unit": "weeks"
 				}
 			]
 		},
 		"content": {
-			"chartType": "Line",
+			"chartType": "Donut",
 			"legend": {
-				"visible": "{legend/visible}",
-				"position": "{legend/position}",
-				"alignment": "{legend/alignment}"
+				"visible": true,
+				"position": "Top",
+				"alignment": "Center"
 			},
 			"plotArea": {
 				"dataLabel": {
-					"visible": true
-				},
-				"categoryAxisText": {
-					"visible": false
-				},
-				"valueAxisText": {
-					"visible": false
+					"visible": true,
+					"showTotal": true
 				}
 			},
 			"title": {
-				"text": "Line chart",
+				"text": "Donut chart",
 				"visible": true,
-				"alignment": "Left"
+				"alignment": "Bottom"
 			},
-			"measureAxis": "valueAxis",
-			"dimensionAxis": "categoryAxis",
+			"measureAxis": "size",
+			"dimensionAxis": "color",
 			"data": {
 				"request": {
-					"url": "./cardsdemo/cardcontent/delayedLoading/analitycalData.json"
+					"url": "./cardsdemo/cardcontent/cost.json"
 				},
-				"path": "/list"
+				"path": "/milk"
 			},
 			"dimensions": [
 				{
-					"label": "{dimensions/weekLabel}",
-					"value": "{Week}"
+					"label": "Store Name",
+					"value": "{Store Name}"
 				}
 			],
 			"measures": [
 				{
-					"label": "{measures/revenueLabel}",
+					"label": "Revenue",
 					"value": "{Revenue}"
-				},
-				{
-					"label": "{measures/costLabel}",
-					"value": "{Cost}"
 				}
 			]
 		}

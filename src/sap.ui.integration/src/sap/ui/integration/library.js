@@ -98,7 +98,12 @@ sap.ui.define([
 		 * When in this mode, the card cannot make requests.
 		 * @public
 		 */
-		Inactive: "Inactive"
+		Inactive: "Inactive",
+		/**
+		 * When in this mode, the card starts processing the manifest when the card is in the viewport..
+		 * @public
+		 */
+		Auto: "Auto"
 	};
 
 	/**
