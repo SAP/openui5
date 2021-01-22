@@ -1696,7 +1696,7 @@ sap.ui.define([
 
 		if (!oFieldHelp) {
 			if (mDefaultHelps[sType].promise) {
-				mDefaultHelps[sType].promise.then(_defaultFieldHelpUpdate.bind(this));
+				mDefaultHelps[sType].promise.then(_defaultFieldHelpUpdate.bind(this, mDefaultHelps[sType].id));
 			}
 			var FieldHelp = sap.ui.require(mDefaultHelps[sType].name);
 			if (!FieldHelp && !mDefaultHelps[sType].promise) {
@@ -1705,7 +1705,7 @@ sap.ui.define([
 					sap.ui.require([mDefaultHelps[sType].name], function(fnControl) {
 						_createDefaultFieldHelp.call(this, sType);
 					}.bind(this));
-				}.bind(this)).then(_defaultFieldHelpUpdate.bind(this));
+				}.bind(this)).then(_defaultFieldHelpUpdate.bind(this, mDefaultHelps[sType].id));
 			}
 			if (FieldHelp) {
 				var oDelegate = this.bDelegateInitialized && this.getControlDelegate()[mDefaultHelps[sType].getDelegate]();
@@ -1719,22 +1719,18 @@ sap.ui.define([
 					delete mDefaultHelps[sType].resolve;
 				}
 				if (!mDefaultHelps[sType].promise) {
-					_defaultFieldHelpUpdate.call(this);
+					_defaultFieldHelpUpdate.call(this, mDefaultHelps[sType].id);
 				}
 			}
 		} else {
-			_defaultFieldHelpUpdate.call(this);
+			_defaultFieldHelpUpdate.call(this, mDefaultHelps[sType].id);
 		}
 
 	}
 
-	function _defaultFieldHelpUpdate() {
+	function _defaultFieldHelpUpdate(sId) {
 
-		_fieldHelpChanged.call(this, "BoolDefaultHelp", "insert");
-		var oControl = this.getAggregation("_content", [])[0];
-		if (oControl) {
-			oControl.setValueHelpIconSrc(this._getFieldHelpIcon());
-		}
+		_fieldHelpChanged.call(this, sId, "insert");
 
 	}
 
@@ -2223,10 +2219,16 @@ sap.ui.define([
 				oFieldHelp.detachEvent("afterClose", _handleFieldHelpAfterClose, this);
 			}
 			this.setProperty("_fieldHelpEnabled", false, true);
+			this._bConnected = false;
 		} else if (sMutation === "insert") {
 			_checkFieldHelpExist.call(this, sId);
 		}
 
+		// update icon
+		var oControl = this.getAggregation("_content", [])[0];
+		if (oControl) {
+			oControl.setValueHelpIconSrc(this._getFieldHelpIcon());
+		}
 		_handleConditionsChange.call(this, this.getConditions()); // to update descriptions
 
 	}
