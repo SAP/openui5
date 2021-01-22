@@ -37,7 +37,7 @@
 				labelledby: bShouldHaveOwnLabelledBy ? {value: oControl.getId(), append: true } : undefined
 			},
 			sHref = oControl.getHref(),
-			sRel = defaultLinkTypes(oControl.getRel(), sHref, oControl.getTarget()),
+			sRel = defaultLinkTypes(oControl.getRel(), oControl.getTarget()),
 			bIsValid = sHref && oControl._isHrefValid(sHref),
 			bEnabled = oControl.getEnabled();
 

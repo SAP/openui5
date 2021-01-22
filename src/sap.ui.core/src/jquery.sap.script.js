@@ -564,8 +564,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Helper that adds window features 'noopener noreferrer' when opening a
-	 * cross-origin address to ensure that no opener browsing context is forwarded.
+	 * Helper that adds window features 'noopener noreferrer' when opening an
+	 * address to ensure that no opener browsing context is forwarded.
 	 * If forwarding of the opener browsing context is needed, the native
 	 * <code>window.open</code> API should be used.
 	 *
@@ -583,7 +583,7 @@ sap.ui.define([
 	 * Determines default link types for an &lt;a&gt; tag that comply with
 	 * best practices for cross-origin communication.
 	 *
-	 * When the target URL is a cross-origin URL and when it will be opened in a new window,
+	 * When the target will be opened in a new window,
 	 * and when no other link types have been specified in the <code>rel</code> attribute,
 	 * "noopener noreferrer" will be returned.
 	 *

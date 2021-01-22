@@ -14,7 +14,8 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/Device",
 	"sap/m/library",
-	"./BreadcrumbsRenderer"
+	"./BreadcrumbsRenderer",
+	"sap/ui/util/openWindow"
 ], function(
 	Control,
 	Text,
@@ -26,7 +27,8 @@ sap.ui.define([
 	IconPool,
 	Device,
 	library,
-	BreadcrumbsRenderer
+	BreadcrumbsRenderer,
+	openWindow
 ) {
 	"use strict";
 
@@ -305,7 +307,9 @@ sap.ui.define([
 
 		if (sLinkHref) {
 			if (sLinkTarget) {
-				window.open(sLinkHref, sLinkTarget);
+				// TODO: take oLink.getRel() value into account ('links' is a public aggregation)
+				openWindow(sLinkHref, sLinkTarget);
+
 			} else {
 				window.location.href = sLinkHref;
 			}

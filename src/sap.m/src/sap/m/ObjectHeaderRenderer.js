@@ -1,17 +1,19 @@
 /*!
  * ${copyright}
  */
+
 sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/library',
 	'sap/m/library',
 	'sap/ui/Device',
 	"sap/base/Log",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/util/defaultLinkTypes"
 ],
-	function(Control, coreLibrary, library, Device, Log, jQuery) {
-	"use strict";
+	function(Control, coreLibrary, library, Device, Log, jQuery, defaultLinkTypes) {
 
+	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
@@ -491,6 +493,7 @@ sap.ui.define([
 					oRM.writeAttributeEscaped("href", oOH.getTitleHref());
 					if (oOH.getTitleTarget()) {
 						oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
+						oRM.writeAttributeEscaped("rel", defaultLinkTypes('', oOH.getTitleTarget()));
 					}
 				}
 
@@ -1314,6 +1317,7 @@ sap.ui.define([
 				oRM.writeAttributeEscaped("href", oOH.getTitleHref());
 				if (oOH.getTitleTarget()) {
 					oRM.writeAttributeEscaped("target", oOH.getTitleTarget());
+					oRM.writeAttributeEscaped("rel", defaultLinkTypes('', oOH.getTitleTarget()));
 				}
 			}
 
