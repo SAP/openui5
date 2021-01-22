@@ -8,12 +8,12 @@ controllerName="sap.ui.layout.sample.GridResponsiveColumnLayout.GridResponsiveCo
 	<ToggleButton
 		id="revealGrid"
 		text="Reveal Grid"
-		press="onRevealGrid"
+		press=".onRevealGrid"
 		class="sapUiSmallMargin" />
 	<Slider
 		class="sapUiSmallMarginBottom"
 		value="100"
-		liveChange="onSliderMoved"/>
+		liveChange=".onSliderMoved"/>
 	<Panel id="panelCSSGrid">
 		<headerToolbar>
 			<Toolbar height="3rem">
@@ -22,9 +22,10 @@ controllerName="sap.ui.layout.sample.GridResponsiveColumnLayout.GridResponsiveCo
 		</headerToolbar>
 		<Text class="sapUiSmallMarginBottom" text="ResponsiveColumnLayout represents a layout which is configured to display a variable number of columns depending on available screen size."/>
 		<Text class="sapUiSmallMarginBottom" text="Grid row's height is dynamically determined by the height of the highest grid element on this row." />
+		<Text class="sapUiSmallMarginBottom" text="Current breakpoint: {/currentBreakpoint}" width="100%"/>
 		<grid:CSSGrid id="grid1">
 			<grid:customLayout>
-				<grid:ResponsiveColumnLayout />
+				<grid:ResponsiveColumnLayout layoutChange=".onLayoutChange"/>
 			</grid:customLayout>
 			<f:Card>
 				<f:layoutData>
