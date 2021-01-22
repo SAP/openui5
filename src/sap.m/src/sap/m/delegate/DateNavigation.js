@@ -90,8 +90,11 @@ sap.ui.define([
 			switch (this.getUnit()) {
 				case Periods.Day:
 				case Periods.Week:
-				case Periods.OneMonth:
 					oCalEnd.setUTCDate(oCalEnd.getUTCDate() + this.getStep() - 1);
+					break;
+				case Periods.OneMonth:
+					oCalEnd.setUTCMonth(oCalEnd.getUTCMonth() + 1);
+					oCalEnd.setUTCDate(oCalEnd.getUTCDate() - 1);
 					break;
 				case Periods.Hour:
 					oCalEnd.setUTCHours(oCalEnd.getUTCHours() + this.getStep() - 1);

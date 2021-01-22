@@ -287,6 +287,19 @@ sap.ui.define([
 			oDateNavigation.destroy();
 		});
 
+		QUnit.test("getEnd", function(assert) {
+			// arrange
+			var oDateNavigation = new DateNavigation();
+			oDateNavigation.setUnit(Periods.OneMonth);
+			oDateNavigation.setStart(new Date(2019, 0, 1));
+
+			// assert
+			assert.deepEqual(oDateNavigation.getEnd(), new Date(2019, 0, 31));
+
+			// clean
+			oDateNavigation.destroy();
+		});
+
 		QUnit.module("week");
 
 		QUnit.test("next without current", function(assert) {

@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/ui/model/type/Date",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/unified/calendar/CalendarDate",
+	'sap/ui/unified/calendar/CalendarUtils',
 	"sap/ui/unified/DateTypeRange",
 	"sap/ui/unified/CalendarLegend",
 	"sap/ui/unified/CalendarLegendRenderer",
@@ -42,6 +43,7 @@ sap.ui.define([
 	TypeDate,
 	JSONModel,
 	CalendarDate,
+	CalendarUtils,
 	DateTypeRange,
 	CalendarLegend,
 	CalendarLegendRenderer,
@@ -839,25 +841,49 @@ sap.ui.define([
 	});
 
 	QUnit.test("checks for the number of hours on small screen", function(assert) {
+		var oEndDate, iVisibleIntervals;
+
 		//Arrange
 		this.prepareTest("smallUiArea");
+
 		//Act
 		_switchToView(CalendarIntervalType.Hour, this.oPC);
 		sap.ui.getCore().applyChanges();
+
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), 600, "width is set to 600px"); // this is only for check that width of the screen is set to 600 px
-		assert.equal(jQuery("#PC3-TimesRow-times").find('.sapUiCalItem').length , 6, "hours are 6");
+
+		iVisibleIntervals = jQuery("#PC3-TimesRow-times").find('.sapUiCalItem').length;
+		assert.equal(iVisibleIntervals , 6, "hours are 6");
+
+		oEndDate = new Date(oPCStartDate.getTime());
+		oEndDate.setHours(oEndDate.getHours() + iVisibleIntervals - 1);
+		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
+
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 6, "correct number of shown intervals");
 	});
 
 	QUnit.test("checks for the number of hours on big screen", function(assert) {
+		var oEndDate, iVisibleIntervals;
+
 		//Arrange
 		this.prepareTest("bigUiArea");
+
 		//Act
 		_switchToView(CalendarIntervalType.Hour, this.oPC);
 		sap.ui.getCore().applyChanges();
+
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "1024", "width is set to 1024 px"); // this is only for check that width of the screen is set to 1024 px
-		assert.equal(jQuery("#PC3-TimesRow-times").find('.sapUiCalItem').length , 12, "hours are 12");
+
+		iVisibleIntervals = this.oPC.getVisibleIntervalsCount();
+		assert.equal(iVisibleIntervals , 12, "hours are 12");
+
+		oEndDate = new Date(oPCStartDate.getTime());
+		oEndDate.setHours(oEndDate.getHours() + iVisibleIntervals - 1);
+		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
+
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 12, "correct number of shown intervals");
 	});
 	QUnit.module("rendering - Days View", {
 		beforeEach: function () {
@@ -874,6 +900,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("checks for the number of days on small screen on Days View", function(assert) {
+		var oEndDate, iVisibleIntervals;
 		//Arrange
 		this.prepareTest("smallUiArea");
 		//Act
@@ -881,10 +908,20 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "600", "width is set to 600px"); // this is only for check that width of the screen is set to 600 px
-		assert.equal(jQuery("#PC3-DatesRow .sapUiCalItem").length , 7, "days are 7");
+
+		iVisibleIntervals = jQuery("#PC3-DatesRow .sapUiCalItem").length;
+		assert.equal(iVisibleIntervals, 7, "days are 7");
+
+
+		oEndDate = new Date(oPCStartDate.getTime());
+		oEndDate.setDate(oEndDate.getDate() + iVisibleIntervals - 1);
+		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
+
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 7, "correct number of shown intervals");
 	});
 
 	QUnit.test("checks for the number of days on big screen on Days View", function(assert) {
+		var oEndDate, iVisibleIntervals;
 		//Arrange
 		this.prepareTest("bigUiArea");
 		//Act
@@ -892,7 +929,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "1024", "width is set to 1024 px"); // this is only for check that width of the screen is set to 1024 px
-		assert.equal(jQuery("#PC3-DatesRow .sapUiCalItem").length , 14, "days are 14");
+
+		iVisibleIntervals = jQuery("#PC3-DatesRow .sapUiCalItem").length;
+		assert.equal(iVisibleIntervals , 14, "days are 14");
+
+		oEndDate = new Date(oPCStartDate.getTime());
+		oEndDate.setDate(oEndDate.getDate() + iVisibleIntervals - 1);
+		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
+
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 14, "correct number of shown intervals");
 	});
 
 	QUnit.module("rendering - Months View", {
@@ -909,6 +954,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("checks for the number of months on very small screen", function(assert) {
+		var oEndDate, iVisibleIntervals;
+
 		//Arrange
 		this.prepareTest("verySmallUiArea");
 		//Act
@@ -916,10 +963,20 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "300", "width is set to 300px"); // this is only for check that width of the screen is set to 300 px
-		assert.equal(jQuery("#PC3-MonthsRow-months .sapUiCalItem").length , 3, "months are 3");
+
+		iVisibleIntervals = jQuery("#PC3-MonthsRow-months .sapUiCalItem").length;
+		assert.equal(iVisibleIntervals, 3, "months are 3");
+
+		oEndDate = new Date(oPCStartDate.getTime());
+		oEndDate.setMonth(oEndDate.getMonth() + iVisibleIntervals - 1);
+		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
+
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 3, "correct number of shown intervals");
 	});
 
 	QUnit.test("checks for the number of months on small screen", function(assert) {
+		var oEndDate, iVisibleIntervals;
+
 		//Arrange
 		this.prepareTest("smallUiArea");
 		//Act
@@ -927,10 +984,20 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "600", "width is set to 600px"); // this is only for check that width of the screen is set to 600 px
-		assert.equal(jQuery("#PC3-MonthsRow-months .sapUiCalItem").length , 6, "months are 6");
+
+		iVisibleIntervals = jQuery("#PC3-MonthsRow-months .sapUiCalItem").length;
+		assert.equal(iVisibleIntervals , 6, "months are 6");
+
+		oEndDate = new Date(oPCStartDate.getTime());
+		oEndDate.setMonth(oEndDate.getMonth() + iVisibleIntervals - 1);
+		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
+
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 6, "correct number of shown intervals");
 	});
 
 	QUnit.test("checks for the number of months on big screen", function(assert) {
+		var oEndDate, iVisibleIntervals;
+
 		//Arrange
 		this.prepareTest("bigUiArea");
 		//Act
@@ -938,7 +1005,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "1024", "width is set to 1024 px"); // this is only for check that width of the screen is set to 1024 px
-		assert.equal(jQuery("#PC3-MonthsRow-months .sapUiCalItem").length , 12, "months are 12");
+
+		iVisibleIntervals = jQuery("#PC3-MonthsRow-months .sapUiCalItem").length;
+		assert.equal(iVisibleIntervals , 12, "months are 12");
+
+		oEndDate = new Date(oPCStartDate.getTime());
+		oEndDate.setMonth(oEndDate.getMonth() + iVisibleIntervals - 1);
+		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
+
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 12, "correct number of shown intervals");
 	});
 	QUnit.module("rendering - 1Week View", {
 		beforeEach: function () {
@@ -955,6 +1030,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("checks for the number of days on small screen on 1Week View", function(assert) {
+		var oEndDate, iVisibleIntervals;
+
 		//Arrange
 		this.prepareTest("smallUiArea");
 		//Act
@@ -962,10 +1039,20 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "600", "width is set to 600px"); // this is only for check that width of the screen is set to 600 px
-		assert.equal(jQuery("#PC3-WeeksRow .sapUiCalItem").length , 7, "days are 7");
+
+		iVisibleIntervals = jQuery("#PC3-WeeksRow .sapUiCalItem").length;
+		assert.equal(iVisibleIntervals, 7, "days are 7");
+
+		oEndDate = CalendarUtils.getFirstDateOfWeek(oPCStartDate);
+		oEndDate.setDate(oEndDate.getDate() + iVisibleIntervals - 1);
+		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
+
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 7, "correct number of shown intervals");
 	});
 
 	QUnit.test("checks for the number of days on big screen on 1Week View", function(assert) {
+		var oEndDate, iVisibleIntervals;
+
 		//Arrange
 		this.prepareTest("bigUiArea");
 		//Act
@@ -973,7 +1060,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "1024", "width is set to 1024 px");  // this is only for check that width of the screen is set to 1024 px
-		assert.equal(jQuery("#PC3-WeeksRow .sapUiCalItem").length , 7, "days are 7");
+
+		iVisibleIntervals = jQuery("#PC3-WeeksRow .sapUiCalItem").length;
+		assert.equal(iVisibleIntervals, 7, "days are 7");
+
+		oEndDate = CalendarUtils.getFirstDateOfWeek(oPCStartDate);
+		oEndDate.setDate(oEndDate.getDate() + iVisibleIntervals - 1);
+		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
+
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 7, "correct number of shown intervals");
 	});
 	QUnit.module("rendering - 1Month View", {
 		beforeEach: function () {
@@ -990,6 +1085,8 @@ sap.ui.define([
 	});
 
 	QUnit.test("checks for the number of days on small screen", function(assert) {
+		var oEndDate, iVisibleIntervals;
+
 		//Arrange
 		this.prepareTest("smallUiArea");
 		//Act
@@ -997,10 +1094,21 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "600", "width is set to 600px"); // this is only for check that width of the screen is set to 600 px
-		assert.equal(jQuery("#PC3-OneMonthsRow .sapUiCalItem").length , 35, "days are 35");
+
+		iVisibleIntervals = jQuery("#PC3-OneMonthsRow .sapUiCalItem").length;
+		assert.equal(iVisibleIntervals, 35, "days are 35");
+
+		oEndDate = new Date(this.oPC.getStartDate().getTime());
+		oEndDate.setMonth(oEndDate.getMonth() + 1);
+		oEndDate.setDate(oEndDate.getDate() - 1);
+		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
+
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 35, "correct number of shown intervals");
 	});
 
 	QUnit.test("checks for the number of days on big screen", function(assert) {
+		var oEndDate, iVisibleIntervals;
+
 		//Arrange
 		this.prepareTest("bigUiArea");
 		//Act
@@ -1008,7 +1116,15 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(this.oPC.$().outerWidth(), "1024", "width is set to 1024 px"); // this is only for check that width of the screen is set to 1024 px
-		assert.equal(jQuery("#PC3-OneMonthsRow .sapUiCalItem").length , 31, "days are 31");
+
+		iVisibleIntervals = jQuery("#PC3-OneMonthsRow .sapUiCalItem").length;
+		assert.equal(iVisibleIntervals , 31, "days are 31");
+
+		oEndDate = new Date(oPCStartDate.getTime());
+		oEndDate.setDate(oEndDate.getDate() + iVisibleIntervals - 1);
+		assert.equal(this.oPC.getEndDate().getTime(), oEndDate.getTime(), "end date is correct");
+
+		assert.equal(this.oPC.getVisibleIntervalsCount(), 31, "correct number of shown intervals");
 	});
 
 	QUnit.module("Setters", {
