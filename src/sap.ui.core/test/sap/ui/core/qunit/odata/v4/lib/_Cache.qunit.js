@@ -4047,7 +4047,11 @@ sap.ui.define([
 				oCache.sMetaPath, "");
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
-				sinon.match.same(oEntity), sinon.match.same(oData), ["property/foo"]);
+				sinon.match.same(oEntity), sinon.match.same(oData), ["property/foo"])
+			.callsFake(function () {
+				assert.ok("Employees('31')?$select=property" in oCache.mPropertyRequestByPath,
+					"still cached");
+			});
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), "",
 				sinon.match.same(oEntity), sinon.match.same(oData), ["property/bar"]);

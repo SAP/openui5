@@ -693,10 +693,13 @@ sap.ui.define([
 
 		visitQueryOptions(mQueryOptions);
 		sFullResourcePath = _Helper.buildPath(this.sResourcePath, sResourcePath);
+		// include $expand/$select only; this uniquely *describes* the late property request
 		sRequestPath = sFullResourcePath
 			+ this.oRequestor.buildQueryString(sFullResourceMetaPath, mQueryOptions, false, true);
 		oPromise = this.mPropertyRequestByPath[sRequestPath];
 		if (!oPromise) {
+			// include non-system query options into string; pass $expand/$select as objects to
+			// allow merge
 			sMergeBasePath = sFullResourcePath
 				+ this.oRequestor.buildQueryString(sFullResourceMetaPath, this.mQueryOptions, true);
 			oPromise = this.oRequestor.request("GET", sMergeBasePath, oGroupLock.getUnlockedCopy(),
@@ -706,8 +709,6 @@ sap.ui.define([
 				that.visitResponse(oData, mTypeForMetaPath, sFullResourceMetaPath, sResourcePath);
 
 				return oData;
-			}).finally(function () {
-				delete that.mPropertyRequestByPath[sRequestPath];
 			});
 			this.mPropertyRequestByPath[sRequestPath] = oPromise;
 		}
@@ -730,6 +731,8 @@ sap.ui.define([
 
 			// return the missing property, so that drillDown properly proceeds
 			return _Helper.drillDown(oResource, sMissingPropertyPath.split("/"));
+		}).finally(function () { // clean up only after updateSelected!
+			delete that.mPropertyRequestByPath[sRequestPath];
 		});
 	};
 
