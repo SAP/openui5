@@ -11,10 +11,14 @@ sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/Device",
 	"sap/m/VBox",
-	"sap/ui/qunit/utils/createAndAppendDiv"
-], function(Image, jQuery, mobileLibrary, LightBox, Text, KeyCodes, QUtils, Core, Device, VBox, createAndAppendDiv) {
+	"sap/ui/qunit/utils/createAndAppendDiv",
+	"sap/ui/core/library"
+], function(Image, jQuery, mobileLibrary, LightBox, Text, KeyCodes, QUtils, Core, Device, VBox, createAndAppendDiv, coreLibrary) {
 	// shortcut for sap.m.ImageMode
 	var ImageMode = mobileLibrary.ImageMode;
+
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	createAndAppendDiv("content");
 
@@ -938,6 +942,27 @@ sap.ui.define([
 		assert.strictEqual(oInfo.type, Core.getLibraryResourceBundle("sap.m").getText("ACC_CTR_TYPE_BUTTON"), "Type");
 		assert.strictEqual(oInfo.description, "Tooltip", "Description");
 		assert.strictEqual(oInfo.focusable, true, "Focusable");
+		oImage.destroy();
+	});
+
+	QUnit.test("aria-haspopup on image with press handled", function(assert) {
+		// Arrange
+		var oImage = new Image();
+
+		oImage.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(oImage.$().attr("aria-haspopup"), undefined, "Image should not have aria-haspopup by default");
+
+		// Act
+		oImage.setAriaHasPopup(AriaHasPopup.Dialog);
+		Core.applyChanges();
+
+		//Assert
+		assert.equal(oImage.$().attr("aria-haspopup"), "dialog", "Image should have correct aria-haspopup");
+
+		//Cleanup
 		oImage.destroy();
 	});
 

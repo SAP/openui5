@@ -10,9 +10,10 @@ sap.ui.define([
 	'./ImageRenderer',
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/security/encodeCSS"
+	"sap/base/security/encodeCSS",
+	"sap/ui/core/library"
 ],
-	function(library, Control, DataType, ImageRenderer, KeyCodes, jQuery, encodeCSS) {
+	function(library, Control, DataType, ImageRenderer, KeyCodes, jQuery, encodeCSS, coreLibrary) {
 	"use strict";
 
 
@@ -20,7 +21,8 @@ sap.ui.define([
 	// shortcut for sap.m.ImageMode
 	var ImageMode = library.ImageMode;
 
-
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
 
 	/**
 	 * Constructor for a new Image.
@@ -183,7 +185,24 @@ sap.ui.define([
 			*
 			* @since 1.87
 			*/
-			lazyLoading : {type : "boolean", defaultValue : false }
+			lazyLoading : {type : "boolean", defaultValue : false },
+
+			/**
+			 * Defines the aria-haspopup attribute of the <code>Image</code>.
+			 *
+			 * <b>Guidance for choosing appropriate value:</b>
+			 * <ul>
+			 * <li> We recommend you to use the property only when press handler is set.</li>
+			 * <li> If you use controls based on <code>sap.m.Popover</code> or <code>sap.m.Dialog</code>,
+			 * then you must use <code>AriaHasPopup.Dialog</code> (both <code>sap.m.Popover</code> and
+			 * <code>sap.m.Dialog</code> have role "dialog" assigned internally).</li>
+			 * <li> If you use other controls, or directly <code>sap.ui.core.Popup</code>, you need to check
+			 * the container role/type and map the value of <code>ariaHasPopup</code> accordingly.</li>
+			 * </ul>
+			 *
+			 * @since 1.86.0
+			 */
+			ariaHasPopup : {type : "sap.ui.core.aria.HasPopup", group : "Accessibility", defaultValue : AriaHasPopup.None}
 		},
 		aggregations : {
 			/**
