@@ -1768,6 +1768,10 @@ sap.ui.define([
 	 * @param {string} sType the type prefix for resource access
 	 */
 	P13nConditionPanel.prototype._fillOperationListItems = function(oCtrl, aOperations, sType) {
+
+		var sText,
+			sRBText;
+
 		if (sType === "_STRING_") {
 			// ignore the "String" Type when accessing the resource text
 			sType = "";
@@ -1781,11 +1785,16 @@ sap.ui.define([
 
 		oCtrl.destroyItems();
 		aOperations.forEach(function(sOperation){
-			var sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sType + sOperation);
-			if (sText.startsWith("CONDITIONPANEL_OPTION")) {
+
+			sRBText = "CONDITIONPANEL_OPTION" + sType + sOperation;
+
+			if (sType && this._oRb.hasText(sRBText)) {
+				sText = this._oRb.getText(sRBText);
+			} else {
 				// when for the specified type the resource does not exist use the normal string resource text
 				sText = this._oRb.getText("CONDITIONPANEL_OPTION" + sOperation);
 			}
+
 			oCtrl.addItem(new ListItem({
 				key: sOperation,
 				text: sText,
