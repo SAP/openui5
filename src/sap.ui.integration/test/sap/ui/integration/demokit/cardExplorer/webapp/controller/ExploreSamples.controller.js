@@ -47,6 +47,8 @@ sap.ui.define([
 
 	var ButtonType = mLibrary.ButtonType;
 
+	var SAMPLE_CHANGED_ERROR = "Sample changed";
+
 	return BaseController.extend("sap.ui.demo.cardExplorer.controller.ExploreSamples", {
 
 		formatter: formatter,
@@ -73,7 +75,7 @@ sap.ui.define([
 			this.getView().setModel(this.oModel);
 			this.getView().setModel(exploreSettingsModel, "settings");
 
-			this._fileEditor = this.byId("fileEditor");
+			this._oFileEditor = this.byId("fileEditor");
 
 			this._registerResize();
 			this._initIFrameCreation();
@@ -89,9 +91,9 @@ sap.ui.define([
 		 * @param {boolean} bRerender If in rerender model
 		 */
 		onFileEditorManifestChangeDebounced: function (sValue, bRerender) {
-			if ((this._sEditSource !== "cardEditor" || bRerender === true) && this._oCardEditor) {
-				this._oCardEditor.setJson({});
-				this._oCardEditor.setJson(sValue);
+			if ((this._sEditSource !== "cardEditor" || bRerender === true) && this._oVisualEditor) {
+				this._oVisualEditor.setJson({});
+				this._oVisualEditor.setJson(sValue);
 			}
 
 			if (exploreSettingsModel.getProperty("/schemaValidation")) {
@@ -117,12 +119,12 @@ sap.ui.define([
 		 * @param {boolean} bRerender If in rerender model
 		 */
 		onFileEditorDesigntimeChangeDebounced: function (sValue, bRerender) {
-			if ((this._sEditSource !== "cardEditor" || bRerender === true) && this._oCardEditor) {
-				var oDesigntimeMetadata = JSON.parse(sValue.slice(137, -11));
-				this._oCardEditor.updateDesigntimeMetadata(oDesigntimeMetadata);
-				var oJson = this._oCardEditor.getJson();
-				this._oCardEditor.setJson({});
-				this._oCardEditor.setJson(oJson);
+			if ((this._sEditSource !== "cardEditor" || bRerender === true) && this._oVisualEditor) {
+				var oDesigntimeMetadata = this._extractDesigntimeMetadata(sValue);
+				this._oVisualEditor.updateDesigntimeMetadata(oDesigntimeMetadata);
+				var oJson = this._oVisualEditor.getJson();
+				this._oVisualEditor.setJson({});
+				this._oVisualEditor.setJson(oJson);
 			}
 		},
 
@@ -143,10 +145,10 @@ sap.ui.define([
 		onCardEditorConfigurationChangeDebounced: function (oValues) {
 			if (this._sEditSource === "cardEditor") {
 				var sManifest = JSON.stringify(oValues.manifest, '\t', 4);
-				this._fileEditor.setManifestContent(sManifest);
+				this._oFileEditor.setManifestContent(sManifest);
 				var sDesigntimeHeader = "sap.ui.define([\"sap/ui/integration/Designtime\"], function (\n	Designtime\n) {\n	\"use strict\";\n	return function () {\r		return new Designtime(";
 				var sDesigntime = sDesigntimeHeader + oValues.configurationstring + ");\n	};\n});\n";
-				this._fileEditor.setDesigntimeContent(sDesigntime);
+				this._oFileEditor.setDesigntimeContent(sDesigntime);
 				this._updateSample(sManifest);
 			}
 		},
@@ -156,17 +158,74 @@ sap.ui.define([
 		},
 
 		onRunPressed: function (oEvent) {
-			this._fileEditor.getManifestContent().then(this._updateSample.bind(this));
+			this._oFileEditor.getManifestContent().then(this._updateSample.bind(this));
 		},
 
-		onChangeEditorClick: function () {
+		/**
+		 * Handy decorator that executes the callback only if the sample hasn't changed
+		 * @param {function} fnCb The callback function
+		 * @returns {function} The decorated callback
+		 * @throws Will throw an error if the sample changed
+		 */
+		_cancelIfSampleChanged: function (fnCb) {
+			var sCurrentSampleKey = this.getCurrentSampleKey();
+
+			return function (vArgs) {
+				// cancel if sample changed before this callback is called
+				if (this.getCurrentSampleKey() !== sCurrentSampleKey) {
+					throw new Error(SAMPLE_CHANGED_ERROR);
+				}
+				return fnCb.apply(this, arguments);
+			}.bind(this);
+		},
+
+		onOpenConfigurationEditor: function (oEvent) {
+			var sMode = oEvent.getSource().data("mode");
+			var sEditorTitle = {
+				admin: "Administrator",
+				content: "Page/Content Administrator",
+				translator: "Translator"
+			}[sMode];
+
+			this._loadCardEditorBundle()
+				.then(this._cancelIfSampleChanged(function () {
+					return Promise.all([
+						Fragment.load({
+							name: "sap.ui.demo.cardExplorer.view.CardEditorDialog",
+							controller: this
+						}),
+						this._oFileEditor.getDesigntimeContent()
+					]);
+				}))
+				.then(this._cancelIfSampleChanged(function (aArgs) {
+					var oDialog = aArgs[0];
+
+					oDialog.setModel(new JSONModel({
+						title: "Configuration Editor for " + sEditorTitle,
+						subTitle: "<p>Settings loaded from <em>" + this._oFileEditor.getDesigntimeFile().name + "</em></p>",
+						cardId: this._oCardSample.getId(),
+						mode: sMode,
+						designtime: this._extractDesigntimeMetadata(aArgs[1])
+					}), "config");
+
+					oDialog.open();
+				}))
+				.catch(function (oErr) {
+					if (oErr.message !== SAMPLE_CHANGED_ERROR) {
+						this._oFileEditor.showError(oErr.name + ": " + oErr.message);
+					}
+				}.bind(this));
+		},
+
+		onChangeEditor: function (oEvent) {
 			var sEditorType = exploreSettingsModel.getProperty("/editorType");
-			if (sEditorType === "text") {
-				exploreSettingsModel.setProperty("/editorType", "card");
+
+			if (sEditorType === Constants.EDITOR_TYPE.TEXT) {
+				exploreSettingsModel.setProperty("/editorType", Constants.EDITOR_TYPE.VISUAL);
 				this._sEditSource = "cardEditor";
-				this._initCardEditor();
+				this._initVisualEditor();
 			} else {
-				exploreSettingsModel.setProperty("/editorType", "text");
+				exploreSettingsModel.setProperty("/editorType", Constants.EDITOR_TYPE.TEXT);
 				this._sEditSource = "codeEditor";
 			}
 		},
@@ -182,7 +241,7 @@ sap.ui.define([
 		 * Downloads only the manifest.json file.
 		 */
 		onDownloadManifestFile: function () {
-			this._fileEditor.getManifestContent().then(function (sJSON) {
+			this._oFileEditor.getManifestContent().then(function (sJSON) {
 				FileUtils.downloadFile(sJSON, "manifest", "json", "application/json");
 			});
 		},
@@ -193,8 +252,8 @@ sap.ui.define([
 		 */
 		_onDownloadCompressed: function (sExtension) {
 			Promise.all([
-				this._fileEditor.getManifestContent(),
-				this._fileEditor.getFilesWithContent()
+				this._oFileEditor.getManifestContent(),
+				this._oFileEditor.getFilesWithContent()
 			]).then(function (aArgs) {
 				var MANIFEST = 0,
 					FILES = 1;
@@ -227,56 +286,73 @@ sap.ui.define([
 			);
 		},
 
-		_initCardEditor: function () {
-			var oPage = this.byId("editPage");
+		/**
+		 * Initializes the Visual Editor for the manifest (BAS editor)
+		 */
+		_initVisualEditor: function () {
 			var	sBaseUrl = this._oCardSample.getBaseUrl();
 			if (!sBaseUrl || sBaseUrl === "") {
-				sBaseUrl = this._fileEditor.getManifestFile().url;
-				var sManifestFileName = sBaseUrl.split("/").pop(),
+				sBaseUrl = this._oFileEditor.getManifestFile().url;
+				var sManifestFileName = sBaseUrl.split("/").pop();
 				sBaseUrl = "." + sBaseUrl.substring(0, sBaseUrl.length - sManifestFileName.length);
 			}
 			var sJson;
-			this._pLoadCardEditor = this._pLoadCardEditor || loadCardEditor(); // only trigger request once
-			this._pLoadCardEditor
-				.then(function (CardEditor) {
-					if (this._oCardEditor) {
+
+			this.byId("editPage").setBusy(true);
+			this._loadCardEditorBundle()
+				.then(function (BASEditor) {
+					if (this._oVisualEditor) {
 						// already initialized
 						this._bCardEditorInitialized = true;
 						return;
 					}
 
 					this._bCardEditorInitialized = false;
-					this._oCardEditor = new CardEditor({
-						visible: "{= ${settings>/editorType} === 'card' }",
+					this._oVisualEditor = new BASEditor({
+						visible: "{= ${settings>/editorType} === 'VISUAL' }",
 						configurationChange: this.onCardEditorConfigurationChange.bind(this),
 						baseUrl: sBaseUrl
 					});
 
-					this._oCardEditor.addStyleClass("sapUiSmallMargin");
-					oPage.addContent(this._oCardEditor);
+					this._oVisualEditor.addStyleClass("sapUiSmallMargin");
+					this.byId("editPage").addContent(this._oVisualEditor);
 				}.bind(this))
 				.then(function () {
-					return this._fileEditor.getManifestContent();
+					return this._oFileEditor.getManifestContent();
 				}.bind(this))
 				.then(function (sManifestContent) {
 					sJson = sManifestContent;
 					if (this._bCardEditorInitialized) {
-						this._oCardEditor._bDesigntimeInit = true;
-						return this._fileEditor.getDesigntimeContent();
+						this._oVisualEditor._bDesigntimeInit = true;
+						return this._oFileEditor.getDesigntimeContent();
 					}
 					return undefined;
 				}.bind(this))
 				.then(function (sDesigntimeContent) {
 					if (sDesigntimeContent) {
-						var oDesigntimeMetadata = JSON.parse(sDesigntimeContent.slice(137, -11));
-						this._oCardEditor.updateDesigntimeMetadata(oDesigntimeMetadata);
+						var oDesigntimeMetadata = this._extractDesigntimeMetadata(sDesigntimeContent);
+						this._oVisualEditor.updateDesigntimeMetadata(oDesigntimeMetadata);
 					}
-					this._oCardEditor.setJson(sJson);
+					this._oVisualEditor.setJson(sJson);
+				}.bind(this))
+				.catch(function (oErr) {
+					this._oFileEditor.showError(oErr.name + ": " + oErr.message);
+				}.bind(this))
+				.finally(function () {
+					this.byId("editPage").setBusy(false);
 				}.bind(this));
 		},
 
+		_loadCardEditorBundle: function () {
+			if (!this._pLoadCardEditor) {
+				this._pLoadCardEditor = loadCardEditor();
+			}
+
+			return this._pLoadCardEditor;
+		},
+
 		_onCardError: function (oEvent) {
-			this._fileEditor.showError(oEvent.getParameters().message);
+			this._oFileEditor.showError(oEvent.getParameters().message);
 		},
 
 		_deregisterResize: function () {
@@ -327,7 +403,7 @@ sap.ui.define([
 			var oSubSampleOrSample = oSubSample || oSample;
 
 			if (oSubSampleOrSample.isApplication) {
-				exploreSettingsModel.setProperty("/editorType", "text");
+				exploreSettingsModel.setProperty("/editorType", Constants.EDITOR_TYPE.TEXT);
 			}
 
 			exploreSettingsModel.setProperty("/isApplication", !!oSubSampleOrSample.isApplication);
@@ -395,23 +471,23 @@ sap.ui.define([
 			return oFoundSubSample;
 		},
 
+		getCurrentSampleKey: function () {
+			return this.oModel.getProperty("/currentSampleKey");
+		},
+
 		_showSample: function (oSample, oSubSample) {
 			var oCurrentSample = oSubSample || oSample,
 				oFrameWrapperEl = this.byId("iframeWrapper"),
 				bUseIFrame = !!oCurrentSample.useIFrame;
 
+			this.oModel.setProperty("/currentSampleKey", oCurrentSample.key);
 			this._oCurrSample = oCurrentSample;
 
 			Promise.all([
 				this._initCardSample(),
 				this._initMockServers(oCurrentSample)
-			]).then(function () {
-				// cancel if sample changed while initializing
-				if (this._oCurrSample.key !== oCurrentSample.key) {
-					return;
-				}
-
-				this._fileEditor
+			]).then(this._cancelIfSampleChanged(function () {
+				this._oFileEditor
 					.setFiles(oCurrentSample.files || [{
 						url: oCurrentSample.manifestUrl,
 						name: 'manifest.json',
@@ -430,7 +506,7 @@ sap.ui.define([
 					oFrameWrapperEl._sSample = oSubSample ? oSample.key + "/" + oSubSample.key : oSample.key;
 					oFrameWrapperEl.invalidate();
 				} else {
-					var sManifestUrl = this._fileEditor.getManifestFile().url,
+					var sManifestUrl = this._oFileEditor.getManifestFile().url,
 						oLayoutSettings = {
 							minRows: 1,
 							columns: 4
@@ -449,7 +525,12 @@ sap.ui.define([
 					this._sSampleManifestUrl = sManifestUrl;
 				}
 				this.byId("splitView").setBusy(false);
-			}.bind(this));
+			}))
+			.catch(function (oErr) {
+				if (oErr.message !== SAMPLE_CHANGED_ERROR) {
+					throw oErr;
+				}
+			});
 		},
 
 		_initMockServers: function (oSample) {
@@ -562,7 +643,6 @@ sap.ui.define([
 		 * @param {object} mParameters Parameters from manifest action.
 		 */
 		_openConfirmNavigationDialog: function (mParameters) {
-
 			var oDialog = new Dialog({
 				title: "Confirm Navigation to App",
 				content: [
@@ -581,18 +661,15 @@ sap.ui.define([
 					text: "Navigate",
 					press: function () {
 						mLibrary.URLHelper.redirect(mParameters.url, true);
-						oDialog.close();
+						oDialog.destroy();
 					}
 				}),
 				endButton: new Button({
 					text: "Cancel",
 					press: function () {
-						oDialog.close();
+						oDialog.destroy();
 					}
-				}),
-				afterClose: function () {
-					oDialog.destroy();
-				}
+				})
 			}).addStyleClass("sapUiSizeCompact sapUiResponsiveContentPadding");
 
 			oDialog.open();
@@ -602,7 +679,7 @@ sap.ui.define([
 		 * Validates the current [sap.card] manifest and shows errors, if any.
 		 */
 		validateManifest: function () {
-			this._fileEditor.validateManifest();
+			this._oFileEditor.validateManifest();
 		},
 
 		/**
@@ -613,8 +690,33 @@ sap.ui.define([
 			if (oEvent.getParameter("selected")) {
 				this.validateManifest();
 			} else {
-				this._fileEditor.hideSchemaErrors();
+				this._oFileEditor.hideSchemaErrors();
 			}
+		},
+
+		/**
+		 * @param {string} sFileContent The content of the dt/Configuration.js file
+		 * @returns {object} The parsed settings
+		 * @throws Will throw an error with message, explaining what has failed during parsing
+		 */
+		_extractDesigntimeMetadata: function (sFileContent) {
+			var oRes = /Designtime\(([\s\S]*?)\)/.exec(sFileContent);
+
+			if (!oRes) {
+				throw new Error("Unable to construct 'new Designtime(...)'");
+			}
+
+			try {
+				return JSON.parse(oRes[1]);
+			} catch (e) {
+				e.message = "Unable to parse the settings given to Designtime constructor. " + e.message;
+				throw e;
+			}
+		},
+
+		onEditorDialogClose: function (oEvent) {
+			var oDialog = oEvent.getSource().getParent();
+			oDialog.destroy();
 		}
 	});
 });

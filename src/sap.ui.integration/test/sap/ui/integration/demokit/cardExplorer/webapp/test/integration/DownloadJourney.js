@@ -28,7 +28,8 @@ sap.ui.define([
 		}, null, "\t");
 
 		When.onTheExploreSamplesPage
-			.iChangeFileEditorValue(sNewValue)
+			.iSelectFile("manifest.json")
+			.and.iEnterValueInTextEditor(sNewValue)
 			.and.iPressDownload("Manifest File");
 
 		Then.onTheExploreSamplesPage.iShouldHaveFile(sNewValue);
