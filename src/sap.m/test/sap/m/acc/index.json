@@ -3,12 +3,22 @@
 		{
 			"control": "sap.m.ActionSelect",
 			"url": "ActionSelect.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.ActionSelect",
+				"title": "ACC test for sap.m.ActionSelect",
+				"module": "./actionselect.qunit"
+			}
 		},
 		{
 			"control": "sap.m.ActionSheet",
 			"url": "ActionSheet.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.ActionSheet",
+				"title": "ACC test for sap.m.ActionSheet",
+				"module": "./actionsheet.qunit"
+			}
 		},
 		{
 			"control": "sap.m.App",
@@ -204,17 +214,27 @@
 		{
 			"control": "sap.m.MessageBox",
 			"url": "MessageBox.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.MessagePopover",
 			"url": "MessagePopover.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.MessagePopover",
+				"title": "ACC test for sap.m.MessagePopover",
+				"module": "./messagepopover.qunit"
+			}
 		},
 		{
 			"control": "sap.m.MessageToast",
 			"url": "MessageToast.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.MessageToast",
+				"title": "ACC test for sap.m.MessageToast",
+				"module": "./messagetoast.qunit"
+			}
 		},
 		{
 			"control": "sap.m.MessageStrip",
@@ -324,7 +344,12 @@
 		{
 			"control": "sap.m.Popover",
 			"url": "Popover.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.Popover",
+				"title": "ACC test for sap.m.Popover",
+				"module": "./popover.qunit"
+			}
 		},
 		{
 			"control": "sap.m.ProgressIndicator",
@@ -369,7 +394,12 @@
 		{
 			"control": "sap.m.ResponsivePopover",
 			"url": "ResponsivePopover.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.ResponsivePopover",
+				"title": "ACC test for sap.m.ResponsivePopover",
+				"module": "./responsivepopover.qunit"
+			}
 		},
 		{
 			"control": "sap.m.SearchField",
