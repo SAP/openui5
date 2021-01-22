@@ -400,6 +400,21 @@ sap.ui.define([
 
 			assert.strictEqual(bAriaExpanded, bShouldBeExpanded, sMessage);
 			assert.strictEqual(sAriaLabelledById, sAriaLabelledBy, sMessage);
+		},
+		getChildPosition: function(oElement, oContainer) {
+				var oTopmostContainer = document.documentElement,
+				oElementPosition = {
+					top: oElement.offsetTop,
+					left: oElement.offsetLeft},
+				oOffsetParent = oElement.offsetParent;
+
+			while ((oOffsetParent !== oContainer) && (oOffsetParent !== oTopmostContainer)) {
+				oElementPosition.top += oOffsetParent.offsetTop;
+				oElementPosition.left += oOffsetParent.offsetLeft;
+				oOffsetParent = oOffsetParent.offsetParent;
+			}
+
+			return oElementPosition;
 		}
 	};
 

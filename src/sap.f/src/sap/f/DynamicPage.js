@@ -372,6 +372,7 @@ sap.ui.define([
 			horizontal: false,
 			vertical: true
 		});
+		this._oScrollHelper.setOnAfterScrollToElement(this._onAfterScrollToElement.bind(this));
 		this._oStickyHeaderObserver = null;
 		this._oHeaderObserver = null;
 		this._oSubHeaderAfterRenderingDelegate = {onAfterRendering: function() {
@@ -571,6 +572,48 @@ sap.ui.define([
 	/**
 	 * PRIVATE METHODS
 	 */
+
+	/**
+	 * Callback for the end of the scroll triggered from <code>scrollToElement</code>
+	 * of <code>sap.ui.core.delegate.ScrollEnablement</code>.
+	 *
+	 * Required for Safari, IE11 or when the browser automatic scroll adjustment
+	 * is disabled (see <code>overflow-anchor</code> CSS property).
+	 *
+	 * The execution of <code>scrollToElement</code> changes the current scroll position,
+	 * so we check if the new scroll position entails subsequent change of the scroll
+	 * container of our page (namely: snapping of the <code>this._oStickySubheader</code>,
+	 * which involves removal of the <code>this._oStickySubheader</code>
+	 * from the top of the scroll container and placing it in the title area above
+	 * the scroll container instead).
+	 *
+	 * If such a change (namely, removal of the <code>this._oStickySubheader</code>
+	 * from the top of the scroll container) should occur, then the content bellow
+	 * the removed subHeader will became offset with X pixels, where X is the
+	 * subHeader height => the element [provided to <code>scrollToElement</code>]
+	 * will be misplaced as a result.
+	 *
+	 * Therefore here we synchronously call the listener to the "scroll" event to check if
+	 * it entails the above snapping and subsequent misplacement => if it entails it,
+	 * then we adjust back the scroll position to correct the misplacement of the scrolled element.
+	 *
+	 * @private
+	 */
+	DynamicPage.prototype._onAfterScrollToElement = function () {
+		var iScrollTop = this.$wrapper.scrollTop(),
+			bWasStickySubheaderInTitleArea = this._bStickySubheaderInTitleArea;
+
+		// synchronously call the existing listener for the native 'scroll' event
+		this._toggleHeaderOnScroll();
+
+		// if the subheader was sticked (removed from the topmost part of the scrollable area) =>
+		// all elements bellow it became offset with X pixels, where X is the subHeader height =>
+		// the element (target of <code>scrollToElement</code>) was offset respectively =>
+		// adjust the scroll position to ensure the element is back visible (outside scroll overflow)
+		if (this._bStickySubheaderInTitleArea && !bWasStickySubheaderInTitleArea && this.$wrapper.scrollTop() === iScrollTop) {
+			this.$wrapper.scrollTop(iScrollTop - this._getHeight(this._oStickySubheader));
+		}
+	};
 
 	/**
 	 * If the header is larger than the allowed height, the <code>preserveHeaderStateOnScroll</code> property will be ignored
@@ -1079,7 +1122,7 @@ sap.ui.define([
 			iScrollPosition;
 
 		iScrollPosition = this._getScrollPosition();
-		bIsInSnappingHeight = iScrollPosition < Math.ceil(this._getHeaderHeight() - this._iHeaderContentPaddingBottom) && !this._bPinned && !this.getPreserveHeaderStateOnScroll();
+		bIsInSnappingHeight = iScrollPosition < this._getSnappingHeight() && !this._bPinned && !this.getPreserveHeaderStateOnScroll();
 
 		// If the scroll position is 0, the sticky content should be always in the DOM of content provider.
 		// If the scroll position is <= header height and at all we can use the snapping height (bIsInSnappingHeight)

@@ -469,4 +469,32 @@ sap.ui.define([
 					"Dynamic Page doesn't have the " + DynamicPage.NAVIGATION_CLASS_NAME + ", " +
 					"when we don't have StickySubheaderProvider.");
 		});
+		QUnit.module("DynamicPage - scrollToElement", {
+			beforeEach: function () {
+				// Arrange
+				this.oDynamicPage = oLibraryFactory.getDynamicPageWithStickySubheader(false /*preserveHeaderStateOnScroll*/, true  /*has header*/, true /*header visible*/, true /*has title*/);
+				oUtil.renderObject(this.oDynamicPage);
+			},
+			afterEach: function () {
+				// Clean up
+				this.oDynamicPage.destroy();
+				this.oDynamicPage = null;
+			}
+		});
+
+		QUnit.test("ScrollToElement correct when subHeader toggles", function(assert) {
+			var oIconTabBar = this.oDynamicPage.getContent(),
+				oElement = oIconTabBar.getItems()[0].getContent()[0].getContent()[20].getDomRef(),
+				$wrapper = this.oDynamicPage.$wrapper;
+
+			// Setup: an element in the context exists
+			assert.ok(oElement, "element is in dom");
+
+			// Act
+			this.oDynamicPage.getScrollDelegate().scrollToElement(oElement);
+			this.oDynamicPage._toggleHeaderOnScroll(); // synchronously call the onscroll callback
+
+			// Assert
+			assert.ok(oUtil.getChildPosition(oElement, $wrapper.get(0)).top >= $wrapper.scrollTop(), "element is visible");
+		});
 	});

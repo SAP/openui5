@@ -616,6 +616,27 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		}
 	});
 
+	QUnit.test("ScrollToElement", function (assert) {
+		var oObjectPage = this.oObjectPageContentScrollingView.byId("ObjectPageLayout"),
+			oSection2 = oObjectPage.getSections()[1],
+			done = assert.async();
+		oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function() {
+
+			var $Section2TTitle = oSection2.$().find('.sapUxAPObjectPageSectionTitle');
+
+			assert.ok($Section2TTitle.length, "element exists");
+
+			// Act
+			oObjectPage.getScrollDelegate().scrollToElement($Section2TTitle.get(0));
+			oObjectPage._onScroll({ target: { scrollTop: oObjectPage._$opWrapper.scrollTop()}});
+
+			// Check
+			assert.ok($Section2TTitle.get(0).offsetTop >= oObjectPage._$opWrapper.scrollTop(), "element is visible");
+			done();
+		});
+
+	});
+
 	QUnit.module("ObjectPage scrolling without view");
 
 	QUnit.test("auto-scroll on resize of last section", function (assert) {

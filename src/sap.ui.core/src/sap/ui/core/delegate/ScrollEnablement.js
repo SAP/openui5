@@ -171,8 +171,8 @@ sap.ui.define([
 			 * Only a single listener can be registered
 			 *
 			 * @param {function} fnCallback
-			 * @ui5-restricted sap.m.GrowingEnablement
 			 * @private
+			 * @ui5-restricted sap.m.GrowingEnablement
 			 * @since 1.74
 			 */
 			onOverflowChange : function(fnCallback){
@@ -180,6 +180,20 @@ sap.ui.define([
 				if (!this._fnOverflowChangeCallback) {
 					this._deregisterOverflowMonitor();
 				}
+			},
+
+			/**
+			 * Sets the listener for the end of any <code>scrollToElement</code>
+			 *
+			 * Only a single listener can be registered
+			 *
+			 * @param {function} fnCallback
+			 * @private
+			 * @ui5-restricted sap.uxap.ObjectPageLayout, sap.f.DynamicPage
+			 * @since 1.87
+			 */
+			setOnAfterScrollToElement : function(fnCallback){
+				this._fnAfterScrollToElement = fnCallback;
 			},
 
 			/**
@@ -261,7 +275,7 @@ sap.ui.define([
 				}
 
 				// scroll to destination
-				this._scrollTo(iLeftScroll, iTopScroll , iTime);
+				this._scrollTo(iLeftScroll, iTopScroll , iTime, this._fnAfterScrollToElement);
 
 				return this;
 			},
