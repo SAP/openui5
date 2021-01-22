@@ -9,7 +9,8 @@ sap.ui.define([
 	"../config/datatable",
 	"./datatable/filters/DataTableFilterDropDown",
 	"./datatable/filters/DataTableFilterRange",
-	"sap/ui/documentation/sdk/controller/util/Highlighter"
+	"sap/ui/documentation/sdk/controller/util/Highlighter",
+	"./DataTableUtil"
 ], function (
 	$,
 	Input,
@@ -17,7 +18,8 @@ sap.ui.define([
 	datatableConfig,
 	DataTableFilterDropDown,
 	DataTableFilterRange,
-	Highlighter
+	Highlighter,
+	DataTableUtil
 ) {
 	"use strict";
 
@@ -380,6 +382,8 @@ sap.ui.define([
 				}
 
 			});
+
+		aOptions.sort(DataTableUtil.sortAlphaNumeric);
 
 		return aOptions;
 	};

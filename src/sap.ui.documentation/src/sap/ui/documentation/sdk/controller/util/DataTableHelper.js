@@ -3,29 +3,13 @@
  */
 
 sap.ui.define([
-	"jquery.sap.global"
+	"jquery.sap.global",
+	"./DataTableUtil"
 ], function (
-	$
+	$,
+	DataTableUtil
 ) {
 	"use strict";
-
-	function sortAlphaNumeric (a, b) {
-		var sRegex = new RegExp("^([a-zA-Z]*)(.*)"),
-			aMatched = sRegex.exec(a),
-			bMatched = sRegex.exec(b),
-			aFirstMached = aMatched[1],
-			bFirstMatched = bMatched[1];
-
-		if (aFirstMached > bFirstMatched) {
-			return 1;
-		}
-
-		if (aFirstMached < bFirstMatched) {
-			return -1;
-		}
-
-		return  parseInt(aMatched[2]) - parseInt(bMatched[2]);
-	}
 
 	/**
 	 *
@@ -65,10 +49,10 @@ sap.ui.define([
 
 		$.extend($.fn.dataTableExt.oSort, {
 			"alpha-numeric-asc": function ( a, b ) {
-				return sortAlphaNumeric(a, b);
+				return DataTableUtil.sortAlphaNumeric(a, b);
 			},
 			"alpha-numeric-desc": function ( a, b ) {
-				return sortAlphaNumeric(b, a);
+				return DataTableUtil.sortAlphaNumeric(b, a);
 			}
 		} );
 	};
