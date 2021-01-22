@@ -552,11 +552,6 @@ function(
 			this._iRefreshListTimeout = null;
 		}
 
-		if (this._oSuggestionTable) {
-			this._oSuggestionTable.destroy();
-			this._oSuggestionTable = null;
-		}
-
 		if (this._isSuggestionsPopoverInitiated()) {
 			this._oSuggestionPopup = null;
 			this._oSuggPopover.destroy();
@@ -683,20 +678,13 @@ function(
 		}
 
 		var sKey = this.getSelectedKey(),
-			bHasSelectedItem,
 			oList = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover().getItemsContainer();
 
 		if (sKey === '') {
 			return;
 		}
 
-		if (this._hasTabularSuggestions()) {
-			bHasSelectedItem = this._oSuggestionTable && !!this._oSuggestionTable.getSelectedItem();
-		} else {
-			bHasSelectedItem = oList && !!oList.getSelectedItem();
-		}
-
-		if (bHasSelectedItem) {
+		if (oList && !!oList.getSelectedItem()) {
 			return;
 		}
 
@@ -778,6 +766,9 @@ function(
 		oHeader = oHeader || new GroupHeaderListItem({
 			title: oGroup.text || oGroup.key
 		});
+
+		// Ensure there is Table available which will accept the group header
+		this._createSuggestionPopupContent(true);
 
 		this.addAggregation("suggestionRows", oHeader, bSuppressInvalidate);
 		return oHeader;
@@ -1894,14 +1885,138 @@ function(
 		 * Adds suggestion row.
 		 *
 		 * @public
+		 * @return {Array} Array of suggestion columns.
+		 */
+		Input.prototype.getSuggestionColumns = function() {
+			if (!this._hasTabularSuggestions()) {
+				return [];
+			}
+			return this.getAggregation("suggestionColumns");
+		};
+
+		/**
+		 * Adds suggestion column.
+		 *
+		 * @public
+		 * @param {sap.m.Column} oColumn Suggestion column.
+		 * @return {sap.m.Input} this Input instance for chaining.
+		 */
+		Input.prototype.addSuggestionColumn = function(oColumn) {
+			// Ensure there is Table available which will accept the suggestion column
+			this._createSuggestionPopupContent(true);
+			this.addAggregation("suggestionColumns", oColumn);
+			return this;
+		};
+
+		/**
+		 * Inserts suggestion column.
+		 *
+		 * @public
+		 * @param {sap.m.Column} oColumn Suggestion column
+		 * @param {int} iIndex Row index.
+		 * @return {sap.m.Input} this Input instance for chaining.
+		 */
+		Input.prototype.insertSuggestionColumn = function(oColumn, iIndex) {
+			// Ensure there is Table available which will accept the suggestion column
+			this._createSuggestionPopupContent(true);
+			this.insertAggregation("suggestionColumns", oColumn, iIndex);
+			return this;
+		};
+
+		/**
+		 * Returns the index of a suggestion column.
+		 *
+		 * @public
+		 * @param {sap.m.Column} oColumn Suggestion column
+		 * @return {sap.m.Input} this Input instance for chaining.
+		 */
+		Input.prototype.indexOfSuggestionColumn = function(oColumn) {
+			if (!this._hasTabularSuggestions()) {
+				return -1;
+			}
+			return this.indexOfAggregation("suggestionColumns", oColumn);
+		};
+
+		/**
+		 * Removes suggestion column.
+		 *
+		 * @public
+		 * @param {sap.m.Column} oColumn Suggestion column.
+		 * @returns {sap.m.Column | null} The removed suggestion column or null.
+		 */
+		Input.prototype.removeSuggestionColumn = function(oColumn) {
+			var vRes;
+
+			if (!this._hasTabularSuggestions()) {
+				return null;
+			}
+
+			vRes = this.removeAggregation("suggestionColumns", oColumn);
+			this._synchronizeSuggestions();
+			return vRes;
+		};
+
+		/**
+		 * Removes all suggestion columns.
+		 *
+		 * @public
+		 * @returns {Array} Array containing the removed suggestion columns. Returns empty array if no items were removed.
+		 */
+		Input.prototype.removeAllSuggestionColumns = function() {
+			var aRes;
+
+			if (!this._hasTabularSuggestions()) {
+				return [];
+			}
+
+			aRes = this.removeAllAggregation("suggestionColumns");
+			this._synchronizeSuggestions();
+			return aRes;
+		};
+
+		/**
+		 * Destroys all suggestion columns.
+		 *
+		 * @public
+		 * @return {sap.m.Input} this Input instance for chaining.
+		 */
+		Input.prototype.destroySuggestionColumns = function() {
+			if (!this._hasTabularSuggestions()) {
+				return this;
+			}
+			this.destroyAggregation("suggestionColumns");
+			this._synchronizeSuggestions();
+			return this;
+		};
+
+		/**
+		 * Gets suggestion rows.
+		 *
+		 * @public
+		 * @return {Array} Array of suggestion rows.
+		 */
+		Input.prototype.getSuggestionRows = function() {
+			if (!this._hasTabularSuggestions()) {
+				return [];
+			}
+			return this.getAggregation("suggestionRows");
+		};
+
+		/**
+		 * Adds suggestion row.
+		 *
+		 * @public
 		 * @param {sap.ui.core.Item} oItem Suggestion item.
 		 * @return {sap.m.Input} this Input instance for chaining.
 		 */
 		Input.prototype.addSuggestionRow = function(oItem) {
 			oItem.setType(ListType.Active);
+
+			// Ensure there is Table available which will accept the suggestion row
+			this._createSuggestionPopupContent(true);
+
 			this.addAggregation("suggestionRows", oItem);
 			this._synchronizeSuggestions();
-			this._createSuggestionPopupContent(true);
 			return this;
 		};
 
@@ -1915,35 +2030,64 @@ function(
 		 */
 		Input.prototype.insertSuggestionRow = function(oItem, iIndex) {
 			oItem.setType(ListType.Active);
+
+			// Ensure there is Table available which will accept the suggestion row
+			this._createSuggestionPopupContent(true);
+
 			this.insertAggregation("suggestionRows", oItem, iIndex);
 			this._synchronizeSuggestions();
-			this._createSuggestionPopupContent(true);
 			return this;
+		};
+
+		/**
+		 * Returns the index of a suggestion row.
+		 *
+		 * @public
+		 * @param {sap.m.Column} oRow Suggestion row
+		 * @return {sap.m.Input} this Input instance for chaining.
+		 */
+		Input.prototype.indexOfSuggestionRow = function(oRow) {
+			if (!this._hasTabularSuggestions()) {
+				return -1;
+			}
+			return this.indexOfAggregation("suggestionRows", oRow);
 		};
 
 		/**
 		 * Removes suggestion row.
 		 *
 		 * @public
-		 * @param {sap.ui.core.Item} oItem Suggestion row.
-		 * @returns {boolean} Determines whether the suggestion row is removed.
+		 * @param {sap.m.ColumnListItem} oRow Suggestion row.
+		 * @returns {sap.m.ColumnListItem | null} The removed suggestion row ro null.
 		 */
-		Input.prototype.removeSuggestionRow = function(oItem) {
-			var res = this.removeAggregation("suggestionRows", oItem);
+		Input.prototype.removeSuggestionRow = function(oRow) {
+			var vRes;
+
+			if (!this._hasTabularSuggestions()) {
+				return null;
+			}
+
+			vRes = this.removeAggregation("suggestionRows", oRow);
 			this._synchronizeSuggestions();
-			return res;
+			return vRes;
 		};
 
 		/**
 		 * Removes all suggestion rows.
 		 *
 		 * @public
-		 * @returns {boolean} Determines whether the suggestion rows are removed.
+		 * @returns {Array} Array containing the removed suggestion rows. Returns empty array if no items were removed.
 		 */
 		Input.prototype.removeAllSuggestionRows = function() {
-			var res = this.removeAllAggregation("suggestionRows");
+			var aRes;
+
+			if (!this._hasTabularSuggestions()) {
+				return [];
+			}
+
+			aRes = this.removeAllAggregation("suggestionRows");
 			this._synchronizeSuggestions();
-			return res;
+			return aRes;
 		};
 
 		/**
@@ -1953,6 +2097,9 @@ function(
 		 * @return {sap.m.Input} this Input instance for chaining.
 		 */
 		Input.prototype.destroySuggestionRows = function() {
+			if (!this._hasTabularSuggestions()) {
+				return this;
+			}
 			this.destroyAggregation("suggestionRows");
 			this._synchronizeSuggestions();
 			return this;
@@ -2202,72 +2349,86 @@ function(
 	};
 
 	/**
-	 * Check for tabular suggestions in the input.
+	 * Check if the suggestions popover is initiated and if the suggestions table is available.
 	 *
 	 * @private
-	 * @returns {boolean} Determines if the Input has tabular suggestions.
+	 * @returns {boolean} Determines if the Input has suggestions table.
 	 */
-	Input.prototype._hasTabularSuggestions = function() {
-		return !!(this.getAggregation("suggestionColumns") && this.getAggregation("suggestionColumns").length);
+	Input.prototype._hasTabularSuggestions = function () {
+		var oSuggestionsTable = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover().getItemsContainer();
+		return !!(oSuggestionsTable && oSuggestionsTable.isA("sap.m.Table"));
 	};
 
 	/**
 	 * Gets suggestion table with lazy loading.
 	 *
 	 * @private
-	 * @returns {sap.m.Table} Suggestion table.
+	 * @returns {sap.m.Table | undefined} Suggestion table or undefined if the suggestions popover has not been initiated yet.
 	 */
 	Input.prototype._getSuggestionsTable = function () {
+		var oSuggestionsTable = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover().getItemsContainer();
 
-		if (this._bIsBeingDestroyed) {
-			return this._oSuggestionTable;
+		// this._bIsBeingDestroyed was added here, as if the Input is in process of destruction
+		// and there is no suggestions table created, there is no need to create one.
+		// If there is any kind of items container already available - a reference to it will be returned.
+		if (oSuggestionsTable || this._bIsBeingDestroyed || !this._isSuggestionsPopoverInitiated()) {
+			return oSuggestionsTable;
 		}
 
-		if (!this._oSuggestionTable) {
-			this._oSuggestionTable = new Table(this.getId() + "-popup-table", {
-				mode: ListMode.SingleSelectMaster,
-				showNoData: false,
-				showSeparators: ListSeparators.None,
-				width: "100%",
-				enableBusyIndicator: false,
-				rememberSelections : false,
-				itemPress: function (oEvent) {
-					if (Device.system.desktop) {
-						this.focus();
-					}
-					var oSelectedListItem = oEvent.getParameter("listItem");
-					this.setSelectionRow(oSelectedListItem, true);
-				}.bind(this),
-				sticky: [library.Sticky.ColumnHeaders]
-			});
+		oSuggestionsTable = this._createSuggestionsTable();
+		return oSuggestionsTable;
+	};
 
-			this._oSuggestionTable.addEventDelegate({
-				onAfterRendering: function () {
-					var aTableCellsDomRef;
-
-					if (!this.getEnableSuggestionsHighlighting()) {
-						return;
-					}
-
-					aTableCellsDomRef = this._oSuggestionTable.$().find('tbody .sapMLabel');
-
-					highlightDOMElements(aTableCellsDomRef, this._sTypedInValue);
+	/**
+	 * Creates the suggestion table
+	 *
+	 * @private
+	 * @returns {sap.m.Table} The newly created suggestions table.
+	 */
+	Input.prototype._createSuggestionsTable = function () {
+		var oSuggestionsTable = new Table(this.getId() + "-popup-table", {
+			mode: ListMode.SingleSelectMaster,
+			showNoData: false,
+			showSeparators: ListSeparators.None,
+			width: "100%",
+			enableBusyIndicator: false,
+			rememberSelections : false,
+			itemPress: function (oEvent) {
+				if (Device.system.desktop) {
+					this.focus();
 				}
-			}, this);
+				var oSelectedListItem = oEvent.getParameter("listItem");
+				this.setSelectionRow(oSelectedListItem, true);
+			}.bind(this),
+			sticky: [library.Sticky.ColumnHeaders]
+		});
 
-			// initially hide the table on phone
-			if (this.isMobileDevice()) {
-				this._oSuggestionTable.addStyleClass("sapMInputSuggestionTableHidden");
+		oSuggestionsTable.addEventDelegate({
+			onAfterRendering: function () {
+				var aTableCellsDomRef;
+
+				if (!this.getEnableSuggestionsHighlighting()) {
+					return;
+				}
+
+				aTableCellsDomRef = oSuggestionsTable.$().find('tbody .sapMLabel');
+
+				highlightDOMElements(aTableCellsDomRef, this._sTypedInValue);
 			}
+		}, this);
 
-			this._oSuggestionTable.updateItems = function() {
-				Table.prototype.updateItems.apply(this, arguments);
-				this._refreshItemsDelayed();
-				return this;
-			};
+		// initially hide the table on phone
+		if (this.isMobileDevice()) {
+			oSuggestionsTable.addStyleClass("sapMInputSuggestionTableHidden");
 		}
 
-		return this._oSuggestionTable;
+		oSuggestionsTable.updateItems = function() {
+			Table.prototype.updateItems.apply(this, arguments);
+			this._refreshItemsDelayed();
+			return this;
+		};
+
+		return oSuggestionsTable;
 	};
 
 	/**
@@ -2693,10 +2854,6 @@ function(
 
 				this._doSelect();
 			}, this);
-
-			if (this.getShowTableSuggestionValueHelp()) {
-				this._addShowMoreButton();
-			}
 		}
 
 		return this._oSuggPopover;
@@ -3002,8 +3159,6 @@ function(
 	 */
 	Input.prototype._getFilteredSuggestionItems = function (sValue) {
 		var oFilterResults,
-			aItems = this.getSuggestionItems(),
-			aTabularRows = this.getSuggestionRows(),
 			oList = this._getSuggestionsPopover().getItemsContainer();
 
 		if (this._hasTabularSuggestions()) {
@@ -3012,11 +3167,11 @@ function(
 				oList.removeStyleClass("sapMInputSuggestionTableHidden");
 			}
 
-			oFilterResults = this.filterTabularItems(aTabularRows, sValue);
+			oFilterResults = this.filterTabularItems(this.getSuggestionRows(), sValue);
 		} else {
 			oFilterResults = filterItems(
 				this, // control instance
-				aItems, // array of items to be filtered
+				this.getSuggestionItems(), // array of items to be filtered
 				sValue, // the value, to be used as a filter
 				this.getFilterSuggests(), // boolean that determines if the suggestions should be filtered
 				true, // filter also by secondary values
