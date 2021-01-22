@@ -69,7 +69,7 @@ sap.ui.define([
 				fileName: Utils.createDefaultFileName(sChangeType),
 				fileType: "change",
 				changeType: sChangeType,
-				layer: Layer.USER,
+				layer: mPropertyBag.layer || Layer.USER,
 				reference: mPropertyBag.reference,
 				selector: {
 					persistencyKey: mPropertyBag.persistencyKey
@@ -277,6 +277,7 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.defaultVariantId - ID of the variant which should be selected at start-up
 	 * @param {string} [mPropertyBag.generator] - Generator of changes
 	 * @param {string} [mPropertyBag.compositeCommand] - Name of the command calling the API
+	 * @param {sap.ui.fl.Layer} [mPropertyBag.layer = Layer.USER] - Enables setDefault for the given layer
 	 * @returns {sap.ui.fl.Change} Created or updated change object in charge for setting the default variant
 	 */
 	CompVariantState.setDefault = function (mPropertyBag) {
