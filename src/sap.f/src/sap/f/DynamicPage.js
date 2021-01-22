@@ -1289,7 +1289,12 @@ sap.ui.define([
 			bScrollBarNeeded,
 			bNeedUpdate;
 
-		if (!Device.system.desktop || !exists(this.$wrapper) || (this._getHeight(this) === 0)) {
+		if (!exists(this.$wrapper) || (this._getHeight(this) === 0)) {
+			return;
+		}
+
+		if (!Device.system.desktop) {
+			setTimeout(this._updateFitContainer.bind(this), 0);
 			return;
 		}
 
