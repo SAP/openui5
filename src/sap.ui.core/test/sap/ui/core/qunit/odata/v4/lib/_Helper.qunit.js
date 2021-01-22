@@ -1205,17 +1205,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("updateSelected: simple/complex and not wanted properties", function (assert) {
 		var oCacheBefore = {
-				"@odata.etag" : "Old ETag",
 				Address : {
 					City : "Walldorf"
 				},
 				ComplexNullable : null
 			},
 			oCacheAfter = {
-				"@$ui5._" : {
-					predicate : "('4711')"
-				},
-				"@odata.etag" : "New ETag",
 				PartnerId : "4711",
 				Address : {
 					City : "Walldorf",
@@ -1251,15 +1246,9 @@ sap.ui.define([
 			.withExactArgs(oChangeListener, "SO_2_BP/PartnerId", "4711");
 		oHelperMock.expects("fireChange")
 			.withExactArgs(oChangeListener, "SO_2_BP/@$ui5._/predicate", "('4711')").never();
-		oHelperMock.expects("fireChange")
-			.withExactArgs(oChangeListener, "SO_2_BP/@odata.etag", "New ETag");
 
 		// code under test
 		_Helper.updateSelected(oChangeListener, "SO_2_BP", oCacheBefore, {
-			"@$ui5._" : {
-				predicate : "('4711')"
-			},
-			"@odata.etag" : "New ETag",
 			PartnerId : "4711",
 			Address : {
 				City : "Walldorf",
@@ -1311,11 +1300,6 @@ sap.ui.define([
 		var mChangeListener = {},
 			oHelperMock = this.mock(_Helper),
 			oNewValue = {
-				"@odata.etag" : "new",
-				"@$ui5._" : {
-					predicate : "('1')",
-					ignore : true
-				},
 				changed : "new",
 				unchanged : "same",
 				fromNull : "new",
@@ -1343,7 +1327,6 @@ sap.ui.define([
 				structuredToNull : null
 			},
 			oOldValue = {
-				"@odata.etag" : "old",
 				changed : "old",
 				unchanged : "same",
 				fromNull : null,
@@ -1387,8 +1370,6 @@ sap.ui.define([
 				"structuredToNull/nested/unseen"
 			],
 			oUpdatedValue = {
-				"@odata.etag" : "new",
-				"@$ui5._" : {predicate : "('1')"},
 				changed : "new",
 				unchanged : "same",
 				fromNull : "new",
@@ -1418,7 +1399,6 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(mChangeListener), "base/path/" + sPath, vValue);
 		}
 
-		expectChange("@odata.etag", "new");
 		expectChange("changed", "new");
 		expectChange("fromNull", "new");
 		expectChange("toNull", null);

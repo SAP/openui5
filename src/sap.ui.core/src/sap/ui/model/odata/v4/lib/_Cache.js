@@ -349,7 +349,8 @@ sap.ui.define([
 				that.fetchTypes()
 			]).then(function (aResult) {
 				var oCreatedEntity = aResult[0],
-					sPredicate;
+					sPredicate,
+					aSelect;
 
 				_Helper.deletePrivateAnnotation(oEntityData, "postBody");
 				_Helper.deletePrivateAnnotation(oEntityData, "transient");
@@ -358,9 +359,12 @@ sap.ui.define([
 				that.visitResponse(oCreatedEntity, aResult[1],
 					_Helper.getMetaPath(_Helper.buildPath(that.sMetaPath, sPath)),
 					sPath + sTransientPredicate, bKeepTransientPath);
-				if (!bKeepTransientPath) {
-					sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
-					if (sPredicate) {
+				sPredicate = _Helper.getPrivateAnnotation(oCreatedEntity, "predicate");
+				if (sPredicate) {
+					_Helper.setPrivateAnnotation(oEntityData, "predicate", sPredicate);
+					if (bKeepTransientPath) {
+						sPredicate = sTransientPredicate;
+					} else {
 						aCollection.$byPredicate[sPredicate] = oEntityData;
 						_Helper.updateTransientPaths(that.mChangeListeners, sTransientPredicate,
 							sPredicate);
@@ -368,11 +372,13 @@ sap.ui.define([
 						// contexts still use the transient predicate to access the data
 					}
 				}
-				// update the cache with the POST response
+				// update the cache with the POST response (note that a deep create is not supported
+				// because updateSelected does not handle key predicates, ETags and $count)
+				aSelect = _Helper.getQueryOptionsForPath(that.mQueryOptions, sPath).$select;
 				_Helper.updateSelected(that.mChangeListeners,
 					_Helper.buildPath(sPath, sPredicate || sTransientPredicate), oEntityData,
 					oCreatedEntity,
-					_Helper.getQueryOptionsForPath(that.mQueryOptions, sPath).$select);
+					aSelect && aSelect.concat("@odata.etag")); // do not change $select
 
 				that.removePendingRequest();
 				return oEntityData;
@@ -1472,7 +1478,7 @@ sap.ui.define([
 		this.checkSharedRequest();
 		return this.fetchValue(_GroupLock.$cached, sEntityPath, null, null, true)
 			.then(function (oEntity) {
-				_Helper.updateSelected(that.mChangeListeners, sEntityPath, oEntity,
+				_Helper.updateAll(that.mChangeListeners, sEntityPath, oEntity,
 					_Cache.makeUpdateData(sPropertyPath.split("/"), vValue));
 			});
 	};
