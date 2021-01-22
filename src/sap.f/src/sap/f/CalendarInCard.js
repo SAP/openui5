@@ -200,6 +200,7 @@ sap.ui.define([
 			this._oPickerBtn.setText(this._formatPickerText());
 		}
 		this._updateTodayButtonState();
+		this.fireStartDateChange();
 		this.fireSelect();
 	};
 
@@ -321,7 +322,6 @@ sap.ui.define([
 	 */
 	CalendarInCard.prototype._selectMonth = function () {
 		Calendar.prototype._selectMonth.apply(this, arguments);
-		this.getSelectedDates()[0].setStartDate(this._getFocusedDate().toLocalJSDate());
 		this._oPickerBtn.setText(this._formatPickerText());
 		this._updateTodayButtonState();
 	};
@@ -333,7 +333,6 @@ sap.ui.define([
 	 */
 	CalendarInCard.prototype._selectYear = function () {
 		Calendar.prototype._selectYear.apply(this, arguments);
-		this.getSelectedDates()[0].setStartDate(this._getFocusedDate().toLocalJSDate());
 		this._oPickerBtn.setText(this._formatMonthPickerText());
 		this._showMonthPicker();
 		this._updateTodayButtonState();
@@ -353,7 +352,6 @@ sap.ui.define([
 
 		oStartDate.setMonth(oFocusedDate.getMonth(), oFocusedDate.getDate());
 		oStartDate.setYear(oStartDate.getYear() + Math.floor(iRangeSize / 2));
-		this.getSelectedDates()[0].setStartDate(oStartDate.toLocalJSDate());
 		oFocusedDate.setYear(oStartDate.getYear());
 		this._setFocusedDate(oFocusedDate);
 

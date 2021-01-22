@@ -2,8 +2,9 @@
 
 sap.ui.define([
 	"sap/f/CalendarInCard",
+	"sap/ui/unified/calendar/CalendarDate",
 	"sap/ui/unified/DateTypeRange"
-], function(CalendarInCard, DateTypeRange) {
+], function(CalendarInCard, CalendarDate, DateTypeRange) {
 	"use strict";
 
 	QUnit.module("Interaction", {
@@ -55,6 +56,7 @@ sap.ui.define([
 
 	QUnit.test("Selecting a date from the pickers", function(assert) {
 		var oCalendar = this.oCal,
+			oMonth = oCalendar.getAggregation("month")[0],
 			oMonthPicker = oCalendar._getMonthPicker(),
 			oYearPicker = oCalendar._getYearPicker(),
 			oYearRangePicker = oCalendar._getYearRangePicker(),
@@ -78,9 +80,8 @@ sap.ui.define([
 		assert.notOk(oMonthPicker.getDomRef(), "MonthPicker is not visible after selecting year range");
 		assert.ok(oYearPicker.getDomRef(), "YearPicker is visible after selecting year range");
 		assert.notOk(oYearRangePicker.getDomRef(), "YearRangePicker is not visible after selecting year range");
-		assert.equal(oCalendar.getSelectedDates()[0].getStartDate().getFullYear(), 2009, "year set correct");
 		assert.ok(oPickerBtn.getVisible(), "picker button is visible");
-		assert.equal(oPickerBtn.getText(), "1999 - 2018", "picker text is correct");
+		assert.strictEqual(oPickerBtn.getText(), "1999 - 2018", "picker text is correct");
 
 		// Act
 		oYearPicker.setYear(2018);
@@ -91,8 +92,7 @@ sap.ui.define([
 		assert.ok(oMonthPicker.getDomRef(),"MonthPicker is visible after selecting year");
 		assert.notOk(oYearPicker.getDomRef(), "YearPicker is not visible after selecting year");
 		assert.notOk(oYearRangePicker.getDomRef(), "YearRangePicker is not visible after selecting year");
-		assert.equal(oCalendar.getSelectedDates()[0].getStartDate().getFullYear(), 2018, "year set correct");
-		assert.equal(oPickerBtn.getText(), "2018", "picker text is correct");
+		assert.strictEqual(oPickerBtn.getText(), "2018", "picker text is correct");
 
 		// Act
 		oMonthPicker.setMonth(10);
@@ -103,7 +103,16 @@ sap.ui.define([
 		assert.notOk(oMonthPicker.getDomRef(), "MonthPicker is not visible after selecting month");
 		assert.notOk(oYearPicker.getDomRef(), "YearPicker is not visible after selecting month");
 		assert.notOk(oYearRangePicker.getDomRef(), "none", "YearRangePicker is not visible after selecting month");
-		assert.equal(oCalendar.getSelectedDates()[0].getStartDate().getMonth(), 10, "month set correct");
+
+		// Act
+		oMonth._selectDay(new CalendarDate(2018, 10, 12));
+		sap.ui.getCore().applyChanges();
+		oMonthPicker.fireSelect();
+		sap.ui.getCore().applyChanges();
+		// Assert
+		assert.strictEqual(oCalendar.getSelectedDates()[0].getStartDate().getFullYear(), 2018, "the year is correctly set");
+		assert.strictEqual(oCalendar.getSelectedDates()[0].getStartDate().getMonth(), 10, "the month is correctly set");
+		assert.strictEqual(oCalendar.getSelectedDates()[0].getStartDate().getDate(), 12, "the date is correctly set");
 	});
 
 	QUnit.test("Navigating in the pickers", function(assert) {

@@ -152,7 +152,7 @@
 	  "date": "2020-09-18",
 	  "maxItems": 5,
 	  "maxLegendItems": 5,
-	  "noItemsText": "You have nothing planned for that day",
+	  "noItemsText": "You have nothing planned for this day",
 	  "item": {
 		"template": {
 		  "startDate": "{start}",

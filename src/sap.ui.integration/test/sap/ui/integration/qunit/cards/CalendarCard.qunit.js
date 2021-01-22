@@ -3,12 +3,14 @@
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/core/format/DateFormat",
-	"sap/ui/integration/widgets/Card"
+	"sap/ui/integration/widgets/Card",
+	"sap/ui/unified/calendar/CalendarDate"
 ],
 	function (
 		Core,
 		DateFormat,
-		Card
+		Card,
+		CalendarDate
 	) {
 		"use strict";
 
@@ -693,6 +695,266 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_DateSelect = {
+			"_version": "1.14.0",
+			"sap.app": {
+				"id": "card.explorer.highlight.list.card",
+				"type": "card",
+				"title": "Sample of a List with Highlight",
+				"subTitle": "Sample of a List with Highlight"
+			},
+			"sap.ui": {
+				"technology": "UI5",
+				"icons": {
+					"icon": "sap-icon://list"
+				}
+			},
+			"sap.card": {
+				"type": "Calendar",
+				"data": {
+					"json": {
+						"date": "2019-09-13T09:00",
+						"maxItems": 3,
+						"item": [
+							{
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
+								"title": "Appointment from JSON",
+								"text": "working",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type05"
+							},
+							{
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
+								"title": "Appointment from JSON",
+								"text": "working",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type06"
+							},
+							{
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
+								"title": "Appointment from JSON",
+								"text": "working",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type05"
+							},
+							{
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
+								"title": "Appointment from JSON",
+								"text": "working",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type05"
+							},
+							{
+								"start": "2019-09-01T09:00",
+								"end": "2019-09-01T10:00",
+								"title": "Appointment from JSON",
+								"text": "working",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type06"
+							}
+						]
+					}
+				},
+				"header": {
+					"title": "My Calendar",
+					"subTitle": "For Today",
+					"status": {
+						"text":  {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"parameters>/allItems"
+								]
+							}
+						}
+					}
+				},
+				"content": {
+					"date": "{date}",
+					"maxItems": "{maxItems}",
+					"item": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"title": "{title}",
+							"text": "{text}",
+							"icon": {
+								"src": "{icon}"
+							},
+							"type": "{type}"
+						},
+						"path": "/item"
+					}
+				}
+			}
+		};
+
+		var oManifest_MonthChange = {
+			"_version": "1.14.0",
+			"sap.app": {
+				"id": "card.explorer.highlight.list.card",
+				"type": "card",
+				"title": "Sample of a List with Highlight",
+				"subTitle": "Sample of a List with Highlight"
+			},
+			"sap.ui": {
+				"technology": "UI5",
+				"icons": {
+					"icon": "sap-icon://list"
+				}
+			},
+			"sap.card": {
+				"type": "Calendar",
+				"data": {
+					"json": {
+						"date": "2019-08-01T09:00",
+						"maxItems": 3,
+						"maxLegendItems": 3,
+						"item": [
+							{
+								"start": "2019-08-01T09:00",
+								"end": "2019-08-01T10:00",
+								"title": "Appointment from JSON",
+								"text": "working",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type05"
+							},
+							{
+								"start": "2019-08-01T09:00",
+								"end": "2019-08-01T10:00",
+								"title": "Appointment from JSON",
+								"text": "working",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type06"
+							},
+							{
+								"start": "2019-08-01T09:00",
+								"end": "2019-08-01T10:00",
+								"title": "Appointment from JSON",
+								"text": "working",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type05"
+							},
+							{
+								"start": "2019-08-01T09:00",
+								"end": "2019-08-01T10:00",
+								"title": "Appointment from JSON",
+								"text": "working",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type05"
+							},
+							{
+								"start": "2019-08-01T09:00",
+								"end": "2019-08-01T10:00",
+								"title": "Appointment from JSON",
+								"text": "working",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type06"
+							}
+						],
+						"specialDate": [
+							{
+								"start": "2019-09-13",
+								"end": "2019-09-14",
+								"type": "Type08"
+							},
+							{
+								"start": "2019-09-24",
+								"end": "2019-09-24",
+								"type": "Type13"
+							}
+						],
+						"legendItem": [
+							{
+								"category": "calendar",
+								"text": "Team building",
+								"type": "Type08"
+							},
+							{
+								"category": "calendar",
+								"text": "Public holiday",
+								"type": "Type13"
+							},
+							{
+								"category": "appointment",
+								"text": "Reminder",
+								"type": "Type06"
+							},
+							{
+								"category": "appointment",
+								"text": "Private appointment",
+								"type": "Type07"
+							},
+							{
+								"category": "appointment",
+								"text": "Out of office",
+								"type": "Type03"
+							},
+							{
+								"category": "appointment",
+								"text": "Collaboration with other team members",
+								"type": "Type07"
+							}
+						]
+					}
+				},
+				"header": {
+					"title": "My Calendar",
+					"subTitle": "For Today",
+					"status": {
+						"text":  {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"parameters>/allItems"
+								]
+							}
+						}
+					}
+				},
+				"content": {
+					"date": "{date}",
+					"maxItems": "{maxItems}",
+					"maxLegendItems": "{maxLegendItems}",
+					"item": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"title": "{title}",
+							"text": "{text}",
+							"icon": {
+								"src": "{icon}"
+							},
+							"type": "{type}"
+						},
+						"path": "/item"
+					},
+					"specialDate": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"type": "{type}"
+						},
+						"path": "/specialDate"
+					},
+					"legendItem": {
+						"template": {
+							"category": "{category}",
+							"text": "{text}",
+							"type": "{type}"
+						},
+						"path": "/legendItem"
+					}
+				}
+			}
+		};
+
 		QUnit.module("Initialization", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -903,6 +1165,115 @@ sap.ui.define([
 
 				// Assert
 				assert.equal(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
+
+				done();
+			}.bind(this));
+		});
+
+		QUnit.module("Events", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px"
+				}).placeAt(DOM_RENDER_LOCATION);
+
+				Core.applyChanges();
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+			}
+		});
+
+		QUnit.test("DateSelect", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.setManifest(oManifest_DateSelect);
+
+			this.oCard.attachEvent("_ready", function () {
+				var oCalendar = this.oCard.getAggregation("_content").getAggregation("_content").getAggregation("items")[0],
+					bDateSelectFired,
+					aAppointmentsRefs;
+
+				Core.applyChanges();
+				this.oCard.attachAction(function (oEvent) {
+					if (oEvent.getParameter("type") === "DateChange") {
+						bDateSelectFired = true;
+					}
+				});
+
+				// Act
+				oCalendar.getSelectedDates()[0].setStartDate(new Date("2019-09-01"));
+				oCalendar.fireSelect({
+					getSource: function () {
+						return this.oCard;
+					}.bind(this),
+					startDate: new Date("2019-09-01")
+				});
+				Core.applyChanges();
+
+				// Assert
+				assert.strictEqual(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
+				assert.strictEqual(this.oCard.getModel("parameters").getData().allItems, 5, "Should have total of 5 appointments.");
+				assert.ok(bDateSelectFired, "DateSelect is fired");
+
+				aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+
+				// Assert
+				assert.strictEqual(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
+
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("MonthChange", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.setManifest(oManifest_MonthChange);
+
+			this.oCard.attachEvent("_ready", function () {
+				var oCalendar = this.oCard.getAggregation("_content").getAggregation("_content").getAggregation("items")[0],
+					bMonthChangeFired,
+					aAppointmentsRefs,
+					aSpecialDatesRefs,
+					aLegendItemsRefs;
+
+				Core.applyChanges();
+				this.oCard.attachAction(function (oEvent) {
+					if (oEvent.getParameter("type") === "MonthChange") {
+						bMonthChangeFired = true;
+					}
+				});
+
+				// Act
+				oCalendar._setFocusedDate(CalendarDate.fromLocalJSDate(new Date(2019, 8, 1)));
+				oCalendar.displayDate(new Date(2019, 8, 1));
+				Core.applyChanges();
+				oCalendar.fireStartDateChange({
+					getSource: function () {
+						return this.oCard;
+					}.bind(this)
+				});
+				Core.applyChanges();
+
+				// Assert
+				assert.strictEqual(this.oCard.getModel("parameters").getData().visibleItems, 3, "Should have 3 visible appointments.");
+				assert.strictEqual(this.oCard.getModel("parameters").getData().allItems, 5, "Should have total of 5 appointments.");
+				assert.ok(bMonthChangeFired, "DateSelect is fired");
+
+				aAppointmentsRefs = this.oCard.$().find(".sapUiCalendarAppContainer");
+
+				// Assert
+				assert.strictEqual(aAppointmentsRefs.length, 3, "Should have 3 rendered appointments.");
+
+				aSpecialDatesRefs = this.oCard.$().find(".sapUiCalSpecialDate");
+
+				// Assert
+				assert.strictEqual(aSpecialDatesRefs.length, 3, "Should have 3 rendered special dates.");
+
+				aLegendItemsRefs = this.oCard.$().find(".sapUiUnifiedLegendItem");
+
+				// Assert
+				assert.strictEqual(aLegendItemsRefs.length, 4, "Should have 3 rendered legend items and one 'More' indicator.");
 
 				done();
 			}.bind(this));
