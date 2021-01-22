@@ -2095,8 +2095,8 @@ function(
 				if (!oItem) {
 					return "";
 				}
-				return bHasTabularSuggestions ? this._fnRowResultFilter(oItem) : oItem.getText();
-			}.bind(this);
+				return bHasTabularSuggestions ? oInput._fnRowResultFilter(oItem) : oItem.getText();
+			};
 
 		var aItemsToSelect = typeAhead(sValue, this, aItems, function (oItem) {
 			return this._formatTypedAheadValue(fnExtractText(oItem));
