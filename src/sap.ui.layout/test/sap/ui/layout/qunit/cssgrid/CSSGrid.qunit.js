@@ -229,8 +229,11 @@ function (
 			name: "items",
 			mutation: "insert",
 			child: {
-				addEventDelegate: that.oSpyAddDelegate,
-				removeEventDelegate: that.oSpyRemoveDelegate
+				addDelegate: that.oSpyAddDelegate,
+				removeEventDelegate: that.oSpyRemoveDelegate,
+				isA: function () {
+					return false;
+				}
 			}
 		};
 
@@ -251,7 +254,7 @@ function (
 			name: "items",
 			mutation: "remove",
 			child: {
-				addEventDelegate: that.oSpyAddDelegate,
+				addDelegate: that.oSpyAddDelegate,
 				removeEventDelegate: that.oSpyRemoveDelegate
 			}
 		};

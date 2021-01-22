@@ -657,6 +657,8 @@ sap.ui.define([
 		}
 
 		this._isRenderingFinished = false;
+		this._lastGridWidth = null;
+		this._lastViewportWidth = null;
 	};
 
 	/**
