@@ -1064,7 +1064,7 @@ function(
 		// The goal is to provide a value in the value help event, which can be used to filter the opened Value Help Dialog.
 		var sTypedInValue = "";
 
-		if (this.getShowSuggestion() && this._isSuggestionsPopoverInitiated()) {
+		if (this.getShowSuggestion() && this._isSuggestionsPopoverInitiated() && !this.isMobileDevice()) {
 			sTypedInValue = this._sTypedInValue || "";
 		} else {
 			sTypedInValue = this.getDOMValue();

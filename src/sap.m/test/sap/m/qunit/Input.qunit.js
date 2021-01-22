@@ -4835,6 +4835,73 @@ sap.ui.define([
 		assert.strictEqual(stub.callCount, 0, "Should NOT call 'setSelectedRow' when aggregation is destroyed after a proposed item was found.");
 	});
 
+	QUnit.test("Dialog's input should propagate the correct typed value for the valueHelpRequest event", function (assert) {
+		this.stub(Device, "system", {
+			desktop: false,
+			phone: true,
+			tablet: false
+		});
+
+		assert.expect(1);
+
+		var done = assert.async();
+		var oInput = new Input({
+			width: "10rem",
+			showValueHelp: true,
+			showSuggestion: true,
+			suggestionRows: {
+				path: "/items",
+				template: new ColumnListItem({
+					cells: [
+						new Text({text:"{value}"}),
+						new Text({text:"{key}"})
+					]
+				})
+			},
+			suggestionColumns: [
+				new Column({
+					header: new Label({text: "Text"})
+				}),
+				new sap.m.Column({
+					header: new Label({text: "Key"})
+				})
+			],
+			valueHelpRequest: function (oEvent) {
+				assert.strictEqual(oEvent.getParameter("_userInputValue"), "te");
+				done();
+			}
+		})
+			.setModel(new JSONModel({
+				items: [
+					{key: "key1", value: "test1"},
+					{key: "key2", value: "test2"},
+					{key: "key3", value: "test3"},
+					{key: "key4", value: "test4"}
+				]
+			})).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		var oSuggPopover = oInput._getSuggestionsPopover();
+		var oPopupInput = oSuggPopover.getInput();
+		oSuggPopover.getPopover().open();
+		this.clock.tick(500);
+
+		oPopupInput.setValue("te");
+		oPopupInput.fireLiveChange({value: "", newValue: "te"});
+		oInput._fireValueHelpRequest();
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(500);
+
+		// Assert
+		// Assertion is within valueHelpRequest callback
+
+		// Cleanup
+		oSuggPopover.getPopover().close();
+		this.clock.tick(500);
+		oInput.destroy();
+	});
+
 	QUnit.test("Typeahead should select the correct formatter", function (assert) {
 		var oPopupInput;
 
