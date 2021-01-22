@@ -1,46 +1,45 @@
 /* global QUnit */
 
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
+	"qunit/RtaQunitUtils",
+	"sap/base/util/restricted/_omit",
+	"sap/m/Button",
+	"sap/m/Label",
 	"sap/ui/core/Control",
 	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/OverlayUtil",
-	"sap/ui/rta/Utils",
-	"sap/ui/rta/util/BindingsExtractor",
-	"qunit/RtaQunitUtils",
-	"sap/ui/fl/fieldExt/Access",
+	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/m/Label",
-	"sap/m/Button",
-	"sap/uxap/ObjectPageSection",
-	"sap/uxap/ObjectPageSubSection",
-	"sap/uxap/ObjectPageLayout",
-	"sap/base/util/restricted/_omit",
+	"sap/ui/rta/util/BindingsExtractor",
+	"sap/ui/rta/Utils",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/uxap/library"
-],
-function(
-	jQuery,
+	"sap/uxap/library",
+	"sap/uxap/ObjectPageLayout",
+	"sap/uxap/ObjectPageSection",
+	"sap/uxap/ObjectPageSubSection"
+], function(
+	RtaQunitUtils,
+	_omit,
+	Button,
+	Label,
 	Control,
 	DesignTime,
 	OverlayRegistry,
 	OverlayUtil,
-	Utils,
-	BindingsExtractor,
-	RtaQunitUtils,
-	Access,
+	FieldExtensibility,
 	Layer,
 	FlexUtils,
-	Label,
-	Button,
-	ObjectPageSection,
-	ObjectPageSubSection,
-	ObjectPageLayout,
-	_omit,
+	BindingsExtractor,
+	Utils,
+	jQuery,
 	sinon,
-	uxapLibrary
+	uxapLibrary,
+	ObjectPageLayout,
+	ObjectPageSection,
+	ObjectPageSubSection
 ) {
 	"use strict";
 
@@ -65,9 +64,9 @@ function(
 		}
 	}, function () {
 		QUnit.test("Given extensibility disabled in the system when isServiceUpToDate is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(false);
+			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(false);
 
-			var isServiceOutdatedStub = sandbox.stub(Access, "isServiceOutdated");
+			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated");
 			var oAnything = {};
 
 			return Utils.isServiceUpToDate(oAnything).then(function() {
@@ -76,8 +75,8 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and an unbound control when isServiceUpToDate is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			var isServiceOutdatedStub = sandbox.stub(Access, "isServiceOutdated");
+			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
+			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated");
 			var oUnboundControl = new Button({text: "unbound"});
 
 			return Utils.isServiceUpToDate(oUnboundControl).then(function() {
@@ -86,22 +85,22 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and a bound control and a not outdated service when isServiceUpToDate is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			var isServiceOutdatedStub = sandbox.stub(Access, "isServiceOutdated").returns(false);
-			var setServiceValidStub = sandbox.stub(Access, "setServiceValid");
+			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
+			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
+			var oSetServiceValidStub = sandbox.stub(FieldExtensibility, "setServiceValid");
 
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
 			return Utils.isServiceUpToDate(oBoundControl).then(function() {
 				assert.ok(true, "then the service is recognized as up to date");
 				assert.equal(isServiceOutdatedStub.callCount, 1, "then service is asked to be invalid");
-				assert.equal(setServiceValidStub.callCount, 0, "then service is not unneccessarily set to be valid");
+				assert.equal(oSetServiceValidStub.callCount, 0, "then service is not unneccessarily set to be valid");
 			});
 		});
 
 		QUnit.test("Given extensibility enabled and a bound control without serviceurl on model when 'isServiceUpToDate' is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			var isServiceOutdatedStub = sandbox.stub(Access, "isServiceOutdated").returns(false);
+			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
+			var isServiceOutdatedStub = sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(false);
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 			var oBoundModel = oBoundControl.getModel();
 			var sServiceUrl = oBoundModel.sServiceUrl;
@@ -114,9 +113,10 @@ function(
 		});
 
 		QUnit.test("Given extensibility enabled and a bound control and an outdated service when isServiceUpToDate is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			sandbox.stub(Access, "isServiceOutdated").returns(true);
-			var setServiceValidStub = sandbox.stub(Access, "setServiceValid");
+			assert.expect(2);
+			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves(true);
+			sandbox.stub(FieldExtensibility, "isServiceOutdated").resolves(true);
+			var oSetServiceValidStub = sandbox.stub(FieldExtensibility, "setServiceValid");
 
 			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
 
@@ -124,120 +124,7 @@ function(
 				assert.ok(true, "then the UI refresh is requested");
 			});
 			return Utils.isServiceUpToDate(oBoundControl).then(function() {
-				assert.ok(false, "then the service should be recognized as outdated");
-			}).catch(function() {
-				assert.ok(true, "then the service is recognized as outdated date");
-				assert.equal(setServiceValidStub.callCount, 1, "then service is set to be valid again");
-			});
-		});
-
-		QUnit.test("Given extensibility disabled when isCustomFieldAvailable is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(false);
-
-			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
-				assert.strictEqual(vResult, false, "then custom fields is disabled");
-			});
-		});
-
-		QUnit.test("Given extensibility enabled and a custom field enabled bound control when isCustomFieldAvailable is called", function(assert) {
-			var oExtensibilityBusinessContext = {
-				BusinessContexts : [{ BusinessContext: "some context", BusinessContextDescription: "Some context description"}],
-				ServiceName : "servive name",
-				ServiceVersion : "some dummy ServiceVersion"
-			};
-
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			sandbox.stub(Access, "getBusinessContexts").returns(
-					Promise.resolve(JSON.parse(JSON.stringify(oExtensibilityBusinessContext))));
-			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
-				var mExpectedResult = JSON.parse(JSON.stringify(oExtensibilityBusinessContext));
-				mExpectedResult.EntityType = "Header";
-				assert.deepEqual(vResult, mExpectedResult, "then extensibility business context is enriched with the bound entity type");
-			});
-		});
-
-		QUnit.test("Given extensibility enabled and a custom field enabled bound control with an empty business context array, when isCustomFieldAvailable is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			sandbox.stub(Access, "getBusinessContexts").returns(
-				Promise.resolve({ BusinessContexts: [] })
-			);
-			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
-				assert.strictEqual(vResult, false, "then the custom field is disabled");
-			});
-		});
-
-		QUnit.test("Given extensibility enabled and a custom field enabled bound control, when isCustomFieldAvailable is called and 'sap.ui.fl.fieldExt.Access' cannot be loaded", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			sandbox.stub(sap.ui, "require")
-				.callThrough()
-				.withArgs(["sap/ui/fl/fieldExt/Access"], sinon.match.any, sinon.match.any)
-				.callsFake(function(sModule, fnResolve, fnReject) {
-					fnReject();
-				});
-
-			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-			return Utils.isCustomFieldAvailable(oBoundControl).then(
-				function () {
-					assert.ok(false, "then the returned promise should not be resolved");
-				}, function () {
-				assert.ok(true, "then the returned promise is rejected");
-			}
-			);
-		});
-
-		QUnit.test("Given extensibility enabled and a custom field enabled bound control, when isCustomFieldAvailable is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			sandbox.stub(Access, "getBusinessContexts").returns(
-				Promise.resolve()
-			);
-			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
-				assert.strictEqual(vResult, false, "then the custom field is disabled");
-			});
-		});
-
-		QUnit.test("Given extensibility enabled and unbound control when isCustomFieldAvailable is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-
-			return Utils.isCustomFieldAvailable(new Button()).then(function(vResult) {
-				assert.strictEqual(vResult, false, "then custom fields is disabled");
-			});
-		});
-
-		QUnit.test("Given extensibility enabled and non custom field enabled bound control when isCustomFieldAvailable is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			sandbox.stub(Access, "getBusinessContexts").resolves();
-			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
-				assert.strictEqual(vResult, false, "then custom fields is disabled");
-			});
-		});
-
-		QUnit.test("Given extensibility enabled and custom field logic rejects call when isCustomFieldAvailable is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			sandbox.stub(Access, "getBusinessContexts").returns(
-					Promise.reject(new Error("some simulated error"))
-			);
-			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
-				assert.strictEqual(vResult, false, "then custom fields is disabled");
-			});
-		});
-
-		QUnit.test("Given extensibility enabled and custom field logic throws error when isCustomFieldAvailable is called", function(assert) {
-			sandbox.stub(Utils, "isExtensibilityEnabledInSystem").resolves(true);
-			sandbox.stub(Access, "getBusinessContexts").throws(new Error("some simulated error"));
-			var oBoundControl = sap.ui.getCore().byId("Comp1---idMain1--MainFormExpandable.GeneralLedgerDocument.ExpirationDate");
-
-			return Utils.isCustomFieldAvailable(oBoundControl).then(function(vResult) {
-				assert.strictEqual(vResult, false, "then custom fields is disabled");
+				assert.equal(oSetServiceValidStub.callCount, 1, "then service is set to be valid again");
 			});
 		});
 	});
@@ -693,6 +580,7 @@ function(
 		QUnit.test("when 'getFiori2Renderer' is called", function(assert) {
 			assert.deepEqual(Utils.getFiori2Renderer(), this.oRenderer, "then the renderer is returned");
 		});
+
 		QUnit.test("when 'isOriginalFioriToolbarAccessible' is called", function(assert) {
 			assert.ok(Utils.isOriginalFioriToolbarAccessible(), "then the function returns 'true'");
 		});
@@ -714,6 +602,7 @@ function(
 		QUnit.test("when 'getFiori2Renderer' is called", function(assert) {
 			assert.deepEqual(Utils.getFiori2Renderer(), this.oRenderer, "then invalid renderer is returned");
 		});
+
 		QUnit.test("when 'isOriginalFioriToolbarAccessible' is called", function(assert) {
 			assert.notOk(Utils.isOriginalFioriToolbarAccessible(), "then the function returns 'false'");
 		});

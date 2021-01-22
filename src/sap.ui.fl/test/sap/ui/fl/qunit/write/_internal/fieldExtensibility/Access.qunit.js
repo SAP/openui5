@@ -1,15 +1,27 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/core/mvc/XMLView",
+	"sap/ui/core/Core",
+	"sap/ui/fl/write/_internal/fieldExtensibility/Access",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/fl/fieldExt/Access",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
-	jQuery,
+	Log,
+	XMLView,
+	Core,
 	Access,
+	Settings,
+	Utils,
+	jQuery,
 	sinon
 ) {
 	"use strict";
+
+	var sandbox = sinon.createSandbox();
 
 	var oBusinessExpectedContextRetrievalResult = {
 		BusinessContexts: [{ BusinessContext: "CFD_TSM_BUPA_ADR", BusinessContextDescription: "Description for CFD_TSM_BUPA_ADR"}, { BusinessContext: "CFD_TSM_BUPA", BusinessContextDescription: "Description for CFD_TSM_BUPA"}],
@@ -105,10 +117,7 @@ sap.ui.define([
 		assert.equal(oService.serviceVersion, sExpectedServiceVersion);
 	};
 
-	QUnit.module("sap.ui.fl.fieldExt.Access", {
-		beforeEach: function() {},
-		afterEach: function() {}
-	}, function() {
+	QUnit.module("sap.ui.fl.fieldExt.Access", {}, function() {
 		QUnit.test("_parseServiceName can extract a service name from an uri without a namespace", function(assert) {
 			var sServiceName = oServiceUri.sServiceName;
 			var sDeterminedServiceName = Access._parseServiceUri(sServiceName).serviceName;
@@ -693,18 +702,18 @@ sap.ui.define([
 				ServiceVersion: "0001"
 			};
 			var oMockResponse = {
-				error : {
-					code : "005056A509B11EE1B9A8FEC11C21D78E",
-					message : {
-						lang : "en",
-						value : "Resource not found for the segment 'GetBusinessContextsByResourcePath'."
+				error: {
+					code: "005056A509B11EE1B9A8FEC11C21D78E",
+					message: {
+						lang: "en",
+						value: "Resource not found for the segment 'GetBusinessContextsByResourcePath'."
 					},
-					innererror : {
-						transactionid : "80E2B6AC2FB801F0E005A26F672AEE62",
-						timestamp : "20171206180317.9903950",
-						Error_Resolution : {
-							SAP_Transaction : "For backend administrators: run transaction /IWFND/ERROR_LOG on SAP Gateway hub system and search for entries with the timestamp above for more details",
-							SAP_Note : "See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)"
+					innererror: {
+						transactionid: "80E2B6AC2FB801F0E005A26F672AEE62",
+						timestamp: "20171206180317.9903950",
+						Error_Resolution: {
+							SAP_Transaction: "For backend administrators: run transaction /IWFND/ERROR_LOG on SAP Gateway hub system and search for entries with the timestamp above for more details",
+							SAP_Note: "See SAP Note 1797736 for error analysis (https://service.sap.com/sap/support/notes/1797736)"
 						}
 					}
 				}
@@ -732,6 +741,172 @@ sap.ui.define([
 				oServer.restore();
 				assert.ok(false, e);
 			}
+		});
+	});
+
+	QUnit.module("Interface Functions", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		QUnit.test("getTexts", function(assert) {
+			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
+			var oGetTextStub = sandbox.stub(oResourceBundle, "getText").callsFake(function(sTextKey) {return sTextKey;});
+
+			var mExpectedTexts = {
+				tooltip: "BTN_FREP_CCF",
+				headerText: "BUSINESS_CONTEXT_TITLE"
+			};
+			var mTexts = Access.getTexts();
+
+			assert.equal(oGetTextStub.callCount, 2, "two texts were retrieved");
+			assert.deepEqual(mTexts, mExpectedTexts, "the correct texts were retrieved");
+		});
+
+		QUnit.test("isExtensibilityEnabled with empty string as component class name", function(assert) {
+			sandbox.stub(Utils, "getComponentClassName").returns("");
+
+			return Access.isExtensibilityEnabled().then(function(bExtensibilityEnabled) {
+				assert.equal(bExtensibilityEnabled, false, "the return value is false");
+			});
+		});
+
+		QUnit.test("isExtensibilityEnabled with undefined as component class name", function(assert) {
+			sandbox.stub(Utils, "getComponentClassName").returns();
+
+			return Access.isExtensibilityEnabled().then(function(bExtensibilityEnabled) {
+				assert.equal(bExtensibilityEnabled, false, "the return value is false");
+			});
+		});
+
+		QUnit.test("isExtensibilityEnabled with undefined as component class name", function(assert) {
+			sandbox.stub(Utils, "getComponentClassName").returns("name");
+			sandbox.stub(Settings, "getInstance").resolves({
+				isModelS: function() {
+					return true;
+				}
+			});
+
+			return Access.isExtensibilityEnabled().then(function(bExtensibilityEnabled) {
+				assert.equal(bExtensibilityEnabled, true, "the function returns the value if isModelS");
+			});
+		});
+
+		QUnit.test("onTriggerCreateExtensionData", function(assert) {
+			var oHrefForExternalStub = sandbox.stub().returns("foo");
+			sandbox.stub(Utils, "ifUShellContainerThen").callsFake(function(fnCallback) {
+				fnCallback([{
+					hrefForExternal: oHrefForExternalStub
+				}]);
+			});
+			var oOpenNewWindowStub = sandbox.stub(Access, "openNewWindow");
+			var oExtensibilityInfo = {
+				BusinessContexts: [
+					{
+						BusinessContext: "bar"
+					},
+					{
+						BusinessContext: "foobar"
+					}
+				],
+				ServiceName: "name",
+				ServiceVersion: 1,
+				EntityType: "odata"
+			};
+
+			var oExpectedParams = {
+				target: {
+					semanticObject: "CustomField",
+					action: "develop"
+				},
+				params: {
+					businessContexts: ["bar", "foobar"],
+					serviceName: "name",
+					serviceVersion: 1,
+					entityType: "odata"
+				}
+			};
+
+			Access.onTriggerCreateExtensionData(oExtensibilityInfo);
+			assert.deepEqual(oExpectedParams, oHrefForExternalStub.lastCall.args[0], "the function was called with the correct parameters");
+			assert.equal("foo", oOpenNewWindowStub.lastCall.args[0], "the function was called with the correct parameters");
+		});
+	});
+
+	QUnit.module("Given a complex test view with oData Model...", {
+		before: function () {
+			return XMLView.create({
+				id: "idMain1",
+				viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
+			}).then(function(oView) {
+				this.oView = oView;
+				this.oView.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+				return this.oView.getController().isDataReady();
+			}.bind(this));
+		},
+		afterEach: function() {
+			sandbox.restore();
+		},
+		after: function () {
+			this.oView.destroy();
+		}
+	}, function() {
+		QUnit.test("getExtensionData without BusinessContexts", function(assert) {
+			var oGetBusinessContextsStub = sandbox.stub(Access, "getBusinessContexts").resolves();
+			return Access.getExtensionData(this.oView.byId("EntityType01.Prop1")).then(function(oExtensionData) {
+				assert.equal(oExtensionData, false, "the function returns false");
+				assert.equal("/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest", oGetBusinessContextsStub.lastCall.args[0]);
+				assert.equal("EntityType01", oGetBusinessContextsStub.lastCall.args[1]);
+			});
+		});
+
+		QUnit.test("getExtensionData with BusinessContexts", function(assert) {
+			var oGetBusinessContextsStub = sandbox.stub(Access, "getBusinessContexts").resolves({
+				BusinessContexts: [
+					"foo"
+				]
+			});
+			var oExpectedResult = {
+				BusinessContexts: [
+					"foo"
+				],
+				EntityType: "EntityType01"
+			};
+			return Access.getExtensionData(this.oView.byId("EntityType01.Prop1")).then(function(oExtensionData) {
+				assert.deepEqual(oExpectedResult, oExtensionData, "the function returns the Business Contexts");
+				assert.equal(oGetBusinessContextsStub.callCount, 1, "the Business Contexts were retrieved");
+			});
+		});
+
+		QUnit.test("getExtensionData with empty BusinessContexts", function(assert) {
+			var oGetBusinessContextsStub = sandbox.stub(Access, "getBusinessContexts").resolves({
+				BusinessContexts: []
+			});
+			return Access.getExtensionData(this.oView.byId("EntityType01.Prop1")).then(function(oExtensionData) {
+				assert.equal(oExtensionData, false, "the function returns false");
+				assert.equal(oGetBusinessContextsStub.callCount, 1, "the Business Contexts were retrieved");
+			});
+		});
+
+		QUnit.test("getExtensionData with getBusinessContexts throwing an error", function(assert) {
+			var oLogStub = sandbox.stub(Log, "error");
+			var oError = Error("myError");
+			oError.errorMessages = [
+				{
+					text: "a"
+				},
+				{
+					text: "b"
+				}
+			];
+			var oGetBusinessContextsStub = sandbox.stub(Access, "getBusinessContexts").rejects(oError);
+			return Access.getExtensionData(this.oView.byId("EntityType01.Prop1")).then(function(oExtensionData) {
+				assert.ok(true, "the function resolves");
+				assert.equal(oExtensionData, false, "the function returns false");
+				assert.equal(oGetBusinessContextsStub.callCount, 1, "the Business Contexts were retrieved");
+				assert.equal(oLogStub.callCount, 2, "two errors was logged");
+			});
 		});
 	});
 
