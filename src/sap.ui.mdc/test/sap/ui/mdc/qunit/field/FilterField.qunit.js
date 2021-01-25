@@ -12,7 +12,8 @@ sap.ui.define([
 	"sap/ui/mdc/field/FieldMultiInput", // async. loading of content control tested in FieldBase test
 	"sap/ui/mdc/condition/FilterOperatorUtil",
 	"sap/ui/mdc/enum/BaseType",
-	"sap/ui/mdc/odata/v4/FieldBaseDelegate" // make sure delegate is loaded (test delegate loading in FieldBase test)
+	"sap/ui/mdc/odata/v4/FieldBaseDelegate", // make sure delegate is loaded (test delegate loading in FieldBase test)
+	"sap/ui/events/KeyCodes"
 	], function (
 		jQuery,
 		qutils,
@@ -21,7 +22,8 @@ sap.ui.define([
 		FieldMultiInput,
 		FilterOperatorUtil,
 		BaseType,
-		FieldBaseDelegate
+		FieldBaseDelegate,
+		KeyCodes
 		) {
 	"use strict";
 
@@ -106,7 +108,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("10");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "FF1", "change event fired on Field");
 		assert.equal(sValue, 10, "change event value");
@@ -130,7 +132,7 @@ sap.ui.define([
 		assert.equal(sLiveValue, "2", "liveChange event value");
 
 		jQuery(oContent.getFocusDomRef()).val("1000");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 2, "change event fired again");
 		assert.notOk(bValid, "Value is not valid");
 		assert.equal(sValue, "1000", "change event wrongValue");

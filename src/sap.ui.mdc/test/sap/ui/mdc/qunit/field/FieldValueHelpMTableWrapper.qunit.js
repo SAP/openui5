@@ -34,7 +34,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataListBinding",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/events/KeyCodes"
 ], function (
 		qutils,
 		FieldValueHelpMTableWrapper,
@@ -65,7 +66,8 @@ sap.ui.define([
 		Filter,
 		ODataModel,
 		ODataListBinding,
-		Device
+		Device,
+		KeyCodes
 	) {
 	"use strict";
 
@@ -1289,13 +1291,13 @@ sap.ui.define([
 			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
 
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
 			oFocusedElement = document.activeElement;
 			assert.equal(iNavigate, 0, "Navigate event not fired");
 			assert.equal(aItems[1].getId(), oFocusedElement.id, "Item 2 is focused");
 
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, jQuery.sap.KeyCodes.SPACE, false, false, false);
+			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, KeyCodes.SPACE, false, false, false);
 			assert.equal(iSelect, 1, "Select event fired");
 			assert.equal(aSelectItems.length, 1, "one item returned");
 			assert.equal(aSelectItems[0].key, "I2", "item key");
@@ -1303,14 +1305,14 @@ sap.ui.define([
 			assert.notOk(bSelectItemPress, "itemPress");
 
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 			oFocusedElement = document.activeElement;
 			assert.equal(iNavigate, 0, "Navigate event not fired");
 			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
 
 			sinon.spy(oField, "focus");
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 			oFocusedElement = document.activeElement;
 			assert.equal(iNavigate, 1, "Navigate event fired");
 			assert.notOk(sNavigateKey, "Navigate event key");
@@ -1481,20 +1483,20 @@ sap.ui.define([
 			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
 
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
 			oFocusedElement = document.activeElement;
 			assert.equal(iNavigate, 0, "Navigate event not fired");
 			assert.equal(aItems[1].getId(), oFocusedElement.id, "Item 2 is focused");
 
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 			oFocusedElement = document.activeElement;
 			assert.equal(iNavigate, 0, "Navigate event not fired");
 			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
 
 			sinon.spy(oField, "focus");
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 			oFocusedElement = document.activeElement;
 			assert.equal(iNavigate, 0, "Navigate event not fired");
 			assert.notOk(oField.focus.called, "focus not set on Field");

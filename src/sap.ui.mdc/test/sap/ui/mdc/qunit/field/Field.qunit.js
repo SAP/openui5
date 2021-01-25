@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/ui/model/type/Currency",
 	"sap/ui/model/odata/type/Currency",
 	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/odata/type/DateTime"
+	"sap/ui/model/odata/type/DateTime",
+	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	qutils,
@@ -55,7 +56,8 @@ sap.ui.define([
 	CurrencyType,
 	oDataCurrencyType,
 	JSONModel,
-	DateTimeType
+	DateTimeType,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -544,7 +546,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("X");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.equal(sValue, "X", "change event value");
@@ -580,7 +582,7 @@ sap.ui.define([
 				sValue = "X"; // to see if empty later on
 				oPromise = undefined;
 				jQuery(oContent.getFocusDomRef()).val("");
-				qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+				qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 				assert.equal(iCount, 1, "change event fired once");
 				assert.equal(sId, "F1", "change event fired on Field");
 				assert.equal(sValue, null, "change event value");
@@ -602,7 +604,7 @@ sap.ui.define([
 					oContent = aContent && aContent.length > 0 && aContent[0];
 					oContent.focus();
 					jQuery(oContent.getFocusDomRef()).val("XXXX");
-					qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+					qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 					assert.equal(iParseError, 1, "ParseError fired");
 					assert.equal(iCount, 1, "change event fired again");
 					assert.notOk(bValid, "Value is not valid");
@@ -632,7 +634,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oSlider.focus();
-		qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.equal(sValue, 71, "change event value");
@@ -647,7 +649,7 @@ sap.ui.define([
 		oSlider.placeAt("content");
 		sap.ui.getCore().applyChanges();
 		oSlider.focus();
-		qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 		assert.equal(iCount, 1, "change event of field not fired again");
 
 		oButton.firePress(); //simulate press
@@ -697,7 +699,7 @@ sap.ui.define([
 
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("X");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		//assert.equal(iCount, 1, "Event fired once");
 		assert.equal(sId, "F1", "Event fired on original Field");
 		assert.equal(sValue, "X", "Event value");
@@ -710,7 +712,7 @@ sap.ui.define([
 
 		oCloneContent.focus();
 		jQuery(oCloneContent.getFocusDomRef()).val("Y");
-		qutils.triggerKeyboardEvent(oCloneContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oCloneContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "Event fired once");
 		assert.equal(sId, "F1-myClone", "Event fired on clone");
 		assert.equal(sValue, "Y", "Event value");
@@ -749,7 +751,7 @@ sap.ui.define([
 		assert.equal(oCloneSlider.getValue(), 60, "Value set on clone Slider control");
 
 		oSlider.focus();
-		qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 		assert.equal(iCount, 1, "Event fired once");
 		assert.equal(sId, "F1", "Event fired on original Field");
 		assert.equal(sValue, 81, "Event value");
@@ -761,7 +763,7 @@ sap.ui.define([
 		sValue = "";
 
 		oCloneSlider.focus();
-		qutils.triggerKeyboardEvent(oCloneSlider.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeyboardEvent(oCloneSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 		//assert.equal(iCount, 1, "Event fired once");
 		assert.equal(sId, "F1-myClone", "Event fired on clone");
 		assert.equal(sValue, 61, "Event value");
@@ -965,7 +967,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		jQuery(oContent.getFocusDomRef()).val("11");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(oModel.getData().value, 11, "Value in Model updated");
 
 	});
@@ -1019,7 +1021,7 @@ sap.ui.define([
 
 			oField3.focus();
 			oContent._$input.val("A1");
-			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 			setTimeout(function() { // as valueState is updates async
 				assert.equal(oField3.getValueState(), "Error", "ValueState set");
@@ -1048,7 +1050,7 @@ sap.ui.define([
 
 			oField3.focus();
 			oContent._$input.val("A1");
-			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 			setTimeout(function() { // as valueState is updates async
 				assert.equal(oField3.getValueState(), "Error", "ValueState set");
@@ -1330,7 +1332,7 @@ sap.ui.define([
 				assert.equal(oContent2.getValue(), "EUR", "Value set on currency control");
 
 				oField.setProperty.reset();
-				qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false); // trigger update
+				qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false); // trigger update
 				assert.equal(iCount, 1, "change event fired once");
 				assert.equal(sId, "F1", "change event fired on Field");
 				assert.deepEqual(sValue, [1, "EUR", oCurrencyCodeList], "change event value");
@@ -1364,7 +1366,7 @@ sap.ui.define([
 						assert.equal(oContent1.getValue(), sNumber, "Value set on number control");
 
 						oField.setProperty.reset();
-						qutils.triggerKeyboardEvent(oContent1.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false); // trigger update
+						qutils.triggerKeyboardEvent(oContent1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false); // trigger update
 						assert.equal(iCount, 1, "change event fired once");
 						assert.equal(sId, "F1", "change event fired on Field");
 						assert.deepEqual(sValue, [2, "USD", oCurrencyCodeList], "change event value");
