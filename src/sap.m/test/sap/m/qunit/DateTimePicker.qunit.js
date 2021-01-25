@@ -137,6 +137,17 @@ sap.ui.define([
 		oDTP.destroy();
 	});
 
+	QUnit.test("Popover instance is properly configured on desktop", function(assert) {
+		// Prepare
+		var oDTP = new DateTimePicker().placeAt("qunit-fixture"),
+			oSetDurationsSpy = sinon.spy(sap.ui.core.Popup.prototype, "setDurations");
+
+		// Act
+		oDTP._createPopup();
+
+		// Assert
+		assert.ok(oSetDurationsSpy.calledOnce, "Popup opening and closing animation durations are set.");
+	});
 
 	QUnit.module("API");
 
@@ -256,44 +267,63 @@ sap.ui.define([
 	QUnit.test("Swticher is rendered and visible on small screen size", function(assert) {
 		// Arrange
 		var done = assert.async(),
-			oDTP7 = new DateTimePicker("DTP7", {}).placeAt("uiArea8");
+			oDTP7 = new DateTimePicker("DTP7", {}),
+			oAfterRenderingDelegate,
+			oCalendar;
+
+		oDTP7.placeAt("uiArea8");
 		sap.ui.getCore().applyChanges();
 		oDTP7.focus();
+
 		qutils.triggerEvent("click", "DTP7-icon");
 		sap.ui.getCore().applyChanges();
+		oCalendar = oDTP7._getCalendar();
+		oAfterRenderingDelegate = {
+			onAfterRendering: function() {
+				assert.ok(jQuery("#DTP7-PC-Switch")[0], "Swicher rendered");
+				assert.ok(jQuery("#DTP7-PC-Switch").is(":visible"), "Swicher is visible");
+				oCalendar.removeDelegate(oCalendar);
+				oDTP7.destroy();
+				done();
+			}
+		};
+
+		// Assert
+		oCalendar.addDelegate(oAfterRenderingDelegate);
 
 		// Act
 		oDTP7._handleWindowResize({name: "Phone"});
-
-
-		// Asssert
-		oDTP7.getAggregation("_popup").attachEventOnce("afterOpen", function() {
-			assert.ok(jQuery("#DTP7-PC-Switch")[0], "Swicher rendered");
-			assert.ok(jQuery("#DTP7-PC-Switch").is(":visible"), "Swicher is visible");
-			oDTP7.destroy();
-			done();
-		});
 	});
 
 	QUnit.test("Swticher is rendered and hidden on large screen size", function(assert) {
 		// Arrange
 		var done = assert.async(),
-			oDTP8 = new DateTimePicker("DTP8", {}).placeAt("uiArea8");
+			oDTP8 = new DateTimePicker("DTP8", {}),
+			oAfterRenderingDelegate,
+			oCalendar;
+
+		oDTP8.placeAt("uiArea8");
 		sap.ui.getCore().applyChanges();
 		oDTP8.focus();
+
 		qutils.triggerEvent("click", "DTP8-icon");
 		sap.ui.getCore().applyChanges();
+		oCalendar = oDTP8._getCalendar();
+		oAfterRenderingDelegate = {
+			onAfterRendering: function() {
+				assert.ok(jQuery("#sap-ui-invisible-DTP8-PC-Switch")[0], "Swicher rendered");
+				assert.ok(jQuery("#sap-ui-invisible-DTP8-PC-Switch").is(":hidden"), "Swicher is hidden");
+				oCalendar.removeDelegate(oCalendar);
+				oDTP8.destroy();
+				done();
+			}
+		};
+
+		// Assert
+		oCalendar.addDelegate(oAfterRenderingDelegate);
 
 		// Act
 		oDTP8._handleWindowResize({name: "Tablet"});
-
-		// Asssert
-		oDTP8.getAggregation("_popup").attachEventOnce("afterOpen", function() {
-			assert.ok(jQuery("#sap-ui-invisible-DTP8-PC-Switch")[0], "Swicher rendered");
-			assert.ok(jQuery("#sap-ui-invisible-DTP8-PC-Switch").is(":hidden"), "Swicher is hidden");
-			oDTP8.destroy();
-			done();
-		});
 	});
 
 	QUnit.module("initialFocusedDate property", {
@@ -413,10 +443,7 @@ sap.ui.define([
 		assert.equal(oDTP2.getDateValue().getTime(), new Date("2016", "01", "18", "10", "30", "00").getTime(), "DateValue not changed set");
 
 	});
-	/*
-				QUnit.test("change date by Pageup/down", function(assert) {
-				});
-	*/
+
 	QUnit.test("change date using calendar - open", function(assert) {
 		var done = assert.async(),
 			oSliders,
@@ -430,13 +457,10 @@ sap.ui.define([
 		bChange = false;
 		sValue = "";
 		sId = "";
-		oDTP3.focus();
-		qutils.triggerEvent("click", "DTP3-icon");
-		sap.ui.getCore().applyChanges();
 
 		oDTP3._createPopup();
 		oDTP3._oPopup.attachEvent("afterOpen", function() {
-
+			sap.ui.getCore().applyChanges();
 			assert.ok(jQuery("#DTP3-cal")[0], "calendar rendered");
 			assert.ok(jQuery("#DTP3-cal").is(":visible"), "calendar is visible");
 
@@ -469,14 +493,14 @@ sap.ui.define([
 
 			done();
 		});
+
+		oDTP3.focus();
+		qutils.triggerEvent("click", "DTP3-icon");
+		sap.ui.getCore().applyChanges();
 	});
 
 	QUnit.test("change date using calendar - choose", function(assert) {
 		var done = assert.async();
-
-		jQuery("#DTP3-OK").trigger("focus");
-		qutils.triggerKeydown("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
-		qutils.triggerKeyup("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
 
 		oDTP3._oPopup.attachEvent("afterClose", function() {
 			assert.ok(!jQuery("#DTP3-cal").is(":visible"), "calendar is invisible");
@@ -487,6 +511,10 @@ sap.ui.define([
 			assert.equal(oDTP3.getDateValue().getTime(), new Date("2016", "01", "10", "11", "11").getTime(), "DateValue set");
 			done();
 		});
+
+		jQuery("#DTP3-OK").trigger("focus");
+		qutils.triggerKeydown("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyup("DTP3-OK", jQuery.sap.KeyCodes.ENTER, false, false, false);
 	});
 
 	QUnit.module("Accessibility");
