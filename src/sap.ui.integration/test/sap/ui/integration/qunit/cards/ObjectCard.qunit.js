@@ -613,4 +613,36 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.test("Group title is not rendered when missing from manifest", function (assert) {
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+			var oContent = this.oCard.getAggregation("_content"),
+				bHasTitle = !!oContent.$().find(".sapFCardObjectItemTitle").length;
+
+			assert.strictEqual(bHasTitle, false, "group title is not rendered");
+			done();
+		}.bind(this));
+
+		this.oCard.setManifest({
+			"sap.app": {
+				"type": "card",
+				"id": "test.object.card.noGroupTitle"
+			},
+			"sap.card": {
+				"type": "Object",
+				"content": {
+					"groups": [{
+						"items": [{
+							"label": "Label",
+							"value": "Value"
+						}]
+					}]
+				}
+			}
+		});
+		Core.applyChanges();
+
+	});
+
 });

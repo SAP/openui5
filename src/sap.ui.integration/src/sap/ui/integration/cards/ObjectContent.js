@@ -42,6 +42,8 @@ sap.ui.define([
 	// shortcut for sap.m.AvatarColor
 	var AvatarColor = mLibrary.AvatarColor;
 
+	var FlexRendertype = mLibrary.FlexRendertype;
+
 	/**
 	 * Constructor for a new <code>ObjectContent</code>.
 	 *
@@ -181,12 +183,18 @@ sap.ui.define([
 		aGroups.forEach(function (oGroup) {
 
 			var oGroupContainer = new VBox({
-					visible : oGroup.visible
+				visible: oGroup.visible,
+				renderType: FlexRendertype.Bare
 			}).addStyleClass("sapFCardObjectGroup");
 
-			var oTitle = new Title({text: oGroup.title}).addStyleClass("sapFCardObjectItemTitle");
+			if (oGroup.title) {
+				oGroupContainer.addItem(new Title({
+					text: oGroup.title
+				}).addStyleClass("sapFCardObjectItemTitle"));
 
-			oGroupContainer.addItem(oTitle);
+				oGroupContainer.addStyleClass("sapFCardObjectGroupWithTitle");
+			}
+
 			oGroup.items.forEach(function (oItem) {
 				var oItemValue,
 					vLabel = oItem.label,

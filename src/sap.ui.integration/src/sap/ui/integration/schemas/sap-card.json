@@ -889,6 +889,9 @@
     "ContentType.Object.Group": {
       "description": "Represents a group of information for an object",
       "type": "object",
+      "required": [
+        "items"
+      ],
       "additionalProperties": false,
       "properties": {
         "title": {
