@@ -1170,7 +1170,7 @@ sap.ui.define([
 					this.handleInlineListNavigation(sName);
 				} else {
 					var oSuggestionsPopover = this._getSuggestionsPopover();
-					oSuggestionsPopover && oSuggestionsPopover.handleListNavigation(oEvent, sName);
+					oSuggestionsPopover && oSuggestionsPopover.handleListNavigation(this, oEvent, sName);
 				}
 
 				// mark the event for components that needs to know if the event was handled
@@ -1312,7 +1312,7 @@ sap.ui.define([
 					oListItem = ListHelpers.getListItem(oItem);
 
 					if (this.isOpen()) {
-						this._getSuggestionsPopover().updateFocus(oListItem);
+						this._getSuggestionsPopover().updateFocus(this, oListItem);
 						this.setLastFocusedListItem(oListItem);
 					} else {
 						this.addStyleClass("sapMFocus");
@@ -1363,7 +1363,7 @@ sap.ui.define([
 
 			if (oSuggestionsPopover) {
 				oSuggestionsPopover.setValueStateActiveState(false);
-				oSuggestionsPopover.updateFocus();
+				oSuggestionsPopover.updateFocus(this);
 			}
 
 			oDomRef.removeAttribute( "aria-activedescendant");
@@ -1658,7 +1658,7 @@ sap.ui.define([
 			this.syncPickerContent();
 			ComboBoxBase.prototype.open.call(this);
 
-			this._getSuggestionsPopover() && this._getSuggestionsPopover().updateFocus(ListHelpers.getListItem(this.getSelectedItem()));
+			this._getSuggestionsPopover() && this._getSuggestionsPopover().updateFocus(this, ListHelpers.getListItem(this.getSelectedItem()));
 
 			return this;
 		};

@@ -1343,7 +1343,7 @@ function(
 			}
 
 			if (this.getShowSuggestion()){
-				this._getSuggestionsPopover().handleListNavigation(oEvent);
+				this._getSuggestionsPopover().handleListNavigation(this, oEvent);
 
 				if (this._isIncrementalType()) {
 					oEvent.setMarked();
@@ -2558,7 +2558,7 @@ function(
 			return;
 		}
 
-		this._getSuggestionsPopover().initContent(bTabular ? this._getSuggestionsTable() : null);
+		this._getSuggestionsPopover().initContent(this.getId(), bTabular ? this._getSuggestionsTable() : null);
 
 		if (!this._hasTabularSuggestions() && !bTabular) {
 			this._decorateSuggestionsPopoverList(this._getSuggestionsPopover().getItemsContainer());
@@ -2699,6 +2699,7 @@ function(
 		if (!this._isSuggestionsPopoverInitiated()) {
 			var oSuggPopover = this._oSuggPopover = new SuggestionsPopover(this);
 
+			oSuggPopover.decorateParent(this);
 			oSuggPopover.setInputLabels(this.getLabels.bind(this));
 			this._createSuggestionsPopoverPopup();
 
@@ -2768,7 +2769,7 @@ function(
 
 		var oSuggPopover = this._getSuggestionsPopover();
 		var oPopover;
-		oSuggPopover.createSuggestionPopup({ showSelectedButton: this._hasShowSelectedButton() });
+		oSuggPopover.createSuggestionPopup(this, { showSelectedButton: this._hasShowSelectedButton() });
 		this._decoratePopupInput(oSuggPopover.getInput());
 
 		oPopover = oSuggPopover.getPopover();

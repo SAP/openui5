@@ -45,23 +45,25 @@ sap.ui.define([
 
 	QUnit.test("ValueStateHeader is destroyed when the SuggestionsPopover is destroyed", function (assert) {
 		var oSpy;
+		var oInput = new Input();
+		var oSuggestionsPopover = new SuggestionsPopover(oInput);
 
 		// Arrange
-		this.oSuggestionsPopover.createSuggestionPopup();
-		this.oSuggestionsPopover._getValueStateHeader();
+		oSuggestionsPopover.createSuggestionPopup(oInput);
+		oSuggestionsPopover._getValueStateHeader();
 
 		// Assert
-		assert.ok(this.oSuggestionsPopover._oValueStateHeader, "The ValueStateHeader is created.");
+		assert.ok(oSuggestionsPopover._getValueStateHeader(), "The ValueStateHeader is created.");
 
 		// Arrange
-		oSpy = this.spy(this.oSuggestionsPopover._oValueStateHeader, "destroy");
+		oSpy = this.spy(oSuggestionsPopover._getValueStateHeader(), "destroy");
 
 		// Act
-		this.oSuggestionsPopover.destroy();
+		oSuggestionsPopover.destroy();
 
 		// Assert
 		assert.ok(oSpy.calledOnce, "The value state header was destroyed.");
-		assert.strictEqual(this.oSuggestionsPopover._oValueStateHeader, null, "There is no reference to the ValueStateHeader in the SuggestionsPopover.");
+		assert.strictEqual(this.oSuggestionsPopover._getValueStateHeader(), undefined, "There is no reference to the ValueStateHeader in the SuggestionsPopover.");
 
 		// Clean
 		oSpy.restore();
@@ -128,7 +130,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		//Act
-		oSuggestionsPopover.createSuggestionPopup({});
+		oSuggestionsPopover.createSuggestionPopup(oComboBox, {});
 
 		//Assert
 		assert.ok(oSuggestionsPopover._oPopover.hasStyleClass("sapUiNoContentPadding"), "The sapUiNoContentPadding class is added");

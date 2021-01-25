@@ -873,10 +873,11 @@ sap.ui.define([
 		ComboBoxBase.prototype._createSuggestionsPopover = function () {
 			var oSuggPopover = new SuggestionsPopover(this);
 
+			oSuggPopover.decorateParent(this);
 			// Creates the internal controls of the <code>SuggestionsPopover</code>
-			oSuggPopover.createSuggestionPopup({showSelectedButton: this._hasShowSelectedButton()});
+			oSuggPopover.createSuggestionPopup(this, {showSelectedButton: this._hasShowSelectedButton()});
 			this._decoratePopupInput(oSuggPopover.getInput());
-			oSuggPopover.initContent();
+			oSuggPopover.initContent(this.getId());
 			this.forwardEventHandlersToSuggPopover(oSuggPopover);
 
 			this._configureList(oSuggPopover.getItemsContainer());
