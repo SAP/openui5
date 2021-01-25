@@ -13,12 +13,11 @@
 			<Title text="{i18n>worklistTitle}" />
 		</semantic:titleHeading>
 
-		<semantic:content>
+		<semantic:headerContent>
 			<IconTabBar
 				id="iconTabBar"
 				select=".onQuickFilter"
-				expandable="false"
-				headerBackgroundDesign="Transparent">
+				expandable="false">
 				<items>
 					<IconTabFilter
 						key="all"
@@ -142,7 +141,7 @@
 					</Table>
 				</content>
 			</IconTabBar>
-		</semantic:content>
+		</semantic:headerContent>
 		<semantic:sendEmailAction>
 			<semantic:SendEmailAction id="shareEmail" press=".onShareEmailPress"/>
 		</semantic:sendEmailAction>
