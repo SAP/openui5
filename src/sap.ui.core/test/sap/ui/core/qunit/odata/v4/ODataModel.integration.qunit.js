@@ -16330,6 +16330,8 @@ sap.ui.define([
 	// not appear for subtotals at all) for a grand total without subtotals to check for drill-down
 	// errors.
 	// JIRA: CPOUI5ODATAV4-583
+	// Order by units as well (at least expect the right requests).
+	// JIRA: CPOUI5ODATAV4-763
 	QUnit.test("Data Aggregation: expand and paging to the last loaded leaf", function (assert) {
 		var oModel = createAggregationModel(),
 			oTable,
@@ -16349,7 +16351,7 @@ sap.ui.define([
 			},\
 			groupLevels : [\'Country\']\
 		},\
-		$orderby : \'Country desc,Region\'\
+		$orderby : \'Country desc,Region,Currency asc,LocalCurrency desc\'\
 	}}" threshold="0" visibleRowCount="4">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -16368,7 +16370,8 @@ sap.ui.define([
 		this.expectRequest("BusinessPartners?$apply=concat(aggregate(AmountPerSale,Currency"
 				+ ",SalesAmount,SalesAmountLocalCurrency,LocalCurrency,SalesNumber)"
 				+ ",groupby((Country),aggregate(SalesAmountLocalCurrency,LocalCurrency))"
-				+ "/orderby(Country desc)/concat(aggregate($count as UI5__count),top(3)))", {
+				+ "/orderby(Country desc,LocalCurrency desc)"
+				+ "/concat(aggregate($count as UI5__count),top(3)))", {
 				value : [{
 					AmountPerSale : "10",
 					Currency : "DEM",
@@ -16413,7 +16416,8 @@ sap.ui.define([
 			///TODO could we omit Currency here because it was non-null at parent?
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'X')/groupby((Region)"
 					+ ",aggregate(AmountPerSale,Currency,SalesAmount,SalesAmountLocalCurrency"
-					+ ",LocalCurrency,SalesNumber))/orderby(Region)&$count=true&$skip=0&$top=4", {
+					+ ",LocalCurrency,SalesNumber))/orderby(Region,Currency asc,LocalCurrency desc)"
+					+ "&$count=true&$skip=0&$top=4", {
 					"@odata.count" : "5",
 					value : [{
 						AmountPerSale : "10",
@@ -16458,7 +16462,8 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'X')/groupby((Region)"
 					+ ",aggregate(AmountPerSale,Currency,SalesAmount,SalesAmountLocalCurrency"
-					+ ",LocalCurrency,SalesNumber))/orderby(Region)&$count=true&$skip=4&$top=1", {
+					+ ",LocalCurrency,SalesNumber))/orderby(Region,Currency asc,LocalCurrency desc)"
+					+ "&$count=true&$skip=4&$top=1", {
 					"@odata.count" : "5",
 					value : [{
 						AmountPerSale : "10",
@@ -16471,8 +16476,8 @@ sap.ui.define([
 					}]
 				})
 				.expectRequest("BusinessPartners?$apply=groupby((Country)"
-					+ ",aggregate(SalesAmountLocalCurrency,LocalCurrency))/orderby(Country desc)"
-					+ "/skip(3)/top(1)", {
+					+ ",aggregate(SalesAmountLocalCurrency,LocalCurrency))"
+					+ "/orderby(Country desc,LocalCurrency desc)/skip(3)/top(1)", {
 					value : [{
 						Country : "W",
 						LocalCurrency : "JPY",
