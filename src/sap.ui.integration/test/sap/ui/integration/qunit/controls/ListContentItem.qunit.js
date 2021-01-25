@@ -47,6 +47,27 @@ sap.ui.define([
 		oLCI.destroy();
 	});
 
+	QUnit.test("Root classes for icon size", function (assert) {
+		// arrange
+		var oLCI = new ListContentItem();
+
+		oLCI.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oLCI.$().hasClass("sapUiIntLCIIconSize" + oLCI.getIconSize()), "sapUiIntLCIIconSize" + oLCI.getIconSize() + " class is not added when there is no icon.");
+
+		// act
+		oLCI.setIcon("sap-icon://warning");
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oLCI.$().hasClass("sapUiIntLCIIconSize" + oLCI.getIconSize()), "sapUiIntLCIIconSize" + oLCI.getIconSize() + " class is added when there is icon.");
+
+		// clean up
+		oLCI.destroy();
+	});
+
 	QUnit.test("Content layout when there are title and chart", function (assert) {
 		// arrange
 		var oLCI = new ListContentItem({

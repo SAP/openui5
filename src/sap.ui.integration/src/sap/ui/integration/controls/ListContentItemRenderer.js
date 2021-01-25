@@ -22,7 +22,10 @@ sap.ui.define([
 		StandardListItemRenderer.renderLIAttributes.apply(this, arguments);
 
 		rm.class("sapUiIntLCI");
-		rm.class("sapUiIntLCIIconSize" + oLI.getIconSize());
+
+		if (oLI.getIcon()) {
+			rm.class("sapUiIntLCIIconSize" + oLI.getIconSize());
+		}
 
 		if (oLI.getMicrochart()) {
 			rm.class("sapUiIntLCIWithChart");
