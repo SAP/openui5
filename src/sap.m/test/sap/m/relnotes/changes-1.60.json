@@ -3435,5 +3435,21 @@
         ]
       }
     ]
+  },
+  "1.60.34": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "577a0e590c587af78a76526f957ec13c99ea893d",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Autocapitalization rendering tests are now fixed in FF",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180012238"
+          }
+        ]
+      }
+    ]
   }
 }

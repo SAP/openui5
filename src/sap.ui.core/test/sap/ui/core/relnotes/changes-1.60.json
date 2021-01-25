@@ -1498,5 +1498,21 @@
         ]
       }
     ]
+  },
+  "1.60.34": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "d355828c6e98610783cabae98400657d153bca91",
+        "type": "FIX",
+        "text": " Locale: Remove mapping from 'SH' to 'SR' for logon language",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007189712020"
+          }
+        ]
+      }
+    ]
   }
 }
