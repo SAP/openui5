@@ -673,7 +673,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"item": {
 								"text": "{CompanyName}",
 								"key": "{CustomerID}",
-								"additionalText": "{= ${CustomerID} !== undefind ? ${Country} + ', ' +  ${City} + ', ' + ${Address}: ''}"
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
 						}
 					},
@@ -693,7 +693,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"item": {
 								"text": "{FirstName} {LastName}",
 								"key": "{EmployeeID}",
-								"additionalText": "{= ${EmployeeID} !== undefind ? ${Country} + ', ' +  ${Title} + ', ' + ${HomePhone}: ''}"
+								"additionalText": "{= ${EmployeeID} !== undefined ? ${Country} + ', ' +  ${Title} + ', ' + ${HomePhone} : ''}"
 							}
 						}
 					},
@@ -713,7 +713,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"path": "/value"
 							},
 							"item": {
-								"text": "{= ${OrderID} !== undefind ? ${OrderID} + '-' +  ${CustomerID} + '-' + ${EmployeeID}: ''}",
+								"text": "{= ${OrderID} !== undefined ? ${OrderID} + '-' +  ${CustomerID} + '-' + ${EmployeeID} : ''}",
 								"key": "{OrderID}",
 								"additionalText": "{OrderDate}"
 							}
@@ -734,9 +734,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"path": "/value"
 							},
 							"item": {
-								"text": "{= ${OrderID} !== undefind ? ${OrderID} + '-' +  ${ProductID} + ':' + ${Product/ProductName}: ''}",
+								"text": "{= ${OrderID} !== undefined ? ${OrderID} + '-' +  ${ProductID} + ':' + ${Product/ProductName} : ''}",
 								"key": "{ProductID}",
-								"additionalText": "{= ${OrderID} !== undefind ? ${UnitPrice} + ' USD, count: '+ ${Quantity}: ''}"
+								"additionalText": "{= ${OrderID} !== undefined ? ${UnitPrice} + ' USD, count: '+ ${Quantity} : ''}"
 							}
 						}
 					},
@@ -758,7 +758,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"item": {
 								"text": "{CompanyName}",
 								"key": "{CustomerID}",
-								"additionalText": "{= ${CustomerID} !== undefind ? ${Country} + ', ' +  ${City} + ', ' + ${Address}: ''}"
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
 							}
 						}
 					}
