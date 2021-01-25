@@ -59,17 +59,22 @@
 									<OverflowToolbarLayoutData priority="High" />
 								</layoutData>
 							</MenuButton>
-							<MenuButton id="openCardEditorButton" text="Card Editor" type="Transparent" visible="{settings>/editable}">
+							<MenuButton
+								id="openConfigurationEditorButton"
+								text="Configuration Editor"
+								type="Transparent"
+								visible="{=  ${settings>/internal} &amp;&amp; ${settings>/editable} &amp;&amp; !${settings>/isApplication} }"
+							>
 								<menu>
 									<Menu>
 										<MenuItem text="Administrator" press=".onOpenConfigurationEditor">
-											<customData><core:CustomData key="mode" value="admin"></core:CustomData></customData>
+											<customData><core:CustomData key="mode" value="admin" /></customData>
 										</MenuItem>
 										<MenuItem text="Page/Content Administrator" press=".onOpenConfigurationEditor">
-											<customData><core:CustomData key="mode" value="content"></core:CustomData></customData>
+											<customData><core:CustomData key="mode" value="content" /></customData>
 										</MenuItem>
 										<MenuItem text="Translator" press=".onOpenConfigurationEditor">
-											<customData><core:CustomData key="mode" value="translator"></core:CustomData></customData>
+											<customData><core:CustomData key="mode" value="translator" /></customData>
 										</MenuItem>
 									</Menu>
 								</menu>

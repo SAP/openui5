@@ -202,7 +202,8 @@ sap.ui.define([
 
 					oDialog.setModel(new JSONModel({
 						title: "Configuration Editor for " + sEditorTitle,
-						subTitle: "<p>Settings loaded from <em>" + this._oFileEditor.getDesigntimeFile().name + "</em></p>",
+						subTitle: "<p>Settings loaded from <em>" + this._oFileEditor.getDesigntimeFile().name + "</em>. "
+								+ "You can edit it to adjust editor fields.<p>",
 						cardId: this._oCardSample.getId(),
 						mode: sMode,
 						designtime: this._extractDesigntimeMetadata(aArgs[1])

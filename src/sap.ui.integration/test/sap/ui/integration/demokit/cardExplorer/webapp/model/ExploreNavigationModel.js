@@ -828,12 +828,12 @@ sap.ui.define([
 						},
 						files: [
 							{
-								url: '/samples/cardActions.json',
+								url: '/samples/actions/quickLinks/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
 							},
 							{
-								url: '/samples/dt/Configuration.js',
+								url: '/samples/actions/quickLinks/dt/Configuration.js',
 								name: 'dt/Configuration.js',
 								key: 'designtime.js'
 							}
@@ -938,12 +938,12 @@ sap.ui.define([
 						},
 						files: [
 							{
-								url: '/samples/dateRange.json',
+								url: '/samples/dateRanges/card1/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
 							},
 							{
-								url: '/samples/dt/Configuration.js',
+								url: '/samples/dateRanges/card1/dt/Configuration.js',
 								name: 'dt/Configuration.js',
 								key: 'designtime.js'
 							}
@@ -1131,12 +1131,12 @@ sap.ui.define([
 						title: 'Parameters',
 						files: [
 							{
-								url: '/samples/parameters.json',
+								url: '/samples/parameters/parameters/manifest.json',
 								name: 'manifest.json',
 								key: 'manifest.json'
 							},
 							{
-								url: '/samples/dt/Configuration.js',
+								url: '/samples/parameters/parameters/dt/Configuration.js',
 								name: 'dt/Configuration.js',
 								key: 'designtime.js'
 							}
@@ -1788,7 +1788,7 @@ sap.ui.define([
 				]
 			},
 			{
-				title: 'Card Editor Design-time',
+				title: 'Configuration Editor',
 				icon: 'sap-icon://create-form',
 				key: 'designtime',
 				target: 'exploreOverview',
