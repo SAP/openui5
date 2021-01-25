@@ -186,6 +186,8 @@ sap.ui.define([
 					this.initEditor(oConfig);
 					if (oConfig.hint && oConfig.type !== "boolean") {
 						this._addHint(oConfig.hint);
+					} else if (oConfig.hint && oConfig.type === "boolean" && oConfig.cols && oConfig.cols === 1) {
+						this._addHint(oConfig.hint);
 					}
 				}.bind(this));
 
@@ -223,11 +225,16 @@ sap.ui.define([
 	BaseField.prototype._triggerValidation = function (value) {
 		var oConfig = this.getConfiguration();
 		//check if trigger validation
-		var doValidation = true;
-		if (!oConfig.required && oConfig.type === "string" && !value) {
-			doValidation = false;
-		} else if (!oConfig.required && (isNaN(value) || value === "") && (oConfig.type === "integer" || oConfig.type === "number")) {
-			doValidation = false;
+		var doValidation = false;
+		if (oConfig.required) {
+			doValidation = true;
+		} else if (oConfig.type === "string" && value) {
+			doValidation = true;
+		} else if ((oConfig.type === "integer" || oConfig.type === "number") && !isNaN(value)) {
+			//the value passed in is "" when empty the field
+			if (value !== "") {
+				doValidation = true;
+			}
 		}
 		if (oConfig.validations && Array.isArray(oConfig.validations) && doValidation) {
 			for (var i = 0; i < oConfig.validations.length; i++) {

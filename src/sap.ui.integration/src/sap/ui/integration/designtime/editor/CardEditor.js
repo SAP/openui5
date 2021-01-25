@@ -1218,7 +1218,7 @@ sap.ui.define([
 			oField
 		);
 		//add hint in the new row for boolean data type.
-		if (oConfig.hint && oConfig.type === "boolean") {
+		if (oConfig.hint && oConfig.type === "boolean" && (!oConfig.cols || oConfig.cols === 2)) {
 			this._addHint(oConfig.hint);
 		}
 		if (oNewLabel) {
