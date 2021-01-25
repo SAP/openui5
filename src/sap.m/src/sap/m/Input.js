@@ -563,16 +563,6 @@ function(
 			this._oSuggPopover = null;
 		}
 
-		if (this._oShowMoreButton) {
-			this._oShowMoreButton.destroy();
-			this._oShowMoreButton = null;
-		}
-
-		if (this._oButtonToolbar) {
-			this._oButtonToolbar.destroy();
-			this._oButtonToolbar = null;
-		}
-
 		// Unregister custom events handlers after migration to semantic rendering
 		this.$().off("click");
 	};
@@ -2424,16 +2414,13 @@ function(
 	};
 
 	/**
-	 * Gets show more button.
+	 * Gets show more button from SuggestionsPopover's Popover/Dialog.
 	 *
 	 * @private
 	 * @return {sap.m.Button} Show more button.
 	 */
 	Input.prototype._getShowMoreButton = function() {
-		return this._oShowMoreButton || (this._oShowMoreButton = new Button({
-			text : this._oRb.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
-			press : this._getShowMoreButtonPress.bind(this)
-		}));
+		return this._getSuggestionsPopover().getShowMoreButton();
 	};
 
 	/**
@@ -2467,21 +2454,25 @@ function(
 	 * @private
 	 * @param{boolean} [bTabular] optional parameter to force override the tabular suggestions check
 	 */
-	Input.prototype._addShowMoreButton = function(bTabular) {
-		var oPopup = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover().getPopover();
+	Input.prototype._addShowMoreButton = function() {
+		var oSuggestionsPopover = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover();
+		var oPopup = oSuggestionsPopover && oSuggestionsPopover.getPopover();
 
-		if (!oPopup || !bTabular && !this._hasTabularSuggestions()) {
+		if (!oPopup || !this._hasTabularSuggestions() || this._getShowMoreButton()) {
 			return;
 		}
 
+		var oShowMoreButton = new Button({
+			text : this._oRb.getText("INPUT_SUGGESTIONS_SHOW_ALL"),
+			press : this._getShowMoreButtonPress.bind(this)
+		});
+
 		if (oPopup.isA("sap.m.Dialog")) {
-			// phone variant, use endButton (beginButton is close)
-			var oShowMoreButton = this._getShowMoreButton();
-			oPopup.setEndButton(oShowMoreButton);
+			oSuggestionsPopover.setShowMoreButton(oShowMoreButton);
 		} else {
-			var oButtonToolbar = this._getButtonToolbar();
-			// desktop/tablet variant, use popover footer
-			oPopup.setFooter(oButtonToolbar);
+			oSuggestionsPopover.setShowMoreButton(new Toolbar({
+				content: [new ToolbarSpacer(), oShowMoreButton]
+			}));
 		}
 	};
 
@@ -2491,34 +2482,12 @@ function(
 	 * @private
 	 */
 	Input.prototype._removeShowMoreButton = function() {
-		var oPopup = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover().getPopover();
+		var oSuggestionsPopover = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover();
+		var oPopup = oSuggestionsPopover && oSuggestionsPopover.getPopover();
 
-		if (!oPopup || !this._hasTabularSuggestions()) {
-			return;
+		if (oPopup && this._hasTabularSuggestions() && this._getShowMoreButton()) {
+			oSuggestionsPopover.removeShowMoreButton();
 		}
-
-		if (oPopup.isA("sap.m.Dialog")) {
-			oPopup.setEndButton(null);
-		} else {
-			oPopup.setFooter(null);
-		}
-	};
-
-	/**
-	 * Gets button toolbar.
-	 *
-	 * @private
-	 * @return {sap.m.Toolbar} Button toolbar.
-	 */
-	Input.prototype._getButtonToolbar = function() {
-		var oShowMoreButton = this._getShowMoreButton();
-
-		return this._oButtonToolbar || (this._oButtonToolbar = new Toolbar({
-			content: [
-				new ToolbarSpacer(),
-				oShowMoreButton
-			]
-		}));
 	};
 
 	Input.prototype._hasShowSelectedButton = function () {return false;};
@@ -2601,7 +2570,7 @@ function(
 		}
 
 		if (this.getShowTableSuggestionValueHelp()) {
-			this._addShowMoreButton(true);
+			this._addShowMoreButton();
 		}
 	};
 

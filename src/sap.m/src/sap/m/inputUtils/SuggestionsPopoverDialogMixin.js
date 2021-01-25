@@ -81,6 +81,37 @@ sap.ui.define([
 		};
 
 		/**
+		 * Gets Show More button from <code>SuggestionsPopover</code>'s Dialog.
+		 *
+		 * @return {sap.m.Button} Show more button.
+		 * @public
+		 */
+		this.getShowMoreButton = function() {
+			return this.getPopover().getEndButton();
+		};
+
+		/**
+		 * Sets Show More button to <code>SuggestionsPopover</code>'s Dialog.
+		 *
+	 	 * @param {sap.m.Button} oShowMoreButton The "Show More" button for the Dialog's <code>endButton</code> aggregation
+		 * @public
+		 */
+		this.setShowMoreButton = function(oShowMoreButton) {
+			this.getPopover().setEndButton(oShowMoreButton);
+			return this;
+		};
+
+		/**
+		 * Destroys Show More button from <code>SuggestionsPopover<code>'s Dialog.
+		 *
+		 * @public
+		 */
+		this.removeShowMoreButton = function() {
+			this.getPopover().destroyAggregation("endButton");
+			return this;
+		};
+
+		/**
 		 * @override
 		 * @param fnHandler
 		 * @returns {sap.m.Button|null}
