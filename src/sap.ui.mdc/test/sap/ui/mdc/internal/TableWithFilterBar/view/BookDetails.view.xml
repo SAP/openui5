@@ -61,7 +61,7 @@
 												<mdcf:content>
 													<mdcf:FieldValueHelpMTableWrapper>
 														<mdcf:table>
-															<Table items='{path : "/Authors"}' width="30rem">
+															<Table items='{path : "/Authors"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
 																<columns>
 																	<Column width="5rem">
 																		<header>

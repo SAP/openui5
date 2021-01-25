@@ -55,7 +55,7 @@
 											<mdcf:content>
 												<mdcf:FieldValueHelpMTableWrapper>
 													<mdcf:table>
-														<Table items='{path : "/Books"}' width="30rem">
+														<Table items='{path : "/Books"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
 															<columns>
 																<Column width="5rem">
 																	<header>
@@ -84,7 +84,7 @@
 											<mdcf:content>
 												<mdcf:FieldValueHelpMTableWrapper>
 													<mdcf:table>
-														<Table items='{path : "/Orders"}' width="30rem">
+														<Table items='{path : "/Orders"}' width="30rem"  growing="true" growingScrollToLoad="true" growingThreshold="20">
 															<columns>
 																<Column width="5rem">
 																	<header>
