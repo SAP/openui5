@@ -75,7 +75,7 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.rta.command
 		 */
 		addVariant: function (mPropertyBag) {
-			mPropertyBag.fileType = "variant";
+			mPropertyBag.changeSpecificData.isVariant = true;
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.add);
 		},
 

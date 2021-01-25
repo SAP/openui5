@@ -2,53 +2,57 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/UriParameters",
+	"sap/base/util/values",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/dt/plugin/ContextMenu",
+	"sap/ui/dt/plugin/TabHandling",
+	"sap/ui/dt/plugin/ToolHooks",
 	"sap/ui/rta/command/CommandFactory",
-	"sap/ui/rta/plugin/Rename",
-	"sap/ui/rta/plugin/DragDrop",
-	"sap/ui/rta/plugin/RTAElementMover",
-	"sap/ui/rta/plugin/CutPaste",
-	"sap/ui/rta/plugin/Remove",
-	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
+	"sap/ui/rta/plugin/iframe/AddIFrame",
 	"sap/ui/rta/plugin/Combine",
-	"sap/ui/rta/plugin/Split",
+	"sap/ui/rta/plugin/CompVariant",
+	"sap/ui/rta/plugin/ControlVariant",
+	"sap/ui/rta/plugin/CreateContainer",
+	"sap/ui/rta/plugin/CutPaste",
+	"sap/ui/rta/plugin/DragDrop",
+	"sap/ui/rta/plugin/Remove",
+	"sap/ui/rta/plugin/Rename",
+	"sap/ui/rta/plugin/RTAElementMover",
 	"sap/ui/rta/plugin/Selection",
 	"sap/ui/rta/plugin/Settings",
-	"sap/ui/rta/plugin/Stretch",
-	"sap/ui/rta/plugin/ControlVariant",
-	"sap/ui/rta/plugin/iframe/AddIFrame",
-	"sap/ui/dt/plugin/ToolHooks",
-	"sap/ui/dt/plugin/ContextMenu",
-	"sap/ui/dt/plugin/TabHandling",
-	"sap/base/util/isEmptyObject",
-	"sap/base/util/values"
+	"sap/ui/rta/plugin/Split",
+	"sap/ui/rta/plugin/Stretch"
 ], function(
+	isEmptyObject,
+	UriParameters,
+	values,
 	ManagedObject,
+	ContextMenuPlugin,
+	TabHandlingPlugin,
+	ToolHooksPlugin,
 	CommandFactory,
-	RTARenamePlugin,
-	RTADragDropPlugin,
-	RTAElementMover,
-	CutPastePlugin,
-	RemovePlugin,
-	CreateContainerPlugin,
 	AdditionalElementsPlugin,
 	AdditionalElementsDialog,
 	AdditionalElementsAnalyzer,
+	AddIFramePlugin,
 	CombinePlugin,
-	SplitPlugin,
+	CompVariantPlugin,
+	ControlVariantPlugin,
+	CreateContainerPlugin,
+	CutPastePlugin,
+	RTADragDropPlugin,
+	RemovePlugin,
+	RTARenamePlugin,
+	RTAElementMover,
 	SelectionPlugin,
 	SettingsPlugin,
-	StretchPlugin,
-	ControlVariantPlugin,
-	AddIFramePlugin,
-	ToolHooksPlugin,
-	ContextMenuPlugin,
-	TabHandlingPlugin,
-	isEmptyObject,
-	values
+	SplitPlugin,
+	StretchPlugin
 ) {
 	"use strict";
 
@@ -182,6 +186,12 @@ sap.ui.define([
 			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
 				commandFactory: this._oCommandFactory
 			});
+
+			if (UriParameters.fromQuery(window.location.search).get("sap-ui-rta-xx-compKeyUser") === "true") {
+				this._mDefaultPlugins["compVariant"] = new CompVariantPlugin({
+					commandFactory: this._oCommandFactory
+				});
+			}
 
 			this._mDefaultPlugins["addIFrame"] = new AddIFramePlugin({
 				commandFactory: this._oCommandFactory

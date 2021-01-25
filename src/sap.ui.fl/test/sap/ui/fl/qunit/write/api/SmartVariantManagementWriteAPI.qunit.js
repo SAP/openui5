@@ -46,7 +46,7 @@ sap.ui.define([
 		}, {
 			apiFunctionName: "addVariant",
 			compVariantStateFunctionName: "add",
-			expectedFileType: "variant"
+			expectedSpecificData: {isVariant: true }
 		}, {
 			apiFunctionName: "save",
 			compVariantStateFunctionName: "persist"
@@ -60,11 +60,13 @@ sap.ui.define([
 			QUnit.test("When " + testData.apiFunctionName + " is called", function (assert) {
 				// mock control
 				var sPersistencyKey = "thePersistencyKey";
-				var mPropertyBag = {};
-				mPropertyBag.control = {
-					getPersistencyKey: function () {
-						return sPersistencyKey;
-					}
+				var mPropertyBag = {
+					control: {
+						getPersistencyKey: function () {
+							return sPersistencyKey;
+						}
+					},
+					changeSpecificData: {}
 				};
 
 				var oMockResponse = testData.mockedResponse || {};
@@ -80,8 +82,8 @@ sap.ui.define([
 				assert.equal(oCompVariantStateFunctionArguments, mPropertyBag, "the propertyBag was passed,");
 				assert.equal(oCompVariantStateFunctionArguments.reference, sReference, "the reference was added,");
 				assert.equal(oCompVariantStateFunctionArguments.persistencyKey, sPersistencyKey, "and the reference was added");
-				if (testData.expectedFileType) {
-					assert.equal(oCompVariantStateFunctionArguments.fileType, testData.expectedFileType, "and the file type was set");
+				if (testData.expectedSpecificData) {
+					assert.deepEqual(oCompVariantStateFunctionArguments.changeSpecificData, testData.expectedSpecificData, "and the specific data was set");
 				}
 			});
 		});

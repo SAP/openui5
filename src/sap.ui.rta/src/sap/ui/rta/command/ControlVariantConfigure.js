@@ -13,7 +13,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * Switch control variants
+	 * Configure control variants
 	 *
 	 * @class
 	 * @extends sap.ui.rta.command.BaseCommand
@@ -22,7 +22,7 @@ sap.ui.define([
 	 * @constructor
 	 * @private
 	 * @since 1.52
-	 * @alias sap.ui.rta.command.ControlVariantDuplicate
+	 * @alias sap.ui.rta.command.ControlVariantConfigure
 	 */
 	var ControlVariantConfigure = BaseCommand.extend("sap.ui.rta.command.ControlVariantConfigure", {
 		metadata : {

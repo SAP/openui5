@@ -24,13 +24,9 @@ sap.ui.define([
 
 	var sComponentId = "the.app.component";
 
-	QUnit.done(function() {
-		jQuery("#qunit-fixture").hide();
-	});
-
 	QUnit.module("add", {
 		beforeEach: function () {
-			this.appComponent = new UIComponent(sComponentId);
+			this.oAppComponent = new UIComponent(sComponentId);
 			return Settings.getInstance()
 			.then(function () {
 				return FlexState.initialize({
@@ -42,7 +38,7 @@ sap.ui.define([
 		afterEach: function() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
-			this.appComponent.destroy();
+			this.oAppComponent.destroy();
 		}
 	}, function() {
 		QUnit.test("Given no propertyBag is provided", function(assert) {
@@ -174,7 +170,7 @@ sap.ui.define([
 
 	QUnit.module("updateState", {
 		before: function () {
-			this.appComponent = new UIComponent(sComponentId);
+			this.oAppComponent = new UIComponent(sComponentId);
 			FlexState.clearState(sComponentId);
 		},
 		beforeEach: function() {
@@ -188,7 +184,7 @@ sap.ui.define([
 			sandbox.restore();
 		},
 		after: function () {
-			this.appComponent.destroy();
+			this.oAppComponent.destroy();
 		}
 	}, function() {
 		QUnit.test("Given updateState is called with a new variant", function(assert) {
@@ -298,21 +294,21 @@ sap.ui.define([
 	});
 
 	QUnit.module("persist", {
-		before: function () {
-			this.appComponent = new UIComponent(sComponentId);
-		},
 		beforeEach: function() {
-			return FlexState.initialize({
-				componentId: sComponentId,
-				reference: sComponentId
-			});
+			this.oAppComponent = new UIComponent(sComponentId);
+			FlexState.clearState(sComponentId);
+
+			return Promise.all([
+				FlexState.initialize({
+					componentId: sComponentId,
+					reference: sComponentId
+				}),
+				Settings.getInstance()
+			]);
 		},
 		afterEach: function() {
-			FlexState.clearState(sComponentId);
+			this.oAppComponent.destroy();
 			sandbox.restore();
-		},
-		after: function () {
-			this.appComponent.destroy();
 		}
 	}, function() {
 		QUnit.test("Given persist is called with all kind of objects (variants, changes, defaultVariant and standardVariant) are present", function(assert) {
@@ -385,11 +381,29 @@ sap.ui.define([
 				assert.equal(oCompVariantStateMapForPersistencyKey.standardVariant, undefined, "the standard variant was cleared");
 			});
 		});
+
+		QUnit.test("persistAll", function(assert) {
+			var oPersistStub = sandbox.stub(CompVariantState, "persist");
+			sandbox.stub(FlexState, "getCompVariantsMap").returns({
+				persistencyKey1: {},
+				persistencyKey2: {},
+				persistencyKey3: {}
+			});
+			return CompVariantState.persistAll(sComponentId).then(function() {
+				assert.equal(oPersistStub.callCount, 3, "persist was called three times");
+				assert.equal(oPersistStub.getCall(0).args[0].reference, sComponentId);
+				assert.equal(oPersistStub.getCall(0).args[0].persistencyKey, "persistencyKey1");
+				assert.equal(oPersistStub.getCall(1).args[0].reference, sComponentId);
+				assert.equal(oPersistStub.getCall(1).args[0].persistencyKey, "persistencyKey2");
+				assert.equal(oPersistStub.getCall(2).args[0].reference, sComponentId);
+				assert.equal(oPersistStub.getCall(2).args[0].persistencyKey, "persistencyKey3");
+			});
+		});
 	});
 
 	QUnit.module("setDefault", {
 		before: function() {
-			this.appComponent = new UIComponent(sComponentId);
+			this.oAppComponent = new UIComponent(sComponentId);
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
@@ -400,7 +414,7 @@ sap.ui.define([
 			sandbox.restore();
 		},
 		after:function () {
-			this.appComponent.destroy();
+			this.oAppComponent.destroy();
 		}
 	}, function() {
 		QUnit.test("Given setDefault is called twice", function(assert) {
@@ -444,7 +458,7 @@ sap.ui.define([
 
 	QUnit.module("setExecuteOnSelect", {
 		before: function() {
-			this.appComponent = new UIComponent(sComponentId);
+			this.oAppComponent = new UIComponent(sComponentId);
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
@@ -455,7 +469,7 @@ sap.ui.define([
 			sandbox.restore();
 		},
 		after:function () {
-			this.appComponent.destroy();
+			this.oAppComponent.destroy();
 		}
 	}, function() {
 		QUnit.test("Given setExecuteOnSelect is called twice", function(assert) {

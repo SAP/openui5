@@ -229,47 +229,13 @@ sap.ui.define([
 		});
 
 		QUnit.test("when save is called", function(assert) {
-			var mPropertyBag = {};
-			mPropertyBag.skipUpdateCache = true;
-			mPropertyBag.selector = this.vSelector;
+			var oFlexObjectStateSaveStub = sandbox.stub(FlexObjectState, "saveFlexObjects").returns("foo");
+			var mPropertyBag = { foo: "bar" };
+			var sReturn = PersistenceWriteAPI.save(mPropertyBag);
 
-			var fnFlexStub = getMethodStub([this.vSelector.appComponent, mPropertyBag.skipUpdateCache], Promise.resolve());
-			var fnDescriptorStub = getMethodStub([this.vSelector.appComponent, mPropertyBag.skipUpdateCache], Promise.resolve());
-
-			mockFlexController(mPropertyBag.selector, { saveAll : fnFlexStub });
-			mockDescriptorController(mPropertyBag.selector, { saveAll : fnDescriptorStub });
-
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges")
-				.withArgs(Object.assign({selector: mPropertyBag.selector, invalidateCache: true, componentId: "appComponent"}))
-				.resolves(sReturnValue);
-
-			return PersistenceWriteAPI.save(mPropertyBag).then(function(sValue) {
-				assert.strictEqual(sValue, sReturnValue, "then the flex persistence was called with correct parameters");
-			});
-		});
-
-		QUnit.test("when save is called for a draft", function(assert) {
-			var mPropertyBag = {};
-			mPropertyBag.layer = Layer.CUSTOMER;
-			mPropertyBag.selector = this.vSelector;
-			mPropertyBag.draft = true;
-
-			var fnFlexStub = getMethodStub([this.vSelector.appComponent, mPropertyBag.skipUpdateCache], Promise.resolve());
-			var fnDescriptorStub = getMethodStub([this.vSelector.appComponent, mPropertyBag.skipUpdateCache], Promise.resolve());
-
-			mockFlexController(mPropertyBag.selector, { saveAll : fnFlexStub });
-			mockDescriptorController(mPropertyBag.selector, { saveAll : fnDescriptorStub });
-
-			sandbox.stub(PersistenceWriteAPI, "_getUIChanges")
-				.withArgs(Object.assign({selector: mPropertyBag.selector, invalidateCache: true, componentId: "appComponent"}))
-				.resolves(sReturnValue);
-
-			return PersistenceWriteAPI.save(mPropertyBag).then(function() {
-				var aFlexArgs = fnFlexStub.getCall(0).args;
-				assert.equal(aFlexArgs[2], true, "then the draft flag was passed to the flex save operation");
-				var aDescriptorArgs = fnDescriptorStub.getCall(0).args;
-				assert.equal(aDescriptorArgs[2], true, "and the draft flag was passed to the descriptor save operation");
-			});
+			assert.equal(oFlexObjectStateSaveStub.callCount, 1, "the FlexObjectState save method was called");
+			assert.deepEqual(oFlexObjectStateSaveStub.firstCall.args[0], mPropertyBag, "the FlexObjectState was called with the same arguments");
+			assert.equal("foo", sReturn, "the function returns whatever the FlexObjectState returns");
 		});
 
 		QUnit.test("when reset is called", function(assert) {

@@ -249,98 +249,110 @@ function(
 
 	var mCommands = { 	// Command names camel case with first char lower case
 		composite: {
-			clazz: 'sap.ui.rta.command.CompositeCommand',
+			clazz: "sap.ui.rta.command.CompositeCommand",
 			noSelector: true
 		},
 		property: {
-			clazz: 'sap.ui.rta.command.Property',
+			clazz: "sap.ui.rta.command.Property",
 			adjustForBinding: adjustSelectorForCommand
 		},
 		bindProperty: {
-			clazz: 'sap.ui.rta.command.BindProperty'
+			clazz: "sap.ui.rta.command.BindProperty"
 		},
 		addXML: {
-			clazz: 'sap.ui.rta.command.AddXML',
+			clazz: "sap.ui.rta.command.AddXML",
 			configure: configureAddXmlCommand,
 			adjustForBinding: adjustSelectorForCommand
 		},
 		addXMLAtExtensionPoint: {
-			clazz: 'sap.ui.rta.command.AddXMLAtExtensionPoint',
+			clazz: "sap.ui.rta.command.AddXMLAtExtensionPoint",
 			configure: configureAddXmlCommand,
 			adjustForBinding: adjustSelectorForCommand
 		},
 		createContainer: {
-			clazz: 'sap.ui.rta.command.CreateContainer',
+			clazz: "sap.ui.rta.command.CreateContainer",
 			configure: configureCreateContainerCommand,
 			adjustForBinding: adjustCreateContainerCommand
 		},
 		move: {
-			clazz: 'sap.ui.rta.command.Move',
+			clazz: "sap.ui.rta.command.Move",
 			configure: configureMoveCommand,
 			adjustForBinding: adjustMoveCommand
 		},
 		remove: {
-			clazz: 'sap.ui.rta.command.Remove',
+			clazz: "sap.ui.rta.command.Remove",
 			configure: configureRemoveCommand,
 			adjustForBinding: adjustRemoveCommand
 		},
 		rename: {
-			clazz: 'sap.ui.rta.command.Rename',
+			clazz: "sap.ui.rta.command.Rename",
 			configure: configureRenameCommand,
 			adjustForBinding: adjustRenameCommand
 		},
 		addDelegateProperty: {
-			clazz: 'sap.ui.rta.command.AddProperty',
+			clazz: "sap.ui.rta.command.AddProperty",
 			configure: configureAddDelegatePropertyCommand,
 			adjustForBinding: adjustAddPropertyCommand
 		},
 		reveal: {
-			clazz: 'sap.ui.rta.command.Reveal',
+			clazz: "sap.ui.rta.command.Reveal",
 			configure: configureRevealCommand,
 			adjustForBinding: adjustRevealCommand
 		},
 		customAdd: {
-			clazz: 'sap.ui.rta.command.CustomAdd',
+			clazz: "sap.ui.rta.command.CustomAdd",
 			configure: configureCustomAddCommand
 		},
 		combine: {
-			clazz: 'sap.ui.rta.command.Combine',
+			clazz: "sap.ui.rta.command.Combine",
 			configure: configureCombineCommand,
 			adjustForBinding: adjustCombineCommand
 		},
 		split: {
-			clazz: 'sap.ui.rta.command.Split',
+			clazz: "sap.ui.rta.command.Split",
 			configure: configureSplitCommand,
 			adjustForBinding: adjustSplitCommand
 		},
 		"switch": {
-			clazz: 'sap.ui.rta.command.ControlVariantSwitch'
+			clazz: "sap.ui.rta.command.ControlVariantSwitch"
 		},
 		save: {
-			clazz: 'sap.ui.rta.command.ControlVariantSave'
+			clazz: "sap.ui.rta.command.ControlVariantSave"
 		},
 		saveAs: {
-			clazz: 'sap.ui.rta.command.ControlVariantSaveAs'
+			clazz: "sap.ui.rta.command.ControlVariantSaveAs"
 		},
 		setTitle: {
-			clazz: 'sap.ui.rta.command.ControlVariantSetTitle'
+			clazz: "sap.ui.rta.command.ControlVariantSetTitle"
 		},
 		configure: {
-			clazz: 'sap.ui.rta.command.ControlVariantConfigure'
+			clazz: "sap.ui.rta.command.ControlVariantConfigure"
 		},
 		settings: {
-			clazz: 'sap.ui.rta.command.Settings'
+			clazz: "sap.ui.rta.command.Settings"
 		},
 		addLibrary: {
-			clazz: 'sap.ui.rta.command.appDescriptor.AddLibrary',
+			clazz: "sap.ui.rta.command.appDescriptor.AddLibrary",
 			noSelector: true
 		},
 		appDescriptor: {
-			clazz: 'sap.ui.rta.command.AppDescriptorCommand',
+			clazz: "sap.ui.rta.command.AppDescriptorCommand",
 			noSelector: true
 		},
 		addIFrame: {
-			clazz: 'sap.ui.rta.command.AddIFrame'
+			clazz: "sap.ui.rta.command.AddIFrame"
+		},
+		compVariantSwitch: {
+			clazz: "sap.ui.rta.command.compVariant.CompVariantSwitch"
+		},
+		compVariantConfigure: {
+			clazz: "sap.ui.rta.command.compVariant.CompVariantConfigure"
+		},
+		compVariantSave: {
+			clazz: "sap.ui.rta.command.compVariant.CompVariantSave"
+		},
+		compVariantSaveAs: {
+			clazz: "sap.ui.rta.command.compVariant.CompVariantSaveAs"
 		}
 	};
 

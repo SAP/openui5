@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/base/util/restricted/_omit",
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
@@ -12,6 +13,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/write/_internal/Storage"
 ], function(
+	_omit,
 	UriParameters,
 	Layer,
 	Change,
@@ -260,7 +262,7 @@ sap.ui.define([
 	 * CompVariant state class to handle the state of the compVariants and its changes.
 	 * This class is in charge of updating the maps stored in the <code>sap.ui.fl.apply._internal.flexState.FlexState</code>.
 	 *
-	 * @namespace sap.ui.fl.apply._internal.flexState.compVariants.CompVariantState
+	 * @namespace sap.ui.fl.write._internal.flexState.compVariants.CompVariantState
 	 * @since 1.83
 	 * @version ${version}
 	 * @private
@@ -491,6 +493,23 @@ sap.ui.define([
 		return Promise.all(aPromises);
 	};
 
+	/**
+	 * Saves all changes and variants of all smart variant managements associated with the app
+	 *
+	 * @param {string} sReference - Flex reference of the app
+	 * @returns {Promise} Promise resolving with an array of responses or rejecting with the first error
+	 * @private
+	 */
+	CompVariantState.persistAll = function(sReference) {
+		var mCompEntities = _omit(FlexState.getCompVariantsMap(sReference), "_getOrCreate");
+		 var aPromises = Object.keys(mCompEntities).map(function(sPersistencyKey) {
+			return CompVariantState.persist({
+				reference: sReference,
+				persistencyKey: sPersistencyKey
+			});
+		});
+		return Promise.all(aPromises);
+	};
 
 	return CompVariantState;
 });
