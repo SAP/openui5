@@ -439,6 +439,95 @@ sap.ui.define([
 		this.oCard.setManifest(oManifest);
 	});
 
+	QUnit.test("Visible property of items - determined by binding with parameters", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oManifest = {
+				"sap.app": {
+					"id": "test.cards.object.visibleItemsWithParameters",
+					"type": "card"
+				},
+				"sap.card": {
+					"type": "Object",
+					"configuration": {
+						"parameters": {
+							"group1Visible": {
+								"value": "false"
+							},
+							"group2Visible": {
+								"value": "truthy value"
+							},
+							"groupItem1Visible": {
+								"value": ""
+							},
+							"groupItem2Visible": {
+								"value": "null"
+							},
+							"groupItem3Visible": {
+								"value": "undefined"
+							}
+						}
+					},
+					"content": {
+						"groups": [
+							{
+								"title": "Title",
+								"visible": "{{parameters.group1Visible}}",
+								"items": [
+									{
+										"label": "Label",
+										"value": "Value"
+									}
+								]
+							},
+							{
+								"visible": "{{parameters.group2Visible}}",
+								"items": [
+									{
+										"label": "Label",
+										"value": "Value",
+										"visible": "{{parameters.groupItem1Visible}}"
+									},
+									{
+										"label": "Label",
+										"value": "Value",
+										"visible": "{{parameters.groupItem2Visible}}"
+									},
+									{
+										"label": "Label",
+										"value": "Value",
+										"visible": "{{parameters.groupItem3Visible}}"
+									}
+								]
+							}
+						]
+					}
+				}
+			};
+
+		this.oCard.attachEvent("_ready", function () {
+			var oContent = this.oCard.getAggregation("_content"),
+				aGroups = oContent.getAggregation("_content").getContent(),
+				oFirstGroup = aGroups[0],
+				oSecondGroup = aGroups[1];
+
+			Core.applyChanges();
+
+			// Assert
+			assert.strictEqual(oFirstGroup.getVisible(), false, "Group is not visible");
+			assert.strictEqual(oSecondGroup.getVisible(), true, "Group is visible");
+			oSecondGroup.getItems().forEach(function (oGroupItem) {
+				assert.strictEqual(oGroupItem.getVisible(), false, "Group item is not visible");
+			});
+
+			done();
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest(oManifest);
+		Core.applyChanges();
+	});
+
 	QUnit.test("Icon property", function (assert) {
 		// Arrange
 		var done = assert.async();

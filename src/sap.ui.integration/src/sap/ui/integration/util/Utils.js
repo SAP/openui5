@@ -126,5 +126,9 @@ sap.ui.define([
 		return Promise.race([pOriginalPromise, pTimeoutPromise]);
 	};
 
+	Utils.hasFalsyValueAsString = function (sString) {
+		return typeof sString == "string" && ["null", "false", "undefined", ""].indexOf(sString.trim()) > -1;
+	};
+
 	return Utils;
 });
