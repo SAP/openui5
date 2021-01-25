@@ -49,8 +49,8 @@
 				oOverlay.$().trigger("click");
 				oOverlay.setSelected(true);
 				oOverlay.$().trigger("dragstart");
-				if (!oTarget.getTargetZone()) {
-					oTarget.attachEventOnce("targetZoneChange", function () {
+				if (!oTarget.getParentAggregationOverlay().getTargetZone()) {
+					oTarget.getParentAggregationOverlay().attachEventOnce("targetZoneChange", function () {
 						fnFinishDragDrop(oOverlay, oSource, oTarget);
 					});
 				} else {
@@ -81,8 +81,7 @@
 					var oSourceElementOverlay = OverlayRegistry.getOverlay("SourcePanel");
 					var oSourceAggregationOverlay = oSourceElementOverlay.getAggregationOverlay("content");
 
-					var oTargetElementOverlay = OverlayRegistry.getOverlay("TargetPanel");
-					var oTargetAggregationOverlay = oTargetElementOverlay.getAggregationOverlay("content");
+					var oTargetOverlay = OverlayRegistry.getOverlay("TargetPanelbutton5");
 
 					var aChildren = oSourceAggregationOverlay.getChildren().slice(1);
 
@@ -119,7 +118,7 @@
 								fnWorker(aChildren.slice(1));
 							});
 						}
-						fnDrag(oButtonOverlay, oSourceAggregationOverlay, oTargetAggregationOverlay);
+						fnDrag(oButtonOverlay, oSourceAggregationOverlay, oTargetOverlay);
 					})(aChildren);
 				});
 			}
@@ -139,8 +138,7 @@
 					var oSourceElementOverlay = OverlayRegistry.getOverlay("SourcePanel");
 					var oSourceAggregationOverlay = oSourceElementOverlay.getAggregationOverlay("content");
 
-					var oTargetElementOverlay = OverlayRegistry.getOverlay("TargetPanel");
-					var oTargetAggregationOverlay = oTargetElementOverlay.getAggregationOverlay("content");
+					var oTargetOverlay = OverlayRegistry.getOverlay("TargetPanelbutton5");
 
 					var aChildren = oSourceAggregationOverlay.getChildren().slice(1);
 
@@ -170,7 +168,7 @@
 
 					aStack.push(new Date().getTime());
 					aChildren.forEach(function (oChild) {
-						fnDrag(oChild, oSourceAggregationOverlay, oTargetAggregationOverlay);
+						fnDrag(oChild, oSourceAggregationOverlay, oTargetOverlay);
 						jQuery(window).trigger("resize");
 					});
 				});
