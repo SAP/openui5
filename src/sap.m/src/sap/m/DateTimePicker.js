@@ -541,6 +541,9 @@ sap.ui.define([
 				this._oPopup.setShowHeader(true);
 				this._oPopup.setShowCloseButton(true);
 			} else {
+				// We add time in miliseconds for opening and closing animations of the popup,
+				// so the opening and closing event handlers are properly ordered in the event queue
+				this._oPopup._getPopup().setDurations(0, 0);
 				this._oPopup.setEndButton(new Button(this.getId() + "-Cancel", {
 					text: sCancelButtonText,
 					press: _handleCancelPress.bind(this)

@@ -1123,7 +1123,7 @@ sap.ui.define([
 				this._oPopup.setShowHeader(true);
 				this._oPopup.setShowCloseButton(true);
 			} else {
-				// sap.m.Dialog used insed of the sap.m.ResponsivePopover doesen't display
+				// sap.m.Dialog used instead of the sap.m.ResponsivePopover doesen't display
 				// correctly without an animation on mobile devices so we remove the animation
 				// only for desktop when sap.m.Popover is used instead of sap.m.Dialog
 				this._oPopup._getPopup().setDurations(0, 0);
