@@ -6,5 +6,5 @@
 		<MessageStrip text="A dialog and other container controls by default have no content padding.
 			By setting the CSS class 'sapUiContentPadding' to the container control you will
 			get a default padding of 1rem (16px) around the content area." class="sapUiTinyMargin"/>
-		<Button text="Show Dialog with content padding" press="onDialogOpen" class="sapUiTinyMargin" />
+		<Button text="Show Dialog with content padding" press="onDialogOpen" class="sapUiTinyMargin" ariaHasPopup="Dialog"/>
 </mvc:View>

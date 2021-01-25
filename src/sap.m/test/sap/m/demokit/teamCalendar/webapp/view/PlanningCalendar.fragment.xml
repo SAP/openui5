@@ -30,7 +30,8 @@
 					id="PlanningCalendarLegendButton"
 					icon="sap-icon://legend"
 					press=".openLegend"
-					tooltip="Open Planning Calendar legend"/>
+					tooltip="Open Planning Calendar legend"
+					ariaHasPopup="Dialog"/>
 			</toolbarContent>
 			<views>
 				<PlanningCalendarView

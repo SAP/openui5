@@ -14,7 +14,7 @@
 				intervalSelect="handleAppointmentAddWithContext">
 			<toolbarContent>
 				<Title text="Title" titleStyle="H4"/>
-				<Button id="addButton" icon="sap-icon://add" press="handleAppointmentCreate" tooltip="Add"/>
+				<Button id="addButton" icon="sap-icon://add" press="handleAppointmentCreate" tooltip="Add" ariaHasPopup="Dialog"/>
 			</toolbarContent>
 			<rows>
 				<PlanningCalendarRow

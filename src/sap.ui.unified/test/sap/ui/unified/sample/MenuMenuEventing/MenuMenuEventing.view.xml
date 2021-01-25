@@ -5,6 +5,6 @@
 	xmlns="sap.m"
 	class="viewPadding">
 	<l:HorizontalLayout>
-		<Button id="openMenu" text="Open Menu" press="handlePressOpenMenu" />
+		<Button id="openMenu" text="Open Menu" press="handlePressOpenMenu" ariaHasPopup="Menu"/>
 	</l:HorizontalLayout>
 </mvc:View>

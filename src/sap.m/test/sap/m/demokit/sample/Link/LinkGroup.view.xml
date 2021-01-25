@@ -9,7 +9,8 @@
 		<l:content>
 			<Link
 				text="Open message box"
-				press="handleLinkPress" />
+				press="handleLinkPress"
+				ariaHasPopup="Dialog" />
 			<Link
 				text="Disabled link"
 				enabled="false" />
