@@ -8,6 +8,7 @@
 		width="100%">
 		<Button
 			text="Open with Custom Filter"
-			press="handleViewSettingsDialogPress" />
+			press="handleViewSettingsDialogPress"
+			ariaHasPopup="Dialog" />
 	</l:VerticalLayout>
 </mvc:View>

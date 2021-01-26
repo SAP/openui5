@@ -64,10 +64,10 @@
 				</Select>
 			</Panel>
 			<Panel headerText="Popover - CommandExecution defined on underlying content">
-			<Button press=".onPopoverOpen" text="Open Popover"/>
+			<Button press=".onPopoverOpen" text="Open Popover" ariaHasPopup="Dialog" />
 			</Panel>
 			<Panel headerText="Popover - CommandExecution defined in Popup content">
-			<Button press=".onCommandPopoverOpen" text="Open Popover"/>
+			<Button press=".onCommandPopoverOpen" text="Open Popover" ariaHasPopup="Dialog" />
 			</Panel>
 			<Panel headerText="toggle enabled/visibility for CommandExecution in Page">
 				<Panel headerText="enabled">

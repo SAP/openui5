@@ -8,6 +8,7 @@
 		width="100%">
 		<Button
 			text="Open View Settings Dialog"
-			press="handleOpenDialog" />
+			press="handleOpenDialog"
+			ariaHasPopup="Dialog" />
 	</l:VerticalLayout>
 </mvc:View>

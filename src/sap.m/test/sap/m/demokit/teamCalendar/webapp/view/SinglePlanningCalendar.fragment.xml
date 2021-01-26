@@ -24,7 +24,8 @@
 					id="SinglePlanningCalendarLegendButton"
 					icon="sap-icon://legend"
 					press=".openLegend"
-					tooltip="Open Single Planning Calendar legend"/>
+					tooltip="Open Single Planning Calendar legend"
+					ariaHasPopup="Dialog"/>
 			</actions>
 			<views>
 				<SinglePlanningCalendarDayView

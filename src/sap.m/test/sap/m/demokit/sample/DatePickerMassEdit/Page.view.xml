@@ -14,7 +14,7 @@
 				<Toolbar>
 					<Title text="Products" level="H2"/>
 					<ToolbarSpacer/>
-					<Button text="Change Dates" id="changeDatesButton" enabled="false" press="onChangeDatesPress"/>
+					<Button text="Change Dates" id="changeDatesButton" enabled="false" press="onChangeDatesPress" ariaHasPopup="Dialog"/>
 				</Toolbar>
 			</headerToolbar>
 			<columns>

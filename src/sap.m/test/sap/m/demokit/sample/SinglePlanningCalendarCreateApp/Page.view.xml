@@ -13,7 +13,7 @@
 			startDate="{path: '/startDate'}"
 			appointments="{path: '/appointments'}">
 			<actions>
-				<Button id="addNewAppointment" text="Create" press="handleAppointmentCreate" tooltip="Add new appointment" />
+				<Button id="addNewAppointment" text="Create" press="handleAppointmentCreate" tooltip="Add new appointment" ariaHasPopup="Dialog" />
 			</actions>
 			<views>
 				<SinglePlanningCalendarDayView key="DayView" title="Day" />
