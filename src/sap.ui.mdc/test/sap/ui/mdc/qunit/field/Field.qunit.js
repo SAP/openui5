@@ -29,34 +29,34 @@ sap.ui.define([
 	"sap/ui/model/odata/type/Currency",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/odata/type/DateTime"
-], function (
-		jQuery,
-		qutils,
-		library,
-		Field,
-		Condition,
-		EditMode,
-		FieldDisplay,
-		ConditionsType,
-		FieldInput,
-		FieldBaseDelegate,
-		Label,
-		Input,
-		Text,
-		TextArea,
-		DatePicker,
-		TimePicker,
-		DateTimePicker,
-		Slider,
-		Button,
-		ParseException,
-		StringType,
-		IntegerType,
-		CurrencyType,
-		oDataCurrencyType,
-		JSONModel,
-		DateTimeType
-		) {
+], function(
+	jQuery,
+	qutils,
+	library,
+	Field,
+	Condition,
+	EditMode,
+	FieldDisplay,
+	ConditionsType,
+	FieldInput,
+	FieldBaseDelegate,
+	Label,
+	Input,
+	Text,
+	TextArea,
+	DatePicker,
+	TimePicker,
+	DateTimePicker,
+	Slider,
+	Button,
+	ParseException,
+	StringType,
+	IntegerType,
+	CurrencyType,
+	oDataCurrencyType,
+	JSONModel,
+	DateTimeType
+) {
 	"use strict";
 
 	var oField;
@@ -173,7 +173,7 @@ sap.ui.define([
 	QUnit.test("external control", function(assert) {
 
 		var oSlider = new Slider("S1");
-		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType()});
+		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContent(oSlider);
 		oField.setValue(70);
 		oField.placeAt("content");
@@ -191,7 +191,7 @@ sap.ui.define([
 		assert.equal(oContent && oContent.getMetadata().getName(), "sap.ui.mdc.field.FieldInput", "sap.ui.mdc.field.FieldInput is used");
 
 		oSlider = new Slider("S1");
-		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType()});
+		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContent(oSlider);
 		sap.ui.getCore().applyChanges();
 
@@ -204,8 +204,8 @@ sap.ui.define([
 
 	QUnit.module("properties", {
 		beforeEach: function() {
-			oFieldEdit = new Field("F1", {editMode: EditMode.Editable});
-			oFieldDisplay = new Field("F2", {editMode: EditMode.Display});
+			oFieldEdit = new Field("F1", { editMode: EditMode.Editable });
+			oFieldDisplay = new Field("F2", { editMode: EditMode.Display });
 			oFieldEdit.placeAt("content");
 			oFieldDisplay.placeAt("content");
 			sap.ui.getCore().applyChanges();
@@ -295,8 +295,8 @@ sap.ui.define([
 		var aConditions = oFieldEdit.getConditions();
 		assert.notEqual(aConditions[0].values[1], "", "Conditions not updated syncronously");
 
-		setTimeout(function () { // async set of condition
-			setTimeout(function () { // model update
+		setTimeout(function() { // async set of condition
+			setTimeout(function() { // model update
 				aContent = oFieldEdit.getAggregation("_content");
 				oContent = aContent && aContent.length > 0 && aContent[0];
 				assert.equal(oContent.getValue(), "Test", "Value set on Input control");
@@ -338,7 +338,7 @@ sap.ui.define([
 		oFieldDisplay.setValue(new Date(2017, 8, 19));
 
 		var fnDone = assert.async();
-		setTimeout(function () {
+		setTimeout(function() {
 			var aContent = oFieldEdit.getAggregation("_content");
 			var oContent = aContent && aContent.length > 0 && aContent[0];
 			assert.ok(oContent instanceof DatePicker, "DatePicker rendered");
@@ -401,7 +401,7 @@ sap.ui.define([
 		oFieldDisplay.setValue([12.34, "USD"]);
 		sap.ui.getCore().applyChanges();
 
-		var oType = new CurrencyType({showMeasure: false});
+		var oType = new CurrencyType({ showMeasure: false });
 		sValue = oType.formatValue([12.34, "USD"], "string"); // because of special whitspaced and local dependend
 		var aContent = oFieldEdit.getAggregation("_content");
 		var oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -443,7 +443,7 @@ sap.ui.define([
 
 	QUnit.test("required", function(assert) {
 
-		var oLabel = new Label("L1", {text: "test", labelFor: oFieldEdit}).placeAt("content");
+		var oLabel = new Label("L1", { text: "test", labelFor: oFieldEdit }).placeAt("content");
 		oFieldEdit.setRequired(true);
 		sap.ui.getCore().applyChanges();
 
@@ -569,7 +569,7 @@ sap.ui.define([
 				assert.equal(vResult, "key", "Promise result");
 
 				//simulate liveChange by calling from internal control
-				oContent.fireLiveChange({value: "Y"});
+				oContent.fireLiveChange({ value: "Y" });
 				assert.equal(iLiveCount, 1, "liveChange event fired once");
 				assert.equal(sLiveId, "F1", "liveChange event fired on Field");
 				assert.equal(sLiveValue, "Y", "liveChange event value");
@@ -627,7 +627,7 @@ sap.ui.define([
 
 		oField.setValue(70);
 		var oSlider = new Slider("S1");
-		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType()});
+		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContent(oSlider);
 		sap.ui.getCore().applyChanges();
 
@@ -725,7 +725,7 @@ sap.ui.define([
 
 		oField.setValue(70);
 		var oSlider = new Slider("S1");
-		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType()});
+		oSlider.bindProperty("value", { path: '$field>/conditions', type: new ConditionsType() });
 		oField.setContent(oSlider);
 		sap.ui.getCore().applyChanges();
 		var oClone = oField.clone("myClone");
@@ -783,10 +783,10 @@ sap.ui.define([
 	var oField5;
 	var oType5;
 	var ODataCurrencyCodeList = {
-			"EUR" : {Text : "Euro", UnitSpecificScale : 2},
-			"USD" : {Text : "US-Dollar", UnitSpecificScale : 2},
-			"JPY" : {Text : "Japan Yen", UnitSpecificScale : 0},
-			"SEK" : {Text : "Swedish krona", UnitSpecificScale : 5}
+		"EUR": { Text: "Euro", UnitSpecificScale: 2 },
+		"USD": { Text: "US-Dollar", UnitSpecificScale: 2 },
+		"JPY": { Text: "Japan Yen", UnitSpecificScale: 0 },
+		"SEK": { Text: "Swedish krona", UnitSpecificScale: 5 }
 	};
 
 	QUnit.module("Binding", {
@@ -800,36 +800,36 @@ sap.ui.define([
 				price2: undefined,
 				currencyCode2: undefined,
 				units2: undefined,
-				items: [{key: "A", description: "Text A"},
-				        {key: "A", description: "Text A"}, // to test same value
-				        {key: "B", description: "Text B"}
-				        ]
+				items: [{ key: "A", description: "Text A" },
+				{ key: "A", description: "Text A" }, // to test same value
+				{ key: "B", description: "Text B" }
+				]
 			});
 
 			oType = new IntegerType();
 			oType._bMyType = true;
 
 			oField = new Field("F1", {
-				value: {path: "/value", type: oType},
+				value: { path: "/value", type: oType },
 				change: _myChangeHandler
 			}).placeAt("content");
 			oField.setModel(oModel);
 
-			oType2 = new DateTimeType({style: "long"}, {displayFormat: "Date"});
+			oType2 = new DateTimeType({ style: "long" }, { displayFormat: "Date" });
 			oType2._bMyType = true;
 
 			oField2 = new Field("F2", {
-				value: {path: "/date", type: oType2},
+				value: { path: "/date", type: oType2 },
 				change: _myChangeHandler
 			}).placeAt("content");
 			oField2.setModel(oModel);
 
-			oType3 = new StringType({}, {maxLength: 1});
+			oType3 = new StringType({}, { maxLength: 1 });
 			oType3._bMyType = true;
 			var oBindingContext = oModel.getContext("/items/0/");
 			oField3 = new Field("F3", {
-				value: {path: "key", type: oType3},
-				additionalValue: {path: "description", mode: "OneWay"},
+				value: { path: "key", type: oType3 },
+				additionalValue: { path: "description", mode: "OneWay" },
 				display: FieldDisplay.DescriptionValue,
 				change: _myChangeHandler
 			}).placeAt("content");
@@ -840,8 +840,8 @@ sap.ui.define([
 			oType4._bMyType = true;
 
 			oField4 = new Field("F4", {
-				delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {x: 1}}, // to test V4 delegate
-				value: {parts: [{path: '/price'}, {path: '/currencyCode'}, {path: '/units'}], type: oType4},
+				delegate: { name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: { x: 1 } }, // to test V4 delegate
+				value: { parts: [{ path: '/price' }, { path: '/currencyCode' }, { path: '/units' }], type: oType4 },
 				change: _myChangeHandler
 			}).placeAt("content");
 			oField4.setModel(oModel);
@@ -851,8 +851,8 @@ sap.ui.define([
 			oType5._bMyType = true;
 
 			oField5 = new Field("F5", {
-				delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {x: 2}}, // to test V4 delegate
-				value: {parts: [{path: '/price2'}, {path: '/currencyCode2'}, {path: '/units2'}], type: oType5},
+				delegate: { name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: { x: 2 } }, // to test V4 delegate
+				value: { parts: [{ path: '/price2' }, { path: '/currencyCode2' }, { path: '/units2' }], type: oType5 },
 				change: _myChangeHandler
 			}).placeAt("content");
 			oField5.setModel(oModel);
@@ -887,7 +887,7 @@ sap.ui.define([
 
 	QUnit.test("using given type", function(assert) {
 
-		assert.ok(oField._oDataType._bMyType, "Given Type is used in Field");
+		assert.ok(oField._oContentFactory.getDataType()._bMyType, "Given Type is used in Field");
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.equal(oContent.getValue(), "10", "Value set on Input control");
@@ -896,8 +896,8 @@ sap.ui.define([
 		var oMyType = oConditionsType.oFormatOptions.valueType;
 		assert.ok(oMyType._bMyType, "Given Type is used in Binding for Input");
 
-		assert.notOk(oField2._oDataType._bMyType, "Given Type is not used used in Field");
-		assert.ok(oField2._oDataType.isA("sap.ui.model.odata.type.DateTime"), "DateTime type used");
+		assert.notOk(oField2._oContentFactory.getDataType()._bMyType, "Given Type is not used used in Field");
+		assert.ok(oField2._oContentFactory.getDataType().isA("sap.ui.model.odata.type.DateTime"), "DateTime type used");
 		aContent = oField2.getAggregation("_content");
 		oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent instanceof DatePicker, "DatePicker used");
@@ -909,11 +909,11 @@ sap.ui.define([
 		assert.notOk(oMyType._bMyType, "Given Type is not used in Binding for Input");
 		assert.ok(oMyType.isA("sap.ui.model.odata.type.DateTime"), "DateTime type used in ConditionsType");
 
-		var oDummyType = new oDataCurrencyType({showMeasure: false});
+		var oDummyType = new oDataCurrencyType({ showMeasure: false });
 		var sValue = oDummyType.formatValue([123.45, "USD", ODataCurrencyCodeList], "string"); // because of special whitspaces and local dependend
-		assert.notOk(oField4._oDataType._bMyType, "Given Type is not used used in Field");
-		assert.ok(oField4._oDataType.isA("sap.ui.model.odata.type.Currency"), "Currency type used");
-		assert.ok(oField4._oDataType.mCustomUnits, "Currency list used");
+		assert.notOk(oField4._oContentFactory.getDataType()._bMyType, "Given Type is not used used in Field");
+		assert.ok(oField4._oContentFactory.getDataType().isA("sap.ui.model.odata.type.Currency"), "Currency type used");
+		assert.ok(oField4._oContentFactory.getDataType().mCustomUnits, "Currency list used");
 		assert.ok(oField4.getBinding("value").getType().mCustomUnits, "Currency list used on binding-type");
 		aContent = oField4.getAggregation("_content");
 		assert.equal(aContent.length, 2, "2 content controls");
@@ -928,9 +928,9 @@ sap.ui.define([
 		oModel.setProperty("/price2", null);
 		oModel.setProperty("/currencyCode2", null);
 		oModel.setProperty("/units2", null);
-		assert.notOk(oField5._oDataType._bMyType, "Given Type is not used used in Field");
-		assert.ok(oField5._oDataType.isA("sap.ui.model.odata.type.Currency"), "Currency type used");
-		assert.strictEqual(oField5._oDataType.mCustomUnits, null, "Currency list initialized");
+		assert.notOk(oField5._oContentFactory.getDataType()._bMyType, "Given Type is not used used in Field");
+		assert.ok(oField5._oContentFactory.getDataType().isA("sap.ui.model.odata.type.Currency"), "Currency type used");
+		assert.strictEqual(oField5._oContentFactory.getDataType().mCustomUnits, null, "Currency list initialized");
 		assert.strictEqual(oField5.getBinding("value").getType().mCustomUnits, null, "Currency list initialized on binding-type");
 		aContent = oField5.getAggregation("_content");
 		assert.equal(aContent.length, 2, "2 content controls");
@@ -945,10 +945,10 @@ sap.ui.define([
 
 	QUnit.test("change binding", function(assert) {
 
-		oField2.bindProperty("value", {path: "/value", type: oType});
+		oField2.bindProperty("value", { path: "/value", type: oType });
 		sap.ui.getCore().applyChanges();
 
-		assert.ok(oField2._oDataType._bMyType, "Given Type is used in Field");
+		assert.ok(oField2._oContentFactory.getDataType()._bMyType, "Given Type is used in Field");
 		var aContent = oField2.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		assert.ok(oContent instanceof Input, "Input used");
@@ -1114,7 +1114,7 @@ sap.ui.define([
 
 	QUnit.test("empty string not nullable", function(assert) {
 
-		oField.setDataTypeConstraints({nullable: false});
+		oField.setDataTypeConstraints({ nullable: false });
 		oField.setValue("");
 		oField.setAdditionalValue("Empty");
 		var aConditions = oField.getConditions();
@@ -1145,7 +1145,7 @@ sap.ui.define([
 
 	QUnit.test("empty digsequence-string not nullable", function(assert) {
 
-		oField.setDataTypeConstraints({maxLength: 3, isDigitSequence: true, nullable: false});
+		oField.setDataTypeConstraints({ maxLength: 3, isDigitSequence: true, nullable: false });
 		oField.setValue("000");
 		oField.setAdditionalValue("Empty");
 		var aConditions = oField.getConditions();
@@ -1175,16 +1175,16 @@ sap.ui.define([
 	});
 
 	var oCurrencyCodeList = {
-		"EUR" : {Text : "Euro", UnitSpecificScale : 2},
-		"USD" : {Text : "US-Dollar", UnitSpecificScale : 2}
+		"EUR": { Text: "Euro", UnitSpecificScale: 2 },
+		"USD": { Text: "US-Dollar", UnitSpecificScale: 2 }
 	};
 
 	QUnit.module("currency data type", {
 		beforeEach: function() {
 			oField = new Field("F1", {
 				dataType: "sap.ui.model.odata.type.Currency",
-				dataTypeFormatOptions: {parseAsString : false},
-				delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {}},
+				dataTypeFormatOptions: { parseAsString: false },
+				delegate: { name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {} },
 				change: _myChangeHandler
 			});
 		},
@@ -1246,7 +1246,7 @@ sap.ui.define([
 		oField.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		var oType = new CurrencyType({showMeasure: false});
+		var oType = new CurrencyType({ showMeasure: false });
 		sValue = oType.formatValue([1, "USD"], "string"); // because of special whitspaces and local dependend
 		var aContent = oField.getAggregation("_content");
 		var oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -1312,7 +1312,7 @@ sap.ui.define([
 		oContent2.focus();
 
 		var fnDone = assert.async();
-		setTimeout(function () { // model update
+		setTimeout(function() { // model update
 			assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
 			assert.deepEqual(oField.getValue(), [undefined, undefined, oCurrencyCodeList], "Value of Field");
 			var aConditions = oField.getConditions();
@@ -1326,7 +1326,7 @@ sap.ui.define([
 			oCondition = aConditions[0];
 			assert.deepEqual(oCondition && oCondition.values[0], [1, "EUR", oCurrencyCodeList], "Value of condition");
 
-			setTimeout(function () { // model update
+			setTimeout(function() { // model update
 				assert.equal(oContent2.getValue(), "EUR", "Value set on currency control");
 
 				oField.setProperty.reset();
@@ -1345,7 +1345,7 @@ sap.ui.define([
 				oContent2.onChange(); // simulate user input
 				oContent1.focus();
 
-				setTimeout(function () { // model update
+				setTimeout(function() { // model update
 					assert.equal(oField.setProperty.withArgs("value").getCalls().length, 0, "value not updated");
 					assert.deepEqual(oField.getValue(), [1, "EUR", oCurrencyCodeList], "Value of Field");
 					aConditions = oField.getConditions();
@@ -1359,8 +1359,8 @@ sap.ui.define([
 					oCondition = aConditions[0];
 					assert.deepEqual(oCondition && oCondition.values[0], [2, "USD", oCurrencyCodeList], "Value of condition");
 
-					setTimeout(function () { // model update
-						var sNumber = oField._oDataType.formatValue([2, "USD"], "string"); // use parser of type to have locale dependent parsing
+					setTimeout(function() { // model update
+						var sNumber = oField._oContentFactory.getDataType().formatValue([2, "USD"], "string"); // use parser of type to have locale dependent parsing
 						assert.equal(oContent1.getValue(), sNumber, "Value set on number control");
 
 						oField.setProperty.reset();

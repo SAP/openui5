@@ -24,8 +24,8 @@ sap.ui.define(function() {
 			},
 			loader: {},
 			page: "test-resources/sap/ui/mdc/qunit/teststarter.qunit.html?testsuite={suite}&test={name}",
-			autostart: true,
-			module: "./../{name}.qunit"				// Whether to call QUnit.start() when the test setup is done
+			autostart: true,// Whether to call QUnit.start() when the test setup is done
+			module: "./../{name}.qunit"
 		},
 		tests: {
 			"link/Link": {
