@@ -904,8 +904,8 @@ sap.ui.define([
 	 * Sets the model for the internal table and the current control, so that both controls can be used with data binding.
 	 * @overwrite
 	 * @public
-	 * @param {sap.ui.Model} oModel The model that holds the data for the table
-	 * @param {string} sName The optional model name
+	 * @param {sap.ui.model.Model} oModel The model that holds the data for the table
+	 * @param {string} [sName] The optional model name
 	 * @returns {sap.m.TableSelectDialog} This pointer for chaining
 	 */
 	TableSelectDialog.prototype.setModel = function (oModel, sModelName) {

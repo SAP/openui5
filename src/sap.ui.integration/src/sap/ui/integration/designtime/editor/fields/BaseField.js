@@ -19,22 +19,22 @@ sap.ui.define([
 	Core
 ) {
 	"use strict";
-	/**
-	 * @class
-	 * @extends sap.ui.core.Control
-	 * @alias sap.ui.integration.designtime.propertyEditors.BaseField
-	 * @author SAP SE
-	 * @since 1.83.0
-	 * @version ${version}
-	 * @private
-	 * @experimental since 1.83.0
-	 * @ui5-restricted
-	 */
 
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration"),
 		sBuildInViz = "sap/ui/integration/designtime/editor/fields/viz";
 
-	var BaseField = Control.extend("sap.ui.integration.designtime.editor.fields.Base", {
+	/**
+	 * @class
+	 * @extends sap.ui.core.Control
+	 * @alias sap.ui.integration.designtime.editor.fields.BaseField
+	 * @author SAP SE
+	 * @since 1.83.0
+	 * @version ${version}
+	 * @private
+	 * @ui5-restricted
+	 * @experimental since 1.83.0
+	 */
+	var BaseField = Control.extend("sap.ui.integration.designtime.editor.fields.BaseField", {
 		metadata: {
 			properties: {
 				configuration: {

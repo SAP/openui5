@@ -1031,7 +1031,7 @@ sap.ui.define([
 	 * @public
 	 * @experimental As of version 1.81
 	 * @param {string} sMessage The message.
-	 * @param {sap.m.MessageType} sType Type of the message.
+	 * @param {sap.ui.core.MessageType} sType Type of the message.
 	 */
 	Card.prototype.showMessage = function (sMessage, sType) {
 		var oContent = this.getCardContent();

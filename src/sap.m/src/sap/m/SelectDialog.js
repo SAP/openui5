@@ -892,8 +892,8 @@ function(
 	 * both controls can be used with data binding
 	 * @override
 	 * @public
-	 * @param {sap.ui.Model} oModel the model that holds the data for the list
-	 * @param {string} sModelName the optional model name
+	 * @param {sap.ui.model.Model} oModel the model that holds the data for the list
+	 * @param {string} [sModelName] the optional model name
 	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.setModel = function (oModel, sModelName) {
