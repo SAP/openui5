@@ -1747,6 +1747,7 @@ sap.ui.define([
 	 * @since 1.48.0
 	 * @name sap.ui.core.IFormContent
 	 * @interface
+	 * @extends sap.ui.core.Control
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1760,7 +1761,7 @@ sap.ui.define([
 	 *
 	 * This is an optional method. When not defined, the width of the control might be adjusted.
 	 *
-	 * @return {boolean} true if the <code>Form</code> is not allowed to adjust the width of the control to use the cell's width
+	 * @returns {boolean} true if the <code>Form</code> is not allowed to adjust the width of the control to use the cell's width
 	 * @since 1.48.0
 	 * @public
 	 * @function
@@ -1779,6 +1780,7 @@ sap.ui.define([
 	 * @since 1.86.0
 	 * @name sap.ui.core.ISemanticFormContent
 	 * @interface
+	 * @extends sap.ui.core.Control
 	 * @public
 	 * @experimental As of version 1.86
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel

@@ -406,14 +406,17 @@ sap.ui.define([
 				};
 
 				if (oControlData.borrowed.properties.length) {
+					oUi5Metadata = oUi5Metadata || (oControlData['ui5-metadata'] = {});
 					oUi5Metadata.properties = (oUi5Metadata.properties || []).concat(oControlData.borrowed.properties);
 				}
 
 				if (oControlData.borrowed.aggregations.length) {
+					oUi5Metadata = oUi5Metadata || (oControlData['ui5-metadata'] = {});
 					oUi5Metadata.aggregations = (oUi5Metadata.aggregations || []).concat(oControlData.borrowed.aggregations);
 				}
 
 				if (oControlData.borrowed.associations.length) {
+					oUi5Metadata = oUi5Metadata || (oControlData['ui5-metadata'] = {});
 					oUi5Metadata.associations = (oUi5Metadata.associations || []).concat(oControlData.borrowed.associations);
 				}
 
