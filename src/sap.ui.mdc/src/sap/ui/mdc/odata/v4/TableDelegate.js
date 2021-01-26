@@ -157,6 +157,7 @@ sap.ui.define([
 
 	Delegate._checkForPreviousAnalytics = function(oEvent, oData) {
 		var sName = oData.sName,
+			sTitle,
 			aAnalytics = oData.aAnalytics,
 			oMDCColumn = oData.oMDCColumn,
 			oTable = oMDCColumn.getParent(),
@@ -165,10 +166,10 @@ sap.ui.define([
 
 		if (aAnalytics.indexOf(sPath) > -1) {
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
+			sTitle = sName == "Aggregate" ? oResourceBundle.getText("table.SETTINGS_AGGREGATE") : oResourceBundle.getText("table.SETTINGS_GROUP");
 			bForcedAnalytics = true;
-			MessageBox.warning(oResourceBundle.getText("table.SETTINGS_MESSAGE") + "\n"
-			+ oResourceBundle.getText("table.SETTINGS_MESSAGE2") + " " + sName + "?", {
-				title: "Add " + sName,
+			MessageBox.warning(oResourceBundle.getText("table.SETTINGS_MESSAGE"), {
+				title: oResourceBundle.getText("table.SETTINGS_WARNING_TITLE") + " " + sTitle,
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 				onClose: function (oAction) {
 					if (oAction === sap.m.MessageBox.Action.YES) {
