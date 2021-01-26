@@ -43,7 +43,7 @@ sap.ui.define([
 		if ([].concat(vDependencies).some(function(sDependency) {
 			return (
 				/sap\/ui\/fl.*connectors/i.test(sDependency)
-				|| TEST_CONNECTORS.includes(sDependency)
+				|| TEST_CONNECTORS.indexOf(sDependency) > -1
 			);
 		})) {
 			fnCallback();
