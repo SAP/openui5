@@ -6,7 +6,7 @@ sap.ui.define([
 	"sap/ui/mdc/odata/v4/TableDelegate",
 	"delegates/odata/v4/TableDelegate",
 	"sap/ui/mdc/odata/v4/ODataMetaModelUtil",
-	"sap/ui/mdc/odata/TypeUtil",
+	"sap/ui/mdc/odata/v4/TypeUtil",
 	"sap/ui/mdc/table/Column",
 	"sap/ui/unified/Currency",
 	"sap/base/Log"
