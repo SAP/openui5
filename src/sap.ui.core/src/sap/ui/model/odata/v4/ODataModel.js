@@ -488,10 +488,6 @@ sap.ui.define([
 	/**
 	 * Creates a new context binding for the given path, context and parameters.
 	 *
-	 * This binding is inactive and will not know the bound context initially. You have to call
-	 * {@link sap.ui.model.Binding#initialize} to get it updated asynchronously and register a
-	 * change listener at the binding to be informed when the bound context is available.
-	 *
 	 * @param {string} sPath
 	 *   The binding path in the model; must not end with a slash
 	 * @param {sap.ui.model.odata.v4.Context} [oContext]
