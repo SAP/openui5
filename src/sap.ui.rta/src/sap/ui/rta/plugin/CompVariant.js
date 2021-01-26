@@ -3,13 +3,11 @@
  */
 
  sap.ui.define([
-	"sap/ui/comp/smartvariants/SmartVariantManagement",
 	"sap/ui/dt/Util",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/rta/Utils"
 ], function(
-	SmartVariantManagement,
 	DtUtil,
 	Plugin,
 	RenameHandler,
@@ -27,7 +25,7 @@
 	});
 
 	function isVariantManagementControl(oOverlay) {
-		return oOverlay.getElement() instanceof SmartVariantManagement;
+		return oOverlay.getElement().getMetadata().getName() === "sap.ui.comp.smartvariants.SmartVariantManagement";
 	}
 
 	function createCommandAndFireEvent(oOverlay, sName, mProperties) {
