@@ -6,12 +6,11 @@
 				"src": "sap-icon://business-objects-experience"
 			},
 			"title": "Object Card",
-			"subTitle": "With Static content"
+			"subTitle": "With Static content and without Group titles"
 		},
 		"content": {
 			"groups": [
 				{
-					"title": "Static Content",
 					"items": [
 						{
 							"label": "Name",
@@ -28,7 +27,6 @@
 					]
 				},
 				{
-					"title": "Organization",
 					"items": [
 						{
 							"label": "Company Name",
