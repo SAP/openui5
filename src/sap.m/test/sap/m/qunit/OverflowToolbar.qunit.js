@@ -1796,6 +1796,31 @@ sap.ui.define([
 		oOverflowTB.destroy();
 	});
 
+	QUnit.test("Changing type of sap.m.Button triggers invalidation of sap.m.OverflowToolbar",
+		function (assert) {
+			var oButton = new sap.m.Button({
+					type: "Default",
+					text: "Button1"
+				}),
+				oOverflowTB,
+				oSpyInvalidation;
+
+			// arrange
+			oOverflowTB = createOverflowToolbar({}, oButton);
+			oSpyInvalidation = this.spy(OverflowToolbar.prototype, "_resetAndInvalidateToolbar");
+			this.clock.tick(1000);
+			//Act
+
+			oButton.setType("Emphasized");
+			sap.ui.getCore().applyChanges();
+
+			//Assert
+			assert.ok(oSpyInvalidation.calledWith(true), "Button property 'type' invalidates the OTB");
+
+			oOverflowTB.destroy();
+		});
+
+
 	QUnit.test("Changing selected item's data model of sap.m.Select, which has autoAdjustWidth: true (affects control size), forces recalculation of the layout", function (assert) {
 		var aContent = getDefaultContent(),
 				oModel,
