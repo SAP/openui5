@@ -2,16 +2,6 @@
  * ${copyright}
  */
 
-/**
- * This module is overall:
- * SPDX-FileCopyrightText: 2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
- * SPDX-License-Identifier: Apache-2.0
- *
- * but contains code taken from jQuery UI Core (see the respective comment):
- * SPDX-FileCopyrightText: 2014 jQuery Foundation and other contributors
- * SPDX-License-Identifier: MIT
- */
-
 // Provides functionality related to DOM analysis and manipulation which is not provided by jQuery itself.
 sap.ui.define([
 	'jquery.sap.global', 'sap/ui/dom/containsOrEquals',

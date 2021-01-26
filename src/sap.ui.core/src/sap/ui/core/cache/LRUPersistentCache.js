@@ -2,19 +2,6 @@
  * ${copyright}
  */
 
-/*!
- * Portions of this module ("Least Recently Used" logic) are taken from the node-lru-cache project (see https://github.com/isaacs/node-lru-cache/blob/v2.7.3/README.md),
- * but modified.
- *
- * So the overall file is under:
- * SPDX-License-Identifier: Apache-2.0
- * SPDX-FileCopyrightText: 2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
- *
- * But the logic of these portions is used under the following license and copyright:
- * SPDX-License-Identifier: ISC
- * SPDX-FileCopyrightText: Isaac Z. Schlueter and Contributors
- */
-
 sap.ui.define(["sap/base/Log", "sap/ui/performance/Measurement"],
 	function(Log, Measurement) {
 		"use strict";

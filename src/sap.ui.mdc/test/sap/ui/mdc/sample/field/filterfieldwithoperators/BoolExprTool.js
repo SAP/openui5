@@ -1,16 +1,6 @@
 /*!
  * ${copyright}
  */
-
-/**
- * This module is overall:
- * SPDX-FileCopyrightText: 2009-2021 SAP SE or an SAP affiliate company and OpenUI5 contributors
- * SPDX-License-Identifier: Apache-2.0
- *
- * but is partly inspired by "BooleanExpressionEvaluator":
- * SPDX-FileCopyrightText: 2015 unnikked
- * SPDX-License-Identifier: MIT
- */
 sap.ui.define(["jquery.sap.global", "sap/ui/base/ManagedObject", "sap/ui/mdc/condition/Condition"],
 	function(jQuery, ManagedObject, Condition) {
 		"use strict";
