@@ -398,10 +398,10 @@ sap.ui.define([
 
 		/**
 		 * Returns the "$orderby" system query option filtered in such a way that only aggregatable
-		 * or groupable properties, or additionally requested properties are used, provided they are
-		 * contained in the given aggregation information and are relevant for the given level.
-		 * Items which cannot be parsed (that is, everything more complicated than a simple path
-		 * followed by an optional "asc"/"desc") are not filtered out.
+		 * or groupable properties, units, or additionally requested properties are used, provided
+		 * they are contained in the given aggregation information and are relevant for the given
+		 * level. Items which cannot be parsed (that is, everything more complicated than a simple
+		 * path followed by an optional "asc"/"desc") are not filtered out.
 		 *
 		 * @param {string} [sOrderby]
 		 *   The original "$orderby" system query option
@@ -419,6 +419,21 @@ sap.ui.define([
 			var bIsLeaf = iLevel > oAggregation.groupLevels.length;
 
 			/*
+			 * Tells whether the given property name is used as a unit for some aggregatable
+			 * property with subtotals.
+			 *
+			 * @param {string} sName - A property name
+			 * @returns {boolean} Whether it is used for some aggregatable property with subtotals
+			 */
+			function isUnitForSubtotals(sName) {
+				return Object.keys(oAggregation.aggregate).some(function (sAlias) {
+					var oDetails = oAggregation.aggregate[sAlias];
+
+					return oDetails.subtotals && sName === oDetails.unit;
+				});
+			}
+
+			/*
 			 * Tells whether the given property name is used for some leaf group.
 			 *
 			 * @param {string} sName - A property name
@@ -429,7 +444,9 @@ sap.ui.define([
 					return true; // "quick path"
 				}
 
-				return Object.keys(oAggregation.group).some(function (sGroup) {
+				return Object.keys(oAggregation.aggregate).some(function (sAlias) {
+					return sName === oAggregation.aggregate[sAlias].unit;
+				}) || Object.keys(oAggregation.group).some(function (sGroup) {
 					return oAggregation.groupLevels.indexOf(sGroup) < 0
 						&& isUsedFor(sName, sGroup);
 				});
@@ -458,7 +475,8 @@ sap.ui.define([
 						return sName in oAggregation.aggregate
 								&& (bIsLeaf || oAggregation.aggregate[sName].subtotals)
 							|| bIsLeaf && isUsedAtLeaf(sName)
-							|| !bIsLeaf && isUsedFor(sName, oAggregation.groupLevels[iLevel - 1]);
+							|| !bIsLeaf && (isUsedFor(sName, oAggregation.groupLevels[iLevel - 1])
+								|| isUnitForSubtotals(sName));
 					}
 					return true;
 				}).join(",");

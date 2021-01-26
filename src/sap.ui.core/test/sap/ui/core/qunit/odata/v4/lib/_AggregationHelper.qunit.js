@@ -1009,7 +1009,7 @@ sap.ui.define([
 	QUnit.test("filterOrderby", function (assert) {
 		var oAggregation = {
 				aggregate : {
-					Measure : {}
+					Measure : {unit : "UnitOfMeasure"}
 				},
 				group : {
 					Dimension : {additionally : ["Texts/Dimension"]}
@@ -1018,8 +1018,8 @@ sap.ui.define([
 			},
 			oAggregationWithLevels = {
 				aggregate : {
-					SalesAmount : {subtotals : true},
-					SalesNumber : {}
+					SalesAmount : {subtotals : true, unit : "Currency"},
+					SalesNumber : {unit : "One"}
 				},
 				group : { // Note: added by _AggregationHelper.buildApply before
 					Country : {},
@@ -1059,6 +1059,26 @@ sap.ui.define([
 		assert.strictEqual(
 			_AggregationHelper.filterOrderby("Texts/Dimension", oAggregation, 1),
 			"Texts/Dimension");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("UnitOfMeasure desc", oAggregation, 1),
+			"UnitOfMeasure desc");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Currency,One", oAggregationWithLevels, 1),
+			"Currency");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Currency,One", oAggregationWithLevels, 2),
+			"Currency");
+
+		// code under test
+		assert.strictEqual(
+			_AggregationHelper.filterOrderby("Currency,One", oAggregationWithLevels, 3),
+			"Currency,One");
 
 		// code under test
 		assert.strictEqual(
