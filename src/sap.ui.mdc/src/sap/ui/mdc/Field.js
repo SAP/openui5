@@ -324,7 +324,7 @@ sap.ui.define([
 		if (vValue && vOldValue && (sDataType === "sap.ui.model.odata.type.Unit" || sDataType === "sap.ui.model.odata.type.Currency")
 				&& !vValue[2] && vOldValue[2] !== undefined) {
 			// if no unit table was provided use the old one.
-			// As we cannot be sure that inner control is already rendered and dataType.formatValue was calles with unit table.
+			// As we cannot be sure that inner control is already rendered and dataType.formatValue was called with unit table.
 			vValue = merge([], vValue); // do not change original array.
 			vValue[2] = vOldValue[2];
 
@@ -393,6 +393,10 @@ sap.ui.define([
 			var oDataType = oBinding ? oBinding.getType() : this._oDataType; // use type from binding, not internal (might be a different one)
 			this._oTypeInitialization = this.getControlDelegate().initializeTypeFromBinding(this.getPayload(), oDataType, vValue);
 			this._bTypeInitialized = this._oTypeInitialization.bTypeInitialized;
+			if (this._bTypeInitialized && this._oUnitOriginalType) {
+				// internal type already created, initialize it too
+				this.getControlDelegate().initializeInternalUnitType(this.getPayload(), this._oDataType, this._oTypeInitialization);
+			}
 		}
 
 	}

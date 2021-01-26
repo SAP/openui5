@@ -780,6 +780,8 @@ sap.ui.define([
 	var oType3;
 	var oField4;
 	var oType4;
+	var oField5;
+	var oType5;
 	var ODataCurrencyCodeList = {
 			"EUR" : {Text : "Euro", UnitSpecificScale : 2},
 			"USD" : {Text : "US-Dollar", UnitSpecificScale : 2},
@@ -795,6 +797,9 @@ sap.ui.define([
 				price: 123.45,
 				currencyCode: "USD",
 				units: ODataCurrencyCodeList,
+				price2: undefined,
+				currencyCode2: undefined,
+				units2: undefined,
 				items: [{key: "A", description: "Text A"},
 				        {key: "A", description: "Text A"}, // to test same value
 				        {key: "B", description: "Text B"}
@@ -840,6 +845,17 @@ sap.ui.define([
 				change: _myChangeHandler
 			}).placeAt("content");
 			oField4.setModel(oModel);
+
+			// test late setting of values
+			oType5 = new oDataCurrencyType();
+			oType5._bMyType = true;
+
+			oField5 = new Field("F5", {
+				delegate: {name: "sap/ui/mdc/odata/v4/FieldBaseDelegate", payload: {x: 2}}, // to test V4 delegate
+				value: {parts: [{path: '/price2'}, {path: '/currencyCode2'}, {path: '/units2'}], type: oType5},
+				change: _myChangeHandler
+			}).placeAt("content");
+			oField5.setModel(oModel);
 			sap.ui.getCore().applyChanges();
 		},
 		afterEach: function() {
@@ -851,6 +867,8 @@ sap.ui.define([
 			oField3 = undefined;
 			oField4.destroy();
 			oField4 = undefined;
+			oField5.destroy();
+			oField5 = undefined;
 			oModel.destroy();
 			oModel = undefined;
 			oType.destroy();
@@ -861,6 +879,8 @@ sap.ui.define([
 			oType3 = undefined;
 			oType4.destroy();
 			oType4 = undefined;
+			oType5.destroy();
+			oType5 = undefined;
 			_cleanupEvents();
 		}
 	});
@@ -893,6 +913,8 @@ sap.ui.define([
 		var sValue = oDummyType.formatValue([123.45, "USD", ODataCurrencyCodeList], "string"); // because of special whitspaces and local dependend
 		assert.notOk(oField4._oDataType._bMyType, "Given Type is not used used in Field");
 		assert.ok(oField4._oDataType.isA("sap.ui.model.odata.type.Currency"), "Currency type used");
+		assert.ok(oField4._oDataType.mCustomUnits, "Currency list used");
+		assert.ok(oField4.getBinding("value").getType().mCustomUnits, "Currency list used on binding-type");
 		aContent = oField4.getAggregation("_content");
 		assert.equal(aContent.length, 2, "2 content controls");
 		var oContent1 = aContent && aContent.length > 0 && aContent[0];
@@ -901,6 +923,23 @@ sap.ui.define([
 		assert.ok(oContent2 instanceof Input, "Input rendered");
 		assert.equal(oContent1.getValue(), sValue, "Value set on number-Input control");
 		assert.equal(oContent2.getValue(), "USD", "Value set on currency-Input control");
+
+		// test late setting of empty values (Currency type needs to be initialized)
+		oModel.setProperty("/price2", null);
+		oModel.setProperty("/currencyCode2", null);
+		oModel.setProperty("/units2", null);
+		assert.notOk(oField5._oDataType._bMyType, "Given Type is not used used in Field");
+		assert.ok(oField5._oDataType.isA("sap.ui.model.odata.type.Currency"), "Currency type used");
+		assert.strictEqual(oField5._oDataType.mCustomUnits, null, "Currency list initialized");
+		assert.strictEqual(oField5.getBinding("value").getType().mCustomUnits, null, "Currency list initialized on binding-type");
+		aContent = oField5.getAggregation("_content");
+		assert.equal(aContent.length, 2, "2 content controls");
+		oContent1 = aContent && aContent.length > 0 && aContent[0];
+		oContent2 = aContent && aContent.length > 1 && aContent[1];
+		assert.ok(oContent1 instanceof Input, "Input rendered");
+		assert.ok(oContent2 instanceof Input, "Input rendered");
+		assert.equal(oContent1.getValue(), "", "Value set on number-Input control");
+		assert.equal(oContent2.getValue(), "", "Value set on currency-Input control");
 
 	});
 
@@ -1027,7 +1066,7 @@ sap.ui.define([
 
 	});
 
-	QUnit.module("nullabel data type", {
+	QUnit.module("nullable data type", {
 		beforeEach: function() {
 			oField = new Field("F1", {
 				dataType: "sap.ui.model.odata.type.String"
