@@ -490,7 +490,7 @@
 		{
 			"control": "sap.m.Title",
 			"url": "Title.html",
-			"appComponent": "CA-UI5-CTR"
+			"appComponent": "CA-UI5-CTR-ROD"
 		},
 		{
 			"control": "sap.m.ToggleButton",
