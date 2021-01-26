@@ -128,6 +128,7 @@ sap.ui.define([
 
 				case "orders":
 				case "orderdetails":
+				case "orderitemdetails":
 					sRouteName = "orders";
 					break;
 
