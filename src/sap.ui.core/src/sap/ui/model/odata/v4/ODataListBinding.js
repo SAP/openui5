@@ -2520,6 +2520,7 @@ sap.ui.define([
 	 */
 	ODataListBinding.prototype.requestSideEffects = function (sGroupId, aPaths, oContext) {
 		var bAllContextsTransient,
+			aContexts,
 			bMissingPredicate,
 			oModel = this.oModel,
 			// Hash set of collection-valued navigation property meta paths (relative to the cache's
@@ -2560,10 +2561,24 @@ sap.ui.define([
 		}
 
 		if (aPaths.indexOf("") < 0) {
-			aPredicates = (bSingle ? [oContext] : this.getCurrentContexts())
-				.map(function (oContext) {
-					return oContext.getPath().slice(iResolvedPathLength);
+			if (bSingle) {
+				aContexts = [oContext];
+			} else {
+				aContexts = this.getCurrentContexts().filter(function (oContext0) {
+					return !oContext0.isTransient();
 				});
+				// add kept-alive contexts outside collection
+				Object.keys(this.mPreviousContextsByPath).forEach(function (sPath) {
+					var oContext0 = that.mPreviousContextsByPath[sPath];
+
+					if (oContext0.isKeepAlive()) {
+						aContexts.push(oContext0);
+					}
+				});
+			}
+			aPredicates = aContexts.map(function (oContext) {
+				return oContext.getPath().slice(iResolvedPathLength);
+			});
 			bMissingPredicate = aPredicates.some(function (sPredicate) {
 				return sPredicate[0] !== "(";
 			});

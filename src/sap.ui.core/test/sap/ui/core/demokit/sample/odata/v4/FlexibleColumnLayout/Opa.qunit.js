@@ -4,6 +4,13 @@
 /*global QUnit */
 QUnit.config.autostart = false;
 
+/*
+ * CAUTION: Do not try to access the list report while the sub-object is visible. All three columns
+ * plus the OPA column need a width of more than 1,600 pixels. If the window/frame does not have
+ * this width, the list report will be hidden when showing the sub-object page. Then accessing its
+ * controls in the OPA will fail.
+ */
+
 sap.ui.getCore().attachInit(function () {
 	"use strict";
 
@@ -235,6 +242,51 @@ sap.ui.getCore().attachInit(function () {
 				// the object page is refreshed
 				Then.onTheObjectPage.checkSalesOrderID("0500000004");
 				Then.onTheListReport.checkSalesOrder(4, "0500000004", "Test (refreshed)");
+
+				Then.iTeardownMyUIComponent();
+			});
+
+			//*****************************************************************************
+			opaTest("Increase sales order line items' quantities (requestSideEffects)",
+					function (Given, When, Then) {
+				Given.iStartMyUIComponent({
+					autoWait : true,
+					componentConfig : {
+						name : "sap.ui.core.sample.odata.v4.FlexibleColumnLayout"
+					}
+				});
+
+				When.onTheListReport.selectSalesOrder(0);
+				Then.onTheObjectPage.checkSalesOrderID("0500000000");
+				Then.onTheListReport.checkSalesOrder(
+					0, "0500000000", "Test (original)", "29,558.41");
+
+				When.onTheObjectPage.selectSalesOrderItem(0);
+				Then.onTheSubObjectPage.checkItemPosition("0000000010");
+
+				When.onTheObjectPage.sortByGrossAmount();
+				Then.onTheObjectPage.checkSalesOrderItemNotInTheList('0000000010');
+				Then.onTheSubObjectPage.checkQuantity("4.000");
+				Then.onTheObjectPage.checkGrossAmount("29,558.41");
+				Then.onTheObjectPage.checkNote("Test (original)");
+				Then.onTheObjectPage.checkSalesOrderItem(0, "0000000080", "2.000");
+				Then.onTheObjectPage.checkSalesOrderItem(1, "0000000090", "3.000");
+				Then.onTheObjectPage.checkSalesOrderItem(2, "0000000050", "3.000");
+				Then.onTheObjectPage.checkSalesOrderItem(3, "0000000030", "2.000");
+				Then.onTheObjectPage.checkSalesOrderItem(4, "0000000100", "3.000");
+
+				// code under test
+				When.onTheObjectPage.increaseSalesOrderItemsQuantity();
+				Then.onTheSubObjectPage.checkQuantity("5.000");
+				Then.onTheObjectPage.checkGrossAmount("32,768.42");
+				Then.onTheObjectPage.checkNote("10 items' quantities increased by 1");
+				Then.onTheObjectPage.checkSalesOrderItem(0, "0000000080", "3.000");
+				Then.onTheObjectPage.checkSalesOrderItem(1, "0000000090", "4.000");
+				Then.onTheObjectPage.checkSalesOrderItem(2, "0000000050", "4.000");
+				Then.onTheObjectPage.checkSalesOrderItem(3, "0000000030", "3.000");
+				Then.onTheObjectPage.checkSalesOrderItem(4, "0000000100", "4.000");
+				// Do not check the group ID in the list report. This may fail because the list
+				// report is hidden if the window is too small.
 
 				Then.iTeardownMyUIComponent();
 			});

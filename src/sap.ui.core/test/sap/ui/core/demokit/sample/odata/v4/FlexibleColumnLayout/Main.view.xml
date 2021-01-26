@@ -66,7 +66,7 @@
 						<Text id="salesOrderId" text="{SalesOrderID}"/>
 						<Text binding="{SO_2_BP}" text="{CompanyName}"/>
 						<Text id="salesOrderNote" text="{Note}" />
-						<Text text="{GrossAmount}"/>
+						<Text id="grossAmount" text="{GrossAmount}"/>
 						<Text text="{CurrencyCode}"/>
 					</ColumnListItem>
 				</Table>
@@ -99,8 +99,8 @@
 					<Input editable="false" id="SalesOrder::status" value="{LifecycleStatusDesc}"/>
 					<Label labelFor="SalesOrder::note" text="Note"/>
 					<Input id="SalesOrder::note" value="{Note}"/>
-					<Label text="Gross Amount"/>
-					<Text text="{GrossAmount}"/>
+					<Label labelFor="SalesOrder::grossAmount" text="Gross Amount"/>
+					<Input editable="false" id="SalesOrder::grossAmount" value="{GrossAmount}"/>
 					<Label text="Currency"/>
 					<Input value="{CurrencyCode}"/>
 				</form:SimpleForm>

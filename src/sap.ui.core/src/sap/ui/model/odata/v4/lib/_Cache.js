@@ -2548,8 +2548,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise to be resolved when the side effects have been applied to the given element
-	 * range and all created elements. All other elements are discarded!
+	 * Returns a promise to be resolved when the side effects have been applied to the elements
+	 * with the given key predicates and all created elements. All other elements from the back end
+	 * are discarded!
 	 *
 	 * @param {sap.ui.model.odata.v4.lib._GroupLock} oGroupLock
 	 *   A lock for the ID of the group that is associated with the request;
@@ -2613,7 +2614,10 @@ sap.ui.define([
 			aElements = this.aElements.filter(function (oElement, i) {
 				var sPredicate;
 
-				if (!oElement || _Helper.hasPrivateAnnotation(oElement, "transient")) {
+				if (!oElement) {
+					return false; // ignore
+				}
+				if (_Helper.hasPrivateAnnotation(oElement, "transient")) {
 					iMaxIndex = i;
 					return false; // keep, but do not request
 				}
@@ -2622,6 +2626,7 @@ sap.ui.define([
 				if (mPredicates[sPredicate]
 						|| _Helper.hasPrivateAnnotation(oElement, "transientPredicate")) {
 					iMaxIndex = i;
+					delete mPredicates[sPredicate];
 					return true; // keep and request
 				}
 
@@ -2633,6 +2638,9 @@ sap.ui.define([
 			if (!aElements.length) {
 				return SyncPromise.resolve(); // micro optimization: use cached *sync.* promise
 			}
+			Object.keys(mPredicates).forEach(function (sPredicate) {
+				aElements.push(that.aElements.$byPredicate[sPredicate]);
+			});
 		}
 		mQueryOptions.$filter = aElements.map(function (oElement) {
 			// all elements have a key predicate, so we will get a key filter

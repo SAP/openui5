@@ -31016,17 +31016,21 @@ sap.ui.define([
 	// outside the collection is also refreshed. Mark a third context as kept-alive context and
 	// refresh again. One of the kept-alive entities does not exist anymore, in that case the
 	// fnOnBeforeDestroy callback is called.
+	// Afterwards request side effects for the gross amount property and check that it is also
+	// requested for the kept-alive entities that are not in the collection.
 	// JIRA: CPOUI5ODATAV4-488
 	// JIRA: CPOUI5ODATAV4-579
+	// JIRA: CPOUI5ODATAV4-411
 	QUnit.test("CPOUI5ODATAV4-488: Refresh w/ kept-alive context", function (assert) {
-		var oListBinding,
+		var oKeptContext,
+			oListBinding,
 			fnOnBeforeDestroy = sinon.stub(),
 			oTable,
 			that = this;
 
-		return this.createKeepAliveScenario(assert, true).then(function (oKeptContext) {
+		return this.createKeepAliveScenario(assert, true).then(function (oKeptContext0) {
+			oKeptContext = oKeptContext0;
 			oTable = that.oView.byId("listReport");
-
 			oListBinding = oKeptContext.getBinding();
 
 			// 2nd kept-alive ontext (CPOUI5ODATAV4-579)
@@ -31135,6 +31139,52 @@ sap.ui.define([
 			return that.waitForChanges(assert, "Step 2: Refresh the list (w/ three kept contexts)");
 		}).then(function () {
 			sinon.assert.called(fnOnBeforeDestroy);
+
+			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '2' or SalesOrderID eq '4'"
+					+ " or SalesOrderID eq '1'&$select=GrossAmount,SalesOrderID&$top=3", {
+					value : [{
+						GrossAmount : "149.3",
+						SalesOrderID : "2"
+					}, {
+						GrossAmount : "789.3",
+						SalesOrderID : "4"
+					}, {
+						GrossAmount : "50.3",
+						SalesOrderID : "1"
+					}]
+				})
+				.expectChange("grossAmount", ["149.30", "789.30"])
+				.expectChange("objectPageGrossAmount", "50.30");
+
+			// code under test
+			oListBinding.getHeaderContext().requestSideEffects(["GrossAmount"]);
+
+			return that.waitForChanges(assert, "Step 3: request side effects with kept contexts");
+		}).then(function () {
+			sinon.assert.called(fnOnBeforeDestroy);
+
+			that.expectRequest("SalesOrderList?$filter=SalesOrderID eq '2' or SalesOrderID eq '4'"
+					+ "&$select=GrossAmount,SalesOrderID&$top=2", {
+					value : [{
+						GrossAmount : "149.4",
+						SalesOrderID : "2"
+					}, {
+						GrossAmount : "789.4",
+						SalesOrderID : "4"
+					}]
+				})
+				.expectChange("grossAmount", ["149.40", "789.40"])
+				.expectChange("objectPageGrossAmount", null)
+				.expectChange("objectPageNote", null);
+
+			that.oView.byId("objectPage").setBindingContext(null);
+			oKeptContext.setKeepAlive(false);
+
+			// code under test
+			oListBinding.getHeaderContext().requestSideEffects(["GrossAmount"]);
+
+			return that.waitForChanges(assert,
+				"Step 4: request side effects with kept contexts not yet destroyed");
 		});
 	});
 
