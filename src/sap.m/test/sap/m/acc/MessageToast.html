@@ -22,7 +22,7 @@
 			oPage = new sap.m.Page("myPage", {
 				title: "MessageToast Accessibility Test Page",
 				content: [
-					new sap.m.Button({
+					new sap.m.Button("messageToastButton", {
 						text: "Show",
 						press: function () {
 							sap.m.MessageToast.show("The message to be displayed");
