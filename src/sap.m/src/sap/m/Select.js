@@ -26,7 +26,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	'./Text',
 	'sap/m/SimpleFixFlex',
-	'sap/base/Log'
+	'sap/base/Log',
+	'sap/ui/core/ValueStateSupport'
 ],
 function(
 	Dialog,
@@ -52,7 +53,8 @@ function(
 	KeyCodes,
 	Text,
 	SimpleFixFlex,
-	Log
+	Log,
+	ValueStateSupport
 ) {
 		"use strict";
 
@@ -433,11 +435,51 @@ function(
 		/* ----------------------------------------------------------- */
 
 		function fnHandleKeyboardNavigation(oItem) {
+			if (this._isIconOnly() && !this.isOpen()) {
+				return;
+			}
+
 			if (oItem) {
 				this.setSelection(oItem);
 				this.setValue(oItem.getText());
 				this.scrollToItem(oItem);
 			}
+		}
+
+		var oAnnounceInstance = null;
+
+		/**
+		 * @return {string} Returns the span to be rendered for the assertive instance.
+		 * @private
+		 * @function
+		 */
+		function fnGetAssertiveInstance() {
+			var sId = "_sapMSltAnnounceMessage-assertive";
+
+			return '<span id="' + sId + '" data-sap-ui="' + sId +
+					'" class="sapUiAnnounceMessageAssertive" role="status" aria-live="assertive">' +
+					'</span>';
+		}
+
+		function fnGetAnnounceInstance() {
+			var oCore = sap.ui.getCore(),
+				oStatic = oCore.getStaticAreaRef(),
+				oNode;
+
+			if (!oAnnounceInstance) {
+				oStatic.insertAdjacentHTML("beforeend", fnGetAssertiveInstance());
+
+				oAnnounceInstance = {
+					announce: function (sText) {
+						oNode = oStatic.querySelector(".sapUiAnnounceMessageAssertive");
+
+						oNode.textContent = "";
+						oNode.textContent = sText;
+					}
+				};
+			}
+
+			return oAnnounceInstance;
 		}
 
 		Select.prototype._attachHiddenSelectHandlers = function () {
@@ -466,6 +508,34 @@ function(
 
 		Select.prototype._getHiddenSelect = function () {
 			return this.$("hiddenSelect");
+		};
+
+		Select.prototype._getHiddenInput = function () {
+			return this.$("hiddenInput");
+		};
+
+		Select.prototype._announceValueStateText = function() {
+			var	sValueStateText = this._getValueStateText();
+
+			if (this._oInvisibleMessage) {
+				this._oInvisibleMessage.announce(sValueStateText);
+			}
+		};
+
+		Select.prototype._getValueStateText = function() {
+			var sValueState = this.getValueState(),
+				sValueStateTypeText = Core.getLibraryResourceBundle("sap.m").getText("INPUTBASE_VALUE_STATE_" + sValueState.toUpperCase()),
+				sValueStateText = sValueStateTypeText + " " + (this.getValueStateText() || ValueStateSupport.getAdditionalText(this));
+
+			return sValueStateText;
+		};
+
+		Select.prototype._isFocused = function () {
+			return this.getFocusDomRef() === document.activeElement;
+		};
+
+		Select.prototype._isIconOnly = function () {
+			return this.getType() === SelectType.IconOnly;
 		};
 
 		Select.prototype._handleFocusout = function(oEvent) {
@@ -675,7 +745,8 @@ function(
 		 */
 		Select.prototype.setValue = function(sValue) {
 			var oDomRef = this.getDomRef(),
-				oTextPlaceholder = oDomRef && oDomRef.querySelector(".sapMSelectListItemText");
+				oTextPlaceholder = oDomRef && oDomRef.querySelector(".sapMSelectListItemText"),
+				bForceAnnounce = !this.isOpen() && this._isFocused() && this._oInvisibleMessage && Device.os.macintosh;
 
 			if (oTextPlaceholder) {
 				oTextPlaceholder.textContent = sValue;
@@ -683,18 +754,26 @@ function(
 
 			this._setHiddenSelectValue();
 			this._getValueIcon();
+
+			if (bForceAnnounce) {
+				// auto-announce of new value (when direct text node of div@role="combobox" is changed) is not working on MacOS.
+				// InvisibleMessage is used in case the popover is closed.
+				// (aria-activedescendant is announcing the new selection when popover is opened).
+				this._oInvisibleMessage.announce(sValue);
+			}
 		};
 
 		Select.prototype._setHiddenSelectValue = function () {
 			var oSelect = this._getHiddenSelect(),
+				oInput = this._getHiddenInput(),
+				oSelectedKey = this.getSelectedKey(),
 				oSelectedItem = this.getSelectedItem(),
 				sSelectedItemText;
 
-			if (oSelectedItem) {
-				sSelectedItemText = oSelectedItem.getText();
-				oSelect.attr("value", this.getSelectedKey());
-				oSelect.val(sSelectedItemText);
-			}
+			oInput.attr("value", oSelectedKey || "");
+
+			sSelectedItemText = oSelectedItem ? oSelectedItem.getText() : "";
+			oSelect.text(sSelectedItemText);
 		};
 
 		Select.prototype._getValueIcon = function() {
@@ -1253,9 +1332,14 @@ function(
 			this._oValueStateMessage = new ValueStateMessage(this);
 
 			this._bValueStateMessageOpened = false;
+
+			this._oInvisibleMessage = null;
 		};
 
 		Select.prototype.onBeforeRendering = function() {
+			if (!this._oInvisibleMessage) {
+				this._oInvisibleMessage = fnGetAnnounceInstance();
+			}
 
 			// rendering phase is started
 			this.bRenderingPhase = true;
@@ -2343,34 +2427,6 @@ function(
 			return oSelectClone;
 		};
 
-		Select.prototype.updateValueStateClasses = function(sValueState, sOldValueState) {
-			var $This = this.$(),
-				$Label = this.$("label"),
-				$Arrow = this.$("arrow"),
-				mValueState = ValueState,
-				CSS_CLASS = this.getRenderer().CSS_CLASS;
-
-			if (sOldValueState !== mValueState.None) {
-				$This.removeClass(CSS_CLASS + "State");
-				$This.removeClass(CSS_CLASS + sOldValueState);
-
-				$Label.removeClass(CSS_CLASS + "LabelState");
-				$Label.removeClass(CSS_CLASS + "Label" + sOldValueState);
-
-				$Arrow.removeClass(CSS_CLASS + "ArrowState");
-			}
-
-			if (sValueState !== mValueState.None) {
-				$This.addClass(CSS_CLASS + "State");
-				$This.addClass(CSS_CLASS + sValueState);
-
-				$Label.addClass(CSS_CLASS + "LabelState");
-				$Label.addClass(CSS_CLASS + "Label" + sValueState);
-
-				$Arrow.addClass(CSS_CLASS + "ArrowState");
-			}
-		};
-
 		Select.prototype._updatePickerAriaLabelledBy = function (sValueState) {
 			var oPicker = this.getPicker(),
 				sPickerValueStateContentId = this.getPickerValueStateContentId();
@@ -2380,26 +2436,6 @@ function(
 			} else {
 				oPicker.addAriaLabelledBy(sPickerValueStateContentId);
 			}
-		};
-
-		Select.prototype.updateAriaLabelledBy = function(sValueState, sOldValueState) {
-			var $this = this._getHiddenSelect(),
-				sAttr = $this.attr("aria-labelledby"),
-				aIDs = sAttr ? sAttr.split(" ") : [],
-				iIndex,
-				sNewIDs;
-
-			if (sOldValueState !== ValueState.None && sOldValueState !== ValueState.Error) {
-				iIndex = aIDs.indexOf(InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_" + sOldValueState.toUpperCase()));
-				aIDs.splice(iIndex, 1);
-			}
-
-			if (sValueState !== ValueState.None && sValueState !== ValueState.Error) {
-				aIDs.push(InvisibleText.getStaticId("sap.ui.core", "VALUE_STATE_" + sValueState.toUpperCase()));
-			}
-
-			sNewIDs = aIDs.join(" ");
-			$this.attr("aria-labelledby", sNewIDs);
 		};
 
 		/**
@@ -2432,7 +2468,7 @@ function(
 		 * @since 1.40.5
 		 */
 		Select.prototype.getDomRefForValueStateMessage = function() {
-			return this.getDomRef();
+			return this.getFocusDomRef();
 		};
 
 		/**
@@ -2486,12 +2522,12 @@ function(
 		/**
 		 * Whether or not the value state message should be opened.
 		 *
-		 * @returns {boolean} <code>false</code> if the field is disabled, read-only or the default value state is set,
+		 * @returns {boolean} <code>false</code> if the field is disabled, read-only, icon-only or the default value state is set,
 		 * otherwise it returns <code>true</code>.
 		 * @since 1.40.5
 		 */
 		Select.prototype.shouldValueStateMessageBeOpened = function() {
-			return (this.getValueState() !== ValueState.None) && this.getEnabled()
+			return !this._isIconOnly() && (this.getValueState() !== ValueState.None) && this.getEnabled()
 				&& this.getEditable() && !this._bValueStateMessageOpened;
 		};
 
@@ -2683,27 +2719,22 @@ function(
 		Select.prototype.setValueState = function(sValueState) {
 			var sOldValueState = this.getValueState();
 
-			this.setProperty("valueState", sValueState, true);
-			sValueState = this.getValueState();
-
 			if (sValueState === sOldValueState) {
 				return this;
 			}
 
+			this.setProperty("valueState", sValueState);
+
 			this._updatePickerAriaLabelledBy(sValueState);
+
+			if (this._isFocused()) {
+				this._announceValueStateText();
+			}
 
 			var oDomRef = this.getDomRefForValueState();
 
 			if (!oDomRef) {
 				return this;
-			}
-
-			var mValueState = ValueState;
-
-			if (sValueState === mValueState.Error) {
-				oDomRef.setAttribute("aria-invalid", true);
-			} else {
-				oDomRef.removeAttribute("aria-invalid");
 			}
 
 			if (!this.isOpen() && this.shouldValueStateMessageBeOpened() && document.activeElement === oDomRef) {
@@ -2712,8 +2743,6 @@ function(
 				this.closeValueStateMessage();
 			}
 
-			this.updateValueStateClasses(sValueState, sOldValueState);
-			this.updateAriaLabelledBy(sValueState, sOldValueState);
 			this._updatePickerValueStateContentText();
 			this._updatePickerValueStateContentStyles();
 			return this;
@@ -2721,11 +2750,15 @@ function(
 
 		Select.prototype.setValueStateText = function(sValueStateText) {
 
-			this.setProperty("valueStateText", sValueStateText, true);
+			this.setProperty("valueStateText", sValueStateText);
 
 			if (this.getDomRefForValueState()) {
 				this._updatePickerValueStateContentText();
 				this._updatePickerValueStateContentStyles();
+			}
+
+			if (this._isFocused()) {
+				this._announceValueStateText();
 			}
 
 			return this;
@@ -2913,7 +2946,7 @@ function(
 		 * @return {object}
 		 */
 		Select.prototype.getDomRefForValueState = function() {
-			return this.getDomRef();
+			return this.getFocusDomRef();
 		};
 
 		/**
@@ -2924,7 +2957,7 @@ function(
 		 * @returns {Object} The <code>sap.m.Select</code> accessibility information
 		 */
 		Select.prototype.getAccessibilityInfo = function() {
-			var bIconOnly = this.getType() === "IconOnly",
+			var bIconOnly = this._isIconOnly(),
 				oInfo = {
 					role: this.getRenderer().getAriaRole(this),
 					focusable: this.getEnabled(),

@@ -26,7 +26,8 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/Device",
 	"sap/ui/core/SeparatorItem",
-	"sap/ui/events/jquery/EventExtension"
+	"sap/ui/events/jquery/EventExtension",
+	"sap/ui/core/ValueStateSupport"
 ],
 	function(
 		$,
@@ -55,7 +56,8 @@ sap.ui.define([
 		IconPool,
 		Device,
 		SeparatorItem,
-		EventExtension
+		EventExtension,
+		ValueStateSupport
 	) {
 		"use strict";
 
@@ -505,6 +507,7 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// assert
+			assert.ok(oSelect.$().is(":sapFocusable"), "Select's root DomRef is with pseudo selector 'sapFocusable'.");
 			assert.strictEqual(oSelect.getName(), "", 'Default name is ""');
 			assert.strictEqual(oSelect.getVisible(), true, "By default the Select control is visible");
 			assert.strictEqual(oSelect.getEnabled(), true, "By default the Select control is enabled");
@@ -2650,7 +2653,7 @@ sap.ui.define([
 			oSelect.setName("select-name0");
 			Core.applyChanges();
 
-			oSelectDomRef = oSelect._getHiddenSelect();
+			oSelectDomRef = oSelect._getHiddenInput();
 
 			// assert
 			assert.strictEqual(oSelectDomRef.attr("name"), "select-name0", 'The attribute name is "select-name0"');
@@ -4031,18 +4034,22 @@ sap.ui.define([
 		QUnit.test("it should add the value state CSS classes", function (assert) {
 
 			// system under test
-			var oSelect = new Select();
+			var oSelectDomRef,
+				oSelect = new Select();
 
 			// arrange
 			oSelect.placeAt("content");
 			Core.applyChanges();
 			var CSS_CLASS = oSelect.getRenderer().CSS_CLASS;
 
+			oSelectDomRef = oSelect._getHiddenSelect();
+
 			// act
 			oSelect.setValueState(ValueState.Error);
+			Core.applyChanges();
 
 			// assert
-			assert.strictEqual(oSelect.$().attr("aria-invalid"), "true");
+			assert.strictEqual(oSelectDomRef.attr("aria-invalid"), "true");
 			assert.ok(oSelect.$().hasClass(CSS_CLASS + "State"));
 			assert.ok(oSelect.$().hasClass(CSS_CLASS + "Error"));
 			assert.ok(oSelect.$("label").hasClass(CSS_CLASS + "LabelState"));
@@ -4067,6 +4074,7 @@ sap.ui.define([
 
 			// act
 			oSelect.setValueState(ValueState.None);
+			Core.applyChanges();
 
 			// assert
 			assert.strictEqual(oSelect.$().attr("aria-invalid"), undefined);
@@ -4085,11 +4093,11 @@ sap.ui.define([
 				oWarningSelect = new Select({ valueState: ValueState.Warning }),
 				oErrorSelect = new Select({ valueState: ValueState.Error }),
 				oInformationSelect = new Select({ valueState: ValueState.Information }),
-				sCoreLib = "sap.ui.core",
-				fnGetSelectAriaLabelledBy = function (oSelect) {
-					var oHiddenSelect = oSelect._getHiddenSelect();
+				fnCheckValueStateText = function (oSelect) {
+					var oValueStateTextDomRef = document.getElementById(oSelect.getValueStateMessageId() + "-sr"),
+						sExpectedValueStateText = ValueStateSupport.getAdditionalText(oSelect);
 
-					return oHiddenSelect.attr("aria-labelledby") || ""; // returns undefined if not set
+					return oValueStateTextDomRef && (oValueStateTextDomRef.textContent.indexOf(sExpectedValueStateText) > -1);
 				};
 
 			// arrange
@@ -4100,28 +4108,31 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// assert
-			assert.ok(fnGetSelectAriaLabelledBy(oSuccessSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "success select is labelled by invisible text");
-			assert.ok(fnGetSelectAriaLabelledBy(oWarningSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_WARNING")) > -1, "warning select is labelled by invisible text");
-			assert.ok(fnGetSelectAriaLabelledBy(oErrorSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) === -1, "error select should not be labelled by invisible text since it has aria-invalid set");
-			assert.ok(fnGetSelectAriaLabelledBy(oInformationSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_INFORMATION")) > -1, "Information select is labelled by invisible text");
+			assert.ok(fnCheckValueStateText(oSuccessSelect), "success select is labelled by invisible text");
+			assert.ok(fnCheckValueStateText(oWarningSelect), "warning select is labelled by invisible text");
+			assert.ok(fnCheckValueStateText(oErrorSelect), "error select should not be labelled by invisible text since it has aria-invalid set");
+			assert.ok(fnCheckValueStateText(oInformationSelect), "Information select is labelled by invisible text");
 
 			// act
 			oSuccessSelect.setValueState("None");
+			Core.applyChanges();
 
 			// assert
-			assert.ok(fnGetSelectAriaLabelledBy(oSuccessSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) < 0, "success select is no longer labelled by success invisible text");
+			assert.notOk(fnCheckValueStateText(oSuccessSelect), "success select is no longer labelled by success invisible text");
 
 			// act
 			oErrorSelect.setValueState("Success");
+			Core.applyChanges();
 
 			// assert
-			assert.ok(fnGetSelectAriaLabelledBy(oErrorSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_SUCCESS")) > -1, "error select is now labelled by success invisible text");
+			assert.ok(fnCheckValueStateText(oErrorSelect), "error select is now labelled by success invisible text");
 
 			// act
 			oWarningSelect.setValueState("Error");
+			Core.applyChanges();
 
 			// assert
-			assert.ok(fnGetSelectAriaLabelledBy(oWarningSelect).split(" ").indexOf(InvisibleText.getStaticId(sCoreLib, "VALUE_STATE_ERROR")) === -1, "warning select is not labelled by the error invisible text");
+			assert.ok(fnCheckValueStateText(oWarningSelect), "warning select is not labelled by the error invisible text");
 
 			// cleanup
 			oSuccessSelect.destroy();
@@ -9560,8 +9571,8 @@ sap.ui.define([
 			Core.applyChanges();
 
 			// Assertion
-			assert.strictEqual(oEnabledSelect._getHiddenSelect().attr("disabled"), undefined, "Enabled Select isn't indicated as disabled");
-			assert.strictEqual(oDisabledSelect._getHiddenSelect().attr("disabled"), "disabled", "Disabled Select is indicated as disabled appropriately");
+			assert.strictEqual(oEnabledSelect._getHiddenSelect().attr("aria-disabled"), undefined, "Enabled Select isn't indicated as disabled");
+			assert.strictEqual(oDisabledSelect._getHiddenSelect().attr("aria-disabled"), "true", "Disabled Select is indicated as disabled appropriately");
 
 			// Cleanup
 			oEnabledSelect.destroy();
@@ -10011,12 +10022,6 @@ sap.ui.define([
 
 		QUnit.test("Hidden select referencing", function (assert) {
 			assert.strictEqual(this.oSelect.getIdForLabel(), this.$oHiddenSelectRef.attr("id"), "getIdForLabel() returns the hidden select ID");
-		});
-
-		QUnit.test("Hidden select options", function (assert) {
-			var aOptions = this.$oHiddenSelectRef.find('option');
-
-			assert.strictEqual(aOptions.length, 2, "An exact number of options have been created");
 		});
 
 		QUnit.module("OverflowToolbar configuration");
