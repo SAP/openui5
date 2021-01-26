@@ -244,14 +244,16 @@ sap.ui.define([
 			sandbox.stub(this.oVariantManagementControl, "getModified").returns(true);
 			sandbox.stub(this.oVariantManagementControl, "getPresentVariantId").returns(sPreviousVarId);
 			sandbox.stub(this.oVariantManagementControl, "getDefaultVariantId").returns(sPreviousDefaultVarId);
-			sandbox.stub(this.oVariantManagementControl, "openSaveAsDialogForKeyUser").callsFake(function(sStyleClass, fCallback) {
+			sandbox.stub(this.oVariantManagementControl, "openSaveAsDialogForKeyUser").callsFake(function(sStyleClass, fCallback, oCompCont) {
 				assert.equal(sStyleClass, Utils.getRtaStyleClassName(), "the style class is set");
+				assert.notEqual(oCompCont, undefined, "the component container is set");
 				fCallback({
 					"default": true,
 					executeOnSelect: false,
 					content: oContent,
 					type: sType,
-					text: sName
+					text: sName,
+					contexts: []
 				});
 			});
 
@@ -262,7 +264,8 @@ sap.ui.define([
 					executeOnSelect: false,
 					content: oContent,
 					type: sType,
-					text: sName
+					text: sName,
+					contexts: []
 				};
 				assert.deepEqual(oCommand.getNewVariantProperties(), mExpectedNewVariantProps, "the newVariantProperties property is set");
 				assert.equal(oCommand.getPreviousDirtyFlag(), true, "the previousDirtyFlag property is set");
@@ -280,8 +283,9 @@ sap.ui.define([
 			var sNewDefaultVarId = "newDefaultVar";
 			sandbox.stub(this.oVariantManagementControl, "getDefaultVariantId").returns(sPreviousDefaultVarId);
 			var oNewVariantProperties = {foo: "bar"};
-			sandbox.stub(this.oVariantManagementControl, "openManageViewsDialogForKeyUser").callsFake(function(sStyleClass, fCallback) {
+			sandbox.stub(this.oVariantManagementControl, "openManageViewsDialogForKeyUser").callsFake(function(sStyleClass, fCallback, oCompCont) {
 				assert.equal(sStyleClass, Utils.getRtaStyleClassName(), "the style class is set");
+				assert.notEqual(oCompCont, undefined, "the component container is set");
 				fCallback(Object.assign({}, oNewVariantProperties, {"default": sNewDefaultVarId}));
 			});
 

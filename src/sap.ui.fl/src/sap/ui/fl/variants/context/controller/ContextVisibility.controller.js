@@ -49,32 +49,38 @@ function (
 		}.bind(this));
 	}
 
-
 	return Controller.extend("sap.ui.fl.variants.context.controller.ContextVisibility", {
 		onInit: function() {
 			this.oSelectedContextsModel = this.getView().getModel("selectedContexts");
 			this.oContextsModel = this.getView().getModel("contexts");
-			var aSelectedRoles = this.getOwnerComponent().getSelectedRoles();
-			if (aSelectedRoles.length > 0) {
-				return assignDescriptionsToSelectedRoles.call(this, aSelectedRoles);
-			}
-			return Promise.resolve(this.oSelectedContextsModel.setProperty("/selected", []));
+			this.oI18n = this.getView().getModel("i18n").getResourceBundle();
 		},
 
 		onBeforeRendering: function() {
-			var oRadioButtonGroup = this.byId("visibilityRadioButtonGroup");
-			if (this.getOwnerComponent().getSelectedRoles().length === 0) {
-				oRadioButtonGroup.setSelectedIndex(0);
-			} else {
-				oRadioButtonGroup.setSelectedIndex(1);
-				this.byId("selectedContextsList").setVisible(true);
+			var aSelectedRoles = this.oSelectedContextsModel.getProperty("/selected");
+			this.byId("selectedContextsList").setVisible(aSelectedRoles.length > 0);
+
+			if (aSelectedRoles.length > 0) {
+				return assignDescriptionsToSelectedRoles.call(this, aSelectedRoles);
 			}
+			return Promise.resolve();
 		},
 
 		isSelected: function(oItem, aSelectedItems) {
 			return aSelectedItems.some(function(oSelectedItem) {
 				return oSelectedItem.id === oItem.id;
 			});
+		},
+
+		formatSelectedIndex: function(aSelectedRoles) {
+			return aSelectedRoles.length === 0 ? 0 : 1;
+		},
+
+		formatTooltip: function(sDescription) {
+			if (!this.oI18n) {
+				this.oI18n = this.getView().getModel("i18n").getResourceBundle();
+			}
+			return sDescription.length === 0 ? this.oI18n.getText("NO_DESCRIPTION") : sDescription;
 		},
 
 		/**
@@ -84,6 +90,10 @@ function (
 			oEvent.getSource().setSelected(true);
 			var bFlag = oEvent.getParameters() && oEvent.getParameters().selected;
 			this.byId("selectedContextsList").setVisible(bFlag);
+		},
+
+		onSelectPublicButton: function() {
+			this.oSelectedContextsModel.setProperty("/selected", []);
 		},
 
 		/**

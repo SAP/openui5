@@ -29,7 +29,8 @@ sap.ui.define([
 	var oCore = sap.ui.getCore();
 
 	function renderComponent(aSelectedRoles) {
-		this.oComp = new ContextVisibilityComponent("test", { selectedRoles: aSelectedRoles});
+		this.oComp = new ContextVisibilityComponent("test");
+		this.oComp.setSelectedContexts({role: aSelectedRoles});
 		this.oCompCont = new ComponentContainer({ component: this.oComp, id: "comp"});
 		this.oCompCont.placeAt("qunit-fixture");
 		oCore.applyChanges();

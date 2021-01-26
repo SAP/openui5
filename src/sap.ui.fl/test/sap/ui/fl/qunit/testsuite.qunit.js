@@ -423,6 +423,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/ExtensionPointRegistryAPI"]
 				}
 			},
+			"write/api/ContextSharingAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/ContextSharingAPI"]
+				}
+			},
 			"write/_internal/Storage": {
 				group: "Write Internal",
 				coverage: {
@@ -821,6 +827,12 @@ sap.ui.define([
 				}
 			},
 			"variants/context/ContextVisibilityIntegration": {
+				group: "Variants",
+				coverage: {
+					only: ["sap/ui/fl/variants/context/"]
+				}
+			},
+			"variants/context/ContextVisibilityComponent": {
 				group: "Variants",
 				coverage: {
 					only: ["sap/ui/fl/variants/context/"]

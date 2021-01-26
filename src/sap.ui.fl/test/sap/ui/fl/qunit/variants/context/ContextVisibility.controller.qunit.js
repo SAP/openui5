@@ -65,69 +65,46 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when the controller is initialized with selected roles", function (assert) {
+		QUnit.test("when the controller is initialized", function (assert) {
 			var oConnectorCall = sandbox.stub(WriteStorage, "loadContextDescriptions").resolves(oDescription);
 			sandbox.stub(oController, "getView").returns({
-				getModel: function() {
+				getModel: function(sId) {
+					if (sId === "i18n") {
+						return {
+							getResourceBundle: function() {}
+						};
+					}
 					return new JSONModel();
 				}
 			});
-			sandbox.stub(oController, "getOwnerComponent").returns({
-				getSelectedRoles: function() {
-					return ["TEST"];
-				}
-			});
 
-			return oController.onInit().then(function() {
-				assert.strictEqual(oConnectorCall.callCount, 1, "then the back end request was sent once");
-				assert.strictEqual(oController.oSelectedContextsModel.getProperty("/selected").length, 2, "then model was updated");
-			});
-		});
-
-		QUnit.test("when the controller is initialized without selected roles", function (assert) {
-			var oConnectorCall = sandbox.stub(WriteStorage, "loadContextDescriptions").resolves(oDescription);
-			sandbox.stub(oController, "getView").returns({
-				getModel: function() {
-					return new JSONModel();
-				}
-			});
-			sandbox.stub(oController, "getOwnerComponent").returns({
-				getSelectedRoles: function() {
-					return [];
-				}
-			});
-
-			return oController.onInit().then(function() {
-				assert.strictEqual(oConnectorCall.callCount, 0, "then the back end request was not sent");
-			});
+			oController.onInit();
+			assert.strictEqual(oConnectorCall.callCount, 0, "then the back end request was not sent");
 		});
 
 		QUnit.test("when rendering component with one pre-selected role, restricted radio button is selected", function (assert) {
+			var oConnectorCall = sandbox.stub(WriteStorage, "loadContextDescriptions").resolves(oDescription);
+
 			var oRadioButtonGroup = new RadioButtonGroup();
 			sandbox.stub(oController, "byId").returns(oRadioButtonGroup);
-			var fnGetSelectedStub = sandbox.stub(oController, "getOwnerComponent").returns({
-				getSelectedRoles: function() {
-					return ["TEST"];
-				}
-			});
+			oController.oSelectedContextsModel = new JSONModel({selected: ["TEST"]});
 
-			oController.onBeforeRendering();
-			assert.equal(fnGetSelectedStub.callCount, 1, "then stub is called once");
-			assert.equal(oRadioButtonGroup.getSelectedIndex(), 1, "then restricted radio button is selected");
+			return oController.onBeforeRendering().then(function() {
+				assert.strictEqual(oConnectorCall.callCount, 1, "then the back end request was sent once");
+			});
 		});
 
 		QUnit.test("when rendering component without pre-selected roles, public radio button is selected", function (assert) {
+			var oConnectorCall = sandbox.stub(WriteStorage, "loadContextDescriptions").resolves(oDescription);
+
 			var oRadioButtonGroup = new RadioButtonGroup();
 			sandbox.stub(oController, "byId").returns(oRadioButtonGroup);
-			var fnGetSelectedStub = sandbox.stub(oController, "getOwnerComponent").returns({
-				getSelectedRoles: function() {
-					return [];
-				}
-			});
+			oController.oSelectedContextsModel = new JSONModel({selected: []});
 
-			oController.onBeforeRendering();
-			assert.equal(fnGetSelectedStub.callCount, 1, "then stub is called once");
-			assert.equal(oRadioButtonGroup.getSelectedIndex(), 0, "then public radio button is selected");
+			return oController.onBeforeRendering().then(function() {
+				assert.strictEqual(oConnectorCall.callCount, 0, "then the back end request was not sent");
+				assert.strictEqual(oRadioButtonGroup.getSelectedIndex(), 0, "then public radio button is selected");
+			});
 		});
 
 		QUnit.test("when the 'Add Contexts' button is pressed ", function (assert) {
@@ -200,6 +177,7 @@ sap.ui.define([
 					return new StandardListItem({title: "ADMIN"});
 				}
 			};
+
 			assert.equal(oController.oSelectedContextsModel.getProperty("/selected").length, 3, "then there are three items");
 			oController.onDeleteContext(oEvent);
 			assert.equal(oController.oSelectedContextsModel.getProperty("/selected").length, 2, "then one item was deleted from model");
