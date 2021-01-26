@@ -604,13 +604,13 @@
 									<m:Table items="{path: '/MaterialCollection'}" width="26rem">
 										<m:columns>
 											<m:Column>
-												<m:Label text="{/#MaterialCollection/MatrId/@sap:label}"/>
+												<m:Label text="{/#Material/MatrId/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="{/#MaterialCollection/Text/@sap:label}"/>
+												<m:Label text="{/#Material/Text/@sap:label}"/>
 											</m:Column>
 											<m:Column>
-												<m:Label text="{/#MaterialCollection/defaultUnit/@sap:label}"/>
+												<m:Label text="{/#Material/defaultUnit/@sap:label}"/>
 											</m:Column>
 										</m:columns>
 										<m:items>
@@ -653,7 +653,7 @@
 										liveMode= "true">
 										<mdc:FilterField
 											id="VHFBTextFF"
-											label= "{/#weightODataUnits/MatrId/@sap:label}"
+											label= "{/#ODataUnits/MatrId/@sap:label}"
 											editMode= "Editable"
 											display= "ValueDescription"
 											dataType="sap.ui.model.type.String"
@@ -666,16 +666,16 @@
 									<m:Table items="{/weightODataUnits}" width="26rem">
 										<m:columns>
 											<m:Column width="10rem">
-												<m:Label text="{/#weightODataUnits/MatrId/@sap:label}"/>
+												<m:Label text="{/#ODataUnits/MatrId/@sap:label}"/>
 											</m:Column>
 											<m:Column width="3rem">
-												<m:Label text="{/#weightODataUnits/id/@sap:label}"/>
+												<m:Label text="{/#ODataUnits/id/@sap:label}"/>
 											</m:Column>
 											<m:Column width="3rem">
-												<m:Label text="{/#weightODataUnits/unit/@sap:label}"/>
+												<m:Label text="{/#ODataUnits/unit/@sap:label}"/>
 											</m:Column>
 											<m:Column >
-												<m:Label text="{/#weightODataUnits/text/@sap:label}"/>
+												<m:Label text="{/#ODataUnits/text/@sap:label}"/>
 											</m:Column>
 										</m:columns>
 										<m:items>
