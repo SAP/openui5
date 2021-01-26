@@ -76,6 +76,31 @@
 		</ColumnListItem>
 	</core:ExtensionPoint>
 
+	<!-- EP contains EP -->
+	<core:ExtensionPoint name="EPinEPRoot">
+		<Button id="ButtonInRootEP"></Button>
+		<core:ExtensionPoint name="EPinEPChild">
+			<Button id="EPinEPButton"></Button>
+			<Button id="EPinEPButton2"></Button>
+			<Button id="EPinEPButton3"></Button>
+			<core:ExtensionPoint name="EPinEPChild3">
+				<Button id="EPinEPButtonDeepNesting"></Button>
+				<Button id="EPinEPButtonDeepNesting2"></Button>
+			</core:ExtensionPoint>
+		</core:ExtensionPoint>
+		<Button id="ButtonInRootEP2"></Button>
+		<Button id="ButtonInRootEP3"></Button>
+		<core:ExtensionPoint name="EPinEPChild2">
+			<Button id="EPinEPButton4"></Button>
+		</core:ExtensionPoint>
+		<Button id="ButtonInRootEP4"></Button>
+	</core:ExtensionPoint>
+
+	<!-- Fragment contains an ExtensionPoint as root node in EP -->
+	<core:ExtensionPoint name="EPinRootFragment">
+		<core:Fragment id="EPinEPRootFragment" fragmentName="testdata.customizing.customer.ext.EPRoot" type="XML" />
+	</core:ExtensionPoint>
+
 	<!-- Fragment contains an ExtensionPoint as root node -->
 	<core:Fragment id="EPRootFragment" fragmentName="testdata.customizing.customer.ext.EPRoot" type="XML" />
 
