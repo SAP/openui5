@@ -81,20 +81,23 @@ sap.ui.define([
 				requestStart: 2,
 				responseEnd: 3,
 				transferSize: 10, // okay
+				nextHopProtocol: "h2",
 				encodedBodySize: 10
 			}, {
 				initiatorType: "xmlhttprequest",
 				startTime: 4,
 				requestStart: 5,
 				responseEnd: 6,
-				transferSize: 0, // xhr from cache
+				transferSize: 0,
+				nextHopProtocol: "", // xhr from cache
 				encodedBodySize: 10
 			}, {
 				initiatorType: "xmlhttprequest",
 				startTime: 7,
 				requestStart: 8,
 				responseEnd: 9,
-				transferSize: 10, // script from cache
+				transferSize: 10,
+				nextHopProtocol: "", // xhr from cache
 				encodedBodySize: 0
 			}, {
 				initiatorType: "xmlhttprequest",
@@ -125,7 +128,7 @@ sap.ui.define([
 
 	QUnit.test("retrieved requests", function(assert) {
 		assert.deepEqual(this.interaction.requests, this.requests, "requests are added to interaction");
-		assert.strictEqual(this.interaction.completeRoundtrips, 4, "only complete requests are counted");
+		assert.strictEqual(this.interaction.completeRoundtrips, 2, "only complete requests are counted");
 	});
 
 	QUnit.test("setRequestHeader parameters", function(assert) {

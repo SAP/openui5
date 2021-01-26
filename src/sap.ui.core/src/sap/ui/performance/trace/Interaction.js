@@ -80,18 +80,21 @@ sap.ui.define([
 	}
 
 	/**
-	 * Check if request is initiated by XHR
+	 * Check if request is initiated by XHR (not from cache) and complete
 	 *
 	 * @param {object} oRequestTiming
 	 * @private
 	 */
-	function isXHR(oRequestTiming) {
+	function isValidXHR(oRequestTiming) {
 		// if the request has been completed it has complete timing figures)
 		var bComplete = oRequestTiming.startTime > 0 &&
 			oRequestTiming.startTime <= oRequestTiming.requestStart &&
 			oRequestTiming.requestStart <= oRequestTiming.responseEnd;
 
-		return bComplete && oRequestTiming.initiatorType === "xmlhttprequest";
+		// if the request was served from cache 'nextHopProtocol' must be an empty string
+		var bFromCache = oRequestTiming.nextHopProtocol === "";
+
+		return !bFromCache && bComplete && oRequestTiming.initiatorType === "xmlhttprequest";
 	}
 
 	function aggregateRequestTiming(oRequest) {
@@ -154,13 +157,14 @@ sap.ui.define([
 			var aAllRequestTimings = window.performance.getEntriesByType("resource");
 			oPendingInteraction.end = iTime;
 			oPendingInteraction.duration = oPendingInteraction.processing;
-			oPendingInteraction.requests = aAllRequestTimings.filter(isXHR);
+			oPendingInteraction.requests = aAllRequestTimings;
 			oPendingInteraction.completeRoundtrips = 0;
 			oPendingInteraction.measurements = Measurement.filterMeasurements(isCompleteMeasurement, true);
-			if (oPendingInteraction.requests.length > 0) {
-				aggregateRequestTimings(oPendingInteraction.requests);
+			var aCompleteRoundtripTimings = oPendingInteraction.requests.filter(isValidXHR);
+			if (aCompleteRoundtripTimings.length > 0) {
+				aggregateRequestTimings(aCompleteRoundtripTimings);
 			}
-			oPendingInteraction.completeRoundtrips = oPendingInteraction.requests.length;
+			oPendingInteraction.completeRoundtrips = aCompleteRoundtripTimings.length;
 
 			// calculate real processing time if any processing took place
 			// cannot be negative as then requests took longer than processing
