@@ -314,7 +314,7 @@ sap.ui.define([
 		 * Displays a message strip on top of the content with the given text.
 		 *
 		 * @param {string} sMessage The message.
-		 * @param {sap.m.MessageType} sType Type of the message.
+		 * @param {sap.ui.core.MessageType} sType Type of the message.
 		 */
 		AdaptiveContent.prototype.showMessage = function (sMessage, sType) {
 			var oMessage = this.getAggregation("_content").getItems()[0];

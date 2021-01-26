@@ -402,8 +402,8 @@ sap.ui.define([
 	 * Returns N-More Popover/Dialog.
 	 *
 	 * @private
-	 * @ui5-restricted for sap.m.MultiInput, sap.m.MultiComboBox
-	 * @returns {sap.m.ResponsivePopup}
+	 * @ui5-restricted sap.m.MultiInput, sap.m.MultiComboBox
+	 * @returns {sap.m.ResponsivePopover}
 	 */
 	Tokenizer.prototype.getTokensPopup = function () {
 		if (this._oPopup) {

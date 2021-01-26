@@ -811,8 +811,8 @@ sap.ui.define([
 
 		/**
 		* Sets the <code>selectionMode</code> property
-		* @param {object} vValue the selection mode to set the chart to
-		* @returns {sap.mdc.Chart} reference to <code>this</code> for method chaining
+		* @param {string} vValue the selection mode to set the chart to
+		* @returns {sap.ui.mdc.Chart} reference to <code>this</code> for method chaining
 		*
 		* @private
 		* @ui5-restricted Fiori Elements
@@ -1070,14 +1070,18 @@ sap.ui.define([
 		};
 
 		/**
-		 * @typedef {Object} mInfo
+		 * @typedef {Object} sap.ui.mdc.Chart.ChartTypeInfo
 		 * @property {string} icon - The icon of the selected chart type
 		 * @property {string} text - Tooltip containing the current chart type
+		 * @experimental
+		 * @private
+		 * @ui5-restricted Fiori Elements
 		 */
+
 		/**
-		 * Gets information about the current chart type
+		 * Gets information about the current chart type.
 		 *
-		 * @returns {mInfo} Object containing information about the chart type
+		 * @returns {sap.ui.mdc.Chart.ChartTypeInfo} Object containing information about the chart type
 		 *
 		 * @experimental
 		 * @private
@@ -1099,8 +1103,8 @@ sap.ui.define([
 		};
 
 		/**
-		 * Gets the managed object model
-		 * @return {oModel} the managed object model
+		 * Gets the managed object model.
+		 * @returns {sap.ui.model.base.ManagedObjectModel} the managed object model
 		 *
 		 * @experimental
 		 * @private

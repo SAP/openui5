@@ -2078,7 +2078,7 @@ sap.ui.define([
 
 	/**
 	 * Returns the layout history object
-	 * @returns {LayoutHistory}
+	 * @returns {sap.f.FlexibleColumnLayout.LayoutHistory}
 	 * @private
 	 * @ui5-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 */
@@ -2212,8 +2212,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Layout history helper class
+	 * Layout history helper class.
 	 * @constructor
+	 * @alias sap.f.FlexibleColumnLayout.LayoutHistory
+	 * @private
+	 * @ui5-restricted sap.f.FlexibleColumnLayoutSemanticHelper
 	 */
 	function LayoutHistory () {
 		this._aLayoutHistory = [];

@@ -4367,7 +4367,7 @@ sap.ui.define([
 	/**
 	 * Touch helper.
 	 *
-	 * @namespace
+	 * @namespace sap.m.touch
 	 * @public
 	 **/
 	thisLib.touch = thisLib.touch || {};
@@ -4378,6 +4378,8 @@ sap.ui.define([
 	 * @param {TouchList} oTouchList The list of touch objects to search.
 	 * @param {Touch | number} oTouch A touch object to find or a Touch.identifier that uniquely identifies the current finger in the touch session.
 	 * @returns {object | undefined} The touch matching if any.
+	 * @name sap.m.touch.find
+	 * @function
 	 * @public
 	*/
 	thisLib.touch.find = function(oTouchList, oTouch) {
@@ -4414,8 +4416,10 @@ sap.ui.define([
 	 * @param {TouchList} oTouchList The list of touch objects to search.
 	 * @param {jQuery | Element | string} vElement A jQuery element or an element reference or an element id.
 	 * @returns {number} The number of touches related with the given element.
+	 * @name sap.m.touch.countContained
+	 * @function
 	 * @public
-	*/
+	 */
 	thisLib.touch.countContained = function(oTouchList, vElement) {
 		var i,
 			iTouchCount = 0,
