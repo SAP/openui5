@@ -111,7 +111,7 @@ sap.ui.define([
 					});
 				},
 				iPressOpenAdministratorEditor: function () {
-					var sMenuBtnId = "openCardEditorButton";
+					var sMenuBtnId = "openConfigurationEditorButton";
 
 					return this.iPressOnToolbarOverflowIfButtonIsThere(sMenuBtnId).and.waitFor({
 						viewName: sViewName,
