@@ -324,6 +324,11 @@
 		"HK": "Хонгконг",
 		"MO": "Макао"
 	},
+	"sr_Latn": {
+		"TW": "Tajvan",
+		"HK": "Hongkong",
+		"MO": "Makao"
+	},
 	"sv": {
 		"TW": "Taiwan",
 		"HK": "Hongkong",
