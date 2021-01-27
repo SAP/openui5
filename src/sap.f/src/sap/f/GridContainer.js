@@ -41,13 +41,19 @@ sap.ui.define([
 	var isRtl = Core.getConfiguration().getRTL();
 
 	/**
-	 * For these controls the grid item visual focus should be displayed from the control inside.
+	 * For these controls check if the grid item visual focus can be displayed from the control inside.
 	 */
-	var aOwnVisualFocusControls = [
-		"sap.f.Card",
-		"sap.ui.integration.widgets.Card",
-		"sap.m.GenericTile"
-	];
+	var mOwnVisualFocusControls = {
+		"sap.f.Card": function (oCard) {
+			return oCard.getCardHeader() || oCard.getCardContent();
+		},
+		"sap.ui.integration.widgets.Card": function (oCard) {
+			return oCard.getCardHeader() || oCard.getCardContent();
+		},
+		"sap.m.GenericTile": function () {
+			return true;
+		}
+	};
 
 	/**
 	 * Gets the column-span property from the item's layout data.
@@ -366,17 +372,9 @@ sap.ui.define([
 	 * @private
 	 */
 	GridContainer.prototype._onAfterItemRendering = function () {
+		var container = this.getParent();
 
-		var container = this.getParent(),
-			oFocusDomRef;
-
-		if (container._hasOwnVisualFocus(this)) {
-			oFocusDomRef = this.getFocusDomRef();
-
-			// remove the focus DOM ref from the tab chain
-			oFocusDomRef.setAttribute("tabindex", -1);
-			oFocusDomRef.tabIndex = -1;
-		}
+		container._checkOwnVisualFocus(this);
 
 		// register resize listener for that item only once
 		if (!container._resizeListeners[this.getId()]) {
@@ -617,7 +615,6 @@ sap.ui.define([
 			oGridRef.insertBefore(oWrapper, oGridRef.lastChild);
 		}
 
-		oItem.addStyleClass("sapFGridContainerItemInnerWrapper");
 		oRm.render(oItem, oWrapper);
 		oRm.destroy();
 
@@ -1182,12 +1179,21 @@ sap.ui.define([
 	});
 
 	/**
-	 * Returns if the control should display the grid item visual focus.
+	 * Checks if the control will display the grid item visual focus.
+	 * @param {sap.ui.core.Control} oControl The control
 	 * @private
-	 * @return {boolean} If the control should display the grid item visual focus
 	 */
-	GridContainer.prototype._hasOwnVisualFocus = function (oControl) {
-		return aOwnVisualFocusControls.indexOf(oControl.getMetadata().getName()) > -1;
+	GridContainer.prototype._checkOwnVisualFocus = function (oControl) {
+		var sName = oControl.getMetadata().getName(),
+			oFocusDomRef;
+
+		if (mOwnVisualFocusControls[sName] && mOwnVisualFocusControls[sName](oControl)) {
+			oFocusDomRef = oControl.getFocusDomRef();
+			// remove the focus DOM ref from the tab chain
+			oFocusDomRef.setAttribute("tabindex", -1);
+			oFocusDomRef.tabIndex = -1;
+			GridContainerUtils.getItemWrapper(oControl).classList.add("sapFGridContainerItemWrapperNoVisualFocus");
+		}
 	};
 
 	/**

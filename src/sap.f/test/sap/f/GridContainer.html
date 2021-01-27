@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+	<head lang="en">
+		<meta charset="UTF-8">
+		<title>sap.f.GridListItem test page</title>
+
+		<script type="text/javascript"
+				src="../../../resources/sap-ui-core.js"
+				id="sap-ui-bootstrap"
+				data-sap-ui-libs="sap.f, sap.m"
+				data-sap-ui-theme="sap_fiori_3">
+		</script>
+
+		<script>
+			sap.ui.getCore().attachInit(function () {
+				sap.ui.require([
+					"sap/m/Page",
+					"sap/m/App",
+					"sap/f/GridContainer",
+					"sap/m/Title",
+					"sap/f/Card",
+					"sap/f/GridContainerItemLayoutData"
+				], function (
+					Page,
+					App,
+					GridContainer,
+					Title,
+					Card,
+					GridContainerItemLayoutData
+				) {
+
+					var oGridContainer = new GridContainer("gridContainer", {
+						items: [
+							new Title("title", {
+								text: "This is an sap.m.Title control inside sap.f.GridContainer",
+								layoutData: new GridContainerItemLayoutData({
+									columns: 100
+								})
+							}),
+							new Card({
+								height: "100%",
+								layoutData: new GridContainerItemLayoutData({
+									minRows: 3,
+									columns: 2
+								})
+							})
+						]
+					});
+
+
+					var oPage = new Page("page", {
+						title: "Test Page for sap.f.GridContainer",
+						content: [ oGridContainer ]
+					}).addStyleClass("sapUiContentPadding");
+
+					var oApp = new App({
+						pages: [ oPage ]
+					}).placeAt("body");
+				});
+			});
+		</script>
+	</head>
+	<body id="body" class="sapUiBody">
+	</body>
+</html>

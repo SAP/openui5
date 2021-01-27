@@ -1686,6 +1686,22 @@ function (
 		oItemWrapperFocusSpy.restore();
 	});
 
+	QUnit.test("Item with own focus, when the item has no focusable content", function (assert) {
+		// Arrange
+		var oCard = new Card({height: "100%"}),
+			oGrid = new GridContainer({
+				items: [ oCard ]
+			});
+		oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		// Assert
+		assert.notOk(GridContainerUtils.getItemWrapper(oCard).classList.contains("sapFGridContainerItemWrapperNoVisualFocus"), "Class for own focus is not added");
+
+		// Clean up
+		oGrid.destroy();
+	});
+
 	QUnit.module("Accessibility", {
 		beforeEach: function () {
 			this.oGrid = new GridContainer({
@@ -1733,7 +1749,7 @@ function (
 						subheader: "subheaderText",
 						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
 					}),
-					this.oCard = new IntegrationCard({
+					new IntegrationCard({
 						manifest: oIntegrationCardManifest,
 						layoutData: new GridContainerItemLayoutData({ columns: 2, rows: 2 })
 					}),
