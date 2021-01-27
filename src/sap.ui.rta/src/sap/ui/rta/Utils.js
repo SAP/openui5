@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
 	"sap/base/util/restricted/_omit",
-	"sap/ui/model/json/JSONModel"
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/core/Fragment"
 ],
 function(
 	jQuery,
@@ -30,7 +31,8 @@ function(
 	Log,
 	UriParameters,
 	_omit,
-	JSONModel
+	JSONModel,
+	Fragment
 ) {
 	"use strict";
 
@@ -256,11 +258,19 @@ function(
 
 				// instantiate the Fragment if not done yet
 				if (!oFragmentDialog) {
-					oFragmentDialog = sap.ui.xmlfragment("sap.ui.rta.view.RemoveElementDialog", oFragmentController);
-					oFragmentDialog.setModel(oModel);
+					Fragment.load({
+						name: "sap.ui.rta.view.RemoveElementDialog",
+						controller: oFragmentController
+					}).then(function(oFragmentDialogT) {
+						oFragmentDialog = oFragmentDialogT;
+						oFragmentDialog.setModel(oModel);
+						oFragmentDialog.addStyleClass(Utils.getRtaStyleClassName());
+						oFragmentDialog.open();
+					});
+				} else {
+					oFragmentDialog.addStyleClass(Utils.getRtaStyleClassName());
+					oFragmentDialog.open();
 				}
-				oFragmentDialog.addStyleClass(Utils.getRtaStyleClassName());
-				oFragmentDialog.open();
 			}
 		);
 	};

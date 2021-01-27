@@ -518,8 +518,10 @@ function(
 				done();
 			});
 
-			assert.ok(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog is available");
-			sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogRemoveButton")[0].id).firePress();
+			setTimeout(function() {
+				assert.ok(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog is available");
+				sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogRemoveButton")[0].id).firePress();
+			}, 100);
 		});
 
 		QUnit.test("when the dialog gets cancelled", function(assert) {
@@ -531,8 +533,10 @@ function(
 				done();
 			});
 
-			assert.ok(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog is available");
-			sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogCancelButton")[0].id).firePress();
+			setTimeout(function() {
+				assert.ok(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog is available");
+				sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogCancelButton")[0].id).firePress();
+			}, 100);
 		});
 	});
 

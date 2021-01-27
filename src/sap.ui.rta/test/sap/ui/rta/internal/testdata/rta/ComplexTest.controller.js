@@ -3,13 +3,15 @@ sap.ui.define([
 	"sap/ui/core/util/MockServer",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Fragment"
 ], function(
 	Controller,
 	MockServer,
 	ODataModel,
 	JSONModel,
-	Log
+	Log,
+	Fragment
 ) {
 	"use strict";
 
@@ -236,20 +238,27 @@ sap.ui.define([
 				var oComponent = this.getOwnerComponent();
 				oComponent.runAsOwner(function() {
 					if (!this._oDialog || !sap.ui.getCore().byId(this._oDialog.getId())) {
-						this._oDialogForm = sap.ui.xmlfragment(this.getView().createId("SmartFormDialog"), "sap.ui.rta.test.fragment.Popup", {});
+						Fragment.load({
+							id: this.getView().createId("SmartFormDialog"),
+							name: "sap.ui.rta.test.fragment.Popup"
+						}).then(function(oDialogForm) {
+							this._oDialogForm = oDialogForm;
 
-						this._oDialog = new Dialog({
-							id: oComponent.createId("SmartFormDialog"),
-							showHeader: false,
-							content: this._oDialogForm,
-							contentHeight: "85%"
-						});
-						this.getView().addDependent(this._oDialog);
+							this._oDialog = new Dialog({
+								id: oComponent.createId("SmartFormDialog"),
+								showHeader: false,
+								content: this._oDialogForm,
+								contentHeight: "85%"
+							});
+							this.getView().addDependent(this._oDialog);
 
-						this._oDialog.removeStyleClass("sapUiPopupWithPadding");
-						this._oDialog.addStyleClass("sapUiSizeCompact");
+							this._oDialog.removeStyleClass("sapUiPopupWithPadding");
+							this._oDialog.addStyleClass("sapUiSizeCompact");
+							this._oDialog.open();
+						}.bind(this));
+					} else {
+						this._oDialog.open();
 					}
-					this._oDialog.open();
 				}.bind(this));
 			}.bind(this));
 		},
@@ -350,19 +359,25 @@ sap.ui.define([
 				var oComponent = this.getOwnerComponent();
 				oComponent.runAsOwner(function() {
 					if (!this._oPopover || !sap.ui.getCore().byId(this._oPopover.getId())) {
-						this._oPopoverForm = sap.ui.xmlfragment(this.getView().createId("FormPopover"), "sap.ui.rta.test.fragment.Popup", {});
+						Fragment.load({
+							id: this.getView().createId("FormPopover"),
+							name: "sap.ui.rta.test.fragment.Popup"
+						}).then(function(oPopoverForm) {
+							this._oPopoverForm = oPopoverForm;
 
-						this._oPopover = new Popover({
-							id: oComponent.createId("SmartFormPopover"),
-							showHeader: false,
-							content: this._oPopoverForm
-						});
-						this.getView().addDependent(this._oPopover);
+							this._oPopover = new Popover({
+								id: oComponent.createId("SmartFormPopover"),
+								showHeader: false,
+								content: this._oPopoverForm
+							});
+							this.getView().addDependent(this._oPopover);
 
-						this._oPopover.removeStyleClass("sapUiPopupWithPadding");
-						this._oPopover.addStyleClass("sapUiSizeCompact");
+							this._oPopover.removeStyleClass("sapUiPopupWithPadding");
+							this._oPopover.addStyleClass("sapUiSizeCompact");
+						}.bind(this));
+					} else {
+						this._oPopover.openBy(oTargetButton);
 					}
-					this._oPopover.openBy(oTargetButton);
 				}.bind(this));
 			}.bind(this));
 		}
