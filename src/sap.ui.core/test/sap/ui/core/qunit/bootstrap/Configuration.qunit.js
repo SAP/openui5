@@ -309,33 +309,62 @@ sap.ui.define([
 		//  SAP language derived by UI5 - special cases
 		oConfig.setLanguage("zh-CN");
 		assert.equal(oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+		assert.equal(oConfig.getLanguageTag(), "zh-CN", "Language Tag should be 'zh-CN'");
 		oConfig.setLanguage("zh-Hans");
 		assert.equal(oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+		assert.equal(oConfig.getLanguageTag(), "zh-Hans", "Language Tag should be 'zh-Hans'");
 		oConfig.setLanguage("zh-Hans-CN");
 		assert.equal(oConfig.getSAPLogonLanguage(), "ZH", "SAP Logon language should be 'ZH'");
+		assert.equal(oConfig.getLanguageTag(), "zh-Hans-CN", "Language Tag should be 'zh-Hans-CN'");
 		oConfig.setLanguage("zh-TW");
 		assert.equal(oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+		assert.equal(oConfig.getLanguageTag(), "zh-TW", "Language Tag should be 'zh-TW'");
 		oConfig.setLanguage("zh-Hant");
 		assert.equal(oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+		assert.equal(oConfig.getLanguageTag(), "zh-Hant", "Language Tag should be 'zh-Hant'");
 		oConfig.setLanguage("zh-Hant-TW");
 		assert.equal(oConfig.getSAPLogonLanguage(), "ZF", "SAP Logon language should be 'ZF'");
+		assert.equal(oConfig.getLanguageTag(), "zh-Hant-TW", "Language Tag should be 'zh-Hant-TW'");
 		oConfig.setLanguage("en-US-x-saptrc");
 		assert.equal(oConfig.getSAPLogonLanguage(), "1Q", "SAP Logon language should be '1Q'");
+		assert.equal(oConfig.getLanguageTag(), "en-US-x-saptrc", "Language Tag should be 'en-US-x-saptrc'");
 		oConfig.setLanguage("en-US-x-sappsd");
 		assert.equal(oConfig.getSAPLogonLanguage(), "2Q", "SAP Logon language should be '2Q'");
+		assert.equal(oConfig.getLanguageTag(), "en-US-x-sappsd", "Language Tag should be 'en-US-x-sappsd'");
 		oConfig.setLanguage("en-US-x-saprigi");
 		assert.equal(oConfig.getSAPLogonLanguage(), "3Q", "SAP Logon language should be '3Q'");
+		assert.equal(oConfig.getLanguageTag(), "en-US-x-saprigi", "Language Tag should be 'en-US-x-saprigi'");
+		oConfig.setLanguage("en-GB");
+		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "SAP Logon language should be '6N'");
+		assert.equal(oConfig.getLanguageTag(), "en-GB", "Language Tag should be 'en-GB'");
+		oConfig.setLanguage("pt-PT");
+		assert.equal(oConfig.getSAPLogonLanguage(), "1P", "SAP Logon language should be '1P'");
+		assert.equal(oConfig.getLanguageTag(), "pt-PT", "Language Tag should be 'pt-PT'");
+
+		oConfig.setLanguage("sr-Latn");
+		assert.equal(oConfig.getSAPLogonLanguage(), "SH", "SAP Logon language should be 'SH'");
+		assert.equal(oConfig.getLanguageTag(), "sh", "Language Tag should be 'sr-Latn'");
+
+		oConfig.setLanguage("sh");
+		assert.equal(oConfig.getSAPLogonLanguage(), "SH", "SAP Logon language should be 'SH'");
+		assert.equal(oConfig.getLanguageTag(), "sh", "Language Tag should be 'sr-Latn'");
+
+		oConfig.setLanguage("sr");
+		assert.equal(oConfig.getSAPLogonLanguage(), "SR", "SAP Logon language should be 'SR'");
+		assert.equal(oConfig.getLanguageTag(), "sr", "Language Tag should be 'sr'");
 	});
 
 	QUnit.test("configured via API", function(assert) {
 		var oConfig = Core.getConfiguration();
 		//  SAP language provided by caller of setLanguage
 		oConfig.setLanguage("en-GB");
-		assert.equal(oConfig.getSAPLogonLanguage(), "EN", "setting only BCP47 language can only return 'EN'");
+		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "setting only BCP47 language can only return 'EN'");
+		oConfig.setLanguage("en-GB", "1E"); // note: only SAPLanguage changes!
+		assert.equal(oConfig.getSAPLogonLanguage(), "1E", "setting both values must return the expected SAP Language '6N'");
 		oConfig.setLanguage("en-GB", "6N"); // note: only SAPLanguage changes!
-		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "setting both values must return the extected SAP Language '6N'");
+		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "setting both values must return the expected SAP Language '6N'");
 		oConfig.setLanguage("en-GB");
-		assert.equal(oConfig.getSAPLogonLanguage(), "EN", "setting only BCP47 language again must reset the knowledge about SAP Language");
+		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "setting only BCP47 language again must reset the knowledge about SAP Language");
 	});
 
 	QUnit.module("SAP Logon Language (via url)", {
@@ -363,7 +392,8 @@ sap.ui.define([
 		[ "?sap-language=1Q",						"en-US-x-saptrc",	"en-US-x-saptrc",	"1Q",	"sap-language is the known SAP language 1Q"],
 		[ "?sap-language=2Q",						"en-US-x-sappsd",	"en-US-x-sappsd",	"2Q",	"sap-language is the known SAP language 2Q"],
 		[ "?sap-language=3Q",						"en-US-x-saprigi",	"en-US-x-saprigi",	"3Q",	"sap-language is the known SAP language 3Q"],
-		[ "?sap-language=6N",						"de",				"de",				"6N",	"sap-language is the unknown SAP language 6N"],
+		[ "?sap-language=6N",						"en-GB",			"en-GB",			"6N",	"sap-language is the unknown SAP language 6N"],
+		[ "?sap-language=SH",						"sr-Latn",			"sh",		    	"SH",	"sap-language is the unknown SAP language 6N"],
 		[ "?sap-locale=fr_CH",						"fr_CH",			"fr-CH",			"FR",	"sap-locale is the accepted BCP47 tag fr_CH"],
 		[ "?sap-locale=En_gb&sap-language=6N",		"En_gb",			"en-GB",			"6N",	"valid combination of sap-locale and sap-language (En_gb, 6N)"],
 		[ "?sap-ui-language=en_GB&sap-language=6N",	"en_GB",			"en-GB",			"6N",	"valid combination of sap-ui-language and sap-language (en_GB, 6N)"],
@@ -384,15 +414,20 @@ sap.ui.define([
 	QUnit.test("language via url, locale+language via API", function(assert) {
 
 		var oConfig = this.setupConfig("de", "?sap-language=6N");
+		assert.equal(oConfig.getLanguage(), "en-GB", "the effective language still should be 'en-GB'");
+		assert.equal(oConfig.getLanguageTag(), "en-GB", "the effective language tag still should be 'en-GB'");
+		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N' already");
+
+		oConfig = this.setupConfig("de", "?sap-language=1E");
 		assert.equal(oConfig.getLanguage(), "de", "the effective language still should be 'de'");
 		assert.equal(oConfig.getLanguageTag(), "de", "the effective language tag still should be 'de'");
-		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N' already");
+		assert.equal(oConfig.getSAPLogonLanguage(), "1E", "the SAP Logon language should be '6N' already");
 
 		// without the second parameter, the sap language now would be 'EN' only
 		oConfig.setLanguage("en-GB");
 		assert.equal(oConfig.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
 		assert.equal(oConfig.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
-		assert.equal(oConfig.getSAPLogonLanguage(), "EN", "the SAP Logon language should be 'EN'");
+		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "the SAP Logon language should be 'EN'");
 
 		// but with the second parameter, everything should be fine
 		oConfig.setLanguage("en-GB", "6N");
@@ -400,21 +435,26 @@ sap.ui.define([
 		assert.equal(oConfig.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
 		assert.equal(oConfig.getSAPLogonLanguage(), "6N", "the SAP Logon language should be '6N'");
 
+		oConfig.setLanguage("en-GB", "1E");
+		assert.equal(oConfig.getLanguage(), "en-GB", "the effective language should be 'en-GB'");
+		assert.equal(oConfig.getLanguageTag(), "en-GB", "the effective language tag should be 'en-GB'");
+		assert.equal(oConfig.getSAPLogonLanguage(), "1E", "the SAP Logon language should be '1E'");
+
 	});
 
 	QUnit.test("error reporting", function(assert) {
 		this.stub(Log, 'warning');
-		this.setupConfig("de", "?sap-language=6N&sap-locale=en-GB");
+		this.setupConfig("de", "?sap-language=1E&sap-locale=en-GB");
 		assert.strictEqual(Log.warning.called, false, "no warning should be written if accompanied by sap-locale");
-		this.setupConfig("de", "?sap-language=6N&sap-ui-language=en-GB");
+		this.setupConfig("de", "?sap-language=1E&sap-ui-language=en-GB");
 		assert.strictEqual(Log.warning.called, false, "no warning should be written if accompanied by sap-ui-language");
-		this.setupConfig("de", "?sap-language=6N");
-		assert.ok(Log.warning.calledWith(sinon.match(/6N/).and(sinon.match(/BCP-?47/i))), "warning must have been written");
+		this.setupConfig("de", "?sap-language=1E");
+		assert.ok(Log.warning.calledWith(sinon.match(/1E/).and(sinon.match(/BCP-?47/i))), "warning must have been written");
 		assert.throws(function() {
-			this.setupConfig("de", "?sap-locale=6N&sap-language=6N");
+			this.setupConfig("de", "?sap-locale=1E&sap-language=1E");
 		}, "setting an invalid (non-BCP-47) sap-locale should cause an error");
 		assert.throws(function() {
-			this.setupConfig("de", "?sap-ui-language=6N&sap-language=6N");
+			this.setupConfig("de", "?sap-ui-language=1E&sap-language=1E");
 		}, "setting an invalid (non-BCP-47) sap-ui-language should cause an error");
 	});
 

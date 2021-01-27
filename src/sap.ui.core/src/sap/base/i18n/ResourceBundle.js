@@ -32,7 +32,7 @@ sap.ui.define([
 
 	/**
 	 * Resource bundles are stored according to the Java Development Kit conventions.
-	 * JDK uses old language names for a few ISO639 codes ("iw" for "he", "ji" for "yi", "in" for "id" and "sh" for "sr").
+	 * JDK uses old language names for a few ISO639 codes ("iw" for "he", "ji" for "yi" and "no" for "nb").
 	 * Make sure to convert newer codes to older ones before creating file names.
 	 * @const
 	 * @private
@@ -40,9 +40,8 @@ sap.ui.define([
 	var M_ISO639_NEW_TO_OLD = {
 		"he" : "iw",
 		"yi" : "ji",
-		"id" : "in",
-		"sr" : "sh",
-		"nb" : "no"
+		"nb" : "no",
+		"sr" : "sh" // for backward compatibility, as long as "sr (Cyrillic)" is not supported
 	};
 
 	/**
@@ -53,8 +52,6 @@ sap.ui.define([
 	var M_ISO639_OLD_TO_NEW = {
 		"iw" : "he",
 		"ji" : "yi",
-		"in" : "id",
-		"sh" : "sr",
 		"no" : "nb"
 	};
 
@@ -112,6 +109,13 @@ sap.ui.define([
 					sRegion = "CN";
 				} else if ( sScript === "hant" ) {
 					sRegion = "TW";
+				}
+			}
+			if (sLanguage === "sr" && sScript === "latn") {
+				if (bPreserveLanguage) {
+					sLanguage = "sr_Latn";
+				} else {
+					sLanguage = "sh";
 				}
 			}
 			return sLanguage + (sRegion ? "_" + sRegion + (sVariants ? "_" + sVariants.replace("-","_") : "") : "");
@@ -179,12 +183,20 @@ sap.ui.define([
 	 * Helper to normalize the given locale (java.util.Locale format) to the BCP-47 syntax.
 	 *
 	 * @param {string} sLocale locale to convert
+	 * @param {boolean} bConvertToModern whether to convert to modern language
 	 * @returns {string} Normalized locale or undefined if the locale can't be normalized
 	 */
-	function convertLocaleToBCP47(sLocale) {
+	function convertLocaleToBCP47(sLocale, bConvertToModern) {
 		var m;
 		if ( typeof sLocale === 'string' && (m = rLocale.exec(sLocale.replace(/_/g, '-'))) ) {
 			var sLanguage = m[1].toLowerCase();
+			var sScript = m[2] ? m[2].toLowerCase() : undefined;
+			// special case for "sr_Latn" language: "sh" should then be used
+			if (bConvertToModern && sLanguage === "sh" && !sScript) {
+				sLanguage = "sr_Latn";
+			} else if (!bConvertToModern && sLanguage === "sr" && sScript === "latn") {
+				sLanguage = "sh";
+			}
 			sLanguage = M_ISO639_OLD_TO_NEW[sLanguage] || sLanguage;
 			return sLanguage + (m[3] ? "-" + m[3].toUpperCase() + (m[4] ? "-" + m[4].slice(1).replace("_","-") : "") : "");
 		}
@@ -943,7 +955,7 @@ sap.ui.define([
 
 		// determine an alternative locale, using a modern ISO639 language code
 		// (converts "sh_RS" to "sr-RS")
-		sLocale = convertLocaleToBCP47(sLocale);
+		sLocale = convertLocaleToBCP47(sLocale, true);
 		if (sLocale) {
 			// normalize it to JDK syntax for easier comparison
 			// (converts "sr-RS" to "sr_RS" - using an underscore ("_") between the segments)
