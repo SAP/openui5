@@ -199,8 +199,8 @@ sap.ui.define([
 					aDirtyChanges = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent});
 					iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oMockedAppComponent}).length;
 					assert.strictEqual(iDirtyChangesCount, 2, "then there are two dirty changes in the flex persistence");
-					assert.strictEqual(aDirtyChanges[0].getFileName(), "change44", "the first change is the first dirty control change");
-					assert.strictEqual(aDirtyChanges[1].getFileName(), "change45", "the second change is the second dirty control change");
+					assert.strictEqual(aDirtyChanges[0].getId(), "change44", "the first change is the first dirty control change");
+					assert.strictEqual(aDirtyChanges[1].getId(), "change45", "the second change is the second dirty control change");
 					assert.notOk(oSaveAsVariant, "then saveAs variant from command unset");
 					assert.notOk(oControlVariantSaveAsCommand._oVariantChange, "then _oVariantChange property was unset for the command");
 					assert.ok(this.oModel.oData["variantMgmtId1"].modified, "the diry flag is set to true again");

@@ -103,7 +103,7 @@ function(
 			sandbox.stub(FlUtils, "getAppComponentForControl").returns(oComp);
 		}
 		if (bSettingsInstance) {
-			sandbox.stub(FlSettings, "getInstance").resolves({
+			var oSettings = {
 				isVersioningEnabled: function () {
 					return false;
 				},
@@ -112,8 +112,13 @@ function(
 				},
 				isAppVariantSaveAsEnabled: function() {
 					return true;
+				},
+				isPublicLayerAvailable: function() {
+					return false;
 				}
-			});
+			};
+			sandbox.stub(FlSettings, "getInstance").resolves(oSettings);
+			sandbox.stub(FlSettings, "getInstanceOrUndef").returns(oSettings);
 		}
 	}
 

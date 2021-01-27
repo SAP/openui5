@@ -108,7 +108,7 @@ sap.ui.define([
 		return aUnsavedChanges;
 	};
 
-	Settings.prototype._handleFlexChangeCommand = function(mChange, aSelectedOverlays, oCompositeCommand) {
+	Settings.prototype._handleFlexChangeCommand = function(mChange, aSelectedOverlays, oCompositeCommand, bRuntimeOnly) {
 		var mChangeSpecificData = mChange.changeSpecificData;
 		var sVariantManagementReference;
 		// temporarily support both
@@ -135,6 +135,9 @@ sap.ui.define([
 					sVariantManagementReference);
 			}.bind(this))
 			.then(function(oSettingsCommand) {
+				if (bRuntimeOnly) {
+					oSettingsCommand.setRuntimeOnly(bRuntimeOnly);
+				}
 				return oCompositeCommand.addCommand(oSettingsCommand);
 			});
 	};
@@ -161,7 +164,7 @@ sap.ui.define([
 		});
 	};
 
-	Settings.prototype._handleCompositeCommand = function(aElementOverlays, oElement, aChanges) {
+	Settings.prototype._handleCompositeCommand = function(aElementOverlays, oElement, aChanges, bRuntimeOnly) {
 		var oCompositeCommand;
 
 		return this.getCommandFactory().getCommandFor(oElement, "composite")
@@ -175,7 +178,7 @@ sap.ui.define([
 				var mChangeSpecificData = mChange.changeSpecificData;
 				// Flex Change
 				if (mChangeSpecificData.changeType) {
-					return this._handleFlexChangeCommand(mChange, aElementOverlays, oCompositeCommand);
+					return this._handleFlexChangeCommand(mChange, aElementOverlays, oCompositeCommand, bRuntimeOnly);
 				// App Descriptor Change
 				} else if (mChangeSpecificData.appDescriptorChangeType) {
 					return this._handleAppDescriptorChangeCommand(mChange, oElement, oCompositeCommand);
@@ -204,7 +207,7 @@ sap.ui.define([
 	 * @param {function} [mPropertyBag.fnHandler] Handler function for the case of multiple settings actions
 	 * @return {Promise} Returns promise resolving with the creation of the commands
 	 */
-	Settings.prototype.handler = function(aElementOverlays, mPropertyBag) {
+	Settings.prototype.handler = function(aElementOverlays, mPropertyBag, bRuntimeOnly) {
 		mPropertyBag = mPropertyBag || {};
 		var oElement = aElementOverlays[0].getElement();
 		var fnHandler = mPropertyBag.fnHandler;
@@ -222,7 +225,7 @@ sap.ui.define([
 
 		.then(function(aChanges) {
 			if (aChanges.length > 0) {
-				return this._handleCompositeCommand(aElementOverlays, oElement, aChanges);
+				return this._handleCompositeCommand(aElementOverlays, oElement, aChanges, bRuntimeOnly);
 			}
 		}.bind(this))
 
@@ -281,7 +284,7 @@ sap.ui.define([
 						handler: function(fnHandler, aElementOverlays, mPropertyBag) {
 							mPropertyBag = mPropertyBag || {};
 							mPropertyBag.fnHandler = fnHandler;
-							return this.handler(aElementOverlays, mPropertyBag);
+							return this.handler(aElementOverlays, mPropertyBag, oSettingsAction.runtimeOnly);
 						}.bind(this, oSettingsAction.handler),
 						submenu: formatSubMenuItems(oSettingsAction.submenu)
 					});

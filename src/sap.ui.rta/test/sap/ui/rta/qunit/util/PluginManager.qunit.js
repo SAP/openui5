@@ -1,12 +1,14 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/rta/util/PluginManager",
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/rta/plugin/Settings",
 	"sap/ui/thirdparty/sinon-4"
 ],
 function(
+	Settings,
 	PluginManager,
 	CreateContainerPlugin,
 	SettingsPlugin,
@@ -19,6 +21,11 @@ function(
 	QUnit.module("Given PluginManager exists", {
 		beforeEach: function() {
 			this.oPluginManager = new PluginManager();
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isPublicLayerAvailable: function() {
+					return true;
+				}
+			});
 		},
 		afterEach: function() {
 			this.oPluginManager.destroy();
@@ -36,6 +43,7 @@ function(
 				"addIFrame",
 				"additionalElements",
 				"combine",
+				"compVariant",
 				"contextMenu",
 				"controlVariant",
 				"createContainer",

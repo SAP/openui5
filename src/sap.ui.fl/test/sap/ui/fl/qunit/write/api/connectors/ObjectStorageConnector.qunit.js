@@ -128,7 +128,7 @@ sap.ui.define([
 		});
 	}
 
-	function parameterizedTest(oConnector, sStorage) {
+	function parameterizedTest(oConnector, sStorage, bPublicLayer) {
 		QUnit.module("loadFlexData: Given a " + sStorage, {
 			afterEach: function() {
 				sandbox.restore();
@@ -169,10 +169,11 @@ sap.ui.define([
 
 			QUnit.test("when loadFeatures is called", function(assert) {
 				return oConnector.loadFeatures().then(function(oFeatures) {
-					assert.deepEqual(oFeatures, {
-						isKeyUser: true,
-						isVariantSharingEnabled: true
-					}, "the function resolves with options");
+					if (bPublicLayer) {
+						assert.strictEqual(oFeatures.isPublicLayerAvailable, bPublicLayer, "the public layer is available");
+					}
+					assert.strictEqual(oFeatures.isKeyUser, true, "the key user is available");
+					assert.strictEqual(oFeatures.isVariantSharingEnabled, true, "the variant sharing is available");
 				});
 			});
 
@@ -431,7 +432,7 @@ sap.ui.define([
 	});
 
 	parameterizedTest(JsObjectConnector, "JsObjectStorage");
-	parameterizedTest(SessionStorageWriteConnector, "sessionStorage");
+	parameterizedTest(SessionStorageWriteConnector, "sessionStorage", true);
 	// WebIDE uses the ObjectStorageConnector with an async storage
 	parameterizedTest(oConnectorWithAsyncStorage, "asyncStorage");
 	// LocalStorage behaves similar to Session storage and we rely on this to not run into issues with parallel tests interfering in the LocalStorageTests

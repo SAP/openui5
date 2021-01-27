@@ -650,7 +650,8 @@ sap.ui.define([
 						return new Promise(function(resolve) {
 							resolve([mAction1Change]);
 						});
-					}
+					},
+					runtimeOnly: true
 				},
 				{
 					name: function() {
@@ -675,6 +676,7 @@ sap.ui.define([
 					assert.equal(oFlexCommand1.getSelector().appComponent, oMockedAppComponent, "with the correct app component");
 					assert.equal(oFlexCommand1.getChangeType(), mAction1Change.changeSpecificData.changeType, "with the correct change type");
 					assert.equal(oFlexCommand1.getContent(), mAction1Change.changeSpecificData.content, "with the correct parameters");
+					assert.equal(oFlexCommand1.getRuntimeOnly(), true, "the runtimeOnly property is set");
 					bFirstChange = false;
 					done1();
 				} else {
@@ -683,6 +685,7 @@ sap.ui.define([
 					assert.equal(oFlexCommand2.getSelector().appComponent, oMockedAppComponent, "with the correct app component");
 					assert.equal(oFlexCommand2.getChangeType(), mAction2Change.changeSpecificData.changeType, "with the correct change type");
 					assert.equal(oFlexCommand2.getContent(), mAction2Change.changeSpecificData.content, "with the correct parameters");
+					assert.notOk(oFlexCommand2.getRuntimeOnly(), "the runtimeOnly property is not set");
 					done2();
 				}
 			});

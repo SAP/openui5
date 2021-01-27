@@ -3,11 +3,15 @@
  */
 
  sap.ui.define([
+	"sap/base/util/restricted/_omit",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/dt/Util",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/RenameHandler",
 	"sap/ui/rta/Utils"
 ], function(
+	_omit,
+	isEmptyObject,
 	DtUtil,
 	Plugin,
 	RenameHandler,
@@ -18,14 +22,21 @@
 	var CompVariant = Plugin.extend("sap.ui.rta.plugin.CompVariant", /** @lends sap.ui.rta.plugin.CompVariant.prototype */ {
 		metadata: {
 			library: "sap.ui.rta",
-			properties : {},
-			associations: {},
-			events: {}
+			properties: {
+				// needed for rename
+				oldValue: {
+					type: "string"
+				}
+			}
 		}
 	});
 
 	function isVariantManagementControl(oOverlay) {
 		return oOverlay.getElement().getMetadata().getName() === "sap.ui.comp.smartvariants.SmartVariantManagement";
+	}
+
+	function isCurrentVariantReadOnly(oVariantManagementControl) {
+		return oVariantManagementControl.isSpecialVariant(oVariantManagementControl.getPresentVariantId());
 	}
 
 	function createCommandAndFireEvent(oOverlay, sName, mProperties) {
@@ -45,113 +56,142 @@
 		});
 	}
 
-	function getAllVariants(/*oOverlay*/) {
-		// TODO: Control API
-		return [];
+	function getAllVariants(oOverlay) {
+		return oOverlay.getElement().getAllVariants();
 	}
 
-	// ------ rename / setTitle
-	// TODO: is this needed at all? Titles are set in the SaveAs dialog and can be changed in the manage dialog
-	function renameVariant(oOverlay) {
-		this.startEdit(oOverlay);
+	// ------ rename ------
+	function renameVariant(aOverlays) {
+		this.startEdit(aOverlays[0]);
 	}
 
-	CompVariant.prototype._emitLabelChangeEvent = function(oOverlay) {
-		// TODO: is renaming a save or a configure)
-		// var sText = RenameHandler._getCurrentEditableFieldText.call(this);
-		createCommandAndFireEvent(oOverlay[0], "compVariantConfigure", {
-			// sText
+	CompVariant.prototype.startEdit = function(oOverlay) {
+		var vDomRef = oOverlay.getDesignTimeMetadata().getData().variantRenameDomRef;
+		RenameHandler.startEdit.call(this, {
+			overlay: oOverlay,
+			domRef: vDomRef,
+			pluginMethodName: "plugin.CompVariant.startEdit"
 		});
 	};
 
+	CompVariant.prototype.stopEdit = function(bRestoreFocus) {
+		RenameHandler._stopEdit.call(this, bRestoreFocus, "plugin.CompVariant.stopEdit");
+	};
+
+	CompVariant.prototype._emitLabelChangeEvent = function() {
+		var oOverlay = this._oEditedOverlay;
+		var sVariantId = oOverlay.getElement().getPresentVariantId();
+		var sText = RenameHandler._getCurrentEditableFieldText.call(this);
+		var mPropertyBag = {
+			newVariantProperties: {}
+		};
+		mPropertyBag.newVariantProperties[sVariantId] = {
+			name: sText
+		};
+		createCommandAndFireEvent.call(this, oOverlay, "compVariantUpdate", mPropertyBag);
+	};
+
 	// ------ configure ------
-	function configureVariants(oOverlay) {
-		oOverlay[0].getElement().openManageViewsDialogForKeyUser(Utils.getRtaStyleClassName(), function(oData) {
-			if (oData.length) {
-				createCommandAndFireEvent.call(this, oOverlay[0], "compVariantConfigure", oData);
+	function configureVariants(aOverlays) {
+		var oVariantManagementControl = aOverlays[0].getElement();
+		oVariantManagementControl.openManageViewsDialogForKeyUser(Utils.getRtaStyleClassName(), function(oData) {
+			if (!isEmptyObject(oData)) {
+				createCommandAndFireEvent.call(this, aOverlays[0], "compVariantUpdate", {
+					newVariantProperties: _omit(oData, ["default"]),
+					newDefaultVariantId: oData.default,
+					oldDefaultVariantId: oVariantManagementControl.getDefaultVariantId()
+				});
 			}
 		}.bind(this));
 	}
 
 	// ------ switch ------
 	function isSwitchEnabled(aOverlays) {
-		return getAllVariants(aOverlays[0]).length > 0;
+		return getAllVariants(aOverlays[0]).length > 1;
 	}
 
-	function switchVariant(oOverlay/*, oData*/) {
-		var oVariantManagementControl = oOverlay.getElement();
+	function switchVariant(aOverlays, mPropertyBag) {
+		var oVariantManagementControl = aOverlays[0].getElement();
+		var oEventItemCustomData = mPropertyBag.eventItem.data();
 
-		createCommandAndFireEvent.call(this, oOverlay[0], "compVariantSwitch", {
-			variantName: "name",
-			variantProperties: {
-				// targetVariantReference: get sNewVariantReference from oData,
-				sourceVariantReference: oVariantManagementControl.getCurrentVariantId()
-			}
+		createCommandAndFireEvent.call(this, aOverlays[0], "compVariantSwitch", {
+			targetVariantId: oEventItemCustomData.key,
+			sourceVariantId: oVariantManagementControl.getPresentVariantId()
 		});
 	}
 
 	// ------ save ------
-	function saveVariant(oOverlay) {
-		var oVariantManagementControl = oOverlay[0].getElement();
-		// TODO: probably also a compVariantConfigure command
-		createCommandAndFireEvent.call(this, oOverlay[0], "compVariantSave", {
-			variantName: "name",
-			variantProperties: {
-				variantReference: oVariantManagementControl.getCurrentVariantId()
-				//content: TODO (either to be set here or in the command / the save function of the control)
-			}
-		});
+	function saveVariant(aOverlays) {
+		var oVariantManagementControl = aOverlays[0].getElement();
+		oVariantManagementControl.getPresentVariantContent().then(function(oContent) {
+			var oPropertyBag = {
+				onlySave: true,
+				newVariantProperties: {}
+			};
+			oPropertyBag.newVariantProperties[oVariantManagementControl.getPresentVariantId()] = {
+				content: oContent
+			};
+			createCommandAndFireEvent.call(this, aOverlays[0], "compVariantUpdate", oPropertyBag);
+		}.bind(this));
 	}
 
-	function isSaveEnabled(/*oOverlay*/) {
-		// TODO: should only be enabled when the variant is dirty
-		return true;
+	function isSaveEnabled(aOverlays) {
+		return aOverlays[0].getElement().currentVariantGetModified();
 	}
 
 	// ------ save as ------
-	function saveAsNewVariant(oOverlay) {
-		// var oVMControl = oOverlay[0].getElement();
-		// oVMControl._openSaveAsDialog(); //TODO get function to open it in key user mode
-		// TODO create the setDefault change
-		createCommandAndFireEvent.call(this, oOverlay[0], "compVariantSaveAs", {
-			variantName: "name",
-			variantProperties: {
-				"default": true,
-				executeOnSelect: false,
-				content: {},
-				type: "page"
+	function saveAsNewVariant(aOverlays) {
+		var oVariantManagementControl = aOverlays[0].getElement();
+
+		oVariantManagementControl.openSaveAsDialogForKeyUser(Utils.getRtaStyleClassName(), function(oReturn) {
+			if (oReturn) {
+				createCommandAndFireEvent.call(this, aOverlays[0], "compVariantSaveAs", {
+					newVariantProperties: {
+						"default": oReturn.default,
+						executeOnSelect: oReturn.executeOnSelect,
+						content: oReturn.content,
+						type: oReturn.type,
+						text: oReturn.text
+					},
+					previousDirtyFlag: oVariantManagementControl.getModified(),
+					previousVariantId: oVariantManagementControl.getPresentVariantId(),
+					previousDefault: oVariantManagementControl.getDefaultVariantId()
+				});
 			}
-		});
+		}.bind(this));
 	}
 
 	CompVariant.prototype._isEditable = function(oOverlay) {
 		return isVariantManagementControl(oOverlay) && this.hasStableId(oOverlay);
 	};
 
-	CompVariant.prototype.getMenuItems = function (aElementOverlays) {
+	CompVariant.prototype.getMenuItems = function(aElementOverlays) {
 		var oElementOverlay = aElementOverlays[0];
 		var oVariantManagementControl = oElementOverlay.getElement();
 		var aMenuItems = [];
 
 		if (this._isEditable(oElementOverlay)) {
 			var oLibraryBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
-			aMenuItems.push({
-				id: "CTX_COMP_VARIANT_SET_TITLE",
-				text: oLibraryBundle.getText("CTX_RENAME"),
-				handler: renameVariant.bind(this),
-				enabled: true,
-				rank: 210,
-				icon: "sap-icon://edit"
-			});
 
-			aMenuItems.push({
-				id: "CTX_COMP_VARIANT_SAVE",
-				text: oLibraryBundle.getText("CTX_VARIANT_SAVE"),
-				handler: saveVariant.bind(this),
-				enabled: isSaveEnabled,
-				rank: 220,
-				icon: "sap-icon://save"
-			});
+			if (!isCurrentVariantReadOnly(oVariantManagementControl)) {
+				aMenuItems.push({
+					id: "CTX_COMP_VARIANT_RENAME",
+					text: oLibraryBundle.getText("CTX_RENAME"),
+					handler: renameVariant.bind(this),
+					enabled: true,
+					rank: 210,
+					icon: "sap-icon://edit"
+				});
+
+				aMenuItems.push({
+					id: "CTX_COMP_VARIANT_SAVE",
+					text: oLibraryBundle.getText("CTX_VARIANT_SAVE"),
+					handler: saveVariant.bind(this),
+					enabled: isSaveEnabled,
+					rank: 220,
+					icon: "sap-icon://save"
+				});
+			}
 
 			aMenuItems.push({
 				id: "CTX_COMP_VARIANT_SAVE_AS",
@@ -173,9 +213,9 @@
 
 			var aVariants = getAllVariants(oElementOverlay);
 			var aSubmenuItems = aVariants.map(function(oVariant) {
-				var bCurrentItem = oVariantManagementControl.getCurrentVariantId() === oVariant.getFileName();
+				var bCurrentItem = oVariantManagementControl.getPresentVariantId() === oVariant.getId();
 				var oItem = {
-					id: oVariant.getFileName(),
+					id: oVariant.getId(),
 					text: oVariant.getText("variantName"),
 					icon: bCurrentItem ? "sap-icon://accept" : "blank",
 					enabled: !bCurrentItem
@@ -184,7 +224,7 @@
 			});
 
 			aMenuItems.push({
-				id: "CTX_COMP_VARIANT_SWITCH_SUBMENU",
+				id: "CTX_COMP_VARIANT_SWITCH",
 				text: oLibraryBundle.getText("CTX_VARIANT_SWITCH"),
 				handler: switchVariant.bind(this),
 				enabled: isSwitchEnabled,
@@ -195,6 +235,10 @@
 		}
 
 		return aMenuItems;
+	};
+
+	CompVariant.prototype.getActionName = function() {
+		return "compVariant";
 	};
 
 	return CompVariant;

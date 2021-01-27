@@ -69,10 +69,12 @@ sap.ui.define([
 		 * @param {string} mPropertyBag.changeSpecificData.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
 		 * @param {object} mPropertyBag.changeSpecificData.texts - Map object with all referenced texts within the file; these texts will be connected to the translation process
 		 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
+		 * @param {object} [mPropertyBag.changeSpecificData.favorite] - Indicates if the change is added as favorite
+		 * @param {object} [mPropertyBag.changeSpecificData.executeOnSelect] - Indicates if the executeOnSelect flag should be set
 		 * @param {string} [mPropertyBag.changeSpecificData.ODataService] - Name of the OData service --> can be null
 		 * @param {string} [mPropertyBag.command] - Name of the command creating the variant
-		 * @returns {sap.ui.fl.apply._internal.flexObjects.Variant} Created variant object instance
 		 * @param {boolean} [mPropertyBag.support] - Information for support analysis
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.Variant} Created variant object instance
 		 * @private
 		 * @ui5-restricted sap.ui.rta.command
 		 */
@@ -187,11 +189,26 @@ sap.ui.define([
 		 * @ui5-restricted
 		 * @since 1.86.0
 		 *
-		 * @returns {Promise<boolean>}  <code>true</code> if personalization of variants is enabled
+		 * @returns {Promise<boolean>} <code>true</code> if personalization of variants is enabled
 		 */
 		isVariantPersonalizationEnabled: function() {
 			return Settings.getInstance().then(function (oInstance) {
 				return oInstance.isVariantPersonalizationEnabled();
+			});
+		},
+
+		/**
+		 * Checks whether adaptation at runtime or designtime should be enabled for comp variants
+		 *
+		 * @private
+		 * @ui5-restricted
+		 * @since 1.87.0
+		 *
+		 * @returns {Promise<boolean>} <code>true</code> if adaptation of variants is enabled
+		 */
+		isVariantAdaptationEnabled: function() {
+			return Settings.getInstance().then(function (oInstance) {
+				return oInstance.isPublicLayerAvailable();
 			});
 		},
 

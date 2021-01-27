@@ -310,20 +310,22 @@ sap.ui.define([
 	 * Adds a new variant or change (addFavorite & removeFavorite) for a smart variant, such as filter bar or table, and returns the ID of the new change.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
-	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer to which the variant should be written
-	 * @param {object} mPropertyBag.changeSpecificData - Map of parameters, see below
-	 * @param {string} mPropertyBag.changeSpecificData.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
-	 * @param {object} mPropertyBag.changeSpecificData.texts - Map object with all referenced texts within the file; these texts will be connected to the translation process
-	 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
-	 * @param {boolean} mPropertyBag.isVariant - Flag if the added entity is a variant
-	 * @param {string} [mPropertyBag.changeSpecificData.ODataService] - Name of the OData service --> can be null
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.Variant} Created variant object instance
-	 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the addition takes place
-	 * @param {boolean} [mPropertyBag.isUserDependent] - Indicates if a change is only valid for the current user
+	 * @param {string} mPropertyBag.reference - Flex reference of the application
+	 * @param {string} mPropertyBag.persistencyKey - ID of the variant management internal identifier
 	 * @param {boolean} [mPropertyBag.generator] - Name of the tool creating the variant for support analysis
 	 * @param {boolean} [mPropertyBag.command] - Name of the sa.ui.rta-command for support analysis
-	 *        downport of variants
-	 * @returns {object} The created change or variant
+	 * @param {object} mPropertyBag.changeSpecificData - Data set defining the object to be added
+	 * @param {sap.ui.fl.Layer} mPropertyBag.changeSpecificData.layer - Layer to which the variant should be written
+	 * @param {string} mPropertyBag.changeSpecificData.type - Type <filterVariant, tableVariant, etc>
+	 * @param {object} mPropertyBag.changeSpecificData.texts - A map object containing all translatable texts which are referenced within the file
+	 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
+	 * @param {object} [mPropertyBag.changeSpecificData.favorite] - Indicates if the change is added as favorite
+	 * @param {object} [mPropertyBag.changeSpecificData.executeOnSelect] - Indicates if the executeOnSelect flag should be set
+	 * @param {string} [mPropertyBag.changeSpecificData.ODataService] - Name of the OData service --> can be null
+	 * @param {boolean} [mPropertyBag.changeSpecificData.isVariant] - Indicates if the change is a variant
+	 * @param {boolean} [mPropertyBag.changeSpecificData.isUserDependent] - Indicates if a change is only valid for the current user
+	 * @param {string} [mPropertyBag.changeSpecificData.packageName] - Package name for the new entity, <default> is $tmp
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} Created variant object instance
 	 * @public
 	 */
 	CompVariantState.add = function(mPropertyBag) {
@@ -379,6 +381,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.executeOnSelect] - Flag if the variant should be executed on selection
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
 	 * this either updates the variant from the layer or writes a change to that layer.
+	 * @returns {sap.ui.fl.Change} The updated Variant
 	 */
 	CompVariantState.updateVariant = function (mPropertyBag) {
 		var oVariant = getVariantById(mPropertyBag);
@@ -413,6 +416,8 @@ sap.ui.define([
 		// also update the runtime instance
 		oVariant.setFavorite(!!oContentToBeWritten.favorite);
 		oVariant.setExecuteOnSelect(!!oContentToBeWritten.executeOnSelect);
+
+		return oVariant;
 	};
 
 	/**
@@ -424,12 +429,14 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.id - ID of the variant
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
 	 * this either removes the variant from the layer or writes a change to that layer.
+	 * @returns {sap.ui.fl.Change} The removed Variant
 	 */
 	CompVariantState.removeVariant = function (mPropertyBag) {
 		var oVariant = getVariantById(mPropertyBag);
 
 		// TODO: check if it is an deletion or create corresponding changes
 		oVariant.markForDeletion();
+		return oVariant;
 	};
 
 	/**

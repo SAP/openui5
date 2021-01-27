@@ -3,12 +3,12 @@
  */
 sap.ui.define([
 	"sap/base/util/isEmptyObject",
-	"sap/base/util/UriParameters",
 	"sap/base/util/values",
 	"sap/ui/base/ManagedObject",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/plugin/TabHandling",
 	"sap/ui/dt/plugin/ToolHooks",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
@@ -29,12 +29,12 @@ sap.ui.define([
 	"sap/ui/rta/plugin/Stretch"
 ], function(
 	isEmptyObject,
-	UriParameters,
 	values,
 	ManagedObject,
 	ContextMenuPlugin,
 	TabHandlingPlugin,
 	ToolHooksPlugin,
+	Settings,
 	CommandFactory,
 	AdditionalElementsPlugin,
 	AdditionalElementsDialog,
@@ -183,15 +183,15 @@ sap.ui.define([
 
 			this._mDefaultPlugins["stretch"] = new StretchPlugin();
 
-			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
-				commandFactory: this._oCommandFactory
-			});
-
-			if (UriParameters.fromQuery(window.location.search).get("sap-ui-rta-xx-compKeyUser") === "true") {
+			if (Settings.getInstanceOrUndef().isPublicLayerAvailable()) {
 				this._mDefaultPlugins["compVariant"] = new CompVariantPlugin({
 					commandFactory: this._oCommandFactory
 				});
 			}
+
+			this._mDefaultPlugins["controlVariant"] = new ControlVariantPlugin({
+				commandFactory: this._oCommandFactory
+			});
 
 			this._mDefaultPlugins["addIFrame"] = new AddIFramePlugin({
 				commandFactory: this._oCommandFactory

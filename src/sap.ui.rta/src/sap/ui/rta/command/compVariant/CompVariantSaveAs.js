@@ -2,8 +2,10 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
 	"sap/ui/rta/command/BaseCommand"
 ], function(
+	SmartVariantManagementWriteAPI,
 	BaseCommand
 ) {
 	"use strict";
@@ -24,31 +26,32 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
-				variantReference: {
-					type: "string"
-				},
-				variantName: {
-					type: "string"
-				},
-				variantProperties: {
+				newVariantProperties: {
 					type: "object"
+				},
+				previousDirtyFlag: {
+					type: "boolean"
+				},
+				previousVariantId: {
+					type: "string"
+				},
+				previousDefault: {
+					type: "string"
 				}
-			},
-			associations: {},
-			events: {}
+			}
 		}
 	});
 
 	/**
 	 * @override
 	 */
-	CompVariantSaveAs.prototype.prepare = function(mFlexSettings) {
-		this._sLayer = mFlexSettings.layer;
+	CompVariantSaveAs.prototype.prepare = function(mFlexSettings, sVariantManagementReference, sCommand) {
+		this.mInformation = {
+			layer: mFlexSettings.layer,
+			command: sCommand, // used for ChangeVisualization and should end up in the support object in change definition
+			generator: sap.ui.rta.GENERATOR_NAME // also to be saved in the support section
+		};
 		return true;
-	};
-
-	CompVariantSaveAs.prototype.getPreparedChange = function() {
-		return this._aPreparedChanges;
 	};
 
 	/**
@@ -57,22 +60,33 @@ sap.ui.define([
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	CompVariantSaveAs.prototype.execute = function() {
-		// TODO: call function on control
-
-		/* this works, but does not update the control
-		var oVariant = SmartVariantManagementWriteAPI.addVariant({
+		var oNewVariantProperties = this.getNewVariantProperties();
+		var mPropertyBag = {
 			changeSpecificData: {
-				type: this.getVariantProperties().type,
+				type: oNewVariantProperties.type,
 				texts: {
-					variantName: this.getVariantName()
+					variantName: oNewVariantProperties.text
 				},
-				content: this.getVariantProperties().content,
-				layer: this._sLayer
+				content: oNewVariantProperties.content,
+				executeOnSelect: oNewVariantProperties.executeOnSelect,
+				favourite: true,
+				layer: this.mInformation.layer
 			},
-			control: this.getElement()
-		});
-		this.setVariantReference(oVariant.getFileName());
-		*/
+			control: this.getElement(),
+			command: this.mInformation.command,
+			generator: this.mInformation.generator
+		};
+		this._oVariant = SmartVariantManagementWriteAPI.addVariant(mPropertyBag);
+
+		if (oNewVariantProperties.default) {
+			SmartVariantManagementWriteAPI.setDefaultVariantId(Object.assign({}, this.mInformation, {
+				control: this.getElement(),
+				defaultVariantId: this._oVariant.getId()
+			}));
+		}
+
+		this.getElement().addVariant(this._oVariant, oNewVariantProperties.default);
+		this.getElement().activateVariant(this._oVariant.getId());
 		return Promise.resolve();
 	};
 
@@ -82,7 +96,25 @@ sap.ui.define([
 	 * @returns {Promise} Resolves after undo
 	 */
 	CompVariantSaveAs.prototype.undo = function() {
-		// TODO come up with concept for undo
+		SmartVariantManagementWriteAPI.removeVariant({
+			id: this._oVariant.getId(),
+			control: this.getElement()
+		});
+
+		if (this.getNewVariantProperties().default) {
+			SmartVariantManagementWriteAPI.setDefaultVariantId(Object.assign({}, this.mInformation, {
+				control: this.getElement(),
+				defaultVariantId: this.getPreviousDefault()
+			}));
+		}
+
+		this.getElement().removeWeakVariant({
+			previousDirtyFlag: this.getPreviousDirtyFlag(),
+			previousVariantId: this.getPreviousVariantId(),
+			previousDefault: this.getPreviousDefault(),
+			variantId: this._oVariant.getId()
+		});
+
 		return Promise.resolve();
 	};
 

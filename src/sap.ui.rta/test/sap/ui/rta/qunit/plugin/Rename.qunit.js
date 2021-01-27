@@ -66,9 +66,9 @@ function(
 
 	function triggerEventOnEditableField(oPlugin, sKeyCode) {
 		sKeyCode = sKeyCode || KeyCodes.ENTER;
-		var $Event = jQuery.Event("keydown");
-		$Event.keyCode = sKeyCode;
-		oPlugin._$editableField.trigger($Event);
+		var oEvent = new Event("keydown");
+		oEvent.keyCode = sKeyCode;
+		oPlugin._$editableField.get(0).dispatchEvent(oEvent);
 	}
 
 	function addResponsibleElement(oDesignTimeMetadata, oTargetElement, oResponsibleElement) {

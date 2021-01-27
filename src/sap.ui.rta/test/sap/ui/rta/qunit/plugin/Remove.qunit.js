@@ -59,10 +59,6 @@ function (
 	};
 	var oGetAppComponentForControlStub = sinon.stub(FlUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 
-	QUnit.done(function () {
-		oGetAppComponentForControlStub.restore();
-	});
-
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a designTime and remove plugin are instantiated", {
@@ -518,6 +514,7 @@ function (
 	});
 
 	QUnit.done(function () {
+		oGetAppComponentForControlStub.restore();
 		jQuery("#qunit-fixture").hide();
 	});
 });

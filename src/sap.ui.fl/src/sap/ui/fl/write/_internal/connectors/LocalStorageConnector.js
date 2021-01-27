@@ -24,5 +24,12 @@ sap.ui.define([
 		storage: window.localStorage
 	});
 
+	LocalStorageConnector.loadFeatures = function() {
+		return ObjectStorageConnector.loadFeatures.apply(this, arguments).then(function(oFeatures) {
+			oFeatures.isPublicLayerAvailable = true;
+			return oFeatures;
+		});
+	};
+
 	return LocalStorageConnector;
 }, true);

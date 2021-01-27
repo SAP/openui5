@@ -163,6 +163,12 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/Combine"]
 				}
 			},
+			"plugin/CompVariant": {
+				group: "Plugin",
+				coverage: {
+					only: ["sap/ui/rta/plugin/CompVariant"]
+				}
+			},
 			"plugin/ControlVariant": {
 				group: "Plugin",
 				coverage: {
@@ -247,6 +253,30 @@ sap.ui.define([
 				},
 				ui5: {
 					"xx-designMode": true
+				}
+			},
+			"command/appDescriptor/AddLibrary": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/appDescriptor/AddLibrary"]
+				}
+			},
+			"command/compVariant/CompVariantSaveAs": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/compVariant/CompVariantSaveAs"]
+				}
+			},
+			"command/compVariant/CompVariantSwitch": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/compVariant/CompVariantSwitch"]
+				}
+			},
+			"command/compVariant/CompVariantUpdate": {
+				group: "Command",
+				coverage: {
+					only: ["sap/ui/rta/command/compVariant/CompVariantUpdate"]
 				}
 			},
 			"command/AddDelegateProperty": {
@@ -375,12 +405,6 @@ sap.ui.define([
 				group: "Command",
 				coverage: {
 					only: ["sap/ui/rta/command/Stack"]
-				}
-			},
-			"command/appDescriptor/AddLibrary": {
-				group: "Command",
-				coverage: {
-					only: ["sap/ui/rta/command/appDescriptor/AddLibrary"]
 				}
 			},
 
@@ -519,6 +543,12 @@ sap.ui.define([
 						resourceroots: {
 							"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
 						}
+					}
+				},
+				"plugin/CompVariant": {
+					group: "Plugin",
+					coverage: {
+						only: ["sap/ui/rta/plugin/CompVariant"]
 					}
 				},
 				"plugin/RTAElementMover": {

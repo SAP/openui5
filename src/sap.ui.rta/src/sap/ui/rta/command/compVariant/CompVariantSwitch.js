@@ -24,29 +24,15 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
-				sourceVariantReference: {
+				sourceVariantId: {
 					type: "string"
 				},
-				targetVariantReference: {
+				targetVariantId: {
 					type: "string"
 				}
-			},
-			associations: {},
-			events: {}
+			}
 		}
 	});
-
-	/**
-	 * @override
-	 */
-	CompVariantSwitch.prototype.prepare = function(mFlexSettings) {
-		this.sLayer = mFlexSettings.layer;
-		return true;
-	};
-
-	CompVariantSwitch.prototype.getPreparedChange = function() {
-		return this._aPreparedChanges;
-	};
 
 	/**
 	 * Triggers the configuration of a variant.
@@ -54,7 +40,7 @@ sap.ui.define([
 	 * @returns {Promise} Returns resolve after execution
 	 */
 	CompVariantSwitch.prototype.execute = function() {
-		// TODO call function on control to activate new variant (targetVariantReference)
+		this.getElement().activateVariant(this.getTargetVariantId());
 		return Promise.resolve();
 	};
 
@@ -64,7 +50,7 @@ sap.ui.define([
 	 * @returns {Promise} Resolves after undo
 	 */
 	CompVariantSwitch.prototype.undo = function() {
-		// TODO call function on control to activate new variant (sourceVariantReference)
+		this.getElement().activateVariant(this.getSourceVariantId());
 		return Promise.resolve();
 	};
 

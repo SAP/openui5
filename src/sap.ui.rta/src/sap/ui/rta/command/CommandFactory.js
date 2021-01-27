@@ -342,17 +342,14 @@ function(
 		addIFrame: {
 			clazz: "sap.ui.rta.command.AddIFrame"
 		},
+		compVariantSaveAs: {
+			clazz: "sap.ui.rta.command.compVariant.CompVariantSaveAs"
+		},
 		compVariantSwitch: {
 			clazz: "sap.ui.rta.command.compVariant.CompVariantSwitch"
 		},
-		compVariantConfigure: {
-			clazz: "sap.ui.rta.command.compVariant.CompVariantConfigure"
-		},
-		compVariantSave: {
-			clazz: "sap.ui.rta.command.compVariant.CompVariantSave"
-		},
-		compVariantSaveAs: {
-			clazz: "sap.ui.rta.command.compVariant.CompVariantSaveAs"
+		compVariantUpdate: {
+			clazz: "sap.ui.rta.command.compVariant.CompVariantUpdate"
 		}
 	};
 
