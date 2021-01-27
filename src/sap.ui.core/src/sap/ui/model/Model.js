@@ -572,7 +572,7 @@ sap.ui.define([
 	 * @function
 	 * @param {string}
 	 *         sPath the path pointing to the property that should be bound
-	 * @param {object}
+	 * @param {sap.ui.model.Context}
 	 *         [oContext=null] the context object for this databinding (optional)
 	 * @param {object}
 	 *         [mParameters=null] additional model specific parameters (optional)
@@ -589,11 +589,11 @@ sap.ui.define([
 	 * @function
 	 * @param {string}
 	 *         sPath the path pointing to the list / array that should be bound
-	 * @param {object}
+	 * @param {sap.ui.model.Context}
 	 *         [oContext=null] the context object for this databinding (optional)
-	 * @param {sap.ui.model.Sorter}
+	 * @param {sap.ui.model.Sorter|sap.ui.model.Sorter[]}
 	 *         [aSorters=null] initial sort order (can be either a sorter or an array of sorters) (optional)
-	 * @param {array}
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]}
 	 *         [aFilters=null] predefined filter/s (can be either a filter or an array of filters) (optional)
 	 * @param {object}
 	 *         [mParameters=null] additional model specific parameters (optional)
@@ -610,13 +610,13 @@ sap.ui.define([
 	 * @function
 	 * @param {string}
 	 *         sPath the path pointing to the tree / array that should be bound
-	 * @param {object}
+	 * @param {sap.ui.model.Context}
 	 *         [oContext=null] the context object for this databinding (optional)
-	 * @param {array}
+	 * @param {sap.ui.model.Filter[]}
 	 *         [aFilters=null] predefined filter/s contained in an array (optional)
 	 * @param {object}
 	 *         [mParameters=null] additional model specific parameters (optional)
-	 * @param {array}
+	 * @param {sap.ui.model.Sorter[]}
 	 *         [aSorters=null] predefined sap.ui.model.sorter/s contained in an array (optional)
 	 * @return {sap.ui.model.TreeBinding}
 
@@ -631,7 +631,7 @@ sap.ui.define([
 	 * @function
 	 * @param {string}
 	 *         sPath the path to create the new context from
-	 * @param {object}
+	 * @param {sap.ui.model.Context}
 	 *		   [oContext=null] the context which should be used to create the new binding context
 	 * @param {object}
 	 *		   [mParameters=null] the parameters used to create the new binding context
@@ -651,7 +651,7 @@ sap.ui.define([
 	 *
 	 * @name sap.ui.model.Model.prototype.destroyBindingContext
 	 * @function
-	 * @param {object}
+	 * @param {sap.ui.model.Context}
 	 *         oContext to destroy
 
 	 * @public
@@ -665,7 +665,7 @@ sap.ui.define([
 	 * @function
 	 * @param {string}
 	 *         sPath the path to where to read the attribute value
-	 * @param {object}
+	 * @param {sap.ui.model.Context}
 	 *		   [oContext=null] the context with which the path should be resolved
 	 * @returns {any} Value of the addressed property
 	 * @public
@@ -677,7 +677,7 @@ sap.ui.define([
 	 *
 	 * @param {string}
 	 *         sPath Path to where to read the object
-	 * @param {object}
+	 * @param {sap.ui.model.Context}
 	 *		   [oContext=null] Context with which the path should be resolved
 	 * @param {object}
 	 *         [mParameters] Additional model specific parameters
@@ -698,7 +698,7 @@ sap.ui.define([
 	 * @param {string | object}
 	 *         sPath the path pointing to the property that should be bound or an object
 	 *         which contains the following parameter properties: path, context, parameters
-	 * @param {object}
+	 * @param {sap.ui.model.Context}
 	 *         [oContext=null] the context object for this databinding (optional)
 	 * @param {object}
 	 *         [mParameters=null] additional model specific parameters (optional)
@@ -789,7 +789,7 @@ sap.ui.define([
 	/**
 	 * Returns a copy of all active bindings of the model.
 	 *
-	 * @return {array} aBindings The active bindings of the model
+	 * @return {sap.ui.model.Binding[]} aBindings The active bindings of the model
 	 * @private
 	 */
 	Model.prototype.getBindings = function() {
@@ -847,6 +847,7 @@ sap.ui.define([
 	 * Check if the specified binding mode is supported by the model.
 	 *
 	 * @param {sap.ui.model.BindingMode} sMode The binding mode to check
+	 * @returns {boolean} Whether the given binding mode is supported
 	 *
 	 * @public
 	 */
@@ -873,7 +874,7 @@ sap.ui.define([
 	/**
 	 * Returns whether legacy path syntax is used.
 	 *
-	 * @return {boolean}
+	 * @returns {boolean} Whether legacy path syntax is used
 	 *
 	 * @public
 	 */
@@ -895,6 +896,7 @@ sap.ui.define([
 
 	/**
 	 * Override getInterface method to avoid creating an Interface object for models.
+	 * @returns {sap.ui.model.Model} Returns a reference to this model
 	 */
 	Model.prototype.getInterface = function() {
 		return this;
@@ -905,7 +907,7 @@ sap.ui.define([
 	 *
 	 * This will check all bindings for updated data and update the controls if data has been changed.
 	 *
-	 * @param {boolean} bForceUpdate Update controls even if data has not been changed
+	 * @param {boolean} [bForceUpdate=false] Update controls even if data has not been changed
 	 * @public
 	 */
 	Model.prototype.refresh = function(bForceUpdate) {
@@ -928,10 +930,10 @@ sap.ui.define([
 	 * <code>bForceUpdate</code> is <code>true</code> if at least one of the asynchronous calls was
 	 * with <code>bForceUpdate=true</code>.
 	 *
-	 * @param {boolean} bForceUpdate
+	 * @param {boolean} [bForceUpdate=false]
 	 *   The parameter <code>bForceUpdate</code> for the <code>checkUpdate</code> call on the
 	 *   bindings
-	 * @param {boolean} bAsync
+	 * @param {boolean} [bAsync=false]
 	 *   Whether this function is called in a new task via <code>setTimeout</code>
 	 *
 	 * @private
@@ -980,7 +982,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPath
 	 *   The resolved binding path
-	 * @param {boolean} [bPrefixMatch]
+	 * @param {boolean} [bPrefixMatch=false]
 	 *   Whether also messages with a target starting with the given path are returned, not just the
 	 *   messages with a target identical to the given path
 	 * @returns {sap.ui.core.message.Message[]}
@@ -1083,7 +1085,7 @@ sap.ui.define([
 	 * The original value is the value that was last responded by a server if using a server model implementation.
 	 *
 	 * @param {string} sPath Path/name of the property
-	 * @param {object} [oContext] Context if available to access the property value
+	 * @param {sap.ui.model.Context} [oContext] Context if available to access the property value
 	 * @returns {any} vValue The value of the property
 	 * @public
 	 */
