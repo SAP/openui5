@@ -545,5 +545,20 @@ function(
 		});
 	};
 
+	/**
+	 * Returns the index of an element in a parent aggregation
+	 * Only the elements of the aggregation which have overlays are counted
+	 * @param {object} oElement Element for which we want to find the index
+	 * @param {object} oParent Parent of the Element
+	 * @param {string} sAggregationName Name of the parent aggregation
+	 * @return {int} Returns the index
+	 */
+	OverlayUtil.getIndexInAggregation = function(oElement, oParent, sAggregationName) {
+		var aElements = ElementUtil.getAggregation(oParent, sAggregationName).filter(function(oCompareElement) {
+			return !!OverlayRegistry.getOverlay(oCompareElement) || oCompareElement === oElement;
+		});
+		return aElements.indexOf(oElement);
+	};
+
 	return OverlayUtil;
 }, /* bExport= */true);

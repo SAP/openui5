@@ -278,6 +278,31 @@ function(
 			oButton.destroy();
 		});
 
+		QUnit.test("when getAggregation is called and Element is not part of the aggregation", function(assert) {
+			var oButton = new Button();
+			var nPosition = OverlayUtil.getIndexInAggregation(oButton, this.oLayout0, "content");
+			assert.strictEqual(nPosition, -1, "then it returns -1");
+			oButton.destroy();
+		});
+
+		QUnit.test("when getAggregation is called and Element is part of the aggregation and all other Elements have Overlays", function(assert) {
+			var oButton = new Button();
+			this.oLayout0.addContent(oButton);
+			var nPosition = OverlayUtil.getIndexInAggregation(oButton, this.oLayout0, "content");
+			assert.strictEqual(nPosition, 2, "then it returns the correct index position");
+			oButton.destroy();
+		});
+
+		QUnit.test("when getAggregation is called and Element is part of the aggregation and not all other Elements have Overlays", function(assert) {
+			var oButton = new Button();
+			this.oLayout0.addContent(oButton);
+			//remove Overlay from Button01
+			OverlayRegistry.deregister(OverlayRegistry.getOverlay(this.oButton01));
+			var nPosition = OverlayUtil.getIndexInAggregation(oButton, this.oLayout0, "content");
+			assert.strictEqual(nPosition, 1, "then it returns the correct index position");
+			oButton.destroy();
+		});
+
 		QUnit.test("when findAllOverlaysInContainer is called", function(assert) {
 			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oButtonOverlay01).length, 3, "then it returns the correct overlays");
 			assert.equal(OverlayUtil.findAllOverlaysInContainer(this.oLayoutOverlay0).length, 2, "then it returns the correct overlays");
