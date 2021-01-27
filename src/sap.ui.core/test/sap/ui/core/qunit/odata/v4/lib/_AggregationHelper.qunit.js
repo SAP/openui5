@@ -610,6 +610,70 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("buildApply: checkTypeof - examples", function (assert) {
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply({
+				subTotalsAtBottomOnly : true
+			});
+		}, new Error("Unsupported property: '$$aggregation/subTotalsAtBottomOnly'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply({
+				grandTotalAtBottomOnly : "top"
+			});
+		}, new Error("Not a boolean value for '$$aggregation/grandTotalAtBottomOnly'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply({
+				groupLevels : "The1"
+			});
+		}, new Error("Not an array value for '$$aggregation/groupLevels'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply({
+				group : {
+					The1 : {additional : ["TheOther"]}
+				}
+			});
+		}, new Error("Unsupported property: '$$aggregation/group/The1/additional'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply({
+				group : {
+					The1 : {additionally : "TheOther"}
+				}
+			});
+		}, new Error("Not an array value for '$$aggregation/group/The1/additionally'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply({
+				aggregate : {
+					foo : {
+						subtotals : "top"
+					}
+				}
+			});
+		}, new Error("Not a boolean value for '$$aggregation/aggregate/foo/subtotals'"));
+
+		assert.throws(function () {
+			// code under test
+			_AggregationHelper.buildApply({
+				aggregate : {
+					foo : {
+						unit : ["A", "B"]
+					}
+				}
+			});
+		}, new Error("Not a string value for '$$aggregation/aggregate/foo/unit'"));
+	});
+
+	//*********************************************************************************************
 	QUnit.test("checkTypeof: primitive types", function (assert) {
 		// code under test
 		_AggregationHelper.checkTypeof(false, "boolean");
