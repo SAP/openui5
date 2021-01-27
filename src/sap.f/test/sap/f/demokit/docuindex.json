@@ -64,11 +64,11 @@
 		},
 		{
 		  "id": "sap.f.tutorial.fiori2",
-		  "name": "SAP Fiori 2.0 App",
+		  "name": "Flexible Column Layout App",
 		  "category": "Tutorial",
 		  "since": "1.56",
 		  "formFactors": "-",
-		  "description": "In this tutorial, we showcase how to structure your UI5 app using the layout patterns that comply with the latest SAP Fiori guidelines.",
+		  "description": "In this tutorial, we showcase how to structure your UI5 app using the layout patterns that comply with the SAP Fiori design guidelines.",
 		  "docuLink": "#docs/guide/c4de2df385174e58a689d9847c7553bd.html",
 		  "samplesAsSteps": [
 			"Setting Up the Initial App",
