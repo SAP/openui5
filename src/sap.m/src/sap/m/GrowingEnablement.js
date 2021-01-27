@@ -295,7 +295,8 @@ sap.ui.define([
 				return false;
 			}
 
-			if (this._iRenderedDataItems >= 40) {
+			// 32 is the minimum height of the item
+			if (this._getDomIndex(this._iRenderedDataItems) > (window.innerHeight / 32)) {
 				return true;
 			}
 
