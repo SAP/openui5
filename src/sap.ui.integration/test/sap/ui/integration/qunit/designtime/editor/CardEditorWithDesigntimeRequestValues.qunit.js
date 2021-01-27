@@ -5,14 +5,16 @@ sap.ui.define([
 	"sap/ui/integration/Host",
 	"sap/ui/thirdparty/sinon-4",
 	"./ContextHost",
-	"sap/ui/core/util/MockServer"
+	"sap/ui/core/util/MockServer",
+	"./cards/withDesigntime/DataExtensionImpl"
 ], function (
 	CardEditor,
 	Designtime,
 	Host,
 	sinon,
 	ContextHost,
-	MockServer
+	MockServer,
+	DataExtensionImpl
 ) {
 	"use strict";
 
@@ -172,6 +174,52 @@ sap.ui.define([
 						"name": "mock_request"
 					}
 				}
+			}
+		}
+	};
+	var oManifestForExtension = {
+		"sap.app": {
+			"id": "test.sample",
+			"i18n": "i18n/i18n.properties"
+		},
+		"sap.card": {
+			"extension": "DataExtensionImpl",
+			"designtime": "designtime/extension",
+			"type": "List",
+			"header": {},
+			"data": {
+				"extension": {
+					"method": "getData"
+				},
+				"path": "/values"
+			},
+			"configuration": {
+				"parameters": {
+					"DataGotFromExtensionRequest": {
+						"value": ""
+					},
+					"DataGotFromCardExtension": {
+						"value": ""
+					}
+				},
+				"destinations": {
+					"northwind": {
+						"name": "Northwind"
+					},
+					"mock_request": {
+						"name": "mock_request"
+					}
+				}
+			},
+			"content": {
+				"item": {
+					"title": "{title}",
+					"description": "Trainer: {trainer}",
+					"info": {
+						"value": "Location: {location}"
+					}
+				},
+				"maxItems": 4
 			}
 		}
 	};
@@ -1036,6 +1084,80 @@ sap.ui.define([
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Get data from extension", {
+		beforeEach: function () {
+			this.oMockServer = new MockServer();
+			this.oMockServer.setRequests([
+				{
+					method: "GET",
+					path: RegExp("/mock_request/Employees.*"),
+					response: function (xhr) {
+						xhr.respondJSON(200, null, {"value": oResponseData["Employees"]});
+					}
+				}
+			]);
+			this.oMockServer.start();
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oMockServer.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Check value items", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: oManifestForExtension
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomerLabel.getText() === "DataGotFromExtensionRequest", "Label: Has static label text");
+					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromExtensionRequest is ComboBox");
+
+					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
+					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
+					assert.ok(oEmployeeLabel.getText() === "DataGotFromCardExtension", "Label: Has static label text");
+					assert.ok(oEmployeeField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					assert.ok(oEmployeeField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: DataGotFromCardExtension is ComboBox");
+
+					setTimeout(function () {
+						assert.ok(oCustomerField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromExtensionRequest lenght is OK");
+						assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 4, "Field: DataGotFromCardExtension lenght is OK");
+						resolve();
+					}, 2 * iWaitTimeout);
 				}.bind(this));
 			}.bind(this));
 		});

@@ -466,8 +466,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							}
 						}
 					},
-					"stringWithRequestExtentionList": {
-						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestExtentionList/value",
+					"stringWithRequestExtensionList": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithRequestExtensionList/value",
 						"type": "string",
 						"values": {
 							"data": {
@@ -481,6 +481,18 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 								"key": "{title}",
 								"additionalText": "{location}"
 							}
+						}
+					},
+					"stringWithDataFromExtensionList": {
+						"manifestpath": "/sap.card/configuration/parameters/stringWithDataFromExtensionList/value",
+						"type": "string",
+						"values": {
+							"item": {
+								"text": "{trainer}",
+								"key": "{title}",
+								"additionalText": "{location}"
+							},
+							"path": "/values"
 						}
 					},
 					"stringWithRequestFromDestinationList": {
