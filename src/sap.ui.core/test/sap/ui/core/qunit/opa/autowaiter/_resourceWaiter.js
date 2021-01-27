@@ -3,9 +3,8 @@ sap.ui.define([
 	"sap/ui/test/_LogCollector",
 	"sap/ui/test/_OpaLogger",
 	"sap/ui/test/autowaiter/_resourceWaiter",
-	"sap/m/Image",
-	"sap/ui/thirdparty/URI"
-], function (_LogCollector, _OpaLogger, _resourceWaiter, Image, URI) {
+	"sap/m/Image"
+], function (_LogCollector, _OpaLogger, _resourceWaiter, Image) {
 	"use strict";
 
 	// before running this test in IE11, clear cached images
@@ -16,9 +15,7 @@ sap.ui.define([
 		beforeEach: function () {
 			this.defaultLogLevel = _OpaLogger.getLevel();
 			_OpaLogger.setLevel("trace");
-			var oCurrentUri = new URI();
-			var sPrefix = oCurrentUri.path().split('/')[1] === "testsuite" ? "/testsuite" : "";
-			var sBase = oCurrentUri.origin() + sPrefix + "/test-resources/sap/ui/core/images/";
+			var sBase = "test-resources/sap/ui/core/images/";
 			this.sExistingImageSrc = sBase + "Mobile.png";
 			this.sReplacerImageSrc = sBase + "Notebook.png";
 			this.sNotFoundSrc = sBase + "noSuchImage.jpg";
@@ -35,14 +32,14 @@ sap.ui.define([
 		if (bHasPending) {
 			assert.ok(true, "Has pending resources");
 			// image could be cached or loaded in previous steps
-			assert.ok(sLogs.match("Pending resource: " + sSrc) ||
-				sLogs.match("Image with src '" + sSrc + "' is updated and pending again"),
+			assert.ok(sLogs.match("Pending resource: .*" + sSrc) ||
+				sLogs.match("Image with src '.*" + sSrc + "' is updated and pending again"),
 				"Image with src " + sSrc + " is pending");
 		} else {
 			// when CPU is very slow, hasPending may be called before load handler
 			assert.ok(true, "Has no pending resources");
-			assert.ok(sLogs.match("Image with src '" + sSrc + "' completed") ||
-				sLogs.match("Image with src '" + sSrc + "' loaded successfully"),
+			assert.ok(sLogs.match("Image with src '.*" + sSrc + "' completed") ||
+				sLogs.match("Image with src '.*" + sSrc + "' loaded successfully"),
 				"Image already loaded");
 		}
 	}
@@ -51,9 +48,9 @@ sap.ui.define([
 	function assertNoRelevantPending(sRelevantSrc, bPass, assert) {
 		_resourceWaiter.hasPending();
 		var sLogs = oLogCollector.getAndClearLog();
-		var aRelevantPending = sLogs.match("Pending resource: " + sRelevantSrc);
+		var aRelevantPending = sLogs.match("Pending resource: .*" + sRelevantSrc);
 		assert.ok(!aRelevantPending, "Should have no pending resources with src " + sRelevantSrc);
-		assert.ok(sLogs.match("Image with src '" + sRelevantSrc + (bPass ? "' loaded successfully" : "' failed to load")),
+		assert.ok(sLogs.match("Image with src '.*" + sRelevantSrc + (bPass ? "' loaded successfully" : "' failed to load")),
 			"Image with src " + sRelevantSrc + " is not pending");
 	}
 
