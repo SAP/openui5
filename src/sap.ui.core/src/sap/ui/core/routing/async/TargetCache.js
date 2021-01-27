@@ -3,13 +3,11 @@
  */
 sap.ui.define([
 	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType",
 	"sap/ui/core/Component",
-	"sap/ui/core/routing/HashChanger",
-	"sap/ui/core/library"
-], function(View, Component, HashChanger, library) {
+	"sap/ui/core/routing/HashChanger"
+], function(View, ViewType, Component, HashChanger) {
 	"use strict";
-
-	var ViewType = library.mvc.ViewType;
 
 	/**
 	 * Provide methods for sap.ui.core.routing.TargetCache in async mode

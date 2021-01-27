@@ -7,10 +7,11 @@
  */
 sap.ui.define([
 	'sap/ui/base/DataType',
+	'sap/ui/core/mvc/ViewType', // provides sap.ui.core.mvc.ViewType
 	'./CalendarType', // provides sap.ui.core.CalendarType
 	'./Core' // provides sap.ui.getCore()
 ],
-	function(DataType) {
+	function(DataType, ViewType) {
 	"use strict";
 
 	// delegate further initialization of this library to the Core
@@ -2074,7 +2075,6 @@ sap.ui.define([
 		None : "None"
 	};
 
-
 	thisLib.mvc = thisLib.mvc || {};
 
 	/**
@@ -2082,42 +2082,10 @@ sap.ui.define([
 	 *
 	 * @enum {string}
 	 * @public
+	 * @alias sap.ui.core.mvc.ViewType
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	thisLib.mvc.ViewType = {
-
-		/**
-		 * JSON View
-		 * @public
-		 */
-		JSON : "JSON",
-
-		/**
-		 * XML view
-		 * @public
-		 */
-		XML : "XML",
-
-		/**
-		 * HTML view
-		 * @public
-		 */
-		HTML : "HTML",
-
-		/**
-		 * JS View
-		 * @public
-		 */
-		JS : "JS",
-
-		/**
-		 * Template View
-		 * @public
-		 */
-		Template : "Template"
-
-	};
-
+	thisLib.mvc.ViewType = ViewType;
 
 	thisLib.routing = thisLib.routing || {};
 

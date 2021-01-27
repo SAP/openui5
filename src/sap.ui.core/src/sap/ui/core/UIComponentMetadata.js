@@ -3,13 +3,9 @@
  */
 
 // Provides class sap.ui.core.ComponentMetadata
-sap.ui.define(['./ComponentMetadata', './library'],
-	function(ComponentMetadata, library) {
+sap.ui.define(['./ComponentMetadata', 'sap/ui/core/mvc/ViewType'],
+	function(ComponentMetadata, ViewType) {
 	"use strict";
-
-	// shortcut for enum(s)
-	var ViewType = library.mvc.ViewType;
-
 
 	/**
 	 * Creates a new metadata object for a UIComponent subclass.

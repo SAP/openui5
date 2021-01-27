@@ -21,7 +21,8 @@ sap.ui.define([
 	'sap/base/util/UriParameters',
 	'sap/base/util/isPlainObject',
 	'sap/base/util/LoaderExtensions',
-	'sap/ui/VersionInfo'
+	'sap/ui/VersionInfo',
+	'sap/ui/core/mvc/ViewType'
 ], function(
 	Manifest,
 	ComponentMetadata,
@@ -40,20 +41,12 @@ sap.ui.define([
 	UriParameters,
 	isPlainObject,
 	LoaderExtensions,
-	VersionInfo
+	VersionInfo,
+	ViewType
 ) {
 	"use strict";
 
 	/* global Promise */
-
-	// TODO: dependency to sap/ui/core/library not possible due to cyclic dependency
-	var ViewType = {
-		JSON: "JSON",
-		XML: "XML",
-		HTML: "HTML",
-		JS: "JS",
-		Template: "Template"
-	};
 
 	var ServiceStartupOptions = {
 		lazy: "lazy",

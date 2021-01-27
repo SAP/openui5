@@ -4,31 +4,31 @@
 
 // Provides control sap.ui.core.mvc.XMLView.
 sap.ui.define([
-	'sap/ui/thirdparty/jquery',
-	'./View',
+	"sap/ui/thirdparty/jquery",
+	"./View",
 	"./XMLViewRenderer",
+	"./ViewType",
 	"sap/base/util/deepExtend",
-	'sap/ui/base/ManagedObject',
-	'sap/ui/core/XMLTemplateProcessor',
-	'sap/ui/core/library',
-	'sap/ui/core/Control',
-	'sap/ui/core/RenderManager',
-	'sap/ui/core/cache/CacheManager',
-	'sap/ui/model/resource/ResourceModel',
-	'sap/ui/util/XMLHelper',
-	'sap/base/strings/hash',
-	'sap/base/Log',
-	'sap/base/util/LoaderExtensions',
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/XMLTemplateProcessor",
+	"sap/ui/core/Control",
+	"sap/ui/core/RenderManager",
+	"sap/ui/core/cache/CacheManager",
+	"sap/ui/model/resource/ResourceModel",
+	"sap/ui/util/XMLHelper",
+	"sap/base/strings/hash",
+	"sap/base/Log",
+	"sap/base/util/LoaderExtensions",
 	"sap/ui/performance/trace/Interaction"
 ],
 	function(
 		jQuery,
 		View,
 		XMLViewRenderer,
+		ViewType,
 		deepExtend,
 		ManagedObject,
 		XMLTemplateProcessor,
-		library,
 		Control,
 		RenderManager,
 		Cache,
@@ -43,7 +43,6 @@ sap.ui.define([
 
 	// actual constants
 	var RenderPrefixes = RenderManager.RenderPrefixes,
-		ViewType = library.mvc.ViewType,
 		sXMLViewCacheError = "XMLViewCacheError",
 		notCacheRelevant = {};
 
