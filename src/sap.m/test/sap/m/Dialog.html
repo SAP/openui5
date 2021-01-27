@@ -819,6 +819,7 @@
 
 			var oDialogSubHeaderNoHeader = new sap.m.Dialog('subHeaderNoHeaderDialog', {
 				showHeader: false,
+				initialFocus: "dialogSubHeaderNoHeaderCloseBtn",
 				content: new sap.m.Text({
 					text: 'Content'
 				}),
@@ -830,7 +831,7 @@
 						})
 					]
 				}),
-				beginButton: new sap.m.Button("oDialogSubHeaderNoHeaderClose", {
+				beginButton: new sap.m.Button("dialogSubHeaderNoHeaderCloseBtn", {
 					text: "OK", press: function () {
 						oDialogSubHeaderNoHeader.close();
 					}

@@ -129,7 +129,7 @@ describe('sap.m.Dialog', function() {
 			var dialog = element(by.id('subHeaderNoHeaderDialog'));
 			expect(takeScreenshot(dialog)).toLookAs('subHeader-no-header-dialog');
 		});
-		element(by.id('oDialogSubHeaderNoHeaderClose')).click();
+		element(by.id('dialogSubHeaderNoHeaderCloseBtn')).click();
 
 		browser.executeScript("document.getElementById('compactMode').scrollIntoView()").then(function() {
 			element(by.id('compactMode-CbBg')).click();
@@ -140,7 +140,7 @@ describe('sap.m.Dialog', function() {
 			var dialogCompact = element(by.id('subHeaderNoHeaderDialog'));
 			expect(takeScreenshot(dialogCompact)).toLookAs('subHeader-no-header-dialog-compact');
 		});
-		element(by.id('oDialogSubHeaderNoHeaderClose')).click();
+		element(by.id('dialogSubHeaderNoHeaderCloseBtn')).click();
 
 		browser.executeScript("document.getElementById('compactMode').scrollIntoView()").then(function() {
 			element(by.id('compactMode-CbBg')).click();
