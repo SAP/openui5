@@ -166,10 +166,12 @@
 											 columnTitles="Name,Type,Description"
 											 class="sapUiSmallMarginTop">
 											<custom:Row>
-												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" deprecated="{= ${deprecated} !== undefined }"/>
-												<m:Link text="{type}"
-														href="{href}"
-														enabled="{= !!${linkEnabled} }"/>
+												<custom:ParamText class="sapUiDocumentationParamBold" text="{name}" depth="{depth}" optional="{optional}" deprecated="{= ${deprecated} !== undefined }"/>
+												<layout:VerticalLayout content="{path: 'types', templateShareable: false}" width="100%">
+													<m:Link text="{path: 'value', formatter: 'sap.ui.base.ManagedObject.escapeSettingsValue'}"
+															href="{href}"
+															enabled="{= !!${linkEnabled} }"/>
+												</layout:VerticalLayout>
 												<layout:VerticalLayout>
 													<custom:JSDocText sanitizeContent="false" text="{description}"/>
 													<m:MessageStrip
