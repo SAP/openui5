@@ -1,30 +1,19 @@
 /******************************************************************
 	Style of the RTA Change Visualization - Quartz dark theme
 *******************************************************************/
-@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColor: rgba(131, 201, 233, 0.75);
-@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolid: rgb(131, 201, 233);
-@_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid: rgb(219, 149, 51);
-@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorHover: rgba(14, 138, 195, 0.75);
-@_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolidHover: #0f648b;
-
-.sapUiRtaChangeIndicator-change:focus{
-	border: 1px solid white;
-	outline: none;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColor: rgba(131, 201, 233, 0.75);
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorFocus: white;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorHover: rgba(14, 138, 195, 0.75);
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolid: rgb(131, 201, 233);
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidBG: @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid;
+@_sap_ui_rta_ChangeVisualization_ChangeIndicatorColorSolidHover: #0f648b;
+@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorFocus: white;
+@_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid: rgb(219, 149, 51);
+.sapUiRtaChangeIndicatorChangeSolid {
+	.sapUiRtaChangeIndicatorIcon{
+		color: @sapUiContentContrastTextColor; // #29313a
+	}
 }
-
-.sapUiRtaChangeIndicator-dependent:focus{
-	border: 1px solid white;
-	outline: none;
-}
-
-.sapUiRtaChangeIndicator-change-solid {
-	background: radial-gradient(circle, @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid 41%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolid 72%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolid 100%);
-}
-
-.sapUiRtaChangeIndicator-change-solid .sapUiRtaChangeIndicatorIcon{
-	color: @sapUiContentContrastTextColor;
-}
-
-.sapUiRtaChangeIndicator-change-solid:hover {
-	background: radial-gradient(circle, @_sap_ui_rta_Toolbar_Adaptation_DependentIndicatorColorSolid 41%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorHover 72%, @_sap_ui_rta_Toolbar_Adaptation_ChangeIndicatorColorSolidHover 100%);
+.sapUiRtaChangeIndicatorDependent:hover{
+	background: radial-gradient(circle, transparent 41%, @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolidHover 56%, @_sap_ui_rta_ChangeVisualization_DependentIndicatorColorSolid 100%);
 }
