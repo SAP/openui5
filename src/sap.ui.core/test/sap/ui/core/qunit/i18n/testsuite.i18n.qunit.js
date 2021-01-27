@@ -240,6 +240,26 @@ sap.ui.define(function() {
 					language: "ru_RU"
 				}
 			},
+			"LocaleData-sr_Latn": {
+				qunit: {
+					reorder: false // currency digits test seems to depend on execution order
+				},
+				sinon: false,
+				module: "./GenericLocaleData.qunit",
+				ui5: {
+					language: "sr_Latn"
+				}
+			},
+			"LocaleData-sr": {
+				qunit: {
+					reorder: false // currency digits test seems to depend on execution order
+				},
+				sinon: false,
+				module: "./GenericLocaleData.qunit",
+				ui5: {
+					language: "sr"
+				}
+			},
 			"LocaleData-pt_BR": {
 				qunit: {
 					reorder: false // currency digits test seems to depend on execution order

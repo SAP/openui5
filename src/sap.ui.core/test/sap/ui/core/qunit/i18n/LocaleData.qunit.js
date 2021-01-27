@@ -2,9 +2,174 @@
 sap.ui.define([
 	"sap/ui/core/CalendarType",
 	"sap/ui/core/Locale",
-	"sap/ui/core/LocaleData"
-], function(CalendarType, Locale, LocaleData) {
+	"sap/ui/core/LocaleData",
+	"sap/base/util/LoaderExtensions"
+], function(CalendarType, Locale, LocaleData, LoaderExtensions) {
 	"use strict";
+
+	QUnit.module("Locale Data Loading", {
+		beforeEach: function(assert) {
+			this.loadResourceSpy = this.spy(LoaderExtensions, "loadResource");
+
+		}, afterEach: function(assert) {
+			this.loadResourceSpy.restore();
+		}
+	});
+
+	QUnit.test("LocaleData caching of data", function(assert) {
+		LocaleData.getInstance(new Locale("en_US"));
+		LocaleData.getInstance(new Locale("en_US"));
+		assert.equal(this.loadResourceSpy.callCount, 1, "called only once for same locale");
+	});
+
+	QUnit.test("LocaleData mapping", function(assert) {
+		// sr Latin
+		// sr_Latn
+		LocaleData.getInstance(new Locale("sr_Latn"));
+		assert.equal(this.loadResourceSpy.callCount, 1, "called for sr_Latn");
+		assert.equal(this.loadResourceSpy.getCall(0).args[0], "sap/ui/core/cldr/sr_Latn.json", "sr_Latn is loaded");
+
+		// sh maps to sr_Latn
+		LocaleData.getInstance(new Locale("sh"));
+		assert.equal(this.loadResourceSpy.callCount, 1, "not called for sh because sr_Latn already loaded");
+		assert.equal(this.loadResourceSpy.getCall(0).args[0], "sap/ui/core/cldr/sr_Latn.json", "sr_Latn already loaded");
+
+		// sr
+		LocaleData.getInstance(new Locale("sr"));
+		assert.equal(this.loadResourceSpy.callCount, 2, "called for sr");
+		assert.equal(this.loadResourceSpy.getCall(1).args[0], "sap/ui/core/cldr/sr.json", "sr is loaded");
+	});
+
+
+	// added "sh"
+	var aLanguages = ["ar", "ar_EG", "ar_SA", "bg", "ca", "cy", "cs", "da", "de", "de_AT", "de_CH", "el", "el_CY",
+		"en", "en_AU", "en_GB", "en_HK", "en_IE", "en_IN", "en_NZ", "en_PG", "en_SG", "en_ZA", "es",
+		"es_AR", "es_BO", "es_CL", "es_CO", "es_MX", "es_PE", "es_UY", "es_VE", "et", "fa", "fi", "fr",
+		"fr_BE", "fr_CA", "fr_CH", "fr_LU", "he", "hi", "hr", "hu", "id", "it", "it_CH", "ja", "kk", "ko", "lt",
+		"lv", "ms", "nb", "nl", "nl_BE", "pl", "pt", "pt_PT", "ro", "ru", "ru_UA", "sk", "sl", "sr", "sr_Latn", "sh", "sv",
+		"th", "tr", "uk", "vi", "zh_CN", "zh_HK", "zh_SG", "zh_TW"];
+
+	aLanguages.forEach(function(sLanguage) {
+		QUnit.test("getCurrentLanguageName '" + sLanguage + "'", function(assert) {
+			var oLocaleData = new LocaleData(new Locale(sLanguage));
+			var oLanguagesObject = oLocaleData.getLanguages();
+			assert.ok(Object.keys(oLanguagesObject).length > 0, "Languages are present for locale: '" + sLanguage + "'");
+			assert.ok(oLocaleData.getCurrentLanguageName(), "Current language is present for locale: '" + sLanguage + "'");
+		});
+	});
+
+	QUnit.test("getCurrentLanguageName specific sh", function(assert) {
+		var oLocale = new Locale("sh"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: sh");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "srpskohrvatski", "current language is present for locale: sh");
+	});
+
+	QUnit.test("getCurrentLanguageName specific sr-Latn", function(assert) {
+		var oLocale = new Locale("sr-Latn"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: sr-Latn");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "srpskohrvatski", "current language is present for locale: sr-Latn");
+	});
+
+	QUnit.test("getCurrentLanguageName specific sr", function(assert) {
+		var oLocale = new Locale("sr"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: sr");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "српски", "current language is present for locale: sr");
+	});
+
+	QUnit.test("getCurrentLanguageName specific iw", function(assert) {
+		var oLocale = new Locale("iw"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: iw");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "עברית", "current language is present for locale: iw");
+	});
+
+	QUnit.test("getCurrentLanguageName specific he", function(assert) {
+		var oLocale = new Locale("he"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: he");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "עברית", "current language is present for locale: he");
+	});
+
+	QUnit.test("getCurrentLanguageName specific iw-x-sapufmt", function(assert) {
+		var oLocale = new Locale("iw-x-sapufmt"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: iw-x-sapufmt");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "עברית", "current language is present for locale: iw-x-sapufmt");
+	});
+
+	QUnit.test("getCurrentLanguageName specific he-x-sapufmt", function(assert) {
+		var oLocale = new Locale("he-x-sapufmt"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: he-x-sapufmt");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "עברית", "current language is present for locale: he-x-sapufmt");
+	});
+
+	// neither ji nor yi is present as CLDR data
+	QUnit.test("getCurrentLanguageName specific ji", function(assert) {
+		var oLocale = new Locale("ji"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.deepEqual(oLanguagesObject, {}, "languages are present for locale: ji");
+		assert.notOk(oLocaleData.getCurrentLanguageName(), "current language is present for locale: ji");
+	});
+
+	QUnit.test("getCurrentLanguageName specific yi", function(assert) {
+		var oLocale = new Locale("yi"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.deepEqual(oLanguagesObject, {}, "languages are present for locale: yi");
+		assert.notOk(oLocaleData.getCurrentLanguageName(), "current language is present for locale: yi");
+	});
+
+	QUnit.test("getCurrentLanguageName specific de-x-sapufmt", function(assert) {
+		var oLocale = new Locale("de-x-sapufmt"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: de-x-sapufmt");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "Deutsch", "current language is present for locale: de-x-sapufmt");
+	});
+
+	QUnit.test("getCurrentLanguageName specific en-GB-x-sapufmt", function(assert) {
+		var oLocale = new Locale("en-GB-x-sapufmt"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: en-GB-x-sapufmt");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "British English", "current language is present for locale: en-GB-x-sapufmt");
+	});
+
+	QUnit.test("getCurrentLanguageName specific zh-Hant-x-sapufmt", function(assert) {
+		var oLocale = new Locale("zh-Hant-x-sapufmt"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: zh-Hant-x-sapufmt");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "繁體中文", "current language is present for locale: zh-Hant-x-sapufmt");
+	});
+
+	QUnit.test("getCurrentLanguageName specific sr-Latn-x-sapufmt", function(assert) {
+		var oLocale = new Locale("sr-Latn-x-sapufmt"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: sr-Latn-x-sapufmt");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "srpskohrvatski", "current language is present for locale: sr-Latn-x-sapufmt");
+	});
+
+	QUnit.test("getCurrentLanguageName specific sr-Cyrl-x-sapufmt", function(assert) {
+		var oLocale = new Locale("sr-Cyrl-x-sapufmt"),
+			oLocaleData = new LocaleData(oLocale);
+		var oLanguagesObject = oLocaleData.getLanguages();
+		assert.ok(Object.keys(oLanguagesObject).length > 0, "languages are present for locale: sr-Cyrl-x-sapufmt");
+		assert.equal(oLocaleData.getCurrentLanguageName(), "српски", "current language is present for locale: sr-Cyrl-x-sapufmt");
+	});
 
 	QUnit.module("Locale data types", {
 		beforeEach: function(assert) {
@@ -240,7 +405,6 @@ sap.ui.define([
 	});
 
 	var aDeprecatedLocales = [
-		"in", // -> id
 		"sh", // -> sr
 		//"ji" -> yi not present
 		"iw" // -> he
@@ -254,6 +418,9 @@ sap.ui.define([
 			assert.ok(Object.keys(oLocaleData.getLanguages()).length > 0, "languages are present for locale: " + sLocale);
 		});
 	});
+
+
+
 
 	QUnit.test("Currency Digits", function(assert) {
 

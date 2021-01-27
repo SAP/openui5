@@ -5,6 +5,7 @@ sap.ui.define([
 	"use strict";
 
 	var aLocales = [
+	//	Language Tag				Language	Script	Region	Variant			Extension		Priv. Use	Logon Language
 		["en",						"en",		null,	null,	null,			null,			null,		"EN"],
 		["en-US",					"en",		null,	"US",	null,			null,			null,		"EN"],
 		["es-419",					"es",		null,	"419",	null,			null,			null,		"ES"],
@@ -12,6 +13,7 @@ sap.ui.define([
 		["zh-yue",					"zh-yue",	null,	null,	null,			null,			null,		"ZH"],
 		["az-Latn",					"az",		"Latn",	null,	null,			null,			null,		"AZ"],
 		["zh-Hant-HK",				"zh",		"Hant",	"HK",	null,			null,			null,		"ZF"],
+		["zh-TW",					"zh",		null,	"TW",	null,			null,			null,		"ZF"],
 		["sl-IT-nedis",				"sl",		null,	"IT",	"nedis",		null,			null,		"SL"], // single variant of the form "5*8alphanum"
 		["de-CH-1901",				"de",		null,	"CH",	"1901",			null,			null,		"DE"], // single variant of the form "DIGIT 3alphanum"
 		["sl-IT-nedis-0815",		"sl",		null,	"IT",	"nedis-0815",	null,			null,		"SL"], // multiple variants
@@ -20,7 +22,7 @@ sap.ui.define([
 		["de-DE-u-co-i-kl",			"de",		null,	"DE",	null,			"u-co-i-kl",	null,		"DE"], // multiple extensions with different singletons
 		["en-US-x-twain",			"en",		null,	"US",	null,			null,			"x-twain",	"EN"],
 
-		// additional tests for normalization
+		// additional tests for the recommended writing of subtags
 		["en_US",					"en",		null,	"US",	null,			null,			null,		"EN"],
 		["EN-US",					"en",		null,	"US",	null,			null,			null,		"EN"],
 		["en-us",					"en",		null,	"US",	null,			null,			null,		"EN"],
@@ -32,21 +34,24 @@ sap.ui.define([
 		["en-x-sappsd",				"en",		null,	null,	null,			null,			"x-sappsd",	"2Q"],
 		["de-CH-x-sapufmt-sappsd",	"de",		null,	"CH",	null,			null,			"x-sapufmt-sappsd",	"2Q"],
 		["sh",					    "sh",		null,	null,	null,			null,			null,		"SH"],
+		["sr-Latn",					"sr",		"Latn",	null,	null,			null,			null,		"SH"],
 		["iw-IL",					"iw",		null,	"IL",	null,			null,			null,		"HE"], // ISO639_OLD_TO_NEW
 		["ji",					    "ji",		null,	null,	null,			null,			null,		"YI"], // ISO639_OLD_TO_NEW
-		["in",					    "in",		null,	null,	null,			null,			null,		"ID"], // ISO639_OLD_TO_NEW
 		["zz",						"zz",		null,	null,	null,			null,			null,		"ZZ"] // unknown language
 	];
 
 	function localeTest(sLocale, sLanguage, sScript, sRegion, sVariant, sExtension, sPrivateUse) {
 		QUnit.test("Locale " + sLocale, function(assert) {
+			// act
 			var oLocale = new Locale(sLocale);
-			assert.equal(oLocale.getLanguage(), sLanguage, "Language");
-			assert.equal(oLocale.getScript(), sScript, "Script");
-			assert.equal(oLocale.getRegion(), sRegion, "Region");
-			assert.equal(oLocale.getVariant(), sVariant, "Variant");
-			assert.equal(oLocale.getExtension(), sExtension, "Extension");
-			assert.equal(oLocale.getPrivateUse(), sPrivateUse, "PrivateUse");
+
+			// assert
+			assert.strictEqual(oLocale.getLanguage(), sLanguage, "Language");
+			assert.strictEqual(oLocale.getScript(), sScript, "Script");
+			assert.strictEqual(oLocale.getRegion(), sRegion, "Region");
+			assert.strictEqual(oLocale.getVariant(), sVariant, "Variant");
+			assert.strictEqual(oLocale.getExtension(), sExtension, "Extension");
+			assert.strictEqual(oLocale.getPrivateUse(), sPrivateUse, "PrivateUse");
 		});
 	}
 
@@ -63,10 +68,45 @@ sap.ui.define([
 		assert.equal(oLocale.hasPrivateUseSubtag("ufmt"), false, "parts of PrivateUse subtag must not be detected");
 	});
 
-	QUnit.test("SAPLogonLanguage", function(assert) {
+	QUnit.test("getSAPLogonLanguage", function(assert) {
 		aLocales.forEach(function(aLocaleData) {
 			var oLocale = new Locale(aLocaleData[0]);
-			assert.equal(oLocale.getSAPLogonLanguage(), aLocaleData[7], "locale should return the correct SAP Logon Language");
+			assert.equal(oLocale.getSAPLogonLanguage(), aLocaleData[7],
+				"locale '" + aLocaleData[0] + "'"
+				+ " should return the SAP logon language '" + aLocaleData[7] + "'");
 		});
+	});
+
+	QUnit.test("fromSAPLogonLanguage", function(assert) {
+		assert.equal(Locale.fromSAPLogonLanguage("ZH").toString(), "zh-Hans");
+		assert.equal(Locale.fromSAPLogonLanguage("ZF").toString(), "zh-Hant");
+		assert.equal(Locale.fromSAPLogonLanguage("SH").toString(), "sr-Latn");
+		assert.equal(Locale.fromSAPLogonLanguage("6N").toString(), "en-GB");
+		assert.equal(Locale.fromSAPLogonLanguage("1P").toString(), "pt-PT");
+		assert.equal(Locale.fromSAPLogonLanguage("1X").toString(), "es-MX");
+		assert.equal(Locale.fromSAPLogonLanguage("3F").toString(), "fr-CA");
+		assert.equal(Locale.fromSAPLogonLanguage("1Q").toString(), "en-US-x-saptrc");
+		assert.equal(Locale.fromSAPLogonLanguage("2Q").toString(), "en-US-x-sappsd");
+		assert.strictEqual(Locale.fromSAPLogonLanguage(""), undefined, "no language");
+		assert.strictEqual(Locale.fromSAPLogonLanguage(false), undefined, "no language");
+		assert.strictEqual(Locale.fromSAPLogonLanguage({}), undefined, "no language");
+		assert.strictEqual(Locale.fromSAPLogonLanguage("1E"), undefined, "no language");
+		assert.equal(Locale.fromSAPLogonLanguage("XX").toString(), "xx");
+	});
+
+	QUnit.test("fromSAPLogonLanguage reverse getSAPLogonLanguage", function(assert) {
+		["ZH", "ZF", "SH", "6N", "1P", "1X", "3F", "1Q", "2Q"].forEach(function(sSAPLanguage) {
+			assert.equal(Locale.fromSAPLogonLanguage(sSAPLanguage).getSAPLogonLanguage(), sSAPLanguage);
+		});
+	});
+
+	QUnit.test("toLanguageTag", function(assert) {
+		assert.equal(new Locale("sh").toLanguageTag(), "sh");
+		assert.equal(new Locale("sr-Latn").toLanguageTag(), "sh");
+		assert.equal(new Locale("sr-RS").toLanguageTag(), "sr-RS");
+		assert.equal(new Locale("sh-RS").toLanguageTag(), "sh-RS");
+		assert.equal(new Locale("en-GB").toLanguageTag(), "en-GB");
+		assert.equal(new Locale("iw").toLanguageTag(), "he");
+		assert.equal(new Locale("ji").toLanguageTag(), "yi");
 	});
 });

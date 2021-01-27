@@ -271,14 +271,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("fallback locale with supportedLocales serbian 'sr_RS' is supported via fallback 'sr_RS'", function(assert) {
-		var sFallbackLocale = "sr_RS";
-		var aSupportedLocales = ["sr_RS"];
-		var sExpectedLocale = "sr_RS";
+	QUnit.test("fallback locale with supportedLocales hebrew 'he_IL' is supported via fallback 'he_IL'", function(assert) {
+		var sFallbackLocale = "he_IL";
+		var aSupportedLocales = ["he_IL"];
+		var sExpectedLocale = "he_IL";
 
-		// fallbackLocale: "sr_RS" is normalized to "sh_RS" (BCP47 -> ISO639)
-		// but since the supportedLocales contain "sr_RS" the resulting locale is "sr_RS" because its ISO639 value ("sr_RS") is included in the supportedLocales
-		// fallback chain: de_CH (not supported) -> de (not supported) -> sh_RS (supported after conversion to BCP47) ==> sr_RS
+		// fallbackLocale: "he_IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// but since the supportedLocales contain "he_IL" the resulting locale is "he_IL" because its ISO639 value ("he_IL") is included in the supportedLocales
+		// fallback chain: de_CH (not supported) -> de (not supported) -> iw_IL (supported after conversion to BCP47) ==> he_IL
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
@@ -289,86 +289,116 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("supportedLocales serbian 'sr_RS' with input 'sr_Latn_RS'", function(assert) {
-		var sLocale = "sr_Latn_RS";
-		var aSupportedLocales = ["sr_RS"];
-		var sExpectedLocale = "sr_RS";
-
-		// locale: "sr_Latn_RS" is normalized to "sh_RS" (BCP47 -> ISO639)
-		// the supportedLocales contain "sr_RS" the resulting locale is "sr_RS" because the locale's BCP47 value ("sr_RS") is included in the supportedLocales
-		// fallback chain: sh_RS (supported after conversion) ==> sr_RS
+	QUnit.test("locale sr -> sh", function(assert) {
+		var sExpectedLocale = "sh";
+		var sLocale = "sr";
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
 		});
 	});
 
-	QUnit.test("supportedLocales serbian 'sh_RS' with input 'sr_Latn_RS'", function(assert) {
-		var sLocale = "sr_Latn_RS";
-		var aSupportedLocales = ["sh_RS"];
-		var sExpectedLocale = "sh_RS";
-
-		// locale: "sr_Latn_RS" is normalized to "sh_RS" (BCP47 -> ISO639)
-		// the supportedLocales contain "sh_RS" therefore the resulting locale is "sh_RS"
-		// fallback chain: sh_RS (supported) ==> sh_RS
-
+	QUnit.test("locale sr -> (supportedLocales: ['sh'])", function(assert) {
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
-
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
-			assert.equal(oStub.callCount, 1);
-			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
-		});
-	});
-
-	QUnit.test("supportedLocales serbian 'sr' with input 'sr_RS'", function(assert) {
-		var sLocale = "sr_RS";
-		var aSupportedLocales = ["sr"];
-		var sExpectedLocale = "sr";
-
-		// locale: "sr_RS" is normalized to "sh_RS" (BCP47 -> ISO639)
-		// the supportedLocales contain "sr" therefore the resulting locale is "sr" because the locale fallback chain's BCP47 value ("sr") is included in the supportedLocales
-		// fallback chain: sh_RS (not supported) -> "sh" (supported after conversion to BCP47) ==> sr
-
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
-
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
-			assert.equal(oStub.callCount, 1);
-			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
-		});
-	});
-
-	QUnit.test("supportedLocales serbian 'sh' with input 'sr_RS'", function(assert) {
-		var sLocale = "sr_RS";
+		var sLocale = "sr";
 		var aSupportedLocales = ["sh"];
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() { //sh
+			assert.equal(oStub.callCount, 1);
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("locale sh -> sh", function(assert) {
+		var sExpectedLocale = "sh";
+		var sLocale = "sh";
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("locale sh -> sh (supportedLocales: ['sh'])", function(assert) {
+		var sExpectedLocale = "sh";
+		var sLocale = "sh";
+		var aSupportedLocales = ["sh"];
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("locale sh -> sr_Latn (supportedLocales: ['sr_Latn'])", function(assert) {
+		var sExpectedLocale = "sr_Latn";
+		var sLocale = "sh";
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: ["sr_Latn"]}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+
+
+	QUnit.test("locale sr-Latn -> sh", function(assert) {
 		var sExpectedLocale = "sh";
 
-		// locale: "sr_RS" is normalized to "sh_RS" (BCP47 -> ISO639)
-		// the supportedLocales contain "sh" therefore the resulting locale is "sh"
-		// fallback chain: sh_RS (not supported) -> "sh" (supported) ==> sh
-
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
+		return ResourceBundle.create({url: 'my.properties', locale: "sr-Latn", async: true}).then(function() {
 			assert.equal(oStub.callCount, 1);
 			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
 			oStub.restore();
 		});
 	});
 
-	QUnit.test("supportedLocales serbian 'sh' with input 'sr_Latn_RS'", function(assert) {
-		var aSupportedLocales = ["sh"];
-		var sLocale = "sr_Latn_RS";
+	QUnit.test("locale sr-Latn -> sr_Latn (supportedLocales: ['sr_Latn'])", function(assert) {
+		var sExpectedLocale = "sr_Latn";
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: "sr-Latn", async: true, supportedLocales: ["sr_Latn"]}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("locale sr-Latn -> sh (supportedLocales: ['sh'])", function(assert) {
 		var sExpectedLocale = "sh";
 
-		// locale: "sr_Latn_RS" is normalized to "sh_RS" (BCP47 -> ISO639)
-		// the supportedLocales contain "sh" therefore the resulting locale is "sh"
-		// fallback chain: sh_RS (not supported) -> "sh" (supported) ==> sh
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: "sr-Latn", async: true, supportedLocales: ["sh"]}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("supportedLocales hebrew 'he_IL' with input 'he_Latn_IL'", function(assert) {
+		var sLocale = "he_Latn_IL";
+		var aSupportedLocales = ["he_IL"];
+		var sExpectedLocale = "he_IL";
+
+		// locale: "he_Latn_IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// the supportedLocales contain "he_IL" the resulting locale is "he_IL" because the locale's BCP47 value ("he_IL") is included in the supportedLocales
+		// fallback chain: iw_IL (supported after conversion) ==> he_IL
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
@@ -379,14 +409,86 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("supportedLocales serbian 'sr' with input 'sr_Latn_RS'", function(assert) {
-		var aSupportedLocales = ["sr"];
-		var sLocale = "sr_Latn_RS";
-		var sExpectedLocale = "sr";
+	QUnit.test("supportedLocales hebrew 'iw_IL' with input 'he_Latn_IL'", function(assert) {
+		var sLocale = "he_Latn_IL";
+		var aSupportedLocales = ["iw_IL"];
+		var sExpectedLocale = "iw_IL";
 
-		// locale: "sr_Latn_RS" is normalized to "sh_RS" (BCP47 -> ISO639)
-		// the supportedLocales contain "sr" therefore the resulting locale is "sr" because the locale fallback chain's BCP47 value ("sr") is included in the supportedLocales
-		// fallback chain: sh_RS (not supported) -> "sh" (supported after conversion to BCP47) ==> sr
+		// locale: "he_Latn_IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// the supportedLocales contain "iw_IL" therefore the resulting locale is "iw_IL"
+		// fallback chain: iw_IL (supported) ==> iw_IL
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("supportedLocales hebrew 'he' with input 'he_IL'", function(assert) {
+		var sLocale = "he_IL";
+		var aSupportedLocales = ["he"];
+		var sExpectedLocale = "he";
+
+		// locale: "he_IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// the supportedLocales contain "he" therefore the resulting locale is "he" because the locale fallback chain's BCP47 value ("he") is included in the supportedLocales
+		// fallback chain: iw_IL (not supported) -> "iw" (supported after conversion to BCP47) ==> he
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("supportedLocales hebrew 'iw' with input 'he_IL'", function(assert) {
+		var sLocale = "he_IL";
+		var aSupportedLocales = ["iw"];
+		var sExpectedLocale = "iw";
+
+		// locale: "he_IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// the supportedLocales contain "iw" therefore the resulting locale is "iw"
+		// fallback chain: iw_IL (not supported) -> "iw" (supported) ==> iw
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("supportedLocales hebrew 'iw' with input 'he_Latn_IL'", function(assert) {
+		var aSupportedLocales = ["iw"];
+		var sLocale = "he_Latn_IL";
+		var sExpectedLocale = "iw";
+
+		// locale: "he_Latn_IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// the supportedLocales contain "iw" therefore the resulting locale is "iw"
+		// fallback chain: iw_IL (not supported) -> "iw" (supported) ==> iw
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("supportedLocales hebrew 'he' with input 'he_Latn_IL'", function(assert) {
+		var aSupportedLocales = ["he"];
+		var sLocale = "he_Latn_IL";
+		var sExpectedLocale = "he";
+
+		// locale: "he_Latn_IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// the supportedLocales contain "he" therefore the resulting locale is "he" because the locale fallback chain's BCP47 value ("he") is included in the supportedLocales
+		// fallback chain: iw_IL (not supported) -> "iw" (supported after conversion to BCP47) ==> he
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
@@ -398,32 +500,14 @@ sap.ui.define([
 	});
 
 
-	QUnit.test("fallback locale with new supportedLocales serbian 'sr' with input 'sh_Latn_RS'", function(assert) {
-		var aSupportedLocales = ["sr"];
-		var sLocale = "sh_Latn_RS";
-		var sExpectedLocale = "sr";
+	QUnit.test("fallback locale with new supportedLocales hebrew 'he' with input 'iw_Latn_IL'", function(assert) {
+		var aSupportedLocales = ["he"];
+		var sLocale = "iw_Latn_IL";
+		var sExpectedLocale = "he";
 
-		// locale: "sh_Latn_RS" is normalized to "sh_RS" (BCP47 -> ISO639)
-		// the supportedLocales contain "sr" therefore the resulting locale is "sr" because the locale fallback chain's BCP47 value ("sr") is included in the supportedLocales
-		// fallback chain: sh_RS (not supported) -> "sh" (supported after conversion to BCP47) ==> sr
-
-		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
-
-		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
-			assert.equal(oStub.callCount, 1);
-			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
-			oStub.restore();
-		});
-	});
-
-	QUnit.test("fallback locale with new supportedLocales serbian 'sh' with input 'sh_Latn_RS'", function(assert) {
-		var aSupportedLocales = ["sh"];
-		var sLocale = "sh_Latn_RS";
-		var sExpectedLocale = "sh";
-
-		// locale: "sh_Latn_RS" is normalized to "sh_RS" (BCP47 -> ISO639)
-		// the supportedLocales contain "sh" therefore the resulting locale is "sh"
-		// fallback chain: sh_RS (not supported) -> "sh" (supported) ==> sh
+		// locale: "iw_Latn_IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// the supportedLocales contain "he" therefore the resulting locale is "he" because the locale fallback chain's BCP47 value ("he") is included in the supportedLocales
+		// fallback chain: iw_IL (not supported) -> "iw" (supported after conversion to BCP47) ==> he
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
@@ -434,14 +518,14 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("fallback locale with new supportedLocales serbian 'sh-RS' with input 'sh_Latn_RS'", function(assert) {
-		var aSupportedLocales = ["sh-RS"];
-		var sLocale = "sh_Latn_RS";
-		var sExpectedLocale = "sh_RS";
+	QUnit.test("fallback locale with new supportedLocales hebrew 'iw' with input 'iw_Latn_IL'", function(assert) {
+		var aSupportedLocales = ["iw"];
+		var sLocale = "iw_Latn_IL";
+		var sExpectedLocale = "iw";
 
-		// locale: "sh-RS" is normalized to "sh_RS" (BCP47 -> ISO639)
-		// the supportedLocales contain "sh_RS" therefore the resulting locale is "sh_RS"
-		// fallback chain: sh_RS (supported) ==> sh_RS
+		// locale: "iw_Latn_IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// the supportedLocales contain "iw" therefore the resulting locale is "iw"
+		// fallback chain: iw_IL (not supported) -> "iw" (supported) ==> iw
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
@@ -452,14 +536,50 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("fallback locale with new supportedLocales serbian 'sr-RS' with input 'sh_Latn_RS'", function(assert) {
-		var aSupportedLocales = ["sr-RS"];
-		var sLocale = "sh_Latn_RS";
-		var sExpectedLocale = "sr_RS";
+	QUnit.test("fallback locale with sr-Latn", function(assert) {
+		var aSupportedLocales = ["sr-Latn"];
+		var sLocale = "sh";
+		var sExpectedLocale = "sr_Latn";
 
-		// locale: "sr-RS" is normalized to "sh_RS" (BCP47 -> ISO639)
-		// the supportedLocales contain "sr_RS" therefore the resulting locale is "sr_RS" because the locale fallback chain's BCP47 value ("sr_RS") is included in the supportedLocales
-		// fallback chain: sh_RS (supported after conversion to BCP47) ==> sr_RS
+		// locale: "iw-IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// the supportedLocales contain "iw_IL" therefore the resulting locale is "iw_IL"
+		// fallback chain: iw_IL (supported) ==> iw_IL
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("fallback locale with new supportedLocales hebrew 'iw-IL' with input 'iw_Latn_IL'", function(assert) {
+		var aSupportedLocales = ["iw-IL"];
+		var sLocale = "iw_Latn_IL";
+		var sExpectedLocale = "iw_IL";
+
+		// locale: "iw-IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// the supportedLocales contain "iw_IL" therefore the resulting locale is "iw_IL"
+		// fallback chain: iw_IL (supported) ==> iw_IL
+
+		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
+
+		return ResourceBundle.create({url: 'my.properties', locale: sLocale, async: true, supportedLocales: aSupportedLocales, fallbackLocale: aSupportedLocales[0]}).then(function() {
+			assert.equal(oStub.callCount, 1);
+			assert.equal(oStub.getCall(0).args[0].url, "my_" + sExpectedLocale + ".properties", "correct properties file is loaded");
+			oStub.restore();
+		});
+	});
+
+	QUnit.test("fallback locale with new supportedLocales hebrew 'he-IL' with input 'iw_Latn_IL'", function(assert) {
+		var aSupportedLocales = ["he-IL"];
+		var sLocale = "iw_Latn_IL";
+		var sExpectedLocale = "he_IL";
+
+		// locale: "he-IL" is normalized to "iw_IL" (BCP47 -> ISO639)
+		// the supportedLocales contain "he_IL" therefore the resulting locale is "he_IL" because the locale fallback chain's BCP47 value ("he_IL") is included in the supportedLocales
+		// fallback chain: iw_IL (supported after conversion to BCP47) ==> he_IL
 
 		var oStub = sinon.stub(Properties, "create").returns(createFakePropertiesPromise({number: "47", mee: "yo"}));
 
@@ -546,61 +666,61 @@ sap.ui.define([
 		var aSupportedLocales = ['he', 'id', 'en'];
 		assert.deepEqual(ResourceBundle._getFallbackLocales('iw-IL'), ['iw_IL', 'iw', 'en', ''], "fallback chain without knowledge about supported locales");
 		assert.deepEqual(ResourceBundle._getFallbackLocales('iw-IL', aSupportedLocales), ['he', 'en'], "fallback chain with knowledge about supported locales");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('in'), ['in', 'en', ''], "fallback chain without knowledge about supported locales");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('in', aSupportedLocales), ['id', 'en'], "fallback chain with knowledge about supported locales");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('id'), ['id', 'en', ''], "fallback chain without knowledge about supported locales");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('id', aSupportedLocales), ['id', 'en'], "fallback chain with knowledge about supported locales");
 
-		// serbian modern: "sr"
-		// serbian legacy: "sh"
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sh'], 'sh'), ['sh'], "fallback for sr_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sr'], 'sr'), ['sr'], "fallback for sr_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sh_RS'], 'sh_RS'), ['sh_RS'], "fallback for sr_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sr_RS', ['sr_RS'], 'sr_RS'), ['sr_RS'], "fallback for sr_RS");
+		// hebrew modern: "he"
+		// hebrew legacy: "iw"
+		assert.deepEqual(ResourceBundle._getFallbackLocales('he_IL', ['iw'], 'iw'), ['iw'], "fallback for he_IL");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('he_IL', ['he'], 'he'), ['he'], "fallback for he_IL");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('he_IL', ['iw_IL'], 'iw_IL'), ['iw_IL'], "fallback for he_IL");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('he_IL', ['he_IL'], 'he_IL'), ['he_IL'], "fallback for he_IL");
 
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sh'], 'sh'), ['sh'], "fallback for sh_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sr'], 'sr'), ['sr'], "fallback for sh_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sh_RS'], 'sh_RS'), ['sh_RS'], "fallback for sh_RS");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sh_RS', ['sr_RS'], 'sr_RS'), ['sr_RS'], "fallback for sh_RS");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('iw_IL', ['iw'], 'iw'), ['iw'], "fallback for iw_IL");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('iw_IL', ['he'], 'he'), ['he'], "fallback for iw_IL");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('iw_IL', ['iw_IL'], 'iw_IL'), ['iw_IL'], "fallback for iw_IL");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('iw_IL', ['he_IL'], 'he_IL'), ['he_IL'], "fallback for iw_IL");
 
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sh', ['sh'], 'sh'), ['sh'], "fallback for sh");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sr', ['sr'], 'sh'), ['sr'], "fallback for sr");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sh', ['sh_RS'], 'sr_RS'), ['sh_RS'], "fallback for sh");
-		assert.deepEqual(ResourceBundle._getFallbackLocales('sr', ['sr_RS'], 'sh_RS'), ['sr_RS'], "fallback for sr");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('iw', ['iw'], 'iw'), ['iw'], "fallback for iw");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('he', ['he'], 'iw'), ['he'], "fallback for he");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('iw', ['iw_IL'], 'he_IL'), ['iw_IL'], "fallback for iw");
+		assert.deepEqual(ResourceBundle._getFallbackLocales('he', ['he_IL'], 'iw_IL'), ['he_IL'], "fallback for he");
 	});
 
 	QUnit.test("_getFallbackLocales (with modern ISO639 language code) not contained", function (assert) {
 		assert.throws(function () {
-			ResourceBundle._getFallbackLocales('sr_RS', ['sh'], 'es');
-		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sh'] and will be ignored."));
+			ResourceBundle._getFallbackLocales('he_IL', ['iw'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['iw'] and will be ignored."));
 		assert.throws(function () {
-			ResourceBundle._getFallbackLocales('sr_RS', ['sr'], 'es');
-		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sr'] and will be ignored."));
+			ResourceBundle._getFallbackLocales('he_IL', ['he'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['he'] and will be ignored."));
 		assert.throws(function () {
-			ResourceBundle._getFallbackLocales('sr_RS', ['sh_RS'], 'es');
-		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sh_RS'] and will be ignored."));
+			ResourceBundle._getFallbackLocales('he_IL', ['iw_IL'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['iw_IL'] and will be ignored."));
 		assert.throws(function () {
-			ResourceBundle._getFallbackLocales('sr_RS', ['sr_RS'], 'es');
-		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sr_RS'] and will be ignored."));
+			ResourceBundle._getFallbackLocales('he_IL', ['he_IL'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['he_IL'] and will be ignored."));
 
 
 		assert.throws(function () {
-			ResourceBundle._getFallbackLocales('sh_RS', ['sh'], 'es');
-		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sh'] and will be ignored."));
+			ResourceBundle._getFallbackLocales('iw_IL', ['iw'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['iw'] and will be ignored."));
 		assert.throws(function () {
-			ResourceBundle._getFallbackLocales('sh_RS', ['sr'], 'es');
-		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sr'] and will be ignored."));
+			ResourceBundle._getFallbackLocales('iw_IL', ['he'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['he'] and will be ignored."));
 		assert.throws(function () {
-			ResourceBundle._getFallbackLocales('sh_RS', ['sh_RS'], 'es');
-		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sh_RS'] and will be ignored."));
+			ResourceBundle._getFallbackLocales('iw_IL', ['iw_IL'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['iw_IL'] and will be ignored."));
 		assert.throws(function () {
-			ResourceBundle._getFallbackLocales('sh_RS', ['sr_RS'], 'es');
-		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['sr_RS'] and will be ignored."));
+			ResourceBundle._getFallbackLocales('iw_IL', ['he_IL'], 'es');
+		}, new Error("The fallback locale 'es' is not contained in the list of supported locales ['he_IL'] and will be ignored."));
 
 		assert.throws(function () {
-			ResourceBundle._getFallbackLocales('sh', ['sh'], 'sr_RS');
-		}, new Error("The fallback locale 'sh_RS' is not contained in the list of supported locales ['sh'] and will be ignored."));
+			ResourceBundle._getFallbackLocales('iw', ['iw'], 'he_IL');
+		}, new Error("The fallback locale 'iw_IL' is not contained in the list of supported locales ['iw'] and will be ignored."));
 		assert.throws(function () {
-			ResourceBundle._getFallbackLocales('sr', ['sr'], 'sh_RS');
-		}, new Error("The fallback locale 'sh_RS' is not contained in the list of supported locales ['sr'] and will be ignored."));
+			ResourceBundle._getFallbackLocales('he', ['he'], 'iw_IL');
+		}, new Error("The fallback locale 'iw_IL' is not contained in the list of supported locales ['he'] and will be ignored."));
 	});
 
 	QUnit.test("getText (multiple resource bundles) checking that nextLocale is loaded", function(assert) {
@@ -829,10 +949,10 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getText fallbackChain - locale 'de_CH' and fallbackLocale 'sr_RS'", function(assert) {
+	QUnit.test("getText fallbackChain - locale 'de_CH' and fallbackLocale 'he_IL'", function(assert) {
 
 		var sLocale = "de_CH";
-		var sFallbackLocale = "sr_RS";
+		var sFallbackLocale = "he_IL";
 
 		// needs to be executed sync because
 		var oPropertiesCreateStub = sinon.stub(Properties, "create");
@@ -852,8 +972,8 @@ sap.ui.define([
 			assert.deepEqual(aUrls, [
 				"my_de_CH.properties",
 				"my_de.properties",
-				"my_sh_RS.properties",
-				"my_sh.properties",
+				"my_iw_IL.properties",
+				"my_iw.properties",
 				"my.properties"
 			], "called urls must match");
 
@@ -862,11 +982,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getText fallbackChain - locale 'de_CH' and fallbackLocale 'sr_RS' and supportedLocales 'de_CH', 'sr_RS', 'sh'", function(assert) {
+	QUnit.test("getText fallbackChain - locale 'de_CH' and fallbackLocale 'he_IL' and supportedLocales 'de_CH', 'he_IL', 'sh'", function(assert) {
 
 		var sLocale = "de_CH";
-		var sFallbackLocale = "sr_RS";
-		var aSupportedLocales = ["de_CH", "sr_RS", "sh"];
+		var sFallbackLocale = "he_IL";
+		var aSupportedLocales = ["de_CH", "he_IL", "iw"];
 
 		// needs to be executed sync because
 		var oPropertiesCreateStub = sinon.stub(Properties, "create");
@@ -885,8 +1005,8 @@ sap.ui.define([
 
 			assert.deepEqual(aUrls, [
 				"my_de_CH.properties",
-				"my_sr_RS.properties",
-				"my_sh.properties"
+				"my_he_IL.properties",
+				"my_iw.properties"
 			], "called urls must match");
 
 			oPropertiesCreateStub.restore();
@@ -894,11 +1014,11 @@ sap.ui.define([
 
 	});
 
-	QUnit.test("getText fallbackChain - locale 'de_CH' and fallbackLocale 'sr_RS' and supportedLocales 'de_CH', 'sr', 'sh_RS'", function(assert) {
+	QUnit.test("getText fallbackChain - locale 'de_CH' and fallbackLocale 'he_IL' and supportedLocales 'de_CH', 'sr', 'iw_IL'", function(assert) {
 
 		var sLocale = "de_CH";
-		var sFallbackLocale = "sr_RS";
-		var aSupportedLocales = ["de_CH", "sr", "sh_RS"];
+		var sFallbackLocale = "he_IL";
+		var aSupportedLocales = ["de_CH", "he", "iw_IL"];
 
 		// needs to be executed sync because
 		var oPropertiesCreateStub = sinon.stub(Properties, "create");
@@ -917,8 +1037,8 @@ sap.ui.define([
 
 			assert.deepEqual(aUrls, [
 				"my_de_CH.properties",
-				"my_sh_RS.properties",
-				"my_sr.properties"
+				"my_iw_IL.properties",
+				"my_he.properties"
 			], "called urls must match");
 
 			oPropertiesCreateStub.restore();
