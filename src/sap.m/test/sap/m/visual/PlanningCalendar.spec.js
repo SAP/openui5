@@ -251,7 +251,7 @@ describe("sap.m.PlanningCalendar", function() {
 		 expect(takeScreenshot(element(by.id("PC1-Header-Cal")))).toLookAs("yearpicker_hours_view");
 		 element(by.id("inputFocusHelper")).click(); //close the popup in order to open it again afterwards
 		 element(by.id("PC1-Header-NavToolbar-PickerBtn")).click();
-		 expect(takeScreenshot(element(by.id("PC1-Header-Cal")))).toLookAs("datepicker_hours_view");
+		 expect(takeScreenshot(element(by.id("PC1-Header-Cal")))).toLookAs("datepicker_hours_view_opened_again");
 		 element(by.id("inputFocusHelper")).click(); //clean up - make sure no popups are opened
 	 });
 	 it("should check that date,month,year picker work properly on days view", function() {
