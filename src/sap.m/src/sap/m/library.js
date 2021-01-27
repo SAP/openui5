@@ -195,6 +195,7 @@ sap.ui.define([
 			"sap.m.Dialog",
 			"sap.m.DisplayListItem",
 			"sap.m.DraftIndicator",
+			"sap.m.ExpandableText",
 			"sap.m.FacetFilter",
 			"sap.m.FacetFilterItem",
 			"sap.m.FacetFilterList",
@@ -441,6 +442,7 @@ sap.ui.define([
 					"unhideControl": "default"
 				},
 				"sap.m.Dialog": "sap/m/flexibility/Dialog",
+				"sap.m.ExpandableText": "sap/m/flexibility/ExpandableText",
 				"sap.m.FlexBox": {
 					"hideControl": "default",
 					"unhideControl": "default",
@@ -4135,6 +4137,27 @@ sap.ui.define([
 		 */
 		Center : "Center"
 
+	};
+
+	/**
+	 * Expandable text overflow mode
+	 *
+	 * @enum {string}
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.ExpandableTextOverflowMode = {
+		/**
+		 * InPlace
+		 * @public
+		 */
+		InPlace: "InPlace",
+
+		/**
+		 * Popover
+		 * @public
+		 */
+		Popover: "Popover"
 	};
 
 	thisLib.AvatarShape = AvatarShape;

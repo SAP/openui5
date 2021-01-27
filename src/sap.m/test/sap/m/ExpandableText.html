@@ -1,0 +1,92 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+		<title>sap.m.ExpandableText</title>
+		<script src="shared-config.js"></script>
+		<script src="../../../resources/sap-ui-core.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-libs="sap.m, sap.ui.layout">
+		</script>
+		<script id="myXml" type="text/xmldata">
+			<mvc:View xmlns:mvc="sap.ui.core.mvc"
+						xmlns="sap.m"
+						xmlns:core="sap.ui.core"
+						controllerName="myController"
+						displayBlock="true">
+				<App>
+					<Page title="Expandable Text">
+						<ScrollContainer
+								width="280px"
+								height="auto"
+								vertical="false"
+								horizontal="false">
+								<ExpandableText text="OneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWordOneWord"/>
+								<core:HTML content="&lt;hr/&gt;" />
+								<ExpandableText text="(4 spaces)    (2 line breaks)&#xA;&#xA;(2 tabs)&#x9;&#x9;consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt (2 line breaks follow)&#xA;&#xA;ut labore et dolore magna aliquyam erat, (4 tabs follow)&#x9;&#x9;&#x9;&#x9;sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (1 line break follows)&#xA;Stet clita kasd gubergren, no sea takimata sanctus est (7 spaces follow)       Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,(7 spaces follow)       sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (7 spaces follow)       Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem (6 tabs follow)&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet:"
+								 		renderWhitespace="true"
+								 		wrappingType="Hyphenated"
+								 		overflowMode="Popover" />
+								<core:HTML content="&lt;hr/&gt;" />
+								<ExpandableText text="(4 spaces)    (2 line breaks)&#xA;&#xA;(2 tabs)&#x9;&#x9;consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt (2 line breaks follow)&#xA;&#xA;ut labore et dolore magna aliquyam erat, (4 tabs follow)&#x9;&#x9;&#x9;&#x9;sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (1 line break follows)&#xA;Stet clita kasd gubergren, no sea takimata sanctus est (7 spaces follow)       Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,(7 spaces follow)       sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (7 spaces follow)       Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem (6 tabs follow)&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet:"
+								 		renderWhitespace="true"
+								 		wrappingType="Hyphenated" />
+								<core:HTML content="&lt;hr/&gt;" />
+								<ExpandableText text="(4 spaces)    (2 line breaks)&#xA;&#xA;(2 tabs)&#x9;&#x9;consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt (2 line breaks follow)&#xA;&#xA;ut labore et dolore magna aliquyam erat, (4 tabs follow)&#x9;&#x9;&#x9;&#x9;sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (1 line break follows)&#xA;Stet clita kasd gubergren, no sea takimata sanctus est (7 spaces follow)       Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,(7 spaces follow)       sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (7 spaces follow)       Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem (6 tabs follow)&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet:" />
+								<core:HTML content="&lt;hr/&gt;" />
+								<ExpandableText text="(4 spaces)    (2 line breaks)&#xA;&#xA;(2 tabs)&#x9;&#x9;consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt (2 line breaks follow)&#xA;&#xA;ut labore et dolore magna aliquyam erat, (4 tabs follow)&#x9;&#x9;&#x9;&#x9;sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (1 line break follows)&#xA;Stet clita kasd gubergren, no sea takimata sanctus est (7 spaces follow)       Lorem ipsum dolor sit amet.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,(7 spaces follow)       sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. (7 spaces follow)       Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.Lorem (6 tabs follow)&#x9;&#x9;&#x9;&#x9;&#x9;&#x9;ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet:"
+										overflowMode="Popover" />
+						</ScrollContainer>
+						<core:HTML content="&lt;hr/&gt;" />
+						<ExpandableText text="Short text" />
+						<core:HTML content="&lt;hr/&gt;" />
+						<Table>
+							<columns>
+								<Column>
+									<Text text="Product" />
+								</Column>
+								<Column>
+									<Text text="Supplier" />
+								</Column>
+							</columns>
+							<items>
+								<ColumnListItem>
+									<cells>
+										<Text text="Text" />
+										<ExpandableText text="m dolor sit amet, consetetursadipscingelitrconsetetursadipscingelitr consetetursadipscingelitrconsetetursadipscingelitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum.Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Lorem ipsum dolor sit amet, consetetur sadipscing elitr"
+												wrappingType="Hyphenated" />
+									</cells>
+								</ColumnListItem>
+								<ColumnListItem>
+									<cells>
+										<Text text="Text" />
+										<ExpandableText text="Lorem ipsuLorem ipsuLorem ipsuLorem ipsuLorem ipsuLorem ipsuLorem ipsuLorem ipsuLorem ipsuLorem ipsu12345678"
+												wrappingType="Hyphenated" />
+									</cells>
+								</ColumnListItem>
+							</items>
+						</Table>
+					</Page>
+				</App>
+			</mvc:View>
+		</script>
+		<script>
+			sap.ui.controller("myController", {
+				onInit: function() {
+					var model = new sap.ui.model.json.JSONModel();
+					model.setData({
+						buttonText: "Click Me!"
+					});
+					this.getView().setModel(model);
+				},
+				doSomething: function() {
+					alert("Hello World!");
+				}
+			});
+			sap.ui.xmlview({ viewContent: jQuery('#myXml').html() }).placeAt("content");
+		</script>
+	</head>
+	<body id='content' class='sapUiBody'>
+	</body>
+</html>

@@ -378,6 +378,16 @@
 		  ]
 		},
 		{
+		  "id": "sap.m.ExpandableText",
+		  "name": "Expandable Text",
+		  "category": "Display",
+		  "since": "1.87",
+		  "formFactors": "SML",
+		  "samples": [
+			"sap.m.sample.ExpandableText"
+		  ]
+		},
+		{
 			"id" : "sap.m.SlideTile",
 			"name" : "Slide Tile",
 			"category" : "Container",
@@ -2066,6 +2076,11 @@
 		  "id": "sap.m.sample.TextHyphenation",
 		  "name": "Text - Hyphenation",
 		  "description": "The Text control has a property allowing hyphenation."
+		},
+		{
+		  "id": "sap.m.sample.ExpandableText",
+		  "name": "Expandable Text",
+		  "description": "The ExpandableText control can be used to display a larger texts inside a table, list or form."
 		},
 		{
 		  "id": "sap.m.sample.Title",
