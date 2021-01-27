@@ -53,6 +53,9 @@ sap.ui.define([
 
 				/**
 				 * Defines the logo to be displayed next to the App when the screen is sufficiently large.
+				 *
+				 * Note: If property value isn't set, then the logo address is taken from the theme parameters.
+				 * For reference please see: {@link sap.ui.core.theming.Parameters}
 				 */
 				logo : {type : "sap.ui.core.URI", group : "Appearance", defaultValue : null},
 
