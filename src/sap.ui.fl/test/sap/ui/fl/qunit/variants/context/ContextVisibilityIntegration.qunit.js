@@ -26,6 +26,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	var sCompName = "test---ContextVisibility--";
+	var sFragmentName = "Fragment--";
 	var oCore = sap.ui.getCore();
 
 	function renderComponent(aSelectedRoles) {
@@ -47,25 +48,25 @@ sap.ui.define([
 	}
 
 	function setTableSelectDialogControls() {
-		this.oSelectDialog = oCore.byId("selectContexts");
-		this.oDialog = oCore.byId("selectContexts-dialog");
-		this.oSearchField = oCore.byId("selectContexts-searchField");
-		this.oList = oCore.byId("selectContexts-list");
-		this.oConfirmBtn = oCore.byId("selectContexts-ok");
-		this.oMoreListItem = oCore.byId("selectContexts-list-trigger");
+		this.oSelectDialog = oCore.byId(sCompName + sFragmentName + "selectContexts");
+		this.oDialog = oCore.byId(sCompName + sFragmentName + "selectContexts-dialog");
+		this.oSearchField = oCore.byId(sCompName + sFragmentName + "selectContexts-searchField");
+		this.oList = oCore.byId(sCompName + sFragmentName + "selectContexts-list");
+		this.oConfirmBtn = oCore.byId(sCompName + sFragmentName + "selectContexts-ok");
+		this.oMoreListItem = oCore.byId(sCompName + sFragmentName + "selectContexts-list-trigger");
 	}
 
-	function asyncFakeStub(oStub, oController, fnCallback) {
-		oStub.callsFake(function() {
-			oStub.wrappedMethod.call(oController, arguments[0]).then(fnCallback.bind(this));
-		}.bind(this));
+	function hookAsyncEventHandler(oStub, fnCallback) {
+		oStub.callsFake(function(oEvent) {
+			oStub.wrappedMethod.call(this, oEvent).then(fnCallback);
+		});
 		return oStub;
 	}
 
 	function duplicateRoles(iNumberOfIterations, oDuplicatedRoles) {
 		var oRolesResponseDuplicate = _merge({}, oRolesResponse);
 		for (var i = 0; i <= iNumberOfIterations; i++) {
-			oRolesResponseDuplicate.values.push.apply(oRolesResponseDuplicate.values, oDuplicatedRoles);
+			oRolesResponseDuplicate.values = oRolesResponseDuplicate.values.concat(oDuplicatedRoles);
 		}
 		return oRolesResponseDuplicate;
 	}
@@ -151,7 +152,6 @@ sap.ui.define([
 			this.oRestrictedRadioButton.fireSelect();
 			oCore.applyChanges();
 
-			var oController = this.oComp.getRootControl().getController();
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
 
 			var fnAsyncAssertions = function() {
@@ -164,7 +164,7 @@ sap.ui.define([
 				fnDone();
 			};
 
-			asyncFakeStub.call(this, oAddContextStub, oController, fnAsyncAssertions);
+			hookAsyncEventHandler(oAddContextStub, fnAsyncAssertions.bind(this));
 			this.oAddBtn.firePress();
 		});
 	});
@@ -188,7 +188,6 @@ sap.ui.define([
 			this.fnGetContextsStub.withArgs({layer: Layer.CUSTOMER, type: "role", $skip: 106}).resolves(oMockDoubledResponse);
 
 			return renderComponent.call(this, ["Random Test ID", "REMOTE"]).then(function() {
-				this.oController = this.oComp.getRootControl().getController();
 				setInitialControls.call(this);
 				this.oRestrictedRadioButton.fireSelect();
 				oCore.applyChanges();
@@ -223,8 +222,8 @@ sap.ui.define([
 				fnDone();
 			};
 
-			asyncFakeStub.call(this, oAddContextStub, this.oController, fnAsyncFireSearch);
-			asyncFakeStub.call(this, oSearchStub, this.oController, fnAsyncAssertions);
+			hookAsyncEventHandler(oAddContextStub, fnAsyncFireSearch.bind(this));
+			hookAsyncEventHandler(oSearchStub, fnAsyncAssertions.bind(this));
 			this.oAddBtn.firePress();
 		});
 
@@ -249,8 +248,8 @@ sap.ui.define([
 				fnDone();
 			};
 
-			asyncFakeStub.call(this, oAddContextStub, this.oController, fnAsyncScroll);
-			asyncFakeStub.call(this, oAppendDataStub, this.oController, fnAsyncAssertions);
+			hookAsyncEventHandler(oAddContextStub, fnAsyncScroll.bind(this));
+			hookAsyncEventHandler(oAppendDataStub, fnAsyncAssertions.bind(this));
 			this.oAddBtn.firePress();
 		});
 
@@ -272,7 +271,7 @@ sap.ui.define([
 				fnDone();
 			};
 
-			asyncFakeStub.call(this, oAddContextStub, this.oController, fnAsyncFireSelectAll);
+			hookAsyncEventHandler(oAddContextStub, fnAsyncFireSelectAll.bind(this));
 			this.oAddBtn.firePress();
 		});
 
@@ -289,11 +288,10 @@ sap.ui.define([
 				assert.equal(this.oList.getSelectedItems().length, 2, "two items are selected");
 				this.oConfirmBtn.firePress();
 				oCore.applyChanges();
-
 				fnDone();
 			};
 
-			asyncFakeStub.call(this, oAddContextStub, this.oController, fnAsyncFireSelectAll);
+			hookAsyncEventHandler(oAddContextStub, fnAsyncFireSelectAll.bind(this));
 			this.oAddBtn.firePress();
 		});
 	});
@@ -352,7 +350,6 @@ sap.ui.define([
 			this.oRestrictedRadioButton.fireSelect();
 			oCore.applyChanges();
 
-			var oController = this.oComp.getRootControl().getController();
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
 
 			var fnAsyncAssertions = function() {
@@ -365,7 +362,7 @@ sap.ui.define([
 				fnDone();
 			};
 
-			asyncFakeStub.call(this, oAddContextStub, oController, fnAsyncAssertions);
+			hookAsyncEventHandler(oAddContextStub, fnAsyncAssertions.bind(this));
 			this.oAddBtn.firePress();
 		});
 	});

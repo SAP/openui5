@@ -15,7 +15,7 @@ function (
 ) {
 	"use strict";
 
-	function getPropertyBag (sSkipValue) {
+	function buildGetContextsPropertyBag(sSkipValue) {
 		var mPropertyBag = {layer: Layer.CUSTOMER, type: "role"};
 		if (this.sFilterValue) {
 			mPropertyBag["$filter"] = this.sFilterValue;
@@ -82,8 +82,9 @@ function (
 		_appendDataFromBackend: function() {
 			var oRoles = this.oContextsModel.getProperty("/values");
 			if (this.oContextsModel.getProperty("/lastHitReached") === false) {
-				return WriteStorage.getContexts(getPropertyBag.call(this, oRoles.length)).then(function(oResponse) {
-					oRoles.push.apply(oRoles, oResponse.values);
+				return WriteStorage.getContexts(buildGetContextsPropertyBag.call(this, oRoles.length)).then(function(oResponse) {
+					oRoles = oRoles.concat(oResponse.values);
+					this.oContextsModel.setProperty("/values", oRoles);
 					this.oContextsModel.setProperty("/lastHitReached", oResponse.lastHitReached);
 					this.oContextsModel.refresh(true);
 					return oRoles;
@@ -108,9 +109,10 @@ function (
 		 * Retrieves contexts from the back end, then opens a new <code>Select Contexts</code> dialog.
 		 */
 		_addContexts: function() {
-			return WriteStorage.getContexts(getPropertyBag.call(this)).then(function(oResponse) {
+			return WriteStorage.getContexts(buildGetContextsPropertyBag.call(this)).then(function(oResponse) {
 				this.oContextsModel.setData(oResponse);
 				return Fragment.load({
+					id: this.createId("Fragment"),
 					name: "sap.ui.fl.variants.context.view.fragment.AddContextDialog",
 					controller: this
 				});
@@ -137,7 +139,7 @@ function (
 		 */
 		onSearch: function(oEvent) {
 			this.sFilterValue = oEvent.getParameter("value");
-			return WriteStorage.getContexts(getPropertyBag.call(this)).then(function(oResponse) {
+			return WriteStorage.getContexts(buildGetContextsPropertyBag.call(this)).then(function(oResponse) {
 				this.oContextsModel.setData(oResponse);
 			}.bind(this));
 		},
