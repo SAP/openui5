@@ -3156,8 +3156,8 @@ sap.ui.define([
 					checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
 						"Products(1)",
 						"Products(1)/Supplier",
-						"Products(1)/Supplier/Products/$count",
-						"Products(1)/Supplier/Products?$skip=0&$top=100"
+						"Suppliers(1)/Products/$count",
+						"Suppliers(1)/Products?$skip=0&$top=100"
 					], "AFTER FORCED PANEL REFRESH 4 requests expected");
 					break;
 				case 2:
@@ -3165,8 +3165,8 @@ sap.ui.define([
 					//3 requests AFTER LIST REFRESH
 					checkSingleBatchRequestContent(oList, assert, iCurrentRun, [
 						"Products(1)/Supplier",
-						"Products(1)/Supplier/Products/$count",
-						"Products(1)/Supplier/Products?$skip=0&$top=100"
+						"Suppliers(1)/Products/$count",
+						"Suppliers(1)/Products?$skip=0&$top=100"
 					], "AFTER FORCED LIST REFRESH 3 requests expected");
 					break;
 				case 3:

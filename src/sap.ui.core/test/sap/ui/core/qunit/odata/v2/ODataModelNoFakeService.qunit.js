@@ -73,6 +73,7 @@ sap.ui.define([
 				_createRequestUrlWithNormalizedPath : function () {},
 				_getHeaders : function () {},
 				_getETag : function () {},
+				_getResourcePath : function () {},
 				_isCanonicalRequestNeeded : function () {},
 				_normalizePath : function () {},
 				_pushToRequestQueue : function () {},
@@ -87,9 +88,8 @@ sap.ui.define([
 				bUseBatch : true
 			},
 			oModelMock = this.mock(oModel),
-			sNormalizedPath = "~normalizedPath",
-			sNormalizedTempPath = "~normalizedTempPath",
 			oODataUtilsMock = this.mock(ODataUtils),
+			sResourcePath = "~resourcePath/$count",
 			aSorters = "{sap.ui.model.Sorter[]} aSorters",
 			fnSuccess = "{function} fnSuccess",
 			bUpdateAggregatedMessages = "{boolean} bUpdateAggregatedMessages",
@@ -116,19 +116,17 @@ sap.ui.define([
 			.returns(bIsCanonicalRequestNeeded);
 		oODataUtilsMock.expects("_createUrlParamsArray").withExactArgs(mUrlParams)
 			.returns(aUrlParams);
-		oModelMock.expects("_getHeaders").withExactArgs(mHeaders, true).returns(mGetHeaders);
+		oModelMock.expects("_getHeaders").withExactArgs(mHeaders, true)
+			.returns(mGetHeaders);
 		oModelMock.expects("_getETag").withExactArgs(sPath, oContext).returns(sETag);
-		oModelMock.expects("_normalizePath")
-			.withExactArgs("~path", oContext, bIsCanonicalRequestNeeded)
-			.returns(sNormalizedTempPath);
-		oModelMock.expects("_normalizePath")
-			.withExactArgs(sPath, oContext, bIsCanonicalRequestNeeded)
-			.returns(sNormalizedPath);
-		oModelMock.expects("resolveDeep").withExactArgs(sPath, oContext).returns(sDeepPath);
 		// inner function createReadRequest
-		oODataUtilsMock.expects("createSortParams").withExactArgs(aSorters).returns(sSorterParams);
+		oModelMock.expects("_getResourcePath")
+			.withExactArgs(bIsCanonicalRequestNeeded, sPath, oContext)
+			.returns(sResourcePath);
+		oODataUtilsMock.expects("createSortParams").withExactArgs(aSorters)
+			.returns(sSorterParams);
 		this.mock(oModel.oMetadata).expects("_getEntityTypeByPath")
-			.withExactArgs(sNormalizedTempPath)
+			.withExactArgs(sResourcePath)
 			.returns(oEntityType);
 		this.mock(FilterProcessor).expects("groupFilters").withExactArgs(aFilters)
 			.returns(oFilter);
@@ -136,10 +134,13 @@ sap.ui.define([
 			.withExactArgs(oFilter, sinon.match.same(oModel.oMetadata), oEntityType)
 			.returns(sFilterParams);
 		oModelMock.expects("_createRequestUrlWithNormalizedPath")
-			.withExactArgs(sNormalizedPath,
+			.withExactArgs(sResourcePath,
 				sinon.match.same(aUrlParams).and(sinon.match([sSorterParams, sFilterParams])),
 				/*bUseBatch*/true)
-			.returns(sUrl);
+				.returns(sUrl);
+		oModelMock.expects("resolveDeep")
+			.withExactArgs(sPath, oContext)
+			.returns(sDeepPath);
 		oModelMock.expects("_createRequest")
 			.withExactArgs(sUrl, sDeepPath, "GET", mGetHeaders, null, sETag, undefined,
 				bUpdateAggregatedMessages)
@@ -150,9 +151,24 @@ sap.ui.define([
 			.returns(oRequest);
 
 		// code under test
-		ODataModel.prototype.read.call(oModel, sPath, mParameters);
+		ODataModel.prototype.read.call(oModel, "~path/$count?foo='bar'", mParameters);
 	});
-	//TODO create fixtures to test all paths of ODataModel#read
+
+	//*********************************************************************************************
+	QUnit.test("_getResourcePath", function (assert) {
+		var oModel = {
+				_normalizePath : function () {}
+			};
+
+		this.mock(oModel).expects("_normalizePath")
+			.withExactArgs("~sPath", "~oContext", "~bShortenPath")
+			.returns("~resourcePath");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype
+				._getResourcePath.call(oModel, "~bShortenPath", "~sPath", "~oContext"),
+			"~resourcePath");
+	});
 
 	//*********************************************************************************************
 [{

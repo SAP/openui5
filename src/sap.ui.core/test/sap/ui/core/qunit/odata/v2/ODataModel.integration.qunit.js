@@ -1439,6 +1439,398 @@ sap.ui.define([
 	}
 
 	//*********************************************************************************************
+	// Integration test for correct path calculation during ODataModel#read(...).
+	// JIRA: CPOUI5MODELS-404
+	// BCP: 2080464216
+[{
+	expectedCanonicalRequest : "SalesOrderSet",
+	expectedRequest : "SalesOrderSet",
+	isArrayResponse : true,
+	path : "/SalesOrderSet",
+	title : "Absolute path with one segment to a collection"
+}, {
+	expectedCanonicalRequest : "SalesOrderSet('1')",
+	expectedRequest : "SalesOrderSet('1')",
+	isArrayResponse : false,
+	path : "/SalesOrderSet('1')",
+	title : "Absolute path with one segment to a single entity"
+}, {
+	expectedCanonicalRequest : "SalesOrder_Confirm(SalesOrderID='1')",
+	expectedRequest : "SalesOrder_Confirm(SalesOrderID='1')",
+	isArrayResponse : false,
+	path : "/SalesOrder_Confirm(SalesOrderID='1')",
+	title : "Function import"
+}, {
+	expectedCanonicalRequest : "SalesOrderSet('1')/ToLineItems",
+	expectedRequest : "SalesOrderSet('1')/ToLineItems",
+	isArrayResponse : true,
+	path : "/SalesOrderSet('1')/ToLineItems",
+	title : "Absolute path with two segments to a collection"
+}, {
+	//TODO: Needs to be adjusted after fixing BCP 2080464216
+	// expectedCanonicalRequest : "SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+	expectedCanonicalRequest : {
+		deepPath : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+		requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+	},
+	expectedRequest : "SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+	isArrayResponse : false,
+	path : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+	title : "Absolute path with two segments to a single entity of a collection"
+}, {
+	expectedCanonicalRequest : "SalesOrderSet('1')/ToBusinessPartner",
+	expectedRequest : "SalesOrderSet('1')/ToBusinessPartner",
+	isArrayResponse : false,
+	path : "/SalesOrderSet('1')/ToBusinessPartner",
+	title : "Absolute path with two segments to a single entity via 'to 1' navigation property"
+}, {
+	expectedCanonicalRequest : "BusinessPartnerSet('BP1')/Address",
+	expectedRequest : "BusinessPartnerSet('BP1')/Address",
+	isArrayResponse : false,
+	path : "/BusinessPartnerSet('BP1')/Address",
+	title : "Absolute path with two segments to a complex type"
+}, {
+	expectedCanonicalRequest : {
+		deepPath : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct",
+		requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+	},
+	expectedRequest : "SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')"
+		+ "/ToProduct",
+	isArrayResponse : false,
+	path : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct",
+	title : "Absolute path with three segments to a single entity; 'to n' navigation in the"
+		+ " middle"
+}, {
+	expectedCanonicalRequest : {
+		deepPath : "/BusinessPartnerSet('BP1')/ToProducts('P1')/ToSalesOrderLineItems",
+		requestUri : "ProductSet('P1')/ToSalesOrderLineItems"
+	},
+	expectedRequest : "BusinessPartnerSet('BP1')/ToProducts('P1')/ToSalesOrderLineItems",
+	isArrayResponse : true,
+	path : "/BusinessPartnerSet('BP1')/ToProducts('P1')/ToSalesOrderLineItems",
+	title : "Absolute path with three segments to a collection; 'to n' navigation in the middle"
+}, {
+	expectedCanonicalRequest : {
+		deepPath : "/BusinessPartnerSet('BP1')/ToProducts('P1')"
+			+ "/ToSalesOrderLineItems(SalesOrderID='1',ItemPosition='10')",
+		//TODO: Needs to be adjusted after fixing BCP 2080464216, expected after fix:
+		// "requestUri" : "ProductSet('P1')"
+		// 	+ "/ToSalesOrderLineItems(SalesOrderID='1',ItemPosition='10')",
+		requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
+	},
+	expectedRequest : "BusinessPartnerSet('BP1')/ToProducts('P1')"
+		+ "/ToSalesOrderLineItems(SalesOrderID='1',ItemPosition='10')",
+	isArrayResponse : false,
+	path : "/BusinessPartnerSet('BP1')/ToProducts('P1')"
+		+ "/ToSalesOrderLineItems(SalesOrderID='1',ItemPosition='10')",
+	title : "Absolute path with three segments to a single entity of a collection; 'to n'"
+		+ " navigation in the middle"
+}, {
+	// path cannot be made canonical as the key predicate for the referenced product is missing
+	expectedCanonicalRequest : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+		+ "/ToSupplier",
+	expectedRequest : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+		+ "/ToSupplier",
+	isArrayResponse : false,
+	path : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct/ToSupplier",
+	title : "Absolute path with three segments to a single entity; 'to 1' navigation in the"
+		+ " middle"
+}, {
+	// path cannot be made canonical as the key predicate for the business partner is missing
+	expectedCanonicalRequest : "SalesOrderSet('1')/ToBusinessPartner/ToProducts",
+	expectedRequest : "SalesOrderSet('1')/ToBusinessPartner/ToProducts",
+	isArrayResponse : true,
+	path : "/SalesOrderSet('1')/ToBusinessPartner/ToProducts",
+	title : "Absolute path with three segments to a collection; 'to 1' navigation in the middle"
+}, {
+	// even if key predicates for ToBusinessPartner cannot be resolved, canonical path for the
+	// product can be computed
+	expectedCanonicalRequest : {
+		deepPath : "/SalesOrderSet('1')/ToBusinessPartner/ToProducts('P1')",
+		requestUri : "ProductSet('P1')"
+	},
+	expectedRequest : "SalesOrderSet('1')/ToBusinessPartner/ToProducts('P1')",
+	isArrayResponse : false,
+	path : "/SalesOrderSet('1')/ToBusinessPartner/ToProducts('P1')",
+	title : "Absolute path with three segments to a single entity of a collection; 'to 1'"
+		+ " navigation in the middle"
+}, {
+	expectedCanonicalRequest : "SalesOrderSet('1')/ToBusinessPartner/Address",
+	expectedRequest : "SalesOrderSet('1')/ToBusinessPartner/Address",
+	isArrayResponse : false,
+	path : "/SalesOrderSet('1')/ToBusinessPartner/Address",
+	title : "Absolute path with three segments to a complex type; 'to 1' navigation in the"
+		+ " middle"
+}, {
+	expectedCanonicalRequest : "SalesOrderSet/$count",
+	expectedRequest : "SalesOrderSet/$count",
+	isArrayResponse : false,
+	path : "/SalesOrderSet/$count",
+	title : "Absolute path; second segment is $count"
+}, {
+	expectedCanonicalRequest : "SalesOrderSet('1')/ToLineItems/$count",
+	expectedRequest : "SalesOrderSet('1')/ToLineItems/$count",
+	isArrayResponse : false,
+	path : "/SalesOrderSet('1')/ToLineItems/$count",
+	title : "Absolute path; third segment is $count; 'to n' navigation in the middle"
+}, {
+	expectedCanonicalRequest : {
+		deepPath : "/BusinessPartnerSet('BP1')/ToProducts('P1')/ToSalesOrderLineItems/$count",
+		requestUri : "ProductSet('P1')/ToSalesOrderLineItems/$count"
+	},
+	expectedRequest : "BusinessPartnerSet('BP1')/ToProducts('P1')/ToSalesOrderLineItems/$count",
+	isArrayResponse : false,
+	path : "/BusinessPartnerSet('BP1')/ToProducts('P1')/ToSalesOrderLineItems/$count",
+	title : "Absolute path; 4th segment is $count"
+}, {
+	contextDeepPath : "/SalesOrderSet",
+	contextPath : "/SalesOrderSet",
+	expectedCanonicalRequest : "SalesOrderSet",
+	expectedRequest : "SalesOrderSet",
+	isArrayResponse : true,
+	path : "",
+	title : "Relative empty path; resolved path has 1 segment referencing a collection"
+}, {
+	contextDeepPath : "/SalesOrderSet('1')",
+	contextPath : "/SalesOrderSet('1')",
+	expectedCanonicalRequest : "SalesOrderSet('1')",
+	expectedRequest : "SalesOrderSet('1')",
+	isArrayResponse : false,
+	path : "",
+	title : "Relative empty path; resolved path has 1 segment referencing a single entity"
+}].forEach(function (oFixture) {
+	[false, true].forEach(function (bCanonical) {
+	var sTitle = oFixture.title + (bCanonical ? "; using canonical requests" : "");
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModel({tokenHandling : false, useBatch : true}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oContext = oFixture.contextPath
+					? oModel.getContext(oFixture.contextPath, oFixture.contextDeepPath)
+					: undefined,
+				vExpectedRequest = bCanonical
+					? oFixture.expectedCanonicalRequest
+					: oFixture.expectedRequest,
+				mParameters = {canonicalRequest : bCanonical, context : oContext};
+
+			if (oFixture.pathCache) {
+				oModel.mPathCache = oFixture.pathCache;
+			}
+			that.expectRequest(vExpectedRequest,
+				// response not relevant for this test
+				oFixture.isArrayResponse ? {results : []} : {});
+
+			// code under test
+			oModel.read(oFixture.path, mParameters);
+
+			return that.waitForChanges(assert);
+		});
+	});
+	});
+});
+
+	//*********************************************************************************************
+	// Integration test for correct path calculation during ODataModel#read(...). A previous read
+	// filled already the path cache, that "to 1" navigation properties can be resolved.
+	// JIRA: CPOUI5MODELS-404
+	// BCP: 2080464216
+[{
+	expectedCanonicalRequest : {
+		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+			+ "/ToSupplier",
+		//TODO: Needs to be adjusted after fixing BCP 2080464216
+		//requestUri : "ProductSet('P1')/ToSupplier"
+		requestUri : "BusinessPartnerSet('BP1')"
+	},
+	expectedRequest : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+		+ "/ToSupplier",
+	isArrayResponse : false,
+	path : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct/ToSupplier",
+	previousReads : [{
+		request : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct",
+		response : {__metadata : {uri : "ProductSet('P1')"} /*content not relevant*/}
+	}, {
+		request : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct/ToSupplier",
+		response : {__metadata : {uri : "BusinessPartnerSet('BP1')"} /*content not relevant*/}
+	}],
+	title : "Absolute path with three segments to a single entity; 'to 1' navigation in the"
+		+ " middle"
+}, {
+	expectedCanonicalRequest : {
+		deepPath : "/SalesOrderSet('1')/ToBusinessPartner/ToProducts",
+		requestUri : "BusinessPartnerSet('BP1')/ToProducts"
+	},
+	expectedRequest : "SalesOrderSet('1')/ToBusinessPartner/ToProducts",
+	isArrayResponse : true,
+	path : "/SalesOrderSet('1')/ToBusinessPartner/ToProducts",
+	previousReads : [{
+		request : "SalesOrderSet('1')/ToBusinessPartner",
+		response : {__metadata : {uri : "BusinessPartnerSet('BP1')"} /*content not relevant*/}
+	}],
+	title : "Absolute path with three segments to a collection; 'to 1' navigation in the middle"
+}, {
+	expectedCanonicalRequest : {
+		deepPath : "/SalesOrderSet('1')/ToBusinessPartner/ToProducts('P1')",
+		//TODO: Needs to be adjusted after fixing BCP 2080464216
+		//requestUri : "BusinessPartnerSet('BP1')/ToProducts('P1')"
+		requestUri : "ProductSet('P1')"
+	},
+	expectedRequest : "SalesOrderSet('1')/ToBusinessPartner/ToProducts('P1')",
+	isArrayResponse : false,
+	path : "/SalesOrderSet('1')/ToBusinessPartner/ToProducts('P1')",
+	previousReads : [{
+		request : "SalesOrderSet('1')/ToBusinessPartner",
+		response : {__metadata : {uri : "BusinessPartnerSet('BP1')"} /*content not relevant*/}
+	}, {
+		request : "SalesOrderSet('1')/ToBusinessPartner/ToProducts('P1')",
+		response : {__metadata : {uri : "ProductSet('P1')"} /*content not relevant*/}
+	}],
+	title : "Absolute path with three segments to a single entity of a collection; 'to 1'"
+		+ " navigation in the middle"
+}, {
+	expectedCanonicalRequest : {
+		deepPath : "/SalesOrderSet('1')/ToBusinessPartner/Address",
+		//TODO: Needs to be adjusted after fixing BCP 2080464216
+		//requestUri : "SalesOrderSet('1')/ToBusinessPartner/Address"
+		requestUri : "BusinessPartnerSet('BP1')/Address"
+	},
+	expectedRequest : "SalesOrderSet('1')/ToBusinessPartner/Address",
+	isArrayResponse : false,
+	path : "/SalesOrderSet('1')/ToBusinessPartner/Address",
+	previousReads : [{
+		request : "SalesOrderSet('1')/ToBusinessPartner",
+		response : {__metadata : {uri : "BusinessPartnerSet('BP1')"} /*content not relevant*/}
+	}],
+	title : "Absolute path with three segments to a complex type; 'to 1' navigation in the"
+		+ " middle"
+}, {
+	contextDeepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct",
+	contextPath : "/ProductSet('P1')",
+	expectedCanonicalRequest : {
+		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+			+ "/ToSupplier",
+		//TODO: Needs to be adjusted after fixing BCP 2080464216
+		//requestUri : "ProductSet('P1')/ToSupplier"
+		requestUri : "BusinessPartnerSet('BP1')"
+	},
+	expectedRequest : {
+		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+			+ "/ToSupplier",
+		requestUri : "ProductSet('P1')/ToSupplier"
+	},
+	isArrayResponse : false,
+	path : "ToSupplier",
+	previousReads : [{
+		request : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct",
+		response : {__metadata : {uri : "ProductSet('P1')"} /*content not relevant*/}
+	}, {
+		request : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct/ToSupplier",
+		response : {__metadata : {uri : "BusinessPartnerSet('BP1')"} /*content not relevant*/}
+	}],
+	title : "Relative path 'ToSupplier'; resolved deep path has 3 segments"
+}, { //TODO: BUG!?! relative context path with more segments does not work!
+	contextDeepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
+	contextPath : "/ToProduct/ToSupplier",
+	expectedCanonicalRequest : {
+		//TODO: Needs to be adjusted after fixing BCP 2080464216
+		//deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+		//	+ "/ToSupplier",
+		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
+		//TODO: Needs to be adjusted after fixing BCP 2080464216
+		//requestUri : "ProductSet('P1')/ToSupplier"
+		requestUri : "ToProduct/ToSupplier"
+	},
+	expectedRequest : {
+		//TODO: Needs to be adjusted after fixing BCP 2080464216
+		//deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+		//	+ "/ToSupplier",
+		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
+		//TODO: Needs to be adjusted after fixing BCP 2080464216
+		//requestUri : "ProductSet('P1')/ToSupplier"
+		requestUri : "ToProduct/ToSupplier"
+	},
+	isArrayResponse : false,
+	path : "",
+	previousReads : [{
+		request : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct",
+		response : {__metadata : {uri : "ProductSet('P1')"} /*content not relevant*/}
+	}, {
+		request : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct/ToSupplier",
+		response : {__metadata : {uri : "BusinessPartnerSet('BP1')"} /*content not relevant*/}
+	}],
+	title : "Relative empty path with 'ToProduct/ToSupplier' as context path; resolved deep path"
+		+ " has 3 segments"
+}].forEach(function (oFixture) {
+	[false, true].forEach(function (bCanonical) {
+	var sTitle = oFixture.title + (bCanonical ? "; using canonical requests" : "")
+			+ "; 'to 1' navigation property in the middle already read";
+
+	QUnit.test(sTitle, function (assert) {
+		var oModel = createSalesOrdersModel({tokenHandling : false, useBatch : true}),
+			that = this;
+
+		oFixture.previousReads.forEach(function (oPreviousRead) {
+			that.expectRequest(oPreviousRead.request, oPreviousRead.response);
+
+			// trigger previous read to be able to resolve the "to 1" navigation property
+			oModel.read("/" + oPreviousRead.request);
+		});
+
+		return this.createView(assert, "", oModel).then(function () {
+			var oContext = oFixture.contextPath
+					? oModel.getContext(oFixture.contextPath, oFixture.contextDeepPath)
+					: undefined,
+				vExpectedRequest = bCanonical
+					? oFixture.expectedCanonicalRequest
+					: oFixture.expectedRequest,
+				mParameters = {canonicalRequest : bCanonical, context : oContext};
+
+			that.expectRequest(vExpectedRequest,
+				// response not relevant for this test
+				oFixture.isArrayResponse ? {results : []} : {});
+
+			// code under test
+			oModel.read(oFixture.path, mParameters);
+
+			return that.waitForChanges(assert);
+		});
+	});
+	});
+});
+
+	//*********************************************************************************************
+	// Integration test for correct path calculation during ODataModel#read(...). If the given path
+	// has a query string, the query string is ignored by ODataModel#read.
+	// JIRA: CPOUI5MODELS-404
+	// BCP: 2080464216
+[{
+	path : "/SalesOrderSet('1')/ToBusinessPartner?sap-client=100"
+}, {
+	contextPath : "/SalesOrderSet('1')/ToBusinessPartner",
+	path : "?sap-client=100"
+}].forEach(function (oFixture) {
+	QUnit.test("ODataModel#read: path with query string: " + oFixture.path, function (assert) {
+		var oModel = createSalesOrdersModel({tokenHandling : false, useBatch : true}),
+			that = this;
+
+		return this.createView(assert, "", oModel).then(function () {
+			that.expectRequest("SalesOrderSet('1')/ToBusinessPartner",
+				// response not relevant for this test
+				{results : {}});
+
+			// code under test
+			oModel.read(oFixture.path, oFixture.contextPath
+				? {context : oModel.getContext(oFixture.contextPath)}
+				: {});
+
+			return that.waitForChanges(assert);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: Read and display data for a single field in a form
 	// Usage of service: /sap/opu/odata/IWBEP/GWSAMPLE_BASIC/
 	testViewStart("Minimal integration test", '\
