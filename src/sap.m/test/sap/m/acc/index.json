@@ -156,11 +156,6 @@
 			"appComponent": "CA-UI5-CTR-PIR"
 		},
 		{
-			"control": "sap.m.InputBase",
-			"url": "../InputBase.html",
-			"appComponent": "CA-UI5-CTR-RIL"
-		},
-		{
 			"control": "sap.m.Input",
 			"url": "Input.html",
 			"appComponent": "CA-UI5-CTR-RIL"
