@@ -72,6 +72,7 @@ sap.ui.define([
 				fileType: "change",
 				changeType: sChangeType,
 				layer: mPropertyBag.layer || Layer.USER,
+				namespace: Utils.createNamespace(mPropertyBag, "changes"),
 				reference: mPropertyBag.reference,
 				selector: {
 					persistencyKey: mPropertyBag.persistencyKey
@@ -85,7 +86,7 @@ sap.ui.define([
 				oChangeParameter.support.generator.compositeCommand = mPropertyBag.compositeCommand;
 			}
 
-			var oChange = new Change(Change.createInitialFileContent(oChangeParameter));
+			var oChange = new Change(oChangeParameter);
 			mCompVariantsByIdMap[sChangeType] = oChange;
 			FlexState.getCompEntitiesByIdMap(mPropertyBag.reference)[oChange.getId()] = oChange;
 		}
