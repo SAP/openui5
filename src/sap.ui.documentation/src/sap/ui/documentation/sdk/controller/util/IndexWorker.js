@@ -1,35 +1,40 @@
 /*!
  * ${copyright}
  */
+/* global fetch */
 
 (function() {
 	"use strict";
 	/* global lunr, importScripts, XMLHttpRequest, JSON, Object */
 
-	self.importScripts("../../../../../../../documentation-config.js");
+	fetch("../../../../../../../documentation-config.js")
+		.then(function(response) {
+			importScripts(response.url);
+			var ResourcesUtil = {
+				/**
+				 *
+				 * @param {string} sPath Relative path to resources
+				 */
+				getResourceOriginPath: function (sPath) {
+					var oConfig = self['sap-ui-documentation-config'],
+						sOrigin = (oConfig && oConfig.demoKitResourceOrigin) || '.';
+					return sOrigin + this._formatPath(sPath);
+				},
+				_formatPath: function(sPath) {
+					sPath = sPath.replace(/^\.\//, '/');
 
-	var ResourcesUtil = {
-		/**
-		 *
-		 * @param {string} sPath Relative path to resources
-		 */
-		getResourceOriginPath: function (sPath) {
-			var oConfig = self['sap-ui-documentation-config'],
-				sOrigin = (oConfig && oConfig.demoKitResourceOrigin) || '.';
-			return sOrigin + this._formatPath(sPath);
-		},
-		_formatPath: function(sPath) {
-			sPath = sPath.replace(/^\.\//, '/');
+					if (!sPath.match(/^\//)) {
+						sPath = "/" + sPath;
+					}
+					return sPath;
+				}
+			};
 
-			if (!sPath.match(/^\//)) {
-				sPath = "/" + sPath;
-			}
-			return sPath;
-		}
-	};
+			URL.SEARCH_INDEX = ResourcesUtil.getResourceOriginPath("../../../../../../../searchindex.json");
+		});
 
 	var URL = {
-		SEARCH_INDEX: ResourcesUtil.getResourceOriginPath("../../../../../../../searchindex.json"),
+		SEARCH_INDEX: "../../../../../../../searchindex.json",
 		SEARCH_LIB: "../../thirdparty/elasticlunr.js",
 		PROMISE_POLYFIL_LIB: "../../../../../../sap/ui/thirdparty/es6-promise.js"
 	};
