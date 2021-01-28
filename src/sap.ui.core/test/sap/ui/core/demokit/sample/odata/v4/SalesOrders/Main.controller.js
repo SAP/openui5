@@ -113,7 +113,9 @@ sap.ui.define([
 				MessageBox.success("SalesOrder created: " + oContext.getProperty("SalesOrderID")
 					+ ", " + oContext.getProperty("SO_2_BP/CompanyName"));
 			}, function (oError) {
-				// delete of transient entity
+				if (!oError.canceled) {
+					throw oError; // unexpected error
+				}
 			});
 		},
 
@@ -146,8 +148,10 @@ sap.ui.define([
 				if (oItem && oItem.getBindingContext() === oContext) {
 					that.setSalesOrderLineItemBindingContext(oContext);
 				}
-			}).catch(function () {
-				// avoid 'Uncaught (in promise)' console errors
+			}).catch(function (oError) {
+				if (!oError.canceled) {
+					throw oError; // unexpected error
+				}
 			}).finally(function () {
 				that.setSelectionMode(oContext);
 			});

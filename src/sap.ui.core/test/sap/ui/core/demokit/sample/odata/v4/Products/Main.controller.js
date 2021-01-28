@@ -46,7 +46,7 @@ sap.ui.define([
 			this.byId("ProductList").getBinding("items").create(oNewEntry).created()
 				.catch(function (oError) {
 					if (!oError.canceled) {
-						MessageBox.alert(oError.message);
+						throw oError; // unexpected error
 					}
 				});
 
@@ -148,8 +148,8 @@ sap.ui.define([
 				});
 
 			oContext.created().catch(function (oError) {
-				if (!oError.canceled) { // unexpected error
-					MessageBox.alert(oError.message);
+				if (!oError.canceled) {
+					throw oError; // unexpected error
 				}
 			});
 

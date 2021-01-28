@@ -66,7 +66,7 @@ sap.ui.define([
 				MessageToast.show("Line item created: " + oContext.getProperty("ItemPosition"));
 			}, function (oError) {
 				if (!oError.canceled) {
-					throw oError;
+					throw oError; // unexpected error
 				}
 			});
 			this.rememberChangedSalesOrderContext();
