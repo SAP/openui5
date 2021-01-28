@@ -687,12 +687,10 @@ sap.ui.define([
 	};
 
 	// fire change event only if unit and currency field are left
-	function _validateFieldGroup(oEvent) {
+	function _validateFieldGroup(aFieldGroupIds) {
 
-		var aFieldGroup = oEvent.getParameters().fieldGroupIds;
-		if (aFieldGroup.indexOf(this.getId()) > -1) { //own FieldGroup left
-			oEvent.bCancelBubble = true; //stop bubbling to the parent control
-
+		var iIndex = aFieldGroupIds.indexOf(this.getId());
+		if (iIndex > -1) { //own FieldGroup left
 			if (this._bPendingChange) {
 				var oFocusedElement = document.activeElement;
 				var oFieldHelp = _getFieldHelp.call(this);
@@ -705,6 +703,15 @@ sap.ui.define([
 						_executeChange.call(this, this.getConditions(), !this._bParseError);
 					}
 				}
+			}
+
+			if (aFieldGroupIds.length > 1) {
+				// if there are other FieldGrops fire event without internal FieldGroup
+				aFieldGroupIds.splice(iIndex, 1);
+
+				this.fireValidateFieldGroup({
+					fieldGroupIds : aFieldGroupIds
+				});
 			}
 		}
 
@@ -1361,6 +1368,7 @@ sap.ui.define([
 		if (sMutation === "remove") {
 			_detachContentHandlers.call(this, oContent);
 			_restoreKeyboardHandler.call(this, oContent);
+			_restoreFieldGroupHandler.call(this, oContent);
 
 			if (this._oContentFactory.getContentConditionTypes()) {
 				delete this._oContentFactory.getContentConditionTypes()[sName];
@@ -1374,6 +1382,7 @@ sap.ui.define([
 			//	}
 			_modifyKeyboardHandler.call(this, oContent, true);
 			_attachContentHandlers.call(this, oContent);
+			_modifyFieldGroupHandler.call(this, oContent, true);
 			// bind to ManagedObjectModel at rendering to prevent unneded updates
 
 			if (this.getAggregation("_content", []).length > 0) {
@@ -1554,6 +1563,7 @@ sap.ui.define([
 					oControl.attachEvent("parseError", _handleParseError, this);
 					oControl.attachEvent("validationError", _handleValidationError, this);
 					_modifyKeyboardHandler.call(this, oControl, oContentType.getUseDefaultEnterHandler());
+					_modifyFieldGroupHandler.call(this, oControl, false);
 					_setModelOnContent.call(this, oControl);
 					if (this._bConnected && ((iIndex === 0 && !this._oContentFactory.isMeasure()) || (iIndex === 1 && this._oContentFactory.isMeasure()))) {
 						_setFocusHandlingForFieldHelp.call(this, oControl);
@@ -1562,10 +1572,6 @@ sap.ui.define([
 				}
 
 				_refreshLabel.call(this);
-
-				if (aControls.length > 1) {
-					this.attachValidateFieldGroup(_validateFieldGroup, this);
-				}
 			}.bind(this));
 		}
 	}
@@ -1577,10 +1583,6 @@ sap.ui.define([
 	}
 
 	function _destroyInternalContent() {
-
-		if (this._getContent().length > 1) {
-			this.detachValidateFieldGroup(_validateFieldGroup, this);
-		}
 
 		// if the internalContent must be new created the data type must be switched back to original one
 		// so new creation of control is using original data
@@ -1678,6 +1680,55 @@ sap.ui.define([
 
 		oControl.removeDelegate(oContentEventDelegateBefore);
 		oControl.removeDelegate(oContentEventDelegateAfter);
+
+	}
+
+	function _modifyFieldGroupHandler(oControl, bEnableResore) {
+
+		if (bEnableResore) {
+			oControl._OriginalGetFieldGroupIds = oControl._getFieldGroupIds;
+			oControl._OriginalTriggerValidateFieldGroup = oControl.triggerValidateFieldGroup;
+		}
+
+		oControl._getFieldGroupIds = function() {
+			var aFieldGroupIds = this.getFieldGroupIds();
+			var oParent = this.getParent();
+
+			if (oParent) { // if in destruction, parent might be removed
+				// always add IDs of Field or FilterField (as Unit Field has internal FieldGroup
+				aFieldGroupIds = aFieldGroupIds.concat(oParent._getFieldGroupIds());
+			}
+
+			return aFieldGroupIds;
+		};
+
+		oControl.triggerValidateFieldGroup = function (aFieldGroupIds) {
+			// fire event on Field or FilterField, not on internal control but remove internal FieldGroup
+			var oParent = this.getParent();
+			if (oParent) { // if in destruction, parent might be removed
+				var iIndex = aFieldGroupIds.indexOf(oParent.getId());
+				if (iIndex > -1) { //own FieldGroup left
+					// handle internal FieldGroup
+					_validateFieldGroup.call(oParent, aFieldGroupIds);
+				} else {
+					// fire event directly
+					oParent.fireValidateFieldGroup({
+						fieldGroupIds : aFieldGroupIds
+					});
+				}
+			}
+		};
+
+	}
+
+	function _restoreFieldGroupHandler(oControl) {
+
+		if (oControl._OriginalGetFieldGroupIds && oControl._OriginalTriggerValidateFieldGroup) {
+			oControl._getFieldGroupIds = oControl._OriginalGetFieldGroupIds;
+			delete oControl._OriginalGetFieldGroupIds;
+			oControl.triggerValidateFieldGroup = oControl._OriginalTriggerValidateFieldGroup;
+			delete oControl._OriginalTriggerValidateFieldGroup;
+		}
 
 	}
 
