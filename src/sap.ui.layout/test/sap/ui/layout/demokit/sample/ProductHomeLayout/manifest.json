@@ -1,0 +1,62 @@
+{
+	"sap.app": {
+		"id": "sap.ui.layout.sample.ProductHomeLayout",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.layout.sample.ProductHomeLayout.view.Main",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.layout": {},
+				"sap.m": {},
+				"sap.f": {},
+				"sap.ui.integration": {}
+			}
+		},
+		"resources": {
+			"css": [
+				{
+					"uri": "RevealGrid/RevealGrid.css"
+				}
+			]
+		},
+		"models": {
+			"home": {
+				"type": "sap.ui.model.json.JSONModel",
+				"uri": "model/home.json"
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"C.controller.js",
+					"cards/LogonRequestsCard/manifest.json",
+					"cards/UsersCard/images/Alain_Chevalier.png",
+					"cards/UsersCard/images/Donna_Moore.png",
+					"cards/UsersCard/images/Elena_Petrova.png",
+					"cards/UsersCard/images/John_Miller.png",
+					"cards/UsersCard/images/Julie_Armstrong.png",
+					"cards/UsersCard/manifest.json",
+					"images/Donna_Moore.png",
+					"images/SAP_Logo.png",
+					"manifest.json",
+					"model/home.json",
+					"RevealGrid/RevealGrid.js",
+					"RevealGrid/RevealGrid.css",
+					"view/Group1.fragment.xml",
+					"view/Group2.fragment.xml",
+					"view/Group3.fragment.xml",
+					"view/Group4.fragment.xml",
+					"view/Main.view.xml"
+				]
+			}
+		}
+	}
+}

@@ -1,0 +1,54 @@
+<core:FragmentDefinition
+	xmlns:cards="sap.f.cards"
+	xmlns:core="sap.ui.core"
+	xmlns="sap.m"
+	xmlns:cssgrid="sap.ui.layout.cssgrid"
+	xmlns:f="sap.f">
+	<f:GridContainer id="group4">
+		<f:layout>
+			<f:GridContainerSettings rowSize="4rem" columnSize="4rem" />
+		</f:layout>
+		<f:layoutData>
+			<cssgrid:ResponsiveColumnItemLayoutData columns="{home>/layout/group4/columns/current}" />
+		</f:layoutData>
+		<HBox alignItems="End" height="100%">
+			<Title text="Running Tasks" titleStyle="H4" />
+			<layoutData>
+				<f:GridContainerItemLayoutData columns="40"/>
+			</layoutData>
+		</HBox>
+		<f:Card height="100%">
+			<f:content>
+				<VBox justifyContent="Center" alignItems="End" width="100%" class="sapUiSmallMargin">
+					<NumericContent value="7" valueColor="Error" width="100%"/>
+					<Text text="Failed Jobs"/>
+				</VBox>
+			</f:content>
+			<f:layoutData>
+				<f:GridContainerItemLayoutData columns="2" minRows="2"/>
+			</f:layoutData>
+		</f:Card>
+		<f:Card height="100%">
+			<f:content>
+				<VBox justifyContent="Center" alignItems="End" width="100%" class="sapUiSmallMargin">
+					<NumericContent value="42" valueColor="Neutral" width="100%"/>
+					<Text text="Scheduled Jobs"/>
+				</VBox>
+			</f:content>
+			<f:layoutData>
+				<f:GridContainerItemLayoutData columns="2" minRows="2"/>
+			</f:layoutData>
+		</f:Card>
+		<f:Card height="100%">
+			<f:content>
+				<VBox justifyContent="Center" alignItems="End" width="100%" class="sapUiSmallMargin">
+					<NumericContent value="12" valueColor="Good" width="100%"/>
+					<Text text="Running Jobs"/>
+				</VBox>
+			</f:content>
+			<f:layoutData>
+				<f:GridContainerItemLayoutData columns="2" minRows="2"/>
+			</f:layoutData>
+		</f:Card>
+	</f:GridContainer>
+</core:FragmentDefinition>

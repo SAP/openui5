@@ -154,7 +154,8 @@
 					"sap.ui.layout.sample.GridTemplateRows",
 					"sap.ui.layout.sample.GridAutoRows",
 					"sap.ui.layout.sample.GridResponsiveness",
-					"sap.ui.layout.sample.GridResponsiveColumnLayout"
+					"sap.ui.layout.sample.GridResponsiveColumnLayout",
+					"sap.ui.layout.sample.ProductHomeLayout"
 				]
 			}
 		],
@@ -430,9 +431,14 @@
 				"description": "Example of setting customLayout for different layout (screen) sizes."
 			},
 			{
-			  "id": "sap.ui.layout.sample.GridResponsiveColumnLayout",
-			  "name": "Responsive Column Layout",
-			  "description": "Example of using ResponsiveColumnLayout."
+				"id": "sap.ui.layout.sample.GridResponsiveColumnLayout",
+				"name": "Responsive Column Layout",
+				"description": "Example of using ResponsiveColumnLayout."
+			},
+			{
+				"id": "sap.ui.layout.sample.ProductHomeLayout",
+				"name": "Product Home Layout",
+				"description": "Example of using several grids nested in one main grid with ResponsiveColumnLayout, in order to achieve responsive home page design."
 			}
 		]
 	}

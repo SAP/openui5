@@ -1,0 +1,47 @@
+<mvc:View 
+	controllerName="sap.ui.layout.sample.ProductHomeLayout.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:cssgrid="sap.ui.layout.cssgrid"
+	xmlns:tnt="sap.tnt"
+	xmlns:core="sap.ui.core">
+	<tnt:ToolPage>
+		<tnt:header>
+			<tnt:ToolHeader>
+				<Image src="{path: 'home>/homeIconSrc', formatter: '.formatSrc'}" class="sapUiTinyMarginBegin" />
+				<Text text="Cloud Platform Product" wrapping="false" />
+				<ToolbarSpacer />
+				<Button icon="sap-icon://search" type="Transparent" />
+				<Button icon="sap-icon://bell" type="Transparent" />
+				<Avatar src="{path: 'home>/user/iconSrc', formatter: '.formatSrc'}" displaySize="XS" class="avatarSize" />
+			</tnt:ToolHeader>
+		</tnt:header>
+		<tnt:mainContents>
+			<ScrollContainer
+				id="scrollCont"
+				horizontal="false"
+				vertical="true"
+				height="100%"
+				class="sapUiResponsiveContentPadding">
+				<ToggleButton
+					text="Reveal Main Grid"
+					press=".onRevealGridMain"
+					class="sapUiSmallMarginBottom sapUiSmallMarginEnd" />
+				<ToggleButton
+					text="Reveal Grids of Groups"
+					press=".onRevealGridGroups"
+					class="sapUiSmallMarginBottom" />
+				<Text class="sapUiSmallMarginBottom" text="Current breakpoint: {home>/currentBreakpoint}" width="100%"/>
+				<cssgrid:CSSGrid id="mainGrid">
+					<cssgrid:customLayout>
+						<cssgrid:ResponsiveColumnLayout layoutChange=".onLayoutChangeMain" />
+					</cssgrid:customLayout>
+						<core:Fragment fragmentName="sap.ui.layout.sample.ProductHomeLayout.view.Group1" type="XML"/>
+						<core:Fragment fragmentName="sap.ui.layout.sample.ProductHomeLayout.view.Group2" type="XML"/>
+						<core:Fragment fragmentName="sap.ui.layout.sample.ProductHomeLayout.view.Group3" type="XML"/>
+						<core:Fragment fragmentName="sap.ui.layout.sample.ProductHomeLayout.view.Group4" type="XML"/>
+				</cssgrid:CSSGrid>
+			</ScrollContainer>
+		</tnt:mainContents>
+	</tnt:ToolPage>
+</mvc:View>
