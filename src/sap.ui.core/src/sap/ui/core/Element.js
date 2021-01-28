@@ -396,6 +396,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.Element|object} vData Data to create the element from
 	 * @param {object} [oKeyInfo] An entity information (e.g. aggregation info)
 	 * @param {string} [oKeyInfo.type] Type info for the entity
+	 * @returns {sap.ui.core.Element}
+	 *   The newly created <code>Element</code>
 	 * @public
 	 * @static
 	 * @deprecated As of 1.44, use the more flexible {@link sap.ui.base.ManagedObject.create}.
