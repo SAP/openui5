@@ -235,27 +235,11 @@ function(
 			return null;
 		}
 
-		var Node = window.Node,
+		var aText = [],
+			Node = window.Node,
 			NodeFilter = window.NodeFilter,
-			oTreeWalker = document.createTreeWalker(oDomRef, NodeFilter.SHOW_TEXT + NodeFilter.SHOW_ELEMENT, function(oNode) {
-				if (oNode.type === Node.ELEMENT_NODE) {
-					if (oNode.classList.contains("sapUiInvisibleText")) {
-						return NodeFilter.FILTER_SKIP;
-					}
+			oTreeWalker = document.createTreeWalker(oDomRef, NodeFilter.SHOW_TEXT + NodeFilter.SHOW_ELEMENT);
 
-					if (oNode.getAttribute("aria-hidden") == "true" ||
-						oNode.style.visibility == "hidden" ||
-						oNode.style.display == "none") {
-						return NodeFilter.FILTER_REJECT;
-					}
-
-					return NodeFilter.FILTER_SKIP;
-				}
-
-				return NodeFilter.FILTER_ACCEPT;
-			}, false);
-
-		var aText = [];
 		while (oTreeWalker.nextNode()) {
 			var oNode = oTreeWalker.currentNode;
 			if (oNode.nodeType === Node.TEXT_NODE) {
