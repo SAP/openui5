@@ -310,5 +310,80 @@
         ]
       }
     ]
+  },
+  "1.84.5": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "a017c29040b070649fc96f1fb06b37903cf6bd7c",
+        "type": "FIX",
+        "text": " sap.m.OverflowToolbar: \"Type\" Button property now invalidates Button",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080412801"
+          }
+        ]
+      },
+      {
+        "id": "c06563a47ae80aa435a62bdd377dd6722c0e7123",
+        "type": "FIX",
+        "text": " sap.m.SplitContainer: The correct initial master page is rendered",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180030699"
+          }
+        ]
+      },
+      {
+        "id": "b089006f835d9e95e89d27179000cb3f4a298f1b",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: customData with binding is properly forwarded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180032893"
+          }
+        ]
+      },
+      {
+        "id": "3c2a335c29ccb97fa5b6cf63486cfcc003b0eb9b",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Drag and drop now creates correct appointments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080428852"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400008451912020"
+          }
+        ]
+      },
+      {
+        "id": "1293ed52f80982b330902fca1b5975b7f3816fff",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Failing tests in IE are now fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180012233"
+          }
+        ]
+      },
+      {
+        "id": "b4fcdfbecb53214653d1027e250c45f3464d015a",
+        "type": "FIX",
+        "text": " DragDrop: Drop indicator is not visible always in scrollable pages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008089962020"
+          }
+        ]
+      }
+    ]
   }
 }

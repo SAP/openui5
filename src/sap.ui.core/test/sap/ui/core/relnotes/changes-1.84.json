@@ -103,5 +103,65 @@
         ]
       }
     ]
+  },
+  "1.84.5": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "ded5c6beca53a8550d1e7f1cdb25122ea7d13365",
+        "type": "FEATURE",
+        "text": " Locale: add cy (Welsh) CLDR data",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      },
+      {
+        "id": "1c76015adc49483c7b27b2bcbf8111daefa7b63f",
+        "type": "FIX",
+        "text": " Locale: Remove mapping from 'SH' to 'SR' for logon language",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400007189712020"
+          }
+        ]
+      },
+      {
+        "id": "5fcff974d5e342812d648b76ecda9009bb267e06",
+        "type": "FIX",
+        "text": " ExtensionPoints: add closest binding info for flex",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007902632020"
+          }
+        ]
+      },
+      {
+        "id": "be22ef27c4fe0de82758b55ec761817983a4fedd",
+        "type": "FIX",
+        "text": " Opa: fix bindingPath matcher issue with static bindings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180001542"
+          }
+        ]
+      },
+      {
+        "id": "b4fcdfbecb53214653d1027e250c45f3464d015a",
+        "type": "FIX",
+        "text": " DragDrop: Drop indicator is not visible always in scrollable pages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500008089962020"
+          }
+        ]
+      }
+    ]
   }
 }

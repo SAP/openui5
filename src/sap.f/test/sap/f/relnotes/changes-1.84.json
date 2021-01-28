@@ -52,5 +52,21 @@
         ]
       }
     ]
+  },
+  "1.84.5": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "e621f3b9155f89dfe1e5caaacbae378b55dfd3c8",
+        "type": "FIX",
+        "text": " CalendarContent: Manifest dates parsed as in ISO 8601 format",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070466809"
+          }
+        ]
+      }
+    ]
   }
 }
