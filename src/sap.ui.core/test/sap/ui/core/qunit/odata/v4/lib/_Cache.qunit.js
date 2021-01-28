@@ -287,7 +287,7 @@ sap.ui.define([
 			that.mock(_Cache).expects("makeUpdateData")
 				.withExactArgs(["Address", "City"], "Walldorf")
 				.returns(oUpdateData);
-			that.mock(_Helper).expects("updateSelected")
+			that.mock(_Helper).expects("updateAll")
 				.withExactArgs(sinon.match.same(oCache.mChangeListeners), "path/to/entity",
 					sinon.match.same(oEntity), sinon.match.same(oUpdateData));
 		});
@@ -6500,13 +6500,14 @@ sap.ui.define([
 				.withExactArgs(sinon.match.same(oPostResult), sinon.match.same(mTypeForMetaPath),
 					"/TEAMS/TEAM_2_EMPLOYEES", sPathInCache + sTransientPredicate,
 					bKeepTransientPath);
-
-			if (!bKeepTransientPath) {
-				// bKeepTransientPath === undefined does not want to keep, but we simulate a lack
-				// of key predicate and are thus forced to keep
-				oHelperMock.expects("getPrivateAnnotation")
-					.withExactArgs(sinon.match.same(oPostResult), "predicate")
-					.returns(bKeepTransientPath === undefined ? undefined : sPredicate);
+			// bKeepTransientPath === undefined does not want to keep, but we simulate a lack of key
+			// predicate and are thus forced to keep
+			oHelperMock.expects("getPrivateAnnotation")
+				.withExactArgs(sinon.match.same(oPostResult), "predicate")
+				.returns(bKeepTransientPath === undefined ? undefined : sPredicate);
+			if (bKeepTransientPath !== undefined) {
+				oHelperMock.expects("setPrivateAnnotation")
+					.withExactArgs(sinon.match.same(oEntityDataCleaned), "predicate", sPredicate);
 			}
 			if (bKeepTransientPath === false) {
 				oHelperMock.expects("updateTransientPaths")
@@ -6523,7 +6524,7 @@ sap.ui.define([
 					sPathInCache
 						+ (bKeepTransientPath === false ? sPredicate : sTransientPredicate),
 					sinon.match.same(oEntityDataCleaned), sinon.match.same(oPostResult),
-					sinon.match.same(aSelectForPath))
+					["ID", "Name", "@odata.etag"])
 				.callsFake(function () {
 					if (bKeepTransientPath === false) {
 						oEntityDataCleaned["@$ui5._"].predicate = sPredicate;
@@ -6570,6 +6571,7 @@ sap.ui.define([
 				});
 				assert.strictEqual(aCollection[0].ID, "7", "from Server");
 				assert.strictEqual(aCollection.$count, 1);
+				assert.deepEqual(aSelectForPath, ["ID", "Name"], "$select unchanged");
 				if (bKeepTransientPath === false) {
 					assert.strictEqual(aCollection.$byPredicate[sPredicate], oEntityDataCleaned);
 				}
@@ -6823,7 +6825,6 @@ sap.ui.define([
 			oPostPromise,
 			oReadGroupLock = {unlock : function () {}},
 			oReadPromise,
-			aSelect = [],
 			sTransientPredicate = "($uid=id-1-23)",
 			mTypeForMetaPath = {},
 			oUpdateGroupLock0 = {
@@ -6894,14 +6895,13 @@ sap.ui.define([
 		// called from the POST's success handler
 		oHelperMock.expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(oCache.mQueryOptions), "")
-			.returns({$select : aSelect});
+			.returns({});
 		oCacheMock.expects("visitResponse")
 			.withExactArgs(sinon.match.same(oPostResult), sinon.match.same(mTypeForMetaPath),
 				"/Employees", sTransientPredicate, true);
 		oHelperMock.expects("updateSelected")
 			.withExactArgs(sinon.match.same(oCache.mChangeListeners), sTransientPredicate,
-				sinon.match.same(oCache.aElements[0]), sinon.match.same(oPostResult),
-				sinon.match.same(aSelect));
+				sinon.match.same(oCache.aElements[0]), sinon.match.same(oPostResult), undefined);
 		// The lock must be unlocked although no request is created
 		this.mock(oUpdateGroupLock0).expects("unlock").withExactArgs();
 		this.mock(oUpdateGroupLock0).expects("getGroupId").withExactArgs().returns("updateGroup");

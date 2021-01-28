@@ -1598,8 +1598,8 @@ sap.ui.define([
 		/**
 		 * Updates the old value with the given new value for the selected properties (see
 		 * {@link #updateExisting}). If no selected properties are given or if "*" is contained in
-		 * the selected properties, then all properties are selected. <code>@odata.etag</code> is
-		 * always selected. Fires change events for all changed properties.
+		 * the selected properties, then all properties are selected. Fires change events for all
+		 * changed properties.
 		 *
 		 * Restrictions:
 		 * - oOldValue and oNewValue are expected to have the same structure; when there is an
@@ -1607,7 +1607,7 @@ sap.ui.define([
 		 *   <code>null</code>.
 		 * - "*" in aSelect does not work correctly if oNewValue contains navigation properties
 		 * - no change events for collection-valued properties
-		 * - does not update navigation properties
+		 * - does not update navigation properties (ignores both key predicates and $count)
 		 *
 		 * @param {object} mChangeListeners
 		 *   A map of change listeners by path
@@ -1622,8 +1622,6 @@ sap.ui.define([
 		 *   from oNewValue
 		 */
 		updateSelected : function (mChangeListeners, sPath, oOldValue, oNewValue, aSelect) {
-			var sPredicate;
-
 			/*
 			 * Take over the property value from source to target and fires an event if the property
 			 * is changed
@@ -1669,25 +1667,10 @@ sap.ui.define([
 				return;
 			}
 
-			// fetch the selected properties plus the ETag;
-			// _Cache#visitResponse is called with the response data before updateSelected
-			// copies the selected values to the cache. visitResponse computes
-			// - $count values for collections, which are not relevant for POST (deep create is
-			//   not yet supported);
-			// - key predicates, which are relevant only for the top level element as no deep
-			//   create is supported
-			// and reports bound messages. Messages need to be copied only if they are selected.
-			aSelect = aSelect.concat("@odata.etag");
-
 			// take over properties from the new value and fire change events
 			aSelect.forEach(function (sProperty) {
 				copyPathValue(sProperty, oNewValue, oOldValue);
 			});
-			// copy key predicate, but do not fire change event
-			sPredicate = _Helper.getPrivateAnnotation(oNewValue, "predicate");
-			if (sPredicate) {
-				_Helper.setPrivateAnnotation(oOldValue, "predicate", sPredicate);
-			}
 		},
 
 		/**
