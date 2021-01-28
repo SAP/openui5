@@ -1346,7 +1346,8 @@
 		  "since": "1.28",
 			"samples": [
 				"sap.m.sample.Title",
-				"sap.m.sample.TitleWrapping"
+				"sap.m.sample.TitleWrapping",
+				"sap.m.sample.TitleLink"
 			]
 		},
 		{
@@ -2091,6 +2092,11 @@
 			"id": "sap.m.sample.TitleWrapping",
 			"name": "Title Properties",
 			"description": "This sample shows the different behaviors of a title."
+		},
+		{
+			"id": "sap.m.sample.TitleLink",
+			"name": "Title with Link",
+			"description": "This sample shows how to add a link to a title."
 		},
 		{
 		  "id": "sap.m.sample.ObjectAttributes",

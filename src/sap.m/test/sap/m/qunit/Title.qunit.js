@@ -3,13 +3,14 @@
 sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/Title",
+	"sap/m/Link",
 	"sap/m/library",
 	"sap/ui/core/library",
 	"sap/m/Toolbar",
 	"sap/ui/core/Title",
 	"sap/ui/core/Core",
 	"sap/ui/core/Renderer"
-], function (createAndAppendDiv, Title, mobileLibrary, coreLibrary, Toolbar, coreTitle, Core, Renderer) {
+], function (createAndAppendDiv, Title, Link, mobileLibrary, coreLibrary, Toolbar, coreTitle, Core, Renderer) {
 	"use strict";
 
 	// shortcut for sap.ui.core.TextDirection
@@ -310,6 +311,72 @@ sap.ui.define([
 			assert.strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level " + level);
 		}
 	});
+
+	QUnit.test("Should skip 'title' association properties if there is a control in 'content' aggregation", function(assert) {
+		var sLevel = TitleLevel.H3,
+			sExpectedTag = sLevel;
+		this.coreTitle.setLevel(TitleLevel.H1);
+		this.title.setLevel(sLevel);
+		this.title.setContent(new Link({
+			text: "Link Text",
+			href: "https://sap.com",
+			target: "_blank"
+		}));
+		Core.applyChanges();
+
+		assert.notEqual(this.title.$().text(), "Hello2", "Text from the 'title' association wasn't rendered");
+		assert.notEqual(this.title.$().attr("title"), "Tooltip2", "Tooltip from the 'title' association wasn't rendered");
+
+		if (sLevel === TitleLevel.Auto) {
+			sExpectedTag = "DIV";
+			assert.strictEqual(this.title.$().attr("role"), "heading", "Role attribute correctly set for level Auto");
+		} else {
+			assert.ok(!this.title.$().attr("role"), "No role attribute set for level " + sLevel);
+		}
+
+		assert.strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level (not from 'title' association)" + sLevel);
+	});
+
+	QUnit.module("Content Aggregation", {
+		beforeEach : function() {
+			this.link = new Link("myLink", {
+				text: "Link",
+				href: "https://sap.com",
+				target: "_blank"
+			});
+			this.title = new Title({
+				text : "Text",
+				tooltip : "Tooltip",
+				level: TitleLevel.H3,
+				content : this.link
+			});
+			this.title.placeAt("uiArea");
+			Core.applyChanges();
+		},
+		afterEach : function() {
+			this.title.destroy();
+			this.title = null;
+			this.link.destroy();
+			this.link = null;
+		}
+	});
+
+	QUnit.test("Should render a link instead of text", function(assert) {
+		var content = this.title.getDomRef().firstChild.innerHTML,
+			childTag = this.title.getDomRef().firstChild && this.title.getDomRef().firstChild.firstChild ? this.title.getDomRef().firstChild.firstChild.tagName : "",
+			sLevel = "H3",
+			sExpectedTag = sLevel;
+
+		assert.notEqual(content, this.title.getText(), "Title's 'text' wasn't rendered");
+		assert.equal(childTag.toUpperCase(), "A", "Link is rendered");
+		assert.notEqual(content.indexOf(">" + this.link.getText() + "</a>"), -1, "Link's 'text' is rendered instead of the Title's text");
+		assert.strictEqual(this.title.getDomRef().tagName.toUpperCase(), sExpectedTag, "Title has correct level" + sLevel);
+
+	});
+
+
+
+
 
 	QUnit.module("Accessibility", {
 		beforeEach : function() {

@@ -28,12 +28,14 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/library", "sap/m/Hyphenation
 	 */
 	TitleRenderer.render = function(oRm, oTitle){
 		var oAssoTitle = oTitle._getTitle(),
-			sLevel = (oAssoTitle ? oAssoTitle.getLevel() : oTitle.getLevel()) || TitleLevel.Auto,
+			oTitleContent = oTitle.getContent(),
+			sLevel = (oAssoTitle && !oTitleContent ? oAssoTitle.getLevel() : oTitle.getLevel()) || TitleLevel.Auto,
 			bAutoLevel = sLevel == TitleLevel.Auto,
 			sTag = bAutoLevel ? "div" : sLevel.toLowerCase(),
-			sText = HyphenationSupport.getTextForRender(oTitle, "main"),
+			sText = !oTitleContent ? HyphenationSupport.getTextForRender(oTitle, "main") : "",
 			sTextDir = oTitle.getTextDirection(),
-			sTextAlign = Renderer.getTextAlign(oTitle.getTextAlign(), sTextDir);
+			sTextAlign = Renderer.getTextAlign(oTitle.getTextAlign(), sTextDir),
+			sTooltip;
 
 		oRm.openStart(sTag, oTitle);
 		oRm.class("sapMTitle");
@@ -56,7 +58,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/library", "sap/m/Hyphenation
 			oRm.class("sapMTitleTB");
 		}
 
-		var sTooltip = oAssoTitle ? oAssoTitle.getTooltip_AsString() : oTitle.getTooltip_AsString();
+		sTooltip = oAssoTitle && !oTitleContent ? oAssoTitle.getTooltip_AsString() : oTitle.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.attr("title", sTooltip);
 		}
@@ -66,17 +68,22 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/library", "sap/m/Hyphenation
 			oRm.attr("aria-level", oTitle._getAriaLevel());
 		}
 
-		HyphenationSupport.writeHyphenationClass(oRm, oTitle);
+		if (!oTitleContent) {
+			HyphenationSupport.writeHyphenationClass(oRm, oTitle);
+		}
 
 		oRm.openEnd();
+
 		oRm.openStart("span", oTitle.getId() + "-inner");
-
 		oRm.attr("dir", sTextDir !== TextDirection.Inherit ? sTextDir.toLowerCase() : "auto");
-
 		oRm.openEnd();
-
-		oRm.text(sText);
+		if (oTitleContent) { // render a control added in the titleControl aggregation ...
+			oRm.renderControl(oTitleContent);
+		} else { // ... or just a text if there is no such control
+			oRm.text(sText);
+		}
 		oRm.close("span");
+
 		oRm.close(sTag);
 	};
 

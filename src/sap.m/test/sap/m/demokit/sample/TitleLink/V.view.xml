@@ -1,0 +1,24 @@
+<mvc:View
+	controllerName="sap.m.sample.TitleLink.C"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	height="100%">
+	<Page
+		enableScrolling="true"
+		title="Page Header Title"
+		titleLevel="H2"
+		showFooter="false">
+		<List items="{/ProductCollection}">
+			<headerToolbar>
+				<Toolbar>
+					<Title level="H3">
+						<Link text="Products Link" href="https://sap.com" target="_blank" />
+					</Title>
+					<ToolbarSpacer />
+					<Button icon="sap-icon://settings" press=".handleButtonPress" />
+				</Toolbar>
+			</headerToolbar>
+			<StandardListItem title="{Name}" description="{ProductId}" />
+		</List>
+	</Page>
+</mvc:View>

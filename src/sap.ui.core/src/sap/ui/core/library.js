@@ -80,7 +80,8 @@ sap.ui.define([
 			"sap.ui.core.IFormContent",
 			"sap.ui.core.dnd.IDragInfo",
 			"sap.ui.core.dnd.IDropInfo",
-			"sap.ui.core.IDScope"
+			"sap.ui.core.IDScope",
+			"sap.ui.core.ITitleContent"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
@@ -1751,6 +1752,19 @@ sap.ui.define([
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
 	 */
+
+	/**
+	 *
+	 * Marker interface for controls that can be used in <code>content</code> aggregation of the <code>sap.m.Title</code> control.
+	 *
+	 * @since 1.87
+	 * @name sap.ui.core.ITitleContent
+	 * @interface
+	 * @public
+	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
+	 */
+
+
 
 	/**
 	 * Whether a control wants to keep its original width even when used in a <code>Form</code>.

@@ -73,7 +73,7 @@ function(
 	 * @see {@link fiori:https://experience.sap.com/fiori-design-web/link/ Link}
 	 *
 	 * @extends sap.ui.core.Control
-	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent
+	 * @implements sap.ui.core.IShrinkable, sap.ui.core.IFormContent, sap.ui.core.ITitleContent
 	 *
 	 * @author SAP SE
 	 * @version ${version}
@@ -88,7 +88,8 @@ function(
 
 		interfaces : [
 			"sap.ui.core.IShrinkable",
-			"sap.ui.core.IFormContent"
+			"sap.ui.core.IFormContent",
+			"sap.ui.core.ITitleContent"
 		],
 		library : "sap.m",
 		designtime: "sap/m/designtime/Link.designtime",
