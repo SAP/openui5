@@ -289,6 +289,26 @@ function(
 			});
 		});
 
+		QUnit.test("make sure requests are only sent if app component is defined", function (assert) {
+			var done = assert.async();
+			var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";
+			var oExtensionProvider = new PreprocessorImpl();
+
+			sandbox.stub(Utils, "getAppComponentForControl").returns(undefined);
+			var spy = sandbox.spy(Log, "warning");
+
+			oExtensionProvider.getControllerExtensions(sControllerName, "<component ID>", true).then(
+				function (aCodeExtensions) {
+					assert.ok(Array.isArray(aCodeExtensions), "Then an array is returned");
+					assert.equal(aCodeExtensions.length, 0, "which is empty");
+					assert.equal(spy.callCount, 1, "and a warning log is written");
+					assert.equal(spy.getCall(0).args[0], "No application component for determining the anchor of the code extensions was identified.",
+						"with the correct message.");
+					done();
+				}
+			);
+		});
+
 		QUnit.test("make sure requests are only sent for app components", function (assert) {
 			var done = assert.async();
 			var sControllerName = "ui.s2p.mm.purchorder.approve.view.S2";

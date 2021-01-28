@@ -60,6 +60,11 @@ function(
 
 			var oComponent = Component.get(sComponentId);
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
+			// In case an application of a component can not be identified, ex: FLP plugins components, return a promise of no extension
+			if (!oAppComponent) {
+				Log.warning("No application component for determining the anchor of the code extensions was identified.");
+				return Promise.resolve([]);
+			}
 			if (!Utils.isApplication(oAppComponent.getManifestObject())) {
 				//we only consider components whose type is application. Otherwise, we might send request for components that can never have changes.
 				return Promise.resolve([]);
