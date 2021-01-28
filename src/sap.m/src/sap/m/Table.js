@@ -313,12 +313,11 @@ sap.ui.define([
 
 	Table.prototype._applyContextualWidth = function(iWidth) {
 		iWidth = parseFloat(iWidth) || 0;
-		if (iWidth) {
+		if (iWidth && this._oContextualSettings.contextualWidth != iWidth) {
 			this._applyContextualSettings({
 				contextualWidth : iWidth
 			});
 		}
-
 	};
 
 	Table.prototype._onResize = function(mParams) {
