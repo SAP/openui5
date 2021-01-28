@@ -46,10 +46,16 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		this._bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		if (sScope === GenericTileScope.Actions) {
-			sScopeClass = encodeCSS("sapMGTScopeActions");
+			// given class only needs to be added if the tile's state is not disabled
+			if (sState !== LoadState.Disabled) {
+				sScopeClass = encodeCSS("sapMGTScopeActions");
+			}
 		} else if (sScope === GenericTileScope.ActionMore || sScope === GenericTileScope.ActionRemove) {
 			bIsSingleAction = true;
-			sScopeClass = encodeCSS("sapMGTScopeSingleAction");
+			// given class only needs to be added if the tile's state is not disabled
+			if (sState !== LoadState.Disabled) {
+				sScopeClass = encodeCSS("sapMGTScopeSingleAction");
+			}
 		} else {
 			sScopeClass = encodeCSS("sapMGTScopeDisplay");
 		}
@@ -84,8 +90,13 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		}
 
 		if (sState !== LoadState.Disabled) {
-			if (!oControl.isInActionRemoveScope()) {
+			// as pointed out in new design guidelines
+			// if in action scope the tile needs to be shown as disabled
+			// thus adding the clas here
+			if (!oControl._isInActionScope()) {
 				oRm.class("sapMPointer");
+			} else {
+				oRm.class("sapMGTDisabled");
 			}
 			oRm.attr("tabindex", "0");
 		} else {
@@ -96,7 +107,12 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		}
 		// oRm.writeClasses();
 		oRm.openEnd();
-
+		// focus div was only getting rendered when screen size was small
+		// which in turn was not rendering active state when screen size was large and thus default browser active state would suffice
+		// in the new line tile visualisation we need active state same as other generic tiles
+		if (oControl.getState() !== LoadState.Disabled) {
+			this._renderFocusDiv(oRm, oControl);
+		}
 		if (bIsScreenLarge) {
 			//large
 			oRm.openStart("div", oControl.getId() + "-startMarker");
@@ -127,11 +143,6 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			oRm.close("div");
 
 		} else {
-			// small
-			if (oControl.getState() !== LoadState.Disabled) {
-				this._renderFocusDiv(oRm, oControl);
-			}
-
 			oRm.openStart("div", oControl.getId() + "-touchArea");
 			oRm.class("sapMGTTouchArea");
 			oRm.openEnd();
@@ -251,8 +262,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			}
 			$Rect.css({
 				top: oLine.offset.y + "px",
-				width: oLine.width + "px",
-				height: oLine.height
+				width: oLine.width + "px"
 			});
 
 			sHelpers += $Rect.get(0).outerHTML.trim();

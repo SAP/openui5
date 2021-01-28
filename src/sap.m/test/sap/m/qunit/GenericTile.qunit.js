@@ -715,6 +715,38 @@ sap.ui.define([
 		assert.strictEqual(this.oGenericTile.$("action-more").length, 0, "More icon has not been rendered");
 	});
 
+	QUnit.test("Generic Tile in Line mode has sapMGTDisabled class when in Actions, ActionMore and ActionRemove scope", function(assert) {
+		//Arrange
+		this.oGenericTile.setState(LoadState.Loaded);
+		this.oGenericTile.setMode(GenericTileMode.LineMode);
+		this.oGenericTile.setScope(GenericTileScope.Actions);
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$().hasClass("sapMGTDisabled"), "Generic Tile has sapMGTDisabled class");
+
+		//Arrange
+		this.oGenericTile.setScope(GenericTileScope.ActionMore);
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$().hasClass("sapMGTDisabled"), "Generic Tile has sapMGTDisabled class");
+
+		//Arrange
+		this.oGenericTile.setScope(GenericTileScope.ActionRemove);
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(this.oGenericTile.$().hasClass("sapMGTDisabled"), "Generic Tile has sapMGTDisabled class");
+
+		//Arrange
+		this.oGenericTile.setScope(GenericTileScope.Display);
+		//Act
+		sap.ui.getCore().applyChanges();
+		//Assert
+		assert.ok(!this.oGenericTile.$().hasClass("sapMGTDisabled"), "Generic Tile does not have sapMGTDisabled class");
+	});
+
 	QUnit.test("Scope content is created on beforeRendering", function(assert) {
 		//Arrange
 		this.oGenericTile.setScope(GenericTileScope.Actions);
@@ -759,9 +791,6 @@ sap.ui.define([
 		assert.ok(this.oGenericTile.$("touchArea").length > 0, "Touch area for line mode was found");
 		assert.ok(this.oGenericTile.$("lineModeHelpContainer").length > 0, "Help container for line mode was found");
 
-		var $Parent = this.oGenericTile.$().parent();
-		assert.ok($Parent.hasClass("sapMGTLineModeListContainer"), "Parent container should have class for the line mode list container.");
-		assert.notOk($Parent.hasClass("sapMGTLineModeFloatingContainer"), "Parent container should not have class for the line mode floating container.");
 	});
 
 	QUnit.module("LineMode FloatingView (large screen only) w/o parent", {
@@ -833,10 +862,6 @@ sap.ui.define([
 		assert.equal(this.oGenericTile.$("subHdr-text").text(), "subheaderText", "SubHeader text was correct");
 		assert.ok(this.oGenericTile.$("styleHelper").length > 0, "Style helper was found.");
 
-		var $Parent = this.oGenericTile.$().parent();
-		assert.ok($Parent.hasClass("sapMGTLineModeContainer"), "Parent container should have class for the line mode container.");
-		assert.ok($Parent.hasClass("sapMGTLineModeFloatingContainer"), "Parent container should have class for the line mode floating container.");
-		assert.notOk($Parent.hasClass("sapMGTLineModeListContainer"), "Parent container should not have class for the line mode list container.");
 	});
 
 	QUnit.module("sap.m.GenericTileMode.LineMode ListView compact (small screen only)", {
@@ -882,9 +907,6 @@ sap.ui.define([
 		assert.ok(this.oGenericTile.$("touchArea").length > 0, "Touch area for line mode was found");
 		assert.ok(this.oGenericTile.$("lineModeHelpContainer").length > 0, "Help container for line mode was found");
 
-		var $Parent = this.oGenericTile.$().parent();
-		assert.ok($Parent.hasClass("sapMGTLineModeListContainer"), "Parent container should have class for the line mode list container.");
-		assert.notOk($Parent.hasClass("sapMGTLineModeFloatingContainer"), "Parent container should not have class for the line mode floating container.");
 	});
 
 	QUnit.module("sap.m.GenericTileMode.LineMode FloatingView compact (large screen only)", {
@@ -946,10 +968,6 @@ sap.ui.define([
 		assert.equal(this.oGenericTile.$("subHdr-text").text(), "Expenses By Region", "SubHeader was correct.");
 		assert.ok(this.oGenericTile.$("styleHelper").length > 0, "Style helper was found.");
 
-		var $Parent = this.oGenericTile.$().parent();
-		assert.ok($Parent.hasClass("sapMGTLineModeContainer"), "Parent container should have class for the line mode container.");
-		assert.ok($Parent.hasClass("sapMGTLineModeFloatingContainer"), "Parent container should have class for the line mode floating container.");
-		assert.notOk($Parent.hasClass("sapMGTLineModeListContainer"), "Parent container should not have class for the line mode list container.");
 	});
 
 	QUnit.module("sap.m.GenericTileMode.LineMode FloatingView Functions tests (large screen only)", {

@@ -437,14 +437,6 @@ sap.ui.define([
 		if (sMode === library.GenericTileMode.LineMode) {
 			var $Parent = this.$().parent();
 			if (bScreenLarge) {
-				// This class needs to be added in order to account for the paddings of the tile.
-				// As this LineMode tile is rendered with display: inline, we cannot apply padding to each line separately, but only the
-				// container can apply a padding for text containment. Thus, this class adds a preset padding-right to the tile's direct DOM parent.
-				$Parent.addClass("sapMGTLineModeContainer");
-
-				$Parent.removeClass("sapMGTLineModeListContainer");
-				$Parent.addClass("sapMGTLineModeFloatingContainer");
-
 				this._updateHoverStyle(true); //force update
 
 				if (this.getParent() instanceof Control) {
@@ -452,9 +444,6 @@ sap.ui.define([
 				} else {
 					this._sParentResizeListenerId = ResizeHandler.register($Parent, this._handleResize.bind(this));
 				}
-			} else {
-				$Parent.removeClass("sapMGTLineModeFloatingContainer");
-				$Parent.addClass("sapMGTLineModeListContainer");
 			}
 		}
 
