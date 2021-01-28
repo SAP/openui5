@@ -1216,13 +1216,14 @@ sap.ui.define([
 		 * responses).
 		 *
 		 * @param {string|object} vRequest
-		 *   The request with the mandatory properties "deepPath", "method" and "requestUri".
+		 *   The request with the mandatory properties "deepPath" and "requestUri".
 		 *   Optional properties are:
 		 *   <ul>
 		 *     <li>"batchNo": The batch number in which the request is contained</li>
 		 *     <li>"encodeRequestUri": Whether the query string of the requestUri has to be encoded;
 		 *       <code>true</code> by default</li>
-		 *     <li>"headers": The expected request headers/li>
+		 *     <li>"headers": The expected request headers</li>
+		 *     <li>"method": The expected HTTP method; "GET" by default</li>
 		 *   </ul>
 		 *   A string is interpreted as URL with method "GET". Spaces inside the URL, and "'" and
 		 *   "~" inside the query string are percent-encoded automatically.
@@ -1244,6 +1245,7 @@ sap.ui.define([
 			}
 			// ensure that these properties are defined (required for deepEqual)
 			vRequest.headers = vRequest.headers || {};
+			vRequest.method = vRequest.method || "GET";
 			vRequest.responseHeaders = mResponseHeaders || {};
 			vRequest.response = oResponse || {/*null object pattern*/};
 			aUrlParts = vRequest.requestUri.split("?");
@@ -1723,7 +1725,6 @@ sap.ui.define([
 			.expectRequest({
 				deepPath : "/SalesOrderSet",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet?$skip=0&$top=100"
 			}, {
 				body : "A plain error text",
@@ -1926,7 +1927,6 @@ sap.ui.define([
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')"
 						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct",
-					method : "GET",
 					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 						+ "/ToProduct"
 				}, {
@@ -1952,7 +1952,6 @@ sap.ui.define([
 					deepPath : "/SalesOrderSet('1')"
 						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')/ToProduct"
 						+ "/ToSupplier",
-					method : "GET",
 					requestUri : "ProductSet('P1')/ToSupplier"
 				}, {
 					__metadata : {
@@ -2143,7 +2142,6 @@ sap.ui.define([
 
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
-				method : "GET",
 				requestUri : "SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"}
 			}, {
@@ -2151,7 +2149,6 @@ sap.ui.define([
 			}, {"sap-message" : getMessageHeader([oMsgSalesOrder, oMsgSalesOrderToLineItems1])})
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100",
 				headers : {"sap-message-scope" : "BusinessObject"}
 			}, {
@@ -2172,7 +2169,6 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')",
-					method : "GET",
 					requestUri : "SalesOrderSet('1')",
 					headers : {"sap-message-scope" : "BusinessObject"}
 				}, {
@@ -2188,7 +2184,6 @@ sap.ui.define([
 				})
 				.expectRequest({
 					deepPath : "/SalesOrderSet('1')/ToLineItems",
-					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100",
 					headers : {"sap-message-scope" : "BusinessObject"}
 				}, {
@@ -2220,7 +2215,6 @@ sap.ui.define([
 		}).then(function () {
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')/ToLineItems",
-					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100",
 					headers : {"sap-message-scope" : "BusinessObject"}
 				}, {
@@ -2262,7 +2256,6 @@ sap.ui.define([
 
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2",
 				headers : {"sap-message-scope" : "BusinessObject"}
 			}, {
@@ -2289,7 +2282,6 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')/ToLineItems",
-					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=2&$top=2",
 					headers : {"sap-message-scope" : "BusinessObject"}
 				}, {
@@ -2376,7 +2368,6 @@ usePreliminaryContext : false}}">\
 				deepPath : "/C_WorkCenterGroupTree(HierarchyRootNode='10000425',"
 					+ "HierarchyParentNode='00000000',HierarchyNode='10000425',"
 					+ "HierarchyNodeType='G')/to_AdminData/to_CreatedByUserContactCard",
-				method : "GET",
 				requestUri : sAdminDataRequest + "/to_CreatedByUserContactCard?$select=FullName"
 			}, {
 				__metadata : {uri : "/I_UserContactCard('Smith')"},
@@ -2386,7 +2377,6 @@ usePreliminaryContext : false}}">\
 				deepPath : "/C_WorkCenterGroupTree(HierarchyRootNode='10000425',"
 					+ "HierarchyParentNode='00000000',HierarchyNode='10000425',"
 					+ "HierarchyNodeType='G')/to_AdminData/to_LastChangedByUserContactCard",
-				method : "GET",
 				requestUri : sAdminDataRequest + "/to_LastChangedByUserContactCard?$select=FullName"
 			}, {
 				__metadata : {uri : "/I_UserContactCard('Smith')"},
@@ -2416,7 +2406,6 @@ usePreliminaryContext : false}}">\
 					deepPath : "/C_WorkCenterGroupTree(HierarchyRootNode='10000425',"
 						+ "HierarchyParentNode='00000000',HierarchyNode='10000425',"
 						+ "HierarchyNodeType='G')/to_AdminData/to_CreatedByUserContactCard",
-					method : "GET",
 					requestUri : sAdminDataRequest + "/to_CreatedByUserContactCard?$select=FullName"
 				}, {
 					__metadata : {uri : "/I_UserContactCard('Smith')"},
@@ -2426,7 +2415,6 @@ usePreliminaryContext : false}}">\
 					deepPath : "/C_WorkCenterGroupTree(HierarchyRootNode='10000425',"
 						+ "HierarchyParentNode='00000000',HierarchyNode='10000425',"
 						+ "HierarchyNodeType='G')/to_AdminData/to_LastChangedByUserContactCard",
-					method : "GET",
 					requestUri : sAdminDataRequest
 						+ "/to_LastChangedByUserContactCard?$select=FullName"
 				}, {
@@ -2504,8 +2492,6 @@ usePreliminaryContext : false}}">\
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')"
 						+ "/ToLineItems(SalesOrderID='1',ItemPosition='10~0~')",
-					headers : {},
-					method : "GET",
 					requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10~0~')"
 						+ "?$expand=ToHeader"
 				}, {
@@ -2771,7 +2757,6 @@ usePreliminaryContext : false}}">\
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -2792,7 +2777,6 @@ usePreliminaryContext : false}}">\
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
 			}, {
 				results : [{
@@ -2864,7 +2848,6 @@ usePreliminaryContext : false}}">\
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -2885,7 +2868,6 @@ usePreliminaryContext : false}}">\
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -2925,7 +2907,6 @@ usePreliminaryContext : false}}">\
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=2&$top=2"
 			}, {
 				results : [{
@@ -3006,7 +2987,6 @@ usePreliminaryContext : false}}">\
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -3028,7 +3008,6 @@ usePreliminaryContext : false}}">\
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -3069,7 +3048,6 @@ usePreliminaryContext : false}}">\
 					headers : bWithMessageScope
 						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 						: {"sap-messages" : "transientOnly"},
-					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 						+ "&$filter=GrossAmount gt 100.0m"
 				}, {
@@ -3162,7 +3140,6 @@ usePreliminaryContext : false}}">\
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -3184,7 +3161,6 @@ usePreliminaryContext : false}}">\
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100&"
 					+ "$filter=GrossAmount gt 100.0m"
 			}, {
@@ -3204,7 +3180,6 @@ usePreliminaryContext : false}}">\
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100&"
 					+ "$filter=GrossAmount le 100.0m"
 			}, {
@@ -3249,7 +3224,6 @@ usePreliminaryContext : false}}">\
 					headers : bWithMessageScope
 						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 						: {"sap-messages" : "transientOnly"},
-					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100&"
 						+ "$filter=GrossAmount gt 100.0m"
 				}, {
@@ -3274,7 +3248,6 @@ usePreliminaryContext : false}}">\
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')",
 					headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-					method : "GET",
 					requestUri : "SalesOrderSet('1')?$select=SalesOrderID"
 				}, {
 					__metadata : {uri : "SalesOrderSet('1')"},
@@ -3360,7 +3333,6 @@ usePreliminaryContext : false}}">\
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -3381,7 +3353,6 @@ usePreliminaryContext : false}}">\
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -3420,7 +3391,6 @@ usePreliminaryContext : false}}">\
 					headers : bWithMessageScope
 						? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 						: {"sap-messages" : "transientOnly"},
-					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 						+ "&$orderby=GrossAmount asc"
 				}, {
@@ -3505,7 +3475,6 @@ usePreliminaryContext : false}}">\
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -3527,7 +3496,6 @@ usePreliminaryContext : false}}">\
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -3688,7 +3656,6 @@ usePreliminaryContext : false}}">\
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -3710,7 +3677,6 @@ usePreliminaryContext : false}}">\
 				headers : bWithMessageScope
 					? {"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"}
 					: {"sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -3812,7 +3778,6 @@ usePreliminaryContext : false}}">\
 		this.expectRequest({
 				deepPath : "/SalesOrderSet",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
 				requestUri : "SalesOrderSet?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -3846,7 +3811,6 @@ usePreliminaryContext : false}}">\
 			that.expectRequest({
 					deepPath : "/SalesOrderSet",
 					headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-					method : "GET",
 					requestUri : "SalesOrderSet?$skip=0&$top=2"
 						+ (bFilter ? "&$filter=GrossAmount gt 100.0m" : "")
 				}, {
@@ -3918,7 +3882,6 @@ usePreliminaryContext : false}}">\
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -3938,7 +3901,6 @@ usePreliminaryContext : false}}">\
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')",
 					headers : {"sap-message-scope" : "BusinessObject"},
-					method : "GET",
 					requestUri : "SalesOrderSet('1')"
 				}, {
 					__metadata : {uri : "SalesOrderSet('1')"},
@@ -4008,7 +3970,6 @@ usePreliminaryContext : false}}">\
 				batchNo : 1,
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -4033,7 +3994,6 @@ usePreliminaryContext : false}}">\
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers :
 					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 			}, {
 				results : [{
@@ -4083,7 +4043,6 @@ usePreliminaryContext : false}}">\
 					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					headers :
 						{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
-					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=2"
 						+ "&$filter=(SalesOrderID eq '1' and ItemPosition eq '40~2~')"
 						+ " or (SalesOrderID eq '1' and ItemPosition eq '10~0~')"
@@ -4152,7 +4111,6 @@ usePreliminaryContext : false}}">\
 		this.expectRequest({
 				deepPath : "/CarrierCollection('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "CarrierCollection('1')"
 			}, {
 				__metadata : {uri : "CarrierCollection('1')"},
@@ -4169,7 +4127,6 @@ usePreliminaryContext : false}}">\
 				deepPath : "/CarrierCollection('1')/carrierFlights",
 				headers :
 					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "CarrierCollection('1')/carrierFlights"
 			}, {
 				results : [{
@@ -4245,7 +4202,6 @@ usePreliminaryContext : false}}">\
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -4258,7 +4214,6 @@ usePreliminaryContext : false}}">\
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers :
 					{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=20"
 			}, {
 				results : [{
@@ -4294,7 +4249,6 @@ usePreliminaryContext : false}}">\
 					deepPath : "/SalesOrderSet('1')/ToLineItems",
 					headers :
 						{"sap-message-scope" : "BusinessObject", "sap-messages" : "transientOnly"},
-					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=20"
 				}, {
 					results : [{
@@ -4424,7 +4378,6 @@ usePreliminaryContext : false}}">\
 				.expectRequest({
 					batchNo : 1,
 					deepPath : "/SalesOrderSet('1')/ToLineItems",
-					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems"
 				}, oFixture.aResponses[2])
 				.expectMessages(oFixture.aExpectedMessages);
@@ -4496,7 +4449,6 @@ usePreliminaryContext : false}}">\
 			oCreatedContext,
 			oGETRequest = {
 				deepPath : "/$~key~",
-				method : "GET",
 				requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
 			},
 			oModel = createSalesOrdersModelMessageScope({
@@ -4952,7 +4904,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : bIsBusinessObject ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				SalesOrderID : "1",
@@ -4994,7 +4945,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectHeadRequest()
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {
@@ -5064,7 +5014,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectHeadRequest()
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {
@@ -5165,7 +5114,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				batchNo : 1,
 				deepPath : "/SalesOrderSet('1')",
 				headers : bWithMessageScope ? {"sap-message-scope" : "BusinessObject"} : {},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -5295,7 +5243,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/BusinessPartnerSet('100')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "BusinessPartnerSet('100')"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('100')"}
@@ -5303,7 +5250,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/BusinessPartnerSet('100')/ToSalesOrders",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
 			}, {
 				results : [{
@@ -5382,7 +5328,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/BusinessPartnerSet('100')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "BusinessPartnerSet('100')"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('100')"}
@@ -5390,7 +5335,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/BusinessPartnerSet('100')/ToSalesOrders",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
 			}, {
 				results : [{
@@ -5479,7 +5423,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')?$expand=ToBusinessPartner"
 					+ "&$select=ToBusinessPartner%2fBusinessPartnerID"
 			}, {
@@ -5584,7 +5527,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -5594,7 +5536,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToBusinessPartner",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToBusinessPartner"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('100')"},
@@ -5610,7 +5551,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			this.expectRequest({
 					deepPath : "/ProductSet('Z')",
 					headers : {"sap-message-scope" : "BusinessObject"},
-					method : "GET",
 					requestUri : "ProductSet('Z')"
 				}, {
 					__metadata : {uri : "ProductSet('Z')"},
@@ -5620,7 +5560,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest({
 					deepPath : "/ProductSet('Z')/ToSupplier",
 					headers : {"sap-message-scope" : "BusinessObject"},
-					method : "GET",
 					requestUri : "ProductSet('Z')/ToSupplier"
 				}, {
 					__metadata : {uri : "BusinessPartnerSet('200')"},
@@ -5698,7 +5637,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -5708,7 +5646,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToBusinessPartner",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToBusinessPartner"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('100')"},
@@ -5720,7 +5657,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/ProductSet('Z')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "ProductSet('Z')"
 			}, {
 				__metadata : {uri : "ProductSet('Z')"},
@@ -5730,7 +5666,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/ProductSet('Z')/ToSupplier",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "ProductSet('Z')/ToSupplier"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('100')"},
@@ -5819,7 +5754,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectRequest({
 				deepPath : "/BusinessPartnerSet('100')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "BusinessPartnerSet('100')"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('100')"}
@@ -5827,7 +5761,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/BusinessPartnerSet('100')/ToSalesOrders",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
 			}, {
 				results : [{
@@ -5942,7 +5875,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					batchNo : 1,
 					deepPath : "/$~key~",
 					headers : {"sap-message-scope" : "BusinessObject"},
-					method : "GET",
 					requestUri : "$~key~?$expand=ToLineItems&$select=ToLineItems"
 				}, {
 					__metadata : {uri : "SalesOrderSet('42')"},
@@ -5990,7 +5922,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -6002,7 +5933,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					"sap-message-scope" : "BusinessObject",
 					"sap-messages" : "transientOnly"
 				},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
 			}, {
 				results : [{
@@ -6046,7 +5976,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 						"sap-message-scope" : "BusinessObject",
 						"sap-messages" : "transientOnly"
 					},
-					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
 				}, {
 					results : [{
@@ -6117,7 +6046,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/BusinessPartnerSet('100')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "BusinessPartnerSet('100')"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('100')"}
@@ -6125,7 +6053,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/BusinessPartnerSet('100')/ToSalesOrders",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "BusinessPartnerSet('100')/ToSalesOrders?$skip=0&$top=100"
 			}, {
 				results : [{
@@ -6371,7 +6298,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				batchNo : 1,
 				deepPath : "/SalesOrderSet",
-				method : "GET",
 				requestUri : "SalesOrderSet?$skip=0&$top=100&$select=foo"
 			}, oErrorMessage)
 			.expectMessages([{
@@ -6387,7 +6313,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				batchNo : 1,
 				deepPath : "/SalesOrderSet('1')",
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				Note : "bar"
@@ -6506,7 +6431,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -6515,7 +6439,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToBusinessPartner",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToBusinessPartner"
 			}, NO_CONTENT
 			/* we expect a NO_CONTENT response to have no messages and explicitly ignore them! */)
@@ -6566,7 +6489,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/BusinessPartnerSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "BusinessPartnerSet('1')"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('1')"},
@@ -6579,7 +6501,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/BusinessPartnerSet('2')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "BusinessPartnerSet('2')"
 			}, {
 				__metadata : {uri : "BusinessPartnerSet('2')"},
@@ -6672,7 +6593,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')"
 			}, {
 				__metadata : {uri : "SalesOrderSet('1')"},
@@ -6681,7 +6601,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				deepPath : "/SalesOrderSet('1')/ToLineItems",
 				headers : {"sap-message-scope" : "BusinessObject"},
-				method : "GET",
 				requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
 			}, {
 				results : [{
@@ -6820,7 +6739,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					batchNo : 1,
 					deepPath : "/$~key~",
 					headers : {"sap-message-scope" : "BusinessObject"},
-					method : "GET",
 					requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
 				}, {
 					__metadata : {
@@ -6984,7 +6902,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 					batchNo : 1,
 					deepPath : "/$~key~",
 					headers : {"sap-message-scope" : "BusinessObject"},
-					method : "GET",
 					requestUri : "$~key~?$expand=ToProduct&$select=ToProduct"
 				}, oErrorGET)
 				.expectMessages([{
@@ -7061,7 +6978,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				batchNo : 1,
 				deepPath : "/" + sObjectUri,
-				method : "GET",
 				requestUri : sObjectUri
 			}, {
 				DfsAllwncReqUUID : "fa163e35-93d9-1eda-b19c-c26490674ab4",
@@ -7071,7 +6987,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				// TreeTable becomes async so that its GET is not in the same $batch as the 1st GET
 				batchNo : 2,
 				deepPath : "/" + sObjectUri + "/to_AllwncReqToFe",
-				method : "GET",
 				requestUri : sObjectUri + "/to_AllwncReqToFe"
 					+ "?$skip=0&$top=101&$inlinecount=allpages&$filter=HierarchyLevel%20le%200"
 			}, {
@@ -7129,7 +7044,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			.expectRequest({
 				batchNo : 1,
 				deepPath : "/C_RSHMaintSchedSmltdOrdAndOp",
-				method : "GET",
 				requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=101&$inlinecount=allpages"
 					+ "&$filter=OrderOperationRowLevel%20le%200"
 			}, {
@@ -7158,7 +7072,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				.expectRequest({
 					batchNo : 2,
 					deepPath : "/C_RSHMaintSchedSmltdOrdAndOp",
-					method : "GET",
 					requestUri : "C_RSHMaintSchedSmltdOrdAndOp?$skip=0&$top=101"
 						+ "&$inlinecount=allpages&$filter=OrderOperationRowLevel%20le%200"
 				}, {
@@ -7309,7 +7222,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 		this.expectHeadRequest()
 			.expectRequest({
 				deepPath : "/SalesOrderSet",
-				method : "GET",
 				requestUri : "SalesOrderSet?$skip=0&$top=100"
 			}, {
 				results : [{
@@ -7324,7 +7236,6 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 				function () {
 			that.expectRequest({
 					deepPath : "/SalesOrderSet('1')/ToLineItems",
-					method : "GET",
 					requestUri : "SalesOrderSet('1')/ToLineItems?$skip=0&$top=100"
 				}, {
 					results : [{
