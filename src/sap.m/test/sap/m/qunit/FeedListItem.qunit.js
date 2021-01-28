@@ -34,7 +34,7 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
-	var IMAGE_PATH = "test-resources/sap/m/images/";
+	var IMAGE_PATH = "test-resources/sap/m/avatar/";
 
 	var oList2 = new List({
 		inset: true
@@ -166,6 +166,7 @@ sap.ui.define([
 		activeIcon: "{activeIcon}",
 		text: "{text}",
 		sender: "{sender}",
+		iconInitials: "{iconInitials}",
 		showIcon: "{showIcon}",
 		senderActive: "{senderActive}",
 		iconActive: "{iconActive}",
@@ -193,6 +194,7 @@ sap.ui.define([
 			icon: IMAGE_PATH + "male.jpg",
 			text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque risus nulla, interdum eget posuere non, tincidunt eu felis. In hac habitasse platea dictumst. This is a very long URL: http://this.is.some.very.long.url.sap.com/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit/lorem/ipsum/dolor/sit/amet/consectetur/adipiscing/elit#LoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElitLoremIpsumDolorSitAmetConsecteturAdipiscingElit Quisque ut ipsum est. Duis ipsum orci, interdum eget sollicitudin ac, blandit a ante. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. Pellentesque tincidunt fermentum lectus, eu luctus mi ultrices quis. Sed luctus nulla sit amet sapien consequat quis pretium eros tincidunt. Nullam quam erat, ultricies in malesuada non, tincidunt at nibh. Curabitur nec lectus et justo auctor tincidunt. In rhoncus risus vitae turpis suscipit eget porta metus facilisis. Vestibulum bibendum vehicula velit eu porta. Donec tincidunt rutrum lacus at egestas.",
 			sender: "Jeremy Dash",
+			iconInitials: "In",
 			senderActive: true,
 			iconActive: true,
 			timestamp: "March 03, 2013",
@@ -202,6 +204,7 @@ sap.ui.define([
 			icon: sURI,
 			text: "This FeedListItem displays an ImagePool image. Cras congue posuere metus sed tempus. Mauris euismod, dui sit amet molestie volutpat, ipsum est viverra velit, id ultricies ante dolor et ligula. ",
 			sender: "Christopher Kent",
+			iconInitials: "In",
 			senderActive: true,
 			iconActive: true,
 			timestamp: "Dec 04, 2012",
@@ -281,13 +284,16 @@ sap.ui.define([
 	QUnit.module("Properties");
 
 	QUnit.test("ImagePool Icon", function (assert) {
-		assert.ok(jQuery('#__item1-oFeedItemList-1 .sapMFeedListItemImage.sapUiIcon').length === 1, "Image pool icon displayed");
+		assert.ok(jQuery('#__item1-oFeedItemList-1 .sapMFeedListItemImage .sapUiIcon').length === 1, "Image pool icon displayed");
 	});
 
 	QUnit.test("All Properties", function (assert) {
-		assert.ok(!!oFeedList.getItems()[0]._oImageControl.$(), "Image rendered");
-		assert.ok(oFeedList.getItems()[0]._oImageControl.getSrc() === oFeedList.getItems()[0].getIcon(), "Image rendered (icon <> initial)");
-		assert.ok(oFeedList.getItems()[0]._oImageControl.$().hasClass("sapMImg"), "property icon set: image should have class sapMImg ");
+		assert.ok(!!oFeedList.getItems()[0].oAvatar.$(), "Avatar rendered");
+		assert.ok(oFeedList.getItems()[0].oAvatar.getSrc() === oFeedList.getItems()[0].getIcon(), "Avatar rendered (icon <> initial)");
+		assert.ok(oFeedList.getItems()[0].oAvatar.getDisplayShape(), "Avatar should have DisplayShape properties");
+		assert.ok(oFeedList.getItems()[0].oAvatar.getInitials(), "Avatar should have initials properties");
+		assert.ok(oFeedList.getItems()[0].oAvatar.getDisplaySize(), "Avatar should have DisplaySize properties");
+		assert.ok(oFeedList.getItems()[0].oAvatar.getAriaLabelledBy(), "Avatar should have ariaLabelledBy set");
 		assert.ok(oFeedList.getItems()[0]._oLinkControl.getEnabled(), "Sender link enabled (senderActive = true)");
 		assert.ok(!!oFeedList.getItems()[0]._oLinkControl.$(), "Name Link rendered");
 		assert.ok(jQuery('#__item1-oFeedItemList-0 .sapMFeedListItemFooter').length === 1, "Footer displayed");
@@ -311,15 +317,15 @@ sap.ui.define([
 	});
 
 	QUnit.test("Show default icon (icon is initial + showIcon = true)", function (assert) {
-		assert.ok(oFeedList.getItems()[3]._oImageControl.getSrc() === IconPool.getIconURI("person-placeholder"), "Placeholder icon rendered (icon  initial)");
+		assert.ok(oFeedList.getItems()[3].oAvatar.getSrc() === IconPool.getIconURI("person-placeholder"), "Placeholder icon rendered (icon  initial)");
 	});
 
 	QUnit.test("Do not show icon", function (assert) {
-		assert.ok(!oFeedList.getItems()[7]._oImageControl, "No icon rendered");
+		assert.ok(!oFeedList.getItems()[7].oAvatar, "No icon rendered");
 	});
 
 	QUnit.test("No Icon", function (assert) {
-		assert.ok(!oFeedList.getItems()[4]._oImageControl.$().hasClass("sapMImg"), "property icon initial: image should not have class sapMImg ");
+		assert.ok(!oFeedList.getItems()[4].oAvatar.$().hasClass("sapMImg"), "property icon initial: image should not have class sapMImg ");
 	});
 
 	QUnit.test("No Timestamp", function (assert) {
@@ -437,7 +443,6 @@ sap.ui.define([
 				text: "Some text which is displayed.",
 				timestamp: "March 03 2013",
 				iconActive: true,
-				iconDensityAware: true,
 				showIcon: true,
 				senderActive: false
 			}).placeAt("qunit-fixture");
@@ -500,13 +505,13 @@ sap.ui.define([
 			// Assert
 			// Deprecated event parameter
 			assert.ok(oEvent.getParameter("domRef"));
-			assert.deepEqual(oEvent.getParameter("domRef"), oFeedListItem._oImageControl.getDomRef());
+			assert.deepEqual(oEvent.getParameter("domRef"), oFeedListItem.oAvatar.getDomRef());
 			// New parameter
 			assert.ok(typeof oEvent.getParameter("getDomRef") === "function");
-			assert.deepEqual(oEvent.getParameter("getDomRef")(), oFeedListItem._oImageControl.getDomRef());
+			assert.deepEqual(oEvent.getParameter("getDomRef")(), oFeedListItem.oAvatar.getDomRef());
 		});
 		// Act
-		qutils.triggerEvent("tap", oFeedListItem._oImageControl.getId());
+		qutils.triggerEvent("tap", oFeedListItem.oAvatar.getId());
 	});
 
 	QUnit.test("Press Sender", function (assert) {
@@ -569,9 +574,9 @@ sap.ui.define([
 
 	QUnit.test("Item with a clickable icon is rendered", function (assert) {
 		//Arrange
-		var oItem = oFeedList.getItems()[0];
+		var oItem = oFeedList.getItems()[0].oAvatar;
 		//Act
-		var $Image = jQuery.sap.domById(oItem.getId() + "-icon");
+		var $Image = document.getElementById(oItem.getId());
 		var sStyleClass = $Image.className;
 		//Assert
 		assert.ok(sStyleClass.indexOf("sapMFeedListItemImage") >= 0, "Css class 'sapMFeedListItemImage' is present");
@@ -583,7 +588,7 @@ sap.ui.define([
 		//Act
 		oItem.setIconActive(false);
 		oFeedList.rerender();
-		var $Image = jQuery.sap.domById(oItem.getId() + "-icon");
+		var $Image = document.getElementById(oItem.oAvatar.getId());
 		var sStyleClass = $Image.className;
 		//Assert
 		assert.ok(sStyleClass.indexOf("sapMFeedListItemImageInactive") >= 0, "Css class 'sapMFeedListItemImageInactive' is present");
@@ -647,7 +652,6 @@ sap.ui.define([
 				text: "Some text which is displayed.",
 				timestamp: "March 03 2013",
 				iconActive: true,
-				iconDensityAware: true,
 				showIcon: true,
 				senderActive: false
 			});
@@ -665,9 +669,9 @@ sap.ui.define([
 	});
 
 	QUnit.test("Only single Press event is added.", function (assert) {
-		assert.equal(Object.keys(this.oFeedListItem._oImageControl.mEventRegistry).length, 1,  "Only single press event is added to the ImageControl");
+		assert.equal(Object.keys(this.oFeedListItem.oAvatar.mEventRegistry).length, 1,  "Only single press event is added to the ImageControl");
 		this.oFeedListItem.rerender();
-		assert.equal(Object.keys(this.oFeedListItem._oImageControl.mEventRegistry).length, 1,  "Only single press event is added to the ImageControl");
+		assert.equal(Object.keys(this.oFeedListItem.oAvatar.mEventRegistry).length, 1,  "Only single press event is added to the ImageControl");
 	});
 
 	QUnit.module("HTML Text inside", {
