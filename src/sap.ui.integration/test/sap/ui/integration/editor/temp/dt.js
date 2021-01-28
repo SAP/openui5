@@ -457,13 +457,13 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						{
 							"type": "error",
 							"validate": function (value) {
-								return value > 5;
+								return value >= 6;
 							},
 							"message": function (value) {
-								if (value <= 2) {
+								if (value < 2) {
 									return "value might not smaller than 2";
 								}
-								return "value might not smaller than 5";
+								return "value might not smaller than 6";
 							}
 						},
 						{

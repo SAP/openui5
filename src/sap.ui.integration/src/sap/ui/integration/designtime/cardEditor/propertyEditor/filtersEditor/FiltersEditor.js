@@ -174,7 +174,7 @@ sap.ui.define([
 					dateRangeValues: {
 						label: this.getI18nProperty("CARD_EDITOR.FILTER.VALUE.VALUES"),
 						path: "dValue/values",
-						type: "textArea",
+						type: "code",
 						visible: "{= ${type} === 'DateRange'}"
 					}
 				}
