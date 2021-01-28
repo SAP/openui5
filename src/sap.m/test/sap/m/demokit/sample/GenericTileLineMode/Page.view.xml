@@ -94,7 +94,7 @@
 					             header="{title}"
 					             subheader="{subtitle}"
 					             state="{=${state} || 'Loaded'}"
-					             scope="{=${/actionsScope} ? 'Actions' : 'Display'}"
+					             scope="{/scope}"
 					             mode="LineMode"
 					             press="press"
 					             sizeBehavior="{/sizeBehavior}">
