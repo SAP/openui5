@@ -13,7 +13,7 @@
 							<OverflowToolbarLayoutData priority="NeverOverflow" />
 						</layoutData>
 					</Button>
-					<Image width="2rem" height="2rem" src="../../../../../../../resources/sap/ui/documentation/sdk/images/logo_ui5.png" densityAware="false" press="navToHome"/>
+					<Image width="2rem" height="2rem" src="{home>/logoSrc}" densityAware="false" press="navToHome"/>
 					<html:a href="../index.html" class="appTitle">
 						<Title text="UI Integration Cards" />
 					</html:a>
