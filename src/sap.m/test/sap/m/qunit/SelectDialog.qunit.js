@@ -6,6 +6,8 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
 	"sap/m/StandardListItem",
+	"sap/m/CustomListItem",
+	"sap/m/Link",
 	"sap/m/GroupHeaderListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/qunit/QUnitUtils",
@@ -25,6 +27,8 @@ sap.ui.define([
 		Filter,
 		FilterOperator,
 		StandardListItem,
+		CustomListItem,
+		Link,
 		GroupHeaderListItem,
 		JSONModel,
 		qutils,
@@ -1059,27 +1063,76 @@ sap.ui.define([
 			var oSelectionChangeSpy = this.spy(this.oSelectDialog, "_selectionChange"),
 				oDelegates;
 
+			var oLink = new Link({
+					text: "More"
+				}),
+				oCustomListItem = new CustomListItem({
+					content: oLink
+				});
+
+			this.oSelectDialog.addItem(oCustomListItem);
+
 			// Act
 			oDelegates = this.oSelectDialog._getListItemsEventDelegates();
+
+			this.oSelectDialog.open();
+			this.clock.tick(350);
 
 			// Assert
 			assert.strictEqual(oDelegates.hasOwnProperty("onsapselect"), true, "onsapselect is present in the returned delegates object.");
 			assert.strictEqual(oDelegates.hasOwnProperty("ontap"), true, "ontap is present in the returned delegates object.");
 
 			// Act
-			oDelegates.onsapselect();
+			oDelegates.onsapselect({
+				srcControl: oCustomListItem,
+				target: oCustomListItem.getDomRef()
+			});
 
 			// Assert
 			assert.strictEqual(oSelectionChangeSpy.calledOnce, true, "Correct method was attached to onsapselect");
 
 			// Act
-			oDelegates.ontap();
+			oDelegates.ontap({
+				srcControl: oCustomListItem,
+				target: oCustomListItem.getDomRef()
+			});
 
 			// Assert
 			assert.deepEqual(oSelectionChangeSpy.calledTwice, true, "Correct method was attached to ontap");
 
 			// Clean
 			oSelectionChangeSpy.restore();
+
+			this.oSelectDialog._oDialog.close();
+			this.clock.tick(350);
+		});
+
+		QUnit.test("The dialog stays open when a link inside is clicked", function (assert) {
+			var oLink = new Link({
+					text: "More"
+				}),
+				oCustomListItem = new CustomListItem({
+					content: oLink
+				}),
+				oDelegates = this.oSelectDialog._getListItemsEventDelegates();
+
+			this.oSelectDialog.addItem(oCustomListItem);
+
+			this.oSelectDialog.open();
+			this.clock.tick(350);
+
+			oCustomListItem._eventHandledByControl = true;
+
+			oDelegates.ontap({
+				srcControl: oLink,
+				target: oLink.getDomRef()
+			});
+			this.clock.tick(350);
+
+			assert.ok(this.oSelectDialog._oDialog.isOpen(), "The dialog is still open.");
+
+			this.oSelectDialog._oDialog.close();
+			this.clock.tick(350);
 		});
 
 		QUnit.module("Destroy", {
