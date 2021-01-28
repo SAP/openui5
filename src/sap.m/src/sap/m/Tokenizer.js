@@ -421,7 +421,7 @@ sap.ui.define([
 			content: this._getTokensList()
 		})
 			.attachBeforeOpen(function () {
-				var iWidestElement = this.getEditable() ? 120 : 0, // Paddings & Delete icons in editable mode
+				var iWidestElement = this.getEditable() ? 120 : 32, // Paddings & Delete icons in editable mode && paddings in non-editable mode
 					oPopup = this._oPopup;
 				if (oPopup.getContent && !oPopup.getContent().length) {
 					oPopup.addContent(this._getTokensList());
