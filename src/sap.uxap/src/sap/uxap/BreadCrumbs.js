@@ -14,6 +14,7 @@ sap.ui.define([
     "sap/ui/Device",
     "./library",
     "sap/ui/core/InvisibleText",
+    "sap/ui/util/openWindow",
     "./BreadCrumbsRenderer",
     "sap/ui/thirdparty/jquery"
 ], function(
@@ -27,6 +28,7 @@ sap.ui.define([
 	Device,
 	library,
 	InvisibleText,
+	openWindow,
 	BreadCrumbsRenderer,
 	jQuery
 ) {
@@ -241,7 +243,7 @@ sap.ui.define([
 			if (sLinkHref) {
 				sLinkTarget = oControl.getTarget();
 				if (sLinkTarget) {
-					window.open(sLinkHref, sLinkTarget);
+					openWindow(sLinkHref, sLinkTarget);
 				} else {
 					window.location.href = sLinkHref;
 				}

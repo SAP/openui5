@@ -4,7 +4,7 @@ sap.ui.define(["sap/ui/util/openWindow"], function(openWindow) {
 	QUnit.module("sap/ui/util/openWindow");
 
 	QUnit.test("Noopener noreferrer", function(assert) {
-		assert.equal(openWindow("https://www.sap.com", "newWindow"), null, "Reference to the newly open window object is" +
-			"broken");
+		var oRes = openWindow("https://www.sap.com", "newWindow");
+		assert.ok(oRes === null, "Reference to the newly open window object is broken");
 	});
 });
