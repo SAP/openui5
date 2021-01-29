@@ -17,6 +17,7 @@ sap.ui.getCore().attachInit(function () {
 		if (!sComponentName) {
 			alert("Missing URL parameter 'component', e.g. '?component=ViewTemplate.scenario'");
 		} else {
+			document.title = sComponentName;
 			Component.create({
 				name : "sap.ui.core.sample." + sComponentName,
 				settings : {id : sComponentName}
