@@ -1071,6 +1071,25 @@ sap.ui.define([
 				coverage: {
 					only: ["sap/ui/fl/registry/SimpleChanges"]
 				}
+			},
+			//OVP key user test scenarios
+			"apply/_internal/changes/descriptor/ovp/ChangeCard": {
+				group: "Apply Internal - OVP Change card",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ovp/ChangeCard"]
+				}
+			},
+			"apply/_internal/changes/descriptor/ovp/AddNewCard": {
+				group: "Apply Internal - OVP Add new card",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ovp/AddNewCard"]
+				}
+			},
+			"apply/_internal/changes/descriptor/ovp/DeleteCard": {
+				group: "Apply Internal - OVP Delete card",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ovp/DeleteCard"]
+				}
 			}
 		}
 	};
