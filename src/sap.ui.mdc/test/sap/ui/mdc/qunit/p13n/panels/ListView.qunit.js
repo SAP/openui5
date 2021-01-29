@@ -127,7 +127,7 @@ sap.ui.define([
 
         this.oListView._oSelectedItem = this.oListView._oListControl.getItems()[0];
 
-        this.oListView._addMoveButtons();
+        this.oListView._addMoveButtons(this.oListView._oSelectedItem);
         assert.equal(this.oListView._oSelectedItem.getCells()[1].getItems().length, 5, "Item does contain move buttons after being selected");
     });
 
@@ -136,9 +136,34 @@ sap.ui.define([
 
         this.oListView._oSelectedItem = this.oListView._oListControl.getItems()[0];
 
-        this.oListView._addMoveButtons();
+        this.oListView._addMoveButtons(this.oListView._oSelectedItem);
         this.oListView.removeMoveButtons();
         assert.equal(this.oListView._oSelectedItem.getCells()[1].getItems().length, 1, "Item does not contain move buttons");
+    });
+
+    QUnit.test("Check hover event handling", function(assert){
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+
+        var nFirstHovered = this.oListView._oListControl.getItems()[1].getDomRef();
+        this.oListView._hoverHandler({
+            currentTarget: nFirstHovered
+        });
+
+        assert.ok(this.oListView._oHoveredItem, "Hovered item is kept separately");
+
+        //Hovered item has the move buttons
+        assert.deepEqual(this.oListView._oListControl.getItems()[1], this.oListView._getMoveButtonContainer().getParent(), "The hovered item holds the move buttons");
+        var oIconSecondTableItem = this.oListView._oListControl.getItems()[1].getCells()[1].getItems()[0];
+        assert.equal(oIconSecondTableItem.getVisible(), false, "The filtered icon is invisible as the table item holds the move buttons");
+
+        var nSecondHovered = this.oListView._oListControl.getItems()[0].getDomRef();
+        this.oListView._hoverHandler({
+            currentTarget: nSecondHovered
+        });
+
+        //The prior hovered item does no longer contain the move buttons and the active icon is visible again
+        assert.notDeepEqual(this.oListView._oListControl.getItems()[1], this.oListView._getMoveButtonContainer().getParent(), "The hovered item does not hold the move buttons anymore");
+        assert.equal(oIconSecondTableItem.getVisible(), true, "The filtered icon is visible again as the table item does no longer hold the move buttons");
     });
 
 });

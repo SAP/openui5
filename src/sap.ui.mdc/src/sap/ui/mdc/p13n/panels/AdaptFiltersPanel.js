@@ -274,6 +274,18 @@ sap.ui.define([
     };
 
     /**
+     * Restores the default ui state of the <code>AdaptFiltersPanel</code>.
+     */
+    AdaptFiltersPanel.prototype.restoreDefaults = function() {
+        //this._sModeKey = "all";
+        //this._getQuickFilter().setSelectedKey(this._sModeKey);
+        this._getSearchField().setValue("");
+        //this.switchView(this.getDefaultView());
+        this._filterByModeAndSearch();
+        //this.showFactory(true);
+    };
+
+    /**
      *
      * @returns {sap.ui.model.json.JSONModel} The inner p13n model instance
      */
@@ -287,7 +299,6 @@ sap.ui.define([
 
         if (!this._oShowHideBtn) {
             this._oShowHideBtn = new Button({
-                width: "6rem",
                 press: function(oEvt) {
                     this.showFactory(!this.getCurrentViewContent().getShowFactory());
                     var oBtn = oEvt.oSource;

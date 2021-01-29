@@ -532,7 +532,7 @@ sap.ui.define([
 		this.getP13nModel().setProperty("/items", aFields);
 
 		// store the moved item again due to binding
-		this._oSelectedItem = aItems[iNewIndex];
+		this._oSelectedItem = this._oListControl.getItems()[iNewIndex];
 
 		this._updateEnableOfMoveButtons(this._oSelectedItem, true);
 

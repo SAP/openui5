@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 sap.ui.define([
     "sap/ui/mdc/p13n/panels/AdaptFiltersPanel",
     "sap/ui/mdc/p13n/P13nBuilder",
@@ -589,6 +589,21 @@ sap.ui.define([
             },
             "An error should be thrown if no item is provided or if the key is missing"
         );
+
+    });
+
+    QUnit.test("Check 'restoreDefaults' to reset the searchfield text", function(assert){
+
+        this.oAFPanel._getSearchField().setValue("Test");
+        var oFilterSpy = sinon.spy(this.oAFPanel, "_filterByModeAndSearch");
+
+        assert.equal(this.oAFPanel._getSearchField().getValue(), "Test", "Value 'Test' is present on the SearchField");
+
+        this.oAFPanel.restoreDefaults();
+        assert.ok(oFilterSpy.calledOnce, "Filter logic executed again after defaults have been restored");
+        assert.equal(this.oAFPanel._getSearchField().getValue(), "", "SearchField is empty after defaults have been restored");
+
+        this.oAFPanel._filterByModeAndSearch.restore();
 
     });
 

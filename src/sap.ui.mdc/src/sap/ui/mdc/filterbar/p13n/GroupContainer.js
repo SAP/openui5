@@ -56,6 +56,10 @@ sap.ui.define([
 		return aFilterItems;
 	};
 
+	GroupContainer.prototype.update = function() {
+		this.oLayout.restoreDefaults();
+	};
+
 	GroupContainer.prototype.exit = function() {
 		this.mFilterItems = null;
 		this.mFilterFields = null;
