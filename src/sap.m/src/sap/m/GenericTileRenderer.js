@@ -44,6 +44,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		if (oControl.getUrl() && !oControl._isInActionScope()) {
 			oRm.write("<a");
 			oRm.writeAttributeEscaped("href", oControl.getUrl());
+			oRm.writeAttribute("rel", "noopener noreferrer");
 		} else {
 			oRm.write("<div");
 		}
