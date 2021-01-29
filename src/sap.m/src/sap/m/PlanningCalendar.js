@@ -1062,6 +1062,35 @@ sap.ui.define([
 		return this;
 	};
 
+	/**
+	 * Getter for the end point in time of the shown interval
+	 * @returns {Object} JavaScript date object with the end date
+	 * @public
+	 */
+	PlanningCalendar.prototype.getEndDate = function () {
+		return this._dateNav.getEnd();
+	};
+
+	/**
+	 * Getter for how many intervals are currently displayed
+	 * @returns {number} The number of displayed intervals
+	 * @public
+	 */
+	PlanningCalendar.prototype.getVisibleIntervalsCount = function () {
+		var sViewKey = this.getViewKey();
+		if (sViewKey === CalendarIntervalType.OneMonth && this._iSize < 2) {
+			var oFirstVisibleDate = CalendarUtils.getFirstDateOfWeek(this.getStartDate()),
+				oFirstDateInLastWeek = CalendarUtils.getFirstDateOfWeek(this._dateNav.getEnd()),
+				oLastVisibleDate = new Date(oFirstDateInLastWeek.getTime());
+
+			oLastVisibleDate.setDate(oLastVisibleDate.getDate() + 6);
+
+			return ((oLastVisibleDate.getTime() - oFirstVisibleDate.getTime()) / 86400000) + 1;
+		} else {
+			return this._getIntervals(this._getView(this.getViewKey()));
+		}
+	};
+
 	PlanningCalendar.prototype._setAriaRole = function (oInterval) {
 		if (this.hasListeners("intervalSelect")) {
 			oInterval._setAriaRole("button"); // set new aria role
