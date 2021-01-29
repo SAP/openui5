@@ -219,5 +219,51 @@
         ]
       }
     ]
+  },
+  "1.78.16": {
+    "date": "January 2021",
+    "notes": [
+      {
+        "id": "07cb62fef59fd4ff44dddc7b5eaaa226c7551886",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.History: enable complete routing history",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070491972"
+          }
+        ]
+      },
+      {
+        "id": "b6f1d420456e7e749ec3ea66644144b60b5ea8b2",
+        "type": "FIX",
+        "text": " ExtensionPoints: add closest binding info for flex",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007902632020"
+          }
+        ]
+      },
+      {
+        "id": "4380887490ccdee575d3543c8e4a89171fc3b3fb",
+        "type": "FIX",
+        "text": " core/Fragment: Propagate ScopedRunWithOwner to nested Fragments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070375374"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070375371"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129500000386622021"
+          }
+        ]
+      }
+    ]
   }
 }
