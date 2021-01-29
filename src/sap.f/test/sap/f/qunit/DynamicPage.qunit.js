@@ -1355,6 +1355,37 @@ function (
 		oDynamicPage.setPreserveHeaderStateOnScroll(true);
 	});
 
+	QUnit.test("DynamicPage _overridePreserveHeaderStateOnScroll() should be called only once, when on resizing, Header is moved and 'preserveHeaderStateOnScroll' is 'true'",
+		function (assert) {
+		// Arrange
+		var oSpy,
+			oMockResizeWidthEvent = {size: {height: 500}, oldSize:{height: 100}},
+			oMockHeaderResizeWidthEvent = {size: {height: 500}, oldSize:{height: 0}, target: {id: this.oDynamicPage.getHeader().getId()}},
+			done = assert.async(),
+			oDynamicPage = this.oDynamicPage;
+
+		// Act
+		oDynamicPage.addEventDelegate({
+			"onAfterRendering": function() {
+				setTimeout(function() {
+					// Act
+					oSpy = sinon.spy(oDynamicPage, "_overridePreserveHeaderStateOnScroll");
+					oDynamicPage._onResize(oMockResizeWidthEvent);
+					oDynamicPage._onChildControlsHeightChange(oMockHeaderResizeWidthEvent);
+
+					// Assert
+					assert.ok(oSpy.calledOnce, "_overridePreserveHeaderStateOnScroll should be called only once (from resizing), but not second time when header is moved");
+
+					// Clean Up
+					oSpy.reset();
+					done();
+				}, 200);
+			}
+		});
+
+		oDynamicPage.setPreserveHeaderStateOnScroll(true);
+	});
+
 	QUnit.test("DynamicPage _overridePreserveHeaderStateOnScroll() shows the header when 'headerExpanded' is 'true'", function (assert) {
 		// Arrange
 		var oDynamicPage = this.oDynamicPage,

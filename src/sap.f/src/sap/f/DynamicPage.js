@@ -1830,7 +1830,7 @@ sap.ui.define([
 		if (oHeader && oEvent.target.id === oHeader.getId()) {
 			bCurrentHeight = oEvent.size.height;
 			bOldHeight = oEvent.oldSize.height;
-			this._updateHeaderVisualState(bCurrentHeight !== bOldHeight);
+			this._updateHeaderVisualState(bCurrentHeight !== bOldHeight && bCurrentHeight !== 0 && bOldHeight !== 0);
 			this._adaptScrollPositionOnHeaderChange(bCurrentHeight, bOldHeight);
 		}
 	};
