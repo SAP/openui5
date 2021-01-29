@@ -56,6 +56,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS"],
 		if (bRenderLink) {
 			oRm.openStart("a", oControl);
 			oRm.attr("href", oControl.getUrl());
+			oRm.attr("rel", "noopener noreferrer");
 			oRm.attr("draggable", "false"); // <a> elements are draggable per default, use UI5 DnD instead
 		} else {
 			oRm.openStart("div",oControl );
