@@ -63,6 +63,17 @@ sap.ui.define(
 						// 	group: "Data",
 						// 	defaultValue: {name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate'}
 						// }
+					},
+					associations : {
+						/**
+						 * <code>collectiveSearch</code> control of the filterbar.
+						 *
+						 * @since 1.87.0
+						 */
+						collectiveSearch: {
+							type: "sap.ui.mdc.filterbar.vh.CollectiveSearchSelect",
+							multiple: false
+						}
 					}
 				},
 
@@ -131,6 +142,7 @@ sap.ui.define(
 		FilterBar.prototype.exit = function() {
 			FilterBarBase.prototype.exit.apply(this, arguments);
 			this._oBasicSearchField = null;
+			this._oCollectiveSearch = null;
 			this._oBtnFilters = null;
 			this._oShowAllFiltersBtn = null;
 		};
@@ -142,6 +154,33 @@ sap.ui.define(
 		FilterBar.prototype._onShowAllFilters = function (oEvent) {
 			this._oFilterBarLayout._updateFilterBarLayout(true);
 		};
+
+		FilterBar.prototype.setCollectiveSearch = function (oCollectiveSearch) {
+			if (this._oCollectiveSearch) {
+				if (this._oFilterBarLayout) {
+					this._oFilterBarLayout.removeControl(this._oCollectiveSearch);
+				}
+			}
+			this._oCollectiveSearch = oCollectiveSearch;
+			if (this._oFilterBarLayout) {
+				this._oFilterBarLayout.insertControl(this._oCollectiveSearch, 0);
+			}
+		};
+
+		FilterBar.prototype.getCollectiveSearch = function () {
+			return this._oCollectiveSearch;
+		};
+
+		FilterBar.prototype.destroyCollectiveSearch = function () {
+			if (this._oCollectiveSearch && this._oFilterBarLayout) {
+				this._oFilterBarLayout.removeControl(this._oCollectiveSearch);
+				this._oCollectiveSearch.destroy();
+				this._oCollectiveSearch = undefined;
+			}
+
+			return this;
+		};
+
 
 		FilterBar.prototype.setBasicSearchField = function (oBasicSearchField) {
 			if (this._oBasicSearchField) {
@@ -156,7 +195,7 @@ sap.ui.define(
 				this.setExpandFilterFields(false);
 
 				if (this._oFilterBarLayout) {
-					this._oFilterBarLayout.insertControl(oBasicSearchField, 0);
+					this._oFilterBarLayout.insertControl(oBasicSearchField, this._oCollectiveSearch ? 1 : 0);
 				}
 
 				oBasicSearchField.attachSubmit(this._handleFilterItemSubmit, this);
