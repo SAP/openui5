@@ -25,7 +25,8 @@ sap.ui.define([
 	"sap/m/Text", // don't want to test async loading in Field here
 	"sap/m/Button", // test custom control
 	"sap/ui/core/ListItem",
-	"sap/base/util/merge"
+	"sap/base/util/merge",
+	"sap/ui/events/KeyCodes"
 ], function(
 		jQuery,
 		qutils,
@@ -49,7 +50,8 @@ sap.ui.define([
 		Text,
 		Button,
 		ListItem,
-		merge
+		merge,
+		KeyCodes
 		) {
 	"use strict";
 
@@ -248,7 +250,7 @@ sap.ui.define([
 			assert.equal(oField.getPlaceholder(), oMessageBundle.getText("valuehelp.DEFINECONDITIONS_VALUE"), "Placeholder of Field");
 
 			jQuery(oField.getFocusDomRef()).val("foo");
-			qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 			sap.ui.getCore().applyChanges();
 
 			assert.equal(oModel.getConditions("Name").length, 1, "1 conditions should exist");
@@ -398,7 +400,7 @@ sap.ui.define([
 			oField1.focus();
 			setTimeout(function() { // for FieldGroup delay
 				jQuery(oField1.getFocusDomRef()).val("B");
-				qutils.triggerKeyboardEvent(oField1.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+				qutils.triggerKeyboardEvent(oField1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 				oButton.focus(); // to leave FieldGroup
 				sap.ui.getCore().applyChanges();
 				setTimeout(function() { // for FieldGroup delay
@@ -412,7 +414,7 @@ sap.ui.define([
 					oField2.focus();
 					setTimeout(function() { // for fieldGroup delay
 						jQuery(oField2.getFocusDomRef()).val("C");
-						qutils.triggerKeyboardEvent(oField2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+						qutils.triggerKeyboardEvent(oField2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 						oButton.focus(); // to leave FieldGroup
 						sap.ui.getCore().applyChanges();
 						setTimeout(function() { // for FieldGroup delay
@@ -430,7 +432,7 @@ sap.ui.define([
 							oField1.focus();
 							setTimeout(function() { // for FieldGroup delay
 								jQuery(oField1.getFocusDomRef()).val("C");
-								qutils.triggerKeyboardEvent(oField1.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+								qutils.triggerKeyboardEvent(oField1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 								oOperatorField.focus();
 								setTimeout(function() { // for FieldGroup delay
 									oButton.focus(); // to leave FieldGroup

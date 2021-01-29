@@ -48,7 +48,8 @@ sap.ui.define([
 	"sap/ui/core/Icon",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/dom/containsOrEquals",
-	"sap/ui/Device"
+	"sap/ui/Device",
+	"sap/ui/events/KeyCodes"
 ], function(
 	jQuery,
 	qutils,
@@ -95,7 +96,8 @@ sap.ui.define([
 	Icon,
 	InvisibleText,
 	containsOrEquals,
-	Device
+	Device,
+	KeyCodes
 ) {
 	"use strict";
 
@@ -1679,7 +1681,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("X");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
@@ -1708,7 +1710,7 @@ sap.ui.define([
 				iCount = 0; sId = ""; sValue = ""; bValid = undefined; oPromise = undefined;
 				iSubmitCount = 0; sSubmitId = ""; oSubmitPromise = undefined;
 				jQuery(oContent.getFocusDomRef()).val("X");
-				qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+				qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 				setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 					assert.equal(iCount, 1, "change event fired");
 					assert.notOk(bValid, "change event not valid");
@@ -1785,7 +1787,7 @@ sap.ui.define([
 			var oContent = aContent && aContent.length > 0 && aContent[0];
 			oContent.focus();
 			jQuery(oContent.getFocusDomRef()).val("X");
-			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
@@ -1804,7 +1806,7 @@ sap.ui.define([
 			iCount = 0;
 			sId = ""; sValue = ""; bValid = false;
 			jQuery(oContent.getFocusDomRef()).val("Y");
-			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
@@ -1837,7 +1839,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("15");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
@@ -1886,7 +1888,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("15");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
@@ -1943,7 +1945,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("X");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.equal(sValue, "X", "change event value");
@@ -1967,7 +1969,7 @@ sap.ui.define([
 		sId = "";
 		sValue = undefined;
 		jQuery(oContent.getFocusDomRef()).val("");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.notOk(sValue, "change event value");
@@ -1986,7 +1988,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("X");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.equal(sValue, "X", "change event value");
@@ -2013,7 +2015,7 @@ sap.ui.define([
 		jQuery(oContent1.getFocusDomRef()).val("1.11");
 		oContent2.focus();
 		jQuery(oContent2.getFocusDomRef()).val("EUR");
-		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(Array.isArray(sValue), "change event value is array");
@@ -2041,7 +2043,7 @@ sap.ui.define([
 		jQuery(oContent1.getFocusDomRef()).val("1.11");
 		oContent2.focus();
 		jQuery(oContent2.getFocusDomRef()).val("EUR");
-		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired twice");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(Array.isArray(sValue), "change event value is array");
@@ -2060,7 +2062,7 @@ sap.ui.define([
 		sValue = undefined;
 		oContent1.focus();
 		jQuery(oContent1.getFocusDomRef()).val("1...3");
-		qutils.triggerKeyboardEvent(oContent1.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent1.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(bValid, "change event valid");
@@ -2078,7 +2080,7 @@ sap.ui.define([
 		sValue = undefined;
 		oContent2.focus();
 		jQuery(oContent2.getFocusDomRef()).val("USD");
-		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(bValid, "change event valid");
@@ -2111,7 +2113,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("15");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
@@ -2166,7 +2168,7 @@ sap.ui.define([
 
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("X"); // set something before it can be cleared
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		sinon.spy(oField._oContentFactory._oConditionsType, "parseValue");
 		sinon.spy(oField._oContentFactory._oConditionsType, "validateValue");
@@ -2175,7 +2177,7 @@ sap.ui.define([
 		sValue = undefined;
 		bValid = undefined;
 		jQuery(oContent.getFocusDomRef()).val("");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
 			assert.ok(oField._oContentFactory._oConditionsType.parseValue.called, "ConditionsType parseValue used");
 			assert.ok(oField._oContentFactory._oConditionsType.validateValue.called, "ConditionsType validateValue used");
@@ -2202,8 +2204,8 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("X");
-		qutils.triggerKeydown(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
-		qutils.triggerKeyup(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyup(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.equal(sValue, "X", "change event value");
@@ -2263,7 +2265,7 @@ sap.ui.define([
 			assert.ok(!!oSlider.getDomRef(), "Slider is rendered");
 			if (oSlider.getDomRef()) {
 				oSlider.focus();
-				qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+				qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 				assert.equal(iCount, 1, "change event fired once");
 				assert.equal(sId, "F1", "change event fired on Field");
 				assert.equal(sValue, 71, "change event value");
@@ -2275,7 +2277,7 @@ sap.ui.define([
 				assert.equal(sLiveId, "F1", "liveChange event fired on Field");
 				assert.equal(sLiveValue, 71, "liveChange event value");
 
-				qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+				qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 				assert.equal(iSubmitCount, 1, "submit event fired once");
 				assert.equal(sSubmitId, "F1", "submit event fired on Field");
 				assert.ok(oSubmitPromise, "submit: Promise returned");
@@ -2286,7 +2288,7 @@ sap.ui.define([
 				oSlider.placeAt("content");
 				sap.ui.getCore().applyChanges();
 				oSlider.focus();
-				qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+				qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 				assert.equal(iCount, 1, "change event of field not fired again");
 
 				oButton.firePress(); //simulate press
@@ -2378,7 +2380,7 @@ sap.ui.define([
 
 		oContent.focus();
 		jQuery(oContent.getFocusDomRef()).val("X");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "Event fired once");
 		assert.equal(sId, "F1", "Event fired on original Field");
 
@@ -2388,7 +2390,7 @@ sap.ui.define([
 
 		oCloneContent.focus();
 		jQuery(oCloneContent.getFocusDomRef()).val("Y");
-		qutils.triggerKeyboardEvent(oCloneContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oCloneContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "Event fired once");
 		assert.equal(sId, "F1-myClone", "Event fired on clone");
 
@@ -2420,7 +2422,7 @@ sap.ui.define([
 		assert.equal(oCloneSlider.getModel("$field"), oClone._oManagedObjectModel, "Clone-Slider has ManagedObjectModel of Clone");
 
 		oSlider.focus();
-		qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeyboardEvent(oSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 		assert.equal(iCount, 1, "Event fired once");
 		assert.equal(sId, "F1", "Event fired on original Field");
 
@@ -2429,7 +2431,7 @@ sap.ui.define([
 		sValue = "";
 
 		oCloneSlider.focus();
-		qutils.triggerKeyboardEvent(oCloneSlider.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeyboardEvent(oCloneSlider.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 		assert.equal(iCount, 1, "Event fired once");
 		assert.equal(sId, "F1-myClone", "Event fired on clone");
 
@@ -2467,7 +2469,7 @@ sap.ui.define([
 		assert.notOk(oCloneSlider2.getModel("$field"), "Clone-Slider for display mode not bound to ManagedObjectModel of Clone as not rendered");
 
 		oSlider1.focus();
-		qutils.triggerKeyboardEvent(oSlider1.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeyboardEvent(oSlider1.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 		assert.equal(iCount, 1, "Event fired once");
 		assert.equal(sId, "F1", "Event fired on original Field");
 
@@ -2476,7 +2478,7 @@ sap.ui.define([
 		sValue = "";
 
 		oCloneSlider1.focus();
-		qutils.triggerKeyboardEvent(oCloneSlider1.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeyboardEvent(oCloneSlider1.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 		assert.equal(iCount, 1, "Event fired once");
 		assert.equal(sId, "F1-myClone", "Event fired on clone");
 
@@ -2562,7 +2564,7 @@ sap.ui.define([
 		assert.equal(aConditions[0].values[0], "Hello", "condition value");
 		assert.equal(aConditions[0].operator, "EQ", "condition operator");
 		assert.equal(oContent._$input.val(), "Navigate (Y)", "Field shown value");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.ok(oFieldHelp.onFieldChange.calledTwice, "onFieldChange called on FieldHelp");
 
 		// simulate value help request to see if FieldHelp opens
@@ -2829,7 +2831,7 @@ sap.ui.define([
 		// open again to test escape without LiveChange event
 		oContent.fireValueHelpRequest();
 		oClock.tick(400); // fake time to open trigger
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ESCAPE, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ESCAPE, false, false, false);
 		oClock.tick(400); // fake time to close trigger
 
 		assert.notOk(oFieldHelp.isOpen(), "FieldHelp closed");
@@ -2961,7 +2963,7 @@ sap.ui.define([
 		// simulate Enter: Filter value must be removed but no change fired.
 		iCount = 0;
 		sValue = ""; bValid = undefined;
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 0, "Change Event not fired");
 		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
 		aConditions = oCM.getConditions("Name");
@@ -3079,21 +3081,21 @@ sap.ui.define([
 		sinon.spy(oContent, "onsapnext");
 		sinon.spy(oContent, "onsapbackspace");
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 		assert.ok(oContent.onsapnext.called, "onsapnext called on content control");
 		oContent.onsapnext.resetHistory();
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
 		assert.ok(oContent.onsapnext.notCalled, "onsapnext not called on content control");
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_LEFT, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_LEFT, false, false, false);
 		assert.ok(oContent.onsapprevious.called, "onsapprevious called on content control");
 		oContent.onsapprevious.resetHistory();
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 		assert.ok(oContent.onsapprevious.notCalled, "onsapprevious not called on content control");
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.BACKSPACE, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.BACKSPACE, false, false, false);
 		assert.ok(oContent.onsapbackspace.called, "onsapbackspace called on content control");
 
 	});
@@ -3110,13 +3112,13 @@ sap.ui.define([
 		sinon.spy(oContent, "onsapnext");
 		sinon.spy(oContent, "onsapbackspace");
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_RIGHT, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_RIGHT, false, false, false);
 		assert.ok(oContent.onsapnext.notCalled, "onsapnext not called on content control");
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_LEFT, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_LEFT, false, false, false);
 		assert.ok(oContent.onsapprevious.notCalled, "onsapprevious not called on content control");
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.BACKSPACE, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.BACKSPACE, false, false, false);
 		assert.ok(oContent.onsapbackspace.notCalled, "onsapbackspace not called on content control");
 
 	});
@@ -3132,11 +3134,11 @@ sap.ui.define([
 		sinon.spy(oContent, "onsapprevious");
 		sinon.spy(oContent, "onsapnext");
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
 		assert.ok(oFieldHelp.navigate.calledWith(1), "navigate called");
 		assert.ok(oContent.onsapnext.notCalled, "onsapnext not called on content control");
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 		assert.ok(oFieldHelp.navigate.calledWith(-1), "navigate called");
 		assert.ok(oContent.onsapprevious.notCalled, "onsapprevious not called on content control");
 
@@ -3148,7 +3150,7 @@ sap.ui.define([
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I2", "condition value");
 		assert.equal(oContent._$input.val(), "Item 3", "Field shown value");
 
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.ok(oFieldHelp.onFieldChange.called, "onFieldChange called on FieldHelp");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 2, "two conditions in Codition model");
@@ -3181,10 +3183,10 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
 		assert.ok(oFieldHelp.navigate.calledWith(1), "navigate called");
 
-		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+		qutils.triggerKeyboardEvent(oField.getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
 		assert.ok(oFieldHelp.navigate.calledWith(-1), "navigate called");
 
 		oFieldHelp.fireNavigate({ value: "Item 3", key: "I3" });
@@ -3194,7 +3196,7 @@ sap.ui.define([
 		assert.equal(aConditions[0] && aConditions[0].values[0], "I2", "condition value");
 		assert.equal(oContent._$input.val(), "Item 3", "Field shown value");
 
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.ok(oFieldHelp.onFieldChange.called, "onFieldChange called on FieldHelp");
 		aConditions = oCM.getConditions("Name");
 		assert.equal(aConditions.length, 1, "one conditions in Codition model");
@@ -3258,7 +3260,7 @@ sap.ui.define([
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent.fireValueHelpRequest();
 		oContent._$input.val("=Item1");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		assert.equal(oFieldHelp.getFilterValue(), "", "FilterValue reset");
 		assert.ok(oFieldHelp.getItemForValue.calledWith("Item1"), "getItemForValue called");
@@ -3284,7 +3286,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent._$input.val("=Invalid");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		assert.ok(oFieldHelp.getItemForValue.calledWith("Invalid"), "getItemForValue called");
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
@@ -3307,7 +3309,7 @@ sap.ui.define([
 			iCount = 0; sId = null; sValue = null; bValid = null;
 			oFieldHelp.setValidateInput(false);
 			oContent._$input.val("=Unknown");
-			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 			assert.equal(iCount, 1, "change event fired once");
 			assert.equal(sId, "F1", "change event fired on Field");
 			assert.ok(bValid, "change event valid");
@@ -3342,7 +3344,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent._$input.val("Invalid");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		assert.ok(oFieldHelp.getItemForValue.calledWith("Invalid"), "getItemForValue called");
 		setTimeout(function() { // to wait for valueStateMessage in IE (otherwise it fails after control destroyed)
@@ -3364,7 +3366,7 @@ sap.ui.define([
 			iCount = 0; sId = null; sValue = null; bValid = null;
 			oFieldHelp.setValidateInput(false);
 			oContent._$input.val("Unknown");
-			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+			qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 			setTimeout(function() { // to update value state
 				assert.equal(iCount, 1, "change event fired once");
 				assert.equal(sId, "F1", "change event fired on Field");
@@ -3468,7 +3470,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		jQuery(oContent.getFocusDomRef()).val("Item3");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.notOk(sValue, "change event has no value");
@@ -3527,7 +3529,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		jQuery(oContent.getFocusDomRef()).val("Item3");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "change event fired once");
 		assert.equal(sId, "F1", "change event fired on Field");
 		assert.ok(oPromise, "Promise returned");
@@ -3571,7 +3573,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent._$input.val("=Invalid");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		assert.ok(oFieldHelp.getItemForValue.calledWith("Invalid"), "getItemForValue called");
 		assert.equal(iCount, 1, "change event fired once");
@@ -3602,7 +3604,7 @@ sap.ui.define([
 					// use default operator
 					iCount = 0; sId = null; sValue = null; bValid = null; oPromise = null;
 					oContent._$input.val("Invalid");
-					qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+					qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 					assert.ok(oFieldHelp.getItemForValue.calledWith("Invalid"), "getItemForValue called");
 					assert.equal(iCount, 1, "change event fired once");
@@ -3630,7 +3632,7 @@ sap.ui.define([
 								iCount = 0; sId = null; sValue = null; bValid = null; oPromise = null;
 								oFieldHelp.setValidateInput(false);
 								oContent._$input.val("=Unknown");
-								qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+								qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 								assert.equal(iCount, 1, "change event fired once");
 								assert.equal(sId, "F1", "change event fired on Field");
 								assert.ok(oPromise, "Promise returned");
@@ -3656,7 +3658,7 @@ sap.ui.define([
 											iCount = 0; sId = null; sValue = null; bValid = null; oPromise = null;
 											oFieldHelp.onFieldChange.resetHistory();
 											oContent._$input.val("=Item9");
-											qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+											qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 											assert.equal(iCount, 1, "change event fired once");
 											assert.equal(sId, "F1", "change event fired on Field");
 											assert.ok(oPromise, "Promise returned");
@@ -3732,7 +3734,7 @@ sap.ui.define([
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
 		oContent._$input.val("Invalid");
-		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		assert.ok(oFieldHelp.getItemForValue.calledWith("Invalid"), "getItemForValue called");
 		assert.equal(iCount, 1, "change event fired once");
@@ -3762,7 +3764,7 @@ sap.ui.define([
 					iCount = 0; sId = null; sValue = null; bValid = null; oPromise = null;
 					oFieldHelp.setValidateInput(false);
 					oContent._$input.val("Unknown");
-					qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+					qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 					assert.equal(iCount, 1, "change event fired once");
 					assert.equal(sId, "F1", "change event fired on Field");
 					assert.ok(oPromise, "Promise returned");
@@ -3786,7 +3788,7 @@ sap.ui.define([
 								iCount = 0; sId = null; sValue = null; bValid = null; oPromise = null;
 								oFieldHelp.onFieldChange.resetHistory();
 								oContent._$input.val("Item9");
-								qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+								qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 								assert.equal(iCount, 1, "change event fired once");
 								assert.equal(sId, "F1", "change event fired on Field");
 								assert.ok(oPromise, "Promise returned");
@@ -3813,7 +3815,7 @@ sap.ui.define([
 											iCount = 0; sId = null; sValue = null; bValid = null; oPromise = null;
 											oFieldHelp.onFieldChange.resetHistory();
 											oContent._$input.val("");
-											qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+											qutils.triggerKeyboardEvent(oContent.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 											assert.equal(iCount, 1, "change event fired once");
 											assert.equal(sId, "F1", "change event fired on Field");
 											assert.ok(oPromise, "Promise returned");
@@ -4143,7 +4145,7 @@ sap.ui.define([
 						});
 						oFieldHelp.getItemForValue.withArgs("USD").returns(oFHPromise);
 						oContent2._$input.val("USD");
-						qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+						qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 						assert.equal(iCount, 1, "Change Event fired");
 						assert.ok(oPromise, "Promise returned");
 						fnResolve({key: "USD", description: "$", inParameters: {inTest: "X"}, outParameters: {outTest: "Y"}});
@@ -4294,7 +4296,7 @@ sap.ui.define([
 		assert.equal(aConditions[1].operator, "BT", "condition operator");
 		assert.equal(oContent2.getDOMValue(), "EUR", "value in inner control");
 
-		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		assert.equal(iCount, 1, "Change Event fired");
 
 		setTimeout(function() { // wait for Model update
@@ -4340,7 +4342,7 @@ sap.ui.define([
 		assert.equal(oContent1.getDOMValue(), "", "value in inner number-control");
 		assert.equal(oContent2.getDOMValue(), "EUR", "value in inner unit-control");
 
-		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 		var aConditions = oCM.getConditions("Price");
 		assert.equal(aConditions.length, 2, "two conditions in Codition model");
 		assert.equal(aConditions[0].values[0][0], 123.45, "condition0 value0-number");
@@ -4364,7 +4366,7 @@ sap.ui.define([
 			oCM.removeAllConditions();
 			setTimeout(function() { // wait for Model update
 				oFieldHelp.fireNavigate({ value: "EUR", key: "EUR", condition: oCondition });
-				qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+				qutils.triggerKeyboardEvent(oContent2.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 				aConditions = oCM.getConditions("Price");
 				assert.equal(aConditions.length, 1, "one condition in Codition model");
 				assert.equal(aConditions[0].values[0][0], undefined, "condition0 value0-number");

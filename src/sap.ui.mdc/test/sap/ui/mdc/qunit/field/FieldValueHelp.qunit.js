@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/ui/model/type/String",
 	"sap/ui/Device",
 	"sap/base/util/merge",
+	"sap/ui/events/KeyCodes",
 	"sap/m/library",
 	"sap/m/Popover",
 	"sap/m/Dialog",
@@ -56,6 +57,7 @@ sap.ui.define([
 		StringType,
 		Device,
 		merge,
+		KeyCodes,
 		mLibrary,
 		Popover,
 		Dialog,
@@ -2286,8 +2288,8 @@ sap.ui.define([
 		var oSearchField = oSearchFilterField.getAggregation("_content")[0];
 		qutils.triggerCharacterInput(oSearchField.getFocusDomRef(), "-" );
 		oSearchField.setValue("-"); // as onInput SearchField sets it's value
-		qutils.triggerKeydown(oSearchField.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
-		qutils.triggerKeyup(oSearchField.getFocusDomRef().id, jQuery.sap.KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeydown(oSearchField.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
+		qutils.triggerKeyup(oSearchField.getFocusDomRef().id, KeyCodes.ENTER, false, false, false);
 
 		oClock.restore(); // as search event is handled in a Promise
 		var fnDone = assert.async();
