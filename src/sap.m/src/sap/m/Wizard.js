@@ -1119,7 +1119,8 @@ sap.ui.define([
 
 			var iScrollTop = oEvent.target.scrollTop,
 				oProgressNavigator = this._getProgressNavigator(),
-				oCurrentStepDOM = this._aStepPath[oProgressNavigator.getCurrentStep() - 1].getDomRef();
+				oCurrentStep = this._aStepPath[oProgressNavigator.getCurrentStep() - 1],
+				oCurrentStepDOM = oCurrentStep && oCurrentStep.getDomRef();
 
 			if (!oCurrentStepDOM) {
 				return;
@@ -1140,7 +1141,8 @@ sap.ui.define([
 					oProgressNavigator.previousStep();
 
 					// update the currentStep reference
-					oCurrentStepDOM = this._aStepPath[oProgressNavigator.getCurrentStep() - 1].getDomRef();
+					oCurrentStep = this._aStepPath[oProgressNavigator.getCurrentStep() - 1];
+					oCurrentStepDOM = oCurrentStep && oCurrentStep.getDomRef();
 
 					if (!oCurrentStepDOM) {
 						break;
