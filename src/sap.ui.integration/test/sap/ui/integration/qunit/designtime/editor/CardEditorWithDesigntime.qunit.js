@@ -269,15 +269,13 @@ sap.ui.define([
 					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Editor is ComboBox");
 					var aItems = oField.getAggregation("_field").getItems();
-					assert.ok(aItems.length === 4, "Field: Select items lenght is OK");
-					assert.ok(aItems[0].getKey() === "", "Field: Select item 0 Key is OK");
-					assert.ok(aItems[0].getText() === "", "Field: Select item 0 Text is OK");
-					assert.ok(aItems[1].getKey() === "key1", "Field: Select item 1 Key is OK");
-					assert.ok(aItems[1].getText() === "text1", "Field: Select item 1 Text is OK");
-					assert.ok(aItems[2].getKey() === "key2", "Field: Select item 2 Key is OK");
-					assert.ok(aItems[2].getText() === "text2", "Field: Select item 2 Text is OK");
-					assert.ok(aItems[3].getKey() === "key3", "Field: Select item 3 Key is OK");
-					assert.ok(aItems[3].getText() === "text3", "Field: Select item 3 Text is OK");
+					assert.ok(aItems.length === 3, "Field: Select items lenght is OK");
+					assert.ok(aItems[0].getKey() === "key1", "Field: Select item 0 Key is OK");
+					assert.ok(aItems[0].getText() === "text1", "Field: Select item 0 Text is OK");
+					assert.ok(aItems[1].getKey() === "key2", "Field: Select item 1 Key is OK");
+					assert.ok(aItems[1].getText() === "text2", "Field: Select item 1 Text is OK");
+					assert.ok(aItems[2].getKey() === "key3", "Field: Select item 1 Key is OK");
+					assert.ok(aItems[2].getText() === "text3", "Field: Select item 1 Text is OK");
 					resolve();
 				}.bind(this));
 			}.bind(this));
@@ -315,17 +313,15 @@ sap.ui.define([
 						assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 						assert.ok(oField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Editor is ComboBox");
 						var aItems = oField.getAggregation("_field").getItems();
-						assert.ok(aItems.length === 5, "Field: Select items lenght is OK");
-						assert.ok(aItems[0].getKey() === "", "Field: Select item 0 Key is OK");
-						assert.ok(aItems[0].getText() === "", "Field: Select item 0 Text is OK");
-						assert.ok(aItems[1].getKey() === "key1", "Field: Select item 1 Key is OK");
-						assert.ok(aItems[1].getText() === "text1req", "Field: Select item 1 Text is OK");
-						assert.ok(aItems[2].getKey() === "key2", "Field: Select item 2 Key is OK");
-						assert.ok(aItems[2].getText() === "text2req", "Field: Select item 2 Text is OK");
-						assert.ok(aItems[3].getKey() === "key3", "Field: Select item 3 Key is OK");
-						assert.ok(aItems[3].getText() === "text3req", "Field: Select item 3 Text is OK");
-						assert.ok(aItems[4].getKey() === "key4", "Field: Select item 4 Key is OK");
-						assert.ok(aItems[4].getText() === "text4req", "Field: Select item 4 Text is OK");
+						assert.ok(aItems.length === 4, "Field: Select items lenght is OK");
+						assert.ok(aItems[0].getKey() === "key1", "Field: Select item 0 Key is OK");
+						assert.ok(aItems[0].getText() === "text1req", "Field: Select item 0 Text is OK");
+						assert.ok(aItems[1].getKey() === "key2", "Field: Select item 1 Key is OK");
+						assert.ok(aItems[1].getText() === "text2req", "Field: Select item 1 Text is OK");
+						assert.ok(aItems[2].getKey() === "key3", "Field: Select item 2 Key is OK");
+						assert.ok(aItems[2].getText() === "text3req", "Field: Select item 2 Text is OK");
+						assert.ok(aItems[3].getKey() === "key4", "Field: Select item 3 Key is OK");
+						assert.ok(aItems[3].getText() === "text4req", "Field: Select item 3 Text is OK");
 						resolve();
 					}, 500);
 				}.bind(this));
@@ -4671,7 +4667,7 @@ sap.ui.define([
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
+					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
@@ -4697,11 +4693,11 @@ sap.ui.define([
 					assert.ok(oCustomerLimitField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
-						assert.ok(oCustomerField.getAggregation("_field").getItems().length === 21, "Field: Costomer lenght is OK");
-						assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 10, "Field: Employee lenght is OK");
+						assert.ok(oCustomerField.getAggregation("_field").getItems().length === 20, "Field: Customer lenght is OK");
+						assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 9, "Field: Employee lenght is OK");
 						assert.ok(oOrderField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
 						assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
-						assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+						assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 5, "Field: CustomerWithTopAndSkipOption lenght is OK");
 						resolve();
 					}, 10000);
 				}.bind(this));
@@ -4755,7 +4751,7 @@ sap.ui.define([
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
+					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
@@ -4782,15 +4778,15 @@ sap.ui.define([
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
 						var oComboBox = oCustomerField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 21, "Field: Costomer lenght is OK");
-						oComboBox.setSelectedIndex(1);
-						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+						assert.ok(oComboBox.getItems().length === 20, "Field: Customer lenght is OK");
+						oComboBox.setSelectedIndex(0);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 						setTimeout(function () {
-							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 21, "Field: Costomer lenght is OK");
-							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 10, "Field: Employee lenght is OK");
+							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 20, "Field: Customer lenght is OK");
+							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 9, "Field: Employee lenght is OK");
 							assert.ok(oOrderField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
 							assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
-							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 5, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
 						}, 5000);
 					}, 5000);
@@ -4846,7 +4842,7 @@ sap.ui.define([
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
+					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
@@ -4873,15 +4869,15 @@ sap.ui.define([
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
 						var oComboBox = oEmployeeField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 10, "Field: Employee lenght is OK");
-						oComboBox.setSelectedIndex(1);
-						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+						assert.ok(oComboBox.getItems().length === 9, "Field: Employee lenght is OK");
+						oComboBox.setSelectedIndex(0);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 						setTimeout(function () {
-							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 21, "Field: Costomer lenght is OK");
-							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 10, "Field: Employee lenght is OK");
+							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 20, "Field: Customer lenght is OK");
+							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 9, "Field: Employee lenght is OK");
 							assert.ok(oOrderField.getAggregation("_field").getItems().length === 0, "Field: Order lenght is OK");
 							assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
-							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 5, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
 						}, 5000);
 					}, 5000);
@@ -4937,7 +4933,7 @@ sap.ui.define([
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
+					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
@@ -4964,19 +4960,19 @@ sap.ui.define([
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
 						var oComboBox = oCustomerField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 21, "Field: Costomer lenght is OK");
-						oComboBox.setSelectedIndex(1);
-						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+						assert.ok(oComboBox.getItems().length === 20, "Field: Customer lenght is OK");
+						oComboBox.setSelectedIndex(0);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 						oComboBox = oEmployeeField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 10, "Field: Employee lenght is OK");
-						oComboBox.setSelectedIndex(1);
-						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+						assert.ok(oComboBox.getItems().length === 9, "Field: Employee lenght is OK");
+						oComboBox.setSelectedIndex(0);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 						setTimeout(function () {
-							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 21, "Field: Costomer lenght is OK");
-							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 10, "Field: Employee lenght is OK");
-							assert.ok(oOrderField.getAggregation("_field").getItems().length === 3, "Field: Order lenght is OK");
+							assert.ok(oCustomerField.getAggregation("_field").getItems().length === 20, "Field: Customer lenght is OK");
+							assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 9, "Field: Employee lenght is OK");
+							assert.ok(oOrderField.getAggregation("_field").getItems().length === 2, "Field: Order lenght is OK");
 							assert.ok(oProductField.getAggregation("_field").getItems().length === 0, "Field: Product lenght is OK");
-							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+							assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 5, "Field: CustomerWithTopAndSkipOption lenght is OK");
 							resolve();
 						}, 5000);
 					}, 5000);
@@ -5032,7 +5028,7 @@ sap.ui.define([
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
+					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
@@ -5059,24 +5055,24 @@ sap.ui.define([
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
 						var oComboBox = oCustomerField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 21, "Field: Costomer lenght is OK");
+						assert.ok(oComboBox.getItems().length === 20, "Field: Customer lenght is OK");
+						oComboBox.setSelectedIndex(1);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+						oComboBox = oEmployeeField.getAggregation("_field");
+						assert.ok(oComboBox.getItems().length === 9, "Field: Employee lenght is OK");
 						oComboBox.setSelectedIndex(2);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[2] });
-						oComboBox = oEmployeeField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 10, "Field: Employee lenght is OK");
-						oComboBox.setSelectedIndex(3);
-						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[3] });
 						setTimeout(function () {
 							oComboBox = oOrderField.getAggregation("_field");
-							assert.ok(oComboBox.getItems().length === 3, "Field: Order lenght is OK");
-							oComboBox.setSelectedIndex(1);
-							oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+							assert.ok(oComboBox.getItems().length === 2, "Field: Order lenght is OK");
+							oComboBox.setSelectedIndex(0);
+							oComboBox.fireChange({ selectedItem: oComboBox.getItems()[0] });
 							setTimeout(function () {
-								assert.ok(oCustomerField.getAggregation("_field").getItems().length === 21, "Field: Costomer lenght is OK");
-								assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 10, "Field: Employee lenght is OK");
-								assert.ok(oOrderField.getAggregation("_field").getItems().length === 3, "Field: Order lenght is OK");
-								assert.ok(oProductField.getAggregation("_field").getItems().length === 4, "Field: Product lenght is OK");
-								assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+								assert.ok(oCustomerField.getAggregation("_field").getItems().length === 20, "Field: Customer lenght is OK");
+								assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 9, "Field: Employee lenght is OK");
+								assert.ok(oOrderField.getAggregation("_field").getItems().length === 2, "Field: Order lenght is OK");
+								assert.ok(oProductField.getAggregation("_field").getItems().length === 3, "Field: Product lenght is OK");
+								assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 5, "Field: CustomerWithTopAndSkipOption lenght is OK");
 								resolve();
 							}, 5000);
 						}, 5000);
@@ -5133,7 +5129,7 @@ sap.ui.define([
 					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
 					assert.ok(oCustomerLabel.getText() === "Customer", "Label: Has static label text");
 					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Costomers is ComboBox");
+					assert.ok(oCustomerField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: Customers is ComboBox");
 
 					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[3];
 					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[4];
@@ -5160,24 +5156,24 @@ sap.ui.define([
 					assert.ok(oCustomerLimitField.getAggregation("_field").isA("sap.m.ComboBox"), "Field: CustomerWithTopAndSkipOption is ComboBox");
 					setTimeout(function () {
 						var oComboBox = oCustomerField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 21, "Field: Costomer lenght is OK");
+						assert.ok(oComboBox.getItems().length === 20, "Field: Customer lenght is OK");
+						oComboBox.setSelectedIndex(1);
+						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
+						oComboBox = oEmployeeField.getAggregation("_field");
+						assert.ok(oComboBox.getItems().length === 9, "Field: Employee lenght is OK");
 						oComboBox.setSelectedIndex(2);
 						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[2] });
-						oComboBox = oEmployeeField.getAggregation("_field");
-						assert.ok(oComboBox.getItems().length === 10, "Field: Employee lenght is OK");
-						oComboBox.setSelectedIndex(3);
-						oComboBox.fireChange({ selectedItem: oComboBox.getItems()[3] });
 						setTimeout(function () {
 							oComboBox = oOrderField.getAggregation("_field");
-							assert.ok(oComboBox.getItems().length === 3, "Field: Order lenght is OK");
-							oComboBox.setSelectedIndex(2);
-							oComboBox.fireChange({ selectedItem: oComboBox.getItems()[2] });
+							assert.ok(oComboBox.getItems().length === 2, "Field: Order lenght is OK");
+							oComboBox.setSelectedIndex(1);
+							oComboBox.fireChange({ selectedItem: oComboBox.getItems()[1] });
 							setTimeout(function () {
-								assert.ok(oCustomerField.getAggregation("_field").getItems().length === 21, "Field: Costomer lenght is OK");
-								assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 10, "Field: Employee lenght is OK");
-								assert.ok(oOrderField.getAggregation("_field").getItems().length === 3, "Field: Order lenght is OK");
-								assert.ok(oProductField.getAggregation("_field").getItems().length === 2, "Field: Product lenght is OK");
-								assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 6, "Field: CustomerWithTopAndSkipOption lenght is OK");
+								assert.ok(oCustomerField.getAggregation("_field").getItems().length === 20, "Field: Customer lenght is OK");
+								assert.ok(oEmployeeField.getAggregation("_field").getItems().length === 9, "Field: Employee lenght is OK");
+								assert.ok(oOrderField.getAggregation("_field").getItems().length === 2, "Field: Order lenght is OK");
+								assert.ok(oProductField.getAggregation("_field").getItems().length === 1, "Field: Product lenght is OK");
+								assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 5, "Field: CustomerWithTopAndSkipOption lenght is OK");
 								resolve();
 							}, 5000);
 						}, 5000);
@@ -5400,8 +5396,8 @@ sap.ui.define([
 					setTimeout(function () {
 						//should resolve the destination within 1000ms
 						assert.ok(DestinationSelect.getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
-						assert.ok(DestinationSelect.getItems().length === 5, "Content of Form contains: Destination Field items lengh OK");
-						assert.ok(DestinationSelect.getSelectedIndex() === 4, "Content of Form contains: Destination Field selectedItem: Index OK");
+						assert.ok(DestinationSelect.getItems().length === 4, "Content of Form contains: Destination Field items lengh OK");
+						assert.ok(DestinationSelect.getSelectedIndex() === 3, "Content of Form contains: Destination Field selectedItem: Index OK");
 						assert.ok(DestinationSelect.getSelectedItem().getKey() === "Northwind", "Content of Form contains: Destination Field selectedItem: Key OK");
 						assert.ok(DestinationSelect.getSelectedItem().getText() === "Northwind", "Content of Form contains: Destination Field selectedItem: Text OK");
 						resolve();

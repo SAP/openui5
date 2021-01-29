@@ -257,6 +257,7 @@ sap.ui.define([
 		var aChanges = this._initalChanges.concat([this.getParent().getCurrentSettings()]);
 		this._oCardPreview.setManifestChanges(aChanges);
 		this._oCardPreview.setManifest(this.getCard()._oCardManifest._oManifest.getRawJson());
+		this._oCardPreview.setHost(this.getCard().getHost());
 		this._oCardPreview.refresh();
 		this._oCardPreview.editor = this._oCardPreview.editor || {};
 		this._oCardPreview.preview = this._oCardPreview.editor.preview = this;

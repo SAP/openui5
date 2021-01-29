@@ -175,7 +175,19 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"manifestpath": "/sap.card/configuration/parameters/enum/value",
 						"label": "Enumerations",
 						"type": "enum",
+						"required": true,
+						"enum": [
+							"Option A",
+							"Option B",
+							"Option C"
+						]
+					},
+					"enumWithDefaultValue": {
+						"manifestpath": "/sap.card/configuration/parameters/enumWithDefaultValue/value",
+						"label": "Enumerations",
+						"type": "enum",
 						"defaultValue": "Option A",
+						"required": true,
 						"enum": [
 							"Option A",
 							"Option B",

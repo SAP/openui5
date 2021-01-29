@@ -48,6 +48,7 @@ sap.ui.define([
 							selectedKey: {
 								path: 'currentSettings>value'
 							},
+							forceSelection: false,
 							editable: oConfig.editable,
 							showSecondaryValues: false,
 							width: "100%",

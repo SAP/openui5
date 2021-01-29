@@ -7,6 +7,9 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 				//resolve local to local path
 				return "./";
 			}
+			if (name === "Northwind") {
+				return "https://services.odata.org/V4/Northwind/Northwind.svc";
+			}
 		}
 	});
 

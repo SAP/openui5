@@ -34,6 +34,7 @@ sap.ui.define([
 				settings: {
 					busy: { path: 'currentSettings>_loading' },
 					selectedKey: { path: 'currentSettings>value' },
+					forceSelection: false,
 					width: "100%",
 					items: {
 						path: "currentSettings>_values", template: new ListItem({

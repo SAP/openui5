@@ -1029,9 +1029,6 @@ sap.ui.define([
 	 * @param {BaseField} oField
 	 */
 	CardEditor.prototype._addValueListModel = function (oConfig, oField, bIgnore) {
-		if (oConfig.enum && oConfig.enum.length > 0 && oConfig.enum[0] !== "") {
-			oConfig.enum = [""].concat(oConfig.enum);
-		}
 		if (oConfig.values && oConfig.values.data && this._oProviderCard && this._oProviderCard._oDataProviderFactory) {
 			var oValueModel = new JSONModel({});
 			var oDataProvider = this._oProviderCard._oDataProviderFactory.create(oConfig.values.data);
@@ -1044,23 +1041,6 @@ sap.ui.define([
 				if (oConfig._cancel) {
 					oConfig._values = [];
 					return;
-				}
-				var sPath = oConfig.values.data.path;
-				if (sPath && sPath !== "/") {
-					if (sPath.startsWith("/")) {
-						sPath = sPath.substring(1);
-					}
-					if (sPath.endsWith("/")) {
-						sPath = sPath.substring(0, sPath.length - 1);
-					}
-					var aPath = sPath.split("/");
-					var oResult = ObjectPath.get(aPath, oData);
-					if (Array.isArray(oResult) && oResult.length > 0 && oConfig.type !== "string[]") {
-						oResult = [{}].concat(oResult);
-						ObjectPath.set(aPath, oResult, oData);
-					}
-				} else if (Array.isArray(oData) && oData.length > 0 && oConfig.type !== "string[]") {
-					oData = [{}].concat(oData);
 				}
 				oConfig._values = oData;
 				oValueModel.setData(oData);
@@ -1581,8 +1561,7 @@ sap.ui.define([
 			}
 			var oItems = oSettings.form.items;
 			Object.keys(oConfiguration.destinations).forEach(function (n) {
-				var _values = [{}], //empty entry
-					oHost = this._oEditorCard.getHostInstance();
+				var oHost = this._oEditorCard.getHostInstance();
 				oItems[n + ".destinaton"] = merge({
 					manifestpath: sBasePath + n + "/name", //destination points to name not value
 					visible: true,
@@ -1602,7 +1581,7 @@ sap.ui.define([
 				if (oHost) {
 					oItems[n + ".destinaton"]._loading = true;
 					this._oEditorCard.getHostInstance().getDestinations().then(function (n, a) {
-						oItems[n + ".destinaton"]._values = _values.concat(a);
+						oItems[n + ".destinaton"]._values = a;
 						oItems[n + ".destinaton"]._loading = false;
 						this._settingsModel.checkUpdate(true);
 					}.bind(this, n)); //pass in n as first parameter
