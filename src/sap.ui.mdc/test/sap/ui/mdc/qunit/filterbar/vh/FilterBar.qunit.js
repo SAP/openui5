@@ -4,12 +4,14 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/filterbar/FilterBarBase",
 	"sap/ui/mdc/condition/Condition",
-	"sap/ui/mdc/FilterField"
+	"sap/ui/mdc/FilterField",
+	"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect"
 ], function (
 	FilterBar,
 	FilterBarBase,
 	Condition,
-	FilterField
+	FilterField,
+	CollectiveSearchSelect
 ) {
 	"use strict";
 
@@ -89,13 +91,20 @@ sap.ui.define([
 		assert.ok(bExpanded);
 
 		assert.equal(oButton.getText(), "Hide Filters");
-		assert.ok(oLayout.getVisible(), "FilterFields layout  should be visible");
+		assert.ok(oLayout.getVisible(), "FilterFields layout should be visible");
 
 		this.oFilterBar.setExpandFilterFields(false);
 		assert.ok(!this.oFilterBar.getExpandFilterFields());
 
 		assert.ok(oButton.getText() === "Show Filters");
 		assert.ok(!oLayout.getVisible(), "FilterFields layout should be invisible");
+
+		this.oFilterBar._onToggleFilters();
+		assert.equal(oButton.getText(), "Hide Filters");
+		assert.ok(oLayout.getVisible(), "FilterFields layout should be visible");
+
+		this.oFilterBar._onShowAllFilters();
+		assert.ok(!this.oFilterBar._oShowAllFiltersBtn.getVisible(), "Show All button should be invisible");
 	});
 
 	QUnit.test("check BasicSearch", function (assert) {
@@ -107,9 +116,34 @@ sap.ui.define([
 		oCtrl = this.oFilterBar.getBasicSearchField();
 		assert.ok(oCtrl === oBSField, "BasicSearchField should exist");
 
+		var oNewBSField = new FilterField();
+		this.oFilterBar.setBasicSearchField(oNewBSField);
+		oCtrl = this.oFilterBar.getBasicSearchField();
+		assert.ok(oCtrl === oNewBSField, "new BasicSearchField should exist");
+
 		this.oFilterBar.destroyBasicSearchField();
 		oCtrl = this.oFilterBar.getBasicSearchField();
 		assert.ok(oCtrl === undefined, "BasicSearchField should not exist");
 	});
+
+	QUnit.test("check CollectiveSearch", function (assert) {
+		var oCtrl = this.oFilterBar.getCollectiveSearch();
+		assert.ok(oCtrl === undefined, "CollectiveSearchSelect should not exist");
+
+		var oColSearch = new CollectiveSearchSelect();
+		this.oFilterBar.setCollectiveSearch(oColSearch);
+		oCtrl = this.oFilterBar.getCollectiveSearch();
+		assert.ok(oCtrl === oColSearch, "CollectiveSearchSelect should exist");
+
+		var oNewColSearch = new CollectiveSearchSelect();
+		this.oFilterBar.setCollectiveSearch(oNewColSearch);
+		oCtrl = this.oFilterBar.getCollectiveSearch();
+		assert.ok(oCtrl === oNewColSearch, "new CollectiveSearchSelect should exist");
+
+		this.oFilterBar.destroyCollectiveSearch();
+		oCtrl = this.oFilterBar.getCollectiveSearch();
+		assert.ok(oCtrl === undefined, "CollectiveSearchSelect should not exist");
+	});
+
 
 });

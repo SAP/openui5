@@ -66,6 +66,10 @@ sap.ui.define([
 			"valueHelp.FilterBar": {
 				group: "FilterBar",
 				module: "./vh/FilterBar.qunit"
+			},
+			"valueHelp.CollectiveSearchSelect": {
+				group: "FilterBar",
+				module: "./vh/CollectiveSearchSelect.qunit"
 			}
 		}
 	};
