@@ -1549,6 +1549,7 @@ sap.ui.define([
 		if (this._bMobileTable) {
 			this._oTable = ResponsiveTableType.createTable(this.getId() + "-innerTable", {
 				autoPopinMode: true,
+				contextualWidth: "Auto",
 				growing: true,
 				sticky: [
 					"ColumnHeaders", "HeaderToolbar", "InfoToolbar"
