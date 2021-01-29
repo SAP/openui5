@@ -6,9 +6,10 @@ sap.ui.define([
 		"sap/ui/integration/cards/BaseListContent",
 		"sap/m/List",
 		"sap/m/StandardListItem",
-		"sap/ui/integration/util/BindingHelper"
+		"sap/ui/integration/util/BindingHelper",
+		"sap/ui/util/openWindow"
 	],
-	function (library, BaseListContent, sapMList, StandardListItem, BindingHelper) {
+	function (library, BaseListContent, sapMList, StandardListItem, BindingHelper, openWindow) {
 		"use strict";
 
 		var AreaType = library.AreaType;
@@ -190,7 +191,7 @@ sap.ui.define([
 
 					if (oItem.action.url) {
 						oListItem.attachPress(function () {
-							window.open(oItem.action.url, oItem.target || "_blank");
+							openWindow(oItem.action.url, oItem.target || "_blank");
 						});
 					}
 				}
