@@ -10,7 +10,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetMinUI5Version",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddComponentUsages",
 	"sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetRegistrationIds",
-	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetFlexExtensionPointEnabled"
+	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetFlexExtensionPointEnabled",
+	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModel"
 ], function(
 	Registration,
 	ChangeDataSource,
@@ -18,7 +19,8 @@ sap.ui.define([
 	SetMinUI5Version,
 	AddComponentUsages,
 	SetRegistrationIds,
-	SetFlexExtensionPointEnabled
+	SetFlexExtensionPointEnabled,
+	AddNewModel
 ) {
 	"use strict";
 
@@ -39,7 +41,8 @@ sap.ui.define([
 		appdescr_ui5_addComponentUsages: AddComponentUsages,
 		appdescr_ui5_setMinUI5Version: SetMinUI5Version,
 		appdescr_fiori_setRegistrationIds: SetRegistrationIds,
-		appdescr_ui5_setFlexExtensionPointEnabled: SetFlexExtensionPointEnabled
+		appdescr_ui5_setFlexExtensionPointEnabled: SetFlexExtensionPointEnabled,
+		appdescr_ui5_addNewModel: AddNewModel
 
 	};
 
