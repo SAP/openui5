@@ -6,14 +6,15 @@ sap.ui.define([
 	"sap/ui/rta/util/changeVisualization/ChangeVisualization",
 	"sap/m/Button",
 	"sap/m/ButtonType",
+	"sap/m/VBox",
+	"sap/m/HBox",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
-	"sap/ui/core/Component",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/apply/_internal/changes/Utils",
 	"sap/ui/fl/Utils",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/core/HTML",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/dt/DesignTimeMetadata",
+	"sap/ui/events/KeyCodes",
+	"sap/base/util/restricted/_merge",
+	"sap/ui/dt/DesignTime"
 ],
 function(
 	sinon,
@@ -21,24 +22,66 @@ function(
 	ChangeVisualization,
 	Button,
 	ButtonType,
+	VBox,
+	HBox,
 	PersistenceWriteAPI,
-	Component,
-	JsControlTreeModifier,
 	ChangesUtils,
 	FlUtils,
-	OverlayRegistry,
-	HTMLControl,
-	KeyCodes
+	DesignTimeMetadata,
+	KeyCodes,
+	merge,
+	DesignTime
 ) {
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
 	var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
-	function prepareTest (aMockChanges, oRootComponent, oChangeHandler) {
+	// Make sure to bind caller context
+	function setupTest(fnCallback, oRootElement) {
+		this.oChangeVisualization = new ChangeVisualization({
+			rootControlId: "MockComponent"
+		});
+		this.oVisualizationButton = new Button({ text: "Test visualization" });
+		this.oContainer = oRootElement || new VBox("container", {
+			items: [
+				new Button("button1", {
+					text: "First button"
+				}),
+				new Button("button2", {
+					text: "Second button"
+				}),
+				new Button("button3", {
+					text: "Third button"
+				})
+			]
+		});
+		this.oContainer.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		this.oDesignTime = new DesignTime({
+			rootElements: [this.oContainer]
+		});
+
+		this.oDesignTime.attachEventOnce("synced", function () {
+			fnCallback();
+		});
+	}
+
+	// Make sure to bind caller context
+	function cleanupTest() {
+		this.oChangeVisualization.destroy();
+		this.oVisualizationButton.destroy();
+		this.oContainer.destroy();
+		sandbox.restore();
+	}
+
+
+	function prepareChanges (aMockChanges, oRootComponent, oChangeHandler) {
+		// Stub changes, root component and change handler
 		sandbox.stub(PersistenceWriteAPI, "_getUIChanges").resolves(aMockChanges || []);
-		var oLoadComponentStub = sandbox.stub(Component, "get");
-		oLoadComponentStub.withArgs("MockComponent").returns(Object.assign(
+		var oLoadComponentStub = sandbox.stub(ChangeVisualization.prototype, "_getComponent");
+		oLoadComponentStub.returns(Object.assign(
 			{
 				createId: function (sId) {
 					return sId;
@@ -46,48 +89,24 @@ function(
 			},
 			oRootComponent
 		));
-		oLoadComponentStub.callThrough();
+		sandbox.stub(ChangesUtils, "getControlIfTemplateAffected")
+			.callsFake(function (oChange, oControl) {
+				return oControl;
+			});
+		sandbox.stub(FlUtils, "getViewForControl").returns();
 		var oMergedChangeHandler = Object.assign(
 			{
 				getChangeVisualizationInfo: function () {}
 			},
 			oChangeHandler
 		);
-		sandbox.stub(ChangesUtils, "getControlIfTemplateAffected")
-			.callsFake(function (oChange, oControl) {
-				return oControl;
-			});
-		sandbox.stub(FlUtils, "getViewForControl").returns();
 		sandbox.stub(ChangesUtils, "getChangeHandler").resolves(oMergedChangeHandler);
 	}
 
-	function createMockOverlay (oBySelectorStub, oOverlayRegistryStub, sChangeId, iPosX, iPosY) {
-		var oElement = document.createElement("div");
-		oElement.style.position = "absolute";
-		oElement.style.width = "100px";
-		oElement.style.height = "100px";
-		oElement.style.left = iPosX + "px";
-		oElement.style.top = iPosY + "px";
-		var oOverlay = new HTMLControl({
-			id: "__mockOverlay_" + sChangeId,
-			content: oElement.outerHTML
-		});
-		oOverlay.placeAt("qunit-fixture");
-
-		oBySelectorStub.withArgs(oOverlay.getId()).returns(oOverlay);
-		oOverlayRegistryStub.withArgs(oOverlay.getId()).returns(oOverlay);
-		oOverlay.getDesignTimeMetadata = function () {
-			return {
-				getLabel: function () {}
-			};
-		};
-		return oOverlay;
-	}
-
-	function createMockChange (sId, sCommandName, oMockOverlay) {
-		return {
+	function createMockChange(sId, sCommandName, sSelectorId, oCustomChange) {
+		return merge({
 			getSelector: function () {
-				return oMockOverlay && oMockOverlay.getId();
+				return sSelectorId;
 			},
 			getId: function () {
 				return sId;
@@ -102,7 +121,7 @@ function(
 			getCreation: function () {
 				return new Date();
 			}
-		};
+		}, oCustomChange);
 	}
 
 	function startChangeVisualization (oStartVisualizationButton, oChangeVisualization) {
@@ -120,6 +139,9 @@ function(
 	}
 
 	function waitForMethodCall (oObject, sMethodName) {
+		// Returns a promise which is resolved with the return value
+		// of the given method after it was first called
+		// Doesn't work with event handlers
 		return new Promise(function (resolve) {
 			sandbox.stub(oObject, sMethodName)
 				.callsFake(function () {
@@ -133,6 +155,7 @@ function(
 	}
 
 	function getChangesListEntry (oPopover, sKey) {
+		// Get the given entry from the change list popover
 		return oPopover.getContent()[0].getItems().find(function (oItem) {
 			return oItem.getBindingContext("commandModel").getObject().key === sKey;
 		});
@@ -141,9 +164,7 @@ function(
 	function selectCommandCategory (oVisualizationButton, oChangeVisualization, sKeyToSelect) {
 		// Simulate click event on the change visualization button,
 		// select the given category and wait for the visualization to update
-
-		// Stub before the event handler is bound
-		var oSelectionPromise = waitForMethodCall(oChangeVisualization, "selectCommandCategory");
+		var oSelectionPromise = waitForMethodCall(oChangeVisualization, "_selectCommandCategory");
 
 		var fnWaitForPopover = function () {
 			return new Promise(function (resolve) {
@@ -168,6 +189,7 @@ function(
 	}
 
 	function collectIndicatorReferences () {
+		// Get all visible change indicator elements on the screen
 		return Array.from(document.getElementsByClassName("sapUiRtaChangeIndicator")).map(function (oDomRef) {
 			return sap.ui.getCore().byId(oDomRef.id);
 		});
@@ -187,7 +209,7 @@ function(
 		}
 	}, function() {
 		QUnit.test("when the change visualization is started without changes", function (assert) {
-			prepareTest();
+			prepareChanges();
 			startChangeVisualization(this.oVisualizationButton, this.oChangeVisualization);
 
 			return waitForMethodCall(this.oChangeVisualization, "setPopover")
@@ -219,7 +241,7 @@ function(
 				createMockChange("testReveal", "reveal"),
 				createMockChange("testRename", "rename")
 			];
-			prepareTest(aMockChanges);
+			prepareChanges(aMockChanges);
 			startChangeVisualization(this.oVisualizationButton, this.oChangeVisualization);
 
 			return waitForMethodCall(this.oChangeVisualization, "setPopover")
@@ -249,36 +271,138 @@ function(
 		});
 	});
 
-	QUnit.module("Change indicator management", {
-		beforeEach: function() {
-			this.oChangeVisualization = new ChangeVisualization({
-				rootControlId: "MockComponent"
+	QUnit.module("Command type detection", {
+		beforeEach: function (assert) {
+			// Create a custom structure to test with deeply nested containers
+			var oContainer = new VBox("container", {
+				items: [
+					new Button("ctdbutton1", {
+						text: "First button"
+					}),
+					new HBox("nestedContainer1", {
+						items: [
+							new Button("ctdbutton2", {
+								text: "Second button"
+							}),
+							new HBox("nestedContainer2", {
+								items: [
+									new Button("ctdbutton3", {
+										text: "Third button"
+									})
+								]
+							})
+						]
+					})
+				]
 			});
-			this.oVisualizationButton = new Button({ text: "Test visualization" });
-			var oBySelectorStub = sandbox.stub(JsControlTreeModifier, "bySelector");
-			var oOverlayRegistryStub = sandbox.stub(OverlayRegistry, "getOverlay");
-			this.aMockOverlays = [
-				createMockOverlay(oBySelectorStub, oOverlayRegistryStub, "test1", 0, 100),
-				createMockOverlay(oBySelectorStub, oOverlayRegistryStub, "test2", 0, 200),
-				createMockOverlay(oBySelectorStub, oOverlayRegistryStub, "test3", 0, 300)
-			];
-			this.aMockChanges = [
-				createMockChange("testAdd", "addDelegateProperty", this.aMockOverlays[0]),
-				createMockChange("testReveal", "reveal", this.aMockOverlays[1]),
-				createMockChange("testRename", "rename", this.aMockOverlays[2])
-			];
+
+			var fnDone = assert.async();
+			setupTest.call(this, function () {
+				fnDone();
+			}, oContainer);
+		},
+		afterEach: function () {
+			cleanupTest.call(this);
+		}
+	}, function () {
+		QUnit.test("when the command type is not defined in the change", function (assert) {
+			// Stub getCommandName to simulate special usecases
+			var oGetCommandNameStub = sandbox.stub(DesignTimeMetadata.prototype, "getCommandName");
+			oGetCommandNameStub.callsFake(function (sChangeType, oElement, sAggregationName) {
+				// For simplicity, lookup known change types by element id
+				// and combination of aggregation name and change type name
+				var sIdentifier = (sAggregationName ? sAggregationName + " " : "") + sChangeType;
+				var oMockResponse = ({
+					// Case 1: Command is defined on the element itself
+					ctdbutton1: {
+						someRenameChangeType: "rename"
+					},
+					// Case 2: Command is defined on the parent overlay
+					nestedContainer1: {
+						"items someAddChangeType": "reveal"
+					},
+					// Case 3: Command is defined on an overlay which was created during runtime
+					// and is not known to the change
+					nestedContainer2: {
+						"items someMoveChangeType": "move"
+					}
+				}[oElement.getId()] || {})[sIdentifier];
+				return oMockResponse || DesignTimeMetadata.prototype.getCommandName.wrappedMethod.apply(this, arguments);
+			});
+
+			// Changes have no command name defined as it is the case for pre 1.84 changes
+			prepareChanges([
+				// For case 1:
+				createMockChange("testChange1", undefined, "ctdbutton1", {
+					getChangeType: function () {
+						return "someRenameChangeType";
+					},
+					getDependentSelectorList: function () {
+						return ["ctdbutton1"];
+					}
+				}),
+				// For case 2:
+				createMockChange("testChange2", undefined, "nestedContainer1", {
+					getChangeType: function () {
+						return "someAddChangeType";
+					},
+					getDependentSelectorList: function () {
+						return ["nestedContainer1", "ctdbutton2"];
+					}
+				}),
+				// For case 3:
+				createMockChange("testChange3", undefined, "nestedContainer1", {
+					getChangeType: function () {
+						return "someMoveChangeType";
+					},
+					getDependentSelectorList: function () {
+						// nestedContainer2 is not part of the dependent selectors
+						return ["nestedContainer1", "ctdbutton3"];
+					}
+				})
+			]);
+			startChangeVisualization(this.oVisualizationButton, this.oChangeVisualization);
+
+			return waitForMethodCall(this.oChangeVisualization, "setPopover")
+				.then(function () {
+					var oPopover = this.oChangeVisualization.getPopover();
+					assert.strictEqual(
+						getChangesListEntry(oPopover, "rename").getCounter(),
+						1,
+						"then changes where the command is defined on the element are properly categorized"
+					);
+					assert.strictEqual(
+						getChangesListEntry(oPopover, "add").getCounter(),
+						1,
+						"then changes where the command is defined on the parent overlay are properly categorized"
+					);
+					assert.strictEqual(
+						getChangesListEntry(oPopover, "move").getCounter(),
+						1,
+						"then changes where the command is defined on an overlay which was created during runtime are properly categorized"
+					);
+				}.bind(this));
+		});
+	});
+
+	QUnit.module("Change indicator management", {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+			setupTest.call(this, function () {
+				this.aMockChanges = [
+					createMockChange("testAdd", "addDelegateProperty", "button1"),
+					createMockChange("testReveal", "reveal", "button2"),
+					createMockChange("testRename", "rename", "button3")
+				];
+				fnDone();
+			}.bind(this));
 		},
 		afterEach: function() {
-			this.oChangeVisualization.destroy();
-			this.oVisualizationButton.destroy();
-			this.aMockOverlays.forEach(function (oOverlay) {
-				oOverlay.destroy();
-			});
-			sandbox.restore();
+			cleanupTest.call(this);
 		}
 	}, function() {
 		QUnit.test("when a command category is selected", function (assert) {
-			prepareTest(this.aMockChanges);
+			prepareChanges(this.aMockChanges);
 			return selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
 				.then(function () {
 					sap.ui.getCore().applyChanges();
@@ -299,7 +423,7 @@ function(
 
 		QUnit.test("when change visualization is deactivated and activated again", function (assert) {
 			var fnDone = assert.async();
-			prepareTest(this.aMockChanges);
+			prepareChanges(this.aMockChanges);
 			selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
 				.then(function () {
 					sap.ui.getCore().applyChanges();
@@ -342,104 +466,125 @@ function(
 						"then the button type is changed back"
 					);
 
-					fnDone();
-					// Temporarily deactivated due to problems with sinon restore
+					var fnReactivate = function () {
+						// Activate again and select a different category
+						selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "add")
+							.then(function () {
+								sap.ui.getCore().applyChanges();
+								assert.strictEqual(
+									collectIndicatorReferences().filter(function (oIndicator) {
+										return oIndicator.getVisible();
+									}).length,
+									2,
+									"then all indicators are visible again after reactivation"
+								);
+								fnDone();
+							});
+					}.bind(this);
 
-					// var fnReactivate = function () {
-					// 	// Activate again
-					// 	selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
-					// 		.then(function () {
-					// 			sap.ui.getCore().applyChanges();
-					// 			assert.strictEqual(
-					// 				collectIndicatorReferences().filter(function (oIndicator) {
-					// 					return oIndicator.getVisible();
-					// 				}).length,
-					// 				3,
-					// 				"then all indicators are visible again after reactivation"
-					// 			);
-					// 			fnDone();
-					// 		});
-					// }.bind(this);
-
-					// if (!this.oChangeVisualization.getPopover().isOpen()) {
-					// 	fnReactivate();
-					// } else {
-					// 	this.oChangeVisualization.getPopover().attachEventOnce("afterClose", fnReactivate);
-					// }
+					if (!this.oChangeVisualization.getPopover().isOpen()) {
+						fnReactivate();
+					} else {
+						this.oChangeVisualization.getPopover().attachEventOnce("afterClose", fnReactivate);
+					}
 				}.bind(this));
 		});
 
-		// QUnit.test("when details are selected for a change", function (assert) {
-		// 	prepareTest(
-		// 		[createMockChange("testMove", "move", this.aMockOverlays[0])],
-		// 		undefined,
-		// 		{
-		// 			getChangeVisualizationInfo: function () {
-		// 				return {
-		// 					dependentControls: [this.aMockOverlays[1].getId()],
-		// 					affectedControls: [this.aMockOverlays[0].getId()]
-		// 				};
-		// 			}.bind(this)
-		// 		}
-		// 	);
-		// 	return selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
-		// 		.then(function () {
-		// 			sap.ui.getCore().applyChanges();
-		// 			var oChangeIndicator = collectIndicatorReferences()[0];
-		// 			oChangeIndicator.fireSelectChange({
-		// 				changeId: oChangeIndicator.getChanges()[0].id
-		// 			});
-		// 			sap.ui.getCore().applyChanges();
-		// 			debugger;
-		// 			assert.async();
-		// 		}.bind(this));
-		// });
+		QUnit.test("when details are selected for a change", function (assert) {
+			prepareChanges(
+				[createMockChange("testMove", "move", "button1")],
+				undefined,
+				{
+					getChangeVisualizationInfo: function () {
+						return {
+							dependentControls: ["button2"],
+							affectedControls: ["button1"]
+						};
+					}
+				}
+			);
+			return selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
+				.then(function () {
+					sap.ui.getCore().applyChanges();
+					var oSelectChangePromise = waitForMethodCall(this.oChangeVisualization, "_selectChange");
+					var oChangeIndicator = collectIndicatorReferences()[0];
+					oChangeIndicator.fireSelectChange({
+						changeId: oChangeIndicator.getChanges()[0].id
+					});
+					return oSelectChangePromise.then(function () {
+						sap.ui.getCore().applyChanges();
+						assert.strictEqual(
+							collectIndicatorReferences().filter(function (oIndicator) {
+								return oIndicator.getVisible();
+							}).length,
+							2,
+							"then only the selected change and its dependent indicator are shown"
+						);
+
+						// Pressing right arrow key twice should focus selected element again
+						// as there are two indicators
+						QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT);
+						QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT);
+						assert.strictEqual(
+							oChangeIndicator.getDomRef(),
+							document.activeElement,
+							"then the focus chain is updated"
+						);
+					});
+				}.bind(this));
+		});
 	});
 
-	function getIndicatorForOverlay (aIndicators, sId) {
+	function getIndicatorForElement (aIndicators, sId) {
 		return aIndicators.find(function (oIndicator) {
-			return oIndicator.getOverlayId() === sId;
+			return oIndicator.getSelectorId() === sId;
 		}).getDomRef();
 	}
 
 	QUnit.module("Keyboard and focus handling", {
-		beforeEach: function() {
-			this.oChangeVisualization = new ChangeVisualization({
-				rootControlId: "MockComponent"
+		beforeEach: function(assert) {
+			var oContainer = new VBox("container", {
+				items: [
+					new Button("topButton", {
+						text: "First button"
+					}),
+					new HBox("nestedContainer", {
+						items: [
+							new Button("bottomLeftButton", {
+								text: "Second button"
+							}),
+							new Button("bottomRightButton", {
+								text: "Third button"
+							})
+						]
+					})
+				]
 			});
-			this.oVisualizationButton = new Button({ text: "Test visualization" });
-			var oBySelectorStub = sandbox.stub(JsControlTreeModifier, "bySelector");
-			var oOverlayRegistryStub = sandbox.stub(OverlayRegistry, "getOverlay");
-			this.aMockOverlays = [
-				createMockOverlay(oBySelectorStub, oOverlayRegistryStub, "testAdd", 100, 200),
-				createMockOverlay(oBySelectorStub, oOverlayRegistryStub, "testReveal", 0, 100),
-				createMockOverlay(oBySelectorStub, oOverlayRegistryStub, "testRename", 0, 200)
-			];
-			var aMockChanges = [
-				createMockChange("testAdd", "addDelegateProperty", this.aMockOverlays[0]),
-				createMockChange("testReveal", "reveal", this.aMockOverlays[1]),
-				createMockChange("testRename", "rename", this.aMockOverlays[2])
-			];
-			prepareTest(aMockChanges);
-			return selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
-				.then(function () {
-					sap.ui.getCore().applyChanges();
-				});
+
+			var fnDone = assert.async();
+			setupTest.call(this, function () {
+				// Pass changes in a mixed up order to check if they are properly sorted for tab handling
+				prepareChanges([
+					createMockChange("testAdd", "addDelegateProperty", "bottomRightButton"),
+					createMockChange("testReveal", "reveal", "topButton"),
+					createMockChange("testRename", "rename", "bottomLeftButton")
+				]);
+				selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
+					.then(function () {
+						sap.ui.getCore().applyChanges();
+						fnDone();
+					});
+			}.bind(this), oContainer);
 		},
 		afterEach: function() {
-			this.oChangeVisualization.destroy();
-			this.oVisualizationButton.destroy();
-			this.aMockOverlays.forEach(function (oOverlay) {
-				oOverlay.destroy();
-			});
-			sandbox.restore();
+			cleanupTest.call(this);
 		}
 	}, function() {
 		QUnit.test("when the visualization is started", function (assert) {
 			var aIndicators = collectIndicatorReferences();
 			// Overlay 1 has lowest y, thus should be focused first
 			assert.strictEqual(
-				getIndicatorForOverlay(aIndicators, this.aMockOverlays[1].getId()),
+				getIndicatorForElement(aIndicators, "topButton"),
 				document.activeElement,
 				"then the indicators are sorted and the first is focused"
 			);
@@ -463,19 +608,19 @@ function(
 			var aIndicators = collectIndicatorReferences();
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_LEFT);
 			assert.strictEqual(
-				getIndicatorForOverlay(aIndicators, this.aMockOverlays[0].getId()),
+				getIndicatorForElement(aIndicators, "bottomRightButton"),
 				document.activeElement,
 				"then the previous indicator is focused 1/3"
 			);
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
 			assert.strictEqual(
-				getIndicatorForOverlay(aIndicators, this.aMockOverlays[2].getId()),
+				getIndicatorForElement(aIndicators, "bottomLeftButton"),
 				document.activeElement,
 				"then the previous indicator is focused 2/3"
 			);
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.TAB, true);
 			assert.strictEqual(
-				getIndicatorForOverlay(aIndicators, this.aMockOverlays[1].getId()),
+				getIndicatorForElement(aIndicators, "topButton"),
 				document.activeElement,
 				"then the previous indicator is focused 3/3"
 			);
@@ -485,22 +630,68 @@ function(
 			var aIndicators = collectIndicatorReferences();
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_RIGHT);
 			assert.strictEqual(
-				getIndicatorForOverlay(aIndicators, this.aMockOverlays[2].getId()),
+				getIndicatorForElement(aIndicators, "bottomLeftButton"),
 				document.activeElement,
 				"then the next indicator is focused 1/3"
 			);
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
 			assert.strictEqual(
-				getIndicatorForOverlay(aIndicators, this.aMockOverlays[0].getId()),
+				getIndicatorForElement(aIndicators, "bottomRightButton"),
 				document.activeElement,
 				"then the next indicator is focused 2/3"
 			);
 			QUnitUtils.triggerKeydown(document.activeElement, KeyCodes.TAB);
 			assert.strictEqual(
-				getIndicatorForOverlay(aIndicators, this.aMockOverlays[1].getId()),
+				getIndicatorForElement(aIndicators, "topButton"),
 				document.activeElement,
 				"then the next indicator is focused 3/3"
 			);
+		});
+	});
+
+	QUnit.module("Cleanup", {
+		beforeEach: function(assert) {
+			var fnDone = assert.async();
+			setupTest.call(this, function () {
+				prepareChanges([
+					createMockChange("testAdd", "addDelegateProperty", "button1")
+				]);
+				selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
+					.then(function () {
+						sap.ui.getCore().applyChanges();
+						fnDone();
+					});
+			}.bind(this));
+		},
+		afterEach: function() {
+			cleanupTest.call(this);
+		}
+	}, function() {
+		QUnit.test("when the change visualization is destroyed", function (assert) {
+			var oDeletionSpy = sandbox.spy(collectIndicatorReferences()[0], "destroy");
+			this.oChangeVisualization.destroy();
+			assert.ok(oDeletionSpy.called, "then change indicators are destroyed as well");
+			assert.strictEqual(collectIndicatorReferences().length, 0, "then all indicators are removed from the UI");
+		});
+
+		QUnit.test("when the change visualization is created a second time", function (assert) {
+			this.oChangeVisualization.destroy();
+			this.oChangeVisualization = new ChangeVisualization({
+				rootControlId: "MockComponent"
+			});
+			return selectCommandCategory(this.oVisualizationButton, this.oChangeVisualization, "all")
+				.then(function () {
+					sap.ui.getCore().applyChanges();
+					assert.strictEqual(collectIndicatorReferences().length, 1, "then indicators are created again");
+					this.oChangeVisualization.destroy();
+				}.bind(this));
+		});
+
+		QUnit.test("when the root control id changes", function (assert) {
+			var oDeletionSpy = sandbox.spy(collectIndicatorReferences()[0], "destroy");
+			this.oChangeVisualization.setRootControlId("someOtherId");
+			assert.ok(oDeletionSpy.called, "then old change indicators are destroyed");
+			this.oChangeVisualization.destroy();
 		});
 	});
 

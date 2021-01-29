@@ -214,9 +214,11 @@ sap.ui.define([
 		return true;
 	};
 
-	AddSimpleFormGroup.getChangeVisualizationInfo = function(oChange) {
+	AddSimpleFormGroup.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+		var oSelector = oChange.getDefinition().content.group.selector;
+		var oAffectedGroup = JsControlTreeModifier.bySelector(oSelector, oAppComponent).getParent().getId();
 		return {
-			affectedControls: [oChange.getDefinition().content.group.selector]
+			affectedControls: [oAffectedGroup]
 		};
 	};
 

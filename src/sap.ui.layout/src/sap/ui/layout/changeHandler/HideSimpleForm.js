@@ -191,9 +191,14 @@ sap.ui.define(['sap/ui/fl/changeHandler/JsControlTreeModifier', "sap/base/Log"],
 		return true;
 	};
 
-	HideForm.getChangeVisualizationInfo = function(oChange) {
+	HideForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+		var oSelector = oChange.getDefinition().content.elementSelector;
+		var oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+		var oAffectedControlSelector = oChange.getChangeType() === "removeSimpleFormGroup"
+			? oElement.getParent().getId()
+			: oElement.getParent().getParent().getId();
 		return {
-			affectedControls: [oChange.getDefinition().content.elementSelector]
+			affectedControls: [oAffectedControlSelector]
 		};
 	};
 

@@ -153,8 +153,8 @@ sap.ui.define([
 
 	ChangeIndicator.prototype.init = function () {
 		this.setAggregation("_text", new Text({
-			text: "{= ${changes}.length}",
-			visible: "{= ${changes}.length > 1}"
+			text: "{= (${changes} || []).length}",
+			visible: "{= (${changes} || []).length > 1}"
 		}).addStyleClass("sapUiRtaChangeIndicatorText"));
 
 		this.setAggregation("_icon", new Icon({
@@ -208,6 +208,10 @@ sap.ui.define([
 	};
 
 	ChangeIndicator.prototype.exit = function () {
+		var oDomRef = this.getDomRef();
+		if (oDomRef) {
+			oDomRef.parentNode.removeChild(oDomRef);
+		}
 		this.detachBrowserEvent("click", this._onSelect, this);
 		this.detachBrowserEvent("keydown", this._onKeyDown, this);
 	};

@@ -79,6 +79,68 @@ function(
 			assert.propEqual(this.oDesignTimeMetadata.getAction("actionWithASubActionInsideFunction", {name:"subActionChangeType"}, "subAction"), {changeType : "subActionChangeType"}, "then the sub action was returned for a function action");
 		});
 
+		QUnit.test("when getCommandName is called...", function(assert) {
+			assert.strictEqual(
+				this.oDesignTimeMetadata.getCommandName("firstChangeType"),
+				"action1",
+				"...for string action, then the proper command name is returned"
+			);
+			assert.strictEqual(
+				this.oDesignTimeMetadata.getCommandName("secondChangeType"),
+				"action2",
+				"...for object action, then the proper command name is returned"
+			);
+			assert.strictEqual(
+				this.oDesignTimeMetadata.getCommandName("thirdChangeType", {name:"thirdChangeType"}),
+				"action3",
+				"...for function action, then the proper command name is returned"
+			);
+			assert.strictEqual(
+				this.oDesignTimeMetadata.getCommandName("invalidChangeType"),
+				undefined,
+				"...for an invalid action, then no command name is returned"
+			);
+		});
+
+		QUnit.test("when getCommandName is called for a sub action or aggregation action", function(assert) {
+			this.oDesignTimeMetadata = new DesignTimeMetadata({
+				data: {
+					actions: {
+						add: {
+							delegate: {
+								changeType: "addDelegateChangeType"
+							},
+							custom: "addCustomChangeType"
+						},
+						someCommandThatShouldBeIgnored: "someChangeType"
+					},
+					aggregations: {
+						someAggregation: {
+							actions: {
+								someCommand: "someChangeType"
+							}
+						}
+					}
+				}
+			});
+
+			assert.strictEqual(
+				this.oDesignTimeMetadata.getCommandName("addDelegateChangeType"),
+				"addDelegateProperty",
+				"then the add delegate command is detected"
+			);
+			assert.strictEqual(
+				this.oDesignTimeMetadata.getCommandName("addCustomChangeType"),
+				"customAdd",
+				"then the custom add command is detected"
+			);
+			assert.strictEqual(
+				this.oDesignTimeMetadata.getCommandName("someChangeType", null, "someAggregation"),
+				"someCommand",
+				"then aggregation actions are considered"
+			);
+		});
+
 		QUnit.test("when getLibraryText is called", function(assert) {
 			var oFakeElement = {
 				getMetadata : sandbox.stub().returns({

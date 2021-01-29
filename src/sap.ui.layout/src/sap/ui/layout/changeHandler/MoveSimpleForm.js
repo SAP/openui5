@@ -417,11 +417,19 @@ function(
 		return true;
 	};
 
-	MoveSimpleForm.getChangeVisualizationInfo = function(oChange) {
+	MoveSimpleForm.getChangeVisualizationInfo = function(oChange, oAppComponent) {
 		var oMovedElement = oChange.getContent().movedElements[0];
+		var oGroupSelector = oMovedElement.source.groupSelector;
+		var oAffectedControlSelector = oChange.getChangeType() === "moveSimpleFormGroup"
+			? JsControlTreeModifier.bySelector(oMovedElement.elementSelector, oAppComponent).getParent().getId()
+			: oMovedElement.elementSelector;
 		return {
-			affectedControls: [oMovedElement.elementSelector],
-			dependentControls: [(oMovedElement.source.groupSelector || oChange.getContent().targetSelector)]
+			affectedControls: [oAffectedControlSelector],
+			dependentControls: [
+				oGroupSelector && oGroupSelector.id
+					? oGroupSelector
+					: oChange.getContent().targetSelector
+			]
 		};
 	};
 
