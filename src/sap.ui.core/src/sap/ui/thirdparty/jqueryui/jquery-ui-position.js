@@ -63,7 +63,8 @@ function getDimensions( elem ) {
 	}
 	// ##### BEGIN: MODIFIED BY SAP
 	// When positioning around SVG elements, method getBoundingClientRect should be used
-	if (typeof window.SVGElement !== "undefined" && raw instanceof window.SVGElement) {
+	// If the control expects getBoundingClientRect to be returned, useClientRect flag should be passed
+	if ((typeof window.SVGElement !== "undefined" && raw instanceof window.SVGElement) || raw.useClientRect) {
 		var boundingClientRect = raw.getBoundingClientRect();
 
 		return {
