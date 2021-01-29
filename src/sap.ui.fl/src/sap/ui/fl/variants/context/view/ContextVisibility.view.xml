@@ -17,7 +17,7 @@
 			<List
 				id="selectedContextsList"
 				visible="false"
-				showNoData="false"
+				noDataText="{i18n>NO_SELECTED_ROLES}"
 				mode="Delete"
 				delete=".onDeleteContext"
 				growing="true"
@@ -32,7 +32,7 @@
 				</headerToolbar>
 				<StandardListItem
 					title="{selectedContexts>id}"
-					tooltip="{selectedContexts>description}"/>
+					tooltip="{= ${selectedContexts>description}.length === 0 ? ${i18n>NO_DESCRIPTION} : ${selectedContexts>description}}"/>
 			</List>
 		</content>
 	</Panel>

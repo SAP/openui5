@@ -26,7 +26,6 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	var sCompName = "test---ContextVisibility--";
-	var sFragmentName = "Fragment--";
 	var oCore = sap.ui.getCore();
 
 	function renderComponent(aSelectedRoles) {
@@ -48,19 +47,18 @@ sap.ui.define([
 	}
 
 	function setTableSelectDialogControls() {
-		this.oSelectDialog = oCore.byId(sCompName + sFragmentName + "selectContexts");
-		this.oDialog = oCore.byId(sCompName + sFragmentName + "selectContexts-dialog");
-		this.oSearchField = oCore.byId(sCompName + sFragmentName + "selectContexts-searchField");
-		this.oList = oCore.byId(sCompName + sFragmentName + "selectContexts-list");
-		this.oConfirmBtn = oCore.byId(sCompName + sFragmentName + "selectContexts-ok");
-		this.oMoreListItem = oCore.byId(sCompName + sFragmentName + "selectContexts-list-trigger");
+		this.oSelectDialog = oCore.byId(sCompName + "selectContexts");
+		this.oDialog = oCore.byId(sCompName + "selectContexts-dialog");
+		this.oSearchField = oCore.byId(sCompName + "selectContexts-searchField");
+		this.oList = oCore.byId(sCompName + "selectContexts-list");
+		this.oConfirmBtn = oCore.byId(sCompName + "selectContexts-ok");
+		this.oMoreListItem = oCore.byId(sCompName + "selectContexts-list-trigger");
 	}
 
 	function hookAsyncEventHandler(oStub, fnCallback) {
 		oStub.callsFake(function(oEvent) {
 			oStub.wrappedMethod.call(this, oEvent).then(fnCallback);
 		});
-		return oStub;
 	}
 
 	function duplicateRoles(iNumberOfIterations, oDuplicatedRoles) {
@@ -90,7 +88,7 @@ sap.ui.define([
 			},
 			{
 				id: "REMOTE",
-				description: "Role for accessing remote systems"
+				description: ""
 			}
 		],
 		lastHitReached: false
@@ -104,7 +102,7 @@ sap.ui.define([
 			},
 			{
 				id: "REMOTE",
-				description: "Role for accessing remote systems"
+				description: ""
 			}
 		]
 	};
@@ -199,6 +197,14 @@ sap.ui.define([
 		}
 
 	}, function() {
+		QUnit.test("when initiating component with selected roles, then tooltips are rendered correctly", function (assert) {
+			assert.equal(this.oSelectedRolesList.getItems().length, 2, "selected roles list contains entries");
+			var oFirstItem = this.oSelectedRolesList.getItems()[0];
+			var oSecondItem = this.oSelectedRolesList.getItems()[1];
+			assert.equal(oFirstItem.getTooltip(), "Test Description", "tooltip is taken from backend");
+			assert.equal(oSecondItem.getTooltip(), "No description available", "tooltip is not available so fallback i18n description is used");
+		});
+
 		QUnit.test("when searching for a value, back end request is fired and list entries are adjusted", function (assert) {
 			var fnDone = assert.async();
 
@@ -208,7 +214,7 @@ sap.ui.define([
 			var fnAsyncFireSearch = function() {
 				assert.equal(this.fnGetContextsStub.callCount, 1, "write storage was called once");
 				setTableSelectDialogControls.call(this);
-				assert.equal(this.oList.getItems().length, 100, "list contains 100 mocked entries");
+				assert.equal(this.oList.getItems().length, 50, "list contains mocked entries");
 				assert.equal(this.oDialog.isOpen(), true, "dialog is opened");
 				assert.equal(this.oSearchField.isActive(), true, "search field is active");
 				this.oSearchField.setValue("KPI");
@@ -218,7 +224,7 @@ sap.ui.define([
 			var fnAsyncAssertions = function() {
 				assert.equal(this.fnGetContextsStub.callCount, 2, "write storage was called twice");
 				oCore.applyChanges();
-				assert.equal(this.oList.getItems().length, 54, "list contains searched entries");
+				assert.equal(this.oList.getItems().length, 50, "list contains searched entries");
 				fnDone();
 			};
 
@@ -236,7 +242,7 @@ sap.ui.define([
 			var fnAsyncScroll = function() {
 				assert.equal(this.fnGetContextsStub.callCount, 1, "write storage was called once");
 				setTableSelectDialogControls.call(this);
-				assert.equal(this.oList.getItems().length, 100, "table contains mocked entries");
+				assert.equal(this.oList.getItems().length, 50, "list contains mocked entries");
 				assert.equal(this.oMoreListItem.isActive(), true, "more button is active");
 				this.oMoreListItem.firePress();
 			};
@@ -244,7 +250,7 @@ sap.ui.define([
 			var fnAsyncAssertions = function() {
 				assert.equal(this.fnGetContextsStub.callCount, 2, "write storage was called twice");
 				oCore.applyChanges();
-				assert.equal(this.oList.getItems().length, 200, "table contains next entries");
+				assert.equal(this.oList.getItems().length, 100, "list contains next entries");
 				fnDone();
 			};
 
@@ -261,7 +267,7 @@ sap.ui.define([
 			var fnAsyncFireSelectAll = function() {
 				setTableSelectDialogControls.call(this);
 				assert.equal(this.oDialog.isOpen(), true, "dialog is opened");
-				assert.equal(this.oList.getItems().length, 100, "table contains mocked entries (growinThreshold=100)");
+				assert.equal(this.oList.getItems().length, 50, "list contains mocked entries (growinThreshold=50)");
 
 				assert.equal(this.oList.getSelectedItems().length, 2, "two items are selected");
 
@@ -280,10 +286,10 @@ sap.ui.define([
 
 			var oAddContextStub = sandbox.stub(ContextVisibilityController.prototype, "_addContexts");
 
-			var fnAsyncFireSelectAll = function() {
+			var fnAsyncFireConfirm = function() {
 				setTableSelectDialogControls.call(this);
 				assert.equal(this.oDialog.isOpen(), true, "dialog is opened");
-				assert.equal(this.oList.getItems().length, 100, "table contains mocked entries");
+				assert.equal(this.oList.getItems().length, 50, "list contains mocked entries");
 
 				assert.equal(this.oList.getSelectedItems().length, 2, "two items are selected");
 				this.oConfirmBtn.firePress();
@@ -291,7 +297,7 @@ sap.ui.define([
 				fnDone();
 			};
 
-			hookAsyncEventHandler(oAddContextStub, fnAsyncFireSelectAll.bind(this));
+			hookAsyncEventHandler(oAddContextStub, fnAsyncFireConfirm.bind(this));
 			this.oAddBtn.firePress();
 		});
 	});
