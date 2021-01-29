@@ -102,7 +102,7 @@ function(Device, UIArea, jQuery) {
 			oDataTransfer = oEvent.originalEvent.dataTransfer,
 			setTransferData = function(sType, sData) {
 				// set to original dataTransfer object if type is supported by the current browser (non-text causes error in IE+Edge)
-				if (oDataTransfer && sType == "text" || (Device.browser != "msie" && Device.browser != "edge")) {
+				if (oDataTransfer && sType == "text" || (!Device.browser.msie && !Device.browser.edge )) {
 					oDataTransfer.setData(sType, sData);
 				}
 			};
