@@ -6901,7 +6901,8 @@ sap.ui.define([
 
 		// act
 		oMCB.placeAt("MultiComboBox-content");
-		this.clock.tick(100);
+		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
 
 		// assert
 		assert.strictEqual(oTokenizer.getRenderMode(), TokenizerRenderMode.Narrow, "the tokenizer is in Narrow mode");
@@ -6992,11 +6993,13 @@ sap.ui.define([
 			selectedItems: ['iitem1', 'iitem3'],
 			width: "200px"
 		});
+
 		oMultiComboBox.syncPickerContent();
 		oMultiComboBox.placeAt("MultiComboBox-content");
-		this.clock.tick(200);
+		sap.ui.getCore().applyChanges();
 
 		oMultiComboBox.$().find(".sapMTokenizerIndicator").trigger("click");
+		this.clock.tick(600);
 
 		//assert
 		assert.strictEqual(oMultiComboBox.getSelectedItems().length, 2, "There are two selected items");
