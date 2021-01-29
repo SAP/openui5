@@ -56,10 +56,10 @@ sap.ui.define([
 		Label,
 		Text,
 		ScrollContainer,
-		Icon,
 		Popover,
 		Dialog,
 		Button,
+		Icon,
 		JSONModel,
 		FormatException,
 		ParseException,
@@ -172,6 +172,9 @@ sap.ui.define([
 			},
 			getPayload: function() {
 				return {};
+			},
+			getScrollDelegate: function () {
+				return undefined; // test real scrolling with FieldValueHelp and Popover
 			}
 	};
 
@@ -366,6 +369,7 @@ sap.ui.define([
 
 	QUnit.test("fieldHelpOpen / fieldHelpClose", function(assert) {
 
+		sinon.stub(oWrapper, "getScrollDelegate").onFirstCall().returns(true); // just to test our existance check, but nit inside table
 		sinon.spy(oTable, "scrollToIndex");
 
 		oWrapper.fieldHelpOpen(true); //suggestion

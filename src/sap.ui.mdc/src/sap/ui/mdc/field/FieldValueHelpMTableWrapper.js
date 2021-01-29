@@ -222,7 +222,7 @@ sap.ui.define([
 		if (oTable) {
 			_adjustTable.call(this, oTable, bSuggestion);
 			_updateSelectedItems.call(this); // as selection mode might be changed
-			if (bSuggestion) {
+			if (bSuggestion && this.getScrollDelegate()) { // if Popover not already rendered no ScrollDelegate exists -> is called afterOpen
 				var oSelectedItem = oTable.getSelectedItem();
 				if (oSelectedItem) {
 					oTable.scrollToIndex(oTable.indexOfItem(oSelectedItem));
@@ -290,7 +290,9 @@ sap.ui.define([
 			oItem.setSelected(true);
 			var oValue = _getDataFromItem.call(this, oItem);
 
-			oTable.scrollToIndex(iSelectedIndex);
+			if (this.getScrollDelegate()) { // if Popover not already rendered no ScrollDelegate exists -> is called afterOpen
+				oTable.scrollToIndex(iSelectedIndex);
+			}
 
 			this._bNoTableUpdate = true;
 			this.setSelectedItems([{key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters}]);

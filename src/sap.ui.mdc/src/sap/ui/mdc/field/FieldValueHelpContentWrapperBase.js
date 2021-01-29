@@ -442,6 +442,13 @@ sap.ui.define([
 
 	};
 
+	FieldValueHelpContentWrapperBase.prototype.getScrollDelegate = function() {
+
+		var oFieldHelp = this._getFieldHelp();
+		return oFieldHelp.getScrollDelegate();
+
+	};
+
 	return FieldValueHelpContentWrapperBase;
 
 });
