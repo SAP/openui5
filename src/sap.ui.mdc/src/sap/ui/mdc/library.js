@@ -229,7 +229,19 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		Filter: "Filter"
+		Filter: "Filter",
+		/**
+		 * Group personalization is enabled.
+		 *
+		 * @public
+		 */
+		Group: "Group",
+		/**
+		 * Aggregation personalization is enabled.
+		 *
+		 * @public
+		 */
+		Aggregate: "Aggregate"
 	};
 
 	/**

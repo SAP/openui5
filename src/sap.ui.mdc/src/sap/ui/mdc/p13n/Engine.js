@@ -386,7 +386,9 @@ sap.ui.define([
 			var bSortSupported = oCurrentState.hasOwnProperty("sorters");
 			var bFilterSupported = oCurrentState.hasOwnProperty("filter");
 			var bItemSupported = oCurrentState.hasOwnProperty("items");
-			var oSortPromise, oConditionPromise, oItemPromise, aChanges = [];
+			var bGroupSupported = oCurrentState.hasOwnProperty("groupLevels");
+			var bAggregateSupported = oCurrentState.hasOwnProperty("aggregations");
+			var oGroupPromise, oAggregatePromise, oSortPromise, oConditionPromise, oItemPromise, aChanges = [];
 
 			//TODO: ORDER OF CHANGES ??? --> Which changes should come first?...
 			if (bSortSupported && oState.sorters){
@@ -394,6 +396,28 @@ sap.ui.define([
 					control: oControl,
 					key: "Sort",
 					state: oState.sorters,
+					suppressAppliance: true,
+					externalAppliance: true,
+					applyAbsolute: bApplyAbsolute
+				});
+			}
+
+			if (bGroupSupported && oState.groupLevels){
+				oGroupPromise = this.createChanges({
+					control: oControl,
+					key: "Group",
+					state: oState.groupLevels,
+					suppressAppliance: true,
+					externalAppliance: true,
+					applyAbsolute: bApplyAbsolute
+				});
+			}
+
+			if (bAggregateSupported && oState.aggregations){
+				oAggregatePromise = this.createChanges({
+					control: oControl,
+					key: "Aggregate", //TODO:
+					state: this.getController(oControl, "Aggregate").mapState(oState.aggregations),
 					suppressAppliance: true,
 					externalAppliance: true,
 					applyAbsolute: bApplyAbsolute
@@ -424,7 +448,7 @@ sap.ui.define([
 			}
 
 			//resolve after all changes have been
-			return Promise.all([oSortPromise, oConditionPromise, oItemPromise]).then(function(aRawChanges){
+			return Promise.all([oSortPromise, oConditionPromise, oItemPromise, oGroupPromise, oAggregatePromise]).then(function(aRawChanges){
 
 				aRawChanges.forEach(function(aSpecificChanges){
 					if (aSpecificChanges && aSpecificChanges.length > 0){

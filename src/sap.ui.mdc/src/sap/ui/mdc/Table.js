@@ -31,7 +31,9 @@ sap.ui.define([
 	"sap/ui/core/InvisibleText",
 	"sap/ui/mdc/p13n/subcontroller/ColumnController",
 	"sap/ui/mdc/p13n/subcontroller/SortController",
-	"sap/ui/mdc/p13n/subcontroller/FilterController"
+	"sap/ui/mdc/p13n/subcontroller/FilterController",
+	"sap/ui/mdc/p13n/subcontroller/GroupController",
+	"sap/ui/mdc/p13n/subcontroller/AggregateController"
 ], function(
 	Control,
 	ActionToolbar,
@@ -61,7 +63,9 @@ sap.ui.define([
 	InvisibleText,
 	ColumnController,
 	SortController,
-	FilterController
+	FilterController,
+	GroupController,
+	AggregateController
 ) {
 	"use strict";
 
@@ -291,6 +295,28 @@ sap.ui.define([
 				filterConditions: {
 					type: "object",
 					defaultValue: {}
+				},
+
+				/**
+				 * Defines the group conditions.
+				 *
+				 * <b>Note:</b> This property is exclusively used for handling flexibility changes. Do not use it for anything else.
+				 *
+				 * @since 1.87
+				 */
+				groupConditions: {
+					type: "object"
+				},
+
+				/**
+				 * Defines the aggregate conditions.
+				 *
+				 * <b>Note:</b> This property is exclusively used for handling flexibility changes. Do not use it for anything else.
+				 *
+				 * @since 1.87
+				 */
+				aggregateConditions: {
+					type: "object"
 				},
 
 				/**
@@ -530,7 +556,9 @@ sap.ui.define([
 			controller: {
 				Item: ColumnController,
 				Sort: SortController,
-				Filter: FilterController
+				Filter: FilterController,
+				Group: GroupController,
+				Aggregate: AggregateController
 			}
 		});
 		// Skip propagation of properties (models and bindingContexts)
@@ -1239,6 +1267,14 @@ sap.ui.define([
 		return this.getSortConditions() ? this.getSortConditions().sorters : [];
 	};
 
+	Table.prototype._getGroupedProperties = function () {
+		return this.getGroupConditions() ? this.getGroupConditions().groupLevels : [];
+	};
+
+	Table.prototype._getAggregatedProperties = function () {
+		return this.getAggregateConditions() ? this.getAggregateConditions() : {};
+	};
+
 	function getFilteredProperties(oTable) {
 		var mFilterConditions = oTable.getFilterConditions();
 
@@ -1270,6 +1306,14 @@ sap.ui.define([
 			oState.filter = this.getFilterConditions();
 		}
 
+		if (this.isGroupingEnabled()) {
+			oState.groupLevels = this._getGroupedProperties();
+		}
+
+		if (this.isAggregationEnabled()) {
+			oState.aggregations = this._getAggregatedProperties();
+		}
+
 		return oState;
 	};
 
@@ -1293,6 +1337,26 @@ sap.ui.define([
 		return this.getP13nMode().indexOf("Sort") > -1;
 	};
 
+	/**
+	 * Checks whether group personalization is enabled.
+	 *
+	 * @protected
+	 * @returns {boolean} Whether group personalization is enabled
+	 */
+	Table.prototype.isGroupingEnabled = function () {
+		return this.getP13nMode().indexOf("Group") > -1;
+	};
+
+	/**
+	* Checks whether group personalization is enabled.
+	*
+	* @protected
+	* @returns {boolean} Whether group personalization is enabled
+	*/
+	Table.prototype.isAggregationEnabled = function () {
+		return this.getP13nMode().indexOf("Aggregate") > -1;
+	};
+
 	Table.prototype._getP13nButtons = function() {
 		var aP13nMode = this.getP13nMode();
 		var aButtons = [];
@@ -1313,6 +1377,12 @@ sap.ui.define([
 		if (aP13nMode.indexOf("Column") > -1) {
 			aButtons.push(TableSettings.createColumnsButton(this.getId(), [
 				this._showSettings, this
+			]));
+		}
+
+		if (this.isGroupingEnabled()) {
+			aButtons.push(TableSettings.createGroupButton(this.getId(), [
+				this._showGroup, this
 			]));
 		}
 
@@ -1691,6 +1761,14 @@ sap.ui.define([
 		var sSortProperty = oEvent.getParameter("property");
 
 		TableSettings.createSort(this, sSortProperty, true);
+	};
+
+	Table.prototype._onCustomGroup = function (sSortProperty) {
+		TableSettings.createGroup(this, sSortProperty);
+	};
+
+	Table.prototype._onCustomAggregate = function (sSortProperty) {
+		TableSettings.createAggregation(this, sSortProperty);
 	};
 
 	Table.prototype._insertInnerColumn = function(oMDCColumn, iIndex) {
@@ -2265,6 +2343,10 @@ sap.ui.define([
 
 	Table.prototype._showFilter = function(oEvt) {
 		TableSettings.showPanel(this, "Filter", oEvt.getSource());
+	};
+
+	Table.prototype._showGroup = function (oEvt) {
+		TableSettings.showPanel(this, "Group", oEvt.getSource());
 	};
 
 	// TODO: move to a base util that can be used by most aggregations

@@ -92,19 +92,18 @@ sap.ui.define([
 		});
 
 		var oAggregatePopover, oGroupPopover;
-		if (aGroupProperties && aGroupProperties.length) {
-			oGroupPopover = this._onGroup(oTable, aGroupProperties, oMDCColumn);
+		if (oTable.isGroupingEnabled() && aGroupProperties && aGroupProperties.length) {
+			oGroupPopover = this._onGroup(aGroupProperties, oMDCColumn);
 		}
 
-		if (aAggregateProperties && aAggregateProperties.length) {
-			oAggregatePopover = this._onAggregate(oTable, aAggregateProperties, oMDCColumn);
+		if (oTable.isAggregationEnabled() && aAggregateProperties && aAggregateProperties.length) {
+			oAggregatePopover = this._onAggregate(aAggregateProperties, oMDCColumn);
 		}
 		return [oGroupPopover, oAggregatePopover];
 	};
 
-	Delegate._onGroup = function(oTable, aGroupProperties, oMDCColumn) {
+	Delegate._onGroup = function(aGroupProperties, oMDCColumn) {
 		var oGroupChild, aGroupChildren = [];
-		var aAggregate = TableMap.get(oTable)["aggregate"] || [];
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 		aGroupProperties.forEach(function(oGroupProperty) {
 			oGroupChild = new Item({
@@ -120,7 +119,6 @@ sap.ui.define([
 				icon: "sap-icon://group-2",
 				action: [{
 					sName: "Group",
-					aAnalytics: aAggregate,
 					oMDCColumn: oMDCColumn
 				}, this._checkForPreviousAnalytics, this]
 			});
@@ -128,9 +126,8 @@ sap.ui.define([
 		}
 	};
 
-	Delegate._onAggregate = function(oTable, aAggregateProperties, oMDCColumn) {
+	Delegate._onAggregate = function(aAggregateProperties, oMDCColumn) {
 		var oAggregateChild, aAggregateChildren = [];
-		var aGroupLevel = TableMap.get(oTable)["group"] || [];
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 		aAggregateProperties.forEach(function(oAggregateProperty) {
 			oAggregateChild = new Item({
@@ -147,7 +144,6 @@ sap.ui.define([
 				icon: "sap-icon://collections-management",
 				action: [{
 					sName: "Aggregate",
-					aAnalytics: aGroupLevel,
 					oMDCColumn: oMDCColumn
 				}, this._checkForPreviousAnalytics, this]
 			});
@@ -158,13 +154,20 @@ sap.ui.define([
 	Delegate._checkForPreviousAnalytics = function(oEvent, oData) {
 		var sName = oData.sName,
 			sTitle,
-			aAnalytics = oData.aAnalytics,
 			oMDCColumn = oData.oMDCColumn,
 			oTable = oMDCColumn.getParent(),
+			aGroupLevels = oTable.getCurrentState().groupLevels || [],
+			oAggregate = oTable.getCurrentState().aggregations || {},
+			aAggregate = Object.keys(oAggregate),
 			bForcedAnalytics = false,
 			sPath = oEvent.getParameter("property");
 
-		if (aAnalytics.indexOf(sPath) > -1) {
+		var aAnalytics = sName == "Aggregate" ? aGroupLevels : aAggregate;
+		var bForce = aAnalytics.filter(function(item) {
+			return sName == "Aggregate" ? item.name === sPath : item === sPath;
+		}).length > 0;
+
+		if (bForce) {
 			var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 			sTitle = sName == "Aggregate" ? oResourceBundle.getText("table.SETTINGS_AGGREGATE") : oResourceBundle.getText("table.SETTINGS_GROUP");
 			bForcedAnalytics = true;
@@ -187,37 +190,54 @@ sap.ui.define([
 	};
 
 	Delegate._onAction = function(sAction, oTable, sPath) {
-		var mTableMap = TableMap.get(oTable);
-		var aGroup =  mTableMap["group"] || [];
-		var aAggregate =  mTableMap["aggregate"] || [];
-
 		if (sAction === "Group") {
-			if (aGroup.indexOf(sPath) > -1) {
-				aGroup.splice(aGroup.indexOf(sPath), 1);
-			} else {
-				aGroup.push(sPath);
-			}
-		} else if (aAggregate.indexOf(sPath) > -1) {
-			aAggregate.splice(aAggregate.indexOf(sPath), 1);
+			oTable._onCustomGroup(sPath);
 		} else {
-				aAggregate.push(sPath);
+			oTable._onCustomAggregate(sPath);
 		}
-		this._setAggregation(oTable, aGroup, aAggregate);
 	};
 
 	Delegate._forceAnalytics = function(sName, oTable, sPath) {
-		var aGroupLevel = TableMap.get(oTable)["group"] || [];
-		var aAggregate = TableMap.get(oTable)["aggregate"] || [];
-
+		var self = this;
 		if (sName === "Aggregate") {
-			aGroupLevel.splice(aAggregate.indexOf(sPath),1);
-			aAggregate.push(sPath);
+			oTable.getCurrentState().groupLevels.forEach(function (item, index, object) {
+				if (item.name == sPath) {
+					var aGroupLevel = oTable.getCurrentState().groupLevels || [];
+					var oAggregate = oTable.getCurrentState().aggregations || {};
+					var aAggregate = Object.keys(oAggregate);
+					aGroupLevel.splice(index, 1);
+					self._setAggregation(oTable, aGroupLevel, aAggregate);
+				}
+			});
+			oTable._onCustomAggregate(sPath);
 		} else if (sName === "Group") {
-			aAggregate.splice(aAggregate.indexOf(sPath),1);
-			aGroupLevel.push(sPath);
+			var oAggregate = oTable.getCurrentState().aggregations || {};
+			Object.keys(oAggregate).forEach(function (item, index, object) {
+				if (item == sPath) {
+					delete oAggregate[sPath];
+					var aAggregate = Object.keys(oAggregate);
+					var aGroupLevel = oTable.getCurrentState().groupLevels || [];
+					self._setAggregation(oTable, aGroupLevel, aAggregate);
+				}
+			});
+			oTable._onCustomGroup(sPath);
 		}
+	};
 
-		this._setAggregation(oTable, aGroupLevel, aAggregate);
+	Delegate.rebindTable = function (oTable, oBindingInfo) {
+		var oGroupLevels, aGrouping, oAggregations, aAggregate;
+
+		oGroupLevels = oTable._getGroupedProperties();
+		oAggregations = oTable._getAggregatedProperties();
+
+		aGrouping = oGroupLevels.map(function (item) {
+			return item.name;
+		});
+
+		aAggregate = Object.keys(oAggregations);
+
+		this._setAggregation(oTable, aGrouping, aAggregate);
+		TableDelegate.rebindTable(oTable, oBindingInfo);
 	};
 
 	Delegate._setAggregation = function(oTable, aGroupLevel, aAggregate) {
@@ -231,11 +251,6 @@ sap.ui.define([
 		};
 
 		oPlugin && oPlugin.setAggregationInfo(oAggregationInfo);
-		TableMap.set(oTable, {
-			plugin: oPlugin,
-			group: aGroupLevel,
-			aggregate: aAggregate
-		});
 	};
 
 	Delegate._getVisibleProperties = function(oTable) {
@@ -260,8 +275,9 @@ sap.ui.define([
 		if (!TableMap.get(oTable)) {
 			return;
 		}
-		var aGroupLevel = TableMap.get(oTable)["group"] || [];
-		var aAggregate  = TableMap.get(oTable)["aggregate"] || [];
+		var aGroupLevel = oTable.getCurrentState().groupLevels || [];
+		var oAggregate  = oTable.getCurrentState().aggregations || {};
+		var aAggregate = Object.keys(oAggregate);
 		this._setAggregation(oTable, aGroupLevel, aAggregate);
 	};
 
