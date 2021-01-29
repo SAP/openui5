@@ -84,7 +84,7 @@ sap.ui.define([
 	 * @extends sap.ui.fl.Change
 	 * @private
 	 * @ui5-restricted
-	 * @since Since 1.86.0
+	 * @since 1.86.0
 	 */
 	var Variant = Change.extend("sap.ui.fl.apply._internal.flexObjects.Variant", /** @lends sap.ui.fl.apply._internal.flexObjects.Variant.prototype */ {
 		metadata: {

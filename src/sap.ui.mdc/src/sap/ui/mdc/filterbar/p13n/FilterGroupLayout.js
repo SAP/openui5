@@ -13,7 +13,7 @@ sap.ui.define(['sap/ui/core/Control',  'sap/m/Label'
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
 	 * @class Represents a filter item on the UI.
-	 * @extends sap.m.ColumnListItem
+	 * @extends sap.ui.core.Control
 	 * @constructor
 	 * @private
 	 * @since 1.82.0

@@ -21,7 +21,7 @@ sap.ui.define([
 	 *
 	 * @class
 	 * @extends sap.ui.core.Control
-	 * @alias sap.ui.integration.designtime.Preview
+	 * @alias sap.ui.integration.designtime.editor.CardPreview
 	 * @author SAP SE
 	 * @since 1.83.0
 	 * @version ${version}

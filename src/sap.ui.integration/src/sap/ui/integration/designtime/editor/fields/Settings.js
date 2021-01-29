@@ -48,8 +48,8 @@ sap.ui.define([
 
 	/**
 	 * @class
-	 * @extends sap.ui.integration.designtime.editor.fields.BaseField
-	 * @alias sap.ui.integration.designtime.editor.fields.BooleanField
+	 * @extends sap.ui.core.Control
+	 * @alias sap.ui.integration.designtime.editor.fields.Settings
 	 * @author SAP SE
 	 * @since 1.83.0
 	 * @version ${version}
