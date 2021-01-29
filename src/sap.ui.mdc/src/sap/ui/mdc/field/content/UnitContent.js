@@ -166,23 +166,14 @@ sap.ui.define([
 			var oField = oContentFactory.getField();
 			var oType = oContentFactory.retrieveDataType();
 			var sName = oType.getMetadata().getName();
-			var oFormatOptions = oType.oFormatOptions;
-			var oConstraints = isEmptyObject(oType.oConstraints) ? undefined : oType.oConstraints;
+			var oFormatOptions = oType.getFormatOptions();
+			var oConstraints = isEmptyObject(oType.getConstraints()) ? undefined : oType.getConstraints();
 
 			// if type is used from binding (Field) or format options are not set correctly -> create new type
 			if (!oFormatOptions || !oFormatOptions.hasOwnProperty("showMeasure") || oFormatOptions.showMeasure) {
 				oFormatOptions = merge({}, oFormatOptions); // do not manipulate original object
 				oFormatOptions.showMeasure = false;
 				oFormatOptions.strictParsing = true; // do not allow to enter unit in number field
-				if (oFormatOptions.hasOwnProperty("parseAsString") && oType.hasOwnProperty("bParseAsString")) {
-					oFormatOptions.parseAsString = oType.bParseAsString; // as V4 types set it always to true and uses internal value
-				}
-				if (oFormatOptions.customCurrencies) {
-					delete oFormatOptions.customCurrencies; // cannot be set from outside
-				}
-				if (oFormatOptions.customUnits) {
-					delete oFormatOptions.customUnits; // cannot be set from outside
-				}
 				var TypeClass = ObjectPath.get(sName);
 				oContentFactory.setUnitOriginalType(oContentFactory.getDataType());
 				oContentFactory.setDataType(new TypeClass(oFormatOptions, oConstraints));

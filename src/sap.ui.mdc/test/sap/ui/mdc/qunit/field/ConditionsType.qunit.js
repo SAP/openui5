@@ -563,7 +563,7 @@ sap.ui.define([
 	QUnit.test("unit Parsing unsing condition from navigation", function(assert) {
 
 		var oNavigateCondition = Condition.createCondition("EQ", [[1, "USD"]], {testIn: "A"}, {testOut: "B"});
-		var oFormatOptions = oUnitConditionsType.oFormatOptions;
+		var oFormatOptions = oUnitConditionsType.getFormatOptions();
 		oFormatOptions.navigateCondition = oNavigateCondition;
 		oUnitConditionsType.setFormatOptions(oFormatOptions);
 

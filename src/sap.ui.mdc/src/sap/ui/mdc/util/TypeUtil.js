@@ -103,7 +103,7 @@ sap.ui.define([
 		 * @public
 		 */
 		getBaseTypeForType: function(oType) {
-			return this.getBaseType(oType.getMetadata && oType.getMetadata().getName(), oType.oFormatOptions, oType.oConstraints);
+			return this.getBaseType(oType.getMetadata && oType.getMetadata().getName(), oType.getFormatOptions(), oType.getConstraints());
 		},
 
 		/**

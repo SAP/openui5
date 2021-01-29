@@ -159,7 +159,7 @@ sap.ui.define([
 			var oDataType = this._oContentFactory.getDataType();
 			if (oBindingInfo.type && (!oDataType ||
 				oDataType.getMetadata().getName() !== oBindingInfo.type.getMetadata().getName() ||
-				!deepEqual(oDataType.oFormatOptions, oBindingInfo.type.oFormatOptions) ||
+				!deepEqual(oDataType.getFormatOptions(), oBindingInfo.type.getFormatOptions()) ||
 				!deepEqual(oDataType.getConstraints(), oBindingInfo.type.getConstraints()) ||
 				oDataType._bCreatedByOperator !== oBindingInfo.type._bCreatedByOperator)) {
 				this._oContentFactory.setDataType(oBindingInfo.type);

@@ -644,7 +644,8 @@ sap.ui.define([
 
 		switch (sType) {
 			case BaseType.Numeric:
-				if (oDataType.oFormatOptions && oDataType.oFormatOptions.hasOwnProperty("emptyString") && oDataType.oFormatOptions.emptyString === null) {
+				var oFormatOptions = oDataType.getFormatOptions();
+				if (oFormatOptions && oFormatOptions.hasOwnProperty("emptyString") && oFormatOptions.emptyString === null) {
 					// given type can be used
 					oNullableType = oDataType;
 				} else {
@@ -805,8 +806,8 @@ sap.ui.define([
 	function _getBaseType(oType) {
 
 		var sType = oType.getMetadata().getName();
-		var oFormatOptions = oType.oFormatOptions;
-		var oConstraints = oType.oConstraints;
+		var oFormatOptions = oType.getFormatOptions();
+		var oConstraints = oType.getConstraints();
 		var oDelegate = this.getFormatOptions().delegate;
 		var oPayload = this.getFormatOptions().payload;
 		var sBaseType = oDelegate ? oDelegate.getTypeUtil(oPayload).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String; // if not configured use string

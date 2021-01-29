@@ -88,7 +88,7 @@ sap.ui.define([
 			switch (sType) {
 
 				case "sap.ui.model.odata.type.DateTime":
-					if (oConstraints && (oConstraints.displayFormat === "Date" || oConstraints.isDateOnly)) {
+					if (oConstraints && oConstraints.displayFormat === "Date") {
 						return BaseType.Date;
 					} else {
 						return BaseType.DateTime;

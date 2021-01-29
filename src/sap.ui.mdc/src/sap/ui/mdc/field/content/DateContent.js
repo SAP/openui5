@@ -106,7 +106,7 @@ sap.ui.define([
 		},
 		_adjustDataTypeForDate: function(oContentFactory) {
 			var oType = oContentFactory.retrieveDataType();
-			var oFormatOptions = oType.oFormatOptions;
+			var oFormatOptions = oType.getFormatOptions();
 
 			// if type is used from binding (Field) or format options are not set correctly -> create new type
 			this._getDatePattern(oContentFactory, oFormatOptions); // to determine pattern

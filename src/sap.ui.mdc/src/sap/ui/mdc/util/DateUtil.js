@@ -82,27 +82,14 @@ sap.ui.define([
 				createInternalType: function(oType, sPattern) {
 
 					var Type = sap.ui.require(oType.getMetadata().getName().replace(/\./g, "/")); // type is already loaded because instance is provided
-					var oConstraints = merge({}, oType.oConstraints);
-					var oFormatOptions = merge({}, oType.oFormatOptions);
+					var oConstraints = merge({}, oType.getConstraints());
+					var oFormatOptions = merge({}, oType.getFormatOptions());
 
 					if (oFormatOptions.style) {
 						delete oFormatOptions.style;
 					}
 					oFormatOptions.pattern = sPattern;
 					oFormatOptions.calendarType = CalendarType.Gregorian;
-
-					if (oConstraints && oConstraints.isDateOnly) {
-						// TODO, better solution for sap.ui.model.odata.type.Date
-						delete oConstraints.isDateOnly;
-						oConstraints.displayFormat = "Date";
-					}
-					if (oType.bV4) {
-						// TODO: better solution for sap.ui.model.odata.type.DateTimeOffset V4 mode
-						if (!oConstraints) {
-							oConstraints = {};
-						}
-						oConstraints.V4 = true;
-					}
 
 					return new Type(oFormatOptions, oConstraints);
 
