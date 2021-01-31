@@ -32,6 +32,7 @@ sap.ui.define([
 		CommunicationBus.subscribe(CommunicationChannels.CONTEXT_MENU_HIGHLIGHT, this._onContextHighlight.bind(this));
 		CommunicationBus.subscribe(CommunicationChannels.CONTEXT_MENU_PRESS, this._onContextPress.bind(this));
 		CommunicationBus.subscribe(CommunicationChannels.CONTEXT_MENU_ENTER_TEXT, this._onContextEnterText.bind(this));
+		CommunicationBus.subscribe(CommunicationChannels.ASSERT_PROPERTY, this._onAssertProperty.bind(this));
 	};
 
 	RecordListener.prototype.stop = function () {
@@ -65,6 +66,10 @@ sap.ui.define([
 
 	RecordListener.prototype._onContextPress = function (mData) {
 		CommandExecutor.execute(Commands.PRESS, mData);
+	};
+
+	RecordListener.prototype._onAssertProperty = function (mData) {
+		CommandExecutor.execute(Commands.ASSERT, mData);
 	};
 
 	RecordListener.prototype._onContextEnterText = function (mData) {

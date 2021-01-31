@@ -71,4 +71,31 @@ sap.ui.define([
 			assert.ok(!sResult.match("\"actions\": "), "Should not include action even if given as arg");
 		}).finally(fnDone);
 	});
+
+	QUnit.test("Should get snippet with assertion", function (assert) {
+		var fnDone = assert.async();
+		var mAssertion = {
+			propertyName: "text",
+			expectedValue: "value",
+			propertyType: "string"
+		};
+
+		DialectRegistry.setActiveDialect(Dialects.OPA5);
+		ControlSnippetProvider.getSnippet({
+			controlSelector: this.mSelector,
+			assertion: mAssertion
+		}).then(function (sResult) {
+			assert.ok(sResult.startsWith("this.waitFor("), "Should include waitFor call");
+			assert.ok(sResult.match('assert.strictEqual.*.getText().*"value"'), "Should include assertion");
+
+			DialectRegistry.setActiveDialect(Dialects.UIVERI5);
+			return ControlSnippetProvider.getSnippet({
+				controlSelector: this.mSelector,
+				assertion: mAssertion
+			});
+		}.bind(this)).then(function (sResult) {
+			assert.ok(sResult.startsWith("expect(element(by.control("), "Should include element call");
+			assert.ok(sResult.match('expect(element.*.asControl().getProperty("text").*toEqual("value")'), "Should include assertion");
+		}).finally(fnDone);
+	});
 });

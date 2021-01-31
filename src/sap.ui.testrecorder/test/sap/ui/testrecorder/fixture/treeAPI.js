@@ -173,7 +173,8 @@ sap.ui.define([
 							UIVERI5: {
 								Highlight: _asPOMethod("element(by.control(" + sRaw + "\n}));", "assert"),
 								Press: _asPOMethod("element(by.control(" + sRaw + "\n})).click();", "press"),
-								"Enter Text": _asPOMethod('element(by.control(' + sRaw + '\n})).sendKeys("test");', "enterText")
+								"Enter Text": _asPOMethod('element(by.control(' + sRaw + '\n})).sendKeys("test");', "enterText"),
+								Assert: _asPOMethod('expect(element(by.control(' + sRaw + '\n})).asControl().getProperty("text")).toEqual("Button One");', "assert")
 							},
 							RAW: {
 								Highlight: sRawJson + "\n}",
@@ -187,7 +188,11 @@ sap.ui.define([
 								"Enter Text": _asPOMethod("this.waitFor(" + sRaw + ",\n" +
 								"    actions: new EnterText({\n" +
 								'        text: "test"\n' +
-								"    })" + "\n});", "enterText")
+								"    })" + "\n});", "enterText"),
+								Assert: _asPOMethod("this.waitFor(" + sRaw + ",\n" +
+									'    success: function (vControls) {\n        var oControl = vControls[0] || vControls;' +
+									'\n        Opa5.assert.strictEqual(oControl.getText(), "Button One");\n    }' +
+									"\n});", "assert")
 							}
 						},
 						properties: {

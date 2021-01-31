@@ -27,7 +27,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.testrecorder.ui.controllers.Main", {
 		onInit: function () {
 			this._minimized = false;
-			this._treeSelectionId = null;
+			this._selectionId = null;
 			this._localStorage = new Storage(Storage.Type.local, "sap-ui-test-recorder");
 
 			$.sap.includeStyleSheet("sap/ui/testrecorder/ui/styles/overlay.css");
@@ -142,6 +142,22 @@ sap.ui.define([
 				this.settingsDialog.close();
 			}
 		},
+		handlePropertyIconPress: function (oEvent) {
+			var oIcon = oEvent.getSource();
+			var oItem = oIcon.getParent().getParent();
+			var propertyName = oItem.getCells()[0].getItems()[1].getText();
+			var propertyValue = oItem.getCells()[1].getText();
+			var propertyType = oItem.getCells()[2].getText();
+			CommunicationBus.publish(CommunicationChannels.ASSERT_PROPERTY, {
+				domElementId: this._selectionId,
+				assertion: {
+					propertyName: propertyName,
+					expectedValue: propertyValue,
+					propertyType: propertyType
+				}
+			});
+		},
+
 		_setupModels: function () {
 			this.model = SharedModel;
 			this.getView().setModel(this.model);
@@ -229,20 +245,27 @@ sap.ui.define([
 		},
 		_onUpdateSelection: function (mData) {
 			// request data for a control that was selected in the app
+			this._selectionId = mData.rootElementId;
 			this.elementTree.setSelectedElement(mData.rootElementId, false);
 			this._clearControlData();
 
 			// domElementId is the ID of the control focus ref *in the app*,
 			// interactionElementId is the ID of the right-clicked element *in the app*
-			CommunicationBus.publish(CommunicationChannels.REQUEST_CONTROL_DATA, {domElementId: mData.rootElementId });
+			CommunicationBus.publish(CommunicationChannels.REQUEST_CONTROL_DATA, {
+				domElementId: mData.rootElementId
+			});
 			CommunicationBus.publish(CommunicationChannels.REQUEST_CODE_SNIPPET, {
 				domElementId: mData.interactionElementId,
-				action: mData.action
+				action: mData.action,
+				assertion: mData.assertion
 			});
-			CommunicationBus.publish(CommunicationChannels.HIGHLIGHT_CONTROL, {domElementId: mData.rootElementId });
+			CommunicationBus.publish(CommunicationChannels.HIGHLIGHT_CONTROL, {
+				domElementId: mData.rootElementId
+			});
 		},
 		_onTreeSelectionChanged: function (domElementId) {
 			// request data for a control that was selected in the tree - via left click
+			this._selectionId = domElementId;
 			this._clearControlData();
 
 			// here domElementId is the ID of the element *in the app*

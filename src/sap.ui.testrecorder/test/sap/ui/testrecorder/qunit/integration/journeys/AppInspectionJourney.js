@@ -202,6 +202,15 @@ sap.ui.define([
 		Then.onTheIFrameInspectPage.iShouldSeeItemProperty(mTestData.prop, mTestData.newValue);
 	});
 
+	opaTest("Should assert a property", function (Given, When, Then) {
+		When.onTheAppPage.iActOnControl(mItems[0].selector, "Highlight");
+		When.onTheIFrameInspectPage.iAssertProperty(mItems[0].text);
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.UIVERI5, "Assert");
+
+		When.onTheIFrameInspectPage.iSelectDialect(Dialects.OPA5);
+		Then.onTheIFrameInspectPage.iShouldSeeItemCodeSnippet(mItems[0].text, Dialects.OPA5, "Assert");
+	});
+
 	opaTest("Should interact with sap.m.DatePicker", function (Given, When, Then) {
 		When.onTheIFrameInspectPage.iSelectDialect(Dialects.OPA5);
 		When.onTheAppPage.iOpenTheDatePicker();

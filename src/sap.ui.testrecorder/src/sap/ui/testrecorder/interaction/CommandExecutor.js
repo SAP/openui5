@@ -6,8 +6,9 @@ sap.ui.define([
 	"sap/ui/testrecorder/interaction/Commands",
 	"sap/ui/testrecorder/interaction/Highlight",
 	"sap/ui/testrecorder/interaction/Press",
-	"sap/ui/testrecorder/interaction/EnterText"
-], function (Commands, Highlight, Press, EnterText) {
+	"sap/ui/testrecorder/interaction/EnterText",
+	"sap/ui/testrecorder/interaction/Assert"
+], function (Commands, Highlight, Press, EnterText, Assert) {
 	"use strict";
 
 	return {
@@ -21,6 +22,9 @@ sap.ui.define([
 					break;
 				case "ENTER_TEXT":
 					EnterText.execute(mData.domElementId);
+					break;
+				case "ASSERT":
+					Assert.execute(mData);
 					break;
 				default:
 					throw new Error("Command " + sCommand + " is not known! Known commands are: " + Object.keys(Commands));

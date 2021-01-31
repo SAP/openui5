@@ -118,6 +118,46 @@ sap.ui.define([
 						actions: new Press(),
 						errorMessage: "Cannot press the switch for multi snippets"
 					});
+				},
+				iAssertProperty: function (sText) {
+					this.waitFor({
+						matchers: function () {
+							return Opa5.getContext()._getRecorderControls({
+								controlType: "sap.m.Text",
+								matchers: new Properties({
+									text: sText
+								})
+							});
+						},
+						success: function (aText) {
+							this.waitFor({
+								matchers: function () {
+									return Opa5.getContext()._getRecorderControls({
+										controlType: "sap.m.ColumnListItem",
+										matchers: new Descendant(aText[0])
+									});
+								},
+								success: function (aItems) {
+									this.waitFor({
+										matchers: function () {
+											return Opa5.getContext()._getRecorderControls({
+												controlType: "sap.ui.core.Icon",
+												matchers: [
+													new Ancestor(aItems[0]),
+													new Properties({
+														src: "sap-icon://add-process"
+													})
+												]
+											});
+										},
+										actions: new Press(),
+										errorMessage: "Cannot find property icon"
+									});
+								},
+								errorMessage: "Cannot find property"
+							});
+						}
+					});
 				}
 			},
 			assertions: {

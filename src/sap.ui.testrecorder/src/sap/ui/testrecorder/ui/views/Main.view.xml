@@ -110,6 +110,7 @@
 										key="properties"
 										text="{i18n>TestRecorder.Inspect.Properties.Title}">
 										<Table
+											id="propertiesTable"
 											items="{controls>/properties/own}"
 											headerText="{i18n>TestRecorder.Inspect.Properties.Own.Header.Text}" >
 											<columns>
@@ -124,7 +125,13 @@
 												</Column>
 											</columns>
 											<ColumnListItem>
-												<Text text="{controls>property}"/>
+												<HBox>
+													<c:Icon src="sap-icon://add-process"
+														class="sapUiSmallMarginEnd"
+														tooltip="{i18n>TestRecorder.Inspect.Properties.Property.Icon.Tooltip}"
+														press="handlePropertyIconPress"/>
+													<Text text="{controls>property}"/>
+												</HBox>
 												<Text text="{controls>value}"/>
 												<Text text="{controls>type}"/>
 											</ColumnListItem>
@@ -147,7 +154,13 @@
 												</Column>
 											</columns>
 											<ColumnListItem>
-												<Text text="{controls>property}"/>
+												<HBox>
+													<c:Icon src="sap-icon://add-process"
+														class="sapUiSmallMarginEnd"
+														tooltip="{i18n>TestRecorder.Inspect.Properties.Property.Icon.Tooltip}"
+														press="handlePropertyIconPress"/>
+													<Text text="{controls>property}"/>
+												</HBox>
 												<Text text="{controls>value}"/>
 												<Text text="{controls>type}"/>
 												<Text text="{controls>inheritedFrom}"/>

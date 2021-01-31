@@ -25,6 +25,7 @@ sap.ui.define([
 	opaTest("Should show a control's properties and bindings", function (Given, When, Then) {
 		Given.iStartMyMockRecorder();
 
+		When.onTheInspectPage.iSelectDialect(Dialects.OPA5);
 		When.onTheTreePage.iSelectItem(mItems[0].text);
 
 		Then.onTheTreePage.iShouldSeeTheHighlightedItem(mItems[0].text);
@@ -42,7 +43,7 @@ sap.ui.define([
 		When.onTheTreePage.iSelectItem(mItems[0].text);
 
 		Then.onTheTreePage.iShouldSeeTheHighlightedItem(mItems[0].text);
-		Then.onTheInspectPage.iShouldSeeItemCodeSnippet(mItems[0].id);
+		Then.onTheInspectPage.iShouldSeeItemCodeSnippet(mItems[0].id, Dialects.OPA5);
 
 		// reset selection
 		When.onTheTreePage.iSelectItem(mItems[1].text);

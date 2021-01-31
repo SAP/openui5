@@ -46,6 +46,8 @@ sap.ui.define([
 		CommunicationBus.subscribe(CommunicationChannels.CONTEXT_MENU_PRESS, _onSnippetRequest("Press"));
 		CommunicationBus.subscribe(CommunicationChannels.CONTEXT_MENU_ENTER_TEXT, _onSnippetRequest("Enter Text"));
 
+		CommunicationBus.subscribe(CommunicationChannels.ASSERT_PROPERTY, _onSnippetRequest("Assert"));
+
 		function _onSnippetRequest(sAction) {
 			return function (mData) {
 				sAction = sAction || "Highlight";

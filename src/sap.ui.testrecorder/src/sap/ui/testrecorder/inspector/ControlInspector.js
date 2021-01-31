@@ -95,6 +95,7 @@ sap.ui.define([
 	 * @param {object} mData object containing control identifiers and actions
 	 * @param {string} mData.domElementId ID of a dom element from which the control is found (e.g. dom ref)
 	 * @param {string} mData.action name of an action to record in the snippet (e.g. press, enter text)
+	 * @param {object} mData.assertion assertion details - property name, type and expected value
 	 */
 	ControlInspector.prototype.getCodeSnippet = function (mData) {
 		var mDataForGenerator = Object.assign({}, mData, {
@@ -110,6 +111,7 @@ sap.ui.define([
 			return CodeSnippetProvider.getSnippet({
 				controlSelector: mSelector,
 				action: mDataForGenerator.action,
+				assertion: mDataForGenerator.assertion,
 				settings: mSelectorSettings
 			});
 		}).then(function (sSnippet) {
@@ -123,7 +125,8 @@ sap.ui.define([
 				return RawSnippetUtil.getJSON(aSnippets, mSelectorSettings);
 			} else {
 				return POMethodUtil.getPOMethod(aSnippets, $.extend({
-					action: mData.action
+					action: mData.action,
+					assertion: mData.assertion
 				}, mSelectorSettings));
 			}
 		}).then(function (sSnippet) {

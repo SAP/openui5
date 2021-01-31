@@ -67,7 +67,7 @@ sap.ui.define([
 								type: "javascript"
 							})
 						],
-						success: function (aTables) {
+						success: function (aEditors) {
 							Opa5.assert.ok(true, "Code snippet is visible");
 						},
 						errorMessage: "Cannot find snippets"

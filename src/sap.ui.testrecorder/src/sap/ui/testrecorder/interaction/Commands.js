@@ -10,6 +10,7 @@ sap.ui.define([
 	return {
 		HIGHLIGHT: "HIGHLIGHT",
 		PRESS: "PRESS",
-		ENTER_TEXT: "ENTER_TEXT"
+		ENTER_TEXT: "ENTER_TEXT",
+		ASSERT: "ASSERT"
 	};
 });

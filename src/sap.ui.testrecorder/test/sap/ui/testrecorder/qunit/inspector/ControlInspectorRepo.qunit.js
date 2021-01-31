@@ -10,7 +10,12 @@ sap.ui.define([
 			this.testData = [{
 				request: {
 					domElementId: "container-cart---homeView--searchField",
-					action: "PRESS"
+					action: "PRESS",
+					assertion: {
+						propertyName: "text",
+						expectedValue: "value1",
+						propertyType: "string"
+					}
 				},
 				selector: {
 					id: "container-cart---homeView--searchField"
@@ -21,7 +26,12 @@ sap.ui.define([
 			}, {
 				request: {
 					domElementId: "__item3-container-cart---homeView--categoryList-0",
-					action: "PRESS"
+					action: "PRESS",
+					assertion: {
+						propertyName: "text",
+						expectedValue: "value2",
+						propertyType: "string"
+					}
 				},
 				selector: {
 					controlType: "sap.m.StandardListItem",
@@ -53,17 +63,24 @@ sap.ui.define([
 	QUnit.test("Should save all data for a domElementId", function (assert) {
 		var aRepo = ControlInspectorRepo.getAll();
 		assert.strictEqual(aRepo.length, 2, "Should save all entries");
-		assert.strictEqual(aRepo[0].domElementId, this.testData[0].request.domElementId);
-		assert.strictEqual(aRepo[0].selector, this.testData[0].selector);
-		assert.strictEqual(aRepo[1].domElementId, this.testData[1].request.domElementId);
-		assert.strictEqual(aRepo[1].selector, this.testData[1].selector);
+		aRepo.forEach(function (entry, i) {
+			assert.strictEqual(entry.domElementId, this.testData[i].request.domElementId);
+			assert.strictEqual(entry.selector, this.testData[i].selector);
+			assert.strictEqual(entry.action, this.testData[i].request.action);
+			assert.strictEqual(entry.assertion, this.testData[i].request.assertion);
+		}.bind(this));
 	});
 
 	QUnit.test("Should update data for a domElementId", function (assert) {
 		var mNewData = {
 			request: {
 				domElementId: "container-cart---homeView--searchField",
-				action: "ENTER_TEXT"
+				action: "ENTER_TEXT",
+				assertion: {
+					propertyName: "text",
+					expectedValue: "value1",
+					propertyType: "string"
+				}
 			},
 			selector: {
 				id: "searchField-new"
@@ -77,7 +94,10 @@ sap.ui.define([
 		assert.strictEqual(aRepo.length, 2, "Should save all entries");
 		assert.strictEqual(aRepo[0].domElementId, mNewData.request.domElementId);
 		assert.strictEqual(aRepo[0].selector, mNewData.selector);
+		assert.strictEqual(aRepo[0].action, mNewData.request.action);
+		assert.strictEqual(aRepo[0].assertion, mNewData.request.assertion);
 		assert.strictEqual(aRepo[0].snippet, mNewData.snippet);
+
 		assert.strictEqual(aRepo[1].domElementId, this.testData[1].request.domElementId);
 		assert.strictEqual(aRepo[1].selector, this.testData[1].selector);
 	});
