@@ -51,6 +51,7 @@ sap.ui.define([
 		 * @param {boolean} mPropertyBag.changeSpecificData.isVariant - Indicates if the change is a variant
 		 * @param {string} [mPropertyBag.changeSpecificData.packageName] - Package name for the new entity; default is <code>$tmp</code>
 		 * @param {boolean} mPropertyBag.changeSpecificData.isUserDependent - Indicates if a change is only valid for the current user
+		 * @param {boolean} [mPropertyBag.support] - Information for support analysis
 		 * @returns {string} ID of the newly created change
 		 * @private
 		 * @ui5-restricted sap.ui.comp
@@ -63,14 +64,15 @@ sap.ui.define([
 		 * Adds a new variant and returns the ID of the new change.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {object[]} mPropertyBag.changeSpecificData - Map of parameters, see below
-		 * @param {sap.ui.fl.Layer} mPropertyBag.changeSpecificData.layer - Layer to which the variant should be written
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer to which the variant should be written
+		 * @param {object} mPropertyBag.changeSpecificData - Map of parameters, see below
 		 * @param {string} mPropertyBag.changeSpecificData.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
 		 * @param {object} mPropertyBag.changeSpecificData.texts - Map object with all referenced texts within the file; these texts will be connected to the translation process
 		 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
 		 * @param {string} [mPropertyBag.changeSpecificData.ODataService] - Name of the OData service --> can be null
-		 * @param {string} [mPropertyBag.changeSpecificData.id] - ID of the variant; the ID has to be globally unique and should only be set in exceptional cases for example downport of variants
+		 * @param {string} [mPropertyBag.command] - Name of the command creating the variant
 		 * @returns {sap.ui.fl.apply._internal.flexObjects.Variant} Created variant object instance
+		 * @param {boolean} [mPropertyBag.support] - Information for support analysis
 		 * @private
 		 * @ui5-restricted sap.ui.rta.command
 		 */

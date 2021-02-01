@@ -3,10 +3,10 @@
  */
 
 sap.ui.define([
-	"sap/ui/fl/apply/_internal/flexObjects/Variant",
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/base/Log"
 ], function(
-	Variant,
+	CompVariant,
 	Log
 ) {
 	"use strict";
@@ -63,7 +63,7 @@ sap.ui.define([
 			oVariantData.content.executeOnSelect = oVariantInput.executeOnSelect;
 		}
 
-		return new Variant(oVariantData);
+		return new CompVariant(oVariantData);
 	}
 
 	function applyChangesOnVariant(mChanges, oVariant) {

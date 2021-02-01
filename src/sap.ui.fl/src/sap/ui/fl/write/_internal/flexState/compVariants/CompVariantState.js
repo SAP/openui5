@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/apply/_internal/flexObjects/Variant",
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/registry/Settings",
@@ -17,7 +17,7 @@ sap.ui.define([
 	UriParameters,
 	Layer,
 	Change,
-	Variant,
+	CompVariant,
 	Utils,
 	FlexState,
 	Settings,
@@ -77,14 +77,10 @@ sap.ui.define([
 				selector: {
 					persistencyKey: mPropertyBag.persistencyKey
 				},
-				support: {
-					generator: mPropertyBag.generator || "CompVariantState." + sChangeType,
-					sapui5Version: sap.ui.version
-				}
+				support: mPropertyBag.support || {}
 			};
-			if (mPropertyBag.compositeCommand) {
-				oChangeParameter.support.generator.compositeCommand = mPropertyBag.compositeCommand;
-			}
+			oChangeParameter.support.generator = oChangeParameter.support.generator || "CompVariantState." + sChangeType;
+			oChangeParameter.support.sapui5Version = sap.ui.version;
 
 			var oChange = new Change(oChangeParameter);
 			mCompVariantsByIdMap[sChangeType] = oChange;
@@ -98,7 +94,7 @@ sap.ui.define([
 	}
 
 	function removeFromArrayByName(aObjectArray, oFlexObject) {
-		for (var i = 0; i < aObjectArray.length; i++) {
+		for (var i = aObjectArray.length - 1; i >= 0; i--) {
 			//aObjectArray can come from either back end response or flex state
 			//In the first case, the fileName is a direct property of object
 			//In the second case, it can be obtained from getFileName() function
@@ -215,12 +211,12 @@ sap.ui.define([
 			.concat(mCompVariantsMapByPersistencyKey.standardVariant);
 	}
 
-	function getTexts(oChangeSpecificData) {
+	function getTexts(mPropertyBag) {
 		var mInternalTexts = {};
-		if (typeof (oChangeSpecificData.texts) === "object") {
-			Object.keys(oChangeSpecificData.texts).forEach(function (key) {
+		if (typeof (mPropertyBag.texts) === "object") {
+			Object.keys(mPropertyBag.texts).forEach(function (key) {
 				mInternalTexts[key] = {
-					value: oChangeSpecificData.texts[key],
+					value: mPropertyBag.texts[key],
 					type: "XFLD"
 				};
 			});
@@ -228,14 +224,14 @@ sap.ui.define([
 		return mInternalTexts;
 	}
 
-	function determineLayer(oChangeSpecificData) {
+	function determineLayer(mPropertyBag) {
 		// the SmartVariantManagementWriteAPI.addVariant-caller within sap.ui.rta provides a layer ...
-		if (oChangeSpecificData.layer) {
-			return oChangeSpecificData.layer;
+		if (mPropertyBag.layer) {
+			return mPropertyBag.layer;
 		}
 
 		// ... the SmartVariantManagementWriteAPI.add-caller cannot determine the layer on its own, but provides a isUserDependent flag
-		if (oChangeSpecificData.isUserDependent) {
+		if (mPropertyBag.isUserDependent) {
 			return Layer.USER;
 		}
 
@@ -246,7 +242,7 @@ sap.ui.define([
 		}
 
 		// PUBLIC is only used for "public" variants
-		if (!oChangeSpecificData.isVariant) {
+		if (!mPropertyBag.isVariant) {
 			return Layer.CUSTOMER;
 		}
 
@@ -313,18 +309,19 @@ sap.ui.define([
 	/**
 	 * Adds a new variant or change (addFavorite & removeFavorite) for a smart variant, such as filter bar or table, and returns the ID of the new change.
 	 *
-	 * @param {object} mPropertyBag - Map of parameters, see below
-	 * @param {string} mPropertyBag.type - Type <filterVariant, tableVariant, etc>
-	 * @param {string} mPropertyBag.reference - Flex reference of the application
-	 * @param {string} mPropertyBag.persistencyKey - ID of the variant management internal identifier
-	 * @param {object} mPropertyBag.changeSpecificData - Data set defining the object to be added
-	 * @param {string} mPropertyBag.ODataService - Name of the OData service --> can be null
-	 * @param {object} mPropertyBag.texts - A map object containing all translatable texts which are referenced within the file
-	 * @param {object} mPropertyBag.content - Content of the new change
-	 * @param {boolean} mPropertyBag.isVariant - Indicates if the change is a variant
-	 * @param {string} [mPropertyBag.packageName] - Package name for the new entity, <default> is $tmp
-	 * @param {boolean} mPropertyBag.isUserDependent - Indicates if a change is only valid for the current user
-	 * @param {boolean} [mPropertyBag.id] - ID of the change. The ID has to be globally unique and should only be set in exceptional cases, for example
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer to which the variant should be written
+	 * @param {object} mPropertyBag.changeSpecificData - Map of parameters, see below
+	 * @param {string} mPropertyBag.changeSpecificData.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
+	 * @param {object} mPropertyBag.changeSpecificData.texts - Map object with all referenced texts within the file; these texts will be connected to the translation process
+	 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
+	 * @param {boolean} mPropertyBag.isVariant - Flag if the added entity is a variant
+	 * @param {string} [mPropertyBag.changeSpecificData.ODataService] - Name of the OData service --> can be null
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.Variant} Created variant object instance
+	 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the addition takes place
+	 * @param {boolean} [mPropertyBag.isUserDependent] - Indicates if a change is only valid for the current user
+	 * @param {boolean} [mPropertyBag.generator] - Name of the tool creating the variant for support analysis
+	 * @param {boolean} [mPropertyBag.command] - Name of the sa.ui.rta-command for support analysis
 	 *        downport of variants
 	 * @returns {object} The created change or variant
 	 * @public
@@ -349,12 +346,14 @@ sap.ui.define([
 			selector: {
 				persistencyKey: mPropertyBag.persistencyKey
 			},
-			texts: getTexts(oChangeSpecificData)
+			texts: getTexts(oChangeSpecificData),
+			command: mPropertyBag.command,
+			generator: mPropertyBag.generator
 		};
 
-		var oFile = Change.createInitialFileContent(oInfo);
+		var oClass = oChangeSpecificData.isVariant ? CompVariant : Change;
+		var oFile = oClass.createInitialFileContent(oInfo);
 
-		var oClass = oChangeSpecificData.isVariant ? Variant : Change;
 		var oFlexObject = new oClass(oFile);
 
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);

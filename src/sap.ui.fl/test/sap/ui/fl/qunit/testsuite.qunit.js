@@ -247,10 +247,10 @@ sap.ui.define([
 					}
 				}
 			},
-			"apply/_internal/flexObjects/Variant": {
+			"apply/_internal/flexObjects/CompVariant": {
 				group: "Apply Internal",
 				coverage: {
-					only: ["sap/ui/fl/apply/_internal/flexObjects/Variant"]
+					only: ["sap/ui/fl/apply/_internal/flexObjects/CompVariant"]
 				}
 			},
 			"apply/_internal/flexState/changes/DependencyHandler": {

@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Change",
+	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -16,6 +17,7 @@ sap.ui.define([
 	Storage,
 	Settings,
 	Change,
+	Utils,
 	Layer,
 	sinon
 ) {
@@ -165,6 +167,55 @@ sap.ui.define([
 				assert.equal(mCompVariantsMapForPersistencyKey[oTestData.targetCategory][0], oAddedObject, "which is the returned entity");
 				assert.equal(mCompVariantsMapForPersistencyKey[oTestData.targetCategory][0].getLayer(), oTestData.expectedLayer, "which is in the correct layer");
 			});
+		});
+
+		QUnit.test("also stores the execute on select", function (assert) {
+			var sPersistencyKey = "persistency.key";
+			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
+			var mPropertyBag = {
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				changeSpecificData: {
+					content: {},
+					isVariant: true,
+					type: "filterVariant"
+				},
+				ODataService: null,
+				texts: {},
+				layer: Layer.CUSTOMER
+			};
+
+			var oExpectedVariant = {
+				fileName: "someFileName",
+				changeType: "filterVariant",
+				content: {},
+				fileType: "variant",
+				layer: Layer.CUSTOMER,
+				namespace: "apps/the.app.component/changes/",
+				packageName: "",
+				reference: sComponentId,
+				selector: {persistencyKey: sPersistencyKey},
+				texts: {},
+				support: {
+					command: "",
+					compositeCommand: "",
+					generator: "Change.createInitialFileContent",
+					service: "",
+					sourceChangeFileName: "",
+					user: ""
+				}
+			};
+
+			var oAddedObject = CompVariantState.add(mPropertyBag);
+			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
+			var mCompVariantsMapForPersistencyKey = mCompVariantsMap[mPropertyBag.persistencyKey];
+
+			assert.equal(mCompVariantsMapForPersistencyKey.variants.length, 1, "then one entity was stored");
+
+			assert.ok(oAddedObject._oDefinition.support.sapui5Version, "the version was filled in the support");
+			delete oAddedObject._oDefinition.support.sapui5Version; // avoid broken tests with version changes
+			assert.deepEqual(oAddedObject._oDefinition, oExpectedVariant, "and the added object is created correct");
+			assert.equal(mCompVariantsMapForPersistencyKey.variants[0], oAddedObject, "which is the returned entity");
 		});
 	});
 
