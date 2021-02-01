@@ -2174,29 +2174,32 @@ function(
 	MultiComboBox.prototype._removeSelection = function (aTokens) {
 		var oTokenizer = this.getAggregation("tokenizer");
 
-		aTokens.forEach(function(oToken) {
+		aTokens.forEach(function (oToken) {
 			var oItem = (oToken && this._getItemByToken(oToken));
 
-			if (oItem && this.isItemSelected(oItem)) {
+			if (!this.getEditable() || !this.getEnabled() || // MultiComboBox
+				!oItem || !this.isItemSelected(oItem) || !oItem.getEnabled() || // core.Item
+				!oToken.getEditable()) { // Token
+				return;
+			}
 
-				this.removeSelection({
-					item: oItem,
-					id: oItem.getId(),
-					key: oItem.getKey(),
-					tokenUpdated: true,
-					fireChangeEvent: true,
-					fireFinishEvent: true, // Fire selectionFinish if token is deleted directly in input field
-					suppressInvalidate: true
-				});
+			this.removeSelection({
+				item: oItem,
+				id: oItem.getId(),
+				key: oItem.getKey(),
+				tokenUpdated: true,
+				fireChangeEvent: true,
+				fireFinishEvent: true, // Fire selectionFinish if token is deleted directly in input field
+				suppressInvalidate: true
+			});
 
-				oToken.destroy();
+			oToken.destroy();
 
-				if (this.getSelectedItems().length > 0) {
-					var aTokens = oTokenizer.getTokens();
-					aTokens[aTokens.length - 1].focus();
-				} else {
-					this.focus();
-				}
+			if (this.getSelectedItems().length > 0) {
+				var aTokens = oTokenizer.getTokens();
+				aTokens[aTokens.length - 1].focus();
+			} else {
+				this.focus();
 			}
 		}, this);
 	};

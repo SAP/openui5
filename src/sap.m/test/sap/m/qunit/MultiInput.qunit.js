@@ -3234,6 +3234,58 @@ sap.ui.define([
 		oMultiInput.destroy();
 	});
 
+	QUnit.test("Properly destroy tokens only when allowed", function (assert) {
+		// arrange
+		var oToken = new Token({text: "My Token"}),
+			oTokenSpy = this.spy(oToken, "destroy"),
+			oMultiInput = new MultiInput({
+				tokens: [oToken]
+			}).placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		// Act
+		oMultiInput.setEditable(false);
+		oMultiInput._deleteTokens([oToken], {});
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
+		assert.deepEqual(oMultiInput.getTokens(), [oToken], "The tokenizer should remain untouched");
+
+
+		// Act
+		oMultiInput.setEditable(true);
+		oMultiInput.setEnabled(false);
+		oMultiInput._deleteTokens([oToken], {});
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
+		assert.deepEqual(oMultiInput.getTokens(), [oToken], "The tokenizer should remain untouched");
+
+		// Act
+		oMultiInput.setEnabled(true);
+		oToken.setEditable(false);
+		oMultiInput._deleteTokens([oToken], {});
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
+		assert.deepEqual(oMultiInput.getTokens(), [oToken], "The tokenizer should remain untouched");
+
+		// Act
+		oToken.setEditable(true);
+		oMultiInput._deleteTokens([oToken], {});
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oTokenSpy.calledOnce, "Token should be destroyed this time");
+		assert.deepEqual(oMultiInput.getTokens(), [], "Tokens aggregation should be empty");
+
+		// Cleanup
+		oMultiInput.destroy();
+	});
+
 
 	QUnit.module("IE11", {
 		beforeEach : function() {
