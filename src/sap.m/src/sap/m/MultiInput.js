@@ -418,9 +418,13 @@ function(
 			removedTokens: aDeletingTokens
 		});
 
-		aDeletingTokens.forEach(function(oToken) {
-			oToken.destroy();
-		}, this);
+		aDeletingTokens
+			.filter(function (oToken) {
+				return this.getEditable() && this.getEnabled() && oToken.getEditable();
+			}.bind(this))
+			.forEach(function (oToken) {
+				oToken.destroy();
+			});
 
 		if (this.getTokens().length === 0) {
 			oTokenizer.getTokensPopup().close();
