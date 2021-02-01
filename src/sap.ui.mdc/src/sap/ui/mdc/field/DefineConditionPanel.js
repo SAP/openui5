@@ -277,7 +277,8 @@ sap.ui.define([
 
 		updateDefineConditions: function() {
 			var aConditions = this.getConditions().filter(function(oCondition) {
-				return oCondition.validated !== ConditionValidated.Validated;
+				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+				return oCondition.validated !== ConditionValidated.Validated || oOperator.exclude;
 			});
 
 			_addStaticText.call(this, aConditions, true, false);
@@ -580,7 +581,7 @@ sap.ui.define([
 	function _createControl(oCondition, iIndex, sId, oBindingContext) {
 
 		var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-		if (!oOperator) {
+		if (!oOperator || !oOperator.valueTypes[iIndex]) {
 			return null; // TODO: exception?
 		}
 
@@ -936,7 +937,8 @@ sap.ui.define([
 
 		for (var i = 0; i < aConditions.length; i++) {
 			var oCondition = aConditions[i];
-			if (oCondition.validated !== ConditionValidated.Validated) {
+			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+			if (oCondition.validated !== ConditionValidated.Validated || oOperator.exclude) {
 				// show only validated conditions
 				var oBindingContext = this._oManagedObjectModel.getContext("/conditions/" + i + "/");
 				iRow++;

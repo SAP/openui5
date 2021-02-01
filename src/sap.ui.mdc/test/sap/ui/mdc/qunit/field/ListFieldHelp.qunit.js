@@ -10,6 +10,8 @@ sap.ui.define([
 	"sap/ui/mdc/field/ListFieldHelpItem",
 	"sap/ui/mdc/field/FieldHelpBaseDelegate",
 	"sap/ui/mdc/condition/Condition",
+	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enum/ConditionValidated",
 	"sap/ui/core/ListItem",
 	"sap/ui/core/Icon",
@@ -28,6 +30,8 @@ sap.ui.define([
 		ListFieldHelpItem,
 		FieldHelpBaseDelegate,
 		Condition,
+		FilterOperatorUtil,
+		Operator,
 		ConditionValidated,
 		ListItem,
 		Icon,
@@ -409,8 +413,8 @@ sap.ui.define([
 			assert.equal(iSelect, 1, "Select event fired");
 			assert.equal(aSelectConditions.length, 1, "one condition returned");
 			assert.equal(aSelectConditions[0].operator, "EQ", "Condition operator");
-			assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0}");
-			assert.equal(aSelectConditions[0].values[1], "Item2", "Condition values[1}");
+			assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0]");
+			assert.equal(aSelectConditions[0].values[1], "Item2", "Condition values[1]");
 			assert.equal(aSelectConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
 			assert.ok(bSelectAdd, "Items should be added");
 			assert.ok(bSelectClose, "FieldHelp closed in Event");
@@ -711,6 +715,117 @@ sap.ui.define([
 		}
 
 		oFieldHelp.close();
+
+	});
+
+	var oOperator = new Operator({
+		name: "MyTest",
+		filterOperator: "EQ",
+		tokenParse: "^=([^=].*)$",
+		tokenFormat: "={0}",
+		valueTypes: [Operator.ValueType.Self],
+		validateInput: true
+	});
+
+	QUnit.module("custom operator", {
+		beforeEach: function() {
+			FilterOperatorUtil.addOperator(oOperator);
+
+			oFieldHelp = new ListFieldHelp("F1-H", {
+				items: [new ListItem("item1", {text: "Item1", additionalText: "Text1", key: "I1"}),
+						new ListItem("item2", {text: "Item2", additionalText: "Text2", key: "I2"}),
+						new ListItem("item3", {text: "Item3", additionalText: "Text3", key: "I3"})
+					   ],
+				disconnect: _myDisconnectHandler,
+				select: _mySelectHandler,
+				navigate: _myNavigateHandler,
+				dataUpdate: _myDataUpdateHandler,
+				open: _myOpenHandler
+			});
+			_initFields();
+			oField._getOperators = function() {return [oOperator.name];};
+			oField.addDependent(oFieldHelp);
+			oFieldHelp.connect(oField);
+		},
+		afterEach: function() {
+			_teardown();
+			delete FilterOperatorUtil._mOperators[oOperator.name]; // TODO API to remove operator
+		}
+	});
+
+	QUnit.test("selected item", function(assert) {
+
+		var oCondition = Condition.createCondition(oOperator.name, ["I2"], undefined, undefined, ConditionValidated.Validated);
+		oFieldHelp.setConditions([oCondition]);
+
+		oFieldHelp.open();
+
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			var oList = oPopover.getContent()[0];
+			var aItems = oList.getItems();
+			assert.ok(aItems[1].getSelected(), "Item 2 is selected");
+		}
+
+	});
+
+	QUnit.test("navigate", function(assert) {
+
+		oFieldHelp.navigate(1);
+
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			var oList = oPopover.getContent()[0];
+			var aItems = oList.getItems();
+			assert.ok(aItems[0].getSelected(), "Item 1 is selected");
+			assert.equal(iNavigate, 1, "Navigate event fired");
+			assert.equal(sNavigateValue, "Item1", "Navigate event value");
+			assert.equal(sNavigateKey, "I1", "Navigate event key");
+			assert.equal(oNavigateCondition.operator, oOperator.name, "NavigateEvent condition operator");
+			assert.equal(oNavigateCondition.values.length, 1, "NavigateEvent condition values length");
+			assert.equal(oNavigateCondition.values[0], "I1", "NavigateEvent condition key");
+			assert.equal(oNavigateCondition.validated, ConditionValidated.Validated, "Condition is validated");
+			assert.equal(sNavigateItemId, "F1-H-item-F1-H-List-0", "Navigate itemId");
+			var aConditions = oFieldHelp.getConditions();
+			assert.equal(aConditions.length, 1, "conditions length");
+			assert.equal(aConditions[0].operator, oOperator.name, "condition operator");
+			assert.equal(aConditions[0].values.length, 1, "condition values length");
+			assert.equal(aConditions[0].values[0], "I1", "condition key");
+			assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
+		}
+
+	});
+
+	QUnit.test("select item", function(assert) {
+
+		var oClock = sinon.useFakeTimers();
+		oFieldHelp.open();
+		oClock.tick(500); // fake opening time
+
+		var oPopover = oFieldHelp.getAggregation("_popover");
+		if (oPopover) {
+			var oList = oPopover.getContent()[0];
+			var aItems = oList.getItems();
+			qutils.triggerEvent("tap", aItems[1].getId());
+			oClock.tick(500); // fake closing time
+
+			assert.equal(iSelect, 1, "Select event fired");
+			assert.equal(aSelectConditions.length, 1, "one condition returned");
+			assert.equal(aSelectConditions[0].operator, oOperator.name, "Condition operator");
+			assert.equal(aSelectConditions[0].values.length, 1, "Condition values length");
+			assert.equal(aSelectConditions[0].values[0], "I2", "Condition values[0]");
+			assert.equal(aSelectConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
+			assert.ok(bSelectAdd, "Items should be added");
+			assert.ok(bSelectClose, "FieldHelp closed in Event");
+			var aConditions = oFieldHelp.getConditions();
+			assert.equal(aConditions.length, 1, "conditions length");
+			assert.equal(aConditions[0].operator, oOperator.name, "Condition operator");
+			assert.equal(aConditions[0].values.length, 1, "condition values length");
+			assert.equal(aConditions[0].values[0], "I2", "conditions key");
+			assert.equal(aConditions[0].validated, ConditionValidated.Validated, "Condition is validated");
+		}
+
+		oClock.restore();
 
 	});
 

@@ -54,12 +54,8 @@ sap.ui.define([
 			toString: function(oCondition, oTypeConfig, oTypeUtil) {
 
 				// convert using "normalized" data type
-				var aValues = _valuesToString(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil, oTypeConfig) || oTypeConfig);
-
-				// ignore the second value for EQ operator with description
-				if (oCondition.operator === "EQ") {
-					aValues = [aValues[0]];
-				}
+				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+				var aValues = _valuesToString(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil, oTypeConfig) || oTypeConfig, oOperator);
 
 				// inParameter, OutParameter
 				// TODO: we need the types of the in/out parameter
@@ -123,13 +119,16 @@ sap.ui.define([
 			}
 		}
 
-		function _valuesToString (aValues, oTypeConfig) {
+		function _valuesToString (aValues, oTypeConfig, oOperator) {
 
 			var aResult = [];
 
 			for (var i = 0; i < aValues.length; i++) {
-				var vValue = aValues[i];
-				aResult.push(_valueToString(vValue, oTypeConfig));
+				if (!oOperator || (oOperator.valueTypes[i] && oOperator.valueTypes[i] !== Operator.ValueType.Static)) {
+					// only add real values (no description in EQ case or static texts) (for unknown operators just copy to be compatible)
+					var vValue = aValues[i];
+					aResult.push(_valueToString(vValue, oTypeConfig));
+				}
 			}
 
 			return aResult;

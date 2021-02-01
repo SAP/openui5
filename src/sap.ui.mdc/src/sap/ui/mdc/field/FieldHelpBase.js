@@ -4,6 +4,10 @@
 
 sap.ui.define([
 	'sap/ui/mdc/Element',
+	'sap/ui/mdc/condition/FilterOperatorUtil',
+	'sap/ui/mdc/condition/Operator',
+	'sap/ui/mdc/condition/Condition',
+	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/base/Log',
 	'sap/base/util/merge',
 	'sap/ui/base/SyncPromise',
@@ -11,6 +15,10 @@ sap.ui.define([
 	'sap/ui/model/ParseException'
 ], function(
 	Element,
+	FilterOperatorUtil,
+	Operator,
+	Condition,
+	ConditionValidated,
 	Log,
 	merge,
 	SyncPromise,
@@ -296,6 +304,8 @@ sap.ui.define([
 
 		this._oField = oField;
 
+		_determineOperator.call(this, oField);
+
 		return this;
 
 	};
@@ -317,6 +327,51 @@ sap.ui.define([
 		} else {
 			return this.getParent();
 		}
+
+	};
+
+	/**
+	 * Returns the currently used operator for chosen values.
+	 *
+	 * @returns {sap.ui.mdc.condition.Operator} Operator used
+	 * @private
+	 * @ui5-restricted FieldHelp subclasses
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype._getOperator = function() {
+
+		if (!this._oOperator) {
+			// use default
+			this._oOperator = FilterOperatorUtil.getEQOperator();
+		}
+
+		return this._oOperator;
+
+	};
+
+	/**
+	 * Creates a condition based on the used operator.
+	 *
+	 * @param {string} sKey Operator for the condition
+	 * @param {string} sDescription Description of the operator
+	 * @param {object} oInParameters In parameters of the condition
+	 * @param {object} oOutParameters Out parameters of the condition
+	 * @returns {sap.ui.mdc.condition.ConditionObject} The new condition object with the maintained operator along with <code>sKey</code> and <code>sDescription</code> as <code>aValues</code>
+	 * @private
+	 * @ui5-restricted FieldHelp subclasses
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype._createCondition = function(sKey, sDescription, oInParameters, oOutParameters) {
+
+		var oOperator = this._getOperator();
+
+		var aValues = [sKey];
+		if (oOperator.valueTypes.length > 1 && oOperator.valueTypes[1] !== Operator.ValueType.Static && sDescription !== null && sDescription !== undefined) {
+			// description is supported
+			aValues.push(sDescription);
+		}
+
+		return Condition.createCondition(oOperator.name, aValues, oInParameters, oOutParameters, ConditionValidated.Validated); // Conditions from help are always validated
 
 	};
 
@@ -1381,6 +1436,16 @@ sap.ui.define([
 		}).catch(function(oException) {
 			fnReject(oException);
 		}).unwrap();
+
+	}
+
+	function _determineOperator(oField) {
+
+		this._oOperator = undefined;
+
+		if (oField && oField._getOperators) {
+			this._oOperator = FilterOperatorUtil.getEQOperator(oField._getOperators());
+		}
 
 	}
 

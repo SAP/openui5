@@ -893,14 +893,13 @@ sap.ui.define([
 			return;
 		}
 
-		oCondition = Condition.createItemCondition(vKey, sDescription);
-		oCondition.validated = ConditionValidated.Validated; // validated even if no description (e.g. display value mode)
 		if (oInParameters) {
-			oCondition.inParameters = _mapInParametersToField.call(this, oInParameters);
+			oInParameters = _mapInParametersToField.call(this, oInParameters);
 		}
 		if (oOutParameters) {
-			oCondition.outParameters = _mapOutParametersToField.call(this, oOutParameters);
+			oOutParameters = _mapOutParametersToField.call(this, oOutParameters);
 		}
+		oCondition = this._createCondition(vKey, sDescription, oInParameters, oOutParameters);
 		this.setProperty("conditions", [oCondition], true); // do not invalidate whole FieldHelp
 		this.fireNavigate({value: sDescription, key: vKey, condition: oCondition, itemId: sItemId});
 
@@ -1081,6 +1080,7 @@ sap.ui.define([
 		var j = 0;
 		var bFound = false;
 		var iMaxConditions = this.getMaxConditions();
+		var oOperator = this._getOperator();
 
 		// try to keep order stable
 		// remove only EQ selections that can be changed from content control
@@ -1088,7 +1088,7 @@ sap.ui.define([
 			oCondition = aConditions[i];
 			oCondition.inParameters = _mapInParametersToHelp.call(this, oCondition.inParameters);
 			oCondition.outParameters = _mapOutParametersToHelp.call(this, oCondition.outParameters);
-			if (oCondition.validated === ConditionValidated.Validated) {
+			if (oCondition.operator === oOperator.name && oCondition.validated === ConditionValidated.Validated) { // only conditions of used operator supported
 				bFound = false;
 				for (j = 0; j < aSelectedItems.length; j++) {
 					oItem = aSelectedItems[j];
@@ -1119,7 +1119,7 @@ sap.ui.define([
 
 			for (j = 0; j < aConditions.length; j++) {
 				oCondition = aConditions[j];
-				if (oCondition.validated === ConditionValidated.Validated && oCondition.values[0] === oItem.key
+				if (oCondition.operator === oOperator.name && oCondition.validated === ConditionValidated.Validated && oCondition.values[0] === oItem.key // only conditions of used operator supported
 						&& (!oCondition.inParameters || deepEqual(oCondition.inParameters, oItem.inParameters))
 						&& (!oCondition.outParameters || deepEqual(oCondition.outParameters, oItem.outParameters))) {
 					bFound = true;
@@ -1130,8 +1130,7 @@ sap.ui.define([
 			}
 
 			if (!bFound) {
-				oCondition = Condition.createItemCondition(oItem.key, oItem.description, oItem.inParameters, oItem.outParameters);
-				oCondition.validated = ConditionValidated.Validated; // validated even if no description (e.g. display value mode)
+				oCondition = this._createCondition(oItem.key, oItem.description, oItem.inParameters, oItem.outParameters);
 				aConditions.push(oCondition);
 			}
 		}
@@ -1234,13 +1233,14 @@ sap.ui.define([
 		}
 
 		var oWrapper = this.getContent();
+		var oOperator = this._getOperator();
 
 		if (oWrapper) {
 			var aConditions = this.getConditions();
 			var aItems = [];
 			for (var i = 0; i < aConditions.length; i++) {
 				var oCondition = aConditions[i];
-				if (oCondition.validated === ConditionValidated.Validated) {
+				if (oCondition.operator === oOperator.name && oCondition.validated === ConditionValidated.Validated) { // only conditions of used operator supported
 					aItems.push({
 						key: oCondition.values[0],
 						description: oCondition.values[1],

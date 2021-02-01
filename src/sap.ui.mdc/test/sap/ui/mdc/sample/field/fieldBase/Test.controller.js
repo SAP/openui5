@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/mdc/condition/Condition",
 	"sap/ui/mdc/condition/FilterConverter",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
+	"sap/ui/mdc/condition/Operator",
 	"sap/ui/mdc/enum/ConditionValidated",
 	'sap/ui/mdc/enum/EditMode',
 	"sap/m/Table",
@@ -24,6 +25,7 @@ sap.ui.define([
 	Condition,
 	FilterConverter,
 	FilterOperatorUtil,
+	Operator,
 	ConditionValidated,
 	EditMode,
 	Table,
@@ -180,6 +182,51 @@ sap.ui.define([
 			oBaseField = oView.byId("FB-Country");
 			oBaseField._fireChange = fnFireChange;
 			oBaseField.attachEvent("change", this.handleChange, this);
+
+			// add custom operators
+			var oOperator = FilterOperatorUtil.getOperator("EQ");
+			var oMyOperator = new Operator({
+				name: "myEQ",
+				filterOperator: oOperator.filterOperator,
+				tokenParse: oOperator.tokenParse,
+				tokenFormat: oOperator.tokenFormat,
+				tokenText: "My Equal",
+				valueTypes: oOperator.valueTypes,
+				displayFormats: oOperator.displayFormats,
+				format: oOperator.format,
+				parse: oOperator.parse,
+				getValues: oOperator.getValues,
+				isEmpty: oOperator.isEmpty,
+				getCheckValue: oOperator.getCheckValue,
+				checkValidated: oOperator.checkValidated,
+				validateInput: oOperator.validateInput
+			});
+			FilterOperatorUtil.addOperator(oMyOperator);
+			oMyOperator = new Operator({
+				name: "myNE",
+				filterOperator: "NE",
+				tokenParse: "^!=(.+)$",
+				tokenFormat: "!(={0})",
+				tokenText: "My NotEqual",
+				valueTypes: oOperator.valueTypes,
+				displayFormats: oOperator.displayFormats,
+				format: function(oCondition, oType, sDisplayFormat) {
+						return "!=" + oOperator.format(oCondition, oType, sDisplayFormat);
+					},
+					parse: oOperator.parse,
+				getValues: oOperator.getValues,
+				isEmpty: oOperator.isEmpty,
+				getCheckValue: oOperator.getCheckValue,
+				checkValidated: oOperator.checkValidated,
+				validateInput: oOperator.validateInput,
+				exclude: true
+			});
+			FilterOperatorUtil.addOperator(oMyOperator);
+
+			oBaseField = oView.byId("FB-MatrId");
+			oBaseField._fireChange = fnFireChange;
+			oBaseField.attachEvent("change", this.handleChange, this);
+			oBaseField._getOperators = function() {return ["GT", "LT", "myEQ", "myNE"];};
 
 		},
 
@@ -372,6 +419,23 @@ sap.ui.define([
 				oFH.setFilterFields("*countryId,text*");
 			} else {
 				oFH.setFilterFields("");
+			}
+		},
+
+		toggleFH: function(oEvent) {
+			var oView = this.getView();
+			var oField = oView.byId("FB-MatrId");
+			var bPressed = oEvent.getParameter("pressed");
+			if (bPressed) {
+				var aConditions = oField.getConditions();
+				if (aConditions.length > 1) {
+					oField.setConditions([aConditions[0]]); // clear conditions as ListFieldHelp only allows one
+				}
+				oField.setMaxConditions(1);
+				oField.setFieldHelp(oView.byId("LFH-MatrId"));
+			} else {
+				oField.setFieldHelp(oView.byId("FVH-MatrId"));
+				oField.setMaxConditions(-1);
 			}
 		}
 
