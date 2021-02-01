@@ -51,11 +51,6 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/Renderer", "./ListItemBaseRen
 		if (oLI.getUpperCase()) {
 			rm.class("sapMGHLIUpperCase");
 		}
-
-		var oTable = oLI.getTable();
-		if (oTable && oTable.shouldRenderDummyColumn()) {
-			rm.class("sapMListTblRowHasDummyCell");
-		}
 	};
 
 

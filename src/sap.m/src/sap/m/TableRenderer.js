@@ -117,9 +117,6 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 		rm.openEnd();
 
 		rm.openStart("tr", oTable.addNavSection(idPrefix + type + "er"));
-		if (type !== "Head" && bShouldRenderDummyColumn) {
-			rm.class("sapMListTblRowHasDummyCell");
-		}
 		rm.attr("tabindex", -1);
 
 		if (bHeaderHidden) {

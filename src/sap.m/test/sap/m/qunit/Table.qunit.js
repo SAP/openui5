@@ -2289,7 +2289,6 @@ sap.ui.define([
 
 		var oGHLI = this.sut.getItems()[0];
 		assert.ok(oGHLI.isA("sap.m.GroupHeaderListItem"), "Table is grouped");
-		assert.notOk(oGHLI.getDomRef().classList.contains("sapMListTblRowHasDummyCell"), "GroupHeaderListItem contains DummyCell class added");
 
 		// apply static widths to all columns
 		this.sut.getColumns().forEach(function(oColumn) {
@@ -2297,7 +2296,6 @@ sap.ui.define([
 		});
 
 		Core.applyChanges();
-		assert.ok(oGHLI.getDomRef().classList.contains("sapMListTblRowHasDummyCell"), "GroupHeaderListItem contains DummyCell class added");
 		assert[Device.browser.msie ? "notOk" : "ok"](oGHLI.getDomRef().classList.contains("sapMTableRowCustomFocus"), "GroupHeaderListItem contains sapMTableRowCustomFocus class");
 	});
 

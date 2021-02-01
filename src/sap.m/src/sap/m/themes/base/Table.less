@@ -229,8 +229,7 @@ html[data-sap-ui-browser^='ed'] .sapMTableTH,
 
 /* sticky headerToolbar, infoToolbar and column headers */
 .sapMSticky .sapMTableTH {
-	position: sticky;
-	position: -webkit-sticky;
+	position: sticky !important;
 	z-index: 1;
 }
 
@@ -424,11 +423,11 @@ html[data-sap-ui-browser^="sf"] .sapMSticky > .sapMListTbl {
 		position: relative;
 	}
 
-	& > :not(.sapMListTblDummyCell) {
+	& > :not(.sapMListTblDummyCell:last-child) {
 		position: relative;
 	}
 
-	& > :not(.sapMListTblDummyCell)::before {
+	& > :not(.sapMListTblDummyCell:last-child)::before {
 		content: "";
 		position: absolute;
 		left: 0;

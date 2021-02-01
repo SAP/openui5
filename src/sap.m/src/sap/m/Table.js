@@ -971,6 +971,9 @@ sap.ui.define([
 	Table.prototype.onfocusin = function(oEvent) {
 		var oTarget = oEvent.target;
 		if (oTarget.id == this.getId("tblHeader")) {
+			if (!this.hasPopin() && this.shouldRenderDummyColumn()) {
+				oTarget.classList.add("sapMTableRowCustomFocus");
+			}
 			this._setHeaderAnnouncement();
 			this._setFirstLastVisibleCells(oTarget);
 		} else if (oTarget.id == this.getId("tblFooter")) {

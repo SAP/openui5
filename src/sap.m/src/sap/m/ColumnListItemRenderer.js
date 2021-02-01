@@ -132,10 +132,6 @@ sap.ui.define([
 				rm.class("sapMListTblRowAlternate");
 			}
 		}
-
-		if (oTable && oTable.shouldRenderDummyColumn()) {
-			rm.class("sapMListTblRowHasDummyCell");
-		}
 	};
 
 
