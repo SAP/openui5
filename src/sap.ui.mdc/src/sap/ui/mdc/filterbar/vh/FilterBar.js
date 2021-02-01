@@ -64,7 +64,7 @@ sap.ui.define(
 						// 	defaultValue: {name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate'}
 						// }
 					},
-					associations : {
+					aggregations : {
 						/**
 						 * <code>collectiveSearch</code> control of the filterbar.
 						 *
@@ -162,7 +162,7 @@ sap.ui.define(
 				}
 			}
 			this._oCollectiveSearch = oCollectiveSearch;
-			if (this._oFilterBarLayout) {
+			if (this._oFilterBarLayout && this._oCollectiveSearch) {
 				this._oFilterBarLayout.insertControl(this._oCollectiveSearch, 0);
 			}
 		};
