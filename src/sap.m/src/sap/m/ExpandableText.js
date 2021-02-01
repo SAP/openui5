@@ -29,8 +29,6 @@ function(library,
 		 ExpandableTextRenderer) {
 	"use strict";
 
-	var MAX_CHARACTERS = 100;
-
 	var oRb = Core.getLibraryResourceBundle("sap.m");
 
 	var TEXT_SHOW_MORE = oRb.getText("EXPANDABLE_TEXT_SHOW_MORE");
@@ -44,8 +42,14 @@ function(library,
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
+	// shortcut for sap.ui.core.aria.HasPopup
+	var AriaHasPopup = coreLibrary.aria.HasPopup;
+
 	// shortcut for sap.m.WrappingType
 	var WrappingType = library.WrappingType;
+
+	// shortcut for sap.m.PlacementType
+	var PlacementType = library.PlacementType;
 
 	// shortcut for sap.m.ExpandableOverflowTextMode
 	var ExpandableTextOverflowMode = library.ExpandableTextOverflowMode;
@@ -65,7 +69,7 @@ function(library,
 	 * inside a table, list or form.
 	 *
 	 * <h3>Overview</h3>
-	 * Only the first 100 characters from the text field are shown initially and a "More" link which allows
+	 * Only the first characters from the text field are shown initially and a "More" link which allows
 	 * the full text to be displayed. The <code>overflowMode</code> property determines
 	 * if the full text will be displayed expanded in place (default) or in a popover.
 	 * If the text is expanded a "Less" link is displayed, which allows collapsing the text field.
@@ -139,6 +143,11 @@ function(library,
 				overflowMode: { type: "sap.m.ExpandableTextOverflowMode", group: "Appearance", defaultValue: ExpandableTextOverflowMode.InPlace },
 
 				/**
+				 * Specifies the maximum number of characters from the beginning of the text field that are shown initially.
+				 */
+				maxCharacters: { type: "int", group: "Appearance", defaultValue: 100 },
+
+				/**
 				 * Determines if the text is expanded.
 				 * @private
 				 */
@@ -204,7 +213,16 @@ function(library,
 			sText = reduceWhitespace(sText);
 		}
 
-		return sText.length > MAX_CHARACTERS + TEXT_SHOW_MORE.length;
+		return sText.length > this._getMaxCharacters() + TEXT_SHOW_MORE.length;
+	};
+
+	/**
+	 * Returns the maximum number of initially displayed characters.
+	 *
+	 * @private
+	 */
+	ExpandableText.prototype._getMaxCharacters = function () {
+		return Math.max(0, this.getMaxCharacters());
 	};
 
 	/**
@@ -225,7 +243,7 @@ function(library,
 			sText = reduceWhitespace(sText);
 		}
 
-		return sText.substring(0, MAX_CHARACTERS);
+		return sText.substring(0, this._getMaxCharacters());
 	};
 
 	ExpandableText.prototype._getShowMoreLink = function() {
@@ -241,7 +259,7 @@ function(library,
 
 					if (this.getOverflowMode() === ExpandableTextOverflowMode.InPlace) {
 						bExpanded = !this.getProperty("expanded");
-						this._getShowMoreLink().setText(bExpanded ? TEXT_SHOW_LESS : TEXT_SHOW_MORE);
+						showMoreLink.setText(bExpanded ? TEXT_SHOW_LESS : TEXT_SHOW_MORE);
 						this.setProperty("expanded", bExpanded);
 					} else {
 						oText = new Text({
@@ -254,9 +272,16 @@ function(library,
 
 						oPopover = this._oPopover;
 
+						if (oPopover && oPopover.isOpen()) {
+							oPopover.close();
+							return;
+						}
+
 						if (!oPopover) {
 							oPopover = this._oPopover = new ResponsivePopover({
-								showHeader: false
+								showHeader: false,
+								placement: PlacementType.HorizontalPreferredRight,
+								beforeClose: this._onPopoverBeforeClose.bind(this)
 							});
 
 							if (Device.system.phone) {
@@ -270,6 +295,12 @@ function(library,
 
 							this.addDependent(oPopover);
 						}
+
+						showMoreLink.setText(TEXT_SHOW_LESS);
+						// force the re-rendering of the link,
+						// so the popover won't flickering,
+						// because of text changing
+						showMoreLink.rerender();
 
 						oPopover.removeAllAriaLabelledBy();
 						oPopover.destroyContent();
@@ -285,7 +316,13 @@ function(library,
 			this.setAggregation("_showMoreLink", showMoreLink, true);
 		}
 
+		showMoreLink.setAriaHasPopup(this.getOverflowMode() === ExpandableTextOverflowMode.InPlace ? AriaHasPopup.None : AriaHasPopup.Dialog);
+
 		return showMoreLink;
+	};
+
+	ExpandableText.prototype._onPopoverBeforeClose = function () {
+		this._getShowMoreLink().setText(TEXT_SHOW_MORE);
 	};
 
 	/**

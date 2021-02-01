@@ -24,8 +24,6 @@ sap.ui.define([
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-	var MAX_CHARACTERS = 100;
-
 	// shortcut for sap.m.ExpandableOverflowTextMode
 	var ExpandableTextOverflowMode = library.ExpandableTextOverflowMode;
 
@@ -48,8 +46,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("initial rendering", function (assert) {
+		var iMaxCharacters = this.oExpandableText.getMaxCharacters();
+
 		assert.ok(this.oExpandableText.getDomRef(), 'Control is rendered');
-		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, MAX_CHARACTERS), "text is correct");
+		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, iMaxCharacters), "text is correct");
 		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), " ... " , "Ellipsis are rendered");
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_MORE, "Show more is rendered");
 	});
@@ -105,7 +105,11 @@ sap.ui.define([
 
 	QUnit.test("Show more/show less", function (assert) {
 
-		var oShowMoreLink = this.oExpandableText.$("showMoreLink").control()[0];
+		assert.notOk(this.oExpandableText.$("showMoreLink").attr("aria-haspopup"), "aria-haspopup attribute is not set");
+
+		var oShowMoreLink = this.oExpandableText._getShowMoreLink(),
+			iMaxCharacters = this.oExpandableText.getMaxCharacters();
+
 		oShowMoreLink.firePress();
 		Core.applyChanges();
 
@@ -116,7 +120,7 @@ sap.ui.define([
 		oShowMoreLink.firePress();
 		Core.applyChanges();
 
-		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, MAX_CHARACTERS), "text is correct");
+		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, iMaxCharacters), "text is correct");
 		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), " ... " , "Ellipsis are rendered");
 		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_MORE, "Show more is rendered");
 	});
@@ -125,14 +129,25 @@ sap.ui.define([
 		this.oExpandableText.setOverflowMode(ExpandableTextOverflowMode.Popover);
 		Core.applyChanges();
 
-		var oShowMoreLink = this.oExpandableText.$("showMoreLink").control()[0];
+		assert.strictEqual(this.oExpandableText.$("showMoreLink").attr("aria-haspopup"), "dialog", "aria-haspopup attribute is set to 'dialog'");
+
+		var oShowMoreLink = this.oExpandableText._getShowMoreLink(),
+			iMaxCharacters = this.oExpandableText.getMaxCharacters();
+
 		oShowMoreLink.firePress();
 		Core.applyChanges();
 
-		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, MAX_CHARACTERS), "text is correct");
+		assert.strictEqual(this.oExpandableText.$("string").text(), this.oExpandableText.getText().substring(0, iMaxCharacters), "text is correct");
 		assert.strictEqual(this.oExpandableText.$().find(".sapMExTextEllipsis").text(), " ... " , "Ellipsis are rendered");
-		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_MORE, "Show more is rendered");
+		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_LESS, "'Show less' text is rendered");
 
 		assert.strictEqual(jQuery(".sapMPopover").text(), this.oExpandableText.getText(), "popover is opened with the correct text");
+
+		oShowMoreLink.firePress();
+		Core.applyChanges();
+		this.clock.tick(500);
+
+		assert.strictEqual(this.oExpandableText.$("showMoreLink").text(), TEXT_SHOW_MORE, "'Show more' text is rendered");
+		assert.notOk(this.oExpandableText._oPopover.isOpen(), "popover is closed");
 	});
 });

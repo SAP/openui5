@@ -5,7 +5,6 @@
 
 	<Table mode="MultiSelect"
 			items="{/products}"
-			class="sapUiSmallMargin"
 			autoPopinMode="true">
 		<columns>
 			<Column>
