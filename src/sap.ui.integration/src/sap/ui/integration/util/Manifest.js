@@ -325,19 +325,19 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {string} sPlaceholder The value to process.
-	 * @param {Object} oParam The parameter from the configuration.
+	 * @param {Object} oParams The parameters from the configuration.
 	 * @param {Object} oDataSources The dataSources from the configuration.
 	 * @param {Object} oFilters The filters from the configuration.
 	 * @returns {string} The string with replaced placeholders.
 	 */
-	Manifest._processPlaceholder = function (sPlaceholder, oParam, oDataSources, oFilters) {
+	Manifest._processPlaceholder = function (sPlaceholder, oParams, oDataSources, oFilters) {
 		var sProcessed = ParameterMap.processPredefinedParameter(sPlaceholder),
 			oValue,
 			sPath;
 
-		if (!isEmptyObject(oParam)) {
-			for (var oProperty in oParam) {
-				oValue = oParam[oProperty].value;
+		if (!isEmptyObject(oParams)) {
+			for (var oProperty in oParams) {
+				oValue = oParams[oProperty].value;
 				sPath = "{{parameters." + oProperty;
 
 				sProcessed = replacePlaceholders(sProcessed, oValue, sPath);
@@ -360,7 +360,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {string} sPlaceholder The string with placeholders to process.
-	 * @param {string|Object} vValue The current value. It will be processed recursively, if is object.
+	 * @param {string|Object} vValue The current value. It will be processed recursively, if its type is an object.
 	 * @param {string} sPath The current path.
 	 * @returns {string} The string with replaced placeholders.
 	 */

@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/ResizeHandler",
 	"sap/ui/layout/AlignedFlowLayout",
 	"sap/ui/dom/units/Rem",
-	"sap/ui/integration/util/BindingHelper"
+	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/integration/util/Utils"
 ], function (
 	library,
 	BaseContent,
@@ -30,7 +31,8 @@ sap.ui.define([
 	ResizeHandler,
 	AlignedFlowLayout,
 	Rem,
-	BindingHelper
+	BindingHelper,
+	Utils
 ) {
 	"use strict";
 
@@ -179,11 +181,17 @@ sap.ui.define([
 	ObjectContent.prototype._addGroups = function (oConfiguration) {
 		var oContainer = this._getRootContainer();
 		var aGroups = oConfiguration.groups || [];
-
 		aGroups.forEach(function (oGroup) {
+			var vVisible;
+
+			if (typeof oGroup.visible == "string") {
+				vVisible = !Utils.hasFalsyValueAsString(oGroup.visible);
+			} else {
+				vVisible = oGroup.visible;
+			}
 
 			var oGroupContainer = new VBox({
-				visible: oGroup.visible,
+				visible: vVisible,
 				renderType: FlexRendertype.Bare
 			}).addStyleClass("sapFCardObjectGroup");
 
@@ -196,12 +204,20 @@ sap.ui.define([
 			}
 
 			oGroup.items.forEach(function (oItem) {
+
 				var oItemValue,
 					vLabel = oItem.label,
 					vValue = oItem.value,
+					vVisible,
 					oItemLabel,
 					vHref,
 					aBindingParts = [];
+
+				if (typeof oItem.visible == "string") {
+					vVisible = !Utils.hasFalsyValueAsString(oItem.visible);
+				} else {
+					vVisible = oItem.visible;
+				}
 
 				if (vLabel) {
 					// Checks if the label ends with ":" and if not we just add the ":"
@@ -210,7 +226,7 @@ sap.ui.define([
 					});
 					oItemLabel = new Label({
 						text: vLabel,
-						visible: oItem.visible
+						visible: vVisible
 					}).addStyleClass("sapFCardObjectItemLabel");
 				}
 
@@ -221,7 +237,7 @@ sap.ui.define([
 								href: oItem.url || vValue,
 								text: vValue,
 								target: oItem.target || '_blank',
-								visible: BindingHelper.reuse(oItem.visible)
+								visible: BindingHelper.reuse(vVisible)
 							});
 							break;
 						case 'email':
@@ -243,7 +259,7 @@ sap.ui.define([
 							oItemValue = new Link({
 								href: vHref,
 								text: vValue,
-								visible: BindingHelper.reuse(oItem.visible)
+								visible: BindingHelper.reuse(vVisible)
 							});
 							break;
 						case 'phone':
@@ -253,13 +269,13 @@ sap.ui.define([
 							oItemValue = new Link({
 								href: vHref,
 								text: vValue,
-								visible: BindingHelper.reuse(oItem.visible)
+								visible: BindingHelper.reuse(vVisible)
 							});
 							break;
 						default:
 							oItemValue = new Text({
 								text:  vValue,
-								visible: BindingHelper.reuse(oItem.visible)
+								visible: BindingHelper.reuse(vVisible)
 							});
 							break;
 					}
@@ -290,7 +306,7 @@ sap.ui.define([
 						]
 					});
 					var oHBox = new HBox({
-						visible: oItem.visible,
+						visible: vVisible,
 						items: [
 							oAvatar,
 							oVbox
