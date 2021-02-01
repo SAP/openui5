@@ -475,9 +475,9 @@ sap.ui.define([
 			bTransient = false,
 			that = this;
 
-		function invalidSegment(sSegment) {
-			Log.error("Failed to drill-down into " + sPath + ", invalid segment: " + sSegment,
-				that.toString(), sClassName);
+		function invalidSegment(sSegment, bAsInfo) {
+			Log[bAsInfo ? "info" : "error"]("Failed to drill-down into " + sPath
+				+ ", invalid segment: " + sSegment, that.toString(), sClassName);
 			return undefined;
 		}
 
@@ -496,7 +496,7 @@ sap.ui.define([
 				sServiceUrl;
 
 			if (Array.isArray(oValue)) {
-				return invalidSegment(sSegment); // missing key predicate or index
+				return invalidSegment(sSegment, sSegment === "0"); // missing key predicate or index
 			}
 			return that.oRequestor.getModelInterface()
 				.fetchMetadata(that.sMetaPath + "/" + _Helper.getMetaPath(sPropertyPath))

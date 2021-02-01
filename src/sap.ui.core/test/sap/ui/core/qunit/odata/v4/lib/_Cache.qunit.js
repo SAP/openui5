@@ -1003,6 +1003,18 @@ sap.ui.define([
 
 		assert.strictEqual(drillDown("0/foo/emptyList('0')"), undefined, "0/foo/emptyList('0')");
 
+		this.oLogMock.expects("info").withExactArgs(
+			"Failed to drill-down into 0/foo/emptyList/0/bar, invalid segment: 0",
+			oCache.toString(), sClassName);
+
+		assert.strictEqual(drillDown("0/foo/emptyList/0/bar"), undefined, "0/foo/emptyList/0/bar");
+
+		this.oLogMock.expects("error").withExactArgs(
+			"Failed to drill-down into ('a')/0, invalid segment: 0",
+			oCache.toString(), sClassName);
+
+		assert.strictEqual(drillDown("('a')/0"), undefined, "('a')/0");
+
 		oCacheMock.expects("from$skip")
 			.withExactArgs("foo", sinon.match.same(oData[0])).returns("foo");
 		oCacheMock.expects("from$skip")
