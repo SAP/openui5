@@ -7,6 +7,6 @@ describe("sap.m.SegmentedButton", function() {
 
 	it("should render SegmentedButton", function() {
 		expect(takeScreenshot()).toLookAs("SegmentedButton_initial");
-	});
+	}, 2000);
 
 });
