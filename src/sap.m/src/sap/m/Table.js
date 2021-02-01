@@ -1069,12 +1069,11 @@ sap.ui.define([
 			return oColumn.getVisible();
 		});
 
-		var aItems = this.getItems();
-
-		if (!aVisibleColumns.length || !aItems.length) {
+		if (!aVisibleColumns.length) {
 			return;
 		}
 
+		var aItems = this.getItems();
 		var mPrioColumns = {
 			High: [],
 			Medium: [],
