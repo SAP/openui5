@@ -1,4 +1,4 @@
-/* global QUnit */
+/* global QUnit, sinon */
 
 sap.ui.define([
 	"jquery.sap.global",
@@ -11,6 +11,27 @@ sap.ui.define([
 	"use strict";
 
 	createAndAppendDiv("target1");
+
+	// In order to offer protection against timing attacks and fingerprinting, the precision of performance.now() might get rounded depending on browser settings.
+	// In Firefox, the privacy.reduceTimerPrecision preference is enabled by default and defaults to 1ms. (see https://developer.mozilla.org/en-US/docs/Web/API/Performance/now#reduced_time_precision)
+	// Therefore it's necessary to add some fake processing time to avoid filtering of zero duration records
+	var addFakeProcessingTime = function () {
+		// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
+		var notifyAsyncStepCallback;
+
+		notifyAsyncStepCallback = Interaction.notifyAsyncStep();
+		this.clock.tick(1);
+		notifyAsyncStepCallback();
+	};
+
+	// This function has the same intention as the function addFakeProcessingTime but it's used in case fakeTimers are not suitable for the test
+	var waitASecond = function () {
+		var iFirstTime, iSecondTime;
+		iFirstTime = iSecondTime = performance.now();
+		while (iFirstTime >= iSecondTime) {
+			iSecondTime = performance.now();
+		}
+	};
 
 	jQuery.sap.measure.setActive(true);
 
@@ -389,42 +410,50 @@ sap.ui.define([
 	});
 
 	QUnit.test("endInteraction", function(assert) {
+		this.clock = sinon.useFakeTimers();
+		window.performance.getEntriesByType = function() { return []; };
 		jQuery.sap.measure.startInteraction("click", this.oButton);
-		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
+		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		assert.ok(oMeasurement, "Measurement has been created");
+		this.clock.restore();
 	});
 
 	QUnit.test("getAllInteractionMeasurements", function(assert) {
+		this.clock = sinon.useFakeTimers();
+		window.performance.getEntriesByType = function() { return []; };
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 		assert.ok(Array.isArray(aMeasurements), "An array was returned");
 		assert.strictEqual(aMeasurements.length, 0, "Measurements count is correct");
-		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
+		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
 		aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 		assert.strictEqual(aMeasurements.length, 1, "Measurements count is correct");
 		jQuery.sap.measure.startInteraction("click", this.oButton);
-		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
+		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
 		aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements();
 		assert.strictEqual(aMeasurements.length, 2, "Measurements count is correct");
 		jQuery.sap.measure.startInteraction("click", this.oButton);
-		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
+		addFakeProcessingTime.apply(this);
 		aMeasurements = jQuery.sap.measure.getAllInteractionMeasurements(/*bFinalize =*/true);
 		assert.strictEqual(aMeasurements.length, 3, "Measurements count is correct - pending interaction has been added");
+		this.clock.restore();
 	});
 
 	QUnit.test("filterInteractionMeasurements", function(assert) {
+		this.clock = sinon.useFakeTimers();
+		window.performance.getEntriesByType = function() { return []; };
 		jQuery.sap.measure.startInteraction("click", this.oButton);
-		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
+		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
 		jQuery.sap.measure.startInteraction("flick", this.oButton);
-		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
+		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
 		jQuery.sap.measure.startInteraction("click", this.oButton);
-		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
+		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
 		var aFilteredMeasurements = jQuery.sap.measure.filterInteractionMeasurements(jQuery.noop);
 		assert.ok(Array.isArray(aFilteredMeasurements), "Array has been returned");
@@ -437,6 +466,7 @@ sap.ui.define([
 			return oMeasurement.event === "flick";
 		});
 		assert.equal(aFilteredMeasurements.length, 1, "Filter applied correctly");
+		this.clock.restore();
 	});
 
 	QUnit.test("getPendingInteractionMeasurement", function(assert) {
@@ -447,8 +477,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Interaction properties", function(assert) {
+		this.clock = sinon.useFakeTimers();
+		window.performance.getEntriesByType = function() { return []; };
 		jQuery.sap.measure.startInteraction("click", this.oButton);
-		Interaction.notifyAsyncStep()(); // trigger notifyAsyncStep and execute the callback manually in order to avoid removal of interactions without processing time
+		addFakeProcessingTime.apply(this);
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		assert.equal(oMeasurement.event, "click", "Event type is set");
@@ -468,6 +500,7 @@ sap.ui.define([
 		assert.ok(oMeasurement.networkTime === 0, "No processing");
 		assert.ok(oMeasurement.bytesSent === 0, "No round trip");
 		assert.ok(oMeasurement.bytesReceived === 0, "No processing");
+		this.clock.restore();
 	});
 
 	// do not test safari as it does not seem to work in testing environments
@@ -475,9 +508,15 @@ sap.ui.define([
 
 	QUnit.test("Performance API depending measures", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
+		var notifyAsyncStepCallback;
+
+		notifyAsyncStepCallback = Interaction.notifyAsyncStep();
+		waitASecond();
 		var oReq = new XMLHttpRequest();
 		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
+		waitASecond();
+		notifyAsyncStepCallback();
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		// ignore browsers where no Performance API is present or insufficient
@@ -494,9 +533,15 @@ sap.ui.define([
 
 	QUnit.test("Request depending measures", function(assert) {
 		jQuery.sap.measure.startInteraction("click", this.oButton);
+		var notifyAsyncStepCallback;
+
+		notifyAsyncStepCallback = Interaction.notifyAsyncStep();
+		waitASecond();
 		var oReq = new XMLHttpRequest();
 		oReq.open("GET", "resources/ui5loader.js?noCache=" + Date.now(), false);
 		oReq.send();
+		waitASecond();
+		notifyAsyncStepCallback();
 		jQuery.sap.measure.endInteraction(true);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
 		// ignore browsers where no Performance API is present or insufficient
@@ -552,6 +597,7 @@ sap.ui.define([
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		// Tests synchronous time intensive API which makes use of measurement API
 		jQuery.sap.require("sap.m.Button");
+		waitASecond();
 		jQuery.sap.measure.endInteraction();
 		jQuery.sap.measure.startInteraction("click", this.oButton);
 		var oMeasurement = jQuery.sap.measure.getAllInteractionMeasurements().pop();
