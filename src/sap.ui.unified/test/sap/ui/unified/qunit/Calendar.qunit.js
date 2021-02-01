@@ -1980,11 +1980,12 @@ QUnit.module("Misc");
 		oCalendar.destroy();
 	});
 
-	QUnit.test("onkeydown handler when F4 is pressed, but the there is a picker popup", function(assert) {
+	QUnit.test("onkeydown handler when F4 is pressed, but there is a picker popup", function(assert) {
 		// Prepare
 		var oSpyEventPreventDefault = this.spy(),
 			oEvent = { keyCode: KeyCodes.F4, preventDefault: oSpyEventPreventDefault, shiftKey: true },
-			oCalendar = new Calendar();
+			oCalendar = new Calendar(),
+			oYRFirstDateStub = this.stub(oCalendar._getYearPicker(), "getFirstRenderedDate", function () { return new Date(); });
 
 		this.stub(oCalendar, "_getSucessorsPickerPopup").returns(true);
 
@@ -1992,10 +1993,11 @@ QUnit.module("Misc");
 		oCalendar.onkeydown(oEvent);
 
 		// Assert
-		assert.equal(oSpyEventPreventDefault.callCount, 0, "browser's event handler is not prevented");
+		assert.equal(oSpyEventPreventDefault.callCount, 1, "browser's event handler is prevented");
 
 		// Cleanup
 		oCalendar.destroy();
+		oYRFirstDateStub.restore();
 	});
 
 	QUnit.test("onsapescape fires cancel event in all views (days, months and years)", function (assert) {
@@ -2054,6 +2056,117 @@ QUnit.module("Misc");
 
 		// clean
 		oCalendar.destroy();
+	});
+
+	QUnit.test("F4 opens month picker", function(assert) {
+		// prepare
+		var oCalendar = new Calendar().placeAt("qunit-fixture"),
+			oFakeEvent = {
+				target: {
+					id: oCalendar.getId() + "-inner",
+					which: jQuery.sap.KeyCodes.PAGE_UP
+				},
+				which: 115,
+				defaultPrevented: false,
+				preventDefault: function() {
+					this.defaultPrevented = true;
+				}
+			}, oSpy = this.spy(oCalendar, "_showMonthPicker");
+
+		// act
+		oCalendar.onkeydown(oFakeEvent);
+
+		// assert
+		assert.ok(oSpy.calledOnce, "the month picker is opened");
+
+		// clean
+		oCalendar.destroy();
+		oSpy.restore();
+	});
+
+	QUnit.test("Shift+F4 opens year picker", function(assert) {
+		// prepare
+		var oCalendar = new Calendar().placeAt("qunit-fixture"),
+			oFakeEvent = {
+				target: {
+					id: oCalendar.getId() + "-inner",
+					which: jQuery.sap.KeyCodes.PAGE_UP
+				},
+				shiftKey: true,
+				which: 115,
+				defaultPrevented: false,
+				preventDefault: function() {
+					this.defaultPrevented = true;
+				}
+			}, oSpy = this.spy(oCalendar, "_showYearPicker"),
+			oYRFirstDateStub = this.stub(oCalendar._getYearPicker(), "getFirstRenderedDate", function () { return new Date(); });
+
+		// act
+		oCalendar.onkeydown(oFakeEvent);
+
+		// assert
+		assert.ok(oSpy.calledOnce, "the year picker is opened");
+
+		// clean
+		oCalendar.destroy();
+		oSpy.restore();
+		oYRFirstDateStub.restore();
+	});
+
+	QUnit.test("Shift+F4 twice opens year range picker", function(assert) {
+		// prepare
+		var oCalendar = new Calendar().placeAt("qunit-fixture"),
+			oFakeEvent = {
+				target: {
+					id: oCalendar.getId() + "-inner",
+					which: jQuery.sap.KeyCodes.PAGE_UP
+				},
+				shiftKey: true,
+				which: 115,
+				defaultPrevented: false,
+				preventDefault: function() {
+					this.defaultPrevented = true;
+				}
+			}, oSpy = this.spy(oCalendar, "_showYearRangePicker"),
+			oYRFirstDateStub = this.stub(oCalendar._getYearPicker(), "getFirstRenderedDate", function () { return new Date(); });
+
+		// act
+		oCalendar.onkeydown(oFakeEvent);
+		oCalendar.onkeydown(oFakeEvent);
+
+		// assert
+		assert.ok(oSpy.calledOnce, "the year range picker is opened");
+
+		// clean
+		oCalendar.destroy();
+		oSpy.restore();
+		oYRFirstDateStub.restore();
+	});
+
+	QUnit.test("F4 doesnt open month picker, when year picker is already opened", function(assert) {
+		// prepare
+		var oCalendar = new Calendar().placeAt("content"),
+			oFakeEvent = {
+				which: 115,
+				defaultPrevented: false,
+				preventDefault: function() {
+					this.defaultPrevented = true;
+				}
+			}, oShowMonthPickerSpy;
+
+		sap.ui.getCore().applyChanges();
+		oCalendar._showYearPicker();
+
+		// act
+		oShowMonthPickerSpy = this.spy(oCalendar, "_showMonthPicker");
+		oCalendar.onkeydown(oFakeEvent);
+
+		// assert
+		assert.ok(oShowMonthPickerSpy.notCalled, "the month picker is not opened");
+
+		// clean
+		oCalendar.destroy();
+		oShowMonthPickerSpy.restore();
 	});
 
 	//================================================================================

@@ -1148,8 +1148,9 @@ sap.ui.define([
 	};
 
 	Calendar.prototype.onsapshow = function(oEvent){
+		var iKC = oEvent.which || oEvent.keyCode;
 
-		if (this._bPoupupMode) {
+		if (this._bPoupupMode && iKC !== KeyCodes.F4) {
 			this._closedPickers();
 			this.fireCancel();
 
@@ -1165,12 +1166,24 @@ sap.ui.define([
 			bShift = oEvent.shiftKey;
 
 		// if there is a popup for picking dates, we should not handle F4
-		if (this._getSucessorsPickerPopup() || iKC !== KeyCodes.F4) {
+		if (iKC !== KeyCodes.F4) {
 			return;
 		}
 
 		oEvent.preventDefault(); //ie expands the address bar on F4
-		bShift ? this._showYearPicker() : this._showMonthPicker();
+
+		switch (this._iMode) {
+			case 0:
+				bShift ? this._showYearPicker() : this._showMonthPicker();
+				break;
+			case 1:
+				bShift && this._showYearPicker();
+				break;
+			case 2:
+				bShift && this._showYearRangePicker();
+				break;
+			default:
+		}
 	};
 
 

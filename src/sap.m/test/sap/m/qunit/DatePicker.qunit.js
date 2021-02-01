@@ -2432,4 +2432,34 @@ sap.ui.define([
 		// Cleanup
 		oDP.destroy();
 	});
+
+	QUnit.module("Keyboard Interaction");
+
+	QUnit.test("F4 does not close the popup when it is opened", function(assert) {
+		// prepare
+		var oDP = new DatePicker(),
+			oFakeEvent = {
+				target: { id: oDP.getId() + "-inner"},
+				which: 115,
+				defaultPrevented: false,
+				preventDefault: function() { this.defaultPrevented = true; }
+			},
+			oSpy;
+
+		oDP.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oDP.toggleOpen();
+		oSpy = sinon.spy(oDP._getCalendar(), "_closedPickers");
+		oDP._getCalendar().onsapshow(oFakeEvent);
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(oSpy.notCalled, "the month picker is opened");
+
+		// clean
+		oDP.destroy();
+		oSpy.restore();
+	});
 });
