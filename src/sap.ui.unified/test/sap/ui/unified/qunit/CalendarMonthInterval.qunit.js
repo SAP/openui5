@@ -148,6 +148,7 @@ sap.ui.define([
 
 	QUnit.test("setStartDate", function(assert) {
 		this.oCal1.setStartDate(new Date("2015", "2", "10"));
+		sap.ui.getCore().applyChanges();
 		var $MonthsRow = sap.ui.getCore().byId("Cal1").getAggregation("monthsRow").$();
 		var aMonths = $MonthsRow.find(".sapUiCalItem");
 		assert.equal(jQuery(aMonths[0]).attr("data-sap-month"), "20150301", "Calendar1: new start month");
@@ -155,6 +156,7 @@ sap.ui.define([
 
 	QUnit.test("focusDate", function(assert) {
 		this.oCal2.focusDate(new Date("2015", "8", "11"));
+		sap.ui.getCore().applyChanges();
 		var oStartDate = this.oCal2.getStartDate();
 		assert.equal(oFormatYyyymmdd.format(oStartDate), "20150804", "Calendar2: start date not changed");
 		var $MonthsRow = sap.ui.getCore().byId("Cal2").getAggregation("monthsRow").$();
@@ -163,6 +165,7 @@ sap.ui.define([
 		assert.equal(jQuery(aMonths[1]).attr("tabindex"), "0", "Calendar2: second month has focus");
 
 		this.oCal2.focusDate(new Date("2014", "3", "11"));
+		sap.ui.getCore().applyChanges();
 		oStartDate = this.oCal2.getStartDate();
 		assert.equal(oFormatYyyymmdd.format(oStartDate), "20140301", "Calendar2: new start date");
 		aMonths = $MonthsRow.find(".sapUiCalItem");
@@ -207,6 +210,7 @@ sap.ui.define([
 
 		bStartDateChanged = false;
 		qutils.triggerEvent("click", "Cal2--Head-prev");
+		sap.ui.getCore().applyChanges();
 		assert.ok(bStartDateChanged, "Calendar2: startDateChangeEvent fired");
 		oStartDate = this.oCal2.getStartDate();
 		assert.equal(oFormatYyyymmdd.format(oStartDate), "20140301", "Calendar2: new start date");

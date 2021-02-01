@@ -221,23 +221,6 @@ sap.ui.define([
 
 	};
 
-	// overwrite invalidate to recognize changes on selectedDates
-	MonthsRow.prototype.invalidate = function(oOrigin) {
-
-		if (!this._bDateRangeChanged && (!oOrigin || !(oOrigin instanceof DateRange))) {
-			Control.prototype.invalidate.apply(this, arguments);
-		} else if (this.getDomRef() && !this._sInvalidateMonths) {
-			// DateRange changed -> only rerender months
-			// do this only once if more DateRanges / Special days are changed
-			if (this._bInvalidateSync) { // set if calendar already invalidates in delayed call
-				_invalidateMonths.call(this);
-			} else {
-				this._sInvalidateMonths = setTimeout(_invalidateMonths.bind(this), 0);
-			}
-		}
-
-	};
-
 	// overwrite removing of date ranged because invalidate don't get information about it
 	MonthsRow.prototype.removeAllSelectedDates = function() {
 
@@ -1084,8 +1067,6 @@ sap.ui.define([
 		if (this.getDomRef()) {
 			if (bFocusable) {
 				_focusDate.call(this, this._oDate , bNoFocus);
-			} else {
-				_renderRow.call(this, bNoFocus);
 			}
 		}
 
@@ -1117,44 +1098,6 @@ sap.ui.define([
 
 	}
 
-	function _renderRow(bNoFocus){
-
-		var oDate = this._getStartDate();
-		var $Container = this.$("months");
-
-		if ($Container.length > 0) {
-			var oRm = sap.ui.getCore().createRenderManager();
-			this.getRenderer().renderMonths(oRm, this, oDate);
-			oRm.flush($Container[0]);
-			oRm.destroy();
-		}
-
-		_renderHeader.call(this);
-
-		_initItemNavigation.call(this);
-		if (!bNoFocus) {
-			this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex());
-		}
-
-	}
-
-	function _renderHeader(){
-
-		var oStartDate = this._getStartDate();
-
-		if (this._getShowHeader()) {
-			var $Container = this.$("Head");
-
-			if ($Container.length > 0) {
-				var oLocaleData = this._getLocaleData();
-				var oRm = sap.ui.getCore().createRenderManager();
-				this.getRenderer().renderHeaderLine(oRm, this, oLocaleData, oStartDate);
-				oRm.flush($Container[0]);
-				oRm.destroy();
-			}
-		}
-
-	}
 
 	/**
 	* @param {sap.ui.unified.calendar.CalendarDate} oDate The date to be set to the month and the year in the header
@@ -1324,16 +1267,6 @@ sap.ui.define([
 
 			this._bNamesLengthChecked = true;
 		}
-	}
-
-	function _invalidateMonths(){
-
-		this._sInvalidateMonths = undefined;
-
-		_renderRow.call(this, this._bNoFocus);
-		this._bDateRangeChanged = undefined;
-		this._bNoFocus = undefined; // set in Calendar to prevent focus flickering for multiple months
-
 	}
 
 	function _bindMousemove(){
