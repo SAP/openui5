@@ -158,6 +158,7 @@ sap.ui.define([
 			var oBaseFormatOptions = fnBaseType.prototype.getFormatOptions.call(this);
 
 			oBaseFormatOptions.parseAsString = this.bParseAsString;
+			delete oBaseFormatOptions[sFormatOptionName];
 
 			return oBaseFormatOptions;
 		}
