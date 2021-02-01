@@ -5381,11 +5381,11 @@ sap.ui.define([
 		this.clock.tick(300);
 
 		qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
 		qutils.triggerKeydown(oInput.getDomRef("inner"), KeyCodes.ENTER);
+		this.clock.tick(300);
 
 		assert.ok(true, 'there is no endless loop');
-
 		assert.strictEqual(iSuggestionItemSelectedCount,  1, 'attachSuggestionItemSelected is fired only once');
 	});
 
@@ -5442,6 +5442,7 @@ sap.ui.define([
 
 		// Act
 		qutils.triggerKeydown(this.oInput.getDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(300);
 
 		// Assert
 		assert.strictEqual(this.oInput.getFocusDomRef().getAttribute('aria-activedescendant'), sInvisibleTextId, "Input has aria-activedescendant attribute set");
@@ -5505,7 +5506,7 @@ sap.ui.define([
 
 		// act
 		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
 
 		// assert
 		// go to the header group item
@@ -5515,7 +5516,7 @@ sap.ui.define([
 		// act
 		// go to the next list item
 		qutils.triggerKeydown(this.oInput.getDomRef("inner"), KeyCodes.ARROW_DOWN);
-		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
 
 		// assert
 		assert.strictEqual(this.oInput.getValue(), aVisibleItems[1].getTitle(), "The value is populated again.");
@@ -5619,6 +5620,7 @@ sap.ui.define([
 			return oItem.getText() === "A Item 1";
 		});
 		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
 
 		// Assert
 		assert.strictEqual(this.oInput._oSuggPopover._oList.getItems().length, 1, "Show only the matching items");
@@ -5684,6 +5686,7 @@ sap.ui.define([
 		// Act
 		this.oInput.showItems();
 		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
 
 		// Assert
 		assert.strictEqual(this.oInput._oSuggestionTable.getItems().length, 5, "All the items are available");
@@ -5703,6 +5706,7 @@ sap.ui.define([
 			return oItem.getCells()[0].getText() === "A Item 1";
 		});
 		sap.ui.getCore().applyChanges();
+		this.clock.tick(300);
 
 		// Assert
 		assert.strictEqual(this.oInput._oSuggestionTable.getItems().length, 5, "All the items are available");
@@ -5780,7 +5784,7 @@ sap.ui.define([
 				tablet: false
 			};
 
-		this.stub(Device, "system", oSystem);
+		var oStub = this.stub(Device, "system", oSystem);
 
 		this.oInput = new Input({showSuggestion: true});
 		this.oInput._openSuggestionsPopover();
@@ -5795,6 +5799,7 @@ sap.ui.define([
 		assert.notOk(oSuggPopover.isOpen(), "The dialog is closed on OK press.");
 
 		this.oInput.destroy();
+		oStub.restore();
 	});
 
 	return waitForThemeApplied(this.oInput);

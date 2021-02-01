@@ -1742,6 +1742,10 @@ function(
 			if (!this._bUseDialog) {
 				if (oPopup.isOpen()) {
 					this._sCloseTimer = setTimeout(function () {
+						if (!this._oSuggPopover) {
+							return;
+						}
+
 						this._oSuggPopover._iPopupListSelectedIndex = -1;
 						this.cancelPendingSuggest();
 						if (this._oSuggPopover._sTypedInValue) {
