@@ -63,5 +63,21 @@
         ]
       }
     ]
+  },
+  "1.85.4": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "49c4b9fc2716de2e6926a493f472b6d9553c9f0c",
+        "type": "FIX",
+        "text": " Field: Currency field brings error if no custom currencies",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180000278"
+          }
+        ]
+      }
+    ]
   }
 }
