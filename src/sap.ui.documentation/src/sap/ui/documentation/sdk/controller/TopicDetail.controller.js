@@ -238,13 +238,11 @@ sap.ui.define([
 
 				this.sTopicId = sTopicId;
 				this.sSubTopicId = sSubTopicId;
-
 				this.sTopicURL = ResourcesUtil.getResourceOriginPath(this._oConfig.docuPath + sTopicId + (sTopicId.match(/\.html/) ? "" : ".html"));
 				this.sSubTopicId = event.getParameter("arguments").subId || sSubTopicId;
-
 				jQuery.ajax(this.sTopicURL)
 					.done(this._onHtmlResourceLoaded.bind(this))
-					.fail(Log.err);
+					.fail(this.onRouteNotFound.bind(this));
 			},
 
 			_onHtmlRendered: function () {
