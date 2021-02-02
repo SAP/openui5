@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/dt/Overlay",
 	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/Util",
 	"sap/base/util/merge"
 ],
@@ -14,6 +15,7 @@ function(
 	jQuery,
 	Overlay,
 	ElementUtil,
+	OverlayUtil,
 	Util,
 	merge
 ) {
@@ -122,7 +124,7 @@ function(
 		 * iCurrentPosition - previous position in DOM
 		 */
 		if (!(Util.isInteger(iPosition))) {
-			iPosition = ElementUtil[this.isAssociation() ? 'getIndexInAssociation' : 'getIndexInAggregation'](
+			iPosition = this.isAssociation() ? ElementUtil.getIndexInAssociation : OverlayUtil.getIndexInAggregation(
 				oChild.getElement(),
 				this.getElement(),
 				this.getAggregationName()
