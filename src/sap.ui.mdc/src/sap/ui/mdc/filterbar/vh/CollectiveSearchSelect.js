@@ -204,15 +204,10 @@ sap.ui.define([
 
 	CollectiveSearchSelect.prototype._updateCurrentItemText = function() {
 		var sKey = this.getSelectedItemKey();
-		var sText = "";
-		if (sKey) {
-			var oItem = this._getItemByKey(sKey);
-			if (oItem) {
-				sText = oItem.getText();
-			}
+		var oItem = this._getItemByKey(sKey);
+		var sText = oItem ? oItem.getText() : sKey;
 
-			this.oInvisibleText.setText(this.oRb.getText("COL_SEARCH_SEL_INVISIBLETXT", [sText]));
-		}
+		this.oInvisibleText.setText(this.oRb.getText("COL_SEARCH_SEL_INVISIBLETXT", [sText]));
 
 		this.setProperty("_currentItemText", sText);
 	};
@@ -289,11 +284,11 @@ sap.ui.define([
 						sSelectedKey = oItemPressed.getKey();
 					}
 				}
-				if (sSelectedKey) {
+				this.oPopover.close();
+				if (this.getSelectedItemKey() !== sSelectedKey) {
 					this.setSelectedItemKey(sSelectedKey);
-					this.oPopover.close();
 
-					this.fireEvent("select", {
+					this.fireSelect({
 						key: sSelectedKey
 					});
 				}

@@ -148,13 +148,26 @@ sap.ui.define([
 		this.oColSearch.onclick();
 
 		// Act
-		var oFakeEvent = {
-			item: new sap.ui.core.Item({key: "cs3", text: "col Search 3"})
-		};
 		this.bEventHandled = false;
 		this.oColSearch.attachSelect(function(oEvent){
 			this.bEventHandled = true;
 		}.bind(this));
+
+
+		var oFakeEvent = {
+			item: new sap.ui.core.Item({key: "cs2", text: "col Search 2"})
+		};
+		this.oColSearch.oList.fireItemPress(oFakeEvent);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(!this.bEventHandled, "select event should not be triggered");
+		assert.ok(this.oColSearch.getSelectedItemKey() === "cs2", "selectedItemKey should be cs2!");
+
+		// Act
+		oFakeEvent = {
+			item: new sap.ui.core.Item({key: "cs3", text: "col Search 3"})
+		};
 		this.oColSearch.oList.fireItemPress(oFakeEvent);
 		sap.ui.getCore().applyChanges();
 
