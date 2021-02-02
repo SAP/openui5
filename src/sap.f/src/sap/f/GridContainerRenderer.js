@@ -108,7 +108,6 @@ sap.ui.define([], function () {
 
 		oRM.openEnd();
 
-		oItem.addStyleClass("sapFGridContainerItemInnerWrapper");
 		oRM.renderControl(oItem);
 
 		oRM.close("div");
@@ -153,10 +152,6 @@ sap.ui.define([], function () {
 
 		if (!oItem.getVisible()) {
 			aClasses.push("sapFGridContainerInvisiblePlaceholder");
-		}
-
-		if (oControl._hasOwnVisualFocus(oItem)) {
-			aClasses.push("sapFGridContainerItemWrapperNoVisualFocus");
 		}
 
 		return {

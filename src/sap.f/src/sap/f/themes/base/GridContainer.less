@@ -1,9 +1,9 @@
-/* ================================== */
-/* CSS for control sap.f/GridContainer  */
-/* Base theme          */
-/* ================================== */
+/* =================================== */
+/* CSS for control sap.f/GridContainer */
+/* Base theme                          */
+/* =================================== */
 
-@_sap_f_GridItem_FocusBorderWidth: 1px;
+@_sap_f_GridContainer_FocusBorderOffset: 0;
 
 .sapFGridContainer {
 	position: relative;
@@ -31,19 +31,23 @@
 		}
 	}
 
-	.sapFGridContainerItemWrapper:not(.sapFGridContainerItemWrapperNoVisualFocus):focus .sapFGridContainerItemInnerWrapper::before {
+	.sapFGridContainerItemWrapper:not(.sapFGridContainerItemWrapperNoVisualFocus):focus::before {
 		content: '';
 		position: absolute;
-		left: -3px;
-		bottom: -3px;
-		right: -3px;
-		top: -3px;
-		border: @_sap_f_GridItem_FocusBorderWidth dotted @sapUiContentFocusColor;
+		left: @_sap_f_GridContainer_FocusBorderOffset;
+		bottom: @_sap_f_GridContainer_FocusBorderOffset;
+		right: @_sap_f_GridContainer_FocusBorderOffset;
+		top: @_sap_f_GridContainer_FocusBorderOffset;
+		z-index: 1;
+		border: @sapUiContentFocusWidth dotted @sapUiContentFocusColor;
 		pointer-events: none;
-	  	border-radius: 0.25rem;
+
+		html[data-sap-ui-browser^="ie"] & {
+			border-style: dashed;
+		}
 	}
 
-	.sapFGridContainerItemWrapper .sapFGridContainerItemInnerWrapper {
+	.sapFGridContainerItemWrapper {
 		position: relative;
 	}
 
@@ -51,9 +55,6 @@
 	  	position: fixed;
 	}
 
-	html[data-sap-ui-browser^="ie"] .sapFGridContainerItemWrapper:focus .sapFGridContainerItemInnerWrapper::before {
-	  border: @_sap_f_GridItem_FocusBorderWidth dashed @sapUiContentFocusColor;
-	}
 	.sapUiIntCard.sapUiIntCardAnalytical {
 		min-height: 100%;
 
