@@ -98,6 +98,7 @@ sap.ui.define([
 		var mParams = this.getNewVariantParameters();
 		mParams.layer = this.sLayer;
 		mParams.newVariantReference = this.sNewVariantReference;
+		mParams.generator = sap.ui.rta.GENERATOR_NAME;
 		return this.oModel._handleSave(this.oVariantManagementControl, mParams)
 			.then(function(aDirtyChanges) {
 				this._aPreparedChanges = aDirtyChanges;

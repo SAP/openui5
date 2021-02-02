@@ -69,6 +69,7 @@ sap.ui.define([
 		this._aPreparedChanges = [];
 		this.getChanges().forEach(function(mChangeProperties) {
 			mChangeProperties.appComponent = this.oAppComponent;
+			mChangeProperties.generator = sap.ui.rta.GENERATOR_NAME;
 			this._aPreparedChanges.push(this.oModel.setVariantProperties(this.sVariantManagementReference, mChangeProperties, true));
 		}.bind(this));
 

@@ -32,13 +32,13 @@ function() {
 		name : "sap.ui.rta",
 		version: "${version}",
 		dependencies : ["sap.ui.core", "sap.m", "sap.ui.fl", "sap.ui.dt"],
-		types: [
-		],
+		types: [],
 		interfaces: [],
 		controls: [],
-		elements: [
-		]
+		elements: []
 	});
+
+	sap.ui.rta.GENERATOR_NAME = "sap.ui.rta.command";
 
 	return sap.ui.rta;
 });
