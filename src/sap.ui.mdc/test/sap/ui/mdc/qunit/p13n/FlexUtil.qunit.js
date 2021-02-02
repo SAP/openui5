@@ -20,6 +20,19 @@ sap.ui.define([
 		];
 
 	QUnit.module("FlexUtil API 'getArrayDeltaChanges' tests for Table (Selection)", {
+		getTableDeltaConfig: function(aChangedItems) {
+			return {
+				control: this.oTable,
+				changedState: aChangedItems,
+				existingState: aExistingItems,
+				deltaAttributes: ["name"],
+				changeOperations: {
+					add: "addColumn",
+					remove: "removeColumn",
+					move: "moveColumn"
+				}
+			};
+		},
 		beforeEach: function () {
 			this.oTable = new Table("TestTable",{});
 		},
@@ -53,11 +66,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aExistingItems, aChangedItems, function(o) {return o.name;}, this.oTable, {
-			add: "addColumn",
-			remove: "removeColumn",
-			move: "moveColumn"
-		});
+		var aChanges = FlexUtil.getArrayDeltaChanges(this.getTableDeltaConfig(aChangedItems));
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");
@@ -79,11 +88,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aExistingItems, aChangedItems, function(o) {return o.name;}, this.oTable, {
-			add: "addColumn",
-			remove: "removeColumn",
-			move: "moveColumn"
-		});
+		var aChanges = FlexUtil.getArrayDeltaChanges(this.getTableDeltaConfig(aChangedItems));
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");
@@ -112,11 +117,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aExistingItems, aChangedItems, function(o) {return o.name;}, this.oTable, {
-			add: "addColumn",
-			remove: "removeColumn",
-			move: "moveColumn"
-		});
+		var aChanges = FlexUtil.getArrayDeltaChanges(this.getTableDeltaConfig(aChangedItems));
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");
@@ -142,6 +143,19 @@ sap.ui.define([
 	];
 
 	QUnit.module("FlexUtil API 'getArrayDeltaChanges' tests for Chart (Selection)", {
+		getChartDeltaConfig: function(aChangedItems) {
+			return {
+				control: this.oChart,
+				changedState: aChangedItems,
+				existingState: aChartExisting,
+				deltaAttributes: ["name", "role"],
+				changeOperations: {
+					add: "addItem",
+					remove: "removeItem",
+					move: "moveItem"
+				}
+			};
+		},
 		beforeEach: function () {
 			//mock data --> usually the settings class provides this
 			this.oChart = new Chart("TestChart",{});
@@ -178,11 +192,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name;}, this.oChart,  {
-			add: "addItem",
-			remove: "removeItem",
-			move: "moveItem"
-		});
+		var aChanges = FlexUtil.getArrayDeltaChanges(this.getChartDeltaConfig(aChangedItems));
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oChart.getId(), "the correct selectorElement has been set");
@@ -203,11 +213,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name;}, this.oChart, {
-			add: "addItem",
-			remove: "removeItem",
-			move: "moveItem"
-		});
+		var aChanges = FlexUtil.getArrayDeltaChanges(this.getChartDeltaConfig(aChangedItems));
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oChart.getId(), "the correct selectorElement has been set");
@@ -235,11 +241,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name;}, this.oChart,  {
-			add: "addItem",
-			remove: "removeItem",
-			move: "moveItem"
-		});
+		var aChanges = FlexUtil.getArrayDeltaChanges(this.getChartDeltaConfig(aChangedItems));
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oChart.getId(), "the correct selectorElement has been set");
@@ -268,11 +270,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aChartExisting, aChangedItems, function(o) {return o.name + o.role;}, this.oChart,  {
-			add: "addItem",
-			remove: "removeItem",
-			move: "moveItem"
-		});
+		var aChanges = FlexUtil.getArrayDeltaChanges(this.getChartDeltaConfig(aChangedItems));
 
 		assert.strictEqual(aChanges.length, 2, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oChart.getId(), "the correct selectorElement has been set");
@@ -302,6 +300,19 @@ sap.ui.define([
 
 	//----------------------- Sorting ------------------------------
 	QUnit.module("FlexUtil API 'processResult' tests for Sorting", {
+		getSortDeltaConfig: function(aChangedItems) {
+			return {
+				control: this.oTable,
+				changedState: aChangedItems,
+				existingState: aSortState,
+				deltaAttributes: ["name", "descending"],
+				changeOperations: {
+					add: "addSort",
+					remove: "removeSort",
+					move: "moveSort"
+				}
+			};
+		},
 		beforeEach: function () {
 			this.oTable = new Table("TestTable",{});
 		},
@@ -334,11 +345,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aSortState, aChangedSorters, function(o) {return o.name + o.role;}, this.oTable, {
-			add: "addSort",
-			remove: "removeSort",
-			move: "moveSort"
-		});
+		var aChanges = FlexUtil.getArrayDeltaChanges(this.getSortDeltaConfig(aChangedSorters));
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");
@@ -359,11 +366,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aSortState, aChangedSorters, function(o) {return o.name + o.role;}, this.oTable, {
-			add: "addSort",
-			remove: "removeSort",
-			move: "moveSort"
-		});
+		var aChanges = FlexUtil.getArrayDeltaChanges(this.getSortDeltaConfig(aChangedSorters));
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");
@@ -389,11 +392,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getArrayDeltaChanges(aSortState, aChangedSorters, function(o) {return o.name + o.role;}, this.oTable, {
-			add: "addSort",
-			remove: "removeSort",
-			move: "moveSort"
-		});
+		var aChanges = FlexUtil.getArrayDeltaChanges(this.getSortDeltaConfig(aChangedSorters));
 
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oTable.getId(), "the correct selectorElement has been set");
@@ -421,7 +420,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getConditionDeltaChanges("Test", aOrigConditions, [], this.oFilterBar);
+		var aChanges = FlexUtil._diffConditionPath("Test", aOrigConditions, [], this.oFilterBar);
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oFilterBar.getId(), "the correct selectorElement has been set");
 		assert.strictEqual(aChanges[0].changeSpecificData.changeType, "addCondition", "Correct change type has been set");
@@ -438,7 +437,7 @@ sap.ui.define([
 			}
 		];
 
-		var aChanges = FlexUtil.getConditionDeltaChanges("Test",[], aShadowConditions, this.oFilterBar);
+		var aChanges = FlexUtil._diffConditionPath("Test",[], aShadowConditions, this.oFilterBar);
 		assert.strictEqual(aChanges.length, 1, "Correct amount of changes has been created");
 		assert.strictEqual(aChanges[0].selectorElement.sId, this.oFilterBar.getId(), "the correct selectorElement has been set");
 		assert.strictEqual(aChanges[0].changeSpecificData.changeType, "removeCondition", "Correct change type has been set");

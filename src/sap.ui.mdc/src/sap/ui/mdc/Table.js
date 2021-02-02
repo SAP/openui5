@@ -28,7 +28,10 @@ sap.ui.define([
 	"sap/base/strings/capitalize",
 	"sap/base/util/deepEqual",
 	"sap/ui/core/InvisibleMessage",
-	"sap/ui/core/InvisibleText"
+	"sap/ui/core/InvisibleText",
+	"sap/ui/mdc/p13n/subcontroller/ColumnController",
+	"sap/ui/mdc/p13n/subcontroller/SortController",
+	"sap/ui/mdc/p13n/subcontroller/FilterController"
 ], function(
 	Control,
 	ActionToolbar,
@@ -55,7 +58,10 @@ sap.ui.define([
 	capitalize,
 	deepEqual,
 	InvisibleMessage,
-	InvisibleText
+	InvisibleText,
+	ColumnController,
+	SortController,
+	FilterController
 ) {
 	"use strict";
 
@@ -456,7 +462,6 @@ sap.ui.define([
 		constructor: function() {
 			this._oTableReady = new Promise(this._resolveTable.bind(this));
 			this._pFullInitialize = new Promise(this._resolveFullInitialization.bind(this));
-			this._oAdaptationController = null;
 			Control.apply(this, arguments);
 			this.bCreated = true;
 			this._doOneTimeOperations();
@@ -521,27 +526,17 @@ sap.ui.define([
 	Table.prototype.init = function() {
 
 		Control.prototype.init.apply(this, arguments);
-
+		this.getEngine().registerAdaptation(this, {
+			controller: {
+				Item: ColumnController,
+				Sort: SortController,
+				Filter: FilterController
+			}
+		});
 		// Skip propagation of properties (models and bindingContexts)
 		this.mSkipPropagation = {
 			rowSettings: true
 		};
-
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc"); //TODO: house keeping?
-
-		this.setProperty("adaptationConfig", {
-			itemConfig: {
-				changeOperations: {
-					add: "addColumn",
-					remove: "removeColumn",
-					move: "moveColumn"
-				},
-				adaptationUI: "sap/ui/mdc/p13n/panels/SelectionPanel",
-				containerSettings: {
-					title: oResourceBundle.getText("table.SETTINGS_COLUMN")
-				}
-			}
-		});
 	};
 
 	Table.prototype.applySettings = function() {
@@ -1070,8 +1065,7 @@ sap.ui.define([
 
 		var aInitPromises = [
 			this.awaitControlDelegate(),
-			oType.loadTableModules(),
-			this.retrieveAdaptationController()
+			oType.loadTableModules()
 		];
 
 		if (this.isFilteringEnabled()) {
@@ -1287,23 +1281,6 @@ sap.ui.define([
 	 */
 	Table.prototype.isFilteringEnabled = function() {
 		return this.getP13nMode().indexOf("Filter") > -1;
-	};
-
-	Table.prototype.retrieveInbuiltFilter = function() {
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		return Control.prototype.retrieveInbuiltFilter.call(this, this._registerInnerFilter).then(function(oAdaptationFilterBar){
-			var oFilterConfig = {
-				adaptationUI: oAdaptationFilterBar,
-				applyFilterChangeOn: oAdaptationFilterBar,
-				initializeControl: oAdaptationFilterBar.createFilterFields,
-				sortData: false,
-				containerSettings: {
-					title: oResourceBundle.getText("filter.PERSONALIZATION_DIALOG_TITLE")
-				}
-			};
-			this.enhanceAdaptationConfig({filterConfig: oFilterConfig});
-			return oAdaptationFilterBar;
-		}.bind(this));
 	};
 
 	/**

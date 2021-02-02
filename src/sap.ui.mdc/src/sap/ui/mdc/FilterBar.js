@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/ui/mdc/p13n/StateUtil", "sap/base/util/merge", "sap/ui/mdc/filterbar/p13n/AdaptationFilterBar", "sap/ui/core/library"
-], function(FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, StateUtil, merge, AdaptationFilterBar, CoreLibrary) {
+	'sap/ui/mdc/p13n/subcontroller/FilterController', 'sap/ui/mdc/p13n/subcontroller/AdaptFiltersController', "sap/ui/mdc/filterbar/aligned/FilterContainer", "sap/ui/mdc/filterbar/aligned/FilterItemLayout", "sap/ui/mdc/filterbar/FilterBarBase", "sap/ui/mdc/filterbar/FilterBarBaseRenderer", 'sap/m/library', 'sap/m/Button', "sap/ui/mdc/p13n/StateUtil", "sap/base/util/merge", "sap/ui/mdc/filterbar/p13n/AdaptationFilterBar", "sap/ui/core/library"
+], function(FilterController, AdaptFiltersController, FilterContainer, FilterItemLayout, FilterBarBase, FilterBarBaseRenderer, mLibrary, Button, StateUtil, merge, AdaptationFilterBar, CoreLibrary) {
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
@@ -90,6 +90,13 @@ sap.ui.define([
 		this._oFilterBarLayout.getInner().addStyleClass("sapUiMdcFilterBarBaseAFLayout");
 		this.setAggregation("layout", this._oFilterBarLayout, true);
 		this._addButtons();
+
+		this.getEngine().registerAdaptation(this, {
+			controller: {
+				Item: AdaptFiltersController,
+				Filter: FilterController
+			}
+		});
 	};
 
 	FilterBar.prototype.setP13nMode = function(aMode) {
@@ -118,7 +125,7 @@ sap.ui.define([
 	};
 
 	FilterBar.prototype.setFilterConditions = function(mValue, bSuppressInvalidate) {
-		StateUtil.checkConditionOperatorSanity(mValue);
+		this.getEngine().checkConditionOperatorSanity(mValue);
 		if (this._oP13nFB){
 			this._oP13nFB.setFilterConditions(merge({},mValue));
 		}
@@ -206,9 +213,7 @@ sap.ui.define([
 	FilterBar.prototype.onAdaptFilters = function(oEvent) {
 
 		return this._oMetadataAppliedPromise.then(function() {
-			return this.retrieveAdaptationController().then(function (oAdaptationController) {
-				return oAdaptationController.showP13n(this._btnAdapt, "Filter");
-			}.bind(this));
+			return this.getEngine().showUI(this, "Item", this._btnAdapt);
 		}.bind(this));
 
 	};

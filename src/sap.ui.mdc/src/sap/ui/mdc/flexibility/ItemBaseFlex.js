@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	"sap/ui/fl/changeHandler/Base", "sap/ui/fl/apply/api/FlexRuntimeInfoAPI"
-], function(FLBase, FlexRuntimeInfoAPI) {
+	"sap/ui/fl/changeHandler/Base", "sap/ui/mdc/p13n/Engine"
+], function(FLBase, Engine) {
 	"use strict";
 
 	var ItemBaseFlex = {
@@ -139,7 +139,7 @@ sap.ui.define([
 		_delayInvalidate: function(oControl) {
 			if (oControl && oControl.isInvalidateSuppressed && !oControl.isInvalidateSuppressed()) {
 				oControl.iSuppressInvalidate = 1;
-				FlexRuntimeInfoAPI.waitForChanges({
+				Engine.getInstance().getModificationHandler(oControl).waitForChanges({
 					element: oControl
 				}).then(function() {
 					oControl.iSuppressInvalidate = 0;

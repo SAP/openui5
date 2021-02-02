@@ -2,10 +2,10 @@
 * ! ${copyright}
 */
 sap.ui.define([
-	'./AdaptationController', './FlexUtil', 'sap/ui/fl/apply/api/FlexRuntimeInfoAPI', 'sap/ui/mdc/condition/FilterOperatorUtil', 'sap/base/Log'
-], function(AdaptationController, FlexUtil, FlexRuntimeInfoAPI, FilterOperatorUtil, Log) {
+	'sap/ui/mdc/p13n/Engine'
+], function(Engine) {
 	"use strict";
-	var oAdaptationController = new AdaptationController();
+
 
 	/**
 	 *  @class Utility class for state handling of MDC Controls.
@@ -61,53 +61,7 @@ sap.ui.define([
 		* }
 		*/
 		applyExternalState: function(oControl, oState){
-			return new Promise(function(resolve, reject) {
-
-				var bValidInterface = this.checkXStateInterface(oControl);
-
-				if (!bValidInterface) {
-					reject("The control needs to implement IxState");
-				}
-
-				StateUtil.retrieveExternalState(oControl).then(function(oCurrentState){
-
-					/* The support for the known StateUtil operations (defined above as oState) depend whether the
-					/* getCurrentState method returns the corresponding attribute. This depends on the Controls
-					/* p13nMode configuration --> For instance a Table without atleast p13nMode="Sort" can not create sort
-					/* changes via StateUtil.
-					*/
-					var bSortSupported = oCurrentState.hasOwnProperty("sorters");
-					var bFilterSupported = oCurrentState.hasOwnProperty("filter");
-					var bItemSupported = oCurrentState.hasOwnProperty("items");
-					var oSortPromise, oConditionPromise, oItemPromise, aChanges = [];
-
-					//TODO: ORDER OF CHANGES ??? --> Which changes should come first?...
-					if (bSortSupported && oState.sorters){
-						oSortPromise = oAdaptationController.createSortChanges(oState.sorters, false);
-					}
-
-					if (bFilterSupported && oState.filter){
-						this.checkConditionOperatorSanity(oState.filter);
-						oConditionPromise =	oAdaptationController.createConditionChanges(oState.filter);
-					}
-
-					if (bItemSupported && oState.items && oState.items.length > 0){
-						oItemPromise = oAdaptationController.createItemChanges(oState.items);
-					}
-
-					//resolve after all changes have been
-					Promise.all([oSortPromise, oConditionPromise, oItemPromise]).then(function(aRawChanges){
-						aRawChanges.forEach(function(aSpecificChanges){
-							if (aSpecificChanges && aSpecificChanges.length > 0){
-								aChanges = aChanges.concat(aSpecificChanges);
-							}
-						});
-						resolve(FlexUtil.handleChanges(aChanges));
-					});
-				}.bind(this), reject);
-
-			}.bind(this));
-
+			return Engine.getInstance().applyExternalState(oControl, oState);
 		},
 
 		/**
@@ -120,86 +74,7 @@ sap.ui.define([
 		 * @param {object} oControl The control instance implementing IxState to retrieve the externalized state
 		 */
 		retrieveExternalState: function(oControl) {
-
-			return new Promise(function(resolve, reject) {
-
-				//needs to be set in order to create and delta the changes as expected
-				oAdaptationController.setAdaptationControl(oControl);
-				oAdaptationController.setStateRetriever(oControl.getCurrentState);
-				oAdaptationController.setItemConfig(oControl.getAdaptationConfigAttribute("itemConfig"));
-
-				var bValidInterface = this.checkXStateInterface(oControl);
-
-				if (!bValidInterface){
-					reject("The control needs to implement then interface IxState.");
-				}
-
-				//ensure the propertyinfo is available
-				oControl.initialized().then(function() {
-
-					//ensure that all changes have been applied
-					FlexRuntimeInfoAPI.waitForChanges({
-						element: oControl
-					}).then(function() {
-
-						//currently only filter is supported
-						resolve(oControl.getCurrentState());
-
-					});
-
-				});
-
-			}.bind(this));
-		},
-
-		/**
-		* Checks if a control is fulfilling the requirements to use <code>StateUtil</code>
-		*
-		* @param {object} oControl The control instance to be checked for corrext IxState implementation
-		* @private
-		*/
-		checkXStateInterface: function(oControl) {
-
-			//check if a control instance is available
-			if (!oControl) {
-				return false;
-			}
-
-			//check if flex is enabled
-			if (!FlexRuntimeInfoAPI.isFlexSupported({element: oControl})) {
-				return false;
-			}
-
-			//check for IxState 'initialized'
-			if (!oControl.isA("sap.ui.mdc.IxState")) {
-				return false;
-			}
-
-			return true;
-		},
-
-		checkConditionOperatorSanity: function(mConditions) {
-			//TODO: consider to harmonize this sanity check with 'getCurrentState' cleanups
-			for (var sFieldPath in mConditions) {
-				var aConditions = mConditions[sFieldPath];
-				for (var i = 0; i < aConditions.length; i++) {
-					var oCondition = aConditions[i];
-					var sOperator = oCondition.operator;
-					if (!FilterOperatorUtil.getOperator(sOperator)){
-						aConditions.splice(i, 1);
-						/*
-						 * in case the unknown operator has been removed, we need to check
-						 * if this caused the object to be empty to not create unnecessary remove changes
-						 * this should only be done within this check, as empty objects have a special meaning in the 'filter'
-						 * object within the external state to reset the given conditions for a single property
-						 */
-						if (mConditions[sFieldPath].length == 0) {
-							delete mConditions[sFieldPath];
-						}
-						Log.warning("The provided conditions for field '" + sFieldPath + "' contain unsupported operators - these conditions will be neglected.");
-					}
-				}
-			}
+			return Engine.getInstance().retrieveExternalState(oControl);
 		}
 
 	};

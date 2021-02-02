@@ -87,18 +87,20 @@ sap.ui.define([
     QUnit.test("Test prepareP13nData - check optional ignoring", function(assert){
         this.aMockInfo[0]["someRandomAttribute"] = true;
 
-        var aIgnore = [{
-            ignoreKey: "someRandomAttribute",
-            ignoreValue: false
-        }];
+        var bIgnore = false;
+
+        var fnIgnore = function(oItem, oInfo) {
+            //returned boolean decides the validity of the property
+            return !(oInfo.someRandomAttribute === bIgnore);
+        };
 
         //Ignore criteria not met
-        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo, aIgnore);
+        var oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo, fnIgnore);
         assert.equal(oP13nData.items.length, this.aMockInfo.length, "correct amount of items created");
 
         //Ignore criteria met
-        aIgnore[0].ignoreValue = true;
-        oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo, aIgnore);
+        bIgnore = true;
+        oP13nData = P13nBuilder.prepareP13nData(this.oExistingMock, this.aMockInfo, fnIgnore);
         assert.equal(oP13nData.items.length, this.aMockInfo.length - 1, "correct amount of items created");
     });
 

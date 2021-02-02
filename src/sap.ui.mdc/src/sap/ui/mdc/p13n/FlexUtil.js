@@ -2,8 +2,8 @@
 * ! ${copyright}
 */
 sap.ui.define([
-	'sap/base/util/array/diff', 'sap/base/util/deepEqual','sap/ui/mdc/condition/FilterOperatorUtil'
-], function (diff, deepEqual, FilterOperatorUtil) {
+	'sap/base/util/array/diff', 'sap/base/util/deepEqual','sap/ui/mdc/condition/FilterOperatorUtil', 'sap/base/Log'
+], function (diff, deepEqual, FilterOperatorUtil, Log) {
 	"use strict";
 
 	var FlexUtil = {
@@ -12,48 +12,45 @@ sap.ui.define([
 		* Generates a set of changes based on the given arrays for a specified control
 		*
 		* @public
-		* @param {array} aExistingArray The array before changes have been done
-		* @param {array} aExistingArray The array after changes have been done
-		* @param {function} fnSymBol A function which is being used to distinct which attributes within the object are relevant to diff
-		* @param {object} oControl Control instance which is being used to generate the changes
-		* @param {object} mChangeOperations map Containg the changeTypes for add/remove/move changeTypes
-		* @param {boolean} bIgnoreIndex Determines whether the change should include the index (false by default)
+		*
+		* @param {object} mDeltaInfo Map containing the necessary information to calculate the diff as change objects
+		* @param {array} mDeltaInfo.existingState An array describing the control state before a adaptation
+		* @param {array} mDeltaInfo.changedState An array describing the control state after a certain adaptation
+		* @param {object} mDeltaInfo.control Control instance which is being used to generate the changes
+		* @param {object} mDeltaInfo.changeOperations Map containing the changeOperations for the given Control instance
+		* @param {string} mDeltaInfo.changeOperations.add Name of the control specific 'add' changehandler
+		* @param {string} mDeltaInfo.changeOperations.remove Name of the control specific 'remove' changehandler
+		* @param {string} [mDeltaInfo.changeOperations.move] Name of the control specific 'move' changehandler
+		* @param {string} [mDeltaInfo.generator] Name of the change generator (E.g. the namespace of the UI creating the change object)
 		*
 		* @returns {array} Array containing the delta based created changes
 		*/
-		getArrayDeltaChanges: function (aExistingArray, aChangedArray, fnSymBol, oControl, mChangeOperations, bIgnoreIndex) {
+		getArrayDeltaChanges: function (mDeltaInfo) {
 
-			var sInsertOperation = mChangeOperations["add"];
-			var sRemoveOperation = mChangeOperations["remove"];
-			var sMoveOperation = mChangeOperations["move"];
+			var aExistingArray = mDeltaInfo.existingState;
+			var aChangedArray = mDeltaInfo.changedState;
+			var oControl = mDeltaInfo.control;
+			var sInsertOperation = mDeltaInfo.changeOperations.add;
+			var sRemoveOperation = mDeltaInfo.changeOperations.remove;
+			var sMoveOperation = mDeltaInfo.changeOperations.move;
+			var sGenerator = mDeltaInfo.generator;
 
-			var aResults = diff(aExistingArray, aChangedArray, fnSymBol);
+			var aDeltaAttributes = mDeltaInfo.deltaAttributes || [];
+
+			var fnSymbol = function(o) {
+				var sDiff = "";
+				aDeltaAttributes.forEach(function(sAttribute){
+					sDiff = sDiff + o[sAttribute];
+				});
+				return sDiff;
+			};
+
+			var aResults = diff(aExistingArray, aChangedArray, fnSymbol);
 			// Function to match field with exising field in the given array
 			var fMatch = function (oField, aArray) {
 				return aArray.filter(function (oExistingField) {
 					return oExistingField && (oExistingField.name === oField.name);
 				})[0];
-			};
-			// Function to extract change content from a field/property
-			// TODO: move this to appropriate settings (e.g. TableSettings) instance
-			var fGetChangeContent = function (oProperty) {
-				var oChangeContent = {
-					name: oProperty.name
-				};
-				// Index
-				if (oProperty.index >= 0 && !bIgnoreIndex) {
-					oChangeContent.index = oProperty.index;
-				}
-				// Role
-				if (oProperty.role) {
-					oChangeContent.role = oProperty.role;
-				}
-				// SortOrder
-				if (oProperty.hasOwnProperty("descending")) {
-					oChangeContent.descending = oProperty.descending === "true" || oProperty.descending === true;
-				}
-
-				return oChangeContent;
 			};
 
 			var aChanges = [];
@@ -72,7 +69,7 @@ sap.ui.define([
 					if (oExistingProp) {
 						oExistingProp.index = aProcessedArray.indexOf(oExistingProp);
 						aProcessedArray.splice(oExistingProp.index, 1, undefined);
-						aChanges.push(this.createAddRemoveChange(oControl, sRemoveOperation, fGetChangeContent(oExistingProp)));
+						aChanges.push(FlexUtil.createAddRemoveChange(oControl, sRemoveOperation, FlexUtil._getChangeContent(oExistingProp, aDeltaAttributes), sGenerator));
 					}
 				}
 				// End hack
@@ -95,15 +92,91 @@ sap.ui.define([
 					if (oExistingProp && oExistingProp.name === oProp.name && oResult.index != oExistingProp.index) {
 						// remove the last insert/delete operation
 						aChanges.pop();
-						aChanges.push(this.createMoveChange(oExistingProp.id, oExistingProp.name, oResult.index, sMoveOperation, oControl, sMoveOperation !== "moveSort"));
+						aChanges.push(FlexUtil.createMoveChange(oExistingProp.id, oExistingProp.name, oResult.index, sMoveOperation, oControl, sMoveOperation !== "moveSort", sGenerator));
 						return;
 					}
 				}
 
-				aChanges.push(this.createAddRemoveChange(oControl, oResult.type === "delete" ? sRemoveOperation : sInsertOperation, fGetChangeContent(oProp)));
+				aChanges.push(FlexUtil.createAddRemoveChange(oControl, oResult.type === "delete" ? sRemoveOperation : sInsertOperation, FlexUtil._getChangeContent(oProp, aDeltaAttributes), sGenerator));
 
-			}.bind(this));
+			});
 			return aChanges;
+		},
+
+		/**
+		 * Method which reduces a propertyinfo map to changecontent relevant attributes.
+		 * <b>Note:</b> This method determines the attributes stored in the changeContent.
+		 *
+		 * @param {object} oProperty Object containing all values prior to change creation
+		 * @param {array} aDeltaAttributes Array containing all attributes that are necessary for the delta calculation
+		 *
+		 * @returns {object} Object containing reduced content
+		 */
+		_getChangeContent: function (oProperty, aDeltaAttributes) {
+
+			var oChangeContent = {};
+
+			// Index
+			if (oProperty.index >= 0) {
+				oChangeContent.index = oProperty.index;
+			}
+
+			aDeltaAttributes.forEach(function(sAttribute) {
+				if (oProperty.hasOwnProperty(sAttribute)){
+					oChangeContent[sAttribute] = oProperty[sAttribute];
+				}
+			});
+
+			return oChangeContent;
+		},
+
+		/**
+		* Generates a set of changes based on the given arrays for a specified control
+		*
+		* @public
+		*
+		* @param {object} mDeltaInfo Map containing the necessary information to calculate the diff as change objects
+		* @param {array} mDeltaInfo.existingState An array describing the control state before a adaptation
+		* @param {array} mDeltaInfo.changedState An array describing the control state after a certain adaptation
+		* @param {object} mDeltaInfo.control Control instance which is being used to generate the changes
+		* @param {object} mDeltaInfo.changeOperations Map containing the changeOperations for the given Control instance
+		* @param {string} mDeltaInfo.changeOperations.add Name of the control specific 'add' changehandler
+		* @param {string} mDeltaInfo.changeOperations.remove Name of the control specific 'remove' changehandler
+		* @param {string} [mDeltaInfo.changeOperations.move] Name of the control specific 'move' changehandler
+		* @param {string} [mDeltaInfo.generator] Name of the change generator (E.g. the namespace of the UI creating the change object)
+		*
+		* @returns {array} Array containing the delta based created changes
+		*/
+		getConditionDeltaChanges: function(mDeltaInfo) {
+			var aConditionChanges = [];
+
+			var mNewConditionState = mDeltaInfo.changedState;
+			var mPreviousConditionState = mDeltaInfo.existingState;
+			var oAdaptationControl = mDeltaInfo.control;
+			var aPropertyInfo = mDeltaInfo.propertyInfo;
+
+			for (var sFieldPath in mNewConditionState) {
+				var bValidProperty = FlexUtil._hasProperty(aPropertyInfo, sFieldPath);
+				if (!bValidProperty) {
+					Log.warning("property '" + sFieldPath + "' not supported");
+					continue;
+				}
+				aConditionChanges = aConditionChanges.concat(FlexUtil._diffConditionPath(sFieldPath, mNewConditionState[sFieldPath], mPreviousConditionState[sFieldPath], oAdaptationControl));
+			}
+
+			return aConditionChanges;
+		},
+
+		_hasProperty: function(aPropertyInfo, sName) {
+			return aPropertyInfo.some(function(oProperty){
+				//First check unique name
+				var bValid = oProperty.name === sName || sName == "$search";
+
+				//Use path as Fallback
+				bValid = bValid ? bValid : oProperty.path === sName;
+
+				return bValid;
+			});
 		},
 
 		/**
@@ -117,7 +190,7 @@ sap.ui.define([
 		*
 		* @returns {array} Array containing the delta based created changes
 		*/
-		getConditionDeltaChanges: function(sFieldPath, aOrigConditions, aOrigShadowConditions, oControl){
+		_diffConditionPath: function(sFieldPath, aOrigConditions, aOrigShadowConditions, oControl){
 			var oChange, aChanges = [];
 			var aConditions = aOrigConditions;
 			var aShadowConditions = aOrigShadowConditions ? aOrigShadowConditions : [];

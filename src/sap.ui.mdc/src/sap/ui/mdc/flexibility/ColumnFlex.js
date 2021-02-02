@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/fl/apply/api/FlexRuntimeInfoAPI', './ItemBaseFlex'
-], function(FlexRuntimeInfoAPI, ItemBaseFlex) {
+	'sap/ui/mdc/p13n/Engine', './ItemBaseFlex'
+], function(Engine, ItemBaseFlex) {
 	"use strict";
 
 	var oColumnFlex = Object.assign({}, ItemBaseFlex);
@@ -14,7 +14,7 @@ sap.ui.define([
 		if (oControl && oControl.isA && oControl.isA("sap.ui.mdc.Table") && oControl.isTableBound()) {
 			if (!oControl._bWaitForBindChanges) {
 				oControl._bWaitForBindChanges = true;
-				FlexRuntimeInfoAPI.waitForChanges({
+				Engine.getInstance().getModificationHandler(oControl).waitForChanges({
 					element: oControl
 				}).then(function() {
 					oControl.checkAndRebind();

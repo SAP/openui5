@@ -4,7 +4,6 @@ sap.ui.define([
 	"sap/ui/mdc/filterbar/p13n/AdaptationFilterBar",
 	"sap/ui/mdc/p13n/FlexUtil",
 	"sap/ui/mdc/Table",
-	"sap/ui/mdc/p13n/AdaptationController",
 	"sap/ui/mdc/Control",
 	"sap/ui/mdc/AggregationBaseDelegate",
 	"sap/ui/mdc/util/TypeUtil",
@@ -12,12 +11,13 @@ sap.ui.define([
 	"sap/ui/mdc/FilterField",
 	"sap/ui/mdc/FilterBar",
 	"./UnitTestMetadataDelegate",
-	"../QUnitUtils"
+	"../QUnitUtils",
+	"sap/ui/mdc/p13n/Engine",
+	"sap/ui/mdc/p13n/subcontroller/FilterController"
 ], function (
 	AdaptationFilterBar,
 	FlexUtil,
 	Table,
-	AdaptationController,
 	Control,
 	AggregationBaseDelegate,
 	TypeUtil,
@@ -25,7 +25,9 @@ sap.ui.define([
 	FilterField,
 	FilterBar,
 	FBTestDelegate,
-	MDCQUnitUtils
+	MDCQUnitUtils,
+	Engine,
+	FilterController
 ) {
 	"use strict";
 
@@ -41,7 +43,9 @@ sap.ui.define([
 				}
 			];
 
-			this.oTestTable = new Table();
+			this.oTestTable = new Table({
+				p13nMode: ["Filter","Column","Sort"]
+			});
 
 			this.oAdaptationFilterBar = new AdaptationFilterBar({
 				adaptationControl: this.oTestTable
@@ -50,16 +54,12 @@ sap.ui.define([
 				FlexUtil.handleChanges.restore();
 			}
 
-			return this.oAdaptationFilterBar.retrieveAdaptationController().then(function (oAdaptationControllerInstance) {
-				MDCQUnitUtils.stubPropertyInfos(this.oTestTable, aPropertyInfo);
-				this.oAdaptationController = this.oAdaptationFilterBar.getAdaptationController();
-			}.bind(this));
+			MDCQUnitUtils.stubPropertyInfos(this.oTestTable, aPropertyInfo);
 		},
 
 		afterEach: function () {
 			this.oAdaptationFilterBar.destroy();
 			this.oAdaptationFilterBar = undefined;
-			this.oAdaptationController = undefined;
 			this.oTestTable.destroy();
 			MDCQUnitUtils.restorePropertyInfos(this.oTestTable);
 			this.oTestTable = null;
@@ -91,18 +91,13 @@ sap.ui.define([
 
 		this.oAdaptationFilterBar.setAdaptationControl(this.oTestTable);
 
-		var oAdaptationController = new AdaptationController({
-			adaptationControl: this.oTestTable,
-			stateRetriever: function(){
-				return {
-					filter: {}
-				};
-			}
-		});
-
-		this.oTestTable._oAdaptationController = oAdaptationController;
-
-		oAdaptationController.createConditionChanges(mSampleConditions).then(function(aChanges){
+		this.oTestTable.getEngine().createChanges({
+			control: this.oTestTable,
+			key: "Filter",
+			state: mSampleConditions,
+			applyAbsolute: false,
+			suppressAppliance: true
+		}).then(function(aChanges){
 			assert.equal(aChanges.length, 1, "One change has been created");
 			assert.deepEqual(aChanges[0].selectorElement, this.oTestTable, "Change has been created on the corresponding adaptationControl");
 			done();
@@ -154,7 +149,6 @@ sap.ui.define([
 		},
 		prepareTestSetup: function(bCreateIFilter) {
 			//mock parent as 'AdaptationControl'
-
 			var fnParentFactory = bCreateIFilter ? this.createIFilter : this.createIFilterSource;
 
 			this.oParent = fnParentFactory({
@@ -163,30 +157,22 @@ sap.ui.define([
 				}
 			});
 
+			var oController = new FilterController(this.oParent);
+
+			oController.getCurrentState = function(){
+				return this.oParent.getFilterConditions();
+			}.bind(this);
+			Engine.getInstance().addController(oController, "Filter");
+
 			oAdaptationFilterBar = new AdaptationFilterBar({
 				adaptationControl: this.oParent
 			});
-
-			if (FlexUtil.handleChanges.restore){
-				FlexUtil.handleChanges.restore();
-			}
 
 			//AdaptatationFilterBar expects 'filterConditions' property
 			this.oParent.getFilterConditions = function() {
 				return {};
 			};
 			sinon.mock(this.oParent.prototype, "getFilterConditions").callsFake({});
-
-			//Mock Parents AdaptationController
-			this.oParent._oAdaptationController = new AdaptationController({
-				adaptationControl: this.oParent,
-				stateRetriever: function() {
-					return {
-						filter: {}
-					};
-				}
-			});
-			this.oParentAC = this.oParent._oAdaptationController;
 
 			oAdaptationFilterBar.setAdaptationControl(this.oParent);
 		},
@@ -234,7 +220,6 @@ sap.ui.define([
 			AggregationBaseDelegate.addItem.restore();
 			oAdaptationFilterBar.destroy();
 			this.oParent = null;
-			this.oParentAC = null;
 			this.aMockProperties = null;
 		}
 	});
@@ -257,22 +242,19 @@ sap.ui.define([
 					]
 				}).then(function(){
 
-
 					var aInnerConditions = oAdaptationFilterBar._getConditionModel().getAllConditions()["key1"];
 
 					assert.ok(aInnerConditions[0].hasOwnProperty("isEmpty"));
 
-					this.oParentAC.setAfterChangesCreated(function(oAC, aChanges) {
+					oAdaptationFilterBar.createConditionChanges().then(function(aChanges){
 						// isEmpty is cleaned up for externalized changes only --> indicator whether the changes are created in externalized format
 						assert.ok(!aChanges[0].changeSpecificData.content.condition.hasOwnProperty("isEmpty"));
 						done();
 					});
 
-					oAdaptationFilterBar._handleModal("Ok");
-
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
+				});
+			});
+		});
 	});
 
 	QUnit.test("Created changes should always be externalized - Check Date types", function(assert) {
@@ -298,18 +280,17 @@ sap.ui.define([
 					assert.ok(aInnerConditions[0].hasOwnProperty("isEmpty"));
 					assert.equal(typeof aInnerConditions[0], "object", "Internal format - type is not stringified");
 
-					this.oParentAC.setAfterChangesCreated(function(oAC, aChanges) {
+
+					oAdaptationFilterBar.createConditionChanges().then(function(aChanges){
 						// isEmpty is cleaned up for externalized changes only --> indicator whether the changes are created in externalized format
 						assert.ok(!aChanges[0].changeSpecificData.content.condition.hasOwnProperty("isEmpty"));
 						assert.equal(typeof aChanges[0].changeSpecificData.content.condition.values[0], "string", "Externalized format should be stringified");
 						done();
 					});
 
-					oAdaptationFilterBar._handleModal("Ok");
-
-				}.bind(this));
-			}.bind(this));
-		}.bind(this));
+				});
+			});
+		});
 
 	});
 

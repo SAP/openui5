@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/core/library', 'sap/ui/mdc/p13n/AdaptationController', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/Device', 'sap/ui/mdc/Control', 'sap/base/util/merge', 'sap/base/util/deepEqual', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/mdc/condition/ConditionModel', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/condition/ConditionConverter', 'sap/m/MessageBox', "sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/fl/apply/api/FlexRuntimeInfoAPI", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/condition/FilterConverter", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/util/FilterUtil", "sap/m/Button", "sap/m/library"
-], function(P13nBuilder, coreLibrary, AdaptationController, FlexUtil, Device, Control, merge, deepEqual, ManagedObjectModel, ManagedObjectObserver, Log, ConditionModel, Condition, IdentifierUtil, ConditionConverter, MessageBox, ControlPersonalizationWriteAPI, FlexRuntimeInfoAPI, StateUtil, FilterConverter, ControlVariantApplyAPI, FilterUtil, Button, mLibrary) {
+	'sap/ui/core/library', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/Device', 'sap/ui/mdc/Control', 'sap/base/util/merge', 'sap/base/util/deepEqual', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/mdc/condition/ConditionModel', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/condition/ConditionConverter', 'sap/m/MessageBox', "sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/condition/FilterConverter", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/util/FilterUtil", "sap/m/Button", "sap/m/library"
+], function(coreLibrary, FlexUtil, Device, Control, merge, deepEqual, ManagedObjectModel, ManagedObjectObserver, Log, ConditionModel, Condition, IdentifierUtil, ConditionConverter, MessageBox, ControlPersonalizationWriteAPI, StateUtil, FilterConverter, ControlVariantApplyAPI, FilterUtil, Button, mLibrary) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -240,41 +240,9 @@ sap.ui.define([
 		}.bind(this));
 
 		this._bIgnoreChanges = false;
-		this._oAdaptationController = null;
 
 		this._bSearchTriggered = false;
 		this._bIgnoreQueuing = false;     // used to overrule the default behaviour of suspendSelection
-
-		this.setProperty("adaptationConfig", {
-			liveMode: false,
-			retrievePropertyInfo: this._getNonHiddenPropertyInfoSet,
-			//TODO: itemConfig can be deleted once the url param sap-ui-xx-complexP13n has been removed
-			itemConfig: {
-				changeOperations: {
-					add: "addFilter",
-					remove: "removeFilter",
-					move: "moveFilter"
-				}
-			},
-			onReset: function() {
-				this.getAdaptationController().resetP13n().then(function(){
-					this.getInbuiltFilter()._setXConditions(this.getFilterConditions(), true);
-				}.bind(this));
-			},
-			filterConfig: {
-				changeOperations: {
-					add: "addFilter",
-					remove: "removeFilter",
-					move: "moveFilter"
-				},
-				adaptationUI: this.retrieveInbuiltFilter,
-				applyFilterChangeOn: this,
-				containerSettings: {
-					verticalScrolling: false,
-					title: sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc").getText("filterbar.ADAPT_TITLE")
-				}
-			}
-		});
 	};
 
 	//TODO: consider to restructure the approach _createInnerLayout to properties or seperate methods
@@ -342,6 +310,7 @@ sap.ui.define([
 
 	FilterBarBase.prototype.applySettings = function(mSettings, oScope) {
 		Control.prototype.applySettings.apply(this, arguments);
+
 		this._createConditionModel();
 
 		this._oConditionModel.attachPropertyChange(this._handleConditionModelPropertyChange, this);
@@ -441,23 +410,6 @@ sap.ui.define([
 			return oState;
 		//}.bind(this));
 	};
-
-	/* FilterBarBase.prototype.retrieveAdaptationController = function() {
-		if (!this._oAdaptationController) {
-			this._oAdaptationController = new AdaptationController({
-				liveMode: false,
-				stateRetriever: function(FilterBarDelegate, aPropertyInfo){
-					return this.getCurrentState(aPropertyInfo);
-				},
-				adaptationControl: this,
-				afterChangesCreated: function (oAdaptationController, aChanges) {
-					FlexUtil.handleChanges(aChanges);
-				},
-				retrievePropertyInfo: this._getNonHiddenPropertyInfoSet
-			});
-		}
-		return this._oAdaptationController;
-	}; */
 
 	/**
 	 * Returns the labels of all filters with a value assignment.
@@ -595,8 +547,8 @@ sap.ui.define([
 		}
 	};
 
-	FilterBarBase.prototype._isFlexSupported = function(oEvent) {
-		return FlexRuntimeInfoAPI.isFlexSupported({element: this});
+	FilterBarBase.prototype._isPersistenceSupported = function(oEvent) {
+		return this.getEngine().getModificationHandler(this).isModificationSupported({element: this});
 	};
 
 	FilterBarBase.prototype._handleConditionModelPropertyChange = function(oEvent) {
@@ -608,12 +560,14 @@ sap.ui.define([
 
 				var sFieldPath = sPath.substring("/conditions/".length);
 
-				if (this._bPersistValues && this._isFlexSupported()) {
+				if (this._bPersistValues && this._isPersistenceSupported()) {
 					var mOrigConditions = {};
 					mOrigConditions[sFieldPath] = this._stringifyConditions(sFieldPath, oEvent.getParameter("value"));
 					this._cleanupConditions(mOrigConditions[sFieldPath]);
-					this.retrieveAdaptationController().then(function (oAdaptationController) {
-						oAdaptationController.createConditionChanges(mOrigConditions);
+					this.getEngine().createChanges({
+						control: this,
+						key: "Filter",
+						state: mOrigConditions
 					});
 				} else {
 					this._reportModelChange(false);
@@ -1125,7 +1079,7 @@ sap.ui.define([
 					var oCondition = this._toInternal(oProperty, oXCondition);
 					if (oCM.indexOf(sFieldPath, oCondition, _fnNormalizeCondition.call(this, oProperty)) < 0) {
 						var aCondition = [{sFieldPath: oProperty}];
-						StateUtil.checkConditionOperatorSanity(aCondition); //check if the single condition's operator is valid
+						this.getEngine().checkConditionOperatorSanity(aCondition); //check if the single condition's operator is valid
 						if (aCondition && aCondition.length > 0){
 							this._cleanUpFilterFieldInErrorStateByName(sFieldPath);
 							oCM.addCondition(sFieldPath, oCondition);
@@ -1513,7 +1467,9 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._getWaitForChangesPromise = function() {
-		return FlexRuntimeInfoAPI.waitForChanges({element: this});
+		return this.getEngine().getModificationHandler(this).waitForChanges({
+			element: this
+		});
 	};
 
 	FilterBarBase.prototype._suspendBinding = function(oFilterField) {

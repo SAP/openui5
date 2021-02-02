@@ -106,24 +106,19 @@ sap.ui.define([
 			oRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
 		},
 		showPanel: function(oControl, sP13nType, oSource, bIsRTAAction) {
-			TableSettings["showP13n" + sP13nType](oControl, oSource);
+			TableSettings["showUI" + sP13nType](oControl, oSource);
 		},
 
-		showP13nColumns: function(oControl, oSource) {
-			var oAdaptationController = oControl.getAdaptationController();
-			oAdaptationController.showP13n(oSource, "Item");
+		showUIColumns: function(oControl, oSource) {
+			oControl.getEngine().showUI(oControl, "Item", oSource);
 		},
 
-		showP13nSort: function(oControl, oSource) {
-			var oAdaptationController = oControl.getAdaptationController();
-			oAdaptationController.showP13n(oSource, "Sort");
+		showUISort: function(oControl, oSource) {
+			oControl.getEngine().showUI(oControl, "Sort", oSource);
 		},
 
-		showP13nFilter: function(oControl, oSource) {
-			var oAdaptationController = oControl.getAdaptationController();
-			oControl.retrieveInbuiltFilter().then(function(){
-				oAdaptationController.showP13n(oSource, "Filter");
-			});
+		showUIFilter: function(oControl, oSource) {
+			oControl.getEngine().showUI(oControl, "Filter", oSource);
 		},
 
 		createSort: function(oControl, sProperty, bRemoveAllExisting) {
@@ -141,10 +136,14 @@ sap.ui.define([
 				}
 			});
 
-			var oAdaptationController = oControl.getAdaptationController();
 			var aItems = [oSorter];
 
-			oAdaptationController.createSortChanges(aItems, true);
+			oControl.getEngine().createChanges({
+				control: oControl,
+				key: "Sort",
+				state: aItems,
+				applyAbsolute: bRemoveAllExisting
+			});
 
 		},
 		moveColumn: function(oControl, iDraggedIndex, iNewIndex) {
@@ -158,8 +157,11 @@ sap.ui.define([
 			var aVisibleFields = oControl.getCurrentState(oControl).items || [];
 			var oMovedField = aVisibleFields[iDraggedIndex];
 
-			var oAdaptationController = oControl.getAdaptationController();
-			oAdaptationController.createItemChanges([{name: oMovedField.name, position: iNewIndex}]);
+			oControl.getEngine().createChanges({
+				control: oControl,
+				key: "Item",
+				state: [{name: oMovedField.name, position: iNewIndex}]
+			});
 
 		}
 	};

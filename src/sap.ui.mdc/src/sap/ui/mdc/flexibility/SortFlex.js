@@ -1,7 +1,7 @@
 /*
  * ! ${copyright}
  */
-sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function(FlexRuntimeInfoAPI) {
+sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 	"use strict";
 	var fRebindControl = function(oControl) {
 		var bExecuteRebindForTable = oControl && oControl.isA && oControl.isA("sap.ui.mdc.Table") && oControl.isTableBound();
@@ -9,7 +9,7 @@ sap.ui.define(["sap/ui/fl/apply/api/FlexRuntimeInfoAPI"], function(FlexRuntimeIn
 		if (bExecuteRebindForTable || bExecuteRebindForChart) {
 			if (!oControl._bWaitForBindChanges) {
 				oControl._bWaitForBindChanges = true;
-				FlexRuntimeInfoAPI.waitForChanges({
+				Engine.getInstance().getModificationHandler(oControl).waitForChanges({
 					element: oControl
 				}).then(function() {
 					if (bExecuteRebindForTable) {

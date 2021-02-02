@@ -20,7 +20,18 @@ sap.ui.define([
             {
                 name: "key3"
             }
+        ],
+        filter: {
+            key2: [
+                {
+                    operator: "EQ",
+                    values: [
+                        "Test"
         ]
+                }
+            ]
+
+        }
     };
 
     var aInfoData = [

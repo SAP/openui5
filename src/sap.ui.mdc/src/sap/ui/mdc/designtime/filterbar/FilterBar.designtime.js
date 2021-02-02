@@ -1,9 +1,9 @@
 /*
  * ! ${copyright}
  */
-
-// Provides the Design Time Metadata for the sap.ui.mdc.FilterBar control
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/ui/mdc/p13n/Engine"
+], function (Engine) {
 	"use strict";
 
 	return {
@@ -11,7 +11,7 @@ sap.ui.define([], function() {
 			settings: function () {
 				return {
 					handler: function (oControl, mPropertyBag) {
-						return oControl.getRTASettingsActionHandler(mPropertyBag, "Filter");
+						return Engine.getInstance().getRTASettingsActionHandler(oControl, mPropertyBag, "Item");
 					}
 				};
 			}
