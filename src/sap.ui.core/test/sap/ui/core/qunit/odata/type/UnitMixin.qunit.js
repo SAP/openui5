@@ -635,4 +635,35 @@ sap.ui.define([
 		assert.strictEqual(oResult, oBaseFormatOptions,
 			"base type getFormatOptions creates a copy, do not copy again");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("getFormatOptions with format option for custom units", function (assert) {
+		var oBaseUnitMock = this.mock(this.oBasePrototype),
+			oBaseFormatOptions = {
+				customUnitsOrCurrencies : {foo : undefined},
+				emptyString: 0,
+				parseAsString : true,
+				unitOptional : true
+			},
+			oType = new UnitMixin();
+
+		oBaseUnitMock.expects("setFormatOptions").withExactArgs(oBaseFormatOptions)
+			.callsFake(function (oFormatOptions) {
+				this.oFormatOptions = oFormatOptions;
+			});
+		oBaseUnitMock.expects("getFormatOptions").withExactArgs().returns(oBaseFormatOptions);
+
+		// check default format options
+		assert.deepEqual(oType.oFormatOptions,
+			{emptyString: 0, parseAsString : true, unitOptional : true});
+
+		// code under test - enhance format options while formatting
+		oType.formatValue([undefined, undefined, {foo : {}}]);
+
+		assert.deepEqual(oType.oFormatOptions, oBaseFormatOptions);
+
+		// code under test - additional format options are removed
+		assert.deepEqual(oType.getFormatOptions(),
+			{emptyString: 0, parseAsString : true, unitOptional : true});
+	});
 });
