@@ -1906,16 +1906,18 @@ function(
 			this._mComponentProperties = {
 				name: "saveChangeScenario"
 			};
-			this._oComponentInstance = sap.ui.component({
-				name: "sap/ui/fl/qunit/integration/testComponentComplex"
-			});
+			return Component.create({
+				name: "sap/ui/fl/qunit/integration/testComponentComplex",
+				manifest: true
+			}).then(function(oComponent) {
+				this.oWriteStub = sandbox.stub(WriteStorage, "write").resolves();
+				this.oStorageCondenseStub = sandbox.stub(WriteStorage, "condense").resolves();
+				this.oRemoveStub = sandbox.stub(WriteStorage, "remove").resolves();
+				this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
 
-			this.oWriteStub = sandbox.stub(WriteStorage, "write").resolves();
-			this.oStorageCondenseStub = sandbox.stub(WriteStorage, "condense").resolves();
-			this.oRemoveStub = sandbox.stub(WriteStorage, "remove").resolves();
-			this.oChangePersistence = new ChangePersistence(this._mComponentProperties);
-
-			this.oServer = sinon.fakeServer.create();
+				this.oServer = sinon.fakeServer.create();
+				this._oComponentInstance = oComponent;
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oServer.restore();

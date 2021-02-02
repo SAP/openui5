@@ -24,18 +24,21 @@
 
 <script type="text/javascript">
 
-	var oCompCont = new sap.ui.core.ComponentContainer("CompCont1", {
-		component : sap.ui.component({
+	sap.ui.require(["sap/ui/core/Component"], function(Component) {
+		return Component.create({
 			name: "sap.m.sample.Table",
 			id : "Comp1",
 			componentData: {
 				"showAdaptButton" : true
 			}
-		})
-	});
-
-	oCompCont.placeAt("content");
-
+		}).then(function(oComponent) {
+			var oCompCont = new sap.ui.core.ComponentContainer("CompCont1", {
+				component : oComponent
+			})
+			oCompCont.placeAt("content");
+		});
+	})
+	
 </script>
 </head>
 <body class="sapUiBody sapUiSizeCompact">

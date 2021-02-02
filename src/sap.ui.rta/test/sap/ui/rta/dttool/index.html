@@ -19,27 +19,28 @@
                 sap.ui.getCore().attachInit(function () {
                     Promise.resolve()
                     .then(function(){
-                        return sap.ui.component({
-                            name: "sap.ui.rta.dttool",
-                            manifestFirst: true,
-                            async: true
-                        });
+                        sap.ui.require(["sap/ui/core/Component"], function(Component) {
+                            return Component.create({
+                                name: "sap.ui.rta.dttool",
+                                manifest: true
+                            })
+                            .then(function(oComponent) {
+                                return new sap.ui.core.ComponentContainer({
+                                    height: "100%",
+                                    component: oComponent,
+                                    async: true,
+                                    id: "dttool"
+                                });
+                            })
+                            .then(function(oComponentContainer) {
+                                new sap.m.Shell({
+                                    app: oComponentContainer,
+                                    showLogout:false,
+                                    appWidthLimited:false,
+                                }).placeAt("content");
+                            });
+                        })
                     })
-                    .then(function(oComponent){
-                        return new sap.ui.core.ComponentContainer({
-                            height: "100%",
-                            component: oComponent,
-                            async: true,
-                            id: "dttool"
-                        });
-                    })
-                    .then(function(oComponentContainer) {
-                        new sap.m.Shell({
-                            app: oComponentContainer,
-                            showLogout:false,
-                            appWidthLimited:false,
-                        }).placeAt("content");
-                    });
                 });
             </script>
         </head>

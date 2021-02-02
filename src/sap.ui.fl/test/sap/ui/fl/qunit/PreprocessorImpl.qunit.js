@@ -11,7 +11,9 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/thirdparty/sinon-4",
-	"sap/ui/thirdparty/jquery"
+	"sap/ui/thirdparty/jquery",
+	"sap/ui/core/mvc/View",
+	"sap/ui/core/mvc/ViewType"
 ],
 function(
 	PreprocessorImpl,
@@ -24,7 +26,9 @@ function(
 	Log,
 	VariantManagementState,
 	sinon,
-	jQuery
+	jQuery,
+	View,
+	ViewType
 ) {
 	"use strict";
 
@@ -157,7 +161,6 @@ function(
 
 		QUnit.test("apply multiple changes on different controllers", function (assert) {
 			// expect both extensions to be called
-			assert.expect(2);
 			var done1 = assert.async();
 			var done2 = assert.async();
 
@@ -192,7 +195,8 @@ function(
 				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension2', {
 					override: {
 						onInit: function () {
-							this.base.getView().callDone();
+							assert.strictEqual(this.base.getView().getId(), "testView1", "View1 is available and ID of View1 is correct");
+							done1();
 						}
 					}
 				});
@@ -203,7 +207,8 @@ function(
 				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension3', {
 					override: {
 						onInit: function () {
-							this.base.getView().callDone();
+							assert.strictEqual(this.base.getView().getId(), "testView2", "View2 is available and ID of View2 is correct");
+							done2();
 						}
 					}
 				});
@@ -255,42 +260,33 @@ function(
 
 			// view, controller and component definition
 
-			var oComponent = sap.ui.component({
-				name: "sap.ui.fl.PreprocessorImpl.testResources"
-			});
-			sandbox.stub(sap.ui, "component").returns(oComponent);
-			sandbox.stub(Component, "get").returns(oComponent);
+			function createView(sViewName, sId, sText, oComponent) {
+				return View.create({
+					viewName: sViewName,
+					id: sId,
+					type: ViewType.XML,
+					viewData: {
+						component: oComponent
+					}
+				}).then(function() {
+					assert.ok(true, "the extension of the " + sText + " controller was applied and executed");
+				});
+			}
 
-			var view1 = sap.ui.view({
-				viewName: "sap.ui.fl.PreprocessorImpl.testResources.view1",
-				type: sap.ui.core.mvc.ViewType.XML,
-				async: true,
-				viewData: {
+			return Component.create({
+				name: "sap.ui.fl.PreprocessorImpl.testResources",
+				manifest: false
+			}).then(function(oComponent) {
+				sandbox.stub(Component, "get").returns(oComponent);
+				var oCompCont = new ComponentContainer({
 					component: oComponent
-				}
+				});
+				oCompCont.placeAt("qunit-fixture");
+				return Promise.all([
+					createView("sap.ui.fl.PreprocessorImpl.testResources.view1", "testView1", "first", oComponent),
+					createView("sap.ui.fl.PreprocessorImpl.testResources.view2", "testView2", "second", oComponent)
+				]);
 			});
-			view1.callDone = function () {
-				assert.ok(true, "the extension of the first controller was applied and executed");
-				done1();
-			};
-
-			var view2 = sap.ui.view({
-				viewName: "sap.ui.fl.PreprocessorImpl.testResources.view2",
-				type: sap.ui.core.mvc.ViewType.XML,
-				async: true,
-				viewData: {
-					component: oComponent
-				}
-			});
-			view2.callDone = function () {
-				assert.ok(true, "the extension of the second controller was applied and executed");
-				done2();
-			};
-
-			var oCompCont = new ComponentContainer({
-				component: oComponent
-			});
-			oCompCont.placeAt("qunit-fixture");
 		});
 
 		QUnit.test("make sure requests are only sent for app components", function (assert) {
