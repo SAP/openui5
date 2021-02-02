@@ -18,13 +18,15 @@ sap.ui.define([
 					"path": "nav/col1",
 					"label": "col1",
 					"sortable": true,
-					"filterable": true
+					"filterable": true,
+					"visible": true
 				}, {
 					"name": "col2",
 					"path": "nav/col2",
 					"label": "col2",
 					"sortable": true,
-					"filterable": false
+					"filterable": false,
+					"visible": true
 				}
 			];
 
@@ -283,6 +285,49 @@ sap.ui.define([
 			assert.ok(oInnerTable, "Inner Table has been created");
 
 			//-1 non sortable property
+			var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
+			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length - 1, "correct amount of items has been set");
+			done();
+		}.bind(this));
+	});
+
+	QUnit.test("check with 'Columns' +  non visible properties", function (assert) {
+		var done = assert.async();
+		var oBtn = new Button();
+		this.destroyTestObjects();
+
+		var aPropertyInfos = [
+			{
+				"name": "col1",
+				"path": "nav/col1",
+				"label": "col1",
+				"sortable": false,
+				"filterable": true,
+				"visible": true
+			}, {
+				"name": "col2",
+				"path": "nav/col2",
+				"label": "col2",
+				"sortable": true,
+				"filterable": false,
+				"visible": false //Don't show this column in the UI at all
+			}
+		];
+
+		this.createTestObjects(aPropertyInfos);
+
+		Engine.getInstance().showUI(this.oTable, "Item", oBtn).then(function(oP13nControl){
+
+			//check container
+			assert.ok(oP13nControl, "Container has been created");
+			assert.ok(Engine.getInstance()._hasActiveP13n(this.oTable),"dialog is open");
+
+			//check inner panel
+			var oInnerTable = oP13nControl.getContent()[0]._oListControl;
+			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.p13n.panels.SelectionPanel"), "Correct panel created");
+			assert.ok(oInnerTable, "Inner Table has been created");
+
+			//-1 non visible property
 			var oPropertyHelper = Engine.getInstance()._getRegistryEntry(this.oTable).helper;
 			assert.equal(oInnerTable.getItems().length, oPropertyHelper.getProperties().length - 1, "correct amount of items has been set");
 			done();

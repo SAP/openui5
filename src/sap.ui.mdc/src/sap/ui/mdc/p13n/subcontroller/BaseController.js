@@ -164,7 +164,9 @@ sap.ui.define([
             items: aItemState
         };
 
-        var oP13nData = P13nBuilder.prepareP13nData(oExistingState, oPropertyHelper);
+        var oP13nData = P13nBuilder.prepareP13nData(oExistingState, oPropertyHelper, function(oItem, oProperty){
+            return oProperty.visible;
+        });
 
         P13nBuilder.sortP13nData({
             visible: "selected",
