@@ -4209,14 +4209,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("addQueryString with placeholders, partial", function (assert) {
-		var mConvertedQueryOptions = {$bar : "bar", $foo : "foo"},
+		var mConvertedQueryOptions = {$bar : "bar~c", $foo : "foo~c"},
 			mQueryOptions = {$bar : "bar", $foo : "foo"},
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
 		this.mock(oRequestor).expects("convertQueryOptions")
 			.withExactArgs("/meta/path", sinon.match.same(mQueryOptions), false, true)
 			.returns(mConvertedQueryOptions);
-		this.mock(_Helper).expects("buildQuery").withExactArgs({$bar : "bar"}).returns("?$bar=bar");
+		this.mock(_Helper).expects("encodePair").withExactArgs("$foo", "foo~c").returns("$foo=foo");
+		this.mock(_Helper).expects("buildQuery").withExactArgs({$bar : "bar~c"})
+			.returns("?$bar=bar");
 
 		// code under test
 		assert.strictEqual(
@@ -4226,14 +4228,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("addQueryString with placeholders, complete", function (assert) {
-		var mConvertedQueryOptions = {$bar : "bar", $foo : "foo"},
+		var mConvertedQueryOptions = {$bar : "bar~c", $foo : "foo~c"},
+			oHelperMock = this.mock(_Helper),
 			mQueryOptions = {$bar : "bar", $foo : "foo"},
 			oRequestor = _Requestor.create(sServiceUrl, oModelInterface);
 
 		this.mock(oRequestor).expects("convertQueryOptions")
 			.withExactArgs("/meta/path", sinon.match.same(mQueryOptions), false, true)
 			.returns(mConvertedQueryOptions);
-		this.mock(_Helper).expects("buildQuery").withExactArgs({}).returns("");
+		oHelperMock.expects("encodePair").withExactArgs("$foo", "foo~c").returns("$foo=foo");
+		oHelperMock.expects("encodePair").withExactArgs("$bar", "bar~c").returns("$bar=bar");
+		oHelperMock.expects("buildQuery").withExactArgs({}).returns("");
 
 		// code under test
 		assert.strictEqual(

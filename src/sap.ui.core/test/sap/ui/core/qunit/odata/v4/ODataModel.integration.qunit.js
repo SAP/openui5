@@ -22416,6 +22416,47 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: requestSideEffects for an expanded list with a $filter which needs encoding.
+	// BCP: 2180064047
+	QUnit.test("requestSideEffects with $filter in $expand", function (assert) {
+		var sView = '\
+<FlexBox id="form" binding="{path : \'/SalesOrderList(\\\'1\\\')\',\
+		parameters : {$expand : {SO_2_SOITEM : {$filter : \'Note.contains(\\\' €\\\'\'}}}}">\
+	<Text id="id" text="{SalesOrderID}"/>\
+	<Table items="{SO_2_SOITEM}">\
+		<Text id="note" text="{Note}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("SalesOrderList('1')"
+				+ "?$expand=SO_2_SOITEM($filter=Note.contains('%20%E2%82%AC')", {
+				SalesOrderID : "1",
+				SO_2_SOITEM : [
+					{ItemPosition : "0010", Note : "Note €", SalesOrderID : "1"}
+				]
+			})
+			.expectChange("id", "1")
+			.expectChange("note", ["Note €"]);
+
+		return this.createView(assert, sView, createSalesOrdersModel()).then(function () {
+			that.expectRequest("SalesOrderList('1')"
+					+ "?$expand=SO_2_SOITEM($filter=Note.contains('%20%E2%82%AC')"
+					+ "&$select=SO_2_SOITEM", {
+					SO_2_SOITEM : [
+						{ItemPosition : "0010", Note : "Note €*", SalesOrderID : "1"}
+					]
+				})
+				.expectChange("note", ["Note €*"]);
+
+			return Promise.all([
+				that.oView.byId("form").getBindingContext().requestSideEffects(["SO_2_SOITEM"]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: requestSideEffects delivers a new entity. See that it can be patched later on.
 	// JIRA: CPOUI5UISERVICESV3-1992
 	QUnit.test("requestSideEffects delivers a new entity", function (assert) {
