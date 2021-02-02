@@ -1,0 +1,11 @@
+<core:View xmlns:core="sap.ui.core.mvc"
+		   xmlns:mdc="sap.ui.mdc"
+		   xmlns="sap.ui.mdc.table"
+		   xmlns:fl="sap.ui.fl.variants"
+		   xmlns:m="sap.m"
+		   class="sapUiSizeCompact"
+		   controllerName="view.Main">
+	<m:App id="FlexTestApp">
+		<m:Page id="FlexTestPage"/>
+	</m:App>
+</core:View>

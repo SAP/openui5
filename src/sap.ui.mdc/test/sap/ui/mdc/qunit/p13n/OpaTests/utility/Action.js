@@ -118,6 +118,16 @@ sap.ui.define([
 			});
 		},
 
+
+		iChangeTheModificationHandler: function(sControlId, sModificationHandler) {
+			return this.waitFor({
+				id: sControlId,
+				success: function(oControl) {
+					oControl.setModificationHandler(sModificationHandler);
+				}
+			});
+		},
+
 		waitForP13nItem: function(oSettings){
 			var bModal = oSettings.hasOwnProperty("modal") ? oSettings.modal : true;
 			var sItemNameSpace = oSettings.itemNameSpace || "sap.m.ColumnListItem";
@@ -428,6 +438,19 @@ sap.ui.define([
 								}
 							});
 						}
+					});
+				}
+			});
+		},
+		/**
+		 * Used to test implicit p13n, should not be used in 'real' applications
+		 */
+		iDestroyTheVariantManagement: function() {
+			return this.waitFor({
+				controlType: "sap.ui.fl.variants.VariantManagement",
+				success: function(aVM) {
+					aVM.forEach(function (oVM) {
+						oVM.destroy();
 					});
 				}
 			});

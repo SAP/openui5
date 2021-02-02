@@ -9,23 +9,29 @@ sap.ui.define([
     "sap/ui/mdc/p13n/modification/ModificationHandler",
     "test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler",
     "sap/ui/base/Object",
-    "sap/ui/mdc/p13n/FlexUtil",
+    "sap/m/VBox",
+    "sap/m/HBox",
+    "sap/ui/mdc/p13n/PersistenceProvider",
+    "sap/ui/fl/variants/VariantManagement",
     "sap/ui/mdc/p13n/panels/BasePanel",
-    "sap/ui/core/library"
-], function (Control, Engine, Controller, AggregationBaseDelegate, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, FlexUtil, BasePanel, coreLibrary) {
+    "sap/ui/core/library",
+    "sap/ui/mdc/p13n/FlexUtil",
+    "sap/ui/mdc/enum/PersistenceMode"
+], function (Control, Engine, Controller, AggregationBaseDelegate, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, VBox, HBox, PersistenceProvider, VariantManagement, BasePanel, coreLibrary, FlexUtil, PersistenceMode) {
     "use strict";
 
     QUnit.module("Modification Handler", {
-		before: function() {
+		beforeEach: function() {
             this.oEngine = Engine.getInstance();
-            this.oControl = new Control();
+            this.oControl = new Control("MyCustomModificationHandlerControl");
 			this.oEngine.registerAdaptation(this.oControl, {
                 controller: {
-                    ContainerTest: Controller
+                    ModificationHandlerTest: Controller
                 }
             });
 		},
-		after: function() {
+		afterEach: function() {
+            this.oControl.destroy();
 			this.oEngine.destroy();
 		}
     });
@@ -33,42 +39,77 @@ sap.ui.define([
     QUnit.test("Check FlexModificationHandler as default", function(assert){
 
         var oModificationHandler = this.oEngine.getModificationHandler(this.oControl);
-        assert.ok(oModificationHandler.isA("sap.ui.mdc.p13n.modification.FlexModificationHandler"), "The default for modification is FLEX");
+        assert.ok(oModificationHandler.isA("sap.ui.mdc.p13n.modification.FlexModificationHandler"), "The default for modification is flex explicit");
 
     });
 
-    QUnit.test("Check FlexModificationHandler function execution", function(assert){
+    QUnit.test("Check FlexModificationHandler payload execution PP(1) VM(0) --> Global changes", function(assert){
 
-        var done = assert.async();
-        this.oEngine._setModificationHandler(this.oControl, FlexModificationHandler.getInstance());
-        var oModificationHandler = this.oEngine.getModificationHandler(this.oControl);
-
-        //Spy
-        var oAddSpy = sinon.spy(FlexUtil, "handleChanges");
-        sinon.stub(FlexRuntimeInfoAPI, "waitForChanges").callsFake(function(mPropertyBag){
-            assert.ok(mPropertyBag.element, "FlexRuntimeInfoAPI called");
-            done();
+        var oPP = new PersistenceProvider({
+            mode: PersistenceMode.Auto,
+            "for": [this.oControl.getId()]
         });
-        var oResetSpy = sinon.spy(FlexUtil, "discardChanges");
-        var oSupportedSpy = sinon.spy(FlexRuntimeInfoAPI, "isFlexSupported");
 
-        //Method calls
-        oModificationHandler.processChanges([]);
-        oModificationHandler.reset({selector: this.oControl});
-        oModificationHandler.isModificationSupported({selector: this.oControl});
-        oModificationHandler.waitForChanges({element: this.oControl});
+        oPP.placeAt("qunit-fixture");
 
-        //Asserts
-        assert.ok(oAddSpy.called, "FlexUtil called");
-        assert.ok(oResetSpy.calledOnce, "FlexUtil called");
-        assert.ok(oSupportedSpy.calledOnce, "FlexRuntimeInfoAPI called");
+        sap.ui.getCore().applyChanges();
 
-        //Restore originals
-        FlexRuntimeInfoAPI.waitForChanges.restore();
-        FlexRuntimeInfoAPI.isFlexSupported.restore();
-        FlexUtil.discardChanges.restore();
-        FlexUtil.handleChanges.restore();
+        var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
+
+        this.oEngine._processChanges(this.oControl, []);
+
+        var oModificationPayload = oFMHStub.getCall(0).args[1];
+
+        assert.notOk(oModificationPayload.hasVM, "No VM reference provided");
+        assert.ok(oModificationPayload.hasPP, "PersistenceProvider reference provided");
+        assert.equal(oModificationPayload.mode, PersistenceMode.Auto, "Auto mode provided");
+        FlexModificationHandler.getInstance().processChanges.restore();
+        oPP.destroy();
     });
+
+    QUnit.test("Check FlexModificationHandler payload execution PP(1) VM(1) --> Explicit changes", function(assert){
+
+        var oPP = new PersistenceProvider({
+            mode: PersistenceMode.Auto,
+            "for": [this.oControl.getId()]
+        });
+        var oVM = new VariantManagement({
+            "for": [this.oControl.getId()]
+        });
+
+        oPP.placeAt("qunit-fixture");
+        oVM.placeAt("qunit-fixture");
+
+        sap.ui.getCore().applyChanges();
+
+        var oFMHStub = sinon.stub(FlexModificationHandler.getInstance(), "processChanges");
+
+        this.oEngine._processChanges(this.oControl, []);
+
+        var oModificationPayload = oFMHStub.getCall(0).args[1];
+
+        assert.ok(oModificationPayload.hasVM, "VM reference provided");
+        assert.ok(oModificationPayload.hasPP, "PersistenceProvider reference provided");
+        assert.equal(oModificationPayload.mode, PersistenceMode.Auto, "Auto mode provided");
+        FlexModificationHandler.getInstance().processChanges.restore();
+        oPP.destroy();
+        oVM.destroy();
+    });
+
+
+    /* QUnit.test("Check registration with a different modification handler", function(assert){
+
+        var oDifferentModifierControl = new Control();
+        this.oEngine.registerAdaptation(oDifferentModifierControl, {
+            controller: {
+                SomeTest: Controller
+            }
+        });
+
+        var oModificationHandler = this.oEngine.getModificationHandler(oDifferentModifierControl);
+        assert.ok(oModificationHandler.isA("sap.ui.mdc.p13n.modification.FlexImplicitModificationHandler"), "The registered modification handler is flex implicit");
+
+    }); */
 
 	QUnit.module("Generic API tests", {
         prepareSetup: function() {
@@ -212,10 +253,6 @@ sap.ui.define([
 
             done();
         }.bind(this));
-    });
-
-    QUnit.test("Check '_getChangeProcessor' return value", function(assert){
-        assert.ok(this.oEngine._getChangeProcessor(this.oControl) instanceof Function, "An API is returned as change appliance");
     });
 
     QUnit.test("Check 'createChanges' return value and resolve", function(assert){
@@ -580,6 +617,27 @@ sap.ui.define([
 
     });
 
+    QUnit.test("Check 'getRTASettingsActionHandler' - Promise reject when using VM + PP ", function(assert){
+
+        var done = assert.async();
+
+        var oPP = new PersistenceProvider({
+            "for": [this.oControl.getId()]
+        });
+
+        oPP.placeAt("qunit-fixture");
+
+        sap.ui.getCore().applyChanges();
+
+        this.oEngine.getRTASettingsActionHandler(this.oControl, {}, "Test").then(function(){
+            //Promise does not resolve
+        }, function(sErr){
+            assert.ok(sErr, "XOR VM or PP, providing both is prohibited in RTA.");
+            oPP.destroy();
+            done();
+        });
+    });
+
     QUnit.module("Error handling", {
         prepareSetup: function() {
             var TestClass = Control.extend("adaptationTestControl", {
@@ -763,6 +821,56 @@ sap.ui.define([
 			oContainer.destroy();
 			done();
 		});
+    });
+
+    QUnit.module("Static Engine methods", {
+		before: function() {
+		},
+		after: function() {
+		}
+    });
+
+    QUnit.test("Check 'hasControlAncestorWithId'", function(assert){
+
+        var oControl = new Control("MyTestControl");
+        var oVBox = new VBox("myVBox", {
+            items: [
+                //wrap another VBox to check if the 'indirect' ancestor has been found
+                new VBox({
+                    items: [
+                        oControl
+                    ]
+                })
+            ]
+        });
+
+        oVBox.placeAt("qunit-fixture");
+        sap.ui.getCore().applyChanges();
+
+        var bHasAncestor = Engine.hasControlAncestorWithId("MyTestControl", "myVBox");
+
+        assert.ok(bHasAncestor, "Ancestor 'myVBox' found");
+
+        oVBox.destroy();
+    });
+
+    QUnit.test("Check 'hasControlAncestorWithType'", function(assert){
+
+        var oControl = new Control("MyTestControl");
+        var oHBox = new HBox();
+
+        oHBox.getFor = function() {
+            return [oControl.getId()];
+        };
+
+        oHBox.placeAt("qunit-fixture");
+        sap.ui.getCore().applyChanges();
+
+        var bHasAncestor = Engine.hasForReference(oControl, "sap.m.HBox");
+
+        assert.ok(bHasAncestor, "Ancestor of type 'sap.m.HBox' found");
+
+        oHBox.destroy();
     });
 
 });

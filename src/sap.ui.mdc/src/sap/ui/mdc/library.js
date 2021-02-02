@@ -45,7 +45,8 @@ sap.ui.define([
 			"sap.ui.mdc.link.Panel",
 			"sap.ui.mdc.link.ContactDetails",
 			"sap.ui.mdc.ui.Container",
-			"sap.ui.mdc.ChartNew"
+			"sap.ui.mdc.ChartNew",
+			"sap.ui.mdc.p13n.PersistenceProvider"
 			],
 		elements: [
 			"sap.ui.mdc.table.Column",

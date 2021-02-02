@@ -2,8 +2,9 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/sample/common/Component'
-], function(CommonComponent) {
+	'sap/ui/core/sample/common/Component',
+	"sap/base/util/UriParameters"
+], function(CommonComponent, UriParameters) {
 	"use strict";
 
 	return CommonComponent.extend("AppUnderTestTable.Component", {

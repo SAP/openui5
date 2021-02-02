@@ -14,9 +14,7 @@ sap.ui.define([
 		if (oControl && oControl.isA && oControl.isA("sap.ui.mdc.Table") && oControl.isTableBound()) {
 			if (!oControl._bWaitForBindChanges) {
 				oControl._bWaitForBindChanges = true;
-				Engine.getInstance().getModificationHandler(oControl).waitForChanges({
-					element: oControl
-				}).then(function() {
+				Engine.getInstance().waitForChanges(oControl).then(function() {
 					oControl.checkAndRebind();
 					delete oControl._bWaitForBindChanges;
 				});

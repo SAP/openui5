@@ -39,6 +39,24 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			// Whether to call QUnit.start() when the test setup is done
 		},
 		tests: {
+			"FlexModificationHandler": {
+				group: "Modification Handling",
+				module: "./modification/FlexModificationHandler.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
+			"PersistenceProvider": {
+				group: "Silent Persistence",
+				module: "./PersistenceProvider.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"Engine": {
 				group: "Engine",
 				module: "./Engine.qunit",

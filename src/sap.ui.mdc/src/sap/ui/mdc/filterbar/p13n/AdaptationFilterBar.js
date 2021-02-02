@@ -115,7 +115,7 @@ sap.ui.define([
 
 	AdaptationFilterBar.prototype._getWaitForChangesPromise = function() {
 		//Change is applied on parent --> wait for the parent promise not the child
-		return this.getEngine().getModificationHandler().waitForChanges({element: this.getAdaptationControl()});
+		return this.getEngine().waitForChanges(this.getAdaptationControl());
 	};
 
 	AdaptationFilterBar.prototype.applyConditionsAfterChangesApplied = function() {

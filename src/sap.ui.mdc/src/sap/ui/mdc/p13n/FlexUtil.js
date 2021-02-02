@@ -289,13 +289,15 @@ sap.ui.define([
 			return oConditionChange;
 		},
 
-		handleChanges: function (aChanges) {
+		handleChanges: function (aChanges, bIgnoreVM, bUseStaticArea) {
 			return new Promise(function (resolve, reject) {
 				sap.ui.require([
 					"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
 				], function (ControlPersonalizationWriteAPI) {
 					ControlPersonalizationWriteAPI.add({
-						changes: aChanges
+						changes: aChanges,
+						ignoreVariantManagement: bIgnoreVM,
+						useStaticArea: bUseStaticArea
 					}).then(function (aDirtyChanges) {
 						resolve(aDirtyChanges);
 					}, reject);
@@ -303,12 +305,36 @@ sap.ui.define([
 			});
 		},
 
-		discardChanges: function(mPropertyBag) {
+		saveChanges: function (oControl, aDirtyChanges) {
+			return new Promise(function (resolve, reject) {
+				sap.ui.require([
+					"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
+				], function (ControlPersonalizationWriteAPI) {
+					ControlPersonalizationWriteAPI.save({
+						selector: oControl, changes: aDirtyChanges
+					}).then(resolve);
+				});
+			});
+		},
+
+		restore: function(mPropertyBag) {
 			return new Promise(function (resolve, reject) {
 				sap.ui.require([
 					"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
 				], function (ControlPersonalizationWriteAPI) {
 					ControlPersonalizationWriteAPI.restore(mPropertyBag).then(function () {
+						resolve();
+					}, reject);
+				});
+			});
+		},
+
+		reset: function(mPropertyBag) {
+			return new Promise(function (resolve, reject) {
+				sap.ui.require([
+					"sap/ui/fl/write/api/ControlPersonalizationWriteAPI"
+				], function (ControlPersonalizationWriteAPI) {
+					ControlPersonalizationWriteAPI.reset(mPropertyBag).then(function () {
 						resolve();
 					}, reject);
 				});
