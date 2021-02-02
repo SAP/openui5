@@ -1860,26 +1860,32 @@ function(
 		});
 	}
 
-	function addTwoChanges(oChangePersistence, oComponentInstance, sLayer1, sLayer2) {
-		var oChangeContent = {
-			fileName: "Gizorillus",
-			layer: sLayer1,
-			fileType: "change",
-			changeType: "addField",
-			selector: {id: "control1"},
-			content: {},
-			originalLanguage: "DE"
-		};
+	function addTwoChanges(oChangePersistence, oComponentInstance, sLayer1, sLayer2, oCustomContent1, oCustomContent2) {
+		var oChangeContent = merge(
+			{
+				fileName: "Gizorillus",
+				layer: sLayer1,
+				fileType: "change",
+				changeType: "addField",
+				selector: {id: "control1"},
+				content: {},
+				originalLanguage: "DE"
+			},
+			oCustomContent1
+		);
 
-		var oChangeContent1 = {
-			fileName: "Gizorillus1",
-			layer: sLayer2 || sLayer1,
-			fileType: "change",
-			changeType: "addField",
-			selector: {id: "control1"},
-			content: {},
-			originalLanguage: "DE"
-		};
+		var oChangeContent1 = merge(
+			{
+				fileName: "Gizorillus1",
+				layer: sLayer2 || sLayer1,
+				fileType: "change",
+				changeType: "addField",
+				selector: {id: "control1"},
+				content: {},
+				originalLanguage: "DE"
+			},
+			oCustomContent2
+		);
 
 
 		return [
@@ -1973,30 +1979,10 @@ function(
 
 		[true, false].forEach(function(bBackendEnablement) {
 			var sName = "Shall not call condenser when there are multiple namespaces present";
-			if (bBackendEnablement.length) {
+			if (bBackendEnablement) {
 				sName += " with backend condensing enabled";
 			}
 			QUnit.test(sName, function(assert) {
-				var oChangeContent1 = {
-					fileName: "Gizorillus1",
-					layer: Layer.CUSTOMER,
-					fileType: "change",
-					changeType: "addField",
-					selector: {id: "control1"},
-					content: {},
-					originalLanguage: "DE",
-					namespace: "namespace1"
-				};
-				var oChangeContent2 = {
-					fileName: "Gizorillus2",
-					layer: Layer.CUSTOMER,
-					fileType: "change",
-					changeType: "addField",
-					selector: {id: "control1"},
-					content: {},
-					originalLanguage: "DE",
-					namespace: "namespace2"
-				};
 				if (bBackendEnablement) {
 					sandbox.stub(Settings, "getInstanceOrUndef").returns({
 						isCondensingEnabled: function() {
@@ -2004,9 +1990,18 @@ function(
 						}
 					});
 				}
-
-				this.oChangePersistence.addChange(oChangeContent1, this._oComponentInstance);
-				this.oChangePersistence.addChange(oChangeContent2, this._oComponentInstance);
+				addTwoChanges(
+					this.oChangePersistence,
+					this._oComponentInstance,
+					Layer.CUSTOMER,
+					Layer.CUSTOMER,
+					{
+						namespace: "namespace1"
+					},
+					{
+						namespace: "namespace2"
+					}
+				);
 
 				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
 					assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
@@ -2014,6 +2009,49 @@ function(
 					assert.equal(this.oStorageCondenseStub.callCount, 0, "the condenser route was not called");
 				}.bind(this));
 			});
+		});
+
+		QUnit.test("Shall not call condenser when persisted changes contain different namespaces", function (assert) {
+			sandbox.stub(Settings, "getInstanceOrUndef").returns({
+				isCondensingEnabled: function() {
+					return true;
+				}
+			});
+
+			addTwoChanges(
+				this.oChangePersistence,
+				this._oComponentInstance,
+				Layer.CUSTOMER,
+				Layer.CUSTOMER,
+				{
+					namespace: "namespace1"
+				},
+				{
+					namespace: "namespace2"
+				}
+			);
+			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+				this.oChangePersistence._mChanges.aChanges[0].setState(Change.states.PERSISTED);
+				this.oChangePersistence._mChanges.aChanges[1].setState(Change.states.PERSISTED);
+
+				addTwoChanges(
+					this.oChangePersistence,
+					this._oComponentInstance,
+					Layer.CUSTOMER,
+					Layer.CUSTOMER,
+					{
+						namespace: "namespace1"
+					},
+					{
+						namespace: "namespace1"
+					}
+				);
+				return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance).then(function() {
+					assert.equal(this.oCondenserStub.callCount, 2, "the condenser was called");
+					assert.equal(this.oWriteStub.callCount, 2, "the write function was called");
+					assert.equal(this.oStorageCondenseStub.callCount, 0, "the condenser route was not called");
+				}.bind(this));
+			}.bind(this));
 		});
 
 		QUnit.test("Shall not do backend condensing with 'bSkipUpdateCache' flag present", function(assert) {
