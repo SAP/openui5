@@ -19,6 +19,28 @@ sap.ui.define([
 	var sClassName = "sap.ui.model.odata.v4.lib._Helper";
 
 	/**
+	 * Checks the given cloned error according to the given expectations.
+	 *
+	 * @param {object} assert - The QUnit assert object
+	 * @param {Error} oOriginal - The original error
+	 * @param {Error} oClone - The cloned error
+	 * @param {object} oExpectedInnerError - The expected inner error
+	 * @param {string} sUrl - The expected request URL
+	 * @param {string} sResourcePath - The expected resource path
+	 */
+	function checkClonedError(assert, oOriginal, oClone, oExpectedInnerError, sUrl, sResourcePath) {
+		assert.notStrictEqual(oClone, oOriginal);
+		assert.ok(oClone instanceof Error);
+		assert.strictEqual(oClone.message, "Message");
+		assert.strictEqual(oClone.requestUrl, sUrl);
+		assert.strictEqual(oClone.resourcePath, sResourcePath);
+		assert.strictEqual(oClone.status, 500);
+		assert.strictEqual(oClone.statusText, "Internal Server Error");
+		assert.notStrictEqual(oClone.error, oOriginal.error);
+		assert.deepEqual(oClone.error, oExpectedInnerError);
+	}
+
+	/**
 	 * Returns a mock "fnFetchMetadata" (see _Requestor#getModelInterface) which returns metadata
 	 * for a meta path according to the given map.
 	 *
@@ -3439,5 +3461,216 @@ sap.ui.define([
 			// code under test
 			_Helper.inheritPathValue(["bar", "foo"], oSource, {});
 		}, TypeError);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("decomposeError: w/o ContentID, w/o details, w/o target", function (assert) {
+		var oError = new Error("Message"),
+			aErrors;
+
+		oError.error = {message : "Top level message"};
+		oError.status = 500;
+		oError.statusText = "Internal Server Error";
+
+		this.mock(_Helper).expects("getContentID").withExactArgs(sinon.match.same(oError.error))
+			.returns(undefined);
+
+		// code under test
+		aErrors = _Helper.decomposeError(oError, [{
+				$ContentID : "0.0",
+				$resourcePath : "~path0~",
+				url: "~url0~"
+			}, {
+				$ContentID : "1.0",
+				$resourcePath : "~path1~",
+				url: "~url1~"
+			}]);
+
+		assert.strictEqual(aErrors.length, 2);
+		checkClonedError(assert, oError, aErrors[0], {
+				message : "Top level message"
+			}, "~url0~", "~path0~");
+		checkClonedError(assert, oError, aErrors[1], {
+				message : "Top level message",
+				$ignoreTopLevel : true
+			}, "~url1~", "~path1~");
+	});
+
+	//*********************************************************************************************
+["n/a", ""].forEach(function (sTarget) {
+	var sTitle = "decomposeError: w/o ContentID, w/ details, w/ + w/o target, top level target: "
+			+ sTarget;
+
+	QUnit.test(sTitle, function (assert) {
+		var oError = new Error("Message"),
+			aErrors,
+			oHelperMock = this.mock(_Helper);
+
+		oError.error = {
+			message : "Top level message",
+			target : sTarget,
+			details : [{
+				foo : "bar",
+				message : "A Message",
+				target : "n/a"
+			}, {
+				foo : "baz",
+				message : "Another Message"
+			}, {
+				foo : "barbaz",
+				message : "Yet another Message",
+				target : ""
+			}]
+		};
+		oError.status = 500;
+		oError.statusText = "Internal Server Error";
+		oHelperMock.expects("getContentID").withExactArgs(sinon.match.same(oError.error))
+			.returns(undefined);
+		oHelperMock.expects("getContentID").withExactArgs(oError.error.details[0])
+			.returns(undefined);
+		oHelperMock.expects("getContentID").withExactArgs(oError.error.details[1])
+			.returns(undefined);
+		oHelperMock.expects("getContentID").withExactArgs(oError.error.details[2])
+			.returns(undefined);
+
+		// code under test
+		aErrors = _Helper.decomposeError(oError, [{
+				$ContentID : "0.0",
+				$resourcePath : "~path0~",
+				url: "~url0~"
+			}, {
+				$ContentID : "1.0",
+				$resourcePath : "~path1~",
+				url: "~url1~"
+			}, {
+				$ContentID : "2.0",
+				$resourcePath : "~path2~",
+				url: "~url2~"
+			}]);
+
+		assert.strictEqual(aErrors.length, 3);
+		checkClonedError(assert, oError, aErrors[0], {
+				message : sTarget ? "n/a: Top level message" : "Top level message",
+				details : [{
+					foo : "bar",
+					message : "n/a: A Message"
+				}, {
+					foo : "baz",
+					message : "Another Message"
+				}, {
+					foo : "barbaz",
+					message : "Yet another Message"
+				}]
+			}, "~url0~", "~path0~");
+		checkClonedError(assert, oError, aErrors[1], {
+				message : "Top level message",
+				target : sTarget,
+				details : [],
+				$ignoreTopLevel : true
+			}, "~url1~", "~path1~");
+		checkClonedError(assert, oError, aErrors[2], {
+				message : "Top level message",
+				target : sTarget,
+				details : [],
+				$ignoreTopLevel : true
+			}, "~url2~", "~path2~");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("decomposeError: w/ ContentID", function (assert) {
+		var oError = new Error("Message"),
+			aErrors,
+			oHelperMock = this.mock(_Helper);
+
+		oError.error = {
+			message : "Top level message",
+			"@SAP__core.ContentID" : "1.0",
+			details : [{
+				message : "A message",
+				"@SAP__core.ContentID" : "1.0"
+			}]
+		};
+		oError.status = 500;
+		oError.statusText = "Internal Server Error";
+		oHelperMock.expects("getContentID").withExactArgs(sinon.match.same(oError.error))
+			.callThrough();
+		oHelperMock.expects("getContentID").withExactArgs(oError.error.details[0])
+			.callThrough();
+
+		// code under test
+		aErrors = _Helper.decomposeError(oError, [{
+				$ContentID : "0.0",
+				$resourcePath : "~path0~",
+				url: "~url0~"
+			}, {
+				$ContentID : "1.0",
+				$resourcePath : "~path1~",
+				url: "~url1~"
+			}]);
+
+		assert.strictEqual(aErrors.length, 2);
+		checkClonedError(assert, oError, aErrors[0], {
+				message : "Top level message",
+				"@SAP__core.ContentID" : "1.0",
+				$ignoreTopLevel : true,
+				details : []
+			}, "~url0~", "~path0~");
+		checkClonedError(assert, oError, aErrors[1], {
+				message : "Top level message",
+				"@SAP__core.ContentID" : "1.0",
+				details : [{
+					message : "A message",
+					"@SAP__core.ContentID" : "1.0"
+				}]
+			}, "~url1~", "~path1~");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getContentID", function (assert) {
+		// code under test
+		assert.strictEqual(_Helper.getContentID({}), undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.getContentID({"@Foo.NoContentID" : "n/a"}), undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.getContentID({"message@Core.ContentID" : "n/a"}), undefined);
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Cannot distinguish @Core.ContentID from @SAP__core.ContentID",
+				undefined, sClassName);
+
+		// code under test
+		assert.strictEqual(_Helper.getContentID({
+				"@Core.ContentID" : "1.0",
+				"@SAP__core.ContentID" : "1.0"
+			}), undefined, "duplicate alias");
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Cannot distinguish @Core.ContentID from @Foo.ContentID",
+				undefined, sClassName);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Cannot distinguish @Foo.ContentID from @SAP__core.ContentID",
+				undefined, sClassName);
+
+		// code under test
+		assert.strictEqual(_Helper.getContentID({
+				"@Core.ContentID" : "1.0",
+				"@Foo.ContentID" : "1.0",
+				"@SAP__core.ContentID" : "1.0"
+			}), undefined, "toggling sContentID is not enough");
+
+		// code under test
+		assert.strictEqual(_Helper.getContentID({"@SAP__core.ContentID" : "1.0"}), "1.0");
+
+		// code under test
+		assert.strictEqual(_Helper.getContentID({"@Core.ContentID" : "2.1"}), "2.1");
+
+		// code under test
+		assert.strictEqual(_Helper.getContentID({"@Org.OData.Core.V1.ContentID" : "3.2"}), "3.2");
+
+		// code under test
+		assert.strictEqual(_Helper.getContentID({"@Foo.ContentID" : "bar"}), "bar");
 	});
 });

@@ -419,6 +419,72 @@ sap.ui.define([
 			return oTechnicalDetails;
 		},
 
+		/**
+		 * Decomposes the given error into an array of errors, one for each of the given requests.
+		 *
+		 * @param {Error} oError
+		 *   The error created by {@link .createError}.
+		 * @param {object} oError.error
+		 *   An error response as sent from the OData server
+		 * @param {object[]} [oError.error.details]
+		 *   A list of detail messages sent from the OData server. These messages are filtered and
+		 *   assigned to the corresponding request.
+		 * @param {object[]} aRequests
+		 *   Requests belonging to a single change set
+		 * @returns {Error[]}
+		 *   One error for each request given, suitable for
+		 *   {@link sap.ui.model.odata.v4.ODataModel#reportError}
+		 */
+		decomposeError : function (oError, aRequests) {
+			var aDetailContentIDs = oError.error.details
+					&& oError.error.details.map(function (oDetail) {
+						return _Helper.getContentID(oDetail);
+					}),
+				sTopLevelContentID = _Helper.getContentID(oError.error);
+
+			return aRequests.map(function (oRequest, i) {
+				var oClone = new Error(oError.message);
+
+				/*
+				 * Returns whether the given message with the given ContentID is relevant for the
+				 * current request. Messages w/o a ContentID are assigned to the 1st request and
+				 * turned into an unbound message.
+				 *
+				 * @param {object} oMessage - A message
+				 * @param {string} [sContentID] - The message's ContentID, if any
+				 * @returns {boolean} Whether the message is relevant
+				 */
+				function isRelevant(oMessage, sContentID) {
+					if (i === 0 && !sContentID) {
+						// w/o ContentID, report as unbound message at 1st request
+						if (oMessage.target) {
+							oMessage.message = oMessage.target + ": " + oMessage.message;
+						}
+						delete oMessage.target; // delete also empty target
+						return true;
+					}
+					return sContentID === oRequest.$ContentID;
+				}
+
+				oClone.error = _Helper.clone(oError.error);
+				oClone.requestUrl = oRequest.url;
+				oClone.resourcePath = oRequest.$resourcePath;
+				oClone.status = oError.status;
+				oClone.statusText = oError.statusText;
+
+				if (!isRelevant(oClone.error, sTopLevelContentID)) {
+					oClone.error.$ignoreTopLevel = true;
+				}
+				if (oClone.error.details) {
+					oClone.error.details = oClone.error.details.filter(function (oDetail, i) {
+						return isRelevant(oDetail, aDetailContentIDs[i]);
+					});
+				}
+
+				return oClone;
+			});
+		},
+
 		// Trampoline property to allow for mocking function module in unit tests.
 		// @see sap.base.util.deepEqual
 		deepEqual : deepEqual,
@@ -636,6 +702,34 @@ sap.ui.define([
 				default:
 					throw new Error("Unsupported type: " + sType);
 			}
+		},
+
+		/**
+		 * Returns the "@Org.OData.Core.V1.ContentID" annotation for the given message, ignoring
+		 * the alias. Logs a warning if duplicates are found.
+		 *
+		 * @param {object} oMessage
+		 *   A single message from an OData error response
+		 * @returns {string|undefined}
+		 *   The value of the ContentID annotation, or <code>undefined</code> in case there is not
+		 *   exactly one such annotation (ignoring the alias)
+		 */
+		getContentID : function (oMessage) {
+			var sContentID, sContentIDKey, bDuplicate;
+
+			Object.keys(oMessage).forEach(function (sKey) {
+				if (sKey[0] === "@" && sKey.endsWith(".ContentID")) {
+					if (sContentID) {
+						Log.warning("Cannot distinguish " + sContentIDKey + " from " + sKey,
+							undefined, sClassName);
+						bDuplicate = true;
+					}
+					sContentID = oMessage[sKey];
+					sContentIDKey = sKey;
+				}
+			});
+
+			return bDuplicate ? undefined : sContentID;
 		},
 
 		/**

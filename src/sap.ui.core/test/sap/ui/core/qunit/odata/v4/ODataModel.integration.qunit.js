@@ -1065,8 +1065,10 @@ sap.ui.define([
 					if (Array.isArray(oRequest)) {
 						return processRequests(oRequest, i + 1);
 					}
+					oRequest.$ContentID = i + "." + (iChangeSetNo - 1);
 					return checkRequest(oRequest.method, oRequest.url, oRequest.headers,
-						oRequest.body, undefined, that.iBatchNo, iChangeSetNo || i + 1
+						oRequest.body, undefined, that.iBatchNo, iChangeSetNo || i + 1,
+						oRequest.$ContentID
 					).catch(function (oError) {
 						if (oError.error) {
 							// convert the error back to a response
@@ -1134,7 +1136,9 @@ sap.ui.define([
 			 *   been requested
 			 * @param {number} [iBatchNo] Number of the batch which the request belongs to
 			 * @param {number} [iChangeSetNo] Number of the change set in the current batch which
-			 *   the request is expected to belong to
+			 *   the request belongs to
+			 * @param {string} [sContentID] Content ID of the actual request; only available if the
+			 *   request is part of a change set
 			 * @returns {Promise} A promise resolving with an object having following properties:
 			 *     {string|object} body - The response body of the matching request
 			 *     {string} [messages] - The messages contained in the "sap-messages" response
@@ -1144,7 +1148,7 @@ sap.ui.define([
 			 *   the error.
 			 */
 			function checkRequest(sMethod, sUrl, mHeaders, vPayload, sOriginalResourcePath,
-					iBatchNo, iChangeSetNo) {
+					iBatchNo, iChangeSetNo, sContentID) {
 				var oActualRequest = {
 						method : sMethod,
 						url : sUrl,
@@ -1190,6 +1194,9 @@ sap.ui.define([
 					}
 					if ("changeSetNo" in oExpectedRequest) {
 						oActualRequest.changeSetNo = iChangeSetNo;
+					}
+					if ("$ContentID" in oExpectedRequest) {
+						oActualRequest.$ContentID = sContentID;
 					}
 					assert.deepEqual(oActualRequest, oExpectedRequest, sMethod + " " + sUrl);
 				} else {
@@ -1958,6 +1965,10 @@ sap.ui.define([
 			var aTableRows = that.oView.byId("table").getItems(),
 				oError = createError({
 					code : "Code",
+					details : [{
+						code : "Code1",
+						message : "Details 1"
+					}],
 					message : "Request intentionally failed"
 				});
 
@@ -1970,11 +1981,13 @@ sap.ui.define([
 
 			that.expectChange("note", ["Note 1 changed", "Note 2 changed"])
 				.expectRequest({
+					changeSetNo : 1,
 					method : "PATCH",
 					url : "SalesOrderList('1')",
 					payload : {Note : "Note 1 changed"}
 				}, oError)
 				.expectRequest({
+					changeSetNo : 1,
 					method : "PATCH",
 					url : "SalesOrderList('2')",
 					payload : {Note : "Note 2 changed"}
@@ -1987,6 +2000,11 @@ sap.ui.define([
 					persistent : true,
 					technical : true,
 					type : "Error"
+				}, {
+					code : "Code1",
+					message : "Details 1",
+					persistent : true,
+					type : "None"
 				}]);
 
 			aTableRows[0].getCells()[1].getBinding("value").setValue("Note 1 changed");
@@ -9713,6 +9731,126 @@ sap.ui.define([
 			return Promise.all([
 				oModel.submitBatch("update"),
 				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: One error for a change set with (un)bound error messages for the various requests.
+	// ContentID on root level, but missing for one message in details. Check the value state for
+	// the related input controls.
+	// JIRA: CPOUI5ODATAV4-729
+	QUnit.test("CPOUI5ODATAV4-729: @Core.ContentId", function (assert) {
+		var aItems,
+			oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<Table id="table" items="{/SalesOrderList}">\
+	<ColumnListItem>\
+		<Input id="amount" value="{GrossAmount}"/>\
+	</ColumnListItem>\
+</Table>',
+			that = this;
+
+		this.expectRequest("SalesOrderList?$select=GrossAmount,SalesOrderID&$skip=0&$top=100", {
+				value : [{
+					GrossAmount : "4.1",
+					SalesOrderID : "41"
+				}, {
+					GrossAmount : "4.2",
+					SalesOrderID : "42"
+				}]
+			})
+			.expectChange("amount", ["4.10", "4.20"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oError = createError({
+					code : "CODE",
+					message : "Request intentionally failed",
+					"@SAP__common.longtextUrl" : "Messages(1)/LongText",
+					"@SAP__core.ContentID" : "0.0",
+					target : "",
+					details : [{
+						code : "CODE0",
+						message : "Value 4.11 not allowed",
+						"@SAP__core.ContentID" : "0.0",
+						target : "GrossAmount",
+						"@SAP__common.numericSeverity" : 3
+					}, {
+						code : "CODE1",
+						message : "Value 4.22 not allowed",
+						"@SAP__core.ContentID" : "1.0",
+						target : "GrossAmount",
+						"@SAP__common.numericSeverity" : 4
+					}, {
+						code : "CODE2",
+						message : "Error cannot be assigned to a request",
+						target : "n/a", // must be ignored because of missing ContentID
+						"@SAP__common.numericSeverity" : 2
+					}]
+				});
+
+			aItems = that.oView.byId("table").getItems();
+
+			that.expectChange("amount", ["4.11", "4.22"])
+				.expectRequest({
+					changeSetNo : 1,
+					$ContentID : "0.0",
+					method : "PATCH",
+					url : "SalesOrderList('41')",
+					payload : {GrossAmount : "4.11"}
+				}, oError)
+				.expectRequest({
+					changeSetNo : 1,
+					$ContentID : "1.0",
+					method : "PATCH",
+					url : "SalesOrderList('42')",
+					payload : {GrossAmount : "4.22"}
+				}) // no response required
+				.expectMessages([{
+					code : "CODE",
+					descriptionUrl : /*TODO: sSalesOrderService + */"Messages(1)/LongText",
+					message : "Request intentionally failed",
+					persistent : true,
+					target : "/SalesOrderList('41')",
+					technical : true,
+					type : "Error"
+				}, {
+					code : "CODE0",
+					message : "Value 4.11 not allowed",
+					persistent : true,
+					target : "/SalesOrderList('41')/GrossAmount",
+					type : "Warning"
+				}, {
+					code : "CODE1",
+					message : "Value 4.22 not allowed",
+					persistent : true,
+					target : "/SalesOrderList('42')/GrossAmount",
+					type : "Error"
+				}, {
+					code : "CODE2",
+					message : "n/a: Error cannot be assigned to a request",
+					persistent : true,
+					type : "Information"
+				}]);
+
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to update path /SalesOrderList('41')/GrossAmount",
+					sinon.match("Request intentionally failed"), "sap.ui.model.odata.v4.Context");
+			that.oLogMock.expects("error")
+				.withExactArgs("Failed to update path /SalesOrderList('42')/GrossAmount",
+					sinon.match("Request intentionally failed"), "sap.ui.model.odata.v4.Context");
+
+			// code under test
+			aItems[0].getCells()[0].getBinding("value").setValue("4.11");
+			aItems[1].getCells()[0].getBinding("value").setValue("4.22");
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			return Promise.all([
+				that.checkValueState(assert, aItems[0].getCells()[0], "Warning",
+					"Value 4.11 not allowed"),
+				that.checkValueState(assert, aItems[1].getCells()[0], "Error",
+					"Value 4.22 not allowed")
 			]);
 		});
 	});

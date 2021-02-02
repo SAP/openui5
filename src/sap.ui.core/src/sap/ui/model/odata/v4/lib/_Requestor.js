@@ -1119,9 +1119,17 @@ sap.ui.define([
 					vRequest.$reject(oError);
 				} else if (vResponse.status >= 400) {
 					vResponse.getResponseHeader = getResponseHeader;
+					// Note: vRequest is an array in case a change set fails, hence url and
+					// $resourcePath are undefined
 					oCause = _Helper.createError(vResponse, "Communication error", vRequest.url,
 						vRequest.$resourcePath);
-					reject(oCause, vRequest);
+					if (Array.isArray(vRequest)) {
+						_Helper.decomposeError(oCause, vRequest).forEach(function (oError, i) {
+							vRequest[i].$reject(oError);
+						});
+					} else {
+						vRequest.$reject(oCause);
+					}
 				} else {
 					if (vResponse.responseText) {
 						try {
