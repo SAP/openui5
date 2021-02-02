@@ -617,7 +617,7 @@ sap.ui.define([
 		if (!this.getIconOnly()) {
 			this.oBrowse.setText(sText || this.getBrowseText());
 		}else {
-			this.oBrowse.setTooltip(sText || this.getBrowseText());
+			this.oBrowse.setTooltip(this.getBrowseText());
 		}
 		return this;
 	};
@@ -656,7 +656,7 @@ sap.ui.define([
 		this.setProperty("iconOnly", bIconOnly, false);
 		if (bIconOnly) {
 			this.oBrowse.setText("");
-			this.oBrowse.setTooltip(this.getButtonText() || this.getBrowseText());
+			this.oBrowse.setTooltip(this.getBrowseText());
 		}else {
 			this.oBrowse.setText(this.getButtonText() || this.getBrowseText());
 			this.oBrowse.setTooltip("");
