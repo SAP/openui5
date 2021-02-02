@@ -105,13 +105,15 @@ sap.ui.define([
 			} else {
 				// when there are no exportSettings given for a ComplexProperty or when the splitCells=true
 				aPropertiesFromComplexProperty.forEach(function(oProperty, iIndex) {
-					var oCurrentExportSettings = oProperty.getExportSettings(),
-						oCurrentColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oCurrentExportSettings, bSplitCells);
+					var oPropertyInfoExportSettings = oProperty.getExportSettings(),
+						oCurrentColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oPropertyInfoExportSettings, bSplitCells);
 					oCurrentColumnExportSettings.property = oProperty.getPath();
 					if (iIndex > 0) {
 						oCurrentColumnExportSettings.columnId = oColumn.getId() + "-additionalProperty" + iIndex;
 					}
-					aColumnExportSettings.push(oCurrentColumnExportSettings);
+					if (oPropertyInfoExportSettings || oCurrentColumnExportSettings.property) {
+						aColumnExportSettings.push(oCurrentColumnExportSettings);
+					}
 				}, this);
 			}
 		} else if (!bSplitCells && oExportSettings) {
@@ -122,7 +124,9 @@ sap.ui.define([
 		} else {
 			oColumnExportSettings = getColumnExportSettingsObject(oColumn, oProperty, oExportSettings, bSplitCells);
 			oColumnExportSettings.property = oProperty.getPath();
-			aColumnExportSettings.push(oColumnExportSettings);
+			if (oColumnExportSettings.property) {
+				aColumnExportSettings.push(oColumnExportSettings);
+			}
 
 			// get Additional path in case of split cells
 			sAdditionalPath = bSplitCells && oExportSettings && oExportSettings.unitProperty ? oExportSettings.unitProperty : null;
@@ -133,7 +137,9 @@ sap.ui.define([
 				oAdditionalColumnExportSettings = getColumnExportSettingsObject(oColumn, oAdditionalProperty, oAdditionExportSettings, bSplitCells);
 				oAdditionalColumnExportSettings.property = oAdditionalProperty.getPath();
 				oAdditionalColumnExportSettings.columnId = oColumn.getId() + "-additionalProperty";
-				aColumnExportSettings.push(oAdditionalColumnExportSettings);
+				if (oAdditionExportSettings || oAdditionalColumnExportSettings.property) {
+					aColumnExportSettings.push(oAdditionalColumnExportSettings);
+				}
 			}
 		}
 

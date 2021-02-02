@@ -19,7 +19,23 @@ sap.ui.define([
 				}
 			};
 
-			aProperties.push(oProductIdName);
+			var oNoDataCol1 = {
+				name: "NoDataCol1",
+				label: "NoDataColumn1",
+				sortable: false,
+				filterable: false
+			};
+
+			var oNoDataCol2 = {
+				name: "NoDataCol2",
+				label: "NoDataColumn2",
+				sortable: false,
+				filterable: false,
+				exportSettings: {
+				}
+			};
+
+			aProperties.push(oProductIdName, oNoDataCol1, oNoDataCol2);
 
 			return aProperties;
 		});

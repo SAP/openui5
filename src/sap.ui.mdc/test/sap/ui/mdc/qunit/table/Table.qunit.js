@@ -1084,10 +1084,12 @@ sap.ui.define([
 		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "name",
+				path: "name",
 				label: "name"
 			},
 			{
 				name: "age",
+				path: "age",
 				label: "age"
 			}
 		]);
@@ -1167,10 +1169,12 @@ sap.ui.define([
 		MDCQUnitUtils.stubPropertyInfos(this.oTable, [
 			{
 				name: "name",
+				path: "name",
 				label: "name"
 			},
 			{
 				name: "age",
+				path: "age",
 				label: "age"
 			}
 		]);
@@ -2667,6 +2671,26 @@ sap.ui.define([
 			})
 		}));
 
+		this.oTable.addColumn(new Column({
+			id: "noDataColumn1",
+			header: "NoDataColumn1",
+			hAlign: "Begin",
+			dataProperty: "noDataColumn1",
+			template: new Button({
+				text: "<"
+			})
+		}));
+
+		this.oTable.addColumn(new Column({
+			id: "noDataColumn2",
+			header: "NoDataColumn2",
+			hAlign: "Begin",
+			dataProperty: "noDataColumn2",
+			template: new Button({
+				text: ">"
+			})
+		}));
+
 		var aExpectedOutput = [
 			{
 				columnId: "firstNameColumn",
@@ -2737,6 +2761,14 @@ sap.ui.define([
 				unitProperty: "currency",
 				width: 10,
 				type: "Currency"
+			},
+			{
+				columnId: "noDataColumn1",
+				label: "NoDataColumn1",
+				property: "",
+				textAlign: "Begin",
+				type: "String",
+				width: 5
 			}
 		];
 
@@ -2800,6 +2832,19 @@ sap.ui.define([
 				exportSettings: {
 					width: 5
 				}
+			}, {
+				name: "noDataColumn1",
+				label: "NoDataColumn1",
+				sortable: false,
+				filterable: false,
+				exportSettings: {
+					width: 5
+				}
+			}, {
+				name: "noDataColumn2",
+				label: "NoDataColumn2",
+				sortable: false,
+				filterable: false
 			}
 		]);
 
@@ -2939,16 +2984,19 @@ sap.ui.define([
 				}
 			}, {
 				name: "company",
+				path: "company",
 				label: "Company Name",
 				propertyInfos: ["companyName", "companyCode"]
 			}, {
 				name: "companyName",
+				path: "companyName",
 				label: "Company Name",
 				exportSettings: {
 					width: 15
 				}
 			}, {
 				name: "companyCode",
+				path: "companyCode",
 				label: "Company Code"
 			}
 		]);

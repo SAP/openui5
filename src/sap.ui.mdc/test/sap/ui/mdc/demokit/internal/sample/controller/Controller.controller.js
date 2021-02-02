@@ -13,6 +13,15 @@ sap.ui.define([
 
 		},
 
+		onBeforeExport: function (oEvt) {
+			var mExcelSettings = oEvt.getParameter("exportSettings");
+
+			// Disable Worker as Mockserver is used in Demokit sample --> Do not use this for real applications!
+			// Disable useBatch as the Mockserver doesn't support it
+			mExcelSettings.worker = false;
+			mExcelSettings.dataSource.useBatch = false;
+		},
+
 		onGridTableSettingsPress: function(oEvent) {
 			if (!this.oGridTableSettingsDialog) {
 				this.oGridTableSettingsDialog = Fragment.load({

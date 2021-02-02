@@ -62,7 +62,6 @@ sap.ui.define([
 		// TODO: Is there a valid use-case for name !== path? Can two properties having the same path cause problems (e.g. for sort/filter)?
 		path: { // The technical path for a data source property.
 			type: "string",
-			defaultValue: "attribute:name",
 			valueForComplexProperty: null
 		},
 		// TODO: Is it possible to reduce the required information by integrating/using TypeUtil (obtained from delegate) here?
