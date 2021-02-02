@@ -7,18 +7,15 @@
 	font-size: @sapMFontMediumSize;
 	color: @sapUiNeutralText;
 	display: inline-block;
-	vertical-align: top;
 	line-height: 0.875rem;
+	vertical-align: top;
 	overflow: visible;
-	margin: 2px 0px;
 	line-height: 0.875rem;
 	min-height: 1rem;
 	&.sapMObjectStatusLarge {
+		vertical-align: middle;
 		font-size: 1rem;
 		min-height: 2rem;
-		&:not(.sapMObjStatusInverted) {
-			margin-top: 3px;
-		}
 	}
 	.sapMObjStatusIcon {
 		width: 1rem;
@@ -176,7 +173,13 @@
 }
 
 .sapMObjStatusInverted {
-	min-height: 1rem;
+	.sapMObjStatusIcon {
+		height: 0.875rem;
+		line-height: 0.875rem;
+		& > .sapUiIcon {
+			vertical-align: middle;
+		}
+	}
 	&.sapMObjectStatusLarge {
 		vertical-align: top;
 		.sapMObjStatusText,

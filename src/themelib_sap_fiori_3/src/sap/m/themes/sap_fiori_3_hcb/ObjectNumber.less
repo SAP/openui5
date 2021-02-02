@@ -5,13 +5,18 @@
 
 @sapUiInformativeElement: @sapUiInformationBG;
 
-.sapMObjectNumber:not(.sapMObjectNumberLarge) {
-	margin: 3px 0;
-}
-
 .sapMObjectNumberLarge .sapMObjectNumberText,
 .sapMObjectNumberLarge .sapMObjectNumberUnit {
 	font-size: 1.5rem;
+}
+
+.sapMObjectNumberInverted {
+	box-sizing: border-box;
+	&:not(.sapMObjectNumberLarge) .sapMObjectNumberInner {
+		min-height: 0.875rem;
+		max-height: 0.875rem;
+		line-height: 0.75rem;
+	}
 }
 
 .sapMObjectNumberInverted .sapMObjectNumberInner {
@@ -23,6 +28,14 @@
 html.sap-desktop .sapMObjectNumberActive:focus {
 
 	.sapMObjectNumberInner::after {
+		top: -1px;
+		left: 1px;
+		bottom: -1px;
+		right: 1px;
+		outline: 2px dotted @sapUiContentFocusColor;
+	}
+
+	&.sapMObjectNumberInverted .sapMObjectNumberInner::after {
 		top: -2px;
 		left: 1px;
 		bottom: -2px;
