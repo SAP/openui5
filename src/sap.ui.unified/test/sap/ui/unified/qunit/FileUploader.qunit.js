@@ -794,6 +794,26 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Browse button tooltip", function(assert) {
+		var oFileUploader = new FileUploader({
+			buttonText: "Something"
+		});
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		assert.notOk(oFileUploader.oBrowse.getTooltip(), "It shouldn't have one while FileUploader has text");
+
+		oFileUploader.setIconOnly(true);
+		oFileUploader.setIcon("sap-icon://add");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oFileUploader.oBrowse.getTooltip(), oFileUploader.getBrowseText(),
+				"Once FileUploader becomes icon-only, then it should contain just the 'Browse...' text");
+
+		oFileUploader.destroy();
+	});
+
 	QUnit.test("Description for default FileUploader", function (assert) {
 		// Setup
 		var oFileUploader = new sap.ui.unified.FileUploader("fu"),
