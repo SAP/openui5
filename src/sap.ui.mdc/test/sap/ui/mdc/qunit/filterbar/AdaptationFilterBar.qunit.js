@@ -122,9 +122,10 @@ sap.ui.define([
 
 			//init AdaptationFilterBar
 			this.oAdaptationFilterBar.initialized().then(function(){
-				var oPropertyHelper = this.oTestTable.getPropertyHelper();
-				assert.deepEqual(this.oAdaptationFilterBar._aProperties.length, oPropertyHelper.getProperties().length, "Property info has been passed from the Parent");
-				done();
+				this.oTestTable.awaitPropertyHelper().then(function(oPropertyHelper){
+					assert.deepEqual(this.oAdaptationFilterBar._aProperties.length, oPropertyHelper.getProperties().length, "Property info has been passed from the Parent");
+					done();
+				}.bind(this));
 			}.bind(this));
 		}.bind(this));
 
