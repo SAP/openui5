@@ -18,7 +18,7 @@ sap.ui.define(function() {
 	 *
 	 * @enum {string}
 	 * @private
-	 * @ui5-restricted sap.ui.mdc
+	 * @ui5-restricted sap.fe
 	 * @since 1.78.0
 	 * @alias sap.ui.mdc.enum.ConditionValidated
 	 */
@@ -26,14 +26,14 @@ sap.ui.define(function() {
 		/**
 		 * Condition is not validated
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @ui5-restricted sap.fe
 		 */
 		NotValidated: "NotValidated",
 
 		/**
 		 * Condition is validated
 		 * @private
-		 * @ui5-restricted sap.ui.mdc
+		 * @ui5-restricted sap.fe
 		 */
 		Validated: "Validated"
 
