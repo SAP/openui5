@@ -7,25 +7,24 @@ sap.ui.define([
 	"sap/ui/rta/RuntimeAuthoring",
 	"qunit/RtaQunitUtils",
 	"sap/ui/fl/Utils",
-	"sap/ui/rta/Utils",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/Device",
 	"sap/m/Page",
 	"sap/m/Button",
 	"sap/ui/thirdparty/sinon-4",
 	"sap/ui/thirdparty/jquery"
-],
-function(
+], function(
 	ObjectPageSection,
 	ObjectPageSubSection,
 	ObjectPageLayout,
 	RuntimeAuthoring,
 	RtaQunitUtils,
 	FlexUtils,
-	Utils,
 	OverlayRegistry,
 	ChangeRegistry,
+	FieldExtensibility,
 	Device,
 	Page,
 	Button,
@@ -144,7 +143,7 @@ function(
 				oGroupElementOverlay.focus();
 				oGroupElementOverlay.setSelected(true);
 				// Fake Custom Fields Creation available
-				sandbox.stub(Utils, "isCustomFieldAvailable").resolves(true);
+				sandbox.stub(FieldExtensibility, "getExtensionData").resolves("foo");
 				// fake no Elements available
 				var oAdditionalElementsPlugin = this.oRta.getPlugins()["additionalElements"];
 				sandbox.stub(oAdditionalElementsPlugin, "_combineAnalyzerResults").resolves([]);

@@ -11,12 +11,10 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	jQuery("#qunit-fixture").hide();
-
 	var sandbox = sinon.sandbox.create();
 	var oTextResources = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 
-	function createDialog(bCFE) {
+	function createDialog() {
 		var aElements = [
 			{
 				selected: false,
@@ -61,23 +59,27 @@ sap.ui.define([
 				selected: false,
 				label: "label6",
 				tooltip: "tooltip6",
-				name : "field6",
+				name: "field6",
 				type: "delegate"
 			}
 		];
 
 		var oAddElementsDialog = new AddElementsDialog({
-			title: "hugo",
-			customFieldEnabled: bCFE
+			title: "hugo"
 		});
 
-		oAddElementsDialog.setElements(aElements);
-
-		return oAddElementsDialog;
+		return oAddElementsDialog._oInitPromise.then(function() {
+			oAddElementsDialog.setElements(aElements);
+			return oAddElementsDialog;
+		});
 	}
 
 	QUnit.module("Given that a AddElementsDialog is available...", {
-		beforeEach: function () {},
+		beforeEach: function() {
+			return createDialog().then(function(oAddElementsDialog) {
+				this.oAddElementsDialog = oAddElementsDialog;
+			}.bind(this));
+		},
 		afterEach: function () {
 			this.oAddElementsDialog.destroy();
 			sandbox.restore();
@@ -92,11 +94,8 @@ sap.ui.define([
 				})[0];
 			}
 
-			this.oAddElementsDialog = createDialog();
-
 			var oList = this.oAddElementsDialog.getList();
 			var sBindingPath = oList.getItems()[0].getBindingContext().getPath();
-
 
 			this.oAddElementsDialog.attachOpened(function() {
 				var oTargetItem = getItemByPath(oList.getItems(), sBindingPath);
@@ -117,8 +116,6 @@ sap.ui.define([
 		QUnit.test("when AddElementsDialog gets initialized and open is called,", function(assert) {
 			var done = assert.async();
 
-			this.oAddElementsDialog = createDialog();
-
 			this.oAddElementsDialog.attachOpened(function() {
 				assert.ok(true, "then dialog pops up,");
 				assert.equal(this.getTitle(), "hugo", "then the title is set");
@@ -135,8 +132,7 @@ sap.ui.define([
 		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and open is called", function(assert) {
 			var done = assert.async();
 
-			this.oAddElementsDialog = createDialog(true);
-
+			this.oAddElementsDialog.setCustomFieldEnabled(true);
 			this.oAddElementsDialog.attachOpenCustomField(function() {
 				assert.ok(true, "then the openCustomField event is fired");
 				done();
@@ -151,8 +147,7 @@ sap.ui.define([
 		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and no Bussiness Contexts are available", function(assert) {
 			var done = assert.async();
 
-			this.oAddElementsDialog = createDialog(true);
-
+			this.oAddElementsDialog.setCustomFieldEnabled(true);
 			this.oAddElementsDialog.attachOpened(function() {
 				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(this._oBCContainer.getContent().length, 2, "and the Business Context Container has two entries");
@@ -167,8 +162,7 @@ sap.ui.define([
 		QUnit.test("when AddElementsDialog gets initialized with customFieldsEnabled set and three Business Contexts are available", function(assert) {
 			var done = assert.async();
 
-			this.oAddElementsDialog = createDialog(true);
-
+			this.oAddElementsDialog.setCustomFieldEnabled(true);
 			this.oAddElementsDialog.attachOpened(function() {
 				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(this._oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
@@ -179,15 +173,17 @@ sap.ui.define([
 				done();
 			});
 			var aBusinessContexts = [
-				{BusinessContextDescription : "Business Context 1"},
-				{BusinessContextDescription : "Business Context 2"},
-				{BusinessContextDescription : "Business Context 3"}
+				{BusinessContextDescription: "Business Context 1"},
+				{BusinessContextDescription: "Business Context 2"},
+				{BusinessContextDescription: "Business Context 3"}
 			];
 			this.oAddElementsDialog.addBusinessContext(aBusinessContexts);
 			this.oAddElementsDialog.open();
 		});
 
 		QUnit.test("when AddElementsDialog gets closed and opened again with customFieldsEnabled set and available Business Contexts", function(assert) {
+			var done = assert.async();
+
 			function fnOnClose() {
 				this.oAddElementsDialog.attachEventOnce("opened", fnOnOpen);
 			}
@@ -200,13 +196,12 @@ sap.ui.define([
 				assert.equal(this._oBCContainer.getContent()[3].getText(), "Business Context 3", "and the fourth entry is the Third Business Context");
 				done();
 			}
-			var done = assert.async();
 
-			this.oAddElementsDialog = createDialog(true);
+			this.oAddElementsDialog.setCustomFieldEnabled(true);
 			var aBusinessContexts = [
-				{BusinessContextDescription : "Business Context 1"},
-				{BusinessContextDescription : "Business Context 2"},
-				{BusinessContextDescription : "Business Context 3"}
+				{BusinessContextDescription: "Business Context 1"},
+				{BusinessContextDescription: "Business Context 2"},
+				{BusinessContextDescription: "Business Context 3"}
 			];
 			this.oAddElementsDialog.addBusinessContext(aBusinessContexts);
 			this.oAddElementsDialog._oDialog.attachEventOnce("afterClose", fnOnClose, this);
@@ -222,8 +217,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when on opened AddElementsDialog OK is pressed,", function(assert) {
-			this.oAddElementsDialog = createDialog();
-
 			this.oAddElementsDialog.attachOpened(function() {
 				this._submitDialog();
 			});
@@ -234,8 +227,6 @@ sap.ui.define([
 		});
 
 		QUnit.test("when on opened AddElementsDialog Cancel is pressed,", function(assert) {
-			this.oAddElementsDialog = createDialog();
-
 			this.oAddElementsDialog.attachOpened(function() {
 				this._cancelDialog();
 			});
@@ -249,8 +240,6 @@ sap.ui.define([
 
 		QUnit.test("when on opened AddElementsDialog the list gets filtered via input", function(assert) {
 			var done = assert.async();
-
-			this.oAddElementsDialog = createDialog();
 
 			this.oAddElementsDialog.attachOpened(function () {
 				assert.equal(this._oList.getItems().length, 6, "then initially 6 entries are there");
@@ -273,8 +262,6 @@ sap.ui.define([
 		QUnit.test("when on opened AddElementsDialog the resort-button is pressed,", function (assert) {
 			var done = assert.async();
 
-			this.oAddElementsDialog = createDialog();
-
 			this.oAddElementsDialog.attachOpened(function() {
 				assert.equal(this._oList.getItems()[0].getContent()[0].getItems()[0].getText(), "label1", "then label1 is first");
 				this._resortList();
@@ -286,8 +273,6 @@ sap.ui.define([
 
 		QUnit.test("when unsupported element type is specified", function (assert) {
 			var fnDone = assert.async();
-			this.oAddElementsDialog = createDialog();
-
 			sandbox.stub(Log, "error")
 				.callThrough()
 				.withArgs(sinon.match("unsupported data type"))
@@ -301,5 +286,9 @@ sap.ui.define([
 				type: "unknown"
 			}]);
 		});
+	});
+
+	QUnit.done(function () {
+		jQuery("#qunit-fixture").hide();
 	});
 });

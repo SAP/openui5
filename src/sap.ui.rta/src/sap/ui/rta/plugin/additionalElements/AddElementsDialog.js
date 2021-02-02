@@ -2,47 +2,49 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/base/ManagedObject",
-	"sap/m/Label",
-	"sap/m/Dialog",
-	"sap/ui/model/json/JSONModel",
-	"sap/m/SearchField",
+	"sap/base/Log",
 	"sap/m/Button",
-	"sap/m/Toolbar",
+	"sap/m/CustomListItem",
+	"sap/m/Dialog",
+	"sap/m/Label",
+	"sap/m/library",
+	"sap/m/List",
+	"sap/m/SearchField",
+	"sap/m/Text",
 	"sap/m/ToolbarSpacer",
+	"sap/m/Toolbar",
+	"sap/m/ScrollContainer",
+	"sap/m/VBox",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/fl/write/api/FieldExtensibility",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
 	"sap/ui/model/FilterOperator",
-	"sap/m/List",
-	"sap/m/CustomListItem",
-	"sap/m/ScrollContainer",
 	"sap/ui/model/Sorter",
-	"sap/base/Log",
-	"sap/m/VBox",
-	"sap/ui/rta/Utils",
-	"sap/m/library",
-	"sap/ui/layout/VerticalLayout",
-	"sap/m/Text"
+	"sap/ui/rta/Utils"
 ], function(
-	ManagedObject,
-	Label,
-	Dialog,
-	JSONModel,
-	SearchField,
+	Log,
 	Button,
-	Toolbar,
+	ListItem,
+	Dialog,
+	Label,
+	mobileLibrary,
+	List,
+	SearchField,
+	Text,
 	ToolbarSpacer,
+	Toolbar,
+	ScrollContainer,
+	VBox,
+	ManagedObject,
+	FieldExtensibility,
+	VerticalLayout,
+	JSONModel,
 	Filter,
 	FilterOperator,
-	List,
-	ListItem,
-	ScrollContainer,
 	Sorter,
-	Log,
-	VBox,
-	Utils,
-	mobileLibrary,
-	VerticalLayout,
-	Text
+	Utils
 ) {
 	"use strict";
 
@@ -110,15 +112,18 @@ sap.ui.define([
 			elements: []
 		}));
 
-		var aContent = this._createContent();
-		var aButtons = this._createButtons();
-		aContent.forEach(function(oContent) {
-			this._oDialog.addContent(oContent);
-		}, this);
-		aButtons.forEach(function(oButton) {
-			this._oDialog.addButton(oButton);
-		}, this);
-		this._oDialog.setInitialFocus(this._oInput);
+		this._oInitPromise = FieldExtensibility.getTexts().then(function(oFieldExtensibilityTexts) {
+			var aContent = this._createContent(oFieldExtensibilityTexts);
+			var aButtons = this._createButtons();
+			aContent.forEach(function(oContent) {
+				this._oDialog.addContent(oContent);
+			}, this);
+			aButtons.forEach(function(oButton) {
+				this._oDialog.addButton(oButton);
+			}, this);
+			this._oDialog.setInitialFocus(this._oInput);
+		}.bind(this));
+		return this._oInitPromise;
 	};
 
 	AddElementsDialog.prototype.exit = function() {
@@ -131,7 +136,7 @@ sap.ui.define([
 	 * @returns {object} list containes inputList and oScrollContainer objects
 	 * @private
 	 */
-	AddElementsDialog.prototype._createContent = function() {
+	AddElementsDialog.prototype._createContent = function(oFieldExtensibilityTexts) {
 		// SearchField
 		this._oInput = new SearchField({
 			width : "100%",
@@ -149,7 +154,7 @@ sap.ui.define([
 		this._oCustomFieldButton = new Button({
 			text : "",
 			icon : "sap-icon://add",
-			tooltip : this._oTextResources.getText("BTN_FREP_CCF"),
+			tooltip : oFieldExtensibilityTexts.tooltip,
 			enabled : this.getCustomFieldEnabled(),
 			press : [this._redirectToCustomFieldCreation, this]
 		});
@@ -164,7 +169,7 @@ sap.ui.define([
 		this._oBCContainer = new VerticalLayout({
 			visible: this.getBusinessContextVisible(),
 			content: [new Text({
-				text: this._oTextResources.getText("BUSINESS_CONTEXT_TITLE")
+				text: oFieldExtensibilityTexts.headerText
 			})
 			]
 		}).addStyleClass("sapUIRtaBusinessContextContainer");

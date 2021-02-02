@@ -3,31 +3,31 @@
  */
 
 sap.ui.define([
-	"sap/ui/rta/plugin/Plugin",
+	"sap/base/util/restricted/_difference",
+	"sap/base/util/merge",
+	"sap/base/Log",
+	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/dt/ElementUtil",
 	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/rta/Utils",
-	"sap/ui/fl/Utils",
 	"sap/ui/dt/Util",
-	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/base/Log",
-	"sap/base/util/merge",
 	"sap/ui/fl/apply/api/DelegateMediatorAPI",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/base/util/restricted/_difference"
+	"sap/ui/fl/write/api/FieldExtensibility",
+	"sap/ui/fl/Utils",
+	"sap/ui/rta/plugin/Plugin",
+	"sap/ui/rta/Utils"
 ], function(
-	Plugin,
+	difference,
+	merge,
+	Log,
+	JsControlTreeModifier,
 	ElementUtil,
 	OverlayRegistry,
-	Utils,
-	FlUtils,
 	DtUtils,
-	ElementDesignTimeMetadata,
-	Log,
-	merge,
 	DelegateMediatorAPI,
-	JsControlTreeModifier,
-	difference
+	FieldExtensibility,
+	FlUtils,
+	Plugin,
+	Utils
 ) {
 	"use strict";
 
@@ -61,7 +61,6 @@ sap.ui.define([
 	function _defaultGetAggregationName(oParent, oChild) {
 		return oChild.sParentAggregationName;
 	}
-
 
 	function _getInvisibleElements (oParentOverlay, sAggregationName) {
 		var oParentElement = oParentOverlay.getElement();
@@ -737,25 +736,7 @@ sap.ui.define([
 		 *
 		 */
 		_onOpenCustomField : function () {
-			// open field ext ui
-			FlUtils.ifUShellContainerThen(function(aServices) {
-				var oCrossAppNav = aServices[0];
-				var sHrefForFieldExtensionUi = (oCrossAppNav && oCrossAppNav.hrefForExternal({
-					target : {
-						semanticObject : "CustomField",
-						action : "develop"
-					},
-					params : {
-						businessContexts : this._oCurrentFieldExtInfo.BusinessContexts.map(function(oBusinessContext) {
-							return oBusinessContext.BusinessContext;
-						}),
-						serviceName : this._oCurrentFieldExtInfo.ServiceName,
-						serviceVersion : this._oCurrentFieldExtInfo.ServiceVersion,
-						entityType : this._oCurrentFieldExtInfo.EntityType
-					}
-				}));
-				Utils.openNewWindow(sHrefForFieldExtensionUi);
-			}.bind(this), ["CrossApplicationNavigation"]);
+			return FieldExtensibility.onTriggerCreateExtensionData(this._oCurrentFieldExtInfo);
 		},
 
 		_createCommands : function(mParents, oSiblingElement, mActions, iIndex) {
@@ -1079,7 +1060,7 @@ sap.ui.define([
 
 				.then(function() {
 					if (mActions.addViaDelegate) {
-						return Utils.isExtensibilityEnabledInSystem(mParents.parent);
+						return FieldExtensibility.isExtensibilityEnabled(mParents.parent);
 					}
 					this.getDialog()._oCustomFieldButton.setVisible(false);
 				}.bind(this))
@@ -1088,7 +1069,7 @@ sap.ui.define([
 					if (mActions.addViaDelegate) {
 						this.getDialog()._oCustomFieldButton.setVisible(bExtensibilityEnabled);
 						this.getDialog().setCustomFieldEnabled(false);
-						return Utils.isCustomFieldAvailable(mParents.parent);
+						return FieldExtensibility.getExtensionData(mParents.parent);
 					}
 				}.bind(this))
 
@@ -1096,9 +1077,10 @@ sap.ui.define([
 					if (oCurrentFieldExtInfo) {
 						this._oCurrentFieldExtInfo = oCurrentFieldExtInfo;
 						this.getDialog().setCustomFieldEnabled(true);
+						// TODO change BusinessContexts to a more generic name
 						this.getDialog().addBusinessContext(this._oCurrentFieldExtInfo.BusinessContexts);
-						this.getDialog().detachEvent('openCustomField', this._onOpenCustomField, this);
-						this.getDialog().attachEvent('openCustomField', null, this._onOpenCustomField, this);
+						this.getDialog().detachEvent("openCustomField", this._onOpenCustomField, this);
+						this.getDialog().attachEvent("openCustomField", null, this._onOpenCustomField, this);
 					}
 				}.bind(this))
 

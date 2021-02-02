@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/fieldExt/Access",
+	"sap/ui/fl/write/_internal/fieldExtensibility/Access",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
 	"sap/ui/core/library"
@@ -67,6 +67,10 @@ sap.ui.define([
 					ServiceVersion: "some dummy ServiceVersion 0.0.1",
 					EntityType : sEntityTypeName
 				});
+			};
+
+			Access.isExtensibilityEnabled = function() {
+				return Promise.resolve(true);
 			};
 
 			sap.ushell = Object.assign({}, sap.ushell, {

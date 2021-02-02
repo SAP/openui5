@@ -3,22 +3,27 @@
  */
 
 sap.ui.define([
-	"sap/ui/util/Storage",
-	"sap/ui/fl/Utils",
 	"sap/base/security/encodeURLParameters",
+	"sap/base/Log",
+	"sap/ui/core/Core",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Utils",
+	"sap/ui/util/Storage",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	Storage,
-	Utils,
 	encodeURLParameters,
+	Log,
+	Core,
+	Settings,
+	Utils,
+	Storage,
 	jQuery
 ) {
 	"use strict";
 
 	/**
-	 * @namespace
-	 * @alias sap.ui.fl.fieldExt.Access
-	 * @experimental Since 1.25.0
+	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.Abap
+	 * @experimental Since 1.87.0
 	 * @author SAP SE
 	 * @version ${version}
 	 */
@@ -54,6 +59,84 @@ sap.ui.define([
 	 * This prevents storing more and more unused data.
 	 */
 	Access._iValidityPeriod = 1 * 7 * 24 * 60 * 60 * 1000; // 1 Week in ms
+
+	function getBoundEntityType(oElement, oModel) {
+		oModel = oModel || oElement.getModel();
+		var oBindingContext = oElement.getBindingContext();
+
+		if (oBindingContext && oModel.oMetadata) {
+			return oModel.oMetadata._getEntityTypeByPath(oBindingContext.getPath());
+		}
+		return {};
+	}
+
+	Access.getTexts = function() {
+		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
+		return {
+			tooltip: oResourceBundle.getText("BTN_FREP_CCF"),
+			headerText: oResourceBundle.getText("BUSINESS_CONTEXT_TITLE")
+		};
+	};
+
+	Access.isExtensibilityEnabled = function(oControl) {
+		var sComponentName = Utils.getComponentClassName(oControl);
+		if (!sComponentName) {
+			return Promise.resolve(false);
+		}
+		return Settings.getInstance(sComponentName).then(function(oSettings) {
+			return oSettings.isModelS();
+		});
+	};
+
+	Access.getExtensionData = function(oControl) {
+		var sServiceUrl = oControl.getModel().sServiceUrl;
+		var sEntityType = getBoundEntityType(oControl).name;
+		var $Deferred = false;
+		try {
+			$Deferred = Access.getBusinessContexts(sServiceUrl, sEntityType);
+		} catch (oError) {
+			Log.error("exception occured in sap.ui.fl.fieldExt.Access.getBusinessContexts", oError);
+		}
+
+		return Promise.resolve($Deferred).then(function(oResult) {
+			if (oResult && Array.isArray(oResult.BusinessContexts) && oResult.BusinessContexts.length > 0) {
+				oResult.EntityType = sEntityType;
+				return oResult;
+			}
+			return false;
+		})
+		.catch(function(oError) {
+			if (oError) {
+				if (Array.isArray(oError.errorMessages)) {
+					oError.errorMessages.forEach(function(oErrorMessage) {
+						Log.error(oErrorMessage.text);
+					});
+				}
+			}
+			return false;
+		});
+	};
+
+	Access.onTriggerCreateExtensionData = function(oExtensibilityInfo) {
+		Utils.ifUShellContainerThen(function(aServices) {
+			var oCrossAppNav = aServices[0];
+			var sHrefForFieldExtensionUi = (oCrossAppNav && oCrossAppNav.hrefForExternal({
+				target: {
+					semanticObject: "CustomField",
+					action: "develop"
+				},
+				params: {
+					businessContexts: oExtensibilityInfo.BusinessContexts.map(function(oBusinessContext) {
+						return oBusinessContext.BusinessContext;
+					}),
+					serviceName: oExtensibilityInfo.ServiceName,
+					serviceVersion: oExtensibilityInfo.ServiceVersion,
+					entityType: oExtensibilityInfo.EntityType
+				}
+			}));
+			Access.openNewWindow(sHrefForFieldExtensionUi);
+		}, ["CrossApplicationNavigation"]);
+	};
 
 	/**
 	 * Returns all Business Contexts for given service and EntityTypeName/EntitySetName. Note that either EntityTypeName or EntitySetName can be
@@ -112,6 +195,15 @@ sap.ui.define([
 	};
 
 	/**
+	 * Allows <code>window.open</code> to be stubbed in tests.
+	 *
+	 * @param {string} sUrl - URL string
+	 */
+	Access.openNewWindow = function(sUrl) {
+		window.open(sUrl, "_blank", "noopener noreferrer");
+	};
+
+	/**
 	 * Validates a given service. A valid service is not stale.
 	 *
 	 * A serviceInfo object is a string or an object which contains serviceName and serviceVersion.
@@ -135,7 +227,7 @@ sap.ui.define([
 
 	/**
 	 * Invalidates a given service.
-	 * Once a service has been validated oder invalidation period is over the service becomes valid again
+	 * Once a service has been validated or invalidation period is over the service becomes valid again
 	 *
 	 * A serviceInfo object is a string or an object which contains serviceName and serviceVersion.
 	 *

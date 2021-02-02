@@ -529,6 +529,17 @@ sap.ui.define([
 					}
 				}
 			},
+			"write/_internal/fieldExtensibility/Access": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/fieldExtensibility/Access"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
+					}
+				}
+			},
 			// Team Gravity tests
 			"descriptorRelated/api/Api": {
 				group: "Descriptor related APIs",
@@ -1003,12 +1014,6 @@ sap.ui.define([
 			},
 			"designtime/Library": {
 				group: "designTime"
-			},
-			"fieldExt/Access": {
-				group: "fieldExt",
-				coverage: {
-					only: ["sap/ui/fl/fieldExt/Access"]
-				}
 			},
 			"integration/async/ComponentWithView": {
 				group: "integration/async",

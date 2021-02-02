@@ -4,32 +4,28 @@
 
 sap.ui.define([
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/dt/OverlayUtil",
 	"sap/ui/dt/DOMUtil",
 	"sap/m/MessageBox",
 	"sap/ui/rta/util/BindingsExtractor",
-	"sap/base/Log",
-	"sap/base/util/UriParameters",
 	"sap/base/util/restricted/_omit",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Fragment"
 ],
 function(
 	jQuery,
+	FieldExtensibility,
 	FlexUtils,
 	Layer,
 	FlexLayerUtils,
-	Settings,
 	OverlayUtil,
 	DOMUtil,
 	MessageBox,
 	BindingsExtractor,
-	Log,
-	UriParameters,
 	_omit,
 	JSONModel,
 	Fragment
@@ -83,130 +79,25 @@ function(
 	};
 
 	/**
-	 * Utility function to check if extensibility is enabled in the current system
-	 *
-	 * @param {sap.ui.core.Control} oControl - Control to be checked
-	 * @returns {Promise} resolves a boolean
-	 */
-	Utils.isExtensibilityEnabledInSystem = function(oControl) {
-		var sComponentName = FlexUtils.getComponentClassName(oControl);
-		if (!sComponentName || sComponentName === "") {
-			return Promise.resolve(false);
-		}
-		return Settings.getInstance(sComponentName).then(function(oSettings) {
-			if (oSettings.isModelS) {
-				return oSettings.isModelS();
-			}
-			return false;
-		});
-	};
-
-	/**
 	 * Utility function to check if the OData service is updated in the meantime
 	 *
 	 * @param {sap.ui.core.Control} oControl - Control to be checked
 	 * @returns {Promise} resolves if service is up to date, rejects otherwise
 	 */
 	Utils.isServiceUpToDate = function(oControl) {
-		return this.isExtensibilityEnabledInSystem(oControl)
-
-		.then(function(bEnabled) {
+		return FieldExtensibility.isExtensibilityEnabled(oControl).then(function(bEnabled) {
 			if (bEnabled) {
-				return new Promise(function(fnResolve, fnReject) {
-					sap.ui.require([
-						"sap/ui/fl/fieldExt/Access"
-					], function(Access) {
-						var oModel = oControl.getModel();
-						if (oModel && oModel.sServiceUrl) {
-							var bServiceOutdated = Access.isServiceOutdated(oModel.sServiceUrl);
-							if (bServiceOutdated) {
-								Access.setServiceValid(oModel.sServiceUrl);
-								//needs FLP to trigger UI restart popup
-								sap.ui.getCore().getEventBus().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
-								return fnReject();
-							}
+				var oModel = oControl.getModel();
+				if (oModel && oModel.sServiceUrl) {
+					return FieldExtensibility.isServiceOutdated(oModel.sServiceUrl).then(function(bServiceOutdated) {
+						if (bServiceOutdated) {
+							FieldExtensibility.setServiceValid(oModel.sServiceUrl);
+							//needs FLP to trigger UI restart popup
+							sap.ui.getCore().getEventBus().publish("sap.ui.core.UnrecoverableClientStateCorruption", "RequestReload", {});
 						}
-						return fnResolve();
 					});
-				});
+				}
 			}
-		});
-	};
-
-	/**
-	 * Fetching entity metadata by specified path.
-	 * @param {sap.ui.model.Model} oModel - Model
-	 * @param {string} sPath Path to resolve
-	 * @returns {object|null} Plain object with entity description
-	 */
-	function getEntityTypeByPath (oModel, sPath) {
-		return oModel.oMetadata && oModel.oMetadata._getEntityTypeByPath(sPath);
-	}
-	/**
-	 * Get the entity type based on the binding of a control
-	 *
-	 * @param {sap.ui.core.Element} oElement - Any Object
-	 * @param {sap.ui.model.odata.ODataModel} oModel - Data model
-	 * @returns{object} Entity type without namespace
-	 */
-	function getBoundEntityType(oElement, oModel) {
-		oModel || (oModel = oElement.getModel());
-
-		var oBindingContext = oElement.getBindingContext();
-
-		if (oBindingContext) {
-			return getEntityTypeByPath(oModel, oBindingContext.getPath()) || {};
-		}
-		return {};
-	}
-	/**
-	 * Utility function to check via backend calls if the custom field button shall be enabled or not
-	 *
-	 * @param {sap.ui.core.Control} oControl - Control to be checked
-	 * @returns {Promise} Returns <boolean> value - true if CustomFieldCreation functionality is to be enabled, false if not
-	 */
-	Utils.isCustomFieldAvailable = function(oControl) {
-		return this.isExtensibilityEnabledInSystem(oControl)
-
-		.then(function(bShowCreateExtFieldButton) {
-			if (!bShowCreateExtFieldButton || !oControl.getModel()) {
-				return false;
-			}
-
-			return new Promise(function(fnResolve, fnReject) {
-				sap.ui.require([
-					"sap/ui/fl/fieldExt/Access"
-				], function(Access) {
-					var sServiceUrl = oControl.getModel().sServiceUrl;
-					var sEntityType = getBoundEntityType(oControl).name;
-					var $Deferred;
-					try {
-						$Deferred = Access.getBusinessContexts(sServiceUrl, sEntityType);
-					} catch (oError) {
-						Log.error("exception occured in sap.ui.fl.fieldExt.Access.getBusinessContexts", oError);
-						fnResolve(false);
-					}
-
-					return Promise.resolve($Deferred)
-					.then(function(oResult) {
-						if (oResult && Array.isArray(oResult.BusinessContexts) && oResult.BusinessContexts.length > 0) {
-							oResult.EntityType = sEntityType;
-							return fnResolve(oResult);
-						}
-						return fnResolve(false);
-					})
-					.catch(function(oError) {
-						if (oError) {
-							if (Array.isArray(oError.errorMessages)) {
-								for (var i = 0; i < oError.errorMessages.length; i++) {
-									Log.error(oError.errorMessages[i].text);
-								}
-							}
-						}
-						return fnResolve(false);
-					});
-				}, fnReject);
-			});
 		});
 	};
 
@@ -478,16 +369,6 @@ function(
 	 */
 	Utils.createFieldLabelId = function(oParentControl, sEntityType, sBindingPath) {
 		return (oParentControl.getId() + "_" + sEntityType + "_" + sBindingPath).replace("/", "_");
-	};
-
-
-	/**
-	 * Allow window.open to be stubbed in tests
-	 *
-	 * @param {string} sUrl - url string
-	 */
-	Utils.openNewWindow = function(sUrl) {
-		window.open(sUrl, "_blank", "noopener noreferrer");
 	};
 
 	/**

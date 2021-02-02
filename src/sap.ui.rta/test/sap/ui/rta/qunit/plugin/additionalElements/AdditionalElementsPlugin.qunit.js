@@ -1,62 +1,62 @@
 /*global QUnit */
 
 sap.ui.define([
+	"sap/base/util/includes",
+	"sap/base/util/isEmptyObject",
+	"sap/base/util/merge",
+	"sap/base/util/ObjectPath",
+	"sap/base/util/uid",
+	"sap/base/Log",
+	"sap/m/Bar",
+	"sap/m/Button",
+	"sap/m/Input",
+	"sap/ui/core/CustomData",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Util",
+	"sap/ui/fl/apply/api/DelegateMediatorAPI",
+	"sap/ui/fl/write/api/FieldExtensibility",
+	"sap/ui/fl/registry/ChangeRegistry",
+	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/registry/SimpleChanges",
+	"sap/ui/fl/Utils",
+	"sap/ui/layout/VerticalLayout",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsPlugin",
 	"sap/ui/rta/plugin/additionalElements/AdditionalElementsAnalyzer",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/ui/rta/plugin/Plugin",
-	"sap/ui/rta/command/CommandFactory",
 	"sap/ui/rta/Utils",
-	"sap/ui/layout/VerticalLayout",
-	"sap/m/Button",
-	"sap/m/Input",
-	"sap/m/Bar",
-	"sap/ui/dt/DesignTime",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/Util",
-	"sap/ui/fl/Utils",
-	"sap/ui/fl/registry/ChangeRegistry",
-	"sap/ui/fl/registry/SimpleChanges",
-	"sap/ui/fl/registry/Settings",
-	"sap/base/Log",
-	"sap/base/util/uid",
-	"sap/base/util/isEmptyObject",
-	"sap/base/util/merge",
-	"sap/base/util/includes",
-	"sap/ui/core/util/reflection/JsControlTreeModifier",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/fl/apply/api/DelegateMediatorAPI",
-	"sap/base/util/ObjectPath",
-	"sap/ui/core/CustomData",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
+	includes,
+	isEmptyObject,
+	merge,
+	ObjectPath,
+	uid,
+	Log,
+	Bar,
+	Button,
+	Input,
+	CustomData,
+	DesignTime,
+	OverlayRegistry,
+	DtUtil,
+	DelegateMediatorAPI,
+	FieldExtensibility,
+	ChangeRegistry,
+	Settings,
+	SimpleChanges,
+	FlexUtils,
+	VerticalLayout,
+	JSONModel,
+	CommandFactory,
 	AdditionalElementsPlugin,
 	AdditionalElementsAnalyzer,
 	AddElementsDialog,
 	RTAPlugin,
-	CommandFactory,
 	RTAUtils,
-	VerticalLayout,
-	Button,
-	Input,
-	Bar,
-	DesignTime,
-	OverlayRegistry,
-	DtUtil,
-	FlexUtils,
-	ChangeRegistry,
-	SimpleChanges,
-	Settings,
-	Log,
-	uid,
-	isEmptyObject,
-	merge,
-	includes,
-	JsControlTreeModifier,
-	JSONModel,
-	DelegateMediatorAPI,
-	ObjectPath,
-	CustomData,
 	sinon
 ) {
 	"use strict";
@@ -1788,7 +1788,7 @@ sap.ui.define([
 
 		QUnit.test("when the service is up to date and addViaDelegate action is available and extensibility is enabled in the system", function (assert) {
 			sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
-			sandbox.stub(RTAUtils, "isExtensibilityEnabledInSystem").resolves();
+			sandbox.stub(FieldExtensibility, "isExtensibilityEnabled").resolves();
 
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
@@ -1829,7 +1829,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when no addViaDelegate action is available", function (assert) {
-			var fnIsCustomFieldAvailableStub = sandbox.stub(RTAUtils, "isCustomFieldAvailable");
+			var oGetExtensionDataStub = sandbox.stub(FieldExtensibility, "getExtensionData");
 			return createOverlayWithAggregationActions.call(this, {
 				reveal: {
 					changeType: "unhideControl"
@@ -1840,23 +1840,22 @@ sap.ui.define([
 				}.bind(this))
 
 				.then(function () {
-					assert.ok(fnIsCustomFieldAvailableStub.notCalled, "then custom field enabling should not be asked");
+					assert.ok(oGetExtensionDataStub.notCalled, "then custom field enabling should not be asked");
 					assert.equal(this.oDialog.getCustomFieldEnabled(), false, "then in the dialog custom field is disabled");
 				}.bind(this));
 		});
 
 		QUnit.test("when addViaDelegate action is available and simulating a click on open custom field", function (assert) {
 			var done = assert.async();
-			var that = this;
 
 			var fnServiceUpToDateStub = sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
-			sandbox.stub(RTAUtils, "isCustomFieldAvailable").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
+			sandbox.stub(FieldExtensibility, "getExtensionData").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
 
-			sandbox.stub(RTAUtils, "openNewWindow").callsFake(function (sUrl) {
-				assert.equal(sUrl, that.STUB_EXTENSIBILITY_USHELL_URL,
+			sandbox.stub(FieldExtensibility, "onTriggerCreateExtensionData").callsFake(function (oExtensionData) {
+				assert.equal(oExtensionData, this.STUB_EXTENSIBILITY_BUSINESS_CTXT,
 					"then we are calling the extensibility tool with the correct parameter");
 				done();
-			});
+			}.bind(this));
 
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
@@ -1885,15 +1884,15 @@ sap.ui.define([
 			var done = assert.async();
 
 			sandbox.stub(RTAUtils, "isServiceUpToDate").resolves();
-			sandbox.stub(RTAUtils, "isCustomFieldAvailable").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
-			var onOpenCustomFieldSpy = sandbox.spy(this.oPlugin, "_onOpenCustomField");
+			sandbox.stub(FieldExtensibility, "getExtensionData").resolves(this.STUB_EXTENSIBILITY_BUSINESS_CTXT);
 			var showAvailableElementsSpy = sandbox.spy(this.oPlugin, "showAvailableElements");
 
-			sandbox.stub(RTAUtils, "openNewWindow").callsFake(function () {
-				assert.ok(onOpenCustomFieldSpy.calledOnce, "then the Custom Field Handler is only called once");
+			sandbox.stub(FieldExtensibility, "onTriggerCreateExtensionData").callsFake(function (oExtensionData) {
 				assert.ok(showAvailableElementsSpy.calledThrice, "then showAvailableElements is called 3 times");
+				assert.equal(oExtensionData, this.STUB_EXTENSIBILITY_BUSINESS_CTXT,
+					"then we are calling the extensibility tool with the correct parameter");
 				done();
-			});
+			}.bind(this));
 
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
