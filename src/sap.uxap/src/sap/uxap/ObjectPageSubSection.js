@@ -146,7 +146,7 @@ sap.ui.define([
 				 * Example:
 				 *
 				 * <pre>
-				 * <code> &lt;Panel class="sapUxAPObjectPageSubSectionAlignContent" width="auto"&gt;&lt;/Panel&gt; </code>
+				 * <code> &lt;Form class="sapUxAPObjectPageSubSectionAlignContent" width="auto"&gt;&lt;/Form&gt; </code>
 				 * </pre>
 				 *
 				 */
