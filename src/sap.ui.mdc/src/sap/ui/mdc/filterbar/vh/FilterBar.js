@@ -165,6 +165,8 @@ sap.ui.define(
 			if (this._oFilterBarLayout && this._oCollectiveSearch) {
 				this._oFilterBarLayout.insertControl(this._oCollectiveSearch, 0);
 			}
+
+			return this;
 		};
 
 		FilterBar.prototype.getCollectiveSearch = function () {

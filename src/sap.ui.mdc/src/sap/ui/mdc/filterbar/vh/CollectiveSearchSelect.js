@@ -291,11 +291,11 @@ sap.ui.define([
 				}
 				if (sSelectedKey) {
 					this.setSelectedItemKey(sSelectedKey);
+					this.oPopover.close();
 
 					this.fireEvent("select", {
 						key: sSelectedKey
 					});
-					this.oPopover.close();
 				}
 			}.bind(this)
 		});

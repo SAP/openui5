@@ -202,7 +202,6 @@ sap.ui.define([
 			var bShowFilterBar = this.getShowFilterbar();
 
 			if (this._oFilterbar) {
-				this._oFilterbar.removeStyleClass("sapMdcValueHelpPanelFilterbar");
 				if (this._bFilterbarParentSet) {
 					this._oFilterbar.setParent();
 					delete this._bFilterbarParentSet;
@@ -211,7 +210,6 @@ sap.ui.define([
 			this._oFilterbar = oFilterbar;
 
 			if (oFilterbar) {
-				oFilterbar.addStyleClass("sapMdcValueHelpPanelFilterbar");
 
 				if (!oFilterbar.getParent()) {
 					// if not in control tree set as child

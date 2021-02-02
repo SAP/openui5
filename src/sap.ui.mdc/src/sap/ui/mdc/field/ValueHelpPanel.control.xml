@@ -15,7 +15,7 @@
 					<!-- <ScrollContainer height="100%" width="100%" vertical="true" horizontal="false"> -->
 					<l:FixFlex minFlexSize="200px"> <!-- minHight for the Flex content Items Table -->
 						<l:fixContent>
-							<VBox id="filterbarVBox" visible="{$this>/_filterBarVisible}">
+							<VBox id="filterbarVBox" visible="{$this>/_filterBarVisible}" class="sapMdcValueHelpPanelFilterbar">
 								<!-- container for the Filterbar / advanced FilterFields -->
 							</VBox>
 						</l:fixContent>
