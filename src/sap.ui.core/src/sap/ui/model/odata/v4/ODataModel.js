@@ -1623,6 +1623,9 @@ sap.ui.define([
 	 *   An error response as sent from the OData server
 	 * @param {object[]} [oError.error.details]
 	 *   A list of detail messages sent from the OData server. These messages are reported, too.
+	 * @param {boolean} [oError.error.$ignoreTopLevel]
+	 *   Whether <code>oError.error</code> itself is not reported, but only the
+	 *   <code>oError.error.details</code>.
 	 * @param {string} [oError.requestUrl]
 	 *   The request URL of the failed OData request, added by the requestor; it is required to
 	 *   resolve a longtextUrl.
@@ -1707,7 +1710,9 @@ sap.ui.define([
 
 		if (oError.error) {
 			sResourcePath = oError.resourcePath && oError.resourcePath.split("?")[0];
-			addMessage(oError.error, 4 /* Error */, true);
+			if (!oError.error.$ignoreTopLevel) {
+				addMessage(oError.error, 4 /* Error */, true);
+			}
 			if (oError.error.details) {
 				oError.error.details.forEach(function (oMessage) {
 					addMessage(oMessage);

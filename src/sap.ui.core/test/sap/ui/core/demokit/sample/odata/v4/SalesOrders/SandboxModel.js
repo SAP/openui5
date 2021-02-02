@@ -374,7 +374,18 @@ sap.ui.define([
 				"PATCH SalesOrderList('0500000004')?custom-option=value" : [{
 					code : 400,
 					ifMatch : /{"Note":"RAISE_ERROR"}/g,
-					source : "PATCH-SalesOrderList('0500000004').Error.json"
+					message : {
+						error : {
+							code : "OO/000",
+							message : "Property `Note` value `RAISE_ERROR` not allowed!",
+							"@SAP__common.numericSeverity" : 4,
+							"@SAP__Common.longtextUrl" : "",
+							 // Note: we assume that it is the 2nd request in a change set
+							"@SAP__core.ContentID" : "1.0",
+							target : "Note",
+							details : []
+						}
+					}
 				}],
 				"PATCH SalesOrderList('0500000001')?custom-option=value" : [{
 					code : 204,

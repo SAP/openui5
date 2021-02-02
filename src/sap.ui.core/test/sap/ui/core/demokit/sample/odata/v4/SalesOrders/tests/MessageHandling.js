@@ -167,6 +167,8 @@ sap.ui.define([
 			// Error Messages
 			// PATCH scenario
 			Then.onTheMainPage.checkMessagesButtonCount(2); // still two for 0500000001
+			When.onTheMainPage.selectSalesOrder(3);
+			When.onTheMainPage.changeNoteInSalesOrders(3, "modified Note");
 			When.onTheMainPage.selectSalesOrder(4);
 			When.onTheMainPage.changeNoteInSalesOrders(4, "RAISE_ERROR");
 			When.onTheMainPage.pressSaveSalesOrdersButton();
@@ -240,16 +242,21 @@ sap.ui.define([
 			When.onTheSimulateDiscountDialog.close();
 
 			Then.onAnyPage.checkLog([{
-					component : "sap.ui.model.odata.v4.Context",
-					level : Log.Level.ERROR,
-					message: "Failed to update path /SalesOrderList('0500000004')/Note",
-					details : "Property `Note` value `RAISE_ERROR` not allowed!"
-				}, {
-					component : "sap.ui.model.odata.v4.ODataListBinding",
-					level : Log.Level.ERROR,
-					message: "POST on 'SalesOrderList('0500000004')/SO_2_SOITEM' failed"
-						+ "; will be repeated automatically",
-					details : "Value must be greater than 0"
+				component : "sap.ui.model.odata.v4.Context",
+				level : Log.Level.ERROR,
+				message: "Failed to update path /SalesOrderList('0500000003')/Note",
+				details : "Property `Note` value `RAISE_ERROR` not allowed!"
+			}, {
+				component : "sap.ui.model.odata.v4.Context",
+				level : Log.Level.ERROR,
+				message: "Failed to update path /SalesOrderList('0500000004')/Note",
+				details : "Property `Note` value `RAISE_ERROR` not allowed!"
+			}, {
+				component : "sap.ui.model.odata.v4.ODataListBinding",
+				level : Log.Level.ERROR,
+				message: "POST on 'SalesOrderList('0500000004')/SO_2_SOITEM' failed"
+					+ "; will be repeated automatically",
+				details : "Value must be greater than 0"
 			}, {
 				component : "sap.ui.model.odata.v4.ODataContextBinding",
 				level : Log.Level.ERROR,

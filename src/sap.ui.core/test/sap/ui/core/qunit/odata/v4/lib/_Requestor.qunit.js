@@ -1815,6 +1815,7 @@ sap.ui.define([
 			.then(unexpected, assertError));
 
 		this.mock(oRequestor).expects("sendBatch").rejects(oBatchError); // arguments don't matter
+		this.mock(_Helper).expects("decomposeError").never();
 
 		aPromises.push(oRequestor.processBatch("groupId").then(unexpected, function (oError) {
 			assert.strictEqual(oError, oBatchError);
@@ -1884,49 +1885,65 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("processBatch(...): error in change set", function (assert) {
-		var oError = {error : {message : "400 Bad Request"}},
+		var oCause = new Error(),
 			aBatchResult = [{
 				getResponseHeader : function () {
 					return "application/json";
 				},
 				headers : {"Content-Type" :"application/json"},
-				responseText : JSON.stringify(oError),
+				responseText : JSON.stringify({error : {message : "400 Bad Request"}}),
 				status : 400,
 				statusText : "Bad Request"
 			}],
+			oError0 = new Error("0"),
+			oError1 = new Error("1"),
 			oProduct = {},
 			aPromises = [],
-			oRequestor = _Requestor.create("/", oModelInterface);
-
-		function assertError(oResultError, sMessage) {
-			assert.ok(oResultError instanceof Error);
-			assert.strictEqual(oResultError.message, "400 Bad Request");
-			assert.strictEqual(oResultError.status, 400);
-			assert.strictEqual(oResultError.statusText, "Bad Request");
-		}
+			oRequestor = _Requestor.create("/", oModelInterface),
+			aRequests;
 
 		aPromises.push(oRequestor.request("PATCH", "ProductList('HT-1001')",
 				this.createGroupLock(), {"If-Match" : oProduct}, {Name : "foo"})
-			.then(undefined, assertError));
+			.catch(function (oError) {
+				assert.strictEqual(oError, oError0);
+			}));
 
 		aPromises.push(oRequestor.request("POST", "Unknown", this.createGroupLock(), undefined, {})
-			.then(undefined, assertError));
+			.catch(function (oError) {
+				assert.strictEqual(oError, oError1);
+			}));
 
 		aPromises.push(oRequestor.request("PATCH", "ProductList('HT-1001')",
 				this.createGroupLock(), {"If-Match" : oProduct}, {Name : "bar"})
-			.then(undefined, assertError));
+			.catch(function (oError) {
+				// PATCHes are merged and thus rejected with the same error
+				assert.strictEqual(oError, oError0);
+			}));
 
 		aPromises.push(oRequestor.request("GET", "ok", this.createGroupLock())
-			.then(undefined, function (oResultError) {
+			.catch(function (oResultError) {
 				assert.ok(oResultError instanceof Error);
 				assert.strictEqual(oResultError.message,
 					"HTTP request was not processed because the previous request failed");
 				assert.strictEqual(oResultError.$reported, true);
-				assertError(oResultError.cause);
+				assert.strictEqual(oResultError.cause, oCause);
 			}));
 
+		this.mock(oRequestor).expects("mergeGetRequests").withExactArgs(sinon.match.array)
+			.callsFake(function (aRequests0) {
+				aRequests = aRequests0;
+				return aRequests;
+			});
 		this.mock(oRequestor).expects("sendBatch").resolves(aBatchResult); // arguments don't matter
+		this.mock(_Helper).expects("createError")
+			.withExactArgs(aBatchResult[0], "Communication error", undefined, undefined)
+			.returns(oCause);
+		this.mock(_Helper).expects("decomposeError")
+			.withExactArgs(sinon.match.same(oCause), sinon.match(function (aChangeSetRequests) {
+				return aChangeSetRequests === aRequests[0];
+			})).returns([oError0, oError1]);
 
+		// code under test
 		aPromises.push(oRequestor.processBatch("groupId").then(function (oResult) {
 			assert.deepEqual(oResult, undefined);
 		}));

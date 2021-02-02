@@ -978,13 +978,18 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportError: JSON response, top-level unbound and details", function (assert) {
+[true, false].forEach(function (bIgnoreTopLevel) {
+	var sTitle = "reportError: JSON response, top-level unbound and details, $ignoreTopLevel = "
+			+ bIgnoreTopLevel;
+
+	QUnit.test(sTitle, function (assert) {
 		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 			sResourcePath = "/Product('1')",
 			oError = {
 				"error" : {
 					"@Common.longtextUrl" : "top/longtext",
 					"code" : "top",
+					"$ignoreTopLevel" : bIgnoreTopLevel,
 					"details" : [{
 						"@com.sap.vocabularies.Common.v1.longtextUrl" : "bound/longtext",
 						"@com.sap.vocabularies.Common.v1.numericSeverity" : 3,
@@ -1010,17 +1015,8 @@ sap.ui.define([
 			},
 			oHelperMock = this.mock(_Helper),
 			sLogMessage = "Failed to read path /Product('1')/Unknown",
-			oModel = this.createModel();
-
-		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
-		oHelperMock.expects("makeAbsolute")
-			.withExactArgs("top/longtext", oError.requestUrl)
-			.returns("/service/Product/top/longtext");
-		oHelperMock.expects("makeAbsolute")
-			.withExactArgs("bound/longtext", oError.requestUrl)
-			.returns("/service/Product/bound/longtext");
-		this.mock(oModel).expects("reportUnboundMessages")
-			.withExactArgs(sResourcePath, [{
+			oModel = this.createModel(),
+			aUnboundMessages = [{
 				code : oError.error.code,
 				longtextUrl : "/service/Product/top/longtext",
 				message : oError.error.message,
@@ -1035,7 +1031,20 @@ sap.ui.define([
 				technical : undefined,
 				"@$ui5.error" : sinon.match.same(oError),
 				"@$ui5.originalMessage" : sinon.match.same(oError.error.details[1])
-			}]);
+			}];
+
+		this.oLogMock.expects("error").withExactArgs(sLogMessage, oError.message, sClassName);
+		oHelperMock.expects("makeAbsolute")
+			.withExactArgs("top/longtext", oError.requestUrl)
+			.exactly(bIgnoreTopLevel ? 0 : 1)
+			.returns("/service/Product/top/longtext");
+		oHelperMock.expects("makeAbsolute")
+			.withExactArgs("bound/longtext", oError.requestUrl)
+			.returns("/service/Product/bound/longtext");
+		this.mock(oModel).expects("reportUnboundMessages")
+			.withExactArgs(sResourcePath, bIgnoreTopLevel
+				? aUnboundMessages.slice(1)
+				: aUnboundMessages);
 		this.mock(oModel).expects("reportBoundMessages")
 			.withExactArgs(sResourcePath, {
 				"" : [{
@@ -1063,6 +1072,7 @@ sap.ui.define([
 		// code under test
 		oModel.reportError(sLogMessage, sClassName, oError);
 	});
+});
 
 	//*********************************************************************************************
 	[{

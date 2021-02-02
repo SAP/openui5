@@ -231,10 +231,13 @@ sap.ui.define([
 	}
 
 	/**
-	 * Serializes the given array of request objects into $batch request body.
+	 * Serializes the given array of request objects into a $batch request body.
 	 *
 	 * @param {object[]} aRequests
-	 *   See parameter <code>aRequests</code> of serializeBatchRequest function
+	 *   An array consisting of request objects or arrays of request objects, in case requests need
+	 *   to be sent in scope of a change set. Change set requests are annotated with a property
+	 *   <code>$ContentID</code> containing the corresponding Content-ID from the serialized batch
+	 *   request body.
 	 * @param {number} [iChangeSetIndex]
 	 *   Is only specified if the function is called to serialize change sets and
 	 *   contains zero-based index of the change set within <code>aRequests</code> array.
@@ -261,7 +264,8 @@ sap.ui.define([
 				sUrl = oRequest.url;
 
 			if (bIsChangeSet) {
-				sContentIdHeader = "Content-ID:" + iRequestIndex + "." + iChangeSetIndex + "\r\n";
+				oRequest.$ContentID = iRequestIndex + "." + iChangeSetIndex;
+				sContentIdHeader = "Content-ID:" + oRequest.$ContentID + "\r\n";
 			}
 
 			aRequestBody = aRequestBody.concat("--", sBatchBoundary, "\r\n");
@@ -336,9 +340,10 @@ sap.ui.define([
 		 * mandatory headers for the batch request.
 		 *
 		 * @param {object[]} aRequests
-		 *  An array consisting of request objects <code>oRequest</code> or out of array(s)
-		 *  of request objects <code>oRequest</code>, in case requests need to be sent in scope of
-		 *  a change set. See example below.
+		 *   An array consisting of request objects or arrays of request objects, in case requests
+		 *   need to be sent in scope of a change set. See example below. Change set requests are
+		 *   annotated with a property <code>$ContentID</code> containing the corresponding
+		 *   Content-ID from the serialized batch request body.
 		 * @param {string} oRequest.method
 		 *   HTTP method, e.g. "GET"
 		 * @param {string} oRequest.url

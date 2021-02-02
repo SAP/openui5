@@ -326,6 +326,7 @@ sap.ui.define([
 				body : {"TEAM_ID" : "TEAM_01"}
 			}
 		]],
+		$ContentIDs : [["0.0", "1.0"]],
 		body : "--batch_id-0123456789012-345\r\n" +
 		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
 		"\r\n" +
@@ -407,6 +408,7 @@ sap.ui.define([
 				}
 			]
 		],
+		$ContentIDs : [[], ["0.1", "1.1"], [], ["0.3", "1.3"]],
 		body : "--batch_id-0123456789012-345\r\n" +
 		"Content-Type:application/http\r\n" +
 		"Content-Transfer-Encoding:binary\r\n" +
@@ -545,6 +547,7 @@ sap.ui.define([
 				}
 			}
 		],
+		$ContentIDs : [["0.0", "1.0"], ["0.1", "1.1", "2.1", "3.1"]],
 		body : "--batch_id-1450426018742-911\r\n" +
 		"Content-Type: multipart/mixed;boundary=changeset_id-1450426018742-912\r\n" +
 		"\r\n" +
@@ -642,6 +645,7 @@ sap.ui.define([
 				body : {"TEAM_ID" : "TEAM_03"}
 			}
 		]],
+		$ContentIDs : [["0.0"]],
 		body : "--batch_id-0123456789012-345\r\n" +
 		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
 		"\r\n" +
@@ -673,6 +677,7 @@ sap.ui.define([
 				body : {"TEAM_ID" : "TEAM_03"}
 			}
 		]],
+		$ContentIDs : [["0.0"]],
 		body : "--batch_id-0123456789012-345\r\n" +
 		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
 		"\r\n" +
@@ -706,6 +711,7 @@ sap.ui.define([
 				body : {"TEAM_ID" : "TEAM_03"}
 			}
 		]],
+		$ContentIDs : [["0.0"]],
 		body : "--batch_id-0123456789012-345\r\n" +
 		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
 		"\r\n" +
@@ -736,6 +742,7 @@ sap.ui.define([
 				body : {"TEAM_ID" : "TEAM_03"}
 			}
 		]],
+		$ContentIDs : [["0.0"]],
 		body : "--batch_id-0123456789012-345\r\n" +
 		"Content-Type: multipart/mixed;boundary=changeset_id-9876543210987-654\r\n" +
 		"\r\n" +
@@ -759,6 +766,14 @@ sap.ui.define([
 					oHelperMock = this.mock(_Helper),
 					aRequests = JSON.parse(JSON.stringify(oFixture.requests));
 
+				if (oFixture.$ContentIDs) {
+					oFixture.$ContentIDs.forEach(function (aContentIds, i) {
+						aContentIds.forEach(function (sContentID, j) {
+							oFixture.requests[i][j].$ContentID = sContentID;
+						});
+					});
+				}
+
 				if (oFixture.expectedBoundaryIDs) {
 					oFixture.expectedBoundaryIDs.forEach(function (oValue) {
 						oHelperMock.expects("uid").returns(oValue);
@@ -769,7 +784,8 @@ sap.ui.define([
 
 				oBatchRequest = _Batch.serializeBatchRequest(aRequests);
 
-				assert.deepEqual(aRequests, oFixture.requests, "input remained unchanged");
+				assert.deepEqual(aRequests, oFixture.requests,
+					"aRequests remained unchanged, apart from $ContentID");
 				assert.strictEqual(oBatchRequest.body, oFixture.body);
 				assert.strictEqual(oBatchRequest.headers["Content-Type"], oFixture["Content-Type"]);
 				assert.strictEqual(oBatchRequest.headers["MIME-Version"], oFixture["MIME-Version"]);
