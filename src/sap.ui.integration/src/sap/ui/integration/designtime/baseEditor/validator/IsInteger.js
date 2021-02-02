@@ -34,6 +34,10 @@ sap.ui.define([
 		 * @name sap.ui.integration.designtime.baseEditor.validator.IsInteger.validate
 		 */
 		validate: function (vValue) {
+			//format the value when updating a string parameter with digit value to integer
+			if (vValue !== undefined && vValue !== "") {
+				vValue = parseFloat(vValue);
+			}
 			return vValue === undefined
 				|| IsValidBinding.validate(vValue, { allowPlainStrings: false })
 				|| (!isNaN(vValue) && Number.isInteger(vValue));
