@@ -538,7 +538,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 */
-		getOrCreateExpandedOject : function (oAggregation, oGroupNode) {
+		getOrCreateExpandedObject : function (oAggregation, oGroupNode) {
 			var oCollapsed,
 				oExpanded = _Helper.getPrivateAnnotation(oGroupNode, "expanded");
 

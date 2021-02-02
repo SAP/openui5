@@ -1511,7 +1511,7 @@ sap.ui.define([
 		oCacheMock.expects("fetchValue").exactly(vHasCache === "expanding" ? 0 : 1)
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
 			.returns(SyncPromise.resolve(oGroupNode));
-		this.mock(_AggregationHelper).expects("getOrCreateExpandedOject")
+		this.mock(_AggregationHelper).expects("getOrCreateExpandedObject")
 			.exactly(vHasCache === "expanding" ? 0 : 1)
 			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(oGroupNode))
 			.returns(oExpanded);
@@ -1639,7 +1639,7 @@ sap.ui.define([
 		this.mock(oCache).expects("fetchValue")
 			.withExactArgs(sinon.match.same(_GroupLock.$cached), "~path~")
 			.returns(SyncPromise.resolve(oGroupNode));
-		this.mock(_AggregationHelper).expects("getOrCreateExpandedOject")
+		this.mock(_AggregationHelper).expects("getOrCreateExpandedObject")
 			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(oGroupNode))
 			.returns(oExpanded);
 		oUpdateAllExpectation = this.mock(_Helper).expects("updateAll")
