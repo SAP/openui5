@@ -589,6 +589,8 @@ sap.ui.define([
 			handleEnter: _handleEnter.bind(this),
 			handleContentPress: _handleContentPress.bind(this)
 		});
+
+		this._oCreateContentPromise = undefined;
 	};
 
 	FieldBase.prototype.exit = function() {
@@ -617,6 +619,7 @@ sap.ui.define([
 
 		this._oObserver.disconnect();
 		this._oObserver = undefined;
+		this._oCreateContentPromise = undefined;
 
 		var oFieldHelp = _getFieldHelp.call(this);
 		if (oFieldHelp) {
@@ -661,12 +664,7 @@ sap.ui.define([
 
 	FieldBase.prototype.onBeforeRendering = function() {
 
-		if (!this.bDelegateInitialized) {
-			// wait until delegate is loaded
-			this.awaitControlDelegate().then(function() { _createInternalContent.call(this); }.bind(this));
-			return;
-		}
-		_createInternalContent.call(this);
+		_createInternalContentWrapper.call(this);
 
 	};
 
@@ -1021,12 +1019,7 @@ sap.ui.define([
 
 		var fnUpdateInternalContent = function() {
 			if (this.getAggregation("_content", []).length > 0) {
-				if (!this.bDelegateInitialized) {
-					// wait until delegate is loaded
-					this.awaitControlDelegate().then(function() { _createInternalContent.call(this); }.bind(this));
-				} else {
-					_createInternalContent.call(this);
-				}
+					_createInternalContentWrapper.call(this);
 			}
 		};
 
@@ -1495,6 +1488,25 @@ sap.ui.define([
 		}
 	}
 
+	function _createInternalContentWrapper() {
+		var fnCreateInternalContent = function() {
+			if (!this.bDelegateInitialized) {
+				// wait until delegate is loaded
+				this.awaitControlDelegate().then(function() { _createInternalContent.call(this); }.bind(this));
+			} else {
+				_createInternalContent.call(this);
+			}
+		};
+
+		if (this._oCreateContentPromise) {
+			this._oCreateContentPromise.then(function() {
+				fnCreateInternalContent.call(this);
+			}.bind(this));
+		} else {
+			fnCreateInternalContent.call(this);
+		}
+	}
+
 	function _createInternalContent() {
 		var sEditMode = this.getEditMode();
 		var oContent = this.getContent();
@@ -1557,7 +1569,8 @@ sap.ui.define([
 			}
 
 			var sId = _getIdForInternalControl.call(this);
-			this._oContentFactory.createContent(oContentType, sContentMode, sId).then(function(aControls) {
+			this._oCreateContentPromise = this._oContentFactory.createContent(oContentType, sContentMode, sId);
+			this._oCreateContentPromise.then(function(aControls) {
 				for (var iIndex = 0; iIndex < aControls.length; iIndex++) {
 					var oControl = aControls[iIndex];
 					oControl.attachEvent("parseError", _handleParseError, this);
@@ -2674,16 +2687,17 @@ sap.ui.define([
 		var that = this;
 		oFieldInfo.isTriggerable().then(function(bTriggerable) {
 			that._bTriggerable = bTriggerable;
-			if (that.getAggregation("_content", []).length > 0 && that.getEditMode() === EditMode.Display) {
-				_createInternalContent.call(that);
+			var aContent = that.getAggregation("_content", []);
+			if (aContent.length > 0 && that.getEditMode() === EditMode.Display) {
+				_createInternalContentWrapper.call(that);
 				if (that._bTriggerable) {
-					var oLink = this.getAggregation("_content", [])[0];
+					var oLink = aContent[0];
 					oFieldInfo.getDirectLinkHrefAndTarget().then(function(oLinkItem) {
 						ContentFactory._updateLink(oLink, oLinkItem);
 					});
 				}
 			}
-		}.bind(this));
+		});
 	}
 
 	// TODO: better API?
