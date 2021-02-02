@@ -280,7 +280,7 @@ sap.ui.define([
 		if (vGroupNodeOrPath !== oGroupNode) {
 			// Note: this also prevents a 2nd expand of the same node
 			_Helper.updateAll(this.mChangeListeners, vGroupNodeOrPath, oGroupNode,
-				_AggregationHelper.getOrCreateExpandedOject(this.oAggregation, oGroupNode));
+				_AggregationHelper.getOrCreateExpandedObject(this.oAggregation, oGroupNode));
 		} // else: no update needed!
 
 		if (aSpliced) {

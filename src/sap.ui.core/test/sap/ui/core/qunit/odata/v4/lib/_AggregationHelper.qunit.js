@@ -1252,7 +1252,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [undefined, false, true].forEach(function (bSubtotalsAtBottomOnly, i) {
-	var sTitle = "getOrCreateExpandedOject: subtotalsAtBottomOnly = " + bSubtotalsAtBottomOnly;
+	var sTitle = "getOrCreateExpandedObject: subtotalsAtBottomOnly = " + bSubtotalsAtBottomOnly;
 
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = {subtotalsAtBottomOnly : bSubtotalsAtBottomOnly},
@@ -1267,7 +1267,7 @@ sap.ui.define([
 				/*oCollapsed*/sinon.match.object, i === 2 ? /*oExpanded*/sinon.match.object : null);
 
 		// code under test (1st time)
-		oExpanded = _AggregationHelper.getOrCreateExpandedOject(oAggregation, oGroupNode);
+		oExpanded = _AggregationHelper.getOrCreateExpandedObject(oAggregation, oGroupNode);
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "expanded"), oExpanded);
 		assert.deepEqual(oExpanded, {"@$ui5.node.isExpanded" : true});
@@ -1282,7 +1282,7 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test (2nd time)
-			_AggregationHelper.getOrCreateExpandedOject(oAggregation, oGroupNode),
+			_AggregationHelper.getOrCreateExpandedObject(oAggregation, oGroupNode),
 			oExpanded);
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "collapsed"), oCollapsed);
