@@ -541,4 +541,35 @@ sap.ui.define([
 		assert.strictEqual(this.oPI.getDisplayValue(), this.oPI._oPopoverText.getText(),
 			"The text inside the popover is synced with the displayValue text after updating the displayValue property of the ProgressIndicator.");
 	});
+
+	QUnit.module("Value state");
+		QUnit.test("enabled set to false", function(assert) {
+			// system under test
+			var oProgInd = new ProgressIndicator({
+				width: "50%",
+				percentValue : 30,
+				enabled: false,
+				state: ValueState.Error
+			}),
+			oProgIndBar = document.getElementsByClassName("sapMPIBar");
+
+			// act
+			oProgInd.placeAt("content");
+			Core.applyChanges();
+
+			// assert
+			assert.notOk(jQuery(oProgIndBar).hasClass("sapMPIBarNegative"));
+
+			// act
+			oProgInd.setEnabled(true);
+			Core.applyChanges();
+
+			// assert
+			assert.ok(jQuery(oProgIndBar).hasClass("sapMPIBarNegative"));
+
+			// cleanup
+			oProgInd.destroy();
+
+		});
+
 });

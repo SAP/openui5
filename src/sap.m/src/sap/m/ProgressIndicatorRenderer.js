@@ -33,7 +33,8 @@ sap.ui.define(["sap/ui/core/library"],
 			bShowText = oControl.getShowValue(),
 			sState = oControl.getState(),
 			sTextDirectionLowerCase = oControl.getTextDirection().toLowerCase(),
-			sControlId = oControl.getId();
+			sControlId = oControl.getId(),
+			bEnabled = oControl.getEnabled();
 
 		// PI container
 		oRm.openStart("div", oControl);
@@ -76,23 +77,28 @@ sap.ui.define(["sap/ui/core/library"],
 		oRm.openStart("div", sControlId + "-bar");
 		oRm.class("sapMPIBar");
 
-		switch (sState) {
-		case ValueState.Warning:
-			oRm.class("sapMPIBarCritical");
-			break;
-		case ValueState.Error:
-			oRm.class("sapMPIBarNegative");
-			break;
-		case ValueState.Success:
-			oRm.class("sapMPIBarPositive");
-			break;
-		case ValueState.Information:
-			oRm.class("sapMPIBarInformation");
-			break;
-		default:
+		if (bEnabled) {
+			switch (sState) {
+				case ValueState.Warning:
+					oRm.class("sapMPIBarCritical");
+					break;
+				case ValueState.Error:
+					oRm.class("sapMPIBarNegative");
+					break;
+				case ValueState.Success:
+					oRm.class("sapMPIBarPositive");
+					break;
+				case ValueState.Information:
+					oRm.class("sapMPIBarInformation");
+					break;
+				default:
+					oRm.class("sapMPIBarNeutral");
+					break;
+				}
+		} else {
 			oRm.class("sapMPIBarNeutral");
-			break;
 		}
+
 
 		oRm.style("flex-basis", fPercentValue + "%");
 		oRm.openEnd();
