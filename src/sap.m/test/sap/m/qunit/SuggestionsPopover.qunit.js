@@ -219,4 +219,27 @@ sap.ui.define([
 		oInput.destroy();
 		oSuggPopover.destroy();
 	});
+
+	QUnit.test("Navigating through GroupItems should deselect items from the list", function (assert) {
+		var oSuggPopover, oInput, oListItem, oList, oListSpy;
+
+		// Setup
+		oListItem = new sap.m.GroupHeaderListItem();
+		oInput = new Input();
+		oSuggPopover = oInput._getSuggestionsPopover();
+		oSuggPopover.initContent();
+		sap.ui.getCore().applyChanges();
+
+		oList = oSuggPopover.getItemsContainer();
+		oListSpy = this.spy(oList, "removeSelections");
+
+		// Act
+		oSuggPopover.handleSelectionFromList(oListItem);
+
+		// Assert
+		assert.ok(oListSpy.calledWith(true), "Clear the Selections from list");
+
+		// Cleanup
+		oInput.destroy();
+	});
 });
