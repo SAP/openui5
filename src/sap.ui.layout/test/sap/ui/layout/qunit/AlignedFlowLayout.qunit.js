@@ -506,7 +506,13 @@ sap.ui.require([
 
 					// assert
 					var sMessage = "a function call to the .reflow() method should not be" +
-                    " triggered when the height of the layout control changes";
+					" triggered when the height of the layout control changes";
+
+					if (oReflowSpy.callCount) {
+						assert.strictEqual(window.devicePixelRatio, 1, "Test will fail because of unexpected devicePixelRatio");
+					}
+
+
 					assert.strictEqual(oReflowSpy.callCount, 0, sMessage);
 
 					// cleanup
@@ -574,6 +580,11 @@ sap.ui.require([
 					var sMessage = "a function call to the .reflow() method should not be" +
 					" triggered when the height of the item holding the `endContent` aggregation" +
 					" changes";
+
+					if (oReflowSpy.callCount) {
+						assert.strictEqual(window.devicePixelRatio, 1, "Test will fail because of unexpected devicePixelRatio");
+					}
+
 					assert.strictEqual(oReflowSpy.callCount, 0, sMessage);
 
 					// cleanup
