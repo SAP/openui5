@@ -1324,7 +1324,8 @@ sap.ui.define([
 			}
 
 			if (this.bDelegateInitialized) {
-				var oPromise = this.getControlDelegate().contentRequest(this.getPayload(), this, bSuggestion);
+				var oProperties = this._getContenRequestProperties(bSuggestion);
+				var oPromise = this.getControlDelegate().contentRequest(this.getPayload(), this, bSuggestion, oProperties);
 				if (oPromise instanceof Promise) {
 					this._oContentRequestPromise = oPromise;
 
@@ -1350,6 +1351,19 @@ sap.ui.define([
 
 		return true;
 
+	};
+
+	/**
+	 * Gets the field help specific properties for <code>contentRequest</code> function of the delegate.
+	 *
+	 * @param {boolean} bSuggestion Flag if field help is opened for a suggestion or for ValueHelp
+	 * @returns {object} Object with properties
+	 * @private
+	 * @ui5-restricted to be enhanced by field helps inherit from FieldHelp
+	 * @since 1.87.0
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldHelpBase.prototype._getContenRequestProperties = function(bSuggestion) {
 	};
 
 	// delegate-handling for getTextForKey and getKeyForText
