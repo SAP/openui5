@@ -102,6 +102,7 @@ sap.ui.define([
 	 */
 	AdaptationFilterBar.prototype.setP13nModel = function(oP13nModel) {
 		this.oAdaptationModel = oP13nModel;
+		this._oFilterBarLayout.update();
 	};
 
 	AdaptationFilterBar.prototype.getP13nModel = function(oP13nModel) {

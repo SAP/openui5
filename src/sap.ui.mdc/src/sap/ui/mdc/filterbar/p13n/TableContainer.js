@@ -55,5 +55,9 @@ sap.ui.define([
 		return this.oLayout.getItems();
 	};
 
+	TableContainer.prototype.update = function() {
+		//Called when the UI model is being set - trigger update logic here
+	};
+
 	return TableContainer;
 });

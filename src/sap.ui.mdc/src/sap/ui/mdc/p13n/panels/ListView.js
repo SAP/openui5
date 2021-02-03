@@ -100,29 +100,10 @@ sap.ui.define([
         this._bShowFactory = false;
         this.displayColumns();
 
-        var that = this;
-
         if (this.getEnableReorder()) {
 
             oListViewTemplate.addEventDelegate({
-                onmouseover: function(oEvt){
-
-                    var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
-                    that.removeMoveButtons();
-
-                    if (that._oSelectedItem && that._oSelectedItem.getBindingContextPath()){
-                        var bVisible = !!that.getP13nModel().getProperty(that._oSelectedItem.getBindingContextPath()).isFiltered;
-                        var oOldIcon = that._oSelectedItem.getCells()[1].getItems()[0];
-                        oOldIcon.setVisible(bVisible);
-                    }
-
-                    var oIcon = oHoveredItem.getCells()[1].getItems()[0];
-                    oIcon.setVisible(false);
-                    that._oSelectedItem = oHoveredItem;
-                    that._updateEnableOfMoveButtons(oHoveredItem, false);
-                    that._addMoveButtons(oHoveredItem);
-                }
-
+                onmouseover: this._hoverHandler.bind(this)
             });
 
             this._setMoveButtonVisibility(true);
@@ -132,14 +113,52 @@ sap.ui.define([
 
     };
 
-    ListView.prototype.removeMoveButtons = function() {
-        if ((!this._oSelectedItem) || (!this._oSelectedItem.getCells()[1])){
+    ListView.prototype._hoverHandler = function(oEvt) {
+        //Only use hover if no item has been selected yet
+        if (this._oSelectedItem && !this._oSelectedItem.bIsDestroyed) {
             return;
         }
-        this._oSelectedItem.getCells()[1].removeItem(this._getMoveTopButton());
-        this._oSelectedItem.getCells()[1].removeItem(this._getMoveUpButton());
-        this._oSelectedItem.getCells()[1].removeItem(this._getMoveDownButton());
-        this._oSelectedItem.getCells()[1].removeItem(this._getMoveBottomButton());
+
+        //(new) hovered item
+        var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
+
+        //remove move buttons if unselected item is hovered (not covered by updateStarted)
+        this.removeMoveButtons();
+
+        //Check if the prior hovered item had a visible icon and renable it if required
+        if (this._oHoveredItem && this._oHoveredItem.getBindingContextPath()){
+            var bVisible = !!this.getP13nModel().getProperty(this._oHoveredItem.getBindingContextPath()).isFiltered;
+            var oOldIcon = this._oHoveredItem.getCells()[1].getItems()[0];
+            oOldIcon.setVisible(bVisible);
+        }
+
+        //Store (new) hovered item and set its icon to visible: false + add move buttons to it
+        var oIcon = oHoveredItem.getCells()[1].getItems()[0];
+        oIcon.setVisible(false);
+        this._oHoveredItem = oHoveredItem;
+        this._updateEnableOfMoveButtons(oHoveredItem, false);
+        this._addMoveButtons(oHoveredItem);
+    };
+
+    ListView.prototype.removeMoveButtons = function() {
+        var oMoveButtonBox = this._getMoveButtonContainer();
+
+        if (oMoveButtonBox){
+            oMoveButtonBox.removeItem(this._getMoveTopButton());
+            oMoveButtonBox.removeItem(this._getMoveUpButton());
+            oMoveButtonBox.removeItem(this._getMoveDownButton());
+            oMoveButtonBox.removeItem(this._getMoveBottomButton());
+        }
+
+    };
+
+    ListView.prototype._getMoveButtonContainer = function() {
+        if (this._oMoveBottomButton &&
+            this._oMoveBottomButton.getParent() &&
+            this._oMoveBottomButton.getParent().isA("sap.m.FlexBox")
+        ){
+            return this._oMoveBottomButton.getParent();
+        }
     };
 
     ListView.prototype.showFactory = function(bShow) {
@@ -176,14 +195,24 @@ sap.ui.define([
 
     };
 
-    ListView.prototype._onItemPressed = function(){
-        BasePanel.prototype._onItemPressed.apply(this, arguments);
-        this._addMoveButtons();
+    ListView.prototype._onItemPressed = function(oEvent){
+        var oTableItem = oEvent.getParameter('listItem');
+
+        //Ignore unselected items --> BasePanel move mode only expects selected items
+        if (oTableItem.getBindingContext(this.P13N_MODEL).getProperty("selected")){
+            BasePanel.prototype._onItemPressed.apply(this, arguments);
+            this._addMoveButtons(this._oSelectedItem);
+        }
+    };
+
+    ListView.prototype._moveSelectedItem = function(){
+        this._oSelectedItem = this._getMoveButtonContainer().getParent();
+        BasePanel.prototype._moveSelectedItem.apply(this, arguments);
     };
 
     ListView.prototype._moveTableItem = function(){
-        this.removeMoveButtons();
         BasePanel.prototype._moveTableItem.apply(this, arguments);
+        this._addMoveButtons(this._oSelectedItem);
     };
 
 	ListView.prototype.getShowFactory = function() {
@@ -263,8 +292,8 @@ sap.ui.define([
         this._oListControl.getBinding("items").filter(aFilter, true);
 	};
 
-    ListView.prototype._addMoveButtons = function() {
-        var oTableItem = this._oSelectedItem;
+    ListView.prototype._addMoveButtons = function(oItem) {
+        var oTableItem = oItem;
         if (!oTableItem){
             return;
         }
@@ -282,6 +311,7 @@ sap.ui.define([
     ListView.prototype.exit = function() {
         BasePanel.prototype.exit.apply(this, arguments);
         this._aInitializedFields = null;
+        this._oHoveredItem = null;
         this._bShowFactory = null;
     };
 
