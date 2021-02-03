@@ -241,14 +241,16 @@ sap.ui.define([
 				oIN = oTable._getItemNavigation(),
 				bIsRowChanged = false,
 				bIsColChanged = false,
-				bIsInitial = false;
+				bIsInitial = false,
+				bHasRowHeader = TableUtils.hasRowHeader(oTable),
+				bHasRowActions = TableUtils.hasRowActions(oTable);
 
 			if (oIN) {
 				// +1 -> we want to announce a count and not the index, the action column is handled like a normal column
-				var iColumnNumber = ExtensionHelper.getColumnIndexOfFocusedCell(oExtension) + 1;
+				var iColumnNumber = ExtensionHelper.getColumnIndexOfFocusedCell(oExtension) + 1 + (bHasRowHeader ? 1 : 0);
 				// same here + take virtualization into account
 				var iRowNumber = TableUtils.getRowIndexOfFocusedCell(oTable) + oTable._getFirstRenderedRowIndex() + 1;
-				var iColCount = TableUtils.getVisibleColumnCount(oTable) + (TableUtils.hasRowActions(oTable) ? 1 : 0);
+				var iColCount = TableUtils.getVisibleColumnCount(oTable) + (bHasRowHeader ? 1 : 0) + (bHasRowActions ? 1 : 0);
 				var iRowCount = TableUtils.isNoDataVisible(oTable) ? 0 : Math.max(oTable._getTotalRowCount(), oTable._getRowCounts().count);
 
 				bIsRowChanged = oExtension._iLastRowNumber != iRowNumber || (oExtension._iLastRowNumber == iRowNumber
@@ -256,7 +258,7 @@ sap.ui.define([
 				bIsColChanged = oExtension._iLastColumnNumber != iColumnNumber;
 				bIsInitial = oExtension._iLastRowNumber == null && oExtension._iLastColumnNumber == null;
 
-				oTable.$("rownumberofrows").text(bIsRowChanged ? TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [iRowNumber, iRowCount]) : " ");
+				oTable.$("rownumberofrows").text(bIsRowChanged && iRowNumber > 0 ? TableUtils.getResourceText("TBL_ROW_ROWCOUNT", [iRowNumber, iRowCount]) : " ");
 				oTable.$("colnumberofcols").text(bIsColChanged ? TableUtils.getResourceText("TBL_COL_COLCOUNT", [iColumnNumber, iColCount]) : " ");
 				oTable.$("ariacount").text(bIsInitial ? TableUtils.getResourceText("TBL_DATA_ROWS_COLS", [iRowCount, iColCount]) : " ");
 
@@ -438,7 +440,7 @@ sap.ui.define([
 			var $Cell = oCellInfo.cell;
 			var oRow = oTable.getRows()[oCellInfo.rowIndex];
 			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.ROWHEADER)["aria-labelledby"] || [];
-			var aLabels = aDefaultLabels.concat([sTableId + "-rownumberofrows"]);
+			var aLabels = aDefaultLabels.concat([sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"]);
 
 			if (!oRow.isSummary() && !oRow.isGroupHeader()) {
 				if (!oRow.isContentHidden()) {
@@ -619,10 +621,10 @@ sap.ui.define([
 
 			switch (sType) {
 				case AccExtension.ELEMENTTYPES.COLUMNROWHEADER:
-					mAttributes["aria-labelledby"] = [sTableId + "-ariacolrowheaderlabel"];
 					var mRenderConfig = oTable._getSelectionPlugin().getRenderConfig();
 
 					if (mRenderConfig.headerSelector.visible) {
+						mAttributes["aria-colindex"] = 1;
 						if (mRenderConfig.headerSelector.type === "toggle") {
 							mAttributes["role"] = ["checkbox"];
 							if (mParams && mParams.enabled) {
@@ -636,20 +638,18 @@ sap.ui.define([
 						}
 					}
 					if (!oTable._getShowStandardTooltips() && mRenderConfig.headerSelector.type === "toggle") {
-						mAttributes["aria-labelledby"].push(sTableId + "-ariaselectall");
+						mAttributes["aria-labelledby"] = [sTableId + "-ariaselectall"];
 					}
 					break;
 
 				case AccExtension.ELEMENTTYPES.ROWHEADER:
-					mAttributes["role"] = "rowheader";
-					if (Device.browser.msie) {
-						mAttributes["aria-labelledby"] = [sTableId + "-ariarowheaderlabel"];
-					}
+					mAttributes["role"] = "gridcell";
+					mAttributes["aria-colindex"] = 1;
 					break;
 
 				case AccExtension.ELEMENTTYPES.ROWACTION:
 					mAttributes["role"] = "gridcell";
-					mAttributes["aria-colindex"] = oTable._getVisibleColumns().length + 1;
+					mAttributes["aria-colindex"] = oTable._getVisibleColumns().length + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
 					mAttributes["aria-labelledby"] = [sTableId + "-rowacthdr"];
 					break;
 
@@ -658,7 +658,7 @@ sap.ui.define([
 					var bHasColSpan = mParams && mParams.colspan;
 
 					mAttributes["role"] = "columnheader";
-					mAttributes["aria-colindex"] = mParams.index + 1;
+					mAttributes["aria-colindex"] = mParams.index + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
 					var aLabels = [];
 
 					if (mParams && mParams.headerId) {
@@ -686,7 +686,7 @@ sap.ui.define([
 
 				case AccExtension.ELEMENTTYPES.DATACELL:
 					mAttributes["role"] = "gridcell";
-					mAttributes["aria-colindex"] = mParams.index + 1;
+					mAttributes["aria-colindex"] = mParams.index + 1 + (TableUtils.hasRowHeader(oTable) ? 1 : 0);
 
 					var aLabels = [],
 						oColumn = mParams && mParams.column ? mParams.column : null;
@@ -762,7 +762,7 @@ sap.ui.define([
 					}
 
 					mAttributes["aria-rowcount"] = oTable._getTotalRowCount();
-					mAttributes["aria-colcount"] = oTable._getVisibleColumns().length + (bHasRowActions ? 1 : 0);
+					mAttributes["aria-colcount"] = oTable._getVisibleColumns().length + (bHasRowHeader ? 1 : 0) + (bHasRowActions ? 1 : 0);
 
 					if (oTable.isA("sap.ui.table.AnalyticalTable")) {
 						mAttributes["aria-roledescription"] = TableUtils.getResourceText("TBL_ANALYTICAL_TABLE_ROLE_DESCRIPTION");

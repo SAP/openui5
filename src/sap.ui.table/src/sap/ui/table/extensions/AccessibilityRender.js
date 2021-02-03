@@ -90,16 +90,12 @@ sap.ui.define([
 				sSelectAllResourceTextID = "TBL_DESELECT_ALL";
 			}
 			_writeAccText(oRm, sTableId, "ariaselectall", TableUtils.getResourceText(sSelectAllResourceTextID));
-			// aria label for row headers
-			_writeAccText(oRm, sTableId, "ariarowheaderlabel", TableUtils.getResourceText("TBL_ROW_HEADER_LABEL"));
 			// aria label for group rows
 			_writeAccText(oRm, sTableId, "ariarowgrouplabel", TableUtils.getResourceText("TBL_ROW_GROUP_LABEL"));
 			// aria label for grand total sums
 			_writeAccText(oRm, sTableId, "ariagrandtotallabel", TableUtils.getResourceText("TBL_GRAND_TOTAL_ROW"));
 			// aria label for group total sums
 			_writeAccText(oRm, sTableId, "ariagrouptotallabel", TableUtils.getResourceText("TBL_GROUP_TOTAL_ROW"));
-			// aria label for column row header
-			_writeAccText(oRm, sTableId, "ariacolrowheaderlabel", TableUtils.getResourceText("TBL_ROW_COL_HEADER_LABEL"));
 			// aria description for table row count
 			_writeAccText(oRm, sTableId, "rownumberofrows");
 			// aria description for table column count

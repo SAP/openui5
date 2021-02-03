@@ -712,12 +712,9 @@ sap.ui.define([
 				aLabels.push(oTable.getId() + "-ariaselection");
 			}
 
-			if (Device.browser.msie) {
-				aLabels.push(oTable.getId() + "-ariarowheaderlabel");
-			}
-
 			if (bFocus) {
 				aLabels.push(oTable.getId() + "-rownumberofrows");
+				aLabels.push(oTable.getId() + "-colnumberofcols");
 				if (bGroup) {
 					aLabels.push(oTable.getId() + "-ariarowgrouplabel");
 					aLabels.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
@@ -891,7 +888,7 @@ sap.ui.define([
 
 		$Elem = oTable.$("rowsel0");
 		assert.strictEqual($Elem.parent().attr("role"), "row", "parent role");
-		assert.strictEqual($Elem.attr("role"), "rowheader", "role");
+		assert.strictEqual($Elem.attr("role"), "gridcell", "role");
 		checkAriaSelected($Elem.attr("aria-selected"), true, assert);
 
 		$Elem = oTable.$("rowsel1");
@@ -1238,15 +1235,13 @@ sap.ui.define([
 		var $Cell = getSelectAll(true, assert);
 
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel"
-			+ this._sAdditionalLabeling, "aria-labelledby of select all");
+			sId + "-ariacount " + sId + "-ariaselection" + this._sAdditionalLabeling, "aria-labelledby of select all");
 
 		$Cell = getCell(1, 1, true, assert); //set focus somewhere else on the table
 		testAriaLabelsForFocusedDataCell($Cell, 1, 1, assert, {firstTime: false, rowChange: true, colChange: true});
 
 		$Cell = getSelectAll(true, assert);
-		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sId + "-ariacolrowheaderlabel" + this._sAdditionalLabeling, "aria-labelledby of select all");
+		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(), this._sAdditionalLabeling, "aria-labelledby of select all");
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			done();
@@ -1260,12 +1255,8 @@ sap.ui.define([
 		var sId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sId + "-ariacount " + sId + "-ariaselection " + sId + "-ariacolrowheaderlabel",
-			"aria-labelledby of select all");
+			sId + "-ariacount " + sId + "-ariaselection", "aria-labelledby of select all");
 		getRowHeader(0, true, assert); //set focus somewhere else on the table
-		$Cell = getSelectAll(true, assert);
-		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sId + "-ariacolrowheaderlabel", "aria-labelledby of select all");
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
@@ -1273,17 +1264,7 @@ sap.ui.define([
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		var $Cell = getSelectAll(false, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			oTable.getId() + "-ariacolrowheaderlabel" + this._sAdditionalLabeling, "aria-labelledby of select all");
-		TableQUnitUtils.setFocusOutsideOfTable(assert);
-	});
-
-	QUnit.test("aria-labelledby without Focus (Single Selection)", function(assert) {
-		oTable.setSelectionMode(SelectionMode.Single);
-		sap.ui.getCore().applyChanges();
-		TableQUnitUtils.setFocusOutsideOfTable(assert);
-		var $Cell = getSelectAll(false, assert);
-		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			oTable.getId() + "-ariacolrowheaderlabel", "aria-labelledby of select all");
+			this._sAdditionalLabeling, "aria-labelledby of select all");
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
 
@@ -1381,7 +1362,7 @@ sap.ui.define([
 
 		assert.strictEqual($Elem.attr("role"), "grid", "role");
 		assert.strictEqual($Elem.attr("aria-rowcount"), "8", "aria-rowcount");
-		assert.strictEqual($Elem.attr("aria-colcount"), "5", "aria-colcount");
+		assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
 		assert.strictEqual($Elem.attr("aria-multiselectable"), "true", "aria-multiselectable");
 		assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId(), "aria-labelledby");
 
@@ -1392,7 +1373,7 @@ sap.ui.define([
 			oTable.setRowActionCount(1);
 			sap.ui.getCore().applyChanges();
 
-			assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
+			assert.strictEqual($Elem.attr("aria-colcount"), "7", "aria-colcount");
 			oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual($Elem.attr("aria-labelledby"), oTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
@@ -1410,7 +1391,7 @@ sap.ui.define([
 
 		assert.strictEqual($Elem.attr("role"), "treegrid", "role");
 		assert.strictEqual($Elem.attr("aria-rowcount"), "8", "aria-rowcount");
-		assert.strictEqual($Elem.attr("aria-colcount"), "5", "aria-colcount");
+		assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
 		assert.ok(!$Elem.attr("aria-multiselectable"), "aria-multiselectable");
 		assert.strictEqual($Elem.attr("aria-labelledby"), oTreeTable.getAriaLabelledBy() + " " + oTreeTable.getTitle().getId(), "aria-labelledby");
 
@@ -1421,7 +1402,7 @@ sap.ui.define([
 			oTreeTable.setRowActionCount(1);
 			sap.ui.getCore().applyChanges();
 
-			assert.strictEqual($Elem.attr("aria-colcount"), "6", "aria-colcount");
+			assert.strictEqual($Elem.attr("aria-colcount"), "7", "aria-colcount");
 			oTreeTable.removeAriaLabelledBy(oTreeTable.getAriaLabelledBy()[0]);
 			sap.ui.getCore().applyChanges();
 			assert.strictEqual($Elem.attr("aria-labelledby"), oTreeTable.getTitle().getId(), "aria-labelledby when ariaLabelledBy association is empty array");
@@ -1505,14 +1486,14 @@ sap.ui.define([
 		for (i = 0; i < iNumberOfColumns; i++) {
 			$Elem = getColumnHeader(i, false);
 			assert.strictEqual($Elem.attr("aria-colindex"),
-				"" + (i + 1), "column " + i + ": aria-colindex of the column header");
+				"" + (i + 2), "column " + i + ": aria-colindex of the column header");
 			$Elem = getCell(0, i, false);
 			assert.strictEqual($Elem.attr("aria-colindex"),
-				"" + (i + 1), "column " + i + ": aria-colindex of the cell");
+				"" + (i + 2), "column " + i + ": aria-colindex of the cell");
 		}
 		$Elem = oTable.$("rowact0");
 		assert.strictEqual($Elem.attr("aria-colindex"),
-			"" + (iNumberOfColumns + 1), "column " + i + ": aria-colindex of the row action");
+			"" + (iNumberOfColumns + 2), "column " + i + ": aria-colindex of the row action");
 	});
 
 	QUnit.test("ARIA current", function(assert) {
@@ -1629,8 +1610,8 @@ sap.ui.define([
 
 	QUnit.test("HiddenTexts", function(assert) {
 		var aHiddenTexts = [
-			"ariacount", "toggleedit", "ariaselectall", "ariarowheaderlabel", "ariarowgrouplabel", "ariagrandtotallabel",
-			"ariagrouptotallabel", "ariacolrowheaderlabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu",
+			"ariacount", "toggleedit", "ariaselectall", "ariarowgrouplabel", "ariagrandtotallabel",
+			"ariagrouptotallabel", "rownumberofrows", "colnumberofcols", "cellacc", "ariarowselected", "ariacolmenu",
 			"ariacolspan", "ariacolfiltered", "ariacolsortedasc", "ariacolsorteddes", "ariafixedcolumn", "ariainvalid", "ariaselection",
 			"ariashowcolmenu", "ariahidecolmenu", "rowexpandtext", "rowcollapsetext", "rownavigatedtext"
 		];

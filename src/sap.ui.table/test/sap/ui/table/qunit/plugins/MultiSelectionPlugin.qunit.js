@@ -166,7 +166,6 @@ sap.ui.define([
 			assert.strictEqual($SelectAll.attr("title"), "Deselect All", "Tooltip exists");
 			assert.notOk($SelectAll.attr("aria-disabled"), "aria-disabled is removed");
 			assert.notOk($SelectAll.hasClass("sapUiTableSelAllDisabled"), "Deselect All is enabled");
-			assert.strictEqual(($SelectAll.attr("aria-labelledby") || "").trim(), that.oTable.getId() + "-ariacolrowheaderlabel", "accessibility info exists");
 			that.oTable.setEnableSelectAll(true);
 
 			var oSetPropertySpy = sinon.spy(oSelectionPlugin, "setProperty");
@@ -186,8 +185,6 @@ sap.ui.define([
 			assert.strictEqual($SelectAll.find(".sapUiTableSelectClear").length, 0,
 				"When the limit is set to -1 the Deselect All button is not rendered");
 			assert.strictEqual($SelectAll.attr("title"), "Select All", "Tooltip exists");
-			assert.strictEqual(($SelectAll.attr("aria-labelledby") || "").trim(), that.oTable.getId() + "-ariacolrowheaderlabel",
-				"accessibility info exists");
 			done();
 		});
 		oSelectionPlugin.setSelectedIndex(0);
