@@ -35,11 +35,12 @@
 <script>
 	sap.ui.require([
 		"sap/ui/table/plugins/V4Aggregation",
-		"sap/ui/model/odata/v4/ODataModel"
-	], function(V4Aggregation, ODataModel) {
+		"sap/ui/model/odata/v4/ODataModel",
+		"sap/ui/model/json/JSONModel"
+	], function(V4Aggregation, ODataModel, JSONModel) {
 		var oTable = new sap.ui.table.Table({
 			extension: [
-				new sap.m.Toolbar({
+				new sap.m.OverflowToolbar({
 					content: [
 						new sap.m.Title({text: "Title of the Table ({headerContext>$count})"}),
 						new sap.m.ToggleButton({
@@ -49,19 +50,115 @@
 								var bPressed = oEvent.getParameter("pressed");
 								if (window.V4Plugin) {
 									if (bPressed) {
-										oTable.addDependent(window.V4Plugin);
+										window.V4Plugin.activate();
 									} else {
-										oTable.removeDependent(window.V4Plugin);
+										window.V4Plugin.deactivate();
 									}
 								}
 							}
 						}),
+						new sap.m.Select({
+							items: [
+								new sap.ui.core.Item({text: "No visual grouping", key: 0}),
+								new sap.ui.core.Item({text: "Group country", key: 1}),
+								new sap.ui.core.Item({text: "Group country and region", key: 2})
+							],
+							change: function(oEvent) {
+								switch (oEvent.getParameters().selectedItem.getProperty("key")) {
+									case "1":
+										oAggregationInfo.groupLevels = ["Country"];
+										break;
+
+									case "2":
+										oAggregationInfo.groupLevels = ["Country", "Region"];
+										break;
+
+									default:
+										oAggregationInfo.groupLevels = [];
+								}
+
+								window.V4Plugin.setAggregationInfo(oAggregationInfo);
+							}
+						}),
+						new sap.m.Select({
+							items: [
+								new sap.ui.core.Item({text: "No totals", key: 0}),
+								new sap.ui.core.Item({text: "Grand total only", key: 1}),
+								new sap.ui.core.Item({text: "Grand total and subtotals", key: 2})
+							],
+							change: function(oEvent) {
+								switch (oEvent.getParameters().selectedItem.getProperty("key")) {
+									case "1":
+										oAggregationInfo.grandTotal = ["SalesAmountLocalCurrency", "SalesAmount"];
+										oAggregationInfo.subtotals = [];
+										break;
+
+									case "2":
+										oAggregationInfo.grandTotal = ["SalesAmountLocalCurrency", "SalesAmount"];
+										oAggregationInfo.subtotals = ["SalesAmountLocalCurrency", "SalesAmount"];
+										break;
+
+									default:
+										oAggregationInfo.grandTotal = [];
+										oAggregationInfo.subtotals = [];
+								}
+
+								window.V4Plugin.setAggregationInfo(oAggregationInfo);
+							}
+						}),
 						new sap.m.ToolbarSpacer()
+					]
+				}),
+				new sap.m.OverflowToolbar({
+					content: [
+						new sap.m.Text({text: "TopSum"}),
+						new sap.m.Select({
+							items: {
+								path: "settings>/totalSummaryOptions",
+								template: new sap.ui.core.Item({
+									text: {path: "settings>key"},
+									key: {path: "settings>key"}
+								})
+							},
+							selectedKey: "{settings>/totalSummaryOnTop}"
+						}),
+						new sap.m.Text({text: "BottomSum"}),
+						new sap.m.Select({
+							items: {
+								path: "settings>/totalSummaryOptions",
+								template: new sap.ui.core.Item({
+									text: {path: "settings>key"},
+									key: {path: "settings>key"}
+								})
+							},
+							selectedKey: "{settings>/totalSummaryOnBottom}"
+						}),
+						new sap.m.Text({text: "GroupSum"}),
+						new sap.m.Select({
+							items: {
+								path: "settings>/groupSummaryOptions",
+								template: new sap.ui.core.Item({
+									text: {path: "settings>key"},
+									key: {path: "settings>key"}
+								})
+							},
+							selectedKey: "{settings>/groupSummary}"
+						})
 					]
 				})
 			],
-			visibleRowCountMode: "Auto"
+			visibleRowCountMode: "Auto",
+			models: {
+				settings: new JSONModel({
+					totalSummaryOnTop: V4Aggregation.getMetadata().getProperty("totalSummaryOnTop").getDefaultValue(),
+					totalSummaryOnBottom: V4Aggregation.getMetadata().getProperty("totalSummaryOnBottom").getDefaultValue(),
+					groupSummary: V4Aggregation.getMetadata().getProperty("groupSummary").getDefaultValue(),
+					totalSummaryOptions: [{key: "On"}, {key: "Off"}, {key: "Fixed"}],
+					groupSummaryOptions: [{key: "Top"}, {key: "Bottom"}, {key: "TopAndBottom"}, {key: "None"}]
+				})
+			}
 		});
+		window.oTable = oTable;
 
 		/* The plugin currently only considers
 	  - groupable : boolean (default: false)
@@ -209,7 +306,7 @@
 		oTable.bindRows({
 			path: "/BusinessPartners",
 			parameters: {
-				$count: false
+				$count: true
 			}
 		});
 
@@ -217,7 +314,11 @@
 			return "Region/Land: " + oContext.getValue(sPath);
 		}
 
-		window.V4Plugin = new V4Aggregation();
+		window.V4Plugin = new V4Aggregation({
+			totalSummaryOnTop: "{settings>/totalSummaryOnTop}",
+			totalSummaryOnBottom: "{settings>/totalSummaryOnBottom}",
+			groupSummary: "{settings>/groupSummary}"
+		});
 
 		window.V4Plugin.setPropertyInfos([
 			{
@@ -351,79 +452,10 @@
 			oTable.unbindRows();
 		}
 
-		function onGroupChanged(oEvent) {
-			switch (oEvent.getParameters().selectedItem.getProperty("key")) {
-				case "1":
-					oAggregationInfo.groupLevels = ["Country"];
-					break;
-
-				case "2":
-					oAggregationInfo.groupLevels = ["Country", "Region"];
-					break;
-
-				default:
-					oAggregationInfo.groupLevels = [];
-			}
-
-			window.V4Plugin.setAggregationInfo(oAggregationInfo);
-		}
-
-		function onTotalChanged(oEvent) {
-			switch (oEvent.getParameters().selectedItem.getProperty("key")) {
-				case "1":
-					oAggregationInfo.grandTotal = ["SalesAmountLocalCurrency", "SalesAmount"];
-					oAggregationInfo.subtotals = [];
-					break;
-
-				case "2":
-					oAggregationInfo.grandTotal = ["SalesAmountLocalCurrency", "SalesAmount"];
-					oAggregationInfo.subtotals = ["SalesAmountLocalCurrency", "SalesAmount"];
-					break;
-
-				default:
-					oAggregationInfo.grandTotal = [];
-					oAggregationInfo.subtotals = [];
-			}
-
-			window.V4Plugin.setAggregationInfo(oAggregationInfo);
-		}
-
-		var oSelectGroup = new sap.m.Select({
-			items: [
-				new sap.ui.core.Item({text: "No visual grouping", key: 0}),
-				new sap.ui.core.Item({text: "Group on country", key: 1}),
-				new sap.ui.core.Item({text: "Group on country and region", key: 2})
-			],
-			change: onGroupChanged
-		});
-
-		var oSelectTotal = new sap.m.Select({
-			items: [
-				new sap.ui.core.Item({text: "No totals", key: 0}),
-				new sap.ui.core.Item({text: "Grand total only", key: 1}),
-				new sap.ui.core.Item({text: "Grand total and subtotals", key: 2})
-			],
-			change: onTotalChanged
-		});
-
 		new sap.m.VBox({
 			width: "100%",
 			items: [
 				oTable.setLayoutData(new sap.m.FlexItemData({growFactor: 1})),
-				new sap.m.HBox({
-					alignItems: sap.m.FlexAlignItems.Center,
-					items: [
-						new sap.m.Label({text: "Visual grouping: "}),
-						oSelectGroup
-					]
-				}),
-				new sap.m.HBox({
-					alignItems: sap.m.FlexAlignItems.Center,
-					items: [
-						new sap.m.Label({text: "Totals: "}),
-						oSelectTotal
-					]
-				}),
 				new sap.m.Button({text: "Just a Button after"})
 			]
 		}).placeAt("content");

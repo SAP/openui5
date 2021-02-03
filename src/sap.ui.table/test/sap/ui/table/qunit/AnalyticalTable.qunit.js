@@ -170,9 +170,10 @@ sap.ui.define([
 		var done = assert.async();
 
 		function doTest(oTable) {
-			assert.equal(oTable.getFixedBottomRowCount(), 1, "Default fixedBottomRowCount");
+			assert.equal(oTable.getFixedBottomRowCount(), 0, "Default fixedBottomRowCount");
 			oTable.setFixedBottomRowCount(5);
-			assert.equal(oTable.getFixedBottomRowCount(), 1, "FixedBottomRowCount cannot be changed");
+			assert.equal(oTable.getFixedBottomRowCount(), 0, "FixedBottomRowCount cannot be changed");
+			TableQUnitUtils.assertRenderedRows(assert, oTable, 0, 19, 1);
 		}
 
 		performTestAfterTableIsUpdated.call(this, doTest, done);

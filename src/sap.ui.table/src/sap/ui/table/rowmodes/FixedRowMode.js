@@ -35,6 +35,9 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
+				rowCount: {type: "int", defaultValue: 10, group: "Appearance"},
+				fixedTopRowCount: {type: "int", defaultValue: 0, group: "Appearance"},
+				fixedBottomRowCount: {type: "int", defaultValue: 0, group: "Appearance"},
 				rowContentHeight: {type: "int", defaultValue: 0, group: "Appearance"},
 				hideEmptyRows: {type: "boolean", defaultValue: false, group: "Appearance"}
 			}
@@ -164,7 +167,7 @@ sap.ui.define([
 			iRowCount = Math.min(iRowCount, this.getTotalRowCountOfTable());
 		}
 
-		return this.sanitizeRowCounts(iRowCount, iFixedTopRowCount, iFixedBottomRowCount);
+		return this.computeStandardizedRowCounts(iRowCount, iFixedTopRowCount, iFixedBottomRowCount);
 	};
 
 	/**

@@ -1222,13 +1222,34 @@ sap.ui.define([
 	TableQUnitUtils.assertNoDataVisible = function(assert, oTable, bVisible, sTitle) {
 		var sTestTitle = sTitle == null ? "" : sTitle + ": ";
 
-		assert.equal(oTable.getDomRef().classList.contains("sapUiTableEmpty"), bVisible,
-			sTestTitle + "NoData class is " + (bVisible ? "" : "not ") + "set");
+		assert.equal(oTable.getDomRef().classList.contains("sapUiTableEmpty"), bVisible, sTestTitle + "NoData visible");
 
 		if (!bVisible) {
 			// If the NoData element is not visible, the table must have focusable elements (cells).
 			assert.ok(oTable.qunit.getDataCell(0, 0), sTestTitle + "If 'NoData' is not visible, rows are rendered");
 		}
+	};
+
+	/**
+	 * Checks if the correct number of rows is rendered.
+	 *
+	 * @param {object} assert QUnit assert object.
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {int} iFixedTop The number of fixed top rows.
+	 * @param {int} iScrollable The number of scrollable rows.
+	 * @param {int} iFixedBottom The number of fixed bottom rows.
+	 */
+	TableQUnitUtils.assertRenderedRows = function(assert, oTable, iFixedTop, iScrollable, iFixedBottom) {
+		var oFixedTopRowContainer = oTable.getDomRef("table-fixrow");
+		var oScrollableRowContainer = oTable.getDomRef("table");
+		var oFixedBottomRowContainer = oTable.getDomRef("table-fixrow-bottom");
+		var iFixedTopRowCount = oFixedTopRowContainer ? oFixedTopRowContainer.querySelectorAll(".sapUiTableRow").length : 0;
+		var iScrollableTopRowCount = oScrollableRowContainer ? oScrollableRowContainer.querySelectorAll(".sapUiTableRow").length : 0;
+		var iFixedBottomRowCount = oFixedBottomRowContainer ? oFixedBottomRowContainer.querySelectorAll(".sapUiTableRow").length : 0;
+
+		assert.equal(iFixedTopRowCount, iFixedTop, "Fixed top row count");
+		assert.equal(iScrollableTopRowCount, iScrollable, "Scrollable row count");
+		assert.equal(iFixedBottomRowCount, iFixedBottom, "Fixed bottom row count");
 	};
 
 	/**

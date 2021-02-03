@@ -354,7 +354,16 @@ sap.ui.define([
 			 * Alternate row coloring is not available for the tree mode.
 			 * @since 1.52
 			 */
-			alternateRowColors : {type : "boolean", group : "Appearance", defaultValue : false}
+			alternateRowColors : {type : "boolean", group : "Appearance", defaultValue : false},
+
+			/**
+			 * Constraints on the row counts of the table. May impact the result of the row count computation in the row modes.
+			 * This hidden property may only be used indirectly by row modes and may not be used otherwise.
+			 *
+			 * @see sap.ui.table.rowmodes.RowMode#getRowCountConstraints
+			 * @private
+			 */
+			rowCountConstraints : {type: "object", visibility: "hidden"}
 		},
 		defaultAggregation : "columns",
 		aggregations : {
@@ -4442,6 +4451,18 @@ sap.ui.define([
 				this.setSelectedIndex(iIndex);
 			}
 		}.bind(this);
+	};
+
+	/**
+	 * Sets constraints on the row counts of the table. May impact the result of the row count computation in the row modes.
+	 * The setter for the hidden property may only be used indirectly by plugins and may not be used otherwise.
+	 *
+	 * @see sap.ui.table.plugins.PluginBase#setRowCountConstraints
+	 * @param {object} mConstraints Row count constraints
+	 * @private
+	 */
+	Table.prototype._setRowCountConstraints = function(mConstraints) {
+		this.setProperty("rowCountConstraints", mConstraints);
 	};
 
 	return Table;

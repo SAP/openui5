@@ -258,6 +258,14 @@ sap.ui.define([
 			},
 
 			// Plugins
+			"PluginBase": {
+				group: "Plugins",
+				module: "./plugins/{name}.qunit",
+				sinon: {
+					version: "edge",
+					qunitBridge: true
+				}
+			},
 			"MultiSelectionPlugin": {
 				group: "Plugins",
 				module: "./plugins/{name}.qunit",
@@ -267,7 +275,6 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
-
 			"Support of external plugins": {
 				group: "Plugins",
 				module: "./plugins/SupportOfExternalPlugins.qunit",
@@ -276,12 +283,12 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.m"]
 				}
 			},
-
-			"V4 aggregation plugin": {
+			"V4Aggregation": {
 				group: "Plugins",
-				module: "./plugins/V4AggregationPlugin.qunit",
-				ui5: {
-					libs: ["sap.ui.table"]
+				module: "./plugins/{name}.qunit",
+				sinon: {
+					version: "edge",
+					qunitBridge: true
 				}
 			}
 		}

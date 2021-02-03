@@ -16,6 +16,8 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var _private = TableUtils.createWeakMapFacade();
+
 	/**
 	 * Constructor for a new row mode.
 	 *
@@ -38,17 +40,7 @@ sap.ui.define([
 	var RowMode = Element.extend("sap.ui.table.rowmodes.RowMode", /** @lends sap.ui.table.rowmodes.RowMode.prototype */ {
 		metadata: {
 			library: "sap.ui.table",
-			"abstract": true,
-			properties: {
-				// TODO: Other names? fixedRowCountTop/Bottom ?
-				// TODO: Should really all row modes have these properties? Introduce a more generic base class without them? For example,
-				//  AutoRowMode already disallows to set "rowCount". More such restrictions might be introduced in future row modes
-				//  (VariableRowMode will also not support "rowCount"). On the other hand, grand total rows will be available in V4 ListBinding,
-				//  so fixed rows support might be required always.
-				rowCount: {type: "int", defaultValue: 10, group: "Appearance"},
-				fixedTopRowCount: {type: "int", defaultValue: 0, group: "Appearance"},
-				fixedBottomRowCount: {type: "int", defaultValue: 0, group: "Appearance"}
-			}/*,
+			"abstract": true/*,
 			events: {
 				rowCountChange: {
 					parameters: {
@@ -74,21 +66,21 @@ sap.ui.define([
 		 *
 		 * @type {boolean}
 		 */
-		this._bListeningForFirstRowsUpdatedAfterRendering = false;
+		_private(this).bListeningForFirstRowsUpdatedAfterRendering = false;
 
 		/*
 		 * Flag indicating whether the NoData text of the table is disabled.
 		 *
 		 * @type {boolean}
 		 */
-		this._bNoDataDisabled = false;
+		_private(this).bNoDataDisabled = false;
 
 		/**
 		 * Updates the table asynchronously according to the current computed row count.
 		 *
 		 * @private
 		 */
-		this.updateTableAsync = TableUtils.throttle(this.updateTable, 50, {
+		_private(this).updateTableAsync = TableUtils.throttle(this.updateTable.bind(this), 50, {
 			asyncLeading: true
 		});
 	};
@@ -140,7 +132,7 @@ sap.ui.define([
 			clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
 		}
 
-		this.updateTableAsync.cancel();
+		_private(this).updateTableAsync.cancel();
 	};
 
 	/**
@@ -177,7 +169,7 @@ sap.ui.define([
 	 * @abstract
 	 */
 	RowMode.prototype.getMinRequestLength = function() {
-		throw new Error(this.getMetadata().getName() + ": sap.ui.table.rowmodes.RowMode subclass did not implement #getMinRequestLength");
+		throwNotImplementedError(this, "getMinRequestLength");
 	};
 
 	/**
@@ -190,7 +182,7 @@ sap.ui.define([
 	 * @abstract
 	 */
 	RowMode.prototype.getComputedRowCounts = function() {
-		throw new Error(this.getMetadata().getName() + ": sap.ui.table.rowmodes.RowMode subclass did not implement #getComputedRowCounts");
+		throwNotImplementedError(this, "getComputedRowCounts");
 	};
 
 	/**
@@ -202,7 +194,7 @@ sap.ui.define([
 	 * @abstract
 	 */
 	RowMode.prototype.getTableStyles = function() {
-		throw new Error(this.getMetadata().getName() + ": sap.ui.table.rowmodes.RowMode subclass did not implement #getTableStyles");
+		throwNotImplementedError(this, "getTableStyles");
 	};
 
 	/**
@@ -215,7 +207,7 @@ sap.ui.define([
 	 * @abstract
 	 */
 	RowMode.prototype.getTableBottomPlaceholderStyles = function() {
-		throw new Error(this.getMetadata().getName() + ": sap.ui.table.rowmodes.RowMode subclass did not implement #getTableBottomPlaceholderStyles");
+		throwNotImplementedError(this, "getTableBottomPlaceholderStyles");
 	};
 
 	/**
@@ -227,7 +219,7 @@ sap.ui.define([
 	 * @abstract
 	 */
 	RowMode.prototype.getRowContainerStyles = function() {
-		throw new Error(this.getMetadata().getName() + ": sap.ui.table.rowmodes.RowMode subclass did not implement #getRowContainerStyles");
+		throwNotImplementedError(this, "getRowContainerStyles");
 	};
 
 	/**
@@ -253,7 +245,7 @@ sap.ui.define([
 			return;
 		}
 
-		this.updateTableAsync.cancel(); // Update will be performed right now.
+		_private(this).updateTableAsync.cancel(); // Update will be performed right now.
 
 		// Update the rows aggregation and the row's binding contexts.
 		var bRowsAggregationChanged = this.updateTableRows();
@@ -347,7 +339,7 @@ sap.ui.define([
 		var oTable = this.getTable();
 
 		clearTimeout(oTable._mTimeouts.refreshRowsCreateRows);
-		this.updateTableAsync(sReason);
+		_private(this).updateTableAsync(sReason);
 	};
 
 	/**
@@ -428,23 +420,49 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns sanitized row counts. The fixed row counts are reduced to fit into the row count. First the number of fixed bottom rows and, if
-	 * that is not enough, the number of fixed top rows is reduced. Makes sure there is at least one scrollable row between fixed rows.
+	 * Computes standardized row counts.
+	 *  - The fixed row counts are reduced to fit into the row count.
+	 *    First the number of fixed bottom rows and, if that is not enough, the number of fixed top rows is reduced.
+	 *  - Makes sure there is at least one scrollable row between fixed rows.
+	 *  - Takes the row count constraints into account.
 	 *
+	 * @see #getRowCountConstraints
 	 * @param {int} iCount The row count.
 	 * @param {int} iFixedTop The fixed top row count.
 	 * @param {int} iFixedBottom The fixed bottom row count.
-	 * @returns {{count: int, scrollable: int, fixedTop: int, fixedBottom: int}} The sanitized counts
-	 * @private
+	 * @returns {{count: int, scrollable: int, fixedTop: int, fixedBottom: int}} The standardized counts
+	 * @protected
 	 */
-	RowMode.prototype.sanitizeRowCounts = function(iCount, iFixedTop, iFixedBottom) {
+	RowMode.prototype.computeStandardizedRowCounts = function(iCount, iFixedTop, iFixedBottom) {
+		var mRowCountConstraints = this.getRowCountConstraints();
+
+		if (mRowCountConstraints.fixedTop === true) {
+			iFixedTop = 1;
+		} else if (mRowCountConstraints.fixedTop === false) {
+			iFixedTop = 0;
+		}
+
+		if (mRowCountConstraints.fixedBottom === true) {
+			iFixedBottom = 1;
+		} else if (mRowCountConstraints.fixedBottom === false) {
+			iFixedBottom = 0;
+		}
+
 		iCount = Math.max(0, iCount);
 		iFixedTop = Math.max(0, iFixedTop);
 		iFixedBottom = Math.max(0, iFixedBottom);
 
 		if (iFixedTop + iFixedBottom >= iCount) {
-			iFixedBottom = Math.max(0, iFixedBottom - Math.max(0, (iFixedTop + iFixedBottom - (iCount - 1))));
-			iFixedTop = Math.max(0, iFixedTop - Math.max(0, (iFixedTop + iFixedBottom - (iCount - 1))));
+			iFixedBottom = Math.max(iFixedBottom > 0 ? 1 : 0, iFixedBottom - Math.max(0, (iFixedTop + iFixedBottom - (iCount - 1))));
+			iFixedTop = Math.max(iFixedTop > 0 ? 1 : 0, iFixedTop - Math.max(0, (iFixedTop + iFixedBottom - (iCount - 1))));
+		}
+
+		if (iFixedTop + iFixedBottom >= iCount) {
+			iFixedBottom = 0;
+		}
+
+		if (iFixedTop + iFixedBottom >= iCount) {
+			iFixedTop = 0;
 		}
 
 		return {
@@ -453,6 +471,34 @@ sap.ui.define([
 			fixedTop: iFixedTop,
 			fixedBottom: iFixedBottom
 		};
+	};
+
+	/**
+	 * Gets the constraints on the row counts in the table.
+	 * These are soft constraints and the subclass may ignore them, for example if it does not support fixed rows.
+	 *
+	 * Description of the constraints:
+	 * <ul>
+	 *   <li>
+	 *       <code>fixedTop</code>:
+	 *       The value <code>true</code> means that there should be exactly one fixed top row and <code>false</code> means that fixed top rows
+	 *       should be disabled. By default, there are no constraint for the fixed top rows.
+	 *   </li>
+	 *   <li>
+	 *       <code>fixedBottom</code>:
+	 *       The value <code>true</code> means that there should be exactly one fixed bottom row and <code>false</code> means that fixed bottom
+	 *       rows should be disabled. By default, there are no constraint for the fixed bottom rows.
+	 *   </li>
+	 * </ul>
+	 *
+	 * @returns {{fixedTop: (boolean|undefined), fixedBottom: (boolean|undefined)}} The row count constraints
+	 * @protected
+	 */
+	RowMode.prototype.getRowCountConstraints = function() {
+		// TODO: Add a type definition for a protected type "rowCountConstraints" in the library file to document the return value
+		//  RowMode#getRowCountConstraints + PluginBase#setRowCountConstraints
+		var oTable = this.getTable();
+		return oTable ? oTable.getProperty("rowCountConstraints") || {} : {};
 	};
 
 	/**
@@ -655,42 +701,17 @@ sap.ui.define([
 		if (!this._bFiredRowsUpdatedAfterRendering) {
 			sReason = TableUtils.RowsUpdateReason.Render;
 
-			if (!this._bListeningForFirstRowsUpdatedAfterRendering) {
-				this._bListeningForFirstRowsUpdatedAfterRendering = true;
+			if (!_private(this).bListeningForFirstRowsUpdatedAfterRendering) {
+				_private(this).bListeningForFirstRowsUpdatedAfterRendering = true;
 
 				oTable.attachEvent("_rowsUpdated", function() {
 					this._bFiredRowsUpdatedAfterRendering = true;
-					this._bListeningForFirstRowsUpdatedAfterRendering = false;
+					_private(this).bListeningForFirstRowsUpdatedAfterRendering = false;
 				}.bind(this));
 			}
 		}
 
 		oTable._fireRowsUpdated(sReason);
-	};
-
-	/**
-	 * Disables the setters for the <code>fixedTopRowCount</code> and <code>fixedBottomRowCount</code> properties.
-	 *
-	 * @private
-	 */
-	RowMode.prototype.disableFixedRows = function() {
-		if (this.bFixedRowsDisabled === true) {
-			return;
-		}
-
-		Object.defineProperty(this, "bFixedRowsDisabled", {
-			value: true
-		});
-
-		function logError() {
-			Log.error("This mode does not support fixed rows", this);
-		}
-
-		this.setProperty("fixedTopRowCount", 0, true);
-		this.setFixedTopRowCount = logError;
-
-		this.setProperty("fixedBottomRowCount", 0, true);
-		this.setFixedBottomRowCount = logError;
 	};
 
 	/**
@@ -704,12 +725,12 @@ sap.ui.define([
 		var oTable = this.getTable();
 		var bNoDataVisible;
 
-		if (this._bNoDataDisabled) {
+		if (this.isNoDataDisabled()) {
 			return;
 		}
 
 		bNoDataVisible = oTable ? TableUtils.isNoDataVisible(oTable) : false;
-		this._bNoDataDisabled = true;
+		_private(this).bNoDataDisabled = true;
 
 		if (!oTable) {
 			return;
@@ -732,15 +753,25 @@ sap.ui.define([
 	RowMode.prototype.enableNoData = function() {
 		var oTable = this.getTable();
 
-		if (!this._bNoDataDisabled) {
+		if (!this.isNoDataDisabled()) {
 			return;
 		}
 
-		this._bNoDataDisabled = false;
+		_private(this).bNoDataDisabled = false;
 
 		if (oTable && !oTable._bInvalid) {
 			oTable._updateNoData();
 		}
+	};
+
+	/**
+	 * Checks whether the "NoData" text of the table is disabled.
+	 *
+	 * @returns {boolean} Whether the "NoData" text is disabled
+	 * @protected
+	 */
+	RowMode.prototype.isNoDataDisabled = function() {
+		return _private(this).bNoDataDisabled;
 	};
 
 	/**
@@ -780,6 +811,10 @@ sap.ui.define([
 		for (var i = 0; i < aRows.length; i++) {
 			aRows[i].setRowBindingContext(aContexts[i], oTable);
 		}
+	}
+
+	function throwNotImplementedError(oPlugin, sFunctionName) {
+		throw new Error(oPlugin + ": sap.ui.table.rowmodes.RowMode subclass does not implement #" + sFunctionName);
 	}
 
 	/**

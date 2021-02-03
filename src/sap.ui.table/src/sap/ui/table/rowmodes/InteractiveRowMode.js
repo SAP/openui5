@@ -40,8 +40,11 @@ sap.ui.define([
 			library: "sap.ui.table",
 			"final": true,
 			properties: {
-				rowContentHeight: {type: "int", defaultValue: 0, group: "Appearance"},
-				minRowCount: {type: "int", defaultValue: 5, group: "Appearance"}
+				rowCount: {type: "int", defaultValue: 10, group: "Appearance"},
+				minRowCount: {type: "int", defaultValue: 5, group: "Appearance"},
+				fixedTopRowCount: {type: "int", defaultValue: 0, group: "Appearance"},
+				fixedBottomRowCount: {type: "int", defaultValue: 0, group: "Appearance"},
+				rowContentHeight: {type: "int", defaultValue: 0, group: "Appearance"}
 			}
 		},
 		constructor: function(sId) {
@@ -163,7 +166,7 @@ sap.ui.define([
 	 * @inheritDoc
 	 */
 	InteractiveRowMode.prototype.getComputedRowCounts = function() {
-		return this.sanitizeRowCounts(this.getConfiguredRowCount(), this.getFixedTopRowCount(), this.getFixedBottomRowCount());
+		return this.computeStandardizedRowCounts(this.getConfiguredRowCount(), this.getFixedTopRowCount(), this.getFixedBottomRowCount());
 	};
 
 	/**
