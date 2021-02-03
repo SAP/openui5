@@ -40,7 +40,8 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 			bInWarningState = ValueState.Warning === sValueState,
 			bInSuccessState = ValueState.Success === sValueState,
 			bInInformationState = ValueState.Information === sValueState,
-			bUseEntireWidth = oCheckBox.getUseEntireWidth();
+			bUseEntireWidth = oCheckBox.getUseEntireWidth(),
+			bEditableAndEnabled = bEditable && bEnabled;
 
 		// CheckBox wrapper
 		oRm.openStart("div", oCheckBox);
@@ -66,14 +67,16 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 			oRm.class("sapMCbWrapped");
 		}
 
-		if (bInErrorState) {
-			oRm.class("sapMCbErr");
-		} else if (bInWarningState) {
-			oRm.class("sapMCbWarn");
-		} else if (bInSuccessState) {
-			oRm.class("sapMCbSucc");
-		} else if (bInInformationState) {
-			oRm.class("sapMCbInfo");
+		if (bEditableAndEnabled) {
+			if (bInErrorState) {
+				oRm.class("sapMCbErr");
+			} else if (bInWarningState) {
+				oRm.class("sapMCbWarn");
+			} else if (bInSuccessState) {
+				oRm.class("sapMCbSucc");
+			} else if (bInInformationState) {
+				oRm.class("sapMCbInfo");
+			}
 		}
 
 		if (bUseEntireWidth) {
@@ -82,7 +85,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 
 		var sTooltip = this.getTooltipText(oCheckBox);
 
-		if (sTooltip) {
+		if (sTooltip && bEditableAndEnabled) {
 			oRm.attr("title", sTooltip);
 		}
 
@@ -95,7 +98,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 			role: "checkbox",
 			selected: null,
 			checked: oCheckBox._getAriaChecked(),
-			describedby: sTooltip ? sId + "-Descr" : undefined
+			describedby: sTooltip && bEditableAndEnabled ? sId + "-Descr" : undefined
 		});
 
 		if (bDisplayOnlyApplied) {
@@ -153,7 +156,7 @@ sap.ui.define(['sap/ui/core/library', 'sap/ui/core/ValueStateSupport', 'sap/ui/D
 		oRm.close("div");
 		oRm.renderControl(oCbLabel);
 
-		if (sTooltip && sap.ui.getCore().getConfiguration().getAccessibility()) {
+		if (sTooltip && sap.ui.getCore().getConfiguration().getAccessibility() && bEditableAndEnabled) {
 			// for ARIA, the tooltip must be in a separate SPAN and assigned via aria-describedby.
 			// otherwise, JAWS does not read it.
 			oRm.openStart("span", sId + "-Descr");
