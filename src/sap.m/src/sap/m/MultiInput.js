@@ -966,7 +966,7 @@ function(
 
 		if (this._getIsSuggestionPopupOpen()) {
 			if (this._hasTabularSuggestions()) {
-				bValidateFreeText = !this._oSuggestionTable.getSelectedItem();
+				bValidateFreeText = !this._getSuggestionsTable().getSelectedItem();
 			} else {
 				bValidateFreeText = !this._getSuggestionsList().getSelectedItem();
 			}
@@ -1915,7 +1915,7 @@ function(
 		if (sValue && (bExactMatch || bPasted || this._getIsSuggestionPopupOpen())) { // only take item from suggestion list if popup is open, otherwise it can be
 			if (this._hasTabularSuggestions()) {
 				//if there is suggestion table, select the correct item, to avoid selecting the wrong item but with same text.
-				oItem = this._oSuggestionTable.getSelectedItem();
+				oItem = this._getSuggestionsTable().getSelectedItem();
 			} else {
 				// impossible to enter other text
 				oItem = this._getSuggestionItem(sValue, bExactMatch);

@@ -552,9 +552,9 @@ function(
 			this._iRefreshListTimeout = null;
 		}
 
-		if (this._oSuggestionTable) {
-			this._oSuggestionTable.destroy();
-			this._oSuggestionTable = null;
+		if (this._oSuggestionsTable) {
+			this._oSuggestionsTable.destroy();
+			this._oSuggestionsTable = null;
 		}
 
 		if (this._isSuggestionsPopoverInitiated()) {
@@ -681,7 +681,7 @@ function(
 		}
 
 		if (this._hasTabularSuggestions()) {
-			bHasSelectedItem = this._oSuggestionTable && !!this._oSuggestionTable.getSelectedItem();
+			bHasSelectedItem = this._getSuggestionsTable() && !!this._getSuggestionsTable().getSelectedItem();
 		} else {
 			bHasSelectedItem = oList && !!oList.getSelectedItem();
 		}
@@ -1501,8 +1501,6 @@ function(
 				if (this._isSuggestionsPopoverInitiated()) {
 					oSuggestionsPopover = this._getSuggestionsPopover();
 					oSuggestionsPopover._destroySuggestionPopup();
-					this._oButtonToolbar = null;
-					this._oShowMoreButton = null;
 				}
 			}
 
@@ -2205,60 +2203,75 @@ function(
 	 * Gets suggestion table with lazy loading.
 	 *
 	 * @private
-	 * @returns {sap.m.Table} Suggestion table.
+	 * @returns {sap.m.Table|null} Suggestion table or <code>null</code> in case the control is currently being destroyed.
 	 */
 	Input.prototype._getSuggestionsTable = function () {
-
+		// this._bIsBeingDestroyed was added here, as if the Input is in process of destruction
+		// and there is no suggestions table created, there is no need to create one.
+		// In case there was suggestions table present, it was already destroyed by the 'exit' method.
 		if (this._bIsBeingDestroyed) {
-			return this._oSuggestionTable;
+			return null;
 		}
 
-		if (!this._oSuggestionTable) {
-			this._oSuggestionTable = new Table(this.getId() + "-popup-table", {
-				mode: ListMode.SingleSelectMaster,
-				showNoData: false,
-				showSeparators: ListSeparators.None,
-				width: "100%",
-				enableBusyIndicator: false,
-				rememberSelections : false,
-				itemPress: function (oEvent) {
-					if (Device.system.desktop) {
-						this.focus();
-					}
-					var oSelectedListItem = oEvent.getParameter("listItem");
-					this.setSelectionRow(oSelectedListItem, true);
-				}.bind(this),
-				sticky: [library.Sticky.ColumnHeaders]
-			});
-
-			this._oSuggestionTable.addEventDelegate({
-				onAfterRendering: function () {
-					var aTableCellsDomRef;
-
-					if (!this.getEnableSuggestionsHighlighting()) {
-						return;
-					}
-
-					aTableCellsDomRef = this._oSuggestionTable.$().find('tbody .sapMLabel');
-
-					highlightDOMElements(aTableCellsDomRef, this._sTypedInValue);
-				}
-			}, this);
-
-			// initially hide the table on phone
-			if (this.isMobileDevice()) {
-				this._oSuggestionTable.addStyleClass("sapMInputSuggestionTableHidden");
-			}
-
-			this._oSuggestionTable.updateItems = function() {
-				Table.prototype.updateItems.apply(this, arguments);
-				this._refreshItemsDelayed();
-				return this;
-			};
+		if (!this._oSuggestionsTable) {
+			this._oSuggestionsTable = this._createSuggestionsTable();
 		}
 
-		return this._oSuggestionTable;
+		return this._oSuggestionsTable;
 	};
+
+	/**
+	 * Creates the suggestions table
+	 *
+	 * @private
+	 * @returns {sap.m.Table} The newly created suggestions table.
+	 */
+	Input.prototype._createSuggestionsTable = function () {
+		var oSuggestionsTable = new Table(this.getId() + "-popup-table", {
+			mode: ListMode.SingleSelectMaster,
+			showNoData: false,
+			showSeparators: ListSeparators.None,
+			width: "100%",
+			enableBusyIndicator: false,
+			rememberSelections : false,
+			itemPress: function (oEvent) {
+				if (Device.system.desktop) {
+					this.focus();
+				}
+				var oSelectedListItem = oEvent.getParameter("listItem");
+				this.setSelectionRow(oSelectedListItem, true);
+			}.bind(this),
+			sticky: [library.Sticky.ColumnHeaders]
+		});
+
+		oSuggestionsTable.addEventDelegate({
+			onAfterRendering: function () {
+				var aTableCellsDomRef;
+
+				if (!this.getEnableSuggestionsHighlighting()) {
+					return;
+				}
+
+				aTableCellsDomRef = oSuggestionsTable.$().find('tbody .sapMLabel');
+
+				highlightDOMElements(aTableCellsDomRef, this._sTypedInValue);
+			}
+		}, this);
+
+		// initially hide the table on phone
+		if (this.isMobileDevice()) {
+			oSuggestionsTable.addStyleClass("sapMInputSuggestionTableHidden");
+		}
+
+		oSuggestionsTable.updateItems = function() {
+			Table.prototype.updateItems.apply(this, arguments);
+			this._refreshItemsDelayed();
+			return this;
+		};
+
+		return oSuggestionsTable;
+	};
+
 
 	/**
 	 * Clones input.

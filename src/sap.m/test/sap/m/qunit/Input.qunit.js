@@ -6000,8 +6000,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oInput._oSuggestionTable.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oInput._oSuggestionTable.getItems()).length, 5, "Shows all items");
+		assert.strictEqual(this.oInput._getSuggestionsTable().getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oInput._getSuggestionsTable().getItems()).length, 5, "Shows all items");
 	});
 
 	QUnit.test("Should filter the items", function (assert) {
@@ -6019,8 +6019,8 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.strictEqual(this.oInput._oSuggestionTable.getItems().length, 5, "All the items are available");
-		assert.strictEqual(fnGetVisisbleItems(this.oInput._oSuggestionTable.getItems()).length, 1, "Only the matching items are visible");
+		assert.strictEqual(this.oInput._getSuggestionsTable().getItems().length, 5, "All the items are available");
+		assert.strictEqual(fnGetVisisbleItems(this.oInput._getSuggestionsTable().getItems()).length, 1, "Only the matching items are visible");
 	});
 
 	QUnit.module("Dialog on mobile");
