@@ -101,7 +101,7 @@ sap.ui.define([
             ]
         }));
 
-        this.addStyleClass("sapUiMDCGroupPanelBase");
+        this.addStyleClass("sapUiMDCAdaptFiltersPanel");
     };
 
     /**
