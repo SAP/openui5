@@ -460,24 +460,28 @@ sap.ui.define([
 	QUnit.test("No data rendering - Accessibility test", function(assert) {
 		//Arrange
 		var sUpdNoDataText = this.oUploadCollection.getNoDataText();
+		var sUpdNoDataDescription = this.oUploadCollection.getNoDataDescription();
 		var sListNoDataText = this.oUploadCollection._oList.getNoDataText();
+		var sUCNoDataTextDescription = sUpdNoDataText + " " + sUpdNoDataDescription;
 		//Act
 		sap.ui.getCore().applyChanges();
 		//Assert
-		assert.equal(sUpdNoDataText, sListNoDataText, "Accessibility Nodata text matches ");
+		assert.equal(sUCNoDataTextDescription, sListNoDataText, "Accessibility Nodata text matches ");
 	});
 
 	QUnit.test("No data rendering - with user specified no data text", function(assert) {
 		//Arrange
 		this.oUploadCollection.setNoDataText("myNoDataText");
 		var sUpdNoDataText = this.oUploadCollection.getNoDataText();
+		var sUpdNoDataDescription = this.oUploadCollection.getNoDataDescription();
 		var sListNoDataText = this.oUploadCollection._oList.getNoDataText();
+		var sUCNoDataTextDescription = sUpdNoDataText + " " + sUpdNoDataDescription;
 		this.oUploadCollection.unbindAggregation("items");
 		//Act
 		sap.ui.getCore().applyChanges();
 		//Assert
 		assert.equal(jQuery.sap.byId(this.oUploadCollection.getId() + "-no-data-text").text(), "myNoDataText", "The no data text set by user is rendered");
-		assert.equal(sUpdNoDataText, sListNoDataText, "Accessibility Nodata text matches after setter");
+		assert.equal(sUCNoDataTextDescription, sListNoDataText, "Accessibility Nodata text matches after setter");
 	});
 
 	QUnit.test("No data rendering - with user specified no data description", function(assert) {
