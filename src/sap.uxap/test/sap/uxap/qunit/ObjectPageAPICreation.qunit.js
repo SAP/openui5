@@ -2337,7 +2337,8 @@ function (
 
 	QUnit.test("ObjectPageLayout - update Header Title", function (assert) {
 		// Arrange
-		var oHeaderTitle = new ObjectPageHeader({
+		var oObjectPageLayout = this.oObjectPageLayout,
+			oHeaderTitle = new ObjectPageHeader({
 				objectTitle: "First Title"
 			}),
 			oSpy = sinon.spy(this.oObjectPageLayout, "_adjustHeaderHeights"),
@@ -2345,8 +2346,10 @@ function (
 
 		assert.expect(2);
 
-		this.oObjectPageLayout.setHeaderTitle(oHeaderTitle);
 		this.oObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
+			oObjectPageLayout.setHeaderTitle(oHeaderTitle);
+			Core.applyChanges();
+
 			oSpy.reset();
 
 			// Act - already have a title, so changing its text should not affect height
