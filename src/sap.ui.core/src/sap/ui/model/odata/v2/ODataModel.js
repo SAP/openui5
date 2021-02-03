@@ -7489,13 +7489,15 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype.removeInternalMetadata = function (oEntityData) {
-		var sCreated, sDeepPath, sKey, vValue;
+		var sCreated, sDeepPath, bInvalid, sKey, vValue;
 
 		if (oEntityData && oEntityData.__metadata) {
 			sCreated = oEntityData.__metadata.created;
 			sDeepPath = oEntityData.__metadata.deepPath;
+			bInvalid = oEntityData.__metadata.invalid;
 			delete oEntityData.__metadata.created;
 			delete oEntityData.__metadata.deepPath;
+			delete oEntityData.__metadata.invalid;
 		}
 		for (sKey in oEntityData) {
 			vValue = oEntityData[sKey];
@@ -7505,7 +7507,7 @@ sap.ui.define([
 				ODataModel.prototype.removeInternalMetadata(vValue);
 			}
 		}
-		return {created: sCreated, deepPath: sDeepPath};
+		return {created: sCreated, deepPath: sDeepPath, invalid : bInvalid};
 	};
 
 	/**
