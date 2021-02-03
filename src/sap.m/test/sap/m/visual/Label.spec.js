@@ -3,6 +3,16 @@
 describe("sap.m.Label", function() {
 	"use strict";
 
+	function changeLanguage(sLang) {
+		return browser.executeScript(function(sLang) {
+			var oSelect = sap.ui.getCore().byId('localeSelect');
+				oSelect.setSelectedKey(sLang);
+
+			var oSelectedItem = oSelect.getSelectedItem();
+				oSelect.fireChange({ selectedItem: oSelectedItem});
+		}, sLang);
+	}
+
 	it("should load test page", function () {
 		expect(takeScreenshot()).toLookAs("0_initial");
 	});
@@ -105,17 +115,18 @@ describe("sap.m.Label", function() {
 		});
 		element(by.id('requiredSwitch')).click();
 	});
+
 	it("should visualize the French language", function(){
 
 		var simpleForm = element(by.id("simpleForm"));
 		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
-			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(1);");
+			changeLanguage("fr");
 			expect(takeScreenshot(simpleForm)).toLookAs('21_simpleForm_compact_French');
 		});
 
 		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
 			element(by.id('cozySwitch')).click();
-			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(1);");
+			changeLanguage("fr");
 			expect(takeScreenshot(simpleForm)).toLookAs('22_simpleForm_cozy_French');
 		});
 		element(by.id('cozySwitch')).click();
@@ -125,13 +136,13 @@ describe("sap.m.Label", function() {
 
 		var simpleForm = element(by.id("simpleForm"));
 		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
-			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(2);");
+			changeLanguage("zh-CN");
 			expect(takeScreenshot(simpleForm)).toLookAs('23_simpleForm_compact_zh_CN');
 		});
 
 		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
 			element(by.id('cozySwitch')).click();
-			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(2);");
+			changeLanguage("zh-CN");
 			expect(takeScreenshot(simpleForm)).toLookAs('24_simpleForm_cozy_zh_CN');
 		});
 		element(by.id('cozySwitch')).click();
@@ -141,13 +152,13 @@ describe("sap.m.Label", function() {
 
 		var simpleForm = element(by.id("simpleForm"));
 		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
-			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(3);");
+			changeLanguage("zh-TW");
 			expect(takeScreenshot(simpleForm)).toLookAs('25_simpleForm_compact_zh_TW');
 		});
 
 		browser.executeScript("document.getElementById('simpleForm').scrollIntoView()").then(function() {
 			element(by.id('cozySwitch')).click();
-			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(3);");
+			changeLanguage("zh-TW");
 			expect(takeScreenshot(simpleForm)).toLookAs('26_simpleForm_cozy_zh_TW');
 		});
 
@@ -158,11 +169,11 @@ describe("sap.m.Label", function() {
 		var oRequiredLabel = element(by.id("lbl2"));
 
 		browser.executeScript("document.getElementById('lbl2').scrollIntoView()").then(function() {
-			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(1);");
+			changeLanguage("fr");
 			expect(takeScreenshot(oRequiredLabel)).toLookAs('27_required_label_French');
 
 			// clean up - reset language
-			browser.executeScript("sap.ui.getCore().byId('localeSelect').setSelectedKey(0);");
+			changeLanguage("en");
 		});
 	});
 });
