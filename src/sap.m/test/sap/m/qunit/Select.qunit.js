@@ -4256,6 +4256,53 @@ sap.ui.define([
 			oInformationSelect.destroy();
 		});
 
+		QUnit.test("valueState with enabled and editable set to false", function(assert) {
+			// system under test
+			var oSelect = new Select({
+				enabled: false,
+				valueState: ValueState.Error
+
+			}),
+			CSS_CLASS = oSelect.getRenderer().CSS_CLASS;
+
+			// act
+			oSelect.placeAt("content");
+			Core.applyChanges();
+
+
+			// assert
+			assert.notOk(oSelect.$().hasClass(CSS_CLASS + "State"));
+			assert.notOk(oSelect.$().hasClass(CSS_CLASS + "Error"));
+
+			// act
+			oSelect.setEnabled(true);
+			Core.applyChanges();
+
+			// assert
+			assert.ok(oSelect.$().hasClass(CSS_CLASS + "State"));
+			assert.ok(oSelect.$().hasClass(CSS_CLASS + "Error"));
+
+			// act
+			oSelect.setEditable(false);
+			Core.applyChanges();
+
+			// assert
+			assert.notOk(oSelect.$().hasClass(CSS_CLASS + "State"));
+			assert.notOk(oSelect.$().hasClass(CSS_CLASS + "Error"));
+
+			// act
+			oSelect.setEditable(true);
+			Core.applyChanges();
+
+			// assert
+			assert.ok(oSelect.$().hasClass(CSS_CLASS + "State"));
+			assert.ok(oSelect.$().hasClass(CSS_CLASS + "Error"));
+
+			// cleanup
+			oSelect.destroy();
+
+		});
+
 		QUnit.module("setTooltip()");
 
 		// BCP 1580232802

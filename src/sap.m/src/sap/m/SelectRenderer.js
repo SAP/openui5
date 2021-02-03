@@ -45,7 +45,8 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				sCSSWidth = oSelect.getWidth(),
 				bWidthPercentage = sCSSWidth.indexOf("%") > -1,
 				bSelectWithFlexibleWidth = bAutoAdjustWidth || sCSSWidth === "auto" || bWidthPercentage,
-				CSS_CLASS = SelectRenderer.CSS_CLASS;
+				CSS_CLASS = SelectRenderer.CSS_CLASS,
+				bEditabledAndEnabled = bEnabled && bEditable;
 
 			oRm.openStart("div", oSelect);
 			this.addClass(oRm, oSelect);
@@ -72,13 +73,13 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				oRm.class(CSS_CLASS + "WithIcon");
 			}
 
-			if (bEnabled && bEditable && Device.system.desktop) {
+			if (bEditabledAndEnabled && Device.system.desktop) {
 				oRm.class(CSS_CLASS + "Hoverable");
 			}
 
 			oRm.class(CSS_CLASS + "WithArrow");
 
-			if (oSelect.getValueState() !== ValueState.None) {
+			if (oSelect.getValueState() !== ValueState.None && bEditabledAndEnabled) {
 				this.addValueStateClasses(oRm, oSelect);
 			}
 
@@ -194,13 +195,14 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			var oSelectedItem = oSelect.getSelectedItem(),
 				sTextDir = oSelect.getTextDirection(),
 				sTextAlign = Renderer.getTextAlign(oSelect.getTextAlign(), sTextDir),
-				CSS_CLASS = SelectRenderer.CSS_CLASS;
+				CSS_CLASS = SelectRenderer.CSS_CLASS,
+				bEditabledAndEnabled = oSelect.getEnabled() && oSelect.getEditable();
 
 			oRm.openStart("span", oSelect.getId() + "-label");
 			oRm.attr("aria-hidden", true);
 			oRm.class(CSS_CLASS + "Label");
 
-			if (oSelect.getValueState() !== ValueState.None) {
+			if (oSelect.getValueState() !== ValueState.None && bEditabledAndEnabled) {
 				oRm.class(CSS_CLASS + "LabelState");
 				oRm.class(CSS_CLASS + "Label" + oSelect.getValueState());
 			}
@@ -358,6 +360,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				oSelectedItem = oSelect.getSelectedItem(),
 				bIconOnly = oSelect.getType() === SelectType.IconOnly,
 				oValueIcon = oSelect._getValueIcon(),
+				bEditabledAndEnabled = oSelect.getEnabled() && oSelect.getEditable(),
 				aLabels = [],
 				aAriaLabelledBy = [],
 				oAriaLabelledBy,
@@ -382,7 +385,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				}
 			}
 
-			if (sValueState !== ValueState.None) {
+			if (sValueState !== ValueState.None && bEditabledAndEnabled) {
 				sAriaDescribedBy = oSelect.getValueStateMessageId() + "-sr";
 			}
 
@@ -406,7 +409,7 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 				required: oSelect._isRequired() || undefined,
 				disabled: !oSelect.getEnabled() || undefined,
 				expanded: oSelect.isOpen(),
-				invalid: (oSelect.getValueState() === ValueState.Error) ? true : undefined,
+				invalid: (oSelect.getValueState() === ValueState.Error && bEditabledAndEnabled) ? true : undefined,
 				labelledby: (bIconOnly || oAriaLabelledBy.value === "") ? undefined : oAriaLabelledBy,
 				describedby: sAriaDescribedBy,
 				activedescendant: sActiveDescendant,
@@ -422,14 +425,14 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		 */
 		SelectRenderer.renderAccessibilityDomNodes = function (oRm, oControl) {
 			var sValueState = oControl.getValueState(),
-				sValueStateText;
+				sValueStateText,
+				bEditabledAndEnabled = oControl.getEnabled() && oControl.getEditable();
 
-			if (sValueState === ValueState.None) {
+			if (sValueState === ValueState.None || !bEditabledAndEnabled) {
 				return;
 			}
 
 			sValueStateText = oControl._getValueStateText();
-
 			oRm.openStart("div", oControl.getValueStateMessageId() + "-sr")
 				.class("sapUiPseudoInvisibleText")
 				.attr("aria-hidden", true)
