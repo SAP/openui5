@@ -251,6 +251,42 @@ sap.ui.define([
 						title: 'Calendar',
 						target: 'exploreSamples',
 						key: 'calendar',
+						subSamples: [
+							{
+								title: 'Calendar',
+								key: 'calendar',
+								settings: {
+									columns: 7
+								},
+								files: [
+									{
+										url: '/samples/calendar/calendar.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									}
+								]
+							},
+							{
+								title: 'Fetch Data with Extension',
+								key: 'extension',
+								experimental: true,
+								settings: {
+									columns: 7
+								},
+								files: [
+									{
+										url: '/samples/calendar/extensionSample/manifest.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/calendar/extensionSample/SampleExtension.js',
+										name: 'SampleExtension.js',
+										key: 'SampleExtension.js'
+									}
+								]
+							}
+						],
 						settings: {
 							columns: 7
 						},

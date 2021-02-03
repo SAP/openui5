@@ -379,6 +379,94 @@
 				</table>
 			</div>
 
+			<h2 id="actions">Actions</h2>
+
+			<p>The Calendar Card has few actions fired by user interaction.</p>
+
+			<h4>Calendar actions</h4>
+
+			<p>Using an extension, you can attach handlers to the following actions. Thus, you can set data fetching to
+				be dependent to the selected date/month. See the sample about
+				<a data-demokit-href="../../../index.html#/explore/calendar/extension"
+					target="_blank">Fetch Data with Extension</a>.</p>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Action</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>DateChange</td>
+						<td>Navigation</td>
+						<td>An action fired when a date in the calendar is selected.<br>
+							<b>Note:</b> This action is experimental and may change!</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
+					</tr>
+					<tr>
+						<td>MonthChange</td>
+						<td>Navigation</td>
+						<td>An action fired when the currently displayed month in the calendar is changed.<br>
+							<b>Note:</b> This action is experimental and may change!</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
+					</tr>
+				</table>
+			</div>
+
+			<p>Parameters for the DateChange action</p>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Parameter</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>selectedDate</td>
+						<td>JavaScript Date object</td>
+						<td>The date that is chosen.</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
+					</tr>
+				</table>
+			</div>
+
+			<p>Parameters for the MonthChange action</p>
+
+			<div class="tableWrapper">
+				<table>
+					<tr>
+						<th>Parameter</th>
+						<th>Type</th>
+						<th>Description</th>
+						<th>Schema Version</th>
+						<th>Since</th>
+					</tr>
+					<tr>
+						<td>firstDate</td>
+						<td>JavaScript Date object</td>
+						<td>The first displayed date in the month view. This could be a date in the previous month.</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
+					</tr>
+					<tr>
+						<td>lastDate</td>
+						<td>JavaScript Date object</td>
+						<td>The last displayed date in the month view. This could be a date in the next month.</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
+					</tr>
+				</table>
+			</div>
+
 			<h2 id="example">Example</h2>
 			<p>Define the type and data for the card:
 			</p>

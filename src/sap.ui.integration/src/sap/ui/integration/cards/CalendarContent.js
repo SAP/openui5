@@ -16,6 +16,8 @@ sap.ui.define([
 		'sap/ui/core/format/DateFormat',
 		"sap/ui/model/Filter",
 		"sap/ui/model/FilterOperator",
+		"sap/ui/unified/calendar/CalendarDate",
+		"sap/ui/unified/calendar/CalendarUtils",
 		"sap/ui/unified/CalendarAppointment",
 		"sap/ui/unified/DateTypeRange",
 		"sap/ui/core/date/UniversalDate",
@@ -35,6 +37,8 @@ sap.ui.define([
 		DateFormat,
 		Filter,
 		FilterOperator,
+		CalendarDate,
+		CalendarUtils,
 		CalendarAppointment,
 		DateTypeRange,
 		UniversalDate,
@@ -95,12 +99,19 @@ sap.ui.define([
 		 */
 		CalendarContent.prototype._createCardContent = function () {
 			this._oCalendar = new CalendarInCard(this.getId() + "-navigation", {
+				startDateChange: function (oEvent) {
+					var oFocusedDate = oEvent.getSource()._getFocusedDate().toLocalJSDate();
+
+					this._handleStartDateChange(oFocusedDate);
+				}.bind(this),
 				select: function (oEvent) {
 					var oSelectedDate = oEvent.getSource().getSelectedDates()[0].getStartDate();
 
 					this._setParameters(oEvent, oEvent.getParameter("startDate"));
 					this._refreshVisibleAppointments(oSelectedDate);
 					this.invalidate();
+
+					this._handleSelect(oSelectedDate);
 				}.bind(this)
 			});
 			this._oLegend = new PlanningCalendarInCardLegend(this.getId() + "-legend", {
@@ -159,10 +170,24 @@ sap.ui.define([
 				this._oActions.destroy();
 				this._oActions = null;
 			}
+
+			if (this._bDataInitiallyLoaded) {
+				this._bDataInitiallyLoaded = null;
+			}
 		};
 
 		CalendarContent.prototype.onDataChanged = function () {
+			var oSelectedDate = this._oCalendar.getSelectedDates()[0].getStartDate();
+
+			if (!this._bDataInitiallyLoaded) {
+				this._handleSelect(oSelectedDate);
+				this._handleStartDateChange(oSelectedDate);
+				this._bDataInitiallyLoaded = true;
+			}
+
 			this._setParameters();
+			this._refreshVisibleAppointments(oSelectedDate);
+			this.invalidate();
 		};
 
 		CalendarContent.prototype.onBeforeRendering = function () {
@@ -248,15 +273,11 @@ sap.ui.define([
 		 * @param {Object} oDate a date, against which the parameters are set.
 		 */
 		CalendarContent.prototype._setParameters = function (oEvent, oDate) {
-			var oConfiguration = this.getConfiguration && this.getConfiguration(),
-				sItemPath = oConfiguration && oConfiguration.item && oConfiguration.item.path,
-				oCurrentDate,
+			var oCurrentDate,
 				oStartOfDay,
 				oEndOfDay,
-				sMaxItemsPath,
 				aBoundAppointments,
-				aAppointmentsCurrentDay,
-				oDateFormat = DateFormat.getDateTimeInstance();
+				aAppointmentsCurrentDay;
 
 			if (oDate) {
 				oCurrentDate = oDate;
@@ -271,11 +292,11 @@ sap.ui.define([
 
 			oEndOfDay.setDate(oEndOfDay.getDate() + 1);
 
-			aBoundAppointments = sItemPath && this.getModel().getProperty(sItemPath);
+			aBoundAppointments = this.getAppointments();
 			if (aBoundAppointments) {
 				aAppointmentsCurrentDay	= aBoundAppointments.filter(function (oApp) {
-					var iStart = oDateFormat.parse(oApp.start).getTime(),
-						iEnd = oDateFormat.parse(oApp.end).getTime();
+					var iStart = oApp.getStartDate().getTime(),
+						iEnd = oApp.getEndDate().getTime();
 					if ((iStart >= oStartOfDay.getTime() && iStart < oEndOfDay.getTime()) ||
 						(iEnd >= oStartOfDay.getTime() && iEnd < oEndOfDay.getTime()) ||
 						(iStart <= oStartOfDay.getTime() && iEnd > oEndOfDay.getTime())) {
@@ -287,14 +308,7 @@ sap.ui.define([
 			}
 
 			this._iAllItems = aAppointmentsCurrentDay.length;
-
-			if (oConfiguration && typeof oConfiguration.maxItems === "object") {
-				sMaxItemsPath = oConfiguration && this.getConfiguration().maxItems && "/" + this.getConfiguration().maxItems.binding.getPath();
-				this._iMaxItems = this.getModel().getProperty(sMaxItemsPath);
-			} else {
-				this._iMaxItems = oConfiguration && this.getConfiguration().maxItems;
-			}
-
+			this._iMaxItems = this.getVisibleAppointmentsCount();
 			this._iVisibleItems = Math.min(this._iMaxItems, this._iAllItems);
 
 			if (this.getModel("parameters")) {
@@ -533,6 +547,12 @@ sap.ui.define([
 				this._oCalendar.addSelectedDate(oDR);
 			} else {
 				this._oCalendar.addSelectedDate(new DateTypeRange({startDate: this.formatDate(sTime)}));
+
+				var oFocusedDate = this.formatDate(sTime);
+
+				this._handleSelect(oFocusedDate);
+				this._handleStartDateChange(oFocusedDate);
+				this._bDataInitiallyLoaded = true;
 			}
 		};
 
@@ -624,6 +644,39 @@ sap.ui.define([
 					}
 				}
 			}
+		};
+
+		/**
+		 * Fires an action indicating that a new month is displayed in the card.
+		 * @param {Date} oFocusedDate The focused date in the new month
+		 */
+		CalendarContent.prototype._handleStartDateChange = function (oFocusedDate) {
+			var oCardActions = this.getActions(),
+				oCalFocusedDate = CalendarDate.fromLocalJSDate(oFocusedDate),
+				oCalFirstRenderedDate = CalendarUtils._getFirstDateOfWeek(oCalFocusedDate),
+				oCalLastDateInMonth = new CalendarDate(oFocusedDate.getFullYear(), oFocusedDate.getMonth() + 1, 1),
+				oCalLastRenderedDate;
+
+			oCalLastDateInMonth.setDate(oCalLastDateInMonth.getDate() - 1); // move a day backwards
+			oCalLastRenderedDate = CalendarUtils._getFirstDateOfWeek(oCalLastDateInMonth); // get first date of the last displayed week
+			oCalLastRenderedDate.setDate(oCalLastRenderedDate.getDate() + 6); // move to the end of the week
+
+			oCardActions.fireAction(this, "MonthChange", {
+				"firstDate": oCalFirstRenderedDate.toLocalJSDate(),
+				"lastDate": oCalLastRenderedDate.toLocalJSDate()
+			});
+		};
+
+		/**
+		 * Fires an action indicating that a new date is selected in the card.
+		 * @param {Date} oSelectedDate The new selected date in the month
+		 */
+		CalendarContent.prototype._handleSelect = function (oSelectedDate) {
+			var oCardActions = this.getActions();
+
+			oCardActions.fireAction(this, "DateChange", {
+				"selectedDate": oSelectedDate
+			});
 		};
 
 		function _getLocaleData() {

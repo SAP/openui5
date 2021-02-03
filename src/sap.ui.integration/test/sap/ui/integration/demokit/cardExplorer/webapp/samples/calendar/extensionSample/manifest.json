@@ -1,0 +1,90 @@
+{
+  "_version": "1.14.0",
+  "sap.app": {
+	"id": "card.explorer.calendar.extensionSample",
+	"type": "card",
+	"title": "Sample of a List with Highlight",
+	"subTitle": "Sample of a Calendar with Highlight",
+	"applicationVersion": {
+	  "version": "1.0.0"
+	},
+	"shortTitle": "A short title for this Card",
+	"info": "Additional information about this Card",
+	"description": "A long description for this Card",
+	"tags": {
+	  "keywords": [
+		"Calendar",
+		"Highlight",
+		"Card",
+		"Sample",
+		"Extension"
+	  ]
+	}
+  },
+  "sap.card": {
+	"type": "Calendar",
+	"extension": "./SampleExtension",
+	"data": {
+	  "name": "calendarData"
+	},
+	"header": {
+	  "title": "My calendar",
+	  "subTitle": "Team Balkan",
+	  "status": {
+		"text": {
+		  "format": {
+			"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+			"parts": [
+			  "parameters>/visibleItems",
+			  "parameters>/allItems"
+			]
+		  }
+		}
+	  }
+	},
+	"content": {
+	  "date": "2019-09-02",
+	  "maxItems": 5,
+	  "maxLegendItems": 3,
+	  "noItemsText": "You have nothing planned for this day",
+	  "item": {
+		"template": {
+		  "startDate": "{calendarData>start}",
+		  "endDate": "{calendarData>end}",
+		  "title": "{calendarData>title}",
+		  "text": "{calendarData>text}",
+		  "icon": {
+			"src": "{calendarData>icon}"
+		  },
+		  "type": "{calendarData>type}"
+		},
+		"path": "calendarData>/item"
+	  },
+	  "specialDate": {
+		"template": {
+		  "startDate": "{calendarData>start}",
+		  "endDate": "{calendarData>end}",
+		  "type": "{calendarData>type}"
+		},
+		"path": "calendarData>/specialDate"
+	  },
+	  "legendItem": {
+		"template": {
+		  "category": "{calendarData>category}",
+		  "text": "{calendarData>text}",
+		  "type": "{calendarData>type}"
+		},
+		"path": "calendarData>/legendItem"
+	  },
+	  "moreItems": {
+		"actions": [
+		  {
+			"type": "Navigation",
+			"enabled": true,
+			"url": "http://sap.com"
+		  }
+		]
+	  }
+	}
+  }
+}
