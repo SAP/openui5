@@ -394,10 +394,6 @@ sap.ui.define([
 			this._forceStyleChange();
 		}
 		this._renderOverlay();
-		if (this._bPopinChanged) {
-			this._firePopinChangedEvent();
-			this._bPopinChanged = false;
-		}
 	};
 
 	Table.prototype._renderOverlay = function() {
@@ -648,6 +644,7 @@ sap.ui.define([
 			var clean = this._getMediaContainerWidth() || window.innerWidth;
 			this._mutex = true;
 			this.rerender();
+			this._firePopinChangedEvent();
 
 			// do not re-render if resize event comes so frequently
 			setTimeout(function() {
@@ -655,6 +652,7 @@ sap.ui.define([
 				if (this._dirty != clean) {
 					this._dirty = 0;
 					this.rerender();
+					this._firePopinChangedEvent();
 				}
 				this._mutex = false;
 			}.bind(this), 200);
@@ -1182,13 +1180,6 @@ sap.ui.define([
 
 	Table.prototype._fireUpdateFinished = function(oInfo) {
 		ListBase.prototype._fireUpdateFinished.apply(this, arguments);
-
-		// indicates initial rendering, after rendering is done, this._bPopinChanged=false is set
-		if (this._bPopinChanged == null) {
-			// remember the visible items length
-			this._iVisibleItemsLength = this.getVisibleItems().length;
-			return;
-		}
 
 		// fire popinChanged when visible items length become 0 from greater than 0 as a result of binding changes
 		// fire popinChanged when visible items length become greater than 0 from 0 as a result of binding changes
