@@ -627,17 +627,13 @@ sap.ui.define([
 	 * @returns {Promise} Resolving after all changes have been saved
 	 */
 	ChangePersistence.prototype.saveDirtyChanges = function(oAppComponent, bSkipUpdateCache, aChanges, nParentVersion) {
-		var aAllChanges;
 		var aDirtyChanges = aChanges || this._aDirtyChanges;
-		var bBackendCondensingEnabled = isBackendCondensingEnabled(aDirtyChanges, bSkipUpdateCache);
-		var bIsCondensingEnabled = false;
-		if (bBackendCondensingEnabled) {
-			aAllChanges = getAllRelevantChangesForCondensing.call(this, aDirtyChanges);
-			bIsCondensingEnabled = shouldCondensingBeEnabled(oAppComponent, aAllChanges);
-		}
-		if (!bIsCondensingEnabled) {
-			aAllChanges = aDirtyChanges;
-		}
+		var aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(this, aDirtyChanges);
+		var bIsCondensingEnabled = (
+			isBackendCondensingEnabled(aRelevantChangesForCondensing, bSkipUpdateCache)
+			&& shouldCondensingBeEnabled(oAppComponent, aRelevantChangesForCondensing)
+		);
+		var aAllChanges = bIsCondensingEnabled ? aRelevantChangesForCondensing : aDirtyChanges;
 		var aChangesClone = aAllChanges.slice(0);
 		var aDirtyChangesClone = aDirtyChanges.slice(0);
 		var aRequests = this._getRequests(aDirtyChanges);
