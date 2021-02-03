@@ -1280,14 +1280,35 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh, list binding", function (assert) {
+	QUnit.test("refresh: list binding, reject", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES/42", 42);
+
+		this.mock(oContext).expects("requestRefresh").withExactArgs("groupId", "bAllowRemoval")
+			.rejects(new Error());
+
+		// code under test - must not cause "Uncaught (in promise)"
+		oContext.refresh("groupId", "bAllowRemoval");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("refresh: context binding, reject", function (assert) {
+		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')");
+
+		this.mock(oContext).expects("requestRefresh").withExactArgs("groupId")
+			.rejects(new Error());
+
+		// code under test - must not cause "Uncaught (in promise)"
+		oContext.refresh("groupId");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestRefresh, list binding", function (assert) {
 		var bAllowRemoval = {/*false, true, undefined*/},
 			oBinding = {
 				checkSuspended : function () {},
 				getContext : function () { return null; },
 				isRelative : function () { return false; },
 				lockGroup : function () {},
-				refresh : function () {},
 				refreshSingle : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
@@ -1296,32 +1317,47 @@ sap.ui.define([
 				checkGroupId : function () {},
 				withUnresolvedBindings : function () {}
 			},
-			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42);
+			oContext = Context.create(oModel, oBinding, "/EMPLOYEES/42", 42),
+			oPromise,
+			bRefreshed = false;
 
 		this.mock(oModel).expects("checkGroupId");
 		oBindingMock.expects("lockGroup").withExactArgs("myGroup", true).returns(oGroupLock);
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
-		oBindingMock.expects("refresh").never();
 		oBindingMock.expects("refreshSingle")
 			.withExactArgs(sinon.match.same(oContext), sinon.match.same(oGroupLock),
-				sinon.match.same(bAllowRemoval));
+				sinon.match.same(bAllowRemoval))
+			.callsFake(function () {
+				return new SyncPromise(function (resolve) {
+					setTimeout(function () {
+						bRefreshed = true;
+						resolve("~");
+					}, 0);
+				});
+			});
 		this.mock(oModel).expects("withUnresolvedBindings")
 			.withExactArgs("removeCachesAndMessages", "EMPLOYEES/42");
 
 		// code under test
-		oContext.refresh("myGroup", bAllowRemoval);
+		oPromise = oContext.requestRefresh("myGroup", bAllowRemoval);
+
+		assert.ok(oPromise instanceof Promise);
+		return oPromise.then(function (oResult) {
+			assert.strictEqual(oResult, undefined);
+			assert.ok(bRefreshed);
+		});
 	});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bReturnValueContext) {
-		QUnit.test("refresh, context binding, " + bReturnValueContext, function (assert) {
+		QUnit.test("requestRefresh, context binding, " + bReturnValueContext, function (assert) {
 			var oBinding = {
 					checkSuspended : function () {},
 					getContext : function () { return {}; },
 					isRelative : function () { return false; },
-					refresh : function () {},
-					refreshReturnValueContext : function () {}
+					refreshReturnValueContext : function () {},
+					requestRefresh : function () {}
 				},
 				oBindingMock = this.mock(oBinding),
 				oModel = {
@@ -1330,35 +1366,70 @@ sap.ui.define([
 				},
 				oModelMock = this.mock(oModel),
 				oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
-				oContextMock = this.mock(oContext);
+				oContextMock = this.mock(oContext),
+				oPromise,
+				bRefreshed = false;
+
+			function doRefresh() {
+				return new SyncPromise(function (resolve) {
+					setTimeout(function () {
+						bRefreshed = true;
+						resolve("~");
+					}, 0);
+				});
+			}
 
 			oModelMock.expects("checkGroupId").withExactArgs("myGroup");
 			oBindingMock.expects("checkSuspended").withExactArgs();
 			oContextMock.expects("hasPendingChanges").withExactArgs().returns(false);
-			oBindingMock.expects("refreshReturnValueContext")
-				.withExactArgs(sinon.match.same(oContext), "myGroup")
-				.returns(bReturnValueContext);
-			oBindingMock.expects("refresh").withExactArgs("myGroup")
-				.exactly(bReturnValueContext ? 0 : 1);
+			if (bReturnValueContext) {
+				oBindingMock.expects("refreshReturnValueContext")
+					.withExactArgs(sinon.match.same(oContext), "myGroup")
+					.callsFake(doRefresh);
+				oBindingMock.expects("requestRefresh").never();
+			} else {
+				oBindingMock.expects("refreshReturnValueContext")
+					.withExactArgs(sinon.match.same(oContext), "myGroup")
+					.returns(null);
+				oBindingMock.expects("requestRefresh").withExactArgs("myGroup")
+					.callsFake(doRefresh);
+			}
 			oModelMock.expects("withUnresolvedBindings")
 				.withExactArgs("removeCachesAndMessages", "EMPLOYEES('42')");
 
 			// code under test
-			oContext.refresh("myGroup");
+			oPromise = oContext.requestRefresh("myGroup");
 
-			oModelMock.expects("checkGroupId").withExactArgs("myGroup");
-			oBindingMock.expects("checkSuspended").withExactArgs();
-			oContextMock.expects("hasPendingChanges").withExactArgs().returns(false);
-
-			assert.throws(function () {
-				// code under test
-				oContext.refresh("myGroup", undefined);
-			}, new Error("Unsupported parameter bAllowRemoval: undefined"));
+			assert.ok(oPromise instanceof Promise);
+			return oPromise.then(function (oResult) {
+				assert.strictEqual(oResult, undefined);
+				assert.ok(bRefreshed);
+			});
 		});
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh, error handling: invalid group", function (assert) {
+	QUnit.test("requestRefresh: bAllowRemoval on bound context", function (assert) {
+		var oBinding = {
+				checkSuspended : function () {}
+			},
+			oModel = {
+				checkGroupId : function () {}
+			},
+			oContext =  Context.create(oModel, oBinding, "/EMPLOYEES('42')");
+
+		this.mock(oModel).expects("checkGroupId").withExactArgs("myGroup");
+		this.mock(oBinding).expects("checkSuspended").withExactArgs();
+		this.mock(oContext).expects("hasPendingChanges").withExactArgs().returns(false);
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestRefresh("myGroup", undefined);
+		}, new Error("Unsupported parameter bAllowRemoval: undefined"));
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestRefresh: invalid group", function (assert) {
 		var oBinding = {},
 			oError = new Error(),
 			sGroupId = "$foo",
@@ -1370,12 +1441,12 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			Context.create(oModel, oBinding, "/EMPLOYEES", 42).refresh(sGroupId);
+			Context.create(oModel, oBinding, "/EMPLOYEES", 42).requestRefresh(sGroupId);
 		}, oError);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh, error handling: has pending changes", function (assert) {
+	QUnit.test("requestRefresh: has pending changes", function (assert) {
 		var oBinding = {
 				checkSuspended : function () {}
 			},
@@ -1391,7 +1462,7 @@ sap.ui.define([
 
 		assert.throws(function () {
 			// code under test
-			oContext.refresh(sGroupId);
+			oContext.requestRefresh(sGroupId);
 		}, new Error("Cannot refresh entity due to pending changes: /EMPLOYEES('42')"));
 	});
 
