@@ -95,6 +95,7 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 			// thus adding the clas here
 			if (!oControl._isInActionScope()) {
 				oRm.class("sapMPointer");
+				oRm.style("pointer-events", "auto");
 			} else {
 				oRm.class("sapMGTDisabled");
 			}
