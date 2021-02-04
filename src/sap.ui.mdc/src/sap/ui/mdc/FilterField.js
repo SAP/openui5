@@ -19,10 +19,10 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A <code>FilterField</code> control is used to filter data based on the conditions. The conditions are managed
-	 * in the corresponding <code>ConditionModel</code>. That is why the <code>conditions</code> property must be bound to the
-	 * related conditions in the <code>ConditionModel</code>. The type of this data must be defined in the <code>dataType</code>
-	 * property.
+	 * The <code>FilterField</code> control is used to filter data based on the conditions. The conditions are managed
+	 * in the corresponding {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.
+	 * That is why the <code>conditions</code> property must be bound to the related conditions in the {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.
+	 * The type of this data must be defined in the <code>dataType</code> property.
 	 *
 	 * @extends sap.ui.mdc.field.FieldBase
 	 *

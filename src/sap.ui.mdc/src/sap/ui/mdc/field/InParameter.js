@@ -12,11 +12,11 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>InParameter</code>.
 	 *
-	 * The <code>FieldValueHelp</code> element supports in parameters. The binding to the data is defined in this element.
+	 * The {@link sap.ui.mdc.field.FieldValueHelp FieldValueHelp} element supports in parameters. The binding to the data is defined in this element.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Base type for <code>InParameter</code> control.
+	 * @class The <code>InParameter</code> element is used in the {@link sap.ui.mdc.field.FieldValueHelp FieldValueHelp} element.
 	 * @extends sap.ui.core.Element
 	 * @version ${version}
 	 * @constructor
@@ -36,7 +36,8 @@ sap.ui.define([
 				/**
 				 * The value of the in parameter.
 				 *
-				 * Here the data of the model can be bound. In the <code>FilterField</code> case this is the <code>ConditionModel</code>.
+				 * Here the data of the model can be bound.
+				 * In the {@link sap.ui.mdc.FilterField FilterField} case this is the {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.
 				 *
 				 * <b>Note:</b> Here we recommend one-way-binding.
 				 */
@@ -56,7 +57,7 @@ sap.ui.define([
 				/**
 				 * If set, an initial value of <code>InParameter</code> starts a filtering for the <code>empty</code> operator.
 				 *
-				 * <b>Note:</b> This property must not be used for <code>FilterField</code> and if bound to <code>ConditionModel</code>.
+				 * <b>Note:</b> This property must not be used for {@link sap.ui.mdc.FilterField FilterField} and if bound to {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.
 				 * In this case, a filtering for the empty operator must be defined by the assigned conditions.
 				 *
 				 * <b>Note:</b> This property must only be set if the data type used supports a filtering for the empty operator.
@@ -148,7 +149,7 @@ sap.ui.define([
 	/**
 	 * Returns an indicator if conditions are used as values.
 	 *
-	 * If the <code>value</code> property is bound to a <code>ConditionModel</code> model it must handle conditions.
+	 * If the <code>value</code> property is bound to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} model it must handle conditions.
 	 * Only in this case multiple values are supported. Otherwise the value is just updated.
 	 *
 	 * @returns {boolean} <code>true</code> if conditions are used

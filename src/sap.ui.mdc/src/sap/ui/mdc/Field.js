@@ -37,8 +37,8 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A <code>Field</code> can be used to bind its value to data of a certain data type. Based on the data type settings, a default
-	 * control is rendered by the <code>Field</code>. For example, if a date type is used, a <code>DatePicker</code> is rendered.
+	 * The <code>Field</code> control is used to bind its value to data of a certain data type. Based on the data type settings, a default
+	 * control is rendered by the <code>Field</code>. For example, if a date type is used, a {@link sap.m.DatePicker DatePicker} is rendered.
 	 *
 	 * @extends sap.ui.mdc.field.FieldBase
 	 * @implements sap.ui.core.IFormContent

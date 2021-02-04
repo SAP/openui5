@@ -14,12 +14,12 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>FieldMultiInput</code>.
 	 *
-	 * The <code>FieldMultiInput</code> enhances the <code>sap.m.MultiInput</code> control to add ARIA attributes
-	 * and other <code>sap.ui.mdc.field.FieldBase</code>-specific logic.
+	 * The <code>FieldMultiInput</code> control enhances the {@link sap.m.MultiInput MultiInput} control to add ARIA attributes
+	 * and other {@link sap.ui.mdc.field.FieldBase FieldBase}-specific logic.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Base type for <code>FieldMultiInput</code> control.
+	 * @class The <code>FieldMultiInput</code> control is used to render a multi-input field inside a control based on {@link sap.ui.mdc.field.FieldBase FieldBase}.
 	 * @extends sap.m.MultiInput
 	 * @version ${version}
 	 * @constructor
@@ -38,7 +38,7 @@ sap.ui.define([
 				/**
 				 * Sets the ARIA attributes added to the <code>MultiInput</code> control.
 				 *
-				 * The object contains ARIA attribudes in an <code>aria</code> node.
+				 * The object contains ARIA attributes in an <code>aria</code> node.
 				 * Additional attributes, such as <code>role</code>, <code>autocomplete</code> or <code>valueHelpEnabled</code>, are added on root level.
 				 */
 				ariaAttributes: {

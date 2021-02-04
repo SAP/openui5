@@ -14,11 +14,11 @@ sap.ui.define([
 	/**
 	 * Constructor for a new <code>OutParameter</code>.
 	 *
-	 * The <code>FieldValueHelp</code> element supports out parameters. The binding to the data is defined in this element.
+	 * The {@link sap.ui.mdc.field.FieldValueHelp FieldValueHelp} element supports out parameters. The binding to the data is defined in this element.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Base type for <code>OutParameter</code> control.
+	 * @class The <code>OutParameter</code> element is used in the {@link sap.ui.mdc.field.FieldValueHelp FieldValueHelp} element.
 	 * @extends sap.ui.mdc.field.InParameter
 	 * @version ${version}
 	 * @constructor

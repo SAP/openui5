@@ -37,11 +37,11 @@ sap.ui.define([
 	 * Constructor for a new <code>FieldValueHelpMTableWrapper</code>.
 	 *
 	 * The <code>FieldValueHelp</code> element supports different types of content. This is a wrapper to use a
-	 * <code>sap.m.Table</code> control as content.
+	 * {@link sap.m.Table Table} control as content.
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class Wrapper to use a <code>sap.m.Table</code> control as content of a <code>FieldValueHelp</code> element
+	 * @class Wrapper to use a {@link sap.m.Table Table} control as content of a {@link sap.ui.mdc.field.FieldValueHelp FieldValueHelp} element.
 	 * @extends sap.ui.mdc.field.FieldValueHelpContentWrapperBase
 	 * @version ${version}
 	 * @constructor
