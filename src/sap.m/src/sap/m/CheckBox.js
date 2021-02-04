@@ -386,7 +386,6 @@ sap.ui.define([
 			this.ontap(oEvent);
 			// stop browsers default behavior
 			oEvent.preventDefault();
-			oEvent.stopPropagation();
 		}
 	};
 
