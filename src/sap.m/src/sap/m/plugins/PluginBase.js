@@ -57,6 +57,22 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 		Object.assign(mPluginControlConfigs[sPluginName] = mPluginControlConfigs[sPluginName] || {}, mControlConfig);
 	};
 
+	/**
+	 * Returns the first applied plugin for the given control instance and the plugin name.
+	 *
+	 * @param {sap.ui.core.Control} oControl The control instance to check for
+	 * @param {string|string[]} vPluginName The plugin name or names to check for
+	 * @return {undefined|sap.m.plugins.PluginBase} The found plugin instance or undefined
+	 * @protected
+	 * @static
+	 * @since 1.87
+	 */
+	PluginBase.getPlugin = function(oControl, vPluginName) {
+		return oControl.getDependents().find(function(oDependent) {
+			return oDependent.isA(vPluginName);
+		});
+	};
+
 	PluginBase.prototype.init = function() {
 		this._bIsActive = false;
 	};
