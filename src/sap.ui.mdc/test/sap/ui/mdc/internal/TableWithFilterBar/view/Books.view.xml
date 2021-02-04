@@ -72,8 +72,11 @@
 								keyPath="ID" descriptionPath="name"
 								filterFields="$search"
 								showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorVH.delegate', payload: {}}">
+								<mdcf:collectiveSearchItems>
+									<core:Item text="Default Search Template" key="default"/>
+									<core:Item text="Search Template 1" key="template1"/>
+								</mdcf:collectiveSearchItems>
 								<mdcf:filterBar>
-									<!-- <vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorsVH.FB.delegate', payload: {collectionName: 'Authors'}}" > -->
 									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: ''}}" >
 										<vhfb:basicSearchField>
 											<mdc:FilterField
