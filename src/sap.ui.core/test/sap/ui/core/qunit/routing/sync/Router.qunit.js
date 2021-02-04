@@ -14,10 +14,11 @@ sap.ui.define([
 	"sap/m/NavContainer",
 	"sap/m/Panel",
 	"sap/m/SplitContainer",
+	"../HistoryUtils",
 	"sap/ui/thirdparty/signals",
 	"sap/ui/thirdparty/crossroads",
 	"sap/ui/thirdparty/hasher"
-], function (Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer) {
+], function (Log, UIComponent, Controller, JSView, View, HashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, HistoryUtils) {
 	"use strict";
 
 	// This variable is used for creating custom component classes to avoid the
@@ -34,7 +35,15 @@ sap.ui.define([
 		}
 	}
 
-	QUnit.module("initialization");
+	// Initialize the HistoryUtils
+	QUnit.begin(HistoryUtils.init);
+
+	// Resets the HistoryUtils
+	QUnit.done(HistoryUtils.exit);
+
+	QUnit.module("initialization", {
+		before: HistoryUtils.check
+	});
 
 	QUnit.test("Should initialize the router instance", function(assert) {
 		//Arrange
@@ -241,6 +250,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("config", {
+		before: HistoryUtils.check,
 		beforeEach : function() {
 			//make sure to start with an empty hash
 			hasher.setHash("");
@@ -444,6 +454,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("greedy", {
+		before: HistoryUtils.check,
 		beforeEach: addClock
 	});
 
@@ -531,6 +542,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("routing", {
+		before: HistoryUtils.check,
 		beforeEach : function() {
 			addClock.call(this);
 			//make sure to start with an empty hash
@@ -709,7 +721,9 @@ sap.ui.define([
 		router.destroy();
 	});
 
-	QUnit.module("hrefGeneration");
+	QUnit.module("hrefGeneration", {
+		before: HistoryUtils.check
+	});
 
 	QUnit.test("Should create an URL for a route", function(assert) {
 		//Arrange
@@ -735,6 +749,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("navTo", {
+		before: HistoryUtils.check,
 		beforeEach: function () {
 			this.oRouter = new Router({
 				home: {
@@ -769,7 +784,9 @@ sap.ui.define([
 		sinon.assert.calledWith(oLogErrorSpy, sinon.match(/navTo with component target info is only supported with async router/));
 	});
 
-	QUnit.module("View generation");
+	QUnit.module("View generation", {
+		before: HistoryUtils.check
+	});
 
 	QUnit.test("View initialization", function(assert) {
 		HashChanger.getInstance().setHash("");
@@ -1116,7 +1133,9 @@ sap.ui.define([
 		oShell.destroy();
 	});
 
-	QUnit.module("View events");
+	QUnit.module("View events", {
+		before: HistoryUtils.check
+	});
 
 	function createXmlView () {
 		var sXmlViewContent = [
@@ -1133,6 +1152,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("views - creation and caching", {
+		before: HistoryUtils.check,
 		beforeEach: function () {
 			// System under test + Arrange
 			this.oRouter = new Router();
@@ -1182,6 +1202,7 @@ sap.ui.define([
 
 
 	QUnit.module("created event", {
+		before: HistoryUtils.check,
 		beforeEach: function () {
 			// System under test + Arrange
 			this.oRouter = new Router();
@@ -1244,6 +1265,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("titleChanged event", {
+		before: HistoryUtils.check,
 		beforeEach: function() {
 			HashChanger.getInstance().setHash("");
 			this.oApp = new App();
@@ -1434,6 +1456,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("title history", {
+		before: HistoryUtils.check,
 		beforeEach: function() {
 			// reset hash
 			HashChanger.getInstance().setHash("");
@@ -2093,7 +2116,9 @@ sap.ui.define([
 		this.oRouter.initialize();
 	});
 
-	QUnit.module("component");
+	QUnit.module("component", {
+		before: HistoryUtils.check
+	});
 
 	QUnit.test("Should create a view with an component", function (assert) {
 		// Arrange
@@ -2117,6 +2142,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("targets", {
+		before: HistoryUtils.check,
 		beforeEach: function () {
 			this.oShell = new ShellSubstitute();
 			this.oChildShell = new ShellSubstitute();
@@ -2247,7 +2273,9 @@ sap.ui.define([
 		assert.strictEqual(this.oSecondShell.getContent().length, 1, "Did place the view in the shell");
 	});
 
-	QUnit.module("getTargets");
+	QUnit.module("getTargets", {
+		before: HistoryUtils.check
+	});
 
 	QUnit.test("Should get the created targets instance", function (assert) {
 		// System under test + arrange
@@ -2269,6 +2297,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("bypassed", {
+		before: HistoryUtils.check,
 		beforeEach: function () {
 			HashChanger.getInstance().replaceHash("test");
 		},
@@ -2349,6 +2378,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Bug fix in Crossroads", {
+		before: HistoryUtils.check,
 		beforeEach: addClock
 	});
 
@@ -2464,6 +2494,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("nested components", {
+		before: HistoryUtils.check,
 		beforeEach: function() {
 			addClock.call(this);
 			hasher.setHash("");
