@@ -2,29 +2,18 @@
 sap.ui.define([
 	"sap/ui/core/routing/HashChanger",
 	"sap/ui/core/routing/History",
-	"sap/ui/Device",
-	"sap/base/Log"
-], function (HashChanger, History, Device, Log) {
+	"sap/base/Log",
+	"./HistoryUtils"
+], function (HashChanger, History, Log, HistoryUtils) {
 	"use strict";
 
 	HashChanger.getInstance().init();
 
-	var bInitialHistoryUsePushState;
+	// Initialize the HistoryUtils
+	QUnit.begin(HistoryUtils.init);
 
-	var fnBeforeHistoryModule = function(){
-		bInitialHistoryUsePushState = History._bUsePushState;
-		if (Device.browser.safari) {
-			// Safari has a restriction that the push state API can't be used more than 100 times in 30 seconds.
-			// The tests below break the restriction therefore we need to turn off push state for Safari.
-			History._bUsePushState = false;
-		}
-	};
-
-	var fnAfterHistoryModule = function(){
-		if (Device.browser.safari) {
-			History._bUsePushState = bInitialHistoryUsePushState;
-		}
-	};
+	// Resets the HistoryUtils
+	QUnit.done(HistoryUtils.exit);
 
 	QUnit.test("Should not use push state when runs in iframe", function (assert) {
 		var done = assert.async();
@@ -43,8 +32,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("history.state enhancement", {
-		before: fnBeforeHistoryModule,
-		after: fnAfterHistoryModule,
+		before: HistoryUtils.check,
 		beforeEach: function(assert) {
 			var that = this;
 			this.oExtendedHashChanger = HashChanger.getInstance();
@@ -300,8 +288,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("history management", {
-		before: fnBeforeHistoryModule,
-		after: fnAfterHistoryModule,
+		before: HistoryUtils.check,
 		beforeEach : function() {
 			HashChanger.getInstance().replaceHash(""); //since the initial hash will be parsed, we want it to be empty on every test
 		}
