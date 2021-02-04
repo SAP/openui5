@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
+		<title>Adaptive Card Accessibility Testing Samples</title>
+		<script src="../../../../../../resources/sap-ui-integration.js"
+			id="sap-ui-bootstrap"
+			data-sap-ui-theme="sap_fiori_3">
+		</script>
+		<style>
+			h1 {
+				text-align: center;
+			}
+			div.card-box {
+				padding: 20px 0;
+				margin: auto;
+				width: 380px;
+			}
+			div.card-box ui-integration-card {
+				height: 480px;
+			}
+			div.card-box ui-integration-card#my-input-card {
+				height: auto;
+			}
+		</style>
+
+	</head>
+	<body class="sapUiBody">
+		<h1>Adaptive Card Accessibility Testing</h1>
+		<div class="card-box">
+			<ui-integration-card id="my-input-card" manifest="./adaptive-card-inputs.json"></ui-integration-card>
+		</div>
+		<div class="card-box">
+			<ui-integration-card id="my-richtext-adaptive-card" manifest="./adaptive-card-richtext.json"></ui-integration-card>
+		</div>
+	</body>
+</html>
