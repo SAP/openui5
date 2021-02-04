@@ -538,9 +538,8 @@ sap.ui.define([
 	/**
 	 * Returns the view's Controller instance or null for a controller-less View.
 	 *
-	 * @return {object} Controller of this view.
+	 * @return {sap.ui.core.mvc.Controller} Controller of this view.
 	 * @public
-	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	View.prototype.getController = function() {
 		return this.oController;
