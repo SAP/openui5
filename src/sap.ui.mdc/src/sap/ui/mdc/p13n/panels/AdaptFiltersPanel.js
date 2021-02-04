@@ -337,7 +337,8 @@ sap.ui.define([
 						key: "mandatory",
 						text: this._getResourceText("p13nDialog.GROUPMODE_MANDATORY")
 					})
-				],
+                ],
+                tooltip: this._getResourceText("p13nDialog.QUICK_FILTER"),
 				change: this._onGroupModeChange.bind(this)
 			});
         }
