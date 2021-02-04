@@ -34,11 +34,11 @@ sap.ui.define([
 			return false;
 		},
 		createEdit: function(oContentFactory, aControlClasses, sId) {
+			oContentFactory.setIsMeasure(true); // FieldHelp only on unit field
 			var Input = aControlClasses[0];
 			var oConditionsType = oContentFactory.getConditionsType();
 			this._adjustDataTypeForUnit(oContentFactory);
 
-			oContentFactory.setIsMeasure(true); // FieldHelp only on unit field
 			var aControls = [];
 			var oInput1 = new Input(sId, {
 				value: { path: "$field>/conditions", type: oConditionsType },
@@ -68,12 +68,12 @@ sap.ui.define([
 			return aControls;
 		},
 		createEditMulti: function(oContentFactory, aControlClasses, sId) {
+			oContentFactory.setIsMeasure(true); // FieldHelp only on unit field
 			var MultiInput = aControlClasses[0];
 			var Token = aControlClasses[2]; // is loaded by MultiInput
 			var Input = aControlClasses[1];
 			var oConditionType = oContentFactory.getConditionType();
 			this._adjustDataTypeForUnit(oContentFactory);
-			oContentFactory.setIsMeasure(true); // FieldHelp only on unit field
 
 			var aControls = [];
 			var oToken = new Token(sId + "-token", {
