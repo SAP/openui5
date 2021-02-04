@@ -24,9 +24,8 @@ sap.ui.define([
 			return vService;
 		}
 
-		var AreaType = library.AreaType,
-			CardActionType = library.CardActionType,
-			ListType = mLibrary.ListType;
+		var ActionArea = library.CardActionArea,
+			CardActionType = library.CardActionType;
 
 		/**
 		 * Constructor for a new <code>CardActions</code>.
@@ -51,45 +50,103 @@ sap.ui.define([
 			metadata: {
 				library: "sap.ui.integration",
 				properties: {
-					card: {type: "object"},
-					areaType: {type: "sap.ui.integration.AreaType", defaultValue: AreaType.None}
+					card: {type: "object"}
 				}
 			}
 		});
 
-		CardActions.prototype.exit = function () {
-			this._oAreaControl = null;
-		};
+		/**
+		 * Listens for a press event on the provided area control and triggers an action with the provided parameters from the item.
+		 * @private
+		 * @param {object} oConfig Object containing configuration for the action
+		 * @param {sap.ui.integration.CardActionArea} oConfig.area The area that describes what the action will be attached to
+		 * @param {object[]} oConfig.actions Configuration object for the actions on an item
+		 * @param {sap.ui.core.Control} oConfig.control The control that the action will be attached on
+		 * @param {sap.ui.core.Control} [oConfig.actionControl] Optional control that the action will be attached on. If supplied, <code>oConfig.control</code> will not receive the action.
+		 * @param {string} [oConfig.enabledPropertyName] Property of the control that will be maintained, based on the configuration of the actions.
+		 * @param {*} [oConfig.enabledPropertyValue=true] The value <code>oConfig.enabledPropertyName</code> will be set to if the action is enabled.
+		 * @param {*} [oConfig.disabledPropertyValue=false] The value <code>oConfig.disabledPropertyValue</code> will be set to if the action is disabled.
+		 */
+		CardActions.prototype.attach = function (oConfig) {
+			var oControl = oConfig.control,
+				sActionArea = oConfig.area;
 
-		CardActions.prototype.attach = function (mItem, oAreaControl) {
-			this._oAreaControl = oAreaControl;
+				oConfig.actionControl = oConfig.actionControl || oConfig.control;
+				oConfig.enabledPropertyValue = oConfig.enabledPropertyValue || true;
+				oConfig.disabledPropertyValue = oConfig.disabledPropertyValue || false;
 
-			if (!mItem.actions) {
+			if (!oConfig.actions) {
 				// For now firing the event here, after refactor need to think
 				// of a way to sync async navigation setters
-				this._fireActionReady();
+				this._fireActionReady(oControl, sActionArea);
 
 				return;
 			}
 
 			// For now we allow for only one action of type navigation.
-			var oAction = mItem.actions[0];
+			var oAction = oConfig.actions[0];
 			if (oAction && oAction.type) { // todo - check if the type is valid
-				this._attachAction(mItem, oAction);
+				oConfig.action = oAction;
+				this._attachAction(oConfig);
+
 			} else {
 				// For now firing the event here, after refactor need to think of a way to sync async navigation setters
-				this._fireActionReady();
+				this._fireActionReady(oControl, sActionArea);
 			}
 		};
 
-		CardActions.prototype._setItemTemplateTypeFormatter = function (oAction) {
-			var that = this,
-				oAreaControl = that._oAreaControl,
-				oItemTemplate = oAreaControl._oItemTemplate;
+		CardActions.prototype._attachAction = function (oConfig) {
+			var oAction = oConfig.action,
+				sActionArea = oConfig.area,
+				oAreaControl = oConfig.control,
+				oActionControl = oConfig.actionControl,
+				sEnabledPropertyName = oConfig.enabledPropertyName,
+				vEnabled = oConfig.enabledPropertyValue,
+				vDisabled = oConfig.disabledPropertyValue,
+				bCheckEnabledState = true,
+				bActionEnabled = true;
 
+			if (sEnabledPropertyName) {
+				bCheckEnabledState = false;
+
+				if (oAction.service) {
+					// When there is a service let it handle the "enabled" state.
+					this._setControlEnabledStateUsingService(oAction, oAreaControl, oActionControl, sEnabledPropertyName, vEnabled, vDisabled);
+				} else {
+					// Or when there is a list item template, handle the "enabled" state with bindProperty + formatter
+					this._setControlEnabledState(oAction, oActionControl, sEnabledPropertyName, vEnabled, vDisabled);
+				}
+			}
+
+			if (oAction.service && this._isSingleAction(oAction)) {
+
+				this._getSingleActionEnabledState(oAction, oAreaControl).then(function (bEnabled) {
+					if (bEnabled) {
+						this._attachPressEvent(oActionControl, oAction, oAreaControl);
+					}
+
+					this._fireActionReady(oAreaControl, sActionArea);
+				}.bind(this));
+
+				return;
+			}
+
+			if (bCheckEnabledState) {
+				// Handle the "enabled" state when there is no service and item template with formatter.
+				bActionEnabled = oAction.enabled !== false && oAction.enabled !== "false";
+			}
+
+			if (bActionEnabled) {
+				this._attachPressEvent(oActionControl, oAction, oAreaControl);
+			}
+
+			this._fireActionReady(oAreaControl, sActionArea);
+		};
+
+		CardActions.prototype._setControlEnabledStateUsingService = function (oAction, oAreaControl, oActionControl, sPropertyName, vEnabled, vDisabled) {
 			var oBindingInfo = ManagedObject.bindingParser("{path:''}");
 
-			// Async formatter to set ListItem type depending
+			// Async formatter to set oActionControl's property depending
 			// if the list item context is a correct navigation target (decided by the navigation service).
 			oBindingInfo.formatter = function (vValue) {
 
@@ -105,10 +162,10 @@ sap.ui.define([
 
 				if (vValue.__resolved) {
 					if (!vValue.__enabled || vValue.__enabled === "false") {
-						return ListType.Inactive;
+						return vDisabled;
 					}
 
-					return ListType.Navigation;
+					return vEnabled;
 				}
 
 				if (!vValue.__promise) {
@@ -137,15 +194,45 @@ sap.ui.define([
 						});
 				}
 
-				return ListType.Inactive;
+				return vDisabled;
 			};
 
-			oItemTemplate.bindProperty("type", oBindingInfo);
+			oActionControl.bindProperty(sPropertyName, oBindingInfo);
 		};
 
-		CardActions.prototype._setSingleActionEnabledState = function (mItem, oAction) {
-			var oAreaControl = this._oAreaControl,
-				oBindingContext = oAreaControl.getBindingContext(),
+		/**
+		 * Binds property to the control using a formatter.
+		 * @param {object} oAction The action object which contains binding infos.
+		 * @param {sap.ui.core.Control} oControl The control instance.
+		 * @param {string} sPropertyName The property name of the control to be bound.
+		 * @param {*} vEnabled The value to be set if the property should be enabled.
+		 * @param {*} vDisabled The value to be set if the property should be disabled.
+		 */
+		CardActions.prototype._setControlEnabledState = function (oAction, oControl, sPropertyName, vEnabled, vDisabled) {
+			var oBindingInfo,
+				bVal;
+
+			if (typeof oAction.enabled === "object") {
+				oBindingInfo = oAction.enabled;
+				oBindingInfo.formatter = function (vValue) {
+					if (!vValue || vValue === "false") {
+						return vDisabled;
+					}
+
+					return vEnabled;
+				};
+			}
+
+			if (oBindingInfo) {
+				oControl.bindProperty(sPropertyName, oBindingInfo);
+			} else {
+				bVal = (oAction.enabled === false || oAction.enabled === "false") ? vDisabled : vEnabled;
+				oControl.setProperty(sPropertyName, bVal);
+			}
+		};
+
+		CardActions.prototype._getSingleActionEnabledState = function (oAction, oAreaControl) {
+			var oBindingContext = oAreaControl.getBindingContext(),
 				mParameters,
 				sPath;
 
@@ -179,43 +266,13 @@ sap.ui.define([
 			});
 		};
 
-		/**
-		 * Sets 'type' property of the list item template or binds it with a formatter.
-		 *
-		 * @param {object} oAction The action object which contains binding infos.
-		 */
-		CardActions.prototype._setItemTemplateEnabledState = function (oAction) {
-
-			var oBindingInfo,
-				sType,
-				oItemTemplate = this._oAreaControl._oItemTemplate;
-
-			if (typeof oAction.enabled === "object") {
-				oBindingInfo = oAction.enabled;
-				oBindingInfo.formatter = function (vValue) {
-					if (!vValue || vValue === "false") {
-						return ListType.Inactive;
-					}
-
-					return ListType.Navigation;
-				};
-			}
-
-			if (oBindingInfo) {
-				oItemTemplate.bindProperty("type", oBindingInfo);
-			} else {
-				sType = (oAction.enabled === false || oAction.enabled === "false") ? ListType.Inactive : ListType.Navigation;
-				oItemTemplate.setProperty("type", sType);
-			}
-		};
-
-		CardActions.prototype._fireActionReady = function () {
-			var bHeader = this.getAreaType() === AreaType.Header;
+		CardActions.prototype._fireActionReady = function (oAreaControl, sActionArea) {
+			var bHeader = sActionArea === ActionArea.Header;
 			var sEventName = bHeader ? "_actionHeaderReady" : "_actionContentReady";
-			this._oAreaControl.fireEvent(sEventName);
+			oAreaControl.fireEvent(sEventName);
 		};
 
-		CardActions.prototype._handleServiceAction = function (oSource, oAction) {
+		CardActions.prototype._handleServiceAction = function (oSource, oAction, oAreaControl) {
 			var oBindingContext = oSource.getBindingContext(),
 				sPath;
 
@@ -223,7 +280,7 @@ sap.ui.define([
 				sPath = oBindingContext.getPath();
 			}
 
-			this._oAreaControl._oServiceManager.getService(_getServiceName(oAction.service))
+			oAreaControl._oServiceManager.getService(_getServiceName(oAction.service))
 				.then(function (oService) {
 					if (oService) {
 						oService.navigate({ // only for navigation?
@@ -249,63 +306,17 @@ sap.ui.define([
 			this._processAction(oSource, oAction, sPath);
 		};
 
-		CardActions.prototype._attachPressEvent = function (oActionControl, oAction, bSingleAction) {
+		CardActions.prototype._attachPressEvent = function (oActionControl, oAction, oAreaControl) {
 
 			oActionControl.attachPress(function (oEvent) {
 				var oSource = oEvent.getSource();
 
 				if (oAction.service) {
-					this._handleServiceAction(oSource, oAction);
+					this._handleServiceAction(oSource, oAction, oAreaControl);
 				} else {
 					this._handleAction(oSource, oAction);
 				}
 			}.bind(this));
-		};
-
-		CardActions.prototype._attachAction = function (mItem, oAction) {
-			var oActionControl = this.getAreaType() === AreaType.ContentItem ? this._oAreaControl._oItemTemplate : this._oAreaControl,
-				bCheckEnabledState = true,
-				sAreaType = this.getAreaType(),
-				bSingleAction = sAreaType === AreaType.Header || sAreaType === AreaType.Content,
-				bContentItemAction = sAreaType === AreaType.ContentItem,
-				bActionEnabled = true;
-
-			if (oAction.service) {
-
-				if (this.getAreaType() === AreaType.ContentItem) {
-					this._setItemTemplateTypeFormatter(oAction);
-				}
-
-				// When there is a service let it handle the "enabled" state.
-				bCheckEnabledState = false;
-			} else if (bContentItemAction) {
-
-				this._setItemTemplateEnabledState(oAction);
-
-				// When there is a list item template handle the "enabled" state with bindProperty + formatter
-				bCheckEnabledState = false;
-			}
-
-			if (bSingleAction && oAction.service) {
-				this._setSingleActionEnabledState(mItem, oAction).then(function (bEnabled) {
-					if (bEnabled) {
-						this._attachPressEvent(oActionControl, oAction, bSingleAction);
-					}
-
-					this._fireActionReady();
-				}.bind(this));
-			} else {
-				if (bCheckEnabledState) {
-					// Handle the "enabled" state when there is no service and item template with formatter.
-					bActionEnabled = oAction.enabled !== false && oAction.enabled !== "false";
-				}
-
-				if (bActionEnabled) {
-					this._attachPressEvent(oActionControl, oAction, bSingleAction);
-				}
-
-				this._fireActionReady();
-			}
 		};
 
 		CardActions.prototype._processAction = function (oSource, oAction, sPath) {
@@ -413,7 +424,6 @@ sap.ui.define([
 					if (oAction.service) {
 						break;
 					}
-
 					sUrl = mConfig.url || sParametersUrl;
 					sTarget = oAction.target || sParametersTarget || "_blank";
 					if (sUrl) {
@@ -509,6 +519,14 @@ sap.ui.define([
 					}
 				}
 			};
+		};
+
+		/**
+		 * @param {object} oAction Configuration object for the action
+		 * @returns {boolean} If the action is configured for the header, content, or a detail of an item in the content of the card
+		 */
+		CardActions.prototype._isSingleAction = function (oAction) {
+			return [ActionArea.Header, ActionArea.Content, ActionArea.ContentItemDetail].indexOf(oAction.area) > -1;
 		};
 
 		return CardActions;

@@ -84,7 +84,9 @@ sap.ui.define([
 					"actions": [
 						{
 							"type": "Navigation",
-							"url": "https://www.sap.com"
+							"parameters": {
+								"url": "https://www.sap.com"
+							}
 						}
 					]
 				}
@@ -110,7 +112,9 @@ sap.ui.define([
 						{
 							"enabled": false,
 							"type": "Navigation",
-							"url": "https://www.sap.com"
+							"parameters": {
+								"url": "https://www.sap.com"
+							}
 						}
 					]
 				}
@@ -168,7 +172,9 @@ sap.ui.define([
 					"subTitle": "Card Subtitle",
 					"actions": [
 						{
-							"url": "https://www.sap.com"
+							"parameters": {
+								"url": "https://www.sap.com"
+							}
 						}
 					]
 				},
@@ -188,10 +194,10 @@ sap.ui.define([
 						},
 						"actions": [
 							{
-								"target": "_blank",
 								"enabled": "{= ${url}}",
-								"url": "{url}",
 								"parameters": {
+									"url": "{url}",
+									"target": "_blank",
 									"somekey": "{someparam}"
 								}
 							}
@@ -243,10 +249,10 @@ sap.ui.define([
 						"actions": [
 							{
 								"type": "Navigation",
-								"target": "_blank",
 								"enabled": "{= ${url}}",
-								"url": "{url}",
 								"parameters": {
+									"url": "{url}",
+									"target": "_blank",
 									"somekey": "{someparam}"
 								}
 							}
@@ -288,9 +294,11 @@ sap.ui.define([
 						"actions": [
 							{
 								"type": "Navigation",
-								"target": "_blank",
 								"enabled": "{= ${enabled}}",
-								"url": "{url}"
+								"parameters": {
+									"url": "{url}",
+									"target": "_blank"
+								}
 							}
 						]
 					}
@@ -570,8 +578,15 @@ sap.ui.define([
 								},
 								{
 									"label": "Website",
-									"type": "link",
-									"value": "{company/website}"
+									"value": "{company/website}",
+									"actions": [
+										{
+											"type": "Navigation",
+											"parameters": {
+												"url": "{company/website}"
+											}
+										}
+									]
 								}
 							]
 						}
@@ -579,16 +594,18 @@ sap.ui.define([
 					"actions": [
 						{
 							"type": "Navigation",
-							"target": "_blank",
 							"enabled": "{= ${url}}",
-							"url": "{url}"
+							"parameters": {
+								"url": "{url}",
+								"target": "_blank"
+							}
 						}
 					]
 				}
 			}
 		};
 
-		var objectCotnent_url = {
+		var objectContent_url = {
 			"sap.app": {
 				"id": "test.card.actions.card12",
 				"type": "card"
@@ -609,7 +626,9 @@ sap.ui.define([
 					"actions": [
 						{
 							"type": "Navigation",
-							"url": "https://www.sap.com"
+							"parameters": {
+								"url": "https://www.sap.com"
+							}
 
 						}
 					]
@@ -630,6 +649,20 @@ sap.ui.define([
 								{
 									"label": "Phone",
 									"value": "{phone}"
+								},
+								{
+									"label": "Agenda",
+									"value": "Book a meeting",
+									"type": "action",
+									"actions": [
+										{
+											"type": "Navigation",
+											"enabled": "{= ${agendaUrl}}",
+											"parameters": {
+												"url": "{agendaUrl}"
+											}
+										}
+									]
 								}
 							]
 						},
@@ -658,7 +691,16 @@ sap.ui.define([
 								},
 								{
 									"label": "Website",
-									"link": "{company/website}"
+									"value": "{company/website}",
+									"actions": [
+										{
+											"type": "Navigation",
+											"enabled": false,
+											"parameters": {
+												"url": "{company/website}"
+											}
+										}
+									]
 								}
 							]
 						}
@@ -666,8 +708,9 @@ sap.ui.define([
 					"actions": [
 						{
 							"type": "Navigation",
-							"url": "https://www.sap.com"
-
+							"parameters": {
+								"url": "https://www.sap.com"
+							}
 						}
 					]
 				}
@@ -716,7 +759,9 @@ sap.ui.define([
 					"actions": [
 						{
 							"type": "Navigation",
-							"url": "https://www.sap.com"
+							"parameters": {
+								"url": "https://www.sap.com"
+							}
 						}
 					],
 					"title": "Integration Card with action",
@@ -769,6 +814,62 @@ sap.ui.define([
 							"value": "{info}",
 							"state": "{infoState}"
 						}
+					}
+				}
+			}
+		};
+
+		var tableContent_action_on_cell = {
+			"sap.app": {
+				"type": "card",
+				"id": "test.card.actions.card14"
+			},
+			"sap.card": {
+				"type": "Table",
+				"header": {
+					"title": "Table Card with Top 5 Products",
+					"subTitle": "These are the top sellers this month",
+					"icon": {
+						"src": "sap-icon://sales-order"
+					},
+					"status": {
+						"text": "5 of 100"
+					}
+				},
+				"content": {
+					"data": {
+						"json": [
+							{
+								"Name": "Ergo Screen E-I",
+								"Number": "356865544"
+							},
+							{
+								"Name": "Laser Professional Eco",
+								"Number": "356865544",
+								"ActionUrl": "https://www.sap.com/corporate/en/company/innovation.html"
+							}
+						]
+					},
+					"row": {
+						"columns": [
+							{
+								"title": "Name",
+								"value": "{Name}"
+							},
+							{
+								"title": "Number",
+								"value": "{Number}",
+								"actions": [
+									{
+										"type": "Navigation",
+										"enabled": "{= ${ActionUrl}}",
+										"parameters": {
+											"url": "{ActionUrl}"
+										}
+									}
+								]
+							}
+						]
 					}
 				}
 			}
@@ -936,7 +1037,7 @@ sap.ui.define([
 				Core.applyChanges();
 
 				var oCardHeader = this.oCard.getCardHeader();
-				assert.ok(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header has a  clickable style is added");
+				assert.ok(oCardHeader.$().hasClass("sapFCardClickable"), "Card Header has a clickable style is added");
 				//Act
 				oCardHeader.firePress();
 				Core.applyChanges();
@@ -1323,32 +1424,128 @@ sap.ui.define([
 
 		QUnit.test("Object content should be actionable - url", function (assert) {
 
-			testActionOnContentUrl.call(this, objectCotnent_url, assert);
+			testActionOnContentUrl.call(this, objectContent_url, assert);
 		});
 
-		QUnit.test("On pressing link, action should not be fired", function (assert) {
+		QUnit.test("On pressing link, action should be fired", function (assert) {
 			var done = assert.async(),
-				oActionSpy = sinon.spy(CardActions, "fireAction");
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {});
 
 			this.oCard.attachEvent("_ready", function () {
 				Core.applyChanges();
-				var oCardLContent = this.oCard.getCardContent();
+				var oObjContent = this.oCard.getCardContent();
 
 				//Act
-				qutils.triggerEvent("mousedown", document.querySelector("[role='link']"));
+				var oLink = oObjContent.$().find(".sapMLnk").control(0);
+				oLink.firePress();
+
 				Core.applyChanges();
 
 				// Assert
-				assert.ok(oCardLContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
-				assert.ok(oActionSpy.callCount === 0, "Card Content is clicked and action event is fired");
+				assert.ok(oObjContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+				assert.ok(oActionSpy.callCount === 1, "Link is clicked and action event is not fired");
 
 				// Cleanup
 				oActionSpy.restore();
+				oStubOpenUrl.restore();
 				done();
 			}.bind(this));
 
 			// Act
 			this.oCard.setManifest(objectContent_service);
+		});
+
+		QUnit.test("Disabled actions should also disable links", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oContent = this.oCard.getCardContent();
+
+				//Act
+				var oLink = oContent.$().find(".sapMLabel:contains('Website')+a").control(0);
+				assert.strictEqual(oLink.getEnabled(), false, "Link is disabled");
+
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(objectContent_url);
+		});
+
+		QUnit.test("Pressing a field with type 'action' should fire an action", function (assert) {
+			var done = assert.async(),
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {});
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oContent = this.oCard.getCardContent();
+
+				//Act
+				var oLink = oContent.$().find("a:contains('Book a meeting')").control(0);
+				assert.strictEqual(oLink.getEnabled(), true, "Link is enabled");
+				oLink.firePress();
+
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(oContent.$().hasClass("sapFCardClickable"), "Card Content is clickable");
+				assert.ok(oActionSpy.callCount === 1, "Field with type='action' is clicked and action event is fired");
+
+				// Cleanup
+				oActionSpy.restore();
+				oStubOpenUrl.restore();
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(objectContent_url);
+		});
+
+		QUnit.module("Navigation Action - Table Content", {
+			beforeEach: function () {
+				this.oCard = new Card({
+					width: "400px",
+					height: "600px",
+					baseUrl: "test-resources/sap/ui/integration/qunit/testResources/"
+				});
+
+				this.oCard.placeAt(DOM_RENDER_LOCATION);
+			},
+			afterEach: function () {
+				this.oCard.destroy();
+				this.oCard = null;
+			}
+		});
+
+		QUnit.test("Pressing a table row column with type 'action' should fire an action", function (assert) {
+			var done = assert.async(),
+				oActionSpy = sinon.spy(CardActions, "fireAction"),
+				oStubOpenUrl = sinon.stub(CardActions, "_doPredefinedAction").callsFake(function () {});
+
+			this.oCard.attachEvent("_ready", function () {
+				Core.applyChanges();
+				var oContent = this.oCard.getCardContent();
+
+				//Act
+				var oLink = oContent.$().find(".sapMLnk:not(.sapMLnkDsbl)").control(0);
+				qutils.triggerKeydown(oLink.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(oActionSpy.callCount === 1, "Field with type='action' is clicked and action event is fired");
+
+				// Cleanup
+				oActionSpy.restore();
+				oStubOpenUrl.restore();
+				done();
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(tableContent_action_on_cell);
 		});
 
 		QUnit.module("Action Handlers", {
@@ -1463,6 +1660,41 @@ sap.ui.define([
 				this.oCard.destroy();
 				this.oCard = null;
 			}
+		});
+
+		QUnit.test("When preventing an action within action handler, no further processing of that action should be done", function (assert) {
+			var done = assert.async(2),
+				oCardFireActionSpy = sinon.spy(this.oCard, "fireAction"),
+				oFurtherProcessingSpy = sinon.spy(CardActions, "_doPredefinedAction");
+
+			// Arrange
+			this.oCard.attachEvent("action", function (oEvent) {
+				// Act
+				oEvent.preventDefault();
+				done();
+
+				setTimeout(function () {
+					// Assert
+					assert.strictEqual(oCardFireActionSpy.returned(), false, "Event fired from Card was prevented");
+					assert.strictEqual(oFurtherProcessingSpy.notCalled, true, "Further processing has not happened");
+
+					// Cleanup
+					oCardFireActionSpy.restore();
+					oFurtherProcessingSpy.restore();
+					done();
+				}, 300);
+			});
+
+			this.oCard.attachEvent("_ready", function () {
+				//Act
+				var oLink = this.oCard.getCardContent().$().find(".sapMLnk:not(.sapMLnkDsbl)").control(0);
+				qutils.triggerKeydown(oLink.getDomRef(), jQuery.sap.KeyCodes.ENTER);
+			}.bind(this));
+
+			// Act
+			this.oCard.setManifest(tableContent_action_on_cell);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+			Core.applyChanges();
 		});
 
 		QUnit.test("Trigger action", function (assert) {

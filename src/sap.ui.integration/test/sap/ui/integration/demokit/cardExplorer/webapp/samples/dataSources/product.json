@@ -5,14 +5,14 @@
 		"i18n": "i18n/i18n.properties",
 		"title": "Sample of a Card with Data Source",
 		"applicationVersion": {
-		  "version": "1.0.0"
+			"version": "1.0.0"
 		},
 		"tags": {
-		  "keywords": [
-			"Data",
-			"Card",
-			"Sample"
-		  ]
+			"keywords": [
+				"Data",
+				"Card",
+				"Sample"
+			]
 		},
 		"dataSources": {
 			"products": {
@@ -93,12 +93,26 @@
 						{
 							"label": "{{EMAIL}}",
 							"value": "{to_Supplier/EmailAddress}",
-							"type": "email"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:{to_Supplier/EmailAddress}"
+									}
+								}
+							]
 						},
 						{
 							"label": "{{PHONE}}",
 							"value": "{to_Supplier/PhoneNumber}",
-							"type": "phone"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:{to_Supplier/PhoneNumber}"
+									}
+								}
+							]
 						}
 					]
 				}

@@ -67,8 +67,15 @@
 						},
 						{
 							"label": "{{website}}",
-							"type": "link",
-							"value": "{company/website}"
+							"value": "{company/website}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/website}"
+									}
+								}
+							]
 						}
 					]
 				}

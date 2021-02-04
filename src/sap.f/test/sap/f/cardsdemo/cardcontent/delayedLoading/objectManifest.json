@@ -56,12 +56,20 @@
 							"value": "{company/name}"
 						},
 						{
-							"label": "{address}",
+							"label": "Address",
 							"value": "{company/address}"
 						},
 						{
-							"label": "{website}",
-							"link": "{company/website}"
+							"label": "Website",
+							"value": "{company/website}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/website}"
+									}
+								}
+							]
 						}
 					]
 				}

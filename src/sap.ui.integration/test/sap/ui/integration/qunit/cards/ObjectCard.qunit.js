@@ -68,12 +68,26 @@ sap.ui.define([
 							{
 								"label": "Phone",
 								"value": "{phone}",
-								"type": "phone"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "tel:{phone}"
+										}
+									}
+								]
 							},
 							{
 								"label": "Email",
 								"value": "{email}",
-								"type": "email"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "mailto:{email}"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -100,20 +114,38 @@ sap.ui.define([
 							{
 								"label": "Email",
 								"value": "{company/email}",
-								"emailSubject": "{company/emailSubject}",
-								"type": "email"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "mailto:{company/email}?subject={company/emailSubject}"
+										}
+									}
+								]
 							},
 							{
 								"label": "Alt Email",
-								"value": "newmail@mail.com",
-								"emailSubject": "Mail Subject",
-								"type": "email"
+								"value": "newmail@example.com",
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "mailto:newmail@example.com?subject=Mail Subject"
+										}
+									}
+								]
 							},
 							{
 								"label": "Website",
 								"value": "{company/website}",
-								"url": "{company/url}",
-								"type": "link"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "{company/url}"
+										}
+									}
+								]
 							}
 						]
 					}
@@ -175,12 +207,26 @@ sap.ui.define([
 							{
 								"label": "Phone",
 								"value": "{phone}",
-								"type": "phone"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "tel:{phone}"
+										}
+									}
+								]
 							},
 							{
 								"label": "Email",
 								"value": "{email}",
-								"type": "email"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "mailto:{email}"
+										}
+									}
+								]
 							}
 						]
 					},
@@ -198,20 +244,38 @@ sap.ui.define([
 							{
 								"label": "Email",
 								"value": "{company/email}",
-								"emailSubject": "{company/emailSubject}",
-								"type": "email"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "mailto:{company/email}?subject={company/emailSubject}"
+										}
+									}
+								]
 							},
 							{
 								"label": "Alt Email",
 								"value": "newmail@mail.com",
-								"emailSubject": "Mail Subject",
-								"type": "email"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "mailto:newmail@mail.com?subject=Mail Subject"
+										}
+									}
+								]
 							},
 							{
 								"label": "Website",
 								"value": "{company/website}",
-								"url": "{company/url}",
-								"type": "link"
+								"actions": [
+									{
+										"type": "Navigation",
+										"parameters": {
+											"url": "{company/url}"
+										}
+									}
+								]
 							}
 						]
 					}
@@ -268,7 +332,6 @@ sap.ui.define([
 			assert.equal(aGroups[0].getItems()[4].getText(), oData.lastName, "Should have correct item value.");
 			assert.equal(aGroups[0].getItems()[5].getText(), oManifestContent.groups[0].items[2].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[0].getItems()[6].getText(), oData.phone, "Should have correct item value.");
-			assert.equal(aGroups[0].getItems()[6].getHref(), "tel:" + oData.phone, "Should have correct phone link.");
 
 			// Group 2 assertions
 			assert.equal(aGroups[1].getItems().length, 2, "Should have 2 items.");
@@ -286,11 +349,8 @@ sap.ui.define([
 			assert.equal(aGroups[2].getItems()[4].getText(), oData.company.address, "Should have correct item value.");
 			assert.equal(aGroups[2].getItems()[5].getText(), oManifestContent.groups[2].items[2].label + ":", "Should have correct item label.");
 			assert.equal(aGroups[2].getItems()[6].getText(), oData.company.email, "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[6].getHref(), "mailto:" + oData.company.email + "?subject=" + oData.company.emailSubject, "Should have correct item links.");
-			assert.equal(aGroups[2].getItems()[8].getText(), "newmail@mail.com", "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[8].getHref(), "mailto:" + "newmail@mail.com" + "?subject=" + "Mail Subject", "Should have correct item link.");
+			assert.equal(aGroups[2].getItems()[8].getText(), "newmail@example.com", "Should have correct item value.");
 			assert.equal(aGroups[2].getItems()[10].getText(), oData.company.website, "Should have correct item value.");
-			assert.equal(aGroups[2].getItems()[10].getHref(), oData.company.url, "Should have correct item URL.");
 
 			done();
 		}.bind(this));
@@ -389,19 +449,14 @@ sap.ui.define([
 								"items": [{
 										"label": "First Name",
 										"value": "{firstName}",
-										"type": "link",
-										"visible": "{visible}"
-									},
-									{
-										"label": "Last Name",
-										"value": "{lastName}",
-										"type": "phone",
-										"visible": "{visible}"
-									},
-									{
-										"label": "Phone",
-										"value": "{phone}",
-										"type": "email",
+										"actions": [
+											{
+												"type": "Navigation",
+												"parameters": {
+													"url": "example.com"
+												}
+											}
+										],
 										"visible": "{visible}"
 									},
 									{
@@ -426,12 +481,8 @@ sap.ui.define([
 			// Assert
 			assert.notOk(aGroupItems[1].getVisible(), "Label for link is NOT visible");
 			assert.notOk(aGroupItems[2].getVisible(), "Link is also NOT visible");
-			assert.notOk(aGroupItems[3].getVisible(), "Label for phone is NOT visible");
-			assert.notOk(aGroupItems[4].getVisible(), "Phone is also NOT visible");
-			assert.notOk(aGroupItems[5].getVisible(), "Label for email is NOT visible");
-			assert.notOk(aGroupItems[6].getVisible(), "Email is also NOT visible");
-			assert.notOk(aGroupItems[7].getVisible(), "Label for text is NOT visible");
-			assert.notOk(aGroupItems[8].getVisible(), "Text is also NOT visible");
+			assert.notOk(aGroupItems[3].getVisible(), "Label for text is NOT visible");
+			assert.notOk(aGroupItems[4].getVisible(), "Text is also NOT visible");
 			done();
 		}.bind(this));
 

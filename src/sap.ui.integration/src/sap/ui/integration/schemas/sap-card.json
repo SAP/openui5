@@ -929,7 +929,7 @@
           "type": "string"
         },
         "type": {
-          "description": "Defines the type of the displayed information",
+          "description": "[Deprecated] Defines the type of the displayed information",
           "type": "string",
           "oneOf": [
             {
@@ -947,11 +947,11 @@
           ]
         },
         "url": {
-          "description": "Defines the URL string. Works only with items of type 'link'",
+          "description": "[Deprecated] Defines the URL string. Works only with items of type 'link'",
           "type": "string"
         },
         "target": {
-          "description": "Specifies the target of the link - it works like the target property of the HTML 'a' tag. Works only with items of type 'link'",
+          "description": "[Deprecated] Specifies the target of the link - it works like the target property of the HTML 'a' tag. Works only with items of type 'link'",
           "oneOf": [
             {
               "$ref": "#/definitions/target"
@@ -962,8 +962,15 @@
           ]
         },
         "emailSubject": {
-          "description": "Represents the subject of the email. Works only with item of type 'email'",
+          "description": "[Deprecated] Represents the subject of the email. Works only with item of type 'email'",
           "type": "string"
+        },
+        "actions": {
+          "description": "Defines actions that can be applied on the group item",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/action"
+          }
         },
         "visible": {
           "description": "Represents the visibility state of the item",
@@ -1057,11 +1064,11 @@
           ]
         },
         "url": {
-          "description": "Defines the URL string",
+          "description": "[Deprecated] Defines the URL string",
           "type": "string"
         },
         "target": {
-          "description": "Specifies where to open the 'url', if it is provided",
+          "description": "[Deprecated] Specifies where to open the 'url', if it is provided",
           "type": "string",
           "oneOf": [
             {
@@ -1089,6 +1096,13 @@
         "visible": {
           "description": "Represents the visibility state of the column",
           "$ref": "#/definitions/visibility"
+        },
+        "actions": {
+          "description": "Defines actions that can be applied on the group item",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/action"
+          }
         }
       }
     },
@@ -1831,7 +1845,7 @@
       "default": "Begin"
     },
     "service": {
-      "description": "Represents service that will be used for an actions",
+      "description": "Represents service that will be used for actions",
       "oneOf": [
         {
           "description": "Represents name of the Service to be used for the action",
@@ -1871,6 +1885,7 @@
         {
           "type": "object",
           "additionalProperties": false,
+          "description": "[Deprecated]",
           "properties": {
             "url": {
               "type": "string"

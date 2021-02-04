@@ -57,7 +57,7 @@
 						<td>visible</td>
 						<td>boolean</td>
 						<td>No</td>
-						<td>Determines the visibility of the group</td>
+						<td>Determines the visibility of the group.</td>
 						<td>1.25.0</td>
 						<td>1.81</td>
 					</tr>
@@ -101,47 +101,20 @@
 						<td>1.64</td>
 					</tr>
 					<tr>
-						<td>type</td>
-						<td>string</td>
-						<td>No</td>
-						<td>Defines the type of the displayed information. It can be - 'text', 'link', 'email' or
-							'phone'.</td>
-						<td>1.15.0</td>
-						<td>1.64</td>
-					</tr>
-					<tr>
-						<td>url</td>
-						<td>string</td>
-						<td>No</td>
-						<td>Defines the URL string. Works only with items of type 'link'.</td>
-						<td>1.15.0</td>
-						<td>1.64</td>
-					</tr>
-					<tr>
-						<td>target</td>
-						<td>string</td>
-						<td>No</td>
-						<td>Specifies the target of the link - it works like the target property of the HTML 'a' tag.
-							Works only with items of type 'link'.
-						</td>
-						<td>1.15.0</td>
-						<td>1.64</td>
-					</tr>
-					<tr>
-						<td>emailSubject</td>
-						<td>string</td>
-						<td>No</td>
-						<td>Represents the subject of the email. Works only with item of type 'email'.</td>
-						<td>1.15.0</td>
-						<td>1.64</td>
-					</tr>
-					<tr>
 						<td>visible</td>
 						<td>boolean</td>
 						<td>No</td>
-						<td>Determines the visibility of the item</td>
+						<td>Determines the visibility of the item.</td>
 						<td>1.25.0</td>
 						<td>1.81</td>
+					</tr>
+					<tr>
+						<td>actions</td>
+						<td><a href="../../../index.html#/learn/features/cardActions" target="_parent">Actions[]</a></td>
+						<td>No</td>
+						<td>Defines actions that can be applied on the item.</td>
+						<td>1.31.0</td>
+						<td>1.87</td>
 					</tr>
 				</table>
 			</div>
@@ -209,7 +182,7 @@
 			<h2 id="example">Example</h2>
 			<p>Define the type and data for the card:
 			</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="prettyprint lang-js">{
 	"sap.card": {
 		"type": "Object",
 		"data": {
@@ -222,7 +195,7 @@
 			<p>
 				The content of the employee.json which we are requesting:
 			</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="prettyprint lang-js">{
 	"firstName": "Donna",
 	"lastName": "Moore",
 	"position": "Sales Executive",
@@ -240,7 +213,7 @@
 	}
 }</pre>
 			<p>Define the header:</p>
-			<pre class="prettyprint  lang-js">"header": {
+			<pre class="prettyprint lang-js">"header": {
 	"icon": {
 		"src": "{photo}"
 	},
@@ -248,7 +221,7 @@
 	"subTitle": "{position}"
 },</pre>
 			<p>Define the content in groups:</p>
-			<pre class="prettyprint  lang-js">"content": {
+			<pre class="prettyprint lang-js">"content": {
 	"groups": [
 		{
 			"title": "Contact Details",
@@ -264,12 +237,26 @@
 				{
 					"label": "Phone",
 					"value": "{phone}",
-					"type": "phone"
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "tel:{phone}"
+							}
+						}
+					]
 				},
 				{
 					"label": "Email",
 					"value": "{email}",
-					"type": "email"
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "mailto:{email}"
+							}
+						}
+					]
 				}
 			]
 		},
@@ -287,14 +274,26 @@
 				{
 					"label": "Email",
 					"value": "{company/email}",
-					"emailSubject": "{company/emailSubject}",
-					"type": "email"
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "mailto:{company/email}?subject={company/emailSubject}"
+							}
+						}
+					]
 				},
 				{
 					"label": "Website",
 					"value": "{company/website}",
-					"url": "{company/url}",
-					"type": "link"
+					"actions": [
+						{
+							"type": "Navigation",
+							"parameters": {
+								"url": "{company/url}",
+							}
+						}
+					]
 				}
 			]
 		},
@@ -313,13 +312,13 @@
 	]
 }</pre>
 			<p>Here is the final manifest definition:</p>
-			<pre class="prettyprint  lang-js">{
+			<pre class="prettyprint lang-js">{
 	"sap.app": {
 		"id": "card.explorer.object.card",
 		"type": "card",
 		"i18n": "i18n/i18n.properties",
 		"applicationVersion": {
-		  "version": "1.0.0"
+			"version": "1.0.0"
 		}
 	},
 	"sap.card": {
@@ -352,12 +351,26 @@
 						{
 							"label": "{{phone}}",
 							"value": "{phone}",
-							"type": "phone"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "tel:{phone}"
+									}
+								}
+							]
 						},
 						{
 							"label": "{{email}}",
 							"value": "{email}",
-							"type": "email"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:{email}"
+									}
+								}
+							]
 						}
 					]
 				},
@@ -387,14 +400,26 @@
 						{
 							"label": "{{email}}",
 							"value": "{company/email}",
-							"emailSubject": "{company/emailSubject}",
-							"type": "email"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "mailto:{company/email}?subject={company/emailSubject}"
+									}
+								}
+							]
 						},
 						{
 							"label": "{{website}}",
 							"value": "{company/website}",
-							"url": "{company/url}",
-							"type": "link"
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/url}"
+									}
+								}
+							]
 						}
 					]
 				}
@@ -403,7 +428,7 @@
 	}
  }</pre>
 			<p>Create the view to display the card:</p>
-			<pre class="prettyprint  lang-xml">
+			<pre class="prettyprint lang-xml">
 &lt;mvc:View xmlns:w="sap.ui.integration.widgets"&gt;
 	&lt;w:Card manifest="./manifest.json" width="400px" height="auto"/&gt;
 &lt;/mvc:View&gt;</pre>

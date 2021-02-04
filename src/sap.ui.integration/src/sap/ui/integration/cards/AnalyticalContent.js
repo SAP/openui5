@@ -7,10 +7,11 @@ sap.ui.define([
 	"sap/ui/integration/library",
 	"sap/ui/integration/util/BindingResolver",
 	"sap/base/Log",
-	"sap/ui/core/Core",
-	"sap/ui/thirdparty/jquery"
-], function (AnalyticalContentRenderer, BaseContent, library, BindingResolver, Log, Core, jQuery) {
+	"sap/ui/core/Core"
+], function (AnalyticalContentRenderer, BaseContent, library, BindingResolver, Log, Core) {
 	"use strict";
+
+	var ActionArea = library.CardActionArea;
 
 	// lazy dependencies, loaded on the first attempt to create AnalyticalContent
 	var VizFrame, FeedItem, FlattenedDataset;
@@ -51,8 +52,6 @@ sap.ui.define([
 		"StackedBar": "stacked_bar",
 		"Donut": "donut"
 	};
-
-	var AreaType = library.AreaType;
 
 	/**
 	 * Constructor for a new <code>AnalyticalContent</code>.
@@ -270,8 +269,11 @@ sap.ui.define([
 		var oVizProperties = this._getVizPropertiesObject(oResolvedChartObject);
 		oChart.setVizProperties(oVizProperties);
 
-		this._oActions.setAreaType(AreaType.Content);
-		this._oActions.attach(oChartObject, this);
+		this._oActions.attach({
+			area: ActionArea.Content,
+			actions: oChartObject.actions,
+			control: this
+		});
 
 		this.setAggregation("_content", oChart);
 	};

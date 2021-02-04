@@ -4,15 +4,22 @@
 sap.ui.define([
 	"./BaseListContent",
 	"./TimelineContentRenderer",
+	"sap/ui/integration/library",
+	"sap/m/library",
 	"sap/ui/core/Core",
 	"sap/ui/integration/util/BindingHelper"
 ], function (
 	BaseListContent,
 	TimelineContentRenderer,
+	library,
+	mLibrary,
 	Core,
 	BindingHelper
 ) {
 	"use strict";
+
+	// shortcuts for sap.ui.integration.CardActionArea
+	var ActionArea = library.CardActionArea;
 
 	// lazy dependencies, loaded on the first attempt to create TimelineContent
 	var Timeline, TimelineItem;
@@ -164,8 +171,14 @@ sap.ui.define([
 			}.bind(this));
 		}
 
-		this._oTimeLineItemTemplate =  new TimelineItem(mSettings);
-		this._oActions.attach(mItem, this);
+		this._oTimeLineItemTemplate = new TimelineItem(mSettings);
+
+		this._oActions.attach({
+			area: ActionArea.ContentItem,
+			actions: mItem.actions,
+			control: this,
+			actionControl: this._oItemTemplate
+		});
 
 		var oBindingInfo = {
 			template: this._oTimeLineItemTemplate

@@ -24,13 +24,17 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var AreaType = library.AreaType;
-
 	// shortcut for sap.m.AvatarSize
 	var AvatarSize = mLibrary.AvatarSize;
 
 	// shortcut for sap.m.AvatarColor
 	var AvatarColor = mLibrary.AvatarColor;
+
+	// shortcut for sap.m.ListType;
+	var ListType = mLibrary.ListType;
+
+	// shortcut for sap.ui.integration.CardActionArea
+	var ActionArea = library.CardActionArea;
 
 	/**
 	 * Constructor for a new <code>ListContent</code>.
@@ -236,8 +240,16 @@ sap.ui.define([
 		}
 
 		this._oItemTemplate = new ListContentItem(mSettings);
-		this._oActions.setAreaType(AreaType.ContentItem);
-		this._oActions.attach(mItem, this);
+		this._oActions.attach({
+			area: ActionArea.ContentItem,
+			actions: mItem.actions,
+			control: this,
+			actionControl: this._oItemTemplate,
+			enabledPropertyName: "type",
+			enabledPropertyValue: ListType.Navigation,
+			disabledPropertyValue: ListType.Inactive
+
+		});
 
 		var oBindingInfo = {
 			template: this._oItemTemplate

@@ -18,7 +18,8 @@ sap.ui.define([
 	"sap/ui/core/library",
 	"sap/m/library",
 	"sap/ui/integration/util/BindingResolver",
-	"sap/ui/integration/util/BindingHelper"
+	"sap/ui/integration/util/BindingHelper",
+	"sap/base/Log"
 ], function (
 	BaseListContent,
 	TableContentRenderer,
@@ -35,7 +36,8 @@ sap.ui.define([
 	coreLibrary,
 	mobileLibrary,
 	BindingResolver,
-	BindingHelper
+	BindingHelper,
+	Log
 ) {
 	"use strict";
 
@@ -52,7 +54,8 @@ sap.ui.define([
 	var ListSeparators = mobileLibrary.ListSeparators;
 	var ListType = mobileLibrary.ListType;
 
-	var AreaType = library.AreaType;
+	// shortcuts for sap.ui.integration.CardActionArea
+	var ActionArea = library.CardActionArea;
 
 	/**
 	 * Constructor for a new <code>TableContent</code>.
@@ -174,8 +177,15 @@ sap.ui.define([
 			vAlign: VerticalAlign.Middle
 		});
 
-		this._oActions.setAreaType(AreaType.ContentItem);
-		this._oActions.attach(oRow, this);
+		this._oActions.attach({
+			area: ActionArea.ContentItem,
+			actions: oRow.actions,
+			control: this,
+			actionControl: this._oItemTemplate,
+			enabledPropertyName: "type",
+			enabledPropertyValue: ListType.Navigation,
+			disabledPropertyValue: ListType.Inactive
+		});
 
 		var oBindingInfo = {
 			template: this._oItemTemplate
@@ -200,27 +210,22 @@ sap.ui.define([
 				vAlign: VerticalAlign.Middle
 			});
 
-
 			if (oRow.cells && Array.isArray(oRow.cells)) {
 				for (var j = 0; j < oRow.cells.length; j++) {
 					oItem.addCell(this._createCell(oRow.cells[j]));
 				}
 			}
 
-			// TO DO: move this part to CardActions
 			if (oRow.actions && Array.isArray(oRow.actions)) {
-				// for now allow only 1 action of type navigation
-				var oAction = oRow.actions[0];
-
-				if (oAction.type === ListType.Navigation) {
-					oItem.setType(ListType.Navigation);
-				}
-
-				if (oAction.url) {
-					oItem.attachPress(function () {
-						window.open(oAction.url, oAction.target || "_blank");
-					});
-				}
+				this._oActions.attach({
+					area: ActionArea.ContentItem,
+					actions: oRow.actions,
+					control: this,
+					actionControl: oItem,
+					enabledPropertyName: "type",
+					enabledPropertyValue: ListType.Navigation,
+					disabledPropertyValue: ListType.Inactive
+				});
 			}
 			oTable.addItem(oItem);
 		}.bind(this));
@@ -232,62 +237,78 @@ sap.ui.define([
 	/**
 	 * Factory method that returns a control from the correct type for each column.
 	 *
-	 * @param {Object} oColumn Object with settings from the schema.
+	 * @param {object} oColumn Object with settings from the schema.
 	 * @returns {sap.ui.core.Control} The control of the proper type.
 	 * @private
 	 */
 	TableContent.prototype._createCell = function (oColumn) {
-
-		if (oColumn.url) {
-			return new Link({
-				text: oColumn.value,
-				href: oColumn.url,
-				target: oColumn.target || "_blank"
-			});
-		}
+		var oControl;
 
 		if (oColumn.identifier) {
+			if (typeof oColumn.identifier == "object") {
+				if (!BindingResolver.isBindingInfo(oColumn.identifier)) {
+					Log.warning("Usage of object type for column property 'identifier' is deprecated.", null, "sap.ui.integration.widgets.Card");
+				}
 
-			var vTitleActive;
-
-			if (oColumn.identifier.url) {
-				vTitleActive = BindingHelper.formattedProperty(oColumn.identifier.url, function (sValue) {
-					if (typeof sValue === "string") {
-						return true;
-					}
-					return false;
-				});
+				if (oColumn.identifier.url) {
+					oColumn.actions = [{
+						type: "Navigation",
+						parameters: {
+							url: oColumn.identifier.url,
+							target: oColumn.identifier.target
+						}
+					}];
+				}
 			}
 
-			var oIdentifier = new ObjectIdentifier({
-				title: oColumn.value,
-				titleActive: vTitleActive
+			oControl = new ObjectIdentifier({
+				title: oColumn.value
 			});
 
-			if (oColumn.identifier.url) {
-				// TO DO: move this part to CardActions
-				oIdentifier.attachTitlePress(function (oEvent) {
+			if (oColumn.actions) {
+				oControl.setTitleActive(true);
 
-					var oSource = oEvent.getSource(),
-						oBindingContext = oSource.getBindingContext(),
-						sPath,
-						sUrl,
-						sTarget;
+				// workaround for lack of attachPress event handler & enabled property on the control
+				oControl.attachPress = oControl.attachTitlePress;
 
-					if (oBindingContext) {
-						sPath = oBindingContext.getPath();
-					}
-
-					sUrl = BindingResolver.resolveValue(oColumn.identifier.url, oSource, sPath);
-					sTarget = BindingResolver.resolveValue(oColumn.identifier.target, oSource, sPath);
-
-					if (sUrl) {
-						window.open(sUrl, sTarget || "_blank");
-					}
+				this._oActions.attach({
+					area: ActionArea.ContentItemDetail,
+					actions: oColumn.actions,
+					control: this,
+					actionControl: oControl,
+					enabledPropertyName: "titleActive"
 				});
 			}
 
-			return oIdentifier;
+			return oControl;
+		}
+
+		if (oColumn.url) {
+			Log.warning("Usage of column property 'url' is deprecated. Use card actions for navigation.", null, "sap.ui.integration.widgets.Card");
+
+			oColumn.actions = [{
+				type: "Navigation",
+				parameters: {
+					url: oColumn.url,
+					target: oColumn.target
+				}
+			}];
+		}
+
+		if (oColumn.actions) {
+			oControl = new Link({
+				text: oColumn.value
+			});
+
+			this._oActions.attach({
+				area: ActionArea.ContentItemDetail,
+				actions: oColumn.actions,
+				control: this,
+				actionControl: oControl,
+				enabledPropertyName: "enabled"
+			});
+
+			return oControl;
 		}
 
 		if (oColumn.state) {

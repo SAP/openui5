@@ -553,7 +553,6 @@ sap.ui.define([
 			assert.equal(aCells[2].getText(), oManifestData[0].status, "Should have correct text value.");
 			assert.equal(aCells[2].getState(), oManifestData[0].statusState, "Should have correct state.");
 			assert.equal(aCells[3].getText(), oManifestData[0].orderUrl, "Should have correct text value.");
-			assert.equal(aCells[3].getHref(), oManifestData[0].orderUrl, "Should have correct url value.");
 			assert.equal(aCells[4].getPercentValue(), oManifestData[0].percent, "Should have correct percentage.");
 			assert.equal(aCells[4].getDisplayValue(), oManifestData[0].percentValue, "Should have correct progress text.");
 			assert.equal(aCells[4].getState(), oManifestData[0].progressState, "Should have correct progress state.");
