@@ -22,7 +22,7 @@ sap.ui.define([
 
 		/**
 		 *
-		 * @class Utilities to create conditions to be used in {@link sap.ui.mdc.FilterField FilterField},
+		 * @namespace Utilities to create conditions to be used in {@link sap.ui.mdc.FilterField FilterField},
 		 * {@link sap.ui.mdc.FilterBar FilterBar} or {@link sap.ui.mdc.condition.ConditionModel ConditionModel}
 		 *
 		 * @author SAP SE
@@ -58,7 +58,7 @@ sap.ui.define([
 				/**
 				 * Creates a condition instance for a condition representing a item chosen from the field help.
 				 *
-				 * This is a "equal" condition with key and description. It is used for entries selected in the field help
+				 * This is a "equal to" (EQ) condition with key and description. It is used for entries selected in the field help
 				 * and for everything entered in the {@link sap.ui.mdc.Field Field} control.
 				 *
 				 * @param {string} sKey Operator for the condition

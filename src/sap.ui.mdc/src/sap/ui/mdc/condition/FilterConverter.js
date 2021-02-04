@@ -18,7 +18,7 @@ function(
 
 	/**
 	 *
-	 * @class Utility to convert {@link sap.ui.mdc.condition.ConditionObject conditions} of a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} into {@link sap.ui.model.Filter Filter}
+	 * @namespace Utility to convert {@link sap.ui.mdc.condition.ConditionObject conditions} of a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} into {@link sap.ui.model.Filter Filter}
 	 *
 	 * @author SAP SE
 	 * @version ${version}
