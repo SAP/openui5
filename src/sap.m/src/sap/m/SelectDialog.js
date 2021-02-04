@@ -4,6 +4,7 @@
 
 // Provides control sap.m.SelectDialog.
 sap.ui.define([
+	"sap/ui/thirdparty/jquery",
 	'./Button',
 	'./Dialog',
 	'./List',
@@ -20,6 +21,7 @@ sap.ui.define([
 	"sap/base/Log"
 ],
 function(
+	jQuery,
 	Button,
 	Dialog,
 	List,
@@ -1325,6 +1327,13 @@ function(
 	 */
 	SelectDialog.prototype._getListItemsEventDelegates = function () {
 		var fnEventDelegate = function (oEvent) {
+
+			var oListItem = jQuery(oEvent.target).closest(".sapMLIB").control()[0];
+
+			if (oListItem._eventHandledByControl) {
+				return;
+			}
+
 			if (oEvent && oEvent.isDefaultPrevented && oEvent.isMarked &&
 				(oEvent.isDefaultPrevented() || oEvent.isMarked("preventSelectionChange"))) {
 				return;
