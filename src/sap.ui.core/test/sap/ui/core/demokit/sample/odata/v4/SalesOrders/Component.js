@@ -72,34 +72,36 @@ sap.ui.define([
 					oLastModified && oLastModified.toISOString(),
 					"sap.ui.core.sample.odata.v4.SalesOrders.Component");
 
-				View.create({
-					id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
-					models : {
-						undefined : oModel,
-						ui : new JSONModel({
-							bCreateItemPending : false,
-							filterProductID : "",
-							filterValue : "",
-							itemFilter : aItemFilter,
-							bLineItemSelected : false,
-							iMessages : 0,
-							bRealOData : TestUtils.isRealOData(),
-							bSalesOrderSelected : false,
-							bScheduleSelected : false,
-							bSelectedSalesOrderItemTransient : false,
-							bSelectedSalesOrderTransient : false,
-							bSortGrossAmountDescending : undefined,
-							bSortSalesOrderIDDescending : undefined,
-							sSortGrossAmountIcon : "",
-							sSortSalesOrderIDIcon : ""
-						}
-					)},
-					type : ViewType.XML,
-					viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main"
-				}).then(function (oView) {
-					oLayout.addItem(oView);
+				this.runAsOwner(function() {
+					View.create({
+						id : "sap.ui.core.sample.odata.v4.SalesOrders.Main",
+						models : {
+							undefined : oModel,
+							ui : new JSONModel({
+								bCreateItemPending : false,
+								filterProductID : "",
+								filterValue : "",
+								itemFilter : aItemFilter,
+								bLineItemSelected : false,
+								iMessages : 0,
+								bRealOData : TestUtils.isRealOData(),
+								bSalesOrderSelected : false,
+								bScheduleSelected : false,
+								bSelectedSalesOrderItemTransient : false,
+								bSelectedSalesOrderTransient : false,
+								bSortGrossAmountDescending : undefined,
+								bSortSalesOrderIDDescending : undefined,
+								sSortGrossAmountIcon : "",
+								sSortSalesOrderIDIcon : ""
+							}
+						)},
+						type : ViewType.XML,
+						viewName : "sap.ui.core.sample.odata.v4.SalesOrders.Main"
+					}).then(function (oView) {
+						oLayout.addItem(oView);
+					});
 				});
-			});
+			}.bind(this));
 			return oLayout;
 			// TODO: enhance sample application after features are supported
 			// - Error Handling; not yet implemented in model

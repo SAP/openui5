@@ -21,5 +21,8 @@
 
 		<mvc:XMLView id="sub6View" viewName="testdata.customizing.sap.Sub6" />
 
+		<!-- This view's controller should get not get the instance-specific extensions of Sub6 -->
+		<mvc:XMLView id="sub6View_Strich" viewName="testdata.customizing.sap.Sub6" />
+
 	</l:VerticalLayout>
 </mvc:View>

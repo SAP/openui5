@@ -178,19 +178,30 @@ sap.ui.define([
 	QUnit.test("Controller Extension (Code Extensibility)", function(assert) {
 
 		// check lifecycle methods
-		assert.equal(oLifecycleSpy.callCount, 9, "9 lifecycle methods should be called");
+		assert.equal(oLifecycleSpy.callCount, 15, "15 lifecycle methods should be called");
 		// check calling order
 		assert.equal(oLifecycleSpy.getCall(0).args[0], "Sub6 Controller onInit()", "1st lifecycle method to be called should be: Sub6 Controller onInit()");
-		assert.equal(oLifecycleSpy.getCall(1).args[0], "Sub6ControllerExtension Controller onInit()", "2nd lifecycle method to be called should be: Sub6ControllerExtension Controller onInit()");
-		assert.equal(oLifecycleSpy.getCall(2).args[0], "Sub6AnotherControllerExtension Controller onInit()", "3rd lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onInit()");
+		assert.equal(oLifecycleSpy.getCall(1).args[0], "Sub6InstanceSpecificControllerExtension Controller onInit()", "2nd lifecycle method to be called should be: Sub6InstanceSpecificControllerExtension Controller onInit()");
 
-		assert.equal(oLifecycleSpy.getCall(3).args[0], "Sub6AnotherControllerExtension Controller onBeforeRendering()", "4th lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onBeforeRendering()");
-		assert.equal(oLifecycleSpy.getCall(4).args[0], "Sub6ControllerExtension Controller onBeforeRendering()", "5th lifecycle method to be called should be: Sub6ControllerExtension Controller onBeforeRendering()");
-		assert.equal(oLifecycleSpy.getCall(5).args[0], "Sub6 Controller onBeforeRendering()", "6th lifecycle method to be called should be: Sub6 Controller onBeforeRendering()");
+		assert.equal(oLifecycleSpy.getCall(2).args[0], "Sub6 Controller onInit()", "Strich: 3rd lifecycle method to be called should be: Sub6ControllerExtension Controller onInit()");
+		assert.equal(oLifecycleSpy.getCall(3).args[0], "Sub6ControllerExtension Controller onInit()", "Strich: 4th lifecycle method to be called should be: Sub6ControllerExtension Controller onInit()");
+		assert.equal(oLifecycleSpy.getCall(4).args[0], "Sub6AnotherControllerExtension Controller onInit()", "Strich: 5th lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onInit()");
 
-		assert.equal(oLifecycleSpy.getCall(6).args[0], "Sub6 Controller onAfterRendering()", "7th lifecycle method to be called should be: Sub6 Controller onAfterRendering()");
-		assert.equal(oLifecycleSpy.getCall(7).args[0], "Sub6ControllerExtension Controller onAfterRendering()", "8th lifecycle method to be called should be: Sub6ControllerExtension Controller onAfterRendering()");
-		assert.equal(oLifecycleSpy.getCall(8).args[0], "Sub6AnotherControllerExtension Controller onAfterRendering()", "9th lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onAfterRendering()");
+		// on before rendering
+		assert.equal(oLifecycleSpy.getCall(5).args[0], "Sub6InstanceSpecificControllerExtension Controller onBeforeRendering()", "6th lifecycle method to be called should be: Sub6InstanceSpecificExtensionController onBeforeRendering()");
+		assert.equal(oLifecycleSpy.getCall(6).args[0], "Sub6 Controller onBeforeRendering()", "7th lifecycle method to be called should be: Sub6 Controller onBeforeRendering()");
+
+		assert.equal(oLifecycleSpy.getCall(7).args[0], "Sub6AnotherControllerExtension Controller onBeforeRendering()", "Strich: 8th lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onBeforeRendering()");
+		assert.equal(oLifecycleSpy.getCall(8).args[0], "Sub6ControllerExtension Controller onBeforeRendering()", "Strich: 9th lifecycle method to be called should be: Sub6ControllerExtension Controller onBeforeRendering()");
+		assert.equal(oLifecycleSpy.getCall(9).args[0], "Sub6 Controller onBeforeRendering()", "Strich: 10th lifecycle method to be called should be: Sub6 Controller onBeforeRendering()");
+
+		// on after rendering
+		assert.equal(oLifecycleSpy.getCall(10).args[0], "Sub6 Controller onAfterRendering()", "11th lifecycle method to be called should be: Sub6 Controller onAfterRendering()");
+		assert.equal(oLifecycleSpy.getCall(11).args[0], "Sub6InstanceSpecificControllerExtension Controller onAfterRendering()", "12th lifecycle method to be called should be: Sub6InstanceSpecificControllerExtension Controller onAfterRendering()");
+
+		assert.equal(oLifecycleSpy.getCall(12).args[0], "Sub6 Controller onAfterRendering()", "Strich: 13th lifecycle method to be called should be: Sub6 Controller onAfterRendering()");
+		assert.equal(oLifecycleSpy.getCall(13).args[0], "Sub6ControllerExtension Controller onAfterRendering()", "Strich: 14th lifecycle method to be called should be: Sub6ControllerExtension Controller onAfterRendering()");
+		assert.equal(oLifecycleSpy.getCall(14).args[0], "Sub6AnotherControllerExtension Controller onAfterRendering()", "Strich: 15th lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onAfterRendering()");
 
 	});
 
@@ -345,7 +356,7 @@ sap.ui.define([
 			var ExtensionProvider = function() {};
 			ExtensionProvider.prototype.getControllerExtensions = function(sControllerName, sComponentId) {
 				if ( !(sControllerName == "testdata.customizing.sap.Sub2") ){
-					return;
+					return [];
 				} else {
 					return new Promise(function(fnResolve, fnReject) {
 						setTimeout(function() {

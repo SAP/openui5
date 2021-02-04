@@ -2,8 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View"],
-	function(Log, ObjectPath, View) {
+sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View", "sap/ui/core/Component"],
+	function(Log, ObjectPath, View, Component) {
 
 	"use strict";
 
@@ -57,54 +57,73 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 	 * API documentation see ExtensionPoint.load() and sap.ui.extensionpoint().
 	 *
 	 * Used only internally by this module, as well as the XMLTemplateProcessor.
+	 *
+	 * @param {sap.ui.core.mvc.View|sap.ui.core.Fragment} oContainer the containing UI5 element, either a View or a Fragment instance
+	 * @param {string} sExtName the name of the extension-point
+	 * @param {function} fnCreateDefaultContent a function which creates the default content of an extension-point. Either given via public API or statically defined in {@link sap.ui.core.XMLTemplateProcessor}.
+	 * @param {sap.ui.core.Control} oTargetControl the target control into which the extension-point's content will be inserted
+	 * @param {string} sAggregationName the aggregation name inside the target control. The content controls of the extension-point will be inserted into this aggregation.
+	 *
+	 * @private
 	 */
-	ExtensionPoint._factory = function(oContainer, sExtName, fnCreateDefaultContent,  oTargetControl, sAggregationName) {
-		var extensionConfig, oView, vResult;
-
-		// Note: the dependency to CustomizingConfiguration is not statically declared to not enforce the loading of that module
-		var CustomizingConfiguration = sap.ui.require('sap/ui/core/CustomizingConfiguration');
+	ExtensionPoint._factory = function(oContainer, sExtName, fnCreateDefaultContent, oTargetControl, sAggregationName) {
+		var oExtensionConfig, oView, vResult, sViewOrFragmentName, oOwnerComponent;
 
 		// do we have a view to check or do we need to check for configuration for a fragment?
 		if (oContainer) {
 			if (oContainer.isA("sap.ui.core.mvc.View")) {
-				extensionConfig = CustomizingConfiguration && CustomizingConfiguration.getViewExtension(oContainer.sViewName, sExtName, oContainer);
+				sViewOrFragmentName = oContainer.sViewName;
 				oView = oContainer;
 			} else if (oContainer.isA("sap.ui.core.Fragment")) {
-				extensionConfig = CustomizingConfiguration && CustomizingConfiguration.getViewExtension(oContainer.getFragmentName(), sExtName, oContainer);
+				sViewOrFragmentName = oContainer.getFragmentName();
 				oView = oContainer._oContainingView;
+			}
+
+			// if customizing is enabled we read the extension-point from the merged manifests of the owner component
+			if (!sap.ui.getCore().getConfiguration().getDisableCustomizing()) {
+				oOwnerComponent = Component.getOwnerComponentFor(oContainer);
+				if (oOwnerComponent) {
+					if (oOwnerComponent.getExtensionComponent) {
+						oOwnerComponent = oOwnerComponent.getExtensionComponent();
+						if (!oOwnerComponent) {
+							throw new Error("getExtensionComponent() must return an instance.");
+						}
+					}
+					oExtensionConfig = oOwnerComponent._getManifestEntry("/sap.ui5/extends/extensions/sap.ui.viewExtensions/" + sViewOrFragmentName + "/" + sExtName, true);
+				}
 			}
 		}
 
 		// Extension Point - is something configured?
-		if (extensionConfig) {
-			if (extensionConfig.className) {
-				var fnClass = sap.ui.requireSync(extensionConfig.className.replace(/\./g, "/")); // make sure fnClass.getMetadata() exists
-				fnClass = fnClass || ObjectPath.get(extensionConfig.className);
-				var sId = oView && extensionConfig.id ? oView.createId(extensionConfig.id) : extensionConfig.id;
+		if (oExtensionConfig) {
+			if (oExtensionConfig.className) {
+				var fnClass = sap.ui.requireSync(oExtensionConfig.className.replace(/\./g, "/")); // make sure fnClass.getMetadata() exists
+				fnClass = fnClass || ObjectPath.get(oExtensionConfig.className);
+				var sId = oView && oExtensionConfig.id ? oView.createId(oExtensionConfig.id) : oExtensionConfig.id;
 				Log.info("Customizing: View extension found for extension point '" + sExtName
-						+ "' in View '" + oView.sViewName + "': " + extensionConfig.className + ": " + (extensionConfig.viewName || extensionConfig.fragmentName));
+						+ "' in View '" + oView.sViewName + "': " + oExtensionConfig.className + ": " + (oExtensionConfig.viewName || oExtensionConfig.fragmentName));
 
-				if (extensionConfig.className === "sap.ui.core.Fragment") {
+				if (oExtensionConfig.className === "sap.ui.core.Fragment") {
 					var oFragment = new fnClass({
 						id: sId,
-						type: extensionConfig.type,
-						fragmentName: extensionConfig.fragmentName,
+						type: oExtensionConfig.type,
+						fragmentName: oExtensionConfig.fragmentName,
 						containingView: oView
 					});
 					vResult = (Array.isArray(oFragment) ? oFragment : [oFragment]); // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
 
-				} else if (extensionConfig.className === "sap.ui.core.mvc.View") {
-					oView = View._legacyCreate({type: extensionConfig.type, viewName: extensionConfig.viewName, id: sId});
+				} else if (oExtensionConfig.className === "sap.ui.core.mvc.View") {
+					oView = View._legacyCreate({type: oExtensionConfig.type, viewName: oExtensionConfig.viewName, id: sId});
 					vResult = [oView]; // vResult is now an array, even if empty - so if a Fragment is configured, the default content below is not added anymore
 
 				} else {
 					// unknown extension class
 					Log.warning("Customizing: Unknown extension className configured (and ignored) in Component.js for extension point '" + sExtName
-							+ "' in View '" + oView.sViewName + "': " + extensionConfig.className);
+							+ "' in View '" + oView.sViewName + "': " + oExtensionConfig.className);
 				}
 			} else {
 				Log.warning("Customizing: no extension className configured in Component.js for extension point '" + sExtName
-						+ "' in View '" + oView.sViewName + "': " + extensionConfig.className);
+						+ "' in View '" + oView.sViewName + "': " + oExtensionConfig.className);
 			}
 		} else if (ExtensionPoint._fnExtensionProvider) {
 			var sExtensionProvider = ExtensionPoint._fnExtensionProvider(oView);
