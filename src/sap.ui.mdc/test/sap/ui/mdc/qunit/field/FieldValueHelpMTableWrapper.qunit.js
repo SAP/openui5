@@ -1157,8 +1157,10 @@ sap.ui.define([
 		iFVHDataUpdate++;
 	};
 
+	var _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
+
 	var _initFieldHelp = function() {
-		oField = new Icon("I1", {src:"sap-icon://sap-ui5"});
+		oField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		oField.getFieldPath = function() {return "key";};
 		oField.placeAt("content");
 
@@ -1178,6 +1180,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oField.addDependent(oFieldHelp);
+		oField.focus();
 		oFieldHelp.connect(oField);
 	};
 
@@ -1447,6 +1450,7 @@ sap.ui.define([
 
 		var oDialog = oFieldHelp.getAggregation("_dialog");
 		if (oDialog) {
+			oTable.focus(); // to be sure focus is on table
 			var aItems = oTable.getItems();
 			aItems[0]._eventHandledByControl = true; // fake press on checkBox
 			qutils.triggerEvent("tap", aItems[0].getId() + "-selectMulti");
