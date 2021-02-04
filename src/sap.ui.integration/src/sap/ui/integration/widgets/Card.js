@@ -87,6 +87,8 @@ sap.ui.define([
 	 */
 	var RESERVED_MODEL_NAMES = ["parameters", "filters", "context", "i18n"];
 
+	var RESERVED_PARAMETER_NAMES = ["visibleItems", "allItems"];
+
 	var HeaderPosition = fLibrary.cards.HeaderPosition;
 
 	var CardDataMode = library.CardDataMode;
@@ -887,6 +889,7 @@ sap.ui.define([
 		this._busyStates.clear();
 
 		this.getModel("filters").setData({});
+		this.getModel("parameters").setData({});
 
 		this._oContextParameters = null;
 
@@ -1181,6 +1184,9 @@ sap.ui.define([
 	 * @private
 	 */
 	Card.prototype._applyManifestSettings = function () {
+
+		this._setParametersModelData();
+
 		this._applyServiceManifestSettings();
 		this._applyFilterBarManifestSettings();
 		this._applyDataManifestSettings();
@@ -1188,6 +1194,30 @@ sap.ui.define([
 		this._applyContentManifestSettings();
 
 		this.fireManifestApplied();
+
+	};
+
+	/**
+	 * Sets parameters data to the 'parameters' model.
+	 * Excluding reserved parameter names.
+	 *
+	 * @private
+	 */
+
+	Card.prototype._setParametersModelData = function () {
+
+		var oCustomParameters = {},
+			oCombinedParameters = this.getCombinedParameters(),
+			sKey;
+
+		for (sKey in oCombinedParameters) {
+			if (RESERVED_PARAMETER_NAMES.indexOf(sKey) >= 0) {
+				Log.warning("The parameter name '" + sKey + "' is reserved for cards. Can not be used for creating custom parameter.");
+			} else {
+				oCustomParameters[sKey] = {value: oCombinedParameters[sKey]};
+			}
+		}
+		this.getModel("parameters").setData(oCustomParameters);
 	};
 
 	Card.prototype._applyDataManifestSettings = function () {

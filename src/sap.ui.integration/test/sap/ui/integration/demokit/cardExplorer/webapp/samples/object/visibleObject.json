@@ -27,6 +27,13 @@
 	},
 	"sap.card": {
 		"type": "Object",
+		"configuration": {
+			"parameters": {
+				"visibleCompanyFields": {
+					"value": ["companyDetails", "companyName"]
+				}
+			}
+		},
 		"designtime": "dt/Configuration",
 		"data": {
 			"json": {
@@ -104,16 +111,16 @@
 					]
 				},
 				{
-					"visible": "{= !!${company}}",
+					"visible": "{= ${parameters>/visibleCompanyFields/value}.indexOf('companyDetails')>-1}",
 					"title": "Company Details",
 					"items": [
 						{
-							"visible": "{= !!${company/name}}",
+							"visible": "{= ${parameters>/visibleCompanyFields/value}.indexOf('companyName')>-1}",
 							"label": "Company Name",
 							"value": "{company/name}"
 						},
 						{
-							"visible": "{= !!${company/address}}",
+							"visible": "{= ${parameters>/visibleCompanyFields/value}.indexOf('companyAddress')>-1}",
 							"label": "Address",
 							"value": "{company/address}"
 						},
