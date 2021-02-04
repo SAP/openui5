@@ -8,6 +8,7 @@
 	float: left;
 	clear: left;
 	outline: none;
+	overflow: hidden;
 	text-overflow: ellipsis;
 	position: relative;
 	white-space: nowrap;
@@ -15,8 +16,7 @@
 
 	> .sapMLabel {
 		max-width: calc(~"100% - 3rem");
-		// some browsers [ie] calcs rems different than the others 0.0625 is caled as 1.04 px in IE
-		padding-right: 1px;
+		padding-right: 0.125rem;
 	}
 }
 
