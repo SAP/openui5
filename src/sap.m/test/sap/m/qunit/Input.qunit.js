@@ -4204,6 +4204,35 @@ sap.ui.define([
 		sap.ui.Device.system.phone = bIsPhone;
 	});
 
+	QUnit.test("Leaving the input field should trigger suggestions item selection", function(assert) {
+		// Setup
+		this.stub(Device, "system", {desktop: true, phone: false, tablet: false});
+
+		var oSelectionItem = new Item({text: "Bulgaria"}),
+			oInput = new Input({
+				showSuggestion: true,
+				suggestionItems: [
+					new Item({text: "Germany"}),
+					oSelectionItem
+				]
+			}).placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.notOk(oInput.getSelectedItem(), "SelectedItems should be empty");
+
+		// Act
+		oInput._sProposedItemText = "Bulgaria";
+		oInput.onsapfocusleave({relatedControlId: oInput.getId()});
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getSelectedItem(), oSelectionItem.getId(), "Focusleave should have triggered item selection");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
 	QUnit.module("ValueHelpDialog");
 
 	QUnit.test("Change event", function(assert) {

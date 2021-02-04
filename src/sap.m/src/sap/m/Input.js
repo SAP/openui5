@@ -1288,6 +1288,19 @@ function(
 			}
 		}
 
+		if (!this.isMobileDevice() && this._sProposedItemText) {
+			// Update selections for poweruser
+			var oSelectedItem = this.getSuggestionItems()
+				.filter(function (oItem) {
+					return oItem.getText() === this._sProposedItemText;
+				}.bind(this))[0];
+
+			if (oSelectedItem) {
+				this.setSelectionItem(oSelectedItem, true);
+				this.selectText(0, 0);
+			}
+		}
+
 		// Inform InputBase to fire the change event on Input only when focus doesn't go into the suggestion popup
 		if (!bFocusInPopup) {
 			InputBase.prototype.onsapfocusleave.apply(this, arguments);
@@ -2183,7 +2196,7 @@ function(
 	 * @private
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
-	Input.prototype.onfocusout = function(oEvent) {
+	Input.prototype.onfocusout = function (oEvent) {
 		InputBase.prototype.onfocusout.apply(this, arguments);
 		this.removeStyleClass("sapMInputFocused");
 		this.$("SuggDescr").text(""); // clear suggestion text, if any

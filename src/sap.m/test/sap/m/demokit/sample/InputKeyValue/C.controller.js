@@ -63,7 +63,8 @@ sap.ui.define([
 
 		onSuggestionItemSelected: function (oEvent) {
 			var oItem = oEvent.getParameter("selectedItem");
-			this.byId("selectedKeyIndicator").setText(oItem.getKey());
+			var oText = oItem ? oItem.getKey() : "";
+			this.byId("selectedKeyIndicator").setText(oText);
 		}
 
 	});
