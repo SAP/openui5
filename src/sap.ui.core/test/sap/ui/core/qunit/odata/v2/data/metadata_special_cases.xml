@@ -15,8 +15,59 @@
 				<Property Name="OrderOperationRowID" Type="Edm.String"/>
 				<Property Name="OrderOperationRowLevel" Type="Edm.Byte"/>
 			</EntityType>
+			<EntityType Name="C_SubscrpnProductChargeTPType">
+				<Key>
+					<PropertyRef Name="SubscrpnProdChrgAndDiscID"/>
+				</Key>
+				<Property Name="SubscrpnProdChrgAndDiscID" Type="Edm.String"/>
+				<NavigationProperty Name="to_CreatedByUserContactCard"
+					Relationship="special.cases.assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"
+					FromRole="FromRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"
+					ToRole="ToRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
+				<NavigationProperty Name="to_AllUserContactCards"
+					Relationship="special.cases.assoc_AllUserContactCards"
+					FromRole="FromRole_assoc_AllUserContactCards"
+					ToRole="ToRole_assoc_AllUserContactCards"/>
+			</EntityType>
+			<EntityType Name="I_UserContactCardType">
+				<Key>
+					<PropertyRef Name="ContactCardID"/>
+				</Key>
+				<Property Name="ContactCardID" Type="Edm.String" Nullable="false" MaxLength="12"/>
+			</EntityType>
+			<Association Name="assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE">
+				<End Type="special.cases.C_SubscrpnProductChargeTPType" Multiplicity="1"
+					Role="FromRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
+				<End Type="special.cases.I_UserContactCardType" Multiplicity="0..1"
+					Role="ToRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
+			</Association>
+			<Association Name="assoc_AllUserContactCards">
+				<End Type="special.cases.C_SubscrpnProductChargeTPType" Multiplicity="1"
+					Role="FromRole_assoc_AllUserContactCards"/>
+				<End Type="special.cases.I_UserContactCardType" Multiplicity="*"
+					Role="ToRole_assoc_AllUserContactCards"/>
+			</Association>
 			<EntityContainer Name="Container" m:IsDefaultEntityContainer="true">
-				<EntitySet Name="C_RSHMaintSchedSmltdOrdAndOp" EntityType="special.cases.C_RSHMaintSchedSmltdOrdAndOpType"/>
+				<EntitySet Name="C_RSHMaintSchedSmltdOrdAndOp"
+					EntityType="special.cases.C_RSHMaintSchedSmltdOrdAndOpType"/>
+				<EntitySet Name="C_SubscrpnProductChargeTP"
+					EntityType="special.cases.C_SubscrpnProductChargeTPType"/>
+				<EntitySet Name="I_UserContactCard"
+					EntityType="special.cases.I_UserContactCardType"
+					sap:addressable="false"/>
+				<AssociationSet Name="assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"
+					Association="special.cases.assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE">
+					<End EntitySet="C_SubscrpnProductChargeTP"
+						Role="FromRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
+					<End EntitySet="I_UserContactCard"
+						Role="ToRole_assoc_59A3FD8F5CF7BAECDA3BCCCD9C24D7BE"/>
+				</AssociationSet>
+				<AssociationSet Name="assoc_AllUserContactCards"
+					Association="special.cases.assoc_AllUserContactCards">
+					<End EntitySet="C_SubscrpnProductChargeTP"
+						Role="FromRole_assoc_AllUserContactCards"/>
+					<End EntitySet="I_UserContactCard" Role="ToRole_assoc_AllUserContactCards"/>
+				</AssociationSet>
 			</EntityContainer>
 		</Schema>
 	</edmx:DataServices>

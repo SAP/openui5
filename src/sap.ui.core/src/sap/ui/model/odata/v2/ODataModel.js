@@ -5300,22 +5300,43 @@ sap.ui.define([
 	};
 
 	/**
-	 * Gets the resource path for the given path and context.
+	 * Gets the absolute path to the resource for the given path and context.
 	 *
 	 * @param {boolean} bShortenPath
 	 *   Whether to shorten the resource path so that it contains at most one navigation property
+	 * @param {string} sDeepPath
+	 *   An absolute deep path; used if resource path has to be shortened
 	 * @param {string} sPath
 	 *   An absolute path or a path relative to the given context; if the path contains a query
 	 *   string, the query string is ignored
 	 * @param {sap.ui.model.Context} [oContext]
 	 *   The context; considered only in case the path is relative
 	 * @return {string}
-	 *   The resource path for the given path and context
+	 *   The absolute path to the resource for the given path and context
 	 *
 	 * @private
 	 */
-	ODataModel.prototype._getResourcePath = function (bShortenPath, sPath, oContext) {
-		return this._normalizePath(sPath, oContext, bShortenPath);
+	ODataModel.prototype._getResourcePath = function (bShortenPath, sDeepPath, sPath, oContext) {
+		var sLastNavigationProperty, sPathBefore, mSplitPath, sResolvedPath;
+
+		if (!bShortenPath) {
+			return this.resolve(sPath, oContext);
+		}
+
+		mSplitPath = this.oMetadata._splitByLastNavigationProperty(sDeepPath);
+		sPathBefore = mSplitPath.pathBeforeLastNavigationProperty;
+		sLastNavigationProperty = mSplitPath.lastNavigationProperty;
+
+		if (sLastNavigationProperty.includes("(") && mSplitPath.addressable) {
+			sResolvedPath = this.resolve(sPathBefore + sLastNavigationProperty, undefined, true);
+			if (sResolvedPath) {
+				return sResolvedPath + mSplitPath.pathAfterLastNavigationProperty;
+			}
+		}
+
+		sResolvedPath = this.resolve(sPathBefore, undefined, true) || sPathBefore;
+
+		return sResolvedPath + sLastNavigationProperty + mSplitPath.pathAfterLastNavigationProperty;
 	};
 
 	/**
@@ -5395,7 +5416,8 @@ sap.ui.define([
 
 		function createReadRequest(requestHandle) {
 			var oEntityType, oFilter, sFilterParams, mRequests, sSorterParams, sUrl,
-				sResourcePath = that._getResourcePath(bCanonical, sPath, oContext);
+				sDeepPath = that.resolveDeep(sPath, oContext),
+				sResourcePath = that._getResourcePath(bCanonical, sDeepPath, sPath, oContext);
 
 			// Add filter/sorter to URL parameters
 			sSorterParams = ODataUtils.createSortParams(aSorters);
@@ -5413,8 +5435,8 @@ sap.ui.define([
 
 			sUrl = that._createRequestUrlWithNormalizedPath(sResourcePath, aUrlParams,
 				that.bUseBatch);
-			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod,
-				mHeaders, null, sETag, undefined, bUpdateAggregatedMessages);
+			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, sETag,
+				undefined, bUpdateAggregatedMessages);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {

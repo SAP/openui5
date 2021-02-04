@@ -21,7 +21,8 @@ sap.ui.define([
 	"use strict";
 	/*eslint max-nested-callbacks: 0*/
 
-	var sClassName = "sap.ui.model.odata.ODataMetadata";
+	var sClassName = "sap.ui.model.odata.ODataMetadata",
+		sSAPAnnotationNamespace = "http://www.sap.com/Protocols/SAPData";
 
 	/**
 	 * Constructor for a new ODataMetadata.
@@ -1684,6 +1685,103 @@ sap.ui.define([
 		}
 
 		return "";
+	};
+
+	/**
+	 * Splits the given absolute path by the last navigation property. Computation stops at the
+	 * first non-navigation property or if an entity type for a path segment cannot be determined.
+	 *
+	 * @param {string} sPath
+	 *   Absolute path to be split
+	 * @return {object}
+	 *   An object containing following properties:
+	 *   <ul>
+	 *     <li>{string} pathBeforeLastNavigationProperty: The absolute path in front of the last
+	 *       navigation property; if the given path does not have any navigation property, the
+	 *       given path is returned</li>
+	 *     <li>{string} lastNavigationProperty: The last navigation property in the given path,
+	 *       starting with a <code>/</code> and including the key predicate if available; maybe
+	 *       <code>""</code> if the given path does not contain any navigation property</li>
+	 *     <li>{string} pathAfterLastNavigationProperty: The part after the last navigation
+	 *       property in the given path, starting with a <code>/</code> or <code>""</code> if there
+	 *       is no navigation property in the given path</li>
+	 *     <li>{boolean} addressable: Whether the last navigation property references an
+	 *       addressable entity set</li>
+	 *   </ul>
+	 * @private
+	 */
+	ODataMetadata.prototype._splitByLastNavigationProperty = function (sPath) {
+		var oEntityType, i, iKeyPredicateIndex, iLastNavigationPropertyIndex, sSegment,
+			aSegments = sPath.split("/"),
+			sFirstPathSegment = "/" + aSegments[1],
+			iSegmentsLength = aSegments.length;
+
+		// ensure that caches for type and navigation properties are filled
+		this._fillElementCaches();
+		oEntityType = this._getEntityTypeByPath(sFirstPathSegment);
+		for (i = 2; i < iSegmentsLength; i += 1) {
+			sSegment = aSegments[i];
+			iKeyPredicateIndex = sSegment.indexOf("(");
+			if (iKeyPredicateIndex !== -1) {
+				sSegment = sSegment.slice(0, iKeyPredicateIndex);
+			}
+			if (oEntityType && oEntityType.__navigationPropertiesMap[sSegment]) {
+				iLastNavigationPropertyIndex = i;
+				oEntityType = this._getEntityTypeByNavProperty(oEntityType, sSegment);
+			} else {
+				break;
+			}
+		}
+
+		if (iLastNavigationPropertyIndex === undefined) {
+			return {
+				pathBeforeLastNavigationProperty : sPath,
+				lastNavigationProperty : "",
+				addressable : true,
+				pathAfterLastNavigationProperty : ""
+			};
+		}
+
+		return {
+			pathBeforeLastNavigationProperty :
+				aSegments.slice(0, iLastNavigationPropertyIndex).join("/"),
+			lastNavigationProperty : "/" + aSegments[iLastNavigationPropertyIndex],
+			addressable : this._isAddressable(oEntityType),
+			pathAfterLastNavigationProperty : (iLastNavigationPropertyIndex + 1) >= iSegmentsLength
+				? ""
+				: ("/" + aSegments.slice(iLastNavigationPropertyIndex + 1).join("/"))
+		};
+	};
+
+	/**
+	 * Whether the entity set for the given entity type is addressable. The entity set for the type
+	 * is not addressable if the set is annotated with <code>sap:addressable="false"</code>;
+	 * otherwise it is addressable. The element cache has to be filled, {@link #_fillElementCaches}.
+	 *
+	 * @param {object} [oEntityType]
+	 *   The metadata object representing an entity type
+	 * @return {boolean}
+	 *   Whether the entity set of the given entity type is addressable
+	 *
+	 * @private
+	 */
+	ODataMetadata.prototype._isAddressable = function (oEntityType) {
+		var oEntitySet;
+
+		if (!oEntityType) { // should not happen; for robustness
+			return true;
+		}
+		oEntitySet = this._entitySetMap[oEntityType.entityType];
+		if (!oEntitySet || !oEntitySet.extensions) {
+			// for robustness: oEntitySet should never be falsy if the metadata are correct
+			return true;
+		}
+
+		return !oEntitySet.extensions.some(function (oExtension) {
+			return oExtension.name === "addressable"
+				&& oExtension.namespace === sSAPAnnotationNamespace
+				&& oExtension.value === "false";
+		});
 	};
 
 	return ODataMetadata;

@@ -3,10 +3,11 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/model/odata/_ODataMetaModelUtils",
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/test/TestUtils",
 	"sap/ui/thirdparty/datajs"
-], function (Log, ODataMetadata, TestUtils, OData) {
+], function (Log, _ODataMetaModelUtils, ODataMetadata, TestUtils, OData) {
 	/*global QUnit, sinon*/
 	/*eslint no-warning-comments: 0, max-nested-callbacks: 0*/
 	"use strict";
@@ -317,6 +318,257 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(ODataMetadata._returnsCollection(oFixture.mFunctionInfo),
 			oFixture.expectedResult);
+	});
+});
+
+	//*********************************************************************************************
+[{
+	getEntityTypeByPathParameter : "/SalesOrderSet",
+	getEntityTypeByPathResult : {__navigationPropertiesMap : {/*not relevant*/}},
+	path : "/SalesOrderSet",
+	result : {
+		addressable : true,
+		lastNavigationProperty : "",
+		pathAfterLastNavigationProperty : "",
+		pathBeforeLastNavigationProperty : "/SalesOrderSet"
+	}
+}, {
+	getEntityTypeByPathParameter : "/SalesOrderSet('1')",
+	getEntityTypeByPathResult : {__navigationPropertiesMap : {/*not relevant*/}},
+	path : "/SalesOrderSet('1')",
+	result : {
+		addressable : true,
+		lastNavigationProperty : "",
+		pathAfterLastNavigationProperty : "",
+		pathBeforeLastNavigationProperty : "/SalesOrderSet('1')"
+	}
+}, {
+	getEntityTypeByNavPropertyResult : {__navigationPropertiesMap : {/*not relevant*/}},
+	getEntityTypeByNavPropertySegment : "ToLineItems",
+	getEntityTypeByPathParameter : "/SalesOrderSet('1')",
+	getEntityTypeByPathResult : {__navigationPropertiesMap : {ToLineItems : {/*not relevant*/}}},
+	path : "/SalesOrderSet('1')/ToLineItems",
+	result : {
+		addressable : "~addressable",
+		lastNavigationProperty : "/ToLineItems",
+		pathAfterLastNavigationProperty : "",
+		pathBeforeLastNavigationProperty : "/SalesOrderSet('1')"
+	}
+}, {
+	getEntityTypeByPathParameter : "/BusinessPartnerSet('BP1')",
+	getEntityTypeByPathResult : {__navigationPropertiesMap : {/*Address is a complex type*/}},
+	path : "/BusinessPartnerSet('BP1')/Address",
+	result : {
+		addressable : true,
+		lastNavigationProperty : "",
+		pathAfterLastNavigationProperty : "",
+		pathBeforeLastNavigationProperty : "/BusinessPartnerSet('BP1')/Address"
+	}
+}, {
+	getEntityTypeByPathParameter : "/BusinessPartnerSet('BP1')",
+	getEntityTypeByPathResult : {__navigationPropertiesMap : {/*Address is a complex type*/}},
+	path : "/BusinessPartnerSet('BP1')/Address/City",
+	result : {
+		addressable : true,
+		lastNavigationProperty : "",
+		pathAfterLastNavigationProperty : "",
+		pathBeforeLastNavigationProperty : "/BusinessPartnerSet('BP1')/Address/City"
+	}
+}, {
+	getEntityTypeByNavPropertyResult : {__navigationPropertiesMap : {/*not relevant*/}},
+	getEntityTypeByNavPropertySegment : "ToLineItems",
+	getEntityTypeByPathParameter : "/SalesOrderSet('1')",
+	getEntityTypeByPathResult : {__navigationPropertiesMap : {ToLineItems : {/*not relevant*/}}},
+	path : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+	result : {
+		addressable : "~addressable",
+		lastNavigationProperty : "/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+		pathAfterLastNavigationProperty : "",
+		pathBeforeLastNavigationProperty : "/SalesOrderSet('1')"
+	}
+}, {
+	getEntityTypeByNavPropertyResult : {__navigationPropertiesMap : {/*not relevant*/}},
+	getEntityTypeByNavPropertySegment : "ToLineItems",
+	getEntityTypeByPathParameter : "/SalesOrderSet('1')",
+	getEntityTypeByPathResult : {__navigationPropertiesMap : {ToLineItems : {/*not relevant*/}}},
+	path : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/Note",
+	result : {
+		addressable : "~addressable",
+		lastNavigationProperty : "/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+		pathAfterLastNavigationProperty : "/Note",
+		pathBeforeLastNavigationProperty : "/SalesOrderSet('1')"
+	}
+}, {
+	getEntityTypeByPathParameter : "/SalesOrderSet('1')",
+	getEntityTypeByPathResult : null, // type cannot be resolved, e.g. metadata are not yet loaded
+	path : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+	result : {
+		addressable : true,
+		// without metadata we cannot identify the navigation properties properly
+		lastNavigationProperty : "",
+		pathAfterLastNavigationProperty : "",
+		pathBeforeLastNavigationProperty : "/SalesOrderSet('1')"
+			+ "/ToLineItems(SalesOrderID='1',ItemPosition='10')"
+	}
+}, {
+	getEntityTypeByNavPropertyResult : undefined, // type for navigation property cannot be resolved
+	getEntityTypeByNavPropertySegment : "ToLineItems",
+	getEntityTypeByPathParameter : "/SalesOrderSet('1')",
+	getEntityTypeByPathResult : {__navigationPropertiesMap : {ToLineItems : {/*not relevant*/}}},
+	path : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/Note",
+	result : {
+		addressable : "~addressable",
+		lastNavigationProperty : "/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+		pathAfterLastNavigationProperty : "/Note",
+		pathBeforeLastNavigationProperty : "/SalesOrderSet('1')"
+	}
+}].forEach(function (oFixture) {
+	QUnit.test("_splitByLastNavigationProperty: " + oFixture.path, function (assert) {
+		var oMetadataMock = this.mock(this.oMetadata);
+
+		oMetadataMock.expects("_fillElementCaches").withExactArgs();
+		oMetadataMock.expects("_getEntityTypeByPath")
+			.withExactArgs(oFixture.getEntityTypeByPathParameter)
+			.returns(oFixture.getEntityTypeByPathResult);
+		oMetadataMock.expects("_getEntityTypeByNavProperty")
+			.withExactArgs(oFixture.getEntityTypeByPathResult,
+				oFixture.getEntityTypeByNavPropertySegment)
+			.exactly(oFixture.getEntityTypeByNavPropertySegment ? 1 : 0)
+			.returns(oFixture.getEntityTypeByNavPropertyResult);
+		oMetadataMock.expects("_isAddressable")
+			.withExactArgs(oFixture.getEntityTypeByNavPropertyResult)
+			.exactly(oFixture.result.lastNavigationProperty ? 1 : 0)
+			.returns("~addressable");
+
+		// code under test
+		assert.deepEqual(this.oMetadata._splitByLastNavigationProperty(oFixture.path),
+			oFixture.result);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_splitByLastNavigationProperty: multiple navigations", function (assert) {
+		var oBusinessPartnerType = {__navigationPropertiesMap : {}},
+			oMetadataMock = this.mock(this.oMetadata),
+			sPath = "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct"
+				+ "/ToSupplier/Address/City",
+			oProductType = {__navigationPropertiesMap : {ToSupplier : {}}},
+			oSalesOrderLineItemType = {__navigationPropertiesMap : {ToProduct : {}}},
+			oSalesOrderType = {__navigationPropertiesMap : {ToLineItems : {/*not relevant*/}}};
+
+		oMetadataMock.expects("_fillElementCaches").withExactArgs();
+		oMetadataMock.expects("_getEntityTypeByPath")
+			.withExactArgs("/SalesOrderSet('1')")
+			.returns(oSalesOrderType);
+		oMetadataMock.expects("_getEntityTypeByNavProperty")
+			.withExactArgs(oSalesOrderType, "ToLineItems")
+			.returns(oSalesOrderLineItemType);
+		oMetadataMock.expects("_getEntityTypeByNavProperty")
+			.withExactArgs(oSalesOrderLineItemType, "ToProduct")
+			.returns(oProductType);
+		oMetadataMock.expects("_getEntityTypeByNavProperty")
+			.withExactArgs(oProductType, "ToSupplier")
+			.returns(oBusinessPartnerType);
+		oMetadataMock.expects("_isAddressable")
+			.withExactArgs(oBusinessPartnerType)
+			.returns("~addressable");
+
+		// code under test
+		assert.deepEqual(this.oMetadata._splitByLastNavigationProperty(sPath), {
+			addressable : "~addressable",
+			lastNavigationProperty : "/ToSupplier",
+			pathAfterLastNavigationProperty : "/Address/City",
+			pathBeforeLastNavigationProperty : "/SalesOrderSet('1')"
+				+ "/ToLineItems(SalesOrderID='1',ItemPosition='10')/ToProduct"
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_splitByLastNavigationProperty: stop at first non-navigation property",
+			function (assert) {
+		var oMetadataMock = this.mock(this.oMetadata),
+			// Assume that the complex type ToComplexType has also a property ToBusinessPartner;
+			// path computation has to stop at the first non-navigation property
+			sPath = "/SalesOrderSet('1')/ToComplexType/ToBusinessPartner",
+			oSalesOrderType = {__navigationPropertiesMap : {ToBusinessPartner : {}}};
+
+		oMetadataMock.expects("_fillElementCaches").withExactArgs();
+		oMetadataMock.expects("_getEntityTypeByPath")
+			.withExactArgs("/SalesOrderSet('1')")
+			.returns(oSalesOrderType);
+		oMetadataMock.expects("_getEntityTypeByNavProperty").never();
+
+		// code under test
+		assert.deepEqual(this.oMetadata._splitByLastNavigationProperty(sPath), {
+			addressable : true,
+			lastNavigationProperty : "",
+			pathAfterLastNavigationProperty : "",
+			pathBeforeLastNavigationProperty : "/SalesOrderSet('1')/ToComplexType/ToBusinessPartner"
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_isAddressable: no type -> true (robustness)", function (assert) {
+		// code under test
+		assert.strictEqual(this.oMetadata._isAddressable(undefined), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_isAddressable: no entity set -> true (robustness)", function (assert) {
+		var oEntityType = {entityType : "GWSAMPLE_BASIC.SalesOrderLineItem"};
+
+		this.oMetadata._entitySetMap = {};
+
+		// code under test
+		assert.strictEqual(this.oMetadata._isAddressable(oEntityType), true);
+	});
+
+	//*********************************************************************************************
+[{}, {extensions : []}].forEach(function (oEntitySet, i) {
+	QUnit.test("_isAddressable: no addressable extension, #" + i, function (assert) {
+		var oEntityType = {entityType : "GWSAMPLE_BASIC.SalesOrderLineItem"};
+
+		this.oMetadata._entitySetMap = {
+			"GWSAMPLE_BASIC.SalesOrderLineItem" : oEntitySet
+		};
+
+		// code under test
+		assert.strictEqual(this.oMetadata._isAddressable(oEntityType), true);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{value : "false", result : false},
+	{value : "true", result : true},
+	{value : undefined, result : true}
+].forEach(function (oFixture) {
+	QUnit.test("_isAddressable: extension found", function (assert) {
+		var oEntitySet = {
+				extensions : [{
+					name : "addressable",
+					namespace : "foo",
+					value : String(!oFixture.result)
+				}, {
+					name : "addressable",
+					namespace : "http://www.sap.com/Protocols/SAPData",
+					value : oFixture.value
+				}, {
+					name : "addressable",
+					namespace : "bar",
+					value : String(!oFixture.result)
+				}]
+			},
+			oEntityType = {
+				entityType : "GWSAMPLE_BASIC.SalesOrderLineItem"
+			};
+
+		this.oMetadata._entitySetMap = {
+			"GWSAMPLE_BASIC.SalesOrderLineItem" : oEntitySet
+		};
+
+		// code under test
+		assert.strictEqual(this.oMetadata._isAddressable(oEntityType), oFixture.result);
 	});
 });
 });

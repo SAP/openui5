@@ -120,8 +120,9 @@ sap.ui.define([
 			.returns(mGetHeaders);
 		oModelMock.expects("_getETag").withExactArgs(sPath, oContext).returns(sETag);
 		// inner function createReadRequest
+		oModelMock.expects("resolveDeep").withExactArgs(sPath, oContext).returns(sDeepPath);
 		oModelMock.expects("_getResourcePath")
-			.withExactArgs(bIsCanonicalRequestNeeded, sPath, oContext)
+			.withExactArgs(bIsCanonicalRequestNeeded, sDeepPath, sPath, oContext)
 			.returns(sResourcePath);
 		oODataUtilsMock.expects("createSortParams").withExactArgs(aSorters)
 			.returns(sSorterParams);
@@ -138,9 +139,6 @@ sap.ui.define([
 				sinon.match.same(aUrlParams).and(sinon.match([sSorterParams, sFilterParams])),
 				/*bUseBatch*/true)
 				.returns(sUrl);
-		oModelMock.expects("resolveDeep")
-			.withExactArgs(sPath, oContext)
-			.returns(sDeepPath);
 		oModelMock.expects("_createRequest")
 			.withExactArgs(sUrl, sDeepPath, "GET", mGetHeaders, null, sETag, undefined,
 				bUpdateAggregatedMessages)
@@ -155,20 +153,156 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_getResourcePath", function (assert) {
+	QUnit.test("_getResourcePath: do not shorten", function (assert) {
 		var oModel = {
-				_normalizePath : function () {}
+				resolve : function () {}
 			};
 
-		this.mock(oModel).expects("_normalizePath")
-			.withExactArgs("~sPath", "~oContext", "~bShortenPath")
-			.returns("~resourcePath");
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("~sPath", "~oContext")
+			.returns("/~resourcePath");
 
 		// code under test
-		assert.strictEqual(ODataModel.prototype
-				._getResourcePath.call(oModel, "~bShortenPath", "~sPath", "~oContext"),
-			"~resourcePath");
+		assert.strictEqual(ODataModel.prototype._getResourcePath.call(oModel, false, "~sDeepPath",
+			"~sPath", "~oContext"), "/~resourcePath");
 	});
+
+	//*********************************************************************************************
+[true, false].forEach(function (bCanBeResolved) {
+	QUnit.test("_getResourcePath: no navigation property; resolvable path: " + bCanBeResolved,
+			function (assert) {
+		var oMetadata = {
+				_splitByLastNavigationProperty : function () {}
+			},
+			oModel = {
+				oMetadata : oMetadata,
+				resolve : function () {}
+			};
+
+		this.mock(oMetadata).expects("_splitByLastNavigationProperty")
+			.withExactArgs("~sDeepPath")
+			.returns({
+				pathBeforeLastNavigationProperty : "/~before",
+				lastNavigationProperty : "",
+				addressable : true,
+				pathAfterLastNavigationProperty : ""
+			});
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("/~before", undefined, true)
+			.returns(bCanBeResolved ? "/~resourcePath" : undefined);
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype._getResourcePath.call(oModel, true, "~sDeepPath", "~sPath",
+				"~oContext"),
+			bCanBeResolved ? "/~resourcePath" : "/~before");
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_getResourcePath: navigation property with key predicate can be resolved",
+			function (assert) {
+		var oMetadata = {
+				_splitByLastNavigationProperty : function () {}
+			},
+			oModel = {
+				oMetadata : oMetadata,
+				resolve : function () {}
+			};
+
+		this.mock(oMetadata).expects("_splitByLastNavigationProperty")
+			.withExactArgs("~sDeepPath")
+			.returns({
+				pathBeforeLastNavigationProperty : "/~before",
+				lastNavigationProperty : "/~navigationProperty(foo='bar')",
+				addressable : true,
+				pathAfterLastNavigationProperty : "/~after"
+			});
+		this.mock(oModel).expects("resolve")
+			.withExactArgs("/~before/~navigationProperty(foo='bar')",
+				undefined, true)
+			.returns("/~resourcePath");
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype._getResourcePath.call(oModel, true, "~sDeepPath", "~sPath",
+				"~oContext"),
+			"/~resourcePath/~after");
+	});
+
+	//*********************************************************************************************
+[{
+	addressable : true,
+	isResolvingWithNavigationPropertyCalled : true,
+	navigationProperty : "/~navigationProperty(foo='bar')",
+	resolvedBeforePath : "/~resourcePath",
+	result : "/~resourcePath/~navigationProperty(foo='bar')/~after"
+}, {
+	addressable : true,
+	isResolvingWithNavigationPropertyCalled : false,
+	navigationProperty : "/~navigationProperty",
+	resolvedBeforePath : "/~resourcePath",
+	result : "/~resourcePath/~navigationProperty/~after"
+}, {
+	addressable : false,
+	isResolvingWithNavigationPropertyCalled : false,
+	navigationProperty : "/~navigationProperty(foo='bar')",
+	resolvedBeforePath : "/~resourcePath",
+	result : "/~resourcePath/~navigationProperty(foo='bar')/~after"
+}, {
+	addressable : true,
+	isResolvingWithNavigationPropertyCalled : true,
+	navigationProperty : "/~navigationProperty(foo='bar')",
+	resolvedBeforePath : null,
+	result : "/~before/~navigationProperty(foo='bar')/~after"
+}, {
+	addressable : true,
+	isResolvingWithNavigationPropertyCalled : false,
+	navigationProperty : "/~navigationProperty",
+	resolvedBeforePath : null,
+	result : "/~before/~navigationProperty/~after"
+}, {
+	addressable : false,
+	isResolvingWithNavigationPropertyCalled : false,
+	navigationProperty : "/~navigationProperty(foo='bar')",
+	resolvedBeforePath : null,
+	result : "/~before/~navigationProperty(foo='bar')/~after"
+}].forEach(function (oFixture, i) {
+	QUnit.test("_getResourcePath: with navigation property, path before navigation property"
+		+ " is resolvable, #" + i, function (assert) {
+		var oMetadata = {
+				_splitByLastNavigationProperty : function () {}
+			},
+			oModel = {
+				oMetadata : oMetadata,
+				resolve : function () {}
+			},
+			oModelMock = this.mock(oModel);
+
+		this.mock(oMetadata).expects("_splitByLastNavigationProperty")
+			.withExactArgs("~sDeepPath")
+			.returns({
+				pathBeforeLastNavigationProperty : "/~before",
+				lastNavigationProperty : oFixture.navigationProperty,
+				addressable : oFixture.addressable,
+				pathAfterLastNavigationProperty : "/~after"
+			});
+		oModelMock.expects("resolve")
+			.withExactArgs("/~before/~navigationProperty(foo='bar')",
+				undefined, true)
+			.exactly(oFixture.isResolvingWithNavigationPropertyCalled ? 1 : 0)
+			.returns(null);
+		oModelMock.expects("resolve")
+			.withExactArgs("/~before", undefined, true)
+			.returns(oFixture.resolvedBeforePath);
+
+		// code under test
+		assert.strictEqual(
+			ODataModel.prototype._getResourcePath.call(oModel, true, "~sDeepPath", "~sPath",
+				"~oContext"),
+			oFixture.result);
+	});
+});
 
 	//*********************************************************************************************
 [{
