@@ -659,8 +659,8 @@ sap.ui.define([
 		assert.equal(oContent1.getModel("$field"), oField._oManagedObjectModel, "MultiInput has ManagedObjectModel of Field");
 		assert.equal(oContent1.getBindingPath("tokens"), "/conditions", "MultiInput tokens bound to Field conditions");
 		assert.notOk(oContent1.getShowValueHelp(), "no valueHelp");
-		assert.equal(oField._oContentFactory._oConditionType.oFormatOptions.valueType.oFormatOptions.showMeasure, false, "showMeasure set to false on internal type");
-		assert.equal(oField._oContentFactory._oConditionType.oFormatOptions.valueType.oFormatOptions.strictParsing, true, "strictParsing set to true on internal type");
+		assert.equal(oField._oContentFactory._oConditionType.getFormatOptions().valueType.getFormatOptions().showMeasure, false, "showMeasure set to false on internal type");
+		assert.equal(oField._oContentFactory._oConditionType.getFormatOptions().valueType.getFormatOptions().strictParsing, true, "strictParsing set to true on internal type");
 
 		var oSuggestControl = oField.getControlForSuggestion();
 		assert.equal(oSuggestControl, oContent2, "Unit control is used for suggestion");
@@ -688,8 +688,8 @@ sap.ui.define([
 		assert.ok(oContent2 instanceof Input, "Input rendered");
 		assert.ok(oContent1.getEditable(), "MultiInput editable");
 		assert.notOk(oContent2.getEditable(), "Input not editable");
-		assert.equal(oField._oContentFactory._oConditionType.oFormatOptions.valueType.oFormatOptions.showMeasure, false, "showMeasure set to false on internal type");
-		assert.equal(oField._oContentFactory._oConditionType.oFormatOptions.valueType.oFormatOptions.strictParsing, true, "strictParsing set to true on internal type");
+		assert.equal(oField._oContentFactory._oConditionType.getFormatOptions().valueType.getFormatOptions().showMeasure, false, "showMeasure set to false on internal type");
+		assert.equal(oField._oContentFactory._oConditionType.getFormatOptions().valueType.getFormatOptions().strictParsing, true, "strictParsing set to true on internal type");
 
 		// if no unit should be displayed only one control should be rendered (original data type must be used, not changed by one with showMeagure=false)
 		oContent1 = undefined; oContent2 = undefined;

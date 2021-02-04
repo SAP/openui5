@@ -895,7 +895,7 @@ sap.ui.define([
 		assert.equal(oContent.getValue(), "10", "Value set on Input control");
 		var oBindingInfo = oContent.getBindingInfo("value");
 		var oConditionsType = oBindingInfo.type;
-		var oMyType = oConditionsType.oFormatOptions.valueType;
+		var oMyType = oConditionsType.getFormatOptions().valueType;
 		assert.ok(oMyType._bMyType, "Given Type is used in Binding for Input");
 
 		assert.notOk(oField2._oContentFactory.getDataType()._bMyType, "Given Type is not used used in Field");
@@ -907,7 +907,7 @@ sap.ui.define([
 		assert.equal(jQuery(oContent.getFocusDomRef()).val(), "December 20, 2018", "Value shown on DatePicker control");
 		oBindingInfo = oContent.getBindingInfo("value");
 		oConditionsType = oBindingInfo.type;
-		oMyType = oConditionsType.oFormatOptions.valueType;
+		oMyType = oConditionsType.getFormatOptions().valueType;
 		assert.notOk(oMyType._bMyType, "Given Type is not used in Binding for Input");
 		assert.ok(oMyType.isA("sap.ui.model.odata.type.DateTime"), "DateTime type used in ConditionsType");
 
@@ -957,7 +957,7 @@ sap.ui.define([
 		assert.equal(oContent.getValue(), "10", "Value set on Input control");
 		var oBindingInfo = oContent.getBindingInfo("value");
 		var oConditionsType = oBindingInfo.type;
-		var oMyType = oConditionsType.oFormatOptions.valueType;
+		var oMyType = oConditionsType.getFormatOptions().valueType;
 		assert.ok(oMyType._bMyType, "Given Type is used in Binding for Input");
 
 	});

@@ -544,7 +544,7 @@ sap.ui.define([
 			if (vType === Operator.ValueType.SelfNoParse) {
 				// create "clone" of original type but do not change value in parse or format
 				sType = oType.getMetadata().getName(); // type is already loaded because instance is provided
-				oFormatOptions = merge({}, oType.oFormatOptions);
+				oFormatOptions = merge({}, oType.getFormatOptions());
 				oConstraints = merge(oType.getConstraints());
 			} else if (typeof vType === "string") {
 				sType = vType;

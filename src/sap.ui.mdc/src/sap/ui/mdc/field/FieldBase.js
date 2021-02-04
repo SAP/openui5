@@ -931,16 +931,18 @@ sap.ui.define([
 	}
 
 	function _getDataTypeConstraints() {
-		if (this._oContentFactory.getDataType() && typeof this._oContentFactory.getDataType() === "object" && this._oContentFactory.getDataType().oConstraints) {
-			return this._oContentFactory.getDataType().oConstraints;
+		var oDataType = this._oContentFactory.getDataType();
+		if (oDataType && typeof oDataType === "object" && oDataType.getConstraints()) {
+			return oDataType.getConstraints();
 		} else {
 			return this.getDataTypeConstraints();
 		}
 	}
 
 	function _getDataTypeFormatOptions() {
-		if (this._oContentFactory.getDataType() && typeof this._oContentFactory.getDataType() === "object" && this._oContentFactory.getDataType().oFormatOptions) {
-			return this._oContentFactory.getDataType().oFormatOptions;
+		var oDataType = this._oContentFactory.getDataType();
+		if (oDataType && typeof oDataType === "object" && oDataType.getFormatOptions()) {
+			return oDataType.getFormatOptions();
 		} else {
 			return this.getDataTypeFormatOptions();
 		}

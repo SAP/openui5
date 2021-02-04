@@ -695,8 +695,8 @@ sap.ui.define([
 	function _getBaseType(oType) {
 
 		var sType = oType.getMetadata().getName();
-		var oFormatOptions = oType.oFormatOptions;
-		var oConstraints = oType.oConstraints;
+		var oFormatOptions = oType.getFormatOptions();
+		var oConstraints = oType.getConstraints();
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
 		var sBaseType = oDelegate ? oDelegate.getTypeUtil(oPayload).getBaseType(sType, oFormatOptions, oConstraints) : BaseType.String;

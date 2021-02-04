@@ -1050,7 +1050,8 @@ sap.ui.define([
 	// Normalization is currently only done for IsDigitSequence Types
 	var _fnNormalizeCondition = function (oProperty) {
 		var oTypeInstance = oProperty.typeConfig.typeInstance;
-		return oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.String" && oTypeInstance.oConstraints && oTypeInstance.oConstraints.isDigitSequence && oTypeInstance.oConstraints.maxLength ? function (oCondition) {
+		var oConstraints = oTypeInstance.getConstraints();
+		return oTypeInstance.getMetadata().getName() === "sap.ui.model.odata.type.String" && oConstraints && oConstraints.isDigitSequence && oConstraints.maxLength ? function (oCondition) {
 			return this._toExternal(oProperty, oCondition, this.getTypeUtil());
 		}.bind(this) : undefined;
 	};
