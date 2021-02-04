@@ -626,15 +626,7 @@ sap.ui.define([
 
 			if (!hasPopin) {
 				oColumn.setDisplay(this.getTableDomRef(), !oColumn.isHidden());
-				setTimeout(function() {
-					var aHiddenInPopin = this.getHiddenInPopin() || [];
-					var bHideColumn = aHiddenInPopin.some(function(sImportance) {
-						return !!sImportance;
-					});
-					if (bHideColumn) {
-						this._firePopinChangedEvent();
-					}
-				}.bind(this), 100);
+				this._firePopinChangedEvent();
 				return;
 			}
 		}
