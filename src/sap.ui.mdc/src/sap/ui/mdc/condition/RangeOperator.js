@@ -17,10 +17,11 @@ sap.ui.define([
 		"use strict";
 
 		/**
+		 * @class
 		 * Creates a <code>sap.ui.mdc.condition.RangeOperator</code> object.
-		 * This is used in the FilterField to define what filter operators are supported
+		 * This is used in the {@link sap.ui.mdc.FilterField FilterField} control to define which filter operators are supported.
 		 *
-		 * If a function or property is initial, the default implementation is used
+		 * If a function or property is initial, the default implementation is used.
 		 *
 		 * @extends sap.ui.mdc.condition.Operator
 		 * @param {object} oConfiguration Included all parameters of {@link sap.ui.mdc.condition.Operator Operator} and adds some special ones
@@ -28,11 +29,13 @@ sap.ui.define([
 		 * @param {function} [oConfiguration.calcRange] function to calculate the date range of the operation. the function returns an array of UniversalDates.
 		 * @param {function} [oConfiguration.formatRange] function to format the date range.
 		 * @constructor
+		 * @author SAP SE
+		 * @version ${version}
 		 * @private
 		 * @ui5-restricted sap.fe
 		 * @MDC_PUBLIC_CANDIDATE
 		 * @alias sap.ui.mdc.condition.RangeOperator
-		 * @version 1.74.0
+		 * @since 1.74.0
 		 * @author SAP SE
 		 */
 		var RangeOperator = Operator.extend("sap.ui.mdc.condition.RangeOperator", /** @lends sap.ui.mdc.condition.RangeOperator.prototype */ {

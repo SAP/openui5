@@ -35,6 +35,7 @@ sap.ui.define([
 		});
 
 		/**
+		 * @class
 		 * Creates an <code>sap.ui.mdc.condition.Operator</code> object.
 		 * This is used in the {@link sap.ui.mdc.FilterField FilterField} control to define which filter operators are supported.
 		 *
@@ -51,17 +52,17 @@ sap.ui.define([
 		 *                 into an output string. For the value placeholder <code>{0}</code> and <code>{1}</code> are used.
 		 *                 A placeholder that refers to the translated tokenText can be used. <code>#tokenText#</code> refers to the <code>oConfiguration.tokenText</code> property if given.
 		 * @param {string[]|object[]} oConfiguration.valueTypes Array of type to be used. The length of the array defines the number of values that
-		 *                 need to be entered with the operator.
-		 *                 If set to <code>Operator.ValueType.Self</code> the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.
-		 *                 If set to <code>Operator.ValueType.Static</code> a simple string type is used to display static text.
-		 *                 If set to a name of a data type an instance of this data type will be used.
+		 *                 need to be entered with the operator.<br>
+		 *                 If set to <code>Operator.ValueType.Self</code> the <code>Type</code> of the <code>Field</code> or <code>FilterField</code> using the <code>Operator</code> is used.<br>
+		 *                 If set to <code>Operator.ValueType.Static</code> a simple string type is used to display static text.<br>
+		 *                 If set to a name of a data type an instance of this data type will be used.<br>
 		 *                 If set to an object with the properties <code>name</code>, <code>formatOptions</code> and <code>constraints</code>
-		 *                 an instance of the corresponding data type will be used.
+		 *                 an instance of the corresponding data type will be used.<br>
 		 * @param {string[]} [oConfiguration.paramTypes] Array of type parameters regexp
-		 * @param {string} [oConfiguration.longText] String representation of the operator as a long text.
+		 * @param {string} [oConfiguration.longText] String representation of the operator as a long text.<br>
 		 *                If longText is not given , it is looked up in the resource bundle of the <code>sap.ui.mdc</code> library by the key
 		 *                <code>operators.{oConfiguration.name}.longText</code>
-		 * @param {string} [oConfiguration.tokenText] String representation of the operator as a short text.
+		 * @param {string} [oConfiguration.tokenText] String representation of the operator as a short text.<br>
 		 *                If the token text is not given, it is looked up in the resource bundle of the <code>sap.ui.mdc</code> library by the key
 		 *                <code>operators.{oConfiguration.name}.tokenText</code>
 		 * @param {object} [oConfiguration.displayFormats] Pattern how different {@link sap.ui.mdc.enum.FieldDisplay displayFormats} are rendered
@@ -78,11 +79,13 @@ sap.ui.define([
 		 * @param {boolean} [oConfiguration.validateInput] If set, the user input for this operator needs to be validated using a field help
  		 * @param {string} [oConfiguration.additionalInfo] additionalInfo text for the operator. Will be shown in the operator suggest as second column. If not used (undefined) the Include or Exclude information of the operator is used.
 		 * @constructor
+		 * @author SAP SE
+		 * @version ${version}
 		 * @private
 		 * @ui5-restricted sap.fe
 		 * @MDC_PUBLIC_CANDIDATE
 		 * @alias sap.ui.mdc.condition.Operator
-		 * @version 1.73.0
+		 * @since 1.73.0
 		 * @author SAP SE
 		 */
 		var Operator = BaseObject.extend("sap.ui.mdc.condition.Operator", /** @lends sap.ui.mdc.condition.Operator.prototype */ {
