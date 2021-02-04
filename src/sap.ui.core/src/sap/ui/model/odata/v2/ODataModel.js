@@ -5300,13 +5300,33 @@ sap.ui.define([
 	};
 
 	/**
+	 * Gets the resource path for the given path and context.
+	 *
+	 * @param {boolean} bShortenPath
+	 *   Whether to shorten the resource path so that it contains at most one navigation property
+	 * @param {string} sPath
+	 *   An absolute path or a path relative to the given context; if the path contains a query
+	 *   string, the query string is ignored
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The context; considered only in case the path is relative
+	 * @return {string}
+	 *   The resource path for the given path and context
+	 *
+	 * @private
+	 */
+	ODataModel.prototype._getResourcePath = function (bShortenPath, sPath, oContext) {
+		return this._normalizePath(sPath, oContext, bShortenPath);
+	};
+
+	/**
 	 * Trigger a <code>GET</code> request to the OData service that was specified in the model constructor.
 	 *
 	 * The data will be stored in the model. The requested data is returned with the response.
 	 *
-	 * @param {string} sPath A string containing the path to the data which should
-	 *		be retrieved. The path is concatenated to the service URL
-	 *		which was specified in the model constructor.
+	 * @param {string} sPath
+	 *   An absolute path or a path relative to the context given in
+	 *   <code>mParameters.context</code>; if the path contains a query string, the query string is
+	 *   ignored, use <code>mParameters.urlParameters</code> instead
 	 * @param {object} [mParameters] Optional parameter map containing any of the following properties:
 	 * @param {object} [mParameters.context] If specified, <code>sPath</code> has to be relative to the path
 	 * 		given with the context.
@@ -5331,12 +5351,9 @@ sap.ui.define([
 	 * @public
 	 */
 	ODataModel.prototype.read = function(sPath, mParameters) {
-		var sDeepPath, oEntityType, sETag, oFilter, sFilterParams, sMethod, sNormalizedPath,
-			sNormalizedTempPath, oRequest, mRequests, sSorterParams, sUrl, aUrlParams,
-			bCanonical, oContext, fnError, aFilters, sGroupId, mHeaders, aSorters, fnSuccess,
-			bUpdateAggregatedMessages, mUrlParams,
+		var bCanonical, oContext, fnError, sETag, aFilters, sGroupId, mHeaders, sMethod, oRequest,
+			aSorters, fnSuccess, bUpdateAggregatedMessages, aUrlParams, mUrlParams,
 			that = this;
-
 
 		if (mParameters) {
 			bCanonical = mParameters.canonicalRequest;
@@ -5351,6 +5368,10 @@ sap.ui.define([
 			mUrlParams = mParameters.urlParameters;
 		}
 		bCanonical = this._isCanonicalRequestNeeded(bCanonical);
+
+		if (sPath && sPath.indexOf('?') !== -1) {
+			sPath = sPath.slice(0, sPath.indexOf('?'));
+		}
 
 		//if the read is triggered via a refresh we should use the refreshGroupId instead
 		if (this.sRefreshGroupId) {
@@ -5372,36 +5393,28 @@ sap.ui.define([
 			}
 		};
 
-		var sTempPath = sPath;
-		var iIndex = sPath.indexOf("$count");
-		// check if we have a manual count request with filters. Then we have to manually adjust the path.
-		if (iIndex !== -1) {
-			sTempPath = sPath.substring(0, iIndex - 1);
-		}
-		sNormalizedTempPath = this._normalizePath(sTempPath, oContext, bCanonical);
-
-		sNormalizedPath = this._normalizePath(sPath, oContext, bCanonical);
-		sDeepPath = this.resolveDeep(sPath, oContext);
-
-
-
 		function createReadRequest(requestHandle) {
+			var oEntityType, oFilter, sFilterParams, mRequests, sSorterParams, sUrl,
+				sResourcePath = that._getResourcePath(bCanonical, sPath, oContext);
+
 			// Add filter/sorter to URL parameters
 			sSorterParams = ODataUtils.createSortParams(aSorters);
 			if (sSorterParams) {
 				aUrlParams.push(sSorterParams);
 			}
 
-			oEntityType = that.oMetadata._getEntityTypeByPath(sNormalizedTempPath);
+			oEntityType = that.oMetadata._getEntityTypeByPath(sResourcePath);
+
 			oFilter = FilterProcessor.groupFilters(aFilters);
 			sFilterParams = ODataUtils.createFilterParams(oFilter, that.oMetadata, oEntityType);
 			if (sFilterParams) {
 				aUrlParams.push(sFilterParams);
 			}
 
-			sUrl = that._createRequestUrlWithNormalizedPath(sNormalizedPath, aUrlParams, that.bUseBatch);
-			oRequest = that._createRequest(sUrl, sDeepPath, sMethod, mHeaders, null, sETag,
-				undefined, bUpdateAggregatedMessages);
+			sUrl = that._createRequestUrlWithNormalizedPath(sResourcePath, aUrlParams,
+				that.bUseBatch);
+			oRequest = that._createRequest(sUrl, that.resolveDeep(sPath, oContext), sMethod,
+				mHeaders, null, sETag, undefined, bUpdateAggregatedMessages);
 
 			mRequests = that.mRequests;
 			if (sGroupId in that.mDeferredGroups) {
