@@ -97,7 +97,8 @@
 
 .sap-desktop.sapUiMedia-GenericTileDeviceSet-large .sapMGT.sapMGTLineMode {
 	&:hover {
-		box-shadow: none !important;
+		// box-shadow: none !important;
+		background-color: #EC8B46;
 	}
 
 	&:not(.sapMGTDisabled):not(.sapMGTFailed):hover .sapMGTLineStyleHelperInner {
@@ -106,9 +107,9 @@
 		margin-bottom: 1px;
 	}
 
-	&:focus {
-		border: 0.125rem dotted @sapUiContentFocusColor;
-	}
+	// &:focus {
+	// 	border: 0.125rem dotted @sapUiContentFocusColor;
+	// }
 
 	&:focus .sapMGTLineStyleHelperInner:before {
 		content: "";
@@ -150,7 +151,7 @@ html.sap-tablet .sapMGTBackgroundHvrOutln:not(.sapMGTStateDisabled):active {
 }
 
 .sap-desktop .sapMGT.sapMGTLineMode:hover {
-	&.sapMGTDisabled, &.sapMGTLineModePress {
+	&.sapMGTLineModePress {
 		box-shadow: none;
 	}
 }
