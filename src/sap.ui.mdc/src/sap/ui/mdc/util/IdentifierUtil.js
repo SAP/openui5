@@ -9,8 +9,9 @@ sap.ui.define(['sap/ui/base/DataType'], function(DataType) {
 	"use strict";
 
 	/**
-	 * @class Utility class used by smart controls for creating stable ids
+	 * Utility class used by smart controls for creating stable ids
 	 *
+	 * @namespace
 	 * @private
 	 * @experimental This module is only for internal/experimental use!
 	 * @since 1.61.0

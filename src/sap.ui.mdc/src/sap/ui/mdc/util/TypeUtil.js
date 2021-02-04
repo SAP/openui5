@@ -9,9 +9,10 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @class Provides mapping functionality for model dependent data types to base types. Extend this object in your project to customize behaviour depending on model usage.
+	 * Provides mapping functionality for model dependent data types to base types. Extend this object in your project to customize behaviour depending on model usage.
 	 * <b>Note:</b>
 	 * This utility is experimental and the API/behavior is not finalized and hence this should not be used for productive usage.
+	 * @namespace
 	 * @author SAP SE
 	 * @private
 	 * @ui5-restricted sap.ui.mdc
