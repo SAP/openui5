@@ -1162,8 +1162,8 @@ sap.ui.define([
 		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true)
 			.returns(oGroupLock);
-		this.mock(_Helper).expects("clone")
-			.withExactArgs(sinon.match.same(oBinding.oOperation.mParameters))
+		this.mock(_Helper).expects("publicClone")
+			.withExactArgs(sinon.match.same(oBinding.oOperation.mParameters), true)
 			.returns(mParameters);
 		this.mock(oBinding).expects("_execute")
 			.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters))
@@ -1192,8 +1192,8 @@ sap.ui.define([
 			this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
 			this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true)
 				.returns(oGroupLock);
-			this.mock(_Helper).expects("clone")
-				.withExactArgs(sinon.match.same(oBinding.oOperation.mParameters))
+			this.mock(_Helper).expects("publicClone")
+				.withExactArgs(sinon.match.same(oBinding.oOperation.mParameters), true)
 				.returns(mParameters);
 			this.mock(oBinding).expects("_execute")
 				.withExactArgs(sinon.match.same(oGroupLock), sinon.match.same(mParameters))

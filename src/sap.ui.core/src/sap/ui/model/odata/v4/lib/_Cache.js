@@ -400,9 +400,8 @@ sap.ui.define([
 
 		this.checkSharedRequest();
 		// clone data to avoid modifications outside the cache
-		oEntityData = _Helper.merge({}, oEntityData);
 		// remove any property starting with "@$ui5."
-		oEntityData = _Requestor.cleanPayload(oEntityData);
+		oEntityData = _Helper.publicClone(oEntityData, true) || {};
 		oPostBody = _Helper.merge({}, oEntityData);
 		// keep post body separate to allow local property changes in the cache
 		_Helper.setPrivateAnnotation(oEntityData, "postBody", oPostBody);

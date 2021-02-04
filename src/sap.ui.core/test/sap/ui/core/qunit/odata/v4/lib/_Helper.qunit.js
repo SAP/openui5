@@ -1931,7 +1931,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("publicClone:", function (assert) {
+[false, true].forEach(function (bClientSide) {
+	QUnit.test("publicClone: bClientSide=" + bClientSide, function (assert) {
 		var oCloneMock = this.mock(_Helper).expects("clone")
 				.withExactArgs("~value~", sinon.match.func),
 			fnReplacer;
@@ -1939,7 +1940,7 @@ sap.ui.define([
 		oCloneMock.returns("~clone~");
 
 		// code under test
-		assert.strictEqual(_Helper.publicClone("~value~"), "~clone~");
+		assert.strictEqual(_Helper.publicClone("~value~", bClientSide), "~clone~");
 
 		fnReplacer = oCloneMock.getCall(0).args[1];
 
@@ -1948,10 +1949,11 @@ sap.ui.define([
 		//   - sKey !== "@$ui5._" => fnReplacer(sKey, vValue) === vValue for each vValue
 		// code under test
 		assert.strictEqual(fnReplacer("@$ui5._", 42), undefined);
-		assert.strictEqual(fnReplacer("@$ui5.node.level", 2), 2);
-		assert.strictEqual(fnReplacer("@$ui5.transient", true), true);
+		assert.strictEqual(fnReplacer("@$ui5.node.level", 2), bClientSide ? undefined : 2);
+		assert.strictEqual(fnReplacer("@$ui5.transient", true), bClientSide ? undefined : true);
 		assert.strictEqual(fnReplacer("ui5._", "bar"), "bar");
 	});
+});
 
 	//*********************************************************************************************
 	[{

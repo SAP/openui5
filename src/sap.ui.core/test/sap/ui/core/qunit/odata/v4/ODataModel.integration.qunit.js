@@ -5153,22 +5153,25 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("ODCB#setParameter with complex type holds the reference", function (assert) {
 		var oModel = createSpecialCasesModel(),
+			oOperation = oModel.bindContext("/HirePerson(...)"),
+			oPerson = {
+				Address : {
+					City : "Tatooine",
+					ZIP : "12345",
+					"@$ui5.foo" : "foo0"
+				},
+				Name : "R2D2",
+				Salary : 12345678,
+				"@$ui5.foo" : "foo1"
+			},
+			sPerson,
 			that = this;
 
 		return this.createView(assert, '', oModel).then(function () {
-			var oOperation = oModel.bindContext("/HirePerson(...)"),
-				oPerson = {
-					Address : {
-						City : "Tatooine",
-						ZIP : "12345"
-					},
-					Name : "R2D2",
-					Salary : 12345678
-				};
-
 			oOperation.setParameter("Person", oPerson);
 			oPerson.Salary = 54321;
 			oPerson.Address.City = "Kashyyk";
+			sPerson = JSON.stringify(oPerson);
 
 			that.expectRequest({
 				method : "POST",
@@ -5190,6 +5193,12 @@ sap.ui.define([
 				oOperation.execute(),
 				that.waitForChanges(assert)
 			]);
+		}).then(function() {
+			// verify that the original object remains unchanged
+			assert.strictEqual(JSON.stringify(oPerson), sPerson);
+			// verify that the private annotations in the parameter remain unchanged
+			assert.strictEqual(JSON.stringify(oOperation.getParameterContext().getObject("Person")),
+				sPerson);
 		});
 	});
 
@@ -18744,37 +18753,90 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Application tries to create client-side instance annotations via ODLB#create.
 	// JIRA: CPOUI5UISERVICESV3-1237
+	//
+	// Also test that no client annotation (starting with "@$ui5") is sent to the server (incl.
+	// nested structural properties)
+	// JIRA: CPOUI5ODATAV4-360
 	QUnit.test("@$ui5.* is write-protected for ODLB#create", function (assert) {
-		var sView = '\
-<Table id="table" items="{path : \'/Equipments\', parameters : {$$updateGroupId : \'never\'}}">\
+		var oContext,
+			oModel = createTeaBusiModel({autoExpandSelect : true, updateGroupId : "update"}),
+			sView = '\
+<Table id="table" items="{/EMPLOYEES}">\
 	<Text id="name" text="{Name}"/>\
+	<Text id="salary" text="{SALARY/MONTHLY_BASIC_SALARY_AMOUNT}"/>\
 </Table>',
 			that = this;
 
-		this.expectRequest("Equipments?$skip=0&$top=100", {
+		this.expectRequest("EMPLOYEES?$select=ID,Name,SALARY/MONTHLY_BASIC_SALARY_AMOUNT"
+			+ "&$skip=0&$top=100", {
 				value : [{
 					ID : "2",
-					Name : "Foo"
+					Name : "John Doe",
+					SALARY : {
+						MONTHLY_BASIC_SALARY_AMOUNT : "888"
+					}
 				}]
 			})
-			.expectChange("name", ["Foo"]);
+			.expectChange("name", ["John Doe"])
+			.expectChange("salary", ["888"]);
 
-		return this.createView(assert, sView).then(function () {
-			var oContext,
-				oListBinding = that.oView.byId("table").getBinding("items"),
+		return this.createView(assert, sView, oModel).then(function () {
+			var oListBinding = that.oView.byId("table").getBinding("items"),
 				oInitialData = {
-					ID : "99",
-					Name : "Bar",
-					"@$ui5.foo" : "baz"
+					Name : "New Employee",
+					"@$ui5.foo" : "foo0",
+					SALARY : {
+						MONTHLY_BASIC_SALARY_AMOUNT : "999",
+						"@$ui5.foo" : "foo1"
+					},
+					Titles : [
+						{"short" : "Dr", "long" : "Doctor"},
+						{"short" : "Prof", "long" : "Professor", "@$ui5.foo" : "foo2"}
+					]
 				};
 
-			that.expectChange("name", ["Bar", "Foo"]);
+			that.expectChange("name", ["New Employee", "John Doe"]);
+			that.expectChange("salary", ["999", "888"]);
 
 			// code under test
-			oContext = oListBinding.create(oInitialData);
+			oContext = oListBinding.create(oInitialData, true);
 
-			// code under test
 			assert.strictEqual(oContext.getProperty("@$ui5.foo"), undefined);
+			assert.strictEqual(oContext.getProperty("SALARY/@$ui5.foo"), undefined);
+			assert.strictEqual(oContext.getObject("Titles")[0]["@$ui5.foo"], undefined);
+			assert.strictEqual(oContext.getObject("Titles")[1]["@$ui5.foo"], undefined);
+
+			return that.waitForChanges(assert, "no private annotation in transient entity");
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					url : "EMPLOYEES",
+					payload : {
+						Name : "New Employee",
+						SALARY : {
+							MONTHLY_BASIC_SALARY_AMOUNT : "999"
+						},
+						Titles : [
+							{"short" : "Dr", "long" : "Doctor"},
+							{"short" : "Prof", "long" : "Professor"}
+						]
+					}
+				}, {
+					ID : "42",
+					Name : "New Employee",
+					SALARY : {
+						MONTHLY_BASIC_SALARY_AMOUNT : "997"
+					}
+					// Titles do no matter here
+				})
+				.expectChange("salary", ["997"]);
+
+
+			return Promise.all([
+				that.oModel.submitBatch("update"),
+				oContext.created(),
+				that.waitForChanges(assert, "no private annotation in request")
+			]);
 		});
 	});
 

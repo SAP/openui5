@@ -835,7 +835,7 @@ sap.ui.define([
 		}
 
 		return this._execute(this.lockGroup(sGroupId, true),
-			_Helper.clone(this.oOperation.mParameters));
+			_Helper.publicClone(this.oOperation.mParameters, true));
 	};
 
 	/**

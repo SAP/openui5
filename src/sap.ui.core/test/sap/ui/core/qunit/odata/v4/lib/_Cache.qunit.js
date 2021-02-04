@@ -3,13 +3,14 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/base/util/isEmptyObject",
 	"sap/ui/base/SyncPromise",
 	"sap/ui/model/odata/v4/lib/_Cache",
 	"sap/ui/model/odata/v4/lib/_GroupLock",
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/model/odata/v4/lib/_Parser",
 	"sap/ui/model/odata/v4/lib/_Requestor"
-], function (Log, SyncPromise, _Cache, _GroupLock, _Helper, _Parser, _Requestor) {
+], function (Log, isEmptyObject, SyncPromise, _Cache, _GroupLock, _Helper, _Parser, _Requestor) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
@@ -6462,7 +6463,6 @@ sap.ui.define([
 					"@$ui5.foo" : "bar",
 					"@$ui5.keepTransientPath" : bKeepTransientPath
 				},
-				oEntityData = Object.assign({}, oInitialData),
 				oEntityDataCleaned = {ID : "", Name : "John Doe"},
 				sPathInCache = "('0')/TEAM_2_EMPLOYEES",
 				oPostBody = {},
@@ -6479,10 +6479,8 @@ sap.ui.define([
 			oCache.fetchValue = function () {};
 			aCollection.$count = 0;
 			aCollection.$created = 0;
-			oHelperMock.expects("merge").withExactArgs({}, sinon.match.same(oInitialData))
-				.returns(oEntityData);
-			this.mock(_Requestor).expects("cleanPayload")
-				.withExactArgs(sinon.match.same(oEntityData))
+			oHelperMock.expects("publicClone")
+				.withExactArgs(sinon.match.same(oInitialData), true)
 				.returns(oEntityDataCleaned);
 			oHelperMock.expects("merge").withExactArgs({}, sinon.match.same(oEntityDataCleaned))
 				.returns(oPostBody);
@@ -7301,7 +7299,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache: creation fails, removePendingRequest called", function (assert) {
+[false, true].forEach(function (bHasEntityData) {
+	var sTitle = "CollectionCache: creation fails, removePendingRequest called, " + bHasEntityData;
+
+	QUnit.test(sTitle, function (assert) {
 		var mQueryOptions = {},
 			oCache = this.createCache("Employees", mQueryOptions),
 			oCallbacks = {
@@ -7311,8 +7312,8 @@ sap.ui.define([
 			oCallbacksMock = this.mock(oCallbacks),
 			oCanceledError = new Error(),
 			aCollection = [],
-			oEntityData = {},
-			oEntityDataCleaned = {},
+			oEntityData = bHasEntityData ? {} : undefined,
+			oEntityDataCleaned = bHasEntityData ? {} : undefined,
 			oGroupLock = {getGroupId : function () {}},
 			oHelperMock = this.mock(_Helper),
 			oPostBody = {},
@@ -7321,20 +7322,28 @@ sap.ui.define([
 			sTransientPredicate = "($uid=id-1-23)",
 			that = this;
 
+		function entityDataCleaned(oParam) {
+			if (oEntityDataCleaned) {
+				return oParam === oEntityDataCleaned;
+			}
+			oEntityDataCleaned = oParam;
+			return isEmptyObject(oParam);
+		}
+
 		oCallbacksMock.expects("errorCallback").never();
 		oCallbacksMock.expects("submitCallback").never();
 		oCanceledError.canceled = true;
-		oHelperMock.expects("merge").withExactArgs({}, undefined).returns(oEntityData);
-		this.mock(_Requestor).expects("cleanPayload")
-			.withExactArgs(sinon.match.same(oEntityData)).returns(oEntityDataCleaned);
-		oHelperMock.expects("merge").withExactArgs({}, sinon.match.same(oEntityDataCleaned))
+		this.mock(_Helper).expects("publicClone")
+			.withExactArgs(sinon.match.same(oEntityData), true)
+			.returns(oEntityData ? oEntityDataCleaned : undefined);
+		oHelperMock.expects("merge").withExactArgs({}, sinon.match(entityDataCleaned))
 			.returns(oPostBody);
 		oHelperMock.expects("setPrivateAnnotation")
-			.withExactArgs(sinon.match.same(oEntityDataCleaned), "postBody",
+			.withExactArgs(sinon.match(entityDataCleaned), "postBody",
 				sinon.match.same(oPostBody))
 			.callThrough();
 		oHelperMock.expects("setPrivateAnnotation")
-			.withExactArgs(sinon.match.same(oEntityDataCleaned), "transientPredicate",
+			.withExactArgs(sinon.match(entityDataCleaned), "transientPredicate",
 				sTransientPredicate)
 			.callThrough();
 		this.mock(oCache).expects("getValue").withExactArgs("").returns(aCollection);
@@ -7343,11 +7352,11 @@ sap.ui.define([
 			.withExactArgs("/Employees", sinon.match.same(mQueryOptions), true)
 			.returns("?sap-client=111");
 		oHelperMock.expects("setPrivateAnnotation").twice()
-			.withExactArgs(sinon.match.same(oEntityDataCleaned), "transient", "updateGroup")
+			.withExactArgs(sinon.match(entityDataCleaned), "transient", "updateGroup")
 			.callThrough();
 		oHelperMock.expects("addByPath").twice()
 			.withExactArgs(sinon.match.same(oCache.mPostRequests), "",
-				sinon.match.same(oEntityDataCleaned));
+				sinon.match(entityDataCleaned));
 		this.mock(oGroupLock).expects("getGroupId").withExactArgs().returns("updateGroup");
 		this.oRequestorMock.expects("request")
 			.withExactArgs("POST", "Employees?sap-client=111", sinon.match.same(oGroupLock),
@@ -7400,13 +7409,14 @@ sap.ui.define([
 
 		// code under test
 		return oCache.create(oGroupLock, SyncPromise.resolve("Employees"), "", sTransientPredicate,
-				undefined, oCallbacks.errorCallback, oCallbacks.submitCallback)
+				oEntityData, oCallbacks.errorCallback, oCallbacks.submitCallback)
 			.then(function () {
 				assert.ok(false, "Unexpected success");
 			}, function (oError) {
 				assert.strictEqual(oError, oCanceledError);
 			});
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("CollectionCache: read w/ transient context", function (assert) {

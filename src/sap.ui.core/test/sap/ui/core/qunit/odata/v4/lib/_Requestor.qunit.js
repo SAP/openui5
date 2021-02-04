@@ -726,10 +726,9 @@ sap.ui.define([
 	[undefined, "$direct"].forEach(function (sGroupId) {
 		QUnit.test("request: sGroupId=" + sGroupId, function (assert) {
 			var fnCancel = this.spy(),
-				oChangedPayload = {"foo" : 42},
 				oConvertedResponse = {},
 				oGroupLock,
-				oPayload = {},
+				oPayload = {"foo" : 42},
 				oPromise,
 				oRequestor = _Requestor.create(sServiceUrl, oModelInterface, undefined, {
 					"foo" : "URL params are ignored for normal requests"
@@ -743,13 +742,13 @@ sap.ui.define([
 			this.mock(oRequestor).expects("convertResourcePath")
 				.withExactArgs("Employees?custom=value")
 				.returns("~Employees~?custom=value");
-			this.mock(_Requestor).expects("cleanPayload")
-				.withExactArgs(sinon.match.same(oPayload)).returns(oChangedPayload);
+			this.mock(JSON).expects("stringify").withExactArgs(sinon.match.same(oPayload))
+				.returns("~payload~");
 			this.mock(oRequestor).expects("sendRequest")
 				.withExactArgs("METHOD", "~Employees~?custom=value", {
 						"header" : "value",
 						"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
-					}, JSON.stringify(oChangedPayload), "~Employees~?custom=value")
+					}, "~payload~", "~Employees~?custom=value")
 				.resolves(oResponse);
 			this.mock(oRequestor).expects("reportUnboundMessagesAsJSON")
 				.withExactArgs(oResponse.resourcePath, sinon.match.same(oResponse.messages));
@@ -1337,8 +1336,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("processBatch(...): success", function (assert) {
-		var aCleanedRequests = [],
-			aExpectedRequests = [[{
+		var aExpectedRequests = [[{
 				method : "POST",
 				url : "~Customers",
 				headers : {
@@ -1468,14 +1466,10 @@ sap.ui.define([
 				aMergedRequests = aRequests.slice();
 				return aMergedRequests;
 			});
-		this.mock(_Requestor).expects("cleanBatch")
+		this.mock(oRequestor).expects("sendBatch")
 			.withExactArgs(sinon.match(function (aRequests) {
 				return aRequests === aMergedRequests;
-			}))
-			.returns(aCleanedRequests);
-
-		this.mock(oRequestor).expects("sendBatch")
-			.withExactArgs(sinon.match.same(aCleanedRequests), sGroupId)
+			}), sGroupId)
 			.resolves(aBatchResults);
 
 		// code under test
@@ -2747,63 +2741,6 @@ sap.ui.define([
 
 		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oEntity), false);
 		assert.strictEqual(oRequestor.hasChanges("$parked.$auto", oYetAnotherEntity), false);
-	});
-
-	//*****************************************************************************************
-	QUnit.test("cleanPayload", function (assert) {
-		var oUnchanged = {
-				"foo" : "bar"
-			},
-			oPostData = { // just used for Object.keys(), but must be unchanged
-				"foo" : undefined,
-				"a@$ui5.b" : undefined,
-				"@$ui51" : undefined,
-				"@$ui5.option" : "baz",
-				"@$ui5._" : {"transient" : true}
-			};
-
-		assert.strictEqual(_Requestor.cleanPayload(undefined), undefined);
-		assert.strictEqual(_Requestor.cleanPayload(oUnchanged), oUnchanged);
-
-		this.mock(Object).expects("assign").withExactArgs({}, sinon.match.same(oPostData))
-			.returns({ // this is the content we compare below
-				"foo" : "bar",
-				"a@$ui5.b" : "c",
-				"@$ui51" : "bar",
-				"@$ui5.option" : "baz",
-				"@$ui5._" : {"transient" : true}
-			});
-
-		// code under test
-		assert.deepEqual(_Requestor.cleanPayload(oPostData), {
-			"foo" : "bar",
-			"@$ui51" : "bar",
-			"a@$ui5.b" : "c"
-		});
-
-		assert.strictEqual(oPostData["@$ui5.option"], "baz");
-		assert.strictEqual(_Helper.getPrivateAnnotation(oPostData, "transient"), true);
-	});
-
-	//*****************************************************************************************
-	QUnit.test("cleanBatch", function (assert) {
-		var oBody1 = {},
-			oBody2 = {
-				"@$ui5.foo" : "bar"
-			},
-			oChangedBody2 = {},
-			oRequestorMock = this.mock(_Requestor),
-			aRequests = [[{body : oBody1}], {method : "FOO", body : oBody2}],
-			aResult = [[{body : oBody1}], {method : "FOO", body : oChangedBody2}];
-
-		oRequestorMock.expects("cleanPayload")
-			.withExactArgs(sinon.match.same(oBody1)).returns(oBody1);
-		oRequestorMock.expects("cleanPayload")
-			.withExactArgs(sinon.match.same(oBody2)).returns(oChangedBody2);
-
-		// code under test
-		assert.strictEqual(_Requestor.cleanBatch(aRequests), aRequests);
-		assert.deepEqual(aRequests, aResult);
 	});
 
 	//*********************************************************************************************

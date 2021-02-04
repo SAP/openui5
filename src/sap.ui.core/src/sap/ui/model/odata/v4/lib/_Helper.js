@@ -1395,14 +1395,16 @@ sap.ui.define([
 		 *
 		 * @param {any} vValue
 		 *   Any value, including <code>undefined</code>
+		 * @param {boolean} [bRemoveClientAnnotations]
+		 *   Whether to remove all client-side annotations, not just private ones
 		 * @returns {any}
 		 *   A public clone
 		 *
 		 * @see sap.ui.model.odata.v4.lib._Helper.clone
 		 */
-		publicClone : function (vValue) {
+		publicClone : function (vValue, bRemoveClientAnnotations) {
 			return _Helper.clone(vValue, function (sKey, vValue) {
-				if (sKey !== "@$ui5._") {
+				if (bRemoveClientAnnotations ? !sKey.startsWith("@$ui5.") : sKey !== "@$ui5._") {
 					return vValue;
 				}
 				// return undefined;

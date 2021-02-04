@@ -1166,7 +1166,7 @@ sap.ui.define([
 
 		this.batchRequestSent(sGroupId, bHasChanges);
 		aRequests = this.mergeGetRequests(aRequests);
-		return this.sendBatch(_Requestor.cleanBatch(aRequests), sGroupId)
+		return this.sendBatch(aRequests, sGroupId)
 			.then(function (aResponses) {
 				visit(aRequests, aResponses);
 			}).catch(function (oError) {
@@ -1541,7 +1541,7 @@ sap.ui.define([
 		}
 		return this.sendRequest(sMethod, sResourcePath,
 			Object.assign({}, mHeaders, this.mFinalHeaders),
-			JSON.stringify(_Requestor.cleanPayload(oPayload)), sOriginalResourcePath
+			JSON.stringify(oPayload), sOriginalResourcePath
 		).then(function (oResponse) {
 			that.reportUnboundMessagesAsJSON(oResponse.resourcePath, oResponse.messages);
 			return that.doConvertResponse(oResponse.body, sMetaPath);
@@ -1786,54 +1786,6 @@ sap.ui.define([
 	 */
 	_Requestor.prototype.waitForRunningChangeRequests = function (sGroupId) {
 		return this.mRunningChangeRequests[sGroupId] || SyncPromise.resolve();
-	};
-
-	/**
-	 * Recursively cleans the payload of all contained requests via {@link #.cleanPayload}.
-	 * Modifies the array in-place.
-	 *
-	 * @param {object[]} aRequests
-	 *   The requests
-	 * @returns {object[]}
-	 *   The cleaned requests
-	 *
-	 * @private
-	 */
-	_Requestor.cleanBatch = function (aRequests) {
-		aRequests.forEach(function (oRequest) {
-			if (Array.isArray(oRequest)) {
-				_Requestor.cleanBatch(oRequest);
-			} else {
-				oRequest.body = _Requestor.cleanPayload(oRequest.body);
-			}
-		});
-		return aRequests;
-	};
-
-	/**
-	 * Creates a duplicate of the payload where all properties starting with "@$ui5." are
-	 * removed.
-	 *
-	 * @param {object} [oPayload]
-	 *   The request payload
-	 * @returns {object}
-	 *   The payload without the unwanted properties (only copied if necessary)
-	 *
-	 * @private
-	 */
-	_Requestor.cleanPayload = function (oPayload) {
-		var oResult = oPayload;
-		if (oResult) {
-			Object.keys(oResult).forEach(function (sKey) {
-				if (sKey.startsWith("@$ui5.")) {
-					if (oResult === oPayload) {
-						oResult = Object.assign({}, oPayload);
-					}
-					delete oResult[sKey];
-				}
-			});
-		}
-		return oResult;
 	};
 
 	/**
