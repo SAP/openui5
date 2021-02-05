@@ -2116,6 +2116,15 @@ sap.ui.define([
 					version: 4
 				}
 			},
+			"plugins/ColumnResizer": {
+				title: "Test Page for sap.m.plugins.ColumnResizer",
+				qunit: {
+					version: 2
+				},
+				sinon: {
+					version: 4
+				}
+			},
 			"routing/async/RouteMatchedHandler": {
 				title: "QUnit Page for RouteMatchedHandler",
 				qunit: {
