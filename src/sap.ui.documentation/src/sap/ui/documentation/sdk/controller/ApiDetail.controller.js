@@ -477,7 +477,12 @@ sap.ui.define([
 					}
 				}
 
-				oControlData.hasChildren = !!oControlData.nodes;
+				oControlData.nodes = this.transformElements(oControlData.nodes || [], fnIsAllowedMember).sort(function(a,b) {
+					return fnSort(a.name, b.name);
+				});
+
+				oControlData.hasChildren = oControlData.nodes && !!oControlData.nodes.length;
+
 				oControlData.hasConstructor = oControlData.hasOwnProperty("constructor") && !!oControlData.constructor;
 				oControlData.hasOwnEvents = !!oControlData.events;
 				oControlData.hasEvents = !!(oControlData.hasOwnEvents || (oControlData.borrowed && oControlData.borrowed.events.length > 0));
