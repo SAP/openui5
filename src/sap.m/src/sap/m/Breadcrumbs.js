@@ -492,7 +492,7 @@ sap.ui.define([
 			oControlsDistribution,
 			iCalculatedControlsForBreadcrumbTrailCount;
 
-		if (oEvent.size.width === oEvent.oldSize.width) {
+		if (oEvent.size.width === oEvent.oldSize.width || oEvent.size.width === 0) {
 			return this;
 		}
 
