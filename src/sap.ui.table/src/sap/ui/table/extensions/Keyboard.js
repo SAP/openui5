@@ -430,30 +430,71 @@ sap.ui.define([
 	 * @param {HTMLElement} oPreviousFocusRef The previously focused element.
 	 * @public
 	 */
-	KeyboardExtension.prototype.updateNoDataAndOverlayFocus = function(oPreviousFocusRef) {
+	KeyboardExtension.prototype.updateNoDataAndOverlayFocus = function() {
 		var oTable = this.getTable();
+		var oFocusRef = document.activeElement;
+
 		if (!oTable || !oTable.getDomRef()) {
 			return;
 		}
 
 		if (oTable.getShowOverlay()) {
-			// The overlay is shown
-			if (containsOrEquals(oTable.getDomRef(), oPreviousFocusRef)) {
-				oTable.$("overlay").trigger("focus"); // Set focus on Overlay Container if it was somewhere in the table before
+			if (containsOrEquals(oTable.getDomRef(), oFocusRef) && oTable.$("overlay")[0] !== oFocusRef) {
+				this._oLastFocus = { Ref: oFocusRef, Pos: "overlay" };
+				oTable.$("overlay").focus();
 			}
-		} else if (TableUtils.isNoDataVisible(oTable)) {
-			// The noData area is shown
-			if (containsOrEquals(oTable.getDomRef("tableCCnt"), oPreviousFocusRef)) {
-				oTable.$("noDataCnt").trigger("focus"); // Set focus on NoData Container if it was on the content before
-			} else if (containsOrEquals(oTable.getDomRef("overlay"), oPreviousFocusRef)) {
-				TableUtils.focusItem(oTable, ExtensionHelper.getInitialItemNavigationIndex(this)); // Set focus on first focusable element
+		} else if (TableUtils.isNoDataVisible(oTable) && oTable.$("noDataCnt")[0] !== oFocusRef) {
+			if (containsOrEquals(oTable.getDomRef("tableCCnt"), oFocusRef)) {
+				this._oLastFocus = {Ref: oFocusRef, Pos: "table content"};
+				oTable.$("noDataCnt").focus();
+			} else if (oTable.$("overlay")[0] === oFocusRef) {
+				setFocusFallback(oTable, this);
 			}
-		} else if (containsOrEquals(oTable.getDomRef("noDataCnt"), oPreviousFocusRef)
-				   || containsOrEquals(oTable.getDomRef("overlay"), oPreviousFocusRef)) {
-			// The overlay or noData area is not shown but was shown before
-			TableUtils.focusItem(oTable, ExtensionHelper.getInitialItemNavigationIndex(this)); // Set focus on first focusable element
+		} else if (this._oLastFocus) {
+			if (this._oLastFocus.Pos === "table content") {
+				if (containsOrEquals(oTable.getDomRef("tableCCnt"), this._oLastFocus.Ref)) {
+					restoreFocusToDataCell(oTable, this);
+				} else if (oTable.getRows()[0] && oTable.getRows()[0].getDomRef("col0")) {
+					oTable.getRows()[0].getDomRef("col0").focus();
+					this._oLastFocus = null;
+				}
+			} else if (this._oLastFocus.Pos === "overlay") {
+				if (containsOrEquals(oTable.getDomRef(), this._oLastFocus.Ref)) {
+					restoreFocusToDataCell(oTable, this);
+				} else {
+					setFocusFallback(oTable, this);
+				}
+			}
 		}
 	};
+
+	function restoreFocusToDataCell(oTable, oKeyboardExtension) {
+		if (!jQuery(oKeyboardExtension._oLastFocus.Ref).hasClass("sapUiTableCell")) {
+			var oParentCell = TableUtils.getParentCell(oTable, oKeyboardExtension._oLastFocus.Ref);
+
+			if (oParentCell && oParentCell[0] && jQuery(oParentCell[0]).hasClass("sapUiTableCell")) {
+				oParentCell[0].focus();
+			} else {
+				oKeyboardExtension._oLastFocus.Ref.focus();
+			}
+		} else {
+			oKeyboardExtension._oLastFocus.Ref.focus();
+		}
+		oKeyboardExtension._oLastFocus = null;
+	}
+
+	function setFocusFallback(oTable, oKeyboardExtension) {
+		if (oTable.getColumnHeaderVisible()) {
+			TableUtils.focusItem(oTable, ExtensionHelper.getInitialItemNavigationIndex(oKeyboardExtension));
+			oKeyboardExtension._oLastFocus = null;
+		} else if (TableUtils.isNoDataVisible(oTable)) {
+			oTable.$("noDataCnt").focus();
+			oKeyboardExtension._oLastFocus = null;
+		} else if (oTable.getRows()[0] && oTable.getRows()[0].getDomRef("col0")) {
+			oTable.getRows()[0].getDomRef("col0").focus();
+			oKeyboardExtension._oLastFocus = null;
+		}
+	}
 
 	/**
 	 * Suspends the event handling of the item navigation.

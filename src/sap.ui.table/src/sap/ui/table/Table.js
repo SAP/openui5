@@ -1584,10 +1584,9 @@ sap.ui.define([
 		this.setProperty("showOverlay", bShow, true);
 
 		if (this.getDomRef()) {
-			var oFocusRef = document.activeElement;
 			this.$().toggleClass("sapUiTableOverlay", bShow);
 			this._getAccExtension().updateAriaStateForOverlayAndNoData();
-			this._getKeyboardExtension().updateNoDataAndOverlayFocus(oFocusRef);
+			this._getKeyboardExtension().updateNoDataAndOverlayFocus();
 		}
 
 		return this;
@@ -2675,10 +2674,9 @@ sap.ui.define([
 			return;
 		}
 
-		var oFocusRef = document.activeElement;
 		this.$().toggleClass("sapUiTableEmpty", TableUtils.isNoDataVisible(this));
 		this._getAccExtension().updateAriaStateForOverlayAndNoData();
-		this._getKeyboardExtension().updateNoDataAndOverlayFocus(oFocusRef);
+		this._getKeyboardExtension().updateNoDataAndOverlayFocus();
 	};
 
 	/*
