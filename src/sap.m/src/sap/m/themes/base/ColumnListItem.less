@@ -3,10 +3,6 @@
 /* Base theme                            */
 /* ===================================== */
 
-@_sap_m_table_Row_Alternate_Background: darken(@sapUiListBackground, 2);
-@_sap_m_table_Row_Alternate_BackgroundHovered: darken(@sapUiListHoverBackground, 3);
-@_sap_m_table_Row_Alternate_BackgroundSelected: darken(@sapUiListSelectionBackgroundColor, 2);
-@_sap_m_table_Row_Alternate_BackgroundSelectedHovered: darken(@sapUiListSelectionHoverBackground, 2);
 @_sap_m_table_SelectionControlWidth: 3rem;
 
 .sapMListTblRow.sapMListTblRowTop > td {
@@ -41,14 +37,14 @@
 .sapMListTblAlternateRowColorsPopin > :nth-child(4n),
 .sapMListTblAlternateRowColorsGrouped > .sapMListTblRowAlternate,
 .sapMListTblAlternateRowColorsGrouped > .sapMListTblRowAlternate + .sapMListTblSubRow {
-	background-color: @_sap_m_table_Row_Alternate_Background;
+	background-color: @sapUiListAlternatingBackground;
 	&.sapMLIBHoverable:hover {
-		background : @_sap_m_table_Row_Alternate_BackgroundHovered;
+		background : @sapUiListHoverBackground;
 	}
 	&.sapMLIBSelected {
-		background: @_sap_m_table_Row_Alternate_BackgroundSelected;
+		background: @sapUiListSelectionBackgroundColor;
 		&.sapMLIBHoverable:hover {
-			background: @_sap_m_table_Row_Alternate_BackgroundSelectedHovered;
+			background: @sapUiListHoverSelectionBackground;
 		}
 	}
 }
