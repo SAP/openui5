@@ -4606,6 +4606,9 @@ sap.ui.define([
 				oContext.requestRefresh().then(function () {
 					assert.strictEqual(oContext.getProperty("Name"), "Jonathan Smith **");
 				}),
+				oContext.requestProperty("Name").then(function (sName) {
+					assert.strictEqual(sName, "Jonathan Smith *", "still the old value");
+				}),
 				that.waitForChanges(assert, "requestRefresh on context")
 			]);
 		});
