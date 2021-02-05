@@ -122,10 +122,7 @@ One example `library.js` file of a small control library, the `sap.ui.suite` lib
  */
 sap.ui.define([
 	'sap/ui/core/library'
-], function() {
-
-	"use strict";
-
+], () => {
 	/**
 	 * Suite controls library.
 	 *
@@ -137,6 +134,7 @@ sap.ui.define([
 	 */
 	
 	// delegate further initialization of this library to the Core
+	// note the full api reference notation due to the Core not being "booted" yet!
 	sap.ui.getCore().initLibrary({
 		name : "sap.ui.suite",
 		version: "${version}",
