@@ -18,7 +18,9 @@
 			height="100%"
 			p13nMode="Column,Sort"
 			noDataText="This text is shown when nothing no data is present in the table"
-			paste="onPaste">
+			paste="onPaste"
+			enableExport="true"
+			beforeExport="onBeforeExport">
 		<mdc:type>
 			<mdcTable:GridTableType rowCountMode="Fixed" rowCount="20"/>
 		</mdc:type>

@@ -24,12 +24,14 @@ sap.ui.define([
 				}
 			}, {
 				name: "propB",
+				path: "propB",
 				label: "Property B",
 				sortable: false,
 				filterable: false,
 				groupLabel: "Group Label"
 			}, {
 				name: "complexPropA",
+				path: "complexPropA",
 				label: "Complex Property A",
 				propertyInfos: ["propA", "propB"],
 				exportSettings: {
@@ -39,6 +41,7 @@ sap.ui.define([
 				visible: false
 			}, {
 				name: "complexPropB",
+				path: "complexPropB",
 				label: "Complex Property B",
 				propertyInfos: ["propB"],
 				exportSettings: {
@@ -48,6 +51,7 @@ sap.ui.define([
 				}
 			}, {
 				name: "price",
+				path: "price",
 				label: "Price",
 				exportSettings: {
 					type: "Currency",
@@ -59,6 +63,28 @@ sap.ui.define([
 				name: "currencyCode",
 				label: "Currency",
 				path: "currency"
+			}, {
+				name: "noDataColumn1",
+				label: "NoDataColumn1",
+				sortable: false,
+				filterable: false,
+				exportSettings: {
+					width: 5
+				}
+			}, {
+				name: "noDataColumn2",
+				label: "NoDataColumn2",
+				sortable: false,
+				filterable: false
+			}, {
+				name: "complexPropC",
+				path: "complexPropC",
+				label: "Complex Property C",
+				propertyInfos: ["noDataColumn1", "noDataColumn2"],
+				exportSettings: {
+					width: 30,
+					label: "Complex export label C"
+				}
 			}]);
 			this.aProperties = this.oPropertyHelper.getProperties();
 
@@ -97,6 +123,26 @@ sap.ui.define([
 				header: "Invalid",
 				dataProperty: "invalidProperty"
 			});
+
+			this.oNoDataColumn1 = new Column({
+				id: "noDataColumn1",
+				header: "NoDataColumn1",
+				hAlign: "Begin",
+				dataProperty: "noDataColumn1"
+			});
+
+			this.oNoDataColumn2 = new Column({
+				id: "noDataColumn2",
+				header: "NoDataColumn2",
+				hAlign: "Begin",
+				dataProperty: "noDataColumn2"
+			});
+
+			this.oColumnComplexPropC = new Column({
+				id: "columnComplexPropC",
+				header: "Complex Property C",
+				dataProperty: "complexPropC"
+			});
 		},
 		afterEach: function() {
 			this.oPropertyHelper.destroy();
@@ -105,8 +151,11 @@ sap.ui.define([
 			this.oColumnPropB.destroy();
 			this.oColumnComplexPropA.destroy();
 			this.oColumnComplexPropB.destroy();
+			this.oColumnComplexPropC.destroy();
 			this.oColumnPrice.destroy();
 			this.oInvalidColumn.destroy();
+			this.oNoDataColumn1.destroy();
+			this.oNoDataColumn2.destroy();
 		}
 	});
 
@@ -156,6 +205,24 @@ sap.ui.define([
 			displayUnit: true,
 			property: "price",
 			unitProperty: "currency"
+		}], "Expected column export settings returned");
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oNoDataColumn1), [{
+			columnId: "noDataColumn1",
+			label: "NoDataColumn1",
+			property: "",
+			textAlign: "Begin",
+			type: "String",
+			width: 5
+		}], "Expected column export settings returned");
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oNoDataColumn2), [],
+			"Expected column export settings returned");
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropC), [{
+			columnId: "columnComplexPropC",
+			label: "Complex export label C",
+			property: ["", ""],
+			textAlign: "Begin",
+			type: "String",
+			width: 30
 		}], "Expected column export settings returned");
 	});
 
@@ -221,6 +288,15 @@ sap.ui.define([
 			textAlign: "End",
 			type: "String",
 			width: ""
+		}], "Expected column export settings returned");
+		assert.deepEqual(this.oPropertyHelper.getColumnExportSettings(this.oColumnComplexPropC, true), [{
+			columnId: "columnComplexPropC",
+			label: "NoDataColumn1",
+			displayUnit: false,
+			property: "",
+			textAlign: "Begin",
+			type: "String",
+			width: 5
 		}], "Expected column export settings returned");
 	});
 });

@@ -764,7 +764,7 @@ sap.ui.define([
 				sortable: true,
 				filterable: true,
 				groupable: false,
-				path: null,
+				path: "",
 				unit: "",
 				group: "",
 				groupLabel: "",
@@ -792,13 +792,7 @@ sap.ui.define([
 					return Object.assign({}, mComplexDefaults, oProperty);
 				}
 
-				var oSimpleProperty = Object.assign({}, mSimpleDefaults, oProperty);
-
-				if (oSimpleProperty.path === null) {
-					oSimpleProperty.path = oSimpleProperty.name;
-				}
-
-				return oSimpleProperty;
+				return Object.assign({}, mSimpleDefaults, oProperty);
 			});
 
 			assert.deepEqual(oPropertyHelper.getProperties(), aExpectedWithDefaults, sMessage || "Properties");
@@ -1892,7 +1886,7 @@ sap.ui.define([
 		assert.strictEqual(this.oPropertyHelper.getPath(this.aProperties[0]), null, "Simple property");
 		assert.strictEqual(this.oPropertyHelper.getPath("complexPropA"), null, "Name of a complex property");
 		assert.strictEqual(this.oPropertyHelper.getPath(this.aProperties[2]), null, "Complex property");
-		assert.strictEqual(this.oPropertyHelper.getPath("propB"), "propB", "Name of a simple property without a path");
+		assert.strictEqual(this.oPropertyHelper.getPath("propB"), "", "Name of a simple property without a path");
 		assert.strictEqual(this.oPropertyHelper.getPath(this.aProperties[1]), null, "Simple property without a path");
 		assert.strictEqual(this.oPropertyHelper.getPath("unknownProp"), null, "Unknown property key");
 		assert.strictEqual(this.oPropertyHelper.getPath({
