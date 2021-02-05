@@ -142,6 +142,15 @@ sap.ui.define([
 		return this;
 	};
 
+	Container.prototype.addView = function(oView) {
+		if (oView && !oView.getContent().hasStyleClass("sapUiMDCContainerContent")){
+			oView.getContent().addStyleClass("sapUiMDCContainerContent");
+		}
+		this.addAggregation("views", oView);
+
+        return this;
+	};
+
 	/**
 	 * This method can be used to retrieve the key of the current view.
 	 *
