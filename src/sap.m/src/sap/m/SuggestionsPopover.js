@@ -481,7 +481,7 @@ sap.ui.define([
 			oList = this.getItemsContainer(),
 			sNewValue;
 
-		if (!oItem) {
+		if (!oItem || oItem.isA("sap.m.GroupHeaderListItem")) {
 			oList.removeSelections(true);
 		} else {
 			oList.setSelectedItem(oItem, true);
