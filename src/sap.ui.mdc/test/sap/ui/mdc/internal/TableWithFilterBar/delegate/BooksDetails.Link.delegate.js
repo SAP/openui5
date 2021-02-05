@@ -14,14 +14,14 @@ sap.ui.define([
             new LinkItem({
                 key: "link_book",
                 text: "Manage book",
-                href: self.location.pathname + "#/Books/{id}",
+                href: self.location.pathname + (self.location.search && self.location.search) + "#/Books/{id}",
                 target: "_blank",
 				initiallyVisible: true
             }),
             new LinkItem({
                 key: "link_author",
                 text: "Manage author",
-                href: self.location.pathname + "#/Authors/{author_ID}",
+                href: self.location.pathname + (self.location.search && self.location.search) + "#/Authors/{author_ID}",
                 target: "_blank"
             })
         ];
