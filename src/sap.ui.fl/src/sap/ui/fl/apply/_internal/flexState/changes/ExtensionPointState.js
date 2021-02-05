@@ -3,14 +3,16 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/write/api/ChangesWriteAPI",
 	"sap/ui/fl/ChangePersistenceFactory",
-	"sap/ui/fl/Change",
 	"sap/base/util/restricted/_omit",
+	"sap/base/util/merge",
 	"sap/base/Log"
 ], function(
+	ChangesWriteAPI,
 	ChangePersistenceFactory,
-	Change,
 	_omit,
+	merge,
 	Log
 ) {
 	"use strict";
@@ -46,11 +48,35 @@ sap.ui.define([
 		return false;
 	}
 
-	function createSelectorWithTargetControl(oChange, oExtensionPoint) {
-		var oSelector = oChange.getSelector();
-		oSelector.id = oExtensionPoint.targetControl.getId();
-		oSelector.idIsLocal = false;
-		return oSelector;
+	function replaceChangeSelector(oChange, oExtensionPoint, bOriginalSelectorNeedsToBeAdjusted) {
+		var mSelector = oChange.getSelector();
+		if (oExtensionPoint.closestAggregationBindingCarrier && oExtensionPoint.closestAggregationBinding) {
+			// processing for extension points positioned into an aggregation template
+			mSelector = merge(mSelector, {
+				id: oExtensionPoint.closestAggregationBindingCarrier,
+				idIsLocal: false
+			});
+			var oChangeDefinition = oChange.getDefinition();
+			var mOriginalSelector = {
+				id: oExtensionPoint.targetControl.getId(),
+				idIsLocal: false
+			};
+			if (!oChangeDefinition.dependentSelector) {
+				oChangeDefinition.dependentSelector = {};
+			}
+			if (bOriginalSelectorNeedsToBeAdjusted) {
+				oChange.originalSelectorToBeAdjusted = mOriginalSelector;
+			} else {
+				oChangeDefinition.dependentSelector.originalSelector = mOriginalSelector;
+			}
+			oChangeDefinition.content.boundAggregation = oExtensionPoint.closestAggregationBinding;
+		} else {
+			mSelector = merge(mSelector, {
+				id: oExtensionPoint.targetControl.getId(),
+				idIsLocal: false
+			});
+		}
+		oChange.setSelector(mSelector);
 	}
 
 	/**
@@ -94,15 +120,17 @@ sap.ui.define([
 	ExtensionPointState.enhanceExtensionPointChanges = function (mPropertyBag, mExtensionPointInfo) {
 		mPropertyBag.extensionPointName = mExtensionPointInfo.name;
 		var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForControl(mExtensionPointInfo.targetControl);
+
 		return ExtensionPointState.getChangesForExtensionPoint(oChangePersistence, mPropertyBag)
 			.then(function (aChanges) {
+				var aPromises = [];
 				aChanges.forEach(function (oChange) {
 					//Only continue process if the change has not been applied, such as in case of XMLPreprocessing of an async view
 					if (oChange.isInInitialState() && !(oChange.getExtensionPointInfo && oChange.getExtensionPointInfo())) {
 						oChange.setExtensionPointInfo(mExtensionPointInfo);
 
 						//Set correct selector from extension point targetControl's ID
-						oChange.setSelector(createSelectorWithTargetControl(oChange, mExtensionPointInfo));
+						replaceChangeSelector(oChange, mExtensionPointInfo, false);
 
 						//If the component creation is async, the changesMap already created without changes on EP --> it need to be updated
 						//Otherwise, update the selector of changes is enough, change map will be created later correctly
@@ -113,16 +141,33 @@ sap.ui.define([
 						//Change is applied but we need to create additional runtime only changes
 						//in case of duplicate extension points with different fragment id (fragment as template)
 						var oChangeDefinition = oChange.getDefinition();
-						var mChangeSpecificData = _omit(oChangeDefinition, ["fileName"]);
+						var mChangeSpecificData = _omit(oChangeDefinition, ["dependentSelector", "fileName", "selector", "content"]);
+						Object.keys(oChangeDefinition.content).forEach(function (sKey) {
+							mChangeSpecificData[sKey] = oChangeDefinition.content[sKey];
+						});
 						mChangeSpecificData.support.sourceChangeFileName = oChangeDefinition.fileName || "";
-						var oRuntimeOnlyChange = new Change(Change.createInitialFileContent(mChangeSpecificData));
-						oRuntimeOnlyChange.getDefinition().creation = oChangeDefinition.creation;
-						oRuntimeOnlyChange.setSelector(createSelectorWithTargetControl(oRuntimeOnlyChange, mExtensionPointInfo));
-						oRuntimeOnlyChange.setExtensionPointInfo(mExtensionPointInfo);
-						oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oRuntimeOnlyChange, oChange);
+						aPromises.push(ChangesWriteAPI.create({
+							changeSpecificData: mChangeSpecificData,
+							selector: {
+								view: mExtensionPointInfo.view,
+								name: mExtensionPointInfo.name
+							}
+						})
+							.then(function (oRuntimeOnlyChange) {
+								//Set correct selector from extension point targetControl's ID
+								replaceChangeSelector(oRuntimeOnlyChange, mExtensionPointInfo, true);
+								oRuntimeOnlyChange.setExtensionPointInfo(mExtensionPointInfo);
+								oRuntimeOnlyChange.setModuleName(oChangeDefinition.moduleName);
+								oRuntimeOnlyChange.getDefinition().creation = oChangeDefinition.creation;
+								oChangePersistence.addChangeAndUpdateDependencies(mPropertyBag.appComponent, oRuntimeOnlyChange, oChange);
+							})
+						);
 					}
 				});
-				return aChanges;
+				return Promise.all(aPromises)
+					.then(function () {
+						return aChanges;
+					});
 			});
 	};
 

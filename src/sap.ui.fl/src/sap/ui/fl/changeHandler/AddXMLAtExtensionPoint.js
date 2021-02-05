@@ -21,6 +21,14 @@ sap.ui.define([
 	 */
 	var AddXMLAtExtensionPoint = {};
 
+	function calculateExtensionPointIndex(mExtensionPointInfo) {
+		var iIndex = mExtensionPointInfo.index;
+		if (mExtensionPointInfo.referencedExtensionPoint) {
+			iIndex += calculateExtensionPointIndex(mExtensionPointInfo.referencedExtensionPoint);
+		}
+		return iIndex;
+	}
+
 	/**
 	 * Adds the content of the XML fragment to the parent control of the Extension Ponint right behind the ExtensionPoint.
 	 *
@@ -53,6 +61,9 @@ sap.ui.define([
 			}
 		});
 		mExtensionPointInfo.defaultContent = [];
+		// calculate index from nested extensionpoints
+		mExtensionPointInfo.index = calculateExtensionPointIndex(mExtensionPointInfo);
+
 		var aNewControls = BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
 		if (mExtensionPointInfo.ready) {
 			// Confirm with ready function in sync apply scenario (preprocessing with JSView)

@@ -755,6 +755,82 @@ sap.ui.define([
 				oRandomControl.destroy();
 			}.bind(this));
 		});
+
+		QUnit.test("applyAllChangesForControl with to be adjusted template changes - 1", function(assert) {
+			var oOriginalTemplateControl = new Control("originalTemplate");
+			var oActualTemplateControl = new Control("actualTemplate");
+			var oChange0 = new Change(getLabelChangeContent("a"));
+			oChange0.getContent().boundAggregation = "boundAggregationName";
+			var oGetBindingInfoStub = sandbox.stub(this.oControl, "getBindingInfo").returns({
+				template: oActualTemplateControl
+			});
+			oChange0.originalSelectorToBeAdjusted = {
+				id: oOriginalTemplateControl.getId(),
+				idIsLocal: false
+			};
+			var fnGetChangesMap = function() {
+				return getInitialChangesMap({
+					mChanges: {
+						someId: [oChange0]
+					}
+				});
+			};
+
+			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl).then(function() {
+				var oOriginalSelector = oChange0.getDependentControl("originalSelector", {modifier: JsControlTreeModifier, appComponent: this.oAppComponent});
+				assert.equal(oOriginalSelector.getId(), "actualTemplate", "the originalSelector was set to the correct template");
+				assert.ok(oGetBindingInfoStub.calledWith("boundAggregationName"), "the template from the correct aggregation was used");
+
+				[oActualTemplateControl, oOriginalTemplateControl].forEach(function(oControl) {
+					oControl.destroy();
+				});
+			}.bind(this));
+		});
+
+		QUnit.test("applyAllChangesForControl with to be adjusted template changes - 2", function(assert) {
+			var oOriginalControlInTemplate = new Control("originalTemplate");
+			var oOrigInnerToolbar = new sap.m.Toolbar("origInnerToolbar", {
+				content: [new Control(), oOriginalControlInTemplate, new Control()]
+			});
+			var oOriginalTemplate = new sap.m.HBox("origOuterHBox", {
+				items: [new Control(), new Control(), oOrigInnerToolbar, new Control()]
+			});
+
+			var oActualControlInTemplate = new Control("actualTemplate");
+			var oActualInnerToolbar = new sap.m.Toolbar("actualInnerToolbar", {
+				content: [new Control(), oActualControlInTemplate, new Control()]
+			});
+			var oActualTemplate = new sap.m.HBox("actualOuterHBox", {
+				items: [new Control(), new Control(), oActualInnerToolbar, new Control()]
+			});
+
+			var oChange0 = new Change(getLabelChangeContent("a"));
+			oChange0.getContent().boundAggregation = "boundAggregationName";
+			var oGetBindingInfoStub = sandbox.stub(this.oControl, "getBindingInfo").returns({
+				template: oActualTemplate
+			});
+			oChange0.originalSelectorToBeAdjusted = {
+				id: oOriginalControlInTemplate.getId(),
+				idIsLocal: false
+			};
+			var fnGetChangesMap = function() {
+				return getInitialChangesMap({
+					mChanges: {
+						someId: [oChange0]
+					}
+				});
+			};
+
+			return Applier.applyAllChangesForControl(fnGetChangesMap, this.oAppComponent, this.oFlexController, this.oControl).then(function() {
+				var oOriginalSelector = oChange0.getDependentControl("originalSelector", {modifier: JsControlTreeModifier, appComponent: this.oAppComponent});
+				assert.equal(oOriginalSelector.getId(), "actualTemplate", "the originalSelector was set to the correct template");
+				assert.ok(oGetBindingInfoStub.calledWith("boundAggregationName"), "the template from the correct aggregation was used");
+
+				[oOriginalTemplate, oActualTemplate].forEach(function(oControl) {
+					oControl.destroy();
+				});
+			}.bind(this));
+		});
 	});
 
 	QUnit.module("[JS] applyChangeOnControl", {
