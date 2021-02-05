@@ -120,9 +120,9 @@ One example `library.js` file of a small control library, the `sap.ui.suite` lib
 /**
  * Initialization Code and shared classes of library sap.ui.suite.
  */
-sap.ui.define(['jquery.sap.global', 
-	'sap/ui/core/library'], // library dependency
-	function(jQuery) {
+sap.ui.define([
+	'sap/ui/core/library'
+], function() {
 
 	"use strict";
 
@@ -191,7 +191,7 @@ sap.ui.define(['jquery.sap.global',
 
 	return sap.ui.suite;
 
-}, /* bExport= */ false);
+}, /* bExport = false */ );
 ```
 
 ### Translation file (messagebundle.properties) and translation
