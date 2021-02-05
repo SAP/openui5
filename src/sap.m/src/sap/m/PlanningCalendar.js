@@ -806,11 +806,8 @@ sap.ui.define([
 
 		this._bBeforeRendering = true;
 
-		if ((!this._oTimesRow && !this._oDatesRow && !this._oMonthsRow && !this._oWeeksRow && !this._oOneMonthsRow) || this._bCheckView) {
-			// init intervalType settings if default is used
-			this.setViewKey(this.getViewKey());
-			this._bCheckView = undefined;
-		}
+		// init interval if default one is used
+		this._adjustViewKey();
 
 		updateSelectItems.call(this);
 
@@ -2094,6 +2091,43 @@ sap.ui.define([
 		}
 
 		this.getAggregation("table").setSticky(aStickyParts);
+	};
+
+	/**
+	 * Adjusts the settings for the displayed view.
+	 *
+	 * @private
+	 */
+	PlanningCalendar.prototype._adjustViewKey = function () {
+		if ((!this._oTimesRow && !this._oDatesRow && !this._oMonthsRow && !this._oWeeksRow && !this._oOneMonthsRow) || this._bCheckView) {
+			// init intervalType settings if default is used
+			this.setViewKey(this.getViewKey());
+			this._bCheckView = undefined;
+		}
+	};
+
+	PlanningCalendar.prototype.addView = function(oView) {
+		this.addAggregation("views", oView);
+
+		if (oView.getKey() === this.getViewKey()) {
+			// we have to ensure that the correct view key is set after all of the views (build-in and custom) are
+			// included as aggregation
+			this._adjustViewKey();
+		}
+
+		return this;
+	};
+
+	PlanningCalendar.prototype.insertView = function(oView, iIndex) {
+		this.insertAggregation("views", oView, iIndex);
+
+		if (oView.getKey() === this.getViewKey()) {
+			// we have to ensure that the correct view key is set after all of the views (build-in and custom) are
+			// included as aggregation
+			this._adjustViewKey();
+		}
+
+		return this;
 	};
 
 	PlanningCalendar.prototype.addRow = function(oRow) {
