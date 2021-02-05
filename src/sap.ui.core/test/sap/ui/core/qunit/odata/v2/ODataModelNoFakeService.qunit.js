@@ -313,7 +313,7 @@ sap.ui.define([
 		// code under test
 		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel);
 
-		assert.deepEqual(oResult, {created : undefined, deepPath : undefined});
+		assert.deepEqual(oResult, {created : undefined, deepPath : undefined, invalid : undefined});
 
 		oEntityData = {};
 
@@ -321,14 +321,15 @@ sap.ui.define([
 		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, oEntityData);
 
 		assert.deepEqual(oEntityData, {});
-		assert.deepEqual(oResult, {created : undefined, deepPath : undefined});
+		assert.deepEqual(oResult, {created : undefined, deepPath : undefined, invalid : undefined});
 
 		oEntityData = {
 			p : "p",
 			__metadata : {
 				uri : "uri",
 				created : "created",
-				deepPath : "deepPath"
+				deepPath : "deepPath",
+				invalid : "invalid"
 			}
 		};
 
@@ -336,21 +337,27 @@ sap.ui.define([
 		oResult = ODataModel.prototype.removeInternalMetadata.call(oModel, oEntityData);
 
 		assert.deepEqual(oEntityData, {p : "p", __metadata : {uri : "uri"}});
-		assert.deepEqual(oResult, {created : "created", deepPath : "deepPath"});
+		assert.deepEqual(oResult, {
+			created : "created",
+			deepPath : "deepPath",
+			invalid : "invalid"
+		});
 
 		oEntityData = {
 			p : "p",
 			__metadata : {
 				uri : "uri",
 				created : "created",
-				deepPath : "deepPath"
+				deepPath : "deepPath",
+				invalid : "invalid"
 			},
 			n : { // 0..1 navigation property
 				p2 : "p2",
 				__metadata : {
 					uri : "uri2",
 					created : "created2",
-					deepPath : "deepPath2"
+					deepPath : "deepPath2",
+					invalid : "invalid2"
 				}
 			}
 		};
@@ -381,21 +388,27 @@ sap.ui.define([
 				__metadata : {uri : "uri2"}
 			}
 		});
-		assert.deepEqual(oResult, {created : "created", deepPath : "deepPath"});
+		assert.deepEqual(oResult, {
+			created : "created",
+			deepPath : "deepPath",
+			invalid : "invalid"
+		});
 
 		oEntityData = {
 			p : "p",
 			__metadata : {
 				uri : "uri",
 				created : "created",
-				deepPath : "deepPath"
+				deepPath : "deepPath",
+				invalid : "invalid"
 			},
 			n : [{ // 0..n navigation property
 					p2 : "p2",
 					__metadata : {
 						uri : "uri2",
 						created : "created2",
-						deepPath : "deepPath2"
+						deepPath : "deepPath2",
+						invalid : "invalid2"
 					}
 			}]
 		};
@@ -426,7 +439,11 @@ sap.ui.define([
 				__metadata : {uri : "uri2"}
 			}]
 		});
-		assert.deepEqual(oResult, {created : "created", deepPath : "deepPath"});
+		assert.deepEqual(oResult, {
+			created : "created",
+			deepPath : "deepPath",
+			invalid : "invalid"
+		});
 	});
 
 	//*********************************************************************************************
@@ -438,7 +455,8 @@ sap.ui.define([
 					__metadata : {
 						uri : "uri1",
 						created : "created1",
-						deepPath : "deepPath1"
+						deepPath : "deepPath1",
+						invalid : "invalid1"
 					},
 					x : {
 						p4 : "p4",
@@ -447,7 +465,8 @@ sap.ui.define([
 							__metadata : {
 								uri : "uri3",
 								created : "created3",
-								deepPath : "deepPath3"
+								deepPath : "deepPath3",
+								invalid : "invalid3"
 							}
 						}]
 					}
@@ -457,7 +476,8 @@ sap.ui.define([
 					__metadata : {
 						uri : "uri2",
 						created : "created2",
-						deepPath : "deepPath2"
+						deepPath : "deepPath2",
+						invalid : "invalid2"
 					}
 				}]
 			},
@@ -490,7 +510,7 @@ sap.ui.define([
 				}
 			}]
 		});
-		assert.deepEqual(oResult, {created : undefined, deepPath : undefined});
+		assert.deepEqual(oResult, {created : undefined, deepPath : undefined, invalid : undefined});
 	});
 
 	//*********************************************************************************************
