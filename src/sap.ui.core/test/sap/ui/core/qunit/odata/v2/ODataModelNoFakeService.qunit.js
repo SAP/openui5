@@ -3469,30 +3469,30 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// BCP: 2070289685
+	// BCP: 002075129400008585322020
 [{
-	functionTarget : undefined,
-	method : "GET",
-	expectedRequest : {}
-}, {
+	functionMetadata : undefined,
 	functionTarget : "~functionTarget",
 	method : "GET",
 	expectedRequest : {
+		functionMetadata : undefined
+	}
+}, {
+	functionMetadata : "~functionMetadata",
+	functionTarget : "~functionTarget",
+	method : "GET",
+	expectedRequest : {
+		functionMetadata : "~functionMetadata",
 		functionTarget : "~functionTarget",
 		requestUri : "~requestUri"
 	}
 }, {
-	functionTarget : undefined,
-	method : "POST",
-	expectedRequest : {
-		data : "~data",
-		headers : "~headers",
-		method : "POST"
-	}
-}, {
+	functionMetadata : "~functionMetadata",
 	functionTarget : "~functionTarget",
 	method : "POST",
 	expectedRequest : {
 		data : "~data",
+		functionMetadata : "~functionMetadata",
 		functionTarget : "~functionTarget",
 		headers : "~headers",
 		method : "POST",
@@ -3515,7 +3515,9 @@ sap.ui.define([
 			mRequests = {
 				"~sGroupId" : {
 					map : {
-						"~key" : {request : {}}
+						"~key" : {
+							request : {functionMetadata : oFixture.functionMetadata}
+						}
 					}
 				}
 			};
