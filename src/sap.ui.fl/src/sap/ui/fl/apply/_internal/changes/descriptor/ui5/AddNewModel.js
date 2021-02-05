@@ -29,9 +29,12 @@ sap.ui.define([
 	}
 
 	function isODataDefinedForODataAnnotation(oChangeDataSource, sODataAnnotationName) {
-		return Object.values(oChangeDataSource).some(function(oDataSource) {
+		var aDataSource = Object.keys(oChangeDataSource).map(function(e) {
+			return oChangeDataSource[e];
+		});
+		return aDataSource.some(function(oDataSource) {
 			return (!oDataSource.type || oDataSource["type"] === "OData") &&
-				oDataSource["settings"]["annotations"].indexOf(sODataAnnotationName) >= 0;
+			oDataSource["settings"]["annotations"].indexOf(sODataAnnotationName) >= 0;
 		});
 	}
 
@@ -92,7 +95,10 @@ sap.ui.define([
 		if (oChangeDataSource[sDataSource].type === "ODataAnnotation") {
 			return true;
 		}
-		return Object.values(oChangeModel).some(function(oModel) {
+		var aModels = Object.keys(oChangeModel).map(function(e) {
+			return oChangeModel[e];
+		});
+		return aModels.some(function(oModel) {
 			return oModel.dataSource && oModel["dataSource"] === sDataSource;
 		});
 	}
