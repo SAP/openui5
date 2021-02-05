@@ -470,7 +470,7 @@ sap.ui.define([
 		oRm.writeClasses();
 		oRm.writeStyles();
 		
-		var sTooltip = oControl.getTooltip_AsString();
+		const sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
@@ -480,7 +480,7 @@ sap.ui.define([
 			this.renderBeforeContent(oRm, oControl); // hook method; may be used by inheriting renderers
 		}
 		
-		var oContent = oControl.getCurrentPage();
+		const oContent = oControl.getCurrentPage();
 		if (oContent) {
 			oRm.renderControl(oContent);
 		}
@@ -501,20 +501,22 @@ Note that the `.extend(...)` method used here is different from the normal UI5 i
 Documentation omitted to keep this example short:
 ```js
 // Provides default renderer for control sap.ui.commons.ToggleButton
-sap.ui.define(['jquery.sap.global', './ButtonRenderer', 'sap/ui/core/Renderer'],
-	function(jQuery, ButtonRenderer, Renderer) {
-	"use strict";
+sap.ui.define([
+	'./ButtonRenderer', 
+	'sap/ui/core/Renderer'
+],
+(ButtonRenderer, Renderer) => {
 
-	var ToggleButtonRenderer = Renderer.extend(ButtonRenderer);
+	const ToggleButtonRenderer = Renderer.extend(ButtonRenderer);
 
-	ToggleButtonRenderer.renderButtonAttributes = function(rm, oToggleButton) {
-		var bPressed = oToggleButton.getPressed();
+	ToggleButtonRenderer.renderButtonAttributes = function(oRm, oToggleButton) {
+		const bPressed = oToggleButton.getPressed();
 	
 		if (bPressed) {
-			rm.addClass("sapMToggleBtnPressed");
+			oRm.addClass("sapMToggleBtnPressed");
 		}
 	
-		rm.writeAttribute('pressed', bPressed);
+		oRm.writeAttribute('pressed', bPressed);
 	};
 
 	return ToggleButtonRenderer;
