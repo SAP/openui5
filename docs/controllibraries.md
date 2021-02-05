@@ -459,12 +459,12 @@ sap.ui.define([
 		oRm.openStart("div");
 		oRm.writeControlData(oControl);
 		
-		oRm.addClass("sapMNav");
-		oRm.addStyle("width", oControl.getWidth());
-		oRm.addStyle("height", oControl.getHeight());
+		oRm.class("sapMNav");
+		oRm.style("width", oControl.getWidth());
+		oRm.style("height", oControl.getHeight());
 	
 		if (this.renderAttributes) {
-			this.renderAttributes(oRm, oControl); // may be used by inheriting renderers, but DO NOT write class or style attributes! Instead, call addClass/addStyle.
+			this.renderAttributes(oRm, oControl); // may be used by inheriting renderers, but DO NOT write class or style attributes! Instead, call class/style.
 		}
 		
 		oRm.writeClasses();
