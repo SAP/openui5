@@ -431,61 +431,61 @@ The code within the `render()` method is the same as in "notepad controls".
  * ${copyright}
  */
 
-sap.ui.define(['jquery.sap.global'],
-	function(jQuery) {
-	"use strict";
-
+sap.ui.define([
+],
+	() => {
 
 	/**
 	 * @class NavContainer renderer. 
 	 * @static
 	 */
-	var NavContainerRenderer = {
+	const NavContainerRenderer = {
+		apiVersion: 2
 	};
 	
 	
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 * 
-	 * @param {sap.ui.core.RenderManager} rm the RenderManager that can be used for writing to the Render-Output-Buffer
+	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	NavContainerRenderer.render = function(rm, oControl) {
+	NavContainerRenderer.render = (oRm, oControl) => {
 		// return immediately if control is invisible, do not render any HTML
 		if (!oControl.getVisible()) {
 			return;
 		}
 		
-		rm.write("<div");
-		rm.writeControlData(oControl);
+		oRm.openStart("div");
+		oRm.writeControlData(oControl);
 		
-		rm.addClass("sapMNav");
-		rm.addStyle("width", oControl.getWidth());
-		rm.addStyle("height", oControl.getHeight());
+		oRm.addClass("sapMNav");
+		oRm.addStyle("width", oControl.getWidth());
+		oRm.addStyle("height", oControl.getHeight());
 	
 		if (this.renderAttributes) {
-			this.renderAttributes(rm, oControl); // may be used by inheriting renderers, but DO NOT write class or style attributes! Instead, call addClass/addStyle.
+			this.renderAttributes(oRm, oControl); // may be used by inheriting renderers, but DO NOT write class or style attributes! Instead, call addClass/addStyle.
 		}
 		
-		rm.writeClasses();
-		rm.writeStyles();
+		oRm.writeClasses();
+		oRm.writeStyles();
 		
 		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
-			rm.writeAttributeEscaped("title", sTooltip);
+			oRm.writeAttributeEscaped("title", sTooltip);
 		}
-		rm.write(">"); // div element
+		oRm.openEnd(); // div element
 	
 		if (this.renderBeforeContent) {
-			this.renderBeforeContent(rm, oControl); // hook method; may be used by inheriting renderers
+			this.renderBeforeContent(oRm, oControl); // hook method; may be used by inheriting renderers
 		}
 		
 		var oContent = oControl.getCurrentPage();
 		if (oContent) {
-			rm.renderControl(oContent);
+			oRm.renderControl(oContent);
 		}
 	
-		rm.write("</div>");
+		oRm.close("div");
 	};
 	
 
