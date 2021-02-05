@@ -1,0 +1,132 @@
+{
+	"sap.card": {
+		"configuration": {
+			"enableMarkdown": true
+		},
+		"header": {
+			"title": "Rich Text Adaptive Card",
+			"subTitle": "Various text formatting and markdown"
+		},
+		"type": "AdaptiveCard",
+		"content": {
+			"$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+			"version": "1.2",
+			"body": [
+				{
+					"type": "RichTextBlock",
+					"inlines": [
+						"This is the first inline. ",
+						{
+							"type": "TextRun",
+							"text": "We support colors, ",
+							"color": "good"
+						},
+						{
+							"type": "TextRun",
+							"text": "both regular and subtle. ",
+							"isSubtle": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Text ",
+							"size": "small"
+						},
+						{
+							"type": "TextRun",
+							"text": "of ",
+							"size": "medium"
+						},
+						{
+							"type": "TextRun",
+							"text": "all ",
+							"size": "large"
+						},
+						{
+							"type": "TextRun",
+							"text": "sizes! ",
+							"size": "extraLarge"
+						},
+						{
+							"type": "TextRun",
+							"text": "Light weight text. ",
+							"weight": "lighter"
+						},
+						{
+							"type": "TextRun",
+							"text": "Bold weight text. ",
+							"weight": "bolder"
+						},
+						{
+							"type": "TextRun",
+							"text": "Highlights. ",
+							"highlight": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Italics. ",
+							"italic": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Strikethrough. ",
+							"strikethrough": true
+						},
+						{
+							"type": "TextRun",
+							"text": "Monospace too!",
+							"fontType": "monospace"
+						}
+					]
+				},
+				{
+					"type": "RichTextBlock",
+					"horizontalAlignment": "left",
+					"inlines": [
+						{
+							"type": "TextRun",
+							"text": "RichTextBlocks also support left alignment."
+						}
+					]
+				},
+				{
+					"type": "RichTextBlock",
+					"horizontalAlignment": "center",
+					"inlines": [
+						{
+							"type": "TextRun",
+							"text": "RichTextBlocks also support center alignment."
+						}
+					]
+				},
+				{
+					"type": "RichTextBlock",
+					"horizontalAlignment": "right",
+					"inlines": [
+						{
+							"type": "TextRun",
+							"text": "RichTextBlocks also support right alignment."
+						}
+					]
+				},
+				{
+					"type": "TextBlock",
+					"text": "**Adaptive cards support markdown syntax**"
+				},
+				{
+					"type": "TextBlock",
+					"text": " _This is some italic text with markdown syntax_"
+				},
+				{
+					"type": "TextBlock",
+					"text": "- Bullet \r- List \r",
+					"wrap": true
+				},
+				{
+					"type": "TextBlock",
+					"text": "1. Numbered\r2. List\r",
+					"wrap": true
+				}
+			]
+		}
+	}
+}

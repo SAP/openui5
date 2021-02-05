@@ -4,6 +4,11 @@
       "control": "sap.ui.integration.widgets.Card",
       "url": "Card.html",
       "appComponent": "CA-UI5-CTR-ROD"
+    },
+    {
+      "control": "sap.ui.integration.cards.AdaptiveContent",
+      "url": "./adaptive/AdaptiveCard.html",
+      "appComponent": "CA-UI5-CTR-RIL"
     }
   ]
 }
