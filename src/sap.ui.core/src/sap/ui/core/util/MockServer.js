@@ -32,7 +32,7 @@ sap.ui
 			}
 
 			/**
-			 * Creates a mocked server. This helps to mock all or some backend calls, e.g. for OData/JSON Models or simple XHR calls, without
+			 * Creates a mocked server. This helps to mock all or some back-end calls, e.g. for OData V2/JSON Models or simple XHR calls, without
 			 * changing the application code. This class can also be used for qunit tests.
 			 *
 			 * @param {string} [sId] id for the new server object; generated automatically if no non-empty id is given
@@ -40,7 +40,7 @@ sap.ui
 			 * @param {object} [mSettings] optional map/JSON-object with initial property values, aggregated objects etc. for the new object
 			 * @param {object} [oScope] scope object for resolving string based type and formatter references in bindings
 			 *
-			 * @class Class to mock http requests made to a remote server.
+			 * @class Class to mock http requests made to a remote server supporting the OData V2 REST protocol.
 			 * @extends sap.ui.base.ManagedObject
 			 * @abstract
 			 * @author SAP SE
