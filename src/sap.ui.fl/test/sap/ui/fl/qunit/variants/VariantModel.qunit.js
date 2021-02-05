@@ -192,11 +192,11 @@ sap.ui.define([
 		QUnit.test("when calling 'setModelPropertiesForControl'", function(assert) {
 			this.oModel.getData()["variantMgmtId1"]._isEditable = true;
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is initially true");
+			assert.ok(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is initially true");
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is set to true for bDesignTimeMode = true");
+			assert.notOk(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is set to false for bDesignTimeMode = true");
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
-			assert.equal(this.oModel.getData()["variantMgmtId1"].variantsEditable, true, "the parameter variantsEditable is set to true for bDesignTimeMode = false");
+			assert.ok(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is set to true for bDesignTimeMode = false");
 		});
 
 		QUnit.test("when calling 'setModelPropertiesForControl' and variant management control has property editable=false", function(assert) {
@@ -1280,10 +1280,10 @@ sap.ui.define([
 				}
 			};
 			this.oModel.oData["variantMgmtId1"].modified = false;
-			this.oModel.oData["variantMgmtId1"].variantsEditable = true;
+			this.oModel.oData["variantMgmtId1"].variantsEditable = false;
 			this.oModel.addChange(oChange);
-			assert.equal(this.oModel.oData["variantMgmtId1"].modified, this.oModel.oData["variantMgmtId1"].variantsEditable, "then modified property equals variantEditable property");
-			assert.equal(oAddVariantStub.callCount, 1, "then function for adding change to variant was called once");
+			assert.ok(this.oModel.oData["variantMgmtId1"].modified, "then modified property is set to true");
+			assert.strictEqual(oAddVariantStub.callCount, 1, "then function for adding change to variant was called once");
 			assert.ok(oAddVariantStub.calledWith({
 				change: oChange,
 				vmReference: "variantMgmtId1",

@@ -501,7 +501,7 @@ sap.ui.define([
 		var sVariantReference = oChange.getVariantReference();
 		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference).variantManagementReference;
 		//*marker for VariantManagement control
-		this.oData[sVariantManagementReference].modified = !!this.oData[sVariantManagementReference].variantsEditable;
+		this.oData[sVariantManagementReference].modified = true;
 		this.checkUpdate(true);
 		return VariantManagementState.addChangeToVariant({
 			reference: this.sFlexReference,
@@ -1052,7 +1052,7 @@ sap.ui.define([
 
 		if (bDesignTimeModeToBeSet && this.oData[sVariantManagementReference]._isEditable) {
 			// Key user adaptation settings
-			this.oData[sVariantManagementReference].variantsEditable = true;
+			this.oData[sVariantManagementReference].variantsEditable = false;
 
 			// Properties for variant management control's internal model
 			this.oData[sVariantManagementReference].variants.forEach(function(oVariant) {
