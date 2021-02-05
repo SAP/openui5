@@ -1091,7 +1091,7 @@ sap.ui.define([
 			selector: oPropertyBag.selector || { id: "" },
 			layer: oPropertyBag.layer || (oPropertyBag.isUserDependent ? Layer.USER : LayerUtils.getCurrentLayer()),
 			texts: oPropertyBag.texts || {},
-			namespace: oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, "changes"), //TODO: we need to think of a better way to create namespaces from Adaptation projects.
+			namespace: oPropertyBag.namespace || Utils.createNamespace(oPropertyBag, sFileType), //TODO: we need to think of a better way to create namespaces from Adaptation projects.
 			projectId: oPropertyBag.projectId || (oPropertyBag.reference && oPropertyBag.reference.replace(".Component", "")) || "",
 			creation: "",
 			originalLanguage: Utils.getCurrentLanguage(),

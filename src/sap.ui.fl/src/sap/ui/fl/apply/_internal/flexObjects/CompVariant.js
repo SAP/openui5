@@ -3,12 +3,14 @@
  */
 
 sap.ui.define([
+	"sap/base/util/restricted/_pick",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils"
 ], function (
+	_pick,
 	Change,
 	Layer,
 	Settings,
@@ -45,11 +47,11 @@ sap.ui.define([
 	}
 
 	/**
-	 * A change can only be modified if the current language equals the original language.
-	 * Returns <code>false</code> if the current language does not equal the original language of the change file.
+	 * A variant can only be modified if the current language equals the original language.
+	 * Returns <code>false</code> if the current language does not equal the original language of the variant file.
 	 * Returns <code>false</code> if the original language is initial.
 	 *
-	 * @returns {boolean} <code>true</code> if the current logon language equals the original language of the change file
+	 * @returns {boolean} <code>true</code> if the current logon language equals the original language of the variant file
 	 *
 	 * @private
 	 */
@@ -64,7 +66,7 @@ sap.ui.define([
 	function isOriginSystem(sSystem, sClient) {
 		var oSettings = Settings.getInstanceOrUndef();
 		if (!oSettings) {
-			return true; // without settings the right to edit or delete a change cannot be determined
+			return true; // without settings the right to edit or delete a variant cannot be determined
 		}
 		if (!sSystem || !sClient) {
 			return true;
@@ -76,17 +78,17 @@ sap.ui.define([
 	}
 
 	/**
-	 * Flexibility change class. Stores change content and related information.
+	 * Flexibility CompVariant class. Stores variant content and related information.
 	 *
 	 * @param {object} oFile - File content and admin data
 	 *
-	 * @class sap.ui.fl.apply._internal.flexObjects.Variant
+	 * @class sap.ui.fl.apply._internal.flexObjects.CompVariant
 	 * @extends sap.ui.fl.Change
 	 * @private
 	 * @ui5-restricted
 	 * @since 1.86.0
 	 */
-	var Variant = Change.extend("sap.ui.fl.apply._internal.flexObjects.Variant", /** @lends sap.ui.fl.apply._internal.flexObjects.Variant.prototype */ {
+	var CompVariant = Change.extend("sap.ui.fl.apply._internal.flexObjects.Variant", /** @lends sap.ui.fl.apply._internal.flexObjects.CompVariant.prototype */ {
 		metadata: {
 			properties: {
 				favorite: {
@@ -112,12 +114,12 @@ sap.ui.define([
 	});
 
 	/**
-	 * Returns <code>true</code> if the current layer is the same as the layer in which the change was created, or if the change is from the end-user layer and was created for this user.
-	 * @returns {boolean} <code>true</code> if the change file is read only
+	 * Returns <code>true</code> if the current layer is the same as the layer in which the variant was created, or if the variant is from the end-user layer and was created for this user.
+	 * @returns {boolean} <code>true</code> if the variant file is read only
 	 *
 	 * @public
 	 */
-	Variant.prototype.isReadOnly = function () {
+	CompVariant.prototype.isReadOnly = function () {
 		return !isOriginSystem(this.getSourceSystem(), this.getSourceClient())
 			|| !isLayerWritableAndUserAuthorized(this.getLayer(), this.getOwnerId());
 	};
@@ -129,9 +131,31 @@ sap.ui.define([
 	 *
 	 * @public
 	 */
-	Variant.prototype.isLabelReadOnly = function () {
+	CompVariant.prototype.isLabelReadOnly = function () {
 		return this.isReadOnly() || isReadOnlyDueToOriginalLanguage(this.getOriginalLanguage());
 	};
 
-	return Variant;
+	CompVariant.createInitialFileContent = function (oPropertyBag) {
+		var oNewFile = Change.createInitialFileContent(oPropertyBag);
+
+		// TODO: clean up the createInitialFileContent within the Change class plus create a base class FlexObject
+		return _pick(oNewFile, [
+			"changeType",
+			"namespace",
+			"service",
+			"content",
+			"reference",
+			"fileName",
+			"fileType",
+			"packageName",
+			"layer",
+			"favorite",
+			"executeOnSelect",
+			"selector",
+			"texts",
+			"support"
+		]);
+	};
+
+	return CompVariant;
 });

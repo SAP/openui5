@@ -2,7 +2,7 @@
 
 sap.ui.define([
 	"sap/base/util/merge",
-	"sap/ui/fl/apply/_internal/flexObjects/Variant",
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
@@ -10,7 +10,7 @@ sap.ui.define([
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	merge,
-	Variant,
+	CompVariant,
 	Change,
 	Utils,
 	Settings,
@@ -204,7 +204,7 @@ sap.ui.define([
 			namespace: "testNamespace"
 		}));
 
-		var oVariant = new Variant(mVariantData);
+		var oVariant = new CompVariant(mVariantData);
 		oVariant.getDefinition().support.user = mTestSetup.variant.user;
 		oVariant.getDefinition().sourceSystem = mTestSetup.variant.sourceSystem;
 		oVariant.getDefinition().sourceClient = mTestSetup.variant.sourceClient;
@@ -269,12 +269,12 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when no favorite is provided", function(assert) {
-			var oVariant = new Variant({});
+			var oVariant = new CompVariant({});
 			assert.equal(oVariant.getFavorite(), false, "then by default it is NOT a favorite");
 		});
 
 		QUnit.test("when favorite is set to false", function(assert) {
-			var oVariant = new Variant({
+			var oVariant = new CompVariant({
 				content: {
 					favorite: false
 				}
@@ -283,7 +283,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when favorite is set to true", function(assert) {
-			var oVariant = new Variant({
+			var oVariant = new CompVariant({
 				content: {
 					favorite: true
 				}
@@ -292,12 +292,12 @@ sap.ui.define([
 		});
 
 		QUnit.test("when no executeOnSelect is provided", function(assert) {
-			var oVariant = new Variant({});
+			var oVariant = new CompVariant({});
 			assert.equal(oVariant.getExecuteOnSelect(), false, "then by default it is NOT executed on selection");
 		});
 
 		QUnit.test("when executeOnSelect is set to false", function(assert) {
-			var oVariant = new Variant({
+			var oVariant = new CompVariant({
 				content: {
 					executeOnSelect: false
 				}
@@ -306,7 +306,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when executeOnSelect is set to true", function(assert) {
-			var oVariant = new Variant({
+			var oVariant = new CompVariant({
 				content: {
 					executeOnSelect: true
 				}

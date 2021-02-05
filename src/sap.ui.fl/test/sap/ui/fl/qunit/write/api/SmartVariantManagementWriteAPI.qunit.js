@@ -7,7 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/apply/_internal/flexObjects/Variant",
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/thirdparty/sinon-4"
@@ -18,7 +18,7 @@ sap.ui.define([
 	InitialStorage,
 	WriteStorage,
 	Settings,
-	Variant,
+	CompVariant,
 	Change,
 	ManifestUtils,
 	sinon
@@ -46,7 +46,9 @@ sap.ui.define([
 		}, {
 			apiFunctionName: "addVariant",
 			compVariantStateFunctionName: "add",
-			expectedSpecificData: {isVariant: true }
+			expectedSpecificData: {
+				isVariant: true
+			}
 		}, {
 			apiFunctionName: "save",
 			compVariantStateFunctionName: "persist"
@@ -66,7 +68,8 @@ sap.ui.define([
 							return sPersistencyKey;
 						}
 					},
-					changeSpecificData: {}
+					changeSpecificData: {},
+					command: "myCommand"
 				};
 
 				var oMockResponse = testData.mockedResponse || {};

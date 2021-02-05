@@ -597,7 +597,7 @@ sap.ui.define([
 		}
 
 		var sFileName = oPropertyBag.content.fileName || Utils.createDefaultFileName();
-		var sNamespace = oPropertyBag.content.namespace || Utils.createNamespace(oPropertyBag.content, "variants");
+		var sNamespace = oPropertyBag.content.namespace || Utils.createNamespace(oPropertyBag.content, "ctrl_variant");
 		var oNewFile = {
 			content : {
 				fileName: sFileName,

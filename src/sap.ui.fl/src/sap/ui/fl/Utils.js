@@ -793,7 +793,11 @@ function(
 			return sFileName;
 		},
 
-		createNamespace: function(oPropertyBag, sSubfolder) {
+		createNamespace: function(oPropertyBag, sFileType) {
+			var sSubfolder = "changes";
+			if (sFileType === "ctrl_variant") {
+				sSubfolder = "variants";
+			}
 			var sReferenceName = oPropertyBag.reference.replace('.Component', '');
 			var sNamespace = 'apps/' + sReferenceName + "/" + sSubfolder + "/";
 			return sNamespace;

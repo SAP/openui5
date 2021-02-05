@@ -197,7 +197,7 @@ sap.ui.define([
 				selector: this.appComponent
 			})
 			.then(function (aFlexObjects) {
-				assert.equal(aFlexObjects.length, 3, "an array with one entry is returned");
+				assert.equal(aFlexObjects.length, 3, "an array with three entries is returned");
 			});
 		});
 
