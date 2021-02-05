@@ -116,7 +116,7 @@ sap.ui.define(["sap/base/Log", "sap/base/util/ObjectPath", "sap/ui/core/mvc/View
 				sFragmentId = oView._sExplicitId;
 				// determine actual containing view instance
 				var oController = oView.getController();
-				oView = oController && oController.isA("sap.ui.core.mvc.Controller") && oController.getView();
+				oView = oController && typeof oController.isA === "function" && oController.isA("sap.ui.core.mvc.Controller") && oController.getView();
 				if (oView) {
 					// local ID of the fragment (minus the view-id prefix)
 					// Might include ID prefixes for nested Fragments.
