@@ -155,7 +155,7 @@ sap.ui.define([
 				assert.equal(this._oBCContainer.getContent()[1].getText(), oTextResources.getText("MSG_NO_BUSINESS_CONTEXTS"), "and the second entry is the No-Context Message");
 				done();
 			});
-			this.oAddElementsDialog.addBusinessContext();
+			this.oAddElementsDialog.addExtensionData();
 			this.oAddElementsDialog.open();
 		});
 
@@ -173,11 +173,11 @@ sap.ui.define([
 				done();
 			});
 			var aBusinessContexts = [
-				{BusinessContextDescription: "Business Context 1"},
-				{BusinessContextDescription: "Business Context 2"},
-				{BusinessContextDescription: "Business Context 3"}
+				{description: "Business Context 1"},
+				{description: "Business Context 2"},
+				{description: "Business Context 3"}
 			];
-			this.oAddElementsDialog.addBusinessContext(aBusinessContexts);
+			this.oAddElementsDialog.addExtensionData(aBusinessContexts);
 			this.oAddElementsDialog.open();
 		});
 
@@ -199,11 +199,11 @@ sap.ui.define([
 
 			this.oAddElementsDialog.setCustomFieldEnabled(true);
 			var aBusinessContexts = [
-				{BusinessContextDescription: "Business Context 1"},
-				{BusinessContextDescription: "Business Context 2"},
-				{BusinessContextDescription: "Business Context 3"}
+				{description: "Business Context 1"},
+				{description: "Business Context 2"},
+				{description: "Business Context 3"}
 			];
-			this.oAddElementsDialog.addBusinessContext(aBusinessContexts);
+			this.oAddElementsDialog.addExtensionData(aBusinessContexts);
 			this.oAddElementsDialog._oDialog.attachEventOnce("afterClose", fnOnClose, this);
 
 			// Open the first time and close it
@@ -211,7 +211,7 @@ sap.ui.define([
 			this.oAddElementsDialog._submitDialog();
 
 			// Add Business Context again
-			this.oAddElementsDialog.addBusinessContext(aBusinessContexts);
+			this.oAddElementsDialog.addExtensionData(aBusinessContexts);
 			// Open the second time
 			this.oAddElementsDialog.open();
 		});
