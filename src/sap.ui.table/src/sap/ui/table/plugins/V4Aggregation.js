@@ -4,11 +4,13 @@
 sap.ui.define([
 	"./PluginBase",
 	"../utils/TableUtils",
-	"sap/ui/unified/MenuItem"
+	"sap/ui/unified/MenuItem",
+	"sap/base/util/deepClone"
 ], function(
 	PluginBase,
 	TableUtils,
-	MenuItem
+	MenuItem,
+	deepClone
 ) {
 	"use strict";
 
@@ -24,7 +26,7 @@ sap.ui.define([
 	/**
 	 * Constructs an instance of sap.ui.table.plugins.V4Aggregation
 	 *
-	 * @class TODO
+	 * @class TODO (don't forget to document fixed row count restrictions because fixed rows are set by this plugin)
 	 * @extends sap.ui.table.plugins.PluginBase
 	 * @author SAP SE
 	 * @version ${version}
@@ -38,40 +40,64 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.table",
 			properties: {
-
-			},
-			events: {}
+				// None, Top, FixedTop, Bottom, FixedBottom, TopAndBottom, FixedTopAndBottom, TopAndFixedBottom, FixedTopAndFixedBottom
+				//totalSummary: {type: "string", defaultValue: "FixedBottom"},
+				totalSummaryOnTop: {type: "string", defaultValue: "Off"}, // On, Off, Fixed
+				totalSummaryOnBottom: {type: "string", defaultValue: "Fixed"}, // On, Off, Fixed
+				groupSummary: {type: "string", defaultValue: "Bottom"} // None, Top, Bottom, TopAndBottom
+				//groupSummaryOnTop: {type: "string", defaultValue: "On"}, // On, Off
+				//groupSummaryOnBottom: {type: "string", defaultValue: "Off"}, // On, Off
+			}
 		}
 	});
 
-	V4Aggregation.prototype.init = function() {
-
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	V4Aggregation.prototype.isApplicable = function(oControl) {
+		return PluginBase.prototype.isApplicable.apply(this, arguments) && oControl.getMetadata().getName() === "sap.ui.table.Table";
 	};
 
-	V4Aggregation.prototype.isApplicable = function(oTable) {
-		return oTable.getMetadata().getName() === "sap.ui.table.Table";
-	};
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	V4Aggregation.prototype.activate = function() {
+		var oBinding = this.getTableBinding();
 
-	V4Aggregation.prototype.onActivate = function(oTable) {
-		// Only activate if OData V4
-		var oBinding = oTable.getBinding();
 		if (oBinding && !oBinding.getModel().isA("sap.ui.model.odata.v4.ODataModel")) {
 			return;
 		}
 
-		PluginBase.prototype.onActivate.apply(this, arguments);
-		TableUtils.Grouping.setGroupMode(oTable);
-		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
-		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Expand, this.expandRow, this);
-		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Collapse, this.collapseRow, this);
+		PluginBase.prototype.activate.apply(this, arguments);
 	};
 
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
+	V4Aggregation.prototype.onActivate = function(oTable) {
+		this.setRowCountConstraints({
+			fixedTop: false,
+			fixedBottom: false
+		});
+		TableUtils.Grouping.setGroupMode(oTable);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
+		TableUtils.Hook.register(oTable, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
+	};
+
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
 	V4Aggregation.prototype.onDeactivate = function(oTable) {
-		PluginBase.prototype.onDeactivate.apply(this, arguments);
+		this.setRowCountConstraints();
 		TableUtils.Grouping.clearMode(oTable);
 		TableUtils.Hook.deregister(oTable, TableUtils.Hook.Keys.Row.UpdateState, this.updateRowState, this);
-		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Expand, this.expandRow, this);
-		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Collapse, this.collapseRow, this);
+		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
+		TableUtils.Hook.deregister(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
 
 		var oBinding = oTable.getBinding();
 		if (oBinding) {
@@ -79,27 +105,42 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * @override
+	 * @inheritDoc
+	 */
 	V4Aggregation.prototype.onTableRowsBound = function(oBinding) {
-		// Activate if OData V4, otherwise deactivate
+		// TODO: Check whether the plugin is correctly (de)activated in all possible cases and write tests.
+		//  For example:
+		//   - if the plugin is not active because there is no ODataV4 model yet, it won't be activated if that model is added later
+		//   - on unbind
+		//  Consider calling binding-related hooks also on inactive plugins for this purpose (check usage in selection plugins).
 		if (oBinding.getModel().isA("sap.ui.model.odata.v4.ODataModel")) {
 			this.updateAggregation();
 		} else {
-			this.onDeactivate(this.getTable());
+			this.deactivate();
 		}
 	};
 
 	V4Aggregation.prototype.updateRowState = function(oState) {
 		var iLevel = oState.context.getValue("@$ui5.node.level");
+		var bContainsTotals = oState.context.getValue("@$ui5.node.isTotal");
+		var bIsLeaf = oState.context.getValue("@$ui5.node.isExpanded") === undefined;
+		var bIsGrandTotal = iLevel === 0 && bContainsTotals;
+		var bIsGroupHeader = iLevel > 0 && !bIsLeaf;
+		var bIsGroupTotal = !bIsGroupHeader && bContainsTotals;
 
-		if (typeof oState.context.getValue("@$ui5.node.isExpanded") === "boolean") {
-			oState.type = (iLevel === 0) ? oState.Type.Summary : oState.Type.GroupHeader;
+		if (bIsGrandTotal || bIsGroupTotal) {
+			oState.type = oState.Type.Summary;
+		} else if (bIsGroupHeader) {
+			oState.type = oState.Type.GroupHeader;
 		}
 
-		oState.expandable = oState.type === oState.Type.GroupHeader;
+		oState.expandable = bIsGroupHeader;
 		oState.expanded = oState.context.getValue("@$ui5.node.isExpanded") === true;
 		oState.level = iLevel;
 
-		if (oState.type === oState.Type.GroupHeader) {
+		if (bIsGroupHeader) {
 			oState.title = this._aGroupLevelFormatters[iLevel - 1](oState.context, this._aGroupLevels[iLevel - 1]);
 		}
 	};
@@ -117,10 +158,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPropertyName name of the propertyInfo to be found
 	 * @returns {object} the proprty info with the corresponding name, or null
-	 *
-	 * @private
 	 */
-
 	V4Aggregation.prototype.findPropertyInfo = function(sPropertyName) {
 		return this.getPropertyInfos().find(function(oPropertyInfo) {
 			return oPropertyInfo.name === sPropertyName;
@@ -206,55 +244,122 @@ sap.ui.define([
 					}
 				}.bind(this));
 			}
+
+			// Make sure that a property is not in both "group" and "aggregate".
+			Object.keys(this._mGroup).forEach(function(sKey) {
+				if (this._mAggregate.hasOwnProperty(sKey)) {
+					if (this._mAggregate[sKey].grandTotal || this._mAggregate[sKey].subtotals) {
+						delete this._mGroup[sKey];
+					} else {
+						delete this._mAggregate[sKey];
+					}
+				}
+			}.bind(this));
 		}
 
 		this.updateAggregation();
 	};
 
-	V4Aggregation.prototype.expandRow = function(oRow) {
-		if (TableUtils.isA(oRow, "sap.ui.table.Row")) {
-			var oRowBindingContext = oRow.getRowBindingContext();
+	function expandRow(oRow) {
+		var oBindingContext = oRow.getRowBindingContext();
 
-			if (oRowBindingContext) {
-				oRowBindingContext.expand();
-			}
+		if (oBindingContext) {
+			oBindingContext.expand();
 		}
+	}
+
+	function collapseRow(oRow) {
+		var oBindingContext = oRow.getRowBindingContext();
+
+		if (oBindingContext) {
+			oBindingContext.collapse();
+		}
+	}
+
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+	V4Aggregation.prototype.setTotalSummaryOnTop = function(sValue) {
+		this.setProperty("totalSummaryOnTop", sValue, true);
+		this.updateAggregation();
 	};
 
-	V4Aggregation.prototype.collapseRow = function(oRow) {
-		if (TableUtils.isA(oRow, "sap.ui.table.Row")) {
-			var oRowBindingContext = oRow.getRowBindingContext();
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+	V4Aggregation.prototype.setTotalSummaryOnBottom = function(sValue) {
+		this.setProperty("totalSummaryOnBottom", sValue, true);
+		this.updateAggregation();
+	};
 
-			if (oRowBindingContext) {
-				oRowBindingContext.collapse();
-			}
-		}
+	/*
+	 * @see JSDoc generated by SAPUI5 control API generator
+	 */
+	V4Aggregation.prototype.setGroupSummary = function(sValue) {
+		this.setProperty("groupSummary", sValue, true);
+		this.updateAggregation();
 	};
 
 	V4Aggregation.prototype.updateAggregation = function() {
 		var oBinding = this.getTableBinding();
-		if (this._mGroup && this._mAggregate) {
-			var self = this;
-			Object.keys(this._mGroup).forEach(function(item) {
-				if (self._mAggregate.hasOwnProperty(item)) {
-					if ((self._mAggregate[item].grandTotal || self._mAggregate[item].subtotals) == true) {
-						delete self._mGroup[item];
-					} else {
-						delete self._mAggregate[item];
-					}
-				}
+
+		if (!oBinding) {
+			return;
+		}
+
+		var mAggregation = {
+			aggregate: deepClone(this._mAggregate),
+			group: deepClone(this._mGroup),
+			groupLevels: this._aGroupLevels ? this._aGroupLevels.slice() : undefined
+		};
+		handleGrandTotals(this, mAggregation);
+		handleGroupTotals(this, mAggregation);
+
+		oBinding.setAggregation(mAggregation);
+	};
+
+	function handleGrandTotals(oPlugin, mAggregation) {
+		var sTotalSummaryOnTop = oPlugin.getTotalSummaryOnTop();
+		var sTotalSummaryOnBottom = oPlugin.getTotalSummaryOnBottom();
+		var bShowTotalSummaryOnTop = sTotalSummaryOnTop === "On" || sTotalSummaryOnTop === "Fixed";
+		var bShowTotalSummaryOnBottom = sTotalSummaryOnBottom === "On" || sTotalSummaryOnBottom === "Fixed";
+		var bHasGrandTotals = Object.keys(mAggregation.aggregate).some(function(sKey) {
+			return mAggregation.aggregate[sKey].grandTotal;
+		});
+
+		if (bShowTotalSummaryOnTop && bShowTotalSummaryOnBottom) {
+			mAggregation.grandTotalAtBottomOnly = false;
+		} else if (bShowTotalSummaryOnBottom) {
+			mAggregation.grandTotalAtBottomOnly = true;
+		} else if (bShowTotalSummaryOnTop) {
+			mAggregation.grandTotalAtBottomOnly = undefined;
+		} else {
+			Object.keys(mAggregation.aggregate).forEach(function(sKey) {
+				delete mAggregation.aggregate[sKey].grandTotal;
 			});
 		}
-		var mAggregation = {
-			aggregate: this._mAggregate,
-			group: this._mGroup,
-			groupLevels: this._aGroupLevels
-		};
 
-		if (oBinding) {
-			oBinding.setAggregation(mAggregation);
+		oPlugin.setRowCountConstraints({
+			fixedTop: sTotalSummaryOnTop === "Fixed" && bHasGrandTotals,
+			fixedBottom: sTotalSummaryOnBottom === "Fixed" && bHasGrandTotals
+		});
+	}
+
+	function handleGroupTotals(oPlugin, mAggregation) {
+		var sGroupSummary = oPlugin.getGroupSummary();
+
+		if (sGroupSummary === "Top") {
+			mAggregation.subtotalsAtBottomOnly = undefined;
+		} else if (sGroupSummary === "Bottom") {
+			mAggregation.subtotalsAtBottomOnly = true;
+		} else if (sGroupSummary === "TopAndBottom") {
+			mAggregation.subtotalsAtBottomOnly = false;
+		} else {
+			Object.keys(mAggregation.aggregate).forEach(function(sKey) {
+				delete mAggregation.aggregate[sKey].subtotals;
+			});
 		}
-	};
+	}
 
 	return V4Aggregation;
 });

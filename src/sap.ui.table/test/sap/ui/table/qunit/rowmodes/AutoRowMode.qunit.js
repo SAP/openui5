@@ -7,12 +7,15 @@ sap.ui.define([
 	"sap/ui/table/Column",
 	"sap/ui/table/RowAction",
 	"sap/ui/table/CreationRow",
+	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/Device"
-], function(TableQUnitUtils, AutoRowMode, Table, Column, RowAction, CreationRow, TableUtils, library, JSONModel, JSONListBinding, Device) {
+], function(
+	TableQUnitUtils, AutoRowMode, Table, Column, RowAction, CreationRow, PluginBase, TableUtils, library, JSONModel, JSONListBinding, Device
+) {
 	"use strict";
 
 	var VisibleRowCountMode = library.VisibleRowCountMode;
@@ -51,7 +54,6 @@ sap.ui.define([
 		var oTable = this.oTable;
 		var oMode = this.oMode;
 
-		assert.strictEqual(oMode.getRowCount(), 5, "The row count is taken from the table");
 		assert.strictEqual(oMode.getFixedTopRowCount(), 1, "The fixed row count is taken from the table");
 		assert.strictEqual(oMode.getFixedBottomRowCount(), 2, "The fixed bottom row count is taken from the table");
 		assert.strictEqual(oMode.getMinRowCount(), 8, "The minimum row count is taken from the table");
@@ -62,7 +64,6 @@ sap.ui.define([
 		oMode.setMinRowCount(10);
 		oMode.setRowContentHeight(10);
 
-		assert.strictEqual(oMode.getRowCount(), 5, "The row count is taken from the table");
 		assert.strictEqual(oMode.getFixedTopRowCount(), 1, "The fixed row count is taken from the table");
 		assert.strictEqual(oMode.getFixedBottomRowCount(), 2, "The fixed bottom row count is taken from the table");
 		assert.strictEqual(oMode.getMinRowCount(), 8, "The minimum row count is taken from the table");
@@ -74,7 +75,6 @@ sap.ui.define([
 		oTable.setMinAutoRowCount(13);
 		oTable.setRowHeight(14);
 
-		assert.strictEqual(oMode.getRowCount(), 10, "The row count is taken from the table");
 		assert.strictEqual(oMode.getFixedTopRowCount(), 2, "The fixed row count is taken from the table");
 		assert.strictEqual(oMode.getFixedBottomRowCount(), 3, "The fixed bottom row count is taken from the table");
 		assert.strictEqual(oMode.getMinRowCount(), 13, "The minimum row count is taken from the table");
@@ -484,6 +484,70 @@ sap.ui.define([
 			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
 				"The call to Binding#getContexts considers the row count");
 			oGetContextsSpy.reset();
+		});
+	});
+
+	QUnit.module("Row count constraints", {
+		before: function() {
+			this.TestPlugin = PluginBase.extend("sap.ui.table.plugins.test.Plugin");
+		},
+		beforeEach: function() {
+			this.oPlugin = new this.TestPlugin();
+			this.oRowMode = new AutoRowMode({
+				minRowCount: 10,
+				maxRowCount: 10
+			});
+			this.oTable = TableQUnitUtils.createTable({
+				dependents: [this.oPlugin],
+				rowMode: this.oRowMode,
+				rows: {path: "/"},
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(100),
+				columns: [TableQUnitUtils.createTextColumn()]
+			});
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		}
+	});
+
+	QUnit.test("Force fixed rows", function(assert) {
+		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			TableQUnitUtils.assertRenderedRows(assert, this.oTable, 1, 8, 1);
+		}.bind(this));
+	});
+
+	QUnit.test("Force fixed rows if row count too low", function(assert) {
+		this.oRowMode.setMaxRowCount(1);
+		this.oPlugin.setRowCountConstraints({fixedTop: true, fixedBottom: true});
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			TableQUnitUtils.assertRenderedRows(assert, this.oTable, 0, 1, 0);
+		}.bind(this));
+	});
+
+	QUnit.test("Disable fixed rows", function(assert) {
+		this.oRowMode.setFixedTopRowCount(2);
+		this.oRowMode.setFixedBottomRowCount(2);
+		this.oPlugin.setRowCountConstraints({fixedTop: false, fixedBottom: false});
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			TableQUnitUtils.assertRenderedRows(assert, this.oTable, 0, 10, 0);
+		}.bind(this));
+	});
+
+	QUnit.test("Change constraints", function(assert) {
+		var that = this;
+
+		this.oRowMode.setFixedTopRowCount(2);
+		this.oRowMode.setFixedBottomRowCount(2);
+		this.oPlugin.setRowCountConstraints({fixedTop: false, fixedBottom: false});
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			that.oPlugin.setRowCountConstraints({fixedTop: false});
+		}).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			TableQUnitUtils.assertRenderedRows(assert, that.oTable, 0, 8, 2);
 		});
 	});
 });

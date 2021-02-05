@@ -209,13 +209,6 @@ html[dir=rtl] {
 	.sapUiTableGroupHeaderFading(@sapUiListHoverBackground);
 }
 
-// Shift last cell content to left, on the right edge the AnalyticalTable's touch group menu button is placed.
-html.sap-tablet:not(.sap-desktop), html.sap-phone {
-	.sapUiTableGroupMode:not(.sapUiTableRAct):not(.sapUiTableRActS) .sapUiTableCtrlScroll .sapUiTableGroupHeaderRow .sapUiTableCellLast {
-		padding-right: 3rem; // The group menu button has a width of 2.5rem. Let the padding be slightly bigger.
-	}
-}
-
 .sapUiTableGroupMode .sapUiTableRowFirstFixedBottom > .sapUiTableRowSelectionCell::before {
 	border-top-color: @sapUiListTableFixedBorder;
 }
@@ -249,8 +242,4 @@ html.sap-tablet:not(.sap-desktop), html.sap-phone {
 .sapUiTableGroupHeaderRow.sapUiTableRowLastScrollable > .sapUiTableRowSelectionCell,
 .sapUiTableGroupMode .sapUiTableTr.sapUiTableGroupHeaderRow.sapUiTableRowLastScrollable > .sapUiTableCellDummy {
 	border-bottom-color: @sapUiListTableFixedBorder;
-}
-
-.sapUiTableGroupMenuButton {
-	display: none;
 }

@@ -12,6 +12,7 @@ sap.ui.define([
 
 	var Hook = TableUtils.Hook.Keys;
 	var oHookInstallation = {};
+	var _private = TableUtils.createWeakMapFacade();
 
 	/**
 	 * Constructor for a new table plugin.
@@ -41,19 +42,21 @@ sap.ui.define([
 	});
 
 	/**
+	 * @override
 	 * @inheritDoc
 	 */
 	PluginBase.prototype.init = function() {
 		Element.prototype.init.apply(this, arguments);
-		this._bIsActive = false;
+		_private(this).bIsActive = false;
 	};
 
 	/**
+	 * @override
 	 * @inheritDoc
 	 */
 	PluginBase.prototype.exit = function() {
 		Element.prototype.exit.apply(this, arguments);
-		this._deactivate(this.getTable());
+		this.deactivate();
 	};
 
 	/**
@@ -61,28 +64,18 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.table.Table} oTable The table this plugin is applied to
 	 * @protected
+	 * @virtual
 	 */
-	PluginBase.prototype.onActivate = function(oTable) {
-		TableUtils.Hook.install(oTable, oHookInstallation, this);
-
-		var oTableBinding = oTable.getBinding();
-		if (oTableBinding) {
-			this.onTableRowsBound(oTableBinding);
-		}
-
-		this._bIsActive = true;
-	};
+	PluginBase.prototype.onActivate = function(oTable) {};
 
 	/**
 	 * Called when the plugin is deactivated.
 	 *
 	 * @param {sap.ui.table.Table} oTable The table this plugin is or was applied to
 	 * @protected
+	 * @virtual
 	 */
-	PluginBase.prototype.onDeactivate = function(oTable) {
-		TableUtils.Hook.uninstall(oTable, oHookInstallation, this);
-		this._bIsActive = false;
-	};
+	PluginBase.prototype.onDeactivate = function(oTable) {};
 
 	/**
 	 * Gets the active state of the plugin.
@@ -91,35 +84,34 @@ sap.ui.define([
 	 * @public
 	 */
 	PluginBase.prototype.isActive = function() {
-		return this._bIsActive;
+		return _private(this).bIsActive;
 	};
 
 	/**
-	 * Determines whether the plugin is applicable to the table.
+	 * Determines whether the plugin is applicable to the control.
 	 *
-	 * @param {sap.ui.table.Table} oTable The table the plugin should be applied to
+	 * @param {sap.ui.core.Control} oControl The control the plugin should be applied to
 	 * @returns {Boolean} Whether it is applicable
 	 * @protected
+	 * @virtual
 	 */
-	PluginBase.prototype.isApplicable = function(oTable) {
-		return TableUtils.isA(oTable, "sap.ui.table.Table");
+	PluginBase.prototype.isApplicable = function(oControl) {
+		return TableUtils.isA(oControl, "sap.ui.table.Table");
 	};
 
 	/**
+	 * @override
 	 * @inheritDoc
 	 */
 	PluginBase.prototype.setParent = function(oParent) {
-		var oOldTable = this.getTable();
+		this.deactivate();
 		Element.prototype.setParent.apply(this, arguments);
-		var oNewTable = this.getTable();
 
-		if (oNewTable) {
-			if (!this.isApplicable(oNewTable)) {
-				throw new Error(this + " is not applicable to " + oNewTable);
+		if (oParent) {
+			if (!this.isApplicable(this.getTable())) {
+				throw new Error(this + " is not applicable to " + oParent);
 			}
-			this._activate(oNewTable);
-		} else if (oOldTable) {
-			this._deactivate(oOldTable);
+			this.activate();
 		}
 
 		return this;
@@ -131,6 +123,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Binding} oBinding The binding of the <code>rows</code> aggregation of the table
 	 * @protected
+	 * @virtual
 	 */
 	PluginBase.prototype.onTableRowsBound = function(oBinding) {};
 	oHookInstallation[Hook.Table.RowsBound] = function(oBinding) {
@@ -141,6 +134,7 @@ sap.ui.define([
 	 * Called when the binding of the <code>rows</code> aggregation of the table is removed.
 	 *
 	 * @protected
+	 * @virtual
 	 */
 	PluginBase.prototype.onTableUnbindRows = function() {};
 	oHookInstallation[Hook.Table.UnbindRows] = function() {
@@ -167,32 +161,76 @@ sap.ui.define([
 	PluginBase.prototype.getTableBinding = function() {
 		var oTable = this.getTable();
 		var oBinding = oTable ? oTable.getBinding() : null;
-
 		return oBinding ? oBinding : null;
+	};
+
+	/**
+	 * Sets soft constraints for the row counts of the table this plugin is currently applied to.
+	 * They may be fully or partially ignored by the table or the row mode. For example, constraints for fixed rows may be ignored if the row mode
+	 * does not support setting fixed rows.
+	 * There can be conflicts if multiple plugins try to constrain the row counts. Only the constraints of the last call of this method are
+	 * considered.
+	 *
+	 * @param {object} mConstraints
+	 *     Row count constraints
+	 * @param {boolean} [mConstraints.fixedTop]
+	 *     The value <code>true</code> means that there is exactly one fixed top row and <code>false</code> means that fixed top rows are disabled.
+	 *     By default, there is no constraint for the fixed top rows. This constraint might be ignored if the table or its row mode do not
+	 *     support fixed top rows.
+	 * @param {boolean} [mConstraints.fixedBottom]
+	 *     The value <code>true</code> means that there is exactly one fixed bottom row and <code>false</code> means that fixed bottom rows are
+	 *     disabled. By default, there is no constraint for the fixed bottom rows. This constraint might be ignored if the table or its row mode
+	 *     do not support fixed bottom rows.
+	 * @protected
+	 */
+	PluginBase.prototype.setRowCountConstraints = function(mConstraints) {
+		// TODO: Add a type definition for a protected type "rowCountConstraints" in the library file to document the parameter
+		//  RowMode#getRowCountConstraints + PluginBase#setRowCountConstraints
+		var oTable = this.getTable();
+
+		if (oTable) {
+			oTable._setRowCountConstraints(mConstraints);
+		}
 	};
 
 	/**
 	 * Activates the plugin if it is not active.
 	 *
-	 * @param {sap.ui.table.Table} oTable The table this plugin is applied to
-	 * @private
+	 * @protected
 	 */
-	PluginBase.prototype._activate = function(oTable) {
-		if (!this.isActive()) {
-			this.onActivate(oTable);
+	PluginBase.prototype.activate = function() {
+		var oTable = this.getTable();
+
+		if (!oTable || this.isActive()) {
+			return;
 		}
+
+		TableUtils.Hook.install(oTable, oHookInstallation, this);
+		this.onActivate(oTable);
+
+		var oTableBinding = this.getTableBinding();
+		if (oTableBinding) {
+			this.onTableRowsBound(oTableBinding);
+		}
+
+		_private(this).bIsActive = true;
 	};
 
 	/**
 	 * Deactivates the plugin if it is active.
 	 *
-	 * @param {sap.ui.table.Table} oTable The table this plugin is applied to
-	 * @private
+	 * @protected
 	 */
-	PluginBase.prototype._deactivate = function(oTable) {
-		if (this.isActive()) {
-			this.onDeactivate(oTable);
+	PluginBase.prototype.deactivate = function() {
+		var oTable = this.getTable();
+
+		if (!this.isActive()) {
+			return;
 		}
+
+		TableUtils.Hook.uninstall(oTable, oHookInstallation, this);
+		this.onDeactivate(oTable);
+		_private(this).bIsActive = false;
 	};
 
 	return PluginBase;

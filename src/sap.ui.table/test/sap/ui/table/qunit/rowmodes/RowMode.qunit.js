@@ -1,4 +1,4 @@
-/*global QUnit, sinon */
+/*global QUnit */
 
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils",
@@ -66,24 +66,43 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("sanitizeRowCounts", function(assert) {
+	QUnit.test("computeStandardizedRowCounts", function(assert) {
 		var aTestParameters = [
 			{input: [-1, -1, -1], output: {count: 0, scrollable: 0, fixedTop: 0, fixedBottom: 0}},
 			{input: [-1, 10, 10], output: {count: 0, scrollable: 0, fixedTop: 0, fixedBottom: 0}},
+			{input: [5, 10, 10], output: {count: 5, scrollable: 1, fixedTop: 3, fixedBottom: 1}},
+			{input: [3, 10, 10], output: {count: 3, scrollable: 1, fixedTop: 1, fixedBottom: 1}},
+			{input: [2, 10, 10], output: {count: 2, scrollable: 1, fixedTop: 1, fixedBottom: 0}},
 			{input: [1, 10, 10], output: {count: 1, scrollable: 1, fixedTop: 0, fixedBottom: 0}},
-			{input: [5, 10, 10], output: {count: 5, scrollable: 1, fixedTop: 4, fixedBottom: 0}},
 			{input: [5, 0, 10], output: {count: 5, scrollable: 1, fixedTop: 0, fixedBottom: 4}},
 			{input: [5, 10, 0], output: {count: 5, scrollable: 1, fixedTop: 4, fixedBottom: 0}},
 			{input: [5, -1, -1], output: {count: 5, scrollable: 5, fixedTop: 0, fixedBottom: 0}},
 			{input: [5, 2, 0], output: {count: 5, scrollable: 3, fixedTop: 2, fixedBottom: 0}},
 			{input: [5, 0, 2], output: {count: 5, scrollable: 3, fixedTop: 0, fixedBottom: 2}},
 			{input: [5, 2, 2], output: {count: 5, scrollable: 1, fixedTop: 2, fixedBottom: 2}},
-			{input: [10, 2, 2], output: {count: 10, scrollable: 6, fixedTop: 2, fixedBottom: 2}}
+			{input: [10, 2, 2], output: {count: 10, scrollable: 6, fixedTop: 2, fixedBottom: 2}},
+			{input: [10, 2, 2], output: {count: 10, scrollable: 8, fixedTop: 1, fixedBottom: 1}, constraints: {fixedTop: true, fixedBottom: true}},
+			{input: [10, 2, 2], output: {count: 10, scrollable: 9, fixedTop: 1, fixedBottom: 0}, constraints: {fixedTop: true, fixedBottom: false}},
+			{input: [10, 2, 2], output: {count: 10, scrollable: 9, fixedTop: 0, fixedBottom: 1}, constraints: {fixedTop: false, fixedBottom: true}},
+			{input: [10, 2, 2], output: {count: 10, scrollable: 10, fixedTop: 0, fixedBottom: 0}, constraints: {fixedTop: false, fixedBottom: false}},
+			{input: [10, 2, 2], output: {count: 10, scrollable: 7, fixedTop: 1, fixedBottom: 2}, constraints: {fixedTop: true}},
+			{input: [10, 2, 2], output: {count: 10, scrollable: 8, fixedTop: 0, fixedBottom: 2}, constraints: {fixedTop: false}},
+			{input: [10, 2, 2], output: {count: 10, scrollable: 7, fixedTop: 2, fixedBottom: 1}, constraints: {fixedBottom: true}},
+			{input: [10, 2, 2], output: {count: 10, scrollable: 8, fixedTop: 2, fixedBottom: 0}, constraints: {fixedBottom: false}},
+			{input: [5, 10, 10], output: {count: 5, scrollable: 3, fixedTop: 1, fixedBottom: 1}, constraints: {fixedTop: true, fixedBottom: true}},
+			{input: [5, 10, 10], output: {count: 5, scrollable: 5, fixedTop: 0, fixedBottom: 0}, constraints: {fixedTop: false, fixedBottom: false}},
+			{input: [5, 0, 10], output: {count: 5, scrollable: 4, fixedTop: 1, fixedBottom: 0}, constraints: {fixedTop: true, fixedBottom: false}},
+			{input: [5, 10, 0], output: {count: 5, scrollable: 4, fixedTop: 0, fixedBottom: 1}, constraints: {fixedTop: false, fixedBottom: true}},
+			{input: [1, 0, 0], output: {count: 1, scrollable: 1, fixedTop: 0, fixedBottom: 0}, constraints: {fixedTop: true, fixedBottom: true}},
+			{input: [2, 0, 0], output: {count: 2, scrollable: 1, fixedTop: 1, fixedBottom: 0}, constraints: {fixedTop: true, fixedBottom: true}},
+			{input: [3, 0, 0], output: {count: 3, scrollable: 1, fixedTop: 1, fixedBottom: 1}, constraints: {fixedTop: true, fixedBottom: true}}
 		];
+		var oGetRowCountConstraints = this.stub(this.oRowMode, "getRowCountConstraints");
 
 		for (var i = 0; i < aTestParameters.length; i++) {
 			var mTestParameter = aTestParameters[i];
-			assert.deepEqual(this.oRowMode.sanitizeRowCounts.apply(this.oRowMode, mTestParameter.input), mTestParameter.output,
+			oGetRowCountConstraints.returns(mTestParameter.constraints || {});
+			assert.deepEqual(this.oRowMode.computeStandardizedRowCounts.apply(this.oRowMode, mTestParameter.input), mTestParameter.output,
 				"(count: " + mTestParameter.input[0]
 				+ ", fixedTop: " + mTestParameter.input[1]
 				+ ", fixedBottom: " + mTestParameter.input[2] + ")"
@@ -94,7 +113,7 @@ sap.ui.define([
 	QUnit.test("getBaseRowHeightOfTable", function(assert) {
 		assert.strictEqual(this.oRowMode.getBaseRowHeightOfTable(), 0, "Returns 0 if not child of a table");
 
-		sinon.stub(this.oTable, "_getBaseRowHeight").returns(11);
+		this.stub(this.oTable, "_getBaseRowHeight").returns(11);
 		this.oTable.setRowMode(this.oRowMode);
 		assert.strictEqual(this.oRowMode.getBaseRowHeightOfTable(), 11, "Returns the default row height of the table");
 	});
@@ -102,7 +121,7 @@ sap.ui.define([
 	QUnit.test("getTotalRowCountOfTable", function(assert) {
 		assert.strictEqual(this.oRowMode.getTotalRowCountOfTable(), 0, "Returns 0 if not child of a table");
 
-		sinon.stub(this.oTable, "_getTotalRowCount").returns(11);
+		this.stub(this.oTable, "_getTotalRowCount").returns(11);
 		this.oTable.setRowMode(this.oRowMode);
 		assert.strictEqual(this.oRowMode.getTotalRowCountOfTable(), 11, "Returns the total row count of the table");
 	});
@@ -121,6 +140,14 @@ sap.ui.define([
 		afterEach: function() {
 			this.oTable.destroy();
 		}
+	});
+
+	QUnit.test("isNoDataDisabled", function(assert) {
+		assert.notOk(this.oTable.getRowMode().isNoDataDisabled(), "Initially");
+		this.oTable.getRowMode().disableNoData();
+		assert.ok(this.oTable.getRowMode().isNoDataDisabled(), "Disabled");
+		this.oTable.getRowMode().enableNoData();
+		assert.notOk(this.oTable.getRowMode().isNoDataDisabled(), "Enabled");
 	});
 
 	QUnit.test("After rendering, when NoData would be shown but is disabled", function(assert) {
@@ -143,14 +170,14 @@ sap.ui.define([
 		this.oTable.unbindRows();
 		sap.ui.getCore().applyChanges();
 
-		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		var oInvalidateSpy = this.spy(this.oTable, "invalidate");
 		this.oTable.getRowMode().enableNoData();
 		assert.ok(oInvalidateSpy.notCalled, "Table not invalidated");
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, false);
 	});
 
 	QUnit.test("Disable/Enable with data", function(assert) {
-		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		var oInvalidateSpy = this.spy(this.oTable, "invalidate");
 
 		this.oTable.getRowMode().disableNoData();
 		assert.ok(oInvalidateSpy.notCalled, "Disable: Table not invalidated");
@@ -163,7 +190,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Disable/Enable without data", function(assert) {
-		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		var oInvalidateSpy = this.spy(this.oTable, "invalidate");
 
 		this.oTable.unbindRows();
 
@@ -201,7 +228,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true);
 
-		var oInvalidateSpy = sinon.spy(this.oTable, "invalidate");
+		var oInvalidateSpy = this.spy(this.oTable, "invalidate");
 		this.oTable.getRowMode().disableNoData();
 		assert.ok(oInvalidateSpy.notCalled, "Disable: Table not invalidated");
 		TableQUnitUtils.assertNoDataVisible(assert, this.oTable, true, "Disable");
