@@ -13,7 +13,7 @@ sap.ui.define([
 		var oLinkItem = new LinkItem({
 			key: "L1_1",
 			text: "Manage author",
-			href: self.location.pathname + "#/Authors/{author/ID}"
+			href: self.location.pathname + (self.location.search && self.location.search) +  "#/Authors/{author/ID}"
 		});
 		var oLinkType = {
 			type: 1,
