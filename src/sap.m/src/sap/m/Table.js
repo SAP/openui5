@@ -394,6 +394,23 @@ sap.ui.define([
 			this._forceStyleChange();
 		}
 		this._renderOverlay();
+
+		if (this._bFirePopinChanged) {
+			this._firePopinChangedEvent();
+			this._bFirePopinChanged = false;
+		}
+
+		var aHiddenInPopin = this._getHiddenInPopin();
+		if ((this._iVisibleItemsLength && this._aHiddenInPopin)) {
+			if (aHiddenInPopin.length !== this._aHiddenInPopin.length || !aHiddenInPopin.every(function(oPopinCol) {
+				return this._aHiddenInPopin.indexOf(oPopinCol) > -1;
+			}, this)) {
+				this._aHiddenInPopin = aHiddenInPopin;
+				this._firePopinChangedEvent();
+			}
+		} else {
+			this._aHiddenInPopin = aHiddenInPopin;
+		}
 	};
 
 	Table.prototype._renderOverlay = function() {
@@ -635,16 +652,16 @@ sap.ui.define([
 		if (!this._mutex) {
 			var clean = this._getMediaContainerWidth() || window.innerWidth;
 			this._mutex = true;
+			this._bFirePopinChanged = true;
 			this.rerender();
-			this._firePopinChangedEvent();
 
 			// do not re-render if resize event comes so frequently
 			setTimeout(function() {
 				// but check if any event come during the wait-time
 				if (this._dirty != clean) {
 					this._dirty = 0;
+					this._bFirePopinChanged = true;
 					this.rerender();
-					this._firePopinChangedEvent();
 				}
 				this._mutex = false;
 			}.bind(this), 200);
@@ -1159,7 +1176,6 @@ sap.ui.define([
 			return oVisibleColumn._media && !oVisibleColumn._media.matches && !oVisibleColumn.isPopin();
 		});
 
-		this._iHiddenPopinColumns = aHiddenPopinColumns.length;
 		return aHiddenPopinColumns;
 	};
 
