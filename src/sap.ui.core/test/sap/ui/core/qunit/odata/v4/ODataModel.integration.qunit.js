@@ -4528,6 +4528,90 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: Refresh an ODataContextBinding and wait for the result.
+	// BCP: 2180064076
+	QUnit.test("ODCB: requestRefresh", function (assert) {
+		var oBinding,
+			oContext,
+			sView = '\
+<FlexBox id="form" binding="{/EMPLOYEES(\'1\')}">\
+	<Text id="name" text="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES('1')", {ID : "1", Name : "Jonathan Smith"})
+			.expectChange("name", "Jonathan Smith");
+
+		return this.createView(assert, sView).then(function () {
+			oBinding = that.oView.byId("form").getObjectBinding();
+			oContext = oBinding.getBoundContext();
+
+			that.expectRequest("EMPLOYEES('1')", {ID : "1", Name : "Jonathan Smith *"})
+				.expectChange("name", "Jonathan Smith *");
+
+			return Promise.all([
+				oBinding.requestRefresh().then(function () {
+					assert.strictEqual(oContext.getProperty("Name"), "Jonathan Smith *");
+				}),
+				that.waitForChanges(assert, "requestRefresh on binding")
+			]);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES('1')", {ID : "1", Name : "Jonathan Smith **"})
+				.expectChange("name", "Jonathan Smith **");
+
+			return Promise.all([
+				oContext.requestRefresh().then(function () {
+					assert.strictEqual(oContext.getProperty("Name"), "Jonathan Smith **");
+				}),
+				that.waitForChanges(assert, "requestRefresh on context")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Refresh an ODataListBinding and wait for the result.
+	// BCP: 2180064076
+	QUnit.test("ODLB: requestRefresh", function (assert) {
+		var oBinding,
+			oContext,
+			sView = '\
+<Table id="table" items="{/EMPLOYEES}">\
+	<Text id="name" text="{Name}"/>\
+</Table>',
+			that = this;
+
+		this.expectRequest("EMPLOYEES?$skip=0&$top=100",
+				{value : [{ID : "1", Name : "Jonathan Smith"}]})
+			.expectChange("name", ["Jonathan Smith"]);
+
+		return this.createView(assert, sView).then(function () {
+			oBinding = that.oView.byId("table").getBinding("items");
+			oContext = oBinding.getCurrentContexts()[0];
+
+			that.expectRequest("EMPLOYEES?$skip=0&$top=100",
+					{value : [{ID : "1", Name : "Jonathan Smith *"}]})
+				.expectChange("name", ["Jonathan Smith *"]);
+
+			return Promise.all([
+				oBinding.requestRefresh().then(function () {
+					assert.strictEqual(oContext.getProperty("Name"), "Jonathan Smith *");
+				}),
+				that.waitForChanges(assert, "requestRefresh on binding")
+			]);
+		}).then(function () {
+			that.expectRequest("EMPLOYEES('1')", {ID : "1", Name : "Jonathan Smith **"})
+				.expectChange("name", ["Jonathan Smith **"]);
+
+			return Promise.all([
+				oContext.requestRefresh().then(function () {
+					assert.strictEqual(oContext.getProperty("Name"), "Jonathan Smith **");
+				}),
+				that.waitForChanges(assert, "requestRefresh on context")
+			]);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Action Imports
 	// See ListBinding application:
 	// * Start the application

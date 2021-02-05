@@ -874,6 +874,8 @@ sap.ui.define([
 	 * {@link sap.ui.model.odata.v4.ODataModel#resetChanges} to reset the changes before calling
 	 * {@link #refresh}.
 	 *
+	 * Use {@link #requestRefresh} if you want to wait for the refresh.
+	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for refresh; if not specified, the binding's group ID is used, see
 	 *   {@link #getGroupId}. For suspended bindings, only the binding's group ID is supported
@@ -889,23 +891,12 @@ sap.ui.define([
 	 * @public
 	 * @see sap.ui.model.Binding#refresh
 	 * @see #getRootBinding
-	 * @see #hasPendingChanges
-	 * @see #resetChanges
 	 * @see #suspend
 	 * @since 1.37.0
 	 */
 	// @override sap.ui.model.Binding#refresh
 	ODataBinding.prototype.refresh = function (sGroupId) {
-		if (!this.isRoot()) {
-			throw new Error("Refresh on this binding is not supported");
-		}
-		if (this.hasPendingChanges()) {
-			throw new Error("Cannot refresh due to pending changes");
-		}
-		this.oModel.checkGroupId(sGroupId);
-
-		// The actual refresh is specific to the binding and is implemented in each binding class.
-		this.refreshInternal("", sGroupId, true).catch(function () {
+		this.requestRefresh(sGroupId).catch(function () {
 			// Nothing to do here, the error is already logged. The catch however is necessary,
 			// because we drop the promise here, so there is no other code to catch it.
 		});
@@ -969,6 +960,36 @@ sap.ui.define([
 				}
 			});
 		}
+	};
+
+	/**
+	 * Refreshes the binding and returns a promise to wait for it. See {@link #refresh} for details.
+	 * Use {@link #refresh} if you do not need the promise.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used
+	 * @returns {Promise}
+	 *   A promise which resolves without a defined result when the refresh is finished and rejects
+	 *   with an instance of <code>Error</code> if the refresh failed
+	 * @throws {Error}
+	 *   See {@link #refresh} for details
+	 *
+	 * @public
+	 * @since 1.87.0
+	 */
+	ODataBinding.prototype.requestRefresh = function (sGroupId) {
+		if (!this.isRoot()) {
+			throw new Error("Refresh on this binding is not supported");
+		}
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot refresh due to pending changes");
+		}
+		this.oModel.checkGroupId(sGroupId);
+
+		// The actual refresh is specific to the binding and is implemented in each binding class.
+		return Promise.resolve(this.refreshInternal("", sGroupId, true)).then(function () {
+			// return undefined
+		});
 	};
 
 	/**

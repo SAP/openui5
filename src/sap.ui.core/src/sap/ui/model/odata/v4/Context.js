@@ -843,12 +843,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Refreshes the single entity represented by this context.
+	 * Refreshes the single entity represented by this context. Use {@link #requestRefresh} if you
+	 * want to wait for the refresh.
 	 *
 	 * @param {string} [sGroupId]
 	 *   The group ID to be used for the refresh; if not specified, the group ID for the context's
 	 *   binding is used, see {@link #getGroupId}.
-	 * @param {boolean} [bAllowRemoval=false]
+	 * @param {boolean} [bAllowRemoval]
 	 *   If the context belongs to a list binding, the parameter allows the list binding to remove
 	 *   the context from the list binding's collection because the entity does not match the
 	 *   binding's filter anymore, see {@link sap.ui.model.odata.v4.ODataListBinding#filter};
@@ -869,25 +870,10 @@ sap.ui.define([
 	 * @since 1.53.0
 	 */
 	Context.prototype.refresh = function (sGroupId, bAllowRemoval) {
-		this.oModel.checkGroupId(sGroupId);
-		this.oBinding.checkSuspended();
-		if (this.hasPendingChanges()) {
-			throw new Error("Cannot refresh entity due to pending changes: " + this);
-		}
-
-		if (this.oBinding.refreshSingle) {
-			this.oBinding.refreshSingle(this, this.oBinding.lockGroup(sGroupId, true),
-				bAllowRemoval);
-		} else {
-			if (arguments.length > 1) {
-				throw new Error("Unsupported parameter bAllowRemoval: " + bAllowRemoval);
-			}
-
-			if (!this.oBinding.refreshReturnValueContext(this, sGroupId)) {
-				this.oBinding.refresh(sGroupId);
-			}
-		}
-		this.oModel.withUnresolvedBindings("removeCachesAndMessages", this.sPath.slice(1));
+		this.requestRefresh.apply(this, arguments).catch(function () {
+			// Nothing to do here, the error is already logged. The catch however is necessary,
+			// because we drop the promise here, so there is no other code to catch it.
+		});
 	};
 
 	/**
@@ -981,6 +967,50 @@ sap.ui.define([
 				});
 		})).then(function (aValues) {
 			return Array.isArray(vPath) ? aValues : aValues[0];
+		});
+	};
+
+	/**
+	 * Refreshes the single entity represented by this context and returns a promise to wait for it.
+	 * See {@link #refresh} for details. Use {@link #refresh} if you do not need the promise.
+	 *
+	 * @param {string} [sGroupId]
+	 *   The group ID to be used
+	 * @param {boolean} [bAllowRemoval]
+	 *   Allows to remove the context
+	 * @returns {Promise}
+	 *   A promise which resolves without a defined result when the refresh is finished and rejects
+	 *   with an instance of <code>Error</code> if the refresh failed
+	 * @throws {Error}
+	 *   See {@link #refresh} for details
+	 *
+	 * @public
+	 * @since 1.87.0
+	 */
+	Context.prototype.requestRefresh = function (sGroupId, bAllowRemoval) {
+		var oPromise;
+
+		this.oModel.checkGroupId(sGroupId);
+		this.oBinding.checkSuspended();
+		if (this.hasPendingChanges()) {
+			throw new Error("Cannot refresh entity due to pending changes: " + this);
+		}
+
+		if (this.oBinding.refreshSingle) {
+			oPromise = this.oBinding.refreshSingle(this, this.oBinding.lockGroup(sGroupId, true),
+				bAllowRemoval);
+		} else {
+			if (arguments.length > 1) {
+				throw new Error("Unsupported parameter bAllowRemoval: " + bAllowRemoval);
+			}
+
+			oPromise = this.oBinding.refreshReturnValueContext(this, sGroupId)
+				|| this.oBinding.requestRefresh(sGroupId);
+		}
+		this.oModel.withUnresolvedBindings("removeCachesAndMessages", this.sPath.slice(1));
+
+		return Promise.resolve(oPromise).then(function () {
+			// return undefined
 		});
 	};
 
