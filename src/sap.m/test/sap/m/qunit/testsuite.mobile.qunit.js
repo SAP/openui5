@@ -263,7 +263,11 @@ sap.ui.define([
 				}
 			},
 			ExpandableText: {
-				title: "QUnit Tests - sap.m.ExpandableText"
+				title: "QUnit Tests - sap.m.ExpandableText",
+				sinon: {
+					version: 1, // as sinon-qunit-bridge doesn't support fake timers yet
+					useFakeTimers: true
+				}
 			},
 			ExploredSamples1: {
 				title: "Test Page for 'Explored' samples from sap.m",
