@@ -335,7 +335,8 @@
 				{ "name" : "program-triangles" },
 				{ "name" : "table-row" },
 				{ "name" : "table-column" },
-				{ "name" : "clear-all" }
+				{ "name" : "clear-all" },
+				{ "name" : "sum" }
 			]
 		},
 		{

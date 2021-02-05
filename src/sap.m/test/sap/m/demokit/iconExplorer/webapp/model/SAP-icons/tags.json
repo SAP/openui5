@@ -6491,5 +6491,18 @@
 			"programming",
 			"technical"
 		]
+	},
+	"sum": {
+		"tags": [
+			"sigma",
+			"sum",
+			"summation",
+			"addition",
+			"total",
+			"aggregate",
+			"amount",
+			"covariance",
+			"covariance matrix"
+		]
 	}
 }
