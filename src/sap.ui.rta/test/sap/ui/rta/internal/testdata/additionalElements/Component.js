@@ -2,14 +2,14 @@
 
 sap.ui.define([
 	"sap/ui/core/UIComponent",
-	"sap/ui/fl/write/_internal/fieldExtensibility/Access",
+	"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
 	"sap/ui/core/library",
 	"sap/ui/core/mvc/XMLView"
 ], function(
 	UIComponent,
-	Access,
+	ABAPAccess,
 	JSONModel,
 	App,
 	library,
@@ -57,7 +57,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_enableExtensibility: function () {
-			Access.getBusinessContexts = function(sServiceUri, sEntityTypeName, sEntitySetName) {
+			ABAPAccess.getExtensionData = function(sServiceUri, sEntityTypeName, sEntitySetName) {
 				return Promise.resolve({
 					BusinessContexts: [{ BusinessContext: sEntityTypeName + " EntityTypeContext", BusinessContextDescription: "Other BusinessContext description" }, { BusinessContext: sEntitySetName + " EntitySetContext", BusinessContextDescription: "Some BusinessContext description"}],
 					ServiceName: sServiceUri,
@@ -66,7 +66,7 @@ sap.ui.define([
 				});
 			};
 
-			Access.isExtensibilityEnabled = function() {
+			ABAPAccess.isExtensibilityEnabled = function() {
 				return Promise.resolve(true);
 			};
 

@@ -1,0 +1,596 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='YI3CLNT000')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='YI3CLNT000')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='YI3CLNT000')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='YI3CLNT000')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='YI3CLNT000')/$value">
+        <edmx:Include Namespace="Org.OData.Measures.V1" Alias="SAP__measures"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CORE',Version='0001',SAP__Origin='YI3CLNT000')/$value">
+        <edmx:Include Namespace="Org.OData.Core.V1" Alias="SAP__core"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='YI3CLNT000')/$value">
+        <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="SAP__capabilities"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='YI3CLNT000')/$value">
+        <edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="SAP__aggregation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='YI3CLNT000')/$value">
+        <edmx:Include Namespace="Org.OData.Validation.V1" Alias="SAP__validation"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CODELIST',Version='0001',SAP__Origin='YI3CLNT000')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.CodeList.v1" Alias="SAP__CodeList"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_UI',Version='0001',SAP__Origin='YI3CLNT000')/$value">
+        <edmx:Include Namespace="com.sap.vocabularies.UI.v1" Alias="SAP__UI"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="com.sap.gateway.srvd.sd_cfd_tsm_bupa_rap_pv.v0001" Alias="SAP__self">
+            <EntityType Name="C_CFD_TSM_BUPA_RAP_PVType">
+                <Key>
+                    <PropertyRef Name="BusinessPartnerId"/>
+                </Key>
+                <Property Name="BusinessPartnerId" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="Gender" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="Title" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="Given_Name" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="Middle_Name" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="Family_Name" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="Birth_Name" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="Test" Type="Edm.String" Nullable="false" MaxLength="60"/>
+                <Property Name="Preferred_Currency" Type="Edm.String" Nullable="false" MaxLength="5"/>
+                <Property Name="Category" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="ZX1_REDAddData_TbhV" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="ZX1_REDAddData_Tbh" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="ZX1_CFU_MANDATORY_BUFF_Tbh" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="variable"/>
+                <Property Name="ZX1_CFU_MANDATORY_BUFF_TbhC" Type="Edm.String" Nullable="false" MaxLength="5"/>
+                <Property Name="ZX1_CFU_MANDATORY_BUFF_TbhT" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="ZX1_ZFEL_TEST_1_Tbh" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="ZX1_TD_RAP_ROTxt_Tbh" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="ZX1_TD_RAP_MDQNT_Tbh" Type="Edm.Decimal" Nullable="false" Precision="15" Scale="3"/>
+                <Property Name="ZX1_TD_RAP_MDQNT_TbhU" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="ZX1_TD_RAP_MDQNT_TbhT" Type="Edm.String" Nullable="false" MaxLength="30"/>
+                <Property Name="ZX1_cfu_numc2_Tbh" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="ZX1_TD_RAP_MDDAT_Tbh" Type="Edm.Date"/>
+                <Property Name="ZX1_TD_RAP_MDTxt_Tbh" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="ZX1_TD_BEXP_EM_Tbh" Type="Edm.String" Nullable="false" MaxLength="30"/>
+                <Property Name="ZX1_TD_ROSBOId_Tbh" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="ZX1_TD_ROSBOId_TbhT" Type="Edm.String" Nullable="false" MaxLength="60"/>
+                <Property Name="ZX1_TD_ROSBONode_Tbh" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="ZX1_TD_ROSBONode_TbhT" Type="Edm.String" Nullable="false" MaxLength="60"/>
+                <Property Name="__EntityControl" Type="com.sap.gateway.srvd.sd_cfd_tsm_bupa_rap_pv.v0001.EntityControl"/>
+                <Property Name="SAP__Messages" Type="Collection(com.sap.gateway.srvd.sd_cfd_tsm_bupa_rap_pv.v0001.SAP__Message)" Nullable="false"/>
+            </EntityType>
+            <EntityType Name="C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType">
+                <Key>
+                    <PropertyRef Name="BusinessPartnerId"/>
+                </Key>
+                <Property Name="BusinessPartnerId" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="Gender" Type="Edm.String" Nullable="false" MaxLength="1"/>
+                <Property Name="Title" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="Given_Name" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="Middle_Name" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="Family_Name" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="Birth_Name" Type="Edm.String" Nullable="false" MaxLength="40"/>
+                <Property Name="Preferred_Currency" Type="Edm.String" Nullable="false" MaxLength="5"/>
+                <Property Name="Category" Type="Edm.String" Nullable="false" MaxLength="3"/>
+                <Property Name="ZX1_REDAddData_TbhV" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="ZX1_REDAddData_Tbh" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="ZX1_cfu_numc2_Tbh" Type="Edm.String" Nullable="false" MaxLength="10"/>
+                <Property Name="ZX1_ZFEL_TEST_1_Tbh" Type="Edm.Boolean" Nullable="false"/>
+            </EntityType>
+            <ComplexType Name="EntityControl">
+                <Property Name="Deletable" Type="Edm.Boolean" Nullable="false"/>
+                <Property Name="Updatable" Type="Edm.Boolean" Nullable="false"/>
+            </ComplexType>
+            <ComplexType Name="SAP__Message">
+                <Property Name="code" Type="Edm.String" Nullable="false"/>
+                <Property Name="message" Type="Edm.String" Nullable="false"/>
+                <Property Name="longtextUrl" Type="Edm.String" Nullable="true"/>
+                <Property Name="numericSeverity" Type="Edm.Byte" Nullable="false"/>
+                <Property Name="target" Type="Edm.String" Nullable="false"/>
+                <Property Name="transition" Type="Edm.Boolean" Nullable="false"/>
+            </ComplexType>
+            <EntityContainer Name="Container">
+                <EntitySet Name="C_CFD_TSM_BUPA_RAP_ADD_DATA_PV" EntityType="com.sap.gateway.srvd.sd_cfd_tsm_bupa_rap_pv.v0001.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType"/>
+                <EntitySet Name="C_CFD_TSM_BUPA_RAP_PV" EntityType="com.sap.gateway.srvd.sd_cfd_tsm_bupa_rap_pv.v0001.C_CFD_TSM_BUPA_RAP_PVType"/>
+            </EntityContainer>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/Gender">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Gender"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/Title">
+                <Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory"/>
+                <Annotation Term="SAP__common.Label" String="Title"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/Given_Name">
+                <Annotation Term="SAP__common.Label" String="Given Name"/>
+                <Annotation Term="SAP__common.Heading" String="Given Name"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Given Name"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/Middle_Name">
+                <Annotation Term="SAP__common.Label" String="Middle Name"/>
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Heading" String="Middle Name"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Middle Name"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/Family_Name">
+                <Annotation Term="SAP__common.Label" String="Family Name"/>
+                <Annotation Term="SAP__common.FieldControl" EnumMember="SAP__common.FieldControlType/Mandatory"/>
+                <Annotation Term="SAP__common.Heading" String="Familiy Name"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Familiy Name"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/Birth_Name">
+                <Annotation Term="SAP__common.Label" String="Birth Name"/>
+                <Annotation Term="SAP__common.Heading" String="Birth Name"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Birth Name"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/Test">
+                <Annotation Term="SAP__core.Computed"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_REDAddData_TbhV">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Truth Value"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Truth Value: True/False"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_REDAddData_Tbh">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="REDAddData"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_CFU_MANDATORY_BUFF_Tbh">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__measures.ISOCurrency" Path="ZX1_CFU_MANDATORY_BUFF_TbhC"/>
+                <Annotation Term="SAP__common.Label" String="CFU_MANDATORY_BUFFER"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_CFU_MANDATORY_BUFF_TbhC">
+                <Annotation Term="SAP__common.Text" Path="ZX1_CFU_MANDATORY_BUFF_TbhT"/>
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_currency/0001;ps='srvd-sd_cfd_tsm_bupa_rap_pv-0001';va='com.sap.gateway.srvd.sd_cfd_tsm_bupa_rap_pv.v0001.et-c_cfd_tsm_bupa_rap_pv.zx1_cfu_mandatory_buff_tbhc'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="CFU_MANDATORY_BUFFER (Cur.)"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_CFU_MANDATORY_BUFF_TbhT">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="Description"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_ZFEL_TEST_1_Tbh">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="ZFEL_TEST_1"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_TD_RAP_ROTxt_Tbh">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="(EN) RAP read only Text"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_TD_RAP_MDQNT_Tbh">
+                <Annotation Term="SAP__measures.Unit" Path="ZX1_TD_RAP_MDQNT_TbhU"/>
+                <Annotation Term="SAP__common.Label" String="(EN) RAP Mandatory quantity"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_TD_RAP_MDQNT_TbhU">
+                <Annotation Term="SAP__common.Text" Path="ZX1_TD_RAP_MDQNT_TbhT"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_unitofmeasure/0001;ps='srvd-sd_cfd_tsm_bupa_rap_pv-0001';va='com.sap.gateway.srvd.sd_cfd_tsm_bupa_rap_pv.v0001.et-c_cfd_tsm_bupa_rap_pv.zx1_td_rap_mdqnt_tbhu'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.Label" String="(EN) RAP Mandatory quantity (Unit)"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_TD_RAP_MDQNT_TbhT">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="UoM Text"/>
+                <Annotation Term="SAP__common.Heading" String="Measurement unit text"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Unit of Measurement Text (Maximum 30 Characters)"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_cfu_numc2_Tbh">
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.Label" String=" cfu_numc"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_TD_ROSBOId_Tbh">
+                <Annotation Term="SAP__common.Text" Path="ZX1_TD_ROSBOId_TbhT">
+                    <Annotation Term="SAP__UI.TextArrangement" EnumMember="SAP__UI.TextArrangementType/TextFirst"/>
+                </Annotation>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_cfd_tsm_cost_center_vh/0001;ps='srvd-sd_cfd_tsm_bupa_rap_pv-0001';va='com.sap.gateway.srvd.sd_cfd_tsm_bupa_rap_pv.v0001.et-c_cfd_tsm_bupa_rap_pv.zx1_td_rosboid_tbh'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.SemanticObject" String="CostCenter"/>
+                <Annotation Term="SAP__common.Label" String="(EN) RAP Read only SBO CostCenter"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_TD_ROSBOId_TbhT">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Label" String="Description"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Custom Fields: Code Value Description"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_TD_ROSBONode_Tbh">
+                <Annotation Term="SAP__common.Text" Path="ZX1_TD_ROSBONode_TbhT">
+                    <Annotation Term="SAP__UI.TextArrangement" EnumMember="SAP__UI.TextArrangementType/TextFirst"/>
+                </Annotation>
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.ValueListReferences">
+                    <Collection>
+                        <String>../../../../srvd_f4/sap/i_cfd_tsm_cost_center_vh/0001;ps='srvd-sd_cfd_tsm_bupa_rap_pv-0001';va='com.sap.gateway.srvd.sd_cfd_tsm_bupa_rap_pv.v0001.et-c_cfd_tsm_bupa_rap_pv.zx1_td_rosbonode_tbh'/$metadata</String>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__common.SemanticObject" String="CostCenter"/>
+                <Annotation Term="SAP__common.Label" String="(EN) RAP Read only SBO Hierarchy"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_TD_ROSBONode_TbhT">
+                <Annotation Term="SAP__common.Label" String="Description"/>
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__common.Heading" String="Hierarchie Node Description"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Custom Fields: Cost Center - Hierarchy Node Description"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/__EntityControl">
+                <Annotation Term="SAP__core.Computed"/>
+                <Annotation Term="SAP__UI.HiddenFilter"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType">
+                <Annotation Term="SAP__common.Label" String="Custom fields: PV for Hidden@RAP"/>
+                <Annotation Term="SAP__UI.Facets">
+                    <Collection>
+                        <Record Type="SAP__UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Business Partner"/>
+                            <PropertyValue Property="ID" String="C_CFD_TSM_BUPA_RAP_PV"/>
+                            <PropertyValue Property="Target" AnnotationPath="@SAP__UI.Identification"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__UI.HeaderInfo">
+                    <Record>
+                        <PropertyValue Property="TypeName" String="Business Partner"/>
+                        <PropertyValue Property="TypeNamePlural" String="Business Partners"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="SAP__UI.DataField">
+                                <PropertyValue Property="Value" Path="BusinessPartnerId"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__UI.Identification">
+                    <Collection>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="BusinessPartnerId"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Title"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Given_Name"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Family_Name"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="ZX1_REDAddData_Tbh"/>
+                            <Annotation Term="SAP__UI.Hidden" Path="ZX1_REDAddData_TbhV"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__UI.LineItem">
+                    <Collection>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="BusinessPartnerId"/>
+                            <Annotation Term="SAP__UI.Importance" EnumMember="SAP__UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Family_Name"/>
+                            <Annotation Term="SAP__UI.Importance" EnumMember="SAP__UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Given_Name"/>
+                            <Annotation Term="SAP__UI.Importance" EnumMember="SAP__UI.ImportanceType/Medium"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>BusinessPartnerId</PropertyPath>
+                        <PropertyPath>Given_Name</PropertyPath>
+                        <PropertyPath>Family_Name</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="Communication.Contact">
+                    <Record>
+                        <PropertyValue Property="email">
+                            <Collection>
+                                <Record>
+                                    <PropertyValue Property="address" Path="ZX1_TD_BEXP_EM_Tbh"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__common.Messages" Path="SAP__Messages"/>
+            </Annotations>
+            <Annotations Target="SAP__self.Container/C_CFD_TSM_BUPA_RAP_PV">
+                <Annotation Term="SAP__capabilities.SearchRestrictions">
+                    <Record>
+                        <PropertyValue Property="Searchable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonFilterableProperties">
+                            <Collection>
+                                <PropertyPath>ZX1_REDAddData_TbhV</PropertyPath>
+                                <PropertyPath>__EntityControl</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SortRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>ZX1_REDAddData_TbhV</PropertyPath>
+                                <PropertyPath>__EntityControl</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Path="__EntityControl/Deletable"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Path="__EntityControl/Updatable"/>
+                        <PropertyValue Property="QueryOptions">
+                            <Record>
+                                <PropertyValue Property="SelectSupported" Bool="true"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.Container">
+                <Annotation Term="SAP__CodeList.CurrencyCodes">
+                    <Record>
+                        <PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata"/>
+                        <PropertyValue Property="CollectionPath" String="Currencies"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__CodeList.UnitsOfMeasure">
+                    <Record>
+                        <PropertyValue Property="Url" String="../../../../default/iwbep/common/0001/$metadata"/>
+                        <PropertyValue Property="CollectionPath" String="UnitsOfMeasure"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__aggregation.ApplySupported">
+                    <Record>
+                        <PropertyValue Property="Transformations">
+                            <Collection>
+                                <String>aggregate</String>
+                                <String>groupby</String>
+                                <String>filter</String>
+                            </Collection>
+                        </PropertyValue>
+                        <PropertyValue Property="Rollup" EnumMember="SAP__aggregation.RollupType/None"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+                <Annotation Term="SAP__capabilities.FilterFunctions">
+                    <Collection>
+                        <String>eq</String>
+                        <String>ne</String>
+                        <String>gt</String>
+                        <String>ge</String>
+                        <String>lt</String>
+                        <String>le</String>
+                        <String>and</String>
+                        <String>or</String>
+                        <String>contains</String>
+                        <String>startswith</String>
+                        <String>endswith</String>
+                        <String>any</String>
+                        <String>all</String>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/Gender">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="Gender"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/Given_Name">
+                <Annotation Term="SAP__common.Label" String="Given Name"/>
+                <Annotation Term="SAP__common.Heading" String="Given Name"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Given Name"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/Middle_Name">
+                <Annotation Term="SAP__common.Label" String="Middle Name"/>
+                <Annotation Term="SAP__common.Heading" String="Middle Name"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Middle Name"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/Family_Name">
+                <Annotation Term="SAP__common.Label" String="Family Name"/>
+                <Annotation Term="SAP__common.Heading" String="Familiy Name"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Familiy Name"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/Birth_Name">
+                <Annotation Term="SAP__common.Label" String="Birth Name"/>
+                <Annotation Term="SAP__common.Heading" String="Birth Name"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Birth Name"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/ZX1_REDAddData_TbhV">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__UI.Hidden"/>
+                <Annotation Term="SAP__common.Label" String="Truth Value"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Truth Value: True/False"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/ZX1_REDAddData_Tbh">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="REDAddData"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/ZX1_cfu_numc2_Tbh">
+                <Annotation Term="SAP__common.IsDigitSequence"/>
+                <Annotation Term="SAP__common.Label" String=" cfu_numc"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/ZX1_ZFEL_TEST_1_Tbh">
+                <Annotation Term="SAP__common.IsUpperCase"/>
+                <Annotation Term="SAP__common.Label" String="ZFEL_TEST_1"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType">
+                <Annotation Term="SAP__common.Label" String="Custom fields: PV for Hidden@RAP"/>
+                <Annotation Term="SAP__UI.Facets">
+                    <Collection>
+                        <Record Type="SAP__UI.ReferenceFacet">
+                            <PropertyValue Property="Label" String="Business Partner"/>
+                            <PropertyValue Property="ID" String="C_CFD_TSM_BUPA_RAP_PV"/>
+                            <PropertyValue Property="Target" AnnotationPath="@SAP__UI.Identification"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__UI.HeaderInfo">
+                    <Record>
+                        <PropertyValue Property="TypeName" String="Business Partner"/>
+                        <PropertyValue Property="TypeNamePlural" String="Business Partners"/>
+                        <PropertyValue Property="Title">
+                            <Record Type="SAP__UI.DataField">
+                                <PropertyValue Property="Value" Path="BusinessPartnerId"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__UI.Identification">
+                    <Collection>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="BusinessPartnerId"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Title"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Given_Name"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Family_Name"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="ZX1_REDAddData_Tbh"/>
+                            <Annotation Term="SAP__UI.Hidden" Path="ZX1_REDAddData_TbhV"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__UI.LineItem">
+                    <Collection>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="BusinessPartnerId"/>
+                            <Annotation Term="SAP__UI.Importance" EnumMember="SAP__UI.ImportanceType/High"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Family_Name"/>
+                            <Annotation Term="SAP__UI.Importance" EnumMember="SAP__UI.ImportanceType/Medium"/>
+                        </Record>
+                        <Record Type="SAP__UI.DataField">
+                            <PropertyValue Property="Value" Path="Given_Name"/>
+                            <Annotation Term="SAP__UI.Importance" EnumMember="SAP__UI.ImportanceType/Medium"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="SAP__UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>BusinessPartnerId</PropertyPath>
+                        <PropertyPath>Given_Name</PropertyPath>
+                        <PropertyPath>Family_Name</PropertyPath>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.Container/C_CFD_TSM_BUPA_RAP_ADD_DATA_PV">
+                <Annotation Term="SAP__capabilities.SearchRestrictions">
+                    <Record>
+                        <PropertyValue Property="Searchable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.FilterRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonFilterableProperties">
+                            <Collection>
+                                <PropertyPath>ZX1_REDAddData_TbhV</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.SortRestrictions">
+                    <Record>
+                        <PropertyValue Property="NonSortableProperties">
+                            <Collection>
+                                <PropertyPath>ZX1_REDAddData_TbhV</PropertyPath>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.InsertRestrictions">
+                    <Record>
+                        <PropertyValue Property="Insertable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.DeleteRestrictions">
+                    <Record>
+                        <PropertyValue Property="Deletable" Bool="false"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="SAP__capabilities.UpdateRestrictions">
+                    <Record>
+                        <PropertyValue Property="Updatable" Bool="false"/>
+                        <PropertyValue Property="QueryOptions">
+                            <Record>
+                                <PropertyValue Property="SelectSupported" Bool="true"/>
+                            </Record>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_TD_BEXP_EM_Tbh">
+                <Annotation Term="Communication.IsEmailAddress"/>
+                <Annotation Term="SAP__common.Label" String="(EN) Before Exp Hndl (EMAIL)"/>
+                <Annotation Term="SAP__common.QuickInfo" String="(EN) Before Export Handler (EMAIL)"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/BusinessPartnerId">
+                <Annotation Term="SAP__common.Label" String="Business Partner ID"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Custom Fields Test: Business Partner ID"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/Preferred_Currency">
+                <Annotation Term="SAP__common.Label" String="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/Category">
+                <Annotation Term="SAP__common.Label" String="Category"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_TD_RAP_MDDAT_Tbh">
+                <Annotation Term="SAP__common.Label" String="(EN) RAP Mandatory date"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_PVType/ZX1_TD_RAP_MDTxt_Tbh">
+                <Annotation Term="SAP__common.Label" String="(EN) RAP Mandatory Text"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/BusinessPartnerId">
+                <Annotation Term="SAP__common.Label" String="Business Partner ID"/>
+                <Annotation Term="SAP__common.QuickInfo" String="Custom Fields Test: Business Partner ID"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/Title">
+                <Annotation Term="SAP__common.Label" String="Title"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/Preferred_Currency">
+                <Annotation Term="SAP__common.Label" String="Currency"/>
+            </Annotations>
+            <Annotations Target="SAP__self.C_CFD_TSM_BUPA_RAP_ADD_DATA_PVType/Category">
+                <Annotation Term="SAP__common.Label" String="Category"/>
+            </Annotations>
+        </Schema>
+    </edmx:DataServices>
+</edmx:Edmx>

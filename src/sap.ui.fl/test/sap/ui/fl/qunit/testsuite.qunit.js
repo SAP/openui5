@@ -559,6 +559,53 @@ sap.ui.define([
 					}
 				}
 			},
+			"write/_internal/fieldExtensibility/ABAPAccess": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess"]
+				},
+				ui5: {
+					resourceroots: {
+						"sap.ui.rta.test.additionalElements": "test-resources/sap/ui/rta/internal/testdata/additionalElements/"
+					}
+				}
+			},
+			"write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/fieldExtensibility/ABAPExtensibilityVariantFactory"]
+				}
+			},
+			"write/_internal/fieldExtensibility/SingleTenantABAPExtensibilityVariant": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/fieldExtensibility/SingleTenantABAPExtensibilityVariant"]
+				}
+			},
+			"write/_internal/fieldExtensibility/MultiTenantABAPExtensibilityVariant": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/fieldExtensibility/MultiTenantABAPExtensibilityVariant"]
+				}
+			},
+			"write/_internal/fieldExtensibility/UriParser": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/fieldExtensibility/UriParser"]
+				}
+			},
+			"write/_internal/fieldExtensibility/Utils": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/fieldExtensibility/Utils"]
+				}
+			},
+			"write/_internal/fieldExtensibility/ServiceValidation": {
+				group: "Write Internal",
+				coverage: {
+					only: ["sap/ui/fl/write/_internal/fieldExtensibility/ServiceValidation"]
+				}
+			},
 			// Team Gravity tests
 			"descriptorRelated/api/Api": {
 				group: "Descriptor related APIs",
@@ -1164,10 +1211,10 @@ sap.ui.define([
 						reorder: false
 					}
 				},
-				"write/_internal/fieldExtensibility/Access": {
+				"write/_internal/fieldExtensibility/ABAPAccess": {
 					group: "Write Internal",
 					coverage: {
-						only: ["sap/ui/fl/write/_internal/fieldExtensibility/Access"]
+						only: ["sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess"]
 					},
 					ui5: {
 						resourceroots: {

@@ -23,8 +23,8 @@
 
 			function markInvalid(){
 				sap.ui.require([
-					"sap/ui/fl/write/_internal/fieldExtensibility/Access"
-				], function(Access) {
+					"sap/ui/fl/write/_internal/fieldExtensibility/ABAPAccess"
+				], function(ABAPAccess) {
 					sap.ushell = Object.assign({}, sap.ushell, {
 						Container : {
 							getLogonSystem : function(){
@@ -39,7 +39,7 @@
 							}
 						}
 					});
-					Access.setServiceInvalid("/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/");
+					ABAPAccess.setServiceInvalid("/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/");
 				});
 			}
 		</script>
