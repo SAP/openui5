@@ -122,7 +122,7 @@ One example `library.js` file of a small control library, the `sap.ui.suite` lib
  */
 sap.ui.define([
 	'sap/ui/core/library'
-], () => {
+], function () {
 	/**
 	 * Suite controls library.
 	 *
@@ -189,7 +189,7 @@ sap.ui.define([
 
 	return sap.ui.suite;
 
-}, /* bExport = false */ );
+});
 ```
 
 ### Translation file (messagebundle.properties) and translation
@@ -275,9 +275,8 @@ sap.ui.define([dependency1Name, dependency2Name,...], function(dependency1, depe
 
 One example control implementation using this syntax (but not containing any documentation or further functionality):
 ```js
-sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
-	function(jQuery, ListItemBase, library) {
-	"use strict";
+sap.ui.define(['./ListItemBase', './library'],
+	function(ListItemBase, library) {
 
 	var MyListItem = ListItemBase.extend("sap.m.MyListItem", /** @lends sap.m.MyListItem.prototype */ { metadata : {
 		library : "sap.m",
@@ -289,12 +288,7 @@ sap.ui.define(['jquery.sap.global', './ListItemBase', './library'],
 }, /* bExport= */ true);
 ```
 
-You see the two standard dependencies:
-
--   ```jquery.sap.global``` providing jQuery itself, enriched with additional UI5 plugins
--   ```./library``` providing the library definition in the `library.js` file
-
-as well as another very common dependency, the base class:
+You see the standard dependency ```./library``` providing the library definition in the `library.js` file as well as another very common dependency, the base class:
 
 -   ```./ListItemBase``` the base class of this specific ListItem type
 
@@ -432,14 +426,13 @@ The code within the `render()` method is the same as in "notepad controls".
  */
 
 sap.ui.define([
-],
-	() => {
+], function () {
 
 	/**
-	 * @class NavContainer renderer. 
+	 * @class NavContainer renderer, using the faster new api version 
 	 * @static
 	 */
-	const NavContainerRenderer = {
+	var NavContainerRenderer = {
 		apiVersion: 2
 	};
 	
@@ -450,7 +443,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the Render-Output-Buffer
 	 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
 	 */
-	NavContainerRenderer.render = (oRm, oControl) => {
+	NavContainerRenderer.render = function (oRm, oControl) {
 		// return immediately if control is invisible, do not render any HTML
 		if (!oControl.getVisible()) {
 			return;
@@ -470,7 +463,7 @@ sap.ui.define([
 		oRm.writeClasses();
 		oRm.writeStyles();
 		
-		const sTooltip = oControl.getTooltip_AsString();
+		var sTooltip = oControl.getTooltip_AsString();
 		if (sTooltip) {
 			oRm.writeAttributeEscaped("title", sTooltip);
 		}
@@ -480,7 +473,7 @@ sap.ui.define([
 			this.renderBeforeContent(oRm, oControl); // hook method; may be used by inheriting renderers
 		}
 		
-		const oContent = oControl.getCurrentPage();
+		var oContent = oControl.getCurrentPage();
 		if (oContent) {
 			oRm.renderControl(oContent);
 		}
@@ -504,19 +497,18 @@ Documentation omitted to keep this example short:
 sap.ui.define([
 	'./ButtonRenderer', 
 	'sap/ui/core/Renderer'
-],
-(ButtonRenderer, Renderer) => {
+], function (ButtonRenderer, Renderer) {
 
-	const ToggleButtonRenderer = Renderer.extend(ButtonRenderer);
+	var ToggleButtonRenderer = Renderer.extend(ButtonRenderer);
 
-	ToggleButtonRenderer.renderButtonAttributes = function(oRm, oToggleButton) {
-		const bPressed = oToggleButton.getPressed();
+	ToggleButtonRenderer.renderButtonAttributes = function (oRm, oToggleButton) {
+		var bPressed = oToggleButton.getPressed();
 	
 		if (bPressed) {
-			oRm.addClass("sapMToggleBtnPressed");
+			oRm.class("sapMToggleBtnPressed");
 		}
 	
-		oRm.writeAttribute('pressed', bPressed);
+		oRm.attr('pressed', bPressed);
 	};
 
 	return ToggleButtonRenderer;
