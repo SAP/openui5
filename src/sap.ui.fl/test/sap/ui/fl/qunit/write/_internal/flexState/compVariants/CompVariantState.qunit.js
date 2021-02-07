@@ -555,6 +555,65 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("revert", {
+		before: function() {
+			this.oAppComponent = new UIComponent(sComponentId);
+			return FlexState.initialize({
+				componentId: sComponentId,
+				reference: sComponentId
+			});
+		},
+		afterEach: function() {
+			FlexState.clearState(sComponentId);
+			sandbox.restore();
+		},
+		after:function () {
+			this.oAppComponent.destroy();
+		}
+	}, function() {
+		QUnit.test("Given a variant was removed", function(assert) {
+			var sPersistencyKey = "persistency.key";
+
+			var oVariant = CompVariantState.add({
+				changeSpecificData: {
+					type: "pageVariant",
+					layer: Layer.CUSTOMER,
+					isVariant: true
+				},
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			});
+
+			// simulate an already persisted state
+			oVariant.setState(Change.states.PERSISTED);
+
+			CompVariantState.removeVariant({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				id: oVariant.getId(),
+				layer: Layer.CUSTOMER
+			});
+
+			assert.equal(oVariant.getState(), Change.states.DELETED, "the variant is flagged for deletion");
+			var aRevertData = oVariant.getRevertInfo();
+			assert.equal(aRevertData.length, 1, "revertData was stored");
+			var oLastRevertData = aRevertData[0];
+			assert.equal(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
+			assert.deepEqual(oLastRevertData.getContent(), {previousState: Change.states.PERSISTED}, "... to PERSISTED");
+
+			CompVariantState.revert({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				id: oVariant.getId(),
+				layer: Layer.CUSTOMER
+			});
+
+			aRevertData = oVariant.getRevertInfo();
+			assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
+			assert.equal(oVariant.getState(), Change.states.PERSISTED, "and the change is flagged as new");
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});

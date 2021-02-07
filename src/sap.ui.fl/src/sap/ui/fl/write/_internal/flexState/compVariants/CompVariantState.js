@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
+	"sap/ui/fl/apply/_internal/flexObjects/CompVariantRevertData",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/registry/Settings",
@@ -18,6 +19,7 @@ sap.ui.define([
 	Layer,
 	Change,
 	CompVariant,
+	CompVariantRevertData,
 	Utils,
 	FlexState,
 	Settings,
@@ -381,7 +383,7 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.executeOnSelect] - Flag if the variant should be executed on selection
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
 	 * this either updates the variant from the layer or writes a change to that layer.
-	 * @returns {sap.ui.fl.Change} The updated Variant
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated Variant
 	 */
 	CompVariantState.updateVariant = function (mPropertyBag) {
 		var oVariant = getVariantById(mPropertyBag);
@@ -421,23 +423,71 @@ sap.ui.define([
 	};
 
 	/**
+	 * Defines the different types of operations done on a variant.
+	 * - StateUpdate only changes the variants persistence status. I.e. a removeVariant call only sets the variant to <code>DELETED</code>
+	 *
+	 * @enum {string}
+	 */
+	CompVariantState.operationType = {
+		StateUpdate: "StateUpdate"
+	};
+
+	/**
 	 * Removes a variant; this may result in an deletion of the existing variant or the creation of a change.
 	 *
 	 * @param {object} mPropertyBag - Object with parameters as properties
 	 * @param {string} mPropertyBag.reference - Flex reference of the application
 	 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
 	 * @param {string} mPropertyBag.id - ID of the variant
+	 * @param {object} [mPropertyBag.revert=false] - Flag if the removal is a revert operation
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
 	 * this either removes the variant from the layer or writes a change to that layer.
-	 * @returns {sap.ui.fl.Change} The removed Variant
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The removed variant
 	 */
 	CompVariantState.removeVariant = function (mPropertyBag) {
 		var oVariant = getVariantById(mPropertyBag);
+
+		if (!mPropertyBag.revert) {
+			var oRevertData = new CompVariantRevertData({
+				type: CompVariantState.operationType.StateUpdate,
+				content: {
+					previousState: oVariant.getState()
+				}
+			});
+			oVariant.addRevertInfo(oRevertData);
+		}
 
 		// TODO: check if it is an deletion or create corresponding changes
 		oVariant.markForDeletion();
 		return oVariant;
 	};
+
+	/**
+	 * Reverts the last operation done on a variant.
+	 *
+	 * @param {object} mPropertyBag - Object with parameters as properties
+	 * @param {string} mPropertyBag.reference - Flex reference of the application
+	 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
+	 * @param {string} mPropertyBag.id - ID of the variant
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The reverted variant
+	 */
+	CompVariantState.revert = function (mPropertyBag) {
+		var oVariant = getVariantById(mPropertyBag);
+
+		var oRevertData = oVariant.getRevertInfo().pop();
+
+		switch (oRevertData.getType()) {
+			case CompVariantState.operationType.StateUpdate:
+				oVariant.setState(oRevertData.getContent().previousState);
+				break;
+		}
+
+		// after a successful revert, remove the entry (the getter above just returned a copy)
+		oVariant.removeRevertInfo(oRevertData);
+
+		return oVariant;
+	};
+
 
 	/**
 	 * Adds the definitions of flex objects to the FlexState in their current state (dirty with NEW or DELETE).

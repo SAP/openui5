@@ -432,6 +432,73 @@ sap.ui.define([
 		});
 	});
 
+	QUnit.module("revert", {
+		before: function() {
+		},
+		afterEach: function() {
+		},
+		after:function () {
+		}
+	}, function() {
+		QUnit.test("Given a variant was removed", function(assert) {
+			var sReference = "an.app";
+			var sPersistencyKey = "persistency.key";
+			sandbox.stub(InitialStorage, "loadFlexData").resolves({
+				changes: [],
+				comp: {
+					variants: [{
+						fileName: "test_variant",
+						selector: {
+							persistencyKey: sPersistencyKey
+						},
+						content: {
+							executeOnSelect: true,
+							favorite: false
+						},
+						texts: {
+							variantName: {
+								value: ""
+							}
+						}
+					}],
+					changes: [],
+					standardVariants: [],
+					defaultVariants: []
+				}
+			});
+
+			return FlexState.clearAndInitialize({
+				reference: sReference,
+				componentId: "__component0",
+				manifest: {},
+				componentData: {}
+			}).then(function () {
+				return SmartVariantManagementWriteAPI.removeVariant({
+					reference: sReference,
+					persistencyKey: sPersistencyKey,
+					id: "test_variant"
+				});
+			}).then(function (oRemovedVariant) {
+				assert.equal(oRemovedVariant.getState(), Change.states.DELETED, "the variant is flagged for deletion");
+				var aRevertData = oRemovedVariant.getRevertInfo();
+				assert.equal(aRevertData.length, 1, "revertData was stored");
+				var oLastRevertData = aRevertData[0];
+				assert.equal(oLastRevertData.getType(), CompVariantState.operationType.StateUpdate, "it is stored that the state was updated ...");
+				assert.deepEqual(oLastRevertData.getContent(), {previousState: Change.states.PERSISTED}, "... to PERSISTED");
+
+				SmartVariantManagementWriteAPI.revert({
+					reference: sReference,
+					persistencyKey: sPersistencyKey,
+					id: "test_variant"
+				});
+
+				aRevertData = oRemovedVariant.getRevertInfo();
+				assert.equal(aRevertData.length, 0, "after a revert... the revert data is no longer available");
+				assert.equal(oRemovedVariant.getState(), Change.states.PERSISTED, "and the change is flagged as new");
+			});
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery('#qunit-fixture').hide();
 	});
