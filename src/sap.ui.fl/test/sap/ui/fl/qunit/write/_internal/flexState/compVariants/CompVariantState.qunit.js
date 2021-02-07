@@ -25,10 +25,10 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	var sComponentId = "the.app.component";
+	new UIComponent(sComponentId);
 
 	QUnit.module("add", {
 		beforeEach: function () {
-			this.oAppComponent = new UIComponent(sComponentId);
 			return Settings.getInstance()
 			.then(function () {
 				return FlexState.initialize({
@@ -40,7 +40,6 @@ sap.ui.define([
 		afterEach: function() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
-			this.oAppComponent.destroy();
 		}
 	}, function() {
 		QUnit.test("Given no propertyBag is provided", function(assert) {
@@ -221,7 +220,6 @@ sap.ui.define([
 
 	QUnit.module("updateState", {
 		before: function () {
-			this.oAppComponent = new UIComponent(sComponentId);
 			FlexState.clearState(sComponentId);
 		},
 		beforeEach: function() {
@@ -233,9 +231,6 @@ sap.ui.define([
 		afterEach: function() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
-		},
-		after: function () {
-			this.oAppComponent.destroy();
 		}
 	}, function() {
 		QUnit.test("Given updateState is called with a new variant", function(assert) {
@@ -346,7 +341,6 @@ sap.ui.define([
 
 	QUnit.module("persist", {
 		beforeEach: function() {
-			this.oAppComponent = new UIComponent(sComponentId);
 			FlexState.clearState(sComponentId);
 
 			return Promise.all([
@@ -358,7 +352,6 @@ sap.ui.define([
 			]);
 		},
 		afterEach: function() {
-			this.oAppComponent.destroy();
 			sandbox.restore();
 		}
 	}, function() {
@@ -453,8 +446,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("setDefault", {
-		before: function() {
-			this.oAppComponent = new UIComponent(sComponentId);
+		beforeEach: function () {
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
@@ -463,9 +455,6 @@ sap.ui.define([
 		afterEach: function() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
-		},
-		after:function () {
-			this.oAppComponent.destroy();
 		}
 	}, function() {
 		QUnit.test("Given setDefault is called twice", function(assert) {
@@ -509,7 +498,6 @@ sap.ui.define([
 
 	QUnit.module("setExecuteOnSelect", {
 		before: function() {
-			this.oAppComponent = new UIComponent(sComponentId);
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
@@ -518,9 +506,6 @@ sap.ui.define([
 		afterEach: function() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
-		},
-		after:function () {
-			this.oAppComponent.destroy();
 		}
 	}, function() {
 		QUnit.test("Given setExecuteOnSelect is called twice", function(assert) {
@@ -557,7 +542,9 @@ sap.ui.define([
 
 	QUnit.module("revert", {
 		before: function() {
-			this.oAppComponent = new UIComponent(sComponentId);
+			FlexState.clearState(sComponentId);
+		},
+		beforeEach: function () {
 			return FlexState.initialize({
 				componentId: sComponentId,
 				reference: sComponentId
@@ -566,23 +553,40 @@ sap.ui.define([
 		afterEach: function() {
 			FlexState.clearState(sComponentId);
 			sandbox.restore();
-		},
-		after:function () {
-			this.oAppComponent.destroy();
 		}
 	}, function() {
-		QUnit.test("Given a variant was removed", function(assert) {
-			var sPersistencyKey = "persistency.key";
+		var sPersistencyKey = "persistency.key";
+		var oVariantData = {
+			changeSpecificData: {
+				type: "pageVariant",
+				layer: Layer.CUSTOMER,
+				isVariant: true
+			},
+			reference: sComponentId,
+			persistencyKey: sPersistencyKey
+		};
 
-			var oVariant = CompVariantState.add({
-				changeSpecificData: {
-					type: "pageVariant",
-					layer: Layer.CUSTOMER,
-					isVariant: true
-				},
+		QUnit.test("Given a variant was was added and a persist was called", function(assert) {
+			var oVariant = CompVariantState.add(oVariantData);
+			sandbox.stub(Storage, "write").resolves();
+
+			// adding a change to test, that the remove-function not existent in changes is not called = the test does not die
+			CompVariantState.setExecuteOnSelect({
 				reference: sComponentId,
+				executeOnSelect: true,
 				persistencyKey: sPersistencyKey
 			});
+
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			}).then(function () {
+				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data is present");
+			});
+		});
+
+		QUnit.test("Given a variant was removed", function(assert) {
+			var oVariant = CompVariantState.add(oVariantData);
 
 			// simulate an already persisted state
 			oVariant.setState(Change.states.PERSISTED);
