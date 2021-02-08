@@ -183,7 +183,8 @@ sap.ui.define([
 
 			this._mDefaultPlugins["stretch"] = new StretchPlugin();
 
-			if (Settings.getInstanceOrUndef().isPublicLayerAvailable()) {
+			var oSettings = Settings.getInstanceOrUndef();
+			if (oSettings && oSettings.isPublicLayerAvailable()) {
 				this._mDefaultPlugins["compVariant"] = new CompVariantPlugin({
 					commandFactory: this._oCommandFactory
 				});
