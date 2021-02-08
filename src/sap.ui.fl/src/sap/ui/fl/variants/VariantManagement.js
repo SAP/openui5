@@ -1248,8 +1248,15 @@ sap.ui.define([
 		this.oSaveAsDialog.close();
 	};
 
+	/**
+	 * Opens the <i>Save as</i> dialog.
+	 * @public
+	 */
+	VariantManagement.prototype.openSaveAsDialogForKeyUser = function (sRtaSyleClassName) {
+		this._openSaveAsDialog(sRtaSyleClassName);
+	};
 
-	VariantManagement.prototype._openSaveAsDialog = function() {
+	VariantManagement.prototype._openSaveAsDialog = function(sRtaSyleClassName) {
 		this._createSaveAsDialog();
 
 		this.oInputName.setValue(this.getSelectedVariantText(this.getCurrentVariantKey()));
@@ -1279,6 +1286,11 @@ sap.ui.define([
 			this.oLabelKey.setVisible(false);
 		}
 
+		if (typeof sRtaSyleClassName === "string" && sRtaSyleClassName.length) {
+			this.oSaveAsDialog.addStyleClass(sRtaSyleClassName);
+		} else {
+			this.oSaveAsDialog.removeStyleClass(sRtaSyleClassName);
+		}
 		this.oSaveAsDialog.open();
 	};
 
