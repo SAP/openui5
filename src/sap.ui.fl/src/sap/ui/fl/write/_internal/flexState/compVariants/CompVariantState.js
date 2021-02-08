@@ -257,6 +257,12 @@ sap.ui.define([
 		return mCompVariantsByIdMap[mPropertyBag.id];
 	}
 
+	function ifVariantClearRevertData(oFlexObject) {
+		if (oFlexObject instanceof CompVariant) {
+			oFlexObject.removeAllRevertInfo();
+		}
+	}
+
 	/**
 	 * CompVariant state class to handle the state of the compVariants and its changes.
 	 * This class is in charge of updating the maps stored in the <code>sap.ui.fl.apply._internal.flexState.FlexState</code>.
@@ -502,10 +508,10 @@ sap.ui.define([
 
 		if (mPropertyBag.changeToBeAddedOrDeleted) {
 			switch (mPropertyBag.changeToBeAddedOrDeleted.getPendingAction()) {
-				case "NEW":
+				case Change.states.NEW:
 					addChange(mPropertyBag, oFlexObjects);
 					break;
-				case "DELETE":
+				case Change.states.DELETED:
 					deleteChange(mPropertyBag, oFlexObjects);
 					break;
 				default:
@@ -535,11 +541,14 @@ sap.ui.define([
 			.filter(needsPersistencyCall)
 			.map(function (oFlexObject) {
 				switch (oFlexObject.getPendingAction()) {
-					case "NEW":
+					case Change.states.NEW:
+						ifVariantClearRevertData(oFlexObject);
 						return writeObjectAndAddToState(oFlexObject, oStoredResponse);
-					case "UPDATE":
+					case Change.states.DIRTY:
+						ifVariantClearRevertData(oFlexObject);
 						return updateObjectAndStorage(oFlexObject, oStoredResponse);
-					case "DELETE":
+					case Change.states.DELETED:
+						ifVariantClearRevertData(oFlexObject);
 						return deleteObjectAndRemoveFromStorage(oFlexObject, mCompEntitiesById, mCompVariantsMapByPersistencyKey, oStoredResponse);
 					default:
 						break;
