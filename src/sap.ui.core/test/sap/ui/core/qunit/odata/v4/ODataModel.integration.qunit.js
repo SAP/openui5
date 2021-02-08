@@ -16587,6 +16587,10 @@ sap.ui.define([
 			// code under test
 			oTable.setFirstVisibleRow(6);
 
+			assert.throws(function () {
+				oTable.getRows()[0].getBindingContext().collapse();
+			}, new Error("Not expandable: /BusinessPartners()[0]"));
+
 			return that.waitForChanges(assert, "scroll to 'X-c'");
 		});
 	});
@@ -16595,6 +16599,8 @@ sap.ui.define([
 	// Scenario: sap.ui.table.Table with aggregation, no visual grouping, and grand total at both
 	// top and bottom - or at bottom only.
 	// JIRA: CPOUI5ODATAV4-558
+	// Collapsing a grand total should throw an error
+	// JIRA: CPOUI5ODATAV4-606
 [false, true].forEach(function (bGrandTotalAtBottomOnly) {
 	var sTitle = "Data Aggregation: grandTotalAtBottomOnly=" + bGrandTotalAtBottomOnly;
 
@@ -16666,6 +16672,11 @@ sap.ui.define([
 				aExpectedPaths.push("/BusinessPartners($isTotal=true)");
 			}
 			assert.deepEqual(oTable.getRows().map(getBindingContextPath), aExpectedPaths);
+
+			assert.throws(function () {
+				oTable.getRows()[bGrandTotalAtBottomOnly ? 3 : 0].getBindingContext().collapse();
+			}, new Error("Not expandable: /BusinessPartners()["
+				+ (bGrandTotalAtBottomOnly ? "7" : "0") + "]"));
 		});
 	});
 });

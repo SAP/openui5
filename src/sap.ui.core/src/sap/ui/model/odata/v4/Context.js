@@ -197,7 +197,8 @@ sap.ui.define([
 	 * Collapses the group node that this context points to.
 	 *
 	 * @throws {Error}
-	 *   If the context points to a node that is not expandable or already collapsed
+	 *   If the context points to a node that is not expandable, already collapsed, or
+	 *   is a grand total.
 	 *
 	 * @public
 	 * @see #expand
@@ -205,7 +206,7 @@ sap.ui.define([
 	 * @since 1.83.0
 	 */
 	Context.prototype.collapse = function () {
-		switch (this.isExpanded()) {
+		switch (this.getProperty("@$ui5.node.level") === 0 ? undefined : this.isExpanded()) {
 			case true:
 				this.oBinding.collapse(this);
 				break;
