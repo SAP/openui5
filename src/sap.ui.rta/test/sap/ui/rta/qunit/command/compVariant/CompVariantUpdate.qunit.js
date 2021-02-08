@@ -16,7 +16,7 @@ sap.ui.define([
 	"use strict";
 	var sandbox = sinon.createSandbox();
 
-	QUnit.module("moduleName", {
+	QUnit.module("Given a control", {
 		beforeEach: function() {
 			this.oControl = new Control();
 		},
@@ -73,7 +73,7 @@ sap.ui.define([
 			var oUpdateControlStub = sandbox.stub();
 			this.oControl.updateVariant = oUpdateControlStub;
 			var oSetDefaultControlStub = sandbox.stub();
-			this.oControl.setDeafultVariantId = oSetDefaultControlStub;
+			this.oControl.setDefaultVariantId = oSetDefaultControlStub;
 			var oUpdateFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "updateVariant");
 			var oSetDefaultFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "setDefaultVariantId");
 			// var oUndoVariantFlAPIStub = sandbox.stub(SmartVariantManagementWriteAPI, "undoVariant");

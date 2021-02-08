@@ -69,7 +69,7 @@ sap.ui.define([
 				},
 				content: oNewVariantProperties.content,
 				executeOnSelect: oNewVariantProperties.executeOnSelect,
-				favourite: true,
+				favorite: true,
 				layer: this.mInformation.layer
 			},
 			control: this.getElement(),
