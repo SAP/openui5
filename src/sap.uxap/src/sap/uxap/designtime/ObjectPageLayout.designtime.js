@@ -111,7 +111,11 @@ function(
 										}
 									}
 								}
-							}
+							},
+							scrollContainers : [{
+								domRef: "> .sapUxAPAnchorBarScrollContainer",
+								aggregations: ["content"]
+							}]
 						};
 					} else if (oElement.isA("sap.m.Button") || oElement.isA("sap.m.MenuButton")) {
 						// getResponsibleElement() replaces with the responsible element, which is then asked for:
@@ -175,7 +179,7 @@ function(
 				} else if (oElement._bStickyAnchorBar){
 					return ["sections", "headerContent"];
 				} else {
-					return ["sections", "anchorBar", "headerContent"];
+					return ["sections", "_anchorBar", "headerContent"];
 				}
 			}
 		}, {
