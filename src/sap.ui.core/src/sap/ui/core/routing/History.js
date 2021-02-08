@@ -453,17 +453,16 @@ sap.ui.define([
 	};
 
 	var instance;
-	History.getInstance = function() {
-		return instance;
-	};
-
-	instance = new History(HashChanger.getInstance());
 
 	/**
 	 * @public
 	 * @returns { sap.ui.core.routing.History } a global singleton that gets created as soon as the sap.ui.core.routing.History is required
 	 */
+	History.getInstance = function() {
+		return instance;
+	};
 
+	instance = new History(HashChanger.getInstance());
 
 	return History;
 
