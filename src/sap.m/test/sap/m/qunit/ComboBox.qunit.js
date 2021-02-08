@@ -12018,9 +12018,11 @@ sap.ui.define([
 
 	QUnit.test("Group header's labelledBy", function (assert) {
 		var oGroupHeader = this.oComboBox._getList().getItems()[0],
+			oListItem = this.oComboBox._getList().getItems()[1],
 			sInvisibleTextId = this.oComboBox._getGroupHeaderInvisibleText().getId();
 
 		assert.strictEqual(oGroupHeader.getAriaLabelledBy()[0], sInvisibleTextId, "The correct invisible text is associated with the group item.");
+		assert.notOk(oListItem.getAriaLabelledBy().length, "The ListItem should not have an aria-labelledby.");
 	});
 
 	QUnit.test("Group header's labelledBy text", function (assert) {
