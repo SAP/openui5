@@ -4,6 +4,7 @@
 
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
+	"sap/base/util/restricted/_pick",
 	"sap/base/util/UriParameters",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
@@ -15,6 +16,7 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/Storage"
 ], function(
 	_omit,
+	_pick,
 	UriParameters,
 	Layer,
 	Change,
@@ -376,6 +378,29 @@ sap.ui.define([
 		return oFlexObject;
 	};
 
+	function storeRevertDataInVariant(mPropertyBag, oVariant) {
+		var aUnchangedValues = [];
+		if (mPropertyBag.favorite === undefined) {
+			aUnchangedValues.push("favorite");
+		}
+		if (mPropertyBag.executeOnSelect === undefined) {
+			aUnchangedValues.push("executeOnSelect");
+		}
+		var oRevertData = {
+			type: CompVariantState.operationType.ContentUpdate,
+			content: {
+				previousState: oVariant.getState(),
+				previousContent: oVariant.getContent(),
+				previousFavorite: oVariant.getFavorite(),
+				previousExecuteOnSelect: oVariant.getExecuteOnSelect()
+			}
+		};
+		if (mPropertyBag.name) {
+			oRevertData.content.previousName = oVariant.getText("variantName");
+		}
+		oVariant.addRevertInfo(new CompVariantRevertData(oRevertData));
+	}
+
 	/**
 	 * Updates a variant; this may result in an update of the variant or the creation of a change.
 	 *
@@ -383,13 +408,14 @@ sap.ui.define([
 	 * @param {string} mPropertyBag.reference - Flex reference of the application
 	 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
 	 * @param {string} mPropertyBag.id - ID of the variant
+	 * @param {object} [mPropertyBag.revert=false] - Flag if the update is a revert operation
 	 * @param {object} [mPropertyBag.name] - Title of the variant
 	 * @param {object} [mPropertyBag.content] - Content of the new change
 	 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
 	 * @param {object} [mPropertyBag.executeOnSelect] - Flag if the variant should be executed on selection
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
 	 * this either updates the variant from the layer or writes a change to that layer.
-	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated Variant
+	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant
 	 */
 	CompVariantState.updateVariant = function (mPropertyBag) {
 		var oVariant = getVariantById(mPropertyBag);
@@ -397,6 +423,9 @@ sap.ui.define([
 		// TODO: update non-fl variants and remove limitation
 		if (!oVariant) {
 			throw new Error("Variant to be modified is not persisted via sap.ui.fl.");
+		}
+		if (!mPropertyBag.revert) {
+			storeRevertDataInVariant(mPropertyBag, oVariant);
 		}
 
 		// TODO: check if it is an update or create corresponding changes
@@ -410,13 +439,13 @@ sap.ui.define([
 
 		if (mPropertyBag.favorite !== undefined) {
 			oContentToBeWritten.favorite = mPropertyBag.favorite;
-		} else if (bFavorite !== undefined) {
+		} else if (!(mPropertyBag.revert && oContentToBeWritten.favorite !== undefined) && bFavorite !== undefined) {
 			oContentToBeWritten.favorite = bFavorite;
 		}
 
 		if (mPropertyBag.executeOnSelect !== undefined) {
 			oContentToBeWritten.executeOnSelect = mPropertyBag.executeOnSelect;
-		} else if (bExecuteOnSelect !== undefined) {
+		} else if (!(mPropertyBag.revert && oContentToBeWritten.executeOnSelect !== undefined) && bExecuteOnSelect !== undefined) {
 			oContentToBeWritten.executeOnSelect = bExecuteOnSelect;
 		}
 
@@ -431,11 +460,13 @@ sap.ui.define([
 	/**
 	 * Defines the different types of operations done on a variant.
 	 * - StateUpdate only changes the variants persistence status. I.e. a removeVariant call only sets the variant to <code>DELETED</code>
+	 * - ContentUpdate may contain all content related updates including name, favorite, executeOnSelect or values and data
 	 *
 	 * @enum {string}
 	 */
 	CompVariantState.operationType = {
-		StateUpdate: "StateUpdate"
+		StateUpdate: "StateUpdate",
+		ContentUpdate: "ContentUpdate"
 	};
 
 	/**
@@ -481,14 +512,27 @@ sap.ui.define([
 		var oVariant = getVariantById(mPropertyBag);
 
 		var oRevertData = oVariant.getRevertInfo().pop();
+		var oRevertDataContent = oRevertData.getContent();
 
 		switch (oRevertData.getType()) {
+			case CompVariantState.operationType.ContentUpdate:
+				CompVariantState.updateVariant(
+					Object.assign({
+						revert: true,
+						name: oRevertDataContent.previousName,
+						content: oRevertDataContent.previousContent,
+						favorite: oRevertDataContent.previousFavorite,
+						executeOnSelect: oRevertDataContent.previousExecuteOnSelect
+					},
+					_pick(mPropertyBag, ["reference", "persistencyKey", "id"])
+				));
+				break;
 			case CompVariantState.operationType.StateUpdate:
-				oVariant.setState(oRevertData.getContent().previousState);
+			default:
 				break;
 		}
 
-		// after a successful revert, remove the entry (the getter above just returned a copy)
+		oVariant.setState(oRevertDataContent.previousState);
 		oVariant.removeRevertInfo(oRevertData);
 
 		return oVariant;

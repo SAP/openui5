@@ -555,16 +555,127 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
+		sandbox.stub(Storage, "write").resolves();
 		var sPersistencyKey = "persistency.key";
 		var oVariantData = {
 			changeSpecificData: {
 				type: "pageVariant",
 				layer: Layer.CUSTOMER,
-				isVariant: true
+				isVariant: true,
+				texts: {
+					variantName: "initialName"
+				}
 			},
 			reference: sComponentId,
 			persistencyKey: sPersistencyKey
 		};
+
+		QUnit.test("Given a variant was updated and reverted multiple times (update, update, revert, update, revert, revert)", function (assert) {
+			var oVariant = CompVariantState.add(oVariantData);
+			var sVariantId = oVariant.getId();
+
+			// ensure a persisted state and empty revertData aggregation
+			return CompVariantState.persist({
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey
+			}).then(function () {
+				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data is present");
+				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+
+				// (<<UPDATE>>, update, revert, update, revert, revert)
+				CompVariantState.updateVariant({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey,
+					favorite: true,
+					executeOnSelect: true
+				});
+				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
+				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.deepEqual(oVariant.getContent(), {
+					executeOnSelect: true,
+					favorite: true
+				}, "1: after an update... is the content is correct");
+
+				// (update, <<UPDATE>>, revert, update, revert, revert)
+				CompVariantState.updateVariant({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey,
+					favorite: false,
+					content: {
+						someKey: "someValue"
+					},
+					name: "myNewName"
+				});
+				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
+				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.deepEqual(oVariant.getContent(), {
+					executeOnSelect: true,
+					favorite: false,
+					someKey: "someValue"
+				}, "2: after an update... is the content is correct");
+				assert.equal(oVariant.getText("variantName"), "myNewName", "and the name is updated");
+
+				// (update, update, <<REVERT>>, update, revert, revert)
+				CompVariantState.revert({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey
+				});
+				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
+				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.deepEqual(oVariant.getContent(), {
+					executeOnSelect: true,
+					favorite: true
+				}, "3: after a revert... is the content is correct");
+				assert.equal(oVariant.getText("variantName"), "initialName", "and the name is also reverted");
+
+				// (update, update, revert, <<UPDATE>>, revert, revert)
+				CompVariantState.updateVariant({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey,
+					favorite: false,
+					content: {
+						someKey: "someValue"
+					}
+				});
+				assert.deepEqual(oVariant.getContent(), {
+					executeOnSelect: true,
+					favorite: false,
+					someKey: "someValue"
+				}, "4: after an update... is the content is correct");
+				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
+				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+
+				// (update, update, revert, update, <<REVERT>>, revert)
+				CompVariantState.revert({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey
+				});
+				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
+				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.deepEqual(oVariant.getContent(), {
+					executeOnSelect: true,
+					favorite: true
+				}, "5: after a revert... is the content is correct");
+
+				// (update, update, revert, update, revert, <<REVERT>>)
+				CompVariantState.revert({
+					id: sVariantId,
+					reference: sComponentId,
+					persistencyKey: sPersistencyKey
+				});
+				assert.deepEqual(oVariant.getContent(), {
+					executeOnSelect: false,
+					favorite: false
+				}, "6: after a revert... is the content is correct");
+				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data entries are present");
+				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+			});
+		});
 
 		QUnit.test("Given a variant was was added and a persist was called", function(assert) {
 			var oVariant = CompVariantState.add(oVariantData);
