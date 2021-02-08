@@ -10,46 +10,21 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	var SUPPORTED_MODEL_DATASOURCE_TYPES = ["OData", "INA", "XML", "JSON", "FHIR"];
+	var SUPPORTED_MODEL_DATASOURCE_TYPES = ["OData", "INA", "XML", "JSON", "FHIR", "http", "WebSocket"];
 	var SUPPORTED_DATASOURCE_TYPES = SUPPORTED_MODEL_DATASOURCE_TYPES.concat(["ODataAnnotation"]);
 
-	/**
-	 * Checks in the oChange if a dataSource has the type 'OData|INA|XML|JSON|FHIR|ODataAnnotation'.
-	 * If no type is specified, the default value is 'OData'.
-	 * @param {object} oChangeDataSource Path to dataSources
-	 * @param {string} sDataSource DataSource name
-	 * @returns {boolean} Result of the check
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal
-	 */
 	function isDataSourceTypeSupported(oChangeDataSource, sDataSource, aSupportedTypes) {
 		return !oChangeDataSource[sDataSource].type ||
 			aSupportedTypes.indexOf(oChangeDataSource[sDataSource]["type"]) >= 0;
 	}
 
-	function isODataDefinedForODataAnnotation(oChangeDataSource, sODataAnnotationName) {
-		var aDataSource = Object.keys(oChangeDataSource).map(function(e) {
-			return oChangeDataSource[e];
-		});
-		return aDataSource.some(function(oDataSource) {
+	function isODataDefinedForODataAnnotation(oChangeDataSources, sODataAnnotationName) {
+		return getObjectAsArray(oChangeDataSources).some(function(oDataSource) {
 			return (!oDataSource.type || oDataSource["type"] === "OData") &&
 			oDataSource["settings"]["annotations"].indexOf(sODataAnnotationName) >= 0;
 		});
 	}
 
-	/**
-	 * Checks in the change that defined model dataSource exists and is of the type 'OData|INA|XML|JSON|FHIR'.
-	 * It also checks in the manifest that the defined model dataSource exists but must not be the type of 'ODataAnnotation' (an exception will be thrown).
-	 * If no type is specified, the default value is 'OData'.
-	 * @param {object} oManifestDataSource Path to dataSources in manifest
-	 * @param {object} oChangeDataSource Path to dataSources in change
-	 * @param {string} sDataSource DataSource name
-	 * @returns {boolean} Result of the check
-	 *
-	 * @private
-	 * @ui5-restricted sap.ui.fl.apply._internal
-	 */
 	function isReferencedModelDataSourceExisting(oManifestDataSource, oChangeDataSource, sDataSource) {
 		return isExistingAndSupported(oChangeDataSource, sDataSource, SUPPORTED_MODEL_DATASOURCE_TYPES) || isDataSourceExistingInManifest(oManifestDataSource, sDataSource);
 	}
@@ -95,16 +70,19 @@ sap.ui.define([
 		if (oChangeDataSource[sDataSource].type === "ODataAnnotation") {
 			return true;
 		}
-		var aModels = Object.keys(oChangeModel).map(function(e) {
-			return oChangeModel[e];
-		});
-		return aModels.some(function(oModel) {
+		return getObjectAsArray(oChangeModel).some(function(oModel) {
 			return oModel.dataSource && oModel["dataSource"] === sDataSource;
 		});
 	}
 
 	function hasModelPropertyTypOrDataSource(oChangeModel, sModel) {
 		return oChangeModel[sModel].type || oChangeModel[sModel].dataSource;
+	}
+
+	function getObjectAsArray(oObject) {
+		return Object.keys(oObject).map(function(sObject) {
+			return oObject[sObject];
+		});
 	}
 
 	/**
@@ -125,8 +103,11 @@ sap.ui.define([
 
 		/**
 		 * Method to apply the <code>appdescr_ui5_addNewModel</code> change to the manifest.
-		 * @param {object} oManifest Original manifest
-		 * @param {object} oChange Change with type <code>appdescr_ui5_addNewModel</code>
+		 *
+		 * @param {object} oManifest - Original manifest
+		 * @param {object} oChange - Change with type <code>appdescr_ui5_addNewModel</code>
+		 * @param {object} oChange.content.model - Model that will be added
+		 * @param {object} oChange.content.dataSource - DataSource for model
 		 * @returns {object} Updated manifest with merged content
 		 *
 		 * @private
@@ -184,4 +165,4 @@ sap.ui.define([
 	};
 
 	return AddNewModel;
-}, true);
+});
