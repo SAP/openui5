@@ -64,8 +64,8 @@ sap.ui.define([
 		 * Adds a new variant and returns the ID of the new change.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer to which the variant should be written
 		 * @param {object} mPropertyBag.changeSpecificData - Map of parameters, see below
+		 * @param {sap.ui.fl.Layer} [mPropertyBag.changeSpecificData.layer] - Layer to which the variant should be written
 		 * @param {string} mPropertyBag.changeSpecificData.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
 		 * @param {object} mPropertyBag.changeSpecificData.texts - Map object with all referenced texts within the file; these texts will be connected to the translation process
 		 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
@@ -94,7 +94,7 @@ sap.ui.define([
 		 * @param {object} [mPropertyBag.content] - Content of the new change
 		 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
 		 * @param {object} [mPropertyBag.executeOnSelect] - Flag if the variant should be executed on selection
-		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place
 		 * this either updates the variant from the layer or writes a change to that layer.
 		 * @private
 		 * @ui5-restricted sap.ui.rta.command
@@ -118,6 +118,19 @@ sap.ui.define([
 		 */
 		removeVariant: function (mPropertyBag) {
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.removeVariant);
+		},
+
+		/**
+		 * Reverts the last operation done on a variant.
+		 *
+		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {string} mPropertyBag.reference - Flex reference of the application
+		 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
+		 * @param {string} mPropertyBag.id - ID of the variant
+		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The reverted variant
+		 */
+		revert: function (mPropertyBag) {
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.revert);
 		},
 
 		/**
