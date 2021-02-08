@@ -1051,6 +1051,7 @@ sap.ui.define([
 		 * Creates picker if doesn't exist yet and sync with Control items
 		 * To be overwritten by subclasses.
 		 *
+		 * @returns {sap.ui.core.Control}
 		 * @protected
 		 */
 		ComboBoxBase.prototype.syncPickerContent = function () {};

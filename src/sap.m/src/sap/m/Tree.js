@@ -247,7 +247,7 @@ function(
 	/**
 	 * The <code>growingScrollToLoad</code> property is not supported for control <code>Tree</code>.
 	 * @public
-	 * @param {int} bValue New value for the <code>growingScrollToLoad</code> property, ignored.
+	 * @param {boolean} bValue New value for the <code>growingScrollToLoad</code> property, ignored.
 	 * @returns {sap.m.Tree} Returns <code>this</code> to allow method chaining
 	 * @deprecated As of version 1.46.
 	 */

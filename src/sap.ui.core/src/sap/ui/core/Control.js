@@ -471,7 +471,7 @@ sap.ui.define([
 	 * @function
 	 *
 	 * @param {string} sStyleClass the CSS class name to be added or removed
-	 * @param {boolean} bAdd whether sStyleClass should be added (or removed); when this parameter is not given, sStyleClass will be toggled (removed, if present, and added if not present)
+	 * @param {boolean} [bAdd] whether sStyleClass should be added (or removed); when this parameter is not given, sStyleClass will be toggled (removed, if present, and added if not present)
 	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */

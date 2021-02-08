@@ -165,7 +165,7 @@ sap.ui.define([
 		}.bind(this));
 	};
 
-	/**
+	/*
 	 * @override
 	 * @inheritDoc
 	 */

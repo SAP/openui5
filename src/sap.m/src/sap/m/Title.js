@@ -228,8 +228,7 @@ sap.ui.define([
 	/**
 	 * Gets the accessibility information for the <code>sap.m.Title</code> control.
 	 *
-	 * @name sap.m.Title.getAccessibilityInfo
-	 * @method
+	 * @returns {object} The accessibility info
 	 * @protected
 	 * @see sap.ui.core.Control#getAccessibilityInfo
 	 */

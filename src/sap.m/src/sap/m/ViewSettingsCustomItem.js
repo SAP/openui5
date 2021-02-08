@@ -94,7 +94,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @override
 	 * @param {int} iValue The new value for property filterCount
 	 * @public
-	 * @return {sap.m.ViewSettingsItem} this pointer for chaining
+	 * @returns {sap.m.ViewSettingsCustomItem} this pointer for chaining
 	 */
 	ViewSettingsCustomItem.prototype.setFilterCount = function (iValue) {
 		this.setProperty("filterCount", iValue, true);
@@ -106,7 +106,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @override
 	 * @param {boolean} bValue The new value for property selected
 	 * @public
-	 * @return {sap.m.ViewSettingsItem} this pointer for chaining
+	 * @returns {sap.m.ViewSettingsCustomItem} this pointer for chaining
 	 */
 	ViewSettingsCustomItem.prototype.setSelected = function (bValue) {
 		this.setProperty("selected", bValue, true);
@@ -119,7 +119,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned object id
 	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
 	 * @param {Object} [oOptions] configuration object
-	 * @return {sap.ui.base.ManagedObject} reference to the newly created clone
+	 * @returns {sap.m.ViewSettingsCustomItem} reference to the newly created clone
 	 * @public
 	 * @override
 	 */

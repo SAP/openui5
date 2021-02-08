@@ -814,6 +814,7 @@ function(
 	 * Forward method to the inner dialog: addStyleClass
 	 * @public
 	 * @override
+	 * @param {string} sStyleClass CSS class name to add
 	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.addStyleClass = function () {
@@ -825,6 +826,7 @@ function(
 	 * Forward method to the inner dialog: removeStyleClass
 	 * @public
 	 * @override
+	 * @param {string} sStyleClass CSS class name to remove
 	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.removeStyleClass = function () {
@@ -833,9 +835,11 @@ function(
 	};
 
 	/**
-	 * Forward method to the inner dialog: toggleStyleClass
+	 * Forward method to the inner dialog: toggleStyleClass.
 	 * @public
 	 * @override
+	 * @param {string} sStyleClass CSS class name to add or remove
+	 * @param {boolean} [bAdd] Whether style class should be added (or removed); when this parameter is not given, the given style class will be toggled (removed, if present, and added if not present)
 	 * @returns {sap.m.SelectDialog} <code>this</code> pointer for chaining
 	 */
 	SelectDialog.prototype.toggleStyleClass = function () {

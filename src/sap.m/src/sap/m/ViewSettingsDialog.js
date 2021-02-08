@@ -657,6 +657,7 @@ function(
 	 * Forward method to the inner dialog method: addStyleClass.
 	 * @public
 	 * @override
+	 * @param {string} sStyleClass CSS class name to add
 	 * @returns {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.addStyleClass = function () {
@@ -670,6 +671,7 @@ function(
 	 * Forward method to the inner dialog method: removeStyleClass.
 	 * @public
 	 * @override
+	 * @param {string} sStyleClass CSS class name to remove
 	 * @returns {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.removeStyleClass = function () {
@@ -683,6 +685,8 @@ function(
 	 * Forward method to the inner dialog method: toggleStyleClass.
 	 * @public
 	 * @override
+	 * @param {string} sStyleClass CSS class name to add or remove
+	 * @param {boolean} [bAdd] Whether style class should be added (or removed); when this parameter is not given, the given style class will be toggled (removed, if present, and added if not present)
 	 * @returns {sap.m.ViewSettingsDialog} this pointer for chaining
 	 */
 	ViewSettingsDialog.prototype.toggleStyleClass = function () {

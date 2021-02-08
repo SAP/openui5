@@ -820,6 +820,7 @@ function(
 	 * To be overwritten by subclasses.
 	 *
 	 * @param {object} oFocusInfo
+	 * @returns {sap.m.InputBase} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	InputBase.prototype.applyFocusInfo = function(oFocusInfo) {
@@ -1131,6 +1132,7 @@ function(
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {Object} The accessibility information for this <code>InputBase</code>
 	 * @protected
 	 */
 	InputBase.prototype.getAccessibilityInfo = function() {

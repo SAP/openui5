@@ -163,7 +163,7 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/assert", "sap/base/Log"],
 	 *
 	 * This function is not available on the service interface.
 	 *
-	 * @return {object} the public interface of the service
+	 * @returns {sap.ui.core.service.Service} the public interface of the service
 	 * @protected
 	 */
 	Service.prototype.getInterface = function() {

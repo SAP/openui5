@@ -206,6 +206,7 @@ sap.ui.define([
 
 	/**
 	 * @see sap.ui.core.Control#getAccessibilityInfo
+	 * @returns {object} The accessibility info
 	 * @protected
 	 */
 	CheckBox.prototype.getAccessibilityInfo = function() {

@@ -614,6 +614,9 @@ sap.ui.define([
 	// ---- ----
 
 	/**
+	 * Components don't have a facade and therefore return themselves as their interface.
+	 *
+	 * @returns {sap.ui.core.Component} <code>this</code> as there's no facade for components
 	 * @see sap.ui.base.Object#getInterface
 	 * @public
 	 */

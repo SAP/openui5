@@ -473,7 +473,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 * Gets the DOM reference for the BusyDialog.
 		 *
 		 * @public
-		 * @returns {sap.m.BusyDialog} Dom reference.
+		 * @returns {Element} Dom reference.
 		 */
 		BusyDialog.prototype.getDomRef = function () {
 			return this._oDialog && this._oDialog.getDomRef();
