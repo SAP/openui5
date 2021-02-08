@@ -400,7 +400,7 @@ sap.ui.define([
 	};
 
 	ProgressIndicator.prototype._getStateText = function () {
-		return ValueStateSupport.getAdditionalText(this.getState());
+		return this.getEnabled() ? ValueStateSupport.getAdditionalText(this.getState()) : "";
 	};
 
 	/**
