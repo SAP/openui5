@@ -24,9 +24,11 @@
 					<ObjectPageHeaderActionButton icon="{buttons>/icon}"
 												  text="{path:'/text', model:'buttons', formatter:'.onFormat'}" tooltip="chain-link"/>
 				</actions>
-				<breadCrumbsLinks>
-					<m:Link text="Page 2 long link" press="handleLink2Press"/>
-				</breadCrumbsLinks>
+				<breadcrumbs>
+					<m:Breadcrumbs>
+						<m:Link text="Page 2 long link" press="handleLink2Press"/>
+					</m:Breadcrumbs>
+				</breadcrumbs>
 			</ObjectPageHeader>
 		</headerTitle>
 		<headerContent>

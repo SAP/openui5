@@ -18,7 +18,7 @@
 				showProductSwitcher="true"
 				notificationsNumber="2">
 				<profile>
-					<Avatar initials="UI"/>
+					<m:Avatar initials="UI"/>
 				</profile>
 		</ShellBar>
 </mvc:View>

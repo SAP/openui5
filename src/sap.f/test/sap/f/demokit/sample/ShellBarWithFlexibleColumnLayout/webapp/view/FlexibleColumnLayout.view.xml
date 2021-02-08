@@ -24,7 +24,7 @@
 					</m:Menu>
 				</menu>
 				<profile>
-					<Avatar initials="UI"/>
+					<m:Avatar initials="UI"/>
 				</profile>
 			</ShellBar>
 		</m:customHeader>

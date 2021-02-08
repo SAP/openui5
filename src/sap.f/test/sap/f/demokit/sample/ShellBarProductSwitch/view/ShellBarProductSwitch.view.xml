@@ -11,7 +11,7 @@
 			productSwitcherPressed="fnOpen"
 			showProductSwitcher="true">
 		<profile>
-			<Avatar initials="UI"/>
+			<m:Avatar initials="UI"/>
 		</profile>
 	</ShellBar>
 </mvc:View>

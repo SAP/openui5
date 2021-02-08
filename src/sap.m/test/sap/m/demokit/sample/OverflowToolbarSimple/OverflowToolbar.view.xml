@@ -288,8 +288,10 @@
 		<ToggleButton text="Toggle Button" type="Transparent"/>
 		<Button text="Button 3" type="Transparent"/>
 		<SegmentedButton tooltip="Segmented Button">
-			<Button text="Segmented" type="Transparent"/>
-			<Button text="Button" type="Transparent"/>
+			<items>
+				<SegmentedButtonItem text="Segmented"/>
+				<SegmentedButtonItem text="Button"/>
+			</items>
 		</SegmentedButton>
 		<Button text="Button 4" type="Transparent"/>
 	</OverflowToolbar>
@@ -417,14 +419,14 @@
 		<Label text="Multiple Generic Tag instances:"/>
 		<ToolbarSpacer />
 		<GenericTag text="Project Cost" design="StatusIconHidden" status="Error">
-			<ObjectNumber state="Error" emphasized="false" number="3.5M" numberUnit="EUR"/>
+			<ObjectNumber state="Error" emphasized="false" number="3.5M" unit="EUR"/>
 		</GenericTag>
 
 		<GenericTag text="Shortage Expected" status="Warning">
 		</GenericTag>
 
 		<GenericTag text="Project Cost"  design="StatusIconHidden" status="Success">
-			<ObjectNumber state="Success" emphasized="false" number="96" numberUnit="%" />
+			<ObjectNumber state="Success" emphasized="false" number="96" unit="%" />
 			<layoutData>
 				<OverflowToolbarLayoutData shrinkable="true" group="2" minWidth="70px"/>
 			</layoutData>

@@ -32,10 +32,12 @@
 					<ObjectPageHeaderActionButton icon="{buttons>/icon}"
 					                              text="{path:'/text', model:'buttons', formatter:'.onFormat'}" tooltip="chain-link"/>
 				</actions>
-				<breadCrumbsLinks>
-					<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
-					<m:Link text="Page 2 long link" press="handleLink2Press"/>
-				</breadCrumbsLinks>
+				<breadcrumbs>
+					<m:Breadcrumbs>
+						<m:Link text="Page 1 a very long link" press="handleLink1Press"/>
+						<m:Link text="Page 2 long link" press="handleLink2Press"/>
+					</m:Breadcrumbs>
+				</breadcrumbs>
 			</ObjectPageHeader>
 		</headerTitle>
 		<headerContent>
@@ -50,7 +52,7 @@
 
 			<m:ObjectStatus text="In Stock" state="Error"/>
 			<m:ObjectStatus title="Label" text="In Stock" state="Warning"/>
-			<m:ObjectNumber number="1000" numberUnit="SOOK" emphasized="false" state="Success"/>
+			<m:ObjectNumber number="1000" unit="SOOK" emphasized="false" state="Success"/>
 			<m:ProgressIndicator
 					percentValue="30"
 					displayValue="30%"
@@ -58,28 +60,28 @@
 					state="None"/>
 			<layout:VerticalLayout>
 				<m:Label text="PC, Unrestricted-Use Stock"/>
-				<m:ObjectNumber class="sapMObjectNumberLarge" number="219" numberUnit="K"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="219" unit="K"/>
 			</layout:VerticalLayout>
 			<layout:VerticalLayout>
 				<layout:layoutData>
 					<ObjectPageHeaderLayoutData visibleS="false"/>
 				</layout:layoutData>
 				<m:Label text="PC, Not in Small Size"/>
-				<m:ObjectNumber class="sapMObjectNumberLarge" number="220" numberUnit="K"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="220" unit="K"/>
 			</layout:VerticalLayout>
 			<layout:VerticalLayout>
 				<layout:layoutData>
 					<ObjectPageHeaderLayoutData visibleM="false" />
 				</layout:layoutData>
 				<m:Label text="PC, Not in Medium Size"/>
-				<m:ObjectNumber class="sapMObjectNumberLarge" number="221" numberUnit="K"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="221" unit="K"/>
 			</layout:VerticalLayout>
 			<layout:VerticalLayout>
 				<layout:layoutData>
 					<ObjectPageHeaderLayoutData visibleL="false"/>
 				</layout:layoutData>
 				<m:Label text="PC, Not in Large Size"/>
-				<m:ObjectNumber class="sapMObjectNumberLarge" number="219" numberUnit="K"/>
+				<m:ObjectNumber class="sapMObjectNumberLarge" number="219" unit="K"/>
 			</layout:VerticalLayout>
 			<m:ObjectAttribute title="Label" text="In Stock"/>
 			<m:Button icon="sap-icon://nurse" tooltip="nurse"/>
