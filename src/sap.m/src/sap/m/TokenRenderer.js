@@ -72,9 +72,7 @@ sap.ui.define(["sap/ui/core/library", "sap/ui/core/InvisibleText"],
 			aAccDescribebyValues.push(InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_DELETABLE"));
 		}
 
-		if (oControl.getSelected()) {
-			aAccDescribebyValues.push(InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_SELECTED"));
-		}
+		oRm.attr("aria-selected", oControl.getSelected());
 
 		//ARIA attributes
 		oAccAttributes.describedby = {

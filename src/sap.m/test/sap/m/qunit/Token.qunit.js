@@ -267,19 +267,16 @@ sap.ui.define([
 		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) > -1, "Token has correct invisible text ID added to aria-describedby attribute");
 	});
 
-	QUnit.test("ARIA Selection text", function(assert) {
-		var sId = InvisibleText.getStaticId("sap.m", "TOKEN_ARIA_SELECTED");
-
-		assert.ok(!this.token1.$().attr("aria-selected"), "aria-selected is not valid property for the current type of role - listitem");
+	QUnit.test("ARIA-SELECTED attribute", function(assert) {
+		assert.strictEqual(this.token1.$().attr("aria-selected"), "false", "aria-selected is set to false.");
 
 		this.token1.setSelected(true);
 		sap.ui.getCore().applyChanges();
-		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) > -1, "Token has correct invisible text ID added to aria-describedby attribute");
+		assert.strictEqual(this.token1.$().attr("aria-selected"), "true", "aria-selected is updated correctly.");
 
 		this.token1.setSelected(false);
 		sap.ui.getCore().applyChanges();
-		assert.ok(this.token1.$().attr("aria-describedby").split(" ").indexOf(sId) === -1, "Token has the invisible text ID removed from aria-describedby attribute");
-
+		assert.strictEqual(this.token1.$().attr("aria-selected"), "false", "aria-selected updated correctly.");
 	});
 
 	QUnit.test("ARIA Editable (deletable) text", function(assert) {
