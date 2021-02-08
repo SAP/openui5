@@ -583,13 +583,8 @@ sap.ui.define([
 		return bCondenserEnabled;
 	}
 
-	function isBackendCondensingEnabled(aChanges, bSkipUpdateCache) {
+	function isBackendCondensingEnabled(aChanges) {
 		var bEnabled = Settings.getInstanceOrUndef() && Settings.getInstanceOrUndef().isCondensingEnabled();
-
-		// bSkipUpdateCache is set in the SaveAs scenario which has to be disabled for now
-		if (bEnabled && bSkipUpdateCache) {
-			bEnabled = false;
-		}
 		if (bEnabled && !checkIfOnlyOne(aChanges, "getNamespace")) {
 			bEnabled = false;
 		}
@@ -630,7 +625,7 @@ sap.ui.define([
 		var aDirtyChanges = aChanges || this._aDirtyChanges;
 		var aRelevantChangesForCondensing = getAllRelevantChangesForCondensing.call(this, aDirtyChanges);
 		var bIsCondensingEnabled = (
-			isBackendCondensingEnabled(aRelevantChangesForCondensing, bSkipUpdateCache)
+			isBackendCondensingEnabled(aRelevantChangesForCondensing)
 			&& shouldCondensingBeEnabled(oAppComponent, aRelevantChangesForCondensing)
 		);
 		var aAllChanges = bIsCondensingEnabled ? aRelevantChangesForCondensing : aDirtyChanges;

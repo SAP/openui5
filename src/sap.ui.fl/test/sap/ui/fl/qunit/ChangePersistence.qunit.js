@@ -2054,7 +2054,7 @@ function(
 			}.bind(this));
 		});
 
-		QUnit.test("Shall not do backend condensing with 'bSkipUpdateCache' flag present", function(assert) {
+		QUnit.test("Shall do backend condensing with 'bSkipUpdateCache' flag present", function(assert) {
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isCondensingEnabled: function() {
 					return true;
@@ -2063,8 +2063,8 @@ function(
 			addTwoChanges(this.oChangePersistence, this.oComponentInstance, Layer.CUSTOMER);
 			return this.oChangePersistence.saveDirtyChanges(this._oComponentInstance, true).then(function() {
 				assert.equal(this.oCondenserStub.callCount, 1, "the condenser was called");
-				assert.equal(this.oWriteStub.callCount, 1, "the write function was called");
-				assert.equal(this.oStorageCondenseStub.callCount, 0, "the condenser route was not called");
+				assert.equal(this.oWriteStub.callCount, 0, "the write function was not called");
+				assert.equal(this.oStorageCondenseStub.callCount, 1, "the condenser route was called");
 			}.bind(this));
 		});
 
