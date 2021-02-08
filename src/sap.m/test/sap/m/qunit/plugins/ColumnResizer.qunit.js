@@ -249,6 +249,10 @@ sap.ui.define([
 		assert.ok(oCurrentColumnUpdatedWidth.indexOf("px") > -1, "px width applied to the CurrentColumn");
 		assert.ok(oNextColumnOriginalWidth !== oNextColumnUpdatedWidth, "NextColumn original width !== NextColumn updated width");
 		assert.ok(oNextColumnUpdatedWidth.indexOf("px") > -1, "px width applied to the NextColumn");
+
+		this.oTable.getColumns().forEach(function(oColumn) {
+			assert.ok(oColumn.getWidth().indexOf("px") > -1, "All columns should have static width once a column is resized");
+		});
 	});
 
 	QUnit.test("Resize columns with Table having dummy column", function(assert) {
@@ -503,13 +507,14 @@ sap.ui.define([
 	});
 
 	QUnit.test("showResizeHandle", function(assert) {
-		var oColumnDomRef = this.oTable.getColumns()[0].getDomRef();
+		var fTableX = this.oTable.getDomRef("listUl").getBoundingClientRect()[this.sBeginDirection];
+		var oColumnDomRef = this.oTable.getColumns()[1].getDomRef();
 
 		this.clock.tick(1);
 
 		assert.notOk(this.oColumnResizer._oHandle, "Resize handle is not created yet");
 		this.oColumnResizer.startResizing(oColumnDomRef);
 		assert.ok(this.oColumnResizer._oHandle, "Resize handle is created");
-		assert.ok(this.oColumnResizer._oHandle.style[this.sBeginDirection], "Resize handle is visible");
+		assert.strictEqual(this.oColumnResizer._oHandle.style[this.sBeginDirection], this.oColumnResizer._aPositions[1] - fTableX + "px", "Resize handle is visible");
 	});
 });

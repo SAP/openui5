@@ -260,7 +260,7 @@ sap.ui.define([
 	};
 
 	ColumnResizer.prototype._getColumnMinWidth = function(oColumn) {
-		return 48;
+		return oColumn ? 48 : 0;
 	};
 
 	/**
@@ -323,6 +323,24 @@ sap.ui.define([
 			}
 		}
 
+		// when any column is resized, then make all visible columns have fixed width
+		this._aResizables.forEach(function(oResizable) {
+			var $oResizable = jQuery(oResizable),
+				oColumn = $oResizable.control(0, true),
+				sWidth = oColumn.getWidth();
+
+			if (sWidth && sWidth.toLowerCase() != "auto") {
+				return;
+			}
+
+			sWidth = $oResizable.css("width");
+
+			if (sWidth && !this._fireColumnResize(oColumn, sWidth)) {
+				return;
+			}
+
+			oColumn.setWidth(sWidth);
+		}, this);
 	};
 
 	/**
