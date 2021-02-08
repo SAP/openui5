@@ -5407,6 +5407,61 @@ sap.ui.define([
 		});
 	});
 
+
+	QUnit.module("Get destinations list timeout", {
+		beforeEach: function() {
+			this.oHost = new Host("host");
+			this.oHost.getDestinations = function() {
+				return new Promise(function(resove, reject) {
+					setTimeout(function() {
+						reject("Get destinations list timeout.");
+					}, 3000);
+				});
+			};
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function() {
+		QUnit.test("Check destination is", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, host: "host", manifest: { "sap.app": { "id": "test.sample", "i18n": "i18n/i18n.properties" }, "sap.card": { "configuration": { "destinations": { "dest1": { "name": "Northwind" } } }, "type": "List", "header": {} } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oField.isA("sap.ui.integration.designtime.editor.fields.DestinationField"), "Content of Form contains: Destination Field");
+					assert.ok(oField.getAggregation("_field").getBusy() === true, "Content of Form contains: Destination Field that is busy");
+					setTimeout(function () {
+						//should resolve the destination within 6000ms
+						assert.ok(oField.getAggregation("_field").getBusy() === false, "Content of Form contains: Destination Field that is not busy anymore");
+						assert.ok(oField.getAggregation("_field").getItems().length === 0, "Content of Form contains: Destination Field items lengh OK");
+						resolve();
+					}, 8000);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+
 	QUnit.module("Expanded groups", {
 		beforeEach: function () {
 			this.oHost = new Host("host");

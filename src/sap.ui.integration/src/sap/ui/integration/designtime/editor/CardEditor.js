@@ -1559,9 +1559,9 @@ sap.ui.define([
 					visible: true
 				};
 			}
-			var oItems = oSettings.form.items;
+			var oItems = oSettings.form.items,
+			    oHost = this._oEditorCard.getHostInstance();
 			Object.keys(oConfiguration.destinations).forEach(function (n) {
-				var oHost = this._oEditorCard.getHostInstance();
 				oItems[n + ".destinaton"] = merge({
 					manifestpath: sBasePath + n + "/name", //destination points to name not value
 					visible: true,
@@ -1580,15 +1580,40 @@ sap.ui.define([
 				}
 				if (oHost) {
 					oItems[n + ".destinaton"]._loading = true;
-					this._oEditorCard.getHostInstance().getDestinations().then(function (n, a) {
+				}
+			});
+			var getDestinationsDone = false;
+			if (oHost) {
+				this._oEditorCard.getHostInstance().getDestinations().then(function (a) {
+					getDestinationsDone = true;
+					Object.keys(oConfiguration.destinations).forEach(function(n) {
 						oItems[n + ".destinaton"]._values = a;
 						oItems[n + ".destinaton"]._loading = false;
 						this._settingsModel.checkUpdate(true);
-					}.bind(this, n)); //pass in n as first parameter
-				}
-			}.bind(this));
+					}.bind(this));
+				}.bind(this)).catch(function() {
+					//Fix DIGITALWORKPLACE-4359, retry once for the timeout issue
+					return this._oEditorCard.getHostInstance().getDestinations();
+				}.bind(this)).then(function(b) {
+					if (getDestinationsDone) {
+						return;
+					}
+					Object.keys(oConfiguration.destinations).forEach(function(n) {
+						oItems[n + ".destinaton"]._values = b;
+						oItems[n + ".destinaton"]._loading = false;
+						this._settingsModel.checkUpdate(true);
+					}.bind(this));
+				}.bind(this)).catch(function(e) {
+					Object.keys(oConfiguration.destinations).forEach(function(n) {
+						oItems[n + ".destinaton"]._loading = false;
+						this._settingsModel.checkUpdate(true);
+					}.bind(this));
+					Log.error("Can not get destinations list from '" + oHost.getId() + "'.");
+				}.bind(this));
+			}
 		}
 	};
+
 	/**
 	 * Returns the default value that was given by the developer for the given path
 	 * @param {string} sPath
