@@ -49,6 +49,35 @@ sap.ui.define([
 				var oRemoveStub = sandbox.stub();
 				this.oControl.removeWeakVariant = oRemoveStub;
 
+				function assertExecute(oControl) {
+					assert.equal(oAddVariantAPIStub.callCount, 1, "the FL API was called");
+					var mExpectedProperties = {
+						changeSpecificData: {
+							type: "myType",
+							texts: {
+								variantName: "myText"
+							},
+							content: {foo: "bar"},
+							executeOnSelect: false,
+							favorite: true,
+							layer: Layer.CUSTOMER
+						},
+						generator: "sap.ui.rta.command",
+						command: "compVariantSaveAs",
+						control: oControl
+					};
+					assert.deepEqual(oAddVariantAPIStub.lastCall.args[0].changeSpecificData, mExpectedProperties.changeSpecificData, "the API was called with the correct properties");
+					assert.deepEqual(oAddVariantAPIStub.lastCall.args[0].control, mExpectedProperties.control, "the API was called with the correct properties");
+					assert.equal(oSetDefaultVariantIdAPIStub.callCount, bDefault ? 1 : 0, "the default variant was (or not) set in FL");
+
+					assert.equal(oActivateStub.callCount, 1, "the Control API to activate was called");
+					assert.equal(sVariantId, oActivateStub.lastCall.args[0], "the activate api was called with the correct property");
+
+					assert.equal(oAddVariantControlStub.callCount, 1, "the API to add was called");
+					assert.deepEqual(oAddVariantControlStub.lastCall.args[0], oVariant, "the first parameter is correct");
+					assert.equal(oAddVariantControlStub.lastCall.args[1], bDefault, "the second parameter is correct");
+				}
+
 				return CommandFactory.getCommandFor(this.oControl, "compVariantSaveAs", {
 					newVariantProperties: {
 						type: "myType",
@@ -66,31 +95,7 @@ sap.ui.define([
 
 					return oSaveAsCommand.execute();
 				}).then(function() {
-					assert.equal(oAddVariantAPIStub.callCount, 1, "the FL API was called");
-					var mExpectedProperties = {
-						changeSpecificData: {
-							type: "myType",
-							texts: {
-								variantName: "myText"
-							},
-							content: {foo: "bar"},
-							executeOnSelect: false,
-							favorite: true,
-							layer: Layer.CUSTOMER
-						},
-						generator: "sap.ui.rta.command",
-						command: "compVariantSaveAs",
-						control: this.oControl
-					};
-					assert.deepEqual(oAddVariantAPIStub.lastCall.args[0].changeSpecificData, mExpectedProperties.changeSpecificData, "the API was called with the correct properties");
-					assert.deepEqual(oAddVariantAPIStub.lastCall.args[0].control, mExpectedProperties.control, "the API was called with the correct properties");
-					assert.equal(oSetDefaultVariantIdAPIStub.callCount, bDefault ? 1 : 0, "the default variant was set (or not) in FL");
-					assert.equal(oActivateStub.callCount, 1, "the Control API to activate was called");
-					assert.equal(sVariantId, oActivateStub.lastCall.args[0], "the activate api was called with the correct property");
-
-					assert.equal(oAddVariantControlStub.callCount, 1, "the API to add was called");
-					assert.deepEqual(oAddVariantControlStub.lastCall.args[0], oVariant, "the first parameter is correct");
-					assert.equal(oAddVariantControlStub.lastCall.args[1], bDefault, "the second parameter is correct");
+					assertExecute(this.oControl);
 
 					return oSaveAsCommand.undo();
 				}.bind(this)).then(function() {
@@ -102,6 +107,7 @@ sap.ui.define([
 					assert.equal(oRemoveVariantAPIStub.callCount, 1, "the FL API to remove was called");
 					assert.equal(oRemoveVariantAPIStub.lastCall.args[0].id, sVariantId, "the first parameter is correct");
 					assert.equal(oRemoveVariantAPIStub.lastCall.args[0].control, this.oControl, "the first parameter is correct");
+					assert.equal(oRemoveVariantAPIStub.lastCall.args[0].revert, true, "the first parameter is correct");
 
 					assert.equal(oRemoveStub.callCount, 1, "the Control API to remove was called");
 					var oExpectedProperties = {
@@ -112,34 +118,10 @@ sap.ui.define([
 					};
 					assert.deepEqual(oRemoveStub.lastCall.args[0], oExpectedProperties, "the first parameter is correct");
 
+					sandbox.resetHistory();
 					return oSaveAsCommand.execute();
 				}.bind(this)).then(function() {
-					assert.equal(oAddVariantAPIStub.callCount, 2, "the FL API was called again");
-					var mExpectedProperties = {
-						changeSpecificData: {
-							type: "myType",
-							texts: {
-								variantName: "myText"
-							},
-							content: {foo: "bar"},
-							executeOnSelect: false,
-							favorite: true,
-							layer: Layer.CUSTOMER
-						},
-						generator: "sap.ui.rta.command",
-						command: "compVariantSaveAs",
-						control: this.oControl
-					};
-					assert.deepEqual(oAddVariantAPIStub.lastCall.args[0].changeSpecificData, mExpectedProperties.changeSpecificData, "the API was called with the correct properties");
-					assert.deepEqual(oAddVariantAPIStub.lastCall.args[0].control, mExpectedProperties.control, "the API was called with the correct properties");
-					assert.equal(oSetDefaultVariantIdAPIStub.callCount, bDefault ? 3 : 0, "the default variant was (or not) set in FL");
-
-					assert.equal(oActivateStub.callCount, 2, "the Control API to activate was called again");
-					assert.equal(sVariantId, oActivateStub.lastCall.args[0], "the activate api was called with the correct property");
-
-					assert.equal(oAddVariantControlStub.callCount, 2, "the API to add was called again");
-					assert.deepEqual(oAddVariantControlStub.lastCall.args[0], oVariant, "the first parameter is correct");
-					assert.equal(oAddVariantControlStub.lastCall.args[1], bDefault, "the second parameter is correct");
+					assertExecute(this.oControl);
 				}.bind(this));
 			});
 		});

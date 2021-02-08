@@ -98,7 +98,8 @@ sap.ui.define([
 	CompVariantSaveAs.prototype.undo = function() {
 		SmartVariantManagementWriteAPI.removeVariant({
 			id: this._oVariant.getId(),
-			control: this.getElement()
+			control: this.getElement(),
+			revert: true
 		});
 
 		if (this.getNewVariantProperties().default) {

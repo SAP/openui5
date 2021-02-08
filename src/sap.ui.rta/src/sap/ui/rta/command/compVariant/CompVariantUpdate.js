@@ -61,8 +61,7 @@ sap.ui.define([
 	function callFlAPIFunction(sFunctionName, sKey, oValue) {
 		var mPropertyBag = Object.assign({}, oValue, this.mInformation, {
 			id: sKey,
-			control: this.getElement(),
-			saveUndoOperation: true
+			control: this.getElement()
 		});
 		return SmartVariantManagementWriteAPI[sFunctionName](mPropertyBag);
 	}
@@ -103,22 +102,21 @@ sap.ui.define([
 	CompVariantUpdate.prototype.undo = function() {
 		if (this.getOnlySave()) {
 			this.getElement().setModified(true);
-			// var sVariantId = Object.keys(this.getNewVariantProperties())[0];
-			// callFlAPIFunction.call(this, "undoVariant", sVariantId, {});
+			var sVariantId = Object.keys(this.getNewVariantProperties())[0];
+			callFlAPIFunction.call(this, "revert", sVariantId, {});
 		} else {
-			// each(this.getNewVariantProperties(), function(sVariantId, oValue) {
-			// 	var oVariant = callFlAPIFunction.call(this, "undoVariant", sVariantId, {});
-			// 	if (oValue.deleted) {
-			// 		this.getElement().addVariant(oVariant);
-			// 	} else {
-			// 		this.getElement().updateVariant(oVariant);
-			// 	}
-			// }.bind(this));
-			// if (this.getNewDefaultVariantId()) {
-				// should this also go into the undo function?
-				// callFlAPIFunction.call(this, "setDefaultVariantId", this.getOldDefaultVariantId());
-				// this.getElement().setDefaultVariantId(this.getOldDefaultVariantId());
-			// }
+			each(this.getNewVariantProperties(), function(sVariantId, oValue) {
+				var oVariant = callFlAPIFunction.call(this, "revert", sVariantId, {});
+				if (oValue.deleted) {
+					this.getElement().addVariant(oVariant);
+				} else {
+					this.getElement().updateVariant(oVariant);
+				}
+			}.bind(this));
+			if (this.getNewDefaultVariantId()) {
+				callFlAPIFunction.call(this, "setDefaultVariantId", this.getOldDefaultVariantId());
+				this.getElement().setDefaultVariantId(this.getOldDefaultVariantId());
+			}
 		}
 		return Promise.resolve();
 	};
