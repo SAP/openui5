@@ -419,21 +419,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds available business contexts
-	 * @param (object[]} aBusinessContexts - Array containing business contexts
+	 * Adds extension data, e.g. business contexts
+	 * @param {object[]} aExtensionData - Array containing extension data
 	 * @public
 	 */
-	AddElementsDialog.prototype.addBusinessContext = function (aBusinessContexts) {
+	AddElementsDialog.prototype.addExtensionData = function (aExtensionData) {
 		// clear old values from last run
-		this._removeBusinessContexts();
-		// Message "none" when no business contexts are available
+		this._removeExtensionDataTexts();
+		// Message "none" when no extension data is available
 		var oBCDescription = new Text({
 			text: this._oTextResources.getText("MSG_NO_BUSINESS_CONTEXTS")
 		});
-		if (aBusinessContexts && aBusinessContexts.length > 0) {
-			aBusinessContexts.forEach(function (oContext) {
+		if (aExtensionData && aExtensionData.length > 0) {
+			aExtensionData.forEach(function (oContext) {
 				oBCDescription = new Text({
-					text: oContext.BusinessContextDescription
+					text: oContext.description
 				});
 				this._oBCContainer.addContent(oBCDescription);
 			}, this);
@@ -445,11 +445,11 @@ sap.ui.define([
 	};
 
 	/**
-	 * Removes business contexts from the vertical layout
+	 * Removes extension data from the vertical layout
 	 * (except for the title)
 	 * @private
 	 */
-	AddElementsDialog.prototype._removeBusinessContexts = function () {
+	AddElementsDialog.prototype._removeExtensionDataTexts = function () {
 		var nIndex;
 		var nElementsCount = this._oBCContainer.getContent().length;
 		for (nIndex = 0; nIndex < nElementsCount; nIndex++) {

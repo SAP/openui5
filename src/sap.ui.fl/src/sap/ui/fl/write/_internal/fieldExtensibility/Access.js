@@ -22,7 +22,7 @@ sap.ui.define([
 	"use strict";
 
 	/**
-	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.Abap
+	 * @namespace sap.ui.fl.write._internal.fieldExtensibility.Access
 	 * @experimental Since 1.87.0
 	 * @author SAP SE
 	 * @version ${version}
@@ -70,6 +70,24 @@ sap.ui.define([
 		return {};
 	}
 
+	function getReturnObjectFromBusinessContexts(oBusinessContextReturn, sEntityType) {
+		oBusinessContextReturn.BusinessContexts.map(function(oBusinessContext) {
+			return {
+				description: oBusinessContext.BusinessContextDescription,
+				businessContext: oBusinessContext.BusinessContext
+			};
+		});
+		return {
+			extensionData: oBusinessContextReturn.BusinessContexts,
+			entityType: sEntityType,
+			serviceVersion: oBusinessContextReturn.ServiceVersion,
+			serviceName: oBusinessContextReturn.ServiceName
+		};
+	}
+
+	/**
+	 * @inheritDoc
+	 */
 	Access.getTexts = function() {
 		var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.fl");
 		return {
@@ -78,6 +96,9 @@ sap.ui.define([
 		};
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	Access.isExtensibilityEnabled = function(oControl) {
 		var sComponentName = Utils.getComponentClassName(oControl);
 		if (!sComponentName) {
@@ -88,6 +109,9 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	Access.getExtensionData = function(oControl) {
 		var sServiceUrl = oControl.getModel().sServiceUrl;
 		var sEntityType = getBoundEntityType(oControl).name;
@@ -100,8 +124,7 @@ sap.ui.define([
 
 		return Promise.resolve($Deferred).then(function(oResult) {
 			if (oResult && Array.isArray(oResult.BusinessContexts) && oResult.BusinessContexts.length > 0) {
-				oResult.EntityType = sEntityType;
-				return oResult;
+				return getReturnObjectFromBusinessContexts(oResult, sEntityType);
 			}
 			return false;
 		})
@@ -117,6 +140,9 @@ sap.ui.define([
 		});
 	};
 
+	/**
+	 * @inheritDoc
+	 */
 	Access.onTriggerCreateExtensionData = function(oExtensibilityInfo) {
 		Utils.ifUShellContainerThen(function(aServices) {
 			var oCrossAppNav = aServices[0];
@@ -126,12 +152,12 @@ sap.ui.define([
 					action: "develop"
 				},
 				params: {
-					businessContexts: oExtensibilityInfo.BusinessContexts.map(function(oBusinessContext) {
-						return oBusinessContext.BusinessContext;
+					businessContexts: oExtensibilityInfo.extensionData.map(function(oBusinessContext) {
+						return oBusinessContext.businessContext;
 					}),
-					serviceName: oExtensibilityInfo.ServiceName,
-					serviceVersion: oExtensibilityInfo.ServiceVersion,
-					entityType: oExtensibilityInfo.EntityType
+					serviceName: oExtensibilityInfo.serviceName,
+					serviceVersion: oExtensibilityInfo.serviceVersion,
+					entityType: oExtensibilityInfo.entityType
 				}
 			}));
 			Access.openNewWindow(sHrefForFieldExtensionUi);

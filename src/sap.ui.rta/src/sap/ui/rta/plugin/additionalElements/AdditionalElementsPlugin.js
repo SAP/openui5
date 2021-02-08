@@ -1077,8 +1077,7 @@ sap.ui.define([
 					if (oCurrentFieldExtInfo) {
 						this._oCurrentFieldExtInfo = oCurrentFieldExtInfo;
 						this.getDialog().setCustomFieldEnabled(true);
-						// TODO change BusinessContexts to a more generic name
-						this.getDialog().addBusinessContext(this._oCurrentFieldExtInfo.BusinessContexts);
+						this.getDialog().addExtensionData(this._oCurrentFieldExtInfo.extensionData);
 						this.getDialog().detachEvent("openCustomField", this._onOpenCustomField, this);
 						this.getDialog().attachEvent("openCustomField", null, this._onOpenCustomField, this);
 					}

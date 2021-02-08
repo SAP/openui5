@@ -801,17 +801,17 @@ sap.ui.define([
 			});
 			var oOpenNewWindowStub = sandbox.stub(Access, "openNewWindow");
 			var oExtensibilityInfo = {
-				BusinessContexts: [
+				extensionData: [
 					{
-						BusinessContext: "bar"
+						businessContext: "bar"
 					},
 					{
-						BusinessContext: "foobar"
+						businessContext: "foobar"
 					}
 				],
-				ServiceName: "name",
-				ServiceVersion: 1,
-				EntityType: "odata"
+				serviceName: "name",
+				serviceVersion: 1,
+				entityType: "odata"
 			};
 
 			var oExpectedParams = {
@@ -865,16 +865,20 @@ sap.ui.define([
 			var oGetBusinessContextsStub = sandbox.stub(Access, "getBusinessContexts").resolves({
 				BusinessContexts: [
 					"foo"
-				]
+				],
+				ServiceName: "name",
+				ServiceVersion: "2"
 			});
 			var oExpectedResult = {
-				BusinessContexts: [
+				extensionData: [
 					"foo"
 				],
-				EntityType: "EntityType01"
+				entityType: "EntityType01",
+				serviceName: "name",
+				serviceVersion: "2"
 			};
 			return Access.getExtensionData(this.oView.byId("EntityType01.Prop1")).then(function(oExtensionData) {
-				assert.deepEqual(oExpectedResult, oExtensionData, "the function returns the Business Contexts");
+				assert.deepEqual(oExtensionData, oExpectedResult, "the function returns the Extension data");
 				assert.equal(oGetBusinessContextsStub.callCount, 1, "the Business Contexts were retrieved");
 			});
 		});
