@@ -210,61 +210,7 @@
 							</mdcf:content>
 							</mdcf:FieldValueHelp>
 
-							<mdcf:FieldValueHelp open="onGenreVHOpen" dataRequested="onGenreVHOpen" filterFields="$search" title="Genre" id="FHGenre"
-								noDialog="false" keyPath="code" descriptionPath="title" showConditionPanel="true"
-								delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-								<mdcf:inParameters>
-									<mdcf:InParameter id="IOFFVHGenre-In-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
-								</mdcf:inParameters>
-								<mdcf:outParameters>
-									<mdcf:OutParameter id="IOFFVHGenre-Out-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
-								</mdcf:outParameters>
-								<mdcf:filterBar>
-									<!-- <mdc:FilterBar liveMode="false">
-										<mdc:filterItems>
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Code" dataType= "Edm.String" conditions= "{$filters>/conditions/code}" />
-
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions= "{$filters>/conditions/title}" />
-
-											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Classification" dataType= "Edm.String" conditions= "{$filters>/conditions/classification_code}" />
-										</mdc:filterItems>
-									</mdc:FilterBar> -->
-								</mdcf:filterBar>
-								<mdcf:content>
-									<mdcf:FieldValueHelpMTableWrapper>
-										<!-- <mdcf:table>
-											<Table items='{path : "/Genres"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
-												<columns>
-													<Column>
-														<header>
-															<Text text="Code" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Title" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Classification" />
-														</header>
-													</Column>
-												</columns>
-												<items>
-													<ColumnListItem type="Active">
-														<cells>
-															<Text text="{code}" />
-															<Text text="{title}" />
-															<Text text="{classification_code}" />
-														</cells>
-													</ColumnListItem>
-												</items>
-											</Table>
-										</mdcf:table> -->
-									</mdcf:FieldValueHelpMTableWrapper>
-								</mdcf:content>
-							</mdcf:FieldValueHelp>
+							
 
 							<mdcf:FieldValueHelp title="Sub Genre" id="FHSubGenre" noDialog="false" keyPath="code"
 								descriptionPath="title" showConditionPanel="true"
@@ -500,7 +446,7 @@
 						</mdc:items>
 					</mdc:Chart>
 
-					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column']}" delegate="{name: 'sap/ui/v4demo/delegate/Books.Table.delegate', payload: {collectionName: 'Books'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
+					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/v4demo/delegate/Books.Table.delegate', payload: {collectionName: 'Books'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
 						<mdc:actions>
 							<Button type="Emphasized" text="Add Book" press="onAddButtonPress" />
 						</mdc:actions>
@@ -542,50 +488,6 @@
 							<mdc:table.ResponsiveTableType growingMode="Scroll" />
 						</mdc:type>
 						<mdc:dependents>
-							<mdcf:FieldValueHelp filterFields="$search" title="Genre" id="FHGenreSingle"
-								keyPath="code" descriptionPath="title"
-								delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-								<mdcf:inParameters>
-									<mdcf:InParameter id="IOFFVHGenre-In-Class-Single" value="{classification_code}" helpPath="classification_code" />
-								</mdcf:inParameters>
-								<mdcf:outParameters>
-									<mdcf:OutParameter id="IOFFVHGenre-Out-Class-Single" value="{classification_code}" helpPath="classification_code" />
-								</mdcf:outParameters>
-								<mdcf:content>
-									<mdcf:FieldValueHelpMTableWrapper>
-										<mdcf:table>
-											<Table items='{path : "/Genres"}' width="30rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
-												<columns>
-													<Column>
-														<header>
-															<Text text="Code" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Title" />
-														</header>
-													</Column>
-													<Column>
-														<header>
-															<Text text="Classification" />
-														</header>
-													</Column>
-												</columns>
-												<items>
-													<ColumnListItem type="Active">
-														<cells>
-															<Text text="{code}" />
-															<Text text="{title}" />
-															<Text text="{classification_code}" />
-														</cells>
-													</ColumnListItem>
-												</items>
-											</Table>
-										</mdcf:table>
-									</mdcf:FieldValueHelpMTableWrapper>
-								</mdcf:content>
-							</mdcf:FieldValueHelp>
 							<mdcf:FieldValueHelp title="Sub Genre" id="FHSubGenreSingle" keyPath="code"
 								descriptionPath="title"
 								delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
@@ -642,5 +544,23 @@
 					</mdc:Table>
 				</VBox>
 			</f2:content>
+			<f2:dependents>
+				<mdcf:FieldValueHelp open="onGenreVHOpen" dataRequested="onGenreVHOpen" filterFields="$search" title="Genre" id="FHGenre"
+					noDialog="false" keyPath="code" descriptionPath="title" showConditionPanel="true"
+					delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
+					<mdcf:inParameters>
+						<mdcf:InParameter id="IOFFVHGenre-In-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
+					</mdcf:inParameters>
+					<mdcf:outParameters>
+						<mdcf:OutParameter id="IOFFVHGenre-Out-Class" value="{$filters>/conditions/classification_code}" helpPath="classification_code" />
+					</mdcf:outParameters>
+					<mdcf:filterBar>
+					</mdcf:filterBar>
+					<mdcf:content>
+						<mdcf:FieldValueHelpMTableWrapper>
+						</mdcf:FieldValueHelpMTableWrapper>
+					</mdcf:content>
+				</mdcf:FieldValueHelp>
+			</f2:dependents>
 		</f2:DynamicPage>
 </mvc:View>

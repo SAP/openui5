@@ -28,65 +28,6 @@ sap.ui.define([
 			});
 		},
 
-		onFeatureToggle: function() {
-
-			if (!this._oSelectDialog){
-
-				var oJsonModel = new JSONModel({
-					items: [
-						{
-							name: "Inbuilt Filtering"
-						}
-					]
-				});
-
-				this._oSelectDialog = new SelectDialog({
-					title: "Enable Features",
-					contentHeight: "50%",
-					rememberSelections: true,
-					items: {
-						path: "features>/items",
-						template: new StandardListItem({
-							title: "{features>name}"
-						})
-					},
-					search: function(oEvent) {
-						var sValue = oEvent.getParameter("value");
-						var oFilter = new Filter("name", "Contains", sValue);
-						var oBinding = oEvent.getParameter("itemsBinding");
-						oBinding.filter([oFilter]);
-					},
-					confirm: function(oEvt) {
-						var aSelectedItems = oEvt.getParameter("selectedItems");
-
-						var bInbuiltFiltering = !!aSelectedItems.find(function(oItem){
-							return oItem.getTitle() == "Inbuilt Filtering";
-						});
-
-						this.toggleInbuiltFiltering(bInbuiltFiltering);
-
-					}.bind(this)
-				});
-				this._oSelectDialog.setMultiSelect(true);
-				this._oSelectDialog.setModel(oJsonModel, "features");
-			}
-
-			this._oSelectDialog.open();
-		},
-
-		toggleInbuiltFiltering: function(bEnablInbuiltFilter) {
-			var aTables = this.byId("app").findAggregatedObjects("sap.ui.mdc.Table", function(o){ return o.isA("sap.ui.mdc.Table");});
-			aTables.forEach(function(oTable){
-				var aP13nMode = oTable.getP13nMode() || [];
-				if (aP13nMode.indexOf("Filter") < 0 && bEnablInbuiltFilter) {
-					aP13nMode.push("Filter");
-				} else if (aP13nMode.indexOf("Filter") > -1 && !bEnablInbuiltFilter) {
-					aP13nMode.splice(aP13nMode.indexOf("Filter"), 1);
-				}
-				oTable.setP13nMode(aP13nMode);
-			});
-		},
-
 		onInit: function () {
 
 			sap.ui.getCore().getMessageManager().registerObject(this.getView(), true);
