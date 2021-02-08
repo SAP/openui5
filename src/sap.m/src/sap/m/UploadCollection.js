@@ -1692,26 +1692,26 @@ sap.ui.define([
 				oRm.close("div"); // end of attributes container
 			}
 			if (iStatusesCounter > 0) {
-				var visibleStatuses = [];
-				for (i = 0; i < iStatusesCounter; i++) {
-					if (aStatuses[i].getVisible()) {
-						visibleStatuses.push(aStatuses[i]);
-					}
-				}
 				oRm.openStart("div"); // begin of statuses container
 				oRm.class("sapMUCStatusContainer");
 				oRm.attr("tabindex", "-1");
 				oRm.openEnd();
-				for (i = 0; i < visibleStatuses.length; i++) {
-					visibleStatuses[i].detachBrowserEvent("hover");
-					visibleStatuses[i].setTooltip(visibleStatuses[i].getTitle() +  ":" + visibleStatuses[i].getText());
-					oRm.renderControl(visibleStatuses[i]);
-					if (visibleStatuses[i + 1]) {
-						oRm.openStart("div"); // separator between statuses
-						oRm.class("sapMUCSeparator");
-						oRm.openEnd();
-						oRm.unsafeHtml("&nbsp&#x00B7&#160");
-						oRm.close("div");
+				for (i = 0; i < iStatusesCounter; i++) {
+					aStatuses[i].detachBrowserEvent("hover");
+					aStatuses[i].setTooltip(aStatuses[i].getTitle() +  ":" + aStatuses[i].getText());
+					oRm.renderControl(aStatuses[i]);
+
+					for (var j = i + 1; j < iStatusesCounter; j++) {
+						if (!aStatuses[i].getVisible()) {
+							break;
+						} else if (aStatuses[j] && aStatuses[j].getVisible()) {
+							oRm.openStart("div"); // separator between statuses
+							oRm.class("sapMUCSeparator");
+							oRm.openEnd();
+							oRm.unsafeHtml("&nbsp&#x00B7&#160");
+							oRm.close("div");
+							break;
+						}
 					}
 				}
 				oRm.close("div"); // end of statuses container
