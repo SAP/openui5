@@ -109,9 +109,6 @@ sap.ui.define(
 				}
 			});
 
-			this._oFilterBarLayout.addControl(this._oBtnFilters);
-
-
 			this._oFilterBarLayout.addControl(
 				this._getSearchButton().bindProperty("visible", {
 					parts: [
@@ -128,6 +125,8 @@ sap.ui.define(
 					}.bind(this)
 				})
 			);
+
+			this._oFilterBarLayout.addControl(this._oBtnFilters);
 
 
 			this._oShowAllFiltersBtn = new Button(this.getId() + "-btnShowAllFilters", {

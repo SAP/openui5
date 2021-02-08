@@ -180,7 +180,7 @@ sap.ui.define([
 			});
 			this._btnAdapt.addStyleClass("sapUiMdcFilterBarBaseButtonPaddingRight");
 
-			this._oFilterBarLayout.addButton(this._btnAdapt);
+
 
 			this._btnSearch = this._getSearchButton();
 			this._btnSearch.setModel(this._oModel, FilterBarBase.INNER_MODEL_NAME);
@@ -199,6 +199,8 @@ sap.ui.define([
 				}.bind(this)
 			});
 			this._oFilterBarLayout.addButton(this._btnSearch);
+
+			this._oFilterBarLayout.addButton(this._btnAdapt);
 		}
 	};
 
