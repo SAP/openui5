@@ -348,13 +348,11 @@ sap.ui.define([
 		var oInfo = {
 			changeType: oChangeSpecificData.type,
 			service: oChangeSpecificData.ODataService,
-			content: oChangeSpecificData.content,
+			content: oChangeSpecificData.content || {},
 			reference: mPropertyBag.reference,
 			fileType: oChangeSpecificData.isVariant ? "variant" : "change",
 			packageName: oChangeSpecificData.packageName,
 			layer: determineLayer(oChangeSpecificData),
-			favorite: !!oChangeSpecificData.favorite,
-			executeOnSelect: !!oChangeSpecificData.executeOnSelect,
 			selector: {
 				persistencyKey: mPropertyBag.persistencyKey
 			},
@@ -362,6 +360,11 @@ sap.ui.define([
 			command: mPropertyBag.command,
 			generator: mPropertyBag.generator
 		};
+		// favorite and executeOnSelect have to be persisted within the content for variants
+		if (oChangeSpecificData.isVariant) {
+			oInfo.content.favorite = !!oChangeSpecificData.favorite;
+			oInfo.content.executeOnSelect = !!oChangeSpecificData.executeOnSelect;
+		}
 
 		var oClass = oChangeSpecificData.isVariant ? CompVariant : Change;
 		var oFile = oClass.createInitialFileContent(oInfo);

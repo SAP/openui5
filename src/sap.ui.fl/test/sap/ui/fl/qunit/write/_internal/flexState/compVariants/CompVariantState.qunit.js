@@ -168,7 +168,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("also stores the execute on select", function (assert) {
+		QUnit.test("also stores the default executeOnSelect and favorite", function (assert) {
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
 			var mPropertyBag = {
@@ -187,7 +187,64 @@ sap.ui.define([
 			var oExpectedVariant = {
 				fileName: "someFileName",
 				changeType: "filterVariant",
-				content: {},
+				content: {
+					executeOnSelect: false,
+					favorite: false
+				},
+				fileType: "variant",
+				layer: Layer.CUSTOMER,
+				namespace: "apps/the.app.component/changes/",
+				packageName: "",
+				reference: sComponentId,
+				selector: {persistencyKey: sPersistencyKey},
+				texts: {},
+				support: {
+					command: "",
+					compositeCommand: "",
+					generator: "Change.createInitialFileContent",
+					service: "",
+					sourceChangeFileName: "",
+					user: ""
+				}
+			};
+
+			var oAddedObject = CompVariantState.add(mPropertyBag);
+			var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
+			var mCompVariantsMapForPersistencyKey = mCompVariantsMap[mPropertyBag.persistencyKey];
+
+			assert.equal(mCompVariantsMapForPersistencyKey.variants.length, 1, "then one entity was stored");
+
+			assert.ok(oAddedObject._oDefinition.support.sapui5Version, "the version was filled in the support");
+			delete oAddedObject._oDefinition.support.sapui5Version; // avoid broken tests with version changes
+			assert.deepEqual(oAddedObject._oDefinition, oExpectedVariant, "and the added object is created correct");
+			assert.equal(mCompVariantsMapForPersistencyKey.variants[0], oAddedObject, "which is the returned entity");
+		});
+
+		QUnit.test("also stores passed executeOnSelect and favorite", function (assert) {
+			var sPersistencyKey = "persistency.key";
+			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
+			var mPropertyBag = {
+				reference: sComponentId,
+				persistencyKey: sPersistencyKey,
+				changeSpecificData: {
+					content: {},
+					isVariant: true,
+					executeOnSelect: true,
+					favorite: true,
+					type: "filterVariant"
+				},
+				ODataService: null,
+				texts: {},
+				layer: Layer.CUSTOMER
+			};
+
+			var oExpectedVariant = {
+				fileName: "someFileName",
+				changeType: "filterVariant",
+				content: {
+					executeOnSelect: true,
+					favorite: true
+				},
 				fileType: "variant",
 				layer: Layer.CUSTOMER,
 				namespace: "apps/the.app.component/changes/",
