@@ -542,7 +542,7 @@ sap.ui.define([
 			return oManifestParameters;
 		}
 
-		var oClonedManifestParams = deepClone(oManifestParameters, 500),
+		var oClonedManifestParams = deepClone(oManifestParameters || {}, 500),
 			oParamProps = Object.getOwnPropertyNames(oParameters),
 			oManifestParamsProps = Object.getOwnPropertyNames(oClonedManifestParams);
 

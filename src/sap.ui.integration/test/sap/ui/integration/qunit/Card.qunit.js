@@ -1913,6 +1913,87 @@ sap.ui.define([
 			this.oCard.placeAt(DOM_RENDER_LOCATION);
 		});
 
+		QUnit.test("Allow visibility change based on a parameter of type array", function (assert) {
+
+			// Arrange
+
+			var oManifest = {
+				"sap.app": {
+					"id": "test.object.card.visibility",
+					"type": "card"
+				},
+				"sap.ui": {
+					"technology": "UI5"
+				},
+				"sap.card": {
+					"type": "Object",
+					"configuration": {
+						"parameters": {
+							"visibleFields": {
+								"value": ["firstName", "companyDetails"]
+							},
+							"visibleItems": {
+								"value": ["lastName"]
+							}
+						}
+					},
+					"content": {
+						"groups": [
+							{
+								"title": "Contact Details",
+								"items": [
+									{
+										"label": "First Name",
+										"value": "First Name",
+										"visible": "{= ${parameters>/visibleFields/value}.indexOf('firstName')>-1}"
+									},
+									{
+										"label": "Last Name",
+										"value": "LastName",
+										"visible": "{= ${parameters>/visibleFields/value}.indexOf('lastName')>-1}"
+									}
+								]
+							},
+							{
+								"title": "Company Details",
+								"visible": "{= ${parameters>/visibleFields/value}.indexOf('companyDetails')>-1}",
+								"items": [
+									{
+										"label": "Company Name",
+										"value": "Company Name"
+									}
+								]
+							}
+						]
+					}
+				}
+			};
+
+			var oSpy = sinon.spy(Log, "warning"),
+				done = assert.async(),
+				sWarning = "The parameter name 'visibleItems' is reserved for cards. Can not be used for creating custom parameter.";
+
+			this.oCard.attachEvent("_ready", function () {
+				var oContent = this.oCard.getAggregation("_content"),
+				oLayout = oContent.getAggregation("_content");
+
+				Core.applyChanges();
+
+				// Assert
+				assert.ok(oSpy.calledWith(sWarning), "Warning is logged if reserved parameter name is used");
+				oSpy.restore();
+
+				assert.ok(oLayout.getContent()[0].getItems()[1].getVisible(), "The group item should be visible");
+				assert.notOk(oLayout.getContent()[0].getItems()[3].getVisible(), "The group item should not be visible");
+				assert.ok(oLayout.getContent()[1].getItems()[0].getVisible(), "The group item should not be visible");
+
+				done();
+			}.bind(this));
+
+			this.oCard.setManifest(oManifest);
+			this.oCard.placeAt(DOM_RENDER_LOCATION);
+		});
+
 		QUnit.module("Refreshing", {
 			beforeEach: function () {
 				this.oCard = new Card();
