@@ -103,14 +103,10 @@ function(
 			var oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
 			sandbox.stub(Utils, "isApplication").returns(true);
 
-			return sap.ui.component({
+			return Component.create({
 				name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 				id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-				async: true,
-				manifestFirst: true,
-				metadata: {
-					manifest: "json"
-				},
+				manifest: true,
 				componentData : {
 					async : true
 				}
@@ -143,14 +139,10 @@ function(
 				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
 
 				// first create the application
-				return sap.ui.component({
+				return Component.create({
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-					async: true,
-					manifestFirst: true,
-					metadata: {
-						manifest: "json"
-					},
+					manifest: true,
 					componentData: {
 						async: true,
 						cacheKey: "X"
@@ -163,14 +155,10 @@ function(
 					that.oComponent.destroy();
 				}).then(function() {
 					// recreate the application from scratch (reload scenario)
-					return sap.ui.component({
+					return Component.create({
 						name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 						id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-						async: true,
-						manifestFirst: true,
-						metadata: {
-							manifest: "json"
-						},
+						manifest: true,
 						componentData: {
 							async: true,
 							cacheKey: "X" // same cache key
@@ -193,14 +181,10 @@ function(
 				var oXmlPrepossessSpy = sandbox.spy(XmlPreprocessorImpl, "process");
 
 				// first create the application
-				return sap.ui.component({
+				return Component.create({
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-					async: true,
-					manifestFirst: true,
-					metadata: {
-						manifest: "json"
-					},
+					manifest: true,
 					componentData: {
 						async: true,
 						cacheKey: "X"
@@ -213,14 +197,10 @@ function(
 					that.oComponent.destroy();
 				}).then(function() {
 					// recreate the application from scratch (reload scenario)
-					return sap.ui.component({
+					return Component.create({
 						name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 						id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-						async: true,
-						manifestFirst: true,
-						metadata: {
-							manifest: "json"
-						},
+						manifest: true,
 						componentData: {
 							async: true,
 							cacheKey: "Y" // different cache key
@@ -250,14 +230,10 @@ function(
 				});
 				var oAddGroupChangeHandlerSpy = sandbox.spy(AddSimpleFormGroup, "applyChange");
 
-				return sap.ui.component({
+				return Component.create({
 					name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 					id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-					async: true,
-					manifestFirst: true,
-					metadata: {
-						manifest: "json"
-					},
+					manifest: true,
 					componentData: {
 						async: true,
 						cacheKey: "X"

@@ -18,17 +18,19 @@
 	</script>
 
 	<script>
-		var oComp = sap.ui.component({
-			name: "sap.ui.fl.sample.variantmanagement",
-			url: "./",
-			id: "Comp1"
-		});
 
-		var oCompCont = new sap.ui.core.ComponentContainer("CompCont1", {
-			component: oComp
-		});
-
-		oCompCont.placeAt("target1");
+		sap.ui.require(["sap/ui/core/Component"], function(Component) {
+			return Component.create({
+				name: "sap.ui.fl.sample.variantmanagement",
+				url: "./",
+				id: "Comp1"
+			}).then(function(oComponent){
+				var oCompCont = new sap.ui.core.ComponentContainer("CompCont1", {
+					component: oComponent
+				});
+				oCompCont.placeAt("target1");	
+			})
+		})
 
 	</script>
 

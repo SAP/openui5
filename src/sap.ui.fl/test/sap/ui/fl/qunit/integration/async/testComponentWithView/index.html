@@ -20,23 +20,19 @@
         jQuery.sap.registerModulePath("sap.ui.fl.qunit.integration.async.testComponentWithView", "./");
 
         sap.ui.getCore().attachInit(function () {
-            sap.ui.component({
-                name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-                id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
-                async: bAsync,
-                manifestFirst: bAsync,
-                "metadata": {
-                    "manifest": "json"
-                },
-                componentData : {
-                    async : bAsync
-                }
-            }).then(function (oComponent) {
-                sap.ui.require([
-                    "sap/m/Shell",
-                    "sap/ui/core/ComponentContainer"
-                ], function (Shell, ComponentContainer) {
-
+            sap.ui.require([
+                "sap/ui/core/Component",
+                "sap/m/Shell",
+                "sap/ui/core/ComponentContainer"
+            ], function(Component, Shell, ComponentContainer){
+                Component.create({
+                    name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
+                    id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
+                    manifest: bAsync,
+                    componentData : {
+                        async : bAsync
+                    }
+                }).then(function (oComponent) {
                     // initialize the UI component
                     new Shell({
                         app: new ComponentContainer({
@@ -46,7 +42,7 @@
                         })
                     }).placeAt("content");
                 });
-            });
+            })
         });
     </script>
 

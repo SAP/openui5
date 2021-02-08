@@ -24,25 +24,23 @@
 	<script type="text/javascript">
 		sap.ui.getCore().attachInit(function () {
 			sap.ui.require([
-				"sap/ui/core/ComponentContainer"
-			], function (ComponentContainer) {
+				"sap/ui/core/ComponentContainer",
+				"sap/ui/core/Component"
+			], function (ComponentContainer, Component) {
 
-				return sap.ui.component({
+				return Component.create({
 					name: "sap.ui.rta.test",
 					id: "Comp1",
 					componentData: {
 						"showAdaptButton": true
-					},
-					async: true
+					}
 				})
-
-				.then(function (oComponent) {
+				.then(function(oComponent) {
 					return new ComponentContainer("CompCont1", {
 						component: oComponent,
 						async: true
 					});
 				})
-
 				.then(function (oComponentContainer) {
 					oComponentContainer.placeAt("content");
 				});
