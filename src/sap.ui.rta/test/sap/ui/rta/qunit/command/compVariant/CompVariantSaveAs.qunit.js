@@ -75,7 +75,7 @@ sap.ui.define([
 							},
 							content: {foo: "bar"},
 							executeOnSelect: false,
-							favourite: true,
+							favorite: true,
 							layer: Layer.CUSTOMER
 						},
 						generator: "sap.ui.rta.command",
@@ -123,7 +123,7 @@ sap.ui.define([
 							},
 							content: {foo: "bar"},
 							executeOnSelect: false,
-							favourite: true,
+							favorite: true,
 							layer: Layer.CUSTOMER
 						},
 						generator: "sap.ui.rta.command",

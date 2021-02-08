@@ -89,7 +89,7 @@ sap.ui.define([
 			}.bind(this));
 			if (this.getNewDefaultVariantId()) {
 				callFlAPIFunction.call(this, "setDefaultVariantId", this.getNewDefaultVariantId());
-				this.getElement().setDeafultVariantId(this.getNewDefaultVariantId());
+				this.getElement().setDefaultVariantId(this.getNewDefaultVariantId());
 			}
 		}
 		return Promise.resolve();
@@ -117,7 +117,7 @@ sap.ui.define([
 			// if (this.getNewDefaultVariantId()) {
 				// should this also go into the undo function?
 				// callFlAPIFunction.call(this, "setDefaultVariantId", this.getOldDefaultVariantId());
-				// this.getElement().setDeafultVariantId(this.getOldDefaultVariantId());
+				// this.getElement().setDefaultVariantId(this.getOldDefaultVariantId());
 			// }
 		}
 		return Promise.resolve();
