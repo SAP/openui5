@@ -14,7 +14,17 @@ html.sap-desktop .sapFAvatarGroup .sapFAvatarGroupMoreButton {
 	}
 
 	&.sapMBtn:focus > .sapMFocusable {
-		outline: 0.0625rem dotted @sapUiContentFocusColor;
+		outline: 0.125rem dotted @sapUiContentFocusColor;
 		border-radius: 50%;
 	}
+}
+
+.sapFAvatarGroupIndividual .sapFAvatarGroupItem:focus,
+.sapFAvatarGroup:focus,
+.sapFAvatarGroupMoreButton.sapMBtn:focus > .sapMFocusable {
+	outline-width: 0.125rem;
+}
+
+.sapFAvatarGroup {
+	padding: 0.125rem;
 }
