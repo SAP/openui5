@@ -519,13 +519,15 @@ sap.ui.define([
 				},
 
 				/**
-				 * <code>startDate</code> was changed while navigating in the <code>PlanningCalendar</code>.
+				 * Fired when the <code>startDate</code> property was changed while navigating in the <code>PlanningCalendar</code>.
 				 * The new value can be obtained using the <code>sap.m.PlanningCalendar#getStartDate()</code> method.
+				 * <b>Note:</b> This event is fired in case when the <code>viewKey</code> property is changed, and  as a result of
+				 * which the view requires a change in the <code>startDate</code> property.
 				 */
 				startDateChange : {},
 
 				/**
-				 * <code>viewKey</code> was changed by user interaction.
+				 * Fired when the <code>viewKey</code> property was changed by user interaction.
 				 */
 				viewChange : {},
 
