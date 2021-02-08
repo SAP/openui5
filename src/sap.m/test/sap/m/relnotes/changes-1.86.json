@@ -552,5 +552,25 @@
         ]
       }
     ]
+  },
+  "1.86.3": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "de61d4d43d58a48a652e9ec781b13f8ec8cdc3dc",
+        "type": "FIX",
+        "text": " sap.m.DateTimePicker: popover can now be reopened",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000893702021"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180043591"
+          }
+        ]
+      }
+    ]
   }
 }
