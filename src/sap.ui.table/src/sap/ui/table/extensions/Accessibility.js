@@ -528,8 +528,9 @@ sap.ui.define([
 				this, AccExtension.ELEMENTTYPES.COLUMNROWHEADER,
 				{enabled: bEnabled, checked: bEnabled && !oTable.$().hasClass("sapUiTableSelAll")}
 			);
+			var aLabels = [oTable.getId() + "-colnumberofcols"].concat(mAttributes["aria-labelledby"]);
 			ExtensionHelper.performCellModifications(this, $Cell, mAttributes["aria-labelledby"], mAttributes["aria-describedby"],
-				mAttributes["aria-labelledby"], mAttributes["aria-describedby"], null
+				aLabels, mAttributes["aria-describedby"], null
 			);
 		},
 
