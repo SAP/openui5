@@ -742,6 +742,28 @@ function (
 		Core.getConfiguration().setAnimationMode(sOriginalMode);
 	});
 
+	QUnit.test("DynamicPage Footer does not overlap content", function (assert) {
+		var sOriginalMode = Core.getConfiguration().getAnimationMode(),
+			oFooterBoundingClientRect,
+			oContentBoundingClientRect;
+
+		//setup
+		Core.getConfiguration().setAnimationMode(Configuration.AnimationMode.none);
+
+		// Act: toggle to 'true'
+		this.oDynamicPage.setShowFooter(true);
+		// scroll to bottom
+		this.oDynamicPage.$wrapper.scrollTop(this.oDynamicPage._getMaxScrollPosition());
+
+		// Check
+		oFooterBoundingClientRect = this.oDynamicPage.getFooter().getDomRef().getBoundingClientRect();
+		oContentBoundingClientRect = this.oDynamicPage.getContent().getDomRef().getBoundingClientRect();
+		assert.ok(oFooterBoundingClientRect.y > oContentBoundingClientRect.y + oContentBoundingClientRect.height, "footer does not overlap content");
+
+		// Clean up
+		Core.getConfiguration().setAnimationMode(sOriginalMode);
+	});
+
 	/* --------------------------- DynamicPage Mobile Rendering ---------------------------------- */
 	QUnit.module("DynamicPage - Rendering - Mobile", {
 		beforeEach: function () {
