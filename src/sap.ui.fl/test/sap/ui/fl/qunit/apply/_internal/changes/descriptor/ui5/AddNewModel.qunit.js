@@ -3,23 +3,16 @@
 sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModel",
 	"sap/ui/fl/Change",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/jquery"
 ],
 function (
 	AddNewModel,
 	Change,
-	jQuery,
-	sinon
+	jQuery
 ) {
 	"use strict";
 
-	var sandbox = sinon.sandbox.create();
-
 	QUnit.module("applyChange", {
-		afterEach: function () {
-			sandbox.restore();
-		}
 	}, function() {
 		var ADDED_MODEL = "the sap.ui5 model {0} was added correctly.";
 		var ALREADY_EXISTING_MODEL = "the already existing sap.ui5 model {0} was not overridden or changed.";
@@ -219,8 +212,8 @@ function (
 
 			assert.throws(function() {
 				AddNewModel.applyChange(oManifest, oChange);
-			}, Error("The defined dataSource 'notExistingDataSource' in the model does not exists as dataSource or must be allowed type of OData|INA|XML|JSON|FHIR"),
-			"throws error that some dataSource which is defined in a model does not exists in the manifest or in the change or is not type of OData|INA|XML|JSON|FHIR");
+			}, Error("The defined dataSource 'notExistingDataSource' in the model does not exists as dataSource or must be allowed type of OData|INA|XML|JSON|FHIR|http|WebSocket"),
+			"throws error that some dataSource which is defined in a model does not exists in the manifest or in the change or is not type of OData|INA|XML|JSON|FHIR|http|WebSocket");
 		});
 
 		QUnit.test("when calling '_applyChange' with adding a new model which refers to an existing dataSource with no type is defined (default 'OData') => SUCCESS", function (assert) {
@@ -553,8 +546,8 @@ function (
 
 			assert.throws(function() {
 				AddNewModel.applyChange(oManifest, oChange);
-			}, Error("The defined dataSource 'notSupportedDataSource' in the model does not exists as dataSource or must be allowed type of OData|INA|XML|JSON|FHIR"),
-			"throws error that the dataSource which is defined in the model has to have a supported type 'OData|INA|XML|JSON|FHIR' or no type (default OData)");
+			}, Error("The defined dataSource 'notSupportedDataSource' in the model does not exists as dataSource or must be allowed type of OData|INA|XML|JSON|FHIR|http|WebSocket"),
+			"throws error that the dataSource which is defined in the model has to have a supported type 'OData|INA|XML|JSON|FHIR|http|WebSocket' or no type (default OData)");
 		});
 
 		QUnit.test("when calling '_applyChange' checks that there is a dataSource with type 'ODataAnnotation' definded which has no dataSources with type 'OData' for that => ERROR", function (assert) {
@@ -904,6 +897,84 @@ function (
 				AddNewModel.applyChange(oManifest, oChange);
 			}, Error("There are currently '2' models in the change. Currently it is only allowed to add '1' model"),
 			"throws error that currently only '1' model can be added");
+		});
+
+		QUnit.test("when calling '_applyChange' with adding a new model and dataSource in a manifest with dataSource type http => SUCCESS", function (assert) {
+			var oManifest = {
+				"sap.app": {
+				},
+				"sap.ui5": {
+				}
+			};
+
+			var oChange = new Change({
+				changeType: "appdescr_ui5_addNewModel",
+				content: {
+					dataSource: {
+						httpDataSource: {
+							uri: "/dataSource/http",
+							type: "http"
+						}
+					},
+					model: {
+						equipment: {
+							preload: true,
+							dataSource: "httpDataSource",
+							settings: {}
+						}
+					}
+				}
+			});
+
+			var oNewManifest = AddNewModel.applyChange(oManifest, oChange);
+
+			assert.strictEqual(oNewManifest["sap.ui5"]["models"].hasOwnProperty("equipment"), true, ADDED_MODEL.replace("{0}", "object equipment"));
+			assert.strictEqual(oNewManifest["sap.ui5"]["models"]["equipment"]["preload"], true, ADDED_MODEL.replace("{0}", "preload"));
+			assert.strictEqual(oNewManifest["sap.ui5"]["models"]["equipment"]["dataSource"], "httpDataSource", ADDED_MODEL.replace("{0}", "dataSource"));
+			assert.strictEqual(JSON.stringify(oNewManifest["sap.ui5"]["models"]["equipment"]["settings"]), "{}", ADDED_MODEL.replace("{0}", "settings"));
+
+			assert.strictEqual(oNewManifest["sap.app"]["dataSources"].hasOwnProperty("httpDataSource"), true, ADDED_DATASOURCE.replace("{0}", "httpDataSource"));
+			assert.strictEqual(oNewManifest["sap.app"]["dataSources"]["httpDataSource"]["uri"], "/dataSource/http", ADDED_DATASOURCE.replace("{0}", "uri"));
+			assert.strictEqual(oNewManifest["sap.app"]["dataSources"]["httpDataSource"]["type"], "http", ADDED_DATASOURCE.replace("{0}", "type"));
+		});
+
+		QUnit.test("when calling '_applyChange' with adding a new model and dataSource in a manifest with dataSource type WebSocket => SUCCESS", function (assert) {
+			var oManifest = {
+				"sap.app": {
+				},
+				"sap.ui5": {
+				}
+			};
+
+			var oChange = new Change({
+				changeType: "appdescr_ui5_addNewModel",
+				content: {
+					dataSource: {
+						webSocketDataSource: {
+							uri: "/dataSource/webSocket",
+							type: "WebSocket"
+						}
+					},
+					model: {
+						equipment: {
+							preload: true,
+							dataSource: "webSocketDataSource",
+							settings: {}
+						}
+					}
+				}
+			});
+
+			var oNewManifest = AddNewModel.applyChange(oManifest, oChange);
+
+			assert.strictEqual(oNewManifest["sap.ui5"]["models"].hasOwnProperty("equipment"), true, ADDED_MODEL.replace("{0}", "object equipment"));
+			assert.strictEqual(oNewManifest["sap.ui5"]["models"]["equipment"]["preload"], true, ADDED_MODEL.replace("{0}", "preload"));
+			assert.strictEqual(oNewManifest["sap.ui5"]["models"]["equipment"]["dataSource"], "webSocketDataSource", ADDED_MODEL.replace("{0}", "dataSource"));
+			assert.strictEqual(JSON.stringify(oNewManifest["sap.ui5"]["models"]["equipment"]["settings"]), "{}", ADDED_MODEL.replace("{0}", "settings"));
+
+			assert.strictEqual(oNewManifest["sap.app"]["dataSources"].hasOwnProperty("webSocketDataSource"), true, ADDED_DATASOURCE.replace("{0}", "webSocketDataSource"));
+			assert.strictEqual(oNewManifest["sap.app"]["dataSources"]["webSocketDataSource"]["uri"], "/dataSource/webSocket", ADDED_DATASOURCE.replace("{0}", "uri"));
+			assert.strictEqual(oNewManifest["sap.app"]["dataSources"]["webSocketDataSource"]["type"], "WebSocket", ADDED_DATASOURCE.replace("{0}", "type"));
 		});
 	});
 
