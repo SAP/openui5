@@ -4,14 +4,22 @@
 /**
  * Defines support rules related to the view.
  */
-sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element", "sap/ui/thirdparty/jquery", "sap/base/util/isEmptyObject"],
-	function(SupportLib, Element, jQuery, isEmptyObject) {
+sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element", "sap/ui/thirdparty/jquery", "sap/base/util/isEmptyObject", "sap/ui/base/DataType"],
+	function(SupportLib, Element, jQuery, isEmptyObject, DataType) {
 	"use strict";
 
 	// shortcuts
 	var Categories = SupportLib.Categories; // Accessibility, Performance, Memory, ...
 	var Severity = SupportLib.Severity; // Hint, Warning, Error
 	var Audiences = SupportLib.Audiences; // Control, Internal, Application
+
+	var isDefaultValue = function (oPropertyMetadata, vValue) {
+		if (oPropertyMetadata.defaultValue !== null) {
+			return oPropertyMetadata.defaultValue === vValue;
+		}
+
+		return vValue === DataType.getType(oPropertyMetadata.type).getDefaultValue();
+	};
 
 	//**********************************************************
 	// Rule Definitions
@@ -224,18 +232,53 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element", "sap/ui/thirdpar
 				for (var sProperty in mProperties) {
 					// if property is deprecated and it is set to a different from the default value
 					// Checks only the deprecated properties with defaultValue property is not null
-					if (mProperties[sProperty].deprecated
-						&& mProperties[sProperty].defaultValue != oElement.getProperty(sProperty)
-						&& mProperties[sProperty].defaultValue !== null) {
+					if (mProperties[sProperty].deprecated &&
+						!isDefaultValue(mProperties[sProperty], oElement.getProperty(sProperty))) {
 
 						oIssueManager.addIssue({
 							severity: Severity.Medium,
-							details: "Deprecated property '" + sProperty + "' is used for element '" + oElement.getId() + "'.",
+							details: "Deprecated property '" + sProperty + "' is used for element '" + oElement.getId()
+								+ "'. Default value: '" + mProperties[sProperty].defaultValue + "' and current value: '"
+								+ oElement.getProperty(sProperty) + "'",
 							context: {
 								id: oElement.getId()
 							}
 						});
 					}
+				}
+			});
+		}
+	};
+
+	/**
+	 * Checks for deprecated controls
+	 */
+	var oDeprecatedElementRule = {
+		id: "deprecatedElement",
+		audiences: [Audiences.Application],
+		categories: [Categories.Functionality],
+		enabled: true,
+		minversion: "1.38",
+		title: "Usage of deprecated element",
+		description: "Using deprecated controls should be avoided, because they are not maintained anymore",
+		resolution: "Refer to the API of the element which element should be used instead.",
+		resolutionurls: [{
+			text: "API Reference",
+			href: "https://sapui5.hana.ondemand.com/#/api/deprecated"
+		}],
+		check: function(oIssueManager, oCoreFacade, oScope) {
+			oScope.getElementsByClassName(Element).forEach(function(oElement) {
+
+				var oMetadata = oElement.getMetadata();
+
+				if (oMetadata.isDeprecated()) {
+					oIssueManager.addIssue({
+						severity: Severity.Medium,
+						details: "Deprecated element '" + oElement.getId() + "' is used.",
+						context: {
+							id: oElement.getId()
+						}
+					});
 				}
 			});
 		}
@@ -367,6 +410,7 @@ sap.ui.define(["sap/ui/support/library", "sap/ui/core/Element", "sap/ui/thirdpar
 		oXMLViewLowerCaseControl,
 		oXMLViewUnusedNamespaces,
 		oDeprecatedPropertyRule,
+		oDeprecatedElementRule,
 		oDeprecatedAggregationRule,
 		oDeprecatedAssociationRule,
 		oDeprecatedEventRule
