@@ -23,6 +23,8 @@
 				"stretch": true,
 				"files": [
 					"TabContainer.view.xml",
+					"Display.fragment.xml",
+					"Edit.fragment.xml",
 					"TabContainer.controller.js",
 					"manifest.json"
 				]
