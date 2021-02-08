@@ -5,8 +5,9 @@
 // Provides element sap.m.BadgeCustomData.
 sap.ui.define([
 	'sap/ui/core/CustomData',
-	'sap/base/Log'
-], function(CustomData, Log) {
+	'sap/base/Log',
+	'sap/m/library'
+], function(CustomData, Log, library) {
 	"use strict";
 
 	/**
@@ -27,10 +28,18 @@ sap.ui.define([
 	 * @public
 	 * @alias sap.m.BadgeCustomData
 	 */
+
+	var BadgeAnimationType = library.BadgeAnimationType;
+
 	var BadgeCustomData = CustomData.extend("sap.m.BadgeCustomData", {
 		metadata: {
 			properties: {
-				visible: {type: "boolean", group: "Appearance", defaultValue: true}
+				visible: {type: "boolean", group: "Appearance", defaultValue: true},
+				/**
+				 * Determines the type of animation to be performed by the Badge DOM element.
+				 * @since 1.87
+				 */
+				animation: {type: "sap.m.BadgeAnimationType", group: "Appearance", defaultValue: BadgeAnimationType.Full}
 			}
 		}
 	});
@@ -70,6 +79,21 @@ sap.ui.define([
 
 		if (oParent) {
 			oParent.updateBadgeVisibility(bVisible);
+		}
+
+
+		return this;
+	};
+
+	BadgeCustomData.prototype.setAnimation =  function (sAnimationType) {
+		if (this.getAnimation() === sAnimationType) { return this; }
+
+		this.setProperty("animation", sAnimationType, true);
+
+		var oParent = this.getParent();
+
+		if (oParent) {
+			oParent.updateBadgeAnimation(sAnimationType);
 		}
 
 
