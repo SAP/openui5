@@ -453,11 +453,24 @@ sap.ui.define([
 
 	MessageView.prototype._fillListsWithGroups = function(sGroupName, aItems) {
 		var oHeader = new GroupHeaderListItem({
-				title: sGroupName
-			});
+			title: sGroupName
+		});
 
 		this._oLists["all"].addAggregation("items", oHeader, true);
+
+		["error", "warning", "success", "information"].forEach(function (sListType) {
+			if (this._hasGroupItemsOfType(aItems, sListType)) {
+				this._oLists[sListType].addAggregation("items", oHeader.clone(), true);
+			}
+		}, this);
+
 		this._fillLists(aItems);
+	};
+
+	MessageView.prototype._hasGroupItemsOfType = function (aItems, sListType) {
+		return aItems.some(function (oItem) {
+			return oItem.getType().toLowerCase() === sListType;
+		});
 	};
 
 	/**
