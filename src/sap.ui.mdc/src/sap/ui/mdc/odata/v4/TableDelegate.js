@@ -141,7 +141,7 @@ sap.ui.define([
 			var oAggregatePopover = new ColumnPopoverSelectListItem({
 				items: aAggregateChildren,
 				label: oResourceBundle.getText("table.SETTINGS_AGGREGATE"),
-				icon: "sap-icon://collections-management",
+				icon: "sap-icon://sum",
 				action: [{
 					sName: "Aggregate",
 					oMDCColumn: oMDCColumn
