@@ -1235,13 +1235,14 @@ sap.ui.define([
 		var $Cell = getSelectAll(true, assert);
 
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sId + "-ariacount " + sId + "-ariaselection" + this._sAdditionalLabeling, "aria-labelledby of select all");
+			sId + "-ariacount " + sId + "-ariaselection " + sId + "-colnumberofcols" + this._sAdditionalLabeling, "aria-labelledby of select all");
 
 		$Cell = getCell(1, 1, true, assert); //set focus somewhere else on the table
 		testAriaLabelsForFocusedDataCell($Cell, 1, 1, assert, {firstTime: false, rowChange: true, colChange: true});
 
 		$Cell = getSelectAll(true, assert);
-		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(), this._sAdditionalLabeling, "aria-labelledby of select all");
+		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(), sId + "-colnumberofcols" + this._sAdditionalLabeling,
+			"aria-labelledby of select all");
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
 			done();
@@ -1255,7 +1256,7 @@ sap.ui.define([
 		var sId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sId + "-ariacount " + sId + "-ariaselection", "aria-labelledby of select all");
+			sId + "-ariacount " + sId + "-ariaselection " + sId + "-colnumberofcols", "aria-labelledby of select all");
 		getRowHeader(0, true, assert); //set focus somewhere else on the table
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
