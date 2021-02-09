@@ -9,6 +9,7 @@ sap.ui.define([
 	'./Token',
 	'./library',
 	'sap/ui/core/EnabledPropagator',
+	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectMetadata',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/Device',
@@ -37,6 +38,7 @@ function(
 	Token,
 	library,
 	EnabledPropagator,
+	ManagedObject,
 	ManagedObjectMetadata,
 	ManagedObjectObserver,
 	Device,
@@ -539,8 +541,8 @@ function(
 			item = eventArgs.getParameter("selectedItem");
 			if (item) {
 				token = new Token({
-					text: item.getText(),
-					key: item.getKey()
+					text: ManagedObject.escapeSettingsValue(item.getText()),
+					key: ManagedObject.escapeSettingsValue(item.getKey())
 				});
 			}
 		}
