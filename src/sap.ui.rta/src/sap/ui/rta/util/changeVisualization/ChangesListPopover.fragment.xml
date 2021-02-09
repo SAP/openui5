@@ -16,7 +16,7 @@
 				title="{commandModel>title}"
 				counter="{commandModel>count}"
 				type="{= ${commandModel>count} > 0 ? 'Active' : 'Inactive'}"
-				press=".selectCommandCategory"
+				press=".onCommandCategorySelection"
 			/>
 		</List>
 	</Popover>

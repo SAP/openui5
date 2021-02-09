@@ -169,6 +169,50 @@ function(
 	};
 
 	/**
+	 * Returns the command name for the action of the given change type
+	 * @param {string} sChangeType Name of the change type
+	 * @param {object} oElement Element instance
+	 * @param {string} [sAggregationName] Aggregation to which the action belongs
+	 * @return {string} Name of the command
+	 * @public
+	 */
+	DesignTimeMetadata.prototype.getCommandName = function(sChangeType, oElement, sAggregationName) {
+		var mData = this.getData();
+		var mActions = merge(
+			{},
+			sAggregationName && mData.aggregations[sAggregationName]
+				? mData.aggregations[sAggregationName].actions
+				: {},
+			mData.actions
+		);
+		function findAction(mActionMap) {
+			return Object.keys(mActionMap)
+				.map(function(sCommandName) {
+					var vAction = mActionMap[sCommandName];
+					if (sCommandName === "add" && !vAction.changeType) {
+						// Handle nested subactions
+						return {
+							delegate: "addDelegateProperty",
+							custom: "customAdd"
+						}[findAction(vAction)];
+					}
+					try {
+						var oActionData = evaluateAction(vAction, oElement);
+						return oActionData && (oActionData.changeType === sChangeType) && sCommandName;
+					} catch (vError) {
+						// If a function action expects to be called with a certain element
+						// it might throw an error when trying with other/without elements
+						// Silently fail in such cases
+						return undefined;
+					}
+				})
+				.filter(Boolean)[0];
+		}
+
+		return findAction(mActions);
+	};
+
+	/**
 	 * Returns a locale-specific string value for the given key sKey.
 	 *
 	 * The text is searched in this resource bundle according to the fallback chain described in

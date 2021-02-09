@@ -12,17 +12,10 @@ function(
 
 	var sandbox = sinon.sandbox.create();
 
-	function createMockChange (sId, sCommandName) {
+	function createMockChange (sId) {
 		return {
 			getId: function () {
 				return sId;
-			},
-			getDefinition: function () {
-				return {
-					support: {
-						command: sCommandName
-					}
-				};
 			}
 		};
 	}
@@ -46,8 +39,8 @@ function(
 		}
 	}, function() {
 		QUnit.test("when changes with valid command types are registered", function (assert) {
-			this.oRegistry.registerChange(createMockChange("fooChange", "foo"));
-			this.oRegistry.registerChange(createMockChange("barChange", "bar"));
+			this.oRegistry.registerChange(createMockChange("fooChange"), "foo");
+			this.oRegistry.registerChange(createMockChange("barChange"), "bar");
 
 			assert.deepEqual(
 				this.oRegistry.getChangeIds(),
@@ -68,7 +61,7 @@ function(
 		});
 
 		QUnit.test("when a change with an invalid command type is registered", function (assert) {
-			this.oRegistry.registerChange(createMockChange("bazChange", "baz"));
+			this.oRegistry.registerChange(createMockChange("bazChange"), "baz");
 			assert.notOk(
 				this.oRegistry.getChange("bazChange"),
 				"then it is not added to the registry"
@@ -97,10 +90,10 @@ function(
 		});
 
 		QUnit.test("when selectors are added for a change", function (assert) {
-			var oFooChange = createMockChange("fooChange", "foo");
-			this.oRegistry.registerChange(oFooChange);
-			var oBarChange = createMockChange("barChange", "bar");
-			this.oRegistry.registerChange(oBarChange);
+			var oFooChange = createMockChange("fooChange");
+			this.oRegistry.registerChange(oFooChange, "foo");
+			var oBarChange = createMockChange("barChange");
+			this.oRegistry.registerChange(oBarChange, "bar");
 
 			var oSelector = {
 				getId: function () {
@@ -151,8 +144,8 @@ function(
 		}
 	}, function() {
 		QUnit.test("when the registry is destroyed", function (assert) {
-			this.oRegistry.registerChange(createMockChange("fooChange", "foo"));
-			this.oRegistry.registerChange(createMockChange("barChange", "bar"));
+			this.oRegistry.registerChange(createMockChange("fooChange"), "foo");
+			this.oRegistry.registerChange(createMockChange("barChange"), "bar");
 			var oIndicator = {
 				destroy: function () {}
 			};

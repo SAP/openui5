@@ -6,7 +6,6 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicator",
 	"sap/ui/rta/util/changeVisualization/ChangeIndicatorRegistry",
-	"sap/ui/core/Component",
 	"sap/ui/core/util/reflection/JsControlTreeModifier",
 	"sap/ui/fl/write/api/PersistenceWriteAPI",
 	"sap/ui/fl/Layer",
@@ -19,12 +18,12 @@ sap.ui.define([
 	"sap/ui/dt/OverlayRegistry",
 	"sap/base/util/deepEqual",
 	"sap/ui/events/KeyCodes",
-	"sap/m/ButtonType"
+	"sap/m/ButtonType",
+	"sap/ui/dt/ElementUtil"
 ], function(
 	Control,
 	ChangeIndicator,
 	ChangeIndicatorRegistry,
-	Component,
 	JsControlTreeModifier,
 	PersistenceWriteAPI,
 	Layer,
@@ -37,7 +36,8 @@ sap.ui.define([
 	OverlayRegistry,
 	deepEqual,
 	KeyCodes,
-	ButtonType
+	ButtonType,
+	ElementUtil
 ) {
 	"use strict";
 
@@ -80,7 +80,7 @@ sap.ui.define([
 		metadata: {
 			properties: {
 				/**
-				 * Id of the component to visualize the changes for
+				 * Id of the component or control to visualize the changes for
 				 */
 				rootControlId: {
 					type: "string"
@@ -128,6 +128,10 @@ sap.ui.define([
 		this.setProperty("rootControlId", sRootControlId);
 	};
 
+	ChangeVisualization.prototype._getComponent = function () {
+		return FlUtils.getAppComponentForControl(ElementUtil.getElementInstance(this.getRootControlId()));
+	};
+
 	ChangeVisualization.prototype.setIsActive = function (bActiveState) {
 		if (bActiveState === this.getIsActive()) {
 			return;
@@ -173,7 +177,6 @@ sap.ui.define([
 		if (bIsActive) {
 			this.setIsActive(false);
 		} else {
-			this._updateChangeRegistry().then(this._updatePopoverModel.bind(this));
 			this._togglePopover();
 		}
 	};
@@ -212,11 +215,14 @@ sap.ui.define([
 
 	ChangeVisualization.prototype._togglePopover = function () {
 		var oPopover = this.getPopover();
+		if (!(oPopover && oPopover.isOpen())) {
+			this._updateChangeRegistry().then(this._updatePopoverModel.bind(this));
+		}
 
 		if (!oPopover) {
 			Fragment.load({
 				name: "sap.ui.rta.util.changeVisualization.ChangesListPopover",
-				id: Component.get(this.getRootControlId()).createId("changeVisualization_changesListPopover"),
+				id: this._getComponent().createId("changeVisualization_changesListPopover"),
 				controller: this
 			})
 				.then(function(oPopover) {
@@ -240,11 +246,15 @@ sap.ui.define([
 	 *
 	 * @param {event} oEvent - Event
 	 */
-	ChangeVisualization.prototype.selectCommandCategory = function (oEvent) {
+	ChangeVisualization.prototype.onCommandCategorySelection = function (oEvent) {
+		var sSelectedCommandCategory = oEvent.getSource().getBindingContext("commandModel").getObject().key;
+		this._selectCommandCategory(sSelectedCommandCategory);
+	};
+
+	ChangeVisualization.prototype._selectCommandCategory = function (sSelectedCommandCategory) {
 		this.getPopover().close();
 		this.setIsActive(true);
 
-		var sSelectedCommandCategory = oEvent.getSource().getBindingContext("commandModel").getObject().key;
 		var aRelevantChanges = this._getChangesForCommandCategory(sSelectedCommandCategory);
 
 		this._updateIndicatorModel({
@@ -269,7 +279,7 @@ sap.ui.define([
 	};
 
 	ChangeVisualization.prototype._getChangedElements = function (oChangeInformation, bDependent) {
-		var oComponent = Component.get(this.getRootControlId());
+		var oComponent = this._getComponent();
 		return this._getInfoFromChangeHandler(oComponent, oChangeInformation.change)
 			.then(function (oInfoFromChangeHandler) {
 				var aSelector = [oChangeInformation.change.getSelector()];
@@ -284,17 +294,52 @@ sap.ui.define([
 				var aPromises = aSelector.map(function (oSelector) {
 					return JsControlTreeModifier.bySelector(oSelector, oComponent);
 				});
-				return Promise.all(aPromises)
-					.then(function (aElements) {
-						return aElements.map(function (oElement) {
-							// Removed elements have to be visualized on the parent
-							if (oChangeInformation.commandCategory === "remove" && oElement) {
-								return oElement.getParent();
-							}
-							return oElement;
-						});
-					});
+				return Promise.all(aPromises);
 			});
+	};
+
+	ChangeVisualization.prototype._getCommandForChange = function(oChange) {
+		var sCommand = oChange.getDefinition().support.command;
+		if (sCommand) {
+			return sCommand;
+		}
+
+		var oComponent = this._getComponent();
+		var oSelectorControl = JsControlTreeModifier.bySelector(oChange.getSelector(), oComponent);
+		var oLastDependentSelector = oChange.getDependentSelectorList().slice(-1)[0];
+		var oLastDependentSelectorControl = JsControlTreeModifier.bySelector(oLastDependentSelector, oComponent);
+
+		// Recursively search through parent element structure
+		// This is necessary to make sure that elements that were created during runtime
+		// (e.g. for SimpleForms) are considered.
+		function searchForCommand(oOverlay, sAggregationName) {
+			var oControl = oOverlay.getElement();
+			var sCommand = oOverlay.getDesignTimeMetadata().getCommandName(
+				oChange.getChangeType(),
+				oControl,
+				sAggregationName
+			);
+			if (sCommand) {
+				return sCommand;
+			}
+
+			var oParentOverlay = oOverlay.getParentElementOverlay();
+			var oParentAggregationOverlay = oOverlay.getParentAggregationOverlay();
+			if (
+				oOverlay.getElement().getId() === oSelectorControl.getId()
+				|| !oParentOverlay
+			) {
+				return undefined;
+			}
+			return searchForCommand(
+				oParentOverlay,
+				oParentAggregationOverlay && oParentAggregationOverlay.getAggregationName()
+			);
+		}
+
+		return oSelectorControl
+			&& oLastDependentSelectorControl
+			&& searchForCommand(OverlayRegistry.getOverlay(oLastDependentSelectorControl));
 	};
 
 	ChangeVisualization.prototype._getInfoFromChangeHandler = function (oAppComponent, oChange) {
@@ -318,7 +363,7 @@ sap.ui.define([
 	};
 
 	ChangeVisualization.prototype._collectChanges = function () {
-		var oComponent = Component.get(this.getRootControlId());
+		var oComponent = this._getComponent();
 		var mPropertyBag = {
 			oComponent: oComponent,
 			selector: oComponent,
@@ -346,13 +391,19 @@ sap.ui.define([
 
 			// Register missing changes
 			difference(aCurrentChangeIds, aRegisteredChangeIds).forEach(function (sChangeIdToAdd) {
-				this._oChangeIndicatorRegistry.registerChange(oCurrentChanges[sChangeIdToAdd]);
+				var oChangeToAdd = oCurrentChanges[sChangeIdToAdd];
+				var sCommandName = this._getCommandForChange(oChangeToAdd);
+				this._oChangeIndicatorRegistry.registerChange(oChangeToAdd, sCommandName);
 			}.bind(this));
 		}.bind(this));
 	};
 
-	ChangeVisualization.prototype._selectChange = function (oEvent) {
+	ChangeVisualization.prototype.selectChange = function (oEvent) {
 		var sChangeId = oEvent.getParameter("changeId");
+		this._selectChange(sChangeId);
+	};
+
+	ChangeVisualization.prototype._selectChange = function (sChangeId) {
 		this._updateIndicatorModel({
 			selectedChange: sChangeId
 		});
@@ -360,12 +411,12 @@ sap.ui.define([
 		if (sChangeId === undefined) {
 			// Hide dependent selectors
 			this._updateChangeIndicators();
-			return;
+			return undefined;
 		}
 
 		// Create indicators for the dependent selectors
 		var oChange = this._oChangeIndicatorRegistry.getChange(sChangeId);
-		this._getChangedElements(oChange, true)
+		return this._getChangedElements(oChange, true)
 			.then(function (aElements) {
 				this._oChangeIndicatorRegistry.addSelectorsForChangeId(
 					oChange.change.getId(),
@@ -396,9 +447,10 @@ sap.ui.define([
 					return undefined;
 				}
 
+				var oOverlayPosition = oOverlay.getDomRef().getClientRects()[0] || {left: 0, top: 0};
 				oIndicators[sSelectorId] = {
-					posX: parseInt(oOverlay.getDomRef().getClientRects()[0].left),
-					posY: parseInt(oOverlay.getDomRef().getClientRects()[0].top),
+					posX: parseInt(oOverlayPosition.left),
+					posY: parseInt(oOverlayPosition.top),
 					changes: this._filterRelevantChanges(aChanges)
 				};
 
@@ -459,10 +511,10 @@ sap.ui.define([
 			},
 			posX: "{posX}",
 			posY: "{posY}",
-			visible: "{= ${/active} && ${changes}.length > 0}",
+			visible: "{= ${/active} && (${changes} || []).length > 0}",
 			overlayId: oOverlay.getId(),
 			selectorId: sSelectorId,
-			selectChange: this._selectChange.bind(this),
+			selectChange: this.selectChange.bind(this),
 			keyPress: this._onIndicatorKeyPress.bind(this)
 		});
 

@@ -50,15 +50,6 @@ sap.ui.define([
 		this.reset();
 	};
 
-	// Utils
-
-	ChangeIndicatorRegistry.prototype._getCommandForChange = function (oChange) {
-		// Open task: Support pre 1.84 changes
-		return oChange.getDefinition().support.command;
-	};
-
-	// Registry
-
 	/**
 	 * Returns all registered changes.
 	 *
@@ -158,9 +149,8 @@ sap.ui.define([
 	 *
 	 * @param {object} oChange - The change to register
 	 */
-	ChangeIndicatorRegistry.prototype.registerChange = function (oChange) {
+	ChangeIndicatorRegistry.prototype.registerChange = function (oChange, sCommandName) {
 		var aCategories = this.getCommandCategories();
-		var sCommandName = this._getCommandForChange(oChange);
 		var oNewChangeInformation = {
 			change: oChange,
 			commandName: sCommandName,
@@ -207,7 +197,10 @@ sap.ui.define([
 		}
 
 		aSelectors.forEach(function (oSelector) {
-			if (!includes(oChange[sPropertyKey], oSelector.getId())) {
+			if (
+				oSelector
+				&& !includes(oChange[sPropertyKey], oSelector.getId())
+			) {
 				oChange[sPropertyKey].push(oSelector.getId());
 			}
 		});
