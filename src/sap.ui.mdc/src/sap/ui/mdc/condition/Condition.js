@@ -22,9 +22,10 @@ sap.ui.define([
 
 		/**
 		 *
-		 * @namespace Utilities to create conditions to be used in {@link sap.ui.mdc.FilterField FilterField},
+		 * Utilities to create conditions to be used in {@link sap.ui.mdc.FilterField FilterField},
 		 * {@link sap.ui.mdc.FilterBar FilterBar} or {@link sap.ui.mdc.condition.ConditionModel ConditionModel}
 		 *
+		 * @namespace
 		 * @author SAP SE
 		 * @version ${version}
 		 * @since 1.61.0

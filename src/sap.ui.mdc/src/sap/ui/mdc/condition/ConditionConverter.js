@@ -24,8 +24,9 @@ sap.ui.define([
 		var sTimePattern = "HH:mm:ss";
 
 		/**
-		 * @namespace Utilities for condition conversion
+		 * Utilities for condition conversion
 		 *
+		 * @namespace
 		 * @author SAP SE
 		 * @version ${version}
 		 * @private

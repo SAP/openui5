@@ -44,8 +44,9 @@ function(
 
 
 		/**
-		 * @namespace Utilities to handle {@link sap.ui.mdc.condition.Operator Operators} and {@link sap.ui.mdc.condition.ConditionObject conditions}.
+		 * Utilities to handle {@link sap.ui.mdc.condition.Operator Operators} and {@link sap.ui.mdc.condition.ConditionObject conditions}.
 		 *
+		 * @namespace
 		 * @author SAP SE
 		 * @version ${version}
 		 * @since 1.73.0
