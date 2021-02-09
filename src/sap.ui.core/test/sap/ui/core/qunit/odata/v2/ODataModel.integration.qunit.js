@@ -1467,8 +1467,8 @@ sap.ui.define([
 	path : "/SalesOrderSet('1')/ToLineItems",
 	title : "Absolute path with two segments to a collection"
 }, {
-	//TODO: Needs to be adjusted after fixing BCP 2080464216
-	// expectedCanonicalRequest : "SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
+	// MockServer does not support navigation properties with key predicates; as long as the
+	// addressed entity set is addressable we can shorten the path
 	expectedCanonicalRequest : {
 		deepPath : "/SalesOrderSet('1')/ToLineItems(SalesOrderID='1',ItemPosition='10')",
 		requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
@@ -1513,9 +1513,8 @@ sap.ui.define([
 	expectedCanonicalRequest : {
 		deepPath : "/BusinessPartnerSet('BP1')/ToProducts('P1')"
 			+ "/ToSalesOrderLineItems(SalesOrderID='1',ItemPosition='10')",
-		//TODO: Needs to be adjusted after fixing BCP 2080464216, expected after fix:
-		// "requestUri" : "ProductSet('P1')"
-		// 	+ "/ToSalesOrderLineItems(SalesOrderID='1',ItemPosition='10')",
+		// MockServer does not support navigation properties with key predicates; as long as the
+		// addressed entity set is addressable we can shorten the path
 		requestUri : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')"
 	},
 	expectedRequest : "BusinessPartnerSet('BP1')/ToProducts('P1')"
@@ -1600,7 +1599,8 @@ sap.ui.define([
 	title : "Relative empty path; resolved path has 1 segment referencing a single entity"
 }].forEach(function (oFixture) {
 	[false, true].forEach(function (bCanonical) {
-	var sTitle = oFixture.title + (bCanonical ? "; using canonical requests" : "");
+	var sTitle = "ODataModel#read:" + oFixture.title
+			+ (bCanonical ? "; using canonical requests" : "");
 
 	QUnit.test(sTitle, function (assert) {
 		var oModel = createSalesOrdersModel({tokenHandling : false, useBatch : true}),
@@ -1640,9 +1640,7 @@ sap.ui.define([
 	expectedCanonicalRequest : {
 		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
 			+ "/ToSupplier",
-		//TODO: Needs to be adjusted after fixing BCP 2080464216
-		//requestUri : "ProductSet('P1')/ToSupplier"
-		requestUri : "BusinessPartnerSet('BP1')"
+		requestUri : "ProductSet('P1')/ToSupplier"
 	},
 	expectedRequest : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
 		+ "/ToSupplier",
@@ -1673,8 +1671,8 @@ sap.ui.define([
 }, {
 	expectedCanonicalRequest : {
 		deepPath : "/SalesOrderSet('1')/ToBusinessPartner/ToProducts('P1')",
-		//TODO: Needs to be adjusted after fixing BCP 2080464216
-		//requestUri : "BusinessPartnerSet('BP1')/ToProducts('P1')"
+		// MockServer does not support navigation properties with key predicates; as long as the
+		// addressed entity set is addressable we can shorten the path
 		requestUri : "ProductSet('P1')"
 	},
 	expectedRequest : "SalesOrderSet('1')/ToBusinessPartner/ToProducts('P1')",
@@ -1690,12 +1688,7 @@ sap.ui.define([
 	title : "Absolute path with three segments to a single entity of a collection; 'to 1'"
 		+ " navigation in the middle"
 }, {
-	expectedCanonicalRequest : {
-		deepPath : "/SalesOrderSet('1')/ToBusinessPartner/Address",
-		//TODO: Needs to be adjusted after fixing BCP 2080464216
-		//requestUri : "SalesOrderSet('1')/ToBusinessPartner/Address"
-		requestUri : "BusinessPartnerSet('BP1')/Address"
-	},
+	expectedCanonicalRequest : "SalesOrderSet('1')/ToBusinessPartner/Address",
 	expectedRequest : "SalesOrderSet('1')/ToBusinessPartner/Address",
 	isArrayResponse : false,
 	path : "/SalesOrderSet('1')/ToBusinessPartner/Address",
@@ -1711,9 +1704,7 @@ sap.ui.define([
 	expectedCanonicalRequest : {
 		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
 			+ "/ToSupplier",
-		//TODO: Needs to be adjusted after fixing BCP 2080464216
-		//requestUri : "ProductSet('P1')/ToSupplier"
-		requestUri : "BusinessPartnerSet('BP1')"
+		requestUri : "ProductSet('P1')/ToSupplier"
 	},
 	expectedRequest : {
 		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
@@ -1730,26 +1721,19 @@ sap.ui.define([
 		response : {__metadata : {uri : "BusinessPartnerSet('BP1')"} /*content not relevant*/}
 	}],
 	title : "Relative path 'ToSupplier'; resolved deep path has 3 segments"
-}, { //TODO: BUG!?! relative context path with more segments does not work!
-	contextDeepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
-	contextPath : "/ToProduct/ToSupplier",
+}, {
+	contextDeepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+		+ "/ToSupplier",
+	contextPath : "/ProductSet('P1')/ToSupplier",
 	expectedCanonicalRequest : {
-		//TODO: Needs to be adjusted after fixing BCP 2080464216
-		//deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
-		//	+ "/ToSupplier",
-		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
-		//TODO: Needs to be adjusted after fixing BCP 2080464216
-		//requestUri : "ProductSet('P1')/ToSupplier"
-		requestUri : "ToProduct/ToSupplier"
+		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+			+ "/ToSupplier",
+		requestUri : "ProductSet('P1')/ToSupplier"
 	},
 	expectedRequest : {
-		//TODO: Needs to be adjusted after fixing BCP 2080464216
-		//deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
-		//	+ "/ToSupplier",
-		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')",
-		//TODO: Needs to be adjusted after fixing BCP 2080464216
-		//requestUri : "ProductSet('P1')/ToSupplier"
-		requestUri : "ToProduct/ToSupplier"
+		deepPath : "/SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct"
+			+ "/ToSupplier",
+		requestUri : "ProductSet('P1')/ToSupplier"
 	},
 	isArrayResponse : false,
 	path : "",
@@ -1760,11 +1744,12 @@ sap.ui.define([
 		request : "SalesOrderLineItemSet(SalesOrderID='1',ItemPosition='10')/ToProduct/ToSupplier",
 		response : {__metadata : {uri : "BusinessPartnerSet('BP1')"} /*content not relevant*/}
 	}],
-	title : "Relative empty path with 'ToProduct/ToSupplier' as context path; resolved deep path"
-		+ " has 3 segments"
+	title : "Relative empty path with '/ProductSet('P1')/ToSupplier' as context path; resolved"
+		+ " deep path has 3 segments"
 }].forEach(function (oFixture) {
 	[false, true].forEach(function (bCanonical) {
-	var sTitle = oFixture.title + (bCanonical ? "; using canonical requests" : "")
+	var sTitle = "ODataModel#read:" + oFixture.title
+			+ (bCanonical ? "; using canonical requests" : "")
 			+ "; 'to 1' navigation property in the middle already read";
 
 	QUnit.test(sTitle, function (assert) {
@@ -1799,6 +1784,59 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// Integration test for correct path calculation during ODataModel#read(...). "To n" navigation
+	// properties are not shortened if the corresponding entity set is not addressable.
+	// JIRA: CPOUI5MODELS-404
+	// BCP: 2080464216
+	QUnit.test("ODataModel#read: not addressable 'to n' navigation property" , function (assert) {
+		var oModel = createSpecialCasesModel({tokenHandling : false, useBatch : true}),
+			sResourcePath = "C_SubscrpnProductChargeTP('ID')/to_AllUserContactCards",
+			that = this;
+
+		this.expectRequest(sResourcePath, {
+			results : [{__metadata : {uri : "I_UserContactCard('Card1')"}}]
+		});
+
+		// trigger previous read to be able to resolve the "to 1" navigation property
+		oModel.read("/" + sResourcePath);
+
+		return this.createView(assert, "", oModel).then(function () {
+			that.expectRequest(sResourcePath + "('Card1')", {});
+
+			// code under test
+			oModel.read("/" + sResourcePath + "('Card1')", {canonicalRequest : true});
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+
+	//*********************************************************************************************
+	// Integration test for correct path calculation during ODataModel#read(...). "To 1" navigation
+	// properties are not shortened independent whether the corresponding entity set is addressable.
+	// JIRA: CPOUI5MODELS-404
+	// BCP: 2080464216
+	QUnit.test("ODataModel#read: not addressable 'to 1' navigation property" , function (assert) {
+		var oModel = createSpecialCasesModel({tokenHandling : false, useBatch : true}),
+			sResourcePath = "C_SubscrpnProductChargeTP('ID')/to_CreatedByUserContactCard",
+			that = this;
+
+		this.expectRequest(sResourcePath, {__metadata : {uri : "I_UserContactCard('Card1')"}});
+
+		// trigger previous read to be able to resolve the "to 1" navigation property
+		oModel.read("/" + sResourcePath);
+
+		return this.createView(assert, "", oModel).then(function () {
+			that.expectRequest(sResourcePath, {});
+
+			// code under test
+			oModel.read("/" + sResourcePath, {canonicalRequest : true});
+
+			return that.waitForChanges(assert);
+		});
+	});
 
 	//*********************************************************************************************
 	// Integration test for correct path calculation during ODataModel#read(...). If the given path

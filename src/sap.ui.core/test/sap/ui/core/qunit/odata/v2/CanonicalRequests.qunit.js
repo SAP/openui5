@@ -277,10 +277,11 @@ sap.ui.define([
 							"SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", assert, that, "read"))
 					.then(// SalesOrderSet - 1 to n - SalesOrderLineItemSet - 1 to 0 - Product - Property - ProductId
 						testODataAPI("/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ProductId",
-							"ProductSet('HT-1000')/ProductId", assert, that, "read")).then(function () {
-								assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
-								return checkIfCacheEntriesAreValid(that.oModel, assert);
-							})
+							"SalesOrderLineItemSet(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct/ProductId", assert, that, "read"))
+					.then(function () {
+							assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
+							return checkIfCacheEntriesAreValid(that.oModel, assert);
+						})
 					.then(done);
 			});
 
@@ -566,7 +567,7 @@ sap.ui.define([
 						assert.equal(oSalesOrderLineItemSetCtx && oSalesOrderLineItemSetCtx.sDeepPath, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')", "Deep path is set.");
 						that.oModel.createBindingContext("ToProduct", oSalesOrderLineItemSetCtx, undefined, function (oProductCtx) {
 							assert.equal(oProductCtx.sDeepPath, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", "Deep path is set.");
-							assert.equal(that.oStubGetEntitySetByPath.callCount, 11, "Check number of cache misses.");
+							assert.equal(that.oStubGetEntitySetByPath.callCount, 10, "Check number of cache misses.");
 							assert.equal(that.iInvalidationCounter, 0, "Check number of cache invalidations necessary.");
 							assert.equal(getLastRequest(that).deepPath, "/SalesOrderSet('0500000000')/ToLineItems(SalesOrderID='0500000000',ItemPosition='0000000010')/ToProduct", "Deep path is set when request is triggered by createBindingContext.");
 							checkIfCacheEntriesAreValid(that.oModel, assert).then(done);
