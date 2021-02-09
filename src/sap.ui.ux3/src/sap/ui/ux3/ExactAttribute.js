@@ -165,6 +165,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 
 	/**
 	 * @param {string|sap.ui.core.TooltipBase} oTooltip
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @see sap.ui.core.Element.prototype.setTooltip
 	 * @public
 	 */

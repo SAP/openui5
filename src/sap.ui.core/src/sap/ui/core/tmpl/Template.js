@@ -118,6 +118,9 @@ function(
 	};
 
 	/**
+	 * Templates don't have a facade and therefore return themselves as their interface.
+	 *
+	 * @returns {this} <code>this</code> as there's no facade for templates
 	 * @see sap.ui.base.Object#getInterface
 	 * @public
 	 */

@@ -102,6 +102,7 @@ sap.ui.define([
 	 * This Method is not supported for the OverlayDialog.
 	 *
 	 * @param {boolean} bVisible
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	OverlayDialog.prototype.setOpenButtonVisible = function(bVisible) {

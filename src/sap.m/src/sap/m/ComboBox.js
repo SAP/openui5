@@ -1682,8 +1682,8 @@ sap.ui.define([
 		/**
 		 * Clones the <code>sap.m.ComboBox</code> control.
 		 *
-		 * @param {string} sIdSuffix Suffix to be added to the ids of the new control and its internal objects.
-		 * @returns {sap.m.ComboBox} The cloned <code>sap.m.ComboBox</code> control.
+		 * @param {string} [sIdSuffix] Suffix to be added to the IDs of the new control and its internal objects.
+		 * @returns {this} The cloned <code>sap.m.ComboBox</code> control.
 		 * @public
 		 * @since 1.22.1
 		 */

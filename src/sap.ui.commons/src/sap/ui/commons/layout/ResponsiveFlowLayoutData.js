@@ -57,7 +57,7 @@ sap.ui.define(['sap/ui/commons/library', 'sap/ui/layout/ResponsiveFlowLayoutData
 	* Default value is <code>true</code>
 	*
 	* @param {boolean} bMargin new value for property <code>margin</code>
-	* @return {sap.ui.layout.ResponsiveFlowLayoutData} <code>this</code> to allow method chaining
+	* @return {this} <code>this</code> to allow method chaining
 	* @public
 	* @since 1.11.0
 	* @name sap.ui.commons.layout.ResponsiveFlowLayoutData#setMargin
