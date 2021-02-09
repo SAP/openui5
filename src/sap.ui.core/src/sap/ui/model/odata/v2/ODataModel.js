@@ -3732,7 +3732,7 @@ sap.ui.define([
 				}
 			}
 
-			if (oRequest.functionTarget) {
+			if (oStoredRequest.functionMetadata) {
 				// function imports need to replace the requestUri
 				oStoredRequest.requestUri = oRequest.requestUri;
 				// function imports need to update the functionTarget in case the function

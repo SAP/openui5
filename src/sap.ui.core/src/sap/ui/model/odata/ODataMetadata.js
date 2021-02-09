@@ -1682,6 +1682,10 @@ sap.ui.define([
 				Log.error("Cannot determine keys of the entity type '" + mEntityType.entityType
 					+ "' for the function import '" + mFunctionInfo.name + "'", this, sClassName);
 			}
+		} else {
+			Log.error("Cannot determine the entity type for the function import '"
+				+ mFunctionInfo.name + "'; check reference of sap:action-for annotation, EntitySet "
+				+ "and ReturnType of the function import metadata", this, sClassName);
 		}
 
 		return "";
