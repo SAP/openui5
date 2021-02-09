@@ -102,12 +102,11 @@
 				</Button>
 				<Button
 					id="sapUiRta_toggleChangeVisualizationButton"
-					icon="sap-icon://key-user-settings"
+					icon="sap-icon://show"
 					press=".toggleChangeVisualization"
 					enabled="{= ${controls>/modeSwitcher} === 'adaptation'}"
 					type="Transparent"
-					tooltip="{i18n>BUT_CHANGEVISUALIZATION_SHOWCHANGES}"
-					visible="{controls>/showChangesVisible}">
+					tooltip="{i18n>BUT_CHANGEVISUALIZATION_SHOWCHANGES}">
 					<layoutData>
 						<OverflowToolbarLayoutData priority="Low" />
 					</layoutData>
