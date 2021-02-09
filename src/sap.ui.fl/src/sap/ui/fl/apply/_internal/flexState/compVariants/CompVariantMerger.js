@@ -59,8 +59,8 @@ sap.ui.define([
 			oVariantData.content.favorite = oVariantInput.favorite;
 		}
 
-		if (oVariantInput.executeOnSelect !== undefined) {
-			oVariantData.content.executeOnSelect = oVariantInput.executeOnSelect;
+		if (oVariantInput.executeOnSelection !== undefined) {
+			oVariantData.content.executeOnSelection = oVariantInput.executeOnSelection;
 		}
 
 		return new CompVariant(oVariantData);
@@ -96,7 +96,7 @@ sap.ui.define([
 
 			if (mCompVariants.standardVariant) {
 				oStandardVariantInput.content = oStandardVariantInput.content || {};
-				oStandardVariantInput.content.executeOnSelect = mCompVariants.standardVariant.getContent().executeOnSelect;
+				oStandardVariantInput.content.executeOnSelection = mCompVariants.standardVariant.getContent().executeOnSelect;
 			}
 
 			oStandardVariantInput.favorite = true;

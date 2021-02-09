@@ -303,14 +303,14 @@ sap.ui.define([
 	 * @param {object} mPropertyBag - Map of parameters, see below
 	 * @param {string} mPropertyBag.reference - Flex reference of the application
 	 * @param {boolean} mPropertyBag.persistencyKey - Flag if the variant should be executed
-	 * @param {string} mPropertyBag.executeOnSelect - ID of the variant which should be selected at start-up
+	 * @param {string} mPropertyBag.executeOnSelection - ID of the variant which should be selected at start-up
 	 * @param {string} [mPropertyBag.generator] - Generator of changes
 	 * @param {string} [mPropertyBag.compositeCommand] - Name of the command calling the API
-	 * @returns {sap.ui.fl.Change} Created or updated change object in charge for setting the executeOnSelect flag in the standard variant
+	 * @returns {sap.ui.fl.Change} Created or updated change object in charge for setting the <code>executeOnSelection</code> flag in the standard variant
 	 */
-	CompVariantState.setExecuteOnSelect = function (mPropertyBag) {
+	CompVariantState.setExecuteOnSelection = function (mPropertyBag) {
 		var oContent = {
-			executeOnSelect: mPropertyBag.executeOnSelect
+			executeOnSelection: mPropertyBag.executeOnSelection
 		};
 
 		return createOrUpdateChange(mPropertyBag, oContent, "standardVariant");
@@ -330,7 +330,7 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.changeSpecificData.texts - A map object containing all translatable texts which are referenced within the file
 	 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
 	 * @param {object} [mPropertyBag.changeSpecificData.favorite] - Indicates if the change is added as favorite
-	 * @param {object} [mPropertyBag.changeSpecificData.executeOnSelect] - Indicates if the executeOnSelect flag should be set
+	 * @param {object} [mPropertyBag.changeSpecificData.executeOnSelect] - Indicates if the <code>executeOnSelection</code> flag should be set
 	 * @param {string} [mPropertyBag.changeSpecificData.ODataService] - Name of the OData service --> can be null
 	 * @param {boolean} [mPropertyBag.changeSpecificData.isVariant] - Indicates if the change is a variant
 	 * @param {boolean} [mPropertyBag.changeSpecificData.isUserDependent] - Indicates if a change is only valid for the current user
@@ -360,10 +360,10 @@ sap.ui.define([
 			command: mPropertyBag.command,
 			generator: mPropertyBag.generator
 		};
-		// favorite and executeOnSelect have to be persisted within the content for variants
+		// favorite and executeOnSelection have to be persisted within the content for variants
 		if (oChangeSpecificData.isVariant) {
 			oInfo.content.favorite = !!oChangeSpecificData.favorite;
-			oInfo.content.executeOnSelect = !!oChangeSpecificData.executeOnSelect;
+			oInfo.content.executeOnSelection = !!oChangeSpecificData.executeOnSelect;
 		}
 
 		var oClass = oChangeSpecificData.isVariant ? CompVariant : Change;
@@ -395,7 +395,7 @@ sap.ui.define([
 				previousState: oVariant.getState(),
 				previousContent: oVariant.getContent(),
 				previousFavorite: oVariant.getFavorite(),
-				previousExecuteOnSelect: oVariant.getExecuteOnSelect()
+				previousExecuteOnSelect: oVariant.getExecuteOnSelection()
 			}
 		};
 		if (mPropertyBag.name) {
@@ -436,7 +436,7 @@ sap.ui.define([
 			oVariant.setText("variantName", mPropertyBag.name);
 		}
 		var oContent = oVariant.getContent();
-		var bExecuteOnSelect = oContent.executeOnSelect;
+		var bExecuteOnSelection = oContent.executeOnSelection;
 		var bFavorite = oContent.favorite;
 		var oContentToBeWritten = mPropertyBag.content || oContent;
 
@@ -447,15 +447,15 @@ sap.ui.define([
 		}
 
 		if (mPropertyBag.executeOnSelect !== undefined) {
-			oContentToBeWritten.executeOnSelect = mPropertyBag.executeOnSelect;
-		} else if (!(mPropertyBag.revert && oContentToBeWritten.executeOnSelect !== undefined) && bExecuteOnSelect !== undefined) {
-			oContentToBeWritten.executeOnSelect = bExecuteOnSelect;
+			oContentToBeWritten.executeOnSelection = mPropertyBag.executeOnSelect;
+		} else if (bExecuteOnSelection !== undefined) {
+			oContentToBeWritten.executeOnSelection = bExecuteOnSelection;
 		}
 
 		oVariant.setContent(oContentToBeWritten);
 		// also update the runtime instance
 		oVariant.setFavorite(!!oContentToBeWritten.favorite);
-		oVariant.setExecuteOnSelect(!!oContentToBeWritten.executeOnSelect);
+		oVariant.setExecuteOnSelection(!!oContentToBeWritten.executeOnSelection);
 
 		return oVariant;
 	};
