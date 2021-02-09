@@ -47,6 +47,10 @@
 				All parameters are replaced during manifest processing and changing them will cause re-processing of the
 				manifest.
 			</p>
+			<p>
+				Since version 1.87 user-defined parameters can also be accessed in expression binding with single brackets binding syntax
+				"{parameters>/city/value}".
+			</p>
 
 			<h3>Parameter properties:</h3>
 
@@ -83,6 +87,7 @@
 			</div>
 
 			<h3>Parameter types:</h3>
+			<p>This table shows the supported value types for manifest parameters.</p>
 
 			<p><b>Note:</b> Currently the type of the parameter is used only in UI adaptation during designtime. There
 				is no runtime data type validation.</p>
@@ -90,7 +95,7 @@
 			<div class="tableWrapper">
 				<table>
 					<tr>
-						<th>Name</th>
+						<th>Type</th>
 						<th>Description</th>
 						<th>Example</th>
 					</tr>
@@ -123,6 +128,11 @@
 						<td>datetime</td>
 						<td>Any valid datetime string. Includes time.</td>
 						<td>2020-02-27T09:30:00.000Z</td>
+					</tr>
+					<tr>
+						<td>array</td>
+						<td>Any valid array. (Since version 1.87)</td>
+						<td>[2,3,5,8,13]</td>
 					</tr>
 				</table>
 			</div>
@@ -226,6 +236,33 @@ oCard.setParameters(oParameters);</pre>
 			"title": "Some title",
 			"subTitle": "Date: {{parameters.TODAY_ISO}}"
 		},
+		...
+	}
+}</pre>
+			<p>
+				Parameters of type array can be used in expression binding:
+			</p>
+			<pre class="prettyprint  lang-js">{
+	"sap.card": {
+		"type": "Object",
+		"configuration": {
+			"parameters": {
+
+				"teamMembers": {
+					"value": ["Donna Moore", "Alain Chevalier"]
+				},
+
+				"visibleFields": {
+					"value": ["firstName", "lastName"]
+				}
+			}
+		},
+		...
+	"content": {
+		"groups": [
+			{
+				"title": "Contact Details for: {=${parameters>/teamMembers/value}[0]}",
+				"visible": "{= ${parameters>/visibleFields/value}.indexOf('firstName')>-1}"
 		...
 	}
 }</pre>

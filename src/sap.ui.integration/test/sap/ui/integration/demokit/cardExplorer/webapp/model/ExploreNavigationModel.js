@@ -666,7 +666,7 @@ sap.ui.define([
 						key: 'object',
 						subSamples: [
 							{
-								title: 'Object',
+								title: 'Multiple Groups',
 								key: 'object1',
 								settings: {
 									columns: 5
@@ -685,7 +685,7 @@ sap.ui.define([
 								]
 							},
 							{
-								title: 'Visible Object Attributes',
+								title: 'Conditional Visibility Attributes',
 								key: 'visibleObjects',
 								settings: {
 									columns: 5
@@ -693,6 +693,25 @@ sap.ui.define([
 								files: [
 									{
 										url: '/samples/object/visibleObject.json',
+										name: 'manifest.json',
+										key: 'manifest.json'
+									},
+									{
+										url: '/samples/object/dt/Configuration.js',
+										name: 'dt/Configuration.js',
+										key: 'designtime.js'
+									}
+								]
+							},
+							{
+								title: 'Array Parameters',
+								key: 'arrayParameters',
+								settings: {
+									columns: 5
+								},
+								files: [
+									{
+										url: '/samples/object/arrayParameters.json',
 										name: 'manifest.json',
 										key: 'manifest.json'
 									},
