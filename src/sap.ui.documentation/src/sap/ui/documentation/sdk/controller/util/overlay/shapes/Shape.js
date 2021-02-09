@@ -29,8 +29,7 @@ sap.ui.define([], function () {
 	 */
 	Shape.prototype.createShape = function (sSvgNamespace, sShape) {
 		this.oContainer = document.createElementNS(sSvgNamespace, sShape);
-		this.oContainer.classList.add('shape');
-		this.oContainer.classList.add(sShape);
+		this.oContainer.setAttribute("class", ['shape', sShape].join(" ")) ;
 
 		return this;
 	};
