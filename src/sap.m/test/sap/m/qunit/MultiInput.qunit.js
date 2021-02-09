@@ -2568,4 +2568,39 @@ sap.ui.define([
 		// Assert
 		assert.ok(oSpy.calledWith({preventScroll: true}), "Focus has been called with preventScroll argument.");
 	});
+
+	QUnit.module("Handling curly braces", {
+		beforeEach: function() {
+			this.oMultiInput = new MultiInput();
+			this.oMultiInput.placeAt('content');
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function() {
+			this.oMultiInput.destroy();
+			this.oMultiInput = null;
+		}
+	});
+
+	QUnit.test("Braces in binded text and key properties do not cause error", function(assert) {
+		// Arrange
+		var oEvent;
+		var oItem = {
+			getText: function () { return "text with braces {{}}"; },
+			getKey: function () { return "keyWithBraces{{}}"; }
+		};
+		var oStub = new sinon.stub();
+
+		oStub.withArgs("selectedItem").returns(oItem);
+
+		oEvent = {
+			getParameter: oStub
+		};
+
+		// Act
+		this.oMultiInput._onSuggestionItemSelected(oEvent);
+
+		// Assert
+		assert.strictEqual(this.oMultiInput.getTokens()[0].getText(), "text with braces {{}}", "Braces are escaped in token's text");
+		assert.strictEqual(this.oMultiInput.getTokens()[0].getKey(), "keyWithBraces{{}}", "Braces are escaped in token's key");
+	});
 });
