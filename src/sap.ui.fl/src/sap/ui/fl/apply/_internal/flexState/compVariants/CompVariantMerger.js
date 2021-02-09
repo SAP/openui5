@@ -87,21 +87,40 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return {
-		merge: function (sPersistencyKey, mCompVariants, oStandardVariantInput, aVariants) {
+		merge: function (sPersistencyKey, mCompData, oStandardVariantInput, aVariants) {
 			aVariants = aVariants || [];
 			aVariants = aVariants.map(createVariant.bind(undefined, sPersistencyKey));
-			aVariants = aVariants.concat(mCompVariants.variants);
-			var mChanges = getChangesMappedByVariant(mCompVariants);
+			aVariants = aVariants.concat(mCompData.variants);
+			var mChanges = getChangesMappedByVariant(mCompData);
 			aVariants.forEach(applyChangesOnVariant.bind(undefined, mChanges));
 
-			if (mCompVariants.standardVariant) {
+			// check for an overwritten standard variant
+			var nIndexOfStandardVariant = -1;
+			aVariants.forEach(function (oVariant, nIndex) {
+				if (oVariant.getContent().standardvariant) {
+					nIndexOfStandardVariant = nIndex;
+				}
+			});
+			var oStandardVariant;
+			if (nIndexOfStandardVariant === -1) {
+				// create a new standard variant with the passed input
 				oStandardVariantInput.content = oStandardVariantInput.content || {};
-				oStandardVariantInput.content.executeOnSelection = mCompVariants.standardVariant.getContent().executeOnSelect;
+				oStandardVariant = createVariant(sPersistencyKey, oStandardVariantInput);
+				applyChangesOnVariant(mChanges, oStandardVariant);
+			} else {
+				// extract the overwriting variant from the variant list
+				// in this case all changes were already applied
+				oStandardVariant = aVariants.splice(nIndexOfStandardVariant, 1)[0];
 			}
 
-			oStandardVariantInput.favorite = true;
-			var oStandardVariant = createVariant(sPersistencyKey, oStandardVariantInput);
-			applyChangesOnVariant(mChanges, oStandardVariant);
+			// the standard must always be visible
+			oStandardVariant.setFavorite(true);
+			if (mCompData.standardVariant) {
+				var bExecuteOnSelection = mCompData.standardVariant.getContent().executeOnSelect;
+				oStandardVariant.setExecuteOnSelection(bExecuteOnSelection);
+				// TODO remove as soon as the consumer uses the API
+				oStandardVariant.getContent().executeOnSelection = bExecuteOnSelection;
+			}
 
 			return {
 				standardVariant: oStandardVariant,

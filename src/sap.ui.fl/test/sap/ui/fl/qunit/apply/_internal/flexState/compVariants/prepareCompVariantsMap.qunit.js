@@ -170,6 +170,43 @@ sap.ui.define([
 			assert.equal(mCompVariants.map[sPersistencyKey].variants[0].getId(), sId1, "which is the provided variant1");
 			assert.equal(mCompVariants.map[sPersistencyKey].variants[1].getId(), sId2, "which is the provided variant2");
 		});
+
+		QUnit.test("given an response with a overwritten standard variant", function(assert) {
+			var sPersistencyKey = "persistencyKey1";
+			var sId1 = "variant1";
+			var oVariant1 = fakeFlexObject(sId1, sPersistencyKey);
+			var sId2 = "variant2";
+			var oVariant2 = fakeFlexObject(sId2, sPersistencyKey);
+			var sStandardVariantId = "standardVariant";
+			var oStandardVariant = fakeFlexObject(sStandardVariantId, sPersistencyKey);
+			oStandardVariant.content = {
+				standardvariant: true
+			};
+
+			var mPropertyBag = {
+				storageResponse: {
+					changes: {
+						comp: {
+							variants: [oVariant1, oStandardVariant, oVariant2],
+							changes: [],
+							defaultVariants: [],
+							standardVariants: []
+						}
+					}
+				}
+			};
+			var mCompVariants = prepareCompVariantsMap(mPropertyBag);
+			assert.deepEqual(Object.keys(mCompVariants.byId).length, 3, "then the by ID list with three entries is provided,");
+			assert.deepEqual(mCompVariants.byId[sId1].getId(), sId1, "which is the provided variant1 under its ID");
+			assert.deepEqual(mCompVariants.byId[sId2].getId(), sId2, "which is the provided variant2 under its ID");
+			assert.equal(Object.keys(mCompVariants.map).length, 2, "the map is returned, with two entry");
+			assert.equal(typeof mCompVariants.map._getOrCreate, "function", "and one entry is the helper function '_getOrCreate'");
+			assert.equal(typeof mCompVariants.map[sPersistencyKey], "object", "another is the persistency key");
+			assert.equal(mCompVariants.map[sPersistencyKey].variants.length, 3, "with three variant");
+			assert.equal(mCompVariants.map[sPersistencyKey].variants[0].getId(), sId1, "which is the provided variant1");
+			assert.equal(mCompVariants.map[sPersistencyKey].variants[1].getId(), sStandardVariantId, "which is the provided standardVariant");
+			assert.equal(mCompVariants.map[sPersistencyKey].variants[2].getId(), sId2, "which is the provided variant2");
+		});
 	});
 
 	QUnit.done(function() {
