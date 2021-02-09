@@ -612,7 +612,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		sandbox.stub(Storage, "write").resolves();
 		var sPersistencyKey = "persistency.key";
 		var oVariantData = {
 			changeSpecificData: {
@@ -628,6 +627,7 @@ sap.ui.define([
 		};
 
 		QUnit.test("Given a variant was updated and reverted multiple times (update, update, revert, update, revert, revert)", function (assert) {
+			sandbox.stub(Storage, "write").resolves();
 			var oVariant = CompVariantState.add(oVariantData);
 			var sVariantId = oVariant.getId();
 
