@@ -4,12 +4,18 @@ sap.ui.define([
 	"sap/ui/fl/variants/context/controller/ContextVisibility.controller",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/model/json/JSONModel",
+	"sap/m/StandardListItem",
+	"sap/m/RadioButton",
+	"sap/m/RadioButtonGroup",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	ContextVisibility,
 	WriteStorage,
 	JSONModel,
+	StandardListItem,
+	RadioButton,
+	RadioButtonGroup,
 	jQuery,
 	sinon
 ) {
@@ -18,24 +24,6 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 	var oController;
 
-
-	var oRoles = {
-		values: [
-			{
-				id: "REMOTE",
-				description: "Role for accessing remote system"
-			},
-			{
-				id: "ADMIN",
-				description: "Administrator"
-			},
-			{
-				id: "KPI",
-				description: "KPI Framework"
-			}
-		],
-		lastHitReached: true
-	};
 
 	var oDescription = {
 		role : [
@@ -55,6 +43,23 @@ sap.ui.define([
 	QUnit.module("Given a ContextVisiblility Controller", {
 		beforeEach: function () {
 			oController = new ContextVisibility();
+			this.oRoles = {
+				values: [
+					{
+						id: "REMOTE",
+						description: "Role for accessing remote system"
+					},
+					{
+						id: "ADMIN",
+						description: "Administrator"
+					},
+					{
+						id: "KPI",
+						description: "KPI Framework"
+					}
+				],
+				lastHitReached: true
+			};
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -97,11 +102,40 @@ sap.ui.define([
 			});
 		});
 
+		QUnit.test("when rendering component with one pre-selected role, restricted radio button is selected", function (assert) {
+			var oRadioButtonGroup = new RadioButtonGroup();
+			sandbox.stub(oController, "byId").returns(oRadioButtonGroup);
+			var fnGetSelectedStub = sandbox.stub(oController, "getOwnerComponent").returns({
+				getSelectedRoles: function() {
+					return ["TEST"];
+				}
+			});
+
+			oController.onBeforeRendering();
+			assert.equal(fnGetSelectedStub.callCount, 1, "then stub is called once");
+			assert.equal(oRadioButtonGroup.getSelectedIndex(), 1, "then restricted radio button is selected");
+		});
+
+		QUnit.test("when rendering component without pre-selected roles, public radio button is selected", function (assert) {
+			var oRadioButtonGroup = new RadioButtonGroup();
+			sandbox.stub(oController, "byId").returns(oRadioButtonGroup);
+			var fnGetSelectedStub = sandbox.stub(oController, "getOwnerComponent").returns({
+				getSelectedRoles: function() {
+					return [];
+				}
+			});
+
+			oController.onBeforeRendering();
+			assert.equal(fnGetSelectedStub.callCount, 1, "then stub is called once");
+			assert.equal(oRadioButtonGroup.getSelectedIndex(), 0, "then public radio button is selected");
+		});
+
 		QUnit.test("when the 'Add Contexts' button is pressed ", function (assert) {
-			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(oRoles);
+			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(this.oRoles);
 			oController.oContextsModel = new JSONModel({});
 			sandbox.stub(oController, "getView").returns({
-				addDependent: function() {}
+				addDependent: function() {},
+				getId: function() {}
 			});
 
 			return oController.onAddContextsHandler().then(function() {
@@ -113,7 +147,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'More' button is pressed and more data can be fetched from the back end", function (assert) {
-			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(oRoles);
+			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(this.oRoles);
 			oController.oContextsModel = new JSONModel({ values: [{id: "1", description: "test"}], lastHitReached: false});
 
 			var oEvent = {
@@ -122,14 +156,14 @@ sap.ui.define([
 				}
 			};
 
-			return oController._updateStartedHandler(oEvent).then(function (oRoles) {
+			return oController._updateStartedHandler(oEvent).then(function () {
 				assert.strictEqual(oConnectorCall.callCount, 1, "then the back end request was sent once");
-				assert.strictEqual(oRoles.length, 4, "then the model was extended correctly");
+				assert.strictEqual(oController.oContextsModel.getData().values.length, 4, "then the model was extended correctly");
 			});
 		});
 
 		QUnit.test("when 'More' button is pressed but there is no more data that can be fetched from the back end", function (assert) {
-			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(oRoles);
+			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(this.oRoles);
 			oController.oContextsModel = new JSONModel({ values: [{id: "1", description: "test"}], lastHitReached: true});
 
 			var oEvent = {
@@ -138,14 +172,14 @@ sap.ui.define([
 				}
 			};
 
-			return oController._updateStartedHandler(oEvent).then(function (oRoles) {
+			return oController._updateStartedHandler(oEvent).then(function () {
 				assert.strictEqual(oConnectorCall.callCount, 0, "then the back end request was not sent");
-				assert.strictEqual(oRoles.length, 1, "then the model was not extended");
+				assert.strictEqual(oController.oContextsModel.getData().values.length, 1, "then the model was not extended");
 			});
 		});
 
 		QUnit.test("when searching for new contexts", function (assert) {
-			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(oRoles);
+			var oConnectorCall = sandbox.stub(WriteStorage, "getContexts").resolves(this.oRoles);
 			oController.oContextsModel = new JSONModel({});
 
 			var oEvent = {
@@ -157,6 +191,61 @@ sap.ui.define([
 			return oController.onSearch(oEvent).then(function() {
 				assert.strictEqual(oConnectorCall.callCount, 1, "then the back end request was sent once");
 			});
+		});
+
+		QUnit.test("when deleting one context from selected contexts list", function (assert) {
+			oController.oSelectedContextsModel = new JSONModel({selected: this.oRoles.values});
+			var oEvent = {
+				getParameter: function () {
+					return new StandardListItem({title: "ADMIN"});
+				}
+			};
+			assert.equal(oController.oSelectedContextsModel.getProperty("/selected").length, 3, "then there are three items");
+			oController.onDeleteContext(oEvent);
+			assert.equal(oController.oSelectedContextsModel.getProperty("/selected").length, 2, "then one item was deleted from model");
+		});
+
+		QUnit.test("when deciding whether items should be selected", function (assert) {
+			var oItem1 = {id: "ADMIN"};
+			var oItem2 = {id: "RANDOM"};
+			var aSelectedItems = [{id: "ADMIN"}, {id:"TEST"}];
+			assert.equal(oController.isSelected(oItem1, aSelectedItems), true, "then item is selected");
+			assert.equal(oController.isSelected(oItem2, aSelectedItems), false, "then item is not selected");
+		});
+
+		QUnit.test("when restricted radio button is selected", function (assert) {
+			var oEvent = {
+				getSource: function() {
+					return new RadioButton();
+				},
+				getParameters: function() {
+					return {selected: true};
+				}
+			};
+			var fnSetVisibleStub = sandbox.stub(oController, "byId").returns({
+				setVisible: function(bFlag) {
+					return bFlag;
+				}
+			});
+			oController.onSelectRestrictedRadioButton(oEvent);
+			assert.equal(fnSetVisibleStub.callCount, 1, "then the visibility of hidden panel is set to 'true'");
+		});
+
+		QUnit.test("when clicking confirm on select roles list", function (assert) {
+			oController.oSelectedContextsModel = new JSONModel({selected: []});
+			var oEvent = {
+				getParameter: function() {
+					return [oListItem];
+				}
+			};
+			var oListItem = {
+				getObject: function() {
+					return { id: "REMOTE", description: "Role for accessing remote system"};
+				}
+			};
+
+			oController.onSelectContexts(oEvent);
+			assert.equal(oController.oSelectedContextsModel.getProperty("/selected").length, 1, "then one roles is selected");
 		});
 	});
 	QUnit.done(function() {

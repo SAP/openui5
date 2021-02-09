@@ -15,15 +15,9 @@ function (
 ) {
 	"use strict";
 
-	function buildGetContextsPropertyBag(sSkipValue) {
-		var mPropertyBag = {layer: Layer.CUSTOMER, type: "role"};
-		if (this.sFilterValue) {
-			mPropertyBag["$filter"] = this.sFilterValue;
-		}
-		if (sSkipValue) {
-			mPropertyBag["$skip"] = sSkipValue;
-		}
-		return mPropertyBag;
+	function buildQueryParameterMap(mConfig) {
+		var mDefaultValues = {layer: Layer.CUSTOMER, type: "role"};
+		return Object.assign({}, mDefaultValues, mConfig);
 	}
 
 	function assignDescriptionsToSelectedRoles(aSelectedRoles) {
@@ -32,6 +26,29 @@ function (
 			this.oSelectedContextsModel.setProperty("/selected", oResponse.role);
 		}.bind(this));
 	}
+
+	function loadFragment() {
+		return Fragment.load({
+			id: this.getView().getId(),
+			name: "sap.ui.fl.variants.context.view.fragment.AddContextDialog",
+			controller: this
+		}).then(function(oDialog) {
+			this.getView().addDependent(oDialog);
+			oDialog._oList.attachUpdateStarted(this._updateStartedHandler.bind(this));
+			return oDialog;
+		}.bind(this));
+	}
+
+	function getData(mConfig, oPreviousRoles) {
+		return WriteStorage.getContexts(buildQueryParameterMap(mConfig)).then(function(oResponse) {
+			if (oPreviousRoles) {
+				oResponse.values = oPreviousRoles.concat(oResponse.values);
+			}
+			this.oContextsModel.setData(oResponse);
+			this.oContextsModel.refresh(true);
+		}.bind(this));
+	}
+
 
 	return Controller.extend("sap.ui.fl.variants.context.controller.ContextVisibility", {
 		onInit: function() {
@@ -51,12 +68,6 @@ function (
 			} else {
 				oRadioButtonGroup.setSelectedIndex(1);
 				this.byId("selectedContextsList").setVisible(true);
-			}
-		},
-
-		onExit: function() {
-			if (this._oDialog) {
-				this._oDialog.destroy();
 			}
 		},
 
@@ -82,13 +93,8 @@ function (
 		_appendDataFromBackend: function() {
 			var oRoles = this.oContextsModel.getProperty("/values");
 			if (this.oContextsModel.getProperty("/lastHitReached") === false) {
-				return WriteStorage.getContexts(buildGetContextsPropertyBag.call(this, oRoles.length)).then(function(oResponse) {
-					oRoles = oRoles.concat(oResponse.values);
-					this.oContextsModel.setProperty("/values", oRoles);
-					this.oContextsModel.setProperty("/lastHitReached", oResponse.lastHitReached);
-					this.oContextsModel.refresh(true);
-					return oRoles;
-				}.bind(this));
+				var mConfig = {$skip: oRoles.length};
+				return getData.call(this, mConfig, oRoles);
 			}
 			return Promise.resolve(oRoles);
 		},
@@ -108,20 +114,10 @@ function (
 		/**
 		 * Retrieves contexts from the back end, then opens a new <code>Select Contexts</code> dialog.
 		 */
-		_addContexts: function() {
-			return WriteStorage.getContexts(buildGetContextsPropertyBag.call(this)).then(function(oResponse) {
-				this.oContextsModel.setData(oResponse);
-				return Fragment.load({
-					id: this.createId("Fragment"),
-					name: "sap.ui.fl.variants.context.view.fragment.AddContextDialog",
-					controller: this
-				});
-			}.bind(this)).then(function(oDialog) {
-				this._oDialog = oDialog;
-				this.getView().addDependent(this._oDialog);
-				this._oDialog._oList.attachUpdateStarted(this._updateStartedHandler.bind(this));
-				return this._oDialog.open();
-			}.bind(this));
+		_addContexts: function(oDialog) {
+			return getData.call(this, {}).then(function() {
+				return oDialog.open();
+			});
 		},
 
 		/**
@@ -129,19 +125,19 @@ function (
 		 */
 		onAddContextsHandler: function() {
 			if (!this._oDialog) {
-				return this._addContexts();
+				this._oDialog = loadFragment.call(this);
 			}
-			return Promise.resolve(this._oDialog.open());
+			return this._oDialog.then(function (oDialog) {
+				return this._addContexts(oDialog);
+			}.bind(this));
 		},
 
 		/**
 		 * Retrieves filtered data from the back end, then updates the model.
 		 */
 		onSearch: function(oEvent) {
-			this.sFilterValue = oEvent.getParameter("value");
-			return WriteStorage.getContexts(buildGetContextsPropertyBag.call(this)).then(function(oResponse) {
-				this.oContextsModel.setData(oResponse);
-			}.bind(this));
+			var mConfig = {$filter: oEvent.getParameter("value")};
+			return getData.call(this, mConfig);
 		},
 
 		/**
