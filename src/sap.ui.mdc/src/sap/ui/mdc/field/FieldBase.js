@@ -1240,8 +1240,6 @@ sap.ui.define([
 			oParent.enhanceAccessibilityState(this, mAriaProps);
 		}
 
-		return mAriaProps;
-
 	};
 
 	/**

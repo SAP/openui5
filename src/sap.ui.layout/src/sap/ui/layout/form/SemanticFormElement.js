@@ -141,7 +141,7 @@ sap.ui.define([
 			}
 		}
 
-		return FormElement.prototype.enhanceAccessibilityState.apply(this, arguments);
+		FormElement.prototype.enhanceAccessibilityState.apply(this, arguments);
 
 	};
 

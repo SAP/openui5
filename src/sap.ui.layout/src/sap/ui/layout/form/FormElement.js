@@ -269,8 +269,6 @@ sap.ui.define([
 
 		}
 
-		return mAriaProps;
-
 	};
 
 	/*

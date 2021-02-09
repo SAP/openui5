@@ -395,10 +395,12 @@ sap.ui.define([
 		var oField1 = new Input("I1");
 		oFormElement.addField(oField1);
 
-		var mAriaProps = oFormElement.enhanceAccessibilityState(oField1, {});
+		var mAriaProps = {};
+		oFormElement.enhanceAccessibilityState(oField1, mAriaProps);
 		assert.equal(mAriaProps["labelledby"], "L1", "aria-labelledby set to Label");
 
-		mAriaProps = oFormElement.enhanceAccessibilityState(oField1, {labelledby: "X"});
+		mAriaProps = {labelledby: "X"};
+		oFormElement.enhanceAccessibilityState(oField1, mAriaProps);
 		assert.equal(mAriaProps["labelledby"], "L1 X", "aria-labelledby set to Label");
 	});
 

@@ -551,8 +551,6 @@ sap.ui.define([
 			// use Field as control, but aria properties of rendered inner control.
 			oParent.enhanceAccessibilityState(this, mAriaProps);
 		}
-
-		return mAriaProps;
 	};
 
 	PropertyEditor.prototype.getFocusDomRef = function() {

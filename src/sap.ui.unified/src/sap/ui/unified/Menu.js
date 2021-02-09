@@ -195,7 +195,9 @@ sap.ui.define([
 	Menu.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
 		var bIsAccFunctionValid = typeof this._fnCustomEnhanceAccStateFunction === "function";
 
-		return bIsAccFunctionValid ? this._fnCustomEnhanceAccStateFunction(oElement, mAriaProps) : mAriaProps;
+		if (bIsAccFunctionValid) {
+			this._fnCustomEnhanceAccStateFunction(oElement, mAriaProps);
+		}
 	};
 
 	/**

@@ -2,6 +2,7 @@
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/base/util/merge",
 	"sap/ui/Device",
 	"jquery.sap.mobile",
 	"sap/m/Menu",
@@ -17,6 +18,7 @@ sap.ui.define([
 	"sap/ui/core/CustomData"
 ], function(
 	qutils,
+	merge,
 	Device,
 	jQuery,
 	Menu,
@@ -1178,10 +1180,10 @@ sap.ui.define([
 
 	QUnit.test("Enhance accessibility functions", function (oAssert) {
 		var oButton = new Button(),
-			oAriaProps = {type: "button"},
+			oOrigProps = {type: "button"},
+			oAriaProps,
 			fnCustomAccFunction = function (oElement, mAriaProps) {
 				mAriaProps.controls = "sControlId";
-				return mAriaProps;
 			},
 			oUfdMenu;
 
@@ -1190,7 +1192,9 @@ sap.ui.define([
 		oUfdMenu = this.oMenu._getMenu();
 
 		// Default
-		assert.strictEqual(oUfdMenu.enhanceAccessibilityState(oButton, oAriaProps), oAriaProps, "Should return passed mAriaProps if no custom function is set");
+		oAriaProps = merge({}, oOrigProps); // clone
+		oUfdMenu.enhanceAccessibilityState(oButton, oAriaProps);
+		assert.deepEqual(oAriaProps, oOrigProps, "Should not modify passed mAriaProps if no custom function is set");
 
 		// Act
 		this.oMenu._setCustomEnhanceAccStateFunction(fnCustomAccFunction);
@@ -1198,7 +1202,9 @@ sap.ui.define([
 		oUfdMenu = this.oMenu._getMenu();
 
 		// Assert
-		assert.strictEqual(oUfdMenu.enhanceAccessibilityState(oButton, oAriaProps).controls, "sControlId", "Should return also the additional mAriaProps if a custom function is set");
+		oAriaProps = merge({}, oOrigProps); // clone
+		oUfdMenu.enhanceAccessibilityState(oButton, oAriaProps);
+		assert.strictEqual(oAriaProps.controls, "sControlId", "Should also add additional mAriaProps if a custom function is set");
 	});
 
 	QUnit.test("Custom data is propagated properly", function (oAssert) {

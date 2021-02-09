@@ -541,10 +541,8 @@ sap.ui.define([
 
 			if (oParent && oParent.enhanceAccessibilityState) {
 				// use XMLComposite as control, but aria properties of rendered inner controls.
-				return oParent.enhanceAccessibilityState(this, mAriaProps);
+				oParent.enhanceAccessibilityState(this, mAriaProps);
 			}
-
-			return mAriaProps;
 		};
 
 		/**
