@@ -379,5 +379,54 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	QUnit.test("createContent error handling", function(assert) {
+		var DefaultContentError = Object.assign({}, DefaultContent);
+
+		DefaultContentError.createDisplay = function () {
+			throw new Error("Test Error");
+		};
+
+		DefaultContentError.getDisplay = function() {
+			return ["sap/ui/mdc/Link"];
+		};
+
+		var oExpectedContentControl = {
+			contentType: DefaultContentError,
+			contentTypeName: "DefaultContent",
+			expectedControls: [
+				[Text],
+				[FieldInput],
+				[FieldMultiInput],
+				[TextArea],
+				[null],
+				[null]
+			]
+		};
+		var done = assert.async(2);
+
+		this.oField.awaitControlDelegate().then(function() {
+			var oContentType = oExpectedContentControl.contentType;
+			var sContentTypeName = oExpectedContentControl.contentTypeName;
+
+			assert.throws(
+				function() {
+					this.oContentFactory.createContent(oContentType, ContentMode.Display, sContentTypeName + "-" + ContentMode.Display + "-ErrorCase");
+				},
+				/Test Error/,
+				"createContent forwards error when module is loaded synchronious.");
+			done();
+
+			DefaultContentError.getDisplay = function() {
+				return ["sap/ui/mdc/ActionToolbar"];
+			};
+
+			this.oContentFactory.createContent(oContentType, ContentMode.Display, sContentTypeName + "-" + ContentMode.Display + "-ErrorCase").catch(function(oError) {
+				assert.equal(oError.message, "Test Error", "createContent forwards error when module is loaded asynchronious.");
+				done();
+			});
+
+		}.bind(this));
+	});
+
 	QUnit.start();
 });
