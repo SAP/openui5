@@ -332,6 +332,34 @@ function (
 		}
 	};
 
+	var oManifest_NamedDataSections = {
+		"sap.app": {
+			"id": "test.card.data.handling"
+		},
+		"sap.card": {
+			"type": "List",
+			"data": {
+				"name": "testCard"
+			},
+			"header": {
+				"data": {
+					"name": "testHeader"
+				},
+				"title": "{testHeader>/title}",
+				"subTitle": "{testCard>/subtitle}"
+			},
+			"content": {
+				"data": {
+					"name": "testContent",
+					"path": "testContent>/items"
+				},
+				"item": {
+					"title": "{testContent>name}"
+				}
+			}
+		}
+	};
+
 	function testServiceOrRequestSection(sName, sTestTitle, oManifest, bShouldFail) {
 		QUnit.test(sTestTitle, function (assert) {
 
@@ -1014,6 +1042,76 @@ function (
 				}
 			}
 		});
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.module("Named data sections", {
+		beforeEach: function () {
+			this.oCard = new Card();
+		},
+		afterEach: function () {
+			this.oCard.destroy();
+		}
+	});
+
+	QUnit.test("Named data section creates model in the card", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			// Assert
+			assert.ok(oCard.getModel("testCard"), "Model on global card level is created");
+			assert.ok(oCard.getModel("testHeader"), "Model on header level is created");
+			assert.ok(oCard.getModel("testContent"), "Model on content level is created");
+
+			done();
+		});
+
+		// Act
+		oCard.setManifest(oManifest_NamedDataSections);
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
+	QUnit.test("Items are bound to named model", function (assert) {
+		// Arrange
+		var done = assert.async(),
+			oCard = this.oCard;
+
+		oCard.attachEvent("_ready", function () {
+			var aItems,
+				oHeader = oCard.getCardHeader();
+
+			oCard.getModel("testCard").setData({
+				"subtitle": "Card subtitle"
+			});
+
+			oCard.getModel("testHeader").setData({
+				"title": "Header title"
+			});
+
+			oCard.getModel("testContent").setData({
+				"items": [
+					{"name": "Item 1"},
+					{"name": "Item 2"}
+				]
+			});
+
+			Core.applyChanges();
+			aItems = oCard.getCardContent().getInnerList().getItems();
+
+			// Assert
+			assert.strictEqual(oHeader.getTitle(), "Header title", "Title from header level is correct.");
+			assert.strictEqual(oHeader.getSubtitle(), "Card subtitle", "Subtitle from card level is correct.");
+
+			assert.strictEqual(aItems.length, 2, "List has 2 items.");
+			assert.strictEqual(aItems[0].getTitle(), "Item 1", "First list item has correct title.");
+
+			done();
+		});
+
+		// Act
+		oCard.setManifest(oManifest_NamedDataSections);
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 

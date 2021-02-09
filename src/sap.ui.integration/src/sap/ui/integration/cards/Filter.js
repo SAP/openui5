@@ -201,7 +201,8 @@ sap.ui.define([
 	 * @param {object} oDataConfig Data configuration
 	 */
 	Filter.prototype._setDataConfiguration = function (oDataConfig) {
-		var oModel;
+		var oCard = this.getCardInstance(),
+			oModel;
 
 		if (!oDataConfig) {
 			this.fireEvent("_dataReady");
@@ -212,13 +213,12 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 		}
 
-		var oCard = Core.byId(this.getCard());
-		this._oDataProvider = oCard._oDataProviderFactory.create(oDataConfig, null, true);
+		this._oDataProvider = oCard.getDataProviderFactory().create(oDataConfig, null, true);
 
 		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
 
 		if (oDataConfig.name) {
-			oModel = this.getModel(oDataConfig.name);
+			oModel = oCard.getModel(oDataConfig.name);
 		} else if (this._oDataProvider) {
 			oModel = new ObservableModel();
 			this.setModel(oModel);
@@ -299,6 +299,16 @@ sap.ui.define([
 		oSelect.setSelectedKey(this.getValue());
 
 		return oSelect;
+	};
+
+	/**
+	 * Gets the card instance of which this element is part of.
+	 * @ui5-restricted
+	 * @private
+	 * @returns {sap.ui.integration.widgets.Card} The card instance.
+	 */
+	Filter.prototype.getCardInstance = function () {
+		return Core.byId(this.getCard());
 	};
 
 	return Filter;

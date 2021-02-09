@@ -2,6 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
+	"sap/ui/core/Core",
 	"sap/base/util/extend",
 	"sap/base/util/isEmptyObject",
 	"sap/f/cards/NumericHeader",
@@ -10,6 +11,7 @@ sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/integration/util/LoadingProvider"
 ], function (
+	Core,
 	extend,
 	isEmptyObject,
 	FNumericHeader,
@@ -89,6 +91,12 @@ sap.ui.define([
 				 * The internally used LoadingProvider.
 				 */
 				_loadingProvider: { type: "sap.ui.core.Element", multiple: false, visibility: "hidden" }
+			},
+			associations: {
+				/**
+				 * Association with the parent Card that contains this filter.
+				 */
+				card: { type: "sap.ui.integration.widgets.Card", multiple: false }
 			}
 		},
 		renderer: FNumericHeaderRenderer
@@ -145,8 +153,8 @@ sap.ui.define([
 
 	NumericHeader.prototype.isLoading = function () {
 		var oLoadingProvider = this.getAggregation("_loadingProvider"),
-			oCard = this.getParent(),
-			bCardLoading = oCard.isA("sap.ui.integration.widgets.Card") ? oCard.isLoading() : false;
+			oCard = this.getCardInstance(),
+			bCardLoading = oCard && oCard.isA("sap.ui.integration.widgets.Card") ? oCard.isLoading() : false;
 
 		return !oLoadingProvider.isDataProviderJson() && (oLoadingProvider.getLoading() || bCardLoading);
 	};
@@ -183,7 +191,8 @@ sap.ui.define([
 	 * @param {object} oDataSettings The data settings
 	 */
 	NumericHeader.prototype._setDataConfiguration = function (oDataSettings) {
-		var sPath = "/",
+		var oCard = this.getCardInstance(),
+			sPath = "/",
 			oModel;
 
 		if (oDataSettings && oDataSettings.path) {
@@ -196,12 +205,12 @@ sap.ui.define([
 			this._oDataProvider.destroy();
 		}
 
-		this._oDataProvider = this._oDataProviderFactory.create(oDataSettings, this._oServiceManager);
+		this._oDataProvider = oCard.getDataProviderFactory().create(oDataSettings, this._oServiceManager);
 
 		this.getAggregation("_loadingProvider").setDataProvider(this._oDataProvider);
 
 		if (oDataSettings && oDataSettings.name) {
-			oModel = this.getModel(oDataSettings.name);
+			oModel = oCard.getModel(oDataSettings.name);
 		} else if (this._oDataProvider) {
 			oModel = new JSONModel();
 			this.setModel(oModel);
@@ -262,6 +271,16 @@ sap.ui.define([
 	NumericHeader.prototype.onDataRequestComplete = function () {
 		this.fireEvent("_dataReady");
 		this.hideLoadingPlaceholders();
+	};
+
+	/**
+	 * Gets the card instance of which this element is part of.
+	 * @ui5-restricted
+	 * @private
+	 * @returns {sap.ui.integration.widgets.Card} The card instance.
+	 */
+	NumericHeader.prototype.getCardInstance = function () {
+		return Core.byId(this.getCard());
 	};
 
 	return NumericHeader;

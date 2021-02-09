@@ -275,6 +275,16 @@ sap.ui.define(function () {
 					]
 				}
 			},
+			"model/ObservableModel": {
+				coverage: {
+					only: [
+						"sap/ui/integration/model/ObservableModel"
+					]
+				},
+				sinon: {
+					useFakeTimers: true
+				}
+			},
 			"util/DataProvider": {
 				coverage: {
 					only: [

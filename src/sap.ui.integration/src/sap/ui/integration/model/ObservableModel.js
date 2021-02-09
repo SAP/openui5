@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/ClientPropertyBinding",
-	"sap/base/util/deepEqual"
+	"sap/base/util/deepEqual",
+	"sap/base/util/deepClone"
 ], function (
 	JSONModel,
 	ClientPropertyBinding,
-	deepEqual
+	deepEqual,
+	deepClone
 ) {
 	"use strict";
 
@@ -74,20 +76,19 @@ sap.ui.define([
 	 * @private
 	 */
 	ObservableModel.prototype._fireChange = function () {
-		var bDataNotChanged;
+		var bDataChanged;
 
 		if (!this._oOldData) {
-			this._oOldData = this.oData;
-			bDataNotChanged = false;
+			bDataChanged = true;
 		} else {
-			bDataNotChanged = deepEqual(this.oData,this._oOldData, 100);
+			bDataChanged = !deepEqual(this.oData, this._oOldData, 100);
 		}
 
-		if (!bDataNotChanged) {
+		this._oOldData = deepClone(this.oData);
+
+		if (bDataChanged) {
 			this.fireEvent("change");
 		}
-
-		this._oOldData = this.oData;
 	};
 
 	return ObservableModel;
