@@ -962,5 +962,21 @@
         ]
       }
     ]
+  },
+  "1.71.27": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "42fa021795915b9ee46aa829f8e7e9ab6b042ca5",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.History: enable complete routing history",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070491972"
+          }
+        ]
+      }
+    ]
   }
 }

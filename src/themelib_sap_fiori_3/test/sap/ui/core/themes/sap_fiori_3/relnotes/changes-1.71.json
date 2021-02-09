@@ -307,5 +307,21 @@
         ]
       }
     ]
+  },
+  "1.71.27": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "67c060d9e31c8086480ef5e05e99f88b12994130",
+        "type": "FIX",
+        "text": " sap.m.InputBase: Icon correctly visualized in High Contrast themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000558272021"
+          }
+        ]
+      }
+    ]
   }
 }

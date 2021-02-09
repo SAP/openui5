@@ -2338,5 +2338,47 @@
         ]
       }
     ]
+  },
+  "1.71.27": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "689329866aadc07efa6af357de2d5849828d7957",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Calendar's F4 shortcut prioritized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180009721"
+          }
+        ]
+      },
+      {
+        "id": "c4c520a26e3c4472f99ee2f710be8497ba70405c",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: customData with binding is properly forwarded",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180032893"
+          }
+        ]
+      },
+      {
+        "id": "1c99373f374d3d03b51c599fcbf783ac70e226a3",
+        "type": "FIX",
+        "text": " sap.m.SinglePlanningCalendar: Drag and drop now creates correct appointments",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080428852"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400008451912020"
+          }
+        ]
+      }
+    ]
   }
 }

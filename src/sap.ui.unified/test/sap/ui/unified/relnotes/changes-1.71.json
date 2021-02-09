@@ -306,5 +306,32 @@
         ]
       }
     ]
+  },
+  "1.71.27": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "32b7a15a6ecd1480d5f0d30d3c8779b185682008",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Screen reader announcement adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080354744"
+          }
+        ]
+      },
+      {
+        "id": "689329866aadc07efa6af357de2d5849828d7957",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: Calendar's F4 shortcut prioritized",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180009721"
+          }
+        ]
+      }
+    ]
   }
 }
