@@ -41,7 +41,7 @@ sap.ui.define([
 				async: false,
 				type: "XML",
 				id: this.createId("view"),
-				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter"></mdc:Table></mvc:View>'
+				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>'
 			});
 			return oView;
 		}
@@ -90,7 +90,7 @@ sap.ui.define([
 
 	function fetchProperties() {
 		var mProperties = {
-			String: {label: "String",name:"String",type:"Edm.String",filterable: true},
+			String: {label: "String",name:"String",type:"Edm.String",filterable: true, groupable: true},
 			Boolean: {label: "Boolean",name:"Boolean",type:"Edm.Boolean",filterable: true},
 			Int16: {label: "Int16",name:"Int16",type:"Edm.Int16",filterable: true},
 			Int32: {label: "Int32",name:"Int32",type:"Edm.Int32",filterable: true},
@@ -706,7 +706,10 @@ sap.ui.define([
 					descending: true
 				}
 			],
+			groupLevels: [],
+			aggregations: {},
 			filter: {}
+
 		};
 
 		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
@@ -766,6 +769,70 @@ sap.ui.define([
 					assert.deepEqual(this.oTable.getSortConditions().sorters, [], "No sorter left");
 					done();
 				}.bind(this));
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("Create different group changes via 'applyExternalState'", function(assert){
+
+		var done = assert.async();
+
+		var oState = {
+			groupLevels: [
+				{
+					name: "String"
+				}
+			]
+		};
+
+		//add new grouping
+		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
+			assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
+
+			assert.equal(aChanges[0].getChangeType(), "addGroup", "Correct change type created");
+			assert.deepEqual(this.oTable.getGroupConditions().groupLevels, oState.groupLevels, "Correct groupLevels object created");
+
+			oState.groupLevels[0].grouped = false;
+
+			//remove grouping
+			StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
+				assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
+
+				assert.equal(aChanges[0].getChangeType(), "removeGroup", "Correct change type created");
+				assert.deepEqual(this.oTable.getGroupConditions().groupLevels, [], "Correct groupLevels object created");
+
+				done();
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test("Create different aggregate changes via 'applyExternalState'", function(assert){
+
+		var done = assert.async();
+
+		var oState = {
+			aggregations: {
+				String : {}
+			}
+		};
+
+		//add new grouping
+		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
+			assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
+
+			assert.equal(aChanges[0].getChangeType(), "addAggregate", "Correct change type created");
+			assert.deepEqual(this.oTable.getAggregateConditions(), oState.aggregations, "Correct aggregation object created");
+
+			oState.aggregations["String"].aggregated = false;
+
+			//remove grouping
+			StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
+				assert.equal(aChanges.length, 1, "Correct amount of changes created: " + aChanges.length);
+
+				assert.equal(aChanges[0].getChangeType(), "removeAggregate", "Correct change type created");
+				assert.deepEqual(this.oTable.getAggregateConditions(), {}, "Correct aggregations object created");
+
+				done();
 			}.bind(this));
 		}.bind(this));
 	});

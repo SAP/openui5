@@ -5,7 +5,8 @@ sap.ui.define([
 	"sap/ui/mdc/Table",
 	"sap/ui/mdc/table/Column",
 	"sap/m/HBox",
-	"sap/m/Text"
+	"sap/m/Text",
+	"sap/ui/fl/variants/VariantManagement"
 ], function(
 	Controller,
 	MessageBox,
@@ -13,7 +14,8 @@ sap.ui.define([
 	Table,
 	Column,
 	HBox,
-	Text
+	Text,
+	VariantManagement
 ) {
 	"use strict";
 
@@ -97,7 +99,7 @@ sap.ui.define([
 				header: "Table header",
 				enableExport: true,
 				selectionMode: "Multi",
-				p13nMode: ["Column", "Filter", "Sort"],
+				p13nMode: ["Column", "Filter", "Sort", "Group", "Aggregate"],
 				noDataText: "This text is shown when no data is present in the table",
 				delegate: {
 					name: "sap/ui/mdc/sample/TableODataV4Analytics/TableDelegate",
@@ -107,6 +109,9 @@ sap.ui.define([
 				}
 			});
 
+			var oVariant = new VariantManagement();
+			oVariant.addFor(oTable);
+			oTable.setVariant(oVariant);
 			oTable.setModel(new ODataModel({
 				serviceUrl: sProxyServiceUrl,
 				synchronizationMode: "None",

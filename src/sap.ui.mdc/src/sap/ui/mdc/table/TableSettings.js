@@ -65,6 +65,18 @@ sap.ui.define([
 				ariaHasPopup: HasPopup.Dialog
 			});
 		},
+		createGroupButton: function (sIdPrefix, aEventInfo) {
+			if (!oRb) {
+				this._loadResourceBundle();
+			}
+			return this._createButton(sIdPrefix + "-group", {
+				icon: "sap-icon://group-2",
+				text: oRb.getText("table.SETTINGS_GROUP"),
+				press: aEventInfo,
+				tooltip: oRb.getText("table.SETTINGS_GROUP"),
+				ariaHasPopup: HasPopup.Dialog
+			});
+		},
 		createExportButton: function(sIdPrefix, mEventInfo) {
 			if (!oRb) {
 				this._loadResourceBundle();
@@ -121,6 +133,10 @@ sap.ui.define([
 			oControl.getEngine().showUI(oControl, "Filter", oSource);
 		},
 
+		showUIGroup: function (oControl, oSource) {
+			oControl.getEngine().showUI(oControl, "Group", oSource);
+		},
+
 		createSort: function(oControl, sProperty, bRemoveAllExisting) {
 
 			var oSorter = {
@@ -146,6 +162,46 @@ sap.ui.define([
 			});
 
 		},
+
+		createGroup: function (oControl, sProperty) {
+			var oGroupLevels = {
+				grouped: true,
+				name: sProperty
+			};
+			var aGroup = [oGroupLevels];
+			oControl.getCurrentState().groupLevels.some(function(oProp) {
+				if (oProp.name == sProperty) {
+					aGroup[0].grouped = false;
+				}
+			});
+
+			oControl.getEngine().createChanges({
+				control: oControl,
+				key: "Group",
+				state: aGroup,
+				applyAbsolute: false
+			});
+		},
+
+		createAggregation: function(oControl, sProperty) {
+			var oAggregations = {
+				name: sProperty,
+				aggregated: true
+			};
+
+			var aAggregate = [oAggregations];
+			if (oControl.getCurrentState().aggregations[sProperty]) {
+				oAggregations.aggregated = false;
+			}
+
+			oControl.getEngine().createChanges({
+				control: oControl,
+				key: "Aggregate",
+				state: aAggregate,
+				applyAbsolute: false
+			});
+		},
+
 		moveColumn: function(oControl, iDraggedIndex, iNewIndex) {
 			//in case the user might enable different d&d options, this function should not create a move change with similar index
 			if (iDraggedIndex != iNewIndex){

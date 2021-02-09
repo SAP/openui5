@@ -25,6 +25,8 @@ sap.ui.define([
 	 * Test delegate for OData V4 with analytical capabilities.
 	 */
 	var AnalyticsTableDelegate = Object.assign({}, TableDelegate, TestDelegate);
+	AnalyticsTableDelegate.rebindTable = TableDelegate.rebindTable;
+
 
 	function getMetadataInfo(oTable) {
 		return oTable ? oTable.getDelegate().payload : undefined;

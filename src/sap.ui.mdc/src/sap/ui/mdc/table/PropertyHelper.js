@@ -62,6 +62,13 @@ sap.ui.define([
 		return "";
 	}
 
+	PropertyHelper.prototype.prepareProperty = function(oProperty) {
+		PropertyHelperBase.prototype.prepareProperty.apply(this, arguments);
+		oProperty.isAggregatable = function() {
+			 return false;
+		};
+	};
+
 	/**
 	 * Gets the export settings for a column.
 	 *
