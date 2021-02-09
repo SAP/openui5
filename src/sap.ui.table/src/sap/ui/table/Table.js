@@ -2291,10 +2291,10 @@ sap.ui.define([
 	 */
 	Table.prototype._getFixedBottomRowContexts = function() {
 		var mRowCounts = this._getRowCounts();
-		var iTotalRowCount = this._getTotalRowCount();
+		var iTotalRowCount = getTotalRowCount(this, true);
 
 		if (mRowCounts.fixedBottom > 0 && mRowCounts.count - mRowCounts.fixedBottom < iTotalRowCount) {
-			return this._getContexts(iTotalRowCount - mRowCounts.fixedBottom, mRowCounts.fixedBottom);
+			return this._getContexts(iTotalRowCount - mRowCounts.fixedBottom, mRowCounts.fixedBottom, 0);
 		} else {
 			return [];
 		}
@@ -2309,7 +2309,7 @@ sap.ui.define([
 		var mRowCounts = this._getRowCounts();
 
 		if (mRowCounts.fixedTop > 0) {
-			return this._getContexts(0, mRowCounts.fixedTop);
+			return this._getContexts(0, mRowCounts.fixedTop, 0);
 		} else {
 			return [];
 		}
@@ -2790,8 +2790,20 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._getTotalRowCount = function() {
-		var oBinding = this.getBinding();
-		var oBindingInfo = this.getBindingInfo("rows");
+		return getTotalRowCount(this);
+	};
+
+	/**
+	 * Returns the number of rows the <code>rows</code> aggregation is bound to.
+	 *
+	 * @param {sap.ui.table.Table} oTable Instance of the table.
+	 * @param {boolean} [bIgnoreCache=false] Whether to ignore the cached binding length.
+	 * @returns {int} The total number of rows. Returns 0 if the <code>rows</code> aggregation is not bound.
+	 * @private
+	 */
+	function getTotalRowCount(oTable, bIgnoreCache) {
+		var oBinding = oTable.getBinding();
+		var oBindingInfo = oTable.getBindingInfo("rows");
 
 		if (!oBinding) {
 			return 0;
@@ -2801,14 +2813,18 @@ sap.ui.define([
 			return oBindingInfo.length;
 		}
 
-		if (!this._bContextsAvailable) {
-			return _private(this).iCachedBindingLength;
+		if (bIgnoreCache === true) {
+			return oBinding.getLength();
 		}
 
-		_private(this).iCachedBindingLength = oBinding.getLength();
+		if (!oTable._bContextsAvailable) {
+			return _private(oTable).iCachedBindingLength;
+		}
 
-		return _private(this).iCachedBindingLength;
-	};
+		_private(oTable).iCachedBindingLength = oBinding.getLength();
+
+		return _private(oTable).iCachedBindingLength;
+	}
 
 	/**
 	 * Returns the maximum row index to which can be scrolled to. It may not be accurate if the index is in the last page, but it never less
