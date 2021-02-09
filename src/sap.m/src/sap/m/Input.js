@@ -2277,7 +2277,7 @@ function(
 	 * Clones input.
 	 *
 	 * @public
-	 * @returns {sap.m.Input} Cloned input.
+	 * @returns {this} Cloned input.
 	 */
 	Input.prototype.clone = function() {
 		var oInputClone = InputBase.prototype.clone.apply(this, arguments);
@@ -2380,8 +2380,8 @@ function(
 	 *
 	 * Default value is empty/<code>undefined</code>
 	 *
-	 * @param {string} sValueStateText  new value for property <code>valueStateText</code>
-	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining
+	 * @param {string} sValueStateText new value for property <code>valueStateText</code>
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @since 1.16
 	 * @name sap.m.Input#setValueStateText
@@ -2389,17 +2389,17 @@ function(
 	 */
 
 	/**
-	* Getter for property <code>showValueStateMessage</code>.
-	* Whether the value state message should be shown. This property is already available for sap.m.Input since 1.16.0.
-	*
-	* Default value is <code>true</code>
-	*
-	* @return {boolean} the value of property <code>showValueStateMessage</code>
-	* @public
-	* @since 1.16
-	* @name sap.m.Input#getShowValueStateMessage
-	* @function
-	*/
+	 * Getter for property <code>showValueStateMessage</code>.
+	 * Whether the value state message should be shown. This property is already available for sap.m.Input since 1.16.0.
+	 *
+	 * Default value is <code>true</code>
+	 *
+	 * @return {boolean} the value of property <code>showValueStateMessage</code>
+	 * @public
+	 * @since 1.16
+	 * @name sap.m.Input#getShowValueStateMessage
+	 * @function
+	 */
 
 	/**
 	 * Setter for property <code>showValueStateMessage</code>.
@@ -2407,7 +2407,7 @@ function(
 	 * Default value is <code>true</code>
 	 *
 	 * @param {boolean} bShowValueStateMessage  new value for property <code>showValueStateMessage</code>
-	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @since 1.16
 	 * @name sap.m.Input#setShowValueStateMessage

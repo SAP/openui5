@@ -227,8 +227,6 @@ sap.ui.define([
 	/**
 	 * Sets the title for a <code>sap.m.Title</code> or <code>sap.ui.core.Title</code>
 	 *
-	 * @name sap.m.Title.setTitle
-	 * @method
 	 * @public
 	 * @param {sap.m.Title|sap.ui.core.Title} vTitle Given variant of the a title which can be <code>sap.m.Title</code> or <code>sap.ui.core.Title</code>.
 	 * @returns {this} this Title reference for chaining.

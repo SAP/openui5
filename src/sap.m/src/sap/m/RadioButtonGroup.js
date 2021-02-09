@@ -518,7 +518,7 @@ sap.ui.define([
 			 * Event handlers are not cloned.
 			 *
 			 * @public
-			 * @returns {sap.m.RadioButtonGroup} New instance of RadioButtonGroup
+			 * @returns {this} New instance of RadioButtonGroup
 			 */
 			RadioButtonGroup.prototype.clone = function(){
 

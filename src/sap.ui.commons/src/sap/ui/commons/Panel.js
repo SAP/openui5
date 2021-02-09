@@ -223,7 +223,9 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 
 
 	/**
+	 * Returns an object representing the serialized focus information.
 	 *
+	 * @returns {object} an object representing the serialized focus information
 	 * @protected
 	 */
 	Panel.prototype.getFocusInfo = function () {

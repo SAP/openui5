@@ -523,7 +523,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndexFrom Index from which the selection should start
 	 * @param {int} iIndexTo Index up to which to select
-	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @function
 	 * @name sap.ui.table.TreeTable#addSelectionInterval
@@ -535,7 +535,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndexFrom Index from which the deselection should start
 	 * @param {int} iIndexTo Index up to which to deselect
-	 * @returns {sap.ui.table.Table} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @function
 	 * @name sap.ui.table.TreeTable#removeSelectionInterval

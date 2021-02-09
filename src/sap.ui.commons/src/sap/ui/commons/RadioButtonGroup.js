@@ -531,7 +531,7 @@ sap.ui.define([
 	 * Creates a new instance of RadioButtonGroup, with the same settings as the RadioButtonGroup
 	 * on which the method is called.
 	 * Event handlers are not cloned.
-	 * @returns {sap.ui.commons.RadioButtonGroup} New instance of RadioButtonGroup
+	 * @returns {this} New instance of RadioButtonGroup
 	 * @public
 	 */
 	RadioButtonGroup.prototype.clone = function(){

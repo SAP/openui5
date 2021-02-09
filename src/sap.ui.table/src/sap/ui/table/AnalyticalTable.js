@@ -765,7 +765,7 @@ sap.ui.define([
 	 *
 	 * @param {int} iIndex
 	 *         Index of the row to return the context from.
-	 * @returns {object} The context of a row by its index
+	 * @returns {sap.ui.model.Context} The context of a row by its index
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
