@@ -64,6 +64,7 @@ sap.ui.define([
 			"sap.m.AvatarColor",
 			"sap.m.BackgroundDesign",
 			"sap.m.BadgeState",
+			"sap.m.BadgeAnimationType",
 			"sap.m.BarDesign",
 			"sap.m.BreadcrumbsSeparatorStyle",
 			"sap.m.ButtonType",
@@ -615,6 +616,35 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Types of animation performed by {@link sap.m.BadgeEnabler}.
+	 *
+	 * @enum {string}
+	 * @public
+	 * @since 1.87
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.BadgeAnimationType = {
+
+		/**
+		 * Badge indicator will perform Appear,Update,and Disappear animation.
+		 * @public
+		 */
+		Full : "Full",
+
+		/**
+		 * Badge indicator will perform only Update animation (suitable for controls, which invalidate often).
+		 * @public
+		 */
+		Update : "Update",
+
+		/**
+		 * No animation is performed.
+		 * @public
+		 */
+		None : "None"
+
+	};
 
 	/**
 	 * Types of badge rendering style.
