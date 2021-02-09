@@ -748,7 +748,11 @@ sap.ui.define([
 			if (oItem.isA("sap.ui.core.Item")) {
 				this.setSelectable(oItem, oItem.getEnabled());
 			}
-			oListItem.addAriaLabelledBy(this._getGroupHeaderInvisibleText().getId());
+
+			if (oItem.isA("sap.ui.core.SeparatorItem")) {
+				oListItem.addAriaLabelledBy(this._getGroupHeaderInvisibleText().getId());
+			}
+
 			oListItem.addStyleClass(this.getRenderer().CSS_CLASS_COMBOBOXBASE + "NonInteractiveItem");
 
 			this._oItemObserver.observe(oItem, {properties: ["text", "additionalText", "enabled", "tooltip"]});
