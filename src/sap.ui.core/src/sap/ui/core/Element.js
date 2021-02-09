@@ -1383,7 +1383,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Allows the parent of a control to enhance the aria information during rendering.
+	 * Allows the parent of a control to enhance the ARIA information during rendering.
 	 *
 	 * This function is called by the RenderManager's
 	 * {@link sap.ui.core.RenderManager#accessibilityState accessibilityState} and
@@ -1392,9 +1392,11 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.core.Element.prototype.enhanceAccessibilityState
-	 * @param {sap.ui.core.Element} oElement the Control/Element for which aria properties are rendered
-	 * @param {object} mAriaProps map of aria properties keyed by there name (without prefix "aria-")
-	 * @return {object} map of enhanced aria properties
+	 * @param {sap.ui.core.Element} oElement
+	 *   The Control/Element for which ARIA properties are collected
+	 * @param {object} mAriaProps
+	 *   Map of ARIA properties keyed by their name (without prefix "aria-"); the method
+	 *   implementation can enhance this map in any way (add or remove properties, modify values)
 	 * @protected
 	 * @abstract
 	 */

@@ -1167,7 +1167,7 @@ function(
 	/**
 	 * Creates picker if doesn't exist yet and sync with Control items
 	 *
-	 * @param {boolean} bForceListSync Force MultiComboBox to SuggestionPopover sync
+	 * @param {boolean} [bForceListSync] Force MultiComboBox to SuggestionPopover sync
 	 * @protected
 	 * @returns {sap.m.Dialog|sap.m.Popover}
 	 */
