@@ -185,6 +185,11 @@ sap.ui.define([
 	 * Enables any consumer of the menu to enhance its accessibility state by calling
 	 * back its custom provided function Menu#_setCustomEnhanceAccStateFunction.
 	 *
+	 * @param {sap.ui.core.Element} oElement
+	 *   The Control/Element for which ARIA properties are collected
+	 * @param {object} mAriaProps
+	 *   Map of ARIA properties keyed by their name (without prefix "aria-"); the method
+	 *   implementation can enhance this map in any way (add or remove properties, modify values)
 	 * @overrides sap.ui.core.Element.prototype.enhanceAccessibilityState
 	 */
 	Menu.prototype.enhanceAccessibilityState = function(oElement, mAriaProps) {
