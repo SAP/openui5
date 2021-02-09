@@ -163,12 +163,6 @@ sap.ui.define([
 					only: ["sap/ui/rta/plugin/Combine"]
 				}
 			},
-			"plugin/CompVariant": {
-				group: "Plugin",
-				coverage: {
-					only: ["sap/ui/rta/plugin/CompVariant"]
-				}
-			},
 			"plugin/ControlVariant": {
 				group: "Plugin",
 				coverage: {
