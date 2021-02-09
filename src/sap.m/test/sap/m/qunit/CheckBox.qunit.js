@@ -729,6 +729,46 @@ sap.ui.define([
 		testSetLabelProperty("width", "100px", "Setter");
 	});
 
+	QUnit.test("valueState with enabled and editable set to false", function(assert) {
+		// system under test
+		var oCheckBox = new CheckBox({
+			enabled: false,
+			valueState: ValueState.Error
+		});
+
+		// act
+		oCheckBox.placeAt("content");
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oCheckBox.$().hasClass("sapMCbErr"));
+
+		// act
+		oCheckBox.setEnabled(true);
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oCheckBox.$().hasClass("sapMCbErr"));
+
+		// act
+		oCheckBox.setEditable(false);
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oCheckBox.$().hasClass("sapMCbErr"));
+
+		// act
+		oCheckBox.setEditable(true);
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oCheckBox.$().hasClass("sapMCbErr"));
+
+		// cleanup
+		oCheckBox.destroy();
+
+	});
+
 
 
 	QUnit.module("Basic CSS classes");
