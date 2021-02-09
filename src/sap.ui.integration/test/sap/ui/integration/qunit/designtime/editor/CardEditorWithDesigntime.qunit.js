@@ -4622,6 +4622,7 @@ sap.ui.define([
 		QUnit.test("Initalize", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
+				host: "contexthost",
 				manifest: {
 					"sap.app": {
 						"id": "test.sample",
@@ -4651,8 +4652,7 @@ sap.ui.define([
 							},
 							"destinations": {
 								"northwind": {
-									"name": "Northwind",
-									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+									"name": "Northwind"
 								}
 							}
 						}
@@ -4707,6 +4707,7 @@ sap.ui.define([
 		QUnit.test("Just select Customer, check Order and Product", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
+				host: "contexthost",
 				manifest: {
 					"sap.app": {
 						"id": "test.sample",
@@ -4736,8 +4737,7 @@ sap.ui.define([
 							},
 							"destinations": {
 								"northwind": {
-									"name": "Northwind",
-									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+									"name": "Northwind"
 								}
 							}
 						}
@@ -4797,6 +4797,7 @@ sap.ui.define([
 		QUnit.test("Just select Employee, check Order and Product", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
+				host: "contexthost",
 				manifest: {
 					"sap.app": {
 						"id": "test.sample",
@@ -4826,8 +4827,7 @@ sap.ui.define([
 							},
 							"destinations": {
 								"northwind": {
-									"name": "Northwind",
-									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+									"name": "Northwind"
 								}
 							}
 						}
@@ -4888,6 +4888,7 @@ sap.ui.define([
 		QUnit.test("Select Customer and Employee, check Oder", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
+				host: "contexthost",
 				manifest: {
 					"sap.app": {
 						"id": "test.sample",
@@ -4917,8 +4918,7 @@ sap.ui.define([
 							},
 							"destinations": {
 								"northwind": {
-									"name": "Northwind",
-									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+									"name": "Northwind"
 								}
 							}
 						}
@@ -4983,6 +4983,7 @@ sap.ui.define([
 		QUnit.test("Select Customer, Employee and Oder, check Product 1", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
+				host: "contexthost",
 				manifest: {
 					"sap.app": {
 						"id": "test.sample",
@@ -5012,8 +5013,7 @@ sap.ui.define([
 							},
 							"destinations": {
 								"northwind": {
-									"name": "Northwind",
-									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+									"name": "Northwind"
 								}
 							}
 						}
@@ -5084,6 +5084,7 @@ sap.ui.define([
 		QUnit.test("Select Customer, Employee and Oder, check Product 2", function (assert) {
 			this.oCardEditor.setCard({
 				baseUrl: sBaseUrl,
+				host: "contexthost",
 				manifest: {
 					"sap.app": {
 						"id": "test.sample",
@@ -5113,8 +5114,7 @@ sap.ui.define([
 							},
 							"destinations": {
 								"northwind": {
-									"name": "Northwind",
-									"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
+									"name": "Northwind"
 								}
 							}
 						}
@@ -5176,6 +5176,758 @@ sap.ui.define([
 								assert.ok(oCustomerLimitField.getAggregation("_field").getItems().length === 5, "Field: CustomerWithTopAndSkipOption lenght is OK");
 								resolve();
 							}, 5000);
+						}, 5000);
+					}, 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Filter in Backend by input for string (ComboBox)", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Defined in Filter Parameter", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/filterBackendForString",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"CustomerWithFilterParameter": {
+									"value": ""
+								},
+								"CustomerWithFilterInURL": {
+									"value": ""
+								},
+								"CustomerWithFilterParamAndColumn": {
+									"value": ""
+								},
+								"CustomerWithFilterColumn": {
+									"value": ""
+								},
+								"EmployeeWithFilterColumns": {
+									"value": ""
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomerLabel.getText() === "Customer with filter parameter", "Label: Has static label text");
+					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					var oCustomerComoboBox = oCustomerField.getAggregation("_field");
+					assert.ok(oCustomerComoboBox.isA("sap.m.ComboBox"), "Field: Customer is ComboBox");
+
+					setTimeout(function () {
+						assert.ok(oCustomerComoboBox.getItems().length === 20, "Field: Customer origin lenght is OK");
+						oCustomerComoboBox.setValue("v");
+						oCustomerField.onInput({
+							"target": {
+								"value": "v"
+							},
+							"srcControl": oCustomerComoboBox
+						});
+						setTimeout(function () {
+							assert.ok(oCustomerComoboBox.getItems().length === 3, "Field: Customer lenght is OK");
+							resolve();
+						}, 5000);
+					}, 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Defined in URL", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/filterBackendForString",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"CustomerWithFilterParameter": {
+									"value": ""
+								},
+								"CustomerWithFilterInURL": {
+									"value": ""
+								},
+								"CustomerWithFilterParamAndColumn": {
+									"value": ""
+								},
+								"CustomerWithFilterColumn": {
+									"value": ""
+								},
+								"EmployeeWithFilterColumns": {
+									"value": ""
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[3];
+					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[4];
+					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomerLabel.getText() === "CustomerWithFilterInURL", "Label: Has static label text");
+					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					var oCustomerComoboBox = oCustomerField.getAggregation("_field");
+					assert.ok(oCustomerComoboBox.isA("sap.m.ComboBox"), "Field: Customer is ComboBox");
+
+					setTimeout(function () {
+						assert.ok(oCustomerComoboBox.getItems().length === 20, "Field: Customer origin lenght is OK");
+						oCustomerComoboBox.setValue("v");
+						oCustomerField.onInput({
+							"target": {
+								"value": "v"
+							},
+							"srcControl": oCustomerComoboBox
+						});
+						setTimeout(function () {
+							assert.ok(oCustomerComoboBox.getItems().length === 3, "Field: Customer lenght is OK");
+							resolve();
+						}, 5000);
+					}, 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Defined in Parameter And Column", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/filterBackendForString",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"CustomerWithFilterParameter": {
+									"value": ""
+								},
+								"CustomerWithFilterInURL": {
+									"value": ""
+								},
+								"CustomerWithFilterParamAndColumn": {
+									"value": ""
+								},
+								"CustomerWithFilterColumn": {
+									"value": ""
+								},
+								"EmployeeWithFilterColumns": {
+									"value": ""
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[5];
+					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[6];
+					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomerLabel.getText() === "CustomerWithFilterParamAndColumn", "Label: Has static label text");
+					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					var oCustomerComoboBox = oCustomerField.getAggregation("_field");
+					assert.ok(oCustomerComoboBox.isA("sap.m.ComboBox"), "Field: Customer is ComboBox");
+
+					setTimeout(function () {
+						assert.ok(oCustomerComoboBox.getItems().length === 1, "Field: Customer origin lenght is OK");
+						oCustomerComoboBox.setValue("v");
+						oCustomerField.onInput({
+							"target": {
+								"value": "v"
+							},
+							"srcControl": oCustomerComoboBox
+						});
+						setTimeout(function () {
+							assert.ok(oCustomerComoboBox.getItems().length === 0, "Field: Customer lenght is OK");
+							resolve();
+						}, 5000);
+					}, 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Defined in Column", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/filterBackendForString",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"CustomerWithFilterParameter": {
+									"value": ""
+								},
+								"CustomerWithFilterInURL": {
+									"value": ""
+								},
+								"CustomerWithFilterParamAndColumn": {
+									"value": ""
+								},
+								"CustomerWithFilterColumn": {
+									"value": ""
+								},
+								"EmployeeWithFilterColumns": {
+									"value": ""
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[7];
+					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[8];
+					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomerLabel.getText() === "CustomerWithFilterColumn", "Label: Has static label text");
+					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					var oCustomerComoboBox = oCustomerField.getAggregation("_field");
+					assert.ok(oCustomerComoboBox.isA("sap.m.ComboBox"), "Field: Customer is ComboBox");
+
+					setTimeout(function () {
+						assert.ok(oCustomerComoboBox.getItems().length === 20, "Field: Customer origin lenght is OK");
+						oCustomerComoboBox.setValue("v");
+						oCustomerField.onInput({
+							"target": {
+								"value": "v"
+							},
+							"srcControl": oCustomerComoboBox
+						});
+						setTimeout(function () {
+							assert.ok(oCustomerComoboBox.getItems().length === 3, "Field: Customer lenght is OK");
+							resolve();
+						}, 5000);
+					}, 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Multi Defined in Column", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/filterBackendForString",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"CustomerWithFilterParameter": {
+									"value": ""
+								},
+								"CustomerWithFilterInURL": {
+									"value": ""
+								},
+								"CustomerWithFilterParamAndColumn": {
+									"value": ""
+								},
+								"CustomerWithFilterColumn": {
+									"value": ""
+								},
+								"EmployeeWithFilterColumns": {
+									"value": ""
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[9];
+					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[10];
+					assert.ok(oEmployeeLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oEmployeeLabel.getText() === "EmployeeWithFilterColumns", "Label: Has static label text");
+					assert.ok(oEmployeeField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
+					var oEmployeeComoboBox = oEmployeeField.getAggregation("_field");
+					assert.ok(oEmployeeComoboBox.isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
+
+					setTimeout(function () {
+						assert.ok(oEmployeeComoboBox.getItems().length === 9, "Field: Employee origin lenght is OK");
+						oEmployeeComoboBox.setValue("n");
+						oEmployeeField.onInput({
+							"target": {
+								"value": "n"
+							},
+							"srcControl": oEmployeeComoboBox
+						});
+						setTimeout(function () {
+							assert.ok(oEmployeeComoboBox.getItems().length === 2, "Field: Employee lenght is OK");
+							resolve();
+						}, 5000);
+					}, 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+	});
+
+	QUnit.module("Filter in Backend by input for string[] (MultiComboBox)", {
+		beforeEach: function () {
+			this.oHost = new Host("host");
+			this.oContextHost = new ContextHost("contexthost");
+
+			this.oCardEditor = new CardEditor();
+			var oContent = document.getElementById("content");
+			if (!oContent) {
+				oContent = document.createElement("div");
+				oContent.style.position = "absolute";
+				oContent.style.top = "200px";
+
+				oContent.setAttribute("id", "content");
+				document.body.appendChild(oContent);
+				document.body.style.zIndex = 1000;
+			}
+			this.oCardEditor.placeAt(oContent);
+		},
+		afterEach: function () {
+			this.oCardEditor.destroy();
+			this.oHost.destroy();
+			this.oContextHost.destroy();
+			sandbox.restore();
+			var oContent = document.getElementById("content");
+			if (oContent) {
+				oContent.innerHTML = "";
+				document.body.style.zIndex = "unset";
+			}
+		}
+	}, function () {
+		QUnit.test("Defined in Filter Parameter", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/filterBackendForStringArray",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"CustomersWithFilterParameter": {
+									"value": []
+								},
+								"CustomersWithFilterInURL": {
+									"value": []
+								},
+								"CustomersWithFilterParamAndColumn": {
+									"value": []
+								},
+								"CustomersWithFilterColumn": {
+									"value": []
+								},
+								"EmployeesWithFilterColumns": {
+									"value": []
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oCustomersLabel = this.oCardEditor.getAggregation("_formContent")[1];
+					var oCustomersField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersLabel.getText() === "Customers with filter parameter", "Label: Has static label text");
+					assert.ok(oCustomersField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
+					var oCustomersComoboBox = oCustomersField.getAggregation("_field");
+					assert.ok(oCustomersComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
+
+					setTimeout(function () {
+						assert.ok(oCustomersComoboBox.getItems().length === 20, "Field: Customers origin lenght is OK");
+						oCustomersComoboBox.setValue("v");
+						oCustomersField.onInput({
+							"target": {
+								"value": "v"
+							},
+							"srcControl": oCustomersComoboBox
+						});
+						setTimeout(function () {
+							assert.ok(oCustomersComoboBox.getItems().length === 3, "Field: Customers lenght is OK");
+							resolve();
+						}, 5000);
+					}, 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Defined in URL", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/filterBackendForStringArray",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"CustomersWithFilterParameter": {
+									"value": []
+								},
+								"CustomersWithFilterInURL": {
+									"value": []
+								},
+								"CustomersWithFilterParamAndColumn": {
+									"value": []
+								},
+								"CustomersWithFilterColumn": {
+									"value": []
+								},
+								"EmployeesWithFilterColumns": {
+									"value": []
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oCustomersLabel = this.oCardEditor.getAggregation("_formContent")[3];
+					var oCustomersField = this.oCardEditor.getAggregation("_formContent")[4];
+					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersLabel.getText() === "CustomersWithFilterInURL", "Label: Has static label text");
+					assert.ok(oCustomersField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
+					var oCustomersComoboBox = oCustomersField.getAggregation("_field");
+					assert.ok(oCustomersComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
+
+					setTimeout(function () {
+						assert.ok(oCustomersComoboBox.getItems().length === 20, "Field: Customers origin lenght is OK");
+						oCustomersComoboBox.setValue("v");
+						oCustomersField.onInput({
+							"target": {
+								"value": "v"
+							},
+							"srcControl": oCustomersComoboBox
+						});
+						setTimeout(function () {
+							assert.ok(oCustomersComoboBox.getItems().length === 3, "Field: Customers lenght is OK");
+							resolve();
+						}, 5000);
+					}, 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Defined in Parameter And Column", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/filterBackendForStringArray",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"CustomersWithFilterParameter": {
+									"value": []
+								},
+								"CustomersWithFilterInURL": {
+									"value": []
+								},
+								"CustomersWithFilterParamAndColumn": {
+									"value": []
+								},
+								"CustomersWithFilterColumn": {
+									"value": []
+								},
+								"EmployeesWithFilterColumns": {
+									"value": []
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oCustomersLabel = this.oCardEditor.getAggregation("_formContent")[5];
+					var oCustomersField = this.oCardEditor.getAggregation("_formContent")[6];
+					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersLabel.getText() === "CustomersWithFilterParamAndColumn", "Label: Has static label text");
+					assert.ok(oCustomersField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
+					var oCustomersComoboBox = oCustomersField.getAggregation("_field");
+					assert.ok(oCustomersComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
+
+					setTimeout(function () {
+						assert.ok(oCustomersComoboBox.getItems().length === 1, "Field: Customers origin lenght is OK");
+						oCustomersComoboBox.setValue("v");
+						oCustomersField.onInput({
+							"target": {
+								"value": "v"
+							},
+							"srcControl": oCustomersComoboBox
+						});
+						setTimeout(function () {
+							assert.ok(oCustomersComoboBox.getItems().length === 0, "Field: Customers lenght is OK");
+							resolve();
+						}, 5000);
+					}, 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Defined in Column", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/filterBackendForStringArray",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"CustomersWithFilterParameter": {
+									"value": []
+								},
+								"CustomersWithFilterInURL": {
+									"value": []
+								},
+								"CustomersWithFilterParamAndColumn": {
+									"value": []
+								},
+								"CustomersWithFilterColumn": {
+									"value": []
+								},
+								"EmployeesWithFilterColumns": {
+									"value": []
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oCustomersLabel = this.oCardEditor.getAggregation("_formContent")[7];
+					var oCustomersField = this.oCardEditor.getAggregation("_formContent")[8];
+					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oCustomersLabel.getText() === "CustomersWithFilterColumn", "Label: Has static label text");
+					assert.ok(oCustomersField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
+					var oCustomersComoboBox = oCustomersField.getAggregation("_field");
+					assert.ok(oCustomersComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
+
+					setTimeout(function () {
+						assert.ok(oCustomersComoboBox.getItems().length === 20, "Field: Customers origin lenght is OK");
+						oCustomersComoboBox.setValue("v");
+						oCustomersField.onInput({
+							"target": {
+								"value": "v"
+							},
+							"srcControl": oCustomersComoboBox
+						});
+						setTimeout(function () {
+							assert.ok(oCustomersComoboBox.getItems().length === 3, "Field: Customers lenght is OK");
+							resolve();
+						}, 5000);
+					}, 5000);
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("Mutil Defined in Column", function (assert) {
+			this.oCardEditor.setCard({
+				baseUrl: sBaseUrl,
+				host: "contexthost",
+				manifest: {
+					"sap.app": {
+						"id": "test.sample",
+						"i18n": "i18n/i18n.properties"
+					},
+					"sap.card": {
+						"designtime": "designtime/filterBackendForStringArray",
+						"type": "List",
+						"header": {},
+						"configuration": {
+							"parameters": {
+								"CustomersWithFilterParameter": {
+									"value": []
+								},
+								"CustomersWithFilterInURL": {
+									"value": []
+								},
+								"CustomersWithFilterParamAndColumn": {
+									"value": []
+								},
+								"CustomersWithFilterColumn": {
+									"value": []
+								},
+								"EmployeesWithFilterColumns": {
+									"value": []
+								}
+							},
+							"destinations": {
+								"northwind": {
+									"name": "Northwind"
+								}
+							}
+						}
+					}
+				}
+			});
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oEmployeesLabel = this.oCardEditor.getAggregation("_formContent")[9];
+					var oEmployeesField = this.oCardEditor.getAggregation("_formContent")[10];
+					assert.ok(oEmployeesLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
+					assert.ok(oEmployeesLabel.getText() === "EmployeesWithFilterColumns", "Label: Has static label text");
+					assert.ok(oEmployeesField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
+					var oEmployeesComoboBox = oEmployeesField.getAggregation("_field");
+					assert.ok(oEmployeesComoboBox.isA("sap.m.MultiComboBox"), "Field: Employees is MultiComboBox");
+
+					setTimeout(function () {
+						assert.ok(oEmployeesComoboBox.getItems().length === 9, "Field: Employees origin lenght is OK");
+						oEmployeesComoboBox.setValue("n");
+						oEmployeesField.onInput({
+							"target": {
+								"value": "n"
+							},
+							"srcControl": oEmployeesComoboBox
+						});
+						setTimeout(function () {
+							assert.ok(oEmployeesComoboBox.getItems().length === 2, "Field: Employees lenght is OK");
+							resolve();
 						}, 5000);
 					}, 5000);
 				}.bind(this));
