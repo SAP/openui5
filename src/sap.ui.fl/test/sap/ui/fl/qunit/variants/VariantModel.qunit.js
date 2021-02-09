@@ -25,6 +25,7 @@ sap.ui.define([
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Variant",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -52,6 +53,7 @@ sap.ui.define([
 	LayerUtils,
 	Utils,
 	Variant,
+	Settings,
 	jQuery,
 	sinon
 ) {
@@ -127,7 +129,7 @@ sap.ui.define([
 						}, {
 							author: "Me",
 							key: "variant1",
-							layer: Layer.CUSTOMER,
+							layer: Layer.USER,
 							title: "variant B",
 							favorite: false,
 							visible: true,
@@ -183,20 +185,36 @@ sap.ui.define([
 		});
 
 		QUnit.test("when calling 'getData'", function(assert) {
-			var sExpectedJSON = '{"variantMgmtId1":{"currentVariant":"variant1","defaultVariant":"variant1","originalCurrentVariant":"variant1","originalDefaultVariant":"variant1","variants":[{"author":"' + VariantUtil.DEFAULT_AUTHOR + '","favorite":true,"key":"variantMgmtId1","layer":"VENDOR","originalFavorite":true,"originalTitle":"Standard","originalVisible":true,"originalExecuteOnSelect":false,"executeOnSelect":false,"title":"Standard","visible":true},{"author":"Me","favorite":true,"key":"variant0","layer":"' + Layer.CUSTOMER + '","originalFavorite":true,"originalTitle":"variant A","originalVisible":true,"originalExecuteOnSelect":false,"executeOnSelect":false,"title":"variant A","visible":true},{"author":"Me","favorite":false,"key":"variant1","layer":"' + Layer.CUSTOMER + '","originalFavorite":false,"originalTitle":"variant B","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant B","visible":true}]}}';
+			var sExpectedJSON = '{"variantMgmtId1":{"currentVariant":"variant1","defaultVariant":"variant1","originalCurrentVariant":"variant1","originalDefaultVariant":"variant1","variants":[{"author":"' + VariantUtil.DEFAULT_AUTHOR + '","favorite":true,"key":"variantMgmtId1","layer":"VENDOR","originalFavorite":true,"originalTitle":"Standard","originalVisible":true,"originalExecuteOnSelect":false,"executeOnSelect":false,"title":"Standard","visible":true},{"author":"Me","favorite":true,"key":"variant0","layer":"' + Layer.CUSTOMER + '","originalFavorite":true,"originalTitle":"variant A","originalVisible":true,"originalExecuteOnSelect":false,"executeOnSelect":false,"title":"variant A","visible":true},{"author":"Me","favorite":false,"key":"variant1","layer":"' + Layer.USER + '","originalFavorite":false,"originalTitle":"variant B","originalVisible":true,"originalExecuteOnSelect":true,"executeOnSelect":true,"title":"variant B","visible":true}]}}';
 			var sCurrentVariant = this.oModel.getCurrentVariantReference("variantMgmtId1");
 			assert.deepEqual(this.oModel.getData(), JSON.parse(sExpectedJSON));
 			assert.equal(sCurrentVariant, "variant1", "then the key of the current variant is returned");
 		});
 
 		QUnit.test("when calling 'setModelPropertiesForControl'", function(assert) {
+			var done = assert.async();
+			sandbox.stub(Settings, "getInstance").resolves({
+				isVariantPersonalizationEnabled: function () {
+					return false;
+				}
+			});
 			this.oModel.getData()["variantMgmtId1"]._isEditable = true;
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.ok(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is initially true");
+			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[2].rename, "user variant can be renamed by default");
+			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[2].remove, "user variant can be removed by default");
+			assert.ok(this.oModel.getData()["variantMgmtId1"].variants[2].change, "user variant can be changed by default");
+			setTimeout(function() {
+				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[2].rename, "user variant can not be renamed after flp setting is received");
+				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[2].remove, "user variant can not be removed after flp setting is received");
+				assert.notOk(this.oModel.getData()["variantMgmtId1"].variants[2].change, "user variant can not be changed after flp setting is received");
+				done();
+			}.bind(this), 0);
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", true, oDummyControl);
 			assert.notOk(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is set to false for bDesignTimeMode = true");
 			this.oModel.setModelPropertiesForControl("variantMgmtId1", false, oDummyControl);
 			assert.ok(this.oModel.getData()["variantMgmtId1"].variantsEditable, "the parameter variantsEditable is set to true for bDesignTimeMode = false");
+			Settings.getInstance.restore();
 		});
 
 		QUnit.test("when calling 'setModelPropertiesForControl' and variant management control has property editable=false", function(assert) {

@@ -22,6 +22,7 @@ sap.ui.define([
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
 	"sap/ui/fl/Utils",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/model/json/JSONModel"
 ], function(
 	_omit,
@@ -43,6 +44,7 @@ sap.ui.define([
 	Layer,
 	LayerUtils,
 	Utils,
+	Settings,
 	JSONModel
 ) {
 	"use strict";
@@ -215,6 +217,16 @@ sap.ui.define([
 
 				this.checkUpdate();
 			}.bind(this));
+	}
+
+	function updatePersonalVariantPropertiesWithFlpSettings(oVariant) {
+		Settings.getInstance().then(function (oSettings) {
+			if (!oSettings.isVariantPersonalizationEnabled()) {
+				oVariant.remove = false;
+				oVariant.rename = false;
+				oVariant.change = false;
+			}
+		});
 	}
 
 	function isVariantValidForRemove(oVariant, sVariantManagementReference, bDesignTimeModeToBeSet) {
@@ -1074,6 +1086,7 @@ sap.ui.define([
 				if (oVariant.layer === Layer.USER) {
 					oVariant.rename = true;
 					oVariant.change = true;
+					updatePersonalVariantPropertiesWithFlpSettings(oVariant);
 				} else {
 					oVariant.rename = false;
 					oVariant.change = false;
