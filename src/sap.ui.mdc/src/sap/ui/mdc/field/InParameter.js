@@ -112,7 +112,20 @@ sap.ui.define([
 	InParameter.prototype.getFieldPath = function() {
 
 		var oBinding = this.getBinding("value");
-		var sPath = oBinding && oBinding.getPath();
+		var sPath;
+
+		if (oBinding) {
+			sPath = oBinding.getPath();
+		} else {
+			var oBindingInfo = this.getBindingInfo("value");
+			if (oBindingInfo) {
+				if (oBindingInfo.path) {
+					sPath = oBindingInfo.path;
+				} else if (oBindingInfo.parts && oBindingInfo.parts.length === 1) {
+					sPath = oBindingInfo.parts[0].path;
+				}
+			}
+		}
 
 		if (sPath) {
 			if (sPath.startsWith("/conditions/")) {
@@ -165,10 +178,24 @@ sap.ui.define([
 		if (this._bConditionModel) {
 			bUseCondition = true;
 		} else if (!this._bBound) {
-			// if not bound, check if condition array is set to value
-			var vValue = this.getValue();
-			if (Array.isArray(vValue) && (vValue.length === 0 || vValue[0].hasOwnProperty("operator"))) {
-				bUseCondition = true;
+			var oBindingInfo = this.getBindingInfo("value");
+			if (oBindingInfo) {
+				// binding just not resolved
+				var sPath;
+				if (oBindingInfo.path) {
+					sPath = oBindingInfo.path;
+				} else if (oBindingInfo.parts && oBindingInfo.parts.length === 1) {
+					sPath = oBindingInfo.parts[0].path;
+				}
+				if (sPath.startsWith("/conditions/")) {
+					bUseCondition = true;
+				}
+			} else {
+				// if not bound, check if condition array is set to value
+				var vValue = this.getValue();
+				if (Array.isArray(vValue) && (vValue.length === 0 || vValue[0].hasOwnProperty("operator"))) {
+					bUseCondition = true;
+				}
 			}
 		}
 

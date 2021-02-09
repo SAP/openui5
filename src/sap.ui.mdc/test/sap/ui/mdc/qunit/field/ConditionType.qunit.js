@@ -474,7 +474,10 @@ sap.ui.define([
 				fieldHelpID: "FH1",
 				operators: ["EQ"],
 				asyncParsing: fnAsync,
-				delegate: FieldBaseDelegate
+				delegate: FieldBaseDelegate,
+				bindingContext: "BC", // just dummy to test forwarding to fieldHelp
+				conditionModel: "CM", // just dummy to test forwarding to fieldHelp
+				conditionModelName: "Name" // just dummy to test forwarding to fieldHelp
 			});
 		},
 		afterEach: function() {
@@ -511,6 +514,7 @@ sap.ui.define([
 		var oCondition = Condition.createCondition("EQ", ["I1"], undefined, undefined, ConditionValidated.Validated);
 		var sResult = oConditionType.formatValue(oCondition);
 		assert.equal(sResult, "Item1", "Result of formatting");
+		assert.ok(oFieldHelp.getTextForKey.calledWith("I1", undefined, undefined, "BC", "CM", "Name"), "getTextForKey called");
 
 		oConditionType.oFormatOptions.display = "DescriptionValue"; // fake setting directly
 		oCondition.values.push(undefined);
@@ -710,6 +714,7 @@ sap.ui.define([
 		assert.deepEqual(oCondition.inParameters, {in1: "I2"} , "in-parameters returned");
 		assert.deepEqual(oCondition.outParameters, {out1: "I2"} , "out-parameters returned");
 		assert.equal(oCondition.validated, ConditionValidated.Validated, "condition validated");
+		assert.ok(oFieldHelp.getItemForValue.calledWith("I2", "I2", undefined, undefined, "BC", true, true, true, "CM", "Name"), "getTextForKey called");
 
 		oCondition = oConditionType.parseValue("Item3");
 		assert.ok(oCondition, "Result returned");
