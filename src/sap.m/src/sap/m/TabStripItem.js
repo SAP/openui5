@@ -252,7 +252,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 		 * Property setter for the icon
 		 *
 		 * @param {sap.ui.core.URI} sIcon - new value of the Icon property
-		 * @return {sap.m.TabStripItem} this to allow method chaining
+		 * @return {this} this to allow method chaining
 		 * @public
 		 */
 		TabStripItem.prototype.setIcon = function(sIcon) {
@@ -291,7 +291,7 @@ sap.ui.define(["./library", "sap/ui/core/Item", "sap/ui/base/ManagedObject", "sa
 		/**
 		 * Function is called when image control needs to be loaded.
 		 *
-		 * @return {sap.m.TabStripItem} this to allow method chaining
+		 * @returns {sap.ui.core.Control} the aggregated image
 		 * @private
 		 */
 		TabStripItem.prototype._getImage = function () {

@@ -321,7 +321,7 @@ sap.ui.define([
 		/**
 		 * Validates the given step.
 		 * @param {sap.m.WizardStep} oStep The step to be validated.
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
+		 * @returns {this} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.validateStep = function (oStep) {
@@ -338,7 +338,7 @@ sap.ui.define([
 		/**
 		 * Invalidates the given step.
 		 * @param {sap.m.WizardStep} oStep The step to be invalidated.
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
+		 * @returns {this} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.invalidateStep = function (oStep) {
@@ -354,7 +354,7 @@ sap.ui.define([
 
 		/**
 		 * Validates the current step, and moves one step further.
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
+		 * @returns {this} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.nextStep = function () {
@@ -368,7 +368,7 @@ sap.ui.define([
 
 		/**
 		 * Discards the current step and goes one step back.
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
+		 * @returns {this} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.previousStep = function () {
@@ -403,7 +403,7 @@ sap.ui.define([
 		 * that haven't been reached yet.
 		 * @param {sap.m.WizardStep} oStep The step to go to.
 		 * @param {boolean} bFocusFirstStepElement Defines whether the focus should be changed to the first element.
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
+		 * @returns {this} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.goToStep = function (oStep, bFocusFirstStepElement) {
@@ -452,7 +452,7 @@ sap.ui.define([
 		 * The verified state of the steps is returned to the initial provided.
 		 * @param {sap.m.WizardStep} oStep The step after which the progress is discarded.
 		 * @param {boolean} bPreserveNextStep Indicating whether we should preserve next step
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
+		 * @returns {this} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.discardProgress = function (oStep, bPreserveNextStep) {
@@ -502,7 +502,7 @@ sap.ui.define([
 		 * Sets association currentStep to the given step.
 		 *
 		 * @param {sap.m.WizardStep | String} vStepId The step of the wizard that will be currently activated (meaning the last step).
-		 * @returns {sap.m.Wizard} Reference to the control instance for chaining.
+		 * @returns {this} Reference to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.setCurrentStep = function (vStepId) {
@@ -524,7 +524,7 @@ sap.ui.define([
 		/**
 		 * Sets the visibility of the next button.
 		 * @param {boolean} bValue True to show the button or false to hide it.
-		 * @returns {sap.m.Wizard} Reference to the control instance for chaining.
+		 * @returns {this} Reference to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.setShowNextButton = function (bValue) {
@@ -554,7 +554,7 @@ sap.ui.define([
 		/**
 		 * Adds a new step to the Wizard.
 		 * @param {sap.m.WizardStep} oWizardStep New WizardStep to add to the Wizard.
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
+		 * @returns {this} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.addStep = function (oWizardStep) {
@@ -573,7 +573,7 @@ sap.ui.define([
 		 * Sets background design.
 		 *
 		 * @param {string} sBgDesign The new background design parameter.
-		 * @returns {sap.m.Wizard} <code>this</code> to facilitate method chaining.
+		 * @returns {this} <code>this</code> to facilitate method chaining.
 		 */
 		Wizard.prototype.setBackgroundDesign = function (sBgDesign) {
 			var sBgDesignOld = this.getBackgroundDesign();
@@ -619,7 +619,7 @@ sap.ui.define([
 
 		/**
 		 * Destroys all aggregated steps in the Wizard.
-		 * @returns {sap.m.Wizard} Pointer to the control instance for chaining.
+		 * @returns {this} Pointer to the control instance for chaining.
 		 * @public
 		 */
 		Wizard.prototype.destroySteps = function () {

@@ -187,7 +187,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {array} aOperations - array of operations <code>[sap.m.P13nConditionOperation.BT, sap.m.P13nConditionOperation.EQ]</code>
-	 * @returns {sap.m.P13nSortPanel} this for chaining
+	 * @returns {this} this for chaining
 	 */
 	P13nSortPanel.prototype.setOperations = function(aOperations) {
 		this._aOperations = aOperations;

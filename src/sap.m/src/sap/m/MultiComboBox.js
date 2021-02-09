@@ -248,7 +248,7 @@ function(
 	/**
 	 * Opens the control's picker popup.
 	 *
-	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @protected
 	 */
 	MultiComboBox.prototype.open = function () {
@@ -2714,7 +2714,7 @@ function(
 	 * Array of sap.ui.core.Item Id which becomes the new target of this <code>selectedItems</code> association.
 	 * Alternatively, an array of sap.ui.core.Item instance may be given or null.
 	 *
-	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	MultiComboBox.prototype.setSelectedItems = function(aItems) {
@@ -2758,7 +2758,7 @@ function(
 	 * Adds some item <code>oItem</code> to the association named <code>selectedItems</code>.
 	 *
 	 * @param {sap.ui.core.Item} oItem The selected item to add; if empty, nothing is added.
-	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	MultiComboBox.prototype.addSelectedItem = function(oItem) {
@@ -2835,7 +2835,7 @@ function(
 	 * Removes selected items. Only items with valid keys are removed.
 	 *
 	 * @param {string[]} aKeys An array of item keys that identifies the items to be removed
-	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
+	 * @returns {sap.ui.core.Item[]} The removed items
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -2871,7 +2871,7 @@ function(
 	 * Default value is [].
 	 *
 	 * @param {string[]} aKeys Keys of items to be set as selected
-	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	MultiComboBox.prototype.setSelectedKeys = function (aKeys) {
@@ -2891,7 +2891,7 @@ function(
 	 * Adds selected items. Only items with valid keys are added as selected.
 	 *
 	 * @param {string[]} aKeys An array of item keys that identifies the items to be added as selected
-	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3287,7 +3287,7 @@ function(
 	 * a negative value of <code>iIndex</code>, the item is inserted at position 0; for a value
 	 * greater than the current size of the aggregation, the item is inserted at
 	 * the last position.
-	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	MultiComboBox.prototype.insertItem = function(oItem, iIndex) {
@@ -3384,7 +3384,7 @@ function(
 	/**
 	 * Destroys all the items in the aggregation named <code>items</code>.
 	 *
-	 * @returns {sap.m.MultiComboBox} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	MultiComboBox.prototype.destroyItems = function() {

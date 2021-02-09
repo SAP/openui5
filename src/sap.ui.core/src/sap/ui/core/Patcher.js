@@ -293,7 +293,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 *
 	 * @param {string} sTagName Tag name of the HTML element; all lowercase
  	 * @param {sap.ui.core.ID} [sId] ID to identify the element
-	 * @return {sap.ui.core.Patcher} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.openStart = function(sTagName, sId) {
 		this._walkOnTree();
@@ -323,7 +323,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 *
 	 * @param {string} sTagName Tag name of the HTML element; all lowercase
  	 * @param {sap.ui.core.ID} [sId] ID to identify the element
-	 * @return {sap.ui.core.Patcher} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.voidStart = Patcher.openStart;
 
@@ -336,7 +336,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 *
 	 * @param {string} vAttr Name of the attribute
 	 * @param {*} vValue Value of the attribute; any non-string value specified is converted automatically into a string
-	 * @return {sap.ui.core.Patcher} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.attr = function(sAttr, vValue) {
 		if (this._iTagOpenState == 1 /* Created */) {
@@ -370,7 +370,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 * This is only valid when called between <code>openStart/voidStart</code> and <code>openEnd/voidEnd</code>.
 	 *
 	 * @param {string} sClass Class name to be written
-	 * @return {sap.ui.core.Patcher} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.class = function(sClass) {
 		if (sClass) {
@@ -388,7 +388,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 *
 	 * @param {string} sStyle Name of the style property
 	 * @param {string} sValue Value of the style property
-	 * @return {sap.ui.core.Patcher} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.style = function(sName, vValue) {
 		if (!sName || vValue == null || vValue == "") {
@@ -404,7 +404,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 *
 	 * This indicates that there are no more attributes to set to the open tag.
 	 *
-	 * @returns {sap.ui.core.Patcher} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.openEnd = function() {
 		if (this._sClasses) {
@@ -437,7 +437,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 * This indicates that there are no more attributes to set to the open tag.
 	 * For self-closing tags, the <code>close</code> method must not be called.
 	 *
-	 * @return {sap.ui.core.Patcher} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.voidEnd = function() {
 		this.openEnd();
@@ -450,7 +450,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 * Sets the specified text.
 	 *
 	 * @param {string} sText Text to be set
-	 * @return {sap.ui.core.Patcher} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.text = function(sText) {
 		this._walkOnTree();
@@ -474,7 +474,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 * This indicates that there are no more children to append to the open tag.
 	 *
 	 * @param {string} sTagName The tag name of the HTML element
-	 * @return {sap.ui.core.Patcher} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 */
 	Patcher.close = function(sTagName) {
 		if (this._iTagOpenState) {
@@ -498,7 +498,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 *
 	 * @param {string} sHtml HTML markup
   	 * @param {sap.ui.core.ID} [sId] ID to identify the element
-	 * @return {sap.ui.core.Patcher} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 * @SecSink {*|XSS}
 	 */
 	Patcher.unsafeHtml = function(sHtml, sId) {

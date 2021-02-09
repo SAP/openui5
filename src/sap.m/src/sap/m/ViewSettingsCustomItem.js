@@ -71,7 +71,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @override
 	 * @public
 	 * @param {sap.ui.core.Control} oControl A control used for filtering purposes
-	 * @return {sap.m.ViewSettingsCustomItem} this pointer for chaining
+	 * @return {this} this pointer for chaining
 	 */
 	ViewSettingsCustomItem.prototype.setCustomControl = function (oControl) {
 		this._control = oControl;
@@ -94,7 +94,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @override
 	 * @param {int} iValue The new value for property filterCount
 	 * @public
-	 * @returns {sap.m.ViewSettingsCustomItem} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	ViewSettingsCustomItem.prototype.setFilterCount = function (iValue) {
 		this.setProperty("filterCount", iValue, true);
@@ -106,7 +106,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @override
 	 * @param {boolean} bValue The new value for property selected
 	 * @public
-	 * @returns {sap.m.ViewSettingsCustomItem} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	ViewSettingsCustomItem.prototype.setSelected = function (bValue) {
 		this.setProperty("selected", bValue, true);

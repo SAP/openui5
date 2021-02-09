@@ -515,7 +515,7 @@ function(
 	 * Called when the navigation toolbar changes its width or height.
 	 *
 	 * @param oEvent The resize event
-	 * @returns {sap.m.SinglePlanningCalendar} <code>this</code> for chaining
+	 * @returns {this} <code>this</code> for chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._onHeaderResize = function (oEvent) {
@@ -595,7 +595,7 @@ function(
 	/**
 	 * Applies or removes sticky classes based on <code>stickyMode</code>'s value.
 	 *
-	 * @returns {sap.m.SinglePlanningCalendar} <code>this</code> for chaining
+	 * @returns {this} <code>this</code> for chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._toggleStickyClasses = function () {
@@ -611,7 +611,7 @@ function(
 	 * Makes sure that the column headers are offset in such a way, that they are positioned right
 	 * after the navigation toolbar.
 	 *
-	 * @returns {sap.m.SinglePlanningCalendar} <code>this</code> for chaining
+	 * @returns {this} <code>this</code> for chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._adjustColumnHeadersTopOffset = function () {
@@ -1412,7 +1412,7 @@ function(
 	 * @param {string} sHandler the handler ID
 	 * @param {Object} oObject
 	 * @param {Function} fnHandler
-	 * @returns {sap.m.SinglePlanningCalendar} <code>this</code> for chaining
+	 * @returns {this} <code>this</code> for chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._registerResizeHandler = function (sHandler, oObject, fnHandler) {
@@ -1426,7 +1426,7 @@ function(
 	/**
 	 * De-registers resize handler.
 	 * @param {string} sHandler the handler ID
-	 * @returns {sap.m.SinglePlanningCalendar} <code>this</code> for chaining
+	 * @returns {this} <code>this</code> for chaining
 	 * @private
 	 */
 	SinglePlanningCalendar.prototype._deRegisterResizeHandler = function (sHandler) {

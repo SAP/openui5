@@ -119,7 +119,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {Object} oConfiguration Configuration object used to create the internal list.
-	 * @returns {sap.ui.integration.cards.TimelineContent} Pointer to the control instance to allow method chaining.
+	 * @returns {this} Pointer to the control instance to allow method chaining.
 	 */
 	TimelineContent.prototype.setConfiguration = function (oConfiguration) {
 		BaseListContent.prototype.setConfiguration.apply(this, arguments);
@@ -152,7 +152,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {Object} mItem The item template of the configuration object
-	 * @returns {sap.ui.integration.cards.TimelineContent} <code>this</code> for chaining
+	 * @returns {this} <code>this</code> for chaining
 	 */
 	TimelineContent.prototype._setItem = function (mItem) {
 		var mSettings = {

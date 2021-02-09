@@ -125,7 +125,7 @@ sap.ui.define([
 			 * @param {string} sType whether the object is a "View" or "Component". Views and components are stored separately in the cache. This means that a view and a component instance
 			 * could be stored under the same name.
 			 * @param {sap.ui.core.mvc.View|sap.ui.core.UIComponent|null|undefined} oObject the view or component instance
-			 * @return {sap.ui.core.routing.TargetCache} this for chaining.
+			 * @return {this} this for chaining.
 			 * @private
 			 */
 			set : function (sName, sType, oObject) {
@@ -148,7 +148,7 @@ sap.ui.define([
 			/**
 			 * Destroys all the views and components created by this instance.
 			 *
-			 * @returns {sap.ui.core.routing.TargetCache} this for chaining.
+			 * @returns {this} this for chaining.
 			 */
 			destroy : function () {
 				EventProvider.prototype.destroy.apply(this);
@@ -216,7 +216,7 @@ sap.ui.define([
 			 *            [oListener] Context object to call the event handler with. Defaults to this
 			 *            <code>sap.ui.core.routing.TargetCache</code> itself
 			 *
-			 * @returns {sap.ui.core.routing.TargetCache} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			attachCreated : function(oData, fnFunction, oListener) {
@@ -231,7 +231,7 @@ sap.ui.define([
 			 *
 			 * @param {function} fnFunction The function to be called, when the event occurs
 			 * @param {object} [oListener] Context object on which the given function had to be called
-			 * @returns {sap.ui.core.routing.TargetCache} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @public
 			 */
 			detachCreated : function(fnFunction, oListener) {
@@ -242,7 +242,7 @@ sap.ui.define([
 			 * Fires event {@link #event:created created} to attached listeners.
 			 *
 			 * @param {object} [oParameters] Parameters to pass along with the event
-			 * @returns {sap.ui.core.routing.TargetCache} Reference to <code>this</code> in order to allow method chaining
+			 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 			 * @protected
 			 */
 			fireCreated : function(oParameters) {

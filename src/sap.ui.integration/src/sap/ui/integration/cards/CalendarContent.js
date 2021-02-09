@@ -215,7 +215,7 @@ sap.ui.define([
 		 *
 		 * @public
 		 * @param {Object} oConfiguration Configuration object used to create the internal calendar.
-		 * @returns {sap.ui.integration.cards.CalendarContent} Pointer to the control instance to allow method chaining.
+		 * @returns {this} Pointer to the control instance to allow method chaining.
 		 */
 		CalendarContent.prototype.setConfiguration = function (oConfiguration) {
 			BaseContent.prototype.setConfiguration.apply(this, arguments);

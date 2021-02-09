@@ -276,7 +276,7 @@ sap.ui.define([
 	 * after the next rendering. Properties are not modified, but preferDOM should be set to true.
 	 *
 	 * @param {Element} oDom the new DOM content
-	 * @return {sap.ui.core.HTML} <code>this</code> to facilitate method chaining
+	 * @return {this} <code>this</code> to facilitate method chaining
 	 * @public
 	 */
 	HTML.prototype.setDOMContent = function(oDom) {

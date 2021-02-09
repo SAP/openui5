@@ -596,7 +596,7 @@ function(
 	 * This is currently also set with a long tap.
 	 *
 	 * @param {boolean} bValue Whether the container is in edit mode or not
-	 * @returns {sap.m.TileContainer} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 * @public
 	 */
 	TileContainer.prototype.setEditable = function(bValue) {
@@ -782,7 +782,7 @@ function(
 	 *
 	 * @param {sap.m.Tile} vTile The tile to move
 	 * @param {int} iNewIndex The new Tile position in the tiles aggregation
-	 * @returns {sap.m.TileContainer} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -806,7 +806,7 @@ function(
 	 * Adds a Tile to the end of the tiles collection.
 	 *
 	 * @param {sap.m.Tile} oTile The tile to add
-	 * @returns {sap.m.TileContainer} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 * @override
 	 * @public
 	 */
@@ -820,7 +820,7 @@ function(
 	 *
 	 * @param {sap.m.Tile} oTile The Tile to insert
 	 * @param {int} iIndex The new Tile position in the tiles aggregation
-	 * @returns {sap.m.TileContainer} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 * @override
 	 * @public
 	 */
@@ -958,7 +958,7 @@ function(
 	 * Deletes a Tile.
 	 *
 	 * @param {sap.m.Tile} oTile The tile to move
-	 * @returns {sap.m.TileContainer} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 * @override
 	 * @public
 	 */

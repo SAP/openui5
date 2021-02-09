@@ -1043,7 +1043,7 @@ sap.ui.define([
 	 *
 	 * @param {object} mSettings the settings to apply to this managed object
 	 * @param {object} [oScope] Scope object to resolve types and formatters
-	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ManagedObject.prototype.applySettings = function(mSettings, oScope) {
@@ -1292,7 +1292,7 @@ sap.ui.define([
 	 * @param {string}  sPropertyName name of the property to set
 	 * @param {any}     oValue value to set the property to
 	 * @param {boolean} [bSuppressInvalidate] if true, the managed object is not marked as changed
-	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 *
 	 * @protected
 	 */
@@ -1485,7 +1485,7 @@ sap.ui.define([
 	 * When the property has not been modified so far, nothing will be done.
 	 *
 	 * @param {string} sPropertyName Name of the property
-	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	ManagedObject.prototype.resetProperty = function(sPropertyName) {
@@ -1542,7 +1542,7 @@ sap.ui.define([
 	 *            sId the ID of the managed object that is set as an association, or the managed object itself or null
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, the managed objects invalidate method is not called
-	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	ManagedObject.prototype.setAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
@@ -1641,7 +1641,7 @@ sap.ui.define([
 	 *            sId the ID of the ManagedObject object to add; if empty, nothing is added; if a <code>sap.ui.base.ManagedObject</code> is given, its ID is added
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this managed object as well as the newly associated object are not marked as changed
-	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	ManagedObject.prototype.addAssociation = function(sAssociationName, sId, bSuppressInvalidate) {
@@ -1919,7 +1919,7 @@ sap.ui.define([
 	 *            oObject the managed object that is set as aggregated object
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
-	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @throws {Error}
 	 * @protected
 	 */
@@ -2091,7 +2091,7 @@ sap.ui.define([
 	 *            the last position
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
-	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	ManagedObject.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
@@ -2144,7 +2144,7 @@ sap.ui.define([
 	 *            oObject the object to add; if empty, nothing is added
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject as well as the added child are not marked as changed
-	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	ManagedObject.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
@@ -2192,7 +2192,7 @@ sap.ui.define([
 	 *            of the aggregation, nothing is removed.
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
-	 * @return {sap.ui.base.ManagedObject} the removed object or null
+	 * @returns {sap.ui.base.ManagedObject} the removed object or null
 	 * @protected
 	 */
 	ManagedObject.prototype.removeAggregation = function(sAggregationName, vObject, bSuppressInvalidate) {
@@ -2327,7 +2327,7 @@ sap.ui.define([
 	 *            sAggregationName the name of the aggregation
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed
-	 * @return {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	ManagedObject.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate){
@@ -2529,7 +2529,7 @@ sap.ui.define([
 	 *            sAggregationName the name of the parent objects's aggregation
 	 * @param {boolean}
 	 *            [bSuppressInvalidate] if true, this ManagedObject is not marked as changed. The old parent, however, is marked.
-	 * @return {sap.ui.base.ManagedObject}
+	 * @returns {this}
 	 *            Returns <code>this</code> to allow method chaining
 	 * @private
 	 */
@@ -2994,7 +2994,7 @@ sap.ui.define([
 	 *            Whether the binding should be suspended initially
 	 * @param {object} [oBindingInfo.events=null]
 	 *            Map of event handler functions keyed by the name of the binding events that they should be attached to
-	 * @returns {sap.ui.base.ManagedObject}
+	 * @returns {this}
 	 *            Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -3097,7 +3097,7 @@ sap.ui.define([
 	 * relative to the parent context again.
 	 *
 	 * @param {string} [sModelName] Name of the model to remove the context for.
-	 * @return {sap.ui.base.ManagedObject} Reference to the instance itself
+	 * @returns {this} Reference to the instance itself
 	 * @public
 	 */
 	ManagedObject.prototype.unbindObject = function(sModelName, /* internal use only */ _bSkipUpdateBindingContext) {
@@ -3129,7 +3129,7 @@ sap.ui.define([
 	 *
 	 * @deprecated Since 1.11.1, please use {@link #bindObject} instead.
 	 * @param {string} sPath the binding path
-	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
+	 * @returns {this} reference to the instance itself
 	 * @public
 	 */
 	ManagedObject.prototype.bindContext = function(sPath) {
@@ -3142,7 +3142,7 @@ sap.ui.define([
 	 *
 	 * @deprecated Since 1.11.1, please use {@link #unbindObject} instead.
 	 * @param {string} [sModelName] name of the model to remove the context for.
-	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
+	 * @returns {this} reference to the instance itself
 	 * @public
 	 */
 	ManagedObject.prototype.unbindContext = function(sModelName) {
@@ -3259,7 +3259,7 @@ sap.ui.define([
 	 *
 	 *            <b>Note</b>: recursive composite bindings are currently not supported
 	 *
-	 * @returns {sap.ui.base.ManagedObject}
+	 * @returns {this}
 	 *            Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -3487,7 +3487,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sName the name of the property
 	 * @param {boolean} bSuppressReset whether the reset to the default value when unbinding should be suppressed
-	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
+	 * @returns {this} reference to the instance itself
 	 * @public
 	 */
 	ManagedObject.prototype.unbindProperty = function(sName, bSuppressReset){
@@ -3723,7 +3723,7 @@ sap.ui.define([
 	 * @param {object} [oBindingInfo.events=null]
 	 *            Map of event handler functions keyed by the name of the binding events that they should be attached to
 	 *
-	 * @returns {sap.ui.base.ManagedObject}
+	 * @returns {this}
 	 *            Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
@@ -3905,7 +3905,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sName Name of the aggregation
 	 * @param {boolean} bSuppressReset Indicates whether destroying the content of the aggregation is skipped
-	 * @returns {sap.ui.base.ManagedObject} Reference to this instance itself
+	 * @returns {this} Reference to this instance itself
 	 * @public
 	 */
 	ManagedObject.prototype.unbindAggregation = function(sName, bSuppressReset){
@@ -4387,7 +4387,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext the new binding context for this object
 	 * @param {string} [sModelName] the name of the model to set the context for or <code>undefined</code>
 	 *
-	 * @return {sap.ui.base.ManagedObject} reference to the instance itself
+	 * @returns {this} reference to the instance itself
 	 * @public
 	 */
 	ManagedObject.prototype.setBindingContext = function(oContext, sModelName){
@@ -4612,7 +4612,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Model|null|undefined} oModel Model to be set or <code>null</code> or <code>undefined</code>
 	 * @param {string} [sName=undefined] the name of the model or <code>undefined</code>
-	 * @returns {sap.ui.base.ManagedObject} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ManagedObject.prototype.setModel = function(oModel, sName) {
@@ -4644,7 +4644,7 @@ sap.ui.define([
 	/**
 	 * Adds a listener function that will be called during each propagation step on every control
 	 * @param {function} listener function
-	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
@@ -4660,7 +4660,7 @@ sap.ui.define([
 	/**
 	 * remove a propagation listener
 	 * @param {function} listener function
-	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.fl
 	 */
@@ -4690,7 +4690,7 @@ sap.ui.define([
 	 *
 	 * @param {string|boolean} 	sName If set true all listeners will be called.
 	 * 							If a name is specified only the listener for this name is called
-	 * @returns {sap.ui.base.ManagedObject} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @private
 	 */
 	ManagedObject.prototype._callPropagationListener = function(listener) {
@@ -4905,7 +4905,7 @@ sap.ui.define([
 	 *                      undefined properties default to <code>false</code>
 	 * @param {boolean} [oOptions.cloneChildren=false] Whether associations and aggregations will be cloned
 	 * @param {boolean} [oOptions.cloneBindings=false] Whether bindings will be cloned
-	 * @returns {sap.ui.base.ManagedObject} Reference to the newly created clone
+	 * @returns {this} Reference to the newly created clone
 	 * @public
 	 */
 	ManagedObject.prototype.clone = function(sIdSuffix, aLocalIds, oOptions) {

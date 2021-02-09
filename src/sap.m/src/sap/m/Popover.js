@@ -772,7 +772,7 @@ sap.ui.define([
 		 *
 		 * @param {object} oControl This is the control to which the Popover will be placed. It can be not only a UI5 control, but also an existing DOM reference. The side of the placement depends on the placement property set in the Popover.
 		 * @param {boolean} bSkipInstanceManager Indicates whether popover should be managed by InstanceManager or not
-		 * @returns {sap.m.Popover} Reference to the control instance for chaining
+		 * @returns {this} Reference to the control instance for chaining
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -894,7 +894,7 @@ sap.ui.define([
 		/**
 		 * Closes the popover when it's already opened.
 		 *
-		 * @return {sap.m.Popover} Reference to the control instance for chaining
+		 * @return {this} Reference to the control instance for chaining
 		 * @public
 		 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 		 */
@@ -946,7 +946,7 @@ sap.ui.define([
 		 * This function is for enabling/disabling the followOf feature.
 		 *
 		 * @param {boolean} bValue Enables the followOf feature
-		 * @return {sap.m.Popover} Reference to the control instance for chaining
+		 * @return {this} Reference to the control instance for chaining
 		 * @protected
 		 * @since 1.16.8
 		 */
@@ -965,7 +965,7 @@ sap.ui.define([
 		 * Default value is empty
 		 *
 		 * @param {boolean} bBounce New value for property <code>bounce</code>
-		 * @return {sap.m.Popover} Reference to the control instance for chaining
+		 * @return {this} Reference to the control instance for chaining
 		 * @protected
 		 * @name sap.m.Popover#setBounce
 		 * @function
@@ -2415,7 +2415,7 @@ sap.ui.define([
 		 * Set the placement of the Popover.
 		 *
 		 * @param {sap.m.PlacementType} sPlacement The position of the Popover
-		 * @returns {sap.m.Popover} Reference to the control instance for chaining
+		 * @returns {this} Reference to the control instance for chaining
 		 * @public
 		 */
 		Popover.prototype.setPlacement = function (sPlacement) {
@@ -2507,7 +2507,7 @@ sap.ui.define([
 		 *
 		 * @param {boolean} bModal New value for property <code>modal</code>.
 		 * @param {string} [sModalCSSClass] A CSS class (or space-separated list of classes) that should be added to the block layer.
-		 * @return {sap.m.Popover} Reference to the control instance for chaining
+		 * @return {this} Reference to the control instance for chaining
 		 * @public
 		 */
 		Popover.prototype.setModal = function (bModal, sModalCSSClass) {
@@ -2549,7 +2549,7 @@ sap.ui.define([
 		 * Default value is <code>false</code>
 		 *
 		 * @param {boolean} bValue New value for property <code>ariaRoleApplication</code>.
-		 * @return {sap.m.Popover} Reference to the control instance for chaining
+		 * @return {this} Reference to the control instance for chaining
 		 * @private
 		 */
 		Popover.prototype._setAriaRoleApplication = function (bValue) {
@@ -2621,7 +2621,6 @@ sap.ui.define([
 
 		/**
 		 * Popup controls should not propagate contextual width
-		 * @returns {sap.m.Popover} Control instance for method chaining
 		 * @private
 		 */
 		Popover.prototype._applyContextualSettings = function () {

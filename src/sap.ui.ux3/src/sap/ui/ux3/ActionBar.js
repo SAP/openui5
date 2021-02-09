@@ -1035,7 +1035,7 @@ sap.ui.define([
 	 *
 	 * @param {object} oSocialAction social action to deal with.
 	 * @param {boolean} bFlag show the action or not.
-	 * @return {sap.ui.ux3.ActionBar} the sap.ui.ux3.ActionBar instance
+	 * @return {this} the sap.ui.ux3.ActionBar instance
 	 * @see sap.ui.ux3.ActionBar._addSocialAction
 	 * @see sap.ui.ux3.ActionBar._removeSocialAction
 	 * @private

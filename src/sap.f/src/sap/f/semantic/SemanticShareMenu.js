@@ -128,7 +128,7 @@ sap.ui.define([
 	* Adds a <code>sap.f.semantic.SemanticControl</code> to the container.
 	*
 	* @param {sap.f.semantic.SemanticControl} oSemanticControl
-	* @returns {sap.f.semantic.SemanticShareMenu}
+	* @returns {this}
 	*/
 	SemanticShareMenu.prototype.addContent = function (oSemanticControl) {
 		var oControl = this._getControl(oSemanticControl);
@@ -160,7 +160,7 @@ sap.ui.define([
 	 * Destroys all the actions - custom and semantic
 	 * and cleans all the references in use.
 	 *
-	 * @returns {sap.f.semantic.SemanticShareMenu}
+	 * @returns {this}
 	 */
 	SemanticShareMenu.prototype.destroy = function() {
 		this._oShareMenuBtn = null;
@@ -188,7 +188,7 @@ sap.ui.define([
 	 * Sets the <code>ShareMenu</code> mode - <code>initial</code>, <code>button</code> or <code>actionSheet</code>.
 	 *
 	 * @param {String} sMode
-	 * @returns {sap.f.semantic.SemanticShareMenu}
+	 * @returns {this}
 	 */
 	SemanticShareMenu.prototype._setMode = function (sMode) {
 		if (this._getMode() === sMode) {

@@ -398,7 +398,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 * Property setter for the "enabled" state
 	 *
 	 * @param {boolean} bEnabled Whether the Panel should be enabled or not.
-	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	Panel.prototype.setEnabled = function(bEnabled) {
@@ -413,7 +413,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 * Property setter for the padding
 	 *
 	 * @param {boolean} bPadding Whether the Panel should have padding.
-	 * @returns {sap.ui.commons.Panel} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	Panel.prototype.setApplyContentPadding = function(bPadding) {
@@ -427,7 +427,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 * Property setter for the "collapsed" state
 	 *
 	 * @param {boolean} bCollapsed Whether the Panel should be collapsed or not.
-	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	Panel.prototype.setCollapsed = function(bCollapsed) {
@@ -510,7 +510,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 * Sets a Tille control that will be rendered in the Panel header.
 	 *
 	 * @param {sap.ui.core.Title} oTitle The Title to render in the header.
-	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	Panel.prototype.setTitle = function(oTitle) {
@@ -528,7 +528,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 * Sets the text that will be rendered in the Panel header.
 	 *
 	 * @param {string} sText The text to render in the header.
-	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	Panel.prototype.setText = function(sText) {
@@ -585,7 +585,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 * Sets the scroll position of the panel in pixels from the left.
 	 *
 	 * @param {int} iPosition The position to scroll to.
-	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	Panel.prototype.setScrollLeft = function (iPosition) {
@@ -627,7 +627,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 * Sets the scrolls position of the panel in pixels from the top.
 	 *
 	 * @param {int} iPosition The position to scroll to.
-	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	Panel.prototype.setScrollTop = function (iPosition) {
@@ -644,7 +644,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 *
 	 * @param {sap.ui.core.CSSSize} sWidth The width of the panel as CSS size.
 	 * @param {sap.ui.core.CSSSize} sHeight The height of the panel as CSS size.
-	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	Panel.prototype.setDimensions = function (sWidth, sHeight) {
@@ -659,7 +659,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 * Sets the width of the panel.
 	 *
 	 * @param {sap.ui.core.CSSSize} sWidth The width of the panel as CSS size.
-	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	Panel.prototype.setWidth = function (sWidth) {
@@ -676,7 +676,7 @@ sap.ui.define(['sap/ui/thirdparty/jquery', 'sap/base/assert', './library', 'sap/
 	 * Sets the height of the panel.
 	 *
 	 * @param {sap.ui.core.CSSSize} sHeight The height of the panel as CSS size.
-	 * @return {sap.ui.commons.Panel} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	Panel.prototype.setHeight = function (sHeight) {

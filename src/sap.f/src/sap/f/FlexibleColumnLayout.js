@@ -1742,7 +1742,7 @@ sap.ui.define([
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.f.FlexibleColumnLayout} The <code>sap.f.FlexibleColumnLayout</code> instance
+	 * @returns {this} The <code>sap.f.FlexibleColumnLayout</code> instance
 	 */
 	FlexibleColumnLayout.prototype.to = function(sPageId, sTransitionName, oData, oTransitionParameters) {
 		if (this._getBeginColumn().getPage(sPageId)) {
@@ -1786,7 +1786,7 @@ sap.ui.define([
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.f.FlexibleColumnLayout} The <code>sap.f.FlexibleColumnLayout</code> instance
+	 * @returns {this} The <code>sap.f.FlexibleColumnLayout</code> instance
 	 */
 	FlexibleColumnLayout.prototype.backToPage = function(sPageId, oBackData, oTransitionParameters) {
 		if (this._getBeginColumn().getPage(sPageId)) {
@@ -1843,7 +1843,7 @@ sap.ui.define([
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.f.FlexibleColumnLayout} The <code>sap.f.FlexibleColumnLayout</code> instance
+	 * @returns {this} The <code>sap.f.FlexibleColumnLayout</code> instance
 	 */
 	FlexibleColumnLayout.prototype.toBeginColumnPage = function(sPageId, sTransitionName, oData, oTransitionParameters) {
 		this._getBeginColumn().to(sPageId, sTransitionName, oData, oTransitionParameters);
@@ -1875,7 +1875,7 @@ sap.ui.define([
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.f.FlexibleColumnLayout} The <code>sap.f.FlexibleColumnLayout</code> instance
+	 * @returns {this} The <code>sap.f.FlexibleColumnLayout</code> instance
 	 */
 	FlexibleColumnLayout.prototype.toMidColumnPage = function(sPageId, sTransitionName, oData, oTransitionParameters) {
 		this._getMidColumn().to(sPageId, sTransitionName, oData, oTransitionParameters);
@@ -1907,7 +1907,7 @@ sap.ui.define([
 	 *         The "show", "slide" and "fade" transitions do not use any parameter.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.f.FlexibleColumnLayout} The <code>sap.f.FlexibleColumnLayout</code> instance
+	 * @returns {this} The <code>sap.f.FlexibleColumnLayout</code> instance
 	 */
 	FlexibleColumnLayout.prototype.toEndColumnPage = function(sPageId, sTransitionName, oData, oTransitionParameters) {
 		this._getEndColumn().to(sPageId, sTransitionName, oData, oTransitionParameters);
@@ -1959,7 +1959,7 @@ sap.ui.define([
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.f.FlexibleColumnLayout} The <code>sap.f.FlexibleColumnLayout</code> instance
+	 * @returns {this} The <code>sap.f.FlexibleColumnLayout</code> instance
 	 */
 	FlexibleColumnLayout.prototype.backToTopBeginColumn = function(oBackData, oTransitionParameters) {
 		this._getBeginColumn().backToTop(oBackData, oTransitionParameters);
@@ -1987,7 +1987,7 @@ sap.ui.define([
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.f.FlexibleColumnLayout} The <code>sap.f.FlexibleColumnLayout</code> instance
+	 * @returns {this} The <code>sap.f.FlexibleColumnLayout</code> instance
 	 */
 	FlexibleColumnLayout.prototype.backToTopMidColumn = function(oBackData, oTransitionParameters) {
 		this._getMidColumn().backToTop(oBackData, oTransitionParameters);
@@ -2016,7 +2016,7 @@ sap.ui.define([
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.f.FlexibleColumnLayout} The <code>sap.f.FlexibleColumnLayout</code> instance
+	 * @returns {this} The <code>sap.f.FlexibleColumnLayout</code> instance
 	 */
 	FlexibleColumnLayout.prototype.backToTopEndColumn = function(oBackData, oTransitionParameters) {
 		this._getEndColumn().backToTop(oBackData, oTransitionParameters);

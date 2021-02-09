@@ -272,7 +272,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sIdSuffix] a suffix to be appended to the cloned element id
 	 * @param {string[]} [aLocalIds] an array of local IDs within the cloned hierarchy (internally used)
-	 * @return {sap.ui.core.Control} reference to the newly created clone
+	 * @returns {this} reference to the newly created clone
 	 * @public
 	 */
 	Control.prototype.clone = function() {
@@ -405,7 +405,7 @@ sap.ui.define([
 	 * in order to prevent text selection.
 	 *
 	 * @param {boolean} bAllow whether to allow text selection or not
-	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Control.prototype.allowTextSelection = function(bAllow) {
@@ -443,7 +443,7 @@ sap.ui.define([
 	 * @function
 	 *
 	 * @param {string} sStyleClass the CSS class name to be added
-	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 
@@ -455,7 +455,7 @@ sap.ui.define([
 	 * @function
 	 *
 	 * @param {string} sStyleClass the style to be removed
-	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 
@@ -472,7 +472,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sStyleClass the CSS class name to be added or removed
 	 * @param {boolean} [bAdd] whether sStyleClass should be added (or removed); when this parameter is not given, sStyleClass will be toggled (removed, if present, and added if not present)
-	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 
@@ -509,7 +509,7 @@ sap.ui.define([
 	 * @param {string} [sEventType] A string containing one or more JavaScript event types, such as "click" or "blur".
 	 * @param {function} [fnHandler] A function to execute each time the event is triggered.
 	 * @param {object} [oListener] The object, that wants to be notified, when the event occurs
-	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Control.prototype.attachBrowserEvent = function(sEventType, fnHandler, oListener) {
@@ -551,7 +551,7 @@ sap.ui.define([
 	 * @param {string} [sEventType] A string containing one or more JavaScript event types, such as "click" or "blur".
 	 * @param {function} [fnHandler] The function that is to be no longer executed.
 	 * @param {object} [oListener] The context object that was given in the call to <code>attachBrowserEvent</code>.
-	 * @returns {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Control.prototype.detachBrowserEvent = function(sEventType, fnHandler, oListener) {
@@ -613,7 +613,7 @@ sap.ui.define([
 	 *
 	 * @param {string|Element|sap.ui.core.Control} oRef container into which the control should be put
 	 * @param {string|int} [vPosition="last"] Describes the position where the control should be put into the container
-	 * @return {sap.ui.core.Control} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Control.prototype.placeAt = function(oRef, vPosition) {
@@ -935,7 +935,7 @@ sap.ui.define([
 	 * Set the controls block state.
 	 *
 	 * @param {boolean} bBlocked The new blocked state to be set
-	 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.core, sap.m, sap.viz
 	 */
@@ -1003,7 +1003,7 @@ sap.ui.define([
 	 * area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr|tr
 	 *
 	 * @param {boolean} bBusy The new busy state to be set
-	 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Control.prototype.setBusy = function (bBusy, sBusySection /* this is an internal parameter to apply partial local busy indicator for a specific section of the control */) {
@@ -1062,7 +1062,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {int} iDelay The delay in ms
-	 * @return {sap.ui.core.Control} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 */
 	Control.prototype.setBusyIndicatorDelay = function(iDelay) {
 		// should be modeled as a non-invalidating property once we have that

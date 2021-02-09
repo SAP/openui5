@@ -284,7 +284,7 @@ sap.ui.define([
 	 * belongs to, not by the application.
 	 *
 	 * @param {sap.ui.core.Control} oField Control to which the <code>FieldHelp</code> element is connected to
-	 * @returns {sap.ui.mdc.field.FieldHelpBase} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1194,7 +1194,7 @@ sap.ui.define([
 	 * To be used by an inherited <code>FieldHelp</code> element, not from outside.
 	 *
 	 * @param {string} oContent Content control to be placed at the <code>Popover</code>
-	 * @returns {sap.ui.mdc.field.FieldHelpBase} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel

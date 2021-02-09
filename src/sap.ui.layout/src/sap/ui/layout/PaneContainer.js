@@ -63,7 +63,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	 * Default value is sap.ui.core.Orientation.Horizontal
 	 * @public
 	 * @param {sap.ui.core.Orientation} sOrientation The Orientation type.
-	 * @returns {sap.ui.layout.PaneContainer} this to allow method chaining.
+	 * @returns {this} this to allow method chaining.
 	 */
 	PaneContainer.prototype.setOrientation = function(sOrientation) {
 		this._oSplitter.setOrientation(sOrientation);
@@ -80,7 +80,7 @@ sap.ui.define(['./library', 'sap/ui/core/Element', './AssociativeSplitter', 'sap
 	 * Setter for property layoutData.
 	 * @public
 	 * @param {sap.ui.core.LayoutData} oLayoutData The LayoutData object.
-	 * @returns {sap.ui.layout.PaneContainer} this to allow method chaining.
+	 * @returns {this} this to allow method chaining.
 	 */
 	PaneContainer.prototype.setLayoutData = function(oLayoutData) {
 		this._oSplitter.setLayoutData(oLayoutData);

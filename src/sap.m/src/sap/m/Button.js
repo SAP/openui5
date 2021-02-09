@@ -253,7 +253,7 @@ sap.ui.define([
 	 * below which the badge is hidden.
 	 *
 	 * @param {number} iMin minimum visible value of the badge (not less than minimum Badge value - 1)
-	 * @return {sap.m.Button} this to allow method chaining
+	 * @return {this} this to allow method chaining
 	 * @public
 	 */
 	Button.prototype.setBadgeMinValue = function(iMin) {
@@ -272,7 +272,7 @@ sap.ui.define([
 	 * above which the badge value is displayed with + after the value (ex. 999+)
 	 *
 	 * @param {number} iMax maximum visible value of the badge (not greater than maximum Badge value - 9999)
-	 * @return {sap.m.Button} this to allow method chaining
+	 * @return {this} this to allow method chaining
 	 * @public
 	 */
 	Button.prototype.setBadgeMaxValue = function(iMax) {
@@ -672,7 +672,7 @@ sap.ui.define([
 	/**
 	 * Function to determine if the button is hoverable
 	 *
-	 * @return {sap.m.Button} this to allow method chaining
+	 * @return {boolean} Whether the button is hoverable
 	 * @private
 	 */
 	Button.prototype._isHoverable = function() {
@@ -686,7 +686,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.URI} sSrc - URI indicating the image to use as image source
 	 * @param {sap.ui.core.URI} sActiveSrc - URI indicating the image to use as active image source
 	 * @param {boolean} bIconDensityAware - value for DensityAware attribute of images
-	 * @return {sap.m.Button} this to allow method chaining
+	 * @return {sap.m.Image} The created image
 	 * @private
 	 */
 	Button.prototype._getImage = function(sImgId, sSrc, sActiveSrc, bIconDensityAware) {
@@ -737,7 +737,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sImgId - id to be used for the image
 	 * @param {sap.ui.core.URI} sSrc - URI indicating the image to use as image source
-	 * @return {sap.m.Button} this to allow method chaining
+	 * @return {sap.m.Image} The created icon button
 	 * @private
 	 */
 	Button.prototype._getInternalIconBtn = function(sImgId, sSrc) {
@@ -766,9 +766,9 @@ sap.ui.define([
 	};
 
 	/**
-	 * Function is called to determine if the button is.unstyled
+	 * Function is called to determine if the button is unstyled.
 	 *
-	 * @return {sap.m.Button} this to allow method chaining
+	 * @return {boolean} Whether the button is unstyled
 	 * @private
 	 */
 	Button.prototype._isUnstyled = function() {

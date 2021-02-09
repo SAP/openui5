@@ -1141,7 +1141,7 @@ sap.ui.define([
 	 * @param {string[]} [aLibraryNames] Optional library names to which the configuration should be restricted
 	 * @param {string} sThemeBaseUrl Base URL below which the CSS file(s) will be loaded from
 	 * @param {boolean} [bForceUpdate=false] Force updating URLs of currently loaded theme
-	 * @return {sap.ui.core.Core} the Core, to allow method chaining
+	 * @return {this} the Core, to allow method chaining
 	 * @since 1.10
 	 * @public
 	 */
@@ -3617,7 +3617,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.model.Model} oModel the model to be set or <code>null</code> or <code>undefined</code>
 	 * @param {string} [sName] the name of the model or <code>undefined</code>
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.setModel = function(oModel, sName) {
@@ -3766,7 +3766,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
 	 *            provider object
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachValidationError = function(oData, fnFunction, oListener) {
@@ -3789,7 +3789,7 @@ sap.ui.define([
 	 *            fnFunction The callback function to unregister
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachValidationError = function(fnFunction, oListener) {
@@ -3815,7 +3815,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
 	 *            provider object
 	 *
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachParseError = function(oData, fnFunction, oListener) {
@@ -3838,7 +3838,7 @@ sap.ui.define([
 	 *            fnFunction The callback function to unregister.
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachParseError = function(fnFunction, oListener) {
@@ -3861,7 +3861,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
 	 *            provider object
 	 *
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachFormatError = function(oData, fnFunction, oListener) {
@@ -3884,7 +3884,7 @@ sap.ui.define([
 	 *            fnFunction The callback function to unregister
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachFormatError = function(fnFunction, oListener) {
@@ -3909,7 +3909,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to a dummy event
 	 *            provider object
 	 *
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.attachValidationSuccess = function(oData, fnFunction, oListener) {
@@ -3932,7 +3932,7 @@ sap.ui.define([
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	Core.prototype.detachValidationSuccess = function(fnFunction, oListener) {
@@ -3951,7 +3951,7 @@ sap.ui.define([
 	 * @param {object} oParameters.newValue Value of the property which was entered when the parse error occurred
 	 * @param {object} oParameters.oldValue Value of the property which was present before a new value was entered (before the parse error)
 	 * @param {object} oParameters.exception Exception object which occurred and has more information about the parse error
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Core.prototype.fireParseError = function(oParameters) {
@@ -3986,7 +3986,7 @@ sap.ui.define([
 	 * @param {object} oParameters.newValue Value of the property which was entered when the validation error occurred
 	 * @param {object} oParameters.oldValue Value of the property which was present before a new value was entered (before the validation error)
 	 * @param {object} oParameters.exception Exception object which occurred and has more information about the validation error
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Core.prototype.fireValidationError = function(oParameters) {
@@ -4021,7 +4021,7 @@ sap.ui.define([
 	 * @param {any} oParameters.newValue Value of the property which was entered when the format error occurred
 	 * @param {any} oParameters.oldValue Value of the property which was present before a new value was entered (before the format error)
 	 * @param {object} oParameters.exception Exception object which occurred and has more information about the format error
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Core.prototype.fireFormatError = function(oParameters) {
@@ -4061,7 +4061,7 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {object} [oParameters] Parameters to pass along with the event
-	 * @returns {sap.ui.core.Core} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	Core.prototype.fireValidationSuccess = function(oParameters) {

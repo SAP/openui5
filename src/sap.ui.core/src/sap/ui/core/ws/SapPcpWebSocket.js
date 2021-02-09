@@ -49,7 +49,7 @@ sap.ui.define(['./WebSocket', "sap/base/Log"],
 	 * @param {object} [oParameters] Parameters to pass along with the event
 	 * @param {string} [oParameters.data] Received data from the server.
 	 * @param {string} [oParameters.pcpFields] Received pcpFields as a key-value map.
-	 * @return {sap.ui.core.ws.SapPcpWebSocket} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @protected
 	 * @name sap.ui.core.ws.SapPcpWebSocket#fireMessage
 	 * @function
@@ -246,7 +246,7 @@ sap.ui.define(['./WebSocket', "sap/base/Log"],
 	 *
 	 * @param {string|Blob|ArrayBuffer} message message to send
 	 * @param {object} [oPcpFields] additional pcp-fields as key-value map
-	 * @return {sap.ui.core.ws.SapPcpWebSocket} Reference to <code>this</code> to allow method chaining
+	 * @return {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	SapPcpWebSocket.prototype.send = function(message, oPcpFields) {

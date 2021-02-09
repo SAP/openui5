@@ -199,7 +199,7 @@ sap.ui.define([
 	/**
 	 * Sets the expanded property of the control.
 	 * @param {boolean} bExpanded Defines whether control is expanded or not.
-	 * @returns {sap.m.Panel} Pointer to the control instance to allow method chaining.
+	 * @returns {this} Pointer to the control instance to allow method chaining.
 	 * @public
 	 */
 	Panel.prototype.setExpanded = function (bExpanded) {

@@ -593,7 +593,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {boolean} bCondensed the new value
-	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setCondensed = function (bCondensed) {
 		this.setProperty("condensed", bCondensed);
@@ -611,7 +611,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {string} sNumber the new value
-	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setNumber = function (sNumber) {
 		this.setProperty("number", sNumber);
@@ -624,7 +624,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {string} sUnit the new value
-	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setNumberUnit = function (sUnit) {
 		this.setProperty("numberUnit", sUnit);
@@ -637,7 +637,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {sap.ui.core.ValueState} sState the new value
-	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setNumberState = function (sState) {
 		this.setProperty("numberState", sState);
@@ -650,7 +650,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {string} sTooltip the tooltip of the title selector
-	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setTitleSelectorTooltip = function (sTooltip) {
 		this.setProperty("titleSelectorTooltip", sTooltip);
@@ -663,7 +663,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {boolean} bMarked visibility of the marker
-	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setMarkFavorite = function (bMarked) {
 		return this._setOldMarkers(ObjectMarkerType.Favorite, bMarked);
@@ -674,7 +674,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {boolean} bMarked visibility of the marker
-	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setMarkFlagged = function (bMarked) {
 		return this._setOldMarkers(ObjectMarkerType.Flagged, bMarked);
@@ -685,7 +685,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {boolean} bMarked visibility of all markers
-	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	ObjectHeader.prototype.setShowMarkers = function (bMarked) {
 		var sMarkerType,
@@ -710,7 +710,7 @@ sap.ui.define([
 	 * @private
 	 * @param {string} markerType the type of the marker which should be created to updated
 	 * @param {boolean} bMarked visibility of the marker
-	 * @returns {sap.m.ObjectHeader} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	ObjectHeader.prototype._setOldMarkers = function (markerType, bMarked) {
 		var aAllMarkers = this.getMarkers(),

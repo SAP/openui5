@@ -121,7 +121,7 @@ sap.ui.define([
 		 * @method
 		 * @param {sap.ui.layout.BlockRowColorSets} sType
 		 * @since 1.42
-		 * @returns {sap.ui.layout.BlockLayoutRow}
+		 * @returns {this}
 		 */
 		BlockLayoutRow.prototype.setRowColorSet = function (sType) {
 			// Apply here so if there's an exception the code bellow won't be executed
@@ -300,7 +300,7 @@ sap.ui.define([
 		 * @method
 		 * @param {string} sId The ID of the row that will be processed
 		 * @param {Array} aCells Cells in the current row
-		 * @returns {sap.ui.layout.BlockLayoutRow}
+		 * @returns {this}
 		 */
 		BlockLayoutRow.prototype._processMixedCellStyles = function (sId, aCells) {
 			var oBlockLayout, bProcessAccentCells;
@@ -344,7 +344,7 @@ sap.ui.define([
 		 * @method
 		 * @param {Array} aAccentCells Cells with accent contrast
 		 * @param {Array} aRowCells All cells in the row
-		 * @returns {sap.ui.layout.BlockLayoutRow}
+		 * @returns {this}
 		 */
 		BlockLayoutRow.prototype._processAccentCellStyles = function (aAccentCells, aRowCells) {
 			var oCell, sCellId, sCalculatedStyleClass,

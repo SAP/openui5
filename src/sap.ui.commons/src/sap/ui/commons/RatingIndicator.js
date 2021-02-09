@@ -484,7 +484,7 @@ sap.ui.define([
 	 * Minimum value is <code>1</code>
 	 *
 	 * @param {int} iMaxValue new value for property <code>maxValue</code>
-	 * @return {sap.ui.commons.RatingIndicator} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	RatingIndicator.prototype.setMaxValue = function(iMaxValue) {

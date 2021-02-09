@@ -385,7 +385,7 @@ sap.ui.define([
 	 * The method sets placement position of the QuickView.
 	 *
 	 * @param {sap.m.PlacementType} sPlacement The side from which the QuickView appears relative to the control that opens it.
-	 * @returns {sap.m.QuickView} Pointer to the control instance for chaining.
+	 * @returns {this} Pointer to the control instance for chaining.
 	 * @public
 	 */
 	QuickView.prototype.setPlacement = function (sPlacement) {
@@ -399,7 +399,7 @@ sap.ui.define([
 	 * The method sets the width of the QuickView.
 	 * Works only on desktop or tablet.
 	 * @param {sap.ui.core.CSSSize} sWidth The new width of the QuickView.
-	 * @returns {sap.m.QuickView} Pointer to the control instance for chaining
+	 * @returns {this} Pointer to the control instance for chaining
 	 * @public
 	 */
 	QuickView.prototype.setWidth = function (sWidth) {
@@ -414,7 +414,7 @@ sap.ui.define([
 	/**
 	 * Opens the QuickView.
 	 * @param {sap.ui.core.Control} oControl The control which opens the QuickView.
-	 * @returns {sap.m.QuickView} Pointer to the control instance for chaining
+	 * @returns {this} Pointer to the control instance for chaining
 	 * @public
 	 */
 	QuickView.prototype.openBy = function(oControl) {
@@ -426,7 +426,7 @@ sap.ui.define([
 
 	/**
 	 * Closes the QuickView.
-	 * @returns {sap.m.QuickView} Pointer to the control instance for chaining
+	 * @returns {this} Pointer to the control instance for chaining
 	 * @public
 	 */
 	QuickView.prototype.close = function() {

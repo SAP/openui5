@@ -552,7 +552,7 @@ sap.ui.define([
 		 * Sets the Components Ready flag
 		 *
 		 * @param bValue
-		 * @returns {sap.ui.integration.cards.AdaptiveContent}
+		 * @returns {this}
 		 * @private
 		 */
 		AdaptiveContent.prototype.setComponentsReady = function (bValue) {

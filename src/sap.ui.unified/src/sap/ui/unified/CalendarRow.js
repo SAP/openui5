@@ -636,7 +636,7 @@ sap.ui.define([
 	 * of each <code>CalendarRow</code>.
 	 *
 	 * @param {jQuery.Event} oEvent The event object of the resize handler.
-	 * @returns {sap.ui.unified.CalendarRow} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CalendarRow.prototype.handleResize = function(oEvent) {
@@ -666,7 +666,7 @@ sap.ui.define([
 	 * it is better if the container triggers the interval once and then calls this function
 	 * of each <code>CalendarRow</code>.
 	 *
-	 * @returns {sap.ui.unified.CalendarRow} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CalendarRow.prototype.updateCurrentTimeVisualization = function() {
@@ -762,7 +762,7 @@ sap.ui.define([
 	 * Focus the given <code>CalendarAppointment</code> in the <code>CalendarRow</code>.
 	 *
 	 * @param {sap.ui.unified.CalendarAppointment} oAppointment Appointment to be focused.
-	 * @returns {sap.ui.unified.CalendarRow} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CalendarRow.prototype.focusAppointment = function(oAppointment) {
@@ -787,7 +787,7 @@ sap.ui.define([
 	 * the given date.
 	 *
 	 * @param {object} oDate Javascript Date object.
-	 * @returns {sap.ui.unified.CalendarRow} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CalendarRow.prototype.focusNearestAppointment = function(oDate) {

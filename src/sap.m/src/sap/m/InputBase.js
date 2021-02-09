@@ -748,7 +748,7 @@ function(
 	 *
 	 * @param {int} iSelectionStart The index into the text at which the first selected character is located.
 	 * @param {int} iSelectionEnd The index into the text at which the last selected character is located.
-	 * @returns {sap.m.InputBase} <code>this</code> to allow method chaining.
+	 * @returns {this} <code>this</code> to allow method chaining.
 	 * @protected
 	 * @since 1.22.1
 	 */
@@ -820,7 +820,7 @@ function(
 	 * To be overwritten by subclasses.
 	 *
 	 * @param {object} oFocusInfo
-	 * @returns {sap.m.InputBase} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	InputBase.prototype.applyFocusInfo = function(oFocusInfo) {
@@ -834,7 +834,7 @@ function(
 	 * Sets the DOM value of the input field and handles placeholder visibility.
 	 *
 	 * @param {string} sValue value of the input field.
-	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @since 1.22
 	 * @protected
 	 */
@@ -1096,7 +1096,7 @@ function(
 	 * Default value is empty/<code>undefined</code>.
 	 *
 	 * @param {string} sValue New value for property <code>value</code>.
-	 * @return {sap.m.InputBase} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	InputBase.prototype.setValue = function(sValue) {
@@ -1201,7 +1201,7 @@ function(
 	 * Sets the last value of the InputBase
 	 *
 	 * @param {string} sValue
-	 * @returns {sap.m.InputBase}
+	 * @returns {this}
 	 * @since 1.78
 	 * @protected
 	 */

@@ -166,7 +166,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {object[]} aConditions the complete list of conditions
-	 * @returns {sap.m.P13nFilterPanel} this for chaining
+	 * @returns {this} this for chaining
 	 */
 	P13nFilterPanel.prototype.setConditions = function(aConditions) {
 		var aIConditions = [];

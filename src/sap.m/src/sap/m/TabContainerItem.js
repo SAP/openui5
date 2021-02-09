@@ -119,7 +119,7 @@ sap.ui.define(['sap/ui/core/Element',
 		 * @param {string} sName Property name to be set
 		 * @param {boolean | string | object} vValue Property value to be set
 		 * @param {boolean} bSuppressInvalidation Whether invalidation to be suppressed
-		 * @return {sap.m.TabContainerItem} This instance for chaining
+		 * @return {this} This instance for chaining
 		 * @public
 		 */
 		TabContainerItem.prototype.setProperty = function(sName, vValue, bSuppressInvalidation) {
@@ -137,7 +137,7 @@ sap.ui.define(['sap/ui/core/Element',
 		 * Property setter for the icon
 		 *
 		 * @param {sap.ui.core.URI} sIcon new value of the Icon property
-		 * @return {sap.m.TabContainerItem} <code>this</code> to allow method chaining
+		 * @return {this} <code>this</code> to allow method chaining
 		 * @public
 		 */
 		TabContainerItem.prototype.setIcon = function(sIcon) {
@@ -149,7 +149,7 @@ sap.ui.define(['sap/ui/core/Element',
 		 *
 		 * @param {string} sImgId - id to be used for the image
 		 * @param {sap.ui.core.URI} sSrc - URI indicating the image to use as image source
-		 * @return {sap.m.TabContainerItem} this to allow method chaining
+		 * @return {sap.ui.core.Control} The image
 		 * @private
 		 */
 		TabContainerItem.prototype._getImage = function () {

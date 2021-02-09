@@ -83,7 +83,7 @@ sap.ui.define([
 	/**
 	 * Selects a given date.
 	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.calendar.OneMonthDatesRow} <code>this</code> for method chaining
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	OneMonthDatesRow.prototype.selectDate = function(oDate) {
 		if (this.iMode < 2 && this.getSelectedDates().length) {
@@ -95,7 +95,7 @@ sap.ui.define([
 	/**
 	 * Sets a given date.
 	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.calendar.OneMonthDatesRow} <code>this</code> for method chaining
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	OneMonthDatesRow.prototype.setDate = function(oDate) {
 		// check if in visible date range
@@ -119,7 +119,7 @@ sap.ui.define([
 	/**
 	 * Displays a given date.
 	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.calendar.OneMonthDatesRow} <code>this</code> for method chaining
+	 * @return {this} <code>this</code> for method chaining
 	 */
 	OneMonthDatesRow.prototype.displayDate = function(oDate){
 		// check if in visible date range

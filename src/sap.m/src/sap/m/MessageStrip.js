@@ -185,7 +185,7 @@ sap.ui.define([
 	 * Default value is empty/undefined
 	 * @public
 	 * @param {string} sText new value for property text
-	 * @returns {sap.m.MessageStrip} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 */
 	MessageStrip.prototype.setText = function (sText) {
 		// Update the internal FormattedText control if needed
@@ -205,7 +205,7 @@ sap.ui.define([
 	 * Default value is sap.ui.core.MessageType.Information
 	 * @public
 	 * @param {sap.ui.core.MessageType} sType The Message type
-	 * @returns {sap.m.MessageStrip} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 */
 	MessageStrip.prototype.setType = function (sType) {
 		if (!sType || sType === MessageType.None) {

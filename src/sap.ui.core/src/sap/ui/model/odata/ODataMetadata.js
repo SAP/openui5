@@ -331,7 +331,7 @@ sap.ui.define([
 	 * Fires event {@link #event:loaded loaded} to attached listeners.
 	 *
 	 * @param {object} [oParameters] Parameters to pass along with the event
-	 * @returns {sap.ui.model.odata.ODataMetadata} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	ODataMetadata.prototype.fireLoaded = function(oParameters) {
@@ -358,7 +358,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to this
 	 *            <code>sap.ui.model.odata.ODataMetadata</code> itself
 	 *
-	 * @returns {sap.ui.model.odata.ODataMetadata} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	ODataMetadata.prototype.attachLoaded = function(oData, fnFunction, oListener) {
@@ -376,7 +376,7 @@ sap.ui.define([
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.odata.ODataMetadata} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	ODataMetadata.prototype.detachLoaded = function(fnFunction, oListener) {
@@ -403,7 +403,7 @@ sap.ui.define([
 	 * @param {string} [oParameters.statusText] The status as a text, details not specified, intended only for diagnosis output
 	 * @param {string} [oParameters.responseText] Response that has been received for the request, as a text string
 	 *
-	 * @returns {sap.ui.model.odata.ODataMetadata} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @protected
 	 */
 	ODataMetadata.prototype.fireFailed = function(oParameters) {
@@ -429,7 +429,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to this
 	 *            <code>sap.ui.model.odata.ODataMetadata</code> itself
 	 *
-	 * @returns {sap.ui.model.odata.ODataMetadata} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	ODataMetadata.prototype.attachFailed = function(oData, fnFunction, oListener) {
@@ -447,7 +447,7 @@ sap.ui.define([
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.odata.ODataMetadata} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	ODataMetadata.prototype.detachFailed = function(fnFunction, oListener) {

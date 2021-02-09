@@ -763,7 +763,7 @@ function(
 		 * @param {string} sAggregationName The name of the aggregation where the new entity is to be added
 		 * @param {any} oObject The value of the aggregation to be added
 		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
-		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @returns {this} <code>this</code> pointer for chaining
 		 * @override
 		 */
 		TabStrip.prototype.addAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
@@ -780,7 +780,7 @@ function(
 		 * @param {any} oObject The value of the aggregation to be inserted
 		 * @param {int} iIndex The index to be inserted in
 		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
-		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @returns {this} <code>this</code> pointer for chaining
 		 * @override
 		 */
 		TabStrip.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
@@ -796,7 +796,7 @@ function(
 		 * @param {string} sAggregationName The name of the aggregation
 		 * @param {any} oObject The value of aggregation to be removed
 		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
-		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @returns {sap.ui.base.ManagedObject} The removed aggregated item
 		 * @override
 		 */
 		TabStrip.prototype.removeAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
@@ -811,7 +811,7 @@ function(
 		 *
 		 * @param {string} sAggregationName The name of aggregation
 		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
-		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @returns {sap.ui.base.ManagedObject[]} the removed aggregated items
 		 * @override
 		 */
 		TabStrip.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
@@ -826,7 +826,7 @@ function(
 		 *
 		 * @param {string} sAggregationName The name of aggregation
 		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
-		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @returns {this} <code>this</code> pointer for chaining
 		 * @override
 		 */
 		TabStrip.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {
@@ -840,7 +840,7 @@ function(
 		 * Sets a <code>TabStripItem</code> as current.
 		 *
 		 * @param {sap.m.TabStripItem} oSelectedItem the item that should be set as current
-		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @returns {this} <code>this</code> pointer for chaining
 		 * @override
 		 */
 		TabStrip.prototype.setSelectedItem = function(oSelectedItem) {
@@ -874,7 +874,7 @@ function(
 		 * @param {string} sPropertyName The property name to be set
 		 * @param {any} vValue The property value to be set
 		 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
-		 * @returns {sap.m.TabStrip} <code>this</code> pointer for chaining
+		 * @returns {this} <code>this</code> pointer for chaining
 		 * @override
 		 */
 		TabStrip.prototype.setProperty = function(sPropertyName, vValue, bSuppressInvalidate) {
@@ -1002,7 +1002,7 @@ function(
 		 *
 		 * @param {array} aArgs
 		 * @param {boolean} bIsAdding
-		 * @returns {sap.m.TabStrip} <code>this</code> instance for chaining
+		 * @returns {this} <code>this</code> instance for chaining
 		 */
 		TabStrip.prototype._handleItemsAggregation = function (aArgs, bIsAdding) {
 			var sAggregationName = 'items', // name of the aggregation in CustomSelect
@@ -1297,7 +1297,7 @@ function(
 		/*
 		 * Destroys all <code>TabStripItem</code> entities from the <code>items</code> aggregation of the <code>TabStrip</code>.
 		 *
-		 * @returns {sap.m.TabStrip} This instance for chaining
+		 * @returns {this} This instance for chaining
 		 * @override
 		 */
 		TabStrip.prototype.destroyItems = function() {

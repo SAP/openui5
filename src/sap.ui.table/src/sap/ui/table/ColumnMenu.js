@@ -433,7 +433,7 @@ sap.ui.define([
 	/**
 	 * sets a new filter value into the filter field
 	 * @param {String} sValue value of the filter input field to be set
-	 * @returns {sap.ui.table.ColumnMenu} this reference for chaining
+	 * @returns {this} this reference for chaining
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterValue = function(sValue) {
@@ -450,7 +450,7 @@ sap.ui.define([
 	/**
 	 * sets a new filter value into the filter field
 	 * @param {sap.ui.core.ValueState} sFilterState value state for filter text field item
-	 * @returns {sap.ui.table.ColumnMenu} this reference for chaining
+	 * @returns {this} this reference for chaining
 	 * @private
 	 */
 	ColumnMenu.prototype._setFilterState = function(sFilterState) {

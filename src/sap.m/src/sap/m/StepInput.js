@@ -500,7 +500,7 @@ function(
 		 * Sets the validation mode.
 		 *
 		 * @param {sap.m.StepInputValidationMode} sValidationMode The validation mode value
-		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
+		 * @returns {this} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setValidationMode = function (sValidationMode) {
 			if (this.getValidationMode() !== sValidationMode) {
@@ -521,7 +521,7 @@ function(
 		 * Sets the min value.
 		 *
 		 * @param {float} min The minimum value
-		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
+		 * @returns {this} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setMin = function (min) {
 			if (min !== undefined && !this._validateOptionalNumberProperty("min", min)) {
@@ -535,7 +535,7 @@ function(
 		 * Sets the max value.
 		 *
 		 * @param {float} max The max value
-		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
+		 * @returns {this} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setMax = function (max) {
 			if (max !== undefined && !this._validateOptionalNumberProperty("max", max)) {
@@ -566,7 +566,7 @@ function(
 		 * Sets the <code>displayValuePrecision</code>.
 		 *
 		 * @param {number} number The value precision
-		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
+		 * @returns {this} Reference to the control instance for chaining
 		 */
 		StepInput.prototype.setDisplayValuePrecision = function (number) {
 			var vValuePrecision;
@@ -693,7 +693,7 @@ function(
 		 * Changes the value of the control and fires the change event.
 		 *
 		 * @param {boolean} bForce If true, will force value change
-		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
+		 * @returns {this} Reference to the control instance for chaining
 		 * @private
 		 */
 		StepInput.prototype._changeValue = function (bForce) {
@@ -714,7 +714,7 @@ function(
 		 *
 		 * @param {float} fMultiplier Indicates the direction - increment (positive value)
 		 * or decrement (negative value) and multiplier for modifying the value
-		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
+		 * @returns {this} Reference to the control instance for chaining
 		 * @private
 		 */
 		StepInput.prototype._handleButtonPress = function (fMultiplier)	{
@@ -737,7 +737,7 @@ function(
 		 *
 		 * @param {float} fMultiplier Indicates the direction - increment (positive value)
 		 * or decrement (negative value), and multiplier for modifying the value
-		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
+		 * @returns {this} Reference to the control instance for chaining
 		 * @private
 		 */
 		StepInput.prototype._changeValueWithStep = function (fMultiplier) {
@@ -775,7 +775,7 @@ function(
 		 * @param {number} iValue Indicates the value in the input
 		 * @param {number} iMax Indicates the max
 		 * @param {number} iMin Indicates the min
-		 * @returns {sap.m.StepInput} Reference to the control instance for chaining
+		 * @returns {this} Reference to the control instance for chaining
 		 */
 		StepInput.prototype._disableButtons = function (iValue, iMax, iMin) {
 

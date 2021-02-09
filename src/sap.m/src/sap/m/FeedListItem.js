@@ -694,7 +694,7 @@ function(
 	 *
 	 * @public
 	 * @param {sap.m.ListType} type new value for property type
-	 * @returns {sap.m.FeedListItem} this allows method chaining
+	 * @returns {this} this allows method chaining
 	 */
 	FeedListItem.prototype.setType = function(type) {
 		if (this.getType() !== type) {

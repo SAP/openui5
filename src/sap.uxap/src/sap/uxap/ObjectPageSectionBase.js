@@ -165,7 +165,7 @@ sap.ui.define([
 	 *
 	 * To be overwritten by the specific control method.
 	 *
-	 * @return {sap.uxap.ObjectPageSectionBase} this for chaining
+	 * @return {this} this for chaining
 	 * @protected
 	 */
 	ObjectPageSectionBase.prototype.setInvisibleTextLabelValue = function (sValue) {

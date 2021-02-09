@@ -158,7 +158,7 @@ sap.ui.define([
 	 * Sets whether tab reordering is enabled.
 	 *
 	 * @param {boolean} bValue The value.
-	 * @returns {sap.ui.commons.TabStrip} Pointer to the control instance for chaining.
+	 * @returns {this} Pointer to the control instance for chaining.
 	 * @public
 	 */
 	TabStrip.prototype.setEnableTabReordering = function (bValue) {
@@ -384,7 +384,7 @@ sap.ui.define([
 	 * Default value is <code>0</code>
 	 *
 	 * @param {int} iSelectedIndex New value for property <code>selectedIndex</code>
-	 * @return {sap.ui.commons.TabStrip} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	TabStrip.prototype.setSelectedIndex = function(iSelectedIndex) {

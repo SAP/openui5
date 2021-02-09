@@ -779,7 +779,7 @@ sap.ui.define([
 	 * applied to the sap.ui.mdc.Table itself.
 	 *
 	 * @param {boolean} bBusy Busy state that is applied to the inner table
-	 * @returns {sap.ui.mdc.Table} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 */
 	Table.prototype.setBusy = function(bBusy) {
 		this.setProperty('busy', bBusy, true);
@@ -795,7 +795,7 @@ sap.ui.define([
 	 * Sets the delay in milliseconds, after which the busy indicator will show up for the inner table.
 	 *
 	 * @param {int} iDelay the delay in milliseconds
-	 * @returns {sap.ui.mdc.Table} Returns <code>this</code> to allow method chaining
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 */
 	Table.prototype.setBusyIndicatorDelay = function(iDelay) {
 		this.setProperty('busyIndicatorDelay', iDelay, true);

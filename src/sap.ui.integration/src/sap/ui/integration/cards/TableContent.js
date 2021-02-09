@@ -122,7 +122,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {Object} oConfiguration Configuration object used to create the internal table.
-	 * @returns {sap.ui.integration.cards.TableContent} Pointer to the control instance to allow method chaining.
+	 * @returns {this} Pointer to the control instance to allow method chaining.
 	 */
 	TableContent.prototype.setConfiguration = function (oConfiguration) {
 		BaseListContent.prototype.setConfiguration.apply(this, arguments);

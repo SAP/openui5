@@ -901,7 +901,7 @@ sap.ui.define([
 	 * Sets an UploadCollectionItem to be selected by ID. In single selection mode, the method removes the previous selection.
 	 * @param {string} id The ID of the item whose selection is to be changed.
 	 * @param {boolean} [select=true] The selection state of the item.
-	 * @returns {sap.m.UploadCollection} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 * @since 1.34.0
 	 * @public
 	 */
@@ -915,7 +915,7 @@ sap.ui.define([
 	 * Selects or deselects the given list item.
 	 * @param {sap.m.UploadCollectionItem} uploadCollectionItem The item whose selection is to be changed. This parameter is mandatory.
 	 * @param {boolean} [select=true] The selection state of the item.
-	 * @returns {sap.m.UploadCollection} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 * @since 1.34.0
 	 * @public
 	 */
@@ -962,7 +962,7 @@ sap.ui.define([
 	 * multiple properties from the UploadCollection have to be set to false. If no UploadCollectionItem is provided, only the dialog opens
 	 * and no further configuration of the UploadCollection is needed.
 	 * @param {sap.m.UploadCollectionItem} item The item to update with a new version. This parameter is mandatory.
-	 * @returns {sap.m.UploadCollection} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 * @since 1.38.0
 	 * @public
 	 */

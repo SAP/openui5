@@ -1503,7 +1503,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Filter[]|sap.ui.model.Filter} aFilters Filter or array of filters to apply
 	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted. If it is not given,
 	 *   the type <code>FilterType.Control</code> is assumed
-	 * @return {sap.ui.model.odata.v2.ODataTreeBinding} Returns <code>this</code> to facilitate method chaining
+	 * @return {this} Returns <code>this</code> to facilitate method chaining
 	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @public
 	 */
@@ -1658,7 +1658,7 @@ sap.ui.define([
 	 * In OperationMode.Client or OperationMode.Auto (if the given threshold is satisfied), the sorters are applied locally on the client.
 	 *
 	 * @param {sap.ui.model.Sorter[]|sap.ui.model.Sorter} aSorters the Sorter or an Array of sap.ui.model.Sorter instances
-	 * @return {sap.ui.model.odata.v2.ODataTreeBinding} returns <code>this</code> to facilitate method chaining
+	 * @return {this} returns <code>this</code> to facilitate method chaining
 	 * @public
 	 */
 	ODataTreeBinding.prototype.sort = function(aSorters, bReturnSuccess) {

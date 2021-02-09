@@ -215,7 +215,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sName
 	 *         The name of the DOM attribute.
-	 * @return {sap.ui.core.tmpl.DOMElement}
+	 * @return {this}
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

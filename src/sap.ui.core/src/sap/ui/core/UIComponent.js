@@ -653,7 +653,7 @@ sap.ui.define([
 	 * determination of the UIArea for the UIComponent.
 	 *
 	 * @param {sap.ui.core.ComponentContainer} oContainer reference to a ComponentContainer
-	 * @return {sap.ui.core.UIComponent} reference to this instance to allow method chaining
+	 * @returns {this} reference to this instance to allow method chaining
 	 * @public
 	 */
 	UIComponent.prototype.setContainer = function(oContainer) {

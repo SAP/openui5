@@ -220,7 +220,7 @@ sap.ui.define([
 	 *         Specifies the area whose properties will be set
 	 * @param {object} oData
 	 *         JSON-like object that contains the values to be set
-	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -236,7 +236,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies the area where controls will be added
-	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -260,7 +260,7 @@ sap.ui.define([
 	 * @param {int} iIndex
 	 *         Specifies the index where the controls shall be added. For a negative value of iIndex, the content is inserted at
 	 *         position '0'; for a value greater than the current size of the aggregation, the content is inserted at the last position.
-	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -283,7 +283,7 @@ sap.ui.define([
 	 *         Specifies the area whose content shall be removed
 	 * @param {*} vElement The content to be removed
 	 *         Specifies the control that shall be removed
-	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -302,7 +302,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies the area whose content shall be removed
-	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -352,7 +352,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.commons.layout.BorderLayoutAreaTypes} sAreaId
 	 *         Specifies the area whose content will be destroyed
-	 * @returns {sap.ui.commons.layout.BorderLayout} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel

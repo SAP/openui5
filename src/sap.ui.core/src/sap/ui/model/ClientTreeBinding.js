@@ -259,7 +259,7 @@ sap.ui.define([
 	 * @see sap.ui.model.TreeBinding.prototype.filter
 	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters Single filter object or an array of filter objects
 	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
-	 * @return {sap.ui.model.ClientTreeBinding} <code>this</code> to facilitate method chaining
+	 * @return {this} <code>this</code> to facilitate method chaining
 	 * @throws {Error} When one of the filters uses an operator that is not supported by the underlying model implementation
 	 * @public
 	 */
@@ -366,7 +366,7 @@ sap.ui.define([
 	 * to keep the hierarchy untouched.
 	 *
 	 * @param {sap.ui.model.Sorter[]} an array of Sorter instances which will be applied
-	 * @return {sap.ui.model.ClientTreeBinding} returns <code>this</code> to facilitate method chaining
+	 * @return {this} returns <code>this</code> to facilitate method chaining
 	 * @public
 	 */
 	ClientTreeBinding.prototype.sort = function (aSorters) {

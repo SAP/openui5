@@ -286,7 +286,7 @@ sap.ui.define([
 	 *
 	 * This method will only trigger a showMore if the property showMoreSteps is set.
 	 *
-	 * @return {sap.ui.commons.RowRepeater} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -812,7 +812,7 @@ sap.ui.define([
 	 * Default value is <code>5</code>
 	 *
 	 * @param {int} iNumberOfRows  new value for property <code>numberOfRows</code>
-	 * @return {sap.ui.commons.RowRepeater} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	RowRepeater.prototype.setNumberOfRows = function(iNumberOfRows) {
@@ -837,7 +837,7 @@ sap.ui.define([
 	 * Setter for property <code>currentPage</code>.
 	 *
 	 * @param {int} iCurrentPage  new value for property <code>currentPage</code>
-	 * @return {sap.ui.commons.RowRepeater} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	RowRepeater.prototype.setCurrentPage = function(iCurrentPage) {
@@ -866,7 +866,7 @@ sap.ui.define([
 	 * page being set to the first page.
 	 *
 	 * @param {int} iShowMoreSteps  new value for property <code>showMoreSteps</code>
-	 * @return {sap.ui.commons.RowRepeater} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	RowRepeater.prototype.setShowMoreSteps = function(iShowMoreSteps) {

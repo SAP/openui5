@@ -76,7 +76,7 @@ sap.ui.define(['./library', 'sap/ui/core/LayoutData'],
 	 * If the control that is using ToolbarLayoutData has been already rendered,
 	 * then this function can be used to apply layout data properties to the related control
 	 *
-	 * @returns {sap.m.ToolbarLayoutData}
+	 * @returns {this}
 	 * @protected
 	 */
 	ToolbarLayoutData.prototype.applyProperties = function() {

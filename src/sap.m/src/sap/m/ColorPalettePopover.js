@@ -254,7 +254,7 @@ sap.ui.define([
 		 * Sets a selected color for the ColorPicker control.
 		 * @param {sap.ui.core.CSSColor} color the selected color
 		 * @public
-		 * @return {sap.m.ColorPalettePopover} <code>this</code> for method chaining
+		 * @return {this} <code>this</code> for method chaining
 		 */
 		ColorPalettePopover.prototype.setColorPickerSelectedColor = function (color) {
 			this._getPalette().setColorPickerSelectedColor(color);

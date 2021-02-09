@@ -83,7 +83,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 		 * @param {string} sAggregationName Name of the added aggregation
 		 * @param {object} oObject Intance that is going to be added
 		 * @param {boolean} bSuppressInvalidate Flag indicating whether invalidation should be supressed
-		 * @returns {sap.m.ViewSettingsFilterItem} This instance for chaining
+		 * @returns {this} This instance for chaining
 		 */
 	ViewSettingsFilterItem.prototype.addAggregation = function (sAggregationName, oObject, bSuppressInvalidate) {
 		ViewSettingsItem.prototype.addAggregation.apply(this, arguments);
@@ -99,7 +99,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @param {any} oObject The value of the aggregation to be inserted
 	 * @param {int} iIndex The index of the position of the entity to be inserted
 	 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
-	 * @returns {sap.m.ViewSettingsFilterItem} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 * @override
 	 */
 	ViewSettingsFilterItem.prototype.insertAggregation = function(sAggregationName, oObject, iIndex, bSuppressInvalidate) {
@@ -114,7 +114,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 * @param {string} sAggregationName The name of the aggregation
 	 * @param {any} oObject The value of aggregation to be removed
 	 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
-	 * @returns {sap.m.ViewSettingsFilterItem} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 * @override
 	 */
 	ViewSettingsFilterItem.prototype.removeAggregation = function(sAggregationName, oObject, bSuppressInvalidate) {
@@ -128,7 +128,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 *
 	 * @param {string} sAggregationName The name of aggregation
 	 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
-	 * @returns {sap.m.ViewSettingsFilterItem} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 * @override
 	 */
 	ViewSettingsFilterItem.prototype.removeAllAggregation = function(sAggregationName, bSuppressInvalidate) {
@@ -142,7 +142,7 @@ sap.ui.define(['./ViewSettingsItem', './library'],
 	 *
 	 * @param {string} sAggregationName The name of aggregation
 	 * @param {boolean} bSuppressInvalidate Whether to suppress invalidation
-	 * @returns {sap.m.ViewSettingsFilterItem} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 * @override
 	 */
 	ViewSettingsFilterItem.prototype.destroyAggregation = function(sAggregationName, bSuppressInvalidate) {

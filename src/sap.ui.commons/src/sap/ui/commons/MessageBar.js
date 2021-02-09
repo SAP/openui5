@@ -792,7 +792,7 @@ sap.ui.define([
 	/**
 	 * Deletes all messages.
 	 *
-	 * @returns {sap.ui.commons.MessageBar} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -837,7 +837,7 @@ sap.ui.define([
 	 * in order to toggle the <code>visibility:hidden;</code> attribute over the control.
 	 *
 	 * @param {boolean} bVisible New value for property <code>visible</code>
-	 * @return {sap.ui.commons.MessageBar} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	MessageBar.prototype.setVisible = function(bVisible) {

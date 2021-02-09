@@ -248,7 +248,7 @@ sap.ui.define([
 		 * Sets conditions. All already existing conditions will be removed.
 		 *
 		 * @param {object} oConditions object of conditions for corresponding fieldPaths
-		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
+		 * @returns {this} Reference to <code>this</code> to allow method chaining.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
@@ -285,7 +285,7 @@ sap.ui.define([
 		 * @param {string} sFieldPath fieldPath of the condition
 		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition condition to be added
 		 * @param {boolean} bForce if set the condition will be added even if it already exist
-		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
+		 * @returns {this} Reference to <code>this</code> to allow method chaining.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
@@ -305,7 +305,7 @@ sap.ui.define([
 		 * @param {int} iIndex index where the condition should be inserted
 		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition condition to be inserted
 		 * @param {boolean} bForce if set the condition will be inserted even if it already exist
-		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
+		 * @returns {this} Reference to <code>this</code> to allow method chaining.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */
@@ -421,7 +421,7 @@ sap.ui.define([
 		 * Removes all conditions for a specified <code>FieldPath</code>.
 		 *
 		 * @param {string} sFieldPath fieldPath of the condition
-		 * @returns {sap.ui.mdc.condition.ConditionModel} Reference to <code>this</code> to allow method chaining.
+		 * @returns {this} Reference to <code>this</code> to allow method chaining.
 		 * @private
 		 * @ui5-restricted sap.ui.mdc
 		 */

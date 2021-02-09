@@ -317,7 +317,7 @@ sap.ui.define([
 	 * If <code>press</code> event is attached and the control is rendered as text, than the control will be
 	 * re-rendered as link.
 	 *
-	 * @returns {sap.m.ObjectMarker} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	ObjectMarker.prototype.attachPress = function () {
 		var oInnerControl = this._getInnerControl();
@@ -339,7 +339,7 @@ sap.ui.define([
 	 * If <code>press</code> event is detached and the control is rendered as a link, than the control will be
 	 * re-rendered as a text.
 	 *
-	 * @returns {sap.m.ObjectMarker} <code>this</code> pointer for chaining
+	 * @returns {this} <code>this</code> pointer for chaining
 	 */
 	ObjectMarker.prototype.detachPress = function() {
 		var oInnerControl = this._getInnerControl();

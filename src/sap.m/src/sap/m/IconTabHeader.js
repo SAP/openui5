@@ -415,7 +415,7 @@ sap.ui.define([
 	 * @overwrite
 	 * @public
 	 * @param {string} sKey The key of the item to be selected
-	 * @return {sap.m.IconTabHeader} this pointer for chaining
+	 * @return {this} this pointer for chaining
 	 */
 	IconTabHeader.prototype.setSelectedKey = function (sKey) {
 		var aItems = this.getTabFilters(),
@@ -451,7 +451,7 @@ sap.ui.define([
 	 * @private
 	 * @param {sap.m.IconTabFilter} oItem The item to be selected
 	 * @param {Boolean} bAPIChange whether this function is called through the API
-	 * @returns {sap.m.IconTabHeader} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	IconTabHeader.prototype.setSelectedItem = function (oItem, bAPIChange) {
 		if (!oItem) {

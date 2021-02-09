@@ -139,7 +139,7 @@ sap.ui.define([
 	 * should be loaded that are only needed if the help is open.
 	 *
 	 * @param {boolean} bSuggestion Flag if field help is opened as suggestion or dialog
-	 * @returns {sap.ui.mdc.field.FieldValueHelpContentWrapperBase} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -193,7 +193,7 @@ sap.ui.define([
 	 * item or do similar things.
 	 *
 	 * @param {boolean} bSuggestion Flag if field help is opened as suggestion or dialog
-	 * @returns {sap.ui.mdc.field.FieldValueHelpContentWrapperBase} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -208,7 +208,7 @@ sap.ui.define([
 	/**
 	 * This function is called if the field help is closed.
 	 *
-	 * @returns {sap.ui.mdc.field.FieldValueHelpContentWrapperBase} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel

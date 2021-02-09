@@ -124,7 +124,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {Object} oConfiguration Configuration object used to create the internal list.
-	 * @returns {sap.ui.integration.cards.ListContent} Pointer to the control instance to allow method chaining.
+	 * @returns {this} Pointer to the control instance to allow method chaining.
 	 */
 	ListContent.prototype.setConfiguration = function (oConfiguration) {
 		BaseListContent.prototype.setConfiguration.apply(this, arguments);

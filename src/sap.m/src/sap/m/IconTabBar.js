@@ -334,7 +334,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {boolean} bExpanded New parameter value.
-	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setExpanded = function (bExpanded) {
 		// set internal property
@@ -352,7 +352,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {sap.m.IconTabHeaderMode} mode New parameter value.
-	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setHeaderMode = function (mode) {
 		// set internal property
@@ -368,7 +368,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {sap.m.IconTabHeaderMode} mode New parameter value.
-	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setTabDensityMode = function (mode) {
 		// set internal property
@@ -385,7 +385,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {sap.m.BackgroundDesign} headerBackgroundDesign New parameter value.
-	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setHeaderBackgroundDesign = function (headerBackgroundDesign) {
 		// set internal property
@@ -401,7 +401,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {boolean} value New value for enableTabReordering.
-	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setEnableTabReordering = function (value) {
 		// set internal property
@@ -417,7 +417,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {object} oAriaTexts New value for ariaTexts.
-	 * @returns {sap.m.IconTabBar} this Reference to this in order to allow method chaining
+	 * @returns {this} this Reference to this in order to allow method chaining
 	 */
 	IconTabBar.prototype.setAriaTexts = function (oAriaTexts) {
 		// set internal property
@@ -471,7 +471,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {boolean|undefined} bExpanded The new state of the container. If not specified, it will use the property expanded.
-	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype._toggleExpandCollapse = function(bExpanded) {
 		var $content = this.$("content");
@@ -538,7 +538,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @param {boolean} bExpanded The new state of the container.
-	 * @return {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 * @return {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.onTransitionEnded = function(bExpanded) {
 		var $content = this.$("content"),
@@ -622,7 +622,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {boolean} bValue the new value.
-	 * @returns {sap.m.IconTabBar} this IconTabBar reference for chaining.
+	 * @returns {this} this IconTabBar reference for chaining.
 	 */
 	IconTabBar.prototype.setShowSelection = function (bValue) {
 		this._getIconTabHeader().setShowSelection(bValue);
@@ -644,7 +644,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sValue The new value.
-	 * @returns {sap.m.IconTabBar} this Pointer for chaining.
+	 * @returns {this} this Pointer for chaining.
 	 */
 	IconTabBar.prototype.setSelectedKey = function (sValue) {
 		this._getIconTabHeader().setSelectedKey(sValue);

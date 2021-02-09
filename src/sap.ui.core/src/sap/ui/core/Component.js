@@ -618,6 +618,7 @@ sap.ui.define([
 	 *
 	 * @returns {sap.ui.core.Component} <code>this</code> as there's no facade for components
 	 * @see sap.ui.base.Object#getInterface
+	 * @returns {this}
 	 * @public
 	 */
 	Component.prototype.getInterface = function() {

@@ -62,7 +62,7 @@ sap.ui.define([
 	 * <b>Note:</b> This property has no effect on <code>OutParameter</code> elements.
 	 *
 	 * @param {boolean} bInitialValueFilterEmpty New value for property <code>initialValueFilterEmpty</code>
-	 * @returns {sap.ui.mdc.field.OutParameter} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 * @name sap.ui.mdc.field.OutParameter#setInitialValueFilterEmpty
 	 * @function

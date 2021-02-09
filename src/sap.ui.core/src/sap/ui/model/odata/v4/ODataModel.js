@@ -476,7 +476,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {sap.ui.model.odata.v4.ODataModel} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @since 1.66.0
@@ -1150,7 +1150,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to call when the event occurs
 	 * @param {object} [oListener] Object on which to call the given function
-	 * @returns {sap.ui.model.odata.v4.ODataModel} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @public
 	 * @since 1.66.0

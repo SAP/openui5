@@ -605,7 +605,7 @@ sap.ui.define([
 	 * Sets the first token truncation.
 	 *
 	 * @param {boolean} bValue The value to set
-	 * @returns {sap.m.Tokenizer} <code>this</code> instance for method chaining
+	 * @returns {this} <code>this</code> instance for method chaining
 	 * @protected
 	 */
 	Tokenizer.prototype.setFirstTokenTruncated = function (bValue) {
@@ -637,7 +637,7 @@ sap.ui.define([
 	 * @private
 	 *
 	 * @param {number} iHiddenTokensCount The number of hidden tokens
-	 * @returns {sap.m.Tokenizer} this instance for method chaining
+	 * @returns {this} this instance for method chaining
 	 */
 	Tokenizer.prototype._handleNMoreIndicator = function (iHiddenTokensCount) {
 		if (!this.getDomRef()) {
@@ -1356,7 +1356,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {boolean} bSelect [optional] true for selecting, false for deselecting
-	 * @returns {sap.m.Tokenizer} this instance for method chaining
+	 * @returns {this} this instance for method chaining
 	 */
 	Tokenizer.prototype.selectAllTokens = function(bSelect) {
 		if (bSelect === undefined) {
@@ -1578,7 +1578,7 @@ sap.ui.define([
 	 * This also determines if the n-More indicator will be shown or not.
 	 *
 	 * @param {number} iCount The number of hidden tokens
-	 * @returns {sap.m.Tokenizer} this instance for method chaining
+	 * @returns {this} this instance for method chaining
 	 * @private
 	 */
 	Tokenizer.prototype._setHiddenTokensCount = function (iCount) {

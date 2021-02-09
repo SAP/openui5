@@ -360,7 +360,7 @@ sap.ui.define([
 	 *             a negative value of <code>iIndex</code>, the collection is inserted at position 0; for a value
 	 *             greater than the current size of the aggregation, the collection is inserted at
 	 *             the last position
-	 * @return {sap.ui.ux3.CollectionInspector} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CollectionInspector.prototype.insertCollection = function(oCollection, iIndex) {
@@ -386,7 +386,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.ux3.Collection}
 	 *            oCollection the collection to add; if empty, nothing is inserted
-	 * @return {sap.ui.ux3.CollectionInspector} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CollectionInspector.prototype.addCollection = function(oCollection) {
@@ -444,7 +444,7 @@ sap.ui.define([
 
 	/**
 	 * Destroys the collection aggregation
-	 * @return {sap.ui.ux3.CollectionInspector} this to allow method chaining
+	 * @return {this} this to allow method chaining
 	 * @public
 	 */
 	CollectionInspector.prototype.destroyCollections = function() {
@@ -481,7 +481,7 @@ sap.ui.define([
 	 *             a negative value of <code>iIndex</code>, the content is inserted at position 0; for a value
 	 *             greater than the current size of the aggregation, the content is inserted at
 	 *             the last position
-	 * @return {sap.ui.ux3.CollectionInspector} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CollectionInspector.prototype.insertContent = function(oContent, iIndex) {
@@ -496,7 +496,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.Control}
 	 *            oContent the content to add; if empty, nothing is inserted
-	 * @return {sap.ui.ux3.CollectionInspector} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CollectionInspector.prototype.addContent = function(oContent) {
@@ -533,7 +533,7 @@ sap.ui.define([
 	/**
 	 * Destroys all the content in the aggregation
 	 * named <code>content</code>.
-	 * @return {sap.ui.ux3.CollectionInspector} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	CollectionInspector.prototype.destroyContent = function() {

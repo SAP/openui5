@@ -58,7 +58,7 @@ sap.ui.define([
 	* Default value is <code>ResponsiveLayout</code>
 	*
 	* @param {sap.ui.commons.form.SimpleFormLayout} oLayout new value for property <code>layout</code>
-	* @return {sap.ui.commons.form.SimpleForm} <code>this</code> to allow method chaining
+	* @return {this} <code>this</code> to allow method chaining
 	* @public
 	* @since 1.14
 	* @name sap.ui.commons.form.SimpleForm#setLayout

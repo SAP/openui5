@@ -118,7 +118,7 @@ ODataMessageParser.prototype.getHeaderField = function() {
  * Sets the header field name that should be used for parsing the JSON messages
  *
  * @param {string} sFieldName - The name of the header field that should be used as source of the message object
- * @return {sap.ui.model.odata.ODataMessageParser} Instance reference for method chaining
+ * @return {this} Instance reference for method chaining
  * @public
  */
 ODataMessageParser.prototype.setHeaderField = function(sFieldName) {

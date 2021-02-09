@@ -495,7 +495,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.16.1
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.m.NavContainer} The <code>sap.m.NavContainer</code> instance
+	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.insertPreviousPage = function (pageId, transitionName, data) {
 		var stack = this._ensurePageStackInitialized();
@@ -676,7 +676,7 @@ sap.ui.define([
 	 *         The "show", "slide", "baseSlide" and "fade" transitions do not use any parameter.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.m.NavContainer} The <code>sap.m.NavContainer</code> instance
+	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.to = function (pageId, transitionName, data, oTransitionParameters, bFromQueue) {
 		if (pageId instanceof Control) {
@@ -861,7 +861,7 @@ sap.ui.define([
 	 *         NOTE: it depends on the transition function how the object should be structured and which parameters are actually used to influence the transition.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.m.NavContainer} The <code>sap.m.NavContainer</code> instance
+	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.back = function (backData, oTransitionParameters) {
 		this._backTo("back", backData, oTransitionParameters);
@@ -891,7 +891,7 @@ sap.ui.define([
 	 * @public
 	 * @since 1.7.2
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.m.NavContainer} The <code>sap.m.NavContainer</code> instance
+	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.backToPage = function (pageId, backData, oTransitionParameters) {
 		this._backTo("backToPage", backData, oTransitionParameters, pageId);
@@ -1620,7 +1620,7 @@ sap.ui.define([
 	 *         See the documentation of NavContainer.addCustomTransitions for more details about this function.
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
-	 * @returns {sap.m.NavContainer} The <code>sap.m.NavContainer</code> instance
+	 * @returns {this} The <code>sap.m.NavContainer</code> instance
 	 */
 	NavContainer.prototype.addCustomTransition = function (sName, fTo, fBack) {
 		if (NavContainer.transitions[sName]) {

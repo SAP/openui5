@@ -191,7 +191,7 @@ sap.ui.define([
 	 * @method
 	 * @public
 	 * @param {sap.m.Title|sap.ui.core.Title} vTitle Given variant of the a title which can be <code>sap.m.Title</code> or <code>sap.ui.core.Title</code>.
-	 * @returns {sap.m.Title} this Title reference for chaining.
+	 * @returns {this} this Title reference for chaining.
 	 */
 	Title.prototype.setTitle = function(vTitle){
 		var that = this;

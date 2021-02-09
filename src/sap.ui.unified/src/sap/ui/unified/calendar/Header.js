@@ -154,7 +154,7 @@ sap.ui.define([
 	 * If set, the third button will be displayed
 	 *
 	 * @param bVisible
-	 * @returns {sap.ui.unified.calendar.Header}
+	 * @returns {this}
 	 * @private
 	 */
 	Header.prototype._setVisibleButton3 = function (bVisible) {
@@ -177,7 +177,7 @@ sap.ui.define([
 	 * Text of the third button (normally month)
 	 *
 	 * @param sText
-	 * @returns {sap.ui.unified.calendar.Header}
+	 * @returns {this}
 	 * @private
 	 */
 	Header.prototype._setTextButton3 = function(sText){
@@ -198,7 +198,7 @@ sap.ui.define([
 	/**
 	 * Additional text of the third button (normally month)
 	 * @param sText
-	 * @returns {sap.ui.unified.calendar.Header}
+	 * @returns {this}
 	 */
 	Header.prototype._setAdditionalTextButton3 = function(sText){
 		_setAdditionalTextPrivateButton.call(this, 3, sText);
@@ -218,7 +218,7 @@ sap.ui.define([
 	/**
 	 * aria-label of the third button (normally month)
 	 * @param sText
-	 * @returns {sap.ui.unified.calendar.Header}
+	 * @returns {this}
 	 * @private
 	 */
 	Header.prototype._setAriaLabelButton3 = function(sText){
@@ -240,7 +240,7 @@ sap.ui.define([
 	 * If set, the fourth button will be displayed
 	 *
 	 * @param bVisible
-	 * @returns {sap.ui.unified.calendar.Header}
+	 * @returns {this}
 	 * @private
 	 */
 	Header.prototype._setVisibleButton4 = function (bVisible) {
@@ -262,7 +262,7 @@ sap.ui.define([
 	/**
 	 * Text of the fourth button (normally year)
 	 * @param sText
-	 * @returns {sap.ui.unified.calendar.Header}
+	 * @returns {this}
 	 * @private
 	 */
 	Header.prototype._setTextButton4 = function(sText){
@@ -283,7 +283,7 @@ sap.ui.define([
 	/**
 	 * Additional text of the fourth button (normally year)
 	 * @param sText
-	 * @returns {sap.ui.unified.calendar.Header}
+	 * @returns {this}
 	 * @private
 	 */
 	Header.prototype._setAdditionalTextButton4 = function(sText){
@@ -304,7 +304,7 @@ sap.ui.define([
 	/**
 	 * aria-label of the fourth button (normally year)
 	 * @param sText
-	 * @returns {sap.ui.unified.calendar.Header}
+	 * @returns {this}
 	 * @private
 	 */
 	Header.prototype._setAriaLabelButton4 = function(sText){

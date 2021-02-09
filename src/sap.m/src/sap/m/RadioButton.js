@@ -278,7 +278,7 @@ function(
 	/**
 	 * Sets RadioButton's groupName. Only one radioButton from the same group can be selected
 	 * @param {string} sGroupName - Name of the group to which the RadioButton will belong.
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining
+	 * @returns {this} Reference to the control instance for chaining
 	 * @public
 	 */
 	RadioButton.prototype.setGroupName = function(sGroupName) {
@@ -290,7 +290,7 @@ function(
 	/**
 	 * Sets the state of the RadioButton to selected.
 	 * @param {boolean} bSelected - defines if the radio button is selected
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining
+	 * @returns {this} Reference to the control instance for chaining
 	 * @public
 	 */
 	RadioButton.prototype.setSelected = function(bSelected) {
@@ -505,7 +505,7 @@ function(
 	 * Sets the tab index of the control
 	 *
 	 * @param {int} iTabIndex - Greater than or equal to -1
-	 * @return {sap.m.RadioButton}
+	 * @return {this}
 	 * @since 1.16
 	 * @protected
 	 */
@@ -525,7 +525,7 @@ function(
 	 *
 	 * @private
 	 * @param {string} sText The new value of the property.
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining.
+	 * @returns {this} Reference to the control instance for chaining.
 	 */
 	RadioButton.prototype.setValueStateText = function(sText) {
 		return this.setProperty("valueStateText", sText);
@@ -534,7 +534,6 @@ function(
 	/**
 	 * Maintains the RadioButton's internal Label's text property.
 	 * @param {string} sText - The text to be set
-	 * @returns {sap.m.RadioButton} Reference to the control instance for chaining
 	 * @public
 	 */
 	RadioButton.prototype._updateLabelProperties = function () {

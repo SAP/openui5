@@ -77,7 +77,7 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 	 * Sets width of the cell to all sizes if the width is specified.
 	 * @param iValue
 	 * @public
-	 * @returns {sap.ui.layout.BlockLayoutCellData}
+	 * @returns {this}
 	 */
 	BlockLayoutCellData.prototype.setSize = function (iValue) {
 		this.setProperty("mSize", iValue);

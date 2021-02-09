@@ -343,7 +343,7 @@ sap.ui.define([
 				/**
 				 * Enables support.
 				 *
-				 * @returns {sap.m.Support} this to allow method chaining
+				 * @returns {this} this to allow method chaining
 				 * @protected
 				 * @name sap.m.Support.on
 				 * @function
@@ -359,7 +359,7 @@ sap.ui.define([
 				/**
 				 * Disables support.
 				 *
-				 * @returns {sap.m.Support} this to allow method chaining
+				 * @returns {this} this to allow method chaining
 				 * @protected
 				 * @name sap.m.Support.off
 				 * @function

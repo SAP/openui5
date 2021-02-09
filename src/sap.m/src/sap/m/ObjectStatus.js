@@ -166,7 +166,7 @@ sap.ui.define([
 	 * @public
 	 * @param {string} sValue New value for property state.
 	 * It should be valid value of enumeration <code>sap.ui.core.ValueState</code> or <code>sap.ui.core.IndicationColor</code>
-	 * @returns {sap.m.ObjectStatus} this to allow method chaining
+	 * @returns {this} this to allow method chaining
 	 */
 	ObjectStatus.prototype.setState = function(sValue) {
 		if (sValue == null) {

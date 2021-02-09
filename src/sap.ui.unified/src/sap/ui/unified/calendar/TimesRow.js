@@ -328,7 +328,7 @@ sap.ui.define([
 	 * Displays the given date without setting the focus
 	 *
 	 * @param {object} oDate JavaScript Date object for focused date.
-	 * @returns {sap.ui.unified.calendar.TimesRow} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -903,7 +903,7 @@ sap.ui.define([
 	* when focus is being restored back (e.g. after rerendering), we focus the needed DOM element (in this case hour)
 	*
 	* @param {object} oInfo the focus info
-	* @returns {sap.ui.unified.calendar.TimesRow} <code>this</code> for method chaining.
+	* @returns {this} <code>this</code> for method chaining.
 	*/
 	TimesRow.prototype.applyFocusInfo = function(oInfo){
 		this._oItemNavigation.focusItem(this._oItemNavigation.getFocusedIndex());

@@ -512,7 +512,7 @@ sap.ui.define([
 	 * is used. A directly set tooltip to the InPlaceEdit is ignored in this case.
 	 *
 	 * @param {string|sap.ui.core.TooltipBase} oTooltip Tooltip as string or RichTooltip.
-	 * @return {sap.ui.commons.InPlaceEdit} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 		InPlaceEdit.prototype.setTooltip = function(oTooltip) {

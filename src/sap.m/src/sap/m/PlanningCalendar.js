@@ -1024,7 +1024,7 @@ sap.ui.define([
 	/**
 	 * Applies or removes sticky class based on <code>stickyHeader</code>'s value.
 	 *
-	 * @returns {sap.m.PlanningCalendar} <code>this</code> for chaining
+	 * @returns {this} <code>this</code> for chaining
 	 * @private
 	 */
 	PlanningCalendar.prototype._toggleStickyClasses = function () {
@@ -1037,7 +1037,7 @@ sap.ui.define([
 	 * Makes sure that the column headers are offset in such a way, that they are positioned right
 	 * after the navigation toolbar.
 	 *
-	 * @returns {sap.m.PlanningCalendar} <code>this</code> for chaining
+	 * @returns {this} <code>this</code> for chaining
 	 * @private
 	 */
 	PlanningCalendar.prototype._adjustColumnHeadersTopOffset = function () {
@@ -1283,7 +1283,7 @@ sap.ui.define([
 	 * of the same week as the given date).
 	 * @param {Date} oDate the date to set as <code>sap.m.PlanningCalendar</code> <code>startDate</code>. May be changed(adjusted) if
 	 * property <code>startDate</code> is adjusted. See remark about week view above.
-	 * @returns {sap.m.PlanningCalendar} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	PlanningCalendar.prototype.setStartDate = function(oDate) {
@@ -2058,7 +2058,7 @@ sap.ui.define([
 	 * @override
 	 * @public
 	 * @param {boolean} bStick Whether the header area will remain visible (fixed on top)
-	 * @returns {sap.m.PlanningCalendar} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 */
 	PlanningCalendar.prototype.setStickyHeader = function(bStick) {
 		if (this.getStickyHeader() === bStick) {
@@ -2427,7 +2427,7 @@ sap.ui.define([
 	 * <b>Note:</b> Selection only works if <code>singleSelection</code> is set to <code>false</code>.
 	 *
 	 * @param {boolean} bSelect Indicator showing whether <code>PlanningCalendarRows</code> should be selected or deselected
-	 * @returns {sap.m.PlanningCalendar} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -3125,7 +3125,7 @@ sap.ui.define([
 	 * For example, the start time and order to the X axis won't change.
 	 * @param {sap.m.PlanningCalendar.appointmentsSorterCallback} fnSorter
 	 * @since 1.54
-	 * @returns {sap.m.PlanningCalendar} <code>this</code> for chaining
+	 * @returns {this} <code>this</code> for chaining
 	 * @public
 	 */
 

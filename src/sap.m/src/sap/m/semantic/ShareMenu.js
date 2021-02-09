@@ -155,7 +155,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.m.Button} oButton - the new button to be added
 	 * @param {boolean} bSuppressInvalidate - if true, the menu as well as the added child are not marked as changed
-	 * @return {sap.m.semantic.ShareMenu} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 */
 	ShareMenu.prototype.addContent = function (oButton, bSuppressInvalidate) {
 		var sMode = this._getMode();
@@ -183,7 +183,7 @@ sap.ui.define([
 	 * @param {sap.m.Button} oButton - the new button to be inserted
 	 * @param {number} iIndex - the insert index
 	 * @param {boolean} bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
-	 * @return {sap.m.semantic.ShareMenu} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 */
 	ShareMenu.prototype.insertContent = function (oButton, iIndex, bSuppressInvalidate) {
 		var sMode = this._getMode();
@@ -305,7 +305,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bSuppressInvalidate - if true, the menu as well as the inserted child are not marked as changed
 	 * @param {sap.m.Button} oButton - the new base button
-	 * @return {sap.m.semantic.ShareMenu} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 */
 	ShareMenu.prototype._setBaseButton = function (oButton, bSuppressInvalidate) {
 		if (this._oBaseButton === oButton) {
@@ -341,7 +341,7 @@ sap.ui.define([
 	 * @param {boolean} bSuppressInvalidate - flag to suppress control invalidation upon change
 	 * @param oBaseButton - when the new mode is ShareMenu._Mode.button, a reference to that button
 	 *
-	 * @return {sap.m.semantic.ShareMenu} Returns <code>this</code> to allow method chaining
+	 * @return {this} Returns <code>this</code> to allow method chaining
 	 */
 	ShareMenu.prototype._setMode = function (sMode, bSuppressInvalidate, oBaseButton) {
 

@@ -1040,7 +1040,7 @@ sap.ui.define([
 	/**
 	 * Sets the value for aria-roledescription attribute
 	 * @param {string} sAriaRoleDescription
-	 * @return {sap.f.DynamicPage} this for chaining
+	 * @return {this} this for chaining
 	 * @private
 	 */
 	DynamicPage.prototype._setAriaRoleDescription = function (sAriaRoleDescription) {

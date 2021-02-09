@@ -621,7 +621,7 @@ sap.ui.define([
 	 * Sets the last value of the column if mergeDuplicates property is true
 	 *
 	 * @param {any} value Any Value
-	 * @returns {sap.m.Column}
+	 * @returns {this}
 	 * @since 1.16
 	 * @protected
 	 */
@@ -635,7 +635,7 @@ sap.ui.define([
 	/**
 	 * Clears the last value of the column if mergeDuplicates property is true
 	 *
-	 * @returns {sap.m.Column}
+	 * @returns {this}
 	 * @since 1.20.4
 	 * @protected
 	 */

@@ -252,7 +252,7 @@ sap.ui.define([
 	/**
 	 * Role of the inner chart item, see @sap.ui.mdc.ChartItemRoleType
 	 * @param vRole The role of the inner chart item
-	 * @return {sap.ui.mdc.chart.MeasureItem} reference to the <code>MeasureItem</code> for method chaining
+	 * @return {this} reference to the <code>MeasureItem</code> for method chaining
 	 *
 	 * @experimental
 	 * @private

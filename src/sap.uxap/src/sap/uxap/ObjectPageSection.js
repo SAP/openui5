@@ -89,9 +89,9 @@ sap.ui.define([
 	ObjectPageSection.MEDIA_RANGE = Device.media.RANGESETS.SAP_STANDARD;
 
 	/**
-	 * Returns the closest ObjectPageSection
+	 * Returns the closest ObjectPageSection.
 	 * @param  {sap.uxap.ObjectPageSectionBase} oSectionBase
-	 * @returns {sap.uxap.ObjectPageSection}
+	 * @returns {sap.uxap.ObjectPageSection} The closest ObjectPageSection
 	 * @private
 	 */
 	ObjectPageSection._getClosestSection = function (vSectionBase) {

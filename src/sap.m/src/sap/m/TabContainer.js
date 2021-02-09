@@ -463,7 +463,7 @@ sap.ui.define([
 		 * Adds a new <code>TabContainerItem</code> to the <code>items</code> aggregation of the <code>TabContainer</code>.
 		 *
 		 * @param {sap.m.TabContainerItem} oItem The new <code>TabContainerItem</code> to be added
-		 * @returns {sap.m.TabContainer} This <code>TabContainer</code> to allow method chaining
+		 * @returns {this} This <code>TabContainer</code> to allow method chaining
 		 * @override
 		 */
 		TabContainer.prototype.addItem = function(oItem) {
@@ -488,7 +488,7 @@ sap.ui.define([
 		/*
 		 * Destroys all <code>TabContainerItem</code> entities from the <code>items</code> aggregation of the <code>TabContainer</code>.
 		 *
-		 * @returns {sap.m.TabContainer} This instance for chaining
+		 * @returns {this} This instance for chaining
 		 * @override
 		 */
 		TabContainer.prototype.destroyItems = function() {
@@ -503,7 +503,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.m.TabContainerItem} oItem The new <code>TabContainerItem</code> to be inserted
 		 * @param {int} iIndex The index where the passed <code>TabContainerItem</code> to be inserted
-		 * @returns {sap.m.TabContainer} This instance for chaining
+		 * @returns {this} This instance for chaining
 		 * @override
 		 */
 		TabContainer.prototype.insertItem = function(oItem, iIndex) {
@@ -527,7 +527,7 @@ sap.ui.define([
 		/*
 		 * Removes all <code>TabContainerItem</code> entities from the <code>items</code> aggregation of the <code>TabContainer</code>.
 		 *
-		 * @returns {sap.m.TabContainer} This instance for chaining
+		 * @returns {sap.m.TabContainerItem[]} The removed items
 		 * @override
 		 */
 		TabContainer.prototype.removeAllItems = function() {
@@ -542,7 +542,7 @@ sap.ui.define([
 		 * Overrides the <code>addButton</code> property setter to proxy to the <code>TabStrip</code>.
 		 *
 		 * @param {sap.ui.core.Control} oButton The new control to be set as <code>TabStrip</code> <code>addButton</code> aggregation
-		 * @returns {sap.m.TabContainer} This instance for chaining
+		 * @returns {this} This instance for chaining
 		 * @override
 		 */
 		TabContainer.prototype.setAddButton = function (oButton) {
@@ -563,7 +563,7 @@ sap.ui.define([
 		 * Override <code>showAddNewButton</code> property setter to proxy to the <code>TabStrip</code>.
 		 *
 		 * @param {boolean} bShowButton Whether to show the <code>addNewButton</code>
-		 * @returns {sap.m.TabContainer} <code>this</code> pointer for chaining
+		 * @returns {this} <code>this</code> pointer for chaining
 		 * @override
 		 */
 		TabContainer.prototype.setShowAddNewButton = function (bShowButton) {
@@ -586,7 +586,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.m.TabContainerItem} oSelectedItem The new <code>TabContainerItem</code> to be selected
 		 * @param {jQuery.Event} oEvent  Event object that may be present when the selection change is bubbling
-		 * @returns {sap.m.TabContainer} <code>this</code> pointer for chaining
+		 * @returns {this} <code>this</code> pointer for chaining
 		 * @override
 		 */
 		TabContainer.prototype.setSelectedItem = function (oSelectedItem, oEvent) {

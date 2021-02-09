@@ -1802,7 +1802,7 @@ sap.ui.define([
 	 * </ul>
 	 *
 	 * @param {object} [mArguments] the arguments to pass along with the event.
-	 * @return {sap.ui.commons.ComboBox} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @protected
 	 * @name sap.ui.commons.ComboBox#fireChange
 	 * @function

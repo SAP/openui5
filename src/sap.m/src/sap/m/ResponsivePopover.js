@@ -286,7 +286,7 @@ sap.ui.define([
 	 *
 	 * @name sap.m.ResponsivePopover#close
 	 * @function
-	 * @return {sap.m.ResponsivePopover} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -679,7 +679,7 @@ sap.ui.define([
 	/**
 	 * Setter for beginButton aggregation
 	 * @param {sap.m.Button} oButton The button that will be set as an aggregation
-	 * @returns {sap.m.ResponsivePopover} Pointer to the control instance for chaining
+	 * @returns {this} Pointer to the control instance for chaining
 	 * @public
 	 */
 	ResponsivePopover.prototype.setBeginButton = function(oButton){
@@ -690,7 +690,7 @@ sap.ui.define([
 	/**
 	 * Setter for endButton aggregation
 	 * @param {sap.m.Button} oButton The button that will be set as an aggregation
-	 * @returns {sap.m.ResponsivePopover} Pointer to the control instance for chaining
+	 * @returns {this} Pointer to the control instance for chaining
 	 * @public
 	 */
 	ResponsivePopover.prototype.setEndButton = function(oButton){
@@ -701,7 +701,7 @@ sap.ui.define([
 	/**
 	 * Determines if the close button to the ResponsivePopover is shown or not. Works only when ResponsivePopover is used as a dialog
 	 * @param {boolean} bShowCloseButton Defines whether the close button is shown
-	 * @returns {sap.m.ResponsivePopover} Pointer to the control instance for chaining
+	 * @returns {this} Pointer to the control instance for chaining
 	 * @public
 	 */
 	ResponsivePopover.prototype.setShowCloseButton = function(bShowCloseButton) {

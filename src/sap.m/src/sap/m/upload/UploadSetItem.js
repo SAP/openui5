@@ -382,7 +382,7 @@ sap.ui.define([
 	 * @param {int} iProgress Current progress.
 	 *
 	 * @public
-	 * @returns {sap.m.upload.UploadSetItem} Returns instance for chaining.
+	 * @returns {this} Returns instance for chaining.
 	 *
 	 */
 	UploadSetItem.prototype.setProgress = function (iProgress) {

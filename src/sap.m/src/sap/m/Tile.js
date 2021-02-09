@@ -255,7 +255,7 @@ sap.ui.define([
 	/**
 	 * Sets initial visibility of the Tile.
 	 * @param {boolean} bVisible visibility
-	 * @returns {sap.m.Tile} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	Tile.prototype._setVisible = function(bVisible){

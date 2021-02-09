@@ -260,7 +260,7 @@ sap.ui.define([
 		/**
 		 * Write the given texts to the buffer
 		 * @param {...string|number} sText (can be a number too)
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @SecSink {*|XSS}
 		 */
@@ -277,7 +277,7 @@ sap.ui.define([
 		 *
 		 * @param {any} sText the text to escape
 		 * @param {boolean} bLineBreaks Whether to convert line breaks into <br> tags
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 */
 		this.writeEscaped = function(sText, bLineBreaks) {
@@ -298,7 +298,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the attribute
 		 * @param {string | number | boolean} vValue Value of the attribute
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @SecSink {0 1|XSS} Attributes are written to HTML without validation
 		 */
@@ -316,7 +316,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the attribute
 		 * @param {any} vValue Value of the attribute
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @SecSink {0|XSS}
 		 */
@@ -332,7 +332,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the CSS property to write
 		 * @param {string|float|int} vValue Value to write
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @SecSink {0 1|XSS} Styles are written to HTML without validation
 		 */
@@ -351,7 +351,7 @@ sap.ui.define([
 
 		/**
 		 * Writes and flushes the style collection
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 */
 		this.writeStyles = function() {
@@ -368,7 +368,7 @@ sap.ui.define([
 		 * The class collection is flushed if it is written to the buffer using {@link #writeClasses}
 		 *
 		 * @param {string} sName name of the class to be added; null values are ignored
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @SecSink {0|XSS} Classes are written to HTML without validation
 		 */
@@ -391,7 +391,7 @@ sap.ui.define([
 		 * classes are added instead. If oElement === false, no custom style classes are added.
 		 *
 		 * @param {sap.ui.core.Element | boolean} [oElement] an Element from which to add custom style classes (instead of adding from the control itself)
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 */
 		this.writeClasses = function(oElement) {
@@ -437,7 +437,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sTagName Tag name of the HTML element
 	 	 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] Control instance or ID to identify the element
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 *
 		 * @public
 		 * @since 1.67
@@ -464,7 +464,7 @@ sap.ui.define([
 		 *
 		 * This indicates that there are no more attributes to set to the open tag.
 		 *
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -486,7 +486,7 @@ sap.ui.define([
 		 * This indicates that there are no more children to append to the open tag.
 		 *
 		 * @param {string} sTagName Tag name of the HTML element
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -508,7 +508,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sTagName Tag name of the HTML element
 		 * @param {sap.ui.core.Element|sap.ui.core.ID} [vControlOrId] Control instance or ID to identify the element
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -525,7 +525,7 @@ sap.ui.define([
 		 * This indicates that there are no more attributes to set to the open tag.
 		 * For self-closing tags <code>close</code> must not be called.
 		 *
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -547,7 +547,7 @@ sap.ui.define([
 		 * This must not be used for plain texts; use the <code>text</code> method instead.
 		 *
 		 * @param {string} sHtml Well-formed, valid HTML markup
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 * @SecSink {*|XSS}
@@ -563,7 +563,7 @@ sap.ui.define([
 		 * Sets the text content with the given text.
 		 *
 		 * @param {string} sText The text to be written
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -586,7 +586,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the attribute
 		 * @param {*} vValue Value of the attribute
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -604,7 +604,7 @@ sap.ui.define([
 		 * Class name must not contain any whitespace.
 		 *
 		 * @param {string} sClass Class name to be written
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -624,7 +624,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sName Name of the style property
 		 * @param {string} sValue Value of the style property
-		 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 * @since 1.67
 		 */
@@ -873,7 +873,7 @@ sap.ui.define([
 		 * If the given control is undefined or null, then nothing is rendered.
 		 *
 		 * @param {sap.ui.core.Control} oControl the control that should be rendered
-		 * @returns {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+		 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 */
 		this.renderControl = function(oControl) {
@@ -1421,7 +1421,7 @@ sap.ui.define([
 
 	/**
 	 * @deprecated As of version 1.1, never has been implemented - DO NOT USE
-	 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeAcceleratorKey = function() {
@@ -1440,7 +1440,7 @@ sap.ui.define([
 	 * Writes the controls data into the HTML.
 	 * Control Data consists at least of the id of a control
 	 * @param {sap.ui.core.Control} oControl the control whose identifying information should be written to the buffer
-	 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeControlData = function(oControl) {
@@ -1453,7 +1453,7 @@ sap.ui.define([
 	 * Writes the elements data into the HTML.
 	 * Element Data consists at least of the id of an element
 	 * @param {sap.ui.core.Element} oElement the element whose identifying information should be written to the buffer
-	 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeElementData = function(oElement) {
@@ -1533,7 +1533,7 @@ sap.ui.define([
 	 *            [oElement] The <code>Element</code> whose accessibility state should be rendered
 	 * @param {object}
 	 *            [mProps] A map of additional properties that should be added or changed.
-	 * @return {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeAccessibilityState = function(oElement, mProps) {
@@ -1651,7 +1651,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.URI} sURI URI of an image or of an icon registered in {@link sap.ui.core.IconPool}
 	 * @param {array|string} [aClasses] Additional classes that are added to the rendered tag
 	 * @param {object} [mAttributes] Additional attributes that will be added to the rendered tag
-	 * @returns {sap.ui.core.RenderManager} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	RenderManager.prototype.writeIcon = function(sURI, aClasses, mAttributes){

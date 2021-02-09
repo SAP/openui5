@@ -175,7 +175,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sValue The text of the title
-	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
+	 * @return {this} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setTitle = function(sValue) {
 		this.setProperty("title", sValue, true);
@@ -188,7 +188,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sValue The text of the subtitle
-	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
+	 * @return {this} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setSubtitle = function(sValue) {
 		this.setProperty("subtitle", sValue, true);
@@ -201,7 +201,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sValue The value of the unit of measurement
-	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
+	 * @return {this} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setUnitOfMeasurement = function(sValue) {
 		this.setProperty("unitOfMeasurement", sValue, true);
@@ -214,7 +214,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sValue The text of the details
-	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
+	 * @return {this} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setDetails = function(sValue) {
 		this.setProperty("details", sValue, true);
@@ -227,7 +227,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sValue A string representation of the number
-	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
+	 * @return {this} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setNumber = function(sValue) {
 		this.setProperty("number", sValue, true);
@@ -240,7 +240,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {string} sValue The text of the title
-	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
+	 * @return {this} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setScale = function(sValue) {
 		this.setProperty("scale", sValue, true);
@@ -253,7 +253,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {sap.m.DeviationIndicator} sValue The direction of the trend arrow
-	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
+	 * @return {this} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setTrend = function(sValue) {
 		this.setProperty("trend", sValue, true);
@@ -266,7 +266,7 @@ sap.ui.define([
 	 *
 	 * @public
 	 * @param {sap.m.ValueColor} sValue The semantic color which represents the state
-	 * @return {sap.f.cards.NumericHeader} <code>this</code> pointer for chaining
+	 * @return {this} <code>this</code> pointer for chaining
 	 */
 	NumericHeader.prototype.setState = function(sValue) {
 		this.setProperty("state", sValue, true);

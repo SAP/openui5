@@ -185,7 +185,7 @@ sap.ui.define([
 	/**
 	 * Setter for the aggregated <code>menu</code>.
 	 * @param {sap.ui.unified.Menu} oMenu The menu to be set to the menu aggregation
-	 * @return {sap.ui.commons.MenuButton} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	MenuButton.prototype.setMenu = function(oMenu) {
@@ -197,7 +197,7 @@ sap.ui.define([
 	/**
 	 * Destroys the menu in the aggregation
 	 * named <code>menu</code>.
-	 * @return {sap.ui.commons.MenuButton} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	MenuButton.prototype.destroyMenu = function() {
@@ -265,7 +265,7 @@ sap.ui.define([
 	 *            [oListener] Context object to call the event handler with. Defaults to this
 	 *            <code>sap.ui.commons.MenuButton</code> itself
 	 *
-	 * @return {sap.ui.commons.MenuButton} Reference to <code>this</code> in order to allow method chaining
+	 * @return {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 * @name sap.ui.commons.MenuButton#attachPress
 	 * @function
@@ -283,7 +283,7 @@ sap.ui.define([
 	 *            fnFunction The function to be called, when the event occurs
 	 * @param {object}
 	 *            [oListener] Context object on which the given function had to be called
-	 * @return {sap.ui.commons.MenuButton} Reference to <code>this</code> to allow method chaining
+	 * @return {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 * @name sap.ui.commons.MenuButton#detachPress
 	 * @function
@@ -295,7 +295,7 @@ sap.ui.define([
 	 * @see sap.ui.commons.MenuButton#fireItemSelected
 	 *
 	 * @param {object} [oParameters] Parameters to pass along with the event
-	 * @return {sap.ui.commons.MenuButton} Reference to <code>this</code> to allow method chaining
+	 * @return {this} Reference to <code>this</code> to allow method chaining
 	 * @protected
 	 * @name sap.ui.commons.MenuButton#firePress
 	 * @function

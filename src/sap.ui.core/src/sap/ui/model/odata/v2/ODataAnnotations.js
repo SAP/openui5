@@ -326,7 +326,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] Context object to call the event handler with, defaults to this
 	 *            <code>ODataAnnotations</code> itself
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachSuccess = function(oData, fnFunction, oListener) {
@@ -340,7 +340,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachSuccess = function(fnFunction, oListener) {
@@ -387,7 +387,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] Context object to call the event handler with, defaults to this
 	 *            <code>ODataAnnotations</code> itself
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachError = function(oData, fnFunction, oListener) {
@@ -401,7 +401,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachError = function(fnFunction, oListener) {
@@ -448,7 +448,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] Context object to call the event handler with, defaults to this
 	 *            <code>ODataAnnotations</code> itself
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachLoaded = function(oData, fnFunction, oListener) {
@@ -462,7 +462,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachLoaded = function(fnFunction, oListener) {
@@ -508,7 +508,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] Context object to call the event handler with, defaults to this
 	 *            <code>ODataAnnotations</code> itself
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachFailed = function(oData, fnFunction, oListener) {
@@ -522,7 +522,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachFailed = function(fnFunction, oListener) {
@@ -548,7 +548,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] Context object to call the event handler with, defaults to this
 	 *            <code>ODataAnnotations</code> itself
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachSomeLoaded = function(oData, fnFunction, oListener) {
@@ -562,7 +562,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachSomeLoaded = function(fnFunction, oListener) {
@@ -588,7 +588,7 @@ sap.ui.define([
 	 * @param {object}
 	 *            [oListener] Context object to call the event handler with, defaults to this
 	 *            <code>ODataAnnotations</code> itself
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.attachAllFailed = function(oData, fnFunction, oListener) {
@@ -602,7 +602,7 @@ sap.ui.define([
 	 *
 	 * @param {function} fnFunction The function to be called, when the event occurs
 	 * @param {object} [oListener] Context object on which the given function had to be called
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @public
 	 */
 	ODataAnnotations.prototype.detachAllFailed = function(fnFunction, oListener) {
@@ -617,7 +617,7 @@ sap.ui.define([
 	 * data.
 	 *
 	 * @param {Object} mResult The filled source-map of the successful loading and parsing
-	 * @returns {sap.ui.model.odata.v2.ODataAnnotations} Reference to <code>this</code> to allow method chaining
+	 * @returns {this} Reference to <code>this</code> to allow method chaining
 	 * @private
 	 */
 	ODataAnnotations.prototype._fireSuccess = function(mResult) {
@@ -629,7 +629,7 @@ sap.ui.define([
 	 * data.
 	 *
 	 * @param {Error} oError The error that occurred.
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
+	 * @return {this} Returns <code>this</code> to allow method chaining.
 	 * @private
 	 */
 	ODataAnnotations.prototype._fireError = function(oError) {
@@ -641,7 +641,7 @@ sap.ui.define([
 	 * Fires the <code>loaded</code> event with an array of results in the result-parameter of the event.
 	 *
 	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source[]} aResults An array of results
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
+	 * @return {this} Returns <code>this</code> to allow method chaining.
 	 * @private
 	 */
 	ODataAnnotations.prototype._fireLoaded = function(aResults) {
@@ -652,7 +652,7 @@ sap.ui.define([
 	 * Fires the <code>failed</code> event with an array of results and errors in the result-parameter of the event.
 	 *
 	 * @param {Error[]} aErrors An array of Errors
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
+	 * @return {this} Returns <code>this</code> to allow method chaining.
 	 * @private
 	 */
 	ODataAnnotations.prototype._fireFailed = function(aErrors) {
@@ -663,7 +663,7 @@ sap.ui.define([
 	 * Fires the <code>someLoaded</code> event with an array of results and errors in the result-parameter of the event.
 	 *
 	 * @param {sap.ui.model.odata.v2.ODataAnnotations.Source[]|Error[]|any} aResults An array of results and Errors
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
+	 * @return {this} Returns <code>this</code> to allow method chaining.
 	 * @private
 	 */
 	ODataAnnotations.prototype._fireSomeLoaded = function(aResults) {
@@ -674,7 +674,7 @@ sap.ui.define([
 	 * Fires the <code>failed</code> event with an array of errors in the result-parameter of the event.
 	 *
 	 * @param {Error[]} aErrors An array of Errors
-	 * @return {sap.ui.model.odata.v2.ODataAnnotations} Returns <code>this</code> to allow method chaining.
+	 * @return {this} Returns <code>this</code> to allow method chaining.
 	 * @private
 	 */
 	ODataAnnotations.prototype._fireAllFailed = function(aErrors) {

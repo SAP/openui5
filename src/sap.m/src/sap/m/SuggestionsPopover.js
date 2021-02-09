@@ -597,7 +597,7 @@ sap.ui.define([
 	 * @param {string} sValueState Value state of the control
 	 * @param {(string|object)} vValueStateText Value state message text of the control.
 	 * @param {boolean} bShowValueStateMessage Whether or not a value state message should be displayed.
-	 * @returns {sap.m.SuggestionsPopover} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 *
 	 * @private
 	 */

@@ -239,7 +239,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 * Opens the BusyDialog.
 		 *
 		 * @public
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.open = function () {
 			Log.debug("sap.m.BusyDialog.open called at " + new Date().getTime());
@@ -295,7 +295,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 *
 		 * @public
 		 * @param {string} sTitle The title for the BusyDialog.
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setTitle = function (sTitle) {
 			//the text can be changed only before opening
@@ -318,7 +318,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 *
 		 * @public
 		 * @param {string} sTooltip The tooltip for the BusyDialog.
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setTooltip = function (sTooltip) {
 			this._oDialog.setTooltip(sTooltip);
@@ -342,7 +342,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 *
 		 * @public
 		 * @param {string} sText The text for the BusyDialog.
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setText = function (sText) {
 			//the text can be changed only before opening
@@ -370,7 +370,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 *
 		 * @public
 		 * @param {string} sIcon Icon to use as a busy animation.
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setCustomIcon = function (sIcon) {
 			this.setProperty("customIcon", sIcon, true);
@@ -383,7 +383,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 *
 		 * @public
 		 * @param {int} iSpeed Defines the rotation speed of the given image.
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setCustomIconRotationSpeed = function (iSpeed) {
 			this.setProperty("customIconRotationSpeed", iSpeed, true);
@@ -396,7 +396,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 *
 		 * @public
 		 * @param {boolean} bIsDensityAware Determines if the source image will be loaded directly without attempting to fetch the density for high density devices.
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setCustomIconDensityAware = function (bIsDensityAware) {
 			this.setProperty("customIconDensityAware", bIsDensityAware, true);
@@ -409,7 +409,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 *
 		 * @public
 		 * @param {string} sWidth Width of the provided icon in CSSSize.
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setCustomIconWidth = function (sWidth) {
 			this.setProperty("customIconWidth", sWidth, true);
@@ -422,7 +422,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 *
 		 * @public
 		 * @param {string} sHeight Height of the provided icon in CSSSize.
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setCustomIconHeight = function (sHeight) {
 			this.setProperty("customIconHeight", sHeight, true);
@@ -435,7 +435,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 *
 		 * @public
 		 * @param {boolean} bIsCancelButtonShown Determines if the Cancel button is shown.
-		 * @returns {sap.m.BusyDialog} BusyDialog reference for chaining.
+		 * @returns {this} BusyDialog reference for chaining.
 		 */
 		BusyDialog.prototype.setShowCancelButton = function (bIsCancelButtonShown) {
 			this.setProperty("showCancelButton", bIsCancelButtonShown, false);

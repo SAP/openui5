@@ -293,7 +293,7 @@ sap.ui.define([
 	/*
 	 * Loads the appropriate type of FacetFilter according to device.
 	 * @param {object} oType Type of FacetFilter to render depending on device
-	 * @returns {sap.m.FacetFilter} this for chaining
+	 * @returns {this} this for chaining
 	 */
 	FacetFilter.prototype.setType = function(oType) {
 
@@ -328,7 +328,7 @@ sap.ui.define([
 	/*
 	 * Sets whether or not to display Reset button to reset values.
 	 * @param {boolean} bVal Boolean to set Reset button to true or false
-	 * @returns {sap.m.FacetFilter} this for chaining
+	 * @returns {this} this for chaining
 	 */
 	FacetFilter.prototype.setShowReset = function(bVal) {
 
@@ -354,7 +354,7 @@ sap.ui.define([
 	/*
 	 * Sets whether or not to display summary bar.
 	 * @param {boolean} bVal Boolean to set summary bar to <code>true</code> or <code>false</code>
-	 * @returns {sap.m.FacetFilter} this for chaining
+	 * @returns {this} this for chaining
 	 */
 	FacetFilter.prototype.setShowSummaryBar = function(bVal) {
 
@@ -379,7 +379,7 @@ sap.ui.define([
 	/*
 	 * Sets whether or not to display live search bar.
 	 * @param {boolean} bVal Boolean to set live search bar to <code>true</code> or <code>false</code>
-	 * @returns {sap.m.FacetFilter} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 */
 	FacetFilter.prototype.setLiveSearch = function(bVal) {
 
@@ -456,7 +456,7 @@ sap.ui.define([
 	/**
 	 * Opens the FacetFilter dialog.
 	 *
-	 * @returns {sap.m.FacetFilter} this pointer for chaining
+	 * @returns {this} this pointer for chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1174,7 +1174,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.m.Popover} oPopover the Popover to be opened
 	 * @param {sap.m.Control} oControl The control the popover will be opened "by"
-	 * @returns {sap.m.FacetFilter} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @private
 	 */
 	FacetFilter.prototype._openPopover = function(oPopover, oControl) {
@@ -1720,7 +1720,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 * @ui5-restricted hpa.cei.mkt.cal -> FacetFilter.controller -> OnDisplayRefreshed
-	 * @returns {sap.m.FacetFilter}
+	 * @returns {this}
 	 */
 	FacetFilter.prototype.refreshFacetList = function () {
 		this._oFacetList.getModel().setData({ items: this._getMapFacetLists() });

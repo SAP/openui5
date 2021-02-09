@@ -199,7 +199,7 @@ sap.ui.define([
 	 * after displaying a Target without involving a Router.
 	 *
 	 * @param {sap.ui.core.routing.Router} oRouter the router from which the resetHash is started
-	 * @return {sap.ui.core.routing.RouterHashChanger} The current RouterHashChanger for chaining the method
+	 * @return {this} The current RouterHashChanger for chaining the method
 	 * @protected
 	 */
 	RouterHashChanger.prototype.resetHash = function(oRouter) {

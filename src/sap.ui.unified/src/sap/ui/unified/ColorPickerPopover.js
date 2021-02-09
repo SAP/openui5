@@ -341,7 +341,7 @@ sap.ui.define([
 		/**
 		 * On submit fires change event of the control with parameters
 		 * taken from the event fired from the ColorPicker control.
-		 * @return {sap.ui.unified.ColorPickerPopover} <code>this</code> for method chaining.
+		 * @return {this} <code>this</code> for method chaining.
 		 * @private
 		 */
 		ColorPickerPopover.prototype._handleChange = function (oEvent) {

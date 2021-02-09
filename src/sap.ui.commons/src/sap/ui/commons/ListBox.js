@@ -414,7 +414,7 @@ sap.ui.define([
 	 * @param {int} iIndex The index to which the ListBox should scroll.
 	 * @param {boolean} bLazy
 	 *         If set to true, the ListBox only scrolls if the item is not completely visible, and it scrolls for exactly the space to make it fully visible. If set to false, the item is scrolled to the top position (if possible).
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.scrollToIndex = function(iIndex, bLazy) {
@@ -462,7 +462,7 @@ sap.ui.define([
 	 * Makes the ListBox render with a height that allows it to display exactly the given number of items.
 	 *
 	 * @param {int} iItemCount The number of items that should fit into the ListBox without scrolling.
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.setVisibleItems = function(iItemCount) {
@@ -534,7 +534,7 @@ sap.ui.define([
 	 * Sets the height of this ListBox in CSS units.
 	 *
 	 * @param {sap.ui.core.CSSSize} sHeight New height for the ListBox.
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.setHeight = function(sHeight) {
@@ -562,7 +562,7 @@ sap.ui.define([
 	 * Sets the width of this ListBox in CSS units.
 	 *
 	 * @param {sap.ui.core.CSSSize} sWidth New width for the ListBox.
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.setWidth = function(sWidth) {
@@ -578,7 +578,7 @@ sap.ui.define([
 	 * Positions the ListBox contents so that they are scrolled-down by the given number of pixels.
 	 *
 	 * @param {int} iScrollTop Vertical scroll position in pixels.
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.setScrollTop = function (iScrollTop) {
@@ -818,7 +818,7 @@ sap.ui.define([
 	 *This method removes any previous selections. When the given index is invalid, the call is ignored.
 	 *
 	 * @param {int} iSelectedIndex Index to be selected.
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.setSelectedIndex = function(iSelectedIndex) {
@@ -852,7 +852,7 @@ sap.ui.define([
 	 * When the given index is invalid, the call is ignored.
 	 *
 	 * @param {int} iSelectedIndex Index to add to selection..
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.addSelectedIndex = function(iSelectedIndex) {
@@ -887,7 +887,7 @@ sap.ui.define([
 	 * Removes the given index from this selection. When the index is invalid or not selected, the call is ignored.
 	 *
 	 * @param {int} iIndex Index that shall be removed from selection.
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.removeSelectedIndex = function(iIndex) {
@@ -910,7 +910,7 @@ sap.ui.define([
 	/**
 	 * Removes complete selection.
 	 *
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.clearSelection = function() {
@@ -958,7 +958,7 @@ sap.ui.define([
 	 * The previous selection is in any case replaced.
 	 *
 	 * @param {int[]} aSelectedIndices Indices of the items to be selected.
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.setSelectedIndices = function(aSelectedIndices) {
@@ -998,7 +998,7 @@ sap.ui.define([
 	 * Adds the given indices to selection. Any invalid indices are ignored.
 	 *
 	 * @param {int[]} aSelectedIndices Indices of the items that shall additionally be selected.
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.addSelectedIndices = function(aSelectedIndices) {
@@ -1056,7 +1056,7 @@ sap.ui.define([
 	 * The previous selection is replaced in any case.
 	 *
 	 * @param {string[]} aSelectedKeys The keys of the items to be selected.
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.setSelectedKeys = function(aSelectedKeys) {
@@ -1180,7 +1180,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.core.ListItem[]} aItems The items to set for this ListBox.
 	 * @param {boolean} bDestroyItems Optional boolean parameter to indicate that the formerly set items should be destroyed, instead of just removed.
-	 * @return {sap.ui.commons.ListBox} <code>this</code> to allow method chaining.
+	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
 	ListBox.prototype.setItems = function(aItems, bDestroyItems, bNoItemsChanged) {

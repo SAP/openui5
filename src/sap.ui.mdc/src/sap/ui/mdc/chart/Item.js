@@ -82,7 +82,7 @@ sap.ui.define([
 	/**
 	 * Role of the inner chart item, see @sap.ui.mdc.ChartItemRoleType
 	 * @param {string} vRole The role of the inner chart item
-	 * @return {sap.ui.mdc.chart.Item}
+	 * @return {this}
 	 */
 	Item.prototype.setRole = function(vRole) {
 		throw new Error("sap.ui.mdc.chart.Item - setRole not implemented see sap.ui.mdc.chart.DimensionItem or sap.ui.mdc.chart.MeasureItem");

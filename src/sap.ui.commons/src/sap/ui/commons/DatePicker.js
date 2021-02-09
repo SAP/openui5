@@ -488,7 +488,7 @@ sap.ui.define([
 		 * </ul>
 		 *
 		 * @param {boolean} bInvalidValue true is value is invalid
-		 * @return {sap.ui.commons.DatePicker} <code>this</code> to allow method chaining
+		 * @return {this} <code>this</code> to allow method chaining
 		 * @protected
 		 */
 		DatePicker.prototype.fireChange = function(bInvalidValue) {

@@ -261,7 +261,7 @@ sap.ui.define([
 	 * If the <code>usage</code> property is set the ComponentLifecycle is processed like a "Container" lifecycle.
 	 *
 	 * @param {string|sap.ui.core.UIComponent} vComponent ID of an element which becomes the new target of this component association. Alternatively, an element instance may be given.
-	 * @return {sap.ui.core.ComponentContainer} the reference to <code>this</code> in order to allow method chaining
+	 * @return {this} the reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	ComponentContainer.prototype.setComponent = function(vComponent, bSuppressInvalidate) {

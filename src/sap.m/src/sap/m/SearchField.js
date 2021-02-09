@@ -976,7 +976,7 @@ sap.ui.define([
 	 * This method may be called only as a response to the <code>suggest</code> event to ensure that the suggestion list is shown
 	 * at the moment when the user expects it.
 	 *
-	 * @returns {sap.m.SearchField} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @since 1.34
 	 */

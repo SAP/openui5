@@ -127,7 +127,7 @@ sap.ui.define(['sap/ui/core/Element', 'sap/ui/model/SelectionModel', './library'
 	 * @param {string | sap.ui.core.Item} vSelectedItem
 	 *    Id of a selectedItem which becomes an additional target of this <code>selectedItems</code> association.
 	 *    Alternatively, a selectedItem instance may be given.
-	 * @return {sap.ui.ux3.Collection} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	Collection.prototype.addSelectedItem = function(vSelectedItem) {

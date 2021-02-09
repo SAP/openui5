@@ -1185,7 +1185,7 @@ sap.ui.define([
 	/**
 	 * Ensures the given listbox is 'cleaned-up'.
 	 * @param {sap.ui.commons.ListBox} oListBox the listBox to clean up
-	 * @returns {sap.ui.commons.DropdownBox} this instance of DropdownBox
+	 * @returns {this} this instance of DropdownBox
 	 * @private
 	 */
 	DropdownBox.prototype._cleanupClose = function(oListBox){
@@ -1483,7 +1483,7 @@ sap.ui.define([
 	 * @param {string} sText new value for property <code>searchHelpText</code>
 	 * @param {string} sAdditionalText new value for property <code>searchHelpAdditionalText</code>
 	 * @param {string} sIcon new value for property <code>searchHelpIcon</code>
-	 * @return {sap.ui.commons.DropdownBox} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpEnabled = function(bEnabled, sText, sAdditionalText, sIcon) {
@@ -1545,7 +1545,7 @@ sap.ui.define([
 	 * Default value is empty/<code>undefined</code>
 	 *
 	 * @param {string} sSearchHelpText new value for property <code>searchHelpText</code>
-	 * @return {sap.ui.commons.DropdownBox} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpText = function(sSearchHelpText) {
@@ -1562,7 +1562,7 @@ sap.ui.define([
 	 * Default value is empty/<code>undefined</code>
 	 *
 	 * @param {string} sSearchHelpAdditionalText new value for property <code>searchHelpAdditionalText</code>
-	 * @return {sap.ui.commons.DropdownBox} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpAdditionalText = function(sSearchHelpAdditionalText) {
@@ -1579,7 +1579,7 @@ sap.ui.define([
 	 * Default value is empty/<code>undefined</code>
 	 *
 	 * @param {sap.ui.core.URI} sSearchHelpIcon new value for property <code>searchHelpIcon</code>
-	 * @return {sap.ui.commons.DropdownBox} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpIcon = function(sSearchHelpIcon) {

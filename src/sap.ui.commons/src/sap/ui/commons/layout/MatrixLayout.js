@@ -118,7 +118,7 @@ sap.ui.define([
 	 * "as is", or an arbitrary content control, which is wrapped with a new
 	 * (default) matrix layout cell first and then added to the row.
 	 *
-	 * @return {sap.ui.commons.layout.MatrixLayout} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -154,7 +154,7 @@ sap.ui.define([
 	 * Sets the widths of the columns. The values must be stored in an array to be used in renderer.
 	 * to be compatible with previous version also allow list of values.
 	 * @param {sap.ui.core.CSSSize[]} aWidths new value for property <code>widths</code>
-	 * @return {sap.ui.commons.layout.MatrixLayout} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	MatrixLayout.prototype.setWidths = function( aWidths ) {

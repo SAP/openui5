@@ -251,7 +251,7 @@ sap.ui.define([
 			 * @param {int[]} [aOffset=[0,0]]
 			 *           Specifies an additional left and top offset of the target scroll position, relative to
 			 *           the upper left corner of the DOM element
-			 * @returns {sap.ui.core.delegate.ScrollEnablement}
+			 * @returns {this}
 			 * @protected
 			 */
 			scrollToElement: function(oElement, iTime, aOffset) {

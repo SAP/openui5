@@ -1640,7 +1640,7 @@ sap.ui.define([
 	 *
 	 * @experimental Since 1.65. API might change.
 	 * @param {sap.ui.integration.CardDataMode} sMode The mode to set to the Card.
-	 * @returns {sap.ui.integration.widgets.Card} Pointer to the control instance to allow method chaining.
+	 * @returns {this} Pointer to the control instance to allow method chaining.
 	 * @public
 	 * @since 1.65
 	 */

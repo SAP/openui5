@@ -111,7 +111,7 @@ sap.ui.define([
 		 * Sets an year.
 		 * @param {int} year Short format for year (2 digits) is not supported. This means that if 10 is given, this will
 		 * be considered as year 10, not 1910, as in JS Date.
-		 * @returns {sap.ui.unified.calendar.CalendarDate} <code>this</code> for method chaining.
+		 * @returns {this} <code>this</code> for method chaining.
 		 */
 		CalendarDate.prototype.setYear = function (year) {
 			checkNumericLike(year, "Invalid year: " + year);
@@ -140,7 +140,7 @@ sap.ui.define([
 		 * - first day of the next month if the current month has 31 days.
 		 * - second day of the next month if the current month has 30 days.
 		 * Other value will result in adding or subtracting days according to the given value.
-		 * @returns {sap.ui.unified.calendar.CalendarDate} <code>this</code> for method chaining.
+		 * @returns {this} <code>this</code> for method chaining.
 		 */
 		CalendarDate.prototype.setMonth = function (month, date) {
 			checkNumericLike(month, "Invalid month: " + month);
@@ -167,7 +167,7 @@ sap.ui.define([
 		 * the valid date range for the current month, this method attempts to update the date information accordingly.
 		 * For example, if the month has 30 days and 31 is given as a date, the month will be incremented by 1, and 1 will be used for date.
 		 * Also if 0 is given for a date, the month will be decremented by 1, and the date will be set to the last date of that previous month.
-		 * @returns {sap.ui.unified.calendar.CalendarDate} <code>this</code> for method chaining.
+		 * @returns {this} <code>this</code> for method chaining.
 		 */
 		CalendarDate.prototype.setDate = function (date) {
 			checkNumericLike(date, "Invalid date: " + date);

@@ -77,7 +77,7 @@ sap.ui.define([
 	 * Each argument must be either a JSon object or a list of objects or the area element or elements.
 	 *
 	 * @param {any} content Area content to add
-	 * @return {sap.ui.commons.ImageMap} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

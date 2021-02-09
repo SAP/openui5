@@ -52,7 +52,7 @@ sap.ui.define(['./ListItemBase', './library', './FacetFilterItemRenderer'],
 	/*
 	 * Sets count for the FacetFilterList.
 	 * @param {int} iCount The counter to be set to
-	 * @returns {sap.m.FacetFilterItem} this for chaining
+	 * @returns {this} this for chaining
 	 */
 	FacetFilterItem.prototype.setCount = function(iCount) {
 
@@ -65,7 +65,7 @@ sap.ui.define(['./ListItemBase', './library', './FacetFilterItemRenderer'],
 	/**
 	 * Sets counter for the FacetFilter list.
 	 * @param {int} iCount The counter to be set to
-	 * @returns {sap.m.FacetFilterItem} this for chaining
+	 * @returns {this} this for chaining
 	 */
 	FacetFilterItem.prototype.setCounter = function(iCount) {
 

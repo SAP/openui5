@@ -252,7 +252,7 @@ sap.ui.define([
 		 * @override
 		 * @param {boolean} bValue True or false
 		 * @param {boolean} suppressEvent Whether to suppress event firing
-		 * @returns {sap.m.TimePickerSlider} this instance, used for chaining
+		 * @returns {this} this instance, used for chaining
 		 * @public
 		 */
 		TimePickerSlider.prototype.setIsExpanded = function(bValue, suppressEvent) {

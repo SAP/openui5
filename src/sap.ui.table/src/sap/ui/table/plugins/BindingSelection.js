@@ -303,7 +303,7 @@ sap.ui.define([
 	 * Sets the selection mode. The current selection is lost
 	 *
 	 * @param {string} sSelectionMode The new selection mode.
-	 * @returns {sap.ui.table.plugins.BindingSelection} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
 	BindingSelection.prototype.setSelectionMode = function(sSelectionMode) {
