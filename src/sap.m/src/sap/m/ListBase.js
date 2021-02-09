@@ -895,7 +895,7 @@ function(
 	 * Returns the binding contexts of the selected items.
 	 * Note: This method returns an empty array if no databinding is used.
 	 *
-	 * @param {boolean} bAll
+	 * @param {boolean} [bAll=false]
 	 *         Set true to include even invisible selected items(e.g. the selections from the previous filters).
 	 *         Note: In single selection modes, only the last selected item's binding context is returned in array.
 	 * @type object[]
