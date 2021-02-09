@@ -68,5 +68,21 @@
         ]
       }
     ]
+  },
+  "1.84.6": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "fd23238a170ce43f5b6a40f80daa1eb6b5ab4584",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Handle fitContainer automatically on tablet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180043733"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -139,5 +139,21 @@
         ]
       }
     ]
+  },
+  "1.84.6": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "04623ddb37994841aea8b1e750b59b7fc045a007",
+        "type": "FIX",
+        "text": " sap.uxap.HierarchicalSelect: Fixed button's focus on all themes",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070468666"
+          }
+        ]
+      }
+    ]
   }
 }

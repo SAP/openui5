@@ -385,5 +385,58 @@
         ]
       }
     ]
+  },
+  "1.84.6": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "ec7cbd48dbfd7d4836d47cc0979cf2b4e26eb0f9",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Unstable qUnit tests are now updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180087183"
+          }
+        ]
+      },
+      {
+        "id": "279f39acda6c23af4e14a130129f741a50372072",
+        "type": "FIX",
+        "text": " sap.m.Wizard: Unstable qUnit tests are now updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180087186"
+          }
+        ]
+      },
+      {
+        "id": "01c8423e69c584011be6c9c49f7b992122b56bfe",
+        "type": "FIX",
+        "text": " sap.m.ObjectStatus: icon isn't clipped in a table cell now",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080400658"
+          }
+        ]
+      },
+      {
+        "id": "e27389df9a1504053068969920cea4533f560976",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: can select a range in month with 4 weeks",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080437818"
+          },
+          {
+            "type": "BCP",
+            "reference": "002075129400000540672021"
+          }
+        ]
+      }
+    ]
   }
 }
