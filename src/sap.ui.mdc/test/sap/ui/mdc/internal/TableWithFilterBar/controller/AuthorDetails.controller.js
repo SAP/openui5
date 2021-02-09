@@ -77,7 +77,7 @@ sap.ui.define([
 
 			oModel.resetChanges();
 			oViewModel.setProperty("/editMode", false);
-
+			UIComponent.getRouterFor(this).navTo("authors");
 		},
 
 		onSavePress: function (oEvent) {

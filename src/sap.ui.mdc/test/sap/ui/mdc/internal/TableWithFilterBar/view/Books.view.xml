@@ -14,8 +14,6 @@
 	xmlns="sap.m"
 	xmlns:types="sap.ui.v4demo.types"
 	xmlns:demo="sap.ui.v4demo.controls" controllerName="sap.ui.v4demo.controller.Books">
-	<Page showHeader="false" enableScrolling="false" class="sapUiContentPadding" showNavButton="false">
-
 		<f2:DynamicPage id="dynamicPage">
 			<f2:title>
 				<f2:DynamicPageTitle>
@@ -68,7 +66,7 @@
 								</mdcf:content>
 							</mdcf:FieldValueHelp>
 
-							<mdcf:FieldValueHelp title="Author" id="FH1" noDialog="false"
+							<mdcf:FieldValueHelp title="Author ID" id="FH1" noDialog="false"
 								keyPath="ID" descriptionPath="name"
 								filterFields="$search"
 								showConditionPanel="true" delegate="{name: 'sap/ui/v4demo/delegate/Books.AuthorVH.delegate', payload: {}}">
@@ -415,7 +413,7 @@
 
 						<mdc:filterItems>
 							<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}"
-								id="ff1" label="Author"
+								id="ff1" label="Author ID"
 								conditions="{$filters>/conditions/author_ID}"
 								dataType="Edm.Int32"
 								required="false" fieldHelp="FH1" display="DescriptionValue"/>
@@ -521,7 +519,7 @@
 								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" value="{descr}" multipleLines="true" editMode="Display" />
 							</mdc:table.Column>
 							<mdc:table.Column id="id1" header="Author ID" dataProperty="author_ID" width="10rem">
-								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FAN_1" value="{author/name}" editMode="Display" multipleLines="true">
+								<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FAN_1" value="{author/name}" display="ValueDescription" additionalValue="{author_ID}"  editMode="Display" multipleLines="true">
 									<mdc:fieldInfo>
 										<mdc:Link delegate="{name: 'sap/ui/v4demo/delegate/Books.Link.delegate'}"></mdc:Link>
 									</mdc:fieldInfo>
@@ -645,6 +643,4 @@
 				</VBox>
 					</f2:content>
 		</f2:DynamicPage>
-
-	</Page>
 </mvc:View>

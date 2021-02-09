@@ -72,6 +72,7 @@ sap.ui.define([
 
 			oModel.resetChanges();
 			oViewModel.setProperty("/editMode", false);
+			UIComponent.getRouterFor(this).navTo("books");
 		},
 
 		onSavePress: function (oEvent) {

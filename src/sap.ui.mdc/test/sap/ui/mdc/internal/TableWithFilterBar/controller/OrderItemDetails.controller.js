@@ -91,6 +91,7 @@ sap.ui.define([
 			oModel.resetChanges();
 			oViewModel.setProperty("/editMode", false);
 
+			this.navigateToParent();
 		},
 
 		onSavePress: function (oEvent) {
