@@ -262,7 +262,7 @@ sap.ui.define([
 						multiple: true
 					},
 					actions: {
-						type: "sap.ui.core.Control",
+						type: "sap.ui.mdc.actiontoolbar.ActionToolbarAction",
 						multiple: true,
 						forwarding: {
 							idSuffix: "--toolbar",
@@ -1085,7 +1085,7 @@ sap.ui.define([
 				oMDCResourceBundle = Core.getLibraryResourceBundle("sap.ui.mdc");
 
 			var mInfo = {
-				icon: ChartTypeButton.mMatchingIcon[sType],
+				icon: ChartTypeButton && ChartTypeButton.mMatchingIcon[sType] ? ChartTypeButton.mMatchingIcon[sType] : "sap-icon://horizontal-bar-chart",
 				text: oMDCResourceBundle.getText("chart.CHART_TYPE_TOOLTIP", [
 					sType
 				])

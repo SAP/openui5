@@ -7,6 +7,7 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcf="sap.ui.mdc.field"
+	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
 	xmlns:mdcl="sap.ui.mdc.link"
 	xmlns:ui="sap.ui"
 	xmlns:variants="sap.ui.fl.variants"
@@ -69,7 +70,9 @@
 									<fl:VariantManagement id="opTableVM" for="childOrderItemsTable"/>
 								</mdc:variant>
 								<mdc:actions>
-									<Button type="Emphasized" text="Add Order Item" press="onAddButtonPress" visible="{=!${view>/addMode}}" />
+									<mdcat:ActionToolbarAction>
+										<Button type="Emphasized" text="Add Order Item" press="onAddButtonPress" visible="{=!${view>/addMode}}" />
+									</mdcat:ActionToolbarAction>
 								</mdc:actions>
 								<mdc:columns>
 									<mdc:table.Column id="cID" header="ID" dataProperty="ID" width="18rem">

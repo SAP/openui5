@@ -55,18 +55,23 @@ sap.ui.define([
 						new Title(oChart.getId() + "-title", {
 							text: oChart.getHeader()
 						})
-					],
-					actions: aUserActions
+					]
 				});
 
 				oChart.setAggregation("_toolbar", oToolbar);
 
-				if (bInitNotBound){
-					this.initializeToolbarNotBound(oChart);
-				} else {
+				this.initializeToolbarNotBound(oChart);
+				this.addActions(oToolbar, aUserActions); //Add actions after chart content for correct sorting
+				if (!bInitNotBound){
 					this.updateToolbar(oChart);
 				}
 			}
+		},
+
+		addActions: function(oToolbar, aActions) {
+			aActions.forEach(function(action) {
+				oToolbar.addAction(action);
+			});
 		},
 
 		initializeToolbarNotBound: function(oChart) {
@@ -77,70 +82,85 @@ sap.ui.define([
 			}
 
 			if (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.ZoomInOut)) {
-				var oZoomInButton,
-					oZoomOutButton;
 
-
-				oZoomInButton = new OverflowButton({
+				this._oZoomInButton = new OverflowButton({
 					tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
 					icon: "sap-icon://zoom-in",
-					enabled: false
+					enabled: "{= ${$mdcChart>/_chart/getZoomInfo/enabled} && ${$mdcChart>/_chart/getZoomInfo/currentZoomLevel} < 1}"
 				});
 
-				oZoomOutButton = new OverflowButton({
+				this._oZoomOutButton = new OverflowButton({
 					tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"),
 					icon: "sap-icon://zoom-out",
-					enabled: false
+					enabled: "{= ${$mdcChart>/_chart/getZoomInfo/enabled} && ${$mdcChart>/_chart/getZoomInfo/currentZoomLevel} > 0}"
 				});
 
-				oToolbar.addEnd(oZoomInButton);
-				oToolbar.addEnd(oZoomOutButton);
+				oToolbar.addEnd(this._oZoomInButton);
+				oToolbar.addEnd(this._oZoomOutButton);
 			}
 
 
 			if (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.DrillDownUp) < 0) {
 				oChart._oDrillDownBtn = new OverflowButton(oChart.getId() + "-drillDown", {
 					icon: "sap-icon://drill-down",
-					enabled: false
+					enabled: false,
+					tooltip: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
+					text: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
+					press: [
+						oChart._showDrillDown, oChart
+					]
 				});
 				oToolbar.addEnd(oChart._oDrillDownBtn);
 			}
 
 			if (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.Legend) < 0) {
-				oToolbar.addEnd(new OverflowToggleButton({
+				this._legendBtn = new OverflowToggleButton(oChart.getId() + "-chart_legend", {
 					type: "Transparent",
 					text: MDCRb.getText("chart.LEGENDBTN_TEXT"),
 					icon: "sap-icon://legend",
 					enabled: false,
 					pressed: false
-				}));
+				});
+
+				oToolbar.addEnd(this._legendBtn);
 			}
 
 			//Check p13n mode property on the chart and enable only desired buttons
 			var aP13nMode = oChart.getP13nMode() || [];
 
 			if (aP13nMode.indexOf("Item") > -1) {
-				oToolbar.addEnd(new OverflowButton(oChart.getId() + "-chart_settings", {
+				this._chartSettingsBtn = new OverflowButton(oChart.getId() + "-chart_settings", {
+					tooltip: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
 					icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
 					ariaHasPopup: HasPopup.ListBox,
 					enabled: false
-				}));
+				});
+				oToolbar.addEnd(this._chartSettingsBtn);
+
+				ShortcutHintsMixin.addConfig(this._chartSettingsBtn, {
+						addAccessibilityLabel: true,
+						messageBundleKey: Device.os.macintosh ? "mdc.PERSONALIZATION_SHORTCUT_MAC" : "mdc.PERSONALIZATION_SHORTCUT" // Cmd+, or Ctrl+,
+					},
+					oChart // we need the chart instance, otherwise the messageBundleKey does not find the resource bundle
+				);
+
 			}
 
 			if (aP13nMode.indexOf("Sort") > -1) {
-				oToolbar.addEnd(new OverflowButton(oChart.getId() + "-sort_settings", {
-					icon: "sap-icon://sort",
+				this._sortBtn = new OverflowButton(oChart.getId() + "-sort_settings", {
 					ariaHasPopup: HasPopup.ListBox,
+					icon: "sap-icon://sort",
+					tooltip: MDCRb.getText('sort.PERSONALIZATION_DIALOG_TITLE'),
+					text: MDCRb.getText('sort.PERSONALIZATION_DIALOG_TITLE'),
 					enabled: false
-				}));
+				});
+				oToolbar.addEnd(this._sortBtn);
 			}
 
 			if (aP13nMode.indexOf("Type") > -1) {
-				oToolbar.addEnd(new OverflowButton({
-					id: oChart.getId() + "-btnChartType",
-					icon: 'sap-icon://vertical-bar-chart',
-					enabled: false
-				}));
+				this._chartTypeBtn = new ChartTypeButton(oChart);
+				oToolbar.addEnd(this._chartTypeBtn);
 			}
 
 			oToolbar.setEnabled(false);
@@ -157,114 +177,75 @@ sap.ui.define([
 				return;
 			}
 
-			oToolbar.destroyEnd();
+			//oToolbar.destroyEnd(true);
 
 			if (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.ZoomInOut)) {
-				var oInnerChart = oChart.getAggregation("_chart"),
-					oZoomInButton,
-					oZoomOutButton;
+				var oInnerChart = oChart.getAggregation("_chart");
 
+				this._oZoomInButton.setTooltip(MDCRb.getText("chart.TOOLBAR_ZOOM_IN"));
+				this._oZoomInButton.setText(MDCRb.getText("chart.TOOLBAR_ZOOM_IN"));
+				this._oZoomInButton.attachPress(function onZoomInButtonPressed(oControlEvent) {
+					this.handleZoomIn(oInnerChart, this._oZoomInButton, this._oZoomOutButton);
+				}.bind(this));
 
-				oZoomInButton = new OverflowButton({
-					tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
-					text: MDCRb.getText("chart.TOOLBAR_ZOOM_IN"),
-					icon: "sap-icon://zoom-in",
-					enabled: "{= ${$mdcChart>/_chart/getZoomInfo/enabled} && ${$mdcChart>/_chart/getZoomInfo/currentZoomLevel} < 1}",
-					press: function onZoomInButtonPressed(oControlEvent) {
-						this.handleZoomIn(oInnerChart, oZoomInButton, oZoomOutButton);
-					}.bind(this)
-				});
-
-				oZoomOutButton = new OverflowButton({
-					tooltip: MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"),
-					text: MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"),
-					icon: "sap-icon://zoom-out",
-					enabled: "{= ${$mdcChart>/_chart/getZoomInfo/enabled} && ${$mdcChart>/_chart/getZoomInfo/currentZoomLevel} > 0}",
-					press: function onZoomOutButtonPressed(oControlEvent) {
-						this.handleZoomOut(oInnerChart, oZoomInButton, oZoomOutButton);
-					}.bind(this)
-				});
-
-				oToolbar.addEnd(oZoomInButton);
-				oToolbar.addEnd(oZoomOutButton);
+				this._oZoomOutButton.setTooltip(MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"));
+				this._oZoomOutButton.setText(MDCRb.getText("chart.TOOLBAR_ZOOM_OUT"));
+				this._oZoomOutButton.attachPress(function onZoomInButtonPressed(oControlEvent) {
+					this.handleZoomOut(oInnerChart, this._oZoomInButton, this._oZoomOutButton);
+				}.bind(this));
 
 				if (oInnerChart) {
 					oInnerChart.attachRenderComplete(function onInnerChartRenderCompleted(oControlEvent) {
 						var oZoomInfo = oInnerChart.getZoomInfo();
-						this.handleInnerChartRenderCompleted(oZoomInfo, oZoomInButton, oZoomOutButton);
+						this.handleInnerChartRenderCompleted(oZoomInfo, this._oZoomInButton, this._oZoomOutButton);
 					}, this);
 				}
 			}
 
 
 			if (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.DrillDownUp) < 0) {
-				oChart._oDrillDownBtn = new OverflowButton(oChart.getId() + "-drillDown", {
-					icon: "sap-icon://drill-down",
-					tooltip: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
-					text: MDCRb.getText("chart.CHART_DRILLDOWN_TITLE"),
-					press: [
-						oChart._showDrillDown, oChart
-					]
-				});
-				oToolbar.addEnd(oChart._oDrillDownBtn);
+
+				oChart._oDrillDownBtn.setEnabled(true);
 			}
 
 			if (!oChart.getIgnoreToolbarActions().length || oChart.getIgnoreToolbarActions().indexOf(MDCLib.ChartToolbarActionType.Legend) < 0) {
-				oToolbar.addEnd(new OverflowToggleButton({
-					type: "Transparent",
-					text: MDCRb.getText("chart.LEGENDBTN_TEXT"),
-					tooltip: MDCRb.getText("chart.LEGENDBTN_TOOLTIP"),
-					icon: "sap-icon://legend",
-					pressed: "{$mdcChart>/legendVisible}"
-				}));
+				this._legendBtn.setEnabled(true);
+				this._legendBtn.setPressed(oChart.getLegendVisible());
+				this._legendBtn.attachPress(function(){
+					oChart.setLegendVisible(!oChart.getLegendVisible());
+					this._legendBtn.setPressed(oChart.getLegendVisible());
+				}.bind(this));
 			}
 
 			//Check p13n mode property on the chart and enable only desired buttons
 			var aP13nMode = oChart.getP13nMode() || [];
 
 			if (aP13nMode.indexOf("Item") > -1) {
-				var oBtn = new OverflowButton(oChart.getId() + "-chart_settings", {
-					icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
-					tooltip: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
-					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
-					press: function(oEvent) {
-						var oSource = oEvent.getSource();
-						oChart._getPropertyData().then(function(aProperties) {
-							ChartSettings.showPanel(oChart, "Chart", oSource, aProperties);
-						});
-					},
-					ariaHasPopup: HasPopup.ListBox
+
+				this._chartSettingsBtn.setEnabled(true);
+				this._chartSettingsBtn.attachPress(function(oEvent) {
+					var oSource = oEvent.getSource();
+					oChart._getPropertyData().then(function(aProperties) {
+						ChartSettings.showPanel(oChart, "Chart", oSource, aProperties);
+					});
 				});
-
-				oToolbar.addEnd(oBtn);
-
-				ShortcutHintsMixin.addConfig(oBtn, {
-						addAccessibilityLabel: true,
-						messageBundleKey: Device.os.macintosh ? "mdc.PERSONALIZATION_SHORTCUT_MAC" : "mdc.PERSONALIZATION_SHORTCUT" // Cmd+, or Ctrl+,
-					},
-					oChart // we need the chart instance, otherwise the messageBundleKey does not find the resource bundle
-				);
-
 			}
 
 			if (aP13nMode.indexOf("Sort") > -1) {
-				oToolbar.addEnd(new OverflowButton(oChart.getId() + "-sort_settings", {
-					icon: "sap-icon://sort",
-					tooltip: MDCRb.getText('sort.PERSONALIZATION_DIALOG_TITLE'),
-					text: MDCRb.getText('sort.PERSONALIZATION_DIALOG_TITLE'),
-					press: function(oEvent) {
-						var oSource = oEvent.getSource();
-						oChart._getPropertyData().then(function(aProperties) {
-							ChartSettings.showPanel(oChart, "Sort", oSource, aProperties);
-						});
-					},
-					ariaHasPopup: HasPopup.ListBox
-				}));
+				this._sortBtn.setEnabled(true);
+				this._sortBtn.attachPress(function(oEvent) {
+					var oSource = oEvent.getSource();
+					oChart._getPropertyData().then(function(aProperties) {
+						ChartSettings.showPanel(oChart, "Sort", oSource, aProperties);
+					});
+				});
 			}
 
 			if (aP13nMode.indexOf("Type") > -1) {
-				oToolbar.addEnd(new ChartTypeButton(oChart));
+				this._chartTypeBtn.bindToInnerChart(oChart);
+				//oToolbar.addEnd(new ChartTypeButton(oChart));
 			}
+
 
 			oToolbar.setEnabled(true);
 		},
