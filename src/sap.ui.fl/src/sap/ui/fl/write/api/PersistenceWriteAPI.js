@@ -61,25 +61,6 @@ sap.ui.define([
 	}
 
 	/**
-	 * Checks if one of the existing changes can be published;
-	 *
-	 * @param {object} mPropertyBag Object with parameters as properties
-	 * @param {sap.ui.fl.Selector} mPropertyBag.selector To retrieve the associated flex persistence
-	 * @returns {Promise<boolean>} Promise that resolves to a boolean indicating if changes exist and are not yet published
-	 */
-	function hasChangesToPublish(mPropertyBag) {
-		mPropertyBag.includeCtrlVariants = true;
-		mPropertyBag.invalidateCache = false;
-		return PersistenceWriteAPI._getUIChanges(mPropertyBag)
-			.then(function(aChanges) {
-				return aChanges.some(function(oChange) {
-					var sPackageName = oChange.getPackage();
-					return sPackageName === "$TMP" || sPackageName === "";
-				});
-			});
-	}
-
-	/**
 	 * Provides an API for tools to query, provide, save or reset {@link sap.ui.fl.Change}s.
 	 *
 	 * @namespace sap.ui.fl.write.api.PersistenceWriteAPI
@@ -141,7 +122,7 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag Contains additional data needed for checking flex/info
 		 * @param {sap.ui.fl.Selector} mPropertyBag.selector Selector
-		 * @param {string} mPropertyBag.layer Layer on which the request is sent to the backend
+		 * @param {sap.ui.fl.Layer} mPropertyBag.layer Layer on which the request is sent to the backend
 		 *
 		 * @returns {Promise<object>} Resolves the information if the application to which the selector belongs has content that can be published/reset
 		 *
@@ -151,31 +132,36 @@ sap.ui.define([
 		getResetAndPublishInfo: function(mPropertyBag) {
 			return Promise.all([
 				hasChanges(mPropertyBag),
-				hasChangesToPublish(mPropertyBag),
 				FeaturesAPI.isPublishAvailable()
-			])
-				.then(function(aResetPublishInfo) {
-					var oFlexInfo = {
-						isResetEnabled: aResetPublishInfo[0],
-						isPublishEnabled: aResetPublishInfo[1]
-					};
-					var bPublishAvailable = aResetPublishInfo[2];
-
-					var bIsBackEndCallNeeded = !(mPropertyBag.layer === Layer.USER) && (!oFlexInfo.isResetEnabled || (bPublishAvailable && !oFlexInfo.isPublishEnabled));
-					if (bIsBackEndCallNeeded) {
-						return ChangesController.getFlexControllerInstance(mPropertyBag.selector).getResetAndPublishInfo(mPropertyBag)
-							.then(function(oResponse) {
-								oFlexInfo.isResetEnabled = oFlexInfo.isResetEnabled || oResponse.isResetEnabled;
-								oFlexInfo.isPublishEnabled = oFlexInfo.isPublishEnabled || oResponse.isPublishEnabled;
-								return oFlexInfo;
-							})
-							.catch(function(oError) {
-								Log.error("Sending request to flex/info route failed: " + oError.message);
-								return oFlexInfo;
-							});
-					}
-					return oFlexInfo;
-				});
+			]).then(function (aResetPublishInfo) {
+				var bHasChanges = aResetPublishInfo[0];
+				var bIsPublishAvailable = aResetPublishInfo[1];
+				var bIsLayerTransportable = mPropertyBag.layer !== Layer.USER && mPropertyBag.layer !== Layer.PUBLIC;
+				// By default:
+				// Reset is enabled if there is change
+				// Publish is enabled if there is change + layer is transportable + system is enabled for publish
+				var oFlexInfo = {
+					isResetEnabled: bHasChanges,
+					isPublishEnabled: bHasChanges && bIsLayerTransportable && bIsPublishAvailable
+				};
+				// If there is change and the layer is transportable , the request to back end is always necessary
+				// because of control variant reset logic through setVisible change
+				if (bHasChanges && bIsLayerTransportable) {
+					return ChangesController.getFlexControllerInstance(mPropertyBag.selector).getResetAndPublishInfo(mPropertyBag)
+						.then(function (oResponse) {
+							oFlexInfo.isResetEnabled = oResponse.isResetEnabled;
+							// Together with publish info from back end,
+							// system setting info for publish availability also need to be checked
+							oFlexInfo.isPublishEnabled = oFlexInfo.isPublishEnabled && oResponse.isPublishEnabled;
+							return oFlexInfo;
+						})
+						.catch(function (oError) {
+							Log.error("Sending request to flex/info route failed: " + oError.message);
+							return oFlexInfo;
+						});
+				}
+				return oFlexInfo;
+			});
 		},
 
 		/**
