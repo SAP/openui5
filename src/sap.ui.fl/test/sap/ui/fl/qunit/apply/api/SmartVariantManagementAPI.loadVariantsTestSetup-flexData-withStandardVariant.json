@@ -18,8 +18,7 @@
         "compositeCommand": ""
       },
       "content": {
-        "executeOnSelect": true,
-        "favorite": true
+        "executeOnSelect": true
       },"creation":"2020-12-11T06:21:52.183Z"
     }],
     "variants": [{
@@ -47,6 +46,22 @@
       "texts": {
         "variantName": {
           "value": "B Variant2"
+        }
+      }
+    },{
+      "fileName": "variant_standard",
+      "fileType": "variant",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {
+        "standardvariant": true,
+        "favorite": true,
+        "executeOnSelection": true
+      },
+      "texts": {
+        "variantName": {
+          "value": "This my very own standard variant text"
         }
       }
     }],

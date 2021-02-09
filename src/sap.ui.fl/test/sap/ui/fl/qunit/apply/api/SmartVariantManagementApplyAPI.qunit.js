@@ -83,21 +83,24 @@ sap.ui.define([
 				fileType: "variant",
 				selector: {
 					persistencyKey: sPersistencyKey
-				}
+				},
+				content: {}
 			};
 			var oVariant2 = {
 				fileName: "variant2",
 				fileType: "variant",
 				selector: {
 					persistencyKey: sPersistencyKey
-				}
+				},
+				content: {}
 			};
 			var oVariant3 = {
 				fileName: "variant3",
 				fileType: "variant",
 				selector: {
 					persistencyKey: "anotherKey"
-				}
+				},
+				content: {}
 			};
 			var oUiChange = {
 				fileName: "uiChange",
@@ -246,7 +249,8 @@ sap.ui.define([
 					fileType: "variant",
 					selector: {
 						persistencyKey: sPersistencyKey
-					}
+					},
+					content: {}
 				}]
 			});
 
@@ -257,7 +261,7 @@ sap.ui.define([
 				}.bind(this));
 		});
 
-		QUnit.test("When loadVariants() is called and one variant is present for the persistencyKey of the passed control", function (assert) {
+		QUnit.test("When loadVariants() is called and multiple variants are present for the persistencyKey of the passed control", function (assert) {
 			this.oControl = new Control("controlId1");
 			var sPersistencyKey = "variantManagement1";
 			this.oControl.getPersistencyKey = function () {
@@ -317,6 +321,69 @@ sap.ui.define([
 				assert.equal(aVariants[4].getFavorite(), true, "which is a favorite, because it is flagged as one within the content");
 				assert.equal(aVariants[4].getExecuteOnSelection(), true, "and is executed on selection, because it is flagged within the content");
 			});
+		});
+
+
+		QUnit.test("When loadVariants() is called and multiple variants, of which one is a overruling standard variant, are present for the persistencyKey of the passed control", function (assert) {
+			this.oControl = new Control("controlId1");
+			var sPersistencyKey = "variantManagement1";
+			this.oControl.getPersistencyKey = function () {
+				return sPersistencyKey;
+			};
+
+			var mFlexData = LoaderExtensions.loadResource({
+				dataType: "json",
+				url: sap.ui.require.toUrl("test-resources/sap/ui/fl/qunit/apply/api/SmartVariantManagementAPI.loadVariantsTestSetup-flexData-withStandardVariant.json")
+			});
+
+			sandbox.stub(LrepConnector, "loadFlexData").resolves(mFlexData);
+
+			var aVariants = [{
+				id: "variant_3",
+				name: "C variant"
+			}, {
+				id: "variant_4",
+				executeOnSelection: true,
+				name: "A variant"
+			}, {
+				id: "variant_5",
+				name: "A Variant"
+			}];
+
+			var sStandardVariantTitle = "this is a localized standard variant title";
+
+			return SmartVariantManagementApplyAPI.loadVariants({
+				control: this.oControl,
+				standardVariant: {
+					name: sStandardVariantTitle
+				},
+				variants: aVariants
+			})
+				.then(function (oResponse) {
+					var oStandardVariant = oResponse.standardVariant;
+					assert.equal(oStandardVariant.getId(), "variant_standard", "the first is the overwritten standard variant");
+					assert.equal(oStandardVariant.getText("variantName"), "This my very own standard variant text", "with the title from the variant file");
+					assert.equal(oStandardVariant.getExecuteOnSelection(), true, "and not is executed on selection due to a change");
+					assert.equal(oStandardVariant.getFavorite(), true, "and it is a favorite");
+
+					var aVariants = oResponse.variants;
+					assert.equal(aVariants.length, 5, "then five entities are returned");
+					assert.equal(aVariants[0].getId(), "variant_3", "the six is the variant provided from the loadFlexData");
+					assert.equal(aVariants[0].getFavorite(), true, "which was changed to be a favorite");
+					assert.equal(aVariants[0].getExecuteOnSelection(), false, "and is not executed on selection by default");
+					assert.equal(aVariants[1].getId(), "variant_4", "the third is the variant provided from the loadFlexData");
+					assert.equal(aVariants[1].getFavorite(), false, "which is NOT a favorite");
+					assert.equal(aVariants[1].getExecuteOnSelection(), true, "and is executed on selection, because it is flagged within the object");
+					assert.equal(aVariants[2].getId(), "variant_5", "the second is the variant provided from the loadFlexData");
+					assert.equal(aVariants[2].getFavorite(), false, "which is NOT a favorite");
+					assert.equal(aVariants[2].getExecuteOnSelection(), false, "and is not executed on selection by default");
+					assert.equal(aVariants[3].getId(), "variant_1", "the fourth is the variant provided from the loadFlexData");
+					assert.equal(aVariants[3].getFavorite(), false, "which is NOT a favorite, because it was added as a favorite and afterwards removed");
+					assert.equal(aVariants[3].getExecuteOnSelection(), false, "and is not executed on selection by default");
+					assert.equal(aVariants[4].getId(), "variant_2", "the fifth is the variant provided from the loadFlexData");
+					assert.equal(aVariants[4].getFavorite(), true, "which is a favorite, because it is flagged as one within the content");
+					assert.equal(aVariants[4].getExecuteOnSelection(), true, "and is executed on selection, because it is flagged within the content");
+				});
 		});
 
 		QUnit.test("When loadChanges() is called and one variant is present for the persistencyKey of another control", function (assert) {
