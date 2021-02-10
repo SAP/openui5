@@ -25,6 +25,7 @@
           "src/sap.ui.unified/pom.xml": "1",
           "src/themelib_sap_fiori_3/pom.xml": "1",
           "src/sap.m/package.json": "4",
+          "package-lock.json": "1",
           "src/themelib_sap_bluecrystal/package.json": "18",
           "src/sap.ui.support/package.json": "6",
           "src/sap.ui.core/pom.xml": "1",
