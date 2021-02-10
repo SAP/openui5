@@ -83,7 +83,7 @@
 								id="ruleList"
 								selectionMode="MultiToggle"
 								rows="{
-									path: 'treeModel>/',
+									path: 'ruleSets>/',
 									parameters: {numberOfExpandedLevels: 1}
 								}"
 								collapseRecursive="false"
@@ -96,7 +96,6 @@
 								visible="{= ${/selectedSetPreviewKey} === 'availableRules' }"
 								showColumnVisibilityMenu="true"
 								columnVisibility="onColumnVisibilityChange"
-								expandFirstLevel="true"
 								>
 							<t:columns>
 								<t:Column id="rulesColumn"
@@ -104,7 +103,7 @@
 										  sortProperty="name"
 										  filterProperty="name">
 									<t:template>
-										<m:Text text="{treeModel>name}" wrapping="false"/>
+										<m:Text text="{ruleSets>name}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="categoriesColumn"
@@ -113,7 +112,7 @@
 										  sortProperty="categories"
 										  filterProperty="categories">
 									<t:template>
-										<m:Text text="{treeModel>categories}" wrapping="false"/>
+										<m:Text text="{ruleSets>categories}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="audienceColumn"
@@ -122,7 +121,7 @@
 										  sortProperty="audiences"
 										  filterProperty="audiences">
 									<t:template>
-										<m:Text text="{treeModel>audiences}" wrapping="false"/>
+										<m:Text text="{ruleSets>audiences}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 								<t:Column id="idsColumn"
@@ -132,16 +131,16 @@
 										  sortProperty="id"
 										  filterProperty="id">
 									<t:template>
-										<m:Text text="{treeModel>id}" wrapping="false"/>
+										<m:Text text="{ruleSets>id}" wrapping="false"/>
 									</t:template>
 								</t:Column>
 							</t:columns>
 							<t:rowActionTemplate>
 									<t:RowAction>
 										<t:items>
-											<t:RowActionItem icon="sap-icon://edit" text="Edit" press="editRule"  visible="{= ${treeModel>libName} === 'temporary'}" />
-											<t:RowActionItem icon="sap-icon://delete" text="Delete" press="deleteTemporaryRule" visible="{= ${treeModel>libName} === 'temporary'}" />
-											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= ${treeModel>libName} !== 'temporary' &amp;&amp; ${treeModel>type} !== 'lib'}" />
+											<t:RowActionItem icon="sap-icon://edit" text="Edit" press="editRule"  visible="{= ${ruleSets>libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://delete" text="Delete" press="deleteTemporaryRule" visible="{= ${ruleSets>libName} === 'temporary'}" />
+											<t:RowActionItem icon="sap-icon://copy" text="Copy" press="duplicateRule" visible="{= ${ruleSets>libName} !== 'temporary' &amp;&amp; ${ruleSets>type} !== 'lib'}" />
 										</t:items>
 									</t:RowAction>
 							</t:rowActionTemplate>
