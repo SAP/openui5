@@ -95,7 +95,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: false
 				},
-				executeOnSelection: {
+				executeOnSelect: {
 					type: "boolean",
 					defaultValue: false
 				}
@@ -116,8 +116,8 @@ sap.ui.define([
 			if (oFile.content && oFile.content.favorite) {
 				this.setFavorite(oFile.content.favorite);
 			}
-			if (oFile.content && oFile.content.executeOnSelection) {
-				this.setExecuteOnSelection(oFile.content.executeOnSelection);
+			if (oFile.content && oFile.content.executeOnSelect) {
+				this.setExecuteOnSelect(oFile.content.executeOnSelect);
 			}
 		}
 	});
@@ -159,7 +159,7 @@ sap.ui.define([
 			"packageName",
 			"layer",
 			"favorite",
-			"executeOnSelection",
+			"executeOnSelect",
 			"selector",
 			"texts",
 			"support"
