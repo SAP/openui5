@@ -92,11 +92,11 @@ sap.ui.define([
 		});
 
 		var oAggregatePopover, oGroupPopover;
-		if (oTable.isGroupingEnabled() && aGroupProperties && aGroupProperties.length) {
+		if (oTable.isGroupingEnabled() && aGroupProperties && aGroupProperties.length > 0) {
 			oGroupPopover = this._onGroup(aGroupProperties, oMDCColumn);
 		}
 
-		if (oTable.isAggregationEnabled() && aAggregateProperties && aAggregateProperties.length) {
+		if (oTable.isAggregationEnabled() && aAggregateProperties && aAggregateProperties.length > 0) {
 			oAggregatePopover = this._onAggregate(aAggregateProperties, oMDCColumn);
 		}
 		return [oGroupPopover, oAggregatePopover];
