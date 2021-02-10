@@ -11,7 +11,7 @@ sap.ui.define(
 			QUnit.module("displayFormat", function () {
 				QUnit.test("Given DateTimeField, when I set displayFormat", function (assert) {
 					var oSut = new DateTimeField({displayFormat: "medium"}),
-						oSpyUpdatePlaceholder = this.spy(oSut, "_updateDomPlaceholder");
+						oSpyUpdatePlaceholder = this.spy(oSut, "setPlaceholder");
 
 					// Act
 					oSut.setDisplayFormat("short");
@@ -30,7 +30,7 @@ sap.ui.define(
 		});
 
 		QUnit.module("Private API", function () {
-			QUnit.test("Given DateTimeField, when I call _updateDomPlaceholder", function (assert) {
+			QUnit.test("Given DateTimeField, when I call setPlaceholder", function (assert) {
 				// Prepare
 				var oSut = new DateTimeField({displayFormat: "medium"});
 
@@ -38,7 +38,8 @@ sap.ui.define(
 				sap.ui.getCore().applyChanges();
 
 				// Act
-				oSut._updateDomPlaceholder("placeholder1");
+				oSut.setPlaceholder("placeholder1");
+				sap.ui.getCore().applyChanges();
 
 				// Assert
 				assert.equal(oSut.$().find("input").attr("placeholder"), "placeholder1",

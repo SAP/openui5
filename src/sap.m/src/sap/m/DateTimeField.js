@@ -202,7 +202,7 @@ sap.ui.define([
 
 		this.updateDomValue(this._formatValue(this.getDateValue()));
 
-		this._updateDomPlaceholder(this._getPlaceholder());
+		this.setPlaceholder(this._getPlaceholder());
 
 		return this;
 	};
@@ -456,19 +456,6 @@ sap.ui.define([
 	// because Date object in the test is different than the Date object in the application (due to the iframe).
 	DateTimeField.prototype._isValidDate = function (oDate) {
 		return !oDate || Object.prototype.toString.call(oDate) === "[object Date]";
-	};
-
-
-	/**
-	 * Updates the placeholder of the input element with a given valye
-	 * @param {string} sValue the new value
-	 * @private
-	 * @returns void
-	 */
-	DateTimeField.prototype._updateDomPlaceholder = function (sValue) {
-		if (this.getDomRef()) {
-			this._$input.attr("placeholder", sValue);
-		}
 	};
 
 	return DateTimeField;
