@@ -75,7 +75,7 @@ sap.ui.define([
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * A <code>FieldBase</code> control is the basic control to be used within the <code>Field</code> and <code>FilterField</code> controls.
+	 * The <code>FieldBase</code> control is the basic control to be used within the {@link sap.ui.mdc.Field Field} and {@link sap.ui.mdc.FilterField FilterField} controls.
 	 * It must not be used stand-alone.
 	 *
 	 * @extends sap.ui.mdc.Control
@@ -246,10 +246,11 @@ sap.ui.define([
 				/**
 				 * Sets the conditions that represent the values of the field.
 				 *
-				 * This should be bound to a <code>ConditionModel</code> using the corresponding fieldPath.
+				 * This should be bound to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel} using the corresponding fieldPath.
 				 *
-				 * <b>Note</b> For <code>FilterField</code> controls, the <code>conditions</code> property must be used to bind <code>FilterField</code> to a <code>ConditionModel</code>.</br>
-				 * For example, for a <code>FilterField</code> control inside a <code>FilterBar</code> control the binding looks like this:
+				 * <b>Note:</b> For {@link sap.ui.mdc.FilterField FilterField} controls, the <code>conditions</code> property must be used to bind
+				 * {@link sap.ui.mdc.FilterField FilterField} to a {@link sap.ui.mdc.condition.ConditionModel ConditionModel}.</br>
+				 * For example, for a {@link sap.ui.mdc.FilterField FilterField} control inside a {@link sap.ui.mdc.FilterBar FilterBar} control the binding looks like this:</br>
 				 * <code>conditions="{$filters>/conditions/propertyPath}"</code> with the following data:
 				 * <ul>
 				 * <li><code>$filters</code> as the name of the condition model</li>
@@ -257,7 +258,7 @@ sap.ui.define([
 				 * <li><code>propertyPath</code> as the property name</li>
 				 * </ul>
 				 *
-				 * For an Any (see {@link sap.ui.model.FilterOperator}) <code>FilterField</code> control, the binding looks like this:
+				 * For an Any (see {@link sap.ui.model.FilterOperator}) {@link sap.ui.mdc.FilterField FilterField} control, the binding looks like this:</br>
 				 * <code>conditions='{$filters>/conditions/navPath&#42;/propertyPath}'</code> with the following data:
 				 * <ul>
 				 * <li><code>$filters</code> as the name of the condition model</li>
@@ -267,7 +268,7 @@ sap.ui.define([
 				 * </ul>
 				 * Between <code>navPath</code> and <code>propertyPath</code>, <b>&#42;/</b> is required.
 				 *
-				 * <b>Note</b> A condition must have the structure of <code>sap.ui.mdc.condition.ConditionObject</code>.
+				 * <b>Note:</b> A condition must have the structure of {@link sap.ui.mdc.condition.ConditionObject ConditionObject}.
 				 */
 				conditions: {
 					type: "object[]",
@@ -279,7 +280,7 @@ sap.ui.define([
 				/**
 				 * Defines the label text for the field.
 				 *
-				 * This can be used by <code>FilterBar</code> or <code>Form</code> controls to create a <code>Label</code> control for the field.
+				 * This can be used by {@link sap.ui.mdc.FilterBar FilterBar} or {@link sap.ui.layout.form.Form Form} controls to create a {@link sap.m.Label Label} control for the field.
 				 *
 				 * @experimental
 				 * @since 1.62.0 Disclaimer: this property is in a beta state - incompatible API changes may be done before its official public release. Use at your own discretion.
@@ -336,7 +337,7 @@ sap.ui.define([
 				/**
 				 * Sets the ARIA attributes added to the inner control.
 				 *
-				 * The object contains ARIA attribudes in an <code>aria</code> node.
+				 * The object contains ARIA attributes in an <code>aria</code> node.
 				 * Additional attributes, such as <code>role</code>, <code>autocomplete</code> or <code>valueHelpEnabled</code>, are added on root level.
 				 */
 				_ariaAttributes: {
@@ -352,14 +353,14 @@ sap.ui.define([
 				 * Optional content that can be rendered.
 				 *
 				 * <b>Note:</b> Bind the value-holding property of the control to <code>'$field>/conditions'</code>
-				 * using <code>sap.ui.mdc.field.ConditionsType</code> as type.
+				 * using {@link sap.ui.mdc.field.ConditionsType ConditionsType} as type.
 				 *
 				 * If the control needs to show multiple conditions, bind its aggregation to </code>'$field>/conditions'</code>.
-				 * Bind the item controls value-holding property using <code>sap.ui.mdc.field.ConditionType</code> as type.
+				 * Bind the item controls value-holding property using {@link sap.ui.mdc.field.ConditionType ConditionType} as type.
 				 *
-				 * <b>Warning:</b> Only controls allowed in a </code>Form</code> are allowed to be used for this optional content.
+				 * <b>Warning:</b> Only controls allowed in a {@link sap.ui.layout.form.Form Form} are allowed to be used for this optional content.
 				 * Other controls might break the layout.
-				 * This means the <code>sap.ui.core.IFormContent</code> interface needs to be implemented by these controls.
+				 * This means the {@link sap.ui.core.IFormContent IFormContent} interface needs to be implemented by these controls.
 				 */
 				content: {
 					type: "sap.ui.core.Control",
@@ -372,14 +373,14 @@ sap.ui.define([
 				 * <b>Note:</b> If a control is assigned to the <code>content</code> aggregation, this one is ignored.
 				 *
 				 * <b>Note:</b> Bind the value-holding property of the control to <code>'$field>/conditions'</code>
-				 * using <code>sap.ui.mdc.field.ConditionsType</code> as type.
+				 * using {@link sap.ui.mdc.field.ConditionsType ConditionsType} as type.
 				 *
 				 * If the control needs to show multiple conditions, bind its aggregation to </code>'$field>/conditions'</code>.
-				 * Bind the item controls value-holding property using <code>sap.ui.mdc.field.ConditionType</code> as type.
+				 * Bind the item controls value-holding property using {@link sap.ui.mdc.field.ConditionType ConditionType} as type.
 				 *
-				 * <b>Warning:</b> Only controls allowed in a </code>Form</code> are allowed to be used for this optional content.
+				 * <b>Warning:</b> Only controls allowed in a {@link sap.ui.layout.form.Form Form} are allowed to be used for this optional content.
 				 * Other controls might break the layout.
-				 * This means the <code>sap.ui.core.IFormContent</code> interface needs to implemented by these controls.
+				 * This means the {@link sap.ui.core.IFormContent IFormContent} interface needs to be implemented by these controls.
 				 *
 				 * @since 1.61.0
 				 */
@@ -394,14 +395,14 @@ sap.ui.define([
 				 * <b>Note:</b> If a control is assigned to the <code>content</code> aggregation, this one is ignored.
 				 *
 				 * <b>Note:</b> Bind the value-holding property of the control to <code>'$field>/conditions'</code>
-				 * using <code>sap.ui.mdc.field.ConditionsType</code> as type.
+				 * using {@link sap.ui.mdc.field.ConditionsType ConditionsType} as type.
 				 *
 				 * If the control needs to show multiple conditions, bind its aggregation to </code>'$field>/conditions'</code>.
-				 * Bind the item controls value-holding property using <code>sap.ui.mdc.field.ConditionType</code> as type.
+				 * Bind the item controls value-holding property using {@link sap.ui.mdc.field.ConditionType ConditionType} as type.
 				 *
-				 * <b>Warning:</b> Only controls allowed in a </code>Form</code> are allowed to be used for this optional content.
+				 * <b>Warning:</b> Only controls allowed in a {@link sap.ui.layout.form.Form Form} are allowed to be used for this optional content.
 				 * Other controls might break the layout.
-				 * This means the <code>sap.ui.core.IFormContent</code> interface needs to implemented by these controls.
+				 * This means the {@link sap.ui.core.IFormContent IFormContent} interface needs to be implemented by these controls.
 				 *
 				 * @since 1.61.0
 				 */

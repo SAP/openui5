@@ -66,7 +66,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class A field help used in the <code>FieldHelp</code> association in <code>FieldBase</code> controls that shows a value help dialog.
+	 * @class A field help used in the <code>FieldHelp</code> association of controls based on {@link sap.ui.mdc.field.FieldBase FieldBase} that shows a value help dialog.
 	 * @extends sap.ui.mdc.field.FieldHelpBase
 	 * @version ${version}
 	 * @constructor

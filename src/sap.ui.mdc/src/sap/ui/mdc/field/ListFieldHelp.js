@@ -35,7 +35,7 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * @class A field help used in the <code>FieldHelp</code> association in <code>FieldBase</code> controls that shows a list of items.
+	 * @class A field help used in the <code>FieldHelp</code> association of controls based on {@link sap.ui.mdc.field.FieldBase FieldBase} that shows a list of items.
 	 * @extends sap.ui.mdc.field.FieldHelpBase
 	 * @version ${version}
 	 * @constructor
@@ -91,7 +91,7 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> At the moment, icons are not supported.
 				 *
-				 * <b>Note:</b> If <code>sap.ui.mdc.field.ListFieldHelpItem</code> elements are used as items, the items are grouped and sorted
+				 * <b>Note:</b> If {@link sap.ui.mdc.field.ListFieldHelpItem ListFieldHelpItem} elements are used as items, the items are grouped and sorted
 				 * by the value provided in the <code>groupKey</code> property of the item.
 				 * The value provided in the <code>groupText</code> property will be shown as group header.
 				 */
