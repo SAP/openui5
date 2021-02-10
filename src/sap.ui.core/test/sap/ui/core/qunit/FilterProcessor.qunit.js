@@ -7,7 +7,7 @@ sap.ui.define([
 ], function(FilterProcessor, Filter, FilterOperator, Device) {
 	"use strict";
 
-	QUnit.module("sap.ui.model.FilterProcessor: Operators");
+	QUnit.module("sap.ui.model.FilterProcessor");
 
 	QUnit.test("Contains", function(assert) {
 
@@ -113,8 +113,6 @@ sap.ui.define([
 		assert.deepEqual(aFiltered, ["Football", "Basketball", "Baseball"], "Filter result for NotEndsWith is correct.");
 	});
 
-	QUnit.module("sap.ui.model.FilterProcessor: Negated Operators");
-
 	QUnit.test("NotContains", function(assert) {
 
 		var oFilter = new Filter({
@@ -219,8 +217,6 @@ sap.ui.define([
 		assert.deepEqual(aFiltered, ["Soccer", "Hockey", "Tennis"], "Filter result for NotEndsWith is correct.");
 	});
 
-	QUnit.module("sap.ui.model.FilterProcessor: Special cases");
-
 	QUnit.test("getFilterFunction - EndsWith", function(assert) {
 		var oFilter = new Filter({
 			path: 'to/glory',
@@ -248,8 +244,6 @@ sap.ui.define([
 		assert.ok(fnGetFilterFunction(sInput), "endswith '\u0073\u0323\u0307'");
 		assert.notOk(fnGetFilterFunction("dollars"), "does not endswith '\u0073\u0323\u0307'");
 	});
-
-	QUnit.module("sap.ui.model.FilterProcessor: Case-Sensitive & -Insensitive Filtering");
 
 	QUnit.test("Contains w/ caseSensitive = undefined", function(assert) {
 		var oFilter = new Filter({
@@ -342,8 +336,6 @@ sap.ui.define([
 		oToUpperCaseSpy.restore();
 	});
 
-	QUnit.module("sap.ui.model.FilterProcessor: groupFilters");
-
 	QUnit.test("groupFilters with same path", function(assert) {
 		var oGroupedFilter;
 		var aFilters = [
@@ -406,53 +398,68 @@ sap.ui.define([
 		assert.notOk(oGroupedFilter.aFilters[1]._bMultiFilter, "Second Filter should not be a MultiFilter");
 	});
 
-	if (String.prototype.normalize) {
+	QUnit.test("apply: values contain 'toString' value", function (assert) {
+		var aData = ["foo", "toString", "bar", "foo bar"],
+			oFilter = new Filter({path: "name", operator: FilterOperator.Contains, value1: "foo"});
 
-		QUnit.module("sap.ui.model.FilterProcessor: Normalizer cache");
+		// code under test
+		assert.deepEqual(FilterProcessor.apply(aData, oFilter, function (sValue) {return sValue;}),
+			["foo", "foo bar"]);
+	});
 
-		QUnit.test("Caching of normalized values", function(assert) {
-			var oSpy = sinon.spy(String.prototype, "normalize");
-			var a = ["Wakeboarding", "Skateboarding", "Tennis", "Marathon", "Cycling", "Snowboarding", "Surfing"];
-			var oFilter = new Filter({
+// ***********************************************************************************************
+// String.prototype.normalize is not available on all browsers
+// ***********************************************************************************************
+if (String.prototype.normalize) {
+	QUnit.test("Caching of normalized values", function (assert) {
+		var aData = ["Wakeboarding", "Skateboarding", "Tennis", "Marathon", "Cycling",
+				"Snowboarding", "Surfing"],
+			iExpectedCalls = 9,
+			oFilter = new Filter({
 				filters: [
-					new Filter({
-						path: ".",
-						operator: FilterOperator.EQ,
-						value1: "Tennis"
-					}),
-					new Filter({
-						path: ".",
-						operator: FilterOperator.EQ,
-						value1: "Swimming"
-					}),
-					new Filter({
-						path: ".",
-						operator: FilterOperator.EQ,
-						value1: "Snowboarding"
-					}),
-					new Filter({
-						path: ".",
-						operator: FilterOperator.EQ,
-						value1: "Esports"
-					})
+					new Filter({operator : FilterOperator.EQ, path : ".", value1 : "Tennis"}),
+					new Filter({operator : FilterOperator.EQ, path : ".", value1 : "Swimming"}),
+					new Filter({operator : FilterOperator.EQ, path : ".", value1 : "Snowboarding"}),
+					new Filter({operator : FilterOperator.EQ, path : ".", value1 : "Esports"})
 				],
-				and: false
-			});
+				and : false
+			}),
+			aFiltered,
+			oSpy = sinon.spy(String.prototype, "normalize");
 
-			var aFiltered = FilterProcessor.apply(a, oFilter, function (s) {
-				return s;
-			}, {});
-			var iExpectedCalls = 9;
-			// Internet Explorer has two normalize calls per unique value, due to issues with
-			// toUpperCase on not normalized characters
-			if (Device.browser.msie || Device.browser.edge) {
-				iExpectedCalls = iExpectedCalls * 2;
-			}
+		// code under test
+		aFiltered = FilterProcessor.apply(aData, oFilter, function (s) { return s; }, {});
 
-			assert.equal(aFiltered.length, 2, "Two results found");
-			assert.equal(oSpy.callCount, iExpectedCalls, "Normalize is only called once per unique data or filter value");
+		// Internet Explorer has two normalize calls per unique value, due to issues with
+		// toUpperCase on not normalized characters
+		if (Device.browser.msie || Device.browser.edge) {
+			iExpectedCalls = iExpectedCalls * 2;
+		}
+
+		assert.strictEqual(aFiltered.length, 2, "Two results found");
+		assert.strictEqual(oSpy.callCount, iExpectedCalls,
+			"Normalize is only called once per unique data or filter value");
+		oSpy.restore();
+	});
+
+	["foo", "toString"].forEach(function (sValue) {
+		QUnit.test("normalizeFilterValue: case sensitive, value: " + sValue, function (assert) {
+			FilterProcessor._normalizeCache = {"false": {}, "true" : {}};
+
+			this.mock(String.prototype).expects("normalize")
+				.on(sValue)
+				.withExactArgs("NFC")
+				.returns("~normalized");
+
+			// code under test
+			assert.deepEqual(FilterProcessor.normalizeFilterValue(sValue, true), "~normalized");
+
+			assert.strictEqual(FilterProcessor._normalizeCache["true"][sValue], "~normalized",
+				"noramalized value for '" + sValue + "' has been cached");
+
+			// code under test - take it from cache
+			assert.deepEqual(FilterProcessor.normalizeFilterValue(sValue, true), "~normalized");
 		});
-
-	}
-
+	});
+}
 });

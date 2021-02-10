@@ -223,14 +223,14 @@ sap.ui.define(['./Filter', 'sap/base/Log', 'sap/ui/Device'],
 	 * @static
 	 */
 	FilterProcessor.normalizeFilterValue = function(oValue, bCaseSensitive){
+		var sResult;
+
 		if (typeof oValue == "string") {
-			var sResult;
 			if (bCaseSensitive === undefined) {
 				bCaseSensitive = false;
 			}
-			sResult = this._normalizeCache[bCaseSensitive][oValue];
-			if (sResult !== undefined) {
-				return sResult;
+			if (this._normalizeCache[bCaseSensitive].hasOwnProperty(oValue)) {
+				return this._normalizeCache[bCaseSensitive][oValue];
 			}
 			sResult = oValue;
 			if (!bCaseSensitive) {
