@@ -80,16 +80,23 @@ sap.ui.define([
 	 * @param {Array<HTMLElement>} aItemsDomRef DOM elements on which formatting would be applied
 	 * @param {string} sInputValue Text to highlight
 	 * @param {boolean} bWordMode Whether to highlight single string or to highlight each string that starts with space + sInputValue
+	 * @param {integer} iLimit Threshold of the items to enable highlighting. Above that limit, highlighting would be disabled due to performance reasons- DOM trashing. Default: 200
 	 * @ui5-restricted
 	 */
-	var highlightItems = function (aItemsDomRef, sInputValue, bWordMode) {
-		var i;
+	var highlightItems = function (aItemsDomRef, sInputValue, bWordMode, iLimit) {
+		var i, highlightedTexts;
 
-		if (!aItemsDomRef && !aItemsDomRef.length) {
+		iLimit = iLimit || 200;
+
+		if (!sInputValue || // No input value
+			(!aItemsDomRef && !aItemsDomRef.length) ||
+			// Performance optimisation. This module causes inevitable DOM thrashing.
+			// We need to limit that thrashing, so when the limit is hit, highlighting would be entirely disabled.
+			aItemsDomRef.length > iLimit) {
 			return;
 		}
 
-		var highlightedTexts = [];
+		highlightedTexts = [];
 
 		for (i = 0; i < aItemsDomRef.length; i++) {
 			highlightedTexts.push(_createHighlightedText(aItemsDomRef[i], sInputValue, bWordMode));
