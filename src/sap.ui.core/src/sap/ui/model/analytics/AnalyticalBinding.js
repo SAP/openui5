@@ -1944,7 +1944,7 @@ sap.ui.define([
 
 			for ( var sMeasureName in this.oMeasureDetailsSet) {
 				oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
-				if (!bIsLeafGroupsRequest && this.mAnalyticalInfoByProperty[sMeasureName].total == false) {
+				if (!bIsLeafGroupsRequest && this._isSkippingTotalForMeasure(sMeasureName)) {
 					bIncludeRawValue = false;
 					bIncludeFormattedValue = false;
 					bIncludeUnitProperty = false;
@@ -2207,7 +2207,8 @@ sap.ui.define([
 			// determine index range for aggregation levels included in child level
 			// (rule: take all lower levels up to and including the first grouped level; G3 in above example
 			if (that.aMaxAggregationLevel.length > 0) {
-				while (that.oDimensionDetailsSet[that.aMaxAggregationLevel[iChildGroupToLevel]].grouped == false) {
+				while (that.aMaxAggregationLevel[iChildGroupToLevel]
+						&& that.oDimensionDetailsSet[that.aMaxAggregationLevel[iChildGroupToLevel]].grouped == false) {
 					if (++iChildGroupToLevel == that.aMaxAggregationLevel.length) {
 						break;
 					}
@@ -2264,7 +2265,7 @@ sap.ui.define([
 
 			for ( var sMeasureName in that.oMeasureDetailsSet) {
 				oMeasureDetails = that.oMeasureDetailsSet[sMeasureName];
-				if (!bIsLeafGroupsRequest && that.mAnalyticalInfoByProperty[sMeasureName].total == false) {
+				if (!bIsLeafGroupsRequest && that._isSkippingTotalForMeasure(sMeasureName)) {
 					bIncludeRawValue = false;
 					bIncludeFormattedValue = false;
 					bIncludeUnitProperty = false;
@@ -2469,7 +2470,7 @@ sap.ui.define([
 			if (!oMultiUnitRepresentative.aReloadMeasurePropertyName || oMultiUnitRepresentative.aReloadMeasurePropertyName.indexOf(oMeasureDetails.name) == -1) {
 				continue;
 			}
-			if (!bIsLeafGroupsRequest && this.mAnalyticalInfoByProperty[sMeasureName].total == false) {
+			if (!bIsLeafGroupsRequest && this._isSkippingTotalForMeasure(sMeasureName)) {
 				bIncludeRawValue = false;
 				bIncludeFormattedValue = false;
 				bIncludeUnitProperty = false;
@@ -4555,7 +4556,7 @@ sap.ui.define([
 		var aReloadMeasurePropertyName = [];
 		for ( var sMeasureName in this.oMeasureDetailsSet) {
 			var oMeasureDetails = this.oMeasureDetailsSet[sMeasureName];
-			if (!bIsFlatListRequest && !this.mAnalyticalInfoByProperty[sMeasureName].total) {
+			if (!bIsFlatListRequest && this._isSkippingTotalForMeasure(sMeasureName)) {
 				if (oMeasureDetails.rawValuePropertyName != undefined) {
 					oMultiUnitEntry[oMeasureDetails.rawValuePropertyName] = undefined;
 				}
@@ -4573,7 +4574,8 @@ sap.ui.define([
 			// determine if this measure that can be reloaded, because their unit properties do not have deviating values
 			if (aDeviatingUnitPropertyName) {
 				if (!oMeasureDetails.unitPropertyName || aDeviatingUnitPropertyName.indexOf(oMeasureDetails.unitPropertyName) == -1) {
-					aReloadMeasurePropertyName.push(oMeasureDetails.rawValuePropertyName);
+					aReloadMeasurePropertyName.push(oMeasureDetails.rawValuePropertyName
+						|| oMeasureDetails.name);
 				}
 			}
 		}
@@ -5053,6 +5055,23 @@ sap.ui.define([
 			oLogger.warning(sMessage, this.sPath);
 		}
 		this.bApplySortersToGroups = false;
+	};
+
+	/**
+	 * Whether to skip requesting the total for the given measure. If there is no column for the
+	 * measure request the total.
+	 *
+	 * @param {string} sMeasureName The property name of the measure
+	 * @returns {boolean} Whether to skip requesting the total for the given measure.
+	 * @private
+	 */
+	AnalyticalBinding.prototype._isSkippingTotalForMeasure = function (sMeasureName) {
+		var oAnalyticalInfo = this.mAnalyticalInfoByProperty[sMeasureName];
+
+		// It may happen that there is no column for the measure, for example because only the text
+		// property for the measure and not the measure itself has been added as column. In that
+		// case request the total for the corresponding measure.
+		return !!oAnalyticalInfo && oAnalyticalInfo.total == false;
 	};
 
 	AnalyticalBinding.Logger = oLogger;
