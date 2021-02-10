@@ -1187,7 +1187,7 @@ sap.ui.define([
 	 *
 	 * @param {string} sPaneBarItemId
 	 *         The ID of the PaneBarItem which should be marked as selected.
-	 * @type sap.ui.ux3.Shell
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -1237,7 +1237,7 @@ sap.ui.define([
 	 *
 	 * Returns 'this' to allow method chaining.
 	 *
-	 * @type sap.ui.ux3.Shell
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

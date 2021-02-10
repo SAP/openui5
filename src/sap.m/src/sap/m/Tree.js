@@ -316,7 +316,7 @@ function(
 	/**
 	 * Collapses all nodes.
 	 *
-	 * @return {sap.m.Tree} A reference to the Tree control
+	 * @returns {this} A reference to the Tree control
 	 * @public
 	 * @since 1.48.0
 	 */
@@ -375,7 +375,7 @@ function(
 	 *
 	 * Expands one or multiple items. Note that items that are hidden at the time of calling this API can't be expanded.
 	 *
-	 * @return {sap.m.Tree} A reference to the Tree control
+	 * @returns {this} A reference to the Tree control
 	 * @public
 	 * @param {int|int[]} vParam The index or indices of the item to be expanded
 	 * @since 1.56.0
@@ -409,7 +409,7 @@ function(
 	 *
 	 * Collapses one or multiple items.
 	 *
-	 * @return {sap.m.Tree} A reference to the Tree control
+	 * @returns {this} A reference to the Tree control
 	 * @public
 	 * @param {int|int[]} vParam The index or indices of the tree items to be collapsed
 	 * @since 1.56.0

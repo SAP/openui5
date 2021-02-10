@@ -252,7 +252,7 @@ sap.ui.define([
 		/* Clones the NotificationListBase.
 		 *
 		 * @public
-		 * @returns {sap.m.NotificationListBase} The cloned NotificationListBase.
+		 * @returns {this} The cloned NotificationListBase.
 		 */
 		NotificationListBase.prototype.clone = function () {
 			var clonedObject = ListItemBase.prototype.clone.apply(this, arguments);

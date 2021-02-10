@@ -1356,7 +1356,7 @@ sap.ui.define([
 
 		/**
 		 * Gets only the visible items.
-		 * @returns {sap.m.TimePickerSlider} the visible sap.m.TimePickerSlider items
+		 * @returns {sap.m.VisibleItem[]} the visible sap.m.TimePickerSlider items
 		 * @private
 		 */
 		TimePickerSlider.prototype._getVisibleItems = function() {

@@ -733,7 +733,7 @@ sap.ui.define([
 	 * Selects the text of the InputDomRef in the given range
 	 * @param {int} [iStart=0] start position of the text selection
 	 * @param {int} [iEnd=<length of text>] end position of the text selection
-	 * @return {sap.ui.commons.ComboBox} this DropdownBox instance
+	 * @return {this} this ComboBox instance
 	 * @private
 	 */
 	ComboBox.prototype._doSelect = function(iStart, iEnd){

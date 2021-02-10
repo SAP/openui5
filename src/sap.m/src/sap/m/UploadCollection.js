@@ -936,7 +936,7 @@ sap.ui.define([
 
 	/**
 	 * Select all items in "MultiSelection" mode.
-	 * @returns {sap.m.UploadCollection} this to allow method changing
+	 * @returns {this} this to allow method chaining
 	 * @since 1.34.0
 	 * @public
 	 */

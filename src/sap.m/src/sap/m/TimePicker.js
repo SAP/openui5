@@ -1047,7 +1047,7 @@ function(
 		 * Uses {@link sap.m.ResponsivePopover} control for a picker.
 		 *
 		 * @param {string} sFormat Time format used for creating the sliders inside the picker
-		 * @returns {sap.m.TimePicker} the sap.m.TimePicker
+		 * @returns {sap.m.ResponsivePopover} the time picker popover
 		 * @private
 		 */
 		TimePicker.prototype._createPicker = function(sFormat) {

@@ -809,7 +809,7 @@ sap.ui.define([
 	/**
 	 * Call this method to display the previous page (corresponds to a swipe left). Returns 'this' for method chaining.
 	 *
-	 * @type sap.m.Carousel
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -826,7 +826,7 @@ sap.ui.define([
 	/**
 	 * Call this method to display the next page (corresponds to a swipe right). Returns 'this' for method chaining.
 	 *
-	 * @type sap.m.Carousel
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

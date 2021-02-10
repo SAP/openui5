@@ -844,7 +844,7 @@ function(
 	 *         The list item whose selection to be changed. This parameter is mandatory.
 	 * @param {boolean} [bSelect=true]
 	 *         Sets selected status of the list item
-	 * @type sap.m.ListBase
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -881,7 +881,7 @@ function(
 	 *         The id of the list item whose selection to be changed.
 	 * @param {boolean} [bSelect=true]
 	 *         Sets selected status of the list item
-	 * @type sap.m.ListBase
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -932,7 +932,7 @@ function(
 	 *
 	 * @param {boolean} bAll
 	 *         Since version 1.16.3. This control keeps old selections after filter or sorting. Set this parameter "true" to remove all selections.
-	 * @type sap.m.ListBase
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -967,7 +967,7 @@ function(
 	 *
 	 * <b>Note:</b> In case <code>growing</code> is enabled, only the visible items in the list will be selected.
 	 *
-	 * @type sap.m.ListBase
+	 * @type this
 	 * @public
 	 * @since 1.16
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -1734,7 +1734,7 @@ function(
 	 *
 	 * @param {any} oCallback
 	 *         This callback function is called with two parameters(swipedListItem and swipedContent) after swipe-out animation is finished.
-	 * @type sap.m.ListBase
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

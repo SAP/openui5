@@ -208,7 +208,7 @@ sap.ui.define([
 	 *
 	 *
 	 * @public
-	 * @return {sap.m.TablePersoController} the TablePersoController instance.
+	 * @returns {this} the TablePersoController instance.
 	 */
 	TablePersoController.prototype.activate = function() {
 
@@ -538,7 +538,7 @@ sap.ui.define([
 	/**
 	 * Reflector for the controller's 'contentWidth' property.
 	 * @param {sap.ui.core.CSSSize} sWidth the new width of the tablePersoDialog
-	 * @return {sap.m.TablePersoController} the TablePersoController instance.
+	 * @returns {this} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setContentWidth = function(sWidth) {
@@ -553,7 +553,7 @@ sap.ui.define([
 	/**
 	 * Reflector for the controller's 'contentHeight' property.
 	 * @param {sap.ui.core.CSSSize} sHeight the new height of the TablePersoDialog.
-	 * @return {sap.m.TablePersoController} the TablePersoController instance.
+	 * @returns {this} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setContentHeight = function(sHeight) {
@@ -568,7 +568,7 @@ sap.ui.define([
 	/**
 	 * Reflector for the controller's 'hasGrouping' property.
 	 * @param {boolean} bHasGrouping is the tablePersoDialog displayed in grouping mode or not.
-	 * @return {sap.m.TablePersoController} the TablePersoController instance.
+	 * @returns {this} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setHasGrouping = function(bHasGrouping) {
@@ -583,7 +583,7 @@ sap.ui.define([
 	/**
 	 * Reflector for the controller's 'showSelectAll' property.
 	 * @param {boolean} bShowSelectAll is the tablePersoDialog's 'Display All' checkbox displayed or not.
-	 * @return {sap.m.TablePersoController} the TablePersoController instance.
+	 * @returns {this} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setShowSelectAll = function(bShowSelectAll) {
@@ -598,7 +598,7 @@ sap.ui.define([
 	/**
 	 * Reflector for the controller's 'showResetAll' property.
 	 * @param {boolean} bShowResetAll is the tablePersoDialog's 'UndoPersonalization' button displayed or not.
-	 * @return {sap.m.TablePersoController} the TablePersoController instance.
+	 * @returns {this} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setShowResetAll = function(bShowResetAll) {
@@ -618,7 +618,7 @@ sap.ui.define([
 	 * whether the table's app has a different component name or not.
 	 *
 	 * @param {string} sCompName the new component name.
-	 * @return {sap.m.TablePersoController} the TablePersoController instance.
+	 * @returns {this} the TablePersoController instance.
 	 * @public
 	 */
 	TablePersoController.prototype.setComponentName = function(sCompName) {

@@ -195,10 +195,8 @@ sap.ui.define([
 	/**
 	 * Gets the currently set title.
 	 *
-	 * @name sap.m.Title._getTitle
-	 * @method
 	 * @private
-	 * @returns {sap.m.Title} Instance of the associated sap.ui.core.Title if exists.
+	 * @returns {sap.ui.core.Title} Instance of the associated sap.ui.core.Title if exists.
 	 */
 	Title.prototype._getTitle = function(){
 		var sTitle = this.getTitle();
@@ -216,8 +214,6 @@ sap.ui.define([
 	/**
 	 * Title on change handler.
 	 *
-	 * @name sap.m.Title._onTitleChanged
-	 * @method
 	 * @private
 	 */
 	Title.prototype._onTitleChanged = function(){

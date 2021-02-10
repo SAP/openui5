@@ -195,7 +195,7 @@ sap.ui.define([
 	 *
 	 * Inverts the current value of the control.
 	 *
-	 * @type sap.ui.commons.CheckBox
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

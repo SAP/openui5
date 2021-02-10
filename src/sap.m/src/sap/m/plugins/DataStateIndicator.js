@@ -70,7 +70,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 	/**
 	 * Defines the text to be shown for the link control of the message strip.
 	 * @param {string} [sLinkText] The text for the link control
-	 * @returns {sap.m.plugins.DataStateIndicator} The control instance
+	 * @returns {this} The plugin instance
 	 * @since 1.79
 	 * @private
 	 */
@@ -94,7 +94,7 @@ sap.ui.define(["./PluginBase", "sap/ui/core/Core", "sap/ui/base/ManagedObjectObs
 	/**
 	 * Defines the visibility of the link control in the message strip.
 	 * @param {boolean} [bVisible] Visibility of the link control
-	 * @return {sap.m.plugins.DataStateIndicator} The control instance
+	 * @returns {this} The plugin instance
 	 * @since 1.79
 	 * @private
 	 */

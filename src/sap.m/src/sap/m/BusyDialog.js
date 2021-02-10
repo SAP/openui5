@@ -268,7 +268,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 *
 		 * @public
 		 * @param {boolean} [isClosedFromUserInteraction] Indicates if the BusyDialog is closed from a user interaction.
-		 * @returns {sap.m.BusyDialog} The modified BusyDialog.
+		 * @returns {this} The modified BusyDialog.
 		 */
 		BusyDialog.prototype.close = function (isClosedFromUserInteraction) {
 			this._isClosedFromUserInteraction = isClosedFromUserInteraction;
@@ -454,7 +454,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 *
 		 * @public
 		 * @param {string} sText Text for the cancel button.
-		 * @returns {sap.m.BusyDialog} The modified BusyDialog.
+		 * @returns {this} The modified BusyDialog.
 		 */
 		BusyDialog.prototype.setCancelButtonText = function (sText) {
 			this.setProperty("cancelButtonText", sText, false);
