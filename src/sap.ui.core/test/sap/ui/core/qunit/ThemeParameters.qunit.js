@@ -431,4 +431,21 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 			}
 		});
 	});
+
+	QUnit.test("Read parameter first time from lib which CSS is already loaded shouldn't trigger a library-parameters.json request", function(assert) {
+		var done = assert.async();
+		var fnAssertThemeChanged = function() {
+
+			// parameters of base theme should now be present
+			assert.equal(getParameterInUnifiedHexNotation("sapUiThemeParam1ForLib10"), "#123321", "sapUiText must be defined as '#123321'");
+			assert.strictEqual(checkLibraryParametersJsonRequestForLib("10").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib10");
+
+			sap.ui.getCore().detachThemeChanged(fnAssertThemeChanged);
+			done();
+		};
+
+		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib10");
+
+		sap.ui.getCore().attachThemeChanged(fnAssertThemeChanged);
+	});
 });
