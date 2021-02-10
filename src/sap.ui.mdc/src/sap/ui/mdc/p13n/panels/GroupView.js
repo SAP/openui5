@@ -132,7 +132,7 @@ sap.ui.define([
 
 	GroupView.prototype._createGroupListTemplate = function() {
 		var oList = new List({
-			keyboardMode: ListKeyboardMode.Edit,
+			keyboardMode: ListKeyboardMode.Navigation,
 			selectionChange: function(oBindingInfo) {
 				var sPath = oBindingInfo.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
 				var oItem = this.getP13nModel().getProperty(sPath);
