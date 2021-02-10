@@ -11,6 +11,7 @@ sap.ui.define([
 	"sap/ui/base/EventProvider",
 	"sap/ui/core/Control",
 	"sap/base/util/ObjectPath",
+	"sap/ui/util/openWindow",
 	// library dependency
 	"sap/ui/core/library",
 	"sap/base/strings/capitalize",
@@ -33,6 +34,7 @@ sap.ui.define([
 	EventProvider,
 	Control,
 	ObjectPath,
+	openWindow,
 	CoreLibrary,
 	capitalize,
 	jQuery,
@@ -4673,14 +4675,7 @@ sap.ui.define([
 				if (!bNewWindow) {
 					window.location.href = sURL;
 				} else {
-					var oWindow = window.open(sURL, "_blank");
-					if (!oWindow) {
-						Log.error(this + "#redirect: Could not open " + sURL);
-						if (Device.os.windows_phone || (Device.browser.edge && Device.browser.mobile)) {
-							Log.warning("URL will be enforced to open in the same window as a fallback from a known Windows Phone system restriction. Check the documentation for more information.");
-							window.location.href = sURL;
-						}
-					}
+					openWindow(sURL, "_blank");
 				}
 			},
 
