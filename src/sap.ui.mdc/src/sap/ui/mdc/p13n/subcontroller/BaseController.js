@@ -231,6 +231,7 @@ sap.ui.define([
     BaseController.prototype.getP13nModel = function() {
         if (!this._oAdaptationModel && this.oP13nData) {
             this._oAdaptationModel = new JSONModel(this.oP13nData);
+            this._oAdaptationModel.setSizeLimit(10000);
         } else {
             this.update();
         }
