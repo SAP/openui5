@@ -1,0 +1,51 @@
+{
+  "1.87.0": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "29f99a49af5e2483a0a71cd989179dae26c3be60",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Week numbers are now correct in different locales",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180007566"
+          }
+        ]
+      },
+      {
+        "id": "ac7a33ecee900d91189c7df1543f4d1711204fd8",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: Screen reader announcement adjusted",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080354744"
+          }
+        ]
+      },
+      {
+        "id": "1312711a8b9c8369cd379186a2a6faf96acf91eb",
+        "type": "FIX",
+        "text": " sap.ui.unified.YearPicker: maximum constraint now works properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180030102"
+          }
+        ]
+      },
+      {
+        "id": "aa1db6e68e994c32cff8e143d68a0bc408c2dafc",
+        "type": "FIX",
+        "text": " sap.ui.unified.calendar.Month: Renders Dec 9999 correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180002261"
+          }
+        ]
+      }
+    ]
+  }
+}

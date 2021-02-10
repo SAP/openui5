@@ -1,0 +1,33 @@
+{
+  "1.87.0": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "7a549d458ff7f69d5c209d5fad011475d1bbe27c",
+        "type": "FEATURE",
+        "text": " Integration cards: Added actions as entries in Table and Object cards"
+      },
+      {
+        "id": "6bb1e195eeacb3ae7ac484a1c25c933783f0a459",
+        "type": "FEATURE",
+        "text": " Calendar Card: two new actions introduced"
+      },
+      {
+        "id": "b6953ab67bfd31c9d2afbd04d3f9375765a6030b",
+        "type": "FIX",
+        "text": " Integration cards: Object card's visible property now works with parameters",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180001524"
+          }
+        ]
+      },
+      {
+        "id": "cfa49dd61ce6e7a4d2efce73239cd96e426cf551",
+        "type": "FIX",
+        "text": " sap.f/sap.ui.integration (samples): fix spelling mistake"
+      }
+    ]
+  }
+}

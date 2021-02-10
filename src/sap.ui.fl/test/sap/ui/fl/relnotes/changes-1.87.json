@@ -1,0 +1,86 @@
+{
+  "1.87.0": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "e2552c3d609e762ece5546426ba105d95246bc21",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl fix QUnit test flapping",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180090148"
+          }
+        ]
+      },
+      {
+        "id": "20880de54fb5af8b75be6cf4fd1bfee99244b52a",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl SvmAPI.loadVariants can handle overwriting standard variants",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180089883"
+          }
+        ]
+      },
+      {
+        "id": "9140b3e11eda7f205dae4691dc1596b2dfda453a",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl corrects executeOnSelect(ion) for comp"
+      },
+      {
+        "id": "32e21a6c485cbda924538fc021656f5562d11e14",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl...CompVariantState.add stores favorite and executeOnSelect"
+      },
+      {
+        "id": "0b312833c54d60f33156490194682c3b9a04f0a2",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl...CompVariantState can revert updateVariant"
+      },
+      {
+        "id": "f48e834800d6d496ece5ab81ea6135cf6ca12297",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl...CompVariantState clears revert data on persist"
+      },
+      {
+        "id": "4d60fcb7c945e67ad7cf4abb4b1dcb1b104d2ff5",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl...SmartVariantManagementWriteAPI can revert"
+      },
+      {
+        "id": "2b75bd967a809bef2fa359190504060f567c94ba",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl...CompVariantState stores data correct"
+      },
+      {
+        "id": "8db1ac9dd00e22f71c65e2ba39b9e4310db67d12",
+        "type": "FIX",
+        "text": " sap.ui.fl: Personalization changes not filtered on \"Adapt UI\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180021032"
+          }
+        ]
+      },
+      {
+        "id": "6e4ce8533c3246c5b685f44dbf17ff2da218e8de",
+        "type": "FIX",
+        "text": " sap.ui.fl: Standard Variant needs an empty variantReference string",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180021083"
+          }
+        ]
+      },
+      {
+        "id": "66b7e9bbaf28368f42f7666e88e5b04107b5722a",
+        "type": "FEATURE",
+        "text": " VariantManagement: Manage Views Dialog - Change \"OK\" to \"Save\""
+      }
+    ]
+  }
+}

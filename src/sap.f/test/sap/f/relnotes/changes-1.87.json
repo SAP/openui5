@@ -1,0 +1,71 @@
+{
+  "1.87.0": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "29c065c0ea436af1b56816548d2af27782c215ba",
+        "type": "FIX",
+        "text": " sap.f.AvatarGroup: Focuses in HCB and HCW aligned with spec",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180068783"
+          }
+        ]
+      },
+      {
+        "id": "7a549d458ff7f69d5c209d5fad011475d1bbe27c",
+        "type": "FEATURE",
+        "text": " Integration cards: Added actions as entries in Table and Object cards"
+      },
+      {
+        "id": "aa3d1669709762a6d90bd6ca33c93c3e2f0c1efe",
+        "type": "FIX",
+        "text": " sap.f.GridContainer: Focus of items is now visualized correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180033672"
+          }
+        ]
+      },
+      {
+        "id": "6bb1e195eeacb3ae7ac484a1c25c933783f0a459",
+        "type": "FEATURE",
+        "text": " Calendar Card: two new actions introduced"
+      },
+      {
+        "id": "8db11ef6d4e41443049f4ed9237262337884c7ab",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Infinite snapping/unsnapping is prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000409092021"
+          }
+        ]
+      },
+      {
+        "id": "8d0f4e6407c107c819def525bba613f83ec31dd0",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Handle fitContainer automatically on tablet",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180043733"
+          }
+        ]
+      },
+      {
+        "id": "cfa49dd61ce6e7a4d2efce73239cd96e426cf551",
+        "type": "FIX",
+        "text": " sap.f/sap.ui.integration (samples): fix spelling mistake"
+      },
+      {
+        "id": "6356c09887ee6b50131a60e3271b74d06ad39cd2",
+        "type": "FEATURE",
+        "text": " sap.f.GridList: Introduce 2D keyboard navigation based on the grid"
+      }
+    ]
+  }
+}
