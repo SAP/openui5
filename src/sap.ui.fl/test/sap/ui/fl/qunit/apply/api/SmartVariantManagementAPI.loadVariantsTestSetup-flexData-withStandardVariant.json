@@ -41,7 +41,7 @@
       },
       "content": {
         "favorite": true,
-        "executeOnSelection": true
+        "executeOnSelect": true
       },
       "texts": {
         "variantName": {
@@ -57,7 +57,7 @@
       "content": {
         "standardvariant": true,
         "favorite": true,
-        "executeOnSelection": true
+        "executeOnSelect": true
       },
       "texts": {
         "variantName": {

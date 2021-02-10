@@ -57,7 +57,7 @@ sap.ui.define([
 			compVariantStateFunctionName: "setDefault"
 		}, {
 			apiFunctionName: "setExecuteOnSelect",
-			compVariantStateFunctionName: "setExecuteOnSelection"
+			compVariantStateFunctionName: "setExecuteOnSelect"
 		}].forEach(function(testData) {
 			QUnit.test("When " + testData.apiFunctionName + " is called", function (assert) {
 				// mock control
@@ -154,7 +154,7 @@ sap.ui.define([
 				name: "a new name",
 				content: {},
 				favorite: false,
-				executeOnSelection: false
+				executeOnSelect: false
 			}
 		}, {
 			details: "a new content",
@@ -183,11 +183,11 @@ sap.ui.define([
 				content: {
 					someProperty: "someValue"
 				},
-				executeOnSelection: false,
+				executeOnSelect: false,
 				favorite: false
 			}
 		}, {
-			details: "a new executeOnSelection flag",
+			details: "a new executeOnSelect flag",
 			propertyBag: {
 				id: "test_variant",
 				executeOnSelect: true
@@ -210,9 +210,9 @@ sap.ui.define([
 				name: "",
 				content: {
 					someOld: "content",
-					executeOnSelection: true
+					executeOnSelect: true
 				},
-				executeOnSelection: true,
+				executeOnSelect: true,
 				favorite: false
 			}
 		}, {
@@ -241,11 +241,11 @@ sap.ui.define([
 					someOld: "content",
 					favorite: true
 				},
-				executeOnSelection: false,
+				executeOnSelect: false,
 				favorite: true
 			}
 		}, {
-			details: "a new executeOnSelection flag overwriting an old one",
+			details: "a new executeOnSelect flag overwriting an old one",
 			propertyBag: {
 				id: "test_variant",
 				executeOnSelect: true
@@ -257,7 +257,7 @@ sap.ui.define([
 				},
 				content: {
 					someOld: "content",
-					executeOnSelection: false
+					executeOnSelect: false
 				},
 				texts: {
 					variantName: {
@@ -269,9 +269,9 @@ sap.ui.define([
 				name: "",
 				content: {
 					someOld: "content",
-					executeOnSelection: true
+					executeOnSelect: true
 				},
-				executeOnSelection: true,
+				executeOnSelect: true,
 				favorite: false
 			}
 		}, {
@@ -301,11 +301,11 @@ sap.ui.define([
 					someOld: "content",
 					favorite: true
 				},
-				executeOnSelection: false,
+				executeOnSelect: false,
 				favorite: true
 			}
 		}, {
-			details: "a new content and existing flags for executeOnSelection and favorite",
+			details: "a new content and existing flags for executeOnSelect and favorite",
 			propertyBag: {
 				id: "test_variant",
 				content: {
@@ -318,7 +318,7 @@ sap.ui.define([
 					persistencyKey: sPersistencyKey
 				},
 				content: {
-					executeOnSelection: true,
+					executeOnSelect: true,
 					favorite: false
 				},
 				texts: {
@@ -331,10 +331,10 @@ sap.ui.define([
 				name: "",
 				content: {
 					someProperty: "someValue",
-					executeOnSelection: true,
+					executeOnSelect: true,
 					favorite: false
 				},
-				executeOnSelection: true,
+				executeOnSelect: true,
 				favorite: false
 			}
 		}].forEach(function (testData) {
@@ -365,7 +365,7 @@ sap.ui.define([
 					assert.equal(oVariant.getText("variantName"), testData.expected.name, "the name is correct");
 					assert.deepEqual(oVariant.getContent(), testData.expected.content, "the content is correct");
 					assert.equal(oVariant.getFavorite(), testData.expected.favorite, "the favorite flag is correct");
-					assert.equal(oVariant.getExecuteOnSelection(), testData.expected.executeOnSelection, "the executeOnSelection flag is correct");
+					assert.equal(oVariant.getExecuteOnSelect(), testData.expected.executeOnSelect, "the executeOnSelect flag is correct");
 					assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant is marked for an update");
 				});
 			});
@@ -452,7 +452,7 @@ sap.ui.define([
 							persistencyKey: sPersistencyKey
 						},
 						content: {
-							executeOnSelection: true,
+							executeOnSelect: true,
 							favorite: false
 						},
 						texts: {
