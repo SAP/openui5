@@ -56,8 +56,8 @@ sap.ui.define([
 	 * are overridden: <code>text</code>, <code>textAlign</code>, <code>textDirection</code>, or not used: <code>wrapping</code>,
 	 * <code>wrappingType</code>. The <code>title</code> association will be ignored too.
 	 *
-	 * If the <code>title</code> association is used, <code>text</code>, <code>level</code> and <code>tooltip<code> properties
-	 * will override the corresponding properties of the <>sap.m.Title</code> control.
+	 * If the <code>title</code> association is used, <code>text</code>, <code>level</code> and <code>tooltip</code> properties
+	 * will override the corresponding properties of the <code>sap.m.Title</code> control.
 	 *
  	 * <h3>Usage</h3>
  	 * <h4>When to use</h4>
