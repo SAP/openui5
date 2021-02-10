@@ -397,6 +397,8 @@ sap.ui.define([
 							message : "Property `Note` value `RAISE_ERROR` not allowed!",
 							"@SAP__common.numericSeverity" : 4,
 							"@SAP__Common.longtextUrl" : "",
+							 // Note: we assume that it is the 2nd request in a change set
+							"@SAP__core.ContentID" : "1.0",
 							target : "Note",
 							details : []
 						}
