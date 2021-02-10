@@ -43,6 +43,8 @@ sap.ui.define([
 			this.tempRulesLoaded = false;
 			this.getView().setModel(this.model);
 			this.treeTable = SelectionUtils.treeTable = this.byId("ruleList");
+			this._oRuleSetsModel = new JSONModel();
+			this.treeTable.setModel(this._oRuleSetsModel, "ruleSets");
 			this.ruleSetView = this.byId("ruleSetsView");
 			this.rulesViewContainer = this.byId("rulesNavContainer");
 			this.bAdditionalViewLoaded = false;
@@ -158,6 +160,9 @@ sap.ui.define([
 			this.model.setProperty(sRule + "/check", sNewCheckFunction);
 		},
 
+		/**
+		 * @returns {object} A deep copy of the temporary library
+		 */
 		getTemporaryLib: function () {
 			var libs = this.model.getProperty("/libraries");
 
@@ -174,6 +179,7 @@ sap.ui.define([
 			for (var i = 0; i < libs.length; i++) {
 				if (libs[i].title == Constants.TEMP_RULESETS_NAME) {
 					this.model.setProperty("/libraries/" + i, oData);
+					return;
 				}
 			}
 		},
@@ -190,13 +196,7 @@ sap.ui.define([
 				if (result == "success") {
 					tempLib.rules.push(newRule);
 					this.setTemporaryLib(tempLib);
-					if (!this.oJsonModel) {
-						this.oJsonModel = new JSONModel();
-						this.treeTable.setModel(this.oJsonModel, "treeModel");
-					}
-
-					//Sync Selection of temporary rules
-					this._applyTempRulesSelection(tempLib);
+					this._applyTempRulesSelection(tempLib); //Sync Selection of temporary rules
 
 					//Set selected rules count to UI and update preset selections
 					PresetsUtils.syncCurrentSelectionPreset(SelectionUtils.getSelectedRules());
@@ -210,9 +210,6 @@ sap.ui.define([
 							this.showRuleCreatedToast = false;
 						}
 					}
-
-					// set data to model
-					this.oJsonModel.setData(deepExtend({}, this.model.getProperty("/treeModel")));
 
 					//Clean the new rule object
 					var emptyRule = this.model.getProperty("/newEmptyRule");
@@ -234,7 +231,7 @@ sap.ui.define([
 
 				if (result === "success") {
 					var ruleSource = this.model.getProperty("/editRuleSource"),
-						treeTable = this.model.getProperty('/treeModel'),
+						oRuleSets = this._oRuleSetsModel.getData(),
 						libraries = this.model.getProperty('/libraries');
 
 					libraries.forEach(function (lib, libIndex) {
@@ -248,12 +245,11 @@ sap.ui.define([
 									}
 								}
 							});
-							that._syncTreeTableVieModelTempRule(updateRule, treeTable);
+							that._syncTreeTableVieModelTempRule(updateRule, oRuleSets);
 						}
 					});
 
-					this.oJsonModel.setData(treeTable);
-					this.model.checkUpdate(true);
+					this._oRuleSetsModel.setData(oRuleSets);
 					this.model.setProperty('/selectedRule', updateRule);
 
 					//Set selected rules count to UI
@@ -299,48 +295,43 @@ sap.ui.define([
 				this.model.setProperty("/executionScopeComponents", executionScopeComponents);
 			}, this);
 
-			CommunicationBus.subscribe(channelNames.GET_RULES_MODEL, function (oTreeViewModelRules) {
-				this.oJsonModel = new JSONModel();
-				this.treeTable.setModel(this.oJsonModel, "treeModel");
-				this.oJsonModel.setData(oTreeViewModelRules);
-
+			// Called when new rule sets are loaded with all rulesets
+			// "oRuleSets" is fresh object and all selections so far have to be applied on it
+			CommunicationBus.subscribe(channelNames.GET_RULES_MODEL, function (oRuleSets) {
 				var bPersistSettings = Storage.readPersistenceCookie(Constants.COOKIE_NAME),
-					bLoadingAdditionalRuleSets =  this.model.getProperty("/loadingAdditionalRuleSets");
+					bLoadingAdditionalRuleSets = this.model.getProperty("/loadingAdditionalRuleSets");
 
-
+				// Keep selection when additional rulesets are loaded
 				if (bLoadingAdditionalRuleSets) {
-					//Keep selection when additional rulesets are loaded
-					oTreeViewModelRules = SelectionUtils._syncSelectionAdditionalRuleSetsMainModel(oTreeViewModelRules, this.model.getProperty("/treeModel"));
-					oTreeViewModelRules = SelectionUtils._deselectAdditionalRuleSets(oTreeViewModelRules, this.model.getProperty("/namesOfLoadedAdditionalRuleSets"));
+					SelectionUtils._syncSelectionAdditionalRuleSetsMainModel(oRuleSets, this._oRuleSetsModel.getData());
+					SelectionUtils._deselectAdditionalRuleSets(oRuleSets, this.model.getProperty("/namesOfLoadedAdditionalRuleSets"));
 				}
-				//Keep selection when additional  ruleset are loaded
+
 				if (bPersistSettings) {
 					// Needed for temp rules init
-					this.model.setProperty('/treeModel', deepExtend({}, oTreeViewModelRules));
 					this.initializeTempRules();
 					//Selection should be applied from local storage
 					// Syncs selection for all libs except for temporary
-					var oUpdatedRules = SelectionUtils.updateSelectedRulesFromLocalStorage(oTreeViewModelRules);
+					var oUpdatedRules = SelectionUtils.updateSelectedRulesFromLocalStorage(oRuleSets);
 					// In case of deleted local storage item
 					if (oUpdatedRules) {
-						oTreeViewModelRules = oUpdatedRules;
+						oRuleSets = oUpdatedRules;
 					}
 
 					PresetsUtils.loadCustomPresets();
 				}
 
+				this._oRuleSetsModel.setData(oRuleSets);
+
 				if (bPersistSettings || bLoadingAdditionalRuleSets) {
-					this.oJsonModel.setData(deepExtend({}, oTreeViewModelRules));
 					this.treeTable.updateSelectionFromModel();
 				} else {
 					this.treeTable.selectAll();
 				}
 
-				this.model.setProperty('/treeModel', deepExtend({}, oTreeViewModelRules));
 				this.model.setProperty("/selectedRulesCount", SelectionUtils.getSelectedRules().length);
 
 				PresetsUtils.initializeSelectionPresets(SelectionUtils.getSelectedRules());
-
 
 			}, this);
 
@@ -443,11 +434,11 @@ sap.ui.define([
 		 * @returns {Array} All currently loaded rulesets.
 		 */
 		_getLoadedRulesets: function () {
-			var oRulesets = this.treeTable.getModel("treeModel").getData(),
+			var oRulesSts = this.treeTable.getModel("ruleSets").getData(),
 				aLoadedLibraries = [];
 
-			Object.keys(oRulesets).forEach(function (sKey) {
-				var sLibraryName = oRulesets[sKey].name;
+			Object.keys(oRulesSts).forEach(function (sKey) {
+				var sLibraryName = oRulesSts[sKey].name;
 				if (sLibraryName && sLibraryName !== "temporary") {
 					aLoadedLibraries.push(sLibraryName);
 				}
@@ -459,10 +450,9 @@ sap.ui.define([
 		/**
 		 * Keeps in sync the TreeViewModel for temporary library that we use for visualisation of sap.m.TreeTable and the model that we use in the Suppport Assistant
 		 * @param {Object} tempLib  temporary library model from Support Assistant
-		 * @param {Object} treeModel Model for sap.m.TreeTable visualization
 		 */
 		_applyTempRulesSelection: function (tempLib) {
-			var treeModelData = deepExtend({}, this.model.getProperty("/treeModel")),
+			var oRuleSets = deepExtend({}, this._oRuleSetsModel.getData()),
 				library,
 				rule,
 				aTempLibNodes,
@@ -473,16 +463,16 @@ sap.ui.define([
 					return oRule.id === rule.id;
 				};
 
-			for (var i in treeModelData) {
-				library = treeModelData[i];
-				aTempLibNodes = treeModelData[i].nodes;
+			for (var i in oRuleSets) {
+				library = oRuleSets[i];
+				aTempLibNodes = oRuleSets[i].nodes;
 
 				if (library.name !== Constants.TEMP_RULESETS_NAME) {
 					continue;
 				}
 
 				//reset the model to add the temp rules
-				treeModelData[i].nodes = [];
+				oRuleSets[i].nodes = [];
 				for (var ruleIndex in tempLib.rules) {
 
 					rule = tempLib.rules[ruleIndex];
@@ -521,10 +511,9 @@ sap.ui.define([
 						check: rule.check
 					});
 				}
-
-				this.model.setProperty("/treeModel", treeModelData);
-				this.oJsonModel.setData(deepExtend({}, treeModelData));
 			}
+
+			this._oRuleSetsModel.setData(oRuleSets);
 		},
 
 		/**
@@ -780,8 +769,6 @@ sap.ui.define([
 			}
 
 			this.model.setProperty("/tempLink", { href: "", text: "" });
-
-			this.model.checkUpdate(true, true);
 		},
 
 		goToCreateRule: function () {
@@ -909,7 +896,7 @@ sap.ui.define([
 		},
 
 		duplicateRule: function (oEvent) {
-			var sPath = oEvent.getSource().getBindingContext("treeModel").getPath(),
+			var sPath = oEvent.getSource().getBindingContext("ruleSets").getPath(),
 				oSourceObject = this.treeTable.getBinding().getModel().getProperty(sPath),
 				selectedRule = this.getMainModelFromTreeViewModel(oSourceObject),
 				selectedRuleCopy = deepExtend({}, selectedRule);
@@ -917,24 +904,23 @@ sap.ui.define([
 			selectedRuleCopy.id = this._generateRuleId(selectedRuleCopy.id);
 
 			this.model.setProperty("/newRule", selectedRuleCopy);
-			this.model.checkUpdate(true, false);
 			this.goToCreateRule();
 		},
 
 		editRule: function (event) {
-			var sPath = event.getSource().getBindingContext("treeModel").getPath(),
+			var sPath = event.getSource().getBindingContext("ruleSets").getPath(),
 				oSourceObject = this.treeTable.getBinding().getModel().getProperty(sPath),
 				selectedRule = this.getMainModelFromTreeViewModel(oSourceObject);
 
 			this.model.setProperty("/editRuleSource", selectedRule);
 			this.model.setProperty("/editRule", deepExtend({}, selectedRule));
-			this.model.checkUpdate(true, true);
 			var navCont = this.byId("rulesNavContainer");
 			navCont.to(sap.ui.getCore().byId("ruleUpdatePage"), "show");
 		},
+
 		deleteTemporaryRule: function (event) {
 			var sourceObject = this.getObjectOnTreeRow(event),
-				oTreeModelData = deepExtend({}, this.treeTable.getBinding().getModel().getData()),
+				oRuleSets = deepExtend({}, this._oRuleSetsModel.getData()),
 				aLibraries = this.model.getProperty("/libraries"),
 				aRemainingRules;
 
@@ -947,17 +933,17 @@ sap.ui.define([
 				}
 			});
 
-			for (var oLibrary in oTreeModelData) {
-				if (oTreeModelData[oLibrary].name === Constants.TEMP_RULESETS_NAME) {
-					for (var iRuleIndex in oTreeModelData[oLibrary].nodes) {
-						if (oTreeModelData[oLibrary].nodes[iRuleIndex].id === sourceObject.id) {
-							oTreeModelData[oLibrary].nodes.splice(iRuleIndex, 1);
+			for (var oLibrary in oRuleSets) {
+				if (oRuleSets[oLibrary].name === Constants.TEMP_RULESETS_NAME) {
+					for (var iRuleIndex in oRuleSets[oLibrary].nodes) {
+						if (oRuleSets[oLibrary].nodes[iRuleIndex].id === sourceObject.id) {
+							oRuleSets[oLibrary].nodes.splice(iRuleIndex, 1);
 						}
 					}
 				}
 			}
-			this.model.setProperty("/treeModel", oTreeModelData);
-			this.oJsonModel.setData(deepExtend({}, oTreeModelData));
+
+			this._oRuleSetsModel.setData(oRuleSets);
 
 			CommunicationBus.publish(channelNames.DELETE_RULE, RuleSerializer.serialize(sourceObject));
 
@@ -978,7 +964,7 @@ sap.ui.define([
 		* @returns {Object} ISelected rule from row
 		***/
 		getObjectOnTreeRow: function (event) {
-			var sPath = event.getSource().getBindingContext("treeModel").getPath(),
+			var sPath = event.getSource().getBindingContext("ruleSets").getPath(),
 				sourceObject = this.treeTable.getBinding().getModel().getProperty(sPath),
 				libs = this.model.getProperty("/libraries");
 

@@ -5,11 +5,13 @@
 sap.ui.define([
 	"sap/ui/support/supportRules/CommunicationBus",
 	"sap/ui/support/supportRules/WCBChannels",
-	"sap/ui/support/supportRules/IssueManager"
-], function (CommunicationBus, Channels, IssueManager) {
+	"sap/ui/support/supportRules/IssueManager",
+	"sap/ui/support/supportRules/RuleSerializer"
+], function (CommunicationBus, Channels, IssueManager, RuleSerializer) {
 	"use strict";
 
 	var CommunicationMock = {};
+	var mRuleSets = null;
 
 	CommunicationMock._bInitialized = false;
 
@@ -41,6 +43,8 @@ sap.ui.define([
 
 		CommunicationBus.subscribe(Channels.ON_INIT_ANALYSIS_CTRL, function () {
 			jQuery.getJSON("test-resources/sap/ui/support/integration/ui/data/RuleSets.json").done(function (oRuleSets) {
+				mRuleSets = oRuleSets;
+
 				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, {
 					sRuleSet: oRuleSets
 				});
@@ -63,23 +67,37 @@ sap.ui.define([
 		}, this);
 
 		CommunicationBus.subscribe(Channels.LOAD_RULESETS, function () {
-			jQuery.getJSON("test-resources/sap/ui/support/integration/ui/data/RuleSetAdditional.json").done(function (oRuleSets) {
+			jQuery.getJSON("test-resources/sap/ui/support/integration/ui/data/RuleSetAdditional.json").done(function (oAdditionalRuleSets) {
+				// add the additional rule sets to the already existing
+				Object.assign(mRuleSets, oAdditionalRuleSets);
+
 				CommunicationBus.publish(Channels.UPDATE_SUPPORT_RULES, {
-					sRuleSet: oRuleSets
+					sRuleSet: JSON.parse(JSON.stringify(mRuleSets))
 				});
 			});
 		}, this);
 
 		// Subscriptions that are needed for temporary rules
 		CommunicationBus.subscribe(Channels.VERIFY_CREATE_RULE, function (tempRuleSerialized) {
+			var oTempRule = RuleSerializer.deserialize(tempRuleSerialized),
+				oTempRuleSet = mRuleSets["temporary"].ruleset;
+
+			oTempRuleSet._mRules[oTempRule.id] = oTempRule; // preserve the temporary rule
+
 			CommunicationBus.publish(Channels.VERIFY_RULE_CREATE_RESULT, {
 				result: "success",
-				newRule:tempRuleSerialized
+				newRule: tempRuleSerialized
 			});
 		}, this);
 
 		CommunicationBus.subscribe(Channels.VERIFY_UPDATE_RULE, function (data) {
-			var oTempRuleSerialized = data.updateObj;
+			var oTempRuleSerialized = data.updateObj,
+				oTempRule = RuleSerializer.deserialize(oTempRuleSerialized),
+				oTempRuleSet = mRuleSets["temporary"].ruleset;
+
+			delete oTempRuleSet._mRules[data.oldId];
+			oTempRuleSet._mRules[oTempRule.id] = oTempRule; // preserve the temporary rule
+
 			CommunicationBus.publish(Channels.VERIFY_RULE_UPDATE_RESULT, {
 				result: "success",
 				updateRule: oTempRuleSerialized

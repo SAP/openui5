@@ -8,7 +8,8 @@ sap.ui.define([
 
 	var CREATE_RULE_BUTTON = "Create Rule",
 		ADD_RULE_BUTTON = "Add Rule",
-		INDEX_OF_TEMPORARY_LIBRARY = 0;
+		INDEX_OF_TEMPORARY_LIBRARY = 0,
+		TEMP_RULE_TITLE_AFTER_UPDATE = "Title of the rule after update";
 
 	QUnit.module("Support Assistant Temporary Rules");
 
@@ -69,16 +70,15 @@ sap.ui.define([
 
 	opaTest("Should edit temporary rule without persistence enabled", function (Given, When, Then) {
 
-		var sRuleTitle = "Title of the rule after update";
 		When.onTheRulesPage.iPressEditIconOfTemporaryRule("Title of the temp rule2");
 
 		Then.onTheUpdateTemporaryRulePage.iShouldSeeTheForm();
 
-		When.onTheUpdateTemporaryRulePage.iFillTitleWith(sRuleTitle);
+		When.onTheUpdateTemporaryRulePage.iFillTitleWith(TEMP_RULE_TITLE_AFTER_UPDATE);
 
 		When.onTheRulesPage.iPressButtonWithText("Update");
 
-		Then.onTheRulesPage.iShouldSeeARuleWithSpecificTitle(INDEX_OF_TEMPORARY_LIBRARY, 0, sRuleTitle);
+		Then.onTheRulesPage.iShouldSeeARuleWithSpecificTitle(INDEX_OF_TEMPORARY_LIBRARY, 0, TEMP_RULE_TITLE_AFTER_UPDATE);
 	});
 
 	opaTest("Should clone rule from existing without persistence enabled", function (Given, When, Then) {
@@ -189,13 +189,15 @@ sap.ui.define([
 	});
 
 	opaTest("Should load additional rule and deselect sap.ui.table rules", function (Given, When, Then) {
+		Then.onTheRulesPage.iShouldSeeRuleInTable(TEMP_RULE_TITLE_AFTER_UPDATE, "Temporary rule " + TEMP_RULE_TITLE_AFTER_UPDATE + " disappeared")
+			.and.iShouldSeeLibraryDeselectedInView(INDEX_OF_TEMPORARY_LIBRARY);
 
-		When.onTheRulesPage.iPressIconTabHeader("additionalRulesets");
-		When.onTheRulesPage.iSelectAdditionalRuleSet("sap.ui.table");
-		When.onTheRulesPage.iPressLoadAdditionalRuleSetButton();
+		When.onTheRulesPage.iPressIconTabHeader("additionalRulesets")
+			.and.iSelectAdditionalRuleSet("sap.ui.table")
+			.and.iPressLoadAdditionalRuleSetButton();
 
-		//temporary- library
-		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(0);
+		Then.onTheRulesPage.iShouldSeeRuleInTable(TEMP_RULE_TITLE_AFTER_UPDATE, "Temporary rule '" + TEMP_RULE_TITLE_AFTER_UPDATE + "' disappeared after loading additional rulesets")
+			.and.iShouldSeeLibraryDeselectedInView(INDEX_OF_TEMPORARY_LIBRARY);
 
 		// first temp rule
 		Then.onTheRulesPage.iShouldSeeRuleDeselectedInView(1);
@@ -255,13 +257,15 @@ sap.ui.define([
 	});
 
 	opaTest("Should load additional rule and deselect sap.ui.table rules", function (Given, When, Then) {
+		Then.onTheRulesPage.iShouldSeeRuleInTable(TEMP_RULE_TITLE_AFTER_UPDATE, "Temporary rule " + TEMP_RULE_TITLE_AFTER_UPDATE + " disappeared")
+			.and.iShouldSeeLibraryDeselectedInView(INDEX_OF_TEMPORARY_LIBRARY);
 
-		When.onTheRulesPage.iPressIconTabHeader("additionalRulesets");
-		When.onTheRulesPage.iSelectAdditionalRuleSet("sap.ui.table");
-		When.onTheRulesPage.iPressLoadAdditionalRuleSetButton();
+		When.onTheRulesPage.iPressIconTabHeader("additionalRulesets")
+			.and.iSelectAdditionalRuleSet("sap.ui.table")
+			.and.iPressLoadAdditionalRuleSetButton();
 
-		//temporary- library
-		Then.onTheRulesPage.iShouldSeeLibraryDeselectedInView(INDEX_OF_TEMPORARY_LIBRARY);
+		Then.onTheRulesPage.iShouldSeeRuleInTable(TEMP_RULE_TITLE_AFTER_UPDATE, "Temporary rule '" + TEMP_RULE_TITLE_AFTER_UPDATE + "' disappeared after loading additional rulesets")
+			.and.iShouldSeeLibraryDeselectedInView(INDEX_OF_TEMPORARY_LIBRARY);
 
 		// first temp rule
 		Then.onTheRulesPage.iShouldSeeRuleDeselectedInView(1);

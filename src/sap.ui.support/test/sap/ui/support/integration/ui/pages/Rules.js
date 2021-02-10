@@ -11,11 +11,11 @@ sap.ui.define([
 		sViewNameSpace = "sap.ui.support.supportRules.ui.views.";
 
 	function isRuleSelectedInModel(oTable, iLibIndex, iRuleIndex) {
-		return oTable.getModel().getData().treeModel[iLibIndex].nodes[iRuleIndex].selected;
+		return oTable.getModel("ruleSets").getData()[iLibIndex].nodes[iRuleIndex].selected;
 	}
 
 	function isLibrarySelectedInModel(oTable, iLibIndex) {
-		return oTable.getModel().getData().treeModel[iLibIndex].selected;
+		return oTable.getModel("ruleSets").getData()[iLibIndex].selected;
 	}
 
 	function isSelectedInView(oTable, iRowIndex) {
@@ -25,11 +25,11 @@ sap.ui.define([
 	}
 
 	function countRulesInLibraryFromModel(oTable, iLibIndex) {
-		return oTable.getModel().getData().treeModel[iLibIndex].nodes.length;
+		return oTable.getModel("ruleSets").getData()[iLibIndex].nodes.length;
 	}
 
 	function getSpecificRuleTitle(oTable, iLibIndex, iRuleIndex) {
-		return oTable.getModel().getData().treeModel[iLibIndex].nodes[iRuleIndex].title;
+		return oTable.getModel("ruleSets").getData()[iLibIndex].nodes[iRuleIndex].title;
 	}
 
 	function getRowElements(oTable, sTitle) {
@@ -412,7 +412,7 @@ sap.ui.define([
 						success: function () {
 							Opa5.assert.ok(true, "Library is deselected in view");
 						},
-						errorMessage: "Library is not deselected in view"
+						errorMessage: "Library with index " + iLibraryRowIndex + " is not deselected in view"
 					});
 				},
 
@@ -588,6 +588,31 @@ sap.ui.define([
 							Opa5.assert.ok(sRuleTitle === sTitle, "A rule with this title " + sTitle + " was found");
 						},
 						errorMessage: "A rule with this title was not found"
+					});
+				},
+
+				iShouldSeeRuleInTable: function (sRuleTitle, sErrorMessage) {
+					return this.waitFor({
+						id: sTreeTableId,
+						matchers: new AggregationFilled({name: "columns"}),
+						viewName: sViewName,
+						viewNamespace: sViewNameSpace,
+						success: function (oTable) {
+							this.waitFor({
+								controlType: "sap.m.Text",
+								matchers: {
+									ancestor: oTable,
+									properties: {
+										text: sRuleTitle
+									}
+								},
+								success: function () {
+									Opa5.assert.ok(true, "Rule with title '" + sRuleTitle + "' was found");
+								},
+								errorMessage: sErrorMessage
+							});
+						},
+						errorMessage: "The tree table wasn't found"
 					});
 				}
 			}
