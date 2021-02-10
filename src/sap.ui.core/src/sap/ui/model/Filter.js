@@ -109,8 +109,8 @@ sap.ui.define([
 	 * @param {function} [vFilterInfo.test] Function which is used to filter the items and which should return a Boolean value to indicate whether the current item passes the filter
 	 * @param {function} [vFilterInfo.comparator] Function which is used to compare two values, this is used for processing of equal, less than and greater than operators
 	 * @param {sap.ui.model.FilterOperator} [vFilterInfo.operator] Operator used for the filter
-	 * @param {object} [vFilterInfo.value1] First value to use with the given filter operator
-	 * @param {object} [vFilterInfo.value2=null] Second value to use with the filter operator (only for some operators)
+	 * @param {any} [vFilterInfo.value1] First value to use with the given filter operator
+	 * @param {any} [vFilterInfo.value2=null] Second value to use with the filter operator (only for some operators)
 	 * @param {string} [vFilterInfo.variable] The variable used in lambda operators (<code>Any</code> and <code>All</code>)
 	 * @param {sap.ui.model.Filter} [vFilterInfo.condition] A <code>Filter</code> instance which will be used as the condition for the lambda operator
 	 * @param {sap.ui.model.Filter[]} [vFilterInfo.filters] Array of filters on which logical conjunction is applied
