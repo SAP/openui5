@@ -4,9 +4,8 @@
 sap.ui.define([
 	"sap/base/util/deepExtend",
 	'sap/ui/base/EventProvider',
-	'sap/ui/model/SelectionModel',
-	"sap/ui/support/supportRules/ui/models/SharedModel"
-], function(deepExtend, EventProvider, SelectionModel, SharedModel) {
+	'sap/ui/model/SelectionModel'
+], function(deepExtend, EventProvider, SelectionModel) {
 	"use strict";
 
 	function _isInstanceOf(oObject, sType) {
@@ -72,8 +71,8 @@ sap.ui.define([
 			return this.updateSelectionFromModel();
 		},
 
-		syncParentNodeSelectionWithChildren: function (oTreeModel, oTreeTableTreeModel) {
-			return this.syncParentNodeSelectionWithChildren(oTreeModel, oTreeTableTreeModel);
+		syncParentNodeSelectionWithChildren: function (oRuleSetsModel) {
+			return this.syncParentNodeSelectionWithChildren(oRuleSetsModel);
 		}
 	};
 
@@ -368,8 +367,8 @@ sap.ui.define([
 			this.fireEvent("selectionChange", {selectedKeys: this.getSelectedKeys()});
 		},
 
-		syncParentNodeSelectionWithChildren: function(oTreeModel, oTreeTableTreeModel) {
-			var oTreeTableData = deepExtend({}, oTreeModel);
+		syncParentNodeSelectionWithChildren: function(oRuleSetsModel) {
+			var oTreeTableData = deepExtend({}, oRuleSetsModel.getData());
 
 			Object.keys(oTreeTableData).forEach(function(iLibrary) {
 				var flag = true;
@@ -383,18 +382,19 @@ sap.ui.define([
 				});
 			});
 
-			SharedModel.setProperty('/treeModel', oTreeTableData);
-			oTreeTableTreeModel.setData(deepExtend({}, oTreeTableData));
+			oRuleSetsModel.setData(oTreeTableData);
 		},
 
-		updateModelAfterChangedSelection: function(oTreeTableData, sPath, bSelected) {
-			var aPath = sPath.split("/");
-			if (aPath[2]) {
-				if (oTreeTableData[aPath[1]].nodes.length !== 0) {
-					oTreeTableData[aPath[1]].nodes[aPath[3]].selected = bSelected;
+		updateModelAfterChangedSelection: function(oModel, sPath, bSelected) {
+			var aPath = sPath.split("/"),
+				sLib = aPath[1];
+
+			if (aPath[2]) { // selecting a rule
+				if (oModel.getProperty("/" + sLib + "/nodes") !== 0) {
+					oModel.setProperty("/" + sLib + "/nodes/" + aPath[3] + "/selected", bSelected);
 				}
-			} else {
-				oTreeTableData[aPath[1]].selected = bSelected;
+			} else { // selecting a library
+				oModel.setProperty("/" + sLib + "/selected", bSelected);
 			}
 		}
 
