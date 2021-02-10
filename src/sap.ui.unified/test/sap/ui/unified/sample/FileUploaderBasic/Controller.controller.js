@@ -4,18 +4,13 @@ sap.ui.define(['sap/m/MessageToast','sap/ui/core/mvc/Controller'],
 
 	return Controller.extend("sap.ui.unified.sample.FileUploaderBasic.Controller", {
 		handleUploadComplete: function(oEvent) {
-			var sResponse = oEvent.getParameter("response");
-			if (sResponse) {
-				var sMsg = "";
-				var m = /^\[(\d\d\d)\]:(.*)$/.exec(sResponse);
-				if (m[1] == "200") {
-					sMsg = "Return Code: " + m[1] + "\n" + m[2] + "(Upload Success)";
-					oEvent.getSource().setValue("");
-				} else {
-					sMsg = "Return Code: " + m[1] + "\n" + m[2] + "(Upload Error)";
-				}
+			var sResponse = oEvent.getParameter("response"),
+				iHttpStatusCode = parseInt(/\d{3}/.exec(sResponse)[0]),
+				sMessage;
 
-				MessageToast.show(sMsg);
+			if (sResponse) {
+				sMessage = iHttpStatusCode === 200 ? sResponse + " (Upload Success)" : sResponse + " (Upload Error)";
+				MessageToast.show(sMessage);
 			}
 		},
 
