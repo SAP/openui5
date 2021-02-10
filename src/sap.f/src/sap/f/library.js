@@ -47,6 +47,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.cards.HeaderPosition",
 			"sap.f.DynamicPageTitleArea",
 			"sap.f.DynamicPageTitleShrinkRatio",
+			"sap.f.IllustratedMessageSize",
+			"sap.f.IllustratedMessageType",
 			"sap.f.LayoutType"
 		],
 		controls: [
@@ -62,6 +64,7 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.DynamicPage",
 			"sap.f.DynamicPageHeader",
 			"sap.f.DynamicPageTitle",
+			"sap.f.IllustratedMessage",
 			"sap.f.FlexibleColumnLayout",
 			"sap.f.semantic.SemanticPage",
 			"sap.f.GridList",
@@ -69,7 +72,8 @@ sap.ui.define(["sap/ui/base/DataType",
 			"sap.f.PlanningCalendarInCardLegend",
 			"sap.f.ProductSwitch",
 			"sap.f.ProductSwitchItem",
-			"sap.f.ShellBar"
+			"sap.f.ShellBar",
+			"sap.f.Illustration"
 		],
 		elements: [
 			"sap.f.DynamicPageAccessibleLandmarkInfo",
@@ -559,6 +563,133 @@ sap.ui.define(["sap/ui/base/DataType",
 		 * @public
 		 */
 		Right: "Right"
+	};
+
+	/** Available <code>Illustration</code> types for the {@link sap.f.IllustratedMessage} control.
+	 *
+	 * @enum {string}
+	 * @experimental Since 1.87 This enum is experimental. Its properties may change.
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.IllustratedMessageType = {
+
+		/**
+		 * "Before Search" illustration type.
+		 * @public
+		 */
+		BeforeSearch: "sapIllus-BeforeSearch",
+
+		/**
+		 * "No Activities" illustration type.
+		 * @public
+		 */
+		NoActivities: "sapIllus-NoActivities",
+
+		/**
+		 * "No Data" illustration type.
+		 * @public
+		 */
+		NoData: "sapIllus-NoData",
+
+		/**
+		 * "No Email" illustration type.
+		 * @public
+		 */
+		NoEmail: "sapIllus-NoEmail",
+
+		/**
+		 * "No Entries" illustration type.
+		 * @public
+		 */
+		NoEntries: "sapIllus-NoEntries",
+
+		/**
+		 * "No Notifications" illustration type.
+		 * @public
+		 */
+		NoNotifications: "sapIllus-NoNotifications",
+
+		/**
+		 * "No Saved Items" illustration type.
+		 * @public
+		 */
+		NoSavedItems: "sapIllus-NoSavedItems",
+
+		/**
+		 * "No Search Results" illustration type.
+		 * @public
+		 */
+		NoSearchResults: "sapIllus-NoSearchResults",
+
+		/**
+		 * "No Tasks" illustration type.
+		 * @public
+		 */
+		NoTasks: "sapIllus-NoTasks",
+
+		/**
+		 * "Unable To Load" illustration type.
+		 * @public
+		 */
+		UnableToLoad: "sapIllus-UnableToLoad",
+
+		/**
+		 * "Unable To Upload" illustration type.
+		 * @public
+		 */
+		UnableToUpload: "sapIllus-UnableToUpload"
+	};
+
+	/**
+	 * Available <code>Illustration</code> sizes for the {@link sap.f.IllustratedMessage} control.
+	 *
+	 * @enum {string}
+	 * @experimental Since 1.87 This enum is experimental. Its properties may change.
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.IllustratedMessageSize = {
+
+		/**
+		 * Automatically decides the <code>Illustration</code> size (<code>Base</code>, <code>Spot</code>,
+		 * <code>Dialog</code>, or <code>Scene</code>) depending on the <code>IllustratedMessage</code> container width.
+		 *
+		 * <b>Note:</b> <code>Auto</code> is the only option where the illustration size is changed according to
+		 * the available container width. If any other <code>IllustratedMessageSize</code> is chosen, it remains
+		 * until changed by the app developer.
+		 *
+		 * @public
+		 */
+		Auto : "Auto",
+
+		/**
+		 * Base <code>Illustration</code> size (XS breakpoint). Suitable for cards (two columns).
+		 *
+		 * <b>Note:</b> When <code>Base</code> is in use, no illustration is displayed.
+		 *
+		 * @public
+		 */
+		Base : "Base",
+
+		/**
+		 * Spot <code>Illustration</code> size (S breakpoint). Suitable for cards (four columns).
+		 * @public
+		 */
+		Spot : "Spot",
+
+		/**
+		 * Dialog <code>Illustration</code> size (M breakpoint). Suitable for dialogs.
+		 * @public
+		 */
+		Dialog : "Dialog",
+
+		/**
+		 * Scene <code>Illustration</code> size (L breakpoint). Suitable for a <code>Page</code> or a table.
+		 * @public
+		 */
+		Scene : "Scene"
+
 	};
 
 	return thisLib;

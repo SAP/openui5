@@ -42,6 +42,17 @@
 		  ]
 		},
 		{
+			"id": "sap.f.IllustratedMessage",
+			"name": "Illustrated Message (Experimental)",
+			"category": "Display",
+			"since": "1.87",
+			"samples": [
+			"sap.f.sample.IllustratedMessageInCard",
+			"sap.f.sample.IllustratedMessageInDialog",
+			"sap.f.sample.IllustratedMessageInPage"
+			]
+		},
+		{
 		  "id": "sap.f.FlexibleColumnLayout",
 		  "name": "Flexible Column Layout",
 		  "category": "Container",
@@ -167,6 +178,21 @@
 		  "id": "sap.f.sample.DynamicPageWithWizard",
 		  "name": "Dynamic Page with Wizard",
 		  "description": "Dynamic Page containing a sap.m.Wizard and WizardProgressNavigator in the content area."
+		},
+		{
+		  "id": "sap.f.sample.IllustratedMessageInCard",
+		  "name": "Illustrated Message in a Card",
+		  "description": "IllustratedMessage as content of sap.f.Card."
+		},
+		{
+		  "id": "sap.f.sample.IllustratedMessageInDialog",
+		  "name": "Illustrated Message in a Dialog",
+		  "description": "IllustratedMessage as content of sap.m.Dialog."
+		},
+		{
+		  "id": "sap.f.sample.IllustratedMessageInPage",
+		  "name": "Illustrated Message in a Page with Configurable Properties",
+		  "description": "IllustratedMessage as content of sap.m.Page. The available properties of the IllustratedMessage are configurable in this sample."
 		},
 		{
 		  "id": "sap.f.sample.FlexibleColumnLayoutWithOneColumnStart",

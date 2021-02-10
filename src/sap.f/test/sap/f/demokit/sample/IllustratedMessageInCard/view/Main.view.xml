@@ -1,0 +1,19 @@
+<mvc:View
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns="sap.m"
+	xmlns:f="sap.f"
+	height="100%">
+	<f:Card width="16.4rem" class="sapUiSmallMarginBegin sapUiSmallMarginTop">
+		<f:content>
+
+			<f:IllustratedMessage>
+
+				<f:additionalContent>
+					<Button text="Compose" />
+				</f:additionalContent>
+
+			</f:IllustratedMessage>
+
+		</f:content>
+	</f:Card>
+</mvc:View>
