@@ -1660,7 +1660,6 @@ sap.ui.define([
 		var oBinding = {
 				checkUpdate : function () {}
 			},
-			aBindings = [oBinding],
 			mChangedEntities = "changedEntities",
 			oModel = {
 				checkUpdate : function () {},
@@ -1668,12 +1667,12 @@ sap.ui.define([
 				_processAfterUpdate : function () {},
 				// test data
 				sUpdateTimer : "updateTimer",
-				bForceUpdate : "forceUpdate",
+				bForceUpdate : bForceUpdate,
 				mChangedEntities4checkUpdate : "commulatedChangedEntities"
 			};
 
 		this.mock(window).expects("clearTimeout").withExactArgs("updateTimer");
-		this.mock(oModel).expects("getBindings").returns(aBindings);
+		this.mock(oModel).expects("getBindings").returns([oBinding]);
 		this.mock(oBinding).expects("checkUpdate").withExactArgs(bForceUpdate, mChangedEntities);
 		this.mock(oModel).expects("_processAfterUpdate").withExactArgs();
 
@@ -1685,6 +1684,42 @@ sap.ui.define([
 		assert.strictEqual(oModel.sUpdateTimer, null);
 	});
 });
+
+	//*********************************************************************************************
+	// BCP: 2180036790
+	QUnit.test("checkUpdate: truthy bForceUpdate of async wins over later sync", function (assert) {
+		var oBinding = {
+				checkUpdate : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			oModel = {
+				_processAfterUpdate : function () {},
+				getBindings : function () {},
+				mChangedEntities4checkUpdate : {},
+				sUpdateTimer : "updateTimer"
+			},
+			oModelMock = this.mock(oModel),
+			oWindowMock = this.mock(window);
+
+		oWindowMock.expects("clearTimeout").never();
+		oModelMock.expects("getBindings").never();
+		oBindingMock.expects("checkUpdate").never();
+		oModelMock.expects("_processAfterUpdate").never();
+
+		// code under test
+		ODataModel.prototype.checkUpdate.call(oModel, true, true);
+
+		oWindowMock.expects("clearTimeout").withExactArgs(oModel.sUpdateTimer).callThrough();
+		oModelMock.expects("getBindings").withExactArgs().returns([oBinding]);
+		oBindingMock.expects("checkUpdate").withExactArgs(true, undefined);
+		oModelMock.expects("_processAfterUpdate").withExactArgs();
+
+		// code under test
+		ODataModel.prototype.checkUpdate.call(oModel);
+
+		assert.strictEqual(oModel.bForceUpdate, undefined);
+		assert.strictEqual(oModel.sUpdateTimer, null);
+	});
 
 	//*********************************************************************************************
 ["expandAfterCreateFailed", "expandAfterFunctionCallFailed"].forEach(function (sExpandAfter) {
