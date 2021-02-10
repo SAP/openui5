@@ -14,14 +14,22 @@
 		margin-bottom: 0.5rem;
 	}
 
-	& .sapFCardObjectItemLabel {
+	> .sapFCardObjectItemLabel {
 		margin-top: 1rem;
 	}
 
-	&:not(.sapFCardObjectGroupWithTitle) .sapFCardObjectItemLabel:first-of-type {
-		margin-top: 0;
-	}
+	&:not(.sapFCardObjectGroupWithTitle) {
 
+		/* Don't apply margin to the first label when there is no title */
+		> .sapFCardObjectItemLabel {
+			margin-top: 0;
+		}
+
+		/* Apply margin to the rest of the labels */
+		> .sapFCardObjectItemLabel ~ .sapFCardObjectItemLabel {
+			margin-top: 1rem;
+		}
+	}
 
 	& .sapFCardObjectItemText {
 		margin-top: 0.25rem;
