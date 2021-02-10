@@ -153,12 +153,13 @@ sap.ui.define([
 					try {
 						var oParams = JSON.parse(sParams);
 						mergeParameters(oParams, oUrl.themeBaseUrl);
-						return;
+						return true; // parameters successfully parsed
 					} catch (ex) {
 						Log.warning("Could not parse theme parameters from " + oUrl.styleSheetUrl + ". Loading library-parameters.json as fallback solution.");
 					}
 				}
 			}
+			return false; //could not parse parameters
 		}
 
 		/*
@@ -167,44 +168,44 @@ sap.ui.define([
 		function loadParameters(sId) {
 			var oUrl = getThemeBaseUrlForId(sId);
 
-			parseParameters(sId);
+			if (!parseParameters(sId)) { // only try to load parameters in case it was not possible to parse them
+				// load library-parameters.json (as fallback solution)
 
-			// load library-parameters.json (as fallback solution)
+				// derive parameter file URL from CSS file URL
+				// $1: name of library (incl. variants)
+				// $2: additional parameters, e.g. for sap-ui-merged, version/sap-ui-dist-version
+				var sUrl = oUrl.styleSheetUrl.replace(/\/(?:css_variables|library)([^\/.]*)\.(?:css|less)($|[?#])/, function($0, $1, $2) {
+					return "/library-parameters.json" + ($2 ? $2 : "");
+				});
 
-			// derive parameter file URL from CSS file URL
-			// $1: name of library (incl. variants)
-			// $2: additional parameters, e.g. for sap-ui-merged, version/sap-ui-dist-version
-			var sUrl = oUrl.styleSheetUrl.replace(/\/(?:css_variables|library)([^\/.]*)\.(?:css|less)($|[?#])/, function($0, $1, $2) {
-				return "/library-parameters.json" + ($2 ? $2 : "");
-			});
-
-			if (syncCallBehavior === 2) {
-				Log.error("[nosync] Loading library-parameters.json ignored", sUrl, "sap.ui.core.theming.Parameters");
-				return;
-			} else if (syncCallBehavior === 1) {
-				Log.error("[nosync] Loading library-parameters.json with sync XHR", sUrl, "sap.ui.core.theming.Parameters");
-			}
-
-			// check if we need to send credentials
-			var sThemeOrigin = new URI(oUrl.themeBaseUrl).origin();
-			var bWithCredentials = mOriginsNeedingCredentials[sThemeOrigin];
-			var aWithCredentials = [];
-
-			// initially we don't have any information if the target origin needs credentials or not ...
-			if (bWithCredentials === undefined) {
-				// ... so we assume that for all cross-origins except the UI5 bootstrap we need credentials.
-				// Setting the XHR's "withCredentials" flag does not do anything for same origin requests.
-				if (sUrl.startsWith(sBootstrapOrigin)) {
-					aWithCredentials = [false, true];
-				} else {
-					aWithCredentials = [true, false];
+				if (syncCallBehavior === 2) {
+					Log.error("[nosync] Loading library-parameters.json ignored", sUrl, "sap.ui.core.theming.Parameters");
+					return;
+				} else if (syncCallBehavior === 1) {
+					Log.error("[nosync] Loading library-parameters.json with sync XHR", sUrl, "sap.ui.core.theming.Parameters");
 				}
-			} else {
-				aWithCredentials = [bWithCredentials];
-			}
 
-			// trigger a sync. loading of the parameters.json file
-			loadParametersJSON(sUrl, oUrl.themeBaseUrl, aWithCredentials);
+				// check if we need to send credentials
+				var sThemeOrigin = new URI(oUrl.themeBaseUrl).origin();
+				var bWithCredentials = mOriginsNeedingCredentials[sThemeOrigin];
+				var aWithCredentials = [];
+
+				// initially we don't have any information if the target origin needs credentials or not ...
+				if (bWithCredentials === undefined) {
+					// ... so we assume that for all cross-origins except the UI5 bootstrap we need credentials.
+					// Setting the XHR's "withCredentials" flag does not do anything for same origin requests.
+					if (sUrl.startsWith(sBootstrapOrigin)) {
+						aWithCredentials = [false, true];
+					} else {
+						aWithCredentials = [true, false];
+					}
+				} else {
+					aWithCredentials = [bWithCredentials];
+				}
+
+				// trigger a sync. loading of the parameters.json file
+				loadParametersJSON(sUrl, oUrl.themeBaseUrl, aWithCredentials);
+			}
 		}
 
 		function getThemeBaseUrlForId (sId) {
@@ -608,21 +609,18 @@ sap.ui.define([
 
 			var resolveWithParameter, vResult;
 			var lookForParameter = function (sName) {
-				if (bAsync) {
-					parsePendingLibraryParameters();
-				} else {
-					loadPendingLibraryParameters();
-				}
-
 				if (oElement instanceof Element) {
 					// check for scopes and try to find the classes in Control Tree
 					var aScopeChain = this.getActiveScopesFor(oElement, bAsync);
 
 					return getParamForActiveScope(sName, aScopeChain, bAsync);
 				} else {
+					if (bAsync) {
+						parsePendingLibraryParameters();
+					}
 					return getParam({
 						parameterName: sName,
-						loadPendingParameters: false,
+						loadPendingParameters: !bAsync,
 						async: bAsync
 					});
 				}
