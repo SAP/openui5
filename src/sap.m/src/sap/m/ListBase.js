@@ -898,7 +898,7 @@ function(
 	 * @param {boolean} [bAll=false]
 	 *         Set true to include even invisible selected items(e.g. the selections from the previous filters).
 	 *         Note: In single selection modes, only the last selected item's binding context is returned in array.
-	 * @type object[]
+	 * @type sap.ui.model.Context[]
 	 * @public
 	 * @since 1.18.6
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
