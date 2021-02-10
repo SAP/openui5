@@ -164,8 +164,7 @@ sap.ui.define([
 	oTV.setDesign(TextViewDesign.H2); // to make text bigger than the cells
 
 	oML4.createRow({height: "25px"},oMLC1);
-
-
+	sap.ui.getCore().applyChanges();
 
 	QUnit.module("Properties");
 
@@ -242,10 +241,10 @@ sap.ui.define([
 		}
 
 		var oMLDom = jQuery.sap.domById('Matrix2');
-		assert.equal(oMLDom.offsetWidth, 101, "Width of the Matrix2:");
+		assert.equal(Math.floor(oMLDom.getBoundingClientRect().width), 101, "Width of the Matrix2:");
 
 		var oCellDom = jQuery.sap.domById('Matrix2-0-0');
-		assert.equal(oCellDom.offsetWidth, 77, "Width of Cell 0.0:");
+		assert.equal(Math.floor(oCellDom.getBoundingClientRect().width), 77, "Width of Cell 0.0:");
 		assert.equal(oCellDom.offsetHeight, 41, "Height of Cell 0.0:");
 		assert.equal(oCellDom.offsetLeft, 0, "Left offset of Cell 0.0:");
 		assert.equal(oCellDom.offsetTop, 0, "Top offset of Cell 0.0:");
@@ -253,11 +252,11 @@ sap.ui.define([
 		oCellDom = jQuery.sap.domById('Matrix2-0-1');
 		assert.equal(oCellDom.offsetWidth, 24, "Width of Cell 0.1:");
 		assert.equal(oCellDom.offsetHeight, 41, "Height of Cell 0.1:");
-		assert.equal(oCellDom.offsetLeft, 77, "Left offset of Cell 0.1:");
+		assert.equal(Math.floor(oCellDom.getBoundingClientRect().left), 77, "Left offset of Cell 0.1:");
 		assert.equal(oCellDom.offsetTop, 0, "Top offset of Cell 0.1:");
 
 		oCellDom = jQuery.sap.domById('Matrix2-1-0');
-		assert.equal(oCellDom.offsetWidth, 77, "Width of Cell 1.0:");
+		assert.equal(Math.floor(oCellDom.getBoundingClientRect().width), 77, "Width of Cell 1.0:");
 		assert.equal(oCellDom.offsetHeight, 25, "Height of Cell 1.0:");
 		assert.equal(oCellDom.offsetLeft, 0, "Left offset of Cell 1.0:");
 		assert.equal(oCellDom.offsetTop, 41, "Top offset of Cell 1.0:");
@@ -265,7 +264,7 @@ sap.ui.define([
 		oCellDom = jQuery.sap.domById('Matrix2-1-1');
 		assert.equal(oCellDom.offsetWidth, 24, "Width of Cell 1.1:");
 		assert.equal(oCellDom.offsetHeight, 25, "Height of Cell 1.1:");
-		assert.equal(oCellDom.offsetLeft, 77, "Left offset of Cell 1.1:");
+		assert.equal(Math.floor(oCellDom.getBoundingClientRect().left), 77, "Left offset of Cell 1.1:");
 		assert.equal(oCellDom.offsetTop, 41, "Top offset of Cell 1.1:");
 
 		var oMLDom = jQuery.sap.domById('Matrix3');
@@ -279,7 +278,7 @@ sap.ui.define([
 		assert.equal(oCellDom.offsetTop, 0, "Top offset of Cell 0.0:");
 
 		oCellDom = jQuery.sap.domById('Matrix3-0-1');
-		assert.equal(oCellDom.offsetWidth, 75, "Width of Cell 0.1:");
+		assert.equal(Math.ceil(oCellDom.getBoundingClientRect().width), 75, "Width of Cell 0.1:");
 		assert.equal(oCellDom.offsetHeight, 40, "Height of Cell 0.1:");
 		assert.equal(oCellDom.offsetLeft, 75, "Left offset of Cell 0.1:");
 		assert.equal(oCellDom.offsetTop, 0, "Top offset of Cell 0.1:");
@@ -291,7 +290,7 @@ sap.ui.define([
 		assert.equal(oCellDom.offsetTop, 40, "Top offset of Cell 1.0:");
 
 		oCellDom = jQuery.sap.domById('Matrix3-1-1');
-		assert.equal(oCellDom.offsetWidth, 75, "Width of Cell 1.1:");
+		assert.equal(Math.ceil(oCellDom.getBoundingClientRect().width), 75, "Width of Cell 1.1:");
 		assert.equal(oCellDom.offsetHeight, 40, "Height of Cell 1.1:");
 		assert.equal(oCellDom.offsetLeft, 75, "Left offset of Cell 1.1:");
 		assert.equal(oCellDom.offsetTop, 40, "Top offset of Cell 1.1:");
@@ -305,7 +304,7 @@ sap.ui.define([
 		assert.equal(oCellDom.offsetLeft, 0, "Left offset of Cell 0.0:");
 		assert.equal(oCellDom.offsetTop, 0, "Top offset of Cell 0.0:");
 		assert.ok(oCellDom.lastChild.offsetTop > 0, "Top offset of content of Cell 0.0 > 0 (vertical-align:bottom):");
-		assert.equal(oCellDom.lastChild.offsetTop + oCellDom.lastChild.offsetHeight, 25, "Top offset of content of Cell 0.0 + height = cell height (vertical-align:bottom):");
+		assert.equal(Math.floor(oCellDom.offsetTop) + Math.floor(oCellDom.offsetHeight), 25, "Top offset of content of Cell 0.0 + height = cell height (vertical-align:bottom):");
 
 		oCellDom = jQuery.sap.domById('Matrix4-0-2');
 		assert.equal(oCellDom.offsetWidth, 300, "Width of Cell 0.2:");
@@ -346,7 +345,7 @@ sap.ui.define([
 
 		oCellDom = jQuery.sap.domById('Matrix4-2-1');
 		assert.equal(oCellDom.offsetWidth, 500, "Width of Cell 2.1:");
-		assert.equal(oCellDom.offsetHeight, 25, "Height of Cell 2.1:");
+		assert.equal(Math.floor(oCellDom.getBoundingClientRect().height), 25, "Height of Cell 2.1:");
 		assert.equal(oCellDom.offsetLeft, 100, "Left offset of Cell 2.1:");
 		var offsetTop = oCellDom.offsetTop;
 		if (Device.browser.chrome && offsetTop == 51) { // a known issue in Chrome that sometimes happens
