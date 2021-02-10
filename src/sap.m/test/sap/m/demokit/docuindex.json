@@ -1299,7 +1299,8 @@
 			"sap.m.sample.Text",
 			"sap.m.sample.TextMaxLines",
 			"sap.m.sample.TextRenderWhitespace",
-			"sap.m.sample.TextHyphenation"
+			"sap.m.sample.TextHyphenation",
+		    "sap.m.sample.TextEmptyIndicator"
 		  ]
 		},
 		{
@@ -2072,6 +2073,11 @@
 		  "id": "sap.m.sample.TextRenderWhitespace",
 		  "name": "Text - Render Whitespace",
 		  "description": "The Text control has a property allowing browsers to render whitespace and tabs."
+		},
+		{
+		  "id": "sap.m.sample.TextEmptyIndicator",
+		  "name": "Text - Empty Indicator",
+		  "description": "The Text control has a property allowing an empty text indicator to be displayed."
 		},
 		{
 		  "id": "sap.m.sample.TextHyphenation",

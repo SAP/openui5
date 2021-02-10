@@ -7,20 +7,28 @@ sap.ui.define([
 	'sap/ui/core/Renderer',
 	'sap/ui/core/library',
 	'sap/m/HyphenationSupport',
-	'./library'
+	'./library',
+	'sap/ui/core/Core'
 ], function(
 	Renderer,
 	coreLibrary,
 	HyphenationSupport,
-	mobileLibrary
+	mobileLibrary,
+	Core
 ) {
 		"use strict";
 
 		// shortcut for sap.ui.core.TextDirection
 		var TextDirection = coreLibrary.TextDirection;
 
-		// shortcut for sap.ui.core.TextDirection
+		// shortcut for sap.m.WrappingType
 		var WrappingType = mobileLibrary.WrappingType;
+
+		// shortcut for sap.m.EmptyIndicator
+		var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
+
+		// shortcut for library resource bundle
+		var oRb = Core.getLibraryResourceBundle("sap.m");
 
 		/**
 		 * Text renderer.
@@ -130,8 +138,39 @@ sap.ui.define([
 		 */
 		TextRenderer.renderText = function(oRm, oText) {
 			var sText = HyphenationSupport.getTextForRender(oText, "main");
-			oRm.text(sText);
+			if (oText.getEmptyIndicator() !== EmptyIndicatorMode.Off && !oText.getText()) {
+				this.renderEmptyIndicator(oRm, oText);
+			} else {
+				oRm.text(sText);
+			}
 		};
+
+	/**
+	 * Renders the empty text indicator.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.Text} oText An object representation of the control that should be rendered.
+	 */
+	TextRenderer.renderEmptyIndicator = function(oRm, oText) {
+		oRm.openStart("span");
+			oRm.class("sapMEmptyIndicator");
+			if (oText.getEmptyIndicator() === EmptyIndicatorMode.Auto) {
+				oRm.class("sapMEmptyIndicatorAuto");
+			}
+			oRm.openEnd();
+			oRm.openStart("span");
+			oRm.attr("aria-hidden", true);
+			oRm.openEnd();
+				oRm.text(oRb.getText("EMPTY_INDICATOR"));
+			oRm.close("span");
+			//Empty space text to be announced by screen readers
+			oRm.openStart("span");
+			oRm.class("sapUiPseudoInvisibleText");
+			oRm.openEnd();
+				oRm.text(oRb.getText("EMPTY_INDICATOR_TEXT"));
+			oRm.close("span");
+		oRm.close("span");
+	};
 
 		return TextRenderer;
 
