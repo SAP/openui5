@@ -41,7 +41,7 @@
 								<f:content>
 									<Label text="ID" />
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id= "fID" value="{ID}" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}" />
-									<Label text="Author" />
+									<Label text="Author ID" />
 									<mdc:Field delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="fAuthor" value="{path: 'author_ID', type: 'sap.ui.model.odata.type.Int32'}" fieldHelp="FH1" editMode="{=${view>/editMode} ? 'Editable' : 'Display'}">
 										<mdc:dependents>
 											<mdcf:FieldValueHelp filterFields="$search" title="Author" id="FH1" noDialog="false" keyPath="ID" descriptionPath="name" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">

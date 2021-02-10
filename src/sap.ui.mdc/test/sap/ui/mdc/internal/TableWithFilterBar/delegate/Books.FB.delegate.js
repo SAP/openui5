@@ -27,7 +27,7 @@ sap.ui.define([
 
 				if (oPropertyInfo.name === "author_ID") {
 					oPropertyInfo.fieldHelp = "FH1";
-					oPropertyInfo.label = "Author";
+					oPropertyInfo.label = "Author ID";
 				}
 
 				if (oPropertyInfo.name === "title") {
