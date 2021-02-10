@@ -233,12 +233,8 @@ function(
 				this.getPopupManager().attachOpen(this.onPopupOpen, this);
 				this.getPopupManager().attachClose(this.onPopupClose, this);
 
-				var oUriParams = UriParameters.fromQuery(window.location.search);
-				var bChangeVisualizationAvailable = oUriParams.get("sap-ui-rta-xx-changeVisualization") === "true";
-				if (bChangeVisualizationAvailable) {
-					// Change visualization can only be triggered from the toolbar
-					this.addDependent(new ChangeVisualization(), "changeVisualization");
-				}
+				// Change visualization can only be triggered from the toolbar
+				this.addDependent(new ChangeVisualization(), "changeVisualization");
 			}
 
 			if (window.parent !== window) {
@@ -1063,9 +1059,6 @@ function(
 			return oToolbar.onFragmentLoaded().then(function() {
 				var bSaveAsAvailable = aButtonsVisibility.saveAsAvailable;
 				var bExtendedOverview = bSaveAsAvailable && RtaAppVariantFeature.isOverviewExtended();
-				var oUriParams = UriParameters.fromQuery(window.location.search);
-				var bShowChangesVisible = oUriParams.get("sap-ui-rta-xx-changeVisualization") === "true";
-
 
 				this._oToolbarControlsModel = new JSONModel({
 					undoEnabled: false,
@@ -1079,7 +1072,6 @@ function(
 					saveAsEnabled: false,
 					manageAppsVisible: bSaveAsAvailable && !bExtendedOverview,
 					manageAppsEnabled: bSaveAsAvailable && !bExtendedOverview,
-					showChangesVisible: bShowChangesVisible,
 					modeSwitcher: this.getMode()
 				});
 
