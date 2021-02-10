@@ -568,7 +568,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	/** Available <code>Illustration</code> types for the {@link sap.f.IllustratedMessage} control.
 	 *
 	 * @enum {string}
-	 * @experimental Since 1.87 This enum is experimental. Its properties may change.
+	 * @experimental Since 1.88 This enum is experimental. Its properties may change.
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -645,7 +645,7 @@ sap.ui.define(["sap/ui/base/DataType",
 	 * Available <code>Illustration</code> sizes for the {@link sap.f.IllustratedMessage} control.
 	 *
 	 * @enum {string}
-	 * @experimental Since 1.87 This enum is experimental. Its properties may change.
+	 * @experimental Since 1.88 This enum is experimental. Its properties may change.
 	 * @public
 	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
 	 */

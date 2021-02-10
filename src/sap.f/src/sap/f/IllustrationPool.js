@@ -63,7 +63,7 @@ sap.ui.define([
 		 * a later state with the {@link sap.f.IllustrationPool.loadRestOfTheAssets} API.
 		 *
 		 * @namespace
-		 * @experimental Since 1.87 This namespace is experimental. The API may change.
+		 * @experimental Since 1.88 This namespace is experimental. The API may change.
 		 * @public
 		 * @alias sap.f.IllustrationPool
 		 */
@@ -227,10 +227,10 @@ sap.ui.define([
 		 * @private
 		 */
 		IllustrationPool._loadMetadata = function(sName, sPath, bLoadAllResources) {
-			var sMedataPath = sPath + "metadata.json";
+			var sMetadataPath = sPath + "metadata.json";
 
 			return new Promise(function (fnResolve) {
-				jQuery.ajax(sMedataPath, {
+				jQuery.ajax(sMetadataPath, {
 					type: "GET",
 					dataType: "json",
 					success: function (oMetadataJSON) {
@@ -240,7 +240,7 @@ sap.ui.define([
 					},
 					error: function (jqXHR, sStatus) {
 						if (sStatus !== "abort") { // log an error if it isn't aborted
-							Log.error("Metadata from: " + sMedataPath + " file path could not be loaded");
+							Log.error("Metadata from: " + sMetadataPath + " file path could not be loaded");
 							delete oSetRegistry[sName];
 							fnResolve();
 						}
@@ -274,7 +274,7 @@ sap.ui.define([
 		};
 
 		/**
-		 * Removes an asset from the Illustration Pool's DOM element inneer HTML.
+		 * Removes an asset from the Illustration Pool's DOM element inner HTML.
 		 *
 		 * @param {string} sId string containing the ID of the asset which should be removed from the Illustration Pool's DOM
 		 * @static
@@ -298,7 +298,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sSet the name of the Illustration Set for which the asset is being loaded
 		 * @param {string} sId the ID of the asset being loaded
-		 * @param {string} sInstanceId the ID of the Illustration instance which is requiering the asset
+		 * @param {string} sInstanceId the ID of the Illustration instance which is requiring the asset
 		 * @return {Promise} Promise which resolves when the SVG asset is loaded
 		 * @static
 		 * @private
@@ -314,7 +314,7 @@ sap.ui.define([
 							// cache the loaded symbol
 							oLoadedSymbols[sId] = sHTML;
 
-							// update the DOM if the asset is required by an instnce
+							// update the DOM if the asset is required by an instance
 							if (sInstanceId) {
 								IllustrationPool._updateDOMPool();
 							}
