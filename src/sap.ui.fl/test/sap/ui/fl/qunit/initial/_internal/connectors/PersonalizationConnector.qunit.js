@@ -26,7 +26,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given Personalization connector with a fake XHR", {
-		beforeEach : function () {
+		beforeEach: function () {
 			this.xhr = sandbox.useFakeXMLHttpRequest();
 			mockResponse.call(this, '{"changes":[]}');
 		},
@@ -36,7 +36,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("when no static changes-bundle.json is placed, loading flex data is triggered and an empty response as 'json' is returned", function (assert) {
-			var oMockResponse = {changes:[]};
+			var oMockResponse = {changes: []};
 			mockResponse.call(this, JSON.stringify(oMockResponse), "json");
 			return PersonalizationConnector.loadFlexData({url: "/flexPersonalization", reference: "reference"}).then(function (oResult) {
 				assert.deepEqual(this.oXHRLoadSpy.firstCall.args[0].target.response, oMockResponse, "then xhr.onLoad was called with the right response");
@@ -75,11 +75,11 @@ sap.ui.define([
 			var sExpectedUrl = "/flexPersonalization/flex/personalization/v1/data/reference";
 			var oStubGetUrlWithQueryParameters = sandbox.stub(InitialUtils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({
-				response : {
+				response: {
 					changes: [1],
 					compVariants: [2]
 				},
-				xsrfToken : "newToken",
+				xsrfToken: "newToken",
 				status: "200",
 				etag: "abc123"
 			});

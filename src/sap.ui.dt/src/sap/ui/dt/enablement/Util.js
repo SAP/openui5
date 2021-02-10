@@ -43,8 +43,8 @@ function(
 		var oElementOverlay = OverlayRegistry.getOverlay(oElement);
 
 		return {
-			metadata : oMetadata,
-			overlay : oElementOverlay
+			metadata: oMetadata,
+			overlay: oElementOverlay
 		};
 	};
 
@@ -56,13 +56,13 @@ function(
 	 */
 	ElementTest.getAggregationInfo = function(oElement, sAggregationName) {
 		var mAggregationTest = {
-			ignored : true,
-			domRefDeclared : false,
-			domRefFound : false,
-			domRefVisible : false,
-			overlayTooSmall : false,
-			overlayGeometryCalculatedByChildren : false,
-			overlayVisible : false
+			ignored: true,
+			domRefDeclared: false,
+			domRefFound: false,
+			domRefVisible: false,
+			overlayTooSmall: false,
+			overlayGeometryCalculatedByChildren: false,
+			overlayVisible: false
 		};
 		var oDesignTimeMetadata;
 

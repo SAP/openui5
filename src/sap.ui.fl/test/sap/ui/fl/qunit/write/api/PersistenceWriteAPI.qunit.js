@@ -97,7 +97,7 @@ sap.ui.define([
 				selector: {
 					id: "RTADemoAppMD---detail--GroupElementDatesShippingStatus"
 				},
-				layer:  Layer.CUSTOMER,
+				layer: Layer.CUSTOMER,
 				texts: {},
 				namespace: "reference.app.Component",
 				creation: "2018-10-16T08:00:02",
@@ -256,7 +256,7 @@ sap.ui.define([
 			var aArguments = [mPropertyBag.layer, mPropertyBag.generator, oAppComponent, mPropertyBag.selectorIds, mPropertyBag.changeTypes];
 			var fnPersistenceStub = getMethodStub(aArguments, Promise.resolve(sReturnValue));
 
-			mockFlexController(oAppComponent, { resetChanges : fnPersistenceStub });
+			mockFlexController(oAppComponent, { resetChanges: fnPersistenceStub });
 
 			return PersistenceWriteAPI.reset(mPropertyBag)
 				.then(function (sValue) {
@@ -285,7 +285,7 @@ sap.ui.define([
 				mPropertyBag.appVariantDescriptors
 			], Promise.resolve(sReturnValue));
 
-			mockFlexController(oAppComponent, { _oChangePersistence: { transportAllUIChanges : fnPersistenceStub } });
+			mockFlexController(oAppComponent, { _oChangePersistence: { transportAllUIChanges: fnPersistenceStub } });
 
 			return PersistenceWriteAPI.publish(mPropertyBag)
 				.then(function(sValue) {
@@ -313,7 +313,7 @@ sap.ui.define([
 				mPropertyBag.appVariantDescriptors
 			], Promise.resolve(sReturnValue));
 
-			mockFlexController(oAppComponent, { _oChangePersistence: { transportAllUIChanges : fnPersistenceStub } });
+			mockFlexController(oAppComponent, { _oChangePersistence: { transportAllUIChanges: fnPersistenceStub } });
 
 			return PersistenceWriteAPI.publish(mPropertyBag)
 				.then(function(sValue) {
@@ -351,7 +351,7 @@ sap.ui.define([
 
 			var fnPersistenceStub = getMethodStub([mPropertyBag.change, oAppComponent], sReturnValue);
 
-			mockFlexController(oAppComponent, { addPreparedChange : fnPersistenceStub });
+			mockFlexController(oAppComponent, { addPreparedChange: fnPersistenceStub });
 
 			assert.strictEqual(PersistenceWriteAPI.add(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
@@ -423,7 +423,7 @@ sap.ui.define([
 			var fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
 			var fnDeleteChangeStub = sandbox.stub();
 
-			mockFlexController(oAppComponent, { deleteChange : fnDeleteChangeStub });
+			mockFlexController(oAppComponent, { deleteChange: fnDeleteChangeStub });
 
 			PersistenceWriteAPI.remove(mPropertyBag);
 			assert.ok(fnRemoveChangeStub.calledWith(oElement, mPropertyBag.change, JsControlTreeModifier), "then the flex persistence was called with correct parameters");
@@ -445,7 +445,7 @@ sap.ui.define([
 			var fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
 			var fnDeleteChangeStub = sandbox.stub();
 
-			mockFlexController(undefined, { deleteChange : fnDeleteChangeStub });
+			mockFlexController(undefined, { deleteChange: fnDeleteChangeStub });
 			try {
 				PersistenceWriteAPI.remove(mPropertyBag);
 			} catch (oError) {
@@ -469,7 +469,7 @@ sap.ui.define([
 			var fnRemoveChangeStub = sandbox.stub(FlexCustomData, "destroyAppliedCustomData");
 			var fnDeleteChangeStub = sandbox.stub();
 
-			mockFlexController(undefined, { deleteChange : fnDeleteChangeStub });
+			mockFlexController(undefined, { deleteChange: fnDeleteChangeStub });
 			try {
 				PersistenceWriteAPI.remove(mPropertyBag);
 			} catch (oError) {

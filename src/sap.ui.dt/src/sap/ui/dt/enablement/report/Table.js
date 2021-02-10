@@ -51,18 +51,18 @@ function(
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var oTable = Control.extend("sap.ui.dt.enablement.report.Table", /** @lends sap.ui.dt.enablement.report.Table.prototype */ {
-		metadata : {
+		metadata: {
 			library: "sap.ui.dt",
-			properties : {
-				data : {
-					type : "object"
+			properties: {
+				data: {
+					type: "object"
 				}
 			},
-			aggregations : {
-				_table : {
-					type : "sap.ui.table.TreeTable",
-					hidden : true,
-					multiple : false
+			aggregations: {
+				_table: {
+					type: "sap.ui.table.TreeTable",
+					hidden: true,
+					multiple: false
 				}
 			}
 		},
@@ -72,7 +72,7 @@ function(
 		 * Called when the Table is initialized
 		 * @protected
 		 */
-		init : function() {
+		init: function() {
 			this.setAggregation("_table", this._createTable());
 		},
 
@@ -81,7 +81,7 @@ function(
 		 * Called when the Table is destroyed
 		 * @protected
 		 */
-		exit : function() {
+		exit: function() {
 			clearTimeout(this._iFilterTimeout);
 			this.setData(null);
 		},
@@ -93,7 +93,7 @@ function(
 		 *
 		 * @public
 		 */
-		setData : function(oData) {
+		setData: function(oData) {
 			if (this._oModel) {
 				this._oModel.destroy();
 				delete this._oModel;
@@ -115,7 +115,7 @@ function(
 		 *
 		 * @public
 		 */
-		filter : function(sFilter) {
+		filter: function(sFilter) {
 			var oModel = this._getTable().getModel();
 			if (oModel) {
 				if (sFilter.length > 0) {
@@ -138,15 +138,15 @@ function(
 		/**
 		 * @private
 		 */
-		_createTable : function() {
+		_createTable: function() {
 			var oTable = new TreeTable(this.getId() + "--table", {
-				selectionMode : "MultiToggle",
+				selectionMode: "MultiToggle",
 				visibleRowCount: 20,
-				enableSelectAll : false,
-				ariaLabelledBy : "title",
-				toolbar : this._createToolbar(),
-				rows : "{path:'/', parameters: {arrayNames:['children']}}",
-				columns : [
+				enableSelectAll: false,
+				ariaLabelledBy: "title",
+				toolbar: this._createToolbar(),
+				rows: "{path:'/', parameters: {arrayNames:['children']}}",
+				columns: [
 					this._createTextColumn("name", "Name", "{name}"),
 					this._createRatingIndicatorColumn("value", "Status Values", "{status/value}", "{status/text} ({status/value})"),
 					this._createTextColumn("status", "Status", "{status/text}"),
@@ -161,20 +161,20 @@ function(
 		/**
 		 * @private
 		 */
-		_createToolbar : function() {
+		_createToolbar: function() {
 			return new Toolbar(this.getId() + "--toolbar", {
-				content : [
+				content: [
 					new ToolbarSpacer(this.getId() + "--toolbar-spacer"),
 					new Button(this.getId() + "--toolbar-collapse-button", {
-						text : "Collapse all",
-						press : this._onCollapseAll.bind(this)
+						text: "Collapse all",
+						press: this._onCollapseAll.bind(this)
 					}),
 					new Button(this.getId() + "--toolbar-expand-button", {
-						text : "Expand",
-						press : this._onExpandSecondLevel.bind(this)
+						text: "Expand",
+						press: this._onExpandSecondLevel.bind(this)
 					}),
 					new SearchField(this.getId() + "--toolbar-search-field", {
-						liveChange:this._onSearch.bind(this)
+						liveChange: this._onSearch.bind(this)
 					})
 				]
 			});
@@ -184,7 +184,7 @@ function(
 		/**
 		 * @private
 		 */
-		_onSearch : function(oEvt) {
+		_onSearch: function(oEvt) {
 			var sFilter = oEvt.getParameter('newValue');
 			clearTimeout(this._iFilterTimeout);
 			this._iFilterTimeout = setTimeout(function() {
@@ -196,10 +196,10 @@ function(
 		/**
 		 * @private
 		 */
-		_createTextColumn : function(sId, sColumnText, sRowText) {
+		_createTextColumn: function(sId, sColumnText, sRowText) {
 			return this._createColumn(sId, sColumnText,
 				new Text({
-					text : sRowText
+					text: sRowText
 				})
 			);
 		},
@@ -208,13 +208,13 @@ function(
 		/**
 		 * @private
 		 */
-		_createRatingIndicatorColumn : function(sId, sColumnText, sRowText, sTooltip) {
+		_createRatingIndicatorColumn: function(sId, sColumnText, sRowText, sTooltip) {
 			return this._createColumn(sId, sColumnText,
 				new RatingIndicator({
-					maxValue : 3,
-					value : sRowText,
-					enabled : false,
-					tooltip : sTooltip
+					maxValue: 3,
+					value: sRowText,
+					enabled: false,
+					tooltip: sTooltip
 				})
 			);
 		},
@@ -223,11 +223,11 @@ function(
 		/**
 		 * @private
 		 */
-		_createColumn : function(sId, sColumnText, oTemplate) {
+		_createColumn: function(sId, sColumnText, oTemplate) {
 			return new Column(this.getId() + "--table-column-" + sId, {
-				label : sColumnText,
-				width : "13em",
-				template : oTemplate
+				label: sColumnText,
+				width: "13em",
+				template: oTemplate
 			});
 		},
 
@@ -235,7 +235,7 @@ function(
 		/**
 		 * @private
 		 */
-		_getTable : function() {
+		_getTable: function() {
 			return this.getAggregation("_table");
 		},
 
@@ -243,7 +243,7 @@ function(
 		/**
 		 * @private
 		 */
-		_onCollapseAll : function() {
+		_onCollapseAll: function() {
 			var oTable = this._getTable();
 			oTable.collapseAll();
 		},
@@ -252,7 +252,7 @@ function(
 		/**
 		 * @private
 		 */
-		_onExpandSecondLevel : function() {
+		_onExpandSecondLevel: function() {
 			var oTable = this._getTable();
 			oTable.expandToLevel(2);
 		}

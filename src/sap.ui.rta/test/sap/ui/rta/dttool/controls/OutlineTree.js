@@ -30,7 +30,7 @@ sap.ui.define([
 		metadata: {
 		},
 
-		renderer : function () {
+		renderer: function () {
 			TreeRenderer.render.apply(this, arguments);
 		}
 	});

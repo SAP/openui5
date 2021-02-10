@@ -52,36 +52,36 @@ sap.ui.define([
 	 */
 	var IFrame = Control.extend("sap.ui.fl.util.IFrame", /** @lends ap.ui.fl.util.IFrame.prototype */ {
 
-		metadata : {
-			library : "sap.ui.fl",
+		metadata: {
+			library: "sap.ui.fl",
 
-			properties : {
+			properties: {
 				/**
 				 * Determines the url of the content.
 				 */
-				url : {type : "sap.ui.core.URI", group : "Misc", defaultValue: "" },
+				url: {type: "sap.ui.core.URI", group: "Misc", defaultValue: "" },
 
 				/**
 				 * Defines the <code>IFrame</code> width.
 				 */
-				width : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "100%"},
+				width: {type: "sap.ui.core.CSSSize", group: "Misc", defaultValue: "100%"},
 
 				/**
 				 * Defines the <code>IFrame</code> height.
 				 */
-				height : {type : "sap.ui.core.CSSSize", group : "Misc", defaultValue : "100%"},
+				height: {type: "sap.ui.core.CSSSize", group: "Misc", defaultValue: "100%"},
 
 				/**
 				 * Defines the title of the item.
 				 */
-				title : {type : "string", group : "Misc", defaultValue : undefined},
+				title: {type: "string", group: "Misc", defaultValue: undefined},
 
 				/**
 				 * Backup of the initial settings for the dialogs
 				 *
 				 * @ui5-restricted sap.ui.fl
 				 */
-				_settings : {type : "object", group : "Data", defaultValue : null}
+				_settings: {type: "object", group: "Data", defaultValue: null}
 			},
 
 			designtime: "sap/ui/fl/designtime/util/IFrame.designtime"

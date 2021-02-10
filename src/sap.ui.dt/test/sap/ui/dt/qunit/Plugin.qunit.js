@@ -28,7 +28,7 @@ function(
 
 			this.oButton = new Button();
 			this.oLayout = new VerticalLayout({
-				content : [
+				content: [
 					this.oButton
 				]
 			}).placeAt("qunit-fixture");

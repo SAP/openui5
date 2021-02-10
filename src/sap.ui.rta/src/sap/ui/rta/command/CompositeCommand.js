@@ -27,16 +27,16 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var CompositeCommand = BaseCommand.extend("sap.ui.rta.command.CompositeCommand", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {},
-			aggregations : {
-				commands : {
-					type : "sap.ui.rta.command.BaseCommand",
-					multiple : true
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {},
+			aggregations: {
+				commands: {
+					type: "sap.ui.rta.command.BaseCommand",
+					multiple: true
 				}
 			},
-			events : {}
+			events: {}
 		}
 	});
 

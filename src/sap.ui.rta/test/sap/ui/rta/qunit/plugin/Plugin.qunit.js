@@ -51,7 +51,7 @@ function (
 	QUnit.module("Given a Plugin and 'hasChangeHandler' is called", {
 		beforeEach: function() {
 			this.oPlugin = new Plugin({
-				commandFactory : new CommandFactory()
+				commandFactory: new CommandFactory()
 			});
 			this.oButton = new Button();
 			this.oGetChangeHandlerStub = sandbox.stub(ChangeRegistry.prototype, "getChangeHandler");
@@ -108,19 +108,19 @@ function (
 	});
 
 	QUnit.module("Given the Plugin is initialized with move registered for a control", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			oChangeRegistry.registerControlsForChanges({
-				VerticalLayout : {
+				VerticalLayout: {
 					moveControls: "default"
 				}
 			})
 			.then(function() {
 				this.oButton = new Button();
 				this.oLayout = new VerticalLayout({
-					content : [
+					content: [
 						this.oButton
 					]
 				}).placeAt("qunit-fixture");
@@ -128,11 +128,11 @@ function (
 				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oLayout]
+					rootElements: [this.oLayout]
 				});
 
 				this.oPlugin = new Plugin({
-					commandFactory : new CommandFactory()
+					commandFactory: new CommandFactory()
 				});
 				this.oRemovePlugin = new Remove();
 
@@ -146,7 +146,7 @@ function (
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -313,12 +313,12 @@ function (
 	});
 
 	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable not stubbed", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			this.oButton = new Button("button");
 			this.oLayout = new VerticalLayout({
-				content : [
+				content: [
 					this.oButton
 				]
 			}).placeAt("qunit-fixture");
@@ -329,13 +329,13 @@ function (
 
 			var oCommandFactory = new CommandFactory();
 			this.oRenamePlugin = new Rename({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 			this.oRemovePlugin = new Remove({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
+				rootElements: [this.oLayout],
 				plugins: [this.oRemovePlugin, this.oRenamePlugin]
 			});
 
@@ -346,7 +346,7 @@ function (
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -362,13 +362,13 @@ function (
 	});
 
 	QUnit.module("Given the Designtime is initialized with 2 Plugins with _isEditable stubbed asynchronous", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			this.oButton = new Button("button");
 			this.oInvisibleButton = new Button("invisibleButton", { visible: false });
 			this.oLayout = new VerticalLayout({
-				content : [
+				content: [
 					this.oInvisibleButton,
 					this.oButton
 				]
@@ -377,17 +377,17 @@ function (
 
 			var oCommandFactory = new CommandFactory();
 			this.oRenamePlugin = new Rename({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 			this.oRemovePlugin = new Remove({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 			sandbox.stub(this.oRenamePlugin, "_isEditable").resolves(true);
 			sandbox.stub(this.oRemovePlugin, "_isEditable").returns(false);
 			this.oModifyPluginListSpy = sandbox.spy(Plugin.prototype, "_modifyPluginList");
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
+				rootElements: [this.oLayout],
 				plugins: [this.oRemovePlugin, this.oRenamePlugin]
 			});
 
@@ -400,7 +400,7 @@ function (
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -513,10 +513,10 @@ function (
 	});
 
 	QUnit.module("Given the Plugin is initialized", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oGroup = new FormContainer("group");
 			this.oForm = new Form("Form", {
-				formContainers : [this.oGroup]
+				formContainers: [this.oGroup]
 			}).placeAt("qunit-fixture");
 
 			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
@@ -524,7 +524,7 @@ function (
 			sap.ui.getCore().applyChanges();
 
 			this.oPlugin = new Plugin({
-				commandFactory : new CommandFactory()
+				commandFactory: new CommandFactory()
 			});
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -540,7 +540,7 @@ function (
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oForm.destroy();
 			sandbox.restore();
@@ -548,9 +548,9 @@ function (
 	}, function() {
 		QUnit.test("when DesignTimeMetadata has no actions but aggregations with actions and checkAggregationsOnSelf method is called", function(assert) {
 			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations : {
-					formContainers : {
-						actions : {
+				aggregations: {
+					formContainers: {
+						actions: {
 							changeType: "addGroup"
 						}
 					}
@@ -565,7 +565,7 @@ function (
 
 		QUnit.test("when DesignTimeMetadata has actions and checkAggregations method is called without the action name", function(assert) {
 			this.oFormOverlay.setDesignTimeMetadata({
-				actions : {}
+				actions: {}
 			});
 
 			return this.oPlugin.checkAggregationsOnSelf(this.oFormOverlay, undefined)
@@ -576,9 +576,9 @@ function (
 
 		QUnit.test("when DesignTimeMetadata has no actions but aggregations with actions and checkAggregationsOnSelf method is called with the aggregation name", function(assert) {
 			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations : {
-					formContainers : {
-						actions : {
+				aggregations: {
+					formContainers: {
+						actions: {
 							changeType: "addGroup"
 						}
 					}
@@ -597,17 +597,17 @@ function (
 	});
 
 	QUnit.module("Given the Plugin is initialized.", {
-		beforeEach : function() {
-			this.oTitle0 = new Title({id : "Title0"});
-			this.oLabel0 = new Label({id : "Label0"});
-			this.oInput0 = new Input({id : "Input0"});
+		beforeEach: function() {
+			this.oTitle0 = new Title({id: "Title0"});
+			this.oLabel0 = new Label({id: "Label0"});
+			this.oInput0 = new Input({id: "Input0"});
 			this.oSimpleForm = new SimpleForm("SimpleForm", {
-				title : "Simple Form",
-				content : [this.oTitle0, this.oLabel0, this.oInput0]
+				title: "Simple Form",
+				content: [this.oTitle0, this.oLabel0, this.oInput0]
 			});
 
 			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oSimpleForm]
+				content: [this.oSimpleForm]
 			}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
@@ -618,10 +618,10 @@ function (
 			this.oCheckControlIdSpy = sandbox.spy(FlexUtils, "checkControlId");
 
 			this.oPlugin = new Plugin({
-				commandFactory : new CommandFactory()
+				commandFactory: new CommandFactory()
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oPlugin.destroy();
 			this.oVerticalLayout.destroy();
 			sandbox.restore();
@@ -631,12 +631,12 @@ function (
 			var done = assert.async();
 
 			var oDesignTimeMetadata = {
-				aggregations : {
-					formContainer : {
-						actions : {
-							createContainer : {
-								changeType : "addSimpleFormGroup",
-								changeOnRelevantContainer : true
+				aggregations: {
+					formContainer: {
+						actions: {
+							createContainer: {
+								changeType: "addSimpleFormGroup",
+								changeOnRelevantContainer: true
 							}
 						}
 					}
@@ -648,8 +648,8 @@ function (
 					this.oVerticalLayout
 				],
 				plugins: [],
-				designTimeMetadata : {
-					"sap.ui.layout.form.SimpleForm" : oDesignTimeMetadata
+				designTimeMetadata: {
+					"sap.ui.layout.form.SimpleForm": oDesignTimeMetadata
 				}
 			});
 
@@ -665,10 +665,10 @@ function (
 			var done = assert.async();
 
 			var oDesignTimeMetadata = {
-				aggregations : {
-					form : {
-						actions : {
-							getStableElements : function(oElement) {
+				aggregations: {
+					form: {
+						actions: {
+							getStableElements: function(oElement) {
 								var aStableElements = [];
 								var oLabel;
 								var oTitleOrToolbar;
@@ -703,8 +703,8 @@ function (
 					this.oVerticalLayout
 				],
 				plugins: [],
-				designTimeMetadata : {
-					"sap.ui.layout.form.SimpleForm" : oDesignTimeMetadata
+				designTimeMetadata: {
+					"sap.ui.layout.form.SimpleForm": oDesignTimeMetadata
 				}
 			});
 
@@ -723,17 +723,17 @@ function (
 	});
 
 	QUnit.module("Given this the Plugin is initialized.", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oTitle0 = new Title();
 			this.oLabel0 = new Label();
 			this.oInput0 = new Input();
 			this.oSimpleForm = new SimpleForm("SimpleForm", {
-				title : "Simple Form",
-				content : [this.oTitle0, this.oLabel0, this.oInput0]
+				title: "Simple Form",
+				content: [this.oTitle0, this.oLabel0, this.oInput0]
 			});
 
 			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oSimpleForm]
+				content: [this.oSimpleForm]
 			}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
@@ -758,7 +758,7 @@ function (
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -766,10 +766,10 @@ function (
 	}, function() {
 		QUnit.test("when the control has no stable id and it has no stable elements to be retrieved by function in newly set DT Metadata", function(assert) {
 			this.oFormContainerOverlay.setDesignTimeMetadata({
-				aggregations : {
-					form : {
-						actions : {
-							getStableElements : function(oElement) {
+				aggregations: {
+					form: {
+						actions: {
+							getStableElements: function(oElement) {
 								var aStableElements = [];
 								var oLabel;
 								var oTitleOrToolbar;
@@ -806,9 +806,9 @@ function (
 
 		QUnit.test("when the control has no stable id, no actions and hasStableId method is called", function(assert) {
 			this.oFormContainerOverlay.setDesignTimeMetadata({
-				aggregations : {
-					form : {
-						actions : {}
+				aggregations: {
+					form: {
+						actions: {}
 					}
 				}
 			});

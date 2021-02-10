@@ -28,19 +28,19 @@ function(
 
 	QUnit.module("Given that a DesignTime is created for a SimpleForm and designTimeMetadata for SimpleForm hidden form is provided", {
 		beforeEach: function(assert) {
-			this.oLabel = new Label({text:"Name"});
+			this.oLabel = new Label({text: "Name"});
 
 			this.oSimpleForm = new SimpleForm("Form1", {
 				maxContainerCols: 2,
 				editable: true,
-				content:[
-					new Title({text:"Person"}),
+				content: [
+					new Title({text: "Person"}),
 					this.oLabel,
-					new Input({value:"Max"}),
-					new Input({value:"Mustermann"}),
-					new Label({text:"Date of birth"}),
-					new DatePicker({valueFormat:"yyyyMMdd", value:"19990909"}),
-					new Label({text:"Gender"})
+					new Input({value: "Max"}),
+					new Input({value: "Mustermann"}),
+					new Label({text: "Date of birth"}),
+					new DatePicker({valueFormat: "yyyyMMdd", value: "19990909"}),
+					new Label({text: "Gender"})
 				]
 			});
 
@@ -53,7 +53,7 @@ function(
 
 			this.oDesignTime = new DesignTime({
 				designTimeMetadata: {
-					"sap.ui.layout.form.SimpleForm" : {
+					"sap.ui.layout.form.SimpleForm": {
 						aggregations: {
 							content: {
 								ignore: true
@@ -85,7 +85,7 @@ function(
 
 		QUnit.test("when the content is added to a SimpleForm ...", function(assert) {
 			var fnDone = assert.async();
-			this.oButton = new Button("button1", {text : "Button"});
+			this.oButton = new Button("button1", {text: "Button"});
 			this.oSimpleForm.addContent(this.oButton);
 			sap.ui.getCore().applyChanges();
 

@@ -21,17 +21,17 @@ sap.ui.define([
 	"use strict";
 
 	var AppVariantOverviewDialog = Dialog.extend("sap.ui.rta.appVariant.AppVariantOverviewDialog", {
-		metadata : {
+		metadata: {
 			library: "sap.ui.rta",
 			properties: {
-				idRunningApp : "string",
+				idRunningApp: "string",
 				isOverviewForKeyUser: {
 					type: "boolean"
 				},
 				layer: "string"
 			},
-			events : {
-				cancel : {}
+			events: {
+				cancel: {}
 			}
 		},
 		constructor: function() {
@@ -40,14 +40,14 @@ sap.ui.define([
 
 			// Create manage apps component
 			this.oManageAppsComponent = new ManageAppsComponent("sap.ui.rta.appVariant.manageApps", {
-				idRunningApp : this.getIdRunningApp(),
+				idRunningApp: this.getIdRunningApp(),
 				isOverviewForKeyUser: this.getIsOverviewForKeyUser(),
 				layer: this.getLayer()
 			});
 
 			// Place component in container and display
 			this.oManageAppsComponentContainer = new ComponentContainer({
-				component : this.oManageAppsComponent
+				component: this.oManageAppsComponent
 			});
 
 			this.addContent(this.oManageAppsComponentContainer);

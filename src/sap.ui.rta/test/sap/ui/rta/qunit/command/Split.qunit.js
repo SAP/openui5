@@ -42,9 +42,9 @@ function(
 				},
 				getManifest: function () {
 					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							}
 						}
 					};
@@ -61,7 +61,7 @@ function(
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
 			this.oPanel = new Panel("panel", {
-				content : [
+				content: [
 					this.oButton1,
 					this.oButton2
 				]
@@ -74,7 +74,7 @@ function(
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
-					splitStuff : {
+					splitStuff: {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						applyChange: this.fnApplyChangeSpy,
 						revertChange: function() {}
@@ -94,12 +94,12 @@ function(
 			sinon.stub(oOverlay, "getRelevantContainer").returns(this.oPanel);
 
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						split : {
+				data: {
+					actions: {
+						split: {
 							changeType: "splitStuff",
-							changeOnRelevantContainer : true,
-							isEnabled : true
+							changeOnRelevantContainer: true,
+							isEnabled: true
 						}
 					},
 					getRelevantContainer: function () {
@@ -109,9 +109,9 @@ function(
 			});
 
 			return CommandFactory.getCommandFor(this.oButton1, "split", {
-				newElementIds : ["dummy-1", "dummy-2"],
-				source : this.oButton1,
-				parentElement : this.oPanel
+				newElementIds: ["dummy-1", "dummy-2"],
+				source: this.oButton1,
+				parentElement: this.oPanel
 			}, oDesignTimeMetadata)
 			.then(function(oSplitCommand) {
 				assert.ok(oSplitCommand, "split command exists for element");

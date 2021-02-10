@@ -59,9 +59,9 @@ function (
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -72,13 +72,13 @@ function (
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a designTime and createContainer plugin are instantiated for a Form", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.ui.layout.form.Form" : {
+				"sap.ui.layout.form.Form": {
 					addGroup: {
 						completeChangeContent: function() {},
 						applyChange: function() {},
@@ -88,7 +88,7 @@ function (
 			})
 			.then(function() {
 				this.oCreateContainer = new CreateContainerPlugin({
-					commandFactory : new CommandFactory()
+					commandFactory: new CommandFactory()
 				});
 				this.oFormContainer = new FormContainer(oMockedViewWithStableId.createId("formContainer"), {
 					title: new Title({
@@ -101,7 +101,7 @@ function (
 					})
 				});
 				this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
-					content : [this.oForm]
+					content: [this.oForm]
 				}).placeAt("qunit-fixture");
 
 				sap.ui.getCore().applyChanges();
@@ -111,8 +111,8 @@ function (
 				this.oForm.addFormContainer(this.oNewFormContainerStub);
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oVerticalLayout],
-					plugins : [this.oCreateContainer]
+					rootElements: [this.oVerticalLayout],
+					plugins: [this.oCreateContainer]
 				});
 
 				var done = assert.async();
@@ -156,11 +156,11 @@ function (
 
 		QUnit.test("when an overlay has createContainer action designTime metadata, but has no isEnabled property defined", function(assert) {
 			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations : {
-					formContainers : {
-						actions : {
-							createContainer : {
-								changeType : "addGroup"
+				aggregations: {
+					formContainers: {
+						actions: {
+							createContainer: {
+								changeType: "addGroup"
 							}
 						}
 					}
@@ -182,11 +182,11 @@ function (
 
 		QUnit.test("when an overlay has createContainer action designTime metadata, has no changeType and isEnabled property is true", function(assert) {
 			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations : {
-					formContainers : {
-						actions : {
-							createContainer : {
-								isEnabled : true
+				aggregations: {
+					formContainers: {
+						actions: {
+							createContainer: {
+								isEnabled: true
 							}
 						}
 					}
@@ -209,12 +209,12 @@ function (
 		QUnit.test("when an overlay has createContainer action designTime metadata, and isEnabled property is function", function(assert) {
 			assert.expect(22);
 			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations : {
-					formContainers : {
-						actions : {
-							createContainer : {
-								changeType : "addGroup",
-								isEnabled : function (oElement) {
+				aggregations: {
+					formContainers: {
+						actions: {
+							createContainer: {
+								changeType: "addGroup",
+								isEnabled: function (oElement) {
 									return oElement.getMetadata().getName() === "sap.ui.layout.form.Form";
 								}
 							}
@@ -276,11 +276,11 @@ function (
 			sandbox.stub(Utils, "getViewForControl").returns(oViewWithUnstableId);
 
 			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations : {
-					formContainers : {
-						actions : {
-							createContainer : {
-								changeType : "addGroup"
+				aggregations: {
+					formContainers: {
+						actions: {
+							createContainer: {
+								changeType: "addGroup"
 							}
 						}
 					}
@@ -302,11 +302,11 @@ function (
 
 		QUnit.test("when an overlay has createContainer action with changeOnRelevantContainer true, but its relevant container has no stable id", function(assert) {
 			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations : {
-					formContainers : {
-						actions : {
-							createContainer : {
-								changeType : "addGroup",
+				aggregations: {
+					formContainers: {
+						actions: {
+							createContainer: {
+								changeType: "addGroup",
 								changeOnRelevantContainer: true
 							}
 						}
@@ -323,7 +323,7 @@ function (
 
 			// changeOnRelevantContainer means the action has to be registered on the parent
 			return ChangeRegistry.getInstance().registerControlsForChanges({
-				"sap.ui.layout.VerticalLayout" : {
+				"sap.ui.layout.VerticalLayout": {
 					addGroup: {
 						completeChangeContent: function() {},
 						applyChange: function() {},
@@ -345,11 +345,11 @@ function (
 
 		QUnit.test("when a sibling overlay has createContainer action designTime metadata, but for another aggregation", function(assert) {
 			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations : {
-					toolBar : {
-						actions : {
-							createContainer : {
-								changeType : "addToolbarContainer"
+				aggregations: {
+					toolBar: {
+						actions: {
+							createContainer: {
+								changeType: "addToolbarContainer"
 							}
 						}
 					}
@@ -367,7 +367,7 @@ function (
 		QUnit.test("when the designTimeMetadata has a getContainerIndex property and a function _determineIndex() is called", function(assert) {
 			var vAction = {
 				aggregationName: "formContainers",
-				getIndex : function(oForm, oFormContainer) {
+				getIndex: function(oForm, oFormContainer) {
 					var sAggregationName = vAction.aggregationName;
 					var oMetadata = oForm.getMetadata();
 					var oAggregation = oMetadata.getAggregation(sAggregationName);
@@ -389,7 +389,7 @@ function (
 		QUnit.test("when the designTimeMetadata has no getContainerIndex property given and a function _determineIndex() is called", function(assert) {
 			var vAction = {
 				aggregationName: "formContainers",
-				changeType : "addGroup"
+				changeType: "addGroup"
 			};
 
 			assert.deepEqual(this.oCreateContainer._determineIndex(this.oForm, undefined, vAction.aggregationName, undefined), 0, "then the default index calculation would start and returns the right index");
@@ -397,7 +397,7 @@ function (
 
 		QUnit.test("when the designTimeMetadata has a getCreatedContainerId property and a function getCreatedContainerId() is called", function(assert) {
 			var vAction = {
-				getCreatedContainerId : function(sNewControlID) {
+				getCreatedContainerId: function(sNewControlID) {
 					return sNewControlID;
 				}
 			};
@@ -409,7 +409,7 @@ function (
 
 		QUnit.test("when the designTimeMetadata has no getCreatedContainerId property and a function getCreatedContainerId() is called", function(assert) {
 			var vAction = {
-				changeType : "addGroup"
+				changeType: "addGroup"
 			};
 
 			assert.deepEqual(this.oCreateContainer.getCreatedContainerId(vAction, this.sNewControlID),
@@ -421,16 +421,16 @@ function (
 			var fnDone = assert.async();
 
 			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations : {
-					formContainers : {
-						childNames : {
-							singular : "GROUP_CONTROL_NAME",
-							plural : "GROUP_CONTROL_NAME_PLURAL"
+				aggregations: {
+					formContainers: {
+						childNames: {
+							singular: "GROUP_CONTROL_NAME",
+							plural: "GROUP_CONTROL_NAME_PLURAL"
 						},
-						actions : {
-							createContainer :  {
-								changeType : "addGroup",
-								isEnabled : true
+						actions: {
+							createContainer: {
+								changeType: "addGroup",
+								isEnabled: true
 							}
 						}
 					}
@@ -467,15 +467,15 @@ function (
 			}.bind(this));
 
 			this.oFormOverlay.setDesignTimeMetadata({
-				aggregations : {
-					formContainers : {
-						childNames : {
-							singular : "GROUP_CONTROL_NAME",
-							plural : "GROUP_CONTROL_NAME_PLURAL"
+				aggregations: {
+					formContainers: {
+						childNames: {
+							singular: "GROUP_CONTROL_NAME",
+							plural: "GROUP_CONTROL_NAME_PLURAL"
 						},
-						actions : {
-							createContainer :  {
-								changeType : "addGroup"
+						actions: {
+							createContainer: {
+								changeType: "addGroup"
 							}
 						}
 					}
@@ -487,7 +487,7 @@ function (
 	});
 
 	QUnit.module("Given a designTime and createContainer plugin are instantiated for a SimpleForm", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
@@ -504,21 +504,21 @@ function (
 			})
 			.then(function() {
 				this.oCreateContainer = new CreateContainerPlugin({
-					commandFactory : new CommandFactory()
+					commandFactory: new CommandFactory()
 				});
 				this.oTitle = new Title(oMockedViewWithStableId.createId("title"), { text: "title" });
 				this.oSimpleForm = new SimpleForm(oMockedViewWithStableId.createId("form"), {
 					content: [this.oTitle]
 				});
 				this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
-					content : [this.oSimpleForm]
+					content: [this.oSimpleForm]
 				}).placeAt("qunit-fixture");
 
 				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oVerticalLayout],
-					plugins : [this.oCreateContainer]
+					rootElements: [this.oVerticalLayout],
+					plugins: [this.oCreateContainer]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {

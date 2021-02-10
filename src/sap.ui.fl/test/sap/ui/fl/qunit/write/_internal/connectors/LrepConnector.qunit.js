@@ -34,46 +34,46 @@ sap.ui.define([
 	QUnit.module("LrepConnector", {
 		before: function() {
 			this.oMockNewChange = {
-				packageName : "$TMP",
-				fileType : "change",
-				id : "changeId2",
-				namespace : "namespace",
-				getDefinition : function() {
+				packageName: "$TMP",
+				fileType: "change",
+				id: "changeId2",
+				namespace: "namespace",
+				getDefinition: function() {
 					return {
-						packageName : this.packageName,
-						fileType : this.fileType
+						packageName: this.packageName,
+						fileType: this.fileType
 					};
 				},
-				getId : function() {
+				getId: function() {
 					return this.id;
 				},
-				getNamespace : function() {
+				getNamespace: function() {
 					return this.namespace;
 				},
-				setResponse : function(oDefinition) {
+				setResponse: function(oDefinition) {
 					this.packageName = oDefinition.packageName;
 				},
-				getPackage : function() {
+				getPackage: function() {
 					return this.packageName;
 				}
 			};
 
 			this.oAppVariantDescriptor = {
-				packageName : "$TMP",
-				fileType : "appdescr_variant",
-				fileName : "manifest",
-				id : "customer.app.var.id",
-				namespace : "namespace",
-				getDefinition : function() {
+				packageName: "$TMP",
+				fileType: "appdescr_variant",
+				fileName: "manifest",
+				id: "customer.app.var.id",
+				namespace: "namespace",
+				getDefinition: function() {
 					return {
-						fileType : this.fileType,
-						fileName : this.fileName
+						fileType: this.fileType,
+						fileName: this.fileName
 					};
 				},
-				getNamespace : function() {
+				getNamespace: function() {
 					return this.namespace;
 				},
-				getPackage : function() {
+				getPackage: function() {
 					return this.packageName;
 				}
 			};
@@ -83,7 +83,7 @@ sap.ui.define([
 			this.aMockLocalChanges = [this.oMockNewChange];
 			this.aAppVariantDescriptors = [this.oAppVariantDescriptor];
 		},
-		beforeEach : function () {
+		beforeEach: function () {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
 		},
@@ -184,8 +184,8 @@ sap.ui.define([
 
 		QUnit.test("when calling publish successfully", function(assert) {
 			var oMockTransportInfo = {
-				packageName : "PackageName",
-				transport : "transportId"
+				packageName: "PackageName",
+				transport: "transportId"
 			};
 
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
@@ -216,8 +216,8 @@ sap.ui.define([
 
 		QUnit.test("when calling publish successfully in S/4 Hana Cloud", function(assert) {
 			var oMockTransportInfo = {
-				packageName : "PackageName",
-				transport : "ATO_NOTIFICATION"
+				packageName: "PackageName",
+				transport: "ATO_NOTIFICATION"
 			};
 
 			var fnOpenTransportSelectionStub = sandbox.stub(TransportSelection.prototype, "openTransportSelection").returns(Promise.resolve(oMockTransportInfo));
@@ -318,8 +318,8 @@ sap.ui.define([
 
 		QUnit.test("when calling reset in VENDOR layer with mix content of $TMP and transported changes", function (assert) {
 			var oMockTransportInfo = {
-				packageName : "PackageName",
-				transport : "transportId"
+				packageName: "PackageName",
+				transport: "transportId"
 			};
 			// changes for the component
 			var oVENDORChange1 = new Change({
@@ -387,9 +387,9 @@ sap.ui.define([
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.deepEqual(oResponse, oAdjustedResponse, "expected Response");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -397,8 +397,8 @@ sap.ui.define([
 
 		QUnit.test("when calling resetChanges in VENDOR layer for transported changes with selector and change type", function (assert) {
 			var oMockTransportInfo = {
-				packageName : "PackageName",
-				transport : "transportId"
+				packageName: "PackageName",
+				transport: "transportId"
 			};
 			// changes for the component
 			var oVENDORChange1 = new Change({
@@ -460,9 +460,9 @@ sap.ui.define([
 			}).then(function() {
 				assert.ok(fnOpenTransportSelectionStub.calledOnce, "then openTransportSelection called once");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -470,7 +470,7 @@ sap.ui.define([
 
 		QUnit.test("when calling resetChanges in CUSTOMER layer with ATO_NOTIFICATION", function (assert) {
 			var oMockTransportInfo = {
-				transport : "ATO_NOTIFICATION"
+				transport: "ATO_NOTIFICATION"
 			};
 			// changes for the component
 			var oUserChange = new Change({
@@ -547,9 +547,9 @@ sap.ui.define([
 			}).then(function() {
 				assert.equal(fnOpenTransportSelectionStub.callCount, 3, "then openTransportSelection called three times");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -579,9 +579,9 @@ sap.ui.define([
 				selectorIds: aControlIds
 			}).then(function() {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -613,9 +613,9 @@ sap.ui.define([
 			}).then(function() {
 				assert.equal(oTransportStub.callCount, 0, "no transport data was requested");
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -660,12 +660,12 @@ sap.ui.define([
 
 			return WriteLrepConnector.write(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json",
-					payload : "[]"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					payload: "[]"
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -685,12 +685,12 @@ sap.ui.define([
 
 			return WriteLrepConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json",
-					payload : JSON.stringify(oFlexObject)
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					payload: JSON.stringify(oFlexObject)
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -711,12 +711,12 @@ sap.ui.define([
 
 			return WriteLrepConnector.update(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json",
-					payload : JSON.stringify(oFlexObject)
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					payload: JSON.stringify(oFlexObject)
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -739,11 +739,11 @@ sap.ui.define([
 
 			return WriteLrepConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json"
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -766,11 +766,11 @@ sap.ui.define([
 
 			return WriteLrepConnector.remove(mPropertyBag).then(function () {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json"
 				}), "a send request with correct parameters and options is sent");
 				WriteUtils.sendRequest.restore();
 			});
@@ -778,7 +778,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("LrepConnector.appVariant", {
-		beforeEach : function () {
+		beforeEach: function () {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
 			this.oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
@@ -797,11 +797,11 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.getManifest(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(mPropertyBag.appVarUrl, "GET", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : undefined,
-					initialConnector : InitialLrepConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: undefined,
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json"
 				}), "a send request with correct parameters and options is sent");
 			}.bind(this));
 		});
@@ -816,11 +816,11 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.load(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "GET", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : undefined,
-					initialConnector : InitialLrepConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: undefined,
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json"
 				}), "a send request with correct parameters and options is sent");
 			}.bind(this));
 		});
@@ -849,12 +849,12 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json",
-					payload : JSON.stringify(oFlexObject)
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					payload: JSON.stringify(oFlexObject)
 				}), "a send request with correct parameters and options is sent");
 			}.bind(this));
 		});
@@ -884,12 +884,12 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json",
-					payload : JSON.stringify(oFlexObject)
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					payload: JSON.stringify(oFlexObject)
 				}), "a send request with correct parameters and options is sent");
 			}.bind(this));
 		});
@@ -922,12 +922,12 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.create(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json",
-					payload : JSON.stringify(oFlexObject)
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					payload: JSON.stringify(oFlexObject)
 				}), "a send request with correct parameters and options is sent");
 			}.bind(this));
 		});
@@ -943,11 +943,11 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.assignCatalogs(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					dataType : "json",
-					contentType : "application/json; charset=utf-8"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					dataType: "json",
+					contentType: "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
 			}.bind(this));
 		});
@@ -962,11 +962,11 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.unassignCatalogs(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					dataType : "json",
-					contentType : "application/json; charset=utf-8"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					dataType: "json",
+					contentType: "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
 			}.bind(this));
 		});
@@ -983,11 +983,11 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.update(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					dataType : "json",
-					contentType : "application/json; charset=utf-8"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					dataType: "json",
+					contentType: "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
 			}.bind(this));
 		});
@@ -1020,11 +1020,11 @@ sap.ui.define([
 				assert.ok(oStubOpenTransportSelection.calledOnce);
 				assert.equal(oStubOpenTransportSelection.getCalls()[0].args[0].getPackage(), "", "no package information is sent to get transport info");
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "PUT", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					dataType : "json",
-					contentType : "application/json; charset=utf-8"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					dataType: "json",
+					contentType: "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
 				TransportSelection.prototype.openTransportSelection.restore();
 			}.bind(this));
@@ -1072,11 +1072,11 @@ sap.ui.define([
 			var sUrl = "/sap/bc/lrep/appdescr_variants/someAppVariantId?changelist=aTransport";
 			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					dataType : "json",
-					contentType : "application/json; charset=utf-8"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					dataType: "json",
+					contentType: "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
 			}.bind(this));
 		});
@@ -1107,11 +1107,11 @@ sap.ui.define([
 			return WriteLrepConnector.appVariant.remove(mPropertyBag).then(function () {
 				assert.ok(oStubOpenTransportSelection.calledOnce);
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "DELETE", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : "/sap/bc/lrep/actions/getcsrftoken/",
-					initialConnector : InitialLrepConnector,
-					dataType : "json",
-					contentType : "application/json; charset=utf-8"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: "/sap/bc/lrep/actions/getcsrftoken/",
+					initialConnector: InitialLrepConnector,
+					dataType: "json",
+					contentType: "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
 				TransportSelection.prototype.openTransportSelection.restore();
 			}.bind(this));
@@ -1187,18 +1187,18 @@ sap.ui.define([
 
 			return WriteLrepConnector.appVariant.list(mPropertyBag).then(function () {
 				assert.ok(this.oStubSendRequest.calledWith(sUrl, "GET", {
-					xsrfToken : InitialLrepConnector.xsrfToken,
-					tokenUrl : undefined,
-					initialConnector : InitialLrepConnector,
-					dataType : "json",
-					contentType : "application/json; charset=utf-8"
+					xsrfToken: InitialLrepConnector.xsrfToken,
+					tokenUrl: undefined,
+					initialConnector: InitialLrepConnector,
+					dataType: "json",
+					contentType: "application/json; charset=utf-8"
 				}), "a send request with correct parameters and options is sent");
 			}.bind(this));
 		});
 	});
 
 	QUnit.module("LrepConnector.ui2personalization", {
-		beforeEach : function () {
+		beforeEach: function () {
 			sandbox.useFakeServer();
 			sandbox.server.autoRespond = true;
 			this.oStubSendRequest = sinon.stub(WriteUtils, "sendRequest").resolves();
@@ -1217,7 +1217,7 @@ sap.ui.define([
 			};
 
 			var mPropertyBag = {
-				flexObject : oContainerData
+				flexObject: oContainerData
 			};
 
 			return WriteLrepConnector.ui2Personalization.create(mPropertyBag).then(function () {

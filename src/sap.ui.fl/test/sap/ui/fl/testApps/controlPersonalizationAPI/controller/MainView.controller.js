@@ -10,7 +10,7 @@ sap.ui.define([
 		onInit: function () {
 			XMLView.create({
 				id: "secondView",
-				viewName : "test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.view.SecondSubView"
+				viewName: "test.sap.ui.fl.testApps.controlPersonalizationAPIChanges.view.SecondSubView"
 			}).then(function (oSecondView) {
 				this.oSecondView = oSecondView;
 				this.getView().byId("vbox").addItem(this.oSecondView);

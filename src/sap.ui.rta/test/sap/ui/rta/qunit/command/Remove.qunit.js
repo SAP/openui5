@@ -30,7 +30,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when getting a remove command for popup ...", function(assert) {
 			return CommandFactory.getCommandFor(this.oPopup, "Remove", {
-				removedElement : this.oPopup
+				removedElement: this.oPopup
 			}, this.oPopupDesignTimeMetadata)
 			.then(function(oCommand) {
 				assert.notOk(oCommand, "no remove command for popup exists");
@@ -57,9 +57,9 @@ sap.ui.define([
 				},
 				getManifest: function () {
 					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							}
 						}
 					};
@@ -73,7 +73,7 @@ sap.ui.define([
 		},
 		beforeEach: function () {
 			this.oLink = new Link("mockLink", {
-				text : "Label"
+				text: "Label"
 			});
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
@@ -82,7 +82,7 @@ sap.ui.define([
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Link": {
-					hideControl : {
+					hideControl: {
 						applyChange: this.fnApplyChangeSpy,
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						revertChange: function() {}
@@ -91,10 +91,10 @@ sap.ui.define([
 			})
 			.then(function() {
 				this.oLinkDesignTimeMetadata = new DesignTimeMetadata({
-					data : {
-						actions : {
-							remove : {
-								changeType : "hideControl"
+					data: {
+						actions: {
+							remove: {
+								changeType: "hideControl"
 							}
 						}
 					}
@@ -107,7 +107,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when getting a remove command with an invalid removedElement ...", function (assert) {
 			return CommandFactory.getCommandFor(this.oLink, "Remove", {
-				removedElement : {}
+				removedElement: {}
 			}, this.oLinkDesignTimeMetadata)
 			.then(function() {
 				assert.notOk(true, "Exception is expected but no exception was thrown");
@@ -135,7 +135,7 @@ sap.ui.define([
 
 		QUnit.test("when getting a remove command for a Link...", function (assert) {
 			return CommandFactory.getCommandFor(this.oLink, "Remove", {
-				removedElement : this.oLink
+				removedElement: this.oLink
 			}, this.oLinkDesignTimeMetadata)
 			.then(function(oRemoveCommand) {
 				var sChangeType = this.oLinkDesignTimeMetadata.getAction("remove", this.oLink).changeType;

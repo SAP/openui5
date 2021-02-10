@@ -34,8 +34,8 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
-				commandStack : {
-					type : "any"
+				commandStack: {
+					type: "any"
 				}
 			},
 			associations: {},
@@ -152,11 +152,11 @@ sap.ui.define([
 			oElement,
 			"appDescriptor",
 			{
-				reference : sReference,
-				appComponent : oComponent,
-				changeType : mChangeSpecificData.appDescriptorChangeType,
-				parameters : mChangeSpecificData.content.parameters,
-				texts : mChangeSpecificData.content.texts
+				reference: sReference,
+				appComponent: oComponent,
+				changeType: mChangeSpecificData.appDescriptorChangeType,
+				parameters: mChangeSpecificData.content.parameters,
+				texts: mChangeSpecificData.content.texts
 			}
 		)
 		.then(function(oAppDescriptorCommand) {
@@ -193,7 +193,7 @@ sap.ui.define([
 		.then(function() {
 			if (oCompositeCommand.getCommands().length > 0) {
 				this.fireElementModified({
-					command : oCompositeCommand
+					command: oCompositeCommand
 				});
 			}
 		}.bind(this));

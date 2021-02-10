@@ -131,7 +131,7 @@ sap.ui.define([
 
 	// -------------------------- Tests that don't need the runtimeAuthoring page --------------------------
 	QUnit.module("Given that the ObjectPage with overlays is given...", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			//	ObjectPageLayout
 			//		ObjectPageSection1
 			//			ObjectPageSubSection1
@@ -157,7 +157,7 @@ sap.ui.define([
 				blocks: this.oLabel3
 			});
 			this.oObjectPageSection1 = new ObjectPageSection({
-				title:"Personal",
+				title: "Personal",
 				subSections: [
 					this.oObjectPageSubSection1,
 					this.oObjectPageSubSection2,
@@ -189,7 +189,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		afterEach : function () {
+		afterEach: function () {
 			this.oObjectPageLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -257,7 +257,7 @@ sap.ui.define([
 
 
 	QUnit.module("Given an ObjectPageLayout with Overlays created, but all except for the button overlays are not selectable", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
 			//		Layout0
@@ -295,12 +295,12 @@ sap.ui.define([
 				subSections: [this.oSubSection1, this.oSubSection2]
 			});
 			this.oLayout0 = new ObjectPageLayout("layout0", {
-				sections : [this.oSection0, this.oSection1]
+				sections: [this.oSection0, this.oSection1]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout0]
+				rootElements: [this.oLayout0]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -428,17 +428,17 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given two generic objects...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oObject1 = {
-				function11 : function() {
+				function11: function() {
 					return "function11Object1";
 				},
-				function12 : function() {}
+				function12: function() {}
 			};
 
 			this.oObject2 = {
-				function21 : function() {},
-				function11 : function() {
+				function21: function() {},
+				function11: function() {
 					return "function11Object2";
 				}
 			};
@@ -468,12 +468,12 @@ sap.ui.define([
 
 	// One model with EntityType01 and EntityType02 (default) + one i18n model ("i18n")
 	QUnit.module("Given a complex test view with oData Model...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oSource = new Label({text: "Label1" });
 			this.oTarget = new Label({text: "Label2" });
 		},
 
-		afterEach : function () {
+		afterEach: function () {
 			this.oSource.destroy();
 			this.oTarget.destroy();
 			sandbox.restore();

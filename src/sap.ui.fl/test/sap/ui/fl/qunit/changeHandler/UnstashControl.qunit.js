@@ -31,19 +31,19 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oChangeHandler = UnstashControlChangeHandler;
 			var oChangeJson = {
-				changeType : "unstashControl",
+				changeType: "unstashControl",
 				selector: {
 					id: "key"
 				},
 				content: {
-					parentAggregationName : "sections",
-					index : 0
+					parentAggregationName: "sections",
+					index: 0
 				}
 			};
 			this.oChange = new Change(oChangeJson);
 
 			var oNonMoveChangeJson = {
-				changeType : "unstashControl",
+				changeType: "unstashControl",
 				selector: {
 					id: "key"
 				},
@@ -60,7 +60,7 @@ sap.ui.define([
 			this.oObjectPageSectionInvisible = new ObjectPageSection("invisible"); // for XML modifier
 
 			this.oObjectPageLayout = new ObjectPageLayout({
-				sections : [this.oObjectPageSection1, this.oObjectPageSection2, this.oPlaceholderSection, this.oObjectPageSectionInvisible]
+				sections: [this.oObjectPageSection1, this.oObjectPageSection2, this.oPlaceholderSection, this.oObjectPageSectionInvisible]
 			});
 
 			var oDOMParser = new DOMParser();

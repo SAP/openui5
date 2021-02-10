@@ -21,27 +21,27 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var AddProperty = FlexCommand.extend("sap.ui.rta.command.AddProperty", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				index : {
-					type : "int"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				index: {
+					type: "int"
 				},
-				newControlId : {
-					type : "string"
+				newControlId: {
+					type: "string"
 				},
 				//the name "bindingPath" conflicts with getBindingPath() method from ManagedObject
-				bindingString : {
-					type : "string"
+				bindingString: {
+					type: "string"
 				},
-				entityType : {
-					type : "string"
+				entityType: {
+					type: "string"
 				},
-				parentId : {
-					type : "string"
+				parentId: {
+					type: "string"
 				},
-				oDataServiceVersion : {
-					type : "string"
+				oDataServiceVersion: {
+					type: "string"
 				},
 				oDataServiceUri: {
 					type: "string"

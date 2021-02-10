@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Send request functions", {
-		beforeEach : function () {
+		beforeEach: function () {
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -29,9 +29,9 @@ sap.ui.define([
 				}
 			};
 
-			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response : "something"});
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").resolves({response: "something"});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
-				assert.deepEqual(oResponse, {response : "something"}, "correct response is returned");
+				assert.deepEqual(oResponse, {response: "something"}, "correct response is returned");
 				assert.ok(oStubSendRequest.calledWith(sUrl, sMethod, mPropertyBag), "there is one request sent");
 			});
 		});
@@ -40,12 +40,12 @@ sap.ui.define([
 			var sToken = "token";
 			var sTokenUrl = "tokenUrl";
 			var oInitialConnector = {
-				xsrfToken : sToken
+				xsrfToken: sToken
 			};
 			var oExpectedOptions = {
-				xsrfToken : sToken,
-				tokenUrl : sTokenUrl,
-				initialConnector : oInitialConnector
+				xsrfToken: sToken,
+				tokenUrl: sTokenUrl,
+				initialConnector: oInitialConnector
 			};
 			assert.deepEqual(WriteUtils.getRequestOptions(oInitialConnector, sTokenUrl), oExpectedOptions);
 			oExpectedOptions.payload = "[]";
@@ -63,7 +63,7 @@ sap.ui.define([
 				}
 			};
 
-			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").rejects({status : 500});
+			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest").rejects({status: 500});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {
 				assert.equal(oError.status, 500, "correct error is returned");
 				assert.ok(oStubSendRequest.calledWith(sUrl, sMethod, mPropertyBag), "there is one request sent");
@@ -78,17 +78,17 @@ sap.ui.define([
 				xsrfToken: "123"
 			};
 			var mPropertyBag = {
-				tokenUrl : sTokenUrl,
+				tokenUrl: sTokenUrl,
 				initialConnector: oInitialConnector,
-				xsrfToken : "oldToken"
+				xsrfToken: "oldToken"
 			};
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest");
-			oStubSendRequest.onCall(0).rejects({status : 403});
-			oStubSendRequest.onCall(1).resolves({xsrfToken : "newToken"});
-			oStubSendRequest.onCall(2).resolves({response : "something"});
+			oStubSendRequest.onCall(0).rejects({status: 403});
+			oStubSendRequest.onCall(1).resolves({xsrfToken: "newToken"});
+			oStubSendRequest.onCall(2).resolves({response: "something"});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).then(function (oResponse) {
-				assert.deepEqual(oResponse, {response : "something"}, "correct response is returned");
+				assert.deepEqual(oResponse, {response: "something"}, "correct response is returned");
 				assert.equal(oInitialConnector.xsrfToken, "newToken", "new token is stored in apply connector");
 				assert.equal(oStubSendRequest.callCount, 3, "there are 3 requests sent in total");
 				assert.ok(oStubSendRequest.getCall(0).calledWith(sUrl, sMethod, mPropertyBag), "first request has correct parameters");
@@ -106,15 +106,15 @@ sap.ui.define([
 				xsrfToken: "123"
 			};
 			var mPropertyBag = {
-				tokenUrl : sTokenUrl,
+				tokenUrl: sTokenUrl,
 				initialConnector: oInitialConnector,
-				xsrfToken : "oldToken"
+				xsrfToken: "oldToken"
 			};
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest");
-			oStubSendRequest.onCall(0).rejects({status : 403});
-			oStubSendRequest.onCall(1).resolves({xsrfToken : "newToken"});
-			oStubSendRequest.onCall(2).rejects({status : 500});
+			oStubSendRequest.onCall(0).rejects({status: 403});
+			oStubSendRequest.onCall(1).resolves({xsrfToken: "newToken"});
+			oStubSendRequest.onCall(2).rejects({status: 500});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {
 				assert.equal(oError.status, 500, "correct error is returned");
 				assert.equal(oInitialConnector.xsrfToken, "newToken", "new token is stored in apply connector");
@@ -134,13 +134,13 @@ sap.ui.define([
 				xsrfToken: "oldToken"
 			};
 			var mPropertyBag = {
-				tokenUrl : sTokenUrl,
+				tokenUrl: sTokenUrl,
 				initialConnector: oInitialConnector
 			};
 
 			var oStubSendRequest = sandbox.stub(InitialUtils, "sendRequest");
-			oStubSendRequest.onCall(0).rejects({status : 403});
-			oStubSendRequest.onCall(1).rejects({status : 500});
+			oStubSendRequest.onCall(0).rejects({status: 403});
+			oStubSendRequest.onCall(1).rejects({status: 500});
 			return WriteUtils.sendRequest(sUrl, sMethod, mPropertyBag).catch(function (oError) {
 				assert.equal(oError.status, 500, "correct error is returned");
 				assert.equal(mPropertyBag.initialConnector.xsrfToken, "oldToken", "new token is not passed in the second sendRequest");

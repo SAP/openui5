@@ -38,9 +38,9 @@ function (
 				},
 				getManifest: function () {
 					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							}
 						}
 					};
@@ -75,7 +75,7 @@ function (
 			var oAddLibraryCommand;
 
 			var oMockDescriptorChange = {
-				store : function() {
+				store: function() {
 					assert.ok(true, "the descriptor change was submitted");
 					oAddLibraryCommand.execute()
 						.then(function() {
@@ -86,7 +86,7 @@ function (
 			};
 
 			var oMockAddLibraryInlineChange = {
-				mockName : "mocked"
+				mockName: "mocked"
 			};
 
 			this.createDescriptorInlineChangeStub = sinon.stub(AppVariantInlineChangeFactory, "createDescriptorInlineChange").callsFake(function(mPropertyBag) {
@@ -108,10 +108,10 @@ function (
 			}.bind(this));
 
 			return CommandFactory.getCommandFor(this.oButton, "addLibrary", {
-				reference : this.sReference,
-				parameters : { libraries : this.mLibraries },
-				appComponent : this.oMockedAppComponent
-			}, {}, {layer : this.sLayer})
+				reference: this.sReference,
+				parameters: { libraries: this.mLibraries },
+				appComponent: this.oMockedAppComponent
+			}, {}, {layer: this.sLayer})
 
 			.then(function(oCommand) {
 				oAddLibraryCommand = oCommand;
@@ -137,9 +137,9 @@ function (
 			};
 
 			return CommandFactory.getCommandFor(this.oButton, "addLibrary", {
-				reference : this.sReference,
-				parameters : { libraries : this.mLibraries }
-			}, {}, {layer : this.sLayer})
+				reference: this.sReference,
+				parameters: { libraries: this.mLibraries }
+			}, {}, {layer: this.sLayer})
 			.then(function (oAddLibraryCommand) {
 				assert.ok(oAddLibraryCommand, "addLibrary command exists for element");
 				return oAddLibraryCommand.execute();

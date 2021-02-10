@@ -36,22 +36,22 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var Rename = Plugin.extend("sap.ui.rta.plugin.Rename", /** @lends sap.ui.rta.plugin.Rename.prototype */ {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				oldValue : "string"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				oldValue: "string"
 			},
-			associations : {},
-			events : {
+			associations: {},
+			events: {
 				/*
 				 * Fired when renaming is possible
 				*/
-				editable : {},
+				editable: {},
 
 				/**
 				 * Fired when renaming is switched off
 				 */
-				nonEditable : {}
+				nonEditable: {}
 			}
 		}
 	});
@@ -200,13 +200,13 @@ sap.ui.define([
 		var sVariantManagementReference = this.getVariantManagementReference(oResponsibleElementOverlay);
 
 		return this.getCommandFactory().getCommandFor(oRenamedElement, "rename", {
-			renamedElement : oRenamedElement,
-			newValue : sText
+			renamedElement: oRenamedElement,
+			newValue: sText
 		}, oDesignTimeMetadata, sVariantManagementReference)
 
 		.then(function(oRenameCommand) {
 			this.fireElementModified({
-				command : oRenameCommand
+				command: oRenameCommand
 			});
 		}.bind(this))
 
@@ -221,7 +221,7 @@ sap.ui.define([
 	 * @return {object[]} - array of the items with required data
 	 */
 	Rename.prototype.getMenuItems = function (vElementOverlays) {
-		return this._getMenuItems(vElementOverlays, { pluginId : "CTX_RENAME", rank : 10, icon: "sap-icon://edit" });
+		return this._getMenuItems(vElementOverlays, { pluginId: "CTX_RENAME", rank: 10, icon: "sap-icon://edit" });
 	};
 
 	/**

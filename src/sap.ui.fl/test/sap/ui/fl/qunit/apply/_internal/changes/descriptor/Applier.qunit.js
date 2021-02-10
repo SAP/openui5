@@ -142,9 +142,9 @@ function (
 					content: {
 						dataSourceId: "ppm",
 						entityPropertyChange: {
-							propertyPath : "uri",
-							operation : "UPDATE",
-							propertyValue : "newuri"
+							propertyPath: "uri",
+							operation: "UPDATE",
+							propertyValue: "newuri"
 						}
 					}
 				}, {//buildtime change
@@ -153,7 +153,7 @@ function (
 						modelId: "ppm"
 					},
 					texts: {
-						i18n:  "resources/i18n/i18n.properties"
+						i18n: "resources/i18n/i18n.properties"
 					}
 				}, {//buildtime change
 					changeType: "appdescr_ui5_addComponentUsages",
@@ -341,9 +341,9 @@ function (
 					content: {
 						dataSourceId: "ppm",
 						entityPropertyChange: {
-							propertyPath : "uri",
-							operation : "UPDATE",
-							propertyValue : "newuri"
+							propertyPath: "uri",
+							operation: "UPDATE",
+							propertyValue: "newuri"
 						}
 					}
 				}, {
@@ -352,7 +352,7 @@ function (
 						modelId: "ppm"
 					},
 					texts: {
-						i18n:  "resources/i18n/i18n.properties"
+						i18n: "resources/i18n/i18n.properties"
 					}
 				}, {
 					changeType: "appdescr_ui5_addComponentUsages",
@@ -407,8 +407,8 @@ function (
 
 				assert.equal(oNewManifest["sap.app"].title, "{{sap.app.descriptor.test_sap.app.title}}", "title is replaced correctly");
 				var oExpectedi18n = {
-					bundleUrl:"i18n/i18n.properties",
-					enhanceWith: [{ bundleName :"sap.app.descriptor.test.i18n.i18n" }]
+					bundleUrl: "i18n/i18n.properties",
+					enhanceWith: [{ bundleName: "sap.app.descriptor.test.i18n.i18n" }]
 				};
 				assert.deepEqual(oNewManifest["sap.app"].i18n, oExpectedi18n, "sap.app/i18n enhanced correctly");
 			}.bind(this));
@@ -456,10 +456,10 @@ function (
 
 				assert.equal(oNewManifest["sap.app"].title, "{{sap.app.descriptor.test_sap.app.title}}", "title is replaced correctly");
 				var oExpectedi18n = {
-					bundleUrl:"i18n/i18n.properties",
+					bundleUrl: "i18n/i18n.properties",
 					enhanceWith: [
-						{ bundleName :"sap.app.descriptor.test.some.random.name" },
-						{ bundleName :"sap.app.descriptor.test.other.random.name" }
+						{ bundleName: "sap.app.descriptor.test.some.random.name" },
+						{ bundleName: "sap.app.descriptor.test.other.random.name" }
 					]
 				};
 				assert.deepEqual(oNewManifest["sap.app"].i18n, oExpectedi18n, "sap.app/i18n enhanced correctly");
@@ -517,9 +517,9 @@ function (
 			return Applier.applyChanges(this.oManifest, aChanges, this.BuildtimeStrategy).then(function(oNewManifest) {
 				assert.equal(oNewManifest["sap.app"].title, "{{sap.app.descriptor.test_sap.app.title}}", "title is replaced correctly");
 				var oExpectedi18n = {
-					bundleUrl:"i18n/i18n.properties",
+					bundleUrl: "i18n/i18n.properties",
 					enhanceWith: [
-						{ bundleName :"sap.app.descriptor.test.bundle.url.random" }
+						{ bundleName: "sap.app.descriptor.test.bundle.url.random" }
 					]
 				};
 				assert.deepEqual(oNewManifest["sap.app"].i18n, oExpectedi18n, "sap.app/i18n enhanced correctly");

@@ -44,7 +44,7 @@ sap.ui.define([
 
 	function _prepareUriParametersFromQuery(sValue) {
 		sandbox.stub(UriParameters, "fromQuery").returns({
-			get : function () {
+			get: function () {
 				return sValue;
 			}
 		});
@@ -64,8 +64,8 @@ sap.ui.define([
 			setVersioningEnabled({CUSTOMER: false});
 
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
+				layer: Layer.CUSTOMER,
+				reference: "com.sap.app"
 			};
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
@@ -93,8 +93,8 @@ sap.ui.define([
 			setVersioningEnabled(oVersioningEnabled);
 
 			var mPropertyBag = {
-				layer : sLayer,
-				reference : sReference
+				layer: sLayer,
+				reference: sReference
 			};
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
@@ -112,8 +112,8 @@ sap.ui.define([
 			setVersioningEnabled({CUSTOMER: true});
 
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
+				layer: Layer.CUSTOMER,
+				reference: "com.sap.app"
 			};
 
 			return Versions.initialize(mPropertyBag).then(function (oResponse) {
@@ -132,13 +132,13 @@ sap.ui.define([
 			setVersioningEnabled({CUSTOMER: true});
 
 			var mPropertyBag1 = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
+				layer: Layer.CUSTOMER,
+				reference: "com.sap.app"
 			};
 
 			var mPropertyBag2 = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app2"
+				layer: Layer.CUSTOMER,
+				reference: "com.sap.app2"
 			};
 
 			var aReturnedVersions = [];
@@ -159,13 +159,13 @@ sap.ui.define([
 		QUnit.test("Given Versions.initialize is called multiple times for different layers where only one is versioning enabled", function (assert) {
 			setVersioningEnabled({CUSTOMER: true, USER: false});
 			var mPropertyBag1 = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
+				layer: Layer.CUSTOMER,
+				reference: "com.sap.app"
 			};
 
 			var mPropertyBag2 = {
-				layer : Layer.USER,
-				reference : "com.sap.app"
+				layer: Layer.USER,
+				reference: "com.sap.app"
 			};
 
 			return Versions.initialize(mPropertyBag1).then(function () {
@@ -179,13 +179,13 @@ sap.ui.define([
 		QUnit.test("Given Versions.initialize is called multiple times for different layers where all are versioning enabled", function (assert) {
 			setVersioningEnabled({CUSTOMER: true, USER: true});
 			var mPropertyBag1 = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
+				layer: Layer.CUSTOMER,
+				reference: "com.sap.app"
 			};
 
 			var mPropertyBag2 = {
-				layer : Layer.USER,
-				reference : "com.sap.app"
+				layer: Layer.USER,
+				reference: "com.sap.app"
 			};
 
 			return Versions.initialize(mPropertyBag1).then(function () {
@@ -201,7 +201,7 @@ sap.ui.define([
 		beforeEach: function () {
 			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
 		afterEach: function() {
@@ -211,8 +211,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("and a connector is configured which returns a list of versions", function (assert) {
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
+				layer: Layer.CUSTOMER,
+				reference: "com.sap.app"
 			};
 			var aReturnedVersions = [];
 			sandbox.stub(KeyUserConnector.versions, "load").resolves(aReturnedVersions);
@@ -226,20 +226,20 @@ sap.ui.define([
 			var nActiveVersion = 2;
 
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
+				layer: Layer.CUSTOMER,
+				reference: "com.sap.app"
 			};
 
 			var oFirstVersion = {
-				activatedBy : "qunit",
-				activatedAt : "a long while ago",
-				version : 1
+				activatedBy: "qunit",
+				activatedAt: "a long while ago",
+				version: 1
 			};
 
 			var oSecondVersion = {
-				activatedBy : "qunit",
-				activatedAt : "a while ago",
-				version : nActiveVersion
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: nActiveVersion
 			};
 
 			var aReturnedVersions = [
@@ -263,20 +263,20 @@ sap.ui.define([
 			//set displayedVersion to 1
 			_prepareUriParametersFromQuery("1");
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
+				layer: Layer.CUSTOMER,
+				reference: "com.sap.app"
 			};
 
 			var oFirstVersion = {
-				activatedBy : "qunit",
-				activatedAt : "a long while ago",
-				version : 1
+				activatedBy: "qunit",
+				activatedAt: "a long while ago",
+				version: 1
 			};
 
 			var oSecondVersion = {
-				activatedBy : "qunit",
-				activatedAt : "a while ago",
-				version : nActiveVersion
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: nActiveVersion
 			};
 
 			var aReturnedVersions = [
@@ -309,24 +309,24 @@ sap.ui.define([
 			var nActiveVersion = 2;
 
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : "com.sap.app"
+				layer: Layer.CUSTOMER,
+				reference: "com.sap.app"
 			};
 
 			var oFirstVersion = {
-				activatedBy : "qunit",
-				activatedAt : "a long while ago",
-				version : 1
+				activatedBy: "qunit",
+				activatedAt: "a long while ago",
+				version: 1
 			};
 
 			var oSecondVersion = {
-				activatedBy : "qunit",
-				activatedAt : "a while ago",
-				version : nActiveVersion
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: nActiveVersion
 			};
 
 			var aReturnedVersions = [
-				{version : sap.ui.fl.Versions.Draft},
+				{version: sap.ui.fl.Versions.Draft},
 				oSecondVersion,
 				oFirstVersion
 			];
@@ -359,7 +359,7 @@ sap.ui.define([
 		beforeEach: function () {
 			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
 		afterEach: function() {
@@ -373,26 +373,26 @@ sap.ui.define([
 			_prepareUriParametersFromQuery(sap.ui.fl.Versions.Draft.toString());
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : sReference,
+				layer: Layer.CUSTOMER,
+				reference: sReference,
 				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent
 			};
 
 			var oFirstVersion = {
-				activatedBy : "qunit",
-				activatedAt : "a long while ago",
-				version : 1
+				activatedBy: "qunit",
+				activatedAt: "a long while ago",
+				version: 1
 			};
 
 			var oSecondVersion = {
-				activatedBy : "qunit",
-				activatedAt : "a while ago",
-				version : 2
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: 2
 			};
 
 			var aReturnedVersions = [
-				{version : 0},
+				{version: 0},
 				oSecondVersion,
 				oFirstVersion
 			];
@@ -400,9 +400,9 @@ sap.ui.define([
 			var oSaveStub = _prepareResponsesAndStubMethod(sReference, aReturnedVersions, "saveDirtyChanges", []);
 
 			var oActivatedVersion = {
-				activatedBy : "qunit",
-				activatedAt : "just now",
-				version : nActiveVersion
+				activatedBy: "qunit",
+				activatedAt: "just now",
+				version: nActiveVersion
 			};
 			sandbox.stub(KeyUserConnector.versions, "activate").resolves(oActivatedVersion);
 
@@ -431,8 +431,8 @@ sap.ui.define([
 			//set displayedVersion to 1
 			_prepareUriParametersFromQuery("1");
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : sReference,
+				layer: Layer.CUSTOMER,
+				reference: sReference,
 				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent
 			};
@@ -444,9 +444,9 @@ sap.ui.define([
 			};
 
 			var oSecondVersion = {
-				activatedBy : "qunit",
-				activatedAt : "a while ago",
-				version : 2
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: 2
 			};
 
 			var aReturnedVersions = [
@@ -484,8 +484,8 @@ sap.ui.define([
 		QUnit.test("and a connector is configured which returns a list of versions while a draft does NOT exists", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : sReference,
+				layer: Layer.CUSTOMER,
+				reference: sReference,
 				nonNormalizedReference: sReference,
 				appComponent: this.oAppComponent
 			};
@@ -520,8 +520,8 @@ sap.ui.define([
 		QUnit.test("and a connector is configured which returns a list of versions while a backend-draft does NOT exists but dirty changes do", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : sReference,
+				layer: Layer.CUSTOMER,
+				reference: sReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -590,8 +590,8 @@ sap.ui.define([
 		QUnit.test("and a connector is configured which returns a list of versions while a backend-draft does exists and also dirty changes do", function (assert) {
 			var sReference = "com.sap.app";
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : sReference,
+				layer: Layer.CUSTOMER,
+				reference: sReference,
 				appComponent: this.oAppComponent
 			};
 
@@ -676,7 +676,7 @@ sap.ui.define([
 		beforeEach: function () {
 			setVersioningEnabled({CUSTOMER: true});
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
-				{connector : "KeyUserConnector", layers : [Layer.CUSTOMER], url: "/flexKeyUser"}
+				{connector: "KeyUserConnector", layers: [Layer.CUSTOMER], url: "/flexKeyUser"}
 			]);
 		},
 		afterEach: function() {
@@ -686,16 +686,16 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("and a connector is configured and no backendDraft exists while discard is called with only dirty changes", function (assert) {
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : this.reference,
+				layer: Layer.CUSTOMER,
+				reference: this.reference,
 				nonNormalizedReference: this.nonNormalizedReference,
 				appComponent: this.oAppComponent
 			};
 
 			var oFirstVersion = {
-				activatedBy : "qunit",
-				activatedAt : "a while ago",
-				version : 1
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: 1
 			};
 
 			var oDraft = {
@@ -753,20 +753,20 @@ sap.ui.define([
 
 		QUnit.test("and a connector is configured and a draft exists while discard is called with only backend changes", function (assert) {
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				reference : this.reference,
+				layer: Layer.CUSTOMER,
+				reference: this.reference,
 				nonNormalizedReference: this.nonNormalizedReference,
 				appComponent: this.oAppComponent
 			};
 
 			var oFirstVersion = {
-				activatedBy : "qunit",
-				activatedAt : "a while ago",
-				version : 1
+				activatedBy: "qunit",
+				activatedAt: "a while ago",
+				version: 1
 			};
 
 			var aReturnedVersions = [
-				{version : sap.ui.fl.Versions.Draft},
+				{version: sap.ui.fl.Versions.Draft},
 				oFirstVersion
 			];
 

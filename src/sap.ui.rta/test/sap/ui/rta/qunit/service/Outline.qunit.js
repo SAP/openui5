@@ -55,8 +55,8 @@ sap.ui.define([
 				metadata: {
 					manifest: {
 						"sap.app": {
-							applicationVersion : {
-								version : "1.2.3"
+							applicationVersion: {
+								version: "1.2.3"
 							},
 							id: "MockController"
 						}
@@ -291,8 +291,8 @@ sap.ui.define([
 				metadata: {
 					manifest: {
 						"sap.app": {
-							applicationVersion : {
-								version : "1.2.3"
+							applicationVersion: {
+								version: "1.2.3"
 							},
 							id: "MockController"
 						}
@@ -327,12 +327,12 @@ sap.ui.define([
 
 			this.oLayout = new VerticalLayout({
 				id: "layout0",
-				content : [this.oButton]
+				content: [this.oButton]
 			});
 
 			this.oLayout1 = new VerticalLayout({
 				id: "layout1",
-				content : [this.oButton1]
+				content: [this.oButton1]
 			});
 
 			this.oPage.addContent(this.oLayout);
@@ -489,16 +489,16 @@ sap.ui.define([
 			});
 
 			return oCommandFactory.getCommandFor(oRelevantContainer, "move", {
-				movedElements : [{
-					element : this.oButton,
-					sourceIndex : 0,
-					targetIndex : 1
+				movedElements: [{
+					element: this.oButton,
+					sourceIndex: 0,
+					targetIndex: 1
 				}],
-				source : {
+				source: {
 					aggregation: "content",
 					parent: this.oLayout
 				},
-				target : {
+				target: {
 					aggregation: "content",
 					parent: this.oLayout1
 				}
@@ -605,8 +605,8 @@ sap.ui.define([
 				manifest: {
 					"sap.app": {
 						id: "myApp",
-						applicationVersion : {
-							version : "1.2.3"
+						applicationVersion: {
+							version: "1.2.3"
 						}
 					},
 					"sap.ui5": {

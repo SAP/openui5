@@ -14,7 +14,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Basic functions", {
-		beforeEach : function () {
+		beforeEach: function () {
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -47,12 +47,12 @@ sap.ui.define([
 				features: {isProductiveSystem: false}
 			};
 			var oResponse2 = {
-				layers : [],
-				features : {isAtoAvailable : true, isKeyUser : true}
+				layers: [],
+				features: {isAtoAvailable: true, isKeyUser: true}
 			};
 			var oResponse3 = {
-				layers : [],
-				features : {newKey : true}
+				layers: [],
+				features: {newKey: true}
 			};
 			var aResponse = [oResponse1, oResponse2, oResponse3];
 

@@ -30,7 +30,7 @@ sap.ui.define([
 
 
 	QUnit.module("Given FileListBaseConnector without implementation", {
-		beforeEach : function() {
+		beforeEach: function() {
 		},
 		afterEach: function() {
 			sandbox.restore();
@@ -45,7 +45,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a ListConnector implementing the FileListBaseConnector", {
-		beforeEach : function() {
+		beforeEach: function() {
 		},
 		afterEach: function() {
 			sandbox.restore();

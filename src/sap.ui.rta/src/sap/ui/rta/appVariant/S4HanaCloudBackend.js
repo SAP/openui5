@@ -47,7 +47,7 @@ sap.ui.define([
 			function checkForNotification() {
 				// No further checks if max number of checks done
 				if (iRemainingChecks === 0) {
-					resolve({ iamAppId : sIamAppId, customizingIsReady : false });
+					resolve({ iamAppId: sIamAppId, customizingIsReady: false });
 					return;
 				} else if (iRemainingChecks > 0) {
 					iRemainingChecks = iRemainingChecks - 1;
@@ -56,7 +56,7 @@ sap.ui.define([
 				this.checkCatalogCustomizingIsReady(sIamAppId, bAppVarCreation).then(function(bIsReady) {
 				// ... Resolve promise if true
 					if (bIsReady) {
-						resolve({ iamAppId : sIamAppId, customizingIsReady : true });
+						resolve({ iamAppId: sIamAppId, customizingIsReady: true });
 				// ... Continue checking if false
 					} else {
 						setTimeout(checkForNotification.bind(that), iMsec);
@@ -65,7 +65,7 @@ sap.ui.define([
 				}).catch(function(oError) {
 					var sText = bAppVarCreation ? "creation" : "deletion";
 					Log.error("Catalog publishing failed for app variant " + sText + ". AppVarStatus is " + oError.message);
-					reject({ iamAppId : sIamAppId, error: oError.message});
+					reject({ iamAppId: sIamAppId, error: oError.message});
 				});
 			}
 

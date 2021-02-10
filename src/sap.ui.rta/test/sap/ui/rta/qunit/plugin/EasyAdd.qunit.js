@@ -52,9 +52,9 @@ function(
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -69,13 +69,13 @@ function(
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
-				commandFactory : new CommandFactory(),
+				commandFactory: new CommandFactory(),
 				dialog: new AddElementsDialog({title: "hugo"}),
-				analyzer : AdditionalElementsAnalyzer
+				analyzer: AdditionalElementsAnalyzer
 			});
 
 			//	VBox
@@ -100,16 +100,16 @@ function(
 				subSections: [this.oSubSection2]
 			});
 			this.oLayout = new ObjectPageLayout("layout", {
-				sections : [this.oSection, this.oSection2]
+				sections: [this.oSection, this.oSection2]
 			});
 			this.oVBox = new VBox({
-				items : [this.oLayout]
+				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVBox],
-				plugins : [this.oEasyAddPlugin]
+				rootElements: [this.oVBox],
+				plugins: [this.oEasyAddPlugin]
 			});
 
 			this.oShowAvailableElementsSpy = sandbox.spy(AdditionalElementsPlugin.prototype, "showAvailableElements");
@@ -121,7 +121,7 @@ function(
 				done();
 			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function () {
 			sandbox.restore();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
@@ -209,24 +209,24 @@ function(
 	});
 
 	QUnit.module("Given a designTime and EasyAdd plugin are instantiated", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
-				commandFactory : new CommandFactory(),
+				commandFactory: new CommandFactory(),
 				dialog: new AddElementsDialog(),
 				analyzer: AdditionalElementsAnalyzer
 			});
 
 			this.oLayout = new ObjectPageLayout("layout", {});
 			this.oVBox = new VBox({
-				items : [this.oLayout]
+				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVBox],
-				plugins : [this.oEasyAddPlugin]
+				rootElements: [this.oVBox],
+				plugins: [this.oEasyAddPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -235,7 +235,7 @@ function(
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -248,11 +248,11 @@ function(
 	});
 
 	QUnit.module("Given a designTime and AddPlugin plugin are instantiated with a OP without stableID", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			this.oEasyAddPlugin = new EasyAdd({
-				commandFactory : new CommandFactory()
+				commandFactory: new CommandFactory()
 			});
 
 			this.oSubSection = new ObjectPageSubSection("subsection", {
@@ -262,13 +262,13 @@ function(
 				subSections: [this.oSubSection]
 			});
 			this.oLayout = new ObjectPageLayout("layout", {
-				sections : [this.oSection]
+				sections: [this.oSection]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
-				plugins : [this.oEasyAddPlugin]
+				rootElements: [this.oLayout],
+				plugins: [this.oEasyAddPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -277,7 +277,7 @@ function(
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}

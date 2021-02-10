@@ -42,33 +42,33 @@ function(
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var AggregationOverlay = Overlay.extend("sap.ui.dt.AggregationOverlay", /** @lends sap.ui.dt.AggregationOverlay.prototype */ {
-		metadata : {
-			library : "sap.ui.dt",
-			properties : {
+		metadata: {
+			library: "sap.ui.dt",
+			properties: {
 				/**
 				 * Name of aggregation to create the AggregationOverlay for
 				 */
-				aggregationName : {
-					type : "string"
+				aggregationName: {
+					type: "string"
 				},
 				/**
 				 * Whether the AggregationOverlay is e.g. a drop target
 				 */
-				targetZone : {
-					type : "boolean",
-					defaultValue : false
+				targetZone: {
+					type: "boolean",
+					defaultValue: false
 				},
 				scrollContainerId: {
 					type: "int"
 				}
 			},
-			events : {
+			events: {
 				/**
 				 * Event fired when the property "targetZone" was changed
 				 */
-				targetZoneChange : {
-					parameters : {
-						targetZone : { type : "boolean" }
+				targetZoneChange: {
+					parameters: {
+						targetZone: { type: "boolean" }
 					}
 				}
 			}
@@ -243,7 +243,7 @@ function(
 			this.setProperty("targetZone", bTargetZone);
 			this.toggleStyleClass("sapUiDtOverlayTargetZone", bTargetZone);
 
-			this.fireTargetZoneChange({targetZone : bTargetZone});
+			this.fireTargetZoneChange({targetZone: bTargetZone});
 		}
 
 		return this;

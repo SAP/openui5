@@ -89,7 +89,7 @@ sap.ui.define([
 
 	function saveListWithConnector(oConnector, aList) {
 		return oConnector.write({
-			flexObjects : aList
+			flexObjects: aList
 		});
 	}
 
@@ -221,8 +221,8 @@ sap.ui.define([
 				})
 				.then(function() {
 					return oConnector.reset({
-						reference : "sap.ui.fl.test.1",
-						layer : Layer.USER
+						reference: "sap.ui.fl.test.1",
+						layer: Layer.USER
 					});
 				})
 				.then(
@@ -240,9 +240,9 @@ sap.ui.define([
 				})
 				.then(function() {
 					return oConnector.reset({
-						reference : "sap.ui.fl.test",
-						layer : Layer.CUSTOMER,
-						selectorIds : ["selector1"]
+						reference: "sap.ui.fl.test",
+						layer: Layer.CUSTOMER,
+						selectorIds: ["selector1"]
 					});
 				})
 				.then(function(oResponse) {
@@ -266,9 +266,9 @@ sap.ui.define([
 				})
 				.then(function() {
 					return oConnector.reset({
-						reference : "sap.ui.fl.test",
-						layer : Layer.CUSTOMER,
-						changeTypes : ["type1"]
+						reference: "sap.ui.fl.test",
+						layer: Layer.CUSTOMER,
+						changeTypes: ["type1"]
 					});
 				})
 				.then(function(oResponse) {
@@ -344,8 +344,8 @@ sap.ui.define([
 				})
 				.then(function() {
 					return oConnector.remove({
-						flexObject : {
-							fileName : "foo"
+						flexObject: {
+							fileName: "foo"
 						}
 					});
 				})
@@ -370,7 +370,7 @@ sap.ui.define([
 			var oSetItemStub = sandbox.stub(JsObjectConnector.storage, "setItem");
 
 			return JsObjectConnector.write({
-				flexObjects : [oObject]
+				flexObjects: [oObject]
 			})
 			.then(function() {
 				assert.equal(oSetItemStub.getCall(0).args[1], oObject, "the write was called with the object");

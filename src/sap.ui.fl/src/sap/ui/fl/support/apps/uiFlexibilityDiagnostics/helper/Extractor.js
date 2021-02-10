@@ -18,10 +18,10 @@ sap.ui.define([
 		var oExport = {
 			sVersion: Extractor.VERSION,
 			bIsInvestigationExport: true,
-			mControlData : {},
-			aAppliedChanges : [],
-			aFailedChanges : [],
-			aNotApplicableChanges : [],
+			mControlData: {},
+			aAppliedChanges: [],
+			aFailedChanges: [],
+			aNotApplicableChanges: [],
 			mChangesEntries: {},
 			mVariantsChanges: {},
 			sComponentName: oChangePersistence._mComponent.name
@@ -73,11 +73,11 @@ sap.ui.define([
 			if (oChange._aDependentSelectorList) {
 				oChange._aDependentSelectorList.forEach(function (oSelector) {
 					var mControlData = {
-						bPresent : !!JsControlTreeModifier.bySelector(oSelector, oAppComponent),
-						aAppliedChanges : [],
-						aFailedChangesJs : [],
-						aFailedChangesXml : [],
-						aNotApplicableChanges : []
+						bPresent: !!JsControlTreeModifier.bySelector(oSelector, oAppComponent),
+						aAppliedChanges: [],
+						aFailedChangesJs: [],
+						aFailedChangesXml: [],
+						aNotApplicableChanges: []
 					};
 
 					oExport.mControlData[oSelector.id] = mControlData;
@@ -129,11 +129,11 @@ sap.ui.define([
 		// collect applied changes
 		jQuery.each(oChangePersistence._mChanges.mChanges, function (sControlId) {
 			var mControlData = {
-				bPresent : false,
-				aAppliedChanges : [],
-				aFailedChangesJs : [],
-				aFailedChangesXml : [],
-				aNotApplicableChanges : []
+				bPresent: false,
+				aAppliedChanges: [],
+				aFailedChangesJs: [],
+				aFailedChangesXml: [],
+				aNotApplicableChanges: []
 			};
 
 			var oControl = sap.ui.getCore().byId(sControlId);

@@ -54,11 +54,11 @@ sap.ui.define([
 			 */
 				modified: {
 					parameters: {
-						type : "string",
-						name : "string",
-						value : "any",
-						oldValue : "any",
-						target : "sap.ui.core.Element"
+						type: "string",
+						name: "string",
+						value: "any",
+						oldValue: "any",
+						target: "sap.ui.core.Element"
 					}
 				},
 				destroyed: {}
@@ -219,7 +219,7 @@ sap.ui.define([
 			if (this._isAggregationObservable(sAggregationName)) {
 				this.fireModified({
 					type: "addOrSetAggregation",
-					name : sAggregationName,
+					name: sAggregationName,
 					value: oObject,
 					target: oTarget
 				});
@@ -236,7 +236,7 @@ sap.ui.define([
 			if (this._isAggregationObservable(sAggregationName)) {
 				this.fireModified({
 					type: "addOrSetAggregation",
-					name : sAggregationName,
+					name: sAggregationName,
 					value: oObject,
 					target: oTarget
 				});
@@ -252,7 +252,7 @@ sap.ui.define([
 			if (this._isAggregationObservable(sAggregationName)) {
 				this.fireModified({
 					type: "removeAggregation",
-					name : sAggregationName,
+					name: sAggregationName,
 					value: vObject,
 					target: oTarget
 				});
@@ -268,7 +268,7 @@ sap.ui.define([
 			if (this._isAggregationObservable(sAggregationName)) {
 				this.fireModified({
 					type: "insertAggregation",
-					name : sAggregationName,
+					name: sAggregationName,
 					value: oObject,
 					target: oTarget
 				});
@@ -285,7 +285,7 @@ sap.ui.define([
 			if (this._isAggregationObservable(sAggregationName)) {
 				this.fireModified({
 					type: "removeAllAggregation",
-					name : sAggregationName,
+					name: sAggregationName,
 					value: aRemovedObjects,
 					target: oTarget
 				});
@@ -302,7 +302,7 @@ sap.ui.define([
 			if (this._isAggregationObservable(sAggregationName)) {
 				this.fireModified({
 					type: "destroyAggregation",
-					name : sAggregationName,
+					name: sAggregationName,
 					value: aRemovedObjects,
 					target: oTarget
 				});
@@ -318,7 +318,7 @@ sap.ui.define([
 			if (this._isAggregationObservable(sAssociationName)) {
 				this.fireModified({
 					type: "addOrSetAggregation",
-					name : sAssociationName,
+					name: sAssociationName,
 					value: oObject,
 					target: oTarget
 				});
@@ -335,7 +335,7 @@ sap.ui.define([
 			if (this._isAggregationObservable(sAssociationName)) {
 				this.fireModified({
 					type: "addOrSetAggregation",
-					name : sAssociationName,
+					name: sAssociationName,
 					value: oObject,
 					target: oTarget
 				});
@@ -351,7 +351,7 @@ sap.ui.define([
 			if (this._isAggregationObservable(sAssociationName)) {
 				this.fireModified({
 					type: "removeAggregation",
-					name : sAssociationName,
+					name: sAssociationName,
 					value: vObject,
 					target: oTarget
 				});
@@ -368,7 +368,7 @@ sap.ui.define([
 			if (this._isAggregationObservable(sAssociationName)) {
 				this.fireModified({
 					type: "removeAllAggregation",
-					name : sAssociationName,
+					name: sAssociationName,
 					value: aRemovedObjects,
 					target: oTarget
 				});
@@ -400,7 +400,7 @@ sap.ui.define([
 				) {
 					this.fireModified({
 						type: "addOrSetAggregation",
-						name : oAggregation.name,
+						name: oAggregation.name,
 						value: oObject,
 						target: oTarget
 					});
@@ -424,7 +424,7 @@ sap.ui.define([
 				) {
 					this.fireModified({
 						type: "insertAggregation",
-						name : oAggregation.name,
+						name: oAggregation.name,
 						value: oObject,
 						target: oTarget
 					});
@@ -448,7 +448,7 @@ sap.ui.define([
 				) {
 					this.fireModified({
 						type: "removeAggregation",
-						name : oAggregation.name,
+						name: oAggregation.name,
 						value: vObject,
 						target: oTarget
 					});
@@ -472,7 +472,7 @@ sap.ui.define([
 				) {
 					this.fireModified({
 						type: "removeAllAggregation",
-						name : oAggregation.name,
+						name: oAggregation.name,
 						value: aRemovedObjects,
 						target: oTarget
 					});
@@ -496,7 +496,7 @@ sap.ui.define([
 				) {
 					this.fireModified({
 						type: "destroyAggregation",
-						name : oAggregation.name,
+						name: oAggregation.name,
 						value: aRemovedObjects,
 						target: oTarget
 					});
@@ -526,7 +526,7 @@ sap.ui.define([
 				) {
 					this.fireModified({
 						type: "addOrSetAggregation",
-						name : oAssociation.name,
+						name: oAssociation.name,
 						value: oObject,
 						target: oTarget
 					});
@@ -549,7 +549,7 @@ sap.ui.define([
 				) {
 					this.fireModified({
 						type: "removeAggregation",
-						name : oAssociation.name,
+						name: oAssociation.name,
 						value: vObject,
 						target: oTarget
 					});
@@ -573,7 +573,7 @@ sap.ui.define([
 				) {
 					this.fireModified({
 						type: "removeAllAggregation",
-						name : oAssociation.name,
+						name: oAssociation.name,
 						value: aRemovedObjects,
 						target: oTarget
 					});

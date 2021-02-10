@@ -226,7 +226,7 @@ sap.ui.define([
 				assert.ok(this.oApplyChangeOnControlStub.alwaysCalledWith(sinon.match.any, this.oControl, {
 					modifier: sinon.match.any,
 					appComponent: this.oAppComponent,
-					view:sinon.match.any
+					view: sinon.match.any
 				}), "then Applier.applyChangeOnControl was always called with the component responsible for the change selector");
 			}.bind(this));
 		});

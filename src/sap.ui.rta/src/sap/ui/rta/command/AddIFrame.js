@@ -23,9 +23,9 @@ sap.ui.define([
 	 *			   changed in future.
 	 */
 	var AddIFrame = FlexCommand.extend("sap.ui.rta.command.AddIFrame", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
 				baseId: {
 					type: "string",
 					group: "content"
@@ -47,7 +47,7 @@ sap.ui.define([
 					group: "content"
 				},
 				height: {
-					type : "string",
+					type: "string",
 					group: "content"
 				},
 				changeType: {
@@ -55,8 +55,8 @@ sap.ui.define([
 					defaultValue: "addIFrame"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 

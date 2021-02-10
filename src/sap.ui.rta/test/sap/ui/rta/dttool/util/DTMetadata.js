@@ -54,12 +54,12 @@ sap.ui.define([
 				return fnResolve(mLibraryData[sLibraryName]);
 			}
 
-			ResourceBundle.create({url : sURL, async: true})
+			ResourceBundle.create({url: sURL, async: true})
 
 				.then(function(oResourceBundle) {
 					var aPromises = [];
 					mLibraryData[sLibraryName] = {
-						resourceBundle : oResourceBundle,
+						resourceBundle: oResourceBundle,
 						name: sLibraryName
 					};
 
@@ -149,7 +149,7 @@ sap.ui.define([
 			if (oEntry && oDTEntry) {
 					//description
 				if (oEntry.description) {
-					oLibData[n].descriptions = oLibData[n].descriptions || { "short":"", "long":""};
+					oLibData[n].descriptions = oLibData[n].descriptions || { "short": "", "long": ""};
 					oLibData[n].descriptions.long = oLibData[n].descriptions.long || oEntry.description;
 					oLibData[n].descriptions.short = oLibData[n].descriptions.short || oEntry.description;
 				}

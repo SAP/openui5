@@ -37,7 +37,7 @@ sap.ui.define([
 	 * @experimental Since 1.25.0
 	 */
 	var Change = ManagedObject.extend("sap.ui.fl.Change", /** @lends sap.ui.fl.Change.prototype */ {
-		constructor : function(oFile) {
+		constructor: function(oFile) {
 			ManagedObject.apply(this);
 
 			if (!jQuery.isPlainObject(oFile)) {
@@ -54,9 +54,9 @@ sap.ui.define([
 			this.setInitialApplyState();
 			this._oChangeProcessingPromises = {};
 		},
-		metadata : {
-			properties : {
-				state : {
+		metadata: {
+			properties: {
+				state: {
 					type: "string"
 				},
 				/**
@@ -73,7 +73,7 @@ sap.ui.define([
 
 	Change.states = {
 		NEW: "NEW",
-		PERSISTED : "NONE",
+		PERSISTED: "NONE",
 		DELETED: "DELETE",
 		DIRTY: "UPDATE"
 	};

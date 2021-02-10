@@ -78,7 +78,7 @@ sap.ui.define([
 		/**
 		 * @override
 		 */
-		_manageClickEvent : function (vEventOrElement) {
+		_manageClickEvent: function (vEventOrElement) {
 			var oOverlay = vEventOrElement.getSource ? vEventOrElement.getSource() : vEventOrElement;
 			if (oOverlay.isSelected() && this.isRenameAvailable(oOverlay) && this.isRenameEnabled([oOverlay])) {
 				oOverlay.attachBrowserEvent("click", RenameHandler._onClick, this);
@@ -91,7 +91,7 @@ sap.ui.define([
 		 * @param {map} mPropertyBag - (required) contains required properties
 		 * @public
 		 */
-		startEdit : function (mPropertyBag) {
+		startEdit: function (mPropertyBag) {
 			this.setBusy(true);
 			this._oEditedOverlay = mPropertyBag.overlay;
 
@@ -146,7 +146,7 @@ sap.ui.define([
 			var _$oWrapper = jQuery("<div class='sapUiRtaEditableField'></div>")
 				.css({
 					"white-space": "nowrap",
-					overflow:"hidden",
+					overflow: "hidden",
 					width: "calc(100% - (" + iWidthDifference + "px))"
 				}).appendTo(oOverlayForWrapper.$());
 			this._$editableField = jQuery("<div contentEditable='true'></div>").appendTo(_$oWrapper);
@@ -214,7 +214,7 @@ sap.ui.define([
 			});
 		},
 
-		_setDesignTime : function (oDesignTime) {
+		_setDesignTime: function (oDesignTime) {
 			this._aSelection = [];
 			var oOldDesignTime = this.getDesignTime();
 
@@ -232,7 +232,7 @@ sap.ui.define([
 		/**
 		 * @override
 		 */
-		_onDesignTimeSelectionChange : function(oEvent) {
+		_onDesignTimeSelectionChange: function(oEvent) {
 			var aSelection = oEvent.getParameter("selection");
 
 			// detach events from previous selection
@@ -247,7 +247,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_stopPropagation : function (oEvent) {
+		_stopPropagation: function (oEvent) {
 			oEvent.stopPropagation();
 		},
 
@@ -255,7 +255,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_preventDefault : function (oEvent) {
+		_preventDefault: function (oEvent) {
 			oEvent.preventDefault();
 		},
 
@@ -263,7 +263,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_onEditableFieldFocus : function (oEvent) {
+		_onEditableFieldFocus: function (oEvent) {
 			var el = oEvent.target;
 			var range = document.createRange();
 			range.selectNodeContents(el);
@@ -277,7 +277,7 @@ sap.ui.define([
 		 * @param {string} sPluginMethodName - method name of the plugin
 		 * @private
 		 */
-		_stopEdit : function (bRestoreFocus, sPluginMethodName) {
+		_stopEdit: function (bRestoreFocus, sPluginMethodName) {
 			var oOverlay;
 			this.setBusy(false);
 
@@ -313,7 +313,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_onEditableFieldBlur : function () {
+		_onEditableFieldBlur: function () {
 			return RenameHandler._handlePostRename.call(this, false);
 		},
 
@@ -322,7 +322,7 @@ sap.ui.define([
 		 * @param {boolean} bRestoreFocus - to restore focus to overlay after rename completes
 		 * @private
 		 */
-		_handlePostRename : function (bRestoreFocus, oEvent) {
+		_handlePostRename: function (bRestoreFocus, oEvent) {
 			if (!this._bBlurOrKeyDownStarted) {
 				this._oEditedOverlay.removeStyleClass(RenameHandler.errorStyleClass);
 				this._bBlurOrKeyDownStarted = true;
@@ -400,7 +400,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_onEditableFieldKeydown : function (oEvent) {
+		_onEditableFieldKeydown: function (oEvent) {
 			switch (oEvent.keyCode) {
 				case KeyCodes.ENTER:
 					return RenameHandler._handlePostRename.call(this, true, oEvent);
@@ -422,7 +422,7 @@ sap.ui.define([
 		 * @returns {string} current editable field text
 		 * @private
 		 */
-		_getCurrentEditableFieldText : function () {
+		_getCurrentEditableFieldText: function () {
 			// Rename to empty string should not be possible
 			// to prevent issues with disappearing elements
 			var sText = this._$editableField.text().trim();
@@ -433,7 +433,7 @@ sap.ui.define([
 		 * @param {sap.ui.base.Event} oEvent - event object
 		 * @private
 		 */
-		_onClick : function(oEvent) {
+		_onClick: function(oEvent) {
 			var oOverlay = sap.ui.getCore().byId(oEvent.currentTarget.id);
 			if (this.isRenameEnabled([oOverlay]) && !oEvent.metaKey && !oEvent.ctrlKey) {
 				this.startEdit(oOverlay);
@@ -441,7 +441,7 @@ sap.ui.define([
 			}
 		},
 
-		_exit : function() {
+		_exit: function() {
 			if (this._$oEditableControlDomRef) {
 				this.stopEdit(false);
 			}

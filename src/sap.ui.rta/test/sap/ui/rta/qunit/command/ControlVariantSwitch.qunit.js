@@ -34,9 +34,9 @@ sap.ui.define([
 					},
 					getManifest: function () {
 						return {
-							"sap.app" : {
-								applicationVersion : {
-									version : "1.2.3"
+							"sap.app": {
+								applicationVersion: {
+									version: "1.2.3"
 								}
 							}
 						};
@@ -63,8 +63,8 @@ sap.ui.define([
 		QUnit.test("when getting a switch command for VariantManagement...", function(assert) {
 			var oSwitchCommand;
 			var oSwitchCommandData = {
-				targetVariantReference : "newVariantReference",
-				sourceVariantReference : "oldVariantReference"
+				targetVariantReference: "newVariantReference",
+				sourceVariantReference: "oldVariantReference"
 			};
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData)
@@ -100,8 +100,8 @@ sap.ui.define([
 		QUnit.test("when getting a switch command for VariantManagement with equal source and target variantId ...", function(assert) {
 			var oSwitchCommand;
 			var oSwitchCommandData = {
-				targetVariantReference : "variantReference",
-				sourceVariantReference : "variantReference"
+				targetVariantReference: "variantReference",
+				sourceVariantReference: "variantReference"
 			};
 
 			return CommandFactory.getCommandFor(this.oVariantManagement, "switch", oSwitchCommandData)

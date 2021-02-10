@@ -17,7 +17,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.ui.rta.test.ComplexTest", {
 
-		onInit : function () {
+		onInit: function () {
 			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/");
 			var sManifestUrl = this._sResourcePath + "/manifest.json";
 			var oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data;
@@ -52,7 +52,7 @@ sap.ui.define([
 							oMockServer.simulate(sMetadataUrl, {
 								sMockdataBaseUrl: sMockServerPath,
 								bGenerateMissingMockData: true,
-								aEntitySetsNames : aEntities
+								aEntitySetsNames: aEntities
 							});
 						}
 						//else if *Other types can be inserted here, like Annotations*
@@ -137,7 +137,7 @@ sap.ui.define([
 			}
 		},
 
-		_getUrlParameter : function(sParam) {
+		_getUrlParameter: function(sParam) {
 			var sReturn = "";
 			var sPageURL = window.location.search.substring(1);
 			var sURLVariables = sPageURL.split('&');
@@ -150,7 +150,7 @@ sap.ui.define([
 			return sReturn;
 		},
 
-		_undoRedoStack : function(oStack) {
+		_undoRedoStack: function(oStack) {
 			function undo(oStack) {
 				if (oStack.canUndo()) {
 					return oStack.undo().then(function() {
@@ -170,16 +170,16 @@ sap.ui.define([
 
 			undo(oStack)
 				.then(function() {
-					sap.m.MessageToast.show("All changes undone", {duration : 1000});
+					sap.m.MessageToast.show("All changes undone", {duration: 1000});
 
 					return redo(oStack);
 				})
 				.then(function() {
-					sap.m.MessageToast.show("All changes redone", {duration : 1000});
+					sap.m.MessageToast.show("All changes redone", {duration: 1000});
 				});
 		},
 
-		switchToAdaptionMode : function() {
+		switchToAdaptionMode: function() {
 			sap.ui.require([
 				"sap/ui/rta/RuntimeAuthoring",
 				"sap/ui/rta/command/Stack",
@@ -209,7 +209,7 @@ sap.ui.define([
 					window.undoRedoStack = this._undoRedoStack.bind(this, oStack);
 
 					var oRta = new RuntimeAuthoring({
-						rootControl : this.getOwnerComponent(),
+						rootControl: this.getOwnerComponent(),
 						commandStack: oStack,
 						flexSettings: {
 							developerMode: false
@@ -219,7 +219,7 @@ sap.ui.define([
 						oRta.destroy();
 					});
 					oRta.attachEvent('start', function() {
-						MessageToast.show("Rta is started with all changes from local storage added to the command stack. Undo might already by enabled.\n To test the visual editor usage of our stack, there is a undoRedoStack() function in console available", {duration : 10000});
+						MessageToast.show("Rta is started with all changes from local storage added to the command stack. Undo might already by enabled.\n To test the visual editor usage of our stack, there is a undoRedoStack() function in console available", {duration: 10000});
 					});
 
 					oRta.start();
@@ -227,7 +227,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		openSmartFormDialog : function() {
+		openSmartFormDialog: function() {
 			sap.ui.require([
 				"sap/ui/core/mvc/XMLView",
 				"sap/m/Dialog"
@@ -263,7 +263,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		createOrDeleteContent : function(oEvent) {
+		createOrDeleteContent: function(oEvent) {
 			var oTargetControl = oEvent.getSource();
 			sap.ui.require([
 				"sap/ui/core/mvc/XMLView",
@@ -351,7 +351,7 @@ sap.ui.define([
 			}.bind(this));
 		},
 
-		openSmartFormPopover : function(oEvent) {
+		openSmartFormPopover: function(oEvent) {
 			var oTargetButton = oEvent.getSource();
 			return sap.ui.require([
 				"sap/m/Popover"

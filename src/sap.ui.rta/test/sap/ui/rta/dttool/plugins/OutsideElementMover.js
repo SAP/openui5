@@ -23,20 +23,20 @@ function(
 	"use strict";
 
 	var OutsideElementMover = RTAElementMover.extend("sap.ui.rta.dttool.plugins.OutsideElementMover", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				commandFactory : {
-					type : "any",
-					defaultValue : CommandFactory
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				commandFactory: {
+					type: "any",
+					defaultValue: CommandFactory
 				},
-				movableTypes : {
-					type : "string[]",
-					defaultValue : ["sap.ui.core.Element"]
+				movableTypes: {
+					type: "string[]",
+					defaultValue: ["sap.ui.core.Element"]
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 

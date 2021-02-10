@@ -613,7 +613,7 @@ function(
 			var oErrorLoggingStub;
 			var oGetChangeHandlerModuleStub;
 			return this.oChangeRegistry.registerControlsForChanges({
-				VerticalLayout : {
+				VerticalLayout: {
 					moveControls: "default"
 				}
 			})
@@ -639,7 +639,7 @@ function(
 			sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("VerticalLayout");
 			return this.oChangeRegistry.registerControlsForChanges({
-				VerticalLayout : {
+				VerticalLayout: {
 					doSomething: "default"
 				}
 			})
@@ -672,7 +672,7 @@ function(
 			sandbox.stub(JsControlTreeModifier, "getChangeHandlerModulePath").returns("sap/ui/fl/test/registry/TestChangeHandlers.flexibility");
 			sandbox.stub(JsControlTreeModifier, "getControlType").returns("VerticalLayout");
 			return this.oChangeRegistry.registerControlsForChanges({
-				VerticalLayout : {
+				VerticalLayout: {
 					moveControls: "default"
 				}
 			})

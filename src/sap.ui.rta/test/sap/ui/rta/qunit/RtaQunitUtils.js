@@ -37,11 +37,11 @@ sap.ui.define([
 	RtaQunitUtils.renderTestModuleAt = function(sNamespace, sDomId) {
 		disableRtaRestart();
 		var oComp = sap.ui.getCore().createComponent({
-			name : "sap.ui.rta.qunitrta",
-			id : "Comp1",
-			settings : {
-				componentData : {
-					showAdaptButton : true
+			name: "sap.ui.rta.qunitrta",
+			id: "Comp1",
+			settings: {
+				componentData: {
+					showAdaptButton: true
 				}
 			}
 		});
@@ -61,11 +61,11 @@ sap.ui.define([
 		}]);
 
 		var oComp = sap.ui.getCore().createComponent({
-			name : "sap.ui.rta.qunitrta",
-			id : "Comp1",
-			settings : {
-				componentData : {
-					showAdaptButton : true
+			name: "sap.ui.rta.qunitrta",
+			id: "Comp1",
+			settings: {
+				componentData: {
+					showAdaptButton: true
 				}
 			}
 		});
@@ -134,17 +134,17 @@ sap.ui.define([
 		}]);
 
 		return Component.create({
-			name : "sap.ui.rta.qunitrta",
-			id : "Comp1",
-			settings : {
-				componentData : {
-					showAdaptButton : true
+			name: "sap.ui.rta.qunitrta",
+			id: "Comp1",
+			settings: {
+				componentData: {
+					showAdaptButton: true
 				}
 			}
 		})
 			.then(function(oComponent) {
 				return new ComponentContainer({
-					component : oComponent,
+					component: oComponent,
 					async: true
 				});
 			})
@@ -159,11 +159,11 @@ sap.ui.define([
 	RtaQunitUtils.renderRuntimeAuthoringAppAt = function(sDomId) {
 		disableRtaRestart();
 		var oComp = sap.ui.getCore().createComponent({
-			name : "sap.ui.rta.test",
-			id : "Comp1",
-			settings : {
-				componentData : {
-					showAdaptButton : true,
+			name: "sap.ui.rta.test",
+			id: "Comp1",
+			settings: {
+				componentData: {
+					showAdaptButton: true,
 					useSessionStorage: true
 				}
 			}

@@ -33,15 +33,15 @@ sap.ui.define([
 	QUnit.module("getVersionsModel", {
 		before: function() {
 			this.oAppComponent = {
-				getManifest : function () {
+				getManifest: function () {
 					return {};
 				},
-				getId : function () {
+				getId: function () {
 					return "sComponentId";
 				},
-				getComponentData : function () {
+				getComponentData: function () {
 					return {
-						startupParameters : ["sap-app-id"]
+						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
@@ -74,15 +74,15 @@ sap.ui.define([
 	QUnit.module("Given VersionsAPI.isDraftAvailable is called", {
 		before: function() {
 			this.oAppComponent = {
-				getManifest : function () {
+				getManifest: function () {
 					return {};
 				},
-				getId : function () {
+				getId: function () {
 					return "sComponentId";
 				},
-				getComponentData : function () {
+				getComponentData: function () {
 					return {
-						startupParameters : ["sap-app-id"]
+						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
@@ -178,15 +178,15 @@ sap.ui.define([
 	QUnit.module("Given VersionsAPI.isOldVersionDisplayed is called", {
 		before: function() {
 			this.oAppComponent = {
-				getManifest : function () {
+				getManifest: function () {
 					return {};
 				},
-				getId : function () {
+				getId: function () {
 					return "sComponentId";
 				},
-				getComponentData : function () {
+				getComponentData: function () {
 					return {
-						startupParameters : ["sap-app-id"]
+						startupParameters: ["sap-app-id"]
 					};
 				}
 			};
@@ -280,7 +280,7 @@ sap.ui.define([
 
 		QUnit.test("when a selector and a layer were provided and display version is not equal to active version", function(assert) {
 			sandbox.stub(UriParameters, "fromQuery").returns({
-				get : function () {
+				get: function () {
 					return "1";
 				}
 			});
@@ -334,7 +334,7 @@ sap.ui.define([
 		QUnit.test("when no selector is provided", function (assert) {
 			var oSelector = new Control();
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
+				layer: Layer.CUSTOMER,
 				selector: oSelector
 			};
 
@@ -381,7 +381,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("when no selector is provided", function (assert) {
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER
+				layer: Layer.CUSTOMER
 			};
 
 			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (sErrorMessage) {
@@ -391,7 +391,7 @@ sap.ui.define([
 
 		QUnit.test("when no layer is provided", function (assert) {
 			var mPropertyBag = {
-				selector : new Control()
+				selector: new Control()
 			};
 
 			return VersionsAPI.loadVersionForApplication(mPropertyBag).catch(function (sErrorMessage) {
@@ -401,8 +401,8 @@ sap.ui.define([
 
 		QUnit.test("when a selector, a layer and a version were provided, but no app ID could be determined", function (assert) {
 			var mPropertyBag = {
-				layer : Layer.CUSTOMER,
-				selector : new Control(),
+				layer: Layer.CUSTOMER,
+				selector: new Control(),
 				version: sap.ui.fl.Versions.Original
 			};
 
@@ -415,8 +415,8 @@ sap.ui.define([
 			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;
 			var mPropertyBag = {
-				layer : sLayer,
-				selector : new Control(),
+				layer: sLayer,
+				selector: new Control(),
 				componentData: {},
 				manifest: {},
 				version: sap.ui.fl.Versions.Draft
@@ -442,8 +442,8 @@ sap.ui.define([
 			var sComponentId = "sComponentId";
 			var sLayer = Layer.CUSTOMER;
 			var mPropertyBag = {
-				layer : sLayer,
-				selector : new Control(),
+				layer: sLayer,
+				selector: new Control(),
 				componentData: {},
 				manifest: {}
 			};

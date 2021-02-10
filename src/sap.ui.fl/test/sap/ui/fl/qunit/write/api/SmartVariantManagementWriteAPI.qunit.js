@@ -437,7 +437,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 		},
-		after:function () {
+		after: function () {
 		}
 	}, function() {
 		QUnit.test("Given a variant was removed", function(assert) {

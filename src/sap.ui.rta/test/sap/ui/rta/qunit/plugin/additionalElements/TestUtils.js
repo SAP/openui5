@@ -47,7 +47,7 @@ sap.ui.define([
 	}
 
 	var TestUtil = {
-		assertElementsEqual : function(mActualAdditionalElement, mExpected, msg, assert) {
+		assertElementsEqual: function(mActualAdditionalElement, mExpected, msg, assert) {
 			assert.equal(mActualAdditionalElement.selected, mExpected.selected, msg + " -selected");
 			assert.equal(mActualAdditionalElement.label, mExpected.label, msg + " -label");
 			assert.equal(mActualAdditionalElement.tooltip, mExpected.tooltip, msg + " -tooltip");
@@ -64,9 +64,9 @@ sap.ui.define([
 
 		setupSharedObjects: _setupSharedObjects,
 
-		commonHooks : function() {
+		commonHooks: function() {
 			return {
-				before : function() {
+				before: function() {
 					return _setupSharedObjects().then(function(mShared) {
 						//Shared objects for all tests => Don't modify them, it will have side-effects on other tests!
 						this.oView = mShared.view;
@@ -78,7 +78,7 @@ sap.ui.define([
 				afterEach: function() {
 					this.sandbox.restore();
 				},
-				after : function () {
+				after: function () {
 					this.oView.getController().destroy();
 					this.oView.destroy();
 				}

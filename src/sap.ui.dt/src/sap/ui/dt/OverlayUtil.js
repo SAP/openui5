@@ -60,7 +60,7 @@ function(
 
 			return {
 				parent: oParent,
-				aggregation : sParentAggregationName,
+				aggregation: sParentAggregationName,
 				index: iIndex
 			};
 		}
@@ -134,7 +134,7 @@ function(
 					left: minLeft,
 					top: minTop
 				},
-				visible : true
+				visible: true
 			};
 		}
 	};

@@ -48,7 +48,7 @@ sap.ui.define([
 			});
 		});
 		QUnit.test("given a mock server, when write is triggered for multiple change", function (assert) {
-			var mPropertyBag = {url : "/flexKeyuser", flexObjects : []};
+			var mPropertyBag = {url: "/flexKeyuser", flexObjects: []};
 			var sUrl = "/flexKeyuser/flex/keyuser/v1/changes/?sap-language=en";
 			var oChange1 = {
 				fileName: "change1"
@@ -59,12 +59,12 @@ sap.ui.define([
 			var oStubSendRequest = sandbox.stub(WriteUtils, "sendRequest").resolves({response: [oChange1, oChange2]});
 			return KeyUserConnector.write(mPropertyBag).then(function (oResponse) {
 				assert.ok(oStubSendRequest.calledWith(sUrl, "POST", {
-					xsrfToken : InitialConnector.xsrfToken,
-					tokenUrl : "/flexKeyuser/flex/keyuser/v1/settings",
-					initialConnector : InitialConnector,
-					contentType : "application/json; charset=utf-8",
-					dataType : "json",
-					payload : "[]"
+					xsrfToken: InitialConnector.xsrfToken,
+					tokenUrl: "/flexKeyuser/flex/keyuser/v1/settings",
+					initialConnector: InitialConnector,
+					contentType: "application/json; charset=utf-8",
+					dataType: "json",
+					payload: "[]"
 				}), "a send request with correct parameters and options is sent");
 				assert.ok(Array.isArray(oResponse.response), "response is an array");
 				assert.deepEqual(oChange1, oResponse.response[0]);

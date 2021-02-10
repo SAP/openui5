@@ -138,8 +138,8 @@ sap.ui.define([
 			if (ChangePersistenceFactory._instanceCache) {
 				jQuery.each(ChangePersistenceFactory._instanceCache, function (sReference, oChangePersistanceInstance) {
 					aApps.push({
-						key : sReference,
-						text : sReference,
+						key: sReference,
+						text: sReference,
 						data: Extractor.extractData(oChangePersistanceInstance)
 					});
 				});
@@ -219,17 +219,17 @@ sap.ui.define([
 
 			function _collectDataForSingleChange(oControl, aAppliedChanges, aFailedChangesJs, aFailedChangesXml, mChanges, oChange) {
 				var oChangeDetails = {
-					id : oChange.getId(),
-					changeType : oChange.getChangeType(),
-					selector : oChange.getSelector(),
-					controlPresent : !!oControl,
-					indexInAppliedChanges : undefined,
-					indexOfFirstFailing : undefined,
-					dependentControls : [], // filled later
-					dependentChanges : [], // filled later
-					someDirectDependingChangesFailed : false, // filled later
-					someDirectDependingChangesNotApplied : false, // filled later
-					isInSubTree : false // filled later
+					id: oChange.getId(),
+					changeType: oChange.getChangeType(),
+					selector: oChange.getSelector(),
+					controlPresent: !!oControl,
+					indexInAppliedChanges: undefined,
+					indexOfFirstFailing: undefined,
+					dependentControls: [], // filled later
+					dependentChanges: [], // filled later
+					someDirectDependingChangesFailed: false, // filled later
+					someDirectDependingChangesNotApplied: false, // filled later
+					isInSubTree: false // filled later
 				};
 
 				var aAllFailedChanges = aFailedChangesJs.concat(aFailedChangesXml);
@@ -250,8 +250,8 @@ sap.ui.define([
 					var oAppComponent = Extractor.getAppComponentInstance(sAppName);
 					oChangeDetails.dependentControls = oChange._aDependentSelectorList.map(function (oDependentSelector) {
 						return {
-							id : oDependentSelector.id,
-							controlPresent : JsControlTreeModifier.bySelector(oDependentSelector, oAppComponent)
+							id: oDependentSelector.id,
+							controlPresent: JsControlTreeModifier.bySelector(oDependentSelector, oAppComponent)
 						};
 					});
 				}

@@ -21,7 +21,7 @@ function(
 
 	var sModulePath = sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/") + "webapp";
 	var oI18n = ResourceBundle.create({
-		url : sModulePath + "/i18n/i18n.properties"
+		url: sModulePath + "/i18n/i18n.properties"
 	});
 
 	Utils._checkNavigationSupported = function(oNavigationParams) {
@@ -110,8 +110,8 @@ function(
 		var oParams = oPreparedObject.startWith.parameters;
 
 		var oNavigationParams = {
-			semanticObject : sSemanticObject,
-			action : sAction,
+			semanticObject: sSemanticObject,
+			action: sAction,
 			params: oParams
 		};
 
@@ -151,16 +151,16 @@ function(
 
 	Utils._prepareAppVariantAttributes = function(oAppVariantInfo) {
 		return {
-			appId : oAppVariantInfo.appId,
-			title : oAppVariantInfo.title || '',
-			subTitle : oAppVariantInfo.subTitle || '',
-			description : oAppVariantInfo.description || '',
-			icon : oAppVariantInfo.iconUrl || '',
-			iconText : oAppVariantInfo.iconText,
-			isOriginal : oAppVariantInfo.isOriginal,
-			isAppVariant : oAppVariantInfo.isAppVariant,
-			descriptorUrl : oAppVariantInfo.descriptorUrl,
-			appVarStatus : oAppVariantInfo.appVarStatus
+			appId: oAppVariantInfo.appId,
+			title: oAppVariantInfo.title || '',
+			subTitle: oAppVariantInfo.subTitle || '',
+			description: oAppVariantInfo.description || '',
+			icon: oAppVariantInfo.iconUrl || '',
+			iconText: oAppVariantInfo.iconText,
+			isOriginal: oAppVariantInfo.isOriginal,
+			isAppVariant: oAppVariantInfo.isAppVariant,
+			descriptorUrl: oAppVariantInfo.descriptorUrl,
+			appVarStatus: oAppVariantInfo.appVarStatus
 		};
 	};
 
@@ -193,7 +193,7 @@ function(
 				isKeyUser: bKeyUser,
 				isOriginal: oAppVariantInfo.isOriginal,
 				isS4HanaCloud: bIsS4HanaCloud,
-				appVarStatus : oAppVariantInfo.appVarStatus
+				appVarStatus: oAppVariantInfo.appVarStatus
 			};
 
 			if (oAppVariantInfo.hasStartableIntent) {

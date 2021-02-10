@@ -32,7 +32,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("on LRep content received", function(assert) {
 			var oPage = {
-				setBusy : function () {}
+				setBusy: function () {}
 			};
 			var oData = {};
 			var oStubbedFilterList = sandbox.stub(oController, "filterListByQuery");
@@ -40,12 +40,12 @@ sap.ui.define([
 			sandbox.stub(oController, "getView").returns({
 				getModel: function () {
 					return {
-						setData : function () {}
+						setData: function () {}
 					};
 				}
 			});
 			sandbox.stub(oController, "byId").returns({
-				setValue : function() {}
+				setValue: function() {}
 			});
 
 			oController._onContentReceived(oPage, oData);

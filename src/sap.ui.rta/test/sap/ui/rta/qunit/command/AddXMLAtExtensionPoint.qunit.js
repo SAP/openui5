@@ -45,22 +45,22 @@ function (
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
 		},
 		getModel: function () {},
-		createId : function(sId) {
+		createId: function(sId) {
 			return 'testcomponent---' + sId;
 		}
 	};
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given an AddXMLAtExtensionPoint command with a valid entry in the change registry,", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 			var oXmlString =
 				'<mvc:View id="testapp---view" xmlns:mvc="sap.ui.core.mvc"  xmlns:core="sap.ui.core" xmlns="sap.m">' +
@@ -86,7 +86,7 @@ function (
 					};
 				}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oXMLView.destroy();
 			sandbox.restore();
 		}
@@ -188,10 +188,10 @@ function (
 				fragmentPath: "pathToFragment",
 				fragment: "fragment"
 			}, new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						addXMLAtExtensionPoint : {
-							jsOnly : true
+				data: {
+					actions: {
+						addXMLAtExtensionPoint: {
+							jsOnly: true
 						}
 					}
 				}

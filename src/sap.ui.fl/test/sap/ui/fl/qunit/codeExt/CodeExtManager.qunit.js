@@ -22,7 +22,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("CodeExtManager", {
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -178,21 +178,21 @@ sap.ui.define([
 
 			var aChanges = [
 				{
-					changeType : "codeExt",
-					namespace : "",
-					componentName : "component",
-					reference : sReference,
-					selector : {
-						id : sControllerName1
+					changeType: "codeExt",
+					namespace: "",
+					componentName: "component",
+					reference: sReference,
+					selector: {
+						id: sControllerName1
 					}
 				},
 				{
-					changeType : "codeExt",
-					namespace : "",
-					componentName : "component",
-					reference : sReference,
-					selector : {
-						id : sControllerName2
+					changeType: "codeExt",
+					namespace: "",
+					componentName: "component",
+					reference: sReference,
+					selector: {
+						id: sControllerName2
 					}
 				}];
 
@@ -216,13 +216,13 @@ sap.ui.define([
 						codeRef: sCodeRef
 					},
 					selector: {
-						id : sControllerName1
+						id: sControllerName1
 					},
 					layer: sLayer,
 					moduleName: "",
 					texts: {},
 					namespace: sNamespace,
-					projectId : "component",
+					projectId: "component",
 					creation: "",
 					originalLanguage: sLanguage,
 					support: {
@@ -249,13 +249,13 @@ sap.ui.define([
 						codeRef: sCodeRef
 					},
 					selector: {
-						id : sControllerName2
+						id: sControllerName2
 					},
 					layer: sLayer,
 					moduleName: "",
 					texts: {},
 					namespace: sNamespace,
-					projectId : "component",
+					projectId: "component",
 					creation: "",
 					originalLanguage: sLanguage,
 					support: {

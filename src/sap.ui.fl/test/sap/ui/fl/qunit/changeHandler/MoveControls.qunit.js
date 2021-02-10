@@ -43,34 +43,34 @@ sap.ui.define([
 
 	var sandbox = sinon.sandbox.create();
 	var oComponent = sap.ui.getCore().createComponent({
-		name : "testComponent",
-		id : "testComponent"
+		name: "testComponent",
+		id: "testComponent"
 	});
 
 	function getSingleMoveChangeContent(bIdIsLocal, sObjectAttributeId, sObjectHeaderId, sLayoutId) {
 		return {
-			movedElements : [{
-				selector : {
-					id : sObjectAttributeId,
-					idIsLocal : bIdIsLocal
+			movedElements: [{
+				selector: {
+					id: sObjectAttributeId,
+					idIsLocal: bIdIsLocal
 				},
-				sourceIndex : 0,
-				targetIndex : 2
+				sourceIndex: 0,
+				targetIndex: 2
 			}],
-			source : {
-				selector : {
-					id : sObjectHeaderId,
-					idIsLocal : bIdIsLocal,
-					aggregation : "attributes",
-					type : "sap.m.ObjectHeader"
+			source: {
+				selector: {
+					id: sObjectHeaderId,
+					idIsLocal: bIdIsLocal,
+					aggregation: "attributes",
+					type: "sap.m.ObjectHeader"
 				}
 			},
-			target : {
-				selector : {
-					id : sLayoutId,
-					idIsLocal : bIdIsLocal,
-					aggregation : "content",
-					type : "sap.ui.layout.VerticalLayout"
+			target: {
+				selector: {
+					id: sLayoutId,
+					idIsLocal: bIdIsLocal,
+					aggregation: "content",
+					type: "sap.ui.layout.VerticalLayout"
 				}
 			}
 		};
@@ -78,28 +78,28 @@ sap.ui.define([
 
 	function getSingleMoveChangeContentWrongAggregation(bIdIsLocal, sObjectAttributeId, sLayoutId) {
 		return {
-			movedElements : [{
-				selector : {
-					id : sObjectAttributeId,
-					idIsLocal : bIdIsLocal
+			movedElements: [{
+				selector: {
+					id: sObjectAttributeId,
+					idIsLocal: bIdIsLocal
 				},
-				sourceIndex : 0,
-				targetIndex : 2
+				sourceIndex: 0,
+				targetIndex: 2
 			}],
-			source : {
-				selector : {
-					id : sLayoutId,
-					idIsLocal : bIdIsLocal,
-					aggregation : "attributes2",
-					type : "sap.m.ObjectHeader"
+			source: {
+				selector: {
+					id: sLayoutId,
+					idIsLocal: bIdIsLocal,
+					aggregation: "attributes2",
+					type: "sap.m.ObjectHeader"
 				}
 			},
-			target : {
-				selector : {
-					id : sLayoutId,
-					idIsLocal : bIdIsLocal,
-					aggregation : "content",
-					type : "sap.ui.layout.VerticalLayout"
+			target: {
+				selector: {
+					id: sLayoutId,
+					idIsLocal: bIdIsLocal,
+					aggregation: "content",
+					type: "sap.ui.layout.VerticalLayout"
 				}
 			}
 		};
@@ -107,35 +107,35 @@ sap.ui.define([
 
 	function getMultiMoveChangeContent(bIdIsLocal, sObjectAttributeId, sObjectAttributeId2, sObjectHeaderId, sLayoutId) {
 		return {
-			movedElements : [{
-				selector : {
-					id : sObjectAttributeId,
-					idIsLocal : bIdIsLocal
+			movedElements: [{
+				selector: {
+					id: sObjectAttributeId,
+					idIsLocal: bIdIsLocal
 				},
-				sourceIndex : 0,
-				targetIndex : 2
+				sourceIndex: 0,
+				targetIndex: 2
 			}, {
-				selector : {
-					id : sObjectAttributeId2,
-					idIsLocal : bIdIsLocal
+				selector: {
+					id: sObjectAttributeId2,
+					idIsLocal: bIdIsLocal
 				},
-				sourceIndex : 1,
-				targetIndex : 3
+				sourceIndex: 1,
+				targetIndex: 3
 			}],
-			source : {
-				selector : {
-					id : sObjectHeaderId,
-					idIsLocal : bIdIsLocal,
-					aggregation : "attributes",
-					type : "sap.m.ObjectHeader"
+			source: {
+				selector: {
+					id: sObjectHeaderId,
+					idIsLocal: bIdIsLocal,
+					aggregation: "attributes",
+					type: "sap.m.ObjectHeader"
 				}
 			},
-			target : {
-				selector : {
-					id : sLayoutId,
-					idIsLocal : bIdIsLocal,
-					aggregation : "content",
-					type : "sap.ui.layout.VerticalLayout"
+			target: {
+				selector: {
+					id: sLayoutId,
+					idIsLocal: bIdIsLocal,
+					aggregation: "content",
+					type: "sap.ui.layout.VerticalLayout"
 				}
 			}
 		};
@@ -143,7 +143,7 @@ sap.ui.define([
 
 	function getSelector(bIdIsLocal, sLayoutId) {
 		return {
-			id : sLayoutId,
+			id: sLayoutId,
 			idIsLocal: bIdIsLocal
 		};
 	}
@@ -167,7 +167,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given a Move Controls Change Handler on jsControlTree", {
-		beforeEach : function() {
+		beforeEach: function() {
 			// Test Setup:
 			// VerticalLayout
 			// -- content
@@ -184,10 +184,10 @@ sap.ui.define([
 			this.oObjectAttribute = new ObjectAttribute(oComponent.createId(myObjectAttributeId));
 			this.oObjectAttribute2 = new ObjectAttribute(oComponent.createId(myObjectAttributeId2));
 			this.oObjectHeader = new ObjectHeader(oComponent.createId(myObjectHeaderId), {
-				attributes : [this.oObjectAttribute, this.oObjectAttribute2]
+				attributes: [this.oObjectAttribute, this.oObjectAttribute2]
 			});
 			this.oLayout = new VerticalLayout(oComponent.createId(myLayoutId), {
-				content : [this.oObjectHeader, this.oButton]
+				content: [this.oObjectHeader, this.oButton]
 			});
 
 			// local id's for JsControlTreeModifier
@@ -218,26 +218,26 @@ sap.ui.define([
 				false, this.oObjectAttribute.getId(), this.oObjectAttribute2.getId(),
 				this.oObjectHeader.getId(), this.oLayout.getId());
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oLayout.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("When providing change data via specific change info", function(assert) {
 			var mSpecificChangeInfo = {
-				movedElements : [{
-					element : this.oObjectAttribute, // optional fallback for id
-					id : this.oObjectAttribute.getId(),
-					sourceIndex : 0,
-					targetIndex : 2
+				movedElements: [{
+					element: this.oObjectAttribute, // optional fallback for id
+					id: this.oObjectAttribute.getId(),
+					sourceIndex: 0,
+					targetIndex: 2
 				}],
-				source : {
-					id : this.oObjectHeader.getId(),
-					aggregation : "attributes"
+				source: {
+					id: this.oObjectHeader.getId(),
+					aggregation: "attributes"
 				},
-				target : {
-					id : this.oLayout.getId(),
-					aggregation : "content"
+				target: {
+					id: this.oLayout.getId(),
+					aggregation: "content"
 				}
 			};
 			var oChange = new Change({selector: JsControlTreeModifier.getSelector(mSpecificChangeInfo.target.id, oComponent)});
@@ -254,8 +254,8 @@ sap.ui.define([
 
 		QUnit.test("When applying the single move change on jsControlTree with local id and reverting it afterwards", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithLocalId,
-				content : this.mSingleMoveChangeContentWithLocalId
+				selector: this.mSelectorWithLocalId,
+				content: this.mSingleMoveChangeContentWithLocalId
 			});
 
 			assert.ok(MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
@@ -272,8 +272,8 @@ sap.ui.define([
 
 		QUnit.test("When applying the single move change, that was already performed on the UI, on jsControlTree with local id and reverting it afterwards", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithLocalId,
-				content : this.mSingleMoveChangeContentWithLocalId
+				selector: this.mSelectorWithLocalId,
+				content: this.mSingleMoveChangeContentWithLocalId
 			});
 
 			// the second .applyChange call overwrites the revert data and simulates the change already being done on the UI
@@ -292,8 +292,8 @@ sap.ui.define([
 
 		QUnit.test("When applying the single move change on jsControlTree with global id and reverting it afterwards", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : this.mSingleMoveChangeContentWithGlobalId
+				selector: this.mSelectorWithGlobalId,
+				content: this.mSingleMoveChangeContentWithGlobalId
 			});
 
 			assert.ok(MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier}));
@@ -310,8 +310,8 @@ sap.ui.define([
 
 		QUnit.test("When applying the single move change on jsControlTree with local id and a different aggregation and different source parent and reverting it afterwards", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithLocalId,
-				content : this.mSingleMoveChangeContentWithLocalIdWA
+				selector: this.mSelectorWithLocalId,
+				content: this.mSingleMoveChangeContentWithLocalIdWA
 			});
 
 			assert.ok(MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
@@ -328,8 +328,8 @@ sap.ui.define([
 
 		QUnit.test("When applying the multi move change on jsControlTree with local id and reverting it afterwards", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithLocalId,
-				content : this.mMultiMoveChangeContentWithLocalId
+				selector: this.mSelectorWithLocalId,
+				content: this.mMultiMoveChangeContentWithLocalId
 			});
 
 			assert.ok(MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier, appComponent: oComponent}));
@@ -346,8 +346,8 @@ sap.ui.define([
 
 		QUnit.test("When applying the multi move change on jsControlTree with global id and reverting it afterwards", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : this.mMultiMoveChangeContentWithGlobalId
+				selector: this.mSelectorWithGlobalId,
+				content: this.mMultiMoveChangeContentWithGlobalId
 			});
 
 			assert.ok(MoveControlsHandler.applyChange(oChange, this.oObjectHeader, {modifier: JsControlTreeModifier}));
@@ -364,26 +364,26 @@ sap.ui.define([
 
 		QUnit.test("When applying a change and using mPropertyBag.sourceAggregation and .targetAggregation", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : {
-					movedElements : [{
-						selector : {
-							id : this.oObjectAttribute.getId(),
-							type : "sap.m.ObjectAttribute"
+				selector: this.mSelectorWithGlobalId,
+				content: {
+					movedElements: [{
+						selector: {
+							id: this.oObjectAttribute.getId(),
+							type: "sap.m.ObjectAttribute"
 						},
-						sourceIndex : 0,
-						targetIndex : 1
+						sourceIndex: 0,
+						targetIndex: 1
 					}],
-					source : {
-						selector : {
-							id : this.oObjectHeader.getId(),
-							aggregation : "attributes"
+					source: {
+						selector: {
+							id: this.oObjectHeader.getId(),
+							aggregation: "attributes"
 						}
 					},
-					target : {
-						selector : {
-							id : this.oLayout.getId(),
-							aggregation : "content"
+					target: {
+						selector: {
+							id: this.oLayout.getId(),
+							aggregation: "content"
 						}
 					}
 				}
@@ -404,26 +404,26 @@ sap.ui.define([
 
 		QUnit.test("When applying a change and using mPropertyBag.sourceAggregation and .targetAggregation when the change was already performed", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : {
-					movedElements : [{
-						selector : {
-							id : this.oObjectAttribute.getId(),
-							type : "sap.m.ObjectAttribute"
+				selector: this.mSelectorWithGlobalId,
+				content: {
+					movedElements: [{
+						selector: {
+							id: this.oObjectAttribute.getId(),
+							type: "sap.m.ObjectAttribute"
 						},
-						sourceIndex : 1,
-						targetIndex : 0
+						sourceIndex: 1,
+						targetIndex: 0
 					}],
-					source : {
-						selector : {
-							id : this.oObjectHeader.getId(),
-							aggregation : "attributes"
+					source: {
+						selector: {
+							id: this.oObjectHeader.getId(),
+							aggregation: "attributes"
 						}
 					},
-					target : {
-						selector : {
-							id : this.oObjectHeader.getId(),
-							aggregation : "attributes"
+					target: {
+						selector: {
+							id: this.oObjectHeader.getId(),
+							aggregation: "attributes"
 						}
 					}
 				}
@@ -451,15 +451,15 @@ sap.ui.define([
 
 		QUnit.test("When applying broken changes (functionality independent of modifier)", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : {
-					movedElements : [{
-						selector : {
-							id : this.oObjectAttribute.getId(),
-							type : "sap.m.ObjectAttribute"
+				selector: this.mSelectorWithGlobalId,
+				content: {
+					movedElements: [{
+						selector: {
+							id: this.oObjectAttribute.getId(),
+							type: "sap.m.ObjectAttribute"
 						},
-						sourceIndex : 0,
-						targetIndex : 1
+						sourceIndex: 0,
+						targetIndex: 1
 					}]
 				}
 			});
@@ -469,20 +469,20 @@ sap.ui.define([
 			}, new Error("No source supplied for move"), "missing source error captured");
 
 			oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : {
-					movedElements : [{
-						selector : {
-							id : this.oObjectAttribute.getId(),
-							type : "sap.m.ObjectAttribute"
+				selector: this.mSelectorWithGlobalId,
+				content: {
+					movedElements: [{
+						selector: {
+							id: this.oObjectAttribute.getId(),
+							type: "sap.m.ObjectAttribute"
 						},
-						sourceIndex : 0,
-						targetIndex : 1
+						sourceIndex: 0,
+						targetIndex: 1
 					}],
-					source : {
-						selector : {
-							id : this.oObjectHeader.getId(),
-							aggregation : "attributes"
+					source: {
+						selector: {
+							id: this.oObjectHeader.getId(),
+							aggregation: "attributes"
 						}
 					}
 				}
@@ -493,25 +493,25 @@ sap.ui.define([
 			}, new Error("No target supplied for move"), "missing target error captured");
 
 			oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : {
-					movedElements : [{
-						selector : {
-							id : this.oObjectAttribute.getId(),
-							type : "sap.m.ObjectAttribute"
+				selector: this.mSelectorWithGlobalId,
+				content: {
+					movedElements: [{
+						selector: {
+							id: this.oObjectAttribute.getId(),
+							type: "sap.m.ObjectAttribute"
 						},
-						sourceIndex : 0,
-						targetIndex : 1
+						sourceIndex: 0,
+						targetIndex: 1
 					}],
-					source : {
-						selector : {
-							id : "unkown"
+					source: {
+						selector: {
+							id: "unkown"
 						}
 					},
-					target : {
-						selector : {
-							id : this.oLayout.getId(),
-							aggregation : "content"
+					target: {
+						selector: {
+							id: this.oLayout.getId(),
+							aggregation: "content"
 						}
 					}
 				}
@@ -522,25 +522,25 @@ sap.ui.define([
 			}, new Error("Move source parent not found"), "unkown source error captured");
 
 			oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : {
-					movedElements : [{
-						selector : {
-							id : this.oObjectAttribute.getId(),
-							type : "sap.m.ObjectAttribute"
+				selector: this.mSelectorWithGlobalId,
+				content: {
+					movedElements: [{
+						selector: {
+							id: this.oObjectAttribute.getId(),
+							type: "sap.m.ObjectAttribute"
 						},
-						sourceIndex : 0,
-						targetIndex : 1
+						sourceIndex: 0,
+						targetIndex: 1
 					}],
-					source : {
-						selector : {
-							id : this.oObjectHeader.getId(),
-							aggregation : "attributes"
+					source: {
+						selector: {
+							id: this.oObjectHeader.getId(),
+							aggregation: "attributes"
 						}
 					},
-					target : {
-						selector : {
-							id : "unkown"
+					target: {
+						selector: {
+							id: "unkown"
 						}
 					}
 				}
@@ -551,24 +551,24 @@ sap.ui.define([
 			}, new Error("Move target parent not found"), "unkown target error captured");
 
 			oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : {
-					movedElements : [{
-						selector : {
-							id : this.oObjectAttribute.getId()
+				selector: this.mSelectorWithGlobalId,
+				content: {
+					movedElements: [{
+						selector: {
+							id: this.oObjectAttribute.getId()
 						},
-						sourceIndex : 0,
-						targetIndex : 1
+						sourceIndex: 0,
+						targetIndex: 1
 					}],
-					source : {
-						selector : {
-							id : this.oObjectHeader.getId()
+					source: {
+						selector: {
+							id: this.oObjectHeader.getId()
 						}
 					},
-					target : {
-						selector : {
-							id : this.oLayout.getId(),
-							aggregation : "content"
+					target: {
+						selector: {
+							id: this.oLayout.getId(),
+							aggregation: "content"
 						}
 					}
 				}
@@ -579,25 +579,25 @@ sap.ui.define([
 			}, new Error("No source aggregation supplied for move"), "missing source aggregation error captured");
 
 			oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : {
-					movedElements : [{
-						selector : {
-							id : this.oObjectAttribute.getId()
+				selector: this.mSelectorWithGlobalId,
+				content: {
+					movedElements: [{
+						selector: {
+							id: this.oObjectAttribute.getId()
 						},
-						sourceIndex : 0,
-						targetIndex : 1
+						sourceIndex: 0,
+						targetIndex: 1
 					}],
-					source : {
-						selector : {
-							id : this.oObjectHeader.getId(),
-							aggregation : "attributes",
-							type : "sap.m.ObjectHeader"
+					source: {
+						selector: {
+							id: this.oObjectHeader.getId(),
+							aggregation: "attributes",
+							type: "sap.m.ObjectHeader"
 						}
 					},
-					target : {
-						selector : {
-							id : this.oLayout.getId()
+					target: {
+						selector: {
+							id: this.oLayout.getId()
 						}
 					}
 				}
@@ -608,12 +608,12 @@ sap.ui.define([
 			}, new Error("No target aggregation supplied for move"), "missing target aggregation error captured");
 
 			oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : {
-					target : {
-						selector : {
-							id : this.oLayout.getId(),
-							aggregation : "content"
+				selector: this.mSelectorWithGlobalId,
+				content: {
+					target: {
+						selector: {
+							id: this.oLayout.getId(),
+							aggregation: "content"
 						}
 					}
 				}
@@ -624,24 +624,24 @@ sap.ui.define([
 			}, new Error("Change format invalid"), "missing moved elements error captured");
 
 			oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : {
-					movedElements : [{
-						selector : {
-							id : this.oObjectAttribute.getId()
+				selector: this.mSelectorWithGlobalId,
+				content: {
+					movedElements: [{
+						selector: {
+							id: this.oObjectAttribute.getId()
 						},
-						sourceIndex : 0
+						sourceIndex: 0
 					}],
-					source : {
-						selector : {
-							id : this.oObjectHeader.getId(),
-							aggregation : "attributes"
+					source: {
+						selector: {
+							id: this.oObjectHeader.getId(),
+							aggregation: "attributes"
 						}
 					},
-					target :{
-						selector : {
-							id : this.oLayout.getId(),
-							aggregation : "content"
+					target: {
+						selector: {
+							id: this.oLayout.getId(),
+							aggregation: "content"
 						}
 					}
 				}
@@ -653,25 +653,25 @@ sap.ui.define([
 					+ "' in movedElements supplied"), "missing target index error captured");
 
 			oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : {
-					movedElements : [{
-						selector : {
-							id : this.oObjectAttribute.getId() + "foo"
+				selector: this.mSelectorWithGlobalId,
+				content: {
+					movedElements: [{
+						selector: {
+							id: this.oObjectAttribute.getId() + "foo"
 						},
-						sourceIndex : 0,
-						targetIndex : 1
+						sourceIndex: 0,
+						targetIndex: 1
 					}],
-					source : {
-						selector : {
-							id : this.oObjectHeader.getId(),
-							aggregation : "attributes"
+					source: {
+						selector: {
+							id: this.oObjectHeader.getId(),
+							aggregation: "attributes"
 						}
 					},
-					target :{
-						selector : {
-							id : this.oLayout.getId(),
-							aggregation : "content"
+					target: {
+						selector: {
+							id: this.oLayout.getId(),
+							aggregation: "content"
 						}
 					}
 				}
@@ -684,7 +684,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Move Controls Change Handler on xmlControlTree", {
-		beforeEach : function() {
+		beforeEach: function() {
 			// Test Setup:
 			// VerticalLayout
 			// -- content
@@ -713,18 +713,18 @@ sap.ui.define([
 
 			var Comp = UIComponent.extend("sap.ui.rta.control.enabling.comp", {
 				metadata: {
-					manifest : {
+					manifest: {
 						"sap.app": {
 							id: "sap.ui.rta.control.enabling.comp",
 							type: "application"
 						}
 					}
 				},
-				createContent : function() {
+				createContent: function() {
 					// store it in outer scope
 					var oView = sap.ui.xmlview({
-						id : this.createId("view"),
-						viewContent : oXmlString
+						id: this.createId("view"),
+						viewContent: oXmlString
 					});
 					return oView;
 				}
@@ -734,7 +734,7 @@ sap.ui.define([
 
 			// Place component in container and display
 			this.oUiComponentContainer = new ComponentContainer({
-				component : this.oUiComponent
+				component: this.oUiComponent
 			});
 			this.oUiComponentContainer.placeAt("qunit-fixture");
 
@@ -778,15 +778,15 @@ sap.ui.define([
 				this.oGlobalObjectHeader.getId(), this.oGlobalLayout.getId());
 		},
 
-		afterEach : function() {
+		afterEach: function() {
 			this.oUiComponentContainer.destroy();
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("When applying the single move change on xmlControlTree with local id", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithLocalId,
-				content : this.mSingleMoveChangeContentWithLocalId
+				selector: this.mSelectorWithLocalId,
+				content: this.mSingleMoveChangeContentWithLocalId
 			});
 
 			assert.ok(MoveControlsHandler.applyChange(oChange, this.oGlobalObjectHeader, {modifier: XmlTreeModifier, appComponent: this.oRootControl, view: this.oXmlView}));
@@ -803,8 +803,8 @@ sap.ui.define([
 
 		QUnit.test("When applying the single move change on xmlControlTree with global id", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : this.mSingleMoveChangeContentWithGlobalId
+				selector: this.mSelectorWithGlobalId,
+				content: this.mSingleMoveChangeContentWithGlobalId
 			});
 
 			assert.ok(MoveControlsHandler.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, view: this.oXmlView}));
@@ -821,11 +821,11 @@ sap.ui.define([
 
 		QUnit.test("When applying the multi move change on xmlControlTree with local id and reverting it afterwards", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithLocalId,
-				content : this.mMultiMoveChangeContentWithLocalId
+				selector: this.mSelectorWithLocalId,
+				content: this.mMultiMoveChangeContentWithLocalId
 			});
 
-			assert.ok(MoveControlsHandler.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, appComponent: this.oRootControl, view:  this.oXmlView}));
+			assert.ok(MoveControlsHandler.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, appComponent: this.oRootControl, view: this.oXmlView}));
 
 			assert.equal(this.oXmlObjectHeader.childNodes.length, 0, "both object attributes removed from the header");
 			assert.equal(this.oXmlLayout.childNodes[0].getAttribute("id"), this.oGlobalObjectHeader.getId(), "object header is still at 1. position");
@@ -839,11 +839,11 @@ sap.ui.define([
 
 		QUnit.test("When applying the multi move change on xmlControlTree with global id and reverting it afterwards", function(assert) {
 			var oChange = new Change({
-				selector : this.mSelectorWithGlobalId,
-				content : this.mMultiMoveChangeContentWithGlobalId
+				selector: this.mSelectorWithGlobalId,
+				content: this.mMultiMoveChangeContentWithGlobalId
 			});
 
-			assert.ok(MoveControlsHandler.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, view:  this.oXmlView}));
+			assert.ok(MoveControlsHandler.applyChange(oChange, this.oXmlObjectHeader, {modifier: XmlTreeModifier, view: this.oXmlView}));
 
 			assert.equal(this.oXmlObjectHeader.childNodes.length, 0, "both object attributes removed from the header");
 			assert.equal(this.oXmlLayout.childNodes[0].getAttribute("id"), this.oGlobalObjectHeader.getId(), "object header is still at 1. position");

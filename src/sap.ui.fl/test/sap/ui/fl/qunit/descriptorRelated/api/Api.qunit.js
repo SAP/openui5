@@ -30,18 +30,18 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("DescriptorInlineChangeFactory", {
-		beforeEach : function() {
+		beforeEach: function() {
 			//define sandboxes and stubs explicitly for each modules
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -77,18 +77,18 @@ sap.ui.define([
 
 		QUnit.test("createDescriptorInlineChange", function(assert) {
 			return DescriptorInlineChangeFactory.createDescriptorInlineChange('appdescr_ovp_addNewCard', {
-				card : {
-					"customer.acard" : {
-						model : "customer.boring_model",
-						template : "sap.ovp.cards.list",
-						settings : {
-							category : "{{customer.newid_sap.app.ovp.cards.customer.acard.category}}",
-							title : "{{customer.newid_sap.app.ovp.cards.customer.acard.title}}",
-							description : "extended",
-							entitySet : "Zme_Overdue",
-							sortBy : "OverdueTime",
-							sortOrder : "desc",
-							listType : "extended"
+				card: {
+					"customer.acard": {
+						model: "customer.boring_model",
+						template: "sap.ovp.cards.list",
+						settings: {
+							category: "{{customer.newid_sap.app.ovp.cards.customer.acard.category}}",
+							title: "{{customer.newid_sap.app.ovp.cards.customer.acard.title}}",
+							description: "extended",
+							entitySet: "Zme_Overdue",
+							sortBy: "OverdueTime",
+							sortOrder: "desc",
+							listType: "extended"
 						}
 					}
 				}
@@ -250,18 +250,18 @@ sap.ui.define([
 
 		QUnit.test("create_ovp_addNewCard", function(assert) {
 			return DescriptorInlineChangeFactory.create_ovp_addNewCard({
-				card : {
-					"customer.acard" : {
-						model : "customer.boring_model",
-						template : "sap.ovp.cards.list",
-						settings : {
-							category : "{{cardId_category}}",
-							title : "{{cardId_title}}",
-							description : "extended",
-							entitySet : "Zme_Overdue",
-							sortBy : "OverdueTime",
-							sortOrder : "desc",
-							listType : "extended"
+				card: {
+					"customer.acard": {
+						model: "customer.boring_model",
+						template: "sap.ovp.cards.list",
+						settings: {
+							category: "{{cardId_category}}",
+							title: "{{cardId_title}}",
+							description: "extended",
+							entitySet: "Zme_Overdue",
+							sortBy: "OverdueTime",
+							sortOrder: "desc",
+							listType: "extended"
 						}
 					}
 				}
@@ -298,19 +298,19 @@ sap.ui.define([
 		QUnit.test("create_ovp_addNewCard failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ovp_addNewCard({
-					cardId : {}
+					cardId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ovp_addNewCard({
-					card : "a.id"
+					card: "a.id"
 				});
 			});
 		});
 
 		QUnit.test("create_ovp_removeCard", function(assert) {
 			return DescriptorInlineChangeFactory.create_ovp_removeCard({
-				cardId : "a.id"
+				cardId: "a.id"
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ovp_removeCard");
@@ -320,12 +320,12 @@ sap.ui.define([
 		QUnit.test("create_ovp_removeCard failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ovp_removeCard({
-					cards : "a.id"
+					cards: "a.id"
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ovp_removeCard({
-					cardId : {}
+					cardId: {}
 				});
 			});
 		});
@@ -420,19 +420,19 @@ sap.ui.define([
 		QUnit.test("create_app_addNewInbound failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addNewInbound({
-					inboundId : {}
+					inboundId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addNewInbound({
-					inbound : "a.id"
+					inbound: "a.id"
 				});
 			});
 		});
 
 		QUnit.test("create_app_removeInbound", function(assert) {
 			return DescriptorInlineChangeFactory.create_app_removeInbound({
-				inboundId : "a.id"
+				inboundId: "a.id"
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_removeInbound");
@@ -442,19 +442,19 @@ sap.ui.define([
 		QUnit.test("create_app_removeInbound failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeInbound({
-					inbounds : "a.id"
+					inbounds: "a.id"
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeInbound({
-					inboundId : {}
+					inboundId: {}
 				});
 			});
 		});
 
 		QUnit.test("create_app_removeAllInboundsExceptOne", function(assert) {
 			return DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne({
-				inboundId : "a.id"
+				inboundId: "a.id"
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_removeAllInboundsExceptOne");
@@ -464,12 +464,12 @@ sap.ui.define([
 		QUnit.test("create_app_removeAllInboundsExceptOne failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne({
-					inbounds : "a.id"
+					inbounds: "a.id"
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeAllInboundsExceptOne({
-					inboundId : {}
+					inboundId: {}
 				});
 			});
 		});
@@ -537,17 +537,17 @@ sap.ui.define([
 		QUnit.test("create_app_changeInbound failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeInbound({
-					inbounds : "a.id"
+					inbounds: "a.id"
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeInbound({
-					inboundId : {}
+					inboundId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeInbound({
-					inboundId : "a.id"
+					inboundId: "a.id"
 				});
 			});
 		});
@@ -572,19 +572,19 @@ sap.ui.define([
 		QUnit.test("create_app_addNewOutbound failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addNewOutbound({
-					outboundId : {}
+					outboundId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addNewOutbound({
-					outbound : "a.id"
+					outbound: "a.id"
 				});
 			});
 		});
 
 		QUnit.test("create_app_removeOutbound", function(assert) {
 			return DescriptorInlineChangeFactory.create_app_removeOutbound({
-				outboundId : "a.id"
+				outboundId: "a.id"
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_removeOutbound");
@@ -594,12 +594,12 @@ sap.ui.define([
 		QUnit.test("create_app_removeOutbound failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeOutbound({
-					outbounds : "a.id"
+					outbounds: "a.id"
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeOutbound({
-					outboundId : {}
+					outboundId: {}
 				});
 			});
 		});
@@ -608,23 +608,23 @@ sap.ui.define([
 			return DescriptorInlineChangeFactory.create_app_changeOutbound({
 				outboundId: "a.id",
 				entityPropertyChange: [{
-					propertyPath : "action",
-					operation : "UPDATE",
-					propertyValue : "newAction"
+					propertyPath: "action",
+					operation: "UPDATE",
+					propertyValue: "newAction"
 				},
 				{
-					propertyPath : "parameters/newAddedParameter",
-					operation : "INSERT",
-					propertyValue : {
-						value : {
-							value : "someValue",
-							format : "plain"
+					propertyPath: "parameters/newAddedParameter",
+					operation: "INSERT",
+					propertyValue: {
+						value: {
+							value: "someValue",
+							format: "plain"
 						}
 					}
 				},
 				{
-					propertyPath : "parameters/Language",
-					operation : "DELETE"
+					propertyPath: "parameters/Language",
+					operation: "DELETE"
 				}]
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -636,9 +636,9 @@ sap.ui.define([
 			return DescriptorInlineChangeFactory.create_app_changeOutbound({
 				outboundId: "a.id",
 				entityPropertyChange: {
-					propertyPath : "action",
-					operation : "UPDATE",
-					propertyValue : "newAction"
+					propertyPath: "action",
+					operation: "UPDATE",
+					propertyValue: "newAction"
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -649,17 +649,17 @@ sap.ui.define([
 		QUnit.test("create_app_changeOutbound failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeOutbound({
-					outbounds : "a.id"
+					outbounds: "a.id"
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeOutbound({
-					outboundId : {}
+					outboundId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeOutbound({
-					outboundId : "a.id"
+					outboundId: "a.id"
 				});
 			});
 		});
@@ -676,19 +676,19 @@ sap.ui.define([
 		QUnit.test("create_app_addNewDataSource failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addNewDataSource({
-					dataSourceId : {}
+					dataSourceId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addNewDataSource({
-					dataSource : "a.id"
+					dataSource: "a.id"
 				});
 			});
 		});
 
 		QUnit.test("create_app_removeDataSource", function(assert) {
 			return DescriptorInlineChangeFactory.create_app_removeDataSource({
-				dataSourceId : "a.id"
+				dataSourceId: "a.id"
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_removeDataSource");
@@ -698,12 +698,12 @@ sap.ui.define([
 		QUnit.test("create_app_removeDataSource failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeDataSource({
-					dataSources : "a.id"
+					dataSources: "a.id"
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeDataSource({
-					dataSourceId : {}
+					dataSourceId: {}
 				});
 			});
 		});
@@ -744,17 +744,17 @@ sap.ui.define([
 		QUnit.test("create_app_changeDataSource failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeDataSource({
-					dataSources : "a.id"
+					dataSources: "a.id"
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeDataSource({
-					dataSourceId : {}
+					dataSourceId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_changeDataSource({
-					dataSourceId : "a.id"
+					dataSourceId: "a.id"
 				});
 			});
 		});
@@ -762,8 +762,8 @@ sap.ui.define([
 		QUnit.test("create_appdescr_app_addAnnotationsToOData", function(assert) {
 			return DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
 				dataSourceId: "customer.existingDataSource",
-				annotations : ["customer.anno1"],
-				dataSource : { }
+				annotations: ["customer.anno1"],
+				dataSource: { }
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_addAnnotationsToOData");
@@ -773,39 +773,39 @@ sap.ui.define([
 		QUnit.test("create_appdescr_app_addAnnotationsToOData failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
-					dataSourceId : {}
+					dataSourceId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
-					dataSourceId : "a.id"
-				});
-			});
-			assert.throws(function() {
-				DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
-					dataSourceId: "customer.existingDataSource",
-					dataSource : { }
+					dataSourceId: "a.id"
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
 					dataSourceId: "customer.existingDataSource",
-					annotations : { },
-					dataSource : { }
+					dataSource: { }
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
 					dataSourceId: "customer.existingDataSource",
-					annotations : ["customer.anno1"],
-					dataSource : ""
+					annotations: { },
+					dataSource: { }
+				});
+			});
+			assert.throws(function() {
+				DescriptorInlineChangeFactory.create_app_addAnnotationsToOData({
+					dataSourceId: "customer.existingDataSource",
+					annotations: ["customer.anno1"],
+					dataSource: ""
 				});
 			});
 		});
 
 		QUnit.test("getId", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				assert.strictEqual(oDescriptorVariant.getId(), "a.id");
@@ -814,7 +814,7 @@ sap.ui.define([
 
 		QUnit.test("setId", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				assert.strictEqual(oDescriptorVariant.getReference(), "a.reference");
@@ -825,12 +825,12 @@ sap.ui.define([
 
 		QUnit.test("setReference failure", function (assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				assert.throws(function() {
 					oDescriptorVariant.setReference({
-						ref : "a.id"
+						ref: "a.id"
 					});
 				});
 			});
@@ -838,7 +838,7 @@ sap.ui.define([
 
 		QUnit.test("getReference", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				assert.strictEqual(oDescriptorVariant.getReference(), "a.reference");
@@ -847,7 +847,7 @@ sap.ui.define([
 
 		QUnit.test("getVersion", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				version: "1.0.0"
 			}).then(function(oDescriptorVariant) {
@@ -857,7 +857,7 @@ sap.ui.define([
 
 		QUnit.test("getNamespace", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				assert.strictEqual(oDescriptorVariant.getNamespace(), "apps/a.reference/appVariants/a.id/");
@@ -868,14 +868,14 @@ sap.ui.define([
 			var _oDescriptorInlineChange;
 			var _oDescriptorVariant;
 			var mParameter = {
-				type : "XTIT",
-				maxLength : 20,
-				comment : "a comment",
-				value : {
-					"" : "Default Title",
-					en:"English Title",
-					de:"Deutscher Titel",
-					en_US:"English Title in en_US"
+				type: "XTIT",
+				maxLength: 20,
+				comment: "a comment",
+				value: {
+					"": "Default Title",
+					en: "English Title",
+					de: "Deutscher Titel",
+					en_US: "English Title in en_US"
 				}
 			};
 			return DescriptorInlineChangeFactory.create_app_setTitle(mParameter).then(function(oDescriptorInlineChange) {
@@ -883,7 +883,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setTitle");
 				return DescriptorVariantFactory.createNew({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oDescriptorVariant) {
@@ -899,14 +899,14 @@ sap.ui.define([
 		QUnit.test("create_app_setTitle descriptor change", function(assert) {
 			var _oDescriptorInlineChange;
 			var mParameter = {
-				type : "XTIT",
-				maxLength : 20,
-				comment : "a comment",
-				value : {
-					"" : "Default Title",
-					en:"English Title",
-					de:"Deutscher Titel",
-					en_US:"English Title in en_US"
+				type: "XTIT",
+				maxLength: 20,
+				comment: "a comment",
+				value: {
+					"": "Default Title",
+					en: "English Title",
+					de: "Deutscher Titel",
+					en_US: "English Title in en_US"
 				}
 			};
 			return DescriptorInlineChangeFactory.create_app_setTitle(mParameter).then(function(oDescriptorInlineChange) {
@@ -926,14 +926,14 @@ sap.ui.define([
 			var _oDescriptorInlineChange;
 			var _oDescriptorVariant;
 			var mParameter = {
-				type : "XTIT",
-				maxLength : 30,
-				comment : "comment on subtitle",
-				value : {
-					"" : "Default Subtitle",
-					en:"English Subtitle",
-					de:"Deutscher Untertitel",
-					en_US:"English Subtitle in en_US"
+				type: "XTIT",
+				maxLength: 30,
+				comment: "comment on subtitle",
+				value: {
+					"": "Default Subtitle",
+					en: "English Subtitle",
+					de: "Deutscher Untertitel",
+					en_US: "English Subtitle in en_US"
 				}
 			};
 			return DescriptorInlineChangeFactory.create_app_setSubTitle(mParameter).then(function(oDescriptorInlineChange) {
@@ -941,7 +941,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setSubTitle");
 				return DescriptorVariantFactory.createNew({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oDescriptorVariant) {
@@ -970,7 +970,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_addLibraries");
 				return DescriptorVariantFactory.createNew({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oDescriptorVariant) {
@@ -985,7 +985,7 @@ sap.ui.define([
 		QUnit.test("create_ui5_addLibraries failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_addLibraries({
-					libraries : "a.id"
+					libraries: "a.id"
 				});
 			});
 		});
@@ -994,14 +994,14 @@ sap.ui.define([
 			var _oDescriptorInlineChange;
 			var _oDescriptorVariant;
 			var mParameter = {
-				type : "XTIT",
-				maxLength : 30,
-				comment : "comment on shorttitle",
-				value : {
-					"" : "Default Shorttitle",
-					en:"English Shorttitle",
-					de:"Deutscher Kurztitel",
-					en_US:"English Shorttitle in en_US"
+				type: "XTIT",
+				maxLength: 30,
+				comment: "comment on shorttitle",
+				value: {
+					"": "Default Shorttitle",
+					en: "English Shorttitle",
+					de: "Deutscher Kurztitel",
+					en_US: "English Shorttitle in en_US"
 				}
 			};
 			return DescriptorInlineChangeFactory.create_app_setShortTitle(mParameter).then(function(oDescriptorInlineChange) {
@@ -1009,7 +1009,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setShortTitle");
 				return DescriptorVariantFactory.createNew({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oDescriptorVariant) {
@@ -1026,14 +1026,14 @@ sap.ui.define([
 			var _oDescriptorInlineChange;
 			var _oDescriptorVariant;
 			var mParameter = {
-				type : "XTXT",
-				maxLength : 50,
-				comment : "comment on description",
-				value : {
-					"" : "Default Description",
-					en:"English Description",
-					de:"Deutsche Beschreibung",
-					en_US:"English Description in en_US"
+				type: "XTXT",
+				maxLength: 50,
+				comment: "comment on description",
+				value: {
+					"": "Default Description",
+					en: "English Description",
+					de: "Deutsche Beschreibung",
+					en_US: "English Description in en_US"
 				}
 			};
 			return DescriptorInlineChangeFactory.create_app_setDescription(mParameter).then(function(oDescriptorInlineChange) {
@@ -1041,7 +1041,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setDescription");
 				return DescriptorVariantFactory.createNew({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oDescriptorVariant) {
@@ -1058,13 +1058,13 @@ sap.ui.define([
 			var _oDescriptorInlineChange;
 			var _oDescriptorVariant;
 			var mParameter = {
-				maxLength : 70,
-				comment : "comment on info",
-				value : {
-					"" : "Default Info",
-					en:"English Info",
-					de:"Deutsche Info",
-					en_US:"English Info in en_US"
+				maxLength: 70,
+				comment: "comment on info",
+				value: {
+					"": "Default Info",
+					en: "English Info",
+					de: "Deutsche Info",
+					en_US: "English Info in en_US"
 				}
 			};
 			return DescriptorInlineChangeFactory.create_app_setInfo(mParameter).then(function(oDescriptorInlineChange) {
@@ -1072,7 +1072,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setInfo");
 				return DescriptorVariantFactory.createNew({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oDescriptorVariant) {
@@ -1097,12 +1097,12 @@ sap.ui.define([
 		QUnit.test("create_app_Ach failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_setAch({
-					AchH : {}
+					AchH: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_setAch({
-					Ach : "a.id"
+					Ach: "a.id"
 				});
 			});
 		});
@@ -1111,7 +1111,7 @@ sap.ui.define([
 			return DescriptorInlineChangeFactory.create_app_setKeywords({
 				keywords: ["{{customer.newid_sap.app.tags.keywords.0}}", "{{customer.newid_sap.app.tags.keywords.1}}"]
 			}, {
-				"customer.newid_sap.app.tags.keywords.0" : {
+				"customer.newid_sap.app.tags.keywords.0": {
 					type: "XTIT",
 					maxLength: 20,
 					comment: "sample comment",
@@ -1122,7 +1122,7 @@ sap.ui.define([
 						en_US: "English Keyword 1 in en_US"
 					}
 				},
-				"customer.newid_sap.app.tags.keywords.1" : {
+				"customer.newid_sap.app.tags.keywords.1": {
 					type: "XTIT",
 					maxLength: 20,
 					comment: "sample comment",
@@ -1143,12 +1143,12 @@ sap.ui.define([
 		QUnit.test("create_app_setKeywords failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_setKeywords({
-					keywords : {}
+					keywords: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_setKeywords({
-					keywords : "a.id"
+					keywords: "a.id"
 				});
 			});
 		});
@@ -1167,12 +1167,12 @@ sap.ui.define([
 		QUnit.test("create_app_setDestination failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_setDestination({
-					destinations : {}
+					destinations: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_setDestination({
-					destination : "a.id"
+					destination: "a.id"
 				});
 			});
 		});
@@ -1189,12 +1189,12 @@ sap.ui.define([
 		QUnit.test("create_app_addTechnicalAttributes failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addTechnicalAttributes({
-					technicalAttributes : {}
+					technicalAttributes: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addTechnicalAttributes({
-					technicalAttributes : "TAG1"
+					technicalAttributes: "TAG1"
 				});
 			});
 		});
@@ -1211,12 +1211,12 @@ sap.ui.define([
 		QUnit.test("create_app_removeTechnicalAttributes failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeTechnicalAttributes({
-					technicalAttributes : {}
+					technicalAttributes: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeTechnicalAttributes({
-					technicalAttributes : "TAG1"
+					technicalAttributes: "TAG1"
 				});
 			});
 		});
@@ -1233,12 +1233,12 @@ sap.ui.define([
 		QUnit.test("create_app_addCdsViews failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addCdsViews({
-					cdsViews : {}
+					cdsViews: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_addCdsViews({
-					cdsViews : "VIEW1"
+					cdsViews: "VIEW1"
 				});
 			});
 		});
@@ -1255,21 +1255,21 @@ sap.ui.define([
 		QUnit.test("create_app_removeCdsViews failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeCdsViews({
-					cdsViews : {}
+					cdsViews: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_app_removeCdsViews({
-					cdsViews : "VIEW1"
+					cdsViews: "VIEW1"
 				});
 			});
 		});
 
 		QUnit.test("create_flp_setConfig", function(assert) {
 			return DescriptorInlineChangeFactory.create_flp_setConfig({
-				config : { property1 : "value1",
-											property2 : "value2",
-											propertyList : ["a", "b"]
+				config: { property1: "value1",
+											property2: "value2",
+											propertyList: ["a", "b"]
 										}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -1279,19 +1279,19 @@ sap.ui.define([
 		QUnit.test("create_flp_setConfig failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_flp_setConfig({
-					configs : { }
+					configs: { }
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_flp_setConfig({
-					config : "wrongType"
+					config: "wrongType"
 				});
 			});
 		});
 
 		QUnit.test("appdescr_ui5_addNewModel", function(assert) {
 			return DescriptorInlineChangeFactory.create_ui5_addNewModel({
-				model : {
+				model: {
 					"customer.fancy_model": {
 						dataSource: "customer.fancy_dataSource",
 						settings: {}
@@ -1306,12 +1306,12 @@ sap.ui.define([
 		QUnit.test("appdescr_ui5_addNewModel failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_addNewModel({
-					modelId : {}
+					modelId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_addNewModel({
-					model : "a.id"
+					model: "a.id"
 				});
 			});
 		});
@@ -1319,7 +1319,7 @@ sap.ui.define([
 
 		QUnit.test("appdescr_ui5_removeModel", function(assert) {
 			return DescriptorInlineChangeFactory.create_ui5_removeModel({
-				modelId : "aModelId"
+				modelId: "aModelId"
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_removeModel");
@@ -1329,12 +1329,12 @@ sap.ui.define([
 		QUnit.test("appdescr_ui5_removeModel failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_removeModel({
-					modelId : {}
+					modelId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_removeModel({
-					model : "a.id"
+					model: "a.id"
 				});
 			});
 		});
@@ -1342,7 +1342,7 @@ sap.ui.define([
 
 		QUnit.test("appdescr_ui5_addNewModelEnhanceWith", function(assert) {
 			return DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
-				modelId : "customer.existingModelId"
+				modelId: "customer.existingModelId"
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_addNewModelEnhanceWith");
@@ -1352,12 +1352,12 @@ sap.ui.define([
 		QUnit.test("appdescr_ui5_addNewModelEnhanceWith failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
-					modelId : {}
+					modelId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
-					model : "a.id"
+					model: "a.id"
 				});
 			});
 		});
@@ -1379,19 +1379,19 @@ sap.ui.define([
 		QUnit.test("appdescr_ui5_replaceComponentUsage failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_replaceComponentUsage({
-					componentUsageId : {}
+					componentUsageId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_replaceComponentUsage({
-					componentUsage : "a.id"
+					componentUsage: "a.id"
 				});
 			});
 		});
 
 		QUnit.test("appdescr_ui5_setMinUI5Version", function(assert) {
 			return DescriptorInlineChangeFactory.create_ui5_setMinUI5Version({
-				minUI5Version : "1.63.0"
+				minUI5Version: "1.63.0"
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_setMinUI5Version");
@@ -1401,7 +1401,7 @@ sap.ui.define([
 		QUnit.test("appdescr_ui5_setMinUI5Version failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui5_setMinUI5Version({
-					minUI5Version : {}
+					minUI5Version: {}
 				});
 			});
 		});
@@ -1435,12 +1435,12 @@ sap.ui.define([
 		QUnit.test("appdescr_smb_addNamespace failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_smb_addNamespace({
-					smartBusinessAppId : {}
+					smartBusinessAppId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_smb_addNamespace({
-					smartBusinessApp : "a.id"
+					smartBusinessApp: "a.id"
 				});
 			});
 		});
@@ -1452,10 +1452,10 @@ sap.ui.define([
 						tileConfiguration: "{\"TILE_PROPERTIES\":\" {\\\"id\\\":\\\"\\\",\\\"instanceId\\\":\\\"\\\",\\\"evaluationId\\\":\\\"\\\"," +
 						"\\\"navType\\\":\\\"0\\\",\\\"cacheMaxAge\\\":1,\\\"cacheMaxAgeUnit\\\":\\\"MIN\\\",\\\"tileSpecific\\\":{}}\"}"
 					},
-					annotationFragments : {
-						selectionVariant : "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.SelectionVariant#<qualifier>",
-						dataPoint : "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.DataPoint#<qualifier>",
-						selectionField : "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.SelectionFields#<qualifier>"
+					annotationFragments: {
+						selectionVariant: "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.SelectionVariant#<qualifier>",
+						dataPoint: "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.DataPoint#<qualifier>",
+						selectionField: "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.SelectionFields#<qualifier>"
 					}
 				}
 			}).then(function(oDescriptorInlineChange) {
@@ -1467,19 +1467,19 @@ sap.ui.define([
 		QUnit.test("appdescr_smb_changeNamespace failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_smb_changeNamespace({
-					smartBusinessAppId : {}
+					smartBusinessAppId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_smb_changeNamespace({
-					smartBusinessApp : "a.id"
+					smartBusinessApp: "a.id"
 				});
 			});
 		});
 
 		QUnit.test("appdescr_ui_generic_app_setMainPage", function(assert) {
 			return DescriptorInlineChangeFactory.create_ui_generic_app_setMainPage({
-				page : {
+				page: {
 					page_1: {
 						entitySet: "STTA_C_MP_Product",
 						component: {
@@ -1497,19 +1497,19 @@ sap.ui.define([
 		QUnit.test("appdescr_ui_generic_app_setMainPage failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui_generic_app_setMainPage({
-					pageId : {}
+					pageId: {}
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui_generic_app_setMainPage({
-					page : "a.id"
+					page: "a.id"
 				});
 			});
 		});
 
 		QUnit.test("create_ui_setIcon", function(assert) {
 			return DescriptorInlineChangeFactory.create_ui_setIcon({
-				icon : "sap-icon://add-contact"
+				icon: "sap-icon://add-contact"
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 			});
@@ -1518,19 +1518,19 @@ sap.ui.define([
 		QUnit.test("create_ui_setIcon failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui_setIcon({
-					iconId : "a.string"
+					iconId: "a.string"
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui_setIcon({
-					icon : { }
+					icon: { }
 				});
 			});
 		});
 
 		QUnit.test("create_ui_setDeviceTypes", function(assert) {
 			return DescriptorInlineChangeFactory.create_ui_setDeviceTypes({
-				deviceTypes : { desktop : true, tablet : true, phone : true }
+				deviceTypes: { desktop: true, tablet: true, phone: true }
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 			});
@@ -1539,19 +1539,19 @@ sap.ui.define([
 		QUnit.test("create_ui_setDeviceTypes failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui_setDeviceTypes({
-					types : { desktop : true, tablet : true, phone : true }
+					types: { desktop: true, tablet: true, phone: true }
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_ui_setDeviceTypes({
-					deviceTypes : "desktop"
+					deviceTypes: "desktop"
 				});
 			});
 		});
 
 		QUnit.test("create_url_setUri", function(assert) {
 			return DescriptorInlineChangeFactory.create_url_setUri({
-				uri : "uri.com"
+				uri: "uri.com"
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 			});
@@ -1560,14 +1560,14 @@ sap.ui.define([
 		QUnit.test("create_url_setUri failure", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_url_setUri({
-					uri : { }
+					uri: { }
 				});
 			});
 		});
 
 		QUnit.test("create_fiori_setRegistrationIds", function(assert) {
 			return DescriptorInlineChangeFactory.create_fiori_setRegistrationIds({
-				registrationIds : ["F01234"]
+				registrationIds: ["F01234"]
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
 			});
@@ -1576,12 +1576,12 @@ sap.ui.define([
 		QUnit.test("create_fiori_setRegistrationIds", function (assert) {
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_fiori_setRegistrationIds({
-					registrationIds : 1.0
+					registrationIds: 1.0
 				});
 			});
 			assert.throws(function() {
 				DescriptorInlineChangeFactory.create_fiori_setRegistrationIds({
-					registrationIds : { }
+					registrationIds: { }
 				});
 			});
 		});
@@ -1592,16 +1592,16 @@ sap.ui.define([
 		beforeEach: function() {
 			sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				})
 			});
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 		},
@@ -1611,15 +1611,15 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("addDescriptorInlineChange", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
-				return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+				return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 					return oDescriptorVariant.addDescriptorInlineChange(oDescriptorInlineChange).then(function() {
 						assert.notEqual(oDescriptorVariant.getDefinition().content, null);
 						assert.equal(oDescriptorVariant.getDefinition().content.length, 1);
 						assert.equal(oDescriptorVariant.getDefinition().content[0].changeType, "changeType");
-						assert.deepEqual(oDescriptorVariant.getDefinition().content[0].content, {param:"value"});
+						assert.deepEqual(oDescriptorVariant.getDefinition().content[0].content, {param: "value"});
 						assert.deepEqual(oDescriptorVariant.getDefinition().content[0].texts, {a: "b"});
 					});
 				});
@@ -1629,7 +1629,7 @@ sap.ui.define([
 		QUnit.test("setTransportRequest", function(assert) {
 			var oDescriptorVariant_;
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				oDescriptorVariant_ = oDescriptorVariant;
@@ -1641,7 +1641,7 @@ sap.ui.define([
 
 		QUnit.test("setTransportRequest - wrong format - error expected", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				return oDescriptorVariant.setTransportRequest("Wrong Format");
@@ -1658,7 +1658,7 @@ sap.ui.define([
 		QUnit.test("setPackage", function(assert) {
 			var oDescriptorVariant_;
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				assert.equal(oDescriptorVariant._getMap().packageName, "");//check the default
@@ -1671,7 +1671,7 @@ sap.ui.define([
 
 		QUnit.test("setPackage - wrong format - error expected", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				assert.equal(oDescriptorVariant._getMap().packageName, "");//check the default
@@ -1688,7 +1688,7 @@ sap.ui.define([
 
 		QUnit.test("submit", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				return oDescriptorVariant.submit().then(function(oResponse) {
@@ -1702,16 +1702,16 @@ sap.ui.define([
 		beforeEach: function() {
 			sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				})
 			});
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 		},
@@ -1722,7 +1722,7 @@ sap.ui.define([
 		QUnit.test("createNew", function(assert) {
 			// assert.strictEqual(typeof FlexControllerFactory.create, 'function');
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 				//no layer -> default to customer expected
 			}).then(function(oDescriptorVariant) {
@@ -1745,7 +1745,7 @@ sap.ui.define([
 				})
 				.then(function() {
 					return DescriptorVariantFactory.createNew({
-						id : "a.id"
+						id: "a.id"
 					});
 				})
 				.then(function() {
@@ -1756,18 +1756,6 @@ sap.ui.define([
 				})
 				.then(function() {
 					return DescriptorVariantFactory.createNew({
-						reference : "a.reference"
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return DescriptorVariantFactory.createNew({
-						id : 1,
 						reference: "a.reference"
 					});
 				})
@@ -1779,7 +1767,19 @@ sap.ui.define([
 				})
 				.then(function() {
 					return DescriptorVariantFactory.createNew({
-						id : "a.id",
+						id: 1,
+						reference: "a.reference"
+					});
+				})
+				.then(function() {
+					assert.notOk("Should never succeed!");
+				})
+				.catch(function(sError) {
+					assert.ok(sError);
+				})
+				.then(function() {
+					return DescriptorVariantFactory.createNew({
+						id: "a.id",
 						reference: 1
 					});
 				})
@@ -1791,7 +1791,7 @@ sap.ui.define([
 				})
 				.then(function() {
 					return DescriptorVariantFactory.createNew({
-						id : "a.id",
+						id: "a.id",
 						reference: "a.reference",
 						version: 2
 					});
@@ -1804,7 +1804,7 @@ sap.ui.define([
 				})
 				.then(function() {
 					return DescriptorVariantFactory.createNew({
-						id : "a.id",
+						id: "a.id",
 						reference: "a.reference",
 						layer: true
 					});
@@ -1819,7 +1819,7 @@ sap.ui.define([
 
 		QUnit.test("createNew - layer - set to CUSTOMER", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.CUSTOMER
 			}).then(function(oDescriptorVariant) {
@@ -1829,7 +1829,7 @@ sap.ui.define([
 
 		QUnit.test("createNew - layer - set to CUSTOMER_BASE", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.CUSTOMER_BASE
 			}).then(function(oDescriptorVariant) {
@@ -1839,7 +1839,7 @@ sap.ui.define([
 
 		QUnit.test("createNew - layer - set to PARTNER", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.PARTNER
 			}).then(function(oDescriptorVariant) {
@@ -1849,7 +1849,7 @@ sap.ui.define([
 
 		QUnit.test("createNew - layer - set to VENDOR", function(assert) {
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.VENDOR
 			}).then(function(oDescriptorVariant) {
@@ -1893,12 +1893,12 @@ sap.ui.define([
 			});
 			assert.throws(function() {
 				DescriptorVariantFactory.createDeletion({
-					reference : "a.id"
+					reference: "a.id"
 				});
 			});
 			assert.throws(function() {
 				DescriptorVariantFactory.createDeletion({
-					id : 1
+					id: 1
 				});
 			});
 		});
@@ -1914,10 +1914,10 @@ sap.ui.define([
 			sandbox.stub(Storage, "write").resolves(this.sCreateResponse);
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 		},
@@ -1926,7 +1926,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("default package", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 			}).then(function(oDescriptorChange) {
 				assert.equal(oDescriptorChange._getChangeToSubmit().getPackage(), "");
@@ -1934,7 +1934,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("submit", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"})
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"})
 			.then(function(oDescriptorInlineChange) {
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 			}).then(function(oDescriptorChange) {
@@ -1945,7 +1945,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("createNew - w/o layer, check default", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
 						"a.reference",
 						oDescriptorInlineChange
@@ -1957,7 +1957,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("createNew - with layer VENDOR", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
 						"a.reference",
 						oDescriptorInlineChange,
@@ -1969,7 +1969,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("createNew - with layer CUSTOMER", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
 						"a.reference",
 						oDescriptorInlineChange,
@@ -1981,7 +1981,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("createNew - with layer CUSTOMER_BASE", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
 						"a.reference",
 						oDescriptorInlineChange,
@@ -1993,7 +1993,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("createNew - with layer PARTNER", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
 						"a.reference",
 						oDescriptorInlineChange,
@@ -2005,7 +2005,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("getJson", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew(
 						"a.reference",
 						oDescriptorInlineChange,
@@ -2019,7 +2019,7 @@ sap.ui.define([
 								packageName: "",
 								changeType: "changeType",
 								content: {
-									param:"value"
+									param: "value"
 								},
 								texts: {a: "b"}
 							};
@@ -2042,10 +2042,10 @@ sap.ui.define([
 		beforeEach: function() {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 		},
@@ -2054,7 +2054,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("createNew", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange).then(function(oDescriptorChange) {
 					assert.notEqual(oDescriptorChange, null);
 					assert.equal(oDescriptorChange._mChangeFile.reference, "a.reference");
@@ -2066,7 +2066,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("createNew - with tool", function(assert) {
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, 'VENDOR', undefined, 'RTA');
 			}).then(function(oDescriptorChange) {
 				assert.equal(oDescriptorChange._mChangeFile.layer, Layer.VENDOR);
@@ -2079,17 +2079,17 @@ sap.ui.define([
 		beforeEach: function() {
 			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: Layer.CUSTOMER
 				})
 			});
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 		},
@@ -2100,7 +2100,7 @@ sap.ui.define([
 		QUnit.test("new - submit", function(assert) {
 			var that = this;
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oDescriptorVariant) {
 				return oDescriptorVariant.submit().then(function(oResponse) {
@@ -2113,7 +2113,7 @@ sap.ui.define([
 		QUnit.test("new with referenceVersion - submit", function(assert) {
 			var that = this;
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				referenceVersion: "1.1"
 			}).then(function(oDescriptorVariant) {
@@ -2188,7 +2188,7 @@ sap.ui.define([
 			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest");
 			this._fStubSend.resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: Layer.CUSTOMER,
 					packageName: '$TMP'
@@ -2196,10 +2196,10 @@ sap.ui.define([
 			});
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 		},
@@ -2210,7 +2210,7 @@ sap.ui.define([
 		QUnit.test("new - submit", function(assert) {
 			var that = this;
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.CUSTOMER
 			}).then(function(oDescriptorVariant) {
@@ -2224,7 +2224,7 @@ sap.ui.define([
 		QUnit.test("Smart Business: new - submit", function(assert) {
 			var that = this;
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.CUSTOMER,
 				skipIam: true,
@@ -2271,7 +2271,7 @@ sap.ui.define([
 			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest");
 			this._fStubSend.resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: Layer.CUSTOMER,
 					packageName: "YY1_DEFAULT_123"
@@ -2279,10 +2279,10 @@ sap.ui.define([
 			});
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 		},
@@ -2293,7 +2293,7 @@ sap.ui.define([
 		QUnit.test("new - submit", function(assert) {
 			var that = this;
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.CUSTOMER
 			}).then(function(oDescriptorVariant) {
@@ -2307,7 +2307,7 @@ sap.ui.define([
 		QUnit.test("Smart Business: new - submit", function(assert) {
 			var that = this;
 			return DescriptorVariantFactory.createNew({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.CUSTOMER,
 				skipIam: true,
@@ -2347,16 +2347,16 @@ sap.ui.define([
 		beforeEach: function() {
 			sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				})
 			});
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 		},
@@ -2366,7 +2366,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("create new", function(assert) {
 			var _oDescriptorChange;
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 			}).then(function(oDescriptorChange) {
 				_oDescriptorChange = oDescriptorChange;
@@ -2379,16 +2379,16 @@ sap.ui.define([
 		beforeEach: function() {
 			this._fStubSend = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				})
 			});
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 		},
@@ -2398,7 +2398,7 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("create new - CUSTOMER layer", function(assert) {
 			var _oDescriptorChange;
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange);
 			}).then(function(oDescriptorChange) {
 				_oDescriptorChange = oDescriptorChange;
@@ -2409,7 +2409,7 @@ sap.ui.define([
 
 		QUnit.test("create new - CUSTOMER_BASE layer", function(assert) {
 			var _oDescriptorChange;
-			return DescriptorInlineChangeFactory.createNew("changeType", {param:"value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
+			return DescriptorInlineChangeFactory.createNew("changeType", {param: "value"}, {a: "b"}).then(function(oDescriptorInlineChange) {
 				return new DescriptorChangeFactory().createNew("a.reference", oDescriptorInlineChange, 'CUSTOMER_BASE');
 			}).then(function(oDescriptorChange) {
 				_oDescriptorChange = oDescriptorChange;

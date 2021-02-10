@@ -40,24 +40,24 @@ sap.ui.define([
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	var oStatistic = Control.extend("sap.ui.dt.enablement.report.Statistic", /** @lends sap.ui.dt.enablement.report.Statistic.prototype */ {
-		metadata : {
+		metadata: {
 			library: "sap.ui.dt",
-			properties : {
-				data : {
-					type : "object"
+			properties: {
+				data: {
+					type: "object"
 				}
 			},
-			aggregations : {
-				_form : {
-					type : "sap.ui.layout.form.SimpleForm",
-					hidden : true,
-					multiple : false
+			aggregations: {
+				_form: {
+					type: "sap.ui.layout.form.SimpleForm",
+					hidden: true,
+					multiple: false
 				}
 			}
 		},
 
 
-		init : function() {
+		init: function() {
 			this._oModel = null;
 			this.setAggregation("_form", this._createForm());
 		},
@@ -66,11 +66,11 @@ sap.ui.define([
 		 * Called when the Statistic is destroyed
 		 * @protected
 		 */
-		exit : function() {
+		exit: function() {
 			this.setData(null);
 		},
 
-		setData : function(oData) {
+		setData: function(oData) {
 			if (this._oModel) {
 				this._oModel.destroy();
 				delete this._oModel;
@@ -85,11 +85,11 @@ sap.ui.define([
 		},
 
 
-		_createForm : function() {
+		_createForm: function() {
 			var oForm = new SimpleForm(this.getId() + "--form", {
-				editable : false,
-				title : "Statistics",
-				content : [
+				editable: false,
+				title: "Statistics",
+				content: [
 					new Label(this.getId() + "--form-supported-label", {text: "Supported"}),
 					new Text(this.getId() + "--form-supported-value", {text: "{/statistic/SUPPORTED}"}),
 					new Label(this.getId() + "--form-partial-supported-label", {text: "Partial Supported"}),
@@ -105,7 +105,7 @@ sap.ui.define([
 			return oForm;
 		},
 
-		_getForm : function() {
+		_getForm: function() {
 			return this.getAggregation("_form");
 		}
 	});

@@ -41,12 +41,12 @@ function (
 	 * @experimental Since 1.54. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var SelectionManager = ManagedObject.extend("sap.ui.dt.SelectionManager", {
-		metadata : {
+		metadata: {
 			events: {
-				change : {
-					parameters : {
-						selection : {
-							type : "sap.ui.dt.ElementOverlay[]"
+				change: {
+					parameters: {
+						selection: {
+							type: "sap.ui.dt.ElementOverlay[]"
 						}
 					}
 				}

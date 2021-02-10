@@ -76,7 +76,7 @@ sap.ui.define([
 			for (var i = 0; i < iRtaStartCounter; i++) {
 				/* eslint no-new: 0 */
 				new RuntimeAuthoring({
-					rootControl : oHorizontalLayout
+					rootControl: oHorizontalLayout
 				});
 			}
 

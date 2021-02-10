@@ -126,7 +126,7 @@ function(
 		oSelectDialog.addStyleClass(RtaUtils.getRtaStyleClassName());
 
 		oSelectDialog.bindAggregation("items", {
-			path:"/icons",
+			path: "/icons",
 			template: new StandardListItem({
 				title: "{name}",
 				description: "",
@@ -143,7 +143,7 @@ function(
 		aUI5Icons.forEach(function(sName) {
 			aIcons.push({
 				icon: IconPool.getIconInfo(sName).uri,
-				name : sName.toLowerCase()
+				name: sName.toLowerCase()
 			});
 		});
 
@@ -261,19 +261,19 @@ function(
 	}
 
 	var AppVariantDialog = Dialog.extend("sap.ui.rta.appVariant.AppVariantDialog", {
-		metadata : {
-			library : "sap.ui.rta",
-			events : {
+		metadata: {
+			library: "sap.ui.rta",
+			events: {
 
 				/**
 				 * This event will be fired when the user clicks the Create button on the dialog.
 				 */
-				create : {},
+				create: {},
 
 				/**
 				 * This event will be fired when the user clicks the Cancel button on the dialog.
 				 */
-				cancel : {}
+				cancel: {}
 			}
 		},
 		init: function() {

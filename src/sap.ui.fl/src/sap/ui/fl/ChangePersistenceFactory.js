@@ -38,7 +38,7 @@ sap.ui.define([
 		var oChangePersistence = ChangePersistenceFactory._instanceCache[sComponentName];
 		if (!oChangePersistence) {
 			var oComponent = {
-				name : sComponentName
+				name: sComponentName
 			};
 			oChangePersistence = new ChangePersistence(oComponent);
 			ChangePersistenceFactory._instanceCache[sComponentName] = oChangePersistence;

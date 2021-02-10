@@ -60,8 +60,8 @@ sap.ui.define([
 
 	function createAppComponent() {
 		var oDescriptor = {
-			"sap.app" : {
-				id : "reference.app",
+			"sap.app": {
+				id: "reference.app",
 				applicationVersion: {
 					version: "1.2.3"
 				}
@@ -71,7 +71,7 @@ sap.ui.define([
 		var oManifest = new Manifest(oDescriptor);
 		var oAppComponent = {
 			name: "testComponent",
-			getManifest : function() {
+			getManifest: function() {
 				return oManifest;
 			},
 			getId: function() {
@@ -107,8 +107,8 @@ sap.ui.define([
 				changeSpecificData: {
 					changeType: sChangeType,
 					content: {
-						card : {
-							"customer.acard" : {}
+						card: {
+							"customer.acard": {}
 						}
 					},
 					texts: {
@@ -137,7 +137,7 @@ sap.ui.define([
 			};
 			var fnPersistenceStub = getMethodStub(mPropertyBag.changeSpecificData, sReturnValue);
 
-			mockFlexController(mPropertyBag.selector, { createChangeWithControlSelector : fnPersistenceStub });
+			mockFlexController(mPropertyBag.selector, { createChangeWithControlSelector: fnPersistenceStub });
 
 			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
@@ -152,7 +152,7 @@ sap.ui.define([
 			};
 			var fnPersistenceStub = getMethodStub(mPropertyBag.changeSpecificData, sReturnValue);
 
-			mockFlexController(mPropertyBag.selector.view, { createChangeWithExtensionPointSelector : fnPersistenceStub });
+			mockFlexController(mPropertyBag.selector.view, { createChangeWithExtensionPointSelector: fnPersistenceStub });
 
 			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
@@ -164,7 +164,7 @@ sap.ui.define([
 			};
 			this.aObjectsToDestroy.push(mPropertyBag.selector);
 			var fnPersistenceStub = getMethodStub([mPropertyBag.changeSpecificData, mPropertyBag.selector], sReturnValue);
-			mockFlexController(mPropertyBag.selector, { createBaseChange : fnPersistenceStub });
+			mockFlexController(mPropertyBag.selector, { createBaseChange: fnPersistenceStub });
 			assert.strictEqual(ChangesWriteAPI.create(mPropertyBag), sReturnValue, "then the flex persistence was called with correct parameters");
 		});
 

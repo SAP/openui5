@@ -76,7 +76,7 @@ function(
 			var sModuleName = "sap/ui/fl/qunit/PreprocessorImpl/1.0.0/codeExtensions/firstCodeExt";
 			sap.ui.predefine(sModuleName, ['sap/ui/core/mvc/ControllerExtension'], function(ControllerExtension) {
 				return ControllerExtension.extend('ui.s2p.mm.purchorder.approve.Extension1', {
-					extHookOnInit:function() {},
+					extHookOnInit: function() {},
 					onInit: function() {}
 				});
 			});
@@ -117,9 +117,9 @@ function(
 			var oAppComponent = {
 				getManifest: function () {
 					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							}
 						},
 						getEntry: function () {
@@ -131,9 +131,9 @@ function(
 				},
 				getManifestObject: function () {
 					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							}
 						},
 						getEntry: function () {
@@ -297,9 +297,9 @@ function(
 			var oComponent = {
 				getManifestObject: function () {
 					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							},
 							type: "component"
 						}
@@ -307,9 +307,9 @@ function(
 				},
 				getManifest: function () {
 					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							},
 							type: "component"
 						}

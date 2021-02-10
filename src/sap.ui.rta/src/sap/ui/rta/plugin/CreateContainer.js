@@ -88,17 +88,17 @@ sap.ui.define([
 		var sVariantManagementReference = this.getVariantManagementReference(oParentOverlay);
 
 		return this.getCommandFactory().getCommandFor(oParent, "createContainer", {
-			newControlId : sNewControlID,
-			label : this._getContainerTitle(vAction, oParent, oDesignTimeMetadata),
-			index : iIndex,
-			parentId : oParent.getId()
+			newControlId: sNewControlID,
+			label: this._getContainerTitle(vAction, oParent, oDesignTimeMetadata),
+			index: iIndex,
+			parentId: oParent.getId()
 		}, oDesignTimeMetadata, sVariantManagementReference)
 
 		.then(function(oCreateCommand) {
 			this.fireElementModified({
-				command : oCreateCommand,
-				action : vAction,
-				newControlId : sNewControlID
+				command: oCreateCommand,
+				action: vAction,
+				newControlId: sNewControlID
 			});
 		}.bind(this))
 

@@ -7,20 +7,20 @@ function(
 	"use strict";
 
 	var Component = UIComponent.extend("sap.m.sample.Table.Component", {
-		metadata : {
+		metadata: {
 			manifest: "json",
-			publicMethods : [
+			publicMethods: [
 				"getTable"
 			],
-			dependencies : {
-				libs : [
+			dependencies: {
+				libs: [
 					"sap.m",
 					"sap.ui.layout"
 				]
 			},
-			config : {
-				sample : {
-					files : [
+			config: {
+				sample: {
+					files: [
 						"Table.view.xml",
 						"Table.controller.js",
 						"Formatter.js"
@@ -29,7 +29,7 @@ function(
 			}
 		},
 
-		getTable : function () {
+		getTable: function () {
 			return this._rootView.getContent()[0];
 		}
 	});
@@ -38,8 +38,8 @@ function(
 		var oApp = new sap.m.App();
 
 		var oPage = sap.ui.view(this.createId("idMain1"), {
-			viewName : "sap.m.sample.Table.Table",
-			type : sap.ui.core.mvc.ViewType.XML
+			viewName: "sap.m.sample.Table.Table",
+			type: sap.ui.core.mvc.ViewType.XML
 		});
 
 		oApp.addPage(oPage);

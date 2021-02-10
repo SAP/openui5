@@ -26,8 +26,8 @@ sap.ui.define([
 			this.originalUShell = sap.ushell;
 
 			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function() {
+				Container: {
+					getService: function() {
 						return {
 							getLinks: function() {
 								return Promise.resolve([{
@@ -36,7 +36,7 @@ sap.ui.define([
 							}
 						};
 					},
-					setDirtyFlag : function() {
+					setDirtyFlag: function() {
 						return "";
 					}
 				}
@@ -49,12 +49,12 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with some missing properties (Key user view) on S4/Hana Cloud", function (assert) {
 			var oAppVariantInfo = {
-				appId : "id1",
-				title : "title1",
-				isOriginal : true,
+				appId: "id1",
+				title: "title1",
+				isOriginal: true,
 				originLayer: Layer.VENDOR,
 				isAppVariant: false,
-				descriptorUrl : "url1",
+				descriptorUrl: "url1",
 				hasStartableIntent: true,
 				startWith: {
 					semanticObject: "SemObj",
@@ -64,10 +64,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -83,11 +83,11 @@ sap.ui.define([
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app var status 'U'", function (assert) {
 			var oAppVariantInfo = {
-				appId : "id1",
-				title : "title1",
+				appId: "id1",
+				title: "title1",
 				originLayer: Layer.VENDOR,
 				isAppVariant: true,
-				descriptorUrl : "url1",
+				descriptorUrl: "url1",
 				hasStartableIntent: true,
 				startWith: {
 					semanticObject: "SemObj",
@@ -98,10 +98,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -120,21 +120,21 @@ sap.ui.define([
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with app var status 'R'", function (assert) {
 			var oAppVariantInfo = {
-				appId : "id1",
-				title : "title1",
+				appId: "id1",
+				title: "title1",
 				originLayer: Layer.VENDOR,
 				isAppVariant: true,
-				descriptorUrl : "url1",
+				descriptorUrl: "url1",
 				hasStartableIntent: false,
 				appVarStatus: 'R'
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -153,20 +153,20 @@ sap.ui.define([
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana onPremise and it has no target mappings", function (assert) {
 			var oAppVariantInfo = {
-				appId : "id1",
-				title : "title1",
+				appId: "id1",
+				title: "title1",
 				originLayer: Layer.VENDOR,
 				isAppVariant: true,
-				descriptorUrl : "url1",
+				descriptorUrl: "url1",
 				hasStartableIntent: false
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 
@@ -184,11 +184,11 @@ sap.ui.define([
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana onPremise and it has target mappings", function (assert) {
 			var oAppVariantInfo = {
-				appId : "id1",
-				title : "title1",
+				appId: "id1",
+				title: "title1",
 				originLayer: Layer.VENDOR,
 				isAppVariant: true,
-				descriptorUrl : "url1",
+				descriptorUrl: "url1",
 				hasStartableIntent: true,
 				startWith: {
 					semanticObject: "SemObj",
@@ -198,10 +198,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 
@@ -219,11 +219,11 @@ sap.ui.define([
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called on S4/Hana Cloud with status 'Error'", function (assert) {
 			var oAppVariantInfo = {
-				appId : "id1",
-				title : "title1",
+				appId: "id1",
+				title: "title1",
 				originLayer: Layer.VENDOR,
 				isAppVariant: true,
-				descriptorUrl : "url1",
+				descriptorUrl: "url1",
 				hasStartableIntent: true,
 				startWith: {
 					semanticObject: "SemObj",
@@ -234,10 +234,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -255,15 +255,15 @@ sap.ui.define([
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with no intent parameters (Key user view) in on prem system", function (assert) {
 			var oAppVariantInfo = {
-				appId : "id1",
-				title : "title1",
-				subTitle : "subTitle1",
-				description : "description1",
-				iconUrl : "sap-icon://history",
-				isOriginal : true,
+				appId: "id1",
+				title: "title1",
+				subTitle: "subTitle1",
+				description: "description1",
+				iconUrl: "sap-icon://history",
+				isOriginal: true,
 				originLayer: Layer.VENDOR,
 				isAppVariant: false,
-				descriptorUrl : "url1",
+				descriptorUrl: "url1",
 				hasStartableIntent: true,
 				startWith: {
 					semanticObject: "SemObj",
@@ -273,10 +273,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 
@@ -290,21 +290,21 @@ sap.ui.define([
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as an object (Key user view) on cloud system", function (assert) {
 			var oAppVariantInfo = {
-				appId : "id1",
-				title : "title1",
-				subTitle : "subTitle1",
-				description : "description1",
-				iconUrl : "sap-icon://history",
-				isOriginal : true,
+				appId: "id1",
+				title: "title1",
+				subTitle: "subTitle1",
+				description: "description1",
+				iconUrl: "sap-icon://history",
+				isOriginal: true,
 				originLayer: Layer.VENDOR,
 				isAppVariant: false,
-				descriptorUrl : "url1",
+				descriptorUrl: "url1",
 				hasStartableIntent: true,
 				startWith: {
 					semanticObject: "SemObj",
 					action: "Action",
 					parameters: {
-						"sap-appvar-id" : {
+						"sap-appvar-id": {
 							value: "id1",
 							required: true
 						}
@@ -314,10 +314,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -328,31 +328,31 @@ sap.ui.define([
 
 		QUnit.test("When getAppVariantOverviewAttributes() method is called with intent parameter as a string (Key user view) in on prem system", function (assert) {
 			var oAppVariantInfo = {
-				appId : "id1",
-				title : "title1",
-				subTitle : "subTitle1",
-				description : "description1",
-				iconUrl : "sap-icon://history",
-				isOriginal : true,
+				appId: "id1",
+				title: "title1",
+				subTitle: "subTitle1",
+				description: "description1",
+				iconUrl: "sap-icon://history",
+				isOriginal: true,
 				originLayer: Layer.VENDOR,
 				isAppVariant: false,
-				descriptorUrl : "url1",
+				descriptorUrl: "url1",
 				hasStartableIntent: true,
 				startWith: {
 					semanticObject: "SemObj",
 					action: "Action",
 					parameters: {
-						"sap-appvar-id" : "id1"
+						"sap-appvar-id": "id1"
 					}
 				}
 			};
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 
@@ -366,21 +366,21 @@ sap.ui.define([
 				response: {
 					items: [
 						{
-							appId : "id1",
-							title : "title1",
-							subTitle : "subTitle1",
-							description : "description1",
-							iconUrl : "sap-icon://history",
-							isOriginal : true,
+							appId: "id1",
+							title: "title1",
+							subTitle: "subTitle1",
+							description: "description1",
+							iconUrl: "sap-icon://history",
+							isOriginal: true,
 							originLayer: Layer.VENDOR,
 							isAppVariant: false,
-							descriptorUrl : "url1",
+							descriptorUrl: "url1",
 							hasStartableIntent: true,
 							startWith: {
 								semanticObject: "SemObj",
 								action: "Action",
 								parameters: {
-									"sap-appvar-id" : {
+									"sap-appvar-id": {
 										value: "id1"
 									}
 								}
@@ -392,10 +392,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -421,10 +421,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -439,15 +439,15 @@ sap.ui.define([
 				response: {
 					items: [
 						{
-							appId : "id1",
-							title : "title1",
-							subTitle : "subTitle1",
-							description : "description1",
-							iconUrl : "sap-icon://history",
-							isOriginal : true,
+							appId: "id1",
+							title: "title1",
+							subTitle: "subTitle1",
+							description: "description1",
+							iconUrl: "sap-icon://history",
+							isOriginal: true,
 							originLayer: Layer.VENDOR,
 							isAppVariant: false,
-							descriptorUrl : "url1",
+							descriptorUrl: "url1",
 							hasStartableIntent: false
 						}
 					]
@@ -456,10 +456,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 
@@ -479,15 +479,15 @@ sap.ui.define([
 				response: {
 					items: [
 						{
-							appId : "id1",
-							title : "title1",
-							subTitle : "subTitle1",
-							description : "description1",
-							iconUrl : "sap-icon://history",
+							appId: "id1",
+							title: "title1",
+							subTitle: "subTitle1",
+							description: "description1",
+							iconUrl: "sap-icon://history",
 							originLayer: Layer.VENDOR,
-							isOriginal : false,
+							isOriginal: false,
 							isAppVariant: true,
-							descriptorUrl : "url1",
+							descriptorUrl: "url1",
 							hasStartableIntent: false,
 							startWith: {
 								semanticObject: "",
@@ -496,21 +496,21 @@ sap.ui.define([
 							}
 						},
 						{
-							appId : "id2",
-							title : "title2",
-							subTitle : "subTitle2",
-							description : "description2",
-							iconUrl : "sap-icon://account",
-							isOriginal : true,
+							appId: "id2",
+							title: "title2",
+							subTitle: "subTitle2",
+							description: "description2",
+							iconUrl: "sap-icon://account",
+							isOriginal: true,
 							originLayer: Layer.VENDOR,
 							isAppVariant: false,
-							descriptorUrl : "url2",
+							descriptorUrl: "url2",
 							hasStartableIntent: true,
 							startWith: {
 								semanticObject: "SemObj",
 								action: "Action",
 								parameters: {
-									"sap-appvar-id" : "id2"
+									"sap-appvar-id": "id2"
 								}
 							}
 						}
@@ -528,10 +528,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -561,21 +561,21 @@ sap.ui.define([
 				response: {
 					items: [
 						{
-							appId : "id1",
-							title : "title1",
-							subTitle : "subTitle1",
-							description : "description1",
-							iconUrl : "sap-icon://history",
+							appId: "id1",
+							title: "title1",
+							subTitle: "subTitle1",
+							description: "description1",
+							iconUrl: "sap-icon://history",
 							originLayer: Layer.VENDOR,
-							isOriginal : false,
+							isOriginal: false,
 							isAppVariant: true,
-							descriptorUrl : "url1",
+							descriptorUrl: "url1",
 							hasStartableIntent: true,
 							startWith: {
 								semanticObject: "SemObj",
 								action: "Action",
 								parameters: {
-									"sap-appvar-id" : {
+									"sap-appvar-id": {
 										value: "id1"
 									}
 								}
@@ -597,10 +597,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -627,8 +627,8 @@ sap.ui.define([
 			// this overrides the ushell globally => we need to restore it!
 
 			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function() {
+				Container: {
+					getService: function() {
 						return {
 							getLinks: function() {
 								return Promise.resolve([]);
@@ -648,21 +648,21 @@ sap.ui.define([
 				response: {
 					items: [
 						{
-							appId : "id1",
-							title : "title1",
-							subTitle : "subTitle1",
-							description : "description1",
-							iconUrl : "sap-icon://history",
-							isOriginal : true,
+							appId: "id1",
+							title: "title1",
+							subTitle: "subTitle1",
+							description: "description1",
+							iconUrl: "sap-icon://history",
+							isOriginal: true,
 							originLayer: Layer.VENDOR,
 							isAppVariant: true,
-							descriptorUrl : "url1",
+							descriptorUrl: "url1",
 							hasStartableIntent: true,
 							startWith: {
 								semanticObject: "SemObj",
 								action: "Action",
 								parameters: {
-									"sap-appvar-id" : "id1"
+									"sap-appvar-id": "id1"
 								}
 							}
 						}
@@ -672,10 +672,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -695,8 +695,8 @@ sap.ui.define([
 		QUnit.test("When getDescriptor() method is called", function (assert) {
 			var oResult = {
 				response: {
-					"sap.app" : {
-						id : "testId"
+					"sap.app": {
+						id: "testId"
 					}
 				}
 			};

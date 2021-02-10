@@ -114,17 +114,17 @@ sap.ui.define([
 
 	function _oPropertyToAdditionalElementInfo (oProperty) {
 		return {
-			selected : false,
-			label : oProperty.label || oProperty.name,
+			selected: false,
+			label: oProperty.label || oProperty.name,
 			parentPropertyName: oProperty.parentPropertyName ? oProperty.parentPropertyName : "",
 			duplicateName: oProperty.duplicateName ? oProperty.duplicateName : false,
-			tooltip :  oProperty.tooltip || oProperty.label,
+			tooltip: oProperty.tooltip || oProperty.label,
 			originalLabel: "",
 			//command relevant data
-			type : "delegate",
-			entityType : oProperty.entityType,
-			name : oProperty.name,
-			bindingPath : oProperty.bindingPath
+			type: "delegate",
+			entityType: oProperty.entityType,
+			name: oProperty.name,
+			bindingPath: oProperty.bindingPath
 		};
 	}
 
@@ -132,16 +132,16 @@ sap.ui.define([
 		var oElement = mData.element;
 		var mAction = mData.action;
 		return {
-			selected : false,
-			label : oElement.__label || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
-			tooltip : oElement.__tooltip || ElementUtil.getLabelForElement(oElement, mAction.getLabel) || oElement.__bindingPath,
+			selected: false,
+			label: oElement.__label || ElementUtil.getLabelForElement(oElement, mAction.getLabel),
+			tooltip: oElement.__tooltip || ElementUtil.getLabelForElement(oElement, mAction.getLabel) || oElement.__bindingPath,
 			parentPropertyName: oElement.__parentPropertyName ? oElement.__parentPropertyName : "",
 			duplicateName: oElement.__duplicateName ? oElement.__duplicateName : false,
 			originalLabel: oElement.__renamedLabel && oElement.__label !== oElement.__originalLabel ? oElement.__originalLabel : "",
 			bindingPath: oElement.__bindingPath, //used for OPA tests and debugging
 			//command relevant data
-			type : "invisible",
-			elementId : oElement.getId()
+			type: "invisible",
+			elementId: oElement.getId()
 		};
 	}
 
@@ -411,7 +411,7 @@ sap.ui.define([
 		 *
 		 * @return {Promise} - returns a Promise which resolves with a list of hidden controls are available to display
 		 */
-		enhanceInvisibleElements : function(oElement, mActions) {
+		enhanceInvisibleElements: function(oElement, mActions) {
 			var mRevealData = mActions.reveal;
 			var mAddViaDelegate = mActions.addViaDelegate;
 
@@ -440,8 +440,8 @@ sap.ui.define([
 
 						if (bIncludeElement) {
 							aAllElementData.push({
-								element : oInvisibleElement,
-								action : mRevealAction
+								element: oInvisibleElement,
+								action: mRevealAction
 							});
 						}
 					});

@@ -177,7 +177,7 @@ sap.ui.define([
 				parameters: {
 					operation: "add",
 					metadata: {
-						extensions : {}
+						extensions: {}
 					}
 				}
 			};

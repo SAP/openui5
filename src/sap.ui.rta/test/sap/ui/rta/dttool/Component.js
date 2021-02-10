@@ -5,7 +5,7 @@ sap.ui.define([
 ], function (UIComponent, FakeLrepConnectorLocalStorage, UrlParser) {
 	"use strict";
 	return UIComponent.extend("sap.ui.rta.dttool.Component", {
-		metadata : {
+		metadata: {
 			manifest: "json"
 		},
 
@@ -14,7 +14,7 @@ sap.ui.define([
 			this._createFakeLrep();
 		},
 
-		init : function () {
+		init: function () {
 			// call the init function of the parent
 			UIComponent.prototype.init.apply(this, arguments);
 

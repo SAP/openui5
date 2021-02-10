@@ -40,7 +40,7 @@ function (
 			assert.expect(2);
 			var sButtonId = this.oButton.getId();
 			this.oElementOverlay.setDesignTimeMetadata({
-				tool : {
+				tool: {
 					start: function(oButton) {
 						assert.equal(oButton.getId(), sButtonId, "the function was called with the control as parameter");
 					},
@@ -55,7 +55,7 @@ function (
 
 		QUnit.test("with both entries not being a function in DesignTimeMetadata", function (assert) {
 			this.oElementOverlay.setDesignTimeMetadata({
-				tool : {
+				tool: {
 					start: "notAFunction",
 					stop: "notAFunction"
 				}

@@ -33,7 +33,7 @@ function (
 
 	function parameterizedTest(oSimpleFormLayout) {
 		QUnit.module("Given the SimpleForm using " + oSimpleFormLayout, {
-			beforeEach : function(assert) {
+			beforeEach: function(assert) {
 				var done = assert.async();
 
 				XMLView.create({id: "testView", viewName: "dt.view.TestSimpleForm"})
@@ -68,7 +68,7 @@ function (
 					}.bind(this));
 			},
 
-			afterEach : function() {
+			afterEach: function() {
 				this.oView.destroy();
 				this.oDesignTime.destroy();
 			}

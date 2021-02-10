@@ -22,17 +22,17 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a AppVariantFactory for S4/Hana onPremise systems", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -69,7 +69,7 @@ sap.ui.define([
 		QUnit.test("When prepareUpdate is called only once", function(assert) {
 			sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				})
 			});
@@ -98,7 +98,7 @@ sap.ui.define([
 		QUnit.test("When prepareUpdate is called and variant was saved as a local object", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: "CUSTOMER",
 					packageName: "$TMP"
@@ -127,7 +127,7 @@ sap.ui.define([
 		QUnit.test("When prepareUpdate is called and variant was already published", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: "CUSTOMER"
 				})
@@ -151,7 +151,7 @@ sap.ui.define([
 		QUnit.test("When prepareDelete is called", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: "CUSTOMER"
 				})
@@ -183,7 +183,7 @@ sap.ui.define([
 		QUnit.test("When prepareDelete is called to prepare a delete app variant config and submit is called to delete an app variant saved as local object", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: "CUSTOMER",
 					packageName: ""
@@ -208,7 +208,7 @@ sap.ui.define([
 		QUnit.test("When prepareDelete is called to prepare a delete app variant config and submit is called to delete a published app variant", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: "CUSTOMER",
 					packageName: ""
@@ -250,7 +250,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and getting id of app variant is checked", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				assert.strictEqual(oVariant.getId(), "a.id");
@@ -259,7 +259,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and setting id of app variant is cross checked", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				assert.strictEqual(oVariant.getReference(), "a.reference");
@@ -270,7 +270,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and setting incorrect id of app variant failed", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				assert.strictEqual(oVariant.getReference(), "a.reference");
@@ -282,7 +282,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and getting id of reference app is checked", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				assert.strictEqual(oVariant.getReference(), "a.reference");
@@ -291,7 +291,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and getting version of an app variant is checked", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				version: "1.0.0"
 			}).then(function(oVariant) {
@@ -301,7 +301,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and namespace of an app variant is checked", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				assert.strictEqual(oVariant.getNamespace(), "apps/a.reference/appVariants/a.id/");
@@ -311,7 +311,7 @@ sap.ui.define([
 		QUnit.test("When prepareCreate is called and setting transport is checked", function(assert) {
 			var _oVariant;
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				_oVariant = oVariant;
@@ -323,7 +323,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and setting transport has wrong format", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				return oVariant.setTransportRequest("WRONG_FORMAT");
@@ -337,7 +337,7 @@ sap.ui.define([
 		QUnit.test("When prepareCreate is called and setting package is checked", function(assert) {
 			var _oVariant;
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				_oVariant = oVariant;
@@ -349,7 +349,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and setting package has wrong format", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				return oVariant.setPackage("SomePackage_WrongFormat");
@@ -362,7 +362,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and setting layer to customer", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.CUSTOMER
 			}).then(function(oVariant) {
@@ -372,7 +372,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and setting layer to customer", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.CUSTOMER_BASE
 			}).then(function(oVariant) {
@@ -382,7 +382,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and setting layer to partner", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.PARTNER
 			}).then(function(oVariant) {
@@ -392,7 +392,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called and setting layer to vendor", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				layer: Layer.VENDOR
 			}).then(function(oVariant) {
@@ -402,7 +402,7 @@ sap.ui.define([
 
 		QUnit.test("When prepareCreate is called, variant saved into backend and checking app variant properties", function(assert) {
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				assert.notEqual(oVariant, null);
@@ -424,7 +424,7 @@ sap.ui.define([
 				})
 				.then(function() {
 					return AppVariantFactory.prepareCreate({
-						id : "a.id"
+						id: "a.id"
 					});
 				})
 				.then(function() {
@@ -435,18 +435,6 @@ sap.ui.define([
 				})
 				.then(function() {
 					return AppVariantFactory.prepareCreate({
-						reference : "a.reference"
-					});
-				})
-				.then(function() {
-					assert.notOk("Should never succeed!");
-				})
-				.catch(function(sError) {
-					assert.ok(sError);
-				})
-				.then(function() {
-					return AppVariantFactory.createNew({
-						id : 1,
 						reference: "a.reference"
 					});
 				})
@@ -458,7 +446,19 @@ sap.ui.define([
 				})
 				.then(function() {
 					return AppVariantFactory.createNew({
-						id : "a.id",
+						id: 1,
+						reference: "a.reference"
+					});
+				})
+				.then(function() {
+					assert.notOk("Should never succeed!");
+				})
+				.catch(function(sError) {
+					assert.ok(sError);
+				})
+				.then(function() {
+					return AppVariantFactory.createNew({
+						id: "a.id",
 						reference: 1
 					});
 				})
@@ -470,7 +470,7 @@ sap.ui.define([
 				})
 				.then(function() {
 					return AppVariantFactory.createNew({
-						id : "a.id",
+						id: "a.id",
 						reference: "a.reference",
 						version: 2
 					});
@@ -483,7 +483,7 @@ sap.ui.define([
 				})
 				.then(function() {
 					return AppVariantFactory.createNew({
-						id : "a.id",
+						id: "a.id",
 						reference: "a.reference",
 						layer: true
 					});
@@ -499,13 +499,13 @@ sap.ui.define([
 		QUnit.test("When prepareCreate is called and app variant is submitted", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: Layer.CUSTOMER
 				})
 			});
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oAppVariant) {
 				return oAppVariant.submit();
@@ -518,13 +518,13 @@ sap.ui.define([
 		QUnit.test("When prepareCreate is called with referenceVersion and app variant is submitted", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: Layer.CUSTOMER
 				})
 			});
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				referenceVersion: "1.1"
 			}).then(function(oAppVariant) {
@@ -539,7 +539,7 @@ sap.ui.define([
 		QUnit.test("When prepareUpdate is called with referenceVersion and app variant is submitted as a local object", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: Layer.CUSTOMER
 				})
@@ -560,7 +560,7 @@ sap.ui.define([
 		QUnit.test("When prepareUpdate is called and app variant is submitted which is already published", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: Layer.CUSTOMER
 				})
@@ -581,7 +581,7 @@ sap.ui.define([
 		QUnit.test("When prepareDelete is called and app variant is deleted which was saved as a local object", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: Layer.CUSTOMER
 				})
@@ -601,7 +601,7 @@ sap.ui.define([
 		QUnit.test("When prepareDelete is called and app variant is deleted which was already published", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: Layer.CUSTOMER
 				})
@@ -621,32 +621,32 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AppVariantFactory for S4/Hana Cloud systems", {
-		beforeEach : function() {
+		beforeEach: function() {
 			//define sandboxes and stubs explicitly for each modules
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("When prepareCreate is called and variant is saved into the backend", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: "CUSTOMER",
 					packageName: "YY1_DEFAULT_123"
 				})
 			});
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				return oVariant.submit();
@@ -659,14 +659,14 @@ sap.ui.define([
 		QUnit.test("SmartBusiness: When prepareCreate is called and variant is saved into the backend", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: "CUSTOMER",
 					packageName: "YY1_DEFAULT_123"
 				})
 			});
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference",
 				transport: "ATO_NOTIFICATION"
 			}).then(function(oVariant) {
@@ -680,7 +680,7 @@ sap.ui.define([
 		QUnit.test("Smart Business: When prepareUpdate is called and variant was already published", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: "CUSTOMER",
 					packageName: "YY1_DEFAULT_123"
@@ -699,7 +699,7 @@ sap.ui.define([
 		QUnit.test("Smart Business: When prepareUpdate is called and variant was already published", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: "CUSTOMER",
 					packageName: "YY1_DEFAULT_123"
@@ -718,7 +718,7 @@ sap.ui.define([
 		QUnit.test("When prepareDelete is called to prepare a delete app variant config and submit is called to delete an app variant saved as local object", function(assert) {
 			var oNewConnectorStub = sandbox.stub(WriteUtils, "sendRequest").resolves({
 				response: JSON.stringify({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference",
 					layer: "CUSTOMER"
 				})

@@ -65,11 +65,11 @@ sap.ui.define([
 					try {
 						var oRuntimeResourceModel = new ResourceModel({
 							bundleUrl: sap.ui.resource(sTestLibrary, "messagebundle.properties"),
-							bundleLocale:"en"
+							bundleLocale: "en"
 						});
 						var oDesigntimeResourceModel = new ResourceModel({
 							bundleUrl: sap.ui.resource(sTestLibrary + ".designtime", "messagebundle.properties"),
-							bundleLocale:"en"
+							bundleLocale: "en"
 						});
 						mBundles.runtime = oRuntimeResourceModel.getResourceBundle();
 						mBundles.designtime = oDesigntimeResourceModel.getResourceBundle();
@@ -77,11 +77,11 @@ sap.ui.define([
 							if (sTestLibrary !== sLib) {
 								oRuntimeResourceModel.enhance({
 									bundleUrl: sap.ui.resource(sLib, "messagebundle.properties"),
-									bundleLocale:"en"
+									bundleLocale: "en"
 								});
 								oDesigntimeResourceModel.enhance({
 									bundleUrl: sap.ui.resource(sLib + ".designtime", "messagebundle.properties"),
-									bundleLocale:"en"
+									bundleLocale: "en"
 								});
 							}
 						});
@@ -114,19 +114,19 @@ sap.ui.define([
 	};
 	LibraryTest.version = 2.0;
 	var mModelChecks = {
-		"/" : {
+		"/": {
 			optional: false,
 			check: function (assert, oObject, sControlName) {
 				assert.strictEqual(typeof oObject, "object", sControlName + " is an object");
 			}
 		},
-		"/designtimeModule" : {
+		"/designtimeModule": {
 			optional: false,
 			check: function (assert, sString, sControlName) {
 				assert.strictEqual(typeof sString, "string", sControlName + " defines /designtimeModule : " + sString);
 			}
 		},
-		"/actions" : {
+		"/actions": {
 			optional: true,
 			check: function (assert, mActions, sControlName) {
 				Object.keys(mActions).forEach(function(sAction) {
@@ -140,7 +140,7 @@ sap.ui.define([
 				});
 			}
 		},
-		"/name" : {
+		"/name": {
 			optional: true,
 			check: function (assert, mEntry, sControlName) {
 				//name can be a string like this "{name}"
@@ -188,7 +188,7 @@ sap.ui.define([
 				});
 			}
 		},
-		"/palette" : {
+		"/palette": {
 			optional: true,
 			check: function (assert, mEntry, sControlName) {
 				var aValidGroups = ["ACTION", "DISPLAY", "LAYOUT", "LIST", "INPUT", "CONTAINER", "CHART", "TILE", "DIALOG"];
@@ -210,7 +210,7 @@ sap.ui.define([
 				}
 			}
 		},
-		"/templates" : {
+		"/templates": {
 			optional: true,
 			check: function (assert, mEntry /* ,sControlName */) {
 				if (mEntry.create) { //icons in palette optional

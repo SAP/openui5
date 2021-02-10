@@ -36,7 +36,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("SmartVariantManagementApplyAPI", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 		},
@@ -474,7 +474,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("SmartVariantManagementApplyAPI.getDefaultVariantId", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			this.oControl = new Control("controlId1");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
@@ -560,7 +560,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("SmartVariantManagementApplyAPI.getExecuteOnSelect", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			this.oControl = new Control("controlId1");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
@@ -649,7 +649,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("SmartVariantManagementApplyAPI._getChangeMap", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			this.oControl = new Control("controlId1");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);

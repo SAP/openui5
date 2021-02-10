@@ -87,14 +87,14 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oFlexSettings = {
 				layer: Layer.CUSTOMER,
 				developerMode: true,
 				qunitTestParameter: "qunitTestParameter"
 			};
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp,
+				rootControl: oComp,
 				flexSettings: this.oFlexSettings
 			});
 
@@ -105,7 +105,7 @@ sap.ui.define([
 				this.oRootControlOverlay = OverlayRegistry.getOverlay(oComp);
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();
@@ -185,7 +185,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a USER layer change", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oUserChange = new Change({
 				fileType: "change",
 				layer: Layer.USER,
@@ -204,7 +204,7 @@ sap.ui.define([
 			});
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp
+				rootControl: oComp
 			});
 			sandbox.stub(PersistenceWriteAPI, "getResetAndPublishInfo").resolves({
 				isResetEnabled: true,
@@ -213,7 +213,7 @@ sap.ui.define([
 
 			return RtaQunitUtils.clear();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();
@@ -255,8 +255,8 @@ sap.ui.define([
 				this.oRta._oVersionsModel.setProperty("/versioningEnabled", true);
 				var oDraftAvailableStub = sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 				var oPropertyBag = {
-					selector : oCompCont.getComponentInstance(),
-					layer : Layer.CUSTOMER
+					selector: oCompCont.getComponentInstance(),
+					layer: Layer.CUSTOMER
 				};
 
 				assert.equal(this.oRta._isDraftAvailable(), true, "then the 'isDraftAvailable' is true");
@@ -300,7 +300,7 @@ sap.ui.define([
 			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
 				publishAvailable: true,
 				saveAsAvailable: true,
-				draftAvailable : false
+				draftAvailable: false
 			}));
 			sandbox.stub(AppVariantUtils, "getManifirstSupport").returns(Promise.resolve({response: false}));
 			sandbox.stub(Utils, "getAppDescriptor").returns({"sap.app": {id: "1"}});
@@ -320,7 +320,7 @@ sap.ui.define([
 			sandbox.stub(this.oRta, '_getToolbarButtonsVisibility').returns(Promise.resolve({
 				publishAvailable: true,
 				saveAsAvailable: true,
-				draftAvailable : false
+				draftAvailable: false
 			 }));
 			sandbox.stub(RtaAppVariantFeature, "isOverviewExtended").returns(true);
 			sandbox.stub(RtaAppVariantFeature, "isManifestSupported").resolves(false);
@@ -338,13 +338,13 @@ sap.ui.define([
 
 		QUnit.test("when _onGetAppVariantOverview is called", function(assert) {
 			var oMenuButton = {
-				getId : function() {
+				getId: function() {
 					return 'keyUser';
 				}
 			};
 
 			var oEmptyEvent = new sap.ui.base.Event("emptyEventId", oMenuButton, {
-				item : oMenuButton
+				item: oMenuButton
 			});
 
 			var fnAppVariantFeatureSpy = sandbox.stub(RtaAppVariantFeature, "onGetOverview").returns(Promise.resolve(true));
@@ -355,16 +355,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started without toolbar...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp,
-				showToolbars : false
+				rootControl: oComp,
+				showToolbars: false
 			});
 
 			return RtaQunitUtils.clear()
 			.then(this.oRta.start.bind(this.oRta));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 			return RtaQunitUtils.clear();
@@ -422,7 +422,7 @@ sap.ui.define([
 			};
 		},
 
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			Device.os.macintosh = this.bMacintoshOriginal;
 		}
@@ -546,7 +546,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available together with a CommandStack with changes...", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
@@ -558,17 +558,17 @@ sap.ui.define([
 			return RtaQunitUtils.clear()
 			.then(function () {
 				oChangeRegistry.registerControlsForChanges({
-					"sap.ui.comp.smartform.GroupElement" : {
-						hideControl : "default"
+					"sap.ui.comp.smartform.GroupElement": {
+						hideControl: "default"
 					}
 				});
 			})
 			.then(function() {
 				this.oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
-					data : {
-						actions : {
-							remove : {
-								changeType : "hideControl"
+					data: {
+						actions: {
+							remove: {
+								changeType: "hideControl"
 							}
 						}
 					}
@@ -576,7 +576,7 @@ sap.ui.define([
 				// Create commmands
 				var oCommandFactory = new CommandFactory();
 				return oCommandFactory.getCommandFor(oElement1, "Remove", {
-					removedElement : oElement1
+					removedElement: oElement1
 				}, this.oGroupElementDesignTimeMetadata);
 			}.bind(this))
 
@@ -592,9 +592,9 @@ sap.ui.define([
 					// Start RTA with command stack
 					var oRootControl = oComp.getAggregation("rootControl");
 					this.oRta = new RuntimeAuthoring({
-						rootControl : oRootControl,
-						commandStack : this.oCommandStack,
-						showToolbars : true,
+						rootControl: oRootControl,
+						commandStack: this.oCommandStack,
+						showToolbars: true,
 						flexSettings: {
 							developerMode: false
 						}
@@ -624,7 +624,7 @@ sap.ui.define([
 			});
 		},
 
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oRemoveCommand.destroy();
 			this.oCommandStack.destroy();
@@ -747,25 +747,25 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available together with a CommandStack with changes...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
-			var oGroupElement1 = new GroupElement({id : oComp.createId("element1")});
-			var oGroupElement2 = new GroupElement({id : oComp.createId("element2")});
+			var oGroupElement1 = new GroupElement({id: oComp.createId("element1")});
+			var oGroupElement2 = new GroupElement({id: oComp.createId("element2")});
 			var oGroup = new Group({
-				id : oComp.createId("group"),
-				groupElements : [oGroupElement1, oGroupElement2]
+				id: oComp.createId("group"),
+				groupElements: [oGroupElement1, oGroupElement2]
 			});
 			this.oSmartForm = new SmartForm({
-				id : oComp.createId("smartform"),
-				groups : [oGroup]
+				id: oComp.createId("smartform"),
+				groups: [oGroup]
 			});
 			this.oSmartForm.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			var oGroupElementDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						remove : {
-							changeType : "hideControl"
+				data: {
+					actions: {
+						remove: {
+							changeType: "hideControl"
 						}
 					}
 				}
@@ -773,9 +773,9 @@ sap.ui.define([
 			var oCommandFactory = new CommandFactory();
 			this.oCommandStack = new Stack();
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oSmartForm,
-				commandStack : this.oCommandStack,
-				showToolbars : true
+				rootControl: this.oSmartForm,
+				commandStack: this.oCommandStack,
+				showToolbars: true
 			});
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(false);
 
@@ -783,7 +783,7 @@ sap.ui.define([
 			.then(this.oRta.start.bind(this.oRta))
 			.then(function() {
 				return oCommandFactory.getCommandFor(oGroupElement1, "Remove", {
-					removedElement : oGroupElement1
+					removedElement: oGroupElement1
 				}, oGroupElementDesignTimeMetadata);
 			})
 			.then(function(oRemoveCommand) {
@@ -791,14 +791,14 @@ sap.ui.define([
 			}.bind(this))
 			.then(function() {
 				return oCommandFactory.getCommandFor(oGroupElement2, "Remove", {
-					removedElement : oGroupElement2
+					removedElement: oGroupElement2
 				}, oGroupElementDesignTimeMetadata);
 			})
 			.then(function(oRemoveCommand) {
 				return this.oCommandStack.pushAndExecute(oRemoveCommand);
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oSmartForm.destroy();
 			this.oRta.destroy();
@@ -883,16 +883,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with a scope set...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl"),
-				metadataScope : "someScope"
+				rootControl: oComp.getAggregation("rootControl"),
+				metadataScope: "someScope"
 			});
 
 			return RtaQunitUtils.clear()
 			.then(this.oRta.start.bind(this.oRta));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -921,11 +921,11 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created but not started", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : false,
+				rootControl: this.oRootControl,
+				showToolbars: false,
 				flexSettings: {
 					layer: Layer.CUSTOMER
 				}
@@ -1248,15 +1248,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created without flexSettings", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox.stub(Utils, "buildLrepRootNamespace").returns("rootNamespace/");
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : false
+				rootControl: this.oRootControl,
+				showToolbars: false
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -1317,15 +1317,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given _onStackModified", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : true
+				rootControl: this.oRootControl,
+				showToolbars: true
 			});
 			return this.oRta.start();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			if (this.oRta._oDraftDiscardWarningPromise) {
 				this.oRta._oDraftDiscardWarningPromise = undefined;
 				this.oRta._oDraftDiscardWarningDialog.destroy();
@@ -1361,8 +1361,8 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : true
+				rootControl: this.oRootControl,
+				showToolbars: true
 			});
 			return this.oRta.start();
 		},

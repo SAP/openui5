@@ -55,7 +55,7 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var done = assert.async();
 			this.oPlugin = new CompVariant({
-				commandFactory : new CommandFactory()
+				commandFactory: new CommandFactory()
 			});
 			this.oVariantManagementControl = new SmartVariantManagement("svm", {
 				persistencyKey: "myPersistencyKey"
@@ -64,8 +64,8 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVariantManagementControl],
-				plugins : [this.oPlugin]
+				rootElements: [this.oVariantManagementControl],
+				plugins: [this.oPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {

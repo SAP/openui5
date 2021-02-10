@@ -45,10 +45,10 @@ sap.ui.define([
 				domChanged: {
 					parameters: {
 						type: {
-							type : "string"
+							type: "string"
 						},
 						targetNodes: {
-							type : "element[]"
+							type: "element[]"
 						}
 					}
 				}
@@ -325,11 +325,11 @@ sap.ui.define([
 		// we should observe whole DOM, otherwise position change of elements can be triggered via outter changes
 		// (like change of body size, container insertions etc.)
 		this._oMutationObserver.observe(window.document, {
-			childList : true,
-			subtree : true,
-			attributes : true,
-			attributeFilter : ["style", "class", "width", "height", "border"],
-			characterData : true // also observe text node changes, see https://dom.spec.whatwg.org/#characterdata
+			childList: true,
+			subtree: true,
+			attributes: true,
+			attributeFilter: ["style", "class", "width", "height", "border"],
+			characterData: true // also observe text node changes, see https://dom.spec.whatwg.org/#characterdata
 		});
 	};
 

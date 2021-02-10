@@ -14,7 +14,7 @@ sap.ui.define([
 
 	// Test
 	QUnit.module("Given the S4HanaCloudBackend class", {
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -59,7 +59,7 @@ sap.ui.define([
 			// Perform a check each 100 msec, no more than 3 checks
 			return oS4HanaCloudBackend.notifyFlpCustomizingIsReady("VALID_IAM_ID", true, 100, 3).then(function(oResult) {
 				assert.ok(true, "Promise got resolved");
-				assert.deepEqual(oResult, { iamAppId : "VALID_IAM_ID", customizingIsReady : true }, "and the final status is as expected");
+				assert.deepEqual(oResult, { iamAppId: "VALID_IAM_ID", customizingIsReady: true }, "and the final status is as expected");
 			});
 		});
 
@@ -74,7 +74,7 @@ sap.ui.define([
 
 			// Perform a check each 100 msec, no more than 3 checks
 			return oS4HanaCloudBackend.notifyFlpCustomizingIsReady("VALID_IAM_ID", true, 100, 3).then(function(oResult) {
-				assert.deepEqual(oResult, { iamAppId : "VALID_IAM_ID", customizingIsReady : true }, "and the final status is as expected");
+				assert.deepEqual(oResult, { iamAppId: "VALID_IAM_ID", customizingIsReady: true }, "and the final status is as expected");
 			});
 		});
 
@@ -89,7 +89,7 @@ sap.ui.define([
 
 			// Perform a check each 100 msec, no more than 3 checks
 			return oS4HanaCloudBackend.notifyFlpCustomizingIsReady("VALID_IAM_ID", true, 100, 3).then(function(oResult) {
-				assert.deepEqual(oResult, { iamAppId : "VALID_IAM_ID", customizingIsReady : false }, "then the final status is as expected");
+				assert.deepEqual(oResult, { iamAppId: "VALID_IAM_ID", customizingIsReady: false }, "then the final status is as expected");
 			});
 		});
 
@@ -99,7 +99,7 @@ sap.ui.define([
 
 			return oS4HanaCloudBackend.notifyFlpCustomizingIsReady("VALID_IAM_ID", true)
 			.catch(function(oResult) {
-				assert.deepEqual(oResult, { iamAppId : "VALID_IAM_ID", error : "locked" }, "then the final status is as expected");
+				assert.deepEqual(oResult, { iamAppId: "VALID_IAM_ID", error: "locked" }, "then the final status is as expected");
 			});
 		});
 

@@ -56,7 +56,7 @@ function(
 				press: this.eventHandler.bind(this, 'Restore')
 			}).data('name', 'restore'),
 			new Button("sapUiRta_exit", {
-				type:"Emphasized",
+				type: "Emphasized",
 				text: "{i18n>BTN_DONE}",
 				press: this.eventHandler.bind(this, 'Exit')
 			}).data('name', 'exit')

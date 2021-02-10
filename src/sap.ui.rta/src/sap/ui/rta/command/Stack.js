@@ -29,9 +29,9 @@ sap.ui.define([
 	function _pushToStack(oComponent, mComposite, oStack, oChange) {
 		var oSelector = oChange.getSelector();
 		var oCommand = new Settings({
-			selector : oSelector,
-			changeType : oChange.getDefinition().changeType,
-			element : JsControlTreeModifier.bySelector(oSelector, oComponent)
+			selector: oSelector,
+			changeType: oChange.getDefinition().changeType,
+			element: JsControlTreeModifier.bySelector(oSelector, oComponent)
 		});
 		oCommand._oPreparedChange = oChange;
 		if (oChange.getUndoOperations()) {
@@ -66,20 +66,20 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var Stack = ManagedObject.extend("sap.ui.rta.command.Stack", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {},
-			aggregations : {
-				commands : {
-					type : "sap.ui.rta.command.BaseCommand",
-					multiple : true
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {},
+			aggregations: {
+				commands: {
+					type: "sap.ui.rta.command.BaseCommand",
+					multiple: true
 				}
 			},
-			events : {
-				modified : {},
-				commandExecuted : {
+			events: {
+				modified: {},
+				commandExecuted: {
 					parameters: {
-						command : {type: "object"},
+						command: {type: "object"},
 						undo: {type: "boolean"}
 					}
 				}
@@ -101,8 +101,8 @@ sap.ui.define([
 			var oComponent = FlUtils.getComponentForControl(oControl);
 			var sAppName = FlUtils.getAppDescriptor(oComponent)["sap.app"].id;
 			var mPropertyBag = {
-				oComponent : oComponent,
-				appName : sAppName,
+				oComponent: oComponent,
+				appName: sAppName,
 				selector: oControl,
 				invalidateCache: false
 			};

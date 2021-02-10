@@ -29,9 +29,9 @@ function() {
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
-		name : "sap.ui.rta",
+		name: "sap.ui.rta",
 		version: "${version}",
-		dependencies : ["sap.ui.core", "sap.m", "sap.ui.fl", "sap.ui.dt"],
+		dependencies: ["sap.ui.core", "sap.m", "sap.ui.fl", "sap.ui.dt"],
 		types: [],
 		interfaces: [],
 		controls: [],

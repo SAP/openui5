@@ -86,11 +86,11 @@ sap.ui.define([
 				content: {
 					fragmentPath: "fragments/" + sEpName + "_" + sLayer + ".fragment.xml"
 				},
-				creation:sCreation || "",
+				creation: sCreation || "",
 				projectId: "testProject",
 				selector: {
 					name: sEpName,
-					viewSelector: { id: sReference + "---mainView--" + sViewName, idIsLocal : false}
+					viewSelector: { id: sReference + "---mainView--" + sViewName, idIsLocal: false}
 				},
 				layer: sLayer,
 				support: {},

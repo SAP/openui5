@@ -55,10 +55,10 @@ sap.ui.define([
 						}
 					}
 				},
-				scrollContainers : [
+				scrollContainers: [
 					{
-						domRef : "> .sapUiDtTestSSCScrollContainer",
-						aggregations : ["content1", "content2"]
+						domRef: "> .sapUiDtTestSSCScrollContainer",
+						aggregations: ["content1", "content2"]
 					}
 				],
 				actions: {

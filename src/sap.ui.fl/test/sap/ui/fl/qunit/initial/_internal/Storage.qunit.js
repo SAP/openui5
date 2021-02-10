@@ -245,7 +245,7 @@ sap.ui.define([
 				fileType: "ctrl_variant",
 				layer: Layer.CUSTOMER,
 				variantManagementReference: "variantManagement1",
-				creation:"2020-04-17T13:10:20.1234567Z"
+				creation: "2020-04-17T13:10:20.1234567Z"
 			};
 
 			var oExpectedStorageResponse = Object.assign(StorageUtils.getEmptyFlexDataResponse(), {
@@ -255,7 +255,7 @@ sap.ui.define([
 
 			sandbox.stub(LrepConnector, "loadFlexData").resolves({
 				ui2personalization: oUI2PersonalizationResponse,
-				variantSection : {
+				variantSection: {
 					variantManagement1: {
 						variantManagementChanges: {},
 						variants: [{
@@ -536,7 +536,7 @@ sap.ui.define([
 							fileType: "ctrl_variant",
 							layer: Layer.CUSTOMER,
 							variantManagementReference: "variantManagement1",
-							creation:"2019-07-22T10:34:19.7491090Z"
+							creation: "2019-07-22T10:34:19.7491090Z"
 						},
 						controlChanges: [],
 						variantChanges: {}
@@ -575,7 +575,7 @@ sap.ui.define([
 							creation: "2019-07-22T10:33:19.7491090Z"
 						},
 						controlChanges: [],
-						variantChanges:{}
+						variantChanges: {}
 					}]
 				}
 			};
@@ -600,7 +600,7 @@ sap.ui.define([
 							creation: "2019-07-22T10:34:19.7491090Z"
 						},
 						controlChanges: [],
-						variantChanges:{}
+						variantChanges: {}
 					}]
 				}
 			};
@@ -722,7 +722,7 @@ sap.ui.define([
 				fileName: "variant2",
 				fileType: "variant",
 				layer: Layer.CUSTOMER,
-				creation:"2019-07-22T10:34:19.7491091Z"
+				creation: "2019-07-22T10:34:19.7491091Z"
 			};
 			oResponse2.comp = {
 				variants: [oVariant2]
@@ -742,7 +742,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Storage with a custom & broken connector", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([{
 				loadConnector: "my/connectors/BrokenInitialConnector",
 				layers: []}

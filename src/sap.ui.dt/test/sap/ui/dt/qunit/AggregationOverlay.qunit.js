@@ -60,8 +60,8 @@ function(
 				isRoot: true,
 				element: this.oPage,
 				designTimeMetadata: new AggregationDesignTimeMetadata({
-					data : {
-						domRef : ":sap-domref > section"
+					data: {
+						domRef: ":sap-domref > section"
 					}
 				})
 			});
@@ -85,8 +85,8 @@ function(
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
-			this.oButton1 = new Button({text : "button1"});
-			this.oButton2 = new Button({text : "button2"});
+			this.oButton1 = new Button({text: "button1"});
+			this.oButton2 = new Button({text: "button2"});
 			this.oPage = new Page({
 				content: [
 					this.oButton1,
@@ -176,7 +176,7 @@ function(
 				isRoot: true,
 				designTimeMetadata: new AggregationDesignTimeMetadata({
 					data: {
-						domRef : ":sap-domref > section"
+						domRef: ":sap-domref > section"
 					}
 				})
 			});
@@ -259,7 +259,7 @@ function(
 				element: this.oPage,
 				designTimeMetadata: new AggregationDesignTimeMetadata({
 					data: {
-						domRef : ":sap-domref > section"
+						domRef: ":sap-domref > section"
 					}
 				})
 			});

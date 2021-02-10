@@ -29,14 +29,14 @@ sap.ui.define([
 	 * @private
 	 */
 	var ElementActionDefinitionTest = ManagedObject.extend("controlEnablementReport.ElementActionDefinitionTest", /** @lends sap.ui.dt.test.ElementActionDefinitionTest.prototype */ {
-		metadata : {
+		metadata: {
 			// ---- object ----
 
 			// ---- control specific ----
-			library : "sap.ui.dt",
-			properties : {
-				type : {
-					type : "string"
+			library: "sap.ui.dt",
+			properties: {
+				type: {
+					type: "string"
 				}
 			}
 		}
@@ -50,8 +50,8 @@ sap.ui.define([
 		return this._setup().then(function(oData) {
 			var sActions;
 			this._mResult = {
-				name : this.getType(),
-				actions : undefined
+				name: this.getType(),
+				actions: undefined
 			};
 
 			if (!this._bError) {
@@ -107,8 +107,8 @@ sap.ui.define([
 				for (var sDataAction in oData.actions) {
 					aActions[i] = sDataAction;
 					mActions[i] = {
-						action : sDataAction,
-						aggregation : "self"
+						action: sDataAction,
+						aggregation: "self"
 					};
 					i = i + 1;
 				}
@@ -127,8 +127,8 @@ sap.ui.define([
 							aActions.push(sAggregationAction);
 							i = aActions.indexOf(sAggregationAction);
 							mActions[i] = {
-								action : sAggregationAction,
-								aggregation : sAggregation
+								action: sAggregationAction,
+								aggregation: sAggregation
 							};
 						} else {
 							mActions[i].aggregation = mActions[i].aggregation + ", " + sAggregation;

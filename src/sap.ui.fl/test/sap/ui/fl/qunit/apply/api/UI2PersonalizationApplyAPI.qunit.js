@@ -26,8 +26,8 @@ sap.ui.define([
 
 	function createAppComponent() {
 		var oDescriptor = {
-			"sap.app" : {
-				id : "reference.app",
+			"sap.app": {
+				id: "reference.app",
 				applicationVersion: {
 					version: "1.2.3"
 				}
@@ -37,7 +37,7 @@ sap.ui.define([
 		var oManifest = new Manifest(oDescriptor);
 		return {
 			name: "testComponent",
-			getManifest : function() {
+			getManifest: function() {
 				return oManifest;
 			},
 			getId: function() {

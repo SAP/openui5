@@ -43,14 +43,14 @@ sap.ui.define([
 		 * @param {string} sValue the source path
 		 * @returns {string} the formatted source path
 		 */
-		formatter : function (sValue) {
+		formatter: function (sValue) {
 			if (sValue) {
 				return jQuery.sap.getResourcePath(sValue);
 			}
 			return "";
 		},
 
-		onInit : function () {
+		onInit: function () {
 			this.oPostMessageBus = PostMessageBus.getInstance();
 			var oView = this.getView();
 
@@ -136,7 +136,7 @@ sap.ui.define([
 		/**
 		 * Called when the iFrame is ready to receive Messages
 		 */
-		onIFrameReady : function (oPayload) {
+		onIFrameReady: function (oPayload) {
 			if (this.oRTAClient) {
 				this.oRTAClient.destroy();
 			}
@@ -152,7 +152,7 @@ sap.ui.define([
 		 * called when a palette item is dragged
 		 * @param {sap.ui.base.Event} oEvent the dragstart event
 		 */
-		onDragStart : function (oEvent) {
+		onDragStart: function (oEvent) {
 			oEvent.stopPropagation();
 			var oItemDom = window.document.activeElement;
 			if (oItemDom.tagName === "TR" && oItemDom.id) {
@@ -164,19 +164,19 @@ sap.ui.define([
 						sClassName = oContext.getProperty("is");
 					}
 					var oData = {
-						className : sClassName
+						className: sClassName
 					};
 					if (oContext.getProperty("NOPEcreateTemplate")) {
 						jQuery.extend(oData, {
-							module : oContext.getProperty("createTemplate")
+							module: oContext.getProperty("createTemplate")
 						});
 					}
 					this.oPostMessageBus.publish({
-						target : DTToolUtils.getIframeWindow(),
-						origin : DTToolUtils.getIframeWindow().origin,
-						channelId : "dtTool",
-						eventId : "dragStart",
-						data : oData
+						target: DTToolUtils.getIframeWindow(),
+						origin: DTToolUtils.getIframeWindow().origin,
+						channelId: "dtTool",
+						eventId: "dragStart",
+						data: oData
 					});
 				}
 			}
@@ -197,7 +197,7 @@ sap.ui.define([
 		 * not only on the arrow
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
-		expandPallete : function(oEvent) {
+		expandPallete: function(oEvent) {
 			var isExpanded = oEvent.getSource().getParent().getExpanded();
 			oEvent.getSource().getParent().setExpanded(!isExpanded);
 		},
@@ -206,13 +206,13 @@ sap.ui.define([
 		/**
 		 * Called when the dragged palette item is dropped
 		 */
-		onDragEnd : function () {
+		onDragEnd: function () {
 			this.oPostMessageBus.publish({
-				target : DTToolUtils.getIframeWindow(),
-				origin : DTToolUtils.getIframeWindow().origin,
-				channelId : "dtTool",
-				eventId : "dragEnd",
-				data : {}
+				target: DTToolUtils.getIframeWindow(),
+				origin: DTToolUtils.getIframeWindow().origin,
+				channelId: "dtTool",
+				eventId: "dragEnd",
+				data: {}
 			});
 		},
 
@@ -221,7 +221,7 @@ sap.ui.define([
 		 * Workaround because Splitter takes up more space than it should and doesn't fire resize events in all cases
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
-		onSplitterResize : function () {
+		onSplitterResize: function () {
 			jQuery(".sapUiDtToolSplitter").css("height", window.innerHeight - parseInt(jQuery(".sapMPageHeader").css("height")) + "px");
 		},
 
@@ -229,7 +229,7 @@ sap.ui.define([
 		 * Called when the tree selection changes
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
-		onSelectionChange : function (oEvent) {
+		onSelectionChange: function (oEvent) {
 			var sId = oEvent.getParameter("listItem").data().id;
 
 			var oModel = this._getOutlineModel();
@@ -313,7 +313,7 @@ sap.ui.define([
 		/**
 		 * Makes all palette entry dom refs draggable by setting draggable = true and adding an Event Listener
 		 */
-		setDraggable : function () {
+		setDraggable: function () {
 			var aPaletteDomRefs = this.getPaletteDomRefs();
 
 			aPaletteDomRefs.forEach(function (oPaletteDomRef) {
@@ -333,7 +333,7 @@ sap.ui.define([
 		 * returns the DomRefs of all the palette entries
 		 * @returns {array} the DomRefs
 		 */
-		getPaletteDomRefs : function () {
+		getPaletteDomRefs: function () {
 			return this.byId("palette").getItems().reduce(function (aRefs, oItem) {
 				var aSpliceParams = oItem.getContent()[0].getContent()[0].getItems().map(function (oGroupItem) {
 					return oGroupItem.getDomRef();
@@ -351,15 +351,15 @@ sap.ui.define([
 		 * Called when the stop/start RTA Button is pressed
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
-		onToggleRTA : function (oEvent) {
+		onToggleRTA: function (oEvent) {
 			var sEventId = oEvent.getParameter("item").getId().replace(this.getView().getId() + "--", "");
 
 			this.oPostMessageBus.publish({
-				target : DTToolUtils.getIframeWindow(),
-				origin : DTToolUtils.getIframeWindow().origin,
-				channelId : "dtTool",
-				eventId : sEventId,
-				data : {}
+				target: DTToolUtils.getIframeWindow(),
+				origin: DTToolUtils.getIframeWindow().origin,
+				channelId: "dtTool",
+				eventId: sEventId,
+				data: {}
 			});
 
 			if (sEventId === "stopRTA") {
@@ -372,11 +372,11 @@ sap.ui.define([
 		 */
 		onUndo: function () {
 			this.oPostMessageBus.publish({
-				target : DTToolUtils.getIframeWindow(),
-				origin : DTToolUtils.getIframeWindow().origin,
-				channelId : "dtTool",
-				eventId : "undo",
-				data : {}
+				target: DTToolUtils.getIframeWindow(),
+				origin: DTToolUtils.getIframeWindow().origin,
+				channelId: "dtTool",
+				eventId: "undo",
+				data: {}
 			});
 		},
 
@@ -385,11 +385,11 @@ sap.ui.define([
 		 */
 		onRedo: function () {
 			this.oPostMessageBus.publish({
-				target : DTToolUtils.getIframeWindow(),
-				origin : DTToolUtils.getIframeWindow().origin,
-				channelId : "dtTool",
-				eventId : "redo",
-				data : {}
+				target: DTToolUtils.getIframeWindow(),
+				origin: DTToolUtils.getIframeWindow().origin,
+				channelId: "dtTool",
+				eventId: "redo",
+				data: {}
 			});
 		},
 
@@ -405,7 +405,7 @@ sap.ui.define([
 		/**
 		* Called when RTA has started in the iframe
 		*/
-		onRTAstarted : function () {
+		onRTAstarted: function () {
 			this.oRTAClient.getService("outline").then(function (oOutlineProvider) {
 				oOutlineProvider.get().then(function (oOutline) {
 					var oModel = this._getOutlineModel();
@@ -539,7 +539,7 @@ sap.ui.define([
 		 * @param {object} oEvent the event
 		 * @param {string} oEvent.data.id the id of the overlay
 		 */
-		onSelectOverlayInOutline : function (oEvent) {
+		onSelectOverlayInOutline: function (oEvent) {
 			var sId = oEvent.data.id;
 			var oTree = this._getTree();
 			var sPath = this.findOverlayInOutline(sId, this._getOutlineModel().getData());
@@ -556,21 +556,21 @@ sap.ui.define([
 		 * @param {object} oEvent the event
 		 * @param {object} oEvent.data.properties the properties of the selected element
 		 */
-		onUpdatePropertyPanel : function (oEvent) {
+		onUpdatePropertyPanel: function (oEvent) {
 			if (oEvent && oEvent.data && oEvent.data.properties) {
 				var mElmntProps = oEvent.data.properties;
 
 				var oDTData = this._getPropertyModel().getData();
 
 				if (typeof oDTData.displayName === "string") {
-					oDTData.displayName = {singular : oDTData.displayName};
+					oDTData.displayName = {singular: oDTData.displayName};
 				}
 
 				oDTData.propertiesList.forEach(function (oProperty) {
 					if (mElmntProps[oProperty.name] !== undefined) {
-						jQuery.extend(oProperty, {currentValue : mElmntProps[oProperty.name]});
+						jQuery.extend(oProperty, {currentValue: mElmntProps[oProperty.name]});
 					} else {
-						jQuery.extend(oProperty, {currentValue : oProperty.defaultValue});
+						jQuery.extend(oProperty, {currentValue: oProperty.defaultValue});
 					}
 				});
 
@@ -585,7 +585,7 @@ sap.ui.define([
 		 * @param {object} oEvent the event
 		 * @param {object} oEvent.data.dtData the dt data
 		 */
-		onDTData : function (oEvent) {
+		onDTData: function (oEvent) {
 			var oDTData = oEvent.data.dtData;
 
 			var oPropPanModel = this._getPropertyModel();
@@ -619,7 +619,7 @@ sap.ui.define([
 		 * Opens a dialog which allows importing a control via module path
 		 * @param {sap.ui.base.Event} oEvent the add button press event
 		 */
-		onAddControlToPalette : function () {
+		onAddControlToPalette: function () {
 			var oDialog = new Dialog({
 				id: "addControlDialog",
 				title: "Add Custom Control",
@@ -680,7 +680,7 @@ sap.ui.define([
 		/**
 		 * Loads a control and adds it to the palette
 		 */
-		onAddCustomControl : function () {
+		onAddCustomControl: function () {
 			var sText = sap.ui.getCore().byId("addDialogInput").getValue();
 
 			DTMetadata.loadElement(sText.replace(/\//g, ".")).then(function (oData) {
@@ -693,11 +693,11 @@ sap.ui.define([
 
 				sGroup = oData.palette && oData.palette.group || "CUSTOM";
 				oControlData = {
-					className : sText.replace(/\//g, "."),
-					description : oData.descriptions && oData.descriptions.short,
-					icon : oData.palette && oData.palette.icons && oData.palette.icons.svg,
-					name : oData.displayName && oData.displayName.singular || sText.replace(/\//g, ".").match(/.+\.(\w+)$/)[1],
-					createTemplate : oData.templates && oData.templates.create
+					className: sText.replace(/\//g, "."),
+					description: oData.descriptions && oData.descriptions.short,
+					icon: oData.palette && oData.palette.icons && oData.palette.icons.svg,
+					name: oData.displayName && oData.displayName.singular || sText.replace(/\//g, ".").match(/.+\.(\w+)$/)[1],
+					createTemplate: oData.templates && oData.templates.create
 				};
 
 				this._updatePalette(sGroup, oControlData);
@@ -718,17 +718,17 @@ sap.ui.define([
 		 * @param {object} oControlData the control data for the palette entry
 		 * @returns {object} the mapped control data
 		 */
-		_mapDataForPalette : function (oControlData) {
+		_mapDataForPalette: function (oControlData) {
 			if (!oControlData) {
 				return true;
 			}
 
 			var oControlPaletteData = {
-				className : oControlData.className,
-				description : oControlData.descriptions && oControlData.descriptions.short,
-				icon : oControlData.palette.icons && oControlData.palette.icons.svg,
-				name : oControlData.displayName && oControlData.displayName.singular,
-				createTemplate : oControlData.templates && oControlData.templates.create
+				className: oControlData.className,
+				description: oControlData.descriptions && oControlData.descriptions.short,
+				icon: oControlData.palette.icons && oControlData.palette.icons.svg,
+				name: oControlData.displayName && oControlData.displayName.singular,
+				createTemplate: oControlData.templates && oControlData.templates.create
 			};
 
 			return oControlPaletteData;
@@ -740,7 +740,7 @@ sap.ui.define([
 		 * @param {object} oControlPaletteData the data of the palette entry
 		 * @param {boolean} bIgnore the ignore property of the palette entry. If true the entry will not be added.
 		 */
-		_updatePalette : function (sGroup, oControlPaletteData, bIgnore) {
+		_updatePalette: function (sGroup, oControlPaletteData, bIgnore) {
 			var oPaletteModel = this._getPaletteModel();
 			var oPaletteData = oPaletteModel.getData();
 
@@ -779,9 +779,9 @@ sap.ui.define([
 				return bRemoved && bAdded;
 			}) && !bAdded) {
 				oPaletteData.groups.push({
-					groupName : sGroup.toLowerCase(),
-					number : 1,
-					controls : [oControlPaletteData]
+					groupName: sGroup.toLowerCase(),
+					number: 1,
+					controls: [oControlPaletteData]
 				});
 			}
 
@@ -805,7 +805,7 @@ sap.ui.define([
 		 * @param {string} sPath the path that is currently being searched
 		 * @returns {string} the path of the overlay
 		 */
-		findOverlayInOutline : function (sId, aData, sPath) {
+		findOverlayInOutline: function (sId, aData, sPath) {
 			if (!sPath) {
 				sPath = "/";
 			}
@@ -829,18 +829,18 @@ sap.ui.define([
 		 * Sends a message to the iFrame when a property was changed via the property pannel
 		 * @param {sap.ui.base.Event} oEvent the change event
 		 */
-		onPropertyChange : function (oEvent) {
+		onPropertyChange: function (oEvent) {
 			var sPropertyName = oEvent.getSource().getPropertyName();
 			var vNewValue = oEvent.getParameter("newValue");
 
 			this.oPostMessageBus.publish({
-				target : DTToolUtils.getIframeWindow(),
-				origin : DTToolUtils.getIframeWindow().origin,
-				channelId : "dtTool",
-				eventId : "propertyChange",
-				data : {
-					propertyName : sPropertyName,
-					newValue : vNewValue
+				target: DTToolUtils.getIframeWindow(),
+				origin: DTToolUtils.getIframeWindow().origin,
+				channelId: "dtTool",
+				eventId: "propertyChange",
+				data: {
+					propertyName: sPropertyName,
+					newValue: vNewValue
 				}
 			});
 		},
@@ -849,7 +849,7 @@ sap.ui.define([
 		 * Filters the Palette tables and updates the counter in the panel header
 		 * @param {sap.ui.base.Event} oEvent the liveSearch event
 		 */
-		onPaletteSearch : function (oEvent) {
+		onPaletteSearch: function (oEvent) {
 			var aFilter = [];
 			var sQuery = oEvent.getParameter("newValue");
 			if (sQuery) {
@@ -882,7 +882,7 @@ sap.ui.define([
 		 * Colapses the last expanded panel when a new panel is expanded
 		 * @param {sap.ui.base.Event} oEvent the expand event
 		 */
-		onPanelExpand : function (oEvent) {
+		onPanelExpand: function (oEvent) {
 			if (oEvent.getParameter("expand") === false) {
 				this.sLastExpandedId = "";
 			} else {
@@ -898,7 +898,7 @@ sap.ui.define([
 		 * Returns the property model
 		 * @returns {sap.ui.model.json.JSONModel} the property model
 		 */
-		_getPropertyModel : function () {
+		_getPropertyModel: function () {
 			if (!this.oPropertyModel) {
 				this.oPropertyModel = this.getView().getModel("properties");
 			}
@@ -909,7 +909,7 @@ sap.ui.define([
 		* Returns the tree
 		* @returns {sap.m.Tree} the tree
 		*/
-		_getPropertyPanel : function () {
+		_getPropertyPanel: function () {
 			if (!this.oPropertyPanel) {
 				this.oPropertyPanel = this.byId("PropertyPanel");
 			}
@@ -920,7 +920,7 @@ sap.ui.define([
 		 * Returns the palette model
 		 * @returns {sap.ui.model.json.JSONModel} the palette model
 		 */
-		_getPaletteModel : function () {
+		_getPaletteModel: function () {
 			if (!this.oPaletteModel) {
 				this.oPaletteModel = this.getView().getModel("palette");
 			}
@@ -931,7 +931,7 @@ sap.ui.define([
 		 * Returns the outline model
 		 * @returns {sap.ui.model.json.JSONModel} the outline model
 		 */
-		_getOutlineModel : function () {
+		_getOutlineModel: function () {
 			if (!this.oOutlineModel) {
 				this.oOutlineModel = this.getView().getModel("outline");
 			}
@@ -942,7 +942,7 @@ sap.ui.define([
 		 * Returns the tree
 		 * @returns {sap.m.Tree} the tree
 		 */
-		_getTree : function () {
+		_getTree: function () {
 			if (!this.oTree) {
 				this.oTree = this.byId("Tree");
 			}
@@ -953,7 +953,7 @@ sap.ui.define([
 		 * Retruns the palette tables
 		 * @returns {sap.m.Table[]} the tables
 		 */
-		_getPaletteTables : function () {
+		_getPaletteTables: function () {
 			if (!this.oPaletteTables) {
 				this.oPaletteTables = this.byId("palette").getItems().map(function (oItem) {
 					return oItem.getContent()[0].getContent()[0];
@@ -966,7 +966,7 @@ sap.ui.define([
 		 * Retruns the palette table header ObjectNumbers
 		 * @returns {sap.m.ObjectNumber[]} the numbers
 		 */
-		_getPaletteNumbers : function () {
+		_getPaletteNumbers: function () {
 			if (!this.oPaletteNumbers) {
 				this.oPaletteNumbers = this._getPaletteTables().map(function (oTable) {
 					return oTable.getHeaderToolbar().getContent()[2];

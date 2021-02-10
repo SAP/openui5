@@ -50,9 +50,9 @@ function(
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -72,11 +72,11 @@ function(
 		bEnabled = bEnabled === undefined || bEnabled === null ? true : bEnabled;
 		if (oDesignTimeMetadata === DEFAULT_DTM) {
 			oDesignTimeMetadata = {
-				actions : {
-					combine : {
+				actions: {
+					combine: {
 						changeType: "combineStuff",
-						changeOnRelevantContainer : true,
-						isEnabled : bEnabled
+						changeOnRelevantContainer: true,
+						isEnabled: bEnabled
 					}
 				}
 			};
@@ -86,11 +86,11 @@ function(
 
 	//Designtime Metadata with fake isEnabled function (returns false)
 	var oDesignTimeMetadata1 = {
-		actions : {
-			combine : {
+		actions: {
+			combine: {
 				changeType: "combineStuff",
-				changeOnRelevantContainer : true,
-				isEnabled : function() {
+				changeOnRelevantContainer: true,
+				isEnabled: function() {
 					return false;
 				}
 			}
@@ -99,11 +99,11 @@ function(
 
 	//Designtime Metadata with fake isEnabled function (returns true)
 	var oDesignTimeMetadata2 = {
-		actions : {
-			combine : {
+		actions: {
+			combine: {
 				changeType: "combineStuff",
-				changeOnRelevantContainer : true,
-				isEnabled : function() {
+				changeOnRelevantContainer: true,
+				isEnabled: function() {
 					return true;
 				}
 			}
@@ -112,20 +112,20 @@ function(
 
 	// DesignTime Metadata without changeType
 	var oDesignTimeMetadata3 = {
-		actions : {
-			combine : {
-				changeOnRelevantContainer : true,
-				isEnabled : true
+		actions: {
+			combine: {
+				changeOnRelevantContainer: true,
+				isEnabled: true
 			}
 		}
 	};
 
 	// DesignTime Metadata without changeOnRelevantContainer
 	var oDesigntimeMetadata4 = {
-		actions : {
-			combine : {
+		actions: {
+			combine: {
 				changeType: "combineStuff",
-				isEnabled : function() {
+				isEnabled: function() {
 					return true;
 				}
 			}
@@ -134,18 +134,18 @@ function(
 
 	//DesignTime Metadata with different changeType
 	var oDesignTimeMetadata5 = {
-		actions : {
-			combine : {
+		actions: {
+			combine: {
 				changeType: "combineOtherStuff",
-				changeOnRelevantContainer : true,
-				isEnabled : true
+				changeOnRelevantContainer: true,
+				isEnabled: true
 			}
 		}
 	};
 
 
 	QUnit.module("Given a designTime and combine plugin are instantiated", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var oChangeHandler = {
 				completeChangeContent: function() {},
 				applyChange: function() {},
@@ -155,18 +155,18 @@ function(
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
-					combineStuff : oChangeHandler
+					combineStuff: oChangeHandler
 				},
 				"sap.m.OverflowToolbar": {
-					combineStuff : oChangeHandler,
-					combineOtherStuff : oChangeHandler
+					combineStuff: oChangeHandler,
+					combineOtherStuff: oChangeHandler
 				}
 			})
 			.then(function() {
 				this.oCommandFactory = new CommandFactory();
 
 				this.oCombinePlugin = new CombinePlugin({
-					commandFactory : this.oCommandFactory
+					commandFactory: this.oCommandFactory
 				});
 
 				this.oButton1 = new Button("button1");
@@ -175,7 +175,7 @@ function(
 				this.oButton4 = new Button("button4");
 				this.oButton5 = new Button("button5");
 				this.oPanel = new Panel("panel", {
-					content : [
+					content: [
 						this.oButton1,
 						this.oButton2,
 						this.oButton3,
@@ -183,7 +183,7 @@ function(
 					]
 				}).placeAt("qunit-fixture");
 				this.oPanel2 = new Panel("panel2", {
-					content : [
+					content: [
 						this.oButton5
 					]
 				}).placeAt("qunit-fixture");
@@ -192,7 +192,7 @@ function(
 				this.oButton6 = new Button("button6");
 				this.oCheckBox1 = new CheckBox("checkbox1");
 				this.OverflowToolbar = new OverflowToolbar("OWFlToolbar", {
-					content : [
+					content: [
 						this.oOverflowToolbarButton1,
 						this.oButton6,
 						this.oCheckBox1
@@ -202,33 +202,33 @@ function(
 				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oPanel, this.oPanel2, this.OverflowToolbar],
-					plugins : [this.oCombinePlugin],
-					designTimeMetadata : {
-						"sap.m.Button" : {
-							actions : {
-								combine : {
+					rootElements: [this.oPanel, this.oPanel2, this.OverflowToolbar],
+					plugins: [this.oCombinePlugin],
+					designTimeMetadata: {
+						"sap.m.Button": {
+							actions: {
+								combine: {
 									changeType: "combineStuff",
-									changeOnRelevantContainer : true,
-									isEnabled : true
+									changeOnRelevantContainer: true,
+									isEnabled: true
 								}
 							}
 						},
-						"sap.m.OverflowToolbarButton" : {
-							actions : {
-								combine : {
+						"sap.m.OverflowToolbarButton": {
+							actions: {
+								combine: {
 									changeType: "combineStuff",
-									changeOnRelevantContainer : true,
-									isEnabled : true
+									changeOnRelevantContainer: true,
+									isEnabled: true
 								}
 							}
 						},
-						"sap.m.CheckBox" : {
-							actions : {
-								combine : {
+						"sap.m.CheckBox": {
+							actions: {
+								combine: {
 									changeType: "combineOtherStuff",
-									changeOnRelevantContainer : true,
-									isEnabled : true
+									changeOnRelevantContainer: true,
+									isEnabled: true
 								}
 							}
 						}

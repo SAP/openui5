@@ -9,7 +9,7 @@ function(
 	"use strict";
 
 	QUnit.module("Given three elements with vertical and horizontal scrollbars...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			var $content = jQuery("#qunit-fixture");
 
 			var fnCreatePanelWithBiggerSubPanel = function(sId, sColour) {
@@ -40,7 +40,7 @@ function(
 
 			this.oScrollbarSynchronizer = new ScrollbarSynchronizer();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.$Panel1.remove();
 			this.$Panel2.remove();
 			this.$Panel3.remove();

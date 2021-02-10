@@ -20,7 +20,7 @@ sap.ui.define([
 				_mChanges: {
 					mChanges: {}
 				},
-				_mChangesEntries:{},
+				_mChangesEntries: {},
 				_mChangesInitial: {
 					mDependencies: {}
 				}

@@ -117,11 +117,11 @@ function(
 
 				// create some dummy JSON data and create a Model from it
 				var data = {
-					messageText : sText,
-					titleText : sTitle,
-					icon : "sap-icon://question-mark",
-					removeText : oTextResources.getText("BTN_FREP_REMOVE"),
-					cancelText : oTextResources.getText("BTN_FREP_CANCEL")
+					messageText: sText,
+					titleText: sTitle,
+					icon: "sap-icon://question-mark",
+					removeText: oTextResources.getText("BTN_FREP_REMOVE"),
+					cancelText: oTextResources.getText("BTN_FREP_CANCEL")
 				};
 				var oModel = new JSONModel();
 				oModel.setData(data);
@@ -137,11 +137,11 @@ function(
 
 				// create a controller for the action in the Dialog
 				var oFragmentController = {
-					removeField : function() {
+					removeField: function() {
 						fnCleanUp();
 						resolve(true);
 					},
-					closeDialog : function() {
+					closeDialog: function() {
 						fnCleanUp();
 						resolve(false);
 					}
@@ -387,7 +387,7 @@ function(
 						: "";
 				sPath = sPath.split("/")[sPath.split("/").length - 1];
 				aPaths[sPath] = {
-					valueProperty : oInfo
+					valueProperty: oInfo
 				};
 			}
 		}

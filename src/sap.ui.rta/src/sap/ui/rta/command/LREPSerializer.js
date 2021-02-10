@@ -36,20 +36,20 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var LREPSerializer = ManagedObject.extend("sap.ui.rta.command.LREPSerializer", {
-		metadata : {
-			library : "sap.ui.rta",
-			associations : {
+		metadata: {
+			library: "sap.ui.rta",
+			associations: {
 				/** The root control which is needed for the Flex Persistence */
-				rootControl : {
-					type : "sap.ui.core.Control"
+				rootControl: {
+					type: "sap.ui.core.Control"
 				}
 			},
-			properties : {
-				commandStack : {
-					type : "object" // has to be of type sap.ui.rta.command.Stack
+			properties: {
+				commandStack: {
+					type: "object" // has to be of type sap.ui.rta.command.Stack
 				}
 			},
-			aggregations : {}
+			aggregations: {}
 		}
 	});
 

@@ -26,7 +26,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a Property Change Handler", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oChangeHandler = PropertyChange;
 			this.sBindingError = "Please use 'PropertyBindingChange' to set a binding";
 
@@ -34,32 +34,32 @@ sap.ui.define([
 			this.OLD_VALUE = "original";
 			this.NEW_VALUE = "newValue";
 
-			this.oButton = new Button({text:this.OLD_VALUE});
+			this.oButton = new Button({text: this.OLD_VALUE});
 			this.oDOMParser = new DOMParser();
 			this.oXmlDocument = this.oDOMParser.parseFromString("<Button xmlns='sap.m' text='" + this.OLD_VALUE + "' enabled='true' />", "application/xml");
 			this.oXmlButton = this.oXmlDocument.childNodes[0];
 
 			this.mExpectedSelector = {
-				id : this.oButton.getId(),
-				type : "sap.m.Button"
+				id: this.oButton.getId(),
+				type: "sap.m.Button"
 			};
 
 			this.mExpectedChangeContent = {
-				property : "text",
-				oldValue : this.OLD_VALUE,
-				newValue : this.NEW_VALUE,
-				semantic : "rename"
+				property: "text",
+				oldValue: this.OLD_VALUE,
+				newValue: this.NEW_VALUE,
+				semantic: "rename"
 			};
 
 			this.mSpecificChangeData = {
-				selector : this.mExpectedSelector,
-				changeType : "propertyChange",
-				content : this.mExpectedChangeContent
+				selector: this.mExpectedSelector,
+				changeType: "propertyChange",
+				content: this.mExpectedChangeContent
 			};
 
 			this.oChange = new Change(this.mSpecificChangeData);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
@@ -134,16 +134,16 @@ sap.ui.define([
 			this.NEW_VALUE = "{i18n>textKey}";
 
 			this.mExpectedChangeContent = {
-				property : "text",
-				oldValue : this.OLD_VALUE,
-				newValue : this.NEW_VALUE,
-				semantic : "rename"
+				property: "text",
+				oldValue: this.OLD_VALUE,
+				newValue: this.NEW_VALUE,
+				semantic: "rename"
 			};
 
 			this.mSpecificChangeData = {
-				selector : this.mExpectedSelector,
-				changeType : "propertyChange",
-				content : this.mExpectedChangeContent
+				selector: this.mExpectedSelector,
+				changeType: "propertyChange",
+				content: this.mExpectedChangeContent
 			};
 
 			this.oChange = new Change(this.mSpecificChangeData);
@@ -158,24 +158,24 @@ sap.ui.define([
 
 		QUnit.test('When applying and reverting a property change which changes a binding on a js control tree, Then', function(assert) {
 			this.OLD_VALUE = "{path:'namedModel>/textKey'}";
-			this.oButton = new Button({text:this.OLD_VALUE});
+			this.oButton = new Button({text: this.OLD_VALUE});
 
 			var oNamedModel = new JSONModel({
-				textKey : this.OLD_BINDING_VALUE
+				textKey: this.OLD_BINDING_VALUE
 			});
 			this.oButton.setModel(oNamedModel, "namedModel");
 
 			this.mExpectedChangeContent = {
-				property : "text",
-				oldValue : this.OLD_VALUE,
-				newValue : this.NEW_VALUE,
-				semantic : "rename"
+				property: "text",
+				oldValue: this.OLD_VALUE,
+				newValue: this.NEW_VALUE,
+				semantic: "rename"
 			};
 
 			this.mSpecificChangeData = {
-				selector : this.mExpectedSelector,
-				changeType : "propertyChange",
-				content : this.mExpectedChangeContent
+				selector: this.mExpectedSelector,
+				changeType: "propertyChange",
+				content: this.mExpectedChangeContent
 			};
 
 			this.oChange = new Change(this.mSpecificChangeData);
@@ -198,16 +198,16 @@ sap.ui.define([
 			this.NEW_VALUE = "{i18n>textKey}";
 
 			this.mExpectedChangeContent = {
-				property : "text",
-				oldValue : this.OLD_VALUE,
-				newValue : this.NEW_VALUE,
-				semantic : "rename"
+				property: "text",
+				oldValue: this.OLD_VALUE,
+				newValue: this.NEW_VALUE,
+				semantic: "rename"
 			};
 
 			this.mSpecificChangeData = {
-				selector : this.mExpectedSelector,
-				changeType : "propertyChange",
-				content : this.mExpectedChangeContent
+				selector: this.mExpectedSelector,
+				changeType: "propertyChange",
+				content: this.mExpectedChangeContent
 			};
 
 			this.oChange = new Change(this.mSpecificChangeData);
@@ -227,16 +227,16 @@ sap.ui.define([
 			this.oXmlButton = this.oXmlDocument.childNodes[0];
 
 			this.mExpectedChangeContent = {
-				property : "text",
-				oldValue : this.OLD_VALUE,
-				newValue : this.NEW_VALUE,
-				semantic : "rename"
+				property: "text",
+				oldValue: this.OLD_VALUE,
+				newValue: this.NEW_VALUE,
+				semantic: "rename"
 			};
 
 			this.mSpecificChangeData = {
-				selector : this.mExpectedSelector,
-				changeType : "propertyChange",
-				content : this.mExpectedChangeContent
+				selector: this.mExpectedSelector,
+				changeType: "propertyChange",
+				content: this.mExpectedChangeContent
 			};
 
 			this.oChange = new Change(this.mSpecificChangeData);

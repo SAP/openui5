@@ -60,7 +60,7 @@ sap.ui.define([
 			});
 
 			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oControl1, this.oControl2, this.oToBeStashedPlaceholder, this.oControlInvisible]
+				content: [this.oControl1, this.oControl2, this.oToBeStashedPlaceholder, this.oControlInvisible]
 			});
 
 			// XML representation of the above runtime state (before modification)

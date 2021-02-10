@@ -28,8 +28,8 @@ function (
 
 	var sandbox = sinon.sandbox.create();
 	var oComponent = sap.ui.getCore().createComponent({
-		name : "testComponent",
-		id : "testComponent"
+		name: "testComponent",
+		id: "testComponent"
 	});
 
 	var mPropertyBag = {modifier: JsControlTreeModifier, appComponent: oComponent};
@@ -43,13 +43,13 @@ function (
 			this.oBaseHandler = Base;
 
 			this.oDefaultRenameChangeHandler = BaseRename.createRenameChangeHandler({
-				propertyName : "text",
-				translationTextType : "XFLD"
+				propertyName: "text",
+				translationTextType: "XFLD"
 			});
 			this.oSpecialRenameChangeHandler = BaseRename.createRenameChangeHandler({
-				propertyName : "text",
-				changePropertyName : "buttonText",
-				translationTextType : "XFLD"
+				propertyName: "text",
+				changePropertyName: "buttonText",
+				translationTextType: "XFLD"
 			});
 
 			var oChangeJson = {
@@ -60,7 +60,7 @@ function (
 
 			this.oChange = new Change(oChangeJson);
 			this.mSpecificChangeInfo = {
-				value : "Button New Text"
+				value: "Button New Text"
 			};
 		},
 		afterEach: function() {
@@ -114,7 +114,7 @@ function (
 		QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later', function (assert) {
 			this.myLayoutId = "myLayout";
 			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId), {
-				content : [this.oButton]
+				content: [this.oButton]
 			});
 
 			var oDOMParser = new DOMParser();
@@ -146,7 +146,7 @@ function (
 		QUnit.test('when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later in XML and JS (on button with binding)', function (assert) {
 			this.myLayoutId = "myLayout";
 			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId), {
-				content : [this.oButton]
+				content: [this.oButton]
 			});
 			var oModel = new JSONModel({
 				text: "Initial Text"

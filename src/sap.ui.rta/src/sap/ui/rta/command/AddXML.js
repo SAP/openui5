@@ -23,32 +23,32 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var AddXML = FlexCommand.extend("sap.ui.rta.command.AddXML", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				fragment : {
-					type : "string",
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				fragment: {
+					type: "string",
 					group: "content"
 				},
-				fragmentPath : {
-					type : "string",
+				fragmentPath: {
+					type: "string",
 					group: "content"
 				},
-				targetAggregation : {
-					type : "string",
+				targetAggregation: {
+					type: "string",
 					group: "content"
 				},
 				index: {
 					type: "int",
 					group: "content"
 				},
-				changeType : {
-					type : "string",
-					defaultValue : "addXML"
+				changeType: {
+					type: "string",
+					defaultValue: "addXML"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 

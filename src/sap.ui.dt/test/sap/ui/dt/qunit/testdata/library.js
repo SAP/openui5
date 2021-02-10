@@ -24,9 +24,9 @@ function () {
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
-		name : "sap.ui.testLibrary",
+		name: "sap.ui.testLibrary",
 		version: "${version}",
-		dependencies : ["sap.ui.core", "sap.ui.dt"],
+		dependencies: ["sap.ui.core", "sap.ui.dt"],
 		types: [],
 		interfaces: [],
 		controls: [

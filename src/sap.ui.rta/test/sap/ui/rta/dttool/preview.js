@@ -39,11 +39,11 @@ sap.ui.define([
 		}
 
 		oPostMessageBus.publish({
-			target : window.parent,
-			origin : window.parent.origin,
-			channelId : "dtTool",
-			eventId : "updatePropertyPanel",
-			data : {}
+			target: window.parent,
+			origin: window.parent.origin,
+			channelId: "dtTool",
+			eventId: "updatePropertyPanel",
+			data: {}
 		});
 
 		var fnEnsureXMLNodeStableIds = function ($XML) {
@@ -78,11 +78,11 @@ sap.ui.define([
 
 			this.refreshIframe(sCompName);
 			oPostMessageBus.publish({
-				target : window.parent,
-				origin : window.parent.origin,
-				channelId : "dtTool",
-				eventId : "newRTA",
-				data : {}
+				target: window.parent,
+				origin: window.parent.origin,
+				channelId: "dtTool",
+				eventId: "newRTA",
+				data: {}
 			});
 		} else {
 			this.refreshIframe(sCompName);
@@ -103,8 +103,8 @@ sap.ui.define([
 		this.sCompId = "sampleComp-" + sCompName;
 
 		this.oUiComponent = sap.ui.getCore().createComponent({
-			id : this.sCompId,
-			name : sCompName
+			id: this.sCompId,
+			name: sCompName
 		});
 
 		var oMetadata = this.oUiComponent.getMetadata();
@@ -112,12 +112,12 @@ sap.ui.define([
 		var aFiles = oConfig && oConfig.sample && oConfig.sample.files;
 
 		oPostMessageBus.publish({
-			target : window.parent,
-			origin : window.parent.origin,
-			channelId : "dtTool",
-			eventId : "files",
-			data : {
-				files : aFiles
+			target: window.parent,
+			origin: window.parent.origin,
+			channelId: "dtTool",
+			eventId: "files",
+			data: {
+				files: aFiles
 			}
 		});
 
@@ -129,12 +129,12 @@ sap.ui.define([
 		this.setupRTA();
 
 		oPostMessageBus.publish({
-			target : window.parent,
-			origin : window.parent.origin,
-			channelId : "dtTool",
-			eventId : "loadLibs",
-			data : {
-				libs : Object.keys(sap.ui.getCore().getLoadedLibraries())
+			target: window.parent,
+			origin: window.parent.origin,
+			channelId: "dtTool",
+			eventId: "loadLibs",
+			data: {
+				libs: Object.keys(sap.ui.getCore().getLoadedLibraries())
 			}
 		});
 	};
@@ -196,19 +196,19 @@ sap.ui.define([
 
 		//Close files inside code editor
 		oPostMessageBus.publish({
-			target : window.parent,
-			origin : window.parent.origin,
-			channelId : "dtTool",
-			eventId : "updateDesignTimeFile",
-			data : {}
+			target: window.parent,
+			origin: window.parent.origin,
+			channelId: "dtTool",
+			eventId: "updateDesignTimeFile",
+			data: {}
 		});
 
 		oPostMessageBus.publish({
-			target : window.parent,
-			origin : window.parent.origin,
-			channelId : "dtTool",
-			eventId : "updatePropertyFile",
-			data : {}
+			target: window.parent,
+			origin: window.parent.origin,
+			channelId: "dtTool",
+			eventId: "updatePropertyFile",
+			data: {}
 		});
 
 		this.checkUndoRedo(true);
@@ -225,11 +225,11 @@ sap.ui.define([
 			this.oDesignTime.getSelectionManager().attachChange(this.onOverlaySelected, this);
 			window._oRTA = this.oRta;
 			oPostMessageBus.publish({
-				target : window.parent,
-				origin : window.parent.origin,
-				channelId : "dtTool",
-				eventId : "RTAstarted",
-				data : {}
+				target: window.parent,
+				origin: window.parent.origin,
+				channelId: "dtTool",
+				eventId: "RTAstarted",
+				data: {}
 			});
 
 			Object.keys(this.oRta.getPlugins()).forEach(function(sPluginName) {
@@ -260,12 +260,12 @@ sap.ui.define([
 					this.oProperties.selector.controlType.match(/(.*)\..*$/)[1]
 				) {
 					oPostMessageBus.publish({
-						target : window.parent,
-						origin : window.parent.origin,
-						channelId : "dtTool",
-						eventId : "updatePropertyPanel",
-						data : {
-							properties : this.oProperties.renamedElement.mProperties
+						target: window.parent,
+						origin: window.parent.origin,
+						channelId: "dtTool",
+						eventId: "updatePropertyPanel",
+						data: {
+							properties: this.oProperties.renamedElement.mProperties
 						}
 					});
 				} else if (
@@ -319,13 +319,13 @@ sap.ui.define([
 		}
 
 		oPostMessageBus.publish({
-			target : window.parent,
-			origin : window.parent.origin,
-			channelId : "dtTool",
-			eventId : "updateOutline",
-			data : {
-				id : sOverlayId,
-				notify : bNotify
+			target: window.parent,
+			origin: window.parent.origin,
+			channelId: "dtTool",
+			eventId: "updateOutline",
+			data: {
+				id: sOverlayId,
+				notify: bNotify
 			}
 		});
 	};
@@ -340,12 +340,12 @@ sap.ui.define([
 				this.oOutlineProvider = oOutline;
 				this.oOutlineProvider.get(sId, iDepth).then(function (oOutlineModelData) {
 					oPostMessageBus.publish({
-						target : window.parent,
-						origin : window.parent.origin,
-						channelId : "dtTool",
-						eventId : "outline",
-						data : {
-							outline : oOutlineModelData
+						target: window.parent,
+						origin: window.parent.origin,
+						channelId: "dtTool",
+						eventId: "outline",
+						data: {
+							outline: oOutlineModelData
 						}
 					});
 				});
@@ -353,12 +353,12 @@ sap.ui.define([
 		} else {
 			this.oOutlineProvider.get(sId, iDepth).then(function (oOutlineModelData) {
 				oPostMessageBus.publish({
-					target : window.parent,
-					origin : window.parent.origin,
-					channelId : "dtTool",
-					eventId : "outline",
-					data : {
-						outline : oOutlineModelData
+					target: window.parent,
+					origin: window.parent.origin,
+					channelId: "dtTool",
+					eventId: "outline",
+					data: {
+						outline: oOutlineModelData
 					}
 				});
 			});
@@ -389,12 +389,12 @@ sap.ui.define([
 			var sId = this.oLastSelection.getElement().getId();
 
 			oPostMessageBus.publish({
-				target : window.parent,
-				origin : window.parent.origin,
-				channelId : "dtTool",
-				eventId : "selectOverlayInOutline",
-				data : {
-					id : sId
+				target: window.parent,
+				origin: window.parent.origin,
+				channelId: "dtTool",
+				eventId: "selectOverlayInOutline",
+				data: {
+					id: sId
 				}
 			});
 
@@ -416,22 +416,22 @@ sap.ui.define([
 			}
 
 			oPostMessageBus.publish({
-				target : window.parent,
-				origin : window.parent.origin,
-				channelId : "dtTool",
-				eventId : "updateDesignTimeFile",
-				data : JSON.parse(JSON.stringify({
-					name : sName,
-					module : sDTModule
+				target: window.parent,
+				origin: window.parent.origin,
+				channelId: "dtTool",
+				eventId: "updateDesignTimeFile",
+				data: JSON.parse(JSON.stringify({
+					name: sName,
+					module: sDTModule
 				}))
 			});
 
 			oPostMessageBus.publish({
-				target : window.parent,
-				origin : window.parent.origin,
-				channelId : "dtTool",
-				eventId : "updatePropertyFile",
-				data : {
+				target: window.parent,
+				origin: window.parent.origin,
+				channelId: "dtTool",
+				eventId: "updatePropertyFile",
+				data: {
 					actions: this.getOverlayActions(oElement.getId()),
 					id: oElement.getId()
 				}
@@ -451,11 +451,11 @@ sap.ui.define([
 		}
 
 		oPostMessageBus.publish({
-			target : window.parent,
-			origin : window.parent.origin,
-			channelId : "dtTool",
-			eventId : "updatePropertyFile",
-			data : {
+			target: window.parent,
+			origin: window.parent.origin,
+			channelId: "dtTool",
+			eventId: "updatePropertyFile",
+			data: {
 				actions: this.getOverlayActions(oElement.getId()),
 				id: oElement.getId()
 			}
@@ -470,8 +470,8 @@ sap.ui.define([
 		var oMetadata = oElement.getMetadata();
 
 		oEditorDTData = jQuery.extend({
-			designtimeModule : oMetadata._oDesignTime && oMetadata._oDesignTime.designtimeModule || "fake_" + oMetadata.getLibraryName().replace(/\./g, "/") + "/designtime/" + oMetadata.getName().match(/.+\.(\w+)$/)[1] + ".designtime.js",
-			_oLib : oMetadata._oDesignTime && oMetadata._oDesignTime._oLib
+			designtimeModule: oMetadata._oDesignTime && oMetadata._oDesignTime.designtimeModule || "fake_" + oMetadata.getLibraryName().replace(/\./g, "/") + "/designtime/" + oMetadata.getName().match(/.+\.(\w+)$/)[1] + ".designtime.js",
+			_oLib: oMetadata._oDesignTime && oMetadata._oDesignTime._oLib
 		}, oEditorDTData);
 
 		oMetadata._oDesignTime = oEditorDTData;
@@ -479,22 +479,22 @@ sap.ui.define([
 
 		oMetadata.loadDesignTime(oElement).then(function (oDTData) {
 			oPostMessageBus.publish({
-				target : window.parent,
-				origin : window.parent.origin,
-				channelId : "dtTool",
-				eventId : "dtData",
-				data : {
-					dtData : JSON.parse(JSON.stringify(oDTData))
+				target: window.parent,
+				origin: window.parent.origin,
+				channelId: "dtTool",
+				eventId: "dtData",
+				data: {
+					dtData: JSON.parse(JSON.stringify(oDTData))
 				}
 			});
 
 			oPostMessageBus.publish({
-				target : window.parent,
-				origin : window.parent.origin,
-				channelId : "dtTool",
-				eventId : "updatePropertyPanel",
-				data : {
-					properties : oElement.mProperties
+				target: window.parent,
+				origin: window.parent.origin,
+				channelId: "dtTool",
+				eventId: "updatePropertyPanel",
+				data: {
+					properties: oElement.mProperties
 				}
 			});
 		});
@@ -563,11 +563,11 @@ sap.ui.define([
 
 	Preview.checkUndoRedo = function (bRtaStopped) {
 		oPostMessageBus.publish({
-			target : window.parent,
-			origin : window.parent.origin,
-			channelId : "dtTool",
-			eventId : "setUndoRedo",
-			data : {
+			target: window.parent,
+			origin: window.parent.origin,
+			channelId: "dtTool",
+			eventId: "setUndoRedo",
+			data: {
 				bCanUndo: this.oRta && !bRtaStopped ? this.oRta.canUndo() : false,
 				bCanRedo: this.oRta && !bRtaStopped ? this.oRta.canRedo() : false
 			}

@@ -30,8 +30,8 @@ function(ManagedObject) {
 	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var Test = ManagedObject.extend("sap.ui.dt.test.Test", /** @lends sap.ui.dt.test.Test.prototype */ {
-		metadata : {
-			"abstract" : true
+		metadata: {
+			"abstract": true
 		}
 	});
 
@@ -40,27 +40,27 @@ function(ManagedObject) {
 	 * @static
 	 */
 	Test.STATUS = {
-		SUPPORTED : {
+		SUPPORTED: {
 			key: "SUPPORTED",
 			text: "supported",
 			value: 3
 		},
-		PARTIAL_SUPPORTED : {
+		PARTIAL_SUPPORTED: {
 			key: "PARTIAL_SUPPORTED",
 			text: "partial supported",
 			value: 2
 		},
-		NOT_SUPPORTED : {
+		NOT_SUPPORTED: {
 			key: "NOT_SUPPORTED",
 			text: "not supported",
 			value: 1
 		},
-		ERROR : {
+		ERROR: {
 			key: "ERROR",
 			text: "error",
 			value: 0
 		},
-		UNKNOWN : {
+		UNKNOWN: {
 			key: "UNKNOWN",
 			text: "unknown",
 			value: 0
@@ -72,9 +72,9 @@ function(ManagedObject) {
 	 * @static
 	 */
 	Test.TYPE = {
-		TEST : "Test",
-		GROUP : "Group",
-		SUITE : "Suite"
+		TEST: "Test",
+		GROUP: "Group",
+		SUITE: "Suite"
 	};
 
 
@@ -166,13 +166,13 @@ function(ManagedObject) {
 		}
 
 		var mEntry = {
-			name : sName,
-			message : sMessage,
-			result : bResult,
-			status : mStatus,
-			type : sType,
-			statistic : {},
-			children : []
+			name: sName,
+			message: sMessage,
+			result: bResult,
+			status: mStatus,
+			type: sType,
+			statistic: {},
+			children: []
 		};
 
 		if (aParentChildren) {
@@ -206,8 +206,8 @@ function(ManagedObject) {
 			var aMappedResult = aChildren.map(function(mEntry) {
 				var mChildResult = this.aggregate(mEntry);
 				return {
-					result : mChildResult.result,
-					status : mChildResult.status
+					result: mChildResult.result,
+					status: mChildResult.status
 				};
 			}, this);
 
@@ -217,9 +217,9 @@ function(ManagedObject) {
 
 			var mReducedResult = aMappedResult.reduce(function(mPreviousValue, mCurrentValue) {
 				return {
-					result : this._getResult(mPreviousValue, mCurrentValue),
-					status : this._getStatus(mPreviousValue, mCurrentValue),
-					statistic : this._getStatistic(mPreviousValue, mCurrentValue)
+					result: this._getResult(mPreviousValue, mCurrentValue),
+					status: this._getStatus(mPreviousValue, mCurrentValue),
+					statistic: this._getStatistic(mPreviousValue, mCurrentValue)
 				};
 			}.bind(this));
 

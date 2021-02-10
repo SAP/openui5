@@ -39,7 +39,7 @@ sap.ui.define([
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Input": {
-					hideControl : {
+					hideControl: {
 						completeChangeContent: function() {},
 						applyChange: function() {return Promise.resolve();},
 						revertChange: function() {}
@@ -49,17 +49,17 @@ sap.ui.define([
 			.then(function() {
 				// Create command stack with some commands
 				this.oCommandStack = new CommandStack();
-				this.oInput1 = new Input({id : "input1"});
-				this.oInput2 = new Input({id : "input2"});
+				this.oInput1 = new Input({id: "input1"});
+				this.oInput2 = new Input({id: "input2"});
 				this.oPanel = new Panel({
-					id : "panel",
-					content : [this.oInput1, this.oInput2]});
+					id: "panel",
+					content: [this.oInput1, this.oInput2]});
 
 				this.oInputDesignTimeMetadata = new DesignTimeMetadata({
-					data : {
-						actions : {
-							remove : {
-								changeType : "hideControl"
+					data: {
+						actions: {
+							remove: {
+								changeType: "hideControl"
 							}
 						}
 					}
@@ -95,13 +95,13 @@ sap.ui.define([
 
 			// Create commands
 			return CommandFactory.getCommandFor(this.oInput1, "Remove", {
-				removedElement : this.oInput1
+				removedElement: this.oInput1
 			}, this.oInputDesignTimeMetadata)
 			.then(function(oRemoveCommand) {
 				return this.oCommandStack.pushAndExecute(oRemoveCommand);
 			}.bind(this))
 			.then(CommandFactory.getCommandFor.bind(this, this.oInput2, "Remove", {
-				removedElement : this.oInput2
+				removedElement: this.oInput2
 			}, this.oInputDesignTimeMetadata))
 			.then(function(oRemoveCommand) {
 				this.oCommandStack.pushAndExecute(oRemoveCommand);
@@ -173,9 +173,9 @@ sap.ui.define([
 				}
 			};
 
-			this.oControl = {id : "a Control"};
+			this.oControl = {id: "a Control"};
 			sandbox.stub(FlUtils, "getComponentForControl").returns(this.oComponent);
-			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app" : {id: "someApp"}});
+			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "someApp"}});
 		},
 		afterEach: function () {
 			this.oComponent.destroy();

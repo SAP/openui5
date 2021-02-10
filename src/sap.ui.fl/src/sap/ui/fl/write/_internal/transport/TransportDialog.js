@@ -42,41 +42,41 @@ function(
 	 * @alias sap.ui.fl.write._internal.transport.TransportDialog
 	 */
 	var TransportDialog = Dialog.extend("sap.ui.fl.write._internal.transport.TransportDialog", /** @lends sap.ui.fl.write._internal.transport.TransportDialog.prototype */ {
-		metadata : {
-			library : "sap.ui.fl",
-			properties : {
+		metadata: {
+			library: "sap.ui.fl",
+			properties: {
 
 				/**
 				 * An ABAP package that can be used as default for the ABAP package selection.
 				 */
-				pkg : {type : "string", group : "Misc", defaultValue : null},
+				pkg: {type: "string", group: "Misc", defaultValue: null},
 
 				/**
 				 * The set of ABAP transport requests that can be selected by a user.
 				 */
-				transports : {type : "any", group : "Misc", defaultValue : null},
+				transports: {type: "any", group: "Misc", defaultValue: null},
 
 				/**
 				 * The LREP object for which as transport request has to be selected.
 				 */
-				lrepObject : {type : "any", group : "Misc", defaultValue : null},
+				lrepObject: {type: "any", group: "Misc", defaultValue: null},
 
 				/**
 				 * Flag indicating whether the selection of an ABAP package is to be hidden or not.
 				 */
-				hidePackage : {type : "boolean", group : "Misc", defaultValue : null}
+				hidePackage: {type: "boolean", group: "Misc", defaultValue: null}
 			},
-			events : {
+			events: {
 
 				/**
 				 * This event will be fired when the user clicks the OK button in the dialog.
 				 */
-				ok : {},
+				ok: {},
 
 				/**
 				 * This event will be fired when the user clicks the Cancel button in the dialog or presses the Escape key on the keyboard.
 				 */
-				cancel : {}
+				cancel: {}
 			}
 		},
 		renderer: {} // inherit Dialog renderer
@@ -248,7 +248,7 @@ function(
 				that.getButtons()[1].setEnabled(true);
 				that._oTransport.setValueState(sap.ui.core.ValueState.None);
 			},
-			change : function(oEvent) {
+			change: function(oEvent) {
 				var fCheck = function(oItem) {
 					if ((oItem && oEvent.mParameters.newValue !== oItem.getText()) || !oItem) {
 						return true;
@@ -309,7 +309,7 @@ function(
 	TransportDialog.prototype._createObjectInfo = function() {
 		var oObject;
 		var oResult = {
-			"package" : this._oPackage.getValue() || ""
+			"package": this._oPackage.getValue() || ""
 		};
 
 		oObject = this.getProperty("lrepObject");

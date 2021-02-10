@@ -131,14 +131,14 @@ sap.ui.define([
 		var sVariantManagementReference = this.getVariantManagementReference(oElementOverlay, oSplitAction);
 
 		return this.getCommandFactory().getCommandFor(oSplitElement, "split", {
-			newElementIds : aNewElementIds,
-			source : oSplitElement,
-			parentElement : oParent
+			newElementIds: aNewElementIds,
+			source: oSplitElement,
+			parentElement: oParent
 		}, oDesignTimeMetadata, sVariantManagementReference)
 
 		.then(function(oSplitCommand) {
 			this.fireElementModified({
-				command : oSplitCommand
+				command: oSplitCommand
 			});
 		}.bind(this))
 
@@ -158,7 +158,7 @@ sap.ui.define([
 	 * @return {object[]} - array of the items with required data
 	 */
 	Split.prototype.getMenuItems = function (vElementOverlays) {
-		return this._getMenuItems(vElementOverlays, {pluginId : "CTX_UNGROUP_FIELDS", rank : 100, icon : "sap-icon://split"});
+		return this._getMenuItems(vElementOverlays, {pluginId: "CTX_UNGROUP_FIELDS", rank: 100, icon: "sap-icon://split"});
 	};
 
 	/**

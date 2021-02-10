@@ -29,47 +29,47 @@ sap.ui.define([
 	', document.head);
 
 	QUnit.module("Given the IconTabBar is created with 3 filters and different content..", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oList = new List({
-				items : [
+				items: [
 					new StandardListItem({
-						title : "List Item 1"
+						title: "List Item 1"
 					}),
 					new StandardListItem({
-						title : "List Item 2"
+						title: "List Item 2"
 					}),
 					new StandardListItem({
-						title : "List Item 3"
+						title: "List Item 3"
 					})
 				]
 			});
-			this.oButton = new Button({text : "Text"});
+			this.oButton = new Button({text: "Text"});
 			this.oIconTabBar = new IconTabBar({
-				items : [
+				items: [
 					new IconTabFilter({
-						showAll : true,
-						count : "22",
-						text : "Orders",
-						content : [
+						showAll: true,
+						count: "22",
+						text: "Orders",
+						content: [
 							this.oList
 						]
 					}),
 					new IconTabFilter({
-						icon : "sap-icon://task",
-						iconColor : sap.ui.core.IconColor.Critical,
-						count : "10",
-						key : "Open",
-						text : "Open",
+						icon: "sap-icon://task",
+						iconColor: sap.ui.core.IconColor.Critical,
+						count: "10",
+						key: "Open",
+						text: "Open",
 						content: [
 							this.oButton
 						]
 					}),
 					new IconTabFilter({
-						icon : "sap-icon://shipping-status",
-						iconColor : sap.ui.core.IconColor.Positive,
-						count : "5",
-						key : "Shipped",
-						text : "Shipped"
+						icon: "sap-icon://shipping-status",
+						iconColor: sap.ui.core.IconColor.Positive,
+						count: "5",
+						key: "Shipped",
+						text: "Shipped"
 					})
 				]
 			}).placeAt("qunit-fixture");
@@ -78,14 +78,14 @@ sap.ui.define([
 			var done = assert.async();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oIconTabBar]
+				rootElements: [this.oIconTabBar]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				done();
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oList.destroy();
 			this.oButton.destroy();
 			this.oIconTabBar.destroy();

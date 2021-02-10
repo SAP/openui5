@@ -31,9 +31,9 @@ sap.ui.define([
 	var Registration = {
 		appdescr_ui5_addLibraries: AddLibrary,
 		appdescr_app_setTitle: SetTitle,
-		appdescr_ovp_changeCard : ChangeCard,
-		appdescr_ovp_addNewCard : AddNewCard,
-		appdescr_ovp_removeCard : DeleteCard
+		appdescr_ovp_changeCard: ChangeCard,
+		appdescr_ovp_addNewCard: AddNewCard,
+		appdescr_ovp_removeCard: DeleteCard
 	};
 	return Registration;
 }, true);

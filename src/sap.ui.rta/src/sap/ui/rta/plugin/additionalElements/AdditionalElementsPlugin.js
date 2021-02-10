@@ -51,10 +51,10 @@ sap.ui.define([
 		}
 		return {
 			responsibleElementOverlay: oResponsibleElementOverlay,
-			relevantContainerOverlay : oRelevantContainerOverlay,
-			parentOverlay : oParentOverlay,
-			relevantContainer : oRelevantContainer,
-			parent : oParentOverlay && oParentOverlay.getElement() //root overlay has no parent
+			relevantContainerOverlay: oRelevantContainerOverlay,
+			parentOverlay: oParentOverlay,
+			relevantContainer: oRelevantContainer,
+			parent: oParentOverlay && oParentOverlay.getElement() //root overlay has no parent
 		};
 	}
 
@@ -352,7 +352,7 @@ sap.ui.define([
 		 * @param  {sap.ui.dt.Overlay} oOverlay overlay object
 		 * @override
 		 */
-		registerElementOverlay : function(oOverlay) {
+		registerElementOverlay: function(oOverlay) {
 			var oModel = oOverlay.getElement().getModel();
 			if (oModel) {
 				var oMetaModel = oModel.getMetaModel();
@@ -402,7 +402,7 @@ sap.ui.define([
 			}.bind(this), []);
 
 			var oInitialRevealObject = {
-				elements : [],
+				elements: [],
 				controlTypeNames: []
 			};
 			var mRevealPromise = aInvisibleElements.reduce(function(oPreviousPromise, oInvisibleElement) {
@@ -414,7 +414,7 @@ sap.ui.define([
 			return mRevealPromise.then(function(mReveal) {
 				if (mReveal.elements.length > 0) {
 					_mReveal[sAggregationName] = {
-						reveal : mReveal
+						reveal: mReveal
 					};
 				}
 				return _mReveal;
@@ -460,9 +460,9 @@ sap.ui.define([
 				return oHasChangeHandlerPromise.then(function() {
 					if (bRevealEnabled) {
 						mReveal.elements.push({
-							element : oInvisibleElement,
-							designTimeMetadata : oDesignTimeMetadata,
-							action : mRevealAction
+							element: oInvisibleElement,
+							designTimeMetadata: oDesignTimeMetadata,
+							action: mRevealAction
 						});
 						var mName = oDesignTimeMetadata.getName(oInvisibleElement);
 						if (mName) {
@@ -723,7 +723,7 @@ sap.ui.define([
 				});
 		},
 
-		_setDialogTitle : function(mActions, oParentElement, sControlName) {
+		_setDialogTitle: function(mActions, oParentElement, sControlName) {
 			var sDialogTitle = _getText("HEADER_ADDITIONAL_ELEMENTS", mActions, oParentElement, PLURAL, sControlName);
 			this.getDialog().setTitle(sDialogTitle);
 			if (sControlName) {
@@ -735,11 +735,11 @@ sap.ui.define([
 		 * Function called when custom field button was pressed
 		 *
 		 */
-		_onOpenCustomField : function () {
+		_onOpenCustomField: function () {
 			return FieldExtensibility.onTriggerCreateExtensionData(this._oCurrentFieldExtInfo);
 		},
 
-		_createCommands : function(mParents, oSiblingElement, mActions, iIndex) {
+		_createCommands: function(mParents, oSiblingElement, mActions, iIndex) {
 			var aSelectedElements = this.getDialog().getSelectedElements();
 
 			// sort elements by label in descending order. When added the fields will be in ascending order on the UI
@@ -782,7 +782,7 @@ sap.ui.define([
 
 					.then(function(oCompositeCommand) {
 						this.fireElementModified({
-							command : oCompositeCommand
+							command: oCompositeCommand
 						});
 					}.bind(this))
 
@@ -798,7 +798,7 @@ sap.ui.define([
 			return Promise.resolve();
 		},
 
-		_createCommandsForInvisibleElement : function(oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex) {
+		_createCommandsForInvisibleElement: function(oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex) {
 			return this._createRevealCommandForInvisible(oSelectedElement, mActions, mParents)
 
 				.then(function(oRevealCommandForInvisible) {
@@ -824,8 +824,8 @@ sap.ui.define([
 					var mManifest = oComponent.getManifest();
 					var sReference = mManifest["sap.app"].id;
 					return this.getCommandFactory().getCommandFor(mParents.publicParent, "addLibrary", {
-						reference : sReference,
-						parameters : { libraries : mRequiredLibraries },
+						reference: sReference,
+						parameters: { libraries: mRequiredLibraries },
 						appComponent: oComponent
 					}, oParentAggregationDTMetadata);
 				}
@@ -848,8 +848,8 @@ sap.ui.define([
 
 			if (oRevealAction.changeOnRelevantContainer) {
 				return this.getCommandFactory().getCommandFor(oRevealedElement, "reveal", {
-					revealedElementId : oRevealedElement.getId(),
-					directParent : mParents.parent
+					revealedElementId: oRevealedElement.getId(),
+					directParent: mParents.parent
 				}, oDesignTimeMetadata, sVariantManagementReference);
 			}
 			return this.getCommandFactory().getCommandFor(oRevealedElement, "reveal", { }, oDesignTimeMetadata, sVariantManagementReference);
@@ -872,18 +872,18 @@ sap.ui.define([
 				var sVariantManagementReference = this.getVariantManagementReference(oRevealedElementOverlay);
 
 				return this.getCommandFactory().getCommandFor(mParents.relevantContainer, "move", {
-					movedElements : [{
-						element : oRevealedElement,
-						sourceIndex : iRevealedSourceIndex,
-						targetIndex : iRevealTargetIndex
+					movedElements: [{
+						element: oRevealedElement,
+						sourceIndex: iRevealedSourceIndex,
+						targetIndex: iRevealTargetIndex
 					}],
-					source : {
-						parent : oSourceParent,
-						aggregation : sParentAggregationName
+					source: {
+						parent: oSourceParent,
+						aggregation: sParentAggregationName
 					},
-					target : {
-						parent : oTargetParent,
-						aggregation : sParentAggregationName
+					target: {
+						parent: oTargetParent,
+						aggregation: sParentAggregationName
 					}
 				}, SourceParentDesignTimeMetadata, sVariantManagementReference);
 			}
@@ -918,7 +918,7 @@ sap.ui.define([
 				});
 		},
 
-		_createCommandsForAddViaDelegate : function(oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex) {
+		_createCommandsForAddViaDelegate: function(oCompositeCommand, oSelectedElement, mParents, oSiblingElement, mActions, iIndex) {
 			var mAddViaDelegateAction = mActions.addViaDelegate.action;
 			var mRequiredLibraries = mAddViaDelegateAction.delegateInfo.requiredLibraries;
 			var oParentAggregationOverlay = mParents.parentOverlay.getAggregationOverlay(mActions.aggregation);
@@ -938,7 +938,7 @@ sap.ui.define([
 				});
 		},
 
-		_createAddViaDelegateCommand : function(oSelectedElement, mParents, oParentAggregationDTMetadata, oSiblingElement, mActions, iIndex) {
+		_createAddViaDelegateCommand: function(oSelectedElement, mParents, oParentAggregationDTMetadata, oSiblingElement, mActions, iIndex) {
 			var mAddViaDelegateAction = mActions.addViaDelegate.action;
 			var oParent = mAddViaDelegateAction.changeOnRelevantContainer ? mParents.relevantContainer : mParents.parent;
 			var oParentOverlay = mAddViaDelegateAction.changeOnRelevantContainer ? mParents.relevantContainerOverlay : mParents.parentOverlay;

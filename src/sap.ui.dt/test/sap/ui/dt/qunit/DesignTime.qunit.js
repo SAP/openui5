@@ -73,10 +73,10 @@ function(
 	}
 
 	QUnit.module("Given that the DesignTime is created", {
-		beforeEach : function () {
+		beforeEach: function () {
 			this.oDesignTime = new DesignTime();
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oDesignTime.destroy();
 		}
 	}, function() {
@@ -162,33 +162,33 @@ function(
 	});
 
 	QUnit.module("Given that the DesignTime is created for a root control", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
 			this.oInnerLayout = new Panel({
-				content : [
+				content: [
 					this.oButton1,
 					this.oButton2
 				]
 			});
 			this.oOuterLayout = new Panel({
-				content : [this.oInnerLayout]
+				content: [this.oInnerLayout]
 			});
 
 			this.oOuterLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oOuterLayout]
+				rootElements: [this.oOuterLayout]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
 				fnDone();
 			});
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oDesignTime.destroy();
 			this.oOuterLayout.destroy();
 			sandbox.restore();
@@ -595,7 +595,7 @@ function(
 			var fnDone = assert.async();
 
 			var oButton = new Button();
-			var oLayout = new VerticalLayout({content : [oButton]});
+			var oLayout = new VerticalLayout({content: [oButton]});
 
 			var bSyncingCalled = false;
 			this.oDesignTime.attachEventOnce("syncing", function () {
@@ -824,7 +824,7 @@ function(
 
 			this.oInnerLayout.removeContent(this.oButton1); //triggers setParent modified
 			this.oButton1.destroy(); //triggers overlay removal
-			this.oInnerLayout.addContent(new Button({ id : sElementId, text : "recreated"})); //triggers overlay being added
+			this.oInnerLayout.addContent(new Button({ id: sElementId, text: "recreated"})); //triggers overlay being added
 		});
 
 		// TODO: check after DesignTime API Enhancement
@@ -988,17 +988,17 @@ function(
 	});
 
 	QUnit.module("Given a layout and a button", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oButton1 = new Button("button");
 
 			this.oLayout1 = new VerticalLayout("layout", {
-				content : [this.oButton1]
+				content: [this.oButton1]
 			});
 			this.oLayout1.placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oLayout1.destroy();
 			if (this.oDesignTime) {
 				this.oDesignTime.destroy();
@@ -1012,7 +1012,7 @@ function(
 			sandbox.stub(ElementUtil, "getAssociationInstances").returns([this.oButton1]);
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout1]
+				rootElements: [this.oLayout1]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -1032,7 +1032,7 @@ function(
 
 			this.oLayout1.getMetadata().loadDesignTime().then(function(mDesignTimeMetadata) {
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oLayout1]
+					rootElements: [this.oLayout1]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {
@@ -1054,25 +1054,25 @@ function(
 	});
 
 	QUnit.module("Given that the DesignTime is initalized for two root controls", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
 			this.oLayout1 = new VerticalLayout({
-				content : []
+				content: []
 			});
 			this.oLayout2 = new VerticalLayout({
-				content : []
+				content: []
 			});
 			this.oLayout3 = new VerticalLayout({
-				content : []
+				content: []
 			});
 			this.oOuterLayout = new VerticalLayout({
-				content : [this.oLayout1, this.oLayout2, this.oLayout3]
+				content: [this.oLayout1, this.oLayout2, this.oLayout3]
 			});
 			this.oOuterLayout.placeAt("qunit-fixture");
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout1, this.oLayout3]
+				rootElements: [this.oLayout1, this.oLayout3]
 			});
 			sap.ui.getCore().applyChanges();
 
@@ -1081,7 +1081,7 @@ function(
 				fnDone();
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oOuterLayout.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -1156,7 +1156,7 @@ function(
 	});
 
 	QUnit.module("Given that the DesignTime is initialized with custom DesignTime Metadata for sap.m.Page", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oPage = new Page();
 			this.oPage.getMetadata().loadDesignTime().then(function() {
@@ -1164,12 +1164,12 @@ function(
 				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
-					designTimeMetadata : {
-						"sap.m.Page" : {
-							testField : "testValue"
+					designTimeMetadata: {
+						"sap.m.Page": {
+							testField: "testValue"
 						}
 					},
-					rootElements : [this.oPage]
+					rootElements: [this.oPage]
 				});
 				this.oDesignTime.attachEventOnce('synced', function () {
 					this.oPageOverlay = OverlayRegistry.getOverlay(this.oPage);
@@ -1177,7 +1177,7 @@ function(
 				}, this);
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oPage.destroy();
 			this.oDesignTime.destroy();
 			sandbox.restore();
@@ -1204,7 +1204,7 @@ function(
 	});
 
 	QUnit.module("Given that the DesignTime is created with hidden layout", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oButton1 = new Button({ text: 'Button1' });
 			this.oLayout1 = new VerticalLayout({
@@ -1218,7 +1218,7 @@ function(
 
 			this.oDesignTime = new DesignTime({
 				designTimeMetadata: {
-					"sap.ui.layout.VerticalLayout" : {
+					"sap.ui.layout.VerticalLayout": {
 						aggregations: {
 							content: {
 								domRef: function() {}
@@ -1233,7 +1233,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oLayoutOuter.destroy();
 		}
@@ -1242,7 +1242,7 @@ function(
 			var fnDone = assert.async();
 			this.oButton2 = new Button({ text: 'Button2' });
 			this.oLayout2 = new VerticalLayout({
-				content : [this.oButton2]
+				content: [this.oButton2]
 			});
 			this.oLayout2.addStyleClass('hidden');
 
@@ -1269,7 +1269,7 @@ function(
 			var fnDone = assert.async();
 			this.oButton2 = new Button({ text: 'Button2' });
 			this.oLayout2 = new VerticalLayout({
-				content : [this.oButton2]
+				content: [this.oButton2]
 			});
 			this.oLayout1.addStyleClass('hidden');
 			this.oLayout2.addStyleClass('hidden');
@@ -1334,7 +1334,7 @@ function(
 			this.oLayout1.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout1]
+				rootElements: [this.oLayout1]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -1414,10 +1414,10 @@ function(
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oPage],
-				designTimeMetadata : {
-					"sap.ui.layout.VerticalLayout" : oLayoutMetadata1.data,
-					"sap.ui.layout.HorizontalLayout" : oLayoutMetadata2.data
+				rootElements: [this.oPage],
+				designTimeMetadata: {
+					"sap.ui.layout.VerticalLayout": oLayoutMetadata1.data,
+					"sap.ui.layout.HorizontalLayout": oLayoutMetadata2.data
 				}
 			});
 

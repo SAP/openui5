@@ -55,16 +55,16 @@ function(
 	sinon.stub(PersistenceWriteAPI, "save");
 	var MockComponent = UIComponent.extend("MockController", {
 		metadata: {
-			manifest: 	{
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+			manifest: {
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					},
 					id: "MockComponent"
 				}
 			}
 		},
-		createContent : function() {
+		createContent: function() {
 			var viewContent = '<mvc:View xmlns:mvc="sap.ui.core.mvc">' + '</mvc:View>';
 			oView = new XMLView(this.createId("mockview"), {
 				viewContent: viewContent
@@ -141,17 +141,17 @@ function(
 	jQuery("body").addClass("sapUiRtaMode");
 
 	QUnit.module("Given PopupManager exists", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.fnAddPopupFilterStub = sandbox.stub(ZIndexManager, "addPopupFilter");
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when RTA is initialized", function(assert) {
 			assert.expect(3);
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
+				rootControl: oComp.getAggregation("rootControl")
 			});
 			assert.ok(this.fnAddPopupFilterStub.calledTwice, "then 2 popup filters were added to the ZIndexManager");
 			this.oRta.getPopupManager()._aPopupFilters.forEach(function(fnFilter) {
@@ -161,13 +161,13 @@ function(
 	});
 
 	QUnit.module("Given RTA instance is created without starting", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
+				rootControl: oComp.getAggregation("rootControl")
 			});
 			this.fnOverrideFunctionsSpy = sandbox.spy(this.oRta.getPopupManager(), "_overrideInstanceFunctions");
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -186,12 +186,12 @@ function(
 	});
 
 	QUnit.module("Given RTA instance is initialized", {
-		beforeEach : function() {
+		beforeEach: function() {
 			stubBefore(true/*bPersistenceAPI*/);
 
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
+				rootControl: oComp.getAggregation("rootControl")
 			});
 			this.oRta._$document = jQuery(document);
 			sap.ui.getCore().applyChanges();
@@ -199,7 +199,7 @@ function(
 			var oToolbarPromise = this.oRta.getToolbar().show();
 			//mock DesignTime
 			this.oRta._oDesignTime = new DesignTime({
-				rootElements : [oComp.getAggregation("rootControl")]
+				rootElements: [oComp.getAggregation("rootControl")]
 			});
 			var oDesignTimePromise = new Promise(function(fnResolve) {
 				this.oRta._oDesignTime.attachEventOnce("synced", function () {
@@ -246,7 +246,7 @@ function(
 			this.oNonRtaDialog = new Dialog("nonRtaDialog");
 			return Promise.all([oDesignTimePromise, oToolbarPromise]);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			if (this.oRta) {
 				this.oRta.destroy();
 			}
@@ -333,7 +333,7 @@ function(
 
 			oComp.runAsOwner(function () {
 				oDialogNotAllowed = new Dialog({
-					id:"adaptNotAllowedDialog",
+					id: "adaptNotAllowedDialog",
 					showHeader: false,
 					contentHeight: "800px",
 					contentWidth: "1000px"
@@ -360,14 +360,14 @@ function(
 			oPopupManager.oRtaRootAppComponent = oComp;
 
 			var oDialogNotAllowed = new Dialog({
-				id:"adaptNotAllowedDialog",
+				id: "adaptNotAllowedDialog",
 				showHeader: false,
 				contentHeight: "800px",
 				contentWidth: "1000px"
 			});
 			oComp.runAsOwner(function () {
 				oInnerDialog = new Dialog({
-					id:"dialogWithValidComponent",
+					id: "dialogWithValidComponent",
 					showHeader: false,
 					contentHeight: "400px",
 					contentWidth: "600px"
@@ -641,10 +641,10 @@ function(
 	//integration tests
 	//when RTA is started and then dialogs are opened
 	QUnit.module("Given RTA is started with an app containing dialog(s)", {
-		beforeEach : function() {
+		beforeEach: function() {
 			stubBefore(true/*bPersistenceAPI*/, true/*bAppComponentForControl*/, true/*bSettingsInstance*/);
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
+				rootControl: oComp.getAggregation("rootControl")
 			});
 			this.oNonRtaDialog = new Dialog("nonRtaDialog");
 			this.oDialog = new Dialog("testDialog");
@@ -653,7 +653,7 @@ function(
 			this.oButton = createDialogOpenButton.call(this);
 			return this.oRta.start().then(spyBefore.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oRta.destroy();
 			if (this.oDialog) {
@@ -707,7 +707,7 @@ function(
 
 	//Dialog open -> RTA started
 	QUnit.module("Given that a dialog is open and then RTA is started", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			stubBefore(true/*bPersistenceAPI*/, true/*bAppComponentForControl*/);
 
 			this.oDialog = new Dialog("testDialog");
@@ -720,7 +720,7 @@ function(
 				fnOpenDone();
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			if (this.oDialog) {
 				this.oDialog.destroy();
@@ -732,7 +732,7 @@ function(
 	}, function () {
 		QUnit.test("when dialog with same app component is already open", function(assert) {
 			var oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
+				rootControl: oComp.getAggregation("rootControl")
 			});
 			var fnAfterRTA = function() {
 				assert.notEqual(oRta._oDesignTime.getRootElements().map(function(oRootElement) {
@@ -752,7 +752,7 @@ function(
 			};
 			this.oDialog.oPopup.setModal(false);
 			var oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
+				rootControl: oComp.getAggregation("rootControl")
 			});
 			assert.notOk(this.oDialog.oPopup.getModal(), "initially modal property for dialog is set to false");
 			var fnAfterRTA = function() {
@@ -774,7 +774,7 @@ function(
 			};
 			this.oDialog.oPopup.setModal(false);
 			var oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
+				rootControl: oComp.getAggregation("rootControl")
 			});
 			assert.notOk(this.oDialog.oPopup.getModal(), "initially modal property for dialog is set to false");
 			var fnAfterRTA = function() {
@@ -798,21 +798,21 @@ function(
 			stubBefore(true/*bPersistenceAPI*/);
 
 			var oCompContInDialog = new ComponentContainer("CompCont2", {
-				component : new MockComponent("compInContainer")
+				component: new MockComponent("compInContainer")
 			});
 			var oCompInDialog = oCompContInDialog.getComponentInstance();
 			this.oDialog = new Dialog("appinside");
 			this.oDialog.addContent(oCompContInDialog);
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompInDialog.getAggregation("rootControl")
+				rootControl: oCompInDialog.getAggregation("rootControl")
 			});
 			this.oRta._$document = jQuery(document);
 			this.oRta._createToolsMenu(true);
 			this.oRta.getToolbar().show();
 			//mock DesignTime
 			this.oRta._oDesignTime = new DesignTime({
-				rootElements : [oCompInDialog.getAggregation("rootControl")]
+				rootElements: [oCompInDialog.getAggregation("rootControl")]
 			});
 			this.oDialog.open();
 			var done = assert.async();
@@ -849,13 +849,13 @@ function(
 
 			//mock RTA instance
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oComp.getAggregation("rootControl")
+				rootControl: oComp.getAggregation("rootControl")
 			});
 			var done = assert.async();
 			this.oNonRtaDialog = new Dialog("nonRtaDialog");
 			oComp.runAsOwner(function() {
 				this.oCompContInside = new ComponentContainer("CompContInside", {
-					component : new MockComponent("compInside")
+					component: new MockComponent("compInside")
 				});
 				oComp.byId("mockview").addContent(this.oCompContInside);
 				this.oCompContInside.getComponentInstance().byId("mockview").addContent(this.oNonRtaDialog);

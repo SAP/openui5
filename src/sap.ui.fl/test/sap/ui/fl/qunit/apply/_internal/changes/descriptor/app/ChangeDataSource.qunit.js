@@ -23,9 +23,9 @@ function (
 				content: {
 					dataSourceId: "ppm",
 					entityPropertyChange: {
-						propertyPath : "uri",
-						operation : "UPDATE",
-						propertyValue : "newuri"
+						propertyPath: "uri",
+						operation: "UPDATE",
+						propertyValue: "newuri"
 					}
 				}
 			});
@@ -35,9 +35,9 @@ function (
 				content: {
 					dataSourceId: "ppm",
 					entityPropertyChange: {
-						propertyPath : "settings/maxAge",
-						operation : "UPDATE",
-						propertyValue : "100"
+						propertyPath: "settings/maxAge",
+						operation: "UPDATE",
+						propertyValue: "100"
 					}
 				}
 			});
@@ -47,9 +47,9 @@ function (
 				content: {
 					dataSourceId: "ppm",
 					entityPropertyChange: {
-						propertyPath : "uri",
-						operation : "UPSERT",
-						propertyValue : "newuri"
+						propertyPath: "uri",
+						operation: "UPSERT",
+						propertyValue: "newuri"
 					}
 				}
 			});
@@ -60,14 +60,14 @@ function (
 					dataSourceId: "ppm",
 					entityPropertyChange: [
 						{
-							propertyPath : "uri",
-							operation : "UPDATE",
-							propertyValue : "newuri"
+							propertyPath: "uri",
+							operation: "UPDATE",
+							propertyValue: "newuri"
 						},
 						{
-							propertyPath : "settings/maxage",
-							operation : "UPDATE",
-							propertyValue : "100"
+							propertyPath: "settings/maxage",
+							operation: "UPDATE",
+							propertyValue: "100"
 						}
 					]
 				}

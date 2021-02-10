@@ -40,7 +40,7 @@ function(
 		var oCommandFactory = new CommandFactory();
 
 		QUnit.module("Given the SimpleForm in RTA using " + oSimpleFormLayout, {
-			beforeEach : function(assert) {
+			beforeEach: function(assert) {
 				oComponent = new UIComponent();
 				sandbox.stub(Utils, "getAppComponentForControl").returns(oComponent);
 
@@ -57,12 +57,12 @@ function(
 				var oSelectionPlugin = new MouseSelectionPlugin();
 
 				oRemove = new RemovePlugin({
-					commandFactory : oCommandFactory
+					commandFactory: oCommandFactory
 				});
 
 				oDesignTime = new DesignTime({
-					plugins : [oTabHandlingPlugin, oSelectionPlugin, oRemove],
-					rootElements : [oView]
+					plugins: [oTabHandlingPlugin, oSelectionPlugin, oRemove],
+					rootElements: [oView]
 				});
 
 				oDesignTime.attachEventOnce("synced", function() {
@@ -70,7 +70,7 @@ function(
 				});
 			},
 
-			afterEach : function() {
+			afterEach: function() {
 				sandbox.restore();
 				oComponent.destroy();
 				oView.destroy();

@@ -43,16 +43,16 @@ sap.ui.define([
 
 	function givenAnFLP(fnFLPToExternalStub, fnFLPReloadStub, mShellParams) {
 		sandbox.stub(FlexUtils, "getUshellContainer").returns({
-			getService : function () {
+			getService: function () {
 				return {
-					toExternal : fnFLPToExternalStub,
-					getHash : function () {
+					toExternal: fnFLPToExternalStub,
+					getHash: function () {
 						return "Action-somestring";
 					},
-					parseShellHash : function () {
+					parseShellHash: function () {
 						var mHash = {
-							semanticObject : "Action",
-							action : "somestring"
+							semanticObject: "Action",
+							action: "somestring"
 						};
 
 						if (mShellParams) {
@@ -60,16 +60,16 @@ sap.ui.define([
 						}
 						return mHash;
 					},
-					unregisterNavigationFilter : function () {
+					unregisterNavigationFilter: function () {
 					},
-					registerNavigationFilter : function () {
+					registerNavigationFilter: function () {
 					},
-					reloadCurrentApp : fnFLPReloadStub
+					reloadCurrentApp: fnFLPReloadStub
 				};
 			},
-			getLogonSystem : function () {
+			getLogonSystem: function () {
 				return {
-					isTrial : function () {
+					isTrial: function () {
 						return false;
 					}
 				};
@@ -94,14 +94,14 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that RuntimeAuthoring wants to determine if a draft is available", {
-		beforeEach : function () {
+		beforeEach: function () {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : false
+				rootControl: this.oRootControl,
+				showToolbars: false
 			});
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -124,26 +124,26 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring wants to determine if a reload is needed", {
-		beforeEach : function () {
+		beforeEach: function () {
 			givenAnFLP(function () {
 				return true;
 			}, undefined, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : false
+				rootControl: this.oRootControl,
+				showToolbars: false
 			});
 			this.oReloadInfo = {
-				layer : this.oRta.getLayer(),
-				selector : this.oRta.getRootControlInstance(),
-				ignoreMaxLayerParameter : false,
+				layer: this.oRta.getLayer(),
+				selector: this.oRta.getRootControlInstance(),
+				ignoreMaxLayerParameter: false,
 				includeCtrlVariants: true,
-				parsedHash : {params : {}}
+				parsedHash: {params: {}}
 			};
 
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(this.oReloadInfo.parsedHash);
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -168,9 +168,9 @@ sap.ui.define([
 				assert.ok(oHasVersionParameterSpy.calledWith(sap.ui.fl.Versions.UrlParameter), "the version parameter was checked");
 				assert.equal(oHasHigherLayerChangesSpy.callCount, 1, "then hasHigherLayerChanges is called once");
 				assert.deepEqual(oHasHigherLayerChangesSpy.lastCall.args[0], {
-					selector : this.oReloadInfo.selector,
+					selector: this.oReloadInfo.selector,
 					reference: "sap.ui.rta.qunitrta.Component",
-					ignoreMaxLayerParameter : this.oReloadInfo.ignoreMaxLayerParameter,
+					ignoreMaxLayerParameter: this.oReloadInfo.ignoreMaxLayerParameter,
 					includeCtrlVariants: this.oReloadInfo.includeCtrlVariants,
 					upToLayer: "CUSTOMER"
 				}, "then hasHigherLayerChanges is called with the correct parameters");
@@ -203,40 +203,40 @@ sap.ui.define([
 		});
 	});
 	QUnit.module("Given that a CrossAppNavigation is needed because of a draft", {
-		beforeEach : function () {
+		beforeEach: function () {
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
-				getService : function () {
+				getService: function () {
 					return {
-						toExternal : function () {
+						toExternal: function () {
 							return true;
 						},
-						parseShellHash : function () {
-							return {params : {}};
+						parseShellHash: function () {
+							return {params: {}};
 						}
 					};
 				}
 			});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : false
+				rootControl: this.oRootControl,
+				showToolbars: false
 			});
 			this.mParsedHash = {
-				params : {
-					"sap-ui-fl-version" : [sap.ui.fl.Versions.Draft.toString()]
+				params: {
+					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]
 				}
 			};
 			this.oReloadInfo = {
-				hasHigherLayerChanges : false,
-				isDraftAvailable : true,
-				layer : this.oRta.getLayer(),
-				selector : this.oRta.getRootControlInstance(),
-				ignoreMaxLayerParameter : false,
+				hasHigherLayerChanges: false,
+				isDraftAvailable: true,
+				layer: this.oRta.getLayer(),
+				selector: this.oRta.getRootControlInstance(),
+				ignoreMaxLayerParameter: false,
 				includeCtrlVariants: true,
-				parsedHash : this.mParsedHash
+				parsedHash: this.mParsedHash
 			};
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -256,28 +256,28 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring wants to determine if a reload is needed on start", {
-		beforeEach : function () {
+		beforeEach: function () {
 			givenAnFLP(function () {
 				return true;
 			}, undefined, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : false
+				rootControl: this.oRootControl,
+				showToolbars: false
 			});
-			this.mParsedHash = {params : {}};
+			this.mParsedHash = {params: {}};
 
 			this.oReloadInfo = {
-				hasHigherLayerChanges : false,
-				isDraftAvailable : true,
-				layer : this.oRta.getLayer(),
-				selector : this.oRta.getRootControlInstance(),
-				ignoreMaxLayerParameter : false,
+				hasHigherLayerChanges: false,
+				isDraftAvailable: true,
+				layer: this.oRta.getLayer(),
+				selector: this.oRta.getRootControlInstance(),
+				ignoreMaxLayerParameter: false,
 				includeCtrlVariants: true,
-				parsedHash : this.mParsedHash
+				parsedHash: this.mParsedHash
 			};
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -302,9 +302,9 @@ sap.ui.define([
 				assert.ok(oHasVersionParameterSpy.calledWith(sap.ui.fl.Versions.UrlParameter), "the version parameter was checked");
 				assert.equal(oHasHigherLayerChangesSpy.callCount, 1, "then hasHigherLayerChanges is called once");
 				assert.deepEqual(oHasHigherLayerChangesSpy.lastCall.args[0], {
-					selector : this.oReloadInfo.selector,
+					selector: this.oReloadInfo.selector,
 					reference: "sap.ui.rta.qunitrta.Component",
-					ignoreMaxLayerParameter : this.oReloadInfo.ignoreMaxLayerParameter,
+					ignoreMaxLayerParameter: this.oReloadInfo.ignoreMaxLayerParameter,
 					includeCtrlVariants: this.oReloadInfo.includeCtrlVariants,
 					upToLayer: "CUSTOMER"
 				}, "then hasHigherLayerChanges is called with the correct parameters");
@@ -348,18 +348,18 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring in the CUSTOMER layer was started within an FLP and wants to determine if a reload is needed on exit", {
-		beforeEach : function () {
+		beforeEach: function () {
 			givenAnFLP(function () {
 				return true;
 			}, undefined, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : false
+				rootControl: this.oRootControl,
+				showToolbars: false
 			});
 			return this.oRta.start();
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -426,26 +426,26 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP", {
-		beforeEach : function () {
+		beforeEach: function () {
 			this.oRestartFlpStub = sandbox.stub();
 			givenAnFLP(function () {
 				return true;
 			}, this.oRestartFlpStub, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl
+				rootControl: this.oRootControl
 			});
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
 			return this.oRta.start();
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
 	}, function () {
 		QUnit.test("when something can be undone", function (assert) {
 			var oEvent = new Event("someEventId", undefined, {
-				version : 1
+				version: 1
 			});
 
 			sandbox.stub(this.oRta, "canUndo").returns(true);
@@ -460,7 +460,7 @@ sap.ui.define([
 
 		QUnit.test("when the displayed version and the in the event are the same", function (assert) {
 			var oEvent = new Event("someEventId", undefined, {
-				version : 1
+				version: 1
 			});
 
 			this.oRta._oVersionsModel.setProperty("/displayedVersion", 1);
@@ -472,7 +472,7 @@ sap.ui.define([
 
 		QUnit.test("when no version is in the url and the app", function (assert) {
 			var oEvent = new Event("someEventId", undefined, {
-				version : 1
+				version: 1
 			});
 
 			var oCrossAppNavigationStub = sandbox.stub(this.oRta, "_triggerCrossAppNavigation").resolves();
@@ -492,7 +492,7 @@ sap.ui.define([
 		QUnit.test("when a version is in the url and the same version should be loaded again (i.e. loaded the app with " +
 			"the 'Original App' version, create a draft and switch to 'Original Version' again)", function (assert) {
 			var oEvent = new Event("someEventId", undefined, {
-				version : sap.ui.fl.Versions.Original
+				version: sap.ui.fl.Versions.Original
 			});
 
 			var oLoadVersionStub = sandbox.stub(VersionsAPI, "loadVersionForApplication");
@@ -516,13 +516,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP, something can be undone and a dialog fires an event", {
-		beforeEach : function () {
+		beforeEach: function () {
 			givenAnFLP(function () {
 				return true;
 			}, undefined, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl
+				rootControl: this.oRootControl
 			});
 			sandbox.stub(this.oRta, "canUndo").returns(true);
 			this.oSerializeStub = sandbox.stub(this.oRta, "_serializeToLrep").resolves();
@@ -531,7 +531,7 @@ sap.ui.define([
 			this.nVersionParameter = 1;
 			return this.oRta.start();
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -540,7 +540,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.YES);
 
 			var oEvent = new Event("someEventId", undefined, {
-				version : this.nVersionParameter
+				version: this.nVersionParameter
 			});
 			return this.oRta._onSwitchVersion(oEvent)
 			.then(function () {
@@ -555,7 +555,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.NO);
 
 			var oEvent = new Event("someEventId", undefined, {
-				version : this.nVersionParameter
+				version: this.nVersionParameter
 			});
 			return this.oRta._onSwitchVersion(oEvent)
 			.then(function () {
@@ -570,7 +570,7 @@ sap.ui.define([
 			sandbox.stub(Utils, "showMessageBox").resolves(MessageBox.Action.CANCEL);
 
 			var oEvent = new Event("someEventId", undefined, {
-				version : this.nVersionParameter
+				version: this.nVersionParameter
 			});
 			return this.oRta._onSwitchVersion(oEvent)
 			.then(function () {
@@ -581,16 +581,16 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl
+				rootControl: this.oRootControl
 			});
 
 			sandbox.stub(this.oRta, "_setVersionsModel").callsFake(function (oModel) {
 				oModel.setProperty("/versions", [{
-					version : sap.ui.fl.Versions.Draft,
-					type : "draft"
+					version: sap.ui.fl.Versions.Draft,
+					type: "draft"
 				}]);
 				oModel.setProperty("/backendDraft", true);
 				oModel.setProperty("/versioningEnabled", true);
@@ -601,7 +601,7 @@ sap.ui.define([
 			this.oRestartFlpStub = sandbox.stub();
 			givenAnFLP(function() {return true;}, this.oRestartFlpStub);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -612,7 +612,7 @@ sap.ui.define([
 			var oRta = this.oRta;
 			var sVersionTitle = "aVersionTitle";
 			var oEvent = {
-				getParameter : function () {
+				getParameter: function () {
 					return sVersionTitle;
 				}
 			};
@@ -642,7 +642,7 @@ sap.ui.define([
 			var oRta = this.oRta;
 			var sVersionTitle = "aVersionTitle";
 			var oEvent = {
-				getParameter : function () {
+				getParameter: function () {
 					return sVersionTitle;
 				}
 			};
@@ -686,8 +686,8 @@ sap.ui.define([
 			var oShowMessageBoxStub = sandbox.stub(Utils, "showMessageBox").resolves("MessageBox.Action.CANCEL");
 			var oStopStub = sandbox.stub(this.oRta, "stop");
 			var mParsedHash = {
-				params : {
-					"sap-ui-fl-version" : [sap.ui.fl.Versions.Draft]
+				params: {
+					"sap-ui-fl-version": [sap.ui.fl.Versions.Draft]
 				}
 			};
 			sandbox.stub(this.oRta, "_isDraftAvailable").returns(true);
@@ -725,8 +725,8 @@ sap.ui.define([
 		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : false
+				rootControl: this.oRootControl,
+				showToolbars: false
 			});
 			this.oEnableRestartStub = sandbox.stub(RuntimeAuthoring, "enableRestart");
 			return this.oRta.start();
@@ -771,15 +771,15 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given _onStackModified", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : true
+				rootControl: this.oRootControl,
+				showToolbars: true
 			});
 			return this.oRta.start();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			if (this.oRta._oDraftDiscardWarningPromise) {
 				this.oRta._oDraftDiscardWarningPromise = undefined;
 				this.oRta._oDraftDiscardWarningDialog.destroy();
@@ -863,11 +863,11 @@ sap.ui.define([
 
 
 	QUnit.module("Given a draft discarding warning dialog is openend", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : true
+				rootControl: this.oRootControl,
+				showToolbars: true
 			});
 
 			this.oUndoStub = sandbox.stub(this.oRta, "undo");
@@ -880,7 +880,7 @@ sap.ui.define([
 					sandbox.stub(this.oRta.getCommandStack(), "canUndo").returns(true);
 				}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			delete this.oRta._bUserDiscardedDraft;
 			this.oRta.destroy();
 			sandbox.restore();

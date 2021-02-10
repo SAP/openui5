@@ -28,9 +28,9 @@ function (
 
 	// delegate further initialization of this library to the Core
 	sap.ui.getCore().initLibrary({
-		name : "sap.ui.dt",
+		name: "sap.ui.dt",
 		version: "${version}",
-		dependencies : ["sap.ui.core"],
+		dependencies: ["sap.ui.core"],
 		types: [
 			"sap.ui.dt.SelectionMode"
 		],

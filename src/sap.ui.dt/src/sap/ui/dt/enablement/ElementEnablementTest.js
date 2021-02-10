@@ -45,24 +45,24 @@ function(
 	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var ElementEnablementTest = Test.extend("sap.ui.dt.test.ElementEnablementTest", /** @lends sap.ui.dt.test.ElementEnablementTest.prototype */ {
-		metadata : {
+		metadata: {
 			// ---- object ----
 
 			// ---- control specific ----
-			library : "sap.ui.dt",
-			properties : {
-				type : {
-					type : "string"
+			library: "sap.ui.dt",
+			properties: {
+				type: {
+					type: "string"
 				},
-				create : {
-					type : "any" //function
+				create: {
+					type: "any" //function
 				},
-				timeout : {
-					type : "int",
-					defaultValue : 0
+				timeout: {
+					type: "int",
+					defaultValue: 0
 				},
-				groupPostfix : {
-					type : "string"
+				groupPostfix: {
+					type: "string"
 				}
 			}
 		}
@@ -162,7 +162,7 @@ function(
 	ElementEnablementTest.prototype._getTestArea = function() {
 		if (!this._$TestAreaDomRef) {
 			this._$TestAreaDomRef = jQuery("<div id='" + this.getId() + "--testArea" + "'></div>").css({
-				height : "500px",
+				height: "500px",
 				width: "1000px"// test area needs a height, so that some controls render correctly
 			}).appendTo("body");
 		}
@@ -198,7 +198,7 @@ function(
 
 					if (!this._bErrorDuringRendering) {
 						this._oDesignTime = new DesignTime({
-							rootElements : [this._oElement]
+							rootElements: [this._oElement]
 						});
 						this._oDesignTime.attachEventOnce("synced", function() {
 							if (this.getTimeout()) {

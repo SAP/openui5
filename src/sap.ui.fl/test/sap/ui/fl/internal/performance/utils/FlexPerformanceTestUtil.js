@@ -93,8 +93,8 @@ sap.ui.define([
 	function _createControlsForDiverse(sControlId) {
 		var oLayout = sap.ui.getCore().byId("idMain1--Layout");
 		var oInnerLayout = new VerticalLayout({
-			id : sControlId + ".layout",
-			content :  [
+			id: sControlId + ".layout",
+			content: [
 				new Label(sControlId + ".title", {text: sControlId + ".title"}),
 				new VBox(sControlId + ".vbox", {
 					items: [

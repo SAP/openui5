@@ -162,7 +162,7 @@ sap.ui.define([
 					var oSimpleChange = {
 						changeType: sChangeType,
 						changeHandler: oChangeHandler.changeHandler,
-						layers:oChangeHandler.layers
+						layers: oChangeHandler.layers
 					};
 					this.registerControlForSimpleChange(sControlType, oSimpleChange);
 				}.bind(this));
@@ -193,7 +193,7 @@ sap.ui.define([
 				var oSimpleChange = {
 					changeType: sChangeType,
 					changeHandler: oChangeHandler.changeHandler,
-					layers:oChangeHandler.layers
+					layers: oChangeHandler.layers
 				};
 				var sControlType = oModifier.getControlType(oControl);
 				var oChangeRegistryItem = this._createChangeRegistryItemForSimpleChange(sControlType, oSimpleChange);
@@ -316,7 +316,7 @@ sap.ui.define([
 		mParam = {
 			name: oSimpleChange.changeType,
 			changeHandler: oSimpleChange.changeHandler,
-			layers : mLayerPermissions
+			layers: mLayerPermissions
 		};
 		oChangeTypeMetadata = new ChangeTypeMetadata(mParam);
 

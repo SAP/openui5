@@ -58,7 +58,7 @@ sap.ui.define([
 			Util.createNestedPanels(oPanel, sAggregation, iNumberOfControls - 1, oLastElement);
 		},
 
-		addMixedControlsTo : function(oLayout, iFrom, iTo, bVisible) {
+		addMixedControlsTo: function(oLayout, iFrom, iTo, bVisible) {
 			var aControlTypes = [Button, Label, DatePicker, Slider, RatingIndicator];
 
 			var oControl = null;
@@ -107,16 +107,16 @@ sap.ui.define([
 				var oTabHandlingPlugin = new TabHandling();
 				var oSelectionPlugin = new MouseSelection();
 				var oControlDragPlugin = new ControlDragDrop({
-					draggableTypes : MOVABLE_TYPES
+					draggableTypes: MOVABLE_TYPES
 				});
 				var oCutPastePlugin = new CutPaste({
-					movableTypes : MOVABLE_TYPES
+					movableTypes: MOVABLE_TYPES
 				});
 				var oContextMenuPlugin = new ContextMenu();
 				window.performance.mark("dt.plugins.created");
 
 				var oDesignTime = new DesignTime({
-					plugins : [
+					plugins: [
 						oTabHandlingPlugin,
 						oSelectionPlugin,
 						oCutPastePlugin,

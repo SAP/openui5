@@ -50,8 +50,8 @@ sap.ui.define([
 
 		QUnit.test("forEachObjectInStorage with various changes and variants with reference", function(assert) {
 			return ObjectStorageUtils.forEachObjectInStorage({
-				storage : this.oStorage,
-				reference : "sap.ui.fl.test"
+				storage: this.oStorage,
+				reference: "sap.ui.fl.test"
 			}, function (mFlexObject) {
 				mFlexObject.changeDefinition.name += "called";
 				this.oStorage[mFlexObject.key] = (JSON.stringify(mFlexObject.changeDefinition));

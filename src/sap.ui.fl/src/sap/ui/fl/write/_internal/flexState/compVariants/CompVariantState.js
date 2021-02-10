@@ -127,10 +127,10 @@ sap.ui.define([
 	function writeObjectAndAddToState(oFlexObject, oStoredResponse) {
 		// TODO: remove this line as soon as layering and a condensing is in place
 		return Storage.write({
-			flexObjects : [oFlexObject.getDefinition()],
-			layer : oFlexObject.getLayer(),
-			transport : oFlexObject.getRequest(),
-			isLegacyVariant : oFlexObject.isVariant()
+			flexObjects: [oFlexObject.getDefinition()],
+			layer: oFlexObject.getLayer(),
+			transport: oFlexObject.getRequest(),
+			isLegacyVariant: oFlexObject.isVariant()
 		}).then(function (result) {
 			// updateFlexObject
 			if (result && result.response && result.response[0]) {

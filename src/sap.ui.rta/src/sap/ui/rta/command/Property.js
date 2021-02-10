@@ -23,25 +23,25 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var Property = FlexCommand.extend("sap.ui.rta.command.Property", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				propertyName : {
-					type : "string"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				propertyName: {
+					type: "string"
 				},
-				newValue : {
-					type : "any"
+				newValue: {
+					type: "any"
 				},
-				semanticMeaning : {
-					type : "string"
+				semanticMeaning: {
+					type: "string"
 				},
-				changeType : {
-					type : "string",
-					defaultValue : "propertyChange"
+				changeType: {
+					type: "string",
+					defaultValue: "propertyChange"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 
@@ -49,15 +49,15 @@ sap.ui.define([
 		var oElement = this.getElement();
 		// general format
 		return {
-			changeType : this.getChangeType(),
-			selector : {
-				id : oElement.getId(),
-				type : oElement.getMetadata().getName()
+			changeType: this.getChangeType(),
+			selector: {
+				id: oElement.getId(),
+				type: oElement.getMetadata().getName()
 			},
-			content : {
-				property : this.getPropertyName(),
-				newValue : this.getNewValue(),
-				semantic : this.getSemanticMeaning()
+			content: {
+				property: this.getPropertyName(),
+				newValue: this.getNewValue(),
+				semantic: this.getSemanticMeaning()
 			}
 		};
 	};

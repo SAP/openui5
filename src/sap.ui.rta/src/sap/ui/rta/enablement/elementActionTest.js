@@ -81,7 +81,7 @@ sap.ui.define([
 
 		if (typeof mOptions.xmlView === "string") {
 			mOptions.xmlView = {
-				viewContent : mOptions.xmlView
+				viewContent: mOptions.xmlView
 			};
 		}
 		var sandbox = sinon.sandbox.create();
@@ -112,7 +112,7 @@ sap.ui.define([
 		var ASYNC = true;
 		var Comp = UIComponent.extend(UI_COMPONENT_NAME, {
 			metadata: {
-				manifest : {
+				manifest: {
 					"sap.app": {
 						id: UI_COMPONENT_NAME,
 						type: "application"
@@ -124,7 +124,7 @@ sap.ui.define([
 					}
 				}
 			},
-			createContent : function() {
+			createContent: function() {
 				var mViewSettings = Object.assign({}, mOptions.xmlView);
 				mViewSettings.id = this.createId("view");
 

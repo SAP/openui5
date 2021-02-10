@@ -328,7 +328,7 @@ function (
 			assert.strictEqual(oEventSpy.callCount, 1, "then 'editableChange' was fired");
 			assert.deepEqual(oEventSpy.getCall(0).args[0], {
 				id: this.oElementOverlay.getId(),
-				editable : true
+				editable: true
 			}, "then 'editableChange' was fired with the required parameters");
 			assert.strictEqual(this.oElementOverlay.hasStyleClass("sapUiDtOverlayEditable"), true, "the Overlay has the sapUiDtOverlayEditable StyleClass");
 		});
@@ -479,8 +479,8 @@ function (
 	QUnit.module("Given that an Overlay is created for a layout with an invisible domRef", {
 		beforeEach: function (assert) {
 			var done = assert.async();
-			this.oLabel = new Label({text : "text"});
-			this.oVerticalLayout = new VerticalLayout({ content : [this.oLabel] });
+			this.oLabel = new Label({text: "text"});
+			this.oVerticalLayout = new VerticalLayout({ content: [this.oLabel] });
 			this.oVerticalLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			this.oVerticalLayout.$().css("display", "none");
@@ -519,17 +519,17 @@ function (
 	});
 
 	QUnit.module("Given that an Overlay is created for a layout with a visible domRef", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
-			this.oLabel1 = new Label({text : "text 1"});
-			this.oLabel2 = new Label({text : "text 2"});
-			this.oInnerLayout = new VerticalLayout({ content : [this.oLabel2] });
-			this.oVerticalLayout = new HorizontalLayout({ content : [this.oInnerLayout, this.oLabel1] });
+			this.oLabel1 = new Label({text: "text 1"});
+			this.oLabel2 = new Label({text: "text 2"});
+			this.oInnerLayout = new VerticalLayout({ content: [this.oLabel2] });
+			this.oVerticalLayout = new HorizontalLayout({ content: [this.oInnerLayout, this.oLabel1] });
 			this.oVerticalLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout]
+				rootElements: [this.oVerticalLayout]
 			});
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oLayoutOverlay = OverlayRegistry.getOverlay(this.oVerticalLayout);
@@ -539,7 +539,7 @@ function (
 				fnDone();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -627,13 +627,13 @@ function (
 	});
 
 	QUnit.module("Given that an Overlay is created for a layout with child controls", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oButton1 = new Button({
-				text : "Button 1"
+				text: "Button 1"
 			});
 			this.oVerticalLayout1 = new VerticalLayout({
-				content : [this.oButton1]
+				content: [this.oButton1]
 			});
 			this.oVerticalLayout2 = new VerticalLayout();
 			this.oVerticalLayout = new VerticalLayout({
@@ -643,7 +643,7 @@ function (
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout]
+				rootElements: [this.oVerticalLayout]
 			});
 			this.oDesignTime.attachEventOnce("synced", function() {
 				this.oOverlayButton1 = OverlayRegistry.getOverlay(this.oButton1);
@@ -652,7 +652,7 @@ function (
 				fnDone();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oButton1.destroy();
 			this.oVerticalLayout.destroy();
 			this.oDesignTime.destroy();
@@ -671,7 +671,7 @@ function (
 	});
 
 	QUnit.module("Given that an Overlay is created for a control with custom design time metadata", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oButton = new Button({
 				text: "Button"
 			});
@@ -679,10 +679,10 @@ function (
 			sap.ui.getCore().applyChanges();
 
 			this.oOverlay = new ElementOverlay({
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
-					data : {
-						name : "My Custom Metadata"
+				element: this.oButton,
+				designTimeMetadata: new ElementDesignTimeMetadata({
+					data: {
+						name: "My Custom Metadata"
 					}
 				}),
 				init: assert.async(),
@@ -692,7 +692,7 @@ function (
 				}
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oOverlay.destroy();
 			this.oButton.destroy();
 		}
@@ -714,10 +714,10 @@ function (
 
 			this.oOverlay = new ElementOverlay({
 				isRoot: true,
-				element : this.oButton,
-				designTimeMetadata : new ElementDesignTimeMetadata({
+				element: this.oButton,
+				designTimeMetadata: new ElementDesignTimeMetadata({
 					data: {
-						ignore : true
+						ignore: true
 					}
 				}),
 				init: function () {
@@ -745,24 +745,24 @@ function (
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oButton1 = new Button({
-				text : "Button 1"
+				text: "Button 1"
 			});
 			this.oButton2 = new Button({
-				text : "Button 2"
+				text: "Button 2"
 			});
 			this.oButton3 = new Button({
-				text : "Button 3"
+				text: "Button 3"
 			});
 			this.oButton4 = new Button({
-				text : "Button 4"
+				text: "Button 4"
 			});
 
 			this.oVerticalLayout1 = new VerticalLayout({
-				content : [this.oButton1, this.oButton2]
+				content: [this.oButton1, this.oButton2]
 			});
 
 			this.oVerticalLayout2 = new VerticalLayout({
-				content : [this.oButton3, this.oButton4]
+				content: [this.oButton3, this.oButton4]
 			});
 
 			this.oVerticalLayout1.placeAt("qunit-fixture");
@@ -787,7 +787,7 @@ function (
 				fnDone();
 			}, this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oVerticalLayout2.destroy();
 			this.oVerticalLayout1.destroy();
 			this.oDesignTime.destroy();
@@ -856,7 +856,7 @@ function (
 	});
 
 	QUnit.module("Given a SimpleScrollControl with Overlays", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			this.oSimpleScrollControl = new SimpleScrollControl("scrollControl");
@@ -873,12 +873,12 @@ function (
 				value: "bar"
 			}));
 			this.oVBox = new VBox({
-				items : [this.oSimpleScrollControl]
+				items: [this.oSimpleScrollControl]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVBox]
+				rootElements: [this.oVBox]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -892,7 +892,7 @@ function (
 				}
 			}, this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oVBox.destroy();
 			this.oDesignTime.destroy();
@@ -1011,7 +1011,7 @@ function (
 	});
 
 	QUnit.module("Aggregation sorting", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var fnDone2 = assert.async();
 
@@ -1029,7 +1029,7 @@ function (
 			});
 			this.oLayout = new ObjectPageLayout("layout", {
 				height: "300px",
-				sections : [oSection, oSection2],
+				sections: [oSection, oSection2],
 				headerTitle: new ObjectPageHeader({
 					objectTitle: "Title"
 				}),
@@ -1042,7 +1042,7 @@ function (
 				showFooter: true
 			}).attachEventOnce("onAfterRenderingDOMReady", fnDone2);
 			this.oVBox = new VBox({
-				items : [this.oLayout]
+				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
@@ -1059,7 +1059,7 @@ function (
 				fnDone();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oVBox.destroy();
 		}
@@ -1110,7 +1110,7 @@ function (
 	});
 
 	QUnit.module("Given another SimpleScrollControl with Overlays and one scroll container aggregation is ignored", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var ScrollControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.ScrollControl", {
 				metadata: {
 					designtime: {
@@ -1166,12 +1166,12 @@ function (
 	});
 
 	QUnit.module("Given a control with control domRef defined in dt-metadata", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var AnyControl = SimpleScrollControl.extend("sap.ui.dt.test.controls.AnyControl", {
 				metadata: {
 					designtime: {
 						domRef: ".sapUiDtTestSSCScrollContainer",
-						scrollContainers : null //not needed in this test
+						scrollContainers: null //not needed in this test
 					}
 				},
 				renderer: SimpleScrollControl.getMetadata().getRenderer().render
@@ -1180,7 +1180,7 @@ function (
 			var fnDone = assert.async();
 
 			this.oAnyControl = new AnyControl({
-				id : "control"
+				id: "control"
 			});
 
 			this.oVBox = new VBox({
@@ -1516,23 +1516,23 @@ function (
 	});
 
 	QUnit.module("Given that an Overlay is created when scrolling is present", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button({
-				text : "Button"
+				text: "Button"
 			});
 			this.oButton2 = new Button({
-				text : "Button2"
+				text: "Button2"
 			});
 			this.oButton3 = new Button({
-				text : "Button3"
+				text: "Button3"
 			});
 
 			this.oPanel = new Panel({
-				id : "SmallPanel",
-				content : [this.oButton, this.oButton2, this.oButton3],
-				width : "40px",
-				height : "100px"
+				id: "SmallPanel",
+				content: [this.oButton, this.oButton2, this.oButton3],
+				width: "40px",
+				height: "100px"
 			});
 
 			this.oPanel.placeAt("qunit-fixture");
@@ -1541,12 +1541,12 @@ function (
 			this.oPanel.$().find(">.sapMPanelContent").scrollTop(50);
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oPanel]
+				rootElements: [this.oPanel]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", fnDone);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oPanel.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -1606,7 +1606,7 @@ function (
 	});
 
 	QUnit.module("Given an object page with scrolling", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var fnDone2 = assert.async();
 
@@ -1624,7 +1624,7 @@ function (
 			});
 			this.oLayout = new ObjectPageLayout("layout", {
 				height: "300px",
-				sections : [oSection, oSection2],
+				sections: [oSection, oSection2],
 				headerTitle: new ObjectPageHeader({
 					objectTitle: "Title"
 				}),
@@ -1633,7 +1633,7 @@ function (
 				})
 			}).attachEventOnce("onAfterRenderingDOMReady", fnDone2);
 			this.oVBox = new VBox({
-				items : [this.oLayout]
+				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
@@ -1646,7 +1646,7 @@ function (
 				fnDone();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oVBox.destroy();
 		}

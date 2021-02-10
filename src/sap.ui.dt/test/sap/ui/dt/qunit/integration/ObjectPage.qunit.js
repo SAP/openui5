@@ -42,18 +42,18 @@ function (
 			});
 			this.oLayout = new ObjectPageLayout("layout", {
 				height: "600px",
-				sections : [this.oSection, this.oSection2],
+				sections: [this.oSection, this.oSection2],
 				headerTitle: new ObjectPageHeader({
 					objectTitle: "Title"
 				})
 			});
 			this.oVBox = new VBox({
-				items : [this.oLayout]
+				items: [this.oLayout]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVBox]
+				rootElements: [this.oVBox]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", fnDone);

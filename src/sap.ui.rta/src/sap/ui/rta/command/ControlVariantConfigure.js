@@ -25,18 +25,18 @@ sap.ui.define([
 	 * @alias sap.ui.rta.command.ControlVariantConfigure
 	 */
 	var ControlVariantConfigure = BaseCommand.extend("sap.ui.rta.command.ControlVariantConfigure", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				control : {
-					type : "any"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				control: {
+					type: "any"
 				},
-				changes : {
-					type : "array"
+				changes: {
+					type: "array"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 

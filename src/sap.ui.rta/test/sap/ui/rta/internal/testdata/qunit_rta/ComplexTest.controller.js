@@ -2,7 +2,7 @@
 	"use strict";
 
 	sap.ui.controller("sap.ui.rta.qunitrta.ComplexTest", {
-		onInit : function () {
+		onInit: function () {
 			jQuery.sap.require("sap.ui.core.util.MockServer");
 			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/qunitrta/");
 			var sManifestUrl = this._sResourcePath + "/manifest.json";
@@ -50,7 +50,7 @@
 							oMockServer.simulate(sMetadataUrl, {
 								sMockdataBaseUrl: sMockServerPath,
 								bGenerateMissingMockData: true,
-								aEntitySetsNames : aEntities
+								aEntitySetsNames: aEntities
 							});
 						}
 						//else if *Other types can be inserted here, like Annotations*
@@ -93,7 +93,7 @@
 			}
 		},
 
-		_getUrlParameter : function(sParam) {
+		_getUrlParameter: function(sParam) {
 			var sReturn = "";
 			var sPageURL = window.location.search.substring(1);
 			var sURLVariables = sPageURL.split('&');
@@ -106,12 +106,12 @@
 			return sReturn;
 		},
 
-		switchToAdaptionMode : function() {
+		switchToAdaptionMode: function() {
 			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
 			var oRta = new sap.ui.rta.RuntimeAuthoring({
-				rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
-				customFieldUrl : this._sResourcePath + "/testdata/rta/CustomField.html",
-				showCreateCustomField : (this._getUrlParameter("sap-ui-xx-ccf") === "true"),
+				rootControl: sap.ui.getCore().byId("Comp1---idMain1"),
+				customFieldUrl: this._sResourcePath + "/testdata/rta/CustomField.html",
+				showCreateCustomField: (this._getUrlParameter("sap-ui-xx-ccf") === "true"),
 				flexSettings: {
 					developerMode: false
 				}

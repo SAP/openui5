@@ -33,9 +33,9 @@ sap.ui.define([
 				},
 				getManifest: function () {
 					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							}
 						}
 					};
@@ -49,7 +49,7 @@ sap.ui.define([
 		},
 		beforeEach: function () {
 			this.oButton = new Button("mockButton", {
-				text : "Label"
+				text: "Label"
 			});
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
@@ -59,7 +59,7 @@ sap.ui.define([
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button": {
-					rename : {
+					rename: {
 						applyChange: this.fnApplyChangeSpy,
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						revertChange: function() {}
@@ -68,10 +68,10 @@ sap.ui.define([
 			})
 			.then(function() {
 				this.oButtonDesignTimeMetadata = new DesignTimeMetadata({
-					data : {
-						actions : {
-							rename : {
-								changeType : "rename"
+					data: {
+						actions: {
+							rename: {
+								changeType: "rename"
 							}
 						}
 					}
@@ -84,8 +84,8 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when getting a rename command for a Button...", function(assert) {
 			return CommandFactory.getCommandFor(this.oButton, "Rename", {
-				renamedElement : this.oButton,
-				value : "new value"
+				renamedElement: this.oButton,
+				value: "new value"
 			}, this.oButtonDesignTimeMetadata)
 
 			.then(function(oRenameCommand) {

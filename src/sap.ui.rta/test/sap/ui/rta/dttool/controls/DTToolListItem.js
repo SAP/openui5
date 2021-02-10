@@ -33,33 +33,33 @@ sap.ui.define([
 
 		metadata: {
 			properties: {
-				propertyName : {
-					type : "string"
+				propertyName: {
+					type: "string"
 				},
-				type : {
-					type : "string"
+				type: {
+					type: "string"
 				},
-				value : {
-					type : "any"
+				value: {
+					type: "any"
 				},
-				defaultValue : {
-					type : "any",
+				defaultValue: {
+					type: "any",
 					defaultValue: "string"
 				}
 			},
 
 			events: {
-				change : {
-					parameters : {
-						newValue : {
-							type : "any"
+				change: {
+					parameters: {
+						newValue: {
+							type: "any"
 						}
 					}
 				}
 			}
 		},
 
-		onSelectChange : function (oEvent) {
+		onSelectChange: function (oEvent) {
 			var vNewValue = oEvent.getParameter("selectedItem").getKey();
 
 			if (this.getType() === "boolean") {
@@ -71,7 +71,7 @@ sap.ui.define([
 			});
 		},
 
-		onInputChange : function (oEvent) {
+		onInputChange: function (oEvent) {
 			var vNewValue = oEvent.getParameter("value");
 
 			if (this.getType() === "int") {
@@ -87,7 +87,7 @@ sap.ui.define([
 			});
 		},
 
-		onBeforeRendering : function () {
+		onBeforeRendering: function () {
 			this.removeAllContent();
 
 			this.setLabel(this.getPropertyName());
@@ -100,20 +100,20 @@ sap.ui.define([
 			var sDefaultValue = this.getDefaultValue();
 			if (sType === "boolean") {
 				this.addContent(new sap.m.Select({
-					width : "12.5rem",
-					selectedKey : "" + sValue,
-					showSecondaryValues : true,
-					change : this.onSelectChange.bind(this),
-					items : [
+					width: "12.5rem",
+					selectedKey: "" + sValue,
+					showSecondaryValues: true,
+					change: this.onSelectChange.bind(this),
+					items: [
 						new sap.ui.core.ListItem({
-							key : "true",
-							text : "true",
-							additionalText : sDefaultValue ? "default" : ""
+							key: "true",
+							text: "true",
+							additionalText: sDefaultValue ? "default" : ""
 						}),
 						new sap.ui.core.ListItem({
-							key : "false",
-							text : "false",
-							additionalText : sDefaultValue ? "" : "default"
+							key: "false",
+							text: "false",
+							additionalText: sDefaultValue ? "" : "default"
 						})
 					]
 				}));
@@ -122,36 +122,36 @@ sap.ui.define([
 
 				Object.keys(oEnum).forEach(function (sKey) {
 					aItems.push(new sap.ui.core.ListItem({
-						key : "" + oEnum[sKey],
-						text : oEnum[sKey],
-						additionalText : sDefaultValue === oEnum[sKey] ? "default" : ""
+						key: "" + oEnum[sKey],
+						text: oEnum[sKey],
+						additionalText: sDefaultValue === oEnum[sKey] ? "default" : ""
 					}));
 				});
 
 				this.addContent(new sap.m.Select({
-					width : "12.5rem",
-					selectedKey : "" + sValue,
-					showSecondaryValues : true,
-					change : this.onSelectChange.bind(this),
-					items : aItems
+					width: "12.5rem",
+					selectedKey: "" + sValue,
+					showSecondaryValues: true,
+					change: this.onSelectChange.bind(this),
+					items: aItems
 				}));
 			} else {
 				this.addContent(new sap.m.Input({
-					width : "8rem",
-					value : sValue,
-					textAlign : (this.getType === "int" || this.getType === "float") ? "End" : "Begin",
-					type : (this.getType === "int" || this.getType === "float") ? "Number" : "Text",
-					change : this.onInputChange.bind(this)
+					width: "8rem",
+					value: sValue,
+					textAlign: (this.getType === "int" || this.getType === "float") ? "End" : "Begin",
+					type: (this.getType === "int" || this.getType === "float") ? "Number" : "Text",
+					change: this.onInputChange.bind(this)
 				}).addStyleClass("sapUiTinyMarginEnd")).addContent(new sap.m.Button({
-					width : "4rem",
-					text : "default",
-					enabled : sDefaultValue !== sValue,
-					press : this.defaultButtonPress.bind(this)
+					width: "4rem",
+					text: "default",
+					enabled: sDefaultValue !== sValue,
+					press: this.defaultButtonPress.bind(this)
 				}));
 			}
 		},
 
-		defaultButtonPress : function () {
+		defaultButtonPress: function () {
 			this.getContent()[0].setValue(this.getDefaultValue());
 			this.getContent()[1].setEnabled(false);
 
@@ -160,11 +160,11 @@ sap.ui.define([
 			});
 		},
 
-		setType : function (sType) {
+		setType: function (sType) {
 			this.setProperty("type", sType || "string");
 		},
 
-		renderer : function () {
+		renderer: function () {
 			InputListItemRenderer.render.apply(this, arguments);
 		}
 	});

@@ -68,15 +68,15 @@ function(
 		});
 
 		QUnit.test("when getAction is called...", function(assert) {
-			assert.propEqual(this.oDesignTimeMetadata.getAction("action1"), {changeType : "firstChangeType"}, "...for string action, the string is returned");
-			assert.propEqual(this.oDesignTimeMetadata.getAction("action2"), {changeType : "secondChangeType"}, "...for object action, the object is returned");
-			assert.propEqual(this.oDesignTimeMetadata.getAction("action3", {name:"thirdChangeType"}), {changeType : "thirdChangeType"}, "...for function action, the correct string is returned");
+			assert.propEqual(this.oDesignTimeMetadata.getAction("action1"), {changeType: "firstChangeType"}, "...for string action, the string is returned");
+			assert.propEqual(this.oDesignTimeMetadata.getAction("action2"), {changeType: "secondChangeType"}, "...for object action, the object is returned");
+			assert.propEqual(this.oDesignTimeMetadata.getAction("action3", {name: "thirdChangeType"}), {changeType: "thirdChangeType"}, "...for function action, the correct string is returned");
 		});
 
 		QUnit.test("when getAction is called for a sub action", function(assert) {
-			assert.propEqual(this.oDesignTimeMetadata.getAction("actionWithASubAction", undefined, "subAction"), {changeType : "subActionChangeType"}, "then the sub action was returned");
+			assert.propEqual(this.oDesignTimeMetadata.getAction("actionWithASubAction", undefined, "subAction"), {changeType: "subActionChangeType"}, "then the sub action was returned");
 			assert.strictEqual(this.oDesignTimeMetadata.getAction("actionWithASubAction", undefined, "InvalidSubAction"), undefined, "then for an invalid sub action undefined is returned");
-			assert.propEqual(this.oDesignTimeMetadata.getAction("actionWithASubActionInsideFunction", {name:"subActionChangeType"}, "subAction"), {changeType : "subActionChangeType"}, "then the sub action was returned for a function action");
+			assert.propEqual(this.oDesignTimeMetadata.getAction("actionWithASubActionInsideFunction", {name: "subActionChangeType"}, "subAction"), {changeType: "subActionChangeType"}, "then the sub action was returned for a function action");
 		});
 
 		QUnit.test("when getCommandName is called...", function(assert) {
@@ -91,7 +91,7 @@ function(
 				"...for object action, then the proper command name is returned"
 			);
 			assert.strictEqual(
-				this.oDesignTimeMetadata.getCommandName("thirdChangeType", {name:"thirdChangeType"}),
+				this.oDesignTimeMetadata.getCommandName("thirdChangeType", {name: "thirdChangeType"}),
 				"action3",
 				"...for function action, then the proper command name is returned"
 			);
@@ -143,13 +143,13 @@ function(
 
 		QUnit.test("when getLibraryText is called", function(assert) {
 			var oFakeElement = {
-				getMetadata : sandbox.stub().returns({
-					getLibraryName : sandbox.stub().returns("fakeLibrary")
+				getMetadata: sandbox.stub().returns({
+					getLibraryName: sandbox.stub().returns("fakeLibrary")
 				})
 			};
 			var oFakeLibBundle = {
-				getText : sandbox.stub().returns("translated text"),
-				hasText : sandbox.stub().returns(true)
+				getText: sandbox.stub().returns("translated text"),
+				hasText: sandbox.stub().returns(true)
 			};
 			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").returns(oFakeLibBundle);
 			assert.equal(this.oDesignTimeMetadata.getLibraryText(oFakeElement, "I18N_KEY"), "translated text", "then you get the text from the resource bundle of the corresponding library");
@@ -157,17 +157,17 @@ function(
 
 		QUnit.test("when getLibraryText is called and only the parent control has a text", function(assert) {
 			var oFakeElement = {
-				getMetadata : sandbox.stub().returns({
-					getLibraryName : sandbox.stub().returns("dummyLib"),
-					getParent : sandbox.stub().returns({
-						getLibraryName : sandbox.stub().returns("fakeLibrary")
+				getMetadata: sandbox.stub().returns({
+					getLibraryName: sandbox.stub().returns("dummyLib"),
+					getParent: sandbox.stub().returns({
+						getLibraryName: sandbox.stub().returns("fakeLibrary")
 					})
 				})
 			};
 
 			var oFakeLibBundle = {
-				getText : sandbox.stub().returns("translated text"),
-				hasText : sandbox.stub().withArgs("I18N_KEY").returns(true)
+				getText: sandbox.stub().returns("translated text"),
+				hasText: sandbox.stub().withArgs("I18N_KEY").returns(true)
 			};
 			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").withArgs("fakeLibrary").returns(oFakeLibBundle);
 			assert.equal(this.oDesignTimeMetadata.getLibraryText(oFakeElement, "I18N_KEY"), "translated text", "then you get the text from the resource bundle of the library from the parent");
@@ -175,8 +175,8 @@ function(
 
 		QUnit.test("when ignore is false", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					ignore : false
+				data: {
+					ignore: false
 				}
 			});
 			assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), false, "then ignore property is returned right");
@@ -184,8 +184,8 @@ function(
 
 		QUnit.test("when ignore is true", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					ignore : true
+				data: {
+					ignore: true
 				}
 			});
 			assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), true, "then ignore property is returned right");
@@ -193,8 +193,8 @@ function(
 
 		QUnit.test("when ignore is a function returning false", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					ignore : function() {return false; }
+				data: {
+					ignore: function() {return false; }
 				}
 			});
 			assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), false, "then ignore property is returned right");
@@ -202,8 +202,8 @@ function(
 
 		QUnit.test("when ignore is a function returning true", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					ignore : function() {return true; }
+				data: {
+					ignore: function() {return true; }
 				}
 			});
 			assert.strictEqual(this.oDesignTimeMetadata.isIgnored(), true, "then ignore property is returned right");
@@ -211,7 +211,7 @@ function(
 
 		QUnit.test("when 'getControllerExtensionTemplate' is called with a path specified", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
+				data: {
 					controllerExtensionTemplate: "foo"
 				}
 			});
@@ -225,7 +225,7 @@ function(
 
 		QUnit.test("when markedAsNotAdaptable function is called on an action with 'not-adaptable' value", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
+				data: {
 					actions: "not-adaptable"
 				}
 			});
@@ -234,7 +234,7 @@ function(
 
 		QUnit.test("when markedAsNotAdaptable function is called on an action with 'null' value", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
+				data: {
 					actions: null
 				}
 			});
@@ -243,10 +243,10 @@ function(
 
 		QUnit.test("when markedAsNotAdaptable function is called on an action with with an action-object value", function(assert) {
 			this.oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
+				data: {
 					actions: {
-						rename : {
-							domRef : function (oElement) {
+						rename: {
+							domRef: function (oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -260,7 +260,7 @@ function(
 	QUnit.module("Given a dedicated rendered control and designtime metadata is created", {
 		beforeEach: function() {
 			this.oButton = new Button({
-				text : "myButton"
+				text: "myButton"
 			});
 
 			this.oButton.placeAt("qunit-fixture");
@@ -272,10 +272,10 @@ function(
 	}, function() {
 		QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function", function(assert) {
 			var oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						rename : {
-							domRef : function (oElement) {
+				data: {
+					actions: {
+						rename: {
+							domRef: function (oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -290,10 +290,10 @@ function(
 
 		QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function and no element", function(assert) {
 			var oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						rename : {
-							domRef : function (oElement) {
+				data: {
+					actions: {
+						rename: {
+							domRef: function (oElement) {
 								return oElement.getDomRef();
 							}
 						}
@@ -307,10 +307,10 @@ function(
 
 		QUnit.test("when getAssociatedDomRef is called on an action with domRef as a string", function(assert) {
 			var oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						rename : {
-							domRef : ".sapMBtnContent"
+				data: {
+					actions: {
+						rename: {
+							domRef: ".sapMBtnContent"
 						}
 					}
 				}
@@ -323,10 +323,10 @@ function(
 
 		QUnit.test("when getAssociatedDomRef is called on an action with domRef as undefined", function(assert) {
 			var oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						rename : {
-							domRef : undefined
+				data: {
+					actions: {
+						rename: {
+							domRef: undefined
 						}
 					}
 				}
@@ -338,9 +338,9 @@ function(
 
 		QUnit.test("when getAssociatedDomRef is called on an action with no domRef at all", function(assert) {
 			var oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						rename : {
+				data: {
+					actions: {
+						rename: {
 						}
 					}
 				}
@@ -352,9 +352,9 @@ function(
 
 		QUnit.test("when getAssociatedDomRef is called on an action with an invalid/not available selector", function(assert) {
 			var oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						rename : {
+				data: {
+					actions: {
+						rename: {
 							domRef: ""
 						}
 					}
@@ -368,9 +368,9 @@ function(
 
 	QUnit.module("Given a dedicated rendered control and an AggregationDesignTimeMetadata is created for a control", {
 		beforeEach: function() {
-			this.oTitle0 = new Title({id : "Title0", text : "Title 0"});
-			this.oLabel0 = new Label({id : "Label0", text : "Label 0"});
-			this.oInput0 = new Input({id : "Input0"});
+			this.oTitle0 = new Title({id: "Title0", text: "Title 0"});
+			this.oLabel0 = new Label({id: "Label0", text: "Label 0"});
+			this.oInput0 = new Input({id: "Input0"});
 
 			this.oSimpleForm = new SimpleForm("form", {
 				id: "SimpleForm",
@@ -387,11 +387,11 @@ function(
 	}, function() {
 		QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function returning the actual domRef", function(assert) {
 			var oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						rename : function() {
+				data: {
+					actions: {
+						rename: function() {
 							return {
-								domRef : function (oElement) {
+								domRef: function (oElement) {
 									return oElement.getDomRef();
 								}
 							};
@@ -408,11 +408,11 @@ function(
 
 		QUnit.test("when getAssociatedDomRef is called on an action with domRef as a function returning ':sap-domRef'", function(assert) {
 			var oDesignTimeMetadata = new DesignTimeMetadata({
-				data : {
-					actions : {
-						rename : function() {
+				data: {
+					actions: {
+						rename: function() {
 							return {
-								domRef : ":sap-domref"
+								domRef: ":sap-domref"
 							};
 						}
 					}
@@ -430,7 +430,7 @@ function(
 		beforeEach: function() {
 			this.oDesignTimeMetadataWithResponsibleElement = new DesignTimeMetadata({
 				data: {
-					actions : {
+					actions: {
 						getResponsibleElement: function(oElement) {
 							return oElement;
 						},
@@ -441,7 +441,7 @@ function(
 
 			this.oDesignTimeMetadataWithoutResponsibleElement = new DesignTimeMetadata({
 				data: {
-					actions : {}
+					actions: {}
 				}
 			});
 

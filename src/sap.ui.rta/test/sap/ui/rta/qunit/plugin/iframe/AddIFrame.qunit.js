@@ -62,9 +62,9 @@ function (
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -75,7 +75,7 @@ function (
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a designTime and addIFrame plugin are instantiated for an ObjectPageLayout", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oMockedComponent);
 			sandbox.stub(Utils, "getViewForControl").returns(oMockedViewWithStableId);
 			sandbox.stub(AddIFrameDialog.prototype, "open").callsFake(function () {
@@ -96,14 +96,14 @@ function (
 			})
 			.then(function() {
 				this.oAddIFrame = new AddIFramePlugin({
-					commandFactory : new CommandFactory()
+					commandFactory: new CommandFactory()
 				});
 				this.oObjectPageSection = new ObjectPageSection(oMockedViewWithStableId.createId("section"), {
 					title: "section title",
-					subSections : [
+					subSections: [
 						new ObjectPageSubSection("subSection", {
-							title : "sub section title",
-							blocks : [new VerticalLayout()]
+							title: "sub section title",
+							blocks: [new VerticalLayout()]
 						})
 					]
 				});
@@ -114,7 +114,7 @@ function (
 					text: "buttonTitle"
 				});
 				this.oVerticalLayout = new VerticalLayout(oMockedViewWithStableId.createId("verticalLayout"), {
-					content : [this.oObjectPageLayout, this.oButton]
+					content: [this.oObjectPageLayout, this.oButton]
 				}).placeAt("qunit-fixture");
 
 				sap.ui.getCore().applyChanges();
@@ -124,8 +124,8 @@ function (
 				this.oObjectPageLayout.addSection(this.oNewObjectPageSection);
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oVerticalLayout],
-					plugins : [this.oAddIFrame]
+					rootElements: [this.oVerticalLayout],
+					plugins: [this.oAddIFrame]
 				});
 
 				var done = assert.async();
@@ -162,14 +162,14 @@ function (
 				.withArgs("CTX_ADDIFRAME", sSingularHeaderText).returns(sExpectedHeaderText);
 
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
-				aggregations : {
+				aggregations: {
 					sections: {
 						childNames: {
 							singular: sSingularSectionText,
 							plural: sPluralSectionText
 						},
-						actions : {
-							addIFrame : {
+						actions: {
+							addIFrame: {
 								changeType: "addIFrame"
 							}
 						}
@@ -179,8 +179,8 @@ function (
 							singular: sSingularHeaderText,
 							plural: sPluralHeaderText
 						},
-						actions : {
-							addIFrame : {
+						actions: {
+							addIFrame: {
 								changeType: "addIFrame"
 							}
 						}
@@ -220,10 +220,10 @@ function (
 
 		QUnit.test("when an overlay has addIFrame action in designTimeMetadata, but has no isEnabled property defined", function(assert) {
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
-				aggregations : {
-					sections : {
-						actions : {
-							addIFrame : {
+				aggregations: {
+					sections: {
+						actions: {
+							addIFrame: {
 								changeType: "addIFrame"
 							}
 						}
@@ -246,11 +246,11 @@ function (
 
 		QUnit.test("when an overlay has addIFrame action designTime metadata, has no changeType and isEnabled property is true", function(assert) {
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
-				aggregations : {
-					sections : {
-						actions : {
-							addIFrame : {
-								isEnabled : true
+				aggregations: {
+					sections: {
+						actions: {
+							addIFrame: {
+								isEnabled: true
 							}
 						}
 					}
@@ -275,14 +275,14 @@ function (
 			var sSingularText = "Singular Text";
 			var sPluralText = "Plural Text";
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
-				aggregations : {
-					sections : {
+				aggregations: {
+					sections: {
 						childNames: {
 							singular: sSingularText,
 							plural: sPluralText
 						},
-						actions : {
-							addIFrame : {
+						actions: {
+							addIFrame: {
 								changeType: "addIFrame"
 							}
 						}
@@ -347,11 +347,11 @@ function (
 			sandbox.stub(Utils, "getViewForControl").returns(oViewWithUnstableId);
 
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
-				aggregations : {
-					sections : {
-						actions : {
-							addIFrame : {
-								changeType : "addIFrame"
+				aggregations: {
+					sections: {
+						actions: {
+							addIFrame: {
+								changeType: "addIFrame"
 							}
 						}
 					}
@@ -374,12 +374,12 @@ function (
 		QUnit.test("when an overlay has an addIFrame action in designTimeMetadata, and isEnabled property is a function", function(assert) {
 			assert.expect(27);
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
-				aggregations : {
-					sections : {
-						actions : {
-							addIFrame : {
-								changeType : "addIFrame",
-								isEnabled : function (oElement) {
+				aggregations: {
+					sections: {
+						actions: {
+							addIFrame: {
+								changeType: "addIFrame",
+								isEnabled: function (oElement) {
 									return oElement.getMetadata().getName() === "sap.uxap.ObjectPageLayout";
 								}
 							}
@@ -449,11 +449,11 @@ function (
 
 		QUnit.test("when an overlay has an addIFrame action with changeOnRelevantContainer true, but its relevant container has no stable ID", function(assert) {
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
-				aggregations : {
-					sections : {
-						actions : {
-							addIFrame : {
-								changeType : "addIFrame",
+				aggregations: {
+					sections: {
+						actions: {
+							addIFrame: {
+								changeType: "addIFrame",
 								changeOnRelevantContainer: true
 							}
 						}
@@ -470,7 +470,7 @@ function (
 
 			// changeOnRelevantContainer means the action has to be registered on the parent
 			return ChangeRegistry.getInstance().registerControlsForChanges({
-				"sap.ui.layout.VerticalLayout" : {
+				"sap.ui.layout.VerticalLayout": {
 					addIFrame: {
 						completeChangeContent: function() {},
 						applyChange: function() {},
@@ -492,11 +492,11 @@ function (
 
 		QUnit.test("when a sibling overlay has an addIFrame action designTimeMetadata, but for another aggregation", function(assert) {
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
-				aggregations : {
-					toolBar : {
-						actions : {
-							addIFrame : {
-								changeType : "addToolbarContainer"
+				aggregations: {
+					toolBar: {
+						actions: {
+							addIFrame: {
+								changeType: "addToolbarContainer"
 							}
 						}
 					}
@@ -514,7 +514,7 @@ function (
 		QUnit.test("when the designTimeMetadata has a getContainerIndex property and a function _determineIndex() is called", function(assert) {
 			var vAction = {
 				aggregationName: "sections",
-				getIndex : function(oForm, oFormContainer) {
+				getIndex: function(oForm, oFormContainer) {
 					var sAggregationName = vAction.aggregationName;
 					var oMetadata = oForm.getMetadata();
 					var oAggregation = oMetadata.getAggregation(sAggregationName);
@@ -536,7 +536,7 @@ function (
 		QUnit.test("when the designTimeMetadata has no getContainerIndex property given and a function _determineIndex() is called", function(assert) {
 			var vAction = {
 				aggregationName: "sections",
-				changeType : "addIFrame"
+				changeType: "addIFrame"
 			};
 
 			assert.deepEqual(this.oAddIFrame._determineIndex(this.oObjectPageLayout, undefined, vAction.aggregationName, undefined), 0, "then the default index calculation would start and returns the right index");
@@ -544,7 +544,7 @@ function (
 
 		QUnit.test("when the designTimeMetadata has a getCreatedContainerId property and a function getCreatedContainerId() is called", function(assert) {
 			var vAction = {
-				getCreatedContainerId : function(sNewControlID) {
+				getCreatedContainerId: function(sNewControlID) {
 					return sNewControlID;
 				}
 			};
@@ -556,7 +556,7 @@ function (
 
 		QUnit.test("when the designTimeMetadata has no getCreatedContainerId property and a function getCreatedContainerId() is called", function(assert) {
 			var vAction = {
-				changeType : "addIFrame"
+				changeType: "addIFrame"
 			};
 
 			assert.deepEqual(this.oAddIFrame.getCreatedContainerId(vAction, this.sNewControlID),
@@ -568,15 +568,15 @@ function (
 			var fnDone = assert.async();
 
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
-				aggregations : {
-					sections : {
-						childNames : {
-							singular : "GROUP_CONTROL_NAME",
-							plural : "GROUP_CONTROL_NAME_PLURAL"
+				aggregations: {
+					sections: {
+						childNames: {
+							singular: "GROUP_CONTROL_NAME",
+							plural: "GROUP_CONTROL_NAME_PLURAL"
 						},
-						actions : {
-							addIFrame :  {
-								changeType : "addIFrame"
+						actions: {
+							addIFrame: {
+								changeType: "addIFrame"
 							}
 						}
 					}
@@ -604,15 +604,15 @@ function (
 			var fnDone = assert.async();
 
 			this.oObjectPageLayoutOverlay.setDesignTimeMetadata({
-				aggregations : {
-					sections : {
-						childNames : {
-							singular : "GROUP_CONTROL_NAME",
-							plural : "GROUP_CONTROL_NAME_PLURAL"
+				aggregations: {
+					sections: {
+						childNames: {
+							singular: "GROUP_CONTROL_NAME",
+							plural: "GROUP_CONTROL_NAME_PLURAL"
 						},
-						actions : {
-							addIFrame :  {
-								changeType : "addIFrame",
+						actions: {
+							addIFrame: {
+								changeType: "addIFrame",
 								getCreatedContainerId: function() {}
 							}
 						}

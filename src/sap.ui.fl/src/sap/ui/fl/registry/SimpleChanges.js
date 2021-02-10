@@ -60,11 +60,11 @@ sap.ui.define([
 			changeType: "moveControls",
 			changeHandler: MoveControls
 		},
-		propertyChange : {
+		propertyChange: {
 			changeType: "propertyChange",
 			changeHandler: PropertyChange
 		},
-		propertyBindingChange : {
+		propertyBindingChange: {
 			changeType: "propertyBindingChange",
 			changeHandler: PropertyBindingChange
 		}

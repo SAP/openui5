@@ -121,17 +121,17 @@ sap.ui.define([
 		var sTargetAggregation = mSpecificChangeInfo.target.aggregation;
 
 		var mSpecificInfo = {
-			source : {
-				id : oSourceParent.getId(),
-				aggregation : sSourceAggregation,
-				type : oModifier.getControlType(oSourceParent)
+			source: {
+				id: oSourceParent.getId(),
+				aggregation: sSourceAggregation,
+				type: oModifier.getControlType(oSourceParent)
 			},
-			target : {
-				id : oTargetParent.getId(),
-				aggregation : sTargetAggregation,
-				type : oModifier.getControlType(oTargetParent)
+			target: {
+				id: oTargetParent.getId(),
+				aggregation: sTargetAggregation,
+				type: oModifier.getControlType(oTargetParent)
 			},
-			movedElements : mSpecificChangeInfo.movedElements
+			movedElements: mSpecificChangeInfo.movedElements
 		};
 
 		return mSpecificInfo;

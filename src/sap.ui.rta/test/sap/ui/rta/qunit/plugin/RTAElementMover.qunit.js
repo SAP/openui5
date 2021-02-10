@@ -85,11 +85,11 @@ sap.ui.define([
 		before: function() {
 			QUnit.config.fixture = null;
 			var oComp = sap.ui.getCore().createComponent({
-				name : "sap.ui.rta.test.additionalElements",
-				id : "Comp1",
-				settings : {
-					componentData : {
-						showAdaptButton : true,
+				name: "sap.ui.rta.test.additionalElements",
+				id: "Comp1",
+				settings: {
+					componentData: {
+						showAdaptButton: true,
 						useSessionStorage: true
 					}
 				}
@@ -105,10 +105,10 @@ sap.ui.define([
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},
-		beforeEach : function (assert) {
+		beforeEach: function (assert) {
 			var done = assert.async();
 			this.oDragDropPlugin = new DragDropPlugin({
-				commandFactory : new CommandFactory()
+				commandFactory: new CommandFactory()
 			});
 
 			this.oDesignTime = new DesignTime({
@@ -143,7 +143,7 @@ sap.ui.define([
 			this.oCompCont.destroy();
 			QUnit.config.fixture = '';
 		},
-		afterEach : function () {
+		afterEach: function () {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oDragDropPlugin.destroy();
@@ -208,27 +208,27 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a group element, overlays, RTAElementMover", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oSmartGroupElement = new GroupElement("stableField", {
 				elements: [new Button("button1", {text: "mybutton"})]
 			});
 
 			this.oSmartForm1 = new SmartForm("form1", {
-				groups : [
+				groups: [
 					new Group("group1", {
-						groupElements : [
+						groupElements: [
 							this.oSmartGroupElement
 						]
 					}),
 					new Group({
-						groupElements : []
+						groupElements: []
 					})
 				]
 			});
 			this.oSmartForm2 = new SmartForm("form2", {
-				groups : [
+				groups: [
 					new Group("group2", {
-						groupElements : []
+						groupElements: []
 					})
 				]
 			});
@@ -239,7 +239,7 @@ sap.ui.define([
 
 			var oCommandFactory = new CommandFactory();
 			this.oDragDropPlugin = new DragDropPlugin({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 			this.oDragDropPlugin.setCommandFactory(oCommandFactory);
 
@@ -315,7 +315,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given verticalLayout with Buttons (first scenario) without relevantContainer propagation", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			// first scenario
 			// VerticalLayout
 			//    MovedButton1
@@ -329,7 +329,7 @@ sap.ui.define([
 
 			var oCommandFactory = new CommandFactory();
 			this.oDragDropPlugin = new DragDropPlugin({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 
 			this.oLayout.placeAt("qunit-fixture");
@@ -341,9 +341,9 @@ sap.ui.define([
 					this.oLayout
 				],
 				plugins: [this.oDragDropPlugin],
-				designTimeMetadata : {
-					"sap.m.Button" : {},
-					"sap.ui.layout.VerticalLayout" : {
+				designTimeMetadata: {
+					"sap.m.Button": {},
+					"sap.ui.layout.VerticalLayout": {
 						content: {
 							actions: {
 								move: "moveControls"
@@ -363,7 +363,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oMovedButton1Overlay.destroy();
 			this.oLayoutAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
@@ -415,7 +415,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given verticalLayout with Button and another verticalLayout inside (second scenario) without relevantContainer propagation", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			// second scenario
 			// VerticalLayout (outerLayout)
 			//    MovedButton1
@@ -433,7 +433,7 @@ sap.ui.define([
 
 			var oCommandFactory = new CommandFactory();
 			this.oDragDropPlugin = new DragDropPlugin({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 
 			this.oOuterLayout.placeAt("qunit-fixture");
@@ -445,9 +445,9 @@ sap.ui.define([
 					this.oOuterLayout
 				],
 				plugins: [this.oDragDropPlugin],
-				designTimeMetadata : {
-					"sap.m.Button" : {},
-					"sap.ui.layout.VerticalLayout" : {
+				designTimeMetadata: {
+					"sap.m.Button": {},
+					"sap.ui.layout.VerticalLayout": {
 						content: {
 							domRef: ":sap-domref",
 							actions: {
@@ -468,7 +468,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oMovedButton1Overlay.destroy();
 			this.oInnerLayoutAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
@@ -486,7 +486,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given smartForm, Groups and GroupElements (third scenario) with relevantContainer propagation", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			// third scenario
 			// SmartForm
 			//    Group1
@@ -504,18 +504,18 @@ sap.ui.define([
 				elements: [this.oButton2]
 			});
 			this.oGroup1 = new Group("group1", {
-				groupElements : [this.oMovedGroupElement1]
+				groupElements: [this.oMovedGroupElement1]
 			});
 			this.oGroup2 = new Group("group2", {
-				groupElements : [this.oGroupElement2]
+				groupElements: [this.oGroupElement2]
 			});
 			this.oSmartForm1 = new SmartForm("smartForm1", {
-				groups : [this.oGroup1, this.oGroup2]
+				groups: [this.oGroup1, this.oGroup2]
 			});
 
 			var oCommandFactory = new CommandFactory();
 			this.oDragDropPlugin = new DragDropPlugin({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 
 			this.oSmartForm1.placeAt("qunit-fixture");
@@ -531,7 +531,7 @@ sap.ui.define([
 				formElements: {
 					actions: {
 						move: {
-							changeType : "moveControls"
+							changeType: "moveControls"
 						}
 					}
 				}
@@ -543,11 +543,11 @@ sap.ui.define([
 					this.oSmartForm1
 				],
 				plugins: [this.oDragDropPlugin],
-				designTimeMetadata : {
-					"sap.m.Button" : {},
-					"sap.ui.comp.smartform.SmartForm" : oSmartFormMetadata.data,
-					"sap.ui.comp.smartform.Group" : oGroupMetadata.data,
-					"sap.ui.comp.smartform.GroupElement" : {}
+				designTimeMetadata: {
+					"sap.m.Button": {},
+					"sap.ui.comp.smartform.SmartForm": oSmartFormMetadata.data,
+					"sap.ui.comp.smartform.Group": oGroupMetadata.data,
+					"sap.ui.comp.smartform.GroupElement": {}
 				}
 			});
 
@@ -561,7 +561,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oMovedGroupElement1Overlay.destroy();
 			this.oGroupAggregationOverlay.destroy();
 			this.oDesignTime.destroy();
@@ -630,7 +630,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Bar with Buttons (fourth scenario) without relevantContainer propagation", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			// fourth scenario
 			// Bar
 			//    Aggregation1 (contentLeft)
@@ -647,7 +647,7 @@ sap.ui.define([
 
 			var oCommandFactory = new CommandFactory();
 			this.oDragDropPlugin = new DragDropPlugin({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 
 			this.oBar.placeAt("qunit-fixture");
@@ -679,9 +679,9 @@ sap.ui.define([
 					this.oBar
 				],
 				plugins: [this.oDragDropPlugin],
-				designTimeMetadata : {
-					"sap.m.Bar" : oBarMetadata,
-					"sap.m.Button" : {}
+				designTimeMetadata: {
+					"sap.m.Bar": oBarMetadata,
+					"sap.m.Button": {}
 				}
 			});
 
@@ -697,7 +697,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oMovedButton1Overlay.destroy();
 			this.oBarRightAggregationOverlay.destroy();
 			this.oBarMiddleAggregationOverlay.destroy();
@@ -738,7 +738,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a Bar with Buttons scenario", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			// another scenario
@@ -758,7 +758,7 @@ sap.ui.define([
 
 			var oCommandFactory = new CommandFactory();
 			this.oDragDropPlugin = new DragDropPlugin({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 
 			this.oBar.placeAt("qunit-fixture");
@@ -790,9 +790,9 @@ sap.ui.define([
 					this.oBar
 				],
 				plugins: [this.oDragDropPlugin],
-				designTimeMetadata : {
-					"sap.m.Bar" : oBarMetadata,
-					"sap.m.Button" : {}
+				designTimeMetadata: {
+					"sap.m.Bar": oBarMetadata,
+					"sap.m.Button": {}
 				}
 			});
 
@@ -803,7 +803,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oButton1Overlay.destroy();
 			this.oBarOverlay.destroy();

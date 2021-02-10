@@ -31,10 +31,10 @@ sap.ui.define([
 	function simulateSystemConfig(bIsCloudSystem) {
 		sandbox.stub(Settings, "getInstance").resolves(
 			new Settings({
-				isKeyUser:true,
+				isKeyUser: true,
 				isAtoAvailable: bIsCloudSystem,
 				isAtoEnabled: bIsCloudSystem,
-				isProductiveSystem:false
+				isProductiveSystem: false
 			})
 		);
 	}
@@ -44,18 +44,18 @@ sap.ui.define([
 			this.oDescrChangeSpecificData1 = {
 				changeType: "appdescr_ovp_addNewCard",
 				content: {
-					card : {
-						"customer.acard" : {
-							model : "customer.boring_model",
-							template : "sap.ovp.cards.list",
-							settings : {
-								category : "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
-								title : "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
-								description : "extended",
-								entitySet : "Zme_Overdue",
-								sortBy : "OverdueTime",
-								sortOrder : "desc",
-								listType : "extended"
+					card: {
+						"customer.acard": {
+							model: "customer.boring_model",
+							template: "sap.ovp.cards.list",
+							settings: {
+								category: "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
+								title: "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
+								description: "extended",
+								entitySet: "Zme_Overdue",
+								sortBy: "OverdueTime",
+								sortOrder: "desc",
+								listType: "extended"
 							}
 						}
 					}

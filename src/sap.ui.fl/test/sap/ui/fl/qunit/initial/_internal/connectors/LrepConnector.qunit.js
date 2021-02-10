@@ -29,7 +29,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given LrepConnector with a fake XHR", {
-		beforeEach : function () {
+		beforeEach: function () {
 			this.xhr = sandbox.useFakeXMLHttpRequest();
 		},
 		afterEach: function() {

@@ -15,19 +15,19 @@ sap.ui.define([
 
 	var oSandbox = sinon.sandbox.create();
 	QUnit.module("Utils", {
-		beforeEach : function() {
+		beforeEach: function() {
 			oSandbox = sinon.sandbox.create();
 
 			oSandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			oSandbox.restore();
 		}
 	}, function() {

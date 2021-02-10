@@ -118,7 +118,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given an AddXMLAtExtensionPoint Change Handler", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			this.sExtensionName = "extension";
 
@@ -127,7 +127,7 @@ sap.ui.define([
 				fragmentPath: "fragments/Fragment"
 			};
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oChange.destroy();
 		}
 	}, function() {
@@ -162,7 +162,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddXMLAtExtensionPoint Change Handler with XmlTreeModifier", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			this.oChange1 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sFragmentPath, "fragments/Fragment", "ExtensionPoint1");
 			this.oChange2 = _createAndCompleteAddXmlAtExtensionPointChange.call(this, sSecondFragmentPath, "fragments/SecondFragment", "ExtensionPoint2");
@@ -179,7 +179,7 @@ sap.ui.define([
 				appComponent: this.oComponent
 			};
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oChange1.destroy();
 			this.oChange2.destroy();
 			this.oChange3.destroy();
@@ -272,7 +272,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddXMLAtExtensionPoint Change Handler with JsControlTreeModifier - create scenario", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			this.oComponent = _createComponent();
@@ -291,7 +291,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oComponent.destroy();
 			this.oXmlView.destroy();
 			sandbox.restore();
@@ -375,7 +375,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddXMLAtExtensionPoint Change Handler with JsControlTreeModifier - apply scenario", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oChangeHandler = AddXMLAtExtensionPoint;
 			this.oComponent = _createComponent();
@@ -390,7 +390,7 @@ sap.ui.define([
 				fnDone();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oComponent.destroy();
 			this.oXmlView.destroy();
 			sandbox.restore();

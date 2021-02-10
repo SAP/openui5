@@ -55,7 +55,7 @@ function (
 			this.fnSpyCreate = sinon.spy(fnCreate);
 
 			this.oElementEnablementTest = new ElementEnablementTest({
-				type : "sap.m.Button",
+				type: "sap.m.Button",
 				create: this.fnSpyCreate
 			});
 		},

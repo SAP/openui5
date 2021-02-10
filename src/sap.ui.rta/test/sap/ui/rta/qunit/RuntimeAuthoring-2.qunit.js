@@ -87,13 +87,13 @@ sap.ui.define([
 
 	function givenMaxLayerParameterIsSetTo(sMaxLayer, fnFLPToExternalStub, fnFLPReloadStub) {
 		givenAnFLP.call(this, fnFLPToExternalStub, fnFLPReloadStub, {
-			"sap-ui-fl-max-layer" : [sMaxLayer]
+			"sap-ui-fl-max-layer": [sMaxLayer]
 		});
 	}
 
 	function givenDraftParameterIsSet(fnFLPToExternalStub, fnFLPReloadStub) {
 		givenAnFLP.call(this, fnFLPToExternalStub, fnFLPReloadStub, {
-			"sap-ui-fl-version" : [sap.ui.fl.Versions.Draft.toString()]
+			"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]
 		});
 	}
 
@@ -106,10 +106,10 @@ sap.ui.define([
 		//we don't want to start RTA for these tests, so just setting the otherwise not set property,
 		//that sinon cannot stub until it was set.
 		oRta._oSerializer = {
-			needsReload : function() {
+			needsReload: function() {
 				return Promise.resolve(bExist);
 			},
-			saveCommands : function() {}
+			saveCommands: function() {}
 		};
 	}
 	function whenStartedWithLayer(oRta, sLayer) {
@@ -159,12 +159,12 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that RuntimeAuthoring is created without a root control...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
-				rootControl : undefined
+				rootControl: undefined
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -182,23 +182,23 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created and started with non-default plugin sets only...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			var oCommandFactory = new CommandFactory();
 
 			this.oContextMenuPlugin = new ContextMenuPlugin("nonDefaultContextMenu");
 			this.oRemovePlugin = new Remove({
-				id : "nonDefaultRemovePlugin",
-				commandFactory : oCommandFactory
+				id: "nonDefaultRemovePlugin",
+				commandFactory: oCommandFactory
 			});
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
-				showToolbars : false
+				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
+				showToolbars: false
 			});
 
 			this.oRta.setPlugins({
-				remove : this.oRemovePlugin,
-				contextMenu : this.oContextMenuPlugin
+				remove: this.oRemovePlugin,
+				contextMenu: this.oContextMenuPlugin
 			});
 
 			this.oPreparePluginsSpy = sinon.spy(this.oRta.getPluginManager(), "preparePlugins");
@@ -206,7 +206,7 @@ sap.ui.define([
 			return RtaQunitUtils.clear()
 				.then(this.oRta.start.bind(this.oRta));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oContextMenuPlugin.destroy();
 			this.oRemovePlugin.destroy();
 			this.oRta.destroy();
@@ -223,10 +223,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RTA is started in FLP", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
-				showToolbars : false
+				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
+				showToolbars: false
 			});
 			sandbox.stub(Versions, "getVersionsModel").returns({
 				getProperty: function () {
@@ -238,7 +238,7 @@ sap.ui.define([
 
 			givenAnFLP.call(this, this.fnFLPToExternalStub);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			//cleanup session storage
 			RuntimeAuthoring.disableRestart(Layer.CUSTOMER);
@@ -362,8 +362,8 @@ sap.ui.define([
 	QUnit.module("Given that RTA gets started in FLP", {
 		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
-				showToolbars : false
+				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
+				showToolbars: false
 			});
 			whenNoAppDescriptorChangesExist(this.oRta);
 			this.fnEnableRestartSpy = sandbox.spy(RuntimeAuthoring, "enableRestart");
@@ -474,10 +474,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RTA is started in FLP with sap-ui-fl-max-layer already in the URL", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
-				showToolbars : false
+				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
+				showToolbars: false
 			});
 			whenNoAppDescriptorChangesExist(this.oRta);
 
@@ -488,7 +488,7 @@ sap.ui.define([
 
 			return this.oRta._initVersioning();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -544,10 +544,10 @@ sap.ui.define([
 		QUnit.test("when no app descriptor changes exist at first save and later they exist and user exits ...", function(assert) {
 			sandbox.stub(ReloadInfoAPI, "initialDraftGotActivated").returns(false);
 			this.oRta._oSerializer = {
-				needsReload : function(bReload) {
+				needsReload: function(bReload) {
 					return Promise.resolve(bReload);
 				},
-				saveCommands : function() {}
+				saveCommands: function() {}
 			};
 			var fnNeedsReloadStub = sandbox.stub(this.oRta._oSerializer, "needsReload");
 			givenMaxLayerParameterIsSetTo.call(this, Layer.CUSTOMER, this.fnFLPToExternalStub);
@@ -655,13 +655,13 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the user is leaving RTA on stand-alone applications", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
-				showToolbars : false
+				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
+				showToolbars: false
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -681,10 +681,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RTA is started on stand-alone applications", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
-				showToolbars : false
+				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
+				showToolbars: false
 			});
 			whenNoAppDescriptorChangesExist(this.oRta);
 
@@ -696,7 +696,7 @@ sap.ui.define([
 
 			return this.oRta._initVersioning();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -868,7 +868,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl ...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox = sinon.sandbox.create();
 			var oSettings = {
 				isAtoAvailable: false,
@@ -878,13 +878,13 @@ sap.ui.define([
 			};
 			var oSettingsInstance = new Settings(oSettings);
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
+				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl")
 			});
 			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSettingsInstance));
 
 			return this.oRta.start();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -896,7 +896,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox = sinon.sandbox.create();
 			var oSettings = {
 				isAtoAvailable: true,
@@ -906,13 +906,13 @@ sap.ui.define([
 			};
 			var oSettingsInstance = new Settings(oSettings);
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl")
+				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl")
 			});
 			sandbox.stub(Settings, "getInstance").returns(Promise.resolve(oSettingsInstance));
 
 			return this.oRta.start();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -924,14 +924,14 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created but not started", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl
+				rootControl: this.oRootControl
 			});
 			givenAnFLP(function() {return true;}, undefined, {"sap-ui-fl-version": [sap.ui.fl.Versions.Draft.toString()]});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			sandbox.restore();
 		}
@@ -994,8 +994,8 @@ sap.ui.define([
 			givenAnFLP(function() {return true;}, undefined, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : this.oRootControl,
-				showToolbars : false,
+				rootControl: this.oRootControl,
+				showToolbars: false,
 				flexSettings: {
 					layer: Layer.VENDOR
 				}

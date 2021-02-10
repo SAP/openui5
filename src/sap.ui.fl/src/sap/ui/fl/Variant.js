@@ -36,7 +36,7 @@ sap.ui.define([
 	 * @experimental Since 1.52.0
 	 */
 	var Variant = ManagedObject.extend("sap.ui.fl.Variant", /** @lends sap.ui.fl.Variant.prototype */ {
-		constructor : function(oFile) {
+		constructor: function(oFile) {
 			ManagedObject.apply(this);
 
 			if (!jQuery.isPlainObject(oFile)) {
@@ -50,9 +50,9 @@ sap.ui.define([
 			this._vRevertData = null;
 			this.setState(Variant.states.NEW);
 		},
-		metadata : {
-			properties : {
-				state : {
+		metadata: {
+			properties: {
+				state: {
 					type: "string"
 				}
 			}
@@ -61,7 +61,7 @@ sap.ui.define([
 
 	Variant.states = {
 		NEW: "NEW",
-		PERSISTED : "NONE",
+		PERSISTED: "NONE",
 		DELETED: "DELETE",
 		DIRTY: "UPDATE"
 	};
@@ -599,7 +599,7 @@ sap.ui.define([
 		var sFileName = oPropertyBag.content.fileName || Utils.createDefaultFileName();
 		var sNamespace = oPropertyBag.content.namespace || Utils.createNamespace(oPropertyBag.content, "ctrl_variant");
 		var oNewFile = {
-			content : {
+			content: {
 				fileName: sFileName,
 				fileType: "ctrl_variant",
 				variantManagementReference: oPropertyBag.content.variantManagementReference,

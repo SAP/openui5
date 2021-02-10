@@ -34,7 +34,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.fl"
 		},
-		constructor : function(mPropertyBag) {
+		constructor: function(mPropertyBag) {
 			ManagedObject.apply(this);
 			if (!jQuery.isPlainObject(mPropertyBag)) {
 				Log.error("Constructor : sap.ui.fl.write._internal.appVariant.AppVariantInlineChange: mPropertyBag is not defined");

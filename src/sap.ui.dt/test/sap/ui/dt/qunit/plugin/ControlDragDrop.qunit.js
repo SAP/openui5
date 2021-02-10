@@ -18,19 +18,19 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given that a ControlDragDrop is initialized ", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oButton0 = new Button();
 			this.oButton1 = new Button();
-			this.oLayout = new VerticalLayout({content : [this.oButton0, this.oButton1]});
+			this.oLayout = new VerticalLayout({content: [this.oButton0, this.oButton1]});
 			this.oEmptyLayout = new VerticalLayout();
-			this.oParentLayout = new VerticalLayout({content : [this.oLayout, this.oEmptyLayout]});
+			this.oParentLayout = new VerticalLayout({content: [this.oLayout, this.oEmptyLayout]});
 			this.oParentLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDragDrop = new ControlDragDrop();
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oParentLayout],
-				plugins : [this.oDragDrop]
+				rootElements: [this.oParentLayout],
+				plugins: [this.oDragDrop]
 			});
 
 			var done = assert.async();
@@ -49,7 +49,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			OverlayRegistry.getOverlay(this.oParentLayout).destroy();
 			this.oButtonOverlay0.destroy();
 			this.oButtonOverlay1.destroy();

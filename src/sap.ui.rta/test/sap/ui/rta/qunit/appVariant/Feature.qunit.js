@@ -56,7 +56,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
-		afterEach : function () {
+		afterEach: function () {
 			if (sap["ushell_abap"]) {
 				sap["ushell_abap"] = null;
 			}
@@ -151,34 +151,34 @@ sap.ui.define([
 
 			var aAppVariantOverviewAttributes = [
 				{
-					appId : "id1",
-					title : "title1",
-					subTitle : "subTitle1",
-					description : "description1",
-					icon : "sap-icon://history",
-					isOriginal : true,
-					typeOfApp : "Original App",
-					descriptorUrl : "url1"
+					appId: "id1",
+					title: "title1",
+					subTitle: "subTitle1",
+					description: "description1",
+					icon: "sap-icon://history",
+					isOriginal: true,
+					typeOfApp: "Original App",
+					descriptorUrl: "url1"
 				},
 				{
-					appId : "id2",
-					title : "title2",
-					subTitle : "subTitle2",
-					description : "description2",
-					icon : "sap-icon://history",
-					isOriginal : false,
-					typeOfApp : "App Variant",
-					descriptorUrl : "url2"
+					appId: "id2",
+					title: "title2",
+					subTitle: "subTitle2",
+					description: "description2",
+					icon: "sap-icon://history",
+					isOriginal: false,
+					typeOfApp: "App Variant",
+					descriptorUrl: "url2"
 				},
 				{
-					appId : "id3",
-					title : "title3",
-					subTitle : "subTitle3",
-					description : "description3",
-					icon : "sap-icon://history",
-					isOriginal : false,
-					typeOfApp : "App Variant",
-					descriptorUrl : "url3"
+					appId: "id3",
+					title: "title3",
+					subTitle: "subTitle3",
+					description: "description3",
+					icon: "sap-icon://history",
+					isOriginal: false,
+					typeOfApp: "App Variant",
+					descriptorUrl: "url3"
 				}
 			];
 
@@ -383,36 +383,36 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a RtaAppVariantFeature is instantiated", {
-		beforeEach : function() {
+		beforeEach: function() {
 			window.bUShellNavigationTriggered = false;
 			this.originalUShell = sap.ushell;
 			// this overrides the ushell globally => we need to restore it!
 
 			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function() {
+				Container: {
+					getService: function() {
 						return {
-							toExternal : function() {
+							toExternal: function() {
 								window.bUShellNavigationTriggered = true;
 							},
-							getHash : function() {
+							getHash: function() {
 								return "Action-somestring";
 							},
-							parseShellHash : function() {
+							parseShellHash: function() {
 								return {
-									semanticObject : "Action",
-									action : "somestring"
+									semanticObject: "Action",
+									action: "somestring"
 								};
 							}
 						};
 					},
-					setDirtyFlag : function() {
+					setDirtyFlag: function() {
 						return false;
 					}
 				}
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			sap.ushell = this.originalUShell;
 			delete window.bUShellNavigationTriggered;
@@ -423,8 +423,8 @@ sap.ui.define([
 	}, function() {
 		var fnCreateAppComponent = function() {
 			var oDescriptor = {
-				"sap.app" : {
-					id : "TestId",
+				"sap.app": {
+					id: "TestId",
 					applicationVersion: {
 						version: "1.2.3"
 					}
@@ -434,7 +434,7 @@ sap.ui.define([
 			var oManifest = new Manifest(oDescriptor);
 			var oAppComponent = {
 				name: "testComponent",
-				getManifest : function() {
+				getManifest: function() {
 					return oManifest;
 				}
 			};
@@ -444,8 +444,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() method is called and saving an app variant failed", function(assert) {
 			var oSelectedAppVariant = {
-				"sap.app" : {
-					id : "TestId",
+				"sap.app": {
+					id: "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
@@ -495,8 +495,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() method is called on S/4HANA on Premise from Overview dialog", function(assert) {
 			var oSelectedAppVariant = {
-				"sap.app" : {
-					id : "TestId",
+				"sap.app": {
+					id: "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
@@ -514,10 +514,10 @@ sap.ui.define([
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 
@@ -558,8 +558,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() method is called on S/4HANA Cloud from Overview dialog", function(assert) {
 			var oSelectedAppVariant = {
-				"sap.app" : {
-					id : "TestId",
+				"sap.app": {
+					id: "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
@@ -599,7 +599,7 @@ sap.ui.define([
 			oGetOverviewStub.onCall(0).resolves(RtaAppVariantFeature.onGetOverview.call(true, Layer.CUSTOMER));
 			oGetOverviewStub.onCall(1).resolves();
 
-			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response : {IAMId : "IAMId"}});
+			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response: {IAMId: "IAMId"}});
 			var oNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
@@ -617,8 +617,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() method is called on S/4HANA Cloud from Overview dialog and customer closes Overview during Polling", function(assert) {
 			var oSelectedAppVariant = {
-				"sap.app" : {
-					id : "TestId",
+				"sap.app": {
+					id: "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
@@ -656,7 +656,7 @@ sap.ui.define([
 			var oShowSuccessMessage = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
 			var oGetOverviewStub = sandbox.stub(RtaAppVariantFeature, "onGetOverview").resolves();
 
-			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response : {IAMId : "IAMId"}});
+			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response: {IAMId: "IAMId"}});
 			var oNotifyKeyUserWhenPublishingIsReady = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 
 			return RtaAppVariantFeature.onSaveAs(false, false, Layer.CUSTOMER, oSelectedAppVariant).then(function() {
@@ -673,13 +673,13 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() is bound with null and is triggered from RTA toolbar", function(assert) {
 			var oSelectedAppVariant = {
-				"sap.app" : {
-					id : "TestId",
+				"sap.app": {
+					id: "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
 				},
-				"sap.ui5" : {
+				"sap.ui5": {
 					componentName: "TestIdBaseApp"
 				}
 			};
@@ -693,13 +693,13 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() is triggered from RTA toolbar on S/4HANA on Premise", function(assert) {
 			var oSelectedAppVariant = {
-				"sap.app" : {
-					id : "TestId",
+				"sap.app": {
+					id: "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
 				},
-				"sap.ui5" : {
+				"sap.ui5": {
 					componentName: "TestIdBaseApp"
 				}
 			};
@@ -758,8 +758,8 @@ sap.ui.define([
 
 		QUnit.test("when onSaveAs() is triggered from RTA toolbar on S/4HANA Cloud", function(assert) {
 			var oSelectedAppVariant = {
-				"sap.app" : {
-					id : "TestId",
+				"sap.app": {
+					id: "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
@@ -798,7 +798,7 @@ sap.ui.define([
 
 			var oClearRTACommandStack = sandbox.stub(AppVariantManager.prototype, "clearRTACommandStack").resolves();
 			var oShowSuccessMessageStub = sandbox.spy(AppVariantManager.prototype, "showSuccessMessage");
-			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response : {IAMId : "IAMId"}});
+			var oTriggerCatalogPublishing = sandbox.stub(AppVariantManager.prototype, "triggerCatalogPublishing").resolves({response: {IAMId: "IAMId"}});
 			var oNotifyKeyUserWhenPublishingIsReadySpy = sandbox.stub(AppVariantManager.prototype, "notifyKeyUserWhenPublishingIsReady").resolves();
 			var oNavigateToFLPHomepage = sandbox.stub(AppVariantUtils, "navigateToFLPHomepage").resolves();
 
@@ -822,8 +822,8 @@ sap.ui.define([
 
 			var oPublishingResponse = {
 				response: {
-					IAMId : "IAMId",
-					inProgress : true
+					IAMId: "IAMId",
+					inProgress: true
 				}
 			};
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "testId"}});
@@ -859,8 +859,8 @@ sap.ui.define([
 
 			var oPublishingResponse = {
 				response: {
-					IAMId : "IAMId",
-					inProgress : true
+					IAMId: "IAMId",
+					inProgress: true
 				}
 			};
 			sandbox.stub(FlUtils, "getAppDescriptor").returns({"sap.app": {id: "testId"}});
@@ -891,8 +891,8 @@ sap.ui.define([
 
 			var oPublishingResponse = {
 				response: {
-					IAMId : "IAMId",
-					inProgress : false
+					IAMId: "IAMId",
+					inProgress: false
 				}
 			};
 			var oShowMessageStub = sandbox.stub(AppVariantUtils, "showMessage").resolves();
@@ -918,10 +918,10 @@ sap.ui.define([
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana on Premise", function(assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 
@@ -948,10 +948,10 @@ sap.ui.define([
 		QUnit.test("when onDeleteFromOverviewDialog() method is called on S4/Hana on Premise from currently adapting app variant", function(assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 
@@ -985,8 +985,8 @@ sap.ui.define([
 
 			var oPublishingResponse = {
 				response: {
-					IAMId : "IAMId",
-					inProgress : true
+					IAMId: "IAMId",
+					inProgress: true
 				}
 			};
 

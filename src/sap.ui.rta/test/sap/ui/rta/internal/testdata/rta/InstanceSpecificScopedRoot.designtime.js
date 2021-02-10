@@ -8,19 +8,19 @@ sap.ui.define(["sap/uxap/library"],
 		"use strict";
 
 		return {
-			"default" : {
-				someKeyToOverwriteInScopes : "default",
-				some : {
-					deep : {
-						key : "default"
+			"default": {
+				someKeyToOverwriteInScopes: "default",
+				some: {
+					deep: {
+						key: "default"
 					}
 				}
 			},
-			someScope : {
-				newKey : "new", //new
-				someKeyToOverwriteInScopes : "scoped", //overwrite
-				some : {
-					deep : null //delete
+			someScope: {
+				newKey: "new", //new
+				someKeyToOverwriteInScopes: "scoped", //overwrite
+				some: {
+					deep: null //delete
 				}
 			}
 		};

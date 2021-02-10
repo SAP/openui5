@@ -43,7 +43,7 @@ sap.ui.define([
 				 * @returns {boolean} true if successful
 				 * @public
 				 */
-				applyChange : function(oChange, oControl, mPropertyBag) {
+				applyChange: function(oChange, oControl, mPropertyBag) {
 					var oModifier = mPropertyBag.modifier;
 					var sPropertyName = mRenameSettings.propertyName;
 					var oChangeDefinition = oChange.getDefinition();
@@ -70,7 +70,7 @@ sap.ui.define([
 				 * @returns {boolean} true if successful
 				 * @public
 				 */
-				revertChange : function(oChange, oControl, mPropertyBag) {
+				revertChange: function(oChange, oControl, mPropertyBag) {
 					var oModifier = mPropertyBag.modifier;
 					var sPropertyName = mRenameSettings.propertyName;
 					var vOldValue = oChange.getRevertData();
@@ -91,7 +91,7 @@ sap.ui.define([
 				 * @param {object} mSpecificChangeInfo with attribute (e.g. textLabel) to be included in the change
 				 * @public
 				 */
-				completeChangeContent : function(oChange, mSpecificChangeInfo, mPropertyBag) {
+				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
 					var oChangeDefinition = oChange.getDefinition();
 					var sChangePropertyName = mRenameSettings.changePropertyName;
 					var sTranslationTextType = mRenameSettings.translationTextType;

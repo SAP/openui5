@@ -41,8 +41,8 @@ function (
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
-				multiSelectionRequiredPlugins : {
-					type : "string[]"
+				multiSelectionRequiredPlugins: {
+					type: "string[]"
 				}
 			},
 			associations: {},

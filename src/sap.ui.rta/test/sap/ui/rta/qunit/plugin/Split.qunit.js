@@ -52,9 +52,9 @@ function (
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -74,7 +74,7 @@ function (
 	};
 
 	QUnit.module("Given a designTime and split plugin are instantiated", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			var oChangeRegistry = ChangeRegistry.getInstance();
 
@@ -89,7 +89,7 @@ function (
 			})
 			.then(function() {
 				this.oSplitPlugin = new SplitPlugin({
-					commandFactory : new CommandFactory()
+					commandFactory: new CommandFactory()
 				});
 
 				this.oView = new XMLView("mockview", {
@@ -125,7 +125,7 @@ function (
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oView.destroy();
 			this.oDesignTime.destroy();
@@ -157,11 +157,11 @@ function (
 		QUnit.test("when an overlay has a split action in designTime metadata and the specified element has more than one control", function (assert) {
 			var done = assert.async();
 			var oDesignTimeMetadata1 = {
-				actions : {
-					split : {
+				actions: {
+					split: {
 						changeType: "splitStuff",
-						changeOnRelevantContainer : true,
-						isEnabled : true,
+						changeOnRelevantContainer: true,
+						isEnabled: true,
 						getControlsCount: function() {
 							return 2;
 						}
@@ -191,11 +191,11 @@ function (
 		QUnit.test("when an overlay has a split action in designTime metadata relevant container has no stable id", function (assert) {
 			var done = assert.async();
 			var oDesignTimeMetadata1 = {
-				actions : {
-					split : {
+				actions: {
+					split: {
 						changeType: "splitStuff",
-						changeOnRelevantContainer : true,
-						isEnabled : true,
+						changeOnRelevantContainer: true,
+						isEnabled: true,
 						getControlsCount: function() {
 							return 2;
 						}
@@ -228,14 +228,14 @@ function (
 
 		QUnit.test("when isEnabled() is a function in designTime metadata and the specified element contains only one control", function (assert) {
 			var oDesignTimeMetadata2 = {
-				actions : {
-					split : {
+				actions: {
+					split: {
 						changeType: "splitField",
-						changeOnRelevantContainer : true,
-						isEnabled : function() {
+						changeOnRelevantContainer: true,
+						isEnabled: function() {
 							return true;
 						},
-						getControlsCount : function() {
+						getControlsCount: function() {
 							return 1;
 						}
 					}
@@ -264,7 +264,7 @@ function (
 				actions: {
 					split: {
 						changeType: "splitField",
-						changeOnRelevantContainer : true,
+						changeOnRelevantContainer: true,
 						isEnabled: function () {
 							return true;
 						}
@@ -344,10 +344,10 @@ function (
 
 		QUnit.test("when an overlay has a split action designTime metadata which has no changeOnRelevantContainer", function(assert) {
 			this.oButton1Overlay.setDesignTimeMetadata({
-				actions : {
-					split : {
+				actions: {
+					split: {
 						changeType: "splitStuff",
-						getControlsCount : function () {
+						getControlsCount: function () {
 							return 2;
 						}
 					}

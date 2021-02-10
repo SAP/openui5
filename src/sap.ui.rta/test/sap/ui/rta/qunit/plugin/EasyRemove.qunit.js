@@ -48,9 +48,9 @@ function (
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -64,12 +64,12 @@ function (
 	});
 
 	QUnit.module("Given a designTime and EasyRemove plugin are instantiated", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.uxap.ObjectPageSection" : {
+				"sap.uxap.ObjectPageSection": {
 					stashControl: {
 						changeHandler: "default",
 						layers: {
@@ -88,7 +88,7 @@ function (
 				//				Button
 
 				this.oEasyRemovePlugin = new EasyRemove({
-					commandFactory : new CommandFactory()
+					commandFactory: new CommandFactory()
 				});
 				var oSubSection = new ObjectPageSubSection("subsection", {
 					blocks: [new Button({text: "firstSubSection"})]
@@ -103,13 +103,13 @@ function (
 					subSections: [oSubSection2]
 				});
 				this.oLayout = new ObjectPageLayout("layout", {
-					sections : [this.oSection, this.oSection2]
+					sections: [this.oSection, this.oSection2]
 				}).placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oLayout],
-					plugins : [this.oEasyRemovePlugin]
+					rootElements: [this.oLayout],
+					plugins: [this.oEasyRemovePlugin]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {
@@ -120,7 +120,7 @@ function (
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oLayout.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -167,12 +167,12 @@ function (
 
 
 	QUnit.module("Given a designTime and EasyRemove plugin are instantiated with a OP-Section without stableID", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.uxap.ObjectPageSection" : {
+				"sap.uxap.ObjectPageSection": {
 					stashControl: {
 						changeHandler: "default",
 						layers: {
@@ -183,7 +183,7 @@ function (
 			})
 			.then(function() {
 				this.oEasyRemovePlugin = new EasyRemove({
-					commandFactory : new CommandFactory()
+					commandFactory: new CommandFactory()
 				});
 				this.oSubSection = new ObjectPageSubSection("subsection", {
 					blocks: [new Button({text: "abc"})]
@@ -192,13 +192,13 @@ function (
 					subSections: [this.oSubSection]
 				});
 				this.oLayout = new ObjectPageLayout("layout", {
-					sections : [this.oSection]
+					sections: [this.oSection]
 				}).placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oLayout],
-					plugins : [this.oEasyRemovePlugin]
+					rootElements: [this.oLayout],
+					plugins: [this.oEasyRemovePlugin]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {

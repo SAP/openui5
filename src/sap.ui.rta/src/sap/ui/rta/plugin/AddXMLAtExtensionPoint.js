@@ -155,11 +155,11 @@ sap.ui.define([
 			oElement,
 			"appDescriptor",
 			{
-				reference : sReference,
-				appComponent : oComponent,
-				changeType : APP_DESCRIPTOR_CHANGE_TYPE,
-				parameters : { flexExtensionPointEnabled: true },
-				texts : {}
+				reference: sReference,
+				appComponent: oComponent,
+				changeType: APP_DESCRIPTOR_CHANGE_TYPE,
+				parameters: { flexExtensionPointEnabled: true },
+				texts: {}
 			}
 		)
 		.then(function(oAppDescriptorCommand) {
@@ -230,7 +230,7 @@ sap.ui.define([
 
 			.then(function(oCompositeCommand) {
 				this.fireElementModified({
-					command : oCompositeCommand
+					command: oCompositeCommand
 				});
 			}.bind(this))
 

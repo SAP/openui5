@@ -21,7 +21,7 @@ sap.ui.define([
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oLayout = new VerticalLayout({
-				content : [
+				content: [
 					this.oButton1 = new Button("button1"),
 					this.oButton2 = new Button("button2")
 				]

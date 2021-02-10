@@ -26,7 +26,7 @@ sap.ui.define([
 	var sUrl = "http://www.sap.com";
 
 	QUnit.module("Given a AddIFrame Change Handler", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oMockedAppComponent = {
 				getLocalId: function () {
 					return undefined;
@@ -40,7 +40,7 @@ sap.ui.define([
 				]
 			});
 
-			this.oView = new View({content : [
+			this.oView = new View({content: [
 				this.oHBox
 			]});
 
@@ -64,20 +64,20 @@ sap.ui.define([
 			};
 
 			this.mSpecificChangeData = {
-				selector : mExpectedSelector,
-				changeType : "addIFrame",
-				content : this.mChangeSpecificContent
+				selector: mExpectedSelector,
+				changeType: "addIFrame",
+				content: this.mChangeSpecificContent
 			};
 
 			this.oChange = new Change(oChangeJson);
 
 			this.mPropertyBag = {
-				modifier : JsControlTreeModifier,
-				view : this.oView,
-				appComponent : this.oMockedAppComponent
+				modifier: JsControlTreeModifier,
+				view: this.oView,
+				appComponent: this.oMockedAppComponent
 			};
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oHBox.destroy();
 		}
 	}, function() {
@@ -96,7 +96,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddIFrame Change Handler with JSTreeModifier", {
-		beforeEach : function () {
+		beforeEach: function () {
 			this.oMockedAppComponent = {
 				getLocalId: function () {
 					return undefined;
@@ -127,9 +127,9 @@ sap.ui.define([
 			};
 
 			this.mSpecificChangeData = {
-				selector : mExpectedSelector,
-				changeType : "addIFrame",
-				content : this.mChangeSpecificContent
+				selector: mExpectedSelector,
+				changeType: "addIFrame",
+				content: this.mChangeSpecificContent
 			};
 
 			this.oChange = new Change(oChangeJson);
@@ -145,10 +145,10 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			this.mPropertyBag = {
-				modifier : JsControlTreeModifier,
-				view : {
-					getController : function () {},
-					getId : function () {},
+				modifier: JsControlTreeModifier,
+				view: {
+					getController: function () {},
+					getId: function () {},
 					createId: function (sId) { return sId; }
 				},
 				appComponent: this.oMockedAppComponent
@@ -156,7 +156,7 @@ sap.ui.define([
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oHBox.destroy();
 		}
 	}, function () {
@@ -197,7 +197,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddIFrame Change Handler with XMLTreeModifier", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oChangeHandler = AddIFrame;
 
 			this.sHBoxId = "hbx";
@@ -222,9 +222,9 @@ sap.ui.define([
 			};
 
 			this.mSpecificChangeData = {
-				selector : mExpectedSelector,
-				changeType : "addIFrame",
-				content : this.mChangeSpecificContent
+				selector: mExpectedSelector,
+				changeType: "addIFrame",
+				content: this.mChangeSpecificContent
 			};
 
 			this.oChange = new Change(oChangeJson);
@@ -256,7 +256,7 @@ sap.ui.define([
 
 			this.oChangeHandler.completeChangeContent(this.oChange, this.mSpecificChangeData, this.mPropertyBag);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oComponent.destroy();
 		}
 	}, function() {
