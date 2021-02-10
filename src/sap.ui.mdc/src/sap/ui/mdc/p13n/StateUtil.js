@@ -2,10 +2,8 @@
 * ! ${copyright}
 */
 sap.ui.define([
-	'sap/ui/mdc/p13n/Engine'
-], function(Engine) {
+], function() {
 	"use strict";
-
 
 	/**
 	 *  @class Utility class for state handling of MDC Controls.
@@ -61,7 +59,7 @@ sap.ui.define([
 		* }
 		*/
 		applyExternalState: function(oControl, oState){
-			return Engine.getInstance().applyExternalState(oControl, oState);
+			return oControl.getEngine().applyState(oControl, StateUtil._internalizeKeys(oState));
 		},
 
 		/**
@@ -74,7 +72,50 @@ sap.ui.define([
 		 * @param {object} oControl The control instance implementing IxState to retrieve the externalized state
 		 */
 		retrieveExternalState: function(oControl) {
-			return Engine.getInstance().retrieveExternalState(oControl);
+			return oControl.getEngine().retrieveState(oControl).then(function(oEngineState){
+				return StateUtil._externalizeKeys(oEngineState);
+			});
+		},
+
+		_externalizeKeys: function(oInternalState) {
+			var mKeysForState = {
+				Sort: "sorters",
+				Group: "groupLevels",
+				Aggregate: "aggregations",
+				Filter: "filter",
+				Item: "items",
+				Column: "items"
+			};
+			var oTransformedState = {};
+
+			Object.keys(oInternalState).forEach(function(sProvidedEngineKey){
+				var sTransformedKey = mKeysForState[sProvidedEngineKey];
+				oTransformedState[sTransformedKey] = oInternalState[sProvidedEngineKey];
+			});
+
+			return oTransformedState;
+		},
+
+		_internalizeKeys: function(oExternalState) {
+			var mKeysForEngine = {
+				sorters: ["Sort"],
+				groupLevels: ["Group"],
+				aggregations: ["Aggregate"],
+				filter: ["Filter"],
+				items: ["Item", "Column"]
+			};
+
+			var oTransformedState = {};
+
+			Object.keys(oExternalState).forEach(function(sProvidedEngineKey){
+				if (mKeysForEngine[sProvidedEngineKey]) {
+					mKeysForEngine[sProvidedEngineKey].forEach(function(sTransformedKey){
+						oTransformedState[sTransformedKey] = oExternalState[sProvidedEngineKey];
+					});
+				}
+			});
+
+			return oTransformedState;
 		}
 
 	};

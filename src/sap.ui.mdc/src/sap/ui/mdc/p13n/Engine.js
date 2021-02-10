@@ -75,6 +75,10 @@ sap.ui.define([
 			throw new Error("Please provide atleast a configuration 'controller' containing a map of key-value pairs (key + Controller class) in order to register adaptation.");
 		}
 
+		if (this._getRegistryEntry(oControl)){
+			this.deregisterAdaptation(oControl);
+		}
+
 		var aControllerKeys = Object.keys(oConfig.controller);
 
 		aControllerKeys.forEach(function(sKey){
@@ -93,7 +97,17 @@ sap.ui.define([
 
 		}.bind(this));
 
-    };
+	};
+
+	Engine.prototype.deregisterAdaptation = function(oControl) {
+		var oRegistryEntry = this._getRegistryEntry(oControl);
+		Object.keys(oRegistryEntry.controller).forEach(function(sKey){
+			var oController = oRegistryEntry.controller[sKey];
+			oController.destroy();
+
+			delete oRegistryEntry.controller[sKey];
+		});
+	};
 
 	/**
 	 * Opens a personalization Dialog according to the provided Controller
@@ -209,7 +223,6 @@ sap.ui.define([
 	 * for example if "A" is existing in the control state, but not mentioned in the new state provided in the
 	 * mDiffParameters.state then the absolute appliance decides whether to remove "A" or to keep it.
 	 * @param {boolean} [mDiffParameters.suppressAppliance] Decides whether the change should be applied directly.
-	 * @param {boolean} [mDiffParameters.externalAppliance] Flag which can be used to distinguish attributes in the
 	 * Controller
 	 *
 	 * @returns {Promise} A Promise resolving in the according delta changes.
@@ -221,8 +234,6 @@ sap.ui.define([
 		var aNewState = mDiffParameters.state;
 		var bApplyAbsolute = !!mDiffParameters.applyAbsolute;
 		var bSuppressCallback = !!mDiffParameters.suppressAppliance;
-		var bexternalAppliance = mDiffParameters.externalAppliance === false ? false : true;
-
 		if (!sKey || !vControl || !aNewState) {
 			throw new Error("To create changes via Engine, atleast a 1)Control 2)Key and 3)State needs to be provided.");
 		}
@@ -240,7 +251,6 @@ sap.ui.define([
 				existingState: oPriorState,
 				applyAbsolute: bApplyAbsolute,
 				changedState: aNewState,
-				externalAppliance: bexternalAppliance === true ? true : false,
 				control: oController.getAdaptationControl(),
 				changeOperations: mchangeOperations,
 				deltaAttributes: ["name"],
@@ -334,122 +344,34 @@ sap.ui.define([
 
 	};
 
-	/**
-	*	Creates and applies the necessary changes for a given control and state.
-	*   Please note that the changes are created in the order that the objects are
-	*   being passed into the state object attributes. For example by adding two objects
-	*   into the "items" attribute of the oState object, the first entry will be created,
-	*   and the second entry will be created on top of the first created change.
-	*   The item state will apply each provided object in the given order un the array and will
-	*   use the provided position. In case no index has been provided or an invalid index,
-	*   the item will be added to the array after the last present item. In addition
-	*   the attribute "visible" can be set to false to remove the item.
-	*
-	* @private
-	* @ui5-restricted sap.ui.mdc
-	* @MDC_PUBLIC_CANDIDATE
-	*
-	* @param {object} oControl the control which will be used to create and apply changes on
-	* @param {object} oState the state in which the control should be represented
-	* @example
-	* oState = {
-	* 		filter: {
-	* 			"Category": [
-	* 				{
-	* 					"operator": EQ,
-	* 					"values": [
-	* 						"Books"
-	* 					]
-	* 				}
-	* 			]
-	* 		},
-	* 		items: [
-	*			{name: "Category", position: 3},
-	*			{name: "Country", visible: false}
-	*       ],
-	*       sorters: [
-	*			{name: "Category", "descending": false},
-	*			{name: "NoCategory", "descending": false, "sorted": false}
-	*       ]
-	* }
-	* @returns {Promise} A Promise resolving after the state has been applied.
-	*
-	*/
-	Engine.prototype.applyExternalState = function(oControl, oState, bApplyAbsolute) {
-		return this.retrieveExternalState(oControl).then(function(oCurrentState){
+	Engine.prototype.applyState = function(oControl, oState, bApplyAbsolute) {
 
-			/* The support for the known StateUtil operations (defined above as oState) depend whether the
-			/* getCurrentState method returns the corresponding attribute. This depends on the Controls
-			/* p13nMode configuration --> For instance a Table without atleast p13nMode="Sort" can not create sort
-			/* changes via StateUtil.
-			*/
-			var bSortSupported = oCurrentState.hasOwnProperty("sorters");
-			var bFilterSupported = oCurrentState.hasOwnProperty("filter");
-			var bItemSupported = oCurrentState.hasOwnProperty("items");
-			var bGroupSupported = oCurrentState.hasOwnProperty("groupLevels");
-			var bAggregateSupported = oCurrentState.hasOwnProperty("aggregations");
-			var oGroupPromise, oAggregatePromise, oSortPromise, oConditionPromise, oItemPromise, aChanges = [];
+		//Call retrieve only to ensure that the control is initialized and enabled for modification
+		return this.retrieveState(oControl).then(function(oCurrentState){
 
-			//TODO: ORDER OF CHANGES ??? --> Which changes should come first?...
-			if (bSortSupported && oState.sorters){
-				oSortPromise = this.createChanges({
+			var aStatePromise = [], aChanges = [];
+
+			Object.keys(oState).forEach(function(sControllerKey){
+
+				var oController = this.getController(oControl, sControllerKey);
+
+				if (!oController){
+					Log.warning("No controller registered for state" + sControllerKey + " - state appliance ignored for this key.");
+					return;
+				}
+
+				var oStatePromise = this.createChanges({
 					control: oControl,
-					key: "Sort",
-					state: oState.sorters,
+					key: sControllerKey,
+					state: oController.validateState(oState[sControllerKey]),
 					suppressAppliance: true,
-					externalAppliance: true,
 					applyAbsolute: bApplyAbsolute
 				});
-			}
 
-			if (bGroupSupported && oState.groupLevels){
-				oGroupPromise = this.createChanges({
-					control: oControl,
-					key: "Group",
-					state: oState.groupLevels,
-					suppressAppliance: true,
-					externalAppliance: true,
-					applyAbsolute: bApplyAbsolute
-				});
-			}
+				aStatePromise.push(oStatePromise);
+			}.bind(this));
 
-			if (bAggregateSupported && oState.aggregations){
-				oAggregatePromise = this.createChanges({
-					control: oControl,
-					key: "Aggregate", //TODO:
-					state: this.getController(oControl, "Aggregate").mapState(oState.aggregations),
-					suppressAppliance: true,
-					externalAppliance: true,
-					applyAbsolute: bApplyAbsolute
-				});
-			}
-
-			if (bFilterSupported && oState.filter){
-				this.checkConditionOperatorSanity(oState.filter);
-				oConditionPromise = this.createChanges({
-					control: oControl,
-					key: "Filter",
-					state: oState.filter,
-					suppressAppliance: true,
-					externalAppliance: true,
-					applyAbsolute: bApplyAbsolute
-				});
-			}
-
-			if (bItemSupported && oState.items && oState.items.length > 0){
-				oItemPromise = this.createChanges({
-					control: oControl,
-					key: "Item",
-					state: oState.items,
-					suppressAppliance: true,
-					externalAppliance: true,
-					applyAbsolute: bApplyAbsolute
-				});
-			}
-
-			//resolve after all changes have been
-			return Promise.all([oSortPromise, oConditionPromise, oItemPromise, oGroupPromise, oAggregatePromise]).then(function(aRawChanges){
-
+			return Promise.all(aStatePromise).then(function(aRawChanges){
 				aRawChanges.forEach(function(aSpecificChanges){
 					if (aSpecificChanges && aSpecificChanges.length > 0){
 						aChanges = aChanges.concat(aSpecificChanges);
@@ -476,7 +398,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} a Promise resolving in the current control state.
 	 */
-	Engine.prototype.retrieveExternalState = function(oControl) {
+	Engine.prototype.retrieveState = function(oControl) {
 
 		var bValidInterface = this.checkXStateInterface(oControl);
 
@@ -484,54 +406,25 @@ sap.ui.define([
 			throw new Error("The control needs to implement the interface IxState.");
 		}
 
+		//ensure that the control has been initialized
 		return oControl.initialized().then(function() {
 
-			//ensure that all changes have been applied
+			//ensure that the current state is affected by all pending modifications
 			return Engine.getInstance().getModificationHandler().waitForChanges({
 				element: oControl
 			}).then(function() {
 
-				//currently only filter is supported
-				return oControl.getCurrentState();
+				var oRetrievedState = {};
+				Engine.getInstance().getRegisteredControllers(oControl).forEach(function(sKey){
+					oRetrievedState[sKey] = Engine.getInstance().getController(oControl, sKey).getCurrentState();
+				});
+
+				return oRetrievedState;
 
 			});
 
 		});
 
-	};
-
-	/**
-	 * //TODO: Move this method to the according Util.
-	 * @private
-	 * @ui5-restricted sap.ui.mdc
-	 *
-	 * A sanity check that can be used for conditions by utilizing the FilterOperatorUtil.
-	 * This is being used to remove conditions that are using unknown operators.
-	 *
-	 * @param {object} mConditions The condition map.
-	 */
-	Engine.prototype.checkConditionOperatorSanity = function(mConditions) {
-		//TODO: consider to harmonize this sanity check with 'getCurrentState' cleanups
-		for (var sFieldPath in mConditions) {
-			var aConditions = mConditions[sFieldPath];
-			for (var i = 0; i < aConditions.length; i++) {
-				var oCondition = aConditions[i];
-				var sOperator = oCondition.operator;
-				if (!FilterOperatorUtil.getOperator(sOperator)){
-					aConditions.splice(i, 1);
-					/*
-						* in case the unknown operator has been removed, we need to check
-						* if this caused the object to be empty to not create unnecessary remove changes
-						* this should only be done within this check, as empty objects have a special meaning in the 'filter'
-						* object within the external state to reset the given conditions for a single property
-						*/
-					if (mConditions[sFieldPath].length == 0) {
-						delete mConditions[sFieldPath];
-					}
-					Log.warning("The provided conditions for field '" + sFieldPath + "' contain unsupported operators - these conditions will be neglected.");
-				}
-			}
-		}
 	};
 
 	/**
@@ -619,6 +512,11 @@ sap.ui.define([
 		if (oRegistryEntry && oRegistryEntry.controller.hasOwnProperty(sKey)) {
 			return oRegistryEntry.controller[sKey];
 		}
+	};
+
+	Engine.prototype.getRegisteredControllers = function(vControl){
+		var oRegistryEntry = this._getRegistryEntry(vControl);
+		return Object.keys(oRegistryEntry.controller);
 	};
 
 	/**
@@ -813,8 +711,7 @@ sap.ui.define([
 			key: sKey,
 			state: oNewState.items,
 			suppressAppliance: true,
-			applyAbsolute: true,
-			externalAppliance: false
+			applyAbsolute: true
 		}).then(function(aItemChanges){
 
 			var aComulatedChanges = aAdditionalChanges ? aAdditionalChanges.concat(aItemChanges) : aItemChanges;

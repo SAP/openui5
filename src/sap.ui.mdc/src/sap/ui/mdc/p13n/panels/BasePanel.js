@@ -328,6 +328,11 @@ sap.ui.define([
 		}, this);
 	};
 
+	BasePanel.prototype._getPresenceAttribute = function() {
+		var sPresenceAttribute = this.getP13nModel().getProperty("/presenceAttribute") || "visible";
+		return sPresenceAttribute;
+	};
+
 	BasePanel.prototype._bindListItems = function(mBindingInfo) {
 		var oTemplate = this.getTemplate();
 		if (oTemplate) {
@@ -453,17 +458,17 @@ sap.ui.define([
 		var aFields = this.getP13nModel().getProperty("/items");
 		var aSelectedFields = [], aOtherFields = [];
 		aFields.forEach(function(oField) {
-			if (oField.selected) {
+			if (oField[this._getPresenceAttribute()]) {
 				aSelectedFields.push(oField);
 			} else {
 				aOtherFields.push(oField);
 			}
-		});
+		}.bind(this));
 		this.getP13nModel().setProperty("/items", aSelectedFields.concat(aOtherFields));
 	};
 
 	BasePanel.prototype._filterBySelected = function(bShowSelected, oList) {
-		oList.getBinding("items").filter(bShowSelected ? new Filter("selected", "EQ", true) : []);
+		oList.getBinding("items").filter(bShowSelected ? new Filter(this._getPresenceAttribute(), "EQ", true) : []);
 	};
 
 	BasePanel.prototype.switchListMode = function(sMode) {
@@ -495,8 +500,13 @@ sap.ui.define([
 		if (!bSelectAll) {
 			var oItem = this.getP13nModel().getProperty(this._oSelectedItem.getBindingContext(this.P13N_MODEL).sPath);
 			// only fire this event if one item is being selected in a live scenario, else fire the change event in the _onSelectionChange method
+			//TODO: remove 'selected' condition enhance
+			var oP13nModel = this.getModel(this.P13N_MODEL);
+			if (oP13nModel && oItem) {
+				oP13nModel.setProperty(oTableItem.getBindingContext(this.P13N_MODEL).sPath + "/selected", oItem.visible);
+			}
 			this.fireChange({
-				reason: oItem.selected ? "Add" : "Remove",
+				reason: oItem[this._getPresenceAttribute()] ? "Add" : "Remove",
 				item: oItem
 			});
 		}

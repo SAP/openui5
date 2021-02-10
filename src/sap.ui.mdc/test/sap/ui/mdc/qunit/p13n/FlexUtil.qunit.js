@@ -9,13 +9,13 @@ sap.ui.define([
 				id: "IDName",
 				name: "name",
 				label: "Name",
-				selected: true
+				visible: true
 			},
 			{
 				id: "IDYear",
 				name: "year",
 				label: "Year",
-				selected: true
+				visible: true
 			}
 		];
 
@@ -48,21 +48,21 @@ sap.ui.define([
 				id: "IDName",
 				name: "name",
 				label: "Name",
-				selected: true,
+				visible: true,
 				position: 0
 			},
 			{
 				id: "IDYear",
 				name: "year",
 				label: "Year",
-				selected: true,
+				visible: true,
 				position: 1
 			},
 			{
 				id: undefined,
 				name: "country",
 				label: "Country",
-				selected: true//set 'Country' to visible
+				visible: true//set 'Country' to visible
 			}
 		];
 
@@ -83,7 +83,7 @@ sap.ui.define([
 				id: "IDName",
 				name: "name",
 				label: "Name",
-				selected: true,
+				visible: true,
 				position: 0
 			}
 		];
@@ -105,14 +105,14 @@ sap.ui.define([
 				id: "IDYear",
 				name: "year",//swapped with name
 				label: "Year",
-				selected: true,
+				visible: true,
 				position: 0
 			},
 			{
 				id: "IDName",
 				name: "name",
 				label: "Name",
-				selected: true,
+				visible: true,
 				position: 1
 			}
 		];
@@ -130,14 +130,14 @@ sap.ui.define([
 			id: "IDName",
 			name: "name",
 			label: "Name",
-			selected: true,
+			visible: true,
 			role: "dimension"
 		},
 		{
 			id: "IDYear",
 			name: "year",
 			label: "Year",
-			selected: true,
+			visible: true,
 			role: "dimension"
 		}
 	];
@@ -173,21 +173,21 @@ sap.ui.define([
 				id: "IDName",
 				name: "name",
 				label: "Name",
-				selected: true,
+				visible: true,
 				role: "dimension"
 			},
 			{
 				id: "IDYear",
 				name: "year",
 				label: "Year",
-				selected: true,
+				visible: true,
 				role: "dimension"
 			},
 			{
 				id: undefined,
 				name: "country",
 				label: "Country",
-				selected: true,//set visible
+				visible: true,//set visible
 				role: "measure"
 			}
 		];
@@ -208,7 +208,7 @@ sap.ui.define([
 				id: "IDName",
 				name: "name",
 				label: "Name",
-				selected: true,
+				visible: true,
 				role: "dimension"
 			}
 		];
@@ -229,14 +229,14 @@ sap.ui.define([
 				id: "IDYear",
 				name: "year",
 				label: "Year",
-				selected: true,
+				visible: true,
 				role: "measure"
 			},
 			{
 				id: "IDName",
 				name: "name",
 				label: "Name",
-				selected: true,
+				visible: true,
 				role: "dimension"
 			}
 		];
@@ -258,14 +258,14 @@ sap.ui.define([
 				id: "IDName",
 				name: "name",
 				label: "Name",
-				selected: true,
+				visible: true,
 				role: "dimension"
 			},
 			{
 				id: "IDYear",
 				name: "year",
 				label: "Year",
-				selected: true,
+				visible: true,
 				role: "series"
 			}
 		];
@@ -287,13 +287,13 @@ sap.ui.define([
 		{
 			name: "name",
 			label: "Name",
-			selected: true,
+			visible: true,
 			descending: false
 		},
 		{
 			name: "year",
 			label: "Year",
-			selected: true,
+			visible: true,
 			descending: false
 		}
 	];
@@ -328,19 +328,19 @@ sap.ui.define([
 			{
 				name: "name",
 				label: "Name",
-				selected: true,
+				visible: true,
 				descending: false
 			},
 			{
 				name: "year",
 				label: "Year",
-				selected: true,
+				visible: true,
 				descending: false
 			},
 			{
 				name: "country",
 				label: "Country",
-				selected: true,
+				visible: true,
 				descending: false
 			}
 		];
@@ -361,7 +361,7 @@ sap.ui.define([
 			{
 				name: "name",
 				label: "Name",
-				selected: true,
+				visible: true,
 				descending: false
 			}
 		];
@@ -381,13 +381,13 @@ sap.ui.define([
 			{
 				name: "year",
 				label: "Year",
-				selected: true,
+				visible: true,
 				descending: false
 			},
 			{
 				name: "name",
 				label: "Name",
-				selected: true,
+				visible: true,
 				descending: false
 			}
 		];

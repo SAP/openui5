@@ -14,19 +14,19 @@ sap.ui.define([
 			{
 				label: "Test",
 				name: "test",
-				selected: true
+				visible: true
 			}, {
 				label: "Test2",
 				name: "test2",
-				selected: true
+				visible: true
 			}, {
 				label: "Test3",
 				name: "test3",
-				selected: true
+				visible: true
 			}, {
 				label: "Test4",
 				name: "test4",
-				selected: false
+				visible: false
 			}
 		]
 	});

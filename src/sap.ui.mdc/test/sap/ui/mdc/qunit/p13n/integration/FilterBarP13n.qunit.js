@@ -63,7 +63,7 @@ sap.ui.define([
 
     QUnit.test("Check 'Engine' subcontroller registration", function(assert) {
         assert.ok(Engine.getInstance().getController(this.oFilterBar, "Item"), "AdaptFiltersController has been registered");
-        assert.ok(Engine.getInstance().getController(this.oFilterBar, "Filter"), "SortController has been registered");
+        assert.ok(Engine.getInstance().getController(this.oFilterBar, "Filter"), "FilterController has been registered");
 	});
 
 
@@ -142,8 +142,8 @@ sap.ui.define([
 			var aModelItems = oAddaptFiltersController.getP13nModel().getData().items;
 			var aModelItemsGrouped = oAddaptFiltersController.getP13nModel().getData().itemsGrouped;
 
-			aModelItems[2].selected = true;
-			aModelItemsGrouped[0].items[2].selected = true;
+			aModelItems[2].visible = true;
+			aModelItemsGrouped[0].items[2].visible = true;
 
             //3 items selected --> mock a model change
 			oAddaptFiltersController.getP13nModel().setProperty("/items", aModelItems);

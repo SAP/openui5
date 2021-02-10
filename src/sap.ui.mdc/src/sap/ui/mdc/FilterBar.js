@@ -90,22 +90,24 @@ sap.ui.define([
 		this._oFilterBarLayout.getInner().addStyleClass("sapUiMdcFilterBarBaseAFLayout");
 		this.setAggregation("layout", this._oFilterBarLayout, true);
 		this._addButtons();
-
-		this.getEngine().registerAdaptation(this, {
-			controller: {
-				Item: AdaptFiltersController,
-				Filter: FilterController
-			}
-		});
 	};
 
 	FilterBar.prototype.setP13nMode = function(aMode) {
 		var aOldMode = this.getP13nMode();
 		this.setProperty("p13nMode", aMode || [], false);
 
+		var oRegisterConfig = {};
+		oRegisterConfig.controller = {};
+
 		aMode && aMode.forEach(function(sMode) {
 			if (!aOldMode || aOldMode.indexOf(sMode) < 0) {
 				this._setP13nMode(sMode, true);
+			}
+			if (sMode == "Item") {
+				oRegisterConfig.controller["Item"] = AdaptFiltersController;
+			}
+			if (sMode == "Value") {
+				oRegisterConfig.controller["Filter"] = FilterController;
 			}
 		}.bind(this));
 		aOldMode && aOldMode.forEach(function(sMode) {
@@ -113,6 +115,8 @@ sap.ui.define([
 				this._setP13nMode(sMode, false);
 			}
 		}.bind(this));
+
+		this.getEngine().registerAdaptation(this, oRegisterConfig);
 
 		return this;
 	};
@@ -125,7 +129,7 @@ sap.ui.define([
 	};
 
 	FilterBar.prototype.setFilterConditions = function(mValue, bSuppressInvalidate) {
-		this.getEngine().checkConditionOperatorSanity(mValue);
+		FilterController.checkConditionOperatorSanity(mValue);
 		if (this._oP13nFB){
 			this._oP13nFB.setFilterConditions(merge({},mValue));
 		}

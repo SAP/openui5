@@ -372,7 +372,6 @@ sap.ui.define([
             assert.ok(mDeltaConfig.hasOwnProperty("existingState"), "PropertyBag created with required attribute (existingState)");
             assert.ok(mDeltaConfig.hasOwnProperty("applyAbsolute"), "PropertyBag created with required attribute (applyAbsolute)");
             assert.ok(mDeltaConfig.hasOwnProperty("changedState"), "PropertyBag created with required attribute (changedState)");
-            assert.ok(mDeltaConfig.hasOwnProperty("externalAppliance"), "PropertyBag created with required attribute (externalAppliance)");
             assert.ok(mDeltaConfig.hasOwnProperty("control"), "PropertyBag created with required attribute (control)");
             assert.ok(mDeltaConfig.hasOwnProperty("changeOperations"), "PropertyBag created with required attribute (changeOperations)");
             assert.ok(mDeltaConfig.hasOwnProperty("deltaAttributes"), "PropertyBag created with required attribute (deltaAttributes)");
@@ -450,14 +449,14 @@ sap.ui.define([
     //---------------------------------------------------------------------------------------------
     //-----------------The actual set of 'State' changes can be found in 'StateUtil.qunit'---------
     //---------------------------------------------------------------------------------------------
-    QUnit.test("Check 'applyExternalState' to return a promise applying changes", function(assert){
+    QUnit.test("Check 'applyState' to return a promise applying changes", function(assert){
 
         var done = assert.async();
 
         sinon.stub(FlexRuntimeInfoAPI, "isFlexSupported").returns(true);
         sinon.stub(FlexRuntimeInfoAPI, "waitForChanges").returns(Promise.resolve());
 
-        this.oEngine.applyExternalState(this.oControl, {
+        this.oEngine.applyState(this.oControl, {
             items: []
         })
         .then(function(){
@@ -475,14 +474,14 @@ sap.ui.define([
     //---------------------------------------------------------------------------------------------
     //-----------------The actual set of 'State' changes can be found in 'StateUtil.qunit'---------
     //---------------------------------------------------------------------------------------------
-    QUnit.test("Check 'retrieveExternalState' to return a promise applying changes", function(assert){
+    QUnit.test("Check 'retrieveState' to return a promise applying changes", function(assert){
 
         var done = assert.async();
 
         sinon.stub(FlexRuntimeInfoAPI, "isFlexSupported").returns(true);
         sinon.stub(FlexRuntimeInfoAPI, "waitForChanges").returns(Promise.resolve());
 
-        this.oEngine.retrieveExternalState(this.oControl)
+        this.oEngine.retrieveState(this.oControl)
         .then(function(oState){
 
             assert.ok(oState, "State retrieval promise resolves");
@@ -509,40 +508,6 @@ sap.ui.define([
 
         assert.ok(oRTAPromise instanceof Promise, "RTA settions action handler returns a promise");
 
-    });
-
-    QUnit.test("Check 'getConditionOperatorSanity' (valid)", function(assert){
-
-        var oValidOperator = {
-            String: [
-                {
-                    operator: "Contains",
-                    values: [
-                        "Test"
-                    ]
-                }
-            ]
-        };
-
-        this.oEngine.checkConditionOperatorSanity(oValidOperator);
-        assert.equal(oValidOperator["String"].length, 1, "Operator is valid");
-    });
-
-    QUnit.test("Check 'getConditionOperatorSanity' (invalid)", function(assert){
-
-        var oInValidOperator = {
-            String: [
-                {
-                    operator: "INVALIDFANTASYOPERATOR",
-                    values: [
-                        "Test"
-                    ]
-                }
-            ]
-        };
-
-        this.oEngine.checkConditionOperatorSanity(oInValidOperator);
-        assert.equal(oInValidOperator["String"], undefined, "Operator has been removed");
     });
 
     QUnit.module("Error handling", {

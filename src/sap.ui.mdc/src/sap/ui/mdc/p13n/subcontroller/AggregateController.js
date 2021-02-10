@@ -12,7 +12,7 @@ sap.ui.define([
         return this.getAdaptationControl().getCurrentState().aggregations;
     };
 
-    AggregateController.prototype.mapState = function(change) {
+    AggregateController.prototype.validateState = function(change) {
         var aAggregations = [];
         Object.keys(change).forEach(function(item) {
             var oAggregate = {
@@ -25,8 +25,9 @@ sap.ui.define([
         });
         return aAggregations;
     };
+
     AggregateController.prototype.getDelta = function (mPropertyBag) {
-        mPropertyBag.existingState = this.mapState(mPropertyBag.existingState);
+        mPropertyBag.existingState = this.validateState(mPropertyBag.existingState);
         return BaseController.prototype.getDelta.apply(this, arguments);
     };
 
@@ -37,29 +38,19 @@ sap.ui.define([
         };
     };
 
-    AggregateController.prototype._getPresenceAttribute = function (bExternalStateAppliance) {
+    AggregateController.prototype._getPresenceAttribute = function () {
         return "aggregated";
     };
 
-    AggregateController.prototype.setP13nData = function (oPropertyHelper) {
+    AggregateController.prototype.setP13nData = function(oPropertyHelper) {
 
-        var aItemState = this.getCurrentState();
-        var mExistingAggregations = aItemState;
+        var mExistingAggregations = this.getCurrentState();
 
-        var fnEnhancer = function(oItem, oProperty){
-
-            var sName = oProperty.name;
-            if (oProperty.isAggregatable() === false) {
-                return false;
-            }
-
-            oItem.aggregated = mExistingAggregations[sName] ? true : false;
-            oItem.aggregatePosition = mExistingAggregations[sName] ? mExistingAggregations[sName].position : -1;
-
-            return true;
-        };
-
-        var oP13nData = P13nBuilder.prepareP13nData({}, oPropertyHelper, fnEnhancer);
+        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+            var oExisting = mExistingAggregations[oProperty.name];
+            mItem.aggregated = !!oExisting;
+            return oProperty.isAggregatable();
+        });
 
         this.oP13nData = oP13nData;
     };

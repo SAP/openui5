@@ -101,6 +101,10 @@ sap.ui.define([
         return Promise.resolve();
     };
 
+    BaseController.prototype.validateState = function(oState) {
+        return oState;
+    };
+
     /**
      * The actual UI used for personalization.
      *
@@ -138,7 +142,7 @@ sap.ui.define([
 
     //TODO: check if this can be avoided
     BaseController.prototype._getPresenceAttribute = function(bexternalAppliance){
-        return bexternalAppliance ? "visible" : "selected";
+        return "visible";
     };
 
     /**
@@ -159,19 +163,21 @@ sap.ui.define([
     BaseController.prototype.setP13nData = function(oPropertyHelper) {
 
         var aItemState = this.getCurrentState();
+        var mItemState = P13nBuilder.arrayToMap(aItemState);
 
-        var oExistingState = {
-            items: aItemState
-        };
-
-        var oP13nData = P13nBuilder.prepareP13nData(oExistingState, oPropertyHelper, function(oItem, oProperty){
+        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+            var oExisting = mItemState[oProperty.name];
+            mItem.visible = !!oExisting;
+            mItem.position =  oExisting ? oExisting.position : -1;
             return oProperty.visible;
         });
 
         P13nBuilder.sortP13nData({
-            visible: "selected",
+            visible: "visible",
             position: "position"
         }, oP13nData.items);
+
+        oP13nData.items.forEach(function(oItem){delete oItem.position;});
 
         this.oP13nData = oP13nData;
     };

@@ -610,18 +610,18 @@ sap.ui.define([
 		var done = assert.async();
 
 		var oState = {
+			sorters: [
+				{
+					name: "String",
+					descending: true
+				}
+			],
 			items: [
 				{
 					name: "Decimal"
 				},
 				{
 					name: "Double"
-				}
-			],
-			sorters: [
-				{
-					name: "String",
-					descending: true
 				}
 			],
 			groupLevels: [],
@@ -818,7 +818,7 @@ sap.ui.define([
 		StateUtil.applyExternalState(this.oTable, oState).then(function(aChanges){
 			assert.equal(aChanges.length, 1, "Only one change was created");
 			assert.equal(aChanges[0].getChangeType(), "addSort", "Only sort and no filter changes should be created");
-			this.oTable.setP13nMode(["Column","Sort","Filter"]);
+			this.oTable.setP13nMode(["Column","Sort","Filter","Aggregate","Group"]);
 			done();
 		}.bind(this));
 
@@ -969,7 +969,7 @@ sap.ui.define([
 				  "role": "category"
 				}
 			  ],
-			sort: []
+			sorters: []
 		};
 
 		StateUtil.applyExternalState(this.oChart, oState).then(function(aChanges){
@@ -984,7 +984,7 @@ sap.ui.define([
 					  "visible": false
 					}
 				  ],
-				sort: []
+				sorters: []
 			};
 
 			StateUtil.applyExternalState(this.oChart, oRemoveState).then(function(aChanges){
@@ -1009,7 +1009,7 @@ sap.ui.define([
 				  "role": "series"
 				}
 			  ],
-			sort: []
+			sorters: []
 		};
 
 		StateUtil.applyExternalState(this.oChart, oState).then(function(aChanges){

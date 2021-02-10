@@ -552,15 +552,7 @@ sap.ui.define([
 	Table.prototype.init = function() {
 
 		Control.prototype.init.apply(this, arguments);
-		this.getEngine().registerAdaptation(this, {
-			controller: {
-				Item: ColumnController,
-				Sort: SortController,
-				Filter: FilterController,
-				Group: GroupController,
-				Aggregate: AggregateController
-			}
-		});
+
 		// Skip propagation of properties (models and bindingContexts)
 		this.mSkipPropagation = {
 			rowSettings: true
@@ -843,11 +835,34 @@ sap.ui.define([
 
 		this.setProperty("p13nMode", aMode, true);
 
+		this._updateAdaptation(this.getP13nMode());
+
 		if (!deepEqual(aOldP13nMode.sort(), this.getP13nMode().sort())) {
 			updateP13nSettings(this);
 		}
 
 		return this;
+	};
+
+	Table.prototype._updateAdaptation = function(aMode) {
+		var oRegisterConfig = {
+			controller: {}
+		};
+
+		var mRegistryOptions = {
+			Column: ColumnController,
+			Sort: SortController,
+			Group: GroupController,
+			Filter: FilterController,
+			Aggregate: AggregateController
+		};
+
+		aMode.forEach(function(sMode){
+			var sKey = sMode;
+			oRegisterConfig.controller[sKey] = mRegistryOptions[sMode];
+		});
+
+		this.getEngine().registerAdaptation(this, oRegisterConfig);
 	};
 
 	function updateP13nSettings(oTable) {

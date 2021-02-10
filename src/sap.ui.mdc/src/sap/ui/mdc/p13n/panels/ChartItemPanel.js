@@ -31,7 +31,7 @@ sap.ui.define([
 			// Initialize the BasePanel
 			BasePanel.prototype.init.apply(this, arguments);
 			var oChartItemPanelTemplate = new ColumnListItem({
-				selected: "{" + this.P13N_MODEL + ">selected}",
+				selected: "{" + this.P13N_MODEL + ">visible}",
 				cells: [
 					new Label({
 						wrapping: true,
@@ -47,7 +47,12 @@ sap.ui.define([
 						selectedKey: "{" + this.P13N_MODEL + ">role}",
 						change: [this.onChangeOfRole, this],
 						forceSelection: false,
-						enabled: "{" + this.P13N_MODEL + ">selected}",
+						enabled: {
+							path: this.P13N_MODEL + ">visible",
+							formatter: function(bEnabled) {
+								return !!bEnabled;
+							}
+						},
 						items: {
 							path: this.P13N_MODEL + ">availableRoles",
 							templateShareable: false,

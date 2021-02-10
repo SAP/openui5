@@ -69,7 +69,7 @@ sap.ui.define([
 
     ListView.prototype._getListTemplate = function() {
         return new ColumnListItem({
-            selected: "{" + this.P13N_MODEL + ">selected}",
+            selected: "{" + this.P13N_MODEL + ">visible}",
             type: ListType.Active,
             cells: [
                 new VBox({
@@ -214,7 +214,7 @@ sap.ui.define([
         var oTableItem = oEvent.getParameter('listItem');
 
         //Ignore unselected items --> BasePanel move mode only expects selected items
-        if (oTableItem.getBindingContext(this.P13N_MODEL).getProperty("selected")){
+        if (oTableItem.getBindingContext(this.P13N_MODEL).getProperty("visible")){
             BasePanel.prototype._onItemPressed.apply(this, arguments);
             if (this.getEnableReorder()){
                 this._handleHover(oTableItem);
@@ -317,7 +317,7 @@ sap.ui.define([
             return;
         }
 
-        var bItemSelected = this.getP13nModel().getProperty(oTableItem.getBindingContextPath()).selected;
+        var bItemSelected = this.getP13nModel().getProperty(oTableItem.getBindingContextPath()).visible;
 
         if (bItemSelected){
             oTableItem.getCells()[1].addItem(this._getMoveTopButton());

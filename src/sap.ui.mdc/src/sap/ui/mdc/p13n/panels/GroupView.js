@@ -136,8 +136,13 @@ sap.ui.define([
 			selectionChange: function(oBindingInfo) {
 				var sPath = oBindingInfo.getParameter("listItem").getBindingContext(this.P13N_MODEL).sPath;
 				var oItem = this.getP13nModel().getProperty(sPath);
+				var oP13nModel = this.getModel(this.P13N_MODEL);
+				//TODO: remove 'selected' condition enhance
+				if (oP13nModel && oItem) {
+					oP13nModel.setProperty(sPath + "/selected", oItem.visible);
+				}
 				this.fireChange({
-					reason: oItem.selected ? "Add" : "Remove",
+					reason: oItem.visible ? "Add" : "Remove",
 					item: oItem
 				});
 			}.bind(this),
@@ -203,7 +208,7 @@ sap.ui.define([
 
 			return new CustomListItem({
 				visible: "{" + this.P13N_MODEL + ">visibleInDialog}",
-				selected: "{" + this.P13N_MODEL + ">selected}",
+				selected: "{" + this.P13N_MODEL + ">visible}",
 				tooltip: "{" + this.P13N_MODEL + ">tooltip}",
 				content: aInnerListItemContent
 			});
