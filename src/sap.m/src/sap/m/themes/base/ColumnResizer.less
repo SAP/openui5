@@ -27,9 +27,16 @@
 	user-select: none;
 }
 
-@media (hover: none) {
-	.sapMPluginsColumnResizerHandle {
-		padding: 0 0.375rem;
-		margin-left: -0.5rem;
-	}
+.sapMPluginsColumnResizerHandleCircle {
+	content: "";
+	position: absolute;
+	top: 1.5rem;
+	left: -0.4375rem;
+	width: 1rem;
+	height: 1rem;
+	border-radius: 1rem;
+	border: 0.125rem solid @sapUiContentDragAndDropActiveColor;
+	background: @sapUiWhiteBG;
+	pointer-events: none;
+	margin-top: -0.125rem;
 }
