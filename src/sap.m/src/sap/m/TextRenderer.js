@@ -138,7 +138,7 @@ sap.ui.define([
 		 */
 		TextRenderer.renderText = function(oRm, oText) {
 			var sText = HyphenationSupport.getTextForRender(oText, "main");
-			if (oText.getEmptyIndicator() !== EmptyIndicatorMode.Off && !oText.getText()) {
+			if (oText.getEmptyIndicatorMode() !== EmptyIndicatorMode.Off && !oText.getText()) {
 				this.renderEmptyIndicator(oRm, oText);
 			} else {
 				oRm.text(sText);
@@ -154,7 +154,7 @@ sap.ui.define([
 	TextRenderer.renderEmptyIndicator = function(oRm, oText) {
 		oRm.openStart("span");
 			oRm.class("sapMEmptyIndicator");
-			if (oText.getEmptyIndicator() === EmptyIndicatorMode.Auto) {
+			if (oText.getEmptyIndicatorMode() === EmptyIndicatorMode.Auto) {
 				oRm.class("sapMEmptyIndicatorAuto");
 			}
 			oRm.openEnd();

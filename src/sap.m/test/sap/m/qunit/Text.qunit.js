@@ -499,17 +499,17 @@ sap.ui.define([
 		beforeEach : function() {
 			this.oText = new Text({
 				text: "",
-				emptyIndicator: EmptyIndicatorMode.On
+				emptyIndicatorMode: EmptyIndicatorMode.On
 			});
 
 			this.oTextEmptyAuto = new Text({
 				text: "",
-				emptyIndicator: EmptyIndicatorMode.Auto
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			});
 
 			this.oTextEmptyAutoNoClass = new Text({
 				text: "",
-				emptyIndicator: EmptyIndicatorMode.Auto
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			});
 
 			this.oPanel = new Panel({
@@ -552,7 +552,7 @@ sap.ui.define([
 
 	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
 		//Arrange
-		this.oText.setEmptyIndicator(EmptyIndicatorMode.Off);
+		this.oText.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		Core.applyChanges();
 
 		//Assert
@@ -590,7 +590,7 @@ sap.ui.define([
 
 	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", function(assert) {
 		//Arrange
-		this.oText.setEmptyIndicator(EmptyIndicatorMode.Off);
+		this.oText.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
 		this.oText.setText("test");
 		Core.applyChanges();
 

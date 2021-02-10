@@ -129,7 +129,7 @@ function(library, Core, Control, coreLibrary, Device, HyphenationSupport, TextRe
 				 *
 				 * @since 1.87
 				 */
-				emptyIndicator: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
+				emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
 			},
 
 			designtime: "sap/m/designtime/Text.designtime"
