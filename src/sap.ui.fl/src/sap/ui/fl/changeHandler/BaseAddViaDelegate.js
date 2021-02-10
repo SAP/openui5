@@ -123,7 +123,8 @@ sap.ui.define([
 			function getControlsFromDelegate(mChangeDefinition, mDelegate, mPropertyBag) {
 				var mDelegatePropertyBag = merge({
 					aggregationName: mAddViaDelegateSettings.aggregationName,
-					payload: mDelegate.payload || {}
+					payload: mDelegate.payload || {},
+					parentSelector: mChangeDefinition.content.parentId
 				}, mPropertyBag);
 				var oDelegate = mDelegate.instance;
 
