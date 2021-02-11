@@ -2,6 +2,7 @@
 <html>
 	<head>
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta charset="utf-8">
 		<title>Label - sap.m</title>
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
@@ -13,10 +14,10 @@
 			var oModel = new sap.ui.model.json.JSONModel({
 				"globalRequired": false
 			});
-
-
+			var oResourceModel = new sap.ui.model.resource.ResourceModel({
+				bundleUrl: "label/i18n/i18n.properties"
+			})
 			var sLabelWidth = "100%";
-
 			var oVL = new sap.ui.layout.VerticalLayout("oVL", {
 				content:[
 					new sap.m.Label({
@@ -257,16 +258,16 @@
 			var sf = new sap.ui.layout.form.SimpleForm("simpleForm", {
 				layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
 				editable: true,
-				title: "Simple Form",
+				title: "Simple Form - ResponsiveGridLayout",
 				content:[
-					new sap.m.Label("requiredTruncated", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true}),
-					new sap.m.Input,
-					new sap.m.Label("truncated", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label"}),
-					new sap.m.Input,
-					new sap.m.Label("requiredOnly",  {text:"Simple Label", required: true}),
-					new sap.m.Input,
-					new sap.m.Label("requiredTruncatedNoWrap", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: "{/globalRequired}", wrapping: false}),
-					new sap.m.Input
+					new sap.m.Label("requiredTruncated", { text:"{i18n>longLabel}", required: true }),
+					new sap.m.Input(),
+					new sap.m.Label("truncated", { text:"{i18n>longLabel}" }),
+					new sap.m.Input(),
+					new sap.m.Label("requiredOnly", { text:"{i18n>simpleLabel}", required: true }),
+					new sap.m.Input(),
+					new sap.m.Label("requiredTruncatedNoWrap", { text:"{i18n>longLabel}", required: "{/globalRequired}", wrapping: false }),
+					new sap.m.Input()
 				]
 			});
 
@@ -274,15 +275,15 @@
 				width: "300px",
 				layout: sap.ui.layout.form.SimpleFormLayout.ResponsiveGridLayout,
 				editable: true,
-				title: "Small Simple Form",
+				title: "Small Simple Form - ResponsiveGridLayout",
 				content:[
-					new sap.m.Label("requiredTruncated2", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: true}),
+					new sap.m.Label("requiredTruncated2", { text:"{i18n>longLabel}", required: true }),
 					new sap.m.Input(),
-					new sap.m.Label("truncated2", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label"}),
+					new sap.m.Label("truncated2", { text:"{i18n>longLabel}", required: "{/globalRequired}" }),
 					new sap.m.Input(),
-					new sap.m.Label("requiredOnly2",  {text:"Simple Label", required: true}),
+					new sap.m.Label("requiredOnly2", {  text:"{i18n>simpleLabel}", required: true }),
 					new sap.m.Input(),
-					new sap.m.Label("requiredTruncatedNoWrap2", {text:"Simple Label Simple LabelSimple LabelSimple LabelSimple LabelSimple Label", required: "{/globalRequired}", wrapping: false}),
+					new sap.m.Label("requiredTruncatedNoWrap2", { text:"{i18n>longLabel}", required: "{/globalRequired}", wrapping: false }),
 					new sap.m.Input(),
 					new sap.m.Label({text:"'*' and ':' should NOT go on new line alone", required: true}),
 					new sap.m.Input()
@@ -369,6 +370,7 @@
 			oApp.addPage(oPage);
 
 			oApp.setModel(oModel);
+			oApp.setModel(oResourceModel, "i18n")
 
 			oApp.placeAt("body");
 		</script>
