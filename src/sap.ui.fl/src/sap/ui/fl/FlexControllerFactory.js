@@ -2,6 +2,8 @@
  * ${copyright}
  */
 
+ /* global WeakMap */
+
 sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/Utils",
@@ -36,7 +38,7 @@ sap.ui.define([
 
 	// in this object a promise is stored for every application component instance
 	// if the same instance is initialized twice the promise is replaced
-	FlexControllerFactory._componentInstantiationPromises = {};
+	FlexControllerFactory._componentInstantiationPromises = new WeakMap();
 
 	/**
 	 * Creates or returns an instance of the FlexController
@@ -134,18 +136,19 @@ sap.ui.define([
 		// if component's manifest is of type 'component' then no flex controller and change persistence instances are created. The variant model is fetched from the outer app component and applied on this component type.
 		if (Utils.isApplicationComponent(oComponent)) {
 			var sComponentId = oComponent.getId();
-			FlexControllerFactory._componentInstantiationPromises[sComponentId] = FlexState.initialize({
+			var oReturnPromise = FlexState.initialize({
 				componentId: sComponentId,
 				asyncHints: vConfig.asyncHints
 			}).then(_propagateChangesForAppComponent.bind(this, oComponent));
-			return FlexControllerFactory._componentInstantiationPromises[sComponentId];
+			FlexControllerFactory._componentInstantiationPromises.set(oComponent, oReturnPromise);
+			return oReturnPromise;
 		} else if (Utils.isEmbeddedComponent(oComponent)) {
 			var oAppComponent = Utils.getAppComponentForControl(oComponent);
 			// Some embedded components might not have an app component, e.g. sap.ushell.plugins.rta, sap.ushell.plugins.rta-personalize
 			if (oAppComponent && Utils.isApplicationComponent(oAppComponent)) {
 				var oInitialPromise = Promise.resolve();
-				if (FlexControllerFactory._componentInstantiationPromises[oAppComponent.getId()]) {
-					oInitialPromise = FlexControllerFactory._componentInstantiationPromises[oAppComponent.getId()];
+				if (FlexControllerFactory._componentInstantiationPromises.has(oAppComponent)) {
+					oInitialPromise = FlexControllerFactory._componentInstantiationPromises.get(oAppComponent);
 				}
 				return oInitialPromise.then(function() {
 					var oExistingVariantModel = oAppComponent.getModel(Utils.VARIANT_MODEL_NAME);
