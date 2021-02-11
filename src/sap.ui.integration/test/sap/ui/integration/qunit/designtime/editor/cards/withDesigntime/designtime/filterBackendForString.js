@@ -16,9 +16,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Customers",
+									"url": "{{destinations.mock_request}}/Customers",
 									"parameters": {
-										"$select": "CustomerID, CompanyName, Country, City, Address",
 										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
 									}
 								},
@@ -38,7 +37,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Customers?$select=CustomerID, CompanyName, Country, City, Address&$filter=startswith(CompanyName,'{currentSettings>suggestValue}')"
+									"url": "{{destinations.mock_request}}/Customers?$filter=startswith(CompanyName,'{currentSettings>suggestValue}')"
 								},
 								"path": "/value"
 							},
@@ -56,10 +55,9 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Customers",
+									"url": "{{destinations.mock_request}}/Customers",
 									"parameters": {
-										"$select": "CustomerID, CompanyName, Country, City, Address",
-										"$filter": "CustomerID eq 'ALFKI'"
+										"$filter": "CustomerID eq 'b'"
 									}
 								},
 								"path": "/value",
@@ -83,10 +81,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Customers",
-									"parameters": {
-										"$select": "CustomerID, CompanyName, Country, City, Address"
-									}
+									"url": "{{destinations.mock_request}}/Customers"
 								},
 								"path": "/value",
 								"filterBackend": {
@@ -109,10 +104,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Employees",
-									"parameters": {
-										"$select": "EmployeeID, FirstName, LastName, Country, Title, HomePhone"
-									}
+									"url": "{{destinations.mock_request}}/Employees"
 								},
 								"path": "/value",
 								"filterBackend": {

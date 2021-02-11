@@ -685,6 +685,15 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/editor/CardEditorWithDesigntimeRequestValues": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/editor/CardEditorWithDesigntimeTrans": {
 				group: "Runtime Card Editor",
 				coverage: {
