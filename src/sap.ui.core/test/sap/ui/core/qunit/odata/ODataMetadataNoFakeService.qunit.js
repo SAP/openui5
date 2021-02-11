@@ -269,12 +269,6 @@ sap.ui.define([
 		this.oLogMock.expects("error")
 			.withExactArgs(oFixture.expectedLog, sinon.match.same(this.oMetadata), sClassName)
 			.exactly(oFixture.expectedLog ? 1 : 0);
-		this.oLogMock.expects("error")
-			.withExactArgs("Cannot determine the entity type for the function import "
-				+ "'~functionName'; check reference of sap:action-for annotation, EntitySet and "
-				+ "ReturnType of the function import metadata", sinon.match.same(this.oMetadata),
-				sClassName)
-			.exactly(oFixture.entityType ? 0 : 1);
 
 		// code under test
 		assert.strictEqual(
@@ -286,13 +280,9 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("_getCanonicalPathOfFunctionImport: no entity type found", function (assert) {
+	QUnit.test("_getCanonicalPathOfFunctionImport: sFunctionReturnType = undefined",
+			function (assert) {
 		var mFunctionInfo = {name : "Foo"};
-
-		this.oLogMock.expects("error")
-			.withExactArgs("Cannot determine the entity type for the function import 'Foo'; check "
-				+ "reference of sap:action-for annotation, EntitySet and ReturnType of the "
-				+ "function import metadata", sinon.match.same(this.oMetadata), sClassName);
 
 		// code under test
 		assert.strictEqual(
