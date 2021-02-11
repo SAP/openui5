@@ -854,11 +854,26 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Returns the query options to be used for downloading list data corresponding to the given
+	 * query options.
+	 *
+	 * @param {object} mQueryOptions - The query options
+	 * @returns {object} The download query options derived from the given query options
+	 *
+	 * @private
+	 */
+	_Cache.prototype.getDownloadQueryOptions = function (mQueryOptions) {
+		return mQueryOptions;
+	};
+
+	/**
 	 * Returns a URL by which the complete content of the list with the given path can be downloaded
 	 * in JSON format.
 	 *
-	 * @param {string} sPath The list's path relative to the cache
-	 * @param {object} mCustomQueryOptions The custom query options
+	 * @param {string} sPath
+	 *   The list's path relative to the cache; may be empty, but not <code>undefined</code>
+	 * @param {object} [mCustomQueryOptions]
+	 *   The custom query options, needed iff. a non-empty path is given
 	 * @returns {string} The download URL
 	 *
 	 * @public
@@ -875,7 +890,8 @@ sap.ui.define([
 		return this.oRequestor.getServiceUrl()
 			+ _Helper.buildPath(this.sResourcePath, sPath)
 			+ this.oRequestor.buildQueryString(
-				_Helper.buildPath(this.sMetaPath, _Helper.getMetaPath(sPath)), mQueryOptions);
+				_Helper.buildPath(this.sMetaPath, _Helper.getMetaPath(sPath)),
+				this.getDownloadQueryOptions(mQueryOptions));
 	};
 
 	/**

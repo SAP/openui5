@@ -29,6 +29,7 @@
 				<Button icon="sap-icon://refresh" press="onRefreshResponsive" tooltip="Refresh"/>
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://sort-ascending"
 					press="onSortResponsive" tooltip="Sort Ascending"/>
+				<Button icon="sap-icon://download" press="onDownloadResponsive" tooltip="Download"/>
 				<SearchField placeholder="Filter by sales number greater than..."
 					value="{path : 'ui>/sFilterResponsive'}"
 					visible="{ui>/bRealOData}" width="50%" search="onFilterResponsive" />
@@ -67,6 +68,7 @@
 				<Button icon="sap-icon://refresh" press="onRefreshGrid" tooltip="Refresh"/>
 				<Button enabled="{ui>/bRealOData}" icon="sap-icon://sort-ascending"
 					press="onSortGrid" tooltip="Sort Ascending"/>
+				<Button icon="sap-icon://download" press="onDownloadGrid" tooltip="Download"/>
 				<SearchField placeholder="Filter by sales number greater than..."
 					value="{path : 'ui>/sFilterGrid'}"
 					visible="{ui>/bRealOData}" width="50%" search="onFilterGrid" />

@@ -85,9 +85,52 @@ sap.ui.define([
 		mQueryOptions : {
 			$$filterBeforeAggregate : "TransactionCurrency eq 'EUR' and Region eq 'UK'"
 		},
-		iLevel : 3, // leaf level
+		iLevel : 3, // leaf level (after fully expanding visual grouping)
 		sApply : "filter(TransactionCurrency eq 'EUR' and Region eq 'UK')"
 			+ "/groupby((A,B,C),aggregate(Amount))"
+	}, {
+		oAggregation : {
+			aggregate : {
+				Amount : {
+					grandTotal : true,
+					subtotals : true,
+					unit : "Currency"
+				},
+				SalesNumber : {
+					max : true,
+					min : true,
+					subtotals : true
+				}
+			},
+			group : { // intentionally out of order to test sorting
+				C : {additionally : ["CountryText", "Texts/Country"]},
+				A : {},
+				B : {}
+			},
+			groupLevels : ["TransactionCurrency", "Region"]
+		},
+		mQueryOptions : {
+			$$filterBeforeAggregate : "TransactionCurrency ne 'EUR' and Region ne 'UK'",
+			$count : true,
+			$filter : "SalesNumber ge 100",
+			$orderby : "Region desc"
+		},
+		iLevel : 0, // leaf level, bypassing visual grouping
+		sApply : "filter(TransactionCurrency ne 'EUR' and Region ne 'UK')"
+			+ "/groupby((TransactionCurrency,Region,A,B,C,CountryText,Texts/Country)"
+				+ ",aggregate(Amount,Currency,SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)"
+			+ "/concat(aggregate(SalesNumber with min as UI5min__SalesNumber"
+				+ ",SalesNumber with max as UI5max__SalesNumber,$count as UI5__count),identity)",
+		// Note: use this for download URL
+		sFollowUpApply : "filter(TransactionCurrency ne 'EUR' and Region ne 'UK')"
+			+ "/groupby((TransactionCurrency,Region,A,B,C,CountryText,Texts/Country)"
+				+ ",aggregate(Amount,Currency,SalesNumber))"
+			+ "/filter(SalesNumber ge 100)/orderby(Region desc)",
+		mExpectedAlias2MeasureAndMethod : {
+			UI5max__SalesNumber : {measure : "SalesNumber", method : "max"},
+			UI5min__SalesNumber : {measure : "SalesNumber", method : "min"}
+		}
 	}, {
 		oAggregation : {
 			aggregate : { // Note: intentionally not sorted
@@ -495,12 +538,13 @@ sap.ui.define([
 		QUnit.test("buildApply with " + oFixture.sApply, function (assert) {
 			var mAlias2MeasureAndMethod = {},
 				sFollowUpApply = oFixture.sFollowUpApply || oFixture.sApply,
+				iLevel = "iLevel" in oFixture ? oFixture.iLevel : 1,
 				sQueryOptionsJSON = JSON.stringify(oFixture.mQueryOptions),
 				mResult;
 
 			// code under test
 			mResult = _AggregationHelper.buildApply(oFixture.oAggregation, oFixture.mQueryOptions,
-				oFixture.iLevel, false, mAlias2MeasureAndMethod);
+				iLevel, false, mAlias2MeasureAndMethod);
 
 			assert.deepEqual(mResult, {$apply : oFixture.sApply}, "sApply");
 			assert.deepEqual(mAlias2MeasureAndMethod,
@@ -510,7 +554,7 @@ sap.ui.define([
 
 			// code under test
 			mResult = _AggregationHelper.buildApply(oFixture.oAggregation,
-				oFixture.mQueryOptions, oFixture.iLevel, true, mAlias2MeasureAndMethod);
+				oFixture.mQueryOptions, iLevel, true, mAlias2MeasureAndMethod);
 
 			assert.deepEqual(mResult, {$apply : sFollowUpApply}, "sFollowUpApply");
 			assert.deepEqual(mAlias2MeasureAndMethod, {}, "mAlias2MeasureAndMethod");
@@ -1070,109 +1114,77 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("filterOrderby", function (assert) {
-		var oAggregation = {
-				aggregate : {
-					Measure : {unit : "UnitOfMeasure"}
+	QUnit.test("getFilteredOrderby", function (assert) {
+		function testWithLevels(sOrderby, aExpected) {
+			var oAggregation = {
+					aggregate : {
+						SalesAmount : {subtotals : true, unit : "Currency"},
+						SalesNumber : {unit : "One"}
+					},
+					group : { // Note: added by _AggregationHelper.buildApply before
+						Country : {},
+						Region : {additionally : ["RegionText", "Texts/Region"]},
+						Segment : {additionally : ["SegmentText", "Texts/Segment"]}
+					},
+					groupLevels : ["Country", "Region"]
+				};
+
+			aExpected.forEach(function (sExpected, iLevel) {
+				assert.strictEqual(
+					// code under test
+					_AggregationHelper.getFilteredOrderby(sOrderby, oAggregation, iLevel),
+					sExpected, sOrderby + ", " + iLevel);
+			});
+		}
+
+		testWithLevels("Currency,One,NotApplicable",
+			["Currency,One", "Currency", "Currency", "Currency,One"]);
+		testWithLevels("SalesAmount desc,SalesNumber,Country desc,Region,Segment asc", [
+				"SalesAmount desc,SalesNumber,Country desc,Region,Segment asc",
+				"SalesAmount desc,Country desc",
+				"SalesAmount desc,Region",
+				"SalesAmount desc,SalesNumber,Segment asc"
+			]);
+		testWithLevels(
+			"Country,RegionText desc,Texts/Region asc,SegmentText desc,Texts/Segment asc", [
+				"Country,RegionText desc,Texts/Region asc,SegmentText desc,Texts/Segment asc",
+				"Country",
+				"RegionText desc,Texts/Region asc",
+				"SegmentText desc,Texts/Segment asc"
+			]);
+
+		// Note: w/o group levels, level must not make a difference
+		[0, 1].forEach(function (iLevel) {
+			var oAggregation = {
+					aggregate : {
+						Measure : {unit : "UnitOfMeasure"}
+					},
+					group : {
+						Dimension : {additionally : ["Texts/Dimension"]}
+					},
+					groupLevels : [] // Note: added by _AggregationHelper.buildApply before
 				},
-				group : {
-					Dimension : {additionally : ["Texts/Dimension"]}
-				},
-				groupLevels : [] // Note: added by _AggregationHelper.buildApply before
-			},
-			oAggregationWithLevels = {
-				aggregate : {
-					SalesAmount : {subtotals : true, unit : "Currency"},
-					SalesNumber : {unit : "One"}
-				},
-				group : { // Note: added by _AggregationHelper.buildApply before
-					Country : {},
-					Region : {additionally : ["RegionText", "Texts/Region"]},
-					Segment : {additionally : ["SegmentText", "Texts/Segment"]}
-				},
-				groupLevels : ["Country", "Region"]
-			},
-			sOrderby = "SalesAmount desc,SalesNumber,Country desc,Region,Segment asc",
-			sOrderbyAdditionally
-				= "Country,RegionText desc,Texts/Region asc,SegmentText desc,Texts/Segment asc";
+				mInput2Output = {
+					"Dimension %20desc%2CFoo asc" : "Dimension %20desc",
+					"Dimension\tdesc,Foo asc" : "Dimension\tdesc",
+					"Measure desc%2cDimension" : "Measure desc,Dimension",
+					"NavigationProperty/$count" : "NavigationProperty/$count",
+					"Texts/Dimension" : "Texts/Dimension",
+					"UnitOfMeasure desc" : "UnitOfMeasure desc"
+				};
 
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby("Dimension %20desc%2CFoo asc", oAggregation, 1),
-			"Dimension %20desc");
+			Object.keys(mInput2Output).forEach(function (sOrderby) {
+				assert.strictEqual(
+					// code under test
+					_AggregationHelper.getFilteredOrderby(sOrderby, oAggregation, iLevel),
+					mInput2Output[sOrderby], sOrderby + ", " + iLevel);
+			});
 
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby("Dimension\tdesc,Foo asc", oAggregation, 1),
-			"Dimension\tdesc");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby("Measure desc%2cDimension", oAggregation, 1),
-			"Measure desc,Dimension");
-
-		// code under test
-		assert.strictEqual(_AggregationHelper.filterOrderby(undefined, oAggregation, 1), undefined);
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby("NavigationProperty/$count", oAggregation, 1),
-			"NavigationProperty/$count");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby("Texts/Dimension", oAggregation, 1),
-			"Texts/Dimension");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby("UnitOfMeasure desc", oAggregation, 1),
-			"UnitOfMeasure desc");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby("Currency,One", oAggregationWithLevels, 1),
-			"Currency");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby("Currency,One", oAggregationWithLevels, 2),
-			"Currency");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby("Currency,One", oAggregationWithLevels, 3),
-			"Currency,One");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby(sOrderby, oAggregationWithLevels, 1),
-			"SalesAmount desc,Country desc");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby(sOrderby, oAggregationWithLevels, 2),
-			"SalesAmount desc,Region");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby(sOrderby, oAggregationWithLevels, 3),
-			"SalesAmount desc,SalesNumber,Segment asc");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby(sOrderbyAdditionally, oAggregationWithLevels, 1),
-			"Country");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby(sOrderbyAdditionally, oAggregationWithLevels, 2),
-			"RegionText desc,Texts/Region asc");
-
-		// code under test
-		assert.strictEqual(
-			_AggregationHelper.filterOrderby(sOrderbyAdditionally, oAggregationWithLevels, 3),
-			"SegmentText desc,Texts/Segment asc");
+			assert.strictEqual(
+				// code under test
+				_AggregationHelper.getFilteredOrderby(undefined, oAggregation, iLevel),
+				undefined);
+		});
 	});
 	//TODO Also support orderbyItems that start with a type cast?
 	// See "11.2.5.2 System Query Option $orderby":
@@ -1286,6 +1298,40 @@ sap.ui.define([
 			oExpanded);
 
 		assert.strictEqual(_Helper.getPrivateAnnotation(oGroupNode, "collapsed"), oCollapsed);
+	});
+});
+
+	//*********************************************************************************************
+[undefined, "", "sFilteredOrderby"].forEach(function (sFilteredOrderby) {
+	var sTitle = "filterOrderby: sFilteredOrderby = " + sFilteredOrderby;
+
+	QUnit.test(sTitle, function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group: {},
+				groupLevels : ["a"]
+			},
+			mQueryOptions = {
+				$orderby : "~$orderby~"
+			};
+
+		this.mock(_AggregationHelper).expects("getFilteredOrderby")
+			.withExactArgs("~$orderby~", sinon.match.same(oAggregation), "~iLevel~")
+			.returns(sFilteredOrderby);
+		this.mock(Object).expects("assign").withExactArgs({}, sinon.match.same(mQueryOptions))
+			.returns({
+				$orderby : "n/a",
+				foo : "bar"
+			});
+
+		// code under test
+		assert.deepEqual(_AggregationHelper.filterOrderby(mQueryOptions, oAggregation, "~iLevel~"),
+			sFilteredOrderby ? {
+					$orderby : "sFilteredOrderby",
+					foo : "bar"
+				} : {
+					foo : "bar"
+				});
 	});
 });
 });

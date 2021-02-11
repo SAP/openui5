@@ -15791,7 +15791,12 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	// Scenario: Binding-specific parameter $$aggregation is used (CPOUI5UISERVICESV3-1195)
+	// Scenario: Binding-specific parameter $$aggregation is used
+	// JIRA: CPOUI5UISERVICESV3-1195
+	//
+	// Check download URL.
+	// JIRA: CPOUI5ODATAV4-609
+	//
 	//TODO support $filter : \'GrossAmount gt 0\',\
 	QUnit.test("Data Aggregation: $$aggregation w/ groupLevels, paging", function (assert) {
 		var oListBinding,
@@ -15839,6 +15844,12 @@ sap.ui.define([
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
 			oListBinding = oTable.getBinding("rows");
+
+			assert.strictEqual(oListBinding.getDownloadUrl(), sSalesOrderService + "SalesOrderList"
+				+ "?$apply=groupby((LifecycleStatus,CurrencyCode),aggregate(GrossAmount,NetAmount))"
+				// Note: ordering by 'ItemPosition asc' does not apply, even on leaf level
+				+ "/orderby(LifecycleStatus%20desc)",
+				"CPOUI5ODATAV4-609");
 
 			oListBinding.getCurrentContexts().forEach(function (oContext, i) {
 				assert.strictEqual(oContext.getPath(),
@@ -15894,15 +15905,19 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Data aggregation with grand total, but no visual grouping. Observe the node status.
 	// BCP: 2080089628
+	//
 	// Use a unit for the grand total.
 	// JIRA: CPOUI5ODATAV4-583
 	//
 	// Show additional text property even w/o group levels.
 	// JIRA: CPOUI5ODATAV4-680
+	//
+	// Check the download URL.
+	// JIRA: CPOUI5ODATAV4-609
 	QUnit.test("Data Aggregation: $$aggregation w/ grand total w/ unit", function (assert) {
 		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
 			sView = '\
-<Table items="{path : \'/SalesOrderList\',\
+<Table id="table" items="{path : \'/SalesOrderList\',\
 		parameters : {\
 			$$aggregation : {\
 				aggregate : {\
@@ -15911,7 +15926,8 @@ sap.ui.define([
 				group : {\
 					LifecycleStatus : {additionally : [\'LifecycleStatusDesc\']}\
 				}\
-			}\
+			},\
+			$orderby : \'LifecycleStatusDesc asc\'\
 		}}">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -15920,11 +15936,13 @@ sap.ui.define([
 	<Text id="lifecycleStatusDesc" text="{LifecycleStatusDesc}"/>\
 	<Text id="grossAmount" text="{= %{GrossAmount}}"/>\
 	<Text id="currencyCode" text="{CurrencyCode}"/>\
-</Table>';
+</Table>',
+			that = this;
 
 		this.expectRequest("SalesOrderList?$apply=concat(aggregate(GrossAmount,CurrencyCode)"
 				+ ",groupby((LifecycleStatus,LifecycleStatusDesc)"
 					+ ",aggregate(GrossAmount,CurrencyCode))"
+				+ "/orderby(LifecycleStatusDesc asc)"
 				+ "/concat(aggregate($count as UI5__count),top(99)))", {
 				value : [
 					{CurrencyCode : null, GrossAmount : "12345"},
@@ -15943,7 +15961,13 @@ sap.ui.define([
 			.expectChange("grossAmount", ["12345", "1", "2"])
 			.expectChange("currencyCode", ["", "EUR", "GBP"]);
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(that.oView.byId("table").getBinding("items").getDownloadUrl(),
+				sSalesOrderService + "SalesOrderList"
+				+ "?$apply=groupby((LifecycleStatus,LifecycleStatusDesc)"
+					+ ",aggregate(GrossAmount,CurrencyCode))/orderby(LifecycleStatusDesc%20asc)",
+				"CPOUI5ODATAV4-609");
+		});
 	});
 
 	//*********************************************************************************************
@@ -16192,8 +16216,12 @@ sap.ui.define([
 	// Expand the first group. After that show more elements of the first group.
 	// After that expand the second group and also show more elements.
 	// JIRA: CPOUI5ODATAV4-177
+	//
 	// Filter before aggregation; make sure it is also applied to children when expanding.
 	// JIRA: CPOUI5ODATAV4-180
+	//
+	// Check download URL.
+	// JIRA: CPOUI5ODATAV4-609
 	QUnit.test("Data Aggregation: expand and paging on sap.ui.table.Table", function (assert) {
 		var oModel = createAggregationModel(),
 			oTable,
@@ -16242,6 +16270,11 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
+
+			assert.strictEqual(oTable.getBinding("rows").getDownloadUrl(),
+				"/aggregation/BusinessPartners?$apply=filter(AccountResponsible%20ge%20'a')"
+				+ "/groupby((Region,AccountResponsible),aggregate(SalesAmount,SalesNumber))",
+				"CPOUI5ODATAV4-609");
 
 			that.expectRequest("BusinessPartners?$apply="
 					+ "filter(Region eq 'Z' and (AccountResponsible ge 'a'))"
@@ -16558,14 +16591,20 @@ sap.ui.define([
 	// Expand the last visible node and scroll to the last loaded leaf.
 	// JIRA: CPOUI5ODATAV4-255
 	// JIRA: CPOUI5ODATAV4-163
+	//
 	// Use grand total without subtotals.
 	// JIRA: CPOUI5ODATAV4-608
+	//
 	// Use a unit for the grand total and the subtotals. Use an "own" unit (that is, the unit must
 	// not appear for subtotals at all) for a grand total without subtotals to check for drill-down
 	// errors.
 	// JIRA: CPOUI5ODATAV4-583
+	//
 	// Order by units as well (at least expect the right requests).
 	// JIRA: CPOUI5ODATAV4-763
+	//
+	// Check download URL.
+	// JIRA: CPOUI5ODATAV4-609
 	QUnit.test("Data Aggregation: expand and paging to the last loaded leaf", function (assert) {
 		var oModel = createAggregationModel(),
 			oTable,
@@ -16646,6 +16685,13 @@ sap.ui.define([
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oTable = that.oView.byId("table");
+
+			assert.strictEqual(oTable.getBinding("rows").getDownloadUrl(),
+				"/aggregation/BusinessPartners?$apply=groupby((Country,Region)"
+				+ ",aggregate(AmountPerSale,Currency,SalesAmount,SalesAmountLocalCurrency"
+					+ ",LocalCurrency,SalesNumber))"
+				+ "/orderby(Country%20desc,Region,Currency%20asc,LocalCurrency%20desc)",
+				"CPOUI5ODATAV4-609");
 
 			///TODO could we omit Currency here because it was non-null at parent?
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'X')/groupby((Region)"
@@ -16746,6 +16792,7 @@ sap.ui.define([
 	// Scenario: sap.ui.table.Table with aggregation, no visual grouping, and grand total at both
 	// top and bottom - or at bottom only.
 	// JIRA: CPOUI5ODATAV4-558
+	//
 	// Collapsing a grand total should throw an error
 	// JIRA: CPOUI5ODATAV4-606
 [false, true].forEach(function (bGrandTotalAtBottomOnly) {
@@ -17057,7 +17104,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
 	// Collapse with placeholders
-	//
 	// JIRA: CPOUI5ODATAV4-179
 	QUnit.test("Data Aggregation: collapse with placeholders", function (assert) {
 		var oModel = createAggregationModel(),
@@ -17136,7 +17182,8 @@ sap.ui.define([
 
 			that.oLogMock.expects("error").withExactArgs("Failed to drill-down into"
 				+ " (Country='UK',Region='Z')/Region, invalid segment: (Country='UK',Region='Z')",
-				"/aggregation/BusinessPartners?$apply=groupby((Country),aggregate(SalesAmount))",
+				"/aggregation/BusinessPartners"
+				+ "?$apply=groupby((Country,Region),aggregate(SalesAmount))",
 				"sap.ui.model.odata.v4.lib._Cache");
 
 			// code under test
@@ -17151,7 +17198,6 @@ sap.ui.define([
 	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
 	// Expand three levels and collapse at the root level, then expand root level again, then
 	// collapse first level.
-	//
 	// JIRA: CPOUI5ODATAV4-178
 	// JIRA: CPOUI5ODATAV4-179
 	// JIRA: CPOUI5ODATAV4-378
@@ -17159,6 +17205,9 @@ sap.ui.define([
 	//
 	// Show additional text properties for group levels.
 	// JIRA: CPOUI5ODATAV4-680
+	//
+	// Check download URL.
+	// JIRA: CPOUI5ODATAV4-609
 	QUnit.test("Data Aggregation: expand three levels, expand after collapse", function (assert) {
 		var oModel = createAggregationModel(),
 			oRowsBinding,
@@ -17178,7 +17227,8 @@ sap.ui.define([
 				Region : {additionally : [\'RegionText\']}\
 			},\
 			groupLevels : [\'Country\', \'Region\', \'Segment\']\
-		}\
+		},\
+		$orderby : \'RegionText desc\'\
 	}}" threshold="0" visibleRowCount="4">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
 	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
@@ -17220,11 +17270,18 @@ sap.ui.define([
 			oTable = that.oView.byId("table");
 			oRowsBinding = oTable.getBinding("rows");
 
+			assert.strictEqual(oRowsBinding.getDownloadUrl(),
+				"/aggregation/BusinessPartners?$apply=groupby((Country,Region,Segment"
+					+ ",AccountResponsible,CountryText,RegionText)"
+					+ ",aggregate(SalesAmount,SalesNumber))"
+				+ "/orderby(RegionText%20desc)",
+				"CPOUI5ODATAV4-609");
+
 			assert.strictEqual(oRowsBinding.getLength(), 26);
 
 			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'US')"
 					+ "/groupby((Region,RegionText),aggregate(SalesAmount))"
-					+ "&$count=true&$skip=0&$top=4", {
+					+ "/orderby(RegionText desc)&$count=true&$skip=0&$top=4", {
 					"@odata.count" : "3",
 					value : [
 						{Region : "Z", RegionText : "<Z>", SalesAmount : "10"},
@@ -17365,7 +17422,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: sap.ui.table.Table with aggregation and visual grouping. Show additional text
 	// properties for group levels via navigation. Expand all levels.
-	//
 	// JIRA: CPOUI5ODATAV4-680
 	QUnit.test("Data Aggregation: additionally via navigation", function (assert) {
 		var oTable,
@@ -17497,7 +17553,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
 	// Expand and paging in parallel.
-	//
 	// JIRA: CPOUI5ODATAV4-336
 [false, true].forEach(function (bSecondScroll) {
 	var sTitle = "Data Aggregation: expand and paging in parallel. (Second scroll = "
@@ -17624,7 +17679,6 @@ sap.ui.define([
 	// and collapse before loading has finished, then expand again. Expand two nodes on 2nd level
 	// and collapse at the root level before the 2nd level has finished loading. Then expand again
 	// at the root level and find the 2nd level properly expanded as well.
-	//
 	// JIRA: CPOUI5ODATAV4-378
 	QUnit.test("Data Aggregation: collapse while expanding", function (assert) {
 		var oModel = createAggregationModel(),
@@ -17792,7 +17846,6 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: sap.ui.table.Table with aggregation and visual grouping. Collapse before paging
 	// has finished.
-	//
 	// JIRA: CPOUI5ODATAV4-378
 	QUnit.test("Data Aggregation: collapse while paging", function (assert) {
 		var oModel = createAggregationModel(),
@@ -17941,8 +17994,10 @@ sap.ui.define([
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row (CPOUI5UISERVICESV3-1418) which is fixed at the top; first visible
 	// row starts at 1 and then we scroll up; headerContext>$count is also used
+	// JIRA: CPOUI5ODATAV4-297
 	//
-	// JIRA: CPOUI5ODATAV4-297, CPOUI5ODATAV4-320 avoid virtual context for $$aggregation
+	// Avoid virtual context for $$aggregation
+	// JIRA: CPOUI5ODATAV4-320
 [false, true].forEach(function (bAutoExpandSelect) {
 	[false, true].forEach(function (bCount) {
 		var sTitle = "Data Aggregation: $$aggregation grandTotal w/o groupLevels; $count : "
@@ -18141,11 +18196,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Binding-specific parameter $$aggregation is used; no visual grouping,
 	// but a grand total row using with/as (CPOUI5UISERVICESV3-1418) and a unit (CPOUI5ODATAV4-583).
+	// Check the download URL(CPOUI5ODATAV4-609).
 	QUnit.test("Data Aggregation: $$aggregation grandTotal w/o groupLevels using with/as/unit",
 			function (assert) {
 		var oModel = createAggregationModel({autoExpandSelect : true}),
 			sView = '\
-<t:Table rows="{path : \'/BusinessPartners\',\
+<t:Table id="table" rows="{path : \'/BusinessPartners\',\
 		parameters : {\
 			$$aggregation : {\
 				aggregate : {\
@@ -18168,7 +18224,8 @@ sap.ui.define([
 	<Text id="salesNumber" text="{SalesNumber}"/>\
 	<Text id="salesAmountSum" text="{= %{SalesAmountSum} }"/>\
 	<Text id="currency" text="{Currency}"/>\
-</t:Table>';
+</t:Table>',
+			that = this;
 
 		this.expectRequest("BusinessPartners?$apply=concat("
 				+ "aggregate(SalesAmount with sum as SalesAmountSum,Currency)"
@@ -18212,7 +18269,13 @@ sap.ui.define([
 			.expectChange("salesAmountSum", [351, 1, 2, 3, 4])
 			.expectChange("currency", ["EUR", "EUR", "EUR", "EUR", "EUR"]);
 
-		return this.createView(assert, sView, oModel);
+		return this.createView(assert, sView, oModel).then(function () {
+			assert.strictEqual(that.oView.byId("table").getBinding("rows").getDownloadUrl(),
+				"/aggregation/BusinessPartners?$apply=groupby((Region)"
+				+ ",aggregate(SalesAmount%20with%20sum%20as%20SalesAmountSum,Currency,SalesNumber))"
+				+ "/filter(SalesAmountSum%20gt%200)/orderby(SalesAmountSum%20asc)",
+				"CPOUI5ODATAV4-609");
+		});
 	});
 
 	//*********************************************************************************************
