@@ -457,12 +457,39 @@ function(DomUnitsRem, Parameters, Breadcrumbs, Link, Text, library) {
 		assert.notOk(oSpy.called, "skipped overflow recalculations");
 	});
 
+	QUnit.test("Skip overflow recalculations when new width is 0", function (assert) {
+		// Arrange
+		var oLink1 = new Link({text: "link1"}),
+			oLink2 = new Link({text: "link2"}),
+			oSpy;
+
+		this.oStandardBreadCrumbsControl = new Breadcrumbs({
+			links: [oLink1, oLink2]
+		});
+
+		helpers.renderObject(this.oStandardBreadCrumbsControl);
+
+		oSpy = this.spy(this.oStandardBreadCrumbsControl, "_getControlDistribution");
+
+		// Act
+		this.oStandardBreadCrumbsControl._handleScreenResize({
+			size: { width: 0 },
+			oldSize: { width: 100}
+		});
+
+		// Assert
+		assert.ok(oSpy.notCalled, "Skipped overflow recalculations");
+
+		// Clean up
+		this.oStandardBreadCrumbsControl.destroy();
+		oSpy.restore();
+	});
+
 	QUnit.module("Breadcrumbs - private functions", {
 		afterEach: function () {
 			this.oStandardBreadCrumbsControl.destroy();
 		}
 	});
-
 
 	QUnit.test("_determineControlDistribution - all items in breadcrumb", function (assert) {
 		this.oStandardBreadCrumbsControl = oFactory.getBreadCrumbControlWithLinks();
