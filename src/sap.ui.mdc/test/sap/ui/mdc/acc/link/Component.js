@@ -24,7 +24,7 @@ sap.ui.define([
 				rootUri: sMockServerUrl
 			});
 
-			var sPath = jQuery.sap.getModulePath("sap.ui.mdc.acc.localservice");
+			var sPath = sap.ui.require.toUrl("sap/ui/mdc/acc/localservice");
 
 			// load local mock data
 			oMockServer.simulate(sPath + "/metadata.xml", {
