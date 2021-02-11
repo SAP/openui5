@@ -56,6 +56,27 @@ describe("sap.m.InputVisualTests", function() {
 		});
 	});
 
+	it("Should visualize input value after closing the suggestions popover", function () {
+		var oInput = element(by.id("inputWithSuggestions"));
+
+		browser.executeScript("document.getElementById('inputWithSuggestions').scrollIntoView()").then(function() {
+			oInput.click();
+
+			browser.actions().sendKeys("A").perform();
+			expect(takeScreenshot());
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot());
+
+			browser.actions().sendKeys(protractor.Key.ARROW_DOWN).perform();
+			expect(takeScreenshot());
+
+			browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+			expect(takeScreenshot()).toLookAs("input-value-after-arrow-up");
+			browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+		});
+	});
+
 	it("Should visualize input with suggestions", function () {
 		var oInput = element(by.id("inputWithSuggestions"));
 		browser.executeScript("document.getElementById('inputWithSuggestions').scrollIntoView()").then(function() {
