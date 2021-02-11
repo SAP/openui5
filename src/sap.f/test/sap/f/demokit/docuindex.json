@@ -45,7 +45,7 @@
 			"id": "sap.f.IllustratedMessage",
 			"name": "Illustrated Message (Experimental)",
 			"category": "Display",
-			"since": "1.87",
+			"since": "1.88",
 			"samples": [
 			"sap.f.sample.IllustratedMessageInCard",
 			"sap.f.sample.IllustratedMessageInDialog",

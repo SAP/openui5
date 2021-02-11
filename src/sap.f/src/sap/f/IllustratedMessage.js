@@ -49,7 +49,7 @@ sap.ui.define([
 	 * Empty states are moments in the user experience where there’s no data to display.
 	 * Success states are occasions to celebrate and reward a user’s special accomplishment or the completion of an important task.
 	 *
-	 * The <code>IllustratedMessage</code> control is meant to be used inside container colntrols,
+	 * The <code>IllustratedMessage</code> control is meant to be used inside container controls,
 	 * for example a <code>Card</code>, a <code>Dialog</code>, or a <code>Page</code>.
 	 *
 	 * <h3>Structure</h3>
@@ -66,8 +66,8 @@ sap.ui.define([
 	 * <h3>Responsive Behavior</h3>
 	 *
 	 * The <code>IllustratedMessage</code> control can adapt depending on the API settings provided by the app developer
-	 * and the available space of its parent contaner. Some of the structural elements are displayed differently or
-	 * are ommited in the different breakpoint sizes (XS, S, M, L).
+	 * and the available space of its parent container. Some of the structural elements are displayed differently or
+	 * are omitted in the different breakpoint sizes (XS, S, M, L).
 	 *
 	 * @extends sap.ui.core.Control
 	 *
@@ -76,8 +76,8 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since 1.87 This class is experimental. The API may change.
-	 * @since 1.87
+	 * @experimental Since 1.88 This class is experimental. The API may change.
+	 * @since 1.88
 	 * @alias sap.f.IllustratedMessage
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -93,7 +93,7 @@ sap.ui.define([
 				 * a default description for the current illustration type is going to be displayed. The default
 				 * description is stored in the <code>sap.f</code> resource bundle.
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				description : {type : "string", group : "Misc", defaultValue : ""},
 
@@ -102,7 +102,7 @@ sap.ui.define([
 				 * as formatted text in HTML format.
 				 *
 				 * For details regarding supported HTML tags, see {@link sap.m.FormattedText}.
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				enableFormattedText: { type: "boolean", group: "Appearance", defaultValue: false },
 
@@ -112,7 +112,7 @@ sap.ui.define([
 				 * As <code>IllustratedMessage</code> adapts itself around the <code>Illustration</code>, the other
 				 * elements of the control are displayed differently on the different breakpoints/illustration sizes.
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				illustrationSize : {type: "sap.f.IllustratedMessageSize", group: "Appearance", defaultValue: IllustratedMessageSize.Auto},
 
@@ -129,7 +129,7 @@ sap.ui.define([
 				 * <li>Second is the illustration type - UnableToLoad</li>
 				 * </ul>
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				illustrationType : {type: "string", group: "Appearance", defaultValue: IllustratedMessageType.NoSearchResults},
 
@@ -139,7 +139,7 @@ sap.ui.define([
 				 * If there is no initial input from the app developer and the default illustration set is being used,
 				 * a default title is displayed corresponding to the current <code>illustrationType</code>.
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				title: {type: "string", group: "Misc", defaultValue: ""}
 			},
@@ -150,14 +150,14 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> Not displayed when <code>illustrationSize</code> is set to <code>Base</code>.
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				additionalContent: {type: "sap.m.Button", multiple: true},
 
 				/**
 				 * The description displayed under the title when <code>enableFormattedText</code> is <code>true</code>.
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				_formattedText: {type: "sap.m.FormattedText", multiple: false, visibility: "hidden" },
 
@@ -167,21 +167,21 @@ sap.ui.define([
 				 *
 				 * It is placed above all other aggregations. Not displayed <code>illustrationSize</code> is set to <code>Base</code>.
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				_illustration: {type: "sap.f.Illustration", visibility: "hidden", multiple: false },
 
 				/**
 				 * The description displayed under the title when <code>enableFormattedText</code> is <code>false</code>.
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				_text: {type: "sap.m.Text", multiple: false, visibility: "hidden"},
 
 				/**
 				 * The text displayed under the illustration.
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				_title: {type: "sap.m.Title", multiple: false, visibility: "hidden"}
 			},
@@ -287,7 +287,7 @@ sap.ui.define([
 		if (sDescription) {
 			oFormattedText.setHtmlText(sDescription);
 		} else {
-			// Use default text for the description if aplicable
+			// Use default text for the description if applicable
 			oFormattedText.setHtmlText(this._getDefaultDescription());
 		}
 
@@ -332,7 +332,7 @@ sap.ui.define([
 		if (sDescription) {
 			oText.setText(sDescription);
 		} else {
-			// Use default text for the description if aplicable
+			// Use default text for the description if applicable
 			oText.setText(this._getDefaultDescription());
 		}
 
@@ -356,7 +356,7 @@ sap.ui.define([
 		if (sTitle) {
 			oTitle.setText(sTitle);
 		} else {
-			// Use default text for the title if aplicable
+			// Use default text for the title if applicable
 			oTitle.setText(this._getResourceBundle().getText(IllustratedMessage.PREPENDS.TITLE + this._sIllustrationType, null, true));
 		}
 
@@ -387,7 +387,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Caches the <code>IllustratedMessage</code> illustration set and illistration type in private instance variables.
+	 * Caches the <code>IllustratedMessage</code> illustration set and illustration type in private instance variables.
 	 * @private
 	 */
 	IllustratedMessage.prototype._updateInternalIllustrationSetAndType = function (sValue) {

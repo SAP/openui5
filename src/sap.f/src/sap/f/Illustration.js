@@ -34,8 +34,8 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @experimental Since 1.87 This class is experimental. The API may change.
-	 * @since 1.87
+	 * @experimental Since 1.88 This class is experimental. The API may change.
+	 * @since 1.88
 	 * @alias sap.f.Illustration
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -46,21 +46,21 @@ sap.ui.define([
 				/**
 				 * Defines which illustration set should be used when building the Symbol ID.
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				set: {type: "string", defaultValue: null},
 
 				/**
 				 * Defines which media/breakpoint should be used when building the Symbol ID.
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				media: {type: "string", defaultValue: null},
 
 				/**
 				 * Defines which illustration type should be used when building the Symbol ID.
 				 *
-				 * @since 1.87
+				 * @since 1.88
 				 */
 				type: {type: "string", defaultValue: null}
 			},

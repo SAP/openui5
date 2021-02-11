@@ -20,14 +20,14 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	 * @param {sap.ui.core.Control} oIllustration An object representation of the control that should be rendered
 	 */
 	IllustrationRenderer.render = function (oRm, oIllustration) {
-		var sSymboldId = oIllustration._sSymbolId;
+		var sSymbolId = oIllustration._sSymbolId;
 
 		oRm.openStart("svg", oIllustration);
 		oRm.class("sapFIllustration");
 		oRm.openEnd();
 
 			oRm.openStart("use");
-			oRm.attr('href', "#" + sSymboldId);
+			oRm.attr('href', "#" + sSymbolId);
 			oRm.openEnd();
 			oRm.close("use");
 
