@@ -2679,6 +2679,7 @@ function(
 
 			oSuggPopover.attachEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, function (oEvent) {
 				var sNewValue = oEvent.getParameter("newValue");
+				var bPreventSelection = oEvent.getParameter("preventSelection");
 
 				// setValue isn't used because here is too early to modify the lastValue of input
 				this.setDOMValue(sNewValue);
@@ -2686,7 +2687,7 @@ function(
 				// memorize the value set by calling jQuery.val, because browser doesn't fire a change event when the value is set programmatically.
 				this._sSelectedSuggViaKeyboard = sNewValue;
 
-				this._doSelect();
+				!bPreventSelection && this._doSelect();
 			}, this);
 
 			if (this.getShowTableSuggestionValueHelp()) {

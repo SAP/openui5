@@ -479,6 +479,7 @@ sap.ui.define([
 	SuggestionsPopover.prototype.handleSelectionFromList = function(oItem) {
 		var oInput = this._oInput,
 			oList = this.getItemsContainer(),
+			bPreventSelection = false,
 			sNewValue;
 
 		if (!oItem || oItem.isA("sap.m.GroupHeaderListItem")) {
@@ -496,7 +497,12 @@ sap.ui.define([
 			sNewValue = oInput._getInputValue(oItem.getTitle());
 		}
 
-		this.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {newValue: sNewValue});
+		if (!oItem && oInput.isA("sap.m.Input")) {
+			sNewValue = oInput._sTypedInValue;
+			bPreventSelection = true;
+		}
+
+		this.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {newValue: sNewValue, preventSelection: bPreventSelection});
 	};
 
 	/**
