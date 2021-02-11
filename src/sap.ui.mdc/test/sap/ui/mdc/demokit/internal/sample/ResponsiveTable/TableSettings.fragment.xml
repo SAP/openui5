@@ -51,6 +51,15 @@
 						<form:FormElement label="Show details button">
 							<CheckBox select="onToggleShowDetails"/>
 						</form:FormElement>
+						<form:FormElement id="fe-detailsButtonSetting" label="Hide columns with importance..." visible="false">
+							<MultiComboBox id="mcb-detailsButtonSetting" selectionFinish="onButtonSettingSelectionFinish">
+								<items>
+									<core:Item key="Low" text="Low" />
+									<core:Item key="Medium" text="Medium" />
+									<core:Item key="High" text="High" />
+								</items>
+							</MultiComboBox>
+						</form:FormElement>
 						<form:FormElement label="Quick Filter">
 							<CheckBox select="onToggleQuickFilter"/>
 						</form:FormElement>

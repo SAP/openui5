@@ -156,16 +156,39 @@ sap.ui.define([
 			var oTable = this.byId('mdcTable');
 			var vType = oTable.getType();
 			var bSelected = oEvent.getParameters().selected;
+			var oFEButtonSetting = sap.ui.getCore().byId("fe-detailsButtonSetting");
+			var oMCBButtonSetting = sap.ui.getCore().byId("mcb-detailsButtonSetting");
 
 			if (vType === "ResponsiveTable") {
 				oTable.setType(new sap.ui.mdc.table.ResponsiveTableType({
 					showDetailsButton: bSelected
 				}));
+				oFEButtonSetting.setVisible(bSelected);
+				if (!bSelected) {
+					oMCBButtonSetting.removeAllSelectedItems();
+				}
 			} else if (vType.constructor === sap.ui.mdc.table.ResponsiveTableType) {
 				vType.setShowDetailsButton(bSelected);
+				oFEButtonSetting.setVisible(bSelected);
+				if (!bSelected) {
+					oMCBButtonSetting.removeAllSelectedItems();
+				}
 			} else {
 				oEvent.getSource().setSelected(false);
+				oFEButtonSetting.setVisible(false);
+				oMCBButtonSetting.removeAllSelectedItems();
 			}
+		},
+
+		onButtonSettingSelectionFinish: function(oEvent){
+			var aItems = [];
+			var oTable = this.byId('mdcTable');
+			var vType = oTable.getType();
+
+			oEvent.getParameter("selectedItems").forEach(function(oItem) {
+				aItems.push(oItem.getKey());
+			});
+			vType.setDetailsButtonSetting(aItems);
 		},
 
 		// only responsive table

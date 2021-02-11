@@ -64,7 +64,7 @@ sap.ui.define([
 				 *
 				 * <b>Note:</b> To hide columns based on their importance, it's mandatory to set <code>showDetailsButton="true"</code>.
 				 * If no priority is given, the default configuration of {@link sap.ui.mdc.table.ResponsiveTableType#getShowDetailsButton} is used.
-				 * If this property is changed after the <code>SmartTable</code> has been initialized, the new changes take effect only when the
+				 * If this property is changed after the <code>MDCTable</code> has been initialized, the new changes take effect only when the
 				 * Show / Hide Details button is pressed a second time.
 				 *
 				 * @since 1.86
@@ -106,7 +106,7 @@ sap.ui.define([
 			oTable.getHeaderToolbar().insertEnd(this._getShowDetailsButton(), 0);
 			this._renderShowDetailsButton();
 			oTable.attachEvent("popinChanged", this._onPopinChanged, this);
-			oTable.setHiddenInPopin(Device.system.phone ? ["Low", "Medium"] : ["Low"]);
+			oTable.setHiddenInPopin(this._getImportanceToHide());
 		} else if (!bValue && this._oShowDetailsButton) {
 			oTable.detachEvent("popinChanged", this._onPopinChanged, this);
 			oTable.getHeaderToolbar().removeEnd(this._oShowDetailsButton);
@@ -188,7 +188,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Set property 'hiddenInPopin' on the inner ResponsiveTable to hide columns based on SmartTable configuration
+	 * Set property 'hiddenInPopin' on the inner ResponsiveTable to hide columns based on MDCTable configuration
 	 * of 'showDetailsButton' and 'detailsButtonSetting' if {@param bValue} is set to {true}.
 	 * Otherwise an empty array is set to show all columns.
 	 *
@@ -226,7 +226,7 @@ sap.ui.define([
 
 	/**
 	 * Helper function to get the importance of the columns that should be hidden based on
-	 * SmartTable configuration.
+	 * MDCTable configuration.
 	 *
 	 * @returns {array} sap.ui.core.Priority[]
 	 * @private
