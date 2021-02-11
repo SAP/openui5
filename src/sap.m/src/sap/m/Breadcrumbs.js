@@ -15,7 +15,8 @@ sap.ui.define([
 	"sap/ui/core/IconPool",
 	"sap/ui/Device",
 	"sap/m/library",
-	"./BreadcrumbsRenderer"
+	"./BreadcrumbsRenderer",
+	'sap/ui/base/ManagedObject'
 ], function(
 	Control,
 	openWindow,
@@ -28,7 +29,8 @@ sap.ui.define([
 	IconPool,
 	Device,
 	library,
-	BreadcrumbsRenderer
+	BreadcrumbsRenderer,
+	ManagedObject
 ) {
 	"use strict";
 
@@ -303,7 +305,7 @@ sap.ui.define([
 	Breadcrumbs.prototype._createSelectItem = function (oItem) {
 		return new Item({
 			key: oItem.getId(),
-			text: oItem.getText()
+			text: ManagedObject.escapeSettingsValue(oItem.getText())
 		});
 	};
 
