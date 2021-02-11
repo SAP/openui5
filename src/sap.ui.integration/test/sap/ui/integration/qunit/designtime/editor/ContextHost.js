@@ -10,6 +10,9 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 				if (name === "Northwind") {
 					return "https://services.odata.org/V3/Northwind/Northwind.svc";
 				}
+				if (name === "mock_request") {
+					return "/mock_request";
+				}
 			}
 		});
 
@@ -29,6 +32,9 @@ sap.ui.define(["sap/ui/integration/Host"], function (Host) {
 				},
 				{
 					"name": "Northwind"
+				},
+				{
+					"name": "mock_request"
 				}
 			]);
 		};

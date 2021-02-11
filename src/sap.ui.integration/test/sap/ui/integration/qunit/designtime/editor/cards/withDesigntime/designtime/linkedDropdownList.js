@@ -14,10 +14,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Customers",
-									"parameters": {
-										"$select": "CustomerID, CompanyName, Country, City, Address"
-									}
+									"url": "{{destinations.mock_request}}/Customers"
 								},
 								"path": "/value/"
 							},
@@ -34,10 +31,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Employees",
-									"parameters": {
-										"$select": "EmployeeID, FirstName, LastName, Country, Title, HomePhone"
-									}
+									"url": "{{destinations.mock_request}}/Employees"
 								},
 								"path": "/value/"
 							},
@@ -54,9 +48,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Orders",
+									"url": "{{destinations.mock_request}}/Orders",
 									"parameters": {
-										"$select": "OrderID, OrderDate, CustomerID, EmployeeID",
 										"$filter": "(CustomerID eq '{items>Customer/value}') and (EmployeeID eq {items>Employee/value})"
 									}
 								},
@@ -75,9 +68,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Order_Details",
+									"url": "{{destinations.mock_request}}/Order_Details",
 									"parameters": {
-										"$expand": "Product",
 										"$filter": "OrderID eq {items>Order/value}"
 									}
 								},
@@ -96,11 +88,10 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"values": {
 							"data": {
 								"request": {
-									"url": "{{destinations.northwind}}/Customers",
+									"url": "{{destinations.mock_request}}/Customers",
 									"parameters": {
-										"$select": "CustomerID, CompanyName, Country, City, Address",
-										"$skip": "5",
-										"$top": "5"
+										"$skip": "1",
+										"$top": "2"
 									}
 								},
 								"path": "/value/"
