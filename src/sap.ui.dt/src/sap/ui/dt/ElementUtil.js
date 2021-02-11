@@ -171,11 +171,11 @@ function(
 			}
 
 			return {
-				get : sGetter,
-				add : oAggregationMetadata._sMutator,
-				remove : oAggregationMetadata._sRemoveMutator,
-				insert : oAggregationMetadata._sInsertMutator,
-				removeAll : oAggregationMetadata._sRemoveAllMutator
+				get: sGetter,
+				add: oAggregationMetadata._sMutator,
+				remove: oAggregationMetadata._sRemoveMutator,
+				insert: oAggregationMetadata._sInsertMutator,
+				removeAll: oAggregationMetadata._sRemoveAllMutator
 			};
 		}
 		return {};
@@ -294,11 +294,11 @@ function(
 		var oAssociationMetadata = oMetadata.getAssociation(sAggregationName);
 		if (oAssociationMetadata) {
 			return {
-				get : oAssociationMetadata._sGetter,
-				add : oAssociationMetadata._sMutator,
-				remove : oAssociationMetadata._sRemoveMutator,
-				insert : oAssociationMetadata._sInsertMutator,
-				removeAll : oAssociationMetadata._sRemoveAllMutator
+				get: oAssociationMetadata._sGetter,
+				add: oAssociationMetadata._sMutator,
+				remove: oAssociationMetadata._sRemoveMutator,
+				insert: oAssociationMetadata._sInsertMutator,
+				removeAll: oAssociationMetadata._sRemoveAllMutator
 			};
 		}
 		return {};

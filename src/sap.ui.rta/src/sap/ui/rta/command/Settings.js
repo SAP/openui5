@@ -19,16 +19,16 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	 *               changed in future.
 	 */
 	var Settings = FlexCommand.extend("sap.ui.rta.command.Settings", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				content : {
-					type : "any",
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				content: {
+					type: "any",
 					group: "content"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 

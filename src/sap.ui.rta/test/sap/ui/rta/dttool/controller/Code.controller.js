@@ -16,7 +16,7 @@ sap.ui.define([
 	"use strict";
 	return Controller.extend("sap.ui.rta.dttool.controller.Code", {
 
-		_aMockFiles : ["products.json", "supplier.json", "img.json"],
+		_aMockFiles: ["products.json", "supplier.json", "img.json"],
 
 		onInit: function () {
 			this.oPostMessageBus = PostMessageBus.getInstance();
@@ -57,12 +57,12 @@ sap.ui.define([
 					this.sCompName = "sap.ui.rta.dttool.emptyView";
 				} else {
 					this.oPostMessageBus.publish({
-						target : DTToolUtils.getIframeWindow(),
-						origin : DTToolUtils.getIframeWindow().origin,
-						channelId : "dtTool",
-						eventId : "setComponent",
-						data : {
-							compName : "sap.ui.rta.dttool.emptyView"
+						target: DTToolUtils.getIframeWindow(),
+						origin: DTToolUtils.getIframeWindow().origin,
+						channelId: "dtTool",
+						eventId: "setComponent",
+						data: {
+							compName: "sap.ui.rta.dttool.emptyView"
 						}
 					});
 				}
@@ -86,12 +86,12 @@ sap.ui.define([
 
 			if (this.sCompName) {
 				this.oPostMessageBus.publish({
-					target : DTToolUtils.getIframeWindow(),
-					origin : DTToolUtils.getIframeWindow().origin,
-					channelId : "dtTool",
-					eventId : "setComponent",
-					data : {
-						compName : this.sCompName
+					target: DTToolUtils.getIframeWindow(),
+					origin: DTToolUtils.getIframeWindow().origin,
+					channelId: "dtTool",
+					eventId: "setComponent",
+					data: {
+						compName: this.sCompName
 					}
 				});
 			}
@@ -120,22 +120,22 @@ sap.ui.define([
 					this.sCompName = sCompName;
 				} else {
 					this.oPostMessageBus.publish({
-						target : DTToolUtils.getIframeWindow(),
-						origin : DTToolUtils.getIframeWindow().origin,
-						channelId : "dtTool",
-						eventId : "setComponent",
-						data : {
-							compName : sCompName
+						target: DTToolUtils.getIframeWindow(),
+						origin: DTToolUtils.getIframeWindow().origin,
+						channelId: "dtTool",
+						eventId: "setComponent",
+						data: {
+							compName: sCompName
 						}
 					});
 				}
 
 				// create data object
 				this._oData = {
-					id : oSample.id,
-					title : "Code: " + oSample.name,
-					name : oSample.name,
-					files : []
+					id: oSample.id,
+					title: "Code: " + oSample.name,
+					name: oSample.name,
+					files: []
 				};
 			}
 		},
@@ -145,7 +145,7 @@ sap.ui.define([
 		 * @param {object} oEvent the event
 		 * @param {object} oEvent.data.files some file names
 		 */
-		retrieveXMLFiles : function (oEvent) {
+		retrieveXMLFiles: function (oEvent) {
 			var aFiles = oEvent.data.files;
 
 			if (aFiles) {
@@ -159,11 +159,11 @@ sap.ui.define([
 					if (sFile.match(/\.xml$/i)) {
 						return this.fetchSourceFile(sRef, sFile).then(function (sContent) {
 							if (!this._oData) {
-								this._oData = { files : [] };
+								this._oData = { files: [] };
 							}
 							this._oData.files.push({
-								name : sFile,
-								raw : sContent
+								name: sFile,
+								raw: sContent
 							});
 							this._aFilesAvailable.push(sFile);
 						}.bind(this));
@@ -191,7 +191,7 @@ sap.ui.define([
 		 * @param {boolean} bUseTestResources whether to load the resource from the test directory
 		 * @return {Promise<string>} the source file
 		 */
-		fetchSourceFile : function (sRef, sFile, bUseTestResources) {
+		fetchSourceFile: function (sRef, sFile, bUseTestResources) {
 			return new Promise(function (fnResolve, fnReject) {
 				if (bUseTestResources && /(.*)\/resources\//.test(sRef)) {
 					sRef = sRef.replace("/resources/", "/test-resources/");
@@ -232,7 +232,7 @@ sap.ui.define([
 		 * @param {string} oEvent.data.name the control name
 		 * @param {string} oEvent.data.module the design time module
 		 */
-		onUpdateDTFile : function (oEvent) {
+		onUpdateDTFile: function (oEvent) {
 			if (oEvent) {
 				var sName = oEvent.data.name;
 				var sDT = oEvent.data.module;
@@ -281,7 +281,7 @@ sap.ui.define([
 		 * @param {string} sFileName the name of the new dt file
 		 * @param {string} sDTFile the content of the new dt file
 		 */
-		_replaceDTFileInEditor : function (sFileName, sDTFile) {
+		_replaceDTFileInEditor: function (sFileName, sDTFile) {
 			this._addFile(sFileName, sDTFile, true, "designtime.js");
 		},
 
@@ -289,7 +289,7 @@ sap.ui.define([
 		 * Updates the value of the CodeEditor
 		 * @param {string} sFileName the filename
 		 */
-		_updateCodeEditor : function (sFileName) {
+		_updateCodeEditor: function (sFileName) {
 			if (!sFileName) {
 				return;
 			}
@@ -317,7 +317,7 @@ sap.ui.define([
 		 * Called when a Tab of the IconTabHeader is selected
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
-		onTabSelect : function (oEvent) {
+		onTabSelect: function (oEvent) {
 			var sKey = oEvent.getParameters().key;
 			this.getView().getModel().setProperty("/fileName", sKey);
 			this._updateCodeEditor(sKey);
@@ -327,7 +327,7 @@ sap.ui.define([
 		 * sends the new dt data to the iframe when the dt file is updated in the editor
 		 * @param {sap.ui.base.Event} oEvent the event
 		 */
-		onCodeEditorLiveChange : function (oEvent) {
+		onCodeEditorLiveChange: function (oEvent) {
 			var oCurrentFile;
 			var sName = this.byId("tabHead").getSelectedKey();
 
@@ -372,12 +372,12 @@ sap.ui.define([
 
 				if (oResult) {
 					this.oPostMessageBus.publish({
-						target : DTToolUtils.getIframeWindow(),
-						origin : DTToolUtils.getIframeWindow().origin,
-						channelId : "dtTool",
-						eventId : "editorDTData",
-						data : {
-							dtData : JSON.parse(JSON.stringify(oResult))
+						target: DTToolUtils.getIframeWindow(),
+						origin: DTToolUtils.getIframeWindow().origin,
+						channelId: "dtTool",
+						eventId: "editorDTData",
+						data: {
+							dtData: JSON.parse(JSON.stringify(oResult))
 						}
 					});
 				}
@@ -465,7 +465,7 @@ sap.ui.define([
 		 * @param {string} sFileName the file name
 		 * @returns {string} the code
 		 */
-		_getCode : function (sFileName) {
+		_getCode: function (sFileName) {
 			var aFiles = this.getView().getModel().getData().files;
 			var sCode = "";
 
@@ -482,7 +482,7 @@ sap.ui.define([
 		 * returns the initial file name
 		 * @returns {string} the initial file name
 		 */
-		_getInitialFileName : function() {
+		_getInitialFileName: function() {
 			return (this._oData
 					&& this._oData.files
 					&& this._oData.files.length > 0
@@ -493,7 +493,7 @@ sap.ui.define([
 		 * returns the CodeEditor
 		 * @returns {sap.ui.codeeditor.CodeEditor} the CodeEditor
 		 */
-		_getCodeEditor : function() {
+		_getCodeEditor: function() {
 			if (!this.oCodeEditor) {
 				this.oCodeEditor = this.byId("codeEditor");
 			}

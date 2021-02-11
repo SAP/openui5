@@ -26,7 +26,7 @@ sap.ui.define([
 
 
 	var oDescription = {
-		role : [
+		role: [
 			{
 				id: "REMOTE",
 				description: "remote system"
@@ -208,7 +208,7 @@ sap.ui.define([
 		QUnit.test("when deciding whether items should be selected", function (assert) {
 			var oItem1 = {id: "ADMIN"};
 			var oItem2 = {id: "RANDOM"};
-			var aSelectedItems = [{id: "ADMIN"}, {id:"TEST"}];
+			var aSelectedItems = [{id: "ADMIN"}, {id: "TEST"}];
 			assert.equal(oController.isSelected(oItem1, aSelectedItems), true, "then item is selected");
 			assert.equal(oController.isSelected(oItem2, aSelectedItems), false, "then item is not selected");
 		});

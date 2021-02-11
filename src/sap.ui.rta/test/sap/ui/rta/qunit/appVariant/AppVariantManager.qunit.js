@@ -94,8 +94,8 @@ function (
 
 		QUnit.test("When processSaveAsDialog() method is called and key user provides the dialog input", function (assert) {
 			var oDescriptor = {
-				"sap.app" : {
-					id : "TestId",
+				"sap.app": {
+					id: "TestId",
 					crossNavigation: {
 						inbounds: {}
 					}
@@ -137,8 +137,8 @@ function (
 	QUnit.module("Given an AppVariantManager is instantiated for different platforms", {
 		beforeEach: function () {
 			var oDescriptor = {
-				"sap.app" : {
-					id : "TestId",
+				"sap.app": {
+					id: "TestId",
 					applicationVersion: {
 						version: "1.2.3"
 					}
@@ -148,7 +148,7 @@ function (
 			var oManifest = new Manifest(oDescriptor);
 			this.oAppComponent = {
 				name: "testComponent",
-				getManifest : function() {
+				getManifest: function() {
 					return oManifest;
 				}
 			};
@@ -172,8 +172,8 @@ function (
 
 			this.oAppVariantData = {
 				description: "App Variant Description",
-				referenceAppId : "TestId",
-				title : "App Variant Title",
+				referenceAppId: "TestId",
+				title: "App Variant Title",
 				subTitle: "App Variant Subtitle",
 				icon: "App Variant Icon"
 			};
@@ -291,17 +291,17 @@ function (
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog assignment", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
 			var oResponse = {
-				VariantId : "customer.TestId",
-				IAMId : "IAMId",
-				CatalogIds : ["TEST_CATALOG"]
+				VariantId: "customer.TestId",
+				IAMId: "IAMId",
+				CatalogIds: ["TEST_CATALOG"]
 			};
 
 			var oSendRequestStub = sandbox.stub(WriteUtils, "sendRequest").resolves(oResponse);
@@ -323,15 +323,15 @@ function (
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog unassignment", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
 			var oResponse = {
-				IAMId : "IAMId",
+				IAMId: "IAMId",
 				inProgress: true
 			};
 
@@ -353,10 +353,10 @@ function (
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog assignment and response is failed", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -369,7 +369,7 @@ function (
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "error").returns();
 
 			var fnShowRelevantDialog = sandbox.spy(AppVariantUtils, "showRelevantDialog");
-			var oErrorInfo = {appVariantId:  "customer.TestId"};
+			var oErrorInfo = {appVariantId: "customer.TestId"};
 			var fnBuildErrorInfoStub = sandbox.stub(AppVariantUtils, "buildErrorInfo").returns(oErrorInfo);
 			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
 			var fnTriggerCatalogAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogAssignment");
@@ -392,10 +392,10 @@ function (
 		QUnit.test("When triggerCatalogPublishing() method is called on S4/Hana Cloud for catalog unassignment and response is failed", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -408,7 +408,7 @@ function (
 			sandbox.stub(Log, "error").callThrough().withArgs("App variant error: ", "error").returns();
 
 			var fnShowRelevantDialog = sandbox.spy(AppVariantUtils, "showRelevantDialog");
-			var oErrorInfo = {appVariantId:  "customer.TestId"};
+			var oErrorInfo = {appVariantId: "customer.TestId"};
 			var fnBuildErrorInfoStub = sandbox.stub(AppVariantUtils, "buildErrorInfo").returns(oErrorInfo);
 			var fncatchErrorDialog = sandbox.spy(AppVariantUtils, "catchErrorDialog");
 			var fnTriggerCatalogUnAssignment = sandbox.spy(AppVariantUtils, "triggerCatalogUnAssignment");
@@ -434,16 +434,16 @@ function (
 			var originalUShell = sap.ushell;
 
 			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function() {
+				Container: {
+					getService: function() {
 						return {
-							toExternal : function() {
+							toExternal: function() {
 								window.bUShellNavigationTriggered = true;
 							}
 						};
 					}
 				},
-				services : {
+				services: {
 					AppConfiguration: {
 						getCurrentApplication: function() {
 							return {
@@ -460,10 +460,10 @@ function (
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -486,16 +486,16 @@ function (
 			var originalUShell = sap.ushell;
 
 			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function() {
+				Container: {
+					getService: function() {
 						return {
-							toExternal : function() {
+							toExternal: function() {
 								window.bUShellNavigationTriggered = true;
 							}
 						};
 					}
 				},
-				services : {
+				services: {
 					AppConfiguration: {
 						getCurrentApplication: function() {
 							return {
@@ -512,10 +512,10 @@ function (
 
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 
@@ -536,10 +536,10 @@ function (
 		QUnit.test("When showSuccessMessage() method is called on S4/Hana Cloud ('Save As' is triggered from app variant overview list)", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 
@@ -560,10 +560,10 @@ function (
 		QUnit.test("When showSuccessMessage() method is called on S4/Hana on premise ('Save As' is triggered from app variant overview list)", function (assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 

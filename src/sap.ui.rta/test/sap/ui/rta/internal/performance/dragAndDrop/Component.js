@@ -36,11 +36,11 @@ sap.ui.define([
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout1, 6);
 			DtPerformanceTestUtil.addMixedControlsTo(oLayout1, 31, 60, false /*invisible*/);
 			var oContainerLayout1 = new VerticalLayout({
-				id : "ContainerLayout1",
-				content :  [
+				id: "ContainerLayout1",
+				content: [
 					new Label({
 						id: "labelForLayout1",
-						text : "ContainerLayout1"
+						text: "ContainerLayout1"
 					}),
 					oLayout1
 				]
@@ -49,11 +49,11 @@ sap.ui.define([
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout2, 6, 6);
 			DtPerformanceTestUtil.addMixedControlsTo(oLayout2, 91, 120, false /*invisible*/);
 			var oContainerLayout2 = new VerticalLayout({
-				id : "ContainerLayout2",
-				content :  [
+				id: "ContainerLayout2",
+				content: [
 					new Label({
 						id: "labelForLayout2",
-						text : "ContainerLayout2"
+						text: "ContainerLayout2"
 					}),
 					oLayout2
 				]
@@ -62,11 +62,11 @@ sap.ui.define([
 			DtPerformanceTestUtil.addBoxesWithMixedControls(oLayout3, 6, 12);
 			DtPerformanceTestUtil.addMixedControlsTo(oLayout3, 151, 200, false /*invisible*/);
 			var oContainerLayout3 = new VerticalLayout({
-				id : "ContainerLayout3",
-				content :  [
+				id: "ContainerLayout3",
+				content: [
 					new Label({
 						id: "labelForLayout3",
-						text : "ContainerLayout3"
+						text: "ContainerLayout3"
 					}),
 					oLayout3
 				]
@@ -76,14 +76,14 @@ sap.ui.define([
 			oLayout3.getContent()[1].getItems()[0].addStyleClass("sapUiRtaPerfTestMarginTop");
 
 			var oHBox = new HBox("HBox", {
-				wrap : FlexWrap.Wrap,
-				items : [oContainerLayout1, oContainerLayout2, oContainerLayout3],
+				wrap: FlexWrap.Wrap,
+				items: [oContainerLayout1, oContainerLayout2, oContainerLayout3],
 				customData: [
 					new CustomData({
-						key : "sap-ui-custom-settings",
-						value : {
-							"sap.ui.dt" : {
-								designtime : "rta/performance/HBox.designtime"
+						key: "sap-ui-custom-settings",
+						value: {
+							"sap.ui.dt": {
+								designtime: "rta/performance/HBox.designtime"
 							}
 						}
 					})
@@ -94,7 +94,7 @@ sap.ui.define([
 			var mHBoxDesigntimeMetadata = {
 				aggregations: {
 					items: {
-						propagateRelevantContainer : true
+						propagateRelevantContainer: true
 					}
 				}
 			};

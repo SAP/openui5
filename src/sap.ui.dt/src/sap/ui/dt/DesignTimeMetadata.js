@@ -28,7 +28,7 @@ function(
 		}
 
 		if (typeof (vAction) === "string") {
-			return { changeType : vAction };
+			return { changeType: vAction };
 		}
 		return vAction;
 	}

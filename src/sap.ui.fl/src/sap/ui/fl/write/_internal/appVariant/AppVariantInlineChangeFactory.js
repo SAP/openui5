@@ -14,7 +14,7 @@ sap.ui.define([
 	function _fillTextsFromContent(mPropertyBag) {
 		if (!mPropertyBag.texts) {
 			mPropertyBag.texts = {
-				"" : mPropertyBag.content //property name = text key set when adding to descriptor variant
+				"": mPropertyBag.content //property name = text key set when adding to descriptor variant
 			};
 			mPropertyBag.content = {};
 		}

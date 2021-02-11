@@ -22,7 +22,7 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		init : function() {
+		init: function() {
 			this._adaptButtonConfiguration();
 			SmartLinkUtil.mockUShellServices();
 			this._setModels(this._startMockServer());

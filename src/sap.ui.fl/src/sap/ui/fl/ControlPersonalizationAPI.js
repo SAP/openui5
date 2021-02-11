@@ -73,13 +73,13 @@ sap.ui.define([
 		 * @returns {object} Returns a map with needed parameters
 		 * @private
 		 */
-		_determineParameters : function(oControl, bIgnoreVariantManagement, bUseStaticArea) {
+		_determineParameters: function(oControl, bIgnoreVariantManagement, bUseStaticArea) {
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			var oFlexController = FlexControllerFactory.createForControl(oAppComponent);
 			var oRootControl = oAppComponent.getRootControl();
 
 			var mParams = {
-				rootControl : oRootControl,
+				rootControl: oRootControl,
 				flexController: oFlexController
 			};
 
@@ -116,7 +116,7 @@ sap.ui.define([
 		 * @returns {object} Returns a map with needed parameters
 		 * @private
 		 */
-		_getVariantManagement : function(oControl, mParams) {
+		_getVariantManagement: function(oControl, mParams) {
 			mParams = mParams || this._determineParameters(oControl);
 			var fnCheckForControl = function (oControl) {
 				if (!mParams.variantManagement[oControl.getId()] && oControl.getParent() && oControl.getId() !== mParams.rootControl.getId()) {
@@ -140,7 +140,7 @@ sap.ui.define([
 		 * @method sap.ui.fl.ControlPersonalizationAPI.clearVariantParameterInURL
 		 * @public
 		 */
-		clearVariantParameterInURL : function (oControl) {
+		clearVariantParameterInURL: function (oControl) {
 			var aUpdatedVariantParameters;
 			var oAppComponent = Utils.getAppComponentForControl(oControl);
 			var oVariantModel = oAppComponent instanceof Component ? oAppComponent.getModel(Utils.VARIANT_MODEL_NAME) : undefined;
@@ -181,7 +181,7 @@ sap.ui.define([
 		 * @method sap.ui.fl.ControlPersonalizationAPI.activateVariant
 		 * @public
 		 */
-		activateVariant : function(vElement, sVariantReference) {
+		activateVariant: function(vElement, sVariantReference) {
 			return Promise.resolve()
 			.then(function () {
 				var oElement;
@@ -467,7 +467,7 @@ sap.ui.define([
 		 * @method sap.ui.fl.ControlPersonalizationAPI.hasVariantManagement
 		 * @public
 		 */
-		hasVariantManagement : function(oControl) {
+		hasVariantManagement: function(oControl) {
 			try {
 				return !!this._getVariantManagement(oControl);
 			} catch (oError) {

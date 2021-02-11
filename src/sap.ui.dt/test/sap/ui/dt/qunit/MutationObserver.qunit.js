@@ -237,20 +237,20 @@ function(
 				return new Button("button" + i);
 			});
 			this.Panel0 = new Panel({
-				id : "SmallPanel",
-				content : aButtons0,
-				width : "100px",
-				height : "100px"
+				id: "SmallPanel",
+				content: aButtons0,
+				width: "100px",
+				height: "100px"
 			});
 
 			var aButtons1 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19].map(function(i) {
 				return new Button("button" + i);
 			});
 			this.Panel1 = new Panel({
-				id : "BigPanel",
-				content : aButtons1,
-				width : "100px",
-				height : "1500px"
+				id: "BigPanel",
+				content: aButtons1,
+				width: "100px",
+				height: "1500px"
 			});
 
 			var aOutsideButtons = [26, 27, 28, 29, 30, 31].map(function(i) {
@@ -258,26 +258,26 @@ function(
 			});
 
 			this.oOutsidePanel = new Panel({
-				id : "OutsidePanel",
-				content : aOutsideButtons,
-				width : "100px",
-				height : "100px"
+				id: "OutsidePanel",
+				content: aOutsideButtons,
+				width: "100px",
+				height: "100px"
 			});
 
 			this.oVerticalLayoutOutsideDT = new VerticalLayout({
-				id : "OutsiderVerticalLayout",
-				content : this.oOutsidePanel
+				id: "OutsiderVerticalLayout",
+				content: this.oOutsidePanel
 			});
 
 			this.oVerticalLayoutRoot = new VerticalLayout({
-				id : "RootVerticalLayout",
-				content : [this.Panel0, this.Panel1]
+				id: "RootVerticalLayout",
+				content: [this.Panel0, this.Panel1]
 			});
 
 			this.oOuterPanel = new Panel({
-				id : "OuterPanel",
-				content : [this.oVerticalLayoutOutsideDT, this.oVerticalLayoutRoot],
-				height : "1200px"
+				id: "OuterPanel",
+				content: [this.oVerticalLayoutOutsideDT, this.oVerticalLayoutRoot],
+				height: "1200px"
 			}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
@@ -286,7 +286,7 @@ function(
 			jQuery(this.oVerticalLayoutRoot.getDomRef()).css("outline", "solid");
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayoutRoot]
+				rootElements: [this.oVerticalLayoutRoot]
 			});
 
 			var fnDone = assert.async();
@@ -339,19 +339,19 @@ function(
 		beforeEach: function() {
 			this.oButton = new Button("Button0");
 			this.oInnerPanel = new Panel({
-				id : "InnerPanel",
-				content : [this.oButton],
-				height : "200px"
+				id: "InnerPanel",
+				content: [this.oButton],
+				height: "200px"
 			});
 
 			this.oVerticalLayoutInner = new VerticalLayout({
-				id : "InnerVerticalLayout",
-				content : [this.oInnerPanel]
+				id: "InnerVerticalLayout",
+				content: [this.oInnerPanel]
 			}).placeAt("qunit-fixture");
 
 			this.oOuterPanel = new Panel({
-				id : "OuterPanel",
-				content : [this.oVerticalLayoutInner]
+				id: "OuterPanel",
+				content: [this.oVerticalLayoutInner]
 			}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();
@@ -439,13 +439,13 @@ function(
 			this.oButton1 = new Button("button1", { text: "button1-text" });
 
 			this.oVerticalLayout0 = new VerticalLayout({
-				id : "verticalLayout0",
-				content : [this.oButton0]
+				id: "verticalLayout0",
+				content: [this.oButton0]
 			}).placeAt("qunit-fixture");
 
 			this.oVerticalLayout1 = new VerticalLayout({
-				id : "verticalLayout1",
-				content : [this.oButton1]
+				id: "verticalLayout1",
+				content: [this.oButton1]
 			}).placeAt("qunit-fixture");
 
 			sap.ui.getCore().applyChanges();

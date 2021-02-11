@@ -39,18 +39,18 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var ElementMover = ManagedObject.extend("sap.ui.dt.plugin.ElementMover", /** @lends sap.ui.dt.plugin.ElementMover.prototype */ {
-		metadata : {
-			library : "sap.ui.dt",
-			properties : {
-				movableTypes : {
-					type : "string[]",
-					defaultValue : ["sap.ui.core.Element"]
+		metadata: {
+			library: "sap.ui.dt",
+			properties: {
+				movableTypes: {
+					type: "string[]",
+					defaultValue: ["sap.ui.core.Element"]
 				}
 			},
-			associations : {},
+			associations: {},
 			events: {
 				/** Event fired when the requested valid target zones are activated */
-				validTargetZonesActivated : {}
+				validTargetZonesActivated: {}
 			}
 		}
 	});

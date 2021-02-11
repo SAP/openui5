@@ -34,26 +34,26 @@ function(
 	 */
 
 	var Plugin = ManagedObject.extend("sap.ui.dt.Plugin", /** @lends sap.ui.dt.Plugin.prototype */ {
-		metadata : {
-			"abstract" : true,
-			library : "sap.ui.dt",
-			properties : {
+		metadata: {
+			"abstract": true,
+			library: "sap.ui.dt",
+			properties: {
 				/**
 				 * DesignTime where this plugin will be used
 				 */
 				designTime: { // its defined as a property because spa.ui.dt.designTime is a managed object and UI5 only allows associations for elements
-					type : "object",
-					multiple : false
+					type: "object",
+					multiple: false
 				},
 				busy: {
-					type : "boolean",
-					defaultValue : false
+					type: "boolean",
+					defaultValue: false
 				}
 			},
-			events : {
-				processingStatusChange : {
-					parameters : {
-						processing : {type : "boolean"}
+			events: {
+				processingStatusChange: {
+					parameters: {
+						processing: {type: "boolean"}
 					}
 				}
 			}

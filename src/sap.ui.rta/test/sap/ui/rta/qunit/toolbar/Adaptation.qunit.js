@@ -800,7 +800,7 @@ function(
 		QUnit.test("Given the a version highlight of the 'original app' should be formatted while an active and a draft version exists", function (assert) {
 			var aVersions = [
 				{type: "draft"},
-				{type:"active"}
+				{type: "active"}
 			];
 			var sHighlight = this.oToolbar.formatOriginalAppHighlight(aVersions);
 			assert.equal(sHighlight, MessageType.None, "then the highlight is returned correct");
@@ -821,7 +821,7 @@ function(
 		QUnit.test("Given the a version highlight text of the 'original app' should be formatted and a active and a draft version exists", function (assert) {
 			var aVersions = [
 				{type: "draft"},
-				{type:"active"}
+				{type: "active"}
 			];
 			var sHighlightText = this.oToolbar.formatOriginalAppHighlightText(aVersions);
 			assert.equal(sHighlightText, this.oMessageBundle.getText("LBL_INACTIVE"), "then the highlight is returned correct");

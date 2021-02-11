@@ -25,18 +25,18 @@ sap.ui.define([
 	 * @alias sap.ui.rta.command.ControlVariantSwitch
 	 */
 	var ControlVariantSwitch = BaseCommand.extend("sap.ui.rta.command.ControlVariantSwitch", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				targetVariantReference : {
-					type : "string"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				targetVariantReference: {
+					type: "string"
 				},
-				sourceVariantReference : {
-					type : "string"
+				sourceVariantReference: {
+					type: "string"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 

@@ -33,23 +33,23 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var ControlDragDrop = DragDrop.extend("sap.ui.dt.plugin.ControlDragDrop", /** @lends sap.ui.dt.plugin.ControlDragDrop.prototype */ {
-		metadata : {
+		metadata: {
 			// ---- control specific ----
-			library : "sap.ui.dt",
-			properties : {
-				draggableTypes : {
-					type : "string[]",
-					defaultValue : ["sap.ui.core.Element"]
+			library: "sap.ui.dt",
+			properties: {
+				draggableTypes: {
+					type: "string[]",
+					defaultValue: ["sap.ui.core.Element"]
 				},
-				elementMover : {
-					type : "any" // "sap.ui.dt.plugin.ElementMover"
+				elementMover: {
+					type: "any" // "sap.ui.dt.plugin.ElementMover"
 				},
 				insertAfterElement: {
 					type: "boolean",
 					defaultValue: false
 				}
 			},
-			associations : {}
+			associations: {}
 		}
 	});
 

@@ -4,7 +4,7 @@ sap.ui.define([
 	"use strict";
 
 	var Util = {
-		buildMetadataObject : function(vContent, vTestAggr) {
+		buildMetadataObject: function(vContent, vTestAggr) {
 			var mData = {
 				data: {
 					aggregations: {
@@ -18,14 +18,14 @@ sap.ui.define([
 			return mData;
 		},
 
-		createPropagateMetadataObject : function(sInstanceOf, sTestValue, vActions, sCustomProperty) {
+		createPropagateMetadataObject: function(sInstanceOf, sTestValue, vActions, sCustomProperty) {
 			return {
-				propagateMetadata : function (oElement, oRelevantContainer) {
+				propagateMetadata: function (oElement, oRelevantContainer) {
 					if (oElement.getMetadata().getName() === sInstanceOf) {
 						var mData = {
-							aggregations : {
+							aggregations: {
 								content: {
-									testProp : sTestValue || "testValue"
+									testProp: sTestValue || "testValue"
 								}
 							},
 							metadataContainer: oRelevantContainer
@@ -42,13 +42,13 @@ sap.ui.define([
 			};
 		},
 
-		createNewAggregationDtMetadataInstance : function(oData) {
+		createNewAggregationDtMetadataInstance: function(oData) {
 			return new AggregationDesignTimeMetadata({
 				data: oData || {}
 			});
 		},
 
-		createPropagationInfoObject : function(vPropagateFunction, oRelevantContainerElement, vMetadataFunction) {
+		createPropagationInfoObject: function(vPropagateFunction, oRelevantContainerElement, vMetadataFunction) {
 			var mObj = {};
 			if (vPropagateFunction) {
 				mObj.relevantContainerFunction = vPropagateFunction;
@@ -62,7 +62,7 @@ sap.ui.define([
 			return mObj;
 		},
 
-		createPropagateRelevantContainerObject : function(sInstanceOf) {
+		createPropagateRelevantContainerObject: function(sInstanceOf) {
 			return {
 				propagateRelevantContainer: function (oElement) {
 					var sType = oElement.getMetadata().getName();

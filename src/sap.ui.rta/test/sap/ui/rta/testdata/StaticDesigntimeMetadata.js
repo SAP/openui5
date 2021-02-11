@@ -78,8 +78,8 @@ sap.ui.define([], function() {
 			actions: {
 				combine: {
 					changeType: "combineButtons",
-					changeOnRelevantContainer : true,
-					isEnabled : true
+					changeOnRelevantContainer: true,
+					isEnabled: true
 				},
 				remove: {
 					changeType: "hideControl"
@@ -150,7 +150,7 @@ sap.ui.define([], function() {
 					return {
 						changeType: "rename",
 						domRef: ".sapUxAPObjectPageSubSectionHeaderTitle",
-						isEnabled : function (oElement) {
+						isEnabled: function (oElement) {
 							return oElement.$("headerTitle").get(0) !== undefined;
 						}
 					};
@@ -158,8 +158,8 @@ sap.ui.define([], function() {
 			},
 			aggregations: {
 				actions: {
-					domRef : ":sap-domref .sapUxAPObjectPageSubSectionHeaderActions",
-					actions : {
+					domRef: ":sap-domref .sapUxAPObjectPageSubSectionHeaderActions",
+					actions: {
 						move: {
 							changeType: "moveControls"
 						}
@@ -171,11 +171,11 @@ sap.ui.define([], function() {
 
 	StaticDesigntimeMatadata.getObjectPageSectionDesigntimeMetadata = function() {
 		return {
-			name : {
-				singular : function() {
+			name: {
+				singular: function() {
 					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
 				},
-				plural : function() {
+				plural: function() {
 					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 				}
 			},
@@ -185,12 +185,12 @@ sap.ui.define([], function() {
 					svg: "sap/uxap/designtime/ObjectPageSection.icon.svg"
 				}
 			},
-			actions : {
-				remove : {
-					changeType : "stashControl"
+			actions: {
+				remove: {
+					changeType: "stashControl"
 				},
-				reveal : {
-					changeType : "unstashControl"
+				reveal: {
+					changeType: "unstashControl"
 				},
 				rename: function () {
 					return {
@@ -204,8 +204,8 @@ sap.ui.define([], function() {
 			},
 			aggregations: {
 				subSections: {
-					domRef : ":sap-domref .sapUxAPObjectPageSectionContainer",
-					actions : {
+					domRef: ":sap-domref .sapUxAPObjectPageSectionContainer",
+					actions: {
 						move: {
 							changeType: "moveControls"
 						}
@@ -217,36 +217,36 @@ sap.ui.define([], function() {
 
 	StaticDesigntimeMatadata.getObjectPageLayoutDesigntimeMetadata = function() {
 		return {
-			name : {
-				singular : function() {
+			name: {
+				singular: function() {
 					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL_NAME");
 				},
-				plural : function() {
+				plural: function() {
 					return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("LAYOUT_CONTROL__PLURAL");
 				}
 			},
-			aggregations : {
-				sections : {
-					domRef : function(oElement) {
+			aggregations: {
+				sections: {
+					domRef: function(oElement) {
 						return oElement.$("sectionsContainer").get(0);
 					},
-					childNames : {
-						singular : function() {
+					childNames: {
+						singular: function() {
 							return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME");
 						},
-						plural : function() {
+						plural: function() {
 							return sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("SECTION_CONTROL_NAME_PLURAL");
 						}
 					},
-					actions : {
-						move : "moveControls"
+					actions: {
+						move: "moveControls"
 					},
-					beforeMove : function (ObjectPageLayout) {
+					beforeMove: function (ObjectPageLayout) {
 						if (ObjectPageLayout) {
 							ObjectPageLayout._suppressScroll();
 						}
 					},
-					afterMove : function (ObjectPageLayout) {
+					afterMove: function (ObjectPageLayout) {
 						if (ObjectPageLayout) {
 							ObjectPageLayout.attachEventOnce("onAfterRenderingDOMReady", function() {
 								ObjectPageLayout._resumeScroll(false);
@@ -254,12 +254,12 @@ sap.ui.define([], function() {
 						}
 					}
 				},
-				headerContent : {
-					domRef : function(oElement) {
+				headerContent: {
+					domRef: function(oElement) {
 						return oElement.$("headerContent").get(0);
 					},
-					actions : {
-						move : function(oElement) {
+					actions: {
+						move: function(oElement) {
 							if (!oElement || oElement.getMetadata().getName() !== 'sap.uxap.ObjectPageSection') {
 								return "moveControls";
 							}
@@ -267,11 +267,11 @@ sap.ui.define([], function() {
 					}
 				}
 			},
-			scrollContainers : [{
-				domRef : "> .sapUxAPObjectPageWrapper",
-				aggregations : ["sections", "headerContent"]
+			scrollContainers: [{
+				domRef: "> .sapUxAPObjectPageWrapper",
+				aggregations: ["sections", "headerContent"]
 			}, {
-				domRef : function(oElement) {
+				domRef: function(oElement) {
 					return oElement.$("vertSB-sb").get(0);
 				}
 			}],

@@ -19,20 +19,20 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	 *               changed in future.
 	 */
 	var Reveal = FlexCommand.extend("sap.ui.rta.command.Reveal", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				revealedElementId : {
-					type : "string"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				revealedElementId: {
+					type: "string"
 				},
-				directParent : "object"
+				directParent: "object"
 			}
 		}
 	});
 
 	Reveal.prototype._getChangeSpecificData = function() {
 		var mSpecificChangeInfo = {
-			changeType : this.getChangeType()
+			changeType: this.getChangeType()
 		};
 		if (this.getRevealedElementId()) {
 			mSpecificChangeInfo.revealedElementId = this.getRevealedElementId();

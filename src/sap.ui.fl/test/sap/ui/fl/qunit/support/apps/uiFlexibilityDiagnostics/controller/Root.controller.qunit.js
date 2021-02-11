@@ -11,7 +11,7 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("formatStatus", {
-		beforeEach : function () {
+		beforeEach: function () {
 			this.oController = new RootController();
 		}
 	}, function() {
@@ -50,7 +50,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("generateAttributes", {
-		beforeEach : function () {
+		beforeEach: function () {
 			this.oController = new RootController();
 		}
 	}, function() {
@@ -68,14 +68,14 @@ sap.ui.define([
 
 
 			var oDefinition = {
-				fileName : sFilename,
+				fileName: sFilename,
 				layer: sLayer,
 				creation: sCreatedAt,
 				selector: {
 					id: sSelector,
 					isLocalId: true
 				},
-				content: {a:1},
+				content: {a: 1},
 				variantReference: "",
 				support: {
 					user: sUser
@@ -128,30 +128,30 @@ sap.ui.define([
 	});
 
 	QUnit.module("_generateDependencies", {
-		beforeEach : function () {
+		beforeEach: function () {
 			this.oController = new RootController();
 		}
 	}, function() {
 		QUnit.test("the generated dependencies are freed of shortcuts", function (assert) {
 			var mChangesInitial = {
-				mChangesEntries : {
-					change1 : {
-						mDefinition : {},
-						aDependencies : []
+				mChangesEntries: {
+					change1: {
+						mDefinition: {},
+						aDependencies: []
 					},
-					change2 : {
-						mDefinition : {},
-						aDependencies : ["change1"]
+					change2: {
+						mDefinition: {},
+						aDependencies: ["change1"]
 					},
-					change3 : {
-						mDefinition : {},
-						aDependencies : ["change1", "change2"]
+					change3: {
+						mDefinition: {},
+						aDependencies: ["change1", "change2"]
 					}
 				}
 			};
 
 			var mGraphData = {
-				lines : []
+				lines: []
 			};
 
 			this.oController._generateDependencies(mChangesInitial, mGraphData);
@@ -161,7 +161,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("_createGraphData", {
-		beforeEach : function () {
+		beforeEach: function () {
 			this.oController = new RootController();
 		}
 	}, function() {

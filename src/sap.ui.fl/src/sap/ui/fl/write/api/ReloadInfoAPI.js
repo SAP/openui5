@@ -203,9 +203,9 @@ sap.ui.define([
 		 */
 		getReloadMethod: function(oReloadInfo) {
 			var oRELOAD = {
-				NOT_NEEDED : "NO_RELOAD",
-				RELOAD_PAGE : "HARD_RELOAD",
-				VIA_HASH : "CROSS_APP_NAVIGATION"
+				NOT_NEEDED: "NO_RELOAD",
+				RELOAD_PAGE: "HARD_RELOAD",
+				VIA_HASH: "CROSS_APP_NAVIGATION"
 			};
 			oReloadInfo.reloadMethod = oRELOAD.NOT_NEEDED;
 

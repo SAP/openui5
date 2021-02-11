@@ -35,11 +35,11 @@ function(
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var ElementDesignTimeMetadata = DesignTimeMetadata.extend("sap.ui.dt.ElementDesignTimeMetadata", /** @lends sap.ui.dt.ElementDesignTimeMetadata.prototype */ {
-		metadata : {
+		metadata: {
 			// ---- object ----
 
 			// ---- control specific ----
-			library : "sap.ui.dt"
+			library: "sap.ui.dt"
 		}
 	});
 
@@ -52,20 +52,20 @@ function(
 		var oDefaultData = DesignTimeMetadata.prototype.getDefaultData.apply(this, arguments);
 
 		oDefaultData.aggregations = {
-			layout : {
-				ignore : true
+			layout: {
+				ignore: true
 			},
-			dependents : {
-				ignore : true
+			dependents: {
+				ignore: true
 			},
-			customData : {
-				ignore : true
+			customData: {
+				ignore: true
 			},
-			layoutData : {
-				ignore : true
+			layoutData: {
+				ignore: true
 			},
 			tooltip: {
-				ignore : true
+				ignore: true
 			},
 			dragDropConfig: {
 				ignore: true
@@ -159,7 +159,7 @@ function(
 					vAction = vAction.apply(null, aActionParameters);
 				}
 				if (typeof (vAction) === "string") {
-					vAction = { changeType : vAction };
+					vAction = { changeType: vAction };
 				}
 				if (vAction) {
 					vAction.aggregation = sAggregation;
@@ -184,8 +184,8 @@ function(
 		}
 		if (vChildNames) {
 			return {
-				singular : this._getText(oElement, vChildNames.singular),
-				plural : this._getText(oElement, vChildNames.plural)
+				singular: this._getText(oElement, vChildNames.singular),
+				plural: this._getText(oElement, vChildNames.plural)
 			};
 		}
 	};
@@ -197,8 +197,8 @@ function(
 		}
 		if (vName) {
 			return {
-				singular : this._getText(oElement, vName.singular),
-				plural : this._getText(oElement, vName.plural)
+				singular: this._getText(oElement, vName.singular),
+				plural: this._getText(oElement, vName.plural)
 			};
 		}
 	};

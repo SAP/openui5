@@ -675,7 +675,7 @@ sap.ui.define([
 				changeType: "setDefault",
 				reference: "",
 				variantReference: "variant_0",
-				variantManagementReference : "variantManagementId",
+				variantManagementReference: "variantManagementId",
 				selector: {},
 				dependentSelector: {},
 				content: {
@@ -762,7 +762,7 @@ sap.ui.define([
 							namespace: "a.name.space",
 							changeType: "setDefault",
 							reference: "",
-							variantManagementReference : "variantManagementId",
+							variantManagementReference: "variantManagementId",
 							variantReference: "variant_0",
 							selector: {},
 							dependentSelector: {},
@@ -790,7 +790,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given Storage when loadFeatures is called", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.url = "/some/url";
 			InitialLrepConnector.xsrfToken = "123";
 			InitialPersonalizationConnector.xsrfToken = "123";
@@ -802,8 +802,8 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("with a failing connector", function (assert) {
-			var oLrepConnectorLoadFeaturesStub = sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({isKeyUser : true});
-			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(WritePersonalizationConnector, "loadFeatures").resolves({isVariantSharingEnabled : false});
+			var oLrepConnectorLoadFeaturesStub = sandbox.stub(WriteLrepConnector, "loadFeatures").resolves({isKeyUser: true});
+			var oPersonalizationConnectorLoadFeaturesStub = sandbox.stub(WritePersonalizationConnector, "loadFeatures").resolves({isVariantSharingEnabled: false});
 			var oJsObjectConnectorLoadFeaturesStub = sandbox.stub(JsObjectConnector, "loadFeatures").rejects({});
 
 			sandbox.stub(sap.ui.getCore().getConfiguration(), "getFlexibilityServices").returns([
@@ -815,9 +815,9 @@ sap.ui.define([
 					connector: "JsObjectConnector",
 					layers: [Layer.CUSTOMER]
 				}, {
-					connector : "PersonalizationConnector",
-					url : this.url,
-					layers : [Layer.USER]
+					connector: "PersonalizationConnector",
+					url: this.url,
+					layers: [Layer.USER]
 				}
 			]);
 

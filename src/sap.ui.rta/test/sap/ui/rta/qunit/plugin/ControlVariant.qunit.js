@@ -105,8 +105,8 @@ sap.ui.define([
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 			this.oData = {
 				varMgtKey: {
-					defaultVariant : "variant1",
-					variantsEditable : true,
+					defaultVariant: "variant1",
+					variantsEditable: true,
 					variants: [
 						{
 							key: "variant1",
@@ -133,7 +133,7 @@ sap.ui.define([
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.ui.layout.VerticalLayout" : {
+				"sap.ui.layout.VerticalLayout": {
 					moveControls: "default"
 				}
 			})
@@ -141,7 +141,7 @@ sap.ui.define([
 			.then(function() {
 				this.oButton = new Button();
 				this.oLayout = new VerticalLayout("overlay1", {
-					content : [this.oButton]
+					content: [this.oButton]
 				});
 				this.oObjectPageSubSection = new ObjectPageSubSection("objSubSection", {
 					blocks: [this.oLayout]
@@ -155,7 +155,7 @@ sap.ui.define([
 				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 				this.oObjectPageLayout = new ObjectPageLayout("objPage", {
 					headerContent: [this.oVariantManagementControl],
-					sections : [this.oObjectPageSection]
+					sections: [this.oObjectPageSection]
 				});
 				this.oVariantManagementControl.addAssociation("for", "objPage", true);
 				this.oButton2 = new Button();
@@ -170,8 +170,8 @@ sap.ui.define([
 				};
 
 				this.oDesignTime = new DesignTime({
-					designTimeMetadata : oVariantManagementDesignTimeMetadata,
-					rootElements : [this.oPage]
+					designTimeMetadata: oVariantManagementDesignTimeMetadata,
+					rootElements: [this.oPage]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {
@@ -202,7 +202,7 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when _isPersonalizationMode is called", function(assert) {
 			assert.notOk(this.oControlVariantPlugin._isPersonalizationMode(), "then _isPersonalizationMode for CUSTOMER layer is false");
-			sandbox.stub(this.oControlVariantPlugin.getCommandFactory(), "getFlexSettings").returns({layer : Layer.USER});
+			sandbox.stub(this.oControlVariantPlugin.getCommandFactory(), "getFlexSettings").returns({layer: Layer.USER});
 			assert.ok(this.oControlVariantPlugin._isPersonalizationMode(), "then _isPersonalizationMode for USER layer is true");
 		});
 
@@ -566,8 +566,8 @@ sap.ui.define([
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 			this.oData = {
 				varMgtKey: {
-					defaultVariant : "variant1",
-					variantsEditable : true,
+					defaultVariant: "variant1",
+					variantsEditable: true,
 					variants: [
 						{
 							key: "variant1",
@@ -615,8 +615,8 @@ sap.ui.define([
 			};
 
 			this.oDesignTime = new DesignTime({
-				designTimeMetadata : oVariantManagementDesignTimeMetadata,
-				rootElements : [this.oPage]
+				designTimeMetadata: oVariantManagementDesignTimeMetadata,
+				rootElements: [this.oPage]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -673,13 +673,13 @@ sap.ui.define([
 
 			var oVariantManagementDesignTimeMetadata = {
 				"sap.ui.fl.variants.VariantManagement": {
-					actions : {}
+					actions: {}
 				}
 			};
 			sap.ui.getCore().applyChanges();
 			this.oDesignTime = new DesignTime({
-				designTimeMetadata : oVariantManagementDesignTimeMetadata,
-				rootElements : [this.oVariantManagementControl]
+				designTimeMetadata: oVariantManagementDesignTimeMetadata,
+				rootElements: [this.oVariantManagementControl]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -704,7 +704,7 @@ sap.ui.define([
 			assert.expect(2);
 			var sOldVariantTitle = "Old Variant Title";
 			this.oControlVariantPlugin._$editableField = {
-				text : function() {
+				text: function() {
 					return "New Variant Title  ";
 				}
 			};
@@ -749,7 +749,7 @@ sap.ui.define([
 			sandbox.spy(RenameHandler, "startEdit");
 
 			this.oModel.setData({
-				varMgtKey : {
+				varMgtKey: {
 					variants: [
 						{
 							title: sNewVariantTitle,
@@ -774,7 +774,7 @@ sap.ui.define([
 			var sNewVariantTitle = "Existing Variant Title";
 
 			this.oModel.setData({
-				varMgtKey : {
+				varMgtKey: {
 					variants: [
 						{
 							title: "Standard",
@@ -810,7 +810,7 @@ sap.ui.define([
 			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
 
 			this.oModel.setData({
-				varMgtKey : {
+				varMgtKey: {
 					variants: [
 						{
 							title: sExistingVariantTitle,
@@ -840,7 +840,7 @@ sap.ui.define([
 			sandbox.spy(this.oControlVariantPlugin, "stopEdit");
 
 			this.oModel.setData({
-				varMgtKey : {
+				varMgtKey: {
 					variants: [
 						{
 							title: sExistingVariantTitle,
@@ -865,7 +865,7 @@ sap.ui.define([
 			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 
 			this.oModel.setData({
-				varMgtKey : {
+				varMgtKey: {
 					variants: [
 						{
 							title: sExistingVariantTitle,
@@ -901,7 +901,7 @@ sap.ui.define([
 			var fnCreateSetTitleCommandSpy = sandbox.spy(this.oControlVariantPlugin, "_createSetTitleCommand");
 
 			this.oModel.setData({
-				varMgtKey : {
+				varMgtKey: {
 					variants: [
 						{
 							title: sExistingVariantTitle,
@@ -1110,8 +1110,8 @@ sap.ui.define([
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 			this.oData = {
 				varMgtKey: {
-					defaultVariant : "variant1",
-					variantsEditable : true,
+					defaultVariant: "variant1",
+					variantsEditable: true,
 					variants: [
 						{key: "variant1"},
 						{key: "variant2"}
@@ -1130,14 +1130,14 @@ sap.ui.define([
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.ui.layout.VerticalLayout" : {
+				"sap.ui.layout.VerticalLayout": {
 					moveControls: "default"
 				}
 			})
 			.then(function() {
 				this.oButton = new Button();
 				this.oLayout = new VerticalLayout("overlay1", {
-					content : [this.oButton]
+					content: [this.oButton]
 				});
 				this.oObjectPageSubSection = new ObjectPageSubSection("objSubSection", {
 					blocks: [this.oLayout]
@@ -1152,7 +1152,7 @@ sap.ui.define([
 				this.oVariantManagementControl.setModel(this.oModel, flUtils.VARIANT_MODEL_NAME);
 				this.oObjectPageLayout = new ObjectPageLayout("objPage", {
 					headerContent: [this.oVariantManagementControl],
-					sections : [this.oObjectPageSection]
+					sections: [this.oObjectPageSection]
 				});
 				this.oVariantManagementControl.addAssociation("for", "objPage", true);
 				this.oButton2 = new Button();
@@ -1170,8 +1170,8 @@ sap.ui.define([
 				};
 
 				this.oDesignTime = new DesignTime({
-					designTimeMetadata : oVariantManagementDesignTimeMetadata,
-					rootElements : [this.oPage]
+					designTimeMetadata: oVariantManagementDesignTimeMetadata,
+					rootElements: [this.oPage]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {
@@ -1214,8 +1214,8 @@ sap.ui.define([
 			sandbox.stub(flUtils, "getComponentClassName").returns("Dummy.Component");
 			this.oData = {
 				varMgtKey: {
-					defaultVariant : "variant1",
-					variantsEditable : true,
+					defaultVariant: "variant1",
+					variantsEditable: true,
 					variants: [
 						{
 							key: "variant1",
@@ -1245,8 +1245,8 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				designTimeMetadata : oVariantManagementDesignTimeMetadata,
-				rootElements : [this.oVariantManagementControl]
+				designTimeMetadata: oVariantManagementDesignTimeMetadata,
+				rootElements: [this.oVariantManagementControl]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {

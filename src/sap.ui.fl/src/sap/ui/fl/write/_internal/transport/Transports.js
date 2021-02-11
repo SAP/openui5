@@ -93,7 +93,7 @@ sap.ui.define([
 			if (!mParameters.reference) {
 				return Promise.reject(new Error("no reference provided as attribute of mParameters"));
 			}
-			var mUrlParams = FlexUtils.getClient() ? {"sap-client" : FlexUtils.getClient()} : {};
+			var mUrlParams = FlexUtils.getClient() ? {"sap-client": FlexUtils.getClient()} : {};
 
 			var sMakeChangesTransportableUrl = InitialUtils.getUrl(ROUTES.ACTION_MAKE_CHANGE_TRANSPORTABLE, {url: FlexUtils.getLrepUrl()}, mUrlParams);
 			var sTokenUrl = InitialUtils.getUrl(ROUTES.ACTION_GET_TOKEN, {url: FlexUtils.getLrepUrl()});

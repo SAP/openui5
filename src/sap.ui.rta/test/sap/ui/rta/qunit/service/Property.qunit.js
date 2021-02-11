@@ -39,15 +39,15 @@ function(
 			var MockComponent = UIComponent.extend("MockController", {
 				metadata: {
 					manifest: {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							},
 							id: "MockAppId"
 						}
 					}
 				},
-				createContent : function() {
+				createContent: function() {
 					return new Page("mainPage");
 				}
 			});
@@ -305,7 +305,7 @@ function(
 
 		// control metadata properties
 			sandbox.stub(mControlMetadata, "getAllProperties").returns({
-				metadataProperty1 : {
+				metadataProperty1: {
 					type: "metadataPropertyType1",
 					name: "metadataPropertyName1",
 					defaultValue: "metadataPropertyDefaultValue1",
@@ -313,7 +313,7 @@ function(
 					group: "metadataPropertyGroup1",
 					visibility: "public"
 				},
-				metadataProperty2 : {
+				metadataProperty2: {
 					type: "metadataPropertyType2",
 					name: "metadataPropertyName2",
 					defaultValue: "metadataPropertyDefaultValue2",
@@ -321,7 +321,7 @@ function(
 					group: "metadataPropertyGroup2",
 					visibility: "public"
 				},
-				metadataProperty3 : {
+				metadataProperty3: {
 					type: "metadataPropertyType3",
 					name: "metadataPropertyName3",
 					defaultValue: "metadataPropertyDefaultValue2",
@@ -464,17 +464,17 @@ function(
 			var MockComponent = UIComponent.extend("MockController2", {
 				metadata: {
 					manifest: {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							},
 							id: "MockAppId2"
 						}
 					}
 				},
-				createContent : function() {
+				createContent: function() {
 					return new Page('page', {
-						content : [
+						content: [
 							oButton
 						]
 					});

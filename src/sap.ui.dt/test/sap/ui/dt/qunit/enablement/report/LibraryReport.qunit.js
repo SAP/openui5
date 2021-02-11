@@ -23,10 +23,10 @@ function (
 
 			this.bCreateCalled = false;
 			this.oLibraryReport = new LibraryReport({
-				libraryName : "sap.ui.testLibrary",
-				testData : {
-					"dt.control.SimpleScrollControl" : {
-						create : this.fnSpyCreate
+				libraryName: "sap.ui.testLibrary",
+				testData: {
+					"dt.control.SimpleScrollControl": {
+						create: this.fnSpyCreate
 					}
 				}
 			});

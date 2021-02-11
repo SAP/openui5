@@ -28,8 +28,8 @@ function(
 		var fnDone = assert.async();
 
 		this.oElement1 = new FormElement({
-			label: new Label({text:"Label0"}),
-			fields: [new Input({required:true})]
+			label: new Label({text: "Label0"}),
+			fields: [new Input({required: true})]
 		});
 
 		this.oFormContainer1 = new sap.ui.layout.form.FormContainer({
@@ -37,8 +37,8 @@ function(
 			formElements: [
 				this.oElement1,
 				new FormElement({
-					label: new Label({text:"Label1"}),
-					fields: [new Input({required:true})]
+					label: new Label({text: "Label1"}),
+					fields: [new Input({required: true})]
 				})
 			]
 		});
@@ -48,11 +48,11 @@ function(
 			formElements: [
 				new FormElement({
 					label: "Label0",
-					fields: [new Input({required:true})]
+					fields: [new Input({required: true})]
 				}),
 				new FormElement({
-					label: new Label({text:"Label1"}),
-					fields: [new Input({required:true})]
+					label: new Label({text: "Label1"}),
+					fields: [new Input({required: true})]
 				})
 			]
 		});
@@ -76,7 +76,7 @@ function(
 
 		this.oForm = new Form({
 			tooltip: "Form tooltip",
-			layout : oLayout,
+			layout: oLayout,
 			formContainers: [
 				this.oFormContainer1,
 				this.oFormContainer2,
@@ -86,7 +86,7 @@ function(
 		sap.ui.getCore().applyChanges();
 
 		this.oFormDesignTime = new DesignTime({
-			rootElements : [this.oForm]
+			rootElements: [this.oForm]
 		});
 
 		this.oFormDesignTime.attachEventOnce("synced", function() {
@@ -157,10 +157,10 @@ function(
 	});
 
 	QUnit.module("Given that overlays are created for a form with ResponsiveGridLayout with formContainers", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			initFormWithGivenLayout.call(this, assert, new sap.ui.layout.form.ResponsiveGridLayout());
 		},
-		afterEach : function() {
+		afterEach: function() {
 			cleanup.call(this);
 		}
 	}, function() {
@@ -170,10 +170,10 @@ function(
 	});
 
 	QUnit.module("Given that overlays are created for a form with FormLayout with formContainers", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			initFormWithGivenLayout.call(this, assert, new sap.ui.layout.form.FormLayout());
 		},
-		afterEach : function() {
+		afterEach: function() {
 			cleanup.call(this);
 		}
 	}, function() {
@@ -183,10 +183,10 @@ function(
 	});
 
 	QUnit.module("Given that overlays are created for a form with GridLayout with formContainers", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			initFormWithGivenLayout.call(this, assert, new sap.ui.layout.form.GridLayout());
 		},
-		afterEach : function() {
+		afterEach: function() {
 			cleanup.call(this);
 		}
 	}, function() {

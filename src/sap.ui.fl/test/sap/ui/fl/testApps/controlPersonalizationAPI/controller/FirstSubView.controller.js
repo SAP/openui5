@@ -10,7 +10,7 @@ sap.ui.define([
 
 		oView: null,
 		oFlexController: null,
-		oLabel : null,
+		oLabel: null,
 		oVariantLabel: null,
 		oAppComponent: null,
 

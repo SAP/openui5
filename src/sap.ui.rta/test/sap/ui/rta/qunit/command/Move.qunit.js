@@ -58,9 +58,9 @@ sap.ui.define([
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -85,7 +85,7 @@ sap.ui.define([
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Button": {
-					moveStuff : {
+					moveStuff: {
 						applyChange: this.fnApplyChangeSpy,
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						revertChange: function() {}
@@ -94,10 +94,10 @@ sap.ui.define([
 			})
 			.then(function() {
 				this.oButtonDesignTimeMetadata = new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							move : {
-								changeType : "moveStuff"
+					data: {
+						actions: {
+							move: {
+								changeType: "moveStuff"
 							}
 						}
 					}
@@ -113,9 +113,9 @@ sap.ui.define([
 	}, function () {
 		QUnit.test("when getting a move command for a Button...", function(assert) {
 			return CommandFactory.getCommandFor(this.oButton, "move", {
-				movedElements : [this.oButton],
-				source : this.oSourceLayout,
-				target : this.oTargetLayout
+				movedElements: [this.oButton],
+				source: this.oSourceLayout,
+				target: this.oTargetLayout
 			}, this.oButtonDesignTimeMetadata)
 
 			.then(function(oMoveCommand) {
@@ -140,9 +140,9 @@ sap.ui.define([
 			var oErrorLogSpy = sandbox.spy(Log, "error");
 
 			return CommandFactory.getCommandFor(this.oButton, "move", {
-				movedElements : [this.oButton],
-				source : this.oSourceLayout,
-				target : this.oTargetLayout
+				movedElements: [this.oButton],
+				source: this.oSourceLayout,
+				target: this.oTargetLayout
 			}, this.oButtonDesignTimeMetadata)
 
 				.then(function(oMoveCommand) {
@@ -169,32 +169,32 @@ sap.ui.define([
 			this.oButton = new Button("button");
 			this.oObjectAttribute = new ObjectAttribute("attribute");
 			this.oObjectHeader = new ObjectHeader("header", {
-				attributes : [this.oObjectAttribute]
+				attributes: [this.oObjectAttribute]
 			});
 			this.oLayout = new VerticalLayout("someLayoutId", {
-				content : [this.oObjectHeader, this.oButton]
+				content: [this.oObjectHeader, this.oButton]
 			});
 
 			return CommandFactory.getCommandFor(this.oLayout, "Move", {
-				source : {
-					parent : this.oObjectHeader,
-					aggregation : "attributes",
-					publicAggregation : "attributes"
+				source: {
+					parent: this.oObjectHeader,
+					aggregation: "attributes",
+					publicAggregation: "attributes"
 				},
-				movedElements : [{
-					element : this.oObjectAttribute,
-					sourceIndex : 0,
-					targetIndex : 2
+				movedElements: [{
+					element: this.oObjectAttribute,
+					sourceIndex: 0,
+					targetIndex: 2
 				}],
-				target : {
-					parent : this.oLayout,
-					aggregation : "content",
-					publicAggregation : "content"
+				target: {
+					parent: this.oLayout,
+					aggregation: "content",
+					publicAggregation: "content"
 				}
 			}, new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						move : "moveControls"
+				data: {
+					actions: {
+						move: "moveControls"
 					}
 				}
 			}))

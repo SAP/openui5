@@ -49,16 +49,16 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that an DragDrop is initialized ", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oButton = new Button();
-			this.oLayout = new VerticalLayout({content : [this.oButton]});
+			this.oLayout = new VerticalLayout({content: [this.oButton]});
 			this.oLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDragDrop = new DragDrop();
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
-				plugins : [this.oDragDrop]
+				rootElements: [this.oLayout],
+				plugins: [this.oDragDrop]
 			});
 
 			var done = assert.async();
@@ -75,37 +75,37 @@ sap.ui.define([
 			this.mFakeTouchEvents = {
 				touchstart: {
 					touches: [{
-						pageX:5,
-						pageY:5
+						pageX: 5,
+						pageY: 5
 					}],
 					originalEvent: {
 						touches: [{
-							pageX:5,
-							pageY:5
+							pageX: 5,
+							pageY: 5
 						}]
 					}
 				},
 				touchmove: {
 					touches: [{
-						pageX:10,
-						pageY:10
+						pageX: 10,
+						pageY: 10
 					}],
 					originalEvent: {
 						touches: [{
-							pageX:10,
-							pageY:10
+							pageX: 10,
+							pageY: 10
 						}]
 					}
 				},
 				touchend: {
 					touches: [{
-						pageX:10,
-						pageY:10
+						pageX: 10,
+						pageY: 10
 					}],
 					originalEvent: {
 						touches: [{
-							pageX:10,
-							pageY:10
+							pageX: 10,
+							pageY: 10
 						}],
 						changedTouches: [{
 							pageX: 10,
@@ -113,13 +113,13 @@ sap.ui.define([
 						}]
 					},
 					changedTouches: [{
-						pageX:10,
-						pageY:10
+						pageX: 10,
+						pageY: 10
 					}]
 				}
 			};
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oButtonOverlay.destroy();
 			this.oLayoutOverlay.destroy();
 			this.oLayout.destroy();
@@ -240,17 +240,17 @@ sap.ui.define([
 
 
 	QUnit.module("Given that an DragDrop touchevents are initialized ", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oButton = new Button();
-			this.oLayout1 = new VerticalLayout({content : [this.oButton]});
-			this.oLayout2 = new VerticalLayout({content : [this.oLayout1]});
+			this.oLayout1 = new VerticalLayout({content: [this.oButton]});
+			this.oLayout2 = new VerticalLayout({content: [this.oLayout1]});
 			this.oLayout2.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDragDrop = new DragDrop();
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout2],
-				plugins : [this.oDragDrop]
+				rootElements: [this.oLayout2],
+				plugins: [this.oDragDrop]
 			});
 
 			var done = assert.async();
@@ -283,31 +283,31 @@ sap.ui.define([
 			this.mFakeTouchEvents = {
 				touchstart: {
 					touches: [{
-						pageX:5,
-						pageY:5
+						pageX: 5,
+						pageY: 5
 					}],
 					originalEvent: {
 						touches: [{
-							pageX:5,
-							pageY:5
+							pageX: 5,
+							pageY: 5
 						}]
 					}
 				},
 				touchmove: {
 					touches: [{
-						pageX:10,
-						pageY:10
+						pageX: 10,
+						pageY: 10
 					}],
 					originalEvent: {
 						touches: [{
-							pageX:10,
-							pageY:10
+							pageX: 10,
+							pageY: 10
 						}]
 					}
 				}
 			};
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oButtonOverlay.destroy();
 			this.oLayout1Overlay.destroy();
 			this.oLayout2Overlay.destroy();
@@ -379,7 +379,7 @@ sap.ui.define([
 		 * scroll on drag
 		 */
 		QUnit.module("Given that overlay is created for a m.Page with Panels", {
-			beforeEach : function(assert) {
+			beforeEach: function(assert) {
 				var that = this;
 				var done = assert.async();
 				this.aPanels = [];
@@ -388,7 +388,7 @@ sap.ui.define([
 					var oPanel = new sap.m.Panel();
 					this.aPanels.push(oPanel);
 					var oPanelOverlay = new ElementOverlay({
-						element : oPanel
+						element: oPanel
 					});
 					this.aPanelOverlays.push(oPanelOverlay);
 				}
@@ -399,9 +399,9 @@ sap.ui.define([
 
 				this.oPage.getMetadata().loadDesignTime().then(function(oDesignTimeMetadata) {
 					that.oPageOverlay = new ElementOverlay({
-						element : that.oPage,
-						designTimeMetadata : { data : oDesignTimeMetadata },
-						lazyRendering : false
+						element: that.oPage,
+						designTimeMetadata: { data: oDesignTimeMetadata },
+						lazyRendering: false
 					});
 					sap.ui.getCore().applyChanges();
 					that.oDragDrop = new DragDrop();
@@ -410,7 +410,7 @@ sap.ui.define([
 					done();
 				});
 			},
-			afterEach : function() {
+			afterEach: function() {
 				this.oPage.destroy();
 				this.oPageOverlay.destroy();
 				for (var i = 0; i < 10; i++) {

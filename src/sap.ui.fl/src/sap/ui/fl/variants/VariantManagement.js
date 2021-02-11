@@ -122,7 +122,7 @@ sap.ui.define([
 	 */
 	var VariantManagement = Control.extend("sap.ui.fl.variants.VariantManagement", /** @lends sap.ui.fl.variants.VariantManagement.prototype */ {
 		metadata: {
-			interfaces : [
+			interfaces: [
 				"sap.m.IOverflowToolbarContent"
 			],
 			library: "sap.ui.fl",

@@ -23,13 +23,13 @@ sap.ui.define(function() {
 		 * Select multiple overlays at a time.
 		 * @public
 		 */
-		Multi : "Multi",
+		Multi: "Multi",
 
 		/**
 		 * Select one overlay at a time.
 		 * @public
 		 */
-		Single : "Single"
+		Single: "Single"
 
 	};
 }, /* bExport= */ true);

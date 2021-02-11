@@ -158,7 +158,7 @@ sap.ui.define([
 				 * @returns {Promise<undefined>} to wait for execution
 				 * @public
 				 */
-				applyChange : function(oChange, oControl, mPropertyBag) {
+				applyChange: function(oChange, oControl, mPropertyBag) {
 					var mChangeDefinition = oChange.getDefinition();
 					var oAppComponent = mPropertyBag.appComponent;
 					var mChangeContent = mChangeDefinition.content;
@@ -199,7 +199,7 @@ sap.ui.define([
 							{
 								control: oControl,
 								innerControls: mInnerControls,
-								change : oChange
+								change: oChange
 							},
 							mPropertyBag
 						);
@@ -226,7 +226,7 @@ sap.ui.define([
 				 * @return {boolean} True if successful
 				 * @public
 				 */
-				revertChange : function(oChange, oControl, mPropertyBag) {
+				revertChange: function(oChange, oControl, mPropertyBag) {
 					var oAppComponent = mPropertyBag.appComponent;
 					var oModifier = mPropertyBag.modifier;
 					var mFieldSelector = oChange.getRevertData().newFieldSelector;
@@ -247,7 +247,7 @@ sap.ui.define([
 					var mAddPropertySettings = merge({},
 						{
 							control: oControl,
-							change : oChange
+							change: oChange
 						},
 						mPropertyBag
 					);
@@ -280,7 +280,7 @@ sap.ui.define([
 				 * @param {object} mPropertyBag.view Application view
 				 * @public
 				 */
-				completeChangeContent : function(oChange, mSpecificChangeInfo, mPropertyBag) {
+				completeChangeContent: function(oChange, mSpecificChangeInfo, mPropertyBag) {
 					var oAppComponent = mPropertyBag.appComponent;
 					var mChangeDefinition = oChange.getDefinition();
 					if (!mChangeDefinition.content) {

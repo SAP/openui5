@@ -20,7 +20,7 @@ function (
 		beforeEach: function () {
 			this.oManifest = {
 				"sap.ovp": {
-					cards:{
+					cards: {
 						card1: {},
 						card2: {}
 					}

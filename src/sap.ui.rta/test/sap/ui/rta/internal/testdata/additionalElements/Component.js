@@ -23,7 +23,7 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		init : function() {
+		init: function() {
 			this._enableExtensibility();
 
 			this._bShowAdaptButton = !!this.getComponentData().showAdaptButton;
@@ -35,16 +35,16 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Control} the content
 		 */
-		createContent : function() {
+		createContent: function() {
 			var oApp = new App();
 
 			var oModel = new JSONModel({
-				showAdaptButton : this._bShowAdaptButton
+				showAdaptButton: this._bShowAdaptButton
 			});
 
 			var oPage = sap.ui.view(this.createId("idMain1"), {
-				viewName : "sap.ui.rta.test.additionalElements.ComplexTest",
-				type : ViewType.XML,
+				viewName: "sap.ui.rta.test.additionalElements.ComplexTest",
+				type: ViewType.XML,
 				async: true
 			});
 
@@ -65,7 +65,7 @@ sap.ui.define([
 					BusinessContexts: [{ BusinessContext: sEntityTypeName + " EntityTypeContext", BusinessContextDescription: "Other BusinessContext description" }, { BusinessContext: sEntitySetName + " EntitySetContext", BusinessContextDescription: "Some BusinessContext description"}],
 					ServiceName: sServiceUri,
 					ServiceVersion: "some dummy ServiceVersion 0.0.1",
-					EntityType : sEntityTypeName
+					EntityType: sEntityTypeName
 				});
 			};
 
@@ -74,28 +74,28 @@ sap.ui.define([
 			};
 
 			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
-					getService : function() {
+				Container: {
+					getService: function() {
 						return {
-							hrefForExternal : function(mData) {
+							hrefForExternal: function(mData) {
 								return "./testdata/additionalElements/extensibilityTool.html?" + URI.encodeQuery(JSON.stringify(mData));
 							},
-							parseShellHash : function() {
+							parseShellHash: function() {
 								//dummy
 							},
-							registerNavigationFilter : function() {
+							registerNavigationFilter: function() {
 								//dummy
 							},
-							unregisterNavigationFilter : function() {
+							unregisterNavigationFilter: function() {
 								//dummy
 							},
-							getUser : function() {
+							getUser: function() {
 								//dummy
 							}
 
 						};
 					},
-					getLogonSystem : function() {
+					getLogonSystem: function() {
 						return {
 							getName: function() {
 								return "ABC";
@@ -108,7 +108,7 @@ sap.ui.define([
 							}
 						};
 					},
-					setDirtyFlag : function() {
+					setDirtyFlag: function() {
 						return true;
 					}
 				}

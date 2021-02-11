@@ -31,24 +31,24 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var AddXMLAtExtensionPoint = FlexCommand.extend("sap.ui.rta.command.AddXMLAtExtensionPoint", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				fragment : {
-					type : "string",
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				fragment: {
+					type: "string",
 					group: "content"
 				},
-				fragmentPath : {
-					type : "string",
+				fragmentPath: {
+					type: "string",
 					group: "content"
 				},
-				changeType : {
-					type : "string",
-					defaultValue : "addXMLAtExtensionPoint"
+				changeType: {
+					type: "string",
+					defaultValue: "addXMLAtExtensionPoint"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 

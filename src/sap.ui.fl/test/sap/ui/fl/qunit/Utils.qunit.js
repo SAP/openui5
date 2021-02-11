@@ -1802,11 +1802,11 @@ function(
 	});
 
 	QUnit.module("_hasParameterAndValue is called", {
-		before : function() {
+		before: function() {
 			this.sParameterName = "parameterName";
 			this.sParameterValue = "parameterValue";
 		},
-		afterEach : function () {
+		afterEach: function () {
 			sandbox.restore();
 		}
 	}, function () {
@@ -1836,13 +1836,13 @@ function(
 	});
 
 	QUnit.module("handleUrlParameter is called", {
-		before : function() {
+		before: function() {
 			this.sParameterName = "parameterName";
 			this.sParameterValue = "parameterValue";
 			this.sSearchParameter = this.sParameterName + "=" + this.sParameterValue;
 			this.sAnotherParameter = "test=true";
 		},
-		afterEach : function () {
+		afterEach: function () {
 			sandbox.restore();
 		}
 	}, function () {

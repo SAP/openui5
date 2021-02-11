@@ -38,9 +38,9 @@ function (
 				},
 				getManifest: function () {
 					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							}
 						}
 					};
@@ -54,14 +54,14 @@ function (
 		beforeEach: function () {
 			this.sReference = "appReference";
 			this.mFlexSettings = {
-				layer : Layer.CUSTOMER
+				layer: Layer.CUSTOMER
 			};
 			this.sChangeType = "dummyChangeType";
 
 			this.mParameters = {
-				dataSource : {
-					source1 : {
-						uri : "/sap/opu/odata/snce/PO_S_SRV;v=2/"
+				dataSource: {
+					source1: {
+						uri: "/sap/opu/odata/snce/PO_S_SRV;v=2/"
 					}
 				}
 			};
@@ -90,11 +90,11 @@ function (
 			var fnAssertSpy = sinon.spy(ManagedObject.prototype, "applySettings");
 
 			var oMockDescriptorInlineChange = {
-				mockName : "mocked"
+				mockName: "mocked"
 			};
 
 			var oMockDescriptorChange = {
-				store : function() {
+				store: function() {
 					assert.ok(true, "the descriptor change was submitted");
 					var mPassedSettings = fnAssertSpy.getCall(0).args[0];
 					var bHasSelector = Object.keys(mPassedSettings).some(function(sKey) {
@@ -126,12 +126,12 @@ function (
 			}.bind(this));
 
 			return CommandFactory.getCommandFor(this.oButton, "appDescriptor", {
-				reference : this.sReference,
-				parameters : this.mParameters,
-				texts : this.mTexts,
-				changeType : this.sChangeType,
-				appComponent : this.oMockedAppComponent
-			}, {}, {layer : this.sLayer})
+				reference: this.sReference,
+				parameters: this.mParameters,
+				texts: this.mTexts,
+				changeType: this.sChangeType,
+				appComponent: this.oMockedAppComponent
+			}, {}, {layer: this.sLayer})
 
 			.then(function(oAppDescriptorCommand) {
 				assert.ok(oAppDescriptorCommand, "App Descriptor command exists for element");

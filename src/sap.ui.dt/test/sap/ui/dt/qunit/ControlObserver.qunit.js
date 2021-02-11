@@ -11,15 +11,15 @@ function (
 	"use strict";
 
 	QUnit.module("Given that a Button is observed", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oButton = new Button();
 			this.oControlObserver = new ControlObserver({
-				target : this.oButton
+				target: this.oButton
 			});
 			this.oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oControlObserver.destroy();
 			this.oButton.destroy();
 		}

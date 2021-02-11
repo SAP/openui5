@@ -77,19 +77,19 @@ function(
 	 */
 
 	var BasePlugin = Plugin.extend("sap.ui.rta.plugin.Plugin", /** @lends sap.ui.dt.Plugin.prototype */ {
-		metadata : {
-			"abstract" : true,
-			library : "sap.ui.rta",
-			properties : {
-				commandFactory : {
-					type : "object",
-					multiple : false
+		metadata: {
+			"abstract": true,
+			library: "sap.ui.rta",
+			properties: {
+				commandFactory: {
+					type: "object",
+					multiple: false
 				}
 			},
-			events : {
-				elementModified : {
-					command : {
-						type : "sap.ui.rta.command.BaseCommand"
+			events: {
+				elementModified: {
+					command: {
+						type: "sap.ui.rta.command.BaseCommand"
 					}
 				}
 			}

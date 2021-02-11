@@ -43,7 +43,7 @@ function (
 		var oTable = new Table({
 			title: "Table Example",
 			visibleRowCount: 5,
-			width : "200px",
+			width: "200px",
 			rows: "{/}"
 		});
 		if (oModel) {
@@ -118,7 +118,7 @@ function (
 		});
 
 		QUnit.module("Given that design time is created for a sap.ui.table.Table", {
-			beforeEach : function(assert) {
+			beforeEach: function(assert) {
 				var done = assert.async();
 
 				this.oTable = _createTable();
@@ -126,14 +126,14 @@ function (
 				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oTable]
+					rootElements: [this.oTable]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {
 					done();
 				});
 			},
-			afterEach : function() {
+			afterEach: function() {
 				this.oTable.destroy();
 				this.oDesignTime.destroy();
 			}
@@ -162,13 +162,13 @@ function (
 		});
 
 		QUnit.module("Given that design time is created for a sap.ui.table.AnalyticalTable", {
-			beforeEach : function(assert) {
+			beforeEach: function(assert) {
 				var done = assert.async();
 
 				this.oTable = new AnalyticalTable({
 					title: "Table Example",
 					visibleRowCount: 5,
-					width : "200px"
+					width: "200px"
 				});
 
 				this.oTable.placeAt("qunit-fixture");
@@ -203,7 +203,7 @@ function (
 				}));
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oTable]
+					rootElements: [this.oTable]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function () {
@@ -213,7 +213,7 @@ function (
 					setTimeout(done, 16);
 				});
 			},
-			afterEach : function() {
+			afterEach: function() {
 				this.oTable.destroy();
 				this.oDesignTime.destroy();
 			}

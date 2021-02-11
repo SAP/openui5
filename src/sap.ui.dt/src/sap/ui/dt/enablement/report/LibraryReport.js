@@ -32,17 +32,17 @@ sap.ui.define([
 	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var LibraryReport = Test.extend("sap.ui.dt.enablement.report.LibraryReport", /** @lends sap.ui.dt.enablement.report.LibraryReport.prototype */ {
-		metadata : {
+		metadata: {
 			// ---- object ----
 
 			// ---- control specific ----
-			library : "sap.ui.dt",
-			properties : {
-				libraryName : {
-					type : "string"
+			library: "sap.ui.dt",
+			properties: {
+				libraryName: {
+					type: "string"
 				},
-				testData : {
-					type : "object"
+				testData: {
+					type: "object"
 				}
 			}
 		}

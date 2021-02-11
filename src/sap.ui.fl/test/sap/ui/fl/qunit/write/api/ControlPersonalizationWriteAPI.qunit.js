@@ -86,7 +86,7 @@ sap.ui.define([
 				changeSpecificData: {
 					changeType: "foo"
 				},
-				selectorControl : {
+				selectorControl: {
 					id: "testComponent---mockview--ObjectPageLayout",
 					controlType: "sap.uxap.ObjectPageLayout",
 					appComponent: this.oComp
@@ -134,7 +134,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given dirty changes in change persistence are required to be saved", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox.stub(Log, "error");
 		},
 		afterEach: function() {
@@ -181,7 +181,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an instance of VariantModel", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			sandbox.stub(Settings, "getInstance").resolves({
@@ -195,14 +195,14 @@ sap.ui.define([
 				var MockComponent = UIComponent.extend("MockController", {
 					metadata: {
 						manifest: {
-							"sap.app" : {
-								applicationVersion : {
-									version : "1.2.3"
+							"sap.app": {
+								applicationVersion: {
+									version: "1.2.3"
 								}
 							}
 						}
 					},
-					createContent : function() {
+					createContent: function() {
 						var oApp = new App(this.createId("mockapp"));
 						var oView = sap.ui.xmlview({
 							id: this.createId("mockview"),
@@ -226,7 +226,7 @@ sap.ui.define([
 				}).placeAt("qunit-fixture");
 
 				this.mMoveChangeData1 = {
-					selectorElement : sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
+					selectorElement: sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
 					changeSpecificData: {
 						changeType: "moveControls",
 						movedElements: [{
@@ -245,7 +245,7 @@ sap.ui.define([
 					}
 				};
 				this.mMoveChangeData2 = {
-					selectorElement : sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
+					selectorElement: sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
 					changeSpecificData: {
 						changeType: "moveControls",
 						movedElements: [{
@@ -264,23 +264,23 @@ sap.ui.define([
 					}
 				};
 				this.mRenameChangeData1 = {
-					selectorElement : sap.ui.getCore().byId("testComponent---mockview--ObjectPageSection1"),
+					selectorElement: sap.ui.getCore().byId("testComponent---mockview--ObjectPageSection1"),
 					changeSpecificData: {
 						changeType: "rename",
 						renamedElement: {
 							id: "testComponent---mockview--ObjectPageSection1"
 						},
-						value : "Personalization Test"
+						value: "Personalization Test"
 					}
 				};
 				this.mRenameChangeData2 = {
-					selectorElement : sap.ui.getCore().byId("testComponent---mockview--TextTitle1"),
+					selectorElement: sap.ui.getCore().byId("testComponent---mockview--TextTitle1"),
 					changeSpecificData: {
 						changeType: "rename",
 						renamedElement: {
 							id: "testComponent---mockview--TextTitle1"
 						},
-						value : "Change for the inner variant"
+						value: "Change for the inner variant"
 					}
 				};
 
@@ -392,7 +392,7 @@ sap.ui.define([
 					renamedElement: {
 						id: "testComponent---mockview--Button"
 					},
-					value : "Personalized Text"
+					value: "Personalized Text"
 				}
 			};
 			return ControlPersonalizationWriteAPI.add({
@@ -450,7 +450,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an instance of VariantModel on a dialog", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			sandbox.stub(Settings, "getInstance").resolves({
@@ -464,14 +464,14 @@ sap.ui.define([
 				var MockComponent = UIComponent.extend("MockController", {
 					metadata: {
 						manifest: {
-							"sap.app" : {
-								applicationVersion : {
-									version : "1.2.3"
+							"sap.app": {
+								applicationVersion: {
+									version: "1.2.3"
 								}
 							}
 						}
 					},
-					createContent : function() {
+					createContent: function() {
 						var oApp = new App(this.createId("mockapp"));
 						var oRootView = sap.ui.xmlview({
 							id: this.createId("root-mockview"),
@@ -504,7 +504,7 @@ sap.ui.define([
 				}).placeAt("qunit-fixture");
 
 				this.mMoveChangeData1 = {
-					selectorElement : sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
+					selectorElement: sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
 					changeSpecificData: {
 						changeType: "moveControls",
 						movedElements: [{
@@ -523,7 +523,7 @@ sap.ui.define([
 					}
 				};
 				this.mMoveChangeData2 = {
-					selectorElement : sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
+					selectorElement: sap.ui.getCore().byId("testComponent---mockview--ObjectPageLayout"),
 					changeSpecificData: {
 						changeType: "moveControls",
 						movedElements: [{
@@ -610,7 +610,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("reset", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.aControls = [];
 			this.getControlIds = function () {
 				return this.aControls.map(function(vControl) {

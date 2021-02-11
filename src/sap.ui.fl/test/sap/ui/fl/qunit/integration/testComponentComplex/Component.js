@@ -14,7 +14,7 @@ sap.ui.define([
 		metadata: {
 			manifest: "json"
 		},
-		init : function() {
+		init: function() {
 			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
 		},
 		createContent: function () {

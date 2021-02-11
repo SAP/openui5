@@ -92,7 +92,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and stretch plugin are instantiated with nested editable containers", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			this.oLayout = new VerticalLayout("layout", {
 				width: "300px",
@@ -132,8 +132,8 @@ sap.ui.define([
 			sandbox.stub(this.oStretchPlugin, "_isEditable").returns(true);
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
-				plugins : [this.oStretchPlugin]
+				rootElements: [this.oLayout],
+				plugins: [this.oStretchPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -143,7 +143,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
 			sandbox.restore();
@@ -223,7 +223,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and stretch plugin are instantiated with nested editable containers of different sizes", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			this.oLayout = new VerticalLayout("layout", {
 				width: "600px",
@@ -246,8 +246,8 @@ sap.ui.define([
 			sandbox.stub(this.oStretchPlugin, "_isEditable").returns(true);
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
-				plugins : [this.oStretchPlugin]
+				rootElements: [this.oLayout],
+				plugins: [this.oStretchPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -257,7 +257,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
 			sandbox.restore();
@@ -285,7 +285,7 @@ sap.ui.define([
 					}
 				}.bind(this));
 			}.bind(this));
-			var oConfig = { attributes: true, childList: false, characterData: false, subtree : true};
+			var oConfig = { attributes: true, childList: false, characterData: false, subtree: true};
 			oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
 
 			this.oLayout.setWidth("300px");
@@ -371,7 +371,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and stretch plugin are instantiated with nested editable containers (one invisible) of different sizes", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			this.oLayout = new VerticalLayout("layout", {
 				width: "600px",
@@ -395,8 +395,8 @@ sap.ui.define([
 			sandbox.stub(this.oStretchPlugin, "_isEditable").returns(true);
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
-				plugins : [this.oStretchPlugin]
+				rootElements: [this.oLayout],
+				plugins: [this.oStretchPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -405,7 +405,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
 			sandbox.restore();
@@ -431,7 +431,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and stretch plugin are instantiated with nested containers (not all editable)", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			this.oLayout = new VerticalLayout("layout", {
 				width: "300px",
@@ -463,8 +463,8 @@ sap.ui.define([
 			});
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
-				plugins : [this.oStretchPlugin]
+				rootElements: [this.oLayout],
+				plugins: [this.oStretchPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -474,7 +474,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
@@ -547,7 +547,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and stretch plugin are instantiated with two hboxes (one invisible, one not editable) in a layout", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			this.oLayout = new VerticalLayout("layout", {
 				width: "300px",
@@ -574,8 +574,8 @@ sap.ui.define([
 			});
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
-				plugins : [this.oStretchPlugin]
+				rootElements: [this.oLayout],
+				plugins: [this.oStretchPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -584,7 +584,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
@@ -621,7 +621,7 @@ sap.ui.define([
 					}
 				}.bind(this));
 			}.bind(this));
-			var oConfig = { attributes: true, childList: false, characterData: false, subtree : true};
+			var oConfig = { attributes: true, childList: false, characterData: false, subtree: true};
 			oObserver.observe(document.getElementById('qunit-fixture'), oConfig);
 
 			this.oHBox2.setVisible(true);
@@ -638,7 +638,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and stretch plugin are instantiated with nested containers (editable not stubbed)", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			this.oLayout = new VerticalLayout("layout", {
 				width: "300px",
@@ -660,8 +660,8 @@ sap.ui.define([
 			var oStretchPlugin = new Stretch();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout],
-				plugins : [oStretchPlugin]
+				rootElements: [this.oLayout],
+				plugins: [oStretchPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -671,7 +671,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
@@ -706,7 +706,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a designTime and stretch plugin are instantiated", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			this.oLayout1 = new VerticalLayout("layout1", {
 				width: "300px",
@@ -726,8 +726,8 @@ sap.ui.define([
 			this.oStretchPlugin = new Stretch();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oLayout1],
-				plugins : [this.oStretchPlugin]
+				rootElements: [this.oLayout1],
+				plugins: [this.oStretchPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -738,7 +738,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.clock.restore();
 			this.oDesignTime.destroy();
@@ -788,10 +788,10 @@ sap.ui.define([
 				label: "element1"
 			});
 			this.oFormContainer = new FormContainer("group1", {
-				formElements : [this.oFormElement]
+				formElements: [this.oFormElement]
 			});
 			this.oForm = new Form("smartForm", {
-				formContainers : [this.oFormContainer],
+				formContainers: [this.oFormContainer],
 				layout: new FormLayout()
 			});
 
@@ -803,8 +803,8 @@ sap.ui.define([
 			sandbox.stub(this.oStretchPlugin, "_isEditable").returns(true);
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oForm],
-				plugins : [this.oStretchPlugin]
+				rootElements: [this.oForm],
+				plugins: [this.oStretchPlugin]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {

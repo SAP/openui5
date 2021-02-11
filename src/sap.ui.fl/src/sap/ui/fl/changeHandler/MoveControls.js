@@ -115,19 +115,19 @@ function(
 		};
 
 		var mSpecificInfo = {
-			source : {
-				id : oSourceParent.getId(),
-				aggregation : sSourceAggregation,
-				type : mAdditionalSourceInfo.type,
-				selector : oModifier.getSelector(mSpecificChangeInfo.source.id, oAppComponent, mAdditionalSourceInfo)
+			source: {
+				id: oSourceParent.getId(),
+				aggregation: sSourceAggregation,
+				type: mAdditionalSourceInfo.type,
+				selector: oModifier.getSelector(mSpecificChangeInfo.source.id, oAppComponent, mAdditionalSourceInfo)
 			},
-			target : {
-				id : oTargetParent.getId(),
-				aggregation : sTargetAggregation,
-				type : mAdditionalTargetInfo.type,
-				selector : oModifier.getSelector(mSpecificChangeInfo.target.id, oAppComponent, mAdditionalTargetInfo)
+			target: {
+				id: oTargetParent.getId(),
+				aggregation: sTargetAggregation,
+				type: mAdditionalTargetInfo.type,
+				selector: oModifier.getSelector(mSpecificChangeInfo.target.id, oAppComponent, mAdditionalTargetInfo)
 			},
-			movedElements : mSpecificChangeInfo.movedElements
+			movedElements: mSpecificChangeInfo.movedElements
 		};
 
 		return mSpecificInfo;
@@ -281,12 +281,12 @@ function(
 		mSpecificChangeInfo = this._getSpecificChangeInfo(oModifier, mSpecificChangeInfo, oAppComponent);
 
 		mChangeData.content = {
-			movedElements : [],
-			source : {
-				selector : mSpecificChangeInfo.source.selector
+			movedElements: [],
+			source: {
+				selector: mSpecificChangeInfo.source.selector
 			},
-			target : {
-				selector : mSpecificChangeInfo.target.selector
+			target: {
+				selector: mSpecificChangeInfo.target.selector
 			}
 		};
 
@@ -295,8 +295,8 @@ function(
 
 			mChangeData.content.movedElements.push({
 				selector: oModifier.getSelector(oElement, oAppComponent),
-				sourceIndex : mElement.sourceIndex,
-				targetIndex : mElement.targetIndex
+				sourceIndex: mElement.sourceIndex,
+				targetIndex: mElement.targetIndex
 			});
 		});
 

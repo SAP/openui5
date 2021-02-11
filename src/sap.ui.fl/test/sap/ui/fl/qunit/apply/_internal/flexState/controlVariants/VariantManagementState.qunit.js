@@ -578,27 +578,27 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'addVariantToVariantManagement' is called with a new variant and no variant reference", function(assert) {
-			var oChangeContent0 = {fileName:"change0"};
-			var oChangeContent1 = {fileName:"change1"};
+			var oChangeContent0 = {fileName: "change0"};
+			var oChangeContent1 = {fileName: "change1"};
 
 			var oFakeVariantData1 = {
-				content : {
+				content: {
 					content: {
 						title: "AA"
 					},
 					fileName: "newVariant1"
 				},
-				controlChanges : [oChangeContent0]
+				controlChanges: [oChangeContent0]
 			};
 
 			var oFakeVariantData2 = {
-				content : {
+				content: {
 					content: {
 						title: "ZZ"
 					},
 					fileName: "newVariant2"
 				},
-				controlChanges : [oChangeContent1]
+				controlChanges: [oChangeContent1]
 			};
 
 			var iIndex1 = VariantManagementState.addVariantToVariantManagement({variantData: oFakeVariantData1, vmReference: this.sVMReference, reference: this.sReference});
@@ -611,11 +611,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'addVariantToVariantManagement' is called on CUSTOMER layer and a variant reference from a VENDOR layer variant, with 2 VENDOR and one CUSTOMER change", function(assert) {
-			var oChangeContent0 = new Change({fileName:"change0"});
+			var oChangeContent0 = new Change({fileName: "change0"});
 			VariantManagementState.getControlChangesForVariant({vReference: "variant0", vmReference: this.sVMReference, reference: this.sReference, changeInstance: true});
 
 			var oFakeVariantData = {
-				content : {
+				content: {
 					fileName: "newVariant1",
 					variantReference: "variant0",
 					layer: Layer.CUSTOMER,
@@ -623,7 +623,7 @@ sap.ui.define([
 						title: "AA"
 					}
 				},
-				controlChanges : [oChangeContent0]
+				controlChanges: [oChangeContent0]
 			};
 
 			var iIndex = VariantManagementState.addVariantToVariantManagement({variantData: oFakeVariantData, vmReference: this.sVMReference, reference: this.sReference});
@@ -641,11 +641,11 @@ sap.ui.define([
 		});
 
 		QUnit.test("when 'addVariantToVariantManagement' is called on USER layer and a variant reference from a VENDOR layer variant with 2 VENDOR and one CUSTOMER change", function(assert) {
-			var oChangeContent0 = new Change({fileName:"change0"});
+			var oChangeContent0 = new Change({fileName: "change0"});
 			VariantManagementState.getControlChangesForVariant({vReference: "variant0", vmReference: "vmReference1", reference: this.sReference, changeInstance: true});
 
 			var oFakeVariantData = {
-				content : {
+				content: {
 					fileName: "newVariant1",
 					variantReference: "variant0",
 					layer: Layer.USER,
@@ -653,7 +653,7 @@ sap.ui.define([
 						title: "AA"
 					}
 				},
-				controlChanges : [oChangeContent0]
+				controlChanges: [oChangeContent0]
 			};
 
 			var iIndex = VariantManagementState.addVariantToVariantManagement({variantData: oFakeVariantData, vmReference: "vmReference1", reference: this.sReference});

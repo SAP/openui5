@@ -37,9 +37,9 @@ function(
 				},
 				getManifest: function () {
 					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							}
 						}
 					};
@@ -55,22 +55,22 @@ function(
 		beforeEach: function () {
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.Button" : {
-					changeSettings : "sap/ui/fl/changeHandler/PropertyChange"
+				"sap.m.Button": {
+					changeSettings: "sap/ui/fl/changeHandler/PropertyChange"
 				}
 			})
 			.then(function() {
 				sandbox.stub(PropertyChange, "completeChangeContent");
 
 				this.oSettingsChange = {
-					selectorElement : {
-						id : "button",
-						controlType : "sap.m.Button",
-						appComponent : this.oMockedAppComponent
+					selectorElement: {
+						id: "button",
+						controlType: "sap.m.Button",
+						appComponent: this.oMockedAppComponent
 					},
-					changeSpecificData : {
-						changeType : "changeSettings",
-						content : "testchange"
+					changeSpecificData: {
+						changeType: "changeSettings",
+						content: "testchange"
 					}
 				};
 			}.bind(this));

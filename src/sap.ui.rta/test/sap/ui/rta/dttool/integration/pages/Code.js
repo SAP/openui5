@@ -34,7 +34,7 @@ function (
 					success: function () {
 						Opa5.assert.ok(true, (fileExtension ? "The " + fileExtension + " file " : "") + filename + (doPartialCheck ? "(...)" : "") + " is displayed in the code editor");
 					},
-					errorMessage : filename + " is not displayed in the code editor"
+					errorMessage: filename + " is not displayed in the code editor"
 				});
 			}
 		}

@@ -28,13 +28,13 @@ sap.ui.define([
 	var CustomButton = Button.extend('sap.ui.rta.dttool.controls.CustomButton', {
 		metadata: {
 			properties: {
-				newProperty : {
-					type : "any"
+				newProperty: {
+					type: "any"
 				}
 			}
 		},
 
-		renderer : function () {
+		renderer: function () {
 			ButtonRenderer.render.apply(this, arguments);
 		}
 	});

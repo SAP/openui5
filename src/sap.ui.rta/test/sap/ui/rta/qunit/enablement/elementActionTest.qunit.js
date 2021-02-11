@@ -73,7 +73,7 @@ sap.ui.define([
 		assert.strictEqual(oViewAfterAction.byId("container").getVisible(), true, "then the form container is visible");
 	};
 	elementActionTest("Checking the remove action for a simple control with always async view and preprocessors", {
-		xmlView : {
+		xmlView: {
 			viewContent:
 				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.layout.form">' +
 					'<Form id="form">' +
@@ -85,15 +85,15 @@ sap.ui.define([
 					'</Form>' +
 				'</mvc:View>',
 			//possibility to add preprocessors or other settings you can pass to sap.ui.xmlview, e.g.
-			async : true,
-			preprocessors : null //add yours
+			async: true,
+			preprocessors: null //add yours
 		},
-		action : {
-			name : "remove",
-			controlId : "container",
-			parameter : function(oView) {
+		action: {
+			name: "remove",
+			controlId: "container",
+			parameter: function(oView) {
 				return {
-					removedElement : oView.byId("container")
+					removedElement: oView.byId("container")
 				};
 			}
 		},

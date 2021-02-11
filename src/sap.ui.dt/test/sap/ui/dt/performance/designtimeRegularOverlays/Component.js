@@ -24,12 +24,12 @@ sap.ui.define([
 			PerformanceTestUtil.addMixedControlsTo(oLayout, 201, 500, false /*invisible*/);
 
 			var oInvisibleLayout = new VerticalLayout("invisibleLayout", {
-				visible : false
+				visible: false
 			});
 			PerformanceTestUtil.addMixedControlsTo(oInvisibleLayout, 2001, 3000, true /*visible*/);
 
 			var oHorizontalLayout = new HorizontalLayout("HorizontalLayout", {
-				content : [oLayout, oInvisibleLayout]
+				content: [oLayout, oInvisibleLayout]
 			});
 			return oHorizontalLayout;
 		}

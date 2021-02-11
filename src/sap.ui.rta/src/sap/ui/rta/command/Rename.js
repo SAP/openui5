@@ -19,29 +19,29 @@ sap.ui.define(["sap/ui/rta/command/FlexCommand"], function(FlexCommand) {
 	 *               changed in future.
 	 */
 	var Rename = FlexCommand.extend("sap.ui.rta.command.Rename", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				renamedElement : {
-					type : "object"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				renamedElement: {
+					type: "object"
 				},
-				newValue : {
-					type : "string",
-					defaultValue : "new text"
+				newValue: {
+					type: "string",
+					defaultValue: "new text"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 
 	Rename.prototype._getChangeSpecificData = function() {
 		var mSpecificInfo = {
-			changeType : this.getChangeType(),
-			renamedElement : {
-				id : this.getRenamedElement().getId()
+			changeType: this.getChangeType(),
+			renamedElement: {
+				id: this.getRenamedElement().getId()
 			},
-			value : this.getNewValue()
+			value: this.getNewValue()
 		};
 
 		return mSpecificInfo;

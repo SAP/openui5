@@ -29,29 +29,29 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var AppDescriptorCommand = BaseCommand.extend("sap.ui.rta.command.AppDescriptor", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				reference : {
-					type : "string"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				reference: {
+					type: "string"
 				},
 				appComponent: {
 					type: "object"
 				},
-				layer : {
-					type : "string"
+				layer: {
+					type: "string"
 				},
-				changeType : {
-					type : "string"
+				changeType: {
+					type: "string"
 				},
-				parameters : {
-					type : "object"
+				parameters: {
+					type: "object"
 				},
-				texts : {
-					type : "object"
+				texts: {
+					type: "object"
 				}
 			},
-			events : {}
+			events: {}
 		}
 	});
 

@@ -142,8 +142,8 @@ sap.ui.define([
 				this.oContextMenuPlugin.addMenuItem(this.oMenuEntries[key]);
 			}
 			this.oRenamePlugin = new RenamePlugin({
-				id : "nonDefaultRenamePlugin",
-				commandFactory : oCommandFactory
+				id: "nonDefaultRenamePlugin",
+				commandFactory: oCommandFactory
 			});
 			this.oDesignTime = new DesignTime({
 				rootElements: [
@@ -510,7 +510,7 @@ sap.ui.define([
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
 				var aContextMenuButtons = oContextMenuControl.getButtons();
 				var oOverflowButton = aContextMenuButtons[aContextMenuButtons.length - 1];
-				oContextMenuControl._onOverflowPress.bind(oContextMenuControl)({oSource : oOverflowButton});
+				oContextMenuControl._onOverflowPress.bind(oContextMenuControl)({oSource: oOverflowButton});
 				assert.ok(true, "Should throw no error");
 			}.bind(this));
 		});
@@ -870,8 +870,8 @@ sap.ui.define([
 
 		QUnit.test("When the popup height is too big", function (assert) {
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-			sandbox.stub(oContextMenuControl, "_getPopoverDimensions").returns({height : 250, width : 100});
-			sandbox.stub(oContextMenuControl, "_getViewportDimensions").returns({width : 300, height : 300, top : 0, bottom : 300});
+			sandbox.stub(oContextMenuControl, "_getPopoverDimensions").returns({height: 250, width: 100});
+			sandbox.stub(oContextMenuControl, "_getViewportDimensions").returns({width: 300, height: 300, top: 0, bottom: 300});
 			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
 				assert.equal(oContextMenuControl.getPopover().getContentHeight(), "200px", "then the height is limited to 2/3 height of the Viewport");
 				sandbox.restore();
@@ -880,8 +880,8 @@ sap.ui.define([
 
 		QUnit.test("When the popup width is more than 400px", function (assert) {
 			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-			sandbox.stub(oContextMenuControl, "_getPopoverDimensions").returns({height : 250, width : 500});
-			sandbox.stub(oContextMenuControl, "_getViewportDimensions").returns({width : 800, height : 800, top : 0, bottom : 800});
+			sandbox.stub(oContextMenuControl, "_getPopoverDimensions").returns({height: 250, width: 500});
+			sandbox.stub(oContextMenuControl, "_getViewportDimensions").returns({width: 800, height: 800, top: 0, bottom: 800});
 			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
 				assert.equal(oContextMenuControl.getPopover().getContentWidth(), "400px", "then the width is limited to 400px");
 				sandbox.restore();

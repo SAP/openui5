@@ -18,7 +18,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given FeaturesAPI", {
-		afterEach : function () {
+		afterEach: function () {
 			Settings._instance = undefined;
 			sandbox.restore();
 		}

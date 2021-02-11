@@ -24,21 +24,21 @@ function(
 	 *               changed in future.
 	 */
 	var Move = FlexCommand.extend("sap.ui.rta.command.Move", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				movedElements : {
-					type : "any[]"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				movedElements: {
+					type: "any[]"
 				},
-				target : {
-					type : "any"
+				target: {
+					type: "any"
 				},
-				source : {
-					type : "any"
+				source: {
+					type: "any"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 
@@ -59,17 +59,17 @@ function(
 			delete mTarget.parent;
 		}
 		var mSpecificInfo = {
-			changeType : this.getChangeType(),
-			source : mSource,
-			target : mTarget,
-			movedElements : []
+			changeType: this.getChangeType(),
+			source: mSource,
+			target: mTarget,
+			movedElements: []
 		};
 
 		this.getMovedElements().forEach(function(mMovedElement) {
 			mSpecificInfo.movedElements.push({
-				id : mMovedElement.id || (mMovedElement.element && mMovedElement.element.getId()),
-				sourceIndex : mMovedElement.sourceIndex,
-				targetIndex : mMovedElement.targetIndex
+				id: mMovedElement.id || (mMovedElement.element && mMovedElement.element.getId()),
+				sourceIndex: mMovedElement.sourceIndex,
+				targetIndex: mMovedElement.targetIndex
 			});
 		});
 		return mSpecificInfo;

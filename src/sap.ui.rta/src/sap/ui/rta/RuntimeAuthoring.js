@@ -115,13 +115,13 @@ function(
 	 * @experimental This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var RuntimeAuthoring = ManagedObject.extend("sap.ui.rta.RuntimeAuthoring", {
-		metadata:{
+		metadata: {
 			// ---- control specific ----
-			library:"sap.ui.rta",
-			associations:{
+			library: "sap.ui.rta",
+			associations: {
 				/** The root control which the runtime authoring should handle. Can only be sap.ui.core.Element or sap.ui.core.UIComponent */
-				rootControl:{
-					type:"sap.ui.base.ManagedObject"
+				rootControl: {
+					type: "sap.ui.base.ManagedObject"
 				}
 			},
 			properties: {

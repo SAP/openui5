@@ -26,8 +26,8 @@ function (
 
 	var sandbox = sinon.sandbox.create();
 	var oComponent = sap.ui.getCore().createComponent({
-		name : "testComponent",
-		id : "testComponent"
+		name: "testComponent",
+		id: "testComponent"
 	});
 	var sProtocol = "https";
 	var sServer = "hana.ondemand.com";
@@ -126,7 +126,7 @@ function (
 		QUnit.test("when completeChangeContent & applyChange with XmlTreeModifier are called, and reverted later", function (assert) {
 			this.myLayoutId = "myLayout";
 			this.oLayout = new VerticalLayout(oComponent.createId(this.myLayoutId), {
-				content : [this.oIFrame]
+				content: [this.oIFrame]
 			});
 
 			var oDOMParser = new DOMParser();

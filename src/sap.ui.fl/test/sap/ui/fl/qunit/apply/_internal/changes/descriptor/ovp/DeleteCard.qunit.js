@@ -32,7 +32,7 @@ function (
 		QUnit.test("when calling '_applyChange' with a change to delete card that is defined in manifest", function (assert) {
 			var oManifest = {
 				"sap.ovp": {
-					cards:{
+					cards: {
 						card1: {},
 						card2: {}
 					}
@@ -45,7 +45,7 @@ function (
 		QUnit.test("when calling '_applyChange' with a change to delete card that is not defined in manifest", function (assert) {
 			var oManifest = {
 				"sap.ovp": {
-					cards:{
+					cards: {
 						card2: {}
 					}
 				}

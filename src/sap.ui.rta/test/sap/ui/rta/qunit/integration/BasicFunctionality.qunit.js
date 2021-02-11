@@ -40,7 +40,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given RTA is started...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
 			this.oForm = sap.ui.getCore().byId("Comp1---idMain1--MainForm");
@@ -48,8 +48,8 @@ sap.ui.define([
 			this.oCommandStack = new Stack();
 
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
-				commandStack : this.oCommandStack
+				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
+				commandStack: this.oCommandStack
 			});
 
 			return RtaQunitUtils.clear()
@@ -58,7 +58,7 @@ sap.ui.define([
 				this.oGroupOverlay = OverlayRegistry.getOverlay(this.oGroup);
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oRta.destroy();
 			this.oCommandStack.destroy();
 			sandbox.restore();
@@ -76,7 +76,7 @@ sap.ui.define([
 			assert.notOk(this.oRta.getToolbar().getControl('publish').getEnabled(), "initially no Changes are existing");
 
 			return new CommandFactory().getCommandFor(this.oGroup, "Remove", {
-				removedElement : this.oGroup
+				removedElement: this.oGroup
 			}, this.oGroupOverlay.getDesignTimeMetadata())
 
 			.then(function(oRemoveCommand) {
@@ -127,9 +127,9 @@ sap.ui.define([
 					layer: Layer.VENDOR
 				}
 			}).getCommandFor(this.oForm, "Property", {
-				propertyName : "title",
-				oldValue : oInitialTitle,
-				newValue : "Test Title"
+				propertyName: "title",
+				oldValue: oInitialTitle,
+				newValue: "Test Title"
 			})
 
 			.then(function(oCommand) {
@@ -153,7 +153,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available and CTRL-Z/CTRL-Y are pressed...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;
 
@@ -163,8 +163,8 @@ sap.ui.define([
 			// Start RTA
 			var oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
-				rootControl : oCompCont.getComponentInstance().getAggregation("rootControl"),
-				showToolbars : true,
+				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
+				showToolbars: true,
 				flexSettings: {
 					developerMode: false
 				}
@@ -176,7 +176,7 @@ sap.ui.define([
 				this.oElementOverlay = OverlayRegistry.getOverlay(sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode"));
 			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function () {
 			sandbox.restore();
 			this.oRta.destroy();
 			Device.os.macintosh = this.bMacintoshOriginal;

@@ -36,7 +36,7 @@ sap.ui.define([
 			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?version=" + sap.ui.fl.Versions.Draft;
 			var oStubGetUrlWithQueryParameters = sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
-				response : {
+				response: {
 					changes: [1],
 					compVariants: [2],
 					settings: {
@@ -44,7 +44,7 @@ sap.ui.define([
 						isVariantSharingEnabled: true
 					}
 				},
-				xsrfToken : "newToken",
+				xsrfToken: "newToken",
 				status: "200",
 				etag: "abc123"
 			});
@@ -76,10 +76,10 @@ sap.ui.define([
 			var sExpectedUrl = "/flexKeyuser/flex/keyuser/v1/data/reference?version=" + sap.ui.fl.Versions.Original;
 			sandbox.stub(Utils, "getUrl").returns(sExpectedUrl);
 			var oStubSendRequest = sandbox.stub(Utils, "sendRequest").resolves({
-				response : {
+				response: {
 					changes: []
 				},
-				xsrfToken : "newToken",
+				xsrfToken: "newToken",
 				status: "200",
 				etag: "abc123"
 			});

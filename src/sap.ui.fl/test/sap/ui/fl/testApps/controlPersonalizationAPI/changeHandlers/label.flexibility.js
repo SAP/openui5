@@ -10,13 +10,13 @@ sap.ui.define([
 		//new change handler
 		changeLabel: {
 			changeHandler: {
-				applyChange : function(oChange, oControl) {
+				applyChange: function(oChange, oControl) {
 					oControl.setText(oControl.getText() + " X");
 				},
-				completeChangeContent : function(oChange) {
+				completeChangeContent: function(oChange) {
 					oChange;
 				},
-				revertChange : function(oChange, oControl) {
+				revertChange: function(oChange, oControl) {
 					var sText = oControl.getText();
 					oControl.setText(sText.substring(0, sText.length - 2));
 				}

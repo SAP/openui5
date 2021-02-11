@@ -17,9 +17,9 @@ sap.ui.define([
 
 	function _simulateComponentPreload(sReference, mModules) {
 		jQuery.sap.registerPreloadedModules({
-			version : "2.0",
-			name : sReference,
-			modules : mModules
+			version: "2.0",
+			name: sReference,
+			modules: mModules
 		});
 	}
 
@@ -36,7 +36,7 @@ sap.ui.define([
 
 		QUnit.test("given a broken bundle.json for 'test.app' resource roots, when loading flex data", function (assert) {
 			_simulateComponentPreload("test.app.broken", {
-				"test/app/broken/changes/changes-bundle.json" : '[{:true}]'
+				"test/app/broken/changes/changes-bundle.json": '[{:true}]'
 			});
 
 			var oLogSpy = sandbox.spy(Log, "error");
@@ -52,7 +52,7 @@ sap.ui.define([
 
 		QUnit.test("given a flexibility-bundle.json for 'test.app' resource roots, when loading flex data with an 'componentName'", function (assert) {
 			_simulateComponentPreload("test.app", {
-				"test/app/changes/flexibility-bundle.json" : '{"changes":[{"dummy":true}],"compVariants":[]}'
+				"test/app/changes/flexibility-bundle.json": '{"changes":[{"dummy":true}],"compVariants":[]}'
 			});
 
 			return StaticFileConnector.loadFlexData({reference: "some.other.id", componentName: "test.app"}).then(function (oResult) {
@@ -64,7 +64,7 @@ sap.ui.define([
 
 		QUnit.test("given a flexibility-bundle.json for 'test.app' resource roots, when loading flex data without an 'componentName'", function (assert) {
 			_simulateComponentPreload("test.app", {
-				"test/app/changes/flexibility-bundle.json" : '[changes:{"dummy":true},"compVariants":[]]'
+				"test/app/changes/flexibility-bundle.json": '[changes:{"dummy":true},"compVariants":[]]'
 			});
 
 			return StaticFileConnector.loadFlexData({reference: "test.app.Component"}).then(function (oResult) {
@@ -76,7 +76,7 @@ sap.ui.define([
 
 		QUnit.test("given a changes-bundle.json for 'test.app' resource roots, when loading flex data with an 'componentName'", function (assert) {
 			_simulateComponentPreload("test.app", {
-				"test/app/changes/changes-bundle.json" : '[{"dummy":true},"compVariants":[]]'
+				"test/app/changes/changes-bundle.json": '[{"dummy":true},"compVariants":[]]'
 			});
 
 			return StaticFileConnector.loadFlexData({reference: "some.other.id", componentName: "test.app"}).then(function (oResult) {
@@ -88,7 +88,7 @@ sap.ui.define([
 
 		QUnit.test("given only a static changes-bundle.json with dummy data placed for 'test.app' resource roots, when loading flex data", function (assert) {
 			_simulateComponentPreload("test.app", {
-				"test/app/changes/changes-bundle.json" : '[{"dummy":true},"compVariants":[]]'
+				"test/app/changes/changes-bundle.json": '[{"dummy":true},"compVariants":[]]'
 			});
 			return StaticFileConnector.loadFlexData({reference: "test.app", componentName: "test.app"}).then(function (oResult) {
 				assert.equal(oResult.changes.length, 1, "one change was loaded");
@@ -122,7 +122,7 @@ sap.ui.define([
 		QUnit.test("given only a static flexibility-bundle.json with dummy data placed for 'test.app2' resource roots, when loading flex data", function (assert) {
 			// simulate a component-preload
 			_simulateComponentPreload("test.app2", {
-				"test/app2/changes/flexibility-bundle.json" : '{' +
+				"test/app2/changes/flexibility-bundle.json": '{' +
 					'"changes": [{"dummy1":true}],' +
 					'"compVariants": [{"dummy2":true}],' +
 					'"variantChanges": [{"dummy3":true}],' +

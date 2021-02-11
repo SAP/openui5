@@ -107,8 +107,8 @@ function(
 				name: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 				id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 				manifest: true,
-				componentData : {
-					async : true
+				componentData: {
+					async: true
 				}
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;

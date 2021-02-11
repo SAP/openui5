@@ -54,9 +54,9 @@ sap.ui.define([
 
 	function _enrichProperty(mProperty, mODataEntity, oElement, sAggregationName) {
 		var mProp = {
-			name :  mProperty.name,
-			bindingPath : mProperty.name,
-			entityType : mODataEntity.name
+			name: mProperty.name,
+			bindingPath: mProperty.name,
+			entityType: mODataEntity.name
 		};
 		var mLabelAnnotation = mProperty["com.sap.vocabularies.Common.v1.Label"];
 		mProp.label = mLabelAnnotation && mLabelAnnotation.String;
@@ -114,7 +114,7 @@ sap.ui.define([
 					&& oMetaModel.getODataAssociationEnd(mODataEntity, mNavProp.name).type
 				);
 				return {
-					name : mNavProp.name,
+					name: mNavProp.name,
 					//no labels or tooltips for navigation properties
 					entityType: sFullyQualifiedEntityName,
 					bindingPath: mNavProp.name,
@@ -227,11 +227,11 @@ sap.ui.define([
 				mPropertyBag.appComponent,
 				mPropertyBag.view,
 				mPropertyBag.fieldSelector,
-				{value : "{" + mPropertyBag.bindingPath + "}"},
+				{value: "{" + mPropertyBag.bindingPath + "}"},
 				ASYNC
 			).then(function(oSmartField) {
 				return {
-					control : oSmartField
+					control: oSmartField
 				};
 			});
 		},
@@ -261,9 +261,9 @@ sap.ui.define([
 					return Delegate.createLabel(mFieldPropertyBag).then(function(oLabel) {
 						//harmonize return values for mediator create function and delegate:
 						return {
-							label : oLabel,
-							control : mField.control,
-							valueHelp : mField.valueHelp
+							label: oLabel,
+							control: mField.control,
+							valueHelp: mField.valueHelp
 						};
 					});
 				}).then(function(mInnerControls) {
@@ -271,11 +271,11 @@ sap.ui.define([
 					oModifier.insertAggregation(oVBox, "items", mInnerControls.label, 0, mPropertyBag.view);
 					oModifier.insertAggregation(oVBox, "items", mInnerControls.control, 1, mPropertyBag.view);
 					return {
-						control : oVBox, //modifier created container containing already the label and control
+						control: oVBox, //modifier created container containing already the label and control
 										//as it is needed for the current control type or position in the app (can be derived from payload)
 										//control type of relevant container (e.g. Form, ObjectPageLayout, Table)
 										//aggregation name of control insertion is given to support
-						valueHelp : mInnerControls.valueHelp
+						valueHelp: mInnerControls.valueHelp
 							//if available it has to be added to the relevant containers dependents aggregation otherwise it is expected for not being needed or included in the control
 					};
 				});

@@ -30,7 +30,7 @@ sap.ui.define([
 		metadata: {
 			library: "sap.ui.rta",
 			properties: {
-				sourceVariantReference : {
+				sourceVariantReference: {
 					type: "string"
 				},
 				sourceDefaultVariant: {

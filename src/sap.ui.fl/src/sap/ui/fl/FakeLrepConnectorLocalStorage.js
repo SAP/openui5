@@ -27,11 +27,11 @@ function(
 	 */
 
 	return {
-		enableFakeConnector : function (mPropertyBag) {
+		enableFakeConnector: function (mPropertyBag) {
 			var sJsonPath = mPropertyBag ? mPropertyBag.sInitialComponentJsonPath : undefined;
 			FakeLrepConnector.setFlexibilityServicesAndClearCache("LocalStorageConnector", sJsonPath);
 		},
-		disableFakeConnector : function () {
+		disableFakeConnector: function () {
 			FakeLrepConnector.disableFakeConnector();
 		},
 		forTesting: {

@@ -61,7 +61,7 @@ sap.ui.define([
 
 		QUnit.test("onLoadComponent does nothing if no manifest was passed", function (assert) {
 			var oComponent = {
-				name : "componentName"
+				name: "componentName"
 			};
 			var oConfig = {
 				name: oComponent.name,
@@ -82,7 +82,7 @@ sap.ui.define([
 
 		QUnit.test("onLoadComponent does nothing if the passed manifest does not contain a type", function (assert) {
 			var oComponent = {
-				name : "componentName"
+				name: "componentName"
 			};
 			var oConfig = {
 				name: oComponent.name,
@@ -110,7 +110,7 @@ sap.ui.define([
 
 		QUnit.test("onLoadComponent does nothing if the passed manifest is not of the type 'application'", function (assert) {
 			var oComponent = {
-				name : "componentName"
+				name: "componentName"
 			};
 			var oConfig = {
 				name: oComponent.name,
@@ -170,7 +170,7 @@ sap.ui.define([
 				"sap.app": {
 					type: "application"
 				},
-				"sap.ui5" : null,
+				"sap.ui5": null,
 				getEntry: function (key) {
 					return this[key];
 				}

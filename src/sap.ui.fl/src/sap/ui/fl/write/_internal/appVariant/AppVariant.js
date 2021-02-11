@@ -38,7 +38,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.rta, smart business
 	 */
 	var AppVariant = ManagedObject.extend("sap.ui.fl.write._internal.appVariant.AppVariant", /** @lends sap.ui.fl.write._internal.appVariant.AppVariant */ {
-		constructor : function(mPropertyBag) {
+		constructor: function(mPropertyBag) {
 			ManagedObject.apply(this);
 			if (!jQuery.isPlainObject(mPropertyBag)) {
 				Log.error("Constructor : sap.ui.fl.write._internal.appVariant.AppVariant: mPropertyBag is not defined");
@@ -46,10 +46,10 @@ sap.ui.define([
 			this._oDefinition = mPropertyBag;
 			return this;
 		},
-		metadata : {
+		metadata: {
 			library: "sap.ui.fl",
-			properties : {
-				mode : {
+			properties: {
+				mode: {
 					type: "string"
 				}
 			}
@@ -58,7 +58,7 @@ sap.ui.define([
 
 	AppVariant.modes = {
 		NEW: "NEW",
-		EXISTING : "EXISTING",
+		EXISTING: "EXISTING",
 		DELETION: "DELETION"
 	};
 

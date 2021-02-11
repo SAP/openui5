@@ -18,25 +18,25 @@ sap.ui.define([
 	"use strict";
 
 	QUnit.module("Given that an Overlay is created on RTL mode", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 			this.oButton = new Button({
-				text : "Button"
+				text: "Button"
 			});
 			this.oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oOverlay = new ElementOverlay({
-				element : this.oButton,
+				element: this.oButton,
 				isRoot: true,
-				designTimeMetadata : {}
+				designTimeMetadata: {}
 			});
 			this.oOverlay.attachEventOnce("init", function() {
 				this.oOverlay.placeInOverlayContainer();
 				fnDone();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oButton.destroy();
 		}
 	}, function () {
@@ -62,10 +62,10 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an Overlay is created on RTL mode and scrolling is present", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 			this.oButton = new Button({
-				text : "Button"
+				text: "Button"
 			});
 
 			this.oInnerPanel = new Panel({
@@ -106,7 +106,7 @@ sap.ui.define([
 				}
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oOuterPanel.destroy();
 		}

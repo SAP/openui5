@@ -160,7 +160,7 @@ function (
 				/**
 				 * Event fired when the associated Element is destroyed
 				 */
-				elementDestroyed : {
+				elementDestroyed: {
 					parameters: {
 						targetId: "string"
 					}
@@ -595,7 +595,7 @@ function (
 
 			this.toggleStyleClass("sapUiDtOverlaySelectable", bSelectable);
 			this.setProperty("selectable", bSelectable);
-			this.fireSelectableChange({selectable : bSelectable});
+			this.fireSelectableChange({selectable: bSelectable});
 		}
 		this.setFocusable(bSelectable);
 		return this;
@@ -614,7 +614,7 @@ function (
 			this.toggleStyleClass("sapUiDtOverlaySelected", bSelected);
 
 			this.fireSelectionChange({
-				selected : bSelected
+				selected: bSelected
 			});
 		}
 
@@ -633,7 +633,7 @@ function (
 			this.toggleStyleClass("sapUiDtOverlayMovable", bMovable);
 
 			this.setProperty("movable", bMovable);
-			this.fireMovableChange({movable : bMovable});
+			this.fireMovableChange({movable: bMovable});
 
 			this.$()[bMovable ? 'attr' : 'removeAttr']('draggable', bMovable);
 		}
@@ -654,7 +654,7 @@ function (
 
 			this.setProperty("editable", bEditable);
 			this.fireEditableChange({
-				editable : bEditable
+				editable: bEditable
 			});
 		}
 
@@ -745,7 +745,7 @@ function (
 	 */
 	ElementOverlay.prototype._onElementDestroyed = function(oEvent) {
 		var sElementId = oEvent.getSource().getTarget();
-		this.fireElementDestroyed({targetId : sElementId});
+		this.fireElementDestroyed({targetId: sElementId});
 		if (this._bInit) {
 			this.destroy();
 		} else {

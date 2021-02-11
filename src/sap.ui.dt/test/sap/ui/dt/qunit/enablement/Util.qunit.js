@@ -15,17 +15,17 @@ function (
 	"use strict";
 
 	QUnit.module("Given that a sap.mButton is tested", {
-		beforeEach : function (assert) {
-			this.oButton = new Button({text : "my button"});
+		beforeEach: function (assert) {
+			this.oButton = new Button({text: "my button"});
 			this.oButton.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oButton]
+				rootElements: [this.oButton]
 			});
 			this.oDesignTime.attachEventOnce("synced", assert.async());
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oButton.destroy();
 		}
@@ -48,17 +48,17 @@ function (
 	});
 
 	QUnit.module("Given that a sap.ui.layout.VerticalLayout without content is tested", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oVerticalLayout = new VerticalLayout();
 			this.oVerticalLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout]
+				rootElements: [this.oVerticalLayout]
 			});
 			this.oDesignTime.attachEventOnce("synced", assert.async());
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oVerticalLayout.destroy();
 		}
@@ -81,20 +81,20 @@ function (
 	});
 
 	QUnit.module("Given that a sap.ui.layout.VerticalLayout with content is tested", {
-		beforeEach : function(assert) {
-			this.oButton = new Button({text : "my button"});
+		beforeEach: function(assert) {
+			this.oButton = new Button({text: "my button"});
 			this.oVerticalLayout = new VerticalLayout({
-				content : [this.oButton]
+				content: [this.oButton]
 			});
 			this.oVerticalLayout.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout]
+				rootElements: [this.oVerticalLayout]
 			});
 			this.oDesignTime.attachEventOnce("synced", assert.async());
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDesignTime.destroy();
 			this.oVerticalLayout.destroy();
 		}

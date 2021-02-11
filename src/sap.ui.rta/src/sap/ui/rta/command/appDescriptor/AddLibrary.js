@@ -25,9 +25,9 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var AddLibrary = AppDescriptorCommand.extend("sap.ui.rta.command.appDescriptor.AddLibrary", {
-		metadata : {
-			library : "sap.ui.rta",
-			events : {}
+		metadata: {
+			library: "sap.ui.rta",
+			events: {}
 		}
 	});
 

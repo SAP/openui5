@@ -23,7 +23,7 @@ function (
 					modelId: "random"
 				},
 				texts: {
-					i18n:  "resources/i18n/i18n.properties"
+					i18n: "resources/i18n/i18n.properties"
 				}
 			});
 
@@ -32,7 +32,7 @@ function (
 					modelId: "random"
 				},
 				texts: {
-					i18n:  "resources/../i18n/i18n.properties"
+					i18n: "resources/../i18n/i18n.properties"
 				}
 			});
 
@@ -41,7 +41,7 @@ function (
 					modelId: "random"
 				},
 				texts: {
-					i18n:  "/resources/i18n/i18n.properties"
+					i18n: "/resources/i18n/i18n.properties"
 				}
 			});
 		},

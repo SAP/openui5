@@ -67,7 +67,7 @@ sap.ui.define([
 		_createResourceBundle: function() {
 			sModulePath = sap.ui.require.toUrl("sap/ui/rta/appVariant/manageApps/") + "webapp";
 			oI18n = ResourceBundle.create({
-				url : sModulePath + "/i18n/i18n.properties"
+				url: sModulePath + "/i18n/i18n.properties"
 			});
 		},
 
@@ -184,7 +184,7 @@ sap.ui.define([
 			return bVisible && bKeyUser;
 		},
 
-		getModelProperty : function(sModelPropName, sBindingContext) {
+		getModelProperty: function(sModelPropName, sBindingContext) {
 			return this.getView().getModel().getProperty(sModelPropName, sBindingContext);
 		},
 
@@ -227,11 +227,11 @@ sap.ui.define([
 			if (sSemanticObject && sAction && oParams) {
 				oNavigationParams = {
 					target: {
-						semanticObject : sSemanticObject,
-						action : sAction
+						semanticObject: sSemanticObject,
+						action: sAction
 					},
 					params: oParams,
-					writeHistory : false
+					writeHistory: false
 				};
 
 				RuntimeAuthoring.enableRestart(Layer.CUSTOMER);

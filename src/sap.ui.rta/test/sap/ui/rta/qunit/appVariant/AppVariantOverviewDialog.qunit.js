@@ -39,36 +39,36 @@ sap.ui.define([
 
 			var aAppVariantOverviewAttributes = [
 				{
-					appId : "id1",
-					title : "title1",
-					subTitle : "subTitle1",
-					description : "description1",
-					icon : "sap-icon://history",
-					isOriginal : true,
-					typeOfApp : "Original App",
-					descriptorUrl : "url1",
+					appId: "id1",
+					title: "title1",
+					subTitle: "subTitle1",
+					description: "description1",
+					icon: "sap-icon://history",
+					isOriginal: true,
+					typeOfApp: "Original App",
+					descriptorUrl: "url1",
 					adaptUIButtonVisibility: false
 				},
 				{
-					appId : "id2",
-					title : "title2",
-					subTitle : "subTitle2",
-					description : "description2",
-					icon : "sap-icon://history",
-					isOriginal : false,
-					typeOfApp : "App Variant",
-					descriptorUrl : "url2",
+					appId: "id2",
+					title: "title2",
+					subTitle: "subTitle2",
+					description: "description2",
+					icon: "sap-icon://history",
+					isOriginal: false,
+					typeOfApp: "App Variant",
+					descriptorUrl: "url2",
 					adaptUIButtonVisibility: false
 				},
 				{
-					appId : "id3",
-					title : "title3",
-					subTitle : "subTitle3",
-					description : "description3",
-					icon : "sap-icon://history",
-					isOriginal : false,
-					typeOfApp : "App Variant",
-					descriptorUrl : "url3",
+					appId: "id3",
+					title: "title3",
+					subTitle: "subTitle3",
+					description: "description3",
+					icon: "sap-icon://history",
+					isOriginal: false,
+					typeOfApp: "App Variant",
+					descriptorUrl: "url3",
 					adaptUIButtonVisibility: false
 				}
 			];
@@ -98,14 +98,14 @@ sap.ui.define([
 
 			var aAppVariantOverviewAttributes = [
 				{
-					appId : "id1",
-					title : "title1",
-					subTitle : "subTitle1",
-					description : "description1",
-					icon : "sap-icon://history",
-					isOriginal : true,
-					typeOfApp : "Original App",
-					descriptorUrl : "url1",
+					appId: "id1",
+					title: "title1",
+					subTitle: "subTitle1",
+					description: "description1",
+					icon: "sap-icon://history",
+					isOriginal: true,
+					typeOfApp: "Original App",
+					descriptorUrl: "url1",
 					adaptUIButtonVisibility: false
 				}
 			];
@@ -135,34 +135,34 @@ sap.ui.define([
 
 			var aAppVariantOverviewAttributes = [
 				{
-					appId : "id1",
-					title : "title1",
-					subTitle : "subTitle1",
-					description : "description1",
-					icon : "sap-icon://history",
-					isOriginal : true,
-					typeOfApp : "Original App",
-					descriptorUrl : "url1"
+					appId: "id1",
+					title: "title1",
+					subTitle: "subTitle1",
+					description: "description1",
+					icon: "sap-icon://history",
+					isOriginal: true,
+					typeOfApp: "Original App",
+					descriptorUrl: "url1"
 				},
 				{
-					appId : "id2",
-					title : "title2",
-					subTitle : "subTitle2",
-					description : "description2",
-					icon : "sap-icon://history",
-					isOriginal : false,
-					typeOfApp : "App Variant",
-					descriptorUrl : "url2"
+					appId: "id2",
+					title: "title2",
+					subTitle: "subTitle2",
+					description: "description2",
+					icon: "sap-icon://history",
+					isOriginal: false,
+					typeOfApp: "App Variant",
+					descriptorUrl: "url2"
 				},
 				{
-					appId : "id3",
-					title : "title3",
-					subTitle : "subTitle3",
-					description : "description3",
-					icon : "sap-icon://history",
-					isOriginal : false,
-					typeOfApp : "App Variant",
-					descriptorUrl : "url3"
+					appId: "id3",
+					title: "title3",
+					subTitle: "subTitle3",
+					description: "description3",
+					icon: "sap-icon://history",
+					isOriginal: false,
+					typeOfApp: "App Variant",
+					descriptorUrl: "url3"
 				}
 			];
 
@@ -191,25 +191,25 @@ sap.ui.define([
 
 			var aAppVariantOverviewAttributes = [
 				{
-					appId : "id1",
-					title : "title1",
-					subTitle : "subTitle1",
-					description : "description1",
-					icon : "sap-icon://history",
-					isOriginal : true,
-					typeOfApp : "Original App",
-					descriptorUrl : "url1"
+					appId: "id1",
+					title: "title1",
+					subTitle: "subTitle1",
+					description: "description1",
+					icon: "sap-icon://history",
+					isOriginal: true,
+					typeOfApp: "Original App",
+					descriptorUrl: "url1"
 				},
 				{
-					appId : "id2",
-					title : "title2",
-					subTitle : "subTitle2",
-					description : "description2",
-					icon : "sap-icon://history",
-					isOriginal : false,
-					typeOfApp : "App Variant",
-					descriptorUrl : "url2",
-					currentStatus : "Just Created"
+					appId: "id2",
+					title: "title2",
+					subTitle: "subTitle2",
+					description: "description2",
+					icon: "sap-icon://history",
+					isOriginal: false,
+					typeOfApp: "App Variant",
+					descriptorUrl: "url2",
+					currentStatus: "Just Created"
 				}
 			];
 

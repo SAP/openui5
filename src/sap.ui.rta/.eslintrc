@@ -125,6 +125,7 @@
 			"SwitchCase": 1
 		}],
 		"one-var": [2, "never"],
-		"no-useless-call": 2
+		"no-useless-call": 2,
+		"key-spacing": [2, { "beforeColon": false }]
 	}
 }

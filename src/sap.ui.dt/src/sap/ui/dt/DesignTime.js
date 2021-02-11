@@ -215,7 +215,7 @@ function (
 				/**
 				 * Fires the "editable" property of an overlay changes
 				 */
-				elementOverlayEditableChanged : {
+				elementOverlayEditableChanged: {
 					parameters: {
 						id: {type: "string"},
 						elementId: {type: "string"},
@@ -226,8 +226,8 @@ function (
 				/**
 				 * Fires when a property of an element with an overlay changes
 				 */
-				elementPropertyChanged : {
-					parameters : {
+				elementPropertyChanged: {
+					parameters: {
 						id: {type: "string"},
 						name: {type: "string"},
 						oldValue: {type: "any"},

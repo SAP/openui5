@@ -60,9 +60,9 @@ function(
 
 
 			this.mPropertyBag = {
-				modifier : JsControlTreeModifier, view : {
-					getController : function () {
-					}, getId : function () {
+				modifier: JsControlTreeModifier, view: {
+					getController: function () {
+					}, getId: function () {
 					}
 				}
 			};

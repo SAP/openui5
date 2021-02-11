@@ -104,8 +104,8 @@ sap.ui.define([
 				// TODO: change to revertData for alignment, but this will conflict with the derived Change.getRevertData as of today
 				revertInfo: {
 					type: "sap.ui.fl.apply._internal.flexObjects.CompVariantRevertData",
-					multiple : true,
-					singularName : "revertInfo",
+					multiple: true,
+					singularName: "revertInfo",
 					defaultValue: []
 				}
 			}

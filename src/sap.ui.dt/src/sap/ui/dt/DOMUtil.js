@@ -235,10 +235,10 @@ sap.ui.define([
 			}
 
 			return {
-				domRef : oDomRef,
-				size : this.getSize(oDomRef),
-				position :  oOffset,
-				visible : this.isVisible(oDomRef)
+				domRef: oDomRef,
+				size: this.getSize(oDomRef),
+				position: oOffset,
+				visible: this.isVisible(oDomRef)
 			};
 		}
 	};

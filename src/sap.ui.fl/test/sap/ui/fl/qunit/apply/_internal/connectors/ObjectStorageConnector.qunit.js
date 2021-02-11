@@ -211,7 +211,7 @@ sap.ui.define([
 		QUnit.module("loadFlexData: Given some changes in the " + sStorage, {
 			before: function() {
 				oWriteStorageConnector.write({
-					flexObjects : [
+					flexObjects: [
 						oTestData.change1,
 						oTestData.change2,
 						oTestData.change3,
@@ -251,7 +251,7 @@ sap.ui.define([
 			}
 		}, function () {
 			QUnit.test("when loadFlexData is called without filter parameters", function (assert) {
-				return oApplyStorageConnector.loadFlexData({reference : "sap.ui.fl.test"}).then(function (vValue) {
+				return oApplyStorageConnector.loadFlexData({reference: "sap.ui.fl.test"}).then(function (vValue) {
 					assert.ok(Array.isArray(vValue), "an array is returned");
 					assert.equal(vValue.length, 2, "two responses were created");
 
@@ -283,7 +283,7 @@ sap.ui.define([
 		QUnit.module("loadFlexData: Given entries were present in different layers " + sStorage, {
 			before: function() {
 				oWriteStorageConnector.write({
-					flexObjects : [
+					flexObjects: [
 						oTestData.baseChange,
 						oTestData.vendorVariant,
 						oTestData.partnerVariantChange,
@@ -303,7 +303,7 @@ sap.ui.define([
 			}
 		}, function () {
 			QUnit.test("when loadFlexData is called without filter parameters", function (assert) {
-				return oApplyStorageConnector.loadFlexData({reference : "sap.ui.fl.test.module2"}).then(function (vValue) {
+				return oApplyStorageConnector.loadFlexData({reference: "sap.ui.fl.test.module2"}).then(function (vValue) {
 					assert.ok(Array.isArray(vValue), "an array is returned");
 					assert.equal(vValue.length, 5, "five responses are returned");
 

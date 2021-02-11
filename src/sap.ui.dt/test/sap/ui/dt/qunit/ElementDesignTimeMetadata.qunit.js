@@ -18,60 +18,60 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that an ElementDesignTimeMetadata is created for a control", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					name : {
-						singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
-						plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
+				data: {
+					name: {
+						singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
+						plural: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 					},
-					aggregations : {
-						testAggregation : {
-							testField : "testValue",
-							actions : {
-								action1 : "firstChangeType",
-								action2 : {
-									changeType : "secondChangeType"
+					aggregations: {
+						testAggregation: {
+							testField: "testValue",
+							actions: {
+								action1: "firstChangeType",
+								action2: {
+									changeType: "secondChangeType"
 								},
-								action3 : function(oElement) {
+								action3: function(oElement) {
 									return {changeType: oElement.name};
 								},
-								action4 : function(oElement, foo, bar) {
+								action4: function(oElement, foo, bar) {
 									return {changeType: oElement.name + foo + bar};
 								},
-								action5 : {
+								action5: {
 									subAction: {
-										changeType : "subChangeType"
+										changeType: "subChangeType"
 									}
 								},
-								action6 : {
+								action6: {
 									subAction: function(oElement, foo, bar) {
 										return {changeType: oElement.name + foo + bar};
 									}
 								}
 							},
-							childNames : {
-								singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
-								plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
+							childNames: {
+								singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
+								plural: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 							}
 						},
-						testAggregation2 : {
-							testField : "testValue",
-							actions : {
-								action1 : "firstChangeType-aggregation2"
+						testAggregation2: {
+							testField: "testValue",
+							actions: {
+								action1: "firstChangeType-aggregation2"
 							}
 						},
-						testAggregation3 : {
-							childNames : function(oElement) {
+						testAggregation3: {
+							childNames: function(oElement) {
 								//fake 2 cases:
 								//1. childNames is a function, that returns the object
 								//2. singular and plural can be functions to handle cases with self made resource bundling
 								return {
-									singular : function() {
+									singular: function() {
 										//fake own resource bundle handling
 										return "I18N_KEY" + oElement.getText();
 									},
-									plural :  function() {
+									plural: function() {
 										//fake own resource bundle handling
 										return "I18N_KEY_PLURAL" + oElement.getText();
 									}
@@ -81,7 +81,7 @@ sap.ui.define([
 					},
 					associations: {
 						testAssociation: {
-							aggregationLike : true
+							aggregationLike: true
 						}
 					},
 					getStableElements: function(oElement) {
@@ -90,7 +90,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oElementDesignTimeMetadata.destroy();
 			sandbox.restore();
 		}
@@ -112,58 +112,58 @@ sap.ui.define([
 
 		QUnit.test("when getActionDataFromAggregations is called", function(assert) {
 			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action1"), [
-				{changeType : "firstChangeType", aggregation : "testAggregation"},
-				{changeType : "firstChangeType-aggregation2", aggregation : "testAggregation2"}
+				{changeType: "firstChangeType", aggregation: "testAggregation"},
+				{changeType: "firstChangeType-aggregation2", aggregation: "testAggregation2"}
 			], "for string action, the correct object is returned");
-			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action2"), [{changeType : "secondChangeType", aggregation : "testAggregation"}], "for object action, the correct object is returned");
-			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action3", {name:"thirdChangeType"}), [{changeType : "thirdChangeType", aggregation : "testAggregation"}], "for function action, the correct object is returned");
-			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action4", {name:"fourthChangeType"}, ["foo", "bar"]), [{changeType : "fourthChangeTypefoobar", aggregation : "testAggregation"}], "for function action with parameters , the correct object is returned");
-			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action5", {name:"subChangeType"}, ["foo", "bar"], "subAction"), [{changeType : "subChangeType", aggregation : "testAggregation"}], "when the function was called with an action, a sub-action and parameters, then the correct object is returned");
-			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action6", {name:"subChangeType"}, ["foo", "bar"], "subAction"), [{changeType : "subChangeTypefoobar", aggregation : "testAggregation"}], "for function action with a function action, a sub-action and parameters, then the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action2"), [{changeType: "secondChangeType", aggregation: "testAggregation"}], "for object action, the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action3", {name: "thirdChangeType"}), [{changeType: "thirdChangeType", aggregation: "testAggregation"}], "for function action, the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action4", {name: "fourthChangeType"}, ["foo", "bar"]), [{changeType: "fourthChangeTypefoobar", aggregation: "testAggregation"}], "for function action with parameters , the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action5", {name: "subChangeType"}, ["foo", "bar"], "subAction"), [{changeType: "subChangeType", aggregation: "testAggregation"}], "when the function was called with an action, a sub-action and parameters, then the correct object is returned");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getActionDataFromAggregations("action6", {name: "subChangeType"}, ["foo", "bar"], "subAction"), [{changeType: "subChangeTypefoobar", aggregation: "testAggregation"}], "for function action with a function action, a sub-action and parameters, then the correct object is returned");
 		});
 
 		QUnit.test("when getAggregationDescription is called", function(assert) {
 			var oFakeElement = {
-				getMetadata : sandbox.stub().returns({
-					getLibraryName : sandbox.stub().returns("fakeLibrary"),
-					getParent : sandbox.stub().returns(undefined)
+				getMetadata: sandbox.stub().returns({
+					getLibraryName: sandbox.stub().returns("fakeLibrary"),
+					getParent: sandbox.stub().returns(undefined)
 				}),
-				getText : sandbox.stub().returns("simulateElement")
+				getText: sandbox.stub().returns("simulateElement")
 			};
 			var oFakeLibBundle = {
-				getText : sandbox.stub().returnsArg(0), //just return i18n keys
-				hasText : sandbox.stub().returns(false)
+				getText: sandbox.stub().returnsArg(0), //just return i18n keys
+				hasText: sandbox.stub().returns(false)
 			};
 			sandbox.stub(Core, "getLibraryResourceBundle").returns(oFakeLibBundle);
 
 			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation", oFakeElement), {
-				singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
-				plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
+				singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
+				plural: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 			}, "then the translated texts are returned for static keys");
 			assert.notOk(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation2", oFakeElement), "then undefined is returned missing childNames");
 			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationDescription("testAggregation3", oFakeElement, "simulateElement"), {
-				singular : "I18N_KEYsimulateElement",
-				plural :  "I18N_KEY_PLURALsimulateElement"
+				singular: "I18N_KEYsimulateElement",
+				plural: "I18N_KEY_PLURALsimulateElement"
 			}, "then the translated texts are returned for variable texts/keys");
 		});
 
 		QUnit.test("when getText is called", function(assert) {
 			var oFakeElement = {
-				getMetadata : sandbox.stub().returns({
-					getLibraryName : sandbox.stub().returns("fakeLibrary"),
-					getParent : sandbox.stub().returns(undefined)
+				getMetadata: sandbox.stub().returns({
+					getLibraryName: sandbox.stub().returns("fakeLibrary"),
+					getParent: sandbox.stub().returns(undefined)
 				})
 			};
 
 			var oFakeLibBundle = {
-				getText : sandbox.stub().returnsArg(0), //just return i18n keys
-				hasText : sandbox.stub().returns(false)
+				getText: sandbox.stub().returnsArg(0), //just return i18n keys
+				hasText: sandbox.stub().returns(false)
 			};
 			sandbox.stub(sap.ui.getCore(), "getLibraryResourceBundle").returns(oFakeLibBundle);
 
 			assert.deepEqual(this.oElementDesignTimeMetadata.getName(oFakeElement), {
-				singular : "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
-				plural :  "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
+				singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
+				plural: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
 			}, "then the translated texts are returned for static keys");
 		});
 
@@ -254,20 +254,20 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an ElementDesignTimeMetadata with scrollContainers with an array for aggregations is created for a control", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oScrollContainer = {
 				domRef: "foo",
 				aggregations: ["a", "b"]
 			};
 			this.oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
+				data: {
 					scrollContainers: [
 						this.oScrollContainer
 					]
 				}
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oElementDesignTimeMetadata.destroy();
 			sandbox.restore();
 		}
@@ -280,9 +280,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that an ElementDesignTimeMetadata with scrollContainers with a function for aggregations is created for a control", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
+				data: {
 					scrollContainers: [
 						{
 							domRef: "foo",
@@ -294,7 +294,7 @@ sap.ui.define([
 				}
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oElementDesignTimeMetadata.destroy();
 			sandbox.restore();
 		}

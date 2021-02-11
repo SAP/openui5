@@ -32,9 +32,9 @@ function(
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -48,15 +48,15 @@ function(
 	});
 
 	QUnit.module("Given an AddDelegateProperty change with a valid entry in the change registry,", {
-		beforeEach : function () {
+		beforeEach: function () {
 			var oChangeRegistry = ChangeRegistry.getInstance();
 
 			this.fnApplyChangeSpy = sinon.spy();
 			this.fnCompleteChangeContentSpy = sinon.spy();
 
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.Button" : {
-					addFields : {
+				"sap.m.Button": {
+					addFields: {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						applyChange: this.fnApplyChangeSpy,
 						revertChange: function() {}
@@ -88,10 +88,10 @@ function(
 			this.oButton,
 			"addDelegateProperty",
 			{
-				changeType : "addFields",
-				index : 1,
-				newControlId : "newControlId",
-				bindingString : "{bindingPath}",
+				changeType: "addFields",
+				index: 1,
+				newControlId: "newControlId",
+				bindingString: "{bindingPath}",
 				oDataServiceUri: "serviceUri",
 				propertyName: "propertyName"
 			},

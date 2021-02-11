@@ -14,12 +14,12 @@ function(
 	var RELATIVE_POS_LEFT = -35;
 
 	QUnit.module("Given that a container is rendered with a bigger content element (for scrollbars)", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oContent = jQuery("<div style='background: red; width: 200px; height: 200px; position: relative; left: -35px; top: 40px;'></div>");
 			this.oContainer = jQuery("<div style='background: blue; width: 100px; height: 100px; overflow: auto;'></div>");
 			this.oContainer.append(this.oContent).appendTo("#qunit-fixture");
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oContainer.remove();
 		}
 	}, function() {

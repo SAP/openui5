@@ -20,7 +20,7 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		init : function() {
+		init: function() {
 			this._adaptButtonConfiguration();
 			this._setModels(this._startMockServer());
 			UIComponent.prototype.init.apply(this, arguments);

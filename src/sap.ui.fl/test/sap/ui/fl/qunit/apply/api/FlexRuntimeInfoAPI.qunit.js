@@ -38,7 +38,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("isPersonalized", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oAppComponent = new UIComponent("AppComponent21");
 			this.oGetAppComponentStub = sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 		},
@@ -80,43 +80,43 @@ sap.ui.define([
 			this.oControl = new Control("controlId1");
 			var aControls = [this.oControl];
 
-			var oChangeContent0 = {fileName:"change0", fileType:"change", variantReference:"", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: Layer.USER};
-			var oChangeContent1 = {fileName:"change1", fileType:"change", variantReference:"variantManagementId", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: Layer.USER};
-			var oChangeContent2 = {fileName:"change2", fileType:"change", variantReference:"variantManagementId", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType2", layer: Layer.USER};
-			var oChangeContent3 = {fileName:"change3", fileType:"change", variantReference:"variant1", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType2", layer: Layer.USER};
+			var oChangeContent0 = {fileName: "change0", fileType: "change", variantReference: "", selector: {id: "controlId1", idIsLocal: false}, changeType: "changeType1", layer: Layer.USER};
+			var oChangeContent1 = {fileName: "change1", fileType: "change", variantReference: "variantManagementId", selector: {id: "controlId1", idIsLocal: false}, changeType: "changeType1", layer: Layer.USER};
+			var oChangeContent2 = {fileName: "change2", fileType: "change", variantReference: "variantManagementId", selector: {id: "controlId1", idIsLocal: false}, changeType: "changeType2", layer: Layer.USER};
+			var oChangeContent3 = {fileName: "change3", fileType: "change", variantReference: "variant1", selector: {id: "controlId1", idIsLocal: false}, changeType: "changeType2", layer: Layer.USER};
 			var oVariantChangeContent0 = {fileName: "variantChange0", fileType: "ctrl_variant_change", layer: Layer.USER, selector: {id: "variantManagementId"}, changeType: "changeType1"};
 			var oVariantManagementChangeContent0 = {fileName: "variantManagementChange0", fileType: "ctrl_variant_management_change", layer: Layer.USER, changeType: "changeType1", selector: {id: "variantManagementId"}, content: {defaultVariant: "defaultVariant0"}};
 
 
 			var oMockedWrappedContent = {
-				changes : {
-					changes : [oChangeContent0],
-					variantSection : {
-						variantManagementId : {
-							variants : [{
-								content : {
+				changes: {
+					changes: [oChangeContent0],
+					variantSection: {
+						variantManagementId: {
+							variants: [{
+								content: {
 									fileName: "variantManagementId",
-									fileType:"ctrl_variant",
+									fileType: "ctrl_variant",
 									content: {
 										title: "variant 0"
 									}
 								},
-								controlChanges : [oChangeContent1, oChangeContent2],
-								variantChanges : {
+								controlChanges: [oChangeContent1, oChangeContent2],
+								variantChanges: {
 									setTitle: [oVariantChangeContent0]
 								}
 							},
 								{
-									content : {
+									content: {
 										fileName: "variant1",
-										fileType:"ctrl_variant",
-										variantReference:"variantManagementId",
+										fileType: "ctrl_variant",
+										variantReference: "variantManagementId",
 										content: {
 											title: "variant 1"
 										}
 									},
-									controlChanges : [oChangeContent3],
-									variantChanges : {}
+									controlChanges: [oChangeContent3],
+									variantChanges: {}
 								}],
 							variantManagementChanges: {
 								setDefault: [oVariantManagementChangeContent0]
@@ -160,7 +160,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When isPersonalized() is called with undefined change types", function(assert) {
-			var oChangeContent0 = {fileName:"change0", fileType:"change", variantReference:"", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: Layer.USER};
+			var oChangeContent0 = {fileName: "change0", fileType: "change", variantReference: "", selector: {id: "controlId1", idIsLocal: false}, changeType: "changeType1", layer: Layer.USER};
 			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
 			var oMockedWrappedContent = {
 				changes: {
@@ -177,7 +177,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("When isPersonalized() is called with an empty array of change types", function(assert) {
-			var oChangeContent0 = {fileName:"change0", fileType:"change", variantReference:"", selector:{id:"controlId1", idIsLocal:false}, changeType: "changeType1", layer: Layer.USER};
+			var oChangeContent0 = {fileName: "change0", fileType: "change", variantReference: "", selector: {id: "controlId1", idIsLocal: false}, changeType: "changeType1", layer: Layer.USER};
 			var aControls = [{id: "controlId1", appComponent: this.oAppComponent}];
 			var oMockedWrappedContent = {
 				changes: {
@@ -197,37 +197,37 @@ sap.ui.define([
 			this.aChangeTypes = ["change0", "changeType2"];
 			this.oControl = new Control("controlId1");
 
-			var oChangeContent0 = {fileName:"change0", variantReference:""};
-			var oChangeContent1 = {fileName:"change1", variantReference:"variant0"};
-			var oChangeContent2 = {fileName:"change2", variantReference:"variant0"};
-			var oChangeContent3 = {fileName:"change3", variantReference:"variant1"};
-			var oChangeContent4 = {fileName:"change4", variantReference:"variant1"};
+			var oChangeContent0 = {fileName: "change0", variantReference: ""};
+			var oChangeContent1 = {fileName: "change1", variantReference: "variant0"};
+			var oChangeContent2 = {fileName: "change2", variantReference: "variant0"};
+			var oChangeContent3 = {fileName: "change3", variantReference: "variant1"};
+			var oChangeContent4 = {fileName: "change4", variantReference: "variant1"};
 
 			var oMockedWrappedContent = {
-				changes : {
-					changes : [oChangeContent0],
-					variantSection : {
-						variantManagementId : {
-							variants : [{
-								content : {
+				changes: {
+					changes: [oChangeContent0],
+					variantSection: {
+						variantManagementId: {
+							variants: [{
+								content: {
 									fileName: "variantManagementId",
 									content: {
 										title: "variant 0"
 									}
 								},
-								controlChanges : [oChangeContent1, oChangeContent2],
-								variantChanges : {}
+								controlChanges: [oChangeContent1, oChangeContent2],
+								variantChanges: {}
 							},
 								{
-									content : {
+									content: {
 										fileName: "variant1",
-										variantReference:"variant0",
+										variantReference: "variant0",
 										content: {
 											title: "variant 1"
 										}
 									},
-									controlChanges : [oChangeContent3, oChangeContent4],
-									variantChanges : {}
+									controlChanges: [oChangeContent3, oChangeContent4],
+									variantChanges: {}
 								}],
 							variantManagementChanges: {}
 						}
@@ -295,22 +295,22 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given an instance of VariantModel", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			jQuery.get("test-resources/sap/ui/fl/qunit/testResources/VariantManagementTestApp.view.xml", null,
 			function(viewContent) {
 				var MockComponent = UIComponent.extend("MockController", {
 					metadata: {
-						manifest: 	{
-							"sap.app" : {
-								applicationVersion : {
-									version : "1.2.3"
+						manifest: {
+							"sap.app": {
+								applicationVersion: {
+									version: "1.2.3"
 								}
 							}
 						}
 					},
-					createContent : function() {
+					createContent: function() {
 						var oApp = new sap.m.App(this.createId("mockapp"));
 						var oView = sap.ui.xmlview({
 							id: this.createId("mockview"),

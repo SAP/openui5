@@ -36,15 +36,15 @@ sap.ui.define([
 	QUnit.module("Given an AppVariantUtils is instantiated", {
 		beforeEach: function () {
 			var oUshellContainerStub = {
-				getService : function () {
+				getService: function () {
 					return {
-						getHash : function() {
+						getHash: function() {
 							return "testSemanticObject-testAction";
 						},
-						parseShellHash : function() {
+						parseShellHash: function() {
 							return {
-								semanticObject : "testSemanticObject",
-								action : "testAction"
+								semanticObject: "testSemanticObject",
+								action: "testAction"
 							};
 						}
 					};
@@ -314,8 +314,8 @@ sap.ui.define([
 
 		var fnCreateAppComponent = function() {
 			var oDescriptor = {
-				"sap.app" : {
-					id : "TestId",
+				"sap.app": {
+					id: "TestId",
 					applicationVersion: {
 						version: "1.2.3"
 					}
@@ -325,7 +325,7 @@ sap.ui.define([
 			var oManifest = new Manifest(oDescriptor);
 			var oAppComponent = {
 				name: "testComponent",
-				getManifest : function() {
+				getManifest: function() {
 					return oManifest;
 				}
 			};
@@ -815,9 +815,9 @@ sap.ui.define([
 			});
 
 			sandbox.stub(FlUtils, "getUshellContainer").returns({
-				getService : function() {
+				getService: function() {
 					return {
-						toExternal : function() {
+						toExternal: function() {
 							window.bUShellNavigationTriggered = true;
 						}
 					};
@@ -854,9 +854,9 @@ sap.ui.define([
 			});
 
 			sandbox.stub(FlUtils, "getUshellContainer").returns({
-				getService : function() {
+				getService: function() {
 					return {
-						toExternal : function() {
+						toExternal: function() {
 							window.bUShellNavigationTriggered = true;
 						}
 					};
@@ -908,10 +908,10 @@ sap.ui.define([
 		QUnit.test("When buildSuccessInfo() method is called for S/4HANA on Premise", function(assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 			var oGetText = sandbox.stub(AppVariantUtils, "getText");
@@ -932,10 +932,10 @@ sap.ui.define([
 		QUnit.test("When buildSuccessInfo() method is called for S/4HANA Cloud", function(assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 			var oGetText = sandbox.stub(AppVariantUtils, "getText");
@@ -956,10 +956,10 @@ sap.ui.define([
 		QUnit.test("When buildFinalSuccessInfoS4HANACloud() method is called for S/4HANA Cloud after catalog assignment finished succesfully", function(assert) {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:true,
-					isAtoAvailable:true,
-					isAtoEnabled:true,
-					isProductiveSystem:false
+					isKeyUser: true,
+					isAtoAvailable: true,
+					isAtoEnabled: true,
+					isProductiveSystem: false
 				})
 			);
 			var oGetText = sandbox.stub(AppVariantUtils, "getText");

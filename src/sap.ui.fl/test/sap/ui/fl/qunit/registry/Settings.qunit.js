@@ -151,7 +151,7 @@ sap.ui.define([
 		QUnit.test("isVersioningEnabled returns a 'true' flag if it is maintained in the settings for the passed layer", function(assert) {
 			var sLayer = Layer.CUSTOMER;
 			var oSettings = {
-				versioning : {}
+				versioning: {}
 			};
 			oSettings.versioning[sLayer] = true;
 
@@ -162,8 +162,8 @@ sap.ui.define([
 		QUnit.test("isVersioningEnabled returns a 'true' flag if it is maintained for 'ALL' layers in the settings for the passed layer", function(assert) {
 			var sLayer = Layer.CUSTOMER;
 			var oSettings = {
-				versioning : {
-					ALL : true
+				versioning: {
+					ALL: true
 				}
 			};
 
@@ -174,8 +174,8 @@ sap.ui.define([
 		QUnit.test("isVersioningEnabled returns a 'false' flag if the layer is NOT maintained in the settings for the passed layer", function(assert) {
 			var sLayer = Layer.CUSTOMER;
 			var oSettings = {
-				versioning : {
-					VENDOR : true
+				versioning: {
+					VENDOR: true
 				}
 			};
 
@@ -186,7 +186,7 @@ sap.ui.define([
 		QUnit.test("isVersioningEnabled returns a 'false' flag if NO layer is maintained in the settings for the passed layer", function(assert) {
 			var sLayer = Layer.CUSTOMER;
 			var oSettings = {
-				versioning : {}
+				versioning: {}
 			};
 
 			this.cut = new Settings(oSettings);

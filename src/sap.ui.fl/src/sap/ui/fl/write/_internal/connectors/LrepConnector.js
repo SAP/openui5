@@ -82,7 +82,7 @@ sap.ui.define([
 		} else {
 			sRoute = ROUTES.CHANGES;
 		}
-		var mParameters = mPropertyBag.transport ? {changelist : mPropertyBag.transport} : {};
+		var mParameters = mPropertyBag.transport ? {changelist: mPropertyBag.transport} : {};
 		if (mPropertyBag.skipIam) {
 			mParameters.skipIam = mPropertyBag.skipIam;
 		}

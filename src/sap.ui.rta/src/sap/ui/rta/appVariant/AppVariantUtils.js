@@ -47,8 +47,8 @@ function(
 					resolve(xhr.response);
 				} else {
 					reject({
-						status : xhr.status,
-						message : xhr.statusText
+						status: xhr.status,
+						message: xhr.statusText
 					});
 				}
 			};
@@ -344,16 +344,16 @@ function(
 
 	AppVariantUtils.getTransportInput = function(sPackageName, sNameSpace, sName, sType) {
 		return {
-			getPackage : function() {
+			getPackage: function() {
 				return sPackageName;
 			},
-			getNamespace : function() {
+			getNamespace: function() {
 				return sNameSpace;
 			},
-			getId : function() {
+			getId: function() {
 				return sName;
 			},
-			getDefinition : function() {
+			getDefinition: function() {
 				return {
 					fileType: sType
 				};
@@ -456,7 +456,7 @@ function(
 		return {
 			text: sMessage,
 			appVariantId: sAppVariantId,
-			copyId : !bIsS4HanaCloud
+			copyId: !bIsS4HanaCloud
 		};
 	};
 
@@ -530,7 +530,7 @@ function(
 
 			MessageBox.show(oInfo.text, {
 				icon: (bSuccessful || oInfo.deleteAppVariant) ? MessageBox.Icon.INFORMATION : MessageBox.Icon.ERROR,
-				onClose : fnCallback,
+				onClose: fnCallback,
 				title: sTitle,
 				actions: aActions,
 				styleClass: RtaUtils.getRtaStyleClassName()
@@ -576,7 +576,7 @@ function(
 
 	AppVariantUtils.showMessage = function(sMessageKey) {
 		var sMessage = AppVariantUtils.getText(sMessageKey);
-		var oInfo = { text: sMessage, copyId : false};
+		var oInfo = { text: sMessage, copyId: false};
 		return AppVariantUtils.showRelevantDialog(oInfo, true);
 	};
 

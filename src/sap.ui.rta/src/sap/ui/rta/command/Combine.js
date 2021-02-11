@@ -23,18 +23,18 @@ sap.ui.define([
 	 *							 changed in future.
 	 */
 	var Combine = FlexCommand.extend("sap.ui.rta.command.Combine", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				source : {
-					type : "any"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				source: {
+					type: "any"
 				},
-				combineElements : {
-					type : "any[]"
+				combineElements: {
+					type: "any[]"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 
@@ -47,9 +47,9 @@ sap.ui.define([
 			aFieldIds.push(oField.getId());
 		});
 		var mSpecificInfo = {
-			changeType : this.getChangeType(),
-			sourceControlId : this.getSource().getId(),
-			combineElementIds : aFieldIds
+			changeType: this.getChangeType(),
+			sourceControlId: this.getSource().getId(),
+			combineElementIds: aFieldIds
 		};
 		return mSpecificInfo;
 	};

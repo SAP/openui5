@@ -119,7 +119,7 @@ sap.ui.define([
 		 * @param {string} [mPropertyBag.dataType] Expected data type of the response
 		 * @returns {Promise<object>} Promise resolving with the JSON parsed response of the request
 		 */
-		sendRequest:function (sUrl, sMethod, mPropertyBag) {
+		sendRequest: function (sUrl, sMethod, mPropertyBag) {
 			if (
 				!mPropertyBag.initialConnector
 				|| (

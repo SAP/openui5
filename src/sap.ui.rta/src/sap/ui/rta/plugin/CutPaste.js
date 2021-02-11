@@ -38,20 +38,20 @@ function(
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var CutPaste = ControlCutPaste.extend("sap.ui.rta.plugin.CutPaste", /** @lends sap.ui.rta.plugin.CutPaste.prototype */ {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				commandFactory : {
-					type : "object",
-					multiple : false
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				commandFactory: {
+					type: "object",
+					multiple: false
 				}
 			},
-			events : {
-				dragStarted : {},
+			events: {
+				dragStarted: {},
 
-				elementModified : {
-					command : {
-						type : "sap.ui.rta.command.BaseCommand"
+				elementModified: {
+					command: {
+						type: "sap.ui.rta.command.BaseCommand"
 					}
 				}
 			}
@@ -143,7 +143,7 @@ function(
 			}.bind(this))
 			.then(function(oMoveCommand) {
 				this.fireElementModified({
-					command : oMoveCommand
+					command: oMoveCommand
 				});
 				this.stopCutAndPaste();
 			}.bind(this))

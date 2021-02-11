@@ -37,27 +37,27 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var FlexCommand = BaseCommand.extend("sap.ui.rta.command.FlexCommand", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				changeType : {
-					type : "string"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				changeType: {
+					type: "string"
 				},
 				/**
 				 * Change can only be applied on js, other modifiers like xml will not work
 				 */
-				jsOnly : {
-					type : "boolean"
+				jsOnly: {
+					type: "boolean"
 				},
 				/**
 				 * selector object containing id, appComponent and controlType to create a command for an element, which is not instantiated
 				 */
-				selector : {
-					type : "object"
+				selector: {
+					type: "object"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 
@@ -143,7 +143,7 @@ sap.ui.define([
 	FlexCommand.prototype._getChangeSpecificData = function() {
 		var mProperties = this.getMetadata().getProperties();
 		var mChangeSpecificData = {
-			changeType : this.getChangeType()
+			changeType: this.getChangeType()
 		};
 		objectValues(mProperties)
 			.filter(function (oProperty) {

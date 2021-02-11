@@ -79,18 +79,18 @@ sap.ui.define([
 
 		QUnit.test("on LRep content received", function(assert) {
 			var oModelData = {
-				fileType : "json"
+				fileType: "json"
 			};
 			var oData = {};
 			var oPage = {
-				setBusy : function () {}
+				setBusy: function () {}
 			};
 			var sContentSuffix = "pathtothefile";
 			var oStubbedFormatData = sandbox.stub(DataUtils, "formatData");
 			var oStubbedGetContent = sandbox.stub(LRepConnector, "getContent").returns(Promise.resolve());
 			var oStubbedSetBusy = sandbox.stub(oPage, "setBusy");
 			oController.oSelectedContentModel = {
-				setData : function() {}
+				setData: function() {}
 			};
 
 			return oController._onContentReceived(oModelData, oPage, sContentSuffix, oData).then(
@@ -119,13 +119,13 @@ sap.ui.define([
 					return {
 						getData: function () {
 							return {
-								fileName : "fileName",
-								fileType : "fileType",
-								namespace : "namespace",
-								data : "content",
-								metadata : [{
-									name : "layer",
-									value : Layer.USER
+								fileName: "fileName",
+								fileType: "fileType",
+								namespace: "namespace",
+								data: "content",
+								metadata: [{
+									name: "layer",
+									value: Layer.USER
 								}]
 							};
 						}
@@ -152,13 +152,13 @@ sap.ui.define([
 					return {
 						getData: function () {
 							return {
-								fileName : "fileName",
-								fileType : "fileType",
-								namespace : "namespace",
-								data : "content",
-								metadata : [{
-									name : "layer",
-									value : "LOAD"
+								fileName: "fileName",
+								fileType: "fileType",
+								namespace: "namespace",
+								data: "content",
+								metadata: [{
+									name: "layer",
+									value: "LOAD"
 								}]
 							};
 						}
@@ -186,16 +186,16 @@ sap.ui.define([
 						getData: function () {
 							return {
 								data: "{packageName: \"$TMP\"}",
-								fileName : "fileName",
-								fileType : "fileType",
-								namespace : "namespace",
-								layer : "All",
-								metadata : [{
-									name : "layer",
-									value : Layer.CUSTOMER
+								fileName: "fileName",
+								fileType: "fileType",
+								namespace: "namespace",
+								layer: "All",
+								metadata: [{
+									name: "layer",
+									value: Layer.CUSTOMER
 								}, {
-									name : "transportId",
-									value : "ATO_NOTIFICATION"
+									name: "transportId",
+									value: "ATO_NOTIFICATION"
 								}]
 							};
 						}
@@ -223,13 +223,13 @@ sap.ui.define([
 						getData: function () {
 							return {
 								data: "{packageName: \"\"}",
-								fileName : "fileName",
-								fileType : "fileType",
-								namespace : "namespace",
-								layer : "All",
-								metadata : [{
-									name : "layer",
-									value : Layer.VENDOR
+								fileName: "fileName",
+								fileType: "fileType",
+								namespace: "namespace",
+								layer: "All",
+								metadata: [{
+									name: "layer",
+									value: Layer.VENDOR
 								}]
 							};
 						}
@@ -257,16 +257,16 @@ sap.ui.define([
 						getData: function () {
 							return {
 								data: "{packageName: \"package\"}",
-								fileName : "fileName",
-								fileType : "fileType",
-								namespace : "namespace",
-								layer : "All",
-								metadata : [{
-									name : "layer",
-									value : Layer.VENDOR
+								fileName: "fileName",
+								fileType: "fileType",
+								namespace: "namespace",
+								layer: "All",
+								metadata: [{
+									name: "layer",
+									value: Layer.VENDOR
 								}, {
-									name : "transportId",
-									value : "transportId"
+									name: "transportId",
+									value: "transportId"
 								}]
 							};
 						}
@@ -297,10 +297,10 @@ sap.ui.define([
 					return {
 						getData: function () {
 							return {
-								layer : Layer.VENDOR,
-								fileName : "fileName",
-								fileType : "fileType",
-								namespace : "namespace"
+								layer: Layer.VENDOR,
+								fileName: "fileName",
+								fileType: "fileType",
+								namespace: "namespace"
 							};
 						}
 					};

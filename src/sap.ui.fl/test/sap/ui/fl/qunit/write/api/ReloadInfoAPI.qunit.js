@@ -230,13 +230,13 @@ sap.ui.define([
 	QUnit.module("Given that getReloadMethod is called in FLP", {
 		beforeEach: function() {
 			this.oRELOAD = {
-				NOT_NEEDED : "NO_RELOAD",
-				RELOAD_PAGE : "HARD_RELOAD",
-				VIA_HASH : "CROSS_APP_NAVIGATION"
+				NOT_NEEDED: "NO_RELOAD",
+				RELOAD_PAGE: "HARD_RELOAD",
+				VIA_HASH: "CROSS_APP_NAVIGATION"
 			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(true);
 		},
-		afterEach : function () {
+		afterEach: function () {
 			sandbox.restore();
 		}
 	}, function () {
@@ -440,13 +440,13 @@ sap.ui.define([
 	QUnit.module("Given that initialDraftGotActivated is called", {
 		beforeEach: function() {
 			this.oRELOAD = {
-				NOT_NEEDED : "NO_RELOAD",
-				RELOAD_PAGE : "HARD_RELOAD",
-				VIA_HASH : "CROSS_APP_NAVIGATION"
+				NOT_NEEDED: "NO_RELOAD",
+				RELOAD_PAGE: "HARD_RELOAD",
+				VIA_HASH: "CROSS_APP_NAVIGATION"
 			};
 			sandbox.stub(FlexUtils, "getUshellContainer").returns(false);
 		},
-		afterEach : function () {
+		afterEach: function () {
 			sandbox.restore();
 		}
 	}, function () {

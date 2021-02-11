@@ -46,10 +46,10 @@ sap.ui.define([
 			sandbox.stub(oManageAppsController, "getView").returns(oViewStub);
 
 			var fnSimulatedOwnerComponent = {
-				getIdRunningApp : function() {
+				getIdRunningApp: function() {
 					return "id1";
 				},
-				getIsOverviewForKeyUser : function() {
+				getIsOverviewForKeyUser: function() {
 					return true;
 				},
 				getLayer: function() {
@@ -63,37 +63,37 @@ sap.ui.define([
 
 			var aAppVariantOverviewAttributes = [
 				{
-					appId : "id1",
-					title : "title1",
-					subTitle : "subTitle1",
-					description : "description1",
-					icon : "sap-icon://history",
-					originalId : "id1",
-					isOriginal : true,
-					typeOfApp : "Original App",
-					descriptorUrl : "url1"
+					appId: "id1",
+					title: "title1",
+					subTitle: "subTitle1",
+					description: "description1",
+					icon: "sap-icon://history",
+					originalId: "id1",
+					isOriginal: true,
+					typeOfApp: "Original App",
+					descriptorUrl: "url1"
 				},
 				{
-					appId : "id2",
-					title : "title2",
-					subTitle : "subTitle2",
-					description : "description2",
-					icon : "sap-icon://history",
-					originalId : "id1",
-					isOriginal : false,
-					typeOfApp : "App Variant",
-					descriptorUrl : "url2"
+					appId: "id2",
+					title: "title2",
+					subTitle: "subTitle2",
+					description: "description2",
+					icon: "sap-icon://history",
+					originalId: "id1",
+					isOriginal: false,
+					typeOfApp: "App Variant",
+					descriptorUrl: "url2"
 				},
 				{
-					appId : "id3",
-					title : "title3",
-					subTitle : "subTitle3",
-					description : "description3",
-					icon : "sap-icon://history",
-					originalId : "id1",
-					isOriginal : false,
-					typeOfApp : "App Variant",
-					descriptorUrl : "url3"
+					appId: "id3",
+					title: "title3",
+					subTitle: "subTitle3",
+					description: "description3",
+					icon: "sap-icon://history",
+					originalId: "id1",
+					isOriginal: false,
+					typeOfApp: "App Variant",
+					descriptorUrl: "url3"
 				}
 			];
 
@@ -112,10 +112,10 @@ sap.ui.define([
 			sandbox.stub(oManageAppsController, "getView").returns(oViewStub);
 
 			var fnSimulatedOwnerComponent = {
-				getIdRunningApp : function() {
+				getIdRunningApp: function() {
 					return "id1";
 				},
-				getIsOverviewForKeyUser : function() {
+				getIsOverviewForKeyUser: function() {
 					return true;
 				},
 				getLayer: function() {
@@ -148,10 +148,10 @@ sap.ui.define([
 			sandbox.stub(oManageAppsController, "getView").returns(oViewStub);
 
 			var fnSimulatedOwnerComponent = {
-				getIdRunningApp : function() {
+				getIdRunningApp: function() {
 					return "id1";
 				},
-				getIsOverviewForKeyUser : function() {
+				getIsOverviewForKeyUser: function() {
 					return true;
 				},
 				getLayer: function() {
@@ -186,24 +186,24 @@ sap.ui.define([
 			modelPropertySpy.onFirstCall().returns("descriptorUrl");
 
 			var oButton = {
-				getBindingContext : function() {
+				getBindingContext: function() {
 					return {
-						sPath : "/appVariants/0"
+						sPath: "/appVariants/0"
 					};
 				}
 			};
 
 			var oEmptyEvent = new Event("emptyEventId", oButton, {
-				button : oButton
+				button: oButton
 			});
 
 			var oResult = {
 				response: {
-					"sap.app" : {
-						id : "testId"
+					"sap.app": {
+						id: "testId"
 					},
-					"sap.ui5" : {
-						componentName : "id1"
+					"sap.ui5": {
+						componentName: "id1"
 					}
 				}
 			};
@@ -226,15 +226,15 @@ sap.ui.define([
 			modelPropertySpy.onFirstCall().returns("Idcopied");
 
 			var oButton = {
-				getBindingContext : function() {
+				getBindingContext: function() {
 					return {
-						sPath : "/appVariants/0"
+						sPath: "/appVariants/0"
 					};
 				}
 			};
 
 			var oEmptyEvent = new Event("emptyEventId", oButton, {
-				button : oButton
+				button: oButton
 			});
 
 
@@ -251,15 +251,15 @@ sap.ui.define([
 			modelPropertySpy.onThirdCall().returns(undefined);
 
 			var oButton = {
-				getBindingContext : function() {
+				getBindingContext: function() {
 					return {
-						sPath : "/appVariants/0"
+						sPath: "/appVariants/0"
 					};
 				}
 			};
 
 			var oEmptyEvent = new Event("emptyEventId", oButton, {
-				button : oButton
+				button: oButton
 			});
 
 
@@ -277,7 +277,7 @@ sap.ui.define([
 			var oManageAppsController = new ManageAppsController();
 
 			var oEmptyEvent = new Event("emptyEventId", new sap.m.Menu(), {
-				item : new sap.m.MenuItem({text: "Copy ID"})
+				item: new sap.m.MenuItem({text: "Copy ID"})
 			});
 
 			var fnCopyID = sandbox.stub(oManageAppsController, "copyId");
@@ -290,7 +290,7 @@ sap.ui.define([
 			var oManageAppsController = new ManageAppsController();
 
 			var oEmptyEvent = new Event("emptyEventId", new sap.m.Menu(), {
-				item : new sap.m.MenuItem({text: "Save As"})
+				item: new sap.m.MenuItem({text: "Save As"})
 			});
 
 			var fnSaveAsAppVariant = sandbox.stub(oManageAppsController, "saveAsAppVariant");
@@ -303,7 +303,7 @@ sap.ui.define([
 			var oManageAppsController = new ManageAppsController();
 
 			var oEmptyEvent = new Event("emptyEventId", new sap.m.Menu(), {
-				item : new sap.m.MenuItem({text: "Adapt UI"})
+				item: new sap.m.MenuItem({text: "Adapt UI"})
 			});
 
 			var fnHandleUiAdaptation = sandbox.stub(oManageAppsController, "handleUiAdaptation");
@@ -316,7 +316,7 @@ sap.ui.define([
 			var oManageAppsController = new ManageAppsController();
 
 			var oEmptyEvent = new Event("emptyEventId", new sap.m.Menu(), {
-				item : new sap.m.MenuItem({text: "Delete App Variant"})
+				item: new sap.m.MenuItem({text: "Delete App Variant"})
 			});
 
 			var fnDeleteAppVariant = sandbox.stub(oManageAppsController, "deleteAppVariant");
@@ -358,10 +358,10 @@ sap.ui.define([
 			// this overrides the ushell globally => we need to restore it!
 
 			sap.ushell = Object.assign({}, sap.ushell, {
-				Container : {
+				Container: {
 					getService: function () {
 						return {
-							toExternal : function() {
+							toExternal: function() {
 								window.bUShellNavigationTriggered = true;
 							}
 						};
@@ -383,19 +383,19 @@ sap.ui.define([
 			modelPropertySpy.onFirstCall().returns("SemObj");
 			modelPropertySpy.onSecondCall().returns("Action");
 			modelPropertySpy.onThirdCall().returns({
-				saveAs : "customer.id"
+				saveAs: "customer.id"
 			});
 
 			var oButton = {
-				getBindingContext : function() {
+				getBindingContext: function() {
 					return {
-						sPath : "/appVariants/0"
+						sPath: "/appVariants/0"
 					};
 				}
 			};
 
 			var oEmptyEvent = new Event("emptyEventId", oButton, {
-				button : oButton
+				button: oButton
 			});
 
 			oManageAppsController.handleUiAdaptation(oEmptyEvent);

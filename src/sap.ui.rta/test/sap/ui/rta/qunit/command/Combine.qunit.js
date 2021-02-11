@@ -56,9 +56,9 @@ function (
 				},
 				getManifest: function () {
 					return {
-						"sap.app" : {
-							applicationVersion : {
-								version : "1.2.3"
+						"sap.app": {
+							applicationVersion: {
+								version: "1.2.3"
 							}
 						}
 					};
@@ -76,7 +76,7 @@ function (
 			this.oButton2 = new Button("button2");
 
 			this.oPanel = new Panel("panel", {
-				content : [this.oButton1, this.oButton2]
+				content: [this.oButton1, this.oButton2]
 			});
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
@@ -86,7 +86,7 @@ function (
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Panel": {
-					combineStuff : {
+					combineStuff: {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						applyChange: this.fnApplyChangeSpy,
 						revertChange: function() {}
@@ -105,12 +105,12 @@ function (
 			sandbox.stub(oOverlay, "getRelevantContainer").returns(this.oPanel);
 
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						combine : {
+				data: {
+					actions: {
+						combine: {
 							changeType: "combineStuff",
-							changeOnRelevantContainer : true,
-							isEnabled : true
+							changeOnRelevantContainer: true,
+							isEnabled: true
 						}
 					},
 					getRelevantContainer: function() {
@@ -120,8 +120,8 @@ function (
 			});
 
 			return CommandFactory.getCommandFor(this.oButton1, "combine", {
-				source : this.oButton1,
-				combineElements : [
+				source: this.oButton1,
+				combineElements: [
 					this.oButton1,
 					this.oButton2
 				]
@@ -144,7 +144,7 @@ function (
 	});
 
 	QUnit.module("Given a command factory and a bound control containing a template binding", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var oMockedAppComponent = {
 				getLocalId: sandbox.stub(),
 				getManifestObject: sandbox.stub(),
@@ -158,16 +158,16 @@ function (
 				},
 				getManifest: function () {
 					return {
-						"sap.app" : {
+						"sap.app": {
 							type: "application",
-							applicationVersion : {
-								version : "1.2.3"
+							applicationVersion: {
+								version: "1.2.3"
 							}
 						}
 					};
 				},
 				getModel: function () {},
-				createId : function(sId) {
+				createId: function(sId) {
 					return 'testcomponent---' + sId;
 				}
 			};
@@ -178,22 +178,22 @@ function (
 
 			var aTexts = [{text1: "Text 1", text2: "More Text 1"}, {text1: "Text 2", text2: "More Text 2"}, {text1: "Text 3", text2: "More Text 3"}];
 			var oModel = new JSONModel({
-				texts : aTexts
+				texts: aTexts
 			});
 
 			this.oItemTemplate = new CustomListItem("item", {
-				content : new VBox("vbox", {
-					items : [
-						new Text("text1", {text : "{text1}"}),
-						new Text("text2", {text : "{text2}"})
+				content: new VBox("vbox", {
+					items: [
+						new Text("text1", {text: "{text1}"}),
+						new Text("text2", {text: "{text2}"})
 					]
 				})
 			});
 			this.oList = new List("list", {
-				items : {
-					path : "/texts",
-					template : this.oItemTemplate,
-					templateShareable : true
+				items: {
+					path: "/texts",
+					template: this.oItemTemplate,
+					templateShareable: true
 				}
 			}).setModel(oModel);
 
@@ -205,7 +205,7 @@ function (
 			this.oText2 = this.oList.getItems()[1].getContent()[0].getItems()[1];
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oList]
+				rootElements: [this.oList]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -217,14 +217,14 @@ function (
 			}.bind(this));
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.removeRegistryItem({controlType : "sap.m.Text"});
+			oChangeRegistry.removeRegistryItem({controlType: "sap.m.Text"});
 
 			this.fnApplyChangeSpy = sinon.spy();
 			this.fnCompleteChangeContentSpy = sinon.spy();
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.m.Text": {
-					combineStuff : {
+					combineStuff: {
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						applyChange: this.fnApplyChangeSpy,
 						revertChange: function() {}
@@ -232,7 +232,7 @@ function (
 				}
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oFlUtilsStub.restore();
 			this.oList.destroy();
@@ -245,12 +245,12 @@ function (
 			sandbox.stub(FlexCommand.prototype, "prepare").returns(true);
 
 			var oDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						combine : {
+				data: {
+					actions: {
+						combine: {
 							changeType: "combineStuff",
-							changeOnRelevantContainer : true,
-							isEnabled : true
+							changeOnRelevantContainer: true,
+							isEnabled: true
 						}
 					},
 					getRelevantContainer: function() {
@@ -260,8 +260,8 @@ function (
 			});
 
 			return CommandFactory.getCommandFor(this.oText1, "combine", {
-				source : this.oText2,
-				combineElements : [
+				source: this.oText2,
+				combineElements: [
 					this.oText1,
 					this.oText2
 				]

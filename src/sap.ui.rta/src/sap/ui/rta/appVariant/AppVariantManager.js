@@ -31,10 +31,10 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var AppVariantManager = ManagedObject.extend("sap.ui.rta.appVariant.AppVariantManager", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				commandSerializer : {
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				commandSerializer: {
 					type: "object" // has to be of type sap.ui.rta.command.LrepSerializer
 				},
 				layer: {

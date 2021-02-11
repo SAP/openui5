@@ -78,7 +78,7 @@ function(
 		 * @returns {boolean} true if provided layer is customer dependent layer else false
 		 * @public
 		 */
-		isCustomerDependentLayer : function(sLayerName) {
+		isCustomerDependentLayer: function(sLayerName) {
 			return ([Layer.PUBLIC, Layer.CUSTOMER, Layer.CUSTOMER_BASE].indexOf(sLayerName) > -1);
 		},
 

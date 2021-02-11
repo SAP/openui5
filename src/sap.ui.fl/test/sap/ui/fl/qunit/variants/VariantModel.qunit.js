@@ -1479,7 +1479,7 @@ sap.ui.define([
 				}
 			};
 			var sUserName = "testUser";
-			var oResponse = {response : [{fileName: sCopyVariantName, support: {user: sUserName}}]};
+			var oResponse = {response: [{fileName: sCopyVariantName, support: {user: sUserName}}]};
 			this.oModel.getData()[sVMReference].modified = true;
 
 			sandbox.stub(this.oModel, "getLocalId").returns(sVMReference);
@@ -1798,7 +1798,7 @@ sap.ui.define([
 				generator: "myFancyGenerator"
 			};
 			var sUserName = "testUser";
-			var oResponse = {response : [{fileName: sCopyVariantName, support: {user: sUserName}}]};
+			var oResponse = {response: [{fileName: sCopyVariantName, support: {user: sUserName}}]};
 			this.oModel.getData()[sVMReference].modified = true;
 			this.oModel._bDesignTimeMode = true;
 

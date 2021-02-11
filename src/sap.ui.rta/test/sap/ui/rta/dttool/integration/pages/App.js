@@ -20,9 +20,9 @@ sap.ui.define([
 	"use strict";
 
 	Opa5.createPageObjects({
-		onTheAppView : {
-			baseClass : Common,
-			actions : {
+		onTheAppView: {
+			baseClass: Common,
+			actions: {
 				thePaletteIsLoaded: function () {
 					return this.waitFor({
 						id: "palette",
@@ -53,12 +53,12 @@ sap.ui.define([
 						}.bind(this)
 					});
 				},
-				iClickTheAddControlButton : function () {
+				iClickTheAddControlButton: function () {
 					return this.waitFor({
-						id : "addControlButton",
-						viewName : "App",
-						actions : new Press(),
-						errorMessage : "Couldn't find control with id addControlButton"
+						id: "addControlButton",
+						viewName: "App",
+						actions: new Press(),
+						errorMessage: "Couldn't find control with id addControlButton"
 					});
 				},
 
@@ -66,7 +66,7 @@ sap.ui.define([
 				Use this when you want to test to change Properties which have a Switch as Control
 				iIndex is the element in the Dropdown
 				 */
-				iClickTheSwitchForThePassedPropertyNameAndClickThePassedIndex : function(sProperty, iIndex) {
+				iClickTheSwitchForThePassedPropertyNameAndClickThePassedIndex: function(sProperty, iIndex) {
 					return this.waitFor({
 						controlType: "sap.ui.rta.dttool.controls.DTToolListItem",
 						matchers: [
@@ -77,7 +77,7 @@ sap.ui.define([
 						actions: function(oControl) {
 							return new Press().executeOn(oControl.getContent()[0]);
 						},
-						success : function (oControl) {
+						success: function (oControl) {
 							return this.waitFor({
 								actions: function() {
 									return new Press().executeOn(oControl[0].getContent()[0].getItems()[iIndex]);
@@ -88,62 +88,62 @@ sap.ui.define([
 					});
 				},
 
-				iClickOnControlWithId : function (id) {
+				iClickOnControlWithId: function (id) {
 					return this.waitFor({
-						id : id,
-						viewName : "App",
-						actions : new Press(),
-						errorMessage : "Couldn't find control with id " + id
+						id: id,
+						viewName: "App",
+						actions: new Press(),
+						errorMessage: "Couldn't find control with id " + id
 					});
 				},
-				iEnterAModulePathIntoTheInput : function (sModulePath) {
+				iEnterAModulePathIntoTheInput: function (sModulePath) {
 					return this.waitFor({
-						id : "addDialogInput",
-						actions : new EnterText({
-							text : sModulePath
+						id: "addDialogInput",
+						actions: new EnterText({
+							text: sModulePath
 						}),
-						errorMessage : "Couldn't find control with id addDialogInput"
+						errorMessage: "Couldn't find control with id addDialogInput"
 					});
 				},
-				iPressTheAddButton : function () {
+				iPressTheAddButton: function () {
 					return this.waitFor({
-						id : "addControlButton",
-						actions : new Press(),
-						errorMessage : "Couldn't find control with id addControlButton"
+						id: "addControlButton",
+						actions: new Press(),
+						errorMessage: "Couldn't find control with id addControlButton"
 					});
 				},
-				iExpandTheOutlineByNLevels : function (iLevels, aLengths, aIndexes) {
+				iExpandTheOutlineByNLevels: function (iLevels, aLengths, aIndexes) {
 					return this.waitFor({
-						id : "Tree",
-						viewName : "App",
-						matchers : function (oTree) {
+						id: "Tree",
+						viewName: "App",
+						matchers: function (oTree) {
 							return oTree.getAggregation("items").length >= aLengths.shift() || 0;
 						},
 						// new AggregationLengthEquals({
 						// 	name : "items",
 						// 	length : aLengths.shift()
 						// }),
-						success : function (oTree) {
+						success: function (oTree) {
 							if (iLevels > 0) {
 								oTree.onItemExpanderPressed(oTree.getItems()[aIndexes.shift()], true);
 								this.and.iExpandTheOutlineByNLevels(iLevels - 1, aLengths, aIndexes);
 							}
 						},
-						errorMessage : "Couldn't find control with id Tree"
+						errorMessage: "Couldn't find control with id Tree"
 					});
 				},
-				iChangeTheHashToTheSwitchSample : function () {
+				iChangeTheHashToTheSwitchSample: function () {
 					return this.waitFor({
-						success : function () {
+						success: function () {
 							Opa5.getHashChanger().setHash("/sample/sap.m.sample.Switch");
 						}
 					});
 				},
-				iSelectTheNthTreeItem : function (iIndex) {
+				iSelectTheNthTreeItem: function (iIndex) {
 					return this.waitFor({
-						id : "__item0-__component0---app--Tree-" + iIndex,
-						actions : new Press(),
-						errorMessage : "Couldn't find control with id __item0-__component0---app--Tree-" + iIndex
+						id: "__item0-__component0---app--Tree-" + iIndex,
+						actions: new Press(),
+						errorMessage: "Couldn't find control with id __item0-__component0---app--Tree-" + iIndex
 					});
 				},
 				iCollapseTheTree: function () {
@@ -162,20 +162,20 @@ sap.ui.define([
 				iNavigateToTheSampleTestApp: function () {
 					Opa5.getHashChanger().setHash("/sample/sap.ui.rta.dttool.sample");
 					return this.waitFor({
-						success : function () {}
+						success: function () {}
 					});
 				},
 				iSelectAnItemFromThePalette: function (numberOfGroups) {
 					return this.waitFor({
-						id : "palette",
-						viewName : "App",
-						matchers : function (oPalette) {
+						id: "palette",
+						viewName: "App",
+						matchers: function (oPalette) {
 							return oPalette.getItems().length >= numberOfGroups;
 						},
 						success: function (oPalette) {
 							oPalette.getItems()[0].getContent()[0].setExpanded(true);
 						},
-						errorMessage : "Couldn't find Switch in palette"
+						errorMessage: "Couldn't find Switch in palette"
 					});
 				},
 				iStartDragging: function () {
@@ -236,7 +236,7 @@ sap.ui.define([
 							oTargetOverlay.$().trigger("dragover");
 							oOverlayToDrag.$().trigger("dragend");
 						},
-						errorMessage : "Couldn't drag inside the iframe"
+						errorMessage: "Couldn't drag inside the iframe"
 					});
 				},
 				iRemoveAnElement: function () {
@@ -244,18 +244,18 @@ sap.ui.define([
 				},
 				iUndoTheLastChange: function () {
 					return this.waitFor({
-						id : "undo",
+						id: "undo",
 						viewName: "App",
-						actions : new Press(),
-						errorMessage : "Couldn't find the button to undo changes."
+						actions: new Press(),
+						errorMessage: "Couldn't find the button to undo changes."
 					});
 				},
 				iStopRta: function () {
 					return this.waitFor({
-						id : "stopRTA-button",
+						id: "stopRTA-button",
 						viewName: "App",
-						actions : new Press(),
-						errorMessage : "Couldn't find the button to stop RTA."
+						actions: new Press(),
+						errorMessage: "Couldn't find the button to stop RTA."
 					});
 				},
 				iCleanupLocalChanges: function () {
@@ -277,7 +277,7 @@ sap.ui.define([
 					});
 				}
 			},
-			assertions : {
+			assertions: {
 				thePassedPropertyShouldBeDisplayedInPropertyPanel: function(sProperty) {
 					return this.waitFor({
 						controlType: "sap.ui.rta.dttool.controls.DTToolListItem",
@@ -310,51 +310,51 @@ sap.ui.define([
 						}
 					});
 				},
-				theSampleSelectShouldBeShown : function () {
+				theSampleSelectShouldBeShown: function () {
 					return this.waitFor({
-						id : "__component0---app--sampleInput",
-						viewName : "App",
-						success : function () {
+						id: "__component0---app--sampleInput",
+						viewName: "App",
+						success: function () {
 							Opa5.assert.ok(true, "sampleInput is displayed");
 						},
-						errorMessage : "Couldn't find control with id sampleInput"
+						errorMessage: "Couldn't find control with id sampleInput"
 					});
 				},
-				thePropertyPanelToolbarShouldDisplayTheCorrectLabel : function (sControlName) {
+				thePropertyPanelToolbarShouldDisplayTheCorrectLabel: function (sControlName) {
 					return this.waitFor({
-						id : "__title5",
-						matchers : function(oTitle) {
+						id: "__title5",
+						matchers: function(oTitle) {
 							return oTitle.getText().indexOf(sControlName) >= 0;
 						},
-						success : function () {
+						success: function () {
 							Opa5.assert.ok(true, "Selected control displays the correct title: " + sControlName);
 						},
-						errorMessage : sControlName + " is not part of the property panel title"
+						errorMessage: sControlName + " is not part of the property panel title"
 					});
 				},
-				thePaletteShouldHaveTheGivenNumberOfGroups : function (iNumberOfPaletteGroups) {
+				thePaletteShouldHaveTheGivenNumberOfGroups: function (iNumberOfPaletteGroups) {
 					return this.waitFor({
-						id : "palette",
-						viewName : "App",
-						matchers : new AggregationLengthEquals({
-							name : "items",
-							length : iNumberOfPaletteGroups
+						id: "palette",
+						viewName: "App",
+						matchers: new AggregationLengthEquals({
+							name: "items",
+							length: iNumberOfPaletteGroups
 						}),
-						success : function () {
+						success: function () {
 							Opa5.assert.ok(true, "Palette has " + iNumberOfPaletteGroups + " groups.");
 						},
-						errorMessage : "Couldn't find control with id palette"
+						errorMessage: "Couldn't find control with id palette"
 					});
 				},
-				theControlWasAddedToThePalette : function () {
+				theControlWasAddedToThePalette: function () {
 					return this.waitFor({
-						id : "palette",
-						viewName : "App",
-						matchers : new AggregationLengthEquals({
-							name : "items",
-							length : 8
+						id: "palette",
+						viewName: "App",
+						matchers: new AggregationLengthEquals({
+							name: "items",
+							length: 8
 						}),
-						success : function (oPalette) {
+						success: function (oPalette) {
 							var bControlAdded = oPalette.getItems().some(function (oItem) {
 								if (oItem.getContent()[0].getHeaderToolbar().getContent()[0].getText() === "action") {
 									return oItem.getContent()[0].getContent()[0].getItems().some(function (oItem) {
@@ -367,43 +367,43 @@ sap.ui.define([
 
 							Opa5.assert.ok(bControlAdded, "Control was added to the palette.");
 						},
-						errorMessage : "Couldn't find control with id palette"
+						errorMessage: "Couldn't find control with id palette"
 					});
 				},
-				theHashWasChanged : function () {
+				theHashWasChanged: function () {
 					return this.waitFor({
-						id : "Tree",
-						viewName : "App",
-						success : function () {
+						id: "Tree",
+						viewName: "App",
+						success: function () {
 							Opa5.assert.ok(true, "Hash has changed.");
 						}
 					});
 				},
-				theCorrectOverlayIsSelected : function (sId) {
+				theCorrectOverlayIsSelected: function (sId) {
 					return this.waitFor({
 						id: "theIFrame",
 						viewName: "App",
-						matchers : function() {
+						matchers: function() {
 							var oElement = jQuery("#__component0---app--theIFrame").contents().find("#" + sId);
 							return oElement.hasClass("sapUiDtOverlaySelected");
 						},
-						success : function () {
+						success: function () {
 							Opa5.assert.ok(true, sId + " has Class sapUiDtOverlaySelected (is selected)");
 						},
-						errorMessage : sId + " doesn't have Class sapUiDtOverlaySelected (is not selected)"
+						errorMessage: sId + " doesn't have Class sapUiDtOverlaySelected (is not selected)"
 					});
 				},
 				theNewElementShouldBeDisplayedInTheOutline: function () {
 					return this.waitFor({
-						id : "Tree",
-						viewName : "App",
-						matchers : function (oTree) {
+						id: "Tree",
+						viewName: "App",
+						matchers: function (oTree) {
 							return oTree.getAggregation("items")[9].getContent()[0].getItems()[1].getProperty("text") === "sap.m.Button";
 						},
-						success : function () {
+						success: function () {
 							Opa5.assert.ok(true, "The new item ist displayed in the outline.");
 						},
-						errorMessage : "Couldn't find new item in the outline."
+						errorMessage: "Couldn't find new item in the outline."
 					});
 				},
 				theElementShouldBeRemoved: function () {
@@ -477,28 +477,28 @@ sap.ui.define([
 				},
 				theUndoStateShouldBeCorrect: function (bUndoShouldBeEnabled) {
 					return this.waitFor({
-						id : "undo",
-						viewName : "App",
-						matchers : function (undoBtn) {
+						id: "undo",
+						viewName: "App",
+						matchers: function (undoBtn) {
 							return undoBtn.getEnabled() === bUndoShouldBeEnabled;
 						},
-						success : function () {
+						success: function () {
 							Opa5.assert.ok(true, "Undo is " + (bUndoShouldBeEnabled ? "" : "not ") + "possible.");
 						},
-						errorMessage : "The undo button should be " + (bUndoShouldBeEnabled ? "enabled" : "disabled")
+						errorMessage: "The undo button should be " + (bUndoShouldBeEnabled ? "enabled" : "disabled")
 					});
 				},
 				theRedoStateShouldBeCorrect: function (bRedoShouldBeEnabled) {
 					return this.waitFor({
-						id : "redo",
-						viewName : "App",
-						matchers : function (redoBtn) {
+						id: "redo",
+						viewName: "App",
+						matchers: function (redoBtn) {
 							return redoBtn.getEnabled() === bRedoShouldBeEnabled;
 						},
-						success : function () {
+						success: function () {
 							Opa5.assert.ok(true, "Redo is " + (bRedoShouldBeEnabled ? "" : "not ") + "possible.");
 						},
-						errorMessage : "The redo button should be " + (bRedoShouldBeEnabled ? "enabled" : "disabled")
+						errorMessage: "The redo button should be " + (bRedoShouldBeEnabled ? "enabled" : "disabled")
 					});
 				},
 				theAppShouldContainNChanges: function (n) {

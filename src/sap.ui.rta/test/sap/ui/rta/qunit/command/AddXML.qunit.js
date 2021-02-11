@@ -50,15 +50,15 @@ function (
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
 		},
 		getModel: function () {},
-		createId : function(sId) {
+		createId: function(sId) {
 			return 'testcomponent---' + sId;
 		}
 	};
@@ -70,11 +70,11 @@ function (
 	});
 
 	QUnit.module("Given an AddXML command with a valid entry in the change registry,", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oButton.destroy();
 			sandbox.restore();
 		}
@@ -115,7 +115,7 @@ function (
 				return oCommandFactory.getCommandFor(this.oButton, "addXML", {
 					fragmentPath: "pathToFragment",
 					fragment: sFragment,
-					targetAggregation : "targetAggregation",
+					targetAggregation: "targetAggregation",
 					index: 0
 				});
 			}.bind(this))
@@ -186,10 +186,10 @@ function (
 				targetAggregation: "targetAggregation",
 				index: 0
 			}, new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						addXML : {
-							jsOnly : true
+				data: {
+					actions: {
+						addXML: {
+							jsOnly: true
 						}
 					}
 				}
@@ -207,38 +207,38 @@ function (
 	});
 
 	QUnit.module("Given an AddXML command for a bound control,", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			sandbox.stub(LayerUtils, "getCurrentLayer").returns(Layer.VENDOR);
 
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
 			var oModel = new JSONModel({
-				texts : aTexts
+				texts: aTexts
 			});
 
 			this.oItemTemplate = new CustomListItem("item", {
-				content : new Text("text", {text : "{text}"})
+				content: new Text("text", {text: "{text}"})
 			});
 			this.oList = new List("list", {
-				items : {
-					path : "/texts",
-					template : this.oItemTemplate
+				items: {
+					path: "/texts",
+					template: this.oItemTemplate
 				}
 			}).setModel(oModel);
 			this.oList.placeAt('qunit-fixture');
 			sap.ui.getCore().applyChanges();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
+			oChangeRegistry.removeRegistryItem({controlType: "sap.m.List"});
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.List" : {
+				"sap.m.List": {
 					addXML: "default"
 				}
 			})
 			.then(function() {
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oList]
+					rootElements: [this.oList]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {
@@ -247,7 +247,7 @@ function (
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			this.oDesignTime.destroy();

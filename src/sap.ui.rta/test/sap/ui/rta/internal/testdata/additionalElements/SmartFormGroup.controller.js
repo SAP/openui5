@@ -12,13 +12,13 @@ sap.ui.define([
 	"use strict";
 
 	return Controller.extend("sap.ui.rta.test.additionalElements.SmartFormGroup", {
-		onInit : function () {
+		onInit: function () {
 			var sURL = "/destinations/E91/sap/opu/odata/SAP/AdditionalElementsTest/?sap-documentation=all";
 			var oModel;
 			var oView;
 
 			var oMockServer = new MockServer({
-				rootUri : sURL
+				rootUri: sURL
 			});
 			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/additionalElements");
 
@@ -27,8 +27,8 @@ sap.ui.define([
 			oMockServer.start();
 
 			oModel = new ODataModel(sURL, {
-				json : true,
-				loadMetadataAsync : true
+				json: true,
+				loadMetadataAsync: true
 			});
 
 			oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
@@ -40,10 +40,10 @@ sap.ui.define([
 			oView.setModel(oModel);
 
 			var data = {
-				readonly : false,
-				mandatory : false,
-				visible : true,
-				enabled : true
+				readonly: false,
+				mandatory: false,
+				visible: true,
+				enabled: true
 			};
 
 			var oStateModel = new JSONModel();
@@ -54,7 +54,7 @@ sap.ui.define([
 			this.byId("MainForm").bindElement("/EntityTypes(Property01='propValue01',Property02='propValue02',Property03='propValue03')");
 		},
 
-		_getUrlParameter : function(sParam) {
+		_getUrlParameter: function(sParam) {
 			var sReturn = "";
 			var sPageURL = window.location.search.substring(1);
 			var sURLVariables = sPageURL.split('&');
@@ -67,14 +67,14 @@ sap.ui.define([
 			return sReturn;
 		},
 
-		switchToAdaptionMode : function() {
+		switchToAdaptionMode: function() {
 			sap.ui.require([
 				"sap/ui/rta/RuntimeAuthoring"
 			], function(RuntimeAuthoring) {
 				var oRta = new RuntimeAuthoring({
-					rootControl : sap.ui.getCore().byId("Comp1---idMain1"),
-					customFieldUrl : this._sResourcePath + "/testdata/rta/CustomField.html",
-					showCreateCustomField : (this._getUrlParameter("sap-ui-xx-ccf") === "true")
+					rootControl: sap.ui.getCore().byId("Comp1---idMain1"),
+					customFieldUrl: this._sResourcePath + "/testdata/rta/CustomField.html",
+					showCreateCustomField: (this._getUrlParameter("sap-ui-xx-ccf") === "true")
 				});
 				oRta.attachEvent('stop', function() {
 					oRta.destroy();

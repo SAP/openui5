@@ -74,7 +74,7 @@ sap.ui.define([
 					this.oSimpleFormWithTitles = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
 
 					this.oRta = new RuntimeAuthoring({
-						rootControl : oComp.getAggregation("rootControl"),
+						rootControl: oComp.getAggregation("rootControl"),
 						showToolbars: false
 					});
 
@@ -319,17 +319,17 @@ sap.ui.define([
 
 				var oChangeRegistry = ChangeRegistry.getInstance();
 				return oChangeRegistry.registerControlsForChanges({
-					"sap.ui.comp.smartform.Group" : {
-						changeSettings : "sap/ui/fl/changeHandler/PropertyChange"
+					"sap.ui.comp.smartform.Group": {
+						changeSettings: "sap/ui/fl/changeHandler/PropertyChange"
 					}
 				})
 					.then(function() {
 						var oGroupDesigntime = {
-							settings : function() {
+							settings: function() {
 								return {
-									changeType : "changeSettings",
-									isEnabled : true,
-									handler : function() {}
+									changeType: "changeSettings",
+									isEnabled: true,
+									handler: function() {}
 								};
 							}
 						};
@@ -442,21 +442,21 @@ sap.ui.define([
 
 				sandbox.stub(oContextMenuPlugin.getDesignTime(), "getSelection").returns([oFormOverlay]);
 				var oEvent = {
-					data : function(sDataParamName) {
+					data: function(sDataParamName) {
 						var oItemData = {
-							id : "CTX_TEST"
+							id: "CTX_TEST"
 						};
 						return oItemData[sDataParamName];
 					},
-					getSubmenu : function() {
+					getSubmenu: function() {
 						return false;
 					}
 				};
 
 				sandbox.stub(oContextMenuPlugin, '_aMenuItems').value([{
-					menuItem : {
-						id : "CTX_TEST",
-						handler : function() {
+					menuItem: {
+						id: "CTX_TEST",
+						handler: function() {
 							assert.ok("Then the handler for the Button is called");
 							done();
 						}
@@ -502,7 +502,7 @@ sap.ui.define([
 		});
 
 		QUnit.module("Given RTA is started for Object Page...", {
-			beforeEach : function() {
+			beforeEach: function() {
 				// View
 				// 	Page
 				// 		ObjectPageLayout
@@ -517,34 +517,34 @@ sap.ui.define([
 				var oEmbeddedView = sap.ui.getCore().byId("Comp1---idMain1");
 
 				var oSubSection = new ObjectPageSubSection({
-					id : oEmbeddedView.createId("subsection1"),
+					id: oEmbeddedView.createId("subsection1"),
 					blocks: [new Button({text: "abc"})]
 				});
 
 				this.oObjectPageSection1 = new ObjectPageSection({
-					id : oEmbeddedView.createId("section1"),
+					id: oEmbeddedView.createId("section1"),
 					title: "Section_1",
-					visible : true,
+					visible: true,
 					subSections: [oSubSection]
 				});
 
 				var oObjectPageSection2 = new ObjectPageSection({
-					id : oEmbeddedView.createId("section2"),
+					id: oEmbeddedView.createId("section2"),
 					title: "Section_2",
-					visible : false
+					visible: false
 				});
 
 				var oObjectPageSection3 = new ObjectPageSection({
-					id : oEmbeddedView.createId("section3"),
+					id: oEmbeddedView.createId("section3"),
 					title: "Section_3",
-					visible : true
+					visible: true
 				});
 
 				var oEmbeddedPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
 
 				this.oObjectPageLayout = new ObjectPageLayout({
-					id : oEmbeddedView.createId("ObjectPageLayout"),
-					sections : [
+					id: oEmbeddedView.createId("ObjectPageLayout"),
+					sections: [
 						this.oObjectPageSection1,
 						oObjectPageSection2,
 						oObjectPageSection3
@@ -554,13 +554,13 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 
 				this.oRta = new RuntimeAuthoring({
-					rootControl : this.oObjectPageLayout,
+					rootControl: this.oObjectPageLayout,
 					showToolbars: false
 				});
 
 				return this.oRta.start();
 			},
-			afterEach : function() {
+			afterEach: function() {
 				this.oObjectPageLayout.destroy();
 				this.oRta.destroy();
 			}
@@ -594,33 +594,33 @@ sap.ui.define([
 		});
 
 		QUnit.module("Given RTA is started for Object Page without stable ids...", {
-			beforeEach : function() {
+			beforeEach: function() {
 				var oSubSection = new ObjectPageSubSection({
-					id : "subsection1",
+					id: "subsection1",
 					blocks: [new Button({text: "abc"})]
 				});
 
 				this.oObjectPageSection1 = new ObjectPageSection({
-					id : "section1",
+					id: "section1",
 					title: "Section_1",
-					visible : true,
+					visible: true,
 					subSections: [oSubSection]
 				});
 
 				var oObjectPageSection2 = new ObjectPageSection({
-					id : "section2",
+					id: "section2",
 					title: "Section_2",
-					visible : false
+					visible: false
 				});
 
 				var oObjectPageSection3 = new ObjectPageSection({
-					id : "section3",
+					id: "section3",
 					title: "Section_3",
-					visible : true
+					visible: true
 				});
 
 				this.oObjectPageLayout = new ObjectPageLayout({
-					sections : [
+					sections: [
 						this.oObjectPageSection1,
 						oObjectPageSection2,
 						oObjectPageSection3
@@ -630,13 +630,13 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 
 				this.oRta = new RuntimeAuthoring({
-					rootControl : this.oObjectPageLayout,
+					rootControl: this.oObjectPageLayout,
 					showToolbars: false
 				});
 
 				return this.oRta.start();
 			},
-			afterEach : function() {
+			afterEach: function() {
 				this.oRta.destroy();
 				this.oObjectPageLayout.destroy();
 				sandbox.restore();
@@ -666,24 +666,24 @@ sap.ui.define([
 		});
 
 		QUnit.module("Given RTA is started for Object Page...", {
-			beforeEach : function() {
+			beforeEach: function() {
 				var oEmbeddedView = sap.ui.getCore().byId("Comp1---idMain1");
 
 				this.oObjectPageSection1 = new ObjectPageSection({
 					title: "Section_1",
-					visible : false
+					visible: false
 				});
 
 				this.oObjectPageSection2 = new ObjectPageSection({
 					title: "Section_2",
-					visible : false
+					visible: false
 				});
 
 				var oEmbeddedPage = sap.ui.getCore().byId("Comp1---idMain1--mainPage");
 
 				this.oObjectPageLayout = new ObjectPageLayout({
-					id : oEmbeddedView.createId("ObjectPageLayout"),
-					sections : [
+					id: oEmbeddedView.createId("ObjectPageLayout"),
+					sections: [
 						this.oObjectPageSection1,
 						this.oObjectPageSection2
 					]
@@ -697,13 +697,13 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 
 				this.oRta = new RuntimeAuthoring({
-					rootControl : oPage,
+					rootControl: oPage,
 					showToolbars: false
 				});
 
 				return this.oRta.start();
 			},
-			afterEach : function() {
+			afterEach: function() {
 				this.oRta.destroy();
 				this.oObjectPageLayout.destroy();
 			}

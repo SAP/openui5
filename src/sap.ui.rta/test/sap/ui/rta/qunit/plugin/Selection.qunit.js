@@ -52,7 +52,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a Selection plugin and designtime in MultiSelection mode and controls with custom dt metadata to simulate different cases...", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			var oChangeHandler = {
@@ -68,14 +68,14 @@ sap.ui.define([
 					SimpleChanges.hideControl,
 					{
 						changeType: "combineChange",
-						changeHandler : oChangeHandler
+						changeHandler: oChangeHandler
 					}
 				],
 				"sap.m.HBox": [
 					SimpleChanges.hideControl,
 					{
 						changeType: "combineChange",
-						changeHandler : oChangeHandler
+						changeHandler: oChangeHandler
 					}
 				],
 				"sap.m.Button": [],
@@ -93,18 +93,18 @@ sap.ui.define([
 					}
 				);
 				this.oSelectionPlugin = new Selection({
-					commandFactory :this.oCommandFactory,
-					multiSelectionRequiredPlugins : [
+					commandFactory: this.oCommandFactory,
+					multiSelectionRequiredPlugins: [
 						Combine.getMetadata().getName(),
 						Remove.getMetadata().getName()
 					]
 				});
 				this.oVBox = new VBox({
-					id : this.oComponent.createId("root"),
-					items : [
+					id: this.oComponent.createId("root"),
+					items: [
 						new HBox({
-							id : this.oComponent.createId("container1"),
-							items : [
+							id: this.oComponent.createId("container1"),
+							items: [
 								new Button(this.oComponent.createId("innerBtn11"), {text: "innerBtn11"}),
 								new Button(this.oComponent.createId("innerBtn12"), {text: "innerBtn12"}),
 								new Text(this.oComponent.createId("innerTxt13"), {text: "innerTxt13"})
@@ -112,24 +112,24 @@ sap.ui.define([
 						}),
 						new Button(this.oComponent.createId("btnOutsideContainer"), {text: "btnOutsideContainer"}),
 						new HBox({
-							id : this.oComponent.createId("container2"),
-							items : [
+							id: this.oComponent.createId("container2"),
+							items: [
 								new Button(this.oComponent.createId("innerBtn21"), {text: "innerBtn21"})
 							]
 						}),
 						new Bar(this.oComponent.createId("othercontainer3")),
 						new HBox({
-							id : this.oComponent.createId("container4"),
-							items : [
+							id: this.oComponent.createId("container4"),
+							items: [
 								new VBox({
-									id : this.oComponent.createId("innerVBox1"),
-									items : [
+									id: this.oComponent.createId("innerVBox1"),
+									items: [
 										new Text(this.oComponent.createId("innerVBox1Txt"), {text: "innerVBox1Txt"})
 									]
 								}),
 								new VBox({
-									id : this.oComponent.createId("innerVBox2"),
-									items : [
+									id: this.oComponent.createId("innerVBox2"),
+									items: [
 										new Text(this.oComponent.createId("innerVBox2Txt"), {text: "innerVBox2Txt"}),
 										new Button(this.oComponent.createId("innerVBox2Btn"), {text: "innerVBox2Btn"})
 									]
@@ -142,44 +142,44 @@ sap.ui.define([
 				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
-					plugins : [
+					plugins: [
 						this.oSelectionPlugin,
-						new Remove({commandFactory :this.oCommandFactory}),
-						new Combine({commandFactory :this.oCommandFactory})
+						new Remove({commandFactory: this.oCommandFactory}),
+						new Combine({commandFactory: this.oCommandFactory})
 					],
-					rootElements : [this.oVBox],
-					designTimeMetadata : {
-						"sap.m.VBox" : {
-							actions : {
-								remove : {
+					rootElements: [this.oVBox],
+					designTimeMetadata: {
+						"sap.m.VBox": {
+							actions: {
+								remove: {
 									changeType: "hideControl"
 								}
 							}
 						},
-						"sap.m.HBox" : {
-							aggregations : {
-								items : {
-									propagateRelevantContainer : true
+						"sap.m.HBox": {
+							aggregations: {
+								items: {
+									propagateRelevantContainer: true
 								}
 							},
-							actions : {
-								remove : {
+							actions: {
+								remove: {
 									changeType: "hideControl"
 								}
 							}
 						},
-						"sap.m.Button" : {
-							actions : {
-								combine : {
+						"sap.m.Button": {
+							actions: {
+								combine: {
 									changeType: "combineChange",
-									changeOnRelevantContainer : true
+									changeOnRelevantContainer: true
 								},
 								remove: null
 							}
 						},
-						"sap.m.Text" : {
-							actions : {
-								remove : {
+						"sap.m.Text": {
+							actions: {
+								remove: {
 									changeType: "hideControl"
 								}
 							}
@@ -195,7 +195,7 @@ sap.ui.define([
 				this.oEvent.altKey = false;
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oComponent.destroy();
 			this.oVBox.destroy();
@@ -512,7 +512,7 @@ sap.ui.define([
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			oOverlay.setEditable(false);
 			oOverlay.setSelectable(false);
-			this.oCommandFactory.setProperty("flexSettings", {layer:Layer.CUSTOMER, developerMode: true});
+			this.oCommandFactory.setProperty("flexSettings", {layer: Layer.CUSTOMER, developerMode: true});
 			this.oSelectionPlugin.attachEventOnce("elementEditableChange", function () {
 				assert.ok(true, 'elementEditableChange event was called');
 				fnDone();

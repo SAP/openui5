@@ -33,7 +33,7 @@ function(
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that an Overlay is created for a control", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			//	Layout2
 			//		Layout1
 			//			Layout0
@@ -60,10 +60,10 @@ function(
 				]
 			});
 			this.oButton21 = new Button("button21", {
-				text : "Button21"
+				text: "Button21"
 			});
 			this.oButton31 = new Button("button31", {
-				text : "Button31"
+				text: "Button31"
 			});
 			this.oLayout3 = new VerticalLayout("layout03", {
 				content: [
@@ -97,7 +97,7 @@ function(
 				fnDone();
 			}, this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oLayout2.destroy();
 			this.oDesignTime.destroy();
 		}
@@ -266,7 +266,7 @@ function(
 
 		QUnit.test("when getParentInformation is requested for a control with no parent ", function(assert) {
 			var oButton = new Button();
-			var oOverlay = new ElementOverlay({element : oButton});
+			var oOverlay = new ElementOverlay({element: oButton});
 
 			var oParentInformation = OverlayUtil.getParentInformation(oOverlay);
 
@@ -317,7 +317,7 @@ function(
 	});
 
 	QUnit.module("Given a VBox with an ObjectPageLayout with Overlays created", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
 			//	VBox0
@@ -349,10 +349,10 @@ function(
 			this.oButton7 = new Button("button7", {text: "button7"});
 			this.oButton8 = new Button("button8", {text: "button8"});
 			this.oVBox2 = new VBox("VBox2", {
-				items : [this.oButton6, this.oButton7]
+				items: [this.oButton6, this.oButton7]
 			});
 			this.oVBox1 = new VBox("VBox1", {
-				items : [this.oVBox2]
+				items: [this.oVBox2]
 			});
 			this.oSubSection0 = new ObjectPageSubSection("subsection0", {
 				blocks: [this.oButton0, this.oButton1]
@@ -371,15 +371,15 @@ function(
 				subSections: [this.oSubSection1, this.oSubSection2]
 			});
 			this.oLayout0 = new ObjectPageLayout("layout0", {
-				sections : [this.oSection0, this.oSection1]
+				sections: [this.oSection0, this.oSection1]
 			});
 			this.oVBox0 = new VBox("VBox", {
-				items : [this.oLayout0]
+				items: [this.oLayout0]
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVBox0]
+				rootElements: [this.oVBox0]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -410,7 +410,7 @@ function(
 				fnDone();
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oVBox0.destroy();
 			this.oDesignTime.destroy();

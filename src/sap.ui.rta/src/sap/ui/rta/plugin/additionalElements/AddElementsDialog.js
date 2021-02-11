@@ -72,24 +72,24 @@ sap.ui.define([
 	 *			   changed in future.
 	 */
 	var AddElementsDialog = ManagedObject.extend("sap.ui.rta.plugin.additionalElements.AddElementsDialog", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				customFieldEnabled : {
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				customFieldEnabled: {
 					type: "boolean",
 					defaultValue: false
 				},
-				businessContextVisible : {
+				businessContextVisible: {
 					type: "boolean",
 					defaultValue: false
 				},
-				title : {
+				title: {
 					type: "string"
 				}
 			},
-			events : {
-				opened : {},
-				openCustomField : {}
+			events: {
+				opened: {},
+				openCustomField: {}
 			}
 		}
 	});
@@ -139,24 +139,24 @@ sap.ui.define([
 	AddElementsDialog.prototype._createContent = function(oFieldExtensibilityTexts) {
 		// SearchField
 		this._oInput = new SearchField({
-			width : "100%",
-			liveChange : [this._updateModelFilter, this]
+			width: "100%",
+			liveChange: [this._updateModelFilter, this]
 		});
 
 		// Button for sorting the List
 		var oResortButton = new Button({
-			text : "",
-			icon : "sap-icon://sort",
-			press : [this._resortList, this]
+			text: "",
+			icon: "sap-icon://sort",
+			press: [this._resortList, this]
 		});
 
 		// Button for creating Custom Fields
 		this._oCustomFieldButton = new Button({
-			text : "",
-			icon : "sap-icon://add",
-			tooltip : oFieldExtensibilityTexts.tooltip,
-			enabled : this.getCustomFieldEnabled(),
-			press : [this._redirectToCustomFieldCreation, this]
+			text: "",
+			icon: "sap-icon://add",
+			tooltip: oFieldExtensibilityTexts.tooltip,
+			enabled: this.getCustomFieldEnabled(),
+			press: [this._redirectToCustomFieldCreation, this]
 		});
 
 		// Toolbar
@@ -217,21 +217,21 @@ sap.ui.define([
 		var oSorter = new Sorter("label", this._bAscendingSortOrder);
 		this._oList = new List(
 			{
-				mode : "MultiSelect",
-				includeItemInSelection : true,
-				growing : true,
-				growingScrollToLoad : true
+				mode: "MultiSelect",
+				includeItemInSelection: true,
+				growing: true,
+				growingScrollToLoad: true
 			}).setNoDataText(this._oTextResources.getText("MSG_NO_FIELDS", this._oTextResources.getText("MULTIPLE_CONTROL_NAME").toLowerCase()));
 
 		var oListItem = new ListItem({
 			type: ListType.Active,
-			selected : "{selected}",
+			selected: "{selected}",
 			tooltip: "{tooltip}",
-			content : [oVBox]
+			content: [oVBox]
 		}).addStyleClass("sapUIRtaListItem");
 
 		this._oList.bindItems({
-			path:"/elements",
+			path: "/elements",
 			template: oListItem,
 			sorter: oSorter,
 			templateShareable: false,
@@ -273,13 +273,13 @@ sap.ui.define([
 	 */
 	AddElementsDialog.prototype._createButtons = function() {
 		this._oOKButton = new Button({
-			text : this._oTextResources.getText("BTN_FREP_OK"),
-			press : [this._submitDialog, this],
+			text: this._oTextResources.getText("BTN_FREP_OK"),
+			press: [this._submitDialog, this],
 			type: ButtonType.Emphasized
 		});
 		var oCancelButton = new Button({
-			text : this._oTextResources.getText("BTN_FREP_CANCEL"),
-			press : [this._cancelDialog, this]
+			text: this._oTextResources.getText("BTN_FREP_CANCEL"),
+			press: [this._cancelDialog, this]
 		});
 		return [this._oOKButton, oCancelButton];
 	};

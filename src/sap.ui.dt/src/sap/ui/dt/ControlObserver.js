@@ -29,21 +29,21 @@ function(ManagedObjectObserver) {
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var ControlObserver = ManagedObjectObserver.extend("sap.ui.dt.ControlObserver", /** @lends sap.ui.dt.ControlObserver.prototype */ {
-		metadata : {
+		metadata: {
 
 			// ---- object ----
 
 			// ---- control specific ----
-			library : "sap.ui.dt",
-			properties : {
+			library: "sap.ui.dt",
+			properties: {
 
 			},
-			associations : {
+			associations: {
 				/**
 				 * target Control to observe
 				 */
-				target : {
-					type : "sap.ui.core.Control"
+				target: {
+					type: "sap.ui.core.Control"
 				}
 			}
 		}
@@ -56,7 +56,7 @@ function(ManagedObjectObserver) {
 		ManagedObjectObserver.prototype.init.apply(this, arguments);
 
 		this._oControlDelegate = {
-			onAfterRendering : this._onAfterRendering
+			onAfterRendering: this._onAfterRendering
 		};
 	};
 

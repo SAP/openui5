@@ -12,9 +12,9 @@ sap.ui.define([
 	return UIComponent.extend("sap.ui.rta.dttool.sample.Component", {
 		metadata: {
 			manifest: "json",
-			config : {
-				sample : {
-					files : [
+			config: {
+				sample: {
+					files: [
 						"Main.view.xml"
 					]
 				}

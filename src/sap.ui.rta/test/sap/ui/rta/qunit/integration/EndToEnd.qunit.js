@@ -32,7 +32,7 @@ sap.ui.define([
 		after: function () {
 			QUnit.config.fixture = "";
 		},
-		beforeEach : function() {
+		beforeEach: function() {
 			return RtaQunitUtils.clear(oView, true).then(function () {
 				this.oVictim = sap.ui.getCore().byId("Comp1---idMain1--Victim");
 				this.oCompanyCodeField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
@@ -234,7 +234,7 @@ sap.ui.define([
 		QUnit.test("when removing a field,", function(assert) {
 			var fnDone = assert.async();
 			var oCommandStack = this.oRta.getCommandStack();
-			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oVictim}).length;
+			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oVictim}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			oCommandStack.attachModified(function () {
@@ -244,7 +244,7 @@ sap.ui.define([
 					fnWaitForExecutionAndSerializationBeingDone.call(this)
 						.then(function () {
 							assert.strictEqual(this.oVictim.getVisible(), false, " then field is not visible");
-							iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oVictim}).length;
+							iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oVictim}).length;
 							assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 							return this.oRta.stop();
 						}.bind(this))
@@ -266,7 +266,7 @@ sap.ui.define([
 		QUnit.test("when moving a field (via cut and paste),", function(assert) {
 			var fnDone = assert.async();
 			var oCommandStack = this.oRta.getCommandStack();
-			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oCompanyCodeField}).length;
+			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			oCommandStack.attachModified(function () {
@@ -276,7 +276,7 @@ sap.ui.define([
 					fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
 						var iIndex = 0;
 						assert.equal(this.oDatesGroup.getGroupElements()[iIndex].getId(), this.oCompanyCodeField.getId(), " then the field is moved to first place");
-						iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oCompanyCodeField}).length;
+						iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 						return this.oRta.stop();
 					}.bind(this))
@@ -298,7 +298,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when renaming a group (via double click) and setting a new title...", function(assert) {
-			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oCompanyCodeField}).length;
+			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			this.oDatesGroupOverlay.focus();
@@ -322,7 +322,7 @@ sap.ui.define([
 									oFirstExecutedCommand.getName() === "rename") {
 									fnWaitForExecutionAndSerializationBeingDone.call(this).then(function () {
 										assert.strictEqual(this.oDatesGroup.getLabel(), "Test", "then title of the group is Test");
-										iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oCompanyCodeField}).length;
+										iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 										assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 										fnResolveOnCommandAdded();
 									}.bind(this));
@@ -358,7 +358,7 @@ sap.ui.define([
 		});
 
 		QUnit.test("when adding a SimpleForm Field via context menu (expanded context menu) - reveal", function(assert) {
-			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oCompanyCodeField}).length;
+			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			var fnDone = assert.async();
@@ -383,7 +383,7 @@ sap.ui.define([
 								.then(function () {
 									sap.ui.getCore().applyChanges();
 
-									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oCompanyCodeField}).length;
+									iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 									assert.strictEqual(iDirtyChangesCount, 1, "then there are three dirty changes in the flex persistence");
 									return this.oRta.stop();
 								}.bind(this))
@@ -411,7 +411,7 @@ sap.ui.define([
 
 		QUnit.test("when renaming a group element via Context menu (compact context menu) and setting a new label...", function(assert) {
 			var fnDone = assert.async();
-			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : this.oCompanyCodeField}).length;
+			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: this.oCompanyCodeField}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no dirty changes in the flex persistence");
 
 			this.oCompanyCodeFieldOverlay.focus();
@@ -438,7 +438,7 @@ sap.ui.define([
 			var oCombinedElement = sap.ui.getCore().byId("Comp1---idMain1--Dates.BoundButton35");
 			var oCombinedElementOverlay = OverlayRegistry.getOverlay(oCombinedElement);
 
-			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : oCombinedElement}).length;
+			var iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;
 			assert.strictEqual(iDirtyChangesCount, 0, "then there are no changes to publish in the flex persistence");
 
 			var oCommandStack = this.oRta.getCommandStack();
@@ -446,7 +446,7 @@ sap.ui.define([
 				fnWaitForExecutionAndSerializationBeingDone.call(this)
 					.then(function () {
 						sap.ui.getCore().applyChanges();
-						iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector : oCombinedElement}).length;
+						iDirtyChangesCount = FlexTestAPI.getDirtyChanges({selector: oCombinedElement}).length;
 						assert.strictEqual(iDirtyChangesCount, 1, "then there is one dirty change in the flex persistence");
 						return this.oRta.stop();
 					}.bind(this))

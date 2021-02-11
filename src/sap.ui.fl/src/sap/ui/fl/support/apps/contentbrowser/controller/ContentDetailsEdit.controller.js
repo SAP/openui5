@@ -40,7 +40,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.fl.support.apps.contentbrowser.controller.ContentDetailsEdit", {
 
 		oSelectedContentModel: undefined,
-		oDataUtils : DataUtils,
+		oDataUtils: DataUtils,
 
 		/**
 		 * Initialize function;

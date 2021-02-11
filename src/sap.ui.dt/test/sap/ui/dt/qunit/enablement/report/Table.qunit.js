@@ -17,7 +17,7 @@ function (
 	QUnit.module("Given that a sap.m Library is tested", {
 		beforeEach: function () {
 			this.oLibraryReport = new LibraryReport({
-				libraryName : "sap.ui.testLibrary"
+				libraryName: "sap.ui.testLibrary"
 			});
 		},
 		afterEach: function () {
@@ -29,7 +29,7 @@ function (
 			this.oLibraryReport.run()
 			.then(function(oResult) {
 				var oTable = new Table({
-					data : oResult
+					data: oResult
 				});
 				oTable.placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();

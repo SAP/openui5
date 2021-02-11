@@ -36,9 +36,9 @@ function(
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -66,10 +66,10 @@ function(
 	}, function() {
 		QUnit.test("when getting a createContainer command for popup ...", function(assert) {
 			return CommandFactory.getCommandFor(this.oPopup, "CreateContainer", {
-				index : 0,
-				newControlId : this.NEW_CONTROL_ID,
-				label : this.NEW_CONTROL_LABEL,
-				parentId : this.oPopup.getId()
+				index: 0,
+				newControlId: this.NEW_CONTROL_ID,
+				label: this.NEW_CONTROL_LABEL,
+				parentId: this.oPopup.getId()
 			}, this.oPopupDesignTimeMetadata)
 
 			.then(function(oCreateContainerCommand) {
@@ -83,10 +83,10 @@ function(
 	});
 
 	QUnit.module("Given a form and it's designtime metadata are created...", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oFormContainer = new FormContainer("container");
 			this.oForm = new Form("form", {
-				formContainers : [this.oFormContainer]
+				formContainers: [this.oFormContainer]
 			});
 
 			this.NEW_CONTROL_ID = "NEW_ID";
@@ -99,7 +99,7 @@ function(
 
 			return oChangeRegistry.registerControlsForChanges({
 				"sap.ui.layout.form.Form": {
-					addGroup : {
+					addGroup: {
 						applyChange: this.fnApplyChangeSpy,
 						completeChangeContent: this.fnCompleteChangeContentSpy,
 						revertChange: function() {}
@@ -109,14 +109,14 @@ function(
 
 			.then(function() {
 				this.oCreateContainerDesignTimeMetadata = new ElementDesignTimeMetadata({
-					data : {
-						aggregations : {
-							formContainers : {
-								actions : {
-									createContainer :  {
-										changeType : "addGroup",
-										isEnabled : true,
-										mapToRelevantControlID : function(sNewControlID) {
+					data: {
+						aggregations: {
+							formContainers: {
+								actions: {
+									createContainer: {
+										changeType: "addGroup",
+										isEnabled: true,
+										mapToRelevantControlID: function(sNewControlID) {
 											return sNewControlID;
 										}
 									}
@@ -127,10 +127,10 @@ function(
 				});
 
 				return CommandFactory.getCommandFor(this.oForm, "createContainer", {
-					index : 0,
-					newControlId : this.NEW_CONTROL_ID,
-					label : this.NEW_CONTROL_LABEL,
-					parentId : this.oForm.getId()
+					index: 0,
+					newControlId: this.NEW_CONTROL_ID,
+					label: this.NEW_CONTROL_LABEL,
+					parentId: this.oForm.getId()
 				}, this.oCreateContainerDesignTimeMetadata);
 			}.bind(this))
 

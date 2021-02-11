@@ -48,9 +48,9 @@ function (
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -63,16 +63,16 @@ function (
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a List with bound items and a List with unbound items", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.StandardListItem" : {
-					hideControl : "default"
+				"sap.m.StandardListItem": {
+					hideControl: "default"
 				},
-				"sap.m.Button" : {
-					hideControl : "default"
+				"sap.m.Button": {
+					hideControl: "default"
 				}
 			})
 			.then(function() {
@@ -84,13 +84,13 @@ function (
 				var oModel = new JSONModel(oData);
 				this.oBoundList = new List("boundlist").setModel(oModel);
 				this.oBoundList.bindAggregation("items", "/", function(sId) {
-					return new CustomListItem(sId, {content: [new Button(sId + "-btn", {text:'{text}'})]});
+					return new CustomListItem(sId, {content: [new Button(sId + "-btn", {text: '{text}'})]});
 				});
 
 				//create list with unbound items
 				this.oUnBoundList = new List("unboundlist");
-				this.oUnBoundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn", {text:'item1-unbound'})]}));
-				this.oUnBoundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn", {text:'item2-unbound'})]}));
+				this.oUnBoundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn", {text: 'item1-unbound'})]}));
+				this.oUnBoundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn", {text: 'item2-unbound'})]}));
 
 				//create a HorizontalLayout containing the two lists
 				this.oHorizontalLayout = new HorizontalLayout("horLyout", {
@@ -100,7 +100,7 @@ function (
 				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oHorizontalLayout]
+					rootElements: [this.oHorizontalLayout]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {
@@ -122,7 +122,7 @@ function (
 	QUnit.test("When we check if items are editable", function(assert) {
 		// aggregation binding is checked by registering overlay for plugins
 		this.oRemovePlugin = new RemovePlugin({
-			commandFactory : new CommandFactory()
+			commandFactory: new CommandFactory()
 		});
 		this.oDesignTime.insertPlugin(this.oRemovePlugin);
 		return DtUtil.waitForSynced(this.oDesignTime)()

@@ -17,7 +17,7 @@ sap.ui.define([
 			library: "sap.ui.rta",
 			version: "0.9",
 			properties: {
-				idRunningApp : "string",
+				idRunningApp: "string",
 				isOverviewForKeyUser: {
 					type: "boolean"
 				},

@@ -21,22 +21,22 @@ sap.ui.define(["sap/ui/base/ManagedObject"], function(ManagedObject) {
 	 *               changed in future.
 	 */
 	var BaseCommand = ManagedObject.extend("sap.ui.rta.command.BaseCommand", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				name : {
-					type : "string"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				name: {
+					type: "string"
 				},
-				runtimeOnly : {
-					type : "boolean"
+				runtimeOnly: {
+					type: "boolean"
 				}
 			},
-			associations : {
-				element : {
-					type : "sap.ui.core.Element"
+			associations: {
+				element: {
+					type: "sap.ui.core.Element"
 				}
 			},
-			events : {}
+			events: {}
 		}
 	});
 

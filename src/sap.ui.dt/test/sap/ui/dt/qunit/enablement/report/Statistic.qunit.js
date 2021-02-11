@@ -15,16 +15,16 @@ function (
 	QUnit.module("Given that a statistic report is created", {
 		beforeEach: function () {
 			this.oResult = {
-				statistic : {
-					SUPPORTED : 10,
-					PARTIAL_SUPPORTED : 0,
-					NOT_SUPPORTED : 20,
-					UNKNOWN : 10,
-					ERROR : 5
+				statistic: {
+					SUPPORTED: 10,
+					PARTIAL_SUPPORTED: 0,
+					NOT_SUPPORTED: 20,
+					UNKNOWN: 10,
+					ERROR: 5
 				}
 			};
 			this.oStatistic = new Statistic({
-				data : this.oResult
+				data: this.oResult
 			});
 			this.oStatistic.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();

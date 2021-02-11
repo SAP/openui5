@@ -13,21 +13,21 @@ function(
 	"use strict";
 
 	var OutsideDragDrop = DragDrop.extend("sap.ui.rta.dttool.plugins.OutsideDragDrop", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				commandFactory : {
-					type : "object",
-					multiple : false
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				commandFactory: {
+					type: "object",
+					multiple: false
 				}
 			},
 			associations: {},
-			events : {
-				dragStarted : {},
+			events: {
+				dragStarted: {},
 
-				elementModified : {
-					command : {
-						type : "sap.ui.rta.command.BaseCommand"
+				elementModified: {
+					command: {
+						type: "sap.ui.rta.command.BaseCommand"
 					}
 				}
 			}
@@ -52,7 +52,7 @@ function(
 			.then(function(oCommand) {
 				oOverlay.getElement().destroy();
 				this.fireElementModified({
-					command : oCommand
+					command: oCommand
 				});
 
 				oOverlay.$().removeClass("sapUiRtaOverlayPlaceholder");

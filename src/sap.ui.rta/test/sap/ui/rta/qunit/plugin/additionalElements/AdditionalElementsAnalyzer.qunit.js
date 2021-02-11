@@ -30,16 +30,16 @@ function(
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : [{
-						element : oGroupElement1,
-						action : {} //nothing relevant for the analyzer tests
+				reveal: {
+					elements: [{
+						element: oGroupElement1,
+						action: {} //nothing relevant for the analyzer tests
 					}, {
-						element : oGroupElement2,
-						action : {} //nothing relevant for the analyzer tests
+						element: oGroupElement2,
+						action: {} //nothing relevant for the analyzer tests
 					}, {
-						element : oGroupElement3,
-						action : {} //nothing relevant for the analyzer tests
+						element: oGroupElement3,
+						action: {} //nothing relevant for the analyzer tests
 					}]
 				},
 				addViaDelegate: {
@@ -67,16 +67,16 @@ function(
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : [{
-						element : oGroupElement1,
-						action : {} //nothing relevant for the analyzer tests
+				reveal: {
+					elements: [{
+						element: oGroupElement1,
+						action: {} //nothing relevant for the analyzer tests
 					}, {
-						element : oGroupElement2,
-						action : {} //nothing relevant for the analyzer tests
+						element: oGroupElement2,
+						action: {} //nothing relevant for the analyzer tests
 					}, {
-						element : oGroupElement3,
-						action : {} //nothing relevant for the analyzer tests
+						element: oGroupElement3,
+						action: {} //nothing relevant for the analyzer tests
 					}]
 				},
 				addViaDelegate: {
@@ -101,18 +101,18 @@ function(
 
 			var oActionsObject = {
 				aggregation: "sections",
-				reveal : {
-					elements : [
+				reveal: {
+					elements: [
 						{
-							element : this.oView.byId("idMain1--ObjectPageSectionInvisible"),
-							action : {} //not relevant for test
+							element: this.oView.byId("idMain1--ObjectPageSectionInvisible"),
+							action: {} //not relevant for test
 						}, {
-							element : this.oView.byId("idMain1--ObjectPageSectionStashed1"),
-							action : {} //not relevant for test
+							element: this.oView.byId("idMain1--ObjectPageSectionStashed1"),
+							action: {} //not relevant for test
 						},
 						{
-							element : this.oView.byId("idMain1--ObjectPageSectionStashed2"),
-							action : {} //not relevant for test
+							element: this.oView.byId("idMain1--ObjectPageSectionStashed2"),
+							action: {} //not relevant for test
 						}
 					]
 				}
@@ -120,27 +120,27 @@ function(
 			return AdditionalElementsAnalyzer.enhanceInvisibleElements(oObjectPageLayout, oActionsObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 3, "then 3 additional sections are available");
 				TestUtils.assertElementsEqual(aAdditionalElements[0], {
-					selected : false,
-					label : "Invisible ObjectPage Section",
-					tooltip : "Invisible ObjectPage Section",
-					type : "invisible",
-					elementId : "idMain1--ObjectPageSectionInvisible",
+					selected: false,
+					label: "Invisible ObjectPage Section",
+					tooltip: "Invisible ObjectPage Section",
+					type: "invisible",
+					elementId: "idMain1--ObjectPageSectionInvisible",
 					bindingPath: undefined
 				}, "the invisible section is found", assert);
 				TestUtils.assertElementsEqual(aAdditionalElements[1], {
-					selected : false,
-					label : "Stashed ObjectPage Section 1",
-					tooltip : "Stashed ObjectPage Section 1",
-					type : "invisible",
-					elementId : "idMain1--ObjectPageSectionStashed1",
+					selected: false,
+					label: "Stashed ObjectPage Section 1",
+					tooltip: "Stashed ObjectPage Section 1",
+					type: "invisible",
+					elementId: "idMain1--ObjectPageSectionStashed1",
 					bindingPath: undefined
 				}, "the 1. stashed section is found", assert);
 				TestUtils.assertElementsEqual(aAdditionalElements[2], {
-					selected : false,
-					label : "Stashed ObjectPage Section 2",
-					tooltip : "Stashed ObjectPage Section 2",
-					type : "invisible",
-					elementId : "idMain1--ObjectPageSectionStashed2",
+					selected: false,
+					label: "Stashed ObjectPage Section 2",
+					tooltip: "Stashed ObjectPage Section 2",
+					type: "invisible",
+					elementId: "idMain1--ObjectPageSectionStashed2",
 					bindingPath: undefined
 				}, "the 2. stashed section is found", assert);
 			});
@@ -163,37 +163,37 @@ function(
 			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 3, "then 3 additional properties are available");
 				assert.deepEqual(aAdditionalElements[0], {
-					selected : false,
-					label : "Entity1-Property06-Unbound",
-					tooltip : "Unbound Property6",
-					type : "delegate",
-					entityType : "EntityType01",
-					name : "Property06",
-					bindingPath : "Property06",
+					selected: false,
+					label: "Entity1-Property06-Unbound",
+					tooltip: "Unbound Property6",
+					type: "delegate",
+					entityType: "EntityType01",
+					name: "Property06",
+					bindingPath: "Property06",
 					originalLabel: "",
 					duplicateName: false,
 					parentPropertyName: ""
 				}, "the unbound property is found");
 				assert.deepEqual(aAdditionalElements[1], {
-					selected : false,
-					label : "Entity1-Property07-ignored-unbound", //available, because there is no ignore filtering implemented
-					tooltip : "Unbound Property7",
-					type : "delegate",
-					entityType : "EntityType01",
-					name : "Property07",
-					bindingPath : "Property07",
+					selected: false,
+					label: "Entity1-Property07-ignored-unbound", //available, because there is no ignore filtering implemented
+					tooltip: "Unbound Property7",
+					type: "delegate",
+					entityType: "EntityType01",
+					name: "Property07",
+					bindingPath: "Property07",
 					originalLabel: "",
 					duplicateName: false,
 					parentPropertyName: ""
 				}, "the 2nd unbound property is found");
 				assert.deepEqual(aAdditionalElements[2], {
-					selected : false,
-					label : "Property08",
-					tooltip : "Property without sap:label",
-					type : "delegate",
-					entityType : "EntityType01",
-					name : "Property08",
-					bindingPath : "Property08",
+					selected: false,
+					label: "Property08",
+					tooltip: "Property without sap:label",
+					type: "delegate",
+					entityType: "EntityType01",
+					name: "Property08",
+					bindingPath: "Property08",
 					originalLabel: "",
 					duplicateName: false,
 					parentPropertyName: ""
@@ -217,25 +217,25 @@ function(
 			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 3, "then all properties of EntityType01 are available, because the GroupElements are not bound to any of them");
 				assert.deepEqual(aAdditionalElements[0], {
-					selected : false,
-					label : "Entity1-Property06-Unbound",
-					tooltip : "Unbound Property6",
-					type : "delegate",
-					entityType : "EntityType01",
-					name : "Property06",
-					bindingPath : "Property06",
+					selected: false,
+					label: "Entity1-Property06-Unbound",
+					tooltip: "Unbound Property6",
+					type: "delegate",
+					entityType: "EntityType01",
+					name: "Property06",
+					bindingPath: "Property06",
 					originalLabel: "",
 					duplicateName: false,
 					parentPropertyName: ""
 				}, "the unbound property is found");
 				assert.deepEqual(aAdditionalElements[1], {
-					selected : false,
-					label : "Entity1-Property07-ignored-unbound",
-					tooltip : "Unbound Property7",
-					type : "delegate",
-					entityType : "EntityType01",
-					name : "Property07",
-					bindingPath : "Property07",
+					selected: false,
+					label: "Entity1-Property07-ignored-unbound",
+					tooltip: "Unbound Property7",
+					type: "delegate",
+					entityType: "EntityType01",
+					name: "Property07",
+					bindingPath: "Property07",
 					originalLabel: "",
 					duplicateName: false,
 					parentPropertyName: ""
@@ -260,37 +260,37 @@ function(
 			return AdditionalElementsAnalyzer.getUnrepresentedDelegateProperties(oGroup, mActionObject).then(function(aAdditionalElements) {
 				assert.equal(aAdditionalElements.length, 10, "then 10 additional properties are available");
 				assert.deepEqual(aAdditionalElements[0], {
-					selected : false,
-					label : "Entity2-Property01-Label",
-					tooltip : "Entity2-Property01-QuickInfo",
-					type : "delegate",
-					entityType : "EntityType02",
-					name : "EntityType02_Property01",
-					bindingPath : "EntityType02_Property01",
+					selected: false,
+					label: "Entity2-Property01-Label",
+					tooltip: "Entity2-Property01-QuickInfo",
+					type: "delegate",
+					entityType: "EntityType02",
+					name: "EntityType02_Property01",
+					bindingPath: "EntityType02_Property01",
 					originalLabel: "",
 					duplicateName: false,
 					parentPropertyName: ""
 				}, "the unbound normal property is found");
 				assert.deepEqual(aAdditionalElements[1], {
-					selected : false,
-					label : "ComplexProperty 03",
-					tooltip : "ComplexProperty 03-QuickInfo",
-					type : "delegate",
-					entityType : "EntityType02",
-					name : "ComplexProperty03",
-					bindingPath : "EntityType02_Complex/ComplexProperty03",
+					selected: false,
+					label: "ComplexProperty 03",
+					tooltip: "ComplexProperty 03-QuickInfo",
+					type: "delegate",
+					entityType: "EntityType02",
+					name: "ComplexProperty03",
+					bindingPath: "EntityType02_Complex/ComplexProperty03",
 					originalLabel: "",
 					duplicateName: true,
 					parentPropertyName: "EntityType02_Complex"
 				}, "the unbound complex property is found");
 				assert.deepEqual(aAdditionalElements[2], {
-					selected : false,
-					label : "ComplexProperty 01",
-					tooltip : "ComplexProperty 01-QuickInfo",
-					type : "delegate",
-					entityType : "EntityType02",
-					name : "ComplexProperty01",
-					bindingPath : "EntityType02_SameComplexType/ComplexProperty01",
+					selected: false,
+					label: "ComplexProperty 01",
+					tooltip: "ComplexProperty 01-QuickInfo",
+					type: "delegate",
+					entityType: "EntityType02",
+					name: "ComplexProperty01",
+					bindingPath: "EntityType02_SameComplexType/ComplexProperty01",
 					originalLabel: "",
 					duplicateName: true,
 					parentPropertyName: "Same Complex Type Property with label"
@@ -301,13 +301,13 @@ function(
 				assert.equal(aAdditionalElements[6].bindingPath, "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty02");
 				assert.equal(aAdditionalElements[7].bindingPath, "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty03");
 				assert.deepEqual(aAdditionalElements[8], {
-					selected : false,
-					label : "ComplexProperty 05",
-					tooltip : "ComplexProperty 05-QuickInfo",
-					type : "delegate",
-					entityType : "EntityType02",
-					name : "ComplexProperty05",
-					bindingPath : "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty05",
+					selected: false,
+					label: "ComplexProperty 05",
+					tooltip: "ComplexProperty 05-QuickInfo",
+					type: "delegate",
+					entityType: "EntityType02",
+					name: "ComplexProperty05",
+					bindingPath: "EntityType02_OtherComplexTypeSameComplexProperties/ComplexProperty05",
 					originalLabel: "",
 					duplicateName: false,
 					parentPropertyName: "EntityType02_OtherComplexTypeSameComplexProperties"
@@ -327,13 +327,13 @@ function(
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : [{
+				reveal: {
+					elements: [{
 						element: oGroupElement1,
-						action : {} //nothing relevant for the analyzer test
+						action: {} //nothing relevant for the analyzer test
 					}, {
 						element: oGroupElement2,
-						action : {} //nothing relevant for the analyzer test
+						action: {} //nothing relevant for the analyzer test
 					}]
 				},
 				addViaDelegate: {
@@ -363,10 +363,10 @@ function(
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : [{
+				reveal: {
+					elements: [{
 						element: oGroupElement1,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -388,13 +388,13 @@ function(
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : [{
+				reveal: {
+					elements: [{
 						element: oGroupElement1,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}, {
 						element: oGroupElement2,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -417,13 +417,13 @@ function(
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : [{
+				reveal: {
+					elements: [{
 						element: oGroupElement1,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}, {
 						element: oGroupElement2,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -447,10 +447,10 @@ function(
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : [{
+				reveal: {
+					elements: [{
 						element: oGroupElement1,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}]
 				}
 			};
@@ -470,10 +470,10 @@ function(
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : [{
+				reveal: {
+					elements: [{
 						element: oGroupElement1,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -494,14 +494,14 @@ function(
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : [{
+				reveal: {
+					elements: [{
 						element: oGroupElement1,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}]
 				},
-				addViaDelegate : {
-					action : {}, //not relevant for test,
+				addViaDelegate: {
+					action: {}, //not relevant for test,
 					delegateInfo: {
 						payload: {},
 						delegate: this.oDelegate
@@ -527,13 +527,13 @@ function(
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : [{
+				reveal: {
+					elements: [{
 						element: oGroupElement1,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}, {
 						element: oGroupElement2,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}]
 				},
 				addViaDelegate: {
@@ -558,15 +558,15 @@ function(
 				return oFormElement.isVisible() === false;
 			}).map(function(oFormElement) {
 				return {
-					element : oFormElement,
-					action : {} //not relevant for test
+					element: oFormElement,
+					action: {} //not relevant for test
 				};
 			});
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : aFormElements
+				reveal: {
+					elements: aFormElements
 				},
 				addViaDelegate: {
 					delegateInfo: {
@@ -600,17 +600,17 @@ function(
 
 			var oActionsObject = {
 				aggregation: "formElements",
-				reveal : {
-					elements : [{
+				reveal: {
+					elements: [{
 						element: oGroupElement1,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}, {
 						element: oGroupElement2,
-						action : {} //not relevant for test
+						action: {} //not relevant for test
 					}]
 				},
-				addViaCustom : {
-					action : {}, //not relevant for test
+				addViaCustom: {
+					action: {}, //not relevant for test
 					items: [{
 						label: sGroupElement1OriginalLabel,
 						tooltip: "Tooltip1",

@@ -15,7 +15,7 @@ sap.ui.define([
 				/**
 				 * Variant management contexts that have been selected.
 				 */
-				selectedRoles : {
+				selectedRoles: {
 					type: "array",
 					defaultValue: []
 				}

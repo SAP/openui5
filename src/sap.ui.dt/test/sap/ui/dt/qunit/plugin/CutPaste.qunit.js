@@ -38,7 +38,7 @@ function(
 	}
 
 	QUnit.module("Given that a CutPaste is initialized", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			// Test Setup:
 			// VerticalLayout
 			// 	 content
@@ -48,7 +48,7 @@ function(
 			this.oButton2 = new Button();
 			this.oButton3 = new Button();
 			this.oLayout = new VerticalLayout({
-				content : [
+				content: [
 					this.oButton,
 					this.oButton2,
 					this.oButton3
@@ -84,7 +84,7 @@ function(
 				done();
 			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oDesignTime.destroy();
 			this.oLayout.destroy();
 			this.oCutPaste.destroy();

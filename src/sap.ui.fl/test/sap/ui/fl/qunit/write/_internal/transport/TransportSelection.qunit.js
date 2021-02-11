@@ -110,58 +110,58 @@ sap.ui.define([
 
 		QUnit.test("when preparing and checking changes for transport", function(assert) {
 			var oMockTransportInfo = {
-				packageName : "PackageName",
-				transport : "transportId"
+				packageName: "PackageName",
+				transport: "transportId"
 			};
 			var oMockTransportInfoInvalid = {
-				packageName : "$TMP",
-				transport : "transportId"
+				packageName: "$TMP",
+				transport: "transportId"
 			};
 			var oMockTransportedChange = {
-				packageName : "aPackage",
-				fileType : "change",
-				id : "changeId1",
-				namespace : "namespace",
-				getDefinition : function() {
+				packageName: "aPackage",
+				fileType: "change",
+				id: "changeId1",
+				namespace: "namespace",
+				getDefinition: function() {
 					return {
-						packageName : this.packageName,
-						fileType : this.fileType
+						packageName: this.packageName,
+						fileType: this.fileType
 					};
 				},
-				getId : function() {
+				getId: function() {
 					return this.id;
 				},
-				getNamespace : function() {
+				getNamespace: function() {
 					return this.namespace;
 				},
-				setResponse : function(oDefinition) {
+				setResponse: function(oDefinition) {
 					this.packageName = oDefinition.packageName;
 				},
-				getPackage : function() {
+				getPackage: function() {
 					return this.packageName;
 				}
 			};
 			var oMockNewChange = {
-				packageName : "$TMP",
-				fileType : "change",
-				id : "changeId2",
-				namespace : "namespace",
-				getDefinition : function() {
+				packageName: "$TMP",
+				fileType: "change",
+				id: "changeId2",
+				namespace: "namespace",
+				getDefinition: function() {
 					return {
-						packageName : this.packageName,
-						fileType : this.fileType
+						packageName: this.packageName,
+						fileType: this.fileType
 					};
 				},
-				getId : function() {
+				getId: function() {
 					return this.id;
 				},
-				getNamespace : function() {
+				getNamespace: function() {
 					return this.namespace;
 				},
-				setResponse : function(oDefinition) {
+				setResponse: function(oDefinition) {
 					this.packageName = oDefinition.packageName;
 				},
-				getPackage : function() {
+				getPackage: function() {
 					return this.packageName;
 				}
 			};
@@ -180,49 +180,49 @@ sap.ui.define([
 
 		QUnit.test("when preparing and checking changes for transport with local UI changes and app variant descriptor", function(assert) {
 			var oMockTransportInfo = {
-				packageName : "PackageName",
-				transport : "transportId"
+				packageName: "PackageName",
+				transport: "transportId"
 			};
 			var oAppVariantDescriptor = {
-				packageName : "$TMP",
-				fileType : "appdescr_variant",
-				fileName : "manifest",
-				id : "customer.app.var.id",
-				namespace : "namespace1",
-				getDefinition : function() {
+				packageName: "$TMP",
+				fileType: "appdescr_variant",
+				fileName: "manifest",
+				id: "customer.app.var.id",
+				namespace: "namespace1",
+				getDefinition: function() {
 					return {
-						fileType : this.fileType,
-						fileName : this.fileName
+						fileType: this.fileType,
+						fileName: this.fileName
 					};
 				},
-				getNamespace : function() {
+				getNamespace: function() {
 					return this.namespace;
 				},
-				getPackage : function() {
+				getPackage: function() {
 					return this.packageName;
 				}
 			};
 			var oMockNewChange = {
-				packageName : "$TMP",
-				fileType : "change",
-				id : "changeId2",
-				namespace : "namespace2",
-				getDefinition : function() {
+				packageName: "$TMP",
+				fileType: "change",
+				id: "changeId2",
+				namespace: "namespace2",
+				getDefinition: function() {
 					return {
-						packageName : this.packageName,
-						fileType : this.fileType
+						packageName: this.packageName,
+						fileType: this.fileType
 					};
 				},
-				getId : function() {
+				getId: function() {
 					return this.id;
 				},
-				getNamespace : function() {
+				getNamespace: function() {
 					return this.namespace;
 				},
-				setResponse : function(oDefinition) {
+				setResponse: function(oDefinition) {
 					this.packageName = oDefinition.packageName;
 				},
-				getPackage : function() {
+				getPackage: function() {
 					return this.packageName;
 				}
 			};
@@ -240,8 +240,8 @@ sap.ui.define([
 
 		QUnit.test("when preparing changes for transport is called the reference, app version and layer was added", function(assert) {
 			var oMockTransportInfo = {
-				packageName : "PackageName",
-				transport : "transportId"
+				packageName: "PackageName",
+				transport: "transportId"
 			};
 			var aMockLocalChanges = [];
 			var aAppVariantDescriptors = [];

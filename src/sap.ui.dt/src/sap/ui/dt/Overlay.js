@@ -173,17 +173,17 @@ function (
 				/**
 				 * Event fired before geometryChanged event is fired
 				 */
-				beforeGeometryChanged : {},
+				beforeGeometryChanged: {},
 				/**
 				 * Event fired when the styles applying is required
 				 */
 				applyStylesRequired: {
 					parameters: {
 						type: {
-							type : "string"
+							type: "string"
 						},
 						targetOverlay: {
-							type : "sap.ui.dt.ElementOverlay"
+							type: "sap.ui.dt.ElementOverlay"
 						}
 					}
 				}
@@ -716,7 +716,7 @@ function (
 					sEventType: sEventType,
 					fnHandler: fnHandler,
 					oListener: oListener,
-					fnProxy : fnProxy
+					fnProxy: fnProxy
 				});
 
 				// if control is rendered, directly call on()
@@ -847,7 +847,7 @@ function (
 			} else {
 				oDummyScrollContainer.css({
 					height: iScrollHeight,
-					width : iScrollWidth
+					width: iScrollWidth
 				});
 				oScrollbarSynchronizer = this._oScrollbarSynchronizers.get($TargetDomRef.get(0));
 				if (!oScrollbarSynchronizer.hasTarget(oOriginalDomRef)) {

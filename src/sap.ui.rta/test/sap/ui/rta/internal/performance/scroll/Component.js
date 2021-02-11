@@ -44,27 +44,27 @@ sap.ui.define([
 			DtPerformanceTestUtil.addMixedControlsTo(oSecondSectionPanel, 61, 80, false /*invisible*/);
 
 			var oObjectPageLayout = new ObjectPageLayout("opLayout", {
-				headerTitle : new ObjectPageHeader("opHeader", {
-					objectTitle : "RtaPerformance",
-					objectSubtitle : "ScrollTest"
+				headerTitle: new ObjectPageHeader("opHeader", {
+					objectTitle: "RtaPerformance",
+					objectSubtitle: "ScrollTest"
 				}),
-				headerContent : oHeaderLayout,
-				sections : [
+				headerContent: oHeaderLayout,
+				sections: [
 					new ObjectPageSection("opSection1", {
-						title : "section1",
-						subSections : [
+						title: "section1",
+						subSections: [
 							new ObjectPageSubSection("opSubSection1", {
-								title : "subsection1",
-								blocks : [oFirstSectionPanel]
+								title: "subsection1",
+								blocks: [oFirstSectionPanel]
 							})
 						]
 					}),
 					new ObjectPageSection("opSection2", {
-						title : "section2",
-						subSections : [
+						title: "section2",
+						subSections: [
 							new ObjectPageSubSection("opSubSection2", {
-								title : "subsection2",
-								blocks : [oSecondSectionPanel]
+								title: "subsection2",
+								blocks: [oSecondSectionPanel]
 							})
 						]
 					})

@@ -155,7 +155,7 @@ function(
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oPage]
+				rootElements: [this.oPage]
 			});
 
 			this.CutPastePlugin.setDesignTime(this.oDesignTime);
@@ -229,7 +229,7 @@ function(
 			var done = assert.async();
 
 			this.CutPastePlugin = new CutPastePlugin({
-				commandFactory : oCommandFactory
+				commandFactory: oCommandFactory
 			});
 
 			sandbox.stub(Plugin.prototype, "hasChangeHandler").returns(true);
@@ -240,7 +240,7 @@ function(
 			});
 
 			this.oVerticalLayoutWoStableId = new VerticalLayout({
-				content : [oObjectStatus3]
+				content: [oObjectStatus3]
 			});
 
 			this.oPage = new sap.m.Page("page", {
@@ -250,7 +250,7 @@ function(
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oPage]
+				rootElements: [this.oPage]
 			});
 
 			this.CutPastePlugin.setDesignTime(this.oDesignTime);

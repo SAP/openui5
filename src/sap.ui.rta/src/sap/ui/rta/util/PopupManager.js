@@ -51,30 +51,30 @@ function (
 	 *               be changed in future.
 	 */
 	var PopupManager = ManagedObject.extend("sap.ui.rta.util.PopupManager", {
-		metadata : {
-			properties : {
-				rta:  "any"
+		metadata: {
+			properties: {
+				rta: "any"
 			},
-			associations : {
+			associations: {
 				/**
 				 * To set the associated controls as an autoCloseArea for all Popover/Dialog open in RTA mode.
 				 * Needs to be filled before the popup is open.
 				 */
-				autoCloseAreas : {type : "sap.ui.core.Control", multiple : true, singularName : "autoCloseArea"}
+				autoCloseAreas: {type: "sap.ui.core.Control", multiple: true, singularName: "autoCloseArea"}
 			},
-			events : {
+			events: {
 				open: {
-					parameters : {
-						oControl : {type : "sap.ui.core.Control"}
+					parameters: {
+						oControl: {type: "sap.ui.core.Control"}
 					}
 				},
 				close: {
-					parameters : {
-						oControl : {type : "sap.ui.core.Control"}
+					parameters: {
+						oControl: {type: "sap.ui.core.Control"}
 					}
 				}
 			},
-			library : "sap.ui.rta"
+			library: "sap.ui.rta"
 		}
 	});
 

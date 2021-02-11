@@ -170,8 +170,8 @@ sap.ui.define([
 			oCombineElement,
 			"combine",
 			{
-				source : oCombineElement,
-				combineElements : aElements
+				source: oCombineElement,
+				combineElements: aElements
 			},
 			oDesignTimeMetadata,
 			sVariantManagementReference
@@ -179,7 +179,7 @@ sap.ui.define([
 
 		.then(function(oCombineCommand) {
 			this.fireElementModified({
-				command : oCombineCommand
+				command: oCombineCommand
 			});
 		}.bind(this))
 

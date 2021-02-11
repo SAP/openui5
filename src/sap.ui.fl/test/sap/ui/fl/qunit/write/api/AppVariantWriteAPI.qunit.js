@@ -48,8 +48,8 @@ sap.ui.define([
 
 	function createAppComponent() {
 		var oDescriptor = {
-			"sap.app" : {
-				id : "customer.reference.app.id",
+			"sap.app": {
+				id: "customer.reference.app.id",
 				applicationVersion: {
 					version: "1.2.3"
 				}
@@ -59,7 +59,7 @@ sap.ui.define([
 		var oManifest = new Manifest(oDescriptor);
 		return {
 			name: "testComponent",
-			getManifest : function() {
+			getManifest: function() {
 				return oManifest;
 			},
 			getId: function() {
@@ -72,10 +72,10 @@ sap.ui.define([
 	function simulateSystemConfig(bIsCloudSystem) {
 		sandbox.stub(Settings, "getInstance").resolves(
 			new Settings({
-				isKeyUser:true,
+				isKeyUser: true,
 				isAtoAvailable: bIsCloudSystem,
 				isAtoEnabled: bIsCloudSystem,
-				isProductiveSystem:false
+				isProductiveSystem: false
 			})
 		);
 	}
@@ -85,18 +85,18 @@ sap.ui.define([
 			this.oDescrChangeSpecificData1 = {
 				changeType: 'appdescr_ovp_addNewCard',
 				content: {
-					card : {
-						"customer.acard" : {
-							model : "customer.boring_model",
-							template : "sap.ovp.cards.list",
-							settings : {
-								category : "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
-								title : "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
-								description : "extended",
-								entitySet : "Zme_Overdue",
-								sortBy : "OverdueTime",
-								sortOrder : "desc",
-								listType : "extended"
+					card: {
+						"customer.acard": {
+							model: "customer.boring_model",
+							template: "sap.ovp.cards.list",
+							settings: {
+								category: "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
+								title: "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
+								description: "extended",
+								entitySet: "Zme_Overdue",
+								sortBy: "OverdueTime",
+								sortOrder: "desc",
+								listType: "extended"
 							}
 						}
 					}
@@ -130,18 +130,18 @@ sap.ui.define([
 			this.oDescrChangeSpecificData2 = {
 				changeType: 'appdescr_ovp_addNewCard',
 				content: {
-					card : {
-						"customer.acard" : {
-							model : "customer.boring_model",
-							template : "sap.ovp.cards.list",
-							settings : {
-								category : "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
-								title : "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
-								description : "extended",
-								entitySet : "Zme_Overdue",
-								sortBy : "OverdueTime",
-								sortOrder : "desc",
-								listType : "extended"
+					card: {
+						"customer.acard": {
+							model: "customer.boring_model",
+							template: "sap.ovp.cards.list",
+							settings: {
+								category: "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
+								title: "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
+								description: "extended",
+								entitySet: "Zme_Overdue",
+								sortBy: "OverdueTime",
+								sortOrder: "desc",
+								listType: "extended"
 							}
 						}
 					}
@@ -204,26 +204,26 @@ sap.ui.define([
 			};
 
 			this.oUIChangeSpecificData = {
-				variantReference:"",
-				fileName:"id_1445501120486_26",
-				fileType:"change",
-				changeType:"hideControl",
-				reference:"reference.app.Component",
-				packageName:"",
-				content:{},
-				selector:{
-					id:"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+				variantReference: "",
+				fileName: "id_1445501120486_26",
+				fileType: "change",
+				changeType: "hideControl",
+				reference: "reference.app.Component",
+				packageName: "",
+				content: {},
+				selector: {
+					id: "RTADemoAppMD---detail--GroupElementDatesShippingStatus"
 				},
-				layer:Layer.CUSTOMER,
-				texts:{},
-				namespace:"reference.app.Component",
-				creation:"2018-10-16T08:00:02",
-				originalLanguage:"EN",
-				conditions:{},
-				support:{
-					generator:"Change.createInitialFileContent",
-					service:"",
-					user:""
+				layer: Layer.CUSTOMER,
+				texts: {},
+				namespace: "reference.app.Component",
+				creation: "2018-10-16T08:00:02",
+				originalLanguage: "EN",
+				conditions: {},
+				support: {
+					generator: "Change.createInitialFileContent",
+					service: "",
+					user: ""
 				}
 			};
 		},
@@ -337,7 +337,7 @@ sap.ui.define([
 			});
 
 
-			sandbox.stub(WriteUtils, "sendRequest").rejects({message:"App variant failed to save"});
+			sandbox.stub(WriteUtils, "sendRequest").rejects({message: "App variant failed to save"});
 
 			sandbox.stub(Log, "error").callThrough().withArgs("the app variant could not be created.", "App variant failed to save").returns();
 
@@ -1011,18 +1011,18 @@ sap.ui.define([
 			this.oDescrChangeSpecificData1 = {
 				changeType: 'appdescr_ovp_addNewCard',
 				content: {
-					card : {
-						"customer.acard" : {
-							model : "customer.boring_model",
-							template : "sap.ovp.cards.list",
-							settings : {
-								category : "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
-								title : "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
-								description : "extended",
-								entitySet : "Zme_Overdue",
-								sortBy : "OverdueTime",
-								sortOrder : "desc",
-								listType : "extended"
+					card: {
+						"customer.acard": {
+							model: "customer.boring_model",
+							template: "sap.ovp.cards.list",
+							settings: {
+								category: "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
+								title: "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
+								description: "extended",
+								entitySet: "Zme_Overdue",
+								sortBy: "OverdueTime",
+								sortOrder: "desc",
+								listType: "extended"
 							}
 						}
 					}
@@ -1056,18 +1056,18 @@ sap.ui.define([
 			this.oDescrChangeSpecificData2 = {
 				changeType: 'appdescr_ovp_addNewCard',
 				content: {
-					card : {
-						"customer.acard" : {
-							model : "customer.boring_model",
-							template : "sap.ovp.cards.list",
-							settings : {
-								category : "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
-								title : "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
-								description : "extended",
-								entitySet : "Zme_Overdue",
-								sortBy : "OverdueTime",
-								sortOrder : "desc",
-								listType : "extended"
+					card: {
+						"customer.acard": {
+							model: "customer.boring_model",
+							template: "sap.ovp.cards.list",
+							settings: {
+								category: "{{reference.app_sap.app.ovp.cards.customer.acard.category}}",
+								title: "{{reference.app_sap.app.ovp.cards.customer.acard.title}}",
+								description: "extended",
+								entitySet: "Zme_Overdue",
+								sortBy: "OverdueTime",
+								sortOrder: "desc",
+								listType: "extended"
 							}
 						}
 					}
@@ -1114,26 +1114,26 @@ sap.ui.define([
 			};
 
 			this.oUIChangeSpecificData = {
-				variantReference:"",
-				fileName:"id_1445501120486_26",
-				fileType:"change",
-				changeType:"hideControl",
-				reference:"reference.app.Component",
-				packageName:"",
-				content:{},
-				selector:{
-					id:"RTADemoAppMD---detail--GroupElementDatesShippingStatus"
+				variantReference: "",
+				fileName: "id_1445501120486_26",
+				fileType: "change",
+				changeType: "hideControl",
+				reference: "reference.app.Component",
+				packageName: "",
+				content: {},
+				selector: {
+					id: "RTADemoAppMD---detail--GroupElementDatesShippingStatus"
 				},
-				layer:Layer.CUSTOMER,
-				texts:{},
-				namespace:"reference.app.Component",
-				creation:"2018-10-16T08:00:02",
-				originalLanguage:"EN",
-				conditions:{},
-				support:{
-					generator:"Change.createInitialFileContent",
-					service:"",
-					user:""
+				layer: Layer.CUSTOMER,
+				texts: {},
+				namespace: "reference.app.Component",
+				creation: "2018-10-16T08:00:02",
+				originalLanguage: "EN",
+				conditions: {},
+				support: {
+					generator: "Change.createInitialFileContent",
+					service: "",
+					user: ""
 				}
 			};
 		},
@@ -1143,8 +1143,8 @@ sap.ui.define([
 	}, function() {
 		QUnit.test("(Save As scenario - onPrem system) when saveAs is called with 4 descriptor and 1 UI changes already added into their own persistences", function(assert) {
 			var oDescriptor = {
-				"sap.app" : {
-					id : "customer.reference.app.variant.id_123456",
+				"sap.app": {
+					id: "customer.reference.app.variant.id_123456",
 					applicationVersion: {
 						version: "1.0.0"
 					}
@@ -1154,7 +1154,7 @@ sap.ui.define([
 			var oManifest = new Manifest(oDescriptor);
 			var oAppVariantComponent = {
 				name: "customer.reference.app.variant.id_123456",
-				getManifest : function() {
+				getManifest: function() {
 					return oManifest;
 				},
 				getId: function() {

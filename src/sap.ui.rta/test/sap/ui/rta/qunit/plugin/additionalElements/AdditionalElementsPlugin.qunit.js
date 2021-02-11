@@ -1486,7 +1486,7 @@ sap.ui.define([
 			});
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
-					delegate : {
+					delegate: {
 						changeType: "addFields",
 						supportsDefaultDelegate: true
 					}
@@ -1530,7 +1530,7 @@ sap.ui.define([
 
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
-					delegate : {
+					delegate: {
 						changeType: "addFields",
 						changeOnRelevantContainer: true,
 						supportsDefaultDelegate: true
@@ -1548,7 +1548,7 @@ sap.ui.define([
 
 		function givenAddHasLibraryDependencyToDefaultDelegatesLibDependencies() {
 			var oMockedAppComponentWithLibDependency = merge({}, oMockedAppComponent, {
-				getManifestEntry : function(sPath) {
+				getManifestEntry: function(sPath) {
 					if (sPath.indexOf("libs")) {
 						return merge(
 							{},
@@ -1579,7 +1579,7 @@ sap.ui.define([
 
 			return createOverlayWithAggregationActions.call(this, {
 				add: {
-					delegate : {
+					delegate: {
 						changeType: "addFields",
 						changeOnRelevantContainer: true,
 						supportsDefaultDelegate: true

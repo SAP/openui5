@@ -32,19 +32,19 @@ sap.ui.define([
 
 			for (var i0 = 0; i0 < aPropNames.length; i0++) {
 				aDTTLs[i0] = new DTToolListItem({
-					propertyName : aPropNames[i0],
-					defaultValue : aDefVals[i0],
-					value : aVals[i0],
-					type : aTypes[i0]
+					propertyName: aPropNames[i0],
+					defaultValue: aDefVals[i0],
+					value: aVals[i0],
+					type: aTypes[i0]
 				});
 			}
 
 			new Table({
-				columns : [
+				columns: [
 					new Column({}),
 					new Column({})
 				],
-				items : [
+				items: [
 					aDTTLs[0],
 					aDTTLs[1],
 					aDTTLs[2],
@@ -96,10 +96,10 @@ sap.ui.define([
 			var done = assert.async();
 
 			var newVals = {
-				DTTLi0 : "Dirk",
-				DTTLi1 : true,
-				DTTLi2 : 42,
-				DTTLi3 : 0.0238095
+				DTTLi0: "Dirk",
+				DTTLi1: true,
+				DTTLi2: 42,
+				DTTLi3: 0.0238095
 			};
 
 			var iChanges = 0;
@@ -114,39 +114,39 @@ sap.ui.define([
 			};
 
 			var oDTTLi0 = new DTToolListItem({
-				id : "DTTLi0",
-				propertyName : "someProp",
-				defaultValue : "fluffy",
-				value : "Kaiserschmarrn",
-				type : "string"
+				id: "DTTLi0",
+				propertyName: "someProp",
+				defaultValue: "fluffy",
+				value: "Kaiserschmarrn",
+				type: "string"
 			}).attachChange(fnChange);
 
 			var oDTTLi1 = new DTToolListItem({
-				id : "DTTLi1",
-				propertyName : "someBoolProp",
-				defaultValue : false,
-				value : false,
-				type : "boolean"
+				id: "DTTLi1",
+				propertyName: "someBoolProp",
+				defaultValue: false,
+				value: false,
+				type: "boolean"
 			}).attachChange(fnChange);
 
 			var oDTTLi2 = new DTToolListItem({
-				id : "DTTLi2",
-				propertyName : "someIntProp",
-				defaultValue : 7,
-				value : 18,
-				type : "int"
+				id: "DTTLi2",
+				propertyName: "someIntProp",
+				defaultValue: 7,
+				value: 18,
+				type: "int"
 			}).attachChange(fnChange);
 
 			var oDTTLi3 = new DTToolListItem({
-				id : "DTTLi3",
-				propertyName : "someFloatProp",
-				defaultValue : 3.14,
-				value : 3.14159,
-				type : "float"
+				id: "DTTLi3",
+				propertyName: "someFloatProp",
+				defaultValue: 3.14,
+				value: 3.14159,
+				type: "float"
 			}).attachChange(fnChange);
 
 			new List({
-				items : [
+				items: [
 					oDTTLi0,
 					oDTTLi1,
 					oDTTLi2,
@@ -156,10 +156,10 @@ sap.ui.define([
 
 			sap.ui.getCore().applyChanges();
 
-			oDTTLi0.getContent()[0].fireChange({value : newVals["DTTLi0"]});
-			oDTTLi1.getContent()[0].fireChange({selectedItem : new Item({key : newVals["DTTLi1"], value : newVals["DTTLi1"]})});
-			oDTTLi2.getContent()[0].fireChange({value : newVals["DTTLi2"]});
-			oDTTLi3.getContent()[0].fireChange({value : newVals["DTTLi3"]});
+			oDTTLi0.getContent()[0].fireChange({value: newVals["DTTLi0"]});
+			oDTTLi1.getContent()[0].fireChange({selectedItem: new Item({key: newVals["DTTLi1"], value: newVals["DTTLi1"]})});
+			oDTTLi2.getContent()[0].fireChange({value: newVals["DTTLi2"]});
+			oDTTLi3.getContent()[0].fireChange({value: newVals["DTTLi3"]});
 		});
 	});
 

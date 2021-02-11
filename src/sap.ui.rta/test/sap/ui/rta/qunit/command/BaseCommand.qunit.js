@@ -91,16 +91,16 @@ function (
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
+				"sap.app": {
 					type: "application",
-					applicationVersion : {
-						version : "1.2.3"
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
 		},
 		getModel: function () {},
-		createId : function(sId) {
+		createId: function(sId) {
 			return "testcomponent---" + sId;
 		}
 	};
@@ -112,23 +112,23 @@ function (
 	}
 
 	QUnit.module("Given a command factory", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oButton = new Button(oMockedAppComponent.createId("myButton"));
 			sandbox.stub(flUtils, "_getComponentForControl")
 				.callThrough()
 				.withArgs(this.oButton)
 				.returns(oMockedAppComponent);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oButton.destroy();
 		}
 	}, function() {
 		QUnit.test("when getting a property change command for button,", function(assert) {
 			return oCommandFactory.getCommandFor(this.oButton, "property", {
-				propertyName : "visible",
-				oldValue : this.oButton.getVisible(),
-				newValue : false
+				propertyName: "visible",
+				oldValue: this.oButton.getVisible(),
+				newValue: false
 			})
 
 			.then(function(oCommand) {
@@ -142,9 +142,9 @@ function (
 					developerMode: true
 				});
 				return oCommandFactory.getCommandFor(this.oButton, "property", {
-					propertyName : "visible",
-					oldValue : this.oButton.getVisible(),
-					newValue : false
+					propertyName: "visible",
+					oldValue: this.oButton.getVisible(),
+					newValue: false
 				});
 			}.bind(this))
 
@@ -170,9 +170,9 @@ function (
 			var oPrepareStub = sandbox.stub(FlexCommand.prototype, "prepare");
 
 			return CommandFactory.getCommandFor(this.oButton, "property", {
-				propertyName : "visible",
-				oldValue : this.oButton.getVisible(),
-				newValue : false
+				propertyName: "visible",
+				oldValue: this.oButton.getVisible(),
+				newValue: false
 			}, null, oFlexSettings)
 
 			.then(function() {
@@ -188,16 +188,16 @@ function (
 	});
 
 	QUnit.module("Given a flex command", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button("mockButton");
 			this.fnApplyChangeSpy = sandbox.spy(HideControl, "applyChange");
 			this.oFlexCommand = new FlexCommand({
-				element : this.oButton,
-				changeType : "hideControl"
+				element: this.oButton,
+				changeType: "hideControl"
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oFlexCommand.destroy();
 			this.oButton.destroy();
@@ -228,7 +228,7 @@ function (
 	});
 
 	QUnit.module("Given a command stack", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.stack = new Stack();
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
@@ -238,7 +238,7 @@ function (
 			};
 			this.command2 = new BaseCommand();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.command.destroy();
 			this.command2.destroy();
@@ -419,7 +419,7 @@ function (
 	});
 
 	QUnit.module("Given a property command", {
-		beforeEach : function() {
+		beforeEach: function() {
 			var oFlexSettings = {
 				developerMode: true,
 				layer: Layer.VENDOR
@@ -428,13 +428,13 @@ function (
 			this.OLD_VALUE = "2px";
 			this.NEW_VALUE = "5px";
 			this.oControl = new Column(oMockedAppComponent.createId("control"), {
-				width : this.OLD_VALUE
+				width: this.OLD_VALUE
 			});
 			return CommandFactory.getCommandFor(this.oControl, "Property", {
-				propertyName : "width",
-				newValue : this.NEW_VALUE,
-				oldValue : this.OLD_VALUE,
-				semanticMeaning : "resize"
+				propertyName: "width",
+				newValue: this.NEW_VALUE,
+				oldValue: this.OLD_VALUE,
+				semanticMeaning: "resize"
 			}, null, oFlexSettings)
 
 			.then(function(oCommand) {
@@ -442,7 +442,7 @@ function (
 				this.fnApplyChangeSpy = sandbox.spy(FlexCommand.prototype, "_applyChange");
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oControl.destroy();
 			this.oPropertyCommand.destroy();
@@ -476,7 +476,7 @@ function (
 	});
 
 	QUnit.module("Given a bind property command", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var oFlexSettings = {
 				developerMode: true,
 				layer: Layer.VENDOR
@@ -494,42 +494,42 @@ function (
 				value: this.OLD_VALUE_BINDING
 			});
 			var oModel = new JSONModel({
-				field1 : this.OLD_VALUE,
-				field2 : 15000
+				field1: this.OLD_VALUE,
+				field2: 15000
 			});
 			var oNamedModel = new JSONModel({
-				numberAsString : this.NEW_VALUE
+				numberAsString: this.NEW_VALUE
 			});
 			this.oInput.setModel(oModel);
 			this.oInput.setModel(oNamedModel, "namedModel");
 
 			return CommandFactory.getCommandFor(this.oInput, "BindProperty", {
-				propertyName : "showValueHelp",
-				newBinding : this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
+				propertyName: "showValueHelp",
+				newBinding: this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
 			}, null, oFlexSettings)
 
 			.then(function(oCommand) {
 				this.oBindShowValueHelpCommand = oCommand;
 				return CommandFactory.getCommandFor(this.oInput, "BindProperty", {
-					element : this.oInput,
-					propertyName : "showValueHelp",
-					newBinding : this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
+					element: this.oInput,
+					propertyName: "showValueHelp",
+					newBinding: this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
 				}, null, oFlexSettings);
 			}.bind(this))
 
 			.then(function(oCommand) {
 				this.oBindShowValueHelpCommandWithoutOldValueSet = oCommand;
 				return CommandFactory.getCommandFor(this.oInput, "BindProperty", {
-					propertyName : "value",
-					newBinding : this.NEW_VALUE_BINDING
+					propertyName: "value",
+					newBinding: this.NEW_VALUE_BINDING
 				}, null, oFlexSettings);
 			}.bind(this))
 
 			.then(function(oCommand) {
 				this.oBindValuePropertyCommand = oCommand;
 				return CommandFactory.getCommandFor(this.oInput, "BindProperty", {
-					propertyName : "value",
-					newBinding : this.NEW_VALUE_BINDING
+					propertyName: "value",
+					newBinding: this.NEW_VALUE_BINDING
 				}, null, oFlexSettings);
 			}.bind(this))
 
@@ -542,7 +542,7 @@ function (
 				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oInput.destroy();
 			this.oBindShowValueHelpCommandWithoutOldValueSet.destroy();
@@ -603,17 +603,17 @@ function (
 	});
 
 	QUnit.module("Given remove command", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
 
 			return CommandFactory.getCommandFor(this.oButton, "Remove", {
 				removedElement: this.oButton
 			}, new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						remove : {
-							changeType : "hideControl"
+				data: {
+					actions: {
+						remove: {
+							changeType: "hideControl"
 						}
 					}
 				}
@@ -623,7 +623,7 @@ function (
 				return this.oCommand.prepare();
 			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function () {
 			sandbox.restore();
 			this.oCommand.destroy();
 			this.oButton.destroy();
@@ -708,7 +708,7 @@ function (
 	});
 
 	QUnit.module("Given a command stack with multiple already executed commands", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			sandbox.stub(flUtils, "getAppComponentForControl").returns(oMockedAppComponent);
 			this.renamedButton = new Button();
 			this.stack = new Stack();
@@ -725,7 +725,7 @@ function (
 				assert.ok(false, "catch must never be called - Error: " + oError);
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.command.destroy();
 			this.command2.destroy();
@@ -845,7 +845,7 @@ function (
 	});
 
 	QUnit.module("Given an empty command stack and commands", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.stack = new Stack();
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.command = new BaseCommand();
@@ -855,7 +855,7 @@ function (
 			this.command5 = new FlexCommand();
 			this.compositeCommand = new CompositeCommand();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.command.destroy();
 			this.command2.destroy();
@@ -1061,7 +1061,7 @@ function (
 	});
 
 	QUnit.module("Given controls and designTimeMetadata", {
-		beforeEach : function () {
+		beforeEach: function () {
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			return ChangeRegistry.getInstance().registerControlsForChanges({
 				"sap.m.ObjectHeader": [SimpleChanges.moveControls]
@@ -1069,34 +1069,34 @@ function (
 			.then(function() {
 				this.oMovable = new ObjectAttribute(oMockedAppComponent.createId("attribute"));
 				this.oSourceParent = new ObjectHeader(oMockedAppComponent.createId("header"), {
-					attributes : [this.oMovable]
+					attributes: [this.oMovable]
 				});
 				this.oTargetParent = new ObjectHeader(oMockedAppComponent.createId("targetHeader"));
 
 				this.oRootElement = new VerticalLayout({
-					content : [this.oSourceParent, this.oTargetParent]
+					content: [this.oSourceParent, this.oTargetParent]
 				});
 
 				this.oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							move : "moveControls"
+					data: {
+						actions: {
+							move: "moveControls"
 						},
-						fakeAggreagtionWithoutMove : {
+						fakeAggreagtionWithoutMove: {
 
 						}
 					}
 				});
 				this.oOtherParentDesignTimeMetadata = new ElementDesignTimeMetadata({
-					data : {
-						actions : {
-							move : undefined
+					data: {
+						actions: {
+							move: undefined
 						}
 					}
 				});
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oRootElement.destroy();
 			this.oSourceParentDesignTimeMetadata.destroy();
@@ -1105,20 +1105,20 @@ function (
 	}, function() {
 		QUnit.test("when asking for a move command", function(assert) {
 			return CommandFactory.getCommandFor(this.oSourceParent, "Move", {
-				movedElements : [{
-					id : this.oMovable.getId(),
-					sourceIndex : 0,
-					targetIndex : 1
+				movedElements: [{
+					id: this.oMovable.getId(),
+					sourceIndex: 0,
+					targetIndex: 1
 				}],
-				source : {
-					id : this.oSourceParent.getId(),
-					aggregation : "attributes",
-					publicAggregation : "attributes"
+				source: {
+					id: this.oSourceParent.getId(),
+					aggregation: "attributes",
+					publicAggregation: "attributes"
 				},
-				target : {
-					id : this.oTargetParent.getId(),
-					aggregation : "attributes",
-					publicAggregation : "attributes"
+				target: {
+					id: this.oTargetParent.getId(),
+					aggregation: "attributes",
+					publicAggregation: "attributes"
 				}
 			}, this.oSourceParentDesignTimeMetadata)
 
@@ -1134,12 +1134,12 @@ function (
 	});
 
 	QUnit.module("Given a command stack with a hideControl flex command", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oCommandStack = new Stack();
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 			this.oButton = new Button(oMockedAppComponent.createId("button"));
 			this.oLayout = new VerticalLayout(oMockedAppComponent.createId("layout"), {
-				content : [this.oButton]
+				content: [this.oButton]
 			});
 			this.oCompositeCommand = new CompositeCommand();
 			this.oFlexCommand = new FlexCommand({
@@ -1165,7 +1165,7 @@ function (
 				}
 			};
 		},
-		afterEach : function () {
+		afterEach: function () {
 			sandbox.restore();
 			this.oFlexCommand.destroy();
 			this.oCompositeCommand.destroy();
@@ -1215,25 +1215,25 @@ function (
 	});
 
 	QUnit.module("Given a command factory and a bound control containing a template binding", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 
 			var done = assert.async();
 
 			var aTexts = [{text1: "Text 1", text2: "More Text 1"}, {text1: "Text 2", text2: "More Text 2"}, {text1: "Text 3", text2: "More Text 3"}];
 			var oModel = new JSONModel({
-				texts : aTexts
+				texts: aTexts
 			});
 
 			this.oItemTemplate = new CustomListItem("item", {
-				content : new VBox("vbox1", {
-					items : [
+				content: new VBox("vbox1", {
+					items: [
 						new VBox("vbox2", {
-							items : [
+							items: [
 								new VBox("vbox3", {
-									items : [
-										new Text("text1", {text : "{text1}"}),
-										new Text("text2", {text : "{text2}"})
+									items: [
+										new Text("text1", {text: "{text1}"}),
+										new Text("text2", {text: "{text2}"})
 									]
 								})
 							]
@@ -1242,10 +1242,10 @@ function (
 				})
 			});
 			this.oList = new List("list", {
-				items : {
-					path : "/texts",
-					template : this.oItemTemplate,
-					templateShareable : true
+				items: {
+					path: "/texts",
+					template: this.oItemTemplate,
+					templateShareable: true
 				}
 			}).setModel(oModel);
 
@@ -1256,7 +1256,7 @@ function (
 			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 			this.oText2 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[1];
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oList]
+				rootElements: [this.oList]
 			});
 
 			this.oDesignTime.attachEventOnce("synced", function() {
@@ -1268,22 +1268,22 @@ function (
 			}.bind(this));
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
+			oChangeRegistry.removeRegistryItem({controlType: "sap.m.List"});
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.VBox" : {
+				"sap.m.VBox": {
 					moveControls: "default"
 				},
-				"sap.m.Text" : {
-					hideControl : "default",
-					unhideControl : "default",
-					rename : sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
+				"sap.m.Text": {
+					hideControl: "default",
+					unhideControl: "default",
+					rename: sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
 						propertyName: "text",
 						translationTextType: "XTXT"
 					})
 				}
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
@@ -1305,14 +1305,14 @@ function (
 			var oMovedElement = this.oText1;
 			var oRelevantContainer = oMovedElement.getParent();
 			var oSource = {
-				parent : oRelevantContainer,
+				parent: oRelevantContainer,
 				aggregation: "items"
 			};
 			var oTarget = oSource;
 			var oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						move : "moveControls"
+				data: {
+					actions: {
+						move: "moveControls"
 					}
 				}
 			});
@@ -1320,20 +1320,20 @@ function (
 			var oExpectedFlexSettings = {
 				layer: Layer.CUSTOMER,
 				developerMode: false,
-				originalSelector : "vbox3",
-				templateSelector : "list",
-				content : {
-					boundAggregation : "items"
+				originalSelector: "vbox3",
+				templateSelector: "list",
+				content: {
+					boundAggregation: "items"
 				}
 			};
 			return oCommandFactory.getCommandFor(oRelevantContainer, "move", {
-				movedElements : [{
-					element : oMovedElement,
-					sourceIndex : 0,
-					targetIndex : 1
+				movedElements: [{
+					element: oMovedElement,
+					sourceIndex: 0,
+					targetIndex: 1
 				}],
-				source : oSource,
-				target : oTarget
+				source: oSource,
+				target: oTarget
 			}, oSourceParentDesignTimeMetadata)
 
 			.then(function(oMoveCommand) {
@@ -1378,9 +1378,9 @@ function (
 			var oRevealedElement = this.oText1;
 			var oRelevantContainer = oRevealedElement.getParent();
 			var oSourceParentDesignTimeMetadata = new ElementDesignTimeMetadata({
-				data : {
-					actions : {
-						reveal : "unhideControl"
+				data: {
+					actions: {
+						reveal: "unhideControl"
 					}
 				}
 			});
@@ -1388,10 +1388,10 @@ function (
 			var oExpectedFlexSettings = {
 				layer: Layer.CUSTOMER,
 				developerMode: false,
-				originalSelector : "text1",
-				templateSelector : "list",
-				content : {
-					boundAggregation : "items"
+				originalSelector: "text1",
+				templateSelector: "list",
+				content: {
+					boundAggregation: "items"
 				}
 			};
 
@@ -1402,8 +1402,8 @@ function (
 			this.oList.getItems()[2].getContent()[0].getItems()[0].getItems()[0].getItems()[0].setVisible(false);
 
 			return oCommandFactory.getCommandFor(oRevealedElement, "reveal", {
-				revealedElementId : oRevealedElement.getId(),
-				directParent : oRelevantContainer
+				revealedElementId: oRevealedElement.getId(),
+				directParent: oRelevantContainer
 			}, oSourceParentDesignTimeMetadata)
 
 			.then(function(oRevealCommand) {
@@ -1443,15 +1443,15 @@ function (
 			var oExpectedFlexSettings = {
 				layer: Layer.VENDOR,
 				developerMode: true,
-				originalSelector : "text1",
-				templateSelector : "list",
-				content : {
-					boundAggregation : "items"
+				originalSelector: "text1",
+				templateSelector: "list",
+				content: {
+					boundAggregation: "items"
 				}
 			};
 
 			return oCommandFactory.getCommandFor(oElement, "property", {
-				element : oElement,
+				element: oElement,
 				changeType: "propertyChange",
 				newValue: false,
 				propertyName: "visible"
@@ -1478,7 +1478,7 @@ function (
 	});
 
 	QUnit.module("Given a command factory and a bound control containing multiple template bindings", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 
 			var done = assert.async();
@@ -1486,28 +1486,28 @@ function (
 			var aInnerTexts = [{text: "More Text 1"}, {text: "More Text 2"}, {text: "More Text 3"}];
 			var aTexts1 = [{text: "Text 1", inner: aInnerTexts}, {text: "Text 2", inner: aInnerTexts}, {text: "Text 3", inner: aInnerTexts}];
 			var oModel = new JSONModel({
-				texts1 : aTexts1
+				texts1: aTexts1
 			});
 
 			this.oItemTemplate = new CustomListItem("item", { //binding context /texts1
-				content : new VBox(oMockedAppComponent.createId("vbox1"), {
-					items : [
+				content: new VBox(oMockedAppComponent.createId("vbox1"), {
+					items: [
 						new Text({id: oMockedAppComponent.createId("text"), text: "{text}"}), //binding context /texts1
 						new VBox(oMockedAppComponent.createId("vbox2"), {
-							items : {
-								path : "inner",
-								template : new Text({id: oMockedAppComponent.createId("inner-text"), text:"{text}"}), //binding context /texts1/inner
-								templateShareable : false
+							items: {
+								path: "inner",
+								template: new Text({id: oMockedAppComponent.createId("inner-text"), text: "{text}"}), //binding context /texts1/inner
+								templateShareable: false
 							}
 						})
 					]
 				})
 			});
 			this.oList = new List(oMockedAppComponent.createId("list"), {
-				items : {
-					path : "/texts1",
-					template : this.oItemTemplate,
-					templateShareable : true
+				items: {
+					path: "/texts1",
+					template: this.oItemTemplate,
+					templateShareable: true
 				}
 			}).setModel(oModel);
 
@@ -1515,14 +1515,14 @@ function (
 			sap.ui.getCore().applyChanges();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
-			oChangeRegistry.removeRegistryItem({controlType : "sap.m.List"});
+			oChangeRegistry.removeRegistryItem({controlType: "sap.m.List"});
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.VBox" : {
+				"sap.m.VBox": {
 					moveControls: "default"
 				},
-				"sap.m.Text" : {
-					hideControl : "default",
-					rename : sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
+				"sap.m.Text": {
+					hideControl: "default",
+					rename: sap.ui.fl.changeHandler.BaseRename.createRenameChangeHandler({
 						propertyName: "text",
 						translationTextType: "XTXT"
 					})
@@ -1530,7 +1530,7 @@ function (
 			})
 			.then(function() {
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oList]
+					rootElements: [this.oList]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {
@@ -1539,7 +1539,7 @@ function (
 				}.bind(this));
 			}.bind(this));
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
@@ -1557,8 +1557,8 @@ function (
 			var oRenamedElement = this.oList.getItems()[2].getContent()[0].getItems()[1].getItems()[1];
 
 			return oCommandFactory.getCommandFor(oRenamedElement, "rename", {
-				renamedElement : oRenamedElement,
-				newValue : "new"
+				renamedElement: oRenamedElement,
+				newValue: "new"
 			}, new ElementDesignTimeMetadata())
 
 			.then(function() {
@@ -1573,14 +1573,14 @@ function (
 	});
 
 	QUnit.module("Given a command factory and a bound control containing an aggregation binding with a factory function", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			sandbox.stub(flUtils, "_getComponentForControl").returns(oMockedAppComponent);
 
 			var done = assert.async();
 
 			var aTexts = [{text1: "Text 1", text2: "More Text 1"}, {text1: "Text 2", text2: "More Text 2"}, {text1: "Text 3", text2: "More Text 3"}];
 			var oModel = new JSONModel({
-				texts : aTexts
+				texts: aTexts
 			});
 
 			this.oList = new List("list").setModel(oModel);
@@ -1588,19 +1588,19 @@ function (
 				var oItem;
 				if (oContext.getProperty("text1").charAt(5) % 2 === 0) {
 					oItem = new CustomListItem(sId, {
-						content : new VBox(sId + "--vbox", {
-							items : [
-								new Text(sId + "--text1", {text : "{text1}"}),
-								new Text(sId + "--text2", {text : "{text2}"})
+						content: new VBox(sId + "--vbox", {
+							items: [
+								new Text(sId + "--text1", {text: "{text1}"}),
+								new Text(sId + "--text2", {text: "{text2}"})
 							]
 						})
 					});
 				} else {
 					oItem = new CustomListItem(sId, {
-						content : new VBox(sId + "--vbox", {
-							items : [
-								new Button(sId + "--button1", {text : "{text1}"}),
-								new Button(sId + "--button2", {text : "{text2}"})
+						content: new VBox(sId + "--vbox", {
+							items: [
+								new Button(sId + "--button1", {text: "{text1}"}),
+								new Button(sId + "--button2", {text: "{text2}"})
 							]
 						})
 					});
@@ -1613,12 +1613,12 @@ function (
 
 			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0];
 			var oDesignTime = new DesignTime({
-				rootElements : [this.oList]
+				rootElements: [this.oList]
 			});
 
 			oDesignTime.attachEventOnce("synced", done);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 			this.oList.destroy();
 		}
@@ -1641,7 +1641,7 @@ function (
 			};
 
 			return oCommandFactory.getCommandFor(this.oText1, "property", {
-				element : this.oText1,
+				element: this.oText1,
 				changeType: "propertyChange",
 				newValue: false,
 				propertyName: "visible"

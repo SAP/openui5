@@ -63,9 +63,9 @@ function(
 	var sandbox = sinon.sandbox.create();
 
 	var fnCreateMinimumControls = function() {
-		this.oButton = new Button("testButton1", {text : "Button"});
+		this.oButton = new Button("testButton1", {text: "Button"});
 		this.oIconTabFilter = new IconTabFilter("icontabfilter", {
-			text : "Orders"
+			text: "Orders"
 		});
 		this.oIconTabBar = new IconTabBar();
 	};
@@ -79,17 +79,17 @@ function(
 	var fnCreateControls = function() {
 		fnCreateMinimumControls.call(this);
 		this.oHorizontalLayoutChild = new HorizontalLayout({
-			content : [
-				new Button({text : "Button"}),
+			content: [
+				new Button({text: "Button"}),
 				this.oButton
 			]
 		});
 		this.oVerticalLayout = new VerticalLayout("verticalLayout", {
-			content : [
-				new Button({text : "Button"}),
-				new Button({text : "Button"}),
-				new Button({text : "Button"}),
-				new Button({text : "Button"}),
+			content: [
+				new Button({text: "Button"}),
+				new Button({text: "Button"}),
+				new Button({text: "Button"}),
+				new Button({text: "Button"}),
 				this.oHorizontalLayoutChild
 			]
 		});
@@ -104,24 +104,24 @@ function(
 
 	var fnCreateMoreControls = function() {
 		this.oHorizontalLayoutChild1 = new HorizontalLayout({
-			content : [
-				new Input({value : "11"}),
-				new Button({text : "12"})
+			content: [
+				new Input({value: "11"}),
+				new Button({text: "12"})
 			]
 		});
 		this.oHorizontalLayoutChild2 = new HorizontalLayout({
-			content : [
-				new Button({text : "21"}),
-				new Text({text : "22"})
+			content: [
+				new Button({text: "21"}),
+				new Text({text: "22"})
 			]
 		});
 		this.oVerticalLayout2 = new VerticalLayout({
-			content : [
-				new Button({text : "Button"}),
+			content: [
+				new Button({text: "Button"}),
 				this.oHorizontalLayoutChild1,
-				new Button({text : "Button"}),
+				new Button({text: "Button"}),
 				this.oHorizontalLayoutChild2,
-				new Button({text : "Button"})
+				new Button({text: "Button"})
 			]
 		});
 	};
@@ -152,7 +152,7 @@ function(
 
 	var fnCreateForm = function() {
 		this.oForm = new Form("form1", {
-			formContainers : [
+			formContainers: [
 				new FormContainer("group1"),
 				new FormContainer("group2")
 			]
@@ -168,8 +168,8 @@ function(
 	var fnCreateCustomControl = function() {
 		var CustomControl = Element.extend("CustomControl", {
 			metadata: {
-				associations : {
-					elements : { type: 'sap.ui.core.Control', multiple : true }
+				associations: {
+					elements: { type: 'sap.ui.core.Control', multiple: true }
 				}
 			}
 		});
@@ -181,10 +181,10 @@ function(
 	};
 
 	QUnit.module("hasInterface()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateMinimumControls.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyMinimumControls.call(this);
 		}
 	}, function() {
@@ -203,11 +203,11 @@ function(
 	});
 
 	QUnit.module("getElementInstance()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateMinimumControls.call(this);
 			fnCreateComponent.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyComponent.call(this);
 		}
@@ -224,10 +224,10 @@ function(
 	});
 
 	QUnit.module("getClosestElementForNode()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateControls.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
@@ -247,11 +247,11 @@ function(
 	});
 
 	QUnit.module("fixComponentParent()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateControls.call(this);
 			fnCreateComponent.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyControls.call(this);
 			fnDestroyComponent.call(this);
 		}
@@ -270,11 +270,11 @@ function(
 	});
 
 	QUnit.module("fixComponentContainerElement()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateMinimumControls.call(this);
 			fnCreateComponent.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyComponent.call(this);
 		}
@@ -293,12 +293,12 @@ function(
 	});
 
 	QUnit.module("getDomRef()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateControls.call(this);
 			fnCreateForm.call(this);
 			this.oVerticalLayout.addContent(this.oForm);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyControls.call(this);
 			fnDestroyForm.call(this);
 		}
@@ -320,11 +320,11 @@ function(
 	});
 
 	QUnit.module("hasAncestor()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateControls.call(this);
 			fnCreateComponent.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyControls.call(this);
 			fnDestroyComponent.call(this);
 		}
@@ -334,7 +334,7 @@ function(
 		});
 
 		QUnit.test("when a control is not a successor of another control", function(assert) {
-			var oButton = new Button({text:"Button"});
+			var oButton = new Button({text: "Button"});
 			assert.equal(ElementUtil.hasAncestor(oButton, this.oVerticalLayout), false, 'then static method "hasAncestor" returns false');
 		});
 
@@ -352,11 +352,11 @@ function(
 	});
 
 	QUnit.module("findAllSiblingsInContainer()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateControls.call(this);
 			fnCreateMoreControls.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyControls.call(this);
 			fnDestroyMoreControls.call(this);
 		}
@@ -393,20 +393,20 @@ function(
 	});
 
 	QUnit.module("getAggregationAccessors()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateControls.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
 		QUnit.test("when the control has aggregations", function(assert) {
 			var mAccessors = ElementUtil.getAggregationAccessors(this.oVerticalLayout, "content");
 			assert.deepEqual(mAccessors, {
-				get:"getContent",
-				add:"addContent",
-				remove:"removeContent",
-				insert:"insertContent",
+				get: "getContent",
+				add: "addContent",
+				remove: "removeContent",
+				insert: "insertContent",
 				removeAll: "removeAllContent"
 			}, 'then the static method "getAggregationAccessors" returns all accessors of an aggregation');
 
@@ -419,19 +419,19 @@ function(
 	});
 
 	QUnit.module("getAssociationAccessors()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateCustomControl.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyCustomControl.call(this);
 		}
 	}, function() {
 		QUnit.test("when the control has associations", function(assert) {
 			var mAccessors = ElementUtil.getAssociationAccessors(this.oCustomControl, "elements");
 			assert.deepEqual(mAccessors, {
-				get:"getElements",
-				add:"addElement",
-				remove:"removeElement",
+				get: "getElements",
+				add: "addElement",
+				remove: "removeElement",
 				insert: undefined,
 				removeAll: "removeAllElements"
 			}, 'then the static method "getAssociationAccessors" returns all accessors of an existing association');
@@ -444,11 +444,11 @@ function(
 	});
 
 	QUnit.module("getAssociation()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateMinimumControls.call(this);
 			fnCreateCustomControl.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyCustomControl.call(this);
 		}
@@ -467,11 +467,11 @@ function(
 	});
 
 	QUnit.module("getAssociationInstances()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateMinimumControls.call(this);
 			fnCreateCustomControl.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyCustomControl.call(this);
 		}
@@ -494,11 +494,11 @@ function(
 	});
 
 	QUnit.module("getIndexInAssociation()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateMinimumControls.call(this);
 			fnCreateCustomControl.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyCustomControl.call(this);
 		}
@@ -526,15 +526,15 @@ function(
 	});
 
 	QUnit.module("addAggregation()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateControls.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
 		QUnit.test("when a child control is added to an aggregation", function(assert) {
-			var oButton = new Button({text:"Button"});
+			var oButton = new Button({text: "Button"});
 			var iLengthBefore = this.oVerticalLayout.getContent().length;
 			ElementUtil.addAggregation(this.oVerticalLayout, "content", oButton);
 			var iLengthAfter = this.oVerticalLayout.getContent().length;
@@ -564,15 +564,15 @@ function(
 	});
 
 	QUnit.module("insertAggregation()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateControls.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
 		QUnit.test("when a child control is added to an aggregation at a certain position", function(assert) {
-			var oButton = new Button({text:"Button"});
+			var oButton = new Button({text: "Button"});
 			var iLengthBefore = this.oVerticalLayout.getContent().length;
 			ElementUtil.insertAggregation(this.oVerticalLayout, "content", oButton, 3);
 			var iLengthAfter = this.oVerticalLayout.getContent().length;
@@ -619,10 +619,10 @@ function(
 	});
 
 	QUnit.module("removeAggregation()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateControls.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
@@ -643,15 +643,15 @@ function(
 	});
 
 	QUnit.module("isValidForAggregation()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateControls.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyControls.call(this);
 		}
 	}, function() {
 		QUnit.test("when an element is checked if it is valid for an aggregation of a parent", function(assert) {
-			assert.equal(ElementUtil.isValidForAggregation(this.oVerticalLayout, "content", new Button({text:"Button"})), true, 'then the static method "isValidForAggregation" returns true');
+			assert.equal(ElementUtil.isValidForAggregation(this.oVerticalLayout, "content", new Button({text: "Button"})), true, 'then the static method "isValidForAggregation" returns true');
 		});
 
 		QUnit.test("when an element is checked if it is valid for an aggregation of itself", function(assert) {
@@ -667,7 +667,7 @@ function(
 		});
 
 		QUnit.test("when a control has non-multiple aggregations with existing items", function(assert) {
-			var oFormElement = new FormElement({label : "InputLabel"});
+			var oFormElement = new FormElement({label: "InputLabel"});
 			var oLabel = new Label();
 			assert.equal(ElementUtil.isValidForAggregation(oFormElement, "label", oLabel), false,
 				'then the static method "isValidForAggregation" returns false');
@@ -682,11 +682,11 @@ function(
 	});
 
 	QUnit.module("getParent()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			fnCreateMinimumControls.call(this);
 			fnCreateComponent.call(this);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			fnDestroyMinimumControls.call(this);
 			fnDestroyComponent.call(this);
 		}
@@ -737,9 +737,9 @@ function(
 	});
 
 	QUnit.module("Given getLabelForElement()", {
-		beforeEach : function() {
+		beforeEach: function() {
 		},
-		afterEach : function() {
+		afterEach: function() {
 			if (this.oLabelControl) {
 				this.oLabelControl.destroy();
 			}
@@ -863,7 +863,7 @@ function(
 		beforeEach: function() {
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
 			var oModel = new JSONModel({
-				texts : aTexts
+				texts: aTexts
 			});
 
 			this.oItemTemplate = new CustomListItem("item", {
@@ -871,10 +871,10 @@ function(
 					new VBox("vbox1", {
 						items: [
 							new VBox("vbox2", {
-								items : [
+								items: [
 									new VBox("vbox3", {
-										items : [
-											new Text("text", {text : "{text}"})
+										items: [
+											new Text("text", {text: "{text}"})
 										]
 									})
 								]
@@ -884,9 +884,9 @@ function(
 				]
 			});
 			this.oList = new List("list", {
-				items : {
-					path : "/texts",
-					template : this.oItemTemplate
+				items: {
+					path: "/texts",
+					template: this.oItemTemplate
 				}
 			}).setModel(oModel);
 
@@ -897,7 +897,7 @@ function(
 			this.oListItem0 = this.oList.getItems()[0];
 			this.oText1 = this.oList.getItems()[1].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			sandbox.restore();
@@ -931,7 +931,7 @@ function(
 		beforeEach: function() {
 			var aTexts = [{text: "Text 1"}, {text: "Text 2"}, {text: "Text 3"}];
 			var oModel = new JSONModel({
-				texts : aTexts
+				texts: aTexts
 			});
 
 			this.oItemTemplate = new CustomListItem("item", {
@@ -939,9 +939,9 @@ function(
 					new VBox("vbox1", {
 						items: [
 							new VBox("vbox2", {
-								items : [
+								items: [
 									new VBox("vbox3", {
-										items : []
+										items: []
 									})
 								]
 							})
@@ -950,9 +950,9 @@ function(
 				]
 			});
 			this.oList = new List("list", {
-				items : {
-					path : "/texts",
-					template : this.oItemTemplate
+				items: {
+					path: "/texts",
+					template: this.oItemTemplate
 				}
 			}).setModel(oModel);
 
@@ -962,10 +962,10 @@ function(
 					new VBox("vbox4", {
 						items: [
 							new VBox("vbox5", {
-								items : [
+								items: [
 									new VBox("vbox6", {
-										items : [
-											new Button("evil-btn1", {text:'{text}'})
+										items: [
+											new Button("evil-btn1", {text: '{text}'})
 										]
 									})
 								]
@@ -984,7 +984,7 @@ function(
 			this.oButton1 = this.oList.getItems()[3].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 			this.oButton2 = this.oList.getItems()[0].getContent()[0].getItems()[0].getItems()[0].getItems()[0];
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oList.destroy();
 			this.oItemTemplate.destroy();
 			this.oButton1.destroy();
@@ -1018,22 +1018,22 @@ function(
 			this.oBoundList = new List("boundlist").setModel(oModel);
 			this.oBoundList.bindAggregation("items", {
 				path: "/",
-				template: new CustomListItem("item", {content: [new Button("item-btn", {text:'{text}'})]}),
-				templateShareable : false
+				template: new CustomListItem("item", {content: [new Button("item-btn", {text: '{text}'})]}),
+				templateShareable: false
 			});
 
 			this.oFactoryBoundList = new List("factoryboundlist").setModel(oModel);
 			this.oFactoryBoundList.bindAggregation("items", {
 				path: "/",
 				factory: function(sId) {
-					return new CustomListItem(sId, {content: [new Button(sId + "-btn", {text:'{text}'})]});
+					return new CustomListItem(sId, {content: [new Button(sId + "-btn", {text: '{text}'})]});
 				}
 			});
 
 			//create list with unbound items
 			this.oUnboundList = new List("unboundlist");
-			this.oUnboundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn", {text:'item1-unbound'})]}));
-			this.oUnboundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn", {text:'item2-unbound'})]}));
+			this.oUnboundList.addItem(new CustomListItem("unboundlist-0", {content: [new Button("item1-btn", {text: 'item1-unbound'})]}));
+			this.oUnboundList.addItem(new CustomListItem("unboundlist-1", {content: [new Button("item2-btn", {text: 'item2-unbound'})]}));
 
 			//create a HorizontalLayout containing the two lists
 			this.oVerticalLayout = new VerticalLayout("verticalLayout0", {

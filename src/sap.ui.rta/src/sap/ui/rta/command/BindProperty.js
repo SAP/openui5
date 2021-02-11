@@ -33,22 +33,22 @@ sap.ui.define([
 	 *               changed in future.
 	 */
 	var BindProperty = FlexCommand.extend("sap.ui.rta.command.BindProperty", {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				propertyName : {
-					type : "string"
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				propertyName: {
+					type: "string"
 				},
-				newBinding : {
-					type : "string"
+				newBinding: {
+					type: "string"
 				},
-				changeType : {
-					type : "string",
-					defaultValue : "propertyBindingChange"
+				changeType: {
+					type: "string",
+					defaultValue: "propertyBindingChange"
 				}
 			},
-			associations : {},
-			events : {}
+			associations: {},
+			events: {}
 		}
 	});
 
@@ -66,14 +66,14 @@ sap.ui.define([
 		var oElement = this.getElement();
 		// general format
 		var mSpecificChangeInfo = {
-			changeType : this.getChangeType(),
-			selector : {
-				id : oElement.getId(),
-				type : oElement.getMetadata().getName()
+			changeType: this.getChangeType(),
+			selector: {
+				id: oElement.getId(),
+				type: oElement.getMetadata().getName()
 			},
-			content : {
-				property : this.getPropertyName(),
-				newBinding : this.getNewBinding()
+			content: {
+				property: this.getPropertyName(),
+				newBinding: this.getNewBinding()
 			}
 		};
 

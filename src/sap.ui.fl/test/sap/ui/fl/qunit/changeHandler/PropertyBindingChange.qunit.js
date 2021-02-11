@@ -30,7 +30,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a Property Binding Change Handler", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oChangeHandler = PropertyBindingChange;
 			this.sNoBindingError = "Please use 'PropertyChange' to set properties without binding";
 
@@ -56,11 +56,11 @@ sap.ui.define([
 			});
 
 			var oModel = new JSONModel({
-				field1 : this.OLD_VALUE_FIELD1,
-				field2 : this.OLD_VALUE_FIELD2
+				field1: this.OLD_VALUE_FIELD1,
+				field2: this.OLD_VALUE_FIELD2
 			});
 			var oNamedModel = new JSONModel({
-				numberAsString : this.NEW_VALUE
+				numberAsString: this.NEW_VALUE
 			});
 			this.oInput.setModel(oModel);
 			this.oInput.setModel(oNamedModel, "namedModel");
@@ -72,56 +72,56 @@ sap.ui.define([
 			this.oXmlInput = oXmlDocument.childNodes[0];
 
 			this.mExpectedSelector = {
-				id : this.oInput.getId(),
-				type : "sap.m.Input"
+				id: this.oInput.getId(),
+				type: "sap.m.Input"
 			};
 
 			this.mExpectedSelector1 = {
-				id : this.oButton.getId(),
-				type : "sap.m.Button"
+				id: this.oButton.getId(),
+				type: "sap.m.Button"
 			};
 
 			this.mExpectedShowValueHelpChangeContent = {
-				property : "showValueHelp",
-				oldValue : this.OLD_BOOLEAN_VALUE,
-				newBinding : this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
+				property: "showValueHelp",
+				oldValue: this.OLD_BOOLEAN_VALUE,
+				newBinding: this.NEW_BOOLEAN_BINDING_WITH_CRITICAL_CHARS
 			};
 			this.mSpecificShowValueHelpChangeData = {
-				selector : this.mExpectedSelector,
-				changeType : "propertyBindingChange",
-				content : this.mExpectedShowValueHelpChangeContent
+				selector: this.mExpectedSelector,
+				changeType: "propertyBindingChange",
+				content: this.mExpectedShowValueHelpChangeContent
 			};
 			this.oShowValueHelpChange = new Change(this.mSpecificShowValueHelpChangeData);
 
 			this.mExpectedValueChangeContent = {
-				property : "value",
-				oldBinding : this.OLD_VALUE_BINDING,
-				newBinding : this.NEW_VALUE_BINDING
+				property: "value",
+				oldBinding: this.OLD_VALUE_BINDING,
+				newBinding: this.NEW_VALUE_BINDING
 			};
 			this.mSpecificValueChangeData = {
-				selector : this.mExpectedSelector,
-				changeType : "propertyBindingChange",
-				content : this.mExpectedValueChangeContent
+				selector: this.mExpectedSelector,
+				changeType: "propertyBindingChange",
+				content: this.mExpectedValueChangeContent
 			};
 			this.oValueChange = new Change(this.mSpecificValueChangeData);
 
 			this.mExpectedValueChangeContent1 = {
-				property : "text",
-				newBinding : this.NEW_VALUE_BINDING
+				property: "text",
+				newBinding: this.NEW_VALUE_BINDING
 			};
 			this.mSpecificValueChangeData1 = {
-				selector : this.mExpectedSelector1,
-				changeType : "propertyBindingChange",
-				content : this.mExpectedValueChangeContent1
+				selector: this.mExpectedSelector1,
+				changeType: "propertyBindingChange",
+				content: this.mExpectedValueChangeContent1
 			};
 			this.oTextChange = new Change(this.mSpecificValueChangeData1);
 
 			this.oChange = new Change({
-				selector : this.mExpectedSelector,
-				changeType : "propertyBindingChange"
+				selector: this.mExpectedSelector,
+				changeType: "propertyBindingChange"
 			});
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oInput.destroy();
 			this.oButton.destroy();
 			this.oChange = null;
@@ -214,8 +214,8 @@ sap.ui.define([
 		QUnit.skip("When applying a change without binding on js control tree", function(assert) {
 			var oChange = new Change({
 				selector: this.mExpectedSelector,
-				changeType : "propertyBindingChange",
-				content : {
+				changeType: "propertyBindingChange",
+				content: {
 					property: "value",
 					newBinding: "Foo"
 				}
@@ -258,8 +258,8 @@ sap.ui.define([
 		QUnit.skip("When applying a change without binding on xml control tree", function(assert) {
 			var oChange = new Change({
 				selector: this.mExpectedSelector,
-				changeType : "propertyBindingChange",
-				content : {
+				changeType: "propertyBindingChange",
+				content: {
 					property: "value",
 					newBinding: "Foo"
 				}

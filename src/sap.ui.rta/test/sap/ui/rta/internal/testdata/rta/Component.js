@@ -14,7 +14,7 @@ sap.ui.define([
 			manifest: "json"
 		},
 
-		init : function() {
+		init: function() {
 			this._bShowAdaptButton = !!this.getComponentData().showAdaptButton;
 			sap.ui.core.UIComponent.prototype.init.apply(this, arguments);
 		},
@@ -24,29 +24,29 @@ sap.ui.define([
 		 *
 		 * @returns {sap.ui.core.Control} the content
 		 */
-		createContent : function() {
+		createContent: function() {
 			SmartLinkUtil.mockUShellServices();
 
 			// app specific setup
 			var oApp = new sap.m.App({
-				id : this.createId("app"),
-				customData : [new CustomData({
-					key : "sap-ui-custom-settings",
-					value : {
-						"sap.ui.dt" : {
-							designtime : "sap/ui/rta/test/InstanceSpecificScopedRoot.designtime"
+				id: this.createId("app"),
+				customData: [new CustomData({
+					key: "sap-ui-custom-settings",
+					value: {
+						"sap.ui.dt": {
+							designtime: "sap/ui/rta/test/InstanceSpecificScopedRoot.designtime"
 						}
 					}
 				})]
 			});
 
 			var oModel = new sap.ui.model.json.JSONModel({
-				showAdaptButton : this._bShowAdaptButton
+				showAdaptButton: this._bShowAdaptButton
 			});
 
 			var oPage = sap.ui.view(this.createId("idMain1"), {
-				viewName : "sap.ui.rta.test.ComplexTest",
-				type : sap.ui.core.mvc.ViewType.XML
+				viewName: "sap.ui.rta.test.ComplexTest",
+				type: sap.ui.core.mvc.ViewType.XML
 			});
 
 			oPage.setModel(oModel, "view");

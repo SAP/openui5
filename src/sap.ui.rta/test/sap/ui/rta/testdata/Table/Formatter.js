@@ -2,7 +2,7 @@ sap.ui.define(function() {
 	"use strict";
 
 	var Formatter = {
-		weightState :  function (fMeasure, sUnit) {
+		weightState: function (fMeasure, sUnit) {
 			// Boarder values for different status of weight
 			var fMaxWeightSuccess = 1;
 			var fMaxWeightWarning = 5;

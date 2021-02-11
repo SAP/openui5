@@ -38,20 +38,20 @@ function(
 	 * @experimental Since 1.30. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var DragDrop = ControlDragDrop.extend("sap.ui.rta.plugin.DragDrop", /** @lends sap.ui.rta.plugin.DragDrop.prototype */ {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				commandFactory : {
-					type : "object",
-					multiple : false
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				commandFactory: {
+					type: "object",
+					multiple: false
 				}
 			},
-			events : {
-				dragStarted : {},
+			events: {
+				dragStarted: {},
 
-				elementModified : {
-					command : {
-						type : "sap.ui.rta.command.BaseCommand"
+				elementModified: {
+					command: {
+						type: "sap.ui.rta.command.BaseCommand"
 					}
 				}
 			}
@@ -130,7 +130,7 @@ function(
 
 		.then(function(oCommand) {
 			this.fireElementModified({
-				command : oCommand
+				command: oCommand
 			});
 
 			oOverlay.$().removeClass("sapUiRtaOverlayPlaceholder");

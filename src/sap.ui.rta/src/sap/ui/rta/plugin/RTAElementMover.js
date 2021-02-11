@@ -42,28 +42,28 @@ function(
 	 * @experimental Since 1.34. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var RTAElementMover = ElementMover.extend("sap.ui.rta.plugin.RTAElementMover", /** @lends sap.ui.rta.plugin.RTAElementMover.prototype */ {
-		metadata : {
-			library : "sap.ui.rta",
-			properties : {
-				commandFactory : {
-					type : "any",
-					defaultValue : CommandFactory
+		metadata: {
+			library: "sap.ui.rta",
+			properties: {
+				commandFactory: {
+					type: "any",
+					defaultValue: CommandFactory
 				},
-				movableTypes : {
-					type : "string[]",
-					defaultValue : ["sap.ui.core.Element"]
+				movableTypes: {
+					type: "string[]",
+					defaultValue: ["sap.ui.core.Element"]
 				}
 			},
-			associations : {
+			associations: {
 			},
-			events : {
+			events: {
 			}
 		}
 	});
 
 	RTAElementMover.prototype.init = function() {
 		this.oBasePlugin = new Plugin({
-			commandFactory : this.getCommandFactory()
+			commandFactory: this.getCommandFactory()
 		});
 	};
 
@@ -328,13 +328,13 @@ function(
 		var sVariantManagementReference = this.oBasePlugin.getVariantManagementReference(oMovedOverlay);
 
 		return this.getCommandFactory().getCommandFor(oRelevantContainer, "Move", {
-			movedElements : [{
-				element : oMovedElement,
-				sourceIndex : iSourceIndex,
-				targetIndex : iTargetIndex
+			movedElements: [{
+				element: oMovedElement,
+				sourceIndex: iSourceIndex,
+				targetIndex: iTargetIndex
 			}],
-			source : oSource,
-			target : oTarget
+			source: oSource,
+			target: oTarget
 		}, oParentAggregationOverlay.getDesignTimeMetadata(), sVariantManagementReference);
 	};
 

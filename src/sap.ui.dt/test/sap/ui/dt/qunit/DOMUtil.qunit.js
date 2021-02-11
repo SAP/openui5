@@ -33,18 +33,18 @@ sap.ui.define([
 	 * getSize
 	 */
 	QUnit.module("Given that a container is rendered", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oContainer = jQuery("<div style='background: blue; width: 200px; height: 200px;'></div>");
 			this.oContainer.appendTo("#qunit-fixture");
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oContainer.remove();
 		}
 	}, function() {
 		QUnit.test("when getSize is called for the container", function(assert) {
 			var mExpectedSize = {
-				width : 200,
-				height : 200
+				width: 200,
+				height: 200
 			};
 			assert.strictEqual(DOMUtil.getSize(this.oContainer.get(0)).width, mExpectedSize.width, "then the width is returned correctly");
 			assert.strictEqual(DOMUtil.getSize(this.oContainer.get(0)).height, mExpectedSize.height, "then the height is returned correctly");
@@ -55,12 +55,12 @@ sap.ui.define([
 	 * getOffsetFromParent
 	 */
 	QUnit.module("Given that a container is rendered with a bigger content element (for scrollbars)", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oContent = jQuery("<div style='background: red; width: 200px; height: 200px; position: relative; left: 30px; top: 40px;'></div>");
 			this.oContainer = jQuery("<div style='background: blue; width: 100px; height: 100px; overflow: auto;'></div>");
 			this.oContainer.append(this.oContent).appendTo("#qunit-fixture");
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oContainer.remove();
 		}
 	}, function() {
@@ -95,19 +95,19 @@ sap.ui.define([
 	 * getZIndex
 	 */
 	QUnit.module("Given that a control is rendered", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.iWidth = 100;
 			this.iHeight = 48;
 			this.oButton = new Button({
 				width: this.iWidth + "px",
-				text : "Button"
+				text: "Button"
 			});
 
 			this.oButton.placeAt("qunit-fixture");
 			// Render Controls
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oButton.destroy();
 		}
 	}, function() {
@@ -138,7 +138,7 @@ sap.ui.define([
 	 * getDomRefForCSSSelector
 	 */
 	QUnit.module("Given that some DOM element with child nodes is rendered...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oDomElement = jQuery("<div class='parent' id='parent'></div>");
 
 			jQuery("<div class='child' id='first-child'></div>").appendTo(this.oDomElement);
@@ -146,7 +146,7 @@ sap.ui.define([
 
 			this.oDomElement.appendTo("#qunit-fixture");
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDomElement.remove();
 		}
 	}, function() {
@@ -189,14 +189,14 @@ sap.ui.define([
 	 * cloneDOMAndStyles
 	 */
 	QUnit.module("Given that some DOM element with child nodes is rendered...", {
-		beforeEach : function() {
+		beforeEach: function() {
 			jQuery("<div style='float: left; width: 50%; height: 100%;' id='left-part'></div>").appendTo("#qunit-fixture");
 			jQuery("<div style='float: left; width: 50%; height: 100%;' id='right-part'></div>").appendTo("#qunit-fixture");
 
 			this.oDomElement = jQuery("<div data-find='div' class='withBeforeElement' style='width:200px; height: 200px;'><span data-find='span' class='withAfterElement' style='color: rgb(255, 0, 0);'>Text</span></div>");
 			this.oDomElement.appendTo("#left-part");
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oDomElement.remove();
 			jQuery("#qunit-fixture").empty();
 		}
@@ -226,12 +226,12 @@ sap.ui.define([
 	 * hasScrollBar
 	 */
 	QUnit.module("Given that a container and a content are rendered", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oContent = jQuery("<div style='background: red; width: 200px; height: 200px;'></div>");
 			this.oContainer = jQuery("<div style='background: blue; width: 200px; height: 200px;'></div>");
 			this.oContainer.append(this.oContent).appendTo("#qunit-fixture");
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oContainer.remove();
 		}
 	}, function() {
@@ -269,7 +269,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("copyComputedStyle()", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oSrcDomElement = jQuery("<div class='child' id='first-child' " +
 				"style='background: #000; width: 200px; height: 200px;'" +
 				"></div>")

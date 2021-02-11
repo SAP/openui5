@@ -32,14 +32,14 @@ function(
 	 * @experimental Since 1.38. This class is experimental and provides only limited functionality. Also the API might be changed in future.
 	 */
 	var QUnitReport = ManagedObject.extend("sap.ui.dt.enablement.report.QUnitReport", /** @lends sap.ui.dt.enablement.report.QUnitReport.prototype */ {
-		metadata : {
+		metadata: {
 			// ---- object ----
 
 			// ---- control specific ----
-			library : "sap.ui.dt",
-			properties : {
-				data : {
-					type : "object"
+			library: "sap.ui.dt",
+			properties: {
+				data: {
+					type: "object"
 				}
 			}
 		},
@@ -48,7 +48,7 @@ function(
 		 * Called when the QUnit is initialized
 		 * @protected
 		 */
-		init : function() {
+		init: function() {
 			if (!QUnit) {
 				throw new Error("QUnit is required for this report.");
 			}
@@ -60,7 +60,7 @@ function(
 		 *
 		 * @public
 		 */
-		setData : function(oData) {
+		setData: function(oData) {
 			if (oData) {
 				var aChildren = oData.children;
 				aChildren.forEach(function(oGroup) {
@@ -73,7 +73,7 @@ function(
 		/**
 		 * @private
 		 */
-		_createModule : function(oGroup) {
+		_createModule: function(oGroup) {
 			QUnit.module(oGroup.message);
 			oGroup.children.forEach(function(oGroup) {
 				this._createTest(oGroup);
@@ -83,7 +83,7 @@ function(
 		/**
 		 * @private
 		 */
-		_createTest : function(oGroup) {
+		_createTest: function(oGroup) {
 			QUnit.test(oGroup.name + ": " + oGroup.message, function (assert) {
 				oGroup.children.forEach(function(oGroup) {
 					this._createAssertion(assert, oGroup);
@@ -94,7 +94,7 @@ function(
 		/**
 		 * @private
 		 */
-		_createAssertion : function(assert, oGroup) {
+		_createAssertion: function(assert, oGroup) {
 			if (oGroup.children.length > 0) {
 				oGroup.children.forEach(function(oTest) {
 					assert.ok(oTest.result, oGroup.name + ": " + oTest.message);

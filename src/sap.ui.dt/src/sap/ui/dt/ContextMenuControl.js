@@ -759,7 +759,7 @@ sap.ui.define([
 		 * @private
 		 */
 		_onOverflowPress: function(oEvent) {
-			this.fireOverflowButtonPressed({oButton : oEvent.oSource});
+			this.fireOverflowButtonPressed({oButton: oEvent.oSource});
 		},
 
 		/**

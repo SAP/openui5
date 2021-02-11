@@ -31,7 +31,7 @@ sap.ui.define([
 	var sUserEmail = (sUserFirstName + "." + sUserLastName).toLowerCase() + "@sap.com";
 
 	QUnit.module("Basic properties", {
-		beforeEach : function () {
+		beforeEach: function () {
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -39,7 +39,7 @@ sap.ui.define([
 				title: sTitle
 			});
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oIFrame.destroy();
 		}
 	}, function () {
@@ -61,7 +61,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Visibility property set to false", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -71,7 +71,7 @@ sap.ui.define([
 			this.oIFrame.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oIFrame.destroy();
 		}
 	}, function () {
@@ -82,7 +82,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Title Parameter of IFrame is set", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
 				height: sDefaultSize,
@@ -92,7 +92,7 @@ sap.ui.define([
 			this.oIFrame.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oIFrame.destroy();
 		}
 	}, function () {
@@ -104,7 +104,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Bindings", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oIFrame = new IFrame({
 				width: "{model>/width}",
 				height: "{model>/height}",
@@ -121,7 +121,7 @@ sap.ui.define([
 			this.oIFrame.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oIFrame.destroy();
 			this.oModel.destroy();
 		}
@@ -205,7 +205,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("UserInfo binding (UserInfo service available)", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oUShellMock = mockUserInfoService(true);
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
@@ -215,7 +215,7 @@ sap.ui.define([
 			this.oIFrame.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oIFrame.destroy();
 			this.oUShellMock.restore();
 		}
@@ -226,7 +226,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UserInfo binding (UserInfo service available but no email)", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oUShellMock = mockUserInfoService(true, /*bNoEmail*/ true);
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
@@ -236,7 +236,7 @@ sap.ui.define([
 			this.oIFrame.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oIFrame.destroy();
 			this.oUShellMock.restore();
 		}
@@ -247,7 +247,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("UserInfo binding (UserInfo service not available)", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oUShellMock = mockUserInfoService(false);
 			this.oIFrame = new IFrame({
 				width: sDefaultSize,
@@ -257,7 +257,7 @@ sap.ui.define([
 			this.oIFrame.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oIFrame.destroy();
 			this.oUShellMock.restore();
 		}
@@ -268,7 +268,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("URL binding in XML view", {
-		beforeEach : function (assert) {
+		beforeEach: function (assert) {
 			var done = assert.async();
 			this.oUShellMock = mockUserInfoService(true);
 			XMLView.create({
@@ -286,7 +286,7 @@ sap.ui.define([
 				done();
 			}.bind(this));
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.myView.destroy();
 			this.oUShellMock.restore();
 		}

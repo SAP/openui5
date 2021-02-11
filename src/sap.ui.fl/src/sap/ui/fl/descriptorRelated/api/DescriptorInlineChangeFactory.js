@@ -383,7 +383,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.create_app_setTitle = function(mParameters, mTexts) {
 		if (!mTexts) {
 			mTexts = {
-				"" : mParameters //property name = text key set when adding to descriptor variant
+				"": mParameters //property name = text key set when adding to descriptor variant
 			};
 			mParameters = {};
 		}
@@ -410,7 +410,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.create_app_setSubTitle = function(mParameters, mTexts) {
 		if (!mTexts) {
 			mTexts = {
-				"" : mParameters //property name = text key set when adding to descriptor variant
+				"": mParameters //property name = text key set when adding to descriptor variant
 			};
 			mParameters = {};
 		}
@@ -438,7 +438,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.create_app_setShortTitle = function(mParameters, mTexts) {
 		if (!mTexts) {
 			mTexts = {
-				"" : mParameters //property name = text key set when adding to descriptor variant
+				"": mParameters //property name = text key set when adding to descriptor variant
 			};
 			mParameters = {};
 		}
@@ -466,7 +466,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.create_app_setDescription = function(mParameters, mTexts) {
 		if (!mTexts) {
 			mTexts = {
-				"" : mParameters //property name = text key set when adding to descriptor variant
+				"": mParameters //property name = text key set when adding to descriptor variant
 			};
 			mParameters = {};
 		}
@@ -494,7 +494,7 @@ sap.ui.define([
 	DescriptorInlineChangeFactory.create_app_setInfo = function(mParameters, mTexts) {
 		if (!mTexts) {
 			mTexts = {
-				"" : mParameters //property name = text key set when adding to descriptor variant
+				"": mParameters //property name = text key set when adding to descriptor variant
 			};
 			mParameters = {};
 		}

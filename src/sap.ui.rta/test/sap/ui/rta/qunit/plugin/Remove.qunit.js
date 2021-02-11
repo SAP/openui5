@@ -48,9 +48,9 @@ function (
 		},
 		getManifest: function () {
 			return {
-				"sap.app" : {
-					applicationVersion : {
-						version : "1.2.3"
+				"sap.app": {
+					applicationVersion: {
+						version: "1.2.3"
 					}
 				}
 			};
@@ -62,32 +62,32 @@ function (
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a designTime and remove plugin are instantiated", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.Button" : {
-					hideControl : "default"
+				"sap.m.Button": {
+					hideControl: "default"
 				},
-				"sap.ui.layout.VerticalLayout" : {
-					hideControl : "default"
+				"sap.ui.layout.VerticalLayout": {
+					hideControl: "default"
 				}
 			})
 			.then(function() {
 				this.oRemovePlugin = new RemovePlugin({
-					commandFactory : new CommandFactory()
+					commandFactory: new CommandFactory()
 				});
-				this.oButton = new Button("button", {text : "Button"});
-				this.oButton1 = new Button("button1", {text : "Button1"});
+				this.oButton = new Button("button", {text: "Button"});
+				this.oButton1 = new Button("button1", {text: "Button1"});
 				this.oVerticalLayout = new VerticalLayout({
-					content : [this.oButton, this.oButton1]
+					content: [this.oButton, this.oButton1]
 				}).placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oVerticalLayout],
-					plugins : [this.oRemovePlugin]
+					rootElements: [this.oVerticalLayout],
+					plugins: [this.oRemovePlugin]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {
@@ -123,8 +123,8 @@ function (
 			var done = assert.async(2);
 
 			this.oButtonOverlay.setDesignTimeMetadata({
-				actions : {
-					remove : {
+				actions: {
+					remove: {
 						changeType: "hideControl"
 					}
 				}
@@ -184,8 +184,8 @@ function (
 
 		QUnit.test("when an overlay has remove action designTime metadata, but the control is the last visible element in an aggregation", function(assert) {
 			this.oButtonOverlay.setDesignTimeMetadata({
-				actions : {
-					remove : {
+				actions: {
+					remove: {
 						changeType: "hideControl"
 					}
 				}
@@ -201,8 +201,8 @@ function (
 
 		QUnit.test("when remove is not available for all elements in the same aggregation (empty aggregation use-case)", function(assert) {
 			this.oButtonOverlay.setDesignTimeMetadata({
-				actions : {
-					remove : {
+				actions: {
+					remove: {
 						changeType: "hideControl"
 					}
 				}
@@ -216,8 +216,8 @@ function (
 
 		QUnit.test("when an overlay has remove action designTime metadata, but the control has no parent", function(assert) {
 			this.oButtonOverlay.setDesignTimeMetadata({
-				actions : {
-					remove : {
+				actions: {
+					remove: {
 						changeType: "hideControl"
 					}
 				}
@@ -233,8 +233,8 @@ function (
 
 		QUnit.test("when an overlay has remove action with changeOnRelevantContainer true, but the control's relevant container doesn't have stable ID", function(assert) {
 			this.oButtonOverlay.setDesignTimeMetadata({
-				actions : {
-					remove : {
+				actions: {
+					remove: {
 						changeType: "hideControl",
 						changeOnRelevantContainer: true
 					}
@@ -261,10 +261,10 @@ function (
 		QUnit.test("when an overlay has remove action designTime metadata with a confirmation text defined and is selected", function (assert) {
 			var done = assert.async();
 			this.oButtonOverlay.setDesignTimeMetadata({
-				actions : {
-					remove : {
-						changeType : "hideControl",
-						getConfirmationText : function (oElementInstance) {
+				actions: {
+					remove: {
+						changeType: "hideControl",
+						getConfirmationText: function (oElementInstance) {
 							return oElementInstance.getText();
 						}
 					}
@@ -294,10 +294,10 @@ function (
 		QUnit.test("when an overlay has remove action designTime metadata with a confirmation text defined and is selected and cancel is pressed", function (assert) {
 			var done = assert.async();
 			this.oButtonOverlay.setDesignTimeMetadata({
-				actions : {
-					remove : {
-						changeType : "hideControl",
-						getConfirmationText : function (oElementInstance) {
+				actions: {
+					remove: {
+						changeType: "hideControl",
+						getConfirmationText: function (oElementInstance) {
 							return oElementInstance.getText();
 						}
 					}
@@ -324,10 +324,10 @@ function (
 		QUnit.test("when an overlay has remove action designTime metadata, and isEnabled property is boolean", function(assert) {
 			var done = assert.async();
 			this.oButtonOverlay.setDesignTimeMetadata({
-				actions : {
-					remove : {
-						changeType : "hideControl",
-						isEnabled : false
+				actions: {
+					remove: {
+						changeType: "hideControl",
+						isEnabled: false
 					}
 				}
 			});
@@ -349,10 +349,10 @@ function (
 		QUnit.test("when an overlay has remove action designTime metadata, and isEnabled is function", function(assert) {
 			var done = assert.async();
 			this.oButtonOverlay.setDesignTimeMetadata({
-				actions : {
-					remove : {
-						changeType : "hideControl",
-						isEnabled : function(oElementInstance) {
+				actions: {
+					remove: {
+						changeType: "hideControl",
+						isEnabled: function(oElementInstance) {
 							return oElementInstance.getMetadata().getName() !== "sap.m.Button";
 						}
 					}
@@ -375,9 +375,9 @@ function (
 		QUnit.test("when an overlay has remove action designTime metadata, and isEnabled property is boolean", function(assert) {
 			var done = assert.async(2);
 			this.oButtonOverlay.setDesignTimeMetadata({
-				actions : {
-					remove : {
-						isEnabled : false
+				actions: {
+					remove: {
+						isEnabled: false
 					}
 				}
 			});
@@ -431,9 +431,9 @@ function (
 
 		QUnit.test("when the handler is called but '_getRemoveCommand' throws an error", function(assert) {
 			this.oButtonOverlay.setDesignTimeMetadata({
-				actions : {
-					remove : {
-						changeType : "hideControl"
+				actions: {
+					remove: {
+						changeType: "hideControl"
 					}
 				}
 			});
@@ -452,29 +452,29 @@ function (
 	});
 
 	QUnit.module("Given a designTime and a Layout with 3 Buttons in it, when _getElementToFocus is called...", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			var done = assert.async();
 
 			var oChangeRegistry = ChangeRegistry.getInstance();
 			return oChangeRegistry.registerControlsForChanges({
-				"sap.m.Button" : {
-					hideControl : "default"
+				"sap.m.Button": {
+					hideControl: "default"
 				},
-				"sap.ui.layout.VerticalLayout" : {
-					hideControl : "default"
+				"sap.ui.layout.VerticalLayout": {
+					hideControl: "default"
 				}
 			})
 			.then(function() {
-				this.oButton1 = new Button("button1", {text : "Button1"});
-				this.oButton2 = new Button("button2", {text : "Button2"});
-				this.oButton3 = new Button("button3", {text : "Button3"});
+				this.oButton1 = new Button("button1", {text: "Button1"});
+				this.oButton2 = new Button("button2", {text: "Button2"});
+				this.oButton3 = new Button("button3", {text: "Button3"});
 				this.oVerticalLayout = new VerticalLayout({
-					content : [this.oButton1, this.oButton2, this.oButton3]
+					content: [this.oButton1, this.oButton2, this.oButton3]
 				}).placeAt("qunit-fixture");
 				sap.ui.getCore().applyChanges();
 
 				this.oDesignTime = new DesignTime({
-					rootElements : [this.oVerticalLayout]
+					rootElements: [this.oVerticalLayout]
 				});
 
 				this.oDesignTime.attachEventOnce("synced", function() {

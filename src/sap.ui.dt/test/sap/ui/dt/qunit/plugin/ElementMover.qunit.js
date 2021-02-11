@@ -22,7 +22,7 @@ sap.ui.define([
 	QUnit.module("Given smartform groups and groupElements", {
 		beforeEach: function () {
 			this.oForm1 = new Form("form1", {
-				formContainers : [
+				formContainers: [
 					new FormContainer("group1"),
 					new FormContainer("group2")
 				]
@@ -122,7 +122,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given verticalLayout, buttons and associated overlays", {
-		beforeEach : function(assert) {
+		beforeEach: function(assert) {
 			this.oElementMover = new ElementMover();
 			this.oButton1 = new Button("button1");
 			this.oButton2 = new Button("button2");
@@ -138,7 +138,7 @@ sap.ui.define([
 			sap.ui.getCore().applyChanges();
 
 			this.oDesignTime = new DesignTime({
-				rootElements : [this.oVerticalLayout]
+				rootElements: [this.oVerticalLayout]
 			});
 
 			var done = assert.async();

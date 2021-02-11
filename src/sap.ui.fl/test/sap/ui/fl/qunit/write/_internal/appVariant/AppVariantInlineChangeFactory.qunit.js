@@ -18,17 +18,17 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given a AppVariantInlineChangeFactory for S4/Hana onPremise systems", {
-		beforeEach : function() {
+		beforeEach: function() {
 			sandbox.stub(Settings, "getInstance").resolves(
 				new Settings({
-					isKeyUser:false,
-					isAtoAvailable:false,
-					isAtoEnabled:false,
-					isProductiveSystem:false
+					isKeyUser: false,
+					isAtoAvailable: false,
+					isAtoEnabled: false,
+					isProductiveSystem: false
 				})
 			);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			sandbox.restore();
 		}
 	}, function() {
@@ -36,14 +36,14 @@ sap.ui.define([
 			var _oDescriptorInlineChange;
 			var _oVariant;
 			var mParameter = {
-				type : "XTIT",
-				maxLength : 20,
-				comment : "a comment",
-				value : {
-					"" : "Default Title",
-					en:"English Title",
-					de:"Deutscher Titel",
-					en_US:"English Title in en_US"
+				type: "XTIT",
+				maxLength: 20,
+				comment: "a comment",
+				value: {
+					"": "Default Title",
+					en: "English Title",
+					de: "Deutscher Titel",
+					en_US: "English Title in en_US"
 				}
 			};
 			return AppVariantInlineChangeFactory.create_app_setTitle({
@@ -57,7 +57,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setTitle");
 				return AppVariantFactory.prepareCreate({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oVariant) {
@@ -74,10 +74,10 @@ sap.ui.define([
 			var _oDescriptorInlineChange;
 			var _oVariant;
 			var mParameter = {
-				type : "XTIT",
-				maxLength : 30,
-				comment : "comment on subtitle",
-				value : {
+				type: "XTIT",
+				maxLength: 30,
+				comment: "comment on subtitle",
+				value: {
 					"": "Default Subtitle",
 					en: "English Subtitle",
 					de: "Deutscher Untertitel",
@@ -95,7 +95,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setSubTitle");
 				return AppVariantFactory.prepareCreate({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oVariant) {
@@ -127,7 +127,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_addLibraries");
 				return AppVariantFactory.prepareCreate({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oVariant) {
@@ -143,7 +143,7 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_addLibraries({
 					content: {
-						libraries : "a.id"
+						libraries: "a.id"
 					}
 				});
 			});
@@ -170,7 +170,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_ui5_addComponentUsages");
 				return AppVariantFactory.prepareCreate({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oVariant) {
@@ -186,7 +186,7 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_addComponentUsages({
 					content: {
-						componentUsages : "a.id"
+						componentUsages: "a.id"
 					}
 				});
 			});
@@ -196,14 +196,14 @@ sap.ui.define([
 			var _oDescriptorInlineChange;
 			var _oVariant;
 			var mParameter = {
-				type : "XTIT",
-				maxLength : 30,
-				comment : "comment on shorttitle",
-				value : {
-					"" : "Default Shorttitle",
-					en:"English Shorttitle",
-					de:"Deutscher Kurztitel",
-					en_US:"English Shorttitle in en_US"
+				type: "XTIT",
+				maxLength: 30,
+				comment: "comment on shorttitle",
+				value: {
+					"": "Default Shorttitle",
+					en: "English Shorttitle",
+					de: "Deutscher Kurztitel",
+					en_US: "English Shorttitle in en_US"
 				}
 			};
 			return AppVariantInlineChangeFactory.create_app_setShortTitle({
@@ -217,7 +217,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setShortTitle");
 				return AppVariantFactory.prepareCreate({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oVariant) {
@@ -234,14 +234,14 @@ sap.ui.define([
 			var _oDescriptorInlineChange;
 			var _oVariant;
 			var mParameter = {
-				type : "XTXT",
-				maxLength : 50,
-				comment : "comment on description",
-				value : {
-					"" : "Default Description",
-					en:"English Description",
-					de:"Deutsche Beschreibung",
-					en_US:"English Description in en_US"
+				type: "XTXT",
+				maxLength: 50,
+				comment: "comment on description",
+				value: {
+					"": "Default Description",
+					en: "English Description",
+					de: "Deutsche Beschreibung",
+					en_US: "English Description in en_US"
 				}
 			};
 			return AppVariantInlineChangeFactory.create_app_setDescription({
@@ -255,7 +255,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setDescription");
 				return AppVariantFactory.prepareCreate({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oVariant) {
@@ -272,13 +272,13 @@ sap.ui.define([
 			var _oDescriptorInlineChange;
 			var _oVariant;
 			var mParameter = {
-				maxLength : 70,
-				comment : "comment on info",
-				value : {
-					"" : "Default Info",
-					en:"English Info",
-					de:"Deutsche Info",
-					en_US:"English Info in en_US"
+				maxLength: 70,
+				comment: "comment on info",
+				value: {
+					"": "Default Info",
+					en: "English Info",
+					de: "Deutsche Info",
+					en_US: "English Info in en_US"
 				}
 			};
 			return AppVariantInlineChangeFactory.create_app_setInfo({
@@ -292,7 +292,7 @@ sap.ui.define([
 				_oDescriptorInlineChange = oDescriptorInlineChange;
 				assert.equal(oDescriptorInlineChange.getMap().changeType, "appdescr_app_setInfo");
 				return AppVariantFactory.prepareCreate({
-					id : "a.id",
+					id: "a.id",
 					reference: "a.reference"
 				});
 			}).then(function(oVariant) {
@@ -321,14 +321,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_setAch({
 					content: {
-						AchH : {}
+						AchH: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_setAch({
 					content: {
-						Ach : "a.id"
+						Ach: "a.id"
 					}
 				});
 			});
@@ -337,7 +337,7 @@ sap.ui.define([
 		QUnit.test("addDescriptorInlineChange", function(assert) {
 			var _oVariant;
 			return AppVariantFactory.prepareCreate({
-				id : "a.id",
+				id: "a.id",
 				reference: "a.reference"
 			}).then(function(oVariant) {
 				_oVariant = oVariant;
@@ -356,7 +356,7 @@ sap.ui.define([
 				assert.notEqual(_oVariant.getDefinition().content, null);
 				assert.equal(_oVariant.getDefinition().content.length, 1);
 				assert.equal(_oVariant.getDefinition().content[0].changeType, "changeType");
-				assert.deepEqual(_oVariant.getDefinition().content[0].content, {param:"value"});
+				assert.deepEqual(_oVariant.getDefinition().content[0].content, {param: "value"});
 				assert.deepEqual(_oVariant.getDefinition().content[0].texts, {a: "b"});
 			});
 		});
@@ -368,7 +368,7 @@ sap.ui.define([
 					keywords: ["{{customer.newid_sap.app.tags.keywords.0}}", "{{customer.newid_sap.app.tags.keywords.1}}"]
 				},
 				texts: {
-					"customer.newid_sap.app.tags.keywords.0" : {
+					"customer.newid_sap.app.tags.keywords.0": {
 						type: "XTIT",
 						maxLength: 20,
 						comment: "sample comment",
@@ -379,7 +379,7 @@ sap.ui.define([
 							en_US: "English Keyword 1 in en_US"
 						}
 					},
-					"customer.newid_sap.app.tags.keywords.1" : {
+					"customer.newid_sap.app.tags.keywords.1": {
 						type: "XTIT",
 						maxLength: 20,
 						comment: "sample comment",
@@ -402,14 +402,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_setKeywords({
 					content: {
-						keywords : {}
+						keywords: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_setKeywords({
 					content: {
-						keywords : "a.id"
+						keywords: "a.id"
 					}
 				});
 			});
@@ -419,18 +419,18 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.createDescriptorInlineChange({
 				changeType: 'appdescr_ovp_addNewCard',
 				content: {
-					card : {
-						"customer.acard" : {
-							model : "customer.boring_model",
-							template : "sap.ovp.cards.list",
-							settings : {
-								category : "{{customer.newid_sap.app.ovp.cards.customer.acard.category}}",
-								title : "{{customer.newid_sap.app.ovp.cards.customer.acard.title}}",
-								description : "extended",
-								entitySet : "Zme_Overdue",
-								sortBy : "OverdueTime",
-								sortOrder : "desc",
-								listType : "extended"
+					card: {
+						"customer.acard": {
+							model: "customer.boring_model",
+							template: "sap.ovp.cards.list",
+							settings: {
+								category: "{{customer.newid_sap.app.ovp.cards.customer.acard.category}}",
+								title: "{{customer.newid_sap.app.ovp.cards.customer.acard.title}}",
+								description: "extended",
+								entitySet: "Zme_Overdue",
+								sortBy: "OverdueTime",
+								sortOrder: "desc",
+								listType: "extended"
 							}
 						}
 					}
@@ -608,18 +608,18 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_ovp_addNewCard({
 				changeType: "appdescr_ovp_addNewCard",
 				content: {
-					card : {
-						"customer.acard" : {
-							model : "customer.boring_model",
-							template : "sap.ovp.cards.list",
-							settings : {
-								category : "{{cardId_category}}",
-								title : "{{cardId_title}}",
-								description : "extended",
-								entitySet : "Zme_Overdue",
-								sortBy : "OverdueTime",
-								sortOrder : "desc",
-								listType : "extended"
+					card: {
+						"customer.acard": {
+							model: "customer.boring_model",
+							template: "sap.ovp.cards.list",
+							settings: {
+								category: "{{cardId_category}}",
+								title: "{{cardId_title}}",
+								description: "extended",
+								entitySet: "Zme_Overdue",
+								sortBy: "OverdueTime",
+								sortOrder: "desc",
+								listType: "extended"
 							}
 						}
 					}
@@ -659,14 +659,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ovp_addNewCard({
 					content: {
-						cardId : {}
+						cardId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ovp_addNewCard({
 					content: {
-						cardId : "a.id"
+						cardId: "a.id"
 					}
 				});
 			});
@@ -676,7 +676,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_ovp_removeCard({
 				changeType: "appdescr_ovp_removeCard",
 				content: {
-					cardId : "a.id"
+					cardId: "a.id"
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -688,14 +688,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ovp_removeCard({
 					content: {
-						cards : "a.id"
+						cards: "a.id"
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ovp_removeCard({
 					content: {
-						cardId : {}
+						cardId: {}
 					}
 				});
 			});
@@ -805,14 +805,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addNewInbound({
 					content: {
-						inboundId : {}
+						inboundId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addNewInbound({
 					content: {
-						inbound : "a.id"
+						inbound: "a.id"
 					}
 				});
 			});
@@ -822,7 +822,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_app_removeInbound({
 				changeType: "appdescr_app_removeInbound",
 				content: {
-					inboundId : "a.id"
+					inboundId: "a.id"
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -834,14 +834,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeInbound({
 					content: {
-						inbounds : "a.id"
+						inbounds: "a.id"
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeInbound({
 					content: {
-						inboundId : {}
+						inboundId: {}
 					}
 				});
 			});
@@ -851,7 +851,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_app_removeAllInboundsExceptOne({
 				changeType: "appdescr_app_removeAllInboundsExceptOne",
 				content: {
-					inboundId : "a.id"
+					inboundId: "a.id"
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -863,14 +863,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeAllInboundsExceptOne({
 					content: {
-						inbounds : "a.id"
+						inbounds: "a.id"
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeAllInboundsExceptOne({
 					content: {
-						inboundId : {}
+						inboundId: {}
 					}
 				});
 			});
@@ -950,21 +950,21 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeInbound({
 					content: {
-						inbounds : "a.id"
+						inbounds: "a.id"
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeInbound({
 					content: {
-						inboundId : {}
+						inboundId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeInbound({
 					content: {
-						inboundId : "a.id"
+						inboundId: "a.id"
 					}
 				});
 			});
@@ -994,14 +994,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addNewOutbound({
 					content: {
-						outboundId : {}
+						outboundId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addNewOutbound({
 					content: {
-						outbound : "a.id"
+						outbound: "a.id"
 					}
 				});
 			});
@@ -1011,7 +1011,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_app_removeOutbound({
 				changeType: "appdescr_app_removeOutbound",
 				content: {
-					outboundId : "a.id"
+					outboundId: "a.id"
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -1023,14 +1023,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeOutbound({
 					content: {
-						outbounds : "a.id"
+						outbounds: "a.id"
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeOutbound({
 					content: {
-						outboundId : {}
+						outboundId: {}
 					}
 				});
 			});
@@ -1042,23 +1042,23 @@ sap.ui.define([
 				content: {
 					outboundId: "a.id",
 					entityPropertyChange: [{
-						propertyPath : "action",
-						operation : "UPDATE",
-						propertyValue : "newAction"
+						propertyPath: "action",
+						operation: "UPDATE",
+						propertyValue: "newAction"
 					},
 					{
-						propertyPath : "parameters/newAddedParameter",
-						operation : "INSERT",
-						propertyValue : {
-							value : {
-								value : "someValue",
-								format : "plain"
+						propertyPath: "parameters/newAddedParameter",
+						operation: "INSERT",
+						propertyValue: {
+							value: {
+								value: "someValue",
+								format: "plain"
 							}
 						}
 					},
 					{
-						propertyPath : "parameters/Language",
-						operation : "DELETE"
+						propertyPath: "parameters/Language",
+						operation: "DELETE"
 					}]
 				}
 			}).then(function(oDescriptorInlineChange) {
@@ -1073,9 +1073,9 @@ sap.ui.define([
 				content: {
 					outboundId: "a.id",
 					entityPropertyChange: {
-						propertyPath : "action",
-						operation : "UPDATE",
-						propertyValue : "newAction"
+						propertyPath: "action",
+						operation: "UPDATE",
+						propertyValue: "newAction"
 					}
 				}
 			}).then(function(oDescriptorInlineChange) {
@@ -1088,21 +1088,21 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeOutbound({
 					content: {
-						outbounds : "a.id"
+						outbounds: "a.id"
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeOutbound({
 					content: {
-						outboundId : {}
+						outboundId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeOutbound({
 					content: {
-						outboundId : "a.id"
+						outboundId: "a.id"
 					}
 				});
 			});
@@ -1124,14 +1124,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addNewDataSource({
 					content: {
-						dataSourceId : {}
+						dataSourceId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addNewDataSource({
 					content: {
-						dataSource : "a.id"
+						dataSource: "a.id"
 					}
 				});
 			});
@@ -1141,7 +1141,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_app_removeDataSource({
 				changeType: "appdescr_app_removeDataSource",
 				content: {
-					dataSourceId : "a.id"
+					dataSourceId: "a.id"
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -1153,14 +1153,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeDataSource({
 					content: {
-						dataSources : "a.id"
+						dataSources: "a.id"
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeDataSource({
 					content: {
-						dataSourceId : {}
+						dataSourceId: {}
 					}
 				});
 			});
@@ -1209,21 +1209,21 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeDataSource({
 					content: {
-						dataSources : "a.id"
+						dataSources: "a.id"
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeDataSource({
 					content: {
-						dataSourceId : {}
+						dataSourceId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_changeDataSource({
 					content: {
-						dataSourceId : "a.id"
+						dataSourceId: "a.id"
 					}
 				});
 			});
@@ -1234,8 +1234,8 @@ sap.ui.define([
 				changeType: "appdescr_app_addAnnotationsToOData",
 				content: {
 					dataSourceId: "customer.existingDataSource",
-					annotations : ["customer.anno1"],
-					dataSource : { }
+					annotations: ["customer.anno1"],
+					dataSource: { }
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -1247,22 +1247,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addAnnotationsToOData({
 					content: {
-						dataSourceId : {}
+						dataSourceId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addAnnotationsToOData({
 					content: {
-						dataSourceId : "a.id"
-					}
-				});
-			});
-			assert.throws(function() {
-				AppVariantInlineChangeFactory.create_app_addAnnotationsToOData({
-					content: {
-						dataSourceId: "customer.existingDataSource",
-						dataSource : { }
+						dataSourceId: "a.id"
 					}
 				});
 			});
@@ -1270,8 +1262,7 @@ sap.ui.define([
 				AppVariantInlineChangeFactory.create_app_addAnnotationsToOData({
 					content: {
 						dataSourceId: "customer.existingDataSource",
-						annotations : { },
-						dataSource : { }
+						dataSource: { }
 					}
 				});
 			});
@@ -1279,8 +1270,17 @@ sap.ui.define([
 				AppVariantInlineChangeFactory.create_app_addAnnotationsToOData({
 					content: {
 						dataSourceId: "customer.existingDataSource",
-						annotations : ["customer.anno1"],
-						dataSource : ""
+						annotations: { },
+						dataSource: { }
+					}
+				});
+			});
+			assert.throws(function() {
+				AppVariantInlineChangeFactory.create_app_addAnnotationsToOData({
+					content: {
+						dataSourceId: "customer.existingDataSource",
+						annotations: ["customer.anno1"],
+						dataSource: ""
 					}
 				});
 			});
@@ -1304,14 +1304,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_setDestination({
 					content: {
-						destinations : {}
+						destinations: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_setDestination({
 					content: {
-						destination : "a.id"
+						destination: "a.id"
 					}
 				});
 			});
@@ -1333,14 +1333,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addTechnicalAttributes({
 					content: {
-						technicalAttributes : {}
+						technicalAttributes: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addTechnicalAttributes({
 					content: {
-						technicalAttributes : "TAG1"
+						technicalAttributes: "TAG1"
 					}
 				});
 			});
@@ -1362,14 +1362,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeTechnicalAttributes({
 					content: {
-						technicalAttributes : {}
+						technicalAttributes: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeTechnicalAttributes({
 					content: {
-						technicalAttributes : "TAG1"
+						technicalAttributes: "TAG1"
 					}
 				});
 			});
@@ -1391,14 +1391,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addCdsViews({
 					content: {
-						cdsViews : {}
+						cdsViews: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_addCdsViews({
 					content: {
-						cdsViews : "VIEW1"
+						cdsViews: "VIEW1"
 					}
 				});
 			});
@@ -1420,14 +1420,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeCdsViews({
 					content: {
-						cdsViews : {}
+						cdsViews: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_app_removeCdsViews({
 					content: {
-						cdsViews : "VIEW1"
+						cdsViews: "VIEW1"
 					}
 				});
 			});
@@ -1437,10 +1437,10 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_flp_setConfig({
 				changeType: "appdescr_flp_setConfig",
 				content: {
-					config : {
-						property1 : "value1",
-						property2 : "value2",
-						propertyList : ["a", "b"]
+					config: {
+						property1: "value1",
+						property2: "value2",
+						propertyList: ["a", "b"]
 					}
 				}
 			}).then(function(oDescriptorInlineChange) {
@@ -1452,14 +1452,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_flp_setConfig({
 					content: {
-						configs : { }
+						configs: { }
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_flp_setConfig({
 					content: {
-						config : "wrongType"
+						config: "wrongType"
 					}
 				});
 			});
@@ -1469,7 +1469,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_ui5_addNewModel({
 				changeType: "appdescr_ui5_addNewModel",
 				content: {
-					model : {
+					model: {
 						"customer.fancy_model": {
 							dataSource: "customer.fancy_dataSource",
 							settings: {}
@@ -1486,14 +1486,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_addNewModel({
 					content: {
-						modelId : {}
+						modelId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_addNewModel({
 					content: {
-						model : "a.id"
+						model: "a.id"
 					}
 				});
 			});
@@ -1504,7 +1504,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_ui5_removeModel({
 				changeType: "appdescr_ui5_removeModel",
 				content: {
-					modelId : "aModelId"
+					modelId: "aModelId"
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -1516,14 +1516,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_removeModel({
 					content: {
-						modelId : {}
+						modelId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_removeModel({
 					content: {
-						model : "a.id"
+						model: "a.id"
 					}
 				});
 			});
@@ -1534,7 +1534,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
 				changeType: "appdescr_ui5_addNewModelEnhanceWith",
 				content: {
-					modelId : "customer.existingModelId"
+					modelId: "customer.existingModelId"
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -1546,14 +1546,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
 					content: {
-						modelId : {}
+						modelId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_addNewModelEnhanceWith({
 					content: {
-						model : "a.id"
+						model: "a.id"
 					}
 				});
 			});
@@ -1580,14 +1580,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_replaceComponentUsage({
 					content: {
-						componentUsageId : {}
+						componentUsageId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_replaceComponentUsage({
 					content: {
-						componentUsage : "a.id"
+						componentUsage: "a.id"
 					}
 				});
 			});
@@ -1597,7 +1597,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_ui5_setMinUI5Version({
 				changeType: "appdescr_ui5_setMinUI5Version",
 				content: {
-					minUI5Version : "1.63.0"
+					minUI5Version: "1.63.0"
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -1609,7 +1609,7 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui5_setMinUI5Version({
 					content: {
-						minUI5Version : {}
+						minUI5Version: {}
 					}
 				});
 			});
@@ -1648,14 +1648,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_smb_addNamespace({
 					content: {
-						smartBusinessAppId : {}
+						smartBusinessAppId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_smb_addNamespace({
 					content: {
-						smartBusinessApp : "a.id"
+						smartBusinessApp: "a.id"
 					}
 				});
 			});
@@ -1670,10 +1670,10 @@ sap.ui.define([
 							tileConfiguration: "{\"TILE_PROPERTIES\":\" {\\\"id\\\":\\\"\\\",\\\"instanceId\\\":\\\"\\\",\\\"evaluationId\\\":\\\"\\\"," +
 							"\\\"navType\\\":\\\"0\\\",\\\"cacheMaxAge\\\":1,\\\"cacheMaxAgeUnit\\\":\\\"MIN\\\",\\\"tileSpecific\\\":{}}\"}"
 						},
-						annotationFragments : {
-							selectionVariant : "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.SelectionVariant#<qualifier>",
-							dataPoint : "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.DataPoint#<qualifier>",
-							selectionField : "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.SelectionFields#<qualifier>"
+						annotationFragments: {
+							selectionVariant: "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.SelectionVariant#<qualifier>",
+							dataPoint: "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.DataPoint#<qualifier>",
+							selectionField: "<entityTypeQualifiedName>/@com.sap.vocabularies.UI.v1.SelectionFields#<qualifier>"
 						}
 					}
 				}
@@ -1687,14 +1687,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_smb_changeNamespace({
 					content: {
-						smartBusinessAppId : {}
+						smartBusinessAppId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_smb_changeNamespace({
 					content: {
-						smartBusinessApp : "a.id"
+						smartBusinessApp: "a.id"
 					}
 				});
 			});
@@ -1704,7 +1704,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_ui_generic_app_setMainPage({
 				changeType: "appdescr_ui_generic_app_setMainPage",
 				content: {
-					page : {
+					page: {
 						page_1: {
 							entitySet: "STTA_C_MP_Product",
 							component: {
@@ -1724,14 +1724,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui_generic_app_setMainPage({
 					content: {
-						pageId : {}
+						pageId: {}
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui_generic_app_setMainPage({
 					content: {
-						page : "a.id"
+						page: "a.id"
 					}
 				});
 			});
@@ -1741,7 +1741,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_ui_setIcon({
 				changeType: "appdescr_ui_setIcon",
 				content: {
-					icon : "sap-icon://add-contact"
+					icon: "sap-icon://add-contact"
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -1752,14 +1752,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui_setIcon({
 					content: {
-						iconId : "a.string"
+						iconId: "a.string"
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui_setIcon({
 					content: {
-						icon : { }
+						icon: { }
 					}
 				});
 			});
@@ -1769,10 +1769,10 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_ui_setDeviceTypes({
 				changeType: "appdescr_ui_setDeviceTypes",
 				content: {
-					deviceTypes : {
-						desktop : true,
-						tablet : true,
-						phone : true
+					deviceTypes: {
+						desktop: true,
+						tablet: true,
+						phone: true
 					}
 				}
 			}).then(function(oDescriptorInlineChange) {
@@ -1784,10 +1784,10 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui_setDeviceTypes({
 					content: {
-						types : {
-							desktop : true,
-							tablet : true,
-							phone : true
+						types: {
+							desktop: true,
+							tablet: true,
+							phone: true
 						}
 					}
 				});
@@ -1795,7 +1795,7 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_ui_setDeviceTypes({
 					content: {
-						deviceTypes : "desktop"
+						deviceTypes: "desktop"
 					}
 				});
 			});
@@ -1805,7 +1805,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_url_setUri({
 				changeType: "appdescr_url_setUri",
 				content: {
-					uri : "uri.com"
+					uri: "uri.com"
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -1816,7 +1816,7 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_url_setUri({
 					content: {
-						uri : { }
+						uri: { }
 					}
 				});
 			});
@@ -1826,7 +1826,7 @@ sap.ui.define([
 			return AppVariantInlineChangeFactory.create_fiori_setRegistrationIds({
 				changeType: "appdescr_fiori_setRegistrationIds",
 				content: {
-					registrationIds : ["F01234"]
+					registrationIds: ["F01234"]
 				}
 			}).then(function(oDescriptorInlineChange) {
 				assert.notEqual(oDescriptorInlineChange, null);
@@ -1837,14 +1837,14 @@ sap.ui.define([
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_fiori_setRegistrationIds({
 					content: {
-						registrationIds : 1.0
+						registrationIds: 1.0
 					}
 				});
 			});
 			assert.throws(function() {
 				AppVariantInlineChangeFactory.create_fiori_setRegistrationIds({
 					content: {
-						registrationIds : { }
+						registrationIds: { }
 					}
 				});
 			});

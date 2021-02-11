@@ -118,7 +118,7 @@ sap.ui.define([
 
 		QUnit.test("getCacheKey with invalid appComponent is called", function(assert) {
 			var mComponentMock = {
-				name : sComponentName
+				name: sComponentName
 			};
 			var oLogWarningSpy = sandbox.spy(Log, "warning");
 			return Cache.getCacheKey(mComponentMock)
@@ -137,7 +137,7 @@ sap.ui.define([
 			var sControlVariantId2 = "id_1541412437845_186_Copy";
 			var sCacheKeyResult = "<NoTag-" + sControlVariantId1 + "-" + sControlVariantId2 + ">";
 			var mComponentMock = {
-				name : sComponentName
+				name: sComponentName
 			};
 			var oAppComponentMock = {
 				getModel: function() {
@@ -165,7 +165,7 @@ sap.ui.define([
 			var sControlVariantId = "id_1541412437845_176_Copy";
 			var sCacheKeyResult = 'abc123'.concat('-', sControlVariantId);
 			var mComponentMock = {
-				name : "testComponent"
+				name: "testComponent"
 			};
 			var oAppComponentMock = {
 				getModel: function() {

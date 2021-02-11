@@ -67,7 +67,7 @@ sap.ui.define([
 			var oChangesBundle = _getBundle(sComponentName, "changes-bundle");
 			if (oChangesBundle) {
 				return Promise.resolve({
-					changes : oChangesBundle
+					changes: oChangesBundle
 				});
 			}
 

@@ -66,12 +66,12 @@ sap.ui.define([
 						oLib.name.indexOf("sap.ui.demoapps") === -1 &&
 						oLib.name !== "sap.ui.core" &&
 						oLib.name !== "sap.ui.fl") {
-					aLoadLibraryPromises.push(sap.ui.getCore().loadLibrary(oLib.name, { async:true }));
+					aLoadLibraryPromises.push(sap.ui.getCore().loadLibrary(oLib.name, { async: true }));
 				}
 			});
 		} else {
 			aLibraries.forEach(function(sLib) {
-				aLoadLibraryPromises.push(sap.ui.getCore().loadLibrary(sLib, { async:true }));
+				aLoadLibraryPromises.push(sap.ui.getCore().loadLibrary(sLib, { async: true }));
 			});
 		}
 

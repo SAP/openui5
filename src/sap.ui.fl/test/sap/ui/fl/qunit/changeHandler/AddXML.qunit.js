@@ -36,7 +36,7 @@ sap.ui.define([
 
 
 	QUnit.module("Given a AddXML Change Handler", {
-		beforeEach : function() {
+		beforeEach: function() {
 			this.oChangeHandler = AddXML;
 			this.oHBox = new HBox("hbox", {
 				items: [this.oButton]
@@ -61,7 +61,7 @@ sap.ui.define([
 
 			this.oChange = new Change(oChangeJson);
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oHBox.destroy();
 		}
 	}, function() {
@@ -106,7 +106,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddXML Change Handler with JSTreeModifier", {
-		beforeEach : function () {
+		beforeEach: function () {
 			// general modifier beforeEach (can be extracted as soon as nested modules are supported)
 			this.oChangeHandler = AddXML;
 
@@ -137,21 +137,21 @@ sap.ui.define([
 			// JSTreeModifier specific beforeEach
 			this.oButton = new Button();
 			this.oHBox = new HBox(this.sHBoxId, {
-				items : [this.oButton]
+				items: [this.oButton]
 			});
 			this.sAggregationType = this.oHBox.getMetadata().getAggregation("items").type;
 			this.oHBox.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 
 			this.oPropertyBag = {
-				modifier : JsControlTreeModifier, view : {
-					getController : function () {
-					}, getId : function () {
+				modifier: JsControlTreeModifier, view: {
+					getController: function () {
+					}, getId: function () {
 					}
 				}
 			};
 		},
-		afterEach : function () {
+		afterEach: function () {
 			this.oHBox.destroy();
 		}
 	}, function () {
@@ -185,7 +185,7 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a AddXML Change Handler with XMLTreeModifier", {
-		beforeEach : function() {
+		beforeEach: function() {
 			// general modifier beforeEach (can be extracted as soon as nested modules are supported)
 			this.oChangeHandler = AddXML;
 
@@ -242,7 +242,7 @@ sap.ui.define([
 				appComponent: this.oComponent
 			};
 		},
-		afterEach : function() {
+		afterEach: function() {
 			this.oComponent.destroy();
 		}
 	}, function() {
