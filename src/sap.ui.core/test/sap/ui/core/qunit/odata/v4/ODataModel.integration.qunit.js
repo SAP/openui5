@@ -19388,8 +19388,37 @@ sap.ui.define([
 	// resolves with the context for the inactive entity. Data for the inactive entity is displayed
 	// when setting this context on the object page. Then call the "Activate" bound action to switch
 	// back to the active entity. The actions are part of the form.
+	// The object page has two starting points: Either it is started for a row of a list page and
+	// gets the row context, or it is started with a 'deep link' and gets the canonical path of an
+	// entity as string. Both variants are shown in the test, the list scenario with key '42' and
+	// the 'deep link' scenario with key '23'.
 	// CPOUI5UISERVICESV3-1712
-	QUnit.test("bound operation: switching between active and inactive entity", function (assert) {
+	// When creating an operation context for the Edit or Activation action, we always use
+	// oObjectPage.getBindingContext() for the binding parameter and use
+	// oObjectPage.setBindingContext(oReturnValueContext) to set the object page to the action's
+	// result. By this we achieve that a subsequent action always gets the return value context of
+	// the preceding action as binding parameter. This avoids that setting the RVC at the object
+	// page creates a circular dependency which would result in its destruction.
+	// There are three variants:
+	// 1. The one originally recommended to FE. The object page has a fixed hidden binding with
+	//    empty path performing the requests. It either gets the list's row context or a context
+	//    created via oModel.createBindingContext() for the 'deep link' scenario as parent.
+	// 2. Avoid this hidden binding when starting with the list. The list data is then also used for
+	//    the object page, enriched by a late property request. For the 'deep link' a hidden,
+	//    absolute binding is created as a starting point.
+	// 3. Flexible Column Layout: Keep the row context alive and always update it via
+	//    Context#replaceWith. For the 'deep link' this also uses the absolute, hidden binding.
+	// CPOUI5ODATAV4-764
+[
+	{hiddenBinding : true, title : "relative hidden binding"}
+	// TODO requires CPOUI5ODATAV4-711: $$inheritExpandSelect inherits late properties
+	//{title : "use row context directly; absolute hidden binding for 'deep links'"},
+	// TODO requires CPOUI5ODATAV4-347: Context#replaceWith
+	//{keepAlive : true, title : "use kept-alive context and replace in list"}
+].forEach(function (oFixture) {
+	var sTitle = "bound operation: switching between active and inactive entity, " + oFixture.title;
+
+	QUnit.test(sTitle, function (assert) {
 		var oHiddenBinding, // to be kept in the controller
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			mNames = {
@@ -19401,11 +19430,14 @@ sap.ui.define([
 				42 : "9.99"
 			},
 			oObjectPage,
+			oRowContext,
 			sView = '\
-<Table id="table" items="{path : \'/Artists\', parameters : {$filter : \'IsActiveEntity\'}}">\
+<Table id="table" items="{path : \'/Artists\', \
+		parameters : {$filter : \'IsActiveEntity\', $$patchWithoutSideEffects : true}}">\
 	<Text id="listId" text="{ArtistID}"/>\
+	<Text id="listIsActive" text="{IsActiveEntity}"/>\
 </Table>\
-<FlexBox id="objectPage" binding="{}">\
+<FlexBox id="objectPage">\
 	<Text id="id" text="{ArtistID}"/>\
 	<Text id="isActive" text="{IsActiveEntity}"/>\
 	<Input id="name" value="{Name}"/>\
@@ -19427,15 +19459,33 @@ sap.ui.define([
 				.expectChange("name", mNames[sId]);
 		}
 
-		function expectPublicationRequest(sId, bIsActive) {
-			that.expectRequest("Artists(ArtistID='" + sId + "',IsActiveEntity=" + bIsActive
-					+ ")/_Publication?$select=Price,PublicationID&$skip=0&$top=100", {
-					value : [{
-						Price : mPrices[sId],
-						PublicationID : "42-0"
-					}]
-				})
-				.expectChange("price", [mPrices[sId]]);
+		function expectPublicationRequest(sId, bIsActive, bAlreadyCached) {
+			if (!bAlreadyCached) {
+				that.expectRequest("Artists(ArtistID='" + sId + "',IsActiveEntity=" + bIsActive
+						+ ")/_Publication?$select=Price,PublicationID&$skip=0&$top=100", {
+						value : [{
+							Price : mPrices[sId],
+							PublicationID : "42-0"
+						}]
+					});
+			}
+			that.expectChange("price", [mPrices[sId]]);
+		}
+
+		function buildDependencyChain(aContextsAndBindings) {
+			var vContextOrBinding = aContextsAndBindings[0];
+
+			if (vContextOrBinding) {
+				if (vContextOrBinding.getBinding) {
+					aContextsAndBindings.unshift(vContextOrBinding.getBinding());
+					return buildDependencyChain(aContextsAndBindings);
+				}
+				if (vContextOrBinding.getContext) {
+					aContextsAndBindings.unshift(vContextOrBinding.getContext());
+					return buildDependencyChain(aContextsAndBindings);
+				}
+			}
+			return aContextsAndBindings;
 		}
 
 		/*
@@ -19447,13 +19497,13 @@ sap.ui.define([
 		 * @param {string} [sName] - The resulting artist's name if it differs from the default
 		 * @returns {Promise} - A promise that waits for the expected changes
 		 */
-		function action(sAction, sId, sName) {
+		function action(sAction, sId, sName, bPublicationAlreadyCached) {
 			var bIsActive = sAction === "ActivationAction", // The resulting artist's bIsActive
 				// TODO The object page's parent context may be the return value context of the
 				//   previous operation. By using it as parent for the new operation we build a long
 				//   chain of bindings that we never release as long as we switch between draft and
 				//   active entity. -> CPOUI5UISERVICESV3-1746
-				oEntityContext = oObjectPage.getObjectBinding().getContext(),
+				oEntityContext = oObjectPage.getBindingContext(),
 				oAction = that.oModel.bindContext("special.cases." + sAction + "(...)",
 					oEntityContext, {$$inheritExpandSelect : true});
 
@@ -19473,12 +19523,18 @@ sap.ui.define([
 				oAction.execute(),
 				that.waitForChanges(assert)
 			]).then(function (aPromiseResults) {
-				var oReturnValueContext = aPromiseResults[0];
+				var oContext = aPromiseResults[0], // the return value context
+					sIsActive = bIsActive ? "Yes" : "No";
 
-				that.expectChange("isActive", bIsActive ? "Yes" : "No");
-				expectPublicationRequest(sId, bIsActive);
+				that.expectChange("isActive", sIsActive);
+				expectPublicationRequest(sId, bIsActive, bPublicationAlreadyCached);
 
-				return bindObjectPage(oReturnValueContext, true);
+				if (sId === "42" && oFixture.keepAlive) {
+					that.expectChange("listIsActive", [sIsActive]);
+
+					oRowContext = oContext = oRowContext.replaceWith(oContext);
+				}
+				return bindObjectPage(oContext, false);
 			});
 		}
 
@@ -19489,31 +19545,37 @@ sap.ui.define([
 		 *
 		 * @param {string|sap.ui.model.odata.v4.Context} vSource
 		 *   The source, either a path or a list context or a return value context
-		 * @param {boolean} bIsReturnValueContext
-		 *   Whether vSource is a return value context
+		 * @param {boolean} bUseHiddenBinding
+		 *   Whether to use the hidden binding as intermediate binding
 		 * @returns {Promise}
 		 *   A promise that waits for the expected changes
 		 */
-		function bindObjectPage(vSource, bIsReturnValueContext) {
-			var oInnerContext,
-				oOuterContext;
+		function bindObjectPage(vSource, bUseHiddenBinding) {
+			var oBinding, oContext = vSource;
 
-			if (bIsReturnValueContext) {
-				oInnerContext = vSource;
-			} else {
-				oOuterContext = typeof vSource === "string"
-					? that.oModel.createBindingContext(vSource)
-					: vSource;
-				oHiddenBinding.setContext(oOuterContext);
-				oInnerContext = oHiddenBinding.getBoundContext();
+			if (typeof vSource === "string") {
+				if (oFixture.hiddenBinding) {
+					oHiddenBinding.setContext(that.oModel.createBindingContext(vSource));
+					oBinding = oHiddenBinding;
+				} else {
+					// create an absolute binding for that path
+					oBinding = that.oModel.bindContext(vSource, undefined,
+						{$$patchWithoutSideEffects : true});
+				}
+				oContext = oBinding.getBoundContext();
+			} else if (bUseHiddenBinding) {
+				oHiddenBinding.setContext(oContext);
+				oContext = oHiddenBinding.getBoundContext();
 			}
-			oObjectPage.setBindingContext(oInnerContext);
+			oObjectPage.setBindingContext(oContext);
 
 			if (vSource) {
-				assert.ok(oObjectPage.getObjectBinding().isPatchWithoutSideEffects(),
-					oObjectPage.getObjectBinding() + " has $$patchWithoutSideEffects");
+				assert.ok(oObjectPage.getBindingContext().getBinding().isPatchWithoutSideEffects(),
+					"Object page has $$patchWithoutSideEffects");
 			}
-			return that.waitForChanges(assert);
+			Log.info("bind object page to " + oContext + "):\r\n"
+				+ buildDependencyChain([oObjectPage.getObjectBinding()]).join("\r\n\t"));
+			return that.waitForChanges(assert, "bind object page to " + oContext);
 		}
 
 		// start here :-)
@@ -19522,25 +19584,33 @@ sap.ui.define([
 				value : [{ArtistID : "42", IsActiveEntity : true}]
 			})
 			.expectChange("listId", ["42"])
+			.expectChange("listIsActive", ["Yes"])
 			.expectChange("id")
 			.expectChange("isActive")
 			.expectChange("name")
 			.expectChange("price", []);
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oRowContext;
-
-			// create the hidden binding when creating the controller
-			oHiddenBinding = that.oModel.bindContext("", undefined,
-				{$$patchWithoutSideEffects : true});
 			oObjectPage = that.oView.byId("objectPage"); // just to keep the test shorter
-
-			expectArtistRequest("42", true);
+			if (oFixture.hiddenBinding) {
+				// create the hidden binding when creating the controller
+				oHiddenBinding = that.oModel.bindContext("", undefined,
+					{$$patchWithoutSideEffects : true});
+				expectArtistRequest("42", true);
+			} else {
+				that.expectChange("id", "42")
+					.expectChange("isActive", "Yes")
+					// late property request for the name
+					.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)?$select=Name",
+						{Name : "The Beatles"})
+					.expectChange("name", "The Beatles");
+			}
 			expectPublicationRequest("42", true);
 
 			// first start with the list
 			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
-			return bindObjectPage(oRowContext, false);
+			oRowContext.setKeepAlive(oFixture.keepAlive);
+			return bindObjectPage(oRowContext, oFixture.hiddenBinding);
 		}).then(function () {
 			return action("EditAction", "42");
 		}).then(function () {
@@ -19553,9 +19623,9 @@ sap.ui.define([
 				.expectChange("name", "The Beatles (modified)");
 
 			that.oView.byId("name").getBinding("value").setValue("The Beatles (modified)");
-			return that.waitForChanges(assert);
+			return that.waitForChanges(assert, "PATCH");
 		}).then(function () {
-			return action("ActivationAction", "42", "The Beatles (modified)");
+			return action("ActivationAction", "42", "The Beatles (modified)", oFixture.keepAlive);
 		}).then(function () {
 			expectArtistRequest("23", false);
 			expectPublicationRequest("23", false);
@@ -19571,8 +19641,9 @@ sap.ui.define([
 
 			that.expectChange("id", "42")
 				.expectChange("isActive", "Yes")
-				.expectChange("name", "The Beatles");
-			expectPublicationRequest("42", true);
+				.expectChange("name",
+						oFixture.keepAlive ? "The Beatles (modified)" : "The Beatles");
+			expectPublicationRequest("42", true, oFixture.keepAlive);
 
 			// Now return to the artist from the list.
 			// There is no request for the artist; its cache is reused.
@@ -19580,7 +19651,7 @@ sap.ui.define([
 			// and the return value context ID changed.
 			// The list must be updated manually.
 			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
-			return bindObjectPage(oRowContext, false);
+			return bindObjectPage(oRowContext, oFixture.hiddenBinding);
 		}).then(function () {
 			// clear the object page
 			that.expectChange("id", null)
@@ -19590,6 +19661,7 @@ sap.ui.define([
 			return bindObjectPage(null, false);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	// Scenario: Fiori Elements Safeguard - Test 1 (Edit/Activate)
