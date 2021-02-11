@@ -1758,10 +1758,8 @@ sap.ui.define([
 
 		for (var i = 0; i < aFiles.length; i++) {
 			sName = aFiles[i].name;
-			sType = aFiles[i].type;
-			if (!sType) {
-				sType = "unknown";
-			}
+			sType = aFiles[i].type || "unknown";
+
 			var fSize = ((aFiles[i].size / 1024) / 1024);
 			if (fMaxSize && (fSize > fMaxSize)) {
 				Log.info("File: " + sName + " is of size " + fSize + " MB which exceeds the file size limit of " + fMaxSize + " MB.");
@@ -1794,11 +1792,11 @@ sap.ui.define([
 						bWrongMime = false;
 					}
 				}
-				if (bWrongMime && !(sType === "unknown" && (Device.browser.edge || Device.browser.msie))) {
+				if (bWrongMime && sType !== "unknown") {
 					Log.info("File: " + sName + " is of type " + sType + ". Allowed types are: "  + aMimeTypes + ".");
 					this.fireTypeMissmatch({
-						fileName:sName,
-						mimeType:sType
+						fileName: sName,
+						mimeType: sType
 					});
 
 					return false;
