@@ -322,7 +322,7 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
 	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
 	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits
-	 *   in case there are more than allowed via format option <code>maxFractionDigits</code>; if
+	 *   in case there are more than the <code>maxFractionDigits</code> format option allows; if
 	 *   decimals are not preserved, the formatted number is rounded to
 	 *   <code>maxFractionDigits</code>.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
@@ -381,7 +381,7 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
 	 *  back to the standard notation. For example "5e+3" is parsed to "5000".
 	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits
-	 *   in case there are more than allowed via format option <code>maxFractionDigits</code>; if
+	 *   in case there are more than the <code>maxFractionDigits</code> format option allows; if
 	 *   decimals are not preserved, the formatted number is rounded to
 	 *   <code>maxFractionDigits</code>.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
@@ -482,7 +482,7 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
 	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
 	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits
-	 *   in case there are more than allowed via format option <code>maxFractionDigits</code>; if
+	 *   in case there are more than the <code>maxFractionDigits</code> format option allows; if
 	 *   decimals are not preserved, the formatted number is rounded to
 	 *   <code>maxFractionDigits</code>.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
@@ -585,7 +585,7 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.parseAsString] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
 	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
 	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits
-	 *   in case there are more than allowed via format option <code>maxFractionDigits</code>; if
+	 *   in case there are more than the <code>maxFractionDigits</code> format option allows; if
 	 *   decimals are not preserved, the formatted number is rounded to
 	 *   <code>maxFractionDigits</code>.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
@@ -646,7 +646,7 @@ sap.ui.define([
 	 * @param {boolean} [oFormatOptions.parseAsString=false] @since 1.28.2 defines whether to output string from parse function in order to keep the precision for big numbers. Numbers in scientific notation are parsed
 	 *  back to the standard notation. For example "5e-3" is parsed to "0.005".
 	 * @param {boolean} [oFormatOptions.preserveDecimals=false] Whether {@link #format} preserves decimal digits
-	 *   in case there are more than allowed via format option <code>maxFractionDigits</code>; if
+	 *   in case there are more than the <code>maxFractionDigits</code> format option allows; if
 	 *   decimals are not preserved, the formatted number is rounded to
 	 *   <code>maxFractionDigits</code>.
 	 * @param {string} [oFormatOptions.style=standard] defines the style of format. Valid values are 'short, 'long' or 'standard' (based on CLDR decimalFormat). Numbers are formatted into compact forms when it's set to
