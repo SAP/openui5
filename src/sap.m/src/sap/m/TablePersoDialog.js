@@ -278,7 +278,6 @@ sap.ui.define([
 
 		this._resetAllButton = new Button(this.getId() + "-buttonUndo", {
 			text: this._oRb.getText("VIEWSETTINGS_RESET"),
-			tooltip: this._oRb.getText('PERSODIALOG_UNDO'),
 			press : function () {
 				this._resetAll();
 			}.bind(this)
