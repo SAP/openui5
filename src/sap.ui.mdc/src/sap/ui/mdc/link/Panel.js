@@ -20,8 +20,9 @@ sap.ui.define([
 	'sap/ui/model/BindingMode',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/ui/mdc/flexibility/PanelItem.flexibility',
-	'sap/ui/mdc/flexibility/Panel.flexibility'
-], function(XMLComposite, mdcLibrary, HBox, VBox, Text, Image, Link, CustomData, Log, SelectDialog, StandardListItem, SelectionDialog, SelectionDialogItem, JSONModel, BindingMode, ManagedObjectObserver, PanelItemFlexibility, PanelFlexibility) {
+	'sap/ui/mdc/flexibility/Panel.flexibility',
+	"sap/ui/core/syncStyleClass"
+], function(XMLComposite, mdcLibrary, HBox, VBox, Text, Image, Link, CustomData, Log, SelectDialog, StandardListItem, SelectionDialog, SelectionDialogItem, JSONModel, BindingMode, ManagedObjectObserver, PanelItemFlexibility, PanelFlexibility, syncStyleClass) {
 	"use strict";
 
 	/**
@@ -296,7 +297,7 @@ sap.ui.define([
 						fnUpdateResetButton.call(this, oSelectionDialog);
 
 						// toggle compact style
-						jQuery.sap.syncStyleClass("sapUiSizeCompact", this, oSelectionDialog);
+						syncStyleClass("sapUiSizeCompact", this, oSelectionDialog);
 						oSelectionDialog.setModel(this._getInternalModel(), "$selectionDialog");
 						this.addDependent(oSelectionDialog);
 
