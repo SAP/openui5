@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"
-		   xmlns="http://docs.oasis-open.org/odata/ns/edm">
+		xmlns="http://docs.oasis-open.org/odata/ns/edm">
 	<edmx:Reference
 			Uri="/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value">
 		<edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="SAP__common"/>
@@ -68,11 +68,11 @@
 			</EntityType>
 			<EntityContainer Name="Container">
 				<EntitySet Name="Currencies"
-						   EntityType="com.sap.gateway.default.iwbep.common.v0001.Currency"/>
+						EntityType="com.sap.gateway.default.iwbep.common.v0001.Currency"/>
 				<EntitySet Name="T100Longtexts"
-						   EntityType="com.sap.gateway.default.iwbep.common.v0001.T100Longtext"/>
+						EntityType="com.sap.gateway.default.iwbep.common.v0001.T100Longtext"/>
 				<EntitySet Name="UnitsOfMeasure"
-						   EntityType="com.sap.gateway.default.iwbep.common.v0001.UnitOfMeasure"/>
+						EntityType="com.sap.gateway.default.iwbep.common.v0001.UnitOfMeasure"/>
 			</EntityContainer>
 			<Annotations Target="SAP__self.UnitOfMeasure/UnitCode">
 				<Annotation Term="SAP__common.Text" Path="Text"/>

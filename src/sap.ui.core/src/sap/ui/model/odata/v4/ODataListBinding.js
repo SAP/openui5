@@ -2496,7 +2496,7 @@ sap.ui.define([
 					var sPredicate = sTarget.slice(sResolvedPath.length).split("/")[0];
 
 					if (!sPredicate.startsWith("($uid=")) {
-						 mPredicates[sPredicate] = true;
+						mPredicates[sPredicate] = true;
 					}
 				});
 			});

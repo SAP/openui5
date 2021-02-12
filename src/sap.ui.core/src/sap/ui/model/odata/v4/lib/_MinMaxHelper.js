@@ -22,7 +22,7 @@ sap.ui.define([
 		 *   An object holding the information needed for data aggregation; see also
 		 *   <a href="http://docs.oasis-open.org/odata/odata-data-aggregation-ext/v4.0/">OData
 		 *   Extension for Data Aggregation Version 4.0</a>; must already be normalized by
-	 	 *   {@link _AggregationHelper.buildApply}
+		 *   {@link _AggregationHelper.buildApply}
 		 * @param {object} mQueryOptions
 		 *   A map of key-value pairs representing the query string
 		 * @returns {sap.ui.model.odata.v4.lib._Cache}

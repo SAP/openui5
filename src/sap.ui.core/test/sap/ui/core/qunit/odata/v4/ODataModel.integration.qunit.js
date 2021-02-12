@@ -6141,15 +6141,15 @@ sap.ui.define([
 				message : "Foo error",
 				target : "/EntitiesWithComplexKey(Key1='f%2Fo''o',Key2=42)/Value",
 				type : "Error"
-			  }, {
+			}, {
 				message : "Foo warning",
 				target : "/EntitiesWithComplexKey(Key1='f%2Fo''o',Key2=42)/Value",
 				type : "Warning"
-			  }, {
+			}, {
 				message : "Bar error",
 				target : "/EntitiesWithComplexKey(Key1='bar',Key2=43)/Value",
 				type : "Error"
-			  }]);
+			}]);
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oBinding = that.oView.byId("table").getBinding("items");
@@ -6172,18 +6172,18 @@ sap.ui.define([
 					message : "Foo error",
 					target : "/EntitiesWithComplexKey(Key1='f%2Fo''o',Key2=42)/Value",
 					type : "Error"
-				  }, {
+				}, {
 					code : "CODE",
 					message : "Create Error",
 					persistent : true,
 					target : "/EntitiesWithComplexKey($uid=...)/Value",
 					technical : true,
 					type : "Error"
-				  }, {
+				}, {
 					message : "Foo warning",
 					target : "/EntitiesWithComplexKey(Key1='f%2Fo''o',Key2=42)/Value",
 					type : "Warning"
-				  }, {
+				}, {
 					message : "Bar error",
 					target : "/EntitiesWithComplexKey(Key1='bar',Key2=43)/Value",
 					type : "Error"
