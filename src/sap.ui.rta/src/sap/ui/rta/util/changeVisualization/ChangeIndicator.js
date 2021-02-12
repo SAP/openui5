@@ -254,12 +254,12 @@ sap.ui.define([
 	};
 
 	ChangeIndicator.prototype._formatChangesModelItem = function (oChange) {
-		var oSelector = sap.ui.getCore().byId(this.getSelectorId());
+		var oAffectedElement = sap.ui.getCore().byId(oChange.affectedElementId);
 		var oOverlay = sap.ui.getCore().byId(this.getOverlayId());
 		var oRtaResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.rta");
 		var sMode = this.getMode();
 		var sChangeTitle = oChange.commandName.charAt(0).toUpperCase() + oChange.commandName.slice(1);
-		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oSelector);
+		var sElementLabel = oOverlay.getDesignTimeMetadata().getLabel(oAffectedElement);
 		sElementLabel = sElementLabel && "'" + sElementLabel + "'";
 		var sChangeTextKey = (
 			"TXT_CHANGEVISUALIZATION_"

@@ -497,8 +497,8 @@ function(
 				{
 					getChangeVisualizationInfo: function () {
 						return {
-							dependentControls: ["button2"],
-							affectedControls: ["button1"]
+							dependentControls: [sap.ui.getCore().byId("button2")], // Test if vis can handle elements
+							affectedControls: ["button1"] // Test if vis can handle IDs
 						};
 					}
 				}
