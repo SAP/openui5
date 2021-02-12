@@ -12,9 +12,9 @@ sap.ui.define([
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.Context",
+		// generation counter to distinguish old from new
+		iGenerationCounter = 0,
 		oModule,
-		// counter for the unique ID of a return value context
-		iReturnValueContextCount = 0,
 		// index of virtual context used for auto-$expand/$select
 		iVIRTUAL = -9007199254740991/*Number.MIN_SAFE_INTEGER*/;
 
@@ -67,9 +67,9 @@ sap.ui.define([
 	 *   by this context; used by list bindings, not context bindings
 	 * @param {Promise} [oCreatePromise]
 	 *   Promise returned by {@link #created}
-	 * @param {number} [iReturnValueContextId]
-	 *   The unique ID for this context if it is a return value context. The ID can be retrieved via
-	 *   {@link #getReturnValueContextId}.
+	 * @param {number} [iGeneration=0]
+	 *   The unique number for this context's generation, which can be retrieved via
+	 *   {@link #getGeneration}.
 	 * @throws {Error}
 	 *   If an invalid path is given
 	 *
@@ -97,8 +97,7 @@ sap.ui.define([
 	 * @version ${version}
 	 */
 	var Context = BaseContext.extend("sap.ui.model.odata.v4.Context", {
-			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise,
-					iReturnValueContextId) {
+			constructor : function (oModel, oBinding, sPath, iIndex, oCreatePromise, iGeneration) {
 				if (sPath[0] !== "/") {
 					throw new Error("Not an absolute path: " + sPath);
 				}
@@ -111,10 +110,10 @@ sap.ui.define([
 					// ensure to return a promise that is resolved w/o data
 					&& Promise.resolve(oCreatePromise).then(function () {});
 				this.oSyncCreatePromise = oCreatePromise && SyncPromise.resolve(oCreatePromise);
+				this.iGeneration = iGeneration || 0;
 				this.iIndex = iIndex;
 				this.bKeepAlive = false;
 				this.fnOnBeforeDestroy = undefined;
-				this.iReturnValueContextId = iReturnValueContextId;
 			}
 		});
 
@@ -536,6 +535,25 @@ sap.ui.define([
 	Context.prototype.getCanonicalPath = _Helper.createGetMethod("fetchCanonicalPath", true);
 
 	/**
+	 * Returns the unique number of this context's generation, or <code>0</code> if it does not
+	 * belong to any specific generation. This number can be inherited from a parent binding.
+	 *
+	 * @param {boolean} [bOnlyLocal]
+	 *   Whether the local generation w/o inheritance is returned
+	 * @returns {number}
+	 *   The unique number of this context's generation, or <code>0</code>
+	 *
+	 * @private
+	 */
+	Context.prototype.getGeneration = function (bOnlyLocal) {
+		if (this.iGeneration || bOnlyLocal) {
+			return this.iGeneration;
+		}
+		return this.oBinding.getGeneration();
+	};
+
+
+	/**
 	 * Returns the group ID of the context's binding that is used for read requests. See
 	 * {@link sap.ui.model.odata.v4.ODataListBinding#getGroupId} and
 	 * {@link sap.ui.model.odata.v4.ODataContextBinding#getGroupId}.
@@ -669,28 +687,6 @@ sap.ui.define([
 			}
 		}
 		return oSyncPromise.isFulfilled() ? oSyncPromise.getResult() : undefined;
-	};
-
-	/**
-	 * Returns the ID of the return value context of this context. If this context is not a return
-	 * value context, the context of the parent binding is asked for its return value context. If
-	 * there is no return value context in the current binding hierarchy of this context,
-	 * <code>undefined</code>is returned.
-	 *
-	 * @returns {number}
-	 *   The ID of the return value context in the binding hierarchy of this context or
-	 *   <code>undefined</code>
-	 *
-	 * @private
-	 */
-	Context.prototype.getReturnValueContextId = function () {
-		if (this.iReturnValueContextId) {
-			return this.iReturnValueContextId;
-		}
-		if (this.oBinding.bRelative
-				&& this.oBinding.oContext && this.oBinding.oContext.getReturnValueContextId) {
-			return this.oBinding.oContext.getReturnValueContextId();
-		}
 	};
 
 	/**
@@ -1439,7 +1435,8 @@ sap.ui.define([
 
 	oModule = {
 		/**
-		 * Creates a context for an OData V4 model.
+		 * Creates a context for an OData V4 model which does not belong to any specific generation,
+		 * that is {@link #getGeneration} returns <code>0</code>.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 		 *   The model
@@ -1463,8 +1460,8 @@ sap.ui.define([
 		},
 
 		/**
-		 * Creates a return value context for an OData V4 model. A unique ID for this context is
-		 * generated and can be retrieved via {@link #getReturnValueContextId}.
+		 * Creates a for an OData V4 model which belongs to a new generation. A unique number for
+		 * that generation is generated and can be retrieved via {@link #getGeneration}.
 		 *
 		 * @param {sap.ui.model.odata.v4.ODataModel} oModel
 		 *   The model
@@ -1473,17 +1470,16 @@ sap.ui.define([
 		 * @param {string} sPath
 		 *   An absolute path without trailing slash
 		 * @returns {sap.ui.model.odata.v4.Context}
-		 *   A return value context for an OData V4 model
+		 *   A context for an OData V4 model
 		 * @throws {Error}
 		 *   If an invalid path is given
 		 *
 		 * @private
 		 */
-		createReturnValueContext : function (oModel, oBinding, sPath) {
-			iReturnValueContextCount += 1;
+		createNewContext : function (oModel, oBinding, sPath) {
+			iGenerationCounter += 1;
 
-			return new Context(oModel, oBinding, sPath, undefined, undefined,
-				iReturnValueContextCount);
+			return new Context(oModel, oBinding, sPath, undefined, undefined, iGenerationCounter);
 		}
 	};
 

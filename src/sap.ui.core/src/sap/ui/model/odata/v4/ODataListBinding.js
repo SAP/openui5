@@ -116,7 +116,7 @@ sap.ui.define([
 				this.bHasAnalyticalInfo = false;
 				this.oHeaderContext = this.bRelative
 					? null
-					: Context.create(oModel, this, sPath);
+					: Context.createNewContext(oModel, this, sPath);
 				this.sOperationMode = mParameters.$$operationMode || oModel.sOperationMode;
 				this.mPreviousContextsByPath = {};
 				this.aPreviousData = [];
@@ -1916,6 +1916,15 @@ sap.ui.define([
 		}
 
 		return oResultAST;
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.ODataParentBinding#getGeneration
+	 */
+	ODataListBinding.prototype.getGeneration = function () {
+		return this.oHeaderContext.getGeneration(true)
+			|| asODataParentBinding.prototype.getGeneration.call(this);
 	};
 
 	/**

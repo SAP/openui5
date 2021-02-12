@@ -168,7 +168,7 @@ sap.ui.define([
 				this.applyParameters(mParameters);
 				this.oElementContext = this.bRelative
 					? null
-					: Context.create(this.oModel, this, sPath);
+					: Context.createNewContext(this.oModel, this, sPath);
 				if (!this.oOperation
 					&& (!this.bRelative || oContext && !oContext.fetchValue)) { // @see #isRoot
 					// do this before #setContext fires an event!
@@ -319,7 +319,7 @@ sap.ui.define([
 						if (that.oReturnValueContext) {
 							that.oReturnValueContext.destroy();
 						}
-						that.oReturnValueContext = Context.createReturnValueContext(that.oModel,
+						that.oReturnValueContext = Context.createNewContext(that.oModel,
 							that, getReturnValueContextPath(sResolvedPath, sResponsePredicate));
 						// set the resource path for late property requests
 						that.oCache.setResourcePath(that.oReturnValueContext.getPath().slice(1));

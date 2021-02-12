@@ -103,6 +103,28 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("constructor: element context", function (assert) {
+		var oBinding,
+			oCreateMock,
+			oElementContext = {};
+
+		oCreateMock = this.mock(Context).expects("createNewContext")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.object, "/TEAMS('42')")
+			.returns(oElementContext);
+
+		// code under test
+		oBinding = this.bindContext("/TEAMS('42')");
+
+		assert.strictEqual(oBinding.getBoundContext(), oElementContext);
+		assert.strictEqual(oCreateMock.args[0][1], oBinding);
+
+		// code under test
+		oBinding = this.bindContext("TEAM_2_MANAGER");
+
+		assert.strictEqual(oBinding.getBoundContext(), null);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("constructor: create operation binding", function (assert) {
 		var oBinding,
 			bInheritExpandSelect = "false,true",
@@ -1587,7 +1609,7 @@ sap.ui.define([
 				.returns(true);
 			oParentContextMock.expects("getValue")
 				.returns(oParentEntity);
-			oContextMock.expects("createReturnValueContext")
+			oContextMock.expects("createNewContext")
 				.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 					"/TEAMS('77')")
 				.returns(oReturnValueContextFirstExecute);
@@ -1622,7 +1644,7 @@ sap.ui.define([
 				oParentContextMock.expects("getValue")
 					.returns(oParentEntity);
 				that.mock(oReturnValueContextFirstExecute).expects("destroy").withExactArgs();
-				oContextMock.expects("createReturnValueContext")
+				oContextMock.expects("createNewContext")
 					.withExactArgs(sinon.match.same(that.oModel), sinon.match.same(oBinding),
 						"/TEAMS('77')")
 					.returns(oReturnValueContextSecondExecute);
@@ -2647,7 +2669,7 @@ sap.ui.define([
 	QUnit.test("refreshInternal", function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataContextBinding.prototype),
-			oContext = Context.create(this.oModel, {}, "/EMPLOYEE('42')"),
+			oContext = Context.createNewContext(this.oModel, {}, "/EMPLOYEE('42')"),
 			bCheckUpdate = {/*true or false*/},
 			bDependentsRefreshed = false,
 			oDependentsPromise = new SyncPromise(function (resolve) {
@@ -2691,7 +2713,7 @@ sap.ui.define([
 	QUnit.test("refreshInternal: suspended", function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataContextBinding.prototype),
-			oContext = Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
+			oContext = Context.createNewContext(this.oModel, {}, "/EMPLOYEES('42')"),
 			bCheckUpdate = {/*true or false*/},
 			bDependentsRefreshed = false,
 			oDependentsPromise = new SyncPromise(function (resolve) {
@@ -2766,7 +2788,9 @@ sap.ui.define([
 			+ ", bRelative=" + bRelative;
 
 	QUnit.test(sTitle, function (assert) {
-		var oContext = bRelative ? Context.create(this.oModel, {}, "/EMPLOYEES('42')") : undefined,
+		var oContext = bRelative
+				? Context.createNewContext(this.oModel, {}, "/EMPLOYEES('42')")
+				: undefined,
 			oBinding = this.bindContext(
 				bRelative ? "EMPLOYEE_2_TEAM" : "/EMPLOYEES('42')/EMPLOYEE_2_TEAM", oContext,
 				{$$ownRequest : true}),
@@ -2841,7 +2865,7 @@ sap.ui.define([
 	var sTitle = "refreshInternal: bCheckUpdate=true, bKeepCacheOnError=" + bKeepCacheOnError;
 
 	QUnit.test(sTitle, function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
+		var oContext = Context.createNewContext(this.oModel, {}, "/EMPLOYEES('42')"),
 			oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {$$ownRequest : true}),
 			oBindingMock = this.mock(oBinding),
 			oCache = oBinding.oCachePromise.getResult(),
@@ -2919,7 +2943,7 @@ sap.ui.define([
 		+ bFetchResourcePathFails;
 
 	QUnit.test(sTitle, function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/EMPLOYEES('42')"),
+		var oContext = Context.createNewContext(this.oModel, {}, "/EMPLOYEES('42')"),
 			oBinding = this.bindContext("EMPLOYEE_2_TEAM", oContext, {$$ownRequest : true}),
 			oBindingMock = this.mock(oBinding),
 			oError = new Error(),
