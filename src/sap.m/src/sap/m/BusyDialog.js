@@ -267,7 +267,7 @@ sap.ui.define(['./library', 'sap/ui/core/Control', 'sap/m/Dialog', 'sap/m/BusyIn
 		 * Closes the BusyDialog.
 		 *
 		 * @public
-		 * @param {boolean} isClosedFromUserInteraction Indicates if the BusyDialog is closed from a user interaction.
+		 * @param {boolean} [isClosedFromUserInteraction] Indicates if the BusyDialog is closed from a user interaction.
 		 * @returns {sap.m.BusyDialog} The modified BusyDialog.
 		 */
 		BusyDialog.prototype.close = function (isClosedFromUserInteraction) {
