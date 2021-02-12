@@ -4619,4 +4619,44 @@ sap.ui.define([
 		return oModel;
 	}
 
+	var getBracketIndices = MockServer.prototype._getBracketIndices;
+	[{
+		string: "MeetupID eq 'P'",
+		start: undefined,
+		end: 0
+	}, {
+		string: "(MeetupID eq 'P')",
+		start: 0,
+		end: 16
+	}, {
+		string: "MeetupID eq 'P' or (Title eq 'P')",
+		start: 19,
+		end: 32
+	}, {
+		string: "substringof('P',MeetupID)",
+		start: undefined,
+		end: 0
+	}, {
+		string: "substringof('P',toupper(MeetupID))",
+		start: undefined,
+		end: 0
+	}, {
+		string: "(substringof('P',toupper(MeetupID)) or substringof('P',toupper(Title)))",
+		start: 0,
+		end: 70
+	}, {
+		string: "substringof('P',toupper(MeetupID)) or substringof('P',toupper(Title))",
+		start: undefined,
+		end: 0
+	}, {
+		string: "substringof('P',toupper(MeetupID)) or (substringof('P',toupper(Title)))",
+		start: 38,
+		end: 70
+	}].forEach(function (oScenario) {
+		QUnit.test("Parenthesis wrapping in filters: " + oScenario.string, function (assert) {
+			var oResult = getBracketIndices(oScenario.string);
+			assert.strictEqual(oResult.start, oScenario.start, "start");
+			assert.strictEqual(oResult.end, oScenario.end, "end");
+		});
+	});
 });
