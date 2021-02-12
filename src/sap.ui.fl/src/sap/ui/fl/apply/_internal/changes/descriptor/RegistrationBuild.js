@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddComponentUsages",
 	"sap/ui/fl/apply/_internal/changes/descriptor/fiori/SetRegistrationIds",
 	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/SetFlexExtensionPointEnabled",
-	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModel"
+	"sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModel",
+	"sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData"
 ], function(
 	Registration,
 	ChangeDataSource,
@@ -20,7 +21,8 @@ sap.ui.define([
 	AddComponentUsages,
 	SetRegistrationIds,
 	SetFlexExtensionPointEnabled,
-	AddNewModel
+	AddNewModel,
+	AddAnnotationsToOData
 ) {
 	"use strict";
 
@@ -42,8 +44,8 @@ sap.ui.define([
 		appdescr_ui5_setMinUI5Version: SetMinUI5Version,
 		appdescr_fiori_setRegistrationIds: SetRegistrationIds,
 		appdescr_ui5_setFlexExtensionPointEnabled: SetFlexExtensionPointEnabled,
-		appdescr_ui5_addNewModel: AddNewModel
-
+		appdescr_ui5_addNewModel: AddNewModel,
+		appdescr_app_addAnnotationsToOData: AddAnnotationsToOData
 	};
 
 	var RegistrationCopy = Object.assign({}, Registration);

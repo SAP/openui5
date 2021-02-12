@@ -145,6 +145,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/changes/descriptor/ui5/AddNewModel"]
 				}
 			},
+			"apply/_internal/changes/descriptor/app/AddAnnotationsToOData": {
+				group: "Apply Internal - Descriptor Change Merger",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/changes/descriptor/app/AddAnnotationsToOData"]
+				}
+			},
 			"apply/_internal/changes/descriptor/ui5/SetMinUI5Version": {
 				group: "Apply Internal - Descriptor Change Merger",
 				coverage: {
