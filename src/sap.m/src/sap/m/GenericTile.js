@@ -760,36 +760,14 @@ sap.ui.define([
 	 */
 	GenericTile.prototype.getBoundingRects = function () {
 		var oPosition = this.$().offset(); //get the tile's position relative to the document (for drag and drop)
-		if (this.getMode() === library.GenericTileMode.LineMode && this._isScreenLarge()) {
-			this._getStyleData();
-			var aRects = [],
-				$StyleHelper,
-				oOffset;
-
-			this.$().find(".sapMGTLineStyleHelper").each(function () {
-				$StyleHelper = jQuery(this);
-				oOffset = $StyleHelper.offset();
-
-				aRects.push({
-					offset: {
-						x: oOffset.left,
-						y: oOffset.top
-					},
-					width: $StyleHelper.width(),
-					height: $StyleHelper.height()
-				});
-			});
-			return aRects;
-		} else {
-			return [{
-				offset: {
-					x: oPosition.left,
-					y: oPosition.top
-				},
-				width: this.$().width(),
-				height: this.$().height()
-			}];
-		}
+		return [{
+			offset: {
+				x: oPosition.left,
+				y: oPosition.top
+			},
+			width: this.$().width(),
+			height: this.$().height()
+		}];
 	};
 
 	/**

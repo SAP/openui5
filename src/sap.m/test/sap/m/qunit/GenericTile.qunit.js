@@ -1452,20 +1452,6 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("getBoundingRects in compact tile creates styleData when nothing exists yet", function(assert) {
-		//Arrange
-		this.oGenericTile._oStyleData = null;
-		sinon.spy(this.oGenericTile, "_getStyleData");
-		sinon.stub(this.oGenericTile, "_calculateStyleData").returns({
-			lines: []
-		});
-
-		//Act
-		this.oGenericTile.getBoundingRects();
-
-		//Assert
-		assert.equal(this.oGenericTile._getStyleData.callCount, 1, "_getStyleData has been called once.");
-	});
 
 	QUnit.test("getBoundingRects in cozy tile returns object with necessary fields in list view (small screen)", function(assert) {
 		//Arrange
