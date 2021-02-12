@@ -2482,8 +2482,10 @@ sap.ui.define([
 			}
 
 			// after selection input cannot be wrong
-			this._bParseError = false;
-			_removeUIMessage.call(this);
+			if (this._bParseError) { // only remove messages set by Field itself, message from outside should stay.
+				this._bParseError = false;
+				_removeUIMessage.call(this);
+			}
 		}
 
 		var aConditionsOld = this.getConditions();
