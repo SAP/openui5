@@ -98,9 +98,9 @@ sap.ui.define([
 					oNewScriptEl.defer = true;
 					oNewScriptEl.async = true;
 					oNewScriptEl.src = oSWAConfig.baseUrl + 'js/track.js';
-					oNewScriptEl.onload = function() {
+					window.addEventListener("swaLoadSuccess", function(){
 						resolve(window["swa"]);
-					};
+					});
 
 					oFirstScriptEl.parentNode.insertBefore(oNewScriptEl, oFirstScriptEl);
 					window["swa"] = oSWAConfig;
