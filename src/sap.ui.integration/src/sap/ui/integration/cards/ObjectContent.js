@@ -318,9 +318,10 @@ sap.ui.define([
 						displayShape: oItem.icon.shape,
 						tooltip: oItem.icon.alt,
 						backgroundColor: oItem.icon.backgroundColor || (oItem.icon.text ? undefined : AvatarColor.Transparent)
-					}).addStyleClass("sapFCardObjectItemAvatar sapFCardObjectItemLabel sapFCardIcon");
+					}).addStyleClass("sapFCardObjectItemAvatar sapFCardIcon");
 
 					var oVbox = new VBox({
+						renderType: FlexRendertype.Bare,
 						items: [
 							oLabel,
 							oControl
@@ -328,11 +329,13 @@ sap.ui.define([
 					});
 					var oHBox = new HBox({
 						visible: vVisible,
+						renderType: FlexRendertype.Bare,
 						items: [
 							oAvatar,
 							oVbox
 						]
-					});
+					}).addStyleClass("sapFCardObjectItemLabel");
+
 					oGroupContainer.addItem(oHBox);
 				} else {
 					oGroupContainer.addItem(oLabel);
