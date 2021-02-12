@@ -242,7 +242,8 @@ sap.ui.define([
 					this._oActions.attach({
 						area: ActionArea.ContentItemDetail,
 						actions: oItem.actions,
-						control: oControl,
+						control: this,
+						actionControl: oControl,
 						enabledPropertyName: "enabled"
 					});
 				}

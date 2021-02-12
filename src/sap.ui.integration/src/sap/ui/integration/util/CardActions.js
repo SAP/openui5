@@ -106,12 +106,13 @@ sap.ui.define([
 				vEnabled = oConfig.enabledPropertyValue,
 				vDisabled = oConfig.disabledPropertyValue,
 				bCheckEnabledState = true,
+				bSingleAction = this._isSingleAction(sActionArea),
 				bActionEnabled = true;
 
 			if (sEnabledPropertyName) {
 				bCheckEnabledState = false;
 
-				if (oAction.service) {
+				if (oAction.service && !bSingleAction) {
 					// When there is a service let it handle the "enabled" state.
 					this._setControlEnabledStateUsingService(oAction, oAreaControl, oActionControl, sEnabledPropertyName, vEnabled, vDisabled);
 				} else {
@@ -120,7 +121,7 @@ sap.ui.define([
 				}
 			}
 
-			if (oAction.service && this._isSingleAction(oAction)) {
+			if (oAction.service && bSingleAction) {
 
 				this._getSingleActionEnabledState(oAction, oAreaControl).then(function (bEnabled) {
 					if (bEnabled) {
@@ -524,11 +525,11 @@ sap.ui.define([
 		};
 
 		/**
-		 * @param {object} oAction Configuration object for the action
+		 * @param {sap.ui.integration.CardActionArea} sActionArea The area that describes what the action will be attached to
 		 * @returns {boolean} If the action is configured for the header, content, or a detail of an item in the content of the card
 		 */
-		CardActions.prototype._isSingleAction = function (oAction) {
-			return [ActionArea.Header, ActionArea.Content, ActionArea.ContentItemDetail].indexOf(oAction.area) > -1;
+		CardActions.prototype._isSingleAction = function (sActionArea) {
+			return [ActionArea.Header, ActionArea.Content, ActionArea.ContentItemDetail].indexOf(sActionArea) > -1;
 		};
 
 		return CardActions;

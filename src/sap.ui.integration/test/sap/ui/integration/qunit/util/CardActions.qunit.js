@@ -605,6 +605,49 @@ sap.ui.define([
 			}
 		};
 
+		var objectContentItemDetail_service = {
+			"sap.app": {
+				"id": "test.card.actions.card11detail",
+				"type": "card"
+			},
+			"sap.ui5": {
+				"services": {
+					"Navigation2": {
+						"factoryName": "test.service.SampleNavigationFactory"
+					}
+				}
+			},
+			"sap.card": {
+				"type": "Object",
+				"data": {
+					"request": {
+						"url": "employee.json"
+					}
+				},
+				"content": {
+					"groups": [
+						{
+							"items": [
+								{
+									"label": "Website",
+									"value": "{company/website}",
+									"actions": [
+										{
+											"type": "Navigation",
+											"service": "Navigation2",
+											"parameters": {
+												"url": "{company/website}"
+											}
+										}
+									]
+								}
+							]
+						}
+					]
+				}
+			}
+		};
+
 		var objectContent_url = {
 			"sap.app": {
 				"id": "test.card.actions.card12",
@@ -1425,6 +1468,20 @@ sap.ui.define([
 		QUnit.test("Object content should be actionable - url", function (assert) {
 
 			testActionOnContentUrl.call(this, objectContent_url, assert);
+		});
+
+		QUnit.test("Using a service for action on link in object content should not throw error", function (assert) {
+			var done = assert.async();
+
+			this.oCard.attachEvent("_ready", function () {
+				// Assert
+				assert.ok(true, "Error was not thrown");
+
+				done();
+			});
+
+			// Act
+			this.oCard.setManifest(objectContentItemDetail_service);
 		});
 
 		QUnit.test("On pressing link, action should be fired", function (assert) {
