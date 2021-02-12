@@ -2920,8 +2920,9 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataModel.prototype._getObject = function(sPath, oContext, bOriginalValue) {
-		var oNode = this.isLegacySyntax() ? this.oData : null, oChangedNode, oOrigNode, sResolvedPath,
-			iSeparator, sDataPath, sMetaPath, oMetaContext, sKey, oMetaModel;
+		var oChangedNode, oCodeListPromise, sCodeListTerm, sDataPath, sKey, oMetaContext,
+			oMetaModel, sMetaPath, oOrigNode, sResolvedPath, iSeparator,
+			oNode = this.isLegacySyntax() ? this.oData : null;
 
 		sResolvedPath = this.resolve(sPath, oContext, this.bCanonicalRequests);
 		if (!sResolvedPath && this.bCanonicalRequests) {
@@ -2937,11 +2938,24 @@ sap.ui.define([
 			if (this.oMetadata && this.oMetadata.isLoaded())  {
 				if (this.isMetaModelPath(sResolvedPath)) {
 					// Metadata binding resolved by ODataMetaModel
-					iSeparator = sResolvedPath.indexOf('/##');
 					oMetaModel = this.getMetaModel();
+					sCodeListTerm = ODataMetaModel.getCodeListTerm(sResolvedPath);
+					if (sCodeListTerm) {
+						oCodeListPromise = oMetaModel.fetchCodeList(sCodeListTerm);
+						if (oCodeListPromise.isFulfilled()) {
+							return oCodeListPromise.getResult();
+						}
+						if (oCodeListPromise.isRejected()) {
+							// if the code list promise rejects we rely on error logging in
+							// ODataMetaModel#fetchCodeList
+							oCodeListPromise.caught();
+						}
+						return undefined;
+					}
 					if (!this.bMetaModelLoaded) {
 						return null;
 					}
+					iSeparator = sResolvedPath.indexOf('/##');
 					sDataPath = sResolvedPath.substr(0, iSeparator);
 					sMetaPath = sResolvedPath.substr(iSeparator + 3);
 					oMetaContext = oMetaModel.getMetaContext(sDataPath);
@@ -2950,6 +2964,8 @@ sap.ui.define([
 					// Metadata binding resolved by ODataMetadata
 					oNode = this.oMetadata._getAnnotation(sResolvedPath);
 				}
+			} else if (ODataMetaModel.getCodeListTerm(sResolvedPath)) {
+				return undefined;
 			}
 		} else {
 			// doesn't make any sense, but used to work

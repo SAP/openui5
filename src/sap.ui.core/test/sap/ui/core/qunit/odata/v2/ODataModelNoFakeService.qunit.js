@@ -3,12 +3,14 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/core/library",
 	"sap/ui/core/message/Message",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataMessageParser",
+	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataPropertyBinding",
 	"sap/ui/model/odata/ODataUtils",
 	"sap/ui/model/odata/v2/ODataContextBinding",
@@ -16,8 +18,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, coreLibrary, Message, FilterProcessor, Model, MessageScope,
-		ODataMessageParser, ODataPropertyBinding, ODataUtils, ODataContextBinding,
+], function (Log, SyncPromise, coreLibrary, Message, FilterProcessor, Model, MessageScope,
+		ODataMessageParser, ODataMetaModel, ODataPropertyBinding, ODataUtils, ODataContextBinding,
 		ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
 ) {
 	/*global QUnit,sinon*/
@@ -3950,5 +3952,79 @@ sap.ui.define([
 				// for any reason the request handle is undefined which must not lead to a TypeError
 				return undefined;
 			});
+	});
+
+	//*********************************************************************************************
+["fulfilled", "pending", "rejected"].forEach(function (sCase) {
+	[false, true].forEach(function (bMetaModelLoaded) {
+	var sTitle = "_getObject: code list path, " + sCase + "; bMetaModelLoaded=" + bMetaModelLoaded;
+
+	QUnit.test(sTitle, function (assert) {
+		var oFetchCodeListPromise,
+			oMetaModel = {
+				fetchCodeList : function () {}
+			},
+			oModel = {
+				oMetadata : {isLoaded : function () {}},
+				bMetaModelLoaded : bMetaModelLoaded,
+				_isMetadataPath : function () {},
+				getMetaModel : function () {},
+				isLegacySyntax : function () {},
+				isMetaModelPath : function () {},
+				resolve : function () {}
+			};
+
+		// We use SyncPromise instead of a mock to ensure #caught needs to be called in case of a
+		// rejected SyncPromise.
+		// SyncPromise.resolve(Promise.resolve()) in fixtures leads to a fulfilled promise in the
+		// QUnit test -> cannot be used in fixture.
+		if (sCase === "fulfilled") {
+			oFetchCodeListPromise = SyncPromise.resolve("~mCodeList");
+		} else {
+			oFetchCodeListPromise = sCase === "pending"
+				? SyncPromise.resolve(Promise.resolve("~mCodeList"))
+				: SyncPromise.reject("~error");
+		}
+
+		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		this.mock(oModel).expects("resolve").withExactArgs("~path", undefined, undefined)
+			.returns("~resolvedPath");
+		this.mock(oModel).expects("_isMetadataPath").withExactArgs("~resolvedPath").returns(true);
+		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+		this.mock(oModel).expects("isMetaModelPath").withExactArgs("~resolvedPath").returns(true);
+		this.mock(oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		this.mock(ODataMetaModel).expects("getCodeListTerm").withExactArgs("~resolvedPath")
+			.returns("~term");
+		this.mock(oMetaModel).expects("fetchCodeList").withExactArgs("~term")
+			.returns(oFetchCodeListPromise);
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._getObject.call(oModel, "~path"),
+			sCase === "fulfilled" ? "~mCodeList" : undefined);
+
+		return oFetchCodeListPromise.isPending() ? oFetchCodeListPromise : undefined;
+	});
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_getObject: code list path, oMetadata.isLoaded=false", function (assert) {
+		var oModel = {
+				oMetadata : {isLoaded : function () {}},
+				_isMetadataPath : function () {},
+				isLegacySyntax : function () {},
+				resolve : function () {}
+			};
+
+		this.mock(oModel).expects("isLegacySyntax").withExactArgs().returns(false);
+		this.mock(oModel).expects("resolve").withExactArgs("~path", undefined, undefined)
+			.returns("~resolvedPath");
+		this.mock(oModel).expects("_isMetadataPath").withExactArgs("~resolvedPath").returns(true);
+		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(false);
+		this.mock(ODataMetaModel).expects("getCodeListTerm").withExactArgs("~resolvedPath")
+			.returns("~term");
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype._getObject.call(oModel, "~path"), undefined);
 	});
 });

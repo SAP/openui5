@@ -3,40 +3,26 @@
  */
 
 sap.ui.define([
-	'sap/ui/model/BindingMode',
-	'sap/ui/base/BindingParser',
-	'sap/ui/model/Context',
-	'sap/ui/base/ManagedObject',
-	'sap/ui/model/ClientContextBinding',
-	'sap/ui/model/FilterProcessor',
-	'sap/ui/model/json/JSONModel',
-	'sap/ui/model/json/JSONListBinding',
-	'sap/ui/model/json/JSONPropertyBinding',
-	'sap/ui/model/json/JSONTreeBinding',
-	'sap/ui/model/MetaModel',
-	'./_ODataMetaModelUtils',
-	'sap/ui/performance/Measurement',
-	'sap/base/Log',
-	'sap/base/util/extend',
-	'sap/base/util/isEmptyObject'
-], function (
-	BindingMode,
-	BindingParser,
-	Context,
-	ManagedObject,
-	ClientContextBinding,
-	FilterProcessor,
-	JSONModel,
-	JSONListBinding,
-	JSONPropertyBinding,
-	JSONTreeBinding,
-	MetaModel,
-	Utils,
-	Measurement,
-	Log,
-	extend,
-	isEmptyObject
-) {
+	"./_ODataMetaModelUtils",
+	"sap/base/Log",
+	"sap/base/util/extend",
+	"sap/base/util/isEmptyObject",
+	"sap/ui/base/BindingParser",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/base/SyncPromise",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/ClientContextBinding",
+	"sap/ui/model/Context",
+	"sap/ui/model/FilterProcessor",
+	"sap/ui/model/MetaModel",
+	"sap/ui/model/json/JSONListBinding",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/json/JSONPropertyBinding",
+	"sap/ui/model/json/JSONTreeBinding",
+	"sap/ui/performance/Measurement"
+], function (Utils, Log, extend, isEmptyObject, BindingParser, ManagedObject, SyncPromise,
+		BindingMode, ClientContextBinding, Context, FilterProcessor, MetaModel, JSONListBinding,
+		JSONModel, JSONPropertyBinding, JSONTreeBinding, Measurement) {
 	"use strict";
 
 	var sODataMetaModel = "sap.ui.model.odata.ODataMetaModel",
@@ -503,6 +489,40 @@ sap.ui.define([
 	};
 
 	/**
+	 * Requests the customizing based on the code list reference given in the entity container's
+	 * <code>com.sap.vocabularies.CodeList.v1.*</code> annotation for the term specified in the
+	 * <code>sTerm</code> parameter.
+	 *
+	 * @param {string} sTerm
+	 *   The unqualified name of the term from the <code>com.sap.vocabularies.CodeList.v1</code>
+	 *   vocabulary used to annotate the entity container, e.g. "CurrencyCodes" or "UnitsOfMeasure"
+	 * @returns {SyncPromise}
+	 *   A promise resolving with the customizing, which is a map from the code key to an object
+	 *   with the following properties:
+	 *   <ul>
+	 *     <li>StandardCode: The language-independent standard code (e.g. ISO) for the code as
+	 *       referred to via the <code>com.sap.vocabularies.CodeList.v1.StandardCode</code>
+	 *       annotation on the code's key, if present
+	 *     <li>Text: The language-dependent text for the code as referred to via the
+	 *       <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the code's key
+	 *     <li>UnitSpecificScale: The decimals for the code as referred to via the
+	 *       <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the code's
+	 *       key; entries where this would be <code>null</code> are ignored, and an error is logged
+	 *   </ul>
+	 *   It resolves with <code>null</code> if no given
+	 *   <code>com.sap.vocabularies.CodeList.v1.*</code> annotation is found.
+	 *   It is rejected if there is not exactly one code key, or if the customizing cannot be
+	 *   loaded.
+	 *
+	 * @private
+	 * @see #requestCurrencyCodes
+	 * @see #requestUnitsOfMeasure
+	 */
+	ODataMetaModel.prototype.fetchCodeList = function (/*sTerm*/) {
+		return SyncPromise.resolve(null);
+	};
+
+	/**
 	 * Returns the OData meta model context corresponding to the given OData model path.
 	 *
 	 * @param {string} [sPath]
@@ -962,40 +982,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * Requests the customizing based on the code list reference given in the entity container's
-	 * <code>com.sap.vocabularies.CodeList.v1.*</code> annotation for the term specified in the
-	 * <code>sTerm</code> parameter.
-	 *
-	 * @param {string} sTerm
-	 *   The unqualified name of the term from the <code>com.sap.vocabularies.CodeList.v1</code>
-	 *   vocabulary used to annotate the entity container, e.g. "CurrencyCodes" or "UnitsOfMeasure"
-	 * @returns {Promise}
-	 *   A promise resolving with the customizing, which is a map from the code key to an object
-	 *   with the following properties:
-	 *   <ul>
-	 *     <li>StandardCode: The language-independent standard code (e.g. ISO) for the code as
-	 *       referred to via the <code>com.sap.vocabularies.CodeList.v1.StandardCode</code>
-	 *       annotation on the code's key, if present
-	 *     <li>Text: The language-dependent text for the code as referred to via the
-	 *       <code>com.sap.vocabularies.Common.v1.Text</code> annotation on the code's key
-	 *     <li>UnitSpecificScale: The decimals for the code as referred to via the
-	 *       <code>com.sap.vocabularies.Common.v1.UnitSpecificScale</code> annotation on the code's
-	 *       key; entries where this would be <code>null</code> are ignored, and an error is logged
-	 *   </ul>
-	 *   It resolves with <code>null</code> if no given
-	 *   <code>com.sap.vocabularies.CodeList.v1.*</code> annotation is found.
-	 *   It is rejected if there is not exactly one code key, or if the customizing cannot be
-	 *   loaded.
-	 *
-	 * @private
-	 * @see #requestCurrencyCodes
-	 * @see #requestUnitsOfMeasure
-	 */
-	ODataMetaModel.prototype.requestCodeList = function (/*sTerm*/) {
-		return Promise.resolve(null);
-	};
-
-	/**
 	 * Requests the currency customizing based on the code list reference given in the entity
 	 * container's <code>com.sap.vocabularies.CodeList.v1.CurrencyCodes</code> annotation. The
 	 * corresponding HTTP request uses the HTTP headers obtained via
@@ -1025,7 +1011,7 @@ sap.ui.define([
 	 * @since 1.88.0
 	 */
 	ODataMetaModel.prototype.requestCurrencyCodes = function () {
-		return this.requestCodeList("CurrencyCodes");
+		return Promise.resolve(this.fetchCodeList("CurrencyCodes"));
 	};
 
 	/**
@@ -1057,7 +1043,7 @@ sap.ui.define([
 	 * @since 1.88.0
 	 */
 	ODataMetaModel.prototype.requestUnitsOfMeasure = function () {
-		return this.requestCodeList("UnitsOfMeasure");
+		return Promise.resolve(this.fetchCodeList("UnitsOfMeasure"));
 	};
 
 	/**
@@ -1083,6 +1069,30 @@ sap.ui.define([
 	ODataMetaModel.prototype.setProperty = function () {
 		// Note: this method is called by JSONPropertyBinding#setValue
 		throw new Error("Unsupported operation: ODataMetaModel#setProperty");
+	};
+
+	//*********************************************************************************************
+	// "static" functions
+	//*********************************************************************************************
+
+	/**
+	 * Returns the code list term for the given data path in case it is "/##@@requestCurrencyCodes"
+	 * or "/##@@requestUnitsOfMeasure" so that it refers to a code list.
+	 *
+	 * @param {string} sDataPath
+	 *   The data path
+	 * @returns {string|undefined}
+	 *   The code list term as specified in {@link #fetchCodeList}; <code>undefined</code> if the
+	 *   data path does not refer to a code list
+	 *
+	 * @private
+	 */
+	ODataMetaModel.getCodeListTerm = function (sDataPath) {
+		if (sDataPath === "/##@@requestCurrencyCodes") {
+			return "CurrencyCodes";
+		} else if (sDataPath === "/##@@requestUnitsOfMeasure") {
+			return "UnitsOfMeasure";
+		}
 	};
 
 	return ODataMetaModel;
