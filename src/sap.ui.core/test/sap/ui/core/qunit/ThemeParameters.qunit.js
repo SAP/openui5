@@ -362,14 +362,14 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 		});
 	});
 
-	QUnit.test("Read multiple given parameters (including undefined param name)", function(assert) {
+	QUnit.test("Read multiple given parameters (async including undefined param name)", function(assert) {
 		var done = assert.async();
 		var oControl = new Control();
-		var aParams = ["sapUiMultipleAsyncThemeParamWithScopeForLib7", "sapUiMultipleAsyncThemeParamWithoutScopeForLib7", "sapUiNotExistingTestParam", "sapBackgroundColor"];
+		var aParams = ["sapUiMultipleAsyncThemeParamWithScopeForLib7", "sapUiMultipleAsyncThemeParamWithoutScopeForLib7", "sapUiNotExistingTestParam", "sapHighlightColor"];
 		var oExpected = {
 			"sapUiMultipleAsyncThemeParamWithScopeForLib7": "#cccccc",
 			"sapUiMultipleAsyncThemeParamWithoutScopeForLib7": "#dddddd",
-			"sapBackgroundColor": "#ffffff"
+			"sapHighlightColor": "#cc8700"
 		};
 
 		sap.ui.getCore().loadLibrary("testlibs.themeParameters.lib7");
@@ -379,11 +379,11 @@ sap.ui.define(["sap/ui/core/theming/Parameters", "sap/ui/core/Control", "sap/ui/
 			name: aParams,
 			scopeElement: oControl,
 			callback: function (oParamResult) {
-				assert.deepEqual(oParamResult, oExpected, "Key-value map for the given params 'sapUiMultipleAsyncThemeParamWithScopeForLib7', 'sapUiMultipleAsyncThemeParamWithoutScopeForLib7' and 'sapBackgroundColor' should be returned");
+				assert.deepEqual(oParamResult, oExpected, "Key-value map for the given params 'sapUiMultipleAsyncThemeParamWithScopeForLib7', 'sapUiMultipleAsyncThemeParamWithoutScopeForLib7' and 'sapHighlightColor' should be returned");
 				assert.strictEqual(checkLibraryParametersJsonRequestForLib("7").length, 0, "library-parameters.json not requested for testlibs.themeParameters.lib7");
 				done();
 			}
-		}), undefined, "Parameter 'sapBackgroundColor' should already be available but value should be returned in callback.");
+		}), undefined, "Parameter 'sapHighlightColor' should already be available but value should be returned in callback.");
 	});
 
 	QUnit.test("Call Parameters.get multiple times with same callback function should only be executed once", function (assert) {
