@@ -49,218 +49,6 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("When getCompEntities() is called and nothing is present for the persistencyKey of the passed control", function (assert) {
-			this.oControl = new Control("controlId1");
-			var sPersistencyKey = "variant1";
-			this.oControl.getPersistencyKey = function () {
-				return sPersistencyKey;
-			};
-
-			sandbox.stub(LrepConnector, "loadFlexData").resolves({
-				changes: []
-			});
-
-			return SmartVariantManagementApplyAPI.getCompEntities({control: this.oControl})
-				.then(function (oCompEntities) {
-					assert.deepEqual(oCompEntities, {
-						changes: [],
-						variants: [],
-						defaultVariant: undefined,
-						standardVariant: undefined
-					}, "then an empty entitiesMap is returned");
-				});
-		});
-
-		QUnit.test("When getCompEntities() is called and one variant is present for the persistencyKey of the passed control", function (assert) {
-			this.oControl = new Control("controlId1");
-			var sPersistencyKey = "variant1";
-			this.oControl.getPersistencyKey = function () {
-				return sPersistencyKey;
-			};
-
-			var oVariant1 = {
-				fileName: "variant1",
-				fileType: "variant",
-				selector: {
-					persistencyKey: sPersistencyKey
-				},
-				content: {}
-			};
-			var oVariant2 = {
-				fileName: "variant2",
-				fileType: "variant",
-				selector: {
-					persistencyKey: sPersistencyKey
-				},
-				content: {}
-			};
-			var oVariant3 = {
-				fileName: "variant3",
-				fileType: "variant",
-				selector: {
-					persistencyKey: "anotherKey"
-				},
-				content: {}
-			};
-			var oUiChange = {
-				fileName: "uiChange",
-				fileType: "change",
-				changeType: "addField",
-				selector: {
-					id: "control.id",
-					idIsLocal: true
-				}
-			};
-			var oAddFavorite1 = {
-				fileName: "addFavorite1",
-				fileType: "change",
-				changeType: "addFavorite",
-				selector: {
-					persistencyKey: "anotherKey"
-				}
-			};
-			var oAddFavorite2 = {
-				fileName: "addFavorite2",
-				fileType: "change",
-				changeType: "addFavorite",
-				selector: {
-					persistencyKey: sPersistencyKey
-				}
-			};
-			var oRemoveFavorite1 = {
-				fileName: "removeFavorite1",
-				fileType: "change",
-				changeType: "removeFavorite",
-				selector: {
-					persistencyKey: sPersistencyKey
-				}
-			};
-			var oDefaultVariant1 = {
-				fileName: "defaultVariant1",
-				fileType: "change",
-				changeType: "defaultVariant",
-				selector: {
-					persistencyKey: sPersistencyKey
-				}
-			};
-			var oDefaultVariant2 = {
-				fileName: "defaultVariant2",
-				fileType: "change",
-				changeType: "defaultVariant",
-				selector: {
-					persistencyKey: "anotherKey"
-				}
-			};
-			var oStandardVariant1 = {
-				fileName: "standardVariant1",
-				fileType: "change",
-				changeType: "standardVariant",
-				selector: {
-					persistencyKey: sPersistencyKey
-				}
-			};
-			var oStandardVariant2 = {
-				fileName: "standardVariant2",
-				fileType: "change",
-				changeType: "standardVariant",
-				selector: {
-					persistencyKey: "anotherKey"
-				}
-			};
-			var oStandardVariant3 = {
-				fileName: "standardVariant3",
-				fileType: "change",
-				changeType: "standardVariant",
-				selector: {
-					persistencyKey: sPersistencyKey
-				}
-			};
-			sandbox.stub(LrepConnector, "loadFlexData").resolves({
-				changes: [
-					oVariant1,
-					oVariant2,
-					oVariant3,
-					oUiChange,
-					oAddFavorite1,
-					oAddFavorite2,
-					oRemoveFavorite1,
-					oDefaultVariant1,
-					oDefaultVariant2,
-					oStandardVariant1,
-					oStandardVariant2,
-					oStandardVariant3
-				]
-			});
-
-			var oInitializeSpy = sandbox.spy(FlexState, "initialize");
-
-			return SmartVariantManagementApplyAPI.getCompEntities({control: this.oControl})
-				.then(function (oCompEntities) {
-					assert.equal(oInitializeSpy.getCall(0).args[0].componentId, "AppComponent21", "the component ID was passed correct to the FlexState");
-					assert.equal(oCompEntities.variants.length, 2, "then two variants are in the variants array");
-					assert.deepEqual(oCompEntities.variants[0].getDefinition(), oVariant1, "");
-					assert.deepEqual(oCompEntities.variants[1].getDefinition(), oVariant2, "");
-					assert.equal(oCompEntities.changes.length, 2, "and two variant change is in the changes array");
-					assert.deepEqual(oCompEntities.changes[0].getDefinition(), oAddFavorite2, "");
-					assert.deepEqual(oCompEntities.changes[1].getDefinition(), oRemoveFavorite1, "");
-					assert.deepEqual(oCompEntities.defaultVariant.getDefinition(), oDefaultVariant1, "and the last default variant is present");
-					assert.deepEqual(oCompEntities.standardVariant.getDefinition(), oStandardVariant3, "and the last standard variant is present");
-				});
-		});
-
-		QUnit.test("When getCompEntities() is called and one variant is present for the persistencyKey of another control", function (assert) {
-			this.oControl = new Control("controlId1");
-			var sPersistencyKey = "variant1";
-			this.oControl.getPersistencyKey = function () {
-				return sPersistencyKey;
-			};
-
-			sandbox.stub(LrepConnector, "loadFlexData").resolves({
-				changes: [{
-					fileType: "variant",
-					selector: {
-						persistencyKey: "variant2"
-					}
-				}]
-			});
-
-			return SmartVariantManagementApplyAPI.getCompEntities({control: this.oControl})
-				.then(function (oCompEntities) {
-					assert.deepEqual(oCompEntities, {
-						changes: [],
-						variants: [],
-						defaultVariant: undefined,
-						standardVariant: undefined
-					}, "then an empty entitiesMap is returned");
-				});
-		});
-
-		QUnit.test("When loadChanges() is called and one variant is present for the persistencyKey of the passed control", function (assert) {
-			this.oControl = new Control("controlId1");
-			var sPersistencyKey = "variant1";
-			this.oControl.getPersistencyKey = function () {
-				return sPersistencyKey;
-			};
-
-			var oFlexStateInitSpy = sandbox.spy(FlexState, "initialize");
-
-			sandbox.stub(LrepConnector, "loadFlexData").resolves({
-				changes: [{
-					fileType: "variant",
-					selector: {
-						persistencyKey: sPersistencyKey
-					},
-					content: {}
-				}]
-			});
-
-			return SmartVariantManagementApplyAPI.loadChanges({control: this.oControl})
-				.then(function (aEntities) {
-					assert.equal(aEntities.length, 1, "then one entity is returned");
-					assert.equal(oFlexStateInitSpy.getCall(0).args[0].manifest, this.oAppComponent.getManifest(), "the manifest was passed");
-				}.bind(this));
-		});
-
 		QUnit.test("When loadVariants() is called and multiple variants are present for the persistencyKey of the passed control", function (assert) {
 			this.oControl = new Control("controlId1");
 			var sPersistencyKey = "variantManagement1";
@@ -384,44 +172,6 @@ sap.ui.define([
 					assert.equal(aVariants[4].getFavorite(), true, "which is a favorite, because it is flagged as one within the content");
 					assert.equal(aVariants[4].getExecuteOnSelect(), true, "and is executed on selection, because it is flagged within the content");
 				});
-		});
-
-		QUnit.test("When loadChanges() is called and one variant is present for the persistencyKey of another control", function (assert) {
-			this.oControl = new Control("controlId1");
-			var sPersistencyKey = "variant1";
-			this.oControl.getPersistencyKey = function () {
-				return sPersistencyKey;
-			};
-
-			sandbox.stub(LrepConnector, "loadFlexData").resolves({
-				changes: [{
-					fileType: "variant",
-					selector: {
-						persistencyKey: "variant2"
-					}
-				}]
-			});
-
-			return SmartVariantManagementApplyAPI.loadChanges({control: this.oControl})
-				.then(function (aEntities) {
-					assert.equal(aEntities.length, 0, "then no entity is returned");
-				});
-		});
-
-		QUnit.test("When isVariantSharingEnabled() is called it calls the Settings instance and returns true", function (assert) {
-			var oSetting = {
-				isKeyUser: true,
-				isAtoAvailable: true
-			};
-
-			sandbox.stub(Storage, "loadFeatures").returns(Promise.resolve(oSetting));
-
-			assert.ok(Settings, "Settings loaded");
-			var isVariantSharingEnabledSpy = sandbox.spy(SmartVariantManagementApplyAPI, "isVariantSharingEnabled");
-			return SmartVariantManagementApplyAPI.isVariantSharingEnabled().then(function (bFlag) {
-				assert.equal(bFlag, true);
-				assert.equal(isVariantSharingEnabledSpy.callCount, 1, "called once");
-			});
 		});
 
 		QUnit.test("When isApplicationVariant() is called", function (assert) {
@@ -550,7 +300,7 @@ sap.ui.define([
 				// clear state created in the beforeEach
 				FlexState.clearState("sap.ui.core.Component");
 				// simulate FlexState initialization
-				return SmartVariantManagementApplyAPI.getCompEntities({control: this.oControl})
+				return SmartVariantManagementApplyAPI.loadVariants({control: this.oControl, standardVariant: {}})
 					.then(function () {
 						var sDefaultVariantName = SmartVariantManagementApplyAPI.getDefaultVariantId({control: this.oControl});
 						assert.equal(sDefaultVariantName, oTestData.expected);
@@ -565,7 +315,7 @@ sap.ui.define([
 			this.oControl = new Control("controlId1");
 			sandbox.stub(Utils, "getAppComponentForControl").returns(this.oAppComponent);
 			// simulate FlexState initialization
-			return SmartVariantManagementApplyAPI.getCompEntities({control: this.oControl});
+			return SmartVariantManagementApplyAPI.loadVariants({control: this.oControl, standardVariant: {}});
 		},
 		afterEach: function() {
 			FlexState.clearState("sap.ui.core.Component");
@@ -639,7 +389,7 @@ sap.ui.define([
 				FlexState.clearState("sap.ui.core.Component");
 
 				// simulate FlexState initialization
-				return SmartVariantManagementApplyAPI.getCompEntities({control: this.oControl})
+				return SmartVariantManagementApplyAPI.loadVariants({control: this.oControl, standardVariant: {}})
 					.then(function () {
 						var bExecuteOnSelect = SmartVariantManagementApplyAPI.getExecuteOnSelect({control: this.oControl});
 						assert.equal(bExecuteOnSelect, oTestData.expected);
