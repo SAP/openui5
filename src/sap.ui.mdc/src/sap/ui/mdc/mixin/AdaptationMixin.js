@@ -92,6 +92,17 @@ sap.ui.define(
             return this._oInbuiltFilterPromise;
         };
 
+        /**
+         * Triggers a validation on the control delegate.
+         *
+         * @param {Object} oTheoreticalState The state to be validated - also see {@link sap.ui.mdc.p13n.StateUtil StateUtil}
+         *
+         * @returns {object} The value returned by {@link sap.ui.mdc.AggregationBaseDelegate#validateState validateState}
+         */
+        AdaptationMixin.validateState = function(oTheoreticalState) {
+            return this.getControlDelegate().validateState(this, oTheoreticalState);
+        };
+
         AdaptationMixin.getInbuiltFilter = function() {
             return this._oP13nFilter;
         };
@@ -123,6 +134,7 @@ sap.ui.define(
         return function () {
             this.retrieveInbuiltFilter = AdaptationMixin.retrieveInbuiltFilter;
             this.getInbuiltFilter = AdaptationMixin.getInbuiltFilter;
+            this.validateState = AdaptationMixin.validateState;
             this.getEngine = AdaptationMixin.getEngine;
             this.exit = AdaptationMixin.exit(this.exit);
         };

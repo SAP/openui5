@@ -101,7 +101,7 @@ sap.ui.define([
         return Promise.resolve();
     };
 
-    BaseController.prototype.validateState = function(oState) {
+    BaseController.prototype.sanityCheck = function(oState) {
         return oState;
     };
 
@@ -189,6 +189,8 @@ sap.ui.define([
     BaseController.prototype.getP13nData = function() {
         return this._oAdaptationModel.getData();
     };
+
+    BaseController.prototype.model2State = false;
 
     /**
      * Can be used to trigger update after UI interactions such as "Ok" and "Reset"

@@ -9,8 +9,10 @@ sap.ui.define([
     "sap/ui/mdc/p13n/modification/ModificationHandler",
     "test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler",
     "sap/ui/base/Object",
-    "sap/ui/mdc/p13n/FlexUtil"
-], function (Control, Engine, Controller, AggregationBaseDelegate, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, FlexUtil) {
+    "sap/ui/mdc/p13n/FlexUtil",
+    "sap/ui/mdc/p13n/panels/BasePanel",
+    "sap/ui/core/library"
+], function (Control, Engine, Controller, AggregationBaseDelegate, FlexRuntimeInfoAPI, FlexModificationHandler, ModificationHandler, TestModificationHandler, BaseObject, FlexUtil, BasePanel, coreLibrary) {
     "use strict";
 
     QUnit.module("Modification Handler", {
@@ -507,6 +509,74 @@ sap.ui.define([
         var oRTAPromise = this.oEngine.getRTASettingsActionHandler(this.oControl, {}, "Test");
 
         assert.ok(oRTAPromise instanceof Promise, "RTA settions action handler returns a promise");
+
+    });
+
+    QUnit.test("Check '_validateP13n' message handling (warning should display a message strip)", function(assert){
+
+        sinon.stub(AggregationBaseDelegate, "validateState").callsFake(function(oControl, oState){
+            assert.ok(oControl.isA("sap.ui.mdc.Control"), "Check that the control instance has been provided");
+            assert.equal(oState.Test2.length, 1, "Check that the (theortical) state object has been provided");
+
+            return {
+                validation: coreLibrary.MessageType.Warning,
+                message: "Test"
+            };
+        });
+
+        //provide a custom "model2State" method
+        var oController = Engine.getInstance().getController(this.oControl, "Test2");
+        oController.model2State = function() {
+            return [{
+                name: "testProperty"
+            }];
+        };
+
+        //Create a mock UI (usually done via runtime in personalization)
+        var oP13nUI = new BasePanel({
+            id: "someTestPanel"
+        });
+        Engine.getInstance()._validateP13n(this.oControl, "Test2", oP13nUI);
+
+        //Check if the strip has been placed in the BasePanel content area
+        var oMessageStrip = oP13nUI._oMessageStrip;
+        assert.ok(oMessageStrip.isA("sap.m.MessageStrip"), "The MessageStrip has been provided on the BasePanel");
+        oP13nUI.destroy();
+        AggregationBaseDelegate.validateState.restore();
+
+    });
+
+    QUnit.test("Check '_validateP13n' message handling (valid validation should NOT display a message strip)", function(assert){
+
+        sinon.stub(AggregationBaseDelegate, "validateState").callsFake(function(oControl, oState){
+            assert.ok(oControl.isA("sap.ui.mdc.Control"), "Check that the control instance has been provided");
+            assert.equal(oState.Test2.length, 1, "Check that the (theortical) state object has been provided");
+
+            return {
+                validation: coreLibrary.MessageType.None,
+                message: "Test"
+            };
+        });
+
+        //provide a custom "model2State" method
+        var oController = Engine.getInstance().getController(this.oControl, "Test2");
+        oController.model2State = function() {
+            return [{
+                name: "testProperty"
+            }];
+        };
+
+        //Create a mock UI (usually done via runtime in personalization)
+        var oP13nUI = new BasePanel({
+            id: "someTestPanel"
+        });
+        Engine.getInstance()._validateP13n(this.oControl, "Test2", oP13nUI);
+
+        //Check if the strip has been placed in the BasePanel content area
+        var oMessageStrip = oP13nUI._oMessageStrip;
+        assert.ok(!oMessageStrip, "No MessageStrip has been provided on the BasePanel (as the validation was successful)");
+        oP13nUI.destroy();
+        AggregationBaseDelegate.validateState.restore();
 
     });
 

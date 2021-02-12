@@ -12,7 +12,7 @@ sap.ui.define([
         return this.getAdaptationControl().getCurrentState().aggregations;
     };
 
-    AggregateController.prototype.validateState = function(change) {
+    AggregateController.prototype.sanityCheck = function(change) {
         var aAggregations = [];
         Object.keys(change).forEach(function(item) {
             var oAggregate = {
@@ -27,7 +27,7 @@ sap.ui.define([
     };
 
     AggregateController.prototype.getDelta = function (mPropertyBag) {
-        mPropertyBag.existingState = this.validateState(mPropertyBag.existingState);
+        mPropertyBag.existingState = this.sanityCheck(mPropertyBag.existingState);
         return BaseController.prototype.getDelta.apply(this, arguments);
     };
 
