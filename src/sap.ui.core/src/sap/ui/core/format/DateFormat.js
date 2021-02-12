@@ -1518,7 +1518,7 @@ sap.ui.define([
 	 * Format a date according to the given format options.
 	 *
 	 * @param {Date|Date[]} vJSDate the value to format
-	 * @param {boolean} bUTC whether to use UTC
+	 * @param {boolean} [bUTC=false] whether to use UTC
 	 * @return {string} the formatted output value. If an invalid date is given, an empty string is returned.
 	 * @public
 	 */
