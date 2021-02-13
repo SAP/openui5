@@ -17,7 +17,7 @@
 	 *  - ui5loader-autoconfig.js
 	 */
 
-	/*global console, document, ES6Promise, jQuery, sap, window */
+	/*global console, document, jQuery, sap, window */
 	"use strict";
 
 	var ui5loader = window.sap && window.sap.ui && window.sap.ui.loader,
@@ -501,11 +501,6 @@
 	});
 
 	var defineModuleSync = ui5loader._.defineModuleSync;
-	defineModuleSync('sap/ui/thirdparty/baseuri.js', null);
-	if ( typeof ES6Promise !== 'undefined' ) {
-		defineModuleSync('sap/ui/thirdparty/es6-promise.js', ES6Promise);
-	}
-	defineModuleSync('sap/ui/thirdparty/es6-shim-nopromise.js', null);
 
 	defineModuleSync('ui5loader.js', null);
 	defineModuleSync('ui5loader-autoconfig.js', null);

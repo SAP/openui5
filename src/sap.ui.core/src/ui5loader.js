@@ -15,6 +15,27 @@
 
 (function(__global) {
 	"use strict";
+	if ( __global.Promise === undefined || !__global.Promise.prototype.finally || __global.URLSearchParams === undefined ) {
+		var page = document.documentElement, pageStyle = page.style,
+			msg = "Microsoft Internet Explorer 11 and other legacy browsers are no longer supported. For more information, see ",
+			hrefText = "Internet Explorer 11 will no longer be supported by various SAP UI technologies in newer releases",
+			href = "https://blogs.sap.com/2021/02/02/internet-explorer-11-will-no-longer-be-supported-by-various-sap-ui-technologies-in-newer-releases/";
+
+		page.innerHTML = '<body style="margin:0;padding:0;overflow-y:hidden;background-color:#f7f7f7;text-align:center;width:100%;position:absolute;top:50%;transform:translate(0,-50%);"><div style="color:#32363a;font-family:Arial,Helvetica,sans-serif;font-size:.875rem;">' +
+			msg + '<a href="' + href + '" style="color:#4076b4;">' + hrefText + '</a>.</div></body>';
+		pageStyle.margin = pageStyle.padding = "0";
+		pageStyle.width = pageStyle.height = "100%";
+		if (__global.stop) { // Check for __global.stop first because safari 11 has __global.stop and document.execCommand but document.execCommand('Stop') does not work in safari 11
+			__global.stop();
+		} else {
+			document.execCommand('Stop');
+		}
+		throw new Error(msg + href);
+	}
+}(window));
+
+(function(__global) {
+	"use strict";
 
 	/*
 	 * Helper function that removes any query and/or hash parts from the given URL.

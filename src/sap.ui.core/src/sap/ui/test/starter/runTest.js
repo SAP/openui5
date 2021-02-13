@@ -64,36 +64,20 @@
 	// prevent a reboot in full debug mode as this would invalidate our listeners
 	window["sap-ui-debug-no-reboot"] = true;
 
-	// define the necessary polyfills to be loaded
-	var aPolyfills = [];
-	if (/(trident)\/[\w.]+;.*rv:([\w.]+)/i.test(window.navigator.userAgent)) {
-		// add polyfills for IE11
-		aPolyfills.push("sap/ui/thirdparty/baseuri.js");
-		aPolyfills.push("sap/ui/thirdparty/es6-promise.js");
-		aPolyfills.push("sap/ui/thirdparty/es6-shim-nopromise.js");
-	} else if (/(edge)[ \/]([\w.]+)/i.test(window.navigator.userAgent) ||
-			/Version\/(11\.0).*Safari/.test(window.navigator.userAgent)) {
-		// for Microsoft Edge and Safari 11.0 the Promise polyfill is still needed
-		aPolyfills.push("sap/ui/thirdparty/es6-promise.js");
-	}
-
-	// cascade 1: polyfills, can all be loaded in parallel
-	loadScripts(aPolyfills, function() {
-		// cascade 2: the loader
+	// cascade 1: the loader
+	loadScripts([
+		"ui5loader.js"
+	], function() {
+		// cascade 2: loader configuration, specific for the runTest scenario
 		loadScripts([
-			"ui5loader.js"
+			"sap/ui/test/starter/_configureLoader.js"
 		], function() {
-			// cascade 3: loader configuration, specific for the runTest scenario
+			// cascade 3: generic loader configuration
 			loadScripts([
-				"sap/ui/test/starter/_configureLoader.js"
+				"ui5loader-autoconfig.js"
 			], function() {
-				// cascade 4: generic loader configuration
-				loadScripts([
-					"ui5loader-autoconfig.js"
-				], function() {
-					// cascade 5: bootstrap the test
-					sap.ui.require(["sap/ui/test/starter/_setupAndStart"]);
-				});
+				// cascade 4: bootstrap the test
+				sap.ui.require(["sap/ui/test/starter/_setupAndStart"]);
 			});
 		});
 	});
