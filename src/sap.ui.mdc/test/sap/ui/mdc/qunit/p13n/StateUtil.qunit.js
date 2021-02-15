@@ -1,84 +1,10 @@
 /* global QUnit, sinon */
 sap.ui.define([
-	"../../delegates/TableDelegate","sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil"
-], function (TableDelegate, StateUtil, FilterBarDelegate, UIComponent, ComponentContainer, FilterField, ChartDelegate, TypeUtil) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "../../delegates/TableDelegate","sap/ui/mdc/p13n/StateUtil","sap/ui/mdc/FilterBarDelegate", "sap/ui/mdc/FilterField", "sap/ui/mdc/ChartDelegate", "sap/ui/mdc/odata/v4/TypeUtil"
+], function (createAppEnvironment, TableDelegate, StateUtil, FilterBarDelegate, FilterField, ChartDelegate, TypeUtil) {
 	"use strict";
 
 	sap.ui.getCore().loadLibrary("sap.ui.fl");
-	var UIComp = UIComponent.extend("test", {
-		metadata: {
-			manifest: {
-				"sap.app": {
-					"id": "",
-					"type": "application"
-				}
-			}
-		},
-		createContent: function() {
-			// store it in outer scope
-			var oView = sap.ui.view({
-				async: false,
-				type: "XML",
-				id: this.createId("view"),
-				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Item,Value"></mdc:FilterBar></mvc:View>'
-			});
-			return oView;
-		}
-	});
-
-	var UICompTable = UIComponent.extend("test", {
-		metadata: {
-			manifest: {
-				"sap.app": {
-					"id": "",
-					"type": "application"
-				}
-			}
-		},
-		createContent: function() {
-			// store it in outer scope
-			var oView = sap.ui.view({
-				async: false,
-				type: "XML",
-				id: this.createId("view"),
-				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>'
-			});
-			return oView;
-		}
-	});
-
-	var UICompChart = UIComponent.extend("test", {
-		metadata: {
-			manifest: {
-				"sap.app": {
-					"id": "",
-					"type": "application"
-				}
-			}
-		},
-		createContent: function() {
-			// store it in outer scope
-			var oView = sap.ui.view({
-				async: false,
-				type: "XML",
-				id: this.createId("view"),
-				viewContent: '<mvc:View' +
-				'\t\t  xmlns:mvc="sap.ui.core.mvc"\n' +
-				'\t\t  xmlns:chart="sap.ui.mdc.chart"\n' +
-				'\t\t  xmlns:mdc="sap.ui.mdc"\n' +
-				'\t\t  >\n' +
-				'\t\t\t\t<mdc:Chart id="mdcChart" p13nMode="{=[\'Sort\',\'Item\']}">\n' +
-				'\t\t\t\t\t\t<mdc:items><chart:DimensionItem id="item0" key="Name" label="Name" role="category"></chart:DimensionItem>\n' +
-				'\t\t\t\t\t\t<chart:MeasureItem id="item1" key="agSalesAmount" label="Depth" role="axis1"></chart:MeasureItem>\n' +
-				'\t\t\t\t\t\t<chart:MeasureItem id="item2" key="SalesNumber" label="Width" role="axis2"></chart:MeasureItem></mdc:items>\n' +
-				'\t\t\t\t</mdc:Chart>\n' +
-				'</mvc:View>'
-			});
-			return oView;
-		}
-	});
-
-
 
 	function createFilterItem(sPropertyName, oFilterBar, mPropertyBag) {
 		return new Promise(function(resolve, reject){
@@ -119,19 +45,16 @@ sap.ui.define([
 
 	QUnit.module("API tests for FilterBar", {
 		before: function(){
+
+			var sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Item,Value"></mdc:FilterBar></mvc:View>';
+
 			FilterBarDelegate.fetchProperties = fetchProperties;
 			FilterBarDelegate.addItem = createFilterItem;
-			this.oUiComponent = new UIComp("comp");
 
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component: this.oUiComponent,
-				async: false
-			});
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			this.oView = this.oUiComponent.getRootControl();
+			return createAppEnvironment(sFilterBarView, "FilterBar").then(function(mCreatedApp){
+				this.oView = mCreatedApp.view;
+				this.oUiComponentContainer = mCreatedApp.container;
+			}.bind(this));
 		},
 		beforeEach: function(){
 			this.oFilterBar = this.oView.byId('myFilterBar');
@@ -607,17 +530,12 @@ sap.ui.define([
 	QUnit.module("API tests for Table", {
 		before: function(){
 			TableDelegate.fetchProperties = fetchProperties;
-			this.oUiComponent = new UICompTable("compTable");
+			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:Table id="mdcTable" p13nMode="Column,Sort,Filter,Group,Aggregate"></mdc:Table></mvc:View>';
 
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component: this.oUiComponent,
-				async: false
-			});
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			this.oView = this.oUiComponent.getRootControl();
+			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
+				this.oView = mCreatedApp.view;
+				this.oUiComponentContainer = mCreatedApp.container;
+			}.bind(this));
 		},
 		beforeEach: function(){
 			this.oTable = this.oView.byId('mdcTable');
@@ -1010,17 +928,22 @@ sap.ui.define([
 	QUnit.module("API tests for Chart", {
 		before: function(){
 			_modifyChartDelegate();
-			this.oUiComponent = new UICompChart("compChart");
+			var sChartView = '<mvc:View' +
+				'\t\t  xmlns:mvc="sap.ui.core.mvc"\n' +
+				'\t\t  xmlns:chart="sap.ui.mdc.chart"\n' +
+				'\t\t  xmlns:mdc="sap.ui.mdc"\n' +
+				'\t\t  >\n' +
+				'\t\t\t\t<mdc:Chart id="mdcChart" p13nMode="{=[\'Sort\',\'Item\']}">\n' +
+				'\t\t\t\t\t\t<mdc:items><chart:DimensionItem id="item0" key="Name" label="Name" role="category"></chart:DimensionItem>\n' +
+				'\t\t\t\t\t\t<chart:MeasureItem id="item1" key="agSalesAmount" label="Depth" role="axis1"></chart:MeasureItem>\n' +
+				'\t\t\t\t\t\t<chart:MeasureItem id="item2" key="SalesNumber" label="Width" role="axis2"></chart:MeasureItem></mdc:items>\n' +
+				'\t\t\t\t</mdc:Chart>\n' +
+				'</mvc:View>';
 
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component: this.oUiComponent,
-				async: false
-			});
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			this.oView = this.oUiComponent.getRootControl();
+			return createAppEnvironment(sChartView, "Chart").then(function(mCreatedApp){
+				this.oView = mCreatedApp.view;
+				this.oUiComponentContainer = mCreatedApp.container;
+			}.bind(this));
 		},
 		beforeEach: function(){
 			this.oChart = this.oView.byId('mdcChart');
