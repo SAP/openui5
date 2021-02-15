@@ -500,8 +500,7 @@ sap.ui.define([
 
 				//ARIA attributes
 				oRM.writeAccessibilityState({
-					role: "link",
-					haspopup: !oOH.getTitleHref()
+					role: "link"
 				});
 			} else {
 				oRM.write("<div"); // Start Title Text container
@@ -1309,8 +1308,7 @@ sap.ui.define([
 			oRM.writeAttribute("tabindex", "0");
 			//ARIA attributes
 			oRM.writeAccessibilityState({
-				role: "link",
-				haspopup: !oOH.getTitleHref()
+				role: "link"
 			});
 		} else {
 			oRM.write("<span");
