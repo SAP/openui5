@@ -1404,9 +1404,10 @@ sap.ui.define([
 	/**
 	 * When the variants map is reset at runtime, this listener is called.
 	 * It reverts all applied changes and resets all variant management controls to default state.
+	 * @param {boolean} bSkipURLHandling - Indicates whether the URL handling should be skipped
 	 * @returns {Promise} Promise which resolves when all applied changes have been reverted
 	 */
-	VariantModel.prototype.resetMap = function() {
+	VariantModel.prototype.resetMap = function(bSkipURLHandling) {
 		var aVariantManagementReferences = Object.keys(this.oData);
 		aVariantManagementReferences.forEach(function(sVariantManagementReference) {
 			var mPropertyBag = {
@@ -1427,12 +1428,14 @@ sap.ui.define([
 			.then(function() {
 				VariantManagementState.resetContent(this.sFlexReference);
 				//re-initialize hash data and remove existing parameters
-				URLHandler.initialize({model: this});
-				URLHandler.update({
-					parameters: [],
-					updateHashEntry: true,
-					model: this
-				});
+				if (!bSkipURLHandling) {
+					URLHandler.initialize({model: this});
+					URLHandler.update({
+						parameters: [],
+						updateHashEntry: true,
+						model: this
+					});
+				}
 			}.bind(this));
 	};
 

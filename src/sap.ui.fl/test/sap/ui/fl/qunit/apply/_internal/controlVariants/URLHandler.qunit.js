@@ -1,36 +1,36 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/base/Log",
+	"sap/ui/base/ManagedObjectObserver",
+	"sap/ui/core/Component",
 	"sap/ui/fl/apply/_internal/controlVariants/URLHandler",
+	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/variants/VariantManagement",
 	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
-	"sap/ui/thirdparty/jquery",
-	"sap/ui/base/ManagedObjectObserver",
-	"sap/ui/core/Component",
-	"sap/base/Log",
 	"sap/ui/thirdparty/hasher",
-	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
+	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
-],
-function(
+], function(
+	Log,
+	ManagedObjectObserver,
+	Component,
 	URLHandler,
+	VariantManagementState,
 	VariantManagement,
 	VariantModel,
 	Layer,
 	Utils,
-	jQuery,
-	ManagedObjectObserver,
-	Component,
-	Log,
 	hasher,
-	VariantManagementState,
+	jQuery,
 	sinon
 ) {
 	"use strict";
 	jQuery("#qunit-fixture").hide();
 	var sandbox = sinon.sandbox.create();
+
 	QUnit.module("Given an instance of VariantModel", {
 		beforeEach: function() {
 			this.oAppComponent = new Component("appComponent");
@@ -142,6 +142,7 @@ function(
 			return this.oModel._oVariantSwitchPromise.then(function() {
 				var aCallArgs = this.fnDestroyUnobserverSpy.getCall(0).args;
 				assert.equal(this.oModel.resetMap.callCount, 1, "then variant model resetMap() was called");
+				assert.strictEqual(this.oModel.resetMap.getCall(0).args[0], true, "the correct boolean was passed");
 				assert.deepEqual(aCallArgs[0], this.oAppComponent, "then ManagedObjectObserver unobserve() was called for the AppComponent");
 				assert.strictEqual(aCallArgs[1].destroy, true, "then ManagedObjectObserver unobserve() was called for the destroy() method");
 				assert.ok(fnVariantSwitchPromiseStub.calledBefore(this.fnDestroyUnobserverSpy), "then first variant switch was resolved and then component's destroy callback was called");

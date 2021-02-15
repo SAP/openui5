@@ -17,15 +17,15 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/controlVariants/VariantManagementState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/variants/VariantModel",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/variants/VariantManagement",
+	"sap/ui/fl/variants/VariantModel",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/FlexControllerFactory",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/LayerUtils",
+	"sap/ui/fl/Layer",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/Variant",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -45,15 +45,15 @@ sap.ui.define([
 	VariantManagementState,
 	FlexState,
 	ChangesController,
-	VariantModel,
+	Settings,
 	VariantManagement,
+	VariantModel,
 	Change,
 	FlexControllerFactory,
-	Layer,
 	LayerUtils,
+	Layer,
 	Utils,
 	Variant,
-	Settings,
 	jQuery,
 	sinon
 ) {
@@ -179,6 +179,29 @@ sap.ui.define([
 					updateHashEntry: true,
 					model: this.oModel
 				}), "then hash register was reset");
+				assert.strictEqual(this.oData[sVariantManagementReference], undefined, "then model data was deleted");
+				assert.equal(VariantManagementState.resetContent.callCount, 1, "then variants map was reset");
+			}.bind(this));
+		});
+
+		QUnit.test("when resetMap() is called with true as property", function(assert) {
+			var sVariantManagementReference = "variantMgmtId1";
+			var sCurrentVariantBeforeReset = this.oModel.oData[sVariantManagementReference].currentVariant;
+			sandbox.stub(URLHandler, "update");
+			sandbox.stub(Switcher, "switchVariant").resolves();
+			sandbox.spy(VariantManagementState, "resetContent");
+
+			return this.oModel.resetMap(true).then(function() {
+				assert.ok(Switcher.switchVariant.calledWith({
+					vmReference: sVariantManagementReference,
+					currentVReference: sCurrentVariantBeforeReset,
+					newVReference: true,
+					appComponent: this.oModel.oAppComponent,
+					reference: this.oModel.sFlexReference,
+					flexController: this.oModel.oFlexController,
+					modifier: JsControlTreeModifier
+				}), "then current variant changes were reverted");
+				assert.strictEqual(URLHandler.update.callCount, 0, "the URLHandler was not called");
 				assert.strictEqual(this.oData[sVariantManagementReference], undefined, "then model data was deleted");
 				assert.equal(VariantManagementState.resetContent.callCount, 1, "then variants map was reset");
 			}.bind(this));
