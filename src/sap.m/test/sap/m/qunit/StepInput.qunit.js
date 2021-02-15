@@ -1540,6 +1540,36 @@ sap.ui.define([
 		assert.equal(this.oChangeSpy.callCount, 1, "Change Event should be called once");
 	});
 
+	QUnit.test("Mouse down on incrementButton when having max value set and inserting value in the input field", function (assert) {
+		// time for which the value will get from 4 to 7
+		var iTime = calcTime(this.stepInput, 2),
+			oIncBtn = this.stepInput._getIncrementButton(),
+			oMockEvent = {
+				"sId" : "change",
+				"mParameters" : {
+					"newValue" : "45.00",
+					"value" : "45.00"
+				},
+				"oSource" : this.stepInput};
+
+		// Act - mouse down on increment button
+		callIconDelegate("onmousedown", oIncBtn);
+		// hold down the increment button enough time so the value can get to 7
+		this.clock.tick(iTime);
+
+		// keep holding until the max value of 10 is reached and the increase button will be disabled
+		this.clock.tick(2000);
+
+		// Act - mouse up on increment button
+		// callIconDelegate("onmouseup", oIncBtn);
+		document.getElementById(this.stepInput._getInput().getId() + "-inner").value = "45";
+		this.stepInput._change(oMockEvent);
+
+		oCore.applyChanges();
+
+		assert.strictEqual(this.stepInput.getValueState(), "Error", "The ValueState is set to error if the value is not valid");
+	});
+
 	QUnit.test("Mouse down on decrementButton when having min value set", function (assert) {
 		// time for which the value will get from 4 to 1
 		var t = calcTime(this.stepInput, 2),
