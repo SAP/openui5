@@ -12704,4 +12704,59 @@ sap.ui.define([
 		// clean up
 		oComboBox.destroy();
 	});
+
+	QUnit.module("Handling curly braces");
+
+	QUnit.test("Braces in binded text and key properties do not cause error", function(assert) {
+		// Arrange
+		var oSorter = new sap.ui.model.Sorter("head", false, true);
+		var oModel = new JSONModel({
+			items: [
+				{
+					key: "1 }",
+					head: "{ ttt",
+					text: "curly braces {{ 1",
+					addText: "some curly {{}} 1"
+				},
+				{
+					key: "2 {}",
+					head: "{ ttt",
+					text: "curly braces {{ 2",
+					addText: "some curly {{}} 2"
+				}
+			]
+		});
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/items",
+				sorter: oSorter,
+				template: new ListItem({
+					text: "{text}",
+					key: "{key}",
+					additionalText: "{addText}"
+				})
+			},
+			showSecondaryValues: true
+		});
+
+		oComboBox.setModel(oModel);
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.showItems();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems()[0].getText(), "{ ttt", "Braces are correctly escaped in the separator item.");
+		assert.strictEqual(oComboBox.getItems()[1].getText(), "curly braces {{ 1", "Braces are correctly escaped in the text of the core list item.");
+		assert.strictEqual(oComboBox._getList().getItems()[0].getTitle(), "{ ttt", "Braces are correctly escaped in group header item.");
+		assert.strictEqual(oComboBox._getList().getItems()[1].getTitle(), "curly braces {{ 1", "Braces are correctly escaped in items text.");
+		assert.strictEqual(oComboBox._getList().getItems()[1].getInfo(), "some curly {{}} 1", "Braces are correctly escaped in items additional text.");
+
+		// Clean
+		oSorter.destroy();
+		oModel.destroy();
+		oComboBox.destroy();
+	});
 });

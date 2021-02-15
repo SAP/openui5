@@ -20,6 +20,7 @@ sap.ui.define([
 	"sap/base/security/encodeXML",
 	"sap/ui/core/Core",
 	"sap/base/Log",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/dom/jquery/control" // jQuery Plugin "control"
 ],
 	function(
@@ -40,6 +41,7 @@ sap.ui.define([
 		encodeXML,
 		core,
 		Log,
+		ManagedObject,
 		jQuery
 	) {
 		"use strict";
@@ -1830,13 +1832,17 @@ sap.ui.define([
 		 * @private
 		 */
 		ComboBox.prototype._mapItemToListItem = function(oItem) {
-			var oListItem, sListItem, sListItemSelected, sAdditionalText;
+			var oListItem, sListItem, sListItemSelected;
+			var sAdditionalText = "";
 			var oRenderer = this.getRenderer();
 
 			if (!oItem) {
 				return null;
 			}
-			sAdditionalText = (oItem.getAdditionalText && this.getShowSecondaryValues()) ? oItem.getAdditionalText() : "";
+
+			if (oItem.getAdditionalText && this.getShowSecondaryValues()) {
+				sAdditionalText = ManagedObject.escapeSettingsValue(oItem.getAdditionalText());
+			}
 
 			sListItem = oRenderer.CSS_CLASS_COMBOBOXBASE + "Item";
 			sListItemSelected = (this.isItemSelected(oItem)) ? sListItem + "Selected" : "";

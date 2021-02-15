@@ -27,6 +27,7 @@ sap.ui.define([
 	"sap/base/util/deepEqual",
 	"./InputRenderer",
 	"sap/ui/thirdparty/jquery",
+	"sap/ui/base/ManagedObject",
 	// jQuery Plugin "selectText"
 	"sap/ui/dom/jquery/selectText"
 ],
@@ -53,7 +54,8 @@ function(
 	assert,
 	deepEqual,
 	InputRenderer,
-	jQuery
+	jQuery,
+	ManagedObject
 ) {
 	"use strict";
 	// shortcut for sap.m.ListType
@@ -717,7 +719,7 @@ function(
 	 */
 	Input.prototype.addSuggestionRowGroup = function(oGroup, oHeader, bSuppressInvalidate) {
 		oHeader = oHeader || new GroupHeaderListItem({
-			title: oGroup.text || oGroup.key
+			title: ManagedObject.escapeSettingsValue(oGroup.text) || ManagedObject.escapeSettingsValue(oGroup.key)
 		});
 
 		this.addAggregation("suggestionRows", oHeader, bSuppressInvalidate);
@@ -736,7 +738,7 @@ function(
 	 */
 	Input.prototype.addSuggestionItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
 		oHeader = oHeader || new SeparatorItem({
-			text: oGroup.text || oGroup.key
+			text: ManagedObject.escapeSettingsValue(oGroup.text) || ManagedObject.escapeSettingsValue(oGroup.key)
 		});
 
 		this.addAggregation("suggestionItems", oHeader, bSuppressInvalidate);
@@ -1477,7 +1479,7 @@ function(
 				if (aItems[i].isA("sap.ui.core.SeparatorItem")) {
 					oListItem = new GroupHeaderListItem({
 						id: oItem.getId() + "-ghli",
-						title: aItems[i].getText()
+						title: ManagedObject.escapeSettingsValue(aItems[i].getText())
 					});
 
 					aGroups.push({
