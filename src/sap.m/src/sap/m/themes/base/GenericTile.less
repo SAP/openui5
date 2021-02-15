@@ -660,6 +660,12 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 		width: 100%;
 	}
 
+	.sapMGTScopeActions, .sapMGTScopeSingleAction {
+		.sapMGTHdrTxt, .sapMGTSubHdrTxt {
+			opacity: 0.4;
+		}
+	}
+
 	.sapMGTLineStyleHelper {
 		position: absolute;
 		pointer-events: auto;
@@ -685,7 +691,6 @@ html[dir=rtl] .sapMGTLineMode .sapMGTLineModeFailedIcon {
 			@line-height: 1.875rem;
 			@padding-top: 0.125rem;
 			@padding-bottom: 0.125rem;
-			margin: @padding-top + @padding-bottom; /* used as hover-style bar-offset top, does not have an effect for inline elements */
 			min-height: 2rem;
 			padding: 0.5rem;
 		}

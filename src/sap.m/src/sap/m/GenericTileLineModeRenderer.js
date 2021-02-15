@@ -90,14 +90,9 @@ sap.ui.define(["sap/m/library", "sap/base/security/encodeCSS", "sap/ui/thirdpart
 		}
 
 		if (sState !== LoadState.Disabled) {
-			// as pointed out in new design guidelines
-			// if in action scope the tile needs to be shown as disabled
-			// thus adding the clas here
-			if (!oControl._isInActionScope()) {
+			if (!oControl.isInActionRemoveScope()) {
 				oRm.class("sapMPointer");
 				oRm.style("pointer-events", "auto");
-			} else {
-				oRm.class("sapMGTDisabled");
 			}
 			oRm.attr("tabindex", "0");
 		} else {
