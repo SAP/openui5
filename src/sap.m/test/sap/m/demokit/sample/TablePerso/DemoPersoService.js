@@ -31,24 +31,63 @@ sap.ui.define(['jquery.sap.global'],
 					id: "demoApp-productsTable-weightCol",
 					order: 3,
 					text: "Weight",
-					visible: true
+					visible: false
 				},
 				{
 					id: "demoApp-productsTable-priceCol",
 					order: 4,
 					text: "Price",
-					visible: true
+					visible: false
 				}
 			]
 		},
+
+		oResetData : {
+			_persoSchemaVersion: "1.0",
+			aColumns : [
+				{
+					id: "demoApp-productsTable-productCol",
+					order: 0,
+					text: "Product",
+					visible: true
+				},
+				{
+					id: "demoApp-productsTable-supplierCol",
+					order: 1,
+					text: "Supplier",
+					visible: false
+				},
+				{
+					id: "demoApp-productsTable-dimensionsCol",
+					order: 4,
+					text: "Dimensions",
+					visible: false
+				},
+				{
+					id: "demoApp-productsTable-weightCol",
+					order: 2,
+					text: "Weight",
+					visible: false
+				},
+				{
+					id: "demoApp-productsTable-priceCol",
+					order: 3,
+					text: "Price",
+					visible: false
+				}
+			]
+		},
+
 
 		getPersData : function () {
 			var oDeferred = new jQuery.Deferred();
 			if (!this._oBundle) {
 				this._oBundle = this.oData;
 			}
-			var oBundle = this._oBundle;
-			oDeferred.resolve(oBundle);
+			oDeferred.resolve(this._oBundle);
+			// setTimeout(function() {
+			// 	oDeferred.resolve(this._oBundle);
+			// }.bind(this), 2000);
 			return oDeferred.promise();
 		},
 
@@ -59,51 +98,34 @@ sap.ui.define(['jquery.sap.global'],
 			return oDeferred.promise();
 		},
 
+		getResetPersData : function () {
+			var oDeferred = new jQuery.Deferred();
+
+			// oDeferred.resolve(this.oResetData);
+
+			setTimeout(function() {
+				oDeferred.resolve(this.oResetData);
+			}.bind(this), 2000);
+
+			return oDeferred.promise();
+		},
+
 		resetPersData : function () {
 			var oDeferred = new jQuery.Deferred();
-			var oInitialData = {
-					_persoSchemaVersion: "1.0",
-					aColumns : [
-					{
-								id: "demoApp-productsTable-productCol",
-									order: 0,
-									text: "Product",
-									visible: true
-								},
-								{
-									id: "demoApp-productsTable-supplierCol",
-									order: 1,
-									text: "Supplier",
-									visible: false
-								},
-								{
-									id: "demoApp-productsTable-dimensionsCol",
-									order: 4,
-									text: "Dimensions",
-									visible: false
-								},
-								{
-									id: "demoApp-productsTable-weightCol",
-									order: 2,
-									text: "Weight",
-									visible: true
-								},
-								{
-									id: "demoApp-productsTable-priceCol",
-									order: 3,
-									text: "Price",
-									visible: true
-								}
-							]
-			};
 
 			//set personalization
-			this._oBundle = oInitialData;
+			this._oBundle = this.oResetData;
 
 			//reset personalization, i.e. display table as defined
-	//		this._oBundle = null;
+			//this._oBundle = null;
 
 			oDeferred.resolve();
+
+			// setTimeout(function() {
+			// 	this._oBundle = this.oResetData;
+			// 	oDeferred.resolve();
+			// }.bind(this), 2000);
+
 			return oDeferred.promise();
 		},
 
