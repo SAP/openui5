@@ -16,7 +16,7 @@ sap.ui.define([
 
 	function getSelectedRules(oTable) {
 		var aSelected = [];
-		jQuery.each(oTable.getModel().getData().treeModel, function(iLibInd, oLibrary) {
+		jQuery.each(oTable.getModel("ruleSets").getData(), function(iLibInd, oLibrary) {
 			oLibrary.nodes.forEach(function(oRule) {
 				if (oRule.selected) {
 					aSelected.push(oRule);
