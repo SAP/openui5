@@ -1756,7 +1756,7 @@ sap.ui.define([
 		table.destroy();
 	});
 
-	QUnit.module("Table autoPopinMode", {
+	QUnit.module("autoPopinMode", {
 		beforeEach: function() {
 			createBiggerTable();
 		},
@@ -1947,16 +1947,21 @@ sap.ui.define([
 
 		// expected value is 6, 3(rem) for selection column and 3(rem) for the navigation column
 		var fInitAccumulatedWidth = oTable._getInitialAccumulatedWidth(aItems);
-		assert.ok(fInitAccumulatedWidth === 6, "Initial accumulated width based on table setup is 6rem");
+		assert.strictEqual(fInitAccumulatedWidth, 6.65, "Initial accumulated width based on table setup is 6.65rem");
 
 		// expected value is 21.81
 		// (125px / 16) + (6 ->fInitAccumulatedWidth + 8 ->default column autoPopinWidth)
 		var fAccumulatedWidth = Table._updateAccumulatedWidth(aColumns, false, fInitAccumulatedWidth);
 		var fAutoPopinWidth = (parseFloat((parseFloat(aColumns[0].getWidth()).toFixed(2) / sBaseFontSize).toFixed(2))) + (fInitAccumulatedWidth + aColumns[1].getAutoPopinWidth());
 		assert.ok(fAccumulatedWidth === fAutoPopinWidth, "Expected autoPopinWidth for next column in pop-in area is " + fAccumulatedWidth + "rem");
+
+		oTable.setInset(true);
+		Core.applyChanges();
+		fInitAccumulatedWidth = oTable._getInitialAccumulatedWidth(aItems);
+		assert.strictEqual(fInitAccumulatedWidth, 10.65, "Initial accumulated width is 10rem");
 	});
 
-	QUnit.test("Spy on _configureAutoPopin - I", function (assert) {
+	QUnit.test("Spy on _configureAutoPopin - autoPopinMode=true", function (assert) {
 		var aColumns = oTable.getColumns();
 
 		oTable.setContextualWidth("Desktop");
@@ -1986,7 +1991,7 @@ sap.ui.define([
 		}, 0);
 	});
 
-	QUnit.test("Spy on _configureAutoPopin - II", function (assert) {
+	QUnit.test("Spy on _configureAutoPopin - autoPopinMode=false", function (assert) {
 		var aColumns = oTable.getColumns();
 
 		oTable.setContextualWidth("Desktop");
@@ -2009,36 +2014,74 @@ sap.ui.define([
 		assert.ok(aColumns[0].getWidth() === "8rem", "Width for column[0] is set to 8rem");
 		assert.notOk(aColumns[1].getVisible(), "Visibility for column[1] is set to false");
 		assert.ok(aColumns[2].getImportance() === "High", "Importance of column[2] is 'High'");
-		assert.ok(aColumns[3].getAutoPopinWidth() === 10, "AutPopinWidth of column[3] is set to 8");
+		assert.ok(aColumns[3].getAutoPopinWidth() === 10, "AutPopinWidth of column[3] is set to 10");
 		assert.ok(fnConfigureAutoPopin.getCalls().length === 0, "Function _configureAutoPopin has been called zero times");
 	});
 
-	QUnit.test("Spy on _requireAutoPopinRecalculation", function(assert) {
-		var fnRequireAutoPopinRecalculation = sinon.spy(oTable, "_requireAutoPopinRecalculation");
-		assert.notOk(oTable._bAutoPopinMode, "oTable._bAutoPopinMode=false as autoPopinMode=false");
-		assert.ok(fnRequireAutoPopinRecalculation.notCalled, "_requireAutoPopinRecalculation function not called yet");
+	QUnit.test("Recalculations with autoPopinMode=true", function(assert) {
+		var clock = sinon.useFakeTimers();
+		// if the below function is called, then its an indicator that the recalulation for the autoPopinMode was done
+		var fnGetInitialAccumulatedWidth = sinon.spy(oTable, "_getInitialAccumulatedWidth");
+		var aColumns = oTable.getColumns();
 
+		oTable.setContextualWidth("Desktop");
 		oTable.setAutoPopinMode(true);
 		Core.applyChanges();
-
-		assert.ok(oTable._bAutoPopinMode, "oTable._bAutoPopinMode=true as autoPopinMode=true");
-		assert.ok(fnRequireAutoPopinRecalculation.notCalled, "_requireAutoPopinRecalculation function not called for initial autoPopinMode=true");
+		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 1, "autoPopinMode calculation performed");
 
 		oTable.setAutoPopinMode(false);
 		Core.applyChanges();
-		assert.notOk(oTable._bAutoPopinMode, "oTable._bAutoPopinMode=false as autoPopinMode=false");
-		assert.ok(fnRequireAutoPopinRecalculation.notCalled, "_requireAutoPopinRecalculation function not called as autoPopinMode=false");
+		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 1, "autoPopinMode=false, hence recalculation was not necessary");
 
 		oTable.setAutoPopinMode(true);
 		Core.applyChanges();
-		assert.strictEqual(fnRequireAutoPopinRecalculation.callCount, 1, "_requireAutoPopinRecalculation function called when the autoPopinMode=true again");
-		assert.ok(fnRequireAutoPopinRecalculation.returned(true), "_requireAutoPopinRecalculation returns true, which indicates recalculation was performed");
+		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 2, "autoPopinMode=true, hence recalculation was done");
 
-		var oColumn = new Column();
-		oTable.addColumn(oColumn);
+		aColumns[1].setVisible(false);
 		Core.applyChanges();
-		assert.strictEqual(fnRequireAutoPopinRecalculation.callCount, 2, "_requireAutoPopinRecalculation function called as new columns are added to the table");
-		assert.ok(fnRequireAutoPopinRecalculation.returned(true), "_requireAutoPopinRecalculation returns true, which indicates recalculation was performed");
+		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 3, "column visibility changed, hence autoPopinMode required recalculation");
+
+		aColumns[1].setVisible(true);
+		Core.applyChanges();
+		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 4, "column visibility changed, hence autoPopinMode required recalculation");
+
+		var fnOnBeforeRendering = sinon.spy(oTable, "onBeforeRendering");
+		aColumns.forEach(function(oColumn) {
+			oColumn.setWidth("10rem");
+		});
+		Core.applyChanges();
+		assert.strictEqual(fnOnBeforeRendering.callCount, 1, "onBeforeRendering of the Table is only called once");
+		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 5, "multiple columns width changed, but the recalulation was perfromed only once");
+
+		aColumns.forEach(function(oColumn) {
+			oColumn.setWidth("15rem");
+		});
+		Core.applyChanges();
+		assert.strictEqual(fnOnBeforeRendering.callCount, 2, "onBeforeRendering of the Table is only called once");
+		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 6, "multiple columns width changed, but the recalulation was perfromed only once");
+
+		aColumns[2].setImportance("Low");
+		Core.applyChanges();
+		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 7, "column importance changed, autoPopinMode recalculation done");
+
+		aColumns[2].setAutoPopinWidth(11);
+		Core.applyChanges();
+		assert.strictEqual(fnGetInitialAccumulatedWidth.callCount, 8, "column autoPopinWidth changed, autoPopinMode recalculation done");
+
+		oTable.getColumns().forEach(function(oColumn, iIndex) {
+			if (iIndex > 1) {
+				oColumn.setImportance("Low");
+			}
+		});
+		Core.applyChanges();
+
+		fnOnBeforeRendering.reset();
+		fnGetInitialAccumulatedWidth.reset();
+
+		oTable.setContextualWidth("Phone");
+		clock.tick(10);
+		assert.ok(fnOnBeforeRendering.calledOnce, "Table rerendered to update popin-area");
+		assert.ok(fnGetInitialAccumulatedWidth.notCalled, "autoPopinMode recalculation prevent, since only the popin-area needs to be updated");
 	});
 
 	QUnit.test("Hide columns based on their importance", function(assert) {
@@ -2089,6 +2132,18 @@ sap.ui.define([
 			}
 		});
 		assert.strictEqual(iScopeCount, oTableHeader.length, "Scope attribute is present in every TableHeader th element and has the value 'col'");
+	});
+
+	QUnit.test("test shouldGrowingSuppressInvalidation", function(assert) {
+		oTable.setGrowing(true);
+		Core.applyChanges();
+		assert.notOk(oTable.getAutoPopinMode(), "autoPopinMode=false");
+		assert.strictEqual(oTable.shouldGrowingSuppressInvalidation(), true, "Growing will suppress invalidation since autoPopinMode=false");
+
+		oTable.setAutoPopinMode(true);
+		Core.applyChanges();
+		assert.ok(oTable.getAutoPopinMode(), "autoPopinMode=true");
+		assert.strictEqual(oTable.shouldGrowingSuppressInvalidation(), false, "Growing will not suppress invalidation since autoPopinMode=true");
 	});
 
 	QUnit.module("Dummy column", {
@@ -2218,6 +2273,7 @@ sap.ui.define([
 
 	QUnit.module("popinChanged event", {
 		beforeEach: function() {
+			this.clock = sinon.useFakeTimers();
 			this.iPopinChangedEventCounter = 0;
 			this.sut = createSUT("idPopinChangedTest", true, false);
 			this.sut.attachPopinChanged(function() {
@@ -2228,30 +2284,27 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.sut.destroy();
+			this.clock.restore();
 		}
 	});
 
-	QUnit.test("Fired after rendering", function(assert) {
-		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event fired once after rendering");
-	});
-
 	QUnit.test("Fired when filtering leads to no data and then filtering leads from no data to visible items", function(assert) {
-		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event fired once after rendering");
-
 		this.sut.getBinding("items").filter(new Filter("color", "EQ", "aaaa"));
-		assert.strictEqual(this.iPopinChangedEventCounter, 2, "popinChanged event fired since filtering led to no data");
+		this.clock.tick(1);
+		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event fired since filtering led to no data");
 
 		this.sut.getBinding("items").filter(new Filter("color", "EQ", "blue"));
-		assert.strictEqual(this.iPopinChangedEventCounter, 3, "popinChanged event fired since filtering led to visible items from no data");
+		this.clock.tick(1);
+		assert.strictEqual(this.iPopinChangedEventCounter, 2, "popinChanged event fired since filtering led to visible items from no data");
 	});
 
 	QUnit.test("Not fired when filter leads to visible items", function(assert) {
-		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event fired once after rendering");
-
 		this.sut.getBinding("items").filter(new Filter("color", "EQ", "blue"));
-		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event not fired");
+		this.clock.tick(1);
+		assert.strictEqual(this.iPopinChangedEventCounter, 0, "popinChanged event not fired");
 
 		this.sut.getBinding("items").filter();
-		assert.strictEqual(this.iPopinChangedEventCounter, 1, "popinChanged event not fired");
+		this.clock.tick(1);
+		assert.strictEqual(this.iPopinChangedEventCounter, 0, "popinChanged event not fired");
 	});
 });

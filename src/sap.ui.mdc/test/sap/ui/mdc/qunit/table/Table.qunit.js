@@ -4154,22 +4154,27 @@ sap.ui.define([
 			this.oTable.bindRows({
 				path: "/testPath"
 			});
+			Core.applyChanges();
 			assert.ok(this.oType._oShowDetailsButton, "button is created");
 			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no popins");
 			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
 
-			this.oTable._oTable.setContextualWidth("Tablet");
-			clock.tick(1);
+			this.oTable._oTable.setContextualWidth("600px");
+			clock.tick(100);
 			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
 			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Show Details", "correct text is set on the button");
 
 			this.oType._oShowDetailsButton.firePress();
+			Core.applyChanges();
 			clock.tick(1);
 			assert.strictEqual(this.oType._oShowDetailsButton.getText(), "Hide Details", "correct text is set on the button");
 
 			this.oTable._oTable.setContextualWidth("4444px");
+			Core.applyChanges();
 			clock.tick(1);
-			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
+			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden there are no popins");
+
+			clock.restore();
 			done();
 		}.bind(this));
 	});
@@ -4180,6 +4185,7 @@ sap.ui.define([
 
 		this.oTable.initialized().then(function() {
 			this.oTable._oTable.setContextualWidth("Tablet");
+			Core.applyChanges();
 			clock.tick(1);
 			var bButtonAddedToToolbar = this.oTable._oTable.getHeaderToolbar().getEnd().some(function(oControl) {
 				return oControl.getId() === this.oType._oShowDetailsButton.getId();
@@ -4187,12 +4193,15 @@ sap.ui.define([
 			assert.ok(bButtonAddedToToolbar, "Button is correctly added to the table header toolbar");
 
 			this.oType.setShowDetailsButton(false);
+			Core.applyChanges();
 			clock.tick(1);
 			assert.notOk(this.oType.getShowDetailsButton(), "showDetailsButton = false");
 			bButtonAddedToToolbar = this.oTable._oTable.getHeaderToolbar().getEnd().some(function(oControl) {
 				return oControl.getId() === this.oType._oShowDetailsButton.getId();
 			}, this);
 			assert.notOk(bButtonAddedToToolbar, "Button is removed from the table header toolbar");
+
+			clock.restore();
 			done();
 		}.bind(this));
 	});
@@ -4241,9 +4250,10 @@ sap.ui.define([
 			this.oTable.bindRows({
 				path: "/testPath"
 			});
+			Core.applyChanges();
 
-			this.oTable._oTable.setContextualWidth("Tablet");
-			clock.tick(1);
+			this.oTable._oTable.setContextualWidth("600px");
+			clock.tick(100);
 			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has popins");
 
 			this.oTable._oTable.getBinding("items").filter(new Filter("test", "EQ", "foo"));
@@ -4254,6 +4264,7 @@ sap.ui.define([
 			clock.tick(1);
 			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has visible items and popins");
 
+			clock.restore();
 			done();
 		}.bind(this));
 	});
