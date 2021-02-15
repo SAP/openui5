@@ -31,6 +31,8 @@ sap.ui.define([
 	"sap/ui/events/KeyCodes",
 	"sap/m/inputUtils/filterItems",
 	"sap/m/inputUtils/ListHelpers",
+	"sap/m/inputUtils/calculateSelectionStart",
+	"sap/m/inputUtils/selectionRange",
 	"./InputRenderer",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "selectText"
@@ -64,6 +66,8 @@ function(
 	KeyCodes,
 	filterItems,
 	ListHelpers,
+	calculateSelectionStart,
+	selectionRange,
 	InputRenderer,
 	jQuery
 ) {
@@ -2699,16 +2703,26 @@ function(
 			this.forwardEventHandlersToSuggPopover(oSuggPopover);
 
 			oSuggPopover.attachEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, function (oEvent) {
-				var sNewValue = oEvent.getParameter("newValue");
-				var bPreventSelection = oEvent.getParameter("preventSelection");
+				var oItem = oEvent.getParameter("newItem"),
+					sNewValue = this.calculateNewValue(oItem),
+					bFocusedGroupHeader = oItem && oItem.isA("sap.m.GroupHeaderListItem"),
+					oFocusDomRef = this.getFocusDomRef(),
+					sTypedValue = oFocusDomRef && oFocusDomRef.value.substring(0, oFocusDomRef.selectionStart),
+					oPreviousItem, bPreviosFocusOnGroup, iSelectionStart;
 
 				// setValue isn't used because here is too early to modify the lastValue of input
-				this.setDOMValue(sNewValue);
+				this.setDOMValue(bFocusedGroupHeader ? sTypedValue : sNewValue);
 
 				// memorize the value set by calling jQuery.val, because browser doesn't fire a change event when the value is set programmatically.
 				this._sSelectedSuggViaKeyboard = sNewValue;
 
-				!bPreventSelection && this._doSelect();
+				if (!bFocusedGroupHeader && (sNewValue.toLowerCase() !== this.getValue().toLowerCase())) {
+					oPreviousItem = oEvent.getParameter("previousItem");
+					bPreviosFocusOnGroup = oPreviousItem && oPreviousItem.isA("sap.m.GroupHeaderListItem");
+					iSelectionStart = calculateSelectionStart(selectionRange(oFocusDomRef, bPreviosFocusOnGroup), sNewValue, sTypedValue, bPreviosFocusOnGroup);
+
+					this._doSelect(iSelectionStart);
+				}
 			}, this);
 
 			if (this.getShowTableSuggestionValueHelp()) {
@@ -2717,6 +2731,27 @@ function(
 		}
 
 		return this._oSuggPopover;
+	};
+
+	/**
+	 * Calculates the correct input value to be applied, depending on the newly selected suggestion.
+	 *
+	 * @param {sap.m.GroupHeaderListItem | sap.m.StandardListItem | sap.m.ColumnListItem} oListItem The selected item
+	 * @returns {string} The input value to be applied
+	 * @private
+	 */
+	Input.prototype.calculateNewValue = function (oListItem) {
+		if (!oListItem || (oListItem && oListItem.isA("sap.m.GroupHeaderListItem"))) {
+			return "";
+		}
+
+		if (oListItem.isA("sap.m.ColumnListItem")) {
+			return this._getInputValue(this._fnRowResultFilter(oListItem));
+		}
+
+		if (oListItem.isA("sap.m.StandardListItem")) {
+			return this._getInputValue(oListItem.getTitle());
+		}
 	};
 
 	/**

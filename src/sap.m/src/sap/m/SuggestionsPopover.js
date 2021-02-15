@@ -477,32 +477,21 @@ sap.ui.define([
 	 * @param {sap.m.GroupHeaderListItem | sap.m.StandardListItem | sap.m.ColumnListItem} oItem The item to be selected.
 	 */
 	SuggestionsPopover.prototype.handleSelectionFromList = function(oItem) {
-		var oInput = this._oInput,
-			oList = this.getItemsContainer(),
-			bPreventSelection = false,
-			sNewValue;
+		var oList = this.getItemsContainer(),
+			oPreviousFocusedItem = this.getFocusedListItem(),
+			bItemGroupHeader = oItem && oItem.isA("sap.m.GroupHeaderListItem");
 
-		if (!oItem || oItem.isA("sap.m.GroupHeaderListItem")) {
+		if (!oItem || bItemGroupHeader) {
 			oList.removeSelections(true);
 		} else {
 			oList.setSelectedItem(oItem, true);
 			this._bSuggestionItemChanged = true;
 		}
 
-		if (!oItem || oItem.isA("sap.m.GroupHeaderListItem")) {
-			sNewValue = "";
-		} else if (oItem.isA("sap.m.ColumnListItem")) {
-			sNewValue = oInput._getInputValue(oInput._fnRowResultFilter(oItem));
-		} else {
-			sNewValue = oInput._getInputValue(oItem.getTitle());
-		}
-
-		if (!oItem && oInput.isA("sap.m.Input")) {
-			sNewValue = oInput._sTypedInValue;
-			bPreventSelection = true;
-		}
-
-		this.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {newValue: sNewValue, preventSelection: bPreventSelection});
+		this.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
+			previosItem: oPreviousFocusedItem,
+			newItem: oItem
+		});
 	};
 
 	/**

@@ -186,6 +186,24 @@ sap.ui.define([
 					version: 2
 				}
 			},
+			"inputUtils/selectionRange": {
+				title: "QUnit Page for sap.m.inputs.selectionRange",
+				ui5: {
+					compatVersion: "1.88"
+				},
+				qunit: {
+					version: 2
+				}
+			},
+			"inputUtils/calculateSelectionStart": {
+				title: "QUnit Page for sap.m.inputs.calculateSelectionStart",
+				ui5: {
+					compatVersion: "1.88"
+				},
+				qunit: {
+					version: 2
+				}
+			},
 			TextArea: {
 				title: "Test Page for sap.m.TextArea",
 				_alternativeTitle: "QUnit page for sap.m.TextArea",
