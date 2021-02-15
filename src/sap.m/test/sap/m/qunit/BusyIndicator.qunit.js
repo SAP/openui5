@@ -134,20 +134,6 @@ sap.ui.define([
 		assert.strictEqual(this.oBusyInd._iconImage.getSrc(), sIconTwo, "ICON src should be " + sIconTwo);
 	});
 
-	QUnit.test("setCustomIconRotationSpeed() defaults to 0 when invalid value is set", function (assert) {
-		this.oBusyInd.setCustomIconRotationSpeed(-123);
-		sap.ui.getCore().applyChanges();
-
-		assert.strictEqual(this.oBusyInd.getCustomIconRotationSpeed(), 0, "should default to 0");
-		assert.throws(
-			function() {
-				this.oBusyInd.setCustomIconRotationSpeed("invalid");
-			},
-			/expected int for property/,
-			"raised error message contains 'expected int for property'"
-		);
-	});
-
 	QUnit.test("setCustomIconDensityAware() sets the correct value to the control and the image", function (assert) {
 		var sIcon = "../images/settings_64.png";
 		this.oBusyInd.setCustomIcon(sIcon);
