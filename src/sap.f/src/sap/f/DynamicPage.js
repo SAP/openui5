@@ -940,7 +940,6 @@ sap.ui.define([
 		}
 
 		this._updateToggleHeaderVisualIndicators();
-		this._togglePinButtonARIAState(this._bPinned);
 
 		if (exists($oDynamicPage)) {
 			$oDynamicPage.addClass("sapFDynamicPageHeaderPinned");
@@ -961,7 +960,6 @@ sap.ui.define([
 
 		this._bPinned = false;
 		this._updateToggleHeaderVisualIndicators();
-		this._togglePinButtonARIAState(this._bPinned);
 
 		if (exists($oDynamicPage)) {
 			$oDynamicPage.removeClass("sapFDynamicPageHeaderPinned");
@@ -994,18 +992,6 @@ sap.ui.define([
 		}
 	};
 
-	/**
-	 * Toggles the header pin button ARIA State
-	 * @param {Boolean} bPinned
-	 * @private
-	 */
-	DynamicPage.prototype._togglePinButtonARIAState = function (bPinned) {
-		var oDynamicPageHeader = this.getHeader();
-
-		if (exists(oDynamicPageHeader)) {
-			oDynamicPageHeader._updateARIAPinButtonState(bPinned);
-		}
-	};
 
 	/**
 	 * Resets the header pin button state
@@ -1016,7 +1002,6 @@ sap.ui.define([
 			this._togglePinButtonVisibility(false);
 		} else {
 			this._togglePinButtonPressedState(false);
-			this._togglePinButtonARIAState(false);
 		}
 	};
 

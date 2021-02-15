@@ -2461,11 +2461,10 @@ function (
 
 	QUnit.test("DynamicPage Header Pin button has the correct tooltip when pin and unpin", function (assert) {
 		var oPinButton = this.oDynamicPage.getHeader()._getPinButton(),
-			sPinTooltip = oFactory.getResourceBundle().getText("PIN_HEADER"),
-			sUnPinTooltip = oFactory.getResourceBundle().getText("UNPIN_HEADER");
+			sPinTooltip = oFactory.getResourceBundle().getText("PIN_HEADER");
 
 		this.oDynamicPage._pin();
-		assert.equal(oPinButton.getTooltip(), sUnPinTooltip, "The tooltip is correct");
+		assert.equal(oPinButton.getTooltip(), sPinTooltip, "The tooltip is correct");
 
 		this.oDynamicPage._unPin();
 		assert.equal(oPinButton.getTooltip(), sPinTooltip, "The tooltip is correct");
@@ -2473,16 +2472,15 @@ function (
 
 	QUnit.test("DynamicPage Header Pin button has the correct tooltip when changing preserveHeaderStateOnScroll", function (assert) {
 		var oPinButton = this.oDynamicPage.getHeader()._getPinButton(),
-			sPinTooltip = oFactory.getResourceBundle().getText("PIN_HEADER"),
-			sUnPinTooltip = oFactory.getResourceBundle().getText("UNPIN_HEADER");
+			sPinTooltip = oFactory.getResourceBundle().getText("PIN_HEADER");
 
 		this.oDynamicPage._pin();
-		assert.equal(oPinButton.getTooltip(), sUnPinTooltip,
+		assert.equal(oPinButton.getTooltip(), sPinTooltip,
 			"The tooltip is correct");
 
 		this.oDynamicPage.setPreserveHeaderStateOnScroll(true);
 		Core.applyChanges();
-		assert.equal(oPinButton.getTooltip(), sUnPinTooltip,
+		assert.equal(oPinButton.getTooltip(), sPinTooltip,
 			"The tooltip is correct: unchanged when preserveHeaderStateOnScroll is true");
 
 		this.oDynamicPage.setPreserveHeaderStateOnScroll(false);

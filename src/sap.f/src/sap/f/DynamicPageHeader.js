@@ -122,7 +122,6 @@ sap.ui.define([
 			LABEL_EXPANDED: DynamicPageHeader._getResourceBundle().getText("EXPANDED_HEADER"),
 			LABEL_COLLAPSED: DynamicPageHeader._getResourceBundle().getText("SNAPPED_HEADER"),
 			LABEL_PINNED: DynamicPageHeader._getResourceBundle().getText("PIN_HEADER"),
-			LABEL_UNPINNED: DynamicPageHeader._getResourceBundle().getText("UNPIN_HEADER"),
 			TOOLTIP_COLLAPSE_BUTTON: DynamicPageHeader._getResourceBundle().getText("COLLAPSE_HEADER_BUTTON_TOOLTIP"),
 			STATE_TRUE: "true",
 			STATE_FALSE: "false"
@@ -233,21 +232,6 @@ sap.ui.define([
 			} else {
 				$header.attr(DynamicPageHeader.ARIA.ARIA_EXPANDED, DynamicPageHeader.ARIA.STATE_FALSE);
 				$header.attr(DynamicPageHeader.ARIA.ARIA_LABEL, DynamicPageHeader.ARIA.LABEL_COLLAPSED);
-			}
-		};
-
-		/**
-		 * Updates <code>DynamicPageHeader</code> pin/unpin button ARIA attributes values according to the pinned/unpinned state.
-		 * @param {Boolean} bPinned determines if the <code>DynamicPageHeader</code> is pinned or unpinned
-		 * @private
-		 */
-		DynamicPageHeader.prototype._updateARIAPinButtonState = function (bPinned) {
-			var oPinBtn = this._getPinButton();
-
-			if (bPinned) {
-				oPinBtn.setTooltip(DynamicPageHeader.ARIA.LABEL_UNPINNED);
-			} else {
-				oPinBtn.setTooltip(DynamicPageHeader.ARIA.LABEL_PINNED);
 			}
 		};
 
