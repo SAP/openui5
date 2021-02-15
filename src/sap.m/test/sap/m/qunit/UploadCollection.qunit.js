@@ -160,7 +160,7 @@ sap.ui.define([
 		return new ObjectStatus({
 			title: "{title}",
 			text: "{text}",
-			visible: '{visible}'
+			visible: "{visible}"
 		});
 	}
 
@@ -307,7 +307,7 @@ sap.ui.define([
 		var oSecondItem = this.oUploadCollection.getItems()[1];
 		oDomRef = oSecondItem.getStatuses()[0].getDomRef();
 		oSibling = oDomRef.nextSibling;
-		assert.ok(!oSibling, "Status separator is not visible");
+		assert.ok(!oSibling.classList.contains("sapMUCSeparator"), "Status separator is not visible");
 	});
 
 	QUnit.test("hideUploadButton hideTerminateUploadButton properties are initialized correctly", function(assert) {
