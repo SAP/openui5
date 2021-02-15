@@ -45,29 +45,33 @@
 		</headerTitle>
 
 		<headerContent>
-            <m:FlexBox wrap="Wrap" fitContainer="true">
+			<m:FlexBox wrap="Wrap" fitContainer="true">
 				<m:Avatar class="sapUiMediumMarginEnd sapUiSmallMarginBottom" displayShape="Square" initials="HF" displaySize="L"/>
 
 				<m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-                    <m:Title text="Profile" class="sapUiTinyMarginBottom"/>
-                    <m:Label text="Personal Information"/>
-                    <m:ProgressIndicator displayValue="42%" percentValue="42%"  state="Information"/>
-                </m:VBox>
+					<m:Title class="sapUiTinyMarginBottom">
+						<m:Link text="Profile"/>
+					</m:Title>
+					<m:Label text="Personal Information"/>
+					<m:ProgressIndicator displayValue="42%" percentValue="42%"  state="Information"/>
+				</m:VBox>
 
-                 <m:VBox class="sapUiSmallMarginBottom sapUiLargeMarginEnd">
-                    <m:Title text="Reliability" class="sapUiTinyMarginBottom"/>
-                    <m:Label text="Based on fulfiled contracts"/>
-                    <m:RatingIndicator value="4" iconSize="16px"/>
-                </m:VBox>
+				 <m:VBox class="sapUiSmallMarginBottom sapUiLargeMarginEnd">
+					<m:Title text="Reliability" class="sapUiTinyMarginBottom" />
+					<m:Label text="Based on fulfiled contracts"/>
+					<m:RatingIndicator value="4" iconSize="16px"/>
+				</m:VBox>
 
 				 <m:VBox width="448px" class="sapUiSmallMarginBottom">
-                    <m:Title text="Product Description" class="sapUiTinyMarginBottom"/>
-                    <m:Text text="Top-design high-quality coffee mug - ideal for a comforting moment; Pack: 6; material: Porcelain - durable dishwasher and microwave-safe porcelain that cleans easily and is ideal for everyday service. Comes in two bright colors."/>
-                </m:VBox>
+					<m:Title class="sapUiTinyMarginBottom">
+						<m:Link text="Product Description"/>
+					</m:Title>
+					<m:Text text="Top-design high-quality coffee mug - ideal for a comforting moment; Pack: 6; material: Porcelain - durable dishwasher and microwave-safe porcelain that cleans easily and is ideal for everyday service. Comes in two bright colors."/>
+				</m:VBox>
 			</m:FlexBox>
 		</headerContent>
 
-        <sections>
+		<sections>
 			<ObjectPageSection titleUppercase="false" id="goalsSection" title="2014 Goals Plan">
 				<subSections>
 					<ObjectPageSubSection id="goalsSectionSS1" titleUppercase="false">
