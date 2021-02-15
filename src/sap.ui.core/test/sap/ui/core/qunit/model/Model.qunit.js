@@ -196,14 +196,13 @@ sap.ui.define([
 		var oBinding = {
 				checkUpdate : function () {}
 			},
-			aBindings = [oBinding],
 			oModel = new Model();
 
 		if (vUpdateTimer) {
-			oModel.bForceUpdate = "forceUpdate";
+			oModel.bForceUpdate = bForceUpdate;
 			this.mock(window).expects("clearTimeout").withExactArgs(42);
 		}
-		this.mock(oModel).expects("getBindings").returns(aBindings);
+		this.mock(oModel).expects("getBindings").returns([oBinding]);
 		this.mock(oBinding).expects("checkUpdate").withExactArgs(bForceUpdate);
 
 		// code under test
@@ -215,4 +214,33 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	// BCP: 2180036790
+	QUnit.test("checkUpdate: truthy bForceUpdate of async wins over later sync", function (assert) {
+		var oBinding = {
+				checkUpdate : function () {}
+			},
+			oBindingMock = this.mock(oBinding),
+			oModel = new Model(),
+			oModelMock = this.mock(oModel),
+			oWindowMock = this.mock(window);
+
+		oWindowMock.expects("clearTimeout").never();
+		oModelMock.expects("getBindings").never();
+		oBindingMock.expects("checkUpdate").never();
+
+		// code under test
+		oModel.checkUpdate(true, true);
+
+		oWindowMock.expects("clearTimeout").withExactArgs(oModel.sUpdateTimer).callThrough();
+		oModelMock.expects("getBindings").withExactArgs().returns([oBinding]);
+		oBindingMock.expects("checkUpdate").withExactArgs(true);
+
+		// code under test
+		oModel.checkUpdate();
+
+		assert.strictEqual(oModel.bForceUpdate, undefined);
+		assert.strictEqual(oModel.sUpdateTimer, null);
+	});
 });

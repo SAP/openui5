@@ -1861,6 +1861,7 @@ sap.ui.define([
 			}
 			return;
 		}
+		bForceUpdate = this.bForceUpdate || bForceUpdate;
 		if (this.sUpdateTimer) {
 			clearTimeout(this.sUpdateTimer);
 			this.sUpdateTimer = null;
