@@ -8,6 +8,7 @@
  *
  * Date: 2017-04-18T02:19Z
  */
+
 (function (global$1) {
   'use strict';
 
@@ -15,6 +16,20 @@
 
   var window = global$1.window;
   var console = global$1.console;
+
+  //### BEGIN MODIFIED BY SAP
+  // include and setup qunitPause before QUnit is loaded. if pausing is enabled, it will hook into setTimeout.
+  // the goal is to prevent QUnit timeouts while test is already paused.
+  if (window && window.sap && window.sap.ui && window.sap.ui.require) {
+    try {
+      var QUnitPause = window.sap.ui.require("sap/ui/test/qunitPause") || window.sap.ui.requireSync("sap/ui/test/qunitPause");
+      QUnitPause.setupBeforeQUnit();
+    } catch (e) {
+      console.warn("Could not find module sap/ui/test/qunitPause. Details: " + e);
+    }
+  }
+  //### END MODIFIED BY SAP
+
   var setTimeout = global$1.setTimeout;
   var clearTimeout = global$1.clearTimeout;
 

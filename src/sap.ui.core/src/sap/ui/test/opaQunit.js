@@ -6,9 +6,12 @@ sap.ui.define([
 	'sap/ui/thirdparty/URI',
 	'sap/ui/test/Opa',
 	'sap/ui/test/Opa5',
-	"sap/ui/thirdparty/jquery"
-], function(URI, Opa, Opa5, jQueryDOM) {
+	"sap/ui/thirdparty/jquery",
+	'sap/ui/test/qunitPause'
+], function(URI, Opa, Opa5, jQueryDOM, QUnitPause) {
 	"use strict";
+
+	QUnitPause.setupAfterQUnit();
 
 	QUnit.begin(function (oDetails) {
 		Opa._usageReport.begin({uri: new URI().toString(), totalTests: oDetails.totalTests});
@@ -106,11 +109,22 @@ sap.ui.define([
 			assert.ok(false, oOptions.errorMessage);
 
 			resetOPA();
-			// let OPA finish before QUnit starts executing the next test
-			// call fnStart only if QUnit did not timeout
-			if (!oOptions.qunitTimeout) {
-				setTimeout(fnDone, 0);
+
+			if (!QUnitPause.shouldPauseOnAssert()) {
+				QUnitPause.emitPause();
 			}
+
+			var oPauseDeferred = jQueryDOM.Deferred();
+			QUnitPause.onResume(function () {
+				// let OPA finish before QUnit starts executing the next test
+				// call fnStart only if QUnit did not timeout
+				if (!oOptions.qunitTimeout) {
+					setTimeout(fnDone, 0);
+				}
+				oPauseDeferred.resolve();
+			});
+
+			return oPauseDeferred.promise();
 		});
 	}
 
@@ -217,6 +231,8 @@ sap.ui.define([
 			// fill in OPA queue
 			// preserve QUnit 'this' in order to access it from waitFor statements
 			mConfig.callback.call(this, Opa.config.arrangements, Opa.config.actions, Opa.config.assertions);
+
+			QUnitPause.setupBeforeOpaTest();
 
 			Opa.emptyQueue()
 				.done(function () {

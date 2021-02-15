@@ -432,7 +432,6 @@ function(Press,
 			Opa5.extendConfig({autoWait: true});
 
 			opaTest(oTest.name, function(oOpa) {
-				var done = Opa5.assert.async();
 
 				oTest.createModel();
 				oList.setModel(oModel);
@@ -457,7 +456,6 @@ function(Press,
 					matchers: new AggregationLengthEquals({name: "items", length: 2}),
 					success: function () {
 						Opa5.assert.ok(true, "Table growth triggered");
-						done();
 					},
 					errorMessage: "Table growth not triggered"
 				});
@@ -669,7 +667,6 @@ function(Press,
 		QUnit.module("OverflowToolbar");
 
 		opaTest("Should synchronize with overflow popup", function (oOpa) {
-			var done = Opa5.assert.async();
 			var oOverflowToolbar = new OverflowToolbar({
 				width: "140px"
 			});
@@ -700,13 +697,11 @@ function(Press,
 			oOpa.waitFor({
 				success: function() {
 					oOverflowToolbar.destroy();
-					done();
 				}
 			});
 		});
 
 		opaTest("Should synchronize with resizing overflow toolbar", function (oOpa) {
-			var done = Opa5.assert.async();
 			var oOverflowToolbar = new OverflowToolbar({
 				width: "400px"
 			});
@@ -744,14 +739,11 @@ function(Press,
 			oOpa.waitFor({
 				success: function() {
 					oOverflowToolbar.destroy();
-					done();
 				}
 			});
 		});
 
 		opaTest("Should synchronize with resizing overflow toolbar when resizing the app", function (oOpa) {
-			var done = Opa5.assert.async();
-
 			var toolbarContent1 = [
 				new Label({
 					text : "Priority Toolbar"
@@ -869,7 +861,6 @@ function(Press,
 				success: function() {
 					console.debug("Destroy the app"); // eslint-disable-line no-console
 					oApp.destroy();
-					done();
 				}
 			});
 		});
