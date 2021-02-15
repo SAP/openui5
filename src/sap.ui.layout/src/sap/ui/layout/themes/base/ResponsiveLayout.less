@@ -3,11 +3,13 @@
 /* Base theme                                      */
 /* =============================================== */
 
-.sapUiRLContainer > .sapUiFormTitle > button{
-	position: absolute;
-	right: 0;
+.sapUiRLContainer.sapUiFormContainerTitle > .sapUiFormTitle.sapUiFormTitleExpandable{
+	padding-left: 2.25rem;
 }
 
+.sapUiRLContainer.sapUiFormContainerTitle > .sapUiFormTitle.sapUiFormTitleExpandable > button{
+	left: -0.5rem;
+}
 .sapUiRLContainerColl > .sapUiRLContainerCont{
 	display: none;
 }
@@ -142,6 +144,9 @@ html.sap-phone .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow > .sapUiRFLContain
 .sapUiFormM > .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer.sapUiFormContainerTitle,
 .sapUiFormM > .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer > .sapUiRFLContainerContent > .sapUiRLContainer.sapUiFormContainerToolbar{
 	margin-top: -0.5rem;
+}
+.sapUiFormM > .sapUiFormResLayout > .sapUiRFL > .sapUiRFLRow:first-child > .sapUiRFLContainer{
+	overflow: visible; /* to show expander and toolbar completely */
 }
 
 /* only one container - reduce top padding*/

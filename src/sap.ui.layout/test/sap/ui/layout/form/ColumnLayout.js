@@ -64,6 +64,16 @@ sap.ui.require([
 		) {
 	"use strict";
 
+	// TODO: Fake iSematicFormContent on controls until it is official supported
+	var myTypeCheck = function(vTypeName) {
+		if (vTypeName === "sap.ui.core.ISemanticFormContent") {
+			return true;
+		} else {
+			return this.getMetadata().isA(vTypeName);
+		}
+	};
+	Input.prototype.isA = myTypeCheck;
+
 	var toggleLayoutData = function(oEvent){
 		var oControl, oLayoutData;
 		var oButton = sap.ui.getCore().byId("B1");

@@ -402,21 +402,21 @@ sap.ui.require([
 				title: "You should not see me !!!",
 				toolbar: new Toolbar("TB3", {
 					content: [
-						new mTitle("F2C2-Title", {text: "other data", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
-						new ToolbarSpacer(),
-						new Link({text: "Link", href: "http://www.sap.com"}),
-						new Button({text: "Text"}),
-						new Button({icon: "sap-icon://collapse-group",
+						new Button({icon: "sap-icon://slim-arrow-down",
 							press: function(oEvent) {
 								var oContainer = sap.ui.getCore().byId("F2C2");
 								if (oContainer.getExpanded()) {
 									oContainer.setExpanded(false);
-									oEvent.oSource.setIcon("sap-icon://expand-group");
+									oEvent.oSource.setIcon("sap-icon://slim-arrow-right");
 								} else {
 									oContainer.setExpanded(true);
-									oEvent.oSource.setIcon("sap-icon://collapse-group");
+									oEvent.oSource.setIcon("sap-icon://slim-arrow-down");
 								}
-							}})
+							}}),
+						new mTitle("F2C2-Title", {text: "other data", level: CoreLib.TitleLevel.H5, titleStyle: CoreLib.TitleLevel.H5, tooltip: "Title tooltip"}),
+						new ToolbarSpacer(),
+						new Link({text: "Link", href: "http://www.sap.com"}),
+						new Button({text: "Text"})
 					]
 				}),
 				ariaLabelledBy: "F2C2-Title",
