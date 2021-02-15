@@ -1,11 +1,14 @@
 sap.ui.define([
+		'sap/m/library',
 		'sap/m/TablePersoController',
 		'./DemoPersoService',
 		'./Formatter',
 		'sap/ui/core/mvc/Controller',
 		'sap/ui/model/json/JSONModel'
-	], function(TablePersoController, DemoPersoService, Formatter, Controller, JSONModel) {
+	], function(mlibrary, TablePersoController, DemoPersoService, Formatter, Controller, JSONModel) {
 	"use strict";
+
+	var ResetAllMode =  mlibrary.ResetAllMode;
 
 	var TableController = Controller.extend("sap.m.sample.TablePerso.Table", {
 
@@ -22,8 +25,13 @@ sap.ui.define([
 				table: this.byId("productsTable"),
 				//specify the first part of persistence ids e.g. 'demoApp-productsTable-dimensionsCol'
 				componentName: "demoApp",
+				resetAllMode: ResetAllMode.ServiceReset,
 				persoService: DemoPersoService
 			}).activate();
+		},
+
+		onExit: function () {
+			this._oTPC.destroy();
 		},
 
 		onPersoButtonPressed: function (oEvent) {
@@ -31,13 +39,17 @@ sap.ui.define([
 		},
 
 		onTablePersoRefresh : function() {
-			DemoPersoService.resetPersData();
-			this._oTPC.refresh();
+			DemoPersoService.resetPersData().done(
+				function() {
+					this._oTPC.refresh();
+				}.bind(this)
+			);
 		},
 
 		onTableGrouping : function(oEvent) {
 			this._oTPC.setHasGrouping(oEvent.getSource().getSelected());
 		}
+
 	});
 
 
