@@ -329,7 +329,7 @@ sap.ui.define([
 
 				getChangeVisualizationInfo: function(oChange) {
 					var oRevertData = oChange.getRevertData();
-					if (oRevertData) {
+					if (oRevertData && oRevertData.labelSelector) {
 						return {
 							affectedControls: [oRevertData.labelSelector]
 						};

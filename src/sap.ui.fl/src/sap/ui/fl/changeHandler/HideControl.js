@@ -3,9 +3,11 @@
  */
 
 sap.ui.define([
-	"sap/base/Log"
+	"sap/base/Log",
+	'sap/ui/fl/changeHandler/JsControlTreeModifier'
 ], function(
-	Log
+	Log,
+	JsControlTreeModifier
 ) {
 	"use strict";
 
@@ -86,6 +88,15 @@ sap.ui.define([
 			affectedControl: oChange.getSelector(),
 			classification: sap.ui.fl.condenser.Classification.Reverse,
 			uniqueKey: PROPERTY_NAME
+		};
+	};
+
+	HideControl.getChangeVisualizationInfo = function(oChange, oAppComponent) {
+		var oSelector = oChange.getSelector();
+		var oElement = JsControlTreeModifier.bySelector(oSelector, oAppComponent);
+		return {
+			affectedControls: [oSelector],
+			displayControls: [oElement.getParent().getId()]
 		};
 	};
 

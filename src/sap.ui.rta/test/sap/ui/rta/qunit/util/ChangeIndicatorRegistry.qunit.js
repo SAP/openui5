@@ -94,21 +94,25 @@ function(
 			this.oRegistry.registerChange(oFooChange, "foo");
 			var oBarChange = createMockChange("barChange");
 			this.oRegistry.registerChange(oBarChange, "bar");
+			var sSelectorId = "test";
 
-			var oSelector = {
-				getId: function () {
-					return "test";
-				}
-			};
-
-			this.oRegistry.addSelectorsForChangeId("fooChange", [oSelector], false);
-			this.oRegistry.addSelectorsForChangeId("barChange", [oSelector], true);
+			this.oRegistry.addSelectorsForChangeId("fooChange", {
+				affectedElementIds: ["someOtherId"],
+				displayElementIds: [sSelectorId],
+				dependentElementIds: []
+			});
+			this.oRegistry.addSelectorsForChangeId("barChange", {
+				affectedElementIds: [],
+				displayElementIds: [],
+				dependentElementIds: [sSelectorId]
+			});
 
 			assert.deepEqual(
 				this.oRegistry.getChangeIndicatorData(),
 				{
 					test: [
 						{
+							affectedElementId: "someOtherId",
 							id: "fooChange",
 							dependent: false,
 							change: oFooChange,
@@ -116,6 +120,7 @@ function(
 							commandCategory: "fooCategory"
 						},
 						{
+							affectedElementId: sSelectorId,
 							id: "barChange",
 							dependent: true,
 							change: oBarChange,

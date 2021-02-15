@@ -6,11 +6,13 @@ sap.ui.define([
 	"sap/ui/base/ManagedObject",
 	"sap/base/util/includes",
 	"sap/base/util/values",
+	"sap/base/util/each",
 	"sap/base/util/restricted/_omit"
 ], function(
 	ManagedObject,
 	includes,
 	values,
+	each,
 	_omit
 ) {
 	"use strict";
@@ -89,26 +91,27 @@ sap.ui.define([
 	ChangeIndicatorRegistry.prototype.getChangeIndicatorData = function () {
 		var oChangeIndicators = {};
 
-		var fnAddSelector = function (sSelectorId, oChange, bDependent) {
+		function addSelector (sSelectorId, sAffectedElementId, oChange, bDependent) {
 			if (oChangeIndicators[sSelectorId] === undefined) {
 				oChangeIndicators[sSelectorId] = [];
 			}
 			oChangeIndicators[sSelectorId].push(Object.assign(
 				{
 					id: oChange.change.getId(),
-					dependent: bDependent
+					dependent: bDependent,
+					affectedElementId: sAffectedElementId
 				},
-				_omit(oChange, ["selectors", "dependentSelectors"])
+				_omit(oChange, ["displayElementIds", "dependentElementIds", "affectedElementIds"])
 			));
-		};
+		}
 
 		values(this._oChanges).forEach(function (oChange) {
-			(oChange.selectors || []).forEach(function (sSelectorId) {
-				fnAddSelector(sSelectorId, oChange, false);
+			oChange.displayElementIds.forEach(function (sSelectorId, iIndex) {
+				addSelector(sSelectorId, oChange.affectedElementIds[iIndex], oChange, false);
 			});
 
-			(oChange.dependentSelectors || []).forEach(function (sSelectorId) {
-				fnAddSelector(sSelectorId, oChange, true);
+			oChange.dependentElementIds.forEach(function (sSelectorId) {
+				addSelector(sSelectorId, sSelectorId, oChange, true);
 			});
 		});
 
@@ -148,6 +151,7 @@ sap.ui.define([
 	 * Registers a change under its ID.
 	 *
 	 * @param {object} oChange - The change to register
+	 * @param {string} sCommandName - Command name of the change
 	 */
 	ChangeIndicatorRegistry.prototype.registerChange = function (oChange, sCommandName) {
 		var aCategories = this.getCommandCategories();
@@ -156,7 +160,10 @@ sap.ui.define([
 			commandName: sCommandName,
 			commandCategory: Object.keys(aCategories).find(function (sCommandCategoryName) {
 				return includes(aCategories[sCommandCategoryName], sCommandName);
-			})
+			}),
+			affectedElementIds: [],
+			displayElementIds: [],
+			dependentElementIds: []
 		};
 
 		// Only register changes that are valid for visualization
@@ -181,28 +188,19 @@ sap.ui.define([
 	 * Adds selectors for a registered change.
 	 *
 	 * @param {string} sChangeId - ID of the registered change
-	 * @param {object[]} aSelectors - List of selectors to register
-	 * @param {boolean} bDependent - Whether the selectors are dependent selectors
+	 * @param {object} oSelectorMap - Map of selector IDs to register
+	 * @param {string[]} oSelectorMap.affectedElementIds - Array of affected element IDs
+	 * @param {string[]} oSelectorMap.displayElementIds - Array of element IDs that the indicators are attached to
+	 * @param {string[]} oSelectorMap.dependentElementIds - Array of element IDs that the dependent indicators are attached to
 	 */
-	ChangeIndicatorRegistry.prototype.addSelectorsForChangeId = function (sChangeId, aSelectors, bDependent) {
+	ChangeIndicatorRegistry.prototype.addSelectorsForChangeId = function (sChangeId, oSelectorMap) {
 		var oChange = this._oChanges[sChangeId];
-		var sPropertyKey = bDependent ? "dependentSelectors" : "selectors";
-
 		if (oChange === undefined) {
 			throw new Error("Change id is not registered");
 		}
 
-		if (oChange[sPropertyKey] === undefined) {
-			oChange[sPropertyKey] = [];
-		}
-
-		aSelectors.forEach(function (oSelector) {
-			if (
-				oSelector
-				&& !includes(oChange[sPropertyKey], oSelector.getId())
-			) {
-				oChange[sPropertyKey].push(oSelector.getId());
-			}
+		each(oSelectorMap, function (sSelectorType, aSelectors) {
+			oChange[sSelectorType] = aSelectors;
 		});
 	};
 
