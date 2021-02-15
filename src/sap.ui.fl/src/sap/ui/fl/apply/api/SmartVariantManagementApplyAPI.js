@@ -42,6 +42,19 @@ sap.ui.define([
 		return mCompVariantsMap._getOrCreate(sPersistencyKey, aVariants);
 	}
 
+	function getCompEntities(mPropertyBag) {
+		var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
+
+		// TODO clarify why in a test we come here without an initialized FlexState (1980546095)
+		return FlexState.initialize({
+			reference: sReference,
+			componentData: {},
+			manifest: Utils.getAppDescriptor(mPropertyBag.control),
+			componentId: Utils.getAppComponentForControl(mPropertyBag.control).getId()
+		})
+			.then(getVariantsMap.bind(undefined, mPropertyBag.control));
+	}
+
 	/**
 	 * Object containing data for a SmartVariantManagement control.
 	 *
@@ -65,51 +78,6 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.comp
 	 */
 	var SmartVariantManagementApplyAPI = /** @lends sap.ui.fl.apply.api.SmartVariantManagementApplyAPI */{
-
-		/**
-		 * Calls the back-end system asynchronously and fetches all {@link sap.ui.fl.Change}s and variants pointing to this control.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
-		 * @param {object[]} mPropertyBag.variants - Variant data from other data providers like an OData service
-		 * @returns {Promise<sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.Response>} Data for the passed
-		 * <code>sap.ui.comp.smartvariants.SmartVariantManagement</code> control
-		 * @since 1.83
-		 * @deprecated
-		 * @private
-		 * @ui5-restricted
-		 */
-		getCompEntities: function (mPropertyBag) {
-			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
-
-			// TODO clarify why in a test we come here without an initialized FlexState (1980546095)
-			return FlexState.initialize({
-				reference: sReference,
-				componentData: {},
-				manifest: Utils.getAppDescriptor(mPropertyBag.control),
-				componentId: Utils.getAppComponentForControl(mPropertyBag.control).getId()
-			})
-			.then(getVariantsMap.bind(undefined, mPropertyBag.control));
-		},
-
-		/**
-		 * Calls the back end asynchronously and fetches all {@link sap.ui.fl.Change}s and variants pointing to this control.
-		 *
-		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
-		 * @returns {Promise<sap.ui.fl.Change[]>} Array with instances of <code>sap.ui.fl.Change</code>
-		 * @private
-		 * @ui5-restricted
-		 *
-		 * @deprecated
-		 */
-		loadChanges: function(mPropertyBag) {
-			return SmartVariantManagementApplyAPI.getCompEntities(mPropertyBag)
-				.then(function(oCompEntities) {
-					return oCompEntities.variants.concat(oCompEntities.changes);
-				});
-		},
-
 		/**
 		 * @typedef {object} sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsInput
 		 * @param {string} id - ID of the variant
@@ -139,7 +107,7 @@ sap.ui.define([
 		 * @returns {Promise<sap.ui.fl.apply.api.SmartVariantManagementApplyAPI.LoadVariantsResponse>} Object with the standard variant and the variants
 		 */
 		loadVariants: function(mPropertyBag) {
-			return SmartVariantManagementApplyAPI.getCompEntities(mPropertyBag)
+			return getCompEntities(mPropertyBag)
 				.then(function(mCompVariants) {
 					var sPersistencyKey = getPersistencyKey(mPropertyBag.control);
 					return CompVariantMerger.merge(sPersistencyKey, mCompVariants, mPropertyBag.standardVariant, mPropertyBag.variants);
@@ -154,21 +122,6 @@ sap.ui.define([
 		getEntityById: function (mPropertyBag) {
 			var sReference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
 			return FlexState.getCompEntitiesByIdMap(sReference)[mPropertyBag.id];
-		},
-
-		/**
-		 * Checks whether sharing of variants is enabled.
-		 *
-		 * @private
-		 * @ui5-restricted
-		 * @deprecated replaced by <code>sap.ui.fl.write.api.SmartVariantWriteAPI.isVariantSharingEnabled</code>
-		 *
-		 * @returns {boolean} <code>true</code> if sharing of variants is enabled
-		 */
-		isVariantSharingEnabled: function() {
-			return Settings.getInstance().then(function (oInstance) {
-				return oInstance.isVariantSharingEnabled();
-			});
 		},
 
 		/**
