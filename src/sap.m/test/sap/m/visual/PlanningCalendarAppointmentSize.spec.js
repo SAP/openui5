@@ -38,6 +38,12 @@ describe("sap.m.PlanningCalendarAppointmentSize", function() {
 		expect(takeScreenshot()).toLookAs("calendar_appointment_reduced_height");
 	});
 
+	it("should render the whole days page", function() {
+		element(by.id("PC1-Header-ViewSwitch")).click();
+		element(by.cssContainingText(".sapMSelectListItem", "Days")).click();
+		expect(takeScreenshot(element(by.id("page1-cont")))).toLookAs("days_page");
+	});
+
 	it("should render the whole months page", function() {
 		element(by.id("PC1-Header-ViewSwitch")).click();
 		element(by.cssContainingText(".sapMSelectListItem", "1 Month")).click();
