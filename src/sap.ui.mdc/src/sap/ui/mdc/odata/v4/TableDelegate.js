@@ -73,6 +73,14 @@ sap.ui.define([
 			throw new Error("This delegate does not support the table type '" + TableDelegate.ResponsiveTable + "'.");
 		}
 
+		// disable temporary the Excel export -> CPOUIFTEAMB-1755
+		// TODO: remove this once a solution has been found
+		oTable.setEnableExport(false);
+		oTable.setEnableExport = function() {
+			return this;
+		};
+		/************************************/
+
 		return enrichGridTable(oTable, that);
 	};
 
