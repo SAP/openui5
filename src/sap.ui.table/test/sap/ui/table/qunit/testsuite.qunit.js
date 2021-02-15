@@ -77,6 +77,10 @@ sap.ui.define([
 					libs: ["sap.ui.table", "sap.ui.unified", "sap.m"]
 				}
 			},
+			"Table with ODataV2": {
+				module: "./Table.ODataV2.qunit",
+				sinon: false /*uses Mockserver*/
+			},
 			"Column": {
 				ui5: {
 					// Test has dependencies to sap.ui.unified modules

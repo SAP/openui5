@@ -1781,7 +1781,7 @@ sap.ui.define([
 
 		var bFirstVisibleRowChanged = this.getFirstVisibleRow() !== iRowIndex;
 		var iOldFirstRenderedRowIndex = this._getFirstRenderedRowIndex();
-		var iNewFirstRenderedRowIndex = this.getBinding() ? Math.min(iRowIndex, this._getMaxFirstRenderedRowIndex()) : iRowIndex;
+		var iNewFirstRenderedRowIndex = this._bContextsAvailable ? Math.min(iRowIndex, this._getMaxFirstRenderedRowIndex()) : iRowIndex;
 		var oScrollExtension = this._getScrollExtension();
 
 		this.setProperty("firstVisibleRow", iRowIndex, true);
@@ -2232,9 +2232,6 @@ sap.ui.define([
 		}
 
 		iVisibleRowCount = this.validateProperty("visibleRowCount", iVisibleRowCount);
-		if (this.getBinding() && this._getTotalRowCount() <= iVisibleRowCount) {
-			this.setFirstVisibleRow(0);
-		}
 		this.setProperty("visibleRowCount", iVisibleRowCount);
 
 		TableUtils.dynamicCall(this._getSyncExtension, function(oSyncExtension) {

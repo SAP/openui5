@@ -10,16 +10,17 @@ sap.ui.define([
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/core/Control",
+	"sap/base/util/merge",
 	"sap/ui/thirdparty/jquery"
 ], function(
-	TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, PluginBase, TableUtils, JSONModel, Control, jQuery
+	TableLibrary, Table, TreeTable, AnalyticalTable, Column, RowAction, RowActionItem, PluginBase, TableUtils, JSONModel, Control, merge, jQuery
 ) {
 	"use strict";
 
 	var TableQUnitUtils = {}; // TBD: Move global functions to this object
 	var aData = [];
 	var oDataTemplate = {};
-	var mDefaultOptions = {};
+	var mDefaultSettings = {};
 	var iNumberOfDataRows = 8;
 
 	var TestControl = Control.extend("sap.ui.table.test.TestControl", {
@@ -236,6 +237,31 @@ sap.ui.define([
 		return Promise.race([pTimeout, pAction]);
 	}
 
+	function deepCloneSettings(mSettings) {
+		var oClone = merge({}, mSettings);
+
+		// Clone all instances of type sap.ui.base.ManagedObject.
+		for (var sProperty in oClone) {
+			if (!oClone.hasOwnProperty(sProperty)) {
+				continue;
+			}
+
+			var vValue = oClone[sProperty];
+
+			if (TableUtils.isA(vValue, "sap.ui.base.ManagedObject")) {
+				oClone[sProperty] = vValue.clone();
+			} else if (Array.isArray(vValue)) {
+				for (var i = 0; i < vValue.length; i++) {
+					if (TableUtils.isA(vValue[i], "sap.ui.base.ManagedObject")) {
+						vValue[i] = vValue[i].clone();
+					}
+				}
+			}
+		}
+
+		return oClone;
+	}
+
 	sap.ui.table.TableHelper = {
 		createLabel: function(mConfig) {
 			return new TestControl(mConfig);
@@ -282,7 +308,7 @@ sap.ui.define([
 		};
 	});
 
-	function createTableConfig(TableClass, mOptions) {
+	function createTableSettings(TableClass, mSettings) {
 		var oMetadata = TableClass.getMetadata();
 		var aProperties = Object.keys(oMetadata.getAllProperties());
 		var aAggregations = Object.keys(oMetadata.getAllAggregations());
@@ -292,20 +318,20 @@ sap.ui.define([
 
 		aAllMetadataKeys = aAllMetadataKeys.concat(["rowMode", "creationRow"]); // TODO: Remove this once row modes and CreationRow are public.
 
-		return Object.keys(mOptions).reduce(function(oObject, sKey) {
+		return Object.keys(mSettings).reduce(function(oObject, sKey) {
 			if (aAllMetadataKeys.indexOf(sKey) >= 0) {
-				oObject[sKey] = mOptions[sKey];
+				oObject[sKey] = mSettings[sKey];
 			}
 			return oObject;
 		}, {});
 	}
 
-	function setExperimentalConfig(oTable, mOptions) {
+	function setExperimentalSettings(oTable, mSettings) {
 		var aExperimentalProperties = ["_bVariableRowHeightEnabled", "_bLargeDataScrolling"];
 
-		for (var sKey in mOptions) {
+		for (var sKey in mSettings) {
 			if (aExperimentalProperties.indexOf(sKey) >= 0) {
-				oTable[sKey] = mOptions[sKey];
+				oTable[sKey] = mSettings[sKey];
 			}
 		}
 	}
@@ -849,53 +875,52 @@ sap.ui.define([
 	TableQUnitUtils.HeightTestControl = HeightTestControl;
 	TableQUnitUtils.TimeoutError = TimeoutError;
 
-	TableQUnitUtils.setDefaultOptions = function(mOptions) {
-		mOptions = Object.assign({}, mOptions);
-		mDefaultOptions = mOptions;
+	TableQUnitUtils.setDefaultSettings = function(mSettings) {
+		mDefaultSettings = Object.assign({}, mSettings);
 	};
 
-	TableQUnitUtils.getDefaultOptions = function() {
-		return Object.create(mDefaultOptions);
+	TableQUnitUtils.getDefaultSettings = function() {
+		return Object.create(mDefaultSettings);
 	};
 
-	TableQUnitUtils.createTable = function(TableClass, mOptions, fnBeforePlaceAt) {
+	TableQUnitUtils.createTable = function(TableClass, mSettings, fnBeforePlaceAt) {
 		if (typeof TableClass === "function" && TableClass !== Table && TableClass !== TreeTable && TableClass !== AnalyticalTable) {
 			fnBeforePlaceAt = TableClass;
 			TableClass = Table;
 		} else if (typeof TableClass === "object") {
-			fnBeforePlaceAt = mOptions;
-			mOptions = TableClass;
+			fnBeforePlaceAt = mSettings;
+			mSettings = TableClass;
 			TableClass = Table;
 		}
-		mOptions = Object.assign({}, mDefaultOptions, mOptions);
+		mSettings = Object.assign({}, deepCloneSettings(mDefaultSettings), mSettings);
 		TableClass = TableClass == null ? Table : TableClass;
 
 		var oHelperPlugin = new HelperPlugin();
 
-		if ("plugins" in mOptions) {
-			mOptions.plugins.push(oHelperPlugin);
+		if ("plugins" in mSettings) {
+			mSettings.plugins.push(oHelperPlugin);
 		} else {
-			mOptions.plugins = [oHelperPlugin];
+			mSettings.plugins = [oHelperPlugin];
 		}
 
-		var oTable = new TableClass(createTableConfig(TableClass, mOptions));
+		var oTable = new TableClass(createTableSettings(TableClass, mSettings));
 
 		Object.defineProperty(oTable, "qunit", {
 			value: {}
 		});
 
-		setExperimentalConfig(oTable, mOptions);
+		setExperimentalSettings(oTable, mSettings);
 		addAsyncHelpers(oTable, oHelperPlugin);
 		addHelpers(oTable);
 
 		if (typeof fnBeforePlaceAt === "function") {
-			fnBeforePlaceAt(oTable, mOptions);
+			fnBeforePlaceAt(oTable, mSettings);
 		}
 
 		var sContainerId;
-		if (typeof mOptions.placeAt === "string") {
-			sContainerId = mOptions.placeAt;
-		} else if (mOptions.placeAt !== false) {
+		if (typeof mSettings.placeAt === "string") {
+			sContainerId = mSettings.placeAt;
+		} else if (mSettings.placeAt !== false) {
 			sContainerId = "qunit-fixture";
 		}
 
