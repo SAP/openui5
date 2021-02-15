@@ -9,8 +9,14 @@ sap.ui.define([
 	"sap/m/library",
 	"sap/base/util/deepEqual",
 	"sap/m/GroupHeaderListItem",
-	"sap/m/StandardListItem"],
-	function (library, deepEqual, GroupHeaderListItem, StandardListItem) {
+	"sap/m/StandardListItem",
+	"sap/ui/base/ManagedObject"],
+	function (
+		library,
+		deepEqual,
+		GroupHeaderListItem,
+		StandardListItem,
+		ManagedObject) {
 	"use strict";
 
 	var ListType = library.ListType;
@@ -144,7 +150,9 @@ sap.ui.define([
 
 		if (oItem.isA("sap.ui.core.SeparatorItem")) {
 			oListItem = new GroupHeaderListItem({
-				title: oItem.getText(),
+				// GroupHeaderListItem does not escape the title so we need to do it once more.
+				// The first time this value was escaped is when the Separator item was created.
+				title: ManagedObject.escapeSettingsValue(oItem.getText()),
 				type: ListType.Inactive,
 				titleTextDirection: sTextDirection
 			});

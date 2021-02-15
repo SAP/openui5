@@ -32,6 +32,7 @@ sap.ui.define([
 	"sap/m/inputUtils/filterItems",
 	"sap/m/inputUtils/ListHelpers",
 	"./InputRenderer",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "selectText"
 	"sap/ui/dom/jquery/selectText"
@@ -65,6 +66,7 @@ function(
 	filterItems,
 	ListHelpers,
 	InputRenderer,
+	ManagedObject,
 	jQuery
 ) {
 	"use strict";
@@ -766,7 +768,7 @@ function(
 	 */
 	Input.prototype.addSuggestionRowGroup = function(oGroup, oHeader, bSuppressInvalidate) {
 		oHeader = oHeader || new GroupHeaderListItem({
-			title: oGroup.text || oGroup.key
+			title: ManagedObject.escapeSettingsValue(oGroup.text) || ManagedObject.escapeSettingsValue(oGroup.key)
 		});
 
 		this.addAggregation("suggestionRows", oHeader, bSuppressInvalidate);
@@ -785,7 +787,7 @@ function(
 	 */
 	Input.prototype.addSuggestionItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
 		oHeader = oHeader || new SeparatorItem({
-			text: oGroup.text || oGroup.key
+			text: ManagedObject.escapeSettingsValue(oGroup.text) || ManagedObject.escapeSettingsValue(oGroup.key)
 		});
 
 		this.addAggregation("suggestionItems", oHeader, bSuppressInvalidate);
