@@ -77,60 +77,73 @@ sap.ui.define(["./DragDropBase"],
 		}
 	}});
 
-	DragInfo.prototype.isDraggable = function(oControl) {
-		if (!this.getEnabled()) {
+	/**
+	 * Provides DragInfo mixin for the subclasses that need DragInfo functionalities.
+	 *
+	 * @private
+	 * @mixin
+	 * @since 1.87
+	 */
+	DragInfo.Mixin = function() {
+
+		this.isDraggable = function(oControl) {
+			if (!this.getEnabled()) {
+				return false;
+			}
+
+			var oDragSource = this.getParent();
+			if (!oDragSource) {
+				return false;
+			}
+
+			// metadata restrictions
+			var sSourceAggregation = this.getSourceAggregation();
+			if (!this.checkMetadata(oDragSource, sSourceAggregation, "draggable")) {
+				return false;
+			}
+
+			// control itself is the drag source
+			if (oDragSource === oControl && !sSourceAggregation) {
+				return true;
+			}
+
+			// control is in the aggregation of the drag source
+			if (oControl.getParent() === oDragSource && sSourceAggregation === oControl.sParentAggregationName) {
+				return true;
+			}
+
 			return false;
-		}
+		};
 
-		var oDragSource = this.getParent();
-		if (!oDragSource) {
-			return false;
-		}
+		this.fireDragStart = function(oEvent) {
+			if (!oEvent || !oEvent.dragSession) {
+				return;
+			}
 
-		// metadata restrictions
-		var sSourceAggregation = this.getSourceAggregation();
-		if (!this.checkMetadata(oDragSource, sSourceAggregation, "draggable")) {
-			return false;
-		}
+			var oDragSession = oEvent.dragSession;
+			return this.fireEvent("dragStart", {
+				dragSession: oDragSession,
+				browserEvent: oEvent.originalEvent,
+				target: oDragSession.getDragControl()
+			}, true);
+		};
 
-		// control itself is the drag source
-		if (oDragSource === oControl && !sSourceAggregation) {
-			return true;
-		}
+		this.fireDragEnd = function(oEvent) {
+			if (!oEvent || !oEvent.dragSession) {
+				return;
+			}
 
-		// control is in the aggregation of the drag source
-		if (oControl.getParent() === oDragSource && sSourceAggregation === oControl.sParentAggregationName) {
-			return true;
-		}
+			var oDragSession = oEvent.dragSession;
+			return this.fireEvent("dragEnd", {
+				dragSession: oDragSession,
+				browserEvent: oEvent.originalEvent,
+				target: oDragSession.getDragControl()
+			});
+		};
 
-		return false;
 	};
 
-	DragInfo.prototype.fireDragStart = function(oEvent) {
-		if (!oEvent || !oEvent.dragSession) {
-			return;
-		}
-
-		var oDragSession = oEvent.dragSession;
-		return this.fireEvent("dragStart", {
-			dragSession: oDragSession,
-			browserEvent: oEvent.originalEvent,
-			target: oDragSession.getDragControl()
-		}, true);
-	};
-
-	DragInfo.prototype.fireDragEnd = function(oEvent) {
-		if (!oEvent || !oEvent.dragSession) {
-			return;
-		}
-
-		var oDragSession = oEvent.dragSession;
-		return this.fireEvent("dragEnd", {
-			dragSession: oDragSession,
-			browserEvent: oEvent.originalEvent,
-			target: oDragSession.getDragControl()
-		});
-	};
+	DragInfo.Mixin.apply(DragInfo.prototype);
 
 	return DragInfo;
 
