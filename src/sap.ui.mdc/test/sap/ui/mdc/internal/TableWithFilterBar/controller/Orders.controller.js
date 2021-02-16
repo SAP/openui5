@@ -12,6 +12,18 @@ sap.ui.define([
 			});
 		},
 
+		onFiltersChanged: function(oEvent) {
+			var oText = this.getView().byId("statusTextExpanded");
+			if (oText) {
+				oText.setText(oEvent.getParameters().filtersTextExpanded);
+			}
+
+			oText = this.getView().byId("statusTextCollapsed");
+			if (oText) {
+				oText.setText(oEvent.getParameters().filtersText);
+			}
+		},
+
 		onRowPress: function (oEvent) {
 			var oContext = oEvent.getParameter("bindingContext") || oEvent.getSource().getBindingContext();
 

@@ -641,6 +641,6 @@
 						</mdc:dependents>
 					</mdc:Table>
 				</VBox>
-					</f2:content>
+			</f2:content>
 		</f2:DynamicPage>
 </mvc:View>
