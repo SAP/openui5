@@ -21,6 +21,7 @@ sap.ui.define([
 	"sap/ui/fl/registry/SimpleChanges",
 	"sap/ui/core/UIComponent",
 	"sap/ui/events/KeyCodes",
+	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/Device",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
@@ -44,6 +45,7 @@ sap.ui.define([
 	SimpleChanges,
 	UIComponent,
 	KeyCodes,
+	QUnitUtils,
 	Device,
 	sinon
 ) {
@@ -190,7 +192,7 @@ sap.ui.define([
 					done();
 				});
 				this.oSelectionManager = this.oDesignTime.getSelectionManager();
-				this.oEvent = jQuery.Event('keydown');
+				this.oEvent = new Event("keydown");
 				this.oEvent.shiftKey = false;
 				this.oEvent.altKey = false;
 			}.bind(this));
@@ -358,7 +360,7 @@ sap.ui.define([
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.focus();
 			this.oEvent.keyCode = KeyCodes.TAB;
-			oOverlay.$().trigger(this.oEvent);
+			oOverlay.getDomRef().dispatchEvent(this.oEvent);
 			assert.notOk(oOverlay.isSelected(), "then this overlay is not selected");
 		});
 
@@ -368,7 +370,7 @@ sap.ui.define([
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay2.focus();
 			this.oEvent.keyCode = KeyCodes.ENTER;
-			oOverlay2.$().trigger(this.oEvent);
+			oOverlay2.getDomRef().dispatchEvent(this.oEvent);
 			assert.notOk(oOverlay1.isSelected(), "then Overlay1 is not selected");
 			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
 		});
@@ -380,7 +382,7 @@ sap.ui.define([
 			oOverlay2.focus();
 			this.oEvent.keyCode = KeyCodes.ENTER;
 			this.oEvent.ctrlKey = true;
-			oOverlay2.$().trigger(this.oEvent);
+			oOverlay2.getDomRef().dispatchEvent(this.oEvent);
 			assert.ok(oOverlay1.isSelected(), "then Overlay1 is selected");
 			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
 		});
@@ -393,7 +395,7 @@ sap.ui.define([
 			assert.equal(this.oSelectionManager.get().length, 2, "Two Overlays are selected before Keypress");
 			oOverlay2.focus();
 			this.oEvent.keyCode = KeyCodes.ESCAPE;
-			oOverlay2.$().trigger(this.oEvent);
+			oOverlay2.getDomRef().dispatchEvent(this.oEvent);
 			assert.equal(this.oSelectionManager.get().length, 0, "No Overlays are selected after Keypress");
 		});
 
@@ -402,7 +404,7 @@ sap.ui.define([
 			oOverlay.focus();
 			var oParentOverlay = Utils.getFocusableParentOverlay(oOverlay);
 			this.oEvent.keyCode = KeyCodes.ARROW_UP;
-			oOverlay.$().trigger(this.oEvent);
+			oOverlay.getDomRef().dispatchEvent(this.oEvent);
 			assert.ok(Utils.getFocusedOverlay() === oParentOverlay, "Parent Overlay is focused");
 		});
 
@@ -411,7 +413,7 @@ sap.ui.define([
 			oOverlay.focus();
 			var oFirstChildOverlay = Utils.getFirstFocusableDescendantOverlay(oOverlay);
 			this.oEvent.keyCode = KeyCodes.ARROW_DOWN;
-			oOverlay.$().trigger(this.oEvent);
+			oOverlay.getDomRef().dispatchEvent(this.oEvent);
 			assert.ok(Utils.getFocusedOverlay() === oFirstChildOverlay, "Child Overlay is focused");
 		});
 
@@ -420,7 +422,7 @@ sap.ui.define([
 			oOverlay.focus();
 			var oPrevSiblingOverlay = Utils.getPreviousFocusableSiblingOverlay(oOverlay);
 			this.oEvent.keyCode = KeyCodes.ARROW_LEFT;
-			oOverlay.$().trigger(this.oEvent);
+			oOverlay.getDomRef().dispatchEvent(this.oEvent);
 			assert.ok(Utils.getFocusedOverlay() === oPrevSiblingOverlay, "Previous Sibling Overlay is focused");
 		});
 
@@ -429,7 +431,7 @@ sap.ui.define([
 			oOverlay.focus();
 			var oNextSiblingOverlay = Utils.getNextFocusableSiblingOverlay(oOverlay);
 			this.oEvent.keyCode = KeyCodes.ARROW_RIGHT;
-			oOverlay.$().trigger(this.oEvent);
+			oOverlay.getDomRef().dispatchEvent(this.oEvent);
 			assert.ok(Utils.getFocusedOverlay() === oNextSiblingOverlay, "Next Sibling Overlay is focused");
 		});
 
@@ -437,8 +439,8 @@ sap.ui.define([
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			this.oSelectionManager.add(oOverlay1);
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
-			var oMouseEvent = jQuery.Event('contextmenu');
-			oOverlay2.$().trigger(oMouseEvent);
+			var oMouseEvent = new Event("contextmenu");
+			oOverlay2.getDomRef().dispatchEvent(oMouseEvent);
 			assert.notOk(oOverlay1.isSelected(), "then Overlay1 is not selected");
 			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
 		});
@@ -447,8 +449,8 @@ sap.ui.define([
 			var oOverlay1 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
 			this.oSelectionManager.add(oOverlay1);
 			var oOverlay2 = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
-			var oMouseEvent = jQuery.Event('click');
-			oOverlay2.$().trigger(oMouseEvent);
+			var oMouseEvent = new Event("click");
+			oOverlay2.getDomRef().dispatchEvent(oMouseEvent);
 			assert.notOk(oOverlay1.isSelected(), "then Overlay1 is not selected");
 			assert.ok(oOverlay2.isSelected(), "then Overlay2 is selected");
 		});
@@ -457,8 +459,8 @@ sap.ui.define([
 			sandbox.stub(Device.browser, "name").value("ie");
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			assert.notOk(document.activeElement === oOverlay.getDomRef(), "when the Overlay is initially not focused");
-			var oMouseEvent = jQuery.Event('mousedown');
-			oOverlay.$().trigger(oMouseEvent);
+			var oMouseEvent = new Event("mousedown");
+			oOverlay.getDomRef().dispatchEvent(oMouseEvent);
 			assert.ok(document.activeElement === oOverlay.getDomRef(), "then the Overlay is focused");
 		});
 
@@ -469,19 +471,19 @@ sap.ui.define([
 			oOverlay.setFocusable(true);
 			oOverlay.focus();
 			assert.ok(document.activeElement === oOverlay.getDomRef(), "when the Overlay is initialy focused");
-			var oMouseEvent = jQuery.Event('mousedown');
-			oOverlay.$().trigger(oMouseEvent);
+			var oMouseEvent = new Event("mousedown");
+			oOverlay.getDomRef().dispatchEvent(oMouseEvent);
 			assert.notOk(document.activeElement === oOverlay.getDomRef(), "then the Overlay is not focused any more");
 		});
 
 		QUnit.test("Invoking Mouse-Over and Mouse-Leave on an Overlay which is selectable", function (assert) {
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "initially the CSS class is not set");
-			var oMouseEvent = jQuery.Event('mouseover');
-			oOverlay.$().trigger(oMouseEvent);
+			var oMouseOverEvent = new Event("mouseover");
+			oOverlay.getDomRef().dispatchEvent(oMouseOverEvent);
 			assert.ok(oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the Overlay has the proper CSS class after mouse-over event");
-			oMouseEvent = jQuery.Event('mouseleave');
-			oOverlay.$().trigger(oMouseEvent);
+			// this does not seem to work without jQuery
+			QUnitUtils.triggerEvent("mouseleave", oOverlay.getDomRef());
 			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is removed again after mouse-leave event");
 		});
 
@@ -489,16 +491,16 @@ sap.ui.define([
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn11"));
 			oOverlay.setSelectable(false);
 			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "initially the CSS class is not set");
-			var oMouseEvent = jQuery.Event('mouseover');
-			oOverlay.$().trigger(oMouseEvent);
+			var oMouseEvent = new Event("mouseover");
+			oOverlay.getDomRef().dispatchEvent(oMouseEvent);
 			assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is still not set after Mouse-over event");
 		});
 
 		QUnit.test("When 'Editable' changes to false on an hovered Overlay", function (assert) {
 			var fnDone = assert.async();
 			var oOverlay = OverlayRegistry.getOverlay(this.oComponent.createId("innerBtn12"));
-			var oMouseEvent = jQuery.Event('mouseover');
-			oOverlay.$().trigger(oMouseEvent);
+			var oMouseEvent = new Event("mouseover");
+			oOverlay.getDomRef().dispatchEvent(oMouseEvent);
 			assert.ok(oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the Overlay has initaly the proper CSS class");
 			this.oSelectionPlugin.attachEventOnce("elementEditableChange", function() {
 				assert.ok(!oOverlay.hasStyleClass("sapUiRtaOverlayHover"), "then the CSS class is removed again after editable change");
