@@ -168,8 +168,18 @@
 		</f2:header>
 		<f2:content>
 
-			<ScrollContainer vertical="true" width="100%" height="100%" focusable="true">
-				<mdc:Table id="authorsTable" header="Authors" filter="authorsFilterBar" p13nMode="{=['Sort', 'Column']}" delegate="{name: 'sap/ui/v4demo/delegate/Authors.Table.delegate', payload: {collectionName: 'Authors'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
+				<mdc:Table
+						id="authorsTable"
+						header="Authors"
+						filter="authorsFilterBar"
+						p13nMode="Sort,Column"
+						delegate="{name: 'sap/ui/v4demo/delegate/Authors.Table.delegate', payload: {collectionName: 'Authors'}}"
+						showRowCount="true"
+						rowPress="onRowPress"
+						threshold="50"
+						width="100%"
+						rowAction="Navigation"
+					>
 					<mdc:actions>
 						<Button type="Emphasized" text="Add Author" press="onAddButtonPress" />
 					</mdc:actions>
@@ -201,7 +211,6 @@
 						<mdc:table.CreationRow visible="true" apply="sap.m.MessageToast.show('Apply fired')" />
 					</mdc:creationRow>
 				</mdc:Table>
-			</ScrollContainer>
 
 		</f2:content>
 	</f2:DynamicPage>
