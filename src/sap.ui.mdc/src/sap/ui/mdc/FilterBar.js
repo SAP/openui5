@@ -178,9 +178,6 @@ sap.ui.define([
 					return bValue1 && bValue2;
 				}
 			});
-			this._btnAdapt.addStyleClass("sapUiMdcFilterBarBaseButtonPaddingRight");
-
-
 
 			this._btnSearch = this._getSearchButton();
 			this._btnSearch.setModel(this._oModel, FilterBarBase.INNER_MODEL_NAME);
@@ -198,8 +195,9 @@ sap.ui.define([
 					return bValue1 && ((this._isPhone()) ? true : !bValue2);
 				}.bind(this)
 			});
-			this._oFilterBarLayout.addButton(this._btnSearch);
+			this._btnSearch.addStyleClass("sapUiMdcFilterBarBaseButtonPaddingRight");
 
+			this._oFilterBarLayout.addButton(this._btnSearch);
 			this._oFilterBarLayout.addButton(this._btnAdapt);
 		}
 	};
