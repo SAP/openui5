@@ -44,22 +44,6 @@ html[data-sap-ui-browser^="ie"] {
 	}
 }
 
-.sapFDynamicPageContentWrapper {
-	.sapFDynamicPageContentWrapperSpacer {
-		height: 4rem;
-		flex: 0 0 4rem;
-	}
-}
-
-.sapUiSizeCompact {
-	.sapFDynamicPageContentWrapper {
-		.sapFDynamicPageContentWrapperSpacer {
-			height: 3.5rem;
-			flex: 0 0 3.5rem;
-		}
-	}
-}
-
 .sapFDynamicPageContent,
 .sapFDynamicPageContentFitContainer {
 	position: relative;
@@ -72,9 +56,23 @@ html[data-sap-ui-browser^="ie"] {
 	right: 0;
 	top: 0;
 	bottom: 0;
+}
 
-	&.sapFDynamicPageContentFitContainerFooterVisible {
-		bottom: 4rem;
+// adds space underneath the footer (when page in scrollable mode)
+.sapFDynamicPageContentFitContainerFooterVisible:not(.sapFDynamicPageContentFitContainer) {
+	padding-bottom: 4rem;
+}
+
+// adds space underneath the footer (when page in non-scrollable mode)
+.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer > div::after {
+	content: '';
+	display: block;
+	height: 4rem;
+}
+
+.sapUiSizeCompact {
+	.sapFDynamicPageContentFitContainerFooterVisible.sapFDynamicPageContentFitContainer > div::after {
+		height: 3.5rem;
 	}
 }
 

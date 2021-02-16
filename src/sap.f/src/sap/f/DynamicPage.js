@@ -661,7 +661,10 @@ sap.ui.define([
 
 		sAnimationMode = Core.getConfiguration().getAnimationMode();
 		bUseAnimations = sAnimationMode !== Configuration.AnimationMode.none && sAnimationMode !== Configuration.AnimationMode.minimal;
-		this._toggleFooterSpacer(bShow);
+
+		if (exists(this.$contentFitContainer)) {
+			this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainerFooterVisible", bShow);
+		}
 
 		if (bUseAnimations) {
 			this._toggleFooterAnimation(bShow, oFooter);
@@ -705,23 +708,6 @@ sap.ui.define([
 			oFooter.removeStyleClass(DynamicPage.HIDE_FOOTER_CLASS_NAME);
 		} else {
 			oFooter.removeStyleClass(DynamicPage.SHOW_FOOTER_CLASS_NAME);
-		}
-	};
-
-	/**
-	 * Hides/shows the footer spacer.
-	 * @param {boolean} bToggle
-	 * @private
-	 */
-	DynamicPage.prototype._toggleFooterSpacer = function (bToggle) {
-		var $footerSpacer = this.$("spacer");
-
-		if (exists($footerSpacer)) {
-			$footerSpacer.toggleClass("sapFDynamicPageContentWrapperSpacer", bToggle);
-		}
-
-		if (exists(this.$contentFitContainer)) {
-			this.$contentFitContainer.toggleClass("sapFDynamicPageContentFitContainerFooterVisible", bToggle);
 		}
 	};
 

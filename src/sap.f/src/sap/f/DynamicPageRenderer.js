@@ -98,8 +98,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 		}
 		oRm.openEnd();
 		oRm.renderControl(oDynamicPageContent);
-		// Renders Dynamic Page Footer Spacer
-		DynamicPageRenderer.renderFooterSpacer(oRm, oDynamicPage, oDynamicPageFooter, bShowFooter);
 		oRm.close("div");
 		oRm.close("div");
 
@@ -123,17 +121,6 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			oDynamicPageFooter.addStyleClass("sapFDynamicPageActualFooterControl");
 			oRm.renderControl(oDynamicPageFooter);
 			oRm.close(sFooterTag);
-		}
-	};
-
-	DynamicPageRenderer.renderFooterSpacer = function (oRm, oDynamicPage, oDynamicPageFooter, bShowFooter) {
-		if (oDynamicPageFooter) {
-			oRm.openStart("div", oDynamicPage.getId() + "-spacer");
-			if (bShowFooter) {
-				oRm.class("sapFDynamicPageContentWrapperSpacer");
-			}
-			oRm.openEnd();
-			oRm.close("div");
 		}
 	};
 
