@@ -627,9 +627,10 @@ sap.ui.define([
 		 * @param {sap.ui.base.ManagedObject|Element} oObject - XML node or element of the control that will be inserted
 		 * @param {int} iIndex - Index for <code>oObject</code> in the aggregation
 		 * @param {Element} [oView] - XML node of the view, needed in XML case to potentially create (aggregation) nodes
+		 * @param {boolean} [bSkipAdjustIndex] - true in case of inserting an XML node or element at an extension point, needed only in XML case
 		 * @public
 		 */
-		insertAggregation: function (vParent, sAggregationName, oObject, iIndex, oView) {},
+		insertAggregation: function (vParent, sAggregationName, oObject, iIndex, oView, bSkipAdjustIndex) {},
 
 
 		/**

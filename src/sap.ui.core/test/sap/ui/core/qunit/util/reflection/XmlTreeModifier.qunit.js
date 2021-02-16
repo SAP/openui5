@@ -124,7 +124,12 @@ function(
 				'<HBox id="hbox2">' +
 					'<Button id="button4" text="Button4" />' +
 					'<Button id="button5" text="Button5" />' +
-					'<core:ExtensionPoint name="ExtensionPoint3" />' +
+					'<core:ExtensionPoint name="ExtensionPoint3">' +
+						'<Label id="ep3-label1" text="EP label1 - default content" />' +
+						'<Label id="ep3-label2" text="EP label2 - default content" />' +
+						'<Label id="ep3-label3" text="EP label3 - default content" />' +
+						'<Label id="ep3-label4" text="EP label4 - default content" />' +
+					'</core:ExtensionPoint>' +
 					'<Label id="label3" text="TestLabel3" />' +
 				'</HBox>' +
 			'</mvc:View>';
@@ -278,7 +283,7 @@ function(
 		QUnit.test("the first non default aggregation childNode is added under a newly created aggregation node ", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
 			var oCustomDataElement = XmlTreeModifier.createControl('sap.ui.core.CustomData', this.oComponent, this.oXmlView, "someId", {'key' : "someKey", "value": "someValue"});
-			XmlTreeModifier.insertAggregation(oVBox, "customData", oCustomDataElement, 0, this.oXmlView, this.oComponent);
+			XmlTreeModifier.insertAggregation(oVBox, "customData", oCustomDataElement, 0, this.oXmlView);
 			assert.equal(XmlTreeModifier._children(oVBox)[3].localName, "customData", "aggregation node is appended at the end");
 			assert.equal(XmlTreeModifier._children(oVBox)[3].namespaceURI, "sap.m", "aggregation node is added with parents namespaceURI");
 			var aNonDefaultAggregationElements = XmlTreeModifier.getAggregation(oVBox, 'customData');
@@ -290,7 +295,7 @@ function(
 		QUnit.test("a child is added to the default aggregation ", function (assert) {
 			var oVBox = XmlTreeModifier._children(this.oXmlView)[0];
 			var oCustomDataElement = XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView);
-			XmlTreeModifier.insertAggregation(oVBox, "items", oCustomDataElement, 0, this.oXmlView, this.oComponent);
+			XmlTreeModifier.insertAggregation(oVBox, "items", oCustomDataElement, 0, this.oXmlView);
 			var aChildNodes = XmlTreeModifier._children(oVBox);
 			assert.equal(aChildNodes.length, 4, "new control is added directly as child to the parent node");
 			assert.equal(aChildNodes[0].localName, "tooltip");
@@ -790,6 +795,51 @@ function(
 			});
 		});
 
+		QUnit.test("when insertAggregation is called without bSkipAdjustIndex for an aggregation containing an extension point", function (assert) {
+			var oHBox2 = XmlTreeModifier._children(this.oXmlView2)[2];
+			var oSelector = {
+				id: "mytext"
+			};
+			var oText = XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView2, oSelector);
+			XmlTreeModifier.insertAggregation(oHBox2, "items", oText, 6, this.oXmlView2, undefined);
+			var aChildNodes = XmlTreeModifier._children(oHBox2);
+			assert.equal(aChildNodes.length, 5, "new control is added to the aggregation");
+			assert.equal(aChildNodes[0].id, "button4");
+			assert.equal(aChildNodes[1].id, "button5");
+			assert.equal(aChildNodes[2].namespaceURI, "sap.ui.core");
+			assert.ok(aChildNodes[2].tagName.indexOf("ExtensionPoint") > 0);
+			assert.equal(aChildNodes[3].id, "mytext", "the new control is added at the correct position (adjust index took place)");
+			assert.equal(aChildNodes[4].id, "label3");
+		});
+
+		QUnit.test("when insertAggregation is called with bSkipAdjustIndex for an aggregation containing an extension point", function (assert) {
+			var oHBox2 = XmlTreeModifier._children(this.oXmlView2)[2];
+			var oSelector = {
+				id: "mytext"
+			};
+			var oText = XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView2, oSelector);
+			XmlTreeModifier.insertAggregation(oHBox2, "items", oText, 3, this.oXmlView2, true);
+			var aChildNodes = XmlTreeModifier._children(oHBox2);
+			assert.equal(aChildNodes.length, 5, "new control is added to the aggregation");
+			assert.equal(aChildNodes[0].id, "button4");
+			assert.equal(aChildNodes[1].id, "button5");
+			assert.equal(aChildNodes[2].namespaceURI, "sap.ui.core");
+			assert.ok(aChildNodes[2].tagName.indexOf("ExtensionPoint") > 0);
+			assert.equal(aChildNodes[3].id, "mytext", "the new control is added at the correct position (no adjust index took place)");
+			assert.equal(aChildNodes[4].id, "label3");
+		});
+
+		QUnit.test("when insertAggregation is called without bSkipAdjustIndex for an aggregation without an extension point", function (assert) {
+			var oVBox2 = XmlTreeModifier._children(this.oXmlView)[5];
+			var oSelector = {
+				id: "mytext"
+			};
+			var oText = XmlTreeModifier.createControl('sap.m.Text', this.oComponent, this.oXmlView, oSelector);
+			XmlTreeModifier.insertAggregation(oVBox2, "items", oText, 2, this.oXmlView, undefined);
+			var aChildNodes = XmlTreeModifier._children(oVBox2);
+			assert.equal(aChildNodes.length, 5, "new control is added to the aggregation");
+			assert.equal(aChildNodes[3].id, "mytext", "the new control is added at the correct position (index offset = 0)");
+		});
 
 		QUnit.test("when getExtensionPointInfo is called", function (assert) {
 			var oExtensionPointInfo1 = XmlTreeModifier.getExtensionPointInfo("ExtensionPoint1", this.oXmlView2);

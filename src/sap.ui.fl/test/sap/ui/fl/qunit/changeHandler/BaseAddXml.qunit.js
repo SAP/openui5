@@ -8,7 +8,8 @@ sap.ui.define([
 	"sap/ui/fl/changeHandler/JsControlTreeModifier",
 	"sap/ui/fl/changeHandler/XmlTreeModifier",
 	"sap/m/HBox",
-	"sap/m/Button"
+	"sap/m/Button",
+	"sap/ui/thirdparty/sinon-4"
 ], function(
 	jQuery,
 	XMLHelper,
@@ -17,9 +18,12 @@ sap.ui.define([
 	JsControlTreeModifier,
 	XmlTreeModifier,
 	HBox,
-	Button
+	Button,
+	sinon
 ) {
 	"use strict";
+
+	var sandbox = sinon.sandbox.create();
 
 	var mPreloadedModules = {};
 
@@ -288,15 +292,18 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			this.oComponent.destroy();
+			sandbox.restore();
 		}
 	}, function() {
 		QUnit.test("When applying the change on a xml control tree", function(assert) {
+			var oInsertAggregationSpy = sandbox.spy(XmlTreeModifier, "insertAggregation");
 			var oHBoxItems = this.oHBox.childNodes[1];
 			var mRevertData = {
 				id: "projectId.button",
 				aggregationName: "items"
 			};
 			this.oChangeHandler.applyChange(this.oChange, this.oHBox, this.oPropertyBag, this.mChangeInfo);
+			assert.notOk(oInsertAggregationSpy.args[0][5], "insertAggregation is called with falsy bSkipAdjustIndex");
 			assert.equal(oHBoxItems.childNodes.length, 2, "after the BaseAddXml there are two children of the HBox");
 			assert.deepEqual(this.oChange.getRevertData(), [mRevertData], "then the revert data is build properly");
 		});

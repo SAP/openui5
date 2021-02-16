@@ -374,7 +374,7 @@ sap.ui.define([
 		/**
 		 * @inheritDoc
 		 */
-		insertAggregation: function (oParent, sName, oObject, iIndex, oView) {
+		insertAggregation: function (oParent, sName, oObject, iIndex, oView, bSkipAdjustIndex) {
 			var oAggregationNode = XmlTreeModifier._findAggregationNode(oParent, sName);
 
 			if (!oAggregationNode) {
@@ -383,6 +383,18 @@ sap.ui.define([
 				// no ids for aggregation nodes => no need pass id or component
 				oAggregationNode = XmlTreeModifier.createControl(sNamespaceURI + "." + sName, undefined, oView);
 				oParent.appendChild(oAggregationNode);
+			}
+
+			if (!bSkipAdjustIndex) {
+				var aChildren = oAggregationNode.children;
+				var iOffset = 0;
+				var iStopIndex = (iIndex < aChildren.length) ? iIndex : aChildren.length;
+				for (var i = 0; i < iStopIndex; i++) {
+					if (aChildren[i].namespaceURI === "sap.ui.core" && aChildren[i].tagName.indexOf("ExtensionPoint") > -1) {
+						iOffset = iOffset + 1 - aChildren[i].children.length;
+					}
+				}
+				iIndex = iIndex + iOffset;
 			}
 
 			if (iIndex >= oAggregationNode.childElementCount) {

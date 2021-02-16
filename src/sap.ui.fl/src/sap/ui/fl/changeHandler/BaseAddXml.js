@@ -36,6 +36,7 @@ sap.ui.define([
 	 * @param {object} mChangeInfo Change Informantion map
 	 * @param {number} mChangeInfo.index Index defines the position at witch the xml fragment is added
 	 * @param {string} mChangeInfo.aggregationName Aggregation name of the control to be extended by the xml fragment
+	 * @param {boolean} [mChangeInfo.skipAdjustIndex] true in case of inserting an XML node or element at an extension point, needed only in XML case
 	 * @returns {array} an array of new created controls
 	 * @public
 	 * @name sap.ui.fl.changeHandler.BaseAddXml#applyChange
@@ -62,7 +63,7 @@ sap.ui.define([
 			}
 		});
 		aNewControls.forEach(function(oNewControl, iIterator) {
-			oModifier.insertAggregation(oControl, sAggregationName, oNewControl, iIndex + iIterator, oView);
+			oModifier.insertAggregation(oControl, sAggregationName, oNewControl, iIndex + iIterator, oView, mChangeInfo.skipAdjustIndex);
 			aRevertData.push({
 				id: oModifier.getId(oNewControl),
 				aggregationName: sAggregationName
