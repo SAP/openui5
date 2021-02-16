@@ -3,6 +3,7 @@
  */
 
 sap.ui.define([
+	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/documentation/sdk/controller/BaseController",
 	"sap/ui/documentation/sdk/controller/util/SearchUtil",
@@ -31,6 +32,7 @@ sap.ui.define([
 	"sap/m/Toolbar",
 	"sap/ui/documentation/sdk/util/Resources"
 ], function(
+	KeyCodes,
 	jQuery,
 	BaseController,
 	SearchUtil,
@@ -212,6 +214,13 @@ sap.ui.define([
 				}
 
 				this.initSearch();
+
+				// open global search when ctrl + alt + F keys are pressed.
+				document.addEventListener("keydown", function(event) {
+					if (event.keyCode === KeyCodes.F && event.shiftKey && event.ctrlKey ) {
+						this.byId("searchControl")._toggleOpen(true);
+					}
+				}.bind(this));
 
 			},
 
