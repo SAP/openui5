@@ -294,14 +294,8 @@ function(
 	 *
 	 * TODO: write two different functions for two different behaviour
 	 */
-	InputBase.prototype._getInputValue = function(sValue) {
-		sValue = (sValue === undefined) ? this.$("inner").val() || "" : sValue.toString();
-
-		if (this.getMaxLength && this.getMaxLength() > 0) {
-			sValue = sValue.substring(0, this.getMaxLength());
-		}
-
-		return sValue;
+	InputBase.prototype._getInputValue = function (sValue) {
+		return (sValue === undefined) ? (this.$("inner").val() || "") : sValue.toString();
 	};
 
 	/**
@@ -841,19 +835,12 @@ function(
 	InputBase.prototype.updateDomValue = function(sValue) {
 		var oInnerDomRef = this.getFocusDomRef();
 
-
 		if (!this.isActive()) {
 			return this;
 		}
 
 		// respect to max length
 		sValue = this._getInputValue(sValue);
-
-		// update the DOM value when necessary
-		// otherwise cursor can goto end of text unnecessarily
-		if (this._getInputValue() === sValue) {
-			return this;
-		}
 
 		this._bCheckDomValue = true;
 
@@ -1099,8 +1086,7 @@ function(
 	 * @return {this} <code>this</code> to allow method chaining.
 	 * @public
 	 */
-	InputBase.prototype.setValue = function(sValue) {
-
+	InputBase.prototype.setValue = function (sValue) {
 		// validate given value
 		sValue = this.validateProperty("value", sValue);
 

@@ -6436,5 +6436,127 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.module("maxLength Property");
+
+	var fnSetValueTestCase1 = function (mSettings) {
+		QUnit.test("method: setValue() initial rendering should respect getMaxLength", function (assert) {
+			// system under test
+			var oInput = new Input({maxLength: mSettings.maxLength, value: mSettings.value});
+
+			// arrange
+			oInput.placeAt("content");
+			sap.ui.getCore().applyChanges();
+
+			// assertions
+			assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
+
+			// cleanup
+			oInput.destroy();
+		});
+	};
+
+	fnSetValueTestCase1({
+		maxLength : 0,
+			value : "Test",
+		output: "Test"
+	});
+
+	fnSetValueTestCase1({
+		maxLength: 5,
+		value: "Test",
+		output: "Test"
+	});
+
+	fnSetValueTestCase1({
+		maxLength: 2,
+		value: "Test",
+		output: "Te"
+	});
+
+	var fnSetValueTestCase2 = function(mSettings) {
+		QUnit.test("method: setValue() after the initial rendering should respect getMaxLength", function(assert) {
+			// system under test
+			var oInput = new Input({maxLength: mSettings.maxLength});
+			var fnSetValueSpy = this.spy(oInput, "setValue");
+
+			// arrange
+			oInput.placeAt("content");
+			sap.ui.getCore().applyChanges();
+			var fnRerenderSpy = this.spy(oInput, "onAfterRendering");
+
+			// act
+			oInput.setValue(mSettings.input);
+
+			// assertions
+			assert.strictEqual(jQuery(oInput.getFocusDomRef()).val(), mSettings.output);
+			assert.ok(fnSetValueSpy.returned(oInput), "sap.m.InputBase.prototype.setValue() method returns the correct value");
+			assert.strictEqual(fnRerenderSpy.callCount, 0, "Input is not rerendered with setValue calls");
+
+			// cleanup
+			fnSetValueSpy.restore();
+			fnRerenderSpy.restore();
+			oInput.destroy();
+		});
+	};
+
+	fnSetValueTestCase2({
+		maxLength : 0,
+		input : "Test",
+		output: "Test"
+	});
+
+	fnSetValueTestCase2({
+		maxLength : 5,
+		input : "Test",
+		output: "Test"
+	});
+
+	fnSetValueTestCase2({
+		maxLength : 2,
+		input : "Test",
+		output: "Te"
+	});
+
+	QUnit.test("setMaxLength vs setValue priorities", function (assert) {
+		// system under test
+		var oInput = new Input({});
+		// arrange
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.setMaxLength(5);
+		oInput.setValue("12345678");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getValue(), "12345", "Value should be cut to 5 sybmols");
+
+		// Act
+		oInput.setValue("12345678");
+		oInput.setMaxLength(10);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getValue(), "12345", "Value is not updated properly, because maxLength was set after the value and it was cut with the previous maxLength value");
+
+		// Act
+		oInput.setValue("12345678");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getValue(), "12345678", "Now value is updated properly");
+
+		// Act
+		oInput.setMaxLength(0);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oInput.getValue(), "12345678", "maxLength is ignored when its value is 0");
+
+		// cleanup
+		oInput.destroy();
+	});
+
 	return waitForThemeApplied(this.oInput);
 });

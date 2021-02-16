@@ -2347,6 +2347,24 @@ function(
 		return this._$input.val();
 	};
 
+	Input.prototype._getInputValue = function() {
+		var sValue = InputBase.prototype._getInputValue.apply(this, arguments);
+
+		if (this.getMaxLength() > 0) {
+			sValue = sValue.substring(0, this.getMaxLength());
+		}
+
+		return sValue;
+	};
+
+	Input.prototype.setMaxLength = function (iLength) {
+		iLength = this.validateProperty("maxLength", iLength);
+		this.setProperty("maxLength", iLength);
+		this.updateDomValue(this.getProperty("value"));
+
+		return this;
+	};
+
 	/**
 	 * Updates the inner input field.
 	 *

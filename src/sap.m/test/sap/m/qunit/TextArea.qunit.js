@@ -668,7 +668,7 @@ sap.ui.define([
 		// system under test
 		var sInitValue = "This is test text.",
 				iMaxLength = 6,
-				oCounter, oTextArea,
+				oCounter,
 				oTA = new TextArea({
 					value: "",
 					maxLength: iMaxLength,
@@ -683,7 +683,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		oTA.onfocusin();
 
-		oTextArea = $("textarea.sapMTextAreaInner");
 		oCounter = oTA.$("counter");
 
 		// assertions
@@ -695,7 +694,6 @@ sap.ui.define([
 		oTA.setShowExceededText(true);
 		sap.ui.getCore().applyChanges();
 		oCounter = oTA.$("counter");
-		oCounterStyle = window.getComputedStyle(oCounter[0]);
 
 		// assertions
 		assert.strictEqual(oTA.getValue(), sInitValue.substring(0, iMaxLength), "The TextArea value is correct");
