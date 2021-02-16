@@ -112,18 +112,15 @@
 					<l:BlockLayoutCell
 							width="2"
 							class="largeCell"
-							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeF">
+							backgroundColorSet="ColorSet11"
+							backgroundColorShade="ShadeD">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
 									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_3_TITLE}"
 									href="topic/8b49fc198bf04b2d9800fc37fecbb218"
-									class="demokitInitialPagesWhiteText"
 									titleStyle="H1"/>
-							<Text
-									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_3_TEXT}"
-									class="demokitInitialPagesWhiteText"/>
+							<Text text="{i18n>TOPIC_DETAIL_INIT_BLOCK_3_TEXT}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 				</l:BlockLayoutRow>
@@ -132,18 +129,15 @@
 					<l:BlockLayoutCell
 							width="2"
 							class="largeCell"
-							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeE">
+							backgroundColorSet="ColorSet11"
+							backgroundColorShade="ShadeC">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
 									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_4_TITLE}"
 									href="topic/23cfd955f58142389fa7c9097e11559c"
-									class="demokitInitialPagesWhiteText"
 									titleStyle="H1"/>
-							<Text
-									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_4_TEXT}"
-									class="demokitInitialPagesWhiteText"/>
+							<Text text="{i18n>TOPIC_DETAIL_INIT_BLOCK_4_TEXT}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
@@ -212,18 +206,15 @@
 					</l:BlockLayoutCell>
 					<l:BlockLayoutCell
 							class="largeCell"
-							backgroundColorSet="ColorSet6"
-							backgroundColorShade="ShadeF">
+							backgroundColorSet="ColorSet11"
+							backgroundColorShade="ShadeD">
 						<l:VerticalLayout width="100%">
 							<custom:TitleLink
 									width="100%"
 									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_9_TITLE}"
 									href="topic/ec699e0817fb46a0817b0fa276a249f8"
-									class="demokitInitialPagesWhiteText"
 									titleStyle="H1"/>
-							<Text
-									text="{i18n>TOPIC_DETAIL_INIT_BLOCK_9_TEXT}"
-									class="demokitInitialPagesWhiteText"/>
+							<Text text="{i18n>TOPIC_DETAIL_INIT_BLOCK_9_TEXT}"/>
 						</l:VerticalLayout>
 					</l:BlockLayoutCell>
 

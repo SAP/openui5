@@ -89,7 +89,7 @@
 							</layoutData>
 						</Button>
 
-						<MenuButton tooltip="{i18n>APP_INFORMATION_BTN_TOOLTIP}" id="aboutMenuButton" icon="sap-icon://hint" type="Transparent" visible="{=!${appView>/bSearchMode}}">
+						<MenuButton tooltip="{i18n>APP_INFORMATION_BTN_TOOLTIP}" id="aboutMenuButton" icon="sap-icon://action-settings" type="Transparent" visible="{=!${appView>/bSearchMode}}">
 							<layoutData>
 								<OverflowToolbarLayoutData priority="NeverOverflow" />
 							</layoutData>
@@ -99,10 +99,10 @@
 										<MenuItem text="{= ${versionData>/isBetaVersion} ? ${i18n>APP_VERSION_BETA_VERSION} : ${i18n>APP_VERSION_VERSION}} {versionData>/version} {=${versionData>/isDevVersion} ? ${i18n>APP_VERSION_IN_PROGRESS} : ''}" visible="{appView>/bPhoneSize}" />
 										<MenuItem key="change_version" text="{i18n>APP_CHANGE_VERSION_BTN}" visible="{appView>/bShowVersionSwitchInMenu}" />
 										<MenuItem key="feedback" text="{i18n>APP_INFORMATION_BTN_FEEDBACK}" visible="{appView>/bPhoneSize}" />
-										<MenuItem key="about" id="aboutMenuItem" text="{i18n>APP_INFORMATION_BTN_ABOUT}" />
-										<MenuItem key="legal" text="{i18n>APP_INFORMATION_BTN_LEGAL}" />
-										<MenuItem key="privacy" text="{i18n>APP_INFORMATION_BTN_PRIVACY}" />
-										<MenuItem key="terms_of_use" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" visible="{=!${versionData>/isOpenUI5}}">
+										<MenuItem icon="sap-icon://hint" key="about" id="aboutMenuItem" text="{i18n>APP_INFORMATION_BTN_ABOUT}" />
+										<MenuItem icon="sap-icon://compare" key="legal" text="{i18n>APP_INFORMATION_BTN_LEGAL}" />
+										<MenuItem icon="sap-icon://locked" key="privacy" text="{i18n>APP_INFORMATION_BTN_PRIVACY}" />
+										<MenuItem icon="sap-icon://document-text" key="terms_of_use" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" visible="{=!${versionData>/isOpenUI5}}">
 											<items>
 												<MenuItem  key="terms_of_use" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" />
 												<MenuItem  key="copyright" text="{i18n>APP_INFORMATION_BTN_COPYRIGHT}" />
@@ -110,12 +110,19 @@
 												<MenuItem  key="disclaimer" text="{i18n>APP_INFORMATION_BTN_DISCLAIMER}" />
 											</items>
 										</MenuItem>
-										<MenuItem text="{i18n>APP_INFORMATION_BTN_LICENSE}" key="license" visible="{versionData>/isOpenUI5}"/>
-										<MenuItem text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" key="terms_of_use" visible="{versionData>/isOpenUI5}"/>
-										<MenuItem text="{i18n>APP_INFORMATION_BTN_SITEMAP}" key="sitemap" visible="{versionData>/isOpenUI5}"/>
-										<MenuItem text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" key="settings"/>
-										<MenuItem text="{i18n>APP_SETTINGS_DIALOG_COOKIE_PREFERENCES}" key="cookie_preferences"
-												  visible="{= ${versionData>/supportsSWA}}"/>
+										<MenuItem icon="sap-icon://palette" key="appearance" text="{i18n>APP_INFORMATION_BTN_APPEARANCE}">
+											<items>
+												<MenuItem  key="light" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_LIGHT}" />
+												<MenuItem  key="dark" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_DARK}" />
+												<MenuItem  key="auto" text="{i18n>APP_INFORMATION_BTN_APPEARANCE_AUTO}" />
+											</items>
+										</MenuItem>
+										<MenuItem icon="sap-icon://permission" text="{i18n>APP_INFORMATION_BTN_LICENSE}" key="license" visible="{versionData>/isOpenUI5}"/>
+										<MenuItem icon="sap-icon://document-text" text="{i18n>APP_INFORMATION_BTN_TERMS_OF_USE}" key="terms_of_use" visible="{versionData>/isOpenUI5}"/>
+										<MenuItem icon="sap-icon://tree" text="{i18n>APP_INFORMATION_BTN_SITEMAP}" key="sitemap" visible="{versionData>/isOpenUI5}"/>
+										<MenuItem icon="sap-icon://hello-world" text="{i18n>APP_SETTINGS_DIALOG_LANGUAGE}" key="settings"/>
+										<MenuItem icon="sap-icon://customize" text="{i18n>APP_SETTINGS_DIALOG_COOKIE_PREFERENCES}" key="cookie_preferences"
+												visible="{= ${versionData>/supportsSWA}}"/>
 									</items>
 								</Menu>
 							</menu>

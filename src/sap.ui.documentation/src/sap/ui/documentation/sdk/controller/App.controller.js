@@ -77,8 +77,17 @@ sap.ui.define([
 			CHANGE_SETTINGS_TEXT = "settings",
 			CHANGE_COOKIE_PREFERENCES_TEXT = "cookie_preferences",
 			DEMOKIT_DEFAULT_LANGUAGE = "en",
+			DEMOKIT_APPEARANCE_KEY_LIGHT = "light",
+			DEMOKIT_APPEARANCE_KEY_DARK = "dark",
+			DEMOKIT_APPEARANCE_KEY_AUTO = "auto",
+			DEMOKIT_APPEARANCE = Object.create(null),
 			DEMOKIT_CONFIGURATION_LANGUAGE = "language",
+			DEMOKIT_CONFIGURATION_APPEARANCE = "appearance",
 			SITEMAP = "sitemap";
+
+		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_LIGHT] = "sap_fiori_3";
+		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_DARK] = "sap_fiori_3_dark";
+		DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_AUTO] = "sap_fiori_3"; // fallback if window.matchMedia is not supported
 
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			formatter: globalFormatter,
@@ -325,6 +334,8 @@ sap.ui.define([
 					this.cookieSettingsDialogOpen({ showCookieDetails: true });
 				} else if (sTargetText === CHANGE_VERSION_TEXT) {
 					this.onChangeVersionButtonPress();
+				} else if (DEMOKIT_APPEARANCE[sTargetText]) {
+					this._updateAppearance(sTargetText);
 				} else if (sTarget === SITEMAP) {
 					this.onSiteMapPress();
 				} else if (sTarget) {
@@ -542,6 +553,63 @@ sap.ui.define([
 			},
 
 			/**
+			 * Updates the appearance of the Demo Kit depending of the incoming appearance keyword.
+			 * If the keyword is "auto" the appearance will be updated to light or dark depending on the
+			 * user's OS settings.
+			 * @param {string} sKey the appearance keyword
+			 * @private
+			 */
+			_updateAppearance: function(sKey) {
+				if (sKey !== DEMOKIT_APPEARANCE_KEY_AUTO) {
+					Core.applyTheme(DEMOKIT_APPEARANCE[sKey]);
+				} else if (window.matchMedia) {
+					this._toggleLightOrDarkAppearance(window.matchMedia('(prefers-color-scheme: dark)').matches);
+					this._attachPrefersColorSchemeChangeListener();
+				} else {
+					Core.applyTheme(DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_AUTO]);
+				}
+
+				this._sLastKnownAppearanceKey = sKey;
+
+				if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1") {
+					this._oConfigUtil.setCookie(DEMOKIT_CONFIGURATION_APPEARANCE, sKey);
+				}
+			},
+
+			/**
+			 * Toggles the appearance of the Demo Kit to light or dark depending on the incoming argument.
+			 * @param {boolean} bIsDark whether the new appearance should be dark
+			 * @private
+			 */
+			_toggleLightOrDarkAppearance: function (bIsDark) {
+				if (bIsDark) {
+					// dark mode
+					Core.applyTheme(DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_DARK]);
+				} else {
+					// light mode or unsupported prefers-color-scheme
+					Core.applyTheme(DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_LIGHT]);
+				}
+			},
+
+			/**
+			 * Attaches an event listener to the 'change' event of the prefers-color-scheme media.
+			 * Depending on the change and the last known appearance, the appearance of the Demo Kit is changed to light or dark.
+			 * @private
+			 */
+			_attachPrefersColorSchemeChangeListener: function() {
+				var that = this;
+
+				if (!this._bAttachedPrefersColorSchemeChangeListener) {
+					window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
+						if (that._sLastKnownAppearanceKey === DEMOKIT_APPEARANCE_KEY_AUTO) {
+							that._toggleLightOrDarkAppearance(e.matches);
+						}
+					});
+					this._bAttachedPrefersColorSchemeChangeListener = true;
+				}
+			},
+
+			/**
 			 * Creates configuration for the application regarding the URI input.
 			 * @private
 			 */
@@ -551,6 +619,10 @@ sap.ui.define([
 
 				if (!(oUriParams.has('sap-ui-language') || oUriParams.has('sap-language'))) {
 					this._aConfiguration.push(DEMOKIT_CONFIGURATION_LANGUAGE);
+				}
+
+				if (!(oUriParams.has('sap-ui-theme') || oUriParams.has('sap-theme'))) {
+					this._aConfiguration.push(DEMOKIT_CONFIGURATION_APPEARANCE);
 				}
 			},
 
@@ -562,6 +634,8 @@ sap.ui.define([
 				this._aConfiguration.forEach(function(sConf){
 					if (sConf === DEMOKIT_CONFIGURATION_LANGUAGE) {
 						Core.getConfiguration().setLanguage(DEMOKIT_DEFAULT_LANGUAGE);
+					} else if (sConf === DEMOKIT_CONFIGURATION_APPEARANCE) {
+						this._updateAppearance(DEMOKIT_APPEARANCE_KEY_AUTO);
 					}
 				}, this);
 
@@ -582,6 +656,8 @@ sap.ui.define([
 					if (sCookieValue !== "") {
 						if (sConf === DEMOKIT_CONFIGURATION_LANGUAGE) {
 							this._setSelectedLanguage(sCookieValue);
+						} else if (sConf === DEMOKIT_CONFIGURATION_APPEARANCE) {
+							this._updateAppearance(sCookieValue);
 						}
 
 						// If we have available value for the given cookie we remove it from the configuration array.
