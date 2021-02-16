@@ -35,7 +35,7 @@ sap.ui.define(["sap/m/ToolbarRenderer", "sap/ui/core/Renderer", "sap/m/BarInPage
 				rm.openStart("div", oToolbar.getId() + "-scroll")
 					.attr("role", "listbox")
 					.attr("aria-describedby", oToolbar.getId() + "-desc")
-					.attr("aria-roledescription", sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_ROLE_DESCRIPTION"))
+					.attr("aria-label", sap.ui.getCore().getLibraryResourceBundle("sap.uxap").getText("ANCHOR_BAR_ARIA_LABEL"))
 					.openEnd();
 
 				if (!oToolbar._bHideScrollContainer) {
