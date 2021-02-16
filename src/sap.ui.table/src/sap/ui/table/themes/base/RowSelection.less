@@ -36,6 +36,9 @@
 		border-radius: @_sap_ui_table_RowSelection_CheckBoxBorderRadius;
 
 		.sapUiSizeCozy & {
+			width: @_sap_ui_table_RowSelection_CheckBoxSizeCozy;
+			height: @_sap_ui_table_RowSelection_CheckBoxSizeCozy;
+			font-size: @_sap_ui_table_RowSelection_CheckBoxIconSizeCozy;
 			border-radius: @_sap_ui_table_RowSelection_CheckBoxBorderRadiusCozy;
 		}
 	}
@@ -60,10 +63,6 @@
 		bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_RowSelection_CheckBoxSize ~") / 2");
 
 		.sapUiSizeCozy & {
-			width: @_sap_ui_table_RowSelection_CheckBoxSizeCozy;
-			height: @_sap_ui_table_RowSelection_CheckBoxSizeCozy;
-			font-size: @_sap_ui_table_RowSelection_CheckBoxIconSizeCozy;
-
 			/* Select All Checkbox should always be at the bottom */
 			bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_RowSelection_CheckBoxSizeCozy ~") / 2");
 		}
@@ -120,22 +119,22 @@
 }
 
 .sapUiTableSelectClear {
-    width: 100%;
-    height: 100%;
+	width: 100%;
+	height: 100%;
 
-    &::before {
-        display: block;
+	&::before {
+		display: block;
 		position: absolute;
 		width: 100%;
 		vertical-align: baseline;
 		font-size: @_sap_ui_table_RowSelection_CheckBoxIconSizeCozy;
 		line-height: @_sap_ui_table_RowSelection_CheckBoxSizeCozy;
-        bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_RowSelection_CheckBoxSizeCozy ~") / 2");
+		bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeight ~"-" @_sap_ui_table_RowSelection_CheckBoxSizeCozy ~") / 2");
 
-        .sapUiSizeCozy & {
-            bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_RowSelection_CheckBoxSizeCozy ~") / 2");
-        }
-    }
+		.sapUiSizeCozy & {
+			bottom: calc(~"(" @_sap_ui_table_ColumnHeaderHeightCozy ~"-" @_sap_ui_table_RowSelection_CheckBoxSizeCozy ~") / 2");
+		}
+	}
 
 	&:active {
 		// The active state background color and text color should not be applied if column reordering is in progress.
