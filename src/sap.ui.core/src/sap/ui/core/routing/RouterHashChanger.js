@@ -182,7 +182,7 @@ sap.ui.define([
 	 * change from affecting the other routers.
 	 *
 	 * @param {sap.ui.core.routing.Router} oRouter the router that should be saved as the active router
-	 * @return {sap.ui.core.routing.RouterHashChanger} The 'this' instance to chain the call
+	 * @returns {this} The 'this' instance to chain the call
 	 * @private
 	 */
 	RouterHashChanger.prototype._setActiveRouter = function(oRouter) {

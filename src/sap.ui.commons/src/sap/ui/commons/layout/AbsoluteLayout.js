@@ -246,7 +246,7 @@ sap.ui.define([
 	 * @param {object} [oPos=\{left: "0px", right: "0px"\}]
 	 *         JSON-like object which defines the position of the child control in the layout.
 	 *         The object is expected to have one or more from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
-	 * @type sap.ui.commons.layout.AbsoluteLayout
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -269,7 +269,7 @@ sap.ui.define([
 	 * @param {object} [oPos=\{left: "0px", right: "0px"\}]
 	 *         JSON-like object which defines the position of the child control in the layout.
 	 *         The object is expected to have one or more from the attribute set top, bottom, left, right; each with a value of type sap.ui.core.CSSSize.
-	 * @type sap.ui.commons.layout.AbsoluteLayout
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -347,7 +347,7 @@ sap.ui.define([
 	/**
 	 * Destroys all aggregated position containers and their child controls. Returns 'this' to allow method chaining.
 	 *
-	 * @type sap.ui.commons.layout.AbsoluteLayout
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

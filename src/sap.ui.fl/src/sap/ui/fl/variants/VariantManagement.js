@@ -535,7 +535,7 @@ sap.ui.define([
 	 * Sets the new selected variant.
 	 * @public
 	 * @param {String} sKey - Key of the variant that should be selected.
-	 * @returns {sap.ui.fl.variants.VariantManagement} Current instance of {@link sap.ui.fl.variants.VariantManagement}.
+	 * @returns {this} Current instance of {@link sap.ui.fl.variants.VariantManagement}.
 	 */
 	VariantManagement.prototype.setCurrentVariantKey = function(sKey) {
 		var oModel = this.getModel(this._sModelName);

@@ -346,7 +346,7 @@ sap.ui.define([
 			 * this function is ignored
 			 *
 			 * @param {sap.ui.core.routing.Router} oRouter The router instance
-			 * @return {sap.ui.core.routing.Targets} The Targets itself
+			 * @returns {this} The Targets itself
 			 * @private
 			 */
 			_setRouter: function(oRouter) {
@@ -361,7 +361,7 @@ sap.ui.define([
 			/**
 			 * Destroys the targets instance and all created targets. Does not destroy the views instance passed to the constructor. It has to be destroyed separately.
 			 * @public
-			 * @returns { sap.ui.core.routing.Targets } this for chaining.
+			 * @returns {this} this for method chaining.
 			 */
 			destroy : function () {
 				var sTargetName;

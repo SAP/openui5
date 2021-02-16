@@ -935,7 +935,7 @@ sap.ui.define([
 	 * Selects the text of the InputDomRef in the given range
 	 * @param {int} [iStart=0] start position of the text selection
 	 * @param {int} [iEnd=<length of text>] end position of the text selection
-	 * @return {sap.ui.commons.DropdownBox} this DropdownBox instance
+	 * @returns {this} this DropdownBox instance
 	 * @private
 	 */
 	DropdownBox.prototype._doSelect = function(iStart, iEnd){
@@ -1146,7 +1146,7 @@ sap.ui.define([
 	 *
 	 * @param {sap.ui.commons.ListBox} oListBox listBox belonging to this ComboBox instance.
 	 * @param {sap.ui.core.Popup} oPopup the instance of the Popup functionality used for opening the proposal list
-	 * @returns {sap.ui.commons.DropdownBox} DropdownBox
+	 * @returns {this} DropdownBox
 	 * @private
 	 */
 	DropdownBox.prototype._prepareOpen = function(oListBox, oPopup){
@@ -1329,7 +1329,7 @@ sap.ui.define([
 	 * Applies the focus info and ensures the cursor and selection is set again
 	 *
 	 * @param {object} oFocusInfo the focus information belonging to this dropdown
-	 * @returns {sap.ui.commons.DropdownBox} DropdownBox
+	 * @returns {this} DropdownBox
 	 * @private
 	 */
 	DropdownBox.prototype.applyFocusInfo = function(oFocusInfo){
@@ -1483,7 +1483,7 @@ sap.ui.define([
 	 * @param {string} sText new value for property <code>searchHelpText</code>
 	 * @param {string} sAdditionalText new value for property <code>searchHelpAdditionalText</code>
 	 * @param {string} sIcon new value for property <code>searchHelpIcon</code>
-	 * @return {this} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpEnabled = function(bEnabled, sText, sAdditionalText, sIcon) {
@@ -1545,7 +1545,7 @@ sap.ui.define([
 	 * Default value is empty/<code>undefined</code>
 	 *
 	 * @param {string} sSearchHelpText new value for property <code>searchHelpText</code>
-	 * @return {this} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpText = function(sSearchHelpText) {
@@ -1562,7 +1562,7 @@ sap.ui.define([
 	 * Default value is empty/<code>undefined</code>
 	 *
 	 * @param {string} sSearchHelpAdditionalText new value for property <code>searchHelpAdditionalText</code>
-	 * @return {this} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpAdditionalText = function(sSearchHelpAdditionalText) {
@@ -1579,7 +1579,7 @@ sap.ui.define([
 	 * Default value is empty/<code>undefined</code>
 	 *
 	 * @param {sap.ui.core.URI} sSearchHelpIcon new value for property <code>searchHelpIcon</code>
-	 * @return {this} <code>this</code> to allow method chaining
+	 * @returns {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	DropdownBox.prototype.setSearchHelpIcon = function(sSearchHelpIcon) {

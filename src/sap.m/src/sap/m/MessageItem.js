@@ -164,7 +164,7 @@ sap.ui.define([
 		 * <b>Note:</b> if you set the type to None it will be handled and rendered as Information.
 		 *
 		 * @param {sap.ui.core.MessageType} sType Type of Message
-		 * @returns {sap.m.MessageItem} The MessageItem
+		 * @returns {this} The MessageItem
 		 * @public
 		 */
 		MessageItem.prototype.setType = function (sType) {

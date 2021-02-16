@@ -85,7 +85,7 @@ sap.ui.define(['sap/ui/commons/library', 'sap/ui/core/CustomStyleClassSupport', 
 	 * @function
 	 * @param {string} sStyleClass
 	 *         the CSS class name to be added
-	 * @type sap.ui.commons.layout.MatrixLayoutRow
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
@@ -101,7 +101,7 @@ sap.ui.define(['sap/ui/commons/library', 'sap/ui/core/CustomStyleClassSupport', 
 	 * @function
 	 * @param {string} sStyleClass
 	 *         the style to be removed
-	 * @type sap.ui.commons.layout.MatrixLayoutRow
+	 * @type this
 	 * @public
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */

@@ -656,7 +656,7 @@ function(
 
 		/**
 		 * @private
-		 * @returns {sap.m.ObjectListItem} Title text control
+		 * @returns {sap.m.Text} Title text control
 		 */
 		ObjectListItem.prototype._getTitleText = function() {
 

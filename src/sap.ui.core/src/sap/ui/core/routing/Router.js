@@ -1514,7 +1514,7 @@ sap.ui.define([
 			 * Use {@link sap.ui.core.routing.Router.getRouter Router.getRouter()} to retrieve the instance.
 			 *
 			 * @param {string} sName Name of the router instance
-			 * @returns {sap.ui.core.routing.Router} The router instance
+			 * @returns {this} The router instance
 			 * @public
 			 */
 			register : function (sName) {
