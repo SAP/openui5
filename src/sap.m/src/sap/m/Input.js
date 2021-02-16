@@ -961,6 +961,7 @@ function(
 		}
 
 		if (!(this.isMobileDevice() && this instanceof sap.m.MultiInput && this._isMultiLineMode)) {
+			this.setSelectionUpdatedFromList(false);
 			this._closeSuggestionPopup();
 		}
 
@@ -1212,6 +1213,7 @@ function(
 		if (this._isSuggestionsPopoverOpen()) {
 			// mark the event as already handled
 			oEvent.originalEvent._sapui_handledByControl = true;
+			this.setSelectionUpdatedFromList(false);
 			this._closeSuggestionPopup();
 
 			// restore the initial value that was there before suggestion dialog
@@ -1243,6 +1245,7 @@ function(
 		this.cancelPendingSuggest();
 
 		if (this._isSuggestionsPopoverOpen() && !this.isComposingCharacter()) {
+			this.setSelectionUpdatedFromList(true);
 			this._closeSuggestionPopup();
 			iValueLength = this.getDOMValue() ? this.getDOMValue().length : null;
 			this.selectText(iValueLength, iValueLength); // Remove text selection
@@ -2760,7 +2763,7 @@ function(
 					var oList = this._getSuggestionsPopover().getItemsContainer(),
 						oSelectedItem = oList && oList.getSelectedItem();
 
-					if (this.getSelectionUpdatedFromList() || this._sProposedItemText) {
+					if (this.getSelectionUpdatedFromList()) {
 						this.updateSelectionFromList(oSelectedItem);
 					}
 
