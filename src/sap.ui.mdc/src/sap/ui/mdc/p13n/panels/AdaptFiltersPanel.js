@@ -15,9 +15,10 @@ sap.ui.define([
     "sap/m/SegmentedButtonItem",
     "sap/m/SearchField",
     "sap/m/OverflowToolbarLayoutData",
-    "sap/ui/core/Item"
-], function(Container, ContainerItem, ListView, GroupView, Filter, Button, Bar, ToolbarSpacer, Select, SegmentedButton, SegmentedButtonItem, SearchField, OverflowToolbarLayoutData, Item) {
-	"use strict";
+    "sap/ui/core/Item",
+    "sap/base/util/UriParameters"
+], function(Container, ContainerItem, ListView, GroupView, Filter, Button, Bar, ToolbarSpacer, Select, SegmentedButton, SegmentedButtonItem, SearchField, OverflowToolbarLayoutData, Item, SAPUriParameters) {
+    "use strict";
 
     /**
 	 * Constructor for a new AdaptFiltersPanel
@@ -44,13 +45,6 @@ sap.ui.define([
 				itemFactory: {
 					type: "function"
                 },
-				/**
-				 * Determines whether the list view should be enabled
-				 */
-				enableListView: {
-					type: "boolean",
-					defaultValue: true
-                },
                 /**
 				 * Determines whether the reordering of items should be enabled
 				 */
@@ -74,10 +68,17 @@ sap.ui.define([
             content: new GroupView(this.getId() + "-groupView", {})
         }));
 
+        this.addView(new ContainerItem({
+            key: this.LIST_KEY,
+            content: new ListView(this.getId() + "-listView", {
+                enableReorder: this.getEnableReorder()
+            })
+        }));
+
+        var oURLParams = new SAPUriParameters(window.location.search);
+        this.setDefaultView(oURLParams.getAll("sap-ui-xx-newFilterDefault")[0] === "true" ? this.LIST_KEY : this.GROUP_KEY);
 
         Container.prototype.applySettings.apply(this, arguments);
-
-        this._checkListView();
 
         var oQuickFilter = this._getQuickFilter();
         var oViewSwitch = this._getViewSwitch();
@@ -102,36 +103,6 @@ sap.ui.define([
         }));
 
         this.addStyleClass("sapUiMDCAdaptFiltersPanel");
-    };
-
-    /**
-     * Can be used to initially enable the list view
-     * (Note: temporary feature toggle)
-     *
-     * @param {boolean} bEnabled
-     */
-    AdaptFiltersPanel.prototype._checkListView = function(bEnabled) {
-
-        if (this.getEnableListView()){
-            this.addView(new ContainerItem({
-                key: this.LIST_KEY,
-                content: new ListView(this.getId() + "-listView", {
-                    enableReorder: this.getEnableReorder()
-                })
-            }));
-
-            var oListViewSwitch = new SegmentedButtonItem({
-                tooltip: this._getResourceText("filterbar.ADAPT_LIST_VIEW"),
-                icon: "sap-icon://list",
-                key: this.LIST_KEY
-            });
-
-            this._getViewSwitch().insertItem(oListViewSwitch, 0);
-            this._getViewSwitch().setVisible(true);
-        }
-
-        return this;
-
     };
 
     /**
@@ -226,9 +197,6 @@ sap.ui.define([
         }));
 
         var oViewSwitch = this._getViewSwitch();
-		if (oViewSwitch && !oViewSwitch.getVisible()) {
-			oViewSwitch.setVisible(true);
-        }
 
 		oViewSwitch.addItem(oItem);
     };
@@ -371,8 +339,12 @@ sap.ui.define([
     AdaptFiltersPanel.prototype._getViewSwitch = function() {
         if (!this._oViewSwitch) {
             this._oViewSwitch = new SegmentedButton({
-                visible: false,
                 items: [
+                    new SegmentedButtonItem({
+                        tooltip: this._getResourceText("filterbar.ADAPT_LIST_VIEW"),
+                        icon: "sap-icon://list",
+                        key: this.LIST_KEY
+                    }),
                     new SegmentedButtonItem({
                         tooltip: this._getResourceText("filterbar.ADAPT_GROUP_VIEW"),
                         icon: "sap-icon://group-2",

@@ -81,10 +81,12 @@ sap.ui.define([
 			assert.ok(Engine.getInstance()._hasActiveP13n(this.oFilterBar),"dialog is open");
 
 			//check inner panel
+			var oPanel = oP13nControl.getContent()[0]._oFilterBarLayout.getInner();
+			oPanel.switchView(oPanel.LIST_KEY);
 			var oInnerTable = oP13nControl.getContent()[0]._oFilterBarLayout.getInner().getCurrentViewContent()._oListControl;
 			assert.ok(oP13nControl.getContent()[0].isA("sap.ui.mdc.filterbar.p13n.AdaptationFilterBar"), "Correct P13n UI created");
 			assert.ok(oInnerTable, "Inner Table has been created");
-            assert.equal(oInnerTable.getItems()[0].getContent()[0].getContent()[0].getItems().length, 3, "Inner Table does not know $search");
+            assert.equal(oInnerTable.getItems().length, 3, "Inner Table does not know $search");
 			done();
 
 		}.bind(this));

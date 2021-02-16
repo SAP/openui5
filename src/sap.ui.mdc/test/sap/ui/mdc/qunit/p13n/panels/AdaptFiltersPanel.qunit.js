@@ -80,6 +80,7 @@ sap.ui.define([
             this.oExistingMock = oMockExisting;
             this.aMockInfo = aInfoData;
             this.oAFPanel = new AdaptFiltersPanel({
+                defaultView: "group",
                 footer: new Toolbar("ID_TB1",{})
             });
 

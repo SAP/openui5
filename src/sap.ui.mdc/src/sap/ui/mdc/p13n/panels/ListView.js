@@ -289,7 +289,9 @@ sap.ui.define([
 	};
 
     ListView.prototype.filterWithoutDestroy = function(aFilter) {
-        this._oListControl.getBinding("items").filter(aFilter, true);
+        if (this._oListControl.getBinding("items")){
+            this._oListControl.getBinding("items").filter(aFilter, true);
+        }
 	};
 
     ListView.prototype._addMoveButtons = function(oItem) {
