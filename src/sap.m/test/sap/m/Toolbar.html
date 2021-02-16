@@ -6,7 +6,10 @@
 
 <script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m">
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m"
+	data-sap-ui-resourceroots='{
+		"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
+	}'>
 </script>
 
 <style type="text/css"></style>
@@ -49,7 +52,7 @@
 			}),
 			new sap.m.SearchField({
 				placeholder : "Search",
-                ariaDescribedBy: ["SF_AD"],
+                ariaLabelledBy: ["SF_AD"],
 				width : "200px"
 			}),
 			new sap.m.SegmentedButton({
@@ -127,6 +130,7 @@
 			}),
 			new sap.m.Input({
 				placeholder: "Input",
+                ariaLabelledBy: ["SF_AD"],
 				width: "150px"
 			}),
 			new sap.m.DateTimePicker({
