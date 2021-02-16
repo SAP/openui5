@@ -3260,6 +3260,55 @@ sap.ui.define([
 		});
 	});
 
+	//*********************************************************************************************
+	QUnit.test("requestCodeList", function (assert) {
+		var oModel = new ODataModel("/fake/emptySchema", {}),
+			oMetaModel = oModel.getMetaModel();
+
+		return oMetaModel.loaded().then(function () {
+			// code under test
+			var oCodeListPromise = oMetaModel.requestCodeList();
+
+			assert.ok(oCodeListPromise instanceof Promise);
+
+			oCodeListPromise.then(function (oResult) {
+				assert.strictEqual(oResult, null);
+			}, function () {
+				assert.ok(false);
+			});
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestCurrencyCodes", function (assert) {
+		var oModel = new ODataModel("/fake/emptySchema", {}),
+			oMetaModel = oModel.getMetaModel();
+
+		this.mock(oMetaModel).expects("requestCodeList")
+			.withExactArgs("CurrencyCodes")
+			.returns("~codeList");
+
+		return oMetaModel.loaded().then(function () {
+			// code under test
+			assert.strictEqual(oMetaModel.requestCurrencyCodes(), "~codeList");
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestUnitsOfMeasure", function (assert) {
+		var oModel = new ODataModel("/fake/emptySchema", {}),
+			oMetaModel = oModel.getMetaModel();
+
+		this.mock(oMetaModel).expects("requestCodeList")
+			.withExactArgs("UnitsOfMeasure")
+			.returns("~codeList");
+
+		return oMetaModel.loaded().then(function () {
+			// code under test
+			assert.strictEqual(oMetaModel.requestUnitsOfMeasure(), "~codeList");
+		});
+	});
+
 	//TODO support getODataValueLists with reference to complex type property via entity type
 	//TODO protect against addAnnotationUrl calls from outside ODataMetaModel?
 
