@@ -2380,5 +2380,32 @@
         ]
       }
     ]
+  },
+  "1.71.29": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "6485f4c9bb89693aea1e6c3485057bad503b40fd",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Escape curly braces when creating Token",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180090423"
+          }
+        ]
+      },
+      {
+        "id": "7dd0c90b5cd787f10b79def89304a9763763c254",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Performance optimisations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000292512021"
+          }
+        ]
+      }
+    ]
   }
 }

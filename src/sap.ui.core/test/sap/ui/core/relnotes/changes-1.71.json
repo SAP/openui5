@@ -978,5 +978,29 @@
         ]
       }
     ]
+  },
+  "1.71.29": {
+    "date": "February 2021",
+    "notes": [
+      {
+        "id": "62c2273a104555ec9da84be22884059747c614dc",
+        "type": "FIX",
+        "text": " theming/Parameters: Request library-parameters.json with credentials",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070394805"
+          },
+          {
+            "type": "BCP",
+            "reference": "2070394696"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180075387"
+          }
+        ]
+      }
+    ]
   }
 }
