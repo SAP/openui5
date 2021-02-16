@@ -830,7 +830,7 @@ sap.ui.define([
 	 * are combined with OR, while filters on different table columns are combined with AND.
 	 * Please note that a custom filter function is not supported.
 	 *
-	 * @param {sap.ui.model.Filter[]|sap.ui.model.odata.Filter[]} aFilters Array of filter objects
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters Single filter object or an array of filter objects
 	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
 	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining
 	 *

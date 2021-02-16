@@ -196,7 +196,7 @@ sap.ui.define([
 	 * When no <code>sFilterType</code> is given, any previously configured application
 	 * filters are cleared and the given filters are used as control filters
 	 *
-	 * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters Single filter object or an array of filter objects
 	 * @param {sap.ui.model.FilterType} [sFilterType=undefined] Type of the filter which should
 	 *  be adjusted; if no type is given, then any previously configured application filters are
 	 *  cleared and the given filters are used as control filters
