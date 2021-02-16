@@ -3490,7 +3490,7 @@ sap.ui.define([
 		},
 		editUrl : "TEAMS(~0)/TEAM_2_CONTAINED_C(~1)"
 	}, { // navigation from contained to root entity, resolved via navigation property binding path
-		 // via transient predicate
+		// via transient predicate
 		path : "/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_S/S_2_EMPLOYEE|ID",
 		fetchPredicates : {
 			"/TEAMS($uid=id-1-23)/TEAM_2_CONTAINED_S/S_2_EMPLOYEE" : "tea_busi.Worker"

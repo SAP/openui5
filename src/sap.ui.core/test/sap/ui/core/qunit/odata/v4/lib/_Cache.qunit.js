@@ -4272,9 +4272,9 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(mQueryOptions), "cache/path")
 			.returns(mQueryOptionsForPath);
 		oHelperMock.expects("merge")
-		   .withExactArgs({}, sinon.match.same(mCustomQueryOptions),
-			   sinon.match.same(mQueryOptionsForPath))
-		   .returns(mResultingQueryOptions);
+			.withExactArgs({}, sinon.match.same(mCustomQueryOptions),
+				sinon.match.same(mQueryOptionsForPath))
+			.returns(mResultingQueryOptions);
 		oHelperMock.expects("buildPath").withExactArgs("Employees", "cache/path")
 			.returns("resource/path");
 		oHelperMock.expects("getMetaPath").withExactArgs("cache/path").returns("meta/path");

@@ -636,7 +636,7 @@ sap.ui.define([
 	 * for asynchronous access.
 	 *
 	 * @param {string} sPath
-	 * 	 A path relative to this context
+	 *   A path relative to this context
 	 * @param {boolean} [bExternalFormat=false]
 	 *   If <code>true</code>, the value is returned in external format using a UI5 type for the
 	 *   given property path that formats corresponding to the property's EDM type and constraints.
