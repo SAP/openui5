@@ -568,6 +568,7 @@ sap.ui.define([
 		}, "full hash parsed");
 
 	});
+
 	QUnit.test("Parse subhashes without top level hash", function(assert) {
 		var sHash = "&/comments/1&/notifications/2";
 		var oParsedHash = this.oHashChanger._parseHash(sHash);
@@ -576,6 +577,20 @@ sap.ui.define([
 			subHashMap: {
 				comments: "1",
 				notifications: "2"
+			}
+		}, "full hash parsed");
+	});
+
+	QUnit.test("Parse subhashes that contain emtpy string value", function(assert) {
+		var sHash = "notifications&/comments&/notifications/2&/comments1/&/comments2";
+		var oParsedHash = this.oHashChanger._parseHash(sHash);
+		assert.deepEqual(oParsedHash, {
+			hash: "notifications",
+			subHashMap: {
+				comments: "",
+				notifications: "2",
+				comments1: "",
+				comments2: ""
 			}
 		}, "full hash parsed");
 	});
