@@ -61,6 +61,7 @@ sap.ui.define([
 		}
 
 		this.oAggregation = oAggregation;
+		this.sDownloadUrl = _Cache.prototype.getDownloadUrl.call(this, "");
 		this.aElements = [];
 		this.aElements.$byPredicate = {};
 		this.aElements.$count = undefined;
@@ -213,22 +214,14 @@ sap.ui.define([
 	_AggregationCache.prototype.createGroupLevelCache = function (oGroupNode, bHasGrandTotal) {
 		var oAggregation = this.oAggregation,
 			aAllProperties = _AggregationHelper.getAllProperties(oAggregation),
-			oCache, sFilteredOrderby, aGroupBy, bLeaf, iLevel, mQueryOptions, bTotal;
+			oCache, aGroupBy, bLeaf, iLevel, mQueryOptions, bTotal;
 
 		iLevel = oGroupNode ? oGroupNode["@$ui5.node.level"] + 1 : 1;
 		bLeaf = iLevel > oAggregation.groupLevels.length;
 		aGroupBy = bLeaf
 			? oAggregation.groupLevels.concat(Object.keys(oAggregation.group).sort())
 			: oAggregation.groupLevels.slice(0, iLevel);
-
-		mQueryOptions = Object.assign({}, this.mQueryOptions);
-		sFilteredOrderby
-			= _AggregationHelper.filterOrderby(mQueryOptions.$orderby, oAggregation, iLevel);
-		if (sFilteredOrderby) {
-			mQueryOptions.$orderby = sFilteredOrderby;
-		} else {
-			delete mQueryOptions.$orderby;
-		}
+		mQueryOptions = _AggregationHelper.filterOrderby(this.mQueryOptions, oAggregation, iLevel);
 		bTotal = !bLeaf && Object.keys(oAggregation.aggregate).some(function (sAlias) {
 			return oAggregation.aggregate[sAlias].subtotals;
 		});
@@ -411,6 +404,24 @@ sap.ui.define([
 		this.registerChange(sPath, oListener);
 
 		return this.drillDown(this.aElements, sPath, oGroupLock);
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.lib._Cache#getDownloadQueryOptions
+	 */
+	_AggregationCache.prototype.getDownloadQueryOptions = function (mQueryOptions) {
+		return _AggregationHelper.buildApply(this.oAggregation,
+			_AggregationHelper.filterOrderby(mQueryOptions, this.oAggregation),
+			0, true);
+	};
+
+	/**
+	 * @override
+	 * @see sap.ui.model.odata.v4.lib._Cache#getDownloadUrl
+	 */
+	_AggregationCache.prototype.getDownloadUrl = function (_sPath, _mCustomQueryOptions) {
+		return this.sDownloadUrl;
 	};
 
 	/**
@@ -611,19 +622,16 @@ sap.ui.define([
 	_AggregationCache.prototype.refreshKeptElements = function () {};
 
 	/**
-	 * Returns the cache's URL (ignoring dynamic parameters $skip/$top).
+	 * Returns the cache's URL.
 	 *
 	 * @returns {string} The URL
 	 *
 	 * @public
-	 * @see sap.ui.model.odata.v4.lib._AggregationCache.getResourcePathWithQuery
+	 * @see sap.ui.model.odata.v4.lib._AggregationCache#getDownloadUrl
 	 */
 	// @override sap.ui.model.odata.v4.lib._Cache#toString
 	_AggregationCache.prototype.toString = function () {
-		return this.oRequestor.getServiceUrl() + this.sResourcePath
-			+ this.oRequestor.buildQueryString(this.sMetaPath,
-				_AggregationHelper.buildApply(this.oAggregation, this.mQueryOptions),
-				false, true);
+		return this.sDownloadUrl;
 	};
 
 	//*********************************************************************************************

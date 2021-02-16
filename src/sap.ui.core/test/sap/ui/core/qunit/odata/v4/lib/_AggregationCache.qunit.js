@@ -219,6 +219,7 @@ sap.ui.define([
 			oCache,
 			oEnhanceCacheWithGrandTotalExpectation,
 			oFirstLevelCache = {},
+			oGetDownloadUrlExpectation,
 			oGrandTotal = {},
 			oGrandTotalCopy = {},
 			oGroupLock = {
@@ -246,6 +247,8 @@ sap.ui.define([
 			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(false);
 		this.mock(_MinMaxHelper).expects("createCache").never();
 		this.mock(_Cache).expects("create").never();
+		oGetDownloadUrlExpectation = this.mock(_Cache.prototype).expects("getDownloadUrl")
+			.withExactArgs("").returns("~downloadUrl~");
 		this.mock(_AggregationCache.prototype).expects("createGroupLevelCache")
 			.withExactArgs(null, bHasGrandTotal).returns(oFirstLevelCache);
 		oEnhanceCacheWithGrandTotalExpectation
@@ -269,6 +272,10 @@ sap.ui.define([
 		assert.strictEqual(typeof oCache.read, "function");
 		// c'tor itself
 		assert.strictEqual(oCache.oAggregation, oAggregation);
+		assert.strictEqual(oCache.sDownloadUrl, "~downloadUrl~");
+		assert.strictEqual(oCache.getDownloadUrl(""), "~downloadUrl~"); // <-- code under test
+		assert.strictEqual(oCache.toString(), "~downloadUrl~"); // <-- code under test
+		assert.ok(oGetDownloadUrlExpectation.alwaysCalledOn(oCache));
 		assert.deepEqual(oCache.aElements, []);
 		assert.deepEqual(oCache.aElements.$byPredicate, {});
 		assert.ok("$count" in oCache.aElements);
@@ -341,31 +348,10 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("toString", function (assert) {
-		var oAggregation = { // Note: properties added by _AggregationHelper.buildApply before
-				aggregate : {},
-				group : {},
-				groupLevels : ["foo"]
-			},
-			mQueryOptions = {},
-			mQueryOptionsWithApply = {},
-			oCache = _AggregationCache.create(this.oRequestor, "Foo", "", oAggregation,
-				mQueryOptions);
-
-		this.mock(_AggregationHelper).expects("buildApply")
-			.withExactArgs(sinon.match.same(oAggregation), sinon.match.same(mQueryOptions))
-			.returns(mQueryOptionsWithApply);
-		this.oRequestorMock.expects("buildQueryString")
-			.withExactArgs("/Foo", sinon.match.same(mQueryOptionsWithApply), false, true)
-			.returns("?foo=bar");
-
-		assert.strictEqual(oCache.toString(), "/~/Foo?foo=bar");
-	});
-
-	//*********************************************************************************************
 	// Using PICT /r:4848
 	//
 	// sFilterBeforeAggregate: "", "~filterBeforeAggregate~"
+	// # the following parameter is ignored below
 	// sFilteredOrderBy: "", "~filteredOrderBy~"
 	// bHasGrandTotal:   false, true
 	// bLeaf:            false, true
@@ -376,42 +362,36 @@ sap.ui.define([
 	// IF [oParentGroupNode] = "{}" THEN [bHasGrandTotal] = "false";
 [{
 	sFilterBeforeAggregate : "",
-	sFilteredOrderBy : "~filteredOrderBy~",
 	bHasGrandTotal : true,
 	bLeaf : false,
 	oParentGroupNode : undefined,
 	bSubtotals : false
 }, {
 	sFilterBeforeAggregate : "",
-	sFilteredOrderBy : "",
 	bHasGrandTotal : false,
 	bLeaf : false,
 	oParentGroupNode : {},
 	bSubtotals : true
 }, {
 	sFilterBeforeAggregate : "",
-	sFilteredOrderBy : "~filteredOrderBy~",
 	bHasGrandTotal : false,
 	bLeaf : true,
 	oParentGroupNode : {},
 	bSubtotals : false
 }, {
 	sFilterBeforeAggregate : "~filterBeforeAggregate~",
-	sFilteredOrderBy : "~filteredOrderBy~",
 	bHasGrandTotal : false,
 	bLeaf : false,
 	oParentGroupNode : undefined,
 	bSubtotals : true
 }, {
 	sFilterBeforeAggregate : "~filterBeforeAggregate~",
-	sFilteredOrderBy : "",
 	bHasGrandTotal : false,
 	bLeaf : true,
 	oParentGroupNode : {},
 	bSubtotals : false
 }, {
 	sFilterBeforeAggregate : "~filterBeforeAggregate~",
-	sFilteredOrderBy : "",
 	bHasGrandTotal : true,
 	bLeaf : false,
 	oParentGroupNode : undefined,
@@ -442,11 +422,11 @@ sap.ui.define([
 			aGroupBy = ["a"],
 			iLevel = oPICT.oParentGroupNode ? 3 : 1,
 			mQueryOptions = {
-				$$filterBeforeAggregate : oPICT.sFilterBeforeAggregate,
-				$orderby : "~orderby~"
+				$$filterBeforeAggregate : oPICT.sFilterBeforeAggregate
+				// $orderby : "~orderby~"
 			};
 
-		function isFilterBeforeAggregateOK(o) {
+		function isOK(o) {
 			if (oPICT.oParentGroupNode) {
 				return o.$$filterBeforeAggregate === (oPICT.sFilterBeforeAggregate
 					? "~filter~ and (~filterBeforeAggregate~)"
@@ -454,13 +434,6 @@ sap.ui.define([
 			}
 
 			return o.$$filterBeforeAggregate === oPICT.sFilterBeforeAggregate;
-		}
-
-		function isOK(o) {
-			return isFilterBeforeAggregateOK(o)
-				&& (oPICT.sFilteredOrderBy
-					? o.$orderby === oPICT.sFilteredOrderBy
-					: !("$orderby" in o));
 		}
 
 		if (!oPICT.bHasGrandTotal) {
@@ -483,12 +456,10 @@ sap.ui.define([
 
 		this.mock(_AggregationHelper).expects("getAllProperties")
 			.withExactArgs(sinon.match.same(oAggregation)).returns(aAllProperties);
-		this.mock(Object).expects("assign")
-			.withExactArgs({}, sinon.match.same(oAggregationCache.mQueryOptions))
-			.returns(mQueryOptions);
 		this.mock(_AggregationHelper).expects("filterOrderby")
-			.withExactArgs("~orderby~", sinon.match.same(oAggregation), iLevel)
-			.returns(oPICT.sFilteredOrderBy);
+			.withExactArgs(sinon.match.same(oAggregationCache.mQueryOptions),
+				sinon.match.same(oAggregation), iLevel)
+			.returns(mQueryOptions);
 		if (oPICT.bHasGrandTotal) {
 			this.mock(_AggregationHelper).expects("buildApply").never();
 		} else {
@@ -2208,10 +2179,33 @@ sap.ui.define([
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
 				group: {},
-				groupLevels : []
+				groupLevels : ["a"]
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {});
 
+		// code under test
 		assert.strictEqual(oCache.refreshKeptElements(), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDownloadQueryOptions", function (assert) {
+		var oAggregation = { // filled before by buildApply
+				aggregate : {},
+				group: {},
+				groupLevels : ["a"]
+			},
+			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
+			mDownloadQueryOptions = {},
+			mQueryOptions = {};
+
+		this.mock(_AggregationHelper).expects("filterOrderby")
+			.withExactArgs(sinon.match.same(mQueryOptions), sinon.match.same(oAggregation))
+			.returns("~mFilteredQueryOptions~");
+		this.mock(_AggregationHelper).expects("buildApply")
+			.withExactArgs(sinon.match.same(oAggregation), "~mFilteredQueryOptions~", 0, true)
+			.returns(mDownloadQueryOptions);
+
+		// code under test
+		assert.strictEqual(oCache.getDownloadQueryOptions(mQueryOptions), mDownloadQueryOptions);
 	});
 });

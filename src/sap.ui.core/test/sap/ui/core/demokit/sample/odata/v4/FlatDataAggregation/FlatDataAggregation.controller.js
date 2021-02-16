@@ -11,6 +11,20 @@ sap.ui.define([
 
 	return Controller.extend(
 			"sap.ui.core.sample.odata.v4.FlatDataAggregation.FlatDataAggregation", {
+		download : function (oListBinding) {
+			oListBinding.requestDownloadUrl().then(function (sUrl) {
+				window.open(sUrl, sUrl);
+			});
+		},
+
+		onDownloadGrid : function () {
+			this.download(this.byId("tTable").getBinding("rows"));
+		},
+
+		onDownloadResponsive : function () {
+			this.download(this.byId("mTable").getBinding("items"));
+		},
+
 		onExit : function () {
 			this.getView().getModel("ui").destroy();
 			return Controller.prototype.onExit.apply(this, arguments);

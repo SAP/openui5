@@ -18,6 +18,7 @@
 			<m:Toolbar design="Transparent" class="sapMTBHeader-CTX">
 				<m:Title id="title" text="Sales Amount by Region" level="H1"/>
 				<m:ToolbarSpacer />
+				<m:Button icon="sap-icon://download" press="onDownload" tooltip="Download"/>
 				<m:Button id="showMessages" icon="sap-icon://message-popup" tooltip="Show messages"
 					press="onToggleMessagePopover" text="{ui>/iMessages}"
 					type="{= ${ui>/iMessages} ? 'Emphasized' : 'Default' }"/>

@@ -16,6 +16,12 @@ sap.ui.define([
 			return Controller.prototype.onExit.apply(this, arguments);
 		},
 
+		onDownload : function () {
+			this.byId("table").getBinding("rows").requestDownloadUrl().then(function (sUrl) {
+				window.open(sUrl, sUrl);
+			});
+		},
+
 		onInit : function () {
 			var oAggregation = {
 					aggregate : {

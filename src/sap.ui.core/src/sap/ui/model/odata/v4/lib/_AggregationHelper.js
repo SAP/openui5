@@ -146,8 +146,8 @@ sap.ui.define([
 		 * @param {number} [mQueryOptions.$top]
 		 *   The value for a "$top" system query option; it is removed from the returned map and
 		 *   turned into a "top()" transformation
-		 * @param {number} [iLevel=1]
-		 *   The current level
+		 * @param {number} [iLevel=0]
+		 *   The current level; use <code>0</code> to bypass group levels
 		 * @param {boolean} [bFollowUp]
 		 *   Tells whether this method is called for a follow-up request, not for the first one; in
 		 *   this case, neither the count nor grand totals or minimum or maximum values are
@@ -203,11 +203,10 @@ sap.ui.define([
 			}
 
 			mQueryOptions = Object.assign({}, mQueryOptions);
-			iLevel = iLevel || 1;
 
 			_AggregationHelper.checkTypeof(oAggregation, mAggregationType, "$$aggregation");
 			oAggregation.groupLevels = oAggregation.groupLevels || [];
-			bIsLeafLevel = iLevel > oAggregation.groupLevels.length;
+			bIsLeafLevel = !iLevel || iLevel > oAggregation.groupLevels.length;
 
 			oAggregation.group = oAggregation.group || {};
 			oAggregation.groupLevels.forEach(function (sGroup) {
@@ -218,10 +217,13 @@ sap.ui.define([
 					return oAggregation.groupLevels.indexOf(sGroup) < 0;
 				})
 				: [oAggregation.groupLevels[iLevel - 1]];
+			if (!iLevel) {
+				aGroupBy = oAggregation.groupLevels.concat(aGroupBy);
+			}
 
 			oAggregation.aggregate = oAggregation.aggregate || {};
 			aAliases = Object.keys(oAggregation.aggregate).sort();
-			if (iLevel <= 1 && !bFollowUp) {
+			if (iLevel === 1 && !bFollowUp) {
 				aAliases.filter(function (sAlias) {
 					return oAggregation.aggregate[sAlias].grandTotal;
 				}).forEach(
@@ -397,90 +399,33 @@ sap.ui.define([
 		},
 
 		/**
-		 * Returns the "$orderby" system query option filtered in such a way that only aggregatable
-		 * or groupable properties, units, or additionally requested properties are used, provided
-		 * they are contained in the given aggregation information and are relevant for the given
-		 * level. Items which cannot be parsed (that is, everything more complicated than a simple
-		 * path followed by an optional "asc"/"desc") are not filtered out.
+		 * Returns a copy of the given query options with a filtered "$orderby".
 		 *
-		 * @param {string} [sOrderby]
-		 *   The original "$orderby" system query option
+		 * @param {object} mQueryOptions
+		 *   A map of key-value pairs representing the query string
 		 * @param {object} oAggregation
 		 *   An object holding the information needed for data aggregation;
 		 *   (see {@link .buildApply})
-		 * @param {number} iLevel
-		 *   The current level
-		 * @returns {string}
-		 *   The filtered "$orderby" system query option
+		 * @param {number} [iLevel=0]
+		 *   The current level; use <code>0</code> to bypass group levels
+		 * @returns {object}
+		 *   The filtered query options map
 		 *
 		 * @public
+		 * @see .getFilteredOrderby
 		 */
-		filterOrderby : function (sOrderby, oAggregation, iLevel) {
-			var bIsLeaf = iLevel > oAggregation.groupLevels.length;
+		filterOrderby : function (mQueryOptions, oAggregation, iLevel) {
+			var sFilteredOrderby = _AggregationHelper.getFilteredOrderby(mQueryOptions.$orderby,
+					oAggregation, iLevel);
 
-			/*
-			 * Tells whether the given property name is used as a unit for some aggregatable
-			 * property with subtotals.
-			 *
-			 * @param {string} sName - A property name
-			 * @returns {boolean} Whether it is used for some aggregatable property with subtotals
-			 */
-			function isUnitForSubtotals(sName) {
-				return Object.keys(oAggregation.aggregate).some(function (sAlias) {
-					var oDetails = oAggregation.aggregate[sAlias];
-
-					return oDetails.subtotals && sName === oDetails.unit;
-				});
+			mQueryOptions = Object.assign({}, mQueryOptions);
+			if (sFilteredOrderby) {
+				mQueryOptions.$orderby = sFilteredOrderby;
+			} else {
+				delete mQueryOptions.$orderby;
 			}
 
-			/*
-			 * Tells whether the given property name is used for some leaf group.
-			 *
-			 * @param {string} sName - A property name
-			 * @returns {boolean} Whether it is used for some leaf group
-			 */
-			function isUsedAtLeaf(sName) {
-				if (sName in oAggregation.group && oAggregation.groupLevels.indexOf(sName) < 0) {
-					return true; // "quick path"
-				}
-
-				return Object.keys(oAggregation.aggregate).some(function (sAlias) {
-					return sName === oAggregation.aggregate[sAlias].unit;
-				}) || Object.keys(oAggregation.group).some(function (sGroup) {
-					return oAggregation.groupLevels.indexOf(sGroup) < 0
-						&& isUsedFor(sName, sGroup);
-				});
-			}
-
-			/*
-			 * Tells whether the given property name is used for the given group.
-			 *
-			 * @param {string} sName - A property name
-			 * @param {string} sGroup - A group name
-			 * @returns {boolean} Whether it is used for the given group
-			 */
-			function isUsedFor(sName, sGroup) {
-				return sName === sGroup
-					|| oAggregation.group[sGroup].additionally
-					&& oAggregation.group[sGroup].additionally.indexOf(sName) >= 0;
-			}
-
-			if (sOrderby) {
-				return sOrderby.split(rComma).filter(function (sOrderbyItem) {
-					var aMatches = rOrderbyItem.exec(sOrderbyItem),
-						sName;
-
-					if (aMatches) {
-						sName = aMatches[1]; // drop optional asc/desc
-						return sName in oAggregation.aggregate
-								&& (bIsLeaf || oAggregation.aggregate[sName].subtotals)
-							|| bIsLeaf && isUsedAtLeaf(sName)
-							|| !bIsLeaf && (isUsedFor(sName, oAggregation.groupLevels[iLevel - 1])
-								|| isUnitForSubtotals(sName));
-					}
-					return true;
-				}).join(",");
-			}
+			return mQueryOptions;
 		},
 
 		/**
@@ -521,6 +466,94 @@ sap.ui.define([
 			});
 
 			return aAllProperties;
+		},
+
+		/**
+		 * Returns the "$orderby" system query option filtered in such a way that only aggregatable
+		 * or groupable properties, units, or additionally requested properties are used, provided
+		 * they are contained in the given aggregation information and are relevant for the given
+		 * level. Items which cannot be parsed (that is, everything more complicated than a simple
+		 * path followed by an optional "asc"/"desc") are not filtered out.
+		 *
+		 * @param {string} [sOrderby]
+		 *   The original "$orderby" system query option
+		 * @param {object} oAggregation
+		 *   An object holding the information needed for data aggregation;
+		 *   (see {@link .buildApply})
+		 * @param {number} [iLevel=0]
+		 *   The current level; use <code>0</code> to bypass group levels
+		 * @returns {string}
+		 *   The filtered "$orderby" system query option
+		 *
+		 * @private
+		 */
+		getFilteredOrderby : function (sOrderby, oAggregation, iLevel) {
+			var bIsLeaf = !iLevel || iLevel > oAggregation.groupLevels.length;
+
+			/*
+			 * Tells whether the given property name is used as a unit for some aggregatable
+			 * property with subtotals.
+			 *
+			 * @param {string} sName - A property name
+			 * @returns {boolean} Whether it is used for some aggregatable property with subtotals
+			 */
+			function isUnitForSubtotals(sName) {
+				return Object.keys(oAggregation.aggregate).some(function (sAlias) {
+					var oDetails = oAggregation.aggregate[sAlias];
+
+					return oDetails.subtotals && sName === oDetails.unit;
+				});
+			}
+
+			/*
+			 * Tells whether the given property name is used for some leaf group.
+			 *
+			 * @param {string} sName - A property name
+			 * @returns {boolean} Whether it is used for some leaf group
+			 */
+			function isUsedAtLeaf(sName) {
+				if (sName in oAggregation.group
+						&& (!iLevel || oAggregation.groupLevels.indexOf(sName) < 0)) {
+					return true; // "quick path"
+				}
+
+				return Object.keys(oAggregation.aggregate).some(function (sAlias) {
+					return sName === oAggregation.aggregate[sAlias].unit;
+				}) || Object.keys(oAggregation.group).some(function (sGroup) {
+					return (!iLevel || oAggregation.groupLevels.indexOf(sGroup) < 0)
+						&& isUsedFor(sName, sGroup);
+				});
+			}
+
+			/*
+			 * Tells whether the given property name is used for the given group.
+			 *
+			 * @param {string} sName - A property name
+			 * @param {string} sGroup - A group name
+			 * @returns {boolean} Whether it is used for the given group
+			 */
+			function isUsedFor(sName, sGroup) {
+				return sName === sGroup
+					|| oAggregation.group[sGroup].additionally
+					&& oAggregation.group[sGroup].additionally.indexOf(sName) >= 0;
+			}
+
+			if (sOrderby) {
+				return sOrderby.split(rComma).filter(function (sOrderbyItem) {
+					var aMatches = rOrderbyItem.exec(sOrderbyItem),
+						sName;
+
+					if (aMatches) {
+						sName = aMatches[1]; // drop optional asc/desc
+						return sName in oAggregation.aggregate
+								&& (bIsLeaf || oAggregation.aggregate[sName].subtotals)
+							|| bIsLeaf && isUsedAtLeaf(sName)
+							|| !bIsLeaf && (isUsedFor(sName, oAggregation.groupLevels[iLevel - 1])
+								|| isUnitForSubtotals(sName));
+					}
+					return true;
+				}).join(",");
+			}
 		},
 
 		/**
