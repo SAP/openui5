@@ -83,7 +83,7 @@ sap.ui.define([
 		 * @param {string} id - ID of the variant
 		 * @param {string} name - Title of the variant
 		 * @param {boolean} [favorite=false] - Flag if the favorite property should be set
-		 * @param {boolean} [executeOnSelect=false] - Flag if the favorite property should be set
+		 * @param {boolean} [executeOnSelection=false] - Flag if the favorite property should be set
 		 * @param {object} [content={}] - Filter values of the variant
 		 */
 
@@ -194,13 +194,13 @@ sap.ui.define([
 		},
 
 		/**
-		 * Synchronously retrieves the <code>ExecuteOnSelect</code> for the standard variant for the current control. WARNING: The consumer has to make sure that the
-		 * changes have already been retrieved with <code>getChanges</code>. It's recommended to use the async API <code>getExecuteOnSelect</code>, which works regardless of any
+		 * Synchronously retrieves the <code>ExecuteOnSelection</code> for the standard variant for the current control. WARNING: The consumer has to make sure that the
+		 * changes have already been retrieved with <code>getChanges</code>. It's recommended to use the async API <code>getExecuteOnSelection</code>, which works regardless of any
 		 * preconditions.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
-		 * @returns {boolean} <code>ExecuteOnSelect</code> flag
+		 * @returns {boolean} <code>ExecuteOnSelection</code> flag
 		 * @private
 		 * @ui5-restricted
 		 * @deprecated

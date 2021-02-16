@@ -56,8 +56,8 @@ sap.ui.define([
 			apiFunctionName: "setDefaultVariantId",
 			compVariantStateFunctionName: "setDefault"
 		}, {
-			apiFunctionName: "setExecuteOnSelect",
-			compVariantStateFunctionName: "setExecuteOnSelect"
+			apiFunctionName: "setExecuteOnSelection",
+			compVariantStateFunctionName: "setExecuteOnSelection"
 		}].forEach(function(testData) {
 			QUnit.test("When " + testData.apiFunctionName + " is called", function (assert) {
 				// mock control
@@ -154,7 +154,7 @@ sap.ui.define([
 				name: "a new name",
 				content: {},
 				favorite: false,
-				executeOnSelect: false
+				executeOnSelection: false
 			}
 		}, {
 			details: "a new content",
@@ -183,11 +183,11 @@ sap.ui.define([
 				content: {
 					someProperty: "someValue"
 				},
-				executeOnSelect: false,
+				executeOnSelection: false,
 				favorite: false
 			}
 		}, {
-			details: "a new executeOnSelect flag",
+			details: "a new executeOnSelection flag",
 			propertyBag: {
 				id: "test_variant",
 				executeOnSelect: true
@@ -210,9 +210,9 @@ sap.ui.define([
 				name: "",
 				content: {
 					someOld: "content",
-					executeOnSelect: true
+					executeOnSelection: true
 				},
-				executeOnSelect: true,
+				executeOnSelection: true,
 				favorite: false
 			}
 		}, {
@@ -241,7 +241,7 @@ sap.ui.define([
 					someOld: "content",
 					favorite: true
 				},
-				executeOnSelect: false,
+				executeOnSelection: false,
 				favorite: true
 			}
 		}, {
@@ -257,7 +257,7 @@ sap.ui.define([
 				},
 				content: {
 					someOld: "content",
-					executeOnSelect: false
+					executeOnSelection: false
 				},
 				texts: {
 					variantName: {
@@ -269,9 +269,9 @@ sap.ui.define([
 				name: "",
 				content: {
 					someOld: "content",
-					executeOnSelect: true
+					executeOnSelection: true
 				},
-				executeOnSelect: true,
+				executeOnSelection: true,
 				favorite: false
 			}
 		}, {
@@ -301,7 +301,7 @@ sap.ui.define([
 					someOld: "content",
 					favorite: true
 				},
-				executeOnSelect: false,
+				executeOnSelection: false,
 				favorite: true
 			}
 		}, {
@@ -318,7 +318,7 @@ sap.ui.define([
 					persistencyKey: sPersistencyKey
 				},
 				content: {
-					executeOnSelect: true,
+					executeOnSelection: true,
 					favorite: false
 				},
 				texts: {
@@ -331,10 +331,10 @@ sap.ui.define([
 				name: "",
 				content: {
 					someProperty: "someValue",
-					executeOnSelect: true,
+					executeOnSelection: true,
 					favorite: false
 				},
-				executeOnSelect: true,
+				executeOnSelection: true,
 				favorite: false
 			}
 		}].forEach(function (testData) {
@@ -365,7 +365,7 @@ sap.ui.define([
 					assert.equal(oVariant.getText("variantName"), testData.expected.name, "the name is correct");
 					assert.deepEqual(oVariant.getContent(), testData.expected.content, "the content is correct");
 					assert.equal(oVariant.getFavorite(), testData.expected.favorite, "the favorite flag is correct");
-					assert.equal(oVariant.getExecuteOnSelect(), testData.expected.executeOnSelect, "the executeOnSelect flag is correct");
+					assert.equal(oVariant.getExecuteOnSelection(), testData.expected.executeOnSelection, "the executeOnSelection flag is correct");
 					assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant is marked for an update");
 				});
 			});
@@ -452,7 +452,7 @@ sap.ui.define([
 							persistencyKey: sPersistencyKey
 						},
 						content: {
-							executeOnSelect: true,
+							executeOnSelection: true,
 							favorite: false
 						},
 						texts: {

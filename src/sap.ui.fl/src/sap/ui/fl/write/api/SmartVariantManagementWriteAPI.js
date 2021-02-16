@@ -70,7 +70,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.changeSpecificData.texts - Map object with all referenced texts within the file; these texts will be connected to the translation process
 		 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
 		 * @param {object} [mPropertyBag.changeSpecificData.favorite] - Indicates if the change is added as favorite
-		 * @param {object} [mPropertyBag.changeSpecificData.executeOnSelect] - Indicates if the executeOnSelect flag should be set
+		 * @param {object} [mPropertyBag.changeSpecificData.executeOnSelection] - Indicates if the <code>executeOnSelection</code> flag should be set
 		 * @param {string} [mPropertyBag.changeSpecificData.ODataService] - Name of the OData service --> can be null
 		 * @param {string} [mPropertyBag.command] - Name of the command creating the variant
 		 * @param {boolean} [mPropertyBag.support] - Information for support analysis
@@ -93,13 +93,15 @@ sap.ui.define([
 		 * @param {object} [mPropertyBag.name] - Title of the variant
 		 * @param {object} [mPropertyBag.content] - Content of the new change
 		 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
-		 * @param {object} [mPropertyBag.executeOnSelect] - Flag if the variant should be executed on selection
+		 * @param {object} [mPropertyBag.executeOnSelection] - Flag if the variant should be executed on selection
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place
 		 * this either updates the variant from the layer or writes a change to that layer.
 		 * @private
 		 * @ui5-restricted sap.ui.rta.command
 		 */
 		updateVariant: function (mPropertyBag) {
+			// TODO: remove as soon as the consumer adjusted
+			mPropertyBag.executeOnSelection = mPropertyBag.executeOnSelect;
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.updateVariant);
 		},
 
@@ -166,18 +168,23 @@ sap.ui.define([
 		},
 
 		/**
-		 * Retrieves the <code>ExecuteOnSelect</code> for the standard variant for the current control synchronously.
+		 * Retrieves the <code>ExecuteOnSelection</code> for the standard variant for the current control synchronously.
 		 * WARNING: Tthe consumer has to make sure that the changes have already been retrieved with <code>getChanges</code>.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
-		 * @param {boolean} mPropertyBag.executeOnSelect - New <code>ExecuteOnSelect</code> flag for standard variant
+		 * @param {boolean} mPropertyBag.executeOnSelection - New <code>ExecuteOnSelection</code> flag for standard variant
 		 * @private
 		 * @ui5-restricted
 		 * @returns {object} Default variant change
 		 */
+		setExecuteOnSelection: function(mPropertyBag) {
+			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.setExecuteOnSelection);
+		},
+
 		setExecuteOnSelect: function(mPropertyBag) {
-			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.setExecuteOnSelect);
+			mPropertyBag.executeOnSelection = mPropertyBag.executeOnSelect;
+			return SmartVariantManagementWriteAPI.setExecuteOnSelection(mPropertyBag);
 		},
 
 		/**

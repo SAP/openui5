@@ -51,7 +51,8 @@ sap.ui.define([
 			propertyBag: {
 				changeSpecificData: {
 					type: "addFavorite",
-					isUserDependent: true
+					isUserDependent: true,
+					content: {}
 				},
 				reference: sComponentId
 			},
@@ -64,7 +65,8 @@ sap.ui.define([
 				changeSpecificData: {
 					type: "pageVariant",
 					isVariant: true,
-					isUserDependent: false
+					isUserDependent: false,
+					content: {}
 				},
 				reference: sComponentId
 			},
@@ -77,7 +79,8 @@ sap.ui.define([
 				changeSpecificData: {
 					type: "pageVariant",
 					isVariant: true,
-					isUserDependent: false
+					isUserDependent: false,
+					content: {}
 				},
 				reference: sComponentId
 			},
@@ -90,7 +93,8 @@ sap.ui.define([
 				changeSpecificData: {
 					type: "pageVariant",
 					isVariant: true,
-					isUserDependent: true
+					isUserDependent: true,
+					content: {}
 				},
 				reference: sComponentId
 			},
@@ -103,7 +107,8 @@ sap.ui.define([
 				changeSpecificData: {
 					type: "pageVariant",
 					isVariant: true,
-					isUserDependent: false
+					isUserDependent: false,
+					content: {}
 				},
 				reference: sComponentId
 			},
@@ -116,7 +121,8 @@ sap.ui.define([
 				changeSpecificData: {
 					type: "pageVariant",
 					isVariant: true,
-					isUserDependent: false
+					isUserDependent: false,
+					content: {}
 				},
 				reference: sComponentId
 			},
@@ -129,7 +135,8 @@ sap.ui.define([
 				changeSpecificData: {
 					type: "pageVariant",
 					isVariant: true,
-					isUserDependent: false
+					isUserDependent: false,
+					content: {}
 				},
 				reference: sComponentId
 			},
@@ -142,7 +149,8 @@ sap.ui.define([
 				changeSpecificData: {
 					type: "pageVariant",
 					isVariant: true,
-					isUserDependent: true
+					isUserDependent: true,
+					content: {}
 				},
 				reference: sComponentId
 			},
@@ -168,7 +176,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("also stores the default executeOnSelect and favorite", function (assert) {
+		QUnit.test("also stores the default executeOnSelection and favorite", function (assert) {
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
 			var mPropertyBag = {
@@ -188,7 +196,7 @@ sap.ui.define([
 				fileName: "someFileName",
 				changeType: "filterVariant",
 				content: {
-					executeOnSelect: false,
+					executeOnSelection: false,
 					favorite: false
 				},
 				fileType: "variant",
@@ -220,7 +228,7 @@ sap.ui.define([
 			assert.equal(mCompVariantsMapForPersistencyKey.variants[0], oAddedObject, "which is the returned entity");
 		});
 
-		QUnit.test("also stores passed executeOnSelect and favorite", function (assert) {
+		QUnit.test("also stores passed executeOnSelection and favorite", function (assert) {
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
 			var mPropertyBag = {
@@ -229,7 +237,7 @@ sap.ui.define([
 				changeSpecificData: {
 					content: {},
 					isVariant: true,
-					executeOnSelect: true,
+					executeOnSelection: true,
 					favorite: true,
 					type: "filterVariant"
 				},
@@ -242,7 +250,7 @@ sap.ui.define([
 				fileName: "someFileName",
 				changeType: "filterVariant",
 				content: {
-					executeOnSelect: true,
+					executeOnSelection: true,
 					favorite: true
 				},
 				fileType: "variant",
@@ -417,7 +425,8 @@ sap.ui.define([
 
 			CompVariantState.add({
 				changeSpecificData: {
-					type: "addFavorite"
+					type: "addFavorite",
+					content: {}
 				},
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
@@ -425,7 +434,8 @@ sap.ui.define([
 			CompVariantState.add({
 				changeSpecificData: {
 					type: "pageVariant",
-					isVariant: true
+					isVariant: true,
+					content: {}
 				},
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey
@@ -433,12 +443,13 @@ sap.ui.define([
 			CompVariantState.setDefault({
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey,
-				defaultVariantId: "id_123_pageVariant"
+				defaultVariantId: "id_123_pageVariant",
+				conntent: {}
 			});
-			CompVariantState.setExecuteOnSelect({
+			CompVariantState.setExecuteOnSelection({
 				reference: sComponentId,
 				persistencyKey: sPersistencyKey,
-				executeOnSelect: true
+				executeOnSelection: true
 			});
 
 			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(sPersistencyKey);
@@ -553,7 +564,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.module("setExecuteOnSelect", {
+	QUnit.module("setExecuteOnSelection", {
 		before: function() {
 			return FlexState.initialize({
 				componentId: sComponentId,
@@ -565,7 +576,7 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("Given setExecuteOnSelect is called twice", function(assert) {
+		QUnit.test("Given setExecuteOnSelection is called twice", function(assert) {
 			var sPersistencyKey = "persistency.key";
 
 			var oCompVariantStateMapForPersistencyKey = FlexState.getCompVariantsMap(sComponentId)._getOrCreate(sPersistencyKey);
@@ -575,9 +586,9 @@ sap.ui.define([
 				"no standardVariant change is set under the persistencyKey");
 			assert.equal(Object.keys(oCompVariantStateById).length, 0, "no entities are present");
 
-			var oChange = CompVariantState.setExecuteOnSelect({
+			var oChange = CompVariantState.setExecuteOnSelection({
 				reference: sComponentId,
-				executeOnSelect: true,
+				executeOnSelection: true,
 				persistencyKey: sPersistencyKey
 			});
 			assert.equal(oCompVariantStateMapForPersistencyKey.standardVariant, oChange,
@@ -585,9 +596,9 @@ sap.ui.define([
 			assert.equal(oChange.getContent().executeOnSelect, true, "the change content is correct");
 			assert.equal(Object.keys(oCompVariantStateById).length, 1, "one entity is present");
 
-			CompVariantState.setExecuteOnSelect({
+			CompVariantState.setExecuteOnSelection({
 				reference: sComponentId,
-				executeOnSelect: false,
+				executeOnSelection: false,
 				persistencyKey: sPersistencyKey
 			});
 			assert.equal(oChange.getContent().executeOnSelect, false, "the change content was updated");
@@ -620,7 +631,8 @@ sap.ui.define([
 				isVariant: true,
 				texts: {
 					variantName: "initialName"
-				}
+				},
+				content: {}
 			},
 			reference: sComponentId,
 			persistencyKey: sPersistencyKey
@@ -645,12 +657,12 @@ sap.ui.define([
 					reference: sComponentId,
 					persistencyKey: sPersistencyKey,
 					favorite: true,
-					executeOnSelect: true
+					executeOnSelection: true
 				});
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelect: true,
+					executeOnSelection: true,
 					favorite: true
 				}, "1: after an update... is the content is correct");
 
@@ -668,7 +680,7 @@ sap.ui.define([
 				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelect: true,
+					executeOnSelection: true,
 					favorite: false,
 					someKey: "someValue"
 				}, "2: after an update... is the content is correct");
@@ -683,7 +695,7 @@ sap.ui.define([
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelect: true,
+					executeOnSelection: true,
 					favorite: true
 				}, "3: after a revert... is the content is correct");
 				assert.equal(oVariant.getText("variantName"), "initialName", "and the name is also reverted");
@@ -699,7 +711,7 @@ sap.ui.define([
 					}
 				});
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelect: true,
+					executeOnSelection: true,
 					favorite: false,
 					someKey: "someValue"
 				}, "4: after an update... is the content is correct");
@@ -715,7 +727,7 @@ sap.ui.define([
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelect: true,
+					executeOnSelection: true,
 					favorite: true
 				}, "5: after a revert... is the content is correct");
 
@@ -726,7 +738,7 @@ sap.ui.define([
 					persistencyKey: sPersistencyKey
 				});
 				assert.deepEqual(oVariant.getContent(), {
-					executeOnSelect: false,
+					executeOnSelection: false,
 					favorite: false
 				}, "6: after a revert... is the content is correct");
 				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data entries are present");
@@ -739,9 +751,9 @@ sap.ui.define([
 			sandbox.stub(Storage, "write").resolves();
 
 			// adding a change to test, that the remove-function not existent in changes is not called = the test does not die
-			CompVariantState.setExecuteOnSelect({
+			CompVariantState.setExecuteOnSelection({
 				reference: sComponentId,
-				executeOnSelect: true,
+				executeOnSelection: true,
 				persistencyKey: sPersistencyKey
 			});
 

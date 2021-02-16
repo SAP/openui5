@@ -293,7 +293,7 @@ sap.ui.define([
 
 		QUnit.test("when no executeOnSelect is provided", function(assert) {
 			var oVariant = new CompVariant({});
-			assert.equal(oVariant.getExecuteOnSelect(), false, "then by default it is NOT executed on selection");
+			assert.equal(oVariant.getExecuteOnSelection(), false, "then by default it is NOT executed on selection");
 		});
 
 		QUnit.test("when executeOnSelect is set to false", function(assert) {
@@ -302,7 +302,7 @@ sap.ui.define([
 					executeOnSelect: false
 				}
 			});
-			assert.equal(oVariant.getExecuteOnSelect(), false, "then it is NOT executed on selection");
+			assert.equal(oVariant.getExecuteOnSelection(), false, "then it is NOT executed on selection");
 		});
 
 		QUnit.test("when executeOnSelect is set to true", function(assert) {
@@ -311,7 +311,7 @@ sap.ui.define([
 					executeOnSelect: true
 				}
 			});
-			assert.equal(oVariant.getExecuteOnSelect(), true, "then it is NOT executed on selection");
+			assert.equal(oVariant.getExecuteOnSelection(), true, "then it is NOT executed on selection");
 		});
 	});
 
