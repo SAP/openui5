@@ -203,6 +203,15 @@
 								}
 
 							}
+						}),
+						new sap.m.Text({ text: "Mobile simulation is:" }),
+						new sap.m.Switch("toggleMobile", {
+							state: false,
+							change: function(oEvent) {
+								var bState = oEvent.getParameter("state");
+								sap.ui.Device.system.desktop = !bState;
+								sap.ui.Device.system.phone = bState;
+							}
 						})
 					]
 				}),

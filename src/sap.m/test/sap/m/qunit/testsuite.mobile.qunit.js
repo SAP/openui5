@@ -1490,6 +1490,12 @@ sap.ui.define([
 			TimePickerSliders: {
 				title: "QUnit page for sap.m.TimePickerSliders"
 			},
+			TimePickerClocks: {
+				title: "QUnit page for sap.m.TimePickerClocks"
+			},
+			TimePickerInputs: {
+				title: "QUnit page for sap.m.TimePickerInputs"
+			},
 			TimePicker_Locale_bg_BG: {
 				title: "Test Page for sap.m.TimePicker in Locale bg_BG",
 				_alternativeTitle: "QUnit page for sap.m.TimePicker in Locale bg_BG",

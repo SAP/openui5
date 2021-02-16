@@ -1,0 +1,68 @@
+/* ====================================== */
+/* CSS for control sap.m/TimePickerClocks */
+/* Base theme                             */
+/* ====================================== */
+
+.sapMTPClocksContainer {
+	margin: 0 auto;
+	box-sizing: border-box;
+	width: 20rem;
+	height: 23.75rem;
+	padding: 1rem;
+	text-align: center;
+}
+
+.sapMTPCButtons {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	padding-bottom: 1rem;
+	width: 18rem;
+
+	& .sapMBtn {
+		width: 2.5625rem;
+	}
+
+	& > span {
+		width: 0.75rem;
+		text-align: center;
+		font-family: @sapUiFontFamily;
+		font-size: @sapMFontMediumSize;
+		color: @sapUiBaseText;
+	}
+}
+
+.sapMTPCClocks {
+	display: block;
+	text-align: center;
+	width: 18rem;
+	height: 18rem;
+	touch-action: none;
+}
+
+.sapMTPClocksContainer > .sapMTPCButtons > div.sapMBtnBase.sapMBtn {
+	box-sizing: border-box;
+	display: inline-block;
+}
+
+.sapUiSizeCompact {
+
+	.sapMTPClocksContainer {
+		width: 18.5rem;
+		height: 21.5rem;
+	}
+
+	.sapMTPCButtons {
+		width: 16.5rem;
+
+		& .sapMBtn {
+			width: 2.3125rem;
+		}
+	}
+
+	.sapMTPCClocks {
+		width: 16.5rem;
+		height: 16.5rem;
+	}
+
+}

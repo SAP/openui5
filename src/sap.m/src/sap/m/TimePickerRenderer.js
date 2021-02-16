@@ -78,11 +78,30 @@ sap.ui.define(['sap/ui/core/Renderer', './InputBaseRenderer', 'sap/ui/core/libra
 			mAccessibilityState["roledescription"] = oControl._oResourceBundle.getText("ACC_CTR_TYPE_TIMEINPUT");
 			mAccessibilityState["autocomplete"] = "none";
 			mAccessibilityState["haspopup"] = coreLibrary.aria.HasPopup.Dialog.toLowerCase();
-			mAccessibilityState["expanded"] = false;
+			mAccessibilityState["expanded"] = "false";
 			mAccessibilityState["disabled"] = null; // aria-disabled not needed if there's already a native 'disabled' attribute
-			mAccessibilityState["owns"] = oControl.getId() + "-sliders";
+			mAccessibilityState["owns"] = oControl.getId() + "-clocks";
+			if (oControl._isMobileDevice()) {
+				mAccessibilityState["describedby"] = oControl._oResourceBundle.getText("ACC_CTR_TYPE_TIMEINPUT_MOBILE_DESCRIBEDBY");
+			}
 
 			return mAccessibilityState;
+		};
+
+		/**
+		 * add extra attributes to TimePicker's Input
+		 *
+		 * @overrides sap.m.InputBaseRenderer.writeInnerAttributes
+		 * @param {sap.ui.core.RenderManager} oRm the RenderManager that can be used for writing to the render output buffer
+		 * @param {sap.ui.core.Control} oControl an object representation of the control that should be rendered
+		 */
+		TimePickerRenderer.writeInnerAttributes = function (oRm, oControl) {
+			if (oControl._isMobileDevice()) {
+				oRm.attr("readonly", "readonly"); // readonly for mobile devices
+			}
+			if (oControl.getShowValueStateMessage()) {
+				oRm.attr("autocomplete", "off"); // autocomplete="off" needed so the native browser autocomplete is not shown?
+			}
 		};
 
 		return TimePickerRenderer;
