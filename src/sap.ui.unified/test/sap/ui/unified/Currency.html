@@ -44,6 +44,7 @@
 		});
 
 		sap.ui.getCore().setModel(oModel);
+		sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({ "BGN4":{"digits": 4}, "BitCoin":{"digits": 5}});
 
 		var oTemplate = new sap.ui.unified.Currency({
 			value: {
@@ -99,7 +100,9 @@
 				{id: Math.random(), lastName: "Ander", money: 563.2, currency: "JPY", type: "Inactive", useSymbol: false},
 				{id: Math.random(), lastName: "Early", money: 8564.4, currency: "EUR", type: "Inactive", useSymbol: false},
 				{id: Math.random(), lastName: "Dewit", money: 34.23, currency: "EUR", type: "Inactive", useSymbol: false},
-				{id: Math.random(), lastName: "Turner", money: 5.67, currency: "שקל‎‎", type: "Inactive", useSymbol: false}
+				{id: Math.random(), lastName: "Turner", money: 5.67, currency: "שקל‎‎", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Piers", money: 51.6745, currency: "BGN4", type: "Inactive", useSymbol: false},
+				{id: Math.random(), lastName: "Angels", money: 542.678912, currency: "BitCoin", type: "Inactive", useSymbol: false}
 			];
 
 		var oModel = new sap.ui.model.json.JSONModel();

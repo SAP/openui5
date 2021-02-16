@@ -7,7 +7,7 @@ sap.ui.define([
 	return Controller.extend("sap.ui.unified.sample.Currency.Controller", {
 
 		onInit: function () {
-
+			sap.ui.getCore().getConfiguration().getFormatSettings().setCustomCurrencies({ "BGN4":{"digits": 4}, "WWWW":{"digits": 5}});
 			var aVariousNumberData = [
 				{ currency: "EUR", price: 2300.12 },
 				{ currency: "EUR", price: 38 },
@@ -17,6 +17,11 @@ sap.ui.define([
 				{ currency: "USD", price: 2125.02843 },
 				{ currency: "TND", price: 9283 },
 				{ currency: "TND", price: 235.0298 }
+			];
+
+			var aCustomCurrenciesData = [
+				{ currency: "BGN4", price: 123.4567 },
+				{ currency: "WWWW", price: 123.45676}
 			];
 
 			var aNonDecimalCurrencyData = [
@@ -34,7 +39,8 @@ sap.ui.define([
 			var oModel = new JSONModel({
 				variousNumberDataModel: aVariousNumberData,
 				nonDecimalCurrencyDataModel: aNonDecimalCurrencyData,
-				bigNumberDataModel: aBigNumberData
+				bigNumberDataModel: aBigNumberData,
+				customCurrencyDataModel: aCustomCurrenciesData
 			});
 			this.getView().setModel(oModel);
 		}

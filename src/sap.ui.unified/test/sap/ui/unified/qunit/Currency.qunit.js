@@ -34,7 +34,7 @@ sap.ui.define([
 		//assert
 		assert.strictEqual(this.sut.getValue(), 0, "Default value is correct");
 		assert.strictEqual(this.sut.getCurrency(), "", "Default currency is correct");
-		assert.strictEqual(this.sut.getMaxPrecision(), 3, "Default precision is correct");
+		assert.strictEqual(this.sut.getMaxPrecision(), undefined, "Default precision is correct");
 		assert.strictEqual(this.sut.getUseSymbol(), true, "Default useSymbol is correct");
 	});
 
@@ -42,7 +42,7 @@ sap.ui.define([
 		// Assert
 		assert.strictEqual(this.sut.$().hasClass("sapUiUfdCurrencyNoVal"), false, "Control has no class " +
 				"sapUiUfdCurrencyNoVal applied");
-		assert.strictEqual(this.fnGetRenderedValue(), "0.00\u2007", "Default value rendered");
+		assert.strictEqual(this.fnGetRenderedValue(), "0.00", "Default value rendered");
 		assert.strictEqual(this.fnGetRenderedCurrency(), "", "No currency rendered");
 	});
 
@@ -77,7 +77,7 @@ sap.ui.define([
 		this.sut.setUseSymbol(false);
 		sap.ui.getCore().applyChanges();
 
-		assert.strictEqual(this.fnGetRenderedValue(), "45,012.91\u2007", "Default formatting for EUR");
+		assert.strictEqual(this.fnGetRenderedValue(), "45,012.91", "Default formatting for EUR");
 
 		this.sut.setMaxPrecision(0);
 		sap.ui.getCore().applyChanges();
@@ -106,7 +106,7 @@ sap.ui.define([
 		this.sut.setValue(55.21);
 		sap.ui.getCore().applyChanges();
 		//assert
-		assert.strictEqual(this.fnGetRenderedValue(), "55.21\u2007", "The default maxPrecision value resulted in adding one figure space to the back of the value");
+		assert.strictEqual(this.fnGetRenderedValue(), "55.21", "The default maxPrecision value resulted in adding one figure space to the back of the value");
 		//arrange
 		this.sut.setMaxPrecision(5);
 		sap.ui.getCore().applyChanges();
@@ -129,7 +129,7 @@ sap.ui.define([
 		this.sut.setCurrency("BGN");
 		sap.ui.getCore().applyChanges();
 		//assert
-		assert.strictEqual(this.fnGetRenderedValue(), "123.23\u2007", "Value is rendered when currency is other than *");
+		assert.strictEqual(this.fnGetRenderedValue(), "123.23", "Value is rendered when currency is other than *");
 	});
 
 	QUnit.test("formatting of the value and the currency", function (assert) {
@@ -137,13 +137,13 @@ sap.ui.define([
 		this.sut.setValue(37);
 
 		// assert
-		assert.strictEqual(this.fnGetRenderedValue(), "37.00 ", "The value is formatted correctly with the default currency.");
+		assert.strictEqual(this.fnGetRenderedValue(), "37.00", "The value is formatted correctly with the default currency.");
 
 		// act
 		this.sut.setCurrency("JPY");
 
 		// assert
-		assert.strictEqual(this.fnGetRenderedValue(), "37    ", "The value is formatted correctly after the currency is changed.");
+		assert.strictEqual(this.fnGetRenderedValue(), "37", "The value is formatted correctly after the currency is changed.");
 	});
 
 	QUnit.module("Control API - helper methods", {
@@ -172,13 +172,13 @@ sap.ui.define([
 
 	QUnit.test("getFormattedValue method", function (assert) {
 		// Assert
-		assert.strictEqual(this.oCurrency.getFormattedValue(), "0.00 ", "By default we get '0.00 '");
+		assert.strictEqual(this.oCurrency.getFormattedValue(), "0.00", "By default we get '0.00 '");
 
 		// Act
 		this.oCurrency.setValue(45012.91);
 		this.oCurrency.setCurrency("EUR");
 		// Assert
-		assert.strictEqual(this.oCurrency.getFormattedValue(), "45,012.91\u2007", "Default formatting for EUR");
+		assert.strictEqual(this.oCurrency.getFormattedValue(), "45,012.91", "Default formatting for EUR");
 
 		// Act
 		this.oCurrency.setMaxPrecision(0);
@@ -221,7 +221,7 @@ sap.ui.define([
 		this.oCurrency.setStringValue("1234");
 
 		// Assert
-		assert.equal(this.oCurrency.getFormattedValue(), "1,234.00\u2007", "value should be set right");
+		assert.equal(this.oCurrency.getFormattedValue(), "1,234.00", "value should be set right");
 		assert.equal(oGetStringValueSpy.callCount, 1, "getStringValue should be called once");
 		assert.equal(oGetValueSpy.callCount, 0, "getValue should not be called once");
 
@@ -235,7 +235,7 @@ sap.ui.define([
 		this.oCurrency.setStringValue("1234567890123456789012"); // normally this will be converted to 1234567890123456780000 if value property is used
 
 		// Assert
-		assert.equal(this.oCurrency.getFormattedValue(), "1,234,567,890,123,456,789,012.00\u2007", "number should not be rounded");
+		assert.equal(this.oCurrency.getFormattedValue(), "1,234,567,890,123,456,789,012.00", "number should not be rounded");
 	});
 
 	QUnit.module("Data binding", {
@@ -489,7 +489,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once to re-render " +
 				"the value");
 
-		assert.strictEqual($Value.text(), "51    ", "For JPY currency " +
+		assert.strictEqual($Value.text(), "51", "For JPY currency " +
 				"decimals should be removed and value padded according to precision");
 
 		// Act
@@ -500,7 +500,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCurrency._renderValue.callCount, 1, "Internal method should be called once to re-render " +
 				"the value");
 
-		assert.strictEqual($Value.text(), "50.99 ", "For EUR currency " +
+		assert.strictEqual($Value.text(), "50.99", "For EUR currency " +
 				"decimals should be added again and value padded according to precision");
 
 		// Act
@@ -511,7 +511,7 @@ sap.ui.define([
 		assert.strictEqual(this.oCurrency._renderValue.callCount, 0, "Internal method should not be called when the new " +
 				"currency has the same amount of decimal values");
 
-		assert.strictEqual($Value.text(), "50.99 ", "For switch to " +
+		assert.strictEqual($Value.text(), "50.99", "For switch to " +
 				"BGN from EUR currency's decimals should remain unchanged");
 	});
 
