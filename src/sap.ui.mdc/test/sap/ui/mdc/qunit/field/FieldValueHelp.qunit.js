@@ -231,7 +231,7 @@ sap.ui.define([
 	};
 
 	var oClock;
-	var _initFieldHelp = function() {
+	var _initFieldHelp = function(iContentAssign) { // 0: content, 1: suggest, 2: dislog
 		oDialogContent = new Icon("DC1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 		oSuggestContent = new Icon("SC1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
 
@@ -267,10 +267,22 @@ sap.ui.define([
 					dataUpdate: _myDataUpdateHandler,
 					open: _myOpenHandler,
 					dataRequested: _myDataRequestedHandler,
-					content: oWrapper,
 					filterFields: "*text,additionalText*",
 					descriptionPath: "text"
 				});
+		switch (iContentAssign) {
+		case 1:
+			oFieldHelp.setSuggestContent(oWrapper);
+			break;
+
+		case 2:
+			oFieldHelp.setDialogContent(oWrapper);
+			break;
+
+		default:
+			oFieldHelp.setContent(oWrapper);
+			break;
+		}
 		_initFields();
 		oField.addDependent(oFieldHelp);
 		oFieldHelp.connect(oField);
@@ -927,7 +939,7 @@ sap.ui.define([
 
 	QUnit.module("Suggestion", {
 		beforeEach: function() {
-			_initFieldHelp();
+			_initFieldHelp(1);
 			oClock = sinon.useFakeTimers();
 		},
 		afterEach: _teardown
@@ -1545,11 +1557,11 @@ sap.ui.define([
 
 	QUnit.test("assign wrapper while opening", function(assert) {
 
-		oFieldHelp.setContent();
+		oFieldHelp.setSuggestContent();
 		oFieldHelp.attachOpen(function(){
 			setTimeout( function(){ // do async
-				if (!oFieldHelp.getContent()) {
-					oFieldHelp.setContent(oWrapper);
+				if (!oFieldHelp.getSuggestContent()) {
+					oFieldHelp.setSuggestContent(oWrapper);
 				}
 			}, 0);
 		});
@@ -1571,7 +1583,7 @@ sap.ui.define([
 		oClock.tick(iPopoverDuration); // fake closing time
 
 		// test same but popover already exist
-		oFieldHelp.setContent();
+		oFieldHelp.setSuggestContent();
 		iDataUpdate = 0;
 		oFieldHelp.open(true);
 		oClock.tick(iPopoverDuration); // fake opening time
@@ -1594,10 +1606,10 @@ sap.ui.define([
 		new Promise(function(fResolve) {
 			fnResolve = fResolve;
 		}).then(function() {
-			oFieldHelp.setContent(oWrapper);
+			oFieldHelp.setSuggestContent(oWrapper);
 		});
 
-		oFieldHelp.setContent();
+		oFieldHelp.setSuggestContent();
 		oFieldHelp.attachOpen(function(){
 			fnResolve();
 		});
@@ -1803,7 +1815,7 @@ sap.ui.define([
 		assert.ok(oClone, "FieldHelp cloned");
 		oClone.connect(oField2);
 
-		var oCloneWrapper = oClone.getContent();
+		var oCloneWrapper = oClone.getSuggestContent();
 		var oClonePopover = oClone.getAggregation("_popover");
 		assert.ok(oCloneWrapper, "Clone has wrapper");
 		assert.equal(oCloneWrapper.getId(), "W1-MyClone", "Id of cloned wrapper");
@@ -1867,7 +1879,7 @@ sap.ui.define([
 
 	QUnit.module("Dialog", {
 		beforeEach: function() {
-			_initFieldHelp();
+			_initFieldHelp(2);
 			oClock = sinon.useFakeTimers();
 		},
 		afterEach: _teardown
@@ -2031,6 +2043,7 @@ sap.ui.define([
 
 	QUnit.test("open dialog while suggestion is open", function(assert) {
 
+		oFieldHelp.setContent(oWrapper); // to have wrapper on both, suggest and dialog
 		oFieldHelp.open(true);
 		var oPopover = oFieldHelp.getAggregation("_popover");
 		assert.ok(oPopover, "Popover created");
@@ -2076,7 +2089,7 @@ sap.ui.define([
 	QUnit.test("DefineConditionPanel without table in dialog", function(assert) {
 
 		oFieldHelp.connect(oField2);
-		oFieldHelp.setContent();
+		oFieldHelp.setDialogContent();
 		oFieldHelp.setShowConditionPanel(true);
 		oFieldHelp.open(false);
 		oClock.tick(iDialogDuration); // fake opening time
@@ -2547,11 +2560,11 @@ sap.ui.define([
 	QUnit.test("assign wrapper while opening", function(assert) {
 
 		oClock.restore(); // to test async loading
-		oFieldHelp.setContent();
+		oFieldHelp.setDialogContent();
 		oFieldHelp.attachOpen(function(){
-			if (!oFieldHelp.getContent()) {
+			if (!oFieldHelp.getDialogContent()) {
 				setTimeout( function(){
-					oFieldHelp.setContent(oWrapper);
+					oFieldHelp.setDialogContent(oWrapper);
 				}, 0);
 			}
 		});
@@ -2607,7 +2620,7 @@ sap.ui.define([
 			fnResolve = fnMyResolve;
 		});
 
-		oFieldHelp.setContent();
+		oFieldHelp.setDialogContent();
 
 		sinon.stub(FieldValueHelpDelegate, "contentRequest").returns(oPromise);
 		oClock.restore(); // as we need a timeout to test async Promise
@@ -2625,7 +2638,7 @@ sap.ui.define([
 
 
 		// set content and resolve promise
-		oFieldHelp.setContent(oWrapper);
+		oFieldHelp.setDialogContent(oWrapper);
 		fnResolve();
 		var fnDone = assert.async();
 		setTimeout( function(){ // as promise is resolves async
@@ -2686,7 +2699,7 @@ sap.ui.define([
 
 	QUnit.module("FilterBar", {
 		beforeEach: function() {
-			_initFieldHelp();
+			_initFieldHelp(0);
 
 			oFilterField = new FilterField("MyFilterField", {
 				label: "Label",
@@ -2943,7 +2956,7 @@ sap.ui.define([
 
 	function _initBoundFieldHelp() {
 
-		_initFieldHelp();
+		_initFieldHelp(0);
 
 		oField.bindProperty("src", {path: "icon"});
 		var oBindingContext = oModel.getContext("/contexts/0/");
@@ -3205,7 +3218,7 @@ sap.ui.define([
 		oCM2 = new ConditionModel();
 		oCM2.addCondition("in", Condition.createItemCondition("Test2", "Text2"));
 
-		_initFieldHelp();
+		_initFieldHelp(0);
 
 		oField._getFormatOptions = function() {
 			return {
@@ -3294,7 +3307,7 @@ sap.ui.define([
 
 	QUnit.module("CollectiveSearch", {
 		beforeEach: function() {
-			_initFieldHelp();
+			_initFieldHelp(0);
 			oFieldHelp.addCollectiveSearchItem(new Item("Item1", {key: "K1", text: "Search 1"}));
 			oFieldHelp.addCollectiveSearchItem(new Item("Item2", {key: "K2", text: "Search 2"}));
 			oClock = sinon.useFakeTimers();
