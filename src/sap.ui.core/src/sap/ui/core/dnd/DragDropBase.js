@@ -114,7 +114,7 @@ sap.ui.define([
 	 * Suppress invalidation when the invalidate attribute of the property metadata is "false".
 	 */
 	DragDropBase.prototype.setProperty = function(sProperty, vValue, bSuppressInvalidate) {
-		bSuppressInvalidate = bSuppressInvalidate || (this.getMetadata().getProperty(sProperty).appData || {}).invalidate === false;
+		bSuppressInvalidate = (bSuppressInvalidate == undefined) ? (this.getMetadata().getProperty(sProperty).appData || {}).invalidate === false : bSuppressInvalidate;
 		return Element.prototype.setProperty.call(this, sProperty, vValue, bSuppressInvalidate);
 	};
 
