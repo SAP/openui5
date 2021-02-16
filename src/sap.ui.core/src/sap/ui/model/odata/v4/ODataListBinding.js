@@ -1576,6 +1576,7 @@ sap.ui.define([
 
 		this.checkSuspended();
 
+		iStart = iStart || 0;
 		if (iStart !== 0 && this.bUseExtendedChangeDetection) {
 			throw new Error("Unsupported operation: v4.ODataListBinding#getContexts,"
 				+ " iStart must be 0 if extended change detection is enabled, but is " + iStart);
@@ -1645,7 +1646,6 @@ sap.ui.define([
 			return [];
 		}
 
-		iStart = iStart || 0;
 		iLength = iLength || this.oModel.iSizeLimit;
 		if (!iMaximumPrefetchSize || iMaximumPrefetchSize < 0) {
 			iMaximumPrefetchSize = 0;

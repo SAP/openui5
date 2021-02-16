@@ -6,6 +6,7 @@ sap.ui.define([
 	"sap/base/util/uid",
 	"sap/m/ColumnListItem",
 	"sap/m/CustomListItem",
+	"sap/m/FlexBox",
 	"sap/m/Text",
 	"sap/ui/Device",
 	"sap/ui/base/EventProvider",
@@ -24,9 +25,9 @@ sap.ui.define([
 	'sap/ui/util/XMLHelper',
 	// load Table resources upfront to avoid loading times > 1 second for the first test using Table
 	"sap/ui/table/Table"
-], function (Log, uid, ColumnListItem, CustomListItem, Text, Device, EventProvider, SyncPromise,
-		Controller, View, Filter, FilterOperator, Sorter, OperationMode, AnnotationHelper,
-		ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
+], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, Text, Device,
+		EventProvider, SyncPromise, Controller, View, Filter, FilterOperator, Sorter, OperationMode,
+		AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
 	/*global QUnit, sinon */
 	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
 	"use strict";
@@ -30216,6 +30217,55 @@ sap.ui.define([
 				"sap.m.ColumnListItem",
 				"sap.m.ColumnListItem"
 			], ["42", "42,Frederic Fall", "42,Jonathan Smith", "42,Peter Burke"]);
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: FlexBox as a control that does not override updateItems but has E.C.D enabled.
+	// BCP: 2180095696
+[false, true].forEach(function (bAutoExpandSelect) {
+	QUnit.test("BCP: 2180095696, bAutoExpandSelect = " + bAutoExpandSelect, function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : bAutoExpandSelect}),
+			sView = '\
+<FlexBox id="flexBox" items="{/EMPLOYEES}">\
+	<Text id="name" text="{Name}"/>\
+</FlexBox>',
+			that = this;
+
+		// force enable E.C.D. for FlexBox
+		FlexBox.prototype.bUseExtendedChangeDetection = true;
+
+		this.expectRequest("EMPLOYEES?"
+			+ (bAutoExpandSelect ? "$select=ID,Name&" : "")
+			+ "$skip=0&$top=100", {
+				value : [
+					{ID : "2", Name : "Frederic Fall"},
+					{ID : "3", Name : "Jonathan Smith"}
+				]
+			})
+			.expectChange("name", ["Frederic Fall", "Jonathan Smith"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("EMPLOYEES?"
+				+ (bAutoExpandSelect ? "$select=ID,Name&" : "")
+				+ "$orderby=Name desc&$skip=0&$top=100", {
+					value : [
+						{ID : "3", Name : "Jonathan Smith"},
+						{ID : "2", Name : "Frederic Fall"}
+					]
+				})
+				.expectChange("name", null)
+				.expectChange("name", null)
+				.expectChange("name", ["Jonathan Smith", "Frederic Fall"]);
+
+			// code under test
+			that.oView.byId("flexBox").getBinding("items").sort(new Sorter("Name", true));
+
+			return that.waitForChanges(assert);
+		}).finally(function () {
+			// reset E.C.D.
+			delete FlexBox.prototype.bUseExtendedChangeDetection;
 		});
 	});
 });
