@@ -1605,10 +1605,6 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 	padding: 0;
 }
 
-.sapUiDocumentationSubclassesPopover {
-	padding: 0.5rem;
-	max-width: 1000px;
-}
 /*
  * End of API Detail specific CSS
  */
