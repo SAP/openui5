@@ -80,20 +80,6 @@ sap.ui.define([
 			DEMOKIT_CONFIGURATION_LANGUAGE = "language",
 			SITEMAP = "sitemap";
 
-		// We need to hardcode theme depending height of Toolbar to calculate ScrollContainer
-		// height more precisely on the home page
-		var oToolbarHeights = {
-			sap_belize: {
-				iMobileHeight: "5rem",
-				iDesktopHeight: "3rem"
-			},
-			sap_fiori_3: {
-				iMobileHeight: "4.75rem",
-				iDesktopHeight: "2.75rem"
-			}
-		};
-
-
 		return BaseController.extend("sap.ui.documentation.sdk.controller.App", {
 			formatter: globalFormatter,
 
@@ -120,8 +106,7 @@ sap.ui.define([
 					"Check at <a href = 'https://openui5.hana.ondemand.com/versionoverview.html'>https://openui5.hana.ondemand.com/versionoverview.html</a> " +
 					"which versions are available. " +
 					"You can view the version-specific Demo Kit by adding the version number to the URL, e.g. " +
-					"<a href='https://openui5.hana.ondemand.com/1.52.4/'>https://openui5.hana.ondemand.com/1.52.4/</a>",
-					oThemeScrollContainerHeight: oToolbarHeights[this.extractThemeSettings()]
+					"<a href='https://openui5.hana.ondemand.com/1.52.4/'>https://openui5.hana.ondemand.com/1.52.4/</a>"
 				}),
 					bSupportsSWA, bHasConsentUseSWA;
 
@@ -192,7 +177,6 @@ sap.ui.define([
 				}, this);
 
 				this.bus = Core.getEventBus();
-				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 
 				this._createConfigurationBasedOnURIInput();
 
@@ -1377,16 +1361,6 @@ sap.ui.define([
 						Log.warning("No neo-app.json was detected");
 					}
 				);
-			},
-
-			onDemoKitThemeChanged: function() {
-				this.getModel("appView").setProperty("/oThemeScrollContainerHeight",
-					oToolbarHeights[this.extractThemeSettings()]);
-			},
-
-			extractThemeSettings: function() {
-				return Core.getConfiguration().getTheme() === "sap_fiori_3" ?
-					"sap_fiori_3" : "sap_belize";
 			},
 
 			_getUI5Version: function () {
