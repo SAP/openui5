@@ -142,7 +142,7 @@ sap.ui.define([
 		var oBinding = this.bindList("EMPLOYEES"),
 			oMixin = {},
 			aOverriddenFunctions = ["destroy", "fetchCache", "getDependentBindings",
-				"hasPendingChangesForPath"];
+				"getGeneration", "hasPendingChangesForPath"];
 
 		asODataParentBinding(oMixin);
 
@@ -294,8 +294,10 @@ sap.ui.define([
 	QUnit.test("constructor", function (assert) {
 		var oBinding,
 			oContext = {},
+			oCreateMock,
 			aFilters = [],
 			vFilters = {},
+			oHeaderContext = {},
 			oHelperMock = this.mock(_Helper),
 			oODataListBindingMock = this.mock(ODataListBinding.prototype),
 			mParameters = {/*see clone below for actual content*/},
@@ -308,6 +310,9 @@ sap.ui.define([
 			aSorters = [],
 			vSorters = {};
 
+		oCreateMock = this.mock(Context).expects("createNewContext")
+			.withExactArgs(sinon.match.same(this.oModel), sinon.match.object, "/EMPLOYEES")
+			.returns(oHeaderContext);
 		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(vFilters)).returns(aFilters);
 		oHelperMock.expects("toArray").withExactArgs(sinon.match.same(vSorters)).returns(aSorters);
 		this.mock(_Helper).expects("clone").withExactArgs(sinon.match.same(mParameters))
@@ -322,14 +327,15 @@ sap.ui.define([
 		oBinding = new ODataListBinding(this.oModel, "/EMPLOYEES", oContext, vSorters, vFilters,
 			mParameters);
 
+		assert.strictEqual(oCreateMock.args[0][1], oBinding);
+
 		assert.strictEqual(oBinding.aApplicationFilters, aFilters);
 		assert.strictEqual(oBinding.sChangeReason, undefined);
 		assert.strictEqual(oBinding.oDiff, undefined);
 		assert.deepEqual(oBinding.aFilters, []);
 		assert.strictEqual(oBinding.sGroupId, "group");
 		assert.strictEqual(oBinding.bHasAnalyticalInfo, false);
-		assert.deepEqual(oBinding.getHeaderContext(),
-			Context.create(this.oModel, oBinding, "/EMPLOYEES"));
+		assert.deepEqual(oBinding.getHeaderContext(), oHeaderContext);
 		assert.strictEqual(oBinding.sOperationMode, OperationMode.Server);
 		assert.deepEqual(oBinding.mPreviousContextsByPath, {});
 		assert.deepEqual(oBinding.aPreviousData, []);
@@ -2194,7 +2200,9 @@ sap.ui.define([
 				+ ", bRelative=" + bRelative;
 
 	QUnit.test(sTitle, function (assert) {
-		var oContext = bRelative ? Context.create(this.oModel, {}, "/TEAMS('42')") : undefined,
+		var oContext = bRelative
+				? Context.createNewContext(this.oModel, {}, "/TEAMS('42')")
+				: undefined,
 			oBinding = this.bindList(bRelative ? "TEAM_2_EMPLOYEES" : "/EMPLOYEES", oContext,
 				null, null, {$$ownRequest : true}),
 			oCache = oBinding.oCachePromise.getResult(),
@@ -2284,7 +2292,7 @@ sap.ui.define([
 		+ bFetchResourcePathFails;
 
 	QUnit.test(sTitle, function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+		var oContext = Context.createNewContext(this.oModel, {}, "/TEAMS('42')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, null, null,
 				{$$ownRequest : true}),
 			oError = new Error(),
@@ -2339,7 +2347,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("refreshInternal: bKeepCacheOnError & canceled", function (assert) {
-		var oContext = Context.create(this.oModel, {}, "/TEAMS('42')"),
+		var oContext = Context.createNewContext(this.oModel, {}, "/TEAMS('42')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext, null, null,
 				{$$ownRequest : true}),
 			oError = new Error(),
@@ -2706,7 +2714,7 @@ sap.ui.define([
 			QUnit.test("sort: " + sTitle, function (assert) {
 				var oBinding,
 					oModel = oFixture.oModel || this.oModel,
-					oContext = Context.create(oModel, {/*oBinding*/}, "/TEAMS", 1),
+					oContext = Context.createNewContext(oModel, {/*oBinding*/}, "/TEAMS", 1),
 					aSorters = [];
 
 				oBinding = oModel.bindList("TEAM_2_EMPLOYEES", undefined, undefined, undefined,
@@ -5152,8 +5160,7 @@ sap.ui.define([
 		oBindingMock.expects("isResolved").withExactArgs().returns(true);
 
 		// code under test
-		assert.deepEqual(oBinding.getHeaderContext(),
-			Context.create(this.oModel, oBinding, "/EMPLOYEES"));
+		assert.ok(oBinding.getHeaderContext());
 
 		oBindingMock.expects("isResolved").withExactArgs().returns(false);
 
@@ -6707,7 +6714,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("checkKeepAlive: relative", function (assert) {
 		var oBinding,
-			oParentContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')");
+			oParentContext = Context.createNewContext({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')");
 
 		oBinding = this.bindList("TEAM_2_EMPLOYEES", oParentContext);
 
@@ -7165,6 +7172,25 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getGeneration", function (assert) {
+		var oBinding = this.bindList("/TEAMS"),
+			oContext = Context.createNewContext(this.oModel, {}, "/TEAMS('42')");
+
+		this.mock(oBinding.oHeaderContext).expects("getGeneration").withExactArgs(true)
+			.returns(42);
+
+		// code under test
+		assert.strictEqual(oBinding.getGeneration(), 42);
+
+		oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext);
+		this.mock(asODataParentBinding.prototype).expects("getGeneration").on(oBinding)
+			.withExactArgs().returns(34);
+
+		// code under test
+		assert.strictEqual(oBinding.getGeneration(), 34);
+	});
 
 	//*********************************************************************************************
 	QUnit.test("getFilterForPredicate (one key property)", function (assert) {

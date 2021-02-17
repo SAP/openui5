@@ -51,7 +51,6 @@ sap.ui.define([
 		assert.strictEqual(oContext.getPath(), sPath);
 		assert.strictEqual(oContext.getModelIndex(), 42);
 		assert.strictEqual(oContext.created(), undefined);
-		assert.strictEqual(oContext.getReturnValueContextId(), undefined);
 		assert.strictEqual(oContext.isKeepAlive(), false);
 		assert.strictEqual(oContext.fnOnBeforeDestroy, undefined);
 
@@ -80,69 +79,38 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createReturnValueContext", function (assert) {
+	QUnit.test("getGeneration: after Context.createNewContext", function (assert) {
 		var oBinding = {},
-			oContext,
+			oContext1,
+			oContext2,
 			oModel = {},
 			sPath = "/foo";
 
-		// code under test (return value context)
-		oContext = Context.createReturnValueContext(oModel, oBinding, sPath);
-
-		assert.notEqual(oContext.getReturnValueContextId(), undefined);
-		assert.strictEqual(oContext.getReturnValueContextId(), oContext.getReturnValueContextId());
-
-		// code under test (return value contexts have different IDs)
-		assert.notEqual(
-			Context.createReturnValueContext(oModel, oBinding, sPath).getReturnValueContextId(),
-			oContext.getReturnValueContextId());
-	});
-
-	//*********************************************************************************************
-	[
-		{getReturnValueContextId : function () {}},
-		{},
-		undefined
-	].forEach(function (oParentContext, i) {
-		QUnit.test("getReturnValueContextId: relative - " + i, function (assert) {
-			var oBinding = {
-					oContext : oParentContext,
-					bRelative : true
-				},
-				oContext,
-				oModel = {},
-				vReturnValueContextId = {};
-
-			oContext = Context.create(oModel, oBinding, "/foo/bar");
-
-			if (i === 0) {
-				this.mock(oParentContext).expects("getReturnValueContextId")
-					.withExactArgs().returns(vReturnValueContextId);
-			}
-
-			// code under test
-			assert.strictEqual(oContext.getReturnValueContextId(),
-				i === 0 ? vReturnValueContextId : undefined);
-		});
-	});
-
-	//*********************************************************************************************
-	QUnit.test("getReturnValueContextId: absolute binding", function (assert) {
-		var oParentContext = {getReturnValueContextId : function () {}},
-			oBinding = {
-				// context is set even if not used because binding is absolute
-				oContext : oParentContext,
-				bRelative : false
-			},
-			oContext,
-			oModel = {};
-
-		oContext = Context.create(oModel, oBinding, "/foo/bar");
-
-		this.mock(oParentContext).expects("getReturnValueContextId").never();
+		oContext1 = Context.createNewContext(oModel, oBinding, sPath);
+		oContext2 = Context.createNewContext(oModel, oBinding, sPath);
 
 		// code under test
-		assert.strictEqual(oContext.getReturnValueContextId(), undefined);
+		assert.ok(oContext1.getGeneration() > 0);
+		assert.strictEqual(oContext1.getGeneration(), oContext1.getGeneration());
+		assert.ok(oContext2.getGeneration(), oContext1.getGeneration());
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getGeneration: after Context.create", function (assert) {
+		var oBinding = {
+				getGeneration : function () {}
+			},
+			oContext;
+
+		oContext = Context.create({/*oModel*/}, oBinding, "/foo/bar");
+
+		this.mock(oBinding).expects("getGeneration").withExactArgs().returns(23);
+
+		// code under test
+		assert.strictEqual(oContext.getGeneration(), 23);
+
+		// code under test
+		assert.strictEqual(oContext.getGeneration(true), 0);
 	});
 
 	//*********************************************************************************************
@@ -205,7 +173,7 @@ sap.ui.define([
 		}, new Error("Not an absolute path: foo"));
 
 		assert.throws(function () {
-			Context.createReturnValueContext(null, null, "foo");
+			Context.createNewContext(null, null, "foo");
 		}, new Error("Not an absolute path: foo"));
 	});
 
@@ -219,10 +187,10 @@ sap.ui.define([
 		}, new Error("Unsupported trailing slash: /foo/"));
 
 		assert.throws(function () {
-			Context.createReturnValueContext(null, null, "/");
+			Context.createNewContext(null, null, "/");
 		}, new Error("Unsupported trailing slash: /"));
 		assert.throws(function () {
-			Context.createReturnValueContext(null, null, "/foo/");
+			Context.createNewContext(null, null, "/foo/");
 		}, new Error("Unsupported trailing slash: /foo/"));
 	});
 
@@ -1979,7 +1947,7 @@ sap.ui.define([
 			getContext : function () { return null; },
 			getPath : function () { return "/..."; }
 		},
-		oReturnValueContext = Context.createReturnValueContext({}, oOperationBinding,
+		oReturnValueContext = Context.createNewContext({}, oOperationBinding,
 			"/...");
 
 	this.mock(oBinding).expects("getContext")

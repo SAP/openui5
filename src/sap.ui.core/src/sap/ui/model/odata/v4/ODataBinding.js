@@ -242,7 +242,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.createAndSetCache = function (mQueryOptions, sResourcePath, oContext) {
-		var oCache, sDeepResourcePath, iReturnValueContextId;
+		var oCache, sDeepResourcePath, iGeneration;
 
 		this.mCacheQueryOptions = Object.assign({}, this.oModel.mUriParameters, mQueryOptions);
 		if (this.bRelative) { // quasi-absolute or relative binding
@@ -258,9 +258,8 @@ sap.ui.define([
 
 			// mCacheByResourcePath has to be reset if parameters are changing
 			oCache = this.mCacheByResourcePath && this.mCacheByResourcePath[sResourcePath];
-			iReturnValueContextId = oContext.getReturnValueContextId
-				&& oContext.getReturnValueContextId();
-			if (oCache && oCache.$returnValueContextId === iReturnValueContextId) {
+			iGeneration = oContext.getGeneration && oContext.getGeneration() || 0;
+			if (oCache && oCache.$generation >= iGeneration) {
 				oCache.setActive(true);
 			} else {
 				sDeepResourcePath = _Helper.buildPath(oContext.getPath(), this.sPath).slice(1);
@@ -271,8 +270,8 @@ sap.ui.define([
 					this.mCacheByResourcePath[sResourcePath] = oCache;
 				}
 				oCache.$deepResourcePath = sDeepResourcePath;
+				oCache.$generation = iGeneration;
 				oCache.$resourcePath = sResourcePath;
-				oCache.$returnValueContextId = iReturnValueContextId;
 			}
 		} else { // absolute binding
 			oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions);

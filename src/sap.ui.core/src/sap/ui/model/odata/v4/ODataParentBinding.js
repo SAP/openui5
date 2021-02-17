@@ -642,7 +642,7 @@ sap.ui.define([
 			oMetaModel = this.oModel.getMetaModel(),
 			aPromises,
 			sResolvedChildPath = this.oModel.resolve(sChildPath, oContext),
-			sResolvedPath = oContext.iReturnValueContextId
+			sResolvedPath = oContext.getBinding().oReturnValueContext === oContext
 				? oContext.getPath()
 				: this.oModel.resolve(this.sPath, this.oContext),
 			// whether this binding is an operation or depends on one
@@ -881,6 +881,19 @@ sap.ui.define([
 		return this.mCacheQueryOptions
 			|| _Helper.getQueryOptionsForPath(
 				this.oContext.getBinding().getCacheQueryOptions(), this.sPath);
+	};
+
+	/**
+	 * Returns the unique number of this bindings's generation, or <code>0</code> if it does not
+	 * belong to any specific generation. This number can be inherited from a parent context.
+	 *
+	 * @returns {number}
+	 *   The unique number of this binding's generation, or <code>0</code>
+	 *
+	 * @private
+	 */
+	ODataParentBinding.prototype.getGeneration = function () {
+		return this.bRelative && this.oContext.getGeneration && this.oContext.getGeneration() || 0;
 	};
 
 	/**
@@ -1418,6 +1431,8 @@ sap.ui.define([
 	asODataParentBinding.prototype.destroy = ODataParentBinding.prototype.destroy;
 	// #fetchCache is still not final, allow for "super" calls
 	asODataParentBinding.prototype.fetchCache = ODataParentBinding.prototype.fetchCache;
+	// #getGeneration is not final, allow for "super" calls
+	asODataParentBinding.prototype.getGeneration = ODataParentBinding.prototype.getGeneration;
 	// #hasPendingChangesForPath is still not final, allow for "super" calls
 	asODataParentBinding.prototype.hasPendingChangesForPath
 		= ODataParentBinding.prototype.hasPendingChangesForPath;

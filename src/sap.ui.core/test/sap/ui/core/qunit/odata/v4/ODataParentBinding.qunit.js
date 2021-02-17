@@ -870,13 +870,16 @@ sap.ui.define([
 				oBindingMock = this.mock(oBinding),
 				mChildLocalQueryOptions = {},
 				oContext = bReturnValueContext
-					? Context.createReturnValueContext(this.oModel, oBinding, "/Set('2')")
+					? Context.createNewContext(this.oModel, oBinding, "/Set('2')")
 					: Context.create(this.oModel, oBinding, "/Set('2')"),
 				oHelperMock = this.mock(_Helper),
 				oMetaModelMock = this.mock(oMetaModel),
 				oModelMock = this.mock(oBinding.oModel),
 				oPromise;
 
+			if (bReturnValueContext) {
+				oBinding.oReturnValueContext = oContext;
+			}
 			oModelMock.expects("resolve").exactly(bReturnValueContext ? 0 : 1)
 				.withExactArgs("/Set", sinon.match.same(oBinding.oContext))
 				.returns("/resolved/path");
@@ -1497,7 +1500,9 @@ sap.ui.define([
 				},
 				sPath : "path"
 			}),
-			oContext = {},
+			oContext = {
+				getBinding : function () { return {/*oBinding*/}; }
+			},
 			oModelMock = this.mock(oBinding.oModel);
 
 		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs().returns("n/a");
@@ -1524,7 +1529,9 @@ sap.ui.define([
 				},
 				sPath : "path"
 			}),
-			oContext = {},
+			oContext = {
+				getBinding : function () { return {/*oBinding*/}; }
+			},
 			oModelMock = this.mock(oBinding.oModel);
 
 		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs().returns("anything");
@@ -1756,7 +1763,9 @@ sap.ui.define([
 				},
 				sPath : "/TEAMS"
 			}),
-			oContext = {},
+			oContext = {
+				getBinding : function () { return {/*oBinding*/}; }
+			},
 			oModelMock = this.mock(oBinding.oModel),
 			oPromise,
 			oRootBinding = {
@@ -3759,6 +3768,7 @@ sap.ui.define([
 			oBinding.doDeregisterChangeListener);
 		assert.strictEqual(asODataParentBinding.prototype.destroy, oBinding.destroy);
 		assert.strictEqual(asODataParentBinding.prototype.fetchCache, oBinding.fetchCache);
+		assert.strictEqual(asODataParentBinding.prototype.getGeneration, oBinding.getGeneration);
 		assert.strictEqual(asODataParentBinding.prototype.hasPendingChangesForPath,
 			oBinding.hasPendingChangesForPath);
 	});
@@ -3924,6 +3934,34 @@ sap.ui.define([
 			.then(function (vResult) {
 				assert.strictEqual(vResult, "~");
 			});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getGeneration", function (assert) {
+		var oBinding = new ODataParentBinding();
+
+		// code under test
+		assert.strictEqual(oBinding.getGeneration(), 0);
+
+		oBinding = new ODataParentBinding({
+			oContext : {
+				getGeneration : function () {}
+			},
+			bRelative : true
+		});
+		this.mock(oBinding.oContext).expects("getGeneration").withExactArgs().returns(42);
+
+		// code under test
+		assert.strictEqual(oBinding.getGeneration(), 42);
+
+		oBinding = new ODataParentBinding({
+			oContext : {},
+			bRelative : true
+		});
+
+		// code under test
+		assert.strictEqual(oBinding.getGeneration(), 0);
+
 	});
 });
 //TODO Fix issue with ODataModel.integration.qunit

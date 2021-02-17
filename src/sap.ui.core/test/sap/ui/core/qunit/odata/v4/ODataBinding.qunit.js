@@ -1436,15 +1436,15 @@ sap.ui.define([
 			},
 			mMergedQueryOptions = {},
 			mQueryOptions = {},
-			iReturnValueContextId = {/*number*/};
+			iGeneration = {/*number*/};
 
 		if (bSharedRequest) {
 			oBinding.mParameters = {$$sharedRequest : true};
 		}
 		if (bV4Context) {
-			oContext.getReturnValueContextId = function () {};
-			this.mock(oContext).expects("getReturnValueContextId").withExactArgs()
-				.returns(iReturnValueContextId);
+			oContext.getGeneration = function () {};
+			this.mock(oContext).expects("getGeneration").withExactArgs()
+				.returns(iGeneration);
 		}
 		if (bHasCaches) {
 			oBinding.mCacheByResourcePath = {foo : "bar"};
@@ -1479,8 +1479,7 @@ sap.ui.define([
 		}
 		assert.strictEqual(oCache.$deepResourcePath, "deep/resource/path");
 		assert.strictEqual(oCache.$resourcePath, "/resource/path");
-		assert.strictEqual(oCache.$returnValueContextId,
-			bV4Context ? iReturnValueContextId : undefined);
+		assert.strictEqual(oCache.$generation, bV4Context ? iGeneration : 0);
 	});
 
 		});
@@ -1525,7 +1524,9 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createAndSetCache: reuse cache", function (assert) {
+// undefined for the quasi-absolute binding (context has no getGeneration())
+[undefined, false, true].forEach(function (bSameGeneration) {
+	QUnit.test("createAndSetCache: reuse cache, " + bSameGeneration, function (assert) {
 		var oBinding = new ODataBinding({
 				oModel : {
 					mUriParameters : {}
@@ -1534,23 +1535,31 @@ sap.ui.define([
 				bRelative : true
 			}),
 			oCache = {
+				$generation : bSameGeneration ? 23 : 42,
 				setActive : function () {}
-			};
+			},
+			oContext = {};
 
 		oBinding.mCacheByResourcePath = {};
 		oBinding.mCacheByResourcePath["/resource/path"] = oCache;
+
+		if (bSameGeneration !== undefined) {
+			oContext.getGeneration = function () {};
+			this.mock(oContext).expects("getGeneration").withExactArgs().returns(23);
+		}
 		this.mock(oCache).expects("setActive").withExactArgs(true);
 
 		assert.strictEqual(
 			// code under test
-			oBinding.createAndSetCache({}, "/resource/path", {}),
+			oBinding.createAndSetCache({}, "/resource/path", oContext),
 			oCache
 		);
 		assert.strictEqual(oBinding.oCache, oCache);
 	});
+});
 
 	//*********************************************************************************************
-	QUnit.test("createAndSetCache: no reuse due to returnValueContextId", function (assert) {
+	QUnit.test("createAndSetCache: no reuse due to older generation", function (assert) {
 		var oBinding = new ODataBinding({
 				doCreateCache : function () {},
 				oModel : {
@@ -1561,12 +1570,12 @@ sap.ui.define([
 				bRelative : true
 			}),
 			oCache0 = {
-				$returnValueContextId : 23
+				$generation : 23
 			},
 			oCache1 = {},
 			oContext = {
 				getPath : function () {},
-				getReturnValueContextId : function () {}
+				getGeneration : function () {}
 			},
 			mMergedQueryOptions = {},
 			mQueryOptions = {};
@@ -1576,7 +1585,7 @@ sap.ui.define([
 		this.mock(Object).expects("assign")
 			.withExactArgs({}, sinon.match.same(oBinding.oModel.mUriParameters),
 				sinon.match.same(mQueryOptions)).returns(mMergedQueryOptions);
-		this.mock(oContext).expects("getReturnValueContextId").withExactArgs().returns(42);
+		this.mock(oContext).expects("getGeneration").withExactArgs().returns(42);
 		this.mock(oContext).expects("getPath").withExactArgs().returns("/contextPath");
 		this.mock(_Helper).expects("buildPath").withExactArgs("/contextPath", oBinding.sPath)
 			.returns("/deep/resource/path");
@@ -1596,7 +1605,7 @@ sap.ui.define([
 		assert.strictEqual(oBinding.mCacheByResourcePath["/resource/path"], oCache1);
 		assert.strictEqual(oCache1.$deepResourcePath, "deep/resource/path");
 		assert.strictEqual(oCache1.$resourcePath, "/resource/path");
-		assert.strictEqual(oCache1.$returnValueContextId, 42);
+		assert.strictEqual(oCache1.$generation, 42);
 	});
 
 	//*********************************************************************************************

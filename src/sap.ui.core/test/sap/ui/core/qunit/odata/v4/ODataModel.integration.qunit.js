@@ -19769,13 +19769,10 @@ sap.ui.define([
 				.expectChange("isActive", "Yes")
 				.expectChange("name",
 						oFixture.keepAlive ? "The Beatles (modified)" : "The Beatles");
-			expectPublicationRequest("42", true, oFixture.keepAlive);
+			expectPublicationRequest("42", true, true);
 
 			// Now return to the artist from the list.
-			// There is no request for the artist; its cache is reused.
-			// The publication is requested again, it was relative to a return value context before
-			// and the return value context ID changed.
-			// The list must be updated manually.
+			// There is no request; the caches are reused.
 			oRowContext = that.oView.byId("table").getItems()[0].getBindingContext();
 			return bindObjectPage(oRowContext, oFixture.hiddenBinding);
 		}).then(function () {
@@ -29072,7 +29069,8 @@ sap.ui.define([
 	// reused. Show that the side effect was not ignored.
 	// JIRA: CPOUI5ODATAV4-34
 	QUnit.test("CPOUI5ODATAV4-34: Response discarded: cache is inactive", function (assert) {
-		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+		var oContext,
+			oModel = createTeaBusiModel({autoExpandSelect : true}),
 			oTable,
 			sView = '\
 <Table id="table" items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
@@ -29088,8 +29086,9 @@ sap.ui.define([
 					value : [{ID : "1", Name : "Jonathan Smith"}]
 				})
 				.expectChange("name", ["Jonathan Smith"]);
+			oContext = oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext();
 			oTable = that.oView.byId("table");
-			oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+			oTable.setBindingContext(oContext);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
@@ -29129,7 +29128,7 @@ sap.ui.define([
 			// 3rd, switch back again
 			that.expectChange("name", ["Darth Vader"]);
 
-			oTable.setBindingContext(oModel.bindContext("/TEAMS('TEAM_01')").getBoundContext());
+			oTable.setBindingContext(oContext);
 
 			return that.waitForChanges(assert);
 		});
@@ -31714,6 +31713,250 @@ sap.ui.define([
 
 			return that.waitForChanges(assert,
 				"Step 4: request side effects with kept contexts not yet destroyed");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Hidden absolute context binding provides binding context for object page, therein a
+	// list binding for items, and on the sub-object of an item, another list binding with even more
+	// details. Make sure that those list bindings do not use old cached data in case the hidden
+	// root binding is new.
+	//
+	// -Do the same with a "binding context" as root.- We do not support this!
+	//
+	// JIRA: CPOUI5ODATAV4-766
+[function (oModel) {
+	var oHiddenBinding = oModel.bindContext("/TEAMS('42')");
+
+	return oHiddenBinding.getBoundContext();
+// }, function (oModel) {
+// 	return oModel.createBindingContext("/TEAMS('42')");
+}].forEach(function (fnCreateContext, i) {
+	QUnit.test("CPOUI5ODATAV4-766: re-read dependent if parent is new, #" + i, function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oObjectPage,
+			oOldRoot,
+			oSubObjectPage,
+			sView = '\
+<FlexBox id="objectPage" binding="{}">\
+	<Text id="name" text="{Name}"/>\
+	<Table id="employees"\
+			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+		<Text id="age" text="{AGE}"/>\
+	</Table>\
+</FlexBox>\
+<FlexBox id="subObjectPage" binding="{}">\
+	<Table id="equipments"\
+			items="{path : \'EMPLOYEE_2_EQUIPMENTS\', parameters : {$$ownRequest : true}}">\
+		<Text id="category" text="{Category}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("name")
+			.expectChange("age", [])
+			.expectChange("category", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oObjectPage = that.oView.byId("objectPage");
+			oOldRoot = fnCreateContext(oModel);
+
+			that.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$select=AGE,ID&$skip=0&$top=100", {
+					value : [{
+						AGE : 31,
+						ID : "1"
+					}, {
+						AGE : 32,
+						ID : "2"
+					}]
+				})
+				.expectRequest("TEAMS('42')?$select=Name,Team_Id", {
+					Name : "Team 42",
+					Team_Id : "42"
+				})
+				.expectChange("name", "Team 42")
+				.expectChange("age", ["31", "32"]);
+
+			// code under test
+			oObjectPage.setBindingContext(oOldRoot);
+
+			return that.waitForChanges(assert, "Show team");
+		}).then(function () {
+			var oEmployeesBinding = that.oView.byId("employees").getBinding("items");
+
+			oSubObjectPage = that.oView.byId("subObjectPage");
+
+			that.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES('1')/EMPLOYEE_2_EQUIPMENTS"
+					+ "?$select=Category,ID&$skip=0&$top=100", {
+					value : [{
+						Category : "C1.1",
+						ID : "1.1"
+					}, {
+						Category : "C1.2",
+						ID : "1.2"
+					}]
+				})
+				.expectChange("category", ["C1.1", "C1.2"]);
+
+			// code under test
+			oSubObjectPage.setBindingContext(oEmployeesBinding.getCurrentContexts()[0]);
+
+			return that.waitForChanges(assert, "Show employee");
+		}).then(function () {
+			var oNewRoot = fnCreateContext(oModel);
+
+			that.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$select=AGE,ID&$skip=0&$top=100", {
+					value : [{
+						AGE : 33,
+						ID : "3"
+					}, {
+						AGE : 34,
+						ID : "4"
+					}]
+				})
+				.expectRequest("TEAMS('42')?$select=Name,Team_Id", {
+					Name : "New Team 42",
+					Team_Id : "42"
+				})
+				.expectChange("name", "New Team 42")
+				.expectChange("age", ["33", "34"]);
+
+			oSubObjectPage.setBindingContext(null);
+			// code under test
+			oObjectPage.setBindingContext(oNewRoot);
+
+			return that.waitForChanges(assert, "Show team anew");
+		}).then(function () {
+			var oEmployeesBinding = that.oView.byId("employees").getBinding("items");
+
+			that.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES('3')/EMPLOYEE_2_EQUIPMENTS"
+					+ "?$select=Category,ID&$skip=0&$top=100", {
+					value : [{
+						Category : "C3.1",
+						ID : "3.1"
+					}, {
+						Category : "C3.2",
+						ID : "3.2"
+					}]
+				})
+				.expectChange("category", ["C3.1", "C3.2"]);
+
+			// code under test
+			oSubObjectPage.setBindingContext(oEmployeesBinding.getCurrentContexts()[0]);
+
+			return that.waitForChanges(assert, "Show employee anew");
+		}).then(function () {
+			// Note: while it might be unrealistic to go back to the old hidden binding, there is no
+			// reason to read new data in this case
+			that.expectChange("name", "Team 42") // Note: old data stored in oHiddenBinding's cache
+				.expectChange("age", ["33", "34"]); // list binding fires "refresh" etc.
+
+			oSubObjectPage.setBindingContext(null);
+			// code under test
+			oObjectPage.setBindingContext(oOldRoot);
+
+			return that.waitForChanges(assert, "Show old team again");
+		}).then(function () {
+			var oEmployeesBinding = that.oView.byId("employees").getBinding("items");
+
+			that.expectChange("category", ["C3.1", "C3.2"]);
+
+			// code under test
+			oSubObjectPage.setBindingContext(oEmployeesBinding.getCurrentContexts()[0]);
+
+			return that.waitForChanges(assert, "Show employee again");
+		});
+	});
+});
+
+	//*********************************************************************************************
+	// Scenario: Absolute list binding provides binding context for object page, therein a list
+	// binding for items. Make sure the dependent list binding does not use old cached data in case
+	// the root binding is new.
+	//
+	// JIRA: CPOUI5ODATAV4-766
+	QUnit.test("CPOUI5ODATAV4-766: re-read dependent if parent list is new", function (assert) {
+		var oModel = createTeaBusiModel({autoExpandSelect : true}),
+			oObjectPage,
+			oOldRoot,
+			sView = '\
+<FlexBox id="objectPage" binding="{}">\
+	<Text id="name" text="{Name}"/>\
+	<Table id="employees"\
+			items="{path : \'TEAM_2_EMPLOYEES\', parameters : {$$ownRequest : true}}">\
+		<Text id="age" text="{AGE}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("name")
+			.expectChange("age", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("TEAMS?$skip=0&$top=1", {
+					value : [{
+						Name : "Team 42",
+						Team_Id : "42"
+					}]
+				});
+
+			return oModel.bindList("/TEAMS").requestContexts(0, 1);
+		}).then(function (aContexts) {
+			oObjectPage = that.oView.byId("objectPage");
+			oOldRoot = aContexts[0];
+
+			that.expectChange("name", "Team 42")
+				.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$select=AGE,ID&$skip=0&$top=100", {
+					value : [{
+						AGE : 31,
+						ID : "1"
+					}, {
+						AGE : 32,
+						ID : "2"
+					}]
+				})
+				.expectChange("age", ["31", "32"]);
+
+			// code under test
+			oObjectPage.setBindingContext(oOldRoot);
+
+			return that.waitForChanges(assert, "Show team");
+		}).then(function () {
+			that.expectRequest("TEAMS?$skip=0&$top=1", {
+					value : [{
+						Name : "New Team 42",
+						Team_Id : "42"
+					}]
+				});
+
+			return oModel.bindList("/TEAMS").requestContexts(0, 1);
+		}).then(function (aContexts) {
+			that.expectChange("name", "New Team 42")
+				.expectRequest("TEAMS('42')/TEAM_2_EMPLOYEES?$select=AGE,ID&$skip=0&$top=100", {
+					value : [{
+						AGE : 33,
+						ID : "3"
+					}, {
+						AGE : 34,
+						ID : "4"
+					}]
+				})
+				.expectChange("age", ["33", "34"]);
+
+			// code under test
+			oObjectPage.setBindingContext(aContexts[0]);
+
+			return that.waitForChanges(assert, "Show team anew");
+		}).then(function () {
+			// Note: while it might be unrealistic to go back to the old hidden binding, there is no
+			// reason to read new data in this case
+			that.expectChange("name", "Team 42") // Note: old data stored in hidden binding's cache
+				.expectChange("age", ["33", "34"]); // list binding fires "refresh" etc.
+
+			// code under test
+			oObjectPage.setBindingContext(oOldRoot);
+
+			return that.waitForChanges(assert, "Show old team again");
 		});
 	});
 
