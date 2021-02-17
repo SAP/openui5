@@ -1,29 +1,8 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/flexibility/SortFlex", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier"
-], function(SortFlex, UIComponent, ComponentContainer, ChangesWriteAPI, JsControlTreeModifier) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/flexibility/SortFlex", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier"
+], function(createAppEnvironment, SortFlex, ChangesWriteAPI, JsControlTreeModifier) {
 	"use strict";
-
-	var UIComp = UIComponent.extend("test", {
-		metadata: {
-			manifest: {
-				"sap.app": {
-					"id": "",
-					"type": "application"
-				}
-			}
-		},
-		createContent: function() {
-			// create empty table in view to enable flex changes
-			var oView = sap.ui.view({
-				async: false,
-				type: "XML",
-				id: this.createId("view"),
-				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table id="myTable"></Table></mvc:View>'
-			});
-			return oView;
-		}
-	});
 
 	var fCreateAddSortDefinition = function(){
 		return {
@@ -55,26 +34,25 @@ sap.ui.define([
 
 	QUnit.module("change handlers", {
 		beforeEach: function() {
-			this.oUiComponent = new UIComp("comp");
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component: this.oUiComponent,
-				async: false
-			});
-			this.oView = this.oUiComponent.getRootControl();
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
 
-			this.oView = this.oUiComponent.getRootControl();
-			this.oTable = this.oView.byId('myTable');
+			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table id="myTable"></Table></mvc:View>';
 
-			//addSort
-			this.fAddSort = SortFlex.addSort.changeHandler.applyChange;
-			this.fRevertAddSort = SortFlex.addSort.changeHandler.revertChange;
+			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
+				this.oView = mCreatedApp.view;
+				this.oUiComponentContainer = mCreatedApp.container;
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
 
-			//removeSort
-			this.fRemoveSort = SortFlex.removeSort.changeHandler.applyChange;
-			this.fRevertRemoveSort = SortFlex.removeSort.changeHandler.revertChange;
+				this.oTable = this.oView.byId('myTable');
+
+				//addSort
+				this.fAddSort = SortFlex.addSort.changeHandler.applyChange;
+				this.fRevertAddSort = SortFlex.addSort.changeHandler.revertChange;
+
+				//removeSort
+				this.fRemoveSort = SortFlex.removeSort.changeHandler.applyChange;
+				this.fRevertRemoveSort = SortFlex.removeSort.changeHandler.revertChange;
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oUiComponentContainer.destroy();

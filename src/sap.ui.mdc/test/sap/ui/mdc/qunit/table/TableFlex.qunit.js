@@ -1,7 +1,7 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/util/TypeUtil", "sap/ui/mdc/FilterField", "sap/ui/mdc/p13n/FlexUtil","sap/ui/mdc/table/TableSettings","sap/ui/mdc/flexibility/Table.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "../../delegates/TableDelegate", "sap/ui/mdc/table/Column"
-], function(TypeUtil, FilterField, FlexUtil, TableSettings, TableFlexHandler, ChangesWriteAPI, JsControlTreeModifier, UIComponent, ComponentContainer, TableDelegate, Column) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/util/TypeUtil", "sap/ui/mdc/FilterField", "sap/ui/mdc/p13n/FlexUtil","sap/ui/mdc/table/TableSettings","sap/ui/mdc/flexibility/Table.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "../../delegates/TableDelegate", "sap/ui/mdc/table/Column"
+], function(createAppEnvironment, TypeUtil, FilterField, FlexUtil, TableSettings, TableFlexHandler, ChangesWriteAPI, JsControlTreeModifier, UIComponent, ComponentContainer, TableDelegate, Column) {
 	'use strict';
 
 	sap.ui.getCore().loadLibrary("sap.ui.fl");
@@ -16,35 +16,15 @@ sap.ui.define([
 			name: "SomePropertyName"
 		}
 	];
-	var UIComp = UIComponent.extend("test", {
-		metadata: {
-			manifest: {
-				"sap.app": {
-					"id": "",
-					"type": "application"
-				}
-			}
-		},
-		createContent: function() {
-			// store it in outer scope
-			var oView = sap.ui.view({
-				async: false,
-				type: "XML",
-				id: this.createId("view"),
-				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table p13nMode="Column,Sort,Filter,Group" id="myTable"><columns><mdcTable:Column id="myTable--column0" header="column 0" dataProperty="column0"><m:Text text="{column0}" id="myTable--text0" /></mdcTable:Column><mdcTable:Column id="myTable--column1" header="column 1" dataProperty="column1"><m:Text text="{column1}" id="myTable--text1" /></mdcTable:Column><mdcTable:Column id="myTable--column2" header="column 2" dataProperty="column2"><m:Text text="{column2}" id="myTable--text2" /></mdcTable:Column></columns></Table></mvc:View>'
-			});
-			return oView;
-		}
-	});
 
 	function createRemoveChangeDefinition() {
 		return {
 			"changeType": "removeColumn",
 			"selector": {
-				"id": "comp---view--myTable"
+				"id": "myTableView--myTable"
 			},
 			"content": {
-				"id": "comp---view--myTable--column1",
+				"id": "myTableView--myTable--column1",
 				"name": "column1",
 				"idIsLocal": false
 			}
@@ -55,7 +35,7 @@ sap.ui.define([
 		return {
 			"changeType": "addColumn",
 			"selector": {
-				"id": "comp---view--myTable"
+				"id": "myTableView--myTable"
 			},
 			"content": {
 				"name": sProperty
@@ -69,42 +49,35 @@ sap.ui.define([
 
 	QUnit.module("Basic functionality with JsControlTreeModifier", {
 		beforeEach: function() {
-			return this.createTestObjects();
+
+			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table p13nMode="Column,Sort,Filter,Group" id="myTable"><columns><mdcTable:Column id="myTable--column0" header="column 0" dataProperty="column0"><m:Text text="{column0}" id="myTable--text0" /></mdcTable:Column><mdcTable:Column id="myTable--column1" header="column 1" dataProperty="column1"><m:Text text="{column1}" id="myTable--text1" /></mdcTable:Column><mdcTable:Column id="myTable--column2" header="column 2" dataProperty="column2"><m:Text text="{column2}" id="myTable--text2" /></mdcTable:Column></columns></Table></mvc:View>';
+
+			return createAppEnvironment(sTableView, "Table").then(function(mCreatedApp){
+				this.oView = mCreatedApp.view;
+				this.oUiComponentContainer = mCreatedApp.container;
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				this.oTable = this.oView.byId('myTable');
+				this.oColumn1 = this.oView.byId('myTable--column1');
+				// Implement required Delgate APIs
+				this._orgFn = TableDelegate.fetchProperties;
+				TableDelegate.fetchProperties = fetchProperties;
+				TableDelegate.addItem = function(sName, oTable, mPropertyBag) {
+					return Promise.resolve(new Column(oTable.getId() + "--" + sName, {dataProperty : sName}));
+				};
+				TableDelegate.getFilterDelegate = function() {
+					return {
+						addItem: function(sPropName, oTable){
+							return Promise.resolve(new FilterField({
+								conditions: "{$filters>/conditions/" + sPropName + "}"
+							}));
+						}
+					};
+				};
+			}.bind(this));
 		},
 		afterEach: function() {
-			this.destroyTestObjects();
-		},
-		createTestObjects: function() {
-			this.oUiComponent = new UIComp("comp");
-
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component: this.oUiComponent,
-				async: false
-			});
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			this.oView = this.oUiComponent.getRootControl();
-			this.oTable = this.oView.byId('myTable');
-			this.oColumn1 = this.oView.byId('myTable--column1');
-			// Implement required Delgate APIs
-			this._orgFn = TableDelegate.fetchProperties;
-			TableDelegate.fetchProperties = fetchProperties;
-			TableDelegate.addItem = function(sName, oTable, mPropertyBag) {
-				return Promise.resolve(new Column(oTable.getId() + "--" + sName, {dataProperty : sName}));
-			};
-			TableDelegate.getFilterDelegate = function() {
-				return {
-					addItem: function(sPropName, oTable){
-						return Promise.resolve(new FilterField({
-							conditions: "{$filters>/conditions/" + sPropName + "}"
-						}));
-					}
-				};
-			};
-		},
-		destroyTestObjects: function() {
 			this.oUiComponentContainer.destroy();
 			TableDelegate.fetchProperties = this._orgFn;
 			delete this._orgFn;
@@ -162,7 +135,7 @@ sap.ui.define([
 				appComponent: this.oUiComponent,
 				view: this.oView
 			}).then(function() {
-				assert.strictEqual(this.oTable.getColumns()[3].getId(), "comp---view--myTable--" + sPropertyName, "column has been added successfully");
+				assert.strictEqual(this.oTable.getColumns()[3].getId(), "myTableView--myTable--" + sPropertyName, "column has been added successfully");
 				assert.strictEqual(this.oTable.getColumns().length, 4);
 
 				// Test revert

@@ -1,37 +1,15 @@
 /* global QUnit */
 sap.ui.define([
-	"sap/ui/mdc/flexibility/FilterBar.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/core/util/reflection/XmlTreeModifier", "sap/ui/core/UIComponent", "sap/ui/core/ComponentContainer", "sap/ui/mdc/FilterBarDelegate", 'sap/ui/mdc/FilterField', 'sap/ui/mdc/condition/ConditionConverter'
-], function(FilterBarFlexHandler, ChangesWriteAPI, JsControlTreeModifier, XMLTreeModifier, UIComponent, ComponentContainer, FilterBarDelegate, FilterField, ConditionConverter) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/flexibility/FilterBar.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/core/util/reflection/XmlTreeModifier", "sap/ui/mdc/FilterBarDelegate", 'sap/ui/mdc/FilterField'
+], function(createAppEnvironment, FilterBarFlexHandler, ChangesWriteAPI, JsControlTreeModifier, XMLTreeModifier, FilterBarDelegate, FilterField) {
 	'use strict';
-
-	sap.ui.getCore().loadLibrary("sap.ui.fl");
-	var UIComp = UIComponent.extend("test", {
-		metadata: {
-			manifest: {
-				"sap.app": {
-					"id": "",
-					"type": "application"
-				}
-			}
-		},
-		createContent: function() {
-			// store it in outer scope
-			var oView = sap.ui.view({
-				async: false,
-				type: "XML",
-				id: this.createId("view"),
-				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/Category}" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field2" conditions="{$filters>/conditions/Name}" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field3" conditions="{$filters>/conditions/ProductID}"  maxConditions="1" dataType="Edm.String"/></mdc:filterItems></mdc:FilterBar></mvc:View>'
-			});
-			return oView;
-		}
-	});
 
 	function createAddConditionChangeDefinition(sOperator) {
 		sOperator = sOperator ? sOperator : "Contains";
 		return {
 			"changeType": "addCondition",
 			"selector": {
-				"id": "comp---view--myFilterBar"
+				"id": "myFilterBarView--myFilterBar"
 			},
 			"content": {
 				"name":"to_nav/field1",
@@ -44,7 +22,7 @@ sap.ui.define([
 		return {
 			"changeType": "removeFilter",
 			"selector": {
-				"id": "comp---view--myFilterBar"
+				"id": "myFilterBarView--myFilterBar"
 			},
 			"content": {
 			//	"id": "comp---view--myFilterBar--Category",
@@ -58,7 +36,7 @@ sap.ui.define([
 		return {
 			"changeType": "addFilter",
 			"selector": {
-				"id": "comp---view--myFilterBar"
+				"id": "myFilterBarView--myFilterBar"
 			},
 			"content": {
 				"name": sProperty
@@ -70,7 +48,7 @@ sap.ui.define([
 		return {
 			"changeType": "moveFilter",
 			"selector": {
-				"id": "comp---view--myFilterBar"
+				"id": "myFilterBarView--myFilterBar"
 			},
 			"content": {
 				"name": sProperty,
@@ -109,19 +87,14 @@ sap.ui.define([
 			FilterBarDelegate.addItem = addItem;
 		},
 		beforeEach: function() {
-			this.oUiComponent = new UIComp("comp");
-
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component: this.oUiComponent,
-				async: false
-			});
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			this.oView = this.oUiComponent.getRootControl();
-			this.oFilterBar = this.oView.byId('myFilterBar');
-			this.oFilterItem = this.oView.byId('myFilterBar--field2');
+			var sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/Category}" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field2" conditions="{$filters>/conditions/Name}" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field3" conditions="{$filters>/conditions/ProductID}"  maxConditions="1" dataType="Edm.String"/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			return createAppEnvironment(sFilterBarView, "FilterBar")
+			.then(function(mCreatedView){
+				this.oView = mCreatedView.view;
+				this.oUiComponentContainer = mCreatedView.container;
+				this.oFilterBar = this.oView.byId('myFilterBar');
+				this.oFilterItem = this.oView.byId('myFilterBar--field2');
+			}.bind(this));
 		},
 		afterEach: function() {
 			this.oUiComponentContainer.destroy();
@@ -210,7 +183,7 @@ sap.ui.define([
 		}).then(function(oChange) {
 			var oChangeHandler = FilterBarFlexHandler["moveFilter"].changeHandler;
 			assert.strictEqual(this.oFilterBar.getFilterItems().length, 3);
-			assert.strictEqual(this.oFilterBar.getFilterItems()[2].getId(), "comp---view--myFilterBar--field3", "filter is on last position");
+			assert.strictEqual(this.oFilterBar.getFilterItems()[2].getId(), "myFilterBarView--myFilterBar--field3", "filter is on last position");
 			// Test apply
 			oChangeHandler.applyChange(oChange, this.oFilterBar, {
 				modifier: JsControlTreeModifier,
@@ -218,7 +191,7 @@ sap.ui.define([
 				view: this.oView
 			}).then(function() {
 				assert.strictEqual(this.oFilterBar.getFilterItems().length, 3);
-				assert.strictEqual(this.oFilterBar.getFilterItems()[0].getId(), "comp---view--myFilterBar--field3", "filter moved to first position");
+				assert.strictEqual(this.oFilterBar.getFilterItems()[0].getId(), "myFilterBarView--myFilterBar--field3", "filter moved to first position");
 
 				// Test revert
 				oChangeHandler.revertChange(oChange, this.oFilterBar, {
@@ -227,7 +200,7 @@ sap.ui.define([
 					view: this.oView
 				}).then(function() {
 					assert.strictEqual(this.oFilterBar.getFilterItems().length, 3);
-					assert.strictEqual(this.oFilterBar.getFilterItems()[2].getId(), "comp---view--myFilterBar--field3", "filter has been reverted to last position");
+					assert.strictEqual(this.oFilterBar.getFilterItems()[2].getId(), "myFilterBarView--myFilterBar--field3", "filter has been reverted to last position");
 					done();
 				}.bind(this));
 			}.bind(this));
