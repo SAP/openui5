@@ -4343,7 +4343,6 @@ sap.ui.define([
 		this._moveHeaderToTitleArea();
 		this._adjustHeaderHeights();
 		this._requestAdjustLayout();
-		this._togglePinButtonARIAState(this._bPinned);
 		this._updateToggleHeaderVisualIndicators();
 
 		if (exists($oObjectPage)) {
@@ -4361,25 +4360,11 @@ sap.ui.define([
 		this._bPinned = false;
 		this._updateToggleHeaderVisualIndicators();
 
-		this._togglePinButtonARIAState(this._bPinned);
-
 		if (exists($oObjectPage)) {
 			$oObjectPage.removeClass("sapUxAPObjectPageLayoutHeaderPinned");
 		}
 	};
 
-	/**
-	 * Toggles the header pin button ARIA State
-	 * @param {Boolean} bPinned
-	 * @private
-	 */
-	ObjectPageLayout.prototype._togglePinButtonARIAState = function (bPinned) {
-		var oHeaderContent = this._getHeaderContent();
-
-		if (exists(oHeaderContent) && oHeaderContent.supportsPinUnpin()) {
-			oHeaderContent._updateARIAPinButtonState(bPinned);
-		}
-	};
 
 	/**
 	 * Determines the adjusted value of <code>preserveHeaderStateOnScroll</code>,
