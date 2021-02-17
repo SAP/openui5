@@ -9,6 +9,7 @@ sap.ui.define([
 	'sap/ui/core/EnabledPropagator',
 	'./RadioButtonGroup',
 	'sap/ui/core/library',
+	'sap/base/strings/capitalize',
 	'./RadioButtonRenderer',
 	'sap/ui/core/message/MessageMixin'
 ],
@@ -18,6 +19,7 @@ function(
 	EnabledPropagator,
 	RadioButtonGroup,
 	coreLibrary,
+	capitalize,
 	RadioButtonRenderer,
 	MessageMixin
 	) {
@@ -156,6 +158,27 @@ function(
 			 * @since 1.28
 			 */
 			textAlign : {type : "sap.ui.core.TextAlign", group : "Appearance", defaultValue : TextAlign.Begin},
+
+			/**
+			 * Specifies if the RadioButton should be editable. This property meant to be used by parent controls (e.g. RadioButtoGroup).
+			 * @since 1.61
+			 * @private
+			 */
+			editableParent: { type: "boolean", group: "Behavior", defaultValue: true, visibility: "hidden"},
+
+			/**
+			 * Specifies the aria-posinset of the RadioButton.
+			 * @since 1.61
+			 * @private
+			 */
+			posinset: {type: "string", group: "Data", defaultValue: "", visibility: "hidden"},
+
+			/**
+			 * Specifies the aria-setsize of the RadioButton.
+			 * @since 1.61
+			 * @private
+			 */
+			setsize: {type: "string", group: "Data", defaultValue: "", visibility: "hidden"},
 
 			/**
 			 * Defines the text that appears in the tooltip of the <code>RadioButton</code>. If this is not specified, a default text is shown from the resource bundle.
@@ -718,6 +741,14 @@ function(
 			}
 		});
 	};
+
+	// Private properties setter generation
+	["editableParent", "posinset", "setsize"].forEach(function(privatePropName) {
+		RadioButton.prototype["_set" + capitalize(privatePropName)] = function (vValue) {
+			// prevent invalidation as the parent will rerender its children
+			return this.setProperty(privatePropName, vValue, true);
+		};
+	});
 
 	return RadioButton;
 
