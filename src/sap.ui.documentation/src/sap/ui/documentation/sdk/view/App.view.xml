@@ -139,7 +139,20 @@
 							</ToggleButton>
 						</contentLeft>
 					</Bar>
-
+					<VBox items="{messagesData>/messages}" width="100%" class="sapUiTinyMarginTop" visible="{=!!${messagesData>/iVisibleMessagesCount}}">
+						<items>
+							<MessageStrip close="onCloseImportantMessage" text="{
+								parts: [
+									'messagesData>text'
+								],
+								formatter: '.formatter.formatImportantMessage'
+							}" class="sapUiTinyMarginBottom sapUiTinyMarginBeginEnd" showIcon="true" showCloseButton="true" visible="{messagesData>isMessageVisible}" type="{messagesData>type}">
+								<customData>
+									<core:CustomData key="messageID" value="{messagesData>id}" />
+								</customData>
+							</MessageStrip>
+						</items>
+					</VBox>
 					<core:ExtensionPoint name="customControls" />
 					<ScrollContainer
 							id="contentId"

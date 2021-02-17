@@ -161,6 +161,7 @@ sap.ui.define([
 				});
 
 				this.setModel(this._oSupportedLangModel, "supportedLanguages");
+				this.setModel(new JSONModel(), "messagesData");
 
 				this._oView = this.getView();
 
@@ -207,6 +208,13 @@ sap.ui.define([
 
 				}.bind(this));
 
+				this.getOwnerComponent().loadMessagesInfo().then(function (data) {
+					if (data) {
+						this._updateMessagesModel(data);
+					}
+
+				}.bind(this));
+
 				if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1" && this._aConfiguration.length > 0) {
 					this._applyCookiesConfiguration(this._aConfiguration);
 				} else {
@@ -221,6 +229,22 @@ sap.ui.define([
 						this.byId("searchControl")._toggleOpen(true);
 					}
 				}.bind(this));
+
+			},
+
+			_updateMessagesModel: function(oMessagesData) {
+				var oMessageCookie = this._oConfigUtil.getCookieValue(this._oCookieNames["DEMOKIT_IMPORTANT_MESSAGES_READ"]),
+					iVisibleMessagesCount = 0;
+
+				oMessagesData.messages.length && oMessagesData.messages.forEach(function(message) {
+					message.isMessageVisible = (new Date(message.expire).getTime() - new Date()) > 0 &&
+						!oMessageCookie.includes(message.id);
+					message.isMessageVisible && iVisibleMessagesCount++;
+				});
+
+				oMessagesData.iVisibleMessagesCount = iVisibleMessagesCount;
+
+				this.getModel("messagesData").setData(oMessagesData);
 
 			},
 
@@ -1488,6 +1512,20 @@ sap.ui.define([
 			_setHeaderSelectedKey: function(sKey) {
 				this._selectHeader.setSelectedKey(sKey);
 				this._tabHeader.setSelectedKey(sKey);
+			},
+
+			onCloseImportantMessage: function (oEvent) {
+				var aMessageCookie = this._oConfigUtil.getCookieValue(this._oCookieNames["DEMOKIT_IMPORTANT_MESSAGES_READ"])
+						.split(",").filter(function(id) { return id !== ''; }),
+					oCustomData = oEvent.getSource().getCustomData().find(function(oCustomData) {
+						return oCustomData.getKey() === "messageID";
+					}),
+					oId = oCustomData.getValue();
+
+				aMessageCookie.push(oId);
+				this._oConfigUtil.setCookie(this._oCookieNames["DEMOKIT_IMPORTANT_MESSAGES_READ"], aMessageCookie.join(","));
+
+				this._updateMessagesModel(this.getModel("messagesData").getData());
 			}
 		});
 	}
