@@ -222,6 +222,7 @@ sap.ui.define([
 
 			/**
 			 * This event is fired when the user changes the value of the search field. Unlike the <code>liveChange</code> event, the <code>change</code> event is not fired for each key press.
+			 * @since 1.77
 			 */
 			change: {
 				parameters: {
