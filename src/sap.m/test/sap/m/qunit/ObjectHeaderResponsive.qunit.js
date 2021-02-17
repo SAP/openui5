@@ -1242,7 +1242,6 @@ sap.ui.define([
 
 		// Assert
 		var $sTitle = oObjectHeader.$("txt");
-		assert.ok($sTitle.attr("aria-haspopup"), "ActiveTitle has attribute aria-haspopup");
 		assert.equal($sTitle.attr("role"), "link", "ActiveTitle has role=link");
 	});
 
