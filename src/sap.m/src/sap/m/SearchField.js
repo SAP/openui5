@@ -377,6 +377,13 @@ sap.ui.define([
 		oCore.detachThemeChanged(this._handleThemeLoad, this);
 	};
 
+	/**
+	 * Clears the value
+	 * @private
+	 * @param {object} [oOptions] Options
+	 * @param {string} [oOptions.value=""] The new value to be set
+	 * @param {boolean} [oOptions.clearButton] Whether the clear button was pressed
+	 */
 	SearchField.prototype.clear = function(oOptions) {
 
 		// in case of escape, revert to the original value, otherwise clear with ""
@@ -396,6 +403,7 @@ sap.ui.define([
 			clearButtonPressed: !!(oOptions && oOptions.clearButton)
 		});
 	};
+
 	/**
 	 *  Destroys suggestion object if exists
 	 */
