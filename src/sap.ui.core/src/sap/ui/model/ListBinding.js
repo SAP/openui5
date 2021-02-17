@@ -121,7 +121,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter', 'sap/base/util/array/diff'],
 	 * Please either use the automatic grouping of filters (where applicable) or use explicit
 	 * AND/OR filters, a mixture of both is not supported.
 	 *
-	 * @param {sap.ui.model.Filter[]} aFilters Array of filter objects
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters Single filter object or an array of filter objects
 	 * @param {sap.ui.model.FilterType} [sFilterType=undefined] Type of the filter which should
 	 *  be adjusted; if no type is given, the behavior depends on the model implementation
 	 * @return {this} returns <code>this</code> to facilitate method chaining

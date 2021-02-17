@@ -121,7 +121,7 @@ sap.ui.define(['./Binding', './Filter', './Sorter'],
 	 *
 	 * @function
 	 * @name sap.ui.model.TreeBinding.prototype.filter
-	 * @param {sap.ui.model.Filter[]} aFilters Array of sap.ui.model.Filter objects
+	 * @param {sap.ui.model.Filter|sap.ui.model.Filter[]} aFilters Single sap.ui.model.Filter object or an array of filter objects
 	 * @param {sap.ui.model.FilterType} sFilterType Type of the filter which should be adjusted, if it is not given, the standard behaviour applies
 	 *
 	 * @public
