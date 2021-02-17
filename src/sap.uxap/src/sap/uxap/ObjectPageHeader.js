@@ -665,6 +665,7 @@ sap.ui.define([
 					fnGenerateSetterProxy("text", oAction, oActionSheetButton);
 					fnGenerateSetterProxy("icon", oAction, oActionSheetButton);
 					fnGenerateSetterProxy("enabled", oAction, oActionSheetButton);
+					fnGenerateSetterProxy("type", oAction, oActionSheetButton);
 				}
 			}, this);
 		}
@@ -702,6 +703,7 @@ sap.ui.define([
 			enabled: oButton.getEnabled(),
 			text: oButton.getText(),
 			icon: oButton.getIcon(),
+			type: oButton.getType(),
 			tooltip: oButton.getTooltip(),
 			customData: new CustomData({
 				key: "originalId",
