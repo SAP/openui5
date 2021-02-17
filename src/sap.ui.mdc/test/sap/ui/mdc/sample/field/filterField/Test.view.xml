@@ -523,114 +523,6 @@
 						change="handleChange"
 						liveChange="handleLiveChange"
 						fieldHelp="IOFFVHCity">
-						<mdc:dependents>
-								<mdcField:FieldValueHelp id="IOFFVHCity"
-									title="Cities"
-									showConditionPanel="true"
-									filterFields="*countryId,regionId,cityId,text*"
-									keyPath="cityId"
-									descriptionPath="text">
-									<mdcField:inParameters>
-										<mdcField:InParameter id="IOFFVHCity_In-Country" value="{cm>/conditions/CountryId}" helpPath="countryId"/>
-										<mdcField:InParameter id="IOFFVHCity_In-Region" value="{cm>/conditions/RegionId}" helpPath="regionId"/>
-									</mdcField:inParameters>
-									<mdcField:outParameters>
-										<mdcField:OutParameter id="IOFFVHCity_Out-Country" value="{cm>/conditions/CountryId}" helpPath="countryId" mode="Always"/>
-										<mdcField:OutParameter id="IOFFVHCity_Out-Region" value="{cm>/conditions/RegionId}" helpPath="regionId" mode="Always"/>
-									</mdcField:outParameters>
-									<mdcField:filterBar>
-										<vhfb:FilterBar
-											liveMode= "false">
-											<mdc:FilterField
-												id="VHFFBTextFFCountry2"
-												label= "{/#City/countryId/@sap:label}"
-												editMode= "Editable"
-												display= "ValueDescription"
-												dataType="sap.ui.model.type.String"
-												dataTypeConstraints="{maxLength: 3}"
-												width="100%"
-												conditions="{$filters>/conditions/countryId}"
-												operators="EQ,NE,EUROPE">
-											</mdc:FilterField>
-											<mdc:FilterField
-												id="VHFFBTextFFRegion2"
-												label= "{/#City/regionId/@sap:label}"
-												editMode= "Editable"
-												display= "ValueDescription"
-												dataType="sap.ui.model.type.String"
-												dataTypeConstraints="{maxLength: 2, search: '^[0-9]+$'}"
-												width="100%"
-												conditions="{$filters>/conditions/regionId}"
-												fieldHelp="IOFFVHRegion2">
-												<mdc:dependents>
-														<mdcField:FieldValueHelp id="IOFFVHRegion2"
-															title="Regions"
-															showConditionPanel="true"
-															filterFields="*regionId,countryId,text*"
-															keyPath="regionId"
-															descriptionPath="text"
-															noDialog="true">
-															<mdcField:inParameters>
-																<mdcField:InParameter id="IOFFVHRegion2-In-Country" value="{$filters>/conditions/countryId}" helpPath="countryId"/>
-															</mdcField:inParameters>
-															<mdcField:outParameters>
-																<mdcField:OutParameter id="IOFFVHRegion2-Out-Country" value="{$filters>/conditions/countryId}" helpPath="countryId"/>
-															</mdcField:outParameters>
-															<mdcField:FieldValueHelpMTableWrapper>
-																<m:Table items="{path: '/RegionCollection', suspended: true}" width="26rem">
-																	<m:columns>
-																		<m:Column>
-																			<m:Label text="{/#Region/regionId/@sap:label}"/>
-																		</m:Column>
-																		<m:Column>
-																			<m:Label text="{/#Region/text/@sap:label}"/>
-																		</m:Column>
-																		<m:Column>
-																			<m:Label text="{/#Region/countryId/@sap:label}"/>
-																		</m:Column>
-																	</m:columns>
-																	<m:items>
-																		<m:ColumnListItem type="Active">
-																			<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"></m:Text>
-																			<m:Text text="{text}"></m:Text>
-																			<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"></m:Text>
-																		</m:ColumnListItem>
-																	</m:items>
-																</m:Table>
-															</mdcField:FieldValueHelpMTableWrapper>
-														</mdcField:FieldValueHelp>
-												</mdc:dependents>
-											</mdc:FilterField>
-										</vhfb:FilterBar>
-									</mdcField:filterBar>
-									<mdcField:FieldValueHelpMTableWrapper>
-										<m:Table items="{path: '/CityCollection', suspended: true}" width="26rem">
-											<m:columns>
-												<m:Column>
-													<m:Label text="{/#City/cityId/@sap:label}"/>
-												</m:Column>
-												<m:Column>
-													<m:Label text="{/#City/text/@sap:label}"/>
-												</m:Column>
-												<m:Column>
-													<m:Label text="{/#City/countryId/@sap:label}"/>
-												</m:Column>
-												<m:Column>
-													<m:Label text="{/#City/regionId/@sap:label}"/>
-												</m:Column>
-											</m:columns>
-											<m:items>
-												<m:ColumnListItem type="Active">
-													<m:Text text="{path:'cityId', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"></m:Text>
-													<m:Text text="{text}"></m:Text>
-													<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"></m:Text>
-													<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"></m:Text>
-												</m:ColumnListItem>
-											</m:items>
-										</m:Table>
-									</mdcField:FieldValueHelpMTableWrapper>
-								</mdcField:FieldValueHelp>
-						</mdc:dependents>
 					</mdc:FilterField>
 
 					<c:Title text="Condition Model"></c:Title>
@@ -647,6 +539,114 @@
 						<mdcField:ConditionFieldHelp id="CFH1" title="Conditions"/>
 					</form:dependents>
 				</form:SimpleForm>
+				<m:dependents> <!-- To have outside of control tree of ConditionModel -->
+					<mdcField:FieldValueHelp id="IOFFVHCity"
+						title="Cities"
+						showConditionPanel="true"
+						filterFields="*countryId,regionId,cityId,text*"
+						keyPath="cityId"
+						descriptionPath="text">
+						<mdcField:inParameters>
+							<mdcField:InParameter id="IOFFVHCity_In-Country" value="{cm>/conditions/CountryId}" helpPath="countryId"/>
+							<mdcField:InParameter id="IOFFVHCity_In-Region" value="{cm>/conditions/RegionId}" helpPath="regionId"/>
+						</mdcField:inParameters>
+						<mdcField:outParameters>
+							<mdcField:OutParameter id="IOFFVHCity_Out-Country" value="{cm>/conditions/CountryId}" helpPath="countryId" mode="Always"/>
+							<mdcField:OutParameter id="IOFFVHCity_Out-Region" value="{cm>/conditions/RegionId}" helpPath="regionId" mode="Always"/>
+						</mdcField:outParameters>
+						<mdcField:filterBar>
+							<vhfb:FilterBar
+								liveMode= "false">
+								<mdc:FilterField
+									id="VHFFBTextFFCountry2"
+									label= "{/#City/countryId/@sap:label}"
+									editMode= "Editable"
+									display= "ValueDescription"
+									dataType="sap.ui.model.type.String"
+									dataTypeConstraints="{maxLength: 3}"
+									width="100%"
+									conditions="{$filters>/conditions/countryId}"
+									operators="EQ,NE,EUROPE">
+								</mdc:FilterField>
+								<mdc:FilterField
+									id="VHFFBTextFFRegion2"
+									label= "{/#City/regionId/@sap:label}"
+									editMode= "Editable"
+									display= "ValueDescription"
+									dataType="sap.ui.model.type.String"
+									dataTypeConstraints="{maxLength: 2, search: '^[0-9]+$'}"
+									width="100%"
+									conditions="{$filters>/conditions/regionId}"
+									fieldHelp="IOFFVHRegion2">
+									<mdc:dependents>
+										<mdcField:FieldValueHelp id="IOFFVHRegion2"
+											title="Regions"
+											showConditionPanel="true"
+											filterFields="*regionId,countryId,text*"
+											keyPath="regionId"
+											descriptionPath="text"
+											noDialog="true">
+											<mdcField:inParameters>
+												<mdcField:InParameter id="IOFFVHRegion2-In-Country" value="{$filters>/conditions/countryId}" helpPath="countryId"/>
+											</mdcField:inParameters>
+											<mdcField:outParameters>
+												<mdcField:OutParameter id="IOFFVHRegion2-Out-Country" value="{$filters>/conditions/countryId}" helpPath="countryId"/>
+											</mdcField:outParameters>
+											<mdcField:FieldValueHelpMTableWrapper>
+												<m:Table items="{path: '/RegionCollection', suspended: true}" width="26rem">
+													<m:columns>
+														<m:Column>
+															<m:Label text="{/#Region/regionId/@sap:label}"/>
+														</m:Column>
+														<m:Column>
+															<m:Label text="{/#Region/text/@sap:label}"/>
+														</m:Column>
+														<m:Column>
+															<m:Label text="{/#Region/countryId/@sap:label}"/>
+														</m:Column>
+													</m:columns>
+													<m:items>
+														<m:ColumnListItem type="Active">
+															<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"></m:Text>
+															<m:Text text="{text}"></m:Text>
+															<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"></m:Text>
+														</m:ColumnListItem>
+													</m:items>
+												</m:Table>
+											</mdcField:FieldValueHelpMTableWrapper>
+										</mdcField:FieldValueHelp>
+									</mdc:dependents>
+								</mdc:FilterField>
+							</vhfb:FilterBar>
+						</mdcField:filterBar>
+						<mdcField:FieldValueHelpMTableWrapper>
+							<m:Table items="{path: '/CityCollection', suspended: true}" width="26rem">
+								<m:columns>
+									<m:Column>
+										<m:Label text="{/#City/cityId/@sap:label}"/>
+									</m:Column>
+									<m:Column>
+										<m:Label text="{/#City/text/@sap:label}"/>
+									</m:Column>
+									<m:Column>
+										<m:Label text="{/#City/countryId/@sap:label}"/>
+									</m:Column>
+									<m:Column>
+										<m:Label text="{/#City/regionId/@sap:label}"/>
+									</m:Column>
+								</m:columns>
+								<m:items>
+									<m:ColumnListItem type="Active">
+										<m:Text text="{path:'cityId', type: 'sap.ui.model.odata.type.String', constraints: {maxLength: 2, isDigitSequence: true, nullable: false}}"></m:Text>
+										<m:Text text="{text}"></m:Text>
+										<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"></m:Text>
+										<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"></m:Text>
+									</m:ColumnListItem>
+								</m:items>
+							</m:Table>
+						</mdcField:FieldValueHelpMTableWrapper>
+					</mdcField:FieldValueHelp>
+				</m:dependents>
 			</m:ScrollContainer>
 			<m:ScrollContainer vertical="true" height="33%">
 				<m:Table id="myTable" items="{path: '/ProductCollection'}" width="100%">

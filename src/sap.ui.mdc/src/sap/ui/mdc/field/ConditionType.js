@@ -67,6 +67,8 @@ sap.ui.define([
 	 * @param {object} [oFormatOptions.delegate] Field delegate to handle model-specific logic
 	 * @param {object} [oFormatOptions.payload] Payload of the delegate
 	 * @param {boolean} [oFormatOptions.preventGetDescription] If set, description is not read by <code>formatValue</code> as it is known that no description exist or it might be set later
+	 * @param {sap.ui.mdc.condition.ConditionModel} [oFormatOptions.conditionModel] <code>ConditionModel</code>, if bound to one
+	 * @param {string} [oFormatOptions.conditionModelName] Name of the <code>ConditionModel</code>, if bound to one
 	 * @param {object} [oConstraints] Value constraints
 	 * @alias sap.ui.mdc.field.ConditionType
 	 */
@@ -143,9 +145,11 @@ sap.ui.define([
 						oCondition.validated === ConditionValidated.Validated && !oCondition.values[1]) {
 					// handle sync case and async case similar
 					var oBindingContext = this.oFormatOptions.bindingContext;
+					var oConditionModel = this.oFormatOptions.conditionModel;
+					var sConditionModelName = this.oFormatOptions.conditionModelName;
 
 					return SyncPromise.resolve().then(function() {
-						return _getDescription.call(this, oCondition.values[0], oCondition.inParameters, oCondition.outParameters, oBindingContext);
+						return _getDescription.call(this, oCondition.values[0], oCondition.inParameters, oCondition.outParameters, oBindingContext, oConditionModel, sConditionModelName);
 					}.bind(this)).then(function(vDescription) { // if description needs to be requested -> return if it is resolved
 						if (vDescription) {
 							oCondition = merge({}, oCondition); // do not manipulate original object
@@ -388,6 +392,8 @@ sap.ui.define([
 		var vCheckValue;
 		var vCheckParsedValue;
 		var oBindingContext = this.oFormatOptions.bindingContext;
+		var oConditionModel = this.oFormatOptions.conditionModel;
+		var sConditionModelName = this.oFormatOptions.conditionModelName;
 		var aValues;
 
 		if (vValue === "") {
@@ -466,7 +472,7 @@ sap.ui.define([
 		}
 
 		return SyncPromise.resolve().then(function() {
-			return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription);
+			return _getItemForValue.call(this, vCheckValue, vCheckParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
 		}.bind(this)).then(function(oResult) {
 			var oCondition = fnSuccess.call(this, oResult);
 			return _finishParseFromString.call(this, oCondition, oType);
@@ -739,30 +745,30 @@ sap.ui.define([
 
 	}
 
-	function _getItemForValue(vValue, vParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription) {
+	function _getItemForValue(vValue, vParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
 
 		var oFieldHelp = _getFieldHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
 
 		if (oDelegate) {
-			return oDelegate.getItemForValue(oPayload, oFieldHelp, vValue, vParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription);
+			return oDelegate.getItemForValue(oPayload, oFieldHelp, vValue, vParsedValue, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
 		} else if (oFieldHelp) {
-			return oFieldHelp.getItemForValue(vValue, vParsedValue, undefined, undefined, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription);
+			return oFieldHelp.getItemForValue(vValue, vParsedValue, undefined, undefined, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName);
 		}
 
 	}
 
-	function _getDescription(vKey, oInParameters, oOutParameters, oBindingContext) {
+	function _getDescription(vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName) {
 
 		var oFieldHelp = _getFieldHelp.call(this);
 		var oDelegate = this.oFormatOptions.delegate;
 		var oPayload = this.oFormatOptions.payload;
 
 		if (oDelegate) {
-			return oDelegate.getDescription(oPayload, oFieldHelp, vKey, oInParameters, oOutParameters, oBindingContext);
+			return oDelegate.getDescription(oPayload, oFieldHelp, vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName);
 		} else if (oFieldHelp) {
-			return oFieldHelp.getTextForKey(vKey, oInParameters, oOutParameters, oBindingContext);
+			return oFieldHelp.getTextForKey(vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName);
 		}
 
 	}

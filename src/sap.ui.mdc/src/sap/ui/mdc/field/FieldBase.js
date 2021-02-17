@@ -2717,6 +2717,8 @@ sap.ui.define([
 			this._asyncParsingCall = _asyncParsingCall.bind(this); //as variable to have the same function after each update of formatOptions. Otherwise it would be a change on FormatOption in ValueHelpPanel every time
 		}
 
+		var oConditionModelInfo = _getConditionModelInfo.call(this);
+
 		return {
 			valueType: this._oContentFactory.retrieveDataType(),
 			originalDateType: this._oContentFactory.getDateOriginalType() || this._oContentFactory.getUnitOriginalType(),
@@ -2731,7 +2733,9 @@ sap.ui.define([
 			delegate: this.getControlDelegate(),
 			delegateName: this.getDelegate() && this.getDelegate().name,
 			payload: this.getPayload(),
-			preventGetDescription: this._bPreventGetDescription
+			preventGetDescription: this._bPreventGetDescription,
+			conditionModel: oConditionModelInfo.model,
+			conditionModelName : oConditionModelInfo.name
 		};
 
 	};
@@ -2786,6 +2790,8 @@ sap.ui.define([
 			this._asyncParsingCall = _asyncParsingCall.bind(this);
 		}
 
+		var oConditionModelInfo = _getConditionModelInfo.call(this);
+
 		return {
 			valueType: undefined, // use String as default
 			originalDateType: this._oContentFactory.retrieveDataType(), // use type of measure for currentValue
@@ -2798,8 +2804,11 @@ sap.ui.define([
 			asyncParsing: this._asyncParsingCall,
 			navigateCondition: this._oNavigateCondition,
 			delegate: this.getControlDelegate(),
+			delegateName: this.getDelegate() && this.getDelegate().name,
 			payload: this.getPayload(),
 			preventGetDescription: this._bPreventGetDescription,
+			conditionModel: oConditionModelInfo.model,
+			conditionModelName : oConditionModelInfo.name,
 			isUnit: true,
 			getConditions: this.getConditions.bind(this) // TODO: better solution to update unit in all conditions
 		};
@@ -2939,6 +2948,35 @@ sap.ui.define([
 		}
 
 		return false;
+
+	}
+
+	/*
+	 * In FilterField case the Field help needs to be bound to the same ConditionModel to
+	 * bind the In- and OutParameters in the right way.
+	 * As the FieldHelp might be placed outside the FilterBar in the control tree it might not
+	 * inherit the ConditionModel.
+	 */
+	function _getConditionModelInfo() {
+
+		var oConditionModel;
+		var sName;
+		var oBinding = this.getBinding("conditions");
+
+		if (oBinding) {
+			var oModel = oBinding.getModel();
+			if (oModel && oModel.isA("sap.ui.mdc.condition.ConditionModel")) {
+				oConditionModel = oModel;
+				var oBindingInfo = this.getBindingInfo("conditions");
+				if (oBindingInfo.model) {
+					sName = oBindingInfo.model;
+				} else if (oBindingInfo.parts && oBindingInfo.parts.length === 1) {
+					sName = oBindingInfo.parts[0].model;
+				}
+			}
+		}
+
+		return {name: sName, model: oConditionModel};
 
 	}
 

@@ -282,7 +282,7 @@ sap.ui.define([
 
 	};
 
-	BoolFieldHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest) {
+	BoolFieldHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName) {
 
 		if (vValue === null || vValue === undefined || vValue === "") {
 			return null;

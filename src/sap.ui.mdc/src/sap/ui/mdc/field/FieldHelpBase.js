@@ -936,18 +936,20 @@ sap.ui.define([
 	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. (Inside a table the <code>FieldHelp</code> element might be connected to a different row.)
+	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
+	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FieldHelpBase.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, oBindingContext) {
-		return _getTextForKey.call(this, vKey, oBindingContext, oInParameters, oOutParameters, false);
+	FieldHelpBase.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, oBindingContext, oConditionModel, sConditionModelName) {
+		return _getTextForKey.call(this, vKey, oBindingContext, oInParameters, oOutParameters, false, oConditionModel, sConditionModelName);
 	};
 
-	function _getTextForKey(vKey, oBindingContext, oInParameters, oOutParameters, bNoRequest) {
-		return _getTextOrKeyDelegateHandler.call(this, true, vKey, oBindingContext, oInParameters, oOutParameters, bNoRequest);
+	function _getTextForKey(vKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName) {
+		return _getTextOrKeyDelegateHandler.call(this, true, vKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName);
 	}
 
 	/**
@@ -962,18 +964,20 @@ sap.ui.define([
 	 *
 	 * @param {string} sText Description
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. (Inside a table the <code>FieldHelp</code> element might be connected to a different row.)
+	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
+	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @returns {any|sap.ui.mdc.field.FieldHelpItem|Promise} Key for description or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FieldHelpBase.prototype.getKeyForText = function(sText, oBindingContext) {
-		return _getKeyForText.call(this, sText, oBindingContext, false);
+	FieldHelpBase.prototype.getKeyForText = function(sText, oBindingContext, oConditionModel, sConditionModelName) {
+		return _getKeyForText.call(this, sText, oBindingContext, false, oConditionModel, sConditionModelName);
 	};
 
-	function _getKeyForText(sText, oBindingContext, bNoRequest) {
-		return _getTextOrKeyDelegateHandler.call(this, false, sText, oBindingContext, undefined, undefined, bNoRequest);
+	function _getKeyForText(sText, oBindingContext, bNoRequest, oConditionModel, sConditionModelName) {
+		return _getTextOrKeyDelegateHandler.call(this, false, sText, oBindingContext, undefined, undefined, bNoRequest, oConditionModel, sConditionModelName);
 	}
 
 	/**
@@ -989,6 +993,8 @@ sap.ui.define([
 	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.)
 	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
 	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
+	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
+	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key, key for description or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 *
 	 * @private
@@ -996,7 +1002,7 @@ sap.ui.define([
 	 * @since 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FieldHelpBase.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest) {
+	FieldHelpBase.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName) {
 		// to be implements by the concrete FieldHelp
 		if (bKey) {
 			return "";
@@ -1051,6 +1057,8 @@ sap.ui.define([
 	 * @param {boolean} bCheckKeyFirst If set, the field help checks first if the value fits a key
 	 * @param {boolean} bCheckKey If set, the field help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @param {boolean} bCheckDescription If set, the field help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
+	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
+	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @returns {sap.ui.mdc.field.FieldHelpItem|Promise} Object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
 	 *
 	 * @private
@@ -1058,15 +1066,15 @@ sap.ui.define([
 	 * @since 1.77.0
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FieldHelpBase.prototype.getItemForValue = function(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription) {
+	FieldHelpBase.prototype.getItemForValue = function(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName) {
 
 		return SyncPromise.resolve().then(function() {
 			// first try without backend request
-			return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, true, true);
+			return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName, true, true);
 		}.bind(this)).then(function(vResult) {
 			if (!vResult && this._isTextOrKeyRequestSupported()) {
 				// try to call with backend request
-				return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, true, false);
+				return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName, true, false);
 			} else {
 				return vResult;
 			}
@@ -1075,7 +1083,7 @@ sap.ui.define([
 
 			if (this._isTextOrKeyRequestSupported()) {
 				// try to call with backend request
-				var vResult = _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, true, false);
+				var vResult = _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst && bCheckKey, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName, true, false);
 
 				if (!vResult) {
 					// nothing found -> throw initial exception
@@ -1088,15 +1096,15 @@ sap.ui.define([
 
 	};
 
-	function _getItemForValue(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, bFirstCheck, bNoRequest) {
+	function _getItemForValue(vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName, bFirstCheck, bNoRequest) {
 
 		return SyncPromise.resolve().then(function() {
 			if (bCheckKeyFirst) {
 				if (bCheckKey) {
-					return _getTextForKey.call(this, vParsedValue, oBindingContext, oInParameters, oOutParameters, bNoRequest);
+					return _getTextForKey.call(this, vParsedValue, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName);
 				}
 			} else if (bCheckDescription) {
-				return _getKeyForText.call(this, vValue, oBindingContext, bNoRequest);
+				return _getKeyForText.call(this, vValue, oBindingContext, bNoRequest, oConditionModel, sConditionModelName);
 			}
 		}.bind(this)).then(function(vResult) {
 			if (vResult) {
@@ -1110,7 +1118,7 @@ sap.ui.define([
 					return {key: vResult, description: vValue};
 				}
 			} else if (bFirstCheck && ((bCheckKeyFirst && bCheckDescription) || (!bCheckKeyFirst && bCheckKey))) {
-				return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, !bCheckKeyFirst, bCheckKey, bCheckDescription, false, bNoRequest);
+				return _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, !bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName, false, bNoRequest);
 			} else {
 				return undefined; // to have alway undefined, not "", null or false
 			}
@@ -1118,7 +1126,7 @@ sap.ui.define([
 			_checkExceptionThown.call(this, oException, oException && oException._bSecondCheck);
 
 			if (bFirstCheck && ((bCheckKeyFirst && bCheckDescription) || (!bCheckKeyFirst && bCheckKey))) {
-				var vResult = _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, !bCheckKeyFirst, bCheckKey, bCheckDescription, false, bNoRequest);
+				var vResult = _getItemForValue.call(this, vValue, vParsedValue, oInParameters, oOutParameters, oBindingContext, !bCheckKeyFirst, bCheckKey, bCheckDescription, oConditionModel, sConditionModelName, false, bNoRequest);
 
 				if (!vResult) {
 					// nothing found -> throw initial exception
@@ -1367,7 +1375,7 @@ sap.ui.define([
 	};
 
 	// delegate-handling for getTextForKey and getKeyForText
-	function _getTextOrKeyDelegateHandler(bKey, vValue, oBindingContext, oInParameters, oOutParameters, bNoRequest) {
+	function _getTextOrKeyDelegateHandler(bKey, vValue, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName) {
 
 		var sInParameters = JSON.stringify(oInParameters);
 		var sContextPath = oBindingContext && oBindingContext.getPath();
@@ -1406,12 +1414,14 @@ sap.ui.define([
 				this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].outParameters = oOutParameters ? merge({}, oOutParameters) : undefined;
 				this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].bindingContext = oBindingContext;
 				this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].noRequest = bNoRequest;
+				this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].conditionModel = oConditionModel;
+				this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].conditionModelName = sConditionModelName;
 			}.bind(this));
 
 			return this._oTextOrKeyPromises[bKey][vValue][sInParameters][sContextPath].promise;
 		}
 
-		return this._getTextOrKey(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest);
+		return this._getTextOrKey(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName);
 
 	}
 
@@ -1442,9 +1452,11 @@ sap.ui.define([
 		var bNoRequest = oTextOrKeyInfo.noRequest;
 		var fnResolve = oTextOrKeyInfo.resolve;
 		var fnReject = oTextOrKeyInfo.reject;
+		var oConditionModel = oTextOrKeyInfo.conditionModel;
+		var sConditionModelName = oTextOrKeyInfo.conditionModelName;
 
 		SyncPromise.resolve().then(function() {
-			return this._getTextOrKey(vMyValue, bMyKey, oBindingContext, oInParameters, oOutParameters, bNoRequest);
+			return this._getTextOrKey(vMyValue, bMyKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName);
 		}.bind(this)).then(function(vResult) {
 			fnResolve(vResult);
 		}).catch(function(oException) {

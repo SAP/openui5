@@ -72,9 +72,13 @@ sap.ui.define([
 			oCM.addCondition("ProductId", Condition.createCondition("EQ", ["22134T"], undefined, undefined, ConditionValidated.Validated));
 			oCM.addCondition("Name", Condition.createCondition("StartsWith", ["Web"]));
 			oCM.addCondition("Quantity", Condition.createCondition("EQ", [22]));
+			oCM.addCondition("CountryId", Condition.createCondition("EQ", ["USA"], undefined, undefined, ConditionValidated.Validated));
+			oCM.addCondition("RegionId", Condition.createCondition("EQ", ["01"], {"CountryId":"USA"}, undefined, ConditionValidated.Validated));
+			oCM.addCondition("CityId", Condition.createCondition("EQ", ["02"], /*{"CountryId":"USA", "RegionId":"01"}*/undefined, undefined, ConditionValidated.Validated));
 
-			//set the model on your view
-			oView.setModel(oCM, "cm");
+			//set the model on Form just to have it somehow local
+			var oForm = this.byId("Form1");
+			oForm.setModel(oCM, "cm");
 
 			// add custom operators
 			FilterOperatorUtil.addOperator(new Operator({
@@ -178,11 +182,11 @@ sap.ui.define([
 		},
 
 		handleConditionModelChange: function(oEvent) {
-			var oCM = this.getView().getModel("cm");
-			var oConditions = oCM.getAllConditions();
 			var oDataTypes = {};
 			var oView = this.getView();
 			var oForm = oView.byId("Form1");
+			var oCM = oForm.getModel("cm");
+			var oConditions = oCM.getAllConditions();
 			var aFormContent = oForm.getContent();
 
 			for (var i = 0; i < aFormContent.length; i++) {

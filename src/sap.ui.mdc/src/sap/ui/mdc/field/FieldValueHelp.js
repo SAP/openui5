@@ -935,7 +935,7 @@ sap.ui.define([
 
 	}
 
-	FieldValueHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest) {
+	FieldValueHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName) {
 
 		var vResult = "";
 		var oWrapper = this.getContent();
@@ -973,7 +973,7 @@ sap.ui.define([
 				bBindingChanged = true;
 			}
 
-			var aInBindings = _getParameterBinding.call(this, aInParameters, bBindingChanged, oBindingContext, oMyBindingContext);
+			var aInBindings = _getParameterBinding.call(this, aInParameters, bBindingChanged, oBindingContext, oMyBindingContext, oConditionModel, sConditionModelName);
 			// Out Parameter binding not used, only given outParameter value
 
 			vResult = SyncPromise.resolve().then(function() {
@@ -997,14 +997,22 @@ sap.ui.define([
 
 	};
 
-	function _getParameterBinding(aParameters, bNewBinding, oBindingContext, oMyBindingContext) {
+	function _getParameterBinding(aParameters, bNewBinding, oBindingContext, oMyBindingContext, oConditionModel, sConditionModelName) {
 
 		var aBindings = [];
 
 		for (var i = 0; i < aParameters.length; i++) {
 			var oParameter = aParameters[i];
 			var oBinding = oParameter.getBinding("value");
-			if (oBinding) {
+
+			if (oParameter.getUseConditions() && oConditionModel) {
+				// if ConditionModel is used, check if Binding is OK and same ConditionModel is used
+				var oMyConditionModel = this.getModel(sConditionModelName);
+				if (oMyConditionModel !== oConditionModel) {
+					// no or different ConditionModel -> create new binding on given ConditionModel
+					aBindings.push(oConditionModel.bindProperty("/conditions/" + oParameter.getFieldPath()));
+				}
+			} else if (oBinding) {
 				var sPath = oBinding.getPath();
 				var oParameterBindingContext = oBinding.getContext();
 
@@ -1017,7 +1025,7 @@ sap.ui.define([
 						aBindings.push(oModel.bindProperty(sPath, oBindingContext));
 					}
 				} else {
-					if (!oParameterBindingContext // we don't havve a BindingContext -> need to wait for one
+					if (!oParameterBindingContext // we don't have a BindingContext -> need to wait for one
 							|| oParameterBindingContext.getProperty(sPath) === undefined // the BindingContext has no data right now -> need to wait for update
 							|| oBinding.getValue() === undefined // the Binding has no data right now, need to wait for update
 							|| !deepEqual(oParameter.validateProperty("value", oParameterBindingContext.getProperty(sPath)), oParameter.getValue())) { // value not alreday set
@@ -1645,18 +1653,21 @@ sap.ui.define([
 						oParameter = aParameters[i];
 						sHelpPath = oParameter.getHelpPath();
 						var vValue = oParameter.getValue();
+						var bUseConditions = oParameter.getUseConditions();
 						if (aBindings || oBindingContext) {
 							var oBinding = oParameter.getBinding("value");
 							var bFound = false;
-							if (oBinding) {
+							if (oBinding || bUseConditions) {
+								sFieldPath = oParameter.getFieldPath();
 								for (var j = 0; j < aBindings.length; j++) {
-									if (oBinding.getPath() === aBindings[j].getPath()) {
+									if ((oBinding && oBinding.getPath() === aBindings[j].getPath()) ||
+											(bUseConditions && aBindings[j].getPath() === "/conditions/" + sFieldPath)) {
 										vValue = aBindings[j].getValue();
 										bFound = true;
 										break;
 									}
 								}
-								if (!bFound && oBindingContext && (!oBinding.getContext() || (oBinding.getContext() !== oBindingContext && oBinding.getContext() === oMyBindingContext))) {
+								if (!bFound && !bUseConditions && oBindingContext && oBinding && (!oBinding.getContext() || (oBinding.getContext() !== oBindingContext && oBinding.getContext() === oMyBindingContext))) {
 									// no new binding created and different BindingContext -> use propery from BindingConext (was already read before)
 									vValue = oBindingContext.getProperty(oBinding.getPath());
 								}
@@ -1667,9 +1678,9 @@ sap.ui.define([
 							if (!oHelpParameters) {
 								oHelpParameters = {};
 							}
-							if (oParameter.getUseConditions()) {
+							if (bUseConditions) {
 								// TODO: What if there are multiple conditions or not EQ?
-								if (vValue.length > 0) {
+								if (vValue && vValue.length > 0) {
 									oHelpParameters[sHelpPath] = vValue[0].values[0];
 								}
 							} else {
@@ -2412,6 +2423,12 @@ sap.ui.define([
 
 		var oBindingContext = this._oField ? this._oField.getBindingContext() : null; // if not connected use no BindingContext
 		this.setBindingContext(oBindingContext);
+
+		// in FilterField case also set right ConditionModel
+		var oFormatOptions = this._getFormatOptions();
+		if (oFormatOptions.conditionModel && this.getModel(oFormatOptions.conditionModelName) !== oFormatOptions.conditionModel) { // don't update propagated model
+			this.setModel(oFormatOptions.conditionModel, oFormatOptions.conditionModelName);
+		}
 
 	}
 

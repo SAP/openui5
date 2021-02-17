@@ -40,6 +40,7 @@ sap.ui.define([
 	"sap/ui/mdc/field/ConditionsType",
 	"sap/ui/mdc/field/ConditionType",
 	"sap/ui/mdc/enum/BaseType",
+	"sap/ui/model/Context",
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/type/Integer",
@@ -88,6 +89,7 @@ sap.ui.define([
 	ConditionsType,
 	ConditionType,
 	BaseType,
+	Context,
 	FormatException,
 	ParseException,
 	IntegerType,
@@ -822,6 +824,54 @@ sap.ui.define([
 		assert.notOk(FilterOperatorUtil.getOperatorsForType.called, "No default operators of type used");
 
 		FilterOperatorUtil.getOperatorsForType.restore();
+
+	});
+
+	QUnit.test("_getFormatOptions", function(assert) {
+
+		var oContext = new Context(); // just dummy context
+		oField.setBindingContext(oContext);
+		oField.setFieldHelp("X"); // just need ID
+		oField.setDataType("sap.ui.model.type.Currency");
+		oField.placeAt("content");
+		sap.ui.getCore().applyChanges();
+		var oFormatOptions = oField._getFormatOptions();
+		assert.ok(oFormatOptions, "FormatOptions returned");
+		assert.ok(oFormatOptions.valueType.isA("sap.ui.model.type.Currency"), "valueType");
+		assert.ok(oFormatOptions.originalDateType.isA("sap.ui.model.type.Currency"), "originalDateType");
+		assert.equal(oFormatOptions.display, FieldDisplay.Value, "display");
+		assert.notOk(oFormatOptions.fieldHelpID, "fieldHelpID");
+		assert.deepEqual(oFormatOptions.operators, oField._getOperators(), "operators");
+		assert.equal(oFormatOptions.hideOperator, false, "hideOperator");
+		assert.equal(oFormatOptions.maxConditions, -1, "maxConditions");
+		assert.equal(oFormatOptions.bindingContext, oContext, "bindingContext");
+		assert.ok(oFormatOptions.asyncParsing, "asyncParsing set");
+		assert.notOk(oFormatOptions.navigateCondition, "no navigateCondition set");
+		assert.ok(oFormatOptions.delegate, "delegate set");
+		assert.equal(oFormatOptions.delegateName, "sap/ui/mdc/field/FieldBaseDelegate", "delegateName");
+		assert.deepEqual(oFormatOptions.payload, {}, "payload");
+		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
+		assert.equal(oFormatOptions.conditionModel, oCM, "conditionModel");
+		assert.equal(oFormatOptions.conditionModelName, "cm", "conditionModelName");
+
+		oFormatOptions = oField._getUnitFormatOptions();
+		assert.ok(oFormatOptions, "FormatOptions returned");
+		assert.notOk(oFormatOptions.valueType, "valueType");
+		assert.ok(oFormatOptions.originalDateType.isA("sap.ui.model.type.Currency"), "originalDateType");
+		assert.equal(oFormatOptions.display, FieldDisplay.Value, "display");
+		assert.equal(oFormatOptions.fieldHelpID, "X", "fieldHelpID");
+		assert.deepEqual(oFormatOptions.operators, ["EQ"], "operators");
+		assert.equal(oFormatOptions.hideOperator, true, "hideOperator");
+		assert.equal(oFormatOptions.maxConditions, 1, "maxConditions");
+		assert.equal(oFormatOptions.bindingContext, oContext, "bindingContext");
+		assert.ok(oFormatOptions.asyncParsing, "asyncParsing set");
+		assert.notOk(oFormatOptions.navigateCondition, "no navigateCondition set");
+		assert.ok(oFormatOptions.delegate, "delegate set");
+		assert.equal(oFormatOptions.delegateName, "sap/ui/mdc/field/FieldBaseDelegate", "delegateName");
+		assert.deepEqual(oFormatOptions.payload, {}, "payload");
+		assert.notOk(oFormatOptions.preventGetDescription, "preventGetDescription not set");
+		assert.equal(oFormatOptions.conditionModel, oCM, "conditionModel");
+		assert.equal(oFormatOptions.conditionModelName, "cm", "conditionModelName");
 
 	});
 

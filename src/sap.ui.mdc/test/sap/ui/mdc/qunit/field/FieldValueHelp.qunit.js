@@ -3188,9 +3188,107 @@ sap.ui.define([
 				assert.equal(oOutParameter.getValue(), "Test1", "Out-parameter updated");
 				var oData = oModel.getData();
 				assert.equal(oData.contexts[0].outParameter, "Test1", "Out-parameter updated in Model");
+				FieldValueHelpDelegate.checkBindingsPending.restore();
 				fnDone();
 			}, 0);
 		}, 0);
+
+	});
+
+	var oCM1;
+	var oCM2;
+
+	function _initWithConditionModel() {
+
+		oCM1 = new ConditionModel();
+		oCM1.addCondition("in", Condition.createItemCondition("Test1", "Text1"));
+		oCM2 = new ConditionModel();
+		oCM2.addCondition("in", Condition.createItemCondition("Test2", "Text2"));
+
+		_initFieldHelp();
+
+		oField._getFormatOptions = function() {
+			return {
+				valueType: oType,
+				maxConditions: -1,
+				delegate: FieldBaseDelegate,
+				operators: ["EQ"],
+				conditionModel: oCM1,
+				conditionModelName: "cm"
+				};
+		};
+		oField2._getFormatOptions = function() {
+			return {
+				valueType: oType,
+				maxConditions: -1,
+				delegate: FieldBaseDelegate,
+				operators: FilterOperatorUtil.getOperatorsForType(BaseType.String),
+				conditionModel: oCM2,
+				conditionModelName: "cm"
+				};
+		};
+
+		oFieldHelp.addInParameter(new InParameter({value: "{cm>/conditions/in}", helpPath: "IN"}));
+		oFieldHelp.addOutParameter(new OutParameter({value: "{cm>/conditions/out}", helpPath: "OUT"}));
+
+		oFieldHelp.connect(oField); // to update ConditionModel
+
+	}
+
+	QUnit.module("ConditionModel", {
+		beforeEach: _initWithConditionModel,
+		afterEach: function() {
+			_teardown();
+			oCM1.destroy();
+			oCM1 = undefined;
+			oCM2.destroy();
+			oCM2 = undefined;
+		}
+	});
+
+	QUnit.test("connect", function(assert) {
+
+			assert.equal(oFieldHelp.getModel("cm"), oCM1, "FieldHelp has ConditionModel of Field");
+			var oInParameter = oFieldHelp.getInParameters()[0];
+			assert.deepEqual(oInParameter.getValue(), oCM1.getConditions("in"), "InParameter value");
+
+			oFieldHelp.connect(oField2);
+			assert.equal(oFieldHelp.getModel("cm"), oCM2, "FieldHelp has ConditionModel of new Field");
+			assert.deepEqual(oInParameter.getValue(), oCM2.getConditions("in"), "InParameter value");
+
+	});
+
+	QUnit.test("getTextForKey", function(assert) {
+
+		oFieldHelp.getTextForKey("I2");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", {IN: "Test1"}), "getTextForKey of Wrapper called with In-Parameter");
+
+		oFieldHelp.getTextForKey("I2", undefined, undefined, undefined, oCM2, "cm");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", {IN: "Test2"}), "getTextForKey of Wrapper called with In-Parameter from other ConditionModel");
+
+	});
+
+	QUnit.test("getKeyForText", function(assert) {
+
+		oFieldHelp.getKeyForText("Item 2");
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", {IN: "Test1"}), "getKeyForText of Wrapper called with In-Parameter");
+
+		oFieldHelp.getKeyForText("Item 2", undefined, oCM2, "cm");
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", {IN: "Test2"}), "getKeyForText of Wrapper called with In-Parameter from other ConditionModel");
+
+	});
+
+	QUnit.test("getItemForValue", function(assert) {
+
+		oFieldHelp.getItemForValue("I2", "I2", undefined, undefined, undefined, true, true, false);
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", {IN: "Test1"}), "getTextForKey of Wrapper called with In-Parameter");
+		oFieldHelp.getItemForValue("Item 2", "item 2", undefined, undefined, undefined, false, false, true);
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", {IN: "Test1"}), "getKeyForText of Wrapper called with In-Parameter");
+
+		oFieldHelp.getItemForValue("I2", "I2", undefined, undefined, undefined, true, true, false, oCM2, "cm");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", {IN: "Test2"}), "getTextForKey of Wrapper called with In-Parameter from other ConditionModel");
+		oFieldHelp.getItemForValue("Item 2", "item 2", undefined, undefined, undefined, false, false, true, oCM2, "cm");
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", {IN: "Test2"}), "getKeyForText of Wrapper called with In-Parameter from other ConditionModel");
 
 	});
 
