@@ -1211,7 +1211,7 @@ html[dir=rtl] {
 			&:hover .sapMITBText {
 				color: @_sap_m_IconTabBar_ShellSelectedTextColor;
 			}
-	
+
 			.sapMITBText {
 				color: @_sap_m_IconTabBar_ShellSelectedTextColor;
 			}
@@ -1417,5 +1417,14 @@ html[dir=rtl] {
 
 	.sapMITBFilterNegative .sapMBadgeAttention {
 		background-color: @sapUiNegativeElement;
+	}
+}
+
+html[data-sap-ui-animation='off'] {
+	.sapMITH,
+	.sapMITBFilterPopover {
+		.sapMITBFilterBadgeMotion .sapMBadgeAttention.sapMBadgeAnimationAdd {
+			animation: none;
+		}
 	}
 }
