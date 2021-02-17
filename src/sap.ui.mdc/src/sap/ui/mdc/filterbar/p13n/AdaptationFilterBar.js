@@ -109,6 +109,10 @@ sap.ui.define([
 		return this.oAdaptationModel;
 	};
 
+	AdaptationFilterBar.prototype._handleFilterItemSubmit = function() {
+		return;
+	};
+
 	AdaptationFilterBar.prototype._getWaitForChangesPromise = function() {
 		//Change is applied on parent --> wait for the parent promise not the child
 		return this.getEngine().getModificationHandler().waitForChanges({element: this.getAdaptationControl()});
