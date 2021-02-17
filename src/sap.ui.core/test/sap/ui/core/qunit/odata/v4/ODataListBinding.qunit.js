@@ -1433,12 +1433,13 @@ sap.ui.define([
 			aContexts;
 
 		oBinding.aPreviousData = [{}];
+		oBinding.bUseExtendedChangeDetection = true; // BCP: 2180095696
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(false);
 		this.mock(oBinding).expects("fetchContexts").never();
 
 		// code under test
-		aContexts = oBinding.getContexts(0, 10);
+		aContexts = oBinding.getContexts();
 
 		assert.deepEqual(aContexts, []);
 		assert.deepEqual(oBinding.aPreviousData, []);
