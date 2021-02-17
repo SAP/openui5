@@ -579,6 +579,15 @@
 		  ]
 		},
 		{
+			"id": "sap.m.IconTabHeader",
+			"name": "Icon Tab Header",
+			"category": "Action",
+			"since": "1.15",
+			"samples": [
+				"sap.m.sample.IconTabHeader"
+			]
+		},
+		{
 		  "id": "sap.m.TabContainer",
 		  "name": "Tab Container",
 		  "category": "Container",
@@ -2018,6 +2027,11 @@
 		  "id": "sap.m.sample.IconTabBarBadges",
 		  "name": "Icon Tab Bar - Badges",
 		  "description": "This sample illustrates the possibility to add badges to the icon tab filters."
+		},
+		{
+		  "id": "sap.m.sample.IconTabHeader",
+		  "name": "Standalone Icon Tab Header",
+		  "description": "Icon Tab Header used standalone, outside of Icon Tab Bar."
 		},
 		{
 		  "id": "sap.m.sample.BusyIndicator",

@@ -1,0 +1,10 @@
+<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">
+	<IconTabHeader mode="Inline">
+		<items>
+			<IconTabFilter key="info" text="Info" />
+			<IconTabFilter key="attachments" text="Attachments" count="3" />
+			<IconTabFilter key="notes" text="Notes" count="12" />
+			<IconTabFilter key="people" text="People"/>
+		</items>
+	</IconTabHeader>
+</mvc:View>
