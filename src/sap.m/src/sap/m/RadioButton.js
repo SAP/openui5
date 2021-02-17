@@ -47,7 +47,11 @@ function(
 	 * @class
 	 * RadioButton is a control similar to a {@link sap.m.CheckBox checkbox}, but it allows you to choose only one of the predefined set of options.
 	 * Multiple radio buttons have to belong to the same group (have the same value for <code>groupName</code>) in order to be mutually exclusive.
-	 * A wrapper control {@link sap.m.RadioButtonGroup RadioButtonGroup} can be used instead of individual radio buttons.
+	 *
+	 * It is recommended to use the wrapper control {@link sap.m.RadioButtonGroup RadioButtonGroup} instead of individual radio buttons.
+	 * This will provide better screen reader support for the user.
+	 * Use the <code>RadioButton</code> control on its own only if there is a wrapper control that handles the screen reader support. For example, such wrappers are sap.m.List, sap.m.Table and sap.f.GridList.
+	 *
 	 * <h3>Structure</h3>
 	 * <ul>
 	 * <li>Radio buttons can have a value state like Error or Warning.</li>
@@ -105,6 +109,9 @@ function(
 			/**
 			 * Name of the radio button group the current radio button belongs to. You can define a new name for the group.
 			 * If no new name is specified, this radio button belongs to the sapMRbDefaultGroup per default. Default behavior of a radio button in a group is that when one of the radio buttons in a group is selected, all others are unselected.
+			 *
+			 * <b>Note</b> To ensure screen reader support it is recommended to use the {@link sap.m.RadioButtonGroup RadioButtonGroup} wrapper instead of using the <code>groupName</code> property.
+			 * Use this property only in cases where a wrapper control will handle the screen reader support. For example such wrappers are <code>sap.m.List</code>, <code>sap.m.Table</code> and <code>sap.f.GridList</code>.
 			 */
 			groupName : {type : "string", group : "Behavior", defaultValue : 'sapMRbDefaultGroup'},
 
@@ -140,6 +147,7 @@ function(
 
 			/**
 			 * Specifies whether the user can select the radio button.
+			 *
 			 * @since 1.25
 			 */
 			editable : {type : "boolean", group : "Behavior", defaultValue : true},
