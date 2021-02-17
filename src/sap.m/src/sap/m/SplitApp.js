@@ -94,8 +94,10 @@ sap.ui.define([
 
 			/**
 			 * Fires when orientation (portrait/landscape) is changed.
+			 * @deprecated Since version 1.87, use {@link sap.ui.Device.orientation.attachHandler} instead.
 			 */
 			orientationChange : {
+				deprecated: true,
 				parameters : {
 
 					/**

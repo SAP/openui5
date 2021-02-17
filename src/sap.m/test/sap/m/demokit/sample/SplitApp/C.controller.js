@@ -1,8 +1,9 @@
 sap.ui.define([
 	"sap/m/MessageToast",
 	"sap/ui/core/mvc/Controller",
+	"sap/ui/Device",
 	"sap/base/Log"
-], function (MessageToast, Controller, Log) {
+], function (MessageToast, Controller, Device, Log) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.SplitApp.C", {
@@ -13,11 +14,16 @@ sap.ui.define([
 				'tablet': 'tablet-icon.png',
 				'icon': 'desktop.ico'
 			});
+
+			Device.orientation.attachHandler(this.onOrientationChange, this);
 		},
 
-		onOrientationChange: function (oEvent) {
-			var bLandscapeOrientation = oEvent.getParameter("landscape"),
-				sMsg = "Orientation now is: " + (bLandscapeOrientation ? "Landscape" : "Portrait");
+		onExit: function () {
+			Device.orientation.detachHandler(this.onOrientationChange, this);
+		},
+
+		onOrientationChange: function (mParams) {
+			var sMsg = "Orientation now is: " + (mParams.landscape ? "Landscape" : "Portrait");
 			MessageToast.show(sMsg, { duration: 5000 });
 		},
 
