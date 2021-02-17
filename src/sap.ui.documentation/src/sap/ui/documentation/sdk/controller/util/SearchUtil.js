@@ -3,8 +3,8 @@
  */
 
 // Provides reuse functionality for reading documentation from api.json files (as created by the UI5 JSDoc3 template/plugin)
-sap.ui.define(["sap/ui/Device"],
-	function(Device) {
+sap.ui.define(["sap/ui/Device", "sap/base/Log"],
+	function(Device, Log) {
 		"use strict";
 
 		var WORKER = {
@@ -35,6 +35,9 @@ sap.ui.define(["sap/ui/Device"],
 					// listen for confirmation from worker
 					oWorker.addEventListener('message', function(oEvent) {
 						var oData = oEvent.data;
+						if (oEvent.data.error) {
+							reject(oEvent.data.error);
+						}
 						resolve(oData && oData[WORKER.RESPONSE_FIELDS.DONE] === true);
 					}, false);
 
@@ -71,6 +74,9 @@ sap.ui.define(["sap/ui/Device"],
 						"sQuery": sQuery,
 						"preferencedCategory": sPreferencedCategory
 					});
+				})
+				.catch(function(err) {
+					Log.error(err);
 				});
 			});
 		}
