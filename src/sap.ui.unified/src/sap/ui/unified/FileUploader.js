@@ -1257,7 +1257,7 @@ sap.ui.define([
 		}
 
 		var oXhr = aXhr[iIndex];
-		var sFilename = oXhr.file.name ? oXhr.file.name : "MultipartFile";
+		var sFilename = oXhr.fileName;
 
 		if ((Device.browser.edge || Device.browser.internet_explorer) && oXhr.file.type && oXhr.xhr.readyState == 1
 			&& !oXhr.requestHeaders.filter(function(oHeader) {

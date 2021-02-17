@@ -2554,9 +2554,7 @@ sap.ui.define([
 				return;
 			}
 			this._oFileUploader.removeAllAggregation("headerParameters", true);
-			this.removeAllAggregation("headerParameters", true);
 			this._oFileUploader.removeAllAggregation("parameters", true);
-			this.removeAllAggregation("parameters", true);
 
 			this.fireChange({
 				// deprecated
