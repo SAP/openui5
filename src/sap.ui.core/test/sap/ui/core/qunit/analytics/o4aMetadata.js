@@ -253,6 +253,34 @@ sap.ui.define([
 		"					sap:hierarchy-level-for=\"CostElement_NodeID\" sap:label=\"Cost Element Level\"\n" +
 		"					sap:sortable=\"false\"/>\n" +
 		"			</EntityType>\n" +
+		"			<!-- Entity type with a measure with a sap:text annotation -->\n" +
+		"			<EntityType Name=\"CONTRACTPERFType\" sap:semantics=\"aggregate\"\n" +
+		"				 sap:content-version=\"1\">\n" +
+		"				<Key>\n" +
+		"					<PropertyRef Name=\"ID\"/>\n" +
+		"				</Key>\n" +
+		"				<Property Name=\"ID\" Type=\"Edm.String\" Nullable=\"false\"/>\n" +
+		"				<Property Name=\"SalesDocument\" Type=\"Edm.String\" MaxLength=\"10\"\n" +
+		"					sap:aggregation-role=\"dimension\"/>\n" +
+		"				<Property Name=\"SalesOrganization\" Type=\"Edm.String\"\n" +
+		"					MaxLength=\"4\" sap:aggregation-role=\"dimension\"/>\n" +
+		"				<Property Name=\"CostOvrWithhold\" Type=\"Edm.Decimal\"\n" +
+		"					Precision=\"42\" Scale=\"2\" sap:aggregation-role=\"measure\"\n" +
+		"					sap:text=\"CostOvrWithhold_F\" sap:unit=\"TransactionCurrency\"/>\n" +
+		"				<Property Name=\"CostOvrWithhold_F\" Type=\"Edm.String\"\n" +
+		"					 MaxLength=\"60\"/>\n" +
+		"				<Property Name=\"TransactionCurrency\" Type=\"Edm.String\"\n" +
+		"					MaxLength=\"5\" sap:aggregation-role=\"dimension\"\n" +
+		"					sap:semantics=\"currency-code\"/>\n" +
+		"				<Property Name=\"CostInGlobalCurrency\" Type=\"Edm.Decimal\"\n" +
+		"					Precision=\"42\" Scale=\"2\" sap:aggregation-role=\"measure\"\n" +
+		"					sap:text=\"CostInGlobalCurrency_F\" sap:unit=\"GlobalCurrency\"/>\n" +
+		"				<Property Name=\"CostInGlobalCurrency_F\" Type=\"Edm.String\"\n" +
+		"					 MaxLength=\"60\"/>\n" +
+		"				<Property Name=\"GlobalCurrency\" Type=\"Edm.String\"\n" +
+		"					MaxLength=\"5\" sap:aggregation-role=\"dimension\"\n" +
+		"					sap:semantics=\"currency-code\"/>\n" +
+		"			</EntityType>\n" +
 		"			<Association Name=\"ActualPlannedCosts_ActualPlannedCostsResultsType\">\n" +
 		"				<End Type=\"servicemock.ActualPlannedCostsType\" Role=\"ActualPlannedCostsPrincipal\"\n" +
 		"					Multiplicity=\"*\" />\n" +
@@ -329,6 +357,11 @@ sap.ui.define([
 		"					EntityType=\"servicemock.TypeWithHierarchies\"\n" +
 		"					sap:creatable=\"false\" sap:updatable=\"false\" sap:deletable=\"false\"\n" +
 		"					sap:addressable=\"false\" sap:content-version=\"1\"/>\n" +
+		"				<!-- EntitySet for type with measure having sap:text annotation -->\n" +
+		"				<EntitySet Name=\"CONTRACTPERFResults\" \n" +
+		"					EntityType=\"servicemock.CONTRACTPERFType\"\n" +
+		"					sap:creatable=\"false\" sap:updatable=\"false\" sap:deletable=\"false\"\n" +
+		"					sap:content-version=\"1\"/>\n" +
 		"				<AssociationSet Name=\"ActualPlannedCosts_ActualPlannedCostsResults\"\n" +
 		"					Association=\"servicemock.ActualPlannedCosts_ActualPlannedCostsResultsType\">\n" +
 		"					<End Role=\"ActualPlannedCostsPrincipal\" EntitySet=\"ActualPlannedCosts\" />\n" +

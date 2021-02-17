@@ -17,6 +17,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	'sap/ui/model/TreeAutoExpandMode',
 	"sap/ui/core/qunit/analytics/o4aMetadata",
+	// following resources add responses to the fake server
+	"sap/ui/core/qunit/analytics/CONTRACTPERFResults_Batch_MeasureWithTextAnnotation",
 	"sap/ui/core/qunit/analytics/TBA_ServiceDocument",
 	"sap/ui/core/qunit/analytics/TBA_NoBatch",
 	"sap/ui/core/qunit/analytics/TBA_Batch_Contexts",
@@ -32,6 +34,23 @@ sap.ui.define([
 
 	var iGroupMembersQueryType = AnalyticalBinding._requestType.groupMembersQuery,
 		sServiceURL = "http://o4aFakeService:8080/",
+		// column templates
+		oGroupedColumn = {
+			grouped : true,
+			inResult : false,
+			sortOrder : "Ascending",
+			sorted : false,
+			total : false,
+			visible : true
+		},
+		oVisibleColumn = {
+			grouped : false,
+			inResult : false,
+			sortOrder : "Ascending",
+			sorted : false,
+			total : false,
+			visible : true
+		},
 		// Analytical info for dimensions
 		oCostCenterGrouped = {
 			name: "CostCenter",
@@ -503,6 +522,90 @@ sap.ui.define([
 				done();
 			}
 		});
+	});
+
+	//*********************************************************************************************
+	// BCP: 002075129500000644142021
+[
+	{analyticalInfoByProperty: {}, measure : "foo", result : false},
+	{analyticalInfoByProperty: {foo : {}}, measure : "foo", result : false},
+	{analyticalInfoByProperty: {foo : {total : true}}, measure : "foo", result : false},
+	{analyticalInfoByProperty: {foo : {total : "truthy"}}, measure : "foo", result : false},
+	{analyticalInfoByProperty: {foo : {total : false}}, measure : "foo", result : true},
+	// not sure whether this may happen; keep it for compatibility
+	{analyticalInfoByProperty: {foo : {total : ""}}, measure : "foo", result : true}
+].forEach(function (oFixture, i) {
+	QUnit.test("_isSkippingTotalForMeasure: #" + i, function (assert) {
+		var oBinding = {
+				mAnalyticalInfoByProperty : oFixture.analyticalInfoByProperty
+			};
+
+		// code under test
+		assert.strictEqual(
+			AnalyticalBinding.prototype._isSkippingTotalForMeasure.call(oBinding, oFixture.measure),
+			oFixture.result);
+	});
+});
+
+	//*********************************************************************************************
+	// If a measure property has a sap:text annotation and in the analytical info only that text
+	// property is contained and not the measure itself, the analytical binding has to request data
+	// and must not fail. It should request the data as it would do if the measure property would be
+	// requested with total=true. In this test a multi-unit case is contained, which leads to a
+	// second $batch resolving the multi-unit case.
+	// Tests _prepareGroupMembersQueryRequest, _createMultiUnitRepresentativeEntry and
+	// _prepareReloadMeasurePropertiesQueryRequest.
+	// BCP: 002075129500000644142021
+	QUnit.test("Measure with sap:text annotation; multi unit case", function (assert) {
+		var aAnalyticalInfo = [
+				Object.assign({}, oGroupedColumn, {name : "SalesDocument"}),
+				Object.assign({}, oVisibleColumn, {name : "CostOvrWithhold_F"}),
+				Object.assign({}, oVisibleColumn, {name : "CostInGlobalCurrency_F"})
+			],
+			iCount = 0,
+			done = assert.async(),
+			that = this;
+
+		setupAnalyticalBinding(2, {}, function (oBinding, oModel) {
+			oModel.attachBatchRequestCompleted(function () {
+				iCount += 1;
+				if (iCount === 1) {
+					return; // wait for the second batch which resolves the multi-unit case
+				}
+				done();
+			});
+			that.oLogMock.expects("warning")
+				.withExactArgs("Detected a multi-unit case, so sorting is only possible on leaves",
+					"/CONTRACTPERFResults");
+
+			oBinding.getContexts(0, 20, 0);
+		}, aAnalyticalInfo, "/CONTRACTPERFResults");
+	});
+
+	//*********************************************************************************************
+	// If a measure property has a sap:text annotation and in the analytical info only that text
+	// property is contained and not the measure itself, the analytical binding has to request data
+	// and must not fail. It should request the data as it would do if the measure property would be
+	// requested with total=true. In this test auto expansion is done.
+	// Tests _prepareGroupMembersAutoExpansionQueryRequest/prepareLevelMembersQueryRequest.
+	// BCP: 002075129500000644142021
+	QUnit.test("Measure with sap:text annotation; auto expand", function (assert) {
+		var aAnalyticalInfo = [
+				Object.assign({}, oGroupedColumn, {name : "SalesDocument"}),
+				Object.assign({}, oGroupedColumn, {name : "SalesOrganization"}),
+				Object.assign({}, oVisibleColumn, {name : "CostOvrWithhold_F"})
+			],
+			done = assert.async();
+
+		setupAnalyticalBinding(2, {noPaging: true, numberOfExpandedLevels: 2},
+			function (oBinding, oModel) {
+				oModel.attachBatchRequestCompleted(function () {
+					done();
+				});
+
+				oBinding.getContexts(0, 20, 0);
+			},
+			aAnalyticalInfo, "/CONTRACTPERFResults");
 	});
 
 	//*********************************************************************************************
