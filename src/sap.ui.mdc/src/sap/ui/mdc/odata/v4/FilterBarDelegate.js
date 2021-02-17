@@ -46,26 +46,26 @@ sap.ui.define([
 
 
 
-	ODataFilterBarDelegate._fetchPropertiesByMetadata = function(oFilterBar, mPropertyBag) {
+	ODataFilterBarDelegate._fetchPropertiesByMetadata = function(oControl, mPropertyBag) {
 
 		var oDelegate, sModelName, sCollectionName, oModel, sFilterBarId;
 
 		if (mPropertyBag) {
 			var oModifier = mPropertyBag.modifier;
 
-			oDelegate = oModifier.getProperty(oFilterBar, "delegate");
+			oDelegate = oModifier.getProperty(oControl, "delegate");
 			sModelName =  oDelegate.payload.modelName === null ? undefined : oDelegate.payload.modelName;
 			sCollectionName = oDelegate.payload.collectionName;
 			oModel = mPropertyBag.appComponent.getModel(sModelName);
 		} else {
 
-			oDelegate = oFilterBar.getProperty("delegate");
+			oDelegate = oControl.getProperty("delegate");
 			sModelName =  oDelegate.payload.modelName === null ? undefined : oDelegate.payload.modelName;
 			sCollectionName = oDelegate.payload.collectionName;
-			oModel = oFilterBar.getModel(sModelName);
+			oModel = oControl.getModel(sModelName);
 		}
 
-		sFilterBarId = oFilterBar.getId ? oFilterBar.getId() :  oFilterBar.id;
+		sFilterBarId = oControl.getId ? oControl.getId() :  oControl.id;
 
 		var oObj = {
 				getDelegate: function() {
@@ -86,7 +86,7 @@ sap.ui.define([
 				}
 		};
 
-		return this.fetchProperties(oObj);
+		return mPropertyBag ? this.fetchProperties(oObj) : oControl.getControlDelegate().fetchProperties(oControl);
 	};
 
 	ODataFilterBarDelegate._ensureSingleRangeEQOperators = function() {

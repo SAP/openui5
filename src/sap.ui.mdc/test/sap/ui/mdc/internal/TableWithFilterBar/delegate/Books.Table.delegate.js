@@ -14,7 +14,7 @@ sap.ui.define([
 				filterable: true,
 				label: "Author",
 				maxLength: undefined,
-				name: "name",
+				name: "author/name",
 				path: "author/name",
 				precision: undefined,
 				scale: undefined,
@@ -25,6 +25,16 @@ sap.ui.define([
 			aProps.forEach(function(oProperty){
 				if (oProperty.name === "language_code") {
 					oProperty.fieldHelp = "FHLanguage";
+				}
+
+				if (oProperty.name === "genre_code") {
+					oProperty.fieldHelp = "FHGenre";
+					oProperty.label = "Genre";
+				}
+
+				if (oProperty.name === "subgenre_code") {
+					oProperty.fieldHelp = "FHSubGenreSingle";
+					oProperty.label = "Sub Genre";
 				}
 			});
 			return aFrontProps.concat(aProps);
