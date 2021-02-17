@@ -871,16 +871,21 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the query options used in the cache.
+	 * Returns the query options that can be inherited from this binding, including late query
+	 * options.
 	 *
-	 * @returns {object} The query options
+	 * @returns {object} The inheritable query options
 	 *
 	 * @private
 	 */
-	ODataParentBinding.prototype.getCacheQueryOptions = function () {
+	ODataParentBinding.prototype.getInheritableQueryOptions = function () {
+		if (this.mLateQueryOptions) {
+			return _Helper.merge({}, this.mCacheQueryOptions, this.mLateQueryOptions);
+		}
+
 		return this.mCacheQueryOptions
 			|| _Helper.getQueryOptionsForPath(
-				this.oContext.getBinding().getCacheQueryOptions(), this.sPath);
+				this.oContext.getBinding().getInheritableQueryOptions(), this.sPath);
 	};
 
 	/**

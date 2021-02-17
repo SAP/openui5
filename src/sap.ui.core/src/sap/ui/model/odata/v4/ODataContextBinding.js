@@ -982,19 +982,19 @@ sap.ui.define([
 	 * @see sap.ui.model.odata.v4.ODataParentBinding#getQueryOptionsFromParameters
 	 */
 	ODataContextBinding.prototype.getQueryOptionsFromParameters = function () {
-		var mParentQueryOptions, mQueryOptions;
+		var mInheritableQueryOptions,
+			mQueryOptions = this.mQueryOptions;
 
-		if (!this.bInheritExpandSelect) {
-			return this.mQueryOptions;
-		}
-
-		mParentQueryOptions = this.oContext.getBinding().getCacheQueryOptions();
-		mQueryOptions = Object.assign({}, this.mQueryOptions);
-		if ("$select" in mParentQueryOptions) {
-			mQueryOptions.$select = mParentQueryOptions.$select;
-		}
-		if ("$expand" in mParentQueryOptions) {
-			mQueryOptions.$expand = mParentQueryOptions.$expand;
+		if (this.bInheritExpandSelect) {
+			mInheritableQueryOptions = this.oContext.getBinding().getInheritableQueryOptions();
+			mQueryOptions = Object.assign({}, mQueryOptions);
+			// keep $select before $expand
+			if ("$select" in mInheritableQueryOptions) {
+				mQueryOptions.$select = mInheritableQueryOptions.$select;
+			}
+			if ("$expand" in mInheritableQueryOptions) {
+				mQueryOptions.$expand = mInheritableQueryOptions.$expand;
+			}
 		}
 
 		return mQueryOptions;
