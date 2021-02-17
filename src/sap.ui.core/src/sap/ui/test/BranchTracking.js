@@ -8,6 +8,7 @@
 	/*eslint no-alert: 0, no-warning-comments: 0 */
 
 	var aFileNames = [], // maps a file's index to its name
+		rParentheses = /[()]/g,
 		oScript = getScriptTag(),
 		aStatistics = [], // maps a file's index to its "hits" array (and statistics record)
 		iThreshold,
@@ -256,24 +257,17 @@
 		}
 
 		/*
-		 * Preserve operator's source code incl. comments and line breaks, but avoid leading closing
-		 * or trailing opening parentheses.
+		 * Try to preserve operator's source code incl. comments and line breaks, but avoid leading
+		 * closing or trailing opening parentheses. Note: this also removes parentheses inside a
+		 * comment, but who cares ;-)
 		 *
 		 * Note: outer parentheses are absorbed by operators and do not appear in operand's source!
 		 *
 		 * @returns {string}
 		 */
 		function operator() {
-			var sSource = oNode.loc.source.slice(oNode.left.range[1], oNode.right.range[0]);
-
-			if (sSource[0] === ")") {
-				sSource = sSource.slice(1);
-			}
-			if (sSource.slice(-1) === "(") {
-				sSource = sSource.slice(0, -1);
-			}
-
-			return sSource;
+			return oNode.loc.source.slice(oNode.left.range[1], oNode.right.range[0])
+				.replace(rParentheses, "");
 		}
 
 		if (Device && isChildOfIgnoredNode(Device, oNode)) {
