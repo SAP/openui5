@@ -101,6 +101,29 @@ describe("sap.m.InputVisualTests", function() {
 		});
 	});
 
+	it("Should be able to properly select an item", function () {
+		var oInput = element(by.id("inputWithSuggestions"));
+		browser.executeScript("document.getElementById('inputWithSuggestions').scrollIntoView()").then(function() {
+			var index;
+			element(by.id("customCssButton")).click();
+			oInput.click();
+
+			for (index = 0; index < 10; index++) {
+				browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			}
+			browser.actions().sendKeys("A").perform();
+			element(by.css("#inputWithSuggestions-popup-list li:nth-child(5)")).click();
+
+			expect(takeScreenshot()).toLookAs("proper_item_selection");
+
+			// Cleanup
+			oInput.click();
+			for (index = 0; index < 10; index++) {
+				browser.actions().sendKeys(protractor.Key.BACK_SPACE).perform();
+			}
+		});
+	});
+
 	it("Should visualize input with sticky header suggestions", function () {
 		var oInput = element(by.id("inputWithStickySuggestions"));
 		browser.executeScript("document.getElementById('inputWithStickySuggestions').scrollIntoView()").then(function() {

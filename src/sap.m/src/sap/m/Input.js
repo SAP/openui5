@@ -763,6 +763,7 @@ function(
 		}
 
 		this._bSelectingItem = false;
+		this._resetTypeAhead();
 	};
 
 
@@ -1278,13 +1279,14 @@ function(
 	Input.prototype.onsapfocusleave = function(oEvent) {
 		var oSuggPopover = this._isSuggestionsPopoverInitiated() && this._getSuggestionsPopover(),
 			oPopup = oSuggPopover && oSuggPopover.getPopover(),
+			bIsPopover = oPopup && oPopup.isA("sap.m.Popover"),
 			oFocusedControl = oEvent.relatedControlId && sap.ui.getCore().byId(oEvent.relatedControlId),
 			oFocusDomRef = oFocusedControl && oFocusedControl.getFocusDomRef(),
 			bFocusInPopup = oPopup
 				&& oFocusDomRef
 				&& containsOrEquals(oPopup.getDomRef(), oFocusDomRef);
 
-		if (oPopup instanceof Popover) {
+		if (bIsPopover) {
 			if (bFocusInPopup && !oSuggPopover.getValueStateActiveState()) {
 				// set the flag that the focus is currently in the Popup
 				this._bPopupHasFocus = true;
@@ -1302,6 +1304,18 @@ function(
 			}
 		}
 
+		// Inform InputBase to fire the change event on Input only when focus doesn't go into the suggestion popup
+		if (!bFocusInPopup) {
+			InputBase.prototype.onsapfocusleave.apply(this, arguments);
+		}
+
+		this.bValueHelpRequested = false;
+	};
+
+	Input.prototype.onsaptabnext = function () {
+		// There's no typeahead for mobile devices.
+		// If the popup has been focused, then the list would take care of that functionality.
+		// There should be a matching item (proposed text in order to continue)
 		if (!this.isMobileDevice() && this._sProposedItemText) {
 			// Update selections for poweruser
 			var oSelectedItem = this.getSuggestionItems()
@@ -1314,14 +1328,8 @@ function(
 				this.selectText(0, 0);
 			}
 		}
-
-		// Inform InputBase to fire the change event on Input only when focus doesn't go into the suggestion popup
-		if (!bFocusInPopup) {
-			InputBase.prototype.onsapfocusleave.apply(this, arguments);
-		}
-
-		this.bValueHelpRequested = false;
 	};
+
 	/**
 	 * Keyboard handler for the onMouseDown event.
 	 *
