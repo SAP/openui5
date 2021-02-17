@@ -1138,7 +1138,8 @@ sap.ui.define([
 
 		this.createReadGroupLock(sGroupId, this.isRoot());
 		return this.oCachePromise.then(function (oCache) {
-			var oPromise = that.oRefreshPromise,
+			var bHasChangeListeners,
+				oPromise = that.oRefreshPromise,
 				oReadGroupLock = that.oReadGroupLock;
 
 			if (!that.oElementContext) { // refresh after delete
@@ -1153,12 +1154,16 @@ sap.ui.define([
 				return that._execute(oReadGroupLock, that.oOperation.mRefreshParameters);
 			}
 			if (oCache && !oPromise) { // do not refresh twice
+				// check here because fetchCache deactivates the cache which removes the listeners
+				bHasChangeListeners = oCache.hasChangeListeners();
 				// remove all cached Caches before fetching a new one
 				that.removeCachesAndMessages(sResourcePathPrefix);
 				that.fetchCache(that.oContext);
 				// Do not fire a change event, or else ManagedObject destroys and recreates the
 				// binding hierarchy causing a flood of events.
-				oPromise = that.createRefreshPromise();
+				oPromise = bHasChangeListeners
+					? that.createRefreshPromise()
+					: SyncPromise.resolve();
 				if (bKeepCacheOnError) {
 					oPromise = oPromise.catch(function (oError) {
 						return that.fetchResourcePath(that.oContext).then(function (sResourcePath) {
