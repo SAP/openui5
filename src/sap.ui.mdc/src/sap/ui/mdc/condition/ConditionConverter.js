@@ -4,6 +4,7 @@
 sap.ui.define([
 	'sap/ui/mdc/condition/Condition',
 	'sap/ui/mdc/enum/BaseType',
+	'sap/ui/mdc/enum/ConditionValidated',
 	'sap/ui/mdc/util/DateUtil',
 	'sap/ui/mdc/condition/FilterOperatorUtil',
 	'sap/ui/mdc/condition/Operator',
@@ -12,6 +13,7 @@ sap.ui.define([
 	function(
 		Condition,
 		BaseType,
+		ConditionValidated,
 		DateUtil,
 		FilterOperatorUtil,
 		Operator,
@@ -44,10 +46,10 @@ sap.ui.define([
 			 *
 			 * <b>Note:</b> Number types are not converted, the number conversion is done by the Flex handling.
 			 *
-			 * @param {object} oCondition Condition
+			 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
 			 * @param {sap.ui.mdc.TypeConfig} oTypeConfig given dataType mapping configuration
 			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent <code>TypeUtil</code> implementation
-			 * @returns {object} stringified condition
+			 * @returns {sap.ui.mdc.condition.ConditionObject} stringified condition
 			 * @private
 			 * @ui5-restricted sap.ui.mdc
 			 * @since 1.74.0
@@ -56,7 +58,7 @@ sap.ui.define([
 
 				// convert using "normalized" data type
 				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
-				var aValues = _valuesToString(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil, oTypeConfig) || oTypeConfig, oOperator);
+				var aValues = _valuesToString(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil, oTypeConfig, oOperator) || oTypeConfig, oOperator);
 
 				// inParameter, OutParameter
 				// TODO: we need the types of the in/out parameter
@@ -82,17 +84,18 @@ sap.ui.define([
 			 *
 			 * <b>Note:</b> Number types are not converted, the number conversion is done by the Flex handling.
 			 *
-			 * @param {object} oCondition stringified condition
+			 * @param {sap.ui.mdc.condition.ConditionObject} oCondition stringified condition
 			 * @param {sap.ui.mdc.TypeConfig} oTypeConfig Data type of the condition
 			 * @param {sap.ui.mdc.util.TypeUtil} oTypeUtil delegate dependent <code>TypeUtil</code> implementation
-			 * @returns {object} condition
+			 * @returns {sap.ui.mdc.condition.ConditionObject} condition
 			 * @private
 			 * @ui5-restricted sap.ui.mdc
 			 * @since 1.74.0
 			 */
 			toType: function(oCondition, oTypeConfig, oTypeUtil) {
 				// convert using "normalized" data type
-				var aValues = _stringToValues(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil, oTypeConfig) || oTypeConfig);
+				var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+				var aValues = _stringToValues(oCondition.values, _getLocalTypeConfig(oCondition, oTypeUtil, oTypeConfig, oOperator) || oTypeConfig);
 
 				// inParameter, OutParameter
 				// TODO: we need the types of the in/out parameter
@@ -107,13 +110,18 @@ sap.ui.define([
 				}
 
 				var oResult = Condition.createCondition(oCondition.operator, aValues, oInParameters, oOutParameters, oCondition.validated);
+
+				if (oResult.validated !== ConditionValidated.Validated && oOperator.validateInput) {
+					// let the operator check if the condition could be validated. (Use result to not change original condition.)
+					oOperator.checkValidated(oResult);
+				}
+
 				return oResult;
 
 			}
 		};
 
-		function _getLocalTypeConfig (oCondition, oTypeUtil, oTypeConfig) {
-			var oOperator = FilterOperatorUtil.getOperator(oCondition.operator);
+		function _getLocalTypeConfig (oCondition, oTypeUtil, oTypeConfig, oOperator) {
 			if (oOperator && oOperator.valueTypes[0] && (oOperator.valueTypes[0] !== Operator.ValueType.Self && oOperator.valueTypes[0] !== Operator.ValueType.Static)) {
 				// we have to create the type instance for the values
 				return oTypeUtil.getTypeConfig(oOperator._createLocalType(oOperator.valueTypes[0], oTypeConfig && oTypeConfig.typeInstance)); // TODO type for all values must be the same})
