@@ -1655,11 +1655,16 @@ if (typeof window.sap.ui !== "object") {
 		var sUserAgent = customUA || navigator.userAgent;
 		if (Device.os.ios) {
 			return /ipad/i.test(sUserAgent);
-		} else if (Device.os.macintosh) {
+		} else if (Device.os.macintosh || Device.os.linux) {
+			// For iOS:
 			// With iOS 13 the string 'iPad' was removed from the user agent string through a browser setting, which is applied on all sites by default:
 			// "Request Desktop Website -> All websites" (for more infos see: https://forums.developer.apple.com/thread/119186).
-			// Therefore the OS is detected as MACINTOSH instead of iOS and the device is a tablet if the supported touch points are more than 1
-			return navigator.maxTouchPoints > 1;
+			// Therefore the OS is detected as MACINTOSH instead of iOS and the device is a tablet if the Device.support.touch is true.
+			// For Android:
+			// At least some devices (e.g. Samsung Galaxy S20 and Samsung Galaxy Tab S7) can't be recognized as Android device in case they request a page
+			// as desktop page. In this case the userAgent does not contain any information regarding the real OS and we detect the device as linux OS
+			// deriving from navigator.platform. Therefore we decided to handle this behaviour similar to iOS.
+			return Device.support.touch;
 		} else {
 			//in real mobile device
 			if (Device.support.touch) {
