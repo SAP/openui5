@@ -197,7 +197,7 @@ sap.ui.define([
 
 				delete mQueryOptions[sOption];
 
-				return sOption + "=" + sValue;
+				return _Helper.encodePair(sOption, sValue);
 			});
 
 		sQueryString = _Helper.buildQuery(mQueryOptions);
