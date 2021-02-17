@@ -67,6 +67,33 @@ sap.ui.define([
 		return Promise.resolve(null);
 	};
 
+	/**
+	 * Retrieves the relevant metadata that will be used for the table binding, and returns the property info array.
+	 * If not overriden, this method return the same as <code>fetchProperties</code>.
+	 * When overridding, make sure the returned result is consistent with what is returned by <code>fetchProperties</code>.
+	 *
+	 * @param {Object} oControl MDC Control instance
+	 * @returns {Promise} Once resolved, an array of property info objects is returned
+	 * @protected
+	*/
+	Delegate.fetchPropertiesForBinding = function(oTable) {
+		return this.fetchProperties(oTable);
+	};
+
+	/**
+	 * Fetches the property extensions that will be used for the table binding.
+	 * If not overriden, this method eturn the same as <code>fetchPropertyExtensions</code>.
+	 * When overridding, make sure the returned result is consistent with what is returned by <code>fetchPropertyExtensions</code>.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {object[]} aProperties The property infos
+	 * @returns {Promise<object<string, object>|null>} Key-value map, where the key is the name of the property, and the value is the extension
+	 * @protected
+	 */
+	Delegate.fetchPropertyExtensionsForBinding = function(oTable, aProperties) {
+		return this.fetchPropertyExtensions(oTable, aProperties);
+	};
+
 	Delegate.preInit = function(oTable) {
 		var that = this;
 		if (oTable._getStringType() === TableType.ResponsiveTable) {
@@ -251,30 +278,40 @@ sap.ui.define([
 	Delegate._setAggregation = function(oTable, aGroupLevel, aAggregate) {
 		var mTableMap = TableMap.get(oTable);
 		var oPlugin = mTableMap["plugin"];
-		var oAggregationInfo = {
-			visible: this._getVisibleProperties(oTable),
-			groupLevels: aGroupLevel,
-			grandTotal: aAggregate,
-			subtotals: aAggregate
-		};
 
-		oPlugin && oPlugin.setAggregationInfo(oAggregationInfo);
+		if (oPlugin) {
+			var oAggregationInfo = {
+				visible: this._getVisibleProperties(oTable, oPlugin),
+				groupLevels: aGroupLevel,
+				grandTotal: aAggregate,
+				subtotals: aAggregate
+			};
+
+			oPlugin.setAggregationInfo(oAggregationInfo);
+		}
 	};
 
-	Delegate._getVisibleProperties = function(oTable) {
+	Delegate._getVisibleProperties = function(oTable, oPlugin) {
 		var aVisibleProperties = [];
-		var oPropertyHelper = oTable.getPropertyHelper();
+		var aProperties = oPlugin.getPropertyInfos();
 		oTable.getColumns().forEach(function(item) {
-			var sPath = item.getDataProperty();
-			if (oPropertyHelper.isComplex(sPath)) {
-				oPropertyHelper.getReferencedProperties(sPath).forEach(function(e){
-					if (aVisibleProperties.indexOf(e.getName()) == -1) {
-						aVisibleProperties.push(e.getName());
-					}
-				});
-			} else if (aVisibleProperties.indexOf(oPropertyHelper.getName(sPath)) == -1) {
-					aVisibleProperties.push(oPropertyHelper.getName(sPath));
+			var sPropertyName = item.getDataProperty(),
+				oPropertyInfo = aProperties.find(function(oProp) {
+				return oProp.name === sPropertyName;
+			});
+			if (oPropertyInfo) {
+				if (oPropertyInfo.propertyInfos) {
+					// Complex propertyInfo --> add the names of all related (simple) propertyInfos in the list
+					oPropertyInfo.propertyInfos.forEach(function(sRelatedInfoName) {
+						if (aVisibleProperties.indexOf(sRelatedInfoName) < 0) {
+							aVisibleProperties.push(sRelatedInfoName);
+						}
+					});
+				} else if (aVisibleProperties.indexOf(sPropertyName) < 0) {
+					// Simple propertyInfo --> add its name in the list
+					aVisibleProperties.push(sPropertyName);
 				}
+			}
 		});
 		return aVisibleProperties;
 	};
@@ -291,14 +328,18 @@ sap.ui.define([
 
 	function enrichGridTable(oTable, that) {
 		// The property helper is initialized after the table "initialized" promise resolves. So we can only wait for the property helper.
+		var aPropertiesForBinding,
+			mExtensionsForBinding,
+			oPlugin;
+
 		return Promise.all([
 			oTable.awaitPropertyHelper(),
 			loadModules("sap/ui/table/plugins/V4Aggregation")
 		]).then(function(aResult) {
-			var oPropertyHelper = oTable.getPropertyHelper(),
-				V4AggregationPlugin = aResult[1][0],
-				oInnerTable = oTable._oTable,
-				oPlugin = new V4AggregationPlugin();
+			var V4AggregationPlugin = aResult[1][0],
+				oInnerTable = oTable._oTable;
+
+			oPlugin = new V4AggregationPlugin();
 
 			oInnerTable.addDependent(oPlugin);
 
@@ -307,8 +348,18 @@ sap.ui.define([
 			});
 
 			// Configure the plugin with the propertyInfos
-			oPlugin.setPropertyInfos(oPropertyHelper.getProperties());
+			return that.fetchPropertiesForBinding(oTable);
+		}).then(function(aProperties) {
+			aPropertiesForBinding = aProperties;
+			return that.fetchPropertyExtensionsForBinding(oTable, aPropertiesForBinding);
+		}).then(function(mExtensions) {
+			mExtensionsForBinding = mExtensions;
+			return that.fetchPropertyHelper(oTable, aPropertiesForBinding, mExtensionsForBinding);
+		}).then(function(HelperClass) {
+			var oHelper = new HelperClass(aPropertiesForBinding, mExtensionsForBinding, oTable);
+			oPlugin.setPropertyInfos(oHelper.getProperties());
 			that._setAggregation(oTable, [], []);
+			oHelper.destroy();
 		});
 	}
 

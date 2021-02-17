@@ -45,6 +45,31 @@ sap.ui.define([
 			return oView;
 		}
 	});
+	var UIComp2 = UIComponent.extend("test2", {
+		metadata: {
+			manifest: {
+				"sap.app": {
+					"id": "",
+					"type": "application"
+				}
+			}
+		},
+		createContent: function() {
+			var oView = sap.ui.view({
+				async: false,
+				type: "XML",
+				id: this.createId("view"),
+				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
+				'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "sap/ui/mdc/odata/v4/TableDelegate", payload : \{ "collectionName" : "ProductList" \} \}\'>' +
+				'<columns>' +
+				'<mdcTable:Column id="myTable--column2" header="column 2" dataProperty="name_country"> ' +
+				'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
+				'</Table></mvc:View>'
+			});
+
+			return oView;
+		}
+	});
 
 	QUnit.module("Basic functionality with JsControlTreeModifier", {
 		beforeEach: function() {
@@ -164,7 +189,7 @@ sap.ui.define([
 				oDelegate.rebindTable = function () {
 					fnRebindTable.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: oDelegate._getVisibleProperties(oTable),
+						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 						groupLevels: ["Name"],
 						grandTotal: [],
 						subtotals: []
@@ -203,7 +228,7 @@ sap.ui.define([
 				oDelegate.rebindTable = function () {
 					fnRebindTable.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: oDelegate._getVisibleProperties(oTable),
+						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 						groupLevels: [],
 						grandTotal: ["Country"],
 						subtotals: ["Country"]
@@ -239,7 +264,7 @@ sap.ui.define([
 				oDelegate.rebindTable = function () {
 					fnRebindTable.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: oDelegate._getVisibleProperties(oTable),
+						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 						groupLevels: ["Name"],
 						grandTotal: [],
 						subtotals: []
@@ -261,7 +286,7 @@ sap.ui.define([
 						oDelegate.rebindTable = function () {
 							fnRebindTable.apply(this, arguments);
 							assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-								visible: oDelegate._getVisibleProperties(oTable),
+								visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 								groupLevels: ["Name"],
 								grandTotal: ["Country"],
 								subtotals: ["Country"]
@@ -302,7 +327,7 @@ sap.ui.define([
 				oDelegate.rebindTable = function () {
 					fnRebindTable.apply(this, arguments);
 					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-						visible: oDelegate._getVisibleProperties(oTable),
+						visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 						groupLevels: ["Name"],
 						grandTotal: [],
 						subtotals: []
@@ -315,7 +340,7 @@ sap.ui.define([
 					oDelegate.rebindTable = function () {
 						fnRebindTable.apply(this, arguments);
 						assert.ok(fSetAggregationSpy.calledOnceWithExactly({
-							visible: oDelegate._getVisibleProperties(oTable),
+							visible: oDelegate._getVisibleProperties(oTable, oPlugin),
 							groupLevels: [],
 							grandTotal: ["Name"],
 							subtotals: ["Name"]
@@ -345,6 +370,166 @@ sap.ui.define([
 			oTable.setEnableExport(true);
 			Core.applyChanges();
 			assert.notOk(oTable.getEnableExport(), "enableExport=false also after trying to set it to true");
+		});
+	});
+
+	QUnit.module("Tests with specific propertyInfos and extensions for binding", {
+		beforeEach: function() {
+			this.createTestObjects();
+			return this.oTable.getEngine().getModificationHandler().waitForChanges({
+				element: this.oTable
+			});
+		},
+		afterEach: function() {
+			this.destroyTestObjects();
+		},
+		createTestObjects: function() {
+			this.oUiComponent = new UIComp2("comp");
+
+			// Place component in container and display
+			this.oUiComponentContainer = new ComponentContainer({
+				component: this.oUiComponent,
+				async: false
+			});
+			this.oUiComponentContainer.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+
+			this.oView = this.oUiComponent.getRootControl();
+			this.oTable = this.oView.byId('myTable');
+
+			ControlPersonalizationWriteAPI.restore({
+				selector: this.oTable
+			});
+
+			this.aPropertyInfo = [
+				{
+					name: "Name",
+					label: "Name",
+					path: "Name",
+					groupable: true
+				},
+				{
+					name: "Country",
+					label: "Country",
+					path: "Country",
+					groupable: true
+				},
+				{
+					name: "Value",
+					label: "Value",
+					path: "Value"
+				},
+				{
+					name: "name_country",
+					label: "Complex Title & Description",
+					propertyInfos: ["Name"]
+				}
+			];
+			this.aPropertyInfoForBinding = [
+				{
+					name: "Name",
+					label: "Name",
+					path: "Name",
+					groupable: true
+				},
+				{
+					name: "Country",
+					label: "Country",
+					path: "Country",
+					groupable: true
+				},
+				{
+					name: "Value",
+					label: "Value",
+					path: "Value"
+				},
+				{
+					name: "name_country",
+					label: "Complex Title & Description",
+					propertyInfos: ["Name", "Country","Value"]
+				}
+			];
+			MDCQUnitUtils.stubPropertyInfos(this.oTable , this.aPropertyInfo);
+			MDCQUnitUtils.stubPropertyInfosForBinding(this.oTable , this.aPropertyInfoForBinding);
+			MDCQUnitUtils.stubPropertyExtensionsForBinding(this.oTable , {
+				Value: {
+					defaultAggregate: {}
+				}
+			});
+		},
+		destroyTestObjects: function() {
+			MDCQUnitUtils.restorePropertyInfos(this.oTable);
+			MDCQUnitUtils.restorePropertyInfosForBinding(this.oTable);
+			MDCQUnitUtils.restorePropertyExtension(this.oTable);
+			MDCQUnitUtils.restorePropertyExtensionsForBinding(this.oTable);
+			this.oUiComponentContainer.destroy();
+		}
+	});
+
+	QUnit.test("Check column header for analytics buttons", function(assert) {
+		var fColumnPressSpy = sinon.spy(this.oTable, "_onColumnPress");
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		var oTable = this.oTable;
+
+		return oTable._fullyInitialized().then(function() {
+			var oFirstInnerColumn = oTable._oTable.getColumns()[0];
+
+			oTable._oTable.fireEvent("columnSelect", {
+				column: oFirstInnerColumn
+			});
+			assert.ok(fColumnPressSpy.calledOnce, "First Column pressed");
+
+			return oTable._fullyInitialized();
+		}).then(function() {
+			assert.strictEqual(oTable._oPopover.getItems()[0].getLabel(), oResourceBundle.getText("table.SETTINGS_GROUP"),
+				"The first column has group menu item");
+			assert.equal(oTable._oPopover.getItems().length, 1, "The first column doesn't have an aggregate menu item");
+		});
+	});
+
+	QUnit.test("Apply group on column header", function(assert) {
+		var oTable = this.oTable;
+		var done = assert.async();
+		var fColumnPressSpy = sinon.spy(oTable, "_onColumnPress");
+
+		 oTable._fullyInitialized().then(function() {
+			var oInnerColumn = oTable._oTable.getColumns()[0];
+			oTable._oTable.fireEvent("columnSelect", {
+				column: oInnerColumn
+			});
+			assert.ok(fColumnPressSpy.calledOnce, "First column pressed");
+			fColumnPressSpy.restore();
+
+			setTimeout(function(){
+				var oPlugin = oTable._oTable.getDependents()[0];
+				var fSetAggregationSpy = sinon.spy(oPlugin, "setAggregationInfo");
+				var oDelegate = oTable.getControlDelegate();
+				var fnRebindTable = oDelegate.rebindTable;
+
+				oDelegate.rebindTable = function () {
+					fnRebindTable.apply(this, arguments);
+					assert.ok(fSetAggregationSpy.calledOnceWithExactly({
+						visible: ["Name", "Country","Value"],
+						groupLevels: ["Name"],
+						grandTotal: [],
+						subtotals: []
+					}), "Plugin#setAggregationInfo call");
+					assert.equal(Object.keys(oPlugin._mGroup).length, 2, "Plugin#_mGroup 2 visible properties are groupable");
+					assert.notEqual(oPlugin._mGroup["Name"], undefined, "Name is part of the query (group)");
+					assert.notEqual(oPlugin._mGroup["Country"], undefined, "Country is part of the query (group)");
+					assert.equal(Object.keys(oPlugin._mAggregate).length, 1, "Plugin#_mAggregate 1 visible property is aggregatable");
+					assert.notEqual(oPlugin._mAggregate["Value"], undefined, "Value is part of the query (aggregate)");
+					fSetAggregationSpy.restore();
+					oDelegate.rebindTable = fnRebindTable;
+					done();
+				};
+				var fTableGroupSpy = sinon.spy(oTable, "_onCustomGroup");
+				oTable._oPopover.getAggregation("_popover").getContent()[0].getContent()[0].firePress();
+				assert.ok(fTableGroupSpy.calledOnce, "Column group triggered");
+				if (!fTableGroupSpy.calledOnce) {
+					done();	// rebindTable won't be called in this case, so we need to end the test here
+				}
+			},0);
 		});
 	});
 });

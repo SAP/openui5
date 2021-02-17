@@ -74,6 +74,70 @@ sap.ui.define(function() {
 		};
 	}
 
+	function stubPropertyInfosForBinding(oTarget, aPropertyInfos) {
+		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
+		var fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
+		var oDelegate;
+		var fnOriginalFetchPropertiesForBinding;
+		var bPropertyHelperExists;
+
+		if (typeof fnOriginalGetControlDelegate !== "function") {
+			throw new Error("The target cannot be stubbed. " + oTarget);
+		}
+
+		if (oTarget.__restorePropertyInfosForBinding) {
+			throw new Error("The target is already stubbed. " + oTarget);
+		}
+
+		if (typeof oTarget.getPropertyHelper === "function") {
+			try {
+				oTarget.getPropertyHelper();
+				bPropertyHelperExists = true;
+			} catch (e) {
+				bPropertyHelperExists = false;
+			}
+
+			if (bPropertyHelperExists) {
+				throw new Error("The target cannot be stubbed if the property helper is already initialized. " + oTarget);
+			}
+		}
+
+		function getDelegate() {
+			if (oDelegate) {
+				return oDelegate;
+			}
+
+			oDelegate = fnOriginalGetControlDelegate.apply(this, arguments);
+			fnOriginalFetchPropertiesForBinding = oDelegate.fetchPropertiesForBinding;
+
+			oDelegate.fetchPropertiesForBinding = function() {
+				fnOriginalFetchPropertiesForBinding.apply(this, arguments);
+				return Promise.resolve(aPropertyInfos);
+			};
+			return oDelegate;
+		}
+
+		oTarget.getControlDelegate = function() {
+			return getDelegate.call(this);
+		};
+
+		oTarget.awaitControlDelegate = function() {
+			return fnOriginalAwaitControlDelegate.apply(this, arguments).then(function() {
+				return getDelegate.call(this);
+			}.bind(this));
+		};
+
+		oTarget.__restorePropertyInfosForBinding = function() {
+			delete oTarget.__restorePropertyInfosForBinding;
+			oTarget.getControlDelegate = fnOriginalGetControlDelegate;
+			oTarget.awaitControlDelegate = fnOriginalAwaitControlDelegate;
+
+			if (oDelegate) {
+				oDelegate.fetchPropertiesForBinding = fnOriginalFetchPropertiesForBinding;
+			}
+		};
+	}
+
 	function stubPropertyExtension(oTarget, mExtensions) {
 		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
 		var fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
@@ -138,9 +202,79 @@ sap.ui.define(function() {
 		};
 	}
 
+	function stubPropertyExtensionsForBinding(oTarget, mExtensions) {
+		var fnOriginalGetControlDelegate = oTarget.getControlDelegate;
+		var fnOriginalAwaitControlDelegate = oTarget.awaitControlDelegate;
+		var oDelegate;
+		var fnOriginalFetchPropertyExtensionsForBinding;
+		var bPropertyHelperExists;
+
+		if (typeof fnOriginalGetControlDelegate !== "function") {
+			throw new Error("The target cannot be stubbed. " + oTarget);
+		}
+
+		if (oTarget.__restorePropertyExtensionsForBinding) {
+			throw new Error("The target is already stubbed. " + oTarget);
+		}
+
+		if (typeof oTarget.getPropertyHelper === "function") {
+			try {
+				oTarget.getPropertyHelper();
+				bPropertyHelperExists = true;
+			} catch (e) {
+				bPropertyHelperExists = false;
+			}
+
+			if (bPropertyHelperExists) {
+				throw new Error("The target cannot be stubbed if the property helper is already initialized. " + oTarget);
+			}
+		}
+
+		function getDelegate() {
+			if (oDelegate) {
+				return oDelegate;
+			}
+
+			oDelegate = fnOriginalGetControlDelegate.apply(this, arguments);
+			fnOriginalFetchPropertyExtensionsForBinding = oDelegate.fetchPropertyExtensionsForBinding;
+
+			oDelegate.fetchPropertyExtensionsForBinding = function() {
+				fnOriginalFetchPropertyExtensionsForBinding.apply(this, arguments);
+				return Promise.resolve(mExtensions);
+			};
+			return oDelegate;
+		}
+
+		oTarget.getControlDelegate = function() {
+			return getDelegate.call(this);
+		};
+
+		oTarget.awaitControlDelegate = function() {
+			return fnOriginalAwaitControlDelegate.apply(this, arguments).then(function() {
+				return getDelegate.call(this);
+			}.bind(this));
+		};
+
+		oTarget.__restorePropertyExtensionsForBinding = function() {
+			delete oTarget.__restorePropertyExtension;
+			oTarget.getControlDelegate = fnOriginalGetControlDelegate;
+			oTarget.awaitControlDelegate = fnOriginalAwaitControlDelegate;
+
+			if (oDelegate) {
+				oDelegate.fetchPropertyExtensionsForBinding = fnOriginalFetchPropertyExtensionsForBinding;
+			}
+		};
+	}
+
 	function restorePropertyInfos(oTarget) {
 		if (oTarget.__restorePropertyInfos) {
 			oTarget.__restorePropertyInfos();
+		}
+	}
+
+	function restorePropertyInfosForBinding(oTarget) {
+		if (oTarget.__restorePropertyInfosForBinding) {
+			oTarget.__restorePropertyInfosForBinding();
 		}
 	}
 
@@ -150,10 +284,20 @@ sap.ui.define(function() {
 		}
 	}
 
+	function restorePropertyExtensionsForBinding(oTarget) {
+		if (oTarget.__restorePropertyExtensionsForBinding) {
+			oTarget.__restorePropertyExtensionsForBinding();
+		}
+	}
+
 	return {
 		stubPropertyInfos: stubPropertyInfos,
 		restorePropertyInfos: restorePropertyInfos,
 		stubPropertyExtension: stubPropertyExtension,
-		restorePropertyExtension: restorePropertyExtension
+		restorePropertyExtension: restorePropertyExtension,
+		stubPropertyInfosForBinding: stubPropertyInfosForBinding,
+		restorePropertyInfosForBinding: restorePropertyInfosForBinding,
+		stubPropertyExtensionsForBinding: stubPropertyExtensionsForBinding,
+		restorePropertyExtensionsForBinding: restorePropertyExtensionsForBinding
 	};
 });
