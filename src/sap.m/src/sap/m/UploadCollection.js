@@ -206,6 +206,7 @@ sap.ui.define([
 
 				/**
 				 * Enables the upload of a file.
+				 * If property instantUpload is false it is not allowed to change uploadEnabled at runtime.
 				 */
 				uploadEnabled: {type: "boolean", group: "Behavior", defaultValue: true},
 
@@ -215,7 +216,7 @@ sap.ui.define([
 				uploadUrl: {type: "string", group: "Data", defaultValue: "../../../upload"},
 
 				/**
-				 * If false, no upload is triggered when a file is selected. In addition, if a file was selected, a new FileUploader instance is created to ensure that multiple files from multiple folders can be chosen.
+				 * If false, no upload is triggered when a file is selected. In addition, if a file was selected, a new FileUploader instance is created to ensure that multiple files can be chosen.
 				 * @since 1.30.0
 				 */
 				instantUpload: {type: "boolean", group: "Behavior", defaultValue: true},
