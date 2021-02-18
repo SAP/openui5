@@ -835,13 +835,13 @@ function(
 				oEventProvider = oEventProvider.getEventingParent();
 			} while (oEventProvider && !bHasValidationErrorListeners);
 
-			if (this._isNumericLike(max) && value > max) {
+			if (this._isMoreThanMax(value)) {
 				if (bHasValidationErrorListeners && sBindingConstraintMax) {
 					return;
 				}
 				sMessage = oCoreMessageBundle.getText("EnterNumberMax", [max]);
 				aViolatedConstraints.push("maximum");
-			} else if (this._isNumericLike(min) && value < min) {
+			} else if (this._isLessThanMin(value)) {
 				if (bHasValidationErrorListeners && sBindingConstraintMin) {
 					return;
 				}
@@ -1209,10 +1209,12 @@ function(
 		 */
 		StepInput.prototype._change = function (oEvent) {
 			var fOldValue;
+			var oNewValue = this._getInput().getValue();
+			var bIsNotInValidRange = this._isLessThanMin(oNewValue) || this._isMoreThanMax(oNewValue);
 
-			if (!this._isButtonFocused()) {
+			if (!this._isButtonFocused() ) {
 
-				if (!this._btndown) {
+				if (!this._btndown || bIsNotInValidRange) {
 					fOldValue = Number(this._getFormattedValue());
 					if (this._fOldValue === undefined) {
 						this._fOldValue = fOldValue;
@@ -1226,6 +1228,14 @@ function(
 					this._fTempValue = Number(this._getInput().getValue());
 				}
 			}
+		};
+
+		StepInput.prototype._isMoreThanMax = function(iValue) {
+			return this._isNumericLike(this._getMax()) && this._getMax() < iValue;
+		};
+
+		StepInput.prototype._isLessThanMin = function(iValue) {
+			return this._isNumericLike(this._getMin()) && this._getMin() > iValue;
 		};
 
 		/**
