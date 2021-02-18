@@ -252,11 +252,18 @@ sap.ui.define([
 		 * @private
 		 */
 		calcGroupIndent: function(oRow) {
-			var iLevel = oRow.getLevel();
+			var bIsTreeTable = GroupingUtils.TableUtils.isA(oRow.getTable(), "sap.ui.table.TreeTable");
+			var iLevel = oRow.getLevel() - (!oRow.isGroupHeader() && !oRow.isSummary() && !bIsTreeTable ? 1 : 0);
 			var iIndent = 0;
 
 			for (var i = 1; i < iLevel; i++) {
-				iIndent += i <= 2 ? 12 : 8;
+				if (i === 1) {
+					iIndent = 24;
+				} else if (i === 2) {
+					iIndent += 12;
+				} else {
+					iIndent += 8;
+				}
 			}
 
 			return iIndent;
@@ -597,6 +604,20 @@ sap.ui.define([
 				oState.contentHidden = oState.expandable;
 			};
 
+			if (!oTable._experimentalGroupingOnRowsUpdated) {
+				oTable._experimentalGroupingOnRowsUpdated = oTable.onRowsUpdated;
+				oTable.onRowsUpdated = function() {
+					oTable._experimentalGroupingOnRowsUpdated.apply(this, arguments);
+					oTable.getRows().forEach(function(oRow) {
+						var oDomRefs = oRow.getDomRefs(true);
+						var $Row = oDomRefs.row;
+						var iIndent = oRow.isGroupHeader() ? 0 : 12;
+						GroupingUtils.setGroupIndent(oRow, iIndent);
+						$Row.toggleClass("sapUiTableRowIndented", iIndent > 0);
+					});
+				};
+			}
+
 			GroupingUtils.TableUtils.Hook.register(oTable, GroupingUtils.TableUtils.Hook.Keys.Row.UpdateState, oTable._experimentalGroupingRowState, oTable);
 
 			// the table need to fetch the updated/changed contexts again, therefore requires the binding to fire a change event
@@ -618,6 +639,11 @@ sap.ui.define([
 				oTable.bindRows(oBindingInfo);
 			}
 			GroupingUtils.TableUtils.Hook.deregister(oTable, GroupingUtils.TableUtils.Hook.Keys.Row.UpdateState, oTable._experimentalGroupingRowState, oTable);
+
+			if (oTable._experimentalGroupingOnRowsUpdated) {
+				oTable.onRowsUpdated = oTable._experimentalGroupingOnRowsUpdated;
+				delete oTable._experimentalGroupingRowState;
+			}
 		}
 	};
 

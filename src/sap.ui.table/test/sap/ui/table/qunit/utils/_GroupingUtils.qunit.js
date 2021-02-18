@@ -528,16 +528,19 @@ sap.ui.define([
 		assert.strictEqual(Grouping.calcGroupIndent(oRow), 0, "Level 1");
 
 		oRowGetLevel.returns(2);
-		assert.strictEqual(Grouping.calcGroupIndent(oRow), 12, "Level 2");
+		assert.strictEqual(Grouping.calcGroupIndent(oRow), 0, "Level 2");
 
 		oRowGetLevel.returns(3);
 		assert.strictEqual(Grouping.calcGroupIndent(oRow), 24, "Level 3");
 
 		oRowGetLevel.returns(4);
-		assert.strictEqual(Grouping.calcGroupIndent(oRow), 32, "Level 4");
+		assert.strictEqual(Grouping.calcGroupIndent(oRow), 36, "Level 4");
 
 		oRowGetLevel.returns(5);
-		assert.strictEqual(Grouping.calcGroupIndent(oRow), 40, "Level 4");
+		assert.strictEqual(Grouping.calcGroupIndent(oRow), 44, "Level 4");
+
+		oRowGetLevel.returns(6);
+		assert.strictEqual(Grouping.calcGroupIndent(oRow), 52, "Level 5");
 	});
 
 	QUnit.test("calcTreeIndent", function(assert) {
