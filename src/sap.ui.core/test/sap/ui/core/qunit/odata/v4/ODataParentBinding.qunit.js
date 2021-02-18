@@ -3774,20 +3774,40 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getCacheQueryOptions: own mCacheQueryOptions", function (assert) {
+	QUnit.test("getInheritableQueryOptions: own mCacheQueryOptions", function (assert) {
 		var oBinding = new ODataParentBinding({
 				mCacheQueryOptions : {}
 			});
 
 		assert.strictEqual(
 			// code under test
-			oBinding.getCacheQueryOptions(),
+			oBinding.getInheritableQueryOptions(),
 			oBinding.mCacheQueryOptions
 		);
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getCacheQueryOptions: mCacheQueryOptions from parent", function (assert) {
+	QUnit.test("getInheritableQueryOptions: with mLateQueryOptions", function (assert) {
+		var oBinding = new ODataParentBinding({
+				mCacheQueryOptions : {},
+				mLateQueryOptions : {}
+			}),
+			mMergedOptions = {};
+
+		this.mock(_Helper).expects("merge")
+			.withExactArgs({}, sinon.match.same(oBinding.mCacheQueryOptions),
+				sinon.match.same(oBinding.mLateQueryOptions))
+			.returns(mMergedOptions);
+
+		assert.strictEqual(
+			// code under test
+			oBinding.getInheritableQueryOptions(),
+			mMergedOptions
+		);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getInheritableQueryOptions: inherit from parent", function (assert) {
 		var oBinding = new ODataParentBinding({
 				oContext : {
 					getBinding : function() {}
@@ -3799,7 +3819,7 @@ sap.ui.define([
 			oParentBinding = new ODataParentBinding();
 
 		this.mock(oBinding.oContext).expects("getBinding").withExactArgs().returns(oParentBinding);
-		this.mock(oParentBinding).expects("getCacheQueryOptions").withExactArgs()
+		this.mock(oParentBinding).expects("getInheritableQueryOptions").withExactArgs()
 			.returns(mCacheQueryOptions);
 		this.mock(_Helper).expects("getQueryOptionsForPath")
 			.withExactArgs(sinon.match.same(mCacheQueryOptions), "~path~")
@@ -3807,7 +3827,7 @@ sap.ui.define([
 
 		assert.strictEqual(
 			// code under test
-			oBinding.getCacheQueryOptions(),
+			oBinding.getInheritableQueryOptions(),
 			mCacheQueryOptionsForPath
 		);
 	});

@@ -20048,20 +20048,22 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Fiori Elements Safeguard - Test 2 (Create)
-	//	1. Call create action bound to collection with $select for Messages,
-	//		$$patchWithoutSideEffects but w/o $$inheritExpandSelect because nothing can be
-	//		inherited.
-	//	2. Bind object page to the return value context of the create action and see that structural
-	//		properties and properties via navigation properties are fetched as late properties.
-	//	3. Show the creation row of a creation row binding (a binding that does not request data,
-	//		is not be refreshed) which is relative to the return value context of the inactive
-	//		version.
-	//	4. Request side effects for the return value context of the inactive version to see that the
-	//		creation row is untouched.
-	//	5. Switch back to active version.
-	// CPOUI5ODATAV4-189
+	// 1. Call create action bound to collection with $select for Messages,
+	//    $$patchWithoutSideEffects but w/o $$inheritExpandSelect because nothing can be
+	//    inherited.
+	// 2. Bind object page to the return value context of the create action and see that structural
+	//    properties and properties via navigation properties are fetched as late properties.
+	// 3. Show the creation row of a creation row binding (a binding that does not request data,
+	//    is not be refreshed) which is relative to the return value context of the inactive
+	//    version.
+	// 4. Request side effects for the return value context of the inactive version to see that the
+	//    creation row is untouched.
+	// 5. Switch back to active version. (CPOUI5ODATAV4-711)
+	// 6. Refresh active version. (CPOUI5ODATAV4-711)
+	//
+	// JIRA: CPOUI5ODATAV4-189
 	QUnit.test("Fiori Elements Safeguard: Test 2 (Create)", function (assert) {
-		var oCreationRow,
+		var oCreationRowContext,
 			oModel = createSpecialCasesModel({autoExpandSelect : true}),
 			oReturnValueContext,
 			sView = '\
@@ -20087,26 +20089,23 @@ sap.ui.define([
 			.expectChange("artistName");
 
 		return this.createView(assert, sView, oModel).then(function () {
-			var oOperationBinding;
 			// 1. Call create action bound to collection
-
-			oOperationBinding = oModel.bindContext("special.cases.Create(...)",
-				oModel.bindList("/Artists").getHeaderContext(),
+			var oOperationBinding = oModel.bindContext("special.cases.Create(...)",
+					oModel.bindList("/Artists").getHeaderContext(),
 					{$$patchWithoutSideEffects : true, $select : "Messages"});
 
 			that.expectRequest({
-				method : "POST",
-				payload : {},
-				url : "Artists/special.cases.Create?$select=Messages"
-			}, {
-				ArtistID : "23",
-				IsActiveEntity : false
-			});
+					method : "POST",
+					payload : {},
+					url : "Artists/special.cases.Create?$select=Messages"
+				}, {
+					ArtistID : "23",
+					IsActiveEntity : false
+				});
 
 			return oOperationBinding.execute();
 		}).then(function (oReturnValueContext0) {
 			// 2. Bind object page to the return value context of the create action
-
 			oReturnValueContext = oReturnValueContext0;
 
 			// two late property requests (one had only a $expand, so BestFriend is selected too)
@@ -20132,23 +20131,18 @@ sap.ui.define([
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// 3. Show the creation row of a creation row binding
-
-			oCreationRow = that.oModel.bindList("_Publication", oReturnValueContext,
+			oCreationRowContext = that.oModel.bindList("_Publication", oReturnValueContext,
 				undefined, undefined, {$$updateGroupId : "doNotSubmit"}).create({Price : "47"});
-			oCreationRow.created().catch(function () {
-				// handle cancellation caused by oCreationRow.delete below
-			});
 
 			that.expectChange("price", "47");
 			that.expectChange("artistName", "DJ Bobo");
 
-			that.oView.byId("creationRow").setBindingContext(oCreationRow);
+			that.oView.byId("creationRow").setBindingContext(oCreationRowContext);
 
 			return that.waitForChanges(assert);
 		}).then(function () {
 			// 4. Request side effects for the return value context of the inactive version to see
 			// that the creation row is untouched
-
 			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)"
 					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
 					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
@@ -20167,57 +20161,63 @@ sap.ui.define([
 				that.waitForChanges(assert)
 			]);
 		}).then(function () {
-			// Delete creation row context before switch back to active version
-
-			that.expectChange("price", null);
-			that.expectChange("artistName", null);
-
-			return Promise.all([
-				// before switching back to the active version, we hide the price deleting the
-				// creation row
-				oCreationRow.delete(),
-				that.waitForChanges(assert)
-			]);
-		}).then(function () {
-			// 5. Switch back to active version
+			// 5. Switch back to active version.
 			var oAction = that.oModel.bindContext("special.cases.ActivationAction(...)",
 					oReturnValueContext, {$$inheritExpandSelect : true});
 
 			that.expectRequest({
-				method : "POST",
-				url : "Artists(ArtistID='23',IsActiveEntity=false)/special.cases.ActivationAction"
-					+ "?$select=Messages",
-				payload : {}
-			}, {
-				ArtistID : "23",
-				IsActiveEntity : true
-			});
+					method : "POST",
+					url : "Artists(ArtistID='23',IsActiveEntity=false)"
+						+ "/special.cases.ActivationAction"
+						+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)",
+					payload : {}
+				}, {
+					ArtistID : "23",
+					IsActiveEntity : true,
+					Name : "DJ Bobo",
+					BestFriend : {
+						ArtistID : "32",
+						IsActiveEntity : true,
+						Name : "Robin Schulz"
+					}
+				});
 
 			return Promise.all([
+				// code under test
 				oAction.execute(),
 				that.waitForChanges(assert)
-			]).then(function (aPromiseResults) {
-				// show active version, observe late properties request but only change for isActive
+			]);
+		}).then(function (aPromiseResults) {
+			oReturnValueContext = aPromiseResults[0];
 
-				oReturnValueContext = aPromiseResults[0];
+			// no late properties request because the late properties were inherited
+			that.expectChange("isActive", "Yes");
 
-				// two late property requests (one had only a $expand, so BestFriend is selected)
-				that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)"
-						+ "?$select=BestFriend,Name"
-						+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
-						Name : "DJ Bobo",
-						BestFriend : {
-							ArtistID : "32",
-							IsActiveEntity : true,
-							Name : "Robin Schulz"
-						}
-					})
-					.expectChange("isActive", "Yes");
+			// code under test
+			that.oView.byId("objectPage").setBindingContext(oReturnValueContext);
 
-				that.oView.byId("objectPage").setBindingContext(oReturnValueContext);
+			return that.waitForChanges(assert);
+		}).then(function() {
+			// 6. Refresh active version.
+			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+					+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+					ArtistID : "23",
+					IsActiveEntity : true,
+					Name : "DJ Bobo",
+					BestFriend : {
+						ArtistID : "32",
+						IsActiveEntity : true,
+						Name : "Robin Schulz"
+					}
+				});
 
-				return that.waitForChanges(assert);
-			});
+			return Promise.all([
+				// code under test
+				oReturnValueContext.requestRefresh(),
+				that.waitForChanges(assert)
+			]);
 		});
 	});
 
