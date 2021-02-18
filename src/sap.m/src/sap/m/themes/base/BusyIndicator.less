@@ -36,8 +36,7 @@ html[data-sap-ui-browser^="cr"] {
 }
 
 .sapMBsyIndAnimation(@name) {
-	-webkit-animation: @name 2s linear 0s infinite normal none;
-	animation:         @name 2s linear 0s infinite normal none;
+	animation: @name 1s linear 0s infinite normal none;
 }
 
 html[dir='rtl'][data-sap-ui-animation-mode="full"] .sapMBsyIndIcon {
@@ -46,29 +45,28 @@ html[dir='rtl'][data-sap-ui-animation-mode="full"] .sapMBsyIndIcon {
 
 .sapMBsyIndIcon {
 	vertical-align: middle;
-	-webkit-transform: rotate(0deg) translateZ(0);
 	transform: rotate(0deg) translateZ(0);
-	-webkit-transition-duration: 0ms;
 	transition-duration: 0ms;
 }
 
-html[data-sap-ui-animation-mode="full"] .sapMBsyIndIcon {
+.sapMBsyIndIcon {
 	.sapMBsyIndAnimation(sapMBsyIndRotate);
 }
 
-@-webkit-keyframes sapMBsyIndRotate {
-	from { -webkit-transform:rotate(0deg) translateZ(0); }
-	to { -webkit-transform:rotate(360deg) translateZ(0); }
+html[data-sap-ui-animation-mode="none"] .sapMBsyIndIcon {
+	animation: none;
+}
+
+html[data-sap-ui-animation-mode="basic"],
+html[data-sap-ui-animation-mode="minimal"] {
+	.sapMBsyIndIcon {
+		animation-duration: 12s;
+	}
 }
 
 @keyframes sapMBsyIndRotate {
 	from { transform:rotate(0deg) translateZ(0); }
 	to { transform:rotate(360deg) translateZ(0); }
-}
-
-@-webkit-keyframes sapMBsyIndRotateRTL {
-	from { -webkit-transform:rotate(0deg) translateZ(0); }
-	to { -webkit-transform:rotate(-360deg) translateZ(0); }
 }
 
 @keyframes sapMBsyIndRotateRTL {

@@ -14,12 +14,8 @@ sap.ui.define([
 	function(library, Control, coreLibrary, Image, Label, BusyIndicatorRenderer) {
 	"use strict";
 
-
-
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
-
-
 
 	/**
 	 * Constructor for a new BusyIndicator.
@@ -159,11 +155,6 @@ sap.ui.define([
 		} else if (!this._busyLabel && this.getText()) {
 			this._createLabel(this.getText());
 		}
-
-		var sRotationSpeed = this.getCustomIconRotationSpeed();
-		if (sRotationSpeed < 0) {
-			this.setCustomIconRotationSpeed(0);
-		}
 	};
 
 	BusyIndicator.prototype.onAfterRendering = function() {
@@ -207,13 +198,20 @@ sap.ui.define([
 			return;
 		}
 
+		var iCustomIconRotationSpeed = this.getCustomIconRotationSpeed();
+
+		if (iCustomIconRotationSpeed === this.getMetadata().getProperty("customIconRotationSpeed").getDefaultValue()) {
+			return;
+		}
+
+		iCustomIconRotationSpeed = Math.max(0, iCustomIconRotationSpeed);
+
 		var $icon = this._iconImage.$();
-		var sRotationSpeed = this.getCustomIconRotationSpeed() + "ms";
+		var sRotationSpeed = iCustomIconRotationSpeed + "ms";
 
-		$icon.css("-webkit-animation-duration", sRotationSpeed)
-			.css("animation-duration", sRotationSpeed);
+		$icon.css("animation-duration", sRotationSpeed);
 
-		//Bug in Chrome: After changing height of image -> changing the rotationspeed will have no affect
+		//Bug in Chrome: After changing height of image -> changing the rotation speed will have no affect
 		//chrome needs a rerendering of this element.
 		$icon.css("display", "none");
 		setTimeout(function() {
