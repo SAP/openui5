@@ -474,26 +474,11 @@ sap.ui.define([
 		var oFirstVisibleColumn = this._getVisibleColumns()[0];
 
 		for (var iRowIndex = 0; iRowIndex < aRows.length; iRowIndex++) {
-			var oRow = aRows[iRowIndex];
-			var iLevel = oRow.getLevel() - (!oRow.isGroupHeader() && !oRow.isSummary() ? 1 : 0);
-			var iIndent = 0;
-
-			for (var j = 1; j < iLevel; j++) {
-				if (j === 1) {
-					iIndent = 24;
-				} else if (j === 2) {
-					iIndent += 12;
-				} else {
-					iIndent += 8;
-				}
-			}
-
-			TableUtils.Grouping.setGroupIndent(oRow, iIndent);
-
 			// show or hide the totals if not enabled - needs to be done by Table
 			// control since the model could be reused and thus the values cannot
 			// be cleared in the model - and the binding has no control over the
 			// value mapping - this happens directly via the context!
+			var oRow = aRows[iRowIndex];
 			var aCells = oRow.getCells();
 			var iCellCount = aCells.length;
 

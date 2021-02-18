@@ -4,6 +4,7 @@ sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/table/Table",
+	"sap/ui/table/Row",
 	"sap/ui/table/Column",
 	"sap/ui/table/ColumnMenu",
 	"sap/ui/table/ColumnMenuRenderer",
@@ -43,6 +44,7 @@ sap.ui.define([
 	TableQUnitUtils,
 	qutils,
 	Table,
+	Row,
 	Column,
 	ColumnMenu,
 	ColumnMenuRenderer,
@@ -1358,6 +1360,7 @@ sap.ui.define([
 		sinon.stub(TableUtils.Grouping, "isTreeMode").returns(false);
 		oTable.rerender();
 		assert.equal(oTable.$().find("sapUiTableRowAlternate").length, 0, "No alternating rows for tree mode");
+		TableUtils.Grouping.isTreeMode.restore();
 	});
 
 	QUnit.module("Column operations", {
@@ -6097,5 +6100,174 @@ sap.ui.define([
 		// Cleanup
 		oClock.restore();
 		oGetBindingLength.restore();
+	});
+
+	QUnit.module("Row visualization", {
+		beforeEach: function() {
+			this.oTable = TableQUnitUtils.createTable({
+				rows: "{/}",
+				models: TableQUnitUtils.createJSONModelWithEmptyRows(10),
+				columns: [
+					new Column({template: new TableQUnitUtils.TestControl()})
+				]
+			});
+
+			return this.oTable.qunit.whenRenderingFinished();
+		},
+		afterEach: function() {
+			this.oTable.destroy();
+		},
+		setRowStates: function(aStates) {
+			var i = 0;
+
+			function updateRowState(oState) {
+				Object.assign(oState, aStates[i]);
+				i++;
+			}
+
+			TableUtils.Hook.register(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState);
+			this.oTable.getBinding().refresh(true);
+
+			return this.oTable.qunit.whenRenderingFinished().then(function() {
+				TableUtils.Hook.deregister(this.oTable, TableUtils.Hook.Keys.Row.UpdateState, updateRowState);
+			}.bind(this));
+		},
+		assertIndentation: function(assert, aIndentations) {
+			var aRows = this.oTable.getRows();
+
+			function getCSSPixelSize(iPixel) {
+				return iPixel === 0 ? "" : iPixel + "px";
+			}
+
+			for (var i = 0; i < aIndentations.length; i++) {
+				var oRow = aRows[i];
+				var iRowIndex = oRow.getIndex();
+				var bRTL = this.oTable._bRtlMode;
+				var oRowDomRefs = oRow.getDomRefs();
+				var oRowHeader = oRowDomRefs.rowHeaderPart;
+				var oFirstCellContentInRow = oRowDomRefs.rowScrollPart.querySelector("td.sapUiTableCellFirst > .sapUiTableCellInner");
+				var sMessagePrefix = (bRTL ? "RTL - " : "") + "Row #" + iRowIndex + ": ";
+
+				if (TableUtils.Grouping.isGroupMode(this.oTable)) {
+					var oGroupShield = oRowHeader.querySelector(".sapUiTableGroupShield");
+
+					assert.equal(oRowHeader.style[bRTL ? "right" : "left"], getCSSPixelSize(aIndentations[i]),
+						sMessagePrefix + "Row header");
+					assert.equal(oGroupShield.style[bRTL ? "marginRight" : "marginLeft"], getCSSPixelSize(-aIndentations[i]),
+						sMessagePrefix + "Group shield");
+					assert.equal(oFirstCellContentInRow.style[bRTL ? "paddingRight" : "paddingLeft"],
+						getCSSPixelSize(aIndentations[i] > 0 ? aIndentations[i] + 8 : 0),
+						sMessagePrefix + "Content of first cell");
+				} else if (TableUtils.Grouping.isTreeMode(this.oTable)) {
+					var oTreeIcon = oRowDomRefs.rowScrollPart.querySelector(".sapUiTableTreeIcon");
+
+					assert.equal(oTreeIcon.style[bRTL ? "marginRight" : "marginLeft"], getCSSPixelSize(aIndentations[i]),
+						sMessagePrefix + "Tree icon");
+				} else {
+					assert.equal(oRowHeader.style[bRTL ? "right" : "left"], getCSSPixelSize(aIndentations[i]),
+						sMessagePrefix + "Row header");
+					assert.equal(oFirstCellContentInRow.style[bRTL ? "paddingRight" : "paddingLeft"],
+						getCSSPixelSize(aIndentations[i] > 0 ? aIndentations[i] + 8 : 0),
+						sMessagePrefix + "Content of first cell");
+				}
+			}
+		}
+	});
+
+	QUnit.test("Group indentation", function(assert) {
+		var oRow = this.oTable.getRows()[0];
+		var aRowStates = [{
+			type: oRow.Type.GroupHeader,
+			level: 1
+		}, {
+			type: oRow.Type.GroupHeader,
+			level: 2
+		}, {
+			type: oRow.Type.Standard,
+			level: 3
+		}, {
+			type: oRow.Type.Summary,
+			level: 2
+		}, {
+			type: oRow.Type.GroupHeader,
+			level: 1
+		}, {
+			type: oRow.Type.Standard,
+			level: 2
+		}, {
+			type: oRow.Type.Standard,
+			level: 4
+		}, {
+			type: oRow.Type.GroupHeader,
+			level: 4
+		}, {
+			type: oRow.Type.Summary,
+			level: 5
+		}, {
+			type: oRow.Type.Summary,
+			level: 1
+		}];
+		var aExpectedIndentations = [0, 24, 24, 24, 0, 0, 36, 44, 52, 0];
+		var that = this;
+
+		TableUtils.Grouping.setGroupMode(this.oTable);
+		this.oTable.invalidate();
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			return that.setRowStates(aRowStates);
+		}).then(function() {
+			that.assertIndentation(assert, aExpectedIndentations);
+		}).then(TableQUnitUtils.$changeTextDirection(true)).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			return that.setRowStates(aRowStates);
+		}).then(function() {
+			that.assertIndentation(assert, aExpectedIndentations);
+		}).then(TableQUnitUtils.$changeTextDirection(false));
+	});
+
+	QUnit.test("Tree indentation", function(assert) {
+		var aRowStates = [
+			{level: 1, expandable: true},
+			{level: 2},
+			{level: 3},
+			{level: 4},
+			{level: 5},
+			{level: 1}
+		];
+		var aExpectedIndentations = [0, 17, 34, 51, 68, 0];
+		var that = this;
+
+		TableUtils.Grouping.setTreeMode(this.oTable);
+		this.oTable.invalidate();
+
+		return this.oTable.qunit.whenRenderingFinished().then(function() {
+			return that.setRowStates(aRowStates);
+		}).then(function() {
+			that.assertIndentation(assert, aExpectedIndentations);
+		}).then(TableQUnitUtils.$changeTextDirection(true)).then(this.oTable.qunit.whenRenderingFinished).then(function() {
+			return that.setRowStates(aRowStates);
+		}).then(function() {
+			that.assertIndentation(assert, aExpectedIndentations);
+		}).then(TableQUnitUtils.$changeTextDirection(false));
+	});
+
+	QUnit.test("Indentation without group or tree mode", function(assert) {
+		var oRow = this.oTable.getRows()[0];
+		var aRowStates = [{
+			type: oRow.Type.GroupHeader,
+			level: 1
+		}, {
+			type: oRow.Type.GroupHeader,
+			level: 2
+		}, {
+			type: oRow.Type.Standard,
+			level: 3
+		}, {
+			type: oRow.Type.Summary,
+			level: 4
+		}];
+
+		return this.setRowStates(aRowStates).then(function() {
+			this.assertIndentation(assert, [0, 0, 0, 0]);
+		}.bind(this));
 	});
 });

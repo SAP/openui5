@@ -140,11 +140,18 @@ sap.ui.define([
 		 * @private
 		 */
 		calcGroupIndent: function(oRow) {
-			var iLevel = oRow.getLevel();
+			var bIsTreeTable = GroupingUtils.TableUtils.isA(oRow.getTable(), "sap.ui.table.TreeTable"); // temporary, until spec is clarified
+			var iLevel = oRow.getLevel() - (!oRow.isGroupHeader() && !oRow.isSummary() && !bIsTreeTable ? 1 : 0);
 			var iIndent = 0;
 
 			for (var i = 1; i < iLevel; i++) {
-				iIndent += i <= 2 ? 12 : 8;
+				if (i === 1) {
+					iIndent = 24;
+				} else if (i === 2) {
+					iIndent += 12;
+				} else {
+					iIndent += 8;
+				}
 			}
 
 			return iIndent;

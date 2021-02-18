@@ -31,7 +31,7 @@
 	TABLESETTINGS.addServiceSettings(oTable, "AnalyticalTableServiceSettings", updateModel)
 
 	// create columns
-	var aColumns = ["CostCenter", "CostCenterText", "CostElement", "CostElementText", "ActualCosts", "Currency", "PlannedCosts"];
+	var aColumns = ["CostCenter", "CostCenterText", "CostElement", "CostElementText", "ActualCosts", "Currency", "PlannedCosts", "ValueType", "CurrencyType"];
 
 	for (var i = 0; i < aColumns.length; i++) {
 		oTable.addColumn(new sap.ui.table.AnalyticalColumn({
