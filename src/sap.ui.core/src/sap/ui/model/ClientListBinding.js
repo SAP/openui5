@@ -200,7 +200,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.FilterType} [sFilterType=undefined] Type of the filter which should
 	 *  be adjusted; if no type is given, then any previously configured application filters are
 	 *  cleared and the given filters are used as control filters
-	 * @return {sap.ui.model.ListBinding} returns <code>this</code> to facilitate method chaining
+	 * @returns {this} returns <code>this</code> to facilitate method chaining
 	 * @throws {Error} When one of the filters uses an operator that is not supported by the underlying model implementation
 	 * @public
 	 */

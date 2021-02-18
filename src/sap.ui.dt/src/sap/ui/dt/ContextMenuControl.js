@@ -570,7 +570,7 @@ sap.ui.define([
 
 		/**
 		 * Adds a overflowButton to the ContextMenu.
-		 * @return {sap.m.ContextMenu} Reference to this in order to allow method chaining
+		 * @returns {sap.ui.dt.ContextMenuControl} Reference to this in order to allow method chaining
 		 * @public
 		 */
 		addOverflowButton: function() {
@@ -590,7 +590,7 @@ sap.ui.define([
 		 * @param {Object} oButtonItem the button configuration item
 		 * @param {function} fnContextMenuHandler the handler function for button press event
 		 * @param {sap.ui.dt.ElementOverlay[]} aElementOverlays - Target overlays
-		 * @return {sap.m.ContextMenu} Reference to this in order to allow method chaining
+		 * @returns {sap.ui.dt.ContextMenuControl} Reference to this in order to allow method chaining
 		 * @public
 		 */
 		addMenuButton: function(oButtonItem, fnContextMenuHandler, aElementOverlays) {
@@ -634,7 +634,7 @@ sap.ui.define([
 		/**
 		 * Closes the ContextMenu.
 		 * @param {boolean} bExplicitClose true if the popover has to be closed explicitly from the contextMenu. Otherwhise the closing is handled by the popover itself
-		 * @return {sap.m.ContextMenu} Reference to this in order to allow method chaining
+		 * @returns {sap.ui.dt.ContextMenuControl} Reference to this in order to allow method chaining
 		 * @public
 		 */
 		close: function(bExplicitClose) {
@@ -690,7 +690,7 @@ sap.ui.define([
 		 * Inserts a button to the ContextMenu.
 		 * @param {sap.m.OverflowToolbarButton} oButton the to insert
 		 * @param {int} iIndex - the 0-based index the button should be inserted at
-		 * @return {sap.m.ContextMenu} Reference to this in order to allow method chaining
+		 * @returns {sap.ui.dt.ContextMenuControl} Reference to this in order to allow method chaining
 		 * @public
 		 */
 		insertButton: function(oButton, iIndex) {

@@ -623,7 +623,7 @@ sap.ui.define([
 	/**
 	* Focuses given date.
 	* @param {Date} oDate a JavaScript date
-	* @return {sap.ui.unified.Calendar} <code>this</code> for method chaining
+	* @returns {this} <code>this</code> for method chaining
 	*/
 	CalendarDateInterval.prototype.focusDate = function(oDate){
 

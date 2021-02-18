@@ -211,7 +211,7 @@ sap.ui.define([
 		 * Setter for property <code>value</code>.
 		 *
 		 * @param {string} sValue New value for property <code>value</code>.
-		 * @return {sap.m.MaskInput} <code>this</code> to allow method chaining.
+		 * @return {this} <code>this</code> to allow method chaining.
 		 * @public
 		 */
 		this.setValue = MaskEnabler.setValue = function (sValue) {

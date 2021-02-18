@@ -629,7 +629,7 @@ sap.ui.define([
 	/*
 	 * Sets a minimum date for the calendar.
 	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.Calendar} <code>this</code> for method chaining
+	 * @returns {this} <code>this</code> for method chaining
 	 */
 	CalendarMonthInterval.prototype.setMinDate = function(oDate){
 

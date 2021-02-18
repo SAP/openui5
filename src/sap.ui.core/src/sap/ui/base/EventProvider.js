@@ -213,7 +213,7 @@ sap.ui.define(['./Event', './Object', './ObjectPool', "sap/base/assert"],
 	 * @param {boolean}
 	 *            [bEnableEventBubbling] Defines whether event bubbling is enabled on the fired event. Set to <code>true</code> the event is also forwarded to the parent(s)
 	 *                                   of the event provider ({@link #getEventingParent}) until the bubbling of the event is stopped or no parent is available anymore.
-	 * @return {sap.ui.base.EventProvider|boolean} Returns <code>this</code> to allow method chaining. When <code>preventDefault</code> is supported on the fired event
+	 * @return {this|boolean} Returns <code>this</code> to allow method chaining. When <code>preventDefault</code> is supported on the fired event
 	 *                                             the function returns <code>true</code> if the default action should be executed, <code>false</code> otherwise.
 	 * @protected
 	 */

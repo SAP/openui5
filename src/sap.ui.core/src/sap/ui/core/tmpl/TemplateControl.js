@@ -157,7 +157,7 @@ sap.ui.define([
 	 * Sets the instance specific renderer for an anonymous template control.
 	 *
 	 * @param {function} fnRenderer the instance specific renderer function
-	 * @return {sap.ui.core.tmpl.Template} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @protected
 	 */
 	TemplateControl.prototype.setTemplateRenderer = function(fnRenderer) {
