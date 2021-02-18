@@ -4835,6 +4835,21 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a map of all models assigned to this ManagedObject.
+	 *
+	 * The default model is available on key <code>undefined</code>.
+	 *
+	 * <b>Note:</b> Models propagated from the parent are not included.
+	 *
+	 * @return {map} models
+	 * @public
+	 * @since 1.88.0
+	 */
+	ManagedObject.prototype.getOwnModels = function() {
+		return this.oModels;
+	};
+
+	/**
 	 * Check if any model is set to the ManagedObject or to one of its parents (including UIArea and Core).
 	 *
 	 * <b>Note:</b> A ManagedObject inherits models from the Core only when it is a descendant of a UIArea.

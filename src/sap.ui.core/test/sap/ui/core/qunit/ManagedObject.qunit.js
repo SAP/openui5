@@ -229,6 +229,32 @@ sap.ui.define([
 		assert.equal(obj.getId(), "myObject", "ID must be 'myObject'");
 	});
 
+	QUnit.test("getOwnModels", function(assert) {
+		var parentObj = new TestManagedObject({
+			models: { "testModelParent1": new JSONModel() }
+		});
+
+		var obj = new TestManagedObject({
+			models: { "testModel1": new JSONModel() }
+		});
+
+		parentObj.setSingleAggr(obj);
+		obj.setModel(new JSONModel());
+		obj.setModel(new JSONModel(), "testModel2");
+
+		assert.ok(obj.getOwnModels(), "Map should be returned.");
+		assert.ok(obj.getOwnModels().hasOwnProperty("undefined"), "Model 'undefined' should be available.");
+		assert.ok(obj.getOwnModels().undefined.isA("sap.ui.model.json.JSONModel"), "Correct model instance should be available.");
+
+		assert.ok(obj.getOwnModels().hasOwnProperty("testModel1"), "Model 'testModel1' should be available.");
+		assert.ok(obj.getOwnModels().testModel1.isA("sap.ui.model.json.JSONModel"), "Correct model instance should be available.");
+
+		assert.notOk(obj.getOwnModels().hasOwnProperty("testModelParent1"), "No propagated models should be returned.");
+
+		assert.ok(obj.getOwnModels().hasOwnProperty("testModel2"), "Model 'testModel2' should be available.");
+		assert.ok(obj.getOwnModels().testModel2.isA("sap.ui.model.json.JSONModel"), "Correct model instance should be available.");
+	});
+
 	QUnit.module("Property Metadata", {
 		beforeEach: function() {
 			this.clazz = ManagedObject.extend("sap.test.MetadataTestClass", {
@@ -2817,5 +2843,4 @@ sap.ui.define([
 		obj.setSkippedPropagation(new Control());
 		assert.ok(obj.getSkippedPropagation().getModel() === undefined, "Model not propagated");
 	});
-
 });
