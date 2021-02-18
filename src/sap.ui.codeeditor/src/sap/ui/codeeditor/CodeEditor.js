@@ -68,6 +68,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
+	 * @since 1.46
 	 * @alias sap.ui.codeeditor.CodeEditor
 	 */
 	var CodeEditor = Control.extend("sap.ui.codeeditor.CodeEditor", {
