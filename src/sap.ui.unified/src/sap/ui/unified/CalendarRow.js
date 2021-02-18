@@ -340,9 +340,6 @@ sap.ui.define([
 			pattern: "EEEE dd/MM/YYYY 'at' " + _getLocaleData.call(this).getTimePattern("medium")
 		});
 
-		this._iHoursMinDelta = 1; // minutes - to position appointments in 1 minutes steps
-		this._iDaysMinDelta = 30; // minutes
-		this._iMonthsMinDelta = 720; // minutes
 		this._aVisibleAppointments = [];
 		this._aVisibleIntervalHeaders = [];
 
@@ -1011,7 +1008,6 @@ sap.ui.define([
 		case CalendarIntervalType.Hour:
 			oEndDate = new UniversalDate(this._oUTCStartDate.getTime());
 			oEndDate.setUTCHours(oEndDate.getUTCHours() + iIntervals);
-			this._iMinDelta = this._iHoursMinDelta;
 			break;
 
 		case CalendarIntervalType.Day:
@@ -1019,13 +1015,11 @@ sap.ui.define([
 		case CalendarIntervalType.OneMonth:
 			oEndDate = new UniversalDate(this._oUTCStartDate.getTime());
 			oEndDate.setUTCDate(oEndDate.getUTCDate() + iIntervals);
-			this._iMinDelta = this._iDaysMinDelta;
 			break;
 
 		case CalendarIntervalType.Month:
 			oEndDate = new UniversalDate(this._oUTCStartDate.getTime());
 			oEndDate.setUTCMonth(oEndDate.getUTCMonth() + iIntervals);
-			this._iMinDelta = this._iMonthsMinDelta;
 			break;
 
 		default:
@@ -1140,10 +1134,6 @@ sap.ui.define([
 				oAppointmentEndDate = new UniversalDate(iEndTime);
 				bCut = true;
 			}
-
-			// adjust start date to min. delta
-			var iStartMinutes = oAppointmentStartDate.getUTCHours() * 60 + oAppointmentStartDate.getUTCMinutes();
-			oAppointmentStartDate.setUTCMinutes(oAppointmentStartDate.getUTCMinutes() - (iStartMinutes % this._iMinDelta));
 
 			var iDelta = (oAppointmentEndDate.getTime() - oAppointmentStartDate.getTime()) / 60000;
 			if (bCut && iDelta == 0) {
