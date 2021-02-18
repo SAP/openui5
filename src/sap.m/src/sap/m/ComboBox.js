@@ -12,6 +12,7 @@ sap.ui.define([
 	'./StandardListItem',
 	'./ComboBoxRenderer',
 	'sap/ui/base/ManagedObjectObserver',
+	'sap/ui/base/ManagedObject',
 	"sap/ui/dom/containsOrEquals",
 	"sap/m/inputUtils/scrollToItem",
 	"sap/m/inputUtils/inputsDefaultFilter",
@@ -33,6 +34,7 @@ sap.ui.define([
 		StandardListItem,
 		ComboBoxRenderer,
 		ManagedObjectObserver,
+		ManagedObject,
 		containsOrEquals,
 		scrollToItem,
 		inputsDefaultFilter,
@@ -674,7 +676,7 @@ sap.ui.define([
 			} else {
 				oListItem = new StandardListItem({
 					type: ListType.Active,
-					info: sAdditionalText,
+					info: ManagedObject.escapeSettingsValue(sAdditionalText),
 					visible: oItem.getEnabled()
 				}).addStyleClass(sListItem + " " + sListItemSelected);
 			}

@@ -10,6 +10,7 @@ sap.ui.define([
 	'./SuggestionsPopover',
 	'sap/ui/core/SeparatorItem',
 	'sap/ui/core/InvisibleText',
+	"sap/ui/base/ManagedObject",
 	'sap/base/Log',
 	'./library',
 	'sap/ui/Device',
@@ -30,6 +31,7 @@ sap.ui.define([
 		SuggestionsPopover,
 		SeparatorItem,
 		InvisibleText,
+		ManagedObject,
 		Log,
 		library,
 		Device,
@@ -1457,7 +1459,9 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype.addItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
 			oHeader = oHeader || new SeparatorItem({
-				text: oGroup.text || oGroup.key
+				// The SeparatorItem does not escape those settings, so we need to take care of that.
+				// This will ensure that values containing curly braces do not break the code.
+				text: ManagedObject.escapeSettingsValue(oGroup.text) || ManagedObject.escapeSettingsValue(oGroup.key)
 			});
 
 			this.addAggregation("items", oHeader, bSuppressInvalidate);
@@ -1479,7 +1483,7 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype._mapSeparatorItemToGroupHeader = function (oSeparatorItem) {
 			var oGroupHeaderListItem = new GroupHeaderListItem({
-				title: oSeparatorItem.getText(),
+				title: ManagedObject.escapeSettingsValue(oSeparatorItem.getText()),
 				ariaLabelledBy: this._getGroupHeaderInvisibleText().getId(),
 				type: ListType.Inactive
 			});

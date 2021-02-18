@@ -28,6 +28,7 @@ sap.ui.define([
 	"sap/m/inputUtils/inputsDefaultFilter",
 	"sap/m/inputUtils/highlightDOMElements",
 	"./InputRenderer",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "selectText"
 	"sap/ui/dom/jquery/selectText"
@@ -57,6 +58,7 @@ function(
 	inputsDefaultFilter,
 	highlightDOMElements,
 	InputRenderer,
+	ManagedObject,
 	jQuery
 ) {
 	"use strict";
@@ -792,7 +794,7 @@ function(
 	 */
 	Input.prototype.addSuggestionRowGroup = function(oGroup, oHeader, bSuppressInvalidate) {
 		oHeader = oHeader || new GroupHeaderListItem({
-			title: oGroup.text || oGroup.key
+			title: ManagedObject.escapeSettingsValue(oGroup.text) || ManagedObject.escapeSettingsValue(oGroup.key)
 		});
 
 		this.addAggregation("suggestionRows", oHeader, bSuppressInvalidate);
@@ -811,7 +813,7 @@ function(
 	 */
 	Input.prototype.addSuggestionItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
 		oHeader = oHeader || new SeparatorItem({
-			text: oGroup.text || oGroup.key
+			text: ManagedObject.escapeSettingsValue(oGroup.text) || ManagedObject.escapeSettingsValue(oGroup.key)
 		});
 
 		this.addAggregation("suggestionItems", oHeader, bSuppressInvalidate);
@@ -1630,7 +1632,9 @@ function(
 				if (aItems[i].isA("sap.ui.core.SeparatorItem")) {
 					oListItem = new GroupHeaderListItem({
 						id: oItem.getId() + "-ghli",
-						title: aItems[i].getText()
+						// GroupHeaderListItem does not escape the title so we need to do it once more.
+						// The first time this value was escaped is when the Separator item was created.
+						title: ManagedObject.escapeSettingsValue(aItems[i].getText())
 					});
 
 					aGroups.push({
@@ -1642,8 +1646,8 @@ function(
 					aHitItems.push(oListItem);
 				} else if (!bFilter || this._fnFilter(sTypedChars, oItem)) {
 					oListItem = new StandardListItem({
-						title: oItem.getText(),
-						info: oItem.getAdditionalText && oItem.getAdditionalText()
+						title: ManagedObject.escapeSettingsValue(oItem.getText()),
+						info: ManagedObject.escapeSettingsValue(oItem.getAdditionalText && oItem.getAdditionalText())
 					});
 					if (!bIsAnySuggestionAlreadySelected && (this._oSuggPopover._sProposedItemText === aItems[i].getText())) {
 						oListItem.setSelected(true);
