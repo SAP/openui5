@@ -1556,13 +1556,16 @@ sap.ui.define([
 			this._bExecuteOnSelect = true;
 		}
 
+		this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch = undefined;
+		if (oVariant.hasOwnProperty("createScenario") && (oVariant.createScenario === "saveAs")) {
+			//during SaveAs a switch occurs but the processing of related variants based changes may still be ongoing
+			this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch = true;
+		}
+
 		// no changes exists, but variant switch occurs
 		// not relevant for applied default variant
 		if (!this._isChangeApplying() && this._bInitialFiltersApplied) {
 			this._changesApplied();
-		} else if (this._isChangeApplying() && oVariant.hasOwnProperty("createScenario") && (oVariant.createScenario === "saveAs")) {
-			//during SaveAs a switch occurs but the processing of related variants based changes may still be ongoing
-			this._bDoNotTriggerFiltersChangeEventBasedOnVariantSwitch = true;
 		}
 	};
 

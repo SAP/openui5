@@ -1492,16 +1492,24 @@ sap.ui.define([
 				nCount++; // once triggered from initial handling
 				var bConditionBased = oEvent.getParameter("conditionsBased");
 				if (!bConditionBased) {
-					assert.equal(nCount, 3);
-					done();
+
+					assert.ok(nCount > 1 && nCount <= 3);
+
+					if (nCount === 3) {
+						done();
+					}
 				} else {
-					assert.ok(nCount < 3);
+					assert.equal(nCount, 1);
 				}
 			});
 
+			// conditionBase = true; usual variantSwitch
 			oFilterBar._handleVariantSwitch({});
+
+			// conditionBase = false; variantSwitch after SaveAs; changes not from FB
 			oFilterBar._handleVariantSwitch({createScenario: "saveAs"});
 
+			// conditionBased = false; variantSwitch after SaveAs; changes from FB
 			sinon.stub(oFilterBar, "_isChangeApplying").returns(true);
 			oFilterBar._handleVariantSwitch({createScenario: "saveAs"});
 			//simulate flex changes applied
