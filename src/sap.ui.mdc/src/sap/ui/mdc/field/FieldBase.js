@@ -2694,6 +2694,7 @@ sap.ui.define([
 			if (aContent.length > 0 && that.getEditMode() === EditMode.Display) {
 				_createInternalContentWrapper.call(that);
 				if (that._bTriggerable) {
+					aContent = that.getAggregation("_content", []);
 					var oLink = aContent[0];
 					oFieldInfo.getDirectLinkHrefAndTarget().then(function(oLinkItem) {
 						ContentFactory._updateLink(oLink, oLinkItem);
