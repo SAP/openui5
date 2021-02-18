@@ -838,6 +838,11 @@ sap.ui.define([
 					oRoute = this.getRoute(sName),
 					pComponentHashChange, sHash;
 
+				if (this.isStopped()){
+					Log.info("The router instance " + this._sId + " is stopped. No navigation can be performed.");
+					return this;
+				}
+
 				if (!oRoute) {
 					Log.warning("Route with name " + sName + " does not exist", this);
 					return this;

@@ -94,6 +94,47 @@ sap.ui.define([
 		assert.equal(this.oRouter.isStopped(), false, "The router isn't stopped");
 	});
 
+	QUnit.test("Calling 'navTo' method does not trigger any hash change when the router is stopped", function(assert) {
+		HashChanger.getInstance().setHash("");
+		assert.expect(4);
+		var oSetHashSpy = this.spy(HashChanger.getInstance(), "setHash"),
+			done = assert.async(),
+			oApp = new App(),
+			oRouter = fnCreateRouter([
+				{
+					name: "home",
+					pattern:  "",
+					targetControl: oApp.getId()
+				},
+				{
+					name : "second",
+					pattern : "second",
+					targetControl: oApp.getId()
+				}
+			]);
+
+		oRouter.getRoute("second").attachPatternMatched(function(oEvent){
+			assert.notOk(true, "The route 'second' should not be matched because router is stopped");
+		});
+
+		oRouter.initialize();
+
+		assert.equal(oRouter.isStopped(), false, "The router isn't stopped");
+
+		oRouter.stop();
+
+		setTimeout(function(){
+			oRouter.navTo("second");
+			setTimeout(function(){
+				assert.equal(oRouter.isStopped(), true, "The router is stopped");
+				assert.strictEqual(HashChanger.getInstance().getHash(), "", "The hash is still empty");
+				assert.equal(oSetHashSpy.callCount, 0, "The method 'setHash' was never called after stopping the router instance");
+				done();
+			});
+		});
+	});
+
+
 	QUnit.module("get/setHashChanger");
 
 	QUnit.test("getHashChanger", function(assert) {
