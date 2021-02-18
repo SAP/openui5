@@ -176,7 +176,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("also stores the default executeOnSelection and favorite", function (assert) {
+		QUnit.test("also stores the default executeOnSelection and favorite and contexts", function (assert) {
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
 			var mPropertyBag = {
@@ -199,6 +199,7 @@ sap.ui.define([
 					executeOnSelection: false,
 					favorite: false
 				},
+				contexts: {},
 				fileType: "variant",
 				layer: Layer.CUSTOMER,
 				namespace: "apps/the.app.component/changes/",
@@ -228,7 +229,7 @@ sap.ui.define([
 			assert.equal(mCompVariantsMapForPersistencyKey.variants[0], oAddedObject, "which is the returned entity");
 		});
 
-		QUnit.test("also stores passed executeOnSelection and favorite", function (assert) {
+		QUnit.test("also stores passed executeOnSelection and favorite and contexts", function (assert) {
 			var sPersistencyKey = "persistency.key";
 			sandbox.stub(Utils, "createDefaultFileName").returns("someFileName");
 			var mPropertyBag = {
@@ -239,6 +240,9 @@ sap.ui.define([
 					isVariant: true,
 					executeOnSelection: true,
 					favorite: true,
+					contexts: {
+						role: ["someValue"]
+					},
 					type: "filterVariant"
 				},
 				ODataService: null,
@@ -252,6 +256,9 @@ sap.ui.define([
 				content: {
 					executeOnSelection: true,
 					favorite: true
+				},
+				contexts: {
+					role: ["someValue"]
 				},
 				fileType: "variant",
 				layer: Layer.CUSTOMER,
@@ -665,6 +672,7 @@ sap.ui.define([
 					executeOnSelection: true,
 					favorite: true
 				}, "1: after an update... is the content is correct");
+				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 
 				// (update, <<UPDATE>>, revert, update, revert, revert)
 				CompVariantState.updateVariant({
@@ -674,6 +682,9 @@ sap.ui.define([
 					favorite: false,
 					content: {
 						someKey: "someValue"
+					},
+					contexts: {
+						role: ["someRole"]
 					},
 					name: "myNewName"
 				});
@@ -685,6 +696,7 @@ sap.ui.define([
 					someKey: "someValue"
 				}, "2: after an update... is the content is correct");
 				assert.equal(oVariant.getText("variantName"), "myNewName", "and the name is updated");
+				assert.equal(oVariant.getContexts().role[0], "someRole", "the variant has the correct contexts");
 
 				// (update, update, <<REVERT>>, update, revert, revert)
 				CompVariantState.revert({
@@ -699,6 +711,7 @@ sap.ui.define([
 					favorite: true
 				}, "3: after a revert... is the content is correct");
 				assert.equal(oVariant.getText("variantName"), "initialName", "and the name is also reverted");
+				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 
 				// (update, update, revert, <<UPDATE>>, revert, revert)
 				CompVariantState.updateVariant({
@@ -708,6 +721,9 @@ sap.ui.define([
 					favorite: false,
 					content: {
 						someKey: "someValue"
+					},
+					contexts: {
+						role: ["someOtherRole"]
 					}
 				});
 				assert.deepEqual(oVariant.getContent(), {
@@ -717,6 +733,7 @@ sap.ui.define([
 				}, "4: after an update... is the content is correct");
 				assert.equal(oVariant.getRevertInfo().length, 2, "two revert data entries are present");
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.equal(oVariant.getContexts().role[0], "someOtherRole", "the variant has the correct contexts");
 
 				// (update, update, revert, update, <<REVERT>>, revert)
 				CompVariantState.revert({
@@ -726,6 +743,7 @@ sap.ui.define([
 				});
 				assert.equal(oVariant.getRevertInfo().length, 1, "one revert data entry is present");
 				assert.equal(oVariant.getState(), Change.states.DIRTY, "the variant has the correct state");
+				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 				assert.deepEqual(oVariant.getContent(), {
 					executeOnSelection: true,
 					favorite: true
@@ -743,6 +761,7 @@ sap.ui.define([
 				}, "6: after a revert... is the content is correct");
 				assert.equal(oVariant.getRevertInfo().length, 0, "no revert data entries are present");
 				assert.equal(oVariant.getState(), Change.states.PERSISTED, "the variant has the correct state");
+				assert.equal(Object.keys(oVariant.getContexts()).length, 0, "the variant has the correct contexts");
 			});
 		});
 
