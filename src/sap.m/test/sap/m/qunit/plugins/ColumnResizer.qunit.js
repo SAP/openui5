@@ -199,6 +199,22 @@ sap.ui.define([
 		assert.ok(this.oColumnResizer._bPositionsInvalid, "Handle positions are invalidated");
 	});
 
+	QUnit.test("Resize handle should have a circle in mobile device", function(assert) {
+		var oColumnDomRef = this.oTable.getColumns()[0].getDomRef();
+		var fnMatchMediaOriginal = window.matchMedia;
+		window.matchMedia = sinon.stub();
+		window.matchMedia.returns({
+			matches: true
+		});
+
+		this.oColumnResizer.startResizing(oColumnDomRef);
+		this.clock.tick(1);
+		assert.strictEqual(this.oColumnResizer._oHandle.childElementCount, 1, "Resize handle circle child element is visible since its a tablet/phone device");
+		assert.ok(this.oColumnResizer._oHandle.firstChild.classList.contains("sapMPluginsColumnResizerHandleCircle"), "Correct style class added to the resize handle circle");
+
+		window.matchMedia = fnMatchMediaOriginal;
+	});
+
 	QUnit.test("Resizing style class", function(assert) {
 		var oTableDomRef = this.oTable.getDomRef("listUl"),
 			oColumn1Dom = this.oTable.getColumns()[1].getDomRef();
