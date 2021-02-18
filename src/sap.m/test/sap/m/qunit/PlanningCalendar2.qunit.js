@@ -1817,6 +1817,32 @@ sap.ui.define([
 			"planning calendar is the first assigned");
 	});
 
+	QUnit.test("Adding a view after setting view key", function(assert) {
+		// prepare
+		var oSetViewKeySpy = this.spy(PlanningCalendar.prototype, "setViewKey");
+		// act
+		this.oPC.setViewKey("H");
+		this.oPC.addView(new PlanningCalendarView({
+			key: "H",
+			intervalType: "Hour"
+		}));
+		// assert
+		assert.ok(oSetViewKeySpy.calledTwice, "The correct view key is set after all custom views are added");
+	});
+
+	QUnit.test("Inserting a view after setting view key", function(assert) {
+		// prepare
+		var oSetViewKeySpy = this.spy(PlanningCalendar.prototype, "setViewKey");
+		// act
+		this.oPC.setViewKey("H");
+		this.oPC.insertView(new PlanningCalendarView({
+			key: "H",
+			intervalType: "Hour"
+		}), 0);
+		// assert
+		assert.ok(oSetViewKeySpy.calledTwice, "The correct view key is set after all custom views are added");
+	});
+
 	QUnit.module('CalendarAppointment');
 
 	QUnit.test('_getComparer', function(assert) {
