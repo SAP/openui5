@@ -145,7 +145,7 @@ sap.ui.define([
 				var sViewName = oView.getViewName();
 				var sFragmentPrefix = oOptions.fragmentId ? oOptions.fragmentId + OpaPlugin.VIEW_ID_DELIMITER : "";
 
-				if ($.isArray(oOptions.id)) {
+				if (Array.isArray(oOptions.id)) {
 					var aControls = [];
 					var aUnmatchedIds = [];
 					oOptions.id.map(function (sId) {
@@ -230,7 +230,7 @@ sap.ui.define([
 						if (this._isRegExp(oOptions.id)) {
 							bIdMatches = oOptions.id.test(sUnprefixedControlId);
 						}
-						if ($.isArray(oOptions.id)) {
+						if (Array.isArray(oOptions.id)) {
 							bIdMatches = oOptions.id.filter(function (sId) {
 								return sId === sUnprefixedControlId;
 							}).length > 0;
@@ -372,7 +372,7 @@ sap.ui.define([
 				// all controls are filtered out
 				if (!vPipelineResult) {
 					// backwards compatible - return empty array in this case
-					if ($.isArray(vResult)) {
+					if (Array.isArray(vResult)) {
 						return [];
 					}
 					// Single control - return null
@@ -422,8 +422,8 @@ sap.ui.define([
 				var aControlsNotFoundConditions = [
 					typeof oOptions.id === "string" && !vControl, // search for single control by string ID
 					this._isRegExp(oOptions.id) && !vControl.length, // search by regex ID
-					$.isArray(oOptions.id) && (!vControl || vControl.length !== oOptions.id.length), // search by array of IDs
-					oOptions.controlType && $.isArray(vControl) && !vControl.length, // search by control type globally
+					Array.isArray(oOptions.id) && (!vControl || vControl.length !== oOptions.id.length), // search by array of IDs
+					oOptions.controlType && Array.isArray(vControl) && !vControl.length, // search by control type globally
 					!oOptions.id && (oOptions.viewName || oOptions.viewId || oOptions.searchOpenDialogs) && !vControl.length // search by control type in view or staic area
 				];
 
@@ -503,7 +503,7 @@ sap.ui.define([
 							aMatchIds.push(sId);
 						}
 					});
-				} else if ($.isArray(oOptions.id)) {
+				} else if (Array.isArray(oOptions.id)) {
 					aMatchIds = oOptions.id;
 				}
 

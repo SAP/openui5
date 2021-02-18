@@ -59,7 +59,7 @@ sap.ui.define([
 			}
 
 			var vAggregation = fnAggregation.call(oControl);
-			var aAggregation = jQueryDOM.isArray(vAggregation) ? vAggregation : [vAggregation];
+			var aAggregation = Array.isArray(vAggregation) ? vAggregation : [vAggregation];
 			var bFilled = !!aAggregation.length;
 			if (!bFilled) {
 				this._oLogger.debug("Control '" + oControl + "' aggregation '" + sAggregationName + "' is empty");

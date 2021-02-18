@@ -72,7 +72,7 @@ sap.ui.define([
 				if (jQueryDOM.isPlainObject(oOptions.matchers)) {
 					 // oOptions = {matchers: {matcher1: {}, matcher2: {}}..} (as seen in declarative-style options)
 					aMatchers = aMatchers.concat(this._getPlainObjectMatchers(oOptions.matchers));
-				} else if (jQueryDOM.isArray(oOptions.matchers)) {
+				} else if (Array.isArray(oOptions.matchers)) {
 
 					oOptions.matchers.forEach(function (vMatcher) {
 						if (jQueryDOM.isPlainObject(vMatcher)) {
@@ -122,12 +122,12 @@ sap.ui.define([
 				var MatcherConstructor = aSupportedMatchers[sMatcher];
 				// if the matcher params are declared as an array, this means that
 				// a new matcher should be instanciated for each element in this array
-				var aMatcherParams = jQueryDOM.isArray(mMatchers[sMatcher]) ? mMatchers[sMatcher] : [mMatchers[sMatcher]];
+				var aMatcherParams = Array.isArray(mMatchers[sMatcher]) ? mMatchers[sMatcher] : [mMatchers[sMatcher]];
 
 				return aMatcherParams.map(function (mSingleMatcherParams) {
 					// there are two types of matcher contstructors depending on the expected arguments:
 					// some expect an object (e.g. BindingPath) and others - an arguments list (e.g. Ancestor)
-					if (jQueryDOM.isArray(mSingleMatcherParams)) {
+					if (Array.isArray(mSingleMatcherParams)) {
 						return new function() {
 							return MatcherConstructor.apply(this, mSingleMatcherParams);
 						}();

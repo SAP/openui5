@@ -65,7 +65,7 @@ sap.ui.define([
 				return false;
 			}
 			var vAggregation = fnAggregation.call(oControl);
-			var aAggregation = jQueryDOM.isArray(vAggregation) ? vAggregation : [vAggregation];
+			var aAggregation = Array.isArray(vAggregation) ? vAggregation : [vAggregation];
 			var iAggregationLength = aAggregation.length;
 			var iExpectedLength = this.getLength();
 			var bIsMatch = iAggregationLength === iExpectedLength;

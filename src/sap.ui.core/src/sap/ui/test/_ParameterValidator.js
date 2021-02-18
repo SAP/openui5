@@ -123,7 +123,7 @@ sap.ui.define([
 	_ParameterValidator.types = {
 		func: {
 			isValid: function (fnValue) {
-				return jQueryDOM.isFunction(fnValue);
+				return typeof fnValue === "function";
 			},
 			description: "a function"
 		},
@@ -153,13 +153,13 @@ sap.ui.define([
 		},
 		numeric: {
 			isValid: function (iValue) {
-				return jQueryDOM.isNumeric(iValue);
+				return _isNumeric(iValue);
 			},
 			description: "numeric"
 		},
 		positivenumeric: {
 			isValid: function (iValue) {
-				return jQueryDOM.isNumeric(iValue) && iValue > 0;
+				return _isNumeric(iValue) && iValue > 0;
 			},
 			description: "a positive numeric"
 		},
@@ -171,6 +171,11 @@ sap.ui.define([
 			description: "any value"
 		}
 	};
+
+	function _isNumeric (iValue) {
+		// see sap/ui/thirdparty/jquery-compat for implementation details
+		return (typeof iValue === "number" || typeof iValue === "string" ) && !isNaN(iValue - parseFloat(iValue));
+	}
 
 	return _ParameterValidator;
 },  /* export= */ true);
