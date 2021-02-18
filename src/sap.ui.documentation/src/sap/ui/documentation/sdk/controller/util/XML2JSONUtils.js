@@ -43,22 +43,29 @@ sap.ui.define(["sap/ui/thirdparty/jquery"],
 				/* "Invalid DOM Elements" (ones that should not be added to the body) are:
 					- all scripts
 					- element with class topictitle1 (this is used as title)
-					- element with class shortdesc (this is used as subtitle)
-					- element with id local-navigation (this is the left-side navigation which we already have)
-					- element with tag header
-					- element with id footer-container
-					- element with id nav.mobile-nav
-					- element with id breadcrumb-container
-					- element with id content-toolbar (it contains info about the previous page)
-					- element with class related-links (it contains the related links info and should have a custom position)
+					- element with class shortdesc (this is used as subtitle, if we have nested topics only the first shortdesc element should be removed)
 				 */
 				var wrapperContainer = xmlDom,
-					invalidChildren = wrapperContainer.querySelectorAll("script, .topictitle1, .shortdesc, #local-navigation, header, #footer-container, nav.mobile-nav, #breadcrumb-container, #content-toolbar"),
+					invalidChildren = wrapperContainer.querySelectorAll("script, .topictitle1"),
+					invalidChildrenFirstOnly = [".shortdesc"],
+					invalidChild,
 					invalidChildParent, i;
+
+				// Convert NodeList to Array to use functions like .push(), etc.
+				invalidChildren = Array.prototype.slice.call(invalidChildren);
+
+				invalidChildrenFirstOnly.forEach(function (selector) {
+					invalidChild = wrapperContainer.querySelector(selector);
+					if (invalidChild && invalidChildren.indexOf(invalidChild) === -1) { //make sure invalidChild is not already a part of the invalidChildren
+						invalidChildren.push(invalidChild);
+					}
+				});
 
 				for (var i = 0; i < invalidChildren.length; i++) {
 					invalidChildParent = invalidChildren[i].parentElement;
-					invalidChildParent.removeChild(invalidChildren[i]);
+					if (invalidChildParent) {
+						invalidChildParent.removeChild(invalidChildren[i]);
+					}
 				}
 
 				fixImgLocation(wrapperContainer);
