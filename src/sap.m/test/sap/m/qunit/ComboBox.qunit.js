@@ -2,13 +2,10 @@
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
 	"sap/ui/core/CustomData",
-	"sap/m/ComboBoxBase",
 	"sap/m/ComboBox",
 	"sap/m/ComboBoxTextField",
 	"sap/m/Label",
 	"sap/m/Select",
-	"sap/m/StandardListItem",
-	"sap/m/GroupHeaderListItem",
 	"sap/m/Link",
 	"sap/m/FormattedText",
 	"sap/ui/core/Item",
@@ -20,7 +17,6 @@ sap.ui.define([
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/base/Event",
 	"sap/base/Log",
-	"sap/base/strings/capitalize",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/core/util/MockServer",
 	"sap/ui/thirdparty/sinon",
@@ -33,7 +29,7 @@ sap.ui.define([
 	"sap/m/InputBase",
 	'sap/ui/core/ValueStateSupport',
 	"sap/ui/core/library",
-	"sap/ui/events/jquery/EventExtension",
+	"sap/ui/base/ManagedObject",
 	"sap/ui/qunit/qunit-css",
 	"sap/ui/thirdparty/qunit",
 	"sap/ui/qunit/qunit-junit",
@@ -43,13 +39,10 @@ sap.ui.define([
 ], function (
 	qutils,
 	CustomData,
-	ComboBoxBase,
 	ComboBox,
 	ComboBoxTextField,
 	Label,
 	Select,
-	StandardListItem,
-	GroupHeaderListItem,
 	Link,
 	FormattedText,
 	Item,
@@ -61,7 +54,6 @@ sap.ui.define([
 	ODataModel,
 	Event,
 	Log,
-	Capitalize,
 	KeyCodes,
 	MockServer,
 	sinon,
@@ -74,7 +66,7 @@ sap.ui.define([
 	InputBase,
 	ValueStateSupport,
 	coreLibrary,
-	EventExtension
+	ManagedObject
 ) {
 	"use strict";
 
@@ -13263,6 +13255,61 @@ sap.ui.define([
 		assert.strictEqual(oComboBox._getList().getItems()[1].getTitleTextDirection(), "RTL", 'RTL direction is correctly mapped from sap.ui.core.Item to sap.m.StandardListItem');
 
 		// Clean
+		oComboBox.destroy();
+	});
+
+	QUnit.module("Handling curly braces");
+
+	QUnit.test("Braces in binded text and key properties do not cause error", function(assert) {
+		// Arrange
+		var oSorter = new sap.ui.model.Sorter("head", false, true);
+		var oModel = new JSONModel({
+			items: [
+				{
+					key: "1 }",
+					head: "{ ttt",
+					text: "curly braces {{ 1",
+					addText: "some curly {{}} 1"
+				},
+				{
+					key: "2 {}",
+					head: "{ ttt",
+					text: "curly braces {{ 2",
+					addText: "some curly {{}} 2"
+				}
+			]
+		});
+		var oComboBox = new ComboBox({
+			items: {
+				path: "/items",
+				sorter: oSorter,
+				template: new ListItem({
+					text: "{text}",
+					key: "{key}",
+					additionalText: "{addText}"
+				})
+			},
+			showSecondaryValues: true
+		});
+
+		oComboBox.setModel(oModel);
+		oComboBox.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oComboBox.showItems();
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oComboBox.getItems()[0].getText(), "{ ttt", "Braces are correctly escaped in the separator item.");
+		assert.strictEqual(oComboBox.getItems()[1].getText(), "curly braces {{ 1", "Braces are correctly escaped in the text of the core list item.");
+		assert.strictEqual(oComboBox._getSuggestionsPopover().getItemsContainer().getItems()[0].getTitle(), "{ ttt", "Braces are correctly escaped in group header item.");
+		assert.strictEqual(oComboBox._getSuggestionsPopover().getItemsContainer().getItems()[1].getTitle(), "curly braces {{ 1", "Braces are correctly escaped in items text.");
+		assert.strictEqual(oComboBox._getSuggestionsPopover().getItemsContainer().getItems()[1].getInfo(), "some curly {{}} 1", "Braces are correctly escaped in items text.");
+
+		// Clean
+		oSorter.destroy();
+		oModel.destroy();
 		oComboBox.destroy();
 	});
 });

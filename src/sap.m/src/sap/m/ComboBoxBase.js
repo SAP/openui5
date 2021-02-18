@@ -3,44 +3,32 @@
  */
 
 sap.ui.define([
-	'./Dialog',
 	'./ComboBoxTextField',
-	'./Input',
-	'./GroupHeaderListItem',
 	'./SuggestionsPopover',
 	'sap/ui/core/SeparatorItem',
 	'sap/ui/core/InvisibleText',
+	'sap/ui/base/ManagedObject',
 	'sap/base/Log',
 	'./library',
 	'sap/ui/Device',
-	'sap/ui/core/library',
-	'./ComboBoxBaseRenderer',
 	"sap/ui/dom/containsOrEquals",
 	"sap/ui/events/KeyCodes",
 	"sap/ui/thirdparty/jquery",
-	"sap/base/security/encodeXML",
-	"sap/base/strings/escapeRegExp",
 	"sap/m/inputUtils/highlightDOMElements",
 	"sap/m/inputUtils/ListHelpers"
 ],
 	function(
-		Dialog,
 		ComboBoxTextField,
-		Input,
-		GroupHeaderListItem,
 		SuggestionsPopover,
 		SeparatorItem,
 		InvisibleText,
+		ManagedObject,
 		Log,
 		library,
 		Device,
-		coreLibrary,
-		ComboBoxBaseRenderer,
 		containsOrEquals,
 		KeyCodes,
 		jQuery,
-		encodeXML,
-		escapeRegExp,
 		highlightDOMElements,
 		ListHelpers
 	) {
@@ -1305,7 +1293,9 @@ sap.ui.define([
 		 */
 		ComboBoxBase.prototype.addItemGroup = function(oGroup, oHeader, bSuppressInvalidate) {
 			oHeader = oHeader || new SeparatorItem({
-				text: oGroup.text || oGroup.key
+				// The SeparatorItem does not escape those settings, so we need to take care of that.
+				// This will ensure that values containing curly braces do not break the code.
+				text: ManagedObject.escapeSettingsValue(oGroup.text) || ManagedObject.escapeSettingsValue(oGroup.key)
 			});
 
 			this.addAggregation("items", oHeader, bSuppressInvalidate);

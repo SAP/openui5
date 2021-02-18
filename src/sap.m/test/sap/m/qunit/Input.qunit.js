@@ -6558,5 +6558,111 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.module("Handling curly braces", {
+		beforeEach: function() {
+			var oData = {
+				items: [
+					{key: "key1 {{}}{}", value: "test1 {{}}", group: "1 {{}}{"},
+					{key: "key2 }}{{", value: "test2", group: "1 {{}}{"},
+					{key: "key3", value: "test3", group: "2 {}{{}}"},
+					{key: "key4", value: "test4", group: "2 {}{{}}"}
+				],
+				columns: [
+					{ columnLabel: "Text" },
+					{ columnLabel: "Key" }
+				]
+			};
+			this.oModel = new JSONModel(oData);
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			this.oModel = null;
+		}
+	});
+
+	QUnit.test("Input with list suggestion - Braces in binded text and key properties do not cause error", function(assert) {
+		// Arrange
+		var oInput = new Input({
+			showValueHelp: true,
+			showSuggestion: true,
+			suggestionItems: {
+				path: "/items",
+				template: new sap.ui.core.Item({key: "{key}", text: "{value}"}),
+				sorter: [new Sorter('group', false, true)]
+			}
+		});
+
+		oInput.setModel(this.oModel);
+		oInput.placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.trigger("focus").val("t").trigger("input");
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getTitle(), "1 {{}}{", "Braces are escaped in inputs item group header");
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[1].getTitle(), "test1 {{}}", "Braces are escaped in inputs item text");
+
+		// Act
+		oInput.setSelectionItem(oInput.getSuggestionItems()[1]);
+
+		// Assert
+		assert.strictEqual(oInput.getValue(), "test1 {{}}", "Braces are correctly set on the value.");
+		assert.strictEqual(oInput.getSelectedKey(), "key1 {{}}{}", "Braces are escaped in inputs selected key.");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
+	QUnit.test("Input with table suggestions - Braces in binded text and key properties do not cause error", function(assert) {
+		// Arrange
+		var oInput = new Input({
+			showValueHelp: true,
+			showSuggestion: true,
+			suggestionRows: {
+				path: "/items",
+				template: new sap.m.ColumnListItem({
+					cells: [
+						new sap.m.Text({text:"{value}"}),
+						new sap.m.Text({text:"{key}"})
+					]
+				}),
+				sorter: [new Sorter('group', false, true)]
+			},
+			suggestionColumns: [
+				new sap.m.Column({
+					header: new sap.m.Label({text: "Text"})
+				}),
+				new sap.m.Column({
+					header: new sap.m.Label({text: "Key"})
+				})
+			]
+		});
+
+		oInput.setModel(this.oModel);
+		oInput.placeAt('content');
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput.onfocusin(); // for some reason this is not triggered when calling focus via API
+		oInput._$input.trigger("focus").val("t").trigger("input");
+		this.clock.tick(300);
+
+		// Assert
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[0].getTitle(), "1 {{}}{", "Braces are escaped in inputs item group header");
+		assert.strictEqual(oInput._getSuggestionsPopover().getItemsContainer().getItems()[1].getCells()[0].getText(), "test1 {{}}", "Braces are escaped in inputs item text");
+
+		// Act
+		oInput.setSelectionRow(oInput.getSuggestionRows()[1]);
+
+		// Assert
+		assert.strictEqual(oInput.getValue(), "test1 {{}}", "Braces are correctly set on the value.");
+
+		// Cleanup
+		oInput.destroy();
+	});
+
 	return waitForThemeApplied(this.oInput);
 });
