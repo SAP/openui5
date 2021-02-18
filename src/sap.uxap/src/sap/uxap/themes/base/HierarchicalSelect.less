@@ -119,13 +119,33 @@
 
 /* styling needed to achieve underline of the select label on phone */
 .sapUxAPObjectPageLayout-Std-Phone, .sap-phone {
-	.sapUxAPHierarchicalSelect .sapMSltLabel {
-		position: relative;
-		top: 0.05rem;
-		display: inline;
-		padding-left: 0;
-		padding-right: 0;
-		padding-bottom: 0.8rem;
+
+	.sapUxAPHierarchicalSelect {
+		display: flex;
+		 .sapMSltLabel {
+			position: relative;
+			padding-left: 0;
+			display: inline-block;
+			vertical-align: top;
+			line-height: 2.2rem;
+			width: auto;
+			padding-right: 0;
+			overflow: visible;
+		 	min-width: 0;
+			.sapMSelectListItemText {
+				display: inline-block;
+				width: 100%;
+				text-overflow: ellipsis;
+				overflow: hidden;
+				box-sizing: border-box;
+			}
+		}
+
+		.sapMSltArrow {
+			position: static;
+			flex-shrink: 0;
+			margin-left: auto;
+		}
 	}
 
 	.sapMSlt.sapUxAPHierarchicalSelect.sapMBarChild {

@@ -112,18 +112,19 @@ html.sap-desktop .sapUxAPHierarchicalSelect {
 			line-height: @sapUiFiori3HSArrowDimensions;
 			height: @sapUiFiori3HSArrowDimensions;
 			width: @sapUiFiori3HSArrowDimensions;
-			margin: 0.1875rem; // 3px needed in order not to overlap the focus of the parent
+			margin: 0.1875rem 0.1875rem 0.1875rem auto; // 3px needed in order not to overlap the focus of the parent
 		}
 
 		& .sapMSltLabel {
-			line-height: @sapElement_LineHeight;
-
+			line-height: 3rem;
+			box-sizing: border-box;
 			&::after {
 				content: "";
 				position: absolute;
-				width: 100%;
-				top: 1.6rem;
+				bottom: 0;
+				height: 0;
 				left: -@sapUiFiori3HSUnderlineOffsetAndHeight;
+				right: -@sapUiFiori3HSUnderlineOffsetAndHeight;;
 				padding: (@sapUiFiori3HSUnderlineOffsetAndHeight / 2) @sapUiFiori3HSUnderlineOffsetAndHeight;
 				border-top-left-radius: @sapUiFiori3HSUnderlineTopRadius;
 				border-top-right-radius: @sapUiFiori3HSUnderlineTopRadius;
