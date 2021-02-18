@@ -13,7 +13,7 @@
 		<headerTitle>
 			<ObjectPageDynamicHeaderTitle>
 				<expandedHeading>
-					<m:Title text="Sample 2" wrapping="true" />
+					<m:Title text="Object Page Header with Links, Rating Indicator, and Object Status" wrapping="true" />
 				</expandedHeading>
 
 				<snappedHeading>
@@ -23,7 +23,7 @@
 						</m:VBox>
 
 						<m:VBox>
-							<m:Title text="Sample 2" wrapping="true"/>
+							<m:Title text="Object Page Header with Links, Rating Indicator, and Object Status" wrapping="true"/>
 							<m:Text text="Example of an ObjectPage with header facet"/>
 						</m:VBox>
 					</m:HBox>
@@ -157,7 +157,7 @@
 				<subSections>
 					<ObjectPageSubSection id="goalsSectionSS1" titleUppercase="false">
 						<blocks>
-							<goals:GoalsBlock id="goalsblock"/>
+							<goals:GoalsBlock id="goalsblock" class="sapUxAPObjectPageSubSectionAlignContent"/>
 						</blocks>
 					</ObjectPageSubSection>
 				</subSections>
@@ -167,19 +167,19 @@
 				<subSections>
 					<ObjectPageSubSection id="personalSectionSS1" title="Connect" titleUppercase="false">
 						<blocks>
-							<personal:BlockPhoneNumber id="phone"/>
-							<personal:BlockSocial id="social"/>
-							<personal:BlockAdresses id="adresses"/>
-							<personal:BlockMailing id="mailing" columnLayout="1"/>
+							<personal:BlockPhoneNumber id="phone" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<personal:BlockSocial id="social" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<personal:BlockAdresses id="adresses" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<personal:BlockMailing id="mailing" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
 						</blocks>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection id="personalSectionSS2" title="Payment information" titleUppercase="false">
 						<blocks>
-							<personal:PersonalBlockPart1 id="part1" columnLayout="1"/>
+							<personal:PersonalBlockPart1 id="part1" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
 						</blocks>
 						<moreBlocks>
-							<personal:PersonalBlockPart2 id="part2" columnLayout="1"/>
+							<personal:PersonalBlockPart2 id="part2" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
 						</moreBlocks>
 					</ObjectPageSubSection>
 				</subSections>
@@ -189,19 +189,19 @@
 				<subSections>
 					<ObjectPageSubSection id="employmentSectionSS1" title="Job information" titleUppercase="false">
 						<blocks>
-							<employment:BlockJobInfoPart1 id="jobinfopart1"/>
-							<employment:BlockJobInfoPart2 id="jobinfopart2"/>
+							<employment:BlockJobInfoPart1 id="jobinfopart1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<employment:BlockJobInfoPart2 id="jobinfopart2" class="sapUxAPObjectPageSubSectionAlignContent"/>
 							<employment:BlockJobInfoPart3 id="jobinfopart3"/>
 						</blocks>
 					</ObjectPageSubSection>
 
 					<ObjectPageSubSection id="employmentSectionSS2" title="Employee Details" importance="Medium" titleUppercase="false">
 						<blocks>
-							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1"/>
+							<employment:BlockEmpDetailPart1 id="empdetailpart1" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
 						</blocks>
 						<moreBlocks>
-							<employment:BlockEmpDetailPart2 id="empdetailpart2" columnLayout="1"/>
-							<employment:BlockEmpDetailPart3 id="empdetailpart3" columnLayout="1"/>
+							<employment:BlockEmpDetailPart2 id="empdetailpart2" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
+							<employment:BlockEmpDetailPart3 id="empdetailpart3" columnLayout="1" class="sapUxAPObjectPageSubSectionAlignContent"/>
 						</moreBlocks>
 					</ObjectPageSubSection>
 				</subSections>
