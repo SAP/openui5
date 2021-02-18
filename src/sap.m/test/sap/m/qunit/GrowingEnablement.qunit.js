@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/core/Core",
 	"sap/ui/qunit/utils/createAndAppendDiv",
@@ -334,10 +334,20 @@ sap.ui.define([
 
 		oList.setModel(oModel);
 
-		var oItemTemplate = new StandardListItem({
-			title : "{Name}",
-			description : "{Category}"
-		});
+		var oItemTemplate;
+		if (oList.isA("sap.m.Table")) {
+			oItemTemplate = new ColumnListItem({
+				cells: [
+					new Text({text: "{Name}"}),
+					new Text({text: "{Category}"})
+				]
+			});
+		} else {
+			oItemTemplate = new StandardListItem({
+				title : "{Name}",
+				description : "{Category}"
+			});
+		}
 
 		oList.bindItems({
 			path : "/Products",
@@ -529,6 +539,49 @@ sap.ui.define([
 		assert.notOk(oTable._oGrowingDelegate._aChunk.length, "chunk is cleared as expected, which updates the items as expected in the DOM");
 
 		oTable.destroy();
+	});
+
+	QUnit.test("Growing should invalidate Table, when autoPopinMode=true", function(assert) {
+		var done = assert.async();
+		//Arrange
+		var oMockServer = startMockServer(),
+			iInitialThreshold = 2,
+			oTable = new Table({
+				autoPopinMode: true,
+				growing : true,
+				growingThreshold : iInitialThreshold,
+				columns: [
+					new Column({
+						header: new Text({text: "Name"})
+					}),
+					new Column({
+						header: new Text({text: "Category"})
+					})
+				]
+			}),
+			oDeferred = jQuery.Deferred();
+
+		//System under test
+		oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+
+		oTable.attachEventOnce("updateFinished", oDeferred.resolve);
+		var fnGetInitialAccumulatedWidth = sinon.spy(oTable, "_getInitialAccumulatedWidth");
+
+		assert.notOk(oTable.getItems().length, "no items available");
+		assert.ok(fnGetInitialAccumulatedWidth.notCalled, "autoPopinMode calculation is not performed yet, since no items available");
+
+		jQuery.when(oDeferred).then(function() {
+			assert.ok(oTable.getItems().length, "items are available");
+			assert.ok(fnGetInitialAccumulatedWidth.calledOnce, "autoPopinMode calculation performed");
+
+			//Cleanup
+			oTable.destroy();
+			oMockServer.stop();
+			done();
+		});
+
+		setODataModelAndBindItems(oTable);
 	});
 
 	QUnit.module("Dummy Column", {
