@@ -19,6 +19,8 @@ sap.ui.define([
 	"sap/m/inputUtils/filterItems",
 	"sap/m/inputUtils/ListHelpers",
 	"sap/m/inputUtils/itemsVisibilityHandler",
+	"sap/m/inputUtils/selectionRange",
+	"sap/m/inputUtils/calculateSelectionStart",
 	"sap/ui/events/KeyCodes",
 	"./Toolbar",
 	"sap/base/assert",
@@ -44,6 +46,8 @@ sap.ui.define([
 		filterItems,
 		ListHelpers,
 		itemsVisibilityHandler,
+		selectionRange,
+		calculateSelectionStart,
 		KeyCodes,
 		Toolbar,
 		assert,
@@ -332,65 +336,6 @@ sap.ui.define([
 		};
 
 		/**
-		 * Checks whether the text of the item starts with the input in the text field of the control.
-		 *
-		 * @param {sap.ui.core.Item} oItem The item to be checked against.
-		 * @param {string} sTypedValue The input from the field.
-		 * @returns {boolean} Whether the item starts with the given input.
-		 * @private
-		 */
-		ComboBox.prototype._itemsTextStartsWithTypedValue = function (oItem, sTypedValue) {
-			if (!oItem || typeof sTypedValue != "string" || sTypedValue == "") {
-				return false;
-			}
-			return oItem.getText().toLowerCase().startsWith(sTypedValue.toLowerCase());
-		};
-
-		/**
-		 * Checks whether the starting point of the selection in the input field should be reset.
-		 *
-		 * @param {sap.m.ComboBox} oControl The control.
-		 * @param {sap.ui.core.Item|sap.ui.core.SeparatorItem} oItem The item to be checked.
-		 * @returns {boolean} Whether the selection should be reset
-		 * @private
-		 */
-		ComboBox.prototype._shouldResetSelectionStart = function (oItem) {
-			var oDomRef = this.getFocusDomRef(),
-				oSelectionRange = this._getSelectionRange(),
-				bIsTextSelected = oSelectionRange.start !== oSelectionRange.end,
-				sTypedValue = oDomRef.value.substring(0, oSelectionRange.start),
-				bItemsTextStartsWithTypedValue = this._itemsTextStartsWithTypedValue(oItem, sTypedValue);
-
-			return !(bItemsTextStartsWithTypedValue && (bIsTextSelected || this._bIsLastFocusedItemHeader));
-		};
-
-		/**
-		 * Returns object containing the 0-based indexes of the first and last selected characters of the ComboBox
-		 *
-		 * @returns {int} The selection start index
-		 * @private
-		 */
-		ComboBox.prototype._getSelectionRange = function () {
-			var oDomRef = this.getFocusDomRef(),
-				sValue = this.getValue(),
-				iSelectionStart = oDomRef.selectionStart,
-				iSelectionEnd = oDomRef.selectionEnd,
-				oRange = {start: iSelectionStart, end: iSelectionEnd};
-
-			if (!(Device.browser.msie || Device.browser.edge)) {
-				return oRange;
-			}
-
-			// IE and Edge
-			if (this._bIsLastFocusedItemHeader) {
-				oRange.start = sValue.length;
-				oRange.end = sValue.length;
-			}
-
-			return oRange;
-		};
-
-		/**
 		 * Updates and synchronizes the <code>selectedItem</code> association, <code>selectedItemId</code>
 		 * and <code>selectedKey</code> properties.
 		 *
@@ -548,7 +493,6 @@ sap.ui.define([
 
 			// holds reference to the last focused GroupHeaderListItem if such exists
 			this.setLastFocusedListItem(null);
-			this._bIsLastFocusedItemHeader = null;
 
 			this._oItemObserver = new ManagedObjectObserver(this._forwardItemProperties.bind(this));
 		};
@@ -1031,7 +975,7 @@ sap.ui.define([
 		 */
 		ComboBox.prototype.onAfterOpen = function() {
 			var oItem = this.getSelectedItem(),
-				oSelectionRange = this._getSelectionRange(),
+				oSelectionRange = selectionRange(this.getFocusDomRef()),
 				bTablet = this.isPlatformTablet();
 
 			this.closeValueStateMessage();
@@ -1285,7 +1229,8 @@ sap.ui.define([
 			var oDomRef = this.getFocusDomRef(),
 				sTypedValue = oDomRef.value.substring(0, oDomRef.selectionStart),
 				oSelectedItem = this.getSelectedItem(),
-				oListItem;
+				oLastFocusedItem = this.getLastFocusedListItem(),
+				oListItem, sItemText, iSelectionStart, bLastFocusOnGroup;
 
 			// if the navigation is inline, the passed item will be a core item,
 			// otherwise it is a list item
@@ -1306,18 +1251,18 @@ sap.ui.define([
 
 				this.updateDomValue(sTypedValue);
 				this.fireSelectionChange({ selectedItem: null });
-				this._bIsLastFocusedItemHeader = true;
 
 				this._getGroupHeaderInvisibleText().setText(this._oRb.getText("LIST_ITEM_GROUP_HEADER") + " " + oItem.getText());
 				return;
 			}
 
 			if (oItem !== oSelectedItem) {
-				var iSelectionStart = this._shouldResetSelectionStart(oItem) ? 0 : this._getSelectionRange().start;
+				sItemText = oItem.getText();
+				bLastFocusOnGroup = oLastFocusedItem && oLastFocusedItem.isA("sap.m.GroupHeaderListItem");
+				iSelectionStart = calculateSelectionStart(selectionRange(oDomRef, bLastFocusOnGroup) , sItemText, sTypedValue, bLastFocusOnGroup);
 
-				this.updateDomValue(oItem.getText());
+				this.updateDomValue(sItemText);
 				this.fireSelectionChange({ selectedItem: oItem });
-				this._bIsLastFocusedItemHeader = false;
 
 				// update the selected item after the change event is fired (the selection may change)
 				oItem = this.getSelectedItem();

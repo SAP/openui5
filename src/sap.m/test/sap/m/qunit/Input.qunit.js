@@ -5830,7 +5830,7 @@ sap.ui.define([
 
 		// assert
 		// go to the header group item
-		assert.strictEqual(this.oInput.getValue(), "", "The value is cleared.");
+		assert.strictEqual(this.oInput.getValue(), "A", "The typed in value should remain.");
 
 		// act
 		// go to the next list item
