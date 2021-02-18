@@ -9,8 +9,6 @@ sap.ui.define([
 ], function(qutils, jQuery, FeedInput, TooltipBase, FeedListItem) {
 	"use strict";
 
-	var IMAGE_PATH = "test-resources/sap/m/images/";
-
 	var oRb = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 
 	QUnit.module("Properties", {
@@ -28,7 +26,6 @@ sap.ui.define([
 		assert.strictEqual(this.oFeedInput.getButtonTooltip(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FEEDINPUT_SUBMIT"), "buttonTooltip is correct");
 		assert.strictEqual(this.oFeedInput.getEnabled(), true, "enabled is 'true'");
 		assert.strictEqual(this.oFeedInput.getIcon(), "", "icon is ''");
-		assert.strictEqual(this.oFeedInput.getIconDensityAware(), true, "iconDensityAware is 'true'");
 		assert.strictEqual(this.oFeedInput.getMaxLength(), 0, "maxLength is '0'");
 		assert.strictEqual(this.oFeedInput.getPlaceholder(), sap.ui.getCore().getLibraryResourceBundle("sap.m").getText("FEEDINPUT_PLACEHOLDER"), "placeholder is correct");
 		assert.strictEqual(this.oFeedInput.getShowIcon(), true, "showIcon is 'true'");
@@ -41,26 +38,6 @@ sap.ui.define([
 		assert.strictEqual(this.oFeedInput.getShowExceededText(), false, "showExceededText is 'false'");
 		assert.strictEqual(this.oFeedInput.$().attr("role"), "group", "role is 'group'");
 		assert.strictEqual(this.oFeedInput.$().attr("aria-label"), oRb.getText("FEED_INPUT_ARIA_LABEL"), "aria-label is 'Your Input'");
-	});
-
-	QUnit.test("TextForPicture", function (assert) {
-		//No Image -> default Icon
-		this.oFeedInput.setAriaLabelForPicture("My test default icon description");
-		sap.ui.getCore().applyChanges();
-		var $Image = jQuery.sap.domById(this.oFeedInput._getImageControl().getId());
-		assert.strictEqual($Image.getAttribute("aria-label"), "My test default icon description", "Aria-label of default icon was set");
-		//Icon
-		this.oFeedInput.setIcon("sap-icon://nurse");
-		this.oFeedInput.setAriaLabelForPicture("SAPUI5 Icon");
-		sap.ui.getCore().applyChanges();
-		$Image = jQuery.sap.domById(this.oFeedInput._getImageControl().getId());
-		assert.strictEqual($Image.getAttribute("aria-label"), "SAPUI5 Icon", "Aria-label of icon was set");
-		//Image
-		this.oFeedInput.setIcon(IMAGE_PATH + "SAPUI5.jpg");
-		this.oFeedInput.setAriaLabelForPicture("SAPUI5 Image");
-		sap.ui.getCore().applyChanges();
-		$Image = jQuery.sap.domById(this.oFeedInput._getImageControl().getId());
-		assert.strictEqual($Image.getAttribute("aria-label"), "SAPUI5 Image", "Aria-label of image was set");
 	});
 
 	QUnit.test("ButtonTooltip", function (assert) {
@@ -105,25 +82,13 @@ sap.ui.define([
 	QUnit.test("Icon", function (assert) {
 		this.oFeedInput.setIcon("myIcon");
 		assert.strictEqual(this.oFeedInput.getIcon(), "myIcon", "Getter should return correct non-default value");
-		assert.strictEqual(this.oFeedInput._getImageControl().getSrc(), this.oFeedInput.getIcon(), "Property should be passed to image control");
-	});
+		assert.strictEqual(this.oFeedInput._getAvatar().getSrc(), this.oFeedInput.getIcon(), "Property should be passed to avatar control");
+		assert.strictEqual(this.oFeedInput._getAvatar().getDisplayShape(), "Square", "Should have 'Square' shape");
+		assert.strictEqual(this.oFeedInput._getAvatar().getDisplaySize(), "M", "Should have 'M' size");
 
-	QUnit.test("IconDensityAware", function (assert) {
-		this.oFeedInput.setIconDensityAware(false);
-		assert.strictEqual(this.oFeedInput.getIconDensityAware(), false, "Getter should return correct non-default value");
-
-		this.oFeedInput.destroy();
-
-		// iconDensityAware is only supported by image, not by icon. So we need an image instance for the next test
-		var oFeedInput = new FeedInput({
-			icon: IMAGE_PATH + "SAPUI5.jpg"
-		});
-		oFeedInput.placeAt("qunit-fixture");
+		this.oFeedInput.setIconInitials("TT");
 		sap.ui.getCore().applyChanges();
-
-		oFeedInput.setIconDensityAware(false);
-		assert.strictEqual(oFeedInput._getImageControl().getDensityAware(), false, "Property should be passed to image control");
-		oFeedInput.destroy();
+		assert.strictEqual(this.oFeedInput._getAvatar().getInitials(), "TT", "Should have initials set");
 	});
 
 	QUnit.test("MaxLength", function (assert) {
@@ -204,9 +169,9 @@ sap.ui.define([
 
 	QUnit.test("Visible", function (assert) {
 		this.oFeedInput.setVisible(true);
-		assert.ok(jQuery.sap.domById("input"), "visible=true: FeedInput control should be rendered");
+		assert.ok(document.getElementById("input"), "visible=true: FeedInput control should be rendered");
 		this.oFeedInput.setVisible(false);
-		assert.ok(jQuery.sap.domById("input"), "visible=false: FeedInput control should not be rendered");
+		assert.ok(document.getElementById("input"), "visible=false: FeedInput control should not be rendered");
 	});
 
 	QUnit.test("HTML Sanitization", function (assert) {

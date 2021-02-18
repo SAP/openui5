@@ -64,7 +64,7 @@ var FeedInputRenderer = {
 			} else {
 				oRm.write(' sapMFeedListItemIsDefaultIcon">');
 			}
-		oRm.renderControl(oControl._getImageControl());
+		oRm.renderControl(oControl._getAvatar());
 		oRm.write('</figure>');
 	};
 

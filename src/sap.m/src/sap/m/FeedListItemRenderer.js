@@ -42,7 +42,7 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 
 		// icon
 		if (oControl.getShowIcon()) {
-			this._writeImageControl(oRm, oControl, sMyId);
+			this._writeAvatarControl(oRm, oControl, sMyId);
 		}
 
 		// action button
@@ -152,7 +152,7 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 		oRm.write('</div>');
 	};
 
-	FeedListItemRenderer._writeImageControl = function(oRm, oControl, sId) {
+	FeedListItemRenderer._writeAvatarControl = function(oRm, oControl, sId) {
 		oRm.write('<figure id="' + sId + '-figure"');
 		oRm.addClass('sapMFeedListItemFigure');
 		if (!oControl.getIcon()) {
@@ -160,7 +160,7 @@ sap.ui.define(["./ListItemBaseRenderer", "sap/ui/core/Renderer", "sap/ui/Device"
 		}
 		oRm.writeClasses();
 		oRm.write('>');
-		oRm.renderControl(oControl._getImageControl());
+		oRm.renderControl(oControl._getAvatar());
 		oRm.write('</figure>');
 	};
 

@@ -49,8 +49,27 @@
 	left: 0;
 	overflow: hidden;
 	border-width: 0.125rem;
-	border-style: solid;
+	border-style: none;
 	border-color: @sapUiFieldBackground; /* the background parameter is used for to ensure the border theme is aligned with the text area background */
+}
+
+.sapMFeedInFigure .sapFAvatarSquare {
+	border-radius: @sapUiElementBorderCornerRadius;
+
+	.sapFAvatarImageHolder {
+		border-radius: @sapUiElementBorderCornerRadius;
+	}
+}
+
+.sapMFeedInFigure .sapFAvatarImageHolder {
+	background: none;
+	display: block;
+	position: absolute;
+	left: 0;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	background-size: cover;
 }
 
 .sapMFeedInImage {

@@ -19,6 +19,11 @@ sap.ui.define([
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
+	// shortcut for sap.m.Avatar
+	var Avatar = library.Avatar;
+	var AvatarSize = library.AvatarSize;
+	var AvatarShape = library.AvatarShape;
+
 	var MAX_ROWS = 15,
 		MIN_ROWS = 2,
 		UNLIMITED_ROWS = 0;
@@ -100,6 +105,24 @@ sap.ui.define([
 			icon : {type : "sap.ui.core.URI", group : "Data", defaultValue : null},
 
 			/**
+			 * Defines the shape of the icon.
+			* @since 1.88
+			*/
+			iconDisplayShape: { type: "sap.m.AvatarShape", defaultValue: AvatarShape.Square},
+
+			/**
+			 * Defines the initials of the icon.
+			 * @since 1.88
+			 */
+			iconInitials: { type: "string", defaultValue: "" },
+
+			/**
+			 * Defines the size of the icon.
+			 * @since 1.88
+			 */
+			iconSize: { type: "sap.m.AvatarSize", defaultValue: AvatarSize.M},
+
+			/**
 			 * If set to "true" (default), icons will be displayed. In case no icon is provided the standard placeholder will be displayed. if set to "false" icons are hidden
 			 */
 			showIcon : {type : "boolean", group : "Behavior", defaultValue : true},
@@ -111,6 +134,8 @@ sap.ui.define([
 			 * If you do not have higher resolution images, you should set the property to "false" to avoid unnecessary round-trips.
 			 *
 			 * Please be aware that this property is relevant only for images and not for icons.
+			 *
+			 * Deprecated as of version 1.88. Image is replaced by avatar.
 			 */
 			iconDensityAware : {type : "boolean", group : "Appearance", defaultValue : true},
 
@@ -126,11 +151,10 @@ sap.ui.define([
 			/**
 			 * Text for Picture which will be read by screenreader.
 			 * If a new ariaLabelForPicture is set, any previously set ariaLabelForPicture is deactivated.
-			 * @since 1.30
+			 * Deprecated as of version 1.88. This will not have any effect in code now.
 			 */
 			ariaLabelForPicture : {type : "string", group : "Accessibility", defaultValue : null}
 		},
-
 		events : {
 
 			/**
@@ -300,21 +324,12 @@ sap.ui.define([
 		if (this._oButton) {
 			this._oButton.destroy();
 		}
-		if (this._oImageControl) {
-			this._oImageControl.destroy();
+		if (this.oAvatar) {
+			this.oAvatar.destroy();
 		}
 	};
 
 	/////////////////////////////////// Properties /////////////////////////////////////////////////////////
-
-	FeedInput.prototype.setIconDensityAware = function (iIconDensityAware) {
-		this.setProperty("iconDensityAware", iIconDensityAware, true);
-		var fnClass = sap.ui.require("sap/m/Image");
-		if (this._getImageControl() instanceof fnClass) {
-			this._getImageControl().setDensityAware(iIconDensityAware);
-		}
-		return this;
-	};
 
 	FeedInput.prototype.setRows = function (iRows) {
 		var iMaxLines = this.getProperty("growingMaxLines");
@@ -480,24 +495,26 @@ sap.ui.define([
 	 * Lazy load feed icon image.
 	 *
 	 * @private
-	 * @returns {sap.m.Image} The image control
+	 * @returns {sap.m.Avatar} The Avatar control
 	 */
-	FeedInput.prototype._getImageControl = function() {
-
-		var sIconSrc = this.getIcon() || IconPool.getIconURI("person-placeholder"),
-			sImgId = this.getId() + '-icon',
-			mProperties = {
-				src : sIconSrc,
-				alt : this.getAriaLabelForPicture(),
-				densityAware : this.getIconDensityAware(),
-				decorative : false,
-				useIconTooltip: false
-			},
-			aCssClasses = ['sapMFeedInImage'];
-
-		this._oImageControl = library.ImageHelper.getImageControl(sImgId, this._oImageControl, this, mProperties, aCssClasses);
-
-		return this._oImageControl;
+	FeedInput.prototype._getAvatar = function() {
+		var sIcon = this.getIcon();
+		var sIconSrc = sIcon ? sIcon : IconPool.getIconURI("person-placeholder");
+		if (!this.oAvatar) {
+			this.oAvatar = new Avatar({
+				src: sIconSrc,
+				displayShape: this.getIconDisplayShape(),
+				initials: this.getIconInitials(),
+				displaySize: this.getIconSize()
+			}).addStyleClass("sapMFeedInImage");
+		} else {
+			this.oAvatar
+				.setSrc(sIconSrc)
+				.setDisplayShape(this.getIconDisplayShape())
+				.setInitials(this.getIconInitials())
+				.setDisplaySize(this.getIconSize());
+		}
+		return this.oAvatar;
 	};
 
 	return FeedInput;
