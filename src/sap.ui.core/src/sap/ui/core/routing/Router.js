@@ -543,6 +543,9 @@ sap.ui.define([
 				if (this.oHashChanger) {
 					Log.warning("The Router already has a HashChanger set and this call is ignored");
 				} else {
+					if (oHashChanger instanceof RouterHashChanger) {
+						oHashChanger.registerRouter(this);
+					}
 					this.oHashChanger = oHashChanger;
 				}
 
@@ -580,6 +583,10 @@ sap.ui.define([
 
 				if (this.fnHashReplaced) {
 					this.oHashChanger.detachEvent("hashReplaced", this.fnHashReplaced);
+				}
+
+				if (this.oHashChanger instanceof RouterHashChanger) {
+					this.oHashChanger.deregisterRouter(this);
 				}
 
 				//will remove all the signals attached to the routes - all the routes will not be useable anymore

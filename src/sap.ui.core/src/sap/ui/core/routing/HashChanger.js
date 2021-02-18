@@ -83,8 +83,11 @@ sap.ui.define([
 	 */
 	HashChanger.prototype.createRouterHashChanger = function() {
 		if (!this._oRouterHashChanger) {
+			var oParsedHash = this._parseHash(this.getHash());
 			this._oRouterHashChanger = new RouterHashChanger({
-				parent: this
+				parent: this,
+				hash: oParsedHash.hash,
+				subHashMap: oParsedHash.subHashMap
 			});
 
 			this._registerListenerToRelevantEvents();
@@ -249,7 +252,12 @@ sap.ui.define([
 			subHashMap: aParts.reduce(function(oMap, sPart) {
 				var iSlashPos = sPart.indexOf("/");
 
-				oMap[sPart.substring(0, iSlashPos)] = sPart.substring(iSlashPos + 1);
+				if (iSlashPos === -1) {
+					oMap[sPart] = "";
+				} else {
+					oMap[sPart.substring(0, iSlashPos)] = sPart.substring(iSlashPos + 1);
+				}
+
 				return oMap;
 			}, {})
 		};

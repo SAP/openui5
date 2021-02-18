@@ -3150,6 +3150,7 @@ sap.ui.define([
 		assert.equal(oHomeRouteMatchedSpy.callCount, 1, "The home route should be matched once");
 		oHomeRouteMatchedSpy.getCall(0).returnValue.catch(function(oError){
 			assert.equal(oError.message, "The router of component 'asyncParent---syncChildComponent' which is loaded via the target 'home' is defined as synchronous which is not supported using as a nested component.", "The correct error should be thrown.");
+			oParentComponent.destroy();
 			done();
 		});
 	});
@@ -4087,7 +4088,7 @@ sap.ui.define([
 								name: "home",
 								target: {
 									name: "home",
-									prefix: "child"
+									prefix: "child1"
 								}
 							},
 							{
@@ -4095,7 +4096,7 @@ sap.ui.define([
 								name: "second",
 								target: {
 									name: "second",
-									prefix: "child"
+									prefix: "child2"
 								}
 							},
 							{

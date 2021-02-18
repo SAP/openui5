@@ -772,6 +772,7 @@ sap.ui.define([
 	QUnit.module("View generation");
 
 	QUnit.test("View initialization", function(assert) {
+		HashChanger.getInstance().setHash("");
 
 		var oShell = new ShellSubstitute();
 
@@ -812,6 +813,8 @@ sap.ui.define([
 
 
 	QUnit.test("Should set a view to the cache", function (assert) {
+		HashChanger.getInstance().setHash("");
+
 		var oShell = new ShellSubstitute();
 
 		//Arrange System under Test
@@ -855,7 +858,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Nested View initialization", function(assert) {
-
 		HashChanger.getInstance().setHash("");
 
 		var oApp = new App();
