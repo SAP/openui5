@@ -273,7 +273,7 @@ sap.ui.define(['./Slider', './library', './RangeSliderRenderer'],
 	 * value A new rendering is not necessary, only the grip must be moved.
 	 *
 	 * @param {float} fValue
-	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	RangeSlider.prototype.setValue = function(fValue) {
@@ -329,7 +329,7 @@ sap.ui.define(['./Slider', './library', './RangeSliderRenderer'],
 	 * value A new rendering is not necessary, only the grip must be moved.
 	 *
 	 * @param {float} fValue
-	 * @return {sap.ui.commons.Slider} <code>this</code> to allow method chaining
+	 * @return {this} <code>this</code> to allow method chaining
 	 * @public
 	 */
 	RangeSlider.prototype.setValue2 = function(fValue) {

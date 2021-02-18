@@ -472,7 +472,7 @@ sap.ui.define([
 	 *
 	 * @param {string}  sPropertyName name of the property to set
 	 * @param {any}     [oValue] value to set the property to
-	 * @return {any|sap.ui.core.Element} Returns <code>this</code> to allow method chaining in case of setter and the property value in case of getter
+	 * @return {any|this} Returns <code>this</code> to allow method chaining in case of setter and the property value in case of getter
 	 * @public
 	 * @deprecated Since 1.28.0 The contract of this method is not fully defined and its write capabilities overlap with applySettings
 	 */

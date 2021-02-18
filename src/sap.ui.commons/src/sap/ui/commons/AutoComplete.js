@@ -407,12 +407,15 @@ sap.ui.define([
 	 * @public
 	 * @name sap.ui.commons.AutoComplete#getListBox
 	 * @function
+	 * @returns {string}
 	 */
 
 
 	/**
 	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
+	 * @param {string | sap.ui.commons.ListBox} oListBox
+	 * @returns {this}
 	 */
 	AutoComplete.prototype.setListBox = function(){
 		return this;
@@ -424,12 +427,15 @@ sap.ui.define([
 	 * @public
 	 * @name sap.ui.commons.AutoComplete#getSelectedKey
 	 * @function
+	 * @returns {string}
 	 */
 
 
 	/**
 	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
+	 * @param {string} sSelectedKey
+	 * @returns {this}
 	 */
 	AutoComplete.prototype.setSelectedKey = function(){
 		return this;
@@ -441,12 +447,15 @@ sap.ui.define([
 	 * @public
 	 * @name sap.ui.commons.AutoComplete#getSelectedItemId
 	 * @function
+	 * @returns {string}
 	 */
 
 
 	/**
 	 * @deprecated As of version 1.10.0, NOT SUPPORTED
 	 * @public
+	 * @param {string} sSelectedItemId
+	 * @returns {this}
 	 */
 	AutoComplete.prototype.setSelectedItemId = function(){
 		return this;

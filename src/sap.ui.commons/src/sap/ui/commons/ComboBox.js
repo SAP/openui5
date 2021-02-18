@@ -1367,6 +1367,7 @@ sap.ui.define([
 
 	/*
 	 * Ensure that handed in ListBoxes are taken from the visible UI immediately.
+	 * @param {jQuery.Event} oEvent The event object.
 	 * @protected
 	 */
 	ComboBox.prototype.onAfterRendering = function(oEvent){

@@ -32,10 +32,9 @@ sap.ui.define(['sap/ui/base/Object'],
 	});
 
 	/**
-	 * Overrides the {@link sap.ui.base.Object#getInterface} to avoid creating an
-	 * <code>Interface</code> object for types.
+	 * Types don't have a facade and therefore return themselves as their interface.
 	 *
-	 * @returns {object} this
+	 * @returns {this} <code>this</code> as there's no facade for types
 	 * @public
 	 */
 	Type.prototype.getInterface = function () {

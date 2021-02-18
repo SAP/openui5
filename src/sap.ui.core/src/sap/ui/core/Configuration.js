@@ -1379,7 +1379,7 @@ sap.ui.define([
 		/**
 		 * Returns a configuration object that bundles the format settings of UI5.
 		 *
-		 * @return {sap.ui.core.Configuration.FormatSettings} A FormatSettings object.
+		 * @returns {sap.ui.core.Configuration.FormatSettings} A FormatSettings object.
 		 * @public
 		 */
 		getFormatSettings : function() {
@@ -1815,7 +1815,7 @@ sap.ui.define([
 		 *
 		 * E.g. In locale 'en' value <code>1</code> would result in <code>1 Bag</code>, while <code>2</code> would result in <code>2 Bags</code>
 		 * @param mUnits {object} custom unit object which replaces the current custom unit definition. Call with <code>null</code> to delete custom units.
-		 * @return {sap.ui.core.Configuration.FormatSettings}
+		 * @returns {this}
 		 */
 		setCustomUnits: function (mUnits) {
 			// add custom units, or remove the existing ones if none are given
@@ -1833,7 +1833,7 @@ sap.ui.define([
 		 * Adds custom units.
 		 * Similar to {@link sap.ui.core.Configuration#setCustomUnits} but instead of setting the custom units, it will add additional ones.
 		 * @param mUnits {object} custom unit object which replaces the current custom unit definition. Call with <code>null</code> to delete custom units.
-		 * @return {sap.ui.core.Configuration.FormatSettings}
+		 * @returns {this}
 		 * @see sap.ui.core.Configuration#setCustomUnits
 		 */
 		addCustomUnits: function (mUnits) {
@@ -1860,8 +1860,9 @@ sap.ui.define([
 		 * }
 		 * </code>
 		 * Note: It is possible to create multiple entries per unit key.
+		 * Call with <code>null</code> to delete unit mappings.
 		 * @param mUnitMappings {object} unit mappings
-		 * @return {sap.ui.core.Configuration.FormatSettings}. Call with <code>null</code> to delete unit mappings.
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 */
 		setUnitMappings: function (mUnitMappings) {
 			this._set("unitMappings", mUnitMappings);
@@ -1872,7 +1873,7 @@ sap.ui.define([
 		 * Adds unit mappings.
 		 * Similar to {@link sap.ui.core.Configuration#setUnitMappings} but instead of setting the unit mappings, it will add additional ones.
 		 * @param mUnitMappings {object} unit mappings
-		 * @return {sap.ui.core.Configuration.FormatSettings}
+		 * @returns {this}
 		 * @see sap.ui.core.Configuration#setUnitMappings
 		 */
 		addUnitMappings: function (mUnitMappings) {
@@ -1920,7 +1921,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sStyle must be one of short, medium, long or full.
 		 * @param {string} sPattern the format pattern to be used in LDML syntax.
-		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setDatePattern : function(sStyle, sPattern) {
@@ -1953,7 +1954,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sStyle must be one of short, medium, long or full.
 		 * @param {string} sPattern the format pattern to be used in LDML syntax.
-		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setTimePattern : function(sStyle, sPattern) {
@@ -1987,7 +1988,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sStyle must be one of decimal, group, plusSign, minusSign.
 		 * @param {string} sSymbol will be used to represent the given symbol type
-		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setNumberSymbol : function(sType, sSymbol) {
@@ -2096,7 +2097,7 @@ sap.ui.define([
 		 * for details and restrictions.
 		 *
 		 * @param {int} iValue must be an integer value between 0 and 6
-		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setFirstDayOfWeek : function(iValue) {
@@ -2131,7 +2132,7 @@ sap.ui.define([
 		 * for details and restrictions.
 		 *
 		 * @param {string} sFormatId id of the ABAP data format (one of '1','2','3','4','5','6','7','8','9','A','B','C')
-		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setLegacyDateFormat : function(sFormatId) {
@@ -2166,7 +2167,7 @@ sap.ui.define([
 		 * for details and restrictions.
 		 *
 		 * @param {string} sFormatId id of the ABAP time format (one of '0','1','2','3','4')
-		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setLegacyTimeFormat : function(sFormatId) {
@@ -2200,7 +2201,7 @@ sap.ui.define([
 		 * for details and restrictions.
 		 *
 		 * @param {string} sFormatId id of the ABAP number format set (one of ' ','X','Y')
-		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setLegacyNumberFormat : function(sFormatId) {
@@ -2221,7 +2222,7 @@ sap.ui.define([
 		 * @param {string} aMappings[].dateFormat The date format
 		 * @param {string} aMappings[].islamicMonthStart The Islamic date
 		 * @param {string} aMappings[].gregDate The corresponding Gregorian date
-		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @public
 		 */
 		setLegacyDateCalendarCustomizing : function(aMappings) {
@@ -2255,7 +2256,7 @@ sap.ui.define([
 		 * with this setting unless overwritten on instance level.
 		 *
 		 * @param {boolean} bTrailingCurrencyCode Whether currency codes shall always be placed after the numeric value
-		 * @return {sap.ui.core.Configuration.FormatSettings} Returns <code>this</code> to allow method chaining
+		 * @returns {this} Returns <code>this</code> to allow method chaining
 		 * @since 1.75.0
 		 * @public
 		 */

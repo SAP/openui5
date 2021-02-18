@@ -201,7 +201,7 @@ sap.ui.define([
 	/**
 	 * Sets a date.
 	 * @param {Date} oDate a JavaScript date
-	 * @return {sap.ui.unified.YearPicker} <code>this</code> for method chaining
+	 * @returns {this} <code>this</code> for method chaining
 	 */
 	YearPicker.prototype.setDate = function(oDate){
 		var oCalDate, iYear, iYears, iHalfRange;
