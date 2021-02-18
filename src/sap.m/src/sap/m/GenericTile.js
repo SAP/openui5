@@ -765,7 +765,7 @@ sap.ui.define([
 				x: oPosition.left,
 				y: oPosition.top
 			},
-			width: this.$().width(),
+			width: this.$().outerWidth(),
 			height: this.$().height()
 		}];
 	};
