@@ -667,6 +667,7 @@ sap.ui.define([
 				mimeType: this.getMediaTypes(),
 				icon: "",
 				iconFirst: false,
+				multiple: true,
 				style: "Transparent",
 				name: "uploadSetFileUploader",
 				sameFilenameAllowed: true,
