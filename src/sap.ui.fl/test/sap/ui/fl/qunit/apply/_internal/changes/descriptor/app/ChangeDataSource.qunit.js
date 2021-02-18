@@ -42,13 +42,13 @@ function (
 				}
 			});
 
-			this.oChangeUpsert = new Change({
+			this.oChangeInsert = new Change({
 				changeType: "appdescr_app_changeDataSource",
 				content: {
 					dataSourceId: "ppm",
 					entityPropertyChange: {
 						propertyPath: "uri",
-						operation: "UPSERT",
+						operation: "INSERT",
 						propertyValue: "newuri"
 					}
 				}
@@ -65,8 +65,8 @@ function (
 							propertyValue: "newuri"
 						},
 						{
-							propertyPath: "settings/maxage",
-							operation: "UPDATE",
+							propertyPath: "settings/maxAge",
+							operation: "UPSERT",
 							propertyValue: "100"
 						}
 					]
@@ -114,6 +114,21 @@ function (
 			assert.notOk(oNewManifest["sap.app"].dataSources.ppm, "dataSource still does not exist");
 		});
 
+		QUnit.test("when calling '_applyChange' with supported change array", function (assert) {
+			var oManifest = {
+				"sap.app": {
+					dataSources: {
+						ppm: {
+							uri: "/sap/opu/odata/custom/data_source/"
+						}
+					}
+				}
+			};
+			var oNewManifest = ChangeDataSource.applyChange(oManifest, this.oChangeArray);
+			assert.equal(oNewManifest["sap.app"].dataSources.ppm.uri, "newuri", "dataSource is updated correctly");
+			assert.equal(oNewManifest["sap.app"].dataSources.ppm.settings.maxAge, "100", "dataSource is updated correctly");
+		});
+
 		QUnit.test("when calling '_applyChange' with unsupported operation type", function (assert) {
 			var oManifest = {
 				"sap.app": {
@@ -126,24 +141,8 @@ function (
 			};
 
 			assert.throws(function() {
-				ChangeDataSource.applyChange(oManifest, this.oChangeUpsert);
-			}, Error("Only operation == 'UPDATE' and entityPropertyChanges of type object are supported."),
-			"throws error");
-		});
-
-		QUnit.test("when calling '_applyChange' with unsupported change array", function (assert) {
-			var oManifest = {
-				"sap.app": {
-					dataSources: {
-						ppm: {
-							uri: "/sap/opu/odata/custom/data_source/"
-						}
-					}
-				}
-			};
-			assert.throws(function() {
-				ChangeDataSource.applyChange(oManifest, this.oChangeArray);
-			}, Error("Only operation == 'UPDATE' and entityPropertyChanges of type object are supported."),
+				ChangeDataSource.applyChange(oManifest, this.oChangeInsert);
+			}, Error("Only operation == 'UPDATE' and operation == 'UPSERT' are supported."),
 			"throws error");
 		});
 
