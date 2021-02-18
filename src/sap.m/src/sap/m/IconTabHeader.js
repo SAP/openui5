@@ -63,7 +63,12 @@ sap.ui.define([
 	 *
 	 * @class
 	 * This control displays a number of IconTabFilters and IconTabSeparators. If the available horizontal
-	 * space is exceeded, a horizontal scrolling appears.
+	 * space is exceeded, an overflow tab appears.
+	 *
+	 * <h3>Usage</h3>
+	 * Use <code>IconTabHeader</code> if you need it as a standalone header.
+	 * If you need to manage content use {@link sap.m.IconTabBar} instead.
+	 *
 	 * @extends sap.ui.core.Control
 	 *
 	 * @author SAP SE
@@ -71,6 +76,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
+	 * @since 1.15
 	 * @alias sap.m.IconTabHeader
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
