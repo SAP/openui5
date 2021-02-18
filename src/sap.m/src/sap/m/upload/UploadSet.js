@@ -636,6 +636,7 @@ sap.ui.define([
 				enabled: this.getUploadEnabled(),
 				icon: "sap-icon://add",
 				iconFirst: false,
+				multiple: true,
 				style: "Transparent",
 				name: "uploadSetFileUploader",
 				sameFilenameAllowed: true,
