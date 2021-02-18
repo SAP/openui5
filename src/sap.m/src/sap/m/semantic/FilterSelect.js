@@ -11,7 +11,7 @@ sap.ui.define(['sap/m/semantic/SemanticSelect'], function(SemanticSelect) {
 	 * @param {object} [mSettings] Custom initial settings for the new control
 	 *
 	 * @class
-	 * A FilterSelect is a {@link sap.m.Select} control enhanced with styling according to the semantics of a common "Filter" acton.
+	 * A FilterSelect is a {@link sap.m.Select} control enhanced with styling according to the semantics of a common "Filter" action.
 	 *
 	 * A FilterSelect cannot be used independently but only as aggregation content of a {@link sap.m.semantic.SemanticPage}.
 	 *
