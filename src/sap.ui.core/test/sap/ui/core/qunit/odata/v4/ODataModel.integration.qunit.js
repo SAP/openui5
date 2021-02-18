@@ -391,6 +391,9 @@ sap.ui.define([
 			// {map<string, true>}
 			// If an ID is in this.mIgnoredChanges, change events with null are ignored
 			this.mIgnoredChanges = {};
+			// {map<string, true>}
+			// whether a control is part of a list or not; used when expecting changes
+			this.mIsListByControlId = {};
 			// {map<string, string[][]>}
 			// this.mListChanges["id"][i] is a list of expected changes for the property "text" of
 			// the control with ID "id" in row i
@@ -1337,7 +1340,8 @@ sap.ui.define([
 		 * @returns {object} The test instance for chaining
 		 */
 		expectChange : function (sControlId, vValue, sRow) {
-			var aExpectations;
+			var aExpectations,
+				that = this;
 
 			// Ensures that oObject[vProperty] is an array and returns it
 			function array(oObject, vProperty) {
@@ -1346,16 +1350,29 @@ sap.ui.define([
 				return oObject[vProperty];
 			}
 
+			function isList(bIsList) {
+				if (sControlId in that.mIsListByControlId
+						&& that.mIsListByControlId[sControlId] !== bIsList) {
+					throw new Error("Inconsistent usage of array values for " + sControlId);
+				}
+				that.mIsListByControlId[sControlId] = bIsList;
+			}
+
 			if (arguments.length === 3) {
+				isList(true);
 				aExpectations = array(this.mListChanges, sControlId);
 				// This may create a sparse array this.mListChanges[sControlId]
 				array(aExpectations, sRow).push(vValue);
 			} else if (Array.isArray(vValue)) {
+				isList(true);
 				aExpectations = array(this.mListChanges, sControlId);
 				vValue.forEach(function (vRowValue, i) {
 					array(aExpectations, i).push(vRowValue);
 				});
 			} else {
+				if (vValue !== null) {
+					isList(false);
+				}
 				aExpectations = array(this.mChanges, sControlId);
 				if (arguments.length > 1) {
 					aExpectations.push(vValue);
@@ -1671,7 +1688,7 @@ sap.ui.define([
 				}]);
 
 			// Note: Because the invalid value has to be set via control, changes for that control
-			// cannot be observed via expectChanges
+			// cannot be observed via expectChange
 			oInput.setValue("INVALID");
 
 			assert.strictEqual(oInput.getValue(), "INVALID");
@@ -11026,7 +11043,7 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("name", "Missy Eliot")
-			.expectChange("nameCreated", []);
+			.expectChange("nameCreated");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			oHeaderContext = that.oView.byId("table").getBinding("items").getHeaderContext();
@@ -15423,8 +15440,8 @@ sap.ui.define([
 				}]
 			})
 			.expectChange("note", ["Row1", "Row2"])
-			.expectChange("netAmount", [])
-			.expectChange("salesOrderID", []);
+			.expectChange("netAmount")
+			.expectChange("salesOrderID");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			var oContextBinding = that.oView.byId("form").getElementBinding(),
@@ -15454,8 +15471,8 @@ sap.ui.define([
 				// "note" temporarily loses its binding context and thus fires a change event
 				.expectChange("note", null, null)
 				.expectChange("note", ["Row2"])
-				.expectChange("netAmount", null, null)
-				.expectChange("salesOrderID", null, null);
+				.expectChange("netAmount", null)
+				.expectChange("salesOrderID", null);
 
 			return Promise.all([
 				// code under test
