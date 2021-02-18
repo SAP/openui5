@@ -205,7 +205,7 @@ sap.ui.define([
 			this._oHandle = document.createElement("div");
 			this._oHandle.className = CSS_CLASS + "Handle";
 
-			if (!Device.system.desktop && !Device.system.combi) {
+			if (window.matchMedia("(hover:none)").matches) {
 				var oCircle = document.createElement("div");
 				oCircle.className = CSS_CLASS + "HandleCircle";
 				oCircle.style.top = this._aResizables[iColumnIndex].offsetHeight - 8 + "px";
