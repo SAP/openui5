@@ -1764,6 +1764,14 @@ html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-5 {
 	color: #346187;
 }
 
+
+html[dir="rtl"] .sapUiDemoKitTreeItemIcon {
+	padding-left: 0;
+	padding-right: 2px;
+	margin-right: 0;
+	margin-left: 4px;
+}
+
 /* Symbol type specific classes - constructed as follows sapUiDemoKitTreeItem(Abbreviation of the symbol type) */
 .sapUiDemoKitTreeItemE {
 	padding-left: 3px;
