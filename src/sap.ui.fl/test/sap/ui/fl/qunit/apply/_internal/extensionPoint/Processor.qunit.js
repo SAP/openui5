@@ -1,3 +1,5 @@
+/*global QUnit */
+
 sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
@@ -20,7 +22,6 @@ sap.ui.define([
 	sinon
 ) {
 	"use strict";
-	/*global QUnit */
 
 	// create content div
 	var oDIV = document.createElement("div");
@@ -241,8 +242,12 @@ sap.ui.define([
 		var iPoll = setInterval(function() {
 			var aPanelContent1 = oView.byId("sync").byId("Panel").getContent();
 			var aPanelContent2 = oView.byId("async").byId("Panel").getContent();
-			var aCellItems1 = oView.byId("sync").byId('fragmentWithExtensionPoint3--customTable').getItems()[0].getCells();
-			var aCellItems2 = oView.byId("async").byId('fragmentWithExtensionPoint3--customTable').getItems()[0].getCells();
+			var aCellItems1 = oView.byId("sync").byId("fragmentWithExtensionPoint3--customTable").getItems()[0]
+				? oView.byId("sync").byId("fragmentWithExtensionPoint3--customTable").getItems()[0].getCells()
+				: [];
+			var aCellItems2 = oView.byId("async").byId("fragmentWithExtensionPoint3--customTable").getItems()[0]
+				? oView.byId("async").byId("fragmentWithExtensionPoint3--customTable").getItems()[0].getCells()
+				: [];
 			if (
 				aPanelContent1.length === 27
 				&& aPanelContent2.length === 27
