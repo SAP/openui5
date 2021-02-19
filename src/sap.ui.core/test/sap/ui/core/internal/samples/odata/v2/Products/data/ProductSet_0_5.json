@@ -1,0 +1,68 @@
+{
+	"d" : {
+		"__count":"5",
+		"results" : [
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('H-100')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('H-100')",
+					"type" : "GWSAMPLE_BASIC.Product"
+				},
+				"ProductID" : "H-100",
+				"Name" : "Notebook Basic 15",
+				"WeightMeasure" : "4.000",
+				"WeightUnit" : "KG",
+				"CurrencyCode" : "USD",
+				"Price" : "1966.20"
+			}, {
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('H-NEW')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('H-NEW')",
+					"type" : "GWSAMPLE_BASIC.Product"
+				},
+				"ProductID" : "H-NEW",
+				"Name" : "Notebook New",
+				"WeightMeasure" : null,
+				"WeightUnit" : null,
+				"CurrencyCode" : null,
+				"Price" : null
+			}, {
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('H-1000')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('H-1000')",
+					"type" : "GWSAMPLE_BASIC.Product"
+				},
+				"ProductID" : "H-1000",
+				"Name" : "Notebook Basic 15",
+				"WeightMeasure" : "43.000",
+				"WeightUnit" : "KG",
+				"CurrencyCode" : "JPY",
+				"Price" : "256"
+			}, {
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('H-1002')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('H-1002')",
+					"type" : "GWSAMPLE_BASIC.Product"
+				},
+				"ProductID" : "H-1002",
+				"Name" : "Notebook Basic 15",
+				"WeightMeasure" : "4.200",
+				"WeightUnit" : "KG",
+				"CurrencyCode" : "JPY",
+				"Price" : "956.00"
+			}, {
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('H-1003')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/ProductSet('H-1003')",
+					"type" : "GWSAMPLE_BASIC.Product"
+				},
+				"ProductID" : "H-1003",
+				"Name" : "Notebook Basic 16",
+				"WeightMeasure" : "4.200",
+				"WeightUnit" : "KG",
+				"CurrencyCode" : "BHD",
+				"Price" : "123.456"
+			}
+		]
+	}
+}
