@@ -153,7 +153,7 @@ sap.ui.define([
 					sAdditionalText = aParameters[2] && aParameters[2].ValueListProperty;
 
 				function onSelectionChange(oEvent) {
-					that.setValue(oEvent.getParameter("selectedItem").getText(),
+					that.setValue(oEvent.getParameter("selectedItem").getKey(),
 						oBinding.getContext());
 				}
 
@@ -169,6 +169,13 @@ sap.ui.define([
 				oComboBox.bindItems({
 					model : "ValueList",
 					path : "/" + oValueListMapping.CollectionPath,
+					parameters : {
+						// For value helps it makes sense to share the requests.
+						// Here it would not be necessary to specify $$sharedRequest
+						// as separate value help models will implicitly use
+						// $$sharedRequest.
+						$$sharedRequest : true
+					},
 					template : oItem
 				});
 				oComboBox.attachSelectionChange(onSelectionChange);
