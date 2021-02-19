@@ -35,8 +35,10 @@
 				<Text class="sapUiTinyMarginBeginEnd" text="(Experimental. Makes the grid items act like an inline-block elements.)" />
 			</HBox>
 		</Panel>
-
-		<f:GridContainer id="demoGrid" class="sapUiSmallMargin">
+		<Panel>
+			<Text class="sapUiSmallMarginBegin" id="columnsCountText" />
+		</Panel>
+		<f:GridContainer id="demoGrid" class="sapUiSmallMargin" columnsChange=".onGridColumnsChange">
 			<f:layout>
 				<f:GridContainerSettings rowSize="84px" columnSize="84px" gap="8px" />
 			</f:layout>

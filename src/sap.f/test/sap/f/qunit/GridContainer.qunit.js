@@ -947,6 +947,36 @@ function (
 		}
 	});
 
+	QUnit.test("columnsChange Event", function (assert) {
+		var mSizes = {
+			"300px": 3,
+			"500px": 5,
+			"700px": 7,
+			"1200px": 12,
+			"1600px": 16
+		};
+
+		// listen for layout change event
+		var iColumnsCount;
+		this.oGrid.attachColumnsChange(function (oEvent) {
+			iColumnsCount = oEvent.getParameter("columns");
+		});
+
+		// Arrange
+		this.oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		for (var sWidth in mSizes) {
+
+			// Act
+			this.oGrid.$().width(sWidth);
+			this.oGrid._resize();
+
+			// Assert
+			assert.strictEqual(mSizes[sWidth], iColumnsCount, "columnsChange event was called correctly for width " + sWidth);
+		}
+	});
+
 	QUnit.module("Keyboard mouse and focus handling", {
 		beforeEach: function () {
 
