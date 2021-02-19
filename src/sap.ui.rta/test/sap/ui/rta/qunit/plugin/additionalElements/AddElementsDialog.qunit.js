@@ -1,10 +1,12 @@
 /*global QUnit*/
 
 sap.ui.define([
+	"sap/ui/fl/write/api/FieldExtensibility",
 	"sap/ui/rta/plugin/additionalElements/AddElementsDialog",
 	"sap/base/Log",
 	"sap/ui/thirdparty/sinon-4"
-], function (
+], function(
+	FieldExtensibility,
 	AddElementsDialog,
 	Log,
 	sinon
@@ -76,6 +78,10 @@ sap.ui.define([
 
 	QUnit.module("Given that a AddElementsDialog is available...", {
 		beforeEach: function() {
+			sandbox.stub(FieldExtensibility, "getTexts").resolves({
+				headerText: "extensibilityHeaderText",
+				tooltip: "extensibilityTooltip"
+			});
 			return createDialog().then(function(oAddElementsDialog) {
 				this.oAddElementsDialog = oAddElementsDialog;
 			}.bind(this));
@@ -151,7 +157,7 @@ sap.ui.define([
 			this.oAddElementsDialog.attachOpened(function() {
 				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(this._oBCContainer.getContent().length, 2, "and the Business Context Container has two entries");
-				assert.equal(this._oBCContainer.getContent()[0].getText(), oTextResources.getText("BUSINESS_CONTEXT_TITLE"), "and the first entry is the Title");
+				assert.equal(this._oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
 				assert.equal(this._oBCContainer.getContent()[1].getText(), oTextResources.getText("MSG_NO_BUSINESS_CONTEXTS"), "and the second entry is the No-Context Message");
 				done();
 			});
@@ -166,7 +172,7 @@ sap.ui.define([
 			this.oAddElementsDialog.attachOpened(function() {
 				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(this._oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
-				assert.equal(this._oBCContainer.getContent()[0].getText(), oTextResources.getText("BUSINESS_CONTEXT_TITLE"), "and the first entry is the Title");
+				assert.equal(this._oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
 				assert.equal(this._oBCContainer.getContent()[1].getText(), "Business Context 1", "and the second entry is the First Business Context");
 				assert.equal(this._oBCContainer.getContent()[2].getText(), "Business Context 2", "and the third entry is the Second Business Context");
 				assert.equal(this._oBCContainer.getContent()[3].getText(), "Business Context 3", "and the fourth entry is the Third Business Context");
@@ -190,7 +196,7 @@ sap.ui.define([
 			function fnOnOpen() {
 				assert.ok(this._oBCContainer.getVisible(), "then the Business Context Container is visible");
 				assert.equal(this._oBCContainer.getContent().length, 4, "and the Business Context Container has four entries");
-				assert.equal(this._oBCContainer.getContent()[0].getText(), oTextResources.getText("BUSINESS_CONTEXT_TITLE"), "and the first entry is the Title");
+				assert.equal(this._oBCContainer.getContent()[0].getText(), "extensibilityHeaderText", "and the first entry is the Title");
 				assert.equal(this._oBCContainer.getContent()[1].getText(), "Business Context 1", "and the second entry is the First Business Context");
 				assert.equal(this._oBCContainer.getContent()[2].getText(), "Business Context 2", "and the third entry is the Second Business Context");
 				assert.equal(this._oBCContainer.getContent()[3].getText(), "Business Context 3", "and the fourth entry is the Third Business Context");
