@@ -347,6 +347,49 @@ sap.ui.define([
 		oNavContainer.destroy();
 	});
 
+	QUnit.module("Events", {
+		beforeEach: function () {
+			// Arrange
+			this.nc = new NavContainer({
+				pages: [
+					new sap.m.Page("page1a", {
+						title: "page1a"
+					}),
+					new sap.m.Page("page2a", {
+						title: "page2a"
+					})
+				]
+			});
+		},
+		afterEach: function () {
+			// Cleanup
+			this.nc.destroy();
+			this.nc = null;
+		}
+	});
+
+	QUnit.test("afterNavigate is fired event if no transition", function (assert) {
+		// Arrange
+		var oSinon = sinon.sandbox.create(),
+			oSpy = oSinon.spy(this.nc, "fireAfterNavigate");
+
+		Core.applyChanges();
+
+		// Act
+		this.nc.to("page2a");
+
+		this.nc.attachAfterNavigate(function () {
+			// Assert
+			assert.ok(oSpy.called, "Navigation finished without transition (NavContainer was not rendered) and event was fired");
+		});
+
+		this.nc.backToPage("page1a");
+
+		// Cleanup
+		oSpy.reset();
+		oSinon.restore();
+	});
+
 	QUnit.module("Page change");
 
 	QUnit.test("to page 2", function(assert) {

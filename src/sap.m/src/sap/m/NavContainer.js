@@ -549,7 +549,7 @@ sap.ui.define([
 		}
 	};
 
-	NavContainer.prototype._afterTransitionCallback = function (oNavInfo, oData, oBackData) {
+	NavContainer.prototype._afterNavigation = function (oNavInfo, oData, oBackData) {
 		var oEvent = jQuery.Event("AfterShow", oNavInfo);
 		oEvent.data = oData || {};
 		oEvent.backData = oBackData || {};
@@ -560,15 +560,21 @@ sap.ui.define([
 		oEvent.srcControl = this; // store the element on the event (aligned with jQuery syntax)
 		oNavInfo.from._handleEvent(oEvent);
 
-		this._iTransitionsCompleted++;
-		this._bNavigating = false;
-
 		// BCP: 1870488179 - We call _applyAutoFocus only if autoFocus property is true
 		if (this.getAutoFocus()) {
 			this._applyAutoFocus(oNavInfo);
 		}
 
 		this.fireAfterNavigate(oNavInfo);
+		this._dequeueNavigation();
+	};
+
+	NavContainer.prototype._afterTransitionCallback = function (oNavInfo, oData, oBackData) {
+		this._iTransitionsCompleted++;
+		this._bNavigating = false;
+
+
+		this._afterNavigation(oNavInfo, oData, oBackData);
 		// TODO: destroy HTML? Remember to destroy ALL HTML of several pages when backToTop has been called
 
 		Log.info(this + ": _afterTransitionCallback called, to: " + oNavInfo.toId);
@@ -577,8 +583,6 @@ sap.ui.define([
 			Log.warning(this.toString() + ": target page '" + oNavInfo.toId + "' still has CSS class 'sapMNavItemHidden' after transition. This should not be the case, please check the preceding log statements.");
 			oNavInfo.to.removeStyleClass("sapMNavItemHidden");
 		}
-
-		this._dequeueNavigation();
 	};
 
 	NavContainer.prototype._dequeueNavigation = function () {
@@ -1053,6 +1057,7 @@ sap.ui.define([
 
 				if (!this.getDomRef()) { // the wanted animation has been recorded, but when the NavContainer is not rendered, we cannot animate, so just return
 					Log.info("'Hidden' back navigation in not-rendered NavContainer " + this.toString());
+					this._afterNavigation(oNavInfo, oToPageData, backData);
 					return this;
 				}
 
