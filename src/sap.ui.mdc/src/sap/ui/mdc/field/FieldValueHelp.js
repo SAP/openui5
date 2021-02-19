@@ -193,6 +193,48 @@ sap.ui.define([
 				},
 
 				/**
+				 * Content for suggestion.
+				 *
+				 * To support different types of content (e.g <code>sap.m.Table</code>), a specific wrapper is used
+				 * to map the functionality of the content control to the field help. The content control
+				 * is assigned to the wrapper.
+				 *
+				 * The filter logic must be implemented in the wrapper control.
+				 * The filtering is triggered by user interaction (type ahead, search request, or search from <code>FilterBar</code>).
+				 * (If <code>FilterBar</code> is in <code>LiveMode</code> and in parameters are used, this also triggers filtering.)
+				 *
+				 * <b>Note:</b> If no special content for suggestion is provided the content of the <code>content</code> aggregation is used.
+				 *
+				 * @since 1.88.0
+				 * @experimental As of version 1.88
+				 */
+				suggestContent: {
+					type: "sap.ui.mdc.field.FieldValueHelpContentWrapperBase",
+					multiple: false
+				},
+
+				/**
+				 * Content for dialog.
+				 *
+				 * To support different types of content (e.g <code>sap.m.Table</code>), a specific wrapper is used
+				 * to map the functionality of the content control to the field help. The content control
+				 * is assigned to the wrapper.
+				 *
+				 * The filter logic must be implemented in the wrapper control.
+				 * The filtering is triggered by user interaction (type ahead, search request, or search from <code>FilterBar</code>).
+				 * (If <code>FilterBar</code> is in <code>LiveMode</code> and in parameters are used, this also triggers filtering.)
+				 *
+				 * <b>Note:</b> If no special content for dialog is provided the content of the <code>content</code> aggregation is used.
+				 *
+				 * @since 1.88.0
+				 * @experimental As of version 1.88
+				 */
+				dialogContent: {
+					type: "sap.ui.mdc.field.FieldValueHelpContentWrapperBase",
+					multiple: false
+				},
+
+				/**
 				 * <code>FilterBar</code> control of the field help.
 				 *
 				 * @since 1.60.0
@@ -298,7 +340,7 @@ sap.ui.define([
 
 		this._oObserver.observe(this, {
 			properties: ["filterValue", "conditions", "showConditionPanel", "filterFields"],
-			aggregations: ["content", "filterBar", "_filterBar", "inParameters", "collectiveSearchItems"]
+			aggregations: ["content", "suggestContent", "dialogContent", "filterBar", "_filterBar", "inParameters", "collectiveSearchItems"]
 		});
 
 		this.setBindingContext(null); // don't inherit from parent as this could have a invalid BindingContent to read InParameters...
@@ -346,10 +388,11 @@ sap.ui.define([
 	FieldValueHelp.prototype.invalidate = function(oOrigin) {
 
 		if (oOrigin) {
-			var oWrapper = this.getContent();
+			var oSuggetWrapper = _getWrapper.call(this, true);
+			var oDialogWrapper = _getWrapper.call(this, false);
 			var oDialog = this.getAggregation("_dialog");
 
-			if (oWrapper && oOrigin === oWrapper) {
+			if ((oSuggetWrapper && oOrigin === oSuggetWrapper) || (oDialogWrapper && oOrigin === oDialogWrapper)) {
 				// Wrapper invalidation might need re-rendering (e.g. selection table item leads to re-rendering of CheckBox)
 				// --> invalidate rendering parent (ValueHelpPanel or Popover)
 				var oPopover = this.getAggregation("_popover");
@@ -411,7 +454,7 @@ sap.ui.define([
 
 		if (oPopover) { // empty if loaded async
 			// use Wrapper content in Popover -> overwrite hook
-			var oWrapper = this.getContent();
+			var oWrapper = _getWrapper.call(this, true);
 			if (oWrapper) {
 				oWrapper.initialize(true);
 			}
@@ -442,7 +485,7 @@ sap.ui.define([
 
 		FieldHelpBase.prototype._handleAfterOpen.apply(this, arguments);
 
-		var oWrapper = this.getContent();
+		var oWrapper = _getWrapper.call(this, true);
 		if (oWrapper) {
 			oWrapper.fieldHelpOpen(true);
 		}
@@ -463,7 +506,7 @@ sap.ui.define([
 			return; // already wait for opening
 		}
 
-		var oWrapper = this.getContent();
+		var oWrapper = _getWrapper.call(this, bSuggestion);
 
 		// trigger content loading in event or delegate
 		var fnOpen = function() {
@@ -492,7 +535,7 @@ sap.ui.define([
 
 		this._bOpenHandled = true; // prevent double event and delegate call
 
-		oWrapper = this.getContent(); // as Wrapper could be added synchronously in open event
+		oWrapper = _getWrapper.call(this, bSuggestion); // as Wrapper could be added synchronously in open event
 		if (oWrapper && oWrapper.getFilterEnabled() && !this._bNavigateRunning) { //in running navigation already filtered
 			if (!oWrapper.isSuspended() || bSuggestion) {// in suggestion applyFilter even if suspended (resume)
 				// apply use in-parameter filters
@@ -688,7 +731,10 @@ sap.ui.define([
 
 	FieldValueHelp.prototype._handleAfterClose = function(oEvent) {
 
-		var oWrapper = this.getContent();
+		var oDialog = this.getAggregation("_dialog");
+		var bSuggestion = !oDialog || oEvent.getSource() !== oDialog;
+
+		var oWrapper = _getWrapper.call(this, bSuggestion);
 
 		if (oWrapper) {
 			if (!oWrapper.getAsyncKeyText()) {
@@ -712,6 +758,14 @@ sap.ui.define([
 			var oDialog;
 
 			if (oChanges.name === "content") {
+				_contentChanged.call(this, oChanges.mutation, oChanges.child);
+			}
+
+			if (oChanges.name === "suggestContent") {
+				_contentChanged.call(this, oChanges.mutation, oChanges.child);
+			}
+
+			if (oChanges.name === "dialogContent") {
 				_contentChanged.call(this, oChanges.mutation, oChanges.child);
 			}
 
@@ -837,7 +891,7 @@ sap.ui.define([
 
 	FieldValueHelp.prototype.navigate = function(iStep) {
 
-		var oWrapper = this.getContent();
+		var oWrapper = _getWrapper.call(this, true); // navigate only in suggestion
 		var oPopover = this.getAggregation("_popover");
 
 		// as BindingContext of Field might change (happens in table) update if needed
@@ -850,7 +904,7 @@ sap.ui.define([
 			if (!bSync) {
 				// navigate after delegates promise is resolved
 				// but trigger loading of Popover to use the pending time (otherwise we run in the next async loading afterwards)
-				oWrapper = this.getContent();
+				oWrapper = _getWrapper.call(this, true);
 				this._bNavigate = false; // will be new set if still needed
 				this._iStep = null;
 				if (oWrapper) {
@@ -862,7 +916,7 @@ sap.ui.define([
 
 		this._bNavigate = false; // will be new set if still needed
 		this._iStep = null;
-		oWrapper = this.getContent();
+		oWrapper = _getWrapper.call(this, true);
 
 		if (oWrapper) {
 			// only create popover if content
@@ -938,7 +992,7 @@ sap.ui.define([
 	FieldValueHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName) {
 
 		var vResult = "";
-		var oWrapper = this.getContent();
+		var oWrapper = _getWrapper.call(this, true); // use suggest wrapper to determine text or key
 
 		if (oWrapper) {
 			var oListBinding = oWrapper.getListBinding();
@@ -1094,7 +1148,7 @@ sap.ui.define([
 	FieldValueHelp.prototype._isTextOrKeyRequestSupported = function() {
 
 		// only possible if Wrapper added
-		var oWrapper = this.getContent();
+		var oWrapper = _getWrapper.call(this, true); // use suggest wrapper to determine text or key
 		return !!oWrapper;
 
 	};
@@ -1102,7 +1156,7 @@ sap.ui.define([
 	FieldValueHelp.prototype.isUsableForValidation = function() {
 
 		// if no wrapper only a defineDonditionPanel might be used -> therefore no input validation is possible
-		var oWrapper = this.getContent();
+		var oWrapper = _getWrapper.call(this, true); // use suggest wrapper to determine text or key
 		return !!oWrapper;
 
 	};
@@ -1213,14 +1267,14 @@ sap.ui.define([
 	function _handleDataUpdate(oEvent) {
 
 		var bContentChange = oEvent.getParameter("contentChange");
-		var oWrapper = this.getContent();
-		var bAsyncKeyText = oWrapper.getAsyncKeyText();
+		var oWrapper;
 
 		if (bContentChange) {
 			var oPopover = this.getAggregation("_popover");
 			var oDialog = this.getAggregation("_dialog");
-			if (oWrapper) {
-				if (oPopover && this._bOpenIfContent) {
+			if (oPopover && this._bOpenIfContent) {
+				oWrapper = _getWrapper.call(this, true);
+				if (oWrapper) {
 					var oField = this._getField();
 					if (oField) {
 						oWrapper.fieldHelpOpen(true);
@@ -1229,14 +1283,17 @@ sap.ui.define([
 						_applyFilters.call(this);
 					}
 					this._bOpenIfContent = false;
-				} else if (oDialog) {
+				}
+			} else if (oDialog) {
+				oWrapper = _getWrapper.call(this, false);
+				if (oWrapper) {
 					var oValueHelpPanel = oDialog.getContent()[0];
 					_setContentOnValueHelpPanel.call(this, oValueHelpPanel, oWrapper.getDialogContent());
 				}
 			}
 		}
 
-		if (!bAsyncKeyText) {
+		if (!oWrapper || !oWrapper.getAsyncKeyText()) {
 			// if asynchronously loading of key or description is supported fields needs no update on data change
 			// Format or parse promise waits until table is set and request returned.
 			this.fireDataUpdate();
@@ -1270,10 +1327,16 @@ sap.ui.define([
 			return; // makes only sense if connected
 		}
 
-		var oWrapper = this.getContent();
-		var oOperator = this._getOperator();
+		// TODO: only for the needed wrapper
+		_updateSelectedItemsOnWrapper.call(this, _getWrapper.call(this, true));
+		_updateSelectedItemsOnWrapper.call(this, _getWrapper.call(this, false));
+
+	}
+
+	function _updateSelectedItemsOnWrapper(oWrapper) {
 
 		if (oWrapper) {
+			var oOperator = this._getOperator();
 			var aConditions = this.getConditions();
 			var aItems = [];
 			for (var i = 0; i < aConditions.length; i++) {
@@ -1751,7 +1814,11 @@ sap.ui.define([
 			return;
 		}
 
-		var oWrapper = this.getContent();
+		// TODO: better way to detrmine what wrapper to use
+		var oDialog = this.getAggregation("_dialog");
+		var bSuggestion = !oDialog || !oDialog.isOpen();
+
+		var oWrapper = _getWrapper.call(this, bSuggestion);
 		if (oWrapper) {
 			var oFilterBar = _getFilterBar.call(this);
 			var oConditions;
@@ -1905,13 +1972,18 @@ sap.ui.define([
 
 		// detach event handler before cloning to not have it twice on the clone
 		// attach it after clone again
-		var oWrapper = this.getContent();
+		var aWrappers = [this.getContent(), this.getSuggestContent(), this.getDialogContent()];
 		var oFilterBar = this.getFilterBar();
+		var i = 0;
+		var oWrapper;
 
-		if (oWrapper) {
-			oWrapper.detachEvent("navigate", _handleNavigate, this);
-			oWrapper.detachEvent("selectionChange", _handleSelectionChange, this);
-			oWrapper.detachEvent("dataUpdate", _handleDataUpdate, this);
+		for (i = 0; i < aWrappers.length; i++) {
+			oWrapper = aWrappers[i];
+			if (oWrapper) {
+				oWrapper.detachEvent("navigate", _handleNavigate, this);
+				oWrapper.detachEvent("selectionChange", _handleSelectionChange, this);
+				oWrapper.detachEvent("dataUpdate", _handleDataUpdate, this);
+			}
 		}
 
 		if (oFilterBar) {
@@ -1920,10 +1992,13 @@ sap.ui.define([
 
 		var oClone = FieldHelpBase.prototype.clone.apply(this, arguments);
 
-		if (oWrapper) {
-			oWrapper.attachEvent("navigate", _handleNavigate, this);
-			oWrapper.attachEvent("selectionChange", _handleSelectionChange, this);
-			oWrapper.attachEvent("dataUpdate", _handleDataUpdate, this);
+		for (i = 0; i < aWrappers.length; i++) {
+			oWrapper = aWrappers[i];
+			if (oWrapper) {
+				oWrapper.attachEvent("navigate", _handleNavigate, this);
+				oWrapper.attachEvent("selectionChange", _handleSelectionChange, this);
+				oWrapper.attachEvent("dataUpdate", _handleDataUpdate, this);
+			}
 		}
 
 		if (oFilterBar) {
@@ -2048,7 +2123,7 @@ sap.ui.define([
 
 	function _createValueHelpPanel() {
 
-		var oWrapper = this.getContent();
+		var oWrapper = _getWrapper.call(this, false);
 		var oFilterBar = _getFilterBar.call(this);
 
 		var oValueHelpPanel = new ValueHelpPanel(this.getId() + "-VHP", {
@@ -2370,7 +2445,7 @@ sap.ui.define([
 		}
 
 		var sFilterFields = this.getFilterFields();
-		var oWrapper = this.getContent(); // without content it makes no sense to have a SearchField
+		var oWrapper = _getWrapper.call(this, false); // without content it makes no sense to have a SearchField
 
 		if (sFilterFields && oWrapper) {
 			var oFilterBar = _getFilterBar.call(this);
@@ -2412,7 +2487,7 @@ sap.ui.define([
 
 	function _getSuggestionContent() {
 
-		var oWrapper = this.getContent();
+		var oWrapper = _getWrapper.call(this, true);
 		if (oWrapper) {
 			return oWrapper.getSuggestionContent();
 		}
@@ -2437,7 +2512,7 @@ sap.ui.define([
 		var oDialog = this.getAggregation("_dialog");
 
 		if (oDialog && (oDialog.isOpen() || oDialog.oPopup.getOpenState() === OpenState.OPENING)) { // TODO: better way to get opening state
-			var oWrapper = this.getContent();
+			var oWrapper = _getWrapper.call(this, false);
 			var oContent = oWrapper && oWrapper.getDialogContent();
 			if (oContent && oContent.getScrollDelegate) {
 				return oContent.getScrollDelegate();
@@ -2464,7 +2539,7 @@ sap.ui.define([
 
 		if (!iMaxConditions || iMaxConditions === 1) {
 			return null;
-		} else if (!this.getContent() && this.getShowConditionPanel() && !this.getNoDialog()) { // no table, only condition panel -> no comboBox
+		} else if (!_getWrapper.call(this, false) && this.getShowConditionPanel() && !this.getNoDialog()) { // no table, only condition panel -> no comboBox
 			return null;
 		} else {
 			if (!this._oResourceBundleM) {
@@ -2563,6 +2638,23 @@ sap.ui.define([
 				}
 			}
 		}
+
+	}
+
+	function _getWrapper(bSuggestion) {
+
+		var oWrapper;
+
+		if (bSuggestion) {
+			oWrapper = this.getSuggestContent();
+		} else {
+			oWrapper = this.getDialogContent();
+		}
+
+		if (!oWrapper) {
+			oWrapper = this.getContent();
+		}
+		return oWrapper;
 
 	}
 

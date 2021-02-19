@@ -5,7 +5,6 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:f2="sap.f"
 	xmlns:mdc="sap.ui.mdc"
-	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 	xmlns:mdcc="sap.ui.mdc.chart"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdcl="sap.ui.mdc.link"
@@ -13,6 +12,7 @@
 	xmlns:variants="sap.ui.fl.variants"
 	xmlns="sap.m"
 	xmlns:types="sap.ui.v4demo.types"
+	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 	xmlns:demo="sap.ui.v4demo.controls" controllerName="sap.ui.v4demo.controller.Books">
 		<f2:DynamicPage id="dynamicPage">
 			<f2:title>
@@ -42,7 +42,14 @@
 						<mdc:dependents>
 
 							<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH4" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
-								<mdcf:content>
+								<mdcf:filterBar>
+									<vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {collectionName: 'Books'}}" >
+										<vhfb:filterItems>
+											<mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Title" conditions="{$filters>/conditions/title}" />
+										</vhfb:filterItems>
+									</vhfb:FilterBar>
+								</mdcf:filterBar>
+								<mdcf:suggestContent>
 									<mdcf:FieldValueHelpMTableWrapper>
 										<mdcf:table>
 											<Table items='{path : "/Books"}' width="20rem" growing="true" growingScrollToLoad="true" growingThreshold="20">
@@ -63,7 +70,45 @@
 											</Table>
 										</mdcf:table>
 									</mdcf:FieldValueHelpMTableWrapper>
-								</mdcf:content>
+								</mdcf:suggestContent>
+								<mdcf:dialogContent>
+									<mdcf:FieldValueHelpMTableWrapper>
+										<mdcf:table>
+											<Table items='{path : "/Books"}' width="100%" growing="true" growingScrollToLoad="true" growingThreshold="20">
+												<columns>
+													<Column>
+														<header>
+															<Text text="Title" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="Description" />
+														</header>
+													</Column>
+													<Column>
+														<header>
+															<Text text="Published" />
+														</header>
+													</Column>
+												</columns>
+												<items>
+													<ColumnListItem type="Active">
+														<cells>
+															<Text text="{title}" />
+														</cells>
+														<cells>
+															<Text text="{descr}" wrapping="true" />
+														</cells>
+														<cells>
+															<Text text="{published}" />
+														</cells>
+													</ColumnListItem>
+												</items>
+											</Table>
+										</mdcf:table>
+									</mdcf:FieldValueHelpMTableWrapper>
+								</mdcf:dialogContent>
 							</mdcf:FieldValueHelp>
 
 							<mdcf:FieldValueHelp title="Author ID" id="FH1" noDialog="false"
@@ -210,7 +255,7 @@
 							</mdcf:content>
 							</mdcf:FieldValueHelp>
 
-							
+
 
 							<mdcf:FieldValueHelp title="Sub Genre" id="FHSubGenre" noDialog="false" keyPath="code"
 								descriptionPath="title" showConditionPanel="true"

@@ -391,6 +391,76 @@
 					</mdc:dependents>
 				</mdc:Field>
 
+				<m:Label text="FieldValueHelp with 2 wrappers"></m:Label>
+				<mdc:Field
+					id="F2-7d"
+					value="870394932"
+					additionalValue="Flat Medium"
+					display="DescriptionValue"
+					change="handleChange"
+					liveChange="handleLiveChange"
+					submit="handleSubmit"
+					fieldHelp="FVH-7d">
+					<mdc:dependents>
+							<mdcField:FieldValueHelp id="FVH-7d"
+								title="Product"
+								filterFields="*ProductId,Name*"
+								keyPath="ProductId"
+								descriptionPath="Name"
+								validateInput="false"
+								open="handleAsyncVHOpen"
+								dataRequested="handleAsyncVHOpen">
+								<mdcField:suggestContent>
+									<mdcField:FieldValueHelpMTableWrapper id="FVH-7d-W1">
+											<m:Table items="{path: '/ProductCollection'}" width="26rem">
+												<m:columns>
+													<m:Column>
+														<m:Label text="{/#Product/ProductId/@sap:label}"/>
+													</m:Column>
+													<m:Column width="10rem">
+														<m:Label text="{/#Product/Name/@sap:label}"/>
+													</m:Column>
+												</m:columns>
+												<m:items>
+													<m:ColumnListItem type="Active">
+														<m:Text text="{ProductId}"/>
+														<m:Text text="{Name}"/>
+													</m:ColumnListItem>
+												</m:items>
+											</m:Table>
+										</mdcField:FieldValueHelpMTableWrapper>
+								</mdcField:suggestContent>
+								<mdcField:dialogContent>
+									<mdcField:FieldValueHelpMTableWrapper id="FVH-7d-W2">
+											<m:Table items="{path: '/ProductCollection'}" width="26rem">
+												<m:columns>
+													<m:Column width="10rem">
+														<m:Label text="{/#Product/ProductId/@sap:label}"/>
+													</m:Column>
+													<m:Column width="10rem">
+														<m:Label text="{/#Product/Name/@sap:label}"/>
+													</m:Column>
+													<m:Column>
+														<m:Label text="{/#Product/Description/@sap:label}"/>
+													</m:Column>
+													<m:Column width="2rem">
+														<m:Label text="Icon"></m:Label>
+													</m:Column>
+												</m:columns>
+												<m:items>
+													<m:ColumnListItem type="Active">
+														<m:Text text="{ProductId}"/>
+														<m:Text text="{Name}"/>
+														<m:Text text="{Description}"/>
+														<m:Image src="{= '../../../../../../' + ${ProductPicUrl}}" height="1rem"/>
+													</m:ColumnListItem>
+												</m:items>
+											</m:Table>
+										</mdcField:FieldValueHelpMTableWrapper>
+								</mdcField:dialogContent>
+							</mdcField:FieldValueHelp>
+					</mdc:dependents>
+				</mdc:Field>
 
 
 				<c:Title text="Fields with type Currency"></c:Title>
