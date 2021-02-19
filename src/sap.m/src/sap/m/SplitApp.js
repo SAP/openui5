@@ -19,35 +19,18 @@ sap.ui.define([
 	 *
 	 * @param {string} [sId] ID for the new control, generated automatically if no ID is given
 	 * @param {object} [mSettings] Initial settings for the new control
-	 * A container control that is used to display a master-detail view in an application.
+	 *
 	 * @class
-	 * SplitApp is another possible root element of an SAPUI5 mobile application besides {@link sap.m.App}. It contains two NavContainers if running on tablet or desktop,  and one on phone.
-	 * The display of master NavContainer depends on the portrait/landscape mode of the device and the mode of SplitApp.
-	 * <h3>Structure</h3>
-	 * The SplitApp divides the screen into two areas:
-	 * <ul>
-	 * <li>Master area - contains a list of available items where the user can search and filter.</li>
-	 * <li>Details area - contains a control which shows further details on the item(s) selected from the master view.</li>
-	 * </ul>
-	 * Both areas have separate headers and footer bars with navigation and actions.
+	 * A container control that is used to display a master-detail view, suitable for mobile applications.
+	 *
+	 * <h3>Overview</h3>
+	 * The control extends the functionalities of the {@link sap.m.SplitContainer}.
+	 * It adds certain header tags to the HTML page which are considered useful for mobile applications
+	 * and allows the configuration of the application's home icon via the <code>homeIcon</code> property.
+	 *
 	 * <h3>Usage</h3>
-	 * <h4>When to use</h4>
-	 * <ul>
-	 * <li>You need to review and process different items quickly with minimal navigation.</li>
-	 * </ul>
-	 * <h4>When not to use</h4>
-	 * <ul>
-	 * <li>You need to offer complex filters for the list of items.</li>
-	 * <li>You need to see different attributes for each item in the list, and compare these values across items.</li>
-	 * <li>You want to display a single object. Do not use the master list to display different facets of the same object.</li>
-	 * </ul>
-	 * <h3>Responsive Behavior</h3>
-	 * On narrow screens for phones (or tablet devices in portrait mode), the master list and the details are split into two separate pages.
+	 * SplitApp should take the full width of the page and be used as the root of the application, not as child of another container.
 	 *
-	 * The user can navigate between the list and details, and see all the available information for each area.
-	 *
-	 * <b>Note:</b> The SplitApp should be used only as a root element of an application. It cannot be used as a child
-	 * control of some container.
 	 * @extends sap.m.SplitContainer
 	 *
 	 * @author SAP SE

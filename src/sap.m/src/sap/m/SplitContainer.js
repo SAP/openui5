@@ -39,8 +39,6 @@ function(
 ) {
 	"use strict";
 
-
-
 	// shortcut for sap.m.ButtonType
 	var ButtonType = library.ButtonType;
 
@@ -57,11 +55,35 @@ function(
 	 * @param {object} [mSettings] Initial settings for the new control
 	 *
 	 * @class
-	 * SplitContainer maintains two NavContainers if running on tablet or desktop and one NavContainer - on phone.
-	 * The display of the master NavContainer depends on the portrait/landscape mode of the device and the mode of SplitContainer.
+	 * A container control that is used to display a master-detail view.
 	 *
-	 * NOTE: This control must be rendered as a full screen control in order to make the show/hide master area work properly.
+	 * <h3>Overview</h3>
+	 * The SplitContainer divides the screen into two areas:
+	 * <ul>
+	 * <li>Master area - contains a list of available items where the user can search and filter.</li>
+	 * <li>Details area - contains a control which shows further details on the item(s) selected from the master view.</li>
+	 * </ul>
+	 * Both areas have separate headers and footer bars with navigation and actions.
+	 *
+	 * <h3>Usage</h3>
+	 * SplitContainer should take the full width of the page in order to work properly.
+	 * <h4>When to use</h4>
+	 * <ul>
+	 * <li>You need to review and process different items quickly with minimal navigation.</li>
+	 * </ul>
+	 * <h4>When not to use</h4>
+	 * <ul>
+	 * <li>You need to offer complex filters for the list of items.</li>
+	 * <li>You need to see different attributes for each item in the list, and compare these values across items.</li>
+	 * <li>You want to display a single object. Do not use the master list to display different facets of the same object.</li>
+	 * </ul>
+	 *
+	 * <h3>Responsive Behavior</h3>
+	 * On narrow screens, such as phones or tablet devices in portrait mode, the master list and the details are split into two separate pages.
+	 * The user can navigate between the list and details, and see all the available information for each area.
+	 *
 	 * @extends sap.ui.core.Control
+	 * @author SAP SE
 	 * @version ${version}
 	 *
 	 * @constructor
