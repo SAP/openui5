@@ -471,14 +471,18 @@
         word-wrap: break-word;
     }
 
+	.fig-codeblock {
+		overflow-x: auto;
+	}
+
     pre.codeblock {
-        display: block;
+        display: inline-block;
         padding: .625rem;
         margin: 0 0 .625rem;
         font-size: .8125rem;
         line-height: 1.125rem;
         color: #333;
-        word-break: break-all;
+		white-space: pre;
 
         .emphasis {
             background-color: #fffcb5;
