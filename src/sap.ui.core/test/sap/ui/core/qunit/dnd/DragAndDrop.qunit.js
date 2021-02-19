@@ -197,34 +197,27 @@ sap.ui.define([
 		assert.equal(oEvent.dragSession, null, "No drag session was created for a textarea element");
 	});
 
-	QUnit.test("Text input elements - Workaround for a bug in IE, Firefox and Edge (EdgeHTML)", function(assert) {
+	QUnit.test("Text input elements - Workaround for a bug in Firefox", function(assert) {
 		var oBrowserStub = sinon.stub(Device, "browser");
 		var that = this;
+		var sBrowser = "firefox";
 
-		function testWorkaround(mBrowser) {
-			var sBrowser = Object.keys(mBrowser)[0];
+		oBrowserStub.value({firefox: true});
+		that.oControl.destroyTopItems();
+		that.oControl.addTopItem(new DivControl({elementTag: "input"}));
+		that.oControl.addTopItem(new DivControl({elementTag: "textarea"}));
+		that.oControl.addDragDropConfig(new DragDropInfo());
+		Core.applyChanges();
 
-			oBrowserStub.value(mBrowser);
-			that.oControl.destroyTopItems();
-			that.oControl.addTopItem(new DivControl({elementTag: "input"}));
-			that.oControl.addTopItem(new DivControl({elementTag: "textarea"}));
-			that.oControl.addDragDropConfig(new DragDropInfo());
-			Core.applyChanges();
+		assert.ok(that.oControl.getDomRef().draggable, sBrowser + " - Ancestor is draggable before mousedown");
 
-			assert.ok(that.oControl.getDomRef().draggable, sBrowser + " - Ancestor is draggable before mousedown");
+		["input", "textarea"].forEach(function(sSelectableElementTagName) {
+			that.oControl.$().find(sSelectableElementTagName).trigger("mousedown");
+			assert.notOk(that.oControl.getDomRef().draggable, sBrowser + " - Ancestor is not draggable after mousedown to allow text selection");
 
-			["input", "textarea"].forEach(function(sSelectableElementTagName) {
-				that.oControl.$().find(sSelectableElementTagName).trigger("mousedown");
-				assert.notOk(that.oControl.getDomRef().draggable, sBrowser + " - Ancestor is not draggable after mousedown to allow text selection");
-
-				that.oControl.$().find(sSelectableElementTagName).trigger("mouseup");
-				assert.ok(that.oControl.getDomRef().draggable, sBrowser + " - Ancestor is draggable again after mouseup to allow drag and drop again");
-			});
-		}
-
-		testWorkaround({msie: true});
-		testWorkaround({firefox: true});
-		testWorkaround({edge: true});
+			that.oControl.$().find(sSelectableElementTagName).trigger("mouseup");
+			assert.ok(that.oControl.getDomRef().draggable, sBrowser + " - Ancestor is draggable again after mouseup to allow drag and drop again");
+		});
 
 		oBrowserStub.restore();
 	});

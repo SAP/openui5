@@ -19,13 +19,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
                 // its a touch device (tablet, hybrid)
                 assert.ok(Device.support.touch, "Device is recognized correctly as touch screen");
 
-                if (Device.browser.edge || Device.browser.msie){
-                    // jQuery.mobile.support.touch should not be overriden by Device.support.touch
-                    assert.notOk(jQuery.mobile.support.touch, "The 'ontouchend' event is not available on MS Edge Legacy and MS Internet Explorer");
-                } else {
-                    // jQuery.mobile.support.touch should be overriden by Device.support.touch
-                    assert.ok(jQuery.mobile.support.touch, "The 'ontouchend' event is available on the browser");
-                }
+                // jQuery.mobile.support.touch should be overriden by Device.support.touch
+                assert.ok(jQuery.mobile.support.touch, "The 'ontouchend' event is available on the browser");
 
                 done();
             });

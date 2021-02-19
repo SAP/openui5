@@ -1,7 +1,6 @@
 sap.ui.define([
-	"sap/base/util/merge",
-	"sap/ui/Device"
-], function(merge, Device) {
+	"sap/base/util/merge"
+], function(merge) {
 	"use strict";
 
 	var oCommonTests = {
@@ -17,7 +16,7 @@ sap.ui.define([
 			title: "QUnit Page for sap.ui.test.actions.EnterText",
 			qunit: {
 				testTimeout: 5000,
-				noglobals: !Device.browser.msie
+				noglobals: true
 			},
 			module: "./actions/EnterText.qunit"
 		},
@@ -48,9 +47,7 @@ sap.ui.define([
 				}
 			},
 			qunit: {
-				// The noglobals check is disabled because IE11 creates false negative from the blindlayer
-				// which is kept in the DOM as global variable
-				noglobals: !Device.browser.msie
+				noglobals: true
 			},
 			ui5: {
 				libs: "sap.m"

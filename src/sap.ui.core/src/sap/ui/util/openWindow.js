@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(["sap/ui/Device"], function(Device) {
+sap.ui.define([], function() {
 	"use strict";
 
 	/**
@@ -20,18 +20,6 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 	 */
 	var fnOpenWindow = function openWindow(sUrl, sWindowName) {
 		var sWindowFeatures = "noopener,noreferrer";
-
-		// ensure that, in IE11 or Edge, opener cannot be accessed by early code
-		if (Device.browser.msie || Device.browser.edge) {
-			var oNewWindow = window.open("about:blank", sWindowName, sWindowFeatures);
-
-			if (oNewWindow) {
-				oNewWindow.opener = null;
-				oNewWindow.location.href = sUrl;
-			}
-
-			return null;
-		}
 
 		return window.open(sUrl, sWindowName, sWindowFeatures);
 	};

@@ -5,13 +5,12 @@
 // Provides class sap.ui.model.odata.v2.ODataAnnotations
 sap.ui.define([
 	'sap/ui/model/odata/AnnotationParser',
-	'sap/ui/Device',
 	'sap/ui/base/EventProvider',
 	'sap/ui/core/cache/CacheManager',
 	"sap/base/assert",
 	"sap/ui/thirdparty/jquery"
 ],
-	function(AnnotationParser, Device, EventProvider, CacheManager, assert, jQuery) {
+	function(AnnotationParser, EventProvider, CacheManager, assert, jQuery) {
 	"use strict";
 
 	///////////////////////////////////////////////// Class Definition /////////////////////////////////////////////////
@@ -773,41 +772,11 @@ sap.ui.define([
 		assert(typeof mSource.xml === "string", "Source must contain XML string in order to be parsed");
 
 		return new Promise(function(fnResolve, fnReject) {
-			var oXMLDocument;
-			if (Device.browser.msie) {
-				// IE is a special case: Even though it supports DOMParser with the latest versions, the resulting
-				// document does not support the 'evaluate' method, which leads to a different kind of XPath implementation
-				// being used in the AnnotationParser. Thus IE (the MSXML implementation) must always be handled separately.
-				oXMLDocument = new window.ActiveXObject("Microsoft.XMLDOM");
-				oXMLDocument.preserveWhiteSpace = true;
+			var oXMLDocument = new DOMParser().parseFromString(mSource.xml, 'application/xml');
 
-				// The MSXML implementation does not parse documents with the technically correct "xmlns:xml"-attribute
-				// So if a document contains 'xmlns:xml="http://www.w3.org/XML/1998/namespace"', IE will stop working.
-				// This hack removes the XML namespace declaration which is then implicitly set to the default one.
-				var sXMLContent = mSource.xml;
-				if (sXMLContent.indexOf(" xmlns:xml=") > -1) {
-					sXMLContent = sXMLContent
-						.replace(' xmlns:xml="http://www.w3.org/XML/1998/namespace"', "")
-						.replace(" xmlns:xml='http://www.w3.org/XML/1998/namespace'", "");
-				}
-
-				oXMLDocument.loadXML(sXMLContent);
-			} else if (window.DOMParser) {
-				oXMLDocument = new DOMParser().parseFromString(mSource.xml, 'application/xml');
-			}
-
-			var oError;
-			if (!oXMLDocument) {
-				oError = new Error("The browser does not support XML parsing. Annotations are not available.");
-				oError.source = mSource;
-				fnReject(oError);
-			} else if (
-				// Check for errors: All browsers including IE
-				oXMLDocument.getElementsByTagName("parsererror").length > 0 ||
-				// Check for errors: IE 11 special case
-				(oXMLDocument.parseError && oXMLDocument.parseError.errorCode !== 0)
-			) {
-				oError = new Error("There were errors parsing the XML.");
+			// Check for errors
+			if (oXMLDocument.getElementsByTagName("parsererror").length > 0) {
+				var oError = new Error("There were errors parsing the XML.");
 				oError.source = {
 					type: mSource.type,
 					data: mSource.data,
@@ -831,9 +800,6 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataAnnotations.prototype._parseSource = function(mSource) {
-		// On IE we have a special format for the XML documents on every other browser it must be a "Document" object.
-		assert(mSource.document instanceof window.Document || Device.browser.msie, "Source must contain a parsed XML document converted to an annotation object");
-
 		return this._oMetadata.loaded()
 			.then(function() {
 				mSource.annotations

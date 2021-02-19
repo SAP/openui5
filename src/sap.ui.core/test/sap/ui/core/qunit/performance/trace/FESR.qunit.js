@@ -1,6 +1,6 @@
 /*global QUnit, sinon*/
-sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Interaction', 'sap/ui/performance/XHRInterceptor', 'sap/ui/performance/trace/Passport', 'sap/ui/Device'],
-	function (FESR, Interaction, XHRInterceptor, Passport, Device) {
+sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Interaction', 'sap/ui/performance/XHRInterceptor', 'sap/ui/performance/trace/Passport'],
+	function (FESR, Interaction, XHRInterceptor, Passport) {
 	"use strict";
 
 	var requestCounter = 0;
@@ -217,130 +217,127 @@ sap.ui.define(['sap/ui/performance/trace/FESR', 'sap/ui/performance/trace/Intera
 		oXhrHandle.abort();
 	});
 
-	if (!Device.browser.msie) {
+	QUnit.test("Beacon URL", function(assert) {
+		assert.expect(4);
 
-		QUnit.test("Beacon URL", function(assert) {
-			assert.expect(4);
+		FESR.setActive(true, "example.url");
+		assert.equal(FESR.getBeaconURL(), "example.url", "Returns beacon url");
 
-			FESR.setActive(true, "example.url");
-			assert.equal(FESR.getBeaconURL(), "example.url", "Returns beacon url");
+		FESR.setActive(false);
+		assert.equal(FESR.getBeaconURL(), undefined, "Beacon URL was reset");
+	});
 
-			FESR.setActive(false);
-			assert.equal(FESR.getBeaconURL(), undefined, "Beacon URL was reset");
-		});
+	QUnit.test("Beacon strategy", function(assert) {
+		assert.expect(9);
+		this.clock = sinon.useFakeTimers();
+		window.performance.getEntriesByType = function() { return []; };
+		var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
+		var fileReader = new FileReader();
+		var done = assert.async();
+		// In order to offer protection against timing attacks and fingerprinting, the precision of performance.now() might get rounded depending on browser settings.
+		// In Firefox, the privacy.reduceTimerPrecision preference is enabled by default and defaults to 1ms. (see https://developer.mozilla.org/en-US/docs/Web/API/Performance/now#reduced_time_precision)
+		// Therefore it's necessary to add some fake processing time to avoid filtering of zero duration records
+		var addFakeProcessingTime = function () {
+			// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
+			var notifyAsyncStepCallback;
 
-		QUnit.test("Beacon strategy", function(assert) {
-			assert.expect(9);
-			this.clock = sinon.useFakeTimers();
-			window.performance.getEntriesByType = function() { return []; };
-			var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
-			var fileReader = new FileReader();
-			var done = assert.async();
-			// In order to offer protection against timing attacks and fingerprinting, the precision of performance.now() might get rounded depending on browser settings.
-			// In Firefox, the privacy.reduceTimerPrecision preference is enabled by default and defaults to 1ms. (see https://developer.mozilla.org/en-US/docs/Web/API/Performance/now#reduced_time_precision)
-			// Therefore it's necessary to add some fake processing time to avoid filtering of zero duration records
-			var addFakeProcessingTime = function () {
-				// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
-				var notifyAsyncStepCallback;
+			notifyAsyncStepCallback = Interaction.notifyAsyncStep();
+			this.clock.tick(1);
+			notifyAsyncStepCallback();
+		}.bind(this);
 
-				notifyAsyncStepCallback = Interaction.notifyAsyncStep();
-				this.clock.tick(1);
-				notifyAsyncStepCallback();
-			}.bind(this);
-
-			FESR.setActive(true, "example.url");
-			for (var index = 0; index < 10; index++) {
-				Interaction.start();
-				addFakeProcessingTime();
-				Interaction.end(true);
-			}
-
-			assert.equal(sendBeaconStub.callCount, 1, "Beacon send triggered");
-
-			var urlSendTo = sendBeaconStub.getCall(0).args[0],
-				blobToSend = sendBeaconStub.getCall(0).args[1];
-
-			assert.equal(urlSendTo, "example.url", "Buffer send to example.url");
-			assert.ok(blobToSend instanceof Blob, "Send data is of type blob");
-			assert.ok(sendBeaconStub.getCall(0).args[1].size > 0, "Blob contains FESR data");
-
-			fileReader.onloadend = function(e) {
-				var data = e.target.result;
-				assert.ok(data.startsWith("sap-fesr-only=1"), "Send blob contains fesr-only header");
-				var nSAPPerfFESRecOpt = data.match(/SAP-Perf-FESRec-opt/g).length;
-				var nSAPPerfFESRec = data.match(/SAP-Perf-FESRec=/g).length;
-				assert.equal(nSAPPerfFESRec, 10, "Send blob contains SAP-Perf-FESRec entries");
-				assert.equal(nSAPPerfFESRecOpt, 10, "Send blob contains SAP-Perf-FESRec-opt entries");
-				done();
-			};
-
-			fileReader.readAsText(blobToSend);
-
-			FESR.setActive(false);
-			sendBeaconStub.restore();
-			this.clock.restore();
-		});
-
-		QUnit.test("Beacon timeout", function(assert) {
-			assert.expect(9);
-			this.clock = sinon.useFakeTimers();
-			var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
-			window.performance.getEntriesByType = function() { return []; };
-			var addFakeProcessingTime = function () {
-				// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
-				var notifyAsyncStepCallback;
-
-				notifyAsyncStepCallback = Interaction.notifyAsyncStep();
-				this.clock.tick(1);
-				notifyAsyncStepCallback();
-			}.bind(this);
-
-			FESR.setActive(true, "example.url");
+		FESR.setActive(true, "example.url");
+		for (var index = 0; index < 10; index++) {
 			Interaction.start();
 			addFakeProcessingTime();
 			Interaction.end(true);
-			this.clock.tick(60000);
-			assert.ok(sendBeaconStub.calledOnce, "Beacon called once after 60s");
-			sendBeaconStub.reset();
+		}
 
-			this.clock.tick(30000);
-			Interaction.start();
-			addFakeProcessingTime();
-			Interaction.end(true);
-			this.clock.tick(30000);
-			assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
-			this.clock.tick(30000);
-			assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called 60s after Interaction");
-			sendBeaconStub.reset();
+		assert.equal(sendBeaconStub.callCount, 1, "Beacon send triggered");
 
-			this.clock.tick(30000);
-			Interaction.start();
-			addFakeProcessingTime();
-			Interaction.end(true);
-			this.clock.tick(30000);
-			Interaction.start();
-			addFakeProcessingTime();
-			Interaction.end(true);
-			assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
-			this.clock.tick(30000);
-			assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called 60s after Interaction");
-			sendBeaconStub.reset();
+		var urlSendTo = sendBeaconStub.getCall(0).args[0],
+			blobToSend = sendBeaconStub.getCall(0).args[1];
 
-			Interaction.start();
-			addFakeProcessingTime();
-			Interaction.end(true);
-			FESR.setActive(false);
-			assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called after deactivation");
-			sendBeaconStub.reset();
+		assert.equal(urlSendTo, "example.url", "Buffer send to example.url");
+		assert.ok(blobToSend instanceof Blob, "Send data is of type blob");
+		assert.ok(sendBeaconStub.getCall(0).args[1].size > 0, "Blob contains FESR data");
 
-			this.clock.tick(60000);
-			assert.ok(sendBeaconStub.notCalled, "Beacon not called after deactivation");
+		fileReader.onloadend = function(e) {
+			var data = e.target.result;
+			assert.ok(data.startsWith("sap-fesr-only=1"), "Send blob contains fesr-only header");
+			var nSAPPerfFESRecOpt = data.match(/SAP-Perf-FESRec-opt/g).length;
+			var nSAPPerfFESRec = data.match(/SAP-Perf-FESRec=/g).length;
+			assert.equal(nSAPPerfFESRec, 10, "Send blob contains SAP-Perf-FESRec entries");
+			assert.equal(nSAPPerfFESRecOpt, 10, "Send blob contains SAP-Perf-FESRec-opt entries");
+			done();
+		};
 
-			// cleanup
-			delete window.performance.getEntriesByType;
-			sendBeaconStub.restore();
-			this.clock.restore();
-		});
-	}
+		fileReader.readAsText(blobToSend);
+
+		FESR.setActive(false);
+		sendBeaconStub.restore();
+		this.clock.restore();
+	});
+
+	QUnit.test("Beacon timeout", function(assert) {
+		assert.expect(9);
+		this.clock = sinon.useFakeTimers();
+		var sendBeaconStub = sinon.stub(window.navigator, "sendBeacon").returns(true);
+		window.performance.getEntriesByType = function() { return []; };
+		var addFakeProcessingTime = function () {
+			// trigger notifyAsyncStep manually in order to avoid removal of interactions without processing time
+			var notifyAsyncStepCallback;
+
+			notifyAsyncStepCallback = Interaction.notifyAsyncStep();
+			this.clock.tick(1);
+			notifyAsyncStepCallback();
+		}.bind(this);
+
+		FESR.setActive(true, "example.url");
+		Interaction.start();
+		addFakeProcessingTime();
+		Interaction.end(true);
+		this.clock.tick(60000);
+		assert.ok(sendBeaconStub.calledOnce, "Beacon called once after 60s");
+		sendBeaconStub.reset();
+
+		this.clock.tick(30000);
+		Interaction.start();
+		addFakeProcessingTime();
+		Interaction.end(true);
+		this.clock.tick(30000);
+		assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
+		this.clock.tick(30000);
+		assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called 60s after Interaction");
+		sendBeaconStub.reset();
+
+		this.clock.tick(30000);
+		Interaction.start();
+		addFakeProcessingTime();
+		Interaction.end(true);
+		this.clock.tick(30000);
+		Interaction.start();
+		addFakeProcessingTime();
+		Interaction.end(true);
+		assert.ok(sendBeaconStub.notCalled, "Beacon not called when Interaction occured");
+		this.clock.tick(30000);
+		assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called 60s after Interaction");
+		sendBeaconStub.reset();
+
+		Interaction.start();
+		addFakeProcessingTime();
+		Interaction.end(true);
+		FESR.setActive(false);
+		assert.ok(sendBeaconStub.calledOnce, "Beacon immediately called after deactivation");
+		sendBeaconStub.reset();
+
+		this.clock.tick(60000);
+		assert.ok(sendBeaconStub.notCalled, "Beacon not called after deactivation");
+
+		// cleanup
+		delete window.performance.getEntriesByType;
+		sendBeaconStub.restore();
+		this.clock.restore();
+	});
 
 });

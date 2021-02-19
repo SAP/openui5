@@ -1,156 +1,147 @@
 /*global QUnit, sinon*/
-sap.ui.define(["sap/ui/performance/BeaconRequest", "sap/ui/Device"], function (BeaconRequest, Device) {
+sap.ui.define(["sap/ui/performance/BeaconRequest"], function (BeaconRequest) {
 	"use strict";
 
-	if (!Device.browser.msie) {
+	QUnit.module("BeaconRequest API (happy path)");
 
-		QUnit.module("BeaconRequest API (happy path)");
+	QUnit.test("Browser support", function(assert) {
+		assert.ok(BeaconRequest.isSupported(), "Current browser is supported");
+	});
 
-		QUnit.test("Browser support", function(assert) {
-			assert.ok(BeaconRequest.isSupported(), "Current browser is supported");
+	QUnit.test("Beacon Request object has been initialized successfully", function(assert) {
+		var beaconRequest = new BeaconRequest({
+			url: "example.url"
 		});
 
-		QUnit.test("Beacon Request object has been initialized successfully", function(assert) {
-			var beaconRequest = new BeaconRequest({
-				url: "example.url"
-			});
+		assert.ok(beaconRequest._sUrl, "Url has been set");
+		assert.equal(beaconRequest._nMaxBufferLength, 10, "Max buffer length default value has been set");
+	});
 
-			assert.ok(beaconRequest._sUrl, "Url has been set");
-			assert.equal(beaconRequest._nMaxBufferLength, 10, "Max buffer length default value has been set");
+
+	QUnit.test("Pass all appended data to sendBeacon", function (assert) {
+		var sendBeaconSpy = sinon.stub(window.navigator, "sendBeacon").returns(true);
+
+		var beaconRequest = new BeaconRequest({
+			url: "example.url"
 		});
 
+		beaconRequest.append("key1", "value1");
+		beaconRequest.append("key2", "value2");
+		beaconRequest.send();
 
-		QUnit.test("Pass all appended data to sendBeacon", function (assert) {
-			var sendBeaconSpy = sinon.stub(window.navigator, "sendBeacon").returns(true);
+		var oBlobToCompare = new Blob(["sap-fesr-only=1&key1=value1&key2=value2"], {
+			type: "application/x-www-form-urlencoded;charset=UTF-8"
+		});
+		assert.deepEqual(sendBeaconSpy.getCall(0).args[1], oBlobToCompare, "sendBeacon has been called");
 
-			var beaconRequest = new BeaconRequest({
-				url: "example.url"
-			});
+		sendBeaconSpy.restore();
+	});
 
-			beaconRequest.append("key1", "value1");
-			beaconRequest.append("key2", "value2");
-			beaconRequest.send();
+	QUnit.test("Send data automatically if max buffer length has been reached after append", function (assert) {
 
-			var oBlobToCompare = new Blob(["sap-fesr-only=1&key1=value1&key2=value2"], {
-				type: "application/x-www-form-urlencoded;charset=UTF-8"
-			});
-			assert.deepEqual(sendBeaconSpy.getCall(0).args[1], oBlobToCompare, "sendBeacon has been called");
+		var beaconRequest = new BeaconRequest({
+			url: "example.url"
+		}), maxBufferLength = 10;
 
-			sendBeaconSpy.restore();
+		var sendSpy = sinon.stub(beaconRequest, "send").returns(true);
+
+		var aBuffer = new Array(maxBufferLength - 1).fill({ key: "key", value: "value" });
+
+		aBuffer.forEach(function(bufferValues) {
+			beaconRequest.append(bufferValues.key, bufferValues.value);
 		});
 
-		QUnit.test("Send data automatically if max buffer length has been reached after append", function (assert) {
+		assert.ok(beaconRequest.getBufferLength(), 9, "9 Items have been appended");
+		assert.strictEqual(sendSpy.callCount, 0, "Data has not been send yet");
+		beaconRequest.append("key", "value");
 
-			var beaconRequest = new BeaconRequest({
-				url: "example.url"
-			}), maxBufferLength = 10;
+		assert.ok(beaconRequest.getBufferLength(), 10, "10 Items have been appended");
+		assert.strictEqual(sendSpy.callCount, 1, "Data has been send");
 
-			var sendSpy = sinon.stub(beaconRequest, "send").returns(true);
+		sendSpy.restore();
+	});
 
-			var aBuffer = new Array(maxBufferLength - 1).fill({ key: "key", value: "value" });
+	QUnit.test("Send beacon and clear the buffer when data has been send", function (assert) {
+		var sendBeaconSpy = sinon.stub(window.navigator, "sendBeacon").returns(true);
 
-			aBuffer.forEach(function(bufferValues) {
-				beaconRequest.append(bufferValues.key, bufferValues.value);
-			});
-
-			assert.ok(beaconRequest.getBufferLength(), 9, "9 Items have been appended");
-			assert.strictEqual(sendSpy.callCount, 0, "Data has not been send yet");
-			beaconRequest.append("key", "value");
-
-			assert.ok(beaconRequest.getBufferLength(), 10, "10 Items have been appended");
-			assert.strictEqual(sendSpy.callCount, 1, "Data has been send");
-
-			sendSpy.restore();
+		var beaconRequest = new BeaconRequest({
+			url: "example.url"
 		});
 
-		QUnit.test("Send beacon and clear the buffer when data has been send", function (assert) {
-			var sendBeaconSpy = sinon.stub(window.navigator, "sendBeacon").returns(true);
+		beaconRequest.append("key", "value");
+		beaconRequest.send();
 
-			var beaconRequest = new BeaconRequest({
-				url: "example.url"
-			});
+		assert.strictEqual(sendBeaconSpy.getCall(0).args[0], "example.url", "sendBeacon has been called");
+		assert.strictEqual(beaconRequest.getBufferLength(), 0, "Buffer has been cleared");
 
-			beaconRequest.append("key", "value");
-			beaconRequest.send();
+		sendBeaconSpy.restore();
+	});
 
-			assert.strictEqual(sendBeaconSpy.getCall(0).args[0], "example.url", "sendBeacon has been called");
-			assert.strictEqual(beaconRequest.getBufferLength(), 0, "Buffer has been cleared");
+	QUnit.test("Send beacon on window close", function(assert) {
+		var done = assert.async();
+		assert.expect(2);
 
-			sendBeaconSpy.restore();
+		// setup iframe which will apply a stub on BeaconRequest#send to check
+		// if it is called on the iframe's window unload event - defined in
+		// static/sendBeaconRequest.js
+		var oIframe = document.createElement("iframe");
+		oIframe.setAttribute("src", sap.ui.require.toUrl("performance/static/sendBeaconRequest.html"));
+		document.getElementById('qunit-fixture').appendChild(oIframe);
+
+		// checks if the arrangements in the iframe have been completed
+		function arranged(msg) {
+			assert.equal(msg.data.token, "arranged", "BeaconRequest#send has been replaced");
+			window.removeEventListener("message", arranged);
+			window.addEventListener("message", assertions);
+			oIframe.contentWindow.location.reload();
+		}
+
+		// checks the if the stub has been called
+		function assertions(msg) {
+			assert.equal(msg.data.token, "called", "BeaconRequest#send has been called");
+			window.removeEventListener("message", assertions);
+			done();
+		}
+
+		window.addEventListener("message", arranged);
+	});
+
+	QUnit.test("Do not send beacon if the buffer is empty", function(assert) {
+		var sendBeaconSpy = sinon.stub(window.navigator, "sendBeacon").returns(true);
+
+		var beaconRequest = new BeaconRequest({
+			url: "example.url"
 		});
 
-		QUnit.test("Send beacon on window close", function(assert) {
-			var done = assert.async();
-			assert.expect(2);
+		// do not add anything
+		beaconRequest.send();
 
-			// setup iframe which will apply a stub on BeaconRequest#send to check
-			// if it is called on the iframe's window unload event - defined in
-			// static/sendBeaconRequest.js
-			var oIframe = document.createElement("iframe");
-			oIframe.setAttribute("src", sap.ui.require.toUrl("performance/static/sendBeaconRequest.html"));
-			document.getElementById('qunit-fixture').appendChild(oIframe);
+		assert.ok(sendBeaconSpy.notCalled, "example.url", "sendBeacon has not been called");
 
-			// checks if the arrangements in the iframe have been completed
-			function arranged(msg) {
-				assert.equal(msg.data.token, "arranged", "BeaconRequest#send has been replaced");
-				window.removeEventListener("message", arranged);
-				window.addEventListener("message", assertions);
-				oIframe.contentWindow.location.reload();
-			}
+		sendBeaconSpy.restore();
+	});
 
-			// checks the if the stub has been called
-			function assertions(msg) {
-				assert.equal(msg.data.token, "called", "BeaconRequest#send has been called");
-				window.removeEventListener("message", assertions);
-				done();
-			}
+	QUnit.module("BeaconRequest API (sad path)");
 
-			window.addEventListener("message", arranged);
-		});
+	QUnit.test("Fail if sendBeacon is not supported", function (assert) {
+		var sendBeaconStub = sinon.stub(window, "navigator").value({});
+		assert.notOk(BeaconRequest.isSupported(), "Beacon API should not be supported ");
+		sendBeaconStub.restore();
+	});
 
-		QUnit.test("Do not send beacon if the buffer is empty", function(assert) {
-			var sendBeaconSpy = sinon.stub(window.navigator, "sendBeacon").returns(true);
+	QUnit.test("Throw if check for beacon API support fails in constructor", function (assert) {
+		var sendBeaconStub = sinon.stub(window, "navigator").value({ });
 
-			var beaconRequest = new BeaconRequest({
-				url: "example.url"
-			});
+		assert.throws(function () {
+			(new BeaconRequest());
+		}, new Error("Beacon API is not supported"), "Initialization failed, beacon API not supported");
 
-			// do not add anything
-			beaconRequest.send();
+		sendBeaconStub.restore();
+	});
 
-			assert.ok(sendBeaconSpy.notCalled, "example.url", "sendBeacon has not been called");
-
-			sendBeaconSpy.restore();
-		});
-
-		QUnit.module("BeaconRequest API (sad path)");
-
-		QUnit.test("Fail if sendBeacon is not supported", function (assert) {
-			var sendBeaconStub = sinon.stub(window, "navigator").value({});
-			assert.notOk(BeaconRequest.isSupported(), "Beacon API should not be supported ");
-			sendBeaconStub.restore();
-		});
-
-		QUnit.test("Throw if check for beacon API support fails in constructor", function (assert) {
-			var sendBeaconStub = sinon.stub(window, "navigator").value({ });
-
-			assert.throws(function () {
-				(new BeaconRequest());
-			}, new Error("Beacon API is not supported"), "Initialization failed, beacon API not supported");
-
-			sendBeaconStub.restore();
-		});
-
-		QUnit.test("Throw if beacon url was not set", function (assert) {
-			assert.throws(function () {
-				(new BeaconRequest());
-			}, new Error("Beacon url must be valid"), "Initialization failed, no beacon url provided");
-		});
-
-	} else {
-		QUnit.test("Browser support", function(assert) {
-			assert.notOk(BeaconRequest.isSupported(), "IE is not supported");
-		});
-	}
-
+	QUnit.test("Throw if beacon url was not set", function (assert) {
+		assert.throws(function () {
+			(new BeaconRequest());
+		}, new Error("Beacon url must be valid"), "Initialization failed, no beacon url provided");
+	});
 });

@@ -8,15 +8,14 @@
 			window["sap-ui-config"] = {debug: true};
 			return new Promise(function(resolve) {
 				sap.ui.require(["sap/base/Log", "sap/ui/Device"], function(Log, Device) {
-					this.bIsNormalizePolyfillNeeded = !String.prototype.normalize && Device.system.desktop;
 					Log.logSupportInfo(true);
 					Log.setLevel(4);
 					sap.ui.require(["sap/ui/core/Core"], function(core) {
 						core.boot();
 						core.attachInit(resolve);
 					});
-				}.bind(this));
-			}.bind(this));
+				});
+			});
 		},
 		after: function(assert) {
 			var iLoadedModuleIndex = 0;
@@ -30,12 +29,6 @@
 			var fnGetModuleName = function(iPosition){
 				return this.requireSyncStub.getCall(iPosition).args[0];
 			}.bind(this);
-
-			// the Normalize Polyfill is optionally required sync by the FilterProcessor
-			if (this.bIsNormalizePolyfillNeeded) {
-				fnAssertRequireSync("sap/base/strings/NormalizePolyfill");
-				iExpectedMaxSyncCalls++;
-			}
 
 			// In case preloads are used, there is also an additional sync request for the sap.ui.core library-preload.js
 			if (fnGetModuleName(iLoadedModuleIndex) === "sap/ui/core/library-preload") {

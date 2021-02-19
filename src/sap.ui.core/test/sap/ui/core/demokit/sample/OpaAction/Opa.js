@@ -3,7 +3,6 @@
 QUnit.config.autostart = false;
 
 sap.ui.require([
-	"sap/ui/Device",
 	"sap/ui/test/Opa5",
 	"sap/ui/test/opaQunit",
 	"sap/ui/test/matchers/AggregationLengthEquals",
@@ -15,8 +14,7 @@ sap.ui.require([
 	"sap/ui/test/actions/EnterText",
 	"sap/ui/test/actions/Drag",
 	"sap/ui/test/actions/Drop"
-], function (Device,
-			 Opa5,
+], function (Opa5,
 			 opaTest,
 			 AggregationLengthEquals,
 			 Ancestor,
@@ -28,8 +26,6 @@ sap.ui.require([
 			 Drag,
 			 Drop) {
 	"use strict";
-
-	var bIsIE11 = Device.browser.msie && Device.browser.version < 12;
 
 	Opa5.extendConfig({
 		viewNamespace: "appUnderTest.view.",
@@ -227,48 +223,41 @@ sap.ui.require([
 
 	QUnit.module("Drag and drop");
 
-	if (bIsIE11) {
-		opaTest("Should not execute drag and drop tests in IE11", function (Given, When, Then) {
-			Opa5.assert.ok(true, "Should not execute drag and drop tests in IE11");
-			Then.iTeardownMyApp();
+	opaTest("Should rearrange items in a list using drag and drop", function (Given, When, Then) {
+		When.waitFor({
+			controlType: "sap.m.StandardListItem",
+			matchers: new BindingPath({
+				path: "/ProductCollection/1",
+				modelName: "orderedListModel"
+			}),
+			actions: new Drag()
 		});
-	} else {
-		opaTest("Should rearrange items in a list using drag and drop", function (Given, When, Then) {
-			When.waitFor({
-				controlType: "sap.m.StandardListItem",
-				matchers: new BindingPath({
-					path: "/ProductCollection/1",
-					modelName: "orderedListModel"
-				}),
-				actions: new Drag()
-			});
 
-			When.waitFor({
-				controlType: "sap.m.StandardListItem",
-				matchers: new BindingPath({
-					path: "/ProductCollection/5",
-					modelName: "orderedListModel"
-				}),
-				actions: new Drop({
-					before: true
-				})
-			});
-
-			Then.waitFor({
-				controlType: "sap.m.List",
-				matchers: function (oList) {
-					return oList.getItems().splice(4, 2);
-				},
-				success: function (aItems) {
-					// assert that items are reordered
-					Opa5.assert.strictEqual(aItems[0][0].getTitle(), "Notebook Basic 17", "The second item was dropped in place");
-					Opa5.assert.strictEqual(aItems[0][1].getTitle(), "Notebook Professional 15", "The second item was dropped before the sixth item");
-				}
-			});
-
-			Then.iTeardownMyApp();
+		When.waitFor({
+			controlType: "sap.m.StandardListItem",
+			matchers: new BindingPath({
+				path: "/ProductCollection/5",
+				modelName: "orderedListModel"
+			}),
+			actions: new Drop({
+				before: true
+			})
 		});
-	}
+
+		Then.waitFor({
+			controlType: "sap.m.List",
+			matchers: function (oList) {
+				return oList.getItems().splice(4, 2);
+			},
+			success: function (aItems) {
+				// assert that items are reordered
+				Opa5.assert.strictEqual(aItems[0][0].getTitle(), "Notebook Basic 17", "The second item was dropped in place");
+				Opa5.assert.strictEqual(aItems[0][1].getTitle(), "Notebook Professional 15", "The second item was dropped before the sixth item");
+			}
+		});
+
+		Then.iTeardownMyApp();
+	});
 
 	QUnit.module("Select buttons in a responsive toolbar");
 
@@ -342,10 +331,6 @@ sap.ui.require([
 		Then.iShouldCheckTheResult("Always Visible");
 
 		// press the toggle button to show the overflowing content
-		if (bIsIE11) {
-			// press button twice to workaround issue with focus in popovers in IE11
-			When.pressToggleButton("toolbar-overflow");
-		}
 		When.pressToggleButton("toolbar-overflow");
 		// press a button that is in the overflow popover
 		When.iPressToolbarButton("toolbar-overflow", "Overflowing");

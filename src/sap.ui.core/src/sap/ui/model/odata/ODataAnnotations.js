@@ -8,14 +8,10 @@ sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
 	"sap/base/util/isEmptyObject",
-	"sap/ui/Device",
 	"sap/ui/base/EventProvider",
 	"sap/ui/thirdparty/jquery"
-], function (AnnotationParser, assert, Log, isEmptyObject, Device, EventProvider, jQuery) {
+], function (AnnotationParser, assert, Log, isEmptyObject, EventProvider, jQuery) {
 	"use strict";
-
-	/*global ActiveXObject */
-
 
 
 	/**
@@ -278,31 +274,11 @@ sap.ui.define([
 			vXML = null;
 		}
 
-		if (Device.browser.msie) {
-			// IE creates an XML Document, but we cannot use it since it does not support the
-			// evaluate-method. So we have to create a new document from the XML string every time.
-			// This also leads to using a difference XPath implementation @see getXPath
-			oXMLDoc = new ActiveXObject("Microsoft.XMLDOM"); // ??? "Msxml2.DOMDocument.6.0"
-			oXMLDoc.preserveWhiteSpace = true;
-
-			// The MSXML implementation does not parse documents with the technically correct "xmlns:xml"-attribute
-			// So if a document contains 'xmlns:xml="http://www.w3.org/XML/1998/namespace"', IE will stop working.
-			// This hack removes the XML namespace declaration which is then implicitly set to the default one.
-			if (sXMLContent.indexOf(" xmlns:xml=") > -1) {
-				sXMLContent = sXMLContent
-					.replace(' xmlns:xml="http://www.w3.org/XML/1998/namespace"', "")
-					.replace(" xmlns:xml='http://www.w3.org/XML/1998/namespace'", "");
-			}
-
-			oXMLDoc.loadXML(sXMLContent);
-		} else if (vXML) {
+		if (vXML) {
 			oXMLDoc = vXML;
-		} else if (window.DOMParser) {
-			oXMLDoc = new DOMParser().parseFromString(sXMLContent, 'application/xml');
 		} else {
-			Log.fatal("The browser does not support XML parsing. Annotations are not available.");
+			oXMLDoc = new DOMParser().parseFromString(sXMLContent, 'application/xml');
 		}
-
 
 		return oXMLDoc;
 	};
@@ -314,12 +290,7 @@ sap.ui.define([
 	 * @return {boolean} true if errors exist false otherwise
 	 */
 	ODataAnnotations.prototype._documentHasErrors = function(oXMLDoc) {
-		return (
-			// All browsers including IE
-			oXMLDoc.getElementsByTagName("parsererror").length > 0
-			// IE 11 special case
-			|| (oXMLDoc.parseError && oXMLDoc.parseError.errorCode !== 0)
-		);
+		return oXMLDoc.getElementsByTagName("parsererror").length > 0;
 	};
 
 	/**

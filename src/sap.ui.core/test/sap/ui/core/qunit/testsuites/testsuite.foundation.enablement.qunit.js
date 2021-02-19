@@ -31,9 +31,6 @@ sap.ui.define(function() {
 			"base/strings/hyphenate": {
 				title: "QUnit Page for hyphenate"
 			},
-			"base/strings/NormalizePolyfill": {
-				title: "QUnit Page for NormalizePolyfill"
-			},
 			"base/strings/toHex": {
 				title: "QUnit Page for toHex"
 			},
@@ -111,10 +108,6 @@ sap.ui.define(function() {
 			},
 			"util/Storage": {
 				title: "QUnit Page for Storage"
-			},
-			"util/jquery.sap.promise": {
-				title: "QUnit Page for jquery.sap.promise",
-				group: "jQuery plugins"
 			},
 			"util/SapPcpWebSocket": {
 				title: "QUnit Page for SapPcpWebSocket"

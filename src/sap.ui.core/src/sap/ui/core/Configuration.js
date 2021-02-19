@@ -77,7 +77,6 @@ sap.ui.define([
 	var Configuration = BaseObject.extend("sap.ui.core.Configuration", /** @lends sap.ui.core.Configuration.prototype */ {
 
 		constructor : function(oCore) {
-
 			this._oCore = oCore;
 
 			function detectLanguage() {
@@ -253,7 +252,7 @@ sap.ui.define([
 
 			function getMetaTagValue(sName) {
 				var oMetaTag = document.querySelector("META[name='" + sName + "']"),
-				    sMetaContent = oMetaTag && oMetaTag.getAttribute("content");
+					sMetaContent = oMetaTag && oMetaTag.getAttribute("content");
 				if (sMetaContent) {
 					return sMetaContent;
 				}
@@ -552,12 +551,6 @@ sap.ui.define([
 			} else {
 				// Validate and set the provided value for the animation mode
 				this.setAnimationMode(this.getAnimationMode());
-			}
-
-			// disable the css variables in case of IE11
-			if (Device.browser.msie && config["xx-cssVariables"] !== "false") {
-				config["xx-cssVariables"] = "false";
-				Log.warning("The option xx-cssVariables is not supported on Microsoft Internet Explorer!");
 			}
 		},
 
@@ -1182,7 +1175,7 @@ sap.ui.define([
 		 * @returns {boolean} whether the design mode is active or not.
 		 * @since 1.13.2
 		 * @private
-	 	 * @ui5-restricted sap.watt, com.sap.webide
+		 * @ui5-restricted sap.watt, com.sap.webide
 		 */
 		getDesignMode : function() {
 			return this["xx-designMode"];
@@ -1194,7 +1187,7 @@ sap.ui.define([
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.13.2
 		 * @private
-	 	 * @ui5-restricted sap.watt, com.sap.webide
+		 * @ui5-restricted sap.watt, com.sap.webide
 		 */
 		getSuppressDeactivationOfControllerCode : function() {
 			return this["xx-suppressDeactivationOfControllerCode"];
@@ -1206,7 +1199,7 @@ sap.ui.define([
 		 * @returns {boolean} whether the activation of the controller code is suppressed or not
 		 * @since 1.26.4
 		 * @private
-	 	 * @ui5-restricted sap.watt, com.sap.webide
+		 * @ui5-restricted sap.watt, com.sap.webide
 		 */
 		getControllerCodeDeactivated : function() {
 			return this.getDesignMode() && !this.getSuppressDeactivationOfControllerCode();

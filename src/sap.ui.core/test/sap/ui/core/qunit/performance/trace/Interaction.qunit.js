@@ -1,8 +1,7 @@
 /*global QUnit */
 sap.ui.define([
-	'sap/ui/performance/trace/Interaction',
-	'sap/ui/Device'
-], function(Interaction, Device) {
+	'sap/ui/performance/trace/Interaction'
+], function(Interaction) {
 	"use strict";
 
 	QUnit.module("Interaction API", {
@@ -132,12 +131,8 @@ sap.ui.define([
 		var xhr = new XMLHttpRequest();
 		xhr.open("www.sap.com", "GET");
 		xhr.setRequestHeader("header", "value");
-		try {
-			xhr.setRequestHeader(null, null); // IE11 throws on this call
-			assert.ok(true, "no exception was raised on valid parammeters");
-		} catch (e) {
-			assert.ok(Device.browser.msie, "exception was raised for IE 11");
-		}
+		xhr.setRequestHeader(null, null);
+		assert.ok(true, "no exception was raised on valid parammeters");
 	});
 
 });

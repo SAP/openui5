@@ -2,10 +2,9 @@ sap.ui.define([
 	"./testfwk",
 	"jquery.sap.sjax",
 	"sap/base/strings/escapeRegExp",
-	"sap/ui/Device",
 	"sap/ui/core/Core",
 	"sap/ui/util/Storage"
-], function(testfwk, jQuery, escapeRegExp, Device, oCore, Storage) {
+], function(testfwk, jQuery, escapeRegExp, oCore, Storage) {
 	"use strict";
 
 	oCore.attachInit(function onLoadPage() {
@@ -347,7 +346,7 @@ sap.ui.define([
 
 		var whenLoaded = Promise.resolve();
 
-		if ( !Device.browser.msie && (forceRefresh || !restoreData()) ) {
+		if ( forceRefresh || !restoreData() ) {
 
 			whenLoaded = new Promise(function(resolve) {
 				// load discovery lazily as it fails for IE11

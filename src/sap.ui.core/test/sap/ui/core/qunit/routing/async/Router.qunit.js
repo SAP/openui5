@@ -17,11 +17,10 @@ sap.ui.define([
 	"sap/m/SplitContainer",
 	"./AsyncViewModuleHook",
 	"sap/ui/base/EventProvider",
-	"sap/ui/Device",
 	"sap/ui/core/Component",
 	"sap/ui/core/ComponentContainer",
 	"sap/m/VBox"
-], function (Log, UIComponent, Controller, JSView, View, HashChanger, RouterHashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Device, Component, ComponentContainer, VBox) {
+], function (Log, UIComponent, Controller, JSView, View, HashChanger, RouterHashChanger, Router, Views, JSONModel, App, Button, NavContainer, Panel, SplitContainer, ModuleHook, EventProvider, Component, ComponentContainer, VBox) {
 	"use strict";
 
 	// This global namespace is used for creating custom component classes.
@@ -345,41 +344,6 @@ sap.ui.define([
 		assert.strictEqual(oRouter._oConfig, null, "did free the config");
 		assert.strictEqual(oRouter._oViews, null, "did free the view cache");
 
-	});
-
-	QUnit.test("Shouldn't cause error when router is destroyed before the triggered target is displayed", function(assert) {
-		var oSandbox = sinon.createSandbox();
-
-		oSandbox.stub(Device, "browser").value({
-			edge: true
-		});
-
-		var oRouter = fnCreateRouter([{
-			name: "myRoute",
-			pattern : "foo",
-			target: "home"
-		}], {}, null, {
-			myTarget : {
-				home: {
-				}
-			}
-		});
-
-		var oTargets = oRouter.getTargets();
-		var oRoute = oRouter.getRoute("myRoute");
-		var oDisplayStub = oSandbox.stub(oTargets, "_display").callsFake(function() {});
-
-		var oRouteMatchedSpy = oSandbox.spy(oRoute, "_routeMatched");
-		oRouter.parse("foo");
-		// destroy the router immediately after trigger the route matched logic
-		oRouter.destroy();
-
-		assert.equal(oRouteMatchedSpy.callCount, 1, "The route is matched");
-
-		return oRouteMatchedSpy.returnValues[0].then(function() {
-			assert.equal(oDisplayStub.callCount, 0, "The target isn't displayed because the router is already destroyed");
-			oSandbox.restore();
-		});
 	});
 
 	QUnit.test("Should log a warning if a router gets destroyed while the hash changes", function (assert) {

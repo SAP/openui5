@@ -1,22 +1,20 @@
 /*global QUnit */
 sap.ui.define([
-    "sap/ui/core/util/MockServer",
-    "sap/ui/core/Control",
-    "sap/ui/core/Element",
-    "sap/ui/model/odata/ODataModel",
-    "jquery.sap.global",
-    "sap/ui/Device",
-    "sap/ui/model/odata/v2/ODataModel",
-    "sap/ui/commons/Label",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/core/Control",
+	"sap/ui/core/Element",
+	"sap/ui/model/odata/ODataModel",
+	"jquery.sap.global",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/commons/Label",
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/base/util/isEmptyObject"
 ], function(
-    MockServer,
+	MockServer,
 	Control,
 	Element,
 	ODataModel,
 	jQuery,
-	Device,
 	v2ODataModel,
 	Label,
 	createAndAppendDiv,
@@ -1224,10 +1222,6 @@ sap.ui.define([
 
 
 	QUnit.test("test Callbacks Merge", function (assert) {
-		if (Device.browser.msie) {
-			assert.ok(true, "IE does not support HTTP MERGE");
-			return;
-		}
 		iTesterPre = 0;
 		iTesterPost = 0;
 
@@ -1284,10 +1278,6 @@ sap.ui.define([
 
 
 	QUnit.test("test Callbacks Patch", function (assert) {
-		if (Device.browser.msie) {
-			assert.ok(true, "IE does not support HTTP PATCH");
-			return;
-		}
 		iTesterPre = 0;
 		iTesterPost = 0;
 

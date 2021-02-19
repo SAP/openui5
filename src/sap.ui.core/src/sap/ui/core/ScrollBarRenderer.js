@@ -25,7 +25,6 @@ sap.ui.define(['sap/ui/Device', "sap/ui/dom/getScrollbarSize"],
 	 * @param {sap.ui.core.Control} oControl Object representation of the control that should be rendered
 	 */
 	ScrollBarRenderer.render = function(oRM, oScrollBar){
-
 		var bRTL = sap.ui.getCore().getConfiguration().getRTL();
 
 		oRM.openStart("div", oScrollBar);
@@ -45,15 +44,6 @@ sap.ui.define(['sap/ui/Device', "sap/ui/dom/getScrollbarSize"],
 		var oBSS = getScrollbarSize(sScrollBarTouchClass);
 		var sWidth = oBSS.width;
 		var sHeight = oBSS.height;
-		// Fix for Fiori Client and Edge in Mobile Mode on Win8 and Win10
-		if (Device.browser.edge) {
-			if (!sWidth) {
-				sWidth = "15";
-			}
-			if (!sHeight) {
-				sHeight = "15";
-			}
-		}
 
 		if (bVertical) {
 			// First div. <div style="overflow:hidden;width:16px;height:200px">

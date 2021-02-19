@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /*global QUnit */
-sap.ui.define(['sap/base/util/array/uniqueSort', 'sap/ui/Device'], function(uniqueSort, Device) {
+sap.ui.define(['sap/base/util/array/uniqueSort'], function(uniqueSort) {
 	"use strict";
 
 	QUnit.module("uniqueSort");
@@ -23,24 +23,14 @@ sap.ui.define(['sap/base/util/array/uniqueSort', 'sap/ui/Device'], function(uniq
 	});
 
 	QUnit.test("basic object test", function(assert) {
-		var assertSameElements = Device.browser.msie || Device.browser.edge ?
-			function(actual, expected, message) {
-				// IE and the old edge do not guarantee a stable sort order
-				// therefore only check for duplicate removals
-				assert.strictEqual(actual.length, expected.length, message + " (actual and expected array have same length)");
-				expected.forEach(function(elem, idx) {
-					assert.ok(actual.indexOf(elem) >= 0, message + " (actual array contains expected element at position " + idx + ")");
-				});
-			} : assert.deepEqual.bind(assert);
-
 		var a = {name: "a"};
 		var b = {name: "b"};
 		var c = {name: "c"};
 
-		assertSameElements(uniqueSort([a, b, c]), [a, b, c], "identity");
-		assertSameElements(uniqueSort([c, b, a]), [c, b, a], "resort");
-		assertSameElements(uniqueSort([c, c, b, a, c, b, a]), [c, b, a], "removal of duplicates");
-		assertSameElements(uniqueSort([a, a, a, a]), [a], "reduce to one");
+		assert.deepEqual(uniqueSort([a, b, c]), [a, b, c], "identity");
+		assert.deepEqual(uniqueSort([c, b, a]), [c, b, a], "resort");
+		assert.deepEqual(uniqueSort([c, c, b, a, c, b, a]), [c, b, a], "removal of duplicates");
+		assert.deepEqual(uniqueSort([a, a, a, a]), [a], "reduce to one");
 
 		// same reference
 		var aInplace1 = [c, c, b, a, c, b, a];

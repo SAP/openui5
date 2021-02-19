@@ -2,9 +2,8 @@
 sap.ui.define([
 	'sap/ui/model/FilterProcessor',
 	'sap/ui/model/Filter',
-	'sap/ui/model/FilterOperator',
-	'sap/ui/Device'
-], function(FilterProcessor, Filter, FilterOperator, Device) {
+	'sap/ui/model/FilterOperator'
+], function(FilterProcessor, Filter, FilterOperator) {
 	"use strict";
 
 	QUnit.module("sap.ui.model.FilterProcessor");
@@ -414,7 +413,6 @@ if (String.prototype.normalize) {
 	QUnit.test("Caching of normalized values", function (assert) {
 		var aData = ["Wakeboarding", "Skateboarding", "Tennis", "Marathon", "Cycling",
 				"Snowboarding", "Surfing"],
-			iExpectedCalls = 9,
 			oFilter = new Filter({
 				filters: [
 					new Filter({operator : FilterOperator.EQ, path : ".", value1 : "Tennis"}),
@@ -430,14 +428,8 @@ if (String.prototype.normalize) {
 		// code under test
 		aFiltered = FilterProcessor.apply(aData, oFilter, function (s) { return s; }, {});
 
-		// Internet Explorer has two normalize calls per unique value, due to issues with
-		// toUpperCase on not normalized characters
-		if (Device.browser.msie || Device.browser.edge) {
-			iExpectedCalls = iExpectedCalls * 2;
-		}
-
 		assert.strictEqual(aFiltered.length, 2, "Two results found");
-		assert.strictEqual(oSpy.callCount, iExpectedCalls,
+		assert.strictEqual(oSpy.callCount, 9,
 			"Normalize is only called once per unique data or filter value");
 		oSpy.restore();
 	});

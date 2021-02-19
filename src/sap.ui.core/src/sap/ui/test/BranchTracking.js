@@ -94,22 +94,12 @@
 	 */
 	function instrument(oConfiguration, fnSuccess){
 		var bBranchTracking = blanket.options("branchTracking"),
-			bComment = false, // interested in meta comments?
-			Device,
 			iFileIndex = aFileNames.length,
 			sFileName = oConfiguration.inputFileName,
 			iNoOfOutputLines,
 			sScriptInput = oConfiguration.inputFile,
 			sScriptOutput;
 
-		if (sScriptInput.indexOf("// sap-ui-cover-browser msie") >= 0) {
-			bComment = true; // needed by isDeviceSpecificBlock(), no matter which device
-			Device = sap.ui.require("sap/ui/Device");
-			if (Device && Device.browser.msie) {
-				// no need to call isChildOfIgnoredNode()
-				Device = undefined;
-			}
-		}
 		aFileNames.push(sFileName);
 		aStatistics[iFileIndex] = _$blanket[sFileName] = []; // hits
 		if (bBranchTracking) {
@@ -120,14 +110,14 @@
 		_$blanket[sFileName].warnings = [];
 
 		sScriptOutput = "" + falafel(sScriptInput, {
-				attachComment : bComment,
-				comment : bComment,
+//				attachComment : true, // interesting for meta comments!
+//				comment : true,
 				loc : true,
 				range : true,
 				source : sScriptInput // is simply attached to each Location
 //				tokens : false,
 //				tolerant : false
-			}, visit.bind(null, bBranchTracking, iFileIndex, Device));
+			}, visit.bind(null, bBranchTracking, iFileIndex));
 
 		iNoOfOutputLines = sScriptOutput.split("\n").length + 1; // account for line 0 here as well
 		if (iNoOfOutputLines !== _$blanket[sFileName].source.length) {
@@ -136,60 +126,6 @@
 		}
 
 		fnSuccess(sScriptOutput);
-	}
-
-	/**
-	 * Returns whether the given node or one of its ancestors is device-specific for a device
-	 * other than what the given <code>Device</code> indicates.
-	 *
-	 * @param {sap.ui.Device} Device
-	 *   Device
-	 * @param {object} oNode
-	 *   AST node
-	 * @returns {boolean}
-	 *   Whether the given node or one of its ancestors is device-specific for another device
-	 */
-	function isChildOfIgnoredNode(Device, oNode) {
-		if (!("$ignored" in oNode)) {
-			if (oNode.parent && isChildOfIgnoredNode(Device, oNode.parent)) {
-				oNode.$ignored = true;
-			} else { // ignore device-specific code on other devices
-				oNode.$ignored = oNode.type === "BlockStatement"
-					&& isDeviceSpecificBlock(Device, oNode);
-			}
-		}
-		return oNode.$ignored;
-	}
-
-	/**
-	 * Returns whether the given block statement node is device-specific (in general, or for a
-	 * device other than what the given <code>Device</code> indicates).
-	 *
-	 * @param {sap.ui.Device} [Device]
-	 *   Optional device API; without it, the meta comment alone counts
-	 * @param {object} oNode
-	 *   AST node
-	 * @returns {boolean}
-	 *   Whether the given block statement node is device-specific for another device
-	 */
-	function isDeviceSpecificBlock(Device, oNode) {
-		/*
-		 * Tells whether the given comment is a meta comment for device-specific code (in general,
-		 * if no <code>Device</code> is available, or for a device other than what the available
-		 * <code>Device</code> indicates).
-		 *
-		 * @param {string} oComment
-		 *   A single block or end-of-line comment
-		 * @returns {boolean}
-		 *   Whether the given comment is a meta comment for device-specific code (see above)
-		 */
-		function isNotForDevice(oComment) {
-			return oComment.type === "Line" && oComment.value === " sap-ui-cover-browser msie"
-				&& !(Device && Device.browser.msie);
-		}
-
-		return oNode.body[0] && oNode.body[0].leadingComments
-			&& oNode.body[0].leadingComments.some(isNotForDevice);
 	}
 
 	/**
@@ -218,8 +154,6 @@
 	 *   Whether branch tracking is on
 	 * @param {number} iFileIndex
 	 *   The current file's index
-	 * @param {sap.ui.Device} [Device]
-	 *   Device
 	 * @param {object} oNode
 	 *   AST node
 	 * @returns {boolean}
@@ -227,7 +161,7 @@
 	 *   meant to keep track for future internal usage and is actually ignored by Falafel's
 	 *   <code>walk</code>.
 	 */
-	function visit(bBranchTracking, iFileIndex, Device, oNode) {
+	function visit(bBranchTracking, iFileIndex, oNode) {
 		var aHits = aStatistics[iFileIndex],
 			aBranchTracking = aHits.branchTracking,
 			iLine = oNode.loc.start.line,
@@ -268,10 +202,6 @@
 		function operator() {
 			return oNode.loc.source.slice(oNode.left.range[1], oNode.right.range[0])
 				.replace(rParentheses, "");
-		}
-
-		if (Device && isChildOfIgnoredNode(Device, oNode)) {
-			return false;
 		}
 
 		switch (oNode.type) {
@@ -351,10 +281,6 @@
 				return addLineTracking(oNode);
 
 			case "IfStatement":
-				if (isDeviceSpecificBlock(undefined, oNode.consequent)) {
-					// Note: if "then" is device-specific, we cannot expect branch coverage of "if"
-					bBranchTracking = false;
-				}
 				// Note: we assume block statements only (@see blanket._blockifyIf)
 				oNode.test.update("blanket.$b(" + iFileIndex + ", "
 					+ (bBranchTracking ? aBranchTracking.length : -1) + ", "

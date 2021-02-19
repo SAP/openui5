@@ -1,7 +1,7 @@
 /*!
  * ${copyright}
  */
-sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/util/extend", "sap/ui/core/Component"], function(Device, Log, extend, Component) {
+sap.ui.define(["sap/base/Log", "sap/base/util/extend", "sap/ui/core/Component"], function(Log, extend, Component) {
 	"use strict";
 
 	/**
@@ -32,8 +32,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/util/extend", "sap/ui/
 				bInitial,
 				oTargetData,
 				oCurrentPromise,
-				aAlignedTargets,
-				that = this;
+				aAlignedTargets;
 
 			oRouter._stopWaitingTitleChangedFromChild();
 			oRouter._oMatchedRoute = this;
@@ -117,27 +116,7 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log", "sap/base/util/extend", "sap/ui/
 						return oCurrentPromise;
 					});
 				}
-			} else if (Device.browser.msie || Device.browser.edge) {
-				// let targets do the placement + the events
-				oCurrentPromise = oSequencePromise;
-
-				// when Promise polyfill is used for IE or Edge, the synchronous DOM or CSS change, e.g. showing a busy indicator, doesn't get
-				// a slot for being executed. Therefore a explicit 0 timeout is added for allowing the DOM or CSS change to be executed before
-				// the view is loaded.
-				oSequencePromise = new Promise(function (resolve, reject) {
-					setTimeout(function () {
-						// check whether the _oTargets still exists after the 0 timeout.
-						// It could be already cleared once the router is destroyed before the timeout.
-						if (oRouter._oTargets) {
-							var oDisplayPromise = oRouter._oTargets._display(aAlignedTargets, oTargetData, that._oConfig.titleTarget, oCurrentPromise);
-							oDisplayPromise.then(resolve, reject);
-						} else {
-							resolve();
-						}
-					}, 0);
-				});
 			} else {
-				// let targets do the placement + the events
 				oSequencePromise = oRouter._oTargets._display(aAlignedTargets, oTargetData, this._oConfig.titleTarget, oSequencePromise);
 			}
 

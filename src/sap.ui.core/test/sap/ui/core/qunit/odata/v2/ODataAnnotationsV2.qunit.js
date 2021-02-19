@@ -3,14 +3,12 @@ sap.ui.define([
 	"sap/ui/core/qunit/odata/data/ODataAnnotationsFakeService",
 	"sap/ui/model/odata/ODataMetadata",
 	"sap/ui/model/odata/v2/ODataAnnotations",
-	"sap/ui/model/odata/v2/ODataModel",
-	'sap/ui/Device'
+	"sap/ui/model/odata/v2/ODataModel"
 ], function(
 	fakeService,
 	ODataMetadata,
 	ODataAnnotations,
-	ODataModel,
-	Device
+	ODataModel
 ) {
 	"use strict";
 
@@ -738,55 +736,7 @@ sap.ui.define([
 							assert.ok(false, "Adding sources with invalid XML content should not be successful");
 						}).catch(function() {
 							assert.ok(true, "Adding sources with invalid XML documents should lead to an error");
-
-
-							// XML Parser is not available should lead to an error
-							var bIsIE = Device.browser.msie;
-							Device.browser.internet_explorer = Device.browser.msie = false;
-							var oOriginalDOMParser = window.DOMParser;
-							window.DOMParser = function() {
-								this.parseFromString = function() {};
-							};
-
-							oAnnotations.addSource({
-								type: "url",
-								data: "fakeService://testdata/odata/multiple-annotations-01.xml"
-							}).then(function() {
-								assert.ok(false, "Adding annotations without having a DOM parser should not be successful");
-							}).catch(function() {
-								assert.ok(true, "Adding annotations without having a DOM parser should lead to an error");
-
-								Device.browser.internet_explorer = Device.browser.msie = bIsIE;
-								window.DOMParser = oOriginalDOMParser;
-
-								// Mock IE XML Parser
-								bIsIE = Device.browser.msie;
-								Device.browser.internet_explorer = Device.browser.msie = true;
-								var oOriginalActiveXObject = window.ActiveXObject;
-								window.ActiveXObject = function() {
-									this.loadXML = function() {};
-								};
-
-								oAnnotations.addSource({
-									type: "url",
-									data: "fakeService://testdata/odata/multiple-annotations-01.xml"
-								}).then(function() {
-									assert.ok(false, "Adding annotations without having a DOM parser should not be successful");
-								}).catch(function() {
-									assert.ok(true, "Adding annotations without having a DOM parser should lead to an error");
-
-
-									window.ActiveXObject = oOriginalActiveXObject;
-									Device.browser.internet_explorer = Device.browser.msie = bIsIE;
-
-									// Clean up
-									oModel.destroy();
-									oAnnotationsFromMetadata.destroy();
-									oAnnotations.destroy();
-
-									done();
-								});
-							});
+							done();
 						});
 					});
 				});

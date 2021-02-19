@@ -3,11 +3,10 @@
  */
 
 // Provides the basic UI5 support functionality
-sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery", "sap/base/Log", "sap/base/util/deepExtend", "sap/base/security/encodeURL"],
+sap.ui.define(['sap/ui/base/EventProvider', './Plugin', "sap/base/util/UriParameters", "sap/ui/thirdparty/jquery", "sap/base/Log", "sap/base/util/deepExtend", "sap/base/security/encodeURL"],
 	function(
 		EventProvider,
 		Plugin,
-		Device,
 		UriParameters,
 		jQuery,
 		Log,
@@ -277,13 +276,7 @@ sap.ui.define(['sap/ui/base/EventProvider', './Plugin', 'sap/ui/Device', "sap/ba
 		}
 
 		mParams = mParams ? mParams : {};
-
-		var mParamsLocal = mParams;
-		if ( Device.browser.msie ) {// TODO remove after the end of support for Internet Explorer
-			mParamsLocal = {};
-			deepExtend(mParamsLocal, mParams);
-		}
-		var oData = {"eventId": sEventId, "params": mParamsLocal};
+		var oData = {"eventId": sEventId, "params": mParams};
 		var sData = "SAPUI5SupportTool*" + JSON.stringify(oData);
 		this._oRemoteWindow.postMessage(sData, this._sRemoteOrigin);
 	};

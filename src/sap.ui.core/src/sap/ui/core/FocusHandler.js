@@ -4,7 +4,6 @@
 
 // Provides class sap.ui.core.FocusHandler
 sap.ui.define([
-	'../Device',
 	'../base/Object',
 	"sap/ui/dom/containsOrEquals",
 	"sap/base/Log",
@@ -12,7 +11,7 @@ sap.ui.define([
 	// jQuery Plugin "control"
 	"sap/ui/dom/jquery/control"
 ],
-	function(Device, BaseObject, containsOrEquals, Log, jQuery) {
+	function(BaseObject, containsOrEquals, Log, jQuery) {
 	"use strict";
 
 
@@ -46,16 +45,11 @@ sap.ui.define([
 				// keep track of focused element which is using Renderer.apiVersion=2
 				this.oPatchingControlFocusInfo = null;
 
-				this.fEventHandler = jQuery.proxy(this.onEvent, this);
+				this.fnEventHandler = this.onEvent.bind(this);
 
 				// initialize event handling
-				if (oRootRef.addEventListener && !Device.browser.msie) { //FF, Safari
-					oRootRef.addEventListener("focus", this.fEventHandler, true);
-					oRootRef.addEventListener("blur", this.fEventHandler, true);
-				} else { //IE
-					jQuery(oRootRef).on("activate", this.fEventHandler);
-					jQuery(oRootRef).on("deactivate", this.fEventHandler);
-				}
+				oRootRef.addEventListener("focus", this.fnEventHandler, true);
+				oRootRef.addEventListener("blur", this.fnEventHandler, true);
 				Log.debug("FocusHandler setup on Root " + oRootRef.type + (oRootRef.id ? ": " + oRootRef.id : ""), null, "sap.ui.core.FocusHandler");
 			}
 		});
@@ -196,13 +190,8 @@ sap.ui.define([
 		FocusHandler.prototype.destroy = function(event) {
 			var oRootRef = event.data.oRootRef;
 			if (oRootRef) {
-				if (oRootRef.removeEventListener && !Device.browser.msie) { //FF, Safari
-					oRootRef.removeEventListener("focus", this.fEventHandler, true);
-					oRootRef.removeEventListener("blur", this.fEventHandler, true);
-				} else { //IE
-					jQuery(oRootRef).off("activate", this.fEventHandler);
-					jQuery(oRootRef).off("deactivate", this.fEventHandler);
-				}
+				oRootRef.removeEventListener("focus", this.fnEventHandler, true);
+				oRootRef.removeEventListener("blur", this.fnEventHandler, true);
 			}
 			this.oCore = null;
 		};
@@ -218,6 +207,7 @@ sap.ui.define([
 
 			Log.debug("Event " + oEvent.type + " reached Focus Handler (target: " + oEvent.target + (oEvent.target ? oEvent.target.id : "") + ")", null, "sap.ui.core.FocusHandler");
 
+			// TODO: IE removal ==> check if still needed
 			var type = (oEvent.type == "focus" || oEvent.type == "focusin" || oEvent.type == "activate") ? "focus" : "blur";
 			this.aEventQueue.push({type:type, controlId: getControlIdForDOM(oEvent.target)});
 			if (this.aEventQueue.length == 1) {
@@ -360,25 +350,6 @@ sap.ui.define([
 				}
 			}
 		};
-
-		/*
-		 * Checks if the passed DOM reference is nested in the active DOM of the document
-		 * @param {Element} oDomRef The new active element
-		 * @private
-		 * @type boolean
-		 * @returns {boolean} whether the passed DOM reference is nested in the active DOM of the document
-		 */
-		/*function isInActiveDom(oDomRef) {
-			assert(oDomRef != null);
-			var oCurrDomRef = oDomRef;
-			while(oCurrDomRef) {
-				if(oCurrDomRef === document) return true;
-				oCurrDomRef = oCurrDomRef.parentNode;
-			}
-			return false;
-		};*/
-
-
 
 	return FocusHandler;
 

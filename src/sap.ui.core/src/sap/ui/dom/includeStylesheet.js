@@ -2,31 +2,9 @@
  * ${copyright}
  */
 /*global Promise, document */
-sap.ui.define(["sap/ui/Device", "sap/base/assert"],
-	function(Device, assert) {
+sap.ui.define(["sap/base/assert"],
+	function(assert) {
 	"use strict";
-
-	function isIEError(oEvent) {
-		if (Device.browser.msie || Device.browser.edge) {
-			try {
-				// in cross-origin scenarios IE / Edge can still access the rules of the stylesheet
-				// if the stylesheet has been loaded properly
-				if (oEvent.target.sheet.rules.length > 0) {
-					return false;
-				}
-				// in cross-origin scenarios now the catch block will be executed because we
-				// cannot access the rules of the stylesheet but for non cross-origin stylesheets
-				// we will get an empty rules array and finally we cannot differ between
-				// empty stylesheet or loading issue correctly => documented in JSDoc!
-			} catch (ex) {
-				// exception happens when the stylesheet could not be loaded from the server
-				// we now ignore this and know that the stylesheet doesn't exists => trigger error
-			}
-			return true;
-		} else {
-			return false;
-		}
-	}
 
 	function _includeStyleSheet(sUrl, mAttributes, fnLoadCallback, fnErrorCallback) {
 
@@ -45,7 +23,7 @@ sap.ui.define(["sap/ui/Device", "sap/base/assert"],
 			}
 
 			function listener(oEvent) {
-				var bError = oEvent.type === "error" || isIEError(oEvent);
+				var bError = oEvent.type === "error";
 				oLink.setAttribute("data-sap-ui-ready", !bError);
 				oLink.removeEventListener("load", listener);
 				oLink.removeEventListener("error", listener);

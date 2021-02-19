@@ -6,9 +6,8 @@
 sap.ui.define([
 	"sap/base/assert",
 	"sap/base/Log",
-	"sap/base/util/isEmptyObject",
-	"sap/ui/Device"
-], function (assert, Log, isEmptyObject, Device) {
+	"sap/base/util/isEmptyObject"
+], function (assert, Log, isEmptyObject) {
 "use strict";
 
 /*
@@ -901,8 +900,8 @@ var AnnotationParser =  {
 	 *
 	 * @param {Node} oNode - The Node of which the text value should be determined
 	 * @return {string} The text content
- 	 * @static
- 	 * @private
+	 * @static
+	 * @private
 	 */
 	_getTextValue: function(oNode) {
 		var xPath = AnnotationParser._oXPath;
@@ -1151,8 +1150,8 @@ var AnnotationParser =  {
 	 * @param {string} sEntityType - The entity type to look for
 	 * @param {string} sPathValue - The path to look for
 	 * @returns {map|null} The NavigationProperty map as defined in the EntityType or null if nothing is found
- 	 * @static
- 	 * @private
+	 * @static
+	 * @private
 	 */
 	findNavProperty: function(sEntityType, sPathValue) {
 		var oMetadata = AnnotationParser._parserData.serviceMetadata;
@@ -1183,8 +1182,8 @@ var AnnotationParser =  {
 	 * @param {string} sValue - The string where the alias should be replaced
 	 * @param {int} iReplacements - The number of replacements to doo at most or 0 for all
 	 * @return {string} The string with the alias replaced
- 	 * @static
- 	 * @private
+	 * @static
+	 * @private
 	 */
 	replaceWithAlias: function(sValue, iReplacements) {
 		if (iReplacements === undefined) {
@@ -1211,49 +1210,29 @@ var AnnotationParser =  {
 		var xPath = {};
 		var mParserData = AnnotationParser._parserData;
 
-		if (Device.browser.msie) {// old IE
-			xPath = {
-				setNameSpace : function(outNode) {
-					outNode.setProperty("SelectionNamespaces",
-							'xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx" xmlns:d="http://docs.oasis-open.org/odata/ns/edm"');
-					outNode.setProperty("SelectionLanguage", "XPath");
-					return outNode;
-				},
-				selectNodes : function(xPath, inNode) {
-					return inNode.selectNodes(xPath);
-				},
-				nextNode : function(node) {
-					return node.nextNode();
-				},
-				getNodeText : function(node) {
-					return node.text;
-				}
-			};
-		} else {// Chrome, Firefox, Opera, etc.
-			xPath = {
-				setNameSpace : function(outNode) {
-					return outNode;
-				},
-				nsResolver : function(prefix) {
-					var ns = {
-						"edmx" : "http://docs.oasis-open.org/odata/ns/edmx",
-						"d" : "http://docs.oasis-open.org/odata/ns/edm"
-					};
-					return ns[prefix] || null;
-				},
-				selectNodes : function(sPath, inNode) {
-					var xmlNodes = mParserData.xmlDocument.evaluate(sPath, inNode, this.nsResolver, /* ORDERED_NODE_SNAPSHOT_TYPE: */ 7, null);
-					xmlNodes.length = xmlNodes.snapshotLength;
-					return xmlNodes;
-				},
-				nextNode : function(node, item) {
-					return node.snapshotItem(item);
-				},
-				getNodeText : function(node) {
-					return node.textContent;
-				}
-			};
-		}
+		xPath = {
+			setNameSpace : function(outNode) {
+				return outNode;
+			},
+			nsResolver : function(prefix) {
+				var ns = {
+					"edmx" : "http://docs.oasis-open.org/odata/ns/edmx",
+					"d" : "http://docs.oasis-open.org/odata/ns/edm"
+				};
+				return ns[prefix] || null;
+			},
+			selectNodes : function(sPath, inNode) {
+				var xmlNodes = mParserData.xmlDocument.evaluate(sPath, inNode, this.nsResolver, /* ORDERED_NODE_SNAPSHOT_TYPE: */ 7, null);
+				xmlNodes.length = xmlNodes.snapshotLength;
+				return xmlNodes;
+			},
+			nextNode : function(node, item) {
+				return node.snapshotItem(item);
+			},
+			getNodeText : function(node) {
+				return node.textContent;
+			}
+		};
 
 		xPath.getPath = function(oNode) {
 			var sPath = "";
