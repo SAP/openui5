@@ -235,7 +235,8 @@ sap.ui.define([
 	 * @public
 	 */
 	Unit.prototype.parseValue = function(vValue, sInternalType) {
-		var vResult, oBundle;
+		var vResult;
+
 		switch (this.getPrimitiveType(sInternalType)) {
 			case "string":
 				this.oOutputFormat = this._getInstance(this.aDynamicValues);
@@ -244,8 +245,7 @@ sap.ui.define([
 				// more specific errors describing the actual issue during parse()
 				// will be introduced with later work on the NumberFormat
 				if (!Array.isArray(vResult) || isNaN(vResult[0])) {
-					oBundle = sap.ui.getCore().getLibraryResourceBundle();
-					throw new ParseException(oBundle.getText("Unit.Invalid", [vValue]));
+					throw this._createInvalidUnitParseException();
 				}
 				break;
 			case "int":
@@ -326,6 +326,18 @@ sap.ui.define([
 			}
 			this.oInputFormat = NumberFormat.getUnitInstance(oSourceOptions);
 		}
+	};
+
+	/**
+	 * Creates and returns a new ParseException instance complaining about an invalid unit.
+	 *
+	 * @returns {sap.ui.model.ParseException} An exception complaining about an invalid unit
+	 *
+	 * @private
+	 */
+	Unit.prototype._createInvalidUnitParseException = function () {
+		return new ParseException(
+			sap.ui.getCore().getLibraryResourceBundle().getText("Unit.Invalid"));
 	};
 
 	return Unit;

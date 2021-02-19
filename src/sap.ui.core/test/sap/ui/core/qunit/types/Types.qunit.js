@@ -528,6 +528,16 @@ sap.ui.define([
 	});
 });
 
+	QUnit.test("Currency: _createInvalidUnitParseException", function (assert) {
+		TestUtils.withNormalizedMessages(function () {
+			// code under test
+			var oException = new CurrencyType()._createInvalidUnitParseException();
+
+			assert.ok(oException instanceof ParseException);
+			assert.strictEqual(oException.message, "Currency.Invalid");
+		});
+	});
+
 	//*********************************************************************************************
 	QUnit.module("sap.ui.model.type.Date", {
 		beforeEach : function() {
@@ -2522,5 +2532,15 @@ sap.ui.define([
 			emptyString: 0
 		});
 		assert.deepEqual(unitType.parseValue("", "string"), [0, undefined], "emptyString option set to 0 does not cause ParseException");
+	});
+
+	QUnit.test("Unit: _createInvalidUnitParseException", function (assert) {
+		TestUtils.withNormalizedMessages(function () {
+			// code under test
+			var oException = new UnitType()._createInvalidUnitParseException();
+
+			assert.ok(oException instanceof ParseException);
+			assert.strictEqual(oException.message, "Unit.Invalid");
+		});
 	});
 });
