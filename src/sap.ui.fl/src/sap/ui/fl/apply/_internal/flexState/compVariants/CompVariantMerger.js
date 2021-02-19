@@ -95,22 +95,23 @@ sap.ui.define([
 			aVariants.forEach(applyChangesOnVariant.bind(undefined, mChanges));
 
 			// check for an overwritten standard variant
-			var nIndexOfStandardVariant = -1;
-			aVariants.forEach(function (oVariant, nIndex) {
+			var oStandardVariant;
+			aVariants.forEach(function (oVariant) {
 				if (oVariant.getContent().standardvariant) {
-					nIndexOfStandardVariant = nIndex;
+					oStandardVariant = oVariant;
 				}
 			});
-			var oStandardVariant;
-			if (nIndexOfStandardVariant === -1) {
+
+			if (!oStandardVariant) {
 				// create a new standard variant with the passed input
 				oStandardVariantInput.content = oStandardVariantInput.content || {};
 				oStandardVariant = createVariant(sPersistencyKey, oStandardVariantInput);
 				applyChangesOnVariant(mChanges, oStandardVariant);
 			} else {
-				// extract the overwriting variant from the variant list
-				// in this case all changes were already applied
-				oStandardVariant = aVariants.splice(nIndexOfStandardVariant, 1)[0];
+				// remove all standard variant entries
+				aVariants = aVariants.filter(function (oVariant) {
+					return !oVariant.getContent().standardvariant;
+				});
 			}
 
 			// the standard must always be visible
