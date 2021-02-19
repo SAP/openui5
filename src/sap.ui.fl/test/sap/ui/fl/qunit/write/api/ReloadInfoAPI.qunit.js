@@ -26,8 +26,6 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("Given that a CrossAppNavigation is needed because of a draft, handleParametersOnStart is called,", {
-		beforeEach: function() {
-		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -94,8 +92,7 @@ sap.ui.define([
 			};
 
 			var mParsedHash = {
-				params: {
-				}
+				params: {}
 			};
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
 			var oNewParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
@@ -112,13 +109,11 @@ sap.ui.define([
 			};
 
 			var oExpectedParams = {
-				params: {
-				}
+				params: {}
 			};
 
 			var mParsedHash = {
-				params: {
-				}
+				params: {}
 			};
 			sandbox.stub(FlexUtils, "getParsedURLHash").returns(mParsedHash);
 			var oNewParsedHash = ReloadInfoAPI.handleParametersOnStart(oReloadInfo);
@@ -127,8 +122,6 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that a getReloadReasonsForStart is called on RTA start,", {
-		beforeEach: function() {
-		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -143,10 +136,18 @@ sap.ui.define([
 			sandbox.stub(ReloadInfoAPI, "hasMaxLayerParameterWithValue");
 			sandbox.stub(ReloadInfoAPI, "hasVersionParameterWithValue");
 			sandbox.stub(FeaturesAPI, "isVersioningEnabled").returns(Promise.resolve(true));
-			sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
+			var oHasHigherLayerChangesAPIStub = sandbox.stub(PersistenceWriteAPI, "hasHigherLayerChanges").resolves(false);
 			sandbox.stub(VersionsAPI, "isDraftAvailable").returns(true);
 
 			return ReloadInfoAPI.getReloadReasonsForStart(oReloadInfo).then(function (oReloadInfo) {
+				var oExpectedArgs = {
+					selector: oReloadInfo.selector,
+					ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
+					upToLayer: oReloadInfo.layer,
+					includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+					includeDirtyChanges: true
+				};
+				assert.deepEqual(oHasHigherLayerChangesAPIStub.getCall(0).args[0], oExpectedArgs, "the correct propertyBag was passed");
 				assert.deepEqual(oReloadInfo.isDraftAvailable, true, "isDraftAvailable is set to true");
 				assert.deepEqual(oReloadInfo.hasHigherLayerChanges, false, "hasHigherLayerChanges is set to false");
 			});
@@ -520,7 +521,8 @@ sap.ui.define([
 						}
 					};
 				}
-			});		},
+			});
+		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -553,7 +555,8 @@ sap.ui.define([
 						}
 					};
 				}
-			});		},
+			});
+		},
 		afterEach: function() {
 			sandbox.restore();
 		}

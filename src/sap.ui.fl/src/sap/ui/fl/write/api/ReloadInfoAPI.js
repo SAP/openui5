@@ -45,7 +45,8 @@ sap.ui.define([
 			selector: oReloadInfo.selector,
 			ignoreMaxLayerParameter: oReloadInfo.ignoreMaxLayerParameter,
 			upToLayer: oReloadInfo.layer,
-			includeCtrlVariants: oReloadInfo.includeCtrlVariants
+			includeCtrlVariants: oReloadInfo.includeCtrlVariants,
+			includeDirtyChanges: true
 		});
 	}
 

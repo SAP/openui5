@@ -59,6 +59,20 @@ sap.ui.define([
 		sandbox.stub(oChangePersistence, "getChangesForComponent").resolves([oChangeInPersistence1, oChangeInPersistence2]);
 	}
 
+	function addDirtyChanges(oChangePersistence) {
+		var oChangeInPersistence1 = new Change({
+			selector: {},
+			changeType: "dirtyRenameField",
+			layer: Layer.USER
+		});
+		var oChangeInPersistence2 = new Change({
+			selector: {},
+			changeType: "dirtyAddGroup",
+			layer: Layer.USER
+		});
+		sandbox.stub(oChangePersistence, "getDirtyChanges").returns([oChangeInPersistence1, oChangeInPersistence2]);
+	}
+
 	QUnit.module("getFlexObjects / saveFlexObjects", {
 		before: function () {
 			return Settings.getInstance();
@@ -201,53 +215,101 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("Get - Given flex objects are present in the ChangePersistence", function(assert) {
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			addChangesToChangePersistence(oChangePersistence);
+		[true, false].forEach(function(bIncludeDirtyChanges) {
+			var sText = "Get - Given flex objects and dirty changes are present in the ChangePersistence with include dirty changes ";
+			sText += bIncludeDirtyChanges ? "set" : "not set";
 
-			return oChangePersistence.saveDirtyChanges(oComponent)
-			.then(FlexObjectState.getFlexObjects.bind(undefined, {
-				selector: this.appComponent
-			}))
-			.then(function (aFlexObjects) {
-				assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
-				assert.equal(aFlexObjects[0].getChangeType(), "renameField", "the first change from the persistence is present");
-				assert.equal(aFlexObjects[1].getChangeType(), "addGroup", "the second change from the persistence is present");
-			});
-		});
+			QUnit.test(sText, function(assert) {
+				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+				addChangesToChangePersistence(oChangePersistence);
 
-		QUnit.test("Get - Given flex objects are present in the ChangePersistence and in the CompVariantState", function(assert) {
-			var sPersistencyKey = "persistency.key";
-			CompVariantState.add({
-				changeSpecificData: {
-					type: "addFavorite"
-				},
-				reference: sReference,
-				persistencyKey: sPersistencyKey
-			});
-			CompVariantState.add({
-				changeSpecificData: {
-					type: "pageVariant",
-					isVariant: true
-				},
-				reference: sReference,
-				persistencyKey: sPersistencyKey
-			});
-
-			var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
-			addChangesToChangePersistence(oChangePersistence);
-
-			return oChangePersistence.saveDirtyChanges(oComponent)
+				return oChangePersistence.saveDirtyChanges(oComponent)
+				.then(function() {
+					addDirtyChanges(oChangePersistence);
+				})
 				.then(FlexObjectState.getFlexObjects.bind(undefined, {
-					selector: this.appComponent
+					selector: this.appComponent,
+					includeDirtyChanges: bIncludeDirtyChanges
+				}))
+				.then(function(aFlexObjects) {
+					assert.equal(aFlexObjects[0].getChangeType(), "renameField", "the first change from the persistence is present");
+					assert.equal(aFlexObjects[1].getChangeType(), "addGroup", "the second change from the persistence is present");
+					if (bIncludeDirtyChanges) {
+						assert.equal(aFlexObjects.length, 4, "an array with four entries is returned");
+						assert.equal(aFlexObjects[2].getChangeType(), "dirtyRenameField", "the third change from the persistence is present");
+						assert.equal(aFlexObjects[3].getChangeType(), "dirtyAddGroup", "the fourth change from the persistence is present");
+					} else {
+						assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
+					}
+				});
+			});
+
+			sText = "Get - Given only dirty changes are present in the ChangePersistence with include dirty changes ";
+			sText += bIncludeDirtyChanges ? "set" : "not set";
+			QUnit.test(sText, function(assert) {
+				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+				addDirtyChanges(oChangePersistence);
+
+				return FlexObjectState.getFlexObjects({
+					selector: this.appComponent,
+					includeDirtyChanges: bIncludeDirtyChanges
+				})
+				.then(function(aFlexObjects) {
+					if (bIncludeDirtyChanges) {
+						assert.equal(aFlexObjects.length, 2, "an array with two entries is returned");
+						assert.equal(aFlexObjects[0].getChangeType(), "dirtyRenameField", "the first change from the persistence is present");
+						assert.equal(aFlexObjects[1].getChangeType(), "dirtyAddGroup", "the second change from the persistence is present");
+					} else {
+						assert.equal(aFlexObjects.length, 0, "an empty array is returned");
+					}
+				});
+			});
+
+			sText = "Get - Given flex objects are present in the ChangePersistence and in the CompVariantState with include dirty changes ";
+			sText += bIncludeDirtyChanges ? "set" : "not set";
+			QUnit.test(sText, function(assert) {
+				var sPersistencyKey = "persistency.key";
+				CompVariantState.add({
+					changeSpecificData: {
+						type: "addFavorite"
+					},
+					reference: sReference,
+					persistencyKey: sPersistencyKey
+				});
+				CompVariantState.add({
+					changeSpecificData: {
+						type: "pageVariant",
+						isVariant: true
+					},
+					reference: sReference,
+					persistencyKey: sPersistencyKey
+				});
+
+				var oChangePersistence = ChangePersistenceFactory.getChangePersistenceForComponent(sReference);
+				addChangesToChangePersistence(oChangePersistence);
+
+				return oChangePersistence.saveDirtyChanges(oComponent)
+				.then(function() {
+					addDirtyChanges(oChangePersistence);
+				})
+				.then(FlexObjectState.getFlexObjects.bind(undefined, {
+					selector: this.appComponent,
+					includeDirtyChanges: bIncludeDirtyChanges
 				}))
 				.then(function (aFlexObjects) {
-					assert.equal(aFlexObjects.length, 4, "an array with four entries is returned");
 					assert.equal(aFlexObjects[0].getChangeType(), "addFavorite", "the change from the compVariantState is present");
 					assert.equal(aFlexObjects[1].getChangeType(), "pageVariant", "the variant from the compVariantState is present");
 					assert.equal(aFlexObjects[2].getChangeType(), "renameField", "the first change from the persistence is present");
 					assert.equal(aFlexObjects[3].getChangeType(), "addGroup", "the second change from the persistence is present");
+					if (bIncludeDirtyChanges) {
+						assert.equal(aFlexObjects.length, 6, "an array with four entries is returned");
+						assert.equal(aFlexObjects[4].getChangeType(), "dirtyRenameField", "the third change from the persistence is present");
+						assert.equal(aFlexObjects[5].getChangeType(), "dirtyAddGroup", "the fourth change from the persistence is present");
+					} else {
+						assert.equal(aFlexObjects.length, 4, "an array with four entries is returned");
+					}
 				});
+			});
 		});
 
 		QUnit.test("Save", function(assert) {
