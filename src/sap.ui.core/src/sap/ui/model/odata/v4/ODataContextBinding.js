@@ -1215,6 +1215,9 @@ sap.ui.define([
 		}
 
 		this.mCacheQueryOptions = this.computeOperationQueryOptions();
+		if (this.mLateQueryOptions) {
+			_Helper.aggregateQueryOptions(this.mCacheQueryOptions, this.mLateQueryOptions);
+		}
 		oCache = _Cache.createSingle(oModel.oRequestor,
 			this.oReturnValueContext.getPath().slice(1), this.mCacheQueryOptions, true,
 			oModel.bSharedRequests);

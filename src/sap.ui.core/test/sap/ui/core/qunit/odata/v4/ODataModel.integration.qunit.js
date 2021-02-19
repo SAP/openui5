@@ -2885,21 +2885,21 @@ sap.ui.define([
 
 			return that.waitForChanges(assert);
 		}).then(function () {
-			that.expectRequest("SalesOrderList('1')?$select=Messages,SalesOrderID"
+			that.expectRequest("SalesOrderList('1')?$select=Messages,Note,SalesOrderID"
 					+ "&$expand=SO_2_SOITEM($select=ItemPosition,Messages,SalesOrderID)", {
+					Note : "Note #1",
 					SalesOrderID : "1",
 					SO_2_SOITEM : [
 						{ItemPosition : "10", SalesOrderID : "1"}
 					]
 				})
+				// Note: "table" has a sorter and thus sends own requests
 				.expectRequest("SalesOrderList('1')/SO_2_SOITEM?$select=ItemPosition,Messages,"
 					+ "SalesOrderID&$orderby=ItemPosition&$skip=0&$top=100", {
 					value : [
 						{ItemPosition : "10", SalesOrderID : "1"}
 					]
-				})
-				// late property request
-				.expectRequest("SalesOrderList('1')?$select=Note", {Note : "Note #1"});
+				});
 
 			// code under test
 			that.oView.byId("returnValue").getBindingContext().refresh();
@@ -20127,6 +20127,26 @@ sap.ui.define([
 			that.oView.byId("objectPage").setBindingContext(oReturnValueContext);
 
 			return that.waitForChanges(assert);
+		}).then(function () {
+			// 2a. Refresh the RVC, expect one request
+			that.expectRequest("Artists(ArtistID='23',IsActiveEntity=false)"
+				+ "?$select=ArtistID,IsActiveEntity,Messages,Name"
+				+ "&$expand=BestFriend($select=ArtistID,IsActiveEntity,Name)", {
+				ArtistID : "23",
+				IsActiveEntity : false,
+				Name : "DJ Bobo",
+				BestFriend : {
+					ArtistID : "32",
+					IsActiveEntity : true,
+					Name : "Robin Schulz"
+				}
+			});
+
+			return Promise.all([
+				// code under test
+				oReturnValueContext.requestRefresh(),
+				that.waitForChanges(assert)
+			]);
 		}).then(function () {
 			// 3. Show the creation row of a creation row binding
 			oCreationRowContext = that.oModel.bindList("_Publication", oReturnValueContext,

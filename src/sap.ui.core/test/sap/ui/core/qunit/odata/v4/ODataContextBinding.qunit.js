@@ -3695,7 +3695,10 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshReturnValueContext", function (assert) {
+[false, true].forEach(function (bWithLateQueryOptions) {
+	var sTitle = "refreshReturnValueContext, with late query options = " + bWithLateQueryOptions;
+
+	QUnit.test(sTitle, function (assert) {
 		var oContext = Context.create(this.oModel, {}, "/SalesOrderList('42')"),
 			oBinding = this.bindContext("bound.Operation(...)", oContext),
 			oCache = {},
@@ -3710,9 +3713,14 @@ sap.ui.define([
 			oReturnValueContext = Context.create(this.oModel, oBinding, "/SalesOrderList('77')"),
 			oRefreshPromise;
 
+		oBinding.mLateQueryOptions = bWithLateQueryOptions ? {} : undefined;
 		oBinding.oReturnValueContext = oReturnValueContext;
 		this.mock(oBinding).expects("computeOperationQueryOptions").withExactArgs()
 			.returns(mQueryOptions);
+		this.mock(_Helper).expects("aggregateQueryOptions")
+			.exactly(bWithLateQueryOptions ? 1 : 0)
+			.withExactArgs(sinon.match.same(mQueryOptions),
+				sinon.match.same(oBinding.mLateQueryOptions));
 		this.mock(_Cache).expects("createSingle")
 			.withExactArgs(sinon.match.same(this.oModel.oRequestor), "SalesOrderList('77')",
 				sinon.match.same(mQueryOptions), true,
@@ -3740,6 +3748,7 @@ sap.ui.define([
 			assert.strictEqual(bDependentsRefreshed, true);
 		});
 	});
+});
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bWithContext) {
