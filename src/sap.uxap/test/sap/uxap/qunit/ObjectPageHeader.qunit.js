@@ -837,6 +837,37 @@ function ($, Core, IconPool, ObjectPageLayout, ObjectPageHeader, ObjectPageHeade
 			"The button is default");
 	});
 
+	QUnit.test("Actions and buttons in overflow popover are synced correctly", function (assert) {
+		var oActionButton = new ObjectPageHeaderActionButton({
+			enabled: false,
+			text: "Test text",
+			icon: "sap-icon://home",
+			type: "Reject"
+		}),
+		oMappedButton;
+
+		this._oHeader.addAction(oActionButton);
+		Core.applyChanges();
+
+		oMappedButton = this._oHeader._oActionSheetButtonMap[oActionButton.getId()];
+
+		assert.strictEqual(oActionButton.getEnabled(), oMappedButton.getEnabled(), "Button enabled property is synced correctly");
+		assert.strictEqual(oActionButton.getText(), oMappedButton.getText(), "Button text property is synced correctly");
+		assert.strictEqual(oActionButton.getIcon(), oMappedButton.getIcon(), "Button icon property is synced correctly");
+		assert.strictEqual(oActionButton.getType(), oMappedButton.getType(), "Button type property is synced correctly");
+
+		oActionButton.setEnabled(true);
+		oActionButton.setText("Test text 2");
+		oActionButton.setIcon("sap-icon://share");
+		oActionButton.setType("Accept");
+		Core.applyChanges();
+
+		assert.strictEqual(oActionButton.getEnabled(), oMappedButton.getEnabled(), "Button enabled property is synced correctly");
+		assert.strictEqual(oActionButton.getText(), oMappedButton.getText(), "Button text property is synced correctly");
+		assert.strictEqual(oActionButton.getIcon(), oMappedButton.getIcon(), "Button icon property is synced correctly");
+		assert.strictEqual(oActionButton.getType(), oMappedButton.getType(), "Button type property is synced correctly");
+	});
+
 	QUnit.test("Setting visibility to action buttons", function (assert) {
 		var oButton = new Button({
 			text : "Some button",
