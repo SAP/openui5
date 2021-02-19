@@ -246,6 +246,7 @@ sap.ui.define([
 	 *
 	 * @deprecated Since version 1.28.
 	 * @public
+	 * @returns {boolean}
 	 * @name sap.ui.table.AnalyticalTable#getEnableGrouping
 	 * @function
 	 */
@@ -254,6 +255,7 @@ sap.ui.define([
 	 * The property <code>enableGrouping</code> is not supported by the <code>AnalyticalTable</code> control.
 	 *
 	 * @deprecated Since version 1.28.
+	 * @param {boolean} bValue
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
@@ -266,6 +268,7 @@ sap.ui.define([
 	 * The <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
 	 *
 	 * @deprecated Since version 1.28.
+	 * @returns {sap.ui.core.ID}
 	 * @public
 	 * @name sap.ui.table.AnalyticalTable#getGroupBy
 	 * @function
@@ -275,6 +278,7 @@ sap.ui.define([
 	 * The <code>groupBy</code> association is not supported by the <code>AnalyticalTable</code> control.
 	 *
 	 * @deprecated Since version 1.28.
+	 * @param {sap.ui.table.Column|sap.ui.core.ID}
 	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
 	 * @public
 	 */
