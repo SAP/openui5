@@ -24087,7 +24087,7 @@ sap.ui.define([
 				value : [{SalesOrderID : "42"}]
 			})
 			.expectChange("salesOrderID", ["42"])
-			.expectChange("note", []);
+			.expectChange("note");
 
 		return this.createView(assert, sView, oModel).then(function () {
 			that.expectRequest("SalesOrderList('42')?$select=Note,SalesOrderID", {
@@ -28090,6 +28090,46 @@ sap.ui.define([
 			return Promise.all([
 				// code under test
 				oContext.requestSideEffects(["BtoA/AValue", "BValue"]),
+				that.waitForChanges(assert)
+			]);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: Refresh a context binding w/o property bindings triggering a request. Ensure that
+	// dependent bindings refresh and that the promise resolves.
+	// JIRA: CPOUI5ODATAV4-293
+	QUnit.test("ODCB: requestRefresh w/o own request", function (assert) {
+		var oModel = createSalesOrdersModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox id="form" binding="{/BusinessPartnerList(\'42\')}">\
+	<Table id="table" items="{path : \'BP_2_SO\', parameters : {$$ownRequest : true}}">\
+		<Text id="note" text="{Note}" />\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectRequest("BusinessPartnerList('42')/BP_2_SO?$select=Note,SalesOrderID"
+				+ "&$skip=0&$top=100", {
+				value : [{
+					Note : "Test",
+					SalesOrderID : "0500000001"
+				}]
+			})
+			.expectChange("note", ["Test"]);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("BusinessPartnerList('42')/BP_2_SO?$select=Note,SalesOrderID"
+					+ "&$skip=0&$top=100", {
+					value : [{
+						Note : "Test - updated",
+						SalesOrderID : "0500000001"
+					}]
+				})
+				.expectChange("note", ["Test - updated"]);
+
+			return Promise.all([
+				that.oView.byId("form").getBindingContext().requestRefresh(),
 				that.waitForChanges(assert)
 			]);
 		});

@@ -2658,7 +2658,7 @@ sap.ui.define([
 			sinon.assert.calledOnce(fnOnRemove);
 			oBinding.detachChange(fnOnRemove);
 			oBinding.attachChange(fnOnRefresh);
-			this.mock(oBinding).expects("createRefreshPromise").withExactArgs();
+			this.mock(oBinding).expects("createRefreshPromise").never();
 
 			// code under test
 			return oBinding.refreshInternal("", undefined, true);
@@ -2666,7 +2666,8 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshInternal", function (assert) {
+[false, true].forEach(function (bHasChangeListeners) {
+	QUnit.test("refreshInternal: bHasChangeListeners=" + bHasChangeListeners, function (assert) {
 		var oBinding,
 			oBindingMock = this.mock(ODataContextBinding.prototype),
 			oContext = Context.createNewContext(this.oModel, {}, "/EMPLOYEE('42')"),
@@ -2678,7 +2679,9 @@ sap.ui.define([
 					resolve();
 				});
 			}),
+			fnFetchCache,
 			oGroupLock = {},
+			fnHasChangeListeners,
 			bKeepCacheOnError = {/*true or false*/},
 			sPath = {/*EMPLOYEES('42')*/},
 			oRefreshResult;
@@ -2688,12 +2691,15 @@ sap.ui.define([
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
 		this.mock(oBinding).expects("getGroupId").never();
 		this.mock(oBinding).expects("setResumeChangeReason").never();
+		fnHasChangeListeners = this.mock(oBinding.oCache).expects("hasChangeListeners")
+			.withExactArgs().returns(bHasChangeListeners);
 		this.mock(oBinding).expects("createReadGroupLock").withExactArgs("myGroup", false)
 			.returns(oGroupLock);
 		this.mock(oBinding).expects("removeCachesAndMessages")
 			.withExactArgs(sinon.match.same(sPath));
-		oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
-		this.mock(oBinding).expects("createRefreshPromise").withExactArgs().callThrough();
+		fnFetchCache = oBindingMock.expects("fetchCache").withExactArgs(sinon.match.same(oContext));
+		this.mock(oBinding).expects("createRefreshPromise").exactly(bHasChangeListeners ? 1 : 0)
+			.withExactArgs().callThrough();
 		this.mock(oBinding).expects("refreshDependentBindings")
 			.withExactArgs(sinon.match.same(sPath), "myGroup", sinon.match.same(bCheckUpdate),
 				sinon.match.same(bKeepCacheOnError))
@@ -2705,9 +2711,13 @@ sap.ui.define([
 				assert.strictEqual(bDependentsRefreshed, true);
 			});
 
-		oBinding.resolveRefreshPromise(); // simulate fetchValue triggered by a property binding
+		sinon.assert.callOrder(fnHasChangeListeners, fnFetchCache);
+		if (bHasChangeListeners) {
+			oBinding.resolveRefreshPromise(); // simulate fetchValue triggered by a property binding
+		}
 		return oRefreshResult;
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("refreshInternal: suspended", function (assert) {
@@ -2813,6 +2823,7 @@ sap.ui.define([
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 			});
+		this.mock(oCache).expects("hasChangeListeners").withExactArgs().returns(true);
 		oBindingMock.expects("createRefreshPromise").withExactArgs().callThrough();
 		oBindingMock.expects("fetchValue").withExactArgs("").callsFake(function () {
 			oBinding.resolveRefreshPromise(oReadPromise);
@@ -2888,6 +2899,7 @@ sap.ui.define([
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 			});
+		this.mock(oCache).expects("hasChangeListeners").withExactArgs().returns(true);
 		oBindingMock.expects("createRefreshPromise").withExactArgs().callThrough();
 		oBindingMock.expects("fetchValue").never();
 		oReadPromise.catch(function () {
@@ -2948,7 +2960,9 @@ sap.ui.define([
 			oBindingMock = this.mock(oBinding),
 			oError = new Error(),
 			bIsRoot = "false,true",
-			oNewCache = {},
+			oNewCache = {
+				hasChangeListeners : function () {}
+			},
 			oOldCache = oBinding.oCachePromise.getResult(),
 			oReadPromise = Promise.reject(oError),
 			oYetAnotherError = new Error(),
@@ -2963,6 +2977,7 @@ sap.ui.define([
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 			});
+		this.mock(oOldCache).expects("hasChangeListeners").withExactArgs().returns(true);
 		oBindingMock.expects("createRefreshPromise").withExactArgs().callThrough();
 		oBindingMock.expects("fetchValue").withExactArgs("").callsFake(function () {
 			oBinding.resolveRefreshPromise(oReadPromise);
@@ -3015,6 +3030,7 @@ sap.ui.define([
 				oBinding.oCache = oNewCache;
 				oBinding.oCachePromise = SyncPromise.resolve(oNewCache);
 			});
+		this.mock(oOldCache).expects("hasChangeListeners").withExactArgs().returns(true);
 		oBindingMock.expects("createRefreshPromise").withExactArgs().returns(oRefreshPromise);
 		oBindingMock.expects("fetchValue").never();
 		oBindingMock.expects("refreshDependentBindings")
