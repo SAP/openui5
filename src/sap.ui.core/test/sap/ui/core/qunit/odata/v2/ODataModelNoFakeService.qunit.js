@@ -3922,4 +3922,33 @@ sap.ui.define([
 		assert.strictEqual(oRequest.deepPath, "~functionTarget");
 		assert.strictEqual(oRequest.deepPath, oRequest.functionTarget);
 	});
+
+	//*********************************************************************************************
+	// BCP: 2080258237
+	QUnit.test("_submitRequest: avoid TypeError if request is aborted", function (assert) {
+		var done = assert.async(),
+			oModel = {
+				pReadyForRequest : Promise.resolve(),
+				_getODataHandler : function () {},
+				_request : function () {},
+				getServiceMetadata : function () {}
+			},
+			oRequest = {requestUri : "~uri"};
+
+		this.mock(oModel).expects("_getODataHandler").withExactArgs("~uri").returns("~oHandler");
+
+		// code under test
+		ODataModel.prototype._submitRequest.call(oModel, oRequest).abort();
+
+		// internal function submit is called async
+		this.mock(oModel).expects("getServiceMetadata").withExactArgs().returns("~metadata");
+		this.mock(oModel).expects("_request")
+			.withExactArgs(sinon.match.same(oRequest), sinon.match.func, sinon.match.func,
+				"~oHandler", undefined, "~metadata")
+			.callsFake(function () {
+				Promise.resolve().then(done);
+				// for any reason the request handle is undefined which must not lead to a TypeError
+				return undefined;
+			});
+	});
 });
