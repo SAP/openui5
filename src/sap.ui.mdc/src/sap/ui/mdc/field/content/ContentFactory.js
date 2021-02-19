@@ -15,8 +15,9 @@ sap.ui.define([
 	"sap/ui/mdc/field/content/BooleanContent",
 	"sap/ui/mdc/field/content/UnitContent",
 	'sap/ui/mdc/field/ConditionType',
-	'sap/ui/mdc/field/ConditionsType'
-], function(BaseObject, EditMode, ContentMode, loadModules, DefaultContent, SearchContent, DateContent, TimeContent, DateTimeContent, LinkContent, BooleanContent, UnitContent, ConditionType, ConditionsType) {
+	'sap/ui/mdc/field/ConditionsType',
+	"sap/ui/base/SyncPromise"
+], function(BaseObject, EditMode, ContentMode, loadModules, DefaultContent, SearchContent, DateContent, TimeContent, DateTimeContent, LinkContent, BooleanContent, UnitContent, ConditionType, ConditionsType, SyncPromise) {
 	"use strict";
 
 	/**
@@ -93,6 +94,7 @@ sap.ui.define([
 	 */
 	ContentFactory.prototype.createContent = function(oContentType, sContentMode, sId) {
 		var aControlNames = oContentType.getControlNames(sContentMode, this._sOperator);
+		var oLoadModulesPromise;
 
 		if (aControlNames.every(function(sControlName) {
 			return !sControlName;
@@ -101,9 +103,27 @@ sap.ui.define([
 			return Promise.resolve([]);
 		}
 
-		return loadModules(aControlNames).then(function(aControls) {
-			return oContentType.create(this, sContentMode, this._sOperator, aControls, sId);
-		}.bind(this));
+		try {
+			oLoadModulesPromise = loadModules(aControlNames)
+				.catch(function(oError) {
+					throw new Error("loadModules promise rejected in sap.ui.mdc.field.content.ContentFactory:createContent function call - could not load controls " + JSON.stringify(aControlNames));
+				})
+				.then(function(aControls) {
+					return oContentType.create(this, sContentMode, this._sOperator, aControls, sId);
+				}.bind(this))
+				.unwrap();
+		} catch (oError) {
+			throw new Error("Error in sap.ui.mdc.field.content.ContentFactory:createContent function call ErrorMessage: '" + oError.message + "'");
+		}
+
+		if (oLoadModulesPromise.then) {
+			oLoadModulesPromise.catch(function(oError) {
+				throw new Error("Error in sap.ui.mdc.field.content.ContentFactory:createContent function call ErrorMessage: '" + oError.message + "'");
+			});
+			return oLoadModulesPromise;
+		}
+
+		return SyncPromise.resolve(oLoadModulesPromise);
 	};
 
 	/**
