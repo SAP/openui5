@@ -291,8 +291,7 @@ sap.ui.define([
 		var oNewHistory = new History(this.oExtendedHashChanger);
 
 		if (!History._bUsePushState) {
-			assert.equal(History._aStateHistory.length, 1, "There's one history state entry");
-			assert.strictEqual(History._aStateHistory[0], "", "The first history state entry is correctly an empty string");
+			assert.equal(History._aStateHistory.length, 0, "There's no history state entry");
 		} else {
 			assert.equal(History._aStateHistory.length, 3, "There are three new history state entries");
 			assert.strictEqual(History._aStateHistory[0], "/hash1", "The first history state entry is correctly '/hash1'");
