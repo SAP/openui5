@@ -139,6 +139,10 @@ sap.ui.define([
 		return this._oMoveTopBtn;
 	};
 
+	BasePanel.prototype.getItems = function() {
+		return this._oListControl.getItems();
+	};
+
 	BasePanel.prototype._getMoveUpButton = function() {
 		if (!this._oMoveUpButton) {
 			this._oMoveUpButton = new OverflowToolbarButton(this.getId() + "-moveUpBtn",{
