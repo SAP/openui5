@@ -276,7 +276,7 @@ sap.ui.define([
 		 * For details about the escaping refer to {@link jQuery.sap.encodeHTML}
 		 *
 		 * @param {any} sText the text to escape
-		 * @param {boolean} bLineBreaks Whether to convert line breaks into <br> tags
+		 * @param {boolean} [bLineBreaks=false] Whether to convert line breaks into <br> tags
 		 * @return {this} Reference to <code>this</code> in order to allow method chaining
 		 * @public
 		 */
