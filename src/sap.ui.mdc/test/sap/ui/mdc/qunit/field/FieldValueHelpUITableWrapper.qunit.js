@@ -6,7 +6,7 @@
 
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
-	"sap/ui/mdc/field/FieldValueHelpMTableWrapper",
+	"sap/ui/mdc/field/FieldValueHelpUITableWrapper",
 	"sap/ui/mdc/field/FieldValueHelp",
 	"sap/ui/mdc/field/FieldValueHelpDelegate",
 	"sap/ui/mdc/odata/v4/FieldValueHelpDelegate",
@@ -16,11 +16,11 @@ sap.ui.define([
 	"sap/ui/mdc/field/OutParameter",
 	"sap/ui/mdc/field/ValueHelpPanel",
 	"sap/ui/mdc/field/DefineConditionPanel",
-	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/filterbar/vh/CollectiveSearchSelect",
+	"sap/ui/mdc/filterbar/vh/FilterBar",
 	"sap/ui/mdc/FilterField",
-	"sap/m/Table",
-	"sap/m/Column",
+	"sap/ui/table/Table",
+	"sap/ui/table/Column",
 	"sap/m/ColumnListItem",
 	"sap/m/Label",
 	"sap/m/Text",
@@ -35,11 +35,10 @@ sap.ui.define([
 	"sap/ui/model/Filter",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataListBinding",
-	"sap/ui/Device",
-	"sap/ui/events/KeyCodes"
+	"sap/ui/Device"
 ], function (
 		qutils,
-		FieldValueHelpMTableWrapper,
+		FieldValueHelpUITableWrapper,
 		FieldValueHelp,
 		FieldValueHelpDelegate,
 		FieldValueHelpDelegateV4,
@@ -49,8 +48,8 @@ sap.ui.define([
 		OutParameter,
 		ValueHelpPanel,
 		DefineConditionPanel,
-		VHFilterBar,
 		CollectiveSearchSelect,
+		VHFilterBar,
 		FilterField,
 		Table,
 		Column,
@@ -58,18 +57,17 @@ sap.ui.define([
 		Label,
 		Text,
 		ScrollContainer,
+		Icon,
 		Popover,
 		Dialog,
 		Button,
-		Icon,
 		JSONModel,
 		FormatException,
 		ParseException,
 		Filter,
 		ODataModel,
 		ODataListBinding,
-		Device,
-		KeyCodes
+		Device
 	) {
 	"use strict";
 
@@ -87,7 +85,6 @@ sap.ui.define([
 	var oField;
 	var iSelect = 0;
 	var aSelectItems;
-	var bSelectItemPress;
 	var sSelectId;
 	var iNavigate = 0;
 	var sNavigateKey;
@@ -102,8 +99,7 @@ sap.ui.define([
 
 	var _mySelectionChangeHandler = function(oEvent) {
 		iSelect++;
-		aSelectItems = oEvent.getParameter("selectedItems");
-		bSelectItemPress = oEvent.getParameter("itemPress");
+		aSelectItems = oWrapper.getSelectedItems();
 		sSelectId = oEvent.oSource.getId();
 	};
 
@@ -197,18 +193,21 @@ sap.ui.define([
 		});
 
 		oTable = new Table("T1", {
+			visibleRowCountMode: "Fixed",
+			rows:"{/items}",
 			width: "26rem",
-			columns: [ new Column({header: new Label({text: "Id"})}),
-					   new Column({header: new Label({text: "Text"})}),
-					   new Column({header: new Label({text: "Info"})})],
-			items: {path: "/items", template: oItemTemplate}
+			columns: [
+				new Column({sortProperty:"key", filterProperty: "key", sorted: true, template: new Text({text: "{key}"})}),
+				new Column({sortProperty:"text", filterProperty: "text", sorted: true, template: new Text({text: "{text}"})}),
+				new Column({sortProperty:"additionalText", filterProperty: "additionalText", sorted: true, template: new Text({text: "{additionalText}"})})
+			]
 		});
 
 		if (!bFVH) {
 			oTable.setModel(oModel); // as ValueHelp is faked
 		}
 
-		oWrapper = new FieldValueHelpMTableWrapper("W1", {
+		oWrapper = new FieldValueHelpUITableWrapper("W1", {
 					selectedItems: [{key: "I2", description: "Item 2"}],
 					selectionChange: _mySelectionChangeHandler,
 					navigate: _myNavigateHandler,
@@ -235,7 +234,6 @@ sap.ui.define([
 		oWrapper = undefined;
 		iSelect = 0;
 		aSelectItems = undefined;
-		bSelectItemPress = undefined;
 		sSelectId = undefined;
 		iNavigate = 0;
 		sNavigateDescription = undefined;
@@ -252,7 +250,7 @@ sap.ui.define([
 		iMaxConditions = -1;
 		bUseInParameters = false;
 		bUseOutParameters = false;
-		FieldValueHelpMTableWrapper._init();
+		//FieldValueHelpUITableWrapper._init();
 		oModel.destroy();
 		oModel = undefined;
 	};
@@ -289,32 +287,23 @@ sap.ui.define([
 
 		oWrapper.initialize();
 
-		assert.ok(oWrapper._oScrollContainer, "ScrollContainer created");
-		assert.ok(oWrapper._oScrollContainer.isA("sap.m.ScrollContainer"), "ScrollContainer instance");
-		assert.equal(oWrapper._oScrollContainer.getId(), "W1-SC", "ScrollContainer ID");
-		var aContent = oWrapper._oScrollContainer.getContent();
-		assert.equal(aContent.length, 1, "ScrollContainer content length");
-		assert.equal(aContent[0], oTable, "ScrollContainer content");
+		//assert.ok(oWrapper._oScrollContainer, "ScrollContainer created");
+		//assert.ok(oWrapper._oScrollContainer.isA("sap.m.ScrollContainer"), "ScrollContainer instance");
+		//assert.equal(oWrapper._oScrollContainer.getId(), "W1-SC", "ScrollContainer ID");
+		var oContent = oWrapper.getTable();
+		assert.equal(oContent, oTable, "oWrapper content");
 
 	});
 
-	QUnit.test("getDialogContent (with async loading of ScrollContainer)", function(assert) {
-
-		var oStub = sinon.stub(sap.ui, "require");
-		oStub.withArgs("sap/m/ScrollContainer").onFirstCall().returns(undefined);
-		oStub.callThrough();
-
+	QUnit.test("getDialogContent", function(assert) {
 
 		oWrapper.initialize();
 		var fnDone = assert.async();
 		setTimeout( function(){ // to wait until ScollContainer is loaded
 			var oContent = oWrapper.getDialogContent();
-			assert.equal(oContent && oContent.getId(), "W1-SC", "ScrollContainer returned");
+			assert.equal(oContent && oContent.getId(), "T1", "Table returned");
 			fnDone();
 		}, 0);
-
-		oStub.restore();
-
 	});
 
 	QUnit.test("getSuggestionContent", function(assert) {
@@ -336,26 +325,26 @@ sap.ui.define([
 		oTable.setModel(oNewModel); // to test OutParameters
 
 		var fnDone = assert.async();
-		var aItems = oTable.getItems();
+		var aItems = oWrapper._getTableItems();
 		setTimeout( function(){ // as model update is async
-			assert.ok(aItems[1].getSelected(), "Item 1 is selected");
+			assert.equal(aItems[1], oWrapper._getTableItems(true)[0], "Item 1 is selected");
 
 			oWrapper.setSelectedItems([{key: "I1", description: "Item 1"}]);
-			aItems = oTable.getItems();
-			assert.ok(aItems[0].getSelected(), "Item 0 is selected");
+			aItems = oWrapper._getTableItems();
+			assert.equal(aItems[0], oWrapper._getTableItems(true)[0], "Item 0 is selected");
 
 			oWrapper.setSelectedItems();
-			aItems = oTable.getSelectedItems();
+			aItems = oWrapper._getTableItems(true);
 			assert.equal(aItems.length, 0, "no item selected");
 
 			bUseOutParameters = true;
 			oWrapper.setSelectedItems([{key: "IA", description: "Item A1", outParameters: {additionalText: "Text 1"}}]);
-			aItems = oTable.getItems();
-			assert.ok(aItems[3].getSelected(), "Item 3 is selected");
+			aItems = oWrapper._getTableItems();
+			assert.equal(aItems[3], oWrapper._getTableItems(true)[0], "Item 3 is selected");
 
 			oWrapper.setSelectedItems([{key: "IA", outParameters: {additionalText: "Text 2"}}]);
-			aItems = oTable.getItems();
-			assert.ok(aItems[4].getSelected(), "Item 4 is selected");
+			aItems = oWrapper._getTableItems();
+			assert.equal(aItems[4], oWrapper._getTableItems(true)[0], "Item 4 is selected");
 			var aSelectedItems = oWrapper.getSelectedItems();
 			assert.equal(aSelectedItems.length, 1, "selectedItems");
 			assert.equal(aSelectedItems[0].key, "IA", "selectedItem key");
@@ -371,69 +360,45 @@ sap.ui.define([
 
 	QUnit.test("fieldHelpOpen / fieldHelpClose", function(assert) {
 
-		sinon.stub(oWrapper, "getScrollDelegate").onFirstCall().returns(true); // just to test our existance check, but nit inside table
-		sinon.spy(oTable, "scrollToIndex");
-
 		oWrapper.fieldHelpOpen(true); //suggestion
-		assert.equal(oTable.getMode(), "MultiSelect", "Table mode in suggestion");
+		assert.equal(oTable.getSelectionMode(), "MultiToggle", "Table mode in suggestion");
 		assert.equal(oTable.getWidth(), "26rem", "Table width in suggestion");
-		var aSticky = oTable.getSticky() || [];
-		assert.equal(aSticky[0], "ColumnHeaders", "Table header is sticky");
-		var aSelectedItems = oTable.getSelectedItems();
+		var aSelectedItems = oWrapper._getTableItems(true);
 		assert.equal(aSelectedItems.length, 1, "1 item selected");
-		assert.equal(aSelectedItems[0].getCells()[0].getText(), "I2", "selected item");
+		assert.equal(aSelectedItems[0].getProperty("key") , "I2", "selected item");
 		assert.ok(oWrapper._bSuggestion, "Sugestion mode stored internally");
-		assert.ok(oTable.scrollToIndex.calledWith(1), "Table scrolled to selected item");
-		oTable.scrollToIndex.reset();
 
 		oWrapper.fieldHelpClose();
 		assert.notOk(oWrapper._bSuggestion, "Sugestion mode not longer stored internally");
+		oWrapper._modifyTableSelection(aSelectedItems, aSelectedItems[0], false); // deselect item;
 
-		aSelectedItems[0].setSelected(false); // deselect item
 		oWrapper.fieldHelpOpen(false); //dialog
-		assert.equal(oTable.getMode(), "MultiSelect", "Table mode in dialog");
+		assert.equal(oTable.getSelectionMode(), "MultiToggle", "Table mode in dialog");
 		assert.equal(oTable.getWidth(), "100%", "Table width in dialog");
-		aSelectedItems = oTable.getSelectedItems();
+		aSelectedItems = oWrapper._getTableItems(true);
 		assert.equal(aSelectedItems.length, 1, "1 item selected");
-		assert.equal(aSelectedItems[0].getCells()[0].getText(), "I2", "selected item");
-		assert.notOk(oTable.scrollToIndex.calledWith(1), "Table not scrolled to selected item");
-		oTable.scrollToIndex.reset();
+		assert.equal(aSelectedItems[0].getProperty("key"), "I2", "selected item");
 
 		// Single Selection case
 		oWrapper.fieldHelpClose();
 		iMaxConditions = 1;
 
 		oWrapper.fieldHelpOpen(true); //suggestion
-		assert.equal(oTable.getMode(), "SingleSelectMaster", "Table mode in suggestion");
+		assert.equal(oTable.getSelectionMode(), "Single", "Table mode in suggestion");
 		assert.equal(oTable.getWidth(), "26rem", "Table width in suggestion");
-		aSelectedItems = oTable.getSelectedItems();
+		var aSelectedItems = oWrapper._getTableItems(true);
 		assert.equal(aSelectedItems.length, 1, "1 item selected");
-		assert.equal(aSelectedItems[0].getCells()[0].getText(), "I2", "selected item");
+		assert.equal(aSelectedItems[0].getProperty("key"), "I2", "selected item");
 		assert.ok(oWrapper._bSuggestion, "Sugestion mode stored internally");
 
 		oWrapper.fieldHelpClose();
-
-		aSelectedItems[0].setSelected(false); // deselect item
+		oWrapper._modifyTableSelection(aSelectedItems, aSelectedItems[0], false); // deselect item;
 		oWrapper.fieldHelpOpen(false); //dialog
-		assert.equal(oTable.getMode(), "SingleSelectLeft", "Table mode in dialog");
+		assert.equal(oTable.getSelectionMode(), "Single", "Table mode in dialog");
 		assert.equal(oTable.getWidth(), "100%", "Table width in dialog");
-		aSelectedItems = oTable.getSelectedItems();
+		aSelectedItems = oWrapper._getTableItems(true);
 		assert.equal(aSelectedItems.length, 1, "1 item selected");
-		assert.equal(aSelectedItems[0].getCells()[0].getText(), "I2", "selected item");
-
-		oWrapper.fieldHelpClose();
-
-		oTable.scrollToIndex.reset();
-		aSelectedItems[0].setSelected(false); // deselect item
-		oWrapper.setSelectedItems([]); // remove selection
-		oWrapper.fieldHelpOpen(true); //suggestion
-		assert.equal(oTable.getMode(), "SingleSelectMaster", "Table mode in suggestion");
-		aSelectedItems = oTable.getSelectedItems();
-		assert.equal(aSelectedItems.length, 0, "no item selected");
-		assert.notOk(oTable.scrollToIndex.called, "Table not scrolled to selected item");
-		oTable.scrollToIndex.reset();
-
-		oWrapper.fieldHelpClose();
+		assert.equal(aSelectedItems[0].getProperty("key"), "I2", "selected item");
 
 	});
 
@@ -457,139 +422,193 @@ sap.ui.define([
 
 	QUnit.test("navigate in single select", function(assert) {
 
+		var fnDone = assert.async();
+
+		// ui table needs to scroll to provide navigatable rows (as it features virtual scrolling)
+		var oScrollSpy = sinon.spy(oWrapper, "_handleScrolling");
+
+		var _handleScrolling = function (fnAfter) {
+            var oScrollPromise = oScrollSpy.lastCall.returnValue;
+			return oScrollPromise ? oScrollPromise.then(fnAfter) : Promise.resolve(fnAfter());
+        };
+
 		iMaxConditions = 1;
 		oWrapper.fieldHelpOpen(true); //suggestion
-		oWrapper.navigate(1);
-		var aItems = oTable.getItems();
-		assert.ok(aItems[2].getSelected(), "Item 2 is selected"); // as item 1 is set as selected
-		assert.equal(iNavigate, 1, "Navigate event fired");
-		assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
-		assert.equal(sNavigateKey, "I3", "Navigate event key");
-		assert.notOk(oNavigateInParameters, "no in-parameters set");
-		assert.notOk(oNavigateOutParameters, "no out-parameters set");
-		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
-		var aSelectedItems = oWrapper.getSelectedItems();
-		assert.equal(aSelectedItems.length, 1, "selectedItems");
-		assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
-		assert.equal(aSelectedItems[0].description, "X-Item 3", "selectedItem description");
-		assert.notOk(aSelectedItems[0].inParameters, "selectedItem no in-parameters");
-		assert.notOk(aSelectedItems[0].outParameters, "selectedItem no out-parameters");
 
-		iNavigate = 0;
-		oWrapper.navigate(1); // no next item
-		aItems = oTable.getItems();
-		assert.ok(aItems[2].getSelected(), "Item 2 is selected");
-		assert.equal(iNavigate, 0, "no Navigate event fired");
-		aSelectedItems = oWrapper.getSelectedItems();
-		assert.equal(aSelectedItems.length, 1, "selectedItems");
-		assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
-		assert.equal(aSelectedItems[0].description, "X-Item 3", "selectedItem description");
+		var _stepOne = function () {
+			oWrapper.navigate(1);
+			var aItems = oWrapper._getTableItems();
+			assert.equal(aItems[2], oWrapper._getTableItems(true)[0], "Item 2 is selected"); // as item 1 is set as selected
+			assert.ok(oScrollSpy.called, "Navigation triggered scrolling to desired row");
+			return _handleScrolling(function (params) {
+				assert.equal(aItems[2], oWrapper._getTableItems(true)[0],"Item 2 is selected"); // as item 1 is set as selected
+				assert.equal(iNavigate, 1, "Navigate event fired");
+				assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
+				assert.equal(sNavigateKey, "I3", "Navigate event key");
+				assert.notOk(oNavigateInParameters, "no in-parameters set");
+				assert.notOk(oNavigateOutParameters, "no out-parameters set");
+				assert.equal(sNavigateItemId, "T1-rows-row2", "Navigate event itemId");
+				var aSelectedItems = oWrapper.getSelectedItems();
+				assert.equal(aSelectedItems.length, 1, "selectedItems");
+				assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
+				assert.equal(aSelectedItems[0].description, "X-Item 3", "selectedItem description");
+				assert.notOk(aSelectedItems[0].inParameters, "selectedItem no in-parameters");
+				assert.notOk(aSelectedItems[0].outParameters, "selectedItem no out-parameters");
+			});
+		};
 
-		iNavigate = 0;
-		oWrapper.setSelectedItems([{key: "I2"}]);
-		oWrapper.navigate(-1);
-		aItems = oTable.getItems();
-		assert.ok(aItems[0].getSelected(), "Item 0 is selected");
-		assert.equal(iNavigate, 1, "Navigate event fired");
-		assert.equal(sNavigateDescription, "Item 1", "Navigate event description");
-		assert.equal(sNavigateKey, "I1", "Navigate event key");
-		assert.equal(sNavigateItemId, "MyItem-T1-0", "Navigate event itemId");
-		aSelectedItems = oWrapper.getSelectedItems();
-		assert.equal(aSelectedItems.length, 1, "selectedItems");
-		assert.equal(aSelectedItems[0].key, "I1", "selectedItem key");
-		assert.equal(aSelectedItems[0].description, "Item 1", "selectedItem description");
+		var _stepTwo = function () {
+			iNavigate = 0;
+			oWrapper.navigate(1); // no next item
+			return _handleScrolling(function () {
+				var aItems = oWrapper._getTableItems();
+				assert.equal(aItems[2], oWrapper._getTableItems(true)[0], "Item 2 is selected");
+				assert.equal(iNavigate, 0, "no Navigate event fired");
+				var aSelectedItems = oWrapper.getSelectedItems();
+				assert.equal(aSelectedItems.length, 1, "selectedItems");
+				assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
+				assert.equal(aSelectedItems[0].description, "X-Item 3", "selectedItem description");
+			});
+		};
 
-		iNavigate = 0;
-		oWrapper.navigate(-1); // no previous item
-		aItems = oTable.getItems();
-		assert.ok(aItems[0].getSelected(), "Item 2 is selected");
-		assert.equal(iNavigate, 0, "no Navigate event fired");
-		aSelectedItems = oWrapper.getSelectedItems();
-		assert.equal(aSelectedItems.length, 1, "selectedItems");
-		assert.equal(aSelectedItems[0].key, "I1", "selectedItem key");
-		assert.equal(aSelectedItems[0].description, "Item 1", "selectedItem description");
+		var _stepThree = function () {
+			iNavigate = 0;
+			oWrapper.setSelectedItems([{key: "I2"}]);
+			oWrapper.navigate(-1);
+			return _handleScrolling(function () {
+				var aItems = oWrapper._getTableItems();
+				assert.equal(aItems[0], oWrapper._getTableItems(true)[0], "Item 0 is selected");
+				assert.equal(iNavigate, 1, "Navigate event fired");
+				assert.equal(sNavigateDescription, "Item 1", "Navigate event description");
+				assert.equal(sNavigateKey, "I1", "Navigate event key");
+				assert.equal(sNavigateItemId, "T1-rows-row0", "Navigate event itemId");
+				var aSelectedItems = oWrapper.getSelectedItems();
+				assert.equal(aSelectedItems.length, 1, "selectedItems");
+				assert.equal(aSelectedItems[0].key, "I1", "selectedItem key");
+				assert.equal(aSelectedItems[0].description, "Item 1", "selectedItem description");
+			});
+		};
 
-		iNavigate = 0;
-		oWrapper.setSelectedItems();
-		oWrapper.navigate(3);
-		aItems = oTable.getItems();
-		assert.ok(aItems[2].getSelected(), "Item 2 is selected"); // as item 1 is set as selected
-		assert.equal(iNavigate, 1, "Navigate event fired");
-		assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
-		assert.equal(sNavigateKey, "I3", "Navigate event key");
-		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
-		aSelectedItems = oWrapper.getSelectedItems();
-		assert.equal(aSelectedItems.length, 1, "selectedItems");
-		assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
-		assert.equal(aSelectedItems[0].description, "X-Item 3", "selectedItem description");
+		var _stepFour = function () {
+			iNavigate = 0;
+			oWrapper.navigate(-1); // no previous item
+			return _handleScrolling(function () {
+				var aItems = oWrapper._getTableItems();
+				assert.equal(aItems[0], oWrapper._getTableItems(true)[0], "Item 2 is selected");
+				assert.equal(iNavigate, 0, "no Navigate event fired");
+				var aSelectedItems = oWrapper.getSelectedItems();
+				assert.equal(aSelectedItems.length, 1, "selectedItems");
+				assert.equal(aSelectedItems[0].key, "I1", "selectedItem key");
+				assert.equal(aSelectedItems[0].description, "Item 1", "selectedItem description");
+			});
+		};
 
-		iNavigate = 0;
-		oWrapper.setSelectedItems();
-		oWrapper.navigate(-2);
-		aItems = oTable.getItems();
-		assert.ok(aItems[1].getSelected(), "Item 1 is selected"); // as item 1 is set as selected
-		assert.equal(iNavigate, 1, "Navigate event fired");
-		assert.equal(sNavigateDescription, "Item 2", "Navigate event description");
-		assert.equal(sNavigateKey, "I2", "Navigate event key");
-		assert.equal(sNavigateItemId, "MyItem-T1-1", "Navigate event itemId");
-		aSelectedItems = oWrapper.getSelectedItems();
-		assert.equal(aSelectedItems.length, 1, "selectedItems");
-		assert.equal(aSelectedItems[0].key, "I2", "selectedItem key");
-		assert.equal(aSelectedItems[0].description, "Item 2", "selectedItem description");
+		var _stepFive = function () {
+			iNavigate = 0;
+			oWrapper.setSelectedItems();
+			oWrapper.navigate(3);
+			return _handleScrolling(function () {
+				var aItems = oWrapper._getTableItems();
+				assert.equal(aItems[2], oWrapper._getTableItems(true)[0], "Item 2 is selected"); // as item 1 is set as selected
+				assert.equal(iNavigate, 1, "Navigate event fired");
+				assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
+				assert.equal(sNavigateKey, "I3", "Navigate event key");
+				assert.equal(sNavigateItemId, "T1-rows-row2", "Navigate event itemId");
+				var aSelectedItems = oWrapper.getSelectedItems();
+				assert.equal(aSelectedItems.length, 1, "selectedItems");
+				assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
+				assert.equal(aSelectedItems[0].description, "X-Item 3", "selectedItem description");
+			});
+		};
 
-		// test in/out-parameter
-		bUseInParameters = true;
-		bUseOutParameters = true;
-		iNavigate = 0;
-		oWrapper.navigate(1); // no next item
-		aItems = oTable.getItems();
-		assert.ok(aItems[2].getSelected(), "Item 2 is selected");
-		assert.equal(iNavigate, 1, "Navigate event fired");
-		assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
-		assert.equal(sNavigateKey, "I3", "Navigate event key");
-		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
-		assert.ok(oNavigateInParameters, "In-parameters set");
-		assert.ok(oNavigateInParameters && oNavigateInParameters.hasOwnProperty("additionalText"), "in-parameters has additionalText");
-		assert.equal(oNavigateInParameters && oNavigateInParameters.additionalText, "Text 3", "in-parameters additionalText");
-		assert.ok(oNavigateOutParameters, "out-parameters set");
-		assert.ok(oNavigateOutParameters && oNavigateOutParameters.hasOwnProperty("additionalText"), "out-parameters has additionalText");
-		assert.equal(oNavigateOutParameters && oNavigateOutParameters.additionalText, "Text 3", "out-parameters additionalText");
-		aSelectedItems = oWrapper.getSelectedItems();
-		assert.equal(aSelectedItems.length, 1, "selectedItems");
-		assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
-		assert.equal(aSelectedItems[0].description, "X-Item 3", "selectedItem description");
-		assert.ok(aSelectedItems[0].inParameters, "selectedItem in-parameters set");
-		assert.ok(aSelectedItems[0].inParameters && aSelectedItems[0].inParameters.hasOwnProperty("additionalText"), "selectedItem in-parameters has additionalText");
-		assert.equal(aSelectedItems[0].inParameters && aSelectedItems[0].inParameters.additionalText, "Text 3", "selectedItem in-parameters additionalText");
-		assert.ok(aSelectedItems[0].outParameters, "selectedItem out-parameters set");
-		assert.ok(aSelectedItems[0].outParameters && aSelectedItems[0].outParameters.hasOwnProperty("additionalText"), "selectedItem out-parameters has additionalText");
-		assert.equal(aSelectedItems[0].outParameters && aSelectedItems[0].outParameters.additionalText, "Text 3", "selectedItem out-parameters additionalText");
+		var _stepSix = function () {
+			iNavigate = 0;
+			oWrapper.setSelectedItems();
+			oWrapper.navigate(-2);
+			return _handleScrolling(function () {
+				var aItems = oWrapper._getTableItems();
+				assert.equal(aItems[1], oWrapper._getTableItems(true)[0], "Item 1 is selected"); // as item 1 is set as selected
+				assert.equal(iNavigate, 1, "Navigate event fired");
+				assert.equal(sNavigateDescription, "Item 2", "Navigate event description");
+				assert.equal(sNavigateKey, "I2", "Navigate event key");
+				assert.equal(sNavigateItemId, "T1-rows-row1", "Navigate event itemId");
+				var aSelectedItems = oWrapper.getSelectedItems();
+				assert.equal(aSelectedItems.length, 1, "selectedItems");
+				assert.equal(aSelectedItems[0].key, "I2", "selectedItem key");
+				assert.equal(aSelectedItems[0].description, "Item 2", "selectedItem description");
+			});
+		};
 
+		var _stepSeven = function () {
+			// test in/out-parameter
+			bUseInParameters = true;
+			bUseOutParameters = true;
+			iNavigate = 0;
+			oWrapper.navigate(1); // no next item
+			return _handleScrolling(function () {
+				var aItems = oWrapper._getTableItems();
+				assert.equal(aItems[2], oWrapper._getTableItems(true)[0], "Item 2 is selected");
+				assert.equal(iNavigate, 1, "Navigate event fired");
+				assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
+				assert.equal(sNavigateKey, "I3", "Navigate event key");
+				assert.equal(sNavigateItemId, "T1-rows-row2", "Navigate event itemId");
+				assert.ok(oNavigateInParameters, "In-parameters set");
+				assert.ok(oNavigateInParameters && oNavigateInParameters.hasOwnProperty("additionalText"), "in-parameters has additionalText");
+				assert.equal(oNavigateInParameters && oNavigateInParameters.additionalText, "Text 3", "in-parameters additionalText");
+				assert.ok(oNavigateOutParameters, "out-parameters set");
+				assert.ok(oNavigateOutParameters && oNavigateOutParameters.hasOwnProperty("additionalText"), "out-parameters has additionalText");
+				assert.equal(oNavigateOutParameters && oNavigateOutParameters.additionalText, "Text 3", "out-parameters additionalText");
+				var aSelectedItems = oWrapper.getSelectedItems();
+				assert.equal(aSelectedItems.length, 1, "selectedItems");
+				assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
+				assert.equal(aSelectedItems[0].description, "X-Item 3", "selectedItem description");
+				assert.ok(aSelectedItems[0].inParameters, "selectedItem in-parameters set");
+				assert.ok(aSelectedItems[0].inParameters && aSelectedItems[0].inParameters.hasOwnProperty("additionalText"), "selectedItem in-parameters has additionalText");
+				assert.equal(aSelectedItems[0].inParameters && aSelectedItems[0].inParameters.additionalText, "Text 3", "selectedItem in-parameters additionalText");
+				assert.ok(aSelectedItems[0].outParameters, "selectedItem out-parameters set");
+				assert.ok(aSelectedItems[0].outParameters && aSelectedItems[0].outParameters.hasOwnProperty("additionalText"), "selectedItem out-parameters has additionalText");
+				assert.equal(aSelectedItems[0].outParameters && aSelectedItems[0].outParameters.additionalText, "Text 3", "selectedItem out-parameters additionalText");
+			});
+		};
+
+		var aSteps = [_stepOne, _stepTwo, _stepThree, _stepFour, _stepFive, _stepSix, _stepSeven, function () {
+			oScrollSpy.restore();
+			fnDone();
+		}];
+
+		aSteps.reduce(function (oPromise, fnTask) {
+			return oPromise.then(fnTask);
+		}, Promise.resolve());
 	});
 
 	QUnit.test("assign table while navigate", function(assert) {
+
+		var fnDone = assert.async();
 
 		iMaxConditions = 1;
 		oWrapper.setTable();
 		oWrapper.navigate(1);
 		oWrapper.setTable(oTable);
-		var aItems = oTable.getItems();
-		assert.ok(aItems[2].getSelected(), "Item 2 is selected"); // as item 1 is set as selected
-		assert.equal(iNavigate, 1, "Navigate event fired");
-		assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
-		assert.equal(sNavigateKey, "I3", "Navigate event key");
-		assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
-		var aSelectedItems = oWrapper.getSelectedItems();
-		assert.equal(aSelectedItems.length, 1, "selectedItems");
-		assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
-		assert.equal(aSelectedItems[0].description, "X-Item 3", "selectedItem description");
+		setTimeout(function () {
+			var aItems = oWrapper._getTableItems();
+			assert.equal(aItems[2], oWrapper._getTableItems(true)[0], "Item 2 is selected"); // as item 1 is set as selected
+			assert.equal(iNavigate, 1, "Navigate event fired");
+			assert.equal(sNavigateDescription, "X-Item 3", "Navigate event description");
+			assert.equal(sNavigateKey, "I3", "Navigate event key");
+			assert.equal(sNavigateItemId, "T1-rows-row2", "Navigate event itemId");
+			var aSelectedItems = oWrapper.getSelectedItems();
+			assert.equal(aSelectedItems.length, 1, "selectedItems");
+			assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
+			assert.equal(aSelectedItems[0].description, "X-Item 3", "selectedItem description");
+			fnDone();
+		}, 0);
 
 	});
 
 	QUnit.test("navigate with suspended table", function(assert) {
 
 		iMaxConditions = 1;
-		var oBinding = oTable.getBinding("items");
+		var oBinding = oTable.getBinding("rows");
 		oBinding.suspend();
 		oWrapper.navigate(1);
 
@@ -602,12 +621,12 @@ sap.ui.define([
 
 		var fnDone = assert.async();
 		setTimeout( function(){ // as model update is async
-			var aItems = oTable.getItems();
-			assert.ok(aItems[2].getSelected(), "Item 2 is selected"); // as item 1 is set as selected
+			var aItems = oWrapper._getTableItems(false);
+			assert.equal(aItems[2], oWrapper._getTableItems(true)[0], "Item 2 is selected"); // as item 1 is set as selected
 			assert.equal(iNavigate, 2, "Navigate event fired");
 			assert.equal(sNavigateDescription, "New X-Item 3", "Navigate event description");
 			assert.equal(sNavigateKey, "I3", "Navigate event key");
-			assert.equal(sNavigateItemId, "MyItem-T1-2", "Navigate event itemId");
+			assert.equal(sNavigateItemId, "T1-rows-row2", "Navigate event itemId");
 			var aSelectedItems = oWrapper.getSelectedItems();
 			assert.equal(aSelectedItems.length, 1, "selectedItems");
 			assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
@@ -890,7 +909,7 @@ sap.ui.define([
 	QUnit.test("getListBinding", function(assert) {
 
 		var oListBinding = oWrapper.getListBinding();
-		assert.equal(oListBinding, oTable.getBinding("items"), "ListBinding of table returned");
+		assert.equal(oListBinding, oTable.getBinding("rows"), "ListBinding of table returned");
 
 	});
 
@@ -899,20 +918,37 @@ sap.ui.define([
 		oWrapper.initialize();
 		var fnDone = assert.async();
 		setTimeout( function(){ // as model update is async
+			var oPlacedTable = oWrapper.getTable();
+
+			var aStubs = [];
+
+			aStubs.push(sinon.stub(oWrapper, 'getTable').callsFake(function () {
+				return oPlacedTable;
+			}));
+
+			aStubs.push(sinon.stub(oWrapper, '_getWrappedTable').callsFake(function () {
+				return oPlacedTable;
+			}));
+
+			aStubs.push(sinon.stub(oWrapper, '_handleSelectionChange').callsFake(function () {
+				this._fireSelectionChange.call(this, false);
+			}.bind(oWrapper)));
+
 			var oContent = oWrapper.getDialogContent();
 			oContent.placeAt("content"); // render table
 			sap.ui.getCore().applyChanges();
 
 			iMaxConditions = 1;
 			oWrapper.fieldHelpOpen(true); // suggestion with single selection
-			var aItems = oTable.getItems();
-			qutils.triggerEvent("tap", aItems[2].getId());
+
+			var aItems = oWrapper._getTableItems(false, true);
+			qutils.triggerEvent("click", aItems[2].getCells()[0].getId(), {userInteraction: true});
+
 			setTimeout( function(){ // as itemPress is handled async
 				assert.equal(iSelect, 1, "Select event fired");
 				assert.equal(aSelectItems.length, 1, "one item returned");
 				assert.equal(aSelectItems[0].key, "I3", "item key");
 				assert.equal(aSelectItems[0].description, "X-Item 3", "item description");
-				assert.ok(bSelectItemPress, "itemPress");
 				var aSelectedItems = oWrapper.getSelectedItems();
 				assert.equal(aSelectedItems.length, 1, "selectedItems");
 				assert.equal(aSelectedItems[0].key, "I3", "selectedItem key");
@@ -926,7 +962,8 @@ sap.ui.define([
 				bUseOutParameters = true;
 				iMaxConditions = -1;
 				oWrapper.fieldHelpOpen(false); // dialog with multi selection
-				qutils.triggerEvent("tap", aItems[1].getId());
+				qutils.triggerEvent("click", aItems[1].getCells()[0].getId());
+
 				setTimeout( function(){ // as itemPress is handled async
 					assert.equal(iSelect, 1, "Select event fired");
 					assert.equal(aSelectItems.length, 2, "two items returned");
@@ -965,25 +1002,33 @@ sap.ui.define([
 					assert.ok(aSelectedItems[1].outParameters && aSelectedItems[1].outParameters.hasOwnProperty("additionalText"), "selectedItem out-parameters has additionalText");
 					assert.equal(aSelectedItems[1].outParameters && aSelectedItems[1].outParameters.additionalText, "Text 3", "selectedItem out-parameters additionalText");
 
-					// check selected items not in table (because filtering) untouched
-					oWrapper.setSelectedItems([{key: "I4", description: "Item 4"}]);
-					iSelect = 0;
-					qutils.triggerEvent("tap", aItems[2].getId());
-					setTimeout( function(){ // as itemPress is handled async
-						assert.equal(iSelect, 1, "Select event fired");
-						assert.equal(aSelectItems.length, 2, "two items returned");
-						assert.equal(aSelectItems[0].key, "I4", "item key");
-						assert.equal(aSelectItems[0].description, "Item 4", "item description");
-						assert.equal(aSelectItems[1].key, "I3", "item key");
-						assert.equal(aSelectItems[1].description, "X-Item 3", "item description");
-						var aSelectedItems = oWrapper.getSelectedItems();
-						assert.equal(aSelectedItems.length, 2, "selectedItems");
-						assert.equal(aSelectedItems[0].key, "I4", "selectedItem key");
-						assert.equal(aSelectedItems[0].description, "Item 4", "selectedItem description");
-						assert.equal(aSelectedItems[1].key, "I3", "selectedItem key");
-						assert.equal(aSelectedItems[1].description, "X-Item 3", "selectedItem description");
-						oWrapper.fieldHelpClose();
-						fnDone();
+					setTimeout(function () {
+						// check selected items not in table (because filtering) untouched
+						oWrapper.setSelectedItems([{key: "I4", description: "Item 4"}]);
+						iSelect = 0;
+						qutils.triggerEvent("click", aItems[2].getCells()[0].getId());
+
+						setTimeout( function(){ // as itemPress is handled async
+							assert.equal(iSelect, 1, "Select event fired");
+							assert.equal(aSelectItems.length, 2, "two items returned");
+							assert.equal(aSelectItems[0].key, "I4", "item key");
+							assert.equal(aSelectItems[0].description, "Item 4", "item description");
+							assert.equal(aSelectItems[1].key, "I3", "item key");
+							assert.equal(aSelectItems[1].description, "X-Item 3", "item description");
+							var aSelectedItems = oWrapper.getSelectedItems();
+							assert.equal(aSelectedItems.length, 2, "selectedItems");
+							assert.equal(aSelectedItems[0].key, "I4", "selectedItem key");
+							assert.equal(aSelectedItems[0].description, "Item 4", "selectedItem description");
+							assert.equal(aSelectedItems[1].key, "I3", "selectedItem key");
+							assert.equal(aSelectedItems[1].description, "X-Item 3", "selectedItem description");
+							oWrapper.fieldHelpClose();
+
+							for (var i = 0; i < aStubs.length; i++) {
+								aStubs[i].restore();
+							}
+
+							fnDone();
+						}, 0);
 					}, 0);
 				}, 0);
 			}, 0);
@@ -1016,24 +1061,36 @@ sap.ui.define([
 			// simulate update finished
 			iDataUpdate = 0;
 			sDataUpdateId = undefined;
-			oTable.fireUpdateFinished({reason: "Test"});
+			oTable.fireEvent("rowsUpdated", {reason: "test"});
 			assert.equal(iDataUpdate, 1, "DataUpdate event fired once");
 			assert.equal(sDataUpdateId, oWrapper.getId(), "DataUpdate Id");
 
 			iDataUpdate = 0;
 			sDataUpdateId = undefined;
-			oCloneTable.fireUpdateFinished({reason: "Test"});
+			oCloneTable.fireEvent("rowsUpdated", {reason: "test"});
 			assert.equal(iDataUpdate, 1, "DataUpdate event on clone fired once");
 			assert.equal(sDataUpdateId, oClone.getId(), "DataUpdate Id on clone");
 
 			// simulate selection
-			oTable.fireSelectionChange();
+			oTable.fireRowSelectionChange({
+				rowIndex: 1,
+				rowContext: oTable.getContextByIndex(1),
+				rowIndices: [1],
+				selectAll: false,
+				userInteraction: true
+			});
 			assert.equal(iSelect, 1, "Select event fired once");
 			assert.equal(sSelectId, oWrapper.getId(), "Select Id");
 
 			iSelect = 0;
 			sSelectId = undefined;
-			oCloneTable.fireSelectionChange();
+			oCloneTable.fireRowSelectionChange({
+				rowIndex: 1,
+				rowContext: oTable.getContextByIndex(1),
+				rowIndices: [1],
+				selectAll: false,
+				userInteraction: true
+			});
 			assert.equal(iSelect, 1, "Select event on clone fired once");
 			assert.equal(sSelectId, oClone.getId(), "Select Id on clone");
 
@@ -1145,6 +1202,7 @@ sap.ui.define([
 	var sFVHNavigateValue;
 	var sFVHNavigateKey;
 	var sFVHNavigateItemId;
+
 	var _myFVHNavigateHandler = function(oEvent) {
 		iFVHNavigate++;
 		sFVHNavigateValue = oEvent.getParameter("value");
@@ -1157,10 +1215,8 @@ sap.ui.define([
 		iFVHDataUpdate++;
 	};
 
-	var _fPressHandler = function(oEvent) {}; // just dummy handler to make Icon focusable
-
 	var _initFieldHelp = function() {
-		oField = new Icon("I1", {src:"sap-icon://sap-ui5", decorative: false, press: _fPressHandler});
+		oField = new Icon("I1", {src:"sap-icon://sap-ui5"});
 		oField.getFieldPath = function() {return "key";};
 		oField.placeAt("content");
 
@@ -1180,7 +1236,6 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		oField.addDependent(oFieldHelp);
-		oField.focus();
 		oFieldHelp.connect(oField);
 	};
 
@@ -1221,7 +1276,7 @@ sap.ui.define([
 			assert.equal(oMyTable.getId(), "T1", "content is Table");
 			assert.ok(iFVHDataUpdate > 0, "DataUpdate event fired"); // one for adding wrapper, one for table update (sometimes table updated before event assigned)
 			assert.equal(oPopover.getInitialFocus(), "I1", "Initial focus on Field");
-			assert.equal(oMyTable.getMode(), "SingleSelectMaster", "Table is single Select");
+			assert.equal(oMyTable.getSelectionMode(), "Single", "Table is single Select");
 		}
 		oFieldHelp.close();
 		oClock.tick(iPopoverDuration); // fake closing time
@@ -1237,12 +1292,12 @@ sap.ui.define([
 
 		var oPopover = oFieldHelp.getAggregation("_popover");
 		if (oPopover) {
-			var aItems = oTable.getItems();
+			var aItems = oWrapper._getTableItems();
 			assert.equal(aItems.length, 2, "List has 2 Items");
 			oFieldHelp.setFilterValue("X");
 			oClock.tick(0); // update binding
 
-			aItems = oTable.getItems();
+			aItems = oWrapper._getTableItems();
 			assert.equal(aItems.length, 1, "List has 1 Item");
 			oFieldHelp.close();
 			oClock.tick(iPopoverDuration); // fake closing time
@@ -1251,29 +1306,30 @@ sap.ui.define([
 	});
 
 	QUnit.test("navigate in suggestion", function(assert) {
-
 		oFieldHelp.navigate(1);
 		oClock.tick(iPopoverDuration); // fake opening time
 
 		var oPopover = oFieldHelp.getAggregation("_popover");
 		if (oPopover) {
 			assert.ok(oPopover.isOpen(), "Field help opened");
-			var aItems = oTable.getItems();
-			assert.ok(aItems[0].getSelected(), "Item 1 is selected");
-			assert.equal(iFVHNavigate, 1, "Navigate event fired");
-			assert.equal(sFVHNavigateValue, "Item 1", "Navigate event value");
-			assert.equal(sFVHNavigateKey, "I1", "Navigate event key");
-			assert.equal(sFVHNavigateItemId, "MyItem-T1-0", "Navigate event itemId");
+			setTimeout(function () {
+				var aItems = oWrapper._getTableItems();
+				assert.equal(aItems[0], oWrapper._getTableItems(true)[0], "Item 1 is selected");
+				assert.equal(iFVHNavigate, 1, "Navigate event fired");
+				assert.equal(sFVHNavigateValue, "Item 1", "Navigate event value");
+				assert.equal(sFVHNavigateKey, "I1", "Navigate event key");
+				assert.equal(sFVHNavigateItemId, "MyItem-T1-0", "Navigate event itemId");
 
-			oFieldHelp.navigate(1);
-			aItems = oTable.getItems();
-			assert.ok(aItems[1].getSelected(), "Item 2 is selected");
-			assert.equal(iFVHNavigate, 2, "Navigate event fired");
-			assert.equal(sFVHNavigateValue, "Item 2", "Navigate event value");
-			assert.equal(sFVHNavigateKey, "I2", "Navigate event key");
-			assert.equal(sFVHNavigateItemId, "MyItem-T1-1", "Navigate event itemId");
-			oFieldHelp.close();
-			oClock.tick(iPopoverDuration); // fake closing time
+				oFieldHelp.navigate(1);
+				aItems = oWrapper._getTableItems();
+				assert.equal(aItems[1], oWrapper._getTableItems(true)[0], "Item 2 is selected");
+				assert.equal(iFVHNavigate, 2, "Navigate event fired");
+				assert.equal(sFVHNavigateValue, "Item 2", "Navigate event value");
+				assert.equal(sFVHNavigateKey, "I2", "Navigate event key");
+				assert.equal(sFVHNavigateItemId, "MyItem-T1-1", "Navigate event itemId");
+				oFieldHelp.close();
+				oClock.tick(iPopoverDuration); // fake closing time
+			}, 0);
 		}
 
 	});
@@ -1287,73 +1343,73 @@ sap.ui.define([
 		var oPopover = oFieldHelp.getAggregation("_popover");
 		if (oPopover) {
 			assert.ok(oPopover.isOpen(), "Field help opened");
-			assert.equal(oTable.getMode(), "MultiSelect", "Table mode in suggestion");
+			setTimeout(function () {
+				assert.equal(oTable.getMode(), "MultiSelect", "Table mode in suggestion");
+				var oFocusedElement = document.activeElement;
+				var aItems = oWrapper._getTableItems();
+				assert.notequal(aItems[0], oWrapper._getTableItems(true)[0], "Item 1 is not selected");
+				assert.equal(iNavigate, 1, "Navigate event fired");
+				assert.notOk(sNavigateKey, "Navigate event key");
+				assert.notOk(sNavigateDescription, "Navigate event description");
+				assert.notOk(sNavigateItemId, "Navigate event itemId");
+				assert.notOk(bNavigateLeave, "Navigate event leave");
+				assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
 
-			var oFocusedElement = document.activeElement;
-			var aItems = oTable.getItems();
-			assert.notOk(aItems[0].getSelected(), "Item 1 is not selected");
-			assert.equal(iNavigate, 1, "Navigate event fired");
-			assert.notOk(sNavigateKey, "Navigate event key");
-			assert.notOk(sNavigateDescription, "Navigate event description");
-			assert.notOk(sNavigateItemId, "Navigate event itemId");
-			assert.notOk(bNavigateLeave, "Navigate event leave");
-			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
+				iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
+				qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+				oFocusedElement = document.activeElement;
+				assert.equal(iNavigate, 0, "Navigate event not fired");
+				assert.equal(aItems[1].getId(), oFocusedElement.id, "Item 2 is focused");
 
-			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
-			oFocusedElement = document.activeElement;
-			assert.equal(iNavigate, 0, "Navigate event not fired");
-			assert.equal(aItems[1].getId(), oFocusedElement.id, "Item 2 is focused");
+				iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
+				qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, jQuery.sap.KeyCodes.SPACE, false, false, false);
+				assert.equal(iSelect, 1, "Select event fired");
+				assert.equal(aSelectItems.length, 1, "one item returned");
+				assert.equal(aSelectItems[0].key, "I2", "item key");
+				assert.equal(aSelectItems[0].description, "Item 2", "item description");
 
-			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, KeyCodes.SPACE, false, false, false);
-			assert.equal(iSelect, 1, "Select event fired");
-			assert.equal(aSelectItems.length, 1, "one item returned");
-			assert.equal(aSelectItems[0].key, "I2", "item key");
-			assert.equal(aSelectItems[0].description, "Item 2", "item description");
-			assert.notOk(bSelectItemPress, "itemPress");
+				iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
+				qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+				oFocusedElement = document.activeElement;
+				assert.equal(iNavigate, 0, "Navigate event not fired");
+				assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
 
-			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
-			oFocusedElement = document.activeElement;
-			assert.equal(iNavigate, 0, "Navigate event not fired");
-			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
+				sinon.spy(oField, "focus");
+				iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
+				qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
+				oFocusedElement = document.activeElement;
+				assert.equal(iNavigate, 1, "Navigate event fired");
+				assert.notOk(sNavigateKey, "Navigate event key");
+				assert.notOk(sNavigateDescription, "Navigate event description");
+				assert.notOk(sNavigateItemId, "Navigate event itemId");
+				assert.ok(bNavigateLeave, "Navigate event leave");
+				assert.ok(oField.focus.called, "focus set on Field");
 
-			sinon.spy(oField, "focus");
-			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
-			oFocusedElement = document.activeElement;
-			assert.equal(iNavigate, 1, "Navigate event fired");
-			assert.notOk(sNavigateKey, "Navigate event key");
-			assert.notOk(sNavigateDescription, "Navigate event description");
-			assert.notOk(sNavigateItemId, "Navigate event itemId");
-			assert.ok(bNavigateLeave, "Navigate event leave");
-			assert.ok(oField.focus.called, "focus set on Field");
-
-			oFieldHelp.close();
-			oClock.tick(iPopoverDuration); // fake closing time
+				oFieldHelp.close();
+				oClock.tick(iPopoverDuration); // fake closing time
+			}, 0);
 		}
 
 	});
 
 	QUnit.test("select item in suggestion", function(assert) {
-
+		var fnDone = assert.async();
 		oFieldHelp.open(true);
 		oClock.tick(iPopoverDuration); // fake opening time
 
 		var oPopover = oFieldHelp.getAggregation("_popover");
 		if (oPopover) {
-			var aItems = oTable.getItems();
-			qutils.triggerEvent("tap", aItems[1].getId());
-			oClock.tick(iPopoverDuration); // fake closing time
-
-			assert.equal(iFVHSelect, 1, "Select event fired");
-			assert.equal(aFVHSelectConditions.length, 1, "one condition returned");
-			assert.equal(aFVHSelectConditions[0].operator, "EQ", "Condition operator");
-			assert.equal(aFVHSelectConditions[0].values[0], "I2", "Condition values[0}");
-			assert.equal(aFVHSelectConditions[0].values[1], "Item 2", "Condition values[1}");
-			assert.ok(bFVHSelectAdd, "Items should be added");
-			assert.notOk(oPopover.isOpen(), "Field help closed");
+			var aItems = oWrapper._getTableItems(false, true);
+				qutils.triggerEvent("click", aItems[1].getCells()[0].getId());
+				oClock.tick(iPopoverDuration); // fake closing time
+				assert.equal(iFVHSelect, 1, "Select event fired");
+				assert.equal(aFVHSelectConditions.length, 1, "one condition returned");
+				assert.equal(aFVHSelectConditions[0].operator, "EQ", "Condition operator");
+				assert.equal(aFVHSelectConditions[0].values[0], "I2", "Condition values[0}");
+				assert.equal(aFVHSelectConditions[0].values[1], "Item 2", "Condition values[1}");
+				assert.ok(bFVHSelectAdd, "Items should be added");
+				assert.notOk(oPopover.isOpen(), "Field help closed");
+				fnDone();
 		}
 
 	});
@@ -1376,14 +1432,9 @@ sap.ui.define([
 			assert.ok(oDialog.isOpen(), "Dialog is open");
 			var oVHP = oDialog.getContent()[0];
 			assert.ok(iFVHDataUpdate > 0, "DataUpdate event fired"); // one for adding wrapper, one for table update (sometimes table updated before event assigned)
-			var oScroll = oVHP.getTable();
-			assert.ok(oScroll, "ValueHelpPanel has table assigned");
-			assert.ok(oScroll && oScroll.isA("sap.m.ScrollContainer"), "content is ScrollContainer");
-			assert.equal(oScroll.getId(), "W1-SC", "ScrollContainer ID");
-			var oMyTable = oScroll.getContent()[0];
-			assert.ok(oMyTable, "ScrollContainer has content");
+			var oMyTable = oVHP.getTable();
 			assert.equal(oMyTable.getId(), "T1", "content is Table");
-			assert.equal(oMyTable.getMode(), "SingleSelectLeft", "Table is single Select");
+			assert.equal(oMyTable.getSelectionMode(), "Single", "Table is single Select");
 		}
 
 		oFieldHelp.close();
@@ -1400,11 +1451,11 @@ sap.ui.define([
 
 		var oDialog = oFieldHelp.getAggregation("_dialog");
 		if (oDialog) {
-			var aItems = oTable.getItems();
-			assert.ok(aItems[1].getSelected(), "Item 2 is selected");
+			var aItems = oWrapper._getTableItems();
+			assert.equal(aItems[1], oWrapper._getTableItems(true)[0], "Item 2 is selected");
 			oFieldHelp.setConditions([Condition.createItemCondition("I3", "Item 3")]);
-			assert.notOk(aItems[1].getSelected(), "Item 2 is not selected");
-			assert.ok(aItems[2].getSelected(), "Item 3 is selected");
+			assert.ok(oWrapper._getTableItems(true).indexOf(aItems[1]) === -1, "Item 2 is not selected");
+			assert.equal(aItems[2], oWrapper._getTableItems(true)[0], "Item 3 is selected");
 		}
 
 		oFieldHelp.close();
@@ -1415,13 +1466,13 @@ sap.ui.define([
 	QUnit.test("select item in dialog", function(assert) {
 
 		oFieldHelp.open(false);
-		oClock.tick(iDialogDuration); // fake opening time
+		oClock.tick(iDialogDuration + 100); // fake opening time
 
 		var oDialog = oFieldHelp.getAggregation("_dialog");
 		if (oDialog) {
-			var aItems = oTable.getItems();
-			qutils.triggerEvent("tap", aItems[0].getId());
-			qutils.triggerEvent("tap", aItems[1].getId());
+			var aItems = oWrapper._getTableItems(false, true);
+			qutils.triggerEvent("click", aItems[0].getCells()[0].getId());
+			qutils.triggerEvent("click", aItems[1].getCells()[0].getId());
 			oClock.tick(0); // itemPress is async
 
 			assert.equal(iFVHSelect, 0, "Select event not fired");
@@ -1446,16 +1497,15 @@ sap.ui.define([
 		oField.getMaxConditions = function() {return -1;};
 		oFieldHelp.connect(oField);
 		oFieldHelp.open(false);
-		oClock.tick(iDialogDuration); // fake opening time
+		oClock.tick(iDialogDuration + 100); // fake opening time
 
 		var oDialog = oFieldHelp.getAggregation("_dialog");
 		if (oDialog) {
-			oTable.focus(); // to be sure focus is on table
-			var aItems = oTable.getItems();
+			var aItems = oWrapper._getTableItems(false, true);
 			aItems[0]._eventHandledByControl = true; // fake press on checkBox
-			qutils.triggerEvent("tap", aItems[0].getId() + "-selectMulti");
+			qutils.triggerEvent("click", oTable.getId() + "-rowsel0");
 			aItems[1]._eventHandledByControl = true; // fake press on checkBox
-			qutils.triggerEvent("tap", aItems[1].getId() + "-selectMulti");
+			qutils.triggerEvent("click", oTable.getId() + "-rowsel1");
 			assert.equal(iFVHSelect, 0, "Select event not fired");
 
 			var aButtons = oDialog.getButtons();
@@ -1480,37 +1530,46 @@ sap.ui.define([
 
 		oField.getMaxConditions = function() {return -1;};
 		oFieldHelp.open(false);
-		oClock.tick(iDialogDuration); // fake opening time
+		oClock.tick(iDialogDuration + 100); // fake opening time
 
 		var oDialog = oFieldHelp.getAggregation("_dialog");
 		if (oDialog) {
 			assert.ok(oDialog.isOpen(), "Field help opened");
-			assert.equal(oTable.getMode(), "MultiSelect", "Table mode in dialog");
+			assert.equal(oTable.getSelectionMode(), "MultiToggle", "Table mode in dialog");
 
 			oTable.focus(); // to be sure focus is on table
 			var oFocusedElement = document.activeElement;
-			var aItems = oTable.getItems();
-			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
+			assert.equal(oTable.getColumns()[0].getId(), oFocusedElement.id, "Column 1 is focused");
+
+			var aItems = oWrapper._getTableItems(false, true);
+
+			qutils.triggerKeyboardEvent(oTable.getColumns()[0].getFocusDomRef().id, jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+			oFocusedElement = document.activeElement;
+			assert.equal(aItems[0].getFocusDomRef().id + "-col0", oFocusedElement.id, "Item 0 is focused");
+
+			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id + "-col0", jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
+			oFocusedElement = document.activeElement;
+			assert.equal(aItems[1].getFocusDomRef().id + "-col0", oFocusedElement.id, "Item 1 is focused");
 
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_DOWN, false, false, false);
+			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id + "-col0", jQuery.sap.KeyCodes.ARROW_DOWN, false, false, false);
 			oFocusedElement = document.activeElement;
 			assert.equal(iNavigate, 0, "Navigate event not fired");
-			assert.equal(aItems[1].getId(), oFocusedElement.id, "Item 2 is focused");
+			assert.equal(aItems[2].getFocusDomRef().id + "-col0", oFocusedElement.id, "Item 2 is focused");
 
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[1].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
+			qutils.triggerKeyboardEvent(aItems[2].getFocusDomRef().id + "-col0", jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
 			oFocusedElement = document.activeElement;
 			assert.equal(iNavigate, 0, "Navigate event not fired");
-			assert.equal(aItems[0].getId(), oFocusedElement.id, "Item 1 is focused");
+			assert.equal(aItems[1].getFocusDomRef().id + "-col0", oFocusedElement.id, "Item 1 is focused");
 
-			sinon.spy(oField, "focus");
+			/* sinon.spy(oField, "focus");
 			iNavigate = 0; sNavigateKey = undefined; sNavigateDescription = undefined; sNavigateItemId = undefined; bNavigateLeave = undefined;
-			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id, KeyCodes.ARROW_UP, false, false, false);
-			oFocusedElement = document.activeElement;
+			qutils.triggerKeyboardEvent(aItems[0].getFocusDomRef().id + "-col0", jQuery.sap.KeyCodes.ARROW_UP, false, false, false);
 			assert.equal(iNavigate, 0, "Navigate event not fired");
 			assert.notOk(oField.focus.called, "focus not set on Field");
-			assert.ok(jQuery(oFocusedElement).hasClass("sapMListTblHeader"), "Focus is set on table-header");
+			oFocusedElement = document.activeElement;
+			assert.ok(oFocusedElement.className.indexOf("sapUiTableHeaderCell") >= 0, "Focus is set on table-header"); */
 
 			oFieldHelp.close();
 			oClock.tick(iDialogDuration); // fake closing time

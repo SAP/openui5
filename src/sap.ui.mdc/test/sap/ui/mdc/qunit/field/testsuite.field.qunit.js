@@ -1,4 +1,4 @@
-sap.ui.define(function() {
+sap.ui.define(['../util/EnvHelper'], function(EnvHelper) {
 
 	"use strict";
 
@@ -113,6 +113,26 @@ sap.ui.define(function() {
 					qunitBridge: true
 				}
 			},
+			"FieldValueHelpUITableWrapper": {
+				group: "Field",
+				module: "./FieldValueHelpUITableWrapper.qunit",
+				ui5: {
+					animationMode: "none"
+				},
+				sinon: {
+					qunitBridge: true
+				}
+			},
+			"FieldValueHelpMdcTableWrapper": {
+				group: "Field",
+				module: "./FieldValueHelpMdcTableWrapper.qunit",
+				ui5: {
+					animationMode: "none"
+				},
+				sinon: {
+					qunitBridge: true
+				}
+			},
 			"FilterField": {
 				module: "./FilterField.qunit",
 				sinon: true
@@ -128,6 +148,19 @@ sap.ui.define(function() {
 				coverage: {
 					only: "[sap/ui/mdc/field]"
 				}
+			},
+			"FieldValueHelpOPATests": {
+				loader: {
+					paths: {
+						"mdc/qunit/util": "test-resources/sap/ui/mdc/qunit/util",
+						"sap/ui/v4demo": "test-resources/sap/ui/mdc/qunit/field/opa/valuehelp"
+					}
+				},
+				qunit: {
+					reorder: false
+				},
+				autostart: false, // tests are added asynchronously because the V4 server needs to be found first
+				module: "test-resources/sap/ui/mdc/qunit/field/opa/valuehelp/opaTests.qunit"
 			}
 		}
 	};
