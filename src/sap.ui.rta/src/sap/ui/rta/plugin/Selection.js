@@ -58,13 +58,46 @@ function (
 		}
 	});
 
+	function preventEventDefaultAndPropagation(oEvent) {
+		oEvent.preventDefault();
+		oEvent.stopPropagation();
+	}
+
+	function hasSharedMultiSelectionPlugins(aElementOverlays, aMultiSelectionRequiredPlugins) {
+		var aSharedMultiSelectionPlugins = aMultiSelectionRequiredPlugins.slice();
+
+		aElementOverlays.forEach(function (oElementOverlay) {
+			aSharedMultiSelectionPlugins = _intersection(aSharedMultiSelectionPlugins, oElementOverlay.getEditableByPlugins());
+		});
+
+		return aSharedMultiSelectionPlugins.length > 0;
+	}
+
+	function hasSharedRelevantContainer(aElementOverlays) {
+		return aElementOverlays.every(function (oElementOverlay) {
+			return oElementOverlay.getRelevantContainer() === aElementOverlays[0].getRelevantContainer();
+		});
+	}
+
+	function hasSameParent(aElementOverlays) {
+		return aElementOverlays.every(function(oElementOverlay) {
+			return oElementOverlay.getParentElementOverlay() === aElementOverlays[0].getParentElementOverlay();
+		});
+	}
+
+	function isOfSameType(aElementOverlays) {
+		return aElementOverlays.every(function (oElementOverlay) {
+			return oElementOverlay.getElement().getMetadata().getName() === aElementOverlays[0].getElement().getMetadata().getName();
+		});
+	}
+
 	Selection.prototype.init = function () {
 		this._multiSelectionValidator = this._multiSelectionValidator.bind(this);
 		Plugin.prototype.init.apply(this, arguments);
 	};
 
 	/**
-	 * @param {sap.ui.dt.ElementOverlay} oOverlay overlay to be checked for developer mode
+	 * @param {sap.ui.dt.ElementOverlay} oOverlay - Overlay to be checked for developer mode
 	 * @returns {boolean} true if it's in developer mode
 	 * @private
 	 */
@@ -86,13 +119,15 @@ function (
 	/**
 	 * Register an overlay
 	 *
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay object
 	 * @override
 	 */
 	Selection.prototype.registerElementOverlay = function (oOverlay) {
 		var oDesignTimeMetadata = oOverlay.getDesignTimeMetadata();
-		if (!oDesignTimeMetadata.markedAsNotAdaptable() &&
-			!this._checkDeveloperMode(oOverlay, oDesignTimeMetadata)) {
+		if (
+			!oDesignTimeMetadata.markedAsNotAdaptable() &&
+			!this._checkDeveloperMode(oOverlay, oDesignTimeMetadata)
+		) {
 			oOverlay.attachEditableChange(this._onEditableChange, this);
 			this._adaptSelectable(oOverlay);
 		}
@@ -126,7 +161,7 @@ function (
 	/**
 	 * Additionally to super->deregisterOverlay this method detatches the browser events
 	 *
-	 * @param {sap.ui.dt.Overlay} oOverlay overlay object
+	 * @param {sap.ui.dt.Overlay} oOverlay - Overlay object
 	 * @override
 	 */
 	Selection.prototype.deregisterElementOverlay = function(oOverlay) {
@@ -149,7 +184,7 @@ function (
 	/**
 	 * Handle keydown event
 	 *
-	 * @param {sap.ui.base.Event} oEvent event object
+	 * @param {sap.ui.base.Event} oEvent - Event object
 	 * @private
 	 */
 	Selection.prototype._onKeyDown = function(oEvent) {
@@ -213,15 +248,16 @@ function (
 				this.getDesignTime().getSelectionManager().set(oOverlay);
 			}
 
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
+			preventEventDefaultAndPropagation(oEvent);
+		} else if (oOverlay && oOverlay.isRoot()) {
+			preventEventDefaultAndPropagation(oEvent);
 		}
 	};
 
 	/**
 	 * Handle MouseDown event
 	 *
-	 * @param {sap.ui.base.Event} oEvent event object
+	 * @param {sap.ui.base.Event} oEvent - Event object
 	 * @private
 	 */
 	Selection.prototype._onMouseDown = function(oEvent) {
@@ -248,7 +284,7 @@ function (
 
 	/**
 	 * Handle mouseover event
-	 * @param  {sap.ui.base.Event} oEvent event object
+	 * @param  {sap.ui.base.Event} oEvent - Event object
 	 * @private
 	 */
 	Selection.prototype._onMouseover = function(oEvent) {
@@ -259,22 +295,20 @@ function (
 				this._oHoverTarget = oOverlay;
 				oOverlay.addStyleClass("sapUiRtaOverlayHover");
 			}
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
+			preventEventDefaultAndPropagation(oEvent);
 		}
 	};
 
 	/**
 	 * Handle mouseleave event
-	 * @param  {sap.ui.base.Event} oEvent event object
+	 * @param  {sap.ui.base.Event} oEvent - Event object
 	 * @private
 	 */
 	Selection.prototype._onMouseleave = function(oEvent) {
 		var oOverlay = OverlayRegistry.getOverlay(oEvent.currentTarget.id);
 		if (oOverlay.isSelectable()) {
 			this._removePreviousHover();
-			oEvent.preventDefault();
-			oEvent.stopPropagation();
+			preventEventDefaultAndPropagation(oEvent);
 		}
 	};
 
@@ -311,43 +345,15 @@ function (
 		return (
 			aElementOverlays.length === 1
 			|| (
-				_hasSharedMultiSelectionPlugins(aElementOverlays, this.getMultiSelectionRequiredPlugins())
-				&& _hasSharedRelevantContainer(aElementOverlays)
+				hasSharedMultiSelectionPlugins(aElementOverlays, this.getMultiSelectionRequiredPlugins())
+				&& hasSharedRelevantContainer(aElementOverlays)
 				&& (
-					_hasSameParent(aElementOverlays)
-					|| _isOfSameType(aElementOverlays)
+					hasSameParent(aElementOverlays)
+					|| isOfSameType(aElementOverlays)
 				)
 			)
 		);
 	};
-
-	function _hasSharedMultiSelectionPlugins(aElementOverlays, aMultiSelectionRequiredPlugins) {
-		var aSharedMultiSelectionPlugins = aMultiSelectionRequiredPlugins.slice();
-
-		aElementOverlays.forEach(function (oElementOverlay) {
-			aSharedMultiSelectionPlugins = _intersection(aSharedMultiSelectionPlugins, oElementOverlay.getEditableByPlugins());
-		});
-
-		return aSharedMultiSelectionPlugins.length > 0;
-	}
-
-	function _hasSharedRelevantContainer(aElementOverlays) {
-		return aElementOverlays.every(function (oElementOverlay) {
-			return oElementOverlay.getRelevantContainer() === aElementOverlays[0].getRelevantContainer();
-		});
-	}
-
-	function _hasSameParent(aElementOverlays) {
-		return aElementOverlays.every(function(oElementOverlay) {
-			return oElementOverlay.getParentElementOverlay() === aElementOverlays[0].getParentElementOverlay();
-		});
-	}
-
-	function _isOfSameType(aElementOverlays) {
-		return aElementOverlays.every(function (oElementOverlay) {
-			return oElementOverlay.getElement().getMetadata().getName() === aElementOverlays[0].getElement().getMetadata().getName();
-		});
-	}
 
 	return Selection;
 });
