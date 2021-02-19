@@ -296,6 +296,7 @@ sap.ui.define([
 
 		var aConditions = this.getConditions();
 		aConditions = Condition._removeEmptyConditions(aConditions);
+		aConditions = Condition._removeInitialFlags(aConditions);
 		FilterOperatorUtil.updateConditionsValues(aConditions); // to remove static text from static conditions
 
 		this.setProperty("conditions", aConditions, true); // do not invalidate whole FieldHelp

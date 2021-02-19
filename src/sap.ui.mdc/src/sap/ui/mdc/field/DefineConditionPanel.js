@@ -263,7 +263,12 @@ sap.ui.define([
 			var sType = _getBaseType.call(this, oType);
 			var oDefaultOperator = FilterOperatorUtil.getDefaultOperator(sType);
 			var sOperator = aOperators.indexOf(oDefaultOperator.name) >= 0 ? oDefaultOperator.name : aOperators[0];
-			var oCondition = Condition.createCondition(sOperator, [null], undefined, undefined, ConditionValidated.NotValidated);
+			var oOperator = FilterOperatorUtil.getOperator(sOperator);
+			var oCondition = Condition.createCondition(sOperator, oOperator.valueDefaults ? oOperator.valueDefaults : [], undefined, undefined, ConditionValidated.NotValidated);
+
+			// mark the condition as initial and not modified by the user
+			oCondition.isInitial = true;
+
 			FilterOperatorUtil.updateConditionValues(oCondition);
 			FilterOperatorUtil.checkConditionsEmpty(oCondition, aOperators);
 			var aConditions = this.getConditions();
@@ -294,6 +299,16 @@ sap.ui.define([
 			var aConditions = this.getConditions();
 			FilterOperatorUtil.checkConditionsEmpty(aConditions, aOperators);
 			FilterOperatorUtil.updateConditionsValues(aConditions, aOperators);
+
+			if (oEvent) {
+				// remove isInitial when the user modified the value and the codndition is not Empty
+				aConditions.forEach(function(oCondition) {
+					if (!oCondition.isEmpty) {
+						delete oCondition.isInitial;
+					}
+				});
+			}
+
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
 
 		},
@@ -306,40 +321,52 @@ sap.ui.define([
 			var oOperatorOld = sOldKey && FilterOperatorUtil.getOperator(sOldKey);
 
 			if (oOperator && oOperatorOld) {
-				var oCondition;
-				var aConditions;
-				var iIndex;
 				var bUpdate = false;
+				var oCondition = oField.getBindingContext("$this").getObject();
+				var aConditions = this.getConditions();
+				var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 
 				if (!deepEqual(oOperator.valueTypes[0], oOperatorOld.valueTypes[0]) && oOperator.valueTypes[0] !== Operator.ValueType.Static) {
 					// type changed -> remove entered value (only if changed by user in Select)
 					// As Static text updated on condition change, don't delete it here.
-					oCondition = oField.getBindingContext("$this").getObject();
-					aConditions = this.getConditions();
-					iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
 					if (iIndex >= 0) {
 						oCondition = aConditions[iIndex]; // to get right instance
-						if (oCondition.values.length > 0 && oCondition.values[0] !== null) {
-							oCondition.values[0] = null;
-							bUpdate = true;
-						}
-						if (oCondition.values.length > 1 && oCondition.values[1] !== null) {
-							oCondition.values[1] = null;
-							bUpdate = true;
-						}
+
+						oCondition.values.forEach(function(value, index) {
+							if (value !== null) {
+								oCondition.values[index] = null;
+								bUpdate = true;
+							}
+						});
 					}
 				}
 
+				if (iIndex >= 0 && oOperator.valueDefaults) {
+					var bCheckEmpty = false;
+					// sets the default values for the operator back to default, if the condition is inital or the value is null
+
+					oCondition = aConditions[iIndex];
+
+					oCondition.values.forEach(function(value, index) {
+						if ((oCondition.isInitial && value !== oOperator.valueDefaults[index]) ||  (value === null)) {
+							// set the default value and mark the condition as initial
+							oCondition.values[index] = oOperator.valueDefaults[index];
+							oCondition.isInitial = true;
+							bUpdate = true;
+							bCheckEmpty = true;
+						}
+					});
+					if (bCheckEmpty) {
+						FilterOperatorUtil.checkConditionsEmpty(oCondition, _getOperators.call(this));
+					}
+				}
+
+
 				if (!oOperator.valueTypes[1] && oOperatorOld.valueTypes[1]) {
 					// switch from BT to EQ -> remove second value even if filled
-					if (!oCondition) { // if already read - use it
-						oCondition = oField.getBindingContext("$this").getObject();
-						aConditions = this.getConditions();
-						iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
-						oCondition = aConditions[iIndex]; // to get right instance
-					}
 					if (iIndex >= 0) {
-							if (oCondition.values.length > 1 && oCondition.values[1]) {
+						oCondition = aConditions[iIndex]; // to get right instance
+						if (oCondition.values.length > 1 && oCondition.values[1]) {
 							oCondition.values = oCondition.values.slice(0, 1);
 							bUpdate = true;
 						}

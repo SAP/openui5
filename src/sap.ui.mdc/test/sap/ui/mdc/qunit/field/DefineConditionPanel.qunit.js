@@ -823,7 +823,7 @@ sap.ui.define([
 					assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
 					oType = oField.getBindingInfo("value").type;
 					assert.ok(oType instanceof IntegerType, "Type of Field binding");
-					assert.notOk(oField.getValue(), "no Value");
+					assert.equal(oField.getValue(), 1, "default value");
 
 					oControl.setValue("5");
 					oControl.fireChange({value: "5"}); //fake input
@@ -844,8 +844,8 @@ sap.ui.define([
 							assert.ok(oType instanceof DateType, "Type of Field binding");
 							assert.notOk(oField.getValue(), "no Value");
 
-							oOperatorField.setValue("TODAYXYDAYS");
-							oOperatorField.fireChange({value: "TODAYXYDAYS"}); // fake item select
+							oOperatorField.setValue("TODAYFROMTO");
+							oOperatorField.fireChange({value: "TODAYFROMTO"}); // fake item select
 
 							setTimeout(function () { // as model update is async
 								sap.ui.getCore().applyChanges();
@@ -857,7 +857,7 @@ sap.ui.define([
 								assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "Field uses Input");
 								oType = oField.getBindingInfo("value").type;
 								assert.ok(oType instanceof IntegerType, "Type of Field binding");
-								assert.notOk(oField.getValue(), "no Value");
+								assert.equal(oField.getValue(), 1, "default Value");
 								oControl.setValue("6");
 								oControl.fireChange({value: "6"}); //fake input
 
@@ -868,7 +868,7 @@ sap.ui.define([
 								assert.ok(oControl.isA("sap.ui.mdc.field.FieldInput"), "second Field uses Input");
 								oType = oField.getBindingInfo("value").type;
 								assert.ok(oType instanceof IntegerType, "Type of second Field binding");
-								assert.notOk(oField.getValue(), "no Value");
+								assert.equal(oField.getValue(), 1, "default Value");
 								oControl.setValue("6");
 								oControl.fireChange({value: "6"}); //fake input
 
