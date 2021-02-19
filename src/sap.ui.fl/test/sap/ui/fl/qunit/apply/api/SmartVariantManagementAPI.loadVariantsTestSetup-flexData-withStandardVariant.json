@@ -34,6 +34,22 @@
         }
       }
     },{
+      "fileName": "variant_standard1",
+      "fileType": "variant",
+      "selector": {
+        "persistencyKey": "variantManagement1"
+      },
+      "content": {
+        "standardvariant": true,
+        "favorite": true,
+        "executeOnSelect": true
+      },
+      "texts": {
+        "variantName": {
+          "value": "This my very own standard variant text"
+        }
+      }
+    },{
       "fileName": "variant_2",
       "fileType": "variant",
       "selector": {
@@ -49,7 +65,7 @@
         }
       }
     },{
-      "fileName": "variant_standard",
+      "fileName": "variant_standard2",
       "fileType": "variant",
       "selector": {
         "persistencyKey": "variantManagement1"
@@ -61,7 +77,7 @@
       },
       "texts": {
         "variantName": {
-          "value": "This my very own standard variant text"
+          "value": "This another of my very own standard variant text"
         }
       }
     }],
