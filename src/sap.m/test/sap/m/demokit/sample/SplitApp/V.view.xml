@@ -6,8 +6,7 @@
 	<SplitApp
 		id="SplitAppDemo"
 		initialDetail="detail"
-		initialMaster="master"
-		orientationChange=".onOrientationChange">
+		initialMaster="master">
 		<detailPages>
 			<Page
 				id="detail"
