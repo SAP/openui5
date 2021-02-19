@@ -193,9 +193,9 @@ sap.ui.define([
 						supportsDefault: mAction.supportsDefaultDelegate
 					})
 						.then(function(mDelegateInfo) {
-							if (mDelegateInfo && mDelegateInfo.name) {
+							if (mDelegateInfo && mDelegateInfo.names && mDelegateInfo.names.length) {
 								var aRequiredLibraries = DelegateMediatorAPI.getRequiredLibrariesForDefaultDelegate({
-									delegateName: mDelegateInfo.name,
+									delegateName: mDelegateInfo.names,
 									control: mParents.relevantContainer
 								});
 

@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/CustomData",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Panel",
+	"sap/m/Button",
 	"sap/ui/rta/enablement/TestDelegate",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
@@ -18,6 +19,7 @@ sap.ui.define([
 	CustomData,
 	JSONModel,
 	Panel,
+	Button,
 	TestDelegate,
 	sinon
 ) {
@@ -36,7 +38,8 @@ sap.ui.define([
 		beforeEach: function () {
 			this.mPropertyBag = {
 				modelType: "test_modelType",
-				delegate: "test_delegate"
+				delegate: "test_delegate",
+				delegateType: "complete"
 			};
 		},
 		afterEach: function() {
@@ -68,12 +71,25 @@ sap.ui.define([
 			assert.ok(DelegateMediator.isDelegateRegistered(this.mPropertyBag.modelType), "then the delegate is registered successfull with the given modelType");
 		});
 
-		QUnit.test("When try to register the same modelType twice", function (assert) {
+		QUnit.test("When it is called with valid property bag multiple times with harmonized delegate types", function (assert) {
+			this.mPropertyBag.requiredLibraries = mRequiredLibraries;
+			this.mPropertyBag.delegateType = "readonly";
 			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
-			assert.throws(function () {
-				DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
-			}.bind(this), /is already defined!/, "then an exception is thrown");
+			this.mPropertyBag.delegateType = "writeonly";
+			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
+			assert.ok(DelegateMediator.isDelegateRegistered(this.mPropertyBag.modelType), "then the delegate is registered successfull with the given modelType");
 		});
+
+		[["readonly", "readonly"], ["writeonly", "complete"], ["complete", "writeonly"]].forEach(function (sDelegateType) {
+			QUnit.test("When try to register the same modelType with with already existing '" + sDelegateType[0] + "' delegate", function (assert) {
+				this.mPropertyBag.delegateType = sDelegateType[0];
+				DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
+				assert.throws(function () {
+					this.mPropertyBag.delegateType = sDelegateType[1];
+					DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
+				}.bind(this), /is already defined!/, "then an exception is thrown");
+			});
+		}.bind(this));
 	});
 	//ensure a default delegate exists for a model not used anywhere else
 	var SomeModel = JSONModel.extend("sap.ui.fl.qunit.test.Model");
@@ -83,7 +99,8 @@ sap.ui.define([
 			this.mPropertyBag = {
 				modelType: SomeModel.getMetadata().getName(),
 				delegate: "sap/ui/rta/enablement/TestDelegate",
-				requiredLibraries: mRequiredLibraries
+				requiredLibraries: mRequiredLibraries,
+				delegateType: "complete"
 			};
 			this.oPanel = new Panel("test_panel");
 			this.oDelegateCustomData = {
@@ -152,9 +169,9 @@ sap.ui.define([
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(vDomNode, XmlTreeModifier, this.mPropertyBag.modelType, true))
 				.then(function (mDelegateInfo) {
 					assert.deepEqual(mDelegateInfo.instance, TestDelegate, "then the default delegate info is returned");
-					assert.strictEqual(mDelegateInfo.name, this.mPropertyBag.delegate, "then the default delegate info is returned");
+					assert.deepEqual(mDelegateInfo.names, [this.mPropertyBag.delegate], "then the default delegate info is returned");
 					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
-					assert.deepEqual(mDelegateInfo.modelType, this.mPropertyBag.modelType, "then the default delegate info contains the modelType");
+					assert.strictEqual(mDelegateInfo.modelType, this.mPropertyBag.modelType, "then the default delegate info contains the modelType");
 					assert.deepEqual(mDelegateInfo.requiredLibraries, this.mPropertyBag.requiredLibraries, "then the default delegate info contains the passed required libraries");
 				}.bind(this));
 		});
@@ -165,9 +182,9 @@ sap.ui.define([
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, undefined, true))
 				.then(function (mDelegateInfo) {
 					assert.deepEqual(mDelegateInfo.instance, TestDelegate, "then the default delegate info is returned");
-					assert.strictEqual(mDelegateInfo.name, this.mPropertyBag.delegate, "then the default delegate info is returned");
+					assert.deepEqual(mDelegateInfo.names, [this.mPropertyBag.delegate], "then the default delegate info is returned");
 					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
-					assert.deepEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
+					assert.strictEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
 					assert.deepEqual(mDelegateInfo.requiredLibraries, this.mPropertyBag.requiredLibraries, "then the default delegate info contains the passed required libraries");
 				}.bind(this));
 		});
@@ -179,9 +196,9 @@ sap.ui.define([
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, undefined, true))
 				.then(function (mDelegateInfo) {
 					assert.deepEqual(mDelegateInfo.instance, TestDelegate, "then the default delegate info is returned");
-					assert.strictEqual(mDelegateInfo.name, this.mPropertyBag.delegate, "then the default delegate info is returned");
+					assert.deepEqual(mDelegateInfo.names, [this.mPropertyBag.delegate], "then the default delegate info is returned");
 					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
-					assert.deepEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
+					assert.strictEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
 					assert.notOk(mDelegateInfo.requiredLibraries, "then the default delegate does not contain any required libraries defined as default");
 				}.bind(this));
 		});
@@ -197,9 +214,122 @@ sap.ui.define([
 
 		QUnit.test("When default delegate is available, but default delegate should be ignored (JS Case)", function (assert) {
 			this.oPanel.setModel(new SomeModel());
+			DelegateMediatorAPI.registerDefaultDelegate(this.mPropertyBag);
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier))
 				.then(function (mDelegateInfo) {
 					assert.notOk(mDelegateInfo, "then an 'undefined' is returned");
+				});
+		});
+
+		QUnit.test("When multiple default delegates are available, without instancespecific delegate definition", function (assert) {
+			this.oPanel.setModel(new SomeModel());
+			DelegateMediatorAPI.registerDefaultDelegate({
+				modelType: SomeModel.getMetadata().getName(),
+				delegate: "sap/ui/rta/enablement/TestDelegate1",
+				requiredLibraries: mRequiredLibraries,
+				delegateType: "readonly"
+			});
+			DelegateMediatorAPI.registerDefaultDelegate({
+				modelType: SomeModel.getMetadata().getName(),
+				delegate: "sap/ui/rta/enablement/TestDelegate2",
+				requiredLibraries: {
+					"sap.some.other.lib": {
+						minVersion: "1.81",
+						lazy: false
+					}
+				},
+				delegateType: "writeonly"
+			});
+			var oFakeReadOnlyDelegate = {
+				getPropertyInfo: function() {
+					return Promise.resolve([{
+						name: "testProperty",
+						bindingPath: "fakepath"
+					}]);
+				}
+			};
+			var oFakeWriteOnlyDelegate = {
+				createLabel: function() {
+					return Promise.resolve(new Button("myBrandNewButton"));
+				}
+			};
+			sandbox.stub(sap.ui, "require")
+				.withArgs(["sap/ui/rta/enablement/TestDelegate1"]).callsFake(function (sModuleName, fnCallback) {
+					fnCallback(oFakeReadOnlyDelegate);
+				})
+				.withArgs(["sap/ui/rta/enablement/TestDelegate2"]).callsFake(function (sModuleName, fnCallback) {
+					fnCallback(oFakeWriteOnlyDelegate);
+				})
+				.callThrough();
+
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, undefined, true))
+				.then(function (mDelegateInfo) {
+					assert.ok(mDelegateInfo, "then delegate info is returned");
+					assert.deepEqual(mDelegateInfo.names, ["sap/ui/rta/enablement/TestDelegate2", "sap/ui/rta/enablement/TestDelegate1"], "then names are returned as expected");
+					assert.deepEqual(Object.keys(mDelegateInfo.requiredLibraries), ["sap.some.other.lib", "sap.some.lib"], "then instance contains the method from write delegate");
+					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
+					assert.strictEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
+					assert.ok(mDelegateInfo.instance.getPropertyInfo, "then instance contains the method from read delegate");
+					assert.ok(mDelegateInfo.instance.createLabel, "then instance contains the method from write delegate");
+					return mDelegateInfo.instance.getPropertyInfo()
+						.then(function (mPropertyInfo) {
+							assert.strictEqual(mPropertyInfo[0].name, "testProperty", "then method from read delegate is executable");
+							return mDelegateInfo.instance.createLabel();
+						})
+						.then(function (oElement) {
+							assert.strictEqual(oElement.getId(), "myBrandNewButton", "then method from write delegate is executable");
+						});
+				});
+		});
+
+		QUnit.test("When read-only default delegate and instancespecific delegate definition on control is available", function (assert) {
+			this.oPanel.addCustomData(new CustomData(this.oDelegateCustomData));
+			this.oPanel.setModel(new SomeModel());
+			DelegateMediatorAPI.registerDefaultDelegate({
+				modelType: SomeModel.getMetadata().getName(),
+				delegate: "sap/ui/rta/enablement/readonly/TestDelegate",
+				requiredLibraries: mRequiredLibraries,
+				delegateType: "readonly"
+			});
+			var oFakeReadOnlyDelegate = {
+				getPropertyInfo: function() {
+					return Promise.resolve([{
+						name: "testProperty",
+						bindingPath: "fakepath"
+					}]);
+				}
+			};
+			var oFakeWriteOnlyDelegate = {
+				createLabel: function() {
+					return Promise.resolve(new Button("buttonFromInstancespecificDelegate"));
+				}
+			};
+			sandbox.stub(sap.ui, "require")
+				.withArgs(["sap/ui/rta/enablement/readonly/TestDelegate"]).callsFake(function (sModuleName, fnCallback) {
+					fnCallback(oFakeReadOnlyDelegate);
+				})
+				.withArgs(["sap/ui/rta/enablement/TestDelegate"]).callsFake(function (sModuleName, fnCallback) {
+					fnCallback(oFakeWriteOnlyDelegate);
+				})
+				.callThrough();
+
+			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier, undefined, true))
+				.then(function (mDelegateInfo) {
+					assert.ok(mDelegateInfo, "then delegate info is returned");
+					assert.deepEqual(mDelegateInfo.names, ["sap/ui/rta/enablement/TestDelegate", "sap/ui/rta/enablement/readonly/TestDelegate"], "then names are returned as expected");
+					assert.deepEqual(Object.keys(mDelegateInfo.requiredLibraries), ["sap.some.lib"], "then instance contains the method from write delegate");
+					assert.deepEqual(mDelegateInfo.payload, {}, "then the default delegate info contains an empty payload");
+					assert.strictEqual(mDelegateInfo.modelType, SomeModel.getMetadata().getName(), "then the default delegate info contains the modelType");
+					assert.ok(mDelegateInfo.instance.getPropertyInfo, "then instance contains the method from read delegate");
+					assert.ok(mDelegateInfo.instance.createLabel, "then instance contains the method from write delegate");
+					return mDelegateInfo.instance.getPropertyInfo()
+						.then(function (mPropertyInfo) {
+							assert.strictEqual(mPropertyInfo[0].name, "testProperty", "then method from read delegate is executable");
+							return mDelegateInfo.instance.createLabel();
+						})
+						.then(function (oElement) {
+							assert.strictEqual(oElement.getId(), "buttonFromInstancespecificDelegate", "then method from write delegate is executable");
+						});
 				});
 		});
 
@@ -234,7 +364,8 @@ sap.ui.define([
 			this.oPanel.setModel(new SomeModel());
 			DelegateMediatorAPI.registerDefaultDelegate({
 				modelType: SomeModel.getMetadata().getName(),
-				delegate: "notExistingDelegate/WouldBreakIfDefaultDelegateGetLoaded"
+				delegate: "notExistingDelegate/WouldBreakIfDefaultDelegateGetLoaded",
+				delegateType: "complete"
 			});
 			return DelegateMediatorAPI.getDelegateForControl(createPropertyBag(this.oPanel, JsControlTreeModifier))
 				.then(function (mDelegateInfo) {

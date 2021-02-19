@@ -85,6 +85,7 @@ sap.ui.define([
 	var DEFAULT_DELEGATE_REGISTRATION = {
 		modelType: SomeModel.getMetadata().getName(),
 		delegate: TEST_DELEGATE_PATH,
+		delegateType: "complete",
 		requiredLibraries: {
 			"sap.uxap": {
 				minVersion: "1.44",
@@ -864,7 +865,7 @@ sap.ui.define([
 						jsOnly: undefined,
 						oDataServiceUri: "",
 						oDataServiceVersion: undefined,
-						modelType: undefined,
+						modelType: "sap.ui.rta.qunit.test.Model",
 						relevantContainerId: "bar",
 						runtimeOnly: undefined,
 						selector: {
@@ -1224,7 +1225,7 @@ sap.ui.define([
 			oRequireStub
 				.withArgs(["path/to/instancespecific/delegate"])
 				.callsFake(function (sModuleName, fnCallback) {
-					fnCallback();
+					fnCallback({ getPropertyInfo: function () {} });
 				});
 			oRequireStub.callThrough();
 
