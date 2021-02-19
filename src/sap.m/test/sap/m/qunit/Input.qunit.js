@@ -754,6 +754,13 @@ sap.ui.define([
 		oInput.destroy();
 	});
 
+	QUnit.test("Check _DEFAULTRESULT_TABULAR function.", function(assert) {
+		assert.strictEqual(Input._DEFAULTRESULT_TABULAR({ isA: function() {
+			return true;
+		}}), "", "Should return empty string");
+		assert.strictEqual(Input._DEFAULTRESULT_TABULAR(), "", "Should return empty string");
+	});
+
 	QUnit.module("Destroy");
 
 	QUnit.test("Destroy DOM", function(assert) {

@@ -509,6 +509,11 @@ function(
 	 * @returns {string} The value to be displayed in the input field.
 	 */
 	Input._DEFAULTRESULT_TABULAR = function (oColumnListItem) {
+		// If there are groups, the GroupHeaderListItems are also passed but they should be skipped by this function
+		if (!oColumnListItem || oColumnListItem.isA("sap.m.GroupHeaderListItem")) {
+			return "";
+		}
+
 		var aCells = oColumnListItem.getCells(),
 			i = 0;
 
