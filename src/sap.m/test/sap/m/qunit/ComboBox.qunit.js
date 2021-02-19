@@ -12521,7 +12521,7 @@ sap.ui.define([
 		// Act
 		this.oErrorComboBox.open();
 
-		oFormattedValueStateText = this.oErrorComboBox._oSuggestionPopover._oValueStateHeader.getFormattedText();
+		oFormattedValueStateText = this.oErrorComboBox._oSuggestionPopover._getValueStateHeader().getFormattedText();
 
 		// Assert
 		assert.strictEqual(oFormattedValueStateText.$().text(), "Value state message containing a link", "Formatted text value state message containing a link is displayed in the suggestion popover");
@@ -12928,7 +12928,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(this.oErrorComboBox.getFocusDomRef(), KeyCodes.F4);
 		this.clock.tick();
 
-		oValueStateHeader = this.oErrorComboBox._oSuggestionPopover._oValueStateHeader;
+		oValueStateHeader = this.oErrorComboBox._oSuggestionPopover._getValueStateHeader();
 		this.oErrorComboBox.onsapup(oFakeEvent);
 		this.clock.tick();
 

@@ -7854,7 +7854,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
 
 		// Assert
-		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.getDomRef(), document.activeElement, "The formatted value state message is focused");
+		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The formatted value state message is focused");
 	});
 
 	QUnit.test("tab key pressed on the last link in the value state message should close the picker", function(assert) {
@@ -7862,9 +7862,9 @@ sap.ui.define([
 		this.oMultiComboBox.open();
 		this.clock.tick();
 
-		// this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.getFormattedText().getControls()[1].getDomRef().focus();
+		// this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getFormattedText().getControls()[1].getDomRef().focus();
 		this.oMultiComboBox._handleFormattedTextNav();
-		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.getFormattedText().getControls()[1].getDomRef(), KeyCodes.TAB);
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getFormattedText().getControls()[1].getDomRef(), KeyCodes.TAB);
 
 		// Assert
 		assert.ok(!this.oMultiComboBox.isOpen(), "Popover is closed");
@@ -7877,7 +7877,7 @@ sap.ui.define([
 		sap.ui.test.qunit.triggerKeydown(ListHelpers.getListItem(this.oMultiComboBox.getItems()[0]).getDomRef(), KeyCodes.ARROW_UP);
 
 		// Assert
-		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.getDomRef(), document.activeElement, "Value state header is focused");
+		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "Value state header is focused");
 	});
 
 	QUnit.test("Value state header containing links should be focusable but not part of the tab chain", function(assert) {
@@ -7893,8 +7893,8 @@ sap.ui.define([
 		this.oMultiComboBox.onsapdown(oFakeEvent);
 
 		// Assert
-		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.$().attr("tabindex"), "-1", "Value state message is focusable but not part of the tab chain");
-		assert.ok(this.oMultiComboBox._getSuggestionsPopover()._oValueStateHeader.$().hasClass("sapMFocusable"), "sapMFocusable class is applied to the value state header");
+		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().$().attr("tabindex"), "-1", "Value state message is focusable but not part of the tab chain");
+		assert.ok(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().$().hasClass("sapMFocusable"), "sapMFocusable class is applied to the value state header");
 	});
 
 
