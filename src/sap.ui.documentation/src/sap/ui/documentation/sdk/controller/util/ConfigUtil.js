@@ -24,6 +24,8 @@ sap.ui.define([
 			owner: null
 		},
 
+		SWA_TRACKER_URL: "sap/webanalytics/core/tracker/js/track.js",
+
 		constructor : function (oComponent) {
 			this._oComponent = oComponent;
 		},
@@ -97,7 +99,7 @@ sap.ui.define([
 					oNewScriptEl.type = 'text/javascript';
 					oNewScriptEl.defer = true;
 					oNewScriptEl.async = true;
-					oNewScriptEl.src = oSWAConfig.baseUrl + 'js/track.js';
+					oNewScriptEl.src = sap.ui.require.toUrl(this.SWA_TRACKER_URL);
 					window.addEventListener("swaLoadSuccess", function(){
 						resolve(window["swa"]);
 					});
