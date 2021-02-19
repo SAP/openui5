@@ -19553,9 +19553,8 @@ sap.ui.define([
 	//    Context#replaceWith. For the 'deep link' this also uses the absolute, hidden binding.
 	// CPOUI5ODATAV4-764
 [
-	{hiddenBinding : true, title : "relative hidden binding"}
-	// TODO requires CPOUI5ODATAV4-711: $$inheritExpandSelect inherits late properties
-	//{title : "use row context directly; absolute hidden binding for 'deep links'"},
+	{hiddenBinding : true, title : "relative hidden binding"},
+	{title : "use row context directly; absolute hidden binding for 'deep links'"}
 	// TODO requires CPOUI5ODATAV4-347: Context#replaceWith
 	//{keepAlive : true, title : "use kept-alive context and replace in list"}
 ].forEach(function (oFixture) {
@@ -19613,22 +19612,6 @@ sap.ui.define([
 					});
 			}
 			that.expectChange("price", [mPrices[sId]]);
-		}
-
-		function buildDependencyChain(aContextsAndBindings) {
-			var vContextOrBinding = aContextsAndBindings[0];
-
-			if (vContextOrBinding) {
-				if (vContextOrBinding.getBinding) {
-					aContextsAndBindings.unshift(vContextOrBinding.getBinding());
-					return buildDependencyChain(aContextsAndBindings);
-				}
-				if (vContextOrBinding.getContext) {
-					aContextsAndBindings.unshift(vContextOrBinding.getContext());
-					return buildDependencyChain(aContextsAndBindings);
-				}
-			}
-			return aContextsAndBindings;
 		}
 
 		/*
@@ -19716,8 +19699,6 @@ sap.ui.define([
 				assert.ok(oObjectPage.getBindingContext().getBinding().isPatchWithoutSideEffects(),
 					"Object page has $$patchWithoutSideEffects");
 			}
-			Log.info("bind object page to " + oContext + "):\r\n"
-				+ buildDependencyChain([oObjectPage.getObjectBinding()]).join("\r\n\t"));
 			return that.waitForChanges(assert, "bind object page to " + oContext);
 		}
 
