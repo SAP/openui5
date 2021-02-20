@@ -2310,7 +2310,7 @@ sap.ui.define([
 			"The method should return sap.ui.unified.DateRange");
 	});
 
-	QUnit.test("_createPopup: mobile device", function(assert) {
+	QUnit.test("dialog on mobile device", function(assert) {
 		// prepare
 		var oDeviceStub = this.stub(Device, "system", {
 				desktop: false,
@@ -2334,6 +2334,39 @@ sap.ui.define([
 		assert.strictEqual(oDialog.getTitle(), "DatePicker Label", "Title is set");
 		assert.strictEqual(oDialog.getBeginButton().getType(), "Emphasized", "OK button type is set");
 		assert.notOk(oDialog.getEndButton(), "Close button in the footer is not set");
+
+		// clean
+		oDeviceStub.restore();
+		oLabel.destroy();
+	});
+
+	QUnit.test("dialog on mobile device with invisible label", function(assert) {
+		// prepare
+		var oDeviceStub = this.stub(Device, "system", {
+				desktop: false,
+				tablet: false,
+				phone: true
+			}),
+			oLabel = new sap.m.Label({text: "DatePicker Label", labelFor: this.oDP.getId()}),
+			oInvisibleText = new sap.ui.core.InvisibleText("invisibleTextId", {
+				text: "invisible text"
+			}),
+			oDialog;
+
+		this.oDP.addAriaLabelledBy("invisibleTextId");
+
+		this.oDP.placeAt("qunit-fixture");
+		oLabel.placeAt("qunit-fixture");
+		oInvisibleText.toStatic().placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		this.oDP._createPopup();
+		oDialog = this.oDP.getAggregation("_popup");
+
+		// assert
+		assert.ok(oDialog.getShowHeader(), "Header is shown");
+		assert.strictEqual(oDialog.getTitle(), "DatePicker Label invisible text", "Title is set");
 
 		// clean
 		oDeviceStub.restore();
