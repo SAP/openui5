@@ -6,6 +6,7 @@
 sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'sap/ui/Device',
+	"sap/ui/core/Element",
 	'./InputBase',
 	'./DateTimeField',
 	'./Button',
@@ -25,11 +26,13 @@ sap.ui.define([
 	"sap/ui/unified/DateRange",
 	"sap/ui/unified/calendar/CustomMonthPicker",
 	"sap/ui/unified/calendar/CustomYearPicker",
+	"sap/ui/core/LabelEnablement",
 	"sap/ui/dom/jquery/cursorPos"
 ],
 	function(
 		jQuery,
 		Device,
+		Element,
 		InputBase,
 		DateTimeField,
 		Button,
@@ -47,7 +50,8 @@ sap.ui.define([
 		Calendar,
 		DateRange,
 		CustomMonthPicker,
-		CustomYearPicker
+		CustomYearPicker,
+		LabelEnablement
 	) {
 	"use strict";
 
@@ -1048,8 +1052,7 @@ sap.ui.define([
 
 	// to be overwritten by DateTimePicker
 	DatePicker.prototype._createPopup = function(){
-		var sArialabelledby,
-			sLabel;
+		var sTitleText = "";
 
 		if (!this._oPopup) {
 			this._oPopup = new ResponsivePopover(this.getId() + "-RP", {
@@ -1069,9 +1072,15 @@ sap.ui.define([
 			);
 
 			if (Device.system.phone) {
-				sArialabelledby = this.$("inner").attr("aria-labelledby");
-				sLabel = sArialabelledby ? document.getElementById(sArialabelledby).getAttribute("aria-label") : "";
-				this._oPopup.setTitle(sLabel);
+				sTitleText = LabelEnablement.getReferencingLabels(this)
+					.concat(this.getAriaLabelledBy())
+					.reduce(function(sAccumulator, sCurrent) {
+						var oCurrentControl = Element.registry.get(sCurrent);
+						return sAccumulator + " " + (oCurrentControl.getText ? oCurrentControl.getText() : "");
+					}, "")
+					.trim();
+
+				this._oPopup.setTitle(sTitleText);
 				this._oPopup.setShowHeader(true);
 				this._oPopup.setShowCloseButton(true);
 			} else {
