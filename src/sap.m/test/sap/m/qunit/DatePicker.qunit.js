@@ -2308,6 +2308,39 @@ sap.ui.define([
 			"The method should return sap.ui.unified.DateRange");
 	});
 
+	QUnit.test("dialog on mobile device with invisible label", function(assert) {
+		// prepare
+		var oDeviceStub = this.stub(Device, "system", {
+				desktop: false,
+				tablet: false,
+				phone: true
+			}),
+			oLabel = new sap.m.Label({text: "DatePicker Label", labelFor: this.oDP.getId()}),
+			oInvisibleText = new sap.ui.core.InvisibleText("invisibleTextId", {
+				text: "invisible text"
+			}),
+			oDialog;
+
+		this.oDP.addAriaLabelledBy("invisibleTextId");
+
+		this.oDP.placeAt("qunit-fixture");
+		oLabel.placeAt("qunit-fixture");
+		oInvisibleText.toStatic().placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		this.oDP._createPopup();
+		oDialog = this.oDP.getAggregation("_popup");
+
+		// assert
+		assert.ok(oDialog.getShowHeader(), "Header is shown");
+		assert.strictEqual(oDialog.getTitle(), "DatePicker Label invisible text", "Title is set");
+
+		// clean
+		oDeviceStub.restore();
+		oLabel.destroy();
+	});
+
 	//set the input value to an invalid one
 	function simulateUserInputViaTheInputField(){
 		bChange = false;
