@@ -639,7 +639,7 @@ sap.ui.define([
 	 * The <code>groupBy</code> association is not supported by the <code>TreeTable</code> control.
 	 *
 	 * @deprecated Since version 1.28.
-	 * @returns {boolean}
+	 * @returns {sap.ui.core.ID}
 	 * @public
 	 * @name sap.ui.table.TreeTable#getGroupBy
 	 * @function

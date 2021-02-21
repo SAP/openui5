@@ -310,6 +310,7 @@ sap.ui.define(['sap/ui/core/Element', './library'],
 	 * @param {string} sPropertyName
 	 * @param {object} oValue
 	 * @param {boolean} bSuppressRerendering
+	 * @returns {this} Returns <code>this</code> to allow method chaining
 	 * @see sap.ui.base.ManagedObject.prototype.setProperty
 	 * @protected
 	 */

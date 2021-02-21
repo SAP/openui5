@@ -1688,6 +1688,18 @@ sap.ui.define([
 	 */
 
 	/**
+	 * Opens the control by given opener ref.
+	 * @param {jQuery.Event | object} oEvent
+	 *   An <code>oncontextmenu</code> event object or an object with properties left, top, offsetX, offsetY
+	 * @param {sap.ui.core.Element|HTMLElement} oOpenerRef
+	 *   The element which will get the focus back again after the menu was closed
+	 *
+	 * @public
+	 * @function
+	 * @name sap.ui.core.IContextMenu.openAsContextMenu
+	 */
+
+	/**
 	 * Marker interface for drag configuration providing information about the source of the drag operation.
 	 *
 	 * @since 1.52.0
@@ -1726,16 +1738,6 @@ sap.ui.define([
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-	/**
-	 * Opens the control by given opener ref.
-	 * @param {string} oEvent oncontextmenu event
-	 * @param {sap.ui.core.Element|Element} oOpenerRef The element which will get the focus back again after the menu was closed.
-	 *
-	 * @public
-	 * @function
-	 * @name sap.ui.core.IContextMenu.openAsContextMenu
 	 */
 
 	/**

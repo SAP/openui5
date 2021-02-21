@@ -118,7 +118,7 @@ sap.ui.define([
 		/**
 		 * Loads the rest of the SVG assets for a given illustration set.
 		 *
-		 * @param {sIllustrationSet} sId The illustration set, the rest of the assets should be loaded for
+		 * @param {string} sIllustrationSet The illustration set, the rest of the assets should be loaded for
 		 * @static
 		 * @public
 		 */
@@ -144,6 +144,8 @@ sap.ui.define([
 		 * Registers an illustration set, which is needed before loading any of its assets.
 		 *
 		 * @param {object} oConfig object containing the name and the path of the Illustration Set
+		 * @param {string} oConfig.setFamily Name of the Illustration Set
+		 * @param {string} oConfig.setURI URL Path of the Illustration Set
 		 * @param {boolean} bLoadAllResources whether or not all of the assets for the Illustration Set
 		 * should be loaded once the metadata is loaded
 		 * @static

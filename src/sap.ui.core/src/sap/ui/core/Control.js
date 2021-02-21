@@ -715,9 +715,10 @@ sap.ui.define([
 	 *
 	 * Subclasses of Control should override this hook to implement any necessary actions before the rendering.
 	 *
+	 * @param {jQuery.Event} oEvent onBeforeRendering event object
 	 * @protected
 	 */
-	Control.prototype.onBeforeRendering = function() {
+	Control.prototype.onBeforeRendering = function(oEvent) {
 		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
 		// Therefore, many subclasses will not call this method at all.
 	};
@@ -729,9 +730,10 @@ sap.ui.define([
 	 *
 	 * Subclasses of Control should override this hook to implement any necessary actions after the rendering.
 	 *
+	 * @param {jQuery.Event} oEvent onAfterRendering event object
 	 * @protected
 	 */
-	Control.prototype.onAfterRendering = function() {
+	Control.prototype.onAfterRendering = function(oEvent) {
 		// Before adding any implementation, please remember that this method was first implemented in release 1.54.
 		// Therefore, many subclasses will not call this method at all.
 	};
