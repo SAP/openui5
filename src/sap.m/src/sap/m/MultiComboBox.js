@@ -2144,6 +2144,8 @@ function(
 		setTimeout(this._syncInputWidth.bind(this, oTokenizer), 0);
 		setTimeout(this._handleNMoreAccessibility.bind(this), 0);
 		setTimeout(oTokenizer["scrollToEnd"].bind(oTokenizer), 0);
+
+		this._toggleTokenClass();
 	};
 
 	/**
@@ -3261,7 +3263,6 @@ function(
 		// ToDo: Remove. Just for backwards compatibility with the runtime layer. When this change merges, we'd need to adjust the code in the runtime
 		this._oTokenizer = this._createTokenizer();
 		this.setAggregation("tokenizer", this._oTokenizer);
-		this._oTokenizer.addDelegate({ onBeforeRendering: this._toggleTokenClass }, this);
 		this._aInitiallySelectedItems = [];
 
 		this._oRbM = core.getLibraryResourceBundle("sap.m");
@@ -3355,7 +3356,7 @@ function(
 	};
 
 	/**
-	 * OnBeforeRendering event delegate for the tokenizer to toggle
+	 * OnAfterRendering event delegate for the tokenizer to toggle
 	 * sapMMultiComboBoxHasToken class depending on whether or not there are
 	 * any tokens.
 	 *

@@ -8732,6 +8732,43 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("MultiComboBox should have sapMMultiComboBoxHasToken css class when there are selected tokens", function (assert) {
+		// Arrange
+		var oModel = new JSONModel({
+			"items" : [{
+				"key" : "token1"
+			}, {
+				"key" : "token2"
+			}, {
+				"key" : "token3"
+			}]
+		});
+
+		var oMultiComboBox = new MultiComboBox({
+			placeholder: "Select parameters",
+			items : {
+				path : "/items",
+				template : new Item({
+					key : "{key}",
+					text : "{key}"
+				})
+			}
+		});
+
+		oMultiComboBox.placeAt("MultiComboBox-content");
+		oMultiComboBox.setModel(oModel);
+
+		// Act
+		oMultiComboBox.setSelectedKeys(["token1"]);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oMultiComboBox.getDomRef().classList.contains("sapMMultiComboBoxHasToken"), true, "Should contain 'sapMMultiComboBoxHasToken' class when there are tokens");
+
+		// Clean
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("RTL Support");
 
 	QUnit.test("If the sap.ui.core.Item's text direction is set explicitly it should be mapped to the StandardListItem", function (assert) {
