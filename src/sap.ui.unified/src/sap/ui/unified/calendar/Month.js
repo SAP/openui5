@@ -1613,21 +1613,27 @@ sap.ui.define([
 	 */
 	Month.prototype._handleWeekSelectionByMultipleDays = function (iWeekNumber, oStartDate, oEndDate) {
 		var oSelectedWeekDays,
-			bExecuteDefault;
+			bExecuteDefault,
+			bSelect;
 
-		if (this._areAllDaysBetweenSelected(oStartDate, oEndDate)) {
-			oSelectedWeekDays = null;
-		} else {
-			oSelectedWeekDays = new DateRange({ startDate: oStartDate.toLocalJSDate(), endDate: oEndDate.toLocalJSDate() });
-		}
+		oSelectedWeekDays = this._areAllDaysBetweenSelected(oStartDate, oEndDate) ?
+			new DateRange({
+				startDate: oStartDate.toLocalJSDate()
+			}) :
+			new DateRange({
+				startDate: oStartDate.toLocalJSDate(),
+				endDate: oEndDate.toLocalJSDate()
+			});
 
 		bExecuteDefault = this.fireWeekNumberSelect({
 			weekNumber: iWeekNumber,
 			weekDays: oSelectedWeekDays
 		});
 
+		bSelect = oSelectedWeekDays.getEndDate() ? true : false;
+
 		if (bExecuteDefault) {
-			this._toggleDaysBetween(oStartDate, oEndDate, !!oSelectedWeekDays);
+			this._toggleDaysBetween(oStartDate, oEndDate, bSelect);
 		}
 
 		return this;
