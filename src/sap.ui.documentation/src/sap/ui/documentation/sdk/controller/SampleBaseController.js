@@ -138,6 +138,9 @@ sap.ui.define([
 
 			return this.fetchSourceFile(sUrl, bTreatAsText)
 				.then(function(vRawFile) {
+					if (vRawFile === "File not loaded") {
+						return; // ignore 404 responses, e.g. for Apache license text file in SAPUI5 environment
+					}
 					if (fnFileFormatter) {
 						vRawFile = fnFileFormatter(vRawFile);
 					}

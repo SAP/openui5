@@ -242,11 +242,19 @@ sap.ui.define([
 						});
 
 						// add generic license file
-						var oLicensePromise = ResourceDownloadUtil.fetch(sap.ui.require.toUrl("LICENSE.txt")); // FIXME: this needs to go up one directory
-						oLicensePromise.then(function (oContent) {
-							oZipFile.file("LICENSE.txt", oContent);
+						var sUrl = sap.ui.require.toUrl("LICENSE.txt").replace("resources/", "");
+						var oLicensePromise = ResourceDownloadUtil.fetch(sUrl);
+						var oLicensePromiseWrapper = new Promise(function(resolve, reject) {
+							oLicensePromise.then(function (oContent) {
+								oZipFile.file("LICENSE.txt", oContent);
+								resolve();
+							}).catch(function() {
+								// LICENSE.txt not available in SAPUI5, continue without it
+								resolve();
+							});
 						});
-						aPromises.push(oLicensePromise);
+
+						aPromises.push(oLicensePromiseWrapper);
 
 						Promise.all(aPromises).then(function () {
 							// collect errors and show them
