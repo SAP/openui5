@@ -4,7 +4,7 @@
 	<Popover
 		id="myPopover"
 		title="{ProductId}"
-		class="sapUiPopupWithPadding"
+		class="sapUiContentPadding"
 		placement="Right"
 		initialFocus="action">
 		<footer>

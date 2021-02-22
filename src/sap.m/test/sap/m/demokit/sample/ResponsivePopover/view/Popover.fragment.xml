@@ -4,7 +4,7 @@
 	<ResponsivePopover
 		id="myPopover"
 		title="{Name}"
-		class="sapUiPopupWithPadding"
+		class="sapUiContentPadding"
 		placement="Bottom" >
 		<beginButton>
 			<Button text="Action-A" press="handleCloseButton" />

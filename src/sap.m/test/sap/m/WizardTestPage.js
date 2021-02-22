@@ -725,7 +725,7 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 					}
 				}),
 				content: [wizard]
-			}).removeStyleClass("sapUiPopupWithPadding");
+			}).addStyleClass("sapUiNoContentPadding");
 
 			var button = new Button({
 				id: "open-dialog-btn",
@@ -809,7 +809,7 @@ sap.ui.define(["sap/m/Wizard", "sap/m/WizardStep", "sap/m/MessageToast",
 					}
 				}),
 				content: [oWizard]
-			}).removeStyleClass("sapUiPopupWithPadding");
+			}).addStyleClass("sapUiNoContentPadding");
 
 			var oButton = new Button({
 				id: "open-dialog-button",

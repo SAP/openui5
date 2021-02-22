@@ -4,7 +4,6 @@
 	<SelectDialog
 		id="valueHelpDialog"
 		title="Products"
-		class="sapUiPopupWithPadding"
 		items="{/ProductCollection}"
 		search="_handleValueHelpSearch"
 		confirm="_handleValueHelpClose"
