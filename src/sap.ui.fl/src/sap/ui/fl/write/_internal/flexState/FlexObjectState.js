@@ -66,7 +66,16 @@ sap.ui.define([
 
 	function getChangePersistenceEntities(mPropertyBag) {
 		var oChangePersistence = getChangePersistence(mPropertyBag);
-		return oChangePersistence.getChangesForComponent(_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache);
+
+		return oChangePersistence.getChangesForComponent(_omit(mPropertyBag, ["invalidateCache", "selector"]), mPropertyBag.invalidateCache)
+
+		.then(function(aPersistedChanges) {
+			var aDirtyChanges = [];
+			if (mPropertyBag.includeDirtyChanges) {
+				aDirtyChanges = oChangePersistence.getDirtyChanges();
+			}
+			return aPersistedChanges.concat(aDirtyChanges);
+		});
 	}
 
 	function saveChangePersistenceEntities(mPropertyBag, oAppComponent) {
@@ -85,6 +94,7 @@ sap.ui.define([
 	 * @param {sap.ui.fl.Control} mPropertyBag.control - Retrieves the associated flex persistence
 	 * @param {boolean} mPropertyBag.invalidateCache - Flag if the cache should be invalidated
 	 * @param {boolean} mPropertyBag.includeCtrlVariants - Flag if control variant change should be included
+	 * @param {boolean} mPropertyBag.includeDirtyChanges - Flag if dirty UI changes should be included
 	 * @returns {Promise<sap.ui.fl.Change[]>} Flex objects, containing changes, compVariants & changes as well as ctrl_variant and changes
 	 */
 	FlexObjectState.getFlexObjects = function (mPropertyBag) {

@@ -3,9 +3,6 @@
 sap.ui.define([
 	"sap/ui/base/Event",
 	"sap/m/MessageBox",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/Layer",
-	"sap/base/Log",
 	"sap/ui/fl/Utils",
 	"sap/ui/rta/Utils",
 	"sap/ui/rta/RuntimeAuthoring",
@@ -14,15 +11,10 @@ sap.ui.define([
 	"sap/ui/fl/write/api/VersionsAPI",
 	"sap/ui/fl/write/api/FeaturesAPI",
 	"sap/ui/fl/write/api/ReloadInfoAPI",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/core/Fragment",
 	"sap/ui/thirdparty/sinon-4"
 ], function (
 	Event,
 	MessageBox,
-	Settings,
-	Layer,
-	Log,
 	FlexUtils,
 	Utils,
 	RuntimeAuthoring,
@@ -31,8 +23,6 @@ sap.ui.define([
 	VersionsAPI,
 	FeaturesAPI,
 	ReloadInfoAPI,
-	JSONModel,
-	Fragment,
 	sinon
 ) {
 	"use strict";
@@ -172,7 +162,8 @@ sap.ui.define([
 					reference: "sap.ui.rta.qunitrta.Component",
 					ignoreMaxLayerParameter: this.oReloadInfo.ignoreMaxLayerParameter,
 					includeCtrlVariants: this.oReloadInfo.includeCtrlVariants,
-					upToLayer: "CUSTOMER"
+					upToLayer: "CUSTOMER",
+					includeDirtyChanges: true
 				}, "then hasHigherLayerChanges is called with the correct parameters");
 
 				assert.equal(oGetReloadMessageOnStart.callCount, 1, "then _getReloadMessageOnStart is called once");
@@ -306,7 +297,8 @@ sap.ui.define([
 					reference: "sap.ui.rta.qunitrta.Component",
 					ignoreMaxLayerParameter: this.oReloadInfo.ignoreMaxLayerParameter,
 					includeCtrlVariants: this.oReloadInfo.includeCtrlVariants,
-					upToLayer: "CUSTOMER"
+					upToLayer: "CUSTOMER",
+					includeDirtyChanges: true
 				}, "then hasHigherLayerChanges is called with the correct parameters");
 
 				assert.equal(oGetReloadMessageOnStart.callCount, 1, "then _getReloadMessageOnStart is called once");
