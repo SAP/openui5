@@ -66,62 +66,104 @@
 		}),
 		subHeader: new sap.m.Bar({
 			contentMiddle: [
-				new sap.m.SearchField( "SFB2", {
-					placeholder: "Search",
-					showRefreshButton: true,
-					search: onSearch,
-					liveChange: onLiveChange,
-					width: "100%",
-					refreshButtonTooltip: "Refresh"
+				new sap.m.HBox({
+					items: [
+						new sap.m.Label("SFB2Label", {
+							text: "SFB2"
+						}).addStyleClass("sapUiTinyMarginEnd"),
+						new sap.m.SearchField( "SFB2", {
+							placeholder: "Search",
+							ariaLabelledBy: "SFB2Label",
+							showRefreshButton: true,
+							search: onSearch,
+							liveChange: onLiveChange,
+							width: "100%",
+							refreshButtonTooltip: "Refresh"
+						})
+					]
 				})
 			]
 		}),
 		content : [
-			new sap.m.SearchField("SF1", {placeholder: "search for...", ariaDescribedBy: ["SF_AD"], search:onSearch}),
+			new sap.m.Label("SF1Label", {
+				text: "SF1"
+			}),
+			new sap.m.SearchField("SF1", {
+				placeholder: "search for...",
+				ariaDescribedBy: ["SF_AD"],
+				ariaLabelledBy: "SF1Label",
+				search: onSearch
+			}),
+			new sap.m.Label("SF2Label", {
+				text: "SF2"
+			}),
 			new sap.m.SearchField("SF2", {
-					showRefreshButton: true,
-					value: "selectOnFocus:false",
-					placeholder: "selectOnFocus:false..",
-					selectOnFocus: false,
-					ariaDescribedBy: ["SF_AD"],
-					showRefreshButton: true, refreshButtonTooltip: "Reload..",
-					search: function(event){
-						onSearch(event);
-						jQuery.sap.log.debug("Page is invalidated");
-						page.invalidate();
-					},
-					liveChange:function(event){
-						onLiveChange(event);
-						jQuery.sap.log.debug("Page is invalidated");
-						page.invalidate();
-					}
-				}),
+				showRefreshButton: true,
+				value: "selectOnFocus:false",
+				placeholder: "selectOnFocus:false..",
+				selectOnFocus: false,
+				ariaDescribedBy: ["SF_AD"],
+				ariaLabelledBy: "SF2Label",
+				showRefreshButton: true, refreshButtonTooltip: "Reload..",
+				search: function(event){
+					onSearch(event);
+					jQuery.sap.log.debug("Page is invalidated");
+					page.invalidate();
+				},
+				liveChange:function(event){
+					onLiveChange(event);
+					jQuery.sap.log.debug("Page is invalidated");
+					page.invalidate();
+				}
+			}),
+			new sap.m.Label("SF3Label", {
+				text: "SF3"
+			}),
 			new sap.m.SearchField("SF3", {
-					placeholder: "disabled...",
-					value: "disabled",
-					ariaDescribedBy: ["SF_AD"],
-					enabled: false,
-					showRefreshButton: true, refreshButtonTooltip: "Reload..",
-					search:onSearch, liveChange:onLiveChange
-				}),
+				placeholder: "disabled...",
+				value: "disabled",
+				ariaDescribedBy: ["SF_AD"],
+				ariaLabelledBy: "SF3Label",
+				enabled: false,
+				showRefreshButton: true, refreshButtonTooltip: "Reload..",
+				search: onSearch,
+				liveChange: onLiveChange
+			}),
+			new sap.m.Label("SF4Label", {
+				text: "SF4"
+			}),
 			new sap.m.SearchField("SF4", {
-					placeholder: "maxLength=5..", maxLength: 5, ariaDescribedBy: ["SF_AD"], search:onSearch, liveChange:onLiveChange
-				}),
+				placeholder: "maxLength=5..",
+				maxLength: 5,
+				ariaDescribedBy: ["SF_AD"],
+				ariaLabelledBy: "SF4Label",
+				search: onSearch,
+				liveChange: onLiveChange
+			}),
+			new sap.m.Label("SF5Label", {
+				text: "SF5"
+			}),
 			new sap.m.SearchField("SF5", {
-					placeholder: "width=50%", width: "50%", ariaDescribedBy: ["SF_AD"], search:onSearch, liveChange:onLiveChange
-				}),
+				placeholder: "width=50%", width: "50%", ariaDescribedBy: ["SF_AD"], ariaLabelledBy: "SF5Label", search: onSearch, liveChange: onLiveChange
+			}),
+			new sap.m.Label("SF6Label", {
+				text: "SF6"
+			}),
 			new sap.m.SearchField("SF6", { // remove default placeholder
-					placeholder: "", ariaDescribedBy: ["SF_AD"], search:onSearch, liveChange:onLiveChange
-				}),
+				placeholder: "", ariaDescribedBy: ["SF_AD"], ariaLabelledBy: "SF6Label", search: onSearch, liveChange: onLiveChange
+			}),
+			new sap.m.Label("SF7Label", {
+				text: "SF7"
+			}),
 			new sap.m.SearchField("SF7", { // showSearchButton = false
-					placeholder: "Without search button..", ariaDescribedBy: ["SF_AD"], showSearchButton: false, search:onSearch, liveChange:onLiveChange
-				}),
+				placeholder: "Without search button..", ariaDescribedBy: ["SF_AD"], ariaLabelledBy: "SF7Label", showSearchButton: false, search: onSearch, liveChange:onLiveChange
+			}),
 			new sap.m.Button("openDialog", {
-					text: "Open a Dialog",
-					press : function() {
-						oDialog.open();
-					}
-				}),
+				text: "Open a Dialog",
+				press : function() {
+					oDialog.open();
+				}
+			})
 		]
 	});
 
@@ -145,7 +187,7 @@
 				})
 			]
 		}),
-				subHeader: new sap.m.Bar({
+		subHeader: new sap.m.Bar({
 			contentMiddle: [
 				new sap.m.SearchField( "SFB22", {
 					placeholder: "Search ...",
@@ -157,11 +199,11 @@
 		}),
 		content : [
 			new sap.m.SearchField("SF12", {
-					placeholder: "search for...", ariaDescribedBy: ["SF_AD"], search:onSearch, liveChange:onLiveChange
-				}),
+				placeholder: "search for...", ariaDescribedBy: ["SF_AD"], search:onSearch, liveChange: onLiveChange
+			}),
 			new sap.m.SearchField("SF22", {
-					placeholder: "search for..", ariaDescribedBy: ["SF_AD"], search:onSearch, liveChange:onLiveChange
-				})
+				placeholder: "search for..", ariaDescribedBy: ["SF_AD"], search:onSearch, liveChange: onLiveChange
+			})
 		]
 	});
 

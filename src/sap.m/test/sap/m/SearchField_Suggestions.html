@@ -84,9 +84,12 @@
 			event.getSource().suggest();
 		}
 	}
-
+	var barSearchFieldLabel = new sap.m.Label({
+		text: "SFB1"
+	}).addStyleClass("sapUiTinyMarginEnd");
 	var barSearchField = new sap.m.SearchField("SFB1", {
 		placeholder: "search for...",
+		ariaLabelledBy: barSearchFieldLabel,
 		enableSuggestions: true,
 		search:onSearch,
 		suggest: doSuggest
@@ -99,7 +102,7 @@
 			templateShareable: true
 		});
 
-	var dialogBarSearchField = barSearchField.clone("dialogBar", {cloneBindings:true});
+	var dialogBarSearchField = barSearchField.clone("dialogBar");
 	var dialogSearchField = new sap.m.SearchField("SFDialog", {
 			placeholder: "search for...",
 			enableSuggestions: true,
@@ -138,9 +141,12 @@
 			})
 	});
 
+	var searchField1Label = new sap.m.Label({ text: "SF1" });
+
 	var searchField = new sap.m.SearchField("SF1", {
 			placeholder: "search for...",
 			enableSuggestions: true,
+			ariaLabelledBy: searchField1Label,
 			search:onSearch,
 			liveChange: onLiveChange,
 			suggest: doSuggest
@@ -152,7 +158,6 @@
 			template: oSuggestionListItemTemplate,
 			templateShareable: true
 		});
-
 
 	var page = new sap.m.Page("searchPage", {
 		enableScrolling: true,
@@ -166,9 +171,19 @@
 					}
 				})
 			],
-			contentRight: [barSearchField]
+			contentRight: [
+				new sap.m.HBox({
+					items: [
+						barSearchFieldLabel,
+						barSearchField
+					]
+				})
+			]
 		}),
-		content : [searchField]
+		content: [
+			searchField1Label,
+			searchField
+		]
 	});
 
 	app.addPage(page).placeAt("body");
