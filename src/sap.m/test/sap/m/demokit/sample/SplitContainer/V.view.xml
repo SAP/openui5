@@ -13,9 +13,7 @@
 				title="Detail 1"
 				backgroundDesign= "Solid"
 				showNavButton="{= !${device>/system/desktop} }"
-				navButtonText="Back"
-				navButtonPress=".onPressDetailBack"
-				class="sapUiStdPage">
+				navButtonPress=".onPressDetailBack">
 				<Label text="Detail page 1" class="sapUiTinyMarginEnd" />
 				<Button text="Go to Detail page 2" press=".onPressNavToDetail" />
 			</Page>
@@ -23,9 +21,7 @@
 				id="detailDetail"
 				title="Detail Detail"
 				backgroundDesign= "Solid"
-				class="sapUiStdPage"
 				showNavButton="true"
-				navButtonText="Back"
 				navButtonPress=".onPressDetailBack">
 				<VBox class="sapUiSmallMargin">
 					<Label text="This is Detail Page 2" />
@@ -48,9 +44,7 @@
 				id="detail2"
 				title="Detail 3 Page"
 				backgroundDesign= "Solid"
-				class="sapUiStdPage"
 				showNavButton="true"
-				navButtonText="Back"
 				navButtonPress=".onPressDetailBack">
 				<Label text="This is Detail Page 3" />
 				<Input/>
@@ -68,9 +62,7 @@
 			<Page
 				id="master"
 				title="Master 1"
-				backgroundDesign= "List"
-				icon="sap-icon://action"
-				class="sapUiStdPage">
+				backgroundDesign= "List">
 				<List>
 					<StandardListItem title="To Master2" type="Navigation" press=".onPressGoToMaster" />
 				</List>
@@ -79,8 +71,6 @@
 				id="master2"
 				title="Master 2"
 				backgroundDesign= "List"
-				icon="sap-icon://action"
-				class="sapUiStdPage"
 				showNavButton="true"
 				navButtonPress=".onPressMasterBack">
 				<List itemPress=".onListItemPress">

@@ -958,7 +958,7 @@ sap.ui.define([
 						})
 					]
 				})
-			}).addStyleClass("sapUiStdPage");
+			});
 			this.oSplitApp = new SplitApp({
 				detailPages: [oDetailPage],
 				masterPages: [oMasterPage],
