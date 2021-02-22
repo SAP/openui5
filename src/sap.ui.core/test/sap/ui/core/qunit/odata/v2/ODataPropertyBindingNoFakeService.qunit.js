@@ -3,12 +3,16 @@
  */
 sap.ui.define([
 	"sap/base/Log",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/model/Binding",
+	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
+	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataPropertyBinding",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (Log, Binding, Context, ODataPropertyBinding, ODataModel, TestUtils) {
+], function (Log, SyncPromise, Binding, ChangeReason, Context, ODataMetaModel,
+		ODataPropertyBinding, ODataModel, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
 	"use strict";
@@ -156,4 +160,94 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oContext, oContext);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate for suspended binding without force update", function (assert) {
+		var oBinding = {
+				bSuspended : true
+			};
+
+		this.mock(ODataMetaModel).expects("getCodeListTerm").never();
+
+		// code under test
+		assert.strictEqual(ODataPropertyBinding.prototype.checkUpdate.call(oBinding), undefined);
+	});
+
+	//*********************************************************************************************
+[
+	{bForceUpdate : true, bSuspended : true},
+	{bForceUpdate : true, bSuspended : false},
+	{bForceUpdate : false, bSuspended : false}
+].forEach(function (oFixture, i) {
+	QUnit.test("checkUpdate for code list; " + i, function (assert) {
+		var oBinding = {
+				bInitial : true,
+				oModel : {getMetaModel : function () {}},
+				sPath : "~path",
+				bSuspended : oFixture.bSuspended,
+				_fireChange : function () {}
+			},
+			oFetchCodeListPromise = SyncPromise.resolve(Promise.resolve("~mCodeList")),
+			oMetaModel = {
+				fetchCodeList : function () {}
+			};
+
+		this.mock(ODataMetaModel).expects("getCodeListTerm").withExactArgs("~path")
+			.returns("~term");
+		this.mock(oBinding.oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		this.mock(oMetaModel).expects("fetchCodeList").withExactArgs("~term")
+			.returns(oFetchCodeListPromise);
+		this.mock(oBinding).expects("_fireChange").withExactArgs({reason : ChangeReason.Change})
+			.callsFake(function () {
+				assert.strictEqual(oBinding.oValue, "~mCodeList");
+			});
+
+		// code under test
+		assert.strictEqual(
+			ODataPropertyBinding.prototype.checkUpdate.call(oBinding, oFixture.bForceUpdate),
+			undefined);
+
+		return oFetchCodeListPromise;
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate for code list, code list loading fails", function (assert) {
+		var oBinding = {
+				bInitial : true,
+				oModel : {getMetaModel : function () {}},
+				sPath : "~path",
+				_fireChange : function () {}
+			},
+			oFetchCodeListPromise = SyncPromise.resolve(Promise.reject("~error")),
+			oMetaModel = {
+				fetchCodeList : function () {}
+			};
+
+		this.mock(ODataMetaModel).expects("getCodeListTerm").withExactArgs("~path")
+			.returns("~term");
+		this.mock(oBinding.oModel).expects("getMetaModel").withExactArgs().returns(oMetaModel);
+		this.mock(oMetaModel).expects("fetchCodeList").withExactArgs("~term")
+			.returns(oFetchCodeListPromise);
+		this.mock(oBinding).expects("_fireChange").never();
+
+		// code under test
+		assert.strictEqual(ODataPropertyBinding.prototype.checkUpdate.call(oBinding), undefined);
+
+		return oFetchCodeListPromise.catch(function () {});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkUpdate for code list, binding is not initial", function (assert) {
+		var oBinding = {
+				bInitial : false,
+				sPath : "~path"
+			};
+
+		this.mock(ODataMetaModel).expects("getCodeListTerm").withExactArgs("~path")
+			.returns("~term");
+
+		// code under test
+		assert.strictEqual(ODataPropertyBinding.prototype.checkUpdate.call(oBinding), undefined);
+	});
 });

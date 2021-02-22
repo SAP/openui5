@@ -4,6 +4,7 @@
 sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/base/BindingParser",
+	"sap/ui/base/SyncPromise",
 	"sap/ui/core/InvisibleText",
 	"sap/ui/model/BindingMode",
 	"sap/ui/model/ClientContextBinding",
@@ -19,8 +20,8 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/performance/Measurement",
 	"sap/ui/test/TestUtils"
-], function (Log, BindingParser, InvisibleText, BindingMode, ClientContextBinding, Context,
-		FilterProcessor, Model, JSONListBinding, JSONPropertyBinding, JSONTreeBinding,
+], function (Log, BindingParser, SyncPromise, InvisibleText, BindingMode, ClientContextBinding,
+		Context, FilterProcessor, Model, JSONListBinding, JSONPropertyBinding, JSONTreeBinding,
 		ODataMetaModel, ODataModel1, Utils, ODataModel, Measurement, TestUtils) {
 	/*global QUnit, sinon */
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0*/
@@ -3261,15 +3262,15 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestCodeList", function (assert) {
+	QUnit.test("fetchCodeList", function (assert) {
 		var oModel = new ODataModel("/fake/emptySchema", {}),
 			oMetaModel = oModel.getMetaModel();
 
 		return oMetaModel.loaded().then(function () {
 			// code under test
-			var oCodeListPromise = oMetaModel.requestCodeList();
+			var oCodeListPromise = oMetaModel.fetchCodeList();
 
-			assert.ok(oCodeListPromise instanceof Promise);
+			assert.ok(oCodeListPromise instanceof SyncPromise);
 
 			oCodeListPromise.then(function (oResult) {
 				assert.strictEqual(oResult, null);
@@ -3281,32 +3282,50 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestCurrencyCodes", function (assert) {
-		var oModel = new ODataModel("/fake/emptySchema", {}),
+		var oCurrencyCodesPromise,
+			oModel = new ODataModel("/fake/emptySchema", {}),
 			oMetaModel = oModel.getMetaModel();
 
-		this.mock(oMetaModel).expects("requestCodeList")
+		this.mock(oMetaModel).expects("fetchCodeList")
 			.withExactArgs("CurrencyCodes")
 			.returns("~codeList");
 
-		return oMetaModel.loaded().then(function () {
-			// code under test
-			assert.strictEqual(oMetaModel.requestCurrencyCodes(), "~codeList");
+		// code under test
+		oCurrencyCodesPromise = oMetaModel.requestCurrencyCodes();
+
+		assert.ok(oCurrencyCodesPromise instanceof Promise);
+		return oCurrencyCodesPromise.then(function (oCodeList) {
+			assert.strictEqual(oCodeList, "~codeList");
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("requestUnitsOfMeasure", function (assert) {
 		var oModel = new ODataModel("/fake/emptySchema", {}),
-			oMetaModel = oModel.getMetaModel();
+			oMetaModel = oModel.getMetaModel(),
+			oUnitsOfMeasurePromise;
 
-		this.mock(oMetaModel).expects("requestCodeList")
+		this.mock(oMetaModel).expects("fetchCodeList")
 			.withExactArgs("UnitsOfMeasure")
 			.returns("~codeList");
 
-		return oMetaModel.loaded().then(function () {
-			// code under test
-			assert.strictEqual(oMetaModel.requestUnitsOfMeasure(), "~codeList");
+		// code under test
+		oUnitsOfMeasurePromise = oMetaModel.requestUnitsOfMeasure();
+
+		assert.ok(oUnitsOfMeasurePromise instanceof Promise);
+		return oUnitsOfMeasurePromise.then(function (oCodeList) {
+			assert.strictEqual(oCodeList, "~codeList");
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCodeListTerm", function (assert) {
+		assert.strictEqual(ODataMetaModel.getCodeListTerm(), undefined);
+		assert.strictEqual(ODataMetaModel.getCodeListTerm("foo"), undefined);
+		assert.strictEqual(ODataMetaModel.getCodeListTerm("/##@@requestCurrencyCodes"),
+			"CurrencyCodes");
+		assert.strictEqual(ODataMetaModel.getCodeListTerm("/##@@requestUnitsOfMeasure"),
+			"UnitsOfMeasure");
 	});
 
 	//TODO support getODataValueLists with reference to complex type property via entity type

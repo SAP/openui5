@@ -7771,4 +7771,112 @@ ToProduct/ToSupplier/BusinessPartnerID\'}}">\
 			assert.strictEqual(that.oView.byId("note").getValue("value"), "Bar");
 		});
 	});
+
+	//*********************************************************************************************
+	// Scenario: If the OData service has no customizing for units, the OData Unit type uses the
+	// UI5 built-in CLDR information for formatting and parsing.
+	// JIRA: CPOUI5MODELS-423
+	QUnit.test("OData Unit type without unit customizing falls back to CLDR", function (assert) {
+		var oModel = createSalesOrdersModel({defaultBindingMode : "TwoWay", useBatch : true}),
+			sView = '\
+<FlexBox binding="{/ProductSet(\'P1\')}">\
+	<Input id="weight" value="{\
+		parts : [{\
+			constraints : { scale : \'variable\' },\
+			path : \'WeightMeasure\',\
+			type : \'sap.ui.model.odata.type.Decimal\'\
+		}, {\
+			path : \'WeightUnit\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}, {\
+			mode : \'OneTime\',\
+			path : \'/##@@requestUnitsOfMeasure\',\
+			targetType : \'any\'\
+		}],\
+		mode : \'TwoWay\',\
+		type : \'sap.ui.model.odata.type.Unit\'\
+	}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("ProductSet('P1')", {
+				ProductID : "P1",
+				WeightMeasure : "12.34",
+				WeightUnit : "mass-kilogram"
+			})
+			.expectChange("weight", "12.34")
+			.expectChange("weight", "12.34 kg");
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oControl = that.oView.byId("weight");
+
+			// remove the formatter so that we can call setValue at the control
+			oControl.getBinding("value").setFormatter(null);
+
+			// code under test
+			oControl.setValue("23.4 kg");
+
+			assert.strictEqual(oControl.getValue(), "23.4 kg");
+
+			// code under test
+			oControl.setValue("");
+
+			assert.strictEqual(oControl.getValue(), "0 kg");
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: If the OData service has no customizing for currencies, the OData Currency type
+	// uses the UI5 built-in CLDR information for formatting and parsing.
+	// JIRA: CPOUI5MODELS-423
+	QUnit.test("OData Currency type without customizing falls back to CLDR", function (assert) {
+		var oModel = createSalesOrdersModel({defaultBindingMode : "TwoWay", useBatch : true}),
+			sView = '\
+<FlexBox binding="{/ProductSet(\'P1\')}">\
+	<Input id="price" value="{\
+		parts : [{\
+			constraints : { scale : \'variable\' },\
+			path : \'Price\',\
+			type : \'sap.ui.model.odata.type.Decimal\'\
+		}, {\
+			path : \'CurrencyCode\',\
+			type : \'sap.ui.model.odata.type.String\'\
+		}, {\
+			mode : \'OneTime\',\
+			path : \'/##@@requestCurrencyCodes\',\
+			targetType : \'any\'\
+		}],\
+		mode : \'TwoWay\',\
+		type : \'sap.ui.model.odata.type.Currency\'\
+	}" />\
+</FlexBox>',
+			that = this;
+
+		this.expectHeadRequest()
+			.expectRequest("ProductSet('P1')", {
+				ProductID : "P1",
+				Price : "12.3",
+				CurrencyCode : "EUR"
+			})
+			.expectChange("price", "12.30")
+			.expectChange("price", "12.30\u00a0EUR"); // "\u00a0" is a non-breaking space
+
+		return this.createView(assert, sView, oModel).then(function () {
+			var oControl = that.oView.byId("price");
+
+			// remove the formatter so that we can call setValue at the control
+			oControl.getBinding("value").setFormatter(null);
+
+			// code under test
+			oControl.setValue("42 JPY");
+
+			assert.strictEqual(oControl.getValue(), "42\u00a0JPY");
+
+			// code under test
+			oControl.setValue("");
+
+			assert.strictEqual(oControl.getValue(), "0\u00a0JPY");
+		});
+	});
 });
