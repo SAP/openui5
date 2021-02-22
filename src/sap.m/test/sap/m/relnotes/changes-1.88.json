@@ -3,6 +3,103 @@
     "date": "February 2021",
     "notes": [
       {
+        "id": "3ce419eb51dd62097728028c0376262c8b1a0ec1",
+        "type": "FIX",
+        "text": " CalendarRow: Appointments with no overlap are rendered in the same level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000342992021"
+          }
+        ]
+      },
+      {
+        "id": "4acf5131fe437a60319279b71b649fc2ad528adb",
+        "type": "FIX",
+        "text": " Input controls: Curly braces properly escaped",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180097576"
+          }
+        ]
+      },
+      {
+        "id": "176d1aab87147cab037d2b19d0551d135b4b9348",
+        "type": "FIX",
+        "text": " sap.m.StepInput: ValueState is now correct when specific case is performed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180047450"
+          }
+        ]
+      },
+      {
+        "id": "d900592b1c0c7dc78d29d029918646a856835ac5",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Flag position alignment",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180080490"
+          }
+        ]
+      },
+      {
+        "id": "ba880434f384a5784dbdcad3a753f1f07a489655",
+        "type": "FIX",
+        "text": " sap.m.Input: SuggestionItemSelected fired correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180085158"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180088592"
+          }
+        ]
+      },
+      {
+        "id": "65a63c59d5b35698f6d1ed688b3e30c345ae8b5b",
+        "type": "FIX",
+        "text": " sap.m.Label: Colon symbol is properly aligned in all languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180097518"
+          }
+        ]
+      },
+      {
+        "id": "454a41c8b7034c673a9c34b92921ced54b7bdce5",
+        "type": "FEATURE",
+        "text": " Use avatar instead of an image"
+      },
+      {
+        "id": "45f6cf2b731b17bae8cf8676ad969a9ff400c852",
+        "type": "FIX",
+        "text": " TablePersoDialog: resetAll button fix",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080241800"
+          }
+        ]
+      },
+      {
+        "id": "673e64160a068e09eb6301e5e8f7df3a2e2c6198",
+        "type": "FIX",
+        "text": " sap.m.SuggestionsPopover: Navigating from list to input updates the value",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180086257"
+          }
+        ]
+      },
+      {
         "id": "6e9d77ce7c36d313eeea32fa217e7d9a0ca45743",
         "type": "FIX",
         "text": " sap.m.ComboBox: Performance optimisations",
@@ -171,6 +268,17 @@
           {
             "type": "BCP",
             "reference": "2180057015"
+          }
+        ]
+      },
+      {
+        "id": "3646483e4128fbe79a4719560cbae956e271014c",
+        "type": "FIX",
+        "text": " sap.m.Input: Update properly value with maxLength",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180035989"
           }
         ]
       },

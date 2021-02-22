@@ -3,6 +3,17 @@
     "date": "February 2021",
     "notes": [
       {
+        "id": "8dfb371cb0cd158868527d9b884978c90cc01f16",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Workaround table flickering",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070413091"
+          }
+        ]
+      },
+      {
         "id": "699fda4f59c104210cf74c86e16075e8faa95cd5",
         "type": "FEATURE",
         "text": " sap.f.IllustratedMessage: New control implementation"

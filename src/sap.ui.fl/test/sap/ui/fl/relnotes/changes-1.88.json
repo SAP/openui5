@@ -3,6 +3,17 @@
     "date": "February 2021",
     "notes": [
       {
+        "id": "7189f68b8fca1aac478fe460109c090f9d9ce1e4",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl.apply.api.SmartVariantManagementApplyAPI loads multiple standards variant correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180107458"
+          }
+        ]
+      },
+      {
         "id": "e2552c3d609e762ece5546426ba105d95246bc21",
         "type": "FIX",
         "text": "[INTERNAL] sap.ui.fl fix QUnit test flapping",

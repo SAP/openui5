@@ -3,6 +3,38 @@
     "date": "February 2021",
     "notes": [
       {
+        "id": "52531ee6a0fa7b8d00230e074450ab0a311c6b5f",
+        "type": "FIX",
+        "text": " sap.ui.core.routing.Router: do not navigate when the router is stopped"
+      },
+      {
+        "id": "ea93910f91422a7e221343e362c50024440bfd62",
+        "type": "FEATURE",
+        "text": " test recorder: assert property values"
+      },
+      {
+        "id": "c958c64742dd6f449481a772abf10da22be17dd9",
+        "type": "FIX",
+        "text": " sap.ui.model.FilterProcessor#normalizeFilterValue: don't fail if the value is the name of a prototype function",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180072688"
+          }
+        ]
+      },
+      {
+        "id": "2cbfbe7f7a68fad6e3df1e2cda6e50023ef511a6",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: support selecting only the text of a measure",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000644142021"
+          }
+        ]
+      },
+      {
         "id": "30d21cd923662b6c1dc29d788fe69a5fca9e12c5",
         "type": "FEATURE",
         "text": " sap.m.Title: new 'content' aggregation added"

@@ -3,6 +3,17 @@
     "date": "February 2021",
     "notes": [
       {
+        "id": "d447cc992d444f909231ed7518b8035f9421c677",
+        "type": "FIX",
+        "text": " mdc.FilterBarBase: correction for the Save As scenario",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180097837"
+          }
+        ]
+      },
+      {
         "id": "8f6708a444b6c38ca27610a56c858d12236abe31",
         "type": "FEATURE",
         "text": " FieldValueHelp: support collective search"

@@ -3,6 +3,28 @@
     "date": "February 2021",
     "notes": [
       {
+        "id": "3ce419eb51dd62097728028c0376262c8b1a0ec1",
+        "type": "FIX",
+        "text": " CalendarRow: Appointments with no overlap are rendered in the same level",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000342992021"
+          }
+        ]
+      },
+      {
+        "id": "0038a6f3aedc8aabababffa5f7ff0584d4283ec1",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: file not blocked",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008348942020"
+          }
+        ]
+      },
+      {
         "id": "29f99a49af5e2483a0a71cd989179dae26c3be60",
         "type": "FIX",
         "text": " sap.ui.unified.Calendar: Week numbers are now correct in different locales",

@@ -3,6 +3,17 @@
     "date": "February 2021",
     "notes": [
       {
+        "id": "65a63c59d5b35698f6d1ed688b3e30c345ae8b5b",
+        "type": "FIX",
+        "text": " sap.m.Label: Colon symbol is properly aligned in all languages",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180097518"
+          }
+        ]
+      },
+      {
         "id": "b74df39d0e34084330c4e103beb8dddc620e2e96",
         "type": "FEATURE",
         "text": " sap.ui.layout.cssgrid.ResponsiveColumnLayout: Added new breakpoints"
