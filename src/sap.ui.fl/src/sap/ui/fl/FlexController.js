@@ -41,6 +41,8 @@ sap.ui.define([
 		return Promise.resolve()
 			.then(function () {
 				if (aChanges.length !== 0) {
+					// Always revert changes in reverse order
+					aChanges.reverse();
 					return Reverter.revertMultipleChanges(aChanges, {
 						appComponent: oComponent,
 						modifier: JsControlTreeModifier,
