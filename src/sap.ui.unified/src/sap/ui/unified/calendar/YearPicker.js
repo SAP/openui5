@@ -745,7 +745,7 @@ sap.ui.define([
 
 	YearPicker.prototype._handleMousedown = function(oEvent, iIndex){
 
-		if (oEvent.button || Device.support.touch) {
+		if (oEvent.button || Device.support.touch && !Device.system.combi) {
 			// only use left mouse button or not touch
 			return;
 		}
