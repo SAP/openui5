@@ -107,7 +107,7 @@ sap.ui.define([
 		// otherwise invalidate/filter/... is not working correctly
 		this._oDialog = new Dialog().addStyleClass("sapUIRtaFieldRepositoryDialog");
 		this._oDialog.addStyleClass(Utils.getRtaStyleClassName());
-		this._oDialog.removeStyleClass("sapUiPopupWithPadding");
+		this._oDialog.addStyleClass("sapUiNoContentPadding");
 		this._oDialog.setModel(new JSONModel({
 			elements: []
 		}));
