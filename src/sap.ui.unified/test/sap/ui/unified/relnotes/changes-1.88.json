@@ -3,6 +3,17 @@
     "date": "February 2021",
     "notes": [
       {
+        "id": "4d15f48cfa98474dd7b3dd049100fe87aa80939f",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: now possible to select month in sap.m.MonthPicker with combined device",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180080565"
+          }
+        ]
+      },
+      {
         "id": "3ce419eb51dd62097728028c0376262c8b1a0ec1",
         "type": "FIX",
         "text": " CalendarRow: Appointments with no overlap are rendered in the same level",
