@@ -78,7 +78,7 @@
 				<l:BlockLayoutRow>
 					<l:BlockLayoutCell
 							backgroundColorSet="ColorSet11"
-							backgroundColorShade="ShadeF">
+							backgroundColorShade="ShadeA">
 						<l:Grid
 								defaultSpan="L6 M12 S12"
 								hSpacing="0"
@@ -89,10 +89,8 @@
 										href="topic/50eadaac8d2e49ee8996dc2b560cb76b"
 										text="{i18n>WELCOME_BLOCK_2_TITLE}"
 										titleStyle="H2"
-										class="demokitInitialPagesWhiteText sapUiSmallMarginBottom"/>
-								<Text
-										text="{i18n>WELCOME_BLOCK_2_TEXT}"
-										class="demokitInitialPagesWhiteText"/>
+										class="sapUiSmallMarginBottom"/>
+								<Text text="{i18n>WELCOME_BLOCK_2_TEXT}"/>
 							</l:VerticalLayout>
 							<Image
 									src="./resources/sap/ui/documentation/sdk/images/Fiori_guidelines_image.png"
