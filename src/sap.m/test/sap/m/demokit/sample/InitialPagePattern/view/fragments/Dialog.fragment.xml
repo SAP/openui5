@@ -2,7 +2,6 @@
 	<SelectDialog
 		id="selectDialog"
 		title="{i18n>Purchases}"
-		class="sapUiPopupWithPadding"
 		items="{/Purchases}"
 		search="handleValueHelpSearch"
 		confirm="handleValueHelpConfirm">

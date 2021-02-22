@@ -3,7 +3,7 @@
 		xmlns:core="sap.ui.core">
 	<Dialog
 			title="{i18n>APP_SETTINGS_DIALOG_TITLE}"
-			class="sapUiPopupWithPadding"
+			class="sapUiContentPadding"
 			contentWidth="350px"
 			id="GlobalSettingsDialog">
 		<content>
@@ -31,4 +31,3 @@
 		</endButton>
 	</Dialog>
 </core:FragmentDefinition>
-
