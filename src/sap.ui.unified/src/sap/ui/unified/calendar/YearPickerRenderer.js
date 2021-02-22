@@ -64,7 +64,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 			iColumns = oYP.getColumns(),
 			sWidth = "",
 			bEnabled = false,
-			bEnabledCheck = false, // check for disabled years only needed if borders touched
 			oCurrentValidatedDate,
 			bApplySelection,
 			bApplySelectionBetween,
@@ -75,7 +74,6 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 
 		if (!oCurrentValidatedDate.isSame(oCurrentDate)) {
 			oCurrentDate = oCurrentValidatedDate;
-			bEnabledCheck = true;
 		}
 
 		if (iColumns > 0) {
@@ -89,11 +87,7 @@ sap.ui.define(['sap/ui/unified/calendar/CalendarDate', 'sap/ui/core/date/Univers
 			mAccProps = {
 				role: "gridcell"
 			};
-			bEnabled = true;
-
-			if (bEnabledCheck) {
-				bEnabled = oYP._checkDateEnabled(oCurrentDate);
-			}
+			bEnabled = oYP._checkDateEnabled(oCurrentDate);
 
 			if (iColumns > 0 && i % iColumns == 0) {
 				// begin of row

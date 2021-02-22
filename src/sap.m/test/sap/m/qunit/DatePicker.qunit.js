@@ -1479,7 +1479,7 @@ sap.ui.define([
 				maxDate: new Date(2020, 0, 1),
 				dateValue: new Date(2010, 0, 1)
 			}),
-			iFocusedIndex = 11,
+			iFocusedIndex = 9,
 			oDeviceStub = this.stub(sap.ui.Device.support, "touch", true),
 			oYP,
 			oFakeEvent,
@@ -1499,7 +1499,7 @@ sap.ui.define([
 
 		oFakeEvent = {
 			target: jQuery("<div></div>").attr({
-				"id": oYP.getId() + "-y20210101",
+				"id": oYP.getId() + "-y20090101",
 				"class": "sapUiCalItem"
 			}).get(0),
 			classList: {

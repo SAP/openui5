@@ -620,7 +620,7 @@ sap.ui.define([
 		var aYears = $YearPicker.find(".sapUiCalItem");
 
 		// assert
-		assert.equal(jQuery(aYears[0]).text(), "2000", "Calendar: first displayed year");
+		assert.equal(jQuery(aYears[0]).text(), "1997", "Calendar: first displayed year");
 		assert.ok(jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button disabled");
 		assert.ok(!jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Calendar: Next Button enabled");
 
@@ -661,7 +661,7 @@ sap.ui.define([
 		aYears = $YearPicker.find(".sapUiCalItem");
 
 		// assert
-		assert.equal(jQuery(aYears[6]).text(), "2050", "Calendar: last displayed year");
+		assert.equal(jQuery(aYears[6]).text(), "2053", "Calendar: last displayed year");
 		assert.ok(!jQuery("#myCal--Head-prev").hasClass("sapUiCalDsbl"), "Calendar: Previous Button enabled");
 		assert.ok(jQuery("#myCal--Head-next").hasClass("sapUiCalDsbl"), "Calendar: Next Button disabled");
 

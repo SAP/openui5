@@ -779,7 +779,7 @@ sap.ui.define([
 				months: 2,
 				firstDayOfWeek: 2,
 				nonWorkingDays: [3, 5],
-				minDate: new Date("2000", "0", "7"),
+				minDate: new Date("2005", "0", "7"),
 				maxDate: new Date("2015", "1", "25"),
 				selectedDates: [new DateRange({startDate: new Date("2015", "0", "5")})],
 				disabledDates: [new DateRange({startDate: new Date("2015", "0", "10")}),
@@ -1066,11 +1066,11 @@ sap.ui.define([
 		assert.ok(jQuery("#Cal3--Head-prev").hasClass("sapUiCalDsbl"), "Calendar3: Previous Button for YearPicker disabled");
 		assert.ok(jQuery("#Cal3--Head-next").hasClass("sapUiCalDsbl"), "Calendar3: Next Button for YearPicker disabled");
 		var aYears = jQuery("#Cal3--YP").find(".sapUiCalItem");
-		assert.equal(jQuery(aYears[0]).text(), "1996", "Calendar3: first displayed year");
-		assert.ok(jQuery(aYears[0]).hasClass("sapUiCalItemDsbl"), "Calendar3: 1996 is disabled");
-		assert.ok(jQuery(aYears[0]).attr("aria-disabled"), "Calendar3: 1996 has aria-disabled");
-		assert.equal(jQuery(aYears[4]).text(), "2000", "Calendar3: 4. displayed year");
-		assert.ok(!jQuery(aYears[4]).hasClass("sapUiCalItemDsbl"), "Calendar3: 2000 is enabled");
+		assert.equal(jQuery(aYears[0]).text(), "2004", "Calendar3: first displayed year");
+		assert.ok(jQuery(aYears[0]).hasClass("sapUiCalItemDsbl"), "Calendar3: 2004 is disabled");
+		assert.ok(jQuery(aYears[0]).attr("aria-disabled"), "Calendar3: 2004 has aria-disabled");
+		assert.equal(jQuery(aYears[4]).text(), "2008", "Calendar3: 4. displayed year");
+		assert.ok(!jQuery(aYears[4]).hasClass("sapUiCalItemDsbl"), "Calendar3: 2008 is enabled");
 		assert.ok(!jQuery(aYears[4]).attr("aria-disabled"), "Calendar3: 2000 has no aria-disabled");
 
 		$Date = jQuery("#Cal3--YP-y20140101");
@@ -1078,7 +1078,7 @@ sap.ui.define([
 		qutils.triggerKeydown($Date.get(0), jQuery.sap.KeyCodes.ENTER, false, false, false);
 		sap.ui.getCore().applyChanges();
 
-		this.oCal3.focusDate(new Date(2000, 0, 10));
+		this.oCal3.focusDate(new Date(2005, 0, 10));
 		sap.ui.getCore().applyChanges();
 		assert.ok(jQuery("#Cal3--Head-prev").hasClass("sapUiCalDsbl"), "Calendar3: Previous Button disabled");
 		assert.ok(!jQuery("#Cal3--Head-next").hasClass("sapUiCalDsbl"), "Calendar3: Next Button enabled");
