@@ -46,6 +46,16 @@ sap.ui.define([
 
 				Operator.apply(this, arguments);
 
+				// if the rangeOperator uses paramTypes, add the same number of valueDefaults
+				if (this.paramTypes) {
+					this.paramTypes.forEach(function(oType) {
+						if (!this.valueDefaults) {
+							this.valueDefaults = [];
+						}
+						this.valueDefaults.push(1); // add a defualt value 1 for a RangeOperator value
+					}.bind(this));
+				}
+
 				if (oConfiguration.label !== undefined) {
 					// label: array of strings of labels will be used as placeholder text inside the value fields on the defineConditionPanel.
 					this.aLabels = oConfiguration.label;

@@ -115,6 +115,15 @@ sap.ui.define([
 						}
 					}
 					return aConditions;
+				},
+
+				_removeInitialFlags: function(aConditions) {
+					for (var i = aConditions.length - 1; i > -1; i--) {
+						if (aConditions[i].isInitial) {
+							delete aConditions[i].isInital;
+						}
+					}
+					return aConditions;
 				}
 
 		};
