@@ -170,6 +170,9 @@ sap.ui.define([
 	 */
 	AnalyticalTreeBindingAdapter.prototype._getContextsOrNodes = function (bReturnNodes,
 			iStartIndex, iLength, iThreshold) {
+		if (!this.isResolved()) {
+			return [];
+		}
 		if (!iLength) {
 			iLength = this.oModel.iSizeLimit;
 		}
