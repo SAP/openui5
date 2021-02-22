@@ -472,10 +472,13 @@ sap.ui.define([
 	};
 
 	Calendar.prototype._handleWeekNumberSelect = function (oEvent) {
-		var bExecuteDefault = this.fireWeekNumberSelect({
-			weekNumber: oEvent.getParameter("weekNumber"),
-			weekDays: oEvent.getParameter("weekDays")
-		});
+		var oWeekDays = oEvent.getParameter("weekDays"),
+			bExecuteDefault = this.fireWeekNumberSelect({
+				weekNumber: oEvent.getParameter("weekNumber"),
+				weekDays: oWeekDays
+			});
+
+		this._focusDate(CalendarDate.fromLocalJSDate(oWeekDays.getStartDate(), this.getPrimaryCalendarType()), true);
 
 		if (!bExecuteDefault) {
 			oEvent.preventDefault();

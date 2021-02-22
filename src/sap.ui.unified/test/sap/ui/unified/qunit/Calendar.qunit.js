@@ -2327,17 +2327,44 @@ sap.ui.define([
 					CalendarDayType.Type04, secondaryType: CalendarDayType.NonWorking})],
 				startDateChange: handleStartDateChange
 			}).placeAt("qunit-fixture"),
-			oEventSpy = this.spy(oCal3, "fireWeekNumberSelect");
-
+			oEventSpy = this.spy(oCal3, "fireWeekNumberSelect"),
+			oFakeEvent = {
+				weekNumber: 1,
+				weekDays: new DateRange({
+					startDate: new Date(2015, 0, 5)
+				})
+			};
 		// Act
 		// Get one of the internal months and just fire it's weekNumberSelect directly
-		oCal3.getAggregation("month")[0].fireWeekNumberSelect();
+		oCal3.getAggregation("month")[0].fireWeekNumberSelect(oFakeEvent);
 
 		// Assert
 		assert.ok(oEventSpy.called, "Detected internal Months firing weekNumberSelect, so Calendar did the same");
 
 		// Clean
 		oCal3.destroy();
+	});
+
+	QUnit.test("weekNumberSelect event handling", function(assert) {
+		// prepare
+		var oCal = new Calendar(),
+			oDate = new Date(2015, 0, 5),
+			oCalendarDate = CalendarDate.fromLocalJSDate(oDate, oCal.getPrimaryCalendarType()),
+			oFakeEvent = {
+				getParameter: function(sParam) {
+					return sParam === "weekDays" ?
+						new DateRange({
+							startDate: oDate
+						}) : 1;
+				}
+			},
+			oFocusDateSpy = this.spy(oCal, "_focusDate");
+
+		// act
+		oCal._handleWeekNumberSelect(oFakeEvent);
+
+		// assert
+		assert.ok(oFocusDateSpy.calledWith(oCalendarDate), "Calendar.prototype._focusDate is called");
 	});
 
 	QUnit.test("onkeydown handler when F4 is pressed", function(assert) {
