@@ -3,6 +3,17 @@
     "date": "February 2021",
     "notes": [
       {
+        "id": "9565ef7b89e513c33a5d8d2f05dfcec18d8d8abf",
+        "type": "FIX",
+        "text": " core.support.Hotkeys: prevent the default when the hotkey is pressed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180076369"
+          }
+        ]
+      },
+      {
         "id": "52531ee6a0fa7b8d00230e074450ab0a311c6b5f",
         "type": "FIX",
         "text": " sap.ui.core.routing.Router: do not navigate when the router is stopped"
