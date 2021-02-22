@@ -487,6 +487,11 @@ function(
 
 		Dialog.prototype.onBeforeRendering = function () {
 			var oHeader = this.getCustomHeader() || this._header;
+
+			if (!Dialog._bPaddingByDefault && this.hasStyleClass("sapUiPopupWithPadding")) {
+				Log.warning("Usage of CSS class 'sapUiPopupWithPadding' is deprecated. Use 'sapUiContentPadding' instead", null, "sap.m.Dialog");
+			}
+
 			//if content has scrolling, disable scrolling automatically
 			if (this._hasSingleScrollableContent()) {
 				this.setVerticalScrolling(false);
