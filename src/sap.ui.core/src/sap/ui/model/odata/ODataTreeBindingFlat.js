@@ -148,7 +148,7 @@ sap.ui.define([
 	 */
 	ODataTreeBindingFlat.prototype._getContextsOrNodes = function (bReturnNodes, iStartIndex,
 			iLength, iThreshold) {
-		if (this.isInitial()) {
+		if (!this.isResolved() || this.isInitial()) {
 			return [];
 		}
 

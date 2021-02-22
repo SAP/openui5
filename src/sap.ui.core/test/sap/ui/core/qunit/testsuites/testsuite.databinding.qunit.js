@@ -216,6 +216,12 @@ sap.ui.define(function() {
 				},
 				title: "sap.ui.model.analytics.AnalyticalBinding - QUnit Tests"
 			},
+			"analytics/AnalyticalTreeBindingAdapter": {
+				title: "sap.ui.model.analytics.AnalyticalTreeBindingAdapter",
+				module: [
+					"test-resources/sap/ui/core/qunit/analytics/AnalyticalTreeBindingAdapter.qunit"
+				]
+			},
 			"analytics/odata4analytics": {
 				coverage : {
 					only : "sap/ui/model/analytics/"

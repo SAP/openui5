@@ -142,4 +142,16 @@ sap.ui.define([
 		assert.strictEqual(oBinding.getNodes("~iStartIndex", "~iLength", "~iThreshold"),
 			"~result");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_getContextsOrNodes: unresolved binding", function (assert) {
+		var oBinding = {
+				isResolved : function () {}
+			};
+
+		this.mock(oBinding).expects("isResolved").withExactArgs().returns(false);
+
+		// code under test - parameters are not relevant for this test
+		assert.deepEqual(TreeBindingAdapter.prototype._getContextsOrNodes.call(oBinding), []);
+	});
 });
