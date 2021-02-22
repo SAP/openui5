@@ -163,7 +163,8 @@ sap.ui.define([
 				if (oChangeHandler) {
 					oChangeHandler.completeChangeContent(oChange, oChangeSpecificData, {
 						modifier: JsControlTreeModifier,
-						appComponent: oAppComponent
+						appComponent: oAppComponent,
+						view: Utils.getViewForControl(oControl)
 					});
 				} else {
 					throw new Error("Change handler could not be retrieved for change " + JSON.stringify(oChangeSpecificData) + ".");
