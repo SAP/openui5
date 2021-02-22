@@ -238,6 +238,8 @@ sap.ui.define([
 			models: { "testModel1": new JSONModel() }
 		});
 
+		var obj1 = new TestManagedObject();
+
 		parentObj.setSingleAggr(obj);
 		obj.setModel(new JSONModel());
 		obj.setModel(new JSONModel(), "testModel2");
@@ -253,6 +255,8 @@ sap.ui.define([
 
 		assert.ok(obj.getOwnModels().hasOwnProperty("testModel2"), "Model 'testModel2' should be available.");
 		assert.ok(obj.getOwnModels().testModel2.isA("sap.ui.model.json.JSONModel"), "Correct model instance should be available.");
+
+		assert.deepEqual(obj1.getOwnModels(), {}, "No models are defined. Empty object is returned.");
 	});
 
 	QUnit.module("Property Metadata", {
