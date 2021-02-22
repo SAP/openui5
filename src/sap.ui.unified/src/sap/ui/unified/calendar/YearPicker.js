@@ -491,6 +491,10 @@ sap.ui.define([
 		var iYears = this.getYears(),
 			oMaxStartYear = new CalendarDate(this._oMaxDate, this.getPrimaryCalendarType());
 
+		if (!oMaxStartYear.isSame(CalendarUtils._maxDate(this.getPrimaryCalendarType()))) {
+			return oDate;
+		}
+
 		oMaxStartYear.setYear(oMaxStartYear.getYear() - iYears + 1);
 		if (oDate.isAfter(oMaxStartYear) && oDate.getYear() != oMaxStartYear.getYear()) {
 			oDate = new CalendarDate(oMaxStartYear, this.getPrimaryCalendarType());

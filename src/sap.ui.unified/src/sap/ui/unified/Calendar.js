@@ -1524,32 +1524,31 @@ sap.ui.define([
 			oMaxDate = new CalendarDate(this._oMaxDate, sPrimaryType),
 			oHeader = this.getAggregation("header"),
 			iRangeSize = 1,
-			oCalDate,
+			oLowDate,
+			oHighDate,
 			iYears,
 			oDate;
 
-		if (oYearRangePicker.getDomRef()) {
+		if (this._iMode === 3) {
 			iYears = oYearRangePicker.getYears();
 			iRangeSize = oYearRangePicker.getRangeSize();
-			oCalDate = new CalendarDate(oYearRangePicker.getProperty("_middleDate"));
-			oCalDate.setYear(oCalDate.getYear() - Math.floor(iYears / 2) * iRangeSize);
-			oCalDate.setYear(oCalDate.getYear() - Math.floor(iRangeSize / 2));
+			oLowDate = new CalendarDate(oYearRangePicker.getProperty("_middleDate"));
+			oHighDate = new CalendarDate(oLowDate);
+
+			oLowDate.setYear(oLowDate.getYear() - (iRangeSize * iYears) / 2);
+			oHighDate.setYear(oHighDate.getYear() + (iRangeSize * iYears) / 2 - 1);
 		} else {
 			iYears = oYearPicker.getYears();
 			oDate = oYearPicker.getProperty("_middleDate") ? oYearPicker.getProperty("_middleDate") : CalendarDate.fromLocalJSDate(new Date());
-			oCalDate = new CalendarDate(oDate);
-			oCalDate.setYear(oCalDate.getYear() - Math.floor(iYears / 2));
-			oCalDate = oYearPicker._checkFirstDate(oCalDate);
+			oLowDate = new CalendarDate(oDate);
+			oHighDate = new CalendarDate(oDate);
+
+			oLowDate.setYear(oLowDate.getYear() - (iYears / 2));
+			oHighDate.setYear(oHighDate.getYear() + (iYears / 2) - 1);
 		}
 
-		oCalDate.setYear(oCalDate.getYear() + Math.floor(iYears / 2) * iRangeSize);
-		oMaxDate.setYear(oMaxDate.getYear() - Math.ceil(iYears / 2) * iRangeSize);
-		oMaxDate.setMonth(11, 31);
-		oMinDate.setYear(oMinDate.getYear() + Math.floor(iYears / 2) * iRangeSize + 1);
-		oMinDate.setMonth(0, 1);
-
-		oHeader.setEnabledNext(oCalDate.isSameOrBefore(oMaxDate));
-		oHeader.setEnabledPrevious(oCalDate.isSameOrAfter(oMinDate));
+		oHeader.setEnabledNext(oHighDate.getYear() < oMaxDate.getYear());
+		oHeader.setEnabledPrevious(oLowDate.getYear() > oMinDate.getYear());
 	};
 
 	/**
