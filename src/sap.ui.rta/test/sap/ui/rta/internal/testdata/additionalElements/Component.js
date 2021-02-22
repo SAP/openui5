@@ -5,18 +5,17 @@ sap.ui.define([
 	"sap/ui/fl/write/_internal/fieldExtensibility/Access",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/mvc/XMLView"
 ], function(
 	UIComponent,
 	Access,
 	JSONModel,
 	App,
-	library
+	library,
+	XMLView
 ) {
 	"use strict";
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = library.mvc.ViewType;
 
 	return UIComponent.extend("sap.ui.rta.test.additionalElements.Component", {
 		metadata: {
@@ -41,16 +40,14 @@ sap.ui.define([
 			var oModel = new JSONModel({
 				showAdaptButton: this._bShowAdaptButton
 			});
-
-			var oPage = sap.ui.view(this.createId("idMain1"), {
-				viewName: "sap.ui.rta.test.additionalElements.ComplexTest",
-				type: ViewType.XML,
-				async: true
+			this.oView = XMLView.create({
+				id: this.createId("idMain1"),
+				viewName: "sap.ui.rta.test.additionalElements.ComplexTest"
+			}).then(function(oPage) {
+				oPage.setModel(oModel, "view");
+				oApp.addPage(oPage);
+				return oPage;
 			});
-
-			oPage.setModel(oModel, "view");
-
-			oApp.addPage(oPage);
 
 			return oApp;
 		},

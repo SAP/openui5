@@ -44,12 +44,14 @@ sap.ui.define([
 				isToolStub: function() {return true;}
 			});
 
-			var oView = this.oFlexibility.oView;
-			assert.equal(oRenderingSpy.callCount, 1, "the rendering was called");
-			assert.ok(oView.getModel("flexApps"));
-			assert.ok(oView.getModel("flexToolSettings"));
-			assert.ok(oView.getModel("flexChanges"));
-			assert.ok(oView.getModel("flexChangeDetails"));
+			return this.oFlexibility.oViewPromise.then(function() {
+				var oView = this.oFlexibility.oView;
+				assert.equal(oRenderingSpy.callCount, 1, "the rendering was called");
+				assert.ok(oView.getModel("flexApps"));
+				assert.ok(oView.getModel("flexToolSettings"));
+				assert.ok(oView.getModel("flexChanges"));
+				assert.ok(oView.getModel("flexChangeDetails"));
+			}.bind(this));
 		});
 	});
 

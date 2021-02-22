@@ -54,30 +54,6 @@ sap.ui.define([
 		return oCompCont;
 	};
 
-	RtaQunitUtils.renderTestAppAt = function(sDomId) {
-		disableRtaRestart();
-		sap.ui.getCore().getConfiguration().setFlexibilityServices([{
-			connector: "SessionStorageConnector"
-		}]);
-
-		var oComp = sap.ui.getCore().createComponent({
-			name: "sap.ui.rta.qunitrta",
-			id: "Comp1",
-			settings: {
-				componentData: {
-					showAdaptButton: true
-				}
-			}
-		});
-
-		var oCompCont = new ComponentContainer({
-			component: oComp
-		}).placeAt(sDomId);
-		sap.ui.getCore().applyChanges();
-
-		return oCompCont;
-	};
-
 	RtaQunitUtils.clear = function (oElement, bRevert) {
 		var oComponent = (oElement && flUtils.getAppComponentForControl(oElement)) || sap.ui.getCore().getComponent("Comp1");
 		var aCustomerChanges;
@@ -143,10 +119,13 @@ sap.ui.define([
 			}
 		})
 			.then(function(oComponent) {
-				return new ComponentContainer({
-					component: oComponent,
-					async: true
-				});
+				return oComponent.oView
+					.then(function() {
+						return new ComponentContainer({
+							component: oComponent,
+							async: true
+						});
+					});
 			})
 			.then(function(oComponentContainer) {
 				oComponentContainer.placeAt(sDomId);
@@ -158,7 +137,7 @@ sap.ui.define([
 
 	RtaQunitUtils.renderRuntimeAuthoringAppAt = function(sDomId) {
 		disableRtaRestart();
-		var oComp = sap.ui.getCore().createComponent({
+		return Component.create({
 			name: "sap.ui.rta.test",
 			id: "Comp1",
 			settings: {
@@ -167,14 +146,21 @@ sap.ui.define([
 					useSessionStorage: true
 				}
 			}
-		});
-
-		var oCompCont = new ComponentContainer({
-			component: oComp
-		}).placeAt(sDomId);
-		sap.ui.getCore().applyChanges();
-
-		return oCompCont;
+		})
+			.then(function(oComponent) {
+				return oComponent.oView
+					.then(function() {
+						return new ComponentContainer({
+							component: oComponent,
+							async: true
+						});
+					});
+			})
+			.then(function(oComponentContainer) {
+				oComponentContainer.placeAt(sDomId);
+				sap.ui.getCore().applyChanges();
+				return oComponentContainer;
+			});
 	};
 
 	RtaQunitUtils.openContextMenuWithKeyboard = function(oTarget) {

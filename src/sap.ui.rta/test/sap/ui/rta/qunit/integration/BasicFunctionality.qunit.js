@@ -28,18 +28,25 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
-
-	QUnit.begin(function () {
-		QUnit.config.fixture = null;
-	});
 
 	QUnit.done(function () {
 		QUnit.config.fixture = '';
 		jQuery("#qunit-fixture").hide();
 	});
 
+	QUnit.config.fixture = null;
+
+	var oCompCont;
+
+	var oComponentPromise = RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
+		.then(function(oCompContainer) {
+			oCompCont = oCompContainer;
+		});
+
 	QUnit.module("Given RTA is started...", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oField = sap.ui.getCore().byId("Comp1---idMain1--GeneralLedgerDocument.CompanyCode");
 			this.oGroup = sap.ui.getCore().byId("Comp1---idMain1--Dates");
@@ -153,6 +160,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available and CTRL-Z/CTRL-Y are pressed...", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;

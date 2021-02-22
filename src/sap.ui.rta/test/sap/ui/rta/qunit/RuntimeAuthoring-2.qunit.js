@@ -48,8 +48,16 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
-	var oComp = oCompCont.getComponentInstance();
+	var oCompCont;
+	var oComp;
+
+	QUnit.config.fixture = null;
+
+	var oComponentPromise = RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
+		.then(function(oCompContainer) {
+			oCompCont = oCompContainer;
+			oComp = oCompCont.getComponentInstance();
+		});
 
 	function givenAnFLP(fnFLPToExternalStub, fnFLPReloadStub, mShellParams) {
 		sandbox.stub(FlexUtils, "getUshellContainer").returns({
@@ -159,6 +167,9 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that RuntimeAuthoring is created without a root control...", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: undefined
@@ -182,6 +193,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created and started with non-default plugin sets only...", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			var oCommandFactory = new CommandFactory();
 
@@ -223,6 +237,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RTA is started in FLP", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
@@ -360,6 +377,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RTA gets started in FLP", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
@@ -474,6 +494,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RTA is started in FLP with sap-ui-fl-max-layer already in the URL", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
@@ -655,6 +678,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given the user is leaving RTA on stand-alone applications", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
@@ -681,6 +707,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RTA is started on stand-alone applications", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oCompCont.getComponentInstance().getAggregation("rootControl"),
@@ -868,6 +897,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl ...", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			sandbox = sinon.sandbox.create();
 			var oSettings = {
@@ -896,6 +928,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			sandbox = sinon.sandbox.create();
 			var oSettings = {
@@ -924,6 +959,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created but not started", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
@@ -990,6 +1028,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring in the VENDOR layer was started within an FLP and wants to determine if a reload is needed on exit", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			givenAnFLP(function() {return true;}, undefined, {});
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");

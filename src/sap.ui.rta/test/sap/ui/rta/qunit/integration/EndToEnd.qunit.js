@@ -22,15 +22,23 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
-	var oView = oCompCont.getComponentInstance().oView;
+	var oCompCont;
+	var oView;
 
 	QUnit.module("Given RTA is started...", {
 		before: function () {
 			QUnit.config.fixture = null;
+			return RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
+				.then(function(oCompContainer) {
+					oCompCont = oCompContainer;
+					oView = sap.ui.getCore().byId("Comp1---idMain1");
+					return oView.getController().isDataReady();
+				});
 		},
 		after: function () {
 			QUnit.config.fixture = "";
+			oCompCont.destroy();
+			oView.destroy();
 		},
 		beforeEach: function() {
 			return RtaQunitUtils.clear(oView, true).then(function () {
@@ -171,7 +179,7 @@ sap.ui.define([
 							sap.ui.getCore().applyChanges();
 						}.bind(this));
 					}.bind(this));
-				}.bind(this), 0);
+				}.bind(this), 2000);
 			}.bind(this));
 
 			// to reveal we have to remove the field first (otherwise it would be addViaDelegate)
@@ -474,13 +482,7 @@ sap.ui.define([
 		});
 	});
 
-	oView.getController().isDataReady().then(function () {
-		QUnit.start();
-	});
-
 	QUnit.done(function () {
-		oView.destroy();
-		oCompCont.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

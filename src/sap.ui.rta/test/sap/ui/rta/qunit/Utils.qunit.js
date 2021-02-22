@@ -50,14 +50,17 @@ sap.ui.define([
 
 	QUnit.module("Given a test app...", {
 		before: function() {
-			this.oCompCont = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
-			this.oView = sap.ui.getCore().byId("Comp1---idMain1");
-			this.oView.getModel().refresh(true);
-			sap.ui.getCore().applyChanges();
-			return this.oView.getModel().getMetaModel().loaded();
+			this.oCompContPromise = RtaQunitUtils.renderRuntimeAuthoringAppAt("qunit-fixture");
+			return this.oCompContPromise.then(function() {
+				this.oView = sap.ui.getCore().byId("Comp1---idMain1");
+				this.oView.getModel().refresh(true);
+				sap.ui.getCore().applyChanges();
+				return this.oView.getModel().getMetaModel().loaded();
+			}.bind(this));
 		},
 		after: function() {
-			this.oCompCont.destroy();
+			this.oView.destroy();
+			this.oCompContPromise = undefined;
 		},
 		afterEach: function () {
 			sandbox.restore();

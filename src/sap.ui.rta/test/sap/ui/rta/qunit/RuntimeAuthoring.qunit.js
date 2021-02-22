@@ -74,8 +74,16 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
-	var oComp = oCompCont.getComponentInstance();
+	var oCompCont;
+	var oComp;
+
+	QUnit.config.fixture = null;
+
+	var oComponentPromise = RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
+		.then(function(oCompContainer) {
+			oCompCont = oCompContainer;
+			oComp = oCompCont.getComponentInstance();
+		});
 
 	function triggerKeydown(oTargetDomRef, iKeyCode, bShiftKey, bAltKey, bCtrlKey, bMetaKey) {
 		var oParams = {};
@@ -89,6 +97,9 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that RuntimeAuthoring is available with a view as rootControl...", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oFlexSettings = {
 				layer: Layer.CUSTOMER,
@@ -187,6 +198,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a USER layer change", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oUserChange = new Change({
 				fileType: "change",
@@ -357,6 +371,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started without toolbar...", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp,
@@ -379,6 +396,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Undo/Redo functionality", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.bMacintoshOriginal = Device.os.macintosh;
 			Device.os.macintosh = false;
@@ -511,6 +531,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("enableRestart", {
+		before: function () {
+			return oComponentPromise;
+		},
 		afterEach: function() {
 			sandbox.restore();
 		}
@@ -548,6 +571,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring based on test-view is available together with a CommandStack with changes...", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function(assert) {
 			var fnDone = assert.async();
 
@@ -686,7 +712,6 @@ sap.ui.define([
 
 		QUnit.test("when _handleElementModified is called if a create container command was executed on a simple form", function(assert) {
 			var done = assert.async();
-
 			var fnFireElementModifiedSpy = sandbox.spy(this.oRta.getPluginManager().getDefaultPlugins()["createContainer"], "fireElementModified");
 
 			var oSimpleForm = sap.ui.getCore().byId("Comp1---idMain1--SimpleForm");
@@ -749,6 +774,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is available together with a CommandStack with changes...", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			sandbox.stub(Utils, "getAppComponentForControl").returns(oComp);
 			var oGroupElement1 = new GroupElement({id: oComp.createId("element1")});
@@ -885,6 +913,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started with a scope set...", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRta = new RuntimeAuthoring({
 				rootControl: oComp.getAggregation("rootControl"),
@@ -923,6 +954,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created but not started", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
@@ -1258,6 +1292,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is created without flexSettings", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			sandbox.stub(Utils, "buildLrepRootNamespace").returns("rootNamespace/");
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
@@ -1327,6 +1364,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given _onStackModified", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
@@ -1368,6 +1408,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given a started RTA", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({

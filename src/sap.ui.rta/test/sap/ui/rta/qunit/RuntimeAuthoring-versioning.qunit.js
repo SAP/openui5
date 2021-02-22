@@ -28,8 +28,16 @@ sap.ui.define([
 	"use strict";
 
 	var sandbox = sinon.sandbox.create();
-	var oCompCont = RtaQunitUtils.renderTestAppAt("qunit-fixture");
-	var oComp = oCompCont.getComponentInstance();
+	var oCompCont;
+	var oComp;
+
+	QUnit.config.fixture = null;
+
+	var oComponentPromise = RtaQunitUtils.renderTestAppAtAsync("qunit-fixture")
+		.then(function(oCompContainer) {
+			oCompCont = oCompContainer;
+			oComp = oCompCont.getComponentInstance();
+		});
 
 	function givenAnFLP(fnFLPToExternalStub, fnFLPReloadStub, mShellParams) {
 		sandbox.stub(FlexUtils, "getUshellContainer").returns({
@@ -84,6 +92,9 @@ sap.ui.define([
 	}
 
 	QUnit.module("Given that RuntimeAuthoring wants to determine if a draft is available", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function () {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
@@ -114,6 +125,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring wants to determine if a reload is needed", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function () {
 			givenAnFLP(function () {
 				return true;
@@ -194,6 +208,9 @@ sap.ui.define([
 		});
 	});
 	QUnit.module("Given that a CrossAppNavigation is needed because of a draft", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function () {
 			sandbox.stub(FlexUtils, "getUshellContainer").returns({
 				getService: function () {
@@ -247,6 +264,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring wants to determine if a reload is needed on start", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function () {
 			givenAnFLP(function () {
 				return true;
@@ -340,6 +360,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring in the CUSTOMER layer was started within an FLP and wants to determine if a reload is needed on exit", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function () {
 			givenAnFLP(function () {
 				return true;
@@ -418,6 +441,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function () {
 			this.oRestartFlpStub = sandbox.stub();
 			givenAnFLP(function () {
@@ -508,6 +534,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in the FLP, something can be undone and a dialog fires an event", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function () {
 			givenAnFLP(function () {
 				return true;
@@ -573,6 +602,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring is started", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
@@ -714,6 +746,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given that RuntimeAuthoring gets a switch version event from the toolbar in standalone", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
@@ -763,6 +798,9 @@ sap.ui.define([
 	});
 
 	QUnit.module("Given _onStackModified", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
@@ -855,6 +893,9 @@ sap.ui.define([
 
 
 	QUnit.module("Given a draft discarding warning dialog is openend", {
+		before: function () {
+			return oComponentPromise;
+		},
 		beforeEach: function() {
 			this.oRootControl = oCompCont.getComponentInstance().getAggregation("rootControl");
 			this.oRta = new RuntimeAuthoring({
