@@ -3251,7 +3251,7 @@ sap.ui.define([
 				fireEvent("Sent", oRequest, null);
 				delete oRequest.eventInfo;
 			}
-			if (bAborted) {
+			if (bAborted && oRequestHandle) {
 				oRequestHandle.abort();
 			}
 		}
