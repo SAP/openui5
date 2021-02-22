@@ -61,7 +61,14 @@ sap.ui.define([
 
         this._aInitializedFields = [];
 
-        var oListViewTemplate = new ColumnListItem({
+        this._bShowFactory = false;
+        this.displayColumns();
+
+        this.setTemplate(this._getListTemplate());
+    };
+
+    ListView.prototype._getListTemplate = function() {
+        return new ColumnListItem({
             selected: "{" + this.P13N_MODEL + ">selected}",
             type: ListType.Active,
             cells: [
@@ -96,21 +103,25 @@ sap.ui.define([
                 })
             ]
         });
+    };
 
-        this._bShowFactory = false;
-        this.displayColumns();
+    ListView.prototype.setEnableReorder = function(bEnableReorder) {
+        var oListViewTemplate = this.getTemplate();
 
-        if (this.getEnableReorder()) {
-
+        if (bEnableReorder) {
             oListViewTemplate.addEventDelegate({
                 onmouseover: this._hoverHandler.bind(this)
             });
-
-            this._setMoveButtonVisibility(true);
+        } else {
+            oListViewTemplate = this._getListTemplate();
         }
 
+        this._setMoveButtonVisibility(true);
         this.setTemplate(oListViewTemplate);
 
+        this.setProperty("enableReorder", bEnableReorder);
+
+        return this;
     };
 
     ListView.prototype._hoverHandler = function(oEvt) {
@@ -121,7 +132,10 @@ sap.ui.define([
 
         //(new) hovered item
         var oHoveredItem = sap.ui.getCore().byId(oEvt.currentTarget.id);
+        this._handleHover(oHoveredItem);
+    };
 
+    ListView.prototype._handleHover = function(oHoveredItem) {
         //remove move buttons if unselected item is hovered (not covered by updateStarted)
         this.removeMoveButtons();
 
@@ -201,7 +215,9 @@ sap.ui.define([
         //Ignore unselected items --> BasePanel move mode only expects selected items
         if (oTableItem.getBindingContext(this.P13N_MODEL).getProperty("selected")){
             BasePanel.prototype._onItemPressed.apply(this, arguments);
-            this._addMoveButtons(this._oSelectedItem);
+            if (this.getEnableReorder()){
+                this._handleHover(oTableItem);
+            }
         }
     };
 

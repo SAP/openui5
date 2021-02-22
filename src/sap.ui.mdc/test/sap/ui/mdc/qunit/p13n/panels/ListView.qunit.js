@@ -4,8 +4,9 @@ sap.ui.define([
     "sap/ui/mdc/p13n/P13nBuilder",
     "sap/ui/model/json/JSONModel",
     "sap/ui/mdc/util/PropertyHelper",
-    "sap/m/VBox"
-], function(ListView, P13nBuilder, JSONModel, PropertyHelper, VBox) {
+    "sap/m/VBox",
+    "sap/ui/base/Event"
+], function(ListView, P13nBuilder, JSONModel, PropertyHelper, VBox, BaseEvent) {
     "use strict";
 
     var oMockExisting = {
@@ -175,6 +176,14 @@ sap.ui.define([
         //The prior hovered item does no longer contain the move buttons and the active icon is visible again
         assert.notDeepEqual(this.oListView._oListControl.getItems()[1], this.oListView._getMoveButtonContainer().getParent(), "The hovered item does not hold the move buttons anymore");
         assert.equal(oIconSecondTableItem.getVisible(), true, "The filtered icon is visible again as the table item does no longer hold the move buttons");
+    });
+
+    QUnit.test("Check 'enableReorder'", function(assert){
+        this.oListView.setEnableReorder(true);
+        assert.equal(this.oListView.getTemplate().aDelegates.length, 1, "Hover event delegate registered");
+
+        this.oListView.setEnableReorder(false);
+        assert.equal(this.oListView.getTemplate().aDelegates.length, 0, "No hover event delegate registered");
     });
 
 });
