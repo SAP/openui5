@@ -5,7 +5,7 @@
 	<ResponsivePopover
 			id="detailsPopover"
 			title="{title}"
-			class="sapUiPopupWithPadding"
+			class="sapUiContentPadding"
 			placement="Auto">
 		<beginButton>
 			<Button text="Edit" type="Emphasized" press="handleEditButton" ariaHasPopup="Dialog"/>

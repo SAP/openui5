@@ -268,7 +268,7 @@ sap.ui.define([
 			});
 			oDialog.addStyleClass("sapMRespMenuDialog");
 			// remove padding for the menu on phone
-			oDialog.removeStyleClass("sapUiPopupWithPadding");
+			oDialog.addStyleClass("sapUiNoContentPadding");
 			this.setAggregation("_dialog", oDialog, true);
 			oDialog.attachAfterClose(this._menuClosed, this);
 		};
