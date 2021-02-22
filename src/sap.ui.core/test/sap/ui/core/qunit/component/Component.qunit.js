@@ -1641,6 +1641,9 @@ sap.ui.define([
 				},
 				"sap.ui5": {
 					"models": {
+						"": {
+							"type": "sap.ui.model.json.JSONModel"
+						},
 						"i18n-component": {
 							"type": "sap.ui.model.resource.ResourceModel",
 							"settings": {
@@ -1706,6 +1709,27 @@ sap.ui.define([
 
 		},
 		afterEach : function() {}
+	});
+
+	QUnit.test("Component.getOwnModels", function(assert) {
+		return Component.create({
+			manifest: this.oManifest
+		}).then(function(oComponent) {
+			var oOwnModels = oComponent.getOwnModels();
+
+			assert.ok(oOwnModels, "Manifest models should be returned.");
+			assert.equal(Object.keys(oOwnModels).length, 3, "The correct number of models should be returned.");
+
+			assert.notOk(oOwnModels.hasOwnProperty(""), "Empty string as key shouldn't be available.");
+
+			assert.ok(oOwnModels.hasOwnProperty("undefined"), "Default model should be available.");
+			assert.ok(oOwnModels.hasOwnProperty("i18n-component"), "i18n-component model should be available");
+			assert.ok(oOwnModels.hasOwnProperty("i18n-manifest"), "i18n-manifest model should be available");
+
+			assert.ok(oOwnModels.undefined.isA("sap.ui.model.json.JSONModel"), "Correct model instance should be returned.");
+			assert.ok(oOwnModels["i18n-component"].isA("sap.ui.model.resource.ResourceModel"), "Correct model instance should be returned.");
+			assert.ok(oOwnModels["i18n-manifest"].isA("sap.ui.model.resource.ResourceModel"), "Correct model instance should be returned.");
+		});
 	});
 
 
