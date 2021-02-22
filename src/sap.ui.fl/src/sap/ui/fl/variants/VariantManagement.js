@@ -1230,7 +1230,7 @@ sap.ui.define([
 				return false;
 			};
 
-			this.oSaveAsDialog.addStyleClass("sapUiPopupWithPadding");
+			this.oSaveAsDialog.addStyleClass("sapUiContentPadding");
 			this.oSaveAsDialog.addStyleClass("sapUiFlVarMngmtSaveDialog");
 
 			if (this.oVariantLayout.$().closest(".sapUiSizeCompact").length > 0) {
