@@ -15,7 +15,7 @@
 		items="{contexts>/values}">
 		<StandardListItem
 			title="{contexts>id}"
-			description="{= ${contexts>description}.length === 0 ? ${i18n>NO_DESCRIPTION} : ${contexts>description}}"
+			description="{path: 'contexts>description', formatter: '.formatTooltip'}"
 			wrapping="true"
 			selected="{ parts: ['contexts>', 'selectedContexts>/selected'], formatter: '.isSelected' }"/>
 	</SelectDialog>

@@ -8,16 +8,19 @@
 	"sap/ui/dt/Util",
 	"sap/ui/rta/plugin/Plugin",
 	"sap/ui/rta/plugin/RenameHandler",
-	"sap/ui/rta/Utils"
+	"sap/ui/rta/Utils",
+	"sap/ui/fl/write/api/ContextSharingAPI"
 ], function(
 	_omit,
 	isEmptyObject,
 	DtUtil,
 	Plugin,
 	RenameHandler,
-	Utils
+	Utils,
+	ContextSharingAPI
 ) {
 	"use strict";
+
 
 	var CompVariant = Plugin.extend("sap.ui.rta.plugin.CompVariant", /** @lends sap.ui.rta.plugin.CompVariant.prototype */ {
 		metadata: {
@@ -94,6 +97,7 @@
 	// ------ configure ------
 	function configureVariants(aOverlays) {
 		var oVariantManagementControl = aOverlays[0].getElement();
+		var oContextSharingComponentContainer = ContextSharingAPI.createComponent(this.getCommandFactory().getFlexSettings());
 		oVariantManagementControl.openManageViewsDialogForKeyUser(Utils.getRtaStyleClassName(), function(oData) {
 			if (!isEmptyObject(oData)) {
 				createCommandAndFireEvent.call(this, aOverlays[0], "compVariantUpdate", {
@@ -102,7 +106,7 @@
 					oldDefaultVariantId: oVariantManagementControl.getDefaultVariantId()
 				});
 			}
-		}.bind(this));
+		}.bind(this), oContextSharingComponentContainer);
 	}
 
 	// ------ switch ------
@@ -142,7 +146,7 @@
 	// ------ save as ------
 	function saveAsNewVariant(aOverlays) {
 		var oVariantManagementControl = aOverlays[0].getElement();
-
+		var oContextSharingComponentContainer = ContextSharingAPI.createComponent(this.getCommandFactory().getFlexSettings());
 		oVariantManagementControl.openSaveAsDialogForKeyUser(Utils.getRtaStyleClassName(), function(oReturn) {
 			if (oReturn) {
 				createCommandAndFireEvent.call(this, aOverlays[0], "compVariantSaveAs", {
@@ -151,14 +155,15 @@
 						executeOnSelect: oReturn.executeOnSelect,
 						content: oReturn.content,
 						type: oReturn.type,
-						text: oReturn.text
+						text: oReturn.text,
+						contexts: oReturn.contexts
 					},
 					previousDirtyFlag: oVariantManagementControl.getModified(),
 					previousVariantId: oVariantManagementControl.getPresentVariantId(),
 					previousDefault: oVariantManagementControl.getDefaultVariantId()
 				});
 			}
-		}.bind(this));
+		}.bind(this), oContextSharingComponentContainer);
 	}
 
 	CompVariant.prototype._isEditable = function(oOverlay) {
