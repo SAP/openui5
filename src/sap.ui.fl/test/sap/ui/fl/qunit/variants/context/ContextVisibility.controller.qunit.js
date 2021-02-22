@@ -222,6 +222,10 @@ sap.ui.define([
 				}
 			};
 
+			sandbox.stub(oController, "getView").returns({
+				getId: function() {}
+			});
+
 			oController.onSelectContexts(oEvent);
 			assert.equal(oController.oSelectedContextsModel.getProperty("/selected").length, 1, "then one roles is selected");
 		});

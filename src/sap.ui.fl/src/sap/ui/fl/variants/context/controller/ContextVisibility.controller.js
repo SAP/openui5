@@ -5,13 +5,17 @@ sap.ui.define([
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/Fragment",
 	"sap/ui/fl/write/_internal/Storage",
-	"sap/ui/fl/Layer"
+	"sap/ui/fl/Layer",
+	"sap/m/MessageStrip",
+	"sap/ui/core/MessageType"
 ],
 function (
 	Controller,
 	Fragment,
 	WriteStorage,
-	Layer
+	Layer,
+	MessageStrip,
+	MessageType
 ) {
 	"use strict";
 
@@ -57,6 +61,7 @@ function (
 		},
 
 		onBeforeRendering: function() {
+			this.oSelectedContextsModel.refresh(true);
 			var aSelectedRoles = this.oSelectedContextsModel.getProperty("/selected");
 			this.byId("selectedContextsList").setVisible(aSelectedRoles.length > 0);
 
@@ -92,8 +97,9 @@ function (
 			this.byId("selectedContextsList").setVisible(bFlag);
 		},
 
-		onSelectPublicButton: function() {
+		onSelectPublicRadioButton: function() {
 			this.oSelectedContextsModel.setProperty("/selected", []);
+			this.showErrorMessage(false);
 		},
 
 		/**
@@ -160,6 +166,7 @@ function (
 				return oListItems.getObject();
 			});
 			this.oSelectedContextsModel.setProperty("/selected", oSelectedItems);
+			this.showErrorMessage(false);
 		},
 
 		/**
@@ -179,6 +186,21 @@ function (
 		 */
 		removeAll: function() {
 			this.oSelectedContextsModel.setProperty("/selected", []);
+		},
+
+		/**
+		 * Shows or removes error message depending on the input.
+		 */
+		showErrorMessage: function(bShowError) {
+			var sErrorMessageId = this.getView().getId() + "--noSelectedRolesError";
+			var oErrorMessage = sap.ui.getCore().byId(sErrorMessageId);
+			if (oErrorMessage && !bShowError) {
+				oErrorMessage.destroy();
+			}
+			if (bShowError) {
+				oErrorMessage = new MessageStrip(sErrorMessageId, {text: this.oI18n.getText("SELECTED_ROLES_ERROR"), type: MessageType.Error, showIcon: true});
+				this.byId("visibilityPanel").insertContent(oErrorMessage, 1);
+			}
 		}
 	});
 });

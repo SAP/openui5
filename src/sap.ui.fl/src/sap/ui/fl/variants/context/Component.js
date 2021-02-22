@@ -56,7 +56,6 @@ sap.ui.define([
 				return {id: oRole, description: ""};
 			});
 			this.getModel("selectedContexts").setProperty("/selected", aSelectedRoles);
-			this.getModel("selectedContexts").refresh();
 		},
 
 		/**
@@ -70,6 +69,7 @@ sap.ui.define([
 			var oRestrictedRadioButton = oRootControl.byId("restrictedRadioButton");
 			var aSelectedRoles = this.getModel("selectedContexts").getProperty("/selected");
 			var bIsErrorShown = oRestrictedRadioButton.getSelected() && aSelectedRoles.length === 0;
+			oRootControl.getController().showErrorMessage(bIsErrorShown);
 			return bIsErrorShown;
 		}
 	});
