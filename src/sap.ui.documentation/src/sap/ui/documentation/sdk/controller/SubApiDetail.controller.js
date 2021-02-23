@@ -18,9 +18,11 @@ sap.ui.define([
 		"sap/m/HBox",
 		"sap/m/ObjectAttribute",
 		"sap/m/Popover",
-		"sap/m/library"
+		"sap/m/library",
+		"sap/m/CustomListItem",
+		"sap/m/List"
 	], function (jQuery, BaseController, JSONModel, ControlsInfo, ToggleFullScreenHandler, APIInfo,
-			formatter, Image, Label, Link, Text, HBox, ObjectAttribute, Popover, library) {
+			formatter, Image, Label, Link, Text, HBox, ObjectAttribute, Popover, library, CustomListItem, List) {
 		"use strict";
 
 		// shortcut for sap.m.FlexWrap
@@ -485,10 +487,14 @@ sap.ui.define([
 			 */
 			_openSubclassesImplementationsPopover: function (oEvent) {
 				var aPopoverContent = this._aSubClasses.map(function (oElement) {
-					return new Link({
-						text: oElement,
-						href: "api/" + oElement
-					}).addStyleClass("sapUiTinyMarginBottom sapUiTinyMarginEnd");
+					return new CustomListItem({
+						content: [
+							new Link({
+								text: oElement,
+								href: "api/" + oElement
+							}).addStyleClass("sapUiTinyMargin")
+						]
+					});
 				}), oPopover = this._getSubClassesAndImplementationsPopover(aPopoverContent);
 
 				oPopover.openBy(oEvent.getSource());
@@ -501,7 +507,13 @@ sap.ui.define([
 					oPopover.destroyContent(); // destroy the old content, before adding the new one
 				}
 
-				(aContent || []).forEach(oPopover.addContent, oPopover);
+				if (aContent && aContent.length > 0) {
+					var oList = new List({
+						items: aContent || []
+					});
+
+					oPopover.addContent(oList);
+				}
 
 				return oPopover;
 			},
@@ -511,7 +523,7 @@ sap.ui.define([
 					this._oPopover = new Popover({
 						placement: "Bottom",
 						showHeader: false
-					}).addStyleClass("sapUiDocumentationSubclassesPopover");
+					});
 				}
 
 				return this._oPopover;
