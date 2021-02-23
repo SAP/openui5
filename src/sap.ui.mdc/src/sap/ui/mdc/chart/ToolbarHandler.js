@@ -10,7 +10,9 @@ sap.ui.define([
 	"sap/m/OverflowToolbarToggleButton",
 	"sap/ui/mdc/chart/ChartTypeButton",
 	"sap/ui/mdc/chart/ChartSettings",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/Device",
+	"sap/ui/core/ShortcutHintsMixin"
 ], function(
 	MDCLib,
 	ActionToolbar,
@@ -19,7 +21,9 @@ sap.ui.define([
 	OverflowToggleButton,
 	ChartTypeButton,
 	ChartSettings,
-	CoreLibrary
+	CoreLibrary,
+	Device,
+	ShortcutHintsMixin
 ) {
 	"use strict";
 
@@ -219,7 +223,7 @@ sap.ui.define([
 			var aP13nMode = oChart.getP13nMode() || [];
 
 			if (aP13nMode.indexOf("Item") > -1) {
-				oToolbar.addEnd(new OverflowButton(oChart.getId() + "-chart_settings", {
+				var oBtn = new OverflowButton(oChart.getId() + "-chart_settings", {
 					icon: "sap-icon://action-settings",//TODO the right icon for P13n chart dialog
 					tooltip: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
 					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_TITLE'),
@@ -230,7 +234,17 @@ sap.ui.define([
 						});
 					},
 					ariaHasPopup: HasPopup.ListBox
-				}));
+				});
+
+				oToolbar.addEnd(oBtn);
+
+				ShortcutHintsMixin.addConfig(oBtn, {
+						addAccessibilityLabel: true,
+						messageBundleKey: Device.os.macintosh ? "mdc.PERSONALIZATION_SHORTCUT_MAC" : "mdc.PERSONALIZATION_SHORTCUT" // Cmd+, or Ctrl+,
+					},
+					oChart // we need the chart instance, otherwise the messageBundleKey does not find the resource bundle
+				);
+
 			}
 
 			if (aP13nMode.indexOf("Sort") > -1) {
