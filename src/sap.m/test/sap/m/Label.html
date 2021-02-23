@@ -321,6 +321,9 @@
 								$("body").toggleClass("sapUiSizeCompact");
 							}
 						}),
+						new sap.m.Label("localeSelectLbl", {
+							text: "Locale"
+						}),
 						new sap.m.Select("localeSelect", {
 							items: [
 									new sap.ui.core.Item({
@@ -343,6 +346,7 @@
 									text: "zh-TW",
 								})
 							],
+							ariaLabelledBy: "localeSelectLbl",
 							change: function (oEvent) {
 								var sLanguage = oEvent.getParameter("selectedItem").getText();
 								sap.ui.getCore().getConfiguration().setLanguage(sLanguage);
