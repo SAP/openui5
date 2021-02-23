@@ -246,6 +246,8 @@ sap.ui.define([
 					sEntityType = "methods";
 				} else if (oClassList.contains("scrollToEvent")) {
 					sEntityType = "events";
+				} else if (oClassList.contains("scrollToAnnotation")) {
+					sEntityType = "annotations";
 				} else {
 					// We do not scroll
 					return;
