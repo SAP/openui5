@@ -157,6 +157,7 @@ sap.ui.define([
 		type: mNumberType.INTEGER,
 		showMeasure: false,
 		style: "standard",
+		showNumber: true,
 		parseAsString: false,
 		preserveDecimals: false,
 		roundingMode: NumberFormat.RoundingMode.TOWARDS_ZERO,
@@ -182,6 +183,7 @@ sap.ui.define([
 		type: mNumberType.FLOAT,
 		showMeasure: false,
 		style: "standard",
+		showNumber: true,
 		parseAsString: false,
 		preserveDecimals: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
@@ -208,6 +210,7 @@ sap.ui.define([
 		type: mNumberType.PERCENT,
 		showMeasure: false,
 		style: "standard",
+		showNumber: true,
 		parseAsString: false,
 		preserveDecimals: false,
 		roundingMode: NumberFormat.RoundingMode.HALF_AWAY_FROM_ZERO,
@@ -236,6 +239,7 @@ sap.ui.define([
 		currencyCode: true,
 		currencyContext: 'standard',
 		style: "standard",
+		showNumber: true,
 		customCurrencies: undefined,
 		parseAsString: false,
 		preserveDecimals: false,
@@ -264,6 +268,7 @@ sap.ui.define([
 		type: mNumberType.UNIT,
 		showMeasure: true,
 		style: "standard",
+		showNumber: true,
 		customUnits: undefined,
 		allowedUnits: undefined,
 		parseAsString: false,
@@ -492,7 +497,14 @@ sap.ui.define([
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
 	 * @param {boolean} [oFormatOptions.trailingCurrencyCode] Overrides the global configuration value {@link sap.ui.core.Configuration.FormatSettings#getTrailingCurrencyCode} whose default value is <code>true</>.
 	 *  This is ignored if <code>oFormatOptions.currencyCode</code> is set to <code>false</code> or if <code>oFormatOptions.pattern</code> is supplied
-	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the measure according to the format is shown in the formatted string
+	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the currency code/symbol is shown in the formatted string,
+	 *  e.g. true: "1.00 EUR", false: "1.00" for locale "en"
+	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
+	 * @param {boolean} [oFormatOptions.showNumber=true] defines whether the number is shown as part of the result string,
+	 *  e.g. 1 EUR for locale "en"
+	 *      <code>NumberFormat.getCurrencyInstance({showNumber:true}).format(1, "EUR"); // "1.00 EUR"</code>
+	 *      <code>NumberFormat.getCurrencyInstance({showNumber:false}).format(1, "EUR"); // "EUR"</code>
+	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
 	 * @param {boolean} [oFormatOptions.currencyCode=true] defines whether the currency is shown as code in currency format. The currency symbol is displayed when this is set to false and there is a symbol defined
 	 *  for the given currency code.
 	 * @param {string} [oFormatOptions.currencyContext=standard] It can be set either with 'standard' (the default value) or with 'accounting' for an accounting specific currency display
@@ -593,7 +605,17 @@ sap.ui.define([
 	 * @param {sap.ui.core.format.NumberFormat.RoundingMode} [oFormatOptions.roundingMode=HALF_AWAY_FROM_ZERO] specifies a rounding behavior for discarding the digits after the maximum fraction digits
 	 *  defined by maxFractionDigits. Rounding will only be applied, if the passed value if of type number. This can be assigned by value in {@link sap.ui.core.format.NumberFormat.RoundingMode RoundingMode}
 	 *  or a function which will be used for rounding the number. The function is called with two parameters: the number and how many decimal digits should be reserved.
-	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the measure according to the format is shown in the formatted string
+	 * @param {boolean} [oFormatOptions.showMeasure=true] defines whether the unit of measure is shown in the formatted string,
+	 *  e.g. for input 1 and "duration-day" true: "1 day", false: "1".
+	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
+	 * @param {boolean} [oFormatOptions.showNumber=true] defines whether the number is shown as part of the result string,
+	 *  e.g. 1 day for locale "en"
+	 *      <code>NumberFormat.getUnitInstance({showNumber:true}).format(1, "duration-day"); // "1 day"</code>
+	 *      <code>NumberFormat.getUnitInstance({showNumber:false}).format(1, "duration-day"); // "day"</code>
+	 *  e.g. 2 days for locale "en"
+	 *      <code>NumberFormat.getUnitInstance({showNumber:true}).format(2, "duration-day"); // "2 days"</code>
+	 *      <code>NumberFormat.getUnitInstance({showNumber:false}).format(2, "duration-day"); // "days"</code>
+	 *  If both <code>showMeasure</code> and <code>showNumber</code> are false, an empty string is returned
 	 * @param {number} [oFormatOptions.emptyString=NaN] @since 1.30.0 defines what empty string is parsed as and what is formatted as empty string. The allowed values are "" (empty string), NaN, null or 0.
 	 *  The 'format' and 'parse' are done in a symmetric way. For example when this parameter is set to NaN, empty string is parsed as [NaN, undefined] and NaN is formatted as empty string.
 	 * @param {sap.ui.core.Locale} [oLocale] Locale to get the formatter for
@@ -988,6 +1010,10 @@ sap.ui.define([
 			return "";
 		}
 
+		if (!oOptions.showNumber && !oOptions.showMeasure) {
+			return "";
+		}
+
 		// Recognize the correct unit definition (either custom unit or CLDR unit)
 		if (oOptions.type === mNumberType.UNIT) {
 			if (oOptions.customUnits && typeof oOptions.customUnits === "object") {
@@ -999,12 +1025,43 @@ sap.ui.define([
 				mUnitPatterns = this.oLocaleData.getUnitFormat(sLookupMeasure);
 			}
 
+			if (oOptions.showMeasure) {
+				// a list of allowed unit types is given, so we check if the given measure is ok
+				var bUnitTypeAllowed = !oOptions.allowedUnits || oOptions.allowedUnits.indexOf(sMeasure) >= 0;
+				if (!bUnitTypeAllowed) {
+					return "";
+				}
+				if (!mUnitPatterns && !oOptions.unitOptional) {
+					return "";
+				}
+			}
+
+
+
 			// either take the decimals/precision on the custom units or fallback to the given format-options
 			oOptions.decimals = (mUnitPatterns && (typeof mUnitPatterns.decimals === "number" && mUnitPatterns.decimals >= 0)) ? mUnitPatterns.decimals : oOptions.decimals;
 			oOptions.precision = (mUnitPatterns && (typeof mUnitPatterns.precision === "number" && mUnitPatterns.precision >= 0)) ? mUnitPatterns.precision : oOptions.precision;
 		}
 
 		if (oOptions.type == mNumberType.CURRENCY) {
+			if (!oOptions.showNumber) {
+				// if the number should not be shown, return the sMeasure part standalone, without anything number specific
+				if (!oOptions.currencyCode) {
+					var sSymbol;
+					// custom currencies provided
+					if (oOptions.customCurrencies && typeof oOptions.customCurrencies === "object") {
+						// the custom currency symbol map was preprocessed on instance creation
+						sSymbol = this.mKnownCurrencySymbols[sMeasure];
+					} else {
+						sSymbol = this.oLocaleData.getCurrencySymbol(sMeasure);
+					}
+
+					if (sSymbol && sSymbol !== sMeasure) {
+						sMeasure = sSymbol;
+					}
+				}
+				return sMeasure;
+			}
 			// if decimals are given on a custom currency, they have precedence over the decimals defined on the format options
 			if (oOptions.customCurrencies && oOptions.customCurrencies[sMeasure]) {
 				// we either take the custom decimals or use decimals defined in the format-options
@@ -1135,6 +1192,37 @@ sap.ui.define([
 			sFractionPart = sFractionPart.substr(0, oOptions.maxFractionDigits);
 		}
 
+		if (oOptions.type === mNumberType.UNIT && !oOptions.showNumber) {
+			if (mUnitPatterns) {
+				sPluralCategory = this.oLocaleData.getPluralCategory(sIntegerPart + "." + sFractionPart);
+
+				sPattern = mUnitPatterns["unitPattern-count-" + sPluralCategory];
+				if (!sPattern) {
+					sPattern = mUnitPatterns["unitPattern-count-other"];
+				}
+				if (!sPattern) {
+					return "";
+				}
+				// fallback to "other" pattern if pattern does not include the number placeholder
+				if (sPluralCategory !== "other" && sPattern.indexOf("{0}") === -1) {
+					sPattern = mUnitPatterns["unitPattern-count-other"];
+					if (!sPattern) {
+						return "";
+					}
+				}
+
+				// with the current CLDR data this is not possible
+				// but if there is the case when there is no number placeholder, the number cannot be separated from the unit
+				// therefore it does not make sense to return a pattern which contains the number part in any other form as part of the pattern
+				if (sPattern.indexOf("{0}") === -1) {
+					Log.warning("Cannot separate the number from the unit because unitPattern-count-other '" + sPattern + "' does not include the number placeholder '{0}' for unit '" + sMeasure + "'");
+				} else {
+					return sPattern.replace("{0}", "").trim();
+				}
+			}
+			return "";
+		}
+
 		// grouping
 		iLength = sIntegerPart.length;
 
@@ -1261,14 +1349,6 @@ sap.ui.define([
 		if (oOptions.showMeasure && oOptions.type === mNumberType.UNIT) {
 
 			sPluralCategory = this.oLocaleData.getPluralCategory(sIntegerPart + "." + sFractionPart);
-			assert(sPluralCategory, "Cannot find plural category for " + (sIntegerPart + "." + sFractionPart));
-
-			// a list of allowed unit types is given, so we check if the given measure is ok
-			var bUnitTypeAllowed = !oOptions.allowedUnits || oOptions.allowedUnits.indexOf(sMeasure) >= 0;
-			if (!bUnitTypeAllowed) {
-				assert(bUnitTypeAllowed, "The given unit '" + sMeasure + "' is not part of the allowed unit types: [" + oOptions.allowedUnits.join(",") + "].");
-				return "";
-			}
 
 			if (mUnitPatterns) {
 				sPattern = mUnitPatterns["unitPattern-count-" + sPluralCategory];
@@ -1276,14 +1356,10 @@ sap.ui.define([
 				if (!sPattern) {
 					sPattern = mUnitPatterns["unitPattern-count-other"];
 				}
-				assert(sPattern, "Cannot find pattern 'unitPattern-count-" + sPluralCategory + "' in '" + sMeasure + "'");
 				if (!sPattern) {
 					return "";
 				}
 				sResult = sPattern.replace("{0}", sResult);
-			} else if (!oOptions.unitOptional) {
-				assert(mUnitPatterns, "Unit '" + sMeasure + "' is unknown");
-				return "";
 			}
 		}
 
@@ -1439,12 +1515,15 @@ sap.ui.define([
 				mUnitPatterns = mFilteredUnits;
 			}
 
-			var oPatternAndResult = parseNumberAndUnit(mUnitPatterns, sValue);
+			var oPatternAndResult = parseNumberAndUnit(mUnitPatterns, sValue, oOptions.showNumber);
 			var bUnitIsAmbiguous = false;
 
 			aUnitCode = oPatternAndResult.cldrCode;
 			if (aUnitCode.length === 1) {
 				sMeasure = aUnitCode[0];
+				if (!oOptions.showNumber) {
+					return [undefined, sMeasure];
+				}
 			} else if (aUnitCode.length === 0) {
 				// in case showMeasure is set to false or unitOptional is set to true
 				// we only try to parse the numberValue
@@ -1453,7 +1532,6 @@ sap.ui.define([
 					oPatternAndResult.numberValue = sValue;
 				} else {
 					//unit not found
-					assert(aUnitCode.length === 1, "Cannot find unit for input: '" + (sValue) + "'");
 					return null;
 				}
 			} else {
@@ -1511,6 +1589,10 @@ sap.ui.define([
 
 			if ((oOptions.customCurrencies && sMeasure === null) || (!oOptions.showMeasure && sMeasure)) {
 				return null;
+			}
+
+			if (!oOptions.showNumber) {
+				return [undefined, sMeasure];
 			}
 		}
 
@@ -2166,13 +2248,14 @@ sap.ui.define([
 	 *
 	 * @param {object} mUnitPatterns the unit patterns
 	 * @param {string} sValue The value e.g. "12 km"
+	 * @param {boolean} bShowNumber whether or not number os shown
 	 * @return {object} An object containing the unit codes (key: <code>[cldrCode]</code>) and the number value (key: <code>numberValue</code>).
 	 * Values are <code>undefined</code> or an empty array if not found. E.g. <code>{
 			numberValue: 12,
 			cldrCode: [length-kilometer]
 		}</code>
 	 */
-	function parseNumberAndUnit(mUnitPatterns, sValue) {
+	function parseNumberAndUnit(mUnitPatterns, sValue, bShowNumber) {
 		var oBestMatch = {
 			numberValue: undefined,
 			cldrCode: []
@@ -2198,6 +2281,10 @@ sap.ui.define([
 					// The smallest resulting number (String length) will be the best match
 					var iNumberPatternIndex = sUnitPattern.indexOf("{0}");
 					var bContainsExpression = iNumberPatternIndex > -1;
+					if (bContainsExpression && !bShowNumber) {
+						sUnitPattern = sUnitPattern.replace("{0}", "").trim();
+						bContainsExpression = false;
+					}
 					if (bContainsExpression) {
 
 						//escape regex characters to match it properly
@@ -2224,19 +2311,23 @@ sap.ui.define([
 							}
 						}
 					} else if (sUnitPattern === sValue) {
-						oBestMatch.cldrCode = [sUnitCode];
+						if (bShowNumber) {
+							oBestMatch.cldrCode = [sUnitCode];
 
-						//for units which do not have a number representation, get the number from the pattern
-						var sNumber;
-						if (sKey.endsWith("-zero")) {
-							sNumber = "0";
-						} else if (sKey.endsWith("-one")) {
-							sNumber = "1";
-						} else if (sKey.endsWith("-two")) {
-							sNumber = "2";
+							//for units which do not have a number representation, get the number from the pattern
+							var sNumber;
+							if (sKey.endsWith("-zero")) {
+								sNumber = "0";
+							} else if (sKey.endsWith("-one")) {
+								sNumber = "1";
+							} else if (sKey.endsWith("-two")) {
+								sNumber = "2";
+							}
+							oBestMatch.numberValue = sNumber;
+							return oBestMatch;
+						} else if (oBestMatch.cldrCode.indexOf(sUnitCode) === -1) {
+							oBestMatch.cldrCode.push(sUnitCode);
 						}
-						oBestMatch.numberValue = sNumber;
-						return oBestMatch;
 					}
 				}
 			}
