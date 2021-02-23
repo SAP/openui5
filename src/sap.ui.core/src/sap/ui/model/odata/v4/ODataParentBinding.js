@@ -709,7 +709,7 @@ sap.ui.define([
 
 			if (sChildPath === "$count" || sChildPath.endsWith("/$count")
 					|| sChildPath[0] === "@") {
-				return SyncPromise.resolve(sReducedPath);
+				return sReducedPath;
 			}
 
 			if (_Helper.getRelativePath(sReducedPath, sResolvedPath) === undefined) {
@@ -719,7 +719,7 @@ sap.ui.define([
 			}
 
 			if (bDependsOnOperation) {
-				return SyncPromise.resolve(sReducedPath);
+				return sReducedPath;
 			}
 
 			sChildMetaPath = _Helper.getRelativePath(_Helper.getMetaPath(sReducedPath),
