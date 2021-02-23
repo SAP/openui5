@@ -112,7 +112,6 @@ sap.ui.define(["./BaseContentRenderer",
 		if (bIsCurrent) {
 			oRm.class("sapUiCalendarAppCurrent");
 		}
-		oRm.accessibilityState(oAppointment, CalendarContentRenderer.getAccProps(oAppointment));
 		oRm.openEnd();
 		oRm.openStart("div");
 		oRm.class("sapUiCalendarAppContainerLeft");
@@ -151,6 +150,12 @@ sap.ui.define(["./BaseContentRenderer",
 
 		oRm.openStart("div", oAppointment);
 		oRm.class("sapUiCalendarApp");
+		if (oAppointment.getClickable()) {
+			oRm.attr("tabindex", "0");
+		} else {
+			oRm.class("sapUiCalendarAppDisabled");
+		}
+		oRm.accessibilityState(oAppointment, CalendarContentRenderer.getAccProps(oAppointment));
 
 		if (sType && sType != CalendarDayType.None) {
 			oRm.class("sapUiCalendarApp" + sType);
@@ -272,6 +277,11 @@ sap.ui.define(["./BaseContentRenderer",
 
 		if (oAppointment.getText()) {
 			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + sId + "-Text";
+		}
+
+		if (oAppointment.getSelected()) {
+			mAccProps["labelledby"].value = mAccProps["labelledby"].value + " "
+				+ InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 		}
 
 		return mAccProps;

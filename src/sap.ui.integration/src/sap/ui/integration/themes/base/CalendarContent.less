@@ -101,12 +101,29 @@
 		font-size: 0.9rem;
 	}
 
-	.sapUiCalendarApp:active {
+	.sapUiUnifiedLegend {
+		padding: 1rem 0.5rem;
+	}
+
+	.sapUiCalendarAppContainer > .sapUiCalendarAppContainerRight > .sapUiCalendarApp:not(.sapUiCalendarAppDisabled):active {
+		.sapUiCalendarAppCont {
+			.sapUiCalendarAppIcon:before,
+			.sapUiCalendarAppTitleWrapper .sapUiCalendarAppTitle,
+			.sapUiCalendarAppTitleWrapper .sapUiCalendarAppText{
+				color: @sapUiListBackground;
+			}
+		}
+	}
+
+	.sapUiCalendarApp.sapUiCalendarAppDisabled.sapUiCalendarAppSel,
+	.sapUiCalendarApp.sapUiCalendarAppDisabled:active,
+	.sapUiCalendarApp.sapUiCalendarAppDisabled.sapUiCalendarAppSel:active{
+		color: transparent;
 		background-color: transparent;
 	}
 
-	.sapUiUnifiedLegend {
-		padding: 1rem 0.5rem;
+	.sapUiCalendarApp.sapUiCalendarAppDisabled {
+		 cursor: auto;
 	}
 }
 

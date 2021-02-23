@@ -1179,6 +1179,13 @@
               }
             }
           }
+        },
+        "actions": {
+          "description": "Defines actions that can be applied on the item",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/action"
+          }
         }
       },
       "actions": {

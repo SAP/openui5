@@ -955,6 +955,108 @@ sap.ui.define([
 			}
 		};
 
+		var oManifest_Appointments_Press = {
+			"_version": "1.14.0",
+			"sap.app": {
+				"id": "card.explorer.simple.calendar.card",
+				"type": "card",
+				"title": "Sample of a List with Highlight",
+				"subTitle": "Sample of a Calendar with Highlight",
+				"applicationVersion": {
+					"version": "1.0.0"
+				},
+				"shortTitle": "A short title for this Card",
+				"info": "Additional information about this Card",
+				"description": "A long description for this Card",
+				"tags": {
+					"keywords": [
+						"Calendar",
+						"Highlight",
+						"Card",
+						"Sample"
+					]
+				}
+			},
+			"sap.card": {
+				"type": "Calendar",
+				"designtime": "dt/Configuration",
+				"data": {
+					"json": {
+						"item": [
+							{
+								"start": "2020-09-18T09:00",
+								"end": "2020-09-18T10:00",
+								"title": "Payment reminder",
+								"icon": "sap-icon://desktop-mobile",
+								"type": "Type06",
+								"url": "http://sap.com"
+							},
+							{
+								"start": "2020-09-16T08:30",
+								"end": "2020-09-18T17:30",
+								"title": "Workshop",
+								"text": "Out of office",
+								"icon": "sap-icon://sap-ui5",
+								"type": "Type07"
+							}
+						]
+					}
+				},
+				"header": {
+					"title": "My calendar",
+					"subTitle": "Team Balkan",
+					"status": {
+						"text":  {
+							"format": {
+								"translationKey": "i18n>CARD.COUNT_X_OF_Y",
+								"parts": [
+									"parameters>/visibleItems",
+									"parameters>/allItems"
+								]
+							}
+						}
+					}
+				},
+				"content": {
+					"date": "2020-09-18",
+					"maxItems": 5,
+					"maxLegendItems": 5,
+					"noItemsText": "You have nothing planned for this day",
+					"item": {
+						"template": {
+							"startDate": "{start}",
+							"endDate": "{end}",
+							"title": "{title}",
+							"text": "{text}",
+							"icon": {
+								"src": "{icon}"
+							},
+							"type": "{type}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"enabled": "{= ${url}}",
+									"parameters": {
+										"url": "{url}"
+									}
+								}
+							]
+						},
+						"path": "/item"
+					},
+					"moreItems": {
+						"actions": [
+							{
+								"type": "Navigation",
+								"enabled": true,
+								"url": "http://sap.com"
+							}
+						]
+					}
+				}
+			}
+		};
+
 		QUnit.module("Initialization", {
 			beforeEach: function () {
 				this.oCard = new Card({
@@ -1274,6 +1376,25 @@ sap.ui.define([
 
 				// Assert
 				assert.strictEqual(aLegendItemsRefs.length, 4, "Should have 3 rendered legend items and one 'More' indicator.");
+
+				done();
+			}.bind(this));
+		});
+
+		QUnit.test("Appointment press", function (assert) {
+			// Arrange
+			var done = assert.async();
+			this.oCard.setManifest(oManifest_Appointments_Press);
+
+			this.oCard.attachEvent("_ready", function () {
+				var aAppointments = this.oCard.getAggregation("_content").getAppointments(),
+					oFirstAppointment = aAppointments[0],
+					oSecondAppointment = aAppointments[1];
+
+				// Assert
+				assert.notOk(oFirstAppointment.$().hasClass("sapUiCalendarAppDisabled"), "The first appointment is in active state.");
+				assert.deepEqual(oFirstAppointment.$().attr("tabindex"), "0", "The first appointment is in the tab chain.");
+				assert.ok(oSecondAppointment.$().hasClass("sapUiCalendarAppDisabled"), "Second appointment is in disabled state.");
 
 				done();
 			}.bind(this));

@@ -3,11 +3,12 @@
  */
 sap.ui.define([
 		"./CalendarContentRenderer",
-		'sap/ui/core/ResizeHandler',
+		"sap/ui/core/ResizeHandler",
 		"sap/ui/integration/library",
 		"sap/ui/integration/cards/BaseContent",
 		"sap/ui/integration/util/BindingHelper",
 		"sap/ui/integration/util/BindingResolver",
+		"sap/f/CalendarAppointmentInCard",
 		"sap/f/CalendarInCard",
 		"sap/f/PlanningCalendarInCardLegend",
 		"sap/m/library",
@@ -18,7 +19,6 @@ sap.ui.define([
 		"sap/ui/model/FilterOperator",
 		"sap/ui/unified/calendar/CalendarDate",
 		"sap/ui/unified/calendar/CalendarUtils",
-		"sap/ui/unified/CalendarAppointment",
 		"sap/ui/unified/DateTypeRange",
 		"sap/ui/core/date/UniversalDate",
 		"sap/ui/unified/CalendarLegendItem"
@@ -29,6 +29,7 @@ sap.ui.define([
 		BaseContent,
 		BindingHelper,
 		BindingResolver,
+		CalendarAppointmentInCard,
 		CalendarInCard,
 		PlanningCalendarInCardLegend,
 		mLibrary,
@@ -39,7 +40,6 @@ sap.ui.define([
 		FilterOperator,
 		CalendarDate,
 		CalendarUtils,
-		CalendarAppointment,
 		DateTypeRange,
 		UniversalDate,
 		CalendarLegendItem) {
@@ -80,7 +80,7 @@ sap.ui.define([
 					visibleAppointmentsCount : { type : "int", group : "Data", defaultValue: 2 },
 
 					/**
-					 * Defines the text that is displayed when no {@link sap.ui.unified.CalendarAppointment CalendarAppointments} are assigned.
+					 * Defines the text that is displayed when no {@link sap.f.CalendarAppointmentInCard CalendarAppointmentInCard} are assigned.
 					 */
 					noAppointmentsText : {type : "string", group : "Misc", defaultValue : null}
 				},
@@ -88,7 +88,7 @@ sap.ui.define([
 					/**
 					 * Defines the appointments in the control.
 					 */
-					appointments: { type: "sap.ui.unified.CalendarAppointment", multiple: true, singularName: "appointment" }
+					appointments: { type: "sap.f.CalendarAppointmentInCard", multiple: true, singularName: "appointment" }
 				}
 			}
 		});
@@ -364,8 +364,8 @@ sap.ui.define([
 		 * Sorts the shown appointments.
 		 *
 		 * @private
-		 * @param {sap.ui.unified.CalendarAppointment} oApp1 The first item to be compared.
-		 * @param {sap.ui.unified.CalendarAppointment} oApp2 The second item to be compared.
+		 * @param {sap.f.CalendarAppointmentInCard} oApp1 The first item to be compared.
+		 * @param {sap.f.CalendarAppointmentInCard} oApp2 The second item to be compared.
 		 * @returns {boolean} if the first item is before the second one
 		 */
 		CalendarContent.prototype._sortByStartHourCB = function (oApp1, oApp2) {
@@ -452,7 +452,17 @@ sap.ui.define([
 					return this._oIconFormatter.formatSrc(sValue);
 				}.bind(this));
 			}
-			this._oAppointmentTemplate = new CalendarAppointment(mAppointmentSettings);
+			this._oAppointmentTemplate = new CalendarAppointmentInCard(mAppointmentSettings);
+			var oCardActions = this.getActions();
+			oCardActions.attach({
+				area: ActionArea.ContentItem,
+				actions: mItem.template.actions,
+				control: this,
+				actionControl: this._oAppointmentTemplate,
+				enabledPropertyName: "clickable",
+				enabledPropertyValue: true,
+				disabledPropertyValue: false
+			});
 			oAppointmentBindingInfo = {
 				path: mItem.path,
 				template: this._oAppointmentTemplate
