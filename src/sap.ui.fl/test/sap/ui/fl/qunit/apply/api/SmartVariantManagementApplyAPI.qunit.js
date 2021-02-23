@@ -323,8 +323,7 @@ sap.ui.define([
 			});
 		});
 
-
-		QUnit.test("When loadVariants() is called and multiple variants, of which one is a overruling standard variant, are present for the persistencyKey of the passed control", function (assert) {
+		QUnit.test("When loadVariants() is called and multiple variants, of which multiple are a overruling the standard variant, are present for the persistencyKey of the passed control", function (assert) {
 			this.oControl = new Control("controlId1");
 			var sPersistencyKey = "variantManagement1";
 			this.oControl.getPersistencyKey = function () {
@@ -361,8 +360,8 @@ sap.ui.define([
 			})
 				.then(function (oResponse) {
 					var oStandardVariant = oResponse.standardVariant;
-					assert.equal(oStandardVariant.getId(), "variant_standard", "the first is the overwritten standard variant");
-					assert.equal(oStandardVariant.getText("variantName"), "This my very own standard variant text", "with the title from the variant file");
+					assert.equal(oStandardVariant.getId(), "variant_standard2", "the first is the overwritten standard variant");
+					assert.equal(oStandardVariant.getText("variantName"), "This another of my very own standard variant text", "with the title from the variant file");
 					assert.equal(oStandardVariant.getExecuteOnSelect(), true, "and not is executed on selection due to a change");
 					assert.equal(oStandardVariant.getFavorite(), true, "and it is a favorite");
 
