@@ -332,10 +332,17 @@ sap.ui.define([
 	 * @private
 	 */
 	GridList.prototype._onGridChange = function (oChanges) {
-		if (oChanges.name !== "items" || !oChanges.child) { return; }
+		var bCallBefore;
+
+		if (oChanges.name !== "items" || !oChanges.child) {
+			return;
+		}
 
 		if (oChanges.mutation === "insert") {
-			oChanges.child.addEventDelegate(this._oItemDelegate, oChanges.child);
+			// The sap.ui.core.HTML has a special behavior
+			// and the delegate should be called after the real onAfterRendering  method
+			bCallBefore = !oChanges.child.isA("sap.ui.core.HTML");
+			oChanges.child.addDelegate(this._oItemDelegate, bCallBefore, oChanges.child);
 		} else if (oChanges.mutation === "remove") {
 			oChanges.child.removeEventDelegate(this._oItemDelegate, oChanges.child);
 		}

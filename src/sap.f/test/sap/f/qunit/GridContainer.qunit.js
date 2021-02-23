@@ -1885,7 +1885,27 @@ function (
 
 		// Assert
 		assert.strictEqual(document.activeElement, oThirdItemWrapper, "Focus is moved back to the bottom starting item.");
-
 	});
 
+	QUnit.module("Tickets");
+
+	QUnit.test("When the grid is invalidated, the internal 'width' settings are cleared", function (assert) {
+		var oGrid = new GridContainer({});
+
+		oGrid.placeAt(DOM_RENDER_LOCATION);
+		Core.applyChanges();
+
+		oGrid._resize();
+
+		assert.ok(oGrid._lastGridWidth, "_lastGridWidth is set");
+		assert.ok(oGrid._lastViewportWidth, "_lastViewportWidth is set");
+
+		oGrid.invalidate();
+		Core.applyChanges();
+
+		assert.notOk(oGrid._lastGridWidth, "_lastGridWidth is not set");
+		assert.notOk(oGrid._lastViewportWidth, "_lastViewportWidth is not set");
+
+		oGrid.destroy();
+	});
 });
