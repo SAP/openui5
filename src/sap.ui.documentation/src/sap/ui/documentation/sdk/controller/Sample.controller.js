@@ -51,6 +51,8 @@ sap.ui.define([
 					rtaLoaded: false
 				});
 
+				this._sDefaultSampleTheme = 'sap_fiori_3';
+
 				this._sId = null; // Used to hold sample ID
 				this._sEntityId = null; // Used to hold entity ID for the sample currently shown
 
@@ -224,6 +226,7 @@ sap.ui.define([
 			},
 
 			onNewTab : function () {
+				this._applySearchParamValueToIframeURL('sap-ui-theme', this._sDefaultSampleTheme);
 				URLHelper.redirect(this.sIFrameUrl, true);
 			},
 
@@ -390,6 +393,22 @@ sap.ui.define([
 			},
 
 			_oRTA : null,
+
+			_applySearchParamValueToIframeURL: function(sSearchParam, sNewVal) {
+				var URL = window.URL,
+					oIFrameURL;
+
+				try {
+					oIFrameURL = new URL(this.sIFrameUrl, document.location);
+				} catch (err) {
+					Log.warning("window.URL is not supported. The search param value won't be applied.");
+					return;
+				}
+
+				oIFrameURL.searchParams.set(sSearchParam, sNewVal);
+
+				this.sIFrameUrl = oIFrameURL.pathname + oIFrameURL.search;
+			},
 
 			_loadRTA: function () {
 				sap.ui.require([
