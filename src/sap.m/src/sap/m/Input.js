@@ -35,6 +35,7 @@ sap.ui.define([
 	"sap/m/inputUtils/selectionRange",
 	"./InputRenderer",
 	"sap/ui/base/ManagedObject",
+	"sap/ui/base/ManagedObjectObserver",
 	"sap/ui/thirdparty/jquery",
 	// jQuery Plugin "selectText"
 	"sap/ui/dom/jquery/selectText"
@@ -71,6 +72,7 @@ function(
 	selectionRange,
 	InputRenderer,
 	ManagedObject,
+	ManagedObjectObserver,
 	jQuery
 ) {
 	"use strict";
@@ -1905,74 +1907,6 @@ function(
 			return this;
 		};
 
-		/**
-		 * Adds suggestion row.
-		 *
-		 * @public
-		 * @param {sap.ui.core.Item} oItem Suggestion item.
-		 * @return {this} this Input instance for chaining.
-		 */
-		Input.prototype.addSuggestionRow = function(oItem) {
-			oItem.setType(ListType.Active);
-			this.addAggregation("suggestionRows", oItem);
-			this._synchronizeSuggestions();
-			this._createSuggestionPopupContent(true);
-			return this;
-		};
-
-		/**
-		 * Inserts suggestion row.
-		 *
-		 * @public
-		 * @param {sap.ui.core.Item} oItem Suggestion row
-		 * @param {int} iIndex Row index.
-		 * @return {this} this Input instance for chaining.
-		 */
-		Input.prototype.insertSuggestionRow = function(oItem, iIndex) {
-			oItem.setType(ListType.Active);
-			this.insertAggregation("suggestionRows", oItem, iIndex);
-			this._synchronizeSuggestions();
-			this._createSuggestionPopupContent(true);
-			return this;
-		};
-
-		/**
-		 * Removes suggestion row.
-		 *
-		 * @public
-		 * @param {sap.ui.core.Item} oItem Suggestion row.
-		 * @returns {boolean} Determines whether the suggestion row is removed.
-		 */
-		Input.prototype.removeSuggestionRow = function(oItem) {
-			var res = this.removeAggregation("suggestionRows", oItem);
-			this._synchronizeSuggestions();
-			return res;
-		};
-
-		/**
-		 * Removes all suggestion rows.
-		 *
-		 * @public
-		 * @returns {boolean} Determines whether the suggestion rows are removed.
-		 */
-		Input.prototype.removeAllSuggestionRows = function() {
-			var res = this.removeAllAggregation("suggestionRows");
-			this._synchronizeSuggestions();
-			return res;
-		};
-
-		/**
-		 * Destroys all suggestion rows.
-		 *
-		 * @public
-		 * @return {this} this Input instance for chaining.
-		 */
-		Input.prototype.destroySuggestionRows = function() {
-			this.destroyAggregation("suggestionRows");
-			this._synchronizeSuggestions();
-			return this;
-		};
-
 		Input.prototype.bindAggregation = function() {
 			if (arguments[0] === "suggestionRows" || arguments[0] === "suggestionColumns" || arguments[0] === "suggestionItems") {
 				this._createSuggestionPopupContent(arguments[0] === "suggestionRows" || arguments[0] === "suggestionColumns");
@@ -2254,6 +2188,7 @@ function(
 	 * @returns {sap.m.Table} The newly created suggestions table.
 	 */
 	Input.prototype._createSuggestionsTable = function () {
+		var oTableObserver;
 		var oSuggestionsTable = new Table(this.getId() + "-popup-table", {
 			mode: ListMode.SingleSelectMaster,
 			showNoData: false,
@@ -2296,9 +2231,35 @@ function(
 			return this;
 		};
 
+		oTableObserver = new ManagedObjectObserver(function (oChange) {
+			var sMutation = oChange.mutation;
+			var vItem = oChange.child;
+			var bSuggestionRow = oChange.name === "items";
+
+			switch (sMutation) {
+				case "insert":
+					if (bSuggestionRow) {
+						vItem.setType(ListType.Active);
+						this._createSuggestionPopupContent(true);
+						this._synchronizeSuggestions();
+					}
+					break;
+				case "remove":
+					if (bSuggestionRow) {
+						this._synchronizeSuggestions();
+					}
+					break;
+				default:
+					break;
+			}
+		}.bind(this));
+
+		oTableObserver.observe(oSuggestionsTable, {
+			aggregations: ["items", "columns"]
+		});
+
 		return oSuggestionsTable;
 	};
-
 
 	/**
 	 * Clones input.
@@ -3062,8 +3023,6 @@ function(
 	 */
 	Input.prototype._getFilteredSuggestionItems = function (sValue) {
 		var oFilterResults,
-			aItems = this.getSuggestionItems(),
-			aTabularRows = this.getSuggestionRows(),
 			oList = this._getSuggestionsPopover().getItemsContainer();
 
 		if (this._hasTabularSuggestions()) {
@@ -3072,11 +3031,11 @@ function(
 				oList.removeStyleClass("sapMInputSuggestionTableHidden");
 			}
 
-			oFilterResults = this.filterTabularItems(aTabularRows, sValue);
+			oFilterResults = this.filterTabularItems(this.getSuggestionRows(), sValue);
 		} else {
 			oFilterResults = filterItems(
 				this, // control instance
-				aItems, // array of items to be filtered
+				this.getSuggestionItems(), // array of items to be filtered
 				sValue, // the value, to be used as a filter
 				this.getFilterSuggests(), // boolean that determines if the suggestions should be filtered
 				true, // filter also by secondary values
