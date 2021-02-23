@@ -139,6 +139,7 @@ sap.ui.define([
 			"sap.m.StringFilterOperator",
 			"sap.m.SwipeDirection",
 			"sap.m.SwitchType",
+			"sap.m.TabsOverflowMode",
 			"sap.m.TileSizeBehavior",
 			"sap.m.TimePickerMaskMode",
 			"sap.m.TitleAlignment",
@@ -1784,6 +1785,26 @@ sap.ui.define([
 		 * @public
 		 */
 		ActionRemove: "ActionRemove"
+	};
+
+	/**
+	 * Specifies <code>IconTabBar</code> tab overflow mode.
+	 *
+ 	 * @since 1.90.0
+	 * @public
+	 * @ui5-metamodel This enumeration also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	thisLib.TabsOverflowMode = {
+		/**
+		 * Default behavior: One overflow tab at the end of the header.
+		 * @public
+		 */
+		End: "End",
+		/**
+		 * Two overflow tabs at both ends of the header to keep tabs order intact.
+		 * @public
+		 */
+		StartAndEnd: "StartAndEnd"
 	};
 
 	/**

@@ -2,7 +2,8 @@
  * ${copyright}
  */
 
-sap.ui.define([], function () {
+sap.ui.define(['./library'],
+		function (library) {
 	"use strict";
 
 	/**
@@ -12,6 +13,9 @@ sap.ui.define([], function () {
 	var IconTabHeaderRenderer = {
 		apiVersion: 2
 	};
+
+	// shortcut for sap.m.TabsOverflowMode
+	var TabsOverflowMode = library.TabsOverflowMode;
 
 	/**
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
@@ -71,6 +75,16 @@ sap.ui.define([], function () {
 
 		oRM.openEnd();
 
+		if (aItems.length && oControl.getTabsOverflowMode() === TabsOverflowMode.StartAndEnd) {
+			oRM.openStart("div")
+				.class("sapMITHStartOverflow")
+				.openEnd();
+
+			oControl._getStartOverflow().render(oRM);
+
+			oRM.close("div");
+		}
+
 		if (mAriaTexts.headerDescription) {
 			oRM.renderControl(oControl._getInvisibleHeadText());
 		}
@@ -106,7 +120,7 @@ sap.ui.define([], function () {
 
 		if (aItems.length) {
 			oRM.openStart("div")
-				.class("sapMITHOverflow")
+				.class("sapMITHEndOverflow")
 				.openEnd();
 
 			oControl._getOverflow().render(oRM);

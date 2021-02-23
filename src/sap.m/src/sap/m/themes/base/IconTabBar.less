@@ -193,18 +193,27 @@
 		display: inline-flex;
 	}
 
+	.sapMITBFilterWrapper {
+		min-width: 0; // fixes flex Chrome issue
+		max-width: 100%;
+	}
+
 	.sapMITBText {
 		line-height: @_sap_m_IconTabBar_FilterTextLineHeight;
-		overflow: hidden;
 		padding: 0.375rem 0 0;
 		position: relative;
-		text-overflow: ellipsis;
-		width: 5rem;
 		color: @_sap_m_IconTabBar_TextColor;
 		text-shadow: @_sap_m_IconTabBar_TextShadow;
 
 		.sapUiIcon {
 			font-size: 1rem;
+		}
+
+		span {
+			display: inline-block;
+			max-width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
 		}
 	}
 
@@ -221,15 +230,6 @@
 		position: absolute;
 		text-overflow: ellipsis;
 	}
-
-	&.sapMITBFilterTruncated .sapMITBFilterWrapper {
-		width: 100%;
-
-		.sapMITBText {
-			overflow: hidden;
-		}
-	}
-
 }
 
 .sapMITHShowSubItemsIcon {
@@ -310,7 +310,6 @@
 			padding: 0;
 			text-align: left;
 			width: auto;
-			overflow: visible;
 		}
 
 		.sapMITBCount {
@@ -439,7 +438,7 @@
 /* IconTabBar Overflow tab class                    */
 /* ------------------------------------------------ */
 
-.sapMITHOverflow {
+.sapMITHEndOverflow, .sapMITHStartOverflow {
 	align-self: stretch;
 	flex-grow: 0;
 	flex-shrink: 0;
@@ -473,7 +472,6 @@
 		padding: 0;
 		text-align: left;
 		width: auto;
-		overflow: visible;
 	}
 
 	.sapMITHOverflowVisible {
@@ -481,7 +479,7 @@
 	}
 }
 
-.sapMITH:not(.sapMITHOverflowList) .sapMITHOverflow {
+.sapMITH:not(.sapMITHEndOverflowList) .sapMITHEndOverflow, .sapMITH:not(.sapMITHStartOverflowList) .sapMITHStartOverflow {
 	display: none;
 }
 
@@ -505,6 +503,9 @@
 	text-align: center;
 	vertical-align: top;
 	color: @sapUiGroupTitleTextColor;
+
+	max-width: 100%;
+	box-sizing: border-box;
 
 	/* Dragged Filter Item */
 	&.sapUiDnDDragging {
@@ -789,7 +790,7 @@ html.sap-desktop {
 	.sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBFilterIcon,
 	.sapMITBTextOnly .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText,
 	.sapMITBItem:not(.sapUiDnDDragging):focus.sapMITBAll,
-	.sapMITHOverflow .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText {
+	.sapMITHEndOverflow .sapMITBItem:not(.sapUiDnDDragging):focus .sapMITBText {
 		&::after {
 			content: "";
 			position: absolute;
@@ -867,8 +868,12 @@ html.sap-desktop {
 		padding: 0 1rem;
 	}
 
-	.sapMITHOverflow {
+	.sapMITHEndOverflow {
 		margin-left: 1rem;
+	}
+
+	.sapMITHStartOverflow {
+		margin-right: 1rem;
 	}
 
 	.sapMITBSepLine {
@@ -903,8 +908,12 @@ html.sap-desktop {
 		padding: 0 2rem;
 	}
 
-	.sapMITHOverflow {
+	.sapMITHEndOverflow {
 		margin-left: 2rem;
+	}
+
+	.sapMITHStartOverflow {
+		margin-right: 2rem;
 	}
 }
 
@@ -961,8 +970,11 @@ html.sap-desktop {
 		}
 	}
 
-	.sapMITHOverflow .sapMITBItem {
-		height: auto;
+	.sapMITHEndOverflow,
+	.sapMITHStartOverflow {
+		.sapMITBItem {
+			height: auto;
+		}
 	}
 
 	.sapMITBVertical {
@@ -1041,11 +1053,13 @@ html.sap-desktop {
 			height: @_sap_m_IconTabBar_Compact_TextOnlyVerticalHeight;
 		}
 
-		.sapMITHOverflow .sapMITBItem .sapMITBText {
-			height: auto;
-			padding: 0;
+		.sapMITHEndOverflow,
+		.sapMITHStartOverflow {
+			.sapMITBItem .sapMITBText {
+				height: auto;
+				padding: 0;
+			}
 		}
-
 	}
 
 	.sapMITBFilterIcon {
