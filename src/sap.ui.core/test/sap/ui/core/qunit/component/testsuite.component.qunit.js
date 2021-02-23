@@ -46,6 +46,12 @@ sap.ui.define(function() {
 					preload: "async" // enforce preloads in dev mode
 				}
 			},
+			"Component_keepAlive": {
+				title: "QUnit test: Component keepAlive",
+				ui5: {
+					language: "en"
+				}
+			},
 			ComponentContainer: {
 				title: "QUnit Page for sap.ui.core.ComponentContainer",
 				ui5: {

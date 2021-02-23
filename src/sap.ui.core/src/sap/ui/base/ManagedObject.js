@@ -493,6 +493,7 @@ sap.ui.define([
 			this.iSuppressInvalidate = 0;
 			this.oPropagatedProperties = ManagedObject._oEmptyPropagatedProperties;
 			this.mSkipPropagation = {};
+			this._bIsOwnerActive = true;
 
 			// data binding
 			this.oModels = {};
@@ -2665,7 +2666,9 @@ sap.ui.define([
 		if (this._oContextualSettings !== oContextualSettings) {
 			this._oContextualSettings = oContextualSettings;
 			this._propagateContextualSettings();
-			this._onContextualSettingsChanged();
+			if (this._bIsOwnerActive) {
+				this._onContextualSettingsChanged();
+			}
 		}
 	};
 
@@ -5227,6 +5230,29 @@ sap.ui.define([
 
 		return aAggregatedObjects;
 
+	};
+
+	/**
+	 * This lifecycle hook is called during deactivation of the owner component
+	 *
+	 * @since 1.88
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	ManagedObject.prototype.onOwnerDeactivation = function() {
+		this._bIsOwnerActive = false;
+	};
+
+	/**
+	 * This lifecycle hook is called during activation of the owner component
+	 *
+	 * @since 1.88
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	ManagedObject.prototype.onOwnerActivation = function() {
+		this._bIsOwnerActive = true;
+		this._onContextualSettingsChanged();
 	};
 
 	ManagedObject._defaultContextualSettings = {};

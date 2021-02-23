@@ -12,6 +12,7 @@ sap.ui.define([
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/base/ManagedObjectRegistry',
+	'sap/ui/core/ResizeHandler',
 	'sap/ui/thirdparty/URI',
 	'sap/ui/performance/trace/Interaction',
 	'sap/base/assert',
@@ -30,6 +31,7 @@ sap.ui.define([
 	merge,
 	ManagedObject,
 	ManagedObjectRegistry,
+	ResizeHandler,
 	URI,
 	Interaction,
 	assert,
@@ -42,7 +44,7 @@ sap.ui.define([
 ) {
 	"use strict";
 
-	/*global Promise */
+	/* global Promise */
 
 	// TODO: dependency to sap/ui/core/library not possible due to cyclic dependency
 	var ViewType = {
@@ -299,8 +301,14 @@ sap.ui.define([
 			// registry for services
 			this._mServices = {};
 
-			ManagedObject.apply(this, args);
+			this._oKeepAliveConfig = this.getManifestEntry("/sap.ui5/keepAlive");
+			if (this._oKeepAliveConfig) {
+				this._oKeepAliveConfig.supported = !!this._oKeepAliveConfig.supported;
+			}
 
+			this._bIsActive = true;
+
+			ManagedObject.apply(this, args);
 		},
 
 		metadata : {
@@ -608,6 +616,10 @@ sap.ui.define([
 	 * @public
 	 */
 	Component.prototype.runAsOwner = function(fn) {
+		if (!this.isActive()) {
+			throw new Error("Execute 'runAsOwner' on an inactive owner component is not supported. Component: '" +
+				this.getMetadata().getName() + "' with id '" + this.getId() + "'.");
+		}
 		return runWithOwner(fn, this.getId());
 	};
 
@@ -761,8 +773,24 @@ sap.ui.define([
 			});
 			var EventBus = sap.ui.requireSync("sap/ui/core/EventBus");
 			this._oEventBus = new EventBus();
+
+			if (!this.isActive()) {
+				this._oEventBus.suspend();
+			}
 		}
 		return this._oEventBus;
+	};
+
+	/**
+	 * Determines if the component is active
+	 *
+	 * @returns {boolean} If the component is active <code>true</code>, otherwise <code>false</code>
+	 * @since 1.88
+	 * @private
+	 * @ui5-restricted sap.ui.core
+	 */
+	Component.prototype.isActive = function() {
+		return this._bIsActive;
 	};
 
 	/**
@@ -1231,6 +1259,9 @@ sap.ui.define([
 		}
 
 		if (oOwnerComponent) {
+			if (!oOwnerComponent.isActive()) {
+				throw new Error("Creation of component '" + mConfig.name + "' is not possible due to inactive owner component '" + oOwnerComponent.getId() + "'");
+			}
 			// create the nested component in the context of this component
 			return oOwnerComponent.runAsOwner(createComponent);
 		} else {
@@ -1754,7 +1785,7 @@ sap.ui.define([
 	 * Used within loadComponent to create models during component load.
 	 *
 	 * "afterManifest"
-	 * Models that are activated for preload via "preload=true" or URI parameter.
+	 * Models that are configured for preload via "preload=true" or URI parameter.
 	 * They will be created after the manifest is available.
 	 *
 	 * "afterPreload"
@@ -1818,7 +1849,7 @@ sap.ui.define([
 				mModelConfigs.afterPreload[sModelName] = mModelConfig;
 			} else if (mModelConfig.preload) {
 				// Only create models:
-				//   - which are flagged for preload (mModelConfig.preload) or activated via internal URI param (see above)
+				//   - which are flagged for preload (mModelConfig.preload) or configured via internal URI param (see above)
 				//   - in case the model class is already loaded (otherwise log a warning)
 				if (sap.ui.loader._.getModuleState(mModelConfig.type.replace(/\./g, "/") + ".js")) {
 					mModelConfigs.afterManifest[sModelName] = mModelConfig;
@@ -3370,6 +3401,186 @@ sap.ui.define([
 		}
 		return sCommandName ? oCommand : oCommands;
 	};
+
+	/**
+	 * Deactivates the component and all descendant components
+	 *
+	 * If this or any descendant component has not enabled keep alive, no component will be deactivated
+	 *
+	 * Deactivation includes following steps:
+	 * - all elements associated (via ownerId) with the deactivated components are deactivated
+	 * - the eventbus of the deactivated components are suspended
+	 * - the router of the deactivated components are stopped
+	 * - the 'onDeactivate' hooks of the deactivated components are called
+	 *
+	 * @since 1.88
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.ushell
+	 */
+	Component.prototype.deactivate = function() {
+		var oOwnerComponent = Component.getOwnerComponentFor(this);
+		if (oOwnerComponent && oOwnerComponent.isActive()) {
+			throw new Error("Component.deactivate must not be called on nested components.");
+		}
+
+		if (!this.isKeepAliveSupported()) {
+			Log.warning("Deactivation of component failed. Component '" + this.getId() + "' does not support 'keepAlive'.");
+			return;
+		}
+		if (!this.isActive()) {
+			Log.warning("Deactivation of component failed. Component '" + this.getId() + "' is already inactive.");
+			return;
+		}
+
+		// deactivate component
+		this.onOwnerDeactivation();
+
+		// mark the component as inactive
+		this._bIsActive = false;
+
+		// deactivate all child elements
+		Element.registry.filter(function(oElement) {
+			var sOwnerId = Component.getOwnerIdFor(oElement);
+			if (sOwnerId === this.getId()) {
+				ResizeHandler.suspend(oElement.getDomRef());
+				return oElement.onOwnerDeactivation();
+			}
+		}, this);
+
+		// deactivate all child components
+		Component.registry.filter(function(oComponent) {
+			var sOwnerId = Component.getOwnerIdFor(oComponent);
+			if (sOwnerId === this.getId()) {
+				oComponent.deactivate();
+			}
+		}, this);
+
+		// suspend EventBus
+		if (this._oEventBus) {
+			this._oEventBus.suspend();
+		}
+
+		// stop the router
+		if (this.getRouter()) {
+			this.getRouter().stop();
+		}
+
+		// call lifecyclehook 'onDeactivate'
+		if (typeof this.onDeactivate === "function") {
+			this.onDeactivate();
+		}
+	};
+
+	/**
+	 * Activates the component and all descendant components.
+	 *
+	 * If this or any descendant component does not enabled keep alive, no component will be activated
+	 *
+	 * Activation includes following steps:
+	 * - all elements associated (via ownerId) with the activated components are activated
+	 * - the eventbus of the activated components are resumed
+	 * - the router of the activated components are initialized
+	 * - the 'onActivate' hooks of the activated components are called
+	 *
+	 * @since 1.88
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.ushell
+	 */
+	Component.prototype.activate = function() {
+		if (!this.isKeepAliveSupported()) {
+			Log.warning("Activation of component failed. Component '" + this.getId() + "' does not support 'keepAlive'.");
+			return;
+		}
+		if (this.isActive()) {
+			Log.warning("Activation of component failed. Component '" + this.getId() + "' is already active.");
+			return;
+		}
+
+		// activate component
+		this.onOwnerActivation();
+
+		// mark the component as active
+		this._bIsActive = true;
+
+		// resume all child elements
+		Element.registry.forEach(function(oElement) {
+			var sCompId = Component.getOwnerIdFor(oElement);
+			if (sCompId === this.getId()) {
+				ResizeHandler.resume(oElement.getDomRef());
+				return oElement.onOwnerActivation();
+			}
+		}, this);
+
+		// activate all child components
+		Component.registry.forEach(function(oComponent) {
+			var sOwnerId = Component.getOwnerIdFor(oComponent);
+			if (sOwnerId === this.getId()) {
+				oComponent.activate();
+			}
+		}, this);
+
+		// resume eventbus
+		if (this._oEventBus) {
+			this._oEventBus.resume();
+		}
+
+		// resume router
+		if (this.getRouter()) {
+			this.getRouter().initialize();
+		}
+
+		// call lifecyclehook 'onActivate'
+		if (typeof this.onActivate === "function") {
+			this.onActivate();
+		}
+	};
+
+	/**
+	 * Checks whether a component and its nested components support "keep-alive" or not.
+	 * Returns <code>false</code>, if at least one component does not support "keep-alive".
+	 *
+	 * @return {boolean} Whether the component supports "keep-alive" or not
+	 * @since 1.88
+	 * @private
+	 * @ui5-restricted sap.ui.core, sap.ushell
+	 */
+	Component.prototype.isKeepAliveSupported = function() {
+		var bIsKeepAliveSupported = this._oKeepAliveConfig && this._oKeepAliveConfig.supported;
+
+		if (bIsKeepAliveSupported) {
+			bIsKeepAliveSupported = Component.registry
+				.filter(function (oComponent) {
+					var sOwnerId = Component.getOwnerIdFor(oComponent);
+					if (sOwnerId === this.getId()) {
+						return true;
+					}
+				}, this).every(function (oComponent) {
+					return oComponent.isKeepAliveSupported();
+				}, this);
+		}
+
+		return bIsKeepAliveSupported;
+	};
+
+	/**
+	 * This method is called after the component is activated
+	 *
+	 * @function
+	 * @name sap.ui.core.Component.prototype.onActivate
+	 * @abstract
+	 * @since 1.88
+	 * @protected
+	 */
+
+	/**
+	 * This method is called after the component is deactivated
+	 *
+	 * @function
+	 * @name sap.ui.core.Component.prototype.onDeactivate
+	 * @abstract
+	 * @since 1.88
+	 * @protected
+	 */
 
 	return Component;
 });

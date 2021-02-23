@@ -2192,7 +2192,6 @@ sap.ui.define([
 
 	};
 
-
 	/**
 	 * Enumeration for different mode behaviors of the <code>InvisibleMessage</code>.
 	 *

@@ -186,9 +186,6 @@ sap.ui.define([
 	 * @public
 	 */
 	EventBus.prototype.publish = function(sChannelId, sEventId, oData) {
-		if (this._bIsSuspended) {
-			return;
-		}
 
 		if (arguments.length == 1) { //sEventId
 			oData = null;
@@ -200,6 +197,11 @@ sap.ui.define([
 				sEventId = sChannelId;
 				sChannelId = null;
 			}
+		}
+
+		if (this._bIsSuspended) {
+			Log.warning("Failed to publish into channel '" + sChannelId + "'." + " The EventBus is suspended.", sChannelId + "#" + sEventId, "sap.ui.core.EventBus");
+			return;
 		}
 
 		oData = oData ? oData : {};
