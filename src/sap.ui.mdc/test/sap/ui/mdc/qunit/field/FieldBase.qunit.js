@@ -3025,6 +3025,7 @@ sap.ui.define([
 		sValue = ""; bValid = undefined;
 		oField.setValueState("Error"); // simulate wrong input before
 		oField.setValueStateText("Error");
+		oField._bParseError = true;
 		oContent.setDOMValue("I"); // to test clearing of content
 		oFieldHelp.fireSelect({ conditions: [oCondition], add: true, close: false });
 		assert.equal(iCount, 1, "Change Event fired once");
@@ -3055,6 +3056,8 @@ sap.ui.define([
 		oCondition = Condition.createItemCondition("I1", "Item1");
 		iCount = 0;
 		sValue = ""; bValid = undefined;
+		oField.setValueState("Error"); // simulate error set by application
+		oField.setValueStateText("Error");
 		oContent.setDOMValue("I"); // to test clearing of content
 		oFieldHelp.fireSelect({ conditions: [oCondition], add: true, close: true });
 		assert.equal(iCount, 1, "Change Event fired once");
@@ -3069,6 +3072,8 @@ sap.ui.define([
 		assert.equal(aConditions[1] && aConditions[1].operator, "EQ", "condition operator");
 		assert.notOk(oFieldHelp.getKeyForText.called, "getKeyForText not called");
 		assert.equal(oContent.getDOMValue(), "", "no value shown in inner control");
+		assert.equal(oField.getValueState(), "Error", "ValueState");
+		assert.equal(oField.getValueStateText(), "Error", "ValueStateText");
 
 		oIcon.destroy();
 
