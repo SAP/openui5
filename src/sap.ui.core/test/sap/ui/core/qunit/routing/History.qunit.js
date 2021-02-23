@@ -287,7 +287,7 @@ sap.ui.define([
 			sap: {
 				history: ["/hash1", "/hash2", "/hash3"]
 			}
-		}, "", "");
+		}, "");
 		var oNewHistory = new History(this.oExtendedHashChanger);
 
 		if (!History._bUsePushState) {
