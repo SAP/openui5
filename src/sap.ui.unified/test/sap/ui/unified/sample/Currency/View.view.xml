@@ -41,5 +41,22 @@
 				<u:Currency stringValue="{price}" currency="{currency}" useSymbol="false"/>
 			</CustomListItem>
 		</List>
+
+		<List
+			id="listFiveId"
+			headerText="Custom currencies with decimals"
+			items="{path: '/customCurrencyDataModel'}">
+			<CustomListItem>
+				<u:Currency stringValue="{price}" currency="{currency}" useSymbol="false"/>
+			</CustomListItem>
+		</List>
+		<List
+			id="listSixId"
+			headerText="Different currencies with maxPrecision 3"
+			items="{path: '/variousNumberDataModel'}">
+			<CustomListItem>
+				<u:Currency stringValue="{price}" currency="{currency}" useSymbol="false" maxPrecision="3"/>
+			</CustomListItem>
+		</List>
 	</l:Grid>
 </mvc:View>

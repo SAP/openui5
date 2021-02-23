@@ -93,7 +93,7 @@ sap.ui.define([
 				/**
 				 * Defines the space that is available for the precision of the various currencies.
 				 */
-				maxPrecision : {type : "int", group : "Appearance", defaultValue : 3},
+				maxPrecision : {type : "int", group : "Appearance"},
 
 				/**
 				 * Displays the currency symbol instead of the ISO currency code.
@@ -282,17 +282,21 @@ sap.ui.define([
 		 */
 		Currency.prototype.getFormattedValue = function() {
 			var sCurrency = this.getCurrency(),
-				iMaxPrecision,
 				iPadding,
 				iCurrencyDigits,
-				sFormattedCurrencyValue;
+				sFormattedCurrencyValue,
+				iMaxPrecision = this.getMaxPrecision(),
+				bMaxPrecisionValidValue = !iMaxPrecision && iMaxPrecision !== 0;
 
 			if (sCurrency === "*") {
 				return "";
 			}
 
 			iCurrencyDigits = this._oFormat.oLocaleData.getCurrencyDigits(sCurrency);
-			iMaxPrecision = this.getMaxPrecision();
+			if (bMaxPrecisionValidValue) {
+				iMaxPrecision = iCurrencyDigits;
+			}
+
 			// Should recalculate iMaxPrecision in order to fix an edge case where decimal precision is not removed
 			// Note: Take into account currencies that do not have decimal values. Example: JPY
 			iMaxPrecision = (iMaxPrecision <= 0 && iCurrencyDigits > 0 ? iMaxPrecision - 1 : iMaxPrecision);
