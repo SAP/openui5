@@ -4938,15 +4938,23 @@ sap.ui.define([
 
 		sinon.stub(TableUtils, "canUsePendingRequestsCounter").returns(true);
 		test(true, 1, true); // Data requested: Set busy state to true.
-		test(true, 2, true); // // Data requested: Keep busy state.
+		test(true, 2, true); // Data requested: Keep busy state.
 		test(false, 1, true); // Data received: Keep busy state.
-		test(false, 0, false); // // Data received: Set busy state to false.
+		test(false, 0, false); // Data received: Set busy state to false.
 
 		TableUtils.canUsePendingRequestsCounter.returns(false);
 		test(true, true, true); // Data requested: Set busy state to true.
-		test(true, true, true); // // Data requested: Keep busy state.
+		test(true, true, true); // Data requested: Keep busy state.
 		test(false, false, false); // Data received: Set busy state to false.
-		test(false, false, false); // // Data requested: Keep busy state.
+		test(false, false, false); // Data received: Keep busy state.
+
+		// Handling of a "dataRequested" event after multiple "dataReceived" events if the pending requests counter cannot be used.
+		oTable._onBindingDataReceived.call(oTable, oEvent);
+		oTable._onBindingDataReceived.call(oTable, oEvent);
+		oTable._onBindingDataRequested.call(oTable, oEvent);
+		clock.tick(1);
+		sap.ui.getCore().applyChanges();
+		assert.strictEqual(oTable.getBusy(), true, "The busy state of the table is: true");
 
 		// Cleanup
 		oTable.detachEvent("busyStateChanged", onBusyStateChangedEventHandler);

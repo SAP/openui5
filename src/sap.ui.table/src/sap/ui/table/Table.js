@@ -1034,16 +1034,11 @@ sap.ui.define([
 	Table.prototype.exit = function() {
 		this.invalidateRowsAggregation();
 		this._detachExtensions();
-
-		if (this._dataReceivedHandlerId) {
-			clearTimeout(this._dataReceivedHandlerId);
-			delete this._dataReceivedHandlerId;
-		}
 		this._cleanUpTimers();
 		this._detachEvents();
-
 		TableUtils.Menu.cleanupDefaultContentCellContextMenu(this);
-
+		clearTimeout(this._dataReceivedHandlerId);
+		delete this._dataReceivedHandlerId;
 		delete this._aTableHeaders;
 	};
 
@@ -4022,10 +4017,8 @@ sap.ui.define([
 			this.setBusy(true);
 		}
 
-		if (this._dataReceivedHandlerId != null) {
-			clearTimeout(this._dataReceivedHandlerId);
-			delete this._dataReceivedHandlerId;
-		}
+		clearTimeout(this._dataReceivedHandlerId);
+		delete this._dataReceivedHandlerId;
 	};
 
 	/**
@@ -4048,6 +4041,7 @@ sap.ui.define([
 		if (!TableUtils.hasPendingRequests(this)) {
 			// This timer should avoid flickering of the busy indicator and unnecessary updates of NoData in case a request will be sent
 			// (dataRequested) immediately after the last response was received (dataReceived).
+			clearTimeout(this._dataReceivedHandlerId);
 			this._dataReceivedHandlerId = setTimeout(function() {
 				if (this.getEnableBusyIndicator()) {
 					this.setBusy(false);
