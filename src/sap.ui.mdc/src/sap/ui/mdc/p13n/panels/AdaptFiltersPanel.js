@@ -64,17 +64,14 @@ sap.ui.define([
     AdaptFiltersPanel.prototype.applySettings = function(mSettings) {
 
         this.addView(new ContainerItem({
-            key: this.GROUP_KEY,
-            content: new GroupView(this.getId() + "-groupView", {})
-        }));
-
-        this.addView(new ContainerItem({
             key: this.LIST_KEY,
             content: new ListView(this.getId() + "-listView")
         }));
 
-        var oURLParams = new SAPUriParameters(window.location.search);
-        this.setDefaultView(oURLParams.getAll("sap-ui-xx-newFilterDefault")[0] === "true" ? this.LIST_KEY : this.GROUP_KEY);
+        this.addView(new ContainerItem({
+            key: this.GROUP_KEY,
+            content: new GroupView(this.getId() + "-groupView", {})
+        }));
 
         Container.prototype.applySettings.apply(this, arguments);
 
