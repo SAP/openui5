@@ -423,7 +423,7 @@ sap.ui.define([
 
 	};
 
-	ListFieldHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName) {
+	ListFieldHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName, vParsedValue, bKeyAndDescription) {
 
 		if (vValue === null || vValue === undefined) {
 			return null;
@@ -437,7 +437,11 @@ sap.ui.define([
 
 		for (i = 0; i < aItems.length; i++) {
 			oItem = aItems[i];
-			if (bKey) {
+			if (bKeyAndDescription) {
+				if (_getKey.call(this, oItem) === vParsedValue || oItem.getText() === vValue) {
+					return {key: _getKey.call(this, oItem), description: oItem.getText()};
+				}
+			} else if (bKey) {
 				if (_getKey.call(this, oItem) === vValue) {
 					return oItem.getText();
 				}
@@ -451,7 +455,7 @@ sap.ui.define([
 			return null;
 		}
 
-		if (!bKey && this.getUseFirstMatch()) {
+		if ((!bKey || bKeyAndDescription) && this.getUseFirstMatch()) {
 			for (i = 0; i < aItems.length; i++) {
 				oItem = aItems[i];
 				var sText = oItem.getText();
@@ -462,7 +466,7 @@ sap.ui.define([
 		}
 
 		var sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [vValue]);
-		if (bKey) {
+		if (bKey && !bKeyAndDescription) {
 			throw new FormatException(sError);
 		} else {
 			throw new ParseException(sError);

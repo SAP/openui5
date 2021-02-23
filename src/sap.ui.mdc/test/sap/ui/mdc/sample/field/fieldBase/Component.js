@@ -14,8 +14,9 @@ sap.ui.define([
 	'sap/ui/core/UIComponent',
 	'sap/ui/model/odata/v2/ODataModel',
 	'sap/ui/core/util/MockServer',
-	'sap/ui/mdc/field/ConditionsType' // as used in XML view
-], function(jQuery, View, ViewType, UIComponent, ODataModel, MockServer, ConditionsType) {
+	'sap/ui/mdc/field/ConditionsType', // as used in XML view
+	'sap/ui/model/odata/ODataUtils'
+], function(jQuery, View, ViewType, UIComponent, ODataModel, MockServer, ConditionsType, ODataUtils) {
 	"use strict";
 
 	var Component = UIComponent.extend("sap.ui.mdc.sample.field.fieldBase.Component", {
@@ -52,6 +53,12 @@ sap.ui.define([
 			var oModel = new ODataModel(sMockServerUrl, {defaultBindingMode: "TwoWay"});
 
 			this.setModel(oModel);
+
+			// as Mockserver don't support case insensitive filtering disable it
+			var fnCreateFilterSegment = ODataUtils._createFilterSegment;
+			ODataUtils._createFilterSegment =  function(sPath, oMetadata, oEntityType, sOperator, oValue1, oValue2, bCaseSensitive) {
+				return fnCreateFilterSegment.apply(this, [sPath, oMetadata, oEntityType, sOperator, oValue1, oValue2, true]);
+			};
 
 			UIComponent.prototype.init.apply(this, arguments);
 		},

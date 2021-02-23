@@ -162,7 +162,6 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.dispose = function(bSuggestion) {
-		return this;
 	};
 
 	FieldValueHelpContentWrapperBase.prototype.setSelectedItems = function(aSelectedItems) {
@@ -270,6 +269,7 @@ sap.ui.define([
 	 * @param {sap.ui.model.Filter} oInParameters In parameters for the key (as a key must not be unique.)
 	 * @param {sap.ui.model.Filter} oOutParameters Out parameters for the key (as a key must not be unique.)
 	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
+	 * @param {boolean} bCaseSensitive If <code>true</code> the filtering is done case sensitive
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.FormatException} if entry is not found or not unique
 	 *
@@ -277,7 +277,7 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FieldValueHelpContentWrapperBase.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, bNoRequest) {
+	FieldValueHelpContentWrapperBase.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, bNoRequest, bCaseSensitive) {
 
 		return "";
 
@@ -291,6 +291,7 @@ sap.ui.define([
 	 * @param {string} sText Description
 	 * @param {sap.ui.model.Filter} oInParameters In parameters for the key (as a key must not be unique.)
 	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
+	 * @param {boolean} bCaseSensitive If <code>true</code> the filtering is done case sensitive
 	 * @returns {any|sap.ui.mdc.field.FieldHelpItem|Promise} Key for description or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
 	 * @throws {sap.ui.model.ParseException} if entry is not found or not unique
 	 *
@@ -298,7 +299,30 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
-	FieldValueHelpContentWrapperBase.prototype.getKeyForText = function(sText, oInParameters, bNoRequest) {
+	FieldValueHelpContentWrapperBase.prototype.getKeyForText = function(sText, oInParameters, bNoRequest, bCaseSensitive) {
+
+		return undefined;
+
+	};
+
+	/**
+	 * Determines the key for an given description.
+	 *
+	 * As the description might change (uppercase), an object with key and description can be returned.
+	 *
+	 * @param {any} vKey parsed value used for key determination
+	 * @param {string} sText Description
+	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.)
+	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
+	 * @param {boolean} bCaseSensitive If <code>true</code> the filtering is done case sensitive
+	 * @returns {sap.ui.mdc.field.FieldHelpItem|Promise<sap.ui.mdc.field.FieldHelpItem>} Object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
+	 *
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 * @since 1.88.0
+	 */
+	FieldValueHelpContentWrapperBase.prototype.getKeyAndText = function(vKey, sText, oInParameters, oOutParameters, bCaseSensitive) {
 
 		return undefined;
 
