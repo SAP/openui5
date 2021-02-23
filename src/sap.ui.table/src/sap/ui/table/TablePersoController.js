@@ -434,7 +434,7 @@ sap.ui.define([
 							}
 						}
 					});
-					that._oDialog._oDialog.removeStyleClass("sapUiPopupWithPadding"); // otherwise height calculation doesn't work properly!
+					that._oDialog._oDialog.addStyleClass("sapUiNoContentPadding"); // otherwise height calculation doesn't work properly!
 
 					_open();
 				});
