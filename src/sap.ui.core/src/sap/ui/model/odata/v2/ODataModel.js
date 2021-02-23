@@ -2764,34 +2764,56 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the JSON object for an entity with the given <code>sPath</code> and optional <code>oContext</code>.
+	 * Returns a JSON object that is a copy of the entity data referenced by the given
+	 * <code>sPath</code> and <code>oContext</code>. It does not load any data and may not return
+	 * all requested data if it is not available.
 	 *
-	 * With the <code>mParameters.select</code> parameter it is possible to specify comma-separated property or navigation property
-	 * names which should be included in the result object. This works like the OData <code>$select</code> parameter.
-	 * With the <code>mParameters.expand</code> parameter it is possible to specify comma-separated navigation property names
-	 * which should be included inline in the result object. This works like the OData <code>$expand</code> parameter.
+	 * With the <code>mParameters.select</code> parameter it is possible to specify comma-separated
+	 * property or navigation property names which should be included in the result object. This
+	 * works like the OData <code>$select</code> URL parameter. With the
+	 * <code>mParameters.expand</code> parameter it is possible to specify comma-separated
+	 * navigation property names which should be included inline in the result object. This works
+	 * like the OData <code>$expand</code> parameter.
 	 *
-	 * This method will return a copy and not a reference of the entity. It does not load any data and may not return all requested
-	 * data if it is not available/loaded. If select entries are contained in the parameters and not all selected properties are
-	 * available, this method will return <code>undefined</code> instead of incomplete data. If no select entries are defined,
-	 * all properties available on the client will be returned.
+	 * <b>Note:</b> <code>mParameters.expand</code> can only be used if the corresponding navigation
+	 * properties have been read via {@link sap.ui.model.odata.v2.ODataModel#read} using the OData
+	 * <code>$expand</code> URL parameter. If a navigation property has not been read via the OData
+	 * <code>$expand</code> URL parameter, it is left out in the result. Keep in mind that
+	 * navigation properties referencing a collection are usually not loaded via the OData
+	 * <code>$expand</code> URL parameter but directly via its navigation property.
+	 *
+	 * <b>Note:</b> If <code>mParameters.select</code> is not specified, the returned object may
+	 * contain model-internal attributes. This may lead to problems when submitting this data to the
+	 * service for an update or create operation. To get a copy of the entity without internal
+	 * attributes, use <code>{select: "*"}</code> instead.
+	 *
+	 * <b>Note:</b> If <code>mParameters.select</code> is given and not all selected properties are
+	 * available, this method returns <code>undefined</code> instead of incomplete data. If
+	 * <code>mParameters.select</code> is not given, all properties available on the client are
+	 * returned.
 	 *
 	 * Example:<br>
-	 * <code>{select: "Products/ProductName, Products", expand:"Products"}</code> will return no properties of the entity itself, but
-	 * only the ProductName property of the Products navigation property. If Products/ProductName has not been loaded before, so is not
-	 * available on the client, it will return <code>undefined</code>.
+	 * With <code>mParameters</code> given as
+	 * <code>{select: "Products/ProductName, Products", expand:"Products"}</code> no properties of
+	 * the entity itself are returned, but only the <code>ProductName</code> property of the
+	 * <code>Products</code> navigation property. If <code>Products/ProductName</code> has not been
+	 * loaded before, <code>undefined</code> is returned.
 	 *
-	 * Note:<br>
-	 * If <code>mParameters.select</code> is not specified, the returned object could contain model-internal attributes. This may lead to
-	 * problems when submitting this data to the service for an update/create operation.
-	 * To get a copy of the entity without containing such internal attributes, use <code>{select: "*"}</code> instead.
 	 *
-	 * @param {string} sPath Path referencing the object
-	 * @param {object} [oContext] Context the path should be resolved with, in case it is relative
-	 * @param {object} [mParameters] Map of parameters
-	 * @param {string} [mParameters.select] Comma-separated list of properties/paths to select
-	 * @param {string} [mParameters.expand] Comma-separated list of navigation properties/paths to expand
-	 * @returns {any} The value for the given path/context or <code>undefined</code> if data or entity type could not be found or was incomplete
+	 * @param {string} sPath
+	 *   The path referencing the object
+	 * @param {sap.ui.model.Context} [oContext]
+	 *   The optional context which is used with the <code>sPath</code> to reference the object.
+	 * @param {object} [mParameters]
+	 *   Map of parameters
+	 * @param {string} [mParameters.select]
+	 *   Comma-separated list of properties or paths to properties to select
+	 * @param {string} [mParameters.expand]
+	 *   Comma-separated list of navigation properties or paths to navigation properties to expand
+	 * @returns {any}
+	 *   The value for the given path and context or <code>undefined</code> if data or entity type
+	 *   cannot be found or if not all selected properties are available
+	 *
 	 * @public
 	 */
 	ODataModel.prototype.getObject = function(sPath, oContext, mParameters) {
