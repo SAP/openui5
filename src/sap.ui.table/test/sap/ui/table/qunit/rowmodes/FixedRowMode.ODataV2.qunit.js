@@ -13,35 +13,27 @@ sap.ui.define([
 			this.oDataModel = TableQUnitUtils.createODataModel();
 			this.oGetContextsSpy = sinon.spy(ODataListBinding.prototype, "getContexts");
 
+			TableQUnitUtils.setDefaultSettings({
+				rowMode: new FixedRowMode(),
+				rows: {path : "/Products"},
+				models: this.oDataModel
+			});
+
 			return this.oDataModel.metadataLoaded();
 		},
 		beforeEach: function() {
 			this.oGetContextsSpy.reset();
 		},
-		afterEach: function() {
-			if (this.oTable) {
-				this.oTable.destroy();
-			}
-		},
 		after: function() {
 			this.oMockServer.destroy();
 			this.oDataModel.destroy();
 			this.oGetContextsSpy.restore();
-		},
-		createTable: function(oModel, bVariableRowHeightEnabled) {
-			this.oTable = TableQUnitUtils.createTable({
-				rowMode: new FixedRowMode(),
-				rows: {path : "/Products"},
-				models: oModel ? oModel : this.oDataModel,
-				_bVariableRowHeightEnabled: bVariableRowHeightEnabled
-			});
-
-			return this.oTable;
+			TableQUnitUtils.setDefaultSettings();
 		}
 	});
 
 	QUnit.test("Initialization if metadata not yet loaded", function(assert) {
-		var oTable = this.createTable(TableQUnitUtils.createODataModel(null, true));
+		var oTable = TableQUnitUtils.createTable({models: TableQUnitUtils.createODataModel(null, true)});
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
 						   .then(oTable.qunit.whenRenderingFinished);
@@ -50,11 +42,15 @@ sap.ui.define([
 		return pReady.then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the row count");
+			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Initialization if metadata not yet loaded; Variable row heights", function(assert) {
-		var oTable = this.createTable(TableQUnitUtils.createODataModel(null, true), true);
+		var oTable = TableQUnitUtils.createTable({
+			models: TableQUnitUtils.createODataModel(null, true),
+			_bVariableRowHeightEnabled: true
+		});
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
 						   .then(oTable.qunit.whenRenderingFinished);
@@ -63,11 +59,12 @@ sap.ui.define([
 		return pReady.then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100), "All calls to Binding#getContexts consider the row count");
+			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Initialization if metadata already loaded", function(assert) {
-		var oTable = this.createTable();
+		var oTable = TableQUnitUtils.createTable();
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
 						   .then(oTable.qunit.whenRenderingFinished);
@@ -76,11 +73,12 @@ sap.ui.define([
 		return pReady.then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the row count");
+			oTable.destroy();
 		});
 	});
 
 	QUnit.skip("Initialization if metadata already loaded; Variable row heights", function(assert) {
-		var oTable = this.createTable(null, true);
+		var oTable = TableQUnitUtils.createTable({_bVariableRowHeightEnabled: true});
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
 						   .then(oTable.qunit.whenRenderingFinished);
@@ -89,11 +87,12 @@ sap.ui.define([
 		return pReady.then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
 			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100), "All calls to Binding#getContexts consider the row count");
+			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Refresh", function(assert) {
-		var oTable = this.createTable();
+		var oTable = TableQUnitUtils.createTable();
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
 						   .then(oTable.qunit.whenRenderingFinished)
@@ -109,11 +108,12 @@ sap.ui.define([
 				"The first call to Binding#getContexts considers the row count");
 			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 10, 100),
 				"The second call to Binding#getContexts considers the row count");
+			oTable.destroy();
 		});
 	});
 
 	QUnit.test("Refresh; Variable row heights", function(assert) {
-		var oTable = this.createTable(null, true);
+		var oTable = TableQUnitUtils.createTable({_bVariableRowHeightEnabled: true});
 		var oGetContextsSpy = this.oGetContextsSpy;
 		var pReady = oTable.qunit.whenBindingChange()
 						   .then(oTable.qunit.whenRenderingFinished)
@@ -129,6 +129,7 @@ sap.ui.define([
 				"The first call to Binding#getContexts considers the row count");
 			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 11, 100),
 				"The second call to Binding#getContexts considers the row count");
+			oTable.destroy();
 		});
 	});
 });
