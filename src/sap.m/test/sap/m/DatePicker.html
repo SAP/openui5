@@ -138,6 +138,12 @@
 				new sap.m.ToggleButton("TB1", { text: "specialDates", press: toggleSpecialDates}),
 				new sap.m.Label({text: "DatePicker with given DateValue and Formatter", labelFor: "DP3", width: "100%"}),
 				new sap.m.DatePicker("DP3", { dateValue: new Date("2014", "02", "26"), displayFormat: "short", change: handleChange }),
+				new sap.m.Label({text: "DatePicker for month and year in compact mode:", labelFor: "DP14"}),
+				new sap.m.DatePicker("DP14", {
+					dateValue: new Date("2014", "02", "26"),
+					displayFormat: "yyyy+++++MM",
+					change: handleChange
+				}).addStyleClass("sapUiSizeCompact"),
 				new sap.m.Label({text: "readonly DatePicker with given DateValue and Formatter", labelFor: "DP4"}),
 				new sap.m.DatePicker("DP4", { dateValue: new Date("2014", "02", "26"), displayFormat: "yyyy-MM-dd", editable: false, change: handleChange }),
 				new sap.m.Label({text: "disabled DatePicker with given DateValue and Formatter", labelFor: "DP5"}),
@@ -215,13 +221,7 @@
 					dateValue: new Date("2014", "02", "26"),
 					displayFormat: "----------------yyyyyyyyyy------------",
 					change: handleChange
-				}),
-				new sap.m.Label({text: "DatePicker for month and year in compact mode:", labelFor: "DP14"}),
-				new sap.m.DatePicker("DP14", {
-					dateValue: new Date("2014", "02", "26"),
-					displayFormat: "yyyy+++++MM",
-					change: handleChange
-				}).addStyleClass("sapUiSizeCompact")
+				})
 			],
 			footer: createFooter()
 		});
