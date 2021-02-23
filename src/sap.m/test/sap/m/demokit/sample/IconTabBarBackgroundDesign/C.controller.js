@@ -1,33 +1,22 @@
 sap.ui.define([
 	"sap/ui/core/mvc/Controller",
-	"sap/ui/core/Core",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/Filter",
-	"sap/m/BackgroundDesign"
-], function (Controller, Core, JSONModel, Filter, BackgroundDesign) {
+	"sap/m/BackgroundDesign",
+	"sap/m/sample/IconTabBarBackgroundDesign/model/formatter"
+], function (Controller, JSONModel, Filter, BackgroundDesign, formatter) {
 	"use strict";
 
 	return Controller.extend("sap.m.sample.IconTabBarBackgroundDesign.C", {
+		formatter: formatter,
 
 		onInit: function () {
 			var oModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 			this.getView().setModel(oModel);
-
-			// reuse table sample component
-			var oComp = Core.createComponent({
-				name: 'sap.m.sample.Table'
-			});
-			oComp.setModel(this.getView().getModel());
-			this._oTable = oComp.getTable();
-			this.byId("idIconTabBar").addContent(this._oTable);
-
-			// update table
-			this._oTable.setHeaderText(null);
-			this._oTable.setShowSeparators("Inner");
 		},
 
 		onFilterSelect: function (oEvent) {
-			var oBinding = this._oTable.getBinding("items"),
+			var oBinding = this.byId("productsTable").getBinding("items"),
 				sKey = oEvent.getParameter("key"),
 				oFilter;
 

@@ -15,17 +15,15 @@
 			"libs": {
 				"sap.ui.core": {},
 				"sap.m": {}
-			},
-			"components": {
-				"sap.m.sample.Table": {}
 			}
 		},
 		"config": {
 			"sample": {
 				"files": [
-					"V.view.xml",
 					"C.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"V.view.xml",
+					"model/formatter.js"
 				]
 			}
 		}
