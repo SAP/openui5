@@ -30,6 +30,7 @@ sap.ui.define([
 			}
 
 			this.oBasePrototype = BaseType.prototype = {
+				_createInvalidUnitParseException : function () {},
 				formatValue : function () {},
 				parseValue : function () {},
 				getFormatOptions : function () {},
@@ -521,6 +522,19 @@ sap.ui.define([
 				oType.parseValue("12.1", "string", aCurrentValues);
 			}, new ParseException("EnterInt"));
 		});
+
+		aCurrentValues[1] = "foo";
+		oBaseUnitMock.expects("parseValue")
+			.withExactArgs("12.2", "string", sinon.match.same(aCurrentValues))
+			.on(oType)
+			.returns(["12.2", undefined]);
+		oBaseUnitMock.expects("_createInvalidUnitParseException").withExactArgs()
+			.returns(new ParseException("~invalidUnitParseException"));
+
+		// code under test: parse exception when unit is not in customizing
+		assert.throws(function () {
+			oType.parseValue("12.2", "string", aCurrentValues);
+		}, new ParseException("~invalidUnitParseException"));
 	});
 
 	//*********************************************************************************************

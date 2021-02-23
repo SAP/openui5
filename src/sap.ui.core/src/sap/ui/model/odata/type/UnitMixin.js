@@ -229,9 +229,11 @@ sap.ui.define([
 				aValues[0] = aValues[0].replace(rTrailingZeros, "").replace(rSeparator, "");
 			}
 			if (sUnit && this.mCustomUnits) {
+				if (!this.mCustomUnits[sUnit]) {
+					throw fnBaseType.prototype._createInvalidUnitParseException();
+				}
 				aMatches = rDecimals.exec(aValues[0]);
 				iFractionDigits = aMatches ? aMatches[1].length : 0;
-				// If the unit is not in mCustomUnits, the base class throws a ParseException.
 				iDecimals = this.mCustomUnits[sUnit].decimals;
 				if (iFractionDigits > iDecimals) {
 					throw new ParseException(iDecimals
