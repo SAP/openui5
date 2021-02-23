@@ -22,7 +22,8 @@ sap.ui.define([
 	"sap/m/VBox",
 	"sap/m/Text",
 	"sap/ui/mdc/p13n/subcontroller/ChartItemController",
-	"sap/ui/mdc/p13n/subcontroller/SortController"
+	"sap/ui/mdc/p13n/subcontroller/SortController",
+	'sap/ui/events/KeyCodes'
 ],
 	function (
 		Core,
@@ -44,7 +45,8 @@ sap.ui.define([
 		VBox,
 		Text,
 		ChartItemController,
-		SortController
+		SortController,
+		KeyCodes
 	) {
 		"use strict";
 
@@ -1728,6 +1730,25 @@ sap.ui.define([
 			} else {
 				if (this._vizTooltip) {
 					this._vizTooltip.destroy();
+				}
+			}
+		};
+
+		Chart.prototype.onkeydown = function(oEvent) {
+			if (oEvent.isMarked()) {
+				return;
+			}
+
+			if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.which === KeyCodes.COMMA) {
+				// CTRL (or Cmd) + COMMA key combination to open the table personalisation dialog
+				var oSettingsBtn =  Core.byId(this.getId() + "-chart_settings");
+				if (oSettingsBtn && oSettingsBtn.getEnabled() && oSettingsBtn.getVisible()) {
+					oSettingsBtn.firePress();
+
+					// Mark the event to ensure that parent handlers (e.g. FLP) can skip their processing if needed. Also prevent potential browser defaults
+					// (e.g. Cmd+, opens browser settings on Mac).
+					oEvent.setMarked();
+					oEvent.preventDefault();
 				}
 			}
 		};

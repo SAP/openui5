@@ -1587,6 +1587,20 @@ sap.ui.define([
 				oEvent.preventDefault();
 			}
 		}
+
+		if ((oEvent.metaKey || oEvent.ctrlKey) && oEvent.which === KeyCodes.COMMA) {
+			// CTRL (or Cmd) + COMMA key combination to open the table personalisation dialog
+			var oSettingsBtn =  Core.byId(this.getId() + "-settings");
+			if (oSettingsBtn && oSettingsBtn.getEnabled() && oSettingsBtn.getVisible()) {
+				oSettingsBtn.firePress();
+
+				// Mark the event to ensure that parent handlers (e.g. FLP) can skip their processing if needed. Also prevent potential browser defaults
+				// (e.g. Cmd+, opens browser settings on Mac).
+				oEvent.setMarked();
+				oEvent.preventDefault();
+			}
+		}
+
 	};
 
 	Table.prototype._createTable = function() {

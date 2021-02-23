@@ -9,8 +9,9 @@
 // ---------------------------------------------------------------------------------------
 // ---------------------------------------------------------------------------------------
 sap.ui.define([
-	"sap/m/OverflowToolbarButton", "sap/m/library", "sap/m/MenuButton", "sap/ui/core/library"
-], function(OverflowToolbarButton, MLibrary, MenuButton, CoreLibrary) {
+	"sap/m/OverflowToolbarButton", "sap/m/library", "sap/m/MenuButton", "sap/ui/core/library", 	"sap/ui/Device", "sap/ui/core/ShortcutHintsMixin"
+
+], function(OverflowToolbarButton, MLibrary, MenuButton, CoreLibrary, Device, ShortcutHintsMixin) {
 	"use strict";
 
 	var HasPopup = CoreLibrary.aria.HasPopup;
@@ -45,13 +46,23 @@ sap.ui.define([
 			if (!oRb) {
 				this._loadResourceBundle();
 			}
-			return this._createButton(sIdPrefix + "-settings", {
+			var oBtn = this._createButton(sIdPrefix + "-settings", {
 				icon: "sap-icon://action-settings",
 				text: oRb.getText("table.SETTINGS_COLUMN"),
 				press: aEventInfo,
 				tooltip: oRb.getText("table.SETTINGS_COLUMN"),
 				ariaHasPopup: HasPopup.Dialog
 			});
+
+
+			ShortcutHintsMixin.addConfig(oBtn, {
+					addAccessibilityLabel: true,
+					messageBundleKey: Device.os.macintosh ? "mdc.PERSONALIZATION_SHORTCUT_MAC" : "mdc.PERSONALIZATION_SHORTCUT" // Cmd+, or Ctrl+,
+				},
+				aEventInfo[1] // we need the table instance, otherwise the messageBundleKey does not find the resource bundle
+			);
+
+			return oBtn;
 		},
 		createFilterButton: function(sIdPrefix, aEventInfo) {
 			if (!oRb) {
@@ -109,6 +120,14 @@ sap.ui.define([
 					oMenuButton.setMenu(oMenu);
 				});
 			});
+
+			ShortcutHintsMixin.addConfig(oMenuButton._getButtonControl(), {
+					addAccessibilityLabel: true,
+					messageBundleKey: Device.os.macintosh ? "table.SHORTCUT_EXPORT_TO_EXCEL_MAC" : "table.SHORTCUT_EXPORT_TO_EXCEL" // Cmd+Shift+E or Ctrl+Shift+E
+				},
+				mEventInfo.exportAs[1]  // we need the table instance, otherwise the messageBundleKey does not find the resource bundle
+			);
+
 			return oMenuButton;
 		},
 		_createButton: function(sId, mSettings) {
