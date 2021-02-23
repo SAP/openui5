@@ -70,15 +70,15 @@ sap.ui.define([
 
         this.addView(new ContainerItem({
             key: this.LIST_KEY,
-            content: new ListView(this.getId() + "-listView", {
-                enableReorder: this.getEnableReorder()
-            })
+            content: new ListView(this.getId() + "-listView")
         }));
 
         var oURLParams = new SAPUriParameters(window.location.search);
         this.setDefaultView(oURLParams.getAll("sap-ui-xx-newFilterDefault")[0] === "true" ? this.LIST_KEY : this.GROUP_KEY);
 
         Container.prototype.applySettings.apply(this, arguments);
+
+        this.getView(this.LIST_KEY).getContent().setEnableReorder(this.getEnableReorder());
 
         var oQuickFilter = this._getQuickFilter();
         var oViewSwitch = this._getViewSwitch();
