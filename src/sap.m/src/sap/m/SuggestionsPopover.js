@@ -480,7 +480,7 @@ sap.ui.define([
 		}
 
 		this.fireEvent(SuggestionsPopover.M_EVENTS.SELECTION_CHANGE, {
-			previosItem: oPreviousFocusedItem,
+			previousItem: oPreviousFocusedItem,
 			newItem: oItem
 		});
 	};
