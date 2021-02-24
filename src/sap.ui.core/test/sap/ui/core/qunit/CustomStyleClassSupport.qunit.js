@@ -33,6 +33,16 @@ sap.ui.define([
 		}
 	});
 
+	var MySVGControl = Control.extend("my.lib.MySVGControl", {
+		renderer: {
+			apiVersion: 2,
+			render: function(rm, ctrl) {
+				rm.openStart("svg", ctrl).openEnd();
+				rm.close("svg");
+			}
+		}
+	});
+
 	QUnit.module("CustomStyleClassSupport", {
 		onThemeScopingChanged: function() {
 			var oDomRef = this.myControl.getDomRef();
@@ -401,4 +411,33 @@ sap.ui.define([
 
 	});
 
+	QUnit.module("Custom style Class Support on SVG nodes");
+
+	QUnit.test("add/remove style class to/from SVG element", function(assert) {
+		var oSVG = new MySVGControl(),
+			sStyleClass = "abc";
+
+		oSVG.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.ok(oSVG.getDomRef() instanceof SVGElement, "control is rendered as an SVG element");
+		assert.equal(oSVG.hasStyleClass(sStyleClass), false, "control should not have the class before it's added");
+		assert.equal(oSVG.$().hasClass(sStyleClass), false, "class should not be in HTML before it's added");
+
+		// act
+		oSVG.addStyleClass(sStyleClass);
+
+		// assert
+		assert.equal(oSVG.hasStyleClass(sStyleClass), true, "control should now have the class");
+		assert.equal(oSVG.$().hasClass(sStyleClass), true, "class should now be in HTML");
+
+
+		// act
+		oSVG.removeStyleClass(sStyleClass);
+
+		assert.equal(oSVG.hasStyleClass(sStyleClass), false, "control should not have the class after it's removed");
+		assert.equal(oSVG.$().hasClass(sStyleClass), false, "class should not be in HTML after it's removed");
+
+		oSVG.destroy();
+	});
 });
