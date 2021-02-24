@@ -440,9 +440,9 @@ sap.ui.define([
 			$bar : $bar,
 			// The content sizes for fast resize bound calculation
 			c1Size : mCalcSizes[iBar],
-			c1MinSize : oLd1 ? parseInt(oLd1.getMinSize()) : 0,
+			c1MinSize : oLd1.getMinSize(),
 			c2Size : mCalcSizes[iBar + 1],
-			c2MinSize : oLd2 ? parseInt(oLd2.getMinSize()) : 0
+			c2MinSize : oLd2.getMinSize()
 		};
 
 		// Event handlers use bound handler methods - see init()
@@ -595,8 +595,8 @@ sap.ui.define([
 
 		var iNewSize1 = this._move.c1Size + iPixels;
 		var iNewSize2 = this._move.c2Size - iPixels;
-		var iMinSize1 = parseInt(oLd1.getMinSize());
-		var iMinSize2 = parseInt(oLd2.getMinSize());
+		var iMinSize1 = oLd1.getMinSize();
+		var iMinSize2 = oLd2.getMinSize();
 
 		// Adhere to size constraints
 		var iDiff;
@@ -658,26 +658,26 @@ sap.ui.define([
 	 * been calculated.
 	 *
 	 * @param {sap.ui.core.Control[]} aContentAreas - The content areas of the Splitter
-	 * @returns {void}
 	 * @private
 	 */
 	Splitter.prototype._resizeBars = function(aContentAreas) {
-		var i, $Bar;
+		var i, $Bar,
+			iSizeNot = this._bHorizontal ? this.$().innerHeight() : this.$().innerWidth();
+
 		// In case the Splitter has a relative height or width set (like "100%"), and the surrounding
 		// container does not have a size set, the content of the Splitter defines the height/width,
 		// in which case the size of the splitter bars is incorrect.
-		var $this = this.$();
 		// First remove the size from the splitter bar so it does not lead to growing the content
 		for (i = 0; i < aContentAreas.length - 1; ++i) {
 			$Bar = this.$("splitbar-" + i);
 			$Bar.css(this._sizeTypeNot, "");
 		}
+
 		// Now measure the content and adapt the size of the Splitter bar
 		for (i = 0; i < aContentAreas.length - 1; ++i) {
 			$Bar = this.$("splitbar-" + i);
-			var iSize = this._bHorizontal ? $this.height() : $this.width();
 			$Bar.css(this._sizeType, "");
-			$Bar.css(this._sizeTypeNot, iSize + "px");
+			$Bar.css(this._sizeTypeNot, iSizeNot + "px");
 		}
 	};
 
@@ -749,100 +749,75 @@ sap.ui.define([
 		}
 	};
 
+	Splitter.prototype._getTotalSize = function () {
+		return this._bHorizontal ? this.$().innerWidth() : this.$().innerHeight();
+	};
+
+	Splitter.prototype._calcAvailableContentSize = function () {
+		return this._getTotalSize() - this._calcBarsSize();
+	};
+
 	/**
-	 * Calculates how much space is actually available inside the splitter to distribute the content
-	 * areas in.
-	 *
-	 * @param {string[]} [aSizes] The list of size values from the LayoutData of the content areas
-	 * @returns {Number} The available space in px
+	 * @returns {int} Sum of the widths of all bars in px
 	 * @private
 	 */
-	Splitter.prototype._calculateAvailableContentSize = function(aSizes) {
-		var i = 0;
-		var $Splitter = this.$();
-		var iFullSize      = this._bHorizontal ? $Splitter.innerWidth() : $Splitter.innerHeight();
-		// Due to rounding errors when zoom is activated, we need 1px of error margin for every element
-		// that is automatically sized...
-		var iAutosizedAreas = 0;
-		var bHasAutoSizedContent = false;
-		for (i = 0; i < aSizes.length; ++i) {
-			var sSize = aSizes[i];
-			if (sSize.indexOf("%") > -1) {
-				iAutosizedAreas++;
-			}
-			if (aSizes[i] == "auto") {
-				bHasAutoSizedContent = true;
-			}
-		}
-		iAutosizedAreas += bHasAutoSizedContent ? 1 : 0;
-
-		// don't subtract from the full size when orientation is Vertical to prevent endless resizing
-		if (this.getOrientation() === Orientation.Horizontal) {
-			iFullSize -= iAutosizedAreas;
-		}
+	Splitter.prototype._calcBarsSize = function () {
+		var iSplitBarsWidth = 0,
+			iBarsCount = this._getContentAreas().length - 1;
 
 		// Due to zoom rounding erros, we cannot assume that all SplitBars have the same sizes, even
 		// though they have the same CSS size set.
-		var iSplitters     = aSizes.length - 1;
-		var iSplitBarsWidth = 0;
-		for (i = 0; i < iSplitters; ++i) {
+		for (var i = 0; i < iBarsCount; i++) {
 			iSplitBarsWidth += this._bHorizontal
 				? this.$("splitbar-" + i).outerWidth()
 				: this.$("splitbar-" + i).outerHeight();
 		}
 
-		return Math.max(0, iFullSize - iSplitBarsWidth);
+		return iSplitBarsWidth;
 	};
 
 	/**
 	 * Recalculates the content sizes in three steps:
 	 *  1. Searches for all absolute values ("px") and deducts them from the available space.
-	 *  2. Searches for all percent values and interprets them as % of the available space after step 1
+	 *  2. Searches for all percent values and interprets them as % of the available space
 	 *  3. Divides the rest of the space uniformly between all contents with "auto" size values
 	 *
 	 * @private
 	 */
-	Splitter.prototype._recalculateSizes = function() {
-		var i, sSize, oLayoutData, iColSize, idx;
-
-		// Read all content sizes from the layout data
+	Splitter.prototype._recalculateSizes = function () {
+		var i, iAreaSize, idx, iMinSize;
 		var aSizes = [];
 		var aContentAreas = this._getContentAreas();
-		for (i = 0; i < aContentAreas.length; ++i) {
-			oLayoutData = aContentAreas[i].getLayoutData();
-			sSize = oLayoutData ? oLayoutData.getSize() : "auto";
-
-			aSizes.push(sSize);
-		}
+		var iRemainingSize = this._calcAvailableContentSize();
+		var aAutosizeIdx = [];
+		var aAutoMinsizeIdx = [];
+		var aPercentSizeIdx = [];
 
 		this._calculatedSizes = [];
 
-		var iAvailableSize = this._calculateAvailableContentSize(aSizes);
+		// Read all content sizes from the layout data
+		for (i = 0; i < aContentAreas.length; ++i) {
+			aSizes.push(aContentAreas[i].getLayoutData().getSize());
+		}
 
-		var aAutosizeIdx = [];
-		var aAutoMinsizeIdx = [];
-		var aPercentsizeIdx = [];
-		var iRest = iAvailableSize;
-
-		// Remove fixed sizes from available size
+		// Step 1: Subtract fixed sizes from available size
 		for (i = 0; i < aSizes.length; ++i) {
-			sSize = aSizes[i];
+			var sSize = aSizes[i];
 			var iSize;
 
 			if (sSize.indexOf("rem") > -1) {
 				iSize = parseFloat(sSize) * iRemAsPixels;
-				iRest -= iSize;
+				iRemainingSize -= iSize;
 				this._calculatedSizes[i] = iSize;
 			} else if (sSize.indexOf("px") > -1) {
 				// Pixel based Value - deduct it from available size
 				iSize = parseInt(sSize);
-				iRest -= iSize;
+				iRemainingSize -= iSize;
 				this._calculatedSizes[i] = iSize;
 			} else if (sSize.indexOf("%") > -1) {
-				aPercentsizeIdx.push(i);
-			} else if (aSizes[i] == "auto") {
-				oLayoutData = aContentAreas[i].getLayoutData();
-				if (oLayoutData && parseInt(oLayoutData.getMinSize()) != 0) {
+				aPercentSizeIdx.push(i);
+			} else if (sSize === "auto") {
+				if (aContentAreas[i].getLayoutData().getMinSize() !== 0) {
 					aAutoMinsizeIdx.push(i);
 				} else {
 					aAutosizeIdx.push(i);
@@ -854,66 +829,87 @@ sap.ui.define([
 
 		var bWarnSize = false; // Warn about sizes being too big for the available space
 
-		// If more than the available size if assigned to fixed width content, the rest will get no
-		// space at all
-		if (iRest < 0) { bWarnSize = true; iRest = 0; }
-
-		// Now calculate % of the available space
-		var iPercentSizes = aPercentsizeIdx.length;
-		for (i = 0; i < iPercentSizes; ++i) {
-			idx = aPercentsizeIdx[i];
-			// Percent based Value - deduct it from available size
-			iColSize = Math.floor((parseFloat(aSizes[idx]) / 100) * iAvailableSize);
-			this._calculatedSizes[idx] = iColSize;
-			iRest -= iColSize;
+		// If more than the available size is assigned to fixed width content, the rest will get no space at all
+		if (iRemainingSize < 0) {
+			bWarnSize = true;
+			iRemainingSize = 0;
 		}
-		iAvailableSize = iRest;
 
-		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
+		// Step 2: Calculate % of the total space
+		iRemainingSize = this._calcPercentBasedSizes(aPercentSizeIdx, iRemainingSize);
 
-		// Calculate auto sizes
-		iColSize = Math.floor(iAvailableSize / (aAutoMinsizeIdx.length + aAutosizeIdx.length), 0);
+		if (iRemainingSize < 0) {
+			bWarnSize = true;
+			iRemainingSize = 0;
+		}
+
+		// Step 3: Calculate auto sizes
+		var iAutoSize = Math.floor(iRemainingSize / (aAutoMinsizeIdx.length + aAutosizeIdx.length), 0);
 
 		// First calculate auto-sizes with a minSize constraint
-		var iAutoMinSizes = aAutoMinsizeIdx.length;
-		for (i = 0; i < iAutoMinSizes; ++i) {
+		for (i = 0; i < aAutoMinsizeIdx.length; ++i) {
+			iAreaSize = iAutoSize;
 			idx = aAutoMinsizeIdx[i];
-			var iMinSize = parseInt(aContentAreas[idx].getLayoutData().getMinSize());
-			if (iMinSize > iColSize) {
-				this._calculatedSizes[idx] = iMinSize;
-				iAvailableSize -= iMinSize;
-			} else {
-				this._calculatedSizes[idx] = iColSize;
-				iAvailableSize -= iColSize;
+			iMinSize = aContentAreas[idx].getLayoutData().getMinSize();
+
+			if (iAreaSize > iRemainingSize) {
+				iAreaSize = iRemainingSize;
 			}
+
+			if (iAreaSize < iMinSize) {
+				iAreaSize = iMinSize;
+			}
+
+			this._calculatedSizes[idx] = iAreaSize;
+			iRemainingSize -= iAreaSize;
 		}
 
-		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
+		if (iRemainingSize < 0) {
+			bWarnSize = true;
+			iRemainingSize = 0;
+		}
 
 		// Now calculate "auto"-sizes
-		iRest = iAvailableSize;
 		var iAutoSizes = aAutosizeIdx.length;
-		iColSize = Math.floor(iAvailableSize / iAutoSizes, 0);
+		iAutoSize = Math.floor(iRemainingSize / iAutoSizes, 0);
 		for (i = 0; i < iAutoSizes; ++i) {
 			idx = aAutosizeIdx[i];
-			this._calculatedSizes[idx] = iColSize;
-			iRest -= iColSize;
-	//			if (i == iAutoSizes - 1 && iRest != 0) {
-	//				// In case of rounding errors, change the last auto-size column
-	//				this._calculatedSizes[idx] += iRest;
-	//			}
+			this._calculatedSizes[idx] = iAutoSize;
+			iRemainingSize -= iAutoSize;
 		}
 
 		if (bWarnSize) {
-			// TODO: Decide if the warning should be kept - might spam the console but on the other
-			//       hand it might make analyzing of splitter bugs easier, since we can just ask
-			//       developers if there was a [Splitter] output on the console if the splitter looks
-			//       weird in their application.
-			Log.info(
-				"[Splitter] The set sizes and minimal sizes of the splitter contents are bigger " +
-				"than the available space in the UI."
-			);
+			this._logConstraintsViolated();
 		}
+	};
+
+	Splitter.prototype._calcPercentBasedSizes = function (aPercentSizeIdx, iRemainingSize) {
+		var aContentAreas = this._getContentAreas(),
+			iAvailableContentSize = this._calcAvailableContentSize();
+
+		for (var i = 0; i < aPercentSizeIdx.length; ++i) {
+			var idx = aPercentSizeIdx[i];
+			// Percent based value - deduct it from available size
+			var iAreaSize = parseFloat(aContentAreas[idx].getLayoutData().getSize()) / 100 * iAvailableContentSize;
+			var iMinSize = aContentAreas[idx].getLayoutData().getMinSize();
+
+			if (iAreaSize < iMinSize) {
+				iAreaSize = iMinSize;
+			}
+
+			this._calculatedSizes[idx] = iAreaSize;
+			iRemainingSize -= iAreaSize;
+		}
+
+		return iRemainingSize;
+	};
+
+	Splitter.prototype._logConstraintsViolated = function () {
+		Log.warning(
+			"The set sizes and minimal sizes of the splitter contents are bigger than the available space in the UI.",
+			null,
+			"sap.ui.layout.Splitter"
+		);
 	};
 
 	/**

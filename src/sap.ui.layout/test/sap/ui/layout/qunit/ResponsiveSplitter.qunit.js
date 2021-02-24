@@ -1,5 +1,6 @@
-/*global QUnit sinon */
+/*global QUnit, sinon */
 sap.ui.define([
+	'sap/base/Log',
 	"sap/ui/qunit/QUnitUtils",
 	'jquery.sap.global',
 	'sap/ui/layout/SplitPane',
@@ -10,8 +11,9 @@ sap.ui.define([
 	'sap/m/Text',
 	'sap/m/ScrollContainer',
 	'sap/ui/core/HTML'
-], function(
-	qutils,
+], function (
+	Log,
+	QunitUtils,
 	jQuery,
 	SplitPane,
 	PaneContainer,
@@ -220,7 +222,7 @@ sap.ui.define([
 
 		assert.strictEqual(jQuery(aPaginationButtons[0]).hasClass("sapUiResponsiveSplitterPaginatorSelectedButton"), true, "First button should have selected class");
 		assert.ok(!!this.oButton1.getDomRef(), "Button 1 sould have a dom ref");
-		sap.ui.test.qunit.triggerEvent("tap", aPaginationButtons[1]);
+		QunitUtils.triggerEvent("tap", aPaginationButtons[1]);
 
 		sap.ui.getCore().applyChanges();
 
@@ -252,7 +254,7 @@ sap.ui.define([
 		}, getButtonByIndex: function (iButtonindex) {
 			return this.oResponsiveSplitter._getVisibleButtons()[iButtonindex];
 		}, triggerKeyOnPaginator: function (iButtonindex, iKeyCode) {
-			sap.ui.test.qunit.triggerKeydown(this.getButtonByIndex(iButtonindex), iKeyCode);
+			QunitUtils.triggerKeydown(this.getButtonByIndex(iButtonindex), iKeyCode);
 			this.clock.tick(1);
 		}, afterEach: function () {
 			this.oScrollContainer.destroy();
@@ -273,35 +275,35 @@ sap.ui.define([
 	});
 
 	QUnit.test("Right arrow", function (assert) {
-		sap.ui.test.qunit.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_RIGHT);
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_RIGHT);
 		this.clock.tick(1);
 
 		assert.strictEqual(this.$FirstPane.width(), this.iFirstPaneInitialWidth + 20, "Splitter's width should be 20 pixels bigger");
 	});
 
 	QUnit.test("Left arrow", function (assert) {
-		sap.ui.test.qunit.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_LEFT);
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_LEFT);
 		this.clock.tick(1);
 
 		assert.strictEqual(this.$FirstPane.width(), this.iFirstPaneInitialWidth - 20, "Splitter's width should be 20 pixels less");
 	});
 
 	QUnit.test("Shift + Left arrow", function (assert) {
-		sap.ui.test.qunit.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_LEFT, true);
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_LEFT, true);
 		this.clock.tick(1);
 
 		assert.strictEqual(this.$FirstPane.width(), this.iFirstPaneInitialWidth - 1, "Splitter's width should be 1 pixel less");
 	});
 
 	QUnit.test("Shift + Right arrow", function (assert) {
-		sap.ui.test.qunit.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_RIGHT, true);
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.ARROW_RIGHT, true);
 		this.clock.tick(1);
 
 		assert.strictEqual(this.$FirstPane.width(), this.iFirstPaneInitialWidth + 1, "Splitter's width should be 1 pixel bigger");
 	});
 
 	QUnit.test("Home", function (assert) {
-		sap.ui.test.qunit.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.HOME);
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.HOME);
 		this.clock.tick(1);
 
 		assert.strictEqual(this.$FirstPane.width(), 0, "Splitter's width should be 0 pixels");
@@ -310,7 +312,7 @@ sap.ui.define([
 	QUnit.test("End", function (assert) {
 		var $SecondPane = jQuery(this.$ResponsiveSplitter.find(".sapUiLoSplitterContent")[1]);
 
-		sap.ui.test.qunit.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.END);
+		QunitUtils.triggerKeydown(this.oSplitterBarDOM, jQuery.sap.KeyCodes.END);
 		this.clock.tick(1);
 		assert.strictEqual($SecondPane.width(), 0, "Second Pane should have 0px width");
 	});
@@ -704,6 +706,91 @@ sap.ui.define([
 
 		// Clean up
 		oSplitter.destroy();
+	});
+
+	QUnit.module("Logging", {
+		beforeEach: function () {
+			this.oResponsiveSplitter = new ResponsiveSplitter();
+			this.oResponsiveSplitter.placeAt(DOM_RENDER_LOCATION);
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach: function () {
+			this.oResponsiveSplitter.destroy();
+		}
+	});
+
+	QUnit.test("There is warning when there is not enough space to fit the content", function (assert) {
+		// arrange
+		var oLogSpy = sinon.spy(Log, "warning");
+		this.oResponsiveSplitter.setWidth("300px");
+		this.oResponsiveSplitter.setRootPaneContainer(new PaneContainer({
+			panes: [
+				new SplitPane({
+					content: new Button(),
+					requiredParentWidth: 0, // don't let the pane paginate for the purpose of the test
+					layoutData: new SplitterLayoutData({
+						minSize: 200
+					})
+				}),
+				new SplitPane({
+					content: new Button(),
+					requiredParentWidth: 0, // don't let the pane paginate for the purpose of the test
+					layoutData: new SplitterLayoutData({
+						minSize: 100
+					})
+				})
+			]
+		}));
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(
+			oLogSpy.calledWith(
+				"The set sizes and minimal sizes of the splitter contents are bigger than the available space in the UI. " +
+				"Consider enabling the pagination mechanism by setting the 'requiredParentWidth' property of the panes"
+			),
+			"Warning is logged"
+		);
+
+		// clean up
+		oLogSpy.restore();
+	});
+
+	QUnit.test("There is NO warning when there is enough space to fit the content", function (assert) {
+		// arrange
+		var oLogSpy = sinon.spy(Log, "warning");
+		this.oResponsiveSplitter.setWidth("300px");
+		this.oResponsiveSplitter.setRootPaneContainer(new PaneContainer({
+			panes: [
+				new SplitPane({
+					content: new Button(),
+					requiredParentWidth: 0, // don't let the pane paginate for the purpose of the test
+					layoutData: new SplitterLayoutData({
+						minSize: 200
+					})
+				}),
+				new SplitPane({
+					content: new Button(),
+					requiredParentWidth: 0, // don't let the pane paginate for the purpose of the test
+					layoutData: new SplitterLayoutData({
+						minSize: 80
+					})
+				})
+			]
+		}));
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(
+			oLogSpy.calledWith(
+				"The set sizes and minimal sizes of the splitter contents are bigger than the available space in the UI. " +
+				"Consider enabling the pagination mechanism by setting the 'requiredParentWidth' property of the panes"
+			),
+			"Warning is not logged"
+		);
+
+		// clean up
+		oLogSpy.restore();
 	});
 
 });
