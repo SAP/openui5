@@ -320,6 +320,14 @@
 			"samples": ["sap.m.sample.ComparisonPattern"]
 		},
 		{
+			"id": "sap.m.CookieSettingsDialogPattern",
+			"name": "Cookie Settings Dialog Pattern",
+			"category": "Floorplans & Patterns",
+			"since": "1.88",
+			"formFactors": "-",
+			"samples": ["sap.m.sample.CookieSettingsDialogPattern"]
+		  },
+		{
 		  "id": "sap.m.CustomTreeItem",
 		  "name": "Custom Tree Item",
 		  "category": "List",
@@ -1842,6 +1850,11 @@
 			"id": "sap.m.sample.ComparisonPattern",
 			"name": "Comparison Pattern",
 			"description": "The pattern allows users to select multiple items from an sap.m.Table and display information about them in a structured way - all items are displayed next to each other for easy comparison, based on their specifics."
+		},
+		{
+			"id": "sap.m.sample.CookieSettingsDialogPattern",
+			"name": "Cookie Settings Dialog Pattern",
+			"description": "The Cookie Settings Dialog allows you to easily manage the cookie settings according to the needs of the specific product."
 		},
 		{
 		  "id": "sap.m.sample.NavContainer",
