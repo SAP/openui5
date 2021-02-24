@@ -341,7 +341,7 @@ sap.ui.define([
 	/**
 	 * Register a given router instance to this RouterHashChanger
 	 *
-	 * @param {sap.ui.core.routing.Router} The router that is going to be registered to the RouterHashChanger
+	 * @param {sap.ui.core.routing.Router} oRouter The router that is going to be registered to the RouterHashChanger
 	 * @returns {sap.ui.core.routing.RouterHashChanger} this RouterHashChanger to enable call chaining
 	 * @private
 	 * @ui5-restricted sap.ui.core
@@ -357,7 +357,7 @@ sap.ui.define([
 	/**
 	 * Deregister a given router instance from this RouterHashChanger
 	 *
-	 * @param {sap.ui.core.routing.Router} The router that is going to be removed from the RouterHashChanger
+	 * @param {sap.ui.core.routing.Router} oRouter The router that is going to be removed from the RouterHashChanger
 	 * @returns {sap.ui.core.routing.RouterHashChanger} this RouterHashChanger to enable call chaining
 	 * @private
 	 * @ui5-restricted sap.ui.core
@@ -372,6 +372,7 @@ sap.ui.define([
 				this.destroy();
 			}
 		}
+		return this;
 	};
 
 	RouterHashChanger.prototype.destroy = function() {
