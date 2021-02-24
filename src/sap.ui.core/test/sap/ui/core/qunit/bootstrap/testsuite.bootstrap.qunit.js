@@ -112,7 +112,8 @@ sap.ui.define(function() {
 				},
 				loader: {
 					paths: {
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/bootstrap/"
+						"sap/ui/test": "test-resources/sap/ui/core/qunit/bootstrap/",
+						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause"
 					}
 				}
 			},

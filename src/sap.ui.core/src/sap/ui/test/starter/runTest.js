@@ -202,7 +202,9 @@
 			QUnit.config.autostart = false;
 
 			// now load QUnit, its CSS + the reporter bridge
-			pQUnit = pAfterLoader.then(function() {
+			pQUnit = pAfterLoader.then(function () {
+				return requireP("sap/ui/test/qunitPause");
+			}).then(function() {
 				utils.addStylesheet(sQUnitCSS);
 				return requireP(sQUnitModule);
 			}).then(function() {

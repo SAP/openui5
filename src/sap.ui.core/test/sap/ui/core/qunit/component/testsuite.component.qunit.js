@@ -67,7 +67,8 @@ sap.ui.define(function() {
 						// internally, the fixtures use "sap.ui.test"
 						// ComponentSupport checks for the internal name, therefore it must use the right namespace
 						// Other tests only need successful loading, so the name doesn't matter
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"
+						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/",
+						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause"
 					}
 				},
 				coverage : {
@@ -110,7 +111,8 @@ sap.ui.define(function() {
 						// internally, the fixtures use "sap.ui.test"
 						// ComponentSupport checks for the internal name, therefore it must use the right namespace
 						// Other tests only need successful loading, so the name doesn't matter
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"
+						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/",
+						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause"
 					}
 				}
 			},
@@ -122,7 +124,8 @@ sap.ui.define(function() {
 						// internally, the fixtures use "sap.ui.test"
 						// ComponentSupport checks for the internal name, therefore it must use the right namespace
 						// Other tests only need successful loading, so the name doesn't matter
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"
+						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/",
+						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause"
 					}
 				}
 			},
@@ -137,7 +140,8 @@ sap.ui.define(function() {
 						// internally, the fixtures use "sap.ui.test"
 						// ComponentSupport checks for the internal name, therefore it must use the right namespace
 						// Other tests only need successful loading, so the name doesn't matter
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"
+						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/",
+						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause"
 					}
 				}
 			},

@@ -871,7 +871,12 @@ sap.ui.define([
 	function runManifestLoadingTests(sDescription, fnCreateConfig) {
 		QUnit.module("Component Metadata async loading of manifests: " + sDescription, {
 			beforeEach: function() {
-				sap.ui.loader.config({paths:{"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/"}});
+				sap.ui.loader.config({
+					paths: {
+						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata/",
+						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause"
+					}
+				});
 			},
 			afterEach: function() {
 				sap.ui.loader.config({paths:{"sap/ui/test": null}});
