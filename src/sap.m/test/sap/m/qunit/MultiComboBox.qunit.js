@@ -5734,6 +5734,73 @@ sap.ui.define([
 		assert.strictEqual(this.oMultiComboBox.getSelectedItems()[0].getText(), "Item1", "The first item should be selected");
 	});
 
+	QUnit.test("Properly destroy tokens only when allowed", function (assert) {
+		// arrange
+		var oToken, oTokenizer,oTokenSpy,
+			oCoreItem = new Item({text: "My Item"}),
+			oMultiComboBox = new MultiComboBox({
+				items: [oCoreItem],
+				selectedItems: [oCoreItem]
+			}).placeAt("MultiComboBox-content");
+		Core.applyChanges();
+
+		oTokenizer = oMultiComboBox.getAggregation("tokenizer");
+		oToken = oTokenizer.getTokens()[0];
+		oTokenSpy = this.spy(oToken, "destroy");
+
+		// Act
+		oMultiComboBox.setEditable(false);
+		oMultiComboBox._removeSelection([oToken]);
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
+		assert.deepEqual(oTokenizer.getTokens(), [oToken], "The tokenizer should remain untouched");
+
+		// // Act
+		oMultiComboBox.setEditable(true);
+		oMultiComboBox.setEnabled(false);
+		oMultiComboBox._removeSelection([oToken]);
+		Core.applyChanges();
+		//
+		// assert
+		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
+		assert.deepEqual(oTokenizer.getTokens(), [oToken], "The tokenizer should remain untouched");
+
+		// Act
+		oMultiComboBox.setEnabled(true);
+		oCoreItem.setEnabled(false);
+		oMultiComboBox._removeSelection([oToken]);
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
+		assert.deepEqual(oTokenizer.getTokens(), [oToken], "The tokenizer should remain untouched");
+
+		// Act
+		oCoreItem.setEnabled(true);
+		oToken.setEditable(false);
+		oMultiComboBox._removeSelection([oToken]);
+		Core.applyChanges();
+
+		// assert
+		assert.notOk(oTokenSpy.calledOnce, "Token destroyed is omitted");
+		assert.deepEqual(oTokenizer.getTokens(), [oToken], "The tokenizer should remain untouched");
+
+
+		// Act
+		oToken.setEditable(true);
+		oMultiComboBox._removeSelection([oToken]);
+		Core.applyChanges();
+
+		// assert
+		assert.ok(oTokenSpy.calledOnce, "Token should be destroyed this time");
+		assert.deepEqual(oTokenizer.getTokens(), [], "Tokens aggregation should be empty");
+		//
+		// Cleanup
+		oMultiComboBox.destroy();
+	});
+
 	QUnit.module("Mobile mode (dialog)");
 
 	QUnit.test("Prevent endless focus loop on mobile", function(assert) {
