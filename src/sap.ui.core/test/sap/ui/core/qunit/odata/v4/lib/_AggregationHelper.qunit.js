@@ -1028,9 +1028,11 @@ sap.ui.define([
 	QUnit.test("extractSubtotals: at bottom only = " + bSubtotalsAtBottomOnly, function (assert) {
 		var oAggregation = {
 				aggregate : {
-					A : {},
-					B : {unit : "U"},
-					C : {name : "n/a"}
+					A : {subtotals : true},
+					B : {subtotals : true, unit : "U"},
+					C : {name : "n/a", subtotals : true},
+					NA : {},
+					XX : {unit : "n/a"}
 				},
 				groupLevels : ["D"]
 			},
@@ -1072,9 +1074,9 @@ sap.ui.define([
 	QUnit.test("extractSubtotals: unit used as group level", function (assert) {
 		var oAggregation = {
 				aggregate : {
-					A : {unit : "U"},
-					B : {unit : "V"},
-					C : {unit : "W"}
+					A : {subtotals : true, unit : "U"},
+					B : {subtotals : true, unit : "V"},
+					C : {subtotals : true, unit : "W"}
 				},
 				groupLevels : ["U", "V", "W"]
 			},

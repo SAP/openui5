@@ -17078,9 +17078,178 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	// Scenario: sap.m.Table with aggregation, visual grouping, and grand total at top and bottom.
+	// Expand and collapse the last node. Use subtotalsAtBottomOnly w/o subtotals actually being
+	// requested. This must not change anything!
+	// JIRA: CPOUI5ODATAV4-825
+[false, true].forEach(function (bSubtotalsAtBottomOnly) {
+	var sTitle = "Data Aggregation: subtotalsAtBottomOnly = " + bSubtotalsAtBottomOnly
+			+ " w/o subtotals";
+
+	QUnit.test(sTitle, function (assert) {
+		var oListBinding,
+			oModel = createAggregationModel(),
+			oTable,
+			sView = '\
+<Table id="table" items="{path : \'/BusinessPartners\', parameters : {\
+		$$aggregation : {\
+			aggregate : {\
+				SalesAmountLocalCurrency : {\
+					grandTotal : true,\
+					unit : \'LocalCurrency\'\
+				}\
+			},\
+			grandTotalAtBottomOnly : false,\
+			groupLevels : [\'Country\',\'LocalCurrency\',\'Region\'],\
+			subtotalsAtBottomOnly : ' + bSubtotalsAtBottomOnly + '\
+		}\
+	}}">\
+	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
+	<Text id="isTotal" text="{= %{@$ui5.node.isTotal} }"/>\
+	<Text id="level" text="{= %{@$ui5.node.level} }"/>\
+	<Text id="country" text="{Country}"/>\
+	<Text id="region" text="{Region}"/>\
+	<Text id="salesAmountLocalCurrency" text="{= %{SalesAmountLocalCurrency} }"/>\
+	<Text id="localCurrency" text="{LocalCurrency}"/>\
+</Table>',
+			that = this;
+
+		function checkTable(sTitle, aExpectedPaths, aExpectedContent) {
+			assert.strictEqual(oListBinding.isLengthFinal(), true, "length is final");
+			assert.strictEqual(oListBinding.getLength(), aExpectedPaths.length, sTitle);
+			assert.deepEqual(oListBinding.getCurrentContexts().map(getPath), aExpectedPaths);
+
+			aExpectedContent = aExpectedContent.map(function (aTexts) {
+				return aTexts.map(function (vText) {
+					return vText !== undefined ? String(vText) : "";
+				});
+			});
+			assert.deepEqual(oTable.getItems().map(function (oItem) {
+				return oItem.getCells().map(function (oCell) {
+					return oCell.getText();
+				});
+			}), aExpectedContent, sTitle);
+		}
+
+		this.expectRequest("BusinessPartners?$apply="
+				+ "concat(aggregate(SalesAmountLocalCurrency,LocalCurrency),groupby((Country))"
+				+ "/concat(aggregate($count as UI5__count),top(99)))", {
+				value : [{
+					LocalCurrency : null,
+					SalesAmountLocalCurrency : "3510" // 1/2 * 26 * 27 * 10
+				}, {
+					UI5__count : "1",
+					"UI5__count@odata.type" : "#Decimal"
+				}, {
+					Country : "A"
+				}]
+			})
+			.expectChange("level", [0, 1, 0]); // wait for at least some data to appear on UI
+
+		return this.createView(assert, sView, oModel).then(function () {
+			oTable = that.oView.byId("table");
+			oListBinding = oTable.getBinding("items");
+
+			checkTable("initial state", [
+				"/BusinessPartners()",
+				"/BusinessPartners(Country='A')",
+				"/BusinessPartners($isTotal=true)"
+			], [
+				[true, true, 0, "", "", "3510", ""],
+				[false, false, 1, "A", "", "", ""],
+				[undefined, true, 0, "", "", "3510", ""]
+			]);
+
+			that.expectRequest("BusinessPartners?$apply=filter(Country eq 'A')"
+					+ "/groupby((LocalCurrency))&$count=true&$skip=0&$top=100", {
+					value : [{
+						LocalCurrency : "EUR"
+					}]
+				})
+				.expectChange("level", [,, 2, 0]);
+
+			// code under test
+			oListBinding.getCurrentContexts()[1].expand();
+
+			return that.waitForChanges(assert, "expand node 'A'");
+		}).then(function () {
+			checkTable("node 'A' expanded", [
+				"/BusinessPartners()",
+				"/BusinessPartners(Country='A')",
+				"/BusinessPartners(Country='A',LocalCurrency='EUR')",
+				"/BusinessPartners($isTotal=true)"
+			], [
+				[true, true, 0, "", "", "3510", ""],
+				[true, false, 1, "A", "", "", ""],
+				[false, false, 2, "A", "", "", "EUR"],
+				[undefined, true, 0, "", "", "3510", ""]
+			]);
+
+			that.expectRequest("BusinessPartners"
+					+ "?$apply=filter(Country eq 'A' and LocalCurrency eq 'EUR')"
+					+ "/groupby((Region))&$count=true&$skip=0&$top=100", {
+					value : [{
+						Region : "a"
+					}, {
+						Region : "b"
+					}, {
+						Region : "c"
+					}]
+				})
+				.expectChange("level", [,,, 3, 3, 3, 0]);
+
+			// code under test
+			oListBinding.getCurrentContexts()[2].expand();
+
+			return that.waitForChanges(assert, "expand node 'A/EUR'");
+		}).then(function () {
+			checkTable("node 'A/EUR' expanded", [
+				"/BusinessPartners()",
+				"/BusinessPartners(Country='A')",
+				"/BusinessPartners(Country='A',LocalCurrency='EUR')",
+				"/BusinessPartners(Country='A',LocalCurrency='EUR',Region='a')",
+				"/BusinessPartners(Country='A',LocalCurrency='EUR',Region='b')",
+				"/BusinessPartners(Country='A',LocalCurrency='EUR',Region='c')",
+				"/BusinessPartners($isTotal=true)"
+			], [
+				[true, true, 0, "", "", "3510", ""],
+				[true, false, 1, "A", "", "", ""],
+				[true, false, 2, "A", "", "", "EUR"],
+				[false, false, 3, "A", "a", "", "EUR"],
+				[false, false, 3, "A", "b", "", "EUR"],
+				[false, false, 3, "A", "c", "", "EUR"],
+				[undefined, true, 0, "", "", "3510", ""]
+			]);
+
+			that.expectChange("level", [,, 0]);
+
+			// code under test
+			oListBinding.getCurrentContexts()[1].collapse();
+
+			// Note: table's content is NOT updated synchronously
+			return that.waitForChanges(assert, "collapse node 'A'");
+		}).then(function () {
+			checkTable("node 'A' collapsed", [
+				"/BusinessPartners()",
+				"/BusinessPartners(Country='A')",
+				"/BusinessPartners($isTotal=true)"
+			], [
+				[true, true, 0, "", "", "3510", ""],
+				[false, false, 1, "A", "", "", ""],
+				[undefined, true, 0, "", "", "3510", ""]
+			]);
+		});
+	});
+});
+
+	//*********************************************************************************************
 	// Scenario: sap.ui.table.Table with aggregation, visual grouping, and grand total at bottom
 	// only while just two rows are visible at all: do not confuse data row with grand total row!
 	// JIRA: CPOUI5ODATAV4-558
+	//
+	// Use subtotalsAtBottomOnly w/o subtotals actually being requested. This must not change
+	// anything!
+	// JIRA: CPOUI5ODATAV4-825
 	QUnit.test("Data Aggregation: grandTotalAtBottomOnly=true, just two rows", function (assert) {
 		var oModel = createAggregationModel(),
 			sView = '\
@@ -17090,7 +17259,8 @@ sap.ui.define([
 				SalesNumber : {grandTotal : true}\
 			},\
 			grandTotalAtBottomOnly : true,\
-			groupLevels : [\'Country\',\'Region\']\
+			groupLevels : [\'Country\',\'Region\'],\
+			subtotalsAtBottomOnly : false\
 		}\
 	}}" visibleRowCount="2">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
@@ -17441,6 +17611,10 @@ sap.ui.define([
 	// Scenario: sap.ui.table.Table with aggregation and visual grouping. Show additional text
 	// properties for group levels via navigation. Expand all levels.
 	// JIRA: CPOUI5ODATAV4-680
+	//
+	// Use subtotalsAtBottomOnly w/o subtotals actually being requested. This must not change
+	// anything!
+	// JIRA: CPOUI5ODATAV4-825
 	QUnit.test("Data Aggregation: additionally via navigation", function (assert) {
 		var oTable,
 			sView = '\
@@ -17457,7 +17631,8 @@ sap.ui.define([
 				},\
 				Name : {additionally : [\'BestFriend/Name\']}\
 			},\
-			groupLevels : [\'IsActiveEntity\', \'Name\']\
+			groupLevels : [\'IsActiveEntity\', \'Name\'],\
+			subtotalsAtBottomOnly : true\
 		},\
 		$orderby :\
 \'BestPublication/DraftAdministrativeData/InProcessByUser desc,BestFriend/Name,Address/City asc\'\
@@ -17572,6 +17747,10 @@ sap.ui.define([
 	// Scenario: sap.ui.table.Table with aggregation and visual grouping.
 	// Expand and paging in parallel.
 	// JIRA: CPOUI5ODATAV4-336
+	//
+	// Use subtotalsAtBottomOnly w/o subtotals actually being requested. This must not change
+	// anything!
+	// JIRA: CPOUI5ODATAV4-825
 [false, true].forEach(function (bSecondScroll) {
 	var sTitle = "Data Aggregation: expand and paging in parallel. (Second scroll = "
 		+ bSecondScroll + ")";
@@ -17589,7 +17768,8 @@ sap.ui.define([
 			group : {\
 				AccountResponsible : {}\
 			},\
-			groupLevels : [\'Region\']\
+			groupLevels : [\'Region\'],\
+			subtotalsAtBottomOnly : false\
 		}\
 	}}" threshold="0" visibleRowCount="3">\
 	<Text id="isExpanded" text="{= %{@$ui5.node.isExpanded} }"/>\
@@ -18692,6 +18872,10 @@ sap.ui.define([
 	// Scenario: Call requestSideEffects on a list binding with data aggregation. See that the
 	// request is not influenced by $select/$sexpand, but by $apply.
 	// JIRA: CPOUI5ODATAV4-337
+	//
+	// Use subtotalsAtBottomOnly w/o subtotals actually being requested. This must not change
+	// anything!
+	// JIRA: CPOUI5ODATAV4-825
 	QUnit.test("requestSideEffects and $$aggregation", function (assert) {
 		var oBinding,
 			oHeaderContext,
@@ -18701,7 +18885,8 @@ sap.ui.define([
 		parameters : {\
 			$$aggregation : {\
 				aggregate : {SalesAmount : {}},\
-				groupLevels : [\'Region\']\
+				groupLevels : [\'Region\'],\
+				subtotalsAtBottomOnly : true\
 			}\
 		}}">\
 	<Text id="region" text="{Region}"/>\
