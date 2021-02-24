@@ -10,7 +10,12 @@ sap.ui.define([
 
 	var ComponentLifecycle = sapUiCore.ComponentLifecycle;
 
-	sap.ui.loader.config({paths:{"sap/ui/test":"test-resources/sap/ui/core/qunit/component/testdata/"}});
+	sap.ui.loader.config({
+		paths:{
+			"sap/ui/test":"test-resources/sap/ui/core/qunit/component/testdata/",
+			"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause"
+		}
+	});
 
 	/*
 	 * Helper to create a ComponentContainer with the given settings,

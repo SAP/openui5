@@ -152,7 +152,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 			"support/SupportTool": {
 				loader: {
 					paths: {
-						"sap/ui/test": "../"
+						"sap/ui/test": "../",
+						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause"
 					}
 				}
 			},
@@ -201,7 +202,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				},
 				loader: {
 					paths: {
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata"
+						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata",
+						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause"
 					}
 				}
 			},
@@ -215,7 +217,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				},
 				loader: {
 					paths: {
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata"
+						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata",
+						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause"
 					}
 				}
 			},
@@ -229,7 +232,8 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				},
 				loader: {
 					paths: {
-						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata"
+						"sap/ui/test": "test-resources/sap/ui/core/qunit/component/testdata",
+						"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause"
 					}
 				}
 			},

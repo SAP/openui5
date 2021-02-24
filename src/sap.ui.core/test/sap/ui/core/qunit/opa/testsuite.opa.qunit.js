@@ -5,6 +5,10 @@ sap.ui.define([
 	"use strict";
 
 	var oCommonTests = {
+		"qunitPause": {
+			title: "QUnit Page for qunitPause",
+			module: "./qunitPause.qunit"
+		},
 		"actions/Action": {
 			title: "QUnit Page for sap.ui.test.actions.Action",
 			sinon: {
