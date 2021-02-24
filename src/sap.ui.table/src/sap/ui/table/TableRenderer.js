@@ -682,7 +682,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			rm.class("sapUiTableRowSel");
 		}
 
-		if (iRowIndex % 2 != 0 && oTable.getAlternateRowColors() && !TableUtils.Grouping.isTreeMode(oTable)) {
+		if (iRowIndex % 2 != 0 && oTable.getAlternateRowColors() && !TableUtils.Grouping.isInTreeMode(oTable)) {
 			rm.class("sapUiTableRowAlternate");
 		}
 
@@ -932,7 +932,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	TableRenderer.writeRowSelectorContent = function(rm, oTable, oRow, iRowIndex) {
 		oTable._getAccRenderExtension().writeAccRowSelectorText(rm, oTable, oRow, iRowIndex);
 
-		if (TableUtils.Grouping.isGroupMode(oTable)) {
+		if (TableUtils.Grouping.isInGroupMode(oTable)) {
 			rm.openStart("div");
 			rm.class("sapUiTableGroupShield");
 			rm.openEnd();
@@ -1091,7 +1091,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			}
 		}
 
-		if (iRowIndex % 2 != 0 && oTable.getAlternateRowColors() && !TableUtils.Grouping.isTreeMode(oTable)) {
+		if (iRowIndex % 2 != 0 && oTable.getAlternateRowColors() && !TableUtils.Grouping.isInTreeMode(oTable)) {
 			rm.class("sapUiTableRowAlternate");
 		}
 
@@ -1166,7 +1166,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 			if (bIsLastColumn) {
 				rm.class("sapUiTableCellLast");
 			}
-			if (bIsFirstColumn && TableUtils.Grouping.isTreeMode(oTable)) {
+			if (bIsFirstColumn && TableUtils.Grouping.isInTreeMode(oTable)) {
 				rm.class("sapUiTableCellFlex"); // without flex, icon pushes contents too wide
 			}
 
@@ -1186,7 +1186,7 @@ sap.ui.define(['sap/ui/core/Control', 'sap/ui/core/theming/Parameters', 'sap/ui/
 	};
 
 	TableRenderer.renderTableCellControl = function(rm, oTable, oCell, bIsFirstColumn) {
-		if (bIsFirstColumn && TableUtils.Grouping.isTreeMode(oTable) && !oTable._bFlatMode) {
+		if (bIsFirstColumn && TableUtils.Grouping.isInTreeMode(oTable)) {
 			var oRow = oCell.getParent();
 			rm.openStart("span", oRow.getId() + "-treeicon");
 			rm.class("sapUiTableTreeIcon");

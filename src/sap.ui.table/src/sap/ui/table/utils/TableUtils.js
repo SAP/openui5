@@ -237,7 +237,7 @@ sap.ui.define([
 		 */
 		hasRowHeader: function(oTable) {
 			return (oTable.getSelectionMode() !== SelectionMode.None && oTable.getSelectionBehavior() !== SelectionBehavior.RowOnly)
-				   || GroupingUtils.isGroupMode(oTable);
+				   || GroupingUtils.isInGroupMode(oTable);
 		},
 
 		/**

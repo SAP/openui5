@@ -83,7 +83,7 @@
 		FLATMODE: {
 			text: "Flat Mode (protected)",
 			value: function(oTable) {
-				return !!oTable._bFlatMode;
+				return sap.ui.table.utils.TableUtils.Grouping.isInFlatMode(oTable);
 			},
 			input: "boolean",
 			action: function(oTable, bValue) {

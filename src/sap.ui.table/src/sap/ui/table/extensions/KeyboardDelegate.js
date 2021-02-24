@@ -653,7 +653,7 @@ sap.ui.define([
 	 */
 	KeyboardDelegate._isElementGroupToggler = function(oTable, oElement) {
 		return TableUtils.Grouping.isInGroupHeaderRow(oElement)
-			   || (TableUtils.Grouping.isTreeMode(oTable)
+			   || (TableUtils.Grouping.isInTreeMode(oTable)
 				   && oElement.classList.contains("sapUiTableCellFirst")
 				   && (oElement.querySelector(".sapUiTableTreeIconNodeOpen")
 					   || oElement.querySelector(".sapUiTableTreeIconNodeClosed")))

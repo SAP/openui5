@@ -157,7 +157,7 @@ sap.ui.define([
 	 */
 	TreeTable.prototype.init = function() {
 		Table.prototype.init.apply(this, arguments);
-		TableUtils.Grouping.setTreeMode(this);
+		TableUtils.Grouping.setToDefaultTreeMode(this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.UpdateState, updateRowState, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Expand, expandRow, this);
 		TableUtils.Hook.register(this, TableUtils.Hook.Keys.Row.Collapse, collapseRow, this);
@@ -203,7 +203,7 @@ sap.ui.define([
 
 		oState.expanded = oNode.nodeState.expanded;
 
-		if (TableUtils.Grouping.isGroupMode(this)) {
+		if (TableUtils.Grouping.isInGroupMode(this)) {
 			var sHeaderProp = this.getGroupHeaderProperty();
 
 			if (sHeaderProp) {
@@ -602,11 +602,7 @@ sap.ui.define([
 
 	TreeTable.prototype.setUseGroupMode = function(bGroup) {
 		this.setProperty("useGroupMode", !!bGroup);
-		if (!!bGroup) {
-			TableUtils.Grouping.setGroupMode(this);
-		} else {
-			TableUtils.Grouping.setTreeMode(this);
-		}
+		updateHierarchyMode(this);
 		return this;
 	};
 
@@ -673,15 +669,20 @@ sap.ui.define([
 	 * @protected
 	 */
 	TreeTable.prototype.setUseFlatMode = function(bFlat) {
-		bFlat = !!bFlat;
-		if (bFlat != this._bFlatMode) {
-			this._bFlatMode = bFlat;
-			if (this.getDomRef() && TableUtils.Grouping.isTreeMode(this)) {
-				this.invalidate();
-			}
-		}
+		this._bFlatMode = !!bFlat;
+		updateHierarchyMode(this);
 		return this;
 	};
+
+	function updateHierarchyMode(oTable) {
+		if (oTable.getUseGroupMode()) {
+			TableUtils.Grouping.setHierarchyMode(oTable, TableUtils.Grouping.HierarchyMode.GroupedTree);
+		} else if (oTable._bFlatMode) {
+			TableUtils.Grouping.setToDefaultFlatMode(oTable);
+		} else if (!oTable._bFlatMode) {
+			TableUtils.Grouping.setToDefaultTreeMode(oTable);
+		}
+	}
 
 	TreeTable.prototype._createLegacySelectionPlugin = function() {
 		return new BindingSelectionPlugin();

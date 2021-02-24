@@ -171,7 +171,7 @@ sap.ui.define([
 	 * There can be conflicts if multiple plugins try to constrain the row counts. Only the constraints of the last call of this method are
 	 * considered.
 	 *
-	 * @param {object} mConstraints
+	 * @param {object} [mConstraints]
 	 *     Row count constraints
 	 * @param {boolean} [mConstraints.fixedTop]
 	 *     The value <code>true</code> means that there is exactly one fixed top row and <code>false</code> means that fixed top rows are disabled.

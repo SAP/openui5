@@ -208,7 +208,7 @@ sap.ui.define([
 		 * Returns whether the given cell is in the tree column of a TreeTable
 		 */
 		isTreeColumnCell: function(oExtension, $Cell) {
-			return TableUtils.Grouping.isTreeMode(oExtension.getTable()) && $Cell.hasClass("sapUiTableCellFirst");
+			return TableUtils.Grouping.isInTreeMode(oExtension.getTable()) && $Cell.hasClass("sapUiTableCellFirst");
 		},
 
 		/*
@@ -405,7 +405,7 @@ sap.ui.define([
 					aLabels.push(sTableId + "-toggleedit");
 				}
 
-				if (TableUtils.Grouping.isTreeMode(oTable) && $Cell.parent().attr("aria-selected") === "true") {
+				if (TableUtils.Grouping.isInTreeMode(oTable) && $Cell.parent().attr("aria-selected") === "true") {
 					// aria-selected on the row seems not be enough for treegrids
 					aLabels.push(sTableId + "-ariarowselected");
 				}
@@ -708,7 +708,7 @@ sap.ui.define([
 					break;
 
 				case AccExtension.ELEMENTTYPES.CONTENT: //The content area of the table which contains all the table elements, rowheaders, columnheaders, etc
-					mAttributes["role"] = TableUtils.Grouping.isGroupMode(oTable) || TableUtils.Grouping.isTreeMode(oTable) ? "treegrid" : "grid";
+					mAttributes["role"] = TableUtils.Grouping.isInGroupMode(oTable) || TableUtils.Grouping.isInTreeMode(oTable) ? "treegrid" : "grid";
 
 					mAttributes["aria-labelledby"] = [].concat(oTable.getAriaLabelledBy());
 					if (oTable.getTitle()) {
@@ -800,7 +800,7 @@ sap.ui.define([
 					break;
 
 				case AccExtension.ELEMENTTYPES.TREEICON: //The expand/collapse icon in the TreeTable
-					if (TableUtils.Grouping.isTreeMode(oTable)) {
+					if (TableUtils.Grouping.isInTreeMode(oTable)) {
 						mAttributes = {
 							"aria-label": "",
 							"title": "",
