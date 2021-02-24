@@ -287,9 +287,11 @@ sap.ui.define([
 				type: ButtonType.Emphasized
 			});
 
-			ShortcutHintsMixin.addConfig(this._getSearchButton(), {
+			ShortcutHintsMixin.addConfig(this._btnSearch, {
 					addAccessibilityLabel: true,
-					messageBundleKey: "filterbar.GoBtnShortCutHint"
+					// setting messageBundleKey does not work for controls which are not in the root folder.
+					// vh/FilterBar is not in the root folder, so use the message property instead
+					message: this._oRb.getText("filterbar.GoBtnShortCutHint")
 				},
 				this
 			);
