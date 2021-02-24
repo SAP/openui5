@@ -6,7 +6,8 @@ sap.ui.define([
 	"sap/ui/layout/form/FormElement",
 	"sap/ui/core/Title",
 	"sap/m/library",
-	"sap/m/Toolbar"
+	"sap/m/Toolbar",
+	"sap/ui/core/theming/Parameters"
 	],
 	function(
 			qutils,
@@ -14,7 +15,8 @@ sap.ui.define([
 			FormElement,
 			Title,
 			mLibrary,
-			Toolbar
+			Toolbar,
+			Parameters
 	) {
 	"use strict";
 
@@ -115,11 +117,11 @@ sap.ui.define([
 	function expanderIcon(assert) {
 		var oButton = oFormContainer.getAggregation("_expandButton");
 
-		assert.equal(oButton.getIcon(), "sap-icon://expand-group", "Expander Icon");
+		assert.equal(oButton.getIcon(), Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerExpImageURL'), "Expander Icon");
 		assert.equal(oButton.getTooltip(), "Expand", "Expander Tooltip");
 
 		oFormContainer.setExpanded(true);
-		assert.equal(oButton.getIcon(), "sap-icon://collapse-group", "Expander Icon");
+		assert.equal(oButton.getIcon(), Parameters._getThemeImage('_sap_ui_layout_Form_FormContainerColImageURL'), "Expander Icon");
 		assert.equal(oButton.getTooltip(), "Collapse", "Expander Tooltip");
 	}
 

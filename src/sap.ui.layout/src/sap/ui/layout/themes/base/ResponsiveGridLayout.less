@@ -20,11 +20,6 @@
 	margin-right: 0.5rem;
 }
 
-.sapUiRGLContainer > .sapUiFormTitle > button{
-	position: absolute;
-	right: 0.25rem;
-}
-
 /* Toolbar */
 .sapUiFormResGrid.sapUiFormToolbar > div:first-child {
 	height: 3rem; /* to have in compact mode and in commons always 3rem on Form header */
@@ -83,7 +78,7 @@
 	padding-bottom: 1.75rem; /* as content has 0.25rem padding-bottom */
 }
 
-.sapUiFormM > .sapUiFormResGrid > .sapUiFormResGridMain > div{
+.sapUiFormM > .sapUiFormResGrid > .sapUiFormResGridMain.sapUiRespGridOverflowHidden > div[class*="sapUiFormResGrid"]{
 	overflow: visible; /* to show top of title or tooolbar in cozy mode (because moved upwards) */
 }
 

@@ -194,6 +194,9 @@ sap.ui.define([
 			}
 			rm.class("sapUiFormTitle");
 			rm.class("sapUiFormTitle" + sLevel);
+			if (bExpander && oExpandButton) {
+				rm.class("sapUiFormTitleExpandable");
+			}
 			rm.openEnd();
 
 			if (bExpander && oExpandButton) {
