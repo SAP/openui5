@@ -12,11 +12,18 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/util/isPlainObject"],
 	 * Constructor for Context class.
 	 *
 	 * @class
-	 * The Context is a pointer to an object in the model data, which is used to
-	 * allow definition of relative bindings, which are resolved relative to the
-	 * defined object.
-	 * Context elements are created either by the ListBinding for each list entry
-	 * or by using createBindingContext.
+	 * The Context is a pointer to an object in the model data. A relative binding needs a context
+	 * as a reference point in order to resolve its path; without a context, a relative binding is
+	 * unresolved and does not point to model data. Context instances can, for example, be created
+	 * in the following ways:
+	 * <ul>
+	 * <li>by a {@link sap.ui.model.ListBinding} for each list entry,</li>
+	 * <li>as the single context associated with a {@link sap.ui.model.ContextBinding},</li>
+	 * <li>by calling {@link sap.ui.model.Model#createBindingContext}.</li>
+	 * </ul>
+	 *
+	 * For more information on the concept of data binding and binding contexts, see
+	 * {@link topic:e2e6f4127fe4450ab3cf1339c42ee832 documentation on binding syntax}.
 	 *
 	 * @param {sap.ui.model.Model} oModel the model
 	 * @param {string} sPath the binding path
