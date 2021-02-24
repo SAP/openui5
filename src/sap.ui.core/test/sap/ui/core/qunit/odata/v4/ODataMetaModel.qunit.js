@@ -30,8 +30,6 @@ sap.ui.define([
 		BaseContext, ContextBinding, Filter, FilterOperator, MetaModel, Model, PropertyBinding,
 		Sorter, OperationMode, AnnotationHelper, Context, ODataMetaModel, ODataModel, ValueListType,
 		_Helper, TestUtils, URI) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-loop-func: 0, no-warning-comments: 0 */
 	"use strict";
 
 	// Common := com.sap.vocabularies.Common.v1
@@ -1171,7 +1169,7 @@ sap.ui.define([
 		/*
 		 * Allow warnings if told to; always suppress debug messages.
 		 */
-		allowWarnings : function (assert, bWarn) {
+		allowWarnings : function (bWarn) {
 			this.mock(Log).expects("isLoggable").atLeast(1)
 				.withExactArgs(sinon.match.number, sODataMetaModel)
 				.callsFake(function (iLogLevel) {
@@ -2568,7 +2566,7 @@ sap.ui.define([
 			this.mock(this.oMetaModel.oRequestor).expects("read")
 				.withExactArgs("/empty/$metadata")
 				.resolves(mMostlyEmptyScope);
-			this.allowWarnings(assert, bWarn);
+			this.allowWarnings(bWarn);
 			this.oLogMock.expects("warning").exactly(bWarn ? 1 : 0)
 				.withExactArgs("/empty/$metadata does not contain " + sSchemaName, sPath,
 					sODataMetaModel);
@@ -2618,7 +2616,7 @@ sap.ui.define([
 			oRequestorMock.expects("read")
 				.withExactArgs("/a/default/iwbep/tea_busi_product/0001/$metadata")
 				.resolves(mReferencedScope);
-			this.allowWarnings(assert, bWarn);
+			this.allowWarnings(bWarn);
 
 			// code under test
 			return this.oMetaModel.fetchObject("/tea_busi_product.v0001.").then(function (vResult) {
@@ -2799,7 +2797,7 @@ sap.ui.define([
 				.exactly(bSupportReferences ? 1 : 0)
 				.withExactArgs(sUrl)
 				.resolves(mClonedProductScope);
-			this.allowWarnings(assert, true);
+			this.allowWarnings(true);
 			this.oLogMock.expects("warning").exactly(bSupportReferences ? 0 : 1)
 				.withExactArgs("Unknown qualified name " + sPath.slice(1), sPath, sODataMetaModel);
 
@@ -3868,7 +3866,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("ODataMetaPropertyBinding#checkUpdate: no event", function (assert) {
+	QUnit.test("ODataMetaPropertyBinding#checkUpdate: no event", function () {
 		var oBinding,
 			oContext = {},
 			mParameters = {},
@@ -3891,8 +3889,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("ODataMetaPropertyBinding#checkUpdate: bForceUpdate, sChangeReason",
-			function (assert) {
+	QUnit.test("ODataMetaPropertyBinding#checkUpdate: bForceUpdate, sChangeReason", function () {
 		var oBinding,
 			oContext = {},
 			mParameters = {},
@@ -4146,7 +4143,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("ODataMetaListBinding#update (sync)", function (assert) {
+	QUnit.test("ODataMetaListBinding#update (sync)", function () {
 		var oBinding,
 			oBindingMock,
 			oContext = this.oMetaModel.getContext("/EMPLOYEES"),
@@ -4216,7 +4213,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("ODataMetaListBinding#checkUpdate", function (assert) {
+	QUnit.test("ODataMetaListBinding#checkUpdate", function () {
 		var oBinding,
 			oBindingMock,
 			oContext = this.oMetaModel.getContext("/"),

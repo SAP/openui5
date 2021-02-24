@@ -1,0 +1,5 @@
+{
+	"rules": {
+		"no-unused-vars": [2, {"argsIgnorePattern": "^_", "args": "all"}]
+	}
+}

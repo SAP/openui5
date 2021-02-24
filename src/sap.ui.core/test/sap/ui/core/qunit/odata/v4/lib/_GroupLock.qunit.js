@@ -5,7 +5,6 @@ sap.ui.define([
 	"sap/base/Log",
 	"sap/ui/model/odata/v4/lib/_GroupLock"
 ], function (Log, _GroupLock) {
-	/*global QUnit, sinon */
 	"use strict";
 
 	//*********************************************************************************************

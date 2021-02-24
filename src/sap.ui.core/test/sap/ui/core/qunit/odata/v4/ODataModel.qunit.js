@@ -25,8 +25,6 @@ sap.ui.define([
 ], function (Log, SyncPromise, Element, Message, Binding, BindingMode, BaseContext, Model,
 		OperationMode, TypeString, Context, ODataMetaModel, ODataModel, SubmitMode, _Helper,
 		_MetadataRequestor, _Parser, _Requestor, TestUtils, library) {
-	/*global QUnit, setTimeout, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	// shortcut for sap.ui.core.MessageType
@@ -165,7 +163,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("metadataUrlParams", function (assert) {
+	QUnit.test("metadataUrlParams", function () {
 		var mUriParameters = {
 				"sap-client" : "279",
 				"sap-context-token" : "n/a"
@@ -227,7 +225,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("supportReferences", function (assert) {
+	QUnit.test("supportReferences", function () {
 		this.createModel("", {supportReferences : false});
 	});
 
@@ -795,7 +793,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges with group ID", function (assert) {
+	QUnit.test("resetChanges with group ID", function () {
 		var oModel = this.createModel();
 
 		this.mock(oModel).expects("checkBatchGroupId").withExactArgs("groupId");
@@ -808,7 +806,7 @@ sap.ui.define([
 	// TODO reset the POST requests in this group
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges with $auto group", function (assert) {
+	QUnit.test("resetChanges with $auto group", function () {
 		var oModel = this.createModel("", {updateGroupId : "$auto"}),
 			oBinding1 = oModel.bindList("/EMPLOYEES"),
 			oBinding2 = oModel.bindProperty("/EMPLOYEES('1')/AGE"),
@@ -830,7 +828,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetChanges w/o group ID", function (assert) {
+	QUnit.test("resetChanges w/o group ID", function () {
 		var oModel = this.createModel("", {updateGroupId : "updateGroupId"}),
 			oBinding1 = oModel.bindList("/EMPLOYEES"),
 			oBinding2 = oModel.bindProperty("/EMPLOYEES('1')/AGE"),
@@ -955,7 +953,7 @@ sap.ui.define([
 		stack : "_Helper.createError@_Helper.js", // like FF
 		message : "Failure\n_Helper.createError@_Helper.js"
 	}].forEach(function (oFixture, i) {
-		QUnit.test("reportError, i:" + i, function (assert) {
+		QUnit.test("reportError, i:" + i, function () {
 			var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 				oError = new Error("Failure"),
 				sLogMessage = "Failed to read path /Product('1')/Unknown",
@@ -988,7 +986,7 @@ sap.ui.define([
 	var sTitle = "reportError: JSON response, top-level unbound and details, $ignoreTopLevel = "
 			+ bIgnoreTopLevel;
 
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test(sTitle, function () {
 		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 			sResourcePath = "/Product('1')",
 			oError = {
@@ -1138,7 +1136,7 @@ sap.ui.define([
 		var sTitle = "reportError: JSON response, resourcePath=" + oFixture.resourcePath
 				+ ", requestUrl=" + oFixture.requestUrl;
 
-		QUnit.test(sTitle, function (assert) {
+		QUnit.test(sTitle, function () {
 			var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 				oError = {
 					"error" : {
@@ -1187,7 +1185,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportError: invoked by an action", function (assert) {
+	QUnit.test("reportError: invoked by an action", function () {
 		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 			aBoundMessages = [{
 				additionalTargets : undefined,
@@ -1244,7 +1242,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportError: JSON response, top-level bound, no details", function (assert) {
+	QUnit.test("reportError: JSON response, top-level bound, no details", function () {
 		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 			oError = {
 				"error" : {
@@ -1282,7 +1280,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportError: JSON response, top-level bound to query option", function (assert) {
+	QUnit.test("reportError: JSON response, top-level bound to query option", function () {
 		var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
 			oError = {
 				"error" : {
@@ -1317,7 +1315,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportError on canceled error", function (assert) {
+	QUnit.test("reportError on canceled error", function () {
 		var oError = {canceled : true, message : "Canceled", stack: "Canceled\n    at foo.bar"},
 			oModel = this.createModel();
 
@@ -1330,7 +1328,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportError on canceled error, no debug log", function (assert) {
+	QUnit.test("reportError on canceled error, no debug log", function () {
 		var oError = {canceled : "noDebugLog"},
 			oModel = this.createModel();
 
@@ -1342,7 +1340,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reportError: no message for $reported", function (assert) {
+	QUnit.test("reportError: no message for $reported", function () {
 		var sClassName = "class",
 			oError = {$reported : true, message : "Reported"},
 			sLogMessage = "Failure",
@@ -1648,7 +1646,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkBatchGroupId: success", function (assert) {
+	QUnit.test("checkBatchGroupId: success", function () {
 		var sGroupId = {/*string*/},
 			oModel = this.createModel();
 
@@ -1995,7 +1993,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("initializeSecurityToken", function (assert) {
+	QUnit.test("initializeSecurityToken", function () {
 		var oModel = this.createModel("");
 
 		this.mock(oModel.oRequestor).expects("refreshSecurityToken").withExactArgs()
@@ -2016,7 +2014,7 @@ sap.ui.define([
 		{numericSeverity : null, type : MessageType.None},
 		{numericSeverity : undefined, type : MessageType.None}
 	].forEach(function (oFixture, i) {
-		QUnit.test("reportUnboundMessages, " + i, function (assert) {
+		QUnit.test("reportUnboundMessages, " + i, function () {
 			var oHelperMock = this.mock(_Helper),
 				aMessages = [{
 					code : 42,
@@ -2879,7 +2877,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [Promise, SyncPromise].forEach(function (oThenable) {
-	QUnit.test("getReporter " + oThenable, function (assert) {
+	QUnit.test("getReporter " + oThenable, function () {
 		var oError1 = new Error("failed intentionally"),
 			oError2 = new Error("already reported"),
 			oModel = this.createModel(),

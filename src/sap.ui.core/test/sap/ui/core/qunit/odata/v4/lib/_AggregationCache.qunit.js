@@ -13,8 +13,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_MinMaxHelper"
 ], function (Log, SyncPromise, _AggregationCache, _AggregationHelper, _Cache, _GrandTotalHelper,
 		_GroupLock, _Helper, _MinMaxHelper) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
+	/*eslint no-sparse-arrays: 0 */
 	"use strict";
 
 	/**

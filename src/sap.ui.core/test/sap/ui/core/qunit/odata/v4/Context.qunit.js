@@ -9,8 +9,6 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/Context",
 	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, isEmptyObject, SyncPromise, BaseContext, Context, _Helper) {
-	/*global QUnit, sinon */
-	/*eslint no-warning-comments: 0 */
 	"use strict";
 
 	//*********************************************************************************************
@@ -1248,7 +1246,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh: list binding, reject", function (assert) {
+	QUnit.test("refresh: list binding, reject", function () {
 		var oModel = {
 				getReporter : function () {}
 			},
@@ -1271,7 +1269,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refresh: context binding, reject", function (assert) {
+	QUnit.test("refresh: context binding, reject", function () {
 		var oModel = {
 				getReporter : function () {}
 			},
@@ -1520,7 +1518,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("patch", function (assert) {
+	QUnit.test("patch", function () {
 		var oCache = {
 				patch : function () {}
 			},
@@ -2476,7 +2474,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("doSetProperty: return value context", function (assert) {
+	QUnit.test("doSetProperty: return value context", function () {
 		var oGroupLock = {},
 			oMetaModel = {
 				fetchUpdateData : function () {},
@@ -2552,7 +2550,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doSetProperty: reduce path", function (assert) {
+	QUnit.test("doSetProperty: reduce path", function () {
 		var oBinding = {
 				oContext : {},
 				doSetProperty : function () {},
@@ -2634,7 +2632,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doSetProperty: oGroupLock = null", function (assert) {
+	QUnit.test("doSetProperty: oGroupLock = null", function () {
 		var oBinding = {
 				oContext : {},
 				doSetProperty : function () {},
@@ -2695,7 +2693,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [SyncPromise.resolve(), undefined].forEach(function (vValue) {
-	QUnit.test("doSetProperty: invocation of ODB#doSetProperty", function (assert) {
+	QUnit.test("doSetProperty: invocation of ODB#doSetProperty", function () {
 		var oBinding = {
 				oContext : {},
 				doSetProperty : function () {},
@@ -2959,7 +2957,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bSuccess) {
-	QUnit.test("expand: success=" + bSuccess, function (assert) {
+	QUnit.test("expand: success=" + bSuccess, function () {
 		var oBinding = {
 				expand : function () {}
 			},

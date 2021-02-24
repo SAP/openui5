@@ -12,8 +12,6 @@ sap.ui.define([
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Log, _Helper, _MetadataConverter, _MetadataRequestor, _V2MetadataConverter,
 		_V4MetadataConverter, TestUtils) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var mFixture = {

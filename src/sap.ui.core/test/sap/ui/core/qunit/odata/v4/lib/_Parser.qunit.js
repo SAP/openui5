@@ -7,8 +7,6 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Requestor",
 	"sap/ui/test/TestUtils"
 ], function (Log, _Parser, _Requestor, TestUtils) {
-	/*global QUnit */
-	/*eslint no-warning-comments: 0 */
 	"use strict";
 
 	/*

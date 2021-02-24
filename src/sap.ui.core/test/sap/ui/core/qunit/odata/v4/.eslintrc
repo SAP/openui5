@@ -1,0 +1,11 @@
+{
+	"globals": {
+		"QUnit": "readonly",
+		"sinon": "readonly"
+	},
+	"rules": {
+		"max-nested-callbacks": 0,
+		"no-unused-vars": [2, {"argsIgnorePattern": "^_","args": "all"}],
+		"no-warning-comments": 0
+	}
+}

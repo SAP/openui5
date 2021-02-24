@@ -13,8 +13,6 @@ sap.ui.define([
 	"sap/ui/test/TestUtils"
 ], function (Log, isEmptyObject, SyncPromise, _Cache, _GroupLock, _Helper, _Parser, _Requestor,
 		TestUtils) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._Cache",
@@ -247,7 +245,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#setProperty", function (assert) {
+	QUnit.test("_Cache#setProperty", function () {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('42')"),
 			oEntity = {},
 			oEntityPromise = Promise.resolve(oEntity),
@@ -650,7 +648,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#registerChange", function (assert) {
+	QUnit.test("_Cache#registerChange", function () {
 		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
 		this.mock(_Helper).expects("addByPath")
@@ -660,7 +658,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#registerChange: $$sharedRequst", function (assert) {
+	QUnit.test("_Cache#registerChange: $$sharedRequst", function () {
 		var oCache = new _Cache(this.oRequestor, "TEAMS", undefined, false, undefined, true);
 
 		this.mock(_Helper).expects("addByPath").never();
@@ -669,7 +667,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#deregisterChange", function (assert) {
+	QUnit.test("_Cache#deregisterChange", function () {
 		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
 		this.mock(_Helper).expects("removeByPath")
@@ -679,7 +677,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#deregisterChange: $$sharedRequst", function (assert) {
+	QUnit.test("_Cache#deregisterChange: $$sharedRequst", function () {
 		var oCache = new _Cache(this.oRequestor, "TEAMS", undefined, false, undefined, true);
 
 		this.mock(_Helper).expects("removeByPath").never();
@@ -841,7 +839,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#checkSharedRequest: not shared", function (assert) {
+	QUnit.test("_Cache#checkSharedRequest: not shared", function () {
 		var oCache = new _Cache(this.oRequestor, "TEAMS");
 
 		oCache.checkSharedRequest();
@@ -2210,7 +2208,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: key predicates: ignore simple values", function (assert) {
+	QUnit.test("Cache#visitResponse: key predicates: ignore simple values", function () {
 		var oCache = new _Cache(this.oRequestor, "TEAMS('42')/Foo"),
 			oCacheMock = this.mock(oCache),
 			oInstance = {results : ["Business Suite"]},
@@ -2381,7 +2379,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: reportBoundMessages; single entity", function (assert) {
+	QUnit.test("Cache#visitResponse: reportBoundMessages; single entity", function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
 			aMessagesInBusinessPartner = [{/* any message object */}],
 			aMessagesSalesOrder = [{/* any message object */}],
@@ -2442,7 +2440,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#visitResponse: reportBoundMessages; nested; to 1 navigation property",
-			function (assert) {
+			function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
 			aMessagesInBusinessPartner = [{/* any message object */}],
 			oData = {
@@ -2466,8 +2464,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: reportBoundMessages; nested; collection entity",
-			function (assert) {
+	QUnit.test("Cache#visitResponse: reportBoundMessages; nested; collection entity", function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
 			aMessagesInBusinessPartner = [{/* any message object */}],
 			oData = {
@@ -2496,7 +2493,7 @@ sap.ui.define([
 		var sTitle = "Cache#visitResponse: reportBoundMessages for new entity"
 			+ ", keep transient path: " + bKeepTransientPath;
 
-		QUnit.test(sTitle, function (assert) {
+		QUnit.test(sTitle, function () {
 			var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
 				aMessages = [{/* any message object */}],
 				oData = {
@@ -2535,7 +2532,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: reportBoundMessages for new nested entity", function (assert) {
+	QUnit.test("Cache#visitResponse: reportBoundMessages for new nested entity", function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
 			aMessages = [{/* any message object */}],
 			oData = {
@@ -2572,7 +2569,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("Cache#visitResponse: no reportBoundMessages if message property is not selected",
-			function (assert) {
+			function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')");
 
 		this.oModelInterfaceMock.expects("reportBoundMessages").never();
@@ -2586,8 +2583,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("Cache#visitResponse: no reportBoundMessages; message in complex type",
-			function (assert) {
+	QUnit.test("Cache#visitResponse: no reportBoundMessages; message in complex type", function () {
 		var oCache = new _Cache(this.oRequestor, "SalesOrderList('0500000001')"),
 			oData = {};
 
@@ -2614,7 +2610,7 @@ sap.ui.define([
 				+ (oFixture.bPredicate ? "" : "out") + " key properties, iStart="
 				+ oFixture.iStart;
 
-		QUnit.test(sTitle, function (assert) {
+		QUnit.test(sTitle, function () {
 			var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
 				sFirst,
 				oHelperMock = this.mock(_Helper),
@@ -2697,7 +2693,7 @@ sap.ui.define([
 		var sTitle = "visitResponse: reportBoundMessages; nested collection, key properties: "
 				+ bPredicate;
 
-		QUnit.test(sTitle, function (assert) {
+		QUnit.test(sTitle, function () {
 			var oCache = new _Cache(this.oRequestor, "SalesOrderList"),
 				oHelperMock = this.mock(_Helper),
 				aMessages = [{/* any message object */}],
@@ -4773,7 +4769,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache#read: pending deletes", function (assert) {
+	QUnit.test("CollectionCache#read: pending deletes", function () {
 		var oCache = this.createCache("Employees"),
 			that = this;
 
@@ -6737,7 +6733,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("CollectionCache: query params", function (assert) {
+	QUnit.test("CollectionCache: query params", function () {
 		var oCache,
 			oGroupLock = {
 				getUnlockedCopy : function () {},
@@ -8477,7 +8473,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("SingleCache: post for bound operation", function (assert) {
+	QUnit.test("SingleCache: post for bound operation", function () {
 		var oGroupLock = {},
 			sMetaPath = "/TEAMS/name.space.EditAction/@$ui5.overload/0/$ReturnType/$Type",
 			sResourcePath = "TEAMS(TeamId='42',IsActiveEntity=true)/name.space.EditAction",
@@ -9206,7 +9202,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_Cache#calculateKeyPredicate: with key but no data for key", function (assert) {
+	QUnit.test("_Cache#calculateKeyPredicate: with key but no data for key", function () {
 		var oCache = new _Cache(this.oRequestor, "Foo"),
 			oHelperMock = this.mock(_Helper),
 			vInstance = {},

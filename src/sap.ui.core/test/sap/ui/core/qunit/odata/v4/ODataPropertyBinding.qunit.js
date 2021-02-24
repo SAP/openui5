@@ -20,8 +20,6 @@ sap.ui.define([
 ], function (Log, ManagedObject, SyncPromise, BindingMode, ChangeReason, BaseContext,
 		PropertyBinding, TypeString, Context, asODataBinding, ODataModel, ODataPropertyBinding,
 		_Cache, _Helper, TestUtils) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.ODataPropertyBinding",
@@ -258,7 +256,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("bindProperty: empty path is valid for base context", function (assert) {
+	QUnit.test("bindProperty: empty path is valid for base context", function () {
 		var oBaseContext = this.oModel.createBindingContext("/ProductList('HT-1000')/Name");
 
 		// code under test
@@ -336,7 +334,7 @@ sap.ui.define([
 	var sTitle = "checkUpdateInternal(undefined) consider data state control messages"
 		+ ", bHasMessages =" + bHasMessages;
 
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test(sTitle, function () {
 		var oContext = Context.create(this.oModel, {/*list binding*/}, "/..."),
 			oBinding = this.oModel.bindProperty("relative", oContext),
 			oDataState = {getControlMessages : function () {}};
@@ -445,7 +443,7 @@ sap.ui.define([
 	// happens that the binding already has a context, but sReducedPath is still unset. So we must
 	// check this before the context access, too.
 	// See $count in the OPA for Sales Order TP100 V2.
-	QUnit.test("checkUpdateInternal: deferred initialization", function (assert) {
+	QUnit.test("checkUpdateInternal: deferred initialization", function () {
 		var oBinding,
 			oBindingMock = this.mock(ODataPropertyBinding.prototype),
 			oContext = Context.create(this.oModel, {/*list binding*/}, "/...", 0),
@@ -661,7 +659,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Unit test for scenario in
 	// ODataModel.integration.qunit, @sap.ui.table.Table with VisibleRowCountMode='Auto'
-	QUnit.test("checkUpdateInternal(true): later call resets this.oContext", function (assert) {
+	QUnit.test("checkUpdateInternal(true): later call resets this.oContext", function () {
 		var oParentBinding = {
 				fetchIfChildCanUseCache : function () {
 					return SyncPromise.resolve(Promise.resolve(true));
@@ -783,7 +781,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdateInternal(): absolute with sGroupId", function (assert) {
+	QUnit.test("checkUpdateInternal(): absolute with sGroupId", function () {
 		var oBinding,
 			oCacheMock = this.getPropertyCacheMock(),
 			oGroupLock = {};
@@ -800,7 +798,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkUpdateInternal(): relative with sGroupId", function (assert) {
+	QUnit.test("checkUpdateInternal(): relative with sGroupId", function () {
 		var oContext = Context.create(this.oModel, {/*oParentBinding*/}, "/Me"),
 			oBinding = this.oModel.bindProperty("property", oContext);
 
@@ -1498,7 +1496,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[undefined, "$direct"].forEach(function (sGroupId) {
-		QUnit.test("checkUpdateInternal, binding group ID " + sGroupId , function (assert) {
+		QUnit.test("checkUpdateInternal, binding group ID " + sGroupId , function () {
 			var oBinding = this.oModel.bindProperty("/absolute", undefined, {$$groupId : sGroupId}),
 				sExpectedGroupId = sGroupId,
 				oGroupLock = {},
@@ -1570,7 +1568,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("onChange", function (assert) {
+	QUnit.test("onChange", function () {
 		var oBinding = this.oModel.bindProperty("/absolute"),
 			vValue = "foo";
 
@@ -1764,7 +1762,7 @@ sap.ui.define([
 ["foo", null].forEach(function (vValue) {
 	var sTitle = "setValue (relative binding) via control, value : " + vValue;
 
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test(sTitle, function () {
 		var oParentBinding = this.oModel.bindContext("/BusinessPartnerList('0100000000')"),
 			oContext = oParentBinding.getBoundContext(),
 			oBinding = this.oModel.bindProperty("Address/City", oContext),
@@ -1825,7 +1823,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setValue (relative binding): error handling", function (assert) {
+	QUnit.test("setValue (relative binding): error handling", function () {
 		var oContext = Context.create(this.oModel, {/*oParentBinding*/}, "/ProductList('HT-1000')"),
 			oError = new Error("This call intentionally failed"),
 			oGroupLock = {unlock : function () {}},
@@ -1873,7 +1871,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setValue (relative binding): unchanged", function (assert) {
+	QUnit.test("setValue (relative binding): unchanged", function () {
 		var oContext = Context.create(this.oModel, {/*oParentBinding*/}, "/ProductList('HT-1000')"),
 			oPropertyBinding = this.oModel.bindProperty("Name", oContext);
 
@@ -1886,7 +1884,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setType: calls setV4 automatically", function (assert) {
+	QUnit.test("setType: calls setV4 automatically", function () {
 		var oDateTimeOffset = {
 				getName : function () { return "sap.ui.model.odata.type.DateTimeOffset"; },
 				setV4 : function () {}
@@ -2081,7 +2079,7 @@ sap.ui.define([
 	//   cache for property binding -> adapt jsdoc for ODPB ctor, ODModel#bindProperty (remove Note: ...)
 
 	//*********************************************************************************************
-	QUnit.test("resetInvalidDataState", function (assert) {
+	QUnit.test("resetInvalidDataState", function () {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
 			oBindingMock = this.mock(oBinding);
 
@@ -2098,7 +2096,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("deregisterChange", function (assert) {
+	QUnit.test("deregisterChange", function () {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
 			oMock,
 			oOtherBinding = {
@@ -2120,7 +2118,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("deregisterChange: withCache rejects sync", function (assert) {
+	QUnit.test("deregisterChange: withCache rejects sync", function () {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE"),
 			oError = new Error("fail intentionally");
 
@@ -2133,7 +2131,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("visitSideEffects", function (assert) {
+	QUnit.test("visitSideEffects", function () {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
 
 		// code under test: nothing happens
@@ -2196,7 +2194,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetChangesInDependents", function (assert) {
+	QUnit.test("resetChangesInDependents", function () {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
 
 		// code under test
@@ -2212,7 +2210,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("adjustPredicate", function (assert) {
+	QUnit.test("adjustPredicate", function () {
 		var oBinding = this.oModel.bindProperty("/EMPLOYEES('1')/AGE");
 
 		// code under test
@@ -2240,7 +2238,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	if (TestUtils.isRealOData()) {
 		//*****************************************************************************************
-		QUnit.test("PATCH an entity", function (assert) {
+		QUnit.test("PATCH an entity", function () {
 			var oModel = new ODataModel({
 					serviceUrl : TestUtils.proxy(sServiceUrl),
 					synchronizationMode : "None"

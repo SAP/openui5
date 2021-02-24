@@ -8,8 +8,6 @@ sap.ui.define([
 	"sap/ui/test/TestUtils",
 	"sap/ui/util/XMLHelper"
 ], function (jQuery, Log, _V4MetadataConverter, TestUtils, XMLHelper) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var sEdmx = '<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx"'

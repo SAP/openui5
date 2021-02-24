@@ -12,8 +12,6 @@ sap.ui.define([
 	"sap/ui/performance/Measurement"
 ], function (Log, deepEqual, BindingParser, ManagedObject, SyncPromise, Basics, Expression,
 		Measurement) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0*/
 	"use strict";
 
 	var sAnnotationHelper = "sap.ui.model.odata.v4.AnnotationHelper";
@@ -1804,7 +1802,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getExpression: complex binding mode is disabled", function (assert) {
+	QUnit.test("getExpression: complex binding mode is disabled", function () {
 		var oPathValue = {value : 42},
 			oParser = ManagedObject.bindingParser;
 
@@ -1827,7 +1825,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getExpression: Performance measurement points, success", function (assert) {
+	QUnit.test("getExpression: Performance measurement points, success", function () {
 		this.mock(Measurement).expects("average")
 			.withExactArgs("sap.ui.model.odata.v4.AnnotationHelper/getExpression", "",
 				["sap.ui.model.odata.v4.AnnotationHelper"]);
@@ -1840,7 +1838,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getExpression: Performance measurement points, error", function (assert) {
+	QUnit.test("getExpression: Performance measurement points, error", function () {
 		this.mock(Measurement).expects("average")
 			.withExactArgs("sap.ui.model.odata.v4.AnnotationHelper/getExpression", "",
 				["sap.ui.model.odata.v4.AnnotationHelper"]);

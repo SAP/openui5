@@ -28,8 +28,7 @@ sap.ui.define([
 		FilterType, ListBinding, Sorter, OperationMode, Context, ODataListBinding, ODataModel,
 		asODataParentBinding, _AggregationCache, _AggregationHelper, _Cache, _GroupLock, _Helper,
 		_Parser, TestUtils) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-new: 0, no-warning-comments: 0, no-sparse-arrays: 0 */
+	/*eslint no-sparse-arrays: 0 */
 	"use strict";
 
 	var aAllowedBindingParameters = ["$$aggregation", "$$canonicalPath", "$$groupId",
@@ -101,7 +100,7 @@ sap.ui.define([
 			this.mock(_Helper).expects("createError").never();
 		},
 
-		afterEach : function (assert) {
+		afterEach : function () {
 			return TestUtils.awaitRendering();
 		},
 
@@ -157,7 +156,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("bindingCreated", function (assert) {
+	QUnit.test("bindingCreated", function () {
 		var oBinding,
 			oExpectation = this.mock(this.oModel).expects("bindingCreated")
 				.withExactArgs(sinon.match.object);
@@ -172,7 +171,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("constructor: lock when creating with base context", function (assert) {
+	QUnit.test("constructor: lock when creating with base context", function () {
 		var oContext = this.oModel.createBindingContext("/TEAMS('42')");
 
 		this.mock(ODataListBinding.prototype).expects("getGroupId").returns("myGroup");
@@ -408,7 +407,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [null, {group : {dimension : {}}}].forEach(function (oAggregation, i) {
-	QUnit.test("setAggregation, " + i, function (assert) {
+	QUnit.test("setAggregation, " + i, function () {
 		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
 				$$aggregation : {aggregate : {"n/a" : {}}},
 				$$groupId : "foo",
@@ -431,7 +430,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("setAggregation: undefined", function (assert) {
+	QUnit.test("setAggregation: undefined", function () {
 		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
 				$$aggregation : {aggregate : {"n/a" : {}}},
 				$$groupId : "foo",
@@ -889,7 +888,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("reset with header context", function (assert) {
+	QUnit.test("reset with header context", function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oCountBinding1 = this.oModel.bindProperty("$count", oBinding.getHeaderContext()),
 			oCountBinding2 = this.oModel.bindProperty("$count", oBinding.getHeaderContext());
@@ -1194,7 +1193,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bCreatedAtEnd) {
-	QUnit.test("fetchContexts: created, atEnd=" + bCreatedAtEnd, function (assert) {
+	QUnit.test("fetchContexts: created, atEnd=" + bCreatedAtEnd, function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			bChanged = {/*boolean*/},
 			fnDataRequested = {/*function*/},
@@ -1461,7 +1460,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getContexts: dataRequested/dataReceived", function (assert) {
+	QUnit.test("getContexts: dataRequested/dataReceived", function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			oFetchContextsCall,
@@ -1490,7 +1489,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getContexts: default values", function (assert) {
+	QUnit.test("getContexts: default values", function () {
 		var oBinding = this.bindList("n/a"),
 			oBindingMock = this.mock(oBinding);
 
@@ -1683,7 +1682,7 @@ sap.ui.define([
 ].forEach(function (oFixture) {
 	var sTitle = "getContexts: error in fetchContexts, " + JSON.stringify(oFixture);
 
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test(sTitle, function () {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oError = {canceled : oFixture.bCanceled},
@@ -1721,7 +1720,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("getContexts: error in dataRequested", function (assert) {
+	QUnit.test("getContexts: error in dataRequested", function () {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oBindingMock = this.mock(oBinding),
@@ -1753,7 +1752,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getContexts: error in dataReceived", function (assert) {
+	QUnit.test("getContexts: error in dataReceived", function () {
 		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/TEAMS('1')"),
 			oBinding = this.bindList("TEAM_2_EMPLOYEES", oContext),
 			oBindingMock = this.mock(oBinding),
@@ -1963,7 +1962,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("bindList: empty path is valid for base context", function (assert) {
+	QUnit.test("bindList: empty path is valid for base context", function () {
 		var oBaseContext = this.oModel.createBindingContext("/BusinessPartnerList");
 
 		// code under test
@@ -2129,7 +2128,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("refreshInternal: relative binding with base context", function (assert) {
+	QUnit.test("refreshInternal: relative binding with base context", function () {
 		var oBinding;
 
 		oBinding = this.bindList("TEAMS", this.oModel.createBindingContext("/"), undefined,
@@ -2882,7 +2881,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("filter: removes caches and messages", function (assert) {
+	QUnit.test("filter: removes caches and messages", function () {
 		var oBinding = this.bindList("/EMPLOYEES", undefined, undefined, undefined, {
 				$$operationMode : OperationMode.Server
 			});
@@ -3396,7 +3395,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createContexts, no prerendering task if no previous contexts", function (assert) {
+	QUnit.test("createContexts, no prerendering task if no previous contexts", function () {
 		var oBinding = this.bindList("/EMPLOYEES", {});
 
 		this.mock(this.oModel).expects("addPrerenderingTask").never();
@@ -3895,7 +3894,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	[false, true].forEach(function (bSkipRefresh) {
-		QUnit.test("create: bSkipRefresh " + bSkipRefresh, function (assert) {
+		QUnit.test("create: bSkipRefresh " + bSkipRefresh, function () {
 			var oBinding = this.bindList("/EMPLOYEES"),
 				oBindingMock = this.mock(oBinding),
 				oContext,
@@ -5735,7 +5734,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("refreshSingle, no fireDataReceived if no fireDataRequested", function (assert) {
+	QUnit.test("refreshSingle, no fireDataReceived if no fireDataRequested", function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oBindingMock = this.mock(oBinding),
 			oCache = {
@@ -5774,7 +5773,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	[true, false].forEach(function (bDataRequested) {
 		QUnit.test("refreshSingle, error handling: dataRequested already fired: " + bDataRequested,
-				function (assert) {
+				function () {
 			var oBinding = this.bindList("/EMPLOYEES"),
 				oBindingMock = this.mock(oBinding),
 				oCache = {refreshSingle : function () {}},
@@ -5926,7 +5925,7 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-	QUnit.test("resumeInternal: no sResumeChangeReason", function (assert) {
+	QUnit.test("resumeInternal: no sResumeChangeReason", function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oDependent0 = {resumeInternal : function () {}},
 			oDependent1 = {resumeInternal : function () {}};
@@ -5947,7 +5946,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resumeInternal: no sResumeChangeReason but parent has", function (assert) {
+	QUnit.test("resumeInternal: no sResumeChangeReason but parent has", function () {
 		var oContext = {},
 			oBinding = this.bindList("/EMPLOYEES", oContext);
 
@@ -6344,7 +6343,7 @@ sap.ui.define([
 	// side effects now and the late property will fetch its own value later on.
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: all contexts transient => no refresh", function (assert) {
+	QUnit.test("requestSideEffects: all contexts transient => no refresh", function () {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = this.bindList("/Set"),
 			j;
@@ -6362,7 +6361,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("requestSideEffects: no contexts => do refresh", function (assert) {
+	QUnit.test("requestSideEffects: no contexts => do refresh", function () {
 		var oCacheMock = this.getCacheMock(), // must be called before creating the binding
 			oBinding = this.bindList("/Set");
 
@@ -6493,7 +6492,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("attachCreateCompleted/detachCreateCompleted", function (assert) {
+	QUnit.test("attachCreateCompleted/detachCreateCompleted", function () {
 		var oBinding = this.bindList("/Set"),
 			oBindingMock = this.mock(oBinding),
 			fnFunction = {},
@@ -6515,7 +6514,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("attachCreateSent/detachCreateSent", function (assert) {
+	QUnit.test("attachCreateSent/detachCreateSent", function () {
 		var oBinding = this.bindList("/Set"),
 			oBindingMock = this.mock(oBinding),
 			fnFunction = {},
@@ -6965,7 +6964,7 @@ sap.ui.define([
 		var sTitle = "fetchCache: no kept-alive contexts, old cache=" + bOldCache + ", new cache="
 				+ bNewCache;
 
-	QUnit.test(sTitle, function (assert) {
+	QUnit.test(sTitle, function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oParentContext = {},
 			oNewCache = {
@@ -7048,7 +7047,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("resetKeepAlive", function (assert) {
+	QUnit.test("resetKeepAlive", function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oContext1 = {
 				isKeepAlive : function () {}
@@ -7082,7 +7081,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_checkDataStateMessages", function (assert) {
+	QUnit.test("_checkDataStateMessages", function () {
 		var oBinding = this.bindList("/EMPLOYEES"),
 			oDataState = {
 				setModelMessages : function () {}
@@ -7200,7 +7199,7 @@ sap.ui.define([
 			}
 			assert.strictEqual(oFilter.aFilters.length, oFixture.predicates.length);
 			assert.notOk(oFilter.bAnd);
-			oFixture.predicates.forEach(function (sPredicate, i) {
+			oFixture.predicates.forEach(function (_sPredicate, i) {
 				assert.strictEqual(oFilter.aFilters[i], aFilters[i]);
 			});
 			if (fnCallback) {

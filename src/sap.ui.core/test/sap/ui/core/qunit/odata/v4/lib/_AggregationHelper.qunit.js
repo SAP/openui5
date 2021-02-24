@@ -8,8 +8,7 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_AggregationHelper",
 	"sap/ui/model/odata/v4/lib/_Helper"
 ], function (Log, Filter, FilterOperator, _AggregationHelper, _Helper) {
-	/*global QUnit, sinon*/
-	/*eslint camelcase: 0, no-warning-comments: 0 */
+	/*eslint camelcase: 0 */
 	"use strict";
 
 	//*********************************************************************************************
@@ -778,7 +777,7 @@ sap.ui.define([
 	// --> [["string", ["string"]]] means @param {Array<(string|Array<string>)>} ;-)
 
 	//*********************************************************************************************
-	QUnit.test("checkTypeof: array", function (assert) {
+	QUnit.test("checkTypeof: array", function () {
 		var oAggregationHelperMock = this.mock(_AggregationHelper),
 			aValue = [{}, {}, {}];
 
@@ -799,7 +798,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkTypeof: object", function (assert) {
+	QUnit.test("checkTypeof: object", function () {
 		var oAggregationHelperMock = this.mock(_AggregationHelper),
 			oType = {
 				bar : "~bar~",
@@ -824,7 +823,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("checkTypeof: map", function (assert) {
+	QUnit.test("checkTypeof: map", function () {
 		var oAggregationHelperMock = this.mock(_AggregationHelper),
 			oType = {
 				"*" : "~type~"

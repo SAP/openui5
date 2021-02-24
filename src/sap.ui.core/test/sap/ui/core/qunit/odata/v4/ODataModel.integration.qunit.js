@@ -28,8 +28,7 @@ sap.ui.define([
 ], function (Log, uid, ColumnListItem, CustomListItem, FlexBox, Text, Device,
 		EventProvider, SyncPromise, Controller, View, Filter, FilterOperator, Sorter, OperationMode,
 		AnnotationHelper, ODataListBinding, ODataModel, ValueListType, TestUtils, XMLHelper) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0, no-sparse-arrays: 0, camelcase: 0*/
+	/*eslint no-sparse-arrays: 0, camelcase: 0 */
 	"use strict";
 
 	var sClassName = "sap.ui.model.odata.v4.lib._V2MetadataConverter",

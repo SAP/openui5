@@ -8,8 +8,6 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_Helper",
 	"sap/ui/test/TestUtils"
 ], function (jQuery, Log, _Batch, _Helper, TestUtils) {
-	/*global QUnit */
-	/*eslint max-nested-callbacks: 0, no-multi-str: 0, no-warning-comments: 0 */
 	"use strict";
 
 	var oEntity = {"@odata.etag" : "W/\"20180830000000.0000000\""},

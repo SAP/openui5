@@ -13,8 +13,6 @@ sap.ui.define([
 	"sap/ui/model/odata/v4/lib/_V2Requestor"
 ], function (Log, SyncPromise, CalendarType, DateFormat, ODataUtils, _Helper, _Parser, _Requestor,
 		asV2Requestor0) {
-	/*global QUnit, sinon */
-	/*eslint max-nested-callbacks: 0, no-warning-comments: 0 */
 	"use strict";
 
 	function asV2Requestor(oRequestor) {
@@ -628,7 +626,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// This test assumes that the precisions in this test are not used in other tests
-	QUnit.test("convertDateTimeOffset, DateTimeInstance map callCount", function (assert) {
+	QUnit.test("convertDateTimeOffset, DateTimeInstance map callCount", function () {
 		var oDateFormatMock = this.mock(DateFormat),
 			oRequestor = {};
 
@@ -961,7 +959,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("doConvertSystemQueryOptions: $filter", function (assert) {
+	QUnit.test("doConvertSystemQueryOptions: $filter", function () {
 		var sFilter = "foo eq 'bar'",
 			oRequestor = {},
 			fnResultHandlerSpy = this.spy();
@@ -1756,7 +1754,7 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("_setDateTimeFormatter", function (assert) {
+	QUnit.test("_setDateTimeFormatter", function () {
 		var oDateFormatMock = this.mock(DateFormat);
 
 		oDateFormatMock.expects("getDateInstance")
