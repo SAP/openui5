@@ -152,13 +152,19 @@ sap.ui.define([
 			maximumFileSize : {type : "float", group : "Data", defaultValue : null},
 
 			/**
-			 * The chosen files will be checked against an array of mime types.
-			 *
-			 * If at least one file does not fit the mime type restriction, the upload is prevented.
-			 * <b>Note:</b> This property is not supported by Internet Explorer & Edge.
-			 *
-			 * Example: <code>["image/png", "image/jpeg"]</code>.
-			 */
+			* The chosen files will be checked against an array of MIME types defined in this property.
+			*
+			* If at least one file does not fit the MIME type restriction, the upload is prevented.
+			*
+			* <b>Note:</b> This property is not supported by Internet Explorer.
+			* It is only reliable for common file types like images, audio, video, plain text and HTML documents.
+			* File types that are not recognized by the browser result in <code>file.type</code> to be returned
+			* as an empty string. In this case the verification could not be performed.
+			* The file upload is not prevented and the validation based on file type is left to the receiving backend side.
+			*
+			*
+			* Example: <code>["image/png", "image/jpeg"]</code>.
+			*/
 			mimeType : {type : "string[]", group : "Data", defaultValue : null},
 
 			/**
@@ -1631,10 +1637,8 @@ sap.ui.define([
 
 		for (var i = 0; i < aFiles.length; i++) {
 			sName = aFiles[i].name;
-			sType = aFiles[i].type;
-			if (!sType) {
-				sType = "unknown";
-			}
+			sType = aFiles[i].type || "unknown";
+
 			var fSize = ((aFiles[i].size / 1024) / 1024);
 			if (fMaxSize && (fSize > fMaxSize)) {
 				Log.info("File: " + sName + " is of size " + fSize + " MB which exceeds the file size limit of " + fMaxSize + " MB.");
@@ -1661,11 +1665,11 @@ sap.ui.define([
 						bWrongMime = false;
 					}
 				}
-				if (bWrongMime && !(sType === "unknown" && (Device.browser.edge || Device.browser.msie))) {
+				if (bWrongMime && sType !== "unknown") {
 					Log.info("File: " + sName + " is of type " + sType + ". Allowed types are: "  + aMimeTypes + ".");
 					this.fireTypeMissmatch({
-						fileName:sName,
-						mimeType:sType
+						fileName: sName,
+						mimeType: sType
 					});
 
 					return false;

@@ -453,6 +453,41 @@ sap.ui.define([
 		oFileUploader.destroy();
 	});
 
+	QUnit.test("Unknown mime types doesn't block file from uploading", function (assert) {
+		// prepare
+		var oFileUploader = new FileUploader({
+				uploadUrl: "/upload",
+				mimeType: ["image/png", "image/jpeg"],
+				fileType: ["msg", "jpeg", "png"]
+			}),
+			fakeEvent = {
+				type: "change",
+				target: {
+					files : {
+						"0": createFakeFile({
+								name: "test.msg",
+								type: "unknown",
+								size: 404450
+							}),
+						"length" : 1
+					}
+				}
+			},
+			oFileAllowedSpy = this.spy(oFileUploader, "fireFileAllowed");
+
+		oFileUploader.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// act
+		oFileUploader.handlechange(fakeEvent);
+
+		// assert
+		assert.ok(oFileAllowedSpy.calledOnce, "File upload is allowed");
+
+		// clean
+		oFileUploader.destroy();
+	});
+
 	if (!(!!sap.ui.Device.browser.internet_explorer && sap.ui.Device.browser.version < 10)) {
 		QUnit.test("Testing the filename lenth validation handling - handlechange()", function (assert) {
 			//setup
