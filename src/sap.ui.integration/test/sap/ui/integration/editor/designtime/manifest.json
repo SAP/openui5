@@ -22,6 +22,9 @@
 		"type": "List",
 		"configuration": {
 			"parameters": {
+				"cardTitle": {
+					"value": "Card Title Default"
+				},
 				"string": {
 					"value": "StringValue"
 				},
@@ -51,6 +54,15 @@
 				},
 				"integerLabelTrans": {
 					"value": 1
+				},
+				"stringphone": {
+					"value": ""
+				},
+				"stringphonenomessage": {
+					"value": ""
+				},
+				"stringmaxmin": {
+					"value": ""
 				},
 				"integerrequired": {
 					"value": ""
@@ -208,7 +220,7 @@
 			}
 		},
 		"header": {
-			"title": "Card Title",
+			"title": "{{parameters.cardTitle}}",
 			"subTitle": "Card Sub Title",
 			"icon": {
 				"src": "sap-icon://accept",

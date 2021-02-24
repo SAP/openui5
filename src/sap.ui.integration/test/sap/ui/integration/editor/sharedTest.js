@@ -28,12 +28,26 @@ var baseUrl = document.location.pathname.substring(0, document.location.pathname
 		}
 	};
 
-function switchTheme(oSelect) {
-	sap.ui.getCore().applyTheme(oSelect.options[oSelect.selectedIndex].value);
+function switchLanguage(oSelect) {
+	this._sLanguage = oSelect.options[oSelect.selectedIndex].value;
+	sap.ui.getCore().getConfiguration().setLanguage(this._sLanguage);
+	updateAllLayerCard();
+	loadAllChanges();
+}
+
+function switchTranslationLanguageForOnlyMode(oSelect) {
+	this._sTranslationLanguageForOnlyMode = oSelect.options[oSelect.selectedIndex].value;
+	loadCurrentValues("cardEditorTranslation");
+}
+
+function switchTranslationLanguageForAllMode(oSelect) {
+	this._sTranslationLanguageForAllMode = oSelect.options[oSelect.selectedIndex].value;
+	updateAdminContentTranslationLayerCard();
 }
 
 function init() {
 	sap.ui.require(["sap-ui-integration-editor"], function () {
+		loadLanguages();
 		updateAllLayerCard();
 		loadAllChanges();
 		//load common implementation for host testing
@@ -83,7 +97,13 @@ function loadCurrentValues(id) {
 	if (!dom) return;
 	var settings = getItem(id),
 		div = document.createElement("div");
-	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), dom.getAttribute("language") || "", dom.getAttribute("designtime") || "");
+	var sLanguage;
+	if (id === "cardEditorTranslation") {
+		sLanguage = this._sTranslationLanguageForOnlyMode || "ru";
+	} else {
+		sLanguage = this._sLanguage || dom.getAttribute("language") || "";
+	}
+	div.innerHTML = createCardEditorTag(id, [settings], dom.getAttribute("mode"), sLanguage, dom.getAttribute("designtime") || "");
 	dom.parentNode.replaceChild(div.firstChild, dom);
 }
 
@@ -101,6 +121,54 @@ function loadAllChanges() {
 	loadCurrentValues("previewNoScale");
 }
 
+function loadLanguages() {
+	sap.ui.require(['sap/base/util/LoaderExtensions', "sap/ui/core/Core"],
+	function (LoaderExtensions, Core) {
+		//load the language list
+		var aLanguageList = LoaderExtensions.loadResource("sap/ui/integration/designtime/editor/languages.json", {
+			dataType: "json",
+			failOnError: false,
+			async: false
+		});
+		var sCurrentLanguage =  Core.getConfiguration().getLanguage().replaceAll('-', '_');
+		var oLanguageSelect = document.getElementById("languageSelect");
+		if (!oLanguageSelect) return;
+		for (var sLanguage in aLanguageList) {
+			var oOption = document.createElement("OPTION");
+			oOption.text = aLanguageList[sLanguage];
+			oOption.value = sLanguage;
+			if (sLanguage === sCurrentLanguage) {
+				oOption.selected = true;
+			}
+			oLanguageSelect.add(oOption);
+		}
+		var oTranslationLanguageSelectForOnlyMode = document.getElementById("translationLanguageSelectForOnlyMode");
+		if (!oTranslationLanguageSelectForOnlyMode) return;
+		var sTranslationLanguageForOnlyMode = this._sTranslationLanguageForOnlyMode || "ru";
+		for (var sLanguage in aLanguageList) {
+			var oOption = document.createElement("OPTION");
+			oOption.text = aLanguageList[sLanguage];
+			oOption.value = sLanguage;
+			if (sLanguage === sTranslationLanguageForOnlyMode) {
+				oOption.selected = true;
+			}
+			oTranslationLanguageSelectForOnlyMode.add(oOption);
+		}
+		var oTranslationLanguageSelectForAllMode = document.getElementById("translationLanguageSelectForAllMode");
+		if (!oTranslationLanguageSelectForAllMode) return;
+		var sTranslationLanguageForAllMode = this._sTranslationLanguageForAllMode || "ru";
+		for (var sLanguage in aLanguageList) {
+			var oOption = document.createElement("OPTION");
+			oOption.text = aLanguageList[sLanguage];
+			oOption.value = sLanguage;
+			if (sLanguage === sTranslationLanguageForAllMode) {
+				oOption.selected = true;
+			}
+			oTranslationLanguageSelectForAllMode.add(oOption);
+		}
+	});
+}
+
 function updateAllLayerCard() {
 	updateAdminContentTranslationLayerCard();
 	updateAdminContentLayerCard();
@@ -112,7 +180,7 @@ function updateAllLayerCard() {
 		content = getItem("cardEditorContent"),
 		translation = getItem("cardEditorTranslation");
 	settings.push(admin, content, translation);
-	target.innerHTML = createCardEditorTag("cardEditorAll", settings, "all", "");
+	target.innerHTML = createCardEditorTag("cardEditorAll", settings, "all", this._sLanguage || "");
 }
 
 function updateAdminContentLayerCard() {
@@ -134,5 +202,6 @@ function updateAdminContentTranslationLayerCard() {
 		content = getItem("cardEditorContent"),
 		translation = getItem("cardEditorTranslation");
 	settings.push(admin, content, translation);
-	target.innerHTML = createCardEditorTag("cardEditorAdminContentTranslation", settings, "translation", "ru");
+	var sLanguage = this._sTranslationLanguageForAllMode || "ru";
+	target.innerHTML = createCardEditorTag("cardEditorAdminContentTranslation", settings, "translation", sLanguage);
 }

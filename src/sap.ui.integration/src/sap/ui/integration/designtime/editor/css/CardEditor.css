@@ -185,6 +185,36 @@
 	max-width: 300px !important;
 	font-size: 0.8rem;
 }
+
+.sapUiIntegrationFieldTranslation .sapMPopoverTitle {
+	max-width: 300px !important;
+	font-size: 1.125rem;
+	text-align: center;
+    width: 100%;
+	padding: 0.5rem 0 0 0;
+}
+
+.sapUiIntegrationFieldTranslation .sapMLIB.sapMGHLI {
+    font-weight: bold;
+	border-bottom: 0;
+	height: 2.25rem;
+    padding-top: 0.5rem;
+}
+
+.sapUiIntegrationFieldTranslation .sapMCLI {
+    padding: 0 1rem 0 1rem;
+	border-bottom: 0;
+}
+
+.sapUiIntegrationFieldTranslation .sapMCurrentLanguageVBox {
+    padding: 0 1.8rem 0.5rem 1rem;
+}
+
+.sapUiIntegrationFieldTranslation .sapMHeaderTitle {
+	font-size: 1rem;
+	padding: 0.5rem 0 0.5rem 0.5rem;
+}
+
 .sapUiIntegrationFieldSettings .description {
 	max-width: 380px;
 	margin: 0.3rem;

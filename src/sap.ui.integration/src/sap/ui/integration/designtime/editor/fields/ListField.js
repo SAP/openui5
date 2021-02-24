@@ -18,7 +18,7 @@ sap.ui.define([
 	BaseField, Input, Text, MultiComboBox, ListItem, each, _debounce, ObjectPath, includes, SeparatorItem, Core, Sorter
 ) {
 	"use strict";
-	var sDefaultSeperator = "/";
+	var sDefaultSeperator = "#";
 	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 	/**

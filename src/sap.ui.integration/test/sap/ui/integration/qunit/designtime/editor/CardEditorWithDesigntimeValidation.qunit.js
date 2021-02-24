@@ -108,12 +108,14 @@ sap.ui.define([
 									allowSettings: true,
 									validation: {
 										maxLength: 10
-									}
+									},
+									manifestpath: "/sap.card/configuration/parameters/string1/value"
 								},
 								string2: {
 									type: "string",
 									label: "{i18n>string2label}",
 									allowSettings: true,
+									manifestpath: "/sap.card/configuration/parameters/string2/value",
 									validations: [{
 										type: "warning",
 										minLength: 1,

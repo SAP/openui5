@@ -711,6 +711,87 @@ sap.ui.define(function () {
 				},
 				sinon: false
 			},
+			"designtime/editor/multiLanguagesOfValue/InitialWithNoChange": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/ChangeByAdminForAdminAndContentModes": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/ChangeByAdminForTranslationAndAllModes": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/ChangeByContent": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/ChangeByTranslation": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/ChangeByAdminAndContent": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/ChangeByAdminAndTranslation": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/ChangeByAdminAndContentAndTranslation": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
+			"designtime/editor/multiLanguagesOfValue/ChangeByContentAndTranslation": {
+				group: "Runtime Card Editor",
+				coverage: {
+					only: [
+						"sap/ui/integration/designtime/editor"
+					]
+				},
+				sinon: false
+			},
 			"designtime/editor/CardEditorWithDesigntimeValidation": {
 				group: "Runtime Card Editor",
 				coverage: {
