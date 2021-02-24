@@ -1,12 +1,16 @@
 /*global QUnit*/
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
+	"sap/m/SinglePlanningCalendar",
+	"sap/m/SinglePlanningCalendarMonthView",
 	"sap/m/SinglePlanningCalendarMonthGrid",
 	"sap/ui/unified/CalendarAppointment",
 	'sap/ui/unified/DateTypeRange',
 	'sap/ui/unified/library'
 ], function(
 	qutils,
+	SinglePlanningCalendar,
+	SinglePlanningCalendarMonthView,
 	SinglePlanningCalendarMonthGrid,
 	CalendarAppointment,
 	DateTypeRange,
@@ -377,5 +381,47 @@ sap.ui.define([
 
 			//clean up
 			oGrid.destroy();
+		});
+
+		QUnit.module("DOM attributes", {
+			beforeEach: function() {
+				this.oSPC = new SinglePlanningCalendar({
+					startDate: new Date(2020,11,1),
+					enableAppointmentsDragAndDrop: false,
+					views: new SinglePlanningCalendarMonthView({
+						key: "Month",
+						title: "Month"
+					}),
+					appointments:[
+						new CalendarAppointment({
+							title: "appointment for 2 rows",
+							startDate: new Date(2020,11,10),
+							endDate: new Date(2020,11,14)
+						})
+					]
+				}).placeAt("qunit-fixture");
+
+				sap.ui.getCore().applyChanges();
+			},
+			afterEach: function() {
+				this.oSPC.destroy();
+			}
+		});
+
+		QUnit.test("Appointment on two rows", function (assert){
+			// arrange
+			var oAppointmentHTMElement = this.oSPC.getAggregation("_mvgrid").$().find(".sapMSinglePCBlockers")[1].children[0];
+			var oAppointment = this.oSPC.getAppointments()[0];
+			//assert
+			assert.strictEqual(oAppointmentHTMElement.getAttribute("data-sap-ui-related"), oAppointment.getId(), "Appoinment have same data-sap-ui-related as the Control Id");
+			assert.notEqual(oAppointmentHTMElement.getAttribute("id"), oAppointment.getId(), "DOM representation of the appointment should have a different id from the object Appointment");
+			assert.strictEqual(oAppointmentHTMElement.getAttribute("draggable"), this.oSPC.getEnableAppointmentsDragAndDrop().toString(), "Тhe appointment must receive the correct 'draggable' attribute from the SPC settings");
+
+			//act
+			this.oSPC.setEnableAppointmentsDragAndDrop(true);
+			sap.ui.getCore().applyChanges();
+
+			//asert
+			assert.strictEqual(oAppointmentHTMElement.getAttribute("draggable"), this.oSPC.getEnableAppointmentsDragAndDrop().toString(), "Тhe appointment must receive the correct 'draggable' attribute from the SPC settings");
 		});
 	});

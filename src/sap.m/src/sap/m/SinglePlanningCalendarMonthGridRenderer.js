@@ -133,10 +133,10 @@ sap.ui.define([
 
 					// render appointments which started in previous rows
 					if (j === 0) {
-						this.renderAppointments(oRm, oControl, aPreviousWeekAppsPerDay[iCellIndex], j, aMoreCountPerCell[iCellIndex], oDensitySizes);
+						this.renderAppointments(oRm, oControl, aPreviousWeekAppsPerDay[iCellIndex], j, aMoreCountPerCell[iCellIndex], oDensitySizes, i);
 					}
 
-					this.renderAppointments(oRm, oControl, aAppsPerDay[iCellIndex], j, aMoreCountPerCell[iCellIndex], oDensitySizes);
+					this.renderAppointments(oRm, oControl, aAppsPerDay[iCellIndex], j, aMoreCountPerCell[iCellIndex], oDensitySizes, i);
 				}
 
 				oRm.close("div"); // end appointments
@@ -209,18 +209,18 @@ sap.ui.define([
 			oRm.close("div");
 		};
 
-		SinglePlanningCalendarMonthGridRenderer.renderAppointments = function(oRm, oControl, apps, iColumn, iMore, oDensitySizes) {
+		SinglePlanningCalendarMonthGridRenderer.renderAppointments = function(oRm, oControl, apps, iColumn, iMore, oDensitySizes, iRow) {
 			var MAX_APPS = oControl._getMaxAppointments(),
 				iMaxLvl = iMore ? MAX_APPS - 2 : MAX_APPS - 1;
 
 			for (var i = 0; i < apps.length; i++) {
 				if (apps[i].level <= iMaxLvl) {
-					this.renderAppointment(oRm, oControl, apps[i], iColumn, oDensitySizes);
+					this.renderAppointment(oRm, oControl, apps[i], iColumn, oDensitySizes, iRow);
 				}
 			}
 		};
 
-		SinglePlanningCalendarMonthGridRenderer.renderAppointment = function(oRm, oControl, app, iColumn, oDensitySizes) {
+		SinglePlanningCalendarMonthGridRenderer.renderAppointment = function(oRm, oControl, app, iColumn, oDensitySizes, iRow) {
 			var oAppointment = app.data,
 				iWidth = app.width,
 				iLevel = app.level,
@@ -232,6 +232,7 @@ sap.ui.define([
 				sText = oAppointment.getText(),
 				sIcon = oAppointment.getIcon(),
 				sId = oAppointment.getId(),
+				bDraggable = oAppointment.getParent().getEnableAppointmentsDragAndDrop(),
 				mAccProps = {
 					role: "listitem",
 					labelledby: {
@@ -268,7 +269,10 @@ sap.ui.define([
 				mAccProps["labelledby"].value = mAccProps["labelledby"].value + " " + InvisibleText.getStaticId("sap.ui.unified", "APPOINTMENT_SELECTED");
 			}
 
-			oRm.openStart("div", oAppointment);
+			oRm.openStart("div", oAppointment.getId() + "_" + iColumn + iRow);
+			oRm.attr("draggable", bDraggable);
+			oRm.attr("data-sap-ui-draggable", bDraggable);
+			oRm.attr("data-sap-ui-related", oAppointment.getId());
 			oRm.attr("data-sap-level", iLevel);
 			oRm.attr("data-sap-width", iWidth);
 			oRm.attr("tabindex", 0);
