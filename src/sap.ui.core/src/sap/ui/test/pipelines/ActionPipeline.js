@@ -38,7 +38,7 @@ sap.ui.define([
 
 				var aActions = oPipelineFactory.create(oOptions.actions);
 
-				if (!jQueryDOM.isArray(vControl)) {
+				if (!Array.isArray(vControl)) {
 					aControls = [vControl];
 				} else {
 					aControls = vControl;

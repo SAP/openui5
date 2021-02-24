@@ -142,7 +142,7 @@ function (ManagedObject, QUnitUtils, Opa5, Device, jQueryDOM, _OpaLogger) {
 				var vAdapter = this.controlAdapters[oMetadata.getName()];
 
 				if (vAdapter) {
-					if (jQueryDOM.isFunction(vAdapter)) {
+					if (typeof vAdapter === "function") {
 						return vAdapter(oControl);
 					}
 					if (typeof vAdapter === "string") {

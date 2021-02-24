@@ -84,7 +84,7 @@ sap.ui.define([
 			}
 
 			var vAggregation = fnAggregation.call(oControl);
-			var aAggregation = jQueryDOM.isArray(vAggregation) ? vAggregation : [vAggregation];
+			var aAggregation = Array.isArray(vAggregation) ? vAggregation : [vAggregation];
 
 			var bMatches = aAggregation.some(function (vAggregationItem) {
 				var fnPropertyGetter = vAggregationItem["get" + capitalize(sPropertyName, 0)];

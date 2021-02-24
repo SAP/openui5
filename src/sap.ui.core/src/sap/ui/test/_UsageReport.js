@@ -25,7 +25,7 @@ sap.ui.define([
             var oPrototype = sap.ui.test._UsageReport.prototype;
             Object.keys(oPrototype).forEach(function (sKey) {
                 var bIsSpecialFunction = ["constructor", "getMetadata"].indexOf(sKey) > -1;
-                if (oPrototype.hasOwnProperty(sKey) && jQueryDOM.isFunction(oPrototype[sKey]) && !bIsSpecialFunction) {
+                if (oPrototype.hasOwnProperty(sKey) && typeof oPrototype[sKey] === "function" && !bIsSpecialFunction) {
                     var fnOriginal = oPrototype[sKey];
                     oPrototype[sKey] = function () {
                         if (this.enabled) {

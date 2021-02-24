@@ -42,7 +42,7 @@ sap.ui.define([
             if (vControls === OpaPlugin.FILTER_FOUND_NO_CONTROLS) {
                 return [];
             } else {
-                return $.isArray(vControls) ? vControls : [vControls];
+                return Array.isArray(vControls) ? vControls : [vControls];
             }
         }
     };
@@ -211,7 +211,7 @@ sap.ui.define([
     }
 
     function _extractAncestorSelector(oOptions) {
-        if ($.isArray(oOptions.ancestor)) {
+        if (Array.isArray(oOptions.ancestor)) {
             // ensure backwards compatibility with UIVeri5
             return {
                 id: oOptions.ancestor[0]

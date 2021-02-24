@@ -746,7 +746,7 @@ sap.ui.define([
 				// even if we have no control the matchers may provide a value for vControl
 				vResult = oPlugin._getFilteredControls(oPluginOptions, vControl);
 
-				if (iFrameLauncher.hasLaunched() && $.isArray(vResult)) {
+				if (iFrameLauncher.hasLaunched() && Array.isArray(vResult)) {
 					// People are using instanceof Array in their check so i need to make sure the Array
 					// comes from the current document. I cannot use slice(0) or map because the original array is kept
 					// so i need to use the slowest way to create a swallow copy of the array

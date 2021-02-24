@@ -87,7 +87,7 @@ sap.ui.define([
 					return vControl;
 				}
 
-				if (!jQueryDOM.isArray(vControl)) {
+				if (!Array.isArray(vControl)) {
 					iExpectedAmount = 1;
 					aControls = [vControl];
 				} else {

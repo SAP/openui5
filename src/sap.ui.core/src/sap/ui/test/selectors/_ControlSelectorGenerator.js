@@ -90,7 +90,7 @@
                 return _ControlSelectorGenerator._executeGenerator(oGenerator, oOptions);
             })).then(function (aSelectors) {
                 aSelectors = aSelectors.filter(function (vSelector) {
-                    return vSelector && !$.isEmptyObject(vSelector) && (!$.isArray(vSelector) || vSelector.length);
+                    return vSelector && !$.isEmptyObject(vSelector) && (!Array.isArray(vSelector) || vSelector.length);
                 });
                 if (aSelectors.length) {
                     _oLogger.debug("The matching " + (oOptions.multiple ? "non-unique" : "unique") + " selectors are: " + JSON.stringify(aSelectors));
@@ -272,10 +272,10 @@
                 var aChildren = Object.keys(oControl.mAggregations).filter(function (sAggregation) {
                     // filter out aggregations with controls in them
                     var vAggregation = oControl.mAggregations[sAggregation];
-                    return vAggregation && (($.isArray(vAggregation) && vAggregation.length) || (vAggregation.getMetadata && vAggregation.getMetadata().getName()));
+                    return vAggregation && ((Array.isArray(vAggregation) && vAggregation.length) || (vAggregation.getMetadata && vAggregation.getMetadata().getName()));
                 }).map(function (sAggregation) {
                     var vAggregation = oControl.mAggregations[sAggregation];
-                    return $.isArray(vAggregation) ? vAggregation.slice(0, _ControlSelectorGenerator._maxWidth) : vAggregation;
+                    return Array.isArray(vAggregation) ? vAggregation.slice(0, _ControlSelectorGenerator._maxWidth) : vAggregation;
                 }).reduce(function (aResult, aAggregationChildren) {
                     // flatten
                     return aResult.concat(aAggregationChildren);
@@ -400,11 +400,11 @@
         var aSelectors = [];
         var oSelectorValidator = new _ControlSelectorValidator(oValidationRoot, bMultiple);
 
-        if ($.isArray(vSelector)) {
+        if (Array.isArray(vSelector)) {
             // vSelector is an array when it includes multiple selectors of the same type (eg: 1 per property, each with a properties matcher)
             vSelector.forEach(function (vSelectorPerType) {
                 // vSelector is an array of arrays (eg: 1 selector per binding part, each with a bindingPath matcher)
-                if ($.isArray(vSelectorPerType)) {
+                if (Array.isArray(vSelectorPerType)) {
                     vSelectorPerType.forEach(function (mSelectorPerPart) {
                         if (oSelectorValidator._validate(mSelectorPerPart)) {
                             aSelectors.push(mSelectorPerPart);
