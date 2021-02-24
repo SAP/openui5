@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv='X-UA-Compatible' content='IE=edge'>
+		<meta charset="utf-8">
+		<title>Mobile App with XML View with JSON Data</title>
+		<script src="../../../shared-config.js"></script>
+		<script id="sap-ui-bootstrap"
+				src="../../../../../../../resources/sap-ui-core.js"
+				data-sap-ui-libs='sap.m'
+				data-sap-ui-bindingSyntax='complex'
+				data-sap-ui-async='true'>
+		</script>
+		<script>
+			sap.ui.require([
+				"sap/ui/core/library",
+				"sap/ui/core/mvc/Controller",
+				"sap/ui/core/mvc/View"
+			], function (library, Controller, View) {
+				"use strict";
+				var VIEW_DEFINITION =
+					'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="myController" displayBlock="true">' +
+						'<App id="myApp">' +
+							'<Page id="page1" title="Hello">' +
+								'<Button id="myButton"/>' +
+							'</Page>' +
+							'<Page id="page2" title="Hello">' +
+								'<Button id="myButton2"/>' +
+							'</Page>' +
+						'</App>' +
+						'<Button id="buttonOutsideOfTheApp"></Button>' +
+					'</mvc:View>';
+				Controller.extend("myController", {});
+				var oView = sap.ui.xmlview({
+					viewContent: VIEW_DEFINITION
+				});
+				oView.setViewName("myView");
+				oView.placeAt("content");
+			});
+		</script>
+	</head>
+	<body id='content' class='sapUiBody'>
+	</body>
+</html>
