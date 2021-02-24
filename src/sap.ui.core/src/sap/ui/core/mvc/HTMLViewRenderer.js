@@ -67,8 +67,8 @@ sap.ui.define(['./ViewRenderer'],
 			rm.unsafeHtml(sHTML);
 
 			// all controls that are not found in the template will be added at the end
-			for (var i = 0; i < aDeferred.length; i++) {
-				rm.renderControl(aDeferred[i]);
+			for (var k = 0; k < aDeferred.length; k++) {
+				rm.renderControl(aDeferred[k]);
 			}
 		}
 
