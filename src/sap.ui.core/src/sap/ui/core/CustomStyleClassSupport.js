@@ -3,33 +3,12 @@
  */
 
 // Provides helper sap.ui.core.CustomStyleClassSupport
-sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log", "sap/ui/Device"],
-	function(Element, assert, Log, Device) {
+sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log", "sap/ui/thirdparty/jquery"],
+	function(Element, assert, Log, jQuery) {
 	"use strict";
-
-	/*global DOMTokenList */
 
 	var rAnyWhiteSpace = /\s/;
 	var rNonWhiteSpace = /\S+/g;
-
-	// Workaround for functionality that is missing in IE11
-	var addAll = DOMTokenList.prototype.add,
-		removeAll = DOMTokenList.prototype.remove;
-
-	if ( Device.browser.msie ) {
-		/* polyfill, to be called with a DOMTokenlist as this and the class names as individual arguments */
-		addAll = function() {
-			for (var i = 0; i < arguments.length; i++) {
-				this.add(arguments[i]);
-			}
-		};
-		/* polyfill, to be called with a DOMTokenlist as this and the class names as individual arguments */
-		removeAll = function() {
-			for (var i = 0; i < arguments.length; i++) {
-				this.remove(arguments[i]);
-			}
-		};
-	}
 
 	/**
 	 * Applies the support for custom style classes on the prototype of a <code>sap.ui.core.Element</code>.
@@ -133,12 +112,8 @@ sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log", "sap/ui/Device"],
 				}
 			}
 
-			if ( rAnyWhiteSpace.test(sStyleClass) ) {
-				aClasses = sStyleClass.match(rNonWhiteSpace);
-				aClasses && aClasses.forEach(check);
-			} else {
-				check(sStyleClass);
-			}
+			aClasses = sStyleClass.match(rNonWhiteSpace);
+			aClasses && aClasses.forEach(check);
 
 			// if all classes exist already, it's not needed to change the DOM or trigger invalidate
 			if (!bModified) {
@@ -147,11 +122,7 @@ sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log", "sap/ui/Device"],
 
 			var oRoot = this.getDomRef();
 			if (oRoot) { // non-rerendering shortcut
-				if ( aClasses ) {
-					addAll.apply(oRoot.classList, aClasses);
-				} else {
-					oRoot.classList.add(sStyleClass);
-				}
+				jQuery(oRoot).addClass(aClasses);
 			} else if (bSuppressRerendering === false) {
 				this.invalidate();
 			}
@@ -197,21 +168,13 @@ sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log", "sap/ui/Device"],
 				}
 			}
 
-			if ( rAnyWhiteSpace.test(sStyleClass) ) {
-				aClasses = sStyleClass.match(rNonWhiteSpace);
-				aClasses && aClasses.forEach(check);
-			} else {
-				check(sStyleClass);
-			}
+			aClasses = sStyleClass.match(rNonWhiteSpace);
+			aClasses && aClasses.forEach(check);
 
 			if (bExist) {
 				var oRoot = this.getDomRef();
 				if (oRoot) { // non-rerendering shortcut
-					if ( aClasses ) {
-						removeAll.apply(oRoot.classList, aClasses);
-					} else {
-						oRoot.classList.remove(sStyleClass);
-					}
+					jQuery(oRoot).removeClass(aClasses);
 				} else if (bSuppressRerendering === false) {
 					this.invalidate();
 				}
