@@ -1214,6 +1214,11 @@ sap.ui.define([
 				title: this._oRb.getText("VARIANT_MANAGEMENT_SAVEDIALOG"),
 				afterClose: function() {
 					this._bSaveOngoing = false;
+
+					if (this._sStyleClass) {
+						this.oSaveAsDialog.removeStyleClass(this._sStyleClass);
+						this._sStyleClass = undefined;
+					}
 				}.bind(this),
 				beginButton: this.oSaveSave,
 				endButton: new Button(this.getId() + "-variantcancel", {
@@ -1251,12 +1256,14 @@ sap.ui.define([
 	/**
 	 * Opens the <i>Save as</i> dialog.
 	 * @public
-	 */
-	VariantManagement.prototype.openSaveAsDialogForKeyUser = function (sRtaSyleClassName) {
-		this._openSaveAsDialog(sRtaSyleClassName);
+	 * @param {string} sRtaStyleClassName - style-class to be used 	 */
+	VariantManagement.prototype.openSaveAsDialogForKeyUser = function (sRtaStyleClassName) {
+		this._openSaveAsDialog(sRtaStyleClassName);
+		this.oSaveAsDialog.addStyleClass(sRtaStyleClassName);
+		this._sStyleClass = sRtaStyleClassName;
 	};
 
-	VariantManagement.prototype._openSaveAsDialog = function(sRtaSyleClassName) {
+	VariantManagement.prototype._openSaveAsDialog = function() {
 		this._createSaveAsDialog();
 
 		this.oInputName.setValue(this.getSelectedVariantText(this.getCurrentVariantKey()));
@@ -1286,11 +1293,6 @@ sap.ui.define([
 			this.oLabelKey.setVisible(false);
 		}
 
-		if (typeof sRtaSyleClassName === "string" && sRtaSyleClassName.length) {
-			this.oSaveAsDialog.addStyleClass(sRtaSyleClassName);
-		} else {
-			this.oSaveAsDialog.removeStyleClass(sRtaSyleClassName);
-		}
 		this.oSaveAsDialog.open();
 	};
 
@@ -2050,9 +2052,8 @@ sap.ui.define([
 							bInError = true;
 						}
 					}
-
-					return bInError;
 				}
+				return bInError;
 			}.bind(this));
 		}
 
@@ -2093,6 +2094,10 @@ sap.ui.define([
 		oModel = this.getModel(VariantManagement.INNER_MODEL_NAME);
 		if (oModel) {
 			oModel.destroy();
+		}
+
+		if (this._sStyleClass) {
+			this._sStyleClass = undefined;
 		}
 	};
 
