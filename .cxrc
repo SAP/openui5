@@ -20,6 +20,13 @@
             "grunt/**/*",
             "lib/**/*",
             "src/sap.ui.core/**/*",
+            "!src/sap.ui.core/src/sap/ui/core/util/Export.js",
+            "!src/sap.ui.core/src/sap/ui/core/util/ExportCell.js",
+            "!src/sap.ui.core/src/sap/ui/core/util/ExportColumn.js",
+            "!src/sap.ui.core/src/sap/ui/core/util/ExportRow.js",
+            "!src/sap.ui.core/src/sap/ui/core/util/ExportType.js",
+            "!src/sap.ui.core/src/sap/ui/core/util/ExportTypeCSV.js",
+            "!src/sap.ui.core/src/sap/ui/core/util/File.js",
             "src/testsuite-utils/**/*",
             "src/testsuite/**/*"
         ],
@@ -27,7 +34,14 @@
             "src/sap.ui.suite/**/*"
         ],
         "tables": [
-            "src/sap.ui.table/**/*"
+            "src/sap.ui.table/**/*",
+            "src/sap.ui.core/src/sap/ui/core/util/Export.js",
+            "src/sap.ui.core/src/sap/ui/core/util/ExportCell.js",
+            "src/sap.ui.core/src/sap/ui/core/util/ExportColumn.js",
+            "src/sap.ui.core/src/sap/ui/core/util/ExportRow.js",
+            "src/sap.ui.core/src/sap/ui/core/util/ExportType.js",
+            "src/sap.ui.core/src/sap/ui/core/util/ExportTypeCSV.js",
+            "src/sap.ui.core/src/sap/ui/core/util/File.js"
         ],
         "flex": [
             "src/sap.ui.dt/**/*",
