@@ -13,6 +13,7 @@ sap.ui.define([
 	sap.ui.loader.config({
 		paths:{
 			"sap/ui/test":"test-resources/sap/ui/core/qunit/component/testdata/",
+			"sap/ui/test/qunitPause": "resources/sap/ui/test/qunitPause",
 			"sap/ui/test/RecorderHotkeyListener": "resources/sap/ui/test/RecorderHotkeyListener"
 		}
 	});
