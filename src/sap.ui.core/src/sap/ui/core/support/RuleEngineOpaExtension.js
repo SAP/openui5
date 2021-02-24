@@ -85,8 +85,8 @@ sap.ui.define([
 			 * RuleEngineOpaAssertions represents a set of methods with which OPA test assertions can be enhanced.
 			 * To use this functionality, {@link sap.ui.core.support.RuleEngineOpaExtension RuleEngineOpaExtension} should be provided in the OPA extensions list.
 			 *
-			 * @namespace
-			 * @name sap.ui.core.support.RuleEngineOpaAssertions
+			 * @interface
+			 * @alias sap.ui.core.support.RuleEngineOpaAssertions
 			 * @public
 			 */
 			var oRuleEngineAssertions = /** @lends sap.ui.core.support.RuleEngineOpaAssertions */ {
