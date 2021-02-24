@@ -1012,11 +1012,30 @@ sap.ui.define([
 			nShortRefNumber,
 			sPluralCategory,
 			mUnitPatterns,
-			sLookupMeasure;
+			sLookupMeasure,
+			bValueIsNullOrUndefined = vValue === undefined || vValue === null;
 
-		if (vValue === oOptions.emptyString || (isNaN(vValue) && isNaN(oOptions.emptyString))) {
+		// emptyString is only relevant for the number part (vValue)
+		if (oOptions.showNumber && (vValue === oOptions.emptyString || (isNaN(vValue) && isNaN(oOptions.emptyString)))) {
 			// if the value equals the 'emptyString' format option, return empty string.
 			// the NaN case has to be checked by using isNaN because NaN !== NaN
+			return "";
+		}
+
+		// sMeasure must be a string if defined
+		if (sMeasure !== undefined
+			&& sMeasure !== null
+			&& typeof sMeasure !== "string"
+			&& !(sMeasure instanceof String)) {
+			return "";
+		}
+
+		if (!oOptions.showNumber && !sMeasure) {
+			return "";
+		}
+
+		// cannot create number from null or undefined
+		if (bValueIsNullOrUndefined && (!sMeasure || !oOptions.showMeasure || oOptions.showNumber)) {
 			return "";
 		}
 
@@ -1032,7 +1051,7 @@ sap.ui.define([
 		}
 
 		// Recognize the correct unit definition (either custom unit or CLDR unit)
-		if (oOptions.type === mNumberType.UNIT) {
+		if (sMeasure && oOptions.type === mNumberType.UNIT) {
 			if (oOptions.customUnits && typeof oOptions.customUnits === "object") {
 				//custom units are exclusive (no fallback to LocaleData)
 				mUnitPatterns = oOptions.customUnits[sMeasure];
@@ -1048,12 +1067,11 @@ sap.ui.define([
 				if (!bUnitTypeAllowed) {
 					return "";
 				}
-				if (!mUnitPatterns && !oOptions.unitOptional) {
-					return "";
-				}
 			}
 
-
+			if (!mUnitPatterns && !oOptions.showNumber) {
+				return this._addOriginInfo(sMeasure);
+			}
 
 			// either take the decimals/precision on the custom units or fallback to the given format-options
 			oOptions.decimals = (mUnitPatterns && (typeof mUnitPatterns.decimals === "number" && mUnitPatterns.decimals >= 0)) ? mUnitPatterns.decimals : oOptions.decimals;
@@ -1187,7 +1205,9 @@ sap.ui.define([
 			vValue = stripTrailingZeroDecimals(vValue, oOptions.maxFractionDigits);
 		}
 
-		sNumber = this.convertToDecimal(vValue);
+		if (!bValueIsNullOrUndefined) {
+			sNumber = this.convertToDecimal(vValue);
+		}
 
 		if (sNumber == "NaN") {
 			return sNumber;
@@ -1230,13 +1250,13 @@ sap.ui.define([
 					sPattern = mUnitPatterns["unitPattern-count-other"];
 				}
 				if (!sPattern) {
-					return "";
+					return this._addOriginInfo(sMeasure);
 				}
 				// fallback to "other" pattern if pattern does not include the number placeholder
 				if (sPluralCategory !== "other" && sPattern.indexOf("{0}") === -1) {
 					sPattern = mUnitPatterns["unitPattern-count-other"];
 					if (!sPattern) {
-						return "";
+						return this._addOriginInfo(sMeasure);
 					}
 				}
 
@@ -1246,10 +1266,9 @@ sap.ui.define([
 				if (sPattern.indexOf("{0}") === -1) {
 					Log.warning("Cannot separate the number from the unit because unitPattern-count-other '" + sPattern + "' does not include the number placeholder '{0}' for unit '" + sMeasure + "'");
 				} else {
-					return sPattern.replace("{0}", "").trim();
+					return this._addOriginInfo(sPattern.replace("{0}", "").trim());
 				}
 			}
-			return "";
 		}
 
 		// grouping
@@ -1375,7 +1394,7 @@ sap.ui.define([
 			sResult = sResult.replace(/%/, oOptions.percentSign);
 		}
 
-		if (oOptions.showMeasure && oOptions.type === mNumberType.UNIT) {
+		if (oOptions.showMeasure && sMeasure && oOptions.type === mNumberType.UNIT) {
 
 			sPluralCategory = this.oLocaleData.getPluralCategory(sIntegerPart + "." + sFractionPart);
 
@@ -1386,12 +1405,17 @@ sap.ui.define([
 					sPattern = mUnitPatterns["unitPattern-count-other"];
 				}
 				if (!sPattern) {
-					return "";
+					sPattern = NumberFormat.getDefaultUnitPattern(sMeasure);
 				}
-				sResult = sPattern.replace("{0}", sResult);
+			} else {
+				sPattern = NumberFormat.getDefaultUnitPattern(sMeasure);
 			}
+			sResult = sPattern.replace("{0}", sResult);
 		}
+		return this._addOriginInfo(sResult);
+	};
 
+	NumberFormat.prototype._addOriginInfo = function(sResult) {
 		if (sap.ui.getCore().getConfiguration().getOriginInfo()) {
 			sResult = new String(sResult);
 			sResult.originInfo = {
@@ -1399,10 +1423,9 @@ sap.ui.define([
 				locale: this.oLocale.toString()
 			};
 		}
-
 		return sResult;
-
 	};
+
 
 	NumberFormat.prototype._composeCurrencyResult = function(sPattern, sFormattedNumber, sMeasure, oOptions) {
 		var sMinusSign = oOptions.minusSign;
@@ -1497,6 +1520,9 @@ sap.ui.define([
 			oShort, vEmptyParseValue;
 
 		if (sValue === "") {
+			if (!oOptions.showNumber) {
+				return null;
+			}
 			vEmptyParseValue = oOptions.emptyString;
 			// If the 'emptyString' option is set to 0 or NaN and parseAsString is set to true, the return value should be converted to a string.
 			// Because null is a valid value for string type, therefore null is not converted to a string.
@@ -1508,6 +1534,10 @@ sap.ui.define([
 			} else {
 				return vEmptyParseValue;
 			}
+		}
+
+		if (typeof sValue !== "string" && !(sValue instanceof String)) {
+			return null;
 		}
 
 		if (oOptions.groupingSeparator === oOptions.decimalSeparator) {
@@ -1523,7 +1553,7 @@ sap.ui.define([
 		}
 
 		var aUnitCode;
-		if (oOptions.type === mNumberType.UNIT) {
+		if (oOptions.type === mNumberType.UNIT && oOptions.showMeasure) {
 
 			var mUnitPatterns;
 			if (oOptions.customUnits && typeof oOptions.customUnits === "object") {
@@ -1557,7 +1587,7 @@ sap.ui.define([
 				// in case showMeasure is set to false or unitOptional is set to true
 				// we only try to parse the numberValue
 				// the currency format behaves the same
-				if ((oOptions.unitOptional || !oOptions.showMeasure) && typeof sValue === "string") {
+				if (oOptions.unitOptional) {
 					oPatternAndResult.numberValue = sValue;
 				} else {
 					//unit not found
@@ -1578,7 +1608,7 @@ sap.ui.define([
 				// two cases:
 				// 1. showMeasure is set to false, but still a unit was parsed
 				// 2. no unit (either none could be found OR the unit is ambiguous, should be separate error logs later on)
-				if ((sMeasure && !oOptions.showMeasure) || bUnitIsAmbiguous) {
+				if (bUnitIsAmbiguous) {
 					return null;
 				}
 			}
@@ -1587,7 +1617,7 @@ sap.ui.define([
 		}
 
 		var oResult;
-		if (oOptions.type === mNumberType.CURRENCY) {
+		if (oOptions.type === mNumberType.CURRENCY && oOptions.showMeasure) {
 			oResult = parseNumberAndCurrency({
 				value: sValue,
 				currencySymbols: this.mKnownCurrencySymbols,
@@ -1605,7 +1635,7 @@ sap.ui.define([
 			// Right now we simply return null. For now this will force the types to throw
 			// a default ParseException with a non-descriptive error.
 			if (oOptions.strictParsing) {
-				if ((oOptions.showMeasure && !oResult.currencyCode) || oResult.duplicatedSymbolFound) {
+				if (!oResult.currencyCode || oResult.duplicatedSymbolFound) {
 					// here we need an error log for:
 					// 1. missing currency code/symbol (CLDR & custom)
 					// 2. duplicated symbol was found (only custom, CLDR has no duplicates)
@@ -1616,23 +1646,24 @@ sap.ui.define([
 			sValue = oResult.numberValue;
 			sMeasure = oResult.currencyCode;
 
-			if ((oOptions.customCurrencies && sMeasure === null) || (!oOptions.showMeasure && sMeasure)) {
+			if (oOptions.customCurrencies && sMeasure === null) {
 				return null;
 			}
 
 			if (!oOptions.showNumber) {
+				if (sValue) {
+					return null;
+				}
 				return [undefined, sMeasure];
 			}
 		}
 
-		if (typeof sValue === "string" || sValue instanceof String) {
-			// remove the RTL special characters before the string is matched with the regex
-			sValue = sValue.replace(/[\u202a\u200e\u202c\u202b\u200f]/g, "");
+		// remove the RTL special characters before the string is matched with the regex
+		sValue = sValue.replace(/[\u202a\u200e\u202c\u202b\u200f]/g, "");
 
-			// remove all white spaces because when grouping separator is a non-breaking space (russian and french for example)
-			// user will not input it this way. Also white spaces or grouping separator can be ignored by determining the value
-			sValue = sValue.replace(/\s/g, "");
-		}
+		// remove all white spaces because when grouping separator is a non-breaking space (russian and french for example)
+		// user will not input it this way. Also white spaces or grouping separator can be ignored by determining the value
+		sValue = sValue.replace(/\s/g, "");
 
 		oShort = getNumberFromShortened(sValue, this.oLocaleData, bIndianCurrency);
 		if (oShort) {
@@ -2289,9 +2320,6 @@ sap.ui.define([
 			numberValue: undefined,
 			cldrCode: []
 		};
-		if (typeof sValue !== "string") {
-			return oBestMatch;
-		}
 		var iBestLength = Number.POSITIVE_INFINITY;
 		var sUnitCode, sKey;
 		for (sUnitCode in mUnitPatterns) {

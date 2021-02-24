@@ -2064,7 +2064,7 @@ sap.ui.define([
 
 		assert.equal(unitType.formatValue(null, "string"), null, "format test");
 		assert.equal(unitType.formatValue([null, "duration-hour"], "string"), null, "format test");
-		assert.equal(unitType.formatValue([1, null], "string"), "", "format test");
+		assert.equal(unitType.formatValue([1, null], "string"), "1", "format test");
 
 		assert.throws(function () { unitType.formatValue(22.0, "int"); }, FormatException, "format test");
 		assert.throws(function () { unitType.formatValue(22.0, "float"); }, FormatException, "format test");
@@ -2184,7 +2184,7 @@ sap.ui.define([
 		});
 
 		// format and parse invalid unit
-		assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "", "Format of unknown unit leads to empty string (just as NumberFormat returns it)");
+		assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "100 mass-kilogram", "Format of unknown unit returns number and measure (just as NumberFormat returns it)");
 		assert.throws(function () {
 				oType.parseValue("100 kg", "string");
 			},
@@ -2247,7 +2247,7 @@ sap.ui.define([
 		});
 
 		// format and parse invalid unit (excluded by local config)
-		assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "", "Format of unknown unit leads to empty string (just as NumberFormat returns it)");
+		assert.equal(oType.formatValue([100, "mass-kilogram"], "string"), "100 mass-kilogram", "Format of unknown unit leads to empty string (just as NumberFormat returns it)");
 		assert.throws(function () {
 				oType.parseValue("100 kg", "string");
 			},
@@ -2255,7 +2255,7 @@ sap.ui.define([
 			"ParseException is thrown for wrong unit");
 
 		// format and parse invalid unit (excluded by local config)
-		assert.equal(oType.formatValue([123.4, "lebkuchen"], "string"), "", "Lebkuchen is not formatted (excluded by local configuration)");
+		assert.equal(oType.formatValue([123.4, "lebkuchen"], "string"), "123.4 lebkuchen", "Lebkuchen is not formatted (excluded by local configuration)");
 		assert.throws(function () {
 			oType.parseValue("1234.56 LKs", "string");
 		},
