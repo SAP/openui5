@@ -2685,7 +2685,9 @@ function(
 					bFocusedGroupHeader = oItem && oItem.isA("sap.m.GroupHeaderListItem"),
 					oFocusDomRef = this.getFocusDomRef(),
 					sTypedValue = oFocusDomRef && oFocusDomRef.value.substring(0, oFocusDomRef.selectionStart),
-					oPreviousItem, bPreviosFocusOnGroup, iSelectionStart;
+					oPreviousItem = oEvent.getParameter("previousItem"),
+					bPreviosFocusOnGroup = oPreviousItem && oPreviousItem.isA("sap.m.GroupHeaderListItem"),
+					iSelectionStart = calculateSelectionStart(selectionRange(oFocusDomRef, bPreviosFocusOnGroup), sNewValue, sTypedValue, bPreviosFocusOnGroup);
 
 				// setValue isn't used because here is too early to modify the lastValue of input
 				this.setDOMValue(bFocusedGroupHeader ? sTypedValue : sNewValue);
@@ -2693,11 +2695,7 @@ function(
 				// memorize the value set by calling jQuery.val, because browser doesn't fire a change event when the value is set programmatically.
 				this._sSelectedSuggViaKeyboard = sNewValue;
 
-				if (!bFocusedGroupHeader && (sNewValue.toLowerCase() !== this.getValue().toLowerCase())) {
-					oPreviousItem = oEvent.getParameter("previousItem");
-					bPreviosFocusOnGroup = oPreviousItem && oPreviousItem.isA("sap.m.GroupHeaderListItem");
-					iSelectionStart = calculateSelectionStart(selectionRange(oFocusDomRef, bPreviosFocusOnGroup), sNewValue, sTypedValue, bPreviosFocusOnGroup);
-
+				if (!bFocusedGroupHeader) {
 					this._doSelect(iSelectionStart);
 				}
 			}, this);
