@@ -146,7 +146,7 @@ sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log", "sap/ui/Device"],
 			}
 
 			var oRoot = this.getDomRef();
-			if (oRoot) { // non-rerendering shortcut
+			if (oRoot && oRoot.classList) { // non-rerendering shortcut
 				if ( aClasses ) {
 					addAll.apply(oRoot.classList, aClasses);
 				} else {
@@ -206,7 +206,7 @@ sap.ui.define(['./Element', "sap/base/assert", "sap/base/Log", "sap/ui/Device"],
 
 			if (bExist) {
 				var oRoot = this.getDomRef();
-				if (oRoot) { // non-rerendering shortcut
+				if (oRoot && oRoot.classList) { // non-rerendering shortcut
 					if ( aClasses ) {
 						removeAll.apply(oRoot.classList, aClasses);
 					} else {
