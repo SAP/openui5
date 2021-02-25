@@ -515,36 +515,35 @@ sap.ui.define([
 	};
 
 
-	ODataFilterBarDelegate._setModel = function () {
-		var sModelName = this.getPayload().modelName;
-		sModelName = sModelName === null ? undefined : sModelName;
-		var oModel = this.getModel(sModelName);
-		if (oModel) {
-			this.detachModelContextChange(ODataFilterBarDelegate._setModel, this);
-			ODataFilterBarDelegate._fModelProvided(oModel);
-		}
-	};
-
 	ODataFilterBarDelegate._waitForMetaModel = function (oFilterBar, sPassedModelName) {
 
 		return new Promise(function(resolve, reject) {
-			var sModelName = sPassedModelName === null ? undefined : sPassedModelName;
 
-			var oModel = oFilterBar.getModel(sModelName);
-			if (oModel) {
-				resolve(oModel);
+			var resolveMetaModel = function () {
+				var sModelName = sPassedModelName === null ? undefined : sPassedModelName;
+				var oModel = oFilterBar.getModel(sModelName);
+				if (oModel) {
+					resolve(oModel);
+				}
+				return oModel;
+			};
+
+			var handleContextChange = function () {
+				if (resolveMetaModel()) {
+					oFilterBar.detachModelContextChange(handleContextChange);
+				}
+			};
+
+			if (!resolveMetaModel()) {
+				if (!oFilterBar.attachModelContextChange) {
+					reject();
+					return;
+				}
+				oFilterBar.attachModelContextChange(handleContextChange);
 			}
-
-			if (!oFilterBar.attachModelContextChange) {
-				reject();
-			}
-
-			ODataFilterBarDelegate._fModelProvided = resolve;
-
-			oFilterBar.attachModelContextChange(ODataFilterBarDelegate._setModel, oFilterBar);
-
 		});
 	};
+
 
 	/**
 	 * Fetches the relevant metadata for a given payload and returns property info array.
