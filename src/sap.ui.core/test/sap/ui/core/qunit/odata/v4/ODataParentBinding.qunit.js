@@ -760,9 +760,6 @@ sap.ui.define([
 						oPromise;
 
 					oModelMock.expects("resolve")
-						.withExactArgs("path", sinon.match.same(oBinding.oContext))
-						.returns("/resolved/path");
-					oModelMock.expects("resolve")
 						.withExactArgs("childPath", sinon.match.same(oContext))
 						.returns("/resolved/child/path");
 					oMetaModelMock.expects("getMetaPath")
@@ -788,9 +785,6 @@ sap.ui.define([
 					oMetaModelMock.expects("getReducedPath")
 						.withExactArgs("/resolved/child/path", "/base/path")
 						.returns("/reduced/child/path");
-					oHelperMock.expects("getRelativePath")
-						.withExactArgs("/reduced/child/path", "/resolved/path")
-						.returns("childPath");
 					oHelperMock.expects("getMetaPath").withExactArgs("/reduced/child/path")
 						.returns("/reduced/child/metapath");
 					oHelperMock.expects("getRelativePath")
@@ -877,12 +871,6 @@ sap.ui.define([
 				oModelMock = this.mock(oBinding.oModel),
 				oPromise;
 
-			if (bReturnValueContext) {
-				oBinding.oReturnValueContext = oContext;
-			}
-			oModelMock.expects("resolve").exactly(bReturnValueContext ? 0 : 1)
-				.withExactArgs("/Set", sinon.match.same(oBinding.oContext))
-				.returns("/resolved/path");
 			oModelMock.expects("resolve")
 				.withExactArgs("childPath", sinon.match.same(oContext))
 				.returns("/resolved/child/path");
@@ -902,10 +890,6 @@ sap.ui.define([
 			oMetaModelMock.expects("getReducedPath")
 				.withExactArgs("/resolved/child/path", "/base/path")
 				.returns("/reduced/child/path");
-			oHelperMock.expects("getRelativePath")
-				.withExactArgs("/reduced/child/path",
-					bReturnValueContext ? "/Set('2')" : "/resolved/path")
-				.returns("childPath");
 			oHelperMock.expects("getMetaPath").withExactArgs("/reduced/child/path")
 				.returns("/reduced/child/metapath");
 			oHelperMock.expects("getRelativePath")
@@ -1001,9 +985,6 @@ sap.ui.define([
 			oPromise;
 
 		oModelMock.expects("resolve")
-			.withExactArgs("navigation", sinon.match.same(oBinding.oContext))
-			.returns("/resolved/path");
-		oModelMock.expects("resolve")
 			.withExactArgs("childPath", sinon.match.same(oContext))
 			.returns("/resolved/child/path");
 		oMetaModelMock.expects("getMetaPath")
@@ -1022,9 +1003,6 @@ sap.ui.define([
 		oMetaModelMock.expects("getReducedPath")
 			.withExactArgs("/resolved/child/path", "/base/path")
 			.returns("/reduced/child/path");
-		oHelperMock.expects("getRelativePath")
-			.withExactArgs("/reduced/child/path", "/resolved/path")
-			.returns("childPath");
 		oHelperMock.expects("getMetaPath").withExactArgs("/reduced/child/path")
 			.returns("/reduced/child/metapath");
 		oHelperMock.expects("getRelativePath")
@@ -1121,9 +1099,6 @@ sap.ui.define([
 			oBinding.oOperation = {};
 		}
 		oModelMock.expects("resolve")
-			.withExactArgs("/Set", sinon.match.same(oBinding.oContext))
-			.returns("/resolved/path");
-		oModelMock.expects("resolve")
 			.withExactArgs("childPath", sinon.match.same(oContext))
 			.returns("/resolved/child/path");
 		oMetaModelMock.expects("getMetaPath")
@@ -1142,9 +1117,6 @@ sap.ui.define([
 		oMetaModelMock.expects("getReducedPath")
 			.withExactArgs("/resolved/child/path", "/base/path")
 			.returns("/reduced/child/path");
-		oHelperMock.expects("getRelativePath")
-			.withExactArgs("/reduced/child/path", "/resolved/path")
-			.returns("childPath");
 		oHelperMock.expects("getMetaPath").withExactArgs("/reduced/child/path")
 			.returns("/reduced/child/metapath");
 		oHelperMock.expects("getRelativePath")
@@ -1225,9 +1197,6 @@ sap.ui.define([
 			oPromise;
 
 		oModelMock.expects("resolve")
-			.withExactArgs("/Set", sinon.match.same(oBinding.oContext))
-			.returns("/resolved/path");
-		oModelMock.expects("resolve")
 			.withExactArgs("", sinon.match.same(oContext))
 			.returns("/resolved/child/path");
 		oMetaModelMock.expects("getMetaPath").withExactArgs("/Set/0").returns("/Set");
@@ -1246,9 +1215,6 @@ sap.ui.define([
 		oMetaModelMock.expects("getReducedPath")
 			.withExactArgs("/resolved/child/path", "/base/path")
 			.returns("/reduced/child/path");
-		oHelperMock.expects("getRelativePath")
-			.withExactArgs("/reduced/child/path", "/resolved/path")
-			.returns("");
 		oHelperMock.expects("getMetaPath").withExactArgs("/reduced/child/path")
 			.returns("/reduced/child/metapath");
 		oHelperMock.expects("getRelativePath")
@@ -1316,9 +1282,6 @@ sap.ui.define([
 				oPromise;
 
 			oModelMock.expects("resolve")
-				.withExactArgs("/Set", sinon.match.same(oBinding.oContext))
-				.returns("/resolved/path");
-			oModelMock.expects("resolve")
 				.withExactArgs(sPath, sinon.match.same(oContext))
 				.returns("/resolved/child/path");
 			oMetaModelMock.expects("getMetaPath")
@@ -1335,9 +1298,6 @@ sap.ui.define([
 			oMetaModelMock.expects("getReducedPath")
 				.withExactArgs("/resolved/child/path", "/base/path")
 				.returns("/reduced/child/path");
-			oHelperMock.expects("getRelativePath")
-				.withExactArgs("/reduced/child/path", "/resolved/path")
-				.returns("childPath");
 			oHelperMock.expects("getMetaPath").withExactArgs("/reduced/child/path")
 				.returns("/reduced/child/metapath");
 			oHelperMock.expects("getRelativePath")
@@ -1395,9 +1355,6 @@ sap.ui.define([
 			oPromise;
 
 		oModelMock.expects("resolve")
-			.withExactArgs("/Set", sinon.match.same(oBinding.oContext))
-			.returns("/resolved/path");
-		oModelMock.expects("resolve")
 			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns("/resolved/child/path/" + sPath);
 		oMetaModelMock.expects("getMetaPath")
@@ -1411,9 +1368,6 @@ sap.ui.define([
 		oMetaModelMock.expects("getReducedPath")
 			.withExactArgs("/resolved/child/path/" + sPath, "/base/path")
 			.returns("/reduced/child/path/" + sPath);
-		oHelperMock.expects("getRelativePath")
-			.withExactArgs("/reduced/child/path/" + sPath, "/resolved/path")
-			.returns("childPath");
 		oHelperMock.expects("getMetaPath").withExactArgs("/reduced/child/path/" + sPath)
 			.returns("/reduced/child/metapath/" + sPath);
 		oHelperMock.expects("getRelativePath")
@@ -1464,8 +1418,6 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs()
 			.returns("/base/path");
-		oModelMock.expects("resolve").withExactArgs("/Set", undefined)
-			.returns("/resolved/path");
 		oModelMock.expects("resolve").withExactArgs(sChildPath, sinon.match.same(oContext))
 			.returns("/resolved/child/path");
 		oMetaModelMock.expects("getMetaPath")
@@ -1501,14 +1453,11 @@ sap.ui.define([
 				sPath : "path"
 			}),
 			oContext = {
-				getBinding : function () { return {/*oBinding*/}; }
+				getPath : function () { return "/foo/bar/path"; }
 			},
 			oModelMock = this.mock(oBinding.oModel);
 
 		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs().returns("n/a");
-		oModelMock.expects("resolve")
-			.withExactArgs("path", sinon.match.same(oBinding.oContext))
-			.returns("/Foo/Bar/path");
 		oModelMock.expects("resolve")
 			.withExactArgs("childPath", sinon.match.same(oContext))
 			.returns("/resolved/child/path");
@@ -1530,14 +1479,11 @@ sap.ui.define([
 				sPath : "path"
 			}),
 			oContext = {
-				getBinding : function () { return {/*oBinding*/}; }
+				getPath : function () { return "/Foo/operation(...)/Bar/path"; }
 			},
 			oModelMock = this.mock(oBinding.oModel);
 
 		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs().returns("anything");
-		oModelMock.expects("resolve")
-			.withExactArgs("path", sinon.match.same(oBinding.oContext))
-			.returns("/Foo/operation(...)/Bar/path");
 		oModelMock.expects("resolve")
 			.withExactArgs("childPath", sinon.match.same(oContext))
 			.returns("/resolved/child/path");
@@ -1589,9 +1535,6 @@ sap.ui.define([
 		this.mock(oBinding).expects("getBaseForPathReduction")
 			.withExactArgs().returns("/base/path");
 		oModelMock.expects("resolve")
-			.withExactArgs("operation(...)", sinon.match.same(oBinding.oContext))
-			.returns("/Set('2')/operation(...)");
-		oModelMock.expects("resolve")
 			.withExactArgs(sPath, sinon.match.same(oContext))
 			.returns("/Set('2')/operation(...)/$Parameter/foo/bar");
 		oMetaModelMock.expects("getMetaPath")
@@ -1606,9 +1549,11 @@ sap.ui.define([
 		oMetaModelMock.expects("getReducedPath")
 			.withExactArgs("/Set('2')/operation(...)/$Parameter/foo/bar", "/base/path")
 			.returns("/reduced/child/path");
+		oHelperMock.expects("getMetaPath").withExactArgs("/reduced/child/path")
+			.returns("/reduced/child/metapath");
 		oHelperMock.expects("getRelativePath")
-			.withExactArgs("/reduced/child/path", "/Set('2')/operation(...)")
-			.returns(bReduced ? undefined : "childPath");
+			.withExactArgs("/reduced/child/metapath", "/Set/operation/$Parameter")
+			.returns(bReduced ? undefined : "unused");
 		oHelperMock.expects("getRelativePath").exactly(bReduced ? 1 : 0)
 			.withExactArgs("/Set('2')/operation(...)/$Parameter/foo/bar", "/Set('2')")
 			.returns("operation(...)/$Parameter/foo/bar");
@@ -1653,9 +1598,6 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("getBaseForPathReduction")
 			.withExactArgs().returns("/base/path");
-		oModelMock.expects("resolve")
-			.withExactArgs("/Collection(42)", undefined)
-			.returns("/Collection(42)");
 		oModelMock.expects("resolve")
 			.withExactArgs(sChildPath, sinon.match.same(oContext))
 			.returns("/resolved/child/path");
@@ -1716,9 +1658,6 @@ sap.ui.define([
 			oPromise;
 
 		oModelMock.expects("resolve")
-			.withExactArgs("/Function(foo=42)", undefined)
-			.returns("/Function(foo=42)");
-		oModelMock.expects("resolve")
 			.withExactArgs(sChildPath, sinon.match.same(oContext))
 			.returns("/resolved/child/path");
 		this.mock(_Helper).expects("fetchPropertyAndType")
@@ -1733,9 +1672,6 @@ sap.ui.define([
 		this.mock(oMetaModel).expects("getReducedPath")
 			.withExactArgs("/resolved/child/path", "/base/path")
 			.returns("/reduced/child/path");
-		oHelperMock.expects("getRelativePath")
-			.withExactArgs("/reduced/child/path", "/Function(foo=42)")
-			.returns("childPath");
 		oHelperMock.expects("getRelativePath")
 			.withExactArgs("/reduced/child/path", "/Function")
 			.returns("value");
@@ -1764,7 +1700,7 @@ sap.ui.define([
 				sPath : "/TEAMS"
 			}),
 			oContext = {
-				getBinding : function () { return {/*oBinding*/}; }
+				getPath : function () { return "/TEAMS"; }
 			},
 			oModelMock = this.mock(oBinding.oModel),
 			oPromise,
@@ -1773,9 +1709,6 @@ sap.ui.define([
 			};
 
 		this.mock(oBinding).expects("getBaseForPathReduction").withExactArgs().returns("anything");
-		oModelMock.expects("resolve")
-			.withExactArgs("/TEAMS", sinon.match.same(oBinding.oContext))
-			.returns("/TEAMS");
 		oModelMock.expects("resolve")
 			.withExactArgs("childPath", sinon.match.same(oContext))
 			.returns("/resolved/child/path");
@@ -1833,9 +1766,6 @@ sap.ui.define([
 			oPromise;
 
 		oModelMock.expects("resolve")
-			.withExactArgs("SO_2_SOITEMS", sinon.match.same(oBinding.oContext))
-			.returns("/SalesOrderList('42')/SO_2_SOITEMS");
-		oModelMock.expects("resolve")
 			.withExactArgs("SOITEMS_2_SO/Note", sinon.match.same(oContext))
 			.returns("/SalesOrderList('42')/SO_2_SOITEMS('23')/SOITEMS_2_SO/Note");
 		oMetaModelMock.expects("getMetaPath")
@@ -1857,8 +1787,10 @@ sap.ui.define([
 			.withExactArgs("/SalesOrderList('42')/SO_2_SOITEMS('23')/SOITEMS_2_SO/Note",
 				"/SalesOrderList")
 			.returns("/SalesOrderList('42')/Note");
+		oHelperMock.expects("getMetaPath").withExactArgs("/SalesOrderList('42')/Note")
+			.returns("/SalesOrderList/Note");
 		oHelperMock.expects("getRelativePath")
-			.withExactArgs("/SalesOrderList('42')/Note", "/SalesOrderList('42')/SO_2_SOITEMS")
+			.withExactArgs("/SalesOrderList/Note", "/SalesOrderList/SO_2_SOITEMS")
 			.returns(undefined);
 		oHelperMock.expects("getRelativePath")
 			.withExactArgs("/SalesOrderList('42')/SO_2_SOITEMS('23')/SOITEMS_2_SO/Note",
