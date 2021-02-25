@@ -32,7 +32,8 @@ sap.ui.define([
 	"sap/ui/integration/util/BindingResolver",
 	"sap/ui/integration/formatters/IconFormatter",
 	"sap/ui/integration/util/FilterBarFactory",
-	"sap/ui/integration/util/CardActions"
+	"sap/ui/integration/util/CardActions",
+	"sap/ui/integration/util/CardObserver"
 ], function (
 	CardRenderer,
 	ActionsToolbar,
@@ -64,7 +65,8 @@ sap.ui.define([
 	BindingResolver,
 	IconFormatter,
 	FilterBarFactory,
-	CardActions
+	CardActions,
+	CardObserver
 ) {
 	"use strict";
 	/* global Map */
@@ -374,7 +376,12 @@ sap.ui.define([
 		this.setModel(new ContextModel(), "context");
 		this._busyStates = new Map();
 		this._oContentFactory = new ContentFactory(this);
+		this._oCardObserver = new CardObserver(this);
+		this._bFirstRendering = true;
 
+		if (this.getProperty("dataMode") === CardDataMode.Auto) {
+			this._oCardObserver.createObserver(this);
+		}
 		/**
 		 * Facade of the {@link sap.ui.integration.widgets.Card} control.
 		 * @interface
@@ -464,6 +471,21 @@ sap.ui.define([
 		}
 
 		this.startManifestProcessing();
+	};
+
+
+	/**
+	 * Called after rendering of the control.
+	 * @private
+	 */
+	Card.prototype.onAfterRendering = function () {
+		var oCardDomRef = this.getDomRef();
+
+		if (this.getDataMode() === CardDataMode.Auto && this._bFirstRendering) {
+			this._oCardObserver.oObserver.observe(oCardDomRef);
+		}
+
+		this._bFirstRendering = false;
 	};
 
 	/**
@@ -838,8 +860,12 @@ sap.ui.define([
 		CardBase.prototype.exit.call(this);
 
 		this.destroyManifest();
+		this._oCardObserver.destroy();
+		this._oCardObserver = null;
 		this._busyStates = null;
 		this._oContentFactory = null;
+		this._bFirstRendering = null;
+
 		if (this._oActionsToolbar) {
 			this._oActionsToolbar.destroy();
 			this._oActionsToolbar = null;
@@ -1657,6 +1683,13 @@ sap.ui.define([
 
 		if (this.getProperty("dataMode") === CardDataMode.Active) {
 			this.refresh();
+		}
+
+		if (this.getProperty("dataMode") === CardDataMode.Auto) {
+			this._oCardObserver.createObserver(this);
+			if (!this._bFirstRendering) {
+				this._oCardObserver.oObserver.observe(this.getDomRef());
+			}
 		}
 
 		return this;

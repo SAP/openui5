@@ -105,6 +105,7 @@ sap.ui.define([
 				iNumberOfCards = parseInt(this.byId("numberOfCards").getValue()),
 				oContainer = this.byId("cardsContainer"),
 				bPreloadManifests = this.byId("preloadManifests").getSelected(),
+				bDataModeAuto = this.byId("dataMode").getSelected(),
 				oSample,
 				vManifest;
 
@@ -124,7 +125,8 @@ sap.ui.define([
 					manifest: vManifest,
 					layoutData: new GridContainerItemLayoutData({
 						columns: oSample.columns
-					})
+					}),
+					dataMode: bDataModeAuto ? "Auto" : "Active"
 				}));
 			}
 		},

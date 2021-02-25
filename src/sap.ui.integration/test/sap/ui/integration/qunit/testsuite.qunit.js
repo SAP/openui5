@@ -53,6 +53,7 @@ sap.ui.define(function () {
 						"sap/f/cards/NumericSideIndicatorRenderer",
 						"sap/ui/integration/widgets/Card",
 						"sap/ui/integration/util/CardActions",
+						"sap/ui/integration/util/CardObserver",
 						"sap/ui/integration/util/CardManifest",
 						"sap/ui/integration/util/ServiceManager",
 						"sap/ui/integration/customElements/",
@@ -266,6 +267,13 @@ sap.ui.define(function () {
 					]
 				},
 				sinon: false
+			},
+			"util/CardObserver": {
+				coverage: {
+					only: [
+						"sap/ui/integration/util/CardObserver"
+					]
+				}
 			},
 			"util/ContentFactory": {},
 			"model/ContextModel": {
