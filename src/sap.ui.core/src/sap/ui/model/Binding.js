@@ -228,6 +228,18 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns the resolved path for this binding using {@link sap.ui.model.Model#resolve} or
+	 * <code>undefined</code> if this binding is not resolved or has no model.
+	 *
+	 * @returns {string|undefined} The resolved path
+	 *
+	 * @private
+	 */
+	Binding.prototype.getResolvedPath = function () {
+		return this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : undefined;
+	};
+
+	/**
 	 * Whether this binding does not propagate model messages to the control. By default, all
 	 * bindings propagate messages. If a binding wants to support this feature, it has to override
 	 * {@link #supportsIgnoreMessages}, which returns <code>true</code>.
