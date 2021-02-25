@@ -363,6 +363,7 @@ sap.ui.define([
 				oTableInstances = TableUtils.getRowColCell(oTable, iRow, iCol, false),
 				oInfo = null,
 				oRow = oTableInstances.row,
+				sRowId = oRow.getId(),
 				bHidden = ExtensionHelper.isHiddenCell($Cell, oTableInstances.cell),
 				bIsTreeColumnCell = ExtensionHelper.isTreeColumnCell(this, $Cell),
 				aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.DATACELL, {
@@ -377,16 +378,15 @@ sap.ui.define([
 
 			if (bIsGroupHeader) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
-				aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
+				aLabels.push(sRowId + "-groupHeader");
 			} else if (oRow.isTotalSummary()) {
 				aLabels.push(sTableId + "-ariagrandtotallabel");
 			} else if (oRow.isGroupSummary()) {
 				aLabels.push(sTableId + "-ariagrouptotallabel");
-				aLabels.push(sTableId + "-rows-row" + iRow + "-groupHeader");
 			}
 
 			if (TableUtils.hasRowHighlights(oTable) && !bIsGroupHeader && !bIsSummary) {
-				aLabels.push(oRow.getId() + "-highlighttext");
+				aLabels.push(sRowId + "-highlighttext");
 			}
 
 			aLabels = aLabels.concat(aDefaultLabels);
@@ -424,7 +424,7 @@ sap.ui.define([
 					if ((bContainsTreeIcon || bIsGroupHeader) && (bRowChange || bColChange)) {
 						aDescriptions.push(oTable.getId() + (!oRow.isExpanded() ? "-rowexpandtext" : "-rowcollapsetext"));
 					} else if (!bHidden && !bIsGroupHeader && !bIsSummary && TableUtils.isRowSelectionAllowed(oTable) && bRowChange) {
-						aLabels.push(oRow.getId() + "-rowselecttext");
+						aLabels.push(sRowId + "-rowselecttext");
 					}
 				}
 			);
@@ -439,30 +439,30 @@ sap.ui.define([
 			var sTableId = oTable.getId();
 			var $Cell = oCellInfo.cell;
 			var oRow = oTable.getRows()[oCellInfo.rowIndex];
+			var sRowId = oRow.getId();
 			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.ROWHEADER)["aria-labelledby"] || [];
 			var aLabels = aDefaultLabels.concat([sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"]);
 
 			if (!oRow.isSummary() && !oRow.isGroupHeader()) {
 				if (!oRow.isContentHidden()) {
-					aLabels.push(oRow.getId() + "-rowselecttext");
+					aLabels.push(sRowId + "-rowselecttext");
 
 					if (TableUtils.hasRowHighlights(oTable)) {
-						aLabels.push(oRow.getId() + "-highlighttext");
+						aLabels.push(sRowId + "-highlighttext");
 					}
 				}
 			}
 
 			if (oRow.isGroupHeader()) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
+				aLabels.push(sRowId + "-groupHeader");
 				aLabels.push(sTableId + (oRow.isExpanded() ? "-rowcollapsetext" : "-rowexpandtext"));
-				//aLabels.push(oRow.getId() + "-groupHeader"); //Not needed: Screenreader seems to announce this automatically
 			}
 
 			if (oRow.isTotalSummary()) {
 				aLabels.push(sTableId + "-ariagrandtotallabel");
 			} else if (oRow.isGroupSummary()) {
 				aLabels.push(sTableId + "-ariagrouptotallabel");
-				//aLabels.push(oRow.getId() + "-groupHeader"); //Not needed: Screenreader seems to announce this automatically
 			}
 
 			ExtensionHelper.performCellModifications(this, $Cell, aDefaultLabels, null, aLabels, null, null);
@@ -542,8 +542,8 @@ sap.ui.define([
 			var oTable = this.getTable();
 			var sTableId = oTable.getId();
 			var $Cell = oCellInfo.cell;
-			var iRowIndex = oCellInfo.rowIndex;
 			var oRow = oTable.getRows()[oCellInfo.rowIndex];
+			var sRowId = oRow.getId();
 			var bHidden = ExtensionHelper.isHiddenCell($Cell);
 			var aDefaultLabels = ExtensionHelper.getAriaAttributesFor(this, AccExtension.ELEMENTTYPES.ROWACTION)["aria-labelledby"] || [];
 			var aLabels = [sTableId + "-rownumberofrows", sTableId + "-colnumberofcols"].concat(aDefaultLabels);
@@ -551,7 +551,7 @@ sap.ui.define([
 
 			if (oRow.isGroupHeader()) {
 				aLabels.push(sTableId + "-ariarowgrouplabel");
-				aLabels.push(sTableId + "-rows-row" + iRowIndex + "-groupHeader");
+				aLabels.push(sRowId + "-groupHeader");
 				aLabels.push(sTableId + (oRow.isExpanded() ? "-rowcollapsetext" : "-rowexpandtext"));
 			}
 
@@ -559,7 +559,6 @@ sap.ui.define([
 				aLabels.push(sTableId + "-ariagrandtotallabel");
 			} else if (oRow.isGroupSummary()) {
 				aLabels.push(sTableId + "-ariagrouptotallabel");
-				aLabels.push(sTableId + "-rows-row" + iRowIndex + "-groupHeader");
 			}
 
 			if (!oRow.isSummary() && !oRow.isGroupHeader() && $Cell.attr("aria-selected") === "true") {
@@ -567,7 +566,7 @@ sap.ui.define([
 			}
 
 			if (TableUtils.hasRowHighlights(oTable) && !oRow.isGroupHeader() && !oRow.isSummary()) {
-				aLabels.push(oRow.getId() + "-highlighttext");
+				aLabels.push(sRowId + "-highlighttext");
 			}
 
 			var sText = "";

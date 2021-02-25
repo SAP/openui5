@@ -144,60 +144,62 @@ sap.ui.define([
 		var bRowChange = !!mParams.rowChange;
 		var bColChange = !!mParams.colChange;
 		var oTable = !mParams.table ? window.oTable : mParams.table;
+		var sTableId = oTable.getId();
 		var bGroup = !!mParams.group;
 		var bSum = !!mParams.sum;
 
 		var aLabels = [];
 		if (bFirstTime) {
-			aLabels.push(oTable.getId() + "-ariacount");
-			aLabels.push(oTable.getId() + "-ariaselection");
+			aLabels.push(sTableId + "-ariacount");
+			aLabels.push(sTableId + "-ariaselection");
 		}
 
-		aLabels.push(oTable.getId() + "-rownumberofrows");
-		aLabels.push(oTable.getId() + "-colnumberofcols");
+		aLabels.push(sTableId + "-rownumberofrows");
+		aLabels.push(sTableId + "-colnumberofcols");
 
 		var oColumn = oTable._getVisibleColumns()[iCol];
 		var oRow = oTable.getRows()[iRow];
+		var sRowId = oRow.getId();
 		var oCell = oRow.getCells()[iCol];
 		var iIndex = Column.ofCell(oCell).getIndex();
 
 		if (bGroup) {
-			aLabels.push(oTable.getId() + "-ariarowgrouplabel");
-			aLabels.push(oTable.getId() + "-rows-row" + iRow + "-groupHeader");
+			aLabels.push(sTableId + "-ariarowgrouplabel");
+			aLabels.push(sRowId + "-groupHeader");
 		}
 
 		if (bSum) {
-			aLabels.push(oTable.getId() + "-ariagrandtotallabel");
+			aLabels.push(sTableId + "-ariagrandtotallabel");
 		}
 
 		if (!bGroup && !bSum) {
-			aLabels.push(oTable.getId() + "-rows-row" + iRow + "-highlighttext");
+			aLabels.push(sRowId + "-highlighttext");
 		}
 
 		aLabels.push(oColumn.getId() + "-inner");
 
 		if (iIndex == 0) {
-			aLabels.push(oTable.getId() + "-ariafixedcolumn");
+			aLabels.push(sTableId + "-ariafixedcolumn");
 		}
 
 		if (!bGroup) {
 			if (iIndex === 4) {
 				aLabels.push(oCell.getId());
 			} else {
-				aLabels.push(oTable.getId() + "-cellacc");
+				aLabels.push(sTableId + "-cellacc");
 			}
 
 			if (iIndex === 0 || iIndex === 2 || iIndex === 4) {
-				aLabels.push(oTable.getId() + "-toggleedit");
+				aLabels.push(sTableId + "-toggleedit");
 			}
 		}
 
 		if (oTable.isIndexSelected(iRow) && TableUtils.Grouping.isTreeMode(oTable)) {
-			aLabels.push(oTable.getId() + "-ariarowselected");
+			aLabels.push(sTableId + "-ariarowselected");
 		}
 
 		if (bFirstTime || bRowChange) {
-			aLabels.push(oTable.getId() + "-rownavigatedtext");
+			aLabels.push(sTableId + "-rownavigatedtext");
 		}
 
 		assert.strictEqual(
@@ -212,13 +214,13 @@ sap.ui.define([
 			"headers attribute of cell [" + iRow + ", " + iCol + "]"
 		);
 
-		var sText = jQuery.sap.byId(oTable.getId() + "-rownumberofrows").text().trim();
+		var sText = jQuery.sap.byId(sTableId + "-rownumberofrows").text().trim();
 		if (bFirstTime || bRowChange) {
 			assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
 		} else {
 			assert.ok(sText.length == 0, "Number of rows are not set when row not changed: " + sText);
 		}
-		sText = jQuery.sap.byId(oTable.getId() + "-colnumberofcols").text().trim();
+		sText = jQuery.sap.byId(sTableId + "-colnumberofcols").text().trim();
 		if (bFirstTime || bColChange) {
 			assert.ok(sText.length > 0, "Number of columns are set on column change: " + sText);
 		} else {
@@ -254,7 +256,6 @@ sap.ui.define([
 	}
 
 	function testACCInfoForFocusedDataCell($Cell, iRow, iCol, assert, mParams) {
-		var mParams = mParams || {};
 		var oRow = oTable.getRows()[iRow];
 		var oCell = oRow.getCells()[iCol];
 		var iIndex = Column.ofCell(oCell).getIndex();
@@ -573,15 +574,16 @@ sap.ui.define([
 		var bFirstTime = !!mParams.firstTime;
 		var bFocus = !!mParams.focus;
 		var bColChange = !!mParams.colChange;
+		var sTableId = oTable.getId();
 
 		var aLabels = [];
 		if (bFirstTime && bFocus) {
-			aLabels.push(oTable.getId() + "-ariacount");
-			aLabels.push(oTable.getId() + "-ariaselection");
+			aLabels.push(sTableId + "-ariacount");
+			aLabels.push(sTableId + "-ariaselection");
 		}
 
 		if (bFocus) {
-			aLabels.push(oTable.getId() + "-colnumberofcols");
+			aLabels.push(sTableId + "-colnumberofcols");
 		}
 
 		var oColumn = oTable._getVisibleColumns()[iCol];
@@ -589,22 +591,22 @@ sap.ui.define([
 		aLabels.push(oColumn.getId() + "-inner");
 
 		if (iCol == 0) {
-			aLabels.push(oTable.getId() + "-ariafixedcolumn");
+			aLabels.push(sTableId + "-ariafixedcolumn");
 		}
 
 		if (bFocus && iCol == 1) {
 			if (Device.browser.msie) {
-				aLabels.push(oTable.getId() + "-ariacolsortedasc");
+				aLabels.push(sTableId + "-ariacolsortedasc");
 			}
-			aLabels.push(oTable.getId() + "-ariacolfiltered");
+			aLabels.push(sTableId + "-ariacolfiltered");
 		}
 
 		if (bFocus && iCol == 2) {
-			aLabels.push(oTable.getId() + "-cellacc"); // Column 2 has tooltip see TableQUnitUtils.js
+			aLabels.push(sTableId + "-cellacc"); // Column 2 has tooltip see TableQUnitUtils.js
 		}
 
 		if (Device.browser.msie && bFocus && iCol == 1) {
-			aLabels.push(oTable.getId() + "-ariacolmenu");
+			aLabels.push(sTableId + "-ariacolmenu");
 		}
 
 		assert.strictEqual(
@@ -614,7 +616,7 @@ sap.ui.define([
 		);
 
 		if (bFocus) {
-			var sText = jQuery.sap.byId(oTable.getId() + "-colnumberofcols").text().trim();
+			var sText = jQuery.sap.byId(sTableId + "-colnumberofcols").text().trim();
 			if (bFirstTime || bColChange) {
 				assert.ok(sText.length > 0, "Number of columns are set on column change: " + sText);
 			} else {
@@ -705,28 +707,32 @@ sap.ui.define([
 			var bSum = !!mParams.sum;
 			var bExpanded = !!mParams.expanded;
 			var oTable = !mParams.table ? window.oTable : mParams.table;
+			var sTableId = oTable.getId();
+			var oRow = oTable.getRows()[iRow];
+			var sRowId = oRow.getId();
 
 			var aLabels = [];
 			if (bFirstTime && bFocus) {
-				aLabels.push(oTable.getId() + "-ariacount");
-				aLabels.push(oTable.getId() + "-ariaselection");
+				aLabels.push(sTableId + "-ariacount");
+				aLabels.push(sTableId + "-ariaselection");
 			}
 
 			if (bFocus) {
-				aLabels.push(oTable.getId() + "-rownumberofrows");
-				aLabels.push(oTable.getId() + "-colnumberofcols");
+				aLabels.push(sTableId + "-rownumberofrows");
+				aLabels.push(sTableId + "-colnumberofcols");
 				if (bGroup) {
-					aLabels.push(oTable.getId() + "-ariarowgrouplabel");
-					aLabels.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
+					aLabels.push(sTableId + "-ariarowgrouplabel");
+					aLabels.push(sRowId + "-groupHeader");
+					aLabels.push(sTableId + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 				} else if (bSum) {
-					aLabels.push(oTable.getId() + "-ariagrandtotallabel");
+					aLabels.push(sTableId + "-ariagrandtotallabel");
 				} else {
-					aLabels.push(oTable.getId() + "-rows-row" + iRow + "-rowselecttext");
-					aLabels.push(oTable.getId() + "-rows-row" + iRow + "-highlighttext");
+					aLabels.push(sRowId + "-rowselecttext");
+					aLabels.push(sRowId + "-highlighttext");
 				}
 
 				if (bFirstTime || bRowChange) {
-					aLabels.push(oTable.getId() + "-rownavigatedtext");
+					aLabels.push(sTableId + "-rownavigatedtext");
 				}
 			}
 
@@ -737,7 +743,7 @@ sap.ui.define([
 			);
 
 			if (bFocus) {
-				var sText = jQuery.sap.byId(oTable.getId() + "-rownumberofrows").text().trim();
+				var sText = jQuery.sap.byId(sTableId + "-rownumberofrows").text().trim();
 				if (bFirstTime || bRowChange) {
 					assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
 				} else {
@@ -1040,42 +1046,45 @@ sap.ui.define([
 			var bSum = !!mParams.sum;
 			var bExpanded = !!mParams.expanded;
 			var oTable = !mParams.table ? window.oTable : mParams.table;
+			var sTableId = oTable.getId();
+			var oRow = oTable.getRows()[iRow];
+			var sRowId = oRow.getId();
 
 			var aLabels = [];
 			if (bFirstTime && bFocus) {
-				aLabels.push(oTable.getId() + "-ariacount");
-				aLabels.push(oTable.getId() + "-ariaselection");
+				aLabels.push(sTableId + "-ariacount");
+				aLabels.push(sTableId + "-ariaselection");
 			}
 
 			if (bFocus) {
 				if (bFirstTime || bRowChange) {
-					aLabels.push(oTable.getId() + "-rownumberofrows");
+					aLabels.push(sTableId + "-rownumberofrows");
 				}
 				if (bColChange) {
-					aLabels.push(oTable.getId() + "-colnumberofcols");
+					aLabels.push(sTableId + "-colnumberofcols");
 				}
-				aLabels.push(oTable.getId() + "-rowacthdr");
+				aLabels.push(sTableId + "-rowacthdr");
 				if (iRow == 0) {
-					aLabels.push(oTable.getId() + "-ariarowselected");
+					aLabels.push(sTableId + "-ariarowselected");
 				}
 				if (!bGroup && !bSum) {
-					aLabels.push(oTable.getId() + "-rows-row" + iRow + "-highlighttext");
+					aLabels.push(sRowId + "-highlighttext");
 				}
 				if (bGroup) {
-					aLabels.push(oTable.getId() + "-ariarowgrouplabel");
-					aLabels.push(oTable.getId() + "-rows-row" + iRow + "-groupHeader");
-					aLabels.push(oTable.getId() + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
+					aLabels.push(sTableId + "-ariarowgrouplabel");
+					aLabels.push(sRowId + "-groupHeader");
+					aLabels.push(sTableId + (bExpanded ? "-rowcollapsetext" : "-rowexpandtext"));
 				} else if (bSum) {
-					aLabels.push(oTable.getId() + "-ariagrandtotallabel");
+					aLabels.push(sTableId + "-ariagrandtotallabel");
 				}
 				if (!bGroup) {
-					aLabels.push(oTable.getId() + "-cellacc");
+					aLabels.push(sTableId + "-cellacc");
 				}
 				if (bFirstTime || bRowChange) {
-					aLabels.push(oTable.getId() + "-rownavigatedtext");
+					aLabels.push(sTableId + "-rownavigatedtext");
 				}
 			} else {
-				aLabels.push(oTable.getId() + "-rowacthdr");
+				aLabels.push(sTableId + "-rowacthdr");
 			}
 
 			assert.strictEqual(
@@ -1085,7 +1094,7 @@ sap.ui.define([
 			);
 
 			if (bFocus) {
-				var sText = jQuery.sap.byId(oTable.getId() + "-rownumberofrows").text().trim();
+				var sText = jQuery.sap.byId(sTableId + "-rownumberofrows").text().trim();
 				if (bFirstTime || bRowChange) {
 					assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
 				} else {
@@ -1231,17 +1240,17 @@ sap.ui.define([
 
 	QUnit.test("aria-labelledby with Focus", function(assert) {
 		var done = assert.async();
-		var sId = oTable.getId();
+		var sTableId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
 
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sId + "-ariacount " + sId + "-ariaselection " + sId + "-colnumberofcols" + this._sAdditionalLabeling, "aria-labelledby of select all");
+			sTableId + "-ariacount " + sTableId + "-ariaselection " + sTableId + "-colnumberofcols" + this._sAdditionalLabeling, "aria-labelledby of select all");
 
 		$Cell = getCell(1, 1, true, assert); //set focus somewhere else on the table
 		testAriaLabelsForFocusedDataCell($Cell, 1, 1, assert, {firstTime: false, rowChange: true, colChange: true});
 
 		$Cell = getSelectAll(true, assert);
-		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(), sId + "-colnumberofcols" + this._sAdditionalLabeling,
+		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(), sTableId + "-colnumberofcols" + this._sAdditionalLabeling,
 			"aria-labelledby of select all");
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 		setTimeout(function() {
@@ -1253,10 +1262,10 @@ sap.ui.define([
 		oTable.setSelectionMode(SelectionMode.Single);
 		sap.ui.getCore().applyChanges();
 
-		var sId = oTable.getId();
+		var sTableId = oTable.getId();
 		var $Cell = getSelectAll(true, assert);
 		assert.strictEqual(($Cell.attr("aria-labelledby") || "").trim(),
-			sId + "-ariacount " + sId + "-ariaselection " + sId + "-colnumberofcols", "aria-labelledby of select all");
+			sTableId + "-ariacount " + sTableId + "-ariaselection " + sTableId + "-colnumberofcols", "aria-labelledby of select all");
 		getRowHeader(0, true, assert); //set focus somewhere else on the table
 		TableQUnitUtils.setFocusOutsideOfTable(assert);
 	});
@@ -1546,6 +1555,8 @@ sap.ui.define([
 
 	QUnit.test("ARIA for Overlay", function(assert) {
 		var $OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
+		var sTableId = oTable.getId();
+
 		//Heading + Extension + Footer + 2xTable + Row Selector + 2xColumn Headers + NoData Container = 8
 		assert.strictEqual($OverlayCoveredElements.length, 9, "Number of potentionally covered elements");
 		$OverlayCoveredElements.each(function() {
@@ -1556,9 +1567,9 @@ sap.ui.define([
 		$OverlayCoveredElements.each(function() {
 			assert.ok(jQuery(this).attr("aria-hidden") === "true", "aria-hidden");
 		});
-		var $Elem = jQuery(document.getElementById(oTable.getId() + "-overlay"));
+		var $Elem = jQuery(document.getElementById(sTableId + "-overlay"));
 		assert.strictEqual($Elem.attr("aria-labelledby"),
-			oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId() + " " + oTable.getId() + "-ariainvalid", "aria-labelledby");
+			oTable.getAriaLabelledBy() + " " + oTable.getTitle().getId() + " " + sTableId + "-ariainvalid", "aria-labelledby");
 		oTable.rerender();
 		$OverlayCoveredElements = oTable.$().find("[data-sap-ui-table-acc-covered*='overlay']");
 		$OverlayCoveredElements.each(function() {
@@ -1572,9 +1583,9 @@ sap.ui.define([
 
 		oTable.removeAriaLabelledBy(oTable.getAriaLabelledBy()[0]);
 		sap.ui.getCore().applyChanges();
-		$Elem = jQuery(document.getElementById(oTable.getId() + "-overlay"));
+		$Elem = jQuery(document.getElementById(sTableId + "-overlay"));
 		assert.strictEqual($Elem.attr("aria-labelledby"),
-			oTable.getTitle().getId() + " " + oTable.getId() + "-ariainvalid", "aria-labelledby when ariaLabelledBy association is empty array");
+			oTable.getTitle().getId() + " " + sTableId + "-ariainvalid", "aria-labelledby when ariaLabelledBy association is empty array");
 	});
 
 	QUnit.test("ARIA for NoData", function(assert) {
