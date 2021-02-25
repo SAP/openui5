@@ -863,16 +863,18 @@ sap.ui.define([
 
 		QUnit.test("getExtensionData with BusinessContexts", function(assert) {
 			var oGetBusinessContextsStub = sandbox.stub(Access, "getBusinessContexts").resolves({
-				BusinessContexts: [
-					"foo"
-				],
+				BusinessContexts: [{
+					BusinessContext: "foo",
+					BusinessContextDescription: "business-context-description"
+				}],
 				ServiceName: "name",
 				ServiceVersion: "2"
 			});
 			var oExpectedResult = {
-				extensionData: [
-					"foo"
-				],
+				extensionData: [{
+					businessContext: "foo",
+					description: "business-context-description"
+				}],
 				entityType: "EntityType01",
 				serviceName: "name",
 				serviceVersion: "2"
