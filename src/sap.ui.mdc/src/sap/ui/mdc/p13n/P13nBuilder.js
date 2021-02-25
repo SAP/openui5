@@ -7,8 +7,9 @@ sap.ui.define([
     "sap/m/Bar",
     "sap/m/Title",
     "sap/base/util/merge",
-    "sap/m/MessageBox"
-], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox) {
+    "sap/m/MessageBox",
+    "sap/ui/Device"
+], function(P13nPropertyHelper, Button, Bar, Title, merge, MessageBox, Device) {
     "use strict";
 
     var oRB = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
@@ -96,7 +97,7 @@ sap.ui.define([
                         contentHeight: mDialogSettings.contentHeight ? mDialogSettings.contentHeight : "55rem",
                         draggable: true,
                         resizable: true,
-                        stretch: "{device>/system/phone}",
+                        stretch: Device.system.phone,
                         content: oP13nUI,
                         afterClose: mDialogSettings.afterClose ? mDialogSettings.afterClose : function(){},
                         buttons: [
