@@ -625,7 +625,6 @@ sap.ui.define([
 					var mRenderConfig = oTable._getSelectionPlugin().getRenderConfig();
 
 					if (mRenderConfig.headerSelector.visible) {
-						mAttributes["aria-colindex"] = 1;
 						if (mRenderConfig.headerSelector.type === "toggle") {
 							mAttributes["role"] = ["checkbox"];
 							if (mParams && mParams.enabled) {
