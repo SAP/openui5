@@ -109,6 +109,10 @@ function(library, View, TemplateViewRenderer, Log) {
 		/**
 		 * Abstract method implementation.
 		 *
+		 * @param {object} mSettings settings for the view
+		 * @param {object.string} mSettings.viewData view data
+		 * @param {object.string} mSettings.viewName view name
+		 * @param {object.boolean} [mSettings.async] set the view to load a view resource asynchronously
 		 * @see sap.ui.core.mvc.View#initViewSettings
 		 *
 		 * @private
