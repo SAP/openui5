@@ -287,7 +287,7 @@ sap.ui.define([
 	 * this object.
 	 *
 	 * @param {sap.ui.base.ManagedObject} oObject the managed object models root object
-	 * @param {object} oData an object for custom data
+	 * @param {object} [oData] an object for custom data
 	 * @alias sap.ui.model.base.ManagedObjectModel
 	 * @extends sap.ui.model.json.JSONModel
 	 * @public
