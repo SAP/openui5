@@ -47,6 +47,25 @@ sap.ui.define([
 		sXMLViewCacheError = "XMLViewCacheError",
 		notCacheRelevant = {};
 
+	/**
+	 * Dummy control for after rendering notification before onAfterRendering of
+	 * child controls of the XMLView is called
+	 *
+	 * @extends sap.ui.core.Control
+	 * @alias sap.ui.core.mvc.XMLAfterRenderingNotifier
+	 * @private
+	 */
+	var XMLAfterRenderingNotifier = Control.extend("sap.ui.core.mvc.XMLAfterRenderingNotifier", {
+		metadata: {
+			library: "sap.ui.core"
+		},
+		renderer: {
+			apiVersion: 2,
+			render: function(oRM, oControl) {
+				oRM.text(""); // onAfterRendering is only called if control produces output
+			}
+		}
+	});
 
 	/**
 	 * Constructor for a new <code>XMLView</code>.
@@ -298,9 +317,10 @@ sap.ui.define([
 	}
 
 	/**
+	 * Sets the resource model to the given <code>oView</code>
 	 *
-	 * @param oView
-	 * @param mSettings
+	 * @param {sap.ui.core.mvc.XMLView} oView The view instance
+	 * @param {map} mSettings The view settings
 	 * @returns {undefined|Promise} will return a Promise if ResourceModel is instantiated asynchronously, otherwise undefined
 	 */
 	function setResourceModel(oView, mSettings) {
@@ -788,25 +808,6 @@ sap.ui.define([
 		 */
 		CONTROLS : "controls"
 	};
-
-	/**
-	 * Dummy control for after rendering notification before onAfterRendering of
-	 * child controls of the XMLView is called
-	 * @extends sap.ui.core.Control
-	 * @alias sap.ui.core.mvc.XMLAfterRenderingNotifier
-	 * @private
-	 */
-	var XMLAfterRenderingNotifier = Control.extend("sap.ui.core.mvc.XMLAfterRenderingNotifier", {
-		metadata: {
-			library: "sap.ui.core"
-		},
-		renderer: {
-			apiVersion: 2,
-			render: function(oRM, oControl) {
-				oRM.text(""); // onAfterRendering is only called if control produces output
-			}
-		}
-	});
 
 	// Register OpenUI5 default preprocessor for templating
 	XMLView.registerPreprocessor("xml", "sap.ui.core.util.XMLPreprocessor", true, true);
