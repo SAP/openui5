@@ -867,10 +867,7 @@ sap.ui.define([
 	 * @since 1.53.0
 	 */
 	Context.prototype.refresh = function (sGroupId, bAllowRemoval) {
-		this.requestRefresh.apply(this, arguments).catch(function () {
-			// Nothing to do here, the error is already logged. The catch however is necessary,
-			// because we drop the promise here, so there is no other code to catch it.
-		});
+		this.requestRefresh.apply(this, arguments).catch(this.oModel.getReporter());
 	};
 
 	/**

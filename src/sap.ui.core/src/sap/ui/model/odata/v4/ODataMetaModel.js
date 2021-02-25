@@ -1550,9 +1550,9 @@ sap.ui.define([
 			return SyncPromise.resolve(oCountType);
 		}
 		// Note: undefined is more efficient than "" here
-		return this.fetchObject(undefined, oMetaContext).catch(function () {
-			// do not log, we log a warning "No metadata for path..." afterwards
-		}).then(function (oProperty) {
+		return this.fetchObject(undefined, oMetaContext).catch(
+			this.oModel.getReporter()
+		).then(function (oProperty) {
 			var oType = oRawType,
 				oTypeInfo;
 

@@ -1199,6 +1199,7 @@ sap.ui.define([
 			this.oLogMock.expects("error").never();
 
 			this.oModel = {
+				getReporter : function () {},
 				reportError : function (_sLogMessage, _sReportingClassName, oError) {
 					throw oError;
 				},
@@ -2992,13 +2993,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchUI5Type: fetchObject fails", function (assert) {
-		var oMetaContext = {};
+		var oError = new Error(),
+			oMetaContext = {},
+			oPromise = SyncPromise.resolve(Promise.reject(oError)),
+			fnReporter = sinon.spy();
 
 		this.mock(this.oMetaModel).expects("getMetaContext")
 			.withExactArgs("/Foo/bar").returns(oMetaContext);
 		this.mock(this.oMetaModel).expects("fetchObject")
 			.withExactArgs(undefined, sinon.match.same(oMetaContext))
-			.returns(SyncPromise.resolve(Promise.reject(new Error())));
+			.returns(oPromise);
+		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 		this.oLogMock.expects("warning")
 			.withExactArgs("No metadata for path '/Foo/bar', using sap.ui.model.odata.type.Raw",
 				undefined, sODataMetaModel);
@@ -3006,6 +3011,8 @@ sap.ui.define([
 		// code under test
 		return this.oMetaModel.fetchUI5Type("/Foo/bar").then(function (oType) {
 			assert.strictEqual(oType.getName(), "sap.ui.model.odata.type.Raw");
+			sinon.assert.calledOnce(fnReporter);
+			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
 		});
 	});
 

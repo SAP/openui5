@@ -1249,24 +1249,47 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("refresh: list binding, reject", function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES/42", 42);
+		var oModel = {
+				getReporter : function () {}
+			},
+			oContext = Context.create(oModel, {/*oBinding*/}, "/EMPLOYEES/42", 42),
+			oError = new Error(),
+			oPromise = Promise.reject(oError),
+			fnReporter = sinon.spy();
 
 		this.mock(oContext).expects("requestRefresh").withExactArgs("groupId", "bAllowRemoval")
-			.rejects(new Error());
+			.returns(oPromise);
+		this.mock(oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 
-		// code under test - must not cause "Uncaught (in promise)"
+		// code under test
 		oContext.refresh("groupId", "bAllowRemoval");
+
+		return oPromise.catch(function () {
+			sinon.assert.calledOnce(fnReporter);
+			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("refresh: context binding, reject", function (assert) {
-		var oContext = Context.create({/*oModel*/}, {/*oBinding*/}, "/EMPLOYEES('42')");
+		var oModel = {
+				getReporter : function () {}
+			},
+			oContext =  Context.create(oModel, {/*oBinding*/}, "/EMPLOYEES('42')"),
+			oError = new Error(),
+			oPromise = Promise.reject(oError),
+			fnReporter = sinon.spy();
 
-		this.mock(oContext).expects("requestRefresh").withExactArgs("groupId")
-			.rejects(new Error());
+		this.mock(oContext).expects("requestRefresh").withExactArgs("groupId").returns(oPromise);
+		this.mock(oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 
-		// code under test - must not cause "Uncaught (in promise)"
+		// code under test
 		oContext.refresh("groupId");
+
+		return oPromise.catch(function () {
+			sinon.assert.calledOnce(fnReporter);
+			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+		});
 	});
 
 	//*********************************************************************************************

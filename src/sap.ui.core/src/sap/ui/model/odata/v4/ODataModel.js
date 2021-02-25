@@ -1387,6 +1387,26 @@ sap.ui.define([
 	};
 
 	/**
+	 * Returns a function to be used as a Promise catch handler in order to report not yet reported
+	 * errors.
+	 *
+	 * @returns {function(Error)}
+	 *   A catch handler function expecting an <code>Error</code> instance. This function will call
+	 *   {@link #reportError} if the error has not been reported yet
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.getReporter = function () {
+		var that = this;
+
+		return function (oError) {
+			if (!oError.$reported) {
+				that.reportError(oError.message, sClassName, oError);
+			}
+		};
+	};
+
+	/**
 	 * Returns <code>true</code> if there are pending changes, meaning updates or created entities
 	 * (see {@link sap.ui.model.odata.v4.ODataListBinding#create}) that have not yet been
 	 * successfully sent to the server.
