@@ -91,6 +91,10 @@ sap.ui.define([
 			var rm = sap.ui.getCore().createRenderManager();
 
 			rm.write('<div id="sapUiSupportDebuggingRebootContainer" class="sapUiSupportContainer">');
+
+			rm.write('<div style="font-weight: bold" class="sapUISupportLabel">Note: Designed to work with apps loaded with the standard UI5 loading bootstrap script tag:</div>');
+			rm.write('<div style="font-weight: bold" class="sapUISupportLabel">&lt;script id="sap-ui-bootstrap" src="somepath/resources/sap-ui-core.js" ...<br/><br/></div>');
+
 			rm.write('<div class="sapUISupportLabel">Boot application with different UI5 version on next reload:</div>');
 			rm.write('<select id="sapUiSupportDebuggingRebootSelect" class="sapUiSupportSelect">');
 			rm.write('<option value="none">Disabled (no custom reboot URL)</option>');
