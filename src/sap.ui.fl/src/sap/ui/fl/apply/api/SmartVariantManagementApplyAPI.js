@@ -6,25 +6,22 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/apply/_internal/flexState/compVariants/CompVariantMerger",
-	"sap/ui/fl/apply/_internal/ChangesController",
-	"sap/ui/fl/Change",
-	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/LayerUtils"
 ], function(
 	FlexState,
 	ManifestUtils,
 	CompVariantMerger,
-	ChangesController,
-	Change,
-	Settings,
 	Utils,
 	LayerUtils
 ) {
 	"use strict";
 
 	function getPersistencyKey(oControl) {
-		return oControl && oControl.getPersistencyKey && oControl.getPersistencyKey();
+		if (oControl) {
+			var oVMControl = oControl.getVariantManagement && oControl.getVariantManagement() || oControl;
+			return oVMControl.getPersonalizableControlPersistencyKey && oVMControl.getPersonalizableControlPersistencyKey();
+		}
 	}
 
 	/**

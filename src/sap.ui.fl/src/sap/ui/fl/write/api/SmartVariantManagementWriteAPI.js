@@ -16,7 +16,7 @@ sap.ui.define([
 	"use strict";
 
 	function getPersistencyKey(oControl) {
-		return oControl && oControl.getPersistencyKey && oControl.getPersistencyKey();
+		return oControl && oControl.getPersonalizableControlPersistencyKey && oControl.getPersonalizableControlPersistencyKey();
 	}
 
 	function setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, fnFunction) {
