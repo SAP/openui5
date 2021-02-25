@@ -21,7 +21,7 @@ sap.ui.define(function() {
 	 * Renders the HTML for the given control, using the provided {@link sap.ui.core.RenderManager}.
 	 *
 	 * @param {sap.ui.core.RenderManager} oRM RenderManager that can be used for writing to the Render-Output-Buffer
-	 * @param {sap.ui.core.Control} oControl Object representation of the control that should be rendered
+	 * @param {sap.ui.core.ComponentContainer} oComponentContainer The ComponentContainer that should be rendered
 	 */
 	ComponentContainerRenderer.render = function(oRM, oComponentContainer){
 
