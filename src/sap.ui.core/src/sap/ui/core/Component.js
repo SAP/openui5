@@ -628,9 +628,8 @@ sap.ui.define([
 	/**
 	 * Components don't have a facade and therefore return themselves as their interface.
 	 *
-	 * @returns {sap.ui.core.Component} <code>this</code> as there's no facade for components
+	 * @returns {this} <code>this</code> as there's no facade for components
 	 * @see sap.ui.base.Object#getInterface
-	 * @returns {this}
 	 * @public
 	 */
 	Component.prototype.getInterface = function() {
@@ -837,15 +836,16 @@ sap.ui.define([
 			mergeParent: true,
 			cacheTokens: mCacheTokens,
 			activeTerminologies: this.getActiveTerminologies()
-		});
+		}),
+			mModelConfigurations = {},
+			sModelName;
 
 		if (!mAllModelConfigurations) {
 			return;
 		}
 
 		// filter out models which are already created
-		var mModelConfigurations = {};
-		for (var sModelName in mAllModelConfigurations) {
+		for (sModelName in mAllModelConfigurations) {
 			if (!this._mManifestModels[sModelName]) {
 				mModelConfigurations[sModelName] = mAllModelConfigurations[sModelName];
 			}
@@ -853,13 +853,13 @@ sap.ui.define([
 
 		// create all models which are not created, yet.
 		var mCreatedModels = Component._createManifestModels(mModelConfigurations, this.toString());
-		for (var sModelName in mCreatedModels) {
+		for (sModelName in mCreatedModels) {
 			// keep the model instance to be able to destroy the created models on component destroy
 			this._mManifestModels[sModelName] = mCreatedModels[sModelName];
 		}
 
 		// set all the models to the component
-		for (var sModelName in this._mManifestModels) {
+		for (sModelName in this._mManifestModels) {
 			var oModel = this._mManifestModels[sModelName];
 
 			// apply the model to the component with provided name ("" as key means unnamed model)
@@ -1493,8 +1493,8 @@ sap.ui.define([
 							if (oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel' ||
 								oModelConfig.type === 'sap.ui.model.odata.v4.ODataModel') {
 
-								var sCacheToken = mCacheTokens.dataSources && mCacheTokens.dataSources[oAnnotation.uri];
-								if (sCacheToken || oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
+								var sCacheTokenForAnnotation = mCacheTokens.dataSources && mCacheTokens.dataSources[oAnnotation.uri];
+								if (sCacheTokenForAnnotation || oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel') {
 									/* eslint-disable no-loop-func */
 									["sap-language", "sap-client"].forEach(function(sName) {
 										if (!oAnnotationUri.hasQuery(sName) && oConfig.getSAPParam(sName)) {
@@ -1504,9 +1504,9 @@ sap.ui.define([
 									/* eslint-enable no-loop-func */
 								}
 
-								if (sCacheToken) {
+								if (sCacheTokenForAnnotation) {
 									Component._applyCacheToken(oAnnotationUri, {
-										cacheToken: sCacheToken,
+										cacheToken: sCacheTokenForAnnotation,
 										componentName: sLogComponentName,
 										dataSource: sAnnotation
 									});
@@ -1578,7 +1578,8 @@ sap.ui.define([
 					if (oModelConfig.type === 'sap.ui.model.odata.v2.ODataModel' ||
 						oModelConfig.type === 'sap.ui.model.odata.v4.ODataModel') {
 
-						var sCacheToken = mCacheTokens.dataSources && mCacheTokens.dataSources[oDataSource.uri];
+						var oModelDataSource = mConfig.dataSources && mConfig.dataSources[oModelConfig.dataSource];
+						var sCacheToken = mCacheTokens.dataSources && mCacheTokens.dataSources[oModelDataSource.uri];
 						// Handle sap-language URI parameter
 						// Do not add it if it is already set in the "metadataUrlParams" or is part of the model URI
 						mMetadataUrlParams = oModelConfig.settings && oModelConfig.settings.metadataUrlParams;
@@ -1677,15 +1678,13 @@ sap.ui.define([
 					// only use 1st argument with "uri" string if there are no settings
 					oModelConfig.settings = [ oModelConfig.uri ];
 				}
-			} else {
-				// Origin segment: check if the uri is given via the respective settingsName, e.g. "serviceURL"
-				if (bAddOrigin && oModelConfig.uriSettingName !== undefined && oModelConfig.settings && oModelConfig.settings[oModelConfig.uriSettingName]) {
-					oModelConfig.preOriginBaseUri = oModelConfig.settings[oModelConfig.uriSettingName].split("?")[0];
-					oModelConfig.settings[oModelConfig.uriSettingName] = ODataUtils.setOrigin(oModelConfig.settings[oModelConfig.uriSettingName], {
-						alias: sSystemParameter
-					});
-					oModelConfig.postOriginUri = oModelConfig.settings[oModelConfig.uriSettingName].split("?")[0];
-				}
+			} else if (bAddOrigin && oModelConfig.uriSettingName !== undefined && oModelConfig.settings && oModelConfig.settings[oModelConfig.uriSettingName]) {
+				// Origin segment: only if the uri is given via the respective settingsName, e.g. "serviceURL"
+				oModelConfig.preOriginBaseUri = oModelConfig.settings[oModelConfig.uriSettingName].split("?")[0];
+				oModelConfig.settings[oModelConfig.uriSettingName] = ODataUtils.setOrigin(oModelConfig.settings[oModelConfig.uriSettingName], {
+					alias: sSystemParameter
+				});
+				oModelConfig.postOriginUri = oModelConfig.settings[oModelConfig.uriSettingName].split("?")[0];
 			}
 
 			// Origin segment: Adapt annotation uris here, based on the base part of the service uri.
@@ -1693,8 +1692,8 @@ sap.ui.define([
 			if (bAddOrigin && oModelConfig.settings && oModelConfig.settings.annotationURI) {
 				var aAnnotationUris = [].concat(oModelConfig.settings.annotationURI); //"to array"
 				var aOriginAnnotations = [];
-				for (var i = 0; i < aAnnotationUris.length; i++) {
-					aOriginAnnotations.push(ODataUtils.setAnnotationOrigin(aAnnotationUris[i], {
+				for (var k = 0; k < aAnnotationUris.length; k++) {
+					aOriginAnnotations.push(ODataUtils.setAnnotationOrigin(aAnnotationUris[k], {
 						alias: sSystemParameter,
 						preOriginBaseUri: oModelConfig.preOriginBaseUri,
 						postOriginBaseUri: oModelConfig.postOriginBaseUri
@@ -2777,10 +2776,10 @@ sap.ui.define([
 			var aComponents = [];
 			var mComponents = oManifest.getEntry("/sap.ui5/dependencies/components");
 			if (mComponents) {
-				for (var sComponentName in mComponents) {
+				for (var sCompName in mComponents) {
 					// filter the lazy components
-					if (!mComponents[sComponentName].lazy) {
-						aComponents.push(sComponentName);
+					if (!mComponents[sCompName].lazy) {
+						aComponents.push(sCompName);
 					}
 				}
 			}
