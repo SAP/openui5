@@ -1,58 +1,58 @@
 /*global QUnit*/
 
 sap.ui.define([
-	"sap/ui/dt/ElementOverlay",
-	"sap/ui/dt/Overlay",
-	"sap/ui/dt/OverlayRegistry",
-	"sap/ui/dt/ElementUtil",
-	"sap/ui/dt/ElementDesignTimeMetadata",
-	"sap/ui/dt/DesignTime",
+	"dt/control/SimpleScrollControl",
 	"sap/m/Bar",
-	"sap/m/VBox",
 	"sap/m/Button",
 	"sap/m/Label",
-	"sap/m/TextArea",
 	"sap/m/Panel",
-	"sap/ui/layout/VerticalLayout",
+	"sap/m/TextArea",
+	"sap/m/VBox",
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Popup",
+	"sap/ui/dt/DesignTime",
+	"sap/ui/dt/DOMUtil",
+	"sap/ui/dt/ElementDesignTimeMetadata",
+	"sap/ui/dt/ElementOverlay",
+	"sap/ui/dt/ElementUtil",
+	"sap/ui/dt/OverlayRegistry",
+	"sap/ui/dt/Overlay",
 	"sap/ui/layout/HorizontalLayout",
+	"sap/ui/layout/VerticalLayout",
+	"sap/uxap/ObjectPageHeader",
 	"sap/uxap/ObjectPageLayout",
 	"sap/uxap/ObjectPageSection",
 	"sap/uxap/ObjectPageSubSection",
-	"sap/uxap/ObjectPageHeader",
-	"sap/ui/Device",
-	"dt/control/SimpleScrollControl",
 	"sap/ui/thirdparty/jquery",
-	"sap/ui/core/Popup",
-	"sap/ui/base/ManagedObject",
-	"sap/ui/dt/DOMUtil",
-	"sap/ui/thirdparty/sinon-4"
+	"sap/ui/thirdparty/sinon-4",
+	"sap/ui/Device"
 ],
 function (
-	ElementOverlay,
-	Overlay,
-	OverlayRegistry,
-	ElementUtil,
-	ElementDesignTimeMetadata,
-	DesignTime,
+	SimpleScrollControl,
 	Bar,
-	VBox,
 	Button,
 	Label,
-	TextArea,
 	Panel,
-	VerticalLayout,
+	TextArea,
+	VBox,
+	ManagedObject,
+	Popup,
+	DesignTime,
+	DOMUtil,
+	ElementDesignTimeMetadata,
+	ElementOverlay,
+	ElementUtil,
+	OverlayRegistry,
+	Overlay,
 	HorizontalLayout,
+	VerticalLayout,
+	ObjectPageHeader,
 	ObjectPageLayout,
 	ObjectPageSection,
 	ObjectPageSubSection,
-	ObjectPageHeader,
-	Device,
-	SimpleScrollControl,
 	jQuery,
-	Popup,
-	ManagedObject,
-	DOMUtil,
-	sinon
+	sinon,
+	Device
 ) {
 	"use strict";
 
@@ -898,7 +898,7 @@ function (
 			this.oDesignTime.destroy();
 		}
 	}, function () {
-		function _createInitialScrollHandlerValues() {
+		function createInitialScrollHandlerValues() {
 			return {
 				offsetTop: this.oContent1.$().offset().top,
 				controlOffset: this.oContent1.$().offset(),
@@ -907,7 +907,7 @@ function (
 			};
 		}
 
-		function _scrollHandler(assert, done, mInitialValues) {
+		function scrollHandler(assert, done, mInitialValues) {
 			var oPromise = Promise.resolve();
 			if (!Device.browser.msie) {
 				assert.equal(mInitialValues.applyStylesSpy.callCount, 0, "then the applyStyles Method is not called");
@@ -926,22 +926,22 @@ function (
 
 		QUnit.test("when the control is scrolled", function(assert) {
 			var done = assert.async();
-			var mInitialValues = _createInitialScrollHandlerValues.call(this);
-			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", _scrollHandler.bind(this, assert, done, mInitialValues));
+			var mInitialValues = createInitialScrollHandlerValues.call(this);
+			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", scrollHandler.bind(this, assert, done, mInitialValues));
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").scrollTop(100);
 		});
 
 		QUnit.test("when the overlay is scrolled", function(assert) {
 			var done = assert.async();
-			var mInitialValues = _createInitialScrollHandlerValues.call(this);
-			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").on("scroll", _scrollHandler.bind(this, assert, done, mInitialValues));
+			var mInitialValues = createInitialScrollHandlerValues.call(this);
+			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").on("scroll", scrollHandler.bind(this, assert, done, mInitialValues));
 			this.oSimpleScrollControlOverlay.getScrollContainerById(0).scrollTop(100);
 		});
 
 		QUnit.test("when the control is re-rendered (with removal of all events) and then scrolled", function(assert) {
 			var done = assert.async();
-			var mInitialValues = _createInitialScrollHandlerValues.call(this);
-			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", _scrollHandler.bind(this, assert, done, mInitialValues));
+			var mInitialValues = createInitialScrollHandlerValues.call(this);
+			this.oSimpleScrollControlOverlay.attachEventOnce("scrollSynced", scrollHandler.bind(this, assert, done, mInitialValues));
 			this.oSimpleScrollControl.$().find("> .sapUiDtTestSSCScrollContainer").off();
 			var oDelegate = {
 				onAfterRendering: function () {
@@ -951,6 +951,25 @@ function (
 			};
 			this.oSimpleScrollControl.addEventDelegate(oDelegate, this);
 			this.oSimpleScrollControl.invalidate();
+		});
+
+		QUnit.test("when the scroll container needs updating", function(assert) {
+			var oScrollContainer = this.oSimpleScrollControlOverlay.getScrollContainerById(1).get(0);
+			var aOverlayChildrenDomRef = this.oSimpleScrollControlOverlay.getChildrenDomRef();
+
+			assert.strictEqual(oScrollContainer.children.length, 2, "initially there are two aggregations in the scroll container");
+			assert.strictEqual(aOverlayChildrenDomRef.children.length, 4, "and 4 children in the element overlay");
+			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content3").getDomRef().parentElement, oScrollContainer, "content3 is in the scroll container");
+			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content4").getDomRef().parentElement, oScrollContainer, "content4 is in the scroll container");
+			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content5").getDomRef().parentElement, aOverlayChildrenDomRef, "content5 is not in the scroll container");
+
+			this.oSimpleScrollControl.changeScrollContainer();
+
+			assert.strictEqual(oScrollContainer.children.length, 2, "still two children in the scroll container");
+			assert.strictEqual(aOverlayChildrenDomRef.children.length, 4, "and 4 children in the element overlay");
+			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content3").getDomRef().parentElement, aOverlayChildrenDomRef, "content3 is not in the scroll container");
+			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content4").getDomRef().parentElement, oScrollContainer, "content4 is in the scroll container");
+			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content5").getDomRef().parentElement, oScrollContainer, "content5 is in the scroll container");
 		});
 	});
 

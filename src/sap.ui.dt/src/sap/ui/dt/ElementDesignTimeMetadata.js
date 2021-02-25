@@ -233,12 +233,15 @@ function(
 	 * @return {array} scrollContainers or empty array
 	 * @public
 	 */
-	ElementDesignTimeMetadata.prototype.getScrollContainers = function(oElement) {
+	ElementDesignTimeMetadata.prototype.getScrollContainers = function(oElement, bInvalidate, fnUpdateFunction) {
 		var aScrollContainers = this.getData().scrollContainers || [];
 
 		aScrollContainers.forEach(function(oScrollContainer) {
 			if (typeof oScrollContainer.aggregations === "function") {
-				oScrollContainer.aggregations = oScrollContainer.aggregations.call(null, oElement);
+				oScrollContainer.aggregationsFunction = oScrollContainer.aggregations;
+				oScrollContainer.aggregations = oScrollContainer.aggregations(oElement, fnUpdateFunction);
+			} else if (bInvalidate && oScrollContainer.aggregationsFunction) {
+				oScrollContainer.aggregations = oScrollContainer.aggregationsFunction(oElement, fnUpdateFunction);
 			}
 		});
 

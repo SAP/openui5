@@ -17,8 +17,7 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/util/restricted/_intersection",
 	"sap/base/util/restricted/_max"
-],
-function (
+], function (
 	Overlay,
 	ControlObserver,
 	ManagedObjectObserver,
@@ -36,7 +35,7 @@ function (
 ) {
 	"use strict";
 
-	var S_SCROLLCONTAINER_CLASSNAME = 'sapUiDtOverlayScrollContainer';
+	var S_SCROLLCONTAINER_CLASSNAME = "sapUiDtOverlayScrollContainer";
 
 	/**
 	 * Constructor for an ElementOverlay.
@@ -107,7 +106,6 @@ function (
 					type: "any[]",
 					defaultValue: []
 				},
-
 				metadataScope: {
 					type: "string"
 				}
@@ -197,14 +195,49 @@ function (
 		}.bind(this));
 	};
 
+	/**
+	 * Scroll containers can be dynamic and contain different aggregations depending on the control.
+	 * Whenever the definition of a scroll container changes the dom structure has to be updated:
+	 * The aggregations have to be moved from the scroll container to the children dom ref of the parent
+	 * or vice versa. This automatically triggers an apply styles to properly update the overlays
+	 *
+	 * @param {object} mProperties - Map of properties
+	 * @param {object} mProperties.index - Index of the scrollcontainer
+	 */
+	ElementOverlay.prototype._updateScrollContainer = function(mProperties) {
+		var iIndex = mProperties.index;
+		var o$ScrollContainer = this.getScrollContainerById(iIndex);
+		var oNewScrollContainer = this.getScrollContainers(true)[iIndex];
+		var aAggregationsCopy = [].concat(oNewScrollContainer.aggregations);
+		var aCurrentScrollContainerChildren = o$ScrollContainer.find(">:not(.sapUiDtDummyScrollContainer)").toArray();
+
+		// first check if the current scroll container content is correct, and if not move it to the children div
+		aCurrentScrollContainerChildren.forEach(function(oAggregationNode) {
+			var sAggregationName = oAggregationNode.getAttribute("data-sap-ui-dt-aggregation");
+			if (oNewScrollContainer.aggregations.includes(sAggregationName)) {
+				aAggregationsCopy.splice(aAggregationsCopy.indexOf(sAggregationName), 1);
+			} else {
+				o$ScrollContainer.get(0).removeChild(oAggregationNode);
+				DOMUtil.appendChild(this.getChildrenDomRef(), oAggregationNode);
+			}
+		}.bind(this));
+
+		// then move the new aggregations to the scroll container
+		aAggregationsCopy.forEach(function(sAggregationName) {
+			var oAggregationNode = this.getAggregationOverlay(sAggregationName).getDomRef();
+			this.getChildrenDomRef().removeChild(oAggregationNode);
+			DOMUtil.appendChild(o$ScrollContainer.get(0), oAggregationNode);
+		}.bind(this));
+	};
+
 	ElementOverlay.prototype._onRootChanged = function (oEvent) {
-		var bRootChangedValue = oEvent.getParameter('value');
+		var bRootChangedValue = oEvent.getParameter("value");
 		this._subscribeToMutationObserver(bRootChangedValue);
 	};
 
 	ElementOverlay.prototype._initMutationObserver = function () {
 		this._subscribeToMutationObserver(this.isRoot());
-		this.attachEvent('isRootChanged', this._onRootChanged, this);
+		this.attachEvent("isRootChanged", this._onRootChanged, this);
 	};
 
 	ElementOverlay.prototype._subscribeToMutationObserver = function (bIsRoot) {
@@ -216,7 +249,7 @@ function (
 			oMutationObserver.registerHandler(this._sObservableNodeId, this._domChangedCallback.bind(this), bIsRoot);
 		} else if (bIsRoot) {
 			//Needs to be a logged error, otherwise the LayoutEditor isn't working anymore.
-			Log.error('sap.ui.dt.ElementOverlay#_subscribeToMutationObserver: please provide a root control with proper domRef and id to ensure that RTA is working properly');
+			Log.error("sap.ui.dt.ElementOverlay#_subscribeToMutationObserver: please provide a root control with proper domRef and id to ensure that RTA is working properly");
 		}
 	};
 
@@ -269,7 +302,7 @@ function (
 	};
 
 	ElementOverlay.prototype.render = function () {
-		this.addStyleClass('sapUiDtElementOverlay');
+		this.addStyleClass("sapUiDtElementOverlay");
 		return Overlay.prototype.render.apply(this, arguments);
 	};
 
@@ -310,7 +343,7 @@ function (
 					Util.printf(
 						"Can't load designtime metadata data for overlay with id='{1}', element id='{2}': {3}",
 						this.getId(),
-						this.getAssociation('element'), // Can't use this.getElement(), because the element might be destroyed already
+						this.getAssociation("element"), // Can't use this.getElement(), because the element might be destroyed already
 						Util.wrapError(vError).message
 					)
 				);
@@ -365,7 +398,7 @@ function (
 	 */
 	ElementOverlay.prototype._sortChildren = function(oContainer) {
 		// compares two DOM Nodes and returns 1, if first child should be bellow in dom order
-		var fnCompareChildren = function(oChild1, oChild2) {
+		function compareChildren(oChild1, oChild2) {
 			var oGeometry1 = DOMUtil.getGeometry(oChild1);
 			var oGeometry2 = DOMUtil.getGeometry(oChild2);
 			var oPosition1 = oGeometry1 && oGeometry1.position;
@@ -427,14 +460,14 @@ function (
 				return 1;
 			}
 			return 0;
-		};
+		}
 
 		// Exclude dummy scroll containers, because, e.g. in Safari, scrollbar synchronizations on ObjectPage sometimes
 		// drops into in different event loops (JS execution cycles) which leads to invalid intermediate position
 		// on the screen with following sorting. That said, sorting happens for intermediate state and then for real
 		// state of the elements in viewport once again. Thus, excluding these elements allow us to avoid 2 extra sortings.
-		var aChildren = jQuery(oContainer).find('>:not(.sapUiDtDummyScrollContainer)').toArray();
-		var aSorted = aChildren.slice().sort(fnCompareChildren);
+		var aChildren = jQuery(oContainer).find(">:not(.sapUiDtDummyScrollContainer)").toArray();
+		var aSorted = aChildren.slice().sort(compareChildren);
 
 		var bOrderChanged = aChildren.some(function(oChild, iIndex) {
 			return oChild !== aSorted[iIndex];
@@ -459,10 +492,10 @@ function (
 					Overlay.getOverlayContainer().append(this.render());
 					this.applyStyles();
 				} else {
-					Log.error('sap.ui.dt.ElementOverlay: overlay is already rendered and can\'t be placed in overlay container. Isn\'t it already there?');
+					Log.error("sap.ui.dt.ElementOverlay: overlay is already rendered and can\'t be placed in overlay container. Isn\'t it already there?");
 				}
 			} else {
-				Log.error('sap.ui.dt.ElementOverlay: it\'s not possible to place overlay inside overlay container while it\'s part of some hierarchy');
+				Log.error("sap.ui.dt.ElementOverlay: it\'s not possible to place overlay inside overlay container while it\'s part of some hierarchy");
 			}
 		} else {
 			Log.error('sap.ui.dt.ElementOverlay: overlay is not ready yet. Please wait until "init" event happens');
@@ -515,8 +548,8 @@ function (
 	 * Gets information about scroll containers from DesignTime metadata
 	 * @returns {object[]} - returns an array with scroll containers description
 	 */
-	ElementOverlay.prototype.getScrollContainers = function () {
-		return this.getDesignTimeMetadata().getScrollContainers(this.getElement());
+	ElementOverlay.prototype.getScrollContainers = function (bInvalidate) {
+		return this.getDesignTimeMetadata().getScrollContainers(this.getElement(), bInvalidate, this._updateScrollContainer.bind(this));
 	};
 
 	/**
@@ -558,7 +591,7 @@ function (
 	 * @return {jQuery} - returns DOM Node of scroll container by its index
 	 */
 	ElementOverlay.prototype.getScrollContainerById = function (iIndex) {
-		return jQuery(this.getChildrenDomRef()).find('>.' + S_SCROLLCONTAINER_CLASSNAME + '[data-sap-ui-dt-scrollcontainerindex="' + iIndex + '"]');
+		return jQuery(this.getChildrenDomRef()).find(">." + S_SCROLLCONTAINER_CLASSNAME + '[data-sap-ui-dt-scrollcontainerindex="' + iIndex + '"]');
 	};
 
 	/**
@@ -635,7 +668,7 @@ function (
 			this.setProperty("movable", bMovable);
 			this.fireMovableChange({movable: bMovable});
 
-			this.$()[bMovable ? 'attr' : 'removeAttr']('draggable', bMovable);
+			this.$()[bMovable ? "attr" : "removeAttr"]("draggable", bMovable);
 		}
 
 		return this;
