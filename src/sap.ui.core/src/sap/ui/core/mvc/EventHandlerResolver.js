@@ -213,7 +213,7 @@ sap.ui.define([
 			 * parse(".fnControllerMethod; .fnControllerMethod(${  path:'/someModelProperty', formatter: '.myFormatter', type: 'sap.ui.model.type.String'}    ); globalFunction")
 			 * => [".fnControllerMethod", ".fnControllerMethod(${  path:'/someModelProperty', formatter: '.myFormatter', type: 'sap.ui.model.type.String'}    )", "globalFunction"]
 			 *
-			 * @param [string] sValue - Incoming string
+			 * @param {string} [sValue] - Incoming string
 			 * @return {string[]} - Array of event handler definitions
 			 */
 			parse: function parse(sValue) {
@@ -241,6 +241,8 @@ sap.ui.define([
 							break;
 						case ")":
 							iParenthesesCounter--;
+							break;
+						default:
 							break;
 					}
 
@@ -302,7 +304,7 @@ sap.ui.define([
 				}
 			}
 
-			var clType, oContext, oBinding, aBindings = [];
+			var fnTypeClass, oContext, oBinding, aBindings = [];
 			oBindingInfo.parts.forEach(function(oPart) {
 				var oModel;
 				if (oPart.model === "$parameters") {
@@ -318,11 +320,11 @@ sap.ui.define([
 
 				oType = oPart.type;
 				if (typeof oType == "string") {
-					clType = ObjectPath.get(oType);
-					if (typeof clType !== "function") {
+					fnTypeClass = ObjectPath.get(oType);
+					if (typeof fnTypeClass !== "function") {
 						throw new Error("Cannot find type \"" + oType + "\" used for binding \"" + oPart.path + "\"!");
 					}
-					oType = new clType(oPart.formatOptions, oPart.constraints);
+					oType = new fnTypeClass(oPart.formatOptions, oPart.constraints);
 				}
 
 				oBinding = oModel.bindProperty(oPart.path, oContext, oBindingInfo.parameters);
@@ -337,8 +339,8 @@ sap.ui.define([
 				// Create type instance if needed
 				oType = oBindingInfo.type;
 				if (typeof oType == "string") {
-					clType = ObjectPath.get(oType);
-					oType = new clType(oBindingInfo.formatOptions, oBindingInfo.constraints);
+					fnTypeClass = ObjectPath.get(oType);
+					oType = new fnTypeClass(oBindingInfo.formatOptions, oBindingInfo.constraints);
 				}
 				oBinding = new CompositeBinding(aBindings, oBindingInfo.useRawValues, oBindingInfo.useInternalValues);
 				oBinding.setType(oType /* type that is able to parse etc. */, oPart.targetType /* string, boolean, etc. */ || "any");
