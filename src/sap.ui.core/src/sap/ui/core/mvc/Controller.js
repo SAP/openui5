@@ -117,7 +117,7 @@ sap.ui.define([
 		 * Apply extension to controller
 		 *
 		 * @param {sap.ui.core.mvc.Controller} oController The controller to extend
-		 * @param {sap.ui.core.mvc.ControllerExtension|object} oCustomControllerDef The controller extension
+		 * @param {sap.ui.core.mvc.ControllerExtension|object} oExtension The controller extension
 		 * @param {string} [sLocalNamespace] Extensions could be applied to a local namespace. Do so if passed
 		 * @private
 		 */
@@ -355,9 +355,11 @@ sap.ui.define([
 		}
 
 		/**
-		 * apply extension if passed as a member of the controller
+		 * Apply extension if passed as a member of the controller
+		 *
 		 * @param {sap.ui.core.mvc.Controller} oController The controller instance
 		 * @param {boolean} bAsync Wether extend async or not
+		 * @returns {Promise|sap.ui.core.mvc.Controller} If <code>bAsync</code> is <code>true</code> a promise which resolves with the extended <code>oController</code>, otherwise the extended <code>oController</code>
 		 * @private
 		 */
 		Controller.extendByMember = function(oController, bAsync) {
@@ -636,10 +638,11 @@ sap.ui.define([
 		}
 
 		/**
-		 * Returns a list of public methods of the controller. If <code>bWithExtensions</code> is
-		 * set to true the public methods of the extensions are also returned
+		 * Returns a map of public methods of the controller. If <code>bWithExtensions</code> is
+		 * set to <code>true</code> the public methods of the extensions are included in the result
 		 *
 		 * @private
+		 * @returns {Map<string,object>} A map containing all methods (key) and their metadata
 		 */
 		Controller.prototype.getPublicMethods = function() {
 			var mPublicFunctions = {},
