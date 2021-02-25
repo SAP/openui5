@@ -493,6 +493,72 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("Token should invalidate the MultiInput when its text is updated by the binding", function(assert) {
+		// Arrange
+		var oInvalidateSpy = sinon.spy(this.multiInput1, "invalidate");
+		var oToken = new Token({
+			text: "{/text}"
+		});
+		var oData = {
+			text: ""
+		};
+		var oJSONModel = new JSONModel(oData);
+
+		this.multiInput1.setModel(oJSONModel);
+		this.multiInput1.addToken(oToken);
+		Core.applyChanges();
+
+		oInvalidateSpy.reset();
+
+		// Act
+		oJSONModel.setProperty("/text", "test");
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oInvalidateSpy.callCount, 1, "MultiInput was invalidated once.");
+		assert.strictEqual(oToken.getText(), "test", "Token's text property was updated.");
+
+		// Clean
+		oJSONModel.destroy();
+	});
+
+	QUnit.test("Adding a token, should attach the invalidate event handler function.", function(assert) {
+		// Arrange
+		var oToken = new Token({
+			text: "test"
+		});
+		var oAttachEventSpy = sinon.spy(oToken, "attachEvent");
+
+		// Act
+		this.multiInput1.addToken(oToken);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oAttachEventSpy.callCount, 1, "Attach event was called once");
+		assert.strictEqual(oAttachEventSpy.firstCall.args[0], "_change", "Attach event was called for the right event.");
+		assert.strictEqual(oAttachEventSpy.firstCall.args[2].getId(), this.multiInput1.getId(), "Attach event was called with the right context.");
+	});
+
+	QUnit.test("Removing a token, should detach the invalidate event handler function.", function(assert) {
+		// Arrange
+		var oToken = new Token({
+			text: "test"
+		});
+		var oDetachEventSpy = sinon.spy(oToken, "detachEvent");
+
+		this.multiInput1.addToken(oToken);
+		Core.applyChanges();
+
+		// Act
+		this.multiInput1.removeToken(oToken);
+		Core.applyChanges();
+
+		// Assert
+		assert.strictEqual(oDetachEventSpy.callCount, 1, "Detach event was called once");
+		assert.strictEqual(oDetachEventSpy.firstCall.args[0], "_change", "Detach event was called for the right event.");
+		assert.strictEqual(oDetachEventSpy.firstCall.args[2].getId(), this.multiInput1.getId(), "Detach event was called with the right context.");
+	});
+
 	QUnit.module("Validation", {
 		beforeEach: function() {
 			this.multiInput1 = new MultiInput();

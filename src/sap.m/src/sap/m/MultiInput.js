@@ -278,6 +278,8 @@ function(
 
 			switch (sMutation) {
 				case "insert":
+					oToken.attachEvent("_change", this.invalidate, this);
+
 					this.fireTokenChange({
 						type: sap.m.Tokenizer.TokenChangeType.Added,
 						token: oToken,
@@ -287,6 +289,7 @@ function(
 					break;
 				case "remove":
 					var sType = oChange.object.getTokens().length ? sap.m.Tokenizer.TokenChangeType.Removed : sap.m.Tokenizer.TokenChangeType.RemovedAll;
+					oToken.detachEvent("_change", this.invalidate, this);
 
 					this.fireTokenChange({
 						type: sType,
