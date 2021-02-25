@@ -267,7 +267,7 @@ sap.ui.define([
 		var oMetaModel = this.oModel.getMetaModel(),
 			oOperationMetadata,
 			oPromise,
-			sResolvedPath = this.getResolvedPath(),
+			sResolvedPath = this.getResolvedPathWithReplacedTransientPredicates(),
 			that = this;
 
 		/*
@@ -1011,7 +1011,7 @@ sap.ui.define([
 	 *
 	 * @private
 	 */
-	ODataContextBinding.prototype.getResolvedPath = function () {
+	ODataContextBinding.prototype.getResolvedPathWithReplacedTransientPredicates = function () {
 		var sPath = "",
 			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
 			aSegments,
