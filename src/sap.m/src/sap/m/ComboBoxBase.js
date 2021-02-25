@@ -455,7 +455,7 @@ sap.ui.define([
 				}
 			}, this);
 
-			this.getIcon().attachPress(this._handlePopupOpenAndItemsLoad.bind(this, true));
+			this.getIcon().attachPress(this._handlePopupOpenAndItemsLoad.bind(this, true, this));
 
 			// a method to define whether an item should be filtered in the picker
 			this.fnFilter = null;
@@ -478,7 +478,7 @@ sap.ui.define([
 			}
 		};
 
-		ComboBoxBase.prototype._handlePopupOpenAndItemsLoad = function (bOpenOnInteraction) {
+		ComboBoxBase.prototype._handlePopupOpenAndItemsLoad = function (bOpenOnInteraction, oObjectToFocus) {
 			var oPicker;
 
 			// in case of a non-editable or disabled combo box, the picker popup cannot be opened
@@ -513,6 +513,11 @@ sap.ui.define([
 				this.syncPickerContent();
 				oPicker = this.getPicker();
 				oPicker.setInitialFocus(oPicker);
+			}
+
+			if (oObjectToFocus) {
+				oPicker = this.getPicker();
+				oPicker && oPicker.setInitialFocus(oObjectToFocus);
 			}
 
 			this.open();
@@ -1413,7 +1418,7 @@ sap.ui.define([
 					});
 
 					this.applyShowItemsFilters(); // Apply control specific filtering
-					this._handlePopupOpenAndItemsLoad(false);
+					this._handlePopupOpenAndItemsLoad(false, this);
 					this.setFilterFunction(fnFilterStore); // Restore filtering function
 				}.bind(this);
 
