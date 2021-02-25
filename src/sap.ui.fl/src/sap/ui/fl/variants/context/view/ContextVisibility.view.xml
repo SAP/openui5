@@ -11,7 +11,7 @@
 		</headerToolbar>
 		<content>
 			<RadioButtonGroup id="visibilityRadioButtonGroup" selectedIndex="{path: 'selectedContexts>/selected', formatter: '.formatSelectedIndex'}" >
-				<RadioButton id="publicRadioButton" text="{i18n>RADIO_BUTTON_PUBLIC}" select=".onSelectPublicButton"/>
+				<RadioButton id="publicRadioButton" text="{i18n>RADIO_BUTTON_PUBLIC}" select=".onSelectPublicRadioButton"/>
 				<RadioButton id="restrictedRadioButton" text="{i18n>RADIO_BUTTON_RESTRICTED}" select=".onSelectRestrictedRadioButton"/>
 			</RadioButtonGroup>
 			<List
