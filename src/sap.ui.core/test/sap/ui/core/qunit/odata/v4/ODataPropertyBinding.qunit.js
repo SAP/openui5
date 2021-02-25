@@ -1937,24 +1937,23 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("refreshInternal", function (assert) {
 		var oBinding = this.oModel.bindProperty("NAME"),
-			oBindingMock = this.mock(oBinding),
+			oCheckUpdateInternalExpectation,
 			oCheckUpdatePromise = {},
 			oContext = Context.create(this.oModel, {}, "/EMPLOYEES/42");
 
-		oBindingMock.expects("isRootBindingSuspended").twice().withExactArgs().returns(false);
-		this.mock(ODataPropertyBinding.prototype).expects("fetchCache").thrice()
-			.withExactArgs(oContext);
-		oBindingMock.expects("checkUpdateInternal")
-			.withExactArgs(/*bInitial*/true, ChangeReason.Context)
-			.resolves();
-		oBinding.setContext(oContext);
-
-		oBindingMock.expects("checkUpdateInternal")
+		oBinding.oContext = oContext; // avoid #setContext, it calls too many other methods
+		this.mock(oBinding).expects("isRootBindingSuspended").twice().withExactArgs()
+			.returns(false);
+		this.mock(oBinding).expects("fetchCache").twice()
+			.withExactArgs(oContext, false, /*bKeepQueryOptions*/true);
+		oCheckUpdateInternalExpectation = this.mock(oBinding).expects("checkUpdateInternal")
 			.withExactArgs(undefined, ChangeReason.Refresh, "myGroup")
 			.returns(oCheckUpdatePromise);
 
 		// code under test
 		assert.strictEqual(oBinding.refreshInternal("", "myGroup", true), oCheckUpdatePromise);
+
+		assert.ok(oCheckUpdateInternalExpectation.calledOnce);
 
 		// code under test
 		assert.strictEqual(oBinding.refreshInternal("", "myGroup", false).getResult(), undefined);

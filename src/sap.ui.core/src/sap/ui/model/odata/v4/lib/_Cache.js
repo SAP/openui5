@@ -2475,8 +2475,9 @@ sap.ui.define([
 		 */
 		function calculateKeptElementsQuery() {
 			var aKeyFilters,
-				mQueryOptions = Object.assign({}, that.mQueryOptions);
+				mQueryOptions = _Helper.merge({}, that.mQueryOptions);
 
+			_Helper.aggregateQueryOptions(mQueryOptions, that.mLateQueryOptions);
 			delete mQueryOptions.$count;
 			delete mQueryOptions.$orderby;
 			delete mQueryOptions.$search;
@@ -2493,7 +2494,7 @@ sap.ui.define([
 			}
 
 			return that.sResourcePath
-				+ that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions);
+				+ that.oRequestor.buildQueryString(that.sMetaPath, mQueryOptions, false, true);
 		}
 
 		if (aPredicates.length === 0) {

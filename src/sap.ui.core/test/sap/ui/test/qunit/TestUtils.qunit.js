@@ -18,7 +18,7 @@ sap.ui.define([
 		}, {
 			regExp : /GET \/Foo\/regexp\/ba[z]/,
 			response : [{
-				ifMatch : function (oRequest) {
+				ifMatch : function (_oRequest) {
 					return true;
 				},
 				message : "RegExp2"
@@ -167,6 +167,7 @@ sap.ui.define([
 			"OData-Version" : "4.0"
 		}
 	}, {
+		expectedLogMessage : "GET /Foo/regexp/baz, alternative (ifMatch) #0",
 		method : "GET",
 		url : "/Foo/regexp/baz",
 		status : 200,
@@ -193,6 +194,7 @@ sap.ui.define([
 			"Content-Type" : "application/json;charset=UTF-8;IEEE754Compatible=true"
 		}
 	}, {
+		expectedLogMessage : "GET /Foo/baz, alternative (ifMatch) #1",
 		method : "GET",
 		url : "/Foo/baz",
 		status : 404,
@@ -202,6 +204,7 @@ sap.ui.define([
 		},
 		responseBody : "Missing SAP-ContextId"
 	}, {
+		expectedLogMessage : "GET /Foo/baz, alternative (ifMatch) #0",
 		method : "GET",
 		url : "/Foo/baz",
 		status : 200,
@@ -305,6 +308,7 @@ sap.ui.define([
 		},
 		responseBody : '{"foo":"bar","@odata.etag":"abc123"}'
 	}, {
+		expectedLogMessage : "POST /Foo/baz, alternative (ifMatch) #0",
 		method : "POST",
 		url : "/Foo/baz",
 		requestHeaders : {
@@ -318,6 +322,7 @@ sap.ui.define([
 		},
 		responseBody : '{"message":"Failure"}'
 	}, {
+		expectedLogMessage : "POST /Foo/baz, alternative (ifMatch) #1",
 		method : "POST",
 		url : "/Foo/baz",
 		requestHeaders : {
@@ -331,9 +336,9 @@ sap.ui.define([
 		},
 		responseBody : '{"foo":"bar","@odata.etag":"abc123"}'
 	}].forEach(function (oFixture) {
-		var sRequest = oFixture.method + " " + oFixture.url;
+		var sTitle = oFixture.method + " " + oFixture.url + ", status : " + oFixture.status;
 
-		QUnit.test("useFakeServer: " + sRequest + " (direct)", function (assert) {
+		QUnit.test("useFakeServer: " + sTitle + " (direct)", function (assert) {
 			var mHeaders = oFixture.method === "MERGE" ? {"DataServiceVersion" : "2.0"}
 				: {"OData-Version" : "4.0"};
 
@@ -342,7 +347,8 @@ sap.ui.define([
 			});
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture,
 				aRegExpFixture);
-			this.oLogMock.expects("info").withExactArgs(oFixture.method + " " + oFixture.url,
+			this.oLogMock.expects("info").withExactArgs(
+				oFixture.expectedLogMessage || oFixture.method + " " + oFixture.url,
 				'{"If-Match":undefined}', "sap.ui.test.TestUtils");
 
 			TestUtils.resetRequestCount();
@@ -356,7 +362,7 @@ sap.ui.define([
 			});
 		});
 
-		QUnit.test("useFakeServer: " + sRequest + " (batch)", function (assert) {
+		QUnit.test("useFakeServer: " + sTitle + " (batch)", function (assert) {
 			var mBatchHeaders = {},
 				mInitialHeaders = {},
 				sUrl = oFixture.url.replace("/Foo/", "");
@@ -373,7 +379,8 @@ sap.ui.define([
 
 			TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture,
 				aRegExpFixture);
-			this.oLogMock.expects("info").withExactArgs(oFixture.method + " " + oFixture.url,
+			this.oLogMock.expects("info").withExactArgs(
+				oFixture.expectedLogMessage || oFixture.method + " " + oFixture.url,
 				'{"If-Match":undefined}', "sap.ui.test.TestUtils");
 
 			TestUtils.resetRequestCount();
@@ -544,8 +551,8 @@ sap.ui.define([
 		TestUtils.useFakeServer(this._oSandbox, "sap/ui/test/qunit/data", mServerFixture);
 		this.oLogMock.expects("info").withExactArgs("POST /Foo/any", '{"If-Match":undefined}',
 			"sap.ui.test.TestUtils");
-		this.oLogMock.expects("info").withExactArgs("POST /Foo/baz", '{"If-Match":undefined}',
-			"sap.ui.test.TestUtils");
+		this.oLogMock.expects("info").withExactArgs("POST /Foo/baz, alternative (ifMatch) #0",
+			'{"If-Match":undefined}', "sap.ui.test.TestUtils");
 		this.oLogMock.expects("info").withExactArgs("GET /Foo/bar", '{"If-Match":undefined}',
 			"sap.ui.test.TestUtils");
 
@@ -651,7 +658,7 @@ sap.ui.define([
 			return jQuery.ajax("/Foo/bar", {
 				method : "GET",
 				headers : oFixture.requestHeaders
-			}).then(function (vData, sTextStatus, jqXHR) {
+			}).then(function (_vData, _sTextStatus, jqXHR) {
 				assert.strictEqual(jqXHR.getResponseHeader("OData-Version"),
 					oFixture.expectedODataVersion);
 				assert.strictEqual(jqXHR.getResponseHeader("DataServiceVersion"),
@@ -676,7 +683,7 @@ sap.ui.define([
 					+ "--batch_id-0123456789012-345\r\n",
 				method : "POST",
 				headers : oFixture.requestHeaders
-			}).then(function (vData, sTextStatus, jqXHR) {
+			}).then(function (vData, _sTextStatus, jqXHR) {
 				var sResponseHeaders;
 
 				// check that $batch response header contains same OData version as in the request
@@ -724,7 +731,7 @@ sap.ui.define([
 					data : sMethod === "DELETE" ? "" : "{\"foo\":\"bar\"}",
 					method : sMethod,
 					headers : oFixture.requestHeaders
-				}).then(function (vData, sTextStatus, jqXHR) {
+				}).then(function (_vData, _sTextStatus, jqXHR) {
 					assert.strictEqual(jqXHR.getResponseHeader("OData-Version"),
 						oFixture.expectedODataVersion);
 					assert.strictEqual(jqXHR.getResponseHeader("OData-MaxVersion"), null);
@@ -748,7 +755,7 @@ sap.ui.define([
 						+ "--batch_id-0123456789012-345\r\n",
 					method : "POST",
 					headers : oFixture.requestHeaders
-				}).then(function (vData, sTextStatus, jqXHR) {
+				}).then(function (vData, _sTextStatus, jqXHR) {
 					var sResponseHeaders;
 
 					// check that $batch response header contains same OData version as the request

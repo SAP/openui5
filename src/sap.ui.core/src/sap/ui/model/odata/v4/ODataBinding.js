@@ -253,7 +253,7 @@ sap.ui.define([
 			if (oContext.isTransient && oContext.isTransient()
 				&& oContext.getProperty("@$ui5.context.isTransient")) {
 				this.oCache = null;
-				return this.oCache;
+				return null;
 			}
 
 			// mCacheByResourcePath has to be reset if parameters are changing
@@ -269,12 +269,18 @@ sap.ui.define([
 					this.mCacheByResourcePath = this.mCacheByResourcePath || {};
 					this.mCacheByResourcePath[sResourcePath] = oCache;
 				}
+				if (this.mLateQueryOptions) {
+					oCache.setLateQueryOptions(this.mLateQueryOptions);
+				}
 				oCache.$deepResourcePath = sDeepResourcePath;
 				oCache.$generation = iGeneration;
 				oCache.$resourcePath = sResourcePath;
 			}
 		} else { // absolute binding
 			oCache = this.doCreateCache(sResourcePath, this.mCacheQueryOptions);
+			if (this.mLateQueryOptions) {
+				oCache.setLateQueryOptions(this.mLateQueryOptions);
+			}
 		}
 		this.oCache = oCache;
 
@@ -362,11 +368,17 @@ sap.ui.define([
 	 *   Whether the parent cache is ignored and a new cache shall be created. This is for example
 	 *   needed during the resume process in case this binding has changed but its parent
 	 *   binding has not (see {@link sap.ui.model.odata.v4.ODataListBinding#resumeInternal})
+	 * @param {boolean} [bKeepQueryOptions]
+	 *   Whether to keep existing (late) query options and not to run auto-$expand/$select again
+	 * @throws {Error}
+	 *   If auto-$expand/$select is still running and query options shall be kept (this case is just
+	 *   not yet implemented and should not be needed)
 	 *
 	 * @private
 	 */
-	ODataBinding.prototype.fetchCache = function (oContext, bIgnoreParentCache) {
-		var oCallToken = {},
+	ODataBinding.prototype.fetchCache = function (oContext, bIgnoreParentCache, bKeepQueryOptions) {
+		var oCache = this.oCache,
+			oCallToken = {},
 			aPromises,
 			that = this;
 
@@ -374,11 +386,28 @@ sap.ui.define([
 			oContext = undefined;
 		}
 
-		if (this.oCache) {
+		if (oCache) {
 			// if oCachePromise is pending no cache will be created because of oFetchCacheCallToken
-			this.oCache.setActive(false);
+			oCache.setActive(false);
+		} else if (bKeepQueryOptions) {
+			if (oCache === undefined) {
+				throw new Error("Unsupported bKeepQueryOptions while oCachePromise is pending");
+			}
+			this.oFetchCacheCallToken = undefined;
+			return;
 		}
+
 		this.oCache = undefined;
+		if (bKeepQueryOptions) {
+			// asynchronously re-create an equivalent cache
+			this.oCachePromise = SyncPromise.resolve(Promise.resolve()).then(function () {
+				return that.createAndSetCache(that.mCacheQueryOptions, oCache.getResourcePath(),
+					oContext);
+			});
+			this.oFetchCacheCallToken = undefined;
+			return;
+		}
+
 		aPromises = [
 			this.fetchQueryOptionsForOwnCache(oContext, bIgnoreParentCache),
 			this.oModel.oRequestor.ready()
