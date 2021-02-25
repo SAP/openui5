@@ -4,15 +4,19 @@ sap.ui.define([
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/fl/changeHandler/Base",
 	"sap/ui/fl/Change",
-	"sap/ui/fl/changeHandler/JsControlTreeModifier"
+	"sap/ui/fl/changeHandler/JsControlTreeModifier",
+	"sap/ui/thirdparty/sinon-4"
 ],
 function(
 	jQuery,
 	Base,
 	Change,
-	JsControlTreeModifier
+	JsControlTreeModifier,
+	sinon
 ) {
 	"use strict";
+
+	var sandbox = sinon.sandbox.create();
 
 	QUnit.module("sap.ui.fl.changeHandler.Base", {
 		beforeEach: function () {
@@ -21,7 +25,7 @@ function(
 		afterEach: function () {
 		}
 	}, function () {
-		QUnit.test('setTextInChange', function (assert) {
+		QUnit.test("setTextInChange", function (assert) {
 			var oChange = {
 				selector: {
 					id: "QUnit.testkey"
@@ -34,8 +38,6 @@ function(
 		});
 	});
 
-
-
 	QUnit.module("sap.ui.fl.changeHandler.Base.instantiateFragment on JSControlTreeModifier", {
 		before: function () {
 			//predefine some modules
@@ -47,7 +49,7 @@ function(
 				'<Button xmlns="sap.m" id="button3" text="Hello World"></Button>' +
 				'</core:FragmentDefinition>';
 			this.sFragmentInvalidPath = "sap/somePath/toSomewhereFragmentInvalid";
-			mPreloadedModules[this.sFragmentInvalidPath] = 'invalidFragment';
+			mPreloadedModules[this.sFragmentInvalidPath] = "invalidFragment";
 			this.sNonExistingPath = "sap/somePath/toSomewhereNonExisting";
 			sap.ui.require.preload(mPreloadedModules);
 		},
@@ -60,9 +62,11 @@ function(
 
 
 			this.mPropertyBag = {
-				modifier: JsControlTreeModifier, view: {
+				modifier: JsControlTreeModifier,
+				view: {
 					getController: function () {
-					}, getId: function () {
+					},
+					getId: function () {
 					}
 				}
 			};
@@ -130,6 +134,69 @@ function(
 			aItems.forEach(function (oItem) { oItem.destroy(); });
 		});
 	});
+
+	QUnit.module("sap.ui.fl.changeHandler.Base.instantiateFragment namespace check", {
+		before: function () {
+			//predefine some modules
+			var mPreloadedModules = {};
+			this.sFragmentMultiplePath = "sap/somePath/toSomewhereFragment";
+			mPreloadedModules[this.sFragmentMultiplePath] = '<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core"></core:FragmentDefinition>';
+			sap.ui.require.preload(mPreloadedModules);
+		},
+		beforeEach: function () {
+			var oChangeJson = {
+				projectId: "projectId"
+			};
+			this.oChange = new Change(oChangeJson);
+			this.oInstantiateFragmentStub = sandbox.stub();
+			this.mPropertyBag = {
+				modifier: { instantiateFragment: this.oInstantiateFragmentStub },
+				view: "<view></view>",
+				viewId: "componentId--viewId"
+			};
+		},
+		afterEach: function () {
+			sandbox.restore();
+			this.oChange.destroy();
+		}
+	}, function () {
+		QUnit.test("When applying the change on a xml control tree with viewId and without prefix", function(assert) {
+			this.oChange.setProjectId(undefined);
+			this.oChange.setModuleName(this.sFragmentMultiplePath);
+			this.mPropertyBag.viewId = undefined;
+			Base.instantiateFragment(this.oChange, this.mPropertyBag);
+			assert.strictEqual(this.oInstantiateFragmentStub.firstCall.args[1], "", "then the namespace is prepared properly");
+		});
+
+		QUnit.test("When applying the change on a xml control tree with viewId and without projectId & fragmentId available as prefix", function(assert) {
+			this.oChange.setProjectId(undefined);
+			this.oChange.setModuleName(this.sFragmentMultiplePath);
+			Base.instantiateFragment(this.oChange, this.mPropertyBag);
+			assert.strictEqual(this.oInstantiateFragmentStub.firstCall.args[1], "componentId--viewId--", "then the namespace is prepared properly");
+		});
+
+		QUnit.test("When applying the change on a xml control tree with viewId & fragmentId and without projectId available as prefix", function(assert) {
+			this.oChange.setProjectId(undefined);
+			this.oChange.setModuleName(this.sFragmentMultiplePath);
+			this.oChange.setExtensionPointInfo({ fragmentId: "fragmentId" });
+			Base.instantiateFragment(this.oChange, this.mPropertyBag);
+			assert.strictEqual(this.oInstantiateFragmentStub.firstCall.args[1], "componentId--viewId--fragmentId", "then the namespace is prepared properly");
+		});
+
+		QUnit.test("When applying the change on a xml control tree with viewId is available as prefix", function(assert) {
+			this.oChange.setModuleName(this.sFragmentMultiplePath);
+			Base.instantiateFragment(this.oChange, this.mPropertyBag);
+			assert.strictEqual(this.oInstantiateFragmentStub.firstCall.args[1], "componentId--viewId--projectId", "then the namespace is prepared properly");
+		});
+
+		QUnit.test("When applying the change on a xml control tree with viewId and fragmentId are available as prefixes", function(assert) {
+			this.oChange.setModuleName(this.sFragmentMultiplePath);
+			this.oChange.setExtensionPointInfo({ fragmentId: "fragmentId" });
+			Base.instantiateFragment(this.oChange, this.mPropertyBag);
+			assert.strictEqual(this.oInstantiateFragmentStub.firstCall.args[1], "componentId--viewId--projectId.fragmentId", "then the namespace is prepared properly");
+		});
+	});
+
 	QUnit.done(function() {
 		jQuery("#qunit-fixture").hide();
 	});

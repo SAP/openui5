@@ -54,19 +54,21 @@ sap.ui.define([
 			if (!sModuleName) {
 				throw new Error("The module name of the fragment is not set. This should happen in the backend");
 			}
+			var sViewId = mPropertyBag.viewId ? mPropertyBag.viewId + "--" : "";
+			var sProjectId = oChange.getProjectId() || "";
+			var sFragmentId = (
+				oChange.getExtensionPointInfo
+				&& oChange.getExtensionPointInfo()
+				&& oChange.getExtensionPointInfo().fragmentId
+			) || "";
+			var sSeparator = sProjectId && sFragmentId ? "." : "";
+			var sIdPrefix = sViewId + sProjectId + sSeparator + sFragmentId;
+
 			var oModifier = mPropertyBag.modifier;
 			var oView = mPropertyBag.view;
 			var sFragment = LoaderExtensions.loadResource(sModuleName, {dataType: "text"});
-			var sNamespace = oChange.getProjectId();
-			var sExtensionPointPrefix =
-			oChange.getExtensionPointInfo
-				&& oChange.getExtensionPointInfo()
-				&& oChange.getExtensionPointInfo().fragmentId;
-			if (sExtensionPointPrefix) {
-				sNamespace = sNamespace ? sNamespace + "." + sExtensionPointPrefix : sExtensionPointPrefix;
-			}
 			try {
-				return oModifier.instantiateFragment(sFragment, sNamespace, oView);
+				return oModifier.instantiateFragment(sFragment, sIdPrefix, oView);
 			} catch (oError) {
 				throw new Error("The following XML Fragment could not be instantiated: " + sFragment + " Reason: " + oError.message);
 			}
