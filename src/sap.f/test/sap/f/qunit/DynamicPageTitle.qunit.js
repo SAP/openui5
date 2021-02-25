@@ -63,6 +63,54 @@ function (
 				"The css class has been added as the content aggregation is empty");
 	});
 
+	QUnit.test("DynamicPageTitle with visible/invisible content", function (assert) {
+		// Arrange
+		var oTitle = oFactory.getDynamicPageTitle();
+		oTitle.addContent(oFactory.getInvisibleContent());
+
+		oUtil.renderObject(oTitle);
+		Core.applyChanges();
+
+		// Assert
+		assert.equal(oTitle.$("content").hasClass("sapFDynamicPageTitleMainContentHasContent"), false,
+			"The css class has not been added as there is no visible control in 'content' aggregation");
+
+		oTitle.getContent()[0].getContent()[0].setVisible(true);
+		Core.applyChanges();
+
+		// Assert
+		assert.equal(oTitle.$("content").hasClass("sapFDynamicPageTitleMainContentHasContent"), true,
+			"The css class has been added as there is visible control in 'content' aggregation");
+
+		// Clean up
+		oTitle.destroy();
+	});
+
+	QUnit.test("DynamicPageTitle with visible/invisible actions", function (assert) {
+		// Arrange
+		var oTitle = oFactory.getDynamicPageTitle();
+		oTitle.addAction(oFactory.getInvisibleAction());
+
+		oUtil.renderObject(oTitle);
+		Core.applyChanges();
+
+		// Assert
+		assert.equal(oTitle.$("mainActions").hasClass("sapFDynamicPageTitleMainActionsHasContent"), false,
+			"The css class has not been added as there is no visible control in 'actions' aggregation");
+
+		// Act
+		oTitle.getActions()[0].setVisible(true);
+		Core.applyChanges();
+
+		// Assert
+		assert.equal(oTitle.$("mainActions").hasClass("sapFDynamicPageTitleMainActionsHasContent"), true,
+			"The css class has been added as there is visible control in 'actions' aggregation");
+
+		// Clean up
+		oTitle.destroy();
+	});
+
+
 	QUnit.module("DynamicPage - Rendering - Title with Breadcrumbs", {
 		beforeEach: function () {
 			this.oDynamicPage = oFactory.getDynamicPageWithBreadCrumbs();

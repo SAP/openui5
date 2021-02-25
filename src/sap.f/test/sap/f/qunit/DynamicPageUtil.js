@@ -280,6 +280,13 @@ sap.ui.define([
 				content: this.getMessageStrips(iNumber)
 			});
 		},
+		getInvisibleContent: function () {
+			return new OverflowToolbar({ content: new Button({
+					text: "Invisible",
+					visible: false
+				})
+			});
+		},
 		getIconTabBar: function () {
 			return new IconTabBar("iconTabBar", {
 				items: [
@@ -313,6 +320,12 @@ sap.ui.define([
 		getAction: function () {
 			return new Button({
 				text: "Action"
+			});
+		},
+		getInvisibleAction: function () {
+			return new Button({
+				text: "Invisible",
+				visible: false
 			});
 		},
 		getLabel: function (sText) {
