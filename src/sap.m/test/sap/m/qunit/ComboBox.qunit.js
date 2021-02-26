@@ -4447,7 +4447,7 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 
 		// assert
-		assert.strictEqual(getComputedStyle(oComboBox.getDomRef("arrow")).getPropertyValue("display"), "none");
+		assert.strictEqual(getComputedStyle(oComboBox.getDomRef("arrow")).getPropertyValue("opacity"), "0");
 
 		// cleanup
 		oComboBox.destroy();
