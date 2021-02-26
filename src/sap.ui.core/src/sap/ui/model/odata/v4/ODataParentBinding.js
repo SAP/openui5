@@ -616,8 +616,11 @@ sap.ui.define([
 	 * removing these two navigation properties from the path.
 	 *
 	 * @param {sap.ui.model.odata.v4.Context} oContext
-	 *   The child binding's context, must not be <code>null</code> or <code>undefined</code>. See
-	 *   <code>sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache</code>.
+	 *   A context of this binding which is the direct or indirect parent of the child binding.
+	 *   Initially it is the child binding's parent context (See
+	 *   {@link sap.ui.model.odata.v4.ODataBinding#fetchQueryOptionsForOwnCache}). When a binding
+	 *   delegates up to its parent binding, it passes its own parent context adjusting
+	 *   <code>sChildPath</code> accordingly.
 	 * @param {string} sChildPath
 	 *   The child binding's binding path relative to <code>oContext</code>
 	 * @param {sap.ui.base.SyncPromise} oChildQueryOptionsPromise
@@ -642,11 +645,8 @@ sap.ui.define([
 			oMetaModel = this.oModel.getMetaModel(),
 			aPromises,
 			sResolvedChildPath = this.oModel.resolve(sChildPath, oContext),
-			sResolvedPath = oContext.getBinding().oReturnValueContext === oContext
-				? oContext.getPath()
-				: this.oModel.resolve(this.sPath, this.oContext),
 			// whether this binding is an operation or depends on one
-			bDependsOnOperation = sResolvedPath.includes("(...)"),
+			bDependsOnOperation = oContext.getPath().includes("(...)"),
 			that = this;
 
 		/*
@@ -712,7 +712,10 @@ sap.ui.define([
 				return sReducedPath;
 			}
 
-			if (_Helper.getRelativePath(sReducedPath, sResolvedPath) === undefined) {
+			sChildMetaPath = _Helper.getRelativePath(_Helper.getMetaPath(sReducedPath),
+				sBaseMetaPath);
+			if (sChildMetaPath === undefined) {
+				// the child's data does not fit into this bindings's cache, try the parent
 				return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
 					_Helper.getRelativePath(sResolvedChildPath, that.oContext.getPath()),
 					oChildQueryOptionsPromise);
@@ -722,8 +725,6 @@ sap.ui.define([
 				return sReducedPath;
 			}
 
-			sChildMetaPath = _Helper.getRelativePath(_Helper.getMetaPath(sReducedPath),
-				sBaseMetaPath);
 			if (that.bAggregatedQueryOptionsInitial) {
 				that.selectKeyProperties(mLocalQueryOptions, sBaseMetaPath);
 				that.mAggregatedQueryOptions = _Helper.clone(mLocalQueryOptions);
