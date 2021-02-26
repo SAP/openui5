@@ -120,7 +120,8 @@ sap.ui.define([
 			CompVariantState.add({
 				changeSpecificData: {
 					type: "pageVariant",
-					isVariant: true
+					isVariant: true,
+					content: {}
 				},
 				reference: sReference,
 				persistencyKey: sPersistencyKey
@@ -150,7 +151,8 @@ sap.ui.define([
 				changeSpecificData: {
 					type: "pageVariant",
 					isUserDependent: true,
-					isVariant: true
+					isVariant: true,
+					content: {}
 				},
 				reference: sReference,
 				persistencyKey: sPersistencyKey
@@ -163,7 +165,8 @@ sap.ui.define([
 			CompVariantState.add({
 				changeSpecificData: {
 					type: "pageVariant",
-					isVariant: true
+					isVariant: true,
+					content: {}
 				},
 				reference: sReference,
 				persistencyKey: sPersistencyKey
@@ -193,7 +196,8 @@ sap.ui.define([
 				changeSpecificData: {
 					type: "pageVariant",
 					isUserDependent: true,
-					isVariant: true
+					isVariant: true,
+					content: {}
 				},
 				reference: sReference,
 				persistencyKey: sPersistencyKey
@@ -201,7 +205,8 @@ sap.ui.define([
 			CompVariantState.add({
 				changeSpecificData: {
 					type: "pageVariant",
-					isVariant: true
+					isVariant: true,
+					content: {}
 				},
 				reference: sReference,
 				persistencyKey: sPersistencyKey
@@ -279,7 +284,8 @@ sap.ui.define([
 				CompVariantState.add({
 					changeSpecificData: {
 						type: "pageVariant",
-						isVariant: true
+						isVariant: true,
+						content: {}
 					},
 					reference: sReference,
 					persistencyKey: sPersistencyKey

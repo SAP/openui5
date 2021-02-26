@@ -58,7 +58,7 @@ sap.ui.define([
 								variantName: "myText"
 							},
 							content: {foo: "bar"},
-							executeOnSelect: false,
+							executeOnSelection: false,
 							favorite: true,
 							layer: Layer.CUSTOMER
 						},

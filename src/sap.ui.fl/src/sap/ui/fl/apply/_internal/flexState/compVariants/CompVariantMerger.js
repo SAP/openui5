@@ -59,8 +59,8 @@ sap.ui.define([
 			oVariantData.content.favorite = oVariantInput.favorite;
 		}
 
-		if (oVariantInput.executeOnSelect !== undefined) {
-			oVariantData.content.executeOnSelect = oVariantInput.executeOnSelect;
+		if (oVariantInput.executeOnSelection !== undefined) {
+			oVariantData.content.executeOnSelection = oVariantInput.executeOnSelection;
 		}
 
 		return new CompVariant(oVariantData);
@@ -117,10 +117,10 @@ sap.ui.define([
 			// the standard must always be visible
 			oStandardVariant.setFavorite(true);
 			if (mCompData.standardVariant) {
-				var bExecuteOnSelect = mCompData.standardVariant.getContent().executeOnSelect;
-				oStandardVariant.setExecuteOnSelect(bExecuteOnSelect);
+				var bExecuteOnSelection = mCompData.standardVariant.getContent().executeOnSelect;
+				oStandardVariant.setExecuteOnSelection(bExecuteOnSelection);
 				// TODO remove as soon as the consumer uses the API
-				oStandardVariant.getContent().executeOnSelect = bExecuteOnSelect;
+				oStandardVariant.getContent().executeOnSelect = bExecuteOnSelection;
 			}
 
 			return {

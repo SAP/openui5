@@ -95,7 +95,7 @@ sap.ui.define([
 					type: "boolean",
 					defaultValue: false
 				},
-				executeOnSelect: {
+				executeOnSelection: {
 					type: "boolean",
 					defaultValue: false
 				}
@@ -116,8 +116,13 @@ sap.ui.define([
 			if (oFile.content && oFile.content.favorite) {
 				this.setFavorite(oFile.content.favorite);
 			}
+			// persisted variants
 			if (oFile.content && oFile.content.executeOnSelect) {
-				this.setExecuteOnSelect(oFile.content.executeOnSelect);
+				this.setExecuteOnSelection(oFile.content.executeOnSelect);
+			}
+			// API provided variants
+			if (oFile.content && oFile.content.executeOnSelection) {
+				this.setExecuteOnSelection(oFile.content.executeOnSelection);
 			}
 		}
 	});
