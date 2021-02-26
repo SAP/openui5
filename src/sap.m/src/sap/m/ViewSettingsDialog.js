@@ -1027,6 +1027,9 @@ function(
 					this['_init' + sType + 'Content']();
 				}
 				if (typeof this['_init' + sType + 'Items'] === 'function') {
+					if (oEvent.getParameter("propertyKey") === "selected" && oEvent.getParameter("propertyValue") === true) {
+						this.setAssociation("selectedGroupItem", oEvent.getParameter("changedItem"), true);
+					}
 					this['_init' + sType + 'Items']();
 				}
 			}

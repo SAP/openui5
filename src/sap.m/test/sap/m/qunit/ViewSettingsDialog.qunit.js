@@ -873,6 +873,26 @@ sap.ui.define([
 		oVSD.destroy();
 	});
 
+	QUnit.test("Group items selected state via binding is preserved", function(assert) {
+		// preapre
+		var oViewSettingsItem = new ViewSettingsItem(),
+			oViewSettingsDialog = new ViewSettingsDialog({
+				groupItems: [
+					oViewSettingsItem
+				]
+			}),
+			oAddAssociationSpy = sinon.spy(oViewSettingsDialog, "setAssociation");
+
+		// act
+		oViewSettingsItem.setSelected(true);
+
+		// assert
+		assert.ok(oAddAssociationSpy.calledWith("selectedGroupItem", oViewSettingsItem, true), "Selected item is referenced");
+
+		// clean
+		oAddAssociationSpy.restore();
+	});
+
 
 	QUnit.test("Cancel on cancel button press event", function (assert){
 		var core = sap.ui.getCore(),
