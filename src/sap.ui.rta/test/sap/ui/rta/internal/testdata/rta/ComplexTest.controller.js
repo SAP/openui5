@@ -252,7 +252,7 @@ sap.ui.define([
 							});
 							this.getView().addDependent(this._oDialog);
 
-							this._oDialog.removeStyleClass("sapUiPopupWithPadding");
+							this._oDialog.addStyleClass("sapUiNoContentPadding");
 							this._oDialog.addStyleClass("sapUiSizeCompact");
 							this._oDialog.open();
 						}.bind(this));
@@ -297,7 +297,7 @@ sap.ui.define([
 						});
 						this.getView().addDependent(this._oDialog);
 
-						this._oDialog.removeStyleClass("sapUiPopupWithPadding");
+						this._oDialog.addStyleClass("sapUiNoContentPadding");
 						this._oDialog.addStyleClass("sapUiSizeCompact");
 					}
 					this._oDialog.open();
@@ -372,7 +372,7 @@ sap.ui.define([
 							});
 							this.getView().addDependent(this._oPopover);
 
-							this._oPopover.removeStyleClass("sapUiPopupWithPadding");
+							this._oPopover.addStyleClass("sapUiNoContentPadding");
 							this._oPopover.addStyleClass("sapUiSizeCompact");
 						}.bind(this));
 					} else {

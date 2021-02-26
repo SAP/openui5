@@ -239,7 +239,7 @@ function(
 					contentWidth: "20%"
 				});
 				this.oPopover.oPopup.setAutoClose(false); /*when focus is taken away popover might close - resulting in failing tests*/
-				this.oDialog.removeStyleClass("sapUiPopupWithPadding");
+				this.oDialog.addStyleClass("sapUiNoContentPadding");
 				oView.addContent(this.oDialog);
 				oView.addContent(this.oPopover);
 			}.bind(this));
