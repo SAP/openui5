@@ -1120,16 +1120,18 @@ sap.ui.define([
 		// check if table has inset
 		var iInset = this.getInset() ? 4 : 0;
 
+		var iThemeDensityWidth = this.$().closest(".sapUiSizeCompact").length ? 2 : 3;
+
 		// check if selection control is available
-		var iSelectionWidth = ListBaseRenderer.ModeOrder[this.getMode()] ? 3 : 0;
+		var iSelectionWidth = ListBaseRenderer.ModeOrder[this.getMode()] ? iThemeDensityWidth : 0;
 
 		// check if actions are available on the item
 		var iActionWidth = aItems.some(function(oItem) {
 			var sType = oItem.getType();
 			return sType === "Detail" || sType === "DetailAndActive" || sType === "Navigation";
-		}) ? 3 : 0;
+		}) ? iThemeDensityWidth : 0;
 
-		// HighlightCol + NavigatedIndicatorCol + borders = ~0.65rem
+		// Inset + HighlightCol + NavigatedIndicatorCol + borders = ~0.65rem
 		return iInset + iSelectionWidth + iActionWidth + 0.65;
 	};
 
