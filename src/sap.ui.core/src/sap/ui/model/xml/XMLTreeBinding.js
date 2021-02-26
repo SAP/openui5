@@ -26,10 +26,10 @@ sap.ui.define(['sap/ui/model/ClientTreeBinding', "sap/base/util/each"],
 
 	/**
 	 * Return node contexts for the tree
-	 * @param {object} oContext to use for retrieving the node contexts
+	 * @param {sap.ui.model.Context} oContext to use for retrieving the node contexts
 	 * @param {int} iStartIndex the startIndex where to start the retrieval of contexts
 	 * @param {int} iLength determines how many contexts to retrieve beginning from the start index.
-	 * @return {Array} the contexts array
+	 * @return {sap.ui.model.Context[]} the contexts array
 	 * @protected
 	 */
 	XMLTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength) {

@@ -351,7 +351,8 @@ sap.ui.define([
 	 * @param {sap.ui.model.Context} oContext the context for which the child nodes should be retrieved
 	 * @param {int} iStartIndex the start index of the requested contexts
 	 * @param {int} iLength the requested amount of contexts
-	 * @param {int} iThreshold
+	 * @param {int} [iThreshold=0] the maximum number of contexts to read before and after the given range; with this,
+	 *   controls can prefetch data that is likely to be needed soon, e.g. when scrolling down in a table.
 	 * @return {sap.ui.model.Context[]} the contexts array
 	 * @public
 	 */
