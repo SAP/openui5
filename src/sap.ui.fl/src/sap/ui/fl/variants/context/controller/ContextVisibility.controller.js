@@ -24,8 +24,8 @@ function (
 		return Object.assign({}, mDefaultValues, mConfig);
 	}
 
-	function assignDescriptionsToSelectedRoles(aSelectedRoles) {
-		var mPropertyBag = {layer: Layer.CUSTOMER, flexObjects: {roles: aSelectedRoles}};
+	function assignDescriptionsToSelectedRoles(oSelectedRoles) {
+		var mPropertyBag = {layer: Layer.CUSTOMER, flexObjects: oSelectedRoles};
 		return WriteStorage.loadContextDescriptions(mPropertyBag).then(function(oResponse) {
 			this.oSelectedContextsModel.setProperty("/selected", oResponse.role);
 		}.bind(this));
@@ -62,11 +62,12 @@ function (
 
 		onBeforeRendering: function() {
 			this.oSelectedContextsModel.refresh(true);
-			var aSelectedRoles = this.oSelectedContextsModel.getProperty("/selected");
-			this.byId("selectedContextsList").setVisible(aSelectedRoles.length > 0);
+			var oSelectedContexts = this.getOwnerComponent().getSelectedContexts();
+			var bHasContexts = oSelectedContexts.role.length > 0;
+			this.byId("selectedContextsList").setVisible(bHasContexts);
 
-			if (aSelectedRoles.length > 0) {
-				return assignDescriptionsToSelectedRoles.call(this, aSelectedRoles);
+			if (bHasContexts) {
+				return assignDescriptionsToSelectedRoles.call(this, oSelectedContexts);
 			}
 			return Promise.resolve();
 		},
@@ -194,7 +195,7 @@ function (
 		showErrorMessage: function(bShowError) {
 			var sErrorMessageId = this.getView().getId() + "--noSelectedRolesError";
 			var oErrorMessage = sap.ui.getCore().byId(sErrorMessageId);
-			if (oErrorMessage && !bShowError) {
+			if (oErrorMessage) {
 				oErrorMessage.destroy();
 			}
 			if (bShowError) {
