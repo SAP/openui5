@@ -3,27 +3,6 @@
 /* Quartz High Contrast White theme  */
 /* ================================= */
 
-html.sap-desktop .sapFAvatarGroup .sapFAvatarGroupMoreButton {
-	&.sapMBtn {
-		outline: none;
-
-		.sapMBtnInner {
-			border: 0.125rem solid @sapUiFieldBorderColor;
-			border-radius: 50%
-		}
-	}
-
-	&.sapMBtn:focus > .sapMFocusable {
-		outline: 0.125rem dotted @sapUiContentFocusColor;
-	}
-}
-
-.sapFAvatarGroupIndividual .sapFAvatarGroupItem:focus,
-.sapFAvatarGroup:focus,
-.sapFAvatarGroupMoreButton.sapMBtn:focus > .sapMFocusable {
-	outline-width: 0.125rem;
-}
-
 .sapFAvatarGroup {
-	padding: 0.125rem;
+	padding: @sapContent_FocusWidth;
 }
