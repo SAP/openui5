@@ -64,6 +64,10 @@ sap.ui.define([
 		// calculate index from nested extensionpoints
 		mExtensionPointInfo.index = calculateExtensionPointIndex(mExtensionPointInfo);
 
+		if (oModifier.targets === "xmlTree") {
+			mExtensionPointInfo.skipAdjustIndex = true;
+		}
+
 		var aNewControls = BaseAddXml.applyChange(oChange, oControl, mPropertyBag, mExtensionPointInfo);
 		if (mExtensionPointInfo.ready) {
 			// Confirm with ready function in sync apply scenario (preprocessing with JSView)

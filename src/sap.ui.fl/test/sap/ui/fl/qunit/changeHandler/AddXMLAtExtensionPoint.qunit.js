@@ -189,6 +189,7 @@ sap.ui.define([
 		}
 	}, function() {
 		QUnit.test("When applying changes on different extension points in xml control tree - apply scenario", function(assert) {
+			var oInsertAggregationSpy = sandbox.spy(XmlTreeModifier, "insertAggregation");
 			var oChange3 = _createAddXMLAtExtensionPointChange(sThirdFragmentPath, "ExtensionPoint1");
 			var oChangeSpecificContent3 = {
 				fragmentPath: "fragments/ThirdFragment"
@@ -199,6 +200,9 @@ sap.ui.define([
 			this.oChangeHandler.applyChange(this.oChange1, this.oHBox, this.oPropertyBag);
 			this.oChangeHandler.applyChange(this.oChange2, this.oPanel, this.oPropertyBag);
 			this.oChangeHandler.applyChange(oChange3, this.oHBox, this.oPropertyBag);
+			assert.ok(oInsertAggregationSpy.args[0][5], "insertAggregation is called with bSkipAdjustIndex equal true");
+			assert.ok(oInsertAggregationSpy.args[1][5], "insertAggregation is called with bSkipAdjustIndex equal true");
+			assert.ok(oInsertAggregationSpy.args[2][5], "insertAggregation is called with bSkipAdjustIndex equal true");
 			assert.equal(oHBoxItems.childNodes.length, 4, "then there are four children of the HBox");
 			assert.equal(oHBoxItems.childNodes[1].getAttribute('id'), "projectId.third_button", "then the control added last to the first extension point is on the first position behind the extension point.");
 			assert.equal(oHBoxItems.childNodes[2].getAttribute('id'), "projectId.button", "then the control added first to the first extension point is on the last position behind the extension point.");
