@@ -7,7 +7,7 @@
  * Code other than the Core tests must not yet introduce dependencies to this module.
  */
 
-/*global document, sap */
+/*global document, sap, URLSearchParams */
 (function(deps, callback) {
 
 	"use strict";
@@ -100,12 +100,10 @@
 	}
 
 	function redirectToTestRunner() {
-		// As IE11 doesn't properly resolve relative URLs when assigning to location.href, use an anchor tag
-		var anchor = document.createElement("A");
-		document.head.appendChild(anchor);
-		anchor.href = sap.ui.require.toUrl("") + "/../test-resources/sap/ui/qunit/testrunner.html"
-			+ "?testpage=" + encodeURIComponent(window.location.pathname) + "&autostart=true";
-		window.location.href = anchor.href;
+		var redirectUrlParams = new URLSearchParams(window.location.search);
+		redirectUrlParams.set("testpage", window.location.pathname);
+		redirectUrlParams.set("autostart", true);
+		window.location.href = sap.ui.require.toUrl("") + "/../test-resources/sap/ui/qunit/testrunner.html?" + redirectUrlParams;
 	}
 
 	function renderList(oSuiteConfig) {
