@@ -32,6 +32,8 @@ sap.ui.define([
 		// auto-$expand/$select: promises to wait until child bindings have provided
 		// their path and query options
 		this.aChildCanUseCachePromises = [];
+		// whether the binding has a child with a path to the parent binding via path reduction
+		this.bHasPathReductionToParent = false;
 		// counts the sent but not yet completed PATCHes
 		this.iPatchCounter = 0;
 		// whether all sent PATCHes have been successfully processed
@@ -715,6 +717,7 @@ sap.ui.define([
 				sBaseMetaPath);
 			if (sChildMetaPath === undefined) {
 				// the child's data does not fit into this bindings's cache, try the parent
+				that.bHasPathReductionToParent = true;
 				return that.oContext.getBinding().fetchIfChildCanUseCache(that.oContext,
 					_Helper.getRelativePath(sResolvedChildPath, that.oContext.getPath()),
 					oChildQueryOptionsPromise);
