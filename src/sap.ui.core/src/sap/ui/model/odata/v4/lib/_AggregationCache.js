@@ -170,7 +170,8 @@ sap.ui.define([
 	 * @see #expand
 	 */
 	_AggregationCache.prototype.collapse = function (sGroupNodePath) {
-		var iCount = 0,
+		var oCollapsed,
+			iCount = 0,
 			aElements = this.aElements,
 			oGroupNode = this.fetchValue(_GroupLock.$cached, sGroupNodePath).getResult(),
 			iGroupNodeLevel = oGroupNode["@$ui5.node.level"],
@@ -182,14 +183,18 @@ sap.ui.define([
 			iCount += 1;
 		}
 
-		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode,
-			_Helper.getPrivateAnnotation(oGroupNode, "collapsed"));
+		oCollapsed = _Helper.getPrivateAnnotation(oGroupNode, "collapsed");
+		_Helper.updateAll(this.mChangeListeners, sGroupNodePath, oGroupNode, oCollapsed);
 
 		while (i < aElements.length && aElements[i]["@$ui5.node.level"] > iGroupNodeLevel) {
 			collapse(i);
 			i += 1;
 		}
-		if (this.oAggregation.subtotalsAtBottomOnly !== undefined) {
+		if (this.oAggregation.subtotalsAtBottomOnly !== undefined
+				// Note: there is at least one key for "@$ui5.node.isExpanded"; there are more keys
+				// if and only if subtotals are actually being requested and (also) shown at the
+				// bottom
+				&& Object.keys(oCollapsed).length > 1) {
 			collapse(i); // collapse subtotals at bottom
 		}
 		_Helper.setPrivateAnnotation(oGroupNode, "spliced", aElements.splice(iIndex + 1, iCount));
@@ -308,9 +313,12 @@ sap.ui.define([
 		return oCache.read(0, this.iReadLength, 0, oGroupLock).then(function (oResult) {
 			var iIndex = that.aElements.indexOf(oGroupNode) + 1,
 				iLevel = oGroupNode["@$ui5.node.level"],
-				oSubtotals,
-				// "only or also at bottom"
-				bSubtotalsAtBottom = that.oAggregation.subtotalsAtBottomOnly !== undefined,
+				oSubtotals = _Helper.getPrivateAnnotation(oGroupNode, "collapsed"),
+				// Note: there is at least one key for "@$ui5.node.isExpanded"; there are more keys
+				// if and only if subtotals are actually being requested and only or also shown at
+				// bottom
+				bSubtotalsAtBottom = that.oAggregation.subtotalsAtBottomOnly !== undefined
+					&& Object.keys(oSubtotals).length > 1,
 				i;
 
 			if (!oGroupNode["@$ui5.node.isExpanded"]) { // already collapsed again
@@ -344,8 +352,7 @@ sap.ui.define([
 					= _AggregationHelper.createPlaceholder(iLevel + 1, i - iIndex, oCache);
 			}
 			if (bSubtotalsAtBottom) {
-				oSubtotals
-					= Object.assign({}, _Helper.getPrivateAnnotation(oGroupNode, "collapsed"));
+				oSubtotals = Object.assign({}, oSubtotals);
 				_AggregationHelper.setAnnotations(oSubtotals, undefined, true, iLevel,
 					_AggregationHelper.getAllProperties(that.oAggregation));
 				_Helper.setPrivateAnnotation(oSubtotals, "predicate",

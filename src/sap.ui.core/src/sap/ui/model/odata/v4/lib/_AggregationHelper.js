@@ -377,14 +377,19 @@ sap.ui.define([
 			var iLevel = oGroupNode["@$ui5.node.level"];
 
 			Object.keys(oAggregation.aggregate).forEach(function (sAlias) {
-				var iIndex, sUnit;
+				var oDetails = oAggregation.aggregate[sAlias],
+					iIndex,
+					sUnit = oDetails.unit;
+
+				if (!oDetails.subtotals) {
+					return;
+				}
 
 				oCollapsed[sAlias] = oGroupNode[sAlias];
 				if (oExpanded) {
 					oExpanded[sAlias] = null; // subtotals not shown here
 					// Note: no need to remove "<sAlias>@odata.type"
 				}
-				sUnit = oAggregation.aggregate[sAlias].unit;
 				if (sUnit) {
 					oCollapsed[sUnit] = oGroupNode[sUnit];
 					if (oExpanded) {

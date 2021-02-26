@@ -1424,8 +1424,10 @@ sap.ui.define([
 	//*********************************************************************************************
 [false, true, "expanding"].forEach(function (vHasCache) {
 	[undefined, false, true].forEach(function (bSubtotalsAtBottomOnly) {
+		[false, true].forEach(function (bSubtotals) { // JIRA: CPOUI5ODATAV4-825
 		var sTitle = "expand: read; has cache = " + vHasCache
-				+ ", subtotalsAtBottomOnly = " + bSubtotalsAtBottomOnly;
+				+ ", subtotalsAtBottomOnly = " + bSubtotalsAtBottomOnly
+				+ ", subtotals = " + bSubtotals;
 
 		if (vHasCache && bSubtotalsAtBottomOnly !== undefined) {
 			return; // skip invalid combination
@@ -1440,6 +1442,7 @@ sap.ui.define([
 			oAggregationHelperMock = this.mock(_AggregationHelper),
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			oCacheMock = this.mock(oCache),
+			oCollapsed = {"@$ui5.node.isExpanded" : false},
 			aElements = [{
 				"@$ui5.node.isExpanded" : vHasCache === "expanding",
 				// while 0 would be realistic, we want to test the general case here
@@ -1459,17 +1462,20 @@ sap.ui.define([
 			vGroupNodeOrPath = vHasCache === "expanding" ? oGroupNode : "~path~",
 			oHelperMock = this.mock(_Helper),
 			oPromise,
-			bSubtotalsAtBottom = bSubtotalsAtBottomOnly !== undefined,
+			bSubtotalsAtBottom = bSubtotals && bSubtotalsAtBottomOnly !== undefined,
 			oUpdateAllExpectation,
 			that = this;
 
+		if (bSubtotals) {
+			oCollapsed.A = "10"; // placeholder for an aggregate with subtotals
+		}
 		oExpandResult.value.$count = 7;
-		_Helper.setPrivateAnnotation(oGroupNode, "collapsed", "~oCollapsed~");
+		_Helper.setPrivateAnnotation(oGroupNode, "collapsed", oCollapsed);
 		_Helper.setPrivateAnnotation(oGroupNode, "predicate", "(~predicate~)");
 		if (vHasCache) {
 			_Helper.setPrivateAnnotation(oGroupNode, "cache", oGroupLevelCache);
 		}
-		if (bSubtotalsAtBottom) {
+		if (bSubtotalsAtBottomOnly !== undefined) {
 			oAggregation.subtotalsAtBottomOnly = bSubtotalsAtBottomOnly;
 		}
 
@@ -1508,7 +1514,7 @@ sap.ui.define([
 		oAggregationHelperMock.expects("createPlaceholder")
 			.withExactArgs(24, 6, sinon.match.same(oGroupLevelCache)).returns("~placeholder~2");
 		if (bSubtotalsAtBottom) {
-			this.mock(Object).expects("assign").withExactArgs({}, "~oCollapsed~")
+			this.mock(Object).expects("assign").withExactArgs({}, sinon.match.same(oCollapsed))
 				.returns("~oSubtotals~");
 			oAggregationHelperMock.expects("getAllProperties")
 				.withExactArgs(sinon.match.same(oAggregation)).returns("~aAllProperties~");
@@ -1569,6 +1575,7 @@ sap.ui.define([
 		return oPromise;
 	});
 
+		});
 	});
 });
 
@@ -1873,10 +1880,6 @@ sap.ui.define([
 			sTitle = "collapse: until end = " + bUntilEnd
 				+ ", subtotalsAtBottomOnly = " + bSubtotalsAtBottomOnly;
 
-		if (bSubtotalsAtBottom && bUntilEnd) {
-			return; // skip invalid combination
-		}
-
 	QUnit.test(sTitle, function (assert) {
 		var oAggregation = { // filled before by buildApply
 				aggregate : {},
@@ -1885,7 +1888,10 @@ sap.ui.define([
 			},
 			oCache = _AggregationCache.create(this.oRequestor, "~", "", oAggregation, {}),
 			bCollapseBottom = bUntilEnd || bSubtotalsAtBottom, // whether bottom line is affected
-			oCollapsed = {"@$ui5.node.isExpanded" : false},
+			oCollapsed = {
+				"@$ui5.node.isExpanded" : false,
+				A : "10" // placeholder for an aggregate with subtotals
+			},
 			aElements = [{
 				// "@$ui5._" : {predicate : "('0')"},
 				// "@$ui5.node.level" : ignored
@@ -1914,7 +1920,8 @@ sap.ui.define([
 					spliced : [aElements[2], aElements[3], aElements[4]]
 				},
 				"@$ui5.node.isExpanded" : false,
-				"@$ui5.node.level" : 5
+				"@$ui5.node.level" : 5,
+				A : "10" // placeholder for an aggregate with subtotals
 			}, {
 				"@$ui5._" : {predicate : "('4')"},
 				"@$ui5.node.level" : 5 // sibling
@@ -1922,6 +1929,11 @@ sap.ui.define([
 
 		if (bSubtotalsAtBottom) {
 			oAggregation.subtotalsAtBottomOnly = bSubtotalsAtBottomOnly;
+			if (bUntilEnd) {
+				// simulate that no subtotals are actually being used (JIRA: CPOUI5ODATAV4-825)
+				delete oCollapsed.A;
+				delete aExpectedElements[1].A;
+			}
 		}
 		oCache.aElements = aElements.slice(); // simulate a read
 		oCache.aElements.$count = aElements.length;
