@@ -9,6 +9,7 @@ sap.ui.define([
 			this.oRouter = this.getOwnerComponent().getRouter();
 			this.oModel = this.getOwnerComponent().getModel();
 
+			this.oRouter.getRoute("master").attachPatternMatched(this._onProductMatched, this);
 			this.oRouter.getRoute("detail").attachPatternMatched(this._onProductMatched, this);
 			this.oRouter.getRoute("detailDetail").attachPatternMatched(this._onProductMatched, this);
 		},
@@ -17,7 +18,8 @@ sap.ui.define([
 				supplierPath = oEvent.getSource().getBindingContext("products").getPath(),
 				supplier = supplierPath.split("/").slice(-1).pop();
 
-			this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout, supplier: supplier});
+			this.oRouter.navTo("detailDetail", {layout: oNextUIState.layout,
+				product: this._product, supplier: supplier});
 		},
 		handleFullScreen: function () {
 			var sNextLayout = this.oModel.getProperty("/actionButtonsInfo/midColumn/fullScreen");
