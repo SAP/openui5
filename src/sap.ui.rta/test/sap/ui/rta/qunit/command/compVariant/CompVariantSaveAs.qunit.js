@@ -60,6 +60,9 @@ sap.ui.define([
 							content: {foo: "bar"},
 							executeOnSelection: false,
 							favorite: true,
+							contexts: {
+								role: ["someRole"]
+							},
 							layer: Layer.CUSTOMER
 						},
 						generator: "sap.ui.rta.command",
@@ -84,6 +87,9 @@ sap.ui.define([
 						text: "myText",
 						content: {foo: "bar"},
 						executeOnSelect: false,
+						contexts: {
+							role: ["someRole"]
+						},
 						"default": bDefault
 					},
 					previousDirtyFlag: true,

@@ -98,6 +98,10 @@ sap.ui.define([
 				executeOnSelection: {
 					type: "boolean",
 					defaultValue: false
+				},
+				contexts: {
+					type: "object",
+					defaultValue: {}
 				}
 			},
 			aggregations: {
@@ -123,6 +127,10 @@ sap.ui.define([
 			// API provided variants
 			if (oFile.content && oFile.content.executeOnSelection) {
 				this.setExecuteOnSelection(oFile.content.executeOnSelection);
+			}
+			if (oFile.contexts) {
+				//setting through property and not setter to not change state to dirty
+				this.setProperty("contexts", oFile.contexts);
 			}
 		}
 	});
@@ -151,6 +159,7 @@ sap.ui.define([
 
 	CompVariant.createInitialFileContent = function (oPropertyBag) {
 		var oNewFile = Change.createInitialFileContent(oPropertyBag);
+		oNewFile.contexts = oPropertyBag.contexts || {};
 
 		// TODO: clean up the createInitialFileContent within the Change class plus create a base class FlexObject
 		return _pick(oNewFile, [
@@ -167,8 +176,22 @@ sap.ui.define([
 			"executeOnSelect",
 			"selector",
 			"texts",
-			"support"
+			"support",
+			"contexts"
 		]);
+	};
+
+	/**
+	 * Sets the object of the contexts attribute.
+	 *
+	 * @param {object} mContexts - Contexts of the variant file
+	 *
+	 * @public
+	 */
+	CompVariant.prototype.setContexts = function (mContexts) {
+		this.setProperty("contexts", mContexts);
+		this._oDefinition.contexts = mContexts;
+		this.setState(Change.states.DIRTY);
 	};
 
 	return CompVariant;

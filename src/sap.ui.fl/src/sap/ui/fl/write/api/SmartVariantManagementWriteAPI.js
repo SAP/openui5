@@ -72,6 +72,8 @@ sap.ui.define([
 		 * @param {object} [mPropertyBag.changeSpecificData.favorite] - Indicates if the change is added as favorite
 		 * @param {object} [mPropertyBag.changeSpecificData.executeOnSelection] - Indicates if the <code>executeOnSelection</code> flag should be set
 		 * @param {string} [mPropertyBag.changeSpecificData.ODataService] - Name of the OData service --> can be null
+		 * @param {object} [mPropertyBag.changeSpecificData.contexts] - Map of contexts that restrict the visibility of the variant
+		 * @param {string[]} [mPropertyBag.changeSpecificData.contexts.role] - List of roles which are allowed to see the variant
 		 * @param {string} [mPropertyBag.command] - Name of the command creating the variant
 		 * @param {boolean} [mPropertyBag.support] - Information for support analysis
 		 * @returns {sap.ui.fl.apply._internal.flexObjects.Variant} Created variant object instance

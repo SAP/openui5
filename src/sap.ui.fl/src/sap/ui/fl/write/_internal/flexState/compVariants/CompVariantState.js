@@ -331,6 +331,8 @@ sap.ui.define([
 	 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
 	 * @param {object} [mPropertyBag.changeSpecificData.favorite] - Indicates if the change is added as favorite
 	 * @param {object} [mPropertyBag.changeSpecificData.executeOnSelection] - Indicates if the <code>executeOnSelection</code> flag should be set
+	 * @param {object} [mPropertyBag.changeSpecificData.contexts] - Map of contexts that restrict the visibility of the variant
+	 * @param {string[]} [mPropertyBag.changeSpecificData.contexts.role] - List of roles which are allowed to see the variant
 	 * @param {string} [mPropertyBag.changeSpecificData.ODataService] - Name of the OData service --> can be null
 	 * @param {boolean} [mPropertyBag.changeSpecificData.isVariant] - Indicates if the change is a variant
 	 * @param {boolean} [mPropertyBag.changeSpecificData.isUserDependent] - Indicates if a change is only valid for the current user
@@ -364,7 +366,7 @@ sap.ui.define([
 		if (oChangeSpecificData.isVariant) {
 			oInfo.content.favorite = !!oChangeSpecificData.favorite;
 			oInfo.content.executeOnSelection = oChangeSpecificData.content.executeOnSelection || !!oChangeSpecificData.executeOnSelection;
-			oInfo.context = oChangeSpecificData.context || {};
+			oInfo.contexts = oChangeSpecificData.contexts || {};
 		}
 
 		var oClass = oChangeSpecificData.isVariant ? CompVariant : Change;
@@ -396,7 +398,8 @@ sap.ui.define([
 				previousState: oVariant.getState(),
 				previousContent: oVariant.getContent(),
 				previousFavorite: oVariant.getFavorite(),
-				previousExecuteOnSelection: oVariant.getExecuteOnSelection()
+				previousExecuteOnSelection: oVariant.getExecuteOnSelection(),
+				previousContexts: oVariant.getContexts()
 			}
 		};
 		if (mPropertyBag.name) {
@@ -417,6 +420,8 @@ sap.ui.define([
 	 * @param {object} [mPropertyBag.content] - Content of the new change
 	 * @param {object} [mPropertyBag.favorite] - Flag if the variant should be flagged as a favorite
 	 * @param {object} [mPropertyBag.executeOnSelection] - Flag if the variant should be executed on selection
+	 * @param {object} [mPropertyBag.contexts] - Map of contexts that restrict the visibility of the variant
+	 * @param {string[]} [mPropertyBag.contexts.role] - List of roles which are allowed to see the variant
 	 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
 	 * this either updates the variant from the layer or writes a change to that layer.
 	 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The updated variant
@@ -437,26 +442,25 @@ sap.ui.define([
 			oVariant.setText("variantName", mPropertyBag.name);
 		}
 		var oContent = oVariant.getContent();
-		var bExecuteOnSelection = oContent.executeOnSelection;
-		var bFavorite = oContent.favorite;
 		var oContentToBeWritten = mPropertyBag.content || oContent;
 
-		if (mPropertyBag.favorite !== undefined) {
-			oContentToBeWritten.favorite = mPropertyBag.favorite;
-		} else if (!(mPropertyBag.revert && oContentToBeWritten.favorite !== undefined) && bFavorite !== undefined) {
-			oContentToBeWritten.favorite = bFavorite;
-		}
-
-		if (mPropertyBag.executeOnSelection !== undefined) {
-			oContentToBeWritten.executeOnSelection = mPropertyBag.executeOnSelection;
-		} else if (!(mPropertyBag.revert && oContentToBeWritten.executeOnSelect !== undefined) && bExecuteOnSelection !== undefined) {
-			oContentToBeWritten.executeOnSelection = bExecuteOnSelection;
-		}
+		["favorite", "executeOnSelection"].forEach(function(sParam) {
+			if (mPropertyBag[sParam] !== undefined) {
+				oContentToBeWritten[sParam] = mPropertyBag[sParam];
+			} else if (!(mPropertyBag.revert && oContentToBeWritten[sParam] !== undefined) && oContent[sParam] !== undefined) {
+				// in case of revert triggered by undo
+				oContentToBeWritten[sParam] = oContent[sParam];
+			}
+		});
 
 		oVariant.setContent(oContentToBeWritten);
 		// also update the runtime instance
 		oVariant.setFavorite(!!oContentToBeWritten.favorite);
 		oVariant.setExecuteOnSelection(!!oContentToBeWritten.executeOnSelection);
+
+		if (mPropertyBag.contexts) {
+			oVariant.setContexts(mPropertyBag.contexts);
+		}
 
 		return oVariant;
 	};
@@ -526,7 +530,8 @@ sap.ui.define([
 						name: oRevertDataContent.previousName,
 						content: oRevertDataContent.previousContent,
 						favorite: oRevertDataContent.previousFavorite,
-						executeOnSelection: oRevertDataContent.previousExecuteOnSelection
+						executeOnSelection: oRevertDataContent.previousExecuteOnSelection,
+						contexts: oRevertDataContent.previousContexts
 					},
 					_pick(mPropertyBag, ["reference", "persistencyKey", "id"])
 				));
