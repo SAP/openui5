@@ -160,6 +160,9 @@ sap.ui.define([
 	 * @param {int} iThreshold the number of additional entries, which will be loaded after (iStartIndex + iLength) as a buffer
 	 */
 	AnalyticalTreeBindingAdapter.prototype.getContexts = function(iStartIndex, iLength, iThreshold, bReturnNodes) {
+		if (!this.isResolved()) {
+			return [];
+		}
 		if (!iLength) {
 			iLength = this.oModel.iSizeLimit;
 		}

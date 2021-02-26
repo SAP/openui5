@@ -50,12 +50,14 @@ sap.ui.require([
 		"sap/ui/core/qunit/model/Context.qunit",
 		"sap/ui/core/qunit/model/ContextBinding.qunit",
 		"sap/ui/core/qunit/model/Model.qunit",
+		"sap/ui/core/qunit/model/TreeBindingAdapter.qunit",
 
 		// ***************************************************************************************
 		// sap.ui.model.analytics.* - tests are contained in testsuite.databinding.qunit.js
 		// ***************************************************************************************
 		//TODO: get test running in 1RingModels.qunit; it uses sinon 1
 		// "sap/ui/core/qunit/analytics/AnalyticalBinding.qunit",
+		"sap/ui/core/qunit/analytics/AnalyticalTreeBindingAdapter.qunit",
 		"sap/ui/core/qunit/analytics/odata4analytics.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses sinon 1
 		// test is contained in /sap.ui.table/test/sap/ui/table/qunit/testsuite.qunit.js
@@ -150,6 +152,7 @@ sap.ui.require([
 		"sap/ui/core/qunit/odata/v2/ODataModel.integration.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataModelNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataPropertyBindingNoFakeService.qunit",
+		"sap/ui/core/qunit/odata/v2/ODataTreeBindingFlatNoFakeService.qunit",
 		"sap/ui/core/qunit/odata/v2/ODataTreeBindingNoFakeService.qunit",
 		//TODO: get test running in 1RingModels.qunit; it uses ODataModelFakeService
 		// "sap/ui/core/qunit/odata/v2/ODataPropertyBinding.qunit",

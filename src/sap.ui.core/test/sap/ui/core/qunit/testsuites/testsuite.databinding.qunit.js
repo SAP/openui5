@@ -176,6 +176,12 @@ sap.ui.define(function() {
 					language: "en-US"
 				}
 			},
+			TreeBindingAdapter: {
+				title: "sap.ui.model.TreeBindingAdapter - QUnit Tests",
+				module: [
+					"test-resources/sap/ui/core/qunit/model/TreeBindingAdapter.qunit"
+				]
+			},
 			TreeBindingUtils: {
 				title: "sap.ui.model.TreeBindingUtils - QUnit Tests"
 			},
@@ -196,6 +202,12 @@ sap.ui.define(function() {
 					version: 1
 				},
 				title: "sap.ui.model.analytics.AnalyticalBinding - QUnit Tests"
+			},
+			"analytics/AnalyticalTreeBindingAdapter": {
+				title: "sap.ui.model.analytics.AnalyticalTreeBindingAdapter",
+				module: [
+					"test-resources/sap/ui/core/qunit/analytics/AnalyticalTreeBindingAdapter.qunit"
+				]
 			},
 			"analytics/odata4analytics": {
 				coverage : {
