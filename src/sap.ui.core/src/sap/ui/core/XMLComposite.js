@@ -147,7 +147,8 @@ sap.ui.define([
 		 * @see {@link topic:b83a4dcb7d0e46969027345b8d32fd44 XML Composite Controls}
 		 *
 		 * @abstract
-		   * @public
+		 * @public
+		 * @deprecated As of version 1.88
 		 * @experimental Since 1.56.0
 		 */
 		var XMLComposite = Control.extend("sap.ui.core.XMLComposite", {
