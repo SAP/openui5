@@ -4,11 +4,11 @@
 
 // Provides control sap.ui.core.mvc.View.
 sap.ui.define([
-	'sap/ui/base/ManagedObject',
-	'sap/ui/core/Control',
-	'sap/ui/core/mvc/Controller',
-	'sap/base/util/merge',
-	'sap/ui/core/library',
+	"sap/ui/base/ManagedObject",
+	"sap/ui/core/Control",
+	"sap/ui/core/mvc/Controller",
+	"sap/base/util/merge",
+	"./ViewType",
 	"./ViewRenderer",
 	"sap/base/assert",
 	"sap/base/Log",
@@ -19,7 +19,7 @@ sap.ui.define([
 		Control,
 		Controller,
 		merge,
-		library,
+		ViewType,
 		ViewRenderer,
 		assert,
 		Log,
@@ -27,9 +27,6 @@ sap.ui.define([
 	) {
 	"use strict";
 
-
-	// shortcut for enum(s)
-	var ViewType = library.mvc.ViewType;
 
 	/**
 	 * @namespace

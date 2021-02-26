@@ -6,13 +6,13 @@
 sap.ui.define([
 	'./View',
 	'./JSViewRenderer',
+	'./ViewType',
 	'sap/base/util/extend',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
-	'sap/ui/core/library',
 	'sap/base/Log'
 ],
-	function(View, JSViewRenderer, merge, extend, ManagedObject, library, Log) {
+	function(View, JSViewRenderer, ViewType, merge, extend, ManagedObject, Log) {
 	"use strict";
 
 
@@ -67,9 +67,6 @@ sap.ui.define([
 	 * @since 1.30
 	 */
 	JSView.asyncSupport = true;
-
-	// shortcut for enum(s)
-	var ViewType = library.mvc.ViewType;
 
 	/**
 	 * Creates an instance of the view with the given name (and id).

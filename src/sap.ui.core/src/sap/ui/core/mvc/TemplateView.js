@@ -4,17 +4,13 @@
 
 // Provides control sap.ui.core.mvc.TemplateView.
 sap.ui.define([
-	'sap/ui/core/library',
-	'./View',
+	"./View",
 	"./TemplateViewRenderer",
+	"./ViewType",
 	"sap/base/Log"
 ],
-function(library, View, TemplateViewRenderer, Log) {
+function(View, TemplateViewRenderer, ViewType, Log) {
 "use strict";
-
-
-	// shortcut for enum(s)
-	var ViewType = library.mvc.ViewType;
 
 	/**
 	 * Constructor for a new mvc/TemplateView.

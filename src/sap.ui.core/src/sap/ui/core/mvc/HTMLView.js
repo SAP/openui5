@@ -7,10 +7,10 @@ sap.ui.define([
 	'sap/ui/thirdparty/jquery',
 	'./View',
 	'./HTMLViewRenderer',
+	'./ViewType',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
 	'sap/ui/core/DeclarativeSupport',
-	'sap/ui/core/library',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/base/util/LoaderExtensions'
 ],
@@ -18,17 +18,14 @@ sap.ui.define([
 		jQuery,
 		View,
 		HTMLViewRenderer,
+		ViewType,
 		merge,
 		ManagedObject,
 		DeclarativeSupport,
-		library,
 		ResourceModel,
 		LoaderExtensions
 	) {
 	"use strict";
-
-	// shortcut for enum(s)
-	var ViewType = library.mvc.ViewType;
 
 	/**
 	 * Constructor for a new <code>HTMLView</code>.

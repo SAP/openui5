@@ -6,7 +6,7 @@
 sap.ui.define([
 	'../base/ManagedObject',
 	'./Component',
-	'./library',
+	'sap/ui/core/mvc/ViewType',
 	'./UIComponentMetadata',
 	'./mvc/Controller',
 	'./mvc/View',
@@ -16,7 +16,7 @@ sap.ui.define([
 	function(
 		ManagedObject,
 		Component,
-		library,
+		ViewType,
 		UIComponentMetadata,
 		Controller,
 		View,
@@ -24,10 +24,6 @@ sap.ui.define([
 		Log
 	) {
 	"use strict";
-
-	// shortcut for enum(s)
-	var ViewType = library.mvc.ViewType;
-
 
 	/**
 	 * Creates and initializes a new UIComponent with the given <code>sId</code> and

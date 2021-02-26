@@ -6,10 +6,10 @@
 sap.ui.define([
 	'./View',
 	'./JSONViewRenderer',
+	'./ViewType',
 	'./EventHandlerResolver',
 	'sap/base/util/merge',
 	'sap/ui/base/ManagedObject',
-	'sap/ui/core/library',
 	'sap/ui/model/resource/ResourceModel',
 	'sap/base/Log',
 	'sap/base/util/LoaderExtensions'
@@ -17,19 +17,15 @@ sap.ui.define([
 	function(
 		View,
 		JSONViewRenderer,
+		ViewType,
 		EventHandlerResolver,
 		merge,
 		ManagedObject,
-		library,
 		ResourceModel,
 		Log,
 		LoaderExtensions
 	) {
 	"use strict";
-
-	// shortcut for enum(s)
-	var ViewType = library.mvc.ViewType;
-
 
 	/**
 	 * Constructor for a new mvc/JSONView.
