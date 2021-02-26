@@ -42,7 +42,6 @@ sap.ui.define([
 				read : function () {},
 				checkFilterOperation : function () {},
 				createCustomParams : function () {},
-				resolve : function () {},
 				resolveDeep : function () {}
 			},
 			bRefresh = "{boolean} bRefresh";
@@ -55,8 +54,7 @@ sap.ui.define([
 
 		oBinding = new ODataListBinding(oModel, "path", oContext);
 
-		this.mock(oModel).expects("resolve").withExactArgs("path", sinon.match.same(oContext))
-			.returns("~path");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~path");
 		oBinding.bSkipDataEvents = true;
 		oBinding.bRefresh = bRefresh;
 		oBinding.bTransitionMessagesOnly = oFixture.transitionMessagesOnly;
@@ -299,21 +297,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestFilterForMessages: unresolved", function (assert) {
-		var oModel = {
-				getMessagesByPath : function () {},
-				resolve : function () {}
-			},
+		var oModel = {getMessagesByPath : function () {}},
 			oBinding = {
-				oContext : "context",
-				sDeepPath : "deepPath",
 				oModel : oModel,
-				sPath : "path"
+				getResolvedPath : function () {}
 			},
 			oPromise;
 
-		this.mock(oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, oBinding.oContext)
-			.returns(undefined);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
 		this.mock(oModel).expects("getMessagesByPath").never();
 
 		// code under test
@@ -377,23 +368,17 @@ sap.ui.define([
 			aFilterForPredicate = oFixture.aFilterForPredicate,
 			aFilters = [],
 			aMessages = oFixture.aMessages,
-			oModel = {
-				getMessagesByPath : function () {},
-				resolve : function () {}
-			},
+			oModel = {getMessagesByPath : function () {}},
 			oBinding = {
-				oContext : "context",
 				sDeepPath : "~deepPath~",
 				oModel : oModel,
-				sPath : "path",
-				_getFilterForPredicate : function () {}
+				_getFilterForPredicate : function () {},
+				getResolvedPath : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
 			oPromise;
 
-		this.mock(oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, oBinding.oContext)
-			.returns("resolvedPath");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("resolvedPath");
 		this.mock(oModel).expects("getMessagesByPath").withExactArgs("~deepPath~", true)
 			.returns(aMessages);
 		if (aMessages.length && bWithFilter) {
@@ -504,16 +489,15 @@ sap.ui.define([
 				oModel : {
 					oMetadata : {
 						isLoaded : function () {}
-					},
-					resolve : function () {}
+					}
 				},
-				sPath : "~path",
 				bSuspended : bSuspended,
 				_checkPathType : function () {},
 				_fireChange : function () {},
 				_fireRefresh : function () {},
 				_initSortersFilters : function () {},
 				checkDataState : function () {},
+				getResolvedPath : function () {},
 				isRelative : function () {}
 			},
 			sResolvedPath = "~resolvedPath";
@@ -521,9 +505,7 @@ sap.ui.define([
 		this.mock(oBinding).expects("isRelative").withExactArgs().returns(oFixture.bRelative);
 		this.mock(oBinding.oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
 		this.mock(oBinding).expects("_checkPathType").withExactArgs().returns(bBoundToList);
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs("~path", sinon.match.same(oBinding.oContext))
-			.exactly(bBoundToList ? 0 : 1)
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().exactly(bBoundToList ? 0 : 1)
 			.returns(sResolvedPath);
 		this.oLogMock.expects("error")
 			.withExactArgs("List Binding is not bound against a list for ~resolvedPath")
@@ -548,10 +530,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("setContext: calls checkDataState if context changes", function (assert) {
-		var oModel = {
-				resolve : function () {},
-				resolveDeep : function () {}
-			},
+		var oModel = {resolveDeep : function () {}},
 			oBinding = {
 				oContext : "~oContext",
 				bInitial : false,
@@ -562,6 +541,7 @@ sap.ui.define([
 				_refresh : function () {},
 				checkDataState : function () {},
 				checkExpandedList : function () {},
+				getResolvedPath : function () {},
 				isRelative : function () {}
 			},
 			oContext = {
@@ -575,9 +555,7 @@ sap.ui.define([
 		this.mock(Context).expects("hasChanged")
 			.withExactArgs("~oContext", sinon.match.same(oContext))
 			.returns(true);
-		this.mock(oModel).expects("resolve")
-			.withExactArgs("~sPath", sinon.match.same(oContext))
-			.returns("~resolvedPath");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
 		this.mock(oModel).expects("resolveDeep")
 			.withExactArgs("~sPath", sinon.match.same(oContext))
 			.returns("~resolvedDeepPath");
@@ -591,5 +569,142 @@ sap.ui.define([
 		ODataListBinding.prototype.setContext.call(oBinding, oContext);
 
 		assert.strictEqual(oBinding.oContext, oContext);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkExpandedList: getResolvedPath is called", function (assert) {
+		var oModel = {_getObject : function () {}},
+			oBinding = {
+				oContext : "~oContext",
+				oModel : oModel,
+				sPath : "~sPath",
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oModel).expects("_getObject").withExactArgs("~sPath", "~oContext")
+			.returns(undefined);
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.checkExpandedList.call(oBinding), false);
+		assert.strictEqual(oBinding.bUseExpandedList, false);
+		assert.strictEqual(oBinding.aExpandRefs, undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_refresh: getResolvedPath is called", function (assert) {
+		var oBinding = {
+				oContext : "~oContext",
+				getResolvedPath : function () {},
+				isRelative : function () {}
+			};
+
+		this.mock(oBinding).expects("isRelative").returns(true);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		ODataListBinding.prototype._refresh.call(oBinding, undefined, undefined, "~mEntityTypes");
+
+		assert.strictEqual(oBinding.bPendingRefresh, false);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_fireRefresh: with resolved path", function (assert) {
+		var oBinding = {
+				fireEvent : function () {},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("fireEvent").withExactArgs("refresh", "~mParameters");
+
+		// code under test
+		ODataListBinding.prototype._fireRefresh.call(oBinding, "~mParameters");
+
+		assert.strictEqual(oBinding.bRefresh, true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_fireRefresh: no resolved path", function (assert) {
+		var oBinding = {getResolvedPath : function () {}};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		ODataListBinding.prototype._fireRefresh.call(oBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_checkPathType: getResolvedPath is called", function (assert) {
+		var oBinding = {getResolvedPath : function () {}};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype._checkPathType.call(oBinding), true);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDownloadUrl: no resolved path", function (assert) {
+		var oBinding = {getResolvedPath : function () {}};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		ODataListBinding.prototype.getDownloadUrl.call(oBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getDownloadUrl: with resolved path", function (assert) {
+		var oBinding = {
+				oModel : {_createRequestUrl : function () {}},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding.oModel).expects("_createRequestUrl")
+			.withExactArgs("~resolvedPath", null, [])
+			.returns("~requestUrl");
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype.getDownloadUrl.call(oBinding), "~requestUrl");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_initSortersFilters: getResolvedPath is called", function (assert) {
+		var oBinding = {getResolvedPath : function () {}};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		ODataListBinding.prototype._initSortersFilters.call(oBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getEntityType: with resolved path", function (assert) {
+		var oBinding = {
+				oModel : {
+					oMetadata : {_getEntityTypeByPath : function () {}}
+				},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding.oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("~resolvedPath")
+			.returns("~entityType");
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype._getEntityType.call(oBinding), "~entityType");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_getEntityType: no resolved path", function (assert) {
+		var oBinding = {getResolvedPath : function () {}};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		assert.strictEqual(ODataListBinding.prototype._getEntityType.call(oBinding), undefined);
 	});
 });

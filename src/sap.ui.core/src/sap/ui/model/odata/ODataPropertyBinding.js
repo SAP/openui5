@@ -174,7 +174,7 @@ sap.ui.define([
 	 */
 	ODataPropertyBinding.prototype.checkDataState = function(mPaths) {
 		var sCanonicalPath = this.oModel.resolve(this.sPath, this.oContext, true)
-			|| this.oModel.resolve(this.sPath, this.oContext);
+			|| this.getResolvedPath();
 
 		this.getDataState().setLaundering(!!mPaths && !!(sCanonicalPath in mPaths));
 		PropertyBinding.prototype._checkDataState.call(this, sCanonicalPath, mPaths);

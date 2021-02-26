@@ -7,11 +7,12 @@ sap.ui.define([
 	"sap/ui/model/Binding",
 	"sap/ui/model/ChangeReason",
 	"sap/ui/model/Context",
+	"sap/ui/model/PropertyBinding",
 	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataPropertyBinding",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, Binding, ChangeReason, Context, ODataMetaModel,
+], function (Log, SyncPromise, Binding, ChangeReason, Context, PropertyBinding, ODataMetaModel,
 		ODataPropertyBinding, ODataModel, TestUtils) {
 	/*global QUnit,sinon*/
 	/*eslint no-warning-comments: 0*/
@@ -249,5 +250,30 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(ODataPropertyBinding.prototype.checkUpdate.call(oBinding), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("checkDataState: getResolvedPath is called", function (assert) {
+		var oBinding = {
+				oContext : "~context",
+				oModel : {resolve : function () {}},
+				sPath : "~path",
+				getDataState : function () {},
+				getResolvedPath : function () {}
+			},
+			oDataState = {
+				setLaundering : function () {}
+			};
+
+		this.mock(oBinding.oModel).expects("resolve").withExactArgs("~path", "~context", true)
+			.returns(undefined);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("getDataState").withExactArgs().returns(oDataState);
+		this.mock(oDataState).expects("setLaundering").withExactArgs(false);
+		this.mock(PropertyBinding.prototype).expects("_checkDataState").on(oBinding)
+			.withExactArgs("~resolvedPath", undefined);
+
+		// code under test
+		ODataPropertyBinding.prototype.checkDataState.call(oBinding);
 	});
 });

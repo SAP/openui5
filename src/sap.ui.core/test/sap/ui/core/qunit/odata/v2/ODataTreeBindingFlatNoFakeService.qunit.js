@@ -119,4 +119,52 @@ sap.ui.define([
 		// code under test - parameters are not relevant for this test
 		assert.deepEqual(ODataTreeBindingFlat.prototype._getContextsOrNodes.call(oBinding), []);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("_getCorrectChangeGroup: getResolvedPath is called", function (assert) {
+		var oBinding = {
+				oModel : {_resolveGroup : function () {}},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding.oModel).expects("_resolveGroup").withExactArgs("~resolvedPath")
+			.returns({groupId : "~changeGroup"});
+
+		// code under test
+		assert.strictEqual(ODataTreeBindingFlat.prototype._getCorrectChangeGroup.call(oBinding),
+			"~changeGroup");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createEntry: getResolvedPath is called", function (assert) {
+		var oBinding = {
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+		this.oLogMock.expects("warning")
+			.withExactArgs("ODataTreeBindingFlat: createEntry failed, as the binding path could not"
+				+ " be resolved.");
+
+		// code under test - parameters are not relevant for this test
+		assert.strictEqual(ODataTreeBindingFlat.prototype.createEntry.call(oBinding), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("submitChanges: getResolvedPath is called", function (assert) {
+		var oBinding = {
+				_optimizeChanges : function () {},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+		this.mock(oBinding).expects("_optimizeChanges").withExactArgs().returns(undefined);
+		this.oLogMock.expects("warning")
+			.withExactArgs("ODataTreeBindingFlat: submitChanges failed, because the binding-path"
+				+ " could not be resolved.");
+
+		// code under test
+		ODataTreeBindingFlat.prototype.submitChanges.call(oBinding);
+	});
 });

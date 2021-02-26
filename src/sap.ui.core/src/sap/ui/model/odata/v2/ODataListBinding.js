@@ -395,7 +395,7 @@ sap.ui.define([
 
 			this.oContext = oContext;
 
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			sResolvedPath = this.getResolvedPath();
 			this.sDeepPath = this.oModel.resolveDeep(this.sPath, this.oContext);
 
 			if (!this._checkPathType()) {
@@ -439,13 +439,17 @@ sap.ui.define([
 	 * @return {boolean} Whether expanded data is available and will be used
 	 */
 	ODataListBinding.prototype.checkExpandedList = function(bSkipReloadNeeded) {
-		// if nested list is already available and no filters or sorters are set, use the data and don't send additional requests
-		// $expand loads all associated entities, no paging parameters possible, so we can safely assume all data is available
-		var bResolves = !!this.oModel.resolve(this.sPath, this.oContext),
+		// if nested list is already available and no filters or sorters are set, use the data and
+		// don't send additional requests
+		// $expand loads all associated entities, no paging parameters possible, so we can safely
+		// assume all data is available
+		var bResolves = !!this.getResolvedPath(),
 			oRef = this.oModel._getObject(this.sPath, this.oContext);
 
-		if (!bResolves || oRef === undefined || this.mCustomParams ||
-		    (this.sOperationMode === OperationMode.Server && (this.aApplicationFilters.length > 0 || this.aFilters.length > 0 || this.aSorters.length > 0))) {
+		if (!bResolves || oRef === undefined || this.mCustomParams
+				|| (this.sOperationMode === OperationMode.Server
+					&& (this.aApplicationFilters.length > 0 || this.aFilters.length > 0
+						|| this.aSorters.length > 0))) {
 			this.bUseExpandedList = false;
 			this.aExpandRefs = undefined;
 			return false;
@@ -453,7 +457,10 @@ sap.ui.define([
 			this.bUseExpandedList = true;
 			if (Array.isArray(oRef)) {
 				// For performance, only check first and last entry, whether reload is needed
-				if (!bSkipReloadNeeded && (this.oModel._isReloadNeeded("/" + oRef[0], this.mParameters) || this.oModel._isReloadNeeded("/" + oRef[oRef.length - 1], this.mParameters))) {
+				if (!bSkipReloadNeeded
+						&& (this.oModel._isReloadNeeded("/" + oRef[0], this.mParameters)
+							|| this.oModel._isReloadNeeded("/" + oRef[oRef.length - 1],
+								this.mParameters))) {
 					this.bUseExpandedList = false;
 					this.aExpandRefs = undefined;
 					return false;
@@ -686,7 +693,7 @@ sap.ui.define([
 		var sPath = this.sPath;
 
 		if (this.isRelative()){
-			sPath = this.oModel.resolve(this.sPath, this.oContext);
+			sPath = this.getResolvedPath();
 		}
 
 		if (sPath) {
@@ -851,7 +858,7 @@ sap.ui.define([
 
 		if (!bForceUpdate) {
 			if (mEntityTypes){
-				var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+				var sResolvedPath = this.getResolvedPath();
 				if (sResolvedPath) {
 					var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
 					if (oEntityType && (oEntityType.entityType in mEntityTypes)) {
@@ -889,7 +896,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype._fireRefresh = function(mParameters) {
-		if (this.oModel.resolve(this.sPath, this.oContext)) {
+		if (this.getResolvedPath()) {
 			this.bRefresh = true;
 			this.fireEvent("refresh", mParameters);
 		}
@@ -903,7 +910,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataListBinding.prototype._checkPathType = function () {
-		var sPath = this.oModel.resolve(this.sPath, this.oContext);
+		var sPath = this.getResolvedPath();
 
 		if (sPath) {
 			if (!this._mPathType || !this._mPathType[sPath]) {
@@ -963,8 +970,7 @@ sap.ui.define([
 		if (this.oModel.oMetadata && this.oModel.oMetadata.isLoaded() && this.bInitial && !bCreatedRelative) {
 
 			if (!this._checkPathType()) {
-				Log.error("List Binding is not bound against a list for "
-					+ this.oModel.resolve(this.sPath, this.oContext));
+				Log.error("List Binding is not bound against a list for " + this.getResolvedPath());
 			}
 
 			this.bInitial = false;
@@ -1141,7 +1147,7 @@ sap.ui.define([
 			aParams.push(this.sCustomParams);
 		}
 
-		sPath = this.oModel.resolve(this.sPath,this.oContext);
+		sPath = this.getResolvedPath();
 
 		if (sPath) {
 			return this.oModel._createRequestUrl(sPath, null, aParams);
@@ -1447,7 +1453,7 @@ sap.ui.define([
 	ODataListBinding.prototype._initSortersFilters = function(){
 		// if path could not be resolved entity type cannot be retrieved and
 		// also filters/sorters don't need to be set
-		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+		var sResolvedPath = this.getResolvedPath();
 		if (!sResolvedPath) {
 			return;
 		}
@@ -1465,7 +1471,7 @@ sap.ui.define([
 	};
 
 	ODataListBinding.prototype._getEntityType = function(){
-		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+		var sResolvedPath = this.getResolvedPath();
 
 		if (sResolvedPath) {
 			var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
@@ -1565,7 +1571,7 @@ sap.ui.define([
 			oFilter = null,
 			aFilters = [],
 			aPredicateSet = new Set(),
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			sResolvedPath = this.getResolvedPath(),
 			that = this;
 
 		if (!sResolvedPath) {

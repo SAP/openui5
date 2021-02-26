@@ -232,7 +232,7 @@ sap.ui.define([
 			this.mRequestHandles[sRequestKey].abort();
 		}
 		sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
-		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+		var sAbsolutePath = this.getResolvedPath();
 		if (sAbsolutePath) {
 			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
 				groupId: sGroupId,
@@ -1430,7 +1430,7 @@ sap.ui.define([
 		var bChangeDetected = false;
 		if (!bForceUpdate) {
 			if (mEntityTypes){
-				var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+				var sResolvedPath = this.getResolvedPath();
 				if (sResolvedPath) {
 					// remove url parameters if any to get correct path for entity type resolving
 					if (sResolvedPath.indexOf("?") !== -1) {
@@ -2001,7 +2001,7 @@ sap.ui.define([
 				return;
 			}
 
-			if (this.oModel.resolve(this.sPath, this.oContext)) {
+			if (this.getResolvedPath()) {
 				this.resetData();
 				this._initialize(); // triggers metadata/annotation check
 				this._fireChange({ reason: ChangeReason.Context });
@@ -2256,7 +2256,7 @@ sap.ui.define([
 			aParams.push(this.sCustomParams);
 		}
 
-		sPath = this.oModel.resolve(this.sPath,this.oContext);
+		sPath = this.getResolvedPath();
 
 		if (sPath) {
 			return this.oModel._createRequestUrl(sPath, null, aParams);
@@ -2330,7 +2330,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataTreeBinding.prototype._getEntityType = function(){
-		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+		var sResolvedPath = this.getResolvedPath();
 
 		if (sResolvedPath) {
 			var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
