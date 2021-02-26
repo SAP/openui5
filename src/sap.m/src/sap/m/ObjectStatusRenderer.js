@@ -10,10 +10,6 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
-	// shortcut for sap.ui.core.ValueState
-	var ValueState = coreLibrary.ValueState;
-
-
 	/**
 	 * ObjectStatus renderer.
 	 * @namespace
@@ -45,8 +41,6 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 			var oAccAttributes = {
 				roledescription: oCore.getLibraryResourceBundle("sap.m").getText("OBJECT_STATUS")
 			};
-			var sValueStateText;
-			var accValueText;
 
 			if (sTextDir === TextDirection.Inherit) {
 				sTextDir = bPageRTL ? TextDirection.RTL : TextDirection.LTR;
@@ -71,13 +65,8 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 				oAccAttributes.role = "group";
 			}
 
-			/* ARIA region adding the aria-describedby to ObjectStatus */
-
-			if (sState !== ValueState.None) {
-				oAccAttributes.describedby = {
-					value: oObjStatus.getId() + "sapSRH",
-					append: true
-				};
+			if (oObjStatus._oInvisibleText) {
+				oAccAttributes["describedby"] = { value: oObjStatus._oInvisibleText.getId(), append: true };
 			}
 
 			oRm.accessibilityState(oObjStatus, oAccAttributes);
@@ -130,23 +119,6 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 			if (oObjStatus._isActive()) {
 				oRm.close("span");
 			}
-			/* ARIA adding hidden node in span element */
-			if (sState != ValueState.None) {
-				sValueStateText = ValueStateSupport.getAdditionalText(sState);
-				if (sValueStateText) {
-					accValueText = sValueStateText;
-				} else {
-					accValueText = IndicationColorSupport.getAdditionalText(sState);
-				}
-				if (accValueText) {
-					oRm.openStart("span", oObjStatus.getId() + "sapSRH");
-					oRm.class("sapUiPseudoInvisibleText");
-					oRm.openEnd();
-					oRm.text(accValueText);
-					oRm.close("span");
-				}
-			}
-
 		}
 
 		oRm.close("div");
