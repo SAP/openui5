@@ -3,7 +3,7 @@
 	xmlns:mvc="sap.ui.core.mvc"
 	displayBlock="true"
 	xmlns="sap.m">
-	<Panel class="sapUiMediumMarginTop"  id="visibilityPanel">
+	<Panel id="visibilityPanel">
 		<headerToolbar>
 			<Toolbar id="visibilityToolbar">
 				<Label id="visibilityToolbarLabel" labelFor="visibilityRadioButtonGroup" text="{i18n>RADIO_BUTTON_GROUP_LABEL}" design="Bold" />
