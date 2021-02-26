@@ -17,7 +17,8 @@
 				"samples": [
 					"sap.ui.integration.sample.CardExplorer",
 					"sap.ui.integration.sample.CardsLayout",
-					"sap.ui.integration.sample.CardsLoading"
+					"sap.ui.integration.sample.CardsLoading",
+					"sap.ui.integration.sample.LazyLoading"
 				]
 			}
 		],
@@ -36,6 +37,11 @@
 			  "id": "sap.ui.integration.sample.CardsLoading",
 			  "name": "Home page with cards loading",
 			  "description": "Different types of cards types and their loading placeholder"
+			},
+			{
+				"id": "sap.ui.integration.sample.LazyLoading",
+				"name": "Lazy loading of cards on home page ",
+				"description": "dataMode:'Auto' activates lazy loading behavior of an integration card"
 			}
 		]
 	}

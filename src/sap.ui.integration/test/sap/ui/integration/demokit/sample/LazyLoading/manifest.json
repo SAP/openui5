@@ -1,0 +1,38 @@
+{
+	"sap.app": {
+		"id": "sap.ui.integration.sample.CardExplorer",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": {
+			"viewName": "sap.ui.integration.sample.LazyLoading.LazyLoading",
+			"type": "XML",
+			"async": true
+		},
+		"dependencies": {
+			"libs": {
+				"sap.ui.core": {},
+				"sap.ui.integration": {},
+				"sap.m": {},
+				"sap.ui.layout": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"files": [
+					"LazyLoading.view.xml",
+					"LazyLoading.controller.js",
+					"manifest.json",
+					"manifests/calendarData.json",
+					"manifests/employee.json",
+					"manifests/listData1.json",
+					"manifests/listData2.json",
+					"manifests/someitems.json",
+					"manifests/tableData.json"
+				]
+			}
+		}
+	}
+}

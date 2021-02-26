@@ -1,0 +1,45 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.samples.list1",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "List",
+		"header": {
+			"data": {
+				"request": {
+					"url": "sap/ui/integration/sample/LazyLoading/manifests/listData1.json"
+				},
+				"path": "/header"
+			},
+			"title": "{title}",
+			"subTitle": "{subTitle}",
+			"icon": {
+			  "src": "sap-icon://list"
+			}
+		},
+		"content": {
+          "maxItems": 3,
+			"data": {
+				"request": {
+					"url": "sap/ui/integration/sample/LazyLoading/manifests/listData1.json"
+				},
+				"path": "/content"
+			},
+			"item": {
+				"title": {
+					"label": "Title",
+					"value": "{Name}"
+				},
+				"icon": {
+					"src": "{icon}"
+				},
+				"highlight": "{state}",
+				"info": {
+					"value": "{info}",
+					"state": "{infoState}"
+				}
+			}
+		}
+	}
+}
