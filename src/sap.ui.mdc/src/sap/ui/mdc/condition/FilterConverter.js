@@ -179,7 +179,7 @@ function(
 								// $search mapping
 								var aFieldPath = $searchfilters[1].split(',');
 								for (var j = 0; j < aFieldPath.length; j++) {
-									aLocalIncludeFilters.push(new Filter(aFieldPath[j], oFilter.sOperator, oFilter.oValue1));
+									aLocalIncludeFilters.push(new Filter({path: aFieldPath[j], operator: oFilter.sOperator, value1: oFilter.oValue1}));
 								}
 								continue;
 							}

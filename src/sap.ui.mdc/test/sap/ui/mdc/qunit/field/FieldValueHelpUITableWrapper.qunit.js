@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/Device"
@@ -65,6 +66,7 @@ sap.ui.define([
 		FormatException,
 		ParseException,
 		Filter,
+		FilterOperator,
 		ODataModel,
 		ODataListBinding,
 		Device
@@ -648,15 +650,17 @@ sap.ui.define([
 		sinon.stub(oWrapper, "_getInParameters").returns(["additionalText"]);
 		sinon.stub(oWrapper, "_getOutParameters").returns(["additionalText"]);
 
-		oResult = oWrapper.getTextForKey("I2", {additionalText: "Text 2"});
+		var oFilter = new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "Text 2"});
+		oResult = oWrapper.getTextForKey("I2", oFilter);
 		assert.equal(oResult.description, "Item 2", "Text for key with in-parameter");
 		assert.deepEqual(oResult.inParameters, {additionalText: "Text 2"} , "in-parameters returned");
 		assert.deepEqual(oResult.outParameters, {additionalText: "Text 2"} , "out-parameters returned");
 
-		oResult = oWrapper.getTextForKey("I2", undefined, {additionalText: "Text 2"});
+		oResult = oWrapper.getTextForKey("I2", undefined, oFilter);
 		assert.equal(oResult.description, "Item 2", "Text for key with out-parameter");
 		assert.deepEqual(oResult.inParameters, {additionalText: "Text 2"} , "in-parameters returned");
 		assert.deepEqual(oResult.outParameters, {additionalText: "Text 2"} , "out-parameters returned");
+		oFilter.destroy();
 
 		oResult = oWrapper.getTextForKey("Test");
 		var oResult2 = oWrapper.getTextForKey("Test", undefined, undefined, false);
@@ -681,18 +685,22 @@ sap.ui.define([
 			var sError = oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["Test"]);
 			assert.equal(oError.message, sError, "Error message");
 
-			oResult = oWrapper.getTextForKey("I2", {additionalText: "X"}, {additionalText: "X"});
+			oFilter = new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "X"});
+			oResult = oWrapper.getTextForKey("I2", oFilter, oFilter);
 			assert.ok(oResult instanceof Promise, "Promise returned as model is asked");
 			oResult.then(function(oResult) {
 				assert.notOk(true, "Promise Then must not be called");
+				oFilter.destroy();
 				fnDone();
 			}).catch(function(oError) {
 				assert.ok(oError, "Error Fired");
 				assert.ok(oError instanceof FormatException, "Error is a FormatException");
 				sError = oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["I2"]);
 				assert.equal(oError.message, sError, "Error message");
+				oFilter.destroy();
 
-				oResult = oWrapper.getTextForKey("X", undefined, {additionalText: "XX"});
+				oFilter = new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "XX"});
+				oResult = oWrapper.getTextForKey("X", undefined, oFilter);
 				assert.ok(oResult instanceof Promise, "Promise returned as model is asked");
 				var oData = oModel.getData();
 				oModel.setData({
@@ -707,6 +715,7 @@ sap.ui.define([
 					assert.equal(oResult.key, "X", "key");
 					assert.deepEqual(oResult.inParameters, {additionalText: "XX"} , "in-parameters returned");
 					assert.deepEqual(oResult.outParameters, {additionalText: "XX"} , "out-parameters returned");
+					oFilter.destroy();
 					oModel.setData(oData);
 					oResult = oWrapper.getTextForKey("Z");
 
@@ -728,6 +737,7 @@ sap.ui.define([
 					});
 				}).catch(function(oError) {
 					assert.notOk(true, "Promise Catch must not be called");
+					oFilter.destroy();
 					fnDone();
 				});
 			});
@@ -869,11 +879,13 @@ sap.ui.define([
 		oResult = oWrapper.getKeyForText("");
 		assert.equal(oResult, null, "no key for empty text returned");
 
-		oResult = oWrapper.getKeyForText("Item 2", {additionalText: "Text 2"});
+		var oFilter = new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "Text 2"});
+		oResult = oWrapper.getKeyForText("Item 2", oFilter);
 		assert.equal(oResult.description, "Item 2", "description with in-parameters");
 		assert.equal(oResult.key, "I2", "key for text with in-parameters");
 		assert.deepEqual(oResult.inParameters, {additionalText: "Text 2"} , "in-parameters returned");
 		assert.deepEqual(oResult.outParameters, {additionalText: "Text 2"} , "out-parameters returned");
+		oFilter.destroy();
 
 		oResult = oWrapper.getKeyForText("X");
 		var oResult2 = oWrapper.getKeyForText("X", undefined, false);

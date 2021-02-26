@@ -1035,10 +1035,10 @@ sap.ui.define([
 			}.bind(this)).then(function() {
 				return SyncPromise.resolve().then(function() {
 					if (bKey) {
-						return oWrapper.getTextForKey(vValue, _mapParametersToHelp.call(this, oInParameters, aInParameters, false, aInBindings, oBindingContext), _mapOutParametersToHelp.call(this, oOutParameters, true), bNoRequest);
+						return oWrapper.getTextForKey(vValue, _mapParametersToHelp.call(this, oInParameters, aInParameters, false, aInBindings, oBindingContext, true), _mapParametersToHelp.call(this, oOutParameters, this.getOutParameters(), true, undefined, undefined, true), bNoRequest);
 					} else {
 						// use default in-parameters for check
-						return oWrapper.getKeyForText(vValue, _mapParametersToHelp.call(this, undefined, aInParameters, false, aInBindings, oBindingContext), bNoRequest);
+						return oWrapper.getKeyForText(vValue, _mapParametersToHelp.call(this, undefined, aInParameters, false, aInBindings, oBindingContext, true), bNoRequest);
 					}
 				}.bind(this)).then(function(vResult) {
 					_cleanupParameterBinding.call(this, aInBindings, bBindingChanged);
@@ -1696,13 +1696,14 @@ sap.ui.define([
 
 	}
 
-	function _mapParametersToHelp(oParameters, aParameters, bNoDefault, aBindings, oBindingContext) {
+	function _mapParametersToHelp(oParameters, aParameters, bNoDefault, aBindings, oBindingContext, bFilters) {
 
 		var oHelpParameters;
 		var oParameter;
 		var sHelpPath;
 		var sFieldPath;
 		var i = 0;
+		var oCondition;
 
 		if (aParameters.length > 0) {
 			if (!oParameters) {
@@ -1717,12 +1718,14 @@ sap.ui.define([
 						sHelpPath = oParameter.getHelpPath();
 						var vValue = oParameter.getValue();
 						var bUseConditions = oParameter.getUseConditions();
+						var bInitialValueFilterEmpty = oParameter.getInitialValueFilterEmpty();
+						var j = 0;
 						if (aBindings || oBindingContext) {
 							var oBinding = oParameter.getBinding("value");
 							var bFound = false;
 							if (oBinding || bUseConditions) {
 								sFieldPath = oParameter.getFieldPath();
-								for (var j = 0; j < aBindings.length; j++) {
+								for (j = 0; j < aBindings.length; j++) {
 									if ((oBinding && oBinding.getPath() === aBindings[j].getPath()) ||
 											(bUseConditions && aBindings[j].getPath() === "/conditions/" + sFieldPath)) {
 										vValue = aBindings[j].getValue();
@@ -1737,17 +1740,49 @@ sap.ui.define([
 							}
 						}
 
-						if (sHelpPath) { // also add empty values to InParameter to allow comparison
+						if (sHelpPath) {
 							if (!oHelpParameters) {
 								oHelpParameters = {};
 							}
-							if (bUseConditions) {
-								// TODO: What if there are multiple conditions or not EQ?
-								if (vValue && vValue.length > 0) {
-									oHelpParameters[sHelpPath] = vValue[0].values[0];
+							if (bFilters) {
+								// create Filter statements here as here the data type of the Parameters can be determined
+								// allow multiple values
+								// ignore empty conditions for filtering
+								oHelpParameters[sHelpPath] = [];
+								if (bUseConditions) { // just use conditions
+									for (j = 0; j < vValue.length; j++) {
+										oCondition = merge({}, vValue[j]);
+										// change paths of in- and out-parameters
+										if (oCondition.inParameters) {
+											oCondition.inParameters = _mapInParametersToHelp.call(this, oCondition.inParameters);
+										}
+										if (oCondition.outParameters) {
+											oCondition.outParameters = _mapOutParametersToHelp.call(this, oCondition.outParameters);
+										}
+										oHelpParameters[sHelpPath].push(oCondition);
+									}
+								} else {
+									if (!vValue && bInitialValueFilterEmpty) {
+										oCondition = Condition.createCondition("Empty", []);
+										oCondition.isEmpty = false; // no explicit check needed
+									} else if (vValue) {
+										oCondition = Condition.createItemCondition(vValue);
+										oCondition.validated = ConditionValidated.Validated;
+									}
+									if (oCondition) {
+										oHelpParameters[sHelpPath].push(oCondition);
+									}
 								}
-							} else {
-								oHelpParameters[sHelpPath] = vValue;
+								oCondition = undefined;
+							} else { // also add empty values to InParameter to allow comparison
+								if (bUseConditions) {
+									// TODO: What if there are multiple conditions or not EQ?
+									if (vValue && vValue.length > 0) {
+										oHelpParameters[sHelpPath] = vValue[0].values[0];
+									}
+								} else {
+									oHelpParameters[sHelpPath] = vValue;
+								}
 							}
 						}
 					}
@@ -1762,10 +1797,23 @@ sap.ui.define([
 							if (!oHelpParameters) {
 								oHelpParameters = {};
 							}
-							oHelpParameters[sHelpPath] = oParameters[sMyFieldPath];
+							if (bFilters) { // create conditions
+								oHelpParameters[sHelpPath] = [];
+								oCondition = Condition.createItemCondition(oParameters[sMyFieldPath]);
+								oCondition.validated = ConditionValidated.Validated;
+								oHelpParameters[sHelpPath].push(oCondition);
+							} else {
+								oHelpParameters[sHelpPath] = oParameters[sMyFieldPath];
+							}
 						}
 					}
 				}
+			}
+			if (bFilters) {
+				// return filters for filtering
+				var oConditionTypes = _getTypesForConditions.call(this, oHelpParameters);
+				var oFilter = FilterConverter.createFilters(oHelpParameters, oConditionTypes);
+				oHelpParameters = oFilter;
 			}
 		}
 

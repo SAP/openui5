@@ -309,7 +309,7 @@ sap.ui.define([
 				// filter only for unit
 				oFilter = oFilterUnit;
 				oFilterUnit = undefined;
-			} else if (this.valueTypes.length == 1) {
+			} else if (!this.valueTypes[1]) {
 				oFilter = new Filter({ path: sFieldPath, operator: this.filterOperator, value1: vValue });
 			} else {
 				var vValue2 = oCondition.values[1];

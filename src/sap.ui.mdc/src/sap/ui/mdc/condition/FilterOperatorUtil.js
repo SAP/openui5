@@ -369,11 +369,11 @@ function(
 							// 	return new Filter(sFieldPath, oOperator.filterOperator, null});
 							// } else {
 							if (isNullable) {
-								return new Filter({ filters: [new Filter(sFieldPath, ModelOperator.EQ, ""),
-															new Filter(sFieldPath, ModelOperator.EQ, null)],
+								return new Filter({ filters: [new Filter({path: sFieldPath, operator: ModelOperator.EQ, value1: ""}),
+															new Filter({path: sFieldPath, operator: ModelOperator.EQ, value1: null})],
 													and: false});
 							} else {
-								return new Filter(sFieldPath, this.filterOperator, "");
+								return new Filter({path: sFieldPath, operator: this.filterOperator, value1: ""});
 							}
 							// }
 						}
@@ -401,9 +401,9 @@ function(
 							// 	return new Filter({ path: sFieldPath, operator: oOperator.filterOperator, value1: null });
 							// } else {
 							if (isNullable) {
-								return new Filter({ filters: [new Filter(sFieldPath, ModelOperator.EQ, ""),
-															new Filter(sFieldPath, ModelOperator.EQ, null)],
-													and: false});
+								return new Filter({ filters: [new Filter({path: sFieldPath, operator: ModelOperator.NE, value1: ""}),
+															new Filter({path: sFieldPath, operator: ModelOperator.NE, value1: null})],
+													and: true});
 							} else {
 								return new Filter({ path: sFieldPath, operator: this.filterOperator, value1: "" });
 							}
