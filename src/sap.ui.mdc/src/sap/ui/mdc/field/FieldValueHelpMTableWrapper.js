@@ -9,6 +9,8 @@ sap.ui.define([
 	'sap/ui/model/FormatException',
 	'sap/ui/model/ParseException',
 	'sap/ui/model/FilterType',
+	'sap/ui/model/FilterOperator',
+	'sap/ui/model/FilterProcessor',
 	'sap/ui/base/ManagedObjectObserver',
 	'sap/base/strings/capitalize',
 	'sap/m/library',
@@ -21,6 +23,8 @@ sap.ui.define([
 			FormatException,
 			ParseException,
 			FilterType,
+			FilterOperator,
+			FilterProcessor,
 			ManagedObjectObserver,
 			capitalize,
 			mLibrary,
@@ -304,108 +308,97 @@ sap.ui.define([
 
 	FieldValueHelpMTableWrapper.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, bNoRequest) {
 
-		if (vKey === null || vKey === undefined) { // TODO: support boolean?
-			return null;
-		}
-
-		var oTable = this.getTable();
-		if (_checkTableReady(oTable)) {
-			var oResult = {key: vKey, description: ""};
-			var aItems = oTable.getItems();
-			var aInParameters;
-			var aOutParameters;
-			var bFound = false;
-
-			if (oInParameters) {
-				// in-parameters of key might be different as global set on FieldHelp. So use only the needed ones for check
-				aInParameters = [];
-				for ( var sInParameter in oInParameters) {
-					aInParameters.push(sInParameter);
-				}
-			}
-
-			if (oOutParameters) {
-				// out-parameters of key might be different as global set on FieldHelp. So use only the needed ones for check
-				aOutParameters = [];
-				for ( var sOutParameter in oOutParameters) {
-					aOutParameters.push(sOutParameter);
-				}
-			}
-
-			for (var i = 0; i < aItems.length; i++) {
-				var oItem = aItems[i];
-				var oValue = _getDataFromItem.call(this, oItem, aInParameters, aOutParameters);
-				if (oValue.key === vKey
-						&& (!oValue.inParameters || !oInParameters || deepEqual(oInParameters, oValue.inParameters))
-						&& (!oValue.outParameters || !oOutParameters || deepEqual(oOutParameters, oValue.outParameters))) {
-					oResult.description = oValue.description;
-					oResult.inParameters = oValue.inParameters;
-					oResult.outParameters = oValue.outParameters;
-					bFound = true;
-					break;
-				}
-			}
-			if (bFound) {
-				return oResult;
-			}
-		}
-
-		if (bNoRequest) {
-			throw new FormatException(this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [vKey]));
-		} else {
-			// not in already loaded item -> ask the model
-			return _loadData.call(this, this._getKeyPath, vKey, "description", oInParameters, oOutParameters, true);
-		}
+		return _checkTextOrKey.call(this, vKey, "key", oInParameters, oOutParameters, bNoRequest);
 
 	};
 
 	FieldValueHelpMTableWrapper.prototype.getKeyForText = function(sText, oInParameters, bNoRequest) {
 
-		if (!sText) {
+		return _checkTextOrKey.call(this, sText, "description", oInParameters, undefined, bNoRequest);
+
+	};
+
+	function _checkTextOrKey(vValue, sField, oInParameters, oOutParameters, bNoRequest) {
+
+		if (vValue === null || vValue === undefined || (sField === "description" && vValue === "" )) { // TODO: support boolean?
 			return null;
 		}
 
+		var Exception = sField === "description" ? ParseException : FormatException;
+		var fnFieldPath = sField === "description" ? this._getDescriptionPath : this._getKeyPath;
 		var oTable = this.getTable();
 		if (_checkTableReady(oTable)) {
-			var oResult = {key: undefined, description: sText};
+			var oResult;
 			var aItems = oTable.getItems();
-			var aInParameters;
-			var bFound = false;
 
-			if (oInParameters) {
-				// in-parameters of key might be different as global set on FieldHelp. So use only the needed ones for check
-				aInParameters = [];
-				for ( var sInParameter in oInParameters) {
-					aInParameters.push(sInParameter);
+			if (this._getKeyPath() && oTable.getBinding("items")) {
+				oResult = _filterItems.call(this, vValue, aItems, fnFieldPath.call(this), oInParameters, oOutParameters, Exception);
+				if (oResult) {
+					return oResult;
 				}
-			}
-
-			for (var i = 0; i < aItems.length; i++) {
-				var oItem = aItems[i];
-				var oValue = _getDataFromItem.call(this, oItem, aInParameters);
-				if (oValue.description === sText && (!oValue.inParameters || !oInParameters || deepEqual(oInParameters, oValue.inParameters))) {
-					oResult.key = oValue.key;
-					oResult.inParameters = oValue.inParameters;
-					oResult.outParameters = oValue.outParameters;
-					bFound = true;
-					break;
+			} else { // if no keyPath assigned, In/OutParameters are not supported, should never happen (only very old case)
+				var bFound = false;
+				for (var i = 0; i < aItems.length; i++) {
+					var oItem = aItems[i];
+					var oValue = _getDataFromItem.call(this, oItem);
+					if (oValue[sField] === vValue){
+						if (bFound) { // not unique
+							throw _createException.call(this, Exception, true, vValue);
+						}
+						oResult = oValue;
+						bFound = true;
+					}
 				}
-			}
-			if (bFound) {
-				return oResult;
+				if (bFound) {
+					return oResult;
+				}
 			}
 		}
 
 		if (bNoRequest) {
-			throw new ParseException(this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [sText]));
+			throw new Exception(this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [vValue]));
 		} else {
-			// not in already loaded item -> ask the model (use in-parameters to find right one)
-			return _loadData.call(this, this._getDescriptionPath, sText, "key", oInParameters, undefined, false);
+			// not in already loaded item -> ask the model
+			return _loadData.call(this, fnFieldPath, vValue, oInParameters, oOutParameters, Exception);
 		}
 
-	};
+	}
 
-	function _loadData(fnFieldPath, vValue, sResultField, oInParameters, oOutParameters, bUseFormatException) {
+	function _filterItems(vValue, aItems, sPath, oInFilters, oOutFilters, Exception) {
+
+		var oFilter = new Filter({path: sPath, operator: FilterOperator.EQ, value1: vValue});
+		var _getFilterValue = function(oItem, sPath) {
+			var oBindingContext = oItem.getBindingContext();
+			var oDataModelRow = oBindingContext.getObject();
+			if (oDataModelRow.hasOwnProperty(sPath)) {
+				return oDataModelRow[sPath];
+			} else {
+				return undefined;
+			}
+		};
+
+		if (oInFilters || oOutFilters) {
+			var aFilters = [oFilter];
+			if (oInFilters) {
+				aFilters.push(oInFilters);
+			}
+			if (oOutFilters) {
+				aFilters.push(oOutFilters);
+			}
+			oFilter = new Filter({filters: aFilters, and: true});
+		}
+
+		var aFilteredItems = FilterProcessor.apply(aItems, oFilter, _getFilterValue);
+		if (aFilteredItems.length === 1) {
+			var oValue = _getDataFromItem.call(this, aFilteredItems[0]);
+			return {key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters};
+		} else if (aFilteredItems.length > 1) {
+			throw _createException.call(this, Exception, true, vValue);
+		}
+
+	}
+
+	function _loadData(fnFieldPath, vValue, oInParameters, oOutParameters, Exception) {
 		// provide fieldPath function as this could be set late when Table is ready
 
 		// if already requested return existing promise. Do not request twice.
@@ -446,16 +439,29 @@ sap.ui.define([
 
 				if (oInParameters) {
 					// use in-parameters as additional filters
-					for ( var sInParameter in oInParameters) {
-						aFilters.push(new Filter(sInParameter, "EQ", oInParameters[sInParameter]));
-					}
+					aFilters.push(oInParameters);
 				}
 				if (oOutParameters) {
-					// use out-parameters as additional filters
-					for ( var sOutParameter in oOutParameters) {
-						if (!oInParameters || !oInParameters.hasOwnProperty(sOutParameter) || oInParameters[sOutParameter] !== oOutParameters[sOutParameter]) {
-							aFilters.push(new Filter(sOutParameter, "EQ", oOutParameters[sOutParameter]));
+					// use out-parameters as additional filters (only if not already set by InParameter
+					if (oInParameters) {
+						var aOutFilters = oOutParameters.aFilters ? oOutParameters.aFilters : [oOutParameters];
+						var aInFilters = oInParameters.aFilters ? oInParameters.aFilters : [oInParameters];
+						for (var i = 0; i < aOutFilters.length; i++) {
+							var oOutFilter = aOutFilters[i];
+							var bFound = false;
+							for (var j = 0; j < aInFilters.length; j++) {
+								var oInFilter = aInFilters[j];
+								if (oInFilter.sPath === oOutFilter.sPath && oInFilter.oValue1 === oOutFilter.oValue1 && oInFilter.oValue2 === oOutFilter.oValue2) {
+									bFound = true;
+									break;
+								}
+							}
+							if (!bFound) {
+								aFilters.push(oOutFilter);
+							}
 						}
+					} else {
+						aFilters.push(oOutParameters);
 					}
 				}
 				if (aFilters.length > 0) {
@@ -475,21 +481,7 @@ sap.ui.define([
 							// nothing found for empty key -> this is not an error
 							fResolve(null);
 						} else {
-							var sError;
-							var oException;
-							var bNotUnique = false;
-							if (aContexts.length > 1) {
-								sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_UNIQUE", [vValue]);
-								bNotUnique = true;
-							} else {
-								sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [vValue]);
-							}
-							if (bUseFormatException) {
-								oException = new FormatException(sError);
-							} else {
-								oException = new ParseException(sError);
-							}
-							oException._bNotUnique = bNotUnique; // TODO: better solution?
+							var oException = _createException.call(this, Exception, aContexts.length > 1, vValue);
 							fReject(oException);
 						}
 
@@ -510,6 +502,20 @@ sap.ui.define([
 		}.bind(this));
 
 		return this._oPromises[sFieldPath][vValue];
+
+	}
+
+	function _createException(Exception, bNotUnique, vValue) {
+
+		var sError;
+		if (bNotUnique) {
+			sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_UNIQUE", [vValue]);
+		} else {
+			sError = this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [vValue]);
+		}
+		var oException = new Exception(sError);
+		oException._bNotUnique = bNotUnique; // TODO: better solution?
+		return oException;
 
 	}
 

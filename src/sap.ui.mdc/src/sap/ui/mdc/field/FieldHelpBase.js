@@ -937,6 +937,7 @@ sap.ui.define([
 	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. (Inside a table the <code>FieldHelp</code> element might be connected to a different row.)
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
+	 * @throws {sap.ui.model.FormatException} if entry is not found or not unique
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
@@ -963,6 +964,7 @@ sap.ui.define([
 	 * @param {string} sText Description
 	 * @param {sap.ui.model.Context} oBindingContext <code>BindingContext</code> of the checked field. (Inside a table the <code>FieldHelp</code> element might be connected to a different row.)
 	 * @returns {any|sap.ui.mdc.field.FieldHelpItem|Promise} Key for description or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
+	 * @throws {sap.ui.model.ParseException} if entry is not found or not unique
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
@@ -990,6 +992,7 @@ sap.ui.define([
 	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
 	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key, key for description or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
+	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
@@ -1052,6 +1055,7 @@ sap.ui.define([
 	 * @param {boolean} bCheckKey If set, the field help checks only if there is an item with the given key. This is set to <code>false</code> if the value cannot be a valid key because of type validation.
 	 * @param {boolean} bCheckDescription If set, the field help checks only if there is an item with the given description. This is set to <code>false</code> if only the key is used in the field.
 	 * @returns {sap.ui.mdc.field.FieldHelpItem|Promise} Object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
+	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType

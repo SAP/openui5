@@ -252,10 +252,11 @@ sap.ui.define([
 	 * As the key might change (uppercase), an object with key and description can be returned.
 	 *
 	 * @param {any} vKey Key
-	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.)
-	 * @param {object} oOutParameters Out parameters for the key (as a key must not be unique.)
+	 * @param {sap.ui.model.Filter} oInParameters In parameters for the key (as a key must not be unique.)
+	 * @param {sap.ui.model.Filter} oOutParameters Out parameters for the key (as a key must not be unique.)
 	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
+	 * @throws {sap.ui.model.FormatException} if entry is not found or not unique
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
@@ -273,9 +274,10 @@ sap.ui.define([
 	 * As the description might change (uppercase), an object with key and description can be returned.
 	 *
 	 * @param {string} sText Description
-	 * @param {object} oInParameters In parameters for the key (as a key must not be unique.)
+	 * @param {sap.ui.model.Filter} oInParameters In parameters for the key (as a key must not be unique.)
 	 * @param {boolean} bNoRequest If <code>true</code> the check must be only done on existing content (table items). Otherwise a backend request could be triggered if needed
 	 * @returns {any|sap.ui.mdc.field.FieldHelpItem|Promise} Key for description or object containing description, key, in and out parameters. If it is not available right away (must be requested), a <code>Promise</code> is returned.
+	 * @throws {sap.ui.model.ParseException} if entry is not found or not unique
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
