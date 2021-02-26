@@ -11,7 +11,8 @@ sap.ui.define([
 	"sap/ui/mdc/chart/ToolbarHandler",
 	"sap/ui/model/Sorter",
 	"sap/ui/model/Filter",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/mdc/actiontoolbar/ActionToolbarAction"
 ],
 function(
 	Core,
@@ -24,7 +25,8 @@ function(
 	ToolbarHandler,
 	Sorter,
 	Filter,
-	CoreLibrary
+	CoreLibrary,
+	ActionToolbarAction
 ) {
 	"use strict";
 
@@ -320,7 +322,9 @@ function(
 
 		// arrange
 		var done = assert.async();
-		var oButtonAction = new Button();
+		var oButtonAction = new ActionToolbarAction({
+			action: new Button()
+		});
 
 		// act
 		var oChart = new Chart({

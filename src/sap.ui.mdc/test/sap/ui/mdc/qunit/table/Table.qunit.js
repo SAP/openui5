@@ -28,7 +28,8 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/ui/core/library",
 	"sap/ui/mdc/odata/TypeUtil",
-	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler"
+	"test-resources/sap/ui/mdc/qunit/p13n/TestModificationHandler",
+	"sap/ui/mdc/actiontoolbar/ActionToolbarAction"
 ], function(
 	MDCQUnitUtils,
 	QUtils,
@@ -56,7 +57,8 @@ sap.ui.define([
 	Control,
 	CoreLibrary,
 	TypeUtil,
-	TestModificationHandler
+	TestModificationHandler,
+	ActionToolbarAction
 ) {
 	"use strict";
 
@@ -3024,7 +3026,10 @@ sap.ui.define([
 		}));
 
 		var oButton = new Button();
-		this.oTable.addAction(oButton);
+		var oAction = new ActionToolbarAction({
+			action: oButton
+		});
+		this.oTable.addAction(oAction);
 
 		this.oTable.initialized().then(function() {
 

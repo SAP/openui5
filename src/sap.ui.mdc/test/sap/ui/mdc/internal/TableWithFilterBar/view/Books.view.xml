@@ -5,6 +5,7 @@
 	xmlns:f="sap.ui.layout.form"
 	xmlns:f2="sap.f"
 	xmlns:mdc="sap.ui.mdc"
+	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
 	xmlns:mdcc="sap.ui.mdc.chart"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdcl="sap.ui.mdc.link"
@@ -493,7 +494,9 @@
 
 					<mdc:Table id="booksTable" header="Books" filter="booksFilterBar" enableExport="true" p13nMode="{=['Sort', 'Column', 'Filter']}" delegate="{name: 'sap/ui/v4demo/delegate/Books.Table.delegate', payload: {collectionName: 'Books'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
 						<mdc:actions>
-							<Button type="Emphasized" text="Add Book" press="onAddButtonPress" />
+							<mdcat:ActionToolbarAction>
+								<Button type="Emphasized" text="Add Book" press="onAddButtonPress" />
+							</mdcat:ActionToolbarAction>
 						</mdc:actions>
 						<mdc:columns>
 							<mdc:table.Column id="id2" header="Title" dataProperty="title" width="15rem">
