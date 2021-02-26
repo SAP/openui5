@@ -186,7 +186,7 @@ sap.ui.define([
 	 * should be used by the component's router. If you are using an own <code>Targets</code> extension, it has to be
 	 * required before the constructor of the component is invoked. If you define routes in your routing section, this
 	 * parameter will be ignored and the <code>Targets</code> instance of the router will be taken, see
-	 * {@lint #sap.ui.core.routing.Router#getTargets}.
+	 * {@link sap.ui.core.routing.Router#getTargets}.
 	 *
 	 * @property {string} [config.rootView]
 	 * By default, the root view will be set to the ID of the view returned by the {@link sap.ui.core.UIComponent#getRootView}
