@@ -67,6 +67,49 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 		},
 
 		/**
+		 * Get a display name for the language of the Locale of this LocaleData, using
+		 * the CLDR display names for languages.
+		 *
+		 * The lookup logic works as follows:
+		 * 1. language code and region is checked (e.g. "en-GB")
+		 * 2. If not found: language code and script is checked (e.g. "zh-Hant")
+		 * 3. If not found language code is checked (e.g. "en")
+		 * 4. If it is then still not found <code>undefined</code> is returned.
+		 *
+		 * @returns {string} language name, e.g. "English", "British English", "American English"
+		 *  or <code>undefined</code> if language cannot be found
+		 * @private
+		 * @ui5-restricted sap.ushell
+		 */
+		getCurrentLanguageName: function() {
+			var oLanguages = this.getLanguages();
+			var sCurrentLanguage;
+			var sLanguage = this.oLocale.getModernLanguage();
+			var sScript = this.oLocale.getScript();
+			// special case for "sr_Latn" language: "sh" should then be used
+			// the key used in the languages object for serbian latin is "sh"
+			if (sLanguage === "sr" && sScript === "Latn") {
+				sLanguage = "sh";
+				sScript = null;
+			}
+			if (this.oLocale.getRegion()) {
+				// fall back to language and region, e.g. "en_GB"
+				sCurrentLanguage = oLanguages[sLanguage + "_" + this.oLocale.getRegion()];
+			}
+
+			if (!sCurrentLanguage && sScript) {
+				// fall back to language and script, e.g. "zh_Hant"
+				sCurrentLanguage = oLanguages[sLanguage + "_" + sScript];
+			}
+
+			if (!sCurrentLanguage) {
+				// fall back to language only, e.g. "en"
+				sCurrentLanguage = oLanguages[sLanguage];
+			}
+			return sCurrentLanguage;
+		},
+
+		/**
 		 * Get locale specific language names.
 		 *
 		 * @returns {object} map of locale specific language names
@@ -3181,9 +3224,7 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 
 	var M_ISO639_OLD_TO_NEW = {
 			"iw" : "he",
-			"ji" : "yi",
-			"in" : "id",
-			"sh" : "sr"
+			"ji" : "yi"
 	};
 
 	/**
@@ -3309,6 +3350,12 @@ sap.ui.define(['sap/base/util/extend', 'sap/ui/base/Object', './CalendarType', '
 			} else if ( sScript === "Hant" ) {
 				sRegion = "TW";
 			}
+		}
+
+		// Special case 3: for Serbian, there is script cyrillic and latin, "sh" and "sr-latn" map to "latin", "sr" maps to cyrillic
+		// CLDR files: sr.json (cyrillic) and sr_Latn.json (latin)
+		if (sLanguage === "sh" || (sLanguage === "sr" && sScript === "Latn")) {
+			sLanguage = "sr_Latn";
 		}
 
 		var sId = sLanguage + "_" + sRegion; // the originally requested locale; this is the key under which the result (even a fallback one) will be stored in the end
