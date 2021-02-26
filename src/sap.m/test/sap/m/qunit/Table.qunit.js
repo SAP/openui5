@@ -1958,7 +1958,13 @@ sap.ui.define([
 		oTable.setInset(true);
 		Core.applyChanges();
 		fInitAccumulatedWidth = oTable._getInitialAccumulatedWidth(aItems);
-		assert.strictEqual(fInitAccumulatedWidth, 10.65, "Initial accumulated width is 10rem");
+		assert.strictEqual(fInitAccumulatedWidth, 10.65, "Initial accumulated width is " + fAccumulatedWidth + "rem");
+
+		document.getElementById("qunit-fixture").classList.add("sapUiSizeCompact");
+		oTable.placeAt("qunit-fixture");
+		Core.applyChanges();
+		fInitAccumulatedWidth = oTable._getInitialAccumulatedWidth(aItems);
+		assert.strictEqual(fInitAccumulatedWidth, 8.65, "Initial accumulated width is " + fInitAccumulatedWidth + "rem. Since compact theme density is applied");
 	});
 
 	QUnit.test("Spy on _configureAutoPopin - autoPopinMode=true", function (assert) {
