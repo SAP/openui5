@@ -400,8 +400,7 @@ sap.ui.define([
 		 */
 		TreeBindingAdapter.prototype.getContexts = function(iStartIndex, iLength, iThreshold, bReturnNodes) {
 
-			//step out if the binding is initial (as long as the metadata is not yet loaded)
-			if (this.isInitial()) {
+			if (!this.isResolved() || this.isInitial()) {
 				return [];
 			}
 

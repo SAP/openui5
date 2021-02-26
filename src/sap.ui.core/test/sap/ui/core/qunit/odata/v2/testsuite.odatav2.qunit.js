@@ -42,6 +42,10 @@ sap.ui.define(function() {
 			ODataModelNoFakeService: {
 				title: "sap.ui.model.odata.v2.ODataModel (ODataModelNoFakeService.qunit)"
 			},
+			ODataTreeBindingFlatNoFakeService: {
+				title: "sap.ui.model.odata.ODataTreeBindingFlat"
+					+ " (ODataTreeBindingFlatNoFakeService.qunit)"
+			},
 			ODataV2ListBinding: {
 				title: "sap.ui.model.odata.v2.ODataListBinding - QUnit tests"
 			},

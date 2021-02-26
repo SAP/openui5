@@ -115,7 +115,7 @@ sap.ui.define([
 	 * API used by the controls.
 	 */
 	ODataTreeBindingFlat.prototype.getContexts = function (iStartIndex, iLength, iThreshold, bReturnNodes) {
-		if (this.isInitial()) {
+		if (!this.isResolved() || this.isInitial()) {
 			return [];
 		}
 
