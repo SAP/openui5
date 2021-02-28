@@ -255,7 +255,7 @@ sap.ui.define([
 				var sNotFoundTitle = this.getModel("i18n").getProperty("NOT_FOUND_TITLE");
 
 				this.getRouter().myNavToWithoutHash("sap.ui.documentation.sdk.view.NotFound", "XML", false);
-				setTimeout(this.appendPageTitle.call(this, sNotFoundTitle));
+				setTimeout(this.appendPageTitle.bind(this, sNotFoundTitle));
 				return;
 			}
 		});
