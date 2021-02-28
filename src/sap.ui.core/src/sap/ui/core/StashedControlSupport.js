@@ -102,7 +102,7 @@ sap.ui.define(["sap/base/assert"],
 
 			// finally perform the real unstashing by starting the XMLTP again for the stashed part (scoped in XMLTP)
 			var Component = sap.ui.require("sap/ui/core/Component");
-			var oOwnerComponent = Component && Component.getOwnerComponentFor(oWrapperParent);
+			var oOwnerComponent = Component && oWrapperParent && Component.getOwnerComponentFor(oWrapperParent);
 			var aControls;
 			var fnCreate = oStashedInfo.fnCreate;
 

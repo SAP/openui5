@@ -92,6 +92,13 @@ function(
 	var XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
 	/**
+	 * The official XMLNS namespace. Must only be used for xmlns:* attributes.
+	 * @const
+	 * @private
+	 */
+	var XMLNS_NAMESPACE = "http://www.w3.org/2000/xmlns/";
+
+	/**
 	 * The official SVG namespace. Can be used to embed SVG in an XMLView.
 	 *
 	 * Note: Using this namespace prevents semantic rendering of an XMLView.
@@ -143,7 +150,7 @@ function(
 	 * @const
 	 * @private
 	 */
-	var ID_MARKER_NAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1";
+	var UI5_INTERNAL_NAMESPACE = "http://schemas.sap.com/sapui5/extension/sap.ui.core.Internal/1";
 
 	/**
 	 * A prefix for XML namespaces that are reserved for XMLPreprocessor extensions.
@@ -496,6 +503,18 @@ function(
 		return pProvider;
 	}
 
+	function findNamespacePrefix(node, namespace, prefix) {
+		var sCandidate = prefix;
+		for (var iCount = 0; iCount < 100; iCount++) {
+			var sRegisteredNamespace = node.lookupNamespaceURI(sCandidate);
+			if (sRegisteredNamespace == null || sRegisteredNamespace === namespace) {
+				return sCandidate;
+			}
+			sCandidate = prefix + iCount;
+		}
+		throw new Error("Could not find an unused namespace prefix after 100 tries, giving up");
+	}
+
 	/**
 	 * Parses a complete XML template definition (full node hierarchy)
 	 *
@@ -518,7 +537,11 @@ function(
 		// the output of the template parsing, containing strings and promises which resolve to control or control arrays
 		// later this intermediate state with promises gets resolved to a flat array containing only strings and controls
 		var aResult = [],
+			sInternalPrefix = findNamespacePrefix(xmlNode, UI5_INTERNAL_NAMESPACE, "__ui5"),
 			pResultChain = parseAndLoadRequireContext(xmlNode, bAsync) || SyncPromise.resolve();
+
+		// define internal namespace on root node
+		xmlNode.setAttributeNS(XMLNS_NAMESPACE, "xmlns:" + sInternalPrefix, UI5_INTERNAL_NAMESPACE);
 
 		bAsync = bAsync && oView._sProcessingMode === "sequential";
 		Log.debug("XML processing mode is " + (bAsync ? "sequential" : "default"), "", "XMLTemplateProcessor");
@@ -955,7 +978,7 @@ function(
 					for (var i = 0; i < node.attributes.length; i++) {
 						var attr = node.attributes[i],
 							sName = attr.name,
-							sNamespace,
+							sNamespace = attr.namespaceURI,
 							oInfo = mKnownSettings[sName],
 							sValue = attr.value;
 
@@ -1019,8 +1042,13 @@ function(
 								sSupportData = sValue;
 							} else if (sNamespace && sNamespace.startsWith(PREPROCESSOR_NAMESPACE_PREFIX)) {
 								Log.debug(oView + ": XMLView parser ignored preprocessor attribute '" + sName + "' (value: '" + sValue + "')");
+							} else if (sNamespace === UI5_INTERNAL_NAMESPACE && localName(attr) === "invisible") {
+								oInfo = mKnownSettings.visible;
+								if (oInfo && oInfo._iKind === 0 && oInfo.type === "boolean") {
+									mSettings.visible = false;
+								}
 							} else if (sNamespace === CORE_NAMESPACE
-									   || sNamespace === ID_MARKER_NAMESPACE
+									   || sNamespace === UI5_INTERNAL_NAMESPACE
 									   || sName.startsWith("xmlns:") ) {
 								// ignore namespaced attributes that are handled by the XMLTP itself
 							} else {
@@ -1196,7 +1224,8 @@ function(
 
 							// ...and mark the stashed node as invisible.
 							// The original visibility value is still scoped in the clone (visible could be bound, yet stashed controls are never visible)
-							childNode.setAttribute("visible", "false");
+							childNode.removeAttribute("visible");
+							setUI5Attribute(childNode, "invisible");
 						}
 
 						// whether the created controls will be the template for a list binding
@@ -1284,7 +1313,7 @@ function(
 				var pInstanceCreated = SyncPromise.resolve();
 
 				if (bEnrichFullIds && node.hasAttribute("id")) {
-						setId(oView, node);
+					setId(oView, node);
 				} else if (!bEnrichFullIds) {
 					// Pass processingMode to Fragments only
 					if (oClass.getMetadata().isA("sap.ui.core.Fragment") && node.getAttribute("type") !== "JS" && oView._sProcessingMode === "sequential") {
@@ -1409,8 +1438,13 @@ function(
 
 		}
 
+		function setUI5Attribute(node, name) {
+			var sPrefix = findNamespacePrefix(node, UI5_INTERNAL_NAMESPACE, sInternalPrefix);
+			node.setAttributeNS(UI5_INTERNAL_NAMESPACE, sPrefix + ":" + name, "true");
+		}
+
 		function getId(oView, xmlNode, sId) {
-			if (xmlNode.getAttributeNS(ID_MARKER_NAMESPACE, "id")) {
+			if (xmlNode.getAttributeNS(UI5_INTERNAL_NAMESPACE, "id")) {
 				return xmlNode.getAttribute("id");
 			} else {
 				return createId(sId ? sId : xmlNode.getAttribute("id"));
@@ -1419,7 +1453,7 @@ function(
 
 		function setId(oView, xmlNode) {
 			xmlNode.setAttribute("id", createId(xmlNode.getAttribute("id")));
-			xmlNode.setAttributeNS(ID_MARKER_NAMESPACE, "id", true);
+			setUI5Attribute(xmlNode, "id");
 		}
 
 	}
