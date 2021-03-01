@@ -458,7 +458,7 @@ sap.ui.define([
 		 */
 		fetchContexts : function () {
 			var bIterateAnnotations,
-				sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+				sResolvedPath = this.getResolvedPath(),
 				that = this;
 
 			if (!sResolvedPath) {

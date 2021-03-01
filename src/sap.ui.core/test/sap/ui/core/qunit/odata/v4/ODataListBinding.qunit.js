@@ -1329,6 +1329,7 @@ sap.ui.define([
 			.returns(SyncPromise.resolve(Promise.reject(oError)));
 		this.mock(oBinding).expects("_fireChange").never();
 		this.mock(oBinding).expects("getContextsInViewOrder").never();
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 		this.mock(this.oModel).expects("reportError").withExactArgs(
 			"Failed to get contexts for /service/EMPLOYEES with start index 1 and length 2",
 			sClassName, sinon.match.same(oError));
@@ -1688,8 +1689,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oBinding).expects("isResolved").withExactArgs().returns(true);
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, sinon.match.same(oContext)).returns("/~");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/~");
 		oFetchContextsCall = this.mock(oBinding).expects("fetchContexts")
 			.withExactArgs(0, 10, 100, undefined, false, sinon.match.func)
 			.returns(oFetchContextsPromise);
@@ -2171,8 +2171,7 @@ sap.ui.define([
 
 		return oRefreshResult.then(function (oResult) {
 			if (oFixture.onRemoveCalled) {
-				that.mock(oBinding.oModel).expects("resolve")
-					.withExactArgs("TEAM_2_EMPLOYEES", sinon.match.same(oContext))
+				that.mock(oBinding).expects("getResolvedPath").withExactArgs()
 					.returns("/resolved/path");
 				that.mock(oKeptContext).expects("resetKeepAlive").withExactArgs();
 
@@ -3098,8 +3097,7 @@ sap.ui.define([
 					oBinding.aContexts.unshift({/*created*/});
 					oBinding.iCreatedContexts += 1;
 				}
-				this.mock(this.oModel).expects("resolve").twice()
-					.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+				this.mock(oBinding).expects("getResolvedPath").twice().withExactArgs()
 					.returns("~resolved~");
 				for (i = iStart; i < iStart + aResults.length; i += 1) {
 					iServerIndex = bCreated ? i - 1 : i;
@@ -3454,6 +3452,7 @@ sap.ui.define([
 					sinon.match.func)
 				.callsArgWith(4, 2, aData)
 				.resolves();
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 			oBinding.aContexts.forEach(function (oContext) {
 				// #destroy would only be called for created context
 				that.mock(oContext).expects("destroy").never();
@@ -3628,6 +3627,7 @@ sap.ui.define([
 			.withExactArgs(undefined, true, true, sinon.match.func)
 			.returns(oGroupLock0);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
+		oBindingMock.expects("getResolvedPath").withExactArgs().callThrough();
 		oCreateInCacheExpectation = oBindingMock.expects("createInCache")
 			.withExactArgs(sinon.match.same(oGroupLock0), sinon.match.same(oCreatePathPromise),
 				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData0),
@@ -3646,6 +3646,7 @@ sap.ui.define([
 			.withExactArgs(undefined, true, true, sinon.match.func)
 			.returns(oGroupLock1);
 		oBindingMock.expects("fetchResourcePath").withExactArgs().returns(oCreatePathPromise);
+		oBindingMock.expects("getResolvedPath").withExactArgs().callThrough();
 		oBindingMock.expects("createInCache")
 			.withExactArgs(sinon.match.same(oGroupLock1), sinon.match.same(oCreatePathPromise),
 				"/EMPLOYEES", sinon.match(rTransientPredicate), sinon.match.same(oInitialData1),
@@ -6979,9 +6980,7 @@ sap.ui.define([
 			p1 : oContext1,
 			p2 : oContext2
 		};
-		this.mock(this.oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
-			.returns("/resolved/path");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/path");
 		this.mock(oContext1).expects("isKeepAlive").withExactArgs().returns(false);
 		this.mock(oContext2).expects("isKeepAlive").withExactArgs().returns(true);
 		this.mock(asODataParentBinding.prototype).expects("fetchCache").on(oBinding)

@@ -1180,6 +1180,7 @@ sap.ui.define([
 
 		this.mock(ODataContextBinding.prototype).expects("createReadGroupLock").never();
 		oBinding = this.bindContext(sPath);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(this.oModel).expects("checkGroupId").withExactArgs("groupId");
 		this.mock(oBinding).expects("lockGroup").withExactArgs("groupId", true)
@@ -3150,6 +3151,7 @@ sap.ui.define([
 		oBinding.attachChange(fnOnRefresh);
 
 		this.mock(oBinding).expects("isRootBindingSuspended").withExactArgs().returns(false);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 		this.mock(oBinding).expects("getGroupId").withExactArgs().returns("$auto");
 
 		// code under test
@@ -3500,6 +3502,7 @@ sap.ui.define([
 
 			this.mock(oBinding).expects("isReturnValueLikeBindingParameter")
 				.withExactArgs(sinon.match.same(oOperationMetadata)).returns(true);
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 			if (oFixture.contextMetaPath) {
 				this.mock(this.oModel.oMetaModel).expects("getObject")
 					.withExactArgs(oFixture.contextMetaPath)
@@ -3639,8 +3642,7 @@ sap.ui.define([
 				oBinding = this.bindContext("foo", oContext),
 				oHelperMock = this.mock(_Helper);
 
-			this.mock(this.oModel).expects("resolve").withExactArgs("foo",
-				sinon.match.same(oBinding.oContext)).returns(oFixture.sPath);
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(oFixture.sPath);
 
 			if (oFixture.aFetchValues) {
 				oFixture.aFetchValues.forEach(function (oFetchValue){
@@ -3666,8 +3668,7 @@ sap.ui.define([
 			oContext = Context.create(this.oModel, {}, sPath),
 			oBinding = this.bindContext("", oContext);
 
-		this.mock(this.oModel).expects("resolve").withExactArgs(oBinding.sPath,
-			sinon.match.same(oBinding.oContext)).returns(sPath);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(sPath);
 		this.mock(oContext).expects("getValue").withExactArgs(sPath).returns(oEntity);
 		this.mock(_Helper).expects("getPrivateAnnotation").exactly(oEntity ? 1 : 0)
 			.withExactArgs(sinon.match.same(oEntity), "predicate")
