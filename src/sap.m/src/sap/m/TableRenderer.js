@@ -161,7 +161,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			}
 
 			var control = oColumn["get" + type + "er"](),
-				width = (iHeaderLength == 1) ? "" : oColumn.getWidth(),
+				width = (iHeaderLength == 1 && oTable.getFixedLayout() != "Strict") ? "" : oColumn.getWidth(),
 				aStyleClass = oColumn.getStyleClass(true).split(" "),
 				align = oColumn.getCssAlign();
 

@@ -319,6 +319,10 @@ sap.ui.define([
 		assert.strictEqual(sut.getColCount(), 8, "highlight, MultiSelect, 3 visible columns, navigation, navigated & dummy columns");
 		assert.strictEqual(sut.getColSpan(), 5, "navigation, navigated & dummy colums are ignored from the col span since they are always rendered by the table");
 
+		sut.addColumn(sut.removeAllColumns().pop());
+		Core.applyChanges();
+		assert.strictEqual(sut.getColumns()[0].getDomRef().style.width, "10rem", "highlight, Single columns is not handled for the Strict layout");
+
 		sut.destroy();
 	});
 

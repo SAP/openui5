@@ -151,6 +151,7 @@ sap.ui.define([
 				busyIndicatorDelay : 0,
 				updateFinished : function(oEvent) {
 					assert.strictEqual(oEvent.getParameter("actual"), 10, "Because of the growingThreshold we should see only first 10 items.");
+					assert.ok(oList.getDomRef("listUl").classList.contains("sapMListHasGrowing"), "sapMListHasGrowing class is added");
 				}
 			}, {
 				events: {
@@ -182,6 +183,7 @@ sap.ui.define([
 				busyIndicatorDelay : 0,
 				updateFinished : function(oEvent) {
 					assert.strictEqual(oEvent.getParameter("total"), 0, "Because of the filter total binding length should be 0");
+					assert.notOk(oList.getDomRef("listUl").classList.contains("sapMListHasGrowing"), "sapMListHasGrowing class is removed");
 				}
 			}, {
 				filters : [new Filter("Name", FilterOperator.EQ, "ThisTextShouldNotBeFound")],
