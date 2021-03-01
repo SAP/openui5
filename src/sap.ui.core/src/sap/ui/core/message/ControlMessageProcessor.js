@@ -89,7 +89,7 @@ sap.ui.define(['sap/ui/core/message/MessageProcessor'],
 			oControl = sap.ui.getCore().byId(aParts[0]);
 
 			//if control does not exist: nothing to do
-			if  (!oControl) {
+			if  (!oControl || oControl._bIsBeingDestroyed) {
 				return;
 			}
 
