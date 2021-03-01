@@ -1,4 +1,4 @@
-/*global QUnit */
+/*global QUnit*/
 /*eslint no-undef:1, no-unused-vars:1, strict: 1 */
 sap.ui.define([
 	"sap/ui/qunit/QUnitUtils",
@@ -7,17 +7,26 @@ sap.ui.define([
 	"sap/m/Text",
 	"jquery.sap.keycodes",
 	"sap/ui/core/library",
+	"sap/ui/core/Core",
+	"sap/m/Panel",
+	"sap/m/library",
 	"jquery.sap.global"
-], function(QUnitUtils, createAndAppendDiv, Link, Text, jQuery, coreLibrary) {
+], function(QUnitUtils, createAndAppendDiv, Link, Text, jQuery, coreLibrary, Core, Panel, mobileLibrary) {
+	"use strict";
+
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
 
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
+	// shortcut for sap.ui.core.TextDirection
+	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
+
+	// shortcut for library resource bundle
+	var oRb = Core.getLibraryResourceBundle("sap.m");
+
 	createAndAppendDiv("uiArea1");
-
-
 
 	var sText = "Hello World";
 	var bLinkPressExpectCtrlKey = false;
@@ -569,6 +578,109 @@ sap.ui.define([
 			"cross-origin URL");
 
 		oLink.destroy();
+	});
+
+	QUnit.module("EmptyIndicator", {
+		beforeEach : function() {
+			this.oLink = new Link({
+				text: "",
+				emptyIndicatorMode: EmptyIndicatorMode.On
+			});
+
+			this.oLinkEmptyAuto = new Link({
+				text: "",
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
+			});
+
+			this.oLinkEmptyAutoNoClass = new Link({
+				text: "",
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
+			});
+
+			this.oPanel = new Panel({
+				content: this.oLinkEmptyAuto
+			}).addStyleClass("sapMShowEmpty-CTX");
+
+			this.oPanel1 = new Panel({
+				content: this.oLinkEmptyAutoNoClass
+			});
+
+			this.oLink.placeAt("qunit-fixture");
+			this.oPanel.placeAt("qunit-fixture");
+			this.oPanel1.placeAt("qunit-fixture");
+			sap.ui.getCore().applyChanges();
+		},
+		afterEach : function() {
+			this.oLink.destroy();
+			this.oLinkEmptyAuto.destroy();
+			this.oLinkEmptyAutoNoClass.destroy();
+			this.oPanel.destroy();
+			this.oPanel1.destroy();
+		}
+	});
+
+	QUnit.test("Indicator should be rendered", function(assert) {
+		var oSpan = this.oLink.getDomRef().childNodes[0];
+		assert.strictEqual(oSpan.firstChild.textContent, "-", "Empty indicator is rendered");
+		assert.strictEqual(oSpan.firstElementChild.getAttribute("aria-hidden"), "true", "Accessibility attribute is set");
+		assert.strictEqual(oSpan.lastElementChild.textContent, "Empty Value", "Accessibility text is added");
+	});
+
+	QUnit.test("Indicator should not be rendered when text is not empty", function(assert) {
+		//Arrange
+		this.oLink.setText("test");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oLink.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
+	});
+
+	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
+		//Arrange
+		this.oLink.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oLink.getDomRef().childNodes[0].textContent, "", "Empty indicator is not rendered");
+	});
+
+	QUnit.test("Indicator should be rendered, when sapMShowEmpty-CTX is added to parent", function(assert) {
+		//Assert
+		var oSpan = this.oLinkEmptyAuto.getDomRef().childNodes[0];
+		assert.strictEqual(oSpan.firstElementChild.textContent, "-", "Empty indicator is rendered");
+		assert.strictEqual(oSpan.firstElementChild.getAttribute("aria-hidden"), "true", "Accessibility attribute is set");
+		assert.strictEqual(oSpan.lastElementChild.textContent, "Empty Value", "Accessibility text is added");
+	});
+
+	QUnit.test("Indicator should not be rendered when text is available", function(assert) {
+		//Arrange
+		this.oLinkEmptyAuto.setText("test");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oLinkEmptyAuto.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
+	});
+
+	QUnit.test("Indicator should be rendered when 'sapMShowEmpty-CTX' is added", function(assert) {
+		var oSpan = this.oLinkEmptyAutoNoClass.getDomRef().childNodes[0];
+		//Assert
+		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "none", "Empty indicator is not rendered");
+		//Arrange
+		this.oPanel1.addStyleClass("sapMShowEmpty-CTX");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(window.getComputedStyle(oSpan)["display"], "inline-block", "Empty indicator is rendered");
+	});
+
+	QUnit.test("Indicator should not be rendered when property is set to off and there is a text", function(assert) {
+		//Arrange
+		this.oLink.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
+		this.oLink.setText("test");
+		sap.ui.getCore().applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oLink.getDomRef().childNodes[0].textContent, "test", "Empty indicator is not rendered");
 	});
 
 });

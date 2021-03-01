@@ -25,6 +25,8 @@ sap.ui.define([
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
 
+	// shortcut for sap.m.EmptyIndicator
+	var EmptyIndicatorMode = library.EmptyIndicatorMode;
 
 	/**
 	 * Constructor for a new ObjectNumber.
@@ -109,8 +111,14 @@ sap.ui.define([
 			 * Determines whether the background color reflects the set <code>state</code> instead of the control's text.
 			 * @since 1.86
 			 */
-			inverted : {type : "boolean", group : "Misc", defaultValue : false}
+			inverted : {type : "boolean", group : "Misc", defaultValue : false},
 
+			/**
+			 * Specifies if an empty indicator should be displayed when there is no number.
+			 *
+			 * @since 1.89
+			 */
+			emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
 		},
 		associations : {
 			/**

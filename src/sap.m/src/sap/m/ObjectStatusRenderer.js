@@ -2,13 +2,20 @@
  * ${copyright}
  */
 
-sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupport', 'sap/ui/core/InvisibleText', 'sap/ui/core/library'],
-	function(ValueStateSupport, IndicationColorSupport, InvisibleText, coreLibrary) {
+sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupport', 'sap/ui/core/InvisibleText', 'sap/ui/core/library', './library', 'sap/ui/core/Core'],
+	function(ValueStateSupport, IndicationColorSupport, InvisibleText, coreLibrary, library, Core) {
 	"use strict";
 
 
 	// shortcut for sap.ui.core.TextDirection
 	var TextDirection = coreLibrary.TextDirection;
+
+	// shortcut for sap.m.EmptyIndicator
+	var EmptyIndicatorMode = library.EmptyIndicatorMode;
+
+	// shortcut for library resource bundle
+	var oRb = Core.getLibraryResourceBundle("sap.m");
+
 
 	/**
 	 * ObjectStatus renderer.
@@ -28,7 +35,7 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 	ObjectStatusRenderer.render = function(oRm, oObjStatus){
 		oRm.openStart("div", oObjStatus);
 
-		if (oObjStatus._isEmpty()) {
+		if (oObjStatus._isEmpty() && oObjStatus.getEmptyIndicatorMode() === EmptyIndicatorMode.Off) {
 			oRm.style("display", "none");
 			oRm.openEnd();
 		} else {
@@ -114,6 +121,8 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 				oRm.openEnd();
 				oRm.text(oObjStatus.getText());
 				oRm.close("span");
+			} else if (oObjStatus.getEmptyIndicatorMode() !== EmptyIndicatorMode.Off && !oObjStatus.getText()) {
+				this.renderEmptyIndicator(oRm, oObjStatus);
 			}
 
 			if (oObjStatus._isActive()) {
@@ -122,6 +131,33 @@ sap.ui.define(['sap/ui/core/ValueStateSupport', 'sap/ui/core/IndicationColorSupp
 		}
 
 		oRm.close("div");
+	};
+
+	/**
+	 * Renders the empty text indicator.
+	 *
+	 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
+	 * @param {sap.m.ObjectStatus} oOS An object representation of the control that should be rendered.
+	 */
+	ObjectStatusRenderer.renderEmptyIndicator = function(oRm, oOS) {
+		oRm.openStart("span");
+			oRm.class("sapMEmptyIndicator");
+			if (oOS.getEmptyIndicatorMode() === EmptyIndicatorMode.Auto) {
+				oRm.class("sapMEmptyIndicatorAuto");
+			}
+			oRm.openEnd();
+			oRm.openStart("span");
+			oRm.attr("aria-hidden", true);
+			oRm.openEnd();
+				oRm.text(oRb.getText("EMPTY_INDICATOR"));
+			oRm.close("span");
+			//Empty space text to be announced by screen readers
+			oRm.openStart("span");
+			oRm.class("sapUiPseudoInvisibleText");
+			oRm.openEnd();
+				oRm.text(oRb.getText("EMPTY_INDICATOR_TEXT"));
+			oRm.close("span");
+		oRm.close("span");
 	};
 
 	return ObjectStatusRenderer;

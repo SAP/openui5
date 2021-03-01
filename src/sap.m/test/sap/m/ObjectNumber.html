@@ -14,8 +14,9 @@
 			var txt1 = new sap.m.Label({text:"ObjectNumber (emphasized by default):"});
 
 			var on1 = new sap.m.ObjectNumber("on1", {
-				number: "300,000,000",
-				unit: "Euro"
+				number: "12",
+				unit: "Euro",
+				emptyIndicator: "Auto"
 			});
 
 			var txt2 = new sap.m.Label({text:"Non-emphasized ObjectNumber:"});
@@ -26,6 +27,13 @@
 				emphasized: false
 			});
 
+			var txt23 = new sap.m.Label({text:"Empty Text ObjectNumber:"});
+
+			var on23 = new sap.m.ObjectNumber("on23", {
+				number: "",
+				unit: "Euro",
+				emptyIndicatorMode: "On"
+			});
 
 			//Object Number control to demonstrate state changes
 			var txt3 = new sap.m.Label({
@@ -138,6 +146,8 @@
 					on1,
 					txt2,
 					on2,
+					txt23,
+					on23,
 					txt3,
 					oStateSelect,
 					on3,

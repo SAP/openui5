@@ -5,8 +5,11 @@ sap.ui.define([
 	"sap/ui/qunit/utils/createAndAppendDiv",
 	"sap/m/ObjectNumber",
 	"jquery.sap.global",
-	"sap/ui/core/library"
-], function(QUnitUtils, createAndAppendDiv, ObjectNumber, jQuery, coreLibrary) {
+	"sap/ui/core/library",
+	"sap/ui/core/Core",
+	"sap/m/Panel",
+	"sap/m/library"
+], function(QUnitUtils, createAndAppendDiv, ObjectNumber, jQuery, coreLibrary, Core, Panel, mobileLibrary) {
 	// shortcut for sap.ui.core.TextAlign
 	var TextAlign = coreLibrary.TextAlign;
 
@@ -15,6 +18,12 @@ sap.ui.define([
 
 	// shortcut for sap.ui.core.ValueState
 	var ValueState = coreLibrary.ValueState;
+
+	// shortcut for sap.ui.core.TextDirection
+	var EmptyIndicatorMode = mobileLibrary.EmptyIndicatorMode;
+
+	// shortcut for library resource bundle
+	var oRb = Core.getLibraryResourceBundle("sap.m");
 
 	createAndAppendDiv("content");
 
@@ -335,5 +344,93 @@ sap.ui.define([
 		sExpectedDescription += " " + sErrorText;
 
 		assert.strictEqual(oAccInfo.description, sExpectedDescription, "Description is updated with state's text");
+	});
+
+	QUnit.module("EmptyIndicator", {
+		beforeEach : function() {
+			this.oObjectNumber = new ObjectNumber({
+				emptyIndicatorMode: EmptyIndicatorMode.On
+			});
+
+			this.oObjectNumberEmptyAuto = new ObjectNumber({
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
+			});
+
+			this.oObjectNumberEmptyAutoNoClass = new ObjectNumber({
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
+			});
+
+			this.oPanel = new Panel({
+				content: this.oObjectNumberEmptyAuto
+			}).addStyleClass("sapMShowEmpty-CTX");
+
+			this.oPanel1 = new Panel({
+				content: this.oObjectNumberEmptyAutoNoClass
+			});
+
+			this.oObjectNumber.placeAt("content");
+			this.oPanel.placeAt("content");
+			this.oPanel1.placeAt("content");
+			Core.applyChanges();
+		},
+		afterEach : function() {
+			this.oObjectNumber.destroy();
+			this.oObjectNumberEmptyAuto.destroy();
+			this.oObjectNumberEmptyAutoNoClass.destroy();
+			this.oPanel.destroy();
+			this.oPanel1.destroy();
+		}
+	});
+
+	QUnit.test("Indicator should be rendered", function(assert) {
+		var oSpan = this.oObjectNumber.getDomRef().children[0].children[0];
+		assert.strictEqual(oSpan.firstElementChild.textContent, "-", "Empty indicator is rendered");
+		assert.strictEqual(oSpan.firstElementChild.getAttribute("aria-hidden"), "true", "Accessibility attribute is set");
+		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
+	});
+
+	QUnit.test("Indicator should not be rendered when text is not empty", function(assert) {
+		//Arrange
+		this.oObjectNumber.setNumber(12);
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oObjectNumber.getDomRef().childNodes[0].textContent, "12", "Empty indicator is not rendered");
+	});
+
+	QUnit.test("Indicator should not be rendered when property is set to off", function(assert) {
+		//Arrange
+		this.oObjectNumber.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oObjectNumber.getDomRef().childNodes[0].textContent, "", "Empty indicator is not rendered");
+	});
+
+	QUnit.test("Indicator should be rendered, when sapMShowEmpty-CTX is added to parent", function(assert) {
+		//Assert
+		var oSpan = this.oObjectNumberEmptyAuto.getDomRef().childNodes[0].children[0];
+		assert.strictEqual(oSpan.firstElementChild.textContent, "-", "Empty indicator is rendered");
+		assert.strictEqual(oSpan.firstElementChild.getAttribute("aria-hidden"), "true", "Accessibility attribute is set");
+		assert.strictEqual(oSpan.lastElementChild.textContent, oRb.getText("EMPTY_INDICATOR_TEXT"), "Accessibility text is added");
+	});
+
+	QUnit.test("Indicator should not be rendered when text is available", function(assert) {
+		//Arrange
+		this.oObjectNumberEmptyAuto.setNumber(12);
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oObjectNumberEmptyAuto.getDomRef().childNodes[0].textContent, "12", "Empty indicator is not rendered");
+	});
+
+	QUnit.test("Indicator should not be rendered when property is set to off and there is a number", function(assert) {
+		//Arrange
+		this.oObjectNumber.setEmptyIndicatorMode(EmptyIndicatorMode.Off);
+		this.oObjectNumber.setNumber(12);
+		Core.applyChanges();
+
+		//Assert
+		assert.strictEqual(this.oObjectNumber.getDomRef().childNodes[0].textContent, "12", "Empty indicator is not rendered");
 	});
 });

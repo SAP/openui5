@@ -5,10 +5,15 @@
 // Provides control sap.ui.unified.Currency.
 sap.ui.define([
 	'sap/ui/core/Control',
+	'sap/m/library',
 	'sap/ui/core/format/NumberFormat',
 	"./CurrencyRenderer"
-], function(Control, NumberFormat, CurrencyRenderer) {
+], function(Control, library, NumberFormat, CurrencyRenderer) {
 		"use strict";
+
+		// shortcut for sap.m.EmptyIndicator
+		var EmptyIndicatorMode = library.EmptyIndicatorMode;
+
 
 		/**
 		 * Constructor for a new <code>Currency</code>.
@@ -98,7 +103,14 @@ sap.ui.define([
 				/**
 				 * Displays the currency symbol instead of the ISO currency code.
 				 */
-				useSymbol : {type : "boolean", group : "Appearance", defaultValue : true}
+				useSymbol : {type : "boolean", group : "Appearance", defaultValue : true},
+
+				/**
+				 * Specifies if an empty indicator should be displayed when there is no text.
+				 *
+				 * @since 1.89
+				 */
+				emptyIndicatorMode: { type: "sap.m.EmptyIndicatorMode", group: "Appearance", defaultValue: EmptyIndicatorMode.Off }
 			},
 			designtime: "sap/ui/unified/designtime/Currency.designtime",
 			dnd: { draggable: true, droppable: false }
@@ -158,10 +170,6 @@ sap.ui.define([
 			// instead and this cannot be changed due to compatibility.
 			if (this.isBound("value")) {
 				this._bRenderNoValClass = sValue == null;
-				// Toggle class if control is rendered
-				if (this.$()) {
-					this.$().toggleClass("sapUiUfdCurrencyNoVal", this._bRenderNoValClass);
-				}
 			}
 
 			this.setProperty("value", sValue, true);
@@ -174,9 +182,6 @@ sap.ui.define([
 
 			if (sPropName === "value") {
 				this._bRenderNoValClass = false;
-				if (this.$()) {
-					this.$().toggleClass("sapUiUfdCurrencyNoVal", false);
-				}
 			}
 		};
 
@@ -210,12 +215,6 @@ sap.ui.define([
 
 			if (bRenderValue) {
 				this._renderValue();
-				// In the special case where the currency is set to "*" we need to remove the CSS class
-				// "sapUiUfdCurrencyNoVal" which hides the control.
-				if (sValue === "*" && this.$()) {
-					this._bRenderNoValClass = false;
-					this.$().toggleClass("sapUiUfdCurrencyNoVal", false);
-				}
 			}
 
 			return this;
