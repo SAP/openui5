@@ -45,11 +45,9 @@ sap.ui.define([
 		 * <li>
 		 * rest as string parameters: "pattern" : ":all*:" - this pattern will define an optional variable that will pass the whole hash as string to the routing events. It may be used to define a catchall route, e. g. the following hashes would match: foo, product/5/3, product/5/detail/3/foo. You can also combine it with the other variables but make sure a variable with a * is the last one.</br>
 		 * </ul>
-		 * @param {boolean} [oConfig.greedy=false]
-		 *   @since 1.27: By default only the first route matching the hash, will fire events. If greedy is turned on
+		 * @param {boolean} [oConfig.greedy=false] Since 1.27. By default only the first route matching the hash, will fire events. If greedy is turned on
 		 *   for a route, its events will be fired even if another route has already matched.
-		 * @param {string} [oConfig.parent]
-		 *   @since 1.32 This property contains the information about the route which nests this route in the form:
+		 * @param {string} [oConfig.parent] Since 1.32. This property contains the information about the route which nests this route in the form:
 		 *   "[componentName:]routeName". The nesting routes pattern will be prefixed to this routes pattern and hence
 		 *   the nesting route also matches if this one matches.
 		 * @param {string|string[]} [oConfig.target]
