@@ -8,7 +8,6 @@
 		xmlns:mdcTable="sap.ui.mdc.table"
 		xmlns:mdcField="sap.ui.mdc.field"
 		xmlns:vhfb="sap.ui.mdc.filterbar.vh"
-		xmlns:mdcat="sap.ui.mdc.actiontoolbar"
 		xmlns:c="sap.ui.core"
 		xmlns:ce="sap.ui.codeeditor"
 		xmlns:chart="sap.suite.ui.microchart">
@@ -413,9 +412,7 @@
 					type= "ResponsiveTable"
 					rows= "{/movies}">
 					<mdc:actions>
-						<mdcat:ActionToolbarAction>
-							<Button text= "Test Action"  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType('ResponsiveTable')"/>
-						</mdcat:ActionToolbarAction>
+						<Button text= "Test Action"  press="sap.ui.getCore().byId('onlyTableView').byId('mdcTable').setType('ResponsiveTable')"/>
 					</mdc:actions>
 					<mdc:columns>
 						<mdcTable:Column id="title" header="Title">

@@ -8,7 +8,6 @@
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:vhfb="sap.ui.mdc.filterbar.vh"
 	xmlns:mdcl="sap.ui.mdc.link"
-	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
 	xmlns:ui="sap.ui"
 	xmlns:variants="sap.ui.fl.variants"
 	xmlns="sap.m" controllerName="sap.ui.v4demo.controller.Authors">
@@ -182,9 +181,7 @@
 						rowAction="Navigation"
 					>
 					<mdc:actions>
-						<mdcat:ActionToolbarAction>
-							<Button type="Emphasized" text="Add Author" press="onAddButtonPress" />
-						</mdcat:ActionToolbarAction>
+						<Button type="Emphasized" text="Add Author" press="onAddButtonPress" />
 					</mdc:actions>
 					<mdc:columns>
 						<mdc:table.Column id="cName" header="Name" dataProperty="name" width="15rem">

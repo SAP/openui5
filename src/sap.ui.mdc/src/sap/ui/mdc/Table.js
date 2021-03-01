@@ -373,7 +373,7 @@ sap.ui.define([
 				 * Additional/external actions available for the table.
 				 */
 				actions: {
-					type: "sap.ui.mdc.actiontoolbar.ActionToolbarAction",
+					type: "sap.ui.core.Control",
 					multiple: true,
 					forwarding: {
 						getter: "_createToolbar",
