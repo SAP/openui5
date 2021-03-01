@@ -19,8 +19,31 @@ sap.ui.define([
 		"sap/m/LightBox",
 		"sap/m/LightBoxItem",
 		"./util/DataTableHelper",
-		"./util/DataTable"
-	], function (jQuery, ResizeHandler, BaseController, JSONModel, XML2JSONUtils, Device, ToggleFullScreenHandler, ResourcesUtil, ResponsiveImageMap, SidyBySideImageMap, HTML, Log, LightBox, LightBoxItem, DataTableHelper, DataTable) {
+		"./util/DataTable",
+		"sap/m/Button",
+		"sap/m/MessageToast"
+
+	],
+	function (
+		jQuery,
+		ResizeHandler,
+		BaseController,
+		JSONModel,
+		XML2JSONUtils,
+		Device,
+		ToggleFullScreenHandler,
+		ResourcesUtil,
+		ResponsiveImageMap,
+		SidyBySideImageMap,
+		HTML,
+		Log,
+		LightBox,
+		LightBoxItem,
+		DataTableHelper,
+		DataTable,
+		Button,
+		MessageToast
+	) {
 		"use strict";
 
 		var GIT_HUB_DOCS_URL = "https://sap.github.io/openui5-docs/#/",
@@ -125,6 +148,28 @@ sap.ui.define([
 
 				ResizeHandler.register(this.getView().getDomRef(), this._onResize.bind(this));
 				Device.orientation.attachHandler(this._onOrientationChange, this);
+			},
+
+			_getCopyButtons: function(oElement) {
+				var oMsg = "Copied to clipboard.";
+				this.aButtonElements = oElement.querySelectorAll(".copyButton");
+
+				this.aButtonElements.forEach(function(oButtonElement) {
+					var oButton = new Button({
+						icon: "sap-icon://copy"
+					});
+					oButton.placeAt(oButtonElement);
+					oButtonElement.addEventListener('click', function() {
+						var oTextArea = document.createElement("textarea");
+						oTextArea.value = oButtonElement.parentNode.innerText;
+						document.body.appendChild(oTextArea);
+						oTextArea.select();
+						document.execCommand('copy');
+						document.body.removeChild(oTextArea);
+						MessageToast.show(oMsg);
+					});
+
+				});
 			},
 
 			onExit: function() {
@@ -256,6 +301,7 @@ sap.ui.define([
 					oDomRef = this.oLayout.getDomRef();
 
 				this._fixExternalLinks(oDomRef);
+				this._getCopyButtons(oDomRef);
 
 				this._computeColumnGroupValues(oDomRef);
 
