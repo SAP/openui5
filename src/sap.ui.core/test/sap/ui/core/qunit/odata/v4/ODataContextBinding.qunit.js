@@ -1380,7 +1380,8 @@ sap.ui.define([
 				oPromise,
 				sResolvedPath = "/OperationImport(...)";
 
-			oBindingMock.expects("getResolvedPath").withExactArgs().returns(sResolvedPath);
+			oBindingMock.expects("getResolvedPathWithReplacedTransientPredicates").withExactArgs()
+				.returns(sResolvedPath);
 			this.mock(this.oModel.getMetaModel()).expects("fetchObject")
 				.withExactArgs("/OperationImport/@$ui5.overload")
 				.returns(SyncPromise.resolve([oOperationMetadata]));
@@ -3632,7 +3633,7 @@ sap.ui.define([
 		}],
 		sResult : "/TEAMS('13')/TEAM_2_EMPLOYEES('6')"
 	}].forEach(function (oFixture, i) {
-		QUnit.test("getResolvedPath: " + i, function (assert) {
+		QUnit.test("getResolvedPathWithReplacedTransientPredicates: " + i, function (assert) {
 			var oContext = Context.create(this.oModel, {}, "/TEAMS"),
 				oContextMock = this.mock(oContext),
 				oBinding = this.bindContext("foo", oContext),
@@ -3652,13 +3653,15 @@ sap.ui.define([
 			}
 
 			// code under test
-			assert.strictEqual(oBinding.getResolvedPath(), oFixture.sResult);
+			assert.strictEqual(oBinding.getResolvedPathWithReplacedTransientPredicates(),
+				oFixture.sResult);
 		});
 	});
 
 	//*********************************************************************************************
 [{}, undefined].forEach(function (oEntity, i) {
-	QUnit.test("getResolvedPath error: no key predicates " + i, function (assert) {
+	QUnit.test("getResolvedPathWithReplacedTransientPredicates error: no key predicates " + i,
+			function (assert) {
 		var sPath = "/TEAMS($uid=id-1-23)",
 			oContext = Context.create(this.oModel, {}, sPath),
 			oBinding = this.bindContext("", oContext);
@@ -3672,7 +3675,7 @@ sap.ui.define([
 
 		// code under test
 		assert.throws(function () {
-			oBinding.getResolvedPath();
+			oBinding.getResolvedPathWithReplacedTransientPredicates();
 		}, new Error("No key predicate known at " + sPath));
 	});
 });
