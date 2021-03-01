@@ -17,10 +17,11 @@
         "sourceChangeFileName": "",
         "compositeCommand": ""
       },
+      "favorite": true,
       "content": {
-        "executeOnSelect": true,
-        "favorite": true
-      },"creation":"2020-12-11T06:21:52.183Z"
+        "executeOnSelect": true
+      },
+      "creation":"2020-12-11T06:21:52.183Z"
     }],
     "variants": [{
       "fileName": "variant_1",
@@ -41,9 +42,9 @@
         "persistencyKey": "variantManagement1"
       },
       "content": {
-        "favorite": true,
         "executeOnSelect": true
       },
+      "favorite": true,
       "texts": {
         "variantName": {
           "value": "B Variant2"

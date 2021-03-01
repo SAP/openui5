@@ -202,9 +202,9 @@ sap.ui.define([
 				fileName: "someFileName",
 				changeType: "filterVariant",
 				content: {
-					executeOnSelection: false,
-					favorite: false
+					executeOnSelection: false
 				},
+				favorite: false,
 				contexts: {},
 				fileType: "variant",
 				layer: Layer.CUSTOMER,
@@ -260,9 +260,9 @@ sap.ui.define([
 				fileName: "someFileName",
 				changeType: "filterVariant",
 				content: {
-					executeOnSelection: true,
-					favorite: true
+					executeOnSelection: true
 				},
+				favorite: true,
 				contexts: {
 					role: ["someValue"]
 				},

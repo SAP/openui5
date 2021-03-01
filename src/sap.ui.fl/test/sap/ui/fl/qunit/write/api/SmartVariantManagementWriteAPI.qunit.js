@@ -1,7 +1,9 @@
 /* global QUnit */
 
 sap.ui.define([
+	"sap/ui/fl/apply/api/SmartVariantManagementApplyAPI",
 	"sap/ui/fl/write/api/SmartVariantManagementWriteAPI",
+	"sap/ui/core/Control",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/apply/_internal/flexState/FlexState",
 	"sap/ui/fl/initial/_internal/Storage",
@@ -10,9 +12,13 @@ sap.ui.define([
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
+	"sap/ui/core/UIComponent",
+	"sap/ui/fl/Utils",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
+	SmartVariantManagementApplyAPI,
 	SmartVariantManagementWriteAPI,
+	Control,
 	CompVariantState,
 	FlexState,
 	InitialStorage,
@@ -21,6 +27,8 @@ sap.ui.define([
 	CompVariant,
 	Change,
 	ManifestUtils,
+	UIComponent,
+	Utils,
 	sinon
 ) {
 	"use strict";
@@ -115,15 +123,37 @@ sap.ui.define([
 				}
 			});
 
+			var oControl = new Control("controlId1");
+			var sPersistencyKey = "variantManagement1";
+			oControl.getPersistencyKey = function() {
+				return sPersistencyKey;
+			};
+			sandbox.stub(ManifestUtils, "getFlexReferenceForControl").returns("an.app");
+
+			var oAppComponent = new UIComponent("AppComponent21");
+			sandbox.stub(Utils, "getAppComponentForControl").returns(oAppComponent);
+
 			return FlexState.clearAndInitialize({
 				reference: "an.app",
 				componentId: "__component0",
 				manifest: {},
 				componentData: {}
-			}).then(function () {
+			}).then(SmartVariantManagementApplyAPI.loadVariants.bind(undefined, {
+				control: oControl,
+				standardVariant: {
+					name: "sStandardVariantTitle"
+				},
+				variants: [{
+					id: "someId",
+					name: "some name",
+					content: {}
+				}]
+			})).then(function () {
 				assert.throws(SmartVariantManagementWriteAPI.updateVariant.bind(undefined, {
+					id: "someId",
 					favorite: true,
-					reference: "an.app"
+					reference: "an.app",
+					control: oControl
 				}),
 				/Variant to be modified is not persisted via sap.ui.fl./,
 				"then it throws an error");

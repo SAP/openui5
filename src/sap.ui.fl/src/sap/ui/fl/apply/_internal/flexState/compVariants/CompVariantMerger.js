@@ -87,17 +87,15 @@ sap.ui.define([
 	 * @ui5-restricted sap.ui.fl
 	 */
 	return {
-		merge: function (sPersistencyKey, mCompData, oStandardVariantInput, aVariants) {
-			aVariants = aVariants || [];
-			aVariants = aVariants.map(createVariant.bind(undefined, sPersistencyKey));
-			aVariants = aVariants.concat(mCompData.variants);
+		merge: function (sPersistencyKey, mCompData, oStandardVariantInput) {
+			var aVariants = mCompData.nonPersistedVariants.concat(mCompData.variants);
 			var mChanges = getChangesMappedByVariant(mCompData);
 			aVariants.forEach(applyChangesOnVariant.bind(undefined, mChanges));
 
 			// check for an overwritten standard variant
 			var oStandardVariant;
 			aVariants.forEach(function (oVariant) {
-				if (oVariant.getContent().standardvariant) {
+				if (oVariant.getContent() && oVariant.getContent().standardvariant) {
 					oStandardVariant = oVariant;
 				}
 			});
@@ -110,7 +108,7 @@ sap.ui.define([
 			} else {
 				// remove all standard variant entries
 				aVariants = aVariants.filter(function (oVariant) {
-					return !oVariant.getContent().standardvariant;
+					return !oVariant.getContent() || !oVariant.getContent().standardvariant;
 				});
 			}
 

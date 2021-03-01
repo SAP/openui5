@@ -108,6 +108,10 @@ sap.ui.define([
 				contexts: {
 					type: "object",
 					defaultValue: {}
+				},
+				persisted: {
+					type: "boolean",
+					defaultValue: true
 				}
 			},
 			aggregations: {
@@ -123,20 +127,25 @@ sap.ui.define([
 
 		constructor: function(oFile) {
 			Change.apply(this, arguments);
-			if (oFile.content && oFile.content.favorite) {
-				this.setFavorite(oFile.content.favorite);
-			}
 			// persisted variants
 			if (oFile.content && oFile.content.executeOnSelect) {
 				this.setExecuteOnSelection(oFile.content.executeOnSelect);
 			}
 			// API provided variants
-			if (oFile.content && oFile.content.executeOnSelection) {
-				this.setExecuteOnSelection(oFile.content.executeOnSelection);
+			if (oFile.executeOnSelection) {
+				this.setExecuteOnSelection(oFile.executeOnSelection);
 			}
 			if (oFile.contexts) {
 				//setting through property and not setter to not change state to dirty
 				this.setProperty("contexts", oFile.contexts);
+			}
+
+			if (oFile.favorite) {
+				this.setFavorite(oFile.favorite);
+			}
+
+			if (oFile.persisted !== undefined) {
+				this.setPersisted(oFile.persisted);
 			}
 		}
 	});
@@ -166,6 +175,7 @@ sap.ui.define([
 	CompVariant.createInitialFileContent = function (oPropertyBag) {
 		var oNewFile = Change.createInitialFileContent(oPropertyBag);
 		oNewFile.contexts = oPropertyBag.contexts || {};
+		oNewFile.favorite = oPropertyBag.favorite;
 
 		// TODO: clean up the createInitialFileContent within the Change class plus create a base class FlexObject
 		return _pick(oNewFile, [

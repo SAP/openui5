@@ -41,9 +41,9 @@
       },
       "content": {
         "standardvariant": true,
-        "favorite": true,
         "executeOnSelect": true
       },
+      "favorite": true,
       "texts": {
         "variantName": {
           "value": "This my very own standard variant text"
@@ -56,9 +56,9 @@
         "persistencyKey": "variantManagement1"
       },
       "content": {
-        "favorite": true,
         "executeOnSelect": true
       },
+      "favorite": true,
       "texts": {
         "variantName": {
           "value": "B Variant2"
@@ -72,9 +72,9 @@
       },
       "content": {
         "standardvariant": true,
-        "favorite": true,
         "executeOnSelect": true
       },
+      "favorite": true,
       "texts": {
         "variantName": {
           "value": "This another of my very own standard variant text"

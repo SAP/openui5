@@ -366,7 +366,7 @@ sap.ui.define([
 		};
 		// favorite and executeOnSelection have to be persisted within the content for variants
 		if (oChangeSpecificData.isVariant) {
-			oInfo.content.favorite = !!oChangeSpecificData.favorite;
+			oInfo.favorite = !!oChangeSpecificData.favorite;
 			oInfo.content.executeOnSelection = oChangeSpecificData.content.executeOnSelection || !!oChangeSpecificData.executeOnSelection;
 			oInfo.contexts = oChangeSpecificData.contexts || {};
 		}
@@ -432,7 +432,7 @@ sap.ui.define([
 		var oVariant = getVariantById(mPropertyBag);
 
 		// TODO: update non-fl variants and remove limitation
-		if (!oVariant) {
+		if (!oVariant.getPersisted()) {
 			throw new Error("Variant to be modified is not persisted via sap.ui.fl.");
 		}
 		if (!mPropertyBag.revert) {
@@ -622,7 +622,7 @@ sap.ui.define([
 	 * @private
 	 */
 	CompVariantState.persistAll = function(sReference) {
-		var mCompEntities = _omit(FlexState.getCompVariantsMap(sReference), "_getOrCreate");
+		var mCompEntities = _omit(FlexState.getCompVariantsMap(sReference), "_getOrCreate", "_initialize");
 		 var aPromises = Object.keys(mCompEntities).map(function(sPersistencyKey) {
 			return CompVariantState.persist({
 				reference: sReference,

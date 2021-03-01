@@ -32,11 +32,18 @@ sap.ui.define([
 	 * @param {object[]} aVariants - Variant data from other data providers like an OData service
 	 * @private
 	 */
-	function getVariantsMap(oControl, aVariants) {
+	function getVariantsMapForKey(oControl) {
 		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
 		var sPersistencyKey = getPersistencyKey(oControl);
 		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
-		return mCompVariantsMap._getOrCreate(sPersistencyKey, aVariants);
+		return mCompVariantsMap._getOrCreate(sPersistencyKey);
+	}
+
+	function initialize(oControl, aVariants) {
+		var sReference = ManifestUtils.getFlexReferenceForControl(oControl);
+		var sPersistencyKey = getPersistencyKey(oControl);
+		var mCompVariantsMap = FlexState.getCompVariantsMap(sReference);
+		return mCompVariantsMap._initialize(sPersistencyKey, aVariants);
 	}
 
 	function getCompEntities(mPropertyBag) {
@@ -49,7 +56,7 @@ sap.ui.define([
 			manifest: Utils.getAppDescriptor(mPropertyBag.control),
 			componentId: Utils.getAppComponentForControl(mPropertyBag.control).getId()
 		})
-			.then(getVariantsMap.bind(undefined, mPropertyBag.control));
+			.then(initialize.bind(undefined, mPropertyBag.control, mPropertyBag.variants));
 	}
 
 	/**
@@ -107,7 +114,7 @@ sap.ui.define([
 			return getCompEntities(mPropertyBag)
 				.then(function(mCompVariants) {
 					var sPersistencyKey = getPersistencyKey(mPropertyBag.control);
-					return CompVariantMerger.merge(sPersistencyKey, mCompVariants, mPropertyBag.standardVariant, mPropertyBag.variants);
+					return CompVariantMerger.merge(sPersistencyKey, mCompVariants, mPropertyBag.standardVariant);
 				});
 		},
 
@@ -186,7 +193,7 @@ sap.ui.define([
 		 * @deprecated
 		 */
 		getDefaultVariantId: function(mPropertyBag) {
-			var oChange = getVariantsMap(mPropertyBag.control).defaultVariant;
+			var oChange = getVariantsMapForKey(mPropertyBag.control).defaultVariant;
 			return oChange ? oChange.getContent().defaultVariantName : "";
 		},
 
@@ -203,7 +210,7 @@ sap.ui.define([
 		 * @deprecated
 		 */
 		getExecuteOnSelect: function(mPropertyBag) {
-			var oChange = getVariantsMap(mPropertyBag.control).standardVariant;
+			var oChange = getVariantsMapForKey(mPropertyBag.control).standardVariant;
 			return oChange ? oChange.getContent().executeOnSelect : null;
 		},
 
