@@ -77,7 +77,7 @@ sap.ui.define([
 					}
 
 					var oPopup = new Dialog(sPopupId, oOptions);
-					oPopup.addStyleClass("sapUiPopupWithPadding");
+					oPopup.addStyleClass("sapUiContentPadding");
 
 					that._objectsRegister[sPopupFactoryFunctionName] = function () {
 						return oPopup;
