@@ -613,6 +613,10 @@ sap.ui.define([
 				bVerScrollingNotApplied = !bVerScrolling || this.isPropertyInitial("verticalScrolling"),
 				oHeader = this.getCustomHeader() || this._internalHeader;
 
+			if (this.hasStyleClass("sapUiPopupWithPadding")) {
+				Log.warning("Usage of CSS class 'sapUiPopupWithPadding' is deprecated. Use 'sapUiContentPadding' instead", null, "sap.m.Popover");
+			}
+
 			if (!this._initialWindowDimensions.width || !this._initialWindowDimensions.height) {
 				this._initialWindowDimensions = {
 					width: this._$window.width(),
