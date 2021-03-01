@@ -212,9 +212,10 @@ sap.ui.define([
 				 *
 				 * @since 1.85
 				 */
-				displayTextForExecuteOnSelectionForStandardVariant: {
+				_displayTextForExecuteOnSelectionForStandardVariant: {
 					type: "string",
 					group: "Misc",
+					visibility: "hidden",
 					defaultValue: ""
 				}
 			},
@@ -413,6 +414,29 @@ sap.ui.define([
 		this.oVariantInvisibleText.toStatic();
 
 		this.addDependent(this.oVariantLayout);
+	};
+
+	/**
+	 * Sets the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
+	 *
+	 * @param {string} sText The apply automatically text
+	 * @private
+	 * @ui5-restricted sap.fe
+	 */
+	VariantManagement.prototype.setDisplayTextForExecuteOnSelectionForStandardVariant = function(sText) {
+		this.setProperty("_displayTextForExecuteOnSelectionForStandardVariant", sText);
+	};
+
+
+	/**
+	 * Gets the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
+	 *
+	 * @returns {string}  The apply automatically text
+	 * @private
+	 * @ui5-restricted sap.fe
+	 */
+	VariantManagement.prototype.getDisplayTextForExecuteOnSelectionForStandardVariant = function() {
+		return this.getProperty("_displayTextForExecuteOnSelectionForStandardVariant");
 	};
 
 	/**
