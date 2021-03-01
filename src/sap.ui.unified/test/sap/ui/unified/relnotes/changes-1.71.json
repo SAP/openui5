@@ -333,5 +333,21 @@
         ]
       }
     ]
+  },
+  "1.71.30": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "d02159ec0c6e1b99c9890ef43fa867c49dca83bc",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: file not blocked",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008348942020"
+          }
+        ]
+      }
+    ]
   }
 }

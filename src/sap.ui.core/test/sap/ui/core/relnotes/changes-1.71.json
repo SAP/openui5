@@ -1002,5 +1002,21 @@
         ]
       }
     ]
+  },
+  "1.71.30": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "7da6a0523bc3bf1febb38f7d6bab95e91c11cdea",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: support selecting only the text of a measure",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000644142021"
+          }
+        ]
+      }
+    ]
   }
 }

@@ -2407,5 +2407,76 @@
         ]
       }
     ]
+  },
+  "1.71.30": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "34e545feebb5b846473ea67c0ead0ba17e735c47",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: referencing invisible text elements as aria labelled by now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000848162021"
+          }
+        ]
+      },
+      {
+        "id": "176d9ec3c4e84f84fe8717b287db2910c61c4a28",
+        "type": "FIX",
+        "text": " sap.m.Tokenizer: Default action on backspace prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400001254692021"
+          }
+        ]
+      },
+      {
+        "id": "410ad2669bf078e6334264a44213d7fa5b208562",
+        "type": "FIX",
+        "text": " sap.m.ObjectIdentifier: ACC state placement fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070449924"
+          }
+        ]
+      },
+      {
+        "id": "3769e6c23c2521a553fcc75bdfe3c932bdc35d87",
+        "type": "FIX",
+        "text": " Input controls: Curly braces properly escaped",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180097576"
+          }
+        ]
+      },
+      {
+        "id": "841362019772b52f38b9fa3173e2e2f84766ddea",
+        "type": "FIX",
+        "text": " sap.m.Shell: the logo property documentation is improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007918612020"
+          }
+        ]
+      },
+      {
+        "id": "dd55272ed15251d02e471dfcddd721bd85e003c1",
+        "type": "FIX",
+        "text": " sap.m.ObjectHeader: Redundant attribute removed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080362137"
+          }
+        ]
+      }
+    ]
   }
 }
