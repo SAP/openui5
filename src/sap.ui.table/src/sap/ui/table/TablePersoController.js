@@ -4,15 +4,18 @@
 
 // Provides TablePersoController
 sap.ui.define([
+	"./library",
 	'sap/ui/base/ManagedObject',
 	"sap/ui/core/syncStyleClass",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	'./utils/TableUtils'
 ],
-	function(ManagedObject, syncStyleClass, Log, jQuery, TableUtils) {
+	function(Library, ManagedObject, syncStyleClass, Log, jQuery, TableUtils) {
 	"use strict";
 
+	// shortcut for sap.ui.table.ResetAllMode
+	var ResetAllMode = Library.ResetAllMode;
 
 	/**
 	 * Constructor for a new TablePersoController.
@@ -71,7 +74,23 @@ sap.ui.define([
 				"customDataKey": {
 					type: "string",
 					defaultValue: "persoKey"
-				}
+				},
+
+				/**
+				 * Controls the visibility of the Reset button of the <code>TablePersoDialog</code>.<br>
+				**/
+				"showResetAll": {type: "boolean", defaultValue: true, since: "1.88"},
+
+
+				/**
+				 * Controls the behavior of the Reset button of the <code>TablePersoDialog</code>.<br>
+				 * The value must be specified in the constructor and cannot be set or modified later.<br>
+				 * If set to <code>Default</code>, the Reset button sets the table back to the initial state of the attached table when the controller is activated.<br>
+				 * If set to <code>ServiceDefault</code>, the Reset button goes back to the initial settings of <code>persoService</code>.<br>
+				 * If set to <code>ServiceReset</code>, the Reset button calls the <code>getResetPersData</code> of the attached <code>persoService</code> and uses it to reset the table.<br>
+				 */
+				"resetAllMode": {type: "sap.ui.table.ResetAllMode", defaultValue: ResetAllMode.Default, since: "1.88"}
+
 			},
 			associations: {
 				/**
@@ -108,6 +127,15 @@ sap.ui.define([
 			this._aColumnProperties.push("filterValue");
 		}
 
+	};
+
+	TablePersoController.prototype.setResetAllMode = function(resetAllMode) {
+		if (!this._resetAllModeSet) {
+			this.setProperty("resetAllMode", resetAllMode);
+			this._resetAllModeSet = true;
+		} else {
+			Log.warning("resetAllMode of the TablePersoController can only be set once.");
+		}
 	};
 
 	/**
@@ -186,7 +214,10 @@ sap.ui.define([
 		if (oNewTable && oNewTable !== oOldTable) {
 
 			// save initial table configuration (incl. text for perso dialog)
-			this._oInitialPersoData = this._getCurrentTablePersoData(true);
+			//TODO If the table will be set before the customerDataKey property, the map has the wrong keys.
+			if (this.getResetAllMode() === ResetAllMode.Default) {
+				this._oInitialPersoData = this._getCurrentTablePersoData(true);
+			}
 
 			// attach handlers to new table
 			this._manageTableEventHandlers(oNewTable, true);
@@ -207,6 +238,10 @@ sap.ui.define([
 		var sOldValue = this.getCustomDataKey();
 		this.setProperty("customDataKey", sCustomDataKey, true);
 		var sNewValue = this.getCustomDataKey();
+
+		if (this.getResetAllMode() === ResetAllMode.Default && this._getTable()) {
+			this._oInitialPersoData = this._getCurrentTablePersoData(true);
+		}
 
 		// save data if the autosave is on and the perso key has been changed
 		if (sOldValue !== sNewValue && this.getAutoSave()) {
@@ -240,6 +275,11 @@ sap.ui.define([
 						? oServiceData
 						: that._oInitialPersoData; // use initial column definitions
 				that._adjustTable(oData);
+
+				if (that.getResetAllMode() === ResetAllMode.ServiceDefault) {
+					that._oInitialPersoData = that._getCurrentTablePersoData(true);
+				}
+
 			}).fail(function() {
 				Log.error("Problem reading persisted personalization data.");
 			});
@@ -419,7 +459,7 @@ sap.ui.define([
 					that._oDialog = new TablePersoDialog(that._getTable().getId() + "-PersoDialog", {
 						persoService: that.getPersoService(),
 						showSelectAll: true,
-						showResetAll: true,
+						showResetAll: (mSettings && mSettings.showResetAll) || that.getShowResetAll(),
 						hasGrouping: false,
 						contentWidth: mSettings && mSettings.contentWidth,
 						contentHeight: mSettings && mSettings.contentHeight || "20rem",
@@ -434,7 +474,25 @@ sap.ui.define([
 							}
 						}
 					});
+
 					that._oDialog._oDialog.addStyleClass("sapUiNoContentPadding"); // otherwise height calculation doesn't work properly!
+
+					if (that.getResetAllMode() === ResetAllMode.ServiceReset && that.getPersoService().getResetPersData) {
+						that._oDialog.setShowResetAll(false);
+
+						that.getPersoService().getResetPersData().done(
+							function(oResetData) {
+								if (this._bIsBeingDestroyed) {
+									return;
+								}
+
+								if (oResetData) {
+									that._oDialog.setInitialColumnState(oResetData.aColumns);
+									that._oDialog.setShowResetAll(that.getShowResetAll());
+								}
+							}
+						);
+					}
 
 					_open();
 				});
