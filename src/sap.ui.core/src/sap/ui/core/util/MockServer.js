@@ -152,7 +152,7 @@ sap.ui
 						 *
 						 * Default value is <code>[]</code>
 						 *
-						 * @return {object[]} the value of property <code>rootUri</code>
+						 * @return {object[]} the value of property <code>requests</code>
 						 * @public
 						 * @name sap.ui.core.util.MockServer#getRequests
 						 * @function
