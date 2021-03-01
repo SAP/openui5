@@ -339,9 +339,6 @@ sap.ui.define([
 				return;
 			}
 
-			// Tooltip will be displayed. Ensure the content is rendered. As this is no control, the popup will not take care of rendering.
-			sap.ui.getCore().getRenderManager().render(this, sap.ui.getCore().getStaticAreaRef(), true);
-
 			// Open popup
 			var oDomRef = oSC.getDomRef();
 			oPopup.setContent(this);

@@ -369,6 +369,29 @@ sap.ui.define([
 		}.bind(this), 150);
 	});
 
+	QUnit.test("Renderer is only called once when opening a tooltip", function(assert) {
+		var fnAfterRenderingSpy = sinon.spy();
+		this.oTooltip1.addDelegate({
+			onAfterRendering: fnAfterRenderingSpy
+		});
+
+		return openTooltip(this.oButton1, {
+			mouseOver: this.oSpyMouseOver1,
+			mouseOut: this.oSpyMouseOut1,
+			openPopup: this.oSpyOpenPopup1
+		}, assert)
+			.then(function() {
+				assert.equal(fnAfterRenderingSpy.callCount, 1, "Tooltip is only rendered once");
+			})
+			.then(function() {
+				return closeTooltip(this.oButton1, {
+					mouseOver: this.oSpyMouseOver1,
+					mouseOut: this.oSpyMouseOut1,
+					closePopup: this.oSpyClosePopup1
+				}, assert);
+			}.bind(this));
+	});
+
 	QUnit.test("Mouseout And Mouseover so The Tooltip Remains Open", function(assert) {
 		var done = assert.async();
 
