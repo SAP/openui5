@@ -665,27 +665,35 @@ sap.ui.define([
 					(bLengthFinal && this._iLimit >= iBindingLength) ||
 					(bHasScrollToLoad && this._getHasScrollbars())) {
 					oControl.$("triggerList").css("display", "none");
+					oControl.$("listUl").removeClass("sapMListHasGrowing");
 				} else {
 					if (bLengthFinal) {
 						oControl.$("triggerInfo").css("display", "block").text(this._getListItemInfo());
 					}
 
-					oTrigger.$().removeClass("sapMGrowingListBusyIndicatorVisible");
 					oControl.$("triggerList").css("display", "");
+					oControl.$("listUl").addClass("sapMListHasGrowing");
+					oTrigger.$().removeClass("sapMGrowingListBusyIndicatorVisible");
 
 					// adapt trigger button width if dummy col is rendered
 					if (oControl.isA("sap.m.Table") && !oControl.hasPopin() && oControl.shouldRenderDummyColumn()) {
-						var sCalWidth = Array.from(oControl.getDomRef("tblHeader").childNodes).slice(0, -1).map(function(oDomRef) {
-							var sWidth = oDomRef.getAttribute("data-sap-width");
-							if (!sWidth || !sWidth.includes("%")) {
-								return oDomRef.getBoundingClientRect().width + "px";
-							} else {
-								return sWidth;
+						window.requestAnimationFrame(function() {
+							if (oControl.bIsDestroyed) {
+								return;
 							}
-						}).join(" + ");
-						// 1px is borderLeft of the dummyCell
-						oTriggerDomRef.style.width = "calc(" + sCalWidth + " + 1px)";
-						oTriggerDomRef.classList.add("sapMGrowingListDummyColumn");
+
+							var sCalWidth = Array.from(oControl.getDomRef("tblHeader").childNodes).slice(0, -1).map(function(oDomRef) {
+								var sWidth = oDomRef.getAttribute("data-sap-width");
+								if (!sWidth || !sWidth.includes("%")) {
+									return oDomRef.getBoundingClientRect().width + "px";
+								} else {
+									return sWidth;
+								}
+							}).join(" + ");
+							// 1px is borderLeft of the dummyCell
+							oTriggerDomRef.style.width = "calc(" + sCalWidth + " + 1px)";
+							oTriggerDomRef.classList.add("sapMGrowingListDummyColumn");
+						});
 					}
 				}
 
