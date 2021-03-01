@@ -71,7 +71,7 @@ sap.ui.define([
 	}
 
 	function getReturnObjectFromBusinessContexts(oBusinessContextReturn, sEntityType) {
-		oBusinessContextReturn.BusinessContexts.map(function(oBusinessContext) {
+		oBusinessContextReturn.BusinessContexts = oBusinessContextReturn.BusinessContexts.map(function(oBusinessContext) {
 			return {
 				description: oBusinessContext.BusinessContextDescription,
 				businessContext: oBusinessContext.BusinessContext
