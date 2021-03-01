@@ -90,7 +90,7 @@
 												<m:Text text="."/>
 											</layout:HorizontalLayout>
 											<layout:HorizontalLayout class="sapUiDocumentationAnnotationsText">
-												<m:Label text="Annotation Limitations:" design="Bold"/>
+												<m:Label text="Annotation Restrictions:" design="Bold"/>
 												<m:Text text="Qualifier support for entity types is limited for this control."/>
 											</layout:HorizontalLayout>
 										</template:if>
