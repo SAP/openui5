@@ -2183,6 +2183,7 @@ sap.ui.define([
 		iDiffSeconds = (oJSDate.getTime() - oToday.getTime()) / 1000;
 		if (this.oFormatOptions.relativeScale == "auto") {
 			sScale = this._getScale(iDiffSeconds, this.aRelativeScales);
+			sScale = fixScaleForMonths(oJSDate, oToday, sScale, iDiffSeconds);
 		}
 
 		if (!aRange) {
@@ -2229,14 +2230,14 @@ sap.ui.define([
 	};
 
 	DateFormat.prototype._mScales = {
-		second: 1,
-		minute: 60,
-		hour: 3600,
-		day: 86400,
-		week: 604800,
-		month: 2592000,
-		quarter: 7776000,
-		year: 31536000
+		second: 1,          // 1
+		minute: 60,         // 60
+		hour: 3600,         // 60*60
+		day: 86400,         // 60*60*24         1 day
+		week: 604800,       // 60*60*24*7       7 days
+		month: 2592000,     // 60*60*24*30      30 days
+		quarter: 7776000,   // 60*60*24*30*3    90 days
+		year: 31536000      // 60*60*24*365     365 days
 	};
 
 	DateFormat.prototype._getScale = function(iDiffSeconds, aScales) {
@@ -2258,6 +2259,41 @@ sap.ui.define([
 
 		return sScale;
 	};
+
+	// Fixes the scale for months/weeks
+	// when involved months do not have 30 days
+	function fixScaleForMonths(oJSDate, oToday, sScale, iDiffSeconds) {
+		var iMonthDiff = Math.abs(oJSDate.getMonth() - oToday.getMonth());
+		if (sScale === "week" && iMonthDiff === 2) {
+			// 2 months diff
+			// e.g. March 1st - Jan 31st
+			return "month";
+		} else if (sScale === "week" && iMonthDiff === 1) {
+			// same day but different month
+			// e.g. March 1st - Feb 1st
+			if (oJSDate.getDate() === oToday.getDate()
+				// future date
+				// e.g. Feb 14th - 15. Mar 15th (29/30 days diff) => 1 month
+				|| (iDiffSeconds < 0 && oJSDate.getDate() < oToday.getDate())
+				// past date
+				// e.g. Mar 15th - Feb 14th (29/30 days diff) => 1 month
+				|| (iDiffSeconds > 0 && oJSDate.getDate() > oToday.getDate())
+			) {
+				return "month";
+			}
+		} else if (sScale === "month" && iMonthDiff === 1) {
+			// future date
+			// e.g. Mar 14th - Apr 13th (30 days diff)
+			if ((iDiffSeconds > 0 && oJSDate.getDate() < oToday.getDate())
+				// past date
+				// Feb 14th - Jan 15th (30 days diff)
+				|| (iDiffSeconds < 0 && oJSDate.getDate() > oToday.getDate())
+			) {
+				return "week";
+			}
+		}
+		return sScale;
+	}
 
 	/**
 	 * Modifies the Date and sets the values with a higher index to <code>0</code>
