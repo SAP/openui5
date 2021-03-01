@@ -438,5 +438,76 @@
         ]
       }
     ]
+  },
+  "1.84.7": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "393d5e2c9a68f2b8b4ee838c7f32646da909a9d7",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: referencing invisible text elements as aria labelled by now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000848162021"
+          }
+        ]
+      },
+      {
+        "id": "6157a0d740f9301469e84d4db55e7a1bb142e391",
+        "type": "FIX",
+        "text": " sap.m.PlanningCalendar: the view key is always set after all the views are available",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180080181"
+          }
+        ]
+      },
+      {
+        "id": "5c19f11f225c661c3d281d46a4b7bce06e6bba52",
+        "type": "FIX",
+        "text": " Input controls: Curly braces properly escaped",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180097576"
+          }
+        ]
+      },
+      {
+        "id": "096afceefe549d1ddbea0edba8313e6869bdaa92",
+        "type": "FIX",
+        "text": " sap.m.MultiComboBox: Prevent token deletion on disabled items",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180010944"
+          }
+        ]
+      },
+      {
+        "id": "2af0964b8e6022442783d9385ef0e4c9c822ee00",
+        "type": "FIX",
+        "text": " sap.m.Shell: the logo property documentation is improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007918612020"
+          }
+        ]
+      },
+      {
+        "id": "db9717fda021e0b2dd41222151d7fded1c1961e9",
+        "type": "FIX",
+        "text": " sap.m.MultiInput: Escape curly braces when creating Token",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180090423"
+          }
+        ]
+      }
+    ]
   }
 }

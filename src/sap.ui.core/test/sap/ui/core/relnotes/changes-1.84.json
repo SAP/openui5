@@ -179,5 +179,32 @@
         ]
       }
     ]
+  },
+  "1.84.7": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "fbe734b47820b5ff6e7ef959498f6eb78824c1cb",
+        "type": "FEATURE",
+        "text": " Localization: add Serbian (Latin), enhance Locale mappings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780409720"
+          }
+        ]
+      },
+      {
+        "id": "c100b0424a89a1befe2c5e3ce61067e50052b37a",
+        "type": "FIX",
+        "text": " sap.ui.model.analytics.AnalyticalBinding: support selecting only the text of a measure",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500000644142021"
+          }
+        ]
+      }
+    ]
   }
 }
