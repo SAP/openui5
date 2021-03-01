@@ -6,11 +6,13 @@ sap.ui.define([
 	"sap/ui/fl/ControlPersonalizationAPI",
 	"sap/ui/fl/FlexControllerFactory",
 	"sap/ui/fl/Layer",
+	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Utils"
 ], function(
 	OldControlPersonalizationAPI,
 	FlexControllerFactory,
 	Layer,
+	Settings,
 	Utils
 ) {
 	"use strict";
@@ -149,6 +151,20 @@ sap.ui.define([
 				id: mPropertyBag.elementId,
 				controlType: mPropertyBag.elementType
 			};
+		},
+
+		/**
+		 * Checks if the data storing implementation for a given layer is capable of handling condensing.
+		 *
+		 * @returns {Promise<boolean>} Resolves to a boolean indicating if condensing is enabled
+		 * @private
+		 * @sapui5-restricted sap.ovp
+		 */
+		isCondensingEnabled: function () {
+			return Settings.getInstance()
+				.then(function (oSettings) {
+					return oSettings.isCondensingEnabled(Layer.USER);
+				});
 		}
 	};
 

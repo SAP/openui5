@@ -857,6 +857,27 @@ sap.ui.define([
 		});
 	});
 
+
+	QUnit.module("isCondensingEnabled", {
+		afterEach: function() {
+			sandbox.restore();
+		}
+	}, function() {
+		[true, false].forEach(function (bCondensingEnabledSetting) {
+			QUnit.test("when called and condensing is set to " + bCondensingEnabledSetting, function(assert) {
+				sandbox.stub(Settings, "getInstance").resolves({
+					isCondensingEnabled: function () {
+						return bCondensingEnabledSetting;
+					}
+				});
+
+				return ControlPersonalizationWriteAPI.isCondensingEnabled().then(function (bCondensingEnabled) {
+					assert.equal(bCondensingEnabledSetting, bCondensingEnabled, "it is returned correct");
+				});
+			});
+		});
+	});
+
 	QUnit.done(function () {
 		jQuery("#qunit-fixture").hide();
 	});
