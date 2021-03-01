@@ -14,7 +14,7 @@ sap.ui.define(function () {
 				language: "en",
 				rtl: false,
 				libs: ["sap.f"],
-				"xx-waitForTheme": true
+				"xx-waitForTheme": "init"
 			},
 			coverage: {
 				only: ["sap/f"]

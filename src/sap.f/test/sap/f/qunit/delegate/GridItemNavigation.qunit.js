@@ -64,6 +64,24 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("No error when matrix can't be calculated", function (assert) {
+		// Arrange
+		var fnThemeAppliedFake = sinon.stub(Core, "isThemeApplied").returns(false),
+			oGrid = this.oGrid,
+			$itemWrapper = jQuery(oGrid.getItems()[0].getDomRef().parentElement),
+			oFakeEvent = new jQuery.Event("keydown", {
+				keyCode: KeyCodes.ARROW_LEFT
+			});
+
+		$itemWrapper.trigger(oFakeEvent);
+
+		// Assert
+		assert.ok(true, "There is no error if events are called before rendering or before theme is applied.");
+
+		// Clean up
+		fnThemeAppliedFake.restore();
+	});
+
 	QUnit.module("Focus", {
 		beforeEach: function () {
 			/* TODO replace with display: grid after the end of support for Internet Explorer */

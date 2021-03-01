@@ -98,7 +98,10 @@ sap.ui.define([
 	};
 
 	GridItemNavigation.prototype._moveFocus = function (oEvent) {
-		var aItemDomRefs = this.getItemDomRefs();
+		var aItemDomRefs = this.getItemDomRefs(),
+			oCurrentItem = oEvent.target,
+			aMatrix,
+			oStartPosition;
 
 		// only react on events of the domrefs
 		if (aItemDomRefs.indexOf(oEvent.target) === -1) {
@@ -107,9 +110,14 @@ sap.ui.define([
 
 		oEvent.preventDefault();
 
-		var oCurrentItem = oEvent.target,
-			aMatrix = this._getGridInstance().getNavigationMatrix(),
-			oStartPosition = this._findPositionInMatrix(aMatrix, oCurrentItem);
+		aMatrix = this._getGridInstance().getNavigationMatrix();
+
+		if (!aMatrix) {
+			// grid control is not rendered or theme is not applied yet
+			return;
+		}
+
+		oStartPosition = this._findPositionInMatrix(aMatrix, oCurrentItem);
 
 		if (!this._mCurrentPosition) {
 			this._mCurrentPosition = {
