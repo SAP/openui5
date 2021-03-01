@@ -24,6 +24,47 @@ sap.ui.define([
 		"use strict";
 
 		/**
+		 * This class resolves the property binding of the 'title' option.
+		 *
+		 * @class
+		 * @param {object} mSettings configuration object for the TitleProvider
+		 * @param {object} mSettings.target Target for which the TitleProvider is created
+		 * @private
+		 * @extends sap.ui.core.Control
+		 */
+		var TitleProvider = Control.extend("sap.ui.core.routing.Target.TitleProvider", /** @lends sap.ui.core.routing.TitleProvider.prototype */ {
+			metadata: {
+				library: "sap.ui.core",
+				properties: {
+					/**
+					 * The title text provided by this class
+					 */
+					title: {
+						type: "string",
+						group: "Data",
+						defaultValue: null
+					}
+				}
+			},
+			constructor: function(mSettings) {
+				this._oTarget = mSettings.target;
+				delete mSettings.target;
+				Control.prototype.constructor.call(this, mSettings);
+			},
+			setTitle: function(sTitle) {
+				// Setting title property should not trigger two way change in model
+				this.setProperty("title", sTitle, true);
+
+				if (this._oTarget._bIsDisplayed && sTitle) {
+					this._oTarget.fireTitleChanged({
+						name: this._oTarget._oOptions._name,
+						title: sTitle
+					});
+				}
+			}
+		});
+
+		/**
 		 * <b>Don't call this constructor directly</b>, use {@link sap.ui.core.routing.Targets} instead, it will create instances of a Target.<br/>
 		 * If you are using the mobile library, please use the {@link sap.m.routing.Targets} constructor, please read the documentation there.<br/>
 		 *
@@ -359,47 +400,6 @@ sap.ui.define([
 			M_EVENTS : {
 				DISPLAY : "display",
 				TITLE_CHANGED : "titleChanged"
-			}
-		});
-
-		/**
-		 * This class resolves the property binding of the 'title' option.
-		 *
-		 * @class
-		 * @param {object} mSettings configuration object for the TitleProvider
-		 * @param {object} mSettings.target Target for which the TitleProvider is created
-		 * @private
-		 * @extends sap.ui.core.Control
-		 */
-		var TitleProvider = Control.extend("sap.ui.core.routing.Target.TitleProvider", /** @lends sap.ui.core.routing.TitleProvider.prototype */ {
-			metadata: {
-				library: "sap.ui.core",
-				properties: {
-					/**
-					 * The title text provided by this class
-					 */
-					title: {
-						type: "string",
-						group: "Data",
-						defaultValue: null
-					}
-				}
-			},
-			constructor: function(mSettings) {
-				this._oTarget = mSettings.target;
-				delete mSettings.target;
-				Control.prototype.constructor.call(this, mSettings);
-			},
-			setTitle: function(sTitle) {
-				// Setting title property should not trigger two way change in model
-				this.setProperty("title", sTitle, true);
-
-				if (this._oTarget._bIsDisplayed && sTitle) {
-					this._oTarget.fireTitleChanged({
-						name: this._oTarget._oOptions._name,
-						title: sTitle
-					});
-				}
 			}
 		});
 
