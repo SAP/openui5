@@ -177,12 +177,12 @@ sap.ui.define([
 				/**
 				 * Content of the field help.
 				 *
-				 * To support different types of content (e.g <code>sap.m.Table</code>), a specific wrapper is used
+				 * To support different types of content (for example <code>sap.m.Table</code>), a specific wrapper is used
 				 * to map the functionality of the content control to the field help. The content control
 				 * is assigned to the wrapper.
 				 *
 				 * The filter logic must be implemented in the wrapper control.
-				 * The filtering is triggered by user interaction (type ahead, search request, or search from <code>FilterBar</code>).
+				 * The filtering is triggered by user interaction (type-ahead, search request, or search from <code>FilterBar</code>).
 				 * (If <code>FilterBar</code> is in <code>LiveMode</code> and in parameters are used, this also triggers filtering.)
 				 *
 				 * @since 1.60.0
@@ -195,15 +195,15 @@ sap.ui.define([
 				/**
 				 * Content for suggestion.
 				 *
-				 * To support different types of content (e.g <code>sap.m.Table</code>), a specific wrapper is used
+				 * To support different types of content (for example <code>sap.m.Table</code>), a specific wrapper is used
 				 * to map the functionality of the content control to the field help. The content control
 				 * is assigned to the wrapper.
 				 *
 				 * The filter logic must be implemented in the wrapper control.
-				 * The filtering is triggered by user interaction (type ahead, search request, or search from <code>FilterBar</code>).
+				 * The filtering is triggered by user interaction (type-ahead, search request, or search from <code>FilterBar</code>).
 				 * (If <code>FilterBar</code> is in <code>LiveMode</code> and in parameters are used, this also triggers filtering.)
 				 *
-				 * <b>Note:</b> If no special content for suggestion is provided the content of the <code>content</code> aggregation is used.
+				 * <b>Note:</b> If no special content for suggestion is provided, the content of the <code>content</code> aggregation is used.
 				 *
 				 * @since 1.88.0
 				 * @experimental As of version 1.88
@@ -216,15 +216,15 @@ sap.ui.define([
 				/**
 				 * Content for dialog.
 				 *
-				 * To support different types of content (e.g <code>sap.m.Table</code>), a specific wrapper is used
+				 * To support different types of content (for example <code>sap.m.Table</code>), a specific wrapper is used
 				 * to map the functionality of the content control to the field help. The content control
 				 * is assigned to the wrapper.
 				 *
 				 * The filter logic must be implemented in the wrapper control.
-				 * The filtering is triggered by user interaction (type ahead, search request, or search from <code>FilterBar</code>).
+				 * The filtering is triggered by user interaction (type-ahead, search request, or search from <code>FilterBar</code>).
 				 * (If <code>FilterBar</code> is in <code>LiveMode</code> and in parameters are used, this also triggers filtering.)
 				 *
-				 * <b>Note:</b> If no special content for dialog is provided the content of the <code>content</code> aggregation is used.
+				 * <b>Note:</b> If no special content for the dialog is provided, the content of the <code>content</code> aggregation is used.
 				 *
 				 * @since 1.88.0
 				 * @experimental As of version 1.88
