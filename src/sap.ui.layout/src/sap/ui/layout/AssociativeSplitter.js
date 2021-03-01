@@ -334,21 +334,6 @@ sap.ui.define([
 		this._calculatedSizes = this._calculatedSizes;
 	};
 
-	AssociativeSplitter.prototype._ensureAllSplittersCollapsed = function (iBar) {
-		var aAreas = this._getContentAreas();
-		var bAllCollapsed = false;
-		for (var i = 0; i < aAreas.length; i++) {
-			var sSize = aAreas[i].getLayoutData().getSize().slice(0, -2);
-
-			if (sSize === "0" || sSize === "au") {
-				bAllCollapsed = true;
-				continue;
-			} else if (i === (aAreas.length - 1) && bAllCollapsed) {
-				this._getContentAreas()[iBar + 1].setLayoutData(new SplitterLayoutData({ size: "100%" }));
-			}
-		}
-	};
-
 	AssociativeSplitter.prototype.containsControl = function (sControlId) {
 		var aContentAreas = this._getContentAreas(),
 			oContentArea,
