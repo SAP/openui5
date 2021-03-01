@@ -1845,7 +1845,6 @@ sap.ui.define([
 			}).placeAt("qunit-fixture");
 
 		sap.ui.getCore().applyChanges();
-
 		// Act
 		oDP.toggleOpen(oDP.isOpen());
 
@@ -1856,6 +1855,11 @@ sap.ui.define([
 		assert.ok(jQuery("#" + oDP.getId() + "-cal").is(":visible"), "CustomYearPicker is visible");
 		assert.ok(oDP._getCalendar() instanceof CustomMonthPicker, "Calendar is of type CustomMonthPicker");
 		assert.equal(oDP._getCalendar().getAggregation("header").getVisibleButton1(), false, "month button in the CustomMonthPicker is hidden");
+
+		oDP.toggleOpen(oDP.isOpen());
+		var oSpy = sinon.spy(oDP._getCalendar(), "_setDisabledMonths");
+		oDP.toggleOpen(oDP.isOpen());
+		assert.strictEqual(oSpy.callCount, 2, "The _setDisabledMonths method is called on on rendering");
 
 		// Clean
 		oDP.destroy();
