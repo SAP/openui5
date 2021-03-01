@@ -1,0 +1,3013 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Kitchen sink - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/Avatar",
+                "sap/ui/webc/main/AvatarGroup",
+                "sap/ui/webc/main/Button",
+                "sap/ui/webc/main/Badge",
+                "sap/ui/webc/main/Icon",
+                "sap/ui/webc/main/BusyIndicator",
+                "sap/ui/webc/main/Calendar",
+                "sap/ui/webc/main/CalendarDate",
+                "sap/ui/webc/main/Card",
+                "sap/ui/webc/main/Carousel",
+                "sap/ui/webc/main/CheckBox",
+                "sap/ui/webc/main/ColorPalette",
+                "sap/ui/webc/main/ColorPaletteItem",
+                "sap/ui/webc/main/ColorPicker",
+                "sap/ui/webc/main/ComboBox",
+                "sap/ui/webc/main/ComboBoxItem",
+                "sap/ui/webc/main/DatePicker",
+                "sap/ui/webc/main/DateRangePicker",
+                "sap/ui/webc/main/DateTimePicker",
+                "sap/ui/webc/main/Dialog",
+                "sap/ui/webc/main/DurationPicker",
+                "sap/ui/webc/main/FileUploader",
+                "sap/ui/webc/main/Input",
+                "sap/ui/webc/main/SuggestionItem",
+                "sap/ui/webc/main/Label",
+                "sap/ui/webc/main/Link",
+                "sap/ui/webc/main/List",
+                "sap/ui/webc/main/CustomListItem",
+                "sap/ui/webc/main/MessageStrip",
+                "sap/ui/webc/main/MultiComboBox",
+                "sap/ui/webc/main/MultiComboBoxItem",
+                "sap/ui/webc/main/MultiInput",
+                "sap/ui/webc/main/Token",
+                "sap/ui/webc/main/Panel",
+                "sap/ui/webc/main/Popover",
+                "sap/ui/webc/main/ProgressIndicator",
+                "sap/ui/webc/main/RadioButton",
+                "sap/ui/webc/main/RangeSlider",
+                "sap/ui/webc/main/RatingIndicator",
+                "sap/ui/webc/main/ResponsivePopover",
+                "sap/ui/webc/main/SegmentedButton",
+                "sap/ui/webc/main/Select",
+                "sap/ui/webc/main/Option",
+                "sap/ui/webc/main/Slider",
+                "sap/ui/webc/main/StepInput",
+                "sap/ui/webc/main/Switch",
+                "sap/ui/webc/main/TabContainer",
+                "sap/ui/webc/main/Tab",
+                "sap/ui/webc/main/Table",
+                "sap/ui/webc/main/TableColumn",
+                "sap/ui/webc/main/TableRow",
+                "sap/ui/webc/main/TableCell",
+                "sap/ui/webc/main/TextArea",
+                "sap/ui/webc/main/TimePicker",
+                "sap/ui/webc/main/Title",
+                "sap/ui/webc/main/Toast",
+                "sap/ui/webc/main/Tree",
+                "sap/ui/webc/main/TreeItem"
+            ], function(
+                Avatar, AvatarGroup, Button, Badge, Icon, BusyIndicator, Calendar, CalendarDate, Card, Carousel, CheckBox, ColorPalette, ColorPaletteItem, ColorPicker, ComboBox, ComboBoxItem, DatePicker, DateRangePicker, DateTimePicker, Dialog, DurationPicker, FileUploader, Input, SuggestionItem, Label, Link, List, CustomListItem, MessageStrip, MultiComboBox, MultiComboBoxItem, MultiInput, Token, Panel, Popover, ProgressIndicator, RadioButton, RangeSlider, RatingIndicator, ResponsivePopover, SegmentedButton, Select, Option, Slider, StepInput, Switch, TabContainer, Tab, Table, TableColumn, TableRow, TableCell, TextArea, TimePicker, Title, Toast, Tree, TreeItem
+            ) {
+
+                var oAvatar = new Avatar({
+                    icon: "employee"
+                });
+                oAvatar.placeAt("testAvatar");
+
+
+                var oAvatarGroup0Button = new Button({
+                    text: "getColorScheme",
+                    click: function(oEvent) {
+                        console.log("Calling getColorScheme...");
+                        var result = oAvatarGroup.getColorScheme();
+                        console.log("... getColorScheme returned: ", result);
+                    }
+                });
+                oAvatarGroup0Button.placeAt("methodsAvatarGroup");
+
+
+
+                var oAvatarGroup1Button = new Button({
+                    text: "getHiddenItems",
+                    click: function(oEvent) {
+                        console.log("Calling getHiddenItems...");
+                        var result = oAvatarGroup.getHiddenItems();
+                        console.log("... getHiddenItems returned: ", result);
+                    }
+                });
+                oAvatarGroup1Button.placeAt("methodsAvatarGroup");
+
+                var oAvatarGroup = new AvatarGroup({
+                    items: [
+                        new Avatar({
+                            icon: "employee"
+                        }),
+                        new Avatar({
+                            icon: "employee"
+                        }),
+                        new Avatar({
+                            icon: "employee"
+                        })
+                    ],
+                    overflowButton: new Button({
+                        icon: "employee",
+                        text: "Some text...",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    click: function(oEvent) {
+                        console.log("Event click fired for AvatarGroup with parameters: ", oEvent.getParameters());
+                    },
+                    overflow: function(oEvent) {
+                        console.log("Event overflow fired for AvatarGroup with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oAvatarGroup.placeAt("testAvatarGroup");
+
+
+                var oBadge = new Badge({
+                    text: "Some text...",
+                    icon: new Icon({
+                        name: "add",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                        }
+                    })
+                });
+                oBadge.placeAt("testBadge");
+
+
+                var oBusyIndicator = new BusyIndicator({
+                    text: "Some text...",
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ]
+                });
+                oBusyIndicator.placeAt("testBusyIndicator");
+
+
+                var oButton = new Button({
+                    icon: "employee",
+                    text: "Some text...",
+                    click: function(oEvent) {
+                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oButton.placeAt("testButton");
+
+
+                var oCalendar = new Calendar({
+                    dates: [
+                        new CalendarDate({
+                            value: "Control value"
+                        }),
+                        new CalendarDate({
+                            value: "Control value"
+                        }),
+                        new CalendarDate({
+                            value: "Control value"
+                        })
+                    ],
+                    selectedDatesChange: function(oEvent) {
+                        console.log("Event selectedDatesChange fired for Calendar with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oCalendar.placeAt("testCalendar");
+
+
+                var oCard = new Card({
+                    subtitleText: "Some text...",
+                    titleText: "Some text...",
+                    action: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    avatar: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    headerClick: function(oEvent) {
+                        console.log("Event headerClick fired for Card with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oCard.placeAt("testCard");
+
+
+                var oCarousel = new Carousel({
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    loadMore: function(oEvent) {
+                        console.log("Event loadMore fired for Carousel with parameters: ", oEvent.getParameters());
+                    },
+                    navigate: function(oEvent) {
+                        console.log("Event navigate fired for Carousel with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oCarousel.placeAt("testCarousel");
+
+
+                var oCheckBox = new CheckBox({
+                    text: "Some text...",
+                    valueState: "Warning",
+                    change: function(oEvent) {
+                        console.log("Event change fired for CheckBox with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oCheckBox.placeAt("testCheckBox");
+
+
+                var oColorPalette = new ColorPalette({
+                    value: "blue",
+                    colors: [
+                        new ColorPaletteItem({
+                            value: "blue"
+                        }),
+                        new ColorPaletteItem({
+                            value: "blue"
+                        }),
+                        new ColorPaletteItem({
+                            value: "blue"
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for ColorPalette with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oColorPalette.placeAt("testColorPalette");
+
+
+                var oColorPicker = new ColorPicker({
+                    change: function(oEvent) {
+                        console.log("Event change fired for ColorPicker with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oColorPicker.placeAt("testColorPicker");
+
+
+                var oComboBox = new ComboBox({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    icon: new Icon({
+                        name: "add",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    items: [
+                        new ComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        }),
+                        new ComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        }),
+                        new ComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for ComboBox with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for ComboBox with parameters: ", oEvent.getParameters());
+                    },
+                    selectionChange: function(oEvent) {
+                        console.log("Event selectionChange fired for ComboBox with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oComboBox.placeAt("testComboBox");
+
+
+                var oDatePicker0Button = new Button({
+                    text: "closePicker",
+                    click: function(oEvent) {
+                        console.log("Calling closePicker...");
+                        var result = oDatePicker.closePicker();
+                        console.log("... closePicker returned: ", result);
+                    }
+                });
+                oDatePicker0Button.placeAt("methodsDatePicker");
+
+
+
+                var oDatePicker1Button = new Button({
+                    text: "formatValue",
+                    click: function(oEvent) {
+                        console.log("Calling formatValue...");
+                        var result = oDatePicker.formatValue();
+                        console.log("... formatValue returned: ", result);
+                    }
+                });
+                oDatePicker1Button.placeAt("methodsDatePicker");
+
+
+
+                var oDatePicker2Button = new Button({
+                    text: "isInValidRange",
+                    click: function(oEvent) {
+                        console.log("Calling isInValidRange...");
+                        var result = oDatePicker.isInValidRange();
+                        console.log("... isInValidRange returned: ", result);
+                    }
+                });
+                oDatePicker2Button.placeAt("methodsDatePicker");
+
+
+
+                var oDatePicker3Button = new Button({
+                    text: "isOpen",
+                    click: function(oEvent) {
+                        console.log("Calling isOpen...");
+                        var result = oDatePicker.isOpen();
+                        console.log("... isOpen returned: ", result);
+                    }
+                });
+                oDatePicker3Button.placeAt("methodsDatePicker");
+
+
+
+                var oDatePicker4Button = new Button({
+                    text: "isValid",
+                    click: function(oEvent) {
+                        console.log("Calling isValid...");
+                        var result = oDatePicker.isValid();
+                        console.log("... isValid returned: ", result);
+                    }
+                });
+                oDatePicker4Button.placeAt("methodsDatePicker");
+
+
+
+                var oDatePicker5Button = new Button({
+                    text: "openPicker",
+                    click: function(oEvent) {
+                        console.log("Calling openPicker...");
+                        var result = oDatePicker.openPicker();
+                        console.log("... openPicker returned: ", result);
+                    }
+                });
+                oDatePicker5Button.placeAt("methodsDatePicker");
+
+
+
+                var oDatePicker6Button = new Button({
+                    text: "getDateValue",
+                    click: function(oEvent) {
+                        console.log("Calling getDateValue...");
+                        var result = oDatePicker.getDateValue();
+                        console.log("... getDateValue returned: ", result);
+                    }
+                });
+                oDatePicker6Button.placeAt("methodsDatePicker");
+
+                var oDatePicker = new DatePicker({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    change: function(oEvent) {
+                        console.log("Event change fired for DatePicker with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for DatePicker with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oDatePicker.placeAt("testDatePicker");
+
+
+                var oDateRangePicker0Button = new Button({
+                    text: "closePicker",
+                    click: function(oEvent) {
+                        console.log("Calling closePicker...");
+                        var result = oDateRangePicker.closePicker();
+                        console.log("... closePicker returned: ", result);
+                    }
+                });
+                oDateRangePicker0Button.placeAt("methodsDateRangePicker");
+
+
+
+                var oDateRangePicker1Button = new Button({
+                    text: "formatValue",
+                    click: function(oEvent) {
+                        console.log("Calling formatValue...");
+                        var result = oDateRangePicker.formatValue();
+                        console.log("... formatValue returned: ", result);
+                    }
+                });
+                oDateRangePicker1Button.placeAt("methodsDateRangePicker");
+
+
+
+                var oDateRangePicker2Button = new Button({
+                    text: "isInValidRange",
+                    click: function(oEvent) {
+                        console.log("Calling isInValidRange...");
+                        var result = oDateRangePicker.isInValidRange();
+                        console.log("... isInValidRange returned: ", result);
+                    }
+                });
+                oDateRangePicker2Button.placeAt("methodsDateRangePicker");
+
+
+
+                var oDateRangePicker3Button = new Button({
+                    text: "isOpen",
+                    click: function(oEvent) {
+                        console.log("Calling isOpen...");
+                        var result = oDateRangePicker.isOpen();
+                        console.log("... isOpen returned: ", result);
+                    }
+                });
+                oDateRangePicker3Button.placeAt("methodsDateRangePicker");
+
+
+
+                var oDateRangePicker4Button = new Button({
+                    text: "isValid",
+                    click: function(oEvent) {
+                        console.log("Calling isValid...");
+                        var result = oDateRangePicker.isValid();
+                        console.log("... isValid returned: ", result);
+                    }
+                });
+                oDateRangePicker4Button.placeAt("methodsDateRangePicker");
+
+
+
+                var oDateRangePicker5Button = new Button({
+                    text: "openPicker",
+                    click: function(oEvent) {
+                        console.log("Calling openPicker...");
+                        var result = oDateRangePicker.openPicker();
+                        console.log("... openPicker returned: ", result);
+                    }
+                });
+                oDateRangePicker5Button.placeAt("methodsDateRangePicker");
+
+
+
+                var oDateRangePicker6Button = new Button({
+                    text: "getDateValue",
+                    click: function(oEvent) {
+                        console.log("Calling getDateValue...");
+                        var result = oDateRangePicker.getDateValue();
+                        console.log("... getDateValue returned: ", result);
+                    }
+                });
+                oDateRangePicker6Button.placeAt("methodsDateRangePicker");
+
+
+
+                var oDateRangePicker7Button = new Button({
+                    text: "getFirstDateValue",
+                    click: function(oEvent) {
+                        console.log("Calling getFirstDateValue...");
+                        var result = oDateRangePicker.getFirstDateValue();
+                        console.log("... getFirstDateValue returned: ", result);
+                    }
+                });
+                oDateRangePicker7Button.placeAt("methodsDateRangePicker");
+
+
+
+                var oDateRangePicker8Button = new Button({
+                    text: "getLastDateValue",
+                    click: function(oEvent) {
+                        console.log("Calling getLastDateValue...");
+                        var result = oDateRangePicker.getLastDateValue();
+                        console.log("... getLastDateValue returned: ", result);
+                    }
+                });
+                oDateRangePicker8Button.placeAt("methodsDateRangePicker");
+
+                var oDateRangePicker = new DateRangePicker({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    change: function(oEvent) {
+                        console.log("Event change fired for DateRangePicker with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for DateRangePicker with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oDateRangePicker.placeAt("testDateRangePicker");
+
+
+                var oDateTimePicker0Button = new Button({
+                    text: "closePicker",
+                    click: function(oEvent) {
+                        console.log("Calling closePicker...");
+                        var result = oDateTimePicker.closePicker();
+                        console.log("... closePicker returned: ", result);
+                    }
+                });
+                oDateTimePicker0Button.placeAt("methodsDateTimePicker");
+
+
+
+                var oDateTimePicker1Button = new Button({
+                    text: "formatValue",
+                    click: function(oEvent) {
+                        console.log("Calling formatValue...");
+                        var result = oDateTimePicker.formatValue();
+                        console.log("... formatValue returned: ", result);
+                    }
+                });
+                oDateTimePicker1Button.placeAt("methodsDateTimePicker");
+
+
+
+                var oDateTimePicker2Button = new Button({
+                    text: "isInValidRange",
+                    click: function(oEvent) {
+                        console.log("Calling isInValidRange...");
+                        var result = oDateTimePicker.isInValidRange();
+                        console.log("... isInValidRange returned: ", result);
+                    }
+                });
+                oDateTimePicker2Button.placeAt("methodsDateTimePicker");
+
+
+
+                var oDateTimePicker3Button = new Button({
+                    text: "isOpen",
+                    click: function(oEvent) {
+                        console.log("Calling isOpen...");
+                        var result = oDateTimePicker.isOpen();
+                        console.log("... isOpen returned: ", result);
+                    }
+                });
+                oDateTimePicker3Button.placeAt("methodsDateTimePicker");
+
+
+
+                var oDateTimePicker4Button = new Button({
+                    text: "isValid",
+                    click: function(oEvent) {
+                        console.log("Calling isValid...");
+                        var result = oDateTimePicker.isValid();
+                        console.log("... isValid returned: ", result);
+                    }
+                });
+                oDateTimePicker4Button.placeAt("methodsDateTimePicker");
+
+
+
+                var oDateTimePicker5Button = new Button({
+                    text: "openPicker",
+                    click: function(oEvent) {
+                        console.log("Calling openPicker...");
+                        var result = oDateTimePicker.openPicker();
+                        console.log("... openPicker returned: ", result);
+                    }
+                });
+                oDateTimePicker5Button.placeAt("methodsDateTimePicker");
+
+
+
+                var oDateTimePicker6Button = new Button({
+                    text: "getDateValue",
+                    click: function(oEvent) {
+                        console.log("Calling getDateValue...");
+                        var result = oDateTimePicker.getDateValue();
+                        console.log("... getDateValue returned: ", result);
+                    }
+                });
+                oDateTimePicker6Button.placeAt("methodsDateTimePicker");
+
+                var oDateTimePicker = new DateTimePicker({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    change: function(oEvent) {
+                        console.log("Event change fired for DateTimePicker with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for DateTimePicker with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oDateTimePicker.placeAt("testDateTimePicker");
+
+
+                var oDialog0Button = new Button({
+                    text: "applyFocus",
+                    click: function(oEvent) {
+                        console.log("Calling applyFocus...");
+                        var result = oDialog.applyFocus();
+                        console.log("... applyFocus returned: ", result);
+                    }
+                });
+                oDialog0Button.placeAt("methodsDialog");
+
+
+
+                var oDialog1Button = new Button({
+                    text: "close",
+                    click: function(oEvent) {
+                        console.log("Calling close...");
+                        var result = oDialog.close();
+                        console.log("... close returned: ", result);
+                    }
+                });
+                oDialog1Button.placeAt("methodsDialog");
+
+
+
+                var oDialog2Button = new Button({
+                    text: "isOpen",
+                    click: function(oEvent) {
+                        console.log("Calling isOpen...");
+                        var result = oDialog.isOpen();
+                        console.log("... isOpen returned: ", result);
+                    }
+                });
+                oDialog2Button.placeAt("methodsDialog");
+
+
+
+                var oDialog3Button = new Button({
+                    text: "open",
+                    click: function(oEvent) {
+                        console.log("Calling open...");
+                        var result = oDialog.open();
+                        console.log("... open returned: ", result);
+                    }
+                });
+                oDialog3Button.placeAt("methodsDialog");
+
+                var oDialog = new Dialog({
+                    headerText: "Some text...",
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    footer: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    header: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    afterClose: function(oEvent) {
+                        console.log("Event afterClose fired for Dialog with parameters: ", oEvent.getParameters());
+                    },
+                    afterOpen: function(oEvent) {
+                        console.log("Event afterOpen fired for Dialog with parameters: ", oEvent.getParameters());
+                    },
+                    beforeClose: function(oEvent) {
+                        console.log("Event beforeClose fired for Dialog with parameters: ", oEvent.getParameters());
+                    },
+                    beforeOpen: function(oEvent) {
+                        console.log("Event beforeOpen fired for Dialog with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oDialog.placeAt("testDialog");
+
+
+                var oDurationPicker0Button = new Button({
+                    text: "closePicker",
+                    click: function(oEvent) {
+                        console.log("Calling closePicker...");
+                        var result = oDurationPicker.closePicker();
+                        console.log("... closePicker returned: ", result);
+                    }
+                });
+                oDurationPicker0Button.placeAt("methodsDurationPicker");
+
+
+
+                var oDurationPicker1Button = new Button({
+                    text: "formatValue",
+                    click: function(oEvent) {
+                        console.log("Calling formatValue...");
+                        var result = oDurationPicker.formatValue();
+                        console.log("... formatValue returned: ", result);
+                    }
+                });
+                oDurationPicker1Button.placeAt("methodsDurationPicker");
+
+
+
+                var oDurationPicker2Button = new Button({
+                    text: "isOpen",
+                    click: function(oEvent) {
+                        console.log("Calling isOpen...");
+                        var result = oDurationPicker.isOpen();
+                        console.log("... isOpen returned: ", result);
+                    }
+                });
+                oDurationPicker2Button.placeAt("methodsDurationPicker");
+
+
+
+                var oDurationPicker3Button = new Button({
+                    text: "isValid",
+                    click: function(oEvent) {
+                        console.log("Calling isValid...");
+                        var result = oDurationPicker.isValid();
+                        console.log("... isValid returned: ", result);
+                    }
+                });
+                oDurationPicker3Button.placeAt("methodsDurationPicker");
+
+
+
+                var oDurationPicker4Button = new Button({
+                    text: "openPicker",
+                    click: function(oEvent) {
+                        console.log("Calling openPicker...");
+                        var result = oDurationPicker.openPicker();
+                        console.log("... openPicker returned: ", result);
+                    }
+                });
+                oDurationPicker4Button.placeAt("methodsDurationPicker");
+
+                var oDurationPicker = new DurationPicker({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    change: function(oEvent) {
+                        console.log("Event change fired for DurationPicker with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for DurationPicker with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oDurationPicker.placeAt("testDurationPicker");
+
+
+                var oFileUploader0Button = new Button({
+                    text: "getFiles",
+                    click: function(oEvent) {
+                        console.log("Calling getFiles...");
+                        var result = oFileUploader.getFiles();
+                        console.log("... getFiles returned: ", result);
+                    }
+                });
+                oFileUploader0Button.placeAt("methodsFileUploader");
+
+                var oFileUploader = new FileUploader({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for FileUploader with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oFileUploader.placeAt("testFileUploader");
+
+
+                var oIcon = new Icon({
+                    name: "add",
+                    click: function(oEvent) {
+                        console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oIcon.placeAt("testIcon");
+
+
+                var oInput0Button = new Button({
+                    text: "getPreviewItem",
+                    click: function(oEvent) {
+                        console.log("Calling getPreviewItem...");
+                        var result = oInput.getPreviewItem();
+                        console.log("... getPreviewItem returned: ", result);
+                    }
+                });
+                oInput0Button.placeAt("methodsInput");
+
+                var oInput = new Input({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    icon: new Icon({
+                        name: "add",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    suggestionItems: [
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        }),
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        }),
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for Input with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for Input with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionItemPreview: function(oEvent) {
+                        console.log("Event suggestionItemPreview fired for Input with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionItemSelect: function(oEvent) {
+                        console.log("Event suggestionItemSelect fired for Input with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionScroll: function(oEvent) {
+                        console.log("Event suggestionScroll fired for Input with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oInput.placeAt("testInput");
+
+
+                var oLabel = new Label({
+                    text: "Some text..."
+                });
+                oLabel.placeAt("testLabel");
+
+
+                var oLink = new Link({
+                    text: "Some text...",
+                    click: function(oEvent) {
+                        console.log("Event click fired for Link with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oLink.placeAt("testLink");
+
+
+                var oList = new List({
+                    footerText: "Some text...",
+                    headerText: "Some text...",
+                    noDataText: "Some text...",
+                    header: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    items: [
+                        new CustomListItem({
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ],
+                            detailClick: function(oEvent) {
+                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new CustomListItem({
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ],
+                            detailClick: function(oEvent) {
+                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new CustomListItem({
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ],
+                            detailClick: function(oEvent) {
+                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    itemClick: function(oEvent) {
+                        console.log("Event itemClick fired for List with parameters: ", oEvent.getParameters());
+                    },
+                    itemClose: function(oEvent) {
+                        console.log("Event itemClose fired for List with parameters: ", oEvent.getParameters());
+                    },
+                    itemDelete: function(oEvent) {
+                        console.log("Event itemDelete fired for List with parameters: ", oEvent.getParameters());
+                    },
+                    itemToggle: function(oEvent) {
+                        console.log("Event itemToggle fired for List with parameters: ", oEvent.getParameters());
+                    },
+                    loadMore: function(oEvent) {
+                        console.log("Event loadMore fired for List with parameters: ", oEvent.getParameters());
+                    },
+                    selectionChange: function(oEvent) {
+                        console.log("Event selectionChange fired for List with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oList.placeAt("testList");
+
+
+                var oMessageStrip = new MessageStrip({
+                    text: "Some text...",
+                    icon: new Icon({
+                        name: "add",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    close: function(oEvent) {
+                        console.log("Event close fired for MessageStrip with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oMessageStrip.placeAt("testMessageStrip");
+
+
+                var oMultiComboBox0Button = new Button({
+                    text: "getOpen",
+                    click: function(oEvent) {
+                        console.log("Calling getOpen...");
+                        var result = oMultiComboBox.getOpen();
+                        console.log("... getOpen returned: ", result);
+                    }
+                });
+                oMultiComboBox0Button.placeAt("methodsMultiComboBox");
+
+                var oMultiComboBox = new MultiComboBox({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    icon: new Icon({
+                        name: "add",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    items: [
+                        new MultiComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        }),
+                        new MultiComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        }),
+                        new MultiComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for MultiComboBox with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for MultiComboBox with parameters: ", oEvent.getParameters());
+                    },
+                    openChange: function(oEvent) {
+                        console.log("Event openChange fired for MultiComboBox with parameters: ", oEvent.getParameters());
+                    },
+                    selectionChange: function(oEvent) {
+                        console.log("Event selectionChange fired for MultiComboBox with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oMultiComboBox.placeAt("testMultiComboBox");
+
+
+                var oMultiInput0Button = new Button({
+                    text: "getPreviewItem",
+                    click: function(oEvent) {
+                        console.log("Calling getPreviewItem...");
+                        var result = oMultiInput.getPreviewItem();
+                        console.log("... getPreviewItem returned: ", result);
+                    }
+                });
+                oMultiInput0Button.placeAt("methodsMultiInput");
+
+                var oMultiInput = new MultiInput({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    icon: new Icon({
+                        name: "add",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    suggestionItems: [
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        }),
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        }),
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        })
+                    ],
+                    tokens: [
+                        new Token({
+                            text: "Some text...",
+                            closeIcon: new Icon({
+                                name: "add",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            select: function(oEvent) {
+                                console.log("Event select fired for Token with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Token({
+                            text: "Some text...",
+                            closeIcon: new Icon({
+                                name: "add",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            select: function(oEvent) {
+                                console.log("Event select fired for Token with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Token({
+                            text: "Some text...",
+                            closeIcon: new Icon({
+                                name: "add",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            select: function(oEvent) {
+                                console.log("Event select fired for Token with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionItemPreview: function(oEvent) {
+                        console.log("Event suggestionItemPreview fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionItemSelect: function(oEvent) {
+                        console.log("Event suggestionItemSelect fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionScroll: function(oEvent) {
+                        console.log("Event suggestionScroll fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    tokenDelete: function(oEvent) {
+                        console.log("Event tokenDelete fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    valueHelpTrigger: function(oEvent) {
+                        console.log("Event valueHelpTrigger fired for MultiInput with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oMultiInput.placeAt("testMultiInput");
+
+
+                var oPanel = new Panel({
+                    headerText: "Some text...",
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    header: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    toggle: function(oEvent) {
+                        console.log("Event toggle fired for Panel with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oPanel.placeAt("testPanel");
+
+
+                var oPopover0Button = new Button({
+                    text: "applyFocus",
+                    click: function(oEvent) {
+                        console.log("Calling applyFocus...");
+                        var result = oPopover.applyFocus();
+                        console.log("... applyFocus returned: ", result);
+                    }
+                });
+                oPopover0Button.placeAt("methodsPopover");
+
+
+
+                var oPopover1Button = new Button({
+                    text: "close",
+                    click: function(oEvent) {
+                        console.log("Calling close...");
+                        var result = oPopover.close();
+                        console.log("... close returned: ", result);
+                    }
+                });
+                oPopover1Button.placeAt("methodsPopover");
+
+
+
+                var oPopover2Button = new Button({
+                    text: "isOpen",
+                    click: function(oEvent) {
+                        console.log("Calling isOpen...");
+                        var result = oPopover.isOpen();
+                        console.log("... isOpen returned: ", result);
+                    }
+                });
+                oPopover2Button.placeAt("methodsPopover");
+
+
+
+                var oPopover3Button = new Button({
+                    text: "openBy",
+                    click: function(oEvent) {
+                        console.log("Calling openBy...");
+                        var result = oPopover.openBy(oPopover3Button);
+                        console.log("... openBy returned: ", result);
+                    }
+                });
+                oPopover3Button.placeAt("methodsPopover");
+
+                var oPopover = new Popover({
+                    headerText: "Some text...",
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    footer: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    header: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    afterClose: function(oEvent) {
+                        console.log("Event afterClose fired for Popover with parameters: ", oEvent.getParameters());
+                    },
+                    afterOpen: function(oEvent) {
+                        console.log("Event afterOpen fired for Popover with parameters: ", oEvent.getParameters());
+                    },
+                    beforeClose: function(oEvent) {
+                        console.log("Event beforeClose fired for Popover with parameters: ", oEvent.getParameters());
+                    },
+                    beforeOpen: function(oEvent) {
+                        console.log("Event beforeOpen fired for Popover with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oPopover.placeAt("testPopover");
+
+
+                var oProgressIndicator = new ProgressIndicator({
+                    valueState: "Warning"
+                });
+                oProgressIndicator.placeAt("testProgressIndicator");
+
+
+                var oRadioButton = new RadioButton({
+                    text: "Some text...",
+                    value: "Control value",
+                    valueState: "Warning",
+                    select: function(oEvent) {
+                        console.log("Event select fired for RadioButton with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oRadioButton.placeAt("testRadioButton");
+
+
+                var oRangeSlider = new RangeSlider({
+                    change: function(oEvent) {
+                        console.log("Event change fired for RangeSlider with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for RangeSlider with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oRangeSlider.placeAt("testRangeSlider");
+
+
+                var oRatingIndicator = new RatingIndicator({
+                    change: function(oEvent) {
+                        console.log("Event change fired for RatingIndicator with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oRatingIndicator.placeAt("testRatingIndicator");
+
+
+                var oResponsivePopover0Button = new Button({
+                    text: "applyFocus",
+                    click: function(oEvent) {
+                        console.log("Calling applyFocus...");
+                        var result = oResponsivePopover.applyFocus();
+                        console.log("... applyFocus returned: ", result);
+                    }
+                });
+                oResponsivePopover0Button.placeAt("methodsResponsivePopover");
+
+
+
+                var oResponsivePopover1Button = new Button({
+                    text: "close",
+                    click: function(oEvent) {
+                        console.log("Calling close...");
+                        var result = oResponsivePopover.close();
+                        console.log("... close returned: ", result);
+                    }
+                });
+                oResponsivePopover1Button.placeAt("methodsResponsivePopover");
+
+
+
+                var oResponsivePopover2Button = new Button({
+                    text: "isOpen",
+                    click: function(oEvent) {
+                        console.log("Calling isOpen...");
+                        var result = oResponsivePopover.isOpen();
+                        console.log("... isOpen returned: ", result);
+                    }
+                });
+                oResponsivePopover2Button.placeAt("methodsResponsivePopover");
+
+
+
+                var oResponsivePopover3Button = new Button({
+                    text: "open",
+                    click: function(oEvent) {
+                        console.log("Calling open...");
+                        var result = oResponsivePopover.open();
+                        console.log("... open returned: ", result);
+                    }
+                });
+                oResponsivePopover3Button.placeAt("methodsResponsivePopover");
+
+
+
+                var oResponsivePopover4Button = new Button({
+                    text: "openBy",
+                    click: function(oEvent) {
+                        console.log("Calling openBy...");
+                        var result = oResponsivePopover.openBy(oResponsivePopover4Button);
+                        console.log("... openBy returned: ", result);
+                    }
+                });
+                oResponsivePopover4Button.placeAt("methodsResponsivePopover");
+
+                var oResponsivePopover = new ResponsivePopover({
+                    headerText: "Some text...",
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    footer: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    header: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    afterClose: function(oEvent) {
+                        console.log("Event afterClose fired for ResponsivePopover with parameters: ", oEvent.getParameters());
+                    },
+                    afterOpen: function(oEvent) {
+                        console.log("Event afterOpen fired for ResponsivePopover with parameters: ", oEvent.getParameters());
+                    },
+                    beforeClose: function(oEvent) {
+                        console.log("Event beforeClose fired for ResponsivePopover with parameters: ", oEvent.getParameters());
+                    },
+                    beforeOpen: function(oEvent) {
+                        console.log("Event beforeOpen fired for ResponsivePopover with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oResponsivePopover.placeAt("testResponsivePopover");
+
+
+                var oSegmentedButton0Button = new Button({
+                    text: "getSelectedButton",
+                    click: function(oEvent) {
+                        console.log("Calling getSelectedButton...");
+                        var result = oSegmentedButton.getSelectedButton();
+                        console.log("... getSelectedButton returned: ", result);
+                    }
+                });
+                oSegmentedButton0Button.placeAt("methodsSegmentedButton");
+
+                var oSegmentedButton = new SegmentedButton({
+                    buttons: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    selectionChange: function(oEvent) {
+                        console.log("Event selectionChange fired for SegmentedButton with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oSegmentedButton.placeAt("testSegmentedButton");
+
+
+                var oSelect0Button = new Button({
+                    text: "getSelectedOption",
+                    click: function(oEvent) {
+                        console.log("Calling getSelectedOption...");
+                        var result = oSelect.getSelectedOption();
+                        console.log("... getSelectedOption returned: ", result);
+                    }
+                });
+                oSelect0Button.placeAt("methodsSelect");
+
+                var oSelect = new Select({
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    options: [
+                        new Option({
+                            icon: "employee",
+                            text: "Some text...",
+                            value: "Control value"
+                        }),
+                        new Option({
+                            icon: "employee",
+                            text: "Some text...",
+                            value: "Control value"
+                        }),
+                        new Option({
+                            icon: "employee",
+                            text: "Some text...",
+                            value: "Control value"
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for Select with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oSelect.placeAt("testSelect");
+
+
+                var oSlider = new Slider({
+                    change: function(oEvent) {
+                        console.log("Event change fired for Slider with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for Slider with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oSlider.placeAt("testSlider");
+
+
+                var oStepInput = new StepInput({
+                    placeholder: "This is my placeholder value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    change: function(oEvent) {
+                        console.log("Event change fired for StepInput with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oStepInput.placeAt("testStepInput");
+
+
+                var oSwitch = new Switch({
+                    textOff: "Some text...",
+                    textOn: "Some text...",
+                    change: function(oEvent) {
+                        console.log("Event change fired for Switch with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oSwitch.placeAt("testSwitch");
+
+
+                var oTabContainer = new TabContainer({
+                    items: [
+                        new Tab({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ]
+                        }),
+                        new Tab({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ]
+                        }),
+                        new Tab({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ]
+                        })
+                    ],
+                    overflowButton: new Button({
+                        icon: "employee",
+                        text: "Some text...",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    tabSelect: function(oEvent) {
+                        console.log("Event tabSelect fired for TabContainer with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oTabContainer.placeAt("testTabContainer");
+
+
+                var oTable = new Table({
+                    growingButtonSubtext: "Some text...",
+                    growingButtonText: "Some text...",
+                    noDataText: "Some text...",
+                    columns: [
+                        new TableColumn({
+                            popinText: "Some text...",
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ]
+                        }),
+                        new TableColumn({
+                            popinText: "Some text...",
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ]
+                        }),
+                        new TableColumn({
+                            popinText: "Some text...",
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ]
+                        })
+                    ],
+                    rows: [
+                        new TableRow({
+                            cells: [
+                                new TableCell({
+                                    content: [
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        })
+                                    ]
+                                }),
+                                new TableCell({
+                                    content: [
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        })
+                                    ]
+                                }),
+                                new TableCell({
+                                    content: [
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        })
+                                    ]
+                                })
+                            ]
+                        }),
+                        new TableRow({
+                            cells: [
+                                new TableCell({
+                                    content: [
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        })
+                                    ]
+                                }),
+                                new TableCell({
+                                    content: [
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        })
+                                    ]
+                                }),
+                                new TableCell({
+                                    content: [
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        })
+                                    ]
+                                })
+                            ]
+                        }),
+                        new TableRow({
+                            cells: [
+                                new TableCell({
+                                    content: [
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        })
+                                    ]
+                                }),
+                                new TableCell({
+                                    content: [
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        })
+                                    ]
+                                }),
+                                new TableCell({
+                                    content: [
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        }),
+                                        new Button({
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            click: function(oEvent) {
+                                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                            }
+                                        })
+                                    ]
+                                })
+                            ]
+                        })
+                    ],
+                    loadMore: function(oEvent) {
+                        console.log("Event loadMore fired for Table with parameters: ", oEvent.getParameters());
+                    },
+                    popinChange: function(oEvent) {
+                        console.log("Event popinChange fired for Table with parameters: ", oEvent.getParameters());
+                    },
+                    rowClick: function(oEvent) {
+                        console.log("Event rowClick fired for Table with parameters: ", oEvent.getParameters());
+                    },
+                    selectionChange: function(oEvent) {
+                        console.log("Event selectionChange fired for Table with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oTable.placeAt("testTable");
+
+
+                var oTextArea = new TextArea({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    change: function(oEvent) {
+                        console.log("Event change fired for TextArea with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for TextArea with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oTextArea.placeAt("testTextArea");
+
+
+                var oTimePicker0Button = new Button({
+                    text: "closePicker",
+                    click: function(oEvent) {
+                        console.log("Calling closePicker...");
+                        var result = oTimePicker.closePicker();
+                        console.log("... closePicker returned: ", result);
+                    }
+                });
+                oTimePicker0Button.placeAt("methodsTimePicker");
+
+
+
+                var oTimePicker1Button = new Button({
+                    text: "formatValue",
+                    click: function(oEvent) {
+                        console.log("Calling formatValue...");
+                        var result = oTimePicker.formatValue();
+                        console.log("... formatValue returned: ", result);
+                    }
+                });
+                oTimePicker1Button.placeAt("methodsTimePicker");
+
+
+
+                var oTimePicker2Button = new Button({
+                    text: "isOpen",
+                    click: function(oEvent) {
+                        console.log("Calling isOpen...");
+                        var result = oTimePicker.isOpen();
+                        console.log("... isOpen returned: ", result);
+                    }
+                });
+                oTimePicker2Button.placeAt("methodsTimePicker");
+
+
+
+                var oTimePicker3Button = new Button({
+                    text: "isValid",
+                    click: function(oEvent) {
+                        console.log("Calling isValid...");
+                        var result = oTimePicker.isValid();
+                        console.log("... isValid returned: ", result);
+                    }
+                });
+                oTimePicker3Button.placeAt("methodsTimePicker");
+
+
+
+                var oTimePicker4Button = new Button({
+                    text: "openPicker",
+                    click: function(oEvent) {
+                        console.log("Calling openPicker...");
+                        var result = oTimePicker.openPicker();
+                        console.log("... openPicker returned: ", result);
+                    }
+                });
+                oTimePicker4Button.placeAt("methodsTimePicker");
+
+
+
+                var oTimePicker5Button = new Button({
+                    text: "getDateValue",
+                    click: function(oEvent) {
+                        console.log("Calling getDateValue...");
+                        var result = oTimePicker.getDateValue();
+                        console.log("... getDateValue returned: ", result);
+                    }
+                });
+                oTimePicker5Button.placeAt("methodsTimePicker");
+
+                var oTimePicker = new TimePicker({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    change: function(oEvent) {
+                        console.log("Event change fired for TimePicker with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for TimePicker with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oTimePicker.placeAt("testTimePicker");
+
+
+                var oTitle = new Title({
+                    text: "Some text..."
+                });
+                oTitle.placeAt("testTitle");
+
+
+                var oToast0Button = new Button({
+                    text: "show",
+                    click: function(oEvent) {
+                        console.log("Calling show...");
+                        var result = oToast.show();
+                        console.log("... show returned: ", result);
+                    }
+                });
+                oToast0Button.placeAt("methodsToast");
+
+                var oToast = new Toast({
+                    text: "Some text..."
+                });
+                oToast.placeAt("testToast");
+
+
+                var oTree0Button = new Button({
+                    text: "walk",
+                    click: function(oEvent) {
+                        console.log("Calling walk...");
+                        var result = oTree.walk();
+                        console.log("... walk returned: ", result);
+                    }
+                });
+                oTree0Button.placeAt("methodsTree");
+
+                var oTree = new Tree({
+                    footerText: "Some text...",
+                    headerText: "Some text...",
+                    noDataText: "Some text...",
+                    header: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    items: [
+                        new TreeItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            items: [
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        }),
+                        new TreeItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            items: [
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        }),
+                        new TreeItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text...",
+                            items: [
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                }),
+                                new TreeItem({
+                                    additionalText: "Some text...",
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    items: [
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        }),
+                                        new TreeItem({
+                                            additionalText: "Some text...",
+                                            icon: "employee",
+                                            text: "Some text...",
+                                            items: [
+
+                                            ]
+                                        })
+                                    ]
+                                })
+                            ]
+                        })
+                    ],
+                    itemClick: function(oEvent) {
+                        console.log("Event itemClick fired for Tree with parameters: ", oEvent.getParameters());
+                    },
+                    itemDelete: function(oEvent) {
+                        console.log("Event itemDelete fired for Tree with parameters: ", oEvent.getParameters());
+                    },
+                    itemToggle: function(oEvent) {
+                        console.log("Event itemToggle fired for Tree with parameters: ", oEvent.getParameters());
+                    },
+                    selectionChange: function(oEvent) {
+                        console.log("Event selectionChange fired for Tree with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oTree.placeAt("testTree");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+
+    <h1>0. Avatar</h1>
+    <div id="methodsAvatar"></div>
+    <div id="testAvatar"></div>
+    <br><br>
+
+
+    <h1>1. AvatarGroup</h1>
+    <div id="methodsAvatarGroup"></div>
+    <div id="testAvatarGroup"></div>
+    <br><br>
+
+
+    <h1>2. Badge</h1>
+    <div id="methodsBadge"></div>
+    <div id="testBadge"></div>
+    <br><br>
+
+
+    <h1>3. BusyIndicator</h1>
+    <div id="methodsBusyIndicator"></div>
+    <div id="testBusyIndicator"></div>
+    <br><br>
+
+
+    <h1>4. Button</h1>
+    <div id="methodsButton"></div>
+    <div id="testButton"></div>
+    <br><br>
+
+
+    <h1>5. Calendar</h1>
+    <div id="methodsCalendar"></div>
+    <div id="testCalendar"></div>
+    <br><br>
+
+
+    <h1>6. Card</h1>
+    <div id="methodsCard"></div>
+    <div id="testCard"></div>
+    <br><br>
+
+
+    <h1>7. Carousel</h1>
+    <div id="methodsCarousel"></div>
+    <div id="testCarousel"></div>
+    <br><br>
+
+
+    <h1>8. CheckBox</h1>
+    <div id="methodsCheckBox"></div>
+    <div id="testCheckBox"></div>
+    <br><br>
+
+
+    <h1>9. ColorPalette</h1>
+    <div id="methodsColorPalette"></div>
+    <div id="testColorPalette"></div>
+    <br><br>
+
+
+    <h1>10. ColorPicker</h1>
+    <div id="methodsColorPicker"></div>
+    <div id="testColorPicker"></div>
+    <br><br>
+
+
+    <h1>11. ComboBox</h1>
+    <div id="methodsComboBox"></div>
+    <div id="testComboBox"></div>
+    <br><br>
+
+
+    <h1>12. DatePicker</h1>
+    <div id="methodsDatePicker"></div>
+    <div id="testDatePicker"></div>
+    <br><br>
+
+
+    <h1>13. DateRangePicker</h1>
+    <div id="methodsDateRangePicker"></div>
+    <div id="testDateRangePicker"></div>
+    <br><br>
+
+
+    <h1>14. DateTimePicker</h1>
+    <div id="methodsDateTimePicker"></div>
+    <div id="testDateTimePicker"></div>
+    <br><br>
+
+
+    <h1>15. Dialog</h1>
+    <div id="methodsDialog"></div>
+    <div id="testDialog"></div>
+    <br><br>
+
+
+    <h1>16. DurationPicker</h1>
+    <div id="methodsDurationPicker"></div>
+    <div id="testDurationPicker"></div>
+    <br><br>
+
+
+    <h1>17. FileUploader</h1>
+    <div id="methodsFileUploader"></div>
+    <div id="testFileUploader"></div>
+    <br><br>
+
+
+    <h1>18. Icon</h1>
+    <div id="methodsIcon"></div>
+    <div id="testIcon"></div>
+    <br><br>
+
+
+    <h1>19. Input</h1>
+    <div id="methodsInput"></div>
+    <div id="testInput"></div>
+    <br><br>
+
+
+    <h1>20. Label</h1>
+    <div id="methodsLabel"></div>
+    <div id="testLabel"></div>
+    <br><br>
+
+
+    <h1>21. Link</h1>
+    <div id="methodsLink"></div>
+    <div id="testLink"></div>
+    <br><br>
+
+
+    <h1>22. List</h1>
+    <div id="methodsList"></div>
+    <div id="testList"></div>
+    <br><br>
+
+
+    <h1>23. MessageStrip</h1>
+    <div id="methodsMessageStrip"></div>
+    <div id="testMessageStrip"></div>
+    <br><br>
+
+
+    <h1>24. MultiComboBox</h1>
+    <div id="methodsMultiComboBox"></div>
+    <div id="testMultiComboBox"></div>
+    <br><br>
+
+
+    <h1>25. MultiInput</h1>
+    <div id="methodsMultiInput"></div>
+    <div id="testMultiInput"></div>
+    <br><br>
+
+
+    <h1>26. Panel</h1>
+    <div id="methodsPanel"></div>
+    <div id="testPanel"></div>
+    <br><br>
+
+
+    <h1>27. Popover</h1>
+    <div id="methodsPopover"></div>
+    <div id="testPopover"></div>
+    <br><br>
+
+
+    <h1>28. ProgressIndicator</h1>
+    <div id="methodsProgressIndicator"></div>
+    <div id="testProgressIndicator"></div>
+    <br><br>
+
+
+    <h1>29. RadioButton</h1>
+    <div id="methodsRadioButton"></div>
+    <div id="testRadioButton"></div>
+    <br><br>
+
+
+    <h1>30. RangeSlider</h1>
+    <div id="methodsRangeSlider"></div>
+    <div id="testRangeSlider"></div>
+    <br><br>
+
+
+    <h1>31. RatingIndicator</h1>
+    <div id="methodsRatingIndicator"></div>
+    <div id="testRatingIndicator"></div>
+    <br><br>
+
+
+    <h1>32. ResponsivePopover</h1>
+    <div id="methodsResponsivePopover"></div>
+    <div id="testResponsivePopover"></div>
+    <br><br>
+
+
+    <h1>33. SegmentedButton</h1>
+    <div id="methodsSegmentedButton"></div>
+    <div id="testSegmentedButton"></div>
+    <br><br>
+
+
+    <h1>34. Select</h1>
+    <div id="methodsSelect"></div>
+    <div id="testSelect"></div>
+    <br><br>
+
+
+    <h1>35. Slider</h1>
+    <div id="methodsSlider"></div>
+    <div id="testSlider"></div>
+    <br><br>
+
+
+    <h1>36. StepInput</h1>
+    <div id="methodsStepInput"></div>
+    <div id="testStepInput"></div>
+    <br><br>
+
+
+    <h1>37. Switch</h1>
+    <div id="methodsSwitch"></div>
+    <div id="testSwitch"></div>
+    <br><br>
+
+
+    <h1>38. TabContainer</h1>
+    <div id="methodsTabContainer"></div>
+    <div id="testTabContainer"></div>
+    <br><br>
+
+
+    <h1>39. Table</h1>
+    <div id="methodsTable"></div>
+    <div id="testTable"></div>
+    <br><br>
+
+
+    <h1>40. TextArea</h1>
+    <div id="methodsTextArea"></div>
+    <div id="testTextArea"></div>
+    <br><br>
+
+
+    <h1>41. TimePicker</h1>
+    <div id="methodsTimePicker"></div>
+    <div id="testTimePicker"></div>
+    <br><br>
+
+
+    <h1>42. Title</h1>
+    <div id="methodsTitle"></div>
+    <div id="testTitle"></div>
+    <br><br>
+
+
+    <h1>43. Toast</h1>
+    <div id="methodsToast"></div>
+    <div id="testToast"></div>
+    <br><br>
+
+
+    <h1>44. Tree</h1>
+    <div id="methodsTree"></div>
+    <div id="testTree"></div>
+    <br><br>
+</body>
+
+</html>

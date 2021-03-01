@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>List - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/List",
+                "sap/ui/webc/main/Button",
+                "sap/ui/webc/main/CustomListItem"
+            ], function(
+                List, Button, CustomListItem
+            ) {
+
+
+                var oList = new List({
+                    footerText: "Some text...",
+                    headerText: "Some text...",
+                    noDataText: "Some text...",
+                    header: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    items: [
+                        new CustomListItem({
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ],
+                            detailClick: function(oEvent) {
+                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new CustomListItem({
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ],
+                            detailClick: function(oEvent) {
+                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new CustomListItem({
+                            content: [
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                }),
+                                new Button({
+                                    icon: "employee",
+                                    text: "Some text...",
+                                    click: function(oEvent) {
+                                        console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                                    }
+                                })
+                            ],
+                            detailClick: function(oEvent) {
+                                console.log("Event detailClick fired for CustomListItem with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    itemClick: function(oEvent) {
+                        console.log("Event itemClick fired for List with parameters: ", oEvent.getParameters());
+                    },
+                    itemClose: function(oEvent) {
+                        console.log("Event itemClose fired for List with parameters: ", oEvent.getParameters());
+                    },
+                    itemDelete: function(oEvent) {
+                        console.log("Event itemDelete fired for List with parameters: ", oEvent.getParameters());
+                    },
+                    itemToggle: function(oEvent) {
+                        console.log("Event itemToggle fired for List with parameters: ", oEvent.getParameters());
+                    },
+                    loadMore: function(oEvent) {
+                        console.log("Event loadMore fired for List with parameters: ", oEvent.getParameters());
+                    },
+                    selectionChange: function(oEvent) {
+                        console.log("Event selectionChange fired for List with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oList.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

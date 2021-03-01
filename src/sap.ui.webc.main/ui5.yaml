@@ -1,0 +1,37 @@
+---
+specVersion: "1.1"
+type: library
+metadata:
+  name: sap.ui.webc.main
+  copyright: |-
+   OpenUI5
+    * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
+    * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+builder:
+  jsdoc:
+    excludes:
+      - "sap/ui/webc/main/thirdparty/**"
+  bundles:
+    - bundleDefinition:
+        name: "sap/ui/webc/main/library-preload.js"
+        defaultFileTypes:
+          - ".js"
+          - ".fragment.xml"
+          - ".view.xml"
+          - ".properties"
+          - ".json"
+        sections:
+          - mode: preload
+            filters:
+              - "sap/ui/webc/main/"
+              - "sap/ui/webc/main/**/manifest.json"
+              - "!sap/ui/webc/main/.library"
+              - "!sap/ui/webc/main/*-preload.js"
+              - "!sap/ui/webc/main/designtime/"
+              - "!sap/ui/webc/main/**/*.designtime.js"
+              - "!sap/ui/webc/main/**/*.support.js"
+              - "!sap/ui/webc/main/thirdparty/messagebundle*.js"
+              - "!sap/ui/webc/main/thirdparty/generated/themes/*/*.js"
+            resolve: false
+            resolveConditional: false
+            renderer: true

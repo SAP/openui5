@@ -1,0 +1,110 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>Card - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/Card",
+                "sap/ui/webc/main/Button"
+            ], function(
+                Card, Button
+            ) {
+
+
+                var oCard = new Card({
+                    subtitleText: "Some text...",
+                    titleText: "Some text...",
+                    action: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    avatar: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    content: [
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Button({
+                            icon: "employee",
+                            text: "Some text...",
+                            click: function(oEvent) {
+                                console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    headerClick: function(oEvent) {
+                        console.log("Event headerClick fired for Card with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oCard.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

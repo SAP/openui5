@@ -1,0 +1,46 @@
+---
+specVersion: "1.1"
+type: library
+metadata:
+  name: sap.ui.webc.common
+  copyright: |-
+   OpenUI5
+    * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
+    * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+builder:
+  jsdoc:
+    excludes:
+      - "sap/ui/webc/common/thirdparty/**"
+  bundles:
+    - bundleDefinition:
+        name: "sap/ui/webc/common/library-preload.js"
+        defaultFileTypes:
+          - ".js"
+          - ".fragment.xml"
+          - ".view.xml"
+          - ".properties"
+          - ".json"
+        sections:
+          - mode: preload
+            filters:
+              - "sap/ui/webc/common/"
+              - "sap/ui/webc/common/**/manifest.json"
+              - "!sap/ui/webc/common/.library"
+              - "!sap/ui/webc/common/*-preload.js"
+              - "!sap/ui/webc/common/designtime/"
+              - "!sap/ui/webc/common/**/*.designtime.js"
+              - "!sap/ui/webc/common/**/*.support.js"
+              - "!sap/ui/webc/common/thirdparty/icons/**/*.js"
+              - "sap/ui/webc/common/thirdparty/icons/AllIcons.js"
+              - "sap/ui/webc/common/thirdparty/icons/Assets.js"
+              - "sap/ui/webc/common/thirdparty/icons/generated/**/*.js"
+              - "sap/ui/webc/common/thirdparty/icons/json-imports/**/*.js"
+              - "!sap/ui/webc/common/thirdparty/icons-tnt/**/*.js"
+              - "sap/ui/webc/common/thirdparty/icons-tnt/AllIcons.js"
+              - "sap/ui/webc/common/thirdparty/icons-tnt/Assets.js"
+              - "sap/ui/webc/common/thirdparty/icons-tnt/generated/**/*.js"
+              - "sap/ui/webc/common/thirdparty/icons-tnt/json-imports/**/*.js"
+              - "!sap/ui/webc/common/thirdparty/theme-base/generated/themes/*/*.js"
+            resolve: false
+            resolveConditional: false
+            renderer: true

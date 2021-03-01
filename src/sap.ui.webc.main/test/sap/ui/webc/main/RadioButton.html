@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>RadioButton - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/RadioButton"
+            ], function(
+                RadioButton
+            ) {
+
+
+                var oRadioButton = new RadioButton({
+                    text: "Some text...",
+                    value: "Control value",
+                    valueState: "Warning",
+                    select: function(oEvent) {
+                        console.log("Event select fired for RadioButton with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oRadioButton.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

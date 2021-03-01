@@ -1,0 +1,83 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>AvatarGroup - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/AvatarGroup",
+                "sap/ui/webc/main/Avatar",
+                "sap/ui/webc/main/Button"
+            ], function(
+                AvatarGroup, Avatar, Button
+            ) {
+
+                var oAvatarGroup0Button = new Button({
+                    text: "getColorScheme",
+                    click: function(oEvent) {
+                        console.log("Calling getColorScheme...");
+                        var result = oAvatarGroup.getColorScheme();
+                        console.log("... getColorScheme returned: ", result);
+                    }
+                });
+                oAvatarGroup0Button.placeAt("methodButtons");
+
+
+
+                var oAvatarGroup1Button = new Button({
+                    text: "getHiddenItems",
+                    click: function(oEvent) {
+                        console.log("Calling getHiddenItems...");
+                        var result = oAvatarGroup.getHiddenItems();
+                        console.log("... getHiddenItems returned: ", result);
+                    }
+                });
+                oAvatarGroup1Button.placeAt("methodButtons");
+
+
+                var oAvatarGroup = new AvatarGroup({
+                    items: [
+                        new Avatar({
+                            icon: "employee"
+                        }),
+                        new Avatar({
+                            icon: "employee"
+                        }),
+                        new Avatar({
+                            icon: "employee"
+                        })
+                    ],
+                    overflowButton: new Button({
+                        icon: "employee",
+                        text: "Some text...",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Button with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    click: function(oEvent) {
+                        console.log("Event click fired for AvatarGroup with parameters: ", oEvent.getParameters());
+                    },
+                    overflow: function(oEvent) {
+                        console.log("Event overflow fired for AvatarGroup with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oAvatarGroup.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

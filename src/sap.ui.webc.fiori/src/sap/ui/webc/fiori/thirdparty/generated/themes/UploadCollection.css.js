@@ -1,0 +1,13 @@
+sap.ui.define(['sap/ui/webc/common/thirdparty/base/asset-registries/Themes', 'sap/ui/webc/common/thirdparty/theme-base/generated/themes/sap_fiori_3/parameters-bundle.css', './sap_fiori_3/parameters-bundle.css'], function (Themes, defaultThemeBase, parametersBundle_css) { 'use strict';
+
+	function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e['default'] : e; }
+
+	var defaultThemeBase__default = /*#__PURE__*/_interopDefaultLegacy(defaultThemeBase);
+
+	Themes.registerThemePropertiesLoader("@ui5/webcomponents-theme-base", "sap_fiori_3", () => defaultThemeBase__default);
+	Themes.registerThemePropertiesLoader("@ui5/webcomponents-fiori", "sap_fiori_3", () => parametersBundle_css);
+	var UploadCollectionCss = ":host(:not([hidden])){display:block}.ui5-uc-root{height:100%;display:flex;flex-direction:column}.ui5-uc-content{position:relative;flex:1 1 auto}.ui5-uc-content.ui5-uc-content-no-data{min-height:20rem}.uc-no-files{position:absolute;top:0;right:0;left:0;bottom:0;box-sizing:border-box;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:1rem;background-color:var(--sapGroup_ContentBackground)}.uc-no-files .icon-container{height:8rem}.uc-no-files .icon-container [ui5-icon]{font-size:6rem;width:6rem;height:6rem;color:var(--sapContent_NonInteractiveIconColor);opacity:.5}.uc-no-files [ui5-title]{font-size:var(--ui5_upload_collection_level_2Size);color:var(--sapGroup_TitleTextColor);margin:1rem 0}.uc-no-files .subtitle{font-size:var(--ui5_upload_collection_level_5Size);color:var(--sapContent_LabelColor);margin-bottom:2rem}.uc-dnd-overlay{position:absolute;top:.5rem;right:.5rem;left:.5rem;bottom:.5rem;display:flex;flex-direction:column;align-items:center;justify-content:center}.uc-drag-overlay{border:var(--ui5_upload_collection_drag_overlay_border)}.uc-drop-overlay{border:var(--ui5_upload_collection_drop_overlay_border)}.uc-dnd-overlay:before{content:\"\";position:absolute;top:0;bottom:0;left:0;right:0;background-color:var(--sapGroup_ContentBackground);opacity:.8}.uc-drop-overlay:after{content:\"\";position:absolute;top:0;bottom:0;left:0;right:0;background-color:var(--ui5_upload_collection_drop_overlay_background);opacity:.05}.uc-dnd-overlay [ui5-icon]{width:4rem;height:4rem;margin-bottom:1rem;color:var(--sapContent_NonInteractiveIconColor)}.uc-dnd-overlay .dnd-overlay-text{font-family:\"72override\",var(--sapFontFamily);font-size:var(--sapFontHeader4Size);color:var(--sapContent_NonInteractiveIconColor)}.uc-dnd-overlay .dnd-overlay-text,.uc-dnd-overlay [ui5-icon]{z-index:1;pointer-events:none}.uc-drop-overlay .dnd-overlay-text,.uc-drop-overlay [ui5-icon]{color:var(--sapContent_DragAndDropActiveColor)}";
+
+	return UploadCollectionCss;
+
+});

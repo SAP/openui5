@@ -1,0 +1,37 @@
+---
+specVersion: "1.1"
+type: library
+metadata:
+  name: sap.ui.webc.fiori
+  copyright: |-
+   OpenUI5
+    * (c) Copyright 2009-${currentYear} SAP SE or an SAP affiliate company.
+    * Licensed under the Apache License, Version 2.0 - see LICENSE.txt.
+builder:
+  jsdoc:
+    excludes:
+      - "sap/ui/webc/fiori/thirdparty/**"
+  bundles:
+    - bundleDefinition:
+        name: "sap/ui/webc/fiori/library-preload.js"
+        defaultFileTypes:
+          - ".js"
+          - ".fragment.xml"
+          - ".view.xml"
+          - ".properties"
+          - ".json"
+        sections:
+          - mode: preload
+            filters:
+              - "sap/ui/webc/fiori/"
+              - "sap/ui/webc/fiori/**/manifest.json"
+              - "!sap/ui/webc/fiori/.library"
+              - "!sap/ui/webc/fiori/*-preload.js"
+              - "!sap/ui/webc/fiori/designtime/"
+              - "!sap/ui/webc/fiori/**/*.designtime.js"
+              - "!sap/ui/webc/fiori/**/*.support.js"
+              - "!sap/ui/webc/fiori/thirdparty/messagebundle*.js"
+              - "!sap/ui/webc/fiori/thirdparty/generated/themes/*/*.js"
+            resolve: false
+            resolveConditional: false
+            renderer: true

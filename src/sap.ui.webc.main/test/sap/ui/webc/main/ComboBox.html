@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>ComboBox - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/ComboBox",
+                "sap/ui/webc/main/Icon",
+                "sap/ui/webc/main/ComboBoxItem"
+            ], function(
+                ComboBox, Icon, ComboBoxItem
+            ) {
+
+
+                var oComboBox = new ComboBox({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    icon: new Icon({
+                        name: "add",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    items: [
+                        new ComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        }),
+                        new ComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        }),
+                        new ComboBoxItem({
+                            additionalText: "Some text...",
+                            text: "Some text..."
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for ComboBox with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for ComboBox with parameters: ", oEvent.getParameters());
+                    },
+                    selectionChange: function(oEvent) {
+                        console.log("Event selectionChange fired for ComboBox with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oComboBox.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>

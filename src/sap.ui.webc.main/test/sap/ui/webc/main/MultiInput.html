@@ -1,0 +1,135 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta charset="utf-8">
+    <title>MultiInput - sap.ui.webc.main</title>
+    <script src="shared-config.js"></script>
+    <script src="../../../../../resources/sap-ui-core.js" id="sap-ui-bootstrap" data-sap-ui-libs="sap.ui.webc.main">
+    </script>
+
+    <script>
+        sap.ui.getCore().attachInit(function() {
+            sap.ui.require([
+                "sap/ui/webc/main/MultiInput",
+                "sap/ui/webc/main/Icon",
+                "sap/ui/webc/main/SuggestionItem",
+                "sap/ui/webc/main/Token",
+                "sap/ui/webc/main/Button"
+            ], function(
+                MultiInput, Icon, SuggestionItem, Token, Button
+            ) {
+
+                var oMultiInput0Button = new Button({
+                    text: "getPreviewItem",
+                    click: function(oEvent) {
+                        console.log("Calling getPreviewItem...");
+                        var result = oMultiInput.getPreviewItem();
+                        console.log("... getPreviewItem returned: ", result);
+                    }
+                });
+                oMultiInput0Button.placeAt("methodButtons");
+
+
+                var oMultiInput = new MultiInput({
+                    placeholder: "This is my placeholder value",
+                    value: "Control value",
+                    valueState: "Warning",
+                    valueStateMessage: "Value State Message",
+                    icon: new Icon({
+                        name: "add",
+                        click: function(oEvent) {
+                            console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                        }
+                    }),
+                    suggestionItems: [
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        }),
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        }),
+                        new SuggestionItem({
+                            additionalText: "Some text...",
+                            icon: "employee",
+                            text: "Some text..."
+                        })
+                    ],
+                    tokens: [
+                        new Token({
+                            text: "Some text...",
+                            closeIcon: new Icon({
+                                name: "add",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            select: function(oEvent) {
+                                console.log("Event select fired for Token with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Token({
+                            text: "Some text...",
+                            closeIcon: new Icon({
+                                name: "add",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            select: function(oEvent) {
+                                console.log("Event select fired for Token with parameters: ", oEvent.getParameters());
+                            }
+                        }),
+                        new Token({
+                            text: "Some text...",
+                            closeIcon: new Icon({
+                                name: "add",
+                                click: function(oEvent) {
+                                    console.log("Event click fired for Icon with parameters: ", oEvent.getParameters());
+                                }
+                            }),
+                            select: function(oEvent) {
+                                console.log("Event select fired for Token with parameters: ", oEvent.getParameters());
+                            }
+                        })
+                    ],
+                    change: function(oEvent) {
+                        console.log("Event change fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    input: function(oEvent) {
+                        console.log("Event input fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionItemPreview: function(oEvent) {
+                        console.log("Event suggestionItemPreview fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionItemSelect: function(oEvent) {
+                        console.log("Event suggestionItemSelect fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    suggestionScroll: function(oEvent) {
+                        console.log("Event suggestionScroll fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    tokenDelete: function(oEvent) {
+                        console.log("Event tokenDelete fired for MultiInput with parameters: ", oEvent.getParameters());
+                    },
+                    valueHelpTrigger: function(oEvent) {
+                        console.log("Event valueHelpTrigger fired for MultiInput with parameters: ", oEvent.getParameters());
+                    }
+                });
+                oMultiInput.placeAt("testControl");
+            });
+        });
+    </script>
+</head>
+
+<body id="body" class="sapUiBody">
+    <div id="methodButtons"></div>
+    <br><br>
+    <div id="testControl"></div>
+</body>
+
+</html>
