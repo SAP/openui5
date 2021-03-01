@@ -7,7 +7,6 @@
     xmlns:mdc="sap.ui.mdc"
     xmlns:mdcf="sap.ui.mdc.field"
     xmlns:mdcl="sap.ui.mdc.link"
-	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
     xmlns:ui="sap.ui"
     xmlns:variants="sap.ui.fl.variants"
     xmlns="sap.m"
@@ -47,11 +46,8 @@
 						width="100%"
 						rowAction="Navigation"
 					>
-					
                     <mdc:actions>
-						<mdcat:ActionToolbarAction>
-							<Button type="Emphasized" text="Add Order" press="onAddButtonPress"/>
-						</mdcat:ActionToolbarAction>
+                        <Button type="Emphasized" text="Add Order" press="onAddButtonPress"/>
                     </mdc:actions>
                     <mdc:columns>
                         <mdc:table.Column

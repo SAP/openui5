@@ -14,9 +14,7 @@ sap.ui.define([
 			library: "sap.ui.mdc"
 		},
 		constructor: function(oChart) {
-
-			this.oChart = oChart;
-
+			this.oChartModel = oChart.getManagedObjectModel();
 			var mSettings = {
 				type: "Transparent",
 				press: function(oEvent) {
@@ -28,14 +26,26 @@ sap.ui.define([
 				text: '{$chart>/getTypeInfo/text}',
 				ariaHasPopup: HasPopup.ListBox
 			};
-
+			this.oChart = oChart;
 			OverflowToolbarButton.apply(this, [
 				mSettings
 			]);
+			this.setModel(this.oChartModel, "$chart");
+
+			this._oObserver = new ManagedObjectObserver(function() {
+				this.oChartModel.checkUpdate(true);
+			}.bind(this));
+			this._oObserver.observe(this.oChart, {
+				aggregations: [
+					"items"
+				],
+				properties: [
+					"chartType"
+				]
+			});
 
 		},
 		renderer: ButtonRenderer.render
-
 	});
 
 	ChartTypeButton.mMatchingIcon = {
@@ -70,31 +80,6 @@ sap.ui.define([
 		"100_stacked_column": "sap-icon://full-stacked-column-chart",
 		"waterfall": "sap-icon://vertical-waterfall-chart",
 		"horizontal_waterfall": "sap-icon://horizontal-waterfall-chart"
-	};
-
-	ChartTypeButton.prototype.init = function(){
-		this.oChartModel = this.oChart.getManagedObjectModel();
-		this.setModel(this.oChartModel, "$chart");
-
-		if (this.oChart.getAutoBindOnInit()){
-			this.bindToInnerChart(this.oChart);
-		}
-	};
-
-	ChartTypeButton.prototype.bindToInnerChart = function(oChart) {
-		this.setEnabled(true);
-
-		this._oObserver = new ManagedObjectObserver(function() {
-			this.oChartModel.checkUpdate(true);
-		}.bind(this));
-		this._oObserver.observe(this.oChart, {
-			aggregations: [
-				"items"
-			],
-			properties: [
-				"chartType"
-			]
-		});
 	};
 
 	/**

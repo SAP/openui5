@@ -7,7 +7,6 @@
 	xmlns:mdc="sap.ui.mdc"
 	xmlns:mdcf="sap.ui.mdc.field"
 	xmlns:mdcl="sap.ui.mdc.link"
-	xmlns:mdcat="sap.ui.mdc.actiontoolbar"
 	xmlns:ui="sap.ui"
 	xmlns:variants="sap.ui.fl.variants"
 	xmlns="sap.m" controllerName="sap.ui.v4demo.controller.OrderDetails">
@@ -67,9 +66,7 @@
 						<uxap:blocks>
 							<mdc:Table id="childOrderItemsTable" filter="ordersFilterBar" p13nMode="{=['Sort', 'Column']}" delegate="{name: 'delegates/TableDelegate', payload: {collectionName: 'OrderItems', collectionPath: 'Items'}}" showRowCount="true" rowPress="onRowPress" threshold="50" width="100%" rowAction="{=['Navigation']}">
 								<mdc:actions>
-									<mdcat:ActionToolbarAction>
-										<Button type="Emphasized" text="Add Order Item" press="onAddButtonPress" visible="{=!${view>/addMode}}" />
-									</mdcat:ActionToolbarAction>
+									<Button type="Emphasized" text="Add Order Item" press="onAddButtonPress" visible="{=!${view>/addMode}}" />
 								</mdc:actions>
 								<mdc:columns>
 									<mdc:table.Column id="cID" header="ID" dataProperty="ID" width="15rem">
