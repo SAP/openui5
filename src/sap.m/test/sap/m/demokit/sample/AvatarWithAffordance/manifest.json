@@ -11,6 +11,9 @@
 			"type": "XML",
 			"async": true
 		},
+		"resourceRoots": {
+			"sap.m.images": "../../../images"
+		},
 		"dependencies": {
 			"libs": {
 				"sap.m": {}
@@ -22,7 +25,11 @@
 				"files": [
 					"view/AvatarWithAffordance.view.xml",
 					"controller/AvatarWithAffordance.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"../../../images/284133_GettyImages-145058106_2600.jpg",
+					"../../../images/283930_shutterstock_56287057.jpg",
+					"../../../images/282627_low_shutterstock_402830878.jpg",
+					"../../../images/274827_274827_l_srgb_s_gl.jpg"
 				]
 			}
 		}

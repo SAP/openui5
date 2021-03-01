@@ -11,9 +11,15 @@
 			"type": "XML",
 			"async": true
 		},
+		"resourceRoots": {
+			"sap.uxap.sample.SharedBlocks": "../SharedBlocks",
+			"sap.uxap.sample.SharedJSONData": "../SharedJSONData",
+			"sap.uxap.sample.AlternativeProfileObjectPageHeader": "./"
+		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.uxap": {}
 			}
 		},
 		"config": {
@@ -21,6 +27,7 @@
 				"stretch": true,
 				"files": [
 					"view/AlternativeProfileObjectPageHeader.view.xml",
+					"view/PopoverUnsavedChanges.fragment.xml",
 					"controller/AlternativeProfileObjectPageHeader.controller.js",
 					"../SharedBlocks/employment/BlockEmpDetailPart1.js",
 					"../SharedBlocks/employment/BlockEmpDetailPart1.view.xml",

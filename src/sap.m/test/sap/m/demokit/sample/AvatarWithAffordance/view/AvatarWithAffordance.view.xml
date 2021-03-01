@@ -1,5 +1,5 @@
 <mvc:View
-		controllerName="sap.m.sample.Avatar.controller.Avatar"
+		controllerName="sap.m.sample.AvatarWithAffordance.controller.AvatarWithAffordance"
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns="sap.m"
 		xmlns:l="sap.ui.layout"
@@ -20,13 +20,13 @@ with various types of visual affordance"
 			<l:content>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/m/images/274827_274827_l_srgb_s_gl.jpg"
+							src="{/LightBox}"
 							displaySize="L"
 							displayShape="Circle">
 						<detailBox>
 							<LightBox>
 								<LightBoxItem
-										imageSrc="test-resources/sap/m/images/274827_274827_l_srgb_s_gl.jpg"
+										imageSrc="{/LightBox}"
 										alt="Michael Adams"
 										title="This is Michael Adams"
 										subtitle="Michael Adams Human Relations">
@@ -41,7 +41,7 @@ with various types of visual affordance"
 				</VBox>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/m/images/284133_GettyImages-145058106_2600.jpg"
+							src="{/GettyImages}"
 							displaySize="XL"
 							imageFitType="Cover"
 							press="onPress"
@@ -57,7 +57,7 @@ with various types of visual affordance"
 							displaySize="M"
 							displayShape="Circle"
 							press="onPress"
-							src="./test-resources/sap/m/images/282627_low_shutterstock_402830878.jpg"
+							src="{/LowShutterstock}"
 							badgeIcon="sap-icon://edit"
 							badgeTooltip= "Julie Armstrong"/>
 					<Text
@@ -99,7 +99,7 @@ with various types of visual affordance"
 							displaySize="XL"
 							displayShape="Square"
 							press="onPress"
-							src="./test-resources/sap/m/images/283930_shutterstock_56287057.jpg"
+							src="{/Shutterstock}"
 							badgeIcon="sap-icon://edit" />
 					<Text
 							textAlign="Center"

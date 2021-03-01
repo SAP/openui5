@@ -6,7 +6,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.uxap.sample.ObjectPageState.controller.ObjectPageState", {
 		onInit: function () {
-			var oJsonModel = new JSONModel("./test-resources/sap/uxap/demokit/sample/SharedJSONData/HRData.json"),
+			var oJsonModel = new JSONModel(sap.ui.require.toUrl("sap/uxap/sample/SharedJSONData/HRData.json")),
 				oTableModel = new JSONModel(sap.ui.require.toUrl("sap/ui/demo/mock/products.json"));
 
 			this.getView().setModel(oJsonModel, "ObjectPageModel");

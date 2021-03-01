@@ -11,9 +11,13 @@
 			"type": "XML",
 			"async": true
 		},
+		"resourceRoots": {
+			"sap.uxap.sample.SharedJSONData": "../SharedJSONData"
+		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.uxap": {}
 			}
 		},
 		"config": {
@@ -22,7 +26,8 @@
 				"files": [
 					"view/ObjectPageXML.view.xml",
 					"controller/ObjectPageXML.controller.js",
-					"manifest.json"
+					"manifest.json",
+					"../SharedJSONData/HRData.json"
 				]
 			}
 		}

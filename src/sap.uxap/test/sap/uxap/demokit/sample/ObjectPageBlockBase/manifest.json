@@ -11,9 +11,13 @@
 			"type": "XML",
 			"async": true
 		},
+		"resourceRoots": {
+			"sap.uxap.sample.SharedBlocks": "../SharedBlocks"
+		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.uxap": {}
 			}
 		},
 		"config": {
@@ -24,8 +28,10 @@
 					"controller/ObjectPageBlockBase.controller.js",
 					"../SharedBlocks/BlockBlue.js",
 					"../SharedBlocks/BlockBlue.view.xml",
+					"../SharedBlocks/BlockBlueCtrl.controller.js",
 					"../SharedBlocks/BlockBlueWithInfo.js",
 					"../SharedBlocks/BlockBlueWithInfo.view.xml",
+					"../SharedBlocks/BlockBlueWithInfoController.controller.js",
 					"manifest.json"
 				]
 			}

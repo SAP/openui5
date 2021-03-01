@@ -3,7 +3,7 @@ sap.ui.define(["sap/ui/model/json/JSONModel", "sap/ui/core/mvc/Controller"], fun
 
 	return Controller.extend("sap.uxap.sample.AlternativeProfileObjectPageHeader.controller.AlternativeProfileObjectPageHeader", {
 		onInit: function () {
-			var oJsonModel = new JSONModel("./test-resources/sap/uxap/demokit/sample/SharedJSONData/employee.json");
+			var oJsonModel = new JSONModel(sap.ui.require.toUrl("sap/uxap/sample/SharedJSONData/employee.json"));
 			this.getView().setModel(oJsonModel, "ObjectPageModel");
 		},
 		handlePress: function (oEvent) {

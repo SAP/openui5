@@ -7,7 +7,7 @@ sap.ui.define([
 
 	return Controller.extend("sap.uxap.sample.ObjectPageXML.controller.ObjectPageXML", {
 		onInit: function () {
-			var oJsonModel = new JSONModel("./test-resources/sap/uxap/demokit/sample/ObjectPageOnJSON/HRData.json");
+			var oJsonModel = new JSONModel(sap.ui.require.toUrl("sap/uxap/sample/ObjectPageOnJSON/HRData.json"));
 
 			//initial state for this object page
 			this.oObjectPageStateModel = new JSONModel({

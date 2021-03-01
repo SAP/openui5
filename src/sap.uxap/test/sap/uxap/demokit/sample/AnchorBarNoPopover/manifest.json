@@ -11,9 +11,13 @@
 			"type": "XML",
 			"async": true
 		},
+		"resourceRoots": {
+			"sap.uxap.sample.SharedBlocks": "../SharedBlocks"
+		},
 		"dependencies": {
 			"libs": {
-				"sap.m": {}
+				"sap.m": {},
+				"sap.uxap": {}
 			}
 		},
 		"config": {
@@ -23,6 +27,7 @@
 					"view/AnchorBarNoPopover.view.xml",
 					"../SharedBlocks/BlockBlue.js",
 					"../SharedBlocks/BlockBlue.view.xml",
+					"../SharedBlocks/BlockBlueCtrl.controller.js",
 					"manifest.json"
 				]
 			}

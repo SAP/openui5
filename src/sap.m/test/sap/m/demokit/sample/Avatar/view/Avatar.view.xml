@@ -19,7 +19,7 @@
 			<l:content>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/f/images/Speakers_avatar_01.jpg"
+							src="{/Speakers}"
 							displaySize="XL"
 							displayShape="Square"
 							showBorder="true"
@@ -30,7 +30,7 @@
 				</VBox>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/f/images/Woman_avatar_01.png"
+							src="{/Woman01}"
 							displaySize="XL"
 							showBorder="true"
 							press="onPress"/>
@@ -90,7 +90,7 @@
 						alignItems="Center"
 						alignContent="End">
 					<Avatar
-							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							src="{/Screw}"
 							displaySize="XL"
 							displayShape="Square"/>
 					<Text
@@ -101,7 +101,7 @@
 						alignItems="Center"
 						alignContent="End">
 					<Avatar
-							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							src="{/Screw}"
 							displaySize="L"
 							displayShape="Square"/>
 					<Text
@@ -110,7 +110,7 @@
 				</VBox>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							src="{/Screw}"
 							displaySize="M"
 							displayShape="Square"/>
 					<Text
@@ -119,7 +119,7 @@
 				</VBox>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							src="{/Screw}"
 							displaySize="S"
 							displayShape="Square"/>
 					<Text
@@ -128,7 +128,7 @@
 				</VBox>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/f/images/Screw_avatar_01.jpg"
+							src="{/Screw}"
 							displaySize="XS"
 							displayShape="Square"/>
 					<Text
@@ -143,7 +143,7 @@
 			<l:content>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/f/images/Woman_avatar_02.png"
+							src="{/Woman02}"
 							displaySize="XL"/>
 					<Text
 							text="XL"
@@ -151,7 +151,7 @@
 				</VBox>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/f/images/Woman_avatar_02.png"
+							src="{/Woman02}"
 							displaySize="L"/>
 					<Text
 							text="L"
@@ -159,7 +159,7 @@
 				</VBox>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/f/images/Woman_avatar_02.png"
+							src="{/Woman02}"
 							displaySize="M"/>
 					<Text
 							text="M"
@@ -167,7 +167,7 @@
 				</VBox>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/f/images/Woman_avatar_02.png"
+							src="{/Woman02}"
 							displaySize="S"/>
 					<Text
 							text="S"
@@ -175,7 +175,7 @@
 				</VBox>
 				<VBox alignItems="Center">
 					<Avatar
-							src="./test-resources/sap/f/images/Woman_avatar_02.png"
+							src="{/Woman02}"
 							displaySize="XS"/>
 					<Text
 							text="XS"
@@ -304,7 +304,7 @@
 							width="100%"
 							class="sapUiMediumMarginTop sapUiMediumMarginBottom"/>
 					<Avatar
-							src="./test-resources/sap/f/images/Lamp_avatar_01.jpg"
+							src="{/Lamp}"
 							displaySize="Custom"
 							customDisplaySize="250px"
 							displayShape="Square"/>
@@ -352,7 +352,7 @@
 								<Avatar
 										displaySize="L"
 										initials="PB"
-										src="images/cannotfind_Woman_avatar_01.png"
+										src="{/Woman01}"
 										backgroundColor="Random"/>
 								<Text
 										text="With invalid image source, but initials provided"
