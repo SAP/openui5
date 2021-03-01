@@ -2058,6 +2058,7 @@ sap.ui.define([
 				horizontalScrolling: false,
 				verticalScrolling: false,
 				title: "{$help>/title}",
+				stretch: Device.system.phone,
 				resizable: true,
 				draggable: true,
 				content: [oValueHelpPanel],
