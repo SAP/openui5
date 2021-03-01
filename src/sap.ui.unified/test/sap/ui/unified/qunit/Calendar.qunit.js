@@ -990,7 +990,7 @@ sap.ui.define([
 		this.oCal1.focusDate(new Date(9999, 10, 10));
 		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
-		assert.ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
+		assert.ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button disabled");
 		qutils.triggerEvent("click", "Cal1--Head-next");
 		sap.ui.getCore().applyChanges();
 		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled on max month");
@@ -1009,7 +1009,7 @@ sap.ui.define([
 		oDate.setFullYear(1);
 		this.oCal1.focusDate(oDate);
 		sap.ui.getCore().applyChanges();
-		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button enabled");
+		assert.ok(!jQuery("#Cal1--Head-prev").hasClass("sapUiCalDsbl"), "Previous Button disabled");
 		assert.ok(!jQuery("#Cal1--Head-next").hasClass("sapUiCalDsbl"), "Next Button enabled");
 		qutils.triggerEvent("click", "Cal1--Head-prev");
 		sap.ui.getCore().applyChanges();
