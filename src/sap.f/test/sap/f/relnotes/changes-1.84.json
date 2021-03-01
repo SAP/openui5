@@ -84,5 +84,21 @@
         ]
       }
     ]
+  },
+  "1.84.7": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "e487afd5e627771891c060ef3afd212f678656da",
+        "type": "FIX",
+        "text": " sap.f.DynamicPage: Infinite snapping/unsnapping is prevented",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000409092021"
+          }
+        ]
+      }
+    ]
   }
 }
