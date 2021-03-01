@@ -351,8 +351,7 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataBinding.prototype.fetchCache = function (oContext, bIgnoreParentCache) {
-		var oCachePromise,
-			oCallToken = {},
+		var oCallToken = {},
 			aPromises,
 			that = this;
 
@@ -371,7 +370,8 @@ sap.ui.define([
 		];
 		this.mCacheQueryOptions = undefined;
 		this.mLateQueryOptions = undefined;
-		oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
+		this.oFetchCacheCallToken = oCallToken;
+		this.oCachePromise = SyncPromise.all(aPromises).then(function (aResult) {
 			var mQueryOptions = aResult[0].mQueryOptions;
 
 			that.sReducedPath = aResult[0].sReducedPath;
@@ -382,7 +382,7 @@ sap.ui.define([
 					var oError;
 
 					// create cache only for the latest call to fetchCache
-					if (oCachePromise && that.oFetchCacheCallToken !== oCallToken) {
+					if (that.oFetchCacheCallToken !== oCallToken) {
 						oError = new Error("Cache discarded as a new cache has been created");
 						oError.canceled = true;
 						throw oError;
@@ -393,14 +393,12 @@ sap.ui.define([
 			that.oCache = null;
 			return null;
 		});
-		oCachePromise.catch(function (oError) {
+		this.oCachePromise.catch(function (oError) {
 			//Note: this may also happen if the promise to read data for the canonical path's
 			// key predicate is rejected with a canceled error
 			that.oModel.reportError("Failed to create cache for binding " + that, sClassName,
 				oError);
 		});
-		this.oCachePromise = oCachePromise;
-		this.oFetchCacheCallToken = oCallToken;
 	};
 
 	/**
