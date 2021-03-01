@@ -1645,13 +1645,13 @@ html[data-sap-ui-os="mac"] pre.prettyprint.prettyprinted {
 
 /* 5 Depths are handled - if more than 5 levels should be displayed we should think of another approach */
 html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-1 {
-	padding-left: 2rem;
+	padding-left: 1.5rem;
 }
 html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-2 {
 	padding-left: 4rem;
 }
 html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-3 {
-	padding-left: 6rem;
+	padding-left: 2.25rem;
 }
 html:not(.sapUiMedia-Std-Phone) .sapUiParamText.depth-4 {
 	padding-left: 8rem;
