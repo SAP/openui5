@@ -64,8 +64,15 @@ sap.ui.define([
 		// shortcut for sap.m.SplitAppMode
 		var SplitAppMode = mobileLibrary.SplitAppMode;
 
-		var MAIN_WEB_PAGE_TITLE,
-		WEB_PAGE_TITLE;
+		var MAIN_WEB_PAGE_TITLE = "Demo Kit - \uFFFD SDK",
+			WEB_PAGE_TITLE = {
+				topic: "Documentation - " + MAIN_WEB_PAGE_TITLE,
+				api: "API Reference - " + MAIN_WEB_PAGE_TITLE,
+				controls: "Samples - " + MAIN_WEB_PAGE_TITLE,
+				demoapps: "Demo Apps - " + MAIN_WEB_PAGE_TITLE,
+				tools: "Tools - " + MAIN_WEB_PAGE_TITLE,
+				home: MAIN_WEB_PAGE_TITLE
+			};
 
 		// shortcut for sap.m.URLHelper
 		var URLHelper = mobileLibrary.URLHelper,
@@ -131,21 +138,17 @@ sap.ui.define([
 				};
 
 				this.getOwnerComponent().loadVersionInfo().then(function () {
+					var sProduct;
 					if (this.getModel("versionData").getProperty("/isOpenUI5")) {
 						this.MENU_LINKS_MAP["Terms of Use"] = "TermsOfUse.txt";
-						MAIN_WEB_PAGE_TITLE = "Demo Kit - OPENUI5 SDK";
+						sProduct = "OPENUI5";
 					} else {
-						MAIN_WEB_PAGE_TITLE = "Demo Kit - SAPUI5 SDK";
+						sProduct = "SAPUI5";
 					}
-
-					WEB_PAGE_TITLE = {
-						topic: "Documentation - " + MAIN_WEB_PAGE_TITLE,
-						api: "API Reference - " + MAIN_WEB_PAGE_TITLE,
-						controls: "Samples - " + MAIN_WEB_PAGE_TITLE,
-						demoapps: "Demo Apps - " + MAIN_WEB_PAGE_TITLE,
-						tools: "Tools - " + MAIN_WEB_PAGE_TITLE,
-						home: MAIN_WEB_PAGE_TITLE
-					};
+					MAIN_WEB_PAGE_TITLE = MAIN_WEB_PAGE_TITLE.replace("\uFFFD", sProduct);
+					Object.keys(WEB_PAGE_TITLE).forEach(function(sKey) {
+						WEB_PAGE_TITLE[sKey] = WEB_PAGE_TITLE[sKey].replace("\uFFFD", sProduct);
+					});
 				}.bind(this));
 
 				this.FEEDBACK_SERVICE_URL = "https://feedback-sapuisofiaprod.hana.ondemand.com:443/api/v2/apps/5bb7d7ff-bab9-477a-a4c7-309fa84dc652/posts";
@@ -1361,15 +1364,17 @@ sap.ui.define([
 				var aVersions = oVersionOverviewJson.versions,
 					aResult = [];
 
-				aVersions = aVersions.filter(function(oVersion) {
-					return !!oVersion.hidden;
-				}).forEach(function(oVersion) {
-					var aHiddenVersions = oVersion.hidden.split(",").map(function(sVersion) {
-						return sVersion.trim();
-					});
+				if (Array.isArray(aVersions)) {
+					aVersions = aVersions.filter(function(oVersion) {
+						return !!oVersion.hidden;
+					}).forEach(function(oVersion) {
+						var aHiddenVersions = oVersion.hidden.split(",").map(function(sVersion) {
+							return sVersion.trim();
+						});
 
-					aResult = aResult.concat(aHiddenVersions);
-				});
+						aResult = aResult.concat(aHiddenVersions);
+					});
+				}
 
 				return aResult;
 			},
@@ -1424,17 +1429,21 @@ sap.ui.define([
 						var aNeoAppVersions = this._processNeoAppJSON(oValues[0]),
 							aHiddenValues = this._processVersionOverview(oValues[1]);
 
-						aNeoAppVersions = aNeoAppVersions.filter(function(oVersion) {
-							return aHiddenValues.indexOf(oVersion.version) === -1;
-						});
+						if (Array.isArray(aNeoAppVersions)) {
+							aNeoAppVersions = aNeoAppVersions.filter(function(oVersion) {
+								return aHiddenValues.indexOf(oVersion.version) === -1;
+							});
 
-						this._aNeoAppVersions = aNeoAppVersions;
-						// Make version select visible
-						this._updateVersionSwitchVisibility();
+							this._aNeoAppVersions = aNeoAppVersions;
+							// Make version select visible
+							this._updateVersionSwitchVisibility();
+						} else {
+							Log.warning("No multi-version environment detected");
+						}
 					}.bind(this),
 					// Error
 					function() {
-						Log.warning("No neo-app.json was detected");
+						Log.warning("No neo-app.json or versionoverview.json was detected");
 					}
 				);
 			},
