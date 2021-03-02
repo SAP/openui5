@@ -67,21 +67,14 @@ sap.ui.define([
 
 	/**
 	 * DO NOT CALL this private constructor for a new <code>ODataMetaModel</code>,
-	 * but rather use {@link sap.ui.model.odata.ODataModel#getMetaModel getMetaModel} instead!
+	 * but rather use {@link sap.ui.model.odata.v2.ODataModel#getMetaModel getMetaModel} instead!
 	 *
 	 * @param {sap.ui.model.odata.ODataMetadata} oMetadata
 	 *   the OData model's metadata object
 	 * @param {sap.ui.model.odata.ODataAnnotations} [oAnnotations]
 	 *   the OData model's annotations object
-	 * @param {object} [oODataModelInterface]
-	 *   the private interface object of the OData model which provides friend access to
-	 *   selected methods
-	 * @param {function} [oODataModelInterface.addAnnotationUrl]
-	 *   the {@link sap.ui.model.odata.v2.ODataModel#addAnnotationUrl addAnnotationUrl} method
-	 *   of the OData model, in case this feature is supported
-	 * @param {Promise} [oODataModelInterface.annotationsLoadedPromise]
-	 *   a promise which is resolved by the OData model once metadata and annotations have been
-	 *   fully loaded
+	 * @param {sap.ui.model.odata.v2.ODataModel} oDataModel
+	 *   the data model instance
 	 *
 	 * @class Implementation of an OData meta model which offers a unified access to both OData V2
 	 * metadata and V4 annotations. It uses the existing {@link sap.ui.model.odata.ODataMetadata}
@@ -212,8 +205,9 @@ sap.ui.define([
 	 * @since 1.27.0
 	 */
 	var ODataMetaModel = MetaModel.extend("sap.ui.model.odata.ODataMetaModel", {
-			constructor : function (oMetadata, oAnnotations, oODataModelInterface) {
-				var that = this;
+			constructor : function (oMetadata, oAnnotations, oDataModel) {
+				var oAnnotationsLoadedPromise = oDataModel.annotationsLoaded(),
+					that = this;
 
 				function load() {
 					var oData;
@@ -229,23 +223,20 @@ sap.ui.define([
 					Measurement.end(sPerformanceLoad);
 				}
 
-				oODataModelInterface = oODataModelInterface || {};
-
 				MetaModel.apply(this); // no arguments to pass!
 				this.oModel = null; // not yet available!
 
 				// map path of property to promise for loading its value list
 				this.mContext2Promise = {};
 				this.sDefaultBindingMode = BindingMode.OneTime;
-				this.oLoadedPromise
-					= oODataModelInterface.annotationsLoadedPromise
-					? oODataModelInterface.annotationsLoadedPromise.then(load)
+				this.oLoadedPromise = oAnnotationsLoadedPromise
+					? oAnnotationsLoadedPromise.then(load)
 					: new Promise(function (fnResolve, fnReject) {
 							load();
 							fnResolve();
 						}); // call load() synchronously!
 				this.oMetadata = oMetadata;
-				this.oODataModelInterface = oODataModelInterface;
+				this.oDataModel = oDataModel;
 				this.mQueryCache = {};
 				// map qualified property name to internal "promise interface" for request bundling
 				this.mQName2PendingRequest = {};
@@ -376,7 +367,7 @@ sap.ui.define([
 	};
 
 	/**
-	 * Merges metadata retrieved via <code>this.oODataModelInterface.addAnnotationUrl</code>.
+	 * Merges metadata retrieved via <code>this.oDataModel.addAnnotationUrl</code>.
 	 *
 	 * @param {object} oResponse response from addAnnotationUrl.
 	 *
@@ -443,7 +434,7 @@ sap.ui.define([
 			aQualifiedPropertyNames[i] = encodeURIComponent(sQualifiedPropertyName);
 		});
 
-		this.oODataModelInterface
+		this.oDataModel
 			.addAnnotationUrl("$metadata?sap-value-list=" + aQualifiedPropertyNames.join(","))
 			.then(
 				function (oResponse) {
@@ -917,8 +908,7 @@ sap.ui.define([
 				sQualifiedTypeName,
 				mValueLists = Utils.getValueLists(oProperty);
 
-			if (!("" in mValueLists) && oProperty["sap:value-list"]
-				&& that.oODataModelInterface.addAnnotationUrl) {
+			if (!("" in mValueLists) && oProperty["sap:value-list"]) {
 				// property with value list which is not yet (fully) loaded
 				bCachePromise = true;
 				sQualifiedTypeName = that.oModel.getObject(aMatches[2]).namespace
