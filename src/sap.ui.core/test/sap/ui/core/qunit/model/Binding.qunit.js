@@ -202,4 +202,20 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oDataState, oFixture.dataStateSet ? undefined : null);
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getResolvedPath", function (assert) {
+		var oModel = {resolve : function () {}};
+
+		this.mock(oModel).expects("resolve").withExactArgs("~sPath", "~oContext")
+			.returns("~resolvedPath");
+
+		// code under test: return resolved path
+		assert.strictEqual(new Binding(oModel, "~sPath", "~oContext").getResolvedPath(),
+			"~resolvedPath");
+
+		// code under test: path cannot be resolved without a model
+		assert.strictEqual(new Binding(undefined, "~sPath", "~oContext").getResolvedPath(),
+			undefined);
+	});
 });

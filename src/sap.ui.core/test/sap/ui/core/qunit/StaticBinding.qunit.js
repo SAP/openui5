@@ -30,7 +30,7 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.module("sap.ui.model.StaticBinding: Basic functionality", {
+	QUnit.module("sap.ui.model.StaticBinding", {
 		beforeEach: function() {
 			sap.ui.getCore().getConfiguration().setLanguage("en-US");
 			this.static = new StaticBinding("test");
@@ -79,39 +79,12 @@ sap.ui.define([
 		assert.equal(this.staticWithType.getValue(), 456, "typed value is parsed correctly");
 	});
 
-	QUnit.module("sap.ui.model.StaticBinding: In CompositeBinding", {
-		beforeEach: function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
-			this.static1 = new StaticBinding("test");
-			this.static2 = new StaticBinding(123);
-			this.composite = new CompositeBinding([this.static1, this.static2]);
-		},
-		afterEach: function() {
-			this.static1 = null;
-			this.static2 = null;
-			this.composite = null;
-			// reset the language
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-		}
-	});
+	QUnit.test("In CompositeBinding: Getter", function(assert) {
+		var oBinding = new CompositeBinding([new StaticBinding("test"), new StaticBinding(123)]);
 
-	QUnit.test("Getter", function(assert) {
-		assert.deepEqual(this.composite.getValue(), ["test", 123], "composite returns array of static values");
-		assert.equal(this.composite.getExternalValue(), "test 123", "external value is space seperated");
-	});
-
-	QUnit.module("sap.ui.model.StaticBinding: Created from binding info", {
-		beforeEach: function() {
-			sap.ui.getCore().getConfiguration().setLanguage("en-US");
-			this.model = new JSONModel({
-				string: "foo"
-			});
-		},
-		afterEach: function() {
-			this.model = null;
-			// reset the language
-			sap.ui.getCore().getConfiguration().setLanguage(sDefaultLanguage);
-		}
+		assert.deepEqual(oBinding.getValue(), ["test", 123],
+			"composite returns array of static values");
+		assert.equal(oBinding.getExternalValue(), "test 123", "external value is space seperated");
 	});
 
 	QUnit.test("Binding info as JS object, string property", function(assert) {
@@ -183,7 +156,9 @@ sap.ui.define([
 
 	QUnit.test("Binding info composite binding", function(assert) {
 		var object = new MyObject({
-			models: this.model,
+			models: new JSONModel({
+				string: "foo"
+			}),
 			value: {
 				parts:[
 					{path: "/string"},
@@ -227,4 +202,9 @@ sap.ui.define([
 		assert.equal(iFormatterCount, 1, "Formatter not called again after setting a model");
 	});
 
+	//*********************************************************************************************
+	QUnit.test("getResolvedPath", function (assert) {
+		// code under test
+		assert.strictEqual(new StaticBinding("~staticValue").getResolvedPath(), undefined);
+	});
 });

@@ -1022,4 +1022,16 @@ sap.ui.define([
 	});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("getResolvedPath", function (assert) {
+		var oModel = {},
+			oCompositeBinding = new CompositeBinding([
+				new PropertyBinding(oModel, ""),
+				new PropertyBinding(oModel, "")
+			]);
+
+		// code under test
+		assert.strictEqual(oCompositeBinding.getResolvedPath(), undefined);
+	});
 });
