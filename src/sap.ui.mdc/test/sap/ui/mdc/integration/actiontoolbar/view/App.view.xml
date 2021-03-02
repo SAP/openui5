@@ -1,0 +1,53 @@
+<mvc:View controllerName="sap.ui.mdc.ActionToolbarTesting.controller.App"
+	xmlns="sap.m"
+	xmlns:mvc="sap.ui.core.mvc"
+	xmlns:tnt="sap.tnt"
+    xmlns:mdc="sap.ui.mdc"
+    xmlns:mdcat="sap.ui.mdc.actiontoolbar">
+    <App id="app">
+        <mdc:ActionToolbar width="100%">
+            <mdc:begin>
+                <Title text="Test Title"/>
+            </mdc:begin>
+            <mdc:between>
+                <Button text="Test Between 1" />
+            </mdc:between>
+            <mdc:end>
+                <Button text="Test End 1" />
+                <Button text="Test End 2" />
+                <Button text="Test End 3" />
+            </mdc:end>
+            <mdc:actions>
+                <mdcat:ActionToolbarAction>
+                    <Button text="Test Action 1" />
+                </mdcat:ActionToolbarAction>
+                <mdcat:ActionToolbarAction layoutInformation="{
+                        aggregationName: 'end',
+                        alignment: 'End'
+                    }">
+                    <Button text="Test Action 2" />
+                </mdcat:ActionToolbarAction>
+
+
+                <mdcat:ActionToolbarAction>
+                    <Button text="Test Action 3" />
+                </mdcat:ActionToolbarAction>
+                <mdcat:ActionToolbarAction>
+                    <Button text="Test Action 4" />
+                </mdcat:ActionToolbarAction>
+                <mdcat:ActionToolbarAction>
+                    <Button text="Test Action 5" />
+                </mdcat:ActionToolbarAction>
+                <mdcat:ActionToolbarAction>
+                    <Button text="Test Action 6" />
+                </mdcat:ActionToolbarAction>
+                <mdcat:ActionToolbarAction>
+                    <Button text="Test Action 7" />
+                </mdcat:ActionToolbarAction>
+                <mdcat:ActionToolbarAction>
+                    <Button text="Test Action 8" />
+                </mdcat:ActionToolbarAction>
+            </mdc:actions>
+        </mdc:ActionToolbar>
+	</App>
+</mvc:View>
