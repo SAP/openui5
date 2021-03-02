@@ -110,7 +110,7 @@
 		<!-- quite or verbose execution -->
 		<sap.ui5.eslint.quite>true</sap.ui5.eslint.quite>
 		<!-- Eslint tools version -->
-		<sap.ui5.eslint.tools.version>0.0.2</sap.ui5.eslint.tools.version>
+		<sap.ui5.eslint.tools.version>0.0.3</sap.ui5.eslint.tools.version>
  	</properties>
 
 
