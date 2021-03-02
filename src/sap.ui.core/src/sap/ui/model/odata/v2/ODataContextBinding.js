@@ -74,7 +74,7 @@ sap.ui.define([
 		}
 
 		// if path cannot be resolved or parent context is created, set element context to null
-		sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+		sResolvedPath = this.getResolvedPath();
 		if (!sResolvedPath || bCreatedRelative) {
 			this.oElementContext = null;
 			this._fireChange({ reason: ChangeReason.Context });
@@ -292,7 +292,7 @@ sap.ui.define([
 
 			this.oContext = oContext;
 
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			sResolvedPath = this.getResolvedPath();
 
 			// If path doesn't resolve or parent context is created, reset current context
 			if (!sResolvedPath || bCreated) {

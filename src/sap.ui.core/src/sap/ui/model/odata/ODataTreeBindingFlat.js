@@ -738,7 +738,7 @@ sap.ui.define([
 			// TODO: Add additional filters to the read call, as soon as back-end implementations support it
 			// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
 
-			var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+			var sAbsolutePath = this.getResolvedPath();
 			if (sAbsolutePath) {
 				oRequest.oRequestHandle = this.oModel.read(sAbsolutePath, {
 					urlParameters: aUrlParameters,
@@ -1033,7 +1033,7 @@ sap.ui.define([
 
 			// TODO: Add additional filters to the read call, as soon as back-end implementations support it
 			// Something like this: aFilters = [new sap.ui.model.Filter([hierarchyFilters].concat(this.aFilters))];
-			var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+			var sAbsolutePath = this.getResolvedPath();
 			if (sAbsolutePath) {
 				oRequest.oRequestHandle = this.oModel.read(sAbsolutePath, {
 					urlParameters: aUrlParameters,
@@ -1269,7 +1269,7 @@ sap.ui.define([
 				aFilters = aFilters.concat(this.aApplicationFilters);
 			}
 
-			var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+			var sAbsolutePath = this.getResolvedPath();
 			if (sAbsolutePath) {
 				oRequest.oRequestHandle = this.oModel.read(sAbsolutePath, {
 					urlParameters: aUrlParameters,
@@ -2955,7 +2955,7 @@ sap.ui.define([
 									"," + this.oTreeProperties["hierarchy-preorder-rank-for"];
 
 		// request the magnitude and preorder
-		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+		var sAbsolutePath = this.getResolvedPath();
 		if (sAbsolutePath) {
 			this.oModel.read(sAbsolutePath, {
 				urlParameters: this.oModel.createCustomParams(mUrlParameters),
