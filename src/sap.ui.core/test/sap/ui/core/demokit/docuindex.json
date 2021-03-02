@@ -265,8 +265,7 @@
 				"category" : "Data Binding",
 				"since" : "1.28",
 				"samples" : [
-					"sap.ui.core.sample.TypeDateTimeAsDate",
-					"sap.ui.core.sample.TypeDateTimeAsString"
+					"sap.ui.core.sample.TypeDateTime"
 				]
 			},
 			{
@@ -419,32 +418,27 @@
 			{
 				"id": "sap.ui.core.sample.TypeDateAsDate",
 				"name": "Date Type - Source As Date",
-				"description": "This sample explains the formatting options of the date type with the date being available as date object."
+				"description": "This sample explains the formatting options of the Date type with the date being available as date object."
 			},
 			{
 				"id": "sap.ui.core.sample.TypeDateAsString",
 				"name": "Date Type - Source As String",
-				"description": "This sample explains the formatting options of the date type with the date being available as string."
+				"description": "This sample explains the formatting options of the Date type with the date being available as string."
 			},
 			{
-				"id": "sap.ui.core.sample.TypeDateTimeAsDate",
-				"name": "DateTime Type - Source As Date",
-				"description": "This sample explains the formatting options of the datetime type."
-			},
-			{
-				"id": "sap.ui.core.sample.TypeDateTimeAsString",
-				"name": "DateTime Type - Source As String",
-				"description": "This sample explains the formatting options of the datetime type."
+				"id": "sap.ui.core.sample.TypeDateTime",
+				"name": "DateTime Type",
+				"description": "This sample explains the formatting options of the DateTime type."
 			},
 			{
 				"id": "sap.ui.core.sample.TypeTimeAsTime",
-				"name": "Time Type - Source As Time",
-				"description": "This sample explains the formatting options of the time type."
+				"name": "Time Type",
+				"description": "This sample explains the formatting options of the Time type."
 			},
 			{
 				"id": "sap.ui.core.sample.TypeFileSize",
 				"name": "FileSize Type",
-				"description": "This sample explains the formatting options of the filesize type."
+				"description": "This sample explains the formatting options of the FileSize type."
 			},
 			{
 				"id": "sap.ui.core.sample.BusyIndicator",

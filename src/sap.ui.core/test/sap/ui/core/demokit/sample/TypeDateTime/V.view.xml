@@ -1,5 +1,5 @@
 <mvc:View
-	controllerName="sap.ui.core.sample.TypeDateTimeAsDate.C"
+	controllerName="sap.ui.core.sample.TypeDateTime.C"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns:form="sap.ui.layout.form"
 	xmlns="sap.m">
@@ -17,8 +17,12 @@
 		columnsM="1"
 		title="Date Input" >
 		<form:content>
-			<Label text="DateTime" />
+			<Label text="DateTime in DateTimePicker" />
 			<DateTimePicker value="{
+				path: '/dtValue',
+				type: 'sap.ui.model.type.DateTime'}" />
+			<Label text="DateTime in Input" />
+			<Input placeholder="{/dtPattern}" value="{
 				path: '/dtValue',
 				type: 'sap.ui.model.type.DateTime'}" />
 		</form:content>

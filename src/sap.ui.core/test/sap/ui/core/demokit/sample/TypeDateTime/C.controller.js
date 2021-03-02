@@ -5,13 +5,13 @@ sap.ui.define([
 ], function (LocaleData, Controller, JSONModel) {
 	"use strict";
 
-	return Controller.extend("sap.ui.core.sample.TypeDateTimeAsString.C", {
+	return Controller.extend("sap.ui.core.sample.TypeDateTime.C", {
 
 		_data : {
 			"dtValue" : new Date()
 		},
 
-		onInit : function (evt) {
+		onInit : function () {
 			var oLocale = sap.ui.getCore().getConfiguration().getLocale(),
 				oLocaleData = new LocaleData(oLocale),
 				oModel;
