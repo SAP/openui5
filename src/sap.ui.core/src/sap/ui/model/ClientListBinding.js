@@ -87,7 +87,7 @@ sap.ui.define([
 		var iEndIndex = Math.min(iStartIndex + iLength, this.aIndices.length),
 		oContext,
 		aContexts = [],
-		sPrefix = this.oModel.resolve(this.sPath, this.oContext);
+		sPrefix = this.getResolvedPath();
 
 		if (sPrefix && !sPrefix.endsWith("/")) {
 			sPrefix += "/";

@@ -735,8 +735,7 @@ sap.ui.define([
 	 * @private
 	 */
 	Binding.prototype.checkDataState = function(mPaths) {
-		var sResolvedPath = this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : null;
-		this._checkDataState(sResolvedPath, mPaths);
+		this._checkDataState(this.getResolvedPath(), mPaths);
 	};
 
 	/**

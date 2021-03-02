@@ -2908,8 +2908,8 @@ sap.ui.define([
 				oBindingMock.expects("isRelative").withExactArgs().returns(oFixture.bRelative);
 				oBindingMock.expects("_abortAllPendingRequests").exactly(oFixture.bRelative ? 1 : 0)
 					.withExactArgs();
-				oModelMock.expects("resolve")
-					.withExactArgs("~", sinon.match.same(oFixture.oContext))
+				oBindingMock.expects("getResolvedPath")
+					.withExactArgs()
 					.exactly(oFixture.bRelative ? 1 : 0)
 					.returns(oFixture.bResolved ? sResolvedPath : undefined);
 				if (oFixture.bResolved) {
@@ -3356,4 +3356,38 @@ sap.ui.define([
 		});
 	});
 });
+
+	//*********************************************************************************************
+	QUnit.test("_getResourcePath: calls getResolvedPath", function (assert) {
+		var oBinding = {
+				getResolvedPath : function () {},
+				isRelative : function () {}
+			};
+
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+
+		// code under test
+		assert.strictEqual(AnalyticalBinding.prototype._getResourcePath.call(oBinding),
+			"~resolvedPath");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_refresh: calls getResolvedPath", function (assert) {
+		var oBinding = {
+				oModel : {
+					oMetadata : {_getEntityTypeByPath : function () {}}
+				},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding.oModel.oMetadata).expects("_getEntityTypeByPath")
+			.withExactArgs("~resolvedPath")
+			.returns(undefined);
+
+		// code under test
+		AnalyticalBinding.prototype._refresh.call(oBinding,
+			/*bForceUpdate*/ undefined, /*mChangedEntities*/ undefined, "~mEntityTypes");
+	});
 });
