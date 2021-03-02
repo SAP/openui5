@@ -16,6 +16,7 @@ sap.ui.define([
 	 * @param {boolean} <code>true</code> for observing and <code>false</code> for unobserving
 	 *
 	 * @private
+	 * @ui5-restricted sap.ui.mdc
 	 */
 	function _adaptDeepChildObservation(caller, oControl, oAggregation, bObserve) {
 		var aChildren = oAggregation.get(oControl) || [], oChild, bRecord;
