@@ -76,6 +76,7 @@ sap.ui.define([
                     items: [
                         new Label({
                             wrapping: true,
+                            required: "{" + this.P13N_MODEL + ">required}",
                             tooltip: "{" + this.P13N_MODEL + ">tooltip}",
                             text: "{" + this.P13N_MODEL + ">label}"
                         })
@@ -228,7 +229,7 @@ sap.ui.define([
 
     ListView.prototype._moveTableItem = function(){
         BasePanel.prototype._moveTableItem.apply(this, arguments);
-        this._addMoveButtons(this._oSelectedItem);
+        this._handleHover(this._oSelectedItem);
     };
 
 	ListView.prototype.getShowFactory = function() {

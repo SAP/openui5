@@ -178,6 +178,26 @@ sap.ui.define([
         assert.equal(oIconSecondTableItem.getVisible(), true, "The filtered icon is visible again as the table item does no longer hold the move buttons");
     });
 
+    QUnit.test("Check '_handleHover'", function(assert){
+        this.oListView.setP13nModel(new JSONModel(this.oP13nData));
+
+        var oHoveredItem = this.oListView._oListControl.getItems()[1];
+
+        oHoveredItem.getCells()[1].getItems()[0].setVisible(true);//Set icon to visible --> check that the handler sets it to visible: false
+
+        //execute hover handler
+        this.oListView._handleHover(oHoveredItem);
+
+        //check that movement buttons have been added
+        assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oListView._getMoveTopButton()) > -1, "Move Top Button found");
+        assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oListView._getMoveUpButton()) > -1, "Move Up Button found");
+        assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oListView._getMoveDownButton()) > -1, "Move Down Button found");
+        assert.ok(oHoveredItem.getCells()[1].getItems().indexOf(this.oListView._getMoveBottomButton()) > -1, "Move Bottom Button found");
+
+        //check that the icon has been set to visible: false
+        assert.ok(!oHoveredItem.getCells()[1].getItems()[0].getVisible(), "Active icon is not visible");
+    });
+
     QUnit.test("Check 'enableReorder'", function(assert){
         this.oListView.setEnableReorder(true);
         assert.equal(this.oListView.getTemplate().aDelegates.length, 1, "Hover event delegate registered");
