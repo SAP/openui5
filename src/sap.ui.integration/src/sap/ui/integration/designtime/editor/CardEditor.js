@@ -1154,7 +1154,7 @@ sap.ui.define([
 		}
 		var oNewLabel = null;
 		if (sMode === "translation") {
-			if (typeof oConfig.value === "string" && oConfig.value.indexOf("{") === 0) {
+			if ((typeof oConfig.value === "string" && oConfig.value.indexOf("{") === 0) || typeof oConfig.values !== "undefined") {
 				//do not show dynamic values for translation
 				return;
 			}

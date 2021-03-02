@@ -15,6 +15,7 @@ sap.ui.define([
 	BaseField, Input, Text, MultiComboBox, ListItem, each, _debounce, ObjectPath, includes
 ) {
 	"use strict";
+	var sDefaultSeperator = "/";
 
 	/**
 	 * @class
@@ -109,6 +110,7 @@ sap.ui.define([
 		if (oControl instanceof MultiComboBox) {
 			var oConfig = this.getConfiguration();
 			if (this.isFilterBackend(oConfig)) {
+				this.prepareFieldsInKey(oConfig);
 				this.onInput = _debounce(this.onInput, 500);
 				//if need to filter backend by input value, need to hook the onInput function which only support filter locally.
 				oControl.oninput = this.onInput;
@@ -121,6 +123,36 @@ sap.ui.define([
 				oModel.attachPropertyChange(this.mergeSelectedItems, this);
 			}
 		}
+	};
+
+	ListField.prototype.prepareFieldsInKey = function(oConfig) {
+		//get field names in the item key
+		this._sKeySeparator = oConfig.values.keySeparator;
+		if (!this._sKeySeparator) {
+			this._sKeySeparator = sDefaultSeperator;
+		}
+		var sKey = oConfig.values.item.key;
+		this._aFields = sKey.split(this._sKeySeparator);
+		for (var n in this._aFields) {
+			//remove the {} in the field
+			if (this._aFields[n].startsWith("{")) {
+				this._aFields[n] = this._aFields[n].substring(1);
+			}
+			if (this._aFields[n].endsWith("}")) {
+				this._aFields[n] = this._aFields[n].substring(0, this._aFields[n].length - 1);
+			}
+		}
+	};
+
+	ListField.prototype.getKeyFromItem = function(oItem) {
+		var sItemKey = "";
+		this._aFields.forEach(function (field) {
+			sItemKey += oItem[field].toString() + this._sKeySeparator;
+		}.bind(this));
+		if (sItemKey.endsWith(this._sKeySeparator)) {
+			sItemKey = sItemKey.substring(0, sItemKey.length - this._sKeySeparator.length);
+		}
+		return sItemKey;
 	};
 
 	ListField.prototype.mergeSelectedItems = function(oEvent) {
@@ -142,21 +174,15 @@ sap.ui.define([
 				//get new items
 				var oResult = ObjectPath.get(aPath, oData);
 				if (Array.isArray(oResult)) {
-					var sKey = oConfig.values.item.key;
-					if (sKey.startsWith("{")) {
-						sKey = sKey.substring(1);
-					}
-					if (sKey.endsWith("}")) {
-						sKey = sKey.substring(0, sKey.length - 1);
-					}
 					//get keys of preview selected items
-					var aSelectedItemKeys = this._aSelectedItems.map(function (oSelectedElement) {
-						return oSelectedElement[sKey];
-					});
+					var aSelectedItemKeys = this._aSelectedItems.map(function (oSelectedItem) {
+						return this.getKeyFromItem(oSelectedItem);
+					}.bind(this));
 					//filter the new items to remove the exist ones according by the keys
 					var oNotSelectedItems = oResult.filter(function (item) {
-						return !includes(aSelectedItemKeys, item[sKey].toString());
-					});
+						var sItemKey = this.getKeyFromItem(item);
+						return !includes(aSelectedItemKeys, sItemKey);
+					}.bind(this));
 					//concat the filtered items to the previous selected items
 					oResult = this._aSelectedItems.concat(oNotSelectedItems);
 				} else {
@@ -186,26 +212,18 @@ sap.ui.define([
 
 	ListField.prototype.onSelectionChange = function(oEvent) {
 		var oField = oEvent.oSource.getParent();
-		var oListItem = oEvent.getParameter("changedItem");
-		var sItemKey = oListItem.getKey();
-		var bIsSelected = oEvent.getParameter("selected");
-
-		//get column name of the key
 		var oConfig = oField.getConfiguration();
-		var sKey = oConfig.values.item.key;
-		if (sKey.startsWith("{")) {
-			sKey = sKey.substring(1);
-		}
-		if (sKey.endsWith("}")) {
-			sKey = sKey.substring(0, sKey.length - 1);
-		}
+		var oListItem = oEvent.getParameter("changedItem");
+		var sChangedItemKey = oListItem.getKey();
+		var bIsSelected = oEvent.getParameter("selected");
 
 		//update the selected item list
 		if (!bIsSelected) {
 			//remove the diselected item from current selected item list
 			if (oField._aSelectedItems) {
-				oField._aSelectedItems = oField._aSelectedItems.filter(function (oSelectedElement) {
-					return oSelectedElement[sKey].toString() !== sItemKey;
+				oField._aSelectedItems = oField._aSelectedItems.filter(function (oSelectedItem) {
+					var sItemKey = oField.getKeyFromItem(oSelectedItem);
+					return sItemKey !== sChangedItemKey;
 				});
 			}
 		} else {
@@ -229,17 +247,20 @@ sap.ui.define([
 					oField._aSelectedItems = [];
 				}
 				//add the selected item into selected item list
-				oData.forEach(function (oItem) {
-					if (oItem[sKey].toString() === sItemKey) {
+				oData.some(function (oItem) {
+					var sItemKey = oField.getKeyFromItem(oItem);
+					if (sItemKey === sChangedItemKey) {
 						oField._aSelectedItems = oField._aSelectedItems.concat([oItem]);
+						return true;
 					}
+					return false;
 				});
 			}
 		}
 
 		//get selected keys of the selected items
-		var aSelectedItemKeys = oField._aSelectedItems.map(function (oSelectedElement) {
-			return oSelectedElement[sKey];
+		var aSelectedItemKeys = oField._aSelectedItems.map(function (oSelectedItem) {
+			return oField.getKeyFromItem(oSelectedItem);
 		});
 
 		//save the selected keys as field value
@@ -249,20 +270,13 @@ sap.ui.define([
 	};
 
 	ListField.prototype.onSelectionFinish = function(oEvent) {
-		//get the keys of the selected items
-		var aSelectedItemKeys = oEvent.getParameter("selectedItems").map(function (oSelectedElement) {
-			return oSelectedElement.getKey();
-		});
 		var oField = this.getParent();
-		//get column name of the key
 		var oConfig = oField.getConfiguration();
-		var sKey = oConfig.values.item.key;
-		if (sKey.startsWith("{")) {
-			sKey = sKey.substring(1);
-		}
-		if (sKey.endsWith("}")) {
-			sKey = sKey.substring(0, sKey.length - 1);
-		}
+
+		//get the keys of the selected items
+		var aSelectedItemKeys = oEvent.getParameter("selectedItems").map(function (oSelectedItem) {
+			return oSelectedItem.getKey();
+		});
 
 		//get the selected items in the data model by the keys
 		var oData = this.getModel().getData();
@@ -278,8 +292,9 @@ sap.ui.define([
 			oData = ObjectPath.get(aPath, oData);
 		}
 		if (oData) {
-			oField._aSelectedItems = oData.filter(function (oSelectedElement) {
-				return includes(aSelectedItemKeys, oSelectedElement[sKey].toString());
+			oField._aSelectedItems = oData.filter(function (oItem) {
+				var sItemKey = oField.getKeyFromItem(oItem);
+				return includes(aSelectedItemKeys, sItemKey);
 			});
 		}
 
