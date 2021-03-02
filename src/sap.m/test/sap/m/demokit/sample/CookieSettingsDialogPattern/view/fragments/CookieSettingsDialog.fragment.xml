@@ -1,0 +1,49 @@
+<core:FragmentDefinition
+		xmlns="sap.m"
+		xmlns:core="sap.ui.core"
+		xmlns:html="http://www.w3.org/1999/xhtml">
+	<Dialog title="{i18n>COOKIE_SETTINGS_DIALOG_TITLE}">
+		<content>
+			<html:div class="cookieSettingsContainer sapUiSmallMargin">
+				<Text text="{i18n>COOKIE_SETTINGS_DIALOG_SUMMARY}"
+					  visible="{= !${cookieData>/showCookieDetails} }"/>
+				<Text text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_TEXT}"
+					  visible="{= !${cookieData>/showCookieDetails} }"/>
+				<List visible="{cookieData>/showCookieDetails}">
+					<CustomListItem class="cookieSetting">
+						<Title text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_TITLE}" />
+						<Text class="cookieSummaryText" text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_SUMMARY}"/>
+						<Panel headerText="{i18n>COOKIE_SETTINGS_DIALOG_MORE_INFO}" expandable="true" class="sapUiTinyMarginTop">
+							<Text text="{i18n>COOKIE_SETTINGS_DIALOG_REQUIRED_COOKIES_TEXT}"/>
+						</Panel>
+						<Switch id="requiredCookiesSwitch" class="cookieStateSwitch" />
+					</CustomListItem>
+
+					<CustomListItem class="cookieSetting sapUiSmallMarginTop">
+						<Title text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_TITLE}"/>
+						<Text class="cookieSummaryText" text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_SUMMARY}"/>
+						<Panel headerText="{i18n>COOKIE_SETTINGS_DIALOG_MORE_INFO}" expandable="true" class="sapUiTinyMarginTop">
+							<Text text="{i18n>COOKIE_SETTINGS_DIALOG_FUNCTIONAL_COOKIES_TEXT}"/>
+						</Panel>
+						<Switch id="functionalCookiesSwitch" class="cookieStateSwitch" />
+					</CustomListItem>
+				</List>
+			</html:div>
+		</content>
+	<buttons>
+		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_ACCEPT_ALL}" type="Emphasized" press="onAcceptAllCookies" visible="{=! ${cookieData>/showCookieDetails} }">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow"/>
+			</layoutData>
+		</Button>
+		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_SET_PREFERENCES}" id="btnSetPreferences" type="Ghost" press="showCookieDetails" visible="{= !${cookieData>/showCookieDetails} }"></Button>
+		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_REJECT_ALL}" press="onRejectAllCookies" visible="{=! ${cookieData>/showCookieDetails} }">
+			<layoutData>
+				<OverflowToolbarLayoutData priority="NeverOverflow"/>
+			</layoutData>
+		</Button>
+		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_SAVE_PREFERENCES}" id="btnSavePreferences" type="Emphasized" press="onSaveCookies" visible="{cookieData>/showCookieDetails}"></Button>
+		<Button text="{i18n>COOKIE_SETTINGS_DIALOG_CANCEL_BTN}" press="onCancelPress" visible="{= ${cookieData>/showCookieDetails} }"></Button>
+	</buttons>
+	</Dialog>
+</core:FragmentDefinition>

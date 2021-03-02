@@ -1,0 +1,29 @@
+{
+	"sap.app": {
+		"id": "sap.m.sample.CookieSettingsDialogPattern",
+		"applicationVersion": {
+			"version": "1.0.0"
+		}
+	},
+	"sap.ui5": {
+		"rootView": "sap.m.sample.CookieSettingsDialogPattern.view.App",
+		"dependencies": {
+			"libs": {
+				"sap.m": {}
+			}
+		},
+		"config": {
+			"sample": {
+				"stretch": true,
+				"files": [
+					"view/App.view.xml",
+					"view/fragments/CookieSettingsDialog.fragment.xml",
+					"controller/App.controller.js",
+					"i18n/i18n.properties",
+					"Component.js",
+					"manifest.json"
+				]
+			}
+		}
+	}
+}
