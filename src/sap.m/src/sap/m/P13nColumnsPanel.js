@@ -760,7 +760,7 @@ sap.ui.define([
 		if (iIndex < 0) {
 			return null;
 		}
-		return this._oTable.getBinding("items").getContexts()[iIndex].getObject().columnKey;
+		return this._oTable.getBinding("items").getContexts(undefined, undefined, undefined, true)[iIndex].getObject().columnKey;
 	};
 
 	P13nColumnsPanel.prototype._getModelItemIndexByColumnKey = function(sColumnKey) {
@@ -788,7 +788,7 @@ sap.ui.define([
 	};
 
 	P13nColumnsPanel.prototype._getTableItemByColumnKey = function(sColumnKey) {
-		var aContext = this._oTable.getBinding("items").getContexts();
+		var aContext = this._oTable.getBinding("items").getContexts(undefined, undefined, undefined, true);
 		var aTableItems = this._oTable.getItems().filter(function(oTableItem, iIndex) {
 			return aContext[iIndex].getObject().columnKey === sColumnKey;
 		});

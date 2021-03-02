@@ -194,7 +194,7 @@ sap.ui.define([
 		},
 
 		_getContextByIndex: function(iRowIndex) {
-			return this._getBinding().getContexts(iRowIndex, 1)[0];
+			return this._getBinding().getContexts(iRowIndex, 1, undefined, true)[0];
 		},
 
 		_getSelectionModel: function(bForceInit) {
