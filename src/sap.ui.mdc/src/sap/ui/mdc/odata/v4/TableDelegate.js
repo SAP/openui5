@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/m/ColumnPopoverSelectListItem",
 	"sap/ui/core/Item",
 	"sap/ui/core/Core",
+	"sap/ui/core/library",
 	"sap/m/MessageBox"
 ], function(
 	TableDelegate,
@@ -17,6 +18,7 @@ sap.ui.define([
 	ColumnPopoverSelectListItem,
 	Item,
 	Core,
+	coreLibrary,
 	MessageBox
 ) {
 	"use strict";
@@ -325,6 +327,39 @@ sap.ui.define([
 		var aAggregate = Object.keys(oAggregate);
 		this._setAggregation(oTable, aGroupLevel, aAggregate);
 	};
+
+	Delegate.validateState = function(oControl, oState) {
+		var oProperty, aProperties = [];
+		oState.items.forEach(function(oItem) {
+			oProperty = oControl.getPropertyHelper().getProperty(oItem.name);
+			if (!oProperty.isComplex()) {
+				aProperties.push(oProperty.name);
+			} else {
+				oProperty.getReferencedProperties().forEach(function(oReferencedProperty) {
+					aProperties.push(oReferencedProperty.name);
+				});
+			}
+		});
+
+		var bSortedOnlyVisibleColumns = oState.sorters.every(function(oSort) {
+			return aProperties.find(function(sPropertyName) {
+				return oSort.name === sPropertyName;
+			});
+		});
+
+		if (!bSortedOnlyVisibleColumns) {
+			var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+			return {
+				validation: coreLibrary.MessageType.Warning,
+				message: oResourceBundle.getText("table.PERSONALIZATION_DIALOG_SORT_RESTRICTION")
+			};
+		}
+
+		return {
+			validation: coreLibrary.MessageType.None
+		};
+	};
+
 
 	function enrichGridTable(oTable, that) {
 		// The property helper is initialized after the table "initialized" promise resolves. So we can only wait for the property helper.
