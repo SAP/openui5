@@ -1,6 +1,6 @@
 {
   "1.88.0": {
-    "date": "February 2021",
+    "date": "March 2021",
     "notes": [
       {
         "id": "2650b7418ca60c3ea0d73fca1501188b34ecd1dc",
@@ -10,17 +10,6 @@
           {
             "type": "BCP",
             "reference": "2180117681"
-          }
-        ]
-      },
-      {
-        "id": "8db1ac9dd00e22f71c65e2ba39b9e4310db67d12",
-        "type": "FIX",
-        "text": " sap.ui.fl: Personalization changes not filtered on \"Adapt UI\"",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180021032"
           }
         ]
       }

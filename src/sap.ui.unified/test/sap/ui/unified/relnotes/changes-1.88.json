@@ -1,7 +1,34 @@
 {
   "1.88.0": {
-    "date": "February 2021",
+    "date": "March 2021",
     "notes": [
+      {
+        "id": "f79da913aec6e8a472e5c0bb774d95714b4c791b",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: week selection working properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180121275"
+          }
+        ]
+      },
+      {
+        "id": "676414a196c81600bc0f280c17a2da9858ba9283",
+        "type": "FEATURE",
+        "text": " sap.ui.unified.Currency: Currency can now have more than three symbols"
+      },
+      {
+        "id": "a9fb60aa09966ea77e592d6e8800090a74240f91",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: year picker is properly displayed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180051173"
+          }
+        ]
+      },
       {
         "id": "4d15f48cfa98474dd7b3dd049100fe87aa80939f",
         "type": "FIX",
@@ -32,50 +59,6 @@
           {
             "type": "BCP",
             "reference": "002075129400008348942020"
-          }
-        ]
-      },
-      {
-        "id": "29f99a49af5e2483a0a71cd989179dae26c3be60",
-        "type": "FIX",
-        "text": " sap.ui.unified.Calendar: Week numbers are now correct in different locales",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180007566"
-          }
-        ]
-      },
-      {
-        "id": "ac7a33ecee900d91189c7df1543f4d1711204fd8",
-        "type": "FIX",
-        "text": " sap.ui.unified.FileUploader: Screen reader announcement adjusted",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2080354744"
-          }
-        ]
-      },
-      {
-        "id": "1312711a8b9c8369cd379186a2a6faf96acf91eb",
-        "type": "FIX",
-        "text": " sap.ui.unified.YearPicker: maximum constraint now works properly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180030102"
-          }
-        ]
-      },
-      {
-        "id": "aa1db6e68e994c32cff8e143d68a0bc408c2dafc",
-        "type": "FIX",
-        "text": " sap.ui.unified.calendar.Month: Renders Dec 9999 correctly",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180002261"
           }
         ]
       }
