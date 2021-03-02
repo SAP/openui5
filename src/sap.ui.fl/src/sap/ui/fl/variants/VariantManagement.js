@@ -210,12 +210,12 @@ sap.ui.define([
 				/**
 				 * Defines the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
 				 *
+				 * <br><b>Note:</b> the usage of this property is restricted to <code>sap.fe</code> components only.
 				 * @since 1.85
 				 */
-				_displayTextForExecuteOnSelectionForStandardVariant: {
+				displayTextForExecuteOnSelectionForStandardVariant: {
 					type: "string",
 					group: "Misc",
-					visibility: "hidden",
 					defaultValue: ""
 				}
 			},
@@ -414,29 +414,6 @@ sap.ui.define([
 		this.oVariantInvisibleText.toStatic();
 
 		this.addDependent(this.oVariantLayout);
-	};
-
-	/**
-	 * Sets the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
-	 *
-	 * @param {string} sText The apply automatically text
-	 * @private
-	 * @ui5-restricted sap.fe
-	 */
-	VariantManagement.prototype.setDisplayTextForExecuteOnSelectionForStandardVariant = function(sText) {
-		this.setProperty("_displayTextForExecuteOnSelectionForStandardVariant", sText);
-	};
-
-
-	/**
-	 * Gets the Apply Automatically text for the standard variant in the Manage Views dialog if the application controls this behavior.
-	 *
-	 * @returns {string}  The apply automatically text
-	 * @private
-	 * @ui5-restricted sap.fe
-	 */
-	VariantManagement.prototype.getDisplayTextForExecuteOnSelectionForStandardVariant = function() {
-		return this.getProperty("_displayTextForExecuteOnSelectionForStandardVariant");
 	};
 
 	/**
