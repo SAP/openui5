@@ -2,14 +2,15 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (JSDocUtil) {
+sap.ui.define(["sap/ui/base/Object", "sap/base/util/merge", "sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (BaseObject, merge, JSDocUtil) {
 	"use strict";
 
 	// regexp for an extra route parameter in the format: a single 'p' letter followed by a digit
 	// this is used in the router configuration to declare optional extra parameters
 	var REGEXP_ROUTE_SPECIAL_PARAMETER = /^p\d+$/;
 
-	return {
+	var oFormatter = BaseObject.extend("sap.ui.documentation.sdk.model.formatter"),
+		oStaticAPI = {
 		/**
 		 * Formats a library namespace to link to the API reference if it starts with sap.
 		 *
@@ -87,6 +88,22 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 		 */
 		apiRefAggregationAltTypes: function (altTypes) {
 			return altTypes && altTypes.join(", ");
+		},
+
+		/**
+		 * Formats the info for visibility of some API (e.g. method, property)
+		 *
+		 * @protected
+		 * @param {string} sVisibility the declared visibility e.g. "public"
+		 * @param {Array} aAllowedFor the types that are allowed to access a restricted API
+		 * @returns {string | undefined} the formatted text
+		 */
+		formatVisibility: function (sVisibility, aAllowedFor) {
+			var sFormatted = sVisibility;
+			if (aAllowedFor && Array.isArray(aAllowedFor)) {
+				sFormatted += (" to " + aAllowedFor.join(", "));
+			}
+			return sFormatted;
 		},
 
 		formatVersionTitle: function (sPattern, sTitle) {
@@ -261,4 +278,5 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/JSDocUtil"], function (
 			return sValue;
 		}
 	};
+	return merge(oFormatter, oStaticAPI);
 });
