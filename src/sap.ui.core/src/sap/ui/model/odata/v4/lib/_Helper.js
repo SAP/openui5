@@ -607,6 +607,27 @@ sap.ui.define([
 		},
 
 		/**
+		 * Filters out every path in <code>aPathsToFilter</code> if any meta path in
+		 * <code>aMetaPaths</code> is a prefix of its meta path.
+		 *
+		 * @param {string[]} aMetaPaths
+		 *   A list of absolute meta paths
+		 * @param {string[]} aPathsToFilter
+		 *   A list of absolute paths
+		 * @returns {string[]}
+		 *   The filtered list
+		 */
+		filterPaths: function (aMetaPaths, aPathsToFilter) {
+			return aPathsToFilter.filter(function (sPathToFilter) {
+				var sMetaPathToFilter = _Helper.getMetaPath(sPathToFilter);
+
+				return aMetaPaths.every(function (sMetaPath) {
+					return !_Helper.hasPathPrefix(sMetaPathToFilter, sMetaPath);
+				});
+			});
+		},
+
+		/**
 		 * Fires a change event to all listeners for the given path in mChangeListeners.
 		 *
 		 * @param {object} mChangeListeners A map of change listeners by path

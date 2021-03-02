@@ -1548,9 +1548,12 @@ sap.ui.define([
 				getRootBinding : function () { return oRootBinding; },
 				isResolved : function () { return true; }
 			},
+			oMetaModel = {
+				getObject : function () {}
+			},
 			oModel = {
 				checkGroupId : function () {},
-				getMetaModel : function () {}
+				getMetaModel : function () { return oMetaModel; }
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
@@ -1586,6 +1589,14 @@ sap.ui.define([
 				oContext.requestSideEffects([oPath]);
 			}, new Error("Not an edm:(Navigation)PropertyPath expression: " + sJSON), sJSON);
 		});
+
+		this.mock(oMetaModel).expects("getObject").withExactArgs("/$EntityContainer")
+			.returns("~container~");
+
+		assert.throws(function () {
+			// code under test
+			oContext.requestSideEffects(["/~container~wrong~path"]);
+		}, new Error("Path must start with '/~container~/': /~container~wrong~path"));
 	});
 
 	//*********************************************************************************************
@@ -1631,10 +1642,8 @@ sap.ui.define([
 	text : "different group ID"
 }].forEach(function (oFixture) {
 	QUnit.test("requestSideEffects: " + oFixture.text, function (assert) {
-		var oRootContext = {},
+		var aAbsolutePaths = oFixture.absolute ? ["/foo", "/bar", "/baz"] : [],
 			oRootBinding = {
-				getContext : function () { return oRootContext; },
-				getPath : function () { return "root/path"; },
 				getResolvedPath : function () {}
 			},
 			oBinding = {
@@ -1646,8 +1655,10 @@ sap.ui.define([
 				getPath : function () { return "/EMPLOYEES('42')"; },
 				isResolved : function () { return true; }
 			},
+			aFilteredPaths = [],
 			oMetaModel = {
-				getAllPathReductions : function () {}
+				getAllPathReductions : function () {},
+				getObject : function () {}
 			},
 			oMetaModelMock = this.mock(oMetaModel),
 			oModel = {
@@ -1681,25 +1692,25 @@ sap.ui.define([
 		function setExpectation() {
 			oExpectation = that.mock(oContext).expects("requestSideEffectsInternal")
 				// Note: $select not yet sorted
-				.withExactArgs(["/base/TEAM_ID", "/reduced/TEAM_ID", "/base/EMPLOYEE_2_MANAGER",
-					"/base/Address/*", "/base/", "/base/*", "/base/", "/base/*",
-					"/base/EMPLOYEE_2_TEAM/*", "/base/MANAGER_ID"], sGroupId)
+				.withExactArgs(sinon.match.same(aFilteredPaths), sGroupId)
 				.returns(SyncPromise.resolve({}));
 			that.mock(oModel).expects("requestSideEffects")
-				.withExactArgs(sGroupId, oFixture.absolute ? ["/foo", "/bar", "/baz"] : [])
+				.withExactArgs(sGroupId, aAbsolutePaths)
 				.returns(SyncPromise.resolve({}));
 		}
 
 		if (oFixture.absolute) {
 			aPathExpressions = aPathExpressions.concat([
-				{$PropertyPath : "/foo"},
-				{$NavigationPropertyPath : "/bar"},
-				"/baz"
+				{$PropertyPath : "/~container~/foo"},
+				{$NavigationPropertyPath : "/~container~/bar"},
+				"/~container~/baz"
 			]);
 		}
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(oFixture.group);
 		this.mock(oRootBinding).expects("getResolvedPath").withExactArgs().returns("/base");
+		this.mock(oMetaModel).expects("getObject").withExactArgs("/$EntityContainer")
+			.returns("~container~");
 		oMetaModelMock.expects("getAllPathReductions")
 			.withExactArgs("/EMPLOYEES('42')/TEAM_ID", "/base")
 			.returns(["/base/TEAM_ID", "/reduced/TEAM_ID"]);
@@ -1717,6 +1728,13 @@ sap.ui.define([
 		oMetaModelMock.expects("getAllPathReductions")
 			.withExactArgs("/EMPLOYEES('42')/EMPLOYEE_2_TEAM/*", "/base")
 			.returns(["/base/EMPLOYEE_2_TEAM/*"]);
+		this.mock(_Helper).expects("filterPaths")
+			.withExactArgs(aAbsolutePaths, [
+				"/base/TEAM_ID", "/reduced/TEAM_ID", "/base/EMPLOYEE_2_MANAGER",
+				"/base/Address/*", "/base/", "/base/*", "/base/", "/base/*",
+				"/base/EMPLOYEE_2_TEAM/*", "/base/MANAGER_ID"
+			])
+			.returns(aFilteredPaths);
 		this.mock(oContext).expects("getUpdateGroupId").exactly(oFixture.group ? 0 : 1)
 			.withExactArgs().returns("any");
 		this.mock(oModel).expects("isAutoGroup").withExactArgs(sGroupId).returns(oFixture.auto);
@@ -1800,10 +1818,7 @@ sap.ui.define([
 				+ bAbsolute;
 
 	QUnit.test(sTitle, function (assert) {
-		var oRootContext = {},
-			oRootBinding = {
-				getContext : function () { return oRootContext; },
-				getPath : function () { return "root/path"; },
+		var oRootBinding = {
 				getResolvedPath : function () {}
 			},
 			oBinding = {
@@ -1813,7 +1828,8 @@ sap.ui.define([
 				isResolved : function () { return true; }
 			},
 			oMetaModel = {
-				getAllPathReductions : function () {}
+				getAllPathReductions : function () {},
+				getObject : function () {}
 			},
 			oModel = {
 				checkGroupId : function () {},
@@ -1832,6 +1848,8 @@ sap.ui.define([
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
 		this.mock(oRootBinding).expects("getResolvedPath").withExactArgs().returns("/base");
+		this.mock(oMetaModel).expects("getObject").withExactArgs("/$EntityContainer")
+			.returns("~container~");
 		this.mock(oMetaModel).expects("getAllPathReductions")
 			.withExactArgs("/EMPLOYEES('42')/TEAM_ID", "/base").returns(["/base/TEAM_ID"]);
 		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("update");
@@ -1850,7 +1868,7 @@ sap.ui.define([
 		// code under test
 		oResult = oContext.requestSideEffects([
 			{$PropertyPath : "TEAM_ID"},
-			{$NavigationPropertyPath : "/EMPLOYEES"}
+			{$NavigationPropertyPath : "/~container~/EMPLOYEES"}
 		]);
 
 		assert.ok(oResult instanceof Promise);
@@ -1882,6 +1900,9 @@ sap.ui.define([
 				});
 			}),
 			oResultPromise;
+
+		// code under test
+		assert.strictEqual(oContext.requestSideEffectsInternal([], "groupId"), undefined);
 
 		this.mock(oBinding).expects("requestSideEffects")
 			.withExactArgs("groupId", ["Name", "TeamBudget"], sinon.match.same(oContext))
