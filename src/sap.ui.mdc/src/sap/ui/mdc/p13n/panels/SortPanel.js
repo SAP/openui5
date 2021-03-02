@@ -110,6 +110,13 @@ sap.ui.define([
 		var oSelectedItem = oEvent.getParameter("selectedItem");
 		// Fire event only for valid selection
 		if (oSelectedItem) {
+			var oBindingContext = oSelectedItem.getBindingContext(this.P13N_MODEL);
+			if (oBindingContext) {
+				var sPath = oBindingContext.getPath();
+
+				//convert stringified boolean back to boolean instance type
+			    this.getP13nModel().setProperty(sPath + "/descending", oSelectedItem.getKey() === "true");
+			}
 			this.fireChange();
 		}
 	};
