@@ -6,7 +6,8 @@
 		xmlns:mvc="sap.ui.core.mvc"
 		xmlns:layout="sap.ui.layout"
 		xmlns:custom="sap.ui.documentation"
-		xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1">
+		xmlns:template="http://schemas.sap.com/sapui5/extension/sap.ui.core.template/1"
+		xmlns:html="http://www.w3.org/1999/xhtml">
 
 	<m:Page
 			id="apiDetailPage"
@@ -766,7 +767,9 @@
 							<subSections>
 								<custom:ObjectPageSubSection>
 									<custom:blocks>
-										<core:HTML id="parserId" content="{/faqContent}"/>
+										<html:div class="sapUiSmallMarginBegin faqContent">
+											<core:HTML id="parserId" content="{/faqContent}"/>
+										</html:div>
 									</custom:blocks>
 								</custom:ObjectPageSubSection>
 							</subSections>

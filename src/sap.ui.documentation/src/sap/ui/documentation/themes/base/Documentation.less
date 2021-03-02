@@ -13,8 +13,13 @@
     }
 }
 
-#d4h5-main-container {
+#d4h5-main-container,
+.faqContent {
     font-size: 0.875em;
+
+    &.faqContent pre > code {
+        font-family: monospace;
+    }
 
     .hidden {
         display: none;
@@ -96,6 +101,7 @@
         }
     }
 
+    &.faqContent h1,
     .section.topic > h1 {
         font-size: 2em;
         font-weight: 400;
