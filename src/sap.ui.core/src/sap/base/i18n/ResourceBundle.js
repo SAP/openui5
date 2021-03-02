@@ -340,7 +340,7 @@ sap.ui.define([
 	 * For more details on the replacement mechanism refer to {@link module:sap/base/strings/formatMessage}.
 	 *
 	 * @param {string} sKey Key to retrieve the text for
-	 * @param {string[]} [aArgs] List of parameter values which should replace the placeholders "{<i>n</i>}"
+	 * @param {any[]} [aArgs] List of parameter values which should replace the placeholders "{<i>n</i>}"
 	 *     (<i>n</i> is the index) in the found locale-specific string value. Note that the replacement is done
 	 *     whenever <code>aArgs</code> is given, no matter whether the text contains placeholders or not
 	 *     and no matter whether <code>aArgs</code> contains a value for <i>n</i> or not.
