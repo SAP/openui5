@@ -87,6 +87,11 @@ sap.ui.define([
 
 			var oRadioButtonGroup = new RadioButtonGroup();
 			sandbox.stub(oController, "byId").returns(oRadioButtonGroup);
+			sandbox.stub(oController, "getOwnerComponent").returns({
+				getSelectedContexts: function() {
+					return {role: ["TEST"]};
+				}
+			});
 			oController.oSelectedContextsModel = new JSONModel({selected: ["TEST"]});
 
 			return oController.onBeforeRendering().then(function() {
@@ -99,6 +104,11 @@ sap.ui.define([
 
 			var oRadioButtonGroup = new RadioButtonGroup();
 			sandbox.stub(oController, "byId").returns(oRadioButtonGroup);
+			sandbox.stub(oController, "getOwnerComponent").returns({
+				getSelectedContexts: function() {
+					return {role: []};
+				}
+			});
 			oController.oSelectedContextsModel = new JSONModel({selected: []});
 
 			return oController.onBeforeRendering().then(function() {
