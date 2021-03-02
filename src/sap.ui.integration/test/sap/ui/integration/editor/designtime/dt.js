@@ -668,6 +668,49 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "Filter backend by input in MultiComboBox",
 						"type": "group"
 					},
+					"CustomersWithMultiKeys": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithMultiKeys/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}/{CompanyName}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
+					},
+					"CustomersWithMultiKeysAndSeperator": {
+						"manifestpath": "/sap.card/configuration/parameters/CustomersWithMultiKeysAndSeperator/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address",
+										"$filter": "startswith(CompanyName,'{currentSettings>suggestValue}')"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}#{CompanyName}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							},
+							"keySeparator": "#"
+						}
+					},
 					"CustomersWithFilterParameter": {
 						"manifestpath": "/sap.card/configuration/parameters/CustomersWithFilterParameter/value",
 						"type": "string[]",
@@ -729,6 +772,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							},
 							"item": {
 								"text": "{CompanyName}",
+								"key": "{CustomerID}",
 								"additionalText": "{= ${CustomerID} !== undefind ? ${Country} + ', ' +  ${City} + ', ' + ${Address}: ''}"
 							}
 						}
