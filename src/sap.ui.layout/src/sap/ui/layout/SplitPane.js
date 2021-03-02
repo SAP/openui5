@@ -43,6 +43,8 @@ sap.ui.define(['./library', 'sap/ui/core/Element'],
 
 			/**
 			 * Determines the minimum width of the ResponsiveSplitter(in pixels). When it is reached the pane will be hidden from the screen.
+			 *
+			 * When you are calculating the required parent width to fit your panes, you should also include the width of all split bars between these panes.
 			*/
 			requiredParentWidth: { type : "int", defaultValue : 800}
 		},
