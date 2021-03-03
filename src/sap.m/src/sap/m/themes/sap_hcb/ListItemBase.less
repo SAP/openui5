@@ -10,8 +10,7 @@ html[data-sap-ui-browser='ie11'] .sapMLIBFocusable:focus {
 }
 
 .sapMLIBFocusable:focus {
-	outline: 0.125rem dotted @sapUiContentFocusColor;
-	outline-offset: -0.125rem;
+	outline-width: 0.125rem;
 }
 
 /* IE ignores outline-offset. Use an overlay: */
@@ -24,4 +23,8 @@ html.sap-desktop .sapMLIBIconDet:focus,
 html.sap-desktop .sapMLIBIconDel:focus {
 	outline: 0.125rem dotted @sapUiContentFocusColor;
 	outline-offset: -0.125rem;
+}
+
+.sapMTableRowCustomFocus:focus > :not(.sapMListTblDummyCell:last-child)::before {
+	border-width: 2px;
 }

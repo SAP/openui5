@@ -690,7 +690,7 @@ sap.ui.define([
 			$firstVisibleCol = aVisibleColumns.eq(0);
 
 		// check if only one column is visible
-		if (aVisibleColumns.length == 1) {
+		if (aVisibleColumns.length == 1 && this.getFixedLayout() != "Strict") {
 			$firstVisibleCol.width("");	// cover the space
 		} else {
 			// set original width of columns
