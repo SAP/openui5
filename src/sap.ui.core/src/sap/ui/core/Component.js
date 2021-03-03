@@ -3400,10 +3400,12 @@ sap.ui.define([
 	 * If this or any descendant component has not enabled keep alive, no component will be deactivated
 	 *
 	 * Deactivation includes following steps:
-	 * - all elements associated (via ownerId) with the deactivated components are deactivated
-	 * - the eventbus of the deactivated components are suspended
-	 * - the router of the deactivated components are stopped
-	 * - the 'onDeactivate' hooks of the deactivated components are called
+	 * <ul>
+	 * <li>all elements associated (via ownerId) with the deactivated component are notified about the deactivation</li>
+	 * <li>the eventbus of each deactivated component is suspended</li>
+	 * <li>the router of each deactivated component is stopped</li>
+	 * <li>the 'onDeactivate' hook of each deactivated component is executed</li>
+	 * </ul>
 	 *
 	 * @since 1.88
 	 * @private
@@ -3469,10 +3471,12 @@ sap.ui.define([
 	 * If this or any descendant component does not enabled keep alive, no component will be activated
 	 *
 	 * Activation includes following steps:
-	 * - all elements associated (via ownerId) with the activated components are activated
-	 * - the eventbus of the activated components are resumed
-	 * - the router of the activated components are initialized
-	 * - the 'onActivate' hooks of the activated components are called
+	 * <ul>
+	 * <li>all elements associated (via ownerId) with the activated components are notified about the activation</li>
+	 * <li>the eventbus of each activated component is resumed</li>
+	 * <li>the router of each activated component is initialized</li>
+	 * <li>the 'onActivate' hook of each activated component is executed</li>
+	 * </ul>
 	 *
 	 * @since 1.88
 	 * @private
