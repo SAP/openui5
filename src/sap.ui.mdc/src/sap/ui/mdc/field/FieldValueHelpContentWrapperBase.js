@@ -74,6 +74,11 @@ sap.ui.define([
 						leave: { type: "boolean" },
 
 						/**
+						 * Disable initial popover focus
+						 */
+						disableFocus: { type: "boolean" },
+
+						/**
 						 * The ID of the navigated item
 						 *
 						 * This is the DOM reference needed for ARIA support to point to the navigated item.
@@ -131,7 +136,7 @@ sap.ui.define([
 
 	// define empty to add it to inherited wrappers, maybe later it might be filled and other wrappers must not changed.
 	FieldValueHelpContentWrapperBase.prototype.exit = function() {
-
+		this.dispose();
 	};
 
 	/**
@@ -145,9 +150,19 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	FieldValueHelpContentWrapperBase.prototype.initialize = function(bSuggestion) {
-
 		return this;
+	};
 
+	/**
+	 * Disposes the wrapper. This method should clean up entities created during initialize
+	 *
+	 * @param {boolean} bSuggestion Flag if field help is opened as suggestion or dialog
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
+	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
+	 */
+	FieldValueHelpContentWrapperBase.prototype.dispose = function(bSuggestion) {
+		return this;
 	};
 
 	FieldValueHelpContentWrapperBase.prototype.setSelectedItems = function(aSelectedItems) {
@@ -193,7 +208,7 @@ sap.ui.define([
 	 * item or do similar things.
 	 *
 	 * @param {boolean} bSuggestion Flag if field help is opened as suggestion or dialog
-	 * @returns {this} Reference to <code>this</code> in order to allow method chaining
+	 * @returns {sap.ui.mdc.field.FieldValueHelpContentWrapperBase} Reference to <code>this</code> in order to allow method chaining
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldValueHelp
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
@@ -445,7 +460,7 @@ sap.ui.define([
 	FieldValueHelpContentWrapperBase.prototype.getScrollDelegate = function() {
 
 		var oFieldHelp = this._getFieldHelp();
-		return oFieldHelp.getScrollDelegate();
+		return oFieldHelp.getScrollDelegate && oFieldHelp.getScrollDelegate();
 
 	};
 

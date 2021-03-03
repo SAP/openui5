@@ -1,0 +1,29 @@
+<layout:VerticalLayout id="notSuspendedLayout" xmlns:layout="sap.ui.layout" width="100%" xmlns="sap.m" xmlns:mvc="sap.ui.core.mvc" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form" xmlns:f2="sap.f" xmlns:mdc="sap.ui.mdc" xmlns:vhfb="sap.ui.mdc.filterbar.vh" xmlns:mdcc="sap.ui.mdc.chart" xmlns:mdcf="sap.ui.mdc.field" xmlns:mdct="sap.ui.mdc.table" xmlns:ui="sap.ui" xmlns:uit="sap.ui.table" xmlns:variants="sap.ui.fl.variants" xmlns:types="sap.ui.v4demo.types" xmlns:demo="sap.ui.v4demo.controls">
+
+    <Title class="sapUiSmallMarginBottom" level="H3" text="Supported Table Types" />
+
+    <mdc:FilterBar id="FB0" p13nMode="Value" liveMode="false" delegate="{name: 'sap/ui/mdc/odata/v4/FilterBarDelegate', payload: {collectionName: 'Books'}}">
+        <mdc:dependents>
+            <mdcf:FieldValueHelp title="Author" id="FB0-FH1" noDialog="false" keyPath="ID" descriptionPath="name" filterFields="$search" showConditionPanel="{= ${settings>/maxConditions} === -1 }" delegate="{name: 'sap/ui/v4demo/delegate/MDCUITableValueHelp.delegate', payload: {}}">
+                <mdcf:filterBar>
+                    <vhfb:FilterBar liveMode="false" delegate="{name: 'sap/ui/mdc/filterbar/vh/GenericFilterBarDelegate', payload: {}}">
+                        <vhfb:filterItems>
+                            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" label="Name" conditions="{$filters>/conditions/name}" />
+                        </vhfb:filterItems>
+                    </vhfb:FilterBar>
+                </mdcf:filterBar>
+                <mdcf:suggestContent>
+                    <mdcf:FieldValueHelpMTableWrapper />
+                </mdcf:suggestContent>
+                <mdcf:dialogContent>
+                    <mdcf:FieldValueHelpMdcTableWrapper />
+                </mdcf:dialogContent>
+            </mdcf:FieldValueHelp>
+        </mdc:dependents>
+        <mdc:filterItems>
+            <mdc:FilterField delegate="{name: 'sap/ui/mdc/odata/v4/FieldBaseDelegate', payload: {}}" id="FB0-FF1" label="M.Table / MDC.GridtableType: via Delegate" conditions="{$filters>/conditions/author_ID}" dataType="Edm.Int32" required="false" fieldHelp="FB0-FH1" display="DescriptionValue" maxConditions="{settings>/maxConditions}" />
+        </mdc:filterItems>
+    </mdc:FilterBar>
+
+
+</layout:VerticalLayout>

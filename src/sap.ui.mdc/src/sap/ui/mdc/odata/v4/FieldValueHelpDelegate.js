@@ -17,6 +17,25 @@ sap.ui.define([
 ) {
 	"use strict";
 
+	var _waitForBindingData = function (oBinding) {
+		return new Promise(function (resolve) {
+			var _bIsExecutionComplete = false;
+			var fnHandleBindingEvent = function (oParameters) {
+				if (oParameters.mParameters.detailedReason) { // do not consider virtualcontext events triggered during automatic determination of $expand and $select
+					return;
+				}
+
+				if (!_bIsExecutionComplete) {
+					_bIsExecutionComplete = true;
+					oBinding.detachEvent("change", fnHandleBindingEvent);
+					resolve(oParameters);
+				}
+			};
+			oBinding.attachEvent("change", fnHandleBindingEvent); // Note: According to an earlier change the change event may not always be fired in some scenarios
+			oBinding.attachEventOnce("dataReceived", fnHandleBindingEvent); // Note: According to an earlier change the dataReceived event may not always be fired in some caching scenarios
+		});
+	};
+
 	/**
 	 * @class Delegate class for sap.ui.mdc.base.FieldValueHelp.<br>
 	 * <h3><b>Note:</b></h3>
@@ -46,31 +65,21 @@ sap.ui.define([
 			oListBinding.changeParameters({ $search: undefined });
 		}
 
+		return _waitForBindingData(oListBinding);
+
 	};
 
 	ODataFieldValueHelpDelegate.executeFilter = function(oPayload, oListBinding, oFilter, fnCallback, iRequestedItems) {
 
-		var _bIsFilterExecutionComplete = false;
-
-		var fnHandleListBindingEvent = function (oParameters) {
-			if (oParameters.mParameters.detailedReason) { // do not consider virtualcontext events triggered during automatic determination of $expand and $select
-				return;
-			}
-
-			if (!_bIsFilterExecutionComplete) {
-				_bIsFilterExecutionComplete = true;
-				oListBinding.detachEvent("change", fnHandleListBindingEvent);
-				fnCallback();
-			}
-		};
-
-		oListBinding.attachEvent("change", fnHandleListBindingEvent); // Note: The change event might not be fired in error scenarios
-		oListBinding.attachEventOnce("dataReceived", fnHandleListBindingEvent); // Note: According to an earlier change the dataReceived event may not always be fired in some caching scenarios
+		var oBindingChangePromise = _waitForBindingData(oListBinding).then(function name(params) {
+			fnCallback();
+		});
 
 		oListBinding.initialize();
 		oListBinding.filter(oFilter, FilterType.Application);
 		oListBinding.getContexts(0, iRequestedItems); // trigger request. not all entries needed, we only need to know if there is one, none or more
 
+		return oBindingChangePromise;
 	};
 
 	ODataFieldValueHelpDelegate.checkBindingsPending = function(oPayload, aBindings) {

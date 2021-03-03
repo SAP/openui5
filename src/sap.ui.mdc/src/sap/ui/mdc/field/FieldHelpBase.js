@@ -737,6 +737,7 @@ sap.ui.define([
 		}
 		if (Popover && mLibrary && !this._bPopoverRequested) {
 			oPopover = new Popover(this.getId() + "-pop", {
+				contentHeight: "auto",
 				placement: mLibrary.PlacementType.VerticalPreferredBottom,
 				showHeader: false,
 				showArrow: false,

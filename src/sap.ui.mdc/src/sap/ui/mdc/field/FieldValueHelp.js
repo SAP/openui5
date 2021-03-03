@@ -557,13 +557,11 @@ sap.ui.define([
 			} else {
 				//call the fieldHelpOpen before the open to update the table width and avoid rerender and flickering of suggest popover
 				oWrapper.fieldHelpOpen(bSuggestion);
-
-				if (!this.getFilterValue() && !this._bNavigateRunning) {
-					// if no filter call filters to search for all (use in-parameters)
-					_applyFilters.call(this, true);
-				}
-
-				FieldHelpBase.prototype.open.apply(this, [bSuggestion]);
+					if (!this.getFilterValue() && !this._bNavigateRunning) {
+						// if no filter call filters to search for all (use in-parameters)
+						_applyFilters.call(this, true);
+					}
+					FieldHelpBase.prototype.open.apply(this, [bSuggestion]);
 			}
 		} else {
 			var oPopover = this.getAggregation("_popover");
@@ -596,17 +594,17 @@ sap.ui.define([
 
 				if (oWrapper) {
 					oWrapper.fieldHelpOpen(false);
-					_updateSelectedItems.call(this);
-				}
-				this._aOldConditions = this.getConditions();
-				oDialog.open();
-				this._bDialogOpen = true; // to know already during opening animation
+						_updateSelectedItems.call(this);
+					}
+					this._aOldConditions = this.getConditions();
+					oDialog.open();
+					this._bDialogOpen = true; // to know already during opening animation
 			} else {
 				this._bOpen = true;
 			}
 		}
 
-		this._bOpenHandled = false;
+				this._bOpenHandled = false;
 
 		return;
 
@@ -936,7 +934,7 @@ sap.ui.define([
 		}
 
 		if (oWrapper) {
-			oWrapper.navigate(iStep);
+			oWrapper.navigate(iStep, oPopover.isOpen());
 		}
 
 	};
@@ -944,6 +942,8 @@ sap.ui.define([
 	function _handleNavigate(oEvent) {
 
 		var oPopover = this._getPopover();
+		var bDisableFocus = oEvent.getParameter("disableFocus");
+
 		var vKey = oEvent.getParameter("key");
 		var sDescription = oEvent.getParameter("description");
 		var oInParameters = oEvent.getParameter("inParameters");
@@ -958,7 +958,7 @@ sap.ui.define([
 			return;
 		}
 
-		if (vKey === undefined) {
+		if (vKey === undefined && !bDisableFocus) {
 			// no real navigation, just open
 			this._bFocusPopover = true;
 		}
@@ -1844,7 +1844,7 @@ sap.ui.define([
 				sSearch = aSearchConditions[0].values[0];
 			}
 
-			oWrapper.applyFilters(aFilters, sSearch);
+			oWrapper.applyFilters(aFilters, sSearch, oFilterBar);
 		}
 
 	}
@@ -2148,9 +2148,7 @@ sap.ui.define([
 	}
 
 	function _setContentOnValueHelpPanel(oValueHelpPanel, oContent) {
-
 		oValueHelpPanel.setTable(oContent);
-
 	}
 
 	function _contentChanged(sMutation, oWrapper) {
