@@ -2409,9 +2409,10 @@ sap.ui.define([
 	 */
 	Table.prototype._attachEvents = function() {
 		var $this = this.$();
+		var sTableId = this.getId();
 
 		if (sap.ui.getCore().getConfiguration().getAnimation()) {
-			jQuery(document.body).on("webkitTransitionEnd transitionend",
+			jQuery(document.body).on("webkitTransitionEnd." + sTableId + " transitionend." + sTableId,
 				function(oEvent) {
 					if (jQuery(oEvent.target).has($this).length > 0) {
 						this._updateTableSizes(TableUtils.RowsUpdateReason.Animation);
@@ -2429,7 +2430,8 @@ sap.ui.define([
 	 * @private
 	 */
 	Table.prototype._detachEvents = function() {
-		jQuery(document.body).off('webkitTransitionEnd transitionend');
+		var sTableId = this.getId();
+		jQuery(document.body).off('webkitTransitionEnd.' + sTableId + ' transitionend.' + sTableId);
 		TableUtils.deregisterResizeHandler(this, "Table");
 		Device.resize.detachHandler(this._onWindowResize, this);
 		TableExtension.detachEvents(this);
