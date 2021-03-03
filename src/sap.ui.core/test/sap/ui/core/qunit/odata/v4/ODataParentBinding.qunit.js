@@ -38,6 +38,7 @@ sap.ui.define([
 					}
 				};
 			},
+			getResolvedPath : function () {}, // @see sap.ui.model.Binding#getResolvedPath
 			isSuspended : Binding.prototype.isSuspended
 		}, oTemplate);
 	}
@@ -2227,12 +2228,7 @@ sap.ui.define([
 				oBinding = new ODataParentBinding({
 					oCache : oCache,
 					mCacheByResourcePath : {},
-					oCachePromise : SyncPromise.resolve(oCache),
-					oContext : {},
-					oModel : {
-						resolve : function () {}
-					},
-					sPath : "TEAMS('1')"
+					oCachePromise : SyncPromise.resolve(oCache)
 				}),
 				oCreateResult = {},
 				oCreatePromise = SyncPromise.resolve(
@@ -2244,9 +2240,7 @@ sap.ui.define([
 
 			oBinding.mCacheByResourcePath[sCanonicalPath] = oCache;
 
-			this.mock(oBinding.oModel).expects("resolve")
-				.withExactArgs("TEAMS('1')", sinon.match.same(oBinding.oContext))
-				.returns("/TEAMS('1')");
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/TEAMS('1')");
 			this.mock(_Helper).expects("getRelativePath")
 				.withExactArgs("/TEAMS('1')/TEAM_2_EMPLOYEES", "/TEAMS('1')")
 				.returns("TEAM_2_EMPLOYEES");
@@ -2258,7 +2252,7 @@ sap.ui.define([
 
 			// code under test
 			return oBinding.createInCache("groupLock", "EMPLOYEES", "/TEAMS('1')/TEAM_2_EMPLOYEES",
-				sTransientPredicate, oInitialData, fnError, fnSubmit)
+					sTransientPredicate, oInitialData, fnError, fnSubmit)
 				.then(function (oResult) {
 					assert.strictEqual(bCancel, false);
 					assert.strictEqual(oResult, oCreateResult);
@@ -2279,12 +2273,7 @@ sap.ui.define([
 			oBinding = new ODataParentBinding({
 				oCache : oCache,
 				mCacheByResourcePath : undefined,
-				oCachePromise : SyncPromise.resolve(oCache),
-				oContext : {},
-				oModel : {
-					resolve : function () {}
-				},
-				sPath : "TEAMS('1')"
+				oCachePromise : SyncPromise.resolve(oCache)
 			}),
 			oCreateResult = {},
 			oCreatePromise = SyncPromise.resolve(oCreateResult),
@@ -2294,9 +2283,7 @@ sap.ui.define([
 			fnSubmit = function () {},
 			sTransientPredicate = "($uid=id-1-23)";
 
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs("TEAMS('1')", sinon.match.same(oBinding.oContext))
-			.returns("/TEAMS('1')");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/TEAMS('1')");
 		this.mock(_Helper).expects("getRelativePath")
 			.withExactArgs("/TEAMS('1')/TEAM_2_EMPLOYEES", "/TEAMS('1')")
 			.returns("TEAM_2_EMPLOYEES");
@@ -3129,10 +3116,8 @@ sap.ui.define([
 				oContext : {},
 				oModel :  {
 					getDependentBindings : function () {},
-					resolve : function () {},
 					withUnresolvedBindings : function () {}
-				},
-				sPath : "path"
+				}
 			}),
 			oChild1CacheMock = this.mock(oCache1),
 			oChild1Mock = this.mock(oChild1),
@@ -3216,8 +3201,7 @@ sap.ui.define([
 		oChild3CacheMock1.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3CacheMock2.expects("hasPendingChangesForPath").withExactArgs("").returns(false);
 		oChild3Mock.expects("hasPendingChangesInDependents").withExactArgs().returns(false);
-		oModelMock.expects("resolve")
-			.withExactArgs("path", sinon.match.same(oBinding.oContext))
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs()
 			.returns("/some/absolute/path");
 		oModelMock.expects("withUnresolvedBindings")
 			.withExactArgs("hasPendingChangesInCaches", "some/absolute/path")
@@ -3496,16 +3480,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getBaseForPathReduction: root binding", function (assert) {
-		var oBinding = new ODataParentBinding({
-				oContext : {},
-				oModel : {resolve : function () {}},
-				sPath : "quasi/absolute"
-			});
+		var oBinding = new ODataParentBinding();
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(true);
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
-			.returns("/resolved/path");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved/path");
 
 		// code under test
 		assert.strictEqual(oBinding.getBaseForPathReduction(), "/resolved/path");
@@ -3521,8 +3499,7 @@ sap.ui.define([
 	QUnit.test("getBaseForPathReduction: delegate to parent binding: " + JSON.stringify(oFixture),
 			function (assert) {
 		var oModel = {
-				getGroupProperty : function () {},
-				resolve : function () {}
+				getGroupProperty : function () {}
 			},
 			oParentBinding = new ODataParentBinding({oModel : oModel}),
 			oContext = {
@@ -3532,8 +3509,7 @@ sap.ui.define([
 			},
 			oBinding = new ODataParentBinding({
 				oContext : oContext,
-				oModel : oModel,
-				sPath : "relative"
+				oModel : oModel
 			});
 
 		this.mock(oBinding).expects("isRoot").withExactArgs().returns(false);
@@ -3547,9 +3523,8 @@ sap.ui.define([
 		this.mock(oModel).expects("getGroupProperty").atLeast(0)
 			.withExactArgs(oFixture.parentGroup, "submit")
 			.returns(oFixture.submitMode);
-		this.mock(oBinding.oModel).expects("resolve").exactly(oFixture.delegate ? 0 : 1)
-			.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
-			.returns("/resolved/path");
+		this.mock(oBinding).expects("getResolvedPath").exactly(oFixture.delegate ? 0 : 1)
+			.withExactArgs().returns("/resolved/path");
 
 		// code under test
 		assert.strictEqual(oBinding.getBaseForPathReduction(),
@@ -3799,18 +3774,10 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestAbsoluteSideEffects: nothing to do", function (assert) {
-		var oBinding = new ODataParentBinding({
-				oContext : {},
-				oModel : {
-					resolve : function () {}
-				},
-				sPath : "path"
-			}),
+		var oBinding = new ODataParentBinding(),
 			oHelperMock = this.mock(_Helper);
 
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs("path", sinon.match.same(oBinding.oContext))
-			.returns("/resolved");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved");
 		oHelperMock.expects("getMetaPath").withExactArgs("/resolved").returns("/meta");
 		oHelperMock.expects("getRelativePath").withExactArgs("/request1", "/meta")
 			.returns(undefined);
@@ -3828,18 +3795,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestAbsoluteSideEffects: refresh", function (assert) {
 		var oBinding = new ODataParentBinding({
-				oContext : {},
-				oModel : {
-					resolve : function () {}
-				},
-				sPath : "path",
 				refreshInternal : function () {}
 			}),
 			oHelperMock = this.mock(_Helper);
 
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs("path", sinon.match.same(oBinding.oContext))
-			.returns("/resolved");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved");
 		oHelperMock.expects("getMetaPath").withExactArgs("/resolved").returns("/meta");
 		oHelperMock.expects("getRelativePath").withExactArgs("/request1", "/meta").returns("~1");
 		oHelperMock.expects("hasPathPrefix").withExactArgs("/meta", "/request1").returns(false);
@@ -3857,18 +3817,11 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestAbsoluteSideEffects: sideEffects", function (assert) {
 		var oBinding = new ODataParentBinding({
-				oContext : {},
-				oModel : {
-					resolve : function () {}
-				},
-				sPath : "path",
 				requestSideEffects : function () {}
 			}),
 			oHelperMock = this.mock(_Helper);
 
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs("path", sinon.match.same(oBinding.oContext))
-			.returns("/resolved");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/resolved");
 		oHelperMock.expects("getMetaPath").withExactArgs("/resolved").returns("/meta");
 		oHelperMock.expects("getRelativePath").withExactArgs("/request1", "/meta")
 			.returns("~1");

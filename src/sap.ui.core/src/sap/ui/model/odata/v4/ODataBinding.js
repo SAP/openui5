@@ -612,8 +612,7 @@ sap.ui.define([
 		var sRelativePath;
 
 		if (sPath[0] === "/") {
-			sRelativePath = _Helper.getRelativePath(sPath,
-				this.oModel.resolve(this.sPath, this.oContext));
+			sRelativePath = _Helper.getRelativePath(sPath, this.getResolvedPath());
 			if (sRelativePath === undefined && this.oReturnValueContext) {
 				sRelativePath = _Helper.getRelativePath(sPath, this.oReturnValueContext.getPath());
 			}

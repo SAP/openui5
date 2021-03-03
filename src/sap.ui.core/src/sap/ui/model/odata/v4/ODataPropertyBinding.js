@@ -443,7 +443,7 @@ sap.ui.define([
 	 * @since 1.45.0
 	 */
 	ODataPropertyBinding.prototype.getValueListType = function () {
-		var sResolvedPath = this.getModel().resolve(this.sPath, this.oContext);
+		var sResolvedPath = this.getResolvedPath();
 
 		if (!sResolvedPath) {
 			throw new Error(this + " is unresolved");
@@ -543,7 +543,7 @@ sap.ui.define([
 	 * @since 1.45.0
 	 */
 	ODataPropertyBinding.prototype.requestValueListInfo = function (bAutoExpandSelect) {
-		var sResolvedPath = this.getModel().resolve(this.sPath, this.oContext);
+		var sResolvedPath = this.getResolvedPath();
 
 		if (!sResolvedPath) {
 			throw new Error(this + " is unresolved");
@@ -565,7 +565,7 @@ sap.ui.define([
 	 * @since 1.47.0
 	 */
 	ODataPropertyBinding.prototype.requestValueListType = function () {
-		var sResolvedPath = this.getModel().resolve(this.sPath, this.oContext);
+		var sResolvedPath = this.getResolvedPath();
 
 		if (!sResolvedPath) {
 			throw new Error(this + " is unresolved");

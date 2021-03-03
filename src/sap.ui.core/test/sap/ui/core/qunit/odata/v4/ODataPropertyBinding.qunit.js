@@ -2000,9 +2000,7 @@ sap.ui.define([
 			oPropertyBinding = this.oModel.bindProperty("Category", oContext),
 			vResult = {};
 
-		this.mock(this.oModel).expects("resolve")
-			.withExactArgs(oPropertyBinding.sPath, oContext)
-			.returns("~");
+		this.mock(oPropertyBinding).expects("getResolvedPath").withExactArgs().returns("~");
 		this.mock(this.oModel.getMetaModel()).expects(sFunctionName)
 			.withExactArgs("~").returns(vResult);
 
@@ -2018,9 +2016,7 @@ sap.ui.define([
 			oPropertyBinding = this.oModel.bindProperty("Category", oContext),
 			vResult = {};
 
-		this.mock(this.oModel).expects("resolve")
-			.withExactArgs(oPropertyBinding.sPath, oContext)
-			.returns("~");
+		this.mock(oPropertyBinding).expects("getResolvedPath").withExactArgs().returns("~");
 		this.mock(this.oModel.getMetaModel()).expects("requestValueListInfo")
 			.withExactArgs("~", sinon.match.same(bAutoExpandSelect), sinon.match.same(oContext))
 			.returns(vResult);

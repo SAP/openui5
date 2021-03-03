@@ -37,6 +37,7 @@ sap.ui.define([
 					}
 				};
 			},
+			getResolvedPath : function () {}, // @see sap.ui.model.Binding#getResolvedPath
 			hasPendingChangesInDependents : function () {}, // implemented by all sub-classes
 			isMeta : function () { return false; },
 			isSuspended : Binding.prototype.isSuspended,
@@ -1618,16 +1619,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getRelativePath: relative to resolved path", function (assert) {
-		var oBinding = new ODataBinding({
-				oContext : {},
-				oModel : {resolve : function () {}},
-				sPath : "bar",
-				bRelative : true,
-				oReturnValueContext : {}
-			});
+		var oBinding = new ODataBinding();
 
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs("bar", sinon.match.same(oBinding.oContext)).returns("/foo/bar");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo/bar");
 		this.mock(_Helper).expects("getRelativePath").withExactArgs("/foo/bar", "/foo/bar")
 			.returns("");
 
@@ -1637,15 +1631,9 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getRelativePath: not relative to resolved path", function (assert) {
-		var oBinding = new ODataBinding({
-				oContext : {},
-				oModel : {resolve : function () {}},
-				sPath : "bar",
-				bRelative : true
-			});
+		var oBinding = new ODataBinding();
 
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs("bar", sinon.match.same(oBinding.oContext)).returns("/foo/bar");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo/bar");
 		this.mock(_Helper).expects("getRelativePath").withExactArgs("/foo", "/foo/bar")
 			.returns(undefined);
 
@@ -1656,17 +1644,12 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("getRelativePath: return value context", function (assert) {
 		var oBinding = new ODataBinding({
-				oContext : {},
-				oModel : {resolve : function () {}},
-				sPath : "bar",
-				bRelative : true,
 				oReturnValueContext : {getPath : function () {}}
 			}),
 			oHelperMock = this.mock(_Helper),
 			sResult = {/*don't care*/};
 
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs("bar", sinon.match.same(oBinding.oContext)).returns("/foo/bar");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("/foo/bar");
 		oHelperMock.expects("getRelativePath").withExactArgs("/foo/baz", "/foo/bar")
 			.returns(undefined);
 		this.mock(oBinding.oReturnValueContext).expects("getPath").withExactArgs()
