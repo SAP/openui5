@@ -22,12 +22,11 @@ sap.ui.define([
 	});
 
 	// this test suite is only for environment where no plugin is installed
-	if (PDFViewerRenderer._isPdfPluginEnabled()) {
+	if (PDFViewerRenderer._isPdfPluginEnabled() && !Device.browser.chrome) {
 		return;
 	}
 
 	QUnit.test("Test displaying of link when pdf plugin is not installed", function (assert) {
-		assert.expect(12);
 		var done = assert.async();
 
 		var oModel = new JSONModel({

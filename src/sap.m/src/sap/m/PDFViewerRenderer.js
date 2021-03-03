@@ -58,10 +58,16 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log"],
 			}
 
 			var aMimeTypes = navigator.mimeTypes;
-			bIsEnabled = aAllowedMimeTypes.some(function (sAllowedMimeType) {
-				var oMimeTypeItem = aMimeTypes.namedItem(sAllowedMimeType);
-				return oMimeTypeItem !== null;
-			});
+			if (aMimeTypes.length) {
+				bIsEnabled = aAllowedMimeTypes.some(function (sAllowedMimeType) {
+					var oMimeTypeItem = aMimeTypes.namedItem(sAllowedMimeType);
+					return oMimeTypeItem !== null;
+				});
+			} else {
+				if (Device.browser.chrome) {
+					return bIsEnabled;
+				}
+			}
 
 			return bIsEnabled;
 		};
