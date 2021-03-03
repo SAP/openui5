@@ -996,7 +996,7 @@ sap.ui.define([
 	 *   It is rejected if there is not exactly one currency key, or if the currency customizing
 	 *   cannot be loaded.
 	 *
-	 * @ui5-restricted sap.ui.table
+	 * @ui5-restricted sap.ui.table, sap.ui.export.Spreadsheet, sap.ui.comp
 	 * @see #requestUnitsOfMeasure
 	 * @since 1.88.0
 	 */
@@ -1028,7 +1028,7 @@ sap.ui.define([
 	 *   It is rejected if there is not exactly one unit key, or if the unit customizing cannot be
 	 *   loaded.
 	 *
-	 * @ui5-restricted sap.ui.table
+	 * @ui5-restricted sap.ui.table, sap.ui.export.Spreadsheet, sap.ui.comp
 	 * @see #requestCurrencyCodes
 	 * @since 1.88.0
 	 */
