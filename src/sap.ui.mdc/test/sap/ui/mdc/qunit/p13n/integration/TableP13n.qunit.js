@@ -70,7 +70,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Check 'Engine' subcontroller registration", function(assert) {
-        assert.ok(Engine.getInstance().getController(this.oTable, "Item"), "ColumnsController has been registered");
+        assert.ok(Engine.getInstance().getController(this.oTable, "Column"), "ColumnsController has been registered");
         assert.ok(Engine.getInstance().getController(this.oTable, "Sort"), "SortController has been registered");
         assert.ok(Engine.getInstance().getController(this.oTable, "Filter"), "FilterController has been registered");
 	});
@@ -78,9 +78,9 @@ sap.ui.define([
 	QUnit.test("liveMode true", function (assert) {
 		var done = assert.async();
 		var oBtn = new Button();
-        this.setLiveMode("Item", true);
+        this.setLiveMode("Column", true);
 
-		Engine.getInstance().showUI(this.oTable, "Item", oBtn).then(function(oP13nControl){
+		Engine.getInstance().showUI(this.oTable, "Column", oBtn).then(function(oP13nControl){
 
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
@@ -102,9 +102,9 @@ sap.ui.define([
 	QUnit.test("liveMode false", function (assert) {
 		var done = assert.async();
 		var oBtn = new Button();
-		this.setLiveMode("Item", false);
+		this.setLiveMode("Column", false);
 
-		Engine.getInstance().showUI(this.oTable, "Item", oBtn).then(function(oP13nControl){
+		Engine.getInstance().showUI(this.oTable, "Column", oBtn).then(function(oP13nControl){
 
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
@@ -180,7 +180,7 @@ sap.ui.define([
 			}
 		];
 
-		Engine.getInstance().createUI(this.oTable, "Item", aPropertyInfos).then(function(oP13nControl){
+		Engine.getInstance().createUI(this.oTable, "Column", aPropertyInfos).then(function(oP13nControl){
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
 			assert.ok(oP13nControl.isA("sap.m.Dialog"));
@@ -198,12 +198,12 @@ sap.ui.define([
 		var done = assert.async();
 
 		//first we need to open the settings dialog to ensure that all models have been prepared
-		Engine.getInstance().showUI(this.oTable, "Item").then(function(oP13nControl){
+		Engine.getInstance().showUI(this.oTable, "Column").then(function(oP13nControl){
 
 			//trigger event handler manually --> usually triggered by user interaction
 			//user interaction manipulates the inner model of the panel,
 			//to mock user interaction we directly act the change on the p13n panel model
-			var aItems = Engine.getInstance().getController(this.oTable, "Item").oP13nData.items;
+			var aItems = Engine.getInstance().getController(this.oTable, "Column").oP13nData.items;
 			aItems.pop(); //remove one item to trigger a change
 
 			var oModificationHandler = TestModificationHandler.getInstance();
@@ -223,7 +223,7 @@ sap.ui.define([
 			}.bind(this);
 			Engine.getInstance()._setModificationHandler(this.oTable, oModificationHandler);
 
-			Engine.getInstance()._handleChange(this.oTable, "Item", {items: aItems});
+			Engine.getInstance()._handleChange(this.oTable, "Column", {items: aItems});
 
 		}.bind(this));
 
@@ -316,7 +316,7 @@ sap.ui.define([
 
 		this.createTestObjects(aPropertyInfos);
 
-		Engine.getInstance().showUI(this.oTable, "Item", oBtn).then(function(oP13nControl){
+		Engine.getInstance().showUI(this.oTable, "Column", oBtn).then(function(oP13nControl){
 
 			//check container
 			assert.ok(oP13nControl, "Container has been created");
@@ -391,7 +391,7 @@ sap.ui.define([
 
 		Engine.getInstance().createChanges({
             control: this.oTable,
-            key: "Item",
+            key: "Column",
             state: aP13nData,
             suppressAppliance: true
         }).then(function(aChanges){
@@ -418,7 +418,7 @@ sap.ui.define([
 
 		Engine.getInstance().createChanges({
             control: this.oTable,
-            key: "Item",
+            key: "Column",
             state: aP13nData,
             suppressAppliance: true
         }).then(function(aChanges){
@@ -438,7 +438,7 @@ sap.ui.define([
 
 		Engine.getInstance().createChanges({
             control: this.oTable,
-            key: "Item",
+            key: "Column",
             state: aP13nData,
             suppressAppliance: true
         }).then(function(aChanges){
@@ -461,7 +461,7 @@ sap.ui.define([
 
 		Engine.getInstance().createChanges({
             control: this.oTable,
-            key: "Item",
+            key: "Column",
             state: aP13nData,
             suppressAppliance: true
         }).then(function(aChanges){

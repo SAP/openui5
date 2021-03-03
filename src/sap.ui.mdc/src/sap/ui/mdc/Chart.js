@@ -388,13 +388,6 @@ sap.ui.define([
 				]
 			});
 
-			this.getEngine().registerAdaptation(this, {
-				controller: {
-					Item: ChartItemController,
-					Sort: SortController
-				}
-			});
-
 			this._oManagedObjectModel = new ManagedObjectModel(this);
 			this.setModel(this._oManagedObjectModel, "$mdcChart");
 			Control.prototype.init.apply(this, arguments);
@@ -458,6 +451,21 @@ sap.ui.define([
 				this._tempResolve = resolve;
 				this._tempReject = reject;
 			}.bind(this));
+
+			var oRegisterConfig = {};
+			oRegisterConfig.controller = {};
+
+			var aMode = this.getP13nMode() || [];
+			aMode.forEach(function(sMode){
+				if (sMode == "Item") {
+					oRegisterConfig.controller["Item"] = ChartItemController;
+				}
+				if (sMode == "Sort") {
+					oRegisterConfig.controller["Sort"] = SortController;
+				}
+			});
+
+			this.getEngine().registerAdaptation(this, oRegisterConfig);
 
 
 			if (this.getAutoBindOnInit()){

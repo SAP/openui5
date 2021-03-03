@@ -66,26 +66,20 @@ sap.ui.define([
         var aItemState = this.getCurrentState();
         var mExistingProperties = P13nBuilder.arrayToMap(aItemState);
 
+        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(oItem, oProperty){
 
-        var fnEnhancer = function(oItem, oProperty){
-
-            if (oProperty.hiddenFilter === true ||  oProperty.name == "$search") {
-                return false;
-            }
             var oExistingProperty = mExistingProperties[oProperty.name];
-            oItem = merge(oItem, oProperty, oExistingProperty);
             var aExistingFilters = mExistingFilters[oProperty.name];
-            oItem.selected = oExistingProperty ? true : false;
+            oItem.visible = oExistingProperty ? true : false;
+            oItem.selected = oItem.visible;
             oItem.position = oExistingProperty ? oExistingProperty.position : -1;
             oItem.isFiltered = aExistingFilters && aExistingFilters.length > 0 ? true : false;
 
-            return true;
-        };
-
-        var oP13nData = P13nBuilder.prepareP13nData({}, oPropertyHelper, fnEnhancer);
+            return !(oProperty.hiddenFilter === true ||  oProperty.name == "$search");
+        }, true);
 
         P13nBuilder.sortP13nData({
-            visible: "selected",
+            visible: "visible",
             position: "position"
         }, oP13nData.items);
 

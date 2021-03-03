@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'./BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/FlexUtil'
-], function (BaseController, P13nBuilder, FlexUtil) {
+	'sap/ui/mdc/condition/FilterOperatorUtil', './BaseController', 'sap/ui/mdc/p13n/P13nBuilder', 'sap/ui/mdc/p13n/FlexUtil', 'sap/base/Log'
+], function (FilterOperatorUtil, BaseController, P13nBuilder, FlexUtil, Log) {
 	"use strict";
 
     var FilterController = BaseController.extend("sap.ui.mdc.p13n.subcontroller.FilterController");
@@ -49,6 +49,44 @@ sap.ui.define([
         });
     };
 
+    FilterController.prototype.validateState = function(oState) {
+        FilterController.checkConditionOperatorSanity(oState);
+        return oState;
+    };
+
+    /**
+     * @private
+     * @ui5-restricted sap.ui.mdc
+     *
+     * A sanity check that can be used for conditions by utilizing the FilterOperatorUtil.
+     * This is being used to remove conditions that are using unknown operators.
+     *
+     * @param {object} mConditions The condition map.
+     */
+    FilterController.checkConditionOperatorSanity = function(mConditions) {
+        //TODO: consider to harmonize this sanity check with 'getCurrentState' cleanups
+        for (var sFieldPath in mConditions) {
+            var aConditions = mConditions[sFieldPath];
+            for (var i = 0; i < aConditions.length; i++) {
+                var oCondition = aConditions[i];
+                var sOperator = oCondition.operator;
+                if (!FilterOperatorUtil.getOperator(sOperator)){
+                    aConditions.splice(i, 1);
+                    /*
+                        * in case the unknown operator has been removed, we need to check
+                        * if this caused the object to be empty to not create unnecessary remove changes
+                        * this should only be done within this check, as empty objects have a special meaning in the 'filter'
+                        * object within the external state to reset the given conditions for a single property
+                        */
+                    if (mConditions[sFieldPath].length == 0) {
+                        delete mConditions[sFieldPath];
+                    }
+                    Log.warning("The provided conditions for field '" + sFieldPath + "' contain unsupported operators - these conditions will be neglected.");
+                }
+            }
+        }
+    };
+
     FilterController.prototype.getAdaptationUI = function (fnRegister) {
         return this.getAdaptationControl().retrieveInbuiltFilter();
     };
@@ -61,25 +99,19 @@ sap.ui.define([
 
         var mExistingFilters = this.getCurrentState() || {};
 
-        var fnEnhancer = function(oItem, oProperty){
+        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
 
             var sName = oProperty.name;
 
-            if (oProperty.filterable === false) {
-                return false;
-            }
-
             var aExistingFilters = mExistingFilters[sName];
-            oItem.isFiltered = aExistingFilters && aExistingFilters.length > 0 ? true : false;
+            mItem.isFiltered = aExistingFilters && aExistingFilters.length > 0 ? true : false;
 
-            return true;
-        };
-
-        var oP13nData = P13nBuilder.prepareP13nData({}, oPropertyHelper, fnEnhancer);
+            return !(oProperty.filterable === false);
+        });
 
         P13nBuilder.sortP13nData({
-            visible: "selected",
-            position: "position"
+            visible: undefined,
+            position: undefined
         }, oP13nData.items);
 
         this.oP13nData = oP13nData;

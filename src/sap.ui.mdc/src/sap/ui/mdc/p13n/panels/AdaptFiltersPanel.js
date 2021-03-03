@@ -406,7 +406,7 @@ sap.ui.define([
 		};
 
 		if (this._sModeKey === "visible") {
-			oFilterMode = new Filter("selected", "EQ", true);
+			oFilterMode = new Filter("visible", "EQ", true);
 			fnAppendFilter();
 		}
 
@@ -423,7 +423,7 @@ sap.ui.define([
 		if (this._sModeKey === "visibleactive") {
 			oFilterMode = oFilterMode = new Filter([
 				new Filter("isFiltered", "EQ", true),
-				new Filter("selected", "EQ", true)
+				new Filter("visible", "EQ", true)
 			], true);
 			fnAppendFilter();
 		}

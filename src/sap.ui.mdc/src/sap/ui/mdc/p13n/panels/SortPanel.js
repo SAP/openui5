@@ -32,7 +32,7 @@ sap.ui.define([
 			BasePanel.prototype.init.apply(this, arguments);
 
 			var oSortPanelTemplate = new ColumnListItem({
-				selected: "{" + this.P13N_MODEL + ">isSorted}",
+				selected: "{" + this.P13N_MODEL + ">sorted}",
 				cells: [
 					new VBox({
 						items: [
@@ -65,7 +65,12 @@ sap.ui.define([
 						width: "100%",
 						selectedKey: "{" + this.P13N_MODEL + ">descending}",
 						change: [this.onChangeOfSortOrder, this],
-						enabled: "{" + this.P13N_MODEL + ">isSorted}",
+						enabled: {
+							path: this.P13N_MODEL + ">sorted",
+							formatter: function(bEnabled) {
+								return !!bEnabled;
+							}
+						},
 						items: [
 							new Item({
 								key: false,
@@ -89,7 +94,7 @@ sap.ui.define([
 	});
 
 	SortPanel.prototype._filterBySelected = function(bShowSelected) {
-		this._oListControl.getBinding("items").filter(bShowSelected ? new Filter("isSorted", "EQ", true) : []);
+		this._oListControl.getBinding("items").filter(bShowSelected ? new Filter("sorted", "EQ", true) : []);
 	};
 
 	SortPanel.prototype._updateModelItems = function() {
@@ -97,7 +102,7 @@ sap.ui.define([
 		var aFields = this.getP13nModel().getProperty("/items");
 		var aSelectedFields = [], aOtherFields = [];
 		aFields.forEach(function(oField) {
-			if (oField.isSorted) {
+			if (oField.sorted) {
 				aSelectedFields.push(oField);
 			} else {
 				aOtherFields.push(oField);

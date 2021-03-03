@@ -37,7 +37,7 @@ sap.ui.define([
     };
 
     SortController.prototype._getPresenceAttribute = function(bexternalAppliance){
-        return bexternalAppliance ? "sorted" : "isSorted";
+        return "sorted";
     };
 
     SortController.prototype.setP13nData = function(oPropertyHelper) {
@@ -45,31 +45,26 @@ sap.ui.define([
         var aItemState = this.getCurrentState();
         var mExistingSorters = P13nBuilder.arrayToMap(aItemState);
 
-        var fnEnhancer = function(oItem, oProperty){
+        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
 
-            var sName = oProperty.name;
+            var oExistingSorter = mExistingSorters[oProperty.name];
 
-            if (oProperty.sortable === false) {
-                return false;
-            }
+            mItem.sorted = oExistingSorter ? true : false;
+            mItem.sortPosition = oExistingSorter ? oExistingSorter.position : -1;
+            mItem.descending = oExistingSorter ? !!oExistingSorter.descending : false;
 
-            oItem.isSorted = mExistingSorters[sName] ? true : false;
-            oItem.sortPosition = mExistingSorters[sName] ? mExistingSorters[sName].position : -1;
-            oItem.descending = mExistingSorters[sName] ? !!mExistingSorters[sName].descending : false;
-
-            return true;
-        };
-
-        var oP13nData = P13nBuilder.prepareP13nData({}, oPropertyHelper, fnEnhancer);
+            return !(oProperty.sortable === false);
+        });
 
         P13nBuilder.sortP13nData({
-            visible: "isSorted",
+            visible: "sorted",
             position: "sortPosition"
         }, oP13nData.items);
 
+        oP13nData.items.forEach(function(oItem){delete oItem.sortPosition;});
+
         this.oP13nData = oP13nData;
     };
-
 
 	return SortController;
 

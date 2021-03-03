@@ -185,6 +185,55 @@ sap.ui.define([
             return oBar;
         },
 
+        prepareAdaptationData: function(vProperties, fnEnhace, bGroupData) {
+
+			var oPropertyHelper =
+				vProperties.isA && vProperties.isA("sap.ui.mdc.util.PropertyHelper") ?
+				vProperties : new P13nPropertyHelper(vProperties);
+
+            var aItems = [];
+            var mItemsGrouped = bGroupData ? {} : null;
+
+            var bEnhance = fnEnhace instanceof Function;
+
+			oPropertyHelper.getProperties().forEach(function(oProperty) {
+
+                var mItem = {};
+
+                if (bEnhance) {
+                    var bIsValid = fnEnhace(mItem, oProperty);
+                    if (!bIsValid) {
+                        return;
+                    }
+                }
+
+                mItem.name = oProperty.name;
+                mItem.label = oProperty.getLabel() || oProperty.name;
+                mItem.tooltip = oProperty.tooltip ? oProperty.tooltip : oProperty.getLabel();
+
+                if (mItemsGrouped) {
+                    mItem.group = oProperty.group ? oProperty.group : "BASIC";
+                    mItem.groupLabel = oProperty.groupLabel;
+                    mItemsGrouped[mItem.group] = mItemsGrouped[mItem.group] ? mItemsGrouped[mItem.group] : [];
+                    mItemsGrouped[mItem.group].push(mItem);
+                }
+
+                aItems.push(mItem);
+
+            });
+
+            var oAdaptationData = {
+                items: aItems
+            };
+
+            if (mItemsGrouped) {
+                oAdaptationData.itemsGrouped = this._buildGroupStructure(mItemsGrouped);
+            }
+
+            return oAdaptationData;
+
+        },
+
         //TODO: align comp<>mdc
         prepareP13nData: function(oCurrentState, vProperties, fnEnhace) {
 
@@ -207,7 +256,7 @@ sap.ui.define([
                 //TODO-----
                 var sKey = oProperty.name;
                 var oExistingProperty = mExistingProperties[sKey];
-                mItem.selected = oExistingProperty ? true : false;
+                mItem.visible = oExistingProperty ? true : false;
                 mItem.position = oExistingProperty ? oExistingProperty.position : -1;
                 if (mExistingFilters[sKey]) {
                     var aExistingFilters = mExistingFilters[sKey];
@@ -238,7 +287,7 @@ sap.ui.define([
 
             return {
                 items: aItems,
-                itemsGrouped: this._builtGroupStructure(mItemsGrouped)
+                itemsGrouped: this._buildGroupStructure(mItemsGrouped)
             };
         },
 
@@ -269,28 +318,7 @@ sap.ui.define([
 
         },
 
-        _getSortAttributes: function(){
-            return {
-                Item: {
-                    position: "position",
-                    visible: "selected"
-                },
-                Sort: {
-                    position: "sortPosition",
-                    visible: "isSorted"
-                },
-                Filter: {
-                    position: "position",
-                    visible: "selected"
-                },
-                generic: {
-                    position: undefined,
-                    visible: undefined
-                }
-            };
-        },
-
-        _builtGroupStructure: function(mItemsGrouped) {
+        _buildGroupStructure: function(mItemsGrouped) {
             var aGroupedItems = [];
             Object.keys(mItemsGrouped).forEach(function(sGroupKey){
                 this.sortP13nData("generic", mItemsGrouped[sGroupKey]);

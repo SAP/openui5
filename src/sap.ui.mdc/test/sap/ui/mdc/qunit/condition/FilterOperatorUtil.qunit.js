@@ -1649,5 +1649,4 @@ sap.ui.define([
 		assert.equal(operatorWithSpecialCharacters.tokenFormat, "foo {0} operator", "tokenFormat has the expected format for the placeholder");
 	});
 
-
 });

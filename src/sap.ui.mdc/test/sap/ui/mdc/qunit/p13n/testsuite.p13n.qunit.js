@@ -49,7 +49,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			"BaseController": {
-				group: "SubController",
+				group: "SubController (generic)",
 				module: "./controllers/ControllerGeneric.qunit",
 				ui5: {
 					libs: [
@@ -58,7 +58,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			"SortController": {
-				group: "SubController",
+				group: "SubController (generic)",
 				module: "./controllers/ControllerGeneric.qunit",
 				ui5: {
 					libs: [
@@ -67,7 +67,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			"ColumnController": {
-				group: "SubController",
+				group: "SubController (generic)",
 				module: "./controllers/ControllerGeneric.qunit",
 				ui5: {
 					libs: [
@@ -76,7 +76,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 				}
 			},
 			"FilterController": {
-				group: "SubController",
+				group: "SubController (generic)",
 				module: "./controllers/ControllerGeneric.qunit",
 				ui5: {
 					libs: [
@@ -84,8 +84,17 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"FilterController2": {
+				group: "SubController (specific)",
+				module: "./controllers/FilterController.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"AdaptFiltersController": {
-				group: "SubController",
+				group: "SubController (generic)",
 				module: "./controllers/ControllerGeneric.qunit",
 				ui5: {
 					libs: [

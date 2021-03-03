@@ -34,34 +34,29 @@ sap.ui.define([
         };
     };
 
-    GroupController.prototype._getPresenceAttribute = function (bExternalStateAppliance) {
-        return bExternalStateAppliance ? "grouped" : "selected";
+    GroupController.prototype._getPresenceAttribute = function () {
+        return "grouped";
     };
 
-    GroupController.prototype.setP13nData = function (oPropertyHelper) {
+    GroupController.prototype.setP13nData = function(oPropertyHelper) {
 
         var aItemState = this.getCurrentState();
-        var mExistingGroupLevels = P13nBuilder.arrayToMap(aItemState);
+        var mItemState = P13nBuilder.arrayToMap(aItemState);
 
-        var fnEnhancer = function(oItem, oProperty){
+        var oP13nData = P13nBuilder.prepareAdaptationData(oPropertyHelper, function(mItem, oProperty){
+            var oExisting = mItemState[oProperty.name];
+            mItem.grouped = !!oExisting;
+            mItem.groupPosition =  oExisting ? oExisting.position : -1;
 
-            var sName = oProperty.name;
-            if (oProperty.isGroupable() === false) {
-                return false;
-            }
-
-            oItem.selected = mExistingGroupLevels[sName] ? true : false;
-            oItem.groupPosition = mExistingGroupLevels[sName] ? mExistingGroupLevels[sName].position : -1;
-
-            return true;
-        };
-
-        var oP13nData = P13nBuilder.prepareP13nData({}, oPropertyHelper, fnEnhancer);
+            return !(oProperty.groupable === false);
+        });
 
         P13nBuilder.sortP13nData({
-            visible: "selected",
+            visible: "grouped",
             position: "groupPosition"
         }, oP13nData.items);
+        oP13nData.presenceAttribute = this._getPresenceAttribute();
+        oP13nData.items.forEach(function(oItem){delete oItem.groupPosition;});
 
         this.oP13nData = oP13nData;
     };

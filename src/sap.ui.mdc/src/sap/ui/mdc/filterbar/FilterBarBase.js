@@ -2,8 +2,8 @@
  * ! ${copyright}
  */
 sap.ui.define([
-	'sap/ui/core/library', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/Device', 'sap/ui/mdc/Control', 'sap/base/util/merge', 'sap/base/util/deepEqual', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/mdc/condition/ConditionModel', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/condition/ConditionConverter', 'sap/m/MessageBox', "sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/condition/FilterConverter", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/util/FilterUtil", "sap/m/Button", "sap/m/library", "sap/ui/core/ShortcutHintsMixin"
-], function(coreLibrary, FlexUtil, Device, Control, merge, deepEqual, ManagedObjectModel, ManagedObjectObserver, Log, ConditionModel, Condition, IdentifierUtil, ConditionConverter, MessageBox, ControlPersonalizationWriteAPI, StateUtil, FilterConverter, ControlVariantApplyAPI, FilterUtil, Button, mLibrary, ShortcutHintsMixin) {
+	'sap/ui/mdc/p13n/subcontroller/FilterController', 'sap/ui/core/library', 'sap/ui/mdc/p13n/FlexUtil', 'sap/ui/Device', 'sap/ui/mdc/Control', 'sap/base/util/merge', 'sap/base/util/deepEqual', 'sap/ui/model/base/ManagedObjectModel', 'sap/ui/base/ManagedObjectObserver', 'sap/base/Log', 'sap/ui/mdc/condition/ConditionModel', 'sap/ui/mdc/condition/Condition', 'sap/ui/mdc/util/IdentifierUtil', 'sap/ui/mdc/condition/ConditionConverter', 'sap/m/MessageBox', "sap/ui/fl/write/api/ControlPersonalizationWriteAPI", "sap/ui/mdc/p13n/StateUtil", "sap/ui/mdc/condition/FilterConverter", "sap/ui/fl/apply/api/ControlVariantApplyAPI", "sap/ui/mdc/util/FilterUtil", "sap/m/Button", "sap/m/library", "sap/ui/core/ShortcutHintsMixin"
+], function(FilterController, coreLibrary, FlexUtil, Device, Control, merge, deepEqual, ManagedObjectModel, ManagedObjectObserver, Log, ConditionModel, Condition, IdentifierUtil, ConditionConverter, MessageBox, ControlPersonalizationWriteAPI, StateUtil, FilterConverter, ControlVariantApplyAPI, FilterUtil, Button, mLibrary, ShortcutHintsMixin) {
 	"use strict";
 
 	var ValueState = coreLibrary.ValueState;
@@ -1090,7 +1090,7 @@ sap.ui.define([
 					var oCondition = this._toInternal(oProperty, oXCondition);
 					if (oCM.indexOf(sFieldPath, oCondition, _fnNormalizeCondition.call(this, oProperty)) < 0) {
 						var aCondition = [{sFieldPath: oProperty}];
-						this.getEngine().checkConditionOperatorSanity(aCondition); //check if the single condition's operator is valid
+						FilterController.checkConditionOperatorSanity(aCondition); //check if the single condition's operator is valid
 						if (aCondition && aCondition.length > 0){
 							this._cleanUpFilterFieldInErrorStateByName(sFieldPath);
 							oCM.addCondition(sFieldPath, oCondition);

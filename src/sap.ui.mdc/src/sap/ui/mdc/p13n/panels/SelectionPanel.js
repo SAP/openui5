@@ -32,44 +32,49 @@ sap.ui.define([
 			// Initialize the BasePanel
 			BasePanel.prototype.init.apply(this, arguments);
 
-			var oSelectionPanelTemplate = new ColumnListItem({
-				selected: "{" + this.P13N_MODEL + ">selected}",
-				cells: new VBox({
-					items: [
-						new Label({
-							design: {
-								path: this.P13N_MODEL + ">groupLabel",
-								formatter: function(sGroupLabel){
-									return sGroupLabel ? "Bold" : "Standard";
-								}
-							},
-							wrapping: true,
-							tooltip: "{" + this.P13N_MODEL + ">tooltip}",
-							text: "{" + this.P13N_MODEL + ">label}"
-						}),
-						new Label({
-							visible: {
-								path: this.P13N_MODEL + ">groupLabel",
-								formatter: function(sGroupLabel){
-									return sGroupLabel ? true : false;
-								}
-							},
-							wrapping: true,
-							tooltip: "{" + this.P13N_MODEL + ">tooltip}",
-							text: "{" + this.P13N_MODEL + ">groupLabel}"
-						})
-
-					]
-				})
-
-			});
-
-			this.setTemplate(oSelectionPanelTemplate);
 			this.setPanelColumns(this.getResourceText("fieldsui.COLUMNS"));
 
 		},
 		renderer: {}
 	});
+
+	SelectionPanel.prototype.setP13nModel = function(oModel) {
+		BasePanel.prototype.setP13nModel.apply(this, arguments);
+
+		var oSelectionPanelTemplate = new ColumnListItem({
+			selected: "{" + this.P13N_MODEL + ">" + this._getPresenceAttribute() + "}",
+			cells: new VBox({
+				items: [
+					new Label({
+						design: {
+							path: this.P13N_MODEL + ">groupLabel",
+							formatter: function(sGroupLabel){
+								return sGroupLabel ? "Bold" : "Standard";
+							}
+						},
+						wrapping: true,
+						tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+						text: "{" + this.P13N_MODEL + ">label}"
+					}),
+					new Label({
+						visible: {
+							path: this.P13N_MODEL + ">groupLabel",
+							formatter: function(sGroupLabel){
+								return sGroupLabel ? true : false;
+							}
+						},
+						wrapping: true,
+						tooltip: "{" + this.P13N_MODEL + ">tooltip}",
+						text: "{" + this.P13N_MODEL + ">groupLabel}"
+					})
+
+				]
+			})
+
+		});
+
+		this.setTemplate(oSelectionPanelTemplate);
+	};
 
 	SelectionPanel.prototype._onSearchFieldLiveChange = function(oEvent) {
 		//TODO: implement in BasePanel

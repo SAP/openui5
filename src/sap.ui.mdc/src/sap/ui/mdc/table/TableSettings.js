@@ -141,7 +141,7 @@ sap.ui.define([
 		},
 
 		showUIColumns: function(oControl, oSource) {
-			oControl.getEngine().showUI(oControl, "Item", oSource);
+			oControl.getEngine().showUI(oControl, "Column", oSource);
 		},
 
 		showUISort: function(oControl, oSource) {
@@ -234,7 +234,7 @@ sap.ui.define([
 
 			oControl.getEngine().createChanges({
 				control: oControl,
-				key: "Item",
+				key: "Column",
 				state: [{name: oMovedField.name, position: iNewIndex}]
 			});
 
