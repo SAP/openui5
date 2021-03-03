@@ -18,7 +18,7 @@
 		title="Time Input" >
 		<form:content>
 			<Label text="Time" />
-			<Input value="{
+			<Input placeholder="{/dtPattern}" value="{
 				path: '/time',
 				type: 'sap.ui.model.type.Time'}" />
 		</form:content>
@@ -34,16 +34,32 @@
 		emptySpanM="4"
 		columnsL="1"
 		columnsM="1"
-		title="Relative Time Format" >
+		title="Style" >
 		<form:content>
-
-			<Label text="Relative Time" />
+			<Label text="Short" />
 			<Text text="{
 				path: '/time',
 				type: 'sap.ui.model.type.Time',
 				formatOptions: {
-					relative: true,
-					relativeScale: 'auto'
+					style: 'short'
+				}
+			}" />
+
+			<Label text="Medium" />
+			<Text text="{
+				path: '/time',
+				type: 'sap.ui.model.type.Time',
+				formatOptions: {
+					style: 'medium'
+				}
+			}" />
+
+			<Label text="Long" />
+			<Text text="{
+				path: '/time',
+				type: 'sap.ui.model.type.Time',
+				formatOptions: {
+					style: 'long'
 				}
 			}" />
 		</form:content>
