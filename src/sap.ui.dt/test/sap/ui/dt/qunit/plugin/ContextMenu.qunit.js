@@ -274,35 +274,6 @@ sap.ui.define([
 			this.clock.tick(50);
 		});
 
-		QUnit.test("Reopen the ContextMenu on another overlay", function (assert) {
-			var done = assert.async();
-			var bIsEdge = Device.browser.edge;
-			Device.browser.edge = true;
-			var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;
-			var fnSpy = sandbox.spy(oContextMenuControl, "_rememberPosition");
-			oContextMenuControl.attachEventOnce("Opened", function() {
-				assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be open");
-				openContextMenu.call(this, this.oButton2Overlay, false, false, true).then(function() {
-					// the popup uses another setTimeout (50ms on firefox), without this the opened event won't be fired
-					this.clock.tick(52);
-				}.bind(this));
-			}.bind(this));
-			oContextMenuControl.attachEventOnce("Closed", function() {
-				assert.ok(!oContextMenuControl.getPopover().isOpen(), "ContextMenu should be closed");
-				assert.strictEqual(fnSpy.callCount, 0, "the Position of the ContextMenu is not stored before closing, because Contextmenu is not closed via ESCAPE");
-				oContextMenuControl.attachEventOnce("Opened", function() {
-					assert.ok(oContextMenuControl.getPopover().isOpen(), "ContextMenu should be reopened again");
-					assert.ok(oContextMenuControl._oLastPosition === null, "the Last Position of the ContextMenu is not set");
-					Device.browser.edge = bIsEdge;
-					done();
-				});
-			});
-			openContextMenu.call(this, this.oButton1Overlay).then(function() {
-				// the popup uses another setTimeout (50ms on firefox), without this the opened event won't be fired
-				this.clock.tick(52);
-			}.bind(this));
-		});
-
 		QUnit.test("When a context menu is open and selection changes", function (assert) {
 			return openContextMenu.call(this, this.oButton2Overlay).then(function() {
 				var oContextMenuControl = this.oContextMenuPlugin.oContextMenuControl;

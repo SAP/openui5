@@ -85,8 +85,8 @@ sap.ui.define([
 			this.oOuterPanel.placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
 			var iScrollLeftValue = -20;
-			// IE, Edge and Chrome use positive leftScroll
-			if (Device.browser.msie || Device.browser.edge || Device.browser.blink) {
+			// Chrome uses positive leftScroll
+			if (Device.browser.blink) {
 				iScrollLeftValue = -iScrollLeftValue;
 			}
 			jQuery(this.oOuterPanel.$().find('>.sapMPanelContent')).scrollLeftRTL(iScrollLeftValue);

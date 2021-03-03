@@ -13,7 +13,6 @@ sap.ui.define([
 	"sap/m/FlexItemData",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/DOMUtil",
-	"sap/ui/Device",
 	// jQuery Plugin "rect"
 	"sap/ui/dom/jquery/rect"
 ], function(
@@ -27,8 +26,7 @@ sap.ui.define([
 	Button,
 	FlexItemData,
 	OverlayRegistry,
-	DOMUtil,
-	Device
+	DOMUtil
 ) {
 	"use strict";
 
@@ -516,9 +514,6 @@ sap.ui.define([
 		 * @return {float} the height of a popover arrow
 		 */
 		_getArrowHeight: function(bCompact) {
-			if (Device.browser.msie || Device.browser.edge) {
-				return bCompact ? 0.5 : 0.5;
-			}
 			return bCompact ? 0.5625 : 0.5625;
 		},
 
