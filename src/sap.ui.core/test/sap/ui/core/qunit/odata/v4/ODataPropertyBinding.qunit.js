@@ -333,7 +333,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [false, true].forEach(function (bHasMessages) {
-	var sTitle = "checkUpdataInternal(undefined) consider data state control messages"
+	var sTitle = "checkUpdateInternal(undefined) consider data state control messages"
 		+ ", bHasMessages =" + bHasMessages;
 
 	QUnit.test(sTitle, function (assert) {
@@ -343,6 +343,7 @@ sap.ui.define([
 
 		oBinding.vValue = 42; // internal value in the model
 
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 		this.mock(oBinding).expects("getDataState").withExactArgs()
 			.returns(oDataState);
 		this.mock(oDataState).expects("getControlMessages").withExactArgs()
@@ -1599,6 +1600,7 @@ sap.ui.define([
 		oControl.getBinding("text").attachChange(function () {
 			that.mock(oControl.getBinding("text").oCachePromise.getResult())
 				.expects("update").never();
+			that.mock(oControl.getBinding("text")).expects("getResolvedPath").callThrough();
 			// Note: if setValue throws, ManagedObject#updateModelProperty does not roll back!
 			that.mock(that.oModel).expects("reportError")
 				.withExactArgs("Failed to update path /ProductList('HT-1000')/Name", sClassName,

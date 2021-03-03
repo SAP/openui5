@@ -4417,6 +4417,7 @@ sap.ui.define([
 			this.oMetaModelMock.expects("fetchEntityContainer").atLeast(0)
 				.returns(SyncPromise.resolve(mScope));
 			oBinding = this.oMetaModel.bindList(oFixture.metaPath, oContext);
+			this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 
 			// code under test
 			assert.deepEqual(oBinding.fetchContexts().getResult().map(function (oContext) {
@@ -4438,6 +4439,7 @@ sap.ui.define([
 			.withExactArgs(sPath + "/")
 			.returns(SyncPromise.resolve(Promise.resolve({bar: "", baz: ""})));
 		oBinding = this.oMetaModel.bindList(sPath);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().callThrough();
 
 		return oBinding.fetchContexts().then(function (oResult) {
 			assert.deepEqual(oResult.map(function (oContext) {

@@ -814,7 +814,7 @@ sap.ui.define([
 	 * @since 1.37.0
 	 */
 	ODataContextBinding.prototype.execute = function (sGroupId) {
-		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+		var sResolvedPath = this.getResolvedPath();
 
 		this.checkSuspended();
 		this.oModel.checkGroupId(sGroupId);
@@ -1013,7 +1013,7 @@ sap.ui.define([
 	 */
 	ODataContextBinding.prototype.getResolvedPathWithReplacedTransientPredicates = function () {
 		var sPath = "",
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			sResolvedPath = this.getResolvedPath(),
 			aSegments,
 			that = this;
 
@@ -1065,8 +1065,7 @@ sap.ui.define([
 			return false;
 		}
 
-		aMetaSegments = oMetaModel.getMetaPath(this.oModel.resolve(this.sPath, this.oContext))
-			.split("/");
+		aMetaSegments = oMetaModel.getMetaPath(this.getResolvedPath()).split("/");
 
 		return aMetaSegments.length === 3
 			&& oMetaModel.getObject("/" + aMetaSegments[1]).$kind === "EntitySet"; // case 4b
@@ -1143,8 +1142,7 @@ sap.ui.define([
 				oReadGroupLock = that.oReadGroupLock;
 
 			if (!that.oElementContext) { // refresh after delete
-				that.oElementContext = Context.create(that.oModel, that,
-					that.oModel.resolve(that.sPath, that.oContext));
+				that.oElementContext = Context.create(that.oModel, that, that.getResolvedPath());
 				if (!oCache) { // make sure event IS fired
 					that._fireChange({reason : ChangeReason.Refresh});
 				}

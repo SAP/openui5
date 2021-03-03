@@ -367,7 +367,7 @@ sap.ui.define([
 					var sEntityPath = _Helper.getRelativePath(oResult.entityPath,
 							oBinding.oReturnValueContext
 								? oBinding.oReturnValueContext.getPath()
-								: that.oModel.resolve(oBinding.sPath, oBinding.oContext)),
+								: oBinding.getResolvedPath()),
 						// If a PATCH is merged into a POST request, firePatchSent is not called,
 						// thus don't call firePatchCompleted
 						bFirePatchCompleted = false;
@@ -1174,7 +1174,7 @@ sap.ui.define([
 		});
 
 		oRootBinding = this.oBinding.getRootBinding();
-		sRootPath = this.oModel.resolve(oRootBinding.getPath(), oRootBinding.getContext());
+		sRootPath = oRootBinding.getResolvedPath();
 		aPathsForBinding = aPathsForBinding.reduce(function (aPaths0, sPath) {
 			return aPaths0.concat(oMetaModel.getAllPathReductions(
 				_Helper.buildPath(that.getPath(), sPath), sRootPath));

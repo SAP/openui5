@@ -237,7 +237,7 @@ sap.ui.define([
 			bIsMeta = iHashHash >= 0,
 			oMetaModel = this.oModel.getMetaModel(),
 			mParametersForDataReceived = {data : {}},
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			sResolvedPath = this.getResolvedPath(),
 			oCallToken = {
 				// a resolved binding fires a change event if checkUpdateInternal is called at least
 				// once with bForceUpdate=true; an unresolved binding only fires if it had a value
@@ -714,9 +714,8 @@ sap.ui.define([
 			that = this;
 
 		function reportError(oError) {
-			that.oModel.reportError(
-				"Failed to update path " + that.oModel.resolve(that.sPath, that.oContext),
-				sClassName, oError);
+			that.oModel.reportError("Failed to update path " + that.getResolvedPath(), sClassName,
+				oError);
 
 			return oError;
 		}

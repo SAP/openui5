@@ -247,7 +247,7 @@ sap.ui.define([
 							that.mPreviousContextsByPath[oContext.getPath()] = oContext;
 						}
 					}
-					sResolvedPath = that.oModel.resolve(that.sPath, that.oContext);
+					sResolvedPath = that.getResolvedPath();
 					that.aContexts.splice(iIndex, 1); // adjust the contexts array
 					for (i = iIndex; i < that.aContexts.length; i += 1) {
 						if (that.aContexts[i]) {
@@ -708,7 +708,7 @@ sap.ui.define([
 			oCreatePathPromise = this.fetchResourcePath(),
 			oCreatePromise,
 			oGroupLock,
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			sResolvedPath = this.getResolvedPath(),
 			sTransientPredicate = "($uid=" + uid() + ")",
 			sTransientPath = sResolvedPath + sTransientPredicate,
 			that = this;
@@ -807,7 +807,7 @@ sap.ui.define([
 			i$skipIndex,
 			bLengthFinal = this.bLengthFinal,
 			oModel = this.oModel,
-			sPath = oModel.resolve(this.sPath, this.oContext),
+			sPath = this.getResolvedPath(),
 			sPredicate,
 			bStartBeyondRange = iStart > this.aContexts.length,
 			that = this;
@@ -1087,7 +1087,7 @@ sap.ui.define([
 	// @override sap.ui.model.odata.v4.ODataBinding#fetchCache
 	ODataListBinding.prototype.fetchCache = function () {
 		var oOldCache = this.oCache,
-			sBindingPath = this.oModel.resolve(this.sPath, this.oContext),
+			sBindingPath = this.getResolvedPath(),
 			bKeptDataAdded,
 			that = this;
 
@@ -1566,7 +1566,7 @@ sap.ui.define([
 			oGroupLock,
 			oPromise,
 			bRefreshEvent = !!this.sChangeReason, // ignored for "*VirtualContext"
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			sResolvedPath = this.getResolvedPath(),
 			oVirtualContext,
 			that = this;
 
@@ -2179,7 +2179,7 @@ sap.ui.define([
 		var oKeptElementsPromise, that = this;
 
 		function onRemove(sPredicate) {
-			var sPath = that.oModel.resolve(that.sPath, that.oContext);
+			var sPath = that.getResolvedPath();
 			that.mPreviousContextsByPath[sPath + sPredicate].resetKeepAlive();
 		}
 
@@ -2428,7 +2428,7 @@ sap.ui.define([
 			}, function (oError) {
 				that.oModel.reportError("Failed to get contexts for "
 					+ that.oModel.sServiceUrl
-					+ that.oModel.resolve(that.sPath, that.oContext).slice(1)
+					+ that.getResolvedPath().slice(1)
 					+ " with start index " + iStart + " and length " + iLength,
 					sClassName, oError);
 				throw oError;

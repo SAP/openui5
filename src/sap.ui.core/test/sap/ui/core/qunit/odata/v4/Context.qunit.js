@@ -1527,8 +1527,7 @@ sap.ui.define([
 			},
 			oModel = {
 				checkGroupId : function () {},
-				getMetaModel : function () {},
-				resolve : function () {}
+				getMetaModel : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')");
 
@@ -1612,7 +1611,8 @@ sap.ui.define([
 		var oRootContext = {},
 			oRootBinding = {
 				getContext : function () { return oRootContext; },
-				getPath : function () { return "root/path"; }
+				getPath : function () { return "root/path"; },
+				getResolvedPath : function () {}
 			},
 			oBinding = {
 				oCache : {
@@ -1635,8 +1635,7 @@ sap.ui.define([
 					relocateAll : function () {},
 					waitForRunningChangeRequests : function () {}
 				},
-				requestSideEffects : function () {},
-				resolve : function () {}
+				requestSideEffects : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
 			oExpectation,
@@ -1677,9 +1676,7 @@ sap.ui.define([
 		}
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(oFixture.group);
-		this.mock(oModel).expects("resolve")
-			.withExactArgs("root/path", sinon.match.same(oRootContext))
-			.returns("/base");
+		this.mock(oRootBinding).expects("getResolvedPath").withExactArgs().returns("/base");
 		oMetaModelMock.expects("getAllPathReductions")
 			.withExactArgs("/EMPLOYEES('42')/TEAM_ID", "/base")
 			.returns(["/base/TEAM_ID", "/reduced/TEAM_ID"]);
@@ -1783,7 +1780,8 @@ sap.ui.define([
 		var oRootContext = {},
 			oRootBinding = {
 				getContext : function () { return oRootContext; },
-				getPath : function () { return "root/path"; }
+				getPath : function () { return "root/path"; },
+				getResolvedPath : function () {}
 			},
 			oBinding = {
 				checkSuspended : function () {},
@@ -1802,8 +1800,7 @@ sap.ui.define([
 					relocateAll : function () {},
 					waitForRunningChangeRequests : function () {}
 				},
-				requestSideEffects : function () {},
-				resolve : function () {}
+				requestSideEffects : function () {}
 			},
 			oContext = Context.create(oModel, oBinding, "/EMPLOYEES('42')"),
 			oError = new Error("Failed intentionally"),
@@ -1811,9 +1808,7 @@ sap.ui.define([
 
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oModel).expects("checkGroupId").withExactArgs(undefined);
-		this.mock(oModel).expects("resolve")
-			.withExactArgs("root/path", sinon.match.same(oRootContext))
-			.returns("/base");
+		this.mock(oRootBinding).expects("getResolvedPath").withExactArgs().returns("/base");
 		this.mock(oMetaModel).expects("getAllPathReductions")
 			.withExactArgs("/EMPLOYEES('42')/TEAM_ID", "/base").returns(["/base/TEAM_ID"]);
 		this.mock(oContext).expects("getUpdateGroupId").withExactArgs().returns("update");
@@ -2329,6 +2324,7 @@ sap.ui.define([
 				doSetProperty : function () {},
 				firePatchCompleted : function () {},
 				firePatchSent : function () {},
+				getResolvedPath : function () {},
 				getUpdateGroupId : function () {},
 				isPatchWithoutSideEffects : function () {},
 				sPath : "binding/path"
@@ -2375,8 +2371,8 @@ sap.ui.define([
 				oBindingMock.expects("firePatchSent").never();
 				oBindingMock.expects("isPatchWithoutSideEffects").withExactArgs()
 					.returns(bPatchWithoutSideEffects);
-				oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
-					.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+				oBindingMock.expects("getResolvedPath").atLeast(1) // fnErrorCallback also needs it
+					.withExactArgs()
 					.returns("/resolved/binding/path");
 				oModelMock.expects("resolve").atLeast(1) // fnErrorCallback also needs it
 					.withExactArgs("some/relative/path", sinon.match.same(oContext))
@@ -2517,6 +2513,7 @@ sap.ui.define([
 				oContext : {},
 				doSetProperty : function () {},
 				getBaseForPathReduction : function () {},
+				getResolvedPath : function () {},
 				isPatchWithoutSideEffects : function () {},
 				sPath : "binding/path"
 			},
@@ -2564,8 +2561,7 @@ sap.ui.define([
 				that.mock(oMetaModel).expects("fetchUpdateData")
 					.withExactArgs("/reduced/path", sinon.match.same(oContext), false)
 					.returns(SyncPromise.resolve(oFetchUpdateDataResult));
-				oModelMock.expects("resolve")
-					.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+				that.mock(oBinding).expects("getResolvedPath").withExactArgs()
 					.returns("/resolved/binding/path");
 				oModelMock.expects("resolve")
 					.withExactArgs("/reduced/path", sinon.match.same(oContext))
@@ -2599,6 +2595,7 @@ sap.ui.define([
 				oContext : {},
 				doSetProperty : function () {},
 				//isPatchWithoutSideEffects: must not be called
+				getResolvedPath : function () {},
 				sPath : "binding/path"
 			},
 			oFetchUpdateDataResult = {
@@ -2615,8 +2612,7 @@ sap.ui.define([
 				bAutoExpandSelect : false, // avoid path reduction
 				getMetaModel : function () {
 					return oMetaModel;
-				},
-				resolve : function () {}
+				}
 			},
 			oContext = Context.create(oModel, oBinding, "/BusinessPartnerList('0100000000')"),
 			that = this;
@@ -2636,8 +2632,7 @@ sap.ui.define([
 					.withExactArgs("/some/absolute/path", sinon.match.same(oContext), true)
 					.returns(SyncPromise.resolve(oFetchUpdateDataResultPromise));
 				oFetchUpdateDataResultPromise.then(function () {
-					that.mock(oModel).expects("resolve")
-						.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+					that.mock(oBinding).expects("getResolvedPath").withExactArgs()
 						.returns("/resolved/binding/path");
 					that.mock(_Helper).expects("getRelativePath")
 						.withExactArgs("/entity/path", "/resolved/binding/path")
@@ -2660,6 +2655,7 @@ sap.ui.define([
 		var oBinding = {
 				oContext : {},
 				doSetProperty : function () {},
+				getResolvedPath : function () {},
 				isPatchWithoutSideEffects : function () {},
 				sPath : "binding/path"
 			},
@@ -2703,8 +2699,7 @@ sap.ui.define([
 					.returns(SyncPromise.resolve(oFetchUpdateDataResult));
 
 				if (vValue === undefined) {
-					oModelMock.expects("resolve")
-						.withExactArgs(oBinding.sPath, sinon.match.same(oBinding.oContext))
+					that.mock(oBinding).expects("getResolvedPath").withExactArgs()
 						.returns("/resolved/binding/path");
 					oModelMock.expects("resolve")
 						.withExactArgs("/some/absolute/path", sinon.match.same(oContext))
