@@ -1,4 +1,4 @@
-sap.ui.define(["sap/ui/Device"], function(Device) {
+sap.ui.define([], function() {
 
 	"use strict";
 
@@ -46,8 +46,7 @@ sap.ui.define(["sap/ui/Device"], function(Device) {
 			"LiveEditorOutput": {
 				coverage: {
 					only : ["sap/ui/documentation/sdk/util/LiveEditorOutput.html"]
-				},
-				skip: Device.browser.msie
+				}
 			},
 
 			"Resources": {

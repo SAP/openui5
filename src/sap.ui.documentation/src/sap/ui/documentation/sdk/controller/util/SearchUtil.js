@@ -3,8 +3,8 @@
  */
 
 // Provides reuse functionality for reading documentation from api.json files (as created by the UI5 JSDoc3 template/plugin)
-sap.ui.define(["sap/ui/Device", "sap/base/Log"],
-	function(Device, Log) {
+sap.ui.define(["sap/base/Log"],
+	function(Log) {
 		"use strict";
 
 		var WORKER = {
@@ -43,8 +43,7 @@ sap.ui.define(["sap/ui/Device", "sap/base/Log"],
 
 					// instruct the worker to fetch the index data
 					oWorker.postMessage({
-						"cmd": WORKER.COMMANDS.INIT,
-						"bIsMsieBrowser": !!Device.browser.msie
+						"cmd": WORKER.COMMANDS.INIT
 					});
 				});
 			}

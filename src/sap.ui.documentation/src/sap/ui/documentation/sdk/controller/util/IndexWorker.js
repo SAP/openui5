@@ -116,9 +116,7 @@
 
 		OR_separator = " ", // separator of terms in the search query
 
-		oIndexCache = {},
-
-		bIsMsieBrowser = false;
+		oIndexCache = {};
 
 
 	/**
@@ -133,7 +131,6 @@
 		// because we want to be able to start the download
 		// of the index in the earliest point in time
 		if (sCmd === WORKER.COMMANDS.INIT) {
-			bIsMsieBrowser = oEvent.data.bIsMsieBrowser;
 			fetchIndex().then(function() {
 				var oResponse = {};
 				oResponse[WORKER.RESPONSE_FIELDS.DONE] = true;
@@ -196,10 +193,7 @@
 					resolve(oIndex);
 				};
 
-			if (!bIsMsieBrowser) { // IE does not support 'json' responseType
-				// (and will throw an error if we attempt to set it nevertheless)
-				req.responseType = 'json';
-			}
+			req.responseType = 'json';
 			req.addEventListener("load", onload, false);
 			req.open("get", URL.SEARCH_INDEX);
 			req.send();

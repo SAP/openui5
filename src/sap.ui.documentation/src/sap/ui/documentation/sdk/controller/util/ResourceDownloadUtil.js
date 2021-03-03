@@ -48,13 +48,7 @@ sap.ui.define([], function() {
 					oResult = (sRespType === "text") ? oReq.responseText : oReq.response;
 
 				if (sRespType === "arraybuffer") {
-					try {
-						oResult = new Uint8Array(oResult);
-					} catch (e) {
-						// IE11 does not support Uint8Array from response array,
-						// in that case it is enough to keep the raw response
-						// (to be able to add it to the download zip, if download is requested)
-					}
+					oResult = new Uint8Array(oResult);
 				}
 
 				return oResult;
