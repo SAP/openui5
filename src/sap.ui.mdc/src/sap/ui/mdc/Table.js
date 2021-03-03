@@ -586,6 +586,10 @@ sap.ui.define([
 		this._fnRejectFullInit = reject;
 	};
 
+	Table.prototype.getDataStateIndicatorPluginOwner = function() {
+		return this._oTable || this._pFullInitialize;
+	};
+
 	// ----Type----
 	Table.prototype._getStringType = function(oTypeInput) {
 		var sType, oType = sType = oTypeInput || this.getType();

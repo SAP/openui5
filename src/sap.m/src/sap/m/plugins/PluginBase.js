@@ -94,7 +94,9 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 * @protected
 	 */
 	PluginBase.prototype.getControl = function() {
-		return this.getParent();
+		var oParent = this.getParent();
+		var sPluginOwnerMethod = "get" + this.getMetadata().getName().split(".").pop() + "PluginOwner";
+		return oParent && oParent[sPluginOwnerMethod] ? oParent[sPluginOwnerMethod](this) : oParent;
 	};
 
 	/**
@@ -157,7 +159,7 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 * @virtual
 	 */
 	PluginBase.prototype.isApplicable = function(oControl) {
-		return oControl.isA("sap.ui.core.Control");
+		return oControl.isA && oControl.isA("sap.ui.core.Control");
 	};
 
 	/**
@@ -191,12 +193,11 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 
 		Element.prototype.setParent.apply(this, arguments);
 
-		if (oParent && bEnabled) {
-			if (!this.isApplicable(oParent)) {
-				throw new Error(this + " is not applicable to " + oParent);
-			} else {
-				this._activate();
-			}
+		var oControl = this.getControl();
+		if (oControl instanceof Promise) {
+			oControl.then(this._checkApplicable.bind(this));
+		} else {
+			this._checkApplicable();
 		}
 
 		return this;
@@ -234,13 +235,25 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	};
 
 
+
+	PluginBase.prototype._checkApplicable = function() {
+		var oControl = this.getControl();
+		if (oControl && this.getEnabled()) {
+			if (!this.isApplicable(oControl)) {
+				throw new Error(this + " is not applicable to " + oControl);
+			} else {
+				this._activate();
+			}
+		}
+	};
+
 	/**
 	 * Internal plugin activation handler
 	 */
 	PluginBase.prototype._activate = function() {
 		if (!this.isActive()) {
-			this.onActivate(this.getControl());
 			this.getControlPluginConfig("onActivate", undefined, this.getControl(), this);
+			this.onActivate(this.getControl());
 			this._bIsActive = true;
 		}
 	};
@@ -250,8 +263,8 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 */
 	PluginBase.prototype._deactivate = function() {
 		if (this.isActive()) {
-			this.onDeactivate(this.getControl());
 			this.getControlPluginConfig("onDeactivate", undefined, this.getControl(), this);
+			this.onDeactivate(this.getControl());
 			this._bIsActive = false;
 		}
 	};

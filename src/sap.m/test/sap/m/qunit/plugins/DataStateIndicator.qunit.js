@@ -5,8 +5,13 @@ sap.ui.define([
 	'sap/ui/model/json/JSONModel',
 	'sap/ui/core/message/Message',
 	'sap/m/plugins/DataStateIndicator',
-	"sap/ui/base/ManagedObjectObserver"
-], function(List, StandardListItem, Core, JSONModel, Message, DataStateIndicator, ManagedObjectObserver) {
+	'sap/ui/base/ManagedObjectObserver',
+	'sap/ui/model/DataState',
+	'sap/ui/model/Filter',
+	'sap/m/Toolbar',
+	'sap/m/Link',
+	'sap/m/Text'
+], function(List, StandardListItem, Core, JSONModel, Message, DataStateIndicator, ManagedObjectObserver, DataState, Filter) {
 
 	"use strict";
 	/*global QUnit */
@@ -243,11 +248,11 @@ sap.ui.define([
 	QUnit.test("Link control test when messageLinkText is set before MessageStrip is initialized", function(assert) {
 		var done = assert.async(),
 			bMessageLinkPressed = false;
-		assert.ok(this.oPlugin.getMetadata().getAllPrivateProperties().hasOwnProperty("messageLinkText"), "messageLinkText is a private property of the DataPluginIndicator");
+
+		assert.ok(this.oPlugin.getMetadata().getAllProperties().hasOwnProperty("enableFiltering"), "enableFiltering is a public property of the DataPluginIndicator");
+		assert.ok(this.oPlugin.setMessageLinkText, "setMessageLinkText method exists on the DataPluginIndicator");
 		this.oPlugin.setMessageLinkText("Test");
-		assert.ok(this.oPlugin.getMetadata().getAllPrivateProperties().hasOwnProperty("messageLinkVisible"), "messageLinkVisible is a private property of the DataPluginIndicator");
-		assert.ok(this.oPlugin.getMessageLinkVisible(), "messageLinkVisible=true by default");
-		this.oPlugin.attachEventOnce("messageLinkPressed", function() {
+		this.oPlugin.attachEvent("messageLinkPressed", function() {
 			bMessageLinkPressed = true;
 		});
 		this.addMessage("Error");
@@ -259,21 +264,12 @@ sap.ui.define([
 			assert.equal(this.oPlugin.getMessageLinkText(), "Test");
 			assert.ok(this.oPlugin._oLink, "Link control created");
 			assert.equal(oMsgStrp.getLink(), this.oPlugin._oLink, "MessageStrip aggregation set correctly");
-			assert.equal(this.oPlugin._oLink.getVisible(), this.oPlugin.getMessageLinkVisible());
 			this.oPlugin._oLink.firePress();
 			assert.ok(bMessageLinkPressed, "messageLinkPressed event fired");
 
 			this.oPlugin.setMessageLinkText("Test2");
 			assert.equal(this.oPlugin.getMessageLinkText(), "Test2", "property value updated correctly");
 			assert.equal(this.oPlugin._oLink.getText(), this.oPlugin.getMessageLinkText(), "Link text updated");
-
-			this.oPlugin.setMessageLinkVisible(false);
-			assert.equal(this.oPlugin.getMessageLinkVisible(), false, "property value updated correctly");
-			assert.equal(this.oPlugin._oLink.getVisible(), this.oPlugin.getMessageLinkVisible(), "link hidden");
-
-			this.oPlugin.setMessageLinkVisible(true);
-			assert.equal(this.oPlugin.getMessageLinkVisible(), true, "property value updated correctly");
-			assert.equal(this.oPlugin._oLink.getVisible(), this.oPlugin.getMessageLinkVisible(), "link visible");
 
 			this.oPlugin.setMessageLinkText("");
 			assert.equal(this.oPlugin.getMessageLinkText(), "", "property value updated correctly");
@@ -338,4 +334,245 @@ sap.ui.define([
 			}, 300);
 		 }.bind(this));
 	});
+
+	QUnit.module("Enable Filtering", {
+		beforeEach: function() {
+			this.oModel = new JSONModel({ names: [{name: "A"}, {name: "B"}, {name: "C"}, {name: "D"}] });
+			this.oPlugin = new DataStateIndicator({
+				enableFiltering: true
+			});
+			this.oList = new List({
+				dependents: this.oPlugin
+			}).bindItems({
+				path : "/names",
+				template : new StandardListItem({
+					title: "{name}"
+				})
+			}).setModel(this.oModel);
+
+			this.oList.placeAt("qunit-fixture");
+			Core.applyChanges();
+
+			this.oDataState = new DataState();
+			this.oList.getBinding("items").getDataState = function() {
+				return this.oDataState;
+			}.bind(this);
+
+			this.aFiltersForMessages = [];
+			this.oList.getBinding("items").requestFilterForMessages = function() {
+				var oFilter = null;
+				if (this.aFiltersForMessages.length == 1) {
+					oFilter = this.aFiltersForMessages[0];
+				} else {
+					oFilter = new Filter({filters : this.aFiltersForMessages});
+				}
+				return Promise.resolve(oFilter);
+			}.bind(this);
+
+			this.addTableMessage = function(sType) {
+				var aMessages = this.oDataState.getMessages().concat(
+					new Message({
+						message: sType + " Table Message Text",
+						type: sType,
+						target: "/names",
+						processor: this.oModel
+					})
+				);
+
+				this.oDataState.setModelMessages(aMessages);
+				this.oPlugin._processDataState(this.oDataState);
+			};
+
+			this.addInputMessage = function(oItem, sType) {
+				var sPath = oItem.getBindingContext().getPath() + "/name";
+				var aMessages = this.oDataState.getMessages().concat(
+					new Message({
+						message: sType + " Input Message Text ",
+						type: sType,
+						target: sPath,
+						processor: this.oModel
+					})
+				);
+
+				this.oDataState.setModelMessages(aMessages);
+
+				this.aFiltersForMessages.push(new Filter("name", "EQ", oItem.getBindingContext().getProperty(sPath)));
+				this.oPlugin._processDataState(this.oDataState);
+			};
+
+			this.removeMessage = function() {
+				var aMessages = this.oDataState.getMessages();
+				aMessages.pop();
+				this.oDataState.setModelMessages(aMessages);
+				this.aFiltersForMessages.pop();
+			};
+		},
+		afterEach: function() {
+			this.oModel.destroy();
+			this.oList.destroy();
+		}
+	});
+
+	QUnit.test("List only messages", function(assert) {
+		var done = assert.async();
+
+		this.addTableMessage("Error");
+		this.addTableMessage("Success");
+
+		setTimeout(function() {
+			assert.equal(this.oPlugin.getMessageLinkText(), "", "List specific messages did not result any link to filter");
+			done();
+		}.bind(this), 300);
+
+	});
+
+	QUnit.test("Filter Items / Clear Filter", function(assert) {
+		var done = assert.async();
+		var bFilterInfoPressed = false;
+
+		this.addInputMessage(this.oList.getItems()[0], "Error");
+		this.oPlugin.attachEvent("filterInfoPress", function() {
+			bFilterInfoPressed = true;
+		});
+
+		setTimeout(function() {
+			assert.equal(this.oPlugin.getMessageLinkText(), "Filter Items", "Filter Items link is shown");
+
+			this.oPlugin.attachEventOnce("applyFilter", function(oEvent) {
+
+				assert.ok(oEvent.getParameter("filter") instanceof Filter, "Filter parameter exists");
+				assert.ok(oEvent.getParameter("revert") instanceof Function, "Revert parameter exists");
+
+				setTimeout(function() {
+
+					assert.equal(this.oPlugin.getMessageLinkText(), "Clear Filter", "Clear Filter link is shown");
+					assert.equal(this.oList.getInfoToolbar().getContent()[0].getText(), "Filtered By: Errors", "InfoToolbar message is correct");
+					assert.ok(this.oList.getInfoToolbar().getActive(), "Info toolbar is active");
+					assert.equal(this.oList.getItems().length, 1, "After message filtering the list has only 1 item");
+					assert.notOk(this.oPlugin._oMessageStrip.getShowCloseButton(), "Close button of the MessageStrip is hidden");
+
+					this.oPlugin.attachEventOnce("clearFilter", function() {
+
+						assert.equal(this.oPlugin.getMessageLinkText(), "Filter Items", "Filter Items link is shown after message filters are cleared");
+						assert.equal(this.oList.getInfoToolbar(), null, "There is no InfoToolbar after message filters are cleared");
+						assert.ok(this.oPlugin._oMessageStrip.getShowCloseButton(), "Close button of the MessageStrip is visible");
+
+						setTimeout(function() {
+							assert.equal(this.oList.getItems().length, 4, "After message filters are cleared there are 4 items again");
+							done();
+						}.bind(this));
+
+					}, this);
+
+					this.oList.getInfoToolbar().firePress();
+					assert.ok(bFilterInfoPressed, "Info toolbar press event is handled");
+
+					this.oPlugin._oLink.firePress();
+
+				}.bind(this));
+
+			}, this);
+
+			assert.equal(this.oList.getItems().length, 4, "Before message filtering the list has 4 items");
+			this.oPlugin._oLink.firePress();
+
+		}.bind(this), 300);
+
+	});
+
+	QUnit.test("Filter Items / Application Filter / Clear Filter", function(assert) {
+		var done = assert.async();
+
+		this.addInputMessage(this.oList.getItems()[0], "Warning");
+		this.addInputMessage(this.oList.getItems()[1], "Error");
+
+		setTimeout(function() {
+			assert.equal(this.oPlugin.getMessageLinkText(), "Filter Items", "Filter Items link is shown");
+
+			this.oPlugin.attachEventOnce("applyFilter", function() {
+
+				setTimeout(function() {
+
+					assert.equal(this.oPlugin.getMessageLinkText(), "Clear Filter", "Clear Filter link is shown");
+					assert.equal(this.oList.getInfoToolbar().getContent()[0].getText(), "Filtered By: Issues", "InfoToolbar message is correct");
+					assert.equal(this.oList.getItems().length, 2, "After message filtering the list has 2 items");
+
+					this.oPlugin.attachEventOnce("clearFilter", function() {
+
+						assert.equal(this.oPlugin.getMessageLinkText(), "Filter Items", "Filter Items link is shown after message filters are cleared");
+						assert.equal(this.oList.getInfoToolbar(), null, "There is no InfoToolbar after message filters are cleared");
+
+						setTimeout(function() {
+							assert.equal(this.oList.getItems().length, 1, "After message filters are cleared there is only 1 item. Previous filter taken into account now");
+							done();
+						}.bind(this));
+
+					}, this);
+
+					this.oList.getBinding("items").filter(new Filter("name", "EQ", "C"), "Application");
+					assert.equal(this.oList.getItems().length, 2, "Another application filter, before Clear Filter is pressed, is temporarily ignored. The result set is not changed");
+					this.oPlugin._oLink.firePress();
+
+				}.bind(this));
+
+			}, this);
+
+			assert.equal(this.oList.getItems().length, 4, "Before message filtering the list has 4 items");
+			this.oPlugin._oLink.firePress();
+
+		}.bind(this), 300);
+
+	});
+
+	QUnit.test("Refresh while filtering", function(assert) {
+		var done = assert.async();
+
+		this.addInputMessage(this.oList.getItems()[2], "Error");
+		this.addInputMessage(this.oList.getItems()[3], "Warning");
+
+		setTimeout(function() {
+			assert.equal(this.oPlugin.getMessageLinkText(), "Filter Items", "Filter Items link is shown");
+
+			this.oPlugin.attachEventOnce("applyFilter", function() {
+
+				setTimeout(function() {
+
+					assert.equal(this.oPlugin.getMessageLinkText(), "Clear Filter", "Clear Filter link is shown");
+					assert.equal(this.oList.getInfoToolbar().getContent()[0].getText(), "Filtered By: Issues", "InfoToolbar message is correct");
+					assert.equal(this.oList.getItems().length, 2, "After message filtering the list has 2 items");
+
+					this.removeMessage();
+					this.oPlugin.refresh();
+
+					setTimeout(function() {
+
+						assert.equal(this.oPlugin.getMessageLinkText(), "Clear Filter", "Clear Filter link is shown");
+						assert.equal(this.oList.getInfoToolbar().getContent()[0].getText(), "Filtered By: Errors", "InfoToolbar message is correct");
+						assert.equal(this.oList.getItems().length, 1, "After message filtering the list has 1 items");
+						assert.equal(this.oList.getItems()[0].getTitle(), "C", "After message filtering the list has 1 items");
+
+						this.oPlugin.setEnabled(false);
+						assert.equal(this.oList.getInfoToolbar(), null, "InfoToolbar is removed from the list");
+						assert.equal(this.oPlugin._oInfoToolbar, null, "InfoToolbar is removed from plugin");
+						assert.equal(this.oPlugin._oMessageStrip, null, "MessageStrip is removed from plugin");
+
+						done();
+
+					}.bind(this));
+
+					this.oList.getBinding("items").filter(new Filter("name", "EQ", "C"), "Application");
+					assert.equal(this.oList.getItems().length, 2, "Another application filter, before Clear Filter is pressed, is temporarily ignored. The result set is not changed");
+					this.oPlugin._oLink.firePress();
+
+				}.bind(this));
+
+			}, this);
+
+			assert.equal(this.oList.getItems().length, 4, "Before message filtering the list has 4 items");
+			this.oPlugin._oLink.firePress();
+
+		}.bind(this), 300);
+
+	});
+
 });
