@@ -331,6 +331,32 @@ sap.ui.define(['sap/ui/core/Core', 'sap/ui/model/TreeAutoExpandMode',
 		hideGroupedColumn: "hideGroupedColumn"
 	};
 
+	/**
+	 * Enumeration of the <code>ResetAllMode</code> that can be used in a <code>TablePersoController</code>.
+	 * @enum {string}
+	 * @public
+	 */
+	thisLib.ResetAllMode = {
+
+		/**
+		 * Default behavior of the <code>TablePersoDialog</code> Reset All button.
+		 * @public
+		 */
+		Default: "Default",
+
+		/**
+		 * Resets the table to the default of the attached <code>PersoService</code>.
+		 * @public
+		 */
+		ServiceDefault: "ServiceDefault",
+
+		/**
+		 * Resets the table to the result of <code>getResetPersData</code> of the attached <code>PersoService</code>.
+		 * @public
+		 */
+		ServiceReset: "ServiceReset"
+	};
+
 	// map the new Column to the old ColumnHeader
 	thisLib.ColumnHeader = thisLib.Column;
 
