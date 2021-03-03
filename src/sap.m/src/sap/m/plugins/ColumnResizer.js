@@ -113,7 +113,7 @@ sap.ui.define([
 
 	/**
 	 * Adds / removes the aria-describedby attribute from the resizable control DOM.
-	 * @param {string} sFnPrefix function prefix
+	 * @param {string} sAction function prefix
 	 * @private
 	 */
 	ColumnResizer.prototype._updateAriaDescribedBy = function(sAction) {
@@ -125,6 +125,15 @@ sap.ui.define([
 	};
 
 	ColumnResizer.prototype.ontouchstart = function(oEvent) {
+		if (this._iHoveredColumnIndex == -1 && this._oHandle && this._oHandle.style[sBeginDirection]) {
+			this._onmousemove(oEvent);
+
+			if (this._iHoveredColumnIndex == -1) {
+				this._oHandle.style[sBeginDirection] = "";
+				this._oAlternateHandle.style[sBeginDirection] = "";
+			}
+		}
+
 		bResizing = (this._iHoveredColumnIndex > -1);
 		if (!bResizing) {
 			return;
@@ -157,7 +166,7 @@ sap.ui.define([
 
 		var iClientX = oEvent.targetTouches ? oEvent.targetTouches[0].clientX : oEvent.clientX;
 		var iHoveredColumnIndex = this._aPositions.findIndex(function(fPosition) {
-			return Math.abs(fPosition - iClientX) <= 3;
+			return Math.abs(fPosition - iClientX) <= (this._oAlternateHandle ? 20 : 3);
 		}, this);
 
 		this._displayHandle(iHoveredColumnIndex);
@@ -195,8 +204,10 @@ sap.ui.define([
 	/**
 	 * Displays the resize handle on the column which is hovered
 	 * @param {integer} iColumnIndex column index
+	 * @param {boolean} bMobileHandle indicates whether the alternate handle is visible
+	 * @private
 	 */
-	ColumnResizer.prototype._displayHandle = function(iColumnIndex) {
+	ColumnResizer.prototype._displayHandle = function(iColumnIndex, bMobileHandle) {
 		if (this._iHoveredColumnIndex == iColumnIndex) {
 			return;
 		}
@@ -205,20 +216,35 @@ sap.ui.define([
 			this._oHandle = document.createElement("div");
 			this._oHandle.className = CSS_CLASS + "Handle";
 
-			if (window.matchMedia("(hover:none)").matches) {
+			if (bMobileHandle) {
 				var oCircle = document.createElement("div");
 				oCircle.className = CSS_CLASS + "HandleCircle";
 				oCircle.style.top = this._aResizables[iColumnIndex].offsetHeight - 8 + "px";
 				this._oHandle.appendChild(oCircle);
+
+				this._oAlternateHandle = this._oHandle.cloneNode(true);
 			}
 		}
 
 		if (!this._oHandle.parentNode) {
 			this._$Container.append(this._oHandle);
+
+			if (bMobileHandle) {
+				this._$Container.append(this._oAlternateHandle);
+			}
 		}
 
 		this._oHandle.style[sBeginDirection] = (iColumnIndex > -1) ? (this._aPositions[iColumnIndex] - this._fContainerX) * iDirectionFactor + "px" : "";
-		this._iHoveredColumnIndex = iColumnIndex;
+
+		if (bMobileHandle) {
+			this._oAlternateHandle.style[sBeginDirection] = (--iColumnIndex > -1) ? (this._aPositions[iColumnIndex] - this._fContainerX) * iDirectionFactor + "px" : "";
+		} else {
+			if (this._oAlternateHandle) {
+				this._oAlternateHandle.style[sBeginDirection] = "";
+			}
+
+			this._iHoveredColumnIndex = iColumnIndex;
+		}
 	};
 
 	/**
@@ -363,6 +389,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the container and handle positions. If positions are invalid then calculates first.
+	 * @returns {Array} hoverable positions
 	 * @private
 	 */
 	ColumnResizer.prototype._setPositions = function() {
@@ -385,7 +412,7 @@ sap.ui.define([
 	ColumnResizer.prototype.startResizing = function(oDomRef) {
 		var iColumnIndex = this._aResizables.indexOf(oDomRef);
 		this._setPositions();
-		this._displayHandle(iColumnIndex);
+		this._displayHandle(iColumnIndex, true);
 	};
 
 	/**

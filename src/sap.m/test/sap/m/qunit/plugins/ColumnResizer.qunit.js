@@ -449,12 +449,42 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("showResizeHandle", function(assert) {
-		var oColumnDomRef = this.oTable.getColumns()[1].getDomRef();
+	QUnit.test("startResizing", function(assert) {
+		var oColumnDomRef = this.oTable.getColumns()[1].getDomRef(),
+			fnDisplayHandle = sinon.spy(this.oColumnResizer, "_displayHandle");
 
 		assert.notOk(this.oColumnResizer._oHandle, "Resize handle is not created yet");
 		this.oColumnResizer.startResizing(oColumnDomRef);
+		assert.ok(fnDisplayHandle.calledWith(1, true), "_displayHandle called with correct parameters");
 		assert.ok(this.oColumnResizer._oHandle, "Resize handle is created");
 		assert.strictEqual(parseInt(this.oColumnResizer._oHandle.style[this.sBeginDirection]), parseInt(this.oColumnResizer._aPositions[1] - this.oColumnResizer._fContainerX), "Resize handle is visible");
+		assert.ok(this.oColumnResizer._oAlternateHandle, "Alternate handle is created");
+		assert.strictEqual(parseInt(this.oColumnResizer._oAlternateHandle.style[this.sBeginDirection]), parseInt(this.oColumnResizer._aPositions[0] - this.oColumnResizer._fContainerX), "Alternate resize handle is visible");
+		assert.strictEqual(this.oColumnResizer._iHoveredColumnIndex, -1, "_iHoveredColumnIndex = " + this.oColumnResizer._iHoveredColumnIndex);
+	});
+
+	QUnit.test("startResizing - on first column", function(assert) {
+		var oColumnDomRef = this.oTable.getColumns()[0].getDomRef();
+
+		this.oColumnResizer.startResizing(oColumnDomRef);
+		assert.ok(this.oColumnResizer._oHandle, "Resize handle is created");
+		assert.strictEqual(parseInt(this.oColumnResizer._oHandle.style[this.sBeginDirection]), parseInt(this.oColumnResizer._aPositions[0] - this.oColumnResizer._fContainerX), "Resize handle is visible");
+		assert.ok(this.oColumnResizer._oAlternateHandle, "Alternate handle is created");
+		assert.strictEqual(this.oColumnResizer._oAlternateHandle.style[this.sBeginDirection], "", "AlternateHandle is not visible");
+	});
+
+	QUnit.test("startResizing - resize column", function(assert) {
+		var oColumn0DomRef = this.oTable.getColumns()[0].getDomRef(),
+			oColumn1DomRef = this.oTable.getColumns()[1].getDomRef(),
+			fnOnMouseMove = sinon.spy(this.oColumnResizer, "_onmousemove");
+
+		this.oColumnResizer.startResizing(oColumn1DomRef);
+		var iClientX = oColumn0DomRef.getBoundingClientRect()[this.sEndDirection];
+		var oTouchStart = createTouchEvent("touchstart", oColumn0DomRef, iClientX, this.oColumnResizer);
+		this.oColumnResizer.ontouchstart(oTouchStart);
+		assert.ok(fnOnMouseMove.calledOnce, "_onmousemove called");
+		assert.strictEqual(this.oColumnResizer._iHoveredColumnIndex, 0, "_iHoveredColumnIndex is updated correctly via _onmousemove");
+		assert.strictEqual(this.oColumnResizer._oAlternateHandle.style[this.sBeginDirection], "", "AlternateHandle is not visible");
+		assert.strictEqual(parseInt(this.oColumnResizer._oHandle.style[this.sBeginDirection]), parseInt(this.oColumnResizer._aPositions[0] - this.oColumnResizer._fContainerX), "Resize handle is visible");
 	});
 });
