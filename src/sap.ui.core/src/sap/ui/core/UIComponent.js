@@ -11,7 +11,8 @@ sap.ui.define([
 	'./mvc/Controller',
 	'./mvc/View',
 	"sap/base/util/ObjectPath",
-	"sap/base/Log"
+	"sap/base/Log",
+	"sap/ui/core/Core" // to ensure correct behaviour of sap.ui.getCore()
 ],
 	function(
 		ManagedObject,
