@@ -150,10 +150,8 @@ sap.ui.define([
 		return DateTimeBase.prototype.formatValue.call(this, vValue, sTargetType);
 	};
 
-	/**
-	 * @override
-	 * @see sap.ui.model.SimpleType#getConstraints
-	 */
+	// @override
+	// @see sap.ui.model.SimpleType#getConstraints
 	DateTimeOffset.prototype.getConstraints = function () {
 		var oConstraints = DateTimeBase.prototype.getConstraints.call(this);
 

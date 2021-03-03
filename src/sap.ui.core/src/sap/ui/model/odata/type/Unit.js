@@ -89,10 +89,8 @@ sap.ui.define([
 	 * @since 1.63.0
 	 */
 
-	/**
-	 * @override
-	 * @see sap.ui.model.odata.type.UnitMixin#getCustomUnitForKey
-	 */
+	// @override
+	// @see sap.ui.model.odata.type.UnitMixin#getCustomUnitForKey
 	Unit.prototype.getCustomUnitForKey = function (mCustomizing, sKey) {
 		return {
 			decimals : mCustomizing[sKey].UnitSpecificScale,
