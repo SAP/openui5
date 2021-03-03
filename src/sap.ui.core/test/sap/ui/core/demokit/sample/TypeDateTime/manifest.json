@@ -1,13 +1,13 @@
 {
 	"sap.app": {
-		"id": "sap.ui.core.sample.TypeDateTimeAsDate",
+		"id": "sap.ui.core.sample.TypeDateTime",
 		"applicationVersion": {
 			"version": "1.0.0"
 		}
 	},
 	"sap.ui5": {
 		"rootView": {
-			"viewName": "sap.ui.core.sample.TypeDateTimeAsDate.V",
+			"viewName": "sap.ui.core.sample.TypeDateTime.V",
 			"type": "XML",
 			"async": true
 		},
