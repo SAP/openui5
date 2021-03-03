@@ -47,20 +47,6 @@ sap.ui.define([
 	 */
 
 	/**
-	 * @see sap.ui.base.Object#getInterface
-	 *
-	 * @returns {object} this
-	 *
-	 * @function
-	 * @name sap.ui.model.odata.type.UnitMixin#getInterface
-	 * @public
-	 * @since 1.63.0
-	 */
-	function getInterface() {
-		return this;
-	}
-
-	/**
 	 * Does nothing as the type does not support constraints.
 	 *
 	 * @param {string} vValue
@@ -315,7 +301,6 @@ sap.ui.define([
 		oPrototype._applyUnitMixin = UnitMixin;
 		oPrototype.formatValue = formatValue;
 		oPrototype.getFormatOptions = getFormatOptions;
-		oPrototype.getInterface = getInterface;
 		oPrototype.getPartsIgnoringMessages = getPartsIgnoringMessages;
 		oPrototype.parseValue = parseValue;
 		oPrototype.validateValue = validateValue;

@@ -354,13 +354,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("getInterface", function (assert) {
-		var oType = new UnitMixin();
-
-		assert.strictEqual(oType.getInterface(), oType, "returns no interface facade");
-	});
-
-	//*********************************************************************************************
 	QUnit.test("parseValue delegates to base prototype", function (assert) {
 		var oBaseUnitMock = this.mock(this.oBasePrototype),
 			aCurrentValues = [{/*unused*/}, "KG", {/*unused*/}],
