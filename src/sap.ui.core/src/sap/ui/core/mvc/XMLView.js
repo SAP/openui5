@@ -19,7 +19,8 @@ sap.ui.define([
 	"sap/base/strings/hash",
 	"sap/base/Log",
 	"sap/base/util/LoaderExtensions",
-	"sap/ui/performance/trace/Interaction"
+	"sap/ui/performance/trace/Interaction",
+	"sap/ui/core/Core" // to ensure correct behaviour of sap.ui.getCore()
 ],
 	function(
 		jQuery,

@@ -12,7 +12,8 @@ sap.ui.define([
 	"./ViewRenderer",
 	"sap/base/assert",
 	"sap/base/Log",
-	"sap/base/util/extend"
+	"sap/base/util/extend",
+	"sap/ui/core/Core" // to ensure correct behaviour of sap.ui.getCore()
 ],
 	function(
 		ManagedObject,
