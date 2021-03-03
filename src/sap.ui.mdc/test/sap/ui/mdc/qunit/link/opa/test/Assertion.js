@@ -168,7 +168,7 @@ sap.ui.define([
 				controlType: "sap.m.CheckBox",
 				check: function(aCheckboxes) {
 					return aCheckboxes.filter(function(oCheckbox) {
-						if (jQuery.sap.endsWith(oCheckbox.getId(), '-sa')) {
+						if (oCheckbox.getId().endsWith("-sa")) {
 							oSelectAllCheckbox = oCheckbox;
 							return true;
 						}
