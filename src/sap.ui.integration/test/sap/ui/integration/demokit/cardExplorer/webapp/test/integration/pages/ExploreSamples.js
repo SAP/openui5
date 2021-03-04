@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/test/actions/Press",
 	"sap/ui/core/util/File",
 	"sap/ui/thirdparty/jszip",
-	"sap/ui/Device",
 	"sap/ui/events/KeyCodes"
-], function(Opa5, Press, File, JSZip, Device, KeyCodes) {
+], function(Opa5, Press, File, JSZip, KeyCodes) {
 	"use strict";
 
 	var sViewName = "ExploreSamples",
@@ -45,24 +44,6 @@ sap.ui.define([
 					});
 				},
 				iChangeDropdownValue: function (sText) {
-					// on Internet Explorer opening the dropdown of the ComboBox by click is unreliable,
-					// so we have to do it programmatically
-					if (Device.browser.msie) {
-						return this.waitFor({
-							viewName: sViewName,
-							id: "subSample",
-							actions: function (oComboBox) {
-								var oItem = oComboBox.getItems().find(function (oItem) {
-									return oItem.getText() === sText;
-								});
-
-								oComboBox.fireSelectionChange({selectedItem: oItem});
-							},
-							errorMessage: "Could not open the ComboBox"
-						});
-					}
-
-					// on all other browsers interact with the ComboBox as a user would
 					return this.waitFor({
 						viewName: sViewName,
 						id: "subSample",
