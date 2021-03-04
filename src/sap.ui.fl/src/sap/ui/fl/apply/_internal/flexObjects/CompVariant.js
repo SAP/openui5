@@ -39,8 +39,14 @@ sap.ui.define([
 		}
 
 		var oSettings = Settings.getInstanceOrUndef();
+		var sActiveLayer;
 
-		var bLayerWritable = sLayer === (oSettings.isPublicLayerAvailable() ? Layer.PUBLIC : Layer.CUSTOMER);
+		if (LayerUtils.isSapUiLayerParameterProvided()) {
+			sActiveLayer = LayerUtils.getCurrentLayer();
+		} else {
+			sActiveLayer = oSettings.isPublicLayerAvailable() ? Layer.PUBLIC : Layer.CUSTOMER;
+		}
+		var bLayerWritable = sLayer === sActiveLayer;
 		var bUserAuthorized = oSettings.isKeyUser() || isUserAuthor(sUserId);
 
 		return bLayerWritable && bUserAuthorized;

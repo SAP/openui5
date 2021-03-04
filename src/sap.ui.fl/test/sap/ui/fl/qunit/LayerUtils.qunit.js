@@ -43,6 +43,17 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
+		QUnit.test("isSapUiLayerParameterProvided shall return true if the sap-ui-layer parameter is set", function (assert) {
+			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
+			var bIsSapUiParameterProvided = LayerUtils.isSapUiLayerParameterProvided();
+			assert.equal(bIsSapUiParameterProvided, true);
+		});
+
+		QUnit.test("isSapUiLayerParameterProvided shall return false if the sap-ui-layer parameter is NOT set", function (assert) {
+			var bIsSapUiParameterProvided = LayerUtils.isSapUiLayerParameterProvided();
+			assert.equal(bIsSapUiParameterProvided, false);
+		});
+
 		QUnit.test("getCurrentLayer shall return sap-ui-layer parameter", function (assert) {
 			sandbox.stub(UriParameters.prototype, "get").withArgs("sap-ui-layer").returns(Layer.VENDOR);
 			var sLayer = LayerUtils.getCurrentLayer();
