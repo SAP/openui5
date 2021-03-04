@@ -1,0 +1,4014 @@
+{
+	"d" : {
+		"results" : [
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('%25')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('%25')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "%",
+				"ISOCode" : "P1",
+				"ExternalCode" : "%",
+				"Text" : "Percentage",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('%25%25')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('%25%25')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "%%",
+				"ISOCode" : "",
+				"ExternalCode" : "010",
+				"Text" : "",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('%25O')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('%25O')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "%O",
+				"ISOCode" : "",
+				"ExternalCode" : "%O",
+				"Text" : "Per mille",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('%2FMI')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('%2FMI')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "/MI",
+				"ISOCode" : "007",
+				"ExternalCode" : "009",
+				"Text" : "",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('001')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('001')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "001",
+				"ISOCode" : "",
+				"ExternalCode" : "002",
+				"Text" : "KT per PC",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('002')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('002')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "002",
+				"ISOCode" : "",
+				"ExternalCode" : "016",
+				"Text" : "KT per M",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('003')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('003')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "003",
+				"ISOCode" : "001",
+				"ExternalCode" : "/NL",
+				"Text" : "",
+				"DecimalPlaces" : 1
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('004')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('004')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "004",
+				"ISOCode" : "002",
+				"ExternalCode" : "/PL",
+				"Text" : "",
+				"DecimalPlaces" : 1
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('005')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('005')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "005",
+				"ISOCode" : "",
+				"ExternalCode" : "U/L",
+				"Text" : "",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('006')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('006')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "006",
+				"ISOCode" : "004",
+				"ExternalCode" : "GDL",
+				"Text" : "",
+				"DecimalPlaces" : 1
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('007')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('007')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "007",
+				"ISOCode" : "005",
+				"ExternalCode" : "MGD",
+				"Text" : "",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('021')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('021')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "021",
+				"ISOCode" : "",
+				"ExternalCode" : "021",
+				"Text" : "M per PC",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('1')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('1')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "1",
+				"ISOCode" : "",
+				"ExternalCode" : "ONE",
+				"Text" : "One",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('10')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('10')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "10",
+				"ISOCode" : "",
+				"ExternalCode" : "D",
+				"Text" : "Days",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('15M')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('15M')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "15M",
+				"ISOCode" : "M15",
+				"ExternalCode" : "15M",
+				"Text" : "15 minutes",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('22S')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('22S')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "22S",
+				"ISOCode" : "",
+				"ExternalCode" : "22S",
+				"Text" : "Square millimeter/second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('2M')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('2M')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "2M",
+				"ISOCode" : "2M",
+				"ExternalCode" : "CMS",
+				"Text" : "Centimeter/second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('2X')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('2X')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "2X",
+				"ISOCode" : "2X",
+				"ExternalCode" : "000",
+				"Text" : "Meter/Minute",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('4G')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('4G')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "4G",
+				"ISOCode" : "4G",
+				"ExternalCode" : "µL",
+				"Text" : "Microliter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('4O')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('4O')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "4O",
+				"ISOCode" : "4O",
+				"ExternalCode" : "µF",
+				"Text" : "Microfarad",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('4T')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('4T')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "4T",
+				"ISOCode" : "4T",
+				"ExternalCode" : "PF",
+				"Text" : "Picofarad",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('999')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('999')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "999",
+				"ISOCode" : "",
+				"ExternalCode" : "999",
+				"Text" : "",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('A')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('A')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "A",
+				"ISOCode" : "AMP",
+				"ExternalCode" : "A",
+				"Text" : "Ampere",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('A87')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('A87')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "A87",
+				"ISOCode" : "A87",
+				"ExternalCode" : "GOH",
+				"Text" : "Gigaohm",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('A93')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('A93')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "A93",
+				"ISOCode" : "A93",
+				"ExternalCode" : "GM3",
+				"Text" : "Gram/cubic meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('ACR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('ACR')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "ACR",
+				"ISOCode" : "ACR",
+				"ExternalCode" : "ACR",
+				"Text" : "Acre",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B34')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B34')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "B34",
+				"ISOCode" : "B34",
+				"ExternalCode" : "KD3",
+				"Text" : "Kilogram/cubic decimeter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B45')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B45')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "B45",
+				"ISOCode" : "B45",
+				"ExternalCode" : "KML",
+				"Text" : "Kilomole",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B47')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B47')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "B47",
+				"ISOCode" : "B47",
+				"ExternalCode" : "NI",
+				"Text" : "Kilonewton",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B73')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B73')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "B73",
+				"ISOCode" : "B73",
+				"ExternalCode" : "MN",
+				"Text" : "Meganewton",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B75')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B75')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "B75",
+				"ISOCode" : "B75",
+				"ExternalCode" : "MGO",
+				"Text" : "Megaohm",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B78')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B78')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "B78",
+				"ISOCode" : "B78",
+				"ExternalCode" : "MHV",
+				"Text" : "Megavolt",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B84')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('B84')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "B84",
+				"ISOCode" : "B84",
+				"ExternalCode" : "µA",
+				"Text" : "Microampere",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BAG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BAG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "BAG",
+				"ISOCode" : "BG",
+				"ExternalCode" : "BAG",
+				"Text" : "Bag",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BAR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BAR')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "BAR",
+				"ISOCode" : "BAR",
+				"ExternalCode" : "BAR",
+				"Text" : "bar",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TO')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TO')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TO",
+				"ISOCode" : "TNE",
+				"ExternalCode" : "TO",
+				"Text" : "Ton",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KG",
+				"ISOCode" : "KGM",
+				"ExternalCode" : "KG",
+				"Text" : "Kilogram",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('H')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('H')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "H",
+				"ISOCode" : "",
+				"ExternalCode" : "H",
+				"Text" : "Hours",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BOT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BOT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "BOT",
+				"ISOCode" : "BO",
+				"ExternalCode" : "BT",
+				"Text" : "Bottle",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BOX')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BOX')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "BOX",
+				"ISOCode" : "BX",
+				"ExternalCode" : "BOX",
+				"Text" : "Cardboard box",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BQK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BQK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "BQK",
+				"ISOCode" : "A18",
+				"ExternalCode" : "BQK",
+				"Text" : "Becquerel/kilogram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('BT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "BT",
+				"ISOCode" : "BO",
+				"ExternalCode" : "003",
+				"Text" : "Bottle",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MIN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MIN')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MIN",
+				"ISOCode" : "MIN",
+				"ExternalCode" : "MIN",
+				"Text" : "Minutes",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('S')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('S')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "S",
+				"ISOCode" : "SEC",
+				"ExternalCode" : "S",
+				"Text" : "Seconds",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "C",
+				"ISOCode" : "",
+				"ExternalCode" : "C",
+				"Text" : "Degrees Celsius",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C10')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C10')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "C10",
+				"ISOCode" : "C10",
+				"ExternalCode" : "RF",
+				"Text" : "Millifarad",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C36')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C36')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "C36",
+				"ISOCode" : "",
+				"ExternalCode" : "M/M",
+				"Text" : "Mole per Cubic Meter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C38')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C38')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "C38",
+				"ISOCode" : "C38",
+				"ExternalCode" : "M/L",
+				"Text" : "Mole per Liter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C39')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C39')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "C39",
+				"ISOCode" : "C39",
+				"ExternalCode" : "NA",
+				"Text" : "Nanoampere",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C3S')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C3S')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "C3S",
+				"ISOCode" : "2J",
+				"ExternalCode" : "C3S",
+				"Text" : "Cubic centimeter/second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C41')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C41')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "C41",
+				"ISOCode" : "C41",
+				"ExternalCode" : "R-U",
+				"Text" : "Nanofarad",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C56')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('C56')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "C56",
+				"ISOCode" : "C56",
+				"ExternalCode" : "NMM",
+				"Text" : "Newton/square millimeter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CCM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CCM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CCM",
+				"ISOCode" : "CMQ",
+				"ExternalCode" : "CCM",
+				"Text" : "Cubic centimeter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CD')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CD",
+				"ISOCode" : "CDL",
+				"ExternalCode" : "CD",
+				"Text" : "Candela",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CDM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CDM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CDM",
+				"ISOCode" : "DMQ",
+				"ExternalCode" : "CD3",
+				"Text" : "Cubic decimeter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CFU')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CFU')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CFU",
+				"ISOCode" : "",
+				"ExternalCode" : "CFU",
+				"Text" : "CFU",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CHG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CHG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CHG",
+				"ISOCode" : "",
+				"ExternalCode" : "CHG",
+				"Text" : "Charge",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CM",
+				"ISOCode" : "CMT",
+				"ExternalCode" : "CM",
+				"Text" : "Centimeter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CM2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CM2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CM2",
+				"ISOCode" : "CMK",
+				"ExternalCode" : "CM2",
+				"Text" : "Square centimeter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CMH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CMH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CMH",
+				"ISOCode" : "",
+				"ExternalCode" : "CMH",
+				"Text" : "Centimeter/hour",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CPA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CPA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CPA",
+				"ISOCode" : "",
+				"ExternalCode" : "CP",
+				"Text" : "Centipoise",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CS",
+				"ISOCode" : "CS",
+				"ExternalCode" : "CV",
+				"Text" : "Case",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CSE')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CSE')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CSE",
+				"ISOCode" : "CSE",
+				"ExternalCode" : "CSE",
+				"Text" : "Case",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CTL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CTL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CTL",
+				"ISOCode" : "CLT",
+				"ExternalCode" : "CL",
+				"Text" : "Centiliter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CWT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('CWT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "CWT",
+				"ISOCode" : "",
+				"ExternalCode" : "CWT",
+				"Text" : "Hundred Weight",
+				"DecimalPlaces" : 5
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('D10')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('D10')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "D10",
+				"ISOCode" : "D10",
+				"ExternalCode" : "S/M",
+				"Text" : "Siemens per meter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('D41')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('D41')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "D41",
+				"ISOCode" : "D41",
+				"ExternalCode" : "TOM",
+				"Text" : "Tonne/cubic meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('D46')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('D46')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "D46",
+				"ISOCode" : "D46",
+				"ExternalCode" : "VAM",
+				"Text" : "Volt - ampere",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('DEG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('DEG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "DEG",
+				"ISOCode" : "DD",
+				"ExternalCode" : "DEG",
+				"Text" : "Degree",
+				"DecimalPlaces" : 99
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('DM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('DM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "DM",
+				"ISOCode" : "DMT",
+				"ExternalCode" : "DM",
+				"Text" : "Decimeter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('DR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('DR')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "DR",
+				"ISOCode" : "DR",
+				"ExternalCode" : "DR",
+				"Text" : "Drum",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('DZ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('DZ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "DZ",
+				"ISOCode" : "DZN",
+				"ExternalCode" : "DZ",
+				"Text" : "Dozen",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('EA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('EA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "EA",
+				"ISOCode" : "EA",
+				"ExternalCode" : "EA",
+				"Text" : "Each",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('EE')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('EE')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "EE",
+				"ISOCode" : "",
+				"ExternalCode" : "EU",
+				"Text" : "Enzyme Units",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('EH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('EH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "EH",
+				"ISOCode" : "",
+				"ExternalCode" : "UN",
+				"Text" : "Unit",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('EML')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('EML')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "EML",
+				"ISOCode" : "",
+				"ExternalCode" : "EML",
+				"Text" : "Enzyme Units/Milliliter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('F')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('F')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "F",
+				"ISOCode" : "FAR",
+				"ExternalCode" : "F",
+				"Text" : "Farad",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('FA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('FA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "FA",
+				"ISOCode" : "FAH",
+				"ExternalCode" : "°F",
+				"Text" : "Fahrenheit",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('FT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('FT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "FT",
+				"ISOCode" : "FOT",
+				"ExternalCode" : "FT",
+				"Text" : "Foot",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('FT2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('FT2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "FT2",
+				"ISOCode" : "FTK",
+				"ExternalCode" : "FT2",
+				"Text" : "Square foot",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('FT3')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('FT3')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "FT3",
+				"ISOCode" : "FTQ",
+				"ExternalCode" : "FT3",
+				"Text" : "Cubic foot",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('FUM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('FUM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "FUM",
+				"ISOCode" : "",
+				"ExternalCode" : "FUM",
+				"Text" : "Forecast Unit of Measure",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('G')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('G')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "G",
+				"ISOCode" : "GRM",
+				"ExternalCode" : "G",
+				"Text" : "Gram",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('G%2FL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('G%2FL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "G/L",
+				"ISOCode" : "",
+				"ExternalCode" : "G/L",
+				"Text" : "Gram Active Ingredient/Liter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GAU')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GAU')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GAU",
+				"ISOCode" : "",
+				"ExternalCode" : "GAU",
+				"Text" : "Gram Gold",
+				"DecimalPlaces" : 99
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GC')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GC')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GC",
+				"ISOCode" : "CEL",
+				"ExternalCode" : "°C",
+				"Text" : "Degrees Celsius",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GHG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GHG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GHG",
+				"ISOCode" : "",
+				"ExternalCode" : "GHG",
+				"Text" : "Gram/hectogram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GJ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GJ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GJ",
+				"ISOCode" : "GV",
+				"ExternalCode" : "GJ",
+				"Text" : "Gigajoule",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GKG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GKG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GKG",
+				"ISOCode" : "GK",
+				"ExternalCode" : "GKG",
+				"Text" : "Gram/kilogram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GLI')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GLI')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GLI",
+				"ISOCode" : "GL",
+				"ExternalCode" : "GLI",
+				"Text" : "Gram/liter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GLL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GLL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GLL",
+				"ISOCode" : "GLL",
+				"ExternalCode" : "GAL",
+				"Text" : "Gallon (US)",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GLM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GLM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GLM",
+				"ISOCode" : "",
+				"ExternalCode" : "GPM",
+				"Text" : "Gallons per mile (US)",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GM",
+				"ISOCode" : "",
+				"ExternalCode" : "GM",
+				"Text" : "Gram/Mole",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GM2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GM2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GM2",
+				"ISOCode" : "GM",
+				"ExternalCode" : "GM2",
+				"Text" : "Gram/square meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GPH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GPH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GPH",
+				"ISOCode" : "",
+				"ExternalCode" : "GPH",
+				"Text" : "Gallons per hour (US)",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GQ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GQ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GQ",
+				"ISOCode" : "GQ",
+				"ExternalCode" : "µGQ",
+				"Text" : "Microgram/cubic meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GRO')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GRO')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GRO",
+				"ISOCode" : "GRO",
+				"ExternalCode" : "GRO",
+				"Text" : "Gross",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GV')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GV')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GV",
+				"ISOCode" : "",
+				"ExternalCode" : "GC3",
+				"Text" : "Gramm/Cubic centimeter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GW')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('GW')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "GW",
+				"ISOCode" : "",
+				"ExternalCode" : "GAI",
+				"Text" : "Gram Active Ingredient",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KWH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KWH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KWH",
+				"ISOCode" : "KWH",
+				"ExternalCode" : "KWH",
+				"Text" : "Kilowatt hour",
+				"DecimalPlaces" : 99
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('HAR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('HAR')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "HAR",
+				"ISOCode" : "HAR",
+				"ExternalCode" : "HA",
+				"Text" : "Hectare",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('HL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('HL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "HL",
+				"ISOCode" : "HLT",
+				"ExternalCode" : "HL",
+				"Text" : "Hectoliter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('HPA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('HPA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "HPA",
+				"ISOCode" : "A97",
+				"ExternalCode" : "HPA",
+				"Text" : "Hectopascal",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('HUR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('HUR')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "HUR",
+				"ISOCode" : "HR",
+				"ExternalCode" : "HUR",
+				"Text" : "Hours",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('HZ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('HZ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "HZ",
+				"ISOCode" : "HTZ",
+				"ExternalCode" : "HZ",
+				"Text" : "Hertz (1/second)",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('IN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('IN')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "IN",
+				"ISOCode" : "INH",
+				"ExternalCode" : "\"",
+				"Text" : "Inch",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('IN2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('IN2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "IN2",
+				"ISOCode" : "INK",
+				"ExternalCode" : "\"2",
+				"Text" : "Square inch",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('IN3')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('IN3')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "IN3",
+				"ISOCode" : "INQ",
+				"ExternalCode" : "\"3",
+				"Text" : "Cubic inch",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('J')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('J')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "J",
+				"ISOCode" : "JOU",
+				"ExternalCode" : "J",
+				"Text" : "Joule",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('JHR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('JHR')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "JHR",
+				"ISOCode" : "ANN",
+				"ExternalCode" : "YR",
+				"Text" : "Years",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('JKG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('JKG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "JKG",
+				"ISOCode" : "J2",
+				"ExternalCode" : "JKG",
+				"Text" : "Joule/Kilogram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('JKK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('JKK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "JKK",
+				"ISOCode" : "B11",
+				"ExternalCode" : "JKK",
+				"Text" : "Specific Heat Capacity",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('JMO')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('JMO')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "JMO",
+				"ISOCode" : "B15",
+				"ExternalCode" : "JMO",
+				"Text" : "Joule/Mole",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('K')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('K')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "K",
+				"ISOCode" : "KEL",
+				"ExternalCode" : "K",
+				"Text" : "Kelvin",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KA",
+				"ISOCode" : "B22",
+				"ExternalCode" : "KA",
+				"Text" : "Kiloampere",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KAN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KAN')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KAN",
+				"ISOCode" : "CA",
+				"ExternalCode" : "CAN",
+				"Text" : "Canister",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KAR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KAR')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KAR",
+				"ISOCode" : "CT",
+				"ExternalCode" : "CAR",
+				"Text" : "Carton",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KBK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KBK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KBK",
+				"ISOCode" : "B25",
+				"ExternalCode" : "KBK",
+				"Text" : "Kilobecquerel/Kilogram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MWH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MWH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MWH",
+				"ISOCode" : "MWH",
+				"ExternalCode" : "MWH",
+				"Text" : "Megawatt hour",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGF')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KGF",
+				"ISOCode" : "28",
+				"ExternalCode" : "KGF",
+				"Text" : "Kilogram/Square meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KGK",
+				"ISOCode" : "",
+				"ExternalCode" : "KGK",
+				"Text" : "Kilogram/Kilogram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KGM",
+				"ISOCode" : "",
+				"ExternalCode" : "KGM",
+				"Text" : "Kilogram/Mole",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KGS",
+				"ISOCode" : "KGS",
+				"ExternalCode" : "KGS",
+				"Text" : "Kilogram/second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGV')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGV')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KGV",
+				"ISOCode" : "KMQ",
+				"ExternalCode" : "KGV",
+				"Text" : "Kilogram/cubic meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGW')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KGW')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KGW",
+				"ISOCode" : "",
+				"ExternalCode" : "KAI",
+				"Text" : "Kilogram Active Ingredient",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KHZ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KHZ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KHZ",
+				"ISOCode" : "KHZ",
+				"ExternalCode" : "KHZ",
+				"Text" : "Kilohertz",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KI')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KI')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KI",
+				"ISOCode" : "CR",
+				"ExternalCode" : "CRT",
+				"Text" : "Crate",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KIT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KIT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KIT",
+				"ISOCode" : "CT",
+				"ExternalCode" : "KIT",
+				"Text" : "Patient Kit",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KJ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KJ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KJ",
+				"ISOCode" : "KJO",
+				"ExternalCode" : "KJ",
+				"Text" : "Kilojoule",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KJK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KJK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KJK",
+				"ISOCode" : "B42",
+				"ExternalCode" : "KJK",
+				"Text" : "Kilojoule/kilogram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KJM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KJM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KJM",
+				"ISOCode" : "B44",
+				"ExternalCode" : "KJM",
+				"Text" : "Kilojoule/Mole",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KM",
+				"ISOCode" : "KMT",
+				"ExternalCode" : "KM",
+				"Text" : "Kilometer",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KM2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KM2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KM2",
+				"ISOCode" : "KMK",
+				"ExternalCode" : "KM2",
+				"Text" : "Square kilometer",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KMH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KMH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KMH",
+				"ISOCode" : "KMH",
+				"ExternalCode" : "KMH",
+				"Text" : "Kilometer/hour",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KMK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KMK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KMK",
+				"ISOCode" : "",
+				"ExternalCode" : "KMK",
+				"Text" : "Cubic meter/Cubic meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KMN')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KMN')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KMN",
+				"ISOCode" : "",
+				"ExternalCode" : "KMN",
+				"Text" : "Kelvin/Minute",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KMS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KMS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KMS",
+				"ISOCode" : "",
+				"ExternalCode" : "KMS",
+				"Text" : "Kelvin/Second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KNM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KNM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KNM",
+				"ISOCode" : "",
+				"ExternalCode" : "KNM",
+				"Text" : "Kilonewton per square meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KOH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KOH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KOH",
+				"ISOCode" : "B49",
+				"ExternalCode" : "KOH",
+				"Text" : "Kiloohm",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KPA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KPA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KPA",
+				"ISOCode" : "",
+				"ExternalCode" : "KPA",
+				"Text" : "Kilopascal",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KT",
+				"ISOCode" : "",
+				"ExternalCode" : "KT",
+				"Text" : "Kiloton",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KV')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KV')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KV",
+				"ISOCode" : "KVT",
+				"ExternalCode" : "KV",
+				"Text" : "Kilovolt",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KVA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KVA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KVA",
+				"ISOCode" : "KVA",
+				"ExternalCode" : "KVA",
+				"Text" : "Kilovolt - ampere",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KW')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KW')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KW",
+				"ISOCode" : "KWT",
+				"ExternalCode" : "KW",
+				"Text" : "Kilowatt",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KW1')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KW1')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KW1",
+				"ISOCode" : "",
+				"ExternalCode" : "KI1",
+				"Text" : "KG Active ingredient aroma",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KW2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KW2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KW2",
+				"ISOCode" : "",
+				"ExternalCode" : "KI2",
+				"Text" : "KG Active ingred. fruit pulp",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KWK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('KWK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "KWK",
+				"ISOCode" : "",
+				"ExternalCode" : "KIK",
+				"Text" : "kg Active Ingredient/kg",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('L')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('L')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "L",
+				"ISOCode" : "LTR",
+				"ExternalCode" : "L",
+				"Text" : "Liter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('L2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('L2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "L2",
+				"ISOCode" : "L2",
+				"ExternalCode" : "LMI",
+				"Text" : "Liter/Minute",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LAG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LAG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LAG",
+				"ISOCode" : "",
+				"ExternalCode" : "LAG",
+				"Text" : "Stor",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LB')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LB",
+				"ISOCode" : "LBR",
+				"ExternalCode" : "LB",
+				"Text" : "Pound",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LE')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LE')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LE",
+				"ISOCode" : "C62",
+				"ExternalCode" : "AU",
+				"Text" : "Activity unit",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LF')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LF",
+				"ISOCode" : "",
+				"ExternalCode" : "017",
+				"Text" : "",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LH",
+				"ISOCode" : "",
+				"ExternalCode" : "L/H",
+				"Text" : "Liter per hour",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LHK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LHK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LHK",
+				"ISOCode" : "",
+				"ExternalCode" : "LHK",
+				"Text" : "Liter per 100 km",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LMS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LMS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LMS",
+				"ISOCode" : "",
+				"ExternalCode" : "LMS",
+				"Text" : "Liter/Mole Second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LPH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LPH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LPH",
+				"ISOCode" : "",
+				"ExternalCode" : "LPH",
+				"Text" : "Liter per hour",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LPL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LPL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LPL",
+				"ISOCode" : "",
+				"ExternalCode" : "LPL",
+				"Text" : "liters per liter",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LS",
+				"ISOCode" : "",
+				"ExternalCode" : "004",
+				"Text" : "",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LSL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LSL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LSL",
+				"ISOCode" : "",
+				"ExternalCode" : "LIL",
+				"Text" : "Liter Active ingredient/Liter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LW1')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('LW1')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "LW1",
+				"ISOCode" : "",
+				"ExternalCode" : "LI1",
+				"Text" : "Liter Active ingredient 1",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "M",
+				"ISOCode" : "MTR",
+				"ExternalCode" : "M",
+				"Text" : "Meter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M%25')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M%25')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "M%",
+				"ISOCode" : "",
+				"ExternalCode" : "M%",
+				"Text" : "Percent mass",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M%25O')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M%25O')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "M%O",
+				"ISOCode" : "",
+				"ExternalCode" : "M%O",
+				"Text" : "Permille mass",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M%2FS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M%2FS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "M/S",
+				"ISOCode" : "MTS",
+				"ExternalCode" : "M/S",
+				"Text" : "Meter/second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "M2",
+				"ISOCode" : "MTK",
+				"ExternalCode" : "M2",
+				"Text" : "Square meter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M2H')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M2H')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "M2H",
+				"ISOCode" : "",
+				"ExternalCode" : "M2H",
+				"Text" : "mm/1h",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M2I')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M2I')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "M2I",
+				"ISOCode" : "",
+				"ExternalCode" : "M-2",
+				"Text" : "1/Square Meter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M2S')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M2S')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "M2S",
+				"ISOCode" : "S4",
+				"ExternalCode" : "M2S",
+				"Text" : "Square meter/second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M3')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M3')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "M3",
+				"ISOCode" : "MTQ",
+				"ExternalCode" : "M3",
+				"Text" : "Cubic meter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M3D')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M3D')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "M3D",
+				"ISOCode" : "",
+				"ExternalCode" : "M3D",
+				"Text" : "Cubic meter/day",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M3S')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('M3S')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "M3S",
+				"ISOCode" : "MQS",
+				"ExternalCode" : "M3S",
+				"Text" : "Cubic meter/second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MA",
+				"ISOCode" : "4K",
+				"ExternalCode" : "MA",
+				"Text" : "Milliampere",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MBA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MBA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MBA",
+				"ISOCode" : "MBR",
+				"ExternalCode" : "MBA",
+				"Text" : "Millibar",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MBZ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MBZ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MBZ",
+				"ISOCode" : "",
+				"ExternalCode" : "MBZ",
+				"Text" : "Meterbar/second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MEJ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MEJ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MEJ",
+				"ISOCode" : "3B",
+				"ExternalCode" : "MEJ",
+				"Text" : "Megajoule",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MET')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MET')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MET",
+				"ISOCode" : "",
+				"ExternalCode" : "MET",
+				"Text" : "Meter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MG",
+				"ISOCode" : "MGM",
+				"ExternalCode" : "MG",
+				"Text" : "Milligram",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGF')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGF')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MGF",
+				"ISOCode" : "",
+				"ExternalCode" : "MGE",
+				"Text" : "Milligram/Square centimeter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MGG",
+				"ISOCode" : "",
+				"ExternalCode" : "MGG",
+				"Text" : "Milligram/gram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MGK",
+				"ISOCode" : "NA",
+				"ExternalCode" : "MGK",
+				"Text" : "Milligram/kilogram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MGL",
+				"ISOCode" : "M1",
+				"ExternalCode" : "MGL",
+				"Text" : "Milligram/liter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGQ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGQ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MGQ",
+				"ISOCode" : "GP",
+				"ExternalCode" : "MGQ",
+				"Text" : "Milligram/cubic meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGW')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MGW')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MGW",
+				"ISOCode" : "MAW",
+				"ExternalCode" : "MGW",
+				"Text" : "Megawatt",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MHG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MHG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MHG",
+				"ISOCode" : "006",
+				"ExternalCode" : "MHG",
+				"Text" : "mmHG",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MHZ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MHZ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MHZ",
+				"ISOCode" : "MHZ",
+				"ExternalCode" : "MHZ",
+				"Text" : "Megahertz",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MI')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MI')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MI",
+				"ISOCode" : "SMI",
+				"ExternalCode" : "MI",
+				"Text" : "Mile",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MI2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MI2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MI2",
+				"ISOCode" : "MIK",
+				"ExternalCode" : "MI2",
+				"Text" : "Square mile",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MIB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MIB')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MIB",
+				"ISOCode" : "",
+				"ExternalCode" : "005",
+				"Text" : "",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MIM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MIM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MIM",
+				"ISOCode" : "4H",
+				"ExternalCode" : "µM",
+				"Text" : "Micrometer",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MIS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MIS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MIS",
+				"ISOCode" : "B98",
+				"ExternalCode" : "MIS",
+				"Text" : "Microsecond",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MJ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MJ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MJ",
+				"ISOCode" : "C15",
+				"ExternalCode" : "MIJ",
+				"Text" : "Millijoule",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('ML')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('ML')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "ML",
+				"ISOCode" : "MLT",
+				"ExternalCode" : "ML",
+				"Text" : "Milliliter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MLK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MLK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MLK",
+				"ISOCode" : "",
+				"ExternalCode" : "MLK",
+				"Text" : "Milliliter/cubic meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MLM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MLM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MLM",
+				"ISOCode" : "",
+				"ExternalCode" : "MLM",
+				"Text" : "Mililiter/Minute",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MLW')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MLW')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MLW",
+				"ISOCode" : "",
+				"ExternalCode" : "MLI",
+				"Text" : "Milliliter Active Ingredient",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MM",
+				"ISOCode" : "MMT",
+				"ExternalCode" : "MM",
+				"Text" : "Millimeter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MM2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MM2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MM2",
+				"ISOCode" : "MMK",
+				"ExternalCode" : "MM2",
+				"Text" : "Square millimeter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MMA",
+				"ISOCode" : "",
+				"ExternalCode" : "MMA",
+				"Text" : "Millimeter/year",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MMG",
+				"ISOCode" : "",
+				"ExternalCode" : "MMG",
+				"Text" : "Millimole/Gram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MMH",
+				"ISOCode" : "",
+				"ExternalCode" : "MMH",
+				"Text" : "Millimeter/hour",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MMK",
+				"ISOCode" : "D87",
+				"ExternalCode" : "MMK",
+				"Text" : "Millimole/Kilogram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMO')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMO')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MMO",
+				"ISOCode" : "C18",
+				"ExternalCode" : "MMO",
+				"Text" : "Millimole",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMQ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMQ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MMQ",
+				"ISOCode" : "MMQ",
+				"ExternalCode" : "MM3",
+				"Text" : "Cubic millimeter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MMS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MMS",
+				"ISOCode" : "C16",
+				"ExternalCode" : "MMS",
+				"Text" : "Millimeter/second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MNM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MNM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MNM",
+				"ISOCode" : "C22",
+				"ExternalCode" : "MNM",
+				"Text" : "Millinewton/meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MOK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MOK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MOK",
+				"ISOCode" : "C19",
+				"ExternalCode" : "MOK",
+				"Text" : "Mole/Kilogram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MOL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MOL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MOL",
+				"ISOCode" : "C34",
+				"ExternalCode" : "MOL",
+				"Text" : "Mole",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MON')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MON')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MON",
+				"ISOCode" : "MON",
+				"ExternalCode" : "MON",
+				"Text" : "Months",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MPA",
+				"ISOCode" : "MPA",
+				"ExternalCode" : "MPA",
+				"Text" : "Megapascal",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPB')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MPB",
+				"ISOCode" : "",
+				"ExternalCode" : "MPB",
+				"Text" : "Mass parts per billion",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MPG",
+				"ISOCode" : "",
+				"ExternalCode" : "MPG",
+				"Text" : "Miles per gallon (US)",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MPM",
+				"ISOCode" : "",
+				"ExternalCode" : "MPM",
+				"Text" : "Mass parts per million",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MPS",
+				"ISOCode" : "C24",
+				"ExternalCode" : "MPS",
+				"Text" : "Millipascal second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MPT",
+				"ISOCode" : "",
+				"ExternalCode" : "MPT",
+				"Text" : "Mass parts per trillion",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPZ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MPZ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MPZ",
+				"ISOCode" : "",
+				"ExternalCode" : "MPZ",
+				"Text" : "Meterpascal/second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MQH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MQH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MQH",
+				"ISOCode" : "MQH",
+				"ExternalCode" : "M3H",
+				"Text" : "Cubic meter/hour",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MS",
+				"ISOCode" : "C26",
+				"ExternalCode" : "MSE",
+				"Text" : "Millisecond",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MS2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MS2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MS2",
+				"ISOCode" : "MSK",
+				"ExternalCode" : "MS2",
+				"Text" : "Meter/Square Second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MTE')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MTE')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MTE",
+				"ISOCode" : "C29",
+				"ExternalCode" : "MTE",
+				"Text" : "Millitesla",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MTL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MTL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MTL",
+				"ISOCode" : "",
+				"ExternalCode" : "MTL",
+				"Text" : "Mil/ul",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MTS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MTS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MTS",
+				"ISOCode" : "",
+				"ExternalCode" : "M/H",
+				"Text" : "Meter/Hour",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MUG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MUG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MUG",
+				"ISOCode" : "",
+				"ExternalCode" : "µG",
+				"Text" : "Microgramm",
+				"DecimalPlaces" : 6
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MV')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MV')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MV",
+				"ISOCode" : "2Z",
+				"ExternalCode" : "MV",
+				"Text" : "Millivolt",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MVA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MVA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MVA",
+				"ISOCode" : "MVA",
+				"ExternalCode" : "MVA",
+				"Text" : "Megavolt - ampere",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MW')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MW')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MW",
+				"ISOCode" : "C31",
+				"ExternalCode" : "MW",
+				"Text" : "Milliwatt",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MYL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('MYL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "MYL",
+				"ISOCode" : "",
+				"ExternalCode" : "/µ",
+				"Text" : "",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('N')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('N')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "N",
+				"ISOCode" : "NEW",
+				"ExternalCode" : "N",
+				"Text" : "Newton",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('NAM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('NAM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "NAM",
+				"ISOCode" : "C45",
+				"ExternalCode" : "NAM",
+				"Text" : "Nanometer",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('NM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('NM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "NM",
+				"ISOCode" : "4P",
+				"ExternalCode" : "NM",
+				"Text" : "Newton/meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('NO')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('NO')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "NO",
+				"ISOCode" : "",
+				"ExternalCode" : "NO",
+				"Text" : "Without unit of measure",
+				"DecimalPlaces" : 2
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('NS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('NS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "NS",
+				"ISOCode" : "C47",
+				"ExternalCode" : "NS",
+				"Text" : "Nanosecond",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OCM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OCM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "OCM",
+				"ISOCode" : "C60",
+				"ExternalCode" : "OCM",
+				"Text" : "Specific Electrical Resistance",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OHM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OHM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "OHM",
+				"ISOCode" : "OHM",
+				"ExternalCode" : "OHM",
+				"Text" : "Ohm",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "OM",
+				"ISOCode" : "C61",
+				"ExternalCode" : "OM",
+				"Text" : "Specific Electrical Resistance",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OPH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OPH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "OPH",
+				"ISOCode" : "",
+				"ExternalCode" : "OPH",
+				"Text" : "Operating hours",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OZ')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OZ')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "OZ",
+				"ISOCode" : "ONZ",
+				"ExternalCode" : "OZ",
+				"Text" : "Ounce",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OZA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('OZA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "OZA",
+				"ISOCode" : "OZA",
+				"ExternalCode" : "FOZ",
+				"Text" : "Fluid ounce (US)",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('P')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('P')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "P",
+				"ISOCode" : "",
+				"ExternalCode" : "P",
+				"Text" : "Points",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PA",
+				"ISOCode" : "PAL",
+				"ExternalCode" : "PA",
+				"Text" : "Pascal",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PAA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PAA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PAA",
+				"ISOCode" : "PR",
+				"ExternalCode" : "PAA",
+				"Text" : "Pair",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PAK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PAK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PAK",
+				"ISOCode" : "PK",
+				"ExternalCode" : "PAC",
+				"Text" : "Pack",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PAL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PAL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PAL",
+				"ISOCode" : "PF",
+				"ExternalCode" : "PAL",
+				"Text" : "Pallet",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PAS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PAS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PAS",
+				"ISOCode" : "C65",
+				"ExternalCode" : "PAS",
+				"Text" : "Pascal second",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PC')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PC')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PC",
+				"ISOCode" : "",
+				"ExternalCode" : "013",
+				"Text" : "",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PDA')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PDA')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PDA",
+				"ISOCode" : "",
+				"ExternalCode" : "PDA",
+				"Text" : "Consultant Day",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PER')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PER')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PER",
+				"ISOCode" : "",
+				"ExternalCode" : "PER",
+				"Text" : "Persons",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PGR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PGR')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PGR",
+				"ISOCode" : "",
+				"ExternalCode" : "PGR",
+				"Text" : "Pikogram",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PH",
+				"ISOCode" : "",
+				"ExternalCode" : "PH",
+				"Text" : "pH value",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PKT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PKT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PKT",
+				"ISOCode" : "",
+				"ExternalCode" : "PKT",
+				"Text" : "",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PMI')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PMI')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PMI",
+				"ISOCode" : "",
+				"ExternalCode" : "PMI",
+				"Text" : "1/minute",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PMR')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PMR')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PMR",
+				"ISOCode" : "",
+				"ExternalCode" : "PMR",
+				"Text" : "Permeation Rate SI",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PNS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PNS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PNS",
+				"ISOCode" : "",
+				"ExternalCode" : "PNS",
+				"Text" : "GRNSPack",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PPB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PPB')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PPB",
+				"ISOCode" : "61",
+				"ExternalCode" : "PPB",
+				"Text" : "Parts per billion",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PPM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PPM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PPM",
+				"ISOCode" : "59",
+				"ExternalCode" : "PPM",
+				"Text" : "Part per million",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PPT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PPT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PPT",
+				"ISOCode" : "",
+				"ExternalCode" : "PPT",
+				"Text" : "Parts per trillion",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PRM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PRM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PRM",
+				"ISOCode" : "",
+				"ExternalCode" : "PRM",
+				"Text" : "Permeation Rate",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PRS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PRS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PRS",
+				"ISOCode" : "IE",
+				"ExternalCode" : "PRS",
+				"Text" : "Number of Persons",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PS",
+				"ISOCode" : "",
+				"ExternalCode" : "PS",
+				"Text" : "Picosecond",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PSI')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PSI')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PSI",
+				"ISOCode" : "",
+				"ExternalCode" : "PSI",
+				"Text" : "Pound/square inch",
+				"DecimalPlaces" : 1
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PT",
+				"ISOCode" : "PT",
+				"ExternalCode" : "PT",
+				"Text" : "Pint (US)",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PTS')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('PTS')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "PTS",
+				"ISOCode" : "PTS",
+				"ExternalCode" : "006",
+				"Text" : "",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('QT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('QT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "QT",
+				"ISOCode" : "QT",
+				"ExternalCode" : "QT",
+				"Text" : "Quart (US)",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('REP')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('REP')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "REP",
+				"ISOCode" : "",
+				"ExternalCode" : "REP",
+				"Text" : "Rep",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('RHO')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('RHO')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "RHO",
+				"ISOCode" : "",
+				"ExternalCode" : "RHO",
+				"Text" : "Gram/Cubic Centimeter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('RL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('RL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "RL",
+				"ISOCode" : "RL",
+				"ExternalCode" : "RL",
+				"Text" : "Reel",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('RM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('RM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "RM",
+				"ISOCode" : "",
+				"ExternalCode" : "RM",
+				"Text" : "Ream",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('ROL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('ROL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "ROL",
+				"ISOCode" : "RO",
+				"ExternalCode" : "ROL",
+				"Text" : "Roll",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('RPM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('RPM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "RPM",
+				"ISOCode" : "",
+				"ExternalCode" : "RPM",
+				"Text" : "Rotation per minute",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('RZ1')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('RZ1')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "RZ1",
+				"ISOCode" : "3H",
+				"ExternalCode" : "015",
+				"Text" : "",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('SCM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('SCM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "SCM",
+				"ISOCode" : "SCM",
+				"ExternalCode" : "SCM",
+				"Text" : "SCM",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('SET')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('SET')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "SET",
+				"ISOCode" : "SET",
+				"ExternalCode" : "SET",
+				"Text" : "SET",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('SHT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('SHT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "SHT",
+				"ISOCode" : "ST",
+				"ExternalCode" : "SHT",
+				"Text" : "Sheet",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('ST')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('ST')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "ST",
+				"ISOCode" : "PCE",
+				"ExternalCode" : "PC",
+				"Text" : "Piece",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('STD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('STD')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "STD",
+				"ISOCode" : "HUR",
+				"ExternalCode" : "HR",
+				"Text" : "Hours",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TAG')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TAG')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TAG",
+				"ISOCode" : "DAY",
+				"ExternalCode" : "DAY",
+				"Text" : "Days",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TC3')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TC3')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TC3",
+				"ISOCode" : "",
+				"ExternalCode" : "TC3",
+				"Text" : "1/cubic centimeter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TE')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TE')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TE",
+				"ISOCode" : "",
+				"ExternalCode" : "TE",
+				"Text" : "Each time",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TES')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TES')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TES",
+				"ISOCode" : "D33",
+				"ExternalCode" : "TES",
+				"Text" : "Tesla",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TH",
+				"ISOCode" : "MIL",
+				"ExternalCode" : "TS",
+				"Text" : "Thousands",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TK",
+				"ISOCode" : "",
+				"ExternalCode" : "TP",
+				"Text" : "Tank pallet",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TL",
+				"ISOCode" : "",
+				"ExternalCode" : "TL",
+				"Text" : "Truck Load",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TM",
+				"ISOCode" : "",
+				"ExternalCode" : "TM",
+				"Text" : "Meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TM3')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TM3')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TM3",
+				"ISOCode" : "",
+				"ExternalCode" : "TM3",
+				"Text" : "1/cubic meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TON')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TON')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TON",
+				"ISOCode" : "",
+				"ExternalCode" : "TON",
+				"Text" : "US Ton",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TST')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('TST')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "TST",
+				"ISOCode" : "",
+				"ExternalCode" : "001",
+				"Text" : "",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('UGL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('UGL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "UGL",
+				"ISOCode" : "",
+				"ExternalCode" : "µGL",
+				"Text" : "Microgram/liter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('UK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('UK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "UK",
+				"ISOCode" : "PA",
+				"ExternalCode" : "UK",
+				"Text" : "",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('UNX')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('UNX')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "UNX",
+				"ISOCode" : "",
+				"ExternalCode" : "022",
+				"Text" : "",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('V')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('V')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "V",
+				"ISOCode" : "VLT",
+				"ExternalCode" : "V",
+				"Text" : "Volt",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('V%25')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('V%25')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "V%",
+				"ISOCode" : "",
+				"ExternalCode" : "V%",
+				"Text" : "Percent volume",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('V%25O')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('V%25O')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "V%O",
+				"ISOCode" : "",
+				"ExternalCode" : "V%O",
+				"Text" : "Permille volume",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('V01')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('V01')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "V01",
+				"ISOCode" : "",
+				"ExternalCode" : "MSC",
+				"Text" : "Microsiemens per centimeter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('V02')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('V02')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "V02",
+				"ISOCode" : "",
+				"ExternalCode" : "MPL",
+				"Text" : "Millimole per Liter",
+				"DecimalPlaces" : 3
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('VAL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('VAL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "VAL",
+				"ISOCode" : "",
+				"ExternalCode" : "VAL",
+				"Text" : "Value-Only Material",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('VPB')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('VPB')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "VPB",
+				"ISOCode" : "",
+				"ExternalCode" : "VPB",
+				"Text" : "Volume parts per billion",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('VPM')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('VPM')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "VPM",
+				"ISOCode" : "",
+				"ExternalCode" : "VPM",
+				"Text" : "Volume parts per million",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('VPT')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('VPT')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "VPT",
+				"ISOCode" : "",
+				"ExternalCode" : "VPT",
+				"Text" : "Volume parts per trillion",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('W')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('W')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "W",
+				"ISOCode" : "WTT",
+				"ExternalCode" : "W",
+				"Text" : "Watt",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('WCH')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('WCH')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "WCH",
+				"ISOCode" : "WEE",
+				"ExternalCode" : "WK",
+				"Text" : "Weeks",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('WMK')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('WMK')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "WMK",
+				"ISOCode" : "D53",
+				"ExternalCode" : "WMK",
+				"Text" : "Heat Conductivity",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('WTL')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('WTL')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "WTL",
+				"ISOCode" : "",
+				"ExternalCode" : "WKY",
+				"Text" : "Evaporation Rate",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('YD')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('YD')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "YD",
+				"ISOCode" : "YRD",
+				"ExternalCode" : "YD",
+				"Text" : "Yards",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('YD2')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('YD2')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "YD2",
+				"ISOCode" : "YDK",
+				"ExternalCode" : "YD2",
+				"Text" : "Square Yard",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('YD3')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('YD3')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "YD3",
+				"ISOCode" : "YDQ",
+				"ExternalCode" : "YD3",
+				"Text" : "Cubic yard",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('bbl')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('bbl')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "bbl",
+				"ISOCode" : "",
+				"ExternalCode" : "bbl",
+				"Text" : "British Thermal Unit/US Barrel",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('bft')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('bft')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "bft",
+				"ISOCode" : "B0",
+				"ExternalCode" : "bft",
+				"Text" : "British Thermal Unit/Cubic Ft",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('bgl')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('bgl')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "bgl",
+				"ISOCode" : "",
+				"ExternalCode" : "bgl",
+				"Text" : "British Thermal Unit/US Gallon",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('btl')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('btl')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "btl",
+				"ISOCode" : "",
+				"ExternalCode" : "btl",
+				"Text" : "British Thermal Unit/US Pound",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('gj3')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('gj3')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "gj3",
+				"ISOCode" : "",
+				"ExternalCode" : "gj3",
+				"Text" : "Gigajoule/1000 Cubic Meters",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('gjm')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('gjm')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "gjm",
+				"ISOCode" : "",
+				"ExternalCode" : "gjm",
+				"Text" : "Gigajoule/Cubic Meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('gjt')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('gjt')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "gjt",
+				"ISOCode" : "",
+				"ExternalCode" : "gjt",
+				"Text" : "Gigajoule/US Ton",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('jm3')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('jm3')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "jm3",
+				"ISOCode" : "",
+				"ExternalCode" : "jm3",
+				"Text" : "Joule/Cubic Meter",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kgb')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kgb')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "kgb",
+				"ISOCode" : "",
+				"ExternalCode" : "kgb",
+				"Text" : "Kilogram/US Barrel",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kgj')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kgj')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "kgj",
+				"ISOCode" : "",
+				"ExternalCode" : "kgj",
+				"Text" : "Kilogram/Joule",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kgm')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kgm')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "kgm",
+				"ISOCode" : "",
+				"ExternalCode" : "kgm",
+				"Text" : "Kilogram/Million BTU",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kgs')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kgs')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "kgs",
+				"ISOCode" : "",
+				"ExternalCode" : "kgs",
+				"Text" : "Kilogram/Standard Cubic Foot",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kgt')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kgt')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "kgt",
+				"ISOCode" : "",
+				"ExternalCode" : "kgt",
+				"Text" : "Kilogram/US Ton",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kml')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('kml')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "kml",
+				"ISOCode" : "",
+				"ExternalCode" : "kml",
+				"Text" : "Kilogram/Kilogram Mole",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbb')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbb')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "lbb",
+				"ISOCode" : "",
+				"ExternalCode" : "lbb",
+				"Text" : "US Pound/British Thermal Unit",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbg')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbg')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "lbg",
+				"ISOCode" : "GE",
+				"ExternalCode" : "lbg",
+				"Text" : "Pound/gallon (US)",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbl')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbl')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "lbl",
+				"ISOCode" : "",
+				"ExternalCode" : "lbl",
+				"Text" : "US Pound/US Pound Mole",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbm')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbm')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "lbm",
+				"ISOCode" : "",
+				"ExternalCode" : "lbm",
+				"Text" : "US Pound/Million BTU",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbs')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbs')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "lbs",
+				"ISOCode" : "",
+				"ExternalCode" : "lbs",
+				"Text" : "US Pound/Standard Cubic Foot",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbt')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('lbt')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "lbt",
+				"ISOCode" : "",
+				"ExternalCode" : "lbt",
+				"Text" : "US Pound/US Ton",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('mbb')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('mbb')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "mbb",
+				"ISOCode" : "",
+				"ExternalCode" : "mbb",
+				"Text" : "Million BTU/US Barrel",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('mbt')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('mbt')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "mbt",
+				"ISOCode" : "",
+				"ExternalCode" : "mbt",
+				"Text" : "Million BTU/US Ton",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tbl')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tbl')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "tbl",
+				"ISOCode" : "",
+				"ExternalCode" : "tbl",
+				"Text" : "Ton/US Barrel",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tbt')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tbt')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "tbt",
+				"ISOCode" : "",
+				"ExternalCode" : "tbt",
+				"Text" : "Ton/British Thermal Unit",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tgl')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tgl')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "tgl",
+				"ISOCode" : "",
+				"ExternalCode" : "tgl",
+				"Text" : "US Ton/US Gallon",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tjl')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tjl')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "tjl",
+				"ISOCode" : "",
+				"ExternalCode" : "tjl",
+				"Text" : "Ton/Joule",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tm3')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tm3')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "tm3",
+				"ISOCode" : "",
+				"ExternalCode" : "tm3",
+				"Text" : "Ton/1000 Cubic Meters",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tt')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('tt')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "tt",
+				"ISOCode" : "",
+				"ExternalCode" : "tt",
+				"Text" : "Ton/Ton",
+				"DecimalPlaces" : 0
+			},
+			{
+				"__metadata" : {
+					"id" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('ttj')",
+					"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC/SAP__UnitsOfMeasure('ttj')",
+					"type" : "GWSAMPLE_BASIC.SAP__UnitOfMeasure"
+				},
+				"UnitCode" : "ttj",
+				"ISOCode" : "",
+				"ExternalCode" : "ttj",
+				"Text" : "Ton/Terajoule",
+				"DecimalPlaces" : 0
+			}
+		]
+	}
+}

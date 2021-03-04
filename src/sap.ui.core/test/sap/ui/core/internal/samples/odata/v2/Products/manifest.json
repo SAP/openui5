@@ -8,7 +8,7 @@
 		"description" : "Example for OData V2 EPM Products (UI5 GWSAMPLE_BASIC)",
 		"dataSources" : {
 			"default" : {
-				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC",
+				"uri" : "/sap/opu/odata/sap/ZUI5_GWSAMPLE_BASIC?customAll='custom%2Fall'",
 				"type" : "OData",
 				"settings" : {
 					"odataVersion" : "2.0"
@@ -46,10 +46,11 @@
 				"dataSource" : "default",
 				"preload" : false,
 				"settings" : {
-					"canonicalRequests" : true,
 					"defaultBindingMode" : "TwoWay",
 					"defaultCountMode" : "Inline",
-					"earlyTokenRequest" : true
+					"earlyTokenRequest" : true,
+					"metadataUrlParams" : {"customMeta" : "'custom/meta'"},
+					"serviceUrlParams" : "customService='custom%2Fservice'"
 				},
 				"type" : "sap.ui.core.internal.samples.odata.v2.Products.SandboxModel",
 				"uriSettingName" : "serviceUrl"
