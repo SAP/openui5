@@ -259,12 +259,11 @@ sap.ui.define([
 
 		addDummyCondition: function(index) {
 			var aOperators = _getOperators.call(this);
-			var oType = _getType.call(this);
-			var sType = _getBaseType.call(this, oType);
-			var oDefaultOperator = FilterOperatorUtil.getDefaultOperator(sType);
+			var oDefaultOperator = _getDefaultOperator.call(this);
 			var sOperator = aOperators.indexOf(oDefaultOperator.name) >= 0 ? oDefaultOperator.name : aOperators[0];
 			var oOperator = FilterOperatorUtil.getOperator(sOperator);
 			var oCondition = Condition.createCondition(sOperator, oOperator.valueDefaults ? oOperator.valueDefaults : [], undefined, undefined, ConditionValidated.NotValidated);
+
 
 			// mark the condition as initial and not modified by the user
 			oCondition.isInitial = true;
@@ -402,7 +401,6 @@ sap.ui.define([
 			if (aSeparatedText && aSeparatedText.length > 1) {
 				setTimeout(function() {
 					var oType = _getType.call(this);
-					var sType = _getBaseType.call(this, oType);
 
 					var iLength = aSeparatedText.length;
 					var aConditions = this.getConditions();
@@ -415,7 +413,7 @@ sap.ui.define([
 								oOperator = FilterOperatorUtil.getOperator("BT");
 							} else {
 								aValues = [sValue.trim()];
-								oOperator = FilterOperatorUtil.getDefaultOperator(sType);
+								oOperator = _getDefaultOperator.call(this);
 							}
 							sValue = oOperator ? oOperator.format(Condition.createCondition(oOperator.name, aValues)) : aValues[0];
 
@@ -715,6 +713,21 @@ sap.ui.define([
 		//TODO oConstraints like maximum are not used inside the Double type
 		return new Type(oFormatOptions, oConstraints);
 
+	}
+
+
+	function _getDefaultOperator() {
+		var oDefaultOperator;
+		var sDefaultOperatorName = this.getFormatOptions().defaultOperatorName;
+		if (sDefaultOperatorName) {
+			oDefaultOperator = FilterOperatorUtil.getOperator(sDefaultOperatorName);
+		} else {
+			var oType = _getType.call(this);
+			var sType = _getBaseType.call(this, oType);
+			oDefaultOperator = FilterOperatorUtil.getDefaultOperator(sType);
+		}
+
+		return oDefaultOperator;
 	}
 
 	function _getOperators() {

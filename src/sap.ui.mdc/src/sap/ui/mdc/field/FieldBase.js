@@ -2738,7 +2738,8 @@ sap.ui.define([
 			payload: this.getPayload(),
 			preventGetDescription: this._bPreventGetDescription,
 			conditionModel: oConditionModelInfo.model,
-			conditionModelName : oConditionModelInfo.name
+			conditionModelName : oConditionModelInfo.name,
+			defaultOperatorName : this.getDefaultOperator ? this.getDefaultOperator() : null
 		};
 
 	};

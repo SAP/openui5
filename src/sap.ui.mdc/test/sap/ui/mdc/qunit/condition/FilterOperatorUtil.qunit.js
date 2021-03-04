@@ -1649,4 +1649,96 @@ sap.ui.define([
 		assert.equal(operatorWithSpecialCharacters.tokenFormat, "foo {0} operator", "tokenFormat has the expected format for the placeholder");
 	});
 
+	QUnit.test("testing OperatorsForType", function(assert) {
+
+		var oMyEQ = new Operator({
+			name: "MYEQ",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+
+		var oLowerThan = new Operator({
+			name: "MYLT",
+			filterOperator: "LT",
+			tokenParse: "^<([^=].*)$",
+			tokenFormat: "<{0}",
+			valueTypes: [Operator.ValueType.Self]
+		});
+
+		FilterOperatorUtil.setOperatorsForType("myType", [oMyEQ, oLowerThan], oMyEQ);
+
+		var aOperators = FilterOperatorUtil.getOperatorsForType("myType");
+
+		assert.equal(aOperators[0], "MYEQ", "Name set");
+		assert.equal(aOperators[1], "MYLT", "Name set");
+
+		var oDefaultOperator = FilterOperatorUtil.getDefaultOperator("myType");
+
+		assert.equal(oDefaultOperator.name, "MYEQ", "Name set");
+
+		FilterOperatorUtil.removeOperatorForType("myType", oMyEQ);
+
+		aOperators = FilterOperatorUtil.getOperatorsForType("myType");
+
+		assert.equal(aOperators.length, 1, "onle one operator exist");
+		assert.equal(aOperators[0], "MYLT", "Name set");
+
+		// Should return null or one of the existng operators for this type, because the operator has been removed.
+		oDefaultOperator = FilterOperatorUtil.getDefaultOperator("myType");
+
+		assert.equal(oDefaultOperator.name, "MYEQ", "Name set");
+
+	});
+
+	QUnit.test("testing set/add/removeOperator", function(assert) {
+
+		var oMyOperator = new Operator({
+			name: "MyEqual",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+		var oMyOperator2 = new Operator({
+			name: "MyEqual2",
+			filterOperator: "EQ",
+			tokenParse: "^=([^=].*)$",
+			tokenFormat: "={0}",
+			valueTypes: [Operator.ValueType.Self],
+			validateInput: true
+		});
+
+		// add one Operator and remove it
+		FilterOperatorUtil.addOperator(oMyOperator);
+
+		var oOperator = FilterOperatorUtil.getOperator("MyEqual");
+		assert.ok(oOperator, "Operator exist");
+
+		FilterOperatorUtil.removeOperators(oMyOperator);
+
+		oOperator = FilterOperatorUtil.getOperator("MyEqual");
+		assert.notOk(oOperator, "Operator should NOT exist");
+
+		// Set one or multiple Operators
+		FilterOperatorUtil.setOperators([oMyOperator, oMyOperator2]);
+
+		oOperator = FilterOperatorUtil.getOperator("MyEqual");
+		assert.ok(oOperator, "Operator exist");
+		oOperator = FilterOperatorUtil.getOperator("MyEqual2");
+		assert.ok(oOperator, "Operator exist");
+
+		// remove all new added operators
+		FilterOperatorUtil.removeOperators([oMyOperator, oMyOperator2]);
+
+		oOperator = FilterOperatorUtil.getOperator("MyEqual");
+		assert.notOk(oOperator, "Operator should NOT exist");
+		oOperator = FilterOperatorUtil.getOperator("MyEqual2");
+		assert.notOk(oOperator, "Operator should NOT exist");
+
+	});
+
 });
