@@ -28,6 +28,18 @@ sap.ui.define([
         return "sap/ui/mdc/p13n/panels/SortPanel";
     };
 
+    SortController.prototype.model2State = function() {
+        var aItems = [];
+        this._oAdaptationModel.getProperty("/items").forEach(function(oItem){
+            if (oItem.isSorted){
+                aItems.push({
+                    name: oItem.name
+                });
+            }
+        });
+        return aItems;
+    };
+
     SortController.prototype.getChangeOperations = function() {
         return {
             add: "addSort",

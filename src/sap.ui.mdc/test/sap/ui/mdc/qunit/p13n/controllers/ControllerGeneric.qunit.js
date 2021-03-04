@@ -14,6 +14,14 @@ sap.ui.define([
 
 			var TestClass = Control.extend("temp",{
 				metadata: {
+					properties: {
+						delegate: {
+							type: "object",
+							defaultValue: {
+								name: "sap/ui/mdc/AggregationBaseDelegate"
+							}
+						}
+					},
 					interfaces: [
 						"sap.ui.mdc.IFilterSource",
 						"sap.ui.mdc.IxState"
@@ -62,8 +70,12 @@ sap.ui.define([
 
 		},
 		beforeEach: function(){
-			return this.prepareController().then(function(oController){
+			return this.prepareController()
+			.then(function(oController){
 				this.oController = oController;
+			}.bind(this))
+			.then(function(){
+				this.oAdaptationControl.initControlDelegate();
 			}.bind(this));
 		},
 		afterEach: function(){
@@ -188,6 +200,21 @@ sap.ui.define([
 		assert.ok(mChangeOperations.hasOwnProperty("add"), "Required changetype provided");
 		assert.ok(mChangeOperations.hasOwnProperty("remove"), "Required changetype provided");
 		assert.ok(Object.keys(mChangeOperations).length <= 3, "Only allowed changetypes are provided");
+	});
+
+	QUnit.test("check 'model2State'", function(assert){
+		this.oController.setP13nData(new PropertyHelper(this.aPropertyInfo));
+		this.oController.getP13nModel();
+
+		var fnValidateP13n = this.oController.model2State;
+
+		if (fnValidateP13n instanceof Function) {
+			var oTheoreticalState = this.oController.model2State();
+			assert.ok(oTheoreticalState, "State returned");
+		} else {
+			assert.strictEqual(fnValidateP13n, false, "The Subcontroller does not implement a validation.");
+		}
+
 	});
 
 });

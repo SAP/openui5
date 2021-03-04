@@ -49,7 +49,7 @@ sap.ui.define([
         });
     };
 
-    FilterController.prototype.validateState = function(oState) {
+    FilterController.prototype.sanityCheck = function(oState) {
         FilterController.checkConditionOperatorSanity(oState);
         return oState;
     };

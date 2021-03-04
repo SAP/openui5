@@ -3,7 +3,7 @@
  */
 
 // sap.ui.mdc.AggregationBaseDelegate
-sap.ui.define(['sap/ui/mdc/BaseDelegate'], function (BaseDelegate) {
+sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (BaseDelegate, coreLibrary) {
 	"use strict";
 
 	/**
@@ -79,6 +79,25 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate'], function (BaseDelegate) {
 		 */
 		removeItem: function(oItem, oControl, mPropertyBag) {
 			return Promise.resolve(true);
+		},
+
+		/**
+		 * A validator that can be used for custom state validations depending on the available personalization options.
+		 *
+		 * @param {Object<sap.ui.mdc.Control>} oControl Instance of a MDC Control.
+		 * @param {Object} oState The theoretical external state representation of a MDC Control.
+		 *
+		 * @returns {Object} An Object that must contain atleast the <code>validation</code> attribute {@link sap.ui.core.MessageType MessageType}.
+		 * If <code>warning</code> or higher state priorities have been provided, a <code>message</code> needs to be provided in addition.
+		 */
+		validateState: function(oControl, oState) {
+
+			var sValidation = coreLibrary.MessageType.None;
+
+			return {
+				validation: sValidation,
+				message: "Please provide a meaningful message here."
+			};
 		}
 
 

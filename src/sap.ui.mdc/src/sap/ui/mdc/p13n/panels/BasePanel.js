@@ -3,8 +3,8 @@
  */
 
 sap.ui.define([
-	'sap/ui/core/Control', 'sap/m/Column', 'sap/m/Text', 'sap/ui/model/Filter', "sap/m/Table", "sap/m/OverflowToolbar", "sap/m/SearchField", "sap/m/ToolbarSpacer", "sap/m/OverflowToolbarButton", "sap/m/OverflowToolbarLayoutData", "sap/m/Button", "sap/ui/core/dnd/DragDropInfo"
-], function(Control, Column, Text, Filter, Table, OverflowToolbar, SearchField, ToolbarSpacer, OverflowToolbarButton, OverflowToolbarLayoutData, Button, DragDropInfo) {
+	'sap/m/VBox', 'sap/ui/core/Control', 'sap/m/Column', 'sap/m/Text', 'sap/ui/model/Filter', "sap/m/Table", "sap/m/OverflowToolbar", "sap/m/SearchField", "sap/m/ToolbarSpacer", "sap/m/OverflowToolbarButton", "sap/m/OverflowToolbarLayoutData", "sap/m/Button", "sap/ui/core/dnd/DragDropInfo"
+], function(VBox, Control, Column, Text, Filter, Table, OverflowToolbar, SearchField, ToolbarSpacer, OverflowToolbarButton, OverflowToolbarLayoutData, Button, DragDropInfo) {
 	"use strict";
 
 	/**
@@ -54,6 +54,13 @@ sap.ui.define([
 				template: {
 					type: "sap.ui.core.Control",
 					multiple: false
+				},
+				/**
+				 * Defines an optional message strip to be displayed in the content area
+				 */
+				messageStrip: {
+					type: "sap.m.MessageStrip",
+					multiple: false
 				}
 			},
 			events: {
@@ -98,7 +105,31 @@ sap.ui.define([
 	 * Can be overwritten in case a different wrapping Control is required for the inner content
 	 */
 	BasePanel.prototype._setInnerLayout = function() {
-		this.setAggregation("_content", this._oListControl);
+		this.setAggregation("_content", new VBox({
+			items: [
+				this._oListControl
+			]
+		}));
+	};
+
+	/**
+	 * Displays a MessageStrip instance between the title and content area of the <code>BasePanel</code>.
+	 *
+	 * @param {sap.m.MessageStrip} oStrip Instance of a sap.m.MessageStrip
+	 */
+	BasePanel.prototype.setMessageStrip = function(oStrip){
+		if (!oStrip) {
+			this.getAggregation("_content").removeItem(this._oMessageStrip);
+			this._oMessageStrip = null;
+		} else {
+			if (this._oMessageStrip) {
+				this._oMessageStrip.destroy();
+			}
+			this._oMessageStrip = oStrip;
+			this.getAggregation("_content").insertItem(oStrip, 0);
+		}
+
+		return this;
 	};
 
 	BasePanel.prototype._getDragDropConfig = function() {

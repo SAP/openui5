@@ -11,9 +11,15 @@ sap.ui.define([
     "sap/ui/mdc/util/loadModules",
     "./P13nBuilder",
 	"sap/ui/mdc/condition/FilterOperatorUtil",
-	"./modification/FlexModificationHandler"
-], function (merge, Log, SAPUriParameters, BaseObject, PropertyHelper, loadModules, P13nBuilder, FilterOperatorUtil, FlexModificationHandler) {
+	"./modification/FlexModificationHandler",
+	"sap/m/MessageStrip",
+	"sap/ui/core/library",
+	"sap/ui/mdc/p13n/StateUtil"
+], function (merge, Log, SAPUriParameters, BaseObject, PropertyHelper, loadModules, P13nBuilder, FilterOperatorUtil, FlexModificationHandler, MessageStrip, coreLibrary, StateUtil) {
     "use strict";
+
+	//Shortcut to 'MessageType'
+	var MessageType = coreLibrary.MessageType;
 
 	//Used for experimental features (such as livemode)
 	var oURLParams = new SAPUriParameters(window.location.search);
@@ -351,6 +357,12 @@ sap.ui.define([
 
 			var aStatePromise = [], aChanges = [];
 
+			var mInfoState = oControl.validateState(StateUtil._externalizeKeys(oState));
+
+			if (mInfoState.validation === MessageType.Error){
+				Log.error(mInfoState.message);
+			}
+
 			Object.keys(oState).forEach(function(sControllerKey){
 
 				var oController = this.getController(oControl, sControllerKey);
@@ -363,7 +375,7 @@ sap.ui.define([
 				var oStatePromise = this.createChanges({
 					control: oControl,
 					key: sControllerKey,
-					state: oController.validateState(oState[sControllerKey]),
+					state: oController.sanityCheck(oState[sControllerKey]),
 					suppressAppliance: true,
 					applyAbsolute: bApplyAbsolute
 				});
@@ -638,6 +650,8 @@ sap.ui.define([
 		} else {
 			oP13nControl.open();
 		}
+
+		this._validateP13n(vControl, sKey, oP13nControl.getContent()[0]);
 	};
 
 	/**
@@ -666,6 +680,12 @@ sap.ui.define([
 					}.bind(this));
 				}
 
+				if (oP13nUI.attachChange) {
+					oP13nUI.attachChange(function(oEvt){
+						Engine.getInstance()._validateP13n(vControl, sKey, oP13nUI);
+					});
+				}
+
 				this._createUIContainer(vControl, sKey, oP13nUI).then(function(oDialog){
 					resolve(oDialog);
 				});
@@ -692,7 +712,50 @@ sap.ui.define([
 			}
 
 		}.bind(this));
-    };
+	};
+
+	/**
+	 * Triggers a validation for a certain controller - The method will create a
+	 * MessageStrip and place it on the according oP13nUI. The BaseController needs
+	 * to implement <code>BaseController#validateP13n</code>.
+	 *
+	 * @private
+	 *
+	 * @param {sap.ui.mdc.Control} vControl The registered control instance.
+	 * @param {string} sKey The registerd key to get the corresponding Controller.
+	 * @param {sap.ui.core.Control} oP13nUI The adaptation UI displayed in the container (e.g. BasePanel derivation).
+	 */
+	Engine.prototype._validateP13n = function(vControl, sKey, oP13nUI) {
+		var oController = this.getController(vControl, sKey);
+		var oControl = Engine.getControlInstance(vControl);
+
+
+		var mControllers = this._getRegistryEntry(vControl).controller;
+		var oTheoreticalState = {};
+
+		Object.keys(mControllers).forEach(function(sControllerKey){
+			oTheoreticalState[sControllerKey] = mControllers[sControllerKey].getCurrentState();
+		});
+
+		//Only execeute validation for controllers that support 'model2State'
+		if (oController.model2State instanceof Function) {
+			oTheoreticalState[sKey] = oController.model2State();
+
+			var mInfoState = oControl.validateState(StateUtil._externalizeKeys(oTheoreticalState));
+
+			var oMessageStrip;
+
+			if (mInfoState.validation !== MessageType.None) {
+				oMessageStrip = new MessageStrip({
+					type: mInfoState.validation,
+					text: mInfoState.message
+				});
+			}
+
+			oP13nUI.setMessageStrip(oMessageStrip);
+		}
+
+	};
 
 	/**
 	 * The event handler called by the P13n UI.

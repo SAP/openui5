@@ -89,7 +89,8 @@ sap.ui.define([
 			var oTransformedState = {};
 
 			Object.keys(oInternalState).forEach(function(sProvidedEngineKey){
-				var sTransformedKey = mKeysForState[sProvidedEngineKey];
+				var sExternalKey = mKeysForState[sProvidedEngineKey];
+				var sTransformedKey = sExternalKey || sProvidedEngineKey;//no external key --> provide internal key
 				oTransformedState[sTransformedKey] = oInternalState[sProvidedEngineKey];
 			});
 
