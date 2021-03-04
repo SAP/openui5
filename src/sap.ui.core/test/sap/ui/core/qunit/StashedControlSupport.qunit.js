@@ -4,13 +4,17 @@ sap.ui.define([
 	"sap/ui/core/Component",
 	"sap/ui/core/mvc/XMLView",
 	"sap/ui/core/Fragment",
+	"sap/ui/core/ListItem",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/Button",
+	"sap/m/SegmentedButton",
+	"sap/m/SegmentedButtonItem",
+	"sap/m/Select",
 	"sap/m/Panel",
 	"sap/uxap/ObjectPageLayout",
 	"sap/base/Log",
 	"sap/ui/qunit/utils/createAndAppendDiv"],
-function(StashedControlSupport, Element, Component, XMLView, Fragment, JSONModel, Button, Panel, ObjectPageLayout, Log, createAndAppendDiv) {
+function(StashedControlSupport, Element, Component, XMLView, Fragment, ListItem, JSONModel, Button, SegmentedButton, SegmentedButtonItem, Select, Panel, ObjectPageLayout, Log, createAndAppendDiv) {
 	/* global QUnit sinon*/
 	"use strict";
 
@@ -68,9 +72,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, JSONModel
 			};
 			this.oPanel = new Panel("parent");
 			// put a placeholder with the correct ID in the panel's aggregation
-			this.oButton = new this.Button(this.sId, {
-				stashed: true
-			});
+			this.oButton = new this.Button(this.sId);
 			this.oPanel.addContent(this.oButton);
 		},
 		afterEach: function() {
@@ -108,8 +110,11 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, JSONModel
 		assert.strictEqual(StashedControlSupport.getStashedControls().length, 0, "Stashed control has been destroyed");
 	});
 
-	QUnit.module("XML", {
+
+
+	QUnit.module("XML (Controls)", {
 		beforeEach: function() {
+			this.assertSpy = this.spy(console, "assert");
 			if (!Button.prototype.isStashed) {
 				// extend the real sap.m.Button for test purposes - once!
 				StashedControlSupport.mixInto(Button);
@@ -118,12 +123,14 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, JSONModel
 				viewContent: sViewContent
 			}).placeAt("content");
 		},
-		afterEach: function() {
+		afterEach: function(assert) {
+			assert.ok(this.assertSpy.neverCalledWith(sinon.match.falsy, sinon.match(/unknown setting.*visible/)),
+				"visible property never should be set when a class doesn't support it");
 			this.oView.destroy();
 		}
 	});
 
-	QUnit.test("StashedControl support (simple)", function(assert) {
+	QUnit.test("StashedControl support (controls)", function(assert) {
 		var done = assert.async();
 		this.oView.onAfterRendering = function() {
 			assert.strictEqual(jQuery("#view--StashedButton").length, 0, "Stashed button is not rendered");
@@ -133,6 +140,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, JSONModel
 			assert.ok(oButton, "Stashed button is available by id");
 			assert.ok(oButton instanceof Button, "Stashed button is instanceof sap.m.Button");
 			assert.ok(oButton.isStashed(), "Stashed button has stashed=true");
+			assert.notOk(oButton.getVisible(), "Stashed button has visible=false");
 			assert.strictEqual(jQuery("#view--Button").length, 1, "Button is rendered");
 			assert.ok(sap.ui.getCore().byId("view--Button") instanceof Button, "Button is a Button");
 
@@ -141,6 +149,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, JSONModel
 				assert.strictEqual(jQuery("#view--StashedButton").length, 1, "Unstashed button is rendered");
 				assert.ok(oUnstashedButton instanceof Button, "Unstashed Button is still a Button");
 				assert.notOk(oUnstashedButton.isStashed(), "UnstashedButton.isStashed() != true");
+				assert.ok(oUnstashedButton.getVisible(), "Unstashed button has visible=true");
 
 				done();
 			};
@@ -161,30 +170,155 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, JSONModel
 		assert.strictEqual(StashedControlSupport.getStashedControlIds("view--Panel")[0], "view--StashedButton", "One stashed controls in parent1");
 	});
 
+
+
+	QUnit.module("XML (Elements)", {
+		beforeEach: function() {
+			this.assertSpy = this.spy(console, "assert");
+		},
+		afterEach: function(assert) {
+			assert.ok(this.assertSpy.neverCalledWith(sinon.match.falsy, sinon.match(/unknown setting.*visible/)),
+				"visible property never should be set when a class doesn't support it");
+		}
+	});
+
+	QUnit.test("StashedControl support (Element with visible)", function(assert) {
+		// mix SCS into SegmentedButtonItem for testing purposes
+		if (!SegmentedButtonItem.prototype.isStashed) {
+			StashedControlSupport.mixInto(SegmentedButtonItem);
+		}
+
+		return XMLView.create({
+			definition:
+				'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'<SegmentedButton id="SegmentedButton">' +
+						'<items>' +
+							'<SegmentedButtonItem id="ItemA" text="A" stashed="true" visible="true"/>' +
+							'<SegmentedButtonItem id="ItemB" text="B" stashed="true" visible="false"/>' +
+							'<SegmentedButtonItem id="ItemC" text="C" visible="false"/>' +
+						'</items>' +
+					'</SegmentedButton>' +
+				'</mvc:View>'
+		}).then(function(oView) {
+			var oItemA = oView.byId("ItemA");
+			var oItemB = oView.byId("ItemB");
+			var oItemC = oView.byId("ItemC");
+
+			assert.ok(oItemA instanceof SegmentedButtonItem, "ItemA is a SegmentedButtonItem");
+			assert.ok(oItemA.isStashed(), "ItemA is stashed");
+			assert.notOk(oItemA.getVisible(), "ItemA is not visible");
+
+			assert.ok(oItemB instanceof SegmentedButtonItem, "ItemB is a SegmentedButtonItem");
+			assert.ok(oItemB.isStashed(), "ItemB is stashed");
+			assert.notOk(oItemB.getVisible(), "ItemB is not visible");
+
+			assert.ok(oItemC instanceof SegmentedButtonItem, "ItemC is a SegmentedButtonItem");
+			assert.notOk(oItemC.isStashed(), "ItemC is not stashed");
+			assert.notOk(oItemC.getVisible(), "ItemC is not visible");
+
+			assert.strictEqual(StashedControlSupport.getStashedControls().length, 2, "There should be 2 stashed objects");
+			assert.strictEqual(StashedControlSupport.getStashedControlIds().length, 2, "There should be 2 stashed IDs");
+			assert.deepEqual(
+				StashedControlSupport.getStashedControlIds().sort(),
+				[oView.createId("ItemA"), oView.createId("ItemB")],
+				"the IDs of the stashed objects should match the IDs of the stashed items in the view");
+
+			// act
+			var oUnstashedItemA = oItemA.unstash();
+			var oUnstashedItemB = oItemB.unstash();
+
+			// assert
+			assert.notStrictEqual(oUnstashedItemA, oItemA, "stashed and unstashed ItemA should differ");
+			assert.ok(oUnstashedItemA instanceof SegmentedButtonItem, "unstashed ItemA is a SegmentedButtonItem");
+			assert.notOk(oUnstashedItemA.isStashed(), "unstashed ItemA no longer has stashed=true");
+			assert.ok(oUnstashedItemA.getVisible(), "unstashed ItemA is visible");
+
+			assert.notStrictEqual(oUnstashedItemB, oItemB, "stashed and unstashed ItemB should differ");
+			assert.ok(oUnstashedItemB instanceof SegmentedButtonItem, "unstashed ItemB is a SegmentedButtonItem");
+			assert.notOk(oUnstashedItemB.isStashed(), "unstashed ItemB no longer has stashed=true");
+			assert.notOk(oUnstashedItemB.getVisible(), "unstashed ItemB is still not visible");
+
+			// cleanup
+			oView.destroy();
+		});
+	});
+
+	QUnit.test("StashedControl support (Element w/o visible)", function(assert) {
+		// mix SCS into ListItem for testing purposes
+		if (!ListItem.prototype.isStashed) {
+			StashedControlSupport.mixInto(ListItem);
+		}
+
+		return XMLView.create({
+			definition:
+				'<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m">' +
+					'<Select id="Select">' +
+						'<core:ListItem id="ItemA" text="A" stashed="true"/>' +
+						'<core:ListItem id="ItemB" text="B"/>' +
+					'</Select>' +
+				'</mvc:View>'
+		}).then(function(oView) {
+
+			var oItemA = oView.byId("ItemA");
+			var oItemB = oView.byId("ItemB");
+
+			assert.ok(oItemA instanceof ListItem, "ItemA is a ListItem");
+			assert.ok(oItemA.isStashed(), "ItemA is stashed");
+
+			assert.ok(oItemB instanceof ListItem, "ItemB is a ListItem");
+			assert.notOk(oItemB.isStashed(), "ItemB is not stashed");
+
+			assert.strictEqual(StashedControlSupport.getStashedControls().length, 1, "There should be 1 stashed object");
+			assert.strictEqual(StashedControlSupport.getStashedControlIds().length, 1, "There should be 1 stashed ID");
+			assert.deepEqual(
+				StashedControlSupport.getStashedControlIds().sort(),
+				[oView.createId("ItemA")],
+				"the IDs of the stashed objects should match the ID of the stashed item in the view");
+
+			// act
+			var oUnstashedItemA = oItemA.unstash();
+
+			// assert
+			assert.notStrictEqual(oUnstashedItemA, oItemA, "stashed and unstashed ItemA should differ");
+			assert.ok(oUnstashedItemA instanceof ListItem, "unstashed ItemA is a ListItem");
+			assert.notOk(oUnstashedItemA.isStashed(), "unstashed ItemA no longer has stashed=true");
+
+			// cleanup
+			oView.destroy();
+		});
+	});
+
+
+
 	QUnit.module("Component integration");
 
 	QUnit.test("owner component", function(assert) {
-		var oView;
-		function createView() {
-			oView = sap.ui.xmlview("view", {
-				viewContent: sViewContent
-			}).placeAt("content");
-		}
-		new Component("comp").runAsOwner(createView.bind(this));
+		var oComponent = new Component("comp");
+		return oComponent.runAsOwner(function() {
+			return XMLView.create({definition:sViewContent});
+		}).then(function(oView) {
+			var oButton = oView.byId("Button");
+			var oStashedButton = oView.byId("StashedButton");
+			var oButtonComponent = Component.getOwnerComponentFor(oButton);
+			var oStashedButtonComponent = Component.getOwnerComponentFor(oStashedButton);
+			assert.strictEqual(oStashedButtonComponent, oButtonComponent, "Stashed and normal Button have same owner");
+			assert.equal(oStashedButtonComponent.getId(), "comp", "Stashed Button has the right owner");
 
-		sap.ui.getCore().byId("view--StashedButton").unstash();
-		var oButtonComponent = Component.getOwnerComponentFor(oView.byId("view--StashedButton"));
-		var oStashedButtonComponent = Component.getOwnerComponentFor(oView.byId("view--StashedButton"));
+			var oUnstashedButton = oStashedButton.unstash();
+			var oUnstashedButtonComponent = Component.getOwnerComponentFor(oUnstashedButton);
+			assert.strictEqual(oUnstashedButtonComponent, oButtonComponent, "Unstashed and normal Button have same owner");
+			assert.equal(oUnstashedButtonComponent.getId(), "comp", "Unstashed Button has the right owner");
 
-		assert.strictEqual(oStashedButtonComponent, oButtonComponent, "Buttons have same owner");
-		assert.equal(oStashedButtonComponent.getId(), "comp", "Buttons have the right owner");
-
-		oView.destroy();
+			oView.destroy();
+			oComponent.destroy();
+		});
 	});
+
+
 
 	QUnit.module("Async XMLView", {
 		beforeEach: function() {
-			if (!Button.prototype.getStashed) {
+			if (!Button.prototype.isStashed) {
 				// extend the real sap.m.Button for test purposes - once!
 				StashedControlSupport.mixInto(Button);
 			}
@@ -220,7 +354,7 @@ function(StashedControlSupport, Element, Component, XMLView, Fragment, JSONModel
 					var oUnstashedButton = sap.ui.getCore().byId("view--StashedButton");
 					assert.strictEqual(jQuery("#view--StashedButton").length, 1, "Unstashed button is rendered");
 					assert.ok(oUnstashedButton instanceof Button, "Unstashed Button is still a Button");
-					assert.notOk(oUnstashedButton.isStashed(), "UnstashedButton.getStashed() != true");
+					assert.notOk(oUnstashedButton.isStashed(), "UnstashedButton.isStashed() != true");
 
 					done();
 				};
