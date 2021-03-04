@@ -3,11 +3,9 @@
  */
 
 sap.ui.define([
-	"sap/ui/Device",
 	"sap/ui/fl/write/_internal/connectors/ObjectPathConnector",
 	"sap/ui/fl/apply/_internal/connectors/ObjectStorageUtils"
 ], function(
-	Device,
 	ObjectPathConnector,
 	ObjectStorageUtils
 ) {
@@ -95,15 +93,7 @@ sap.ui.define([
 					oStorage.removeItem(sKey);
 				};
 
-				if (Device.browser.msie) {
-					var iStorageItems = oStorage.length;
-					for (var i = iStorageItems - 1; i >= 0; i--) {
-						var sKey = oStorage.key(i);
-						fnRemoveItem(sKey);
-					}
-				} else {
-					Object.keys(oStorage).map(fnRemoveItem);
-				}
+				Object.keys(oStorage).map(fnRemoveItem);
 			},
 			store: function (oStorage, sKey, oItem) {
 				var sFlexKey = ObjectStorageUtils.createFlexKey(sKey);
