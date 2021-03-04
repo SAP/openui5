@@ -747,7 +747,7 @@ sap.ui.define([
 	 */
 	function withGivenService(assert, sServiceUrl, vAnnotationUrl, fnCodeUnderTest) {
 		// sets up a v2 ODataModel and retrieves an ODataMetaModel from there
-		var oModel = new ODataModel(sServiceUrl, {
+		var oDataModel = new ODataModel(sServiceUrl, {
 				annotationURI : vAnnotationUrl,
 				json : true,
 				loadMetadataAsync : true
@@ -760,12 +760,12 @@ sap.ui.define([
 			}
 			assert.ok(false, "Failed to load: " + JSON.stringify(oParameters));
 		}
-		oModel.attachMetadataFailed(onFailed);
-		oModel.attachAnnotationsFailed(onFailed);
+		oDataModel.attachMetadataFailed(onFailed);
+		oDataModel.attachAnnotationsFailed(onFailed);
 
 		// calls the code under test once the meta model has loaded
-		return oModel.getMetaModel().loaded().then(function () {
-			return fnCodeUnderTest(oModel.getMetaModel(), oModel);
+		return oDataModel.getMetaModel().loaded().then(function () {
+			return fnCodeUnderTest(oDataModel.getMetaModel(), oDataModel);
 		});
 	}
 
@@ -809,16 +809,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("compatibility with synchronous ODataModel", function (assert) {
-		var oMetaModel, oModel;
+		var oDataModel, oMetaModel;
 
 		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
 
-		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+		oDataModel = new ODataModel1("/GWSAMPLE_BASIC", {
 			annotationURI : "/GWSAMPLE_BASIC/annotations",
 			json : true,
 			loadMetadataAsync : false
 		});
-		oMetaModel = oModel.getMetaModel();
+		oMetaModel = oDataModel.getMetaModel();
 
 		assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
 			"GWSAMPLE_BASIC", "metadata available");
@@ -842,16 +842,16 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("compatibility with asynchronous old ODataModel", function (assert) {
-		var oMetaModel, oModel;
+		var oDataModel, oMetaModel;
 
 		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
 
-		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+		oDataModel = new ODataModel1("/GWSAMPLE_BASIC", {
 			annotationURI : "/GWSAMPLE_BASIC/annotations",
 			json : true,
 			loadMetadataAsync : true
 		});
-		oMetaModel = oModel.getMetaModel();
+		oMetaModel = oDataModel.getMetaModel();
 
 		return oMetaModel.loaded().then(function () {
 			assert.strictEqual(arguments.length, 1, "almost no args");
@@ -876,8 +876,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("compatibility w/ asynchronous old ODataModel: use after load", function (assert) {
 		var iCount = 0,
-			fnDone = assert.async(),
-			oModel;
+			oDataModel,
+			fnDone = assert.async();
 
 		function loaded() {
 			var oMetaModel;
@@ -885,7 +885,7 @@ sap.ui.define([
 			iCount += 1;
 			if (iCount === 2) {
 				// ...then get meta model and use immediately
-				oMetaModel = oModel.getMetaModel();
+				oMetaModel = oDataModel.getMetaModel();
 
 				try {
 					assert.strictEqual(oMetaModel.getProperty("/dataServices/schema/0/namespace"),
@@ -912,28 +912,28 @@ sap.ui.define([
 
 		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
 
-		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+		oDataModel = new ODataModel1("/GWSAMPLE_BASIC", {
 			annotationURI : "/GWSAMPLE_BASIC/annotations",
 			json : true,
 			loadMetadataAsync : true
 		});
 
 		// wait for metadata and annotations to be loaded (but not via oMetaModel.loaded())...
-		oModel.attachAnnotationsLoaded(loaded);
-		oModel.attachMetadataLoaded(loaded);
+		oDataModel.attachAnnotationsLoaded(loaded);
+		oDataModel.attachMetadataLoaded(loaded);
 	});
 
 	//*********************************************************************************************
 	QUnit.test("compatibility with old ODataModel: separate value list load", function (assert) {
-		var oContext, oEntityType, oMetaModel, oModel, oProperty;
+		var oContext, oDataModel, oEntityType, oMetaModel, oProperty;
 
 		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
 
-		oModel = new ODataModel1("/FAR_CUSTOMER_LINE_ITEMS", {
+		oDataModel = new ODataModel1("/FAR_CUSTOMER_LINE_ITEMS", {
 			json : true,
 			loadMetadataAsync : false
 		});
-		oMetaModel = oModel.getMetaModel();
+		oMetaModel = oDataModel.getMetaModel();
 		oContext = oMetaModel.getMetaContext("/Items('foo')/Customer");
 		oEntityType = oMetaModel.getODataEntityType("FAR_CUSTOMER_LINE_ITEMS.Item");
 		oProperty = oMetaModel.getODataProperty(oEntityType, "Customer");
@@ -943,25 +943,20 @@ sap.ui.define([
 				"" : oProperty["com.sap.vocabularies.Common.v1.ValueList"],
 				"DEBID" : oProperty["com.sap.vocabularies.Common.v1.ValueList#DEBID"]
 			});
-
-			// check robustness: no error even if interface is missing
-			oMetaModel = new ODataMetaModel(oMetaModel.oMetadata);
-			return oMetaModel.getODataValueLists(oContext);
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("functions using 'this.oModel' directly", function (assert) {
-		var oModel = new ODataModel("/GWSAMPLE_BASIC", {
+		var oDataModel = new ODataModel("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
 				json : true,
 				loadMetadataAsync : true
 			}),
-			oMetaModel = oModel.getMetaModel();
+			oMetaModel = oDataModel.getMetaModel();
 
 		assert.ok(oMetaModel instanceof ODataMetaModel);
-		assert.strictEqual(typeof oMetaModel.oODataModelInterface.addAnnotationUrl, "function",
-			"function addAnnotationUrl");
+		assert.strictEqual(oMetaModel.oDataModel, oDataModel);
 
 		// call functions before loaded() promise has been resolved
 		assert.throws(function () {
@@ -995,10 +990,17 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("basics", function (assert) {
-		var oMetaModel = new ODataMetaModel({
-				getServiceMetadata : function () { return {dataServices : {}}; }
-			}),
+		var oDataModel = {annotationsLoaded : function () {}},
+			oMetaModel,
 			that = this;
+
+		this.mock(oDataModel).expects("annotationsLoaded").withExactArgs().returns(undefined);
+
+		oMetaModel = new ODataMetaModel({
+			getServiceMetadata : function () { return {dataServices : {}}; }
+		}, undefined, oDataModel);
+
+		assert.strictEqual(oMetaModel.oDataModel, oDataModel);
 
 		return oMetaModel.loaded().then(function () {
 			var oMetaModelMock = that.mock(oMetaModel),
@@ -1442,8 +1444,8 @@ sap.ui.define([
 	}].forEach(function (oFixture, i) {
 		QUnit.test("ODataMetaModel loaded: " + oFixture.title, function (assert) {
 			return withFakeService(assert, this.oLogMock, oFixture.annotationURI,
-					function (oMetaModel, oModel) {
-				var oMetadata = oModel.getServiceMetadata(),
+					function (oMetaModel, oDataModel) {
+				var oMetadata = oDataModel.getServiceMetadata(),
 					oMetaModelData = oMetaModel.getObject("/"),
 					oGWSampleBasic = oMetaModelData.dataServices.schema[0],
 					oEntityContainer = oGWSampleBasic.entityContainer[0],
@@ -2107,7 +2109,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("ODataMetaModel: multiple schemas separating types from sets", function (assert) {
-		return withGivenService(assert, "/fake/special", null, function (oMetaModel, oModel) {
+		return withGivenService(assert, "/fake/special", null, function (oMetaModel, oDataModel) {
 			var oMetaModelData = oMetaModel.getObject("/"),
 				oSpecialSchema = oMetaModelData.dataServices.schema[1],
 				oSpecialSetsSchema = oMetaModelData.dataServices.schema[0],
@@ -2119,7 +2121,7 @@ sap.ui.define([
 				oBusinessPartnerSet = oEntityContainer.entitySet[0],
 				oFunctionImport = oEntityContainer.functionImport[0];
 
-			assert.ok(oModel.getServiceMetadata(), "metadata is loaded");
+			assert.ok(oDataModel.getServiceMetadata(), "metadata is loaded");
 			assert.strictEqual(oSpecialSchema.$path, "/dataServices/schema/1");
 			assert.strictEqual(oSpecialSetsSchema.$path, "/dataServices/schema/0");
 			assert.strictEqual(oAssociation.$path, "/dataServices/schema/1/association/0");
@@ -2182,14 +2184,14 @@ sap.ui.define([
 	// We make sure the same happens even with our asynchronous constructor.
 	[false, true].forEach(function (bAsync) {
 		QUnit.test("Errors thrown inside load(), async = " + bAsync, function (assert) {
-			var oError, oModel;
+			var oDataModel, oError;
 
 			this.oLogMock.expects("warning").exactly(bAsync ? 0 : 1)
 				.withExactArgs(sIgnoreThisWarning);
 
 			oError = new Error("This call failed intentionally");
 			oError.$uncaughtInPromise = true;
-			oModel = new (bAsync ? ODataModel : ODataModel1)("/fake/service", {
+			oDataModel = new (bAsync ? ODataModel : ODataModel1)("/fake/service", {
 				annotationURI : "",
 				json : true,
 				loadMetadataAsync : bAsync
@@ -2204,7 +2206,7 @@ sap.ui.define([
 			this.mock(Model.prototype).expects("setDefaultBindingMode").throws(oError);
 
 			// code under test
-			return oModel.getMetaModel().loaded().then(function () {
+			return oDataModel.getMetaModel().loaded().then(function () {
 				throw new Error("Unexpected success");
 			}, function (ex) {
 				assert.strictEqual(ex, oError, ex.message);
@@ -2221,16 +2223,16 @@ sap.ui.define([
 			function (sPath) {
 				QUnit.test("check that no errors happen for empty/missing structures:"
 						+ sAnnotation + ", " + sPath, function (assert) {
-					var oMetaModel, oModel;
+					var oDataModel, oMetaModel;
 
-					oModel = new ODataModel("/fake/" + sPath, {
+					oDataModel = new ODataModel("/fake/" + sPath, {
 						// annotations are mandatory for this test case
 						annotationURI : "/fake/" + sAnnotation,
 						json : true
 					});
 
 					// code under test
-					oMetaModel = oModel.getMetaModel();
+					oMetaModel = oDataModel.getMetaModel();
 
 					return oMetaModel.loaded().then(function () {
 						assert.strictEqual(oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
@@ -2438,7 +2440,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("getODataAssociation*Set*End: set not found", function (assert) {
-		return withFakeService(assert, this.oLogMock, "", function (oMetaModel, oModel) {
+		return withFakeService(assert, this.oLogMock, "", function (oMetaModel) {
 				var oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.BusinessPartner");
 
 				assert.strictEqual(
@@ -2769,14 +2771,13 @@ sap.ui.define([
 		function (assert) {
 			var that = this;
 
-			return withMetaModel(assert, function (oMetaModel) {
+			return withMetaModel(assert, function (oMetaModel, oDataModel) {
 				var oContext = oMetaModel.getMetaContext("/ProductSet(foo)/Category"),
 					oEntityType = oMetaModel.getODataEntityType("GWSAMPLE_BASIC.Product"),
-					oInterface = oMetaModel.oODataModelInterface,
 					oPromise,
 					oProperty = oMetaModel.getODataProperty(oEntityType, "Category");
 
-				that.mock(oInterface).expects("addAnnotationUrl").never();
+				that.mock(oDataModel).expects("addAnnotationUrl").never();
 
 				oPromise = oMetaModel.getODataValueLists(oContext);
 
@@ -2833,10 +2834,10 @@ sap.ui.define([
 			var that = this;
 
 			return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS",
-					"/FAR_CUSTOMER_LINE_ITEMS/annotations", function (oMetaModel) {
+					"/FAR_CUSTOMER_LINE_ITEMS/annotations", function (oMetaModel, oDataModel) {
 				var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
 					oPromise,
-					fnSpy = that.spy(oMetaModel.oODataModelInterface, "addAnnotationUrl");
+					fnSpy = that.spy(oDataModel, "addAnnotationUrl");
 
 				// no sap:value-list => no request
 				oMetaModel.getODataValueLists(
@@ -2895,14 +2896,13 @@ sap.ui.define([
 	QUnit.test("getODataValueLists: addAnnotationUrl rejects", function (assert) {
 		var that = this;
 
-		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null,
+				function (oMetaModel, oDataModel) {
 			var oContext = oMetaModel.getMetaContext("/Items('foo')/Customer"),
-				oInterface = oMetaModel.oODataModelInterface,
 				oMyError = new Error(),
 				oPromise = Promise.reject(oMyError);
 
-			that.mock(oInterface).expects("addAnnotationUrl")
-				.returns(oPromise);
+			that.mock(oDataModel).expects("addAnnotationUrl").returns(oPromise);
 			oPromise.catch(function () {}); // avoid "Uncaught (in promise)" info
 
 			oPromise = oMetaModel.getODataValueLists(oContext);
@@ -2948,14 +2948,14 @@ sap.ui.define([
 	QUnit.test("getODataValueLists: request bundling", function (assert) {
 		var that = this;
 
-		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null,
+				function (oMetaModel, oDataModel) {
 			var oCompanyCode = oMetaModel.getMetaContext("/Items('foo')/CompanyCode"),
 				oCustomer = oMetaModel.getMetaContext("/Items('foo')/Customer"),
-				oInterface = oMetaModel.oODataModelInterface,
 				oPromiseCompanyCode,
 				oPromiseCustomer;
 
-			that.spy(oInterface, "addAnnotationUrl");
+			that.spy(oDataModel, "addAnnotationUrl");
 
 			// Note: "wrong" alphabetic order of calls to check that property names will be sorted!
 			oPromiseCustomer = oMetaModel.getODataValueLists(oCustomer);
@@ -2967,12 +2967,12 @@ sap.ui.define([
 
 			return Promise.all([oPromiseCustomer, oPromiseCompanyCode]).then(function () {
 				// check bundling
-				assert.strictEqual(oInterface.addAnnotationUrl.callCount, 1,
+				assert.strictEqual(oDataModel.addAnnotationUrl.callCount, 1,
 					"addAnnotationUrl once");
-				assert.strictEqual(oInterface.addAnnotationUrl.args[0][0],
+				assert.strictEqual(oDataModel.addAnnotationUrl.args[0][0],
 					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.Item%2FCompanyCode" +
 					",FAR_CUSTOMER_LINE_ITEMS.Item%2FCustomer",
-					oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
+					oDataModel.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
 			});
 		});
 	});
@@ -2987,9 +2987,9 @@ sap.ui.define([
 	QUnit.test("_sendBundledRequest", function (assert) {
 		var that = this;
 
-		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null,
+				function (oMetaModel, oDataModel) {
 			var oError = new Error(),
-				oInterface = oMetaModel.oODataModelInterface,
 				mQName2PendingRequest = {
 					"BAR" : {
 						resolve : function () {},
@@ -3008,7 +3008,7 @@ sap.ui.define([
 				},
 				oPromise = Promise.resolve(oResponse);
 
-			that.mock(oInterface).expects("addAnnotationUrl")
+			that.mock(oDataModel).expects("addAnnotationUrl")
 				.withExactArgs("$metadata?sap-value-list=BAR,FOO")
 				.returns(oPromise);
 
@@ -3149,11 +3149,11 @@ sap.ui.define([
 	QUnit.test("getODataValueLists: ValueList on ComplexType", function (assert) {
 		var that = this;
 
-		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null, function (oMetaModel) {
-			var oContext = oMetaModel.getMetaContext("/Items('foo')/Complex/Customer"),
-				oInterface = oMetaModel.oODataModelInterface;
+		return withGivenService(assert, "/FAR_CUSTOMER_LINE_ITEMS", null,
+				function (oMetaModel, oDataModel) {
+			var oContext = oMetaModel.getMetaContext("/Items('foo')/Complex/Customer");
 
-			that.spy(oInterface, "addAnnotationUrl");
+			that.spy(oDataModel, "addAnnotationUrl");
 
 			return oMetaModel.getODataValueLists(oContext).then(function (mValueLists) {
 				assert.deepEqual(mValueLists, {
@@ -3167,16 +3167,16 @@ sap.ui.define([
 					}
 				});
 
-				assert.ok(oInterface.addAnnotationUrl.calledWithExactly(
+				assert.ok(oDataModel.addAnnotationUrl.calledWithExactly(
 					"$metadata?sap-value-list=FAR_CUSTOMER_LINE_ITEMS.MyComplexType%2FCustomer"),
-					oInterface.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
+					oDataModel.addAnnotationUrl.printf("addAnnotationUrl calls: %C"));
 			});
 		});
 	});
 
 	//*********************************************************************************************
 	QUnit.test("load: Performance measurement points", function (assert) {
-		var oAverageSpy, oEndSpy, oMetaModel, oModel;
+		var oAverageSpy, oDataModel, oEndSpy, oMetaModel;
 
 		this.oLogMock.expects("warning").withExactArgs(sIgnoreThisWarning);
 
@@ -3184,12 +3184,12 @@ sap.ui.define([
 			.withArgs("sap.ui.model.odata.ODataMetaModel/load", "", [sComponent]);
 		oEndSpy = this.spy(Measurement, "end")
 			.withArgs("sap.ui.model.odata.ODataMetaModel/load");
-		oModel = new ODataModel1("/GWSAMPLE_BASIC", {
+		oDataModel = new ODataModel1("/GWSAMPLE_BASIC", {
 			annotationURI : "/GWSAMPLE_BASIC/annotations",
 			json : true,
 			loadMetadataAsync : true
 		});
-		oMetaModel = oModel.getMetaModel();
+		oMetaModel = oDataModel.getMetaModel();
 
 		assert.strictEqual(oAverageSpy.callCount, 0, "load start measurement before");
 		assert.strictEqual(oEndSpy.callCount, 0, "load end measurement before");
@@ -3201,12 +3201,12 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("destroy immediately", function (assert) {
-		var oModel = new ODataModel("/GWSAMPLE_BASIC", {
+		var oDataModel = new ODataModel("/GWSAMPLE_BASIC", {
 				annotationURI : "/GWSAMPLE_BASIC/annotations",
 				json : true,
 				loadMetadataAsync : true
 			}),
-			oMetaModel = oModel.getMetaModel();
+			oMetaModel = oDataModel.getMetaModel();
 
 		this.oLogMock.expects("error")
 			.withExactArgs("error in ODataMetaModel.loaded(): Meta model already destroyed",
@@ -3224,7 +3224,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	[false, true].forEach(function (bWarn) {
 		QUnit.test("Get sap:semantics for sap:unit via a path, warn=" + bWarn, function (assert) {
-			var oMetaModel, oModel;
+			var oDataModel, oMetaModel;
 
 			this.oLogMock.expects("isLoggable").twice()
 				.withExactArgs(Log.Level.WARNING, sComponent)
@@ -3238,10 +3238,10 @@ sap.ui.define([
 						+ "expected 'currency-code' or 'unit-of-measure'",
 					"foo.bar.Foo/WrongSemantics", sComponent);
 
-			oModel = new ODataModel("/fake/currencyCodeViaPath", {json : true});
+			oDataModel = new ODataModel("/fake/currencyCodeViaPath", {json : true});
 
 			// code under test
-			oMetaModel = oModel.getMetaModel();
+			oMetaModel = oDataModel.getMetaModel();
 
 			return oMetaModel.loaded().then(function () {
 				assert.strictEqual(oMetaModel.getObject("/dataServices/schema/"
@@ -3263,8 +3263,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("fetchCodeList", function (assert) {
-		var oModel = new ODataModel("/fake/emptySchema", {}),
-			oMetaModel = oModel.getMetaModel();
+		var oDataModel = new ODataModel("/fake/emptySchema", {}),
+			oMetaModel = oDataModel.getMetaModel();
 
 		return oMetaModel.loaded().then(function () {
 			// code under test
@@ -3283,8 +3283,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	QUnit.test("requestCurrencyCodes", function (assert) {
 		var oCurrencyCodesPromise,
-			oModel = new ODataModel("/fake/emptySchema", {}),
-			oMetaModel = oModel.getMetaModel();
+			oDataModel = new ODataModel("/fake/emptySchema", {}),
+			oMetaModel = oDataModel.getMetaModel();
 
 		this.mock(oMetaModel).expects("fetchCodeList")
 			.withExactArgs("CurrencyCodes")
@@ -3301,8 +3301,8 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("requestUnitsOfMeasure", function (assert) {
-		var oModel = new ODataModel("/fake/emptySchema", {}),
-			oMetaModel = oModel.getMetaModel(),
+		var oDataModel = new ODataModel("/fake/emptySchema", {}),
+			oMetaModel = oDataModel.getMetaModel(),
 			oUnitsOfMeasurePromise;
 
 		this.mock(oMetaModel).expects("fetchCodeList")

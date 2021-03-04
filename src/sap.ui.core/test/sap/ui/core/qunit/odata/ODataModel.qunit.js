@@ -2,6 +2,8 @@
 sap.ui.define([
 	"sap/base/Log",
 	"test-resources/sap/ui/core/qunit/odata/data/ODataModelFakeService",
+	"sap/ui/model/odata/_ODataMetaModelUtils",
+	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataModel",
 	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/Filter",
@@ -16,6 +18,8 @@ sap.ui.define([
 ], function(
 	Log,
 	fakeService,
+	_ODataMetaModelUtils,
+	ODataMetaModel,
 	ODataModel,
 	CountMode,
 	Filter,
@@ -1740,6 +1744,57 @@ sap.ui.define([
 		}.bind(this));
 	});
 
+	//*********************************************************************************************
+	QUnit.test("getMetaModel: new meta model - successfully loaded", function (assert) {
+		var oData = {foo : 'bar'},
+			oMetaModel,
+			oModel = {
+				oAnnotations : undefined,
+				oMetadata : {
+					getServiceMetadata : function () {},
+					isLoaded : function () {}
+				},
+				oMetaModel : undefined,
+				bMetaModelLoaded : "~bMetaModelLoaded",
+				annotationsLoaded : function () {},
+				checkUpdate : function () {}
+			};
+
+		// called in ODataMetaModel constructor
+		this.mock(oModel).expects("annotationsLoaded").withExactArgs().returns(Promise.resolve());
+		// called in ODataMetaModel constructor; result is used to create a JSONModel
+		this.mock(oModel.oMetadata).expects("getServiceMetadata").withExactArgs().returns(oData);
+
+		// code under test
+		oMetaModel = ODataModel.prototype.getMetaModel.call(oModel);
+
+		assert.ok(oMetaModel instanceof ODataMetaModel);
+		assert.strictEqual(oModel.oMetaModel, oMetaModel);
+		assert.strictEqual(oModel.bMetaModelLoaded, "~bMetaModelLoaded",
+			"bMetaModelLoaded is unchanged until the meta model is loaded");
+
+		// called in ODataMetaModel constructor
+		this.mock(_ODataMetaModelUtils).expects("merge")
+			.withExactArgs({}, oData, sinon.match.same(oMetaModel));
+
+		this.mock(oModel).expects("checkUpdate").withExactArgs(false, false, null, true)
+			.callsFake(function () {
+				assert.strictEqual(oModel.bMetaModelLoaded, true,
+					"checkUpdate called after the meta model is loaded");
+			});
+
+		return oMetaModel.loaded().then(function () {
+			assert.strictEqual(oModel.bMetaModelLoaded, true);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaModel: meta model already available", function (assert) {
+		var oModel = {oMetaModel : "~oMetaModel"};
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.getMetaModel.call(oModel), "~oMetaModel");
+	});
 
 
 	QUnit.module("Annotation Loading", {
@@ -1817,6 +1872,51 @@ sap.ui.define([
 
 
 	});
+
+	//*********************************************************************************************
+[{
+	metadataLoaded : false
+}, {
+	annotationsLoaded : false,
+	metadataLoaded : true
+}].forEach(function (oFixture, i) {
+	QUnit.test("annotationsLoaded: not yet loaded, #" + i, function (assert) {
+		var oModel = {
+				oAnnotations : {isLoaded : function () {}},
+				pAnnotationsLoaded : "~pAnnotationsLoaded",
+				oMetadata : {isLoaded : function () {}}
+			};
+
+		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs()
+			.returns(oFixture.metadataLoaded);
+		this.mock(oModel.oAnnotations).expects("isLoaded").withExactArgs()
+			.exactly(oFixture.metadataLoaded ? 1 : 0)
+			.returns(oFixture.annotationsLoaded);
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.annotationsLoaded.call(oModel),
+			"~pAnnotationsLoaded");
+	});
+});
+
+//*********************************************************************************************
+[{isLoaded : function () {}}, undefined].forEach(function (oAnnotations) {
+	QUnit.test("annotationsLoaded: already loaded, with annotations: " + (!!oAnnotations),
+			function (assert) {
+		var oModel = {
+				oAnnotations : oAnnotations,
+				oMetadata : {isLoaded : function () {}}
+			};
+
+		this.mock(oModel.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+		if (oAnnotations) {
+			this.mock(oAnnotations).expects("isLoaded").withExactArgs().returns(true);
+		}
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.annotationsLoaded.call(oModel), null);
+	});
+});
 
 	QUnit.module("Unsupported Filter Operators", {
 		beforeEach: function() {

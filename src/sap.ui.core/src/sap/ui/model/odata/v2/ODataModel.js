@@ -5592,13 +5592,17 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns a promise that resolves with an array containing information about the initially loaded annotations.
+	 * Returns a promise that resolves with an array containing information about the initially
+	 * loaded annotations.
 	 *
-	 * <b>Important</b>: This covers the annotations that were given to the model constructor, not the ones that might have
-	 * been added later on using the protected API method {@link #addAnnotationUrl}. In order to get information about those,
-	 * the event <code>annotationsLoaded</code> can be used.
+	 * <b>Important</b>: This covers the annotations that were given to the model constructor, not
+	 * the ones that might have been added later on using the protected API method
+	 * {@link #addAnnotationUrl}. In order to get information about those, the event
+	 * <code>annotationsLoaded</code> can be used.
 	 *
-	 * @returns {Promise} A promise to load the annotation URLs that were given to the model on instantiation
+	 * @returns {Promise}
+	 *   A promise that resolves with an array containing information about the initially loaded
+	 *   annotations
 	 *
 	 * @public
 	 * @since 1.42
@@ -7079,10 +7083,7 @@ sap.ui.define([
 	ODataModel.prototype.getMetaModel = function() {
 		var that = this;
 		if (!this.oMetaModel) {
-			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations, {
-				addAnnotationUrl : this.addAnnotationUrl.bind(this),
-				annotationsLoadedPromise : this.pAnnotationsLoaded
-			});
+			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations, this);
 			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
 			this.oMetaModel.loaded().then(function() {
 				that.bMetaModelLoaded = true;

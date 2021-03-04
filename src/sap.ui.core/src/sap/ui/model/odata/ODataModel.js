@@ -3574,13 +3574,7 @@ sap.ui.define([
 	ODataModel.prototype.getMetaModel = function() {
 		var that = this;
 		if (!this.oMetaModel) {
-			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations, {
-				addAnnotationUrl : this.addAnnotationUrl.bind(this),
-				annotationsLoadedPromise :
-					this.oMetadata.isLoaded() && (!this.oAnnotations || this.oAnnotations.isLoaded())
-					? null // stay synchronous
-					: this.pAnnotationsLoaded
-			});
+			this.oMetaModel = new ODataMetaModel(this.oMetadata, this.oAnnotations, this);
 			// Call checkUpdate when metamodel has been loaded to update metamodel bindings
 			this.oMetaModel.loaded().then(function() {
 				that.bMetaModelLoaded = true;
@@ -3588,6 +3582,21 @@ sap.ui.define([
 			});
 		}
 		return this.oMetaModel;
+	};
+
+	/**
+	 * Returns a promise that resolves when the annotations given in the constructor are loaded.
+	 *
+	 * @returns {Promise}
+	 *   A promise that resolves when the annotations are loaded, or <code>null</code> if the
+	 *   annotations are already loaded.
+	 *
+	 * @private
+	 */
+	ODataModel.prototype.annotationsLoaded = function () {
+		return this.oMetadata.isLoaded() && (!this.oAnnotations || this.oAnnotations.isLoaded())
+			? null // stay synchronous
+			: this.pAnnotationsLoaded;
 	};
 
 	return ODataModel;

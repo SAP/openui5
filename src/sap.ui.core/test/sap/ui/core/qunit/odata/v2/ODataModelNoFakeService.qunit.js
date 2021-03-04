@@ -8,6 +8,7 @@ sap.ui.define([
 	"sap/ui/core/message/Message",
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/Model",
+	"sap/ui/model/odata/_ODataMetaModelUtils",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataMessageParser",
 	"sap/ui/model/odata/ODataMetaModel",
@@ -18,9 +19,9 @@ sap.ui.define([
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/test/TestUtils"
-], function (Log, SyncPromise, coreLibrary, Message, FilterProcessor, Model, MessageScope,
-		ODataMessageParser, ODataMetaModel, ODataPropertyBinding, ODataUtils, ODataContextBinding,
-		ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
+], function (Log, SyncPromise, coreLibrary, Message, FilterProcessor, Model, _ODataMetaModelUtils,
+		MessageScope, ODataMessageParser, ODataMetaModel, ODataPropertyBinding, ODataUtils,
+		ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
 ) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
@@ -4026,5 +4027,66 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(ODataModel.prototype._getObject.call(oModel, "~path"), undefined);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("annotationsLoaded", function (assert) {
+		var oModel = {pAnnotationsLoaded : "~pAnnotationsLoaded"};
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.annotationsLoaded.call(oModel),
+			"~pAnnotationsLoaded");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaModel: new meta model - successfully loaded", function (assert) {
+		var oData = {foo : 'bar'},
+			oMetaModel,
+			oModel = {
+				oAnnotations : undefined,
+				oMetadata : {
+					getServiceMetadata : function () {},
+					isLoaded : function () {}
+				},
+				oMetaModel : undefined,
+				bMetaModelLoaded : "~bMetaModelLoaded",
+				annotationsLoaded : function () {},
+				checkUpdate : function () {}
+			};
+
+		// called in ODataMetaModel constructor
+		this.mock(oModel).expects("annotationsLoaded").withExactArgs().returns(Promise.resolve());
+		// called in ODataMetaModel constructor; result is used to create a JSONModel
+		this.mock(oModel.oMetadata).expects("getServiceMetadata").withExactArgs().returns(oData);
+
+		// code under test
+		oMetaModel = ODataModel.prototype.getMetaModel.call(oModel);
+
+		assert.ok(oMetaModel instanceof ODataMetaModel);
+		assert.strictEqual(oModel.oMetaModel, oMetaModel);
+		assert.strictEqual(oModel.bMetaModelLoaded, "~bMetaModelLoaded",
+			"bMetaModelLoaded is unchanged until the meta model is loaded");
+
+		// called in ODataMetaModel constructor
+		this.mock(_ODataMetaModelUtils).expects("merge")
+			.withExactArgs({}, oData, sinon.match.same(oMetaModel));
+
+		this.mock(oModel).expects("checkUpdate").withExactArgs(false, false, null, true)
+			.callsFake(function () {
+				assert.strictEqual(oModel.bMetaModelLoaded, true,
+					"checkUpdate called after the meta model is loaded");
+			});
+
+		return oMetaModel.loaded().then(function () {
+			assert.strictEqual(oModel.bMetaModelLoaded, true);
+		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetaModel: meta model already available", function (assert) {
+		var oModel = {oMetaModel : "~oMetaModel"};
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.getMetaModel.call(oModel), "~oMetaModel");
 	});
 });
