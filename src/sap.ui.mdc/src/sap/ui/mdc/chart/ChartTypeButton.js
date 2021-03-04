@@ -189,8 +189,10 @@ sap.ui.define([
 			placeholder: oRb.getText("chart.CHART_TYPE_SEARCH")
 		});
 		oSearchField.attachLiveChange(function(oEvent) {
-			this._triggerSearchInPopover(oEvent, oList);
-		});
+			if (oChart) {
+				this._triggerSearchInPopover(oEvent, oList);
+			}
+		}.bind(this));
 		oSubHeader.addContentRight(oSearchField);
 
 		var oPopover = new ResponsivePopover({
@@ -221,6 +223,42 @@ sap.ui.define([
 		}
 
 		return oPopover;
+	};
+
+	/**
+	 * Triggers a search in the drill-down popover
+	 *
+	 * @param {object} oEvent The event arguments
+	 * @param {sap.m.List} oList The list to search in
+	 * @private
+	 */
+	ChartTypeButton.prototype._triggerSearchInPopover = function(oEvent, oList) {
+
+		var parameters, i, sTitle, sTooltip, sValue, aItems;
+
+		if (!oEvent || !oList) {
+			return;
+		}
+
+		parameters = oEvent.getParameters();
+		if (!parameters) {
+			return;
+		}
+
+		sValue = parameters.newValue ? parameters.newValue.toLowerCase() : "";
+
+		aItems = oList.getItems();
+		for (i = 0; i < aItems.length; i++) {
+
+			sTooltip = aItems[i].getTooltip();
+			sTitle = aItems[i].getTitle();
+
+			if ((sTitle && (sTitle.toLowerCase().indexOf(sValue) > -1)) || (sTooltip && (sTooltip.toLowerCase().indexOf(sValue) > -1))) {
+				aItems[i].setVisible(true);
+			} else {
+				aItems[i].setVisible(false);
+			}
+		}
 	};
 
 	/**
