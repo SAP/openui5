@@ -134,10 +134,11 @@ sap.ui.define([
 
 	/**
 	 * Return node contexts for the tree
+	 * @param {sap.ui.model.Context} oContext the context for which the child nodes should be retrieved
 	 * @param {int} iStartIndex the start index of the requested contexts
 	 * @param {int} iLength the requested amount of contexts
 	 * @param {int} iThreshold
-	 * @return {Array} the contexts array
+	 * @return {sap.ui.model.Context[]} the contexts array
 	 * @protected
 	 */
 	ODataTreeBinding.prototype.getNodeContexts = function(oContext, iStartIndex, iLength, iThreshold) {
