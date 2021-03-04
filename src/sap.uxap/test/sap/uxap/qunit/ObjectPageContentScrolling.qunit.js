@@ -347,7 +347,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			}
 
 			//Assert
-			assert.ok(isPositionsMatch(oObjectPage._$opWrapper[0].scrollTop, iExpectedPosition), "Assert section: \"" + section + "\" position: " + iExpectedPosition);
+			assert.strictEqual(oObjectPage._$opWrapper[0].scrollTop, iExpectedPosition, "Assert section: \"" + section + "\" position: " + iExpectedPosition);
 		}
 		clock.restore();
 	});
@@ -448,7 +448,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			setTimeout(function() {
 				iScrollPosition = oObjectPage._$opWrapper[0].scrollTop;
 				iExpectedPosition =  oObjectPage._oSectionInfo["UxAP-objectPageContentScrolling--subsection2-1"].positionTop;
-				assert.ok(isPositionsMatch(iScrollPosition, iExpectedPosition), "scrollPosition is correct");
+				assert.strictEqual(iScrollPosition, iExpectedPosition, "scrollPosition is correct");
 				done();
 			}, 1000); // throttling delay
 		}, 1000); //dom calc delay
@@ -474,7 +474,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 				setTimeout(function () {
 					iScrollPositionAfterRemove = Math.ceil(oObjectPage._$opWrapper[0].scrollTop);
 					iExpectedPositionAfterRemove = Math.ceil(jQuery("#" + oThirdSection.getId() + " .sapUxAPObjectPageSectionContainer").position().top); // top of third section content
-					assert.ok(isPositionsMatch(iScrollPositionAfterRemove, iExpectedPositionAfterRemove), "scrollPosition is correct");
+					assert.strictEqual(iScrollPositionAfterRemove, iExpectedPositionAfterRemove, "scrollPosition is correct");
 					oFirstSection.destroy();
 					done();
 				}, 500); // throttling delay
@@ -497,7 +497,7 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 			iScrollPositionBeforeRemove = oObjectPage._$opWrapper[0].scrollTop;
 			setTimeout(function() {
 				iScrollPositionAfterRemove = oObjectPage._$opWrapper[0].scrollTop;
-				assert.ok(isPositionsMatch(iScrollPositionAfterRemove, iScrollPositionBeforeRemove), "scrollPosition is preserved");
+				assert.strictEqual(iScrollPositionAfterRemove, iScrollPositionBeforeRemove, "scrollPosition is preserved");
 				oThirdSection.destroy();
 				done();
 			}, 1000); // throttling delay
@@ -1012,11 +1012,6 @@ function(jQuery, Core, ObjectPageSubSection, ObjectPageSection, ObjectPageLayout
 		return oHeaderTitle.classList.contains("sapUxAPObjectPageHeaderStickied") &&
 				oHeaderContent.classList.contains("sapUxAPObjectPageHeaderDetailsHidden") &&
 				oHeaderContent.style["overflow"] == "hidden";
-	}
-
-	function isPositionsMatch(iPos, iPos2) {
-		var iAcceptableOffset = Device.browser.edge ? 1 : 0;
-		return Math.abs(iPos - iPos2) <= iAcceptableOffset;
 	}
 
 });

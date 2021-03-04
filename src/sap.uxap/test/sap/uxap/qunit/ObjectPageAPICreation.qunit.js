@@ -507,7 +507,7 @@ function (
 				oObjectPage.attachEventOnce("onAfterRenderingDOMReady", function () {
 					setTimeout(function () {
 						sectionIsSelected(oObjectPage, assert, oExpected);
-						assert.ok(isTolerableDifference(oObjectPage._$opWrapper.scrollTop(), oObjectPage.iHeaderContentHeight, ["chrome"], 1), "top section is selected");
+						assert.ok(isTolerableDifference(oObjectPage._$opWrapper.scrollTop(), oObjectPage.iHeaderContentHeight, 1), "top section is selected");
 						assert.strictEqual(oObjectPage._bStickyAnchorBar, true, "anchor bar is snapped");
 						assert.strictEqual(oObjectPage._bHeaderExpanded, false, "header is snapped");
 
@@ -1029,7 +1029,7 @@ function (
 			assert.strictEqual(oObjectPage._bStickyAnchorBar, bExpectedSnapped, "header snapped state is correct");
 		}
 		if (iExpectedScrollTop !== undefined) {
-			assert.ok(isTolerableDifference(Math.ceil(oObjectPage._$opWrapper[0].scrollTop), Math.floor(iExpectedScrollTop), ["msie", "edge"], 1), "scroll position is correct");
+			assert.ok(isTolerableDifference(Math.ceil(oObjectPage._$opWrapper[0].scrollTop), Math.floor(iExpectedScrollTop), 1), "scroll position is correct");
 		}
 	}
 
@@ -2811,7 +2811,7 @@ function (
 			oObjectPage._adjustHeaderHeights(); // call the function that recalculates anchorBar height
 
 			//Check: the new padding is included
-			assert.ok(isTolerableDifference(oObjectPage.iAnchorBarHeight, iABHeight + iDiff, ["msie", "edge"], 1), "anchorBar height is also augmented");
+			assert.ok(isTolerableDifference(oObjectPage.iAnchorBarHeight, iABHeight + iDiff, 1), "anchorBar height is also augmented");
 			done();
 		});
 	});
@@ -3744,17 +3744,8 @@ function (
 		return oObject.length !== 0;
 	}
 
-	function isTolerableDifference(iPos, iPos2, aBrowser, iTolerance) {
-		var iAcceptableOffset = 0, i;
-
-		for (i = 0; i < aBrowser.length; i++) {
-			if (Device.browser[aBrowser[i]]) {
-				iAcceptableOffset = iTolerance;
-				break;
-			}
-		}
-
-		return Math.abs(iPos - iPos2) <= iAcceptableOffset;
+	function isTolerableDifference(iPos, iPos2, iTolerance) {
+		return Math.abs(iPos - iPos2) <= iTolerance;
 	}
 
 });
