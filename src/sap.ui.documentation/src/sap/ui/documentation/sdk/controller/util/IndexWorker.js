@@ -9,28 +9,31 @@
 
 	fetch("../../../../../../../documentation-config.js")
 		.then(function(response) {
-			importScripts(response.url);
-			var ResourcesUtil = {
-				/**
-				 *
-				 * @param {string} sPath Relative path to resources
-				 */
-				getResourceOriginPath: function (sPath) {
-					var oConfig = self['sap-ui-documentation-config'],
-						sOrigin = (oConfig && oConfig.demoKitResourceOrigin) || '.';
-					return sOrigin + this._formatPath(sPath);
-				},
-				_formatPath: function(sPath) {
-					sPath = sPath.replace(/^\.\//, '/');
+			if (response.ok) {
+				importScripts(response.url);
 
-					if (!sPath.match(/^\//)) {
-						sPath = "/" + sPath;
+				var ResourcesUtil = {
+					/**
+					 *
+					 * @param {string} sPath Relative path to resources
+					 */
+					getResourceOriginPath: function (sPath) {
+						var oConfig = self['sap-ui-documentation-config'],
+							sOrigin = (oConfig && oConfig.demoKitResourceOrigin) || '.';
+						return sOrigin + this._formatPath(sPath);
+					},
+					_formatPath: function(sPath) {
+						sPath = sPath.replace(/^\.\//, '/');
+
+						if (!sPath.match(/^\//)) {
+							sPath = "/" + sPath;
+						}
+						return sPath;
 					}
-					return sPath;
-				}
-			};
+				};
 
-			URL.SEARCH_INDEX = ResourcesUtil.getResourceOriginPath("../../../../../../../searchindex.json");
+				URL.SEARCH_INDEX = ResourcesUtil.getResourceOriginPath("../../../../../../../searchindex.json");
+			}
 		});
 
 	var URL = {
@@ -174,7 +177,11 @@
 
 				onload = function (oEvent) {
 
-					oSerializedIndex = oEvent.target.response || oEvent.target.responseText;
+					if (oEvent.target.response === null) {
+						return self.postMessage({error: "Resource file searchindex.json not found"});
+					}
+
+					oSerializedIndex = oEvent.target.response;
 
 					if (typeof oSerializedIndex !== 'object') {
 						// fallback in case the browser does not support automatic JSON parsing
