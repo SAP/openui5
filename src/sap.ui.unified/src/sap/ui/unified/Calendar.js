@@ -527,6 +527,10 @@ sap.ui.define([
 			aMonths[i].setShowWeekNumbers(this.getShowWeekNumbers());
 		}
 
+		if (this._getMonthPicker()) {
+			this._setDisabledMonths(oFocusedDate.getYear(), this._getMonthPicker());
+		}
+
 		this._updateHeader(oCalDate);
 
 		this._iSize = 0; // initialize to recalculate new after rendering
@@ -1440,10 +1444,11 @@ sap.ui.define([
 		this._setHeaderText(oDate);
 		switch (this._iMode) {
 			case 0: // date picker
-			case 1: // month picker
 				this._togglePrevNext(oDate, true);
 				break;
-
+			case 1: // month picker
+				this._togglePrevNext(oDate, false);
+				break;
 			case 2: // year picker
 			case 3: // year range picker
 				this._togglePrevNexYearPicker();
@@ -1746,12 +1751,12 @@ sap.ui.define([
 		var iMinMonth = 0;
 		var iMaxMonth = 11;
 
-		if (iYear == this._oMinDate.getYear()) {
+		if (iYear === this._oMinDate.getYear()) {
 			iMinMonth = this._oMinDate.getMonth();
 		}
 
 
-		if (iYear == this._oMaxDate.getYear()) {
+		if (iYear === this._oMaxDate.getYear()) {
 			iMaxMonth = this._oMaxDate.getMonth();
 		}
 
