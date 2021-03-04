@@ -5,7 +5,6 @@ sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/model/Filter',
 	'sap/ui/model/ParseException',
-	'sap/ui/Device',
 	'sap/base/Log',
 	'sap/base/util/ObjectPath',
 	'sap/base/util/merge',
@@ -17,7 +16,6 @@ sap.ui.define([
 		BaseObject,
 		Filter,
 		ParseException,
-		Device,
 		Log,
 		ObjectPath,
 		merge,
@@ -77,7 +75,7 @@ sap.ui.define([
 		 * @param {function} [oConfiguration.checkValidated] Function to check if a condition is validated (sets the <code>validated</code> property)
 		 * @param {boolean} [oConfiguration.exclude] If set, the operator is handled as exclude filter when creating the filters of all conditions
 		 * @param {boolean} [oConfiguration.validateInput] If set, the user input for this operator needs to be validated using a field help
- 		 * @param {string} [oConfiguration.additionalInfo] additionalInfo text for the operator. Will be shown in the operator suggest as second column. If not used (undefined) the Include or Exclude information of the operator is used.
+		 * @param {string} [oConfiguration.additionalInfo] additionalInfo text for the operator. Will be shown in the operator suggest as second column. If not used (undefined) the Include or Exclude information of the operator is used.
 		 * @constructor
 		 * @author SAP SE
 		 * @version ${version}
@@ -138,9 +136,6 @@ sap.ui.define([
 					var sTokenText;
 					if (oConfiguration.tokenParse) {
 						sTokenText = escapeRegExp(this.tokenText);
-						if (Device.browser.msie) { // IE cannot replace single $, $$ will be replaced to $
-							sTokenText = sTokenText.replace(/\$/g, "$$$");
-						}
 
 						this.tokenParse = oConfiguration.tokenParse.replace(/#tokenText#/g, sTokenText);
 						for (var i = 0; i < this.valueTypes.length; i++) {
@@ -158,9 +153,6 @@ sap.ui.define([
 					// create token formatter
 					if (oConfiguration.tokenFormat) {
 						sTokenText = this.tokenText;
-						if (Device.browser.msie) { // IE cannot replace single $, $$ will be replaced to $
-							sTokenText = sTokenText.replace(/\$/g, "$$$");
-						}
 						this.tokenFormat = oConfiguration.tokenFormat.replace(/\#tokenText\#/g, sTokenText);
 					} else {
 						this.tokenFormat = this.tokenText; // static operator with no value (e.g. "THIS YEAR")
@@ -288,7 +280,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.mdc.condition.ConditionObject} oCondition Condition
 		 * @param {string} sFieldPath Path of filter
- 		 * @param {sap.ui.model.Type} oType Data type of the used filter field
+		 * @param {sap.ui.model.Type} oType Data type of the used filter field
 		 * @returns {sap.ui.model.Filter} filter object
 		 * @private
 		 * @ui5-restricted sap.ui.mdc

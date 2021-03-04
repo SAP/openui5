@@ -1,8 +1,8 @@
 /* globals opaTest */
 
 sap.ui.define([
-	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Action', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion', 'sap/ui/Device'
-], function(Opa5, opaQunit, Arrangement, Action, Assertion, Device) {
+	'sap/ui/test/Opa5', 'sap/ui/test/opaQunit', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Action', 'test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion'
+], function(Opa5, opaQunit, Arrangement, Action, Assertion) {
 	'use strict';
 
 	if (window.blanket) {
@@ -16,13 +16,6 @@ sap.ui.define([
 		viewNamespace: "view.",
 		autoWait: true
 	});
-
-	//set execution delay for Internet Explorer and Edge
-	if (Device.browser.msie || Device.browser.edge) {
-		Opa5.extendConfig({
-			executionDelay: 50
-		});
-	}
 
 	// ----------------------------------------------
 	// Test scenario:
@@ -340,5 +333,4 @@ sap.ui.define([
 	//
 	// 	Then.iTeardownMyAppFrame();
 	// });
-
 });

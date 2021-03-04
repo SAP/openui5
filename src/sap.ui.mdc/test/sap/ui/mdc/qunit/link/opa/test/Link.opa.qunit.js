@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/test/opaQunit",
 	"test-resources/sap/ui/mdc/qunit/link/opa/test/Arrangement",
 	"test-resources/sap/ui/mdc/qunit/link/opa/test/Action",
-	"test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion",
-	"sap/ui/Device"
-], function(Opa5, opaQunit, Arrangement, Action, Assertion, Device) {
+	"test-resources/sap/ui/mdc/qunit/link/opa/test/Assertion"
+], function(Opa5, opaQunit, Arrangement, Action, Assertion) {
 	"use strict";
 
 	if (window.blanket) {
@@ -21,13 +20,6 @@ sap.ui.define([
 		viewNamespace: "view.",
 		autoWait: true
 	});
-
-	//set execution delay for Internet Explorer and Edge
-	if (Device.browser.msie || Device.browser.edge) {
-		Opa5.extendConfig({
-			executionDelay: 50
-		});
-	}
 
 	opaTest("When I click on a Link with 'beforeNavigationCallback', I should see a popup to confirm the navigation", function(Given, When, Then) {
 		Given.iStartMyAppInAFrame("test-resources/sap/ui/mdc/qunit/link/opa/appUnderTest/start.html");

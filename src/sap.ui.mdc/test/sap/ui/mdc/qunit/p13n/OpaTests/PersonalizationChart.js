@@ -22,13 +22,6 @@ sap.ui.define([
 		autoWait: true
 	});
 
-	//set execution delay for Internet Explorer and Edge
-	if (Device.browser.msie || Device.browser.edge) {
-		Opa5.extendConfig({
-			executionDelay: 50
-		});
-	}
-
 	var aChartItems = [
 		{p13nItem: "Genre", selected: true},
 		{p13nItem: "Price (average)", selected: true},
