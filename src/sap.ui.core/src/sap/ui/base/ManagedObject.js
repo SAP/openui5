@@ -4844,7 +4844,7 @@ sap.ui.define([
 	 *
 	 * <b>Note:</b> Models propagated from the parent are not included.
 	 *
-	 * @return {Map<string, sap.ui.model.Model>} The models
+	 * @return {Object<string, sap.ui.model.Model>} The models
 	 * @public
 	 * @since 1.88.0
 	 */
