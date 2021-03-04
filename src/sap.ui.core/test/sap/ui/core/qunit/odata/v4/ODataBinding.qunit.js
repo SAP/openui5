@@ -344,13 +344,23 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	QUnit.test("refresh: reject", function (assert) {
-		var oBinding = new ODataBinding();
+		var oBinding = new ODataBinding({
+				oModel : {getReporter : function () {}}
+			}),
+			oError = new Error(),
+			oPromise = Promise.reject(oError),
+			fnReporter = sinon.spy();
 
-		this.mock(oBinding).expects("requestRefresh").withExactArgs("groupId")
-			.rejects(new Error());
+		this.mock(oBinding).expects("requestRefresh").withExactArgs("groupId").returns(oPromise);
+		this.mock(oBinding.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 
-		// code under test - must not cause "Uncaught (in promise)"
+		// code under test
 		oBinding.refresh("groupId");
+
+		return oPromise.catch(function () {
+			sinon.assert.calledOnce(fnReporter);
+			sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+		});
 	});
 
 	//*********************************************************************************************

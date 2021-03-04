@@ -265,9 +265,13 @@ sap.ui.define([
 			QUnit.test(sTitle, function (assert) {
 				var oBinding = this.bindContext("/OperationImport(...)"),
 					oBindingMock = this.mock(oBinding),
+					bExecuteOperation = !bSuspended && bAction === false,
+					oError = new Error(),
 					oModelMock = this.mock(this.oModel),
 					mParameters = {},
-					mQueryOptions = {};
+					oPromise = Promise.reject(oError),
+					mQueryOptions = {},
+					fnReporter = sinon.spy();
 
 				oBinding.oOperation.bAction = bAction;
 
@@ -277,15 +281,22 @@ sap.ui.define([
 				oBindingMock.expects("fetchCache").never();
 				oBindingMock.expects("refreshInternal").never();
 				oBindingMock.expects("checkUpdate").never();
-				oBindingMock.expects("execute").exactly(bSuspended || bAction !== false ? 0 : 1)
-					.withExactArgs()
-					.rejects(new Error()); // avoid "Uncaught (in promise)"
-
+				oBindingMock.expects("execute").exactly(bExecuteOperation ? 1 : 0)
+					.withExactArgs().returns(oPromise);
+				oModelMock.expects("getReporter").exactly(bExecuteOperation ? 1 : 0)
+					.withExactArgs().returns(fnReporter);
 				// code under test (as called by ODataParentBinding#changeParameters)
 				oBinding.applyParameters(mParameters, ChangeReason.Filter);
 
 				assert.strictEqual(oBinding.mQueryOptions, mQueryOptions, "mQueryOptions");
 				assert.strictEqual(oBinding.mParameters, mParameters);
+
+				return oPromise.catch(function () {
+					if (bExecuteOperation) {
+						sinon.assert.calledOnce(fnReporter);
+						sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+					}
+				});
 			});
 		});
 	});
@@ -296,9 +307,12 @@ sap.ui.define([
 			var oContext = Context.create(this.oModel, {}, "/EMPLOYEES"),
 				oBinding = this.bindContext("", oContext),
 				oBindingMock = this.mock(oBinding),
+				oError = new Error(),
 				oModelMock = this.mock(this.oModel),
 				mParameters = {},
-				mQueryOptions = {};
+				oPromise = Promise.reject(oError),
+				mQueryOptions = {},
+				fnReporter = sinon.spy();
 
 			oModelMock.expects("buildQueryOptions")
 				.withExactArgs(sinon.match.same(mParameters), true).returns(mQueryOptions);
@@ -309,7 +323,8 @@ sap.ui.define([
 				oBindingMock.expects("refreshInternal").never();
 			} else {
 				oBindingMock.expects("refreshInternal").withExactArgs("", undefined, true)
-					.returns(SyncPromise.reject(new Error())); // avoid "Uncaught (in promise)"
+					.returns(oPromise);
+				oModelMock.expects("getReporter").withExactArgs().returns(fnReporter);
 			}
 			oBindingMock.expects("checkUpdate").never();
 			oBindingMock.expects("execute").never();
@@ -331,6 +346,13 @@ sap.ui.define([
 
 				assert.strictEqual(oBinding.sResumeChangeReason, ChangeReason.Change);
 			}
+
+			return oPromise.catch(function () {
+				if (!bSuspended) {
+					sinon.assert.calledOnce(fnReporter);
+					sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
+				}
+			});
 		});
 	});
 
@@ -2813,6 +2835,7 @@ sap.ui.define([
 				setActive : function () {}
 			},
 			oReadPromise = Promise.reject(oError),
+			fnReporter = sinon.spy(),
 			that = this;
 
 		oBindingMock.expects("isRootBindingSuspended").returns(false);
@@ -2831,6 +2854,7 @@ sap.ui.define([
 			oBinding.resolveRefreshPromise(oReadPromise);
 			return SyncPromise.resolve(oReadPromise);
 		});
+		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 		oReadPromise.catch(function () {
 			var iCallCount = bKeepCacheOnError ? 1 : 0,
 				oResourcePathPromise = Promise.resolve(bRelative ? oCache.$resourcePath : "n/a");
@@ -2867,6 +2891,8 @@ sap.ui.define([
 				} else {
 					assert.notStrictEqual(oBinding.oCachePromise.getResult(), oCache);
 				}
+				sinon.assert.calledOnce(fnReporter);
+				sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
 			});
 	});
 
@@ -2967,6 +2993,7 @@ sap.ui.define([
 			},
 			oOldCache = oBinding.oCachePromise.getResult(),
 			oReadPromise = Promise.reject(oError),
+			fnReporter = sinon.spy(),
 			oYetAnotherError = new Error(),
 			that = this;
 
@@ -2985,6 +3012,7 @@ sap.ui.define([
 			oBinding.resolveRefreshPromise(oReadPromise);
 			return SyncPromise.resolve(oReadPromise);
 		});
+		this.mock(this.oModel).expects("getReporter").withExactArgs().returns(fnReporter);
 		oReadPromise.catch(function () {
 			var oResourcePathPromise = Promise.resolve("n/a");
 
@@ -3007,6 +3035,8 @@ sap.ui.define([
 					bFetchResourcePathFails ? oYetAnotherError : oError);
 				assert.strictEqual(oBinding.oCache, oNewCache);
 				assert.strictEqual(oBinding.oCachePromise.getResult(), oNewCache);
+				sinon.assert.calledOnce(fnReporter);
+				sinon.assert.calledWithExactly(fnReporter, sinon.match.same(oError));
 			});
 	});
 });

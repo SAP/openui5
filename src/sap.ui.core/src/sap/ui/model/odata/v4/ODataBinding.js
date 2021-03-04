@@ -892,10 +892,7 @@ sap.ui.define([
 	 */
 	// @override sap.ui.model.Binding#refresh
 	ODataBinding.prototype.refresh = function (sGroupId) {
-		this.requestRefresh(sGroupId).catch(function () {
-			// Nothing to do here, the error is already logged. The catch however is necessary,
-			// because we drop the promise here, so there is no other code to catch it.
-		});
+		this.requestRefresh(sGroupId).catch(this.oModel.getReporter());
 	};
 
 	/**

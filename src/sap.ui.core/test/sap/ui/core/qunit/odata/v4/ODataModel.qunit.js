@@ -2814,6 +2814,31 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(oModel.filterMatchingMessages("/target", "/prefix"), aMessages);
 	});
+
+	//*********************************************************************************************
+[Promise, SyncPromise].forEach(function (oThenable) {
+	QUnit.test("getReporter " + oThenable, function (assert) {
+		var oError1 = new Error("failed intentionally"),
+			oError2 = new Error("already reported"),
+			oModel = this.createModel(),
+			oPromise1 = oThenable.reject(oError1),
+			oPromise2 = oThenable.reject(oError2);
+
+		this.mock(oModel).expects("reportError").withExactArgs(
+			oError1.message, sClassName, sinon.match.same(oError1));
+
+		// code under test
+		oPromise1.catch(oModel.getReporter());
+
+		oError2.$reported = true;
+
+		// code under test
+		oPromise2.catch(oModel.getReporter());
+
+		return Promise.all([oPromise1, oPromise2])
+			.catch(function () {/* avoid that the test fails */});
+	});
+});
 });
 
 //TODO constructor: test that the service root URL is absolute?

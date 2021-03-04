@@ -447,11 +447,10 @@ sap.ui.define([
 		} else if (!this.oOperation) {
 			this.fetchCache(this.oContext);
 			if (sChangeReason) {
-				this.refreshInternal("", undefined, true)
-					.catch(function () {/*avoid "Uncaught (in promise)"*/});
+				this.refreshInternal("", undefined, true).catch(this.oModel.getReporter());
 			}
 		} else if (this.oOperation.bAction === false) {
-			this.execute().catch(function () {/*avoid "Uncaught (in promise)"*/});
+			this.execute().catch(this.oModel.getReporter());
 		}
 	};
 
@@ -1180,7 +1179,7 @@ sap.ui.define([
 					// If bCheckUpdate is unset, dependent bindings do not call fetchValue, and we
 					// have to call it here.
 					// Note: this resets that.oRefreshPromise
-					that.fetchValue("").catch(function () {/*avoid "Uncaught (in promise)"*/});
+					that.fetchValue("").catch(that.oModel.getReporter());
 				}
 			}
 			return SyncPromise.all([
