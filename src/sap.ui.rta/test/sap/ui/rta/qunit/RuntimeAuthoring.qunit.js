@@ -9,6 +9,7 @@ sap.ui.define([
 	"sap/ui/Device",
 	"sap/ui/dt/plugin/ContextMenu",
 	"sap/ui/dt/DesignTimeMetadata",
+	"sap/ui/dt/DesignTime",
 	"sap/ui/dt/OverlayRegistry",
 	"sap/ui/dt/Overlay",
 	"sap/ui/fl/registry/ChangeRegistry",
@@ -43,6 +44,7 @@ sap.ui.define([
 	Device,
 	ContextMenuPlugin,
 	DesignTimeMetadata,
+	DesignTime,
 	OverlayRegistry,
 	Overlay,
 	ChangeRegistry,
@@ -1244,6 +1246,14 @@ sap.ui.define([
 				assert.equal(oLogStub.callCount, 1, "one error got logged");
 				assert.equal(oMessageBoxStub.callCount, 0, "no MessageBox got shown");
 			});
+		});
+
+		QUnit.test("when trying to start twice", function (assert) {
+			var oDesigntimeAddRootElementSpy = sandbox.spy(DesignTime.prototype, "addRootElement");
+			return Promise.all([this.oRta.start(), this.oRta.start()])
+				.then(function () {
+					assert.strictEqual(oDesigntimeAddRootElementSpy.callCount, 1, "the the designtime is going to start once");
+				});
 		});
 	});
 

@@ -315,7 +315,7 @@ function(
 	 * @param {object} mPlugins - map of plugins
 	 */
 	RuntimeAuthoring.prototype.setPlugins = function(mPlugins) {
-		if (this._oDesignTime) {
+		if (this._sStatus !== STOPPED) {
 			throw new Error("Cannot replace plugins: runtime authoring already started");
 		}
 		this.getPluginManager().setPlugins(mPlugins);
@@ -417,12 +417,12 @@ function(
 	 * @public
 	 */
 	RuntimeAuthoring.prototype.start = function () {
-		this._sStatus = STARTING;
 		var oDesignTimePromise;
 		var vError;
-		var oRootControl = this.getRootControlInstance();
 		// Create DesignTime
-		if (!this._oDesignTime) {
+		if (this._sStatus === STOPPED) {
+			this._sStatus = STARTING;
+			var oRootControl = this.getRootControlInstance();
 			if (!oRootControl) {
 				vError = new Error("Root control not found");
 				Log.error(vError);
@@ -1708,7 +1708,7 @@ function(
 	RuntimeAuthoring.prototype.setMetadataScope = function (sScope) {
 		// We do not support scope change after creation of DesignTime instance
 		// as this requires reinitialization of all overlays
-		if (this._oDesignTime) {
+		if (this._sStatus !== STOPPED) {
 			Log.error("sap.ui.rta: Failed to set metadata scope on RTA instance after RTA is started");
 			return;
 		}
