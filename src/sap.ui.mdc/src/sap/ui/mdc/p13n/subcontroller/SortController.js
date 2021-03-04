@@ -31,7 +31,7 @@ sap.ui.define([
     SortController.prototype.model2State = function() {
         var aItems = [];
         this._oAdaptationModel.getProperty("/items").forEach(function(oItem){
-            if (oItem.isSorted){
+            if (oItem.sorted){
                 aItems.push({
                     name: oItem.name
                 });
