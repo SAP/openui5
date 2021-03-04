@@ -1001,8 +1001,8 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the resolved path by calling {@link sap.ui.model.odata.v4.ODataModel#resolve} and
-	 * replacing all occurrences of transient predicates with the corresponding key predicates.
+	 * Returns the resolved path, replacing all occurrences of transient predicates with the
+	 * corresponding key predicates.
 	 *
 	 * @returns {string}
 	 *   The resolved path with replaced transient predicates

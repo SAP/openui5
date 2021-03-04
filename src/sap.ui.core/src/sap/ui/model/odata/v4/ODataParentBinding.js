@@ -460,8 +460,7 @@ sap.ui.define([
 			var sPathInCache;
 
 			if (oCache) {
-				sPathInCache = _Helper.getRelativePath(sCollectionPath,
-					that.oModel.resolve(that.sPath, that.oContext));
+				sPathInCache = _Helper.getRelativePath(sCollectionPath, that.getResolvedPath());
 				return oCache.create(oUpdateGroupLock, vCreatePath, sPathInCache,
 					sTransientPredicate, oInitialData, fnErrorCallback, fnSubmitCallback
 				).then(function (oCreatedEntity) {
@@ -868,7 +867,7 @@ sap.ui.define([
 				return oParentBinding.getBaseForPathReduction();
 			}
 		}
-		return this.oModel.resolve(this.sPath, this.oContext);
+		return this.getResolvedPath();
 	};
 
 	/**
@@ -991,7 +990,7 @@ sap.ui.define([
 			return oDependent.hasPendingChangesInDependents();
 		})
 		|| this.oModel.withUnresolvedBindings("hasPendingChangesInCaches",
-				this.oModel.resolve(this.sPath, this.oContext).slice(1));
+				this.getResolvedPath().slice(1));
 	};
 
 	/**
@@ -1110,7 +1109,7 @@ sap.ui.define([
 	 */
 	ODataParentBinding.prototype.requestAbsoluteSideEffects = function (sGroupId, aAbsolutePaths) {
 		var aPaths = [],
-			sMetaPath = _Helper.getMetaPath(this.oModel.resolve(this.sPath, this.oContext)),
+			sMetaPath = _Helper.getMetaPath(this.getResolvedPath()),
 			bRefresh;
 
 		bRefresh = aAbsolutePaths.some(function (sAbsolutePath) {
