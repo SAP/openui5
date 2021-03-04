@@ -55,6 +55,19 @@ sap.ui.define([
 					type: "string[]",
 					group: "Data",
 					defaultValue: []
+				},
+				/**
+				 * Default operator name for conditions.
+				 * If empty, the relevant default operator depending on the data type used is taken.
+				 *
+				 * <b>Note</b>: The <code>defaultOperator</code> can be the name of an {@link sap.ui.mdc.condition.Operator Operator} or the instance itself.
+				 *
+				 * @since 1.88.0
+				 */
+				defaultOperator: {
+					type: "string",
+					group: "Data",
+					defaultValue: null
 				}
 			},
 			events: {
@@ -144,6 +157,75 @@ sap.ui.define([
 		return aOperators;
 
 	};
+
+	FilterField.prototype.setOperators = function(aOperators) {
+		var aOperatorNames = [];
+
+		aOperators.forEach(function(oOperator) {
+			if (typeof oOperator  === "string") {
+				aOperatorNames.push(oOperator);
+			} else {
+				aOperatorNames.push(oOperator.name);
+			}
+		});
+
+		this.setProperty("operators", aOperatorNames);
+		return this;
+	};
+
+	FilterField.prototype.addOperator = function(oOperator) {
+		var aOperators = this._getOperators();
+		if (typeof oOperator  === "string") {
+			aOperators.push(oOperator);
+		} else {
+			aOperators.push(oOperator.name);
+		}
+		this.setOperators(aOperators);
+	};
+
+	FilterField.prototype.addOperators = function(aOperators) { // aOperators can be an array of operators or names
+		aOperators.forEach(function(oOperator) {
+			this.addOperator(oOperator);
+		}.bind(this));
+
+		return this;
+	};
+
+	FilterField.prototype.removeOperator = function(oOperator) {
+		var aOperators = this.getOperators();
+		var sName = oOperator;
+		if (typeof oOperator !== "string") {
+			sName = oOperator.name;
+		}
+
+		if (aOperators.indexOf(sName)) {
+			aOperators.splice(aOperators.indexOf(sName), 1);
+			this.setOperators(aOperators);
+		}
+	};
+
+	FilterField.prototype.removeOperators = function(aOperators) {
+		aOperators.forEach(function(oOperator) {
+			this.removeOperator(oOperator);
+		}.bind(this));
+
+	};
+
+	FilterField.prototype.removeAllOperators = function() {
+		this.setOperators([]);
+	};
+
+
+	FilterField.prototype.setDefaultOperator = function(oOperator) {
+		var sName = oOperator;
+		if (oOperator && typeof oOperator !== "string") {
+			sName = oOperator.name;
+		}
+
+		this.setProperty("defaultOperator", sName);
+		return this;
+	};
+
 
 	return FilterField;
 

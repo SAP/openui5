@@ -787,6 +787,39 @@ function(
 
 				},
 
+				setOperators: function(aOperators) { // aOperators must be an array of operator instances
+					if (!Array.isArray(aOperators)) {
+						aOperators = [aOperators];
+					}
+
+					aOperators.forEach(function(oOperator) {
+						FilterOperatorUtil.addOperator(oOperator);
+					});
+				},
+
+				removeOperators: function(aOperators) {  // array of Operators or names
+					if (!Array.isArray(aOperators)) {
+						aOperators = [aOperators];
+					}
+
+					aOperators.forEach(function(oOperator) {
+						FilterOperatorUtil.removeOperator(oOperator);
+					});
+				},
+
+				removeOperator: function(oOperator) { // instance or name
+					if (typeof oOperator  === "string") {
+						delete FilterOperatorUtil._mOperators[oOperator];
+					} else {
+						delete FilterOperatorUtil._mOperators[oOperator.name];
+					}
+
+					// check if the removed Operator is still used and remove it
+					// ["String", "Date", ....].forEach(function(sType) {
+					// 	FilterOperatorUtil.removeOperatorForType(sType, oOperator);
+					// });
+				},
+
 				/**
 				 * Adds an operator to the list of valid operators for a type.
 				 *
@@ -799,27 +832,67 @@ function(
 				 * @MDC_PUBLIC_CANDIDATE
 				 */
 				setOperatorsForType: function(sType, aOperators, oDefaultOperator) {
-					var aOps = [];
-					aOperators.forEach(function(oOperator) {
-						if (typeof oOperator  === "string") {
-							aOps.push(FilterOperatorUtil.getOperator(oOperator));
-						} else {
-							aOps.push(oOperator);
-						}
-					});
-
-					FilterOperatorUtil._mDefaultOpsForType[sType] = {
-						operators: aOps
-					};
-
-					if (oDefaultOperator) {
-						if (typeof oDefaultOperator  === "string") {
-							oDefaultOperator = FilterOperatorUtil.getOperator(oDefaultOperator);
-						}
-
-						FilterOperatorUtil._mDefaultOpsForType[sType].defaultOperator = oDefaultOperator;
+					if (!Array.isArray(aOperators)) {
+						aOperators = [aOperators];
 					}
 
+					if (!FilterOperatorUtil._mDefaultOpsForType[sType]) {
+						FilterOperatorUtil._mDefaultOpsForType[sType] = { };
+					}
+					FilterOperatorUtil._mDefaultOpsForType[sType].operators = [];
+
+					aOperators.forEach(function(oOperator) {
+						FilterOperatorUtil.addOperatorForType(sType, oOperator);
+					});
+
+					if (oDefaultOperator) {
+						FilterOperatorUtil.setDefaultOperatorForType(sType, oDefaultOperator);
+					}
+
+				},
+
+				setDefaultOperatorForType: function(sType, oDefaultOperator) {
+					if (!FilterOperatorUtil._mDefaultOpsForType[sType]) {
+						FilterOperatorUtil._mDefaultOpsForType[sType] = { };
+					}
+
+					if (typeof oDefaultOperator  === "string") {
+						oDefaultOperator = FilterOperatorUtil.getOperator(oDefaultOperator);
+					}
+
+					FilterOperatorUtil._mDefaultOpsForType[sType].defaultOperator = oDefaultOperator;
+
+				},
+
+				addOperatorForType: function(sType, oOperator) {
+					FilterOperatorUtil.insertOperatorForType(sType, oOperator);
+				},
+
+				insertOperatorForType: function(sType, oOperator, idx) {
+					if (!FilterOperatorUtil._mDefaultOpsForType[sType]) {
+						FilterOperatorUtil._mDefaultOpsForType[sType] = { operators : [] };
+					}
+
+					idx = idx === undefined ? FilterOperatorUtil._mDefaultOpsForType[sType].operators.length : idx;
+					if (typeof oOperator  === "string") {
+						oOperator = FilterOperatorUtil.getOperator(oOperator);
+					}
+					FilterOperatorUtil._mDefaultOpsForType[sType].operators.splice(idx, 0, oOperator);
+				},
+
+				removeOperatorForType: function(sType, oOperator) {
+					var sName;
+					if (typeof oOperator  === "string") {
+						sName = oOperator;
+					} else {
+						sName = oOperator.name;
+					}
+					for (var i = 0; i < FilterOperatorUtil._mDefaultOpsForType[sType].operators.length; i++) {
+						if (FilterOperatorUtil._mDefaultOpsForType[sType].operators[i].name === sName) {
+							FilterOperatorUtil._mDefaultOpsForType[sType].operators.splice(i, 1);
+							return;
+						}
+					}
 				},
 
 				/**

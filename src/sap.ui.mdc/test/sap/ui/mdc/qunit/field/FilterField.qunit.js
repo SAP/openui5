@@ -168,4 +168,61 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("set/add/removeOperators", function(assert) {
+
+		var oNE = FilterOperatorUtil.getOperator("NE");
+
+		var aOperators = oFilterField.getOperators();
+		assert.ok(aOperators.length == 0, "no Operators returned");
+
+		oFilterField.setOperators(["BT"]);
+		aOperators = oFilterField.getOperators();
+		assert.equal(aOperators.length, 1, "one Operator returned");
+		assert.equal(aOperators[0], "BT", "right Operator returned");
+
+		oFilterField.addOperator("EQ");
+		aOperators = oFilterField.getOperators();
+		assert.equal(aOperators.length, 2, "two Operators returned");
+
+		oFilterField.removeOperator("EQ");
+		aOperators = oFilterField.getOperators();
+		assert.equal(aOperators.length, 1, "one Operator returned");
+		assert.equal(aOperators[0], "BT", "right Operator returned");
+
+		oFilterField.addOperators(["LT", oNE]);
+		aOperators = oFilterField.getOperators();
+		assert.equal(aOperators.length, 3, "two Operators returned");
+
+		oFilterField.removeOperators(["LT", oNE]);
+		aOperators = oFilterField.getOperators();
+		assert.equal(aOperators.length, 1, "one Operator returned");
+		assert.equal(aOperators[0], "BT", "right Operator returned");
+
+		oFilterField.removeAllOperators();
+		aOperators = oFilterField.getOperators();
+		assert.ok(aOperators.length == 0, "no Operators returned");
+
+	});
+
+	QUnit.test("set/getDefaultOperator", function(assert) {
+
+		var oNE = FilterOperatorUtil.getOperator("NE");
+
+		var sOperatorName = oFilterField.getDefaultOperator();
+		assert.equal(sOperatorName, "", "no default Operator set");
+
+		oFilterField.setDefaultOperator("BT");
+		sOperatorName = oFilterField.getDefaultOperator();
+		assert.equal(sOperatorName, "BT", "correct defaultOperator returned");
+
+		oFilterField.setDefaultOperator(oNE);
+		sOperatorName = oFilterField.getDefaultOperator();
+		assert.equal(sOperatorName, "NE", "correct defaultOperator returned");
+
+		oFilterField.setDefaultOperator();
+		sOperatorName = oFilterField.getDefaultOperator();
+		assert.equal(sOperatorName, "", "no default Operator set");
+
+	});
+
 });
