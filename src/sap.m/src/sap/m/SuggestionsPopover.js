@@ -435,6 +435,7 @@ sap.ui.define([
 				subHeader: this.createSubHeaderContent(mOptions),
 				horizontalScrolling : false,
 				initialFocus : this._oPopupInput,
+				endBbutton: (this._oInput && this._oInput._getShowMoreButton && this._oInput._getShowMoreButton()),
 				beforeOpen: function() {
 					that.updatePickerHeaderTitle();
 				},
