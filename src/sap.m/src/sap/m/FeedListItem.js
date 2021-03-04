@@ -78,7 +78,7 @@ function(
 				 * Defines the shape of the icon.
 				 * @since 1.88
 				 */
-				iconDisplayShape: { type: "sap.m.AvatarShape", defaultValue: AvatarShape.Square},
+				iconDisplayShape: { type: "sap.m.AvatarShape", defaultValue: AvatarShape.Circle},
 
 				/**
 				 * Defines the initials of the icon.
