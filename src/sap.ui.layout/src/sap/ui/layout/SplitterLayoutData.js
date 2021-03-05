@@ -54,8 +54,18 @@ sap.ui.define(['sap/ui/core/LayoutData', './library'],
 		}
 	}});
 
-	/*** NOTHING ***/
+	SplitterLayoutData.prototype.init = function () {
+		LayoutData.prototype.init.apply(this, arguments);
+		this._bIsModified = false;
+	};
+
+	SplitterLayoutData.prototype._markModified = function () {
+		this._bIsModified = true;
+	};
+
+	SplitterLayoutData.prototype._isMarked = function () {
+		return this._bIsModified;
+	};
 
 	return SplitterLayoutData;
-
 });

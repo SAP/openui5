@@ -122,17 +122,12 @@ sap.ui.define([
 	// Overriding sap.ui.layout.Splitter's calculation functions in order to make it responsive
 
 	/**
-	 * Resizes the contents after a bar has been moved
-	 *
-	 * @param {Number} [iLeftContent] Number of the first (left) content that is resized
-	 * @param {Number} [iPixels] Number of pixels to increase the first and decrease the second content
-	 * @param {boolean} [bFinal] Whether this is the final position (sets the size in the layoutData of the content areas)
 	 * @override
 	 */
 	AssociativeSplitter.prototype._resizeContents = function (iLeftContent, iPixels, bFinal) {
 		var aContentAreas, oLd1, oLd2, sSize1,
 			sSize2, $Cnt1, $Cnt2, iNewSize1, iNewSize2,
-			iMinSize1, iMinSize2, sOrientation, iSplitterSize,
+			iMinSize1, iMinSize2,
 			sFinalSize1, sFinalSize2, iDiff,
 			sMoveContentSize1 = parseFloat(this._move.c1Size).toFixed(5),
 			sMoveContentSize2 = parseFloat(this._move.c2Size).toFixed(5),
@@ -159,9 +154,6 @@ sap.ui.define([
 		iMinSize1 = parseInt(oLd1.getMinSize());
 		iMinSize2 = parseInt(oLd2.getMinSize());
 
-		sOrientation = this.getOrientation();
-		iSplitterSize = sOrientation === "Horizontal" ? this.$().width() : this.$().height();
-
 		// Adhere to size constraints
 		if (iNewSize1 < iMinSize1) {
 			iDiff = iMinSize1 - iNewSize1;
@@ -176,31 +168,100 @@ sap.ui.define([
 		}
 
 		if (bFinal) {
+			// in this case widths of the areas are % from the available content width (bars excluded)
+			var iAvailableContentSize = this._calcAvailableContentSize();
+
 			// Resize finished, set layout data in content areas
 			if (sSize1 === "auto" && sSize2 !== "auto") {
 				// First pane has auto size - only change size of second pane
-				sFinalSize2 = this._pxToPercent(iNewSize2, iSplitterSize);
+				sFinalSize2 = this._pxToPercent(iNewSize2, iAvailableContentSize);
 				oLd2.setSize(sFinalSize2);
+				oLd2._markModified();
 			} else if (sSize1 !== "auto" && sSize2 === "auto") {
 				// Second pane has auto size - only change size of first pane
-				sFinalSize1 = this._pxToPercent(iNewSize1, iSplitterSize);
+				sFinalSize1 = this._pxToPercent(iNewSize1, iAvailableContentSize);
 				oLd1.setSize(sFinalSize1);
+				oLd1._markModified();
 			} else {
-				sFinalSize1 = this._pxToPercent(iNewSize1, iSplitterSize);
-				sFinalSize2 = this._pxToPercent(iNewSize2, iSplitterSize);
-
+				sFinalSize1 = this._pxToPercent(iNewSize1, iAvailableContentSize);
+				sFinalSize2 = this._pxToPercent(iNewSize2, iAvailableContentSize);
 
 				oLd1.setSize(sFinalSize1);
 				oLd2.setSize(sFinalSize2);
+				oLd1._markModified();
+				oLd2._markModified();
 			}
-		} else {
-			// Live-Resize, resize contents in Dom
-			sFinalSize1 = this._pxToPercent(iNewSize1, iSplitterSize);
-			sFinalSize2 = this._pxToPercent(iNewSize2, iSplitterSize);
+		} else { // Live-Resize, resize contents in Dom
+			// in this case widths of the areas are % from the total size (bars included)
+			var iTotalSplitterSize = this._getTotalSize();
+
+			sFinalSize1 = this._pxToPercent(iNewSize1, iTotalSplitterSize);
+			sFinalSize2 = this._pxToPercent(iNewSize2, iTotalSplitterSize);
 
 			$Cnt1.css(this._sizeType, sFinalSize1);
 			$Cnt2.css(this._sizeType, sFinalSize2);
 		}
+	};
+
+	/**
+	 * Upon bar resizing AssociativeSplitter sets layoutData's size to %.
+	 * This override is needed to check if such % would exceed the available space.
+	 * If so, the size is reduced.
+	 * @override
+	 */
+	AssociativeSplitter.prototype._calcPercentBasedSizes = function (aPercentSizeIdx, iRemainingSize) {
+		var aContentAreas = this._getContentAreas(),
+			iAvailableContentSize = this._calcAvailableContentSize();
+
+		// single area sized with % - let it take the full size
+		if (aPercentSizeIdx.length === 1 && aContentAreas.length === 1) {
+			this._calculatedSizes[aPercentSizeIdx[0]] = iAvailableContentSize;
+			iRemainingSize -= iAvailableContentSize;
+		} else {
+			iRemainingSize = Splitter.prototype._calcPercentBasedSizes.apply(this, arguments);
+		}
+
+		var iMinSizeOfAutoSizedAreas = aContentAreas
+			.filter(function (oArea) {
+				return oArea.getLayoutData().getSize() === "auto";
+			})
+			.reduce(function (iSum, oArea) {
+				return iSum + oArea.getLayoutData().getMinSize();
+			}, 0);
+
+		// calculated % exceed the available space - shrink areas if possible
+		if (iRemainingSize < iMinSizeOfAutoSizedAreas) {
+			var iNeededSize = Math.abs(iRemainingSize - iMinSizeOfAutoSizedAreas);
+
+			// shrink areas from right to left
+			for (var i = aPercentSizeIdx.length - 1; i >= 0; i--) {
+				var iIdx = aPercentSizeIdx[i],
+					oArea = aContentAreas[iIdx],
+					iCalculatedSize = this._calculatedSizes[iIdx],
+					oLD = oArea.getLayoutData();
+
+				if (oLD._isMarked()) {
+					var iNewSize = iCalculatedSize - iNeededSize;
+
+					if (iNewSize < oLD.getMinSize()) {
+						iNewSize = oLD.getMinSize();
+					}
+
+					this._calculatedSizes[iIdx] = iNewSize;
+
+					var iIncreasedSize = iCalculatedSize - iNewSize;
+					iNeededSize -= iIncreasedSize;
+					iRemainingSize += iIncreasedSize;
+				}
+
+				// already shrunk enough
+				if (iNeededSize <= 0) {
+					break;
+				}
+			}
+		}
+
+		return iRemainingSize;
 	};
 
 	AssociativeSplitter.prototype._pxToPercent = function (iPx, iFullSize) {
@@ -208,130 +269,15 @@ sap.ui.define([
 	};
 
 	/**
-	 * Recalculates the content sizes in three steps:
-	 *  1. Searches for all absolute values ("px") and deducts them from the available space.
-	 *  2. Searches for all percent values and interprets them as % of the available space after step 1
-	 *  3. Divides the rest of the space uniformly between all contents with "auto" size values
-	 *
-	 * @private
 	 * @override
 	 */
-	AssociativeSplitter.prototype._recalculateSizes = function () {
-		// TODO: (?) Use maxSize value from layoutData
-		var i, sSize, oLayoutData, iColSize, idx, iSize, iMinSize;
-
-		// Read all content sizes from the layout data
-		var aSizes = [];
-		var aContentAreas = this._getContentAreas();
-		var sOrientation = this.getOrientation();
-		var aAutosizeIdx = [];
-		var aAutoMinsizeIdx = [];
-		var aPercentsizeIdx = [];
-
-		for (i = 0; i < aContentAreas.length; ++i) {
-			oLayoutData = aContentAreas[i].getLayoutData();
-			sSize = oLayoutData ? oLayoutData.getSize() : "auto";
-
-			aSizes.push(sSize);
-		}
-
-		var iAvailableSize = this._calculateAvailableContentSize(aSizes) + 1;
-		this._calculatedSizes = [];
-
-		// Remove fixed sizes from available size
-		for (i = 0; i < aSizes.length; ++i) {
-			sSize = aSizes[i];
-
-			if (sSize.indexOf("px") > -1) {
-				// Pixel based Value - deduct it from available size
-				iSize = parseInt(sSize);
-				iAvailableSize -= iSize;
-				this._calculatedSizes[i] = iSize;
-			} else if (sSize.indexOf("%") > -1) {
-				aPercentsizeIdx.push(i);
-			} else if (sSize === "auto") {
-				oLayoutData = aContentAreas[i].getLayoutData();
-				if (oLayoutData && parseInt(oLayoutData.getMinSize()) !== 0) {
-					aAutoMinsizeIdx.push(i);
-				} else {
-					aAutosizeIdx.push(i);
-				}
-			} else {
-				Log.error("Illegal size value: " + aSizes[i]);
-			}
-		}
-
-		var bWarnSize = false; // Warn about sizes being too big for the available space
-
-		// If more than the available size if assigned to fixed width content, the rest will get no
-		// space at all
-		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
-
-		// Now calculate % of the available space
-		var iRest = iAvailableSize;
-		iAvailableSize = sOrientation === "Horizontal" ? this.$().width() : this.$().height();
-
-		var iPercentSizes = aPercentsizeIdx.length;
-		for (i = 0; i < iPercentSizes; ++i) {
-			idx = aPercentsizeIdx[i];
-			if (iPercentSizes === 1 && aContentAreas.length === 1) {
-				iColSize = iAvailableSize;
-			} else {
-				// Percent based Value - deduct it from available size
-				iColSize = parseFloat(aSizes[idx]) / 100 * iAvailableSize;
-				iMinSize = parseInt(aContentAreas[idx].getLayoutData().getMinSize());
-
-				if (iColSize < iMinSize) {
-					iColSize = iMinSize;
-				}
-			}
-			this._calculatedSizes[idx] = iColSize;
-			iRest -= iColSize;
-		}
-		iAvailableSize = iRest;
-
-		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
-
-		// Calculate auto sizes
-		iColSize = Math.floor(iAvailableSize / (aAutoMinsizeIdx.length + aAutosizeIdx.length), 0);
-
-		// First calculate auto-sizes with a minSize constraint
-		var iAutoMinSizes = aAutoMinsizeIdx.length;
-		for (i = 0; i < iAutoMinSizes; ++i) {
-			idx = aAutoMinsizeIdx[i];
-			iMinSize = parseInt(aContentAreas[idx].getLayoutData().getMinSize());
-			if (iMinSize > iColSize) {
-				this._calculatedSizes[idx] = iMinSize;
-				iAvailableSize -= iMinSize;
-			} else {
-				this._calculatedSizes[idx] = iColSize;
-				iAvailableSize -= iColSize;
-			}
-		}
-
-		if (iAvailableSize < 0) { bWarnSize = true; iAvailableSize = 0; }
-
-		// Now calculate "auto"-sizes
-		iRest = iAvailableSize;
-		var iAutoSizes = aAutosizeIdx.length;
-		iColSize = Math.floor(iAvailableSize / iAutoSizes, 0);
-		for (i = 0; i < iAutoSizes; ++i) {
-			idx = aAutosizeIdx[i];
-			this._calculatedSizes[idx] = iColSize;
-			iRest -= iColSize;
-		}
-
-		if (bWarnSize) {
-			// TODO: Decide if the warning should be kept - might spam the console but on the other
-			//       hand it might make analyzing of splitter bugs easier, since we can just ask
-			//       developers if there was a [Splitter] output on the console if the splitter looks
-			//       weird in their application.
-			Log.info(
-				"[Splitter] The set sizes and minimal sizes of the splitter contents are bigger " +
-				"than the available space in the UI."
-			);
-		}
-		this._calculatedSizes = this._calculatedSizes;
+	AssociativeSplitter.prototype._logConstraintsViolated = function () {
+		Log.warning(
+			"The set sizes and minimal sizes of the splitter contents are bigger than the available space in the UI. " +
+			"Consider enabling the pagination mechanism by setting the 'requiredParentWidth' property of the panes",
+			null,
+			"sap.ui.layout.ResponsiveSplitter"
+		);
 	};
 
 	AssociativeSplitter.prototype.containsControl = function (sControlId) {

@@ -1,16 +1,18 @@
 /*global QUnit sinon */
 sap.ui.define([
-	'sap/ui/layout/Splitter',
-	'sap/ui/layout/SplitterLayoutData',
-	'sap/ui/commons/Button',
-	'sap/m/Panel'
-], function(
+	"sap/base/Log",
+	"sap/ui/layout/Splitter",
+	"sap/ui/layout/SplitterLayoutData",
+	"sap/m/Button",
+	"sap/m/Panel"
+], function (
+	Log,
 	Splitter,
 	SplitterLayoutData,
 	Button,
 	Panel
 ) {
-	'use strict';
+	"use strict";
 
 	function createExampleContent(sSize) {
 		if (createExampleContent.called === undefined) {
@@ -31,7 +33,6 @@ sap.ui.define([
 
 		var oContent = new Button({
 			width: "100%",
-			height: "100%",
 			text: "Content!",
 			layoutData: oLd
 		});
@@ -43,21 +44,7 @@ sap.ui.define([
 		contentAreas: [createExampleContent("100px"), createExampleContent("200px"), createExampleContent("300px")]
 	});
 
-	var iResizes = 0;
-	var fnResize = function (oEvent) {
-		++iResizes;
-	};
-	oSplitter.attachResize(fnResize);
-	var iRenderings = 0;
-	oSplitter.addDelegate({
-		onAfterRendering: function () {
-			++iRenderings;
-		}
-	});
-
-
 	oSplitter.placeAt("qunit-fixture");
-
 	sap.ui.getCore().applyChanges();
 
 	QUnit.module("API", {
@@ -129,13 +116,11 @@ sap.ui.define([
 		var oBtn1 = new Button({
 			text: "Content 2",
 			width: "100%",
-			height: "100%",
 			layoutData: new SplitterLayoutData({size: "300px"})
 		});
 		var oBtn2 = new Button({
 			text: "Content 2",
 			width: "100%",
-			height: "100%",
 			layoutData: new SplitterLayoutData({size: "200px"})
 		});
 		var oSplitter = new Splitter({
@@ -172,24 +157,20 @@ sap.ui.define([
 		var oContainer1 = new Button({
 				text: "Content 1",
 				width: "100%",
-				height: '100%',
 				layoutData: new SplitterLayoutData({size: "33.33%"})
 			}),
 			oContainer2 = new Button({
 				text: "Content 2",
 				width: "100%",
-				height: '100%',
 				layoutData: new SplitterLayoutData({size: "33.33%"})
 			}),
 			oContainer3 = new Button({
 				text: "Content 3",
 				width: "100%",
-				height: '100%',
 				layoutData: new SplitterLayoutData({size: "33.33%"})
 			}),
 
 			oSplitter = new Splitter({
-				height: "500px",
 				width: "500px",
 				contentAreas: [oContainer1, oContainer2, oContainer3]
 			}).placeAt("qunit-fixture");
@@ -266,6 +247,24 @@ sap.ui.define([
 		oSplitter.rerender();
 	});
 
+	QUnit.test("Single area with 100% size", function (assert) {
+		// Arrange
+		var oCont = new Button({
+			text: "Content 2",
+			layoutData: new SplitterLayoutData({size: "100%"})
+		});
+		var oSplitter = new Splitter({
+			contentAreas: [oCont]
+		});
+		oSplitter.placeAt("qunit-fixture");
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.strictEqual(oCont.$().parent().width(), oSplitter.$().width(), "Content area should take all the available width when size is 100%");
+
+		// Clean up
+		oSplitter.destroy();
+	});
 
 	QUnit.module("Mixed Area Sizes");
 
@@ -694,4 +693,70 @@ sap.ui.define([
 		// cleanup
 		this.oSplitter._onBarMoveEnd({ changedTouches: false }); // used to deregister event listeners added onmousedown
 	});
+
+	QUnit.module("Logging", {
+		beforeEach: function () {
+			this.oSplitter = new Splitter();
+			this.oSplitter.placeAt("qunit-fixture");
+		},
+		afterEach: function () {
+			this.oSplitter.destroy();
+		}
+	});
+
+	QUnit.test("There is warning when there is not enough space to fit the content", function (assert) {
+		// arrange
+		var oLogSpy = sinon.spy(Log, "warning");
+		this.oSplitter.setWidth("300px");
+		this.oSplitter.addContentArea(new Button({
+			layoutData: new SplitterLayoutData({
+				minSize: 200
+			})
+		}));
+		this.oSplitter.addContentArea(new Button({
+			layoutData: new SplitterLayoutData({
+				minSize: 100
+			})
+		}));
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.ok(
+			oLogSpy.calledWith("The set sizes and minimal sizes of the splitter contents are bigger than the available space in the UI."),
+			"Warning is logged"
+		);
+
+		// clean up
+		oLogSpy.restore();
+	});
+
+	QUnit.test("There is NO warning when there is enough space to fit the content", function (assert) {
+		// arrange
+		var oLogSpy = sinon.spy(Log, "warning");
+		this.oSplitter.setWidth("300px");
+		this.oSplitter.addContentArea(new Button({
+			layoutData: new SplitterLayoutData({
+				minSize: 200
+			})
+		}));
+		this.oSplitter.addContentArea(new Button({
+			layoutData: new SplitterLayoutData({
+				minSize: 80
+			})
+		}));
+		sap.ui.getCore().applyChanges();
+
+		// assert
+		assert.notOk(
+			oLogSpy.calledWith(
+				"The set sizes and minimal sizes of the splitter contents are bigger than the available space in the UI. " +
+				"Some of the sizes have to be reduced or sap.ui.layout.ResponsiveSplitter should be used instead"
+			),
+			"Warning is not logged"
+		);
+
+		// clean up
+		oLogSpy.restore();
+	});
+
 });
