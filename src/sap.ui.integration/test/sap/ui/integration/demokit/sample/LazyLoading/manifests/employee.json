@@ -1,0 +1,17 @@
+{
+	"firstName": "Donna",
+	"lastName": "Moore",
+	"position": "Sales Executive",
+	"phone": "+1 202 555 5555",
+	"photo": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Avatar_1.png",
+	"manager": {
+		"firstName": "John",
+		"lastName": "Miller",
+		"photo": "./test-resources/sap/ui/integration/demokit/sample/CardsLayout/images/Avatar_2.png"
+	},
+	"company": {
+		"name": "Company A",
+		"address": "481 West Street, Anytown OH 45066, USA",
+		"website": "www.company_a.example.com"
+	}
+}

@@ -1,0 +1,79 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.samples.object1",
+		"type": "card"
+	},
+	"sap.card": {
+		"type": "Object",
+		"data": {
+			"request": {
+				"url": "sap/ui/integration/sample/LazyLoading/manifests/employee.json"
+			}
+		},
+		"header": {
+			"icon": {
+				"src": "{photo}"
+			},
+			"title": "Object Card",
+			"subTitle": "{position}"
+		},
+		"content": {
+			"groups": [
+				{
+					"title": "Contact Details",
+					"items": [
+						{
+							"label": "First Name",
+							"value": "{firstName}"
+						},
+						{
+							"label": "Last Name",
+							"value": "{lastName}"
+						},
+						{
+							"label": "Phone",
+							"value": "{phone}"
+						}
+					]
+				},
+				{
+					"title": "Organizational Details",
+					"items": [
+						{
+							"label": "Direct manager",
+							"value": "{manager/firstName} {manager/lastName}",
+							"icon": {
+								"src": "{manager/photo}"
+							}
+						}
+					]
+				},
+				{
+					"title": "Company Details",
+					"items": [
+						{
+							"label": "Company Name",
+							"value": "{company/name}"
+						},
+						{
+							"label": "Address",
+							"value": "{company/address}"
+						},
+						{
+							"label": "Website",
+							"value": "{company/website}",
+							"actions": [
+								{
+									"type": "Navigation",
+									"parameters": {
+										"url": "{company/website}"
+									}
+								}
+							]
+						}
+					]
+				}
+			]
+		}
+	}
+}

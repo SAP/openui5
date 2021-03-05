@@ -1,0 +1,71 @@
+{
+	"sap.app": {
+		"id": "cardsdemo.samples.table1",
+		"type": "card"
+	},
+	"sap.card": {
+	  "data": {
+		"request": {
+		  "url": "sap/ui/integration/sample/LazyLoading/manifests/tableData.json"
+		}
+	  },
+		"type": "Table",
+	  "header": {
+		"type": "Numeric",
+		"data": {
+		  "path": "/header"
+		},
+		"title": "Table Card ",
+		"subTitle": "{revenue}",
+		"unitOfMeasurement": "EUR",
+		"mainIndicator": {
+		  "number": "{number}",
+		  "unit": "{unit}",
+		  "trend": "{trend}",
+		  "state": "{state}"
+		},
+		"details": "{details}",
+		"sideIndicators": [
+		  {
+			"title": "Target",
+			"number": "{target/number}",
+			"unit": "{target/unit}"
+		  },
+		  {
+			"title": "Deviation",
+			"number": "{deviation/number}",
+			"unit": "%"
+		  }
+		]
+	  },
+		"content": {
+			"data": {
+
+				"path": "/content"
+			},
+			"maxItems": 9,
+			"row": {
+				"columns": [
+					{
+						"title": "Sales Order",
+						"value": "{salesOrder}",
+						"identifier": true
+					},
+					{
+						"title": "Customer",
+						"value": "{name}"
+					},
+					{
+						"title": "Net Amount",
+						"value": "{netAmount}"
+					},
+					{
+						"title": "Status",
+						"value": "{status}",
+						"state": "{statusState}"
+					}
+				]
+			}
+		}
+	}
+}
