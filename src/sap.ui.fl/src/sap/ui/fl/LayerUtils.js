@@ -170,6 +170,16 @@ function(
 		},
 
 		/**
+		 * Determines if the sap-ui-layer parameter is set. This is required to avoid a circling
+		 *
+		 * @returns {boolean} <code>true</code> if the top layer is also the max layer, otherwise <code>false</code>
+		 * @public
+		 */
+		isSapUiLayerParameterProvided: function () {
+			return !!getUrlParameter("sap-ui-layer");
+		},
+
+		/**
 		 * Returns the current layer as defined by the url parameter; if the end user flag is set, it always returns "USER".
 		 *
 		 * @returns {string} the current layer

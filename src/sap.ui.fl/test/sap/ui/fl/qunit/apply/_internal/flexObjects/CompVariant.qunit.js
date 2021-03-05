@@ -7,6 +7,7 @@ sap.ui.define([
 	"sap/ui/fl/Utils",
 	"sap/ui/fl/registry/Settings",
 	"sap/ui/fl/Layer",
+	"sap/base/util/UriParameters",
 	"sap/ui/thirdparty/sinon-4"
 ], function(
 	merge,
@@ -15,6 +16,7 @@ sap.ui.define([
 	Utils,
 	Settings,
 	Layer,
+	UriParameters,
 	sinon
 ) {
 	"use strict";
@@ -183,6 +185,34 @@ sap.ui.define([
 		},
 		currentUser: "PAUL",
 		expectedReadOnly: false
+	}, {
+		testName: "Given a VENDOR variant with a set sap-ui-layer=VENDOR parameter when isReadOnly is called",
+		variant: {
+			layer: Layer.VENDOR,
+			user: "FRANK",
+			originalLanguage: "EN"
+		},
+		settings: {
+			isKeyUser: true,
+			isPublicLayerAvailable: false
+		},
+		currentUser: "PAUL",
+		expectedReadOnly: false,
+		sapUiLayerUrlParameter: Layer.VENDOR
+	}, {
+		testName: "Given a CUSTOMER variant with a set sap-ui-layer=VENDOR parameter when isReadOnly is called",
+		variant: {
+			layer: Layer.CUSTOMER,
+			user: "FRANK",
+			originalLanguage: "EN"
+		},
+		settings: {
+			isKeyUser: true,
+			isPublicLayerAvailable: false
+		},
+		currentUser: "PAUL",
+		expectedReadOnly: true,
+		sapUiLayerUrlParameter: Layer.VENDOR
 	}];
 
 	function stubCurrentUser(sUserId) {
@@ -197,17 +227,17 @@ sap.ui.define([
 		});
 	}
 
-	function createVariant(mTestSetup) {
-		var mVariantData = Change.createInitialFileContent(merge(mTestSetup.variant, {
+	function createVariant(oVariantData) {
+		var mVariantData = Change.createInitialFileContent(merge(oVariantData, {
 			fileType: "variant",
 			fileName: "testVariant_123",
 			namespace: "testNamespace"
 		}));
 
 		var oVariant = new CompVariant(mVariantData);
-		oVariant.getDefinition().support.user = mTestSetup.variant.user;
-		oVariant.getDefinition().sourceSystem = mTestSetup.variant.sourceSystem;
-		oVariant.getDefinition().sourceClient = mTestSetup.variant.sourceClient;
+		oVariant.getDefinition().support.user = oVariantData.user;
+		oVariant.getDefinition().sourceSystem = oVariantData.sourceSystem;
+		oVariant.getDefinition().sourceClient = oVariantData.sourceClient;
 
 		return oVariant;
 	}
@@ -224,8 +254,15 @@ sap.ui.define([
 				// mocked settings
 				Settings._instance = new Settings(mTestSetup.settings);
 				stubCurrentUser(mTestSetup.currentUser);
+				if (mTestSetup.sapUiLayerUrlParameter) {
+					sandbox.stub(UriParameters, "fromQuery").returns({
+						get: function () {
+							return mTestSetup.sapUiLayerUrlParameter;
+						}
+					});
+				}
 
-				var oVariant = createVariant(mTestSetup);
+				var oVariant = createVariant(mTestSetup.variant);
 
 				assert.equal(mTestSetup.expectedReadOnly, oVariant.isReadOnly(), "then the boolean was determined correct");
 			});
@@ -251,7 +288,14 @@ sap.ui.define([
 					// mocked settings
 					Settings._instance = new Settings(mTestSetup.settings);
 					stubCurrentUser(mTestSetup.currentUser);
-					var oVariant = createVariant(mTestSetup);
+					var oVariant = createVariant(mTestSetup.variant);
+					if (mTestSetup.sapUiLayerUrlParameter) {
+						sandbox.stub(UriParameters, "fromQuery").returns({
+							get: function () {
+								return mTestSetup.sapUiLayerUrlParameter;
+							}
+						});
+					}
 
 					sandbox.stub(Utils, "getCurrentLanguage").returns(mLanguageScenario.language);
 
