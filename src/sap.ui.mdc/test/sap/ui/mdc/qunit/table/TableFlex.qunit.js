@@ -48,7 +48,7 @@ sap.ui.define([
 	}
 
 	QUnit.module("Basic functionality with JsControlTreeModifier", {
-		beforeEach: function() {
+		before: function() {
 
 			var sTableView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table"><Table p13nMode="Column,Sort,Filter,Group" id="myTable"><columns><mdcTable:Column id="myTable--column0" header="column 0" dataProperty="column0"><m:Text text="{column0}" id="myTable--text0" /></mdcTable:Column><mdcTable:Column id="myTable--column1" header="column 1" dataProperty="column1"><m:Text text="{column1}" id="myTable--text1" /></mdcTable:Column><mdcTable:Column id="myTable--column2" header="column 2" dataProperty="column2"><m:Text text="{column2}" id="myTable--text2" /></mdcTable:Column></columns></Table></mvc:View>';
 
@@ -75,9 +75,12 @@ sap.ui.define([
 						}
 					};
 				};
+
+				//Only create changes once the Table has been initialized (similar to a 'real' scenario in state/p13n appliance)
+				return this.oTable.initialized();
 			}.bind(this));
 		},
-		afterEach: function() {
+		after: function() {
 			this.oUiComponentContainer.destroy();
 			TableDelegate.fetchProperties = this._orgFn;
 			delete this._orgFn;
@@ -98,7 +101,7 @@ sap.ui.define([
 			assert.strictEqual(this.oTable.getColumns().length, 3);
 
 			// Test apply
-			oChangeHandler.applyChange(oChange, this.oTable, {
+			return oChangeHandler.applyChange(oChange, this.oTable, {
 				modifier: JsControlTreeModifier,
 				appComponent: this.oUiComponent,
 				view: this.oView
@@ -107,7 +110,7 @@ sap.ui.define([
 				assert.strictEqual(this.oTable.getColumns().length, 2);
 
 				// Test revert
-				oChangeHandler.revertChange(oChange, this.oTable, {
+				return oChangeHandler.revertChange(oChange, this.oTable, {
 					modifier: JsControlTreeModifier,
 					appComponent: this.oUiComponent,
 					view: this.oView
@@ -130,7 +133,7 @@ sap.ui.define([
 			var oChangeHandler = TableFlexHandler["addColumn"].changeHandler;
 			assert.strictEqual(this.oTable.getColumns().length, 3);
 			// Test apply
-			oChangeHandler.applyChange(oChange, this.oTable, {
+			return oChangeHandler.applyChange(oChange, this.oTable, {
 				modifier: JsControlTreeModifier,
 				appComponent: this.oUiComponent,
 				view: this.oView
@@ -139,7 +142,7 @@ sap.ui.define([
 				assert.strictEqual(this.oTable.getColumns().length, 4);
 
 				// Test revert
-				oChangeHandler.revertChange(oChange, this.oTable, {
+				return oChangeHandler.revertChange(oChange, this.oTable, {
 					modifier: JsControlTreeModifier,
 					appComponent: this.oUiComponent,
 					view: this.oView
@@ -152,7 +155,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("addCondition (via AdaptationFilterBar)", function(assert){
-		var done = assert.async();
 
 		aPropertyInfo.forEach(function(oProperty){
 			oProperty.typeConfig = TypeUtil.getTypeConfig("sap.ui.model.type.String");
@@ -179,31 +181,40 @@ sap.ui.define([
 			]
 		};
 
-		//wait for Table initialization
-		this.oTable.initialized().then(function(){
-			//initialize inbuilt filter
-			this.oTable.retrieveInbuiltFilter().then(function(oP13nFilter){
+		//1) Initialize inbuilt filter
+		return this.oTable.retrieveInbuiltFilter()
+		.then(function(oP13nFilter){
 
-				this.oTable.getEngine().createChanges({
-					control: this.oTable,
-					key: "Filter",
-					state: mNewConditions,
-					applyAbsolute: false,
-					suppressAppliance: true
-				}).then(function(aChanges){
-					//check raw changes
-					assert.equal(aChanges[0].selectorElement.getId(), this.oTable.getId(), "Correct Selector");
-					assert.equal(aChanges[1].selectorElement.getId(), this.oTable.getId(), "Correct Selector");
+			return oP13nFilter.initialized();
 
-					FlexUtil.handleChanges(aChanges).then(function(){
-						//check updates via changehandler
-						assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
-						assert.deepEqual(this.oTable.getInbuiltFilter().getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
-						done();
+		})
+		.then(function(oP13nFilter){
 
-					}.bind(this));
-				}.bind(this));
-			}.bind(this));
+			//Trigger change creation via Engine
+			return this.oTable.getEngine().createChanges({
+				control: this.oTable,
+				key: "Filter",
+				state: mNewConditions,
+				applyAbsolute: false,
+				suppressAppliance: true
+			});
+
+		}.bind(this))
+		//2) Check 'raw' changes
+		.then(function(aChanges){
+
+			//check raw changes
+			assert.equal(aChanges[0].selectorElement.getId(), this.oTable.getId(), "Correct Selector");
+			assert.equal(aChanges[1].selectorElement.getId(), this.oTable.getId(), "Correct Selector");
+
+			//Process changes via Flex to verify change appliance on Table level (->not on AdaptationFilterBar)
+			return FlexUtil.handleChanges(aChanges);
+		}.bind(this))
+		//3) Check flex processed changes
+		.then(function(){
+			//check updates via changehandler
+			assert.deepEqual(this.oTable.getFilterConditions(), mNewConditions, "conditions are present on Table");
+			assert.deepEqual(this.oTable.getInbuiltFilter().getFilterConditions(), mNewConditions, "conditions are present on inner FilterBar");
 		}.bind(this));
 	});
 
