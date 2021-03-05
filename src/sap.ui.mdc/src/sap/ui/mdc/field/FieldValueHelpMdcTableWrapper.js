@@ -80,8 +80,6 @@ sap.ui.define([
 	FieldValueHelpMdcTableWrapper.prototype.fieldHelpOpen = function(bSuggestion) {
 		var oTable = this.getTable();
 
-		this._bShouldRebind = true;
-
 		if (oTable) {
 			if (this.OInnerWrapperClass) {
 				return this.OInnerWrapperClass.prototype.fieldHelpOpen.call(this, bSuggestion);
@@ -141,7 +139,6 @@ sap.ui.define([
 
 		this._oCurrentConditions = null;
 		this._bSuggestion = null;
-		this._bShouldRebind = null;
 
 		if (this._oInnerWrapperClassPromise) {
 			this._oInnerWrapperClassPromise = null;
@@ -238,12 +235,14 @@ sap.ui.define([
 				oTable.setFilter(oFilterBar);
 			}
 
+			this._oCurrentConditions = this._oCurrentConditions || {};
+
 			var oCurrentConditions = oFilterBar.getConditions();
-			if (this._bShouldRebind || !deepEqual(this._oCurrentConditions, oCurrentConditions)) {
-				this._bShouldRebind = false;
+			if (!deepEqual(this._oCurrentConditions, oCurrentConditions) || (oTable._oTable && oTable._oTable.getShowOverlay())) {
 				oTable.initialized().then(function() {
 					this._oCurrentConditions = oCurrentConditions;
-					oTable.rebind();
+					this._handleScrolling(); // reset scrolling to prevent skip parameters being added
+					oFilterBar.triggerSearch();
 				}.bind(this));
 			}
 
