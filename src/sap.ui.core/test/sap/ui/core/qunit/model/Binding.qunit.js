@@ -218,4 +218,15 @@ sap.ui.define([
 		assert.strictEqual(new Binding(undefined, "~sPath", "~oContext").getResolvedPath(),
 			undefined);
 	});
+
+	//*********************************************************************************************
+	QUnit.test("checkDataState", function (assert) {
+		var oBinding = new Binding("~oModel", "~sPath", "~oContext");
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("_checkDataState").withExactArgs("~resolvedPath", "~mPaths");
+
+		// code under test
+		oBinding.checkDataState("~mPaths");
+	});
 });

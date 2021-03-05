@@ -83,7 +83,7 @@ sap.ui.define([
 			iLength = this.oModel.iSizeLimit;
 		}
 
-		var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+		var sResolvedPath = this.getResolvedPath(),
 			that = this,
 			aContexts,
 			oContext,

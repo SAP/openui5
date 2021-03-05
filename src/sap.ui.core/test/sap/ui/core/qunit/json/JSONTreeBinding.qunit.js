@@ -180,10 +180,17 @@ sap.ui.define([
 		bindings[0] = oModel.bindTree(sPath, oContext, aFilters || [], mParameters, aSorters);
 	}
 
-	QUnit.module("sap.ui.model.json.JSONTreebinding", {});
+	function getErrorWithMessage(sFilter) {
+		return new Error("Filter instances contain an unsupported FilterOperator: " + sFilter);
+	}
+
+	QUnit.module("sap.ui.model.json.JSONTreebinding", {
+		beforeEach: function () {
+			setup();
+		}
+	});
 
 	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert) {
-		setup();
 		createTreeBinding("/orgStructure");
 		var treeBinding = bindings[0],
 			contexts,
@@ -217,7 +224,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeBinding relative getRootContexts getNodeContexts", function(assert) {
-		 setup();
 		 createTreeBinding("orgStructure");
 		 var treeBinding = bindings[0],
 			 contexts,
@@ -253,7 +259,6 @@ sap.ui.define([
 	 });
 
 	QUnit.test("TreeBinding getRootContexts getNodeContexts", function(assert) {
-		setup();
 		createTreeBinding("/orgStructure");
 		var treeBinding = bindings[0],
 			contexts,
@@ -296,7 +301,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeBinding single filters", function(assert) {
-		setup();
 		createTreeBinding("/orgStructure");
 
 		var treeBinding = bindings[0];
@@ -319,7 +323,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeBinding multi filters", function(assert) {
-		setup();
 		createTreeBinding("/orgStructure");
 
 		var treeBinding = bindings[0];
@@ -341,7 +344,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeBinding filters and setData again", function(assert) {
-		setup();
 		createTreeBinding("/orgStructure");
 
 		var treeBinding = bindings[0];
@@ -400,7 +402,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeBinding - Application & Control filters - initial filters", function(assert) {
-		setup();
 		createTreeBinding("/orgStructureAppControlFilter", null,
 			[new Filter("tree", FilterOperator.Contains, "#1")]
 		);
@@ -427,7 +428,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeBinding - Application & Control filters - clear filters", function(assert) {
-		setup();
 		createTreeBinding("/orgStructureAppControlFilter", null,
 			[new Filter("tree", FilterOperator.Contains, "#1")]
 		);
@@ -469,7 +469,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeBinding - Application & Control filters - clear filters separately", function(assert) {
-		setup();
 		createTreeBinding("/orgStructureAppControlFilter", null,
 			[new Filter("tree", FilterOperator.Contains, "#1")]
 		);
@@ -529,7 +528,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeBinding - Application & Control filters - changing filters", function(assert) {
-		setup();
 		createTreeBinding("/orgStructureAppControlFilter");
 
 		var treeBinding = bindings[0];
@@ -571,7 +569,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Display root node", function(assert) {
-		setup();
 		createTreeBinding("/orgStructure/0", null, [], {
 			displayRootNode: true
 		});
@@ -606,7 +603,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeBinding single filter ignoring model size limit", function(assert) {
-		setup();
 		oModel.setSizeLimit(1);
 		createTreeBinding("/orgStructure");
 
@@ -630,7 +626,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind aggregation", function(assert) {
-		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
 		});
@@ -668,7 +663,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Bind aggregation with arrayNames param", function(assert) {
-		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true,
 			arrayNames: ["children"]
@@ -707,7 +701,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Paging", function(assert) {
-		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
 		});
@@ -742,7 +735,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sorting - Sorters in bindTree", function (assert) {
-		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
 		},
@@ -778,7 +770,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Sorting - sort() call", function (assert) {
-		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: true
 		});
@@ -828,7 +819,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeBinding single filter with array structure", function(assert) {
-		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: false
 		});
@@ -851,7 +841,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("TreeBinding single filter with array structure and arrayNames param", function(assert) {
-		setup();
 		createTreeBinding("/orgStructure2", null, [], {
 			displayRootNode: false,
 			arrayNames: ["children"]
@@ -922,16 +911,6 @@ sap.ui.define([
 		assert.equal(oBinding.getChildCount(oContext), 200, "getChildCount(oContext) returns the correct number of child nodes (200)");
 	});
 
-	QUnit.module("sap.ui.model.json.JSONTreebinding: Unsupported Filters", {
-		beforeEach: function () {
-			setup();
-		},
-
-		getErrorWithMessage: function(sFilter) {
-			return new Error("Filter instances contain an unsupported FilterOperator: " + sFilter);
-		}
-	});
-
 	QUnit.test("constructor - Any/All are rejected", function (assert) {
 		assert.throws(
 			function() {
@@ -942,7 +921,7 @@ sap.ui.define([
 
 				oModel.bindTree("/teamMembers", undefined, [oMultiFilter]);
 			},
-			this.getErrorWithMessage(FilterOperator.Any),
+			getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -957,7 +936,7 @@ sap.ui.define([
 				var oFilter2 = new Filter({path: "firstName", operator: FilterOperator.Any, variable: "id1", condition: new Filter()});
 				oTreeBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(FilterOperator.Any),
+			getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
@@ -968,7 +947,7 @@ sap.ui.define([
 				var oFilter2 = new Filter("firstName", FilterOperator.EQ, "Rush");
 				oTreeBinding.filter([oFilter, oFilter2]);
 			},
-			this.getErrorWithMessage(FilterOperator.All),
+			getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
@@ -985,7 +964,7 @@ sap.ui.define([
 
 				oTreeBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(FilterOperator.All),
+			getErrorWithMessage(FilterOperator.All),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 
@@ -999,7 +978,7 @@ sap.ui.define([
 
 				oTreeBinding.filter([oMultiFilter]);
 			},
-			this.getErrorWithMessage(FilterOperator.Any),
+			getErrorWithMessage(FilterOperator.Any),
 			"Error thrown if filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -1027,7 +1006,7 @@ sap.ui.define([
 			function() {
 				oTreeBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(FilterOperator.All),
+			getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
 	});
@@ -1063,8 +1042,20 @@ sap.ui.define([
 			function() {
 				oTreeBinding.filter([oMultiFilter3]);
 			},
-			this.getErrorWithMessage(FilterOperator.All),
+			getErrorWithMessage(FilterOperator.All),
 			"Error thrown if  multi-filter instances contain an unsupported FilterOperator"
 		);
+	});
+
+	//**********************************************************************************************
+	QUnit.test("getRootsContexts: call getResolvedPath", function (assert) {
+		var oBinding = {
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		assert.deepEqual(JSONTreeBinding.prototype.getRootContexts.call(oBinding, 1, 1), []);
 	});
 });

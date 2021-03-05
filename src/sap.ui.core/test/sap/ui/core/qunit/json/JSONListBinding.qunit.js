@@ -1504,4 +1504,16 @@ sap.ui.define([
 		oLB.resume();
 		assert.equal(oLB.getContexts().length, 10, "Binding still has length 10 after calling resume");
 	});
+
+	//**********************************************************************************************
+	QUnit.test("_getContexts: calls getResolvedPath", function (assert) {
+		var oBinding = this.oListBinding;
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding.oModel).expects("getContext").withExactArgs("~resolvedPath/1")
+			.returns("~context");
+
+		// code under test
+		assert.deepEqual(oBinding._getContexts(1, 1), ["~context"]);
+	});
 });

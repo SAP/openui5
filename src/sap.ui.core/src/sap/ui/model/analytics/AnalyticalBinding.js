@@ -409,7 +409,7 @@ sap.ui.define([
 			this._abortAllPendingRequests();
 			// resolving the path makes sure that we can safely analyze the metadata,
 			// as we have a resourcepath for the QueryResult
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+			sResolvedPath = this.getResolvedPath();
 			if (sResolvedPath) {
 				this.resetData();
 				this._initialize(); // triggers metadata/annotation check
@@ -3755,7 +3755,7 @@ sap.ui.define([
 	 * @private
 	 */
 	AnalyticalBinding.prototype._getResourcePath = function() {
-		return this.isRelative() ? this.oModel.resolve(this.sPath, this.getContext()) : this.sPath;
+		return this.isRelative() ? this.getResolvedPath() : this.sPath;
 	};
 
 	/**
@@ -4729,7 +4729,7 @@ sap.ui.define([
 		var bChangeDetected = false;
 		if (!bForceUpdate) {
 			if (mEntityTypes) {
-				var sResolvedPath = this.oModel.resolve(this.sPath, this.oContext);
+				var sResolvedPath = this.getResolvedPath();
 				var oEntityType = this.oModel.oMetadata._getEntityTypeByPath(sResolvedPath);
 				if (oEntityType && (oEntityType.entityType in mEntityTypes)) {
 					bChangeDetected = true;
