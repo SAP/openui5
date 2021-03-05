@@ -25,6 +25,7 @@ sap.ui.define([
 		 * @param {object} mPropertyBag - Property bag for default delegate
 		 * @param {object} mPropertyBag.modelType - default delegate model type
 		 * @param {object} mPropertyBag.delegate - path to default delegate
+		 * @param {object} mPropertyBag.delegateType - Defines the type of the default delegate. Please look at <code>DelegageMediator.types</code> for possible entries
 	 	 * @param {object} [mPropertyBag.requiredLibraries] - map of required libraries
 		 */
 		registerDefaultDelegate: function (mPropertyBag) {

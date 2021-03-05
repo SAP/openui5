@@ -1150,6 +1150,11 @@ function(
 		 */
 		requireAsync: function(sModuleName) {
 			//TODO: get rid of require async as soon as sap.ui.require has learned Promises as return value
+			var oModule = sap.ui.require(sModuleName);
+			// apply directly if class was already loaded
+			if (oModule) {
+				return Promise.resolve(oModule);
+			}
 			return new Promise(function(fnResolve, fnReject) {
 				sap.ui.require([sModuleName], function(oModule) {
 					fnResolve(oModule);
