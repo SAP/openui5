@@ -67,7 +67,7 @@ sap.ui.define([
 	/**
 	 * Constructor for a new ODataModel.
 	 *
-	 * @param {string|object} serviceUrl
+	 * @param {string|object} vServiceUrl
 	 *   Base URI of the service to request data from; additional URL parameters appended here will
 	 *   be appended to every request. If you pass an object, it will be interpreted as the
 	 *   parameter object (second parameter). Then <code>mParameters.serviceUrl</code> becomes a
@@ -197,7 +197,7 @@ sap.ui.define([
 	 */
 	var ODataModel = Model.extend("sap.ui.model.odata.v2.ODataModel", /** @lends sap.ui.model.odata.v2.ODataModel.prototype */ {
 
-		constructor : function(sServiceUrl, mParameters) {
+		constructor : function(vServiceUrl, mParameters) {
 			Model.apply(this, arguments);
 
 			var sUser,
@@ -232,9 +232,11 @@ sap.ui.define([
 				bPersistTechnicalMessages,
 				that = this;
 
-			if (typeof (sServiceUrl) === "object") {
-				mParameters = sServiceUrl;
-				sServiceUrl = mParameters.serviceUrl;
+			if (typeof (vServiceUrl) === "object") {
+				mParameters = vServiceUrl;
+				this.sServiceUrl = mParameters.serviceUrl;
+			} else {
+				this.sServiceUrl = vServiceUrl;
 			}
 
 			if (mParameters) {
@@ -348,8 +350,7 @@ sap.ui.define([
 			this.pReadyForRequest = Promise.resolve();
 
 			// determine the service base url and the url parameters
-			this.sServiceUrl = sServiceUrl;
-			var aUrlParts = sServiceUrl.split("?");
+			var aUrlParts = this.sServiceUrl.split("?");
 			if (aUrlParts.length > 1) {
 				this.sServiceUrl = aUrlParts[0];
 				if (aUrlParts[1]) {
