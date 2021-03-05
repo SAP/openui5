@@ -2756,7 +2756,7 @@ sap.ui.define([
 	 */
 	ODataTreeBindingFlat.prototype._getCorrectChangeGroup = function (sKey) {
 		if (!sKey) {
-			sKey = this.oModel.resolve(this.getPath(), this.getContext());
+			sKey = this.getResolvedPath();
 		}
 		return this.oModel._resolveGroup(sKey).groupId;
 	};
@@ -2765,7 +2765,7 @@ sap.ui.define([
 	 * Creates a new entry, which can be added to this binding instance via addContexts(...).
 	 */
 	ODataTreeBindingFlat.prototype.createEntry = function (mParameters) {
-		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+		var sAbsolutePath = this.getResolvedPath();
 		var oNewEntry;
 
 		if (sAbsolutePath) {
@@ -2788,7 +2788,7 @@ sap.ui.define([
 		mParameters = mParameters || {};
 
 		// group id
-		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext()),
+		var sAbsolutePath = this.getResolvedPath(),
 			oOptimizedChanges = this._optimizeChanges();
 
 		if (!sAbsolutePath) {

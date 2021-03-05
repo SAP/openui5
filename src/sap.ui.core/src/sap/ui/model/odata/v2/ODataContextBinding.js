@@ -194,7 +194,7 @@ sap.ui.define([
 		var that = this, oData, sKey, oStoredEntry, bChangeDetected = false,
 			mParameters = this.mParameters,
 			bCreatedRelative = this.isRelative() && this.oContext && this.oContext.bCreated,
-			sResolvedPath = this.oModel.resolve(this.sPath, this.oContext),
+			sResolvedPath = this.getResolvedPath(),
 			sContextPath;
 
 		if (this.bInitial || bCreatedRelative) {

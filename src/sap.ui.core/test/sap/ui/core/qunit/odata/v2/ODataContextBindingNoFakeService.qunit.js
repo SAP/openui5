@@ -65,4 +65,28 @@ sap.ui.define([
 		assert.strictEqual(oBinding.oElementContext, "newContext");
 	});
 });
+	//*********************************************************************************************
+	QUnit.test("_refresh: Call getResolvedPath", function (assert) {
+		var oBinding = {
+				oContext : "~context",
+				oModel : {createBindingContext : function () {}},
+				mParameters : "~parameters",
+				sPath : "~path",
+				fireDataRequested : function () {},
+				getResolvedPath : function () {},
+				isRelative : function () {}
+			};
+
+		this.mock(oBinding).expects("isRelative").withExactArgs().returns(true);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding).expects("fireDataRequested").withExactArgs();
+		this.mock(oBinding.oModel).expects("createBindingContext")
+			.withExactArgs("~path", "~context", "~parameters", sinon.match.func, true)
+			.returns("~context");
+
+		// code under test
+		ODataContextBinding.prototype._refresh.call(oBinding);
+
+		assert.strictEqual(oBinding.bPendingRequest, true);
+	});
 });

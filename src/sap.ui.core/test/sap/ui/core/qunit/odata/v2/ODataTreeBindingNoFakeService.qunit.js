@@ -279,11 +279,8 @@ sap.ui.define([
 				oContext : oFixture.bSameContext ? oNewContext : "oContext",
 				_fireChange : function () {},
 				_initialize : function () {},
+				getResolvedPath : function () {},
 				isRelative : function () {},
-				oModel : {
-					resolve : function () {}
-				},
-				sPath : "sPath",
 				resetData : function () {},
 				bUsePreliminaryContext : oFixture.bUsePreliminary
 			},
@@ -297,9 +294,7 @@ sap.ui.define([
 				sinon.match.same(oNewContext))
 			.returns(true);
 		oBindingMock.expects("isRelative").withExactArgs().returns(true);
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs("sPath", sinon.match.same(oNewContext))
-			.returns("sResolvedPath");
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("sResolvedPath");
 		oBindingMock.expects("resetData").withExactArgs();
 		oBindingMock.expects("_initialize").withExactArgs();
 		oBindingMock.expects("_fireChange").withExactArgs({reason : ChangeReason.Context});
@@ -318,11 +313,8 @@ sap.ui.define([
 				oContext : "oContext",
 				_fireChange : function () {},
 				_initialize : function () {},
+				getResolvedPath : function () {},
 				isRelative : function () {},
-				oModel : {
-					resolve : function () {}
-				},
-				sPath : "sPath",
 				resetData : function () {}
 			},
 			oBindingMock = this.mock(oBinding),
@@ -342,9 +334,7 @@ sap.ui.define([
 			.withExactArgs("oContext", sinon.match.same(oNewContext))
 			.returns(true);
 		oBindingMock.expects("isRelative").withExactArgs().returns(true);
-		this.mock(oBinding.oModel).expects("resolve")
-			.withExactArgs("sPath", sinon.match.same(oNewContext))
-			.returns(undefined);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
 		oBindingMock.expects("resetData").exactly(sProperty ? 1 : 0).withExactArgs();
 		oBindingMock.expects("_fireChange").exactly(sProperty ? 1 : 0)
 			.withExactArgs({reason : ChangeReason.Context});
@@ -433,6 +423,19 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
+	QUnit.test("_refresh: uses getResolvedPath", function (assert) {
+		var oBinding = {
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		ODataTreeBinding.prototype._refresh.call(oBinding, /*bForceUpdate*/undefined,
+			/*mChangedEntities*/undefined, "~mEntityTypes");
+	});
+
+	//*********************************************************************************************
 [{"~changedEntityKey" : true}, {Foo : true}, {}].forEach(function (mChangedEntities, i) {
 	QUnit.test("_hasChangedEntity: " + i, function (assert) {
 		var oBinding = {
@@ -450,4 +453,72 @@ sap.ui.define([
 		assert.strictEqual(bResult, bExpectChange ? true : false);
 	});
 });
+
+	//*********************************************************************************************
+["~resolvedPath", undefined].forEach(function (sResolvedPath, i) {
+	QUnit.test("getDownloadUrl: getResolvedPath is called, " + i, function (assert) {
+		var oBinding = {
+				oModel : {_createRequestUrl : function () {}},
+				getFilterParams : function () {},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getFilterParams").withExactArgs().returns(undefined);
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(sResolvedPath);
+		this.mock(oBinding.oModel).expects("_createRequestUrl")
+			.withExactArgs(sResolvedPath, null, [])
+			.exactly(sResolvedPath ? 1 : 0)
+			.returns("~requestUrl");
+
+		// code under test
+		assert.strictEqual(ODataTreeBinding.prototype.getDownloadUrl.call(oBinding),
+			sResolvedPath ? "~requestUrl" : undefined);
+	});
+});
+
+	//*********************************************************************************************
+	QUnit.test("_getEntityType: getResolvedPath is called", function (assert) {
+		var oBinding = {
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		ODataTreeBinding.prototype._getEntityType.call(oBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_loadSingleRootNodeByNavigationProperties: no resolved path", function (assert) {
+		var oBinding = {
+				mRequestHandles : {},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns(undefined);
+
+		// code under test
+		ODataTreeBinding.prototype._loadSingleRootNodeByNavigationProperties.call(oBinding);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("_loadSingleRootNodeByNavigationProperties: with resolved path", function (assert) {
+		var oBinding = {
+				oModel : {read : function () {}},
+				mRequestHandles : {},
+				getResolvedPath : function () {}
+			};
+
+		this.mock(oBinding).expects("getResolvedPath").withExactArgs().returns("~resolvedPath");
+		this.mock(oBinding.oModel).expects("read")
+			.withExactArgs("~resolvedPath", sinon.match.object.and(sinon.match.has("groupId"))
+				.and(sinon.match.has("success")).and(sinon.match.has("error")))
+			.returns("~readHandler");
+
+		// code under test
+		ODataTreeBinding.prototype._loadSingleRootNodeByNavigationProperties.call(oBinding,
+			/*sNodeId*/ undefined, "~requestKey");
+
+		assert.strictEqual(oBinding.mRequestHandles["~requestKey"], "~readHandler");
+	});
 });
