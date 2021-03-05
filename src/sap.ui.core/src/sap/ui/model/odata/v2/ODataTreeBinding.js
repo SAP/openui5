@@ -313,7 +313,7 @@ sap.ui.define([
 			aRootContexts = this._getContextsForNodeId(null, iStartIndex, iLength, iThreshold);
 
 		} else {
-			sNodeId = this.oModel.resolve(this.getPath(), this.getContext());
+			sNodeId = this.getResolvedPath();
 
 			var bIsList = this.oModel.isList(this.sPath, this.getContext());
 			if (bIsList) {
@@ -745,7 +745,7 @@ sap.ui.define([
 			Log.warning(sErrorMsg);
 		}
 
-		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+		var sAbsolutePath = this.getResolvedPath();
 
 		// default filter is on the rootLevel
 		var sLevelFilter = "";
@@ -826,7 +826,7 @@ sap.ui.define([
 			var oNodeContext = this.oModel.getContext("/" + sNodeId);
 			var sHierarchyNodeId = oNodeContext.getProperty(this.oTreeProperties["hierarchy-node-for"]);
 
-			sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+			sAbsolutePath = this.getResolvedPath();
 			// only filter for the parent node if the given node is not the root (null)
 			// if root and we $count the collection
 			if (sNodeId != null) {
@@ -1030,7 +1030,7 @@ sap.ui.define([
 			}
 			this.bSkipDataEvents = false;
 
-			sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+			sAbsolutePath = this.getResolvedPath();
 			if (sAbsolutePath) {
 				sGroupId = this.sRefreshGroupId ? this.sRefreshGroupId : this.sGroupId;
 				this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
@@ -1184,7 +1184,7 @@ sap.ui.define([
 
 			var sAbsolutePath;
 			if (this.bHasTreeAnnotations) {
-				sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+				sAbsolutePath = this.getResolvedPath();
 			} else {
 				sAbsolutePath = sNodeId;
 			}
@@ -1320,7 +1320,7 @@ sap.ui.define([
 		if (this.mRequestHandles[sRequestKey]) {
 			this.mRequestHandles[sRequestKey].abort();
 		}
-		var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+		var sAbsolutePath = this.getResolvedPath();
 		if (sAbsolutePath) {
 			this.mRequestHandles[sRequestKey] = this.oModel.read(sAbsolutePath, {
 				urlParameters: aURLParams,
@@ -1859,9 +1859,8 @@ sap.ui.define([
 	 * @private
 	 */
 	ODataTreeBinding.prototype._hasTreeAnnotations = function() {
-		var oModel = this.oModel,
-			oMetadata = oModel.oMetadata,
-			sAbsolutePath = oModel.resolve(this.getPath(), this.getContext()),
+		var oMetadata = this.oModel.oMetadata,
+			sAbsolutePath = this.getResolvedPath(),
 			oEntityType,
 			sTreeAnnotationNamespace = oMetadata.mNamespaces["sap"],
 			that = this;
@@ -2074,7 +2073,7 @@ sap.ui.define([
 
 		if (this.bHasTreeAnnotations) {
 
-			var sAbsolutePath = this.oModel.resolve(this.getPath(), this.getContext());
+			var sAbsolutePath = this.getResolvedPath();
 			// remove url parameters if any to get correct path for entity type resolving
 			if (sAbsolutePath.indexOf("?") !== -1) {
 				sAbsolutePath = sAbsolutePath.split("?")[0];

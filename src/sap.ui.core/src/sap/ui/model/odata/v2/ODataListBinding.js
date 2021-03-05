@@ -796,7 +796,7 @@ sap.ui.define([
 		}
 
 		// Use context and check for relative binding
-		var sPath = this.oModel.resolve(this.sPath, this.oContext);
+		var sPath = this.getResolvedPath();
 
 		// Only send request, if path is defined
 		if (sPath) {
