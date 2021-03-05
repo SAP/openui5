@@ -21,9 +21,12 @@ sap.ui.define([
 	 * 		same as the name, but for nested properties (e.g. complex properties or navigation properties) it has
 	 * 		segments
 	 * @property {boolean} [unsupported] - The delegate has to return all properties that could be bound somewhere.
-	 * 		However some properties maybe shouldn't appear in the dialog (e.g. based on <code>UI.Hidden</code> annotation,
-	 * 		properties you would name in the <code>filter</code> attribute of <code>SmartForm</code>s or properties
-	 * 		that are unsupported by the delegate's create methods). These properties should be marked as <code>unsupported</code>.
+	 * 		However some properties maybe shouldn't appear in the dialog (e.g. properties you would name in the <code>filter</code>
+	 * 		attribute of <code>SmartForm</code>s or properties that are unsupported by the delegate's create methods).
+	 * 		These properties should be marked as <code>unsupported</code>.
+	 * @property {boolean} [hideFromReveal] - The delegate has to return all properties that could be bound somewhere.
+	 * 		However some properties maybe shouldn't appear in the dialog (e.g. based on <code>UI.Hidden</code> annotation
+	 * 		or Field Control). These properties should be marked as <code>hiddenByAnnotation</code>.
 	 * @property {string} [entityType] - Only needed for OData-based delegates to help custom field support tooling
 	 * @property {sap.ui.fl.interfaces.delegate.PropertyInfo[]} [properties] - Some properties can be nested (e.g.
 	 * 		based on complex types and navigation properties in OData). In this case the delegate can provide these
