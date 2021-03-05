@@ -940,6 +940,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
+	 * @throws {sap.ui.model.FormatException} if entry is not found or not unique
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
@@ -968,6 +969,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @returns {any|sap.ui.mdc.field.FieldHelpItem|Promise} Key for description or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
+	 * @throws {sap.ui.model.ParseException} if entry is not found or not unique
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType
@@ -997,6 +999,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @returns {string|sap.ui.mdc.field.FieldHelpItem|Promise} Description for key, key for description or object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
+	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *
 	 * @private
 	 * @ui5-restricted FieldHelp subclasses
@@ -1061,6 +1064,7 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.condition.ConditionModel} [oConditionModel] <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @param {string} [sConditionModelName] Name of the <code>ConditionModel</code>, in case of <code>FilterField</code>
 	 * @returns {sap.ui.mdc.field.FieldHelpItem|Promise} Object containing description, key, in and out parameters. If it is not available right now (must be requested), a <code>Promise</code> is returned.
+	 * @throws {sap.ui.model.FormatException|sap.ui.model.ParseException} if entry is not found or not unique
 	 *
 	 * @private
 	 * @ui5-restricted sap.ui.mdc.field.FieldBase, sap.ui.mdc.field.ConditionType

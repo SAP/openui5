@@ -27,6 +27,8 @@ sap.ui.define([
 	"sap/ui/mdc/FilterBarDelegate",
 	"sap/ui/core/Icon",
 	"sap/ui/core/Item",
+	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/json/JSONModel",
 	"sap/ui/model/type/String",
 	"sap/ui/Device",
@@ -59,6 +61,8 @@ sap.ui.define([
 		FilterBarDelegate,
 		Icon,
 		Item,
+		Filter,
+		FilterOperator,
 		JSONModel,
 		StringType,
 		Device,
@@ -450,18 +454,24 @@ sap.ui.define([
 		assert.equal(vResult, "", "Text for not existing key");
 
 		oFieldHelp.addOutParameter(new OutParameter({value: "{/test}", helpPath: "myTest"}));
+		var oFilter1 = new Filter({path: "myTest", operator: FilterOperator.EQ, value1: "X"});
 		vResult = oFieldHelp.getTextForKey("I2", undefined, {test: "X"});
 		assert.equal(vResult.description, "Item 2", "Text for key");
-		assert.ok(oWrapper.getTextForKey.calledWith("I2", undefined, {myTest: "X"}, false), "getTextForKey of Wrapper called with outParameter");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", undefined, oFilter1, false), "getTextForKey of Wrapper called with outParameter");
 		assert.notOk(vResult.inParameters, "No In-paramters in result");
 		assert.deepEqual(vResult.outParameters, {test: "Out2"} , "Out-parameters in result");
+		oFilter1.destroy();
 
 		oFieldHelp.addInParameter(new InParameter({value: "{/testIn}", helpPath: "myTestIn"}));
+		oFilter1 = new Filter({path: "myTestIn", operator: FilterOperator.EQ, value1: "X"});
+		var oFilter2 = new Filter({path: "myTest", operator: FilterOperator.EQ, value1: "Y"});
 		vResult = oFieldHelp.getTextForKey("I2", {testIn: "X"}, {test: "Y"});
 		assert.equal(vResult.description, "Item 2", "Text for key");
-		assert.ok(oWrapper.getTextForKey.calledWith("I2", {myTestIn: "X"}, {myTest: "Y"}, false), "getTextForKey of Wrapper called with In- and OutParameter");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter1, oFilter2, false), "getTextForKey of Wrapper called with In- and OutParameter");
 		assert.deepEqual(vResult.inParameters, {testIn: "In2"} , "In-parameters in result");
 		assert.deepEqual(vResult.outParameters, {test: "Out2"} , "Out-parameters in result");
+		oFilter1.destroy();
+		oFilter2.destroy();
 
 		assert.notOk(bDataRequested, "No dataRequested event fired");
 
@@ -487,6 +497,30 @@ sap.ui.define([
 				fnDone();
 			});
 		});
+
+	});
+
+	QUnit.test("getTextForKey - with complex InParameters", function(assert) {
+
+		var aConditions = [Condition.createCondition("EQ", ["X"], {testIn: "1"}),
+		                   Condition.createCondition("BT", ["A", "C"])];
+		oFieldHelp.addInParameter(new InParameter({value: aConditions, helpPath: "In1"}));
+		oFieldHelp.addInParameter(new InParameter({value: "{/testIn}", helpPath: "In2", initialValueFilterEmpty: true}));
+
+		var aFilters = [];
+		aFilters.push(new Filter({path: "In1", operator: FilterOperator.EQ, value1: "X"}));
+		aFilters.push(new Filter({path: "In2", operator: FilterOperator.EQ, value1: "1"}));
+		var oFilter = new Filter({filters: aFilters, and: true});
+		aFilters = [];
+		aFilters.push(oFilter);
+		aFilters.push(new Filter({path: "In1", operator: FilterOperator.BT, value1: "A", value2: "C"}));
+		var oFilter1 = new Filter({filters: aFilters, and: false});
+		var oFilter2 = new Filter({path: "In2", operator: FilterOperator.EQ, value1: ""});
+		oFilter = new Filter({filters: [oFilter1, oFilter2], and: true});
+		var vResult = oFieldHelp.getTextForKey("I1");
+		assert.equal(vResult, "Item 1", "Text for key");
+		assert.ok(oWrapper.getTextForKey.calledWith("I1", oFilter), "getTextForKey of Wrapper called");
+		oFilter.destroy();
 
 	});
 
@@ -2549,7 +2583,7 @@ sap.ui.define([
 		assert.ok(oSearchField, "SearchField created");
 
 		oFieldHelp.setFilterFields("");
-		var oFilterBar = oFieldHelp.getAggregation("_filterBar");
+		oFilterBar = oFieldHelp.getAggregation("_filterBar");
 		assert.notOk(oFilterBar, "no Filterbar created");
 
 		oFieldHelp.close();
@@ -3005,12 +3039,16 @@ sap.ui.define([
 		oFieldHelp.addOutParameter(new OutParameter({value: "{outParameter}", helpPath: "myTestOut"}));
 		oFieldHelp.addInParameter(new InParameter({value: "{inParameter}", helpPath: "myTestIn"}));
 		oFieldHelp.getTextForKey("I2");
-		assert.ok(oWrapper.getTextForKey.calledWith("I2", {myTestIn: "in1"}), "getTextForKey of Wrapper called with In-Parameter");
+		var oFilter = new Filter({path: "myTestIn", operator: FilterOperator.EQ, value1: "in1"});
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter), "getTextForKey of Wrapper called with In-Parameter");
+		oFilter.destroy();
 
 		var oBindingContext = oModel.getContext("/contexts/2/");
+		oFilter = new Filter({path: "myTestIn", operator: FilterOperator.EQ, value1: "in3"});
 		oFieldHelp.getTextForKey("I2", undefined, undefined, oBindingContext);
-		assert.ok(oWrapper.getTextForKey.calledWith("I2", {myTestIn: "in3"}), "getTextForKey of Wrapper called with In-Parameter");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter), "getTextForKey of Wrapper called with In-Parameter");
 		assert.equal(oFieldHelp.getBindingContext(), oField.getBindingContext(), "FieldHelp has BindingContext of Field");
+		oFilter.destroy();
 
 	});
 
@@ -3049,9 +3087,16 @@ sap.ui.define([
 		var fnDone = assert.async();
 
 		vResult.then(function(vResult) {
+			var aFilters = [];
+			aFilters.push(new Filter({path: "myExternalIn", operator: FilterOperator.EQ, value1: "X"}));
+			aFilters.push(new Filter({path: "myFixIn", operator: FilterOperator.EQ, value1: "fix"}));
+			aFilters.push(new Filter({path: "myTestIn", operator: FilterOperator.EQ, value1: "in3"}));
+			aFilters.push(new Filter({path: "myTestIn2", operator: FilterOperator.EQ, value1: "in3-2"}));
+			var oFilter = new Filter({filters: aFilters, and: true});
 			assert.ok(true, "Promise Then must be called");
-			assert.ok(oWrapper.getTextForKey.calledWith("I2", {myExternalIn: "X", myFixIn: "fix", myTestIn: "in3", myTestIn2: "in3-2"}), "getTextForKey of Wrapper called with In-Parameter");
+			assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter), "getTextForKey of Wrapper called with In-Parameter");
 			assert.equal(oFieldHelp.getBindingContext(), oField.getBindingContext(), "FieldHelp has BindingContext of Field");
+			oFilter.destroy();
 		}).catch(function(oError) {
 			assert.notOk(true, "Promise Catch must not be called");
 		});
@@ -3068,12 +3113,16 @@ sap.ui.define([
 		oFieldHelp.addOutParameter(new OutParameter({value: "{outParameter}", helpPath: "myTestOut"}));
 		oFieldHelp.addInParameter(new InParameter({value: "{inParameter}", helpPath: "myTestIn"}));
 		oFieldHelp.getKeyForText("Item 2");
-		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", {myTestIn: "in1"}), "getKeyForText of Wrapper called");
+		var oFilter = new Filter({path: "myTestIn", operator: FilterOperator.EQ, value1: "in1"});
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", oFilter), "getKeyForText of Wrapper called");
+		oFilter.destroy();
 
 		var oBindingContext = oModel.getContext("/contexts/2/");
+		oFilter = new Filter({path: "myTestIn", operator: FilterOperator.EQ, value1: "in3"});
 		oFieldHelp.getKeyForText("Item 2", oBindingContext);
-		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", {myTestIn: "in3"}), "getKeyForText of Wrapper called");
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", oFilter), "getKeyForText of Wrapper called");
 		assert.equal(oFieldHelp.getBindingContext(), oField.getBindingContext(), "FieldHelp has BindingContext of Field");
+		oFilter.destroy();
 
 	});
 
@@ -3112,9 +3161,16 @@ sap.ui.define([
 		var fnDone = assert.async();
 
 		vResult.then(function(vResult) {
+			var aFilters = [];
+			aFilters.push(new Filter({path: "myExternalIn", operator: FilterOperator.EQ, value1: "X"}));
+			aFilters.push(new Filter({path: "myFixIn", operator: FilterOperator.EQ, value1: "fix"}));
+			aFilters.push(new Filter({path: "myTestIn", operator: FilterOperator.EQ, value1: "in3"}));
+			aFilters.push(new Filter({path: "myTestIn2", operator: FilterOperator.EQ, value1: "in3-2"}));
+			var oFilter = new Filter({filters: aFilters, and: true});
 			assert.ok(true, "Promise Then must be called");
-			assert.ok(oWrapper.getKeyForText.calledWith("Item 2", {myExternalIn: "X", myFixIn: "fix", myTestIn: "in3", myTestIn2: "in3-2"}), "getKeyForText of Wrapper called");
+			assert.ok(oWrapper.getKeyForText.calledWith("Item 2", oFilter), "getKeyForText of Wrapper called");
 			assert.equal(oFieldHelp.getBindingContext(), oField.getBindingContext(), "FieldHelp has BindingContext of Field");
+			oFilter.destroy();
 		}).catch(function(oError) {
 			assert.notOk(true, "Promise Catch must not be called");
 		});
@@ -3273,35 +3329,47 @@ sap.ui.define([
 
 	QUnit.test("getTextForKey", function(assert) {
 
+		var oFilter = new Filter({path: "IN", operator: FilterOperator.EQ, value1: "Test1"});
 		oFieldHelp.getTextForKey("I2");
-		assert.ok(oWrapper.getTextForKey.calledWith("I2", {IN: "Test1"}), "getTextForKey of Wrapper called with In-Parameter");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter), "getTextForKey of Wrapper called with In-Parameter");
+		oFilter.destroy();
 
+		oFilter = new Filter({path: "IN", operator: FilterOperator.EQ, value1: "Test2"});
 		oFieldHelp.getTextForKey("I2", undefined, undefined, undefined, oCM2, "cm");
-		assert.ok(oWrapper.getTextForKey.calledWith("I2", {IN: "Test2"}), "getTextForKey of Wrapper called with In-Parameter from other ConditionModel");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter), "getTextForKey of Wrapper called with In-Parameter from other ConditionModel");
+		oFilter.destroy();
 
 	});
 
 	QUnit.test("getKeyForText", function(assert) {
 
+		var oFilter = new Filter({path: "IN", operator: FilterOperator.EQ, value1: "Test1"});
 		oFieldHelp.getKeyForText("Item 2");
-		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", {IN: "Test1"}), "getKeyForText of Wrapper called with In-Parameter");
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", oFilter), "getKeyForText of Wrapper called with In-Parameter");
+		oFilter.destroy();
 
+		oFilter = new Filter({path: "IN", operator: FilterOperator.EQ, value1: "Test2"});
 		oFieldHelp.getKeyForText("Item 2", undefined, oCM2, "cm");
-		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", {IN: "Test2"}), "getKeyForText of Wrapper called with In-Parameter from other ConditionModel");
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", oFilter), "getKeyForText of Wrapper called with In-Parameter from other ConditionModel");
+		oFilter.destroy();
 
 	});
 
 	QUnit.test("getItemForValue", function(assert) {
 
+		var oFilter = new Filter({path: "IN", operator: FilterOperator.EQ, value1: "Test1"});
 		oFieldHelp.getItemForValue("I2", "I2", undefined, undefined, undefined, true, true, false);
-		assert.ok(oWrapper.getTextForKey.calledWith("I2", {IN: "Test1"}), "getTextForKey of Wrapper called with In-Parameter");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter), "getTextForKey of Wrapper called with In-Parameter");
 		oFieldHelp.getItemForValue("Item 2", "item 2", undefined, undefined, undefined, false, false, true);
-		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", {IN: "Test1"}), "getKeyForText of Wrapper called with In-Parameter");
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", oFilter), "getKeyForText of Wrapper called with In-Parameter");
+		oFilter.destroy();
 
+		oFilter = new Filter({path: "IN", operator: FilterOperator.EQ, value1: "Test2"});
 		oFieldHelp.getItemForValue("I2", "I2", undefined, undefined, undefined, true, true, false, oCM2, "cm");
-		assert.ok(oWrapper.getTextForKey.calledWith("I2", {IN: "Test2"}), "getTextForKey of Wrapper called with In-Parameter from other ConditionModel");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter), "getTextForKey of Wrapper called with In-Parameter from other ConditionModel");
 		oFieldHelp.getItemForValue("Item 2", "item 2", undefined, undefined, undefined, false, false, true, oCM2, "cm");
-		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", {IN: "Test2"}), "getKeyForText of Wrapper called with In-Parameter from other ConditionModel");
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", oFilter), "getKeyForText of Wrapper called with In-Parameter from other ConditionModel");
+		oFilter.destroy();
 
 	});
 
@@ -3439,7 +3507,7 @@ sap.ui.define([
 		oClock.tick(iDialogDuration); // fake closing time
 
 		oFieldHelp.setFilterBar();
-		var oCollectiveSearch = oFilterBar.getCollectiveSearch();
+		oCollectiveSearch = oFilterBar.getCollectiveSearch();
 		assert.notOk(oCollectiveSearch, "CollectiveSearch not longer assigned to FilterBar");
 		assert.ok(oFieldHelp._oCollectiveSearchSelect, "CollectiveSearch still stored in FieldHelp");
 

@@ -33,6 +33,7 @@ sap.ui.define([
 	"sap/ui/model/FormatException",
 	"sap/ui/model/ParseException",
 	"sap/ui/model/Filter",
+	"sap/ui/model/FilterOperator",
 	"sap/ui/model/odata/v4/ODataModel",
 	"sap/ui/model/odata/v4/ODataListBinding",
 	"sap/ui/Device",
@@ -66,6 +67,7 @@ sap.ui.define([
 		FormatException,
 		ParseException,
 		Filter,
+		FilterOperator,
 		ODataModel,
 		ODataListBinding,
 		Device,
@@ -183,9 +185,9 @@ sap.ui.define([
 	var oClock;
 	var _initWrapper = function(bFVH) {
 		oModel = new JSONModel({
-			items:[{text: "Item 1", key: "I1", additionalText: "Text 1"},
-				   {text: "Item 2", key: "I2", additionalText: "Text 2"},
-				   {text: "X-Item 3", key: "I3", additionalText: "Text 3"}]
+			items:[{text: "Item 1", key: "I1", additionalText: "Text 1", in2: "1"},
+				   {text: "Item 2", key: "I2", additionalText: "Text 2", in2: null},
+				   {text: "X-Item 3", key: "I3", additionalText: "Text 3", in2: ""}]
 			});
 		sap.ui.getCore().setModel(oModel);
 
@@ -620,7 +622,7 @@ sap.ui.define([
 	QUnit.test("getTextForKey", function(assert) {
 
 		var oResult = oWrapper.getTextForKey("I2");
-		assert.ok(typeof oResult, "object", "Object returned");
+		assert.ok(typeof oResult === "object", "Object returned");
 		assert.equal(oResult.description, "Item 2", "Text for key");
 		assert.equal(oResult.key, "I2", "key");
 		assert.notOk(oResult.inParameters, "no in-parameters returned");
@@ -629,15 +631,17 @@ sap.ui.define([
 		sinon.stub(oWrapper, "_getInParameters").returns(["additionalText"]);
 		sinon.stub(oWrapper, "_getOutParameters").returns(["additionalText"]);
 
-		oResult = oWrapper.getTextForKey("I2", {additionalText: "Text 2"});
+		var oFilter = new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "Text 2"});
+		oResult = oWrapper.getTextForKey("I2", oFilter);
 		assert.equal(oResult.description, "Item 2", "Text for key with in-parameter");
 		assert.deepEqual(oResult.inParameters, {additionalText: "Text 2"} , "in-parameters returned");
 		assert.deepEqual(oResult.outParameters, {additionalText: "Text 2"} , "out-parameters returned");
 
-		oResult = oWrapper.getTextForKey("I2", undefined, {additionalText: "Text 2"});
+		oResult = oWrapper.getTextForKey("I2", undefined, oFilter);
 		assert.equal(oResult.description, "Item 2", "Text for key with out-parameter");
 		assert.deepEqual(oResult.inParameters, {additionalText: "Text 2"} , "in-parameters returned");
 		assert.deepEqual(oResult.outParameters, {additionalText: "Text 2"} , "out-parameters returned");
+		oFilter.destroy();
 
 		oResult = oWrapper.getTextForKey("Test");
 		var oResult2 = oWrapper.getTextForKey("Test", undefined, undefined, false);
@@ -662,10 +666,12 @@ sap.ui.define([
 			var sError = oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["Test"]);
 			assert.equal(oError.message, sError, "Error message");
 
-			oResult = oWrapper.getTextForKey("I2", {additionalText: "X"}, {additionalText: "X"});
+			oFilter = new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "X"});
+			oResult = oWrapper.getTextForKey("I2", oFilter, oFilter);
 			assert.ok(oResult instanceof Promise, "Promise returned as model is asked");
 			oResult.then(function(oResult) {
 				assert.notOk(true, "Promise Then must not be called");
+				oFilter.destroy();
 				fnDone();
 			}).catch(function(oError) {
 				assert.ok(oError, "Error Fired");
@@ -673,7 +679,9 @@ sap.ui.define([
 				sError = oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["I2"]);
 				assert.equal(oError.message, sError, "Error message");
 
-				oResult = oWrapper.getTextForKey("X", undefined, {additionalText: "XX"});
+				oFilter.destroy();
+				oFilter = new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "XX"});
+				oResult = oWrapper.getTextForKey("X", undefined, oFilter);
 				assert.ok(oResult instanceof Promise, "Promise returned as model is asked");
 				var oData = oModel.getData();
 				oModel.setData({
@@ -683,11 +691,12 @@ sap.ui.define([
 
 				oResult.then(function(oResult) {
 					assert.ok(true, "Promise Then must be called");
-					assert.ok(typeof oResult, "object", "Object returned");
+					assert.ok(typeof oResult === "object", "Object returned");
 					assert.equal(oResult.description, "XXX", "Text for key");
 					assert.equal(oResult.key, "X", "key");
 					assert.deepEqual(oResult.inParameters, {additionalText: "XX"} , "in-parameters returned");
 					assert.deepEqual(oResult.outParameters, {additionalText: "XX"} , "out-parameters returned");
+					oFilter.destroy();
 					oModel.setData(oData);
 					oResult = oWrapper.getTextForKey("Z");
 
@@ -705,12 +714,109 @@ sap.ui.define([
 						assert.ok(oError instanceof FormatException, "Error is a FormatException");
 						sError = oResourceBundle.getText("valuehelp.VALUE_NOT_UNIQUE", ["Z"]);
 						assert.equal(oError.message, sError, "Error message");
+
+						// check again without request (data exist)
+						try {
+							oResult = oWrapper.getTextForKey("Z");
+						} catch (error) {
+							oError = error;
+						}
+						assert.ok(oError, "Error Fired");
+						assert.ok(oError instanceof FormatException, "Error is a FormatException");
+						sError = oResourceBundle.getText("valuehelp.VALUE_NOT_UNIQUE", ["Z"]);
+						assert.equal(oError.message, sError, "Error message");
+
+						// check using InParameters
+						oFilter = new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "ZZ1"});
+						oResult = oWrapper.getTextForKey("Z", oFilter);
+						assert.ok(typeof oResult === "object", "Object returned");
+						assert.equal(oResult.description, "Z1", "Text for key");
+						assert.equal(oResult.key, "Z", "key");
+						assert.deepEqual(oResult.inParameters, {additionalText: "ZZ1"} , "in-parameters returned");
+						assert.deepEqual(oResult.outParameters, {additionalText: "ZZ1"} , "out-parameters returned");
+						oFilter.destroy();
 						fnDone();
 					});
 				}).catch(function(oError) {
 					assert.notOk(true, "Promise Catch must not be called");
+					oFilter.destroy();
 					fnDone();
 				});
+			});
+		});
+
+	});
+
+	QUnit.test("getTextForKey with complex InParameters", function(assert) {
+
+		sinon.stub(oWrapper, "_getInParameters").returns(["additionalText", "in2"]);
+		sinon.stub(oWrapper, "_getOutParameters").returns(["additionalText"]);
+
+		var aFilters = [];
+		aFilters.push(new Filter({path: "in2", operator: FilterOperator.EQ, value1: ""}));
+		aFilters.push(new Filter({path: "in2", operator: FilterOperator.EQ, value1: null}));
+		var oFilter1 = new Filter({filters: aFilters, and: false});
+		aFilters = [];
+		aFilters.push(new Filter({path: "additionalText", operator: FilterOperator.BT, value1: "A", value2: "C"}));
+		aFilters.push(new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "Text 2"}));
+		var oFilter2 = new Filter({filters: aFilters, and: false});
+		var oFilter = new Filter({filters: [oFilter1, oFilter2], and: true});
+		var oResult = oWrapper.getTextForKey("I2", oFilter);
+		assert.ok(typeof oResult === "object", "Object returned");
+		assert.equal(oResult.description, "Item 2", "Text for key with in-parameter");
+		assert.deepEqual(oResult.inParameters, {additionalText: "Text 2", in2: null} , "in-parameters returned");
+		assert.deepEqual(oResult.outParameters, {additionalText: "Text 2"} , "out-parameters returned");
+		oFilter.destroy();
+
+		// check no result with AND Filters
+		aFilters = [];
+		aFilters.push(new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "A"}));
+		aFilters.push(new Filter({path: "in2", operator: FilterOperator.EQ, value1: "B"}));
+		oFilter = new Filter({filters: aFilters, and: true});
+		oResult = oWrapper.getTextForKey("I2", oFilter);
+		assert.ok(oResult instanceof Promise, "Promise returned as model is asked");
+
+		var fnDone = assert.async();
+		oResult.then(function(oResult) {
+			assert.notOk(true, "Promise Then must not be called");
+			oFilter.destroy();
+			fnDone();
+		}).catch(function(oError) {
+			assert.ok(oError, "Error Fired");
+			assert.ok(oError instanceof FormatException, "Error is a FormatException");
+			var sError = oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["I2"]);
+			assert.equal(oError.message, sError, "Error message");
+			oFilter.destroy();
+
+			// no result with OR Filters
+			aFilters = [];
+			aFilters.push(new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "A"}));
+			aFilters.push(new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "B"}));
+			oFilter = new Filter({filters: aFilters, and: false});
+			oResult = oWrapper.getTextForKey("I2", oFilter);
+			oResult.then(function(oResult) {
+				assert.notOk(true, "Promise Then must not be called");
+				oFilter.destroy();
+				fnDone();
+			}).catch(function(oError) {
+				assert.ok(oError, "Error Fired");
+				assert.ok(oError instanceof FormatException, "Error is a FormatException");
+				var sError = oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", ["I2"]);
+				assert.equal(oError.message, sError, "Error message");
+				oFilter.destroy();
+
+				// result with AND Filters and all fit
+				aFilters = [];
+				aFilters.push(new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "Text 2"}));
+				aFilters.push(new Filter({path: "in2", operator: FilterOperator.EQ, value1: null}));
+				oFilter = new Filter({filters: aFilters, and: true});
+				oResult = oWrapper.getTextForKey("I2", oFilter);
+				assert.ok(typeof oResult === "object", "Object returned");
+				assert.equal(oResult.description, "Item 2", "Text for key with in-parameter");
+				assert.deepEqual(oResult.inParameters, {additionalText: "Text 2", in2: null} , "in-parameters returned");
+				assert.deepEqual(oResult.outParameters, {additionalText: "Text 2"} , "out-parameters returned");
+				oFilter.destroy();
+				fnDone();
 			});
 		});
 
@@ -817,7 +923,7 @@ sap.ui.define([
 			});
 
 			oResult = oWrapper.getTextForKey("");
-			assert.ok(typeof oResult, "object", "Object returned");
+			assert.ok(typeof oResult === "object", "Object returned");
 			assert.equal(oResult.description, "Nothing", "Text for key");
 			assert.equal(oResult.key, "", "key");
 			fnDone();
@@ -831,7 +937,7 @@ sap.ui.define([
 	QUnit.test("getKeyForText", function(assert) {
 
 		var oResult = oWrapper.getKeyForText("Item 2");
-		assert.ok(typeof oResult, "object", "Object returned");
+		assert.ok(typeof oResult === "object", "Object returned");
 		assert.equal(oResult.description, "Item 2", "description");
 		assert.equal(oResult.key, "I2", "key for text");
 		assert.notOk(oResult.inParameters, "no in-parameters returned");
@@ -841,7 +947,7 @@ sap.ui.define([
 		sinon.stub(oWrapper, "_getOutParameters").returns(["additionalText"]);
 
 		oResult = oWrapper.getKeyForText("Item 2");
-		assert.ok(typeof oResult, "object", "Object returned");
+		assert.ok(typeof oResult === "object", "Object returned");
 		assert.equal(oResult.description, "Item 2", "description");
 		assert.equal(oResult.key, "I2", "key for text");
 		assert.deepEqual(oResult.inParameters, {additionalText: "Text 2"} , "in-parameters returned");
@@ -850,11 +956,13 @@ sap.ui.define([
 		oResult = oWrapper.getKeyForText("");
 		assert.equal(oResult, null, "no key for empty text returned");
 
-		oResult = oWrapper.getKeyForText("Item 2", {additionalText: "Text 2"});
+		var oFilter = new Filter({path: "additionalText", operator: FilterOperator.EQ, value1: "Text 2"});
+		oResult = oWrapper.getKeyForText("Item 2", oFilter);
 		assert.equal(oResult.description, "Item 2", "description with in-parameters");
 		assert.equal(oResult.key, "I2", "key for text with in-parameters");
 		assert.deepEqual(oResult.inParameters, {additionalText: "Text 2"} , "in-parameters returned");
 		assert.deepEqual(oResult.outParameters, {additionalText: "Text 2"} , "out-parameters returned");
+		oFilter.destroy();
 
 		oResult = oWrapper.getKeyForText("X");
 		var oResult2 = oWrapper.getKeyForText("X", undefined, false);
