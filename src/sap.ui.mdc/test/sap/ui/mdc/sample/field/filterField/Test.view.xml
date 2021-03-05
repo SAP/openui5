@@ -525,6 +525,9 @@
 						fieldHelp="IOFFVHCity">
 					</mdc:FilterField>
 
+					<m:Label text="Info (not bound to ConditionModel)"/>
+					<m:Input id="Info" value="{path: 'view>/info', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 100, nullable: false}, formatOptions: {parseKeepsEmptyString: true}}"/>
+
 					<c:Title text="Condition Model"></c:Title>
 
 					<m:Label text="Conditions"></m:Label>
@@ -549,6 +552,7 @@
 						<mdcField:inParameters>
 							<mdcField:InParameter id="IOFFVHCity_In-Country" value="{cm>/conditions/CountryId}" helpPath="countryId"/>
 							<mdcField:InParameter id="IOFFVHCity_In-Region" value="{cm>/conditions/RegionId}" helpPath="regionId"/>
+							<mdcField:InParameter id="IOFFVHCity_In-Info" value="{path: 'view>/info', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 100, nullable: false}, formatOptions: {parseKeepsEmptyString: true}}" helpPath="info" initialValueFilterEmpty="false"/>
 						</mdcField:inParameters>
 						<mdcField:outParameters>
 							<mdcField:OutParameter id="IOFFVHCity_Out-Country" value="{cm>/conditions/CountryId}" helpPath="countryId" mode="Always"/>
@@ -617,6 +621,17 @@
 										</mdcField:FieldValueHelp>
 									</mdc:dependents>
 								</mdc:FilterField>
+								<mdc:FilterField
+									id="VHFFBTextFFInfo2"
+									label= "{/#City/info/@sap:label}"
+									editMode= "Editable"
+									display= "Value"
+									dataType="sap.ui.model.odata.type.String"
+									dataTypeFormatOptions="{parseKeepsEmptyString: true}"
+									dataTypeConstraints="{maxLength: 100, nullable: false}"
+									width="100%"
+									conditions="{$filters>/conditions/info}">
+								</mdc:FilterField>
 							</vhfb:FilterBar>
 						</mdcField:filterBar>
 						<mdcField:FieldValueHelpMTableWrapper>
@@ -634,6 +649,9 @@
 									<m:Column>
 										<m:Label text="{/#City/regionId/@sap:label}"/>
 									</m:Column>
+									<m:Column>
+										<m:Label text="{/#City/info/@sap:label}"/>
+									</m:Column>
 								</m:columns>
 								<m:items>
 									<m:ColumnListItem type="Active">
@@ -641,6 +659,7 @@
 										<m:Text text="{text}"></m:Text>
 										<m:Text text="{path: 'countryId', type:'sap.ui.model.type.String', constraints: {maxLength: 3}}"></m:Text>
 										<m:Text text="{path: 'regionId', type:'sap.ui.model.type.String', constraints: {maxLength: 2, search: '^(|[0-9])+$'}}"></m:Text>
+										<m:Text text="{path: 'info', type:'sap.ui.model.odata.type.String', constraints: {maxLength: 100, nullable: false}, formatOptions: {parseKeepsEmptyString: true}}"/>
 									</m:ColumnListItem>
 								</m:items>
 							</m:Table>
