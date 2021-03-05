@@ -91,14 +91,17 @@ sap.ui.define([
 	};
 
 	CompositeCommand.prototype._addCompositeIdToChange = function(oCommand) {
+		if (!this._sCompositeId) {
+			this._sCompositeId = FlUtils.createDefaultFileName("composite");
+		}
 		if (oCommand.getPreparedChange && oCommand.getPreparedChange()) {
 			var oChangeDefinition = oCommand.getPreparedChange().getDefinition();
 			if (!oChangeDefinition.support.compositeCommand) {
-				if (!this._sCompositeId) {
-					this._sCompositeId = FlUtils.createDefaultFileName("composite");
-				}
 				oChangeDefinition.support.compositeCommand = this._sCompositeId;
 			}
+		} else if (oCommand.setCompositeId) {
+			// relevant for app descriptor commands
+			oCommand.setCompositeId(this._sCompositeId);
 		}
 	};
 

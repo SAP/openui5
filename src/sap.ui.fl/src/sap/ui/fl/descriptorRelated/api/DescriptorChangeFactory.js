@@ -162,6 +162,7 @@ sap.ui.define([
 		mPropertyBag.componentName = sReference;
 		mPropertyBag.reference = sReference;
 		mPropertyBag.generator = sTool;
+		mPropertyBag.support = oInlineChange.getMap().support;
 
 		//default to 'CUSTOMER'
 		mPropertyBag.layer = sLayer || 'CUSTOMER';
