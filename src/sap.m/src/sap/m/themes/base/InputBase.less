@@ -191,16 +191,19 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 .sapMInputBaseInner::-webkit-input-placeholder {
 	font-size: @sapMFontMediumSize;
 	font-style: italic;
+	padding: 0 .125rem;
 }
 
 .sapMInputBaseInner::-moz-placeholder {
 	font-size: @sapMFontMediumSize;
 	font-style: italic;
+	padding: 0 .125rem;
 }
 
 .sapMInputBaseInner:-ms-input-placeholder {
 	font-size: @sapMFontMediumSize;
 	font-style: italic;
+	padding: 0 .125rem;
 }
 
 .sapMInputBaseInner::-webkit-outer-spin-button,
@@ -245,23 +248,8 @@ html[data-sap-ui-browser^="ed"].sap-desktop {
 	color: @sapUiFieldPlaceholderTextColor;
 }
 
-.sapMInputBaseInner:-ms-input-placeholder {
+.sapMInputBaseInner::-ms-input-placeholder {
 	color: @sapUiFieldPlaceholderTextColor;
-}
-
-.sapMInputBaseInner[dir="rtl"]::-webkit-input-placeholder {
-	padding-right: 0.125rem;
-	/* important text dir set to rtl causes some characters to get cut off */
-}
-
-.sapMInputBaseInner[dir="rtl"]::-moz-placeholder {
-	padding-right: 0.125rem;
-	/* important text dir set to rtl causes some characters to get cut off */
-}
-
-.sapMInputBaseInner[dir="rtl"]:-ms-input-placeholder {
-	padding-right: 0.125rem;
-	/* important text dir set to rtl causes some characters to get cut off */
 }
 
 input.sapMInputBaseInner:invalid {
