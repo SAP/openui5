@@ -83,7 +83,7 @@ sap.ui.define([
 		this.oFeedInput.setIcon("myIcon");
 		assert.strictEqual(this.oFeedInput.getIcon(), "myIcon", "Getter should return correct non-default value");
 		assert.strictEqual(this.oFeedInput._getAvatar().getSrc(), this.oFeedInput.getIcon(), "Property should be passed to avatar control");
-		assert.strictEqual(this.oFeedInput._getAvatar().getDisplayShape(), "Square", "Should have 'Square' shape");
+		assert.strictEqual(this.oFeedInput._getAvatar().getDisplayShape(), "Circle", "Should have 'Square' shape");
 		assert.strictEqual(this.oFeedInput._getAvatar().getDisplaySize(), "M", "Should have 'M' size");
 
 		this.oFeedInput.setIconInitials("TT");

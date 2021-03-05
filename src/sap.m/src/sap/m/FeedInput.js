@@ -108,7 +108,7 @@ sap.ui.define([
 			 * Defines the shape of the icon.
 			* @since 1.88
 			*/
-			iconDisplayShape: { type: "sap.m.AvatarShape", defaultValue: AvatarShape.Square},
+			iconDisplayShape: { type: "sap.m.AvatarShape", defaultValue: AvatarShape.Circle},
 
 			/**
 			 * Defines the initials of the icon.
@@ -514,6 +514,7 @@ sap.ui.define([
 				.setInitials(this.getIconInitials())
 				.setDisplaySize(this.getIconSize());
 		}
+
 		return this.oAvatar;
 	};
 
