@@ -19229,7 +19229,7 @@ sap.ui.define([
 				// for simulating Chart, call #updateAnalyticalInfo _before_ #getContexts
 				this.mock(ODataListBinding.prototype)
 					.expects("getContexts")
-					.withExactArgs(1, 4, 0)
+					.withExactArgs(1, 4, 0, undefined)
 					.callsFake(function () {
 						this.updateAnalyticalInfo(aAggregation);
 						ODataListBinding.prototype.getContexts.restore();
@@ -19324,7 +19324,7 @@ sap.ui.define([
 		// for simulating Chart, call #updateAnalyticalInfo _before_ #getContexts
 		this.mock(ODataListBinding.prototype)
 			.expects("getContexts")
-			.withExactArgs(1, 3, 0)
+			.withExactArgs(1, 3, 0, undefined)
 			.callsFake(function () {
 				oMeasureRangePromise = this.updateAnalyticalInfo(aAggregation)
 					.measureRangePromise.then(function (mMeasureRange) {

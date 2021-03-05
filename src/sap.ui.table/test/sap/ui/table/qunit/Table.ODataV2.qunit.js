@@ -43,8 +43,8 @@ sap.ui.define([
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Binding#getContexts called 2 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100), "First call to Binding#getContexts");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 10, 100), "Second call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100, undefined), "First call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 10, 100, undefined), "Second call to Binding#getContexts");
 			oTable.destroy();
 		});
 	});
@@ -65,9 +65,9 @@ sap.ui.define([
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 9, 100), "First call to Binding#getContexts");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 9, 100), "Second call to Binding#getContexts");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(15, 1, 0), "Third call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 9, 100, undefined), "First call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 9, 100, undefined), "Second call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(15, 1, 0, true), "Third call to Binding#getContexts");
 			oTable.destroy();
 		});
 	});
@@ -92,11 +92,11 @@ sap.ui.define([
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 5, "Binding#getContexts called 5 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(1, 4, 5), "First call to Binding#getContexts"); // refreshRows
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(1, 4, 5), "Second call to Binding#getContexts"); // updateRows
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(15, 1, 0), "Third call to Binding#getContexts"); // fixed bottom contexts
-			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(1, 4, 5), "Fourth call to Binding#getContexts"); // updateRows
-			assert.ok(oGetContextsSpy.getCall(4).calledWithExactly(15, 1, 0), "Fifth call to Binding#getContexts"); // fixed bottom contexts
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(1, 4, 5, undefined), "First call to Binding#getContexts"); // refreshRows
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(1, 4, 5, undefined), "Second call to Binding#getContexts"); // updateRows
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(15, 1, 0, true), "Third call to Binding#getContexts"); // fixed bottom contexts
+			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(1, 4, 5, undefined), "Fourth call to Binding#getContexts"); // updateRows
+			assert.ok(oGetContextsSpy.getCall(4).calledWithExactly(15, 1, 0, true), "Fifth call to Binding#getContexts"); // fixed bottom contexts
 			oTable.destroy();
 		});
 	});
@@ -114,8 +114,8 @@ sap.ui.define([
 			oTable.getBinding().sort();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Binding#getContexts called 2 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100), "First call to Binding#getContexts");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 10, 100), "Second call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100, undefined), "First call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 10, 100, undefined), "Second call to Binding#getContexts");
 			oTable.destroy();
 		});
 	});
@@ -136,10 +136,10 @@ sap.ui.define([
 			oTable.getBinding().sort();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 4, "Binding#getContexts called 4 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 9, 100), "First call to Binding#getContexts");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(15, 1, 0), "Second call to Binding#getContexts");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 9, 100), "Third call to Binding#getContexts");
-			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(15, 1, 0), "Fourth call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 9, 100, undefined), "First call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(15, 1, 0, true), "Second call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 9, 100, undefined), "Third call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(15, 1, 0, true), "Fourth call to Binding#getContexts");
 			oTable.destroy();
 		});
 	});
@@ -163,12 +163,12 @@ sap.ui.define([
 			oTable.getBinding().sort();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 6, "Binding#getContexts called 6 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 4, 5), "First call to Binding#getContexts"); // refreshRows
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(15, 1, 0), "Second call to Binding#getContexts"); // fixed bottom contexts
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 4, 5), "Third call to Binding#getContexts"); // updateRows
-			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(15, 1, 0), "Fourth call to Binding#getContexts"); // fixed bottom contexts
-			assert.ok(oGetContextsSpy.getCall(4).calledWithExactly(0, 4, 5), "Fifth call to Binding#getContexts"); // updateRows
-			assert.ok(oGetContextsSpy.getCall(5).calledWithExactly(15, 1, 0), "Sixth call to Binding#getContexts"); // fixed bottom contexts
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 4, 5, undefined), "First call to Binding#getContexts"); // refreshRows
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(15, 1, 0, true), "Second call to Binding#getContexts"); // fixed bottom contexts
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 4, 5, undefined), "Third call to Binding#getContexts"); // updateRows
+			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(15, 1, 0, true), "Fourth call to Binding#getContexts"); // fixed bottom contexts
+			assert.ok(oGetContextsSpy.getCall(4).calledWithExactly(0, 4, 5, undefined), "Fifth call to Binding#getContexts"); // updateRows
+			assert.ok(oGetContextsSpy.getCall(5).calledWithExactly(15, 1, 0, true), "Sixth call to Binding#getContexts"); // fixed bottom contexts
 			oTable.destroy();
 		});
 	});
