@@ -157,7 +157,7 @@ sap.ui.define([
 		 * var params = UriParameters.fromQuery("?a=1&b=2&c=3");
 		 * var keys = Array.from(params.keys()); // ["a", "b", "c"]
 		 *
-		 * @returns {Iterator} Iterator for all parameter names.
+		 * @returns {Iterator<string>} Iterator for all parameter names.
 		 * @public
 		 */
 		this.keys = function() {
