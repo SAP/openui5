@@ -30,7 +30,8 @@ sap.ui.define([
 	"sap/ui/core/theming/Parameters",
 	"sap/base/util/ObjectPath",
 	"sap/m/FormattedText",
-	"sap/m/MessageStrip"
+	"sap/m/MessageStrip",
+	"sap/base/util/includes"
 ], function (
 	ui5loader,
 	Control,
@@ -59,7 +60,8 @@ sap.ui.define([
 	Parameters,
 	ObjectPath,
 	FormattedText,
-	MessageStrip
+	MessageStrip,
+	includes
 ) {
 	"use strict";
 
@@ -1050,6 +1052,40 @@ sap.ui.define([
 				if (oConfig._cancel) {
 					oConfig._values = [];
 					return;
+				}
+				//add group property "Selected" to each record for MultiComboBox in ListField
+				if (oConfig.type === "string[]") {
+					var sPath = oConfig.values.data.path;
+					if (sPath && sPath !== "/") {
+						if (sPath.startsWith("/")) {
+							sPath = sPath.substring(1);
+						}
+						if (sPath.endsWith("/")) {
+							sPath = sPath.substring(0, sPath.length - 1);
+						}
+						var aPath = sPath.split("/");
+						var oResult = ObjectPath.get(aPath, oData);
+						if (Array.isArray(oResult)) {
+							for (var n in oResult) {
+								var sKey = oField.getKeyFromItem(oResult[n]);
+								if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && includes(oConfig.value, sKey)) {
+									oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+								} else {
+									oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
+								}
+							}
+							ObjectPath.set(aPath, oResult, oData);
+						}
+					} else if (Array.isArray(oData)) {
+						for (var n in oData) {
+							var sKey = oField.getKeyFromItem(oData[n]);
+							if (Array.isArray(oConfig.value) && oConfig.value.length > 0 && includes(oConfig.value, sKey)) {
+								oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+							} else {
+								oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
+							}
+						}
+					}
 				}
 				oConfig._values = oData;
 				oValueModel.setData(oData);

@@ -70,6 +70,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							},
 							"item": {
 								"text": "{CompanyName}",
+								"key": "{CustomerID}",
 								"additionalText": "{= ${CustomerID} !== undefind ? ${Country} + ', ' +  ${City} + ', ' + ${Address}: ''}"
 							}
 						}

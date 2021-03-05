@@ -10,12 +10,16 @@ sap.ui.define([
 	"sap/base/util/each",
 	"sap/base/util/restricted/_debounce",
 	"sap/base/util/ObjectPath",
-	"sap/base/util/includes"
+	"sap/base/util/includes",
+	"sap/ui/core/SeparatorItem",
+	"sap/ui/core/Core",
+	"sap/ui/model/Sorter"
 ], function (
-	BaseField, Input, Text, MultiComboBox, ListItem, each, _debounce, ObjectPath, includes
+	BaseField, Input, Text, MultiComboBox, ListItem, each, _debounce, ObjectPath, includes, SeparatorItem, Core, Sorter
 ) {
 	"use strict";
 	var sDefaultSeperator = "/";
+	var oResourceBundle = Core.getLibraryResourceBundle("sap.ui.integration");
 
 	/**
 	 * @class
@@ -50,7 +54,13 @@ sap.ui.define([
 							width: "100%",
 							items: {
 								path: "", //empty, because the bindingContext for the undefined model already points to the path
-								template: oItem
+								template: oItem,
+								sorter: [new Sorter({
+									path: 'Selected',
+									descending: false,
+									group: true
+								})],
+								groupHeaderFactory: that.getGroupHeader
 							}
 						}
 					};
@@ -109,18 +119,21 @@ sap.ui.define([
 		var oControl = this.getAggregation("_field");
 		if (oControl instanceof MultiComboBox) {
 			var oConfig = this.getConfiguration();
+			this.prepareFieldsInKey(oConfig);
 			if (this.isFilterBackend(oConfig)) {
-				this.prepareFieldsInKey(oConfig);
 				this.onInput = _debounce(this.onInput, 500);
 				//if need to filter backend by input value, need to hook the onInput function which only support filter locally.
 				oControl.oninput = this.onInput;
 				//listen to the selectionChange event of MultiComboBox
-				oControl.attachSelectionChange(this.onSelectionChange);
+				oControl.attachSelectionChange(this.onSelectionChangeForFilterBackend);
 				//listen to the selectionFinish event of MultiComboBox
 				oControl.attachSelectionFinish(this.onSelectionFinish);
 				var oModel = this.getModel();
 				//merge the previous selected items with new items got from request
 				oModel.attachPropertyChange(this.mergeSelectedItems, this);
+			} else {
+				//listen to the selectionChange event of MultiComboBox
+				oControl.attachSelectionChange(this.onSelectionChange);
 			}
 		}
 	};
@@ -157,46 +170,77 @@ sap.ui.define([
 
 	ListField.prototype.mergeSelectedItems = function(oEvent) {
 		var oConfig = this.getConfiguration();
-		if (this._aSelectedItems && this._aSelectedItems.length > 0) {
-			var sPath = oConfig.values.data.path || "/";
-			var oValueModel = this.getModel();
-			var oData = oValueModel.getData();
-
-			if (sPath !== "/") {
-				//get data path
-				if (sPath.startsWith("/")) {
-					sPath = sPath.substring(1);
-				}
-				if (sPath.endsWith("/")) {
-					sPath = sPath.substring(0, sPath.length - 1);
-				}
-				var aPath = sPath.split("/");
-				//get new items
-				var oResult = ObjectPath.get(aPath, oData);
-				if (Array.isArray(oResult)) {
-					//get keys of preview selected items
-					var aSelectedItemKeys = this._aSelectedItems.map(function (oSelectedItem) {
-						return this.getKeyFromItem(oSelectedItem);
-					}.bind(this));
-					//filter the new items to remove the exist ones according by the keys
-					var oNotSelectedItems = oResult.filter(function (item) {
-						var sItemKey = this.getKeyFromItem(item);
-						return !includes(aSelectedItemKeys, sItemKey);
-					}.bind(this));
-					//concat the filtered items to the previous selected items
-					oResult = this._aSelectedItems.concat(oNotSelectedItems);
-				} else {
-					oResult = this._aSelectedItems;
-				}
-				ObjectPath.set(aPath, oResult, oData);
-			} else if (Array.isArray(oData)) {
-				oData = this._aSelectedItems.concat(oData);
-			} else {
-				oData = this._aSelectedItems;
-			}
-			oValueModel.setData(oData);
-			this.setSuggestValue();
+		if (!this._aSelectedItems) {
+			this._aSelectedItems = [];
 		}
+		var sPath = oConfig.values.data.path || "/";
+		var oValueModel = this.getModel();
+		var oData = oValueModel.getData();
+
+		if (sPath !== "/") {
+			//get data path
+			if (sPath.startsWith("/")) {
+				sPath = sPath.substring(1);
+			}
+			if (sPath.endsWith("/")) {
+				sPath = sPath.substring(0, sPath.length - 1);
+			}
+			var aPath = sPath.split("/");
+			//get new items
+			var oResult = ObjectPath.get(aPath, oData);
+			if (Array.isArray(oResult)) {
+				//get keys of previous selected items
+				var aSelectedItemKeys = this._aSelectedItems.map(function (oSelectedItem) {
+					return this.getKeyFromItem(oSelectedItem);
+				}.bind(this));
+				//get the items which are in selectedItems list
+				var oItemsNotInSelectedItemsList = oResult.filter(function (item) {
+					var sItemKey = this.getKeyFromItem(item);
+					return !includes(aSelectedItemKeys, sItemKey);
+				}.bind(this));
+				//get the items which are selected and not in selectedItems list, for example, the selected items defined in manifest value
+				var oSelectedItemsMissedInSelectedItemsList = oItemsNotInSelectedItemsList.filter(function (item) {
+					return item.Selected === oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+				});
+				//add the selected items which are not in selectedItems list into selectedItems list
+				this._aSelectedItems = this._aSelectedItems.concat(oSelectedItemsMissedInSelectedItemsList);
+				//get the items which are not selected
+				var oNotSelectedItems = oItemsNotInSelectedItemsList.filter(function (item) {
+					return item.Selected !== oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+				});
+				//concat the filtered items to the selectedItems list as new data
+				oResult = this._aSelectedItems.concat(oNotSelectedItems);
+			} else {
+				oResult = this._aSelectedItems;
+			}
+			ObjectPath.set(aPath, oResult, oData);
+		} else if (Array.isArray(oData)) {
+			//get keys of previous selected items
+			var aSelectedItemKeys = this._aSelectedItems.map(function (oSelectedItem) {
+				return this.getKeyFromItem(oSelectedItem);
+			}.bind(this));
+			//get the items which are in selectedItems list
+			var oItemsNotInSelectedItemsList = oData.filter(function (item) {
+				var sItemKey = this.getKeyFromItem(item);
+				return !includes(aSelectedItemKeys, sItemKey);
+			}.bind(this));
+			//get the items which are selected and not in selectedItems list, for example, the selected items defined in manifest value
+			var oSelectedItemsMissedInSelectedItemsList = oItemsNotInSelectedItemsList.filter(function (item) {
+				return item.Selected === oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+			});
+			//add the selected items which are not in selectedItems list into selectedItems list
+			this._aSelectedItems = this._aSelectedItems.concat(oSelectedItemsMissedInSelectedItemsList);
+			//get the items which are not selected
+			var oNotSelectedItems = oItemsNotInSelectedItemsList.filter(function (item) {
+				return item.Selected !== oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+			});
+			//concat the filtered items to the selectedItems list as new data
+			oData = this._aSelectedItems.concat(oNotSelectedItems);
+		} else {
+			oData = this._aSelectedItems;
+		}
+		oValueModel.setData(oData);
+		this.setSuggestValue();
 	};
 
 	ListField.prototype.setSuggestValue = function() {
@@ -210,7 +254,13 @@ sap.ui.define([
 		}
 	};
 
-	ListField.prototype.onSelectionChange = function(oEvent) {
+	ListField.prototype.getGroupHeader = function(oGroup) {
+		return new SeparatorItem( {
+			text: oGroup.key
+		});
+	};
+
+	ListField.prototype.onSelectionChangeForFilterBackend = function(oEvent) {
 		var oField = oEvent.oSource.getParent();
 		var oConfig = oField.getConfiguration();
 		var oListItem = oEvent.getParameter("changedItem");
@@ -250,7 +300,8 @@ sap.ui.define([
 				oData.some(function (oItem) {
 					var sItemKey = oField.getKeyFromItem(oItem);
 					if (sItemKey === sChangedItemKey) {
-						oField._aSelectedItems = oField._aSelectedItems.concat([oItem]);
+						oItem.Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+						oField._aSelectedItems.push(oItem);
 						return true;
 					}
 					return false;
@@ -267,6 +318,54 @@ sap.ui.define([
 		var sSettingspath = this.getBindingContext("currentSettings").sPath;
 		var oSettingsModel = this.getModel("currentSettings");
 		oSettingsModel.setProperty(sSettingspath + "/value", aSelectedItemKeys);
+	};
+
+	ListField.prototype.onSelectionChange = function(oEvent) {
+		var oField = oEvent.oSource.getParent();
+		var oConfig = oField.getConfiguration();
+		var oListItem = oEvent.getParameter("changedItem");
+		var sChangedItemKey = oListItem.getKey();
+		var bIsSelected = oEvent.getParameter("selected");
+
+		//get items in data model
+		var oData = this.getModel().getData();
+		var sPath = oConfig.values.data.path || "/";
+		if (sPath !== "/") {
+			if (sPath.startsWith("/")) {
+				sPath = sPath.substring(1);
+			}
+			if (sPath.endsWith("/")) {
+				sPath = sPath.substring(0, sPath.length - 1);
+			}
+			var aPath = sPath.split("/");
+			var oResult = ObjectPath.get(aPath, oData);
+			if (Array.isArray(oResult)) {
+				for (var n in oResult) {
+					var sItemKey = oField.getKeyFromItem(oResult[n]);
+					if (sItemKey === sChangedItemKey) {
+						if (bIsSelected) {
+							oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+						} else {
+							oResult[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
+						}
+					}
+				}
+				ObjectPath.set(aPath, oResult, oData);
+			}
+		} else if (Array.isArray(oData)) {
+			for (var n in oData) {
+				var sItemKey = oField.getKeyFromItem(oData[n]);
+				if (sItemKey === sChangedItemKey) {
+					if (bIsSelected) {
+						oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
+					} else {
+						oData[n].Selected = oResourceBundle.getText("CARDEDITOR_ITEM_UNSELECTED");
+					}
+				}
+			}
+		}
+		this.getModel().setData(oData);
+		this.getModel().checkUpdate(true);
 	};
 
 	ListField.prototype.onSelectionFinish = function(oEvent) {

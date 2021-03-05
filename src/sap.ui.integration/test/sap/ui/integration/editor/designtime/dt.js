@@ -59,8 +59,8 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 					"stringWithTranslatedDTDefaultValue": {
 						"manifestpath": "/sap.card/configuration/parameters/stringWithTranslatedDTDefaultValue/value",
 						"type": "string",
-						"label": "String with translated value",
-						"defaultValue": "{i18n>TRANSLATED_STRING_VALUE}",
+						"label": "String with translated default value",
+						"defaultValue": "{i18n>TRANSLATED_STRING_DEFAULT_VALUE}",
 						"translatable": true
 					},
 					"integer": {
@@ -418,6 +418,26 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 						"label": "String Array With No Values",
 						"defaultValue": ["key1", "key2"],
 						"type": "string[]"
+					},
+					"Customers": {
+						"manifestpath": "/sap.card/configuration/parameters/Customers/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Customers",
+									"parameters": {
+										"$select": "CustomerID, CompanyName, Country, City, Address"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{CompanyName}",
+								"key": "{CustomerID}",
+								"additionalText": "{= ${CustomerID} !== undefined ? ${Country} + ', ' +  ${City} + ', ' + ${Address} : ''}"
+							}
+						}
 					},
 					"iconNotAllowFile": {
 						"manifestpath": "/sap.card/configuration/parameters/iconNotAllowFile/src",
@@ -898,6 +918,7 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							},
 							"item": {
 								"text": "{CompanyName}",
+								"key": "{CustomerID}",
 								"additionalText": "{= ${CustomerID} !== undefind ? ${Country} + ', ' +  ${City} + ', ' + ${Address}: ''}"
 							}
 						}

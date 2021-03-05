@@ -1111,7 +1111,7 @@ sap.ui.define([
 					assert.ok(oCustomersComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
 
 					setTimeout(function () {
-						assert.ok(oCustomersComoboBox.getItems().length === 4, "Field: Customers origin lenght is OK");
+						assert.ok(oCustomersComoboBox.getItems().length === 5, "Field: Customers origin lenght is OK");
 						oCustomersComoboBox.setValue("c");
 						oCustomersField.onInput({
 							"target": {
@@ -1120,7 +1120,7 @@ sap.ui.define([
 							"srcControl": oCustomersComoboBox
 						});
 						setTimeout(function () {
-							assert.ok(oCustomersComoboBox.getItems().length === 2, "Field: Customers lenght is OK");
+							assert.ok(oCustomersComoboBox.getItems().length === 3, "Field: Customers lenght is OK");
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);
@@ -1146,7 +1146,7 @@ sap.ui.define([
 					assert.ok(oCustomersComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
 
 					setTimeout(function () {
-						assert.ok(oCustomersComoboBox.getItems().length === 4, "Field: Customers origin lenght is OK");
+						assert.ok(oCustomersComoboBox.getItems().length === 5, "Field: Customers origin lenght is OK");
 						oCustomersComoboBox.setValue("c");
 						oCustomersField.onInput({
 							"target": {
@@ -1155,7 +1155,7 @@ sap.ui.define([
 							"srcControl": oCustomersComoboBox
 						});
 						setTimeout(function () {
-							assert.ok(oCustomersComoboBox.getItems().length === 2, "Field: Customers lenght is OK");
+							assert.ok(oCustomersComoboBox.getItems().length === 3, "Field: Customers lenght is OK");
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);
@@ -1181,7 +1181,7 @@ sap.ui.define([
 					assert.ok(oCustomersComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
 
 					setTimeout(function () {
-						assert.ok(oCustomersComoboBox.getItems().length === 1, "Field: Customers origin lenght is OK");
+						assert.ok(oCustomersComoboBox.getItems().length === 2, "Field: Customers origin lenght is OK");
 						oCustomersComoboBox.setValue("d");
 						oCustomersField.onInput({
 							"target": {
@@ -1216,7 +1216,7 @@ sap.ui.define([
 					assert.ok(oCustomersComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
 
 					setTimeout(function () {
-						assert.ok(oCustomersComoboBox.getItems().length === 4, "Field: Customers origin lenght is OK");
+						assert.ok(oCustomersComoboBox.getItems().length === 5, "Field: Customers origin lenght is OK");
 						oCustomersComoboBox.setValue("c");
 						oCustomersField.onInput({
 							"target": {
@@ -1225,7 +1225,7 @@ sap.ui.define([
 							"srcControl": oCustomersComoboBox
 						});
 						setTimeout(function () {
-							assert.ok(oCustomersComoboBox.getItems().length === 2, "Field: Customers lenght is OK");
+							assert.ok(oCustomersComoboBox.getItems().length === 3, "Field: Customers lenght is OK");
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);
@@ -1251,7 +1251,7 @@ sap.ui.define([
 					assert.ok(oEmployeesComoboBox.isA("sap.m.MultiComboBox"), "Field: Employees is MultiComboBox");
 
 					setTimeout(function () {
-						assert.ok(oEmployeesComoboBox.getItems().length === 6, "Field: Employees origin lenght is OK");
+						assert.ok(oEmployeesComoboBox.getItems().length === 7, "Field: Employees origin lenght is OK");
 						oEmployeesComoboBox.setValue("n");
 						oEmployeesField.onInput({
 							"target": {
@@ -1260,7 +1260,7 @@ sap.ui.define([
 							"srcControl": oEmployeesComoboBox
 						});
 						setTimeout(function () {
-							assert.ok(oEmployeesComoboBox.getItems().length === 1, "Field: Employees lenght is OK");
+							assert.ok(oEmployeesComoboBox.getItems().length === 2, "Field: Employees lenght is OK");
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);
