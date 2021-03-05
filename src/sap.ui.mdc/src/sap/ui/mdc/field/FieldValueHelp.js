@@ -2071,6 +2071,8 @@ sap.ui.define([
 				return false;
 			};
 
+			oDialog.addStyleClass("sapMdcValueHelpTitle");
+
 			this.setAggregation("_dialog", oDialog, true);
 			// TODO
 			this.setModel(new ResourceModel({ bundleName: "sap/ui/mdc/messagebundle", async: false }), "$i18n");
