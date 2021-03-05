@@ -30,8 +30,6 @@ sap.ui.define([
 
 			this.key = mSettings.key || "";
 
-			this._aRouters = [];
-
 			HashChangerBase.apply(this);
 		}
 	});
@@ -102,11 +100,8 @@ sap.ui.define([
 			aKeys = Object.keys(this.children);
 
 			aKeys.forEach(function(sChildKey) {
-				var sChildHash = oSubHashMap[sChildKey];
-
-				if (sChildHash !== undefined) {
-					this.children[sChildKey].fireHashChanged(sChildHash, oSubHashMap, bUpdateHashOnly);
-				}
+				var sChildHash = (oSubHashMap[sChildKey] === undefined ? "" : oSubHashMap[sChildKey]);
+				this.children[sChildKey].fireHashChanged(sChildHash, oSubHashMap, bUpdateHashOnly);
 			}.bind(this));
 		}
 	};
@@ -338,48 +333,7 @@ sap.ui.define([
 		return this._bCollectMode || (this.parent instanceof RouterHashChanger && this.parent._isInCollectMode());
 	};
 
-	/**
-	 * Register a given router instance to this RouterHashChanger
-	 *
-	 * @param {sap.ui.core.routing.Router} oRouter The router that is going to be registered to the RouterHashChanger
-	 * @returns {sap.ui.core.routing.RouterHashChanger} this RouterHashChanger to enable call chaining
-	 * @private
-	 * @ui5-restricted sap.ui.core
-	 */
-	RouterHashChanger.prototype.registerRouter = function(oRouter) {
-		if (this._aRouters.indexOf(oRouter) === -1) {
-			this._aRouters.push(oRouter);
-		}
-
-		return this;
-	};
-
-	/**
-	 * Deregister a given router instance from this RouterHashChanger
-	 *
-	 * @param {sap.ui.core.routing.Router} oRouter The router that is going to be removed from the RouterHashChanger
-	 * @returns {sap.ui.core.routing.RouterHashChanger} this RouterHashChanger to enable call chaining
-	 * @private
-	 * @ui5-restricted sap.ui.core
-	 */
-	RouterHashChanger.prototype.deregisterRouter = function(oRouter) {
-		var iPos = this._aRouters.indexOf(oRouter);
-
-		if (iPos !== -1) {
-			this._aRouters.splice(iPos, 1);
-
-			if (this._aRouters.length === 0) {
-				this.destroy();
-			}
-		}
-		return this;
-	};
-
 	RouterHashChanger.prototype.destroy = function() {
-		if (!this.parent) {
-			return;
-		}
-
 		this.parent.deregisterRouterHashChanger(this);
 
 		if (this.children) {
