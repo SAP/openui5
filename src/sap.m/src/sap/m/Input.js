@@ -961,7 +961,7 @@ function(
 			if (oItem) {
 				sNewValue = this._getDisplayText(oItem);
 			} else {
-				sNewValue = this._fnRowResultFilter ? this._fnRowResultFilter(oListItem) : Input._DEFAULTRESULT_TABULAR(oListItem);
+				sNewValue = this._getRowResultFunction()(oListItem);
 			}
 		}
 
@@ -1167,6 +1167,25 @@ function(
 		}
 
 		return this;
+	};
+
+	/**
+	 * Returns a custom or default filter function for tabular suggestions to select the text that is passed to the input field.
+	 *
+	 * If no custom filter is set or default filtering is forced, this function will apply the default filter to the column item.
+	 *
+	 * @private
+	 * @param {sap.m.ColumnListItem} oColumnListItem The sap.m.ColumnListItem that is selected
+	 * @param {boolean} bForceDefaultFiltering Whether or not to apply the default filter even if custom one is set
+	 *
+	 * @returns {function} The row filtering function(s) to execute on the selected row item.
+	 */
+	Input.prototype._getRowResultFunction = function(bForceDefaultFiltering) {
+		if (typeof this._fnRowResultFilter === "function" && !bForceDefaultFiltering) {
+			return this._fnRowResultFilter;
+		}
+
+		return Input._DEFAULTRESULT_TABULAR;
 	};
 
 	/**
@@ -2052,7 +2071,7 @@ function(
 				if (!oItem) {
 					return "";
 				}
-				return bHasTabularSuggestions ? oInput._fnRowResultFilter(oItem) : oItem.getText();
+				return bHasTabularSuggestions ? oInput._getRowResultFunction()(oItem) : oItem.getText();
 			};
 
 		var aItemsToSelect = typeAhead(sValue, this, aItems, function (oItem) {
@@ -2591,11 +2610,6 @@ function(
 			this._fnFilter = Input._DEFAULTFILTER_TABULAR;
 		}
 
-		// if not custom row result function is set we set the default one
-		if (!this._fnRowResultFilter) {
-			this._fnRowResultFilter = Input._DEFAULTRESULT_TABULAR;
-		}
-
 		if (this.getShowTableSuggestionValueHelp()) {
 			this._addShowMoreButton();
 		}
@@ -2721,7 +2735,7 @@ function(
 		}
 
 		if (oListItem.isA("sap.m.ColumnListItem")) {
-			return this._getInputValue(this._fnRowResultFilter(oListItem));
+			return this._getInputValue(this._getRowResultFunction()(oListItem));
 		}
 
 		if (oListItem.isA("sap.m.StandardListItem")) {
@@ -3080,7 +3094,7 @@ function(
 				oTabularRow.setVisible(bShowItem);
 				bShowItem && aFilteredItems.push(oTabularRow);
 
-				if (!bIsAnySuggestionAlreadySelected && bShowItem && this._sProposedItemText === this._fnRowResultFilter(oTabularRow)) {
+				if (!bIsAnySuggestionAlreadySelected && bShowItem && this._sProposedItemText === this._getRowResultFunction()(oTabularRow)) {
 					oTabularRow.setSelected(true);
 					bIsAnySuggestionAlreadySelected = true;
 				}
