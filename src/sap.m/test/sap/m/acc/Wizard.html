@@ -12,7 +12,7 @@
 			}'>
 	</script>
 	<script>
-		var step1 = new sap.m.WizardStep({
+		var step1 = new sap.m.WizardStep("firstStep", {
 			validated: false,
 			title: "User credentials",
 			icon: "sap-icon://permission",
@@ -90,7 +90,7 @@
 					})
 				]
 			}),
-			oWizard = sap.m.Wizard({
+			oWizard = new sap.m.Wizard({
 				width: "100%",
 				showNextButton: true,
 				steps: [step1, step2, step3]

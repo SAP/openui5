@@ -63,7 +63,12 @@
 		{
 			"control": "sap.m.ComboBox",
 			"url": "ComboBox.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.ComboBox",
+				"title": "ACC test for sap.m.ComboBox",
+				"module": "./combobox.qunit"
+			}
 		},
 		{
 			"control": "sap.m.ColorPalette",
@@ -158,7 +163,12 @@
 		{
 			"control": "sap.m.Input",
 			"url": "Input.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.Input",
+				"title": "ACC test for sap.m.Input",
+				"module": "./input.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Label",
@@ -239,7 +249,12 @@
 		{
 			"control": "sap.m.MessageView",
 			"url": "MessageView.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.MessageView",
+				"title": "ACC test for sap.m.MessageView",
+				"module": "./messageview.qunit"
+			}
 		},
 		{
 			"control": "sap.m.MultiInput",
@@ -249,7 +264,12 @@
 		{
 			"control": "sap.m.MultiComboBox",
 			"url": "MultiComboBox.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.MultiComboBox",
+				"title": "ACC test for sap.m.MultiComboBox",
+				"module": "./multicombobox.qunit"
+			}
 		},
 		{
 			"control": "sap.m.NavContainer",
@@ -329,7 +349,12 @@
 		{
 			"control": "sap.m.Panel",
 			"url": "Panel.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.Panel",
+				"title": "ACC test for sap.m.Panel",
+				"module": "./panel.qunit"
+			}
 		},
 		{
 			"control": "sap.m.PlanningCalendar",
@@ -500,7 +525,12 @@
 		{
 			"control": "sap.m.Tokenizer",
 			"url": "Tokenizer.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.Tokenizer",
+				"title": "ACC test for sap.m.Tokenizer",
+				"module": "./tokenizer.qunit"
+			}
 		},
 		{
 			"control": "sap.m.TileContainer",
@@ -550,7 +580,12 @@
 		{
 			"control": "sap.m.Wizard",
 			"url": "Wizard.html",
-			"appComponent": "CA-UI5-CTR-RIL"
+			"appComponent": "CA-UI5-CTR-RIL",
+			"accTest": {
+				"name": "sap.m.Wizard",
+				"title": "ACC test for sap.m.Wizard",
+				"module": "./wizard.qunit"
+			}
 		},
 		{
 			"control": "sap.m.PDFViewer",
