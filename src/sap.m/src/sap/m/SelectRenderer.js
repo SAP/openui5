@@ -100,9 +100,11 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			}
 
 			oRm.openEnd();
-			// Used to benefit from the div[role="combobox"]. Direct textNode is the value of the div and no other elements should be placed inside.
+			// Used to benefit from the input[type="button"]. Text in value attribute is announced by screen readers when changed.
+			// Type is button, otherwise keyboard is shown on mobile when focused.
 			this.renderFocusElement(oRm, oSelect);
 			// Used in case control is in a form submitted by input[type="submit"].
+			// Attribute "value" is holding the selectedKey property value.
 			this.renderHiddenInput(oRm, oSelect);
 			this.renderLabel(oRm, oSelect);
 
@@ -129,16 +131,16 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 		};
 
 		/**
-		 * Renders the element, which receives the focus. This is needed because when using [role="combobox"] we benefit from the direct textNode
-		 * which serves as a VALUE and is read out by screen readers when it changes.
+		 * Renders the element, which receives the focus.
+		 * This element is holding the selectedItem text property in its value attribute and it's announced by screen readers when changed.
 		 *
 		 * @param {sap.ui.core.RenderManager} oRm The RenderManager that can be used for writing to the render output buffer.
 		 * @param {sap.m.Select} oSelect An object representation of the control that should be rendered.
 		 * @private
 		 */
 		SelectRenderer.renderFocusElement = function (oRm, oSelect) {
-			var oSelectedItem = oSelect.getSelectedItem();
-			oRm.openStart("div", oSelect.getId() + "-hiddenSelect");
+			var oSelectedItemText = oSelect._getSelectedItemText();
+			oRm.voidStart("input", oSelect.getId() + "-hiddenSelect");
 
 			this.writeAccessibilityState(oRm, oSelect);
 
@@ -150,14 +152,13 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/IconPool', 'sap/m/library', 
 			if (oSelect.getEnabled()) {
 				oRm.attr("tabindex", "0");
 			}
+			oRm.attr("type", "button");
 
-			oRm.openEnd();
-
-			if (oSelectedItem) {
-				oRm.text(oSelectedItem.getText());
+			if (oSelectedItemText) {
+				oRm.attr("value", oSelectedItemText);
 			}
 
-			oRm.close('div');
+			oRm.voidEnd();
 		};
 
 		/**

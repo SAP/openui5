@@ -776,13 +776,11 @@ function(
 			var oSelect = this._getHiddenSelect(),
 				oInput = this._getHiddenInput(),
 				oSelectedKey = this.getSelectedKey(),
-				oSelectedItem = this.getSelectedItem(),
-				sSelectedItemText;
+				sSelectedItemText = this._getSelectedItemText();
 
 			oInput.attr("value", oSelectedKey || "");
+			oSelect.attr("value", sSelectedItemText);
 
-			sSelectedItemText = oSelectedItem ? oSelectedItem.getText() : "";
-			oSelect.text(sSelectedItemText);
 		};
 
 		Select.prototype._getValueIcon = function() {
