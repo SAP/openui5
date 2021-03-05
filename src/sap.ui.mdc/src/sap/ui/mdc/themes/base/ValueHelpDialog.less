@@ -8,11 +8,13 @@
 .sapMdcTokenizerPanel > .sapMPanelContent {
 	padding-left: 1rem;
 	padding-right: 1rem;
+	padding-top: 0rem;
 	padding-bottom: 1rem;
 	overflow: hidden;
 }
 
 .sapMdcTablePanel > .sapMPanelContent {
+	padding-top: 0;
 	padding-bottom: 0;
 }
 
@@ -28,7 +30,7 @@
 
 .sapMdcTokenizer.sapMTokenizer {
 	width: 100%;
-	border: 1px solid @sapUiGroupContentBorderColor;
+	border: 1px solid @sapUiFieldBorderColor;
 	background-color: @sapUiFieldBackground;
 }
 
@@ -73,10 +75,11 @@
 	box-sizing: border-box;
 }
 
-// remove 1rem left padding around all define conditions content
+// correct paddings around the define conditions content
 .sapMdcDefineconditionPanel .sapMPanelContent {
 	padding-left: 0.75rem;
-	padding-right: 0.75rem;
+	padding-right: 0rem;
+	padding-top: 0rem;
 }
 
 // makes the IconTab Header hidden when only one tabs exist
@@ -143,7 +146,7 @@
 // show padding on top of the defineConditionPanel when used on popover
 .sapMPopoverCont .sapMPopoverScroll > .sapUiMdcDefineConditionPanel {
 	padding-top: 1rem;
-	padding-left: 0.75rem;
+	// padding-left: 0.75rem;
 	padding-right: 0.75rem;
 }
 
@@ -156,3 +159,25 @@
 .sapMdcValueHelpPanel .sapUiFixFlexScrolling .sapMdcTablePanel {
 	height: 200px !important;
 }
+
+// make the title shadows transparent
+.sapMdcValueHelpTitle.sapMDialog:not(.sapMDialogWithSubHeader) > header:first-of-type .sapMIBar {
+    box-shadow: inset 0 -0.0625rem transparent;
+}
+
+.sapMdcValueHelpTitle.sapMBar {
+    box-shadow: inset 0 -0.0625rem transparent;
+}
+
+// remove some borders around the IconTabBar content
+.sapMdcValueHelpPanel .sapMITBContent {
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+}
+
+// set the 2rem padding also on the OK and Cancel buttons in the footer
+.sapMdcValueHelpTitle.sapMDialog footer .sapMTB {
+    padding: 0 2rem;
+}
+
