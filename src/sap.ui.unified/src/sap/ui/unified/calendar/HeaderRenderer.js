@@ -27,7 +27,6 @@ sap.ui.define(["sap/base/security/encodeXML"],
 		var sLanguage = sap.ui.getCore().getConfiguration().getLocale().getLanguage();
 		var sTooltip = oHead.getTooltip_AsString();
 		var sId = oHead.getId();
-		var mAccProps = {};
 		var sLabelNext = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_BTN_NEXT");
 		var sLabelPrev = sap.ui.getCore().getLibraryResourceBundle("sap.ui.unified").getText("CALENDAR_BTN_PREV");
 
@@ -99,7 +98,7 @@ sap.ui.define(["sap/base/security/encodeXML"],
 				iFirst = 2;
 				iLast = 3;
 			}
-			this.renderCalendarButtons(oRm, oHead, sId, iFirst, iLast, mAccProps, iBtn);
+			this.renderCalendarButtons(oRm, oHead, sId, iFirst, iLast, iBtn);
 		}
 
 		oRm.openStart("button", sId + '-next');
@@ -120,7 +119,9 @@ sap.ui.define(["sap/base/security/encodeXML"],
 
 	};
 
-	HeaderRenderer.renderCalendarButtons = function (oRm, oHead, sId, iFirst, iLast, mAccProps, i) {
+	HeaderRenderer.renderCalendarButtons = function (oRm, oHead, sId, iFirst, iLast, i) {
+		var mAccProps = {};
+
 		if (this.getVisibleButton(oHead, i)) {
 			oRm.openStart("button", sId + '-B' + i);
 			oRm.class("sapUiCalHeadB");
