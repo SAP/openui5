@@ -348,7 +348,6 @@ sap.ui.define([
 		oMonth.attachEvent("_unbindMousemove", _handleUnbindMousemove, this);
 		oMonth._bNoThemeChange = true;
 		this.addAggregation("month",oMonth);
-
 		this._initializeMonthPicker();
 		this._initializeYearPicker();
 		this._initializeYearRangePicker();
@@ -2462,7 +2461,6 @@ sap.ui.define([
 		var oYearPicker = this._getYearPicker(),
 			oHeader = this.getAggregation("header"),
 			oSecondMonthHeader = this.getAggregation("secondMonthHeader"),
-			sFirstHeaderAriaLabel = sFirstHeaderYear,
 			sFirstHeaderText = sFirstHeaderYear,
 			sSecondHeaderText = sSecondHeaderYear || sFirstHeaderYear,
 			sPrimaryCalendarType = this.getPrimaryCalendarType();
@@ -2496,22 +2494,12 @@ sap.ui.define([
 		oHeader._setTextButton4(sSecondHeaderText);
 		oHeader._setAriaLabelButton4(sSecondHeaderText);
 		oSecondMonthHeader.setTextButton2(sSecondHeaderText);
-		oSecondMonthHeader.setAriaLabelButton2(sSecondHeaderText);
 		oHeader.setTextButton2(sFirstHeaderText);
-		oHeader.setAriaLabelButton2(sFirstHeaderAriaLabel);
 	};
 
 	Calendar.prototype._updateHeadersYearAdditionalText = function (sYear) {
 		var oHeader = this.getAggregation("header"),
-			oSecondMonthHeader = this.getAggregation("secondMonthHeader"),
-			sAriaLabel = oHeader.getAriaLabelButton2(); // Get what's already set with the primary text
-
-		if (sYear) {
-			// Add the secondary year info, as well as the hint.
-			// Keep in mind this method might be called from _handleNext/Previous without a year
-			sAriaLabel += ", " + sYear;
-			oHeader.setAriaLabelButton2(sAriaLabel);
-		}
+			oSecondMonthHeader = this.getAggregation("secondMonthHeader");
 
 		oHeader.setAdditionalTextButton2(sYear);
 		oHeader._setAdditionalTextButton4(sYear);
