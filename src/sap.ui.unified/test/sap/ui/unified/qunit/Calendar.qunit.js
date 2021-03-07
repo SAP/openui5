@@ -1580,34 +1580,6 @@ QUnit.module("Misc");
 		oCal7.destroy();
 	});
 
-	// BCP: 1780409322
-	QUnit.test("year change update aria-label of the button", function (assert) {
-		// prepare
-		var oCalendar = new Calendar(),
-			oCurrentDate = new Date(2017, 5, 2),
-			oNewFocusedDate = new Date(2018, 6, 3),
-			sExpectedAriaLabel;
-
-		oCalendar.displayDate(oCurrentDate);
-		oCalendar.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		sExpectedAriaLabel = oCalendar.$("-Head-B2").text();
-		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),sExpectedAriaLabel, "aria-label should be equal to the text of the button");
-
-		// act
-		oCalendar.displayDate(oNewFocusedDate);
-
-		// assert
-		sExpectedAriaLabel = oCalendar.$("-Head-B2").text();
-		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"),sExpectedAriaLabel, "aria-label should be equal to the text of the button");
-
-		// cleanup
-		oCalendar.destroy();
-	});
-
-
-	// BCP: 1780409322
 	QUnit.test("month change update aria-label of the button", function (assert) {
 		// prepare
 		var oCalendar = new Calendar(),
@@ -1633,38 +1605,6 @@ QUnit.module("Misc");
 		oCalendar.destroy();
 	});
 
-	// BCP: 1870534995
-	QUnit.test("Secondary year info should be added in button's aria-label", function (assert) {
-		// prepare
-		var oCalendar = new Calendar({
-				primaryCalendarType: "Islamic",
-				secondaryCalendarType: "Gregorian"
-			}),
-			oCurrentDate = new Date(2017, 5, 2),
-			oNewFocusedDate = new Date(2018, 6, 3),
-			sExpectedAriaLabel;
-
-		oCalendar.displayDate(oCurrentDate);
-		oCalendar.placeAt("qunit-fixture");
-		sap.ui.getCore().applyChanges();
-
-		sExpectedAriaLabel = oCalendar.$("-Head-B2-Text").text() + ", " + oCalendar.$("-Head-B2-AddText").text();
-		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"), sExpectedAriaLabel,
-			"aria-label should contain info for both primary and secondary year");
-
-		// act
-		oCalendar.displayDate(oNewFocusedDate);
-
-		// assert
-		sExpectedAriaLabel = oCalendar.$("-Head-B2-Text").text() + ", " + oCalendar.$("-Head-B2-AddText").text();
-		assert.equal(oCalendar.$("-Head-B2").attr("aria-label"), sExpectedAriaLabel,
-			"aria-label should contain info for the updated primary and secondary year");
-
-		// cleanup
-		oCalendar.destroy();
-	});
-
-	// BCP: 1870534995
 	QUnit.test("Secondary month info should be added in button's aria-label", function (assert) {
 		// prepare
 		var oCalendar = new Calendar({
@@ -2064,9 +2004,9 @@ QUnit.module("Misc");
 	QUnit.test("_updateHeadersYearPrimaryText should call header and secondMonthHeader methods with proper value", function (assert) {
 		// arrange
 		var sYear = "2018",
-			sExpectedValue = sYear,
 			oHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy(), _setTextButton4: this.spy(), _setAriaLabelButton4: this.spy() },
 			oSecondMonthHeader = { setTextButton2: this.spy(), setAriaLabelButton2: this.spy() },
+
 			oCalendar = new Calendar(),
 			oGetAggregationStub = this.stub(oCalendar, "getAggregation");
 		oGetAggregationStub.withArgs("header").returns(oHeader);
@@ -2077,11 +2017,8 @@ QUnit.module("Misc");
 
 		// assert
 		assert.equal(oHeader.setTextButton2.getCall(0).args[0], sYear, "setTextButton2 should be called with " + sYear);
-		assert.equal(oHeader.setAriaLabelButton2.getCall(0).args[0], sExpectedValue, "setAriaLabelButton2 should be called with " + sExpectedValue);
 		assert.equal(oHeader._setTextButton4.getCall(0).args[0], sYear, "_setTextButton4 should be called with " + sYear);
-		assert.equal(oHeader._setAriaLabelButton4.getCall(0).args[0], sYear, "_setAriaLabelButton4 should be called with " + sYear);
 		assert.equal(oSecondMonthHeader.setTextButton2.getCall(0).args[0], sYear, "setTextButton2 should be called with " + sYear);
-		assert.equal(oSecondMonthHeader.setAriaLabelButton2.getCall(0).args[0], sYear, "setAriaLabelButton2 should be called with " + sYear);
 
 		// cleanup
 		oCalendar.destroy();
