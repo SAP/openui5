@@ -726,6 +726,51 @@ sap.ui.define([
 		},
 
 		/**
+		 * Returns the "@Org.OData.Core.V1.additionalTargets" annotation for the given message,
+		 * ignoring the alias. Logs a warning if duplicates are found.
+		 *
+		 * @param {object} oMessage
+		 *   A single message from an OData error response
+		 * @returns {string[]|undefined}
+		 *   The value of the additionalTargets annotation, or <code>undefined</code> in case there
+		 *   is not exactly one such annotation (ignoring the alias)
+		 */
+		 getAdditionalTargets : function (oMessage) {
+			return _Helper.getAnnotation(oMessage, ".additionalTargets");
+		},
+
+		/**
+		 * Returns the instance annotation with a given name for the given message, ignoring the
+		 * alias. Logs a warning if duplicates are found.
+		 *
+		 * @param {object} oMessage
+		 *   A single message from an OData error response
+		 * @param {object} sName
+		 *   The name of the annotation without prefix "@" and namespace, e.g. ".ContentID" for a
+		 *   annotation "@Org.OData.Core.V1.ContentID"
+		 * @returns {any|undefined}
+		 *   The value of the annotation, or <code>undefined</code> in case there is not exactly one
+		 *   such annotation (ignoring the alias)
+		 */
+		getAnnotation : function (oMessage, sName) {
+			var sAnnotation, sAnnotationKey, bDuplicate;
+
+			Object.keys(oMessage).forEach(function (sKey) {
+				if (sKey[0] === "@" && sKey.endsWith(sName)) {
+					if (sAnnotation) {
+						Log.warning("Cannot distinguish " + sAnnotationKey + " from " + sKey,
+							undefined, sClassName);
+						bDuplicate = true;
+					}
+					sAnnotation = oMessage[sKey];
+					sAnnotationKey = sKey;
+				}
+			});
+
+			return bDuplicate ? undefined : sAnnotation;
+		},
+
+		/**
 		 * Returns the "@Org.OData.Core.V1.ContentID" annotation for the given message, ignoring
 		 * the alias. Logs a warning if duplicates are found.
 		 *
@@ -735,22 +780,8 @@ sap.ui.define([
 		 *   The value of the ContentID annotation, or <code>undefined</code> in case there is not
 		 *   exactly one such annotation (ignoring the alias)
 		 */
-		getContentID : function (oMessage) {
-			var sContentID, sContentIDKey, bDuplicate;
-
-			Object.keys(oMessage).forEach(function (sKey) {
-				if (sKey[0] === "@" && sKey.endsWith(".ContentID")) {
-					if (sContentID) {
-						Log.warning("Cannot distinguish " + sContentIDKey + " from " + sKey,
-							undefined, sClassName);
-						bDuplicate = true;
-					}
-					sContentID = oMessage[sKey];
-					sContentIDKey = sKey;
-				}
-			});
-
-			return bDuplicate ? undefined : sContentID;
+		 getContentID : function (oMessage) {
+			return _Helper.getAnnotation(oMessage, ".ContentID");
 		},
 
 		/**

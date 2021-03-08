@@ -3629,51 +3629,88 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	QUnit.test("getAnnotation", function (assert) {
+		var oValue = {};
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation({}, ".AnyAnnotation"), undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation({"@Foo.NoAnyAnnotation" : "n/a"},
+			".AnyAnnotation"), undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation({"@Foo.Bar" : "n/a"}, "bar"), undefined);
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation({"message@Core.AnyAnnotation" : "n/a"},
+			".AnyAnnotation"), undefined);
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Cannot distinguish @Core.AnyAnnotation from @SAP__core.AnyAnnotation",
+				undefined, sClassName);
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation({
+				"@Core.AnyAnnotation" : "1.0",
+				"@SAP__core.AnyAnnotation" : "1.0"
+			}, ".AnyAnnotation"), undefined, "duplicate alias");
+
+		this.oLogMock.expects("warning")
+			.withExactArgs("Cannot distinguish @Core.AnyAnnotation from @Foo.AnyAnnotation",
+				undefined, sClassName);
+		this.oLogMock.expects("warning")
+			.withExactArgs("Cannot distinguish @Foo.AnyAnnotation from @SAP__core.AnyAnnotation",
+				undefined, sClassName);
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation({
+				"@Core.AnyAnnotation" : "1.0",
+				"@Foo.AnyAnnotation" : "1.0",
+				"@SAP__core.AnyAnnotation" : "1.0"
+			}, ".AnyAnnotation"), undefined, "toggling sAnyAnnotation is not enough");
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation({"@SAP__core.AnyAnnotation" : "1.0"},
+			".AnyAnnotation"), "1.0");
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation({"@Core.AnyAnnotation" : "2.1"}, ".AnyAnnotation"),
+			"2.1");
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation({"@Org.OData.Core.V1.AnyAnnotation" : "3.2"},
+			".AnyAnnotation"), "3.2");
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation({"@Foo.AnyAnnotation" : "bar"}, ".AnyAnnotation"),
+			"bar");
+
+		// code under test
+		assert.strictEqual(_Helper.getAnnotation({"@Foo.AnyAnnotationName" : oValue},
+			"AnyAnnotationName"), oValue);
+	});
+
+	//*********************************************************************************************
 	QUnit.test("getContentID", function (assert) {
-		// code under test
-		assert.strictEqual(_Helper.getContentID({}), undefined);
+		var oMessage = {};
 
-		// code under test
-		assert.strictEqual(_Helper.getContentID({"@Foo.NoContentID" : "n/a"}), undefined);
+		this.mock(_Helper).expects("getAnnotation")
+			.withExactArgs(sinon.match.same(oMessage), ".ContentID")
+			.returns("~ContentID~");
 
-		// code under test
-		assert.strictEqual(_Helper.getContentID({"message@Core.ContentID" : "n/a"}), undefined);
+		assert.strictEqual(_Helper.getContentID(oMessage), "~ContentID~");
+	});
 
-		this.oLogMock.expects("warning")
-			.withExactArgs("Cannot distinguish @Core.ContentID from @SAP__core.ContentID",
-				undefined, sClassName);
+	//*********************************************************************************************
+	QUnit.test("getAdditionalTargets", function (assert) {
+		var oMessage = {};
 
-		// code under test
-		assert.strictEqual(_Helper.getContentID({
-				"@Core.ContentID" : "1.0",
-				"@SAP__core.ContentID" : "1.0"
-			}), undefined, "duplicate alias");
+		this.mock(_Helper).expects("getAnnotation")
+			.withExactArgs(sinon.match.same(oMessage), ".additionalTargets")
+			.returns("~additionalTargets~");
 
-		this.oLogMock.expects("warning")
-			.withExactArgs("Cannot distinguish @Core.ContentID from @Foo.ContentID",
-				undefined, sClassName);
-		this.oLogMock.expects("warning")
-			.withExactArgs("Cannot distinguish @Foo.ContentID from @SAP__core.ContentID",
-				undefined, sClassName);
-
-		// code under test
-		assert.strictEqual(_Helper.getContentID({
-				"@Core.ContentID" : "1.0",
-				"@Foo.ContentID" : "1.0",
-				"@SAP__core.ContentID" : "1.0"
-			}), undefined, "toggling sContentID is not enough");
-
-		// code under test
-		assert.strictEqual(_Helper.getContentID({"@SAP__core.ContentID" : "1.0"}), "1.0");
-
-		// code under test
-		assert.strictEqual(_Helper.getContentID({"@Core.ContentID" : "2.1"}), "2.1");
-
-		// code under test
-		assert.strictEqual(_Helper.getContentID({"@Org.OData.Core.V1.ContentID" : "3.2"}), "3.2");
-
-		// code under test
-		assert.strictEqual(_Helper.getContentID({"@Foo.ContentID" : "bar"}), "bar");
+		assert.strictEqual(_Helper.getAdditionalTargets(oMessage), "~additionalTargets~");
 	});
 
 	//*********************************************************************************************
