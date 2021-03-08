@@ -133,15 +133,6 @@ sap.ui.define([
 					},
 					"CustomerWithFilterInURL": {
 						"value": ""
-					},
-					"CustomerWithFilterParamAndColumn": {
-						"value": ""
-					},
-					"CustomerWithFilterColumn": {
-						"value": ""
-					},
-					"EmployeeWithFilterColumns": {
-						"value": ""
 					}
 				},
 				"destinations": {
@@ -170,15 +161,6 @@ sap.ui.define([
 						"value": []
 					},
 					"CustomersWithFilterInURL": {
-						"value": []
-					},
-					"CustomersWithFilterParamAndColumn": {
-						"value": []
-					},
-					"CustomersWithFilterColumn": {
-						"value": []
-					},
-					"EmployeesWithFilterColumns": {
 						"value": []
 					}
 				},
@@ -865,111 +847,6 @@ sap.ui.define([
 				}.bind(this));
 			}.bind(this));
 		});
-
-		QUnit.test("Defined in Parameter and Column", function (assert) {
-			this.oCardEditor.setCard({
-				baseUrl: sBaseUrl,
-				host: "contexthost",
-				manifest: oManifestForFilterBackendInComboBox
-			});
-			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[5];
-					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[6];
-					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "CustomerWithFilterParamAndColumn", "Label: Has static label text");
-					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					var oCustomerComoboBox = oCustomerField.getAggregation("_field");
-					assert.ok(oCustomerComoboBox.isA("sap.m.ComboBox"), "Field: Customer is ComboBox");
-
-					setTimeout(function () {
-						assert.ok(oCustomerComoboBox.getItems().length === 1, "Field: Customer origin lenght is OK");
-						oCustomerComoboBox.setValue("d");
-						oCustomerField.onInput({
-							"target": {
-								"value": "d"
-							},
-							"srcControl": oCustomerComoboBox
-						});
-						setTimeout(function () {
-							assert.ok(oCustomerComoboBox.getItems().length === 0, "Field: Customer lenght is OK");
-							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("Defined in Column", function (assert) {
-			this.oCardEditor.setCard({
-				baseUrl: sBaseUrl,
-				host: "contexthost",
-				manifest: oManifestForFilterBackendInComboBox
-			});
-			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oCustomerLabel = this.oCardEditor.getAggregation("_formContent")[7];
-					var oCustomerField = this.oCardEditor.getAggregation("_formContent")[8];
-					assert.ok(oCustomerLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomerLabel.getText() === "CustomerWithFilterColumn", "Label: Has static label text");
-					assert.ok(oCustomerField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					var oCustomerComoboBox = oCustomerField.getAggregation("_field");
-					assert.ok(oCustomerComoboBox.isA("sap.m.ComboBox"), "Field: Customer is ComboBox");
-
-					setTimeout(function () {
-						assert.ok(oCustomerComoboBox.getItems().length === 4, "Field: Customer origin lenght is OK");
-						oCustomerComoboBox.setValue("c");
-						oCustomerField.onInput({
-							"target": {
-								"value": "c"
-							},
-							"srcControl": oCustomerComoboBox
-						});
-						setTimeout(function () {
-							assert.ok(oCustomerComoboBox.getItems().length === 2, "Field: Customer lenght is OK");
-							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("Multi Defined in Column", function (assert) {
-			this.oCardEditor.setCard({
-				baseUrl: sBaseUrl,
-				host: "contexthost",
-				manifest: oManifestForFilterBackendInComboBox
-			});
-			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oEmployeeLabel = this.oCardEditor.getAggregation("_formContent")[9];
-					var oEmployeeField = this.oCardEditor.getAggregation("_formContent")[10];
-					assert.ok(oEmployeeLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oEmployeeLabel.getText() === "EmployeeWithFilterColumns", "Label: Has static label text");
-					assert.ok(oEmployeeField.isA("sap.ui.integration.designtime.editor.fields.StringField"), "Field: String Field");
-					var oEmployeeComoboBox = oEmployeeField.getAggregation("_field");
-					assert.ok(oEmployeeComoboBox.isA("sap.m.ComboBox"), "Field: Employee is ComboBox");
-
-					setTimeout(function () {
-						assert.ok(oEmployeeComoboBox.getItems().length === 6, "Field: Employee origin lenght is OK");
-						oEmployeeComoboBox.setValue("n");
-						oEmployeeField.onInput({
-							"target": {
-								"value": "n"
-							},
-							"srcControl": oEmployeeComoboBox
-						});
-						setTimeout(function () {
-							assert.ok(oEmployeeComoboBox.getItems().length === 1, "Field: Employee lenght is OK");
-							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
-				}.bind(this));
-			}.bind(this));
-		});
 	});
 
 	QUnit.module("Filter in Backend by input for string[] (MultiComboBox)", {
@@ -1156,111 +1033,6 @@ sap.ui.define([
 						});
 						setTimeout(function () {
 							assert.ok(oCustomersComoboBox.getItems().length === 3, "Field: Customers lenght is OK");
-							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("Defined in Parameter And Column", function (assert) {
-			this.oCardEditor.setCard({
-				baseUrl: sBaseUrl,
-				host: "contexthost",
-				manifest: oManifestForFilterBackendInMultiComboBox
-			});
-			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oCustomersLabel = this.oCardEditor.getAggregation("_formContent")[5];
-					var oCustomersField = this.oCardEditor.getAggregation("_formContent")[6];
-					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomersLabel.getText() === "CustomersWithFilterParamAndColumn", "Label: Has static label text");
-					assert.ok(oCustomersField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
-					var oCustomersComoboBox = oCustomersField.getAggregation("_field");
-					assert.ok(oCustomersComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
-
-					setTimeout(function () {
-						assert.ok(oCustomersComoboBox.getItems().length === 2, "Field: Customers origin lenght is OK");
-						oCustomersComoboBox.setValue("d");
-						oCustomersField.onInput({
-							"target": {
-								"value": "d"
-							},
-							"srcControl": oCustomersComoboBox
-						});
-						setTimeout(function () {
-							assert.ok(oCustomersComoboBox.getItems().length === 0, "Field: Customers lenght is OK");
-							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("Defined in Column", function (assert) {
-			this.oCardEditor.setCard({
-				baseUrl: sBaseUrl,
-				host: "contexthost",
-				manifest: oManifestForFilterBackendInMultiComboBox
-			});
-			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oCustomersLabel = this.oCardEditor.getAggregation("_formContent")[7];
-					var oCustomersField = this.oCardEditor.getAggregation("_formContent")[8];
-					assert.ok(oCustomersLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oCustomersLabel.getText() === "CustomersWithFilterColumn", "Label: Has static label text");
-					assert.ok(oCustomersField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
-					var oCustomersComoboBox = oCustomersField.getAggregation("_field");
-					assert.ok(oCustomersComoboBox.isA("sap.m.MultiComboBox"), "Field: Customers is MultiComboBox");
-
-					setTimeout(function () {
-						assert.ok(oCustomersComoboBox.getItems().length === 5, "Field: Customers origin lenght is OK");
-						oCustomersComoboBox.setValue("c");
-						oCustomersField.onInput({
-							"target": {
-								"value": "c"
-							},
-							"srcControl": oCustomersComoboBox
-						});
-						setTimeout(function () {
-							assert.ok(oCustomersComoboBox.getItems().length === 3, "Field: Customers lenght is OK");
-							resolve();
-						}, iWaitTimeout);
-					}, iWaitTimeout);
-				}.bind(this));
-			}.bind(this));
-		});
-
-		QUnit.test("Multi Defined in Column", function (assert) {
-			this.oCardEditor.setCard({
-				baseUrl: sBaseUrl,
-				host: "contexthost",
-				manifest: oManifestForFilterBackendInMultiComboBox
-			});
-			return new Promise(function (resolve, reject) {
-				this.oCardEditor.attachReady(function () {
-					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
-					var oEmployeesLabel = this.oCardEditor.getAggregation("_formContent")[9];
-					var oEmployeesField = this.oCardEditor.getAggregation("_formContent")[10];
-					assert.ok(oEmployeesLabel.isA("sap.m.Label"), "Label: Form content contains a Label");
-					assert.ok(oEmployeesLabel.getText() === "EmployeesWithFilterColumns", "Label: Has static label text");
-					assert.ok(oEmployeesField.isA("sap.ui.integration.designtime.editor.fields.ListField"), "Field: List Field");
-					var oEmployeesComoboBox = oEmployeesField.getAggregation("_field");
-					assert.ok(oEmployeesComoboBox.isA("sap.m.MultiComboBox"), "Field: Employees is MultiComboBox");
-
-					setTimeout(function () {
-						assert.ok(oEmployeesComoboBox.getItems().length === 7, "Field: Employees origin lenght is OK");
-						oEmployeesComoboBox.setValue("n");
-						oEmployeesField.onInput({
-							"target": {
-								"value": "n"
-							},
-							"srcControl": oEmployeesComoboBox
-						});
-						setTimeout(function () {
-							assert.ok(oEmployeesComoboBox.getItems().length === 2, "Field: Employees lenght is OK");
 							resolve();
 						}, iWaitTimeout);
 					}, iWaitTimeout);
