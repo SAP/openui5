@@ -407,7 +407,7 @@ sap.ui.define([
 					this._aHiddenInPopin = aHiddenInPopin;
 					this._firePopinChangedEvent();
 				}
-			} else {
+			} else if (this._aHiddenInPopin == null) {
 				this._aHiddenInPopin = aHiddenInPopin;
 			}
 		}
