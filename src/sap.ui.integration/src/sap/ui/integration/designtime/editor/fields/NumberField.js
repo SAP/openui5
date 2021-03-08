@@ -3,10 +3,9 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/editor/fields/BaseField",
-	"sap/m/Input",
-	"sap/ui/model/type/Float"
+	"sap/m/Input"
 ], function (
-	BaseField, Input, FloatType
+	BaseField, Input
 ) {
 	"use strict";
 
@@ -26,13 +25,17 @@ sap.ui.define([
 	});
 	NumberField.prototype.initVisualization = function (oConfig) {
 		var oVisualization = oConfig.visualization;
+		var oFormatter = oConfig.formatter;
 		if (!oVisualization) {
 			oVisualization = {
 				type: Input,
 				settings: {
-					value: { path: 'currentSettings>value', type: new FloatType() },
-					editable: { path: 'currentSettings>editable' },
-					type: "Number"
+					value: {
+						path: 'currentSettings>value',
+						type: 'sap.ui.model.type.Float',
+						formatOptions: oFormatter
+					},
+					editable: { path: 'currentSettings>editable' }
 				}
 			};
 		}

@@ -26,17 +26,20 @@ sap.ui.define([
 
 	DateField.prototype.initVisualization = function (oConfig) {
 		var oVisualization = oConfig.visualization;
+		var oformatter = oConfig.formatter;
+		if (oConfig.value !== "") {
+			oConfig.value = new Date(oConfig.value);
+		}
 		if (!oVisualization) {
 			oVisualization = {
 				type: DatePicker,
 				settings: {
-					dateValue: {
-						path: 'currentSettings>value', formatter: function (v) {
-							return new Date(v);
-						}
+					value: {
+						path: "currentSettings>value",
+						type: 'sap.ui.model.type.Date',
+						formatOptions: oformatter
 					},
 					editable: { path: 'currentSettings>editable' },
-					valueFormat: "YYYY-MM-dd",
 					width: "16rem",
 					change: function (oEvent) {
 						if (oEvent.getParameters().valid) {
@@ -44,12 +47,12 @@ sap.ui.define([
 							//dateValue would produce a UTC based ISO string.
 							//getValue will contain string base on valueVormat and therefore can be put to setRawValue
 							var oSource = oEvent.getSource();
-							oSource.getBinding("dateValue").setRawValue(oSource.getValue());
-							oSource.getBinding("dateValue").checkUpdate();
+							oSource.getBinding("value").setValue(oSource.getDateValue());
+							oSource.getBinding("value").checkUpdate();
 						} else {
 							//TODO:show an error
 							var oSource = oEvent.getSource();
-							oSource.getBinding("dateValue").setRawValue("");
+							oSource.getBinding("value").setValue("");
 						}
 					}
 				}

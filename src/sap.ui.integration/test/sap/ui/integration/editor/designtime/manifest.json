@@ -158,6 +158,18 @@
 				},
 				"CustomerWithTopAndSkipOption": {
 					"value": ""
+				},
+				"dateFormatter": {
+					"value": "2021/03/05"
+				},
+				"datetimeFormatter": {
+					"value": "2021/03/05 13:50:06"
+				},
+				"floatFormatter": {
+					"value": 21.0024
+				},
+				"integerFormatter": {
+					"value": 99
 				}
 			},
 			"destinations": {

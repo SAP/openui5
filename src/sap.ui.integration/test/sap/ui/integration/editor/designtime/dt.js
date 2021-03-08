@@ -194,6 +194,46 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							"Option C"
 						]
 					},
+					"formatterGroup": {
+						"type": "group",
+						"label": "Formatter"
+					},
+					"dateFormatter": {
+						"manifestpath": "/sap.card/configuration/parameters/dateFormatter/value",
+						"type": "date",
+						"formatter": {
+							style: 'long'
+						}
+						// "formatter": {
+						// 	   format: 'yMMMMd'
+						// }
+						// "formatter": {
+						// 	   pattern: 'yyyy-MM-dd'
+						// }
+					},
+					"datetimeFormatter": {
+						"manifestpath": "/sap.card/configuration/parameters/datetimeFormatter/value",
+						"type": "datetime",
+						"formatter": {
+							style: 'long'
+						}
+					},
+					"floatFormatter": {
+						"manifestpath": "/sap.card/configuration/parameters/floatFormatter/value",
+						"type": "number",
+						"formatter": {
+							decimals: 3
+						}
+					},
+					"integerFormatter": {
+						"manifestpath": "/sap.card/configuration/parameters/integerFormatter/value",
+						"type": "integer",
+						"formatter": {
+							minIntegerDigits: 3,
+							maxIntegerDigits: 6,
+							emptyString: ""
+						}
+					},
 					"validationGroup": {
 						"type": "group",
 						"label": "Validation"

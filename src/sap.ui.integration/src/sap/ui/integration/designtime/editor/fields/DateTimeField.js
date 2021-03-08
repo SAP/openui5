@@ -26,27 +26,34 @@ sap.ui.define([
 
 	DateTimeField.prototype.initVisualization = function (oConfig) {
 		var oVisualization = oConfig.visualization;
+		var oformatter = oConfig.formatter;
+		if (oformatter && !oformatter.UTC) {
+			oformatter.UTC = true;
+		}
+		if (oConfig.value !== "") {
+			oConfig.value = new Date(oConfig.value);
+		}
 		if (!oVisualization) {
 			oVisualization = {
 				type: DateTimePicker,
 				settings: {
-					dateValue: {
-						path: 'currentSettings>value', formatter: function (v) {
-							return new Date(v);
-						}
+					value: {
+						path: "currentSettings>value",
+						type: 'sap.ui.model.type.DateTime',
+						formatOptions: oformatter
 					},
 					editable: { path: 'currentSettings>editable' },
 					width: "16rem",
 					change: function (oEvent) {
 						if (oEvent.getParameters().valid) {
 							var oSource = oEvent.getSource();
-							oSource.getBinding("dateValue").setRawValue(oSource.getDateValue().toISOString());
-							oSource.getBinding("dateValue").checkUpdate();
+							oSource.getBinding("value").setValue(oSource.getDateValue().toISOString());
+							oSource.getBinding("value").checkUpdate();
 						} else {
 							//TODO:show an error
 							var oSource = oEvent.getSource();
-							oSource.getBinding("dateValue").setRawValue("");
-							oSource.getBinding("dateValue").checkUpdate(true);
+							oSource.getBinding("value").setValue("");
+							oSource.getBinding("value").checkUpdate(true);
 						}
 					}
 				}

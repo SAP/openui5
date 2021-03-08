@@ -316,6 +316,57 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("1 integer parameter with formatter (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/intPara", "type": "List", "configuration": { "parameters": { "integerParameter": { "value": 99 } } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.deepEqual(oField.getConfiguration().formatter, { minIntegerDigits: 3 }, "Formatter is correct");
+					assert.ok(oField.getAggregation("_field").mProperties.value === "099", "The value was formatted correctly");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 number parameter with formatter (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/numPara", "type": "List", "configuration": { "parameters": { "floatParameter": { "value": 21.0028 } } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.deepEqual(oField.getConfiguration().formatter, { decimals: 3 }, "formatter is correct");
+					assert.ok(oField.getAggregation("_field").mProperties.value === "21.003", "The value was formatted correctly");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 datetime parameter with formatter (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/datetimePara", "type": "List", "configuration": { "parameters": { "datetimeParameter": { "value": "2021/03/05 13:50:06" } } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.deepEqual(oField.getConfiguration().formatter, { UTC: true, style: 'long' }, "formatter is correct");
+					// assert.ok(oField.getAggregation("_field").mProperties.value === "March 5, 2021 at 5:50:06 AM GMTZ", "The value was formatted correctly");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("1 date parameter with formatter (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/datePara", "type": "List", "configuration": { "parameters": { "dateParameter": { "value": "2021/03/05" } } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var oField = this.oCardEditor.getAggregation("_formContent")[2];
+					assert.deepEqual(oField.getConfiguration().formatter, { style: 'long' }, "formatter is correct");
+					assert.ok(oField.getAggregation("_field").mProperties.value === "March 5, 2021", "The value was formatted correctly");
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
 
 	});
 
