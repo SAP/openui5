@@ -3,6 +3,44 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "43b670cd00cd30afc0cf09bf87c2be589c189168",
+        "type": "FIX",
+        "text": " Revert \"[INTERNAL] core.routing: propagate hash change to component only when browser hash contains its part\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170014800"
+          }
+        ]
+      },
+      {
+        "id": "ce6c04ec2ff09299e8f1c59dfbcf9d2eb1484e7e",
+        "type": "FIX",
+        "text": " XMLTemplateProcessor: hide stashed objects only where supported"
+      },
+      {
+        "id": "ce4aac0358f9eabb28de1c1e91999babcb90d1ad",
+        "type": "FIX",
+        "text": " message/ControlMessageProcessor: Avoid updating messages on destroyed controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180107439"
+          }
+        ]
+      },
+      {
+        "id": "a1bd8f42e59ddf02614b5998dd92c50cebb50050",
+        "type": "FIX",
+        "text": " core.TooltipBase: avoid unneccessary rendering during open",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180121173"
+          }
+        ]
+      },
+      {
         "id": "b4efdf14404c2cff51f8b5af5b3b2b257b54c58d",
         "type": "FEATURE",
         "text": " Localization: add Serbian (Latin), enhance Locale mappings",

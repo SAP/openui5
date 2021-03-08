@@ -3,6 +3,29 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "09d12d2b52b0ba16ca578accacb92b9ab95b0067",
+        "type": "FIX",
+        "text": " sap.m.Table: strict layout single column handling bug is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180127458"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180136742"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180129886"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180129839"
+          }
+        ]
+      },
+      {
         "id": "c39c1805dadeb2412d50ca8978be134cbce4131d",
         "type": "FEATURE",
         "text": " 72 Monospace fonts for all Belize and Quartz flavors"
