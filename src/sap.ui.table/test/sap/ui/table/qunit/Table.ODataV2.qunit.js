@@ -49,7 +49,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Refresh; With fixed rows", function(assert) {
+	QUnit.skip("Refresh; With fixed rows", function(assert) {
 		var oTable = TableQUnitUtils.createTable({
 			fixedTopRowCount: 1,
 			fixedBottomRowCount: 1
@@ -72,7 +72,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Refresh; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
+	QUnit.skip("Refresh; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
 		window.breaky = true;
 		var oTable = TableQUnitUtils.createTable({
 			visibleRowCount: 5,
@@ -120,7 +120,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sort; With fixed rows", function(assert) {
+	QUnit.skip("Sort; With fixed rows", function(assert) {
 		var oTable = TableQUnitUtils.createTable({
 			fixedTopRowCount: 1,
 			fixedBottomRowCount: 1
@@ -144,7 +144,7 @@ sap.ui.define([
 		});
 	});
 
-	QUnit.test("Sort; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
+	QUnit.skip("Sort; With fixed rows, firstVisibleRow = 1, threshold = 1", function(assert) {
 		var oTable = TableQUnitUtils.createTable({
 			visibleRowCount: 5,
 			fixedTopRowCount: 1,
