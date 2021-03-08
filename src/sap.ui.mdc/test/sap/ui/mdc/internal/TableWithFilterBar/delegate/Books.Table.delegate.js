@@ -1,10 +1,13 @@
 sap.ui.define([
 	"delegates/odata/v4/TableDelegate",
 	"sap/ui/mdc/Field",
-	"sap/m/Column"
-], function (ODataTableDelegate, Field, Column) {
+	"sap/ui/core/library"
+], function (ODataTableDelegate, Field, CoreLibrary) {
 	"use strict";
 	var BooksTableDelegate = Object.assign({}, ODataTableDelegate);
+
+	//Shortcut to core messagetype
+	var MessageType = CoreLibrary.MessageType;
 
 	BooksTableDelegate.fetchProperties = function (oTable) {
 		var oODataProps = ODataTableDelegate.fetchProperties.apply(this, arguments);
@@ -95,6 +98,26 @@ sap.ui.define([
 		}
 
 		return Promise.resolve(new Field(oProps));
+	};
+
+	BooksTableDelegate.validateState = function(oTable, oState){
+		var mExistingColumns = {};
+
+		//Map columns for easier access
+		mExistingColumns = oState.items.reduce(function(mMap, oProp, iIndex){
+			mMap[oProp.name] = oProp;
+			return mMap;
+		}, {});
+
+		//Check if there is a sorter for a unselected column
+		var bShowWarning = oState.sorters.some(function(oSorter){
+			return !mExistingColumns[oSorter.name];
+		});
+
+		return {
+			validation: bShowWarning ? MessageType.Warning : MessageType.None,
+			message: "Please note: you have added a sorter for an unselected column!"
+		};
 	};
 
 	BooksTableDelegate._createColumn = function (sPropertyInfoName, oTable) {
