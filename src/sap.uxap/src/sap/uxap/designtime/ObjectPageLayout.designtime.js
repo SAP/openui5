@@ -173,7 +173,13 @@ function(
 		},
 		scrollContainers : [{
 			domRef : "> .sapUxAPObjectPageWrapper",
-			aggregations : function(oElement) {
+			aggregations : function(oElement, fnUpdateFunction) {
+				oElement.attachEventOnce("_snapChange", function() {
+					fnUpdateFunction({
+						index: 0
+					});
+				});
+
 				if (isHeaderInTitleArea(oElement)) {
 					return ["sections"];
 				} else if (oElement._bStickyAnchorBar){
