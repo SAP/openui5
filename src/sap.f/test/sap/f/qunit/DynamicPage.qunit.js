@@ -1532,6 +1532,26 @@ function (
 		assert.equal(oDynamicPage._getScrollPosition(), iExpectedScrollPositionAfter, "Scroll position is correctly offset");
 	});
 
+	QUnit.test("DynamicPage _moveHeaderToContentArea() should fire event", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oMoveHeaderSpy = this.spy(),
+			oHeader = oDynamicPage.getHeader(),
+			$header = oHeader.$(),
+			$wrapper = oDynamicPage.$wrapper;
+
+		// Setup
+		this.oDynamicPage.attachEvent("_moveHeader", oMoveHeaderSpy);
+		oDynamicPage._moveHeaderToTitleArea();
+		assert.equal($wrapper.find($header).length === 0, true, "Header is in not in the content area");
+		oMoveHeaderSpy.reset();
+
+		// Act
+		oDynamicPage._moveHeaderToContentArea();
+
+		// Check
+		assert.equal(oMoveHeaderSpy.callCount, 1, "the event is fired");
+	});
+
 	QUnit.test("DynamicPage _moveHeaderToTitleArea() should move the header from the content area to the title area", function (assert) {
 		var oDynamicPage = this.oDynamicPage,
 			oHeader = oDynamicPage.getHeader(),
@@ -1577,6 +1597,24 @@ function (
 
 		//assert
 		assert.equal($wrapper.scrollTop(), iExpectedScrollPositionAfter, "Scroll position is still the top of the content area");
+	});
+
+	QUnit.test("DynamicPage _moveHeaderToTitleArea() should fire event", function (assert) {
+		var oDynamicPage = this.oDynamicPage,
+			oMoveHeaderSpy = this.spy(),
+			oHeader = oDynamicPage.getHeader(),
+			$header = oHeader.$(),
+			$wrapper = oDynamicPage.$wrapper;
+
+		// Setup
+		oDynamicPage.attachEvent("_moveHeader", oMoveHeaderSpy);
+		assert.equal($wrapper.find($header).length > 0, true, "Header is in the content area initially");
+
+		// Act
+		oDynamicPage._moveHeaderToTitleArea();
+
+		// Check
+		assert.equal(oMoveHeaderSpy.callCount, 1, "the event is fired");
 	});
 
 	QUnit.test("DynamicPage _toggleHeaderVisibility() should show/hide the DynamicPAge`s Header", function (assert) {
