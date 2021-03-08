@@ -173,6 +173,9 @@ sap.ui.define([
 
 				this._oConfigUtil = this.getOwnerComponent().getConfigUtil();
 				this._oCookieNames = this._oConfigUtil.COOKIE_NAMES;
+				this._bSupportsPrefersColorScheme = !!(window.matchMedia &&
+					(window.matchMedia('(prefers-color-scheme: dark)').matches ||
+					window.matchMedia('(prefers-color-scheme: light)').matches));
 
 				ResizeHandler.register(this.oHeader, this.onHeaderResize.bind(this));
 				this.oRouter.attachRouteMatched(this.onRouteChange.bind(this));
@@ -563,16 +566,16 @@ sap.ui.define([
 			 * @private
 			 */
 			_updateAppearance: function(sKey) {
-				if (sKey !== DEMOKIT_APPEARANCE_KEY_AUTO) {
-					Core.applyTheme(DEMOKIT_APPEARANCE[sKey]);
-				} else if (window.matchMedia) {
+				if (sKey === DEMOKIT_APPEARANCE_KEY_AUTO && this._bSupportsPrefersColorScheme) {
 					this._toggleLightOrDarkAppearance(window.matchMedia('(prefers-color-scheme: dark)').matches);
 					this._attachPrefersColorSchemeChangeListener();
 				} else {
-					Core.applyTheme(DEMOKIT_APPEARANCE[DEMOKIT_APPEARANCE_KEY_AUTO]);
+					Core.applyTheme(DEMOKIT_APPEARANCE[sKey]);
 				}
 
 				this._sLastKnownAppearanceKey = sKey;
+
+				this.bus.publish("themeChanged", "onDemoKitThemeChanged", {sThemeActive: DEMOKIT_APPEARANCE[sKey]});
 
 				if (this._oConfigUtil.getCookieValue(this._oCookieNames.ALLOW_REQUIRED_COOKIES) === "1") {
 					this._oConfigUtil.setCookie(DEMOKIT_CONFIGURATION_APPEARANCE, sKey);
@@ -606,6 +609,9 @@ sap.ui.define([
 					window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(e) {
 						if (that._sLastKnownAppearanceKey === DEMOKIT_APPEARANCE_KEY_AUTO) {
 							that._toggleLightOrDarkAppearance(e.matches);
+							that.bus.publish("themeChanged", "onDemoKitThemeChanged", {
+								sThemeActive: DEMOKIT_APPEARANCE[e.matches ? DEMOKIT_APPEARANCE_KEY_DARK : DEMOKIT_APPEARANCE_KEY_LIGHT]
+							});
 						}
 					});
 					this._bAttachedPrefersColorSchemeChangeListener = true;

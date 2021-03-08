@@ -178,7 +178,7 @@ sap.ui.define([
 				this._initListSettings();
 
 				this.bus = Core.getEventBus();
-
+				this.bus.subscribe("themeChanged", "onDemoKitThemeChanged", this.onDemoKitThemeChanged, this);
 			},
 
 			onAfterRendering: function () {
@@ -187,6 +187,10 @@ sap.ui.define([
 						shouldBeObserved: true
 					});
 				}
+			},
+
+			onDemoKitThemeChanged: function (sChannelId, sEventId, oData) {
+				this._oDefaultSettings.themeActive = oData.sThemeActive;
 			},
 
 			_viewSettingsResetOnNavigation: function (oEvent) {
@@ -263,12 +267,10 @@ sap.ui.define([
 				}
 
 				// Handle theme change
-				if (this._oViewSettings.themeActive !== sThemeActive) {
+				if (this._oCore.getConfiguration().getTheme() !== sThemeActive) {
 					this._oCore.applyTheme(sThemeActive);
 
-					this._oViewSettings.themeActive = sThemeActive;
 					bThemeChanged = true;
-					this.bus.publish("themeChanged", "onDemoKitThemeChanged", {sThemeActive: sThemeActive});
 				} else if (bContentDensityChanged) {
 					// NOTE: We notify for content density change only if no theme change is applied because both
 					// methods fire the same event which may lead to unpredictable result.
