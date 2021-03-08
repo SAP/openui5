@@ -865,6 +865,7 @@ sap.ui.define([
 	 *
 	 * @param {boolean} bLegacySyntax The path syntax to use
 	 *
+	 * @deprecated since 1.88.0, legacy path syntax is not supported by most model implementations.
 	 * @public
 	 */
 	Model.prototype.setLegacySyntax = function(bLegacySyntax) {
@@ -876,6 +877,7 @@ sap.ui.define([
 	 *
 	 * @returns {boolean} Whether legacy path syntax is used
 	 *
+	 * @deprecated since 1.88.0, legacy path syntax is not supported by most model implementations.
 	 * @public
 	 */
 	Model.prototype.isLegacySyntax = function() {
