@@ -25,7 +25,7 @@ sap.ui.define([
 
 		var IBADGE_STYLE = library.BadgeStyle;
 
-		var IBADGE_INVALID_VALUES = ["", "undefined", "null"];
+		var IBADGE_INVALID_VALUES = ["", "undefined", "null", false];
 
 		/**
 		 * @class A helper class for implementing the {@link sap.m.IBadge} interface.
@@ -171,8 +171,8 @@ sap.ui.define([
 				var fnBadgeValueFormatter =  typeof this.badgeValueFormatter === "function" && this.badgeValueFormatter,
 					oBadgeElement;
 
-				sValue = isValidValue((fnBadgeValueFormatter ? fnBadgeValueFormatter.call(this, sValue) : sValue)
-					|| this.getBadgeCustomData().getValue()) || "";
+				sValue = isValidValue((fnBadgeValueFormatter ? fnBadgeValueFormatter.call(this, sValue) : sValue))
+					|| "";
 
 				if (!this.getBadgeCustomData().getVisible()) { return false; }
 				oBadgeElement = _getBadgeElement.call(this);

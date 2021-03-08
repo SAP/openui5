@@ -256,6 +256,10 @@
 	content: attr(data-badge);
 }
 
+.sapMBadgeIndicator.sapMBadgeDefault[data-badge=""]:after {
+	display: none;
+}
+
 html[data-sap-ui-animation='on'] {
 	.sapMBadge.sapMBadgeAnimationTypeFull {
 		.sapMBadgeDefault.sapMBadgeAnimationAdd:after {

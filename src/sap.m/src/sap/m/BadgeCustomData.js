@@ -60,10 +60,16 @@ sap.ui.define([
 	 */
 	BadgeCustomData.prototype.setValue =  function (sValue) {
 		if (this.getValue() === sValue) { return this; }
+
+		if (sValue === null || sValue === undefined) {
+			sValue = "";
+		}
+
 		var oParent = this.getParent();
+		sValue = sValue.toString();
 
 		CustomData.prototype.setValue.call(this, sValue);
-		if (oParent && typeof sValue === "string") {
+		if (oParent) {
 			oParent.updateBadgeValue(sValue);
 		}
 
