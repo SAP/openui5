@@ -5,7 +5,7 @@
 	xmlns:cssgrid="sap.ui.layout.cssgrid"
 	xmlns:f="sap.f"
 	xmlns:widgets="sap.ui.integration.widgets">
-	<f:GridContainer id="group1">
+	<f:GridContainer id="group1" columnsChange=".onColumnsChange">
 		<f:layout>
 			<f:GridContainerSettings rowSize="4rem" columnSize="4rem" />
 		</f:layout>
@@ -18,7 +18,10 @@
 				<f:GridContainerItemLayoutData columns="40"/>
 			</layoutData>
 		</HBox>
-		<f:Card height="100%">
+		<f:Card id="applicationsCard" height="100%">
+			<f:layoutData>
+				<f:GridContainerItemLayoutData columns="4" minRows="6"/>
+			</f:layoutData>
 			<f:header>
 				<cards:Header title="Applications"/>
 			</f:header>
@@ -31,16 +34,16 @@
 					<StandardListItem title="Demo Kit" description="Demo Instance"/>
 				</List>
 			</f:content>
-			<f:layoutData>
-				<f:GridContainerItemLayoutData columns="4" minRows="6"/>
-			</f:layoutData>
 		</f:Card>
 		<widgets:Card id="usersCard" height="100%">
 			<widgets:layoutData>
 				<f:GridContainerItemLayoutData columns="4" minRows="6"/>
 			</widgets:layoutData>
 		</widgets:Card>
-		<f:Card height="100%">
+		<f:Card id="upfCard" height="100%">
+			<f:layoutData>
+				<f:GridContainerItemLayoutData columns="4" minRows="6"/>
+			</f:layoutData>
 			<f:header>
 				<cards:Header title="User Provisioning Flows"/>
 			</f:header>
@@ -53,9 +56,6 @@
 					<StandardListItem title="Flow Name" description="SAP Success Factors" highlight="Error"/>
 				</List>
 			</f:content>
-			<f:layoutData>
-				<f:GridContainerItemLayoutData columns="4" minRows="6"/>
-			</f:layoutData>
 		</f:Card>
 	</f:GridContainer>
 </core:FragmentDefinition>

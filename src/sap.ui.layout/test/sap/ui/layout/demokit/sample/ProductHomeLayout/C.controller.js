@@ -44,6 +44,21 @@ sap.ui.define([
 
 		},
 
+		onColumnsChange: function (oEvent) {
+
+			// Depending on the available grid columns
+			// the width of some cards can be adapted
+			// to use more of the space
+
+			var iGridColumns = oEvent.getParameter("columns"),
+				oUsersCardLayoutData = this.getView().byId("usersCard").getLayoutData(),
+				oUpfCardLayoutData = this.getView().byId("upfCard").getLayoutData(),
+				iCardColumns = iGridColumns < 14 ? 4 : 5;
+
+			oUsersCardLayoutData.setColumns(iCardColumns);
+			oUpfCardLayoutData.setColumns(iCardColumns);
+		},
+
 		formatSrc: function (sSrc) {
 			return sap.ui.require.toUrl("sap/ui/layout/sample/ProductHomeLayout/" + sSrc);
 		},
