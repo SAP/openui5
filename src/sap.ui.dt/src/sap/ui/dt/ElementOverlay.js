@@ -205,6 +205,10 @@ sap.ui.define([
 	 * @param {object} mProperties.index - Index of the scrollcontainer
 	 */
 	ElementOverlay.prototype._updateScrollContainer = function(mProperties) {
+		if (this.getShouldBeDestroyed() || this.bIsDestroyed) {
+			return;
+		}
+
 		var iIndex = mProperties.index;
 		var o$ScrollContainer = this.getScrollContainerById(iIndex);
 		var oNewScrollContainer = this.getScrollContainers(true)[iIndex];

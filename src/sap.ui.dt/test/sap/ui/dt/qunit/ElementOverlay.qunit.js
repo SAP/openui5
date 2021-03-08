@@ -971,6 +971,12 @@ function (
 			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content4").getDomRef().parentElement, oScrollContainer, "content4 is in the scroll container");
 			assert.strictEqual(this.oSimpleScrollControlOverlay.getAggregationOverlay("content5").getDomRef().parentElement, oScrollContainer, "content5 is in the scroll container");
 		});
+
+		QUnit.test("when the overlay gets destroyed and the scroll container needs updating", function(assert) {
+			this.oSimpleScrollControlOverlay.destroy();
+			this.oSimpleScrollControl.changeScrollContainer();
+			assert.ok(true, "there is no exception");
+		});
 	});
 
 	QUnit.module("Postponed an aggregation overlay rendering", {
