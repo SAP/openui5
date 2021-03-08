@@ -54,7 +54,8 @@ sap.ui.define([
 			"sap.ui.layout.cssgrid.CSSGridGapShortHand"
 		],
 		interfaces: [
-			"sap.ui.layout.cssgrid.IGridConfigurable"
+			"sap.ui.layout.cssgrid.IGridConfigurable",
+			"sap.ui.layout.cssgrid.IGridItemLayoutData"
 		],
 		controls: [
 			"sap.ui.layout.AlignedFlowLayout",
@@ -176,6 +177,15 @@ sap.ui.define([
 	 * @public
 	 * @function
 	 * @name sap.ui.layout.cssgrid.IGridConfigurable.getGridLayoutConfiguration
+	 */
+
+	/**
+	 * LayoutData for grid items
+	 *
+	 * @since 1.88.0
+	 * @public
+	 * @interface
+	 * @name sap.ui.layout.cssgrid.IGridItemLayoutData
 	 */
 
 	/**
