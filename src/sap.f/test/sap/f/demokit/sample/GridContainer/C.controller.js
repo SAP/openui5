@@ -52,7 +52,10 @@ sap.ui.define([
 
 		onPress: function (oEvent) {
 			MessageToast.show("Press was fired on - " + oEvent.getSource().getMetadata().getName());
-		}
+		},
 
+		onGridColumnsChange: function (oEvent) {
+			this.getView().byId("columnsCountText").setText("Current grid columns count: " + oEvent.getParameter("columns"));
+		}
 	});
 });

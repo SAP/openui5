@@ -293,6 +293,18 @@ sap.ui.define([
 					}
 				},
 				/**
+				 * Fired when the grid columns count is changed.
+				 */
+				columnsChange: {
+					parameters: {
+
+						/**
+						 * The count of the gird columns.
+						 */
+						columns: { type: "int" }
+					}
+				},
+				/**
 				 * Fires if the border of the visualizations is reached
 				 * so that an application can react on this.
 				 */
@@ -499,7 +511,8 @@ sap.ui.define([
 			oRange = Device.media.getCurrentRange("GridContainerRangeSet", iWidth),
 			sLayout = "layout" + oRange.name,
 			oOldSettings = this.getActiveLayoutSettings(),
-			bSettingsAreChanged = false;
+			bSettingsAreChanged = false,
+			iColumns = oOldSettings.getComputedColumnsCount(this.$().innerWidth());
 
 		if (!iWidth) {
 			// width is 0 or unknown - can not detect the layout
@@ -518,6 +531,15 @@ sap.ui.define([
 			this.fireLayoutChange({
 				layout: this._sActiveLayout
 			});
+		}
+
+		if (this._iColumns !== iColumns) {
+
+			this.fireColumnsChange({
+				columns: iColumns
+			});
+
+			this._iColumns = iColumns;
 		}
 
 		return bSettingsAreChanged;
