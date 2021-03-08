@@ -3,6 +3,17 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "967087a67ed388dbc4cac68fa72bc5d0b9190e7c",
+        "type": "FIX",
+        "text": " sap.ui.layout.ResponsiveSplitter: No truncation of last area",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180118515"
+          }
+        ]
+      },
+      {
         "id": "669f56fef6a84e744942ec7621cd37cad8a2dcc1",
         "type": "FIX",
         "text": " sap.ui.layout: fix IDs when moving SimpleFormGroups to the first position",

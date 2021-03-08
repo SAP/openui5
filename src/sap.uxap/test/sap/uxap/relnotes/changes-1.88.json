@@ -12,17 +12,6 @@
             "reference": "2180046524"
           }
         ]
-      },
-      {
-        "id": "91b71eead2cd4df2f89005c43605972fdb837e2b",
-        "type": "FIX",
-        "text": " sap.uxap.ObjectPageLayout: Enforced test condition",
-        "references": [
-          {
-            "type": "BCP",
-            "reference": "2180046524"
-          }
-        ]
       }
     ]
   }
