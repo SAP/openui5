@@ -91,7 +91,7 @@
 											path: 'Name'
 										}
 									}"
-								class="sapFDynamicPageAlignContent"
+								class="sapUiSmallNegativeMarginBeginEnd"
 								width="auto">
 								<headerToolbar>
 									<Toolbar>

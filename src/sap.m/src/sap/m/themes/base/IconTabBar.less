@@ -1428,3 +1428,45 @@ html[data-sap-ui-animation='off'] {
 		}
 	}
 }
+
+/* Responsive paddings when the IconTabBar is inside a DynamicPage */
+
+.sapFDynamicPage-Std-Phone {
+	.sapUiResponsiveContentPadding {
+		.sapMITH,
+		&.sapMITH {
+			padding: 0 1rem !important;
+		}
+
+		.sapMITBContent {
+			padding: 0 1rem !important;
+		}
+	}
+}
+
+.sapFDynamicPage-Std-Tablet,
+.sapFDynamicPage-Std-Desktop {
+	.sapUiResponsiveContentPadding {
+		.sapMITH,
+		&.sapMITH {
+			padding: 0 2rem !important;
+		}
+
+		.sapMITBContent {
+			padding: 1rem 2rem !important;
+		}
+	}
+}
+
+.sapFDynamicPage-Std-Desktop-XL {
+	.sapUiResponsiveContentPadding {
+		.sapMITH,
+		&.sapMITH {
+			padding: 0 3rem !important;
+		}
+
+		.sapMITBContent {
+			padding: 1rem 3rem !important;
+		}
+	}
+}
