@@ -8,7 +8,12 @@
 		{
 			"control": "sap.f.DynamicPage",
 			"url": "DynamicPage.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-PIR",
+			"accTest": {
+				"name": "sap.f.DynamicPage",
+				"title": "ACC test for sap.f.DynamicPage",
+				"module": "./dynamicpage.qunit"
+			}
 		},
 		{
 			"control": "sap.f.FlexibleColumnLayout",

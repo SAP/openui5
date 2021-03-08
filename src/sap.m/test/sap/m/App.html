@@ -8,10 +8,15 @@
 		<script src="shared-config.js"></script>
 		<script src="../../../resources/sap-ui-core.js"
 			id="sap-ui-bootstrap"
-			data-sap-ui-libs="sap.m">
+			data-sap-ui-libs="sap.m"
+			data-sap-ui-resourceroots='{
+				"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
+			}'>
 		</script>
 
 		<script>
+			new sap.ui.core.InvisibleText("SF_AD", {text: "Search"}).toStatic();
+
 			var app = new sap.m.App("myApp", {initialPage:"page1"});
 
 			var page1 = new sap.m.Page("page1", {
@@ -55,7 +60,7 @@
 					})
 				],
 				subHeader: new sap.m.Bar({
-					contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "search for...", width: "100%"})]
+					contentMiddle: [new sap.m.SearchField("SFB1", {placeholder: "search for...", width: "100%", ariaLabelledBy: ["SF_AD"]})]
 				}),
 				footer: new sap.m.Bar({
 					id: 'page1-footer',

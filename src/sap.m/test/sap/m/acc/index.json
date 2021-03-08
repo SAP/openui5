@@ -354,7 +354,12 @@
 		{
 			"control": "sap.m.PullToRefresh",
 			"url": "../PullToRefresh.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-PIR",
+			"accTest": {
+				"name": "sap.m.PullToRefresh",
+				"title": "ACC test for sap.m.PullToRefresh",
+				"module": "./pulltorefresh.qunit"
+			}
 		},
 		{
 			"control": "sap.m.QuickView",
@@ -409,7 +414,12 @@
 		{
 			"control": "sap.m.Select",
 			"url": "Select.html",
-			"appComponent": "CA-UI5-CTR-PIR"
+			"appComponent": "CA-UI5-CTR-PIR",
+			"accTest": {
+				"name": "sap.m.Select",
+				"title": "ACC test for sap.m.Select",
+				"module": "./select.qunit"
+			}
 		},
 		{
 			"control": "sap.m.SelectDialog",

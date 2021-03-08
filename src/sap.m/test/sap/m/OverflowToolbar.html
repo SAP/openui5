@@ -6,7 +6,10 @@
 
 <script src="shared-config.js"></script>
 <script src="../../../resources/sap-ui-core.js"
-	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.ui.layout">
+	id="sap-ui-bootstrap" data-sap-ui-libs="sap.m, sap.ui.layout"
+	data-sap-ui-resourceroots='{
+		"qunit.internal.acc": "../../../test-resources/sap/ui/core/qunit/internal/acc"
+	}'>
 </script>
 
 <style type="text/css"></style>
@@ -346,7 +349,7 @@
 			type: sap.m.ButtonType.Transparent
 		}),
 		new sap.m.ToolbarSpacer(),
-		new sap.m.SearchField("sf1", {width:'25%'}),
+		new sap.m.SearchField("sf1", {width:'25%', ariaLabelledBy: ["dummy_label_acc_name"]}),
 		new sap.m.ToolbarSpacer(),
 		new sap.m.Button({
 			text : "BOOK NOW!",
@@ -503,6 +506,7 @@
 		}),
 		new sap.m.Input({
 			placeholder: "Input",
+			ariaLabelledBy: ["dummy_label_acc_name"],
 			width: "150px"
 		}),
 		new sap.m.DateTimePicker({
@@ -708,6 +712,7 @@
 		new sap.m.ToolbarSpacer(),
 		new sap.m.SearchField("searchLayoutData",
 		{
+			ariaLabelledBy: ["dummy_label_acc_name"],
 			width:"25%",
 			layoutData: new sap.m.OverflowToolbarLayoutData({
 				shrinkable: true,
@@ -744,6 +749,7 @@
 		new sap.m.Input({
 			placeholder: "Input",
 			width: "10%",
+			ariaLabelledBy: ["dummy_label_acc_name"],
 			layoutData: new sap.m.OverflowToolbarLayoutData({
 				shrinkable: true,
 				minWidth: "100px"

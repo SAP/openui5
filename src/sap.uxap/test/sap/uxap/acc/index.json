@@ -3,7 +3,12 @@
 		{
 			"control" : "sap.uxap.ObjectPageLayout",
 			"url" : "ObjectPage.html",
-			"appComponent" : "CA-UI5-CTR-PIR"
+			"appComponent" : "CA-UI5-CTR-PIR",
+			"accTest": {
+				"name": "sap.uxap.ObjectPageLayout",
+				"title": "ACC test for sap.uxap.ObjectPageLayout",
+				"module": "./objectpagelayout.qunit"
+			}
 		}
 	]
 }

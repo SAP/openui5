@@ -8,7 +8,10 @@
 		<script id="sap-ui-bootstrap"
 				src="../../../../resources/sap-ui-core.js"
 				data-sap-ui-libs="sap.m"
-				data-sap-ui-xx-bindingSyntax="complex">
+				data-sap-ui-xx-bindingSyntax="complex"
+				data-sap-ui-resourceroots='{
+					"qunit.internal.acc": "../../../../test-resources/sap/ui/core/qunit/internal/acc"
+				}'>
 		</script>
 		<style type="text/css">
 			.customLabel {
@@ -394,7 +397,7 @@
 			additionalText: "{key}"
 		});
 
-		var oSelect = new sap.m.Select({
+		var oSelect = new sap.m.Select("normalSelect", {
 			ariaLabelledBy: 'select_label',
 			width: "15rem",
 			items: {
