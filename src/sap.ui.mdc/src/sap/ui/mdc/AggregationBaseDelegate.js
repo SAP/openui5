@@ -82,13 +82,13 @@ sap.ui.define(['sap/ui/mdc/BaseDelegate', 'sap/ui/core/library'], function (Base
 		},
 
 		/**
-		 * A validator that can be used for custom state validations depending on the available personalization options.
+		 * A validator to evaluate the theoretical control state.
 		 *
-		 * @param {Object<sap.ui.mdc.Control>} oControl Instance of a MDC Control.
-		 * @param {Object} oState The theoretical external state representation of a MDC Control.
+		 * @param {Object<sap.ui.mdc.Control>} oControl Instance of an MDC control
+		 * @param {Object} oState The theoretical external state representation of an MDC control
 		 *
-		 * @returns {Object} An Object that must contain atleast the <code>validation</code> attribute {@link sap.ui.core.MessageType MessageType}.
-		 * If <code>warning</code> or higher state priorities have been provided, a <code>message</code> needs to be provided in addition.
+		 * @returns {Object} An object that must contain at least the <code>validation</code> attribute {@link sap.ui.core.MessageType MessageType}.
+		 * If <code>warning</code> or <code>error</code> state types have been provided, the <code>message</code> is shown in addition.
 		 */
 		validateState: function(oControl, oState) {
 
