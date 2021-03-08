@@ -1069,8 +1069,16 @@ sap.ui.define([
 		// code under test
 		oPromise = oBinding.fetchData(1, 2, 3, oGroupLock, fnDataRequested);
 
+		oBinding.sChangeReason = "sChangeReason";
+		oBinding.bHasPathReductionToParent = true;
+		this.oModel.bAutoExpandSelect = true;
 		this.mock(oBinding).expects("checkSuspended").never();
-		oBinding.setContext({}); // must have no effect on absolute bindings
+
+		// code under test - must have no effect on absolute bindings
+		oBinding.setContext({});
+
+		assert.strictEqual(oBinding.sChangeReason, "sChangeReason");
+
 		return oPromise.then(function (oResult) {
 			assert.strictEqual(oResult, oData);
 		});
@@ -1990,41 +1998,64 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("setContext: relative path", function (assert) {
+[ // The first test requests the virtual context, all others don't
+	{aggregation : false, autoExpandSelect : true, backLink : true, newContext : true},
+	{aggregation : false, autoExpandSelect : false, backLink : true, newContext : true},
+	{aggregation : false, autoExpandSelect : true, backLink : false, newContext : true},
+	{aggregation : false, autoExpandSelect : true, backLink : true, newContext : false},
+	{aggregation : true, autoExpandSelect : true, backLink : true, newContext : true}
+].forEach(function (oFixture, i) {
+	QUnit.test("setContext: relative path, " + JSON.stringify(oFixture), function (assert) {
 		var oBinding = this.bindList("Suppliers", Context.create(this.oModel, {}, "/foo")),
 			oBindingMock = this.mock(oBinding),
-			oContext = Context.create(this.oModel, {}, "/bar"),
+			oContext = oFixture.newContext ? Context.create(this.oModel, {}, "/bar") : undefined,
+			sExpectedChangeReason = i === 0 ? "AddVirtualContext" : "sChangeReason",
 			oFetchCacheCall,
 			oNewHeaderContext = Context.create(this.oModel, oBinding, "/bar/Suppliers"),
 			oOldHeaderContext = oBinding.getHeaderContext(),
 			oResetKeepAliveCall;
 
+		this.oModel.bAutoExpandSelect = oFixture.autoExpandSelect;
+		if (oFixture.aggregation) {
+			oBinding.mParameters.$$aggregation = {};
+		}
 		oBinding.sChangeReason = "sChangeReason";
+		oBinding.bHasPathReductionToParent = oFixture.backLink;
+
+		// code under test - nothing must happen
+		oBinding.setContext(oBinding.oContext);
+
+		assert.strictEqual(oBinding.sChangeReason, "sChangeReason");
+
 		oBindingMock.expects("checkSuspended").withExactArgs();
 		oBindingMock.expects("reset").withExactArgs();
 		oResetKeepAliveCall = oBindingMock.expects("resetKeepAlive").withExactArgs();
 		oFetchCacheCall = oBindingMock.expects("fetchCache")
 			.withExactArgs(sinon.match.same(oContext));
-		this.mock(this.oModel).expects("resolve")
+		this.mock(this.oModel).expects("resolve").exactly(oFixture.newContext ? 1 : 0)
 			.withExactArgs(oBinding.sPath, sinon.match.same(oContext))
 			.returns("/bar/Suppliers");
-		this.mock(oOldHeaderContext).expects("destroy").withExactArgs();
-		this.mock(Context).expects("create")
+		this.mock(oOldHeaderContext).expects("destroy").exactly(oFixture.newContext ? 1 : 0)
+			.withExactArgs();
+		this.mock(Context).expects("create").exactly(oFixture.newContext ? 1 : 0)
 			.withExactArgs(sinon.match.same(this.oModel), sinon.match.same(oBinding),
 				"/bar/Suppliers")
 			.returns(oNewHeaderContext);
 		this.mock(Binding.prototype).expects("setContext").on(oBinding)
-			.withExactArgs(sinon.match.same(oContext), {detailedReason : "sChangeReason"});
+			.withExactArgs(sinon.match.same(oContext), {detailedReason : sExpectedChangeReason});
 
 		// code under test
 		oBinding.setContext(oContext);
 
 		assert.ok(oFetchCacheCall.calledAfter(oResetKeepAliveCall));
+		assert.strictEqual(oBinding.sChangeReason, sExpectedChangeReason);
 
 		// mock needed because Binding.prototype.setContext is mocked!
 		oBindingMock.expects("isResolved").withExactArgs().returns(true);
-		assert.strictEqual(oBinding.getHeaderContext(), oNewHeaderContext);
+		assert.strictEqual(oBinding.getHeaderContext(),
+			oFixture.newContext ? oNewHeaderContext : oOldHeaderContext);
 	});
+});
 
 	//*********************************************************************************************
 	QUnit.test("setContext: relative path with transient entities", function (assert) {
@@ -2040,6 +2071,9 @@ sap.ui.define([
 		oBinding.aContexts.unshift(oContext2, oContext1, oContext0);
 		oBinding.iCreatedContexts = 3;
 
+		oBinding.sChangeReason = "sChangeReason";
+		oBinding.bHasPathReductionToParent = true;
+		this.oModel.bAutoExpandSelect = true;
 		this.mock(oBinding).expects("checkSuspended").withExactArgs();
 		this.mock(oContext2).expects("isTransient").withExactArgs().returns(false);
 		this.mock(oContext1).expects("isTransient").withExactArgs().returns(true);
@@ -2050,6 +2084,8 @@ sap.ui.define([
 			oBinding.setContext({/*some different context*/});
 		}, new Error("setContext on relative binding is forbidden if a transient entity "
 			+ "exists: sap.ui.model.odata.v4.ODataListBinding: /Foo('42')|Bar"));
+
+		assert.strictEqual(oBinding.sChangeReason, "sChangeReason");
 	});
 
 	//*********************************************************************************************

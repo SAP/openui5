@@ -66,6 +66,7 @@ sap.ui.define([
 		assert.deepEqual(oBinding.mAggregatedQueryOptions, {});
 		assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, true);
 		assert.deepEqual(oBinding.aChildCanUseCachePromises, []);
+		assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 		assert.strictEqual(oBinding.iPatchCounter, 0);
 		assert.strictEqual(oBinding.bPatchSuccess, true);
 		assert.ok("oReadGroupLock" in oBinding);
@@ -818,6 +819,7 @@ sap.ui.define([
 						assert.strictEqual(oBinding.mAggregatedQueryOptions,
 							oFixture.initial ? mExtendResult : mAggregatedQueryOptions);
 						assert.strictEqual(oBinding.bAggregatedQueryOptionsInitial, false);
+						assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 					});
 				}
 			);
@@ -925,6 +927,7 @@ sap.ui.define([
 				// ensure that oCachePromise remains rejected
 				assert.strictEqual(oBinding.oCachePromise.isRejected(),
 					oCachePromise.isRejected());
+				assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 			});
 		});
 	});
@@ -1236,6 +1239,7 @@ sap.ui.define([
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/reduced/child/path");
 			assert.deepEqual(oBinding.aChildCanUseCachePromises, [oPromise]);
+			assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 		});
 	});
 
@@ -1315,6 +1319,7 @@ sap.ui.define([
 			return oPromise.then(function (bUseCache) {
 				assert.strictEqual(bUseCache, undefined);
 				assert.deepEqual(oBinding.mAggregatedQueryOptions, mOriginalAggregatedQueryOptions);
+				assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 			});
 		});
 	});
@@ -1387,6 +1392,7 @@ sap.ui.define([
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath,
 				bImmutable ? undefined : "/reduced/child/path/" + sPath);
+			assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 		});
 	});
 });
@@ -1437,6 +1443,7 @@ sap.ui.define([
 		assert.strictEqual(
 			oBinding.fetchIfChildCanUseCache(oContext, sChildPath).getResult(),
 			"/reduced/child/path");
+		assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 	});
 });
 
@@ -1467,6 +1474,7 @@ sap.ui.define([
 		assert.strictEqual(
 			oBinding.fetchIfChildCanUseCache(oContext, "childPath").getResult(),
 			"/resolved/child/path");
+		assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 	});
 
 	//*********************************************************************************************
@@ -1493,6 +1501,7 @@ sap.ui.define([
 		assert.strictEqual(
 			oBinding.fetchIfChildCanUseCache(oContext, "childPath").getResult(),
 			"/resolved/child/path");
+		assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 	});
 
 	//*********************************************************************************************
@@ -1569,6 +1578,7 @@ sap.ui.define([
 
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/reduced/child/path");
+			assert.strictEqual(oBinding.bHasPathReductionToParent, bReduced);
 		});
 	});
 });
@@ -1614,6 +1624,7 @@ sap.ui.define([
 
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, undefined);
+			assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 		});
 	});
 
@@ -1686,6 +1697,7 @@ sap.ui.define([
 
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, bImmutable ? undefined : "/reduced/child/path");
+			assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 		});
 	});
 });
@@ -1726,6 +1738,7 @@ sap.ui.define([
 
 		return oPromise.then(function (bUseCache) {
 			assert.strictEqual(bUseCache, "/resolved/child/path");
+			assert.strictEqual(oBinding.bHasPathReductionToParent, false);
 		});
 	});
 
@@ -1808,6 +1821,7 @@ sap.ui.define([
 
 		return oPromise.then(function (sReducedPath) {
 			assert.strictEqual(sReducedPath, "/SalesOrderList('42')/Note");
+			assert.strictEqual(oBinding.bHasPathReductionToParent, true);
 		});
 	});
 

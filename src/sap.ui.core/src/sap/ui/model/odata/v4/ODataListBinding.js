@@ -2863,6 +2863,10 @@ sap.ui.define([
 					if (!this.oHeaderContext) {
 						this.oHeaderContext = Context.create(this.oModel, this, sResolvedPath);
 					}
+					if (this.bHasPathReductionToParent && this.oModel.bAutoExpandSelect
+							&& !this.mParameters.$$aggregation) {
+						this.sChangeReason = "AddVirtualContext"; // JIRA: CPOUI5ODATAV4-848
+					}
 				}
 				// call Binding#setContext because of data state etc.; fires "change"
 				Binding.prototype.setContext.call(this, oContext,

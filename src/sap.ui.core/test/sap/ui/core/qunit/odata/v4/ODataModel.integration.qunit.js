@@ -20425,6 +20425,79 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
+	// Scenario: An object page is rebound to the same entity. In the page there is a list of
+	// dependent items containing a back link to the entity via partner attributes. It must be
+	// ensured that this path is re-added to the parent's $select, even though the corresponding
+	// property bindings are not recreated and do not get a different context. If the list is empty,
+	// there even is no such property binding.
+	// JIRA: CPOUI5ODATAV4-848
+	// BCP: 2180125559
+	QUnit.test("BCP: 2180125559", function (assert) {
+		var oModel = createSpecialCasesModel({autoExpandSelect : true}),
+			sView = '\
+<FlexBox>\
+	<Text id="name" text="{Name}"/>\
+	<Table id="table" growing="true" growingThreshold="5" items="{\
+				path : \'_Publication\',\
+				parameters : {$$ownRequest : true}\
+			}">\
+		<Text id="price" text="{Price}"/>\
+		<Text id="channel" text="{_Artist/defaultChannel}"/>\
+	</Table>\
+</FlexBox>',
+			that = this;
+
+		this.expectChange("name")
+			.expectChange("price", [])
+			.expectChange("channel", []);
+
+		return this.createView(assert, sView, oModel).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=5", {
+					value : []
+				})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel", {
+					ArtistID : "42",
+					IsActiveEntity : true,
+					Name : "Hour Frustrated",
+					defaultChannel : "Channel 1"
+				})
+				.expectChange("name", "Hour Frustrated");
+
+			that.oView.setBindingContext(
+				oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
+					.getBoundContext());
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)/_Publication"
+					+ "?$select=Price,PublicationID&$skip=0&$top=5", {
+					value : [{
+						Price : "9.99",
+						PublicationID : "42-0"
+					}]
+				})
+				.expectRequest("Artists(ArtistID='42',IsActiveEntity=true)"
+					+ "?$select=ArtistID,IsActiveEntity,Name,defaultChannel", {
+					ArtistID : "42",
+					IsActiveEntity : true,
+					Name : "Hour Frustrated again",
+					defaultChannel : "Channel 2"
+				})
+				.expectChange("name", "Hour Frustrated again")
+				.expectChange("price", ["9.99"])
+				.expectChange("channel", ["Channel 2"]);
+
+			that.oView.setBindingContext(
+				oModel.bindContext("/Artists(ArtistID='42',IsActiveEntity=true)")
+					.getBoundContext());
+
+			return that.waitForChanges(assert);
+		});
+	});
+
+	//*********************************************************************************************
 	// Scenario: Object page bound to an active entity and its navigation property is $expand'ed via
 	// an own request. Trigger "Edit" bound action to start editing using a return value context and
 	// modify a property in the entity referenced by the navigation property. Activate the inactive
