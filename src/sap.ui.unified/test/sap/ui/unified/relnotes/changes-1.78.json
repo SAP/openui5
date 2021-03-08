@@ -148,5 +148,32 @@
         ]
       }
     ]
+  },
+  "1.78.18": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "6b56eb2e9857794ceab4b48d0862ba6065e22b1a",
+        "type": "FIX",
+        "text": " sap.ui.unified.FileUploader: file not blocked",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400008348942020"
+          }
+        ]
+      },
+      {
+        "id": "e98585b82b76f525822c1e8d672059cbd964d969",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: can select a range in month with 4 weeks",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080437818"
+          }
+        ]
+      }
+    ]
   }
 }

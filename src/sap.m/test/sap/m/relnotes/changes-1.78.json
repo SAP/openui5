@@ -254,5 +254,65 @@
         ]
       }
     ]
+  },
+  "1.78.18": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "82f48877209ca78dd611667a37a5540a710518a6",
+        "type": "FIX",
+        "text": " sap.m.DatePicker: referencing invisible text elements as aria labelled by now works",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000848162021"
+          }
+        ]
+      },
+      {
+        "id": "bb758826bd9f3307de60432fb7ecb1543c00b249",
+        "type": "FIX",
+        "text": " sap.m.Shell: the logo property documentation is improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007918612020"
+          }
+        ]
+      },
+      {
+        "id": "361324a85a208bea1d95a6d3561fd87780c1ed23",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Performance optimisations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000292512021"
+          }
+        ]
+      },
+      {
+        "id": "e98585b82b76f525822c1e8d672059cbd964d969",
+        "type": "FIX",
+        "text": " sap.m.DateRangeSelection: can select a range in month with 4 weeks",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2080437818"
+          }
+        ]
+      },
+      {
+        "id": "c2647d5775a279bcf9d2ac9809f541da0f6d79a3",
+        "type": "FIX",
+        "text": " sap.m.Input: Unstable qUnit tests are now updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": ""
+          }
+        ]
+      }
+    ]
   }
 }
