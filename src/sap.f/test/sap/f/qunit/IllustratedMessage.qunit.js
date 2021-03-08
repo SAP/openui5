@@ -64,8 +64,10 @@ function (
 		assert.ok(this.oIllustratedMessage.getAggregation("_illustration"), "The IllustratedMessage _illustration has instantiated successfully");
 		assert.strictEqual(aPrivateAggregations["_illustration"].type, "sap.f.Illustration", "The type of the _illustration aggregation is sap.f.Illustration");
 		assert.ok(this.oIllustratedMessage.getAggregation("_text"), "The IllustratedMessage _text has instantiated successfully");
+		assert.strictEqual(this.oIllustratedMessage.getAggregation("_text").getTextAlign(), "Center", "The IllustratedMessage _text textAlign is 'Center'");
 		assert.strictEqual(aPrivateAggregations["_text"].type, "sap.m.Text", "The type of the _text aggregation is sap.m.Text");
 		assert.ok(this.oIllustratedMessage.getAggregation("_title"), "The IllustratedMessage _title has instantiated successfully");
+		assert.ok(this.oIllustratedMessage.getAggregation("_title").getWrapping(), "The IllustratedMessage _title wrapping is 'true'");
 		assert.strictEqual(aPrivateAggregations["_title"].type, "sap.m.Title", "The type of the _title aggregation is sap.m.Title");
 		assert.strictEqual(this.oIllustratedMessage.getIllustrationSize(), IllustratedMessageSize.Auto, "The IllustratedMessage illustrationSize property has the correct default value");
 		assert.strictEqual(this.oIllustratedMessage.getIllustrationType(), IllustratedMessageType.NoSearchResults, "The IllustratedMessage illustrationType property has the correct default value");
@@ -119,7 +121,8 @@ function (
 	QUnit.test("onAfterRendering", function (assert) {
 		// Arrange
 		var fnUpdateDomSizeSpy = sinon.spy(this.oIllustratedMessage, "_updateDomSize"),
-			fnAttachResizeSpy = sinon.spy(this.oIllustratedMessage, "_attachResizeHandlers");
+			fnAttachResizeSpy = sinon.spy(this.oIllustratedMessage, "_attachResizeHandlers"),
+			fnPreventWidowResizeSpy = sinon.spy(this.oIllustratedMessage, "_preventWidowWords");
 
 		// Act
 		this.oIllustratedMessage.onAfterRendering();
@@ -127,10 +130,16 @@ function (
 		// Assert
 		assert.ok(fnUpdateDomSizeSpy.calledOnce, "_updateDomSize called once onAfterRendering");
 		assert.ok(fnAttachResizeSpy.calledOnce, "_attachResizeHandlers called once onAfterRendering");
+		assert.ok(fnPreventWidowResizeSpy.calledTwice, "_preventWidowWords called twice onAfterRendering");
+		assert.ok(fnPreventWidowResizeSpy.firstCall.calledWithExactly(this.oIllustratedMessage._getTitle().getDomRef()),
+			"_preventWidowWords first call is with IllustratedMessage's title Dom Ref as argument");
+		assert.ok(fnPreventWidowResizeSpy.secondCall.calledWithExactly(this.oIllustratedMessage._getDescription().getDomRef()),
+			"_preventWidowWords second call is with IllustratedMessage's description Dom Ref as argument");
 
 		// Clean
 		fnUpdateDomSizeSpy.restore();
 		fnAttachResizeSpy.restore();
+		fnPreventWidowResizeSpy.restore();
 	});
 
 	QUnit.test("exit", function (assert) {
@@ -192,6 +201,7 @@ function (
 		sCurrDescrVal = oDescription.getHtmlText();
 
 		// Assert
+		assert.strictEqual(this.oIllustratedMessage.getAggregation("_formattedText").getTextAlign(), "Center", "The IllustratedMessage _formattedText textAlign is 'Center'");
 		assert.ok(oDescription.isA("sap.m.FormattedText"),
 			"Internal getter _getDescription is correctly returning an sap.m.FormattedText if enableFormattedText property is true");
 		assert.strictEqual(sCurrDescrVal, sDefaultText,
@@ -287,6 +297,23 @@ function (
 			this.oIllustratedMessage.destroy();
 			this.oIllustratedMessage = null;
 		}
+	});
+
+	QUnit.test("_preventWidowWords", function (assert) {
+		// Arrange
+		var oPara = document.createElement("p"),
+			oNode = document.createTextNode("This is a new paragraph"),
+			sExpectedResult = 'new&nbsp;paragraph',
+			aParaWords;
+
+		// Act
+		oPara.appendChild(oNode);
+		this.oIllustratedMessage._preventWidowWords(oPara);
+		aParaWords = jQuery(oPara).html().split(" ");
+
+		// Assert
+		assert.strictEqual(aParaWords[aParaWords.length - 1], sExpectedResult,
+			"Last two words of the paragraph are transformed into one with the inclusion of a non-breaking space");
 	});
 
 	QUnit.test("_updateDomSize", function (assert) {

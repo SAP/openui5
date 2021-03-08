@@ -19,15 +19,6 @@ sap.ui.define(["sap/ui/model/json/JSONModel", 'sap/ui/core/mvc/Controller', 'sap
 					aFMITypeData.push({key: oIllustratedMessageType[sKey], text: "IllustratedMessageType." + sKey});
 				});
 
-				aFMITypeData.push({key: "tnt-FaceID", text:"tnt-FaceID"});
-				aFMITypeData.push({key: "tnt-Fingerprint", text:"tnt-Fingerprint"});
-				aFMITypeData.push({key: "tnt-Lock", text:"tnt-Lock"});
-				aFMITypeData.push({key: "tnt-NoApplications", text:"tnt-NoApplications"});
-				aFMITypeData.push({key: "tnt-NoFlows", text:"tnt-NoFlows"});
-				aFMITypeData.push({key: "tnt-SuccessfulAuth", text:"tnt-SuccessfulAuth"});
-				aFMITypeData.push({key: "tnt-Unlock", text:"tnt-Unlock"});
-				aFMITypeData.push({key: "tnt-UnsuccessfulAuth", text:"tnt-UnsuccessfulAuth"});
-
 				this.oModel = new JSONModel({
 					sizeTypes: aFMISizeData,
 					typeTypes: aFMITypeData
