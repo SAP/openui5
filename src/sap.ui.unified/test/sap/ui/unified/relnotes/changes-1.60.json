@@ -342,5 +342,21 @@
         ]
       }
     ]
+  },
+  "1.60.35": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "3dc1df2c81f7abd504cd127f8a17d977b7f3c193",
+        "type": "FIX",
+        "text": " sap.ui.unified.Month: week numbers are displayed correctly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007541222020"
+          }
+        ]
+      }
+    ]
   }
 }

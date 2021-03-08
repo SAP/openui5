@@ -3451,5 +3451,36 @@
         ]
       }
     ]
+  },
+  "1.60.35": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "a1cdf657c5e264ac8297cc9e9f5edb556d2aae8f",
+        "type": "FIX",
+        "text": " sap.m.RadioButton: Propagation for editable state fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2070133796"
+          },
+          {
+            "type": "BCP",
+            "reference": "1870391150"
+          }
+        ]
+      },
+      {
+        "id": "1d8bac62ae0e2513963724fe96ba69b638b33671",
+        "type": "FIX",
+        "text": " sap.m.Shell: the logo property documentation is improved",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129500007918612020"
+          }
+        ]
+      }
+    ]
   }
 }

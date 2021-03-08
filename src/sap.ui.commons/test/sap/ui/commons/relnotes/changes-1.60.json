@@ -36,5 +36,21 @@
         ]
       }
     ]
+  },
+  "1.60.35": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "f8141d9e34361e11ae8c9992cc60809051f32558",
+        "type": "FIX",
+        "text": " sap.ui.commons.MatrixLayout: Unstable qUnit tests are now updated",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180093184"
+          }
+        ]
+      }
+    ]
   }
 }
