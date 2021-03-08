@@ -53,7 +53,8 @@ sap.ui.define([
 							childNames: {
 								singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
 								plural: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
-							}
+							},
+							ignore: false
 						},
 						testAggregation2: {
 							testField: "testValue",
@@ -76,6 +77,14 @@ sap.ui.define([
 										return "I18N_KEY_PLURAL" + oElement.getText();
 									}
 								};
+							}
+						},
+						testAggregation4: {
+							ignore: true
+						},
+						testAggregation5: {
+							ignore: function() {
+								return false;
 							}
 						}
 					},
@@ -147,7 +156,17 @@ sap.ui.define([
 			}, "then the translated texts are returned for variable texts/keys");
 		});
 
-		QUnit.test("when getText is called", function(assert) {
+		QUnit.test("when getText is called (with and without function)", function(assert) {
+			var oElementDesignTimeMetadataWithFunction = new ElementDesignTimeMetadata({
+				data: {
+					name: function() {
+						return {
+							singular: "MY_FANCY_NAME",
+							plural: "MY_FANCY_NAME_PLURAL"
+						};
+					}
+				}
+			});
 			var oFakeElement = {
 				getMetadata: sandbox.stub().returns({
 					getLibraryName: sandbox.stub().returns("fakeLibrary"),
@@ -164,6 +183,11 @@ sap.ui.define([
 			assert.deepEqual(this.oElementDesignTimeMetadata.getName(oFakeElement), {
 				singular: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME",
 				plural: "I18N_KEY_USER_FRIENDLY_CONTROL_NAME_PLURAL"
+			}, "then the translated texts are returned for static keys");
+
+			assert.deepEqual(oElementDesignTimeMetadataWithFunction.getName(oFakeElement), {
+				singular: "MY_FANCY_NAME",
+				plural: "MY_FANCY_NAME_PLURAL"
 			}, "then the translated texts are returned for static keys");
 		});
 
@@ -251,6 +275,21 @@ sap.ui.define([
 			assert.ok(Array.isArray(this.oElementDesignTimeMetadata.getScrollContainers()), "an array is returned");
 			assert.equal(this.oElementDesignTimeMetadata.getScrollContainers().length, 0, "the array is empty");
 		});
+
+		QUnit.test("when calling isAggregationIgnored", function(assert) {
+			var oElement = {foo: "bar"};
+			assert.strictEqual(this.oElementDesignTimeMetadata.isAggregationIgnored(oElement, "testAggregation"), false, "the aggregation is not ignored");
+			assert.strictEqual(this.oElementDesignTimeMetadata.isAggregationIgnored(oElement, "testAggregation2"), false, "the aggregation not is ignored");
+			assert.strictEqual(this.oElementDesignTimeMetadata.isAggregationIgnored(oElement, "testAggregation4"), true, "the aggregation is ignored");
+			assert.strictEqual(this.oElementDesignTimeMetadata.isAggregationIgnored(oElement, "testAggregation5"), false, "the aggregation is not ignored");
+			assert.strictEqual(this.oElementDesignTimeMetadata.isAggregationIgnored(oElement, "testAggregation6"), false, "a not existent aggregation is not ignored");
+		});
+
+		QUnit.test("when calling getAggregationNamesWithAction", function(assert) {
+			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationNamesWithAction("action1"), ["testAggregation", "testAggregation2"], "the action is in two aggregations");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationNamesWithAction("action2"), ["testAggregation"], "the action is in one aggregations");
+			assert.deepEqual(this.oElementDesignTimeMetadata.getAggregationNamesWithAction("fooAction"), [], "the action is in no aggregations");
+		});
 	});
 
 	QUnit.module("Given that an ElementDesignTimeMetadata with scrollContainers with an array for aggregations is created for a control", {
@@ -281,14 +320,13 @@ sap.ui.define([
 
 	QUnit.module("Given that an ElementDesignTimeMetadata with scrollContainers with a function for aggregations is created for a control", {
 		beforeEach: function() {
+			this.oGetAggregationsStub = sandbox.stub();
 			this.oElementDesignTimeMetadata = new ElementDesignTimeMetadata({
 				data: {
 					scrollContainers: [
 						{
 							domRef: "foo",
-							aggregations: function(oElement) {
-								return oElement.getScroll();
-							}
+							aggregations: this.oGetAggregationsStub
 						}
 					]
 				}
@@ -299,19 +337,29 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
-		QUnit.test("when 'getScrollContainers' is called", function(assert) {
-			var oElement = {
-				getScroll: function() {
-					return ["a"];
-				}
-			};
+		QUnit.test("when 'getScrollContainers' is called multiple times", function(assert) {
+			var fnUpdate = sandbox.stub();
+			var oElement = {foo: "bar"};
+			this.oGetAggregationsStub.returns(["a"]);
 			var oExpectedScrollContainer = {
 				domRef: "foo",
-				aggregations: ["a"]
+				aggregations: ["a"],
+				aggregationsFunction: this.oGetAggregationsStub
 			};
-			var aScrollContainers = this.oElementDesignTimeMetadata.getScrollContainers(oElement);
-			assert.equal(aScrollContainers.length, 1, "there is one scrollContainer");
-			assert.deepEqual(oExpectedScrollContainer, aScrollContainers[0], "the scrollContainer is correctly returned");
+			var aScrollContainers = this.oElementDesignTimeMetadata.getScrollContainers(oElement, false, fnUpdate);
+			assert.strictEqual(aScrollContainers.length, 1, "there is one scrollContainer");
+			assert.strictEqual(this.oGetAggregationsStub.callCount, 1, "the aggregations function was called only once");
+			assert.strictEqual(this.oGetAggregationsStub.getCall(0).args[0], oElement, "the element was passed");
+			assert.strictEqual(this.oGetAggregationsStub.getCall(0).args[1], fnUpdate, "the update function was passed");
+			assert.deepEqual(aScrollContainers[0], oExpectedScrollContainer, "the scrollContainer is correctly returned");
+
+			this.oElementDesignTimeMetadata.getScrollContainers(oElement, false, fnUpdate);
+			assert.strictEqual(this.oGetAggregationsStub.callCount, 1, "the aggregations function was not called again");
+
+			this.oElementDesignTimeMetadata.getScrollContainers(oElement, true, fnUpdate);
+			assert.strictEqual(this.oGetAggregationsStub.callCount, 2, "the aggregations function was called again");
+			assert.strictEqual(this.oGetAggregationsStub.getCall(0).args[0], oElement, "the element was passed");
+			assert.strictEqual(this.oGetAggregationsStub.getCall(0).args[1], fnUpdate, "the update function was passed");
 		});
 	});
 
