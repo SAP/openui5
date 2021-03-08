@@ -1358,30 +1358,6 @@ sap.ui.define([
 				if (oItem.manifestpath) {
 					this._mItemsByPaths[oItem.manifestpath] = oItem;
 				}
-				if (oItem.values && oItem.values.data && oItem.values.data.filterBackend && oItem.values.data.filterBackend.columns && oItem.values.data.filterBackend.columns.length > 0) {
-					//add filter param into request
-					if (oItem.values.data.request) {
-						var sFilterParam = "";
-						var sFilterOperator = oItem.values.data.filterBackend.operator ? oItem.values.data.filterBackend.operator : "contains";
-						for (var column in oItem.values.data.filterBackend.columns) {
-							sFilterParam += sFilterOperator + "(" + oItem.values.data.filterBackend.columns[column] + ",'{currentSettings>suggestValue}') or ";
-						}
-						if (sFilterParam.endsWith(" or ")) {
-							sFilterParam = sFilterParam.slice(0, -4);
-						}
-						if (oItem.values.data.request.parameters) {
-							if (oItem.values.data.request.parameters.$filter) {
-								oItem.values.data.request.parameters.$filter = "(" + oItem.values.data.request.parameters.$filter + ") and (" + sFilterParam + ")";
-							} else {
-								oItem.values.data.request.parameters.$filter = sFilterParam;
-							}
-						} else {
-							oItem.values.data.request.parameters = {
-								"$filter": sFilterParam
-							};
-						}
-					}
-				}
 				if (oItem) {
 					//force a label setting, set it to the name of the item
 					oItem.label = oItem.label || n;

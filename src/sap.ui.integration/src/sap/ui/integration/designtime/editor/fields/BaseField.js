@@ -780,10 +780,7 @@ sap.ui.define([
 	BaseField.prototype.isFilterBackend = function (oConfig) {
 		var bIsFilterBackend = false;
 		if (oConfig && oConfig.values && oConfig.values.data) {
-			if (oConfig.values.data.filterBackend && oConfig.values.data.filterBackend.columns && oConfig.values.data.filterBackend.columns.length > 0) {
-				//if contains a filterBackend object with colums under values.data
-				bIsFilterBackend = true;
-			} else if (oConfig.values.data.request && oConfig.values.data.request.parameters && oConfig.values.data.request.parameters.$filter && oConfig.values.data.request.parameters.$filter.indexOf("{currentSettings>suggestValue}") > -1) {
+			if (oConfig.values.data.request && oConfig.values.data.request.parameters && oConfig.values.data.request.parameters.$filter && oConfig.values.data.request.parameters.$filter.indexOf("{currentSettings>suggestValue}") > -1) {
 				//if contains a '$filter' parameter with key word '{currentSettings>suggestValue}' in the values.data.request.parameters
 				bIsFilterBackend = true;
 			} else if (oConfig.values.data.request && oConfig.values.data.request.url && oConfig.values.data.request.url.indexOf("{currentSettings>suggestValue}") > -1) {

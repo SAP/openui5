@@ -138,28 +138,10 @@
 				"CustomersWithFilterInURL": {
 					"value": []
 				},
-				"CustomersWithFilterParamAndColumn": {
-					"value": []
-				},
-				"CustomersWithFilterColumn": {
-					"value": []
-				},
-				"EmployeesWithFilterColumns": {
-					"value": []
-				},
 				"CustomerWithFilterParameter": {
 					"value": ""
 				},
 				"CustomerWithFilterInURL": {
-					"value": ""
-				},
-				"CustomerWithFilterParamAndColumn": {
-					"value": ""
-				},
-				"CustomerWithFilterColumn": {
-					"value": ""
-				},
-				"EmployeeWithFilterColumns": {
 					"value": ""
 				},
 				"Customer": {
