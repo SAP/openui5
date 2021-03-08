@@ -6,10 +6,11 @@
 
 	sap.ui.getCore().attachInit(function() {
 		sap.ui.require([
-			"this/sample/table/mockserver/mockServer", "sap/ui/model/odata/v4/ODataModel", "sap/ui/model/odata/OperationMode", "this/ViewFactory", "sap/ui/core/ComponentContainer"
-		], function(MockServer, ODataModel, OperationMode, ViewFactory, ComponentContainer) {
+			"this/sample/table/mockserver/mockServer", "sap/ui/model/odata/v4/ODataModel", "sap/ui/model/odata/OperationMode", "this/ViewFactory",
+			"sap/ui/core/ComponentContainer", "sap/base/util/UriParameters"
+		], function(MockServer, ODataModel, OperationMode, ViewFactory, ComponentContainer, UriParameters) {
 
-			var uriParams = jQuery.sap.getUriParameters(), bRTA = uriParams.get("rta"), filter = uriParams.get("filter"), sUrl = "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/", view = uriParams.get("view") ? uriParams.get("view") : "Table", tableViewName = {
+			var uriParams = UriParameters.fromURL(window.location.href), bRTA = uriParams.get("rta"), filter = uriParams.get("filter"), sUrl = "/sap/opu/odata4/IWBEP/V4_SAMPLE/default/IWBEP/V4_GW_SAMPLE_BASIC/0001/", view = uriParams.get("view") ? uriParams.get("view") : "Table", tableViewName = {
 				"ResponsiveTable": "Table",
 				"Table": "GridTable",
 				"WithFilter": "TableWithFilter",

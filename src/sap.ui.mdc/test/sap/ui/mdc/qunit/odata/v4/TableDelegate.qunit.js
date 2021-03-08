@@ -1,125 +1,66 @@
 /* global QUnit, sinon */
 sap.ui.define([
 	"sap/ui/mdc/Table",
+	"../../../delegates/odata/v4/TableDelegate",
 	"../../QUnitUtils",
+	"../../util/createAppEnvironment",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/ComponentContainer",
-	"../../../delegates/odata/v4/TableDelegate",
 	"sap/ui/fl/write/api/ControlPersonalizationWriteAPI",
-	"sap/ui/core/Core"
-], function(Table,
+	"sap/ui/core/Core",
+	"sap/ui/core/mvc/XMLView"
+], function(
+	Table,
+	TestDelegate,
 	MDCQUnitUtils,
+	createAppEnvironment,
 	UIComponent,
 	ComponentContainer,
-	TestDelegate,
 	ControlPersonalizationWriteAPI,
-	Core) {
-	'use strict';
+	Core,
+	XMLView
+) {
+	"use strict";
 
 	sap.ui.getCore().loadLibrary("sap.ui.fl");
-	var UIComp = UIComponent.extend("test", {
-		metadata: {
-			manifest: {
-				"sap.app": {
-					"id": "",
-					"type": "application"
-				}
-			}
-		},
-		createContent: function() {
-			var oView = sap.ui.view({
-				async: false,
-				type: "XML",
-				id: this.createId("view"),
-				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
-				'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "sap/ui/mdc/odata/v4/TableDelegate", payload : \{ "collectionName" : "ProductList" \} \}\'>' +
-				'<columns><mdcTable:Column id="myTable--column0" header="column 0" dataProperty="Name">' +
-				'<m:Text text="{Name}" id="myTable--text0" /></mdcTable:Column>' +
-				'<mdcTable:Column id="myTable--column1" header="column 1" dataProperty="Country">' +
-				'<m:Text text="{Country}" id="myTable--text1" /></mdcTable:Column>' +
-				'<mdcTable:Column id="myTable--column2" header="column 2" dataProperty="name_country"> ' +
-				'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
-				'</Table></mvc:View>'
-			});
 
-			return oView;
-		}
-	});
-	var UIComp2 = UIComponent.extend("test2", {
-		metadata: {
-			manifest: {
-				"sap.app": {
-					"id": "",
-					"type": "application"
-				}
-			}
-		},
-		createContent: function() {
-			var oView = sap.ui.view({
-				async: false,
-				type: "XML",
-				id: this.createId("view"),
-				viewContent: '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
-				'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "sap/ui/mdc/odata/v4/TableDelegate", payload : \{ "collectionName" : "ProductList" \} \}\'>' +
-				'<columns>' +
-				'<mdcTable:Column id="myTable--column2" header="column 2" dataProperty="name_country"> ' +
-				'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
-				'</Table></mvc:View>'
-			});
+	var sTableView1 =
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
+		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "sap/ui/mdc/odata/v4/TableDelegate", payload : \{ "collectionName" : "ProductList" \} \}\'>' +
+		'<columns><mdcTable:Column id="myTable--column0" header="column 0" dataProperty="Name">' +
+		'<m:Text text="{Name}" id="myTable--text0" /></mdcTable:Column>' +
+		'<mdcTable:Column id="myTable--column1" header="column 1" dataProperty="Country">' +
+		'<m:Text text="{Country}" id="myTable--text1" /></mdcTable:Column>' +
+		'<mdcTable:Column header="column 2" dataProperty="name_country"> ' +
+		'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
+		'</Table></mvc:View>';
 
-			return oView;
-		}
-	});
+	var sTableView2 =
+		'<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:m="sap.m" xmlns="sap.ui.mdc" xmlns:mdcTable="sap.ui.mdc.table">' +
+		'<Table p13nMode="Group,Aggregate" id="myTable" delegate=\'\{ name : "sap/ui/mdc/odata/v4/TableDelegate", payload : \{ "collectionName" : "ProductList" \} \}\'>' +
+		'<columns>' +
+		'<mdcTable:Column header="column 2" dataProperty="name_country"> ' +
+		'<m:Text text="{Name}" id="myTable--text2" /></mdcTable:Column></columns> ' +
+		'</Table></mvc:View>';
 
 	QUnit.module("Basic functionality with JsControlTreeModifier", {
-		beforeEach: function() {
-			this.createTestObjects();
-			return this.oTable.getEngine().getModificationHandler().waitForChanges({
-				element: this.oTable
-			});
-		},
-		afterEach: function() {
-			this.destroyTestObjects();
-		},
-		createTestObjects: function() {
-			this.oUiComponent = new UIComp("comp");
-
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component: this.oUiComponent,
-				async: false
-			});
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			this.oView = this.oUiComponent.getRootControl();
-			this.oTable = this.oView.byId('myTable');
-
-			ControlPersonalizationWriteAPI.restore({
-				selector: this.oTable
-			});
-
-			this.aPropertyInfo = [
-				{
-					name: "Name",
-					label: "Name",
-					path: "Name",
-					groupable: true
-				},
-				{
-					name: "Country",
-					label: "Country",
-					path: "Country",
-					groupable: true
-				},
-				{
-					name: "name_country",
-					label: "Complex Title & Description",
-					propertyInfos: ["Name", "Country"]
-				}
-			];
-			MDCQUnitUtils.stubPropertyInfos(this.oTable , this.aPropertyInfo);
-			MDCQUnitUtils.stubPropertyExtension(this.oTable , {
+		before: function() {
+			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
+				name: "Name",
+				label: "Name",
+				path: "Name",
+				groupable: true
+			}, {
+				name: "Country",
+				label: "Country",
+				path: "Country",
+				groupable: true
+			}, {
+				name: "name_country",
+				label: "Complex Title & Description",
+				propertyInfos: ["Name", "Country"]
+			}]);
+			MDCQUnitUtils.stubPropertyExtension(Table.prototype, {
 				Name: {
 					defaultAggregate: {}
 				},
@@ -128,9 +69,35 @@ sap.ui.define([
 				}
 			});
 		},
+		beforeEach: function() {
+			return this.createTestObjects().then(function() {
+				return this.oTable.getEngine().getModificationHandler().waitForChanges({
+					element: this.oTable
+				});
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.destroyTestObjects();
+		},
+		after: function() {
+			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+			MDCQUnitUtils.restorePropertyExtension(Table.prototype);
+		},
+		createTestObjects: function() {
+			return createAppEnvironment(sTableView1, "Table").then(function(mCreatedApp){
+				this.oView = mCreatedApp.view;
+				this.oUiComponentContainer = mCreatedApp.container;
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				this.oTable = this.oView.byId('myTable');
+
+				ControlPersonalizationWriteAPI.restore({
+					selector: this.oTable
+				});
+			}.bind(this));
+		},
 		destroyTestObjects: function() {
-			MDCQUnitUtils.restorePropertyInfos(this.oTable);
-			MDCQUnitUtils.restorePropertyExtension(this.oTable);
 			this.oUiComponentContainer.destroy();
 		}
 	});
@@ -374,94 +341,81 @@ sap.ui.define([
 	});
 
 	QUnit.module("Tests with specific propertyInfos and extensions for binding", {
-		beforeEach: function() {
-			this.createTestObjects();
-			return this.oTable.getEngine().getModificationHandler().waitForChanges({
-				element: this.oTable
-			});
-		},
-		afterEach: function() {
-			this.destroyTestObjects();
-		},
-		createTestObjects: function() {
-			this.oUiComponent = new UIComp2("comp");
-
-			// Place component in container and display
-			this.oUiComponentContainer = new ComponentContainer({
-				component: this.oUiComponent,
-				async: false
-			});
-			this.oUiComponentContainer.placeAt("qunit-fixture");
-			sap.ui.getCore().applyChanges();
-
-			this.oView = this.oUiComponent.getRootControl();
-			this.oTable = this.oView.byId('myTable');
-
-			ControlPersonalizationWriteAPI.restore({
-				selector: this.oTable
-			});
-
-			this.aPropertyInfo = [
-				{
-					name: "Name",
-					label: "Name",
-					path: "Name",
-					groupable: true
-				},
-				{
-					name: "Country",
-					label: "Country",
-					path: "Country",
-					groupable: true
-				},
-				{
-					name: "Value",
-					label: "Value",
-					path: "Value"
-				},
-				{
-					name: "name_country",
-					label: "Complex Title & Description",
-					propertyInfos: ["Name"]
-				}
-			];
-			this.aPropertyInfoForBinding = [
-				{
-					name: "Name",
-					label: "Name",
-					path: "Name",
-					groupable: true
-				},
-				{
-					name: "Country",
-					label: "Country",
-					path: "Country",
-					groupable: true
-				},
-				{
-					name: "Value",
-					label: "Value",
-					path: "Value"
-				},
-				{
-					name: "name_country",
-					label: "Complex Title & Description",
-					propertyInfos: ["Name", "Country","Value"]
-				}
-			];
-			MDCQUnitUtils.stubPropertyInfos(this.oTable , this.aPropertyInfo);
-			MDCQUnitUtils.stubPropertyInfosForBinding(this.oTable , this.aPropertyInfoForBinding);
-			MDCQUnitUtils.stubPropertyExtensionsForBinding(this.oTable , {
+		before: function() {
+			MDCQUnitUtils.stubPropertyInfos(Table.prototype, [{
+				name: "Name",
+				label: "Name",
+				path: "Name",
+				groupable: true
+			}, {
+				name: "Country",
+				label: "Country",
+				path: "Country",
+				groupable: true
+			}, {
+				name: "Value",
+				label: "Value",
+				path: "Value"
+			}, {
+				name: "name_country",
+				label: "Complex Title & Description",
+				propertyInfos: ["Name"]
+			}]);
+			MDCQUnitUtils.stubPropertyInfosForBinding(Table.prototype, [{
+				name: "Name",
+				label: "Name",
+				path: "Name",
+				groupable: true
+			}, {
+				name: "Country",
+				label: "Country",
+				path: "Country",
+				groupable: true
+			}, {
+				name: "Value",
+				label: "Value",
+				path: "Value"
+			}, {
+				name: "name_country",
+				label: "Complex Title & Description",
+				propertyInfos: ["Name", "Country", "Value"]
+			}]);
+			MDCQUnitUtils.stubPropertyExtensionsForBinding(Table.prototype, {
 				Value: {
 					defaultAggregate: {}
 				}
 			});
 		},
+		beforeEach: function() {
+			return this.createTestObjects().then(function() {
+				return this.oTable.getEngine().getModificationHandler().waitForChanges({
+					element: this.oTable
+				});
+			}.bind(this));
+		},
+		afterEach: function() {
+			this.destroyTestObjects();
+		},
+		after: function() {
+			MDCQUnitUtils.restorePropertyInfos(Table.prototype);
+			MDCQUnitUtils.restorePropertyInfosForBinding(Table.prototype);
+			MDCQUnitUtils.restorePropertyExtensionsForBinding(Table.prototype);
+		},
+		createTestObjects: function() {
+			return createAppEnvironment(sTableView2, "Table").then(function(mCreatedApp){
+				this.oView = mCreatedApp.view;
+				this.oUiComponentContainer = mCreatedApp.container;
+				this.oUiComponentContainer.placeAt("qunit-fixture");
+				sap.ui.getCore().applyChanges();
+
+				this.oTable = this.oView.byId('myTable');
+
+				ControlPersonalizationWriteAPI.restore({
+					selector: this.oTable
+				});
+			}.bind(this));
+		},
 		destroyTestObjects: function() {
-			MDCQUnitUtils.restorePropertyInfos(this.oTable);
-			MDCQUnitUtils.restorePropertyInfosForBinding(this.oTable);
-			MDCQUnitUtils.restorePropertyExtension(this.oTable);
-			MDCQUnitUtils.restorePropertyExtensionsForBinding(this.oTable);
 			this.oUiComponentContainer.destroy();
 		}
 	});
