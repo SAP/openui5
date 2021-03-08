@@ -61,11 +61,12 @@ sap.ui.define([
 		},
 
 		/**
-		 * Adds a new variant and returns the ID of the new change.
+		 * Adds a new variant and returns it.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {object} mPropertyBag.changeSpecificData - Map of parameters, see below
 		 * @param {sap.ui.fl.Layer} [mPropertyBag.changeSpecificData.layer] - Layer to which the variant should be written
+		 * @param {sap.ui.fl.Layer} [mPropertyBag.changeSpecificData.id] - Id that should be used for the variant
 		 * @param {string} mPropertyBag.changeSpecificData.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
 		 * @param {object} mPropertyBag.changeSpecificData.texts - Map object with all referenced texts within the file; these texts will be connected to the translation process
 		 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change

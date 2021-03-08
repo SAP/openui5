@@ -326,6 +326,7 @@ sap.ui.define([
 	 * @param {boolean} [mPropertyBag.command] - Name of the sa.ui.rta-command for support analysis
 	 * @param {object} mPropertyBag.changeSpecificData - Data set defining the object to be added
 	 * @param {sap.ui.fl.Layer} mPropertyBag.changeSpecificData.layer - Layer to which the variant should be written
+	 * @param {boolean} [mPropertyBag.changeSpecificData.id] - Id that should be used for the flex object
 	 * @param {string} mPropertyBag.changeSpecificData.type - Type <filterVariant, tableVariant, etc>
 	 * @param {object} mPropertyBag.changeSpecificData.texts - A map object containing all translatable texts which are referenced within the file
 	 * @param {object} mPropertyBag.changeSpecificData.content - Content of the new change
@@ -348,6 +349,7 @@ sap.ui.define([
 		var oChangeSpecificData = mPropertyBag.changeSpecificData;
 
 		var oInfo = {
+			id: oChangeSpecificData.id,
 			changeType: oChangeSpecificData.type,
 			service: oChangeSpecificData.ODataService,
 			content: oChangeSpecificData.content || {},
@@ -369,10 +371,10 @@ sap.ui.define([
 			oInfo.contexts = oChangeSpecificData.contexts || {};
 		}
 
-		var oClass = oChangeSpecificData.isVariant ? CompVariant : Change;
-		var oFile = oClass.createInitialFileContent(oInfo);
+		var FlexObjectClass = oChangeSpecificData.isVariant ? CompVariant : Change;
+		var oFile = FlexObjectClass.createInitialFileContent(oInfo);
 
-		var oFlexObject = new oClass(oFile);
+		var oFlexObject = new FlexObjectClass(oFile);
 
 		var mCompVariantsMap = FlexState.getCompVariantsMap(mPropertyBag.reference);
 		var oMapOfPersistencyKey = mCompVariantsMap._getOrCreate(mPropertyBag.persistencyKey);
