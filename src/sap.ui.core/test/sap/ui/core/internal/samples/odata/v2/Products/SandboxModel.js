@@ -15,14 +15,18 @@ sap.ui.define([
 
 	var oMockData = {
 			mFixture : {
-				"$metadata" : {
+				"$metadata?customAll='custom%2Fall'&customMeta='custom%2Fmeta'" : {
 					source : "metadata.xml"
 				},
-				"$metadata?sap-language=EN" : {
-					source : "metadata.xml"
-				},
-				"ProductSet?$skip=0&$top=5&$inlinecount=allpages" : {
+				"ProductSet?customAll='custom%2Fall'&customService='custom%2Fservice'&$skip=0&$top=5&$inlinecount=allpages" :
+				{
 					source : "ProductSet_0_5.json"
+				},
+				"SAP__Currencies?customAll='custom%2Fall'&customService='custom%2Fservice'&$skip=0&$top=5000" : {
+					source : "SAP__Currencies.json"
+				},
+				"SAP__UnitsOfMeasure?customAll='custom%2Fall'&customService='custom%2Fservice'&$skip=0&$top=5000" : {
+					source : "SAP__UnitsOfMeasure.json"
 				}
 			},
 			aRegExpFixture : []
