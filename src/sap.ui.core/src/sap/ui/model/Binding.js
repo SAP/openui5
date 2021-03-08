@@ -228,12 +228,13 @@ sap.ui.define([
 	};
 
 	/**
-	 * Returns the resolved path for this binding using {@link sap.ui.model.Model#resolve} or
-	 * <code>undefined</code> if this binding is not resolved or has no model.
+	 * Provides the resolved path for this binding's path and context and returns it, or
+	 * <code>undefined</code> if the binding is not resolved or has no model.
 	 *
 	 * @returns {string|undefined} The resolved path
 	 *
-	 * @private
+	 * @public
+	 * @since 1.88.0
 	 */
 	Binding.prototype.getResolvedPath = function () {
 		return this.oModel ? this.oModel.resolve(this.sPath, this.oContext) : undefined;
