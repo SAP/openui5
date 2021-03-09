@@ -79,7 +79,9 @@ sap.ui.define([
 		var aItems = [];
 
 		this.getP13nModel().getProperty("/items").forEach(function(oItem){
-			oItem.availableRoles = this._getChartItemTextByKey(oItem.kind);
+			if (!oItem.availableRoles) {
+				oItem.availableRoles = this._getChartItemTextByKey(oItem.kind);
+			}
 			aItems.push(oItem);
 		}.bind(this));
 

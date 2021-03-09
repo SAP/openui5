@@ -179,7 +179,7 @@ sap.ui.define([
         //TODO: In old chart, aggragation method was included in name since every method had their own Item
 
         if (oMDCItem.getType() === "aggregatable") {
-            return new Sorter(oMDCItem.getAggregationMethod() + oSortProperty.name, oSortProperty.descending);
+            return new Sorter(this._getAggregatedMeasureNameForMDCItem(oMDCItem), oSortProperty.descending);
         } else if (oMDCItem.getType() === "groupable") {
             return new Sorter(oSortProperty.name, oSortProperty.descending);
         }
@@ -202,7 +202,7 @@ sap.ui.define([
         } else if (oMDCChartItem.getType() === "aggregatable") {
             this.createInnerMeasure(oMDCChartItem);
             var aVisibleMeasures = this._oInnerChart.getVisibleMeasures();
-            aVisibleMeasures.splice(iIndex, 0, oMDCChartItem.getAggregationMethod() + oMDCChartItem.getName());
+            aVisibleMeasures.splice(iIndex, 0, this._getAggregatedMeasureNameForMDCItem(oMDCChartItem));
             this._oInnerChart.setVisibleMeasures(aVisibleMeasures);
         }
     };
@@ -220,13 +220,13 @@ sap.ui.define([
             this._oInnerChart.setVisibleDimensions(aNewVisibleDimensions);
 
             this._oInnerChart.removeDimension(this._oInnerChart.getDimensionByName(oMDCChartItem.getName()));
-        } else if (oMDCChartItem.getType() === "aggregatable" && this._oInnerChart.getVisibleMeasures().includes(oMDCChartItem.getAggregationMethod() + oMDCChartItem.getName())) {
+        } else if (oMDCChartItem.getType() === "aggregatable" && this._oInnerChart.getVisibleMeasures().includes(this._getAggregatedMeasureNameForMDCItem(oMDCChartItem))) {
             var aNewVisibleMeasures = this._oInnerChart.getVisibleMeasures().filter(function (e) {
-                return e !== oMDCChartItem.getAggregationMethod() + oMDCChartItem.getName();
-            });
+                return e !== this._getAggregatedMeasureNameForMDCItem(oMDCChartItem);
+            }.bind(this));
             this._oInnerChart.setVisibleMeasures(aNewVisibleMeasures);
 
-            this._oInnerChart.removeMeasure(this._oInnerChart.getMeasureByName(oMDCChartItem.getAggregationMethod() + oMDCChartItem.getName()));
+            this._oInnerChart.removeMeasure(this._oInnerChart.getMeasureByName(this._getAggregatedMeasureNameForMDCItem(oMDCChartItem)));
         }
     };
 
@@ -238,9 +238,9 @@ sap.ui.define([
      * @param {sap.ui.mdc.ChartNew} oMDCChart reference to the MDC Chart to add the property to
      * @returns {Promise} Promise that resolves with new MDC Chart Item as parameter
      */
-    ChartDelegate.addItem = function (sPropertyName, oMDCChart, mPropertyBag) {
+    ChartDelegate.addItem = function (sPropertyName, oMDCChart, mPropertyBag, sRole) {
         if (oMDCChart.getModel) {
-            return Promise.resolve(this._createMDCChartItem(sPropertyName, oMDCChart));
+            return Promise.resolve(this._createMDCChartItem(sPropertyName, oMDCChart, sRole));
         }
         return Promise.resolve(null);
     };
@@ -249,7 +249,7 @@ sap.ui.define([
         return Promise.resolve(true);
     };
 
-    ChartDelegate._createMDCChartItem = function (sPropertyName, oMDCChart) {
+    ChartDelegate._createMDCChartItem = function (sPropertyName, oMDCChart, sRole) {
         return this.fetchProperties(oMDCChart).then(function (aProperties) {
             var oPropertyInfo = aProperties.find(function (oCurrentPropertyInfo) {
                 return oCurrentPropertyInfo.name === sPropertyName;
@@ -264,7 +264,8 @@ sap.ui.define([
                 return new MDCChartItem(oMDCChart.getId() + "--GroupableItem--" + oPropertyInfo.name, {
                     name: oPropertyInfo.name,
                     label: oPropertyInfo.label,
-                    type: "groupable"
+                    type: "groupable",
+                    role: sRole ? sRole : "category"
                 });
             }
 
@@ -273,7 +274,8 @@ sap.ui.define([
                     name: oPropertyInfo.name,
                     label: oPropertyInfo.label,
                     type: "aggregatable",
-                    aggregationMethod: oPropertyInfo.recAggrMethod
+                    aggregationMethod: oPropertyInfo.recAggrMethod,
+                    role: sRole ? sRole : "axis1"
                 });
             }
         });
@@ -312,9 +314,9 @@ sap.ui.define([
                     break;
                 case "aggregatable":
                     //TODO: Alias might be changing after backend request
-                    aVisibleMeasures.push(oItem.getAggregationMethod() + oItem.getName());
+                    aVisibleMeasures.push(this._getAggregatedMeasureNameForMDCItem(oItem));
                     var oMeasure = new Measure({
-                        name: oItem.getAggregationMethod() + oItem.getName(),//"average" + oItem.getName(),
+                        name: this._getAggregatedMeasureNameForMDCItem(oItem),//"average" + oItem.getName(),
                         label: oItem.getLabel(),
                         role: "axis1",
                         analyticalInfo: {
@@ -508,7 +510,7 @@ sap.ui.define([
 
         var oDimension = new Dimension({
             name: oMDCChartItem.getName(),
-            role: "category",
+            role: oMDCChartItem.getRole() ? oMDCChartItem.getRole() : "category",
             label: oMDCChartItem.getLabel()
         });
         this._oInnerChart.addDimension(oDimension);
@@ -528,8 +530,9 @@ sap.ui.define([
         //TODO: Where to get analyticalInfo from?
         //var aVisibleMeasures = [];
         var oMeasure = new Measure({
-            name: oMDChartItem.getAggregationMethod() + oMDChartItem.getName(),
-            role: "axis1", label: oMDChartItem.getLabel(),
+            name: this._getAggregatedMeasureNameForMDCItem(oMDChartItem),
+            role: oMDChartItem.getRole() ? oMDChartItem.getRole() : "axis1",
+            label: oMDChartItem.getLabel(),
             analyticalInfo: {
                 propertyPath: oMDChartItem.getName(),
                 "with": oMDChartItem.getAggregationMethod()
@@ -545,6 +548,11 @@ sap.ui.define([
 
         //this._oInnerChart.setVisibleMeasures(aVisibleMeasures);
     };
+
+    ChartDelegate._getAggregatedMeasureNameForMDCItem = function(oMDCItem){
+        return oMDCItem.getAggregationMethod() + oMDCItem.getName();
+    };
+
     /**
      * Checks the binding of the table and rebinds it if required.
      *
@@ -644,6 +652,42 @@ sap.ui.define([
                 oBindingInfo.parameters.$search = sSearchText;
             }
         }
+    };
+
+    /**
+     * This returns the layout options for a specific type of Item (measure/dimension,groupable/aggregatable)
+     * It is used by p13n to determine which layout options to show in the p13n panel
+     * @param {string} sType the type for which the layout options are requested
+     */
+    ChartDelegate._getLayoutOptionsForType = function(sType){
+        var MDCRb = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		var oAvailableRoles = {
+		    groupable: [
+				{
+					key: MDCLib.ChartItemRoleType.category,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY')
+				}, {
+					key: MDCLib.ChartItemRoleType.category2,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_CATEGORY2')
+				}, {
+					key: MDCLib.ChartItemRoleType.series,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_SERIES')
+				}
+			],
+			aggregatable: [
+				{
+					key: MDCLib.ChartItemRoleType.axis1,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS1')
+				}, {
+					key: MDCLib.ChartItemRoleType.axis2,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS2')
+				}, {
+					key: MDCLib.ChartItemRoleType.axis3,
+					text: MDCRb.getText('chart.PERSONALIZATION_DIALOG_CHARTROLE_AXIS3')
+				}
+			]
+		};
+		return oAvailableRoles[sType];
     };
 
     /**
@@ -839,12 +883,14 @@ sap.ui.define([
                         supAggrMethods: oPropertyAnnotations["@Org.OData.Aggregation.V1.SupportedAggregationMethods"],
                         maxConditions: ODataMetaModelUtil.isMultiValueFilterExpression(oFilterRestrictionsInfo.propertyInfo[sKey]) ? -1 : 1,
                         sortKey: oPropertyAnnotations["@Org.OData.Aggregation.V1.Aggregatable"] ? oPropertyAnnotations["@Org.OData.Aggregation.V1.RecommendedAggregationMethod"] + sKey : sKey,
-                        kind: oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] ? "Groupable" : "Aggregatable" //Only needed for P13n Item Panel
+                        kind: oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] ? "Dimension" : "Measure", //TODO: Rename in type; Only needed for P13n Item Panel
+                        availableRoles: oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] ? this._getLayoutOptionsForType("groupable") : this._getLayoutOptionsForType("aggregatable"), //for p13n
+                        role: oPropertyAnnotations["@Org.OData.Aggregation.V1.Groupable"] ? MDCLib.ChartItemRoleType.category : MDCLib.ChartItemRoleType.axis1 //standard, normally this should be interpreted from UI.Chart annotation
                     });
                 }
             }
             return aProperties;
-        });
+        }.bind(this));
     };
 
 
