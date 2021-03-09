@@ -185,6 +185,27 @@ sap.ui.define([
 
 	});
 
+	QUnit.test("null and undefined values", function (assert) {
+
+		//Arrange
+		this.oCustomControl.getBadgeCustomData().setValue(undefined);
+
+		//Assert
+		assert.equal(this.oCustomControl.$("sapMBadge").attr("data-badge"), "", "Value is set to the default, when" +
+			" try adding 'undefined' as a value");
+
+		//Arrange
+		this.oCustomControl.getBadgeCustomData().setValue("10");
+
+		//Act
+		this.oCustomControl.getBadgeCustomData().setValue(null);
+
+		//Assert
+		assert.equal(this.oCustomControl.$("sapMBadge").attr("data-badge"), "", "Value is set to the default, when" +
+			" try adding 'null' as a value");
+
+	});
+
 	QUnit.module("ACC", {
 		beforeEach: function() {
 			this.oCustomControl = new MyCustomControl({id: "CustomControl"});
