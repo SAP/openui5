@@ -1,5 +1,5 @@
 /*global QUnit */
-sap.ui.require([
+sap.ui.define([
 	"sap/ui/base/EventProvider"
 ], function(EventProvider) {
 	"use strict";
