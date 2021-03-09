@@ -1267,7 +1267,7 @@ sap.ui.define([
 	function _handleDataUpdate(oEvent) {
 
 		var bContentChange = oEvent.getParameter("contentChange");
-		var oWrapper;
+		var oWrapper = oEvent.getSource();
 
 		if (bContentChange) {
 			var oPopover = this.getAggregation("_popover");
