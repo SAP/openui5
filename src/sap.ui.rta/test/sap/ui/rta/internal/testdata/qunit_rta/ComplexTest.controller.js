@@ -1,4 +1,8 @@
-(function() {
+sap.ui.define([
+	"sap/base/Log"
+], function(
+	Log
+) {
 	"use strict";
 
 	sap.ui.controller("sap.ui.rta.qunitrta.ComplexTest", {
@@ -87,7 +91,7 @@
 							this._dataPromise = fnGetDataPromise(oView);
 						}
 					} else {
-						jQuery.sap.log.error("Running the app with mock data for " + property);
+						Log.error("Running the app with mock data for " + property);
 					}
 				}
 			}
@@ -127,5 +131,5 @@
 		}
 
 	});
-})();
+});
 
