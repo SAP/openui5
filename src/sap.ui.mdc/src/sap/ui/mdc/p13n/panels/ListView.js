@@ -273,6 +273,8 @@ sap.ui.define([
 		return new Table(this.getId() + "-innerListViewTable", Object.assign({
             keyboardMode: ListKeyboardMode.Edit, //default for ACC --> tab through editable fields
             growing: true,
+            growingThreshold: 25,
+            growingScrollToLoad: true,
             updateStarted: function() {
                 this.removeMoveButtons();
                 this._removeFactoryControl();
