@@ -132,6 +132,7 @@ function (
 		 * Retrieves contexts from the back end, then opens a new <code>Select Contexts</code> dialog.
 		 */
 		_addContexts: function(oDialog) {
+			oDialog._oList.removeSelections(true);
 			return getData.call(this, {}).then(function() {
 				return oDialog.open();
 			});

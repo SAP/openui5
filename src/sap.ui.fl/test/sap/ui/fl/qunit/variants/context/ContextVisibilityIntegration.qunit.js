@@ -160,7 +160,8 @@ sap.ui.define([
 			assert.equal(oCore.byId(sCompName + "noSelectedRolesError").getVisible(), true, "error message is visible, no duplicate id error");
 
 			// public visibility without selected roles => PASS
-			this.oRootControl.byId("publicRadioButton").setSelected(true);
+			this.oComp.setSelectedContexts({role: []});
+			assert.equal(oCore.byId(sCompName + "noSelectedRolesError"), undefined, "error message is not visible");
 
 			assert.equal(this.oComp.hasErrorsAndShowErrorMessage(), false, "component has no errors");
 			assert.equal(oCore.byId(sCompName + "noSelectedRolesError"), undefined, "error message is not visible");

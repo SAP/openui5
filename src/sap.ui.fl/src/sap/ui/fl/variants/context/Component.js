@@ -55,7 +55,9 @@ sap.ui.define([
 			var aSelectedRoles = oSelectedContexts.role.map(function(oRole) {
 				return {id: oRole, description: ""};
 			});
-			this.getModel("selectedContexts").setProperty("/selected", aSelectedRoles);
+			var oSelectedContextsModel = this.getModel("selectedContexts");
+			oSelectedContextsModel.setProperty("/selected", aSelectedRoles);
+			oSelectedContextsModel.refresh(true);
 		},
 
 		/**
