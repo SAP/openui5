@@ -1311,22 +1311,29 @@ function(
 				var vNewControlInstance;
 				var pProvider = SyncPromise.resolve();
 				var pInstanceCreated = SyncPromise.resolve();
+				var sViewType = node.getAttribute("type");
 
 				if (bEnrichFullIds && node.hasAttribute("id")) {
 					setId(oView, node);
 				} else if (!bEnrichFullIds) {
 					// Pass processingMode to Fragments only
-					if (oClass.getMetadata().isA("sap.ui.core.Fragment") && node.getAttribute("type") !== "JS" && oView._sProcessingMode === "sequential") {
+					if (oClass.getMetadata().isA("sap.ui.core.Fragment") && sViewType !== "JS" && oView._sProcessingMode === "sequential") {
 						mSettings.processingMode = "sequential";
 					}
 
-					if (View.prototype.isPrototypeOf(oClass.prototype) && typeof oClass._sType === "string") {
+					if (oClass.getMetadata().isA("sap.ui.core.mvc.View")) {
 						var fnCreateViewInstance = function () {
+
+							if (!oClass._sType && !mSettings.viewName) {
+								// Add module view name
+								mSettings.viewName = "module:" + oClass.getMetadata().getName().replace(/\./g, "/");
+							}
+
 							// Pass processingMode to nested XMLViews
 							if (oClass.getMetadata().isA("sap.ui.core.mvc.XMLView") && oView._sProcessingMode === "sequential") {
 								mSettings.processingMode = "sequential";
 							}
-							return View._legacyCreate(mSettings, undefined, oClass._sType);
+							return View._legacyCreate(mSettings, undefined, oClass._sType || sViewType);
 						};
 
 						// for views having a factory function defined we use the factory function!
