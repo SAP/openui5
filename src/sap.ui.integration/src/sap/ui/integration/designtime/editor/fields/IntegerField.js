@@ -3,10 +3,9 @@
  */
 sap.ui.define([
 	"sap/ui/integration/designtime/editor/fields/BaseField",
-	"sap/m/Input",
-	"sap/ui/model/type/Integer"
+	"sap/m/Input"
 ], function (
-	BaseField, Input, IntType
+	BaseField, Input
 ) {
 	"use strict";
 
@@ -26,18 +25,17 @@ sap.ui.define([
 	});
 	IntegerField.prototype.initVisualization = function (oConfig) {
 		var oVisualization = oConfig.visualization;
+		var oFormatter = oConfig.formatter;
 		if (!oVisualization) {
 			oVisualization = {
 				type: Input,
 				settings: {
 					value: {
 						path: 'currentSettings>value',
-						type: new IntType({
-							emptyString: ""
-						})
+						type: 'sap.ui.model.type.Integer',
+						formatOptions: oFormatter
 					},
-					editable: { path: 'currentSettings>editable' },
-					type: "Number"
+					editable: { path: 'currentSettings>editable' }
 				}
 			};
 		}
