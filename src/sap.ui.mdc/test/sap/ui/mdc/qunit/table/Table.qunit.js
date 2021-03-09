@@ -162,47 +162,23 @@ sap.ui.define([
 	});
 
 	QUnit.test("Instantiate", function(assert) {
-		assert.ok(this.oTable);
 		assert.ok(this.oTable.isA("sap.ui.mdc.IxState"));
 	});
 
 	QUnit.test("Create UI5 Grid Table (default) after initialise", function(assert) {
-		var done = assert.async();
-		assert.ok(this.oTable);
 		assert.ok(!this.oTable._oTable);
 		assert.ok(!this.oTable._oTemplate);
 		assert.ok(!this.oTable._oToolbar);
 
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
+		return this.oTable.initialized().then(function() {
+			assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
 			assert.ok(!this.oTable._oTemplate);
 			assert.ok(this.oTable._oToolbar);
 			assert.equal(this.oTable._oToolbar.getStyle(), "Clear", "Default toolbar style is set");
-			done();
 		}.bind(this));
-	});
-
-	QUnit.test("inner table is a GridTable, with No template", function(assert) {
-		var done = assert.async();
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-		assert.ok(!this.oTable._oTemplate);
-
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
-			assert.ok(!this.oTable._oTemplate);
-
-			assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-			done();
-		}.bind(this));
-
 	});
 
 	QUnit.test("Columns added to inner table", function(assert) {
-		var done = assert.async();
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-
 		this.oTable.addColumn(new Column({
 			minWidth: 8.4,
 			header: "Test1",
@@ -227,8 +203,7 @@ sap.ui.define([
 			})
 		}), 2);
 
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
+		return this.oTable.initialized().then(function() {
 			var aMDCColumns = this.oTable.getColumns();
 			var aInnerColumns = this.oTable._oTable.getColumns();
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
@@ -247,15 +222,10 @@ sap.ui.define([
 			assert.equal(aInnerColumns[1].getCreationTemplate().getText(), "Test1", "column1: creationTemplate is correct");
 			assert.equal(aInnerColumns[1].getCreationTemplate().getWrapping(), false, "column1: creationTemplate wrapping is disabled");
 			assert.equal(aInnerColumns[1].getCreationTemplate().getRenderWhitespace(), false, "column1: creationTemplate renderWhitespace is disabled");
-			done();
 		}.bind(this));
 	});
 
 	QUnit.test("Columns added to inner table - one by one E.g. pers", function(assert) {
-		var done = assert.async();
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-
 		this.oTable.addColumn(new Column({
 			header: "Test",
 			template: new Text({
@@ -263,9 +233,7 @@ sap.ui.define([
 			})
 		}));
 
-		this.oTable.initialized().then(function() {
-
-			assert.ok(this.oTable._oTable);
+		return this.oTable.initialized().then(function() {
 			var aMDCColumns = this.oTable.getColumns();
 			var aInnerColumns = this.oTable._oTable.getColumns();
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
@@ -283,7 +251,6 @@ sap.ui.define([
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
 			assert.equal(aMDCColumns[0].getHeader(), aInnerColumns[0].getLabel().getText());
 			assert.equal("Test2", aInnerColumns[0].getLabel().getText());
-			done();
 		}.bind(this));
 
 	});
@@ -336,77 +303,37 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destroy", function(assert) {
-		var done = assert.async();
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-		assert.ok(!this.oTable._oTemplate);
-		sinon.spy(this.oTable, "exit");
-
-		this.oTable.initialized().then(function() {
-
-			assert.ok(this.oTable._oTable);
-			assert.ok(!this.oTable._oTemplate);
+		return this.oTable.initialized().then(function() {
+			var oToolbar = this.oTable._oToolbar;
 
 			this.oTable.destroy();
 
+			assert.ok(!this.oTable._oTable);
 			assert.ok(!this.oTable._oTemplate);
-			assert.ok(this.oTable.exit.calledOnce);
-			done();
+			assert.strictEqual(oToolbar.bIsDestroyed, true);
 		}.bind(this));
 	});
 
 	QUnit.test("Create UI5 Responsive Table after initialise (model is set on the parent/control)", function(assert) {
-		var done = assert.async();
-
 		// Destroy the old/default table
 		this.oTable.destroy();
 		this.oTable = new Table({
 			type: "ResponsiveTable"
 		});
-		// place the table at the dom
 		this.oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		assert.ok(this.oTable);
 		assert.ok(!this.oTable._oTable);
 		assert.ok(!this.oTable._oTemplate);
 		assert.ok(!this.oTable._oToolbar);
 
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
-			assert.ok(this.oTable._oTemplate);
+		return this.oTable.initialized().then(function() {
+			assert.ok(this.oTable._oTable.isA("sap.m.Table"));
+			assert.ok(this.oTable._oTemplate.isA("sap.m.ColumnListItem"));
 			assert.ok(this.oTable._oTable.getAutoPopinMode(), "autoPopinMode is true");
 			assert.strictEqual(this.oTable._oTable.getContextualWidth(), "Auto", "contextualWidth='Auto'");
 			assert.ok(this.oTable._oToolbar);
 			assert.equal(this.oTable._oToolbar.getStyle(), "Standard", "Default toolbar style is set");
-			done();
-		}.bind(this));
-
-	});
-
-	QUnit.test("inner table is a ResponsiveTable with ColumnListItem as its template", function(assert) {
-		var done = assert.async();
-
-		// Destroy the old/default table
-		this.oTable.destroy();
-		this.oTable = new Table({
-			type: "ResponsiveTable"
-		});
-		// place the table at the dom
-		this.oTable.placeAt("qunit-fixture");
-		Core.applyChanges();
-
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-		assert.ok(!this.oTable._oTemplate);
-
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
-			assert.ok(this.oTable._oTemplate);
-
-			assert.ok(this.oTable._oTable.isA("sap.m.Table"));
-			assert.ok(this.oTable._oTemplate.isA("sap.m.ColumnListItem"));
-			done();
 		}.bind(this));
 	});
 
@@ -420,9 +347,6 @@ sap.ui.define([
 		// place the table at the dom
 		this.oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
-
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
 
 		this.oTable.addColumn(new Column({
 			header: "Test",
@@ -449,7 +373,6 @@ sap.ui.define([
 		}), 1);
 
 		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
 			var aMDCColumns = this.oTable.getColumns();
 			var aInnerColumns = this.oTable._oTable.getColumns();
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
@@ -468,7 +391,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Columns added to inner ResponsiveTable - one by one E.g. pers", function(assert) {
-		var done = assert.async();
 		// Destroy the old/default table
 		this.oTable.destroy();
 		this.oTable = new Table({
@@ -478,9 +400,6 @@ sap.ui.define([
 		this.oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-
 		this.oTable.addColumn(new Column({
 			header: "Test",
 			template: new Text({
@@ -488,9 +407,7 @@ sap.ui.define([
 			})
 		}));
 
-		this.oTable.initialized().then(function() {
-
-			assert.ok(this.oTable._oTable);
+		return this.oTable.initialized().then(function() {
 			var aMDCColumns = this.oTable.getColumns();
 			var aInnerColumns = this.oTable._oTable.getColumns();
 			assert.equal(aMDCColumns.length, aInnerColumns.length);
@@ -517,7 +434,6 @@ sap.ui.define([
 			assert.equal("Test2", aInnerColumns[0].getHeader().getText());
 			assert.equal(aMDCColumns[2].getHeader(), aInnerColumns[2].getHeader().getText());
 			assert.equal("Test3", aInnerColumns[2].getHeader().getText());
-			done();
 		}.bind(this));
 	});
 
@@ -640,7 +556,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Destroy - MTable - remove template", function(assert) {
-		var done = assert.async();
 		// Destroy the old/default table
 		this.oTable.destroy();
 		this.oTable = new Table({
@@ -650,41 +565,19 @@ sap.ui.define([
 		this.oTable.placeAt("qunit-fixture");
 		Core.applyChanges();
 
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-		assert.ok(!this.oTable._oTemplate);
-
-		this.oTable.initialized().then(function() {
-
-			assert.ok(this.oTable._oTable);
-			assert.ok(this.oTable._oTemplate);
-
-			var oToolbar = this.oTable._oToolbar;
+		return this.oTable.initialized().then(function() {
 			this.oTable.destroy();
-
+			assert.ok(!this.oTable._oTable);
 			assert.ok(!this.oTable._oTemplate);
-			assert.ok(!this.oTable._oToolbar);
-			// Toolbar is destroyed
-			assert.strictEqual(oToolbar.bIsDestroyed, true);
-
-			done();
 		}.bind(this));
 	});
 
 	// Switch table type and test APIs
 	QUnit.test("Switch table type and test APIs", function(assert) {
 		var done = assert.async(), fInnerTableDestroySpy, fInnerTemplateDestroySpy;
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-		assert.ok(!this.oTable._oTemplate);
 
 		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
-			assert.ok(!this.oTable._oTemplate);
-
 			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
-
-			assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
 
 			// Switch table
 			assert.ok(fInnerTableDestroySpy.notCalled);
@@ -695,7 +588,7 @@ sap.ui.define([
 			assert.ok(fInnerTableDestroySpy.calledOnce);
 
 			this.oTable.initialized().then(function() {
-				assert.ok(this.oTable._oTable);
+				assert.ok(this.oTable._oTable.isA("sap.m.Table"));
 				assert.ok(this.oTable._oTemplate);
 				assert.ok(this.oTable._oTemplate.isA("sap.m.ColumnListItem"));
 				assert.equal(this.oTable._oTable.getGrowingThreshold(), this.oTable.getThreshold());
@@ -747,9 +640,8 @@ sap.ui.define([
 				assert.ok(fInnerTableDestroySpy.calledOnce);
 				assert.ok(fInnerTemplateDestroySpy.calledOnce);
 				this.oTable.initialized().then(function() {
-					assert.ok(this.oTable._oTable);
-					assert.ok(!this.oTable._oTemplate);
 					assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
+					assert.ok(!this.oTable._oTemplate);
 					assert.equal(this.oTable._oTable.getThreshold(), this.oTable.getThreshold());
 					done();
 				}.bind(this));
@@ -760,17 +652,11 @@ sap.ui.define([
 	// Switch table type immediately
 	QUnit.test("Switch table type immediately after create", function(assert) {
 		var done = assert.async(), fInnerTableDestroySpy, fInnerTemplateDestroySpy, fRowModeDestroySpy, bHideEmptyRows;
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-		assert.ok(!this.oTable._oTemplate);
 
 		// Switch table immediately
 		this.oTable.setType("ResponsiveTable");
 
 		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
-			assert.ok(this.oTable._oTemplate);
-
 			assert.ok(this.oTable._oTable.isA("sap.m.Table"));
 			assert.ok(this.oTable._oTemplate.isA("sap.m.ColumnListItem"));
 			fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
@@ -787,16 +673,12 @@ sap.ui.define([
 			assert.ok(fInnerTemplateDestroySpy.calledOnce);
 
 			this.oTable.initialized().then(function() {
-				assert.ok(this.oTable._oTable);
-				assert.ok(!this.oTable._oTemplate);
-
-				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
-
 				assert.ok(this.oTable._oTable.isA("sap.ui.table.Table"));
-
+				assert.ok(!this.oTable._oTemplate);
 				assert.ok(this.oTable._oTable.getRowMode().isA("sap.ui.table.rowmodes.AutoRowMode"), "The inner GridTable has an auto row mode");
 				assert.equal(this.oTable._oTable.getRowMode().getMinRowCount(), 10);
 
+				fInnerTableDestroySpy = sinon.spy(this.oTable._oTable, "destroy");
 				fRowModeDestroySpy = sinon.spy(this.oTable._oTable.getRowMode(), "destroy");
 				bHideEmptyRows = this.oTable._oTable.getRowMode().getHideEmptyRows();
 
@@ -1049,11 +931,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("bindAggregation for columns uses default behaviour", function(assert) {
-		var done = assert.async();
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-
-		this.oTable.initialized().then(function() {
+		return this.oTable.initialized().then(function() {
 			var sPath = "/columnPath";
 			var oTemplate = new Column({
 				header: '{name}'
@@ -1066,7 +944,6 @@ sap.ui.define([
 			var oBindingInfo = this.oTable.getBindingInfo("columns");
 			assert.equal(oBindingInfo.path, sPath);
 			assert.equal(oBindingInfo.template, oTemplate);
-			done();
 		}.bind(this));
 	});
 
@@ -1395,9 +1272,6 @@ sap.ui.define([
 			this.oTable.setP13nMode([
 				"Column"
 			]);
-			this.oTable.bindRows({
-				path: "/products"
-			});
 
 			Core.applyChanges();
 
@@ -2027,10 +1901,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Multiple Tables with different type - Columns added simultaneously to inner tables", function(assert) {
-		var done = assert.async();
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-
 		var oTable2 = new Table({
 			type: "ResponsiveTable"
 		});
@@ -2067,13 +1937,9 @@ sap.ui.define([
 			})
 		}), 0);
 
-		Promise.all([
+		return Promise.all([
 			this.oTable.initialized(), oTable2.initialized()
 		]).then(function() {
-			assert.ok(this.oTable._oTable);
-			assert.ok(oTable2._oTable);
-			assert.ok(oTable2._oTemplate);
-
 			this.oTable.addColumn(new Column({
 				header: "Test3",
 				template: new Text({
@@ -2123,8 +1989,6 @@ sap.ui.define([
 			assert.equal(aInnerColumns[2].getHeader().getText(), "Test3", "column1: label is correct");
 			assert.equal(aInnerColumns[2].getHeader().getWrapping(), true);
 			assert.equal(aInnerColumns[2].getHeader().getWrappingType(), "Hyphenated");
-
-			done();
 		}.bind(this));
 	});
 
@@ -2217,12 +2081,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("MultiSelectionPlugin", function(assert) {
-		var done = assert.async();
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
+		return this.oTable.initialized().then(function() {
 			var oMultiSelectionPlugin = this.oTable._oTable.getPlugins()[0];
 			assert.ok(oMultiSelectionPlugin, "MultiSelectionPlugin is initialized");
 
@@ -2236,7 +2095,6 @@ sap.ui.define([
 			assert.equal(oMultiSelectionPlugin.getLimit(), 20, "MultiSelectionPlugin.limit is updated");
 			assert.ok(!this.oTable.getType().getShowHeaderSelector(), "showHeaderSelector is updated");
 			assert.ok(!oMultiSelectionPlugin.getShowHeaderSelector(), "MultiSelectionPlugin.showHeaderSelector is updated");
-			done();
 		}.bind(this));
 	});
 
@@ -2350,13 +2208,8 @@ sap.ui.define([
 
 	QUnit.test("Table with VariantManagement and QuickFilter", function(assert) {
 		var done = assert.async();
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
 
 		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
-			assert.ok(this.oTable._oToolbar);
-
 			sap.ui.require([
 				"sap/ui/fl/variants/VariantManagement", "sap/m/SegmentedButton", "sap/ui/core/Control"
 			], function(VariantManagement, SegmentedButton, Control) {
@@ -2442,14 +2295,7 @@ sap.ui.define([
 	});
 
 	QUnit.test("Table busy state", function(assert) {
-		var done = assert.async();
-
-		assert.ok(this.oTable, "sap.ui.mdc.Table initialized");
-		assert.ok(!this.oTable._oTable, "No inner table available");
-
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable, "Inner table initialized");
-
+		return this.oTable.initialized().then(function() {
 			assert.notOk(this.oTable.getBusy(), "sap.ui.mdc.Table busy state is false");
 			assert.notOk(this.oTable._oTable.getBusy(), "Inner table busy state is false");
 
@@ -2470,42 +2316,32 @@ sap.ui.define([
 			this.oTable.setBusyIndicatorDelay(200);
 			assert.strictEqual(this.oTable.getBusyIndicatorDelay(), 200, "sap.ui.mdc.Table - Custom Busy Indicator Delay");
 			assert.strictEqual(this.oTable._oTable.getBusyIndicatorDelay(), 200, "Inner table - Custom Busy Indicator Delay");
-			done();
 		}.bind(this));
 	});
 
 	QUnit.test("enableExport property & export button test", function(assert) {
-		var done = assert.async();
-
-		assert.ok(this.oTable, "sap.ui.mdc.Table initialized");
 		assert.notOk(this.oTable.getEnableExport(), "default property value enableExport=false");
 
 		this.oTable.setEnableExport(true);
 		Core.applyChanges();
 		assert.ok(this.oTable.getEnableExport(), "enableExport=true");
 
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
-			assert.ok(this.oTable._oToolbar);
+		return this.oTable.initialized().then(function() {
 			assert.ok(this.oTable._oExportButton, "Export button created");
 			assert.ok(this.oTable._oExportButton.isA("sap.m.MenuButton"), "Export button is a sap.m.MenuButton");
-			done();
 		}.bind(this));
 	});
 
 	QUnit.test("trigger export - no visible columns", function(assert) {
 		var done = assert.async();
-		assert.ok(this.oTable, "sap.ui.mdc.Table initialized");
 
 		this.oTable.setEnableExport(true);
 		Core.applyChanges();
-		assert.ok(this.oTable.getEnableExport(), "enableExport=true");
 
 		this.oTable.initialized().then(function() {
 			// Initilaized has to be used again as the binding itself is done when the initialized Promise is fired
 			this.oTable.initialized().then(function() {
 				assert.strictEqual(this.oTable.getColumns().length, 0, "No columns in the table");
-				assert.ok(this.oTable._oExportButton, "Export button is created");
 				var fnOnExport = sinon.spy(this.oTable, "_onExport");
 				sap.ui.require([
 					"sap/m/MessageBox"
@@ -2525,15 +2361,12 @@ sap.ui.define([
 
 	QUnit.test("test Export as...", function(assert) {
 		var done = assert.async();
-		assert.ok(this.oTable, "sap.ui.mdc.Table initialized");
-		sinon.stub(this.oTable, "_onExportAs");
 
 		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
+			sinon.stub(this.oTable, "_onExportAs");
 			this.oTable.setEnableExport(true);
 			Core.applyChanges();
 			assert.ok(this.oTable.getEnableExport(), "enableExport=true");
-			assert.ok(this.oTable._oExportButton);
 			sap.ui.getCore().loadLibrary("sap.ui.unified", {async: true}).then(function() { // do the same async steps as the Table to load unified lib and Menu, so the Menu is available in the next checks
 				sap.ui.require(["sap/m/Menu", "sap/m/MenuItem"], function(/* Menu, MenuItem */) {
 					this.oTable._oExportButton.getMenu().getItems()[1].firePress();
@@ -2546,22 +2379,12 @@ sap.ui.define([
 	});
 
 	QUnit.test("test Export as... via keyboard shortcut", function(assert) {
-		var done = assert.async();
-		assert.ok(this.oTable, "sap.ui.mdc.Table initialized");
+		return this.oTable.initialized().then(function() {
+			sinon.stub(this.oTable, "_onExportAs");
 
-		var sPath = "/foo";
-		this.oTable.bindRows({
-			path: sPath
-		});
-
-		sinon.stub(this.oTable, "_onExportAs");
-
-		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
 			this.oTable.setEnableExport(true);
 			Core.applyChanges();
-			assert.ok(this.oTable.getEnableExport(), "enableExport=true");
-			assert.ok(this.oTable._oExportButton);
+
 			assert.notOk(this.oTable.getRowBinding(), "no binding so no binding length");
 			assert.notOk(this.oTable._oExportButton.getEnabled(), "Button is disabled as binding length is 0");
 
@@ -2571,10 +2394,10 @@ sap.ui.define([
 
 			this.oTable._oExportButton.setEnabled(true);
 			Core.applyChanges();
+
 			// trigger CTRL + SHIFT + E keyboard shortcut
 			QUtils.triggerKeydown(this.oTable.getDomRef(), KeyCodes.E, true, false, true);
 			assert.ok(this.oTable._onExportAs.called, "Export settings dialog opened");
-			done();
 		}.bind(this));
 	});
 
@@ -2591,8 +2414,6 @@ sap.ui.define([
 				}
 			}
 		});
-
-		assert.ok(this.oTable, "sap.ui.mdc.Table initialized");
 
 		this.oTable.setEnableExport(true);
 		Core.applyChanges();
@@ -2849,8 +2670,6 @@ sap.ui.define([
 		]);
 
 		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
-
 			this.oTable._createExportColumnConfiguration({fileName: 'Table header'}).then(function(aActualOutput) {
 				assert.deepEqual(aActualOutput[0], aExpectedOutput, "The export configuration was created as expected");
 				done();
@@ -2871,8 +2690,6 @@ sap.ui.define([
 				}
 			}
 		});
-
-		assert.ok(this.oTable, "sap.ui.mdc.Table initialized");
 
 		this.oTable.setEnableExport(true);
 		Core.applyChanges();
@@ -3002,8 +2819,6 @@ sap.ui.define([
 		]);
 
 		this.oTable.initialized().then(function() {
-			assert.ok(this.oTable._oTable);
-
 			this.oTable._createExportColumnConfiguration({fileName: 'Table header', splitCells: true}).then(function(aActualOutput) {
 				assert.deepEqual(aActualOutput[0], aExpectedOutput, "The export configuration was created as expected");
 				done();
@@ -3012,10 +2827,6 @@ sap.ui.define([
 	});
 
 	QUnit.test("Focus Function", function(assert) {
-		var done = assert.async();
-		assert.ok(this.oTable);
-		assert.ok(!this.oTable._oTable);
-
 		this.oTable.addColumn(new Column({
 			header: "Test",
 			template: new Text({
@@ -3026,29 +2837,25 @@ sap.ui.define([
 		var oButton = new Button();
 		this.oTable.addAction(oButton);
 
-		this.oTable.initialized().then(function() {
-
+		return this.oTable.initialized().then(function() {
 			Core.applyChanges();
 
 			assert.ok(this.oTable._oTable.getDomRef());
-
 			assert.ok(!containsOrEquals(this.oTable.getDomRef(), document.activeElement));
+
 			this.oTable.focus();
 			assert.ok(containsOrEquals(this.oTable._oTable.getDomRef(), document.activeElement));
+
 			oButton.focus();
 			assert.ok(oButton.getFocusDomRef() === document.activeElement);
+
 			this.oTable.focus();
 			assert.ok(oButton.getFocusDomRef() === document.activeElement);
-
-			done();
 		}.bind(this));
-
 	});
 
 	QUnit.test("test scrollToIndex", function(assert) {
 		var done = assert.async(), oScrollStub, oTable = this.oTable, n = 0;
-
-		assert.ok(oTable, "sap.ui.mdc.Table initialized");
 
 		function testScroll(iIndex) {
 			return new Promise(function(resolve) {
@@ -3110,8 +2917,6 @@ sap.ui.define([
 
 	QUnit.test("test focusRow", function(assert) {
 		var done = assert.async(), oScrollStub, oFocusStub, oTable = this.oTable, n = 0;
-
-		assert.ok(oTable, "sap.ui.mdc.Table initialized");
 
 		function testFocusRow(iIndex, bFirstInteractiveElement) {
 			return new Promise(function(resolve) {
@@ -4043,6 +3848,12 @@ sap.ui.define([
 			});
 
 			this.oTable = new Table({
+				delegate: {
+					name: sDelegatePath,
+					payload: {
+						collectionPath: "/testPath"
+					}
+				},
 				type: new ResponsiveTableType({
 					showDetailsButton: true
 				}),
@@ -4109,16 +3920,10 @@ sap.ui.define([
 	});
 
 	QUnit.test("Button creation", function(assert) {
-		var done = assert.async();
-		var clock = sinon.useFakeTimers();
-
-		assert.ok(this.oType.getShowDetailsButton(), "showDetailsButton = true");
-
 		return this.oTable._fullyInitialized().then(function() {
-			this.oTable.bindRows({
-				path: "/testPath"
-			});
-			Core.applyChanges();
+			return waitForBinding(this.oTable);
+		}.bind(this)).then(function() {
+			var clock = sinon.useFakeTimers();
 
 			assert.ok(this.oType._oShowDetailsButton, "button is created");
 			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden since there are no popins");
@@ -4140,12 +3945,10 @@ sap.ui.define([
 			assert.notOk(this.oType._oShowDetailsButton.getVisible(), "button is hidden there are no popins");
 
 			clock.restore();
-			done();
 		}.bind(this));
 	});
 
 	QUnit.test("Button placement", function(assert) {
-		var done = assert.async();
 		var clock = sinon.useFakeTimers();
 
 		return this.oTable.initialized().then(function() {
@@ -4167,21 +3970,17 @@ sap.ui.define([
 			assert.notOk(bButtonAddedToToolbar, "Button is removed from the table header toolbar");
 
 			clock.restore();
-			done();
 		}.bind(this));
 	});
 
 	QUnit.test("Inner table hiddenInPopin property in Desktop mode", function(assert) {
-		var done = assert.async();
 		return this.oTable.initialized().then(function() {
 			assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 1, "getHiddenInPopin() contains only 1 value");
 			assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[0], "Low", "Low importance is added to the hiddenInPopin property");
-			done();
 		}.bind(this));
 	});
 
 	QUnit.test("Inner table hiddenInPopin property in Phone mode", function(assert) {
-		var done = assert.async();
 		// save original state
 		var bDesktop = Device.system.desktop;
 		var bTablet = Device.system.tablet;
@@ -4193,7 +3992,7 @@ sap.ui.define([
 		Device.system.phone = true;
 		Core.applyChanges();
 
-		this.oTable.initialized().then(function() {
+		return this.oTable.initialized().then(function() {
 			assert.strictEqual(this.oTable._oTable.getHiddenInPopin().length, 2, "getHiddenInPopin() contains only 1 value");
 			assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[0], "Low", "Low importance is added to the hiddenInPopin property");
 			assert.strictEqual(this.oTable._oTable.getHiddenInPopin()[1], "Medium", "Medium importance is added to the hiddenInPopin property");
@@ -4202,19 +4001,14 @@ sap.ui.define([
 			Device.system.desktop = bDesktop;
 			Device.system.tablet = bTablet;
 			Device.system.phone = bPhone;
-			done();
 		}.bind(this));
 	});
 
 	QUnit.test("Button should be hidden with filtering leads to no data and viceversa", function(assert) {
-		var done = assert.async();
-		var clock = sinon.useFakeTimers();
-
 		return this.oTable._fullyInitialized().then(function() {
-			this.oTable.bindRows({
-				path: "/testPath"
-			});
-			Core.applyChanges();
+			return waitForBinding(this.oTable);
+		}.bind(this)).then(function() {
+			var clock = sinon.useFakeTimers();
 
 			this.oTable._oTable.setContextualWidth("600px");
 			clock.tick(100);
@@ -4229,12 +4023,10 @@ sap.ui.define([
 			assert.ok(this.oType._oShowDetailsButton.getVisible(), "button is visible since table has visible items and popins");
 
 			clock.restore();
-			done();
 		}.bind(this));
 	});
 
 	QUnit.test("test detailsButtonSetting - overwrite default configuration of showDetailsButton", function(assert) {
-		var done = assert.async();
 		var clock = sinon.useFakeTimers();
 
 		// save original state
@@ -4268,7 +4060,6 @@ sap.ui.define([
 			Device.system.phone = bPhone;
 
 			clock.restore();
-			done();
 		}.bind(this));
 	});
 

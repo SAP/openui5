@@ -189,17 +189,6 @@ sap.ui.define([
 					defaultValue: sap.ui.core.TitleLevel.Auto
 				},
 				/**
-				 * Contains the information required for binding the rows/items of the table. Changes to this property are only reflected once the
-				 * next complete rebind on the table occurs.<br>
-				 * <b>Note:</b> Do not add filters and sorters here as they will not be shown on the <code>p13n</code> panels of the table.
-				 *
-				 * @experimental
-				 */
-				rowsBindingInfo: {
-					type: "object",
-					defaultValue: null
-				},
-				/**
 				 * Binds the table automatically after the initial creation or re-creation of the table using the relevant <code>metadataInfo</code>
 				 * and <code>rowBindingInfo</code>.
 				 */
@@ -2119,14 +2108,15 @@ sap.ui.define([
 
 	/**
 	 * Defines the rows/items aggregation binding
-	 * @param {object} oBindingInfo binding info
 	 * @returns {Promise} Returns a <code>Promise</code>
 	 * @private
 	 */
-	Table.prototype.bindRows = function(oBindingInfo) {
+	Table.prototype.bindRows = function() {
 		if (!this.bDelegateInitialized || !this._oTable) {
 			return;
 		}
+
+		var oBindingInfo = {};
 
 		this.getControlDelegate().updateBindingInfo(this, this.getPayload(), oBindingInfo);
 
@@ -2352,7 +2342,7 @@ sap.ui.define([
 	Table.prototype.rebind = function() {
 		// Bind the rows/items of the table, only once it is initialized.
 		if (this._bFullyInitialized) {
-			this.bindRows(this.getRowsBindingInfo() || {});
+			this.bindRows();
 		} else {
 			this._fullyInitialized().then(this.rebind.bind(this));
 		}
