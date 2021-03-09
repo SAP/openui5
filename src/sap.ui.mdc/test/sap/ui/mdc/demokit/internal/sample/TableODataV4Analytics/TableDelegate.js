@@ -26,6 +26,7 @@ sap.ui.define([
 	 */
 	var AnalyticsTableDelegate = Object.assign({}, TableDelegate, TestDelegate);
 	AnalyticsTableDelegate.rebindTable = TableDelegate.rebindTable;
+	AnalyticsTableDelegate.validateState = TableDelegate.validateState;
 
 
 	function getMetadataInfo(oTable) {
