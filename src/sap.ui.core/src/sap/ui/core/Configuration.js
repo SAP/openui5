@@ -340,7 +340,7 @@ sap.ui.define([
 					// always remember as SAP Logon language
 					var sValue = config.sapLogonLanguage = oUriParams.get('sap-language');
 					// try to interpret it as a BCP47 language tag, taking some well known  SAP language codes into account
-					var oLocale = sValue && convertToLocaleOrNull(M_ABAP_LANGUAGE_TO_LOCALE[sValue.toUpperCase()] || sValue);
+					var oLocale = Locale.fromSAPLogonLanguage(sValue);
 					if ( oLocale ) {
 						config.language = oLocale;
 					} else if ( sValue && !oUriParams.get('sap-locale') && !oUriParams.get('sap-ui-language')) {
@@ -662,13 +662,18 @@ sap.ui.define([
 		/**
 		 * Returns a BCP47-compliant language tag for the current language.
 		 *
-		 * The return value of this method is especially useful for an HTTP <code>Accept</code> header.
+		 * The return value of this method is especially useful for an HTTP <code>Accept-Language</code> header.
 		 *
-		 * @return {string} The language tag for the current language, conforming to BCP47
+		 * Retrieves the modern locale,
+		 * e.g. he (Hebrew), yi (Yiddish)
+		 *
+		 * For backward compatibility "sh" is returned for Serbian Latin.
+		 *
+		 * @returns {string} The language tag for the current language, conforming to BCP47
 		 * @public
 		 */
 		getLanguageTag : function () {
-			return this.language.toString();
+			return this.language.toLanguageTag();
 		},
 
 		/**
@@ -1635,14 +1640,6 @@ sap.ui.define([
 	function toLanguageTag(oLocale) {
 		return oLocale ? oLocale.toString() : null;
 	}
-
-	var M_ABAP_LANGUAGE_TO_LOCALE = {
-		"ZH" : "zh-Hans",
-		"ZF" : "zh-Hant",
-		"1Q" : "en-US-x-saptrc",
-		"2Q" : "en-US-x-sappsd",
-		"3Q" : "en-US-x-saprigi"
-	};
 
 	var M_ABAP_DATE_FORMAT_PATTERN = {
 		"" : {pattern: null},
