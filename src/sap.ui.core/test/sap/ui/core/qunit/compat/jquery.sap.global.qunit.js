@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.require(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
+sap.ui.define(["jquery.sap.global", "sap/ui/Device"], function(jQuery) {
 	/*global QUnit, sinon */
 	"use strict";
 

@@ -1,5 +1,5 @@
 /*global QUnit*/
-sap.ui.require([
+sap.ui.define([
 	"sap/f/routing/Router",
 	"sap/f/routing/TargetHandler",
 	"sap/m/NavContainer",
