@@ -26,7 +26,8 @@
         "1.14.0",
         "1.15.0",
         "1.16.0",
-        "1.17.0"
+        "1.17.0",
+        "1.18.0"
       ]
     },
     "designtime": {
@@ -1179,39 +1180,6 @@
               }
             }
           }
-        },
-        "actions": {
-          "description": "Defines actions that can be applied on the item",
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/action"
-          }
-        }
-      },
-      "actions": {
-        "DateChange": {
-          "description": "An action fired when a date in the calendar is selected.",
-          "type": "Navigation",
-          "properties": {
-            "selectedDate": {
-              "description": "The date which is chosen.",
-              "type": "JavaScript date object"
-            }
-          }
-        },
-        "MonthChange": {
-          "description": "An action fired when the currently displayed month in the calendar is changed.",
-          "type": "Navigation",
-          "properties": {
-            "firstDate": {
-              "description": "The first displayed date in the month view. This could be a date in the previous month.",
-              "type": "JavaScript date object"
-            },
-            "lastDate": {
-              "description": "The last displayed date in the month view. This could be a date in the next month.",
-              "type": "JavaScript date object"
-            }
-          }
         }
       }
     },
@@ -1285,6 +1253,13 @@
               "$ref": "#/definitions/simpleBinding"
             }
           ]
+        },
+        "actions": {
+          "description": "Defines actions that can be applied on the item",
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/action"
+          }
         }
       }
     },
