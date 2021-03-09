@@ -17,11 +17,6 @@ sap.ui.define(
                         "sap.ui.mdc.IFilterSource"
                     ],
                     properties: {
-                        adaptationConfig: {
-                            type: "object",
-                            group: "Data",
-                            visiblity: "hidden"
-                        },
                         filterConditions: {
                             type: "object",
                             defaultValue: {}

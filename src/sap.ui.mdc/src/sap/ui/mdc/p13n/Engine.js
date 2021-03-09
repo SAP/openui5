@@ -6,17 +6,17 @@ sap.ui.define([
 	"sap/base/util/merge",
 	"sap/base/Log",
 	"sap/base/util/UriParameters",
-    "sap/ui/base/Object",
-    "sap/ui/mdc/util/PropertyHelper",
-    "sap/ui/mdc/util/loadModules",
-    "./P13nBuilder",
-	"sap/ui/mdc/condition/FilterOperatorUtil",
-	"./modification/FlexModificationHandler",
+	"sap/ui/base/Object",
+	"sap/ui/mdc/util/PropertyHelper",
+	"sap/ui/mdc/util/loadModules",
+	"sap/ui/mdc/p13n/P13nBuilder",
+	"sap/ui/mdc/p13n/modification/FlexModificationHandler",
 	"sap/m/MessageStrip",
 	"sap/ui/core/library",
-	"sap/ui/mdc/p13n/StateUtil"
-], function (merge, Log, SAPUriParameters, BaseObject, PropertyHelper, loadModules, P13nBuilder, FilterOperatorUtil, FlexModificationHandler, MessageStrip, coreLibrary, StateUtil) {
-    "use strict";
+	"sap/ui/mdc/p13n/StateUtil",
+	"sap/ui/core/Element"
+], function (merge, Log, SAPUriParameters, BaseObject, PropertyHelper, loadModules, P13nBuilder, FlexModificationHandler, MessageStrip, coreLibrary, StateUtil, Element) {
+	"use strict";
 
 	//Shortcut to 'MessageType'
 	var MessageType = coreLibrary.MessageType;
@@ -48,7 +48,7 @@ sap.ui.define([
 	 * @alias sap.ui.mdc.p13n.Engine
 	 */
 	var Engine = BaseObject.extend("sap.ui.mdc.p13n.Engine", {
-        constructor: function() {
+		constructor: function() {
 			BaseObject.call(this);
 			this._aRegistry = [];
 		}
@@ -67,7 +67,6 @@ sap.ui.define([
 	 *
 	 * @example
 	 *  {
-	 * 		<modificationMode: TBD>,
 	 * 		controller: {
 	 * 			Item: ColumnController,
 	 * 			Sort: SortController,
@@ -97,8 +96,7 @@ sap.ui.define([
 				}
 				var oController = new SubController(oControl);
 
-				//TODO: add 3rd Parameter --> currently there is only Flex
-				this.addController(oController, sKey, undefined);
+				this.addController(oController, sKey);
 			}
 
 		}.bind(this));
@@ -130,9 +128,9 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} A Promise resolving in the P13n UI.
 	 */
-    Engine.prototype.showUI = function(vControl, sKey, oSource) {
+	Engine.prototype.showUI = function(vControl, sKey, oSource) {
 
-        //!!!Warning: experimental and only for testing purposes!!!----------
+		//!!!Warning: experimental and only for testing purposes!!!----------
 		if (oURLParams.getAll("sap-ui-xx-p13nLiveMode")[0] === "true"){
 			this.getController(vControl, sKey)._bLiveMode = true;
 			Log.warning("Please note that the p13n liveMode is experimental");
@@ -151,18 +149,7 @@ sap.ui.define([
 		} else {
 			return Promise.resolve();
 		}
-    };
-
-	/**
-	 * This method can be used to retrieve the change appliance for a control instance.
-	 * @private
-	 *
-	 * @param {sap.ui.mdc.Control} vControl The registered control instance
-	 * @returns {Function} The current change appliance for the provided Control instance.
-	 */
-    Engine.prototype._getChangeProcessor = function(vControl) {
-        return this.getModificationHandler(vControl).processChanges;
-    };
+	};
 
 	/**
 	 * This method can be used to set the modification handling for a control instance.
@@ -171,12 +158,13 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.Control} vControl The registered control instance
 	 * @param {sap.ui.mdc.p13n.modification.ModificationHandler} ModificationHandler The modification handler singleton instance
 	 */
-    Engine.prototype._setModificationHandler = function(vControl, oModificationHandler) {
+	Engine.prototype._setModificationHandler = function(vControl, oModificationHandler) {
 		if (!oModificationHandler.isA("sap.ui.mdc.p13n.modification.ModificationHandler")) {
 			throw new Error("Only sap.ui.mdc.p13n.modification.ModificationHandler derivations are allowed for modification");
 		}
-		var oRegistryEntry = this._getRegistryEntry(vControl);
-		oRegistryEntry.modification = oModificationHandler;
+		var oModificationSetting = this._determineModification(vControl); //check and calculate modification basics
+		oModificationSetting.handler = oModificationHandler;
+		this._getRegistryEntry(vControl).modification = oModificationSetting;
 	};
 
 	/**
@@ -193,7 +181,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} A Promise resolving in the P13n UI.
 	 */
-    Engine.prototype.createUI = function(vControl, sKey, aCustomInfo) {
+	Engine.prototype.createUI = function(vControl, sKey, aCustomInfo) {
 		return this.initAdaptation(vControl, sKey, aCustomInfo).then(function(){
 			return this._retrieveP13nContainer(vControl, sKey).then(function(oContainer){
 				var oP13nUI = oContainer.getContent()[0];
@@ -212,7 +200,7 @@ sap.ui.define([
 
 			}.bind(this));
 		}.bind(this));
-    };
+	};
 
 	/**
 	 * <code>Engine#createChanges</code> can be used to programmatically trigger the creation
@@ -233,7 +221,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} A Promise resolving in the according delta changes.
 	 */
-    Engine.prototype.createChanges = function(mDiffParameters) {
+	Engine.prototype.createChanges = function(mDiffParameters) {
 
 		var vControl = mDiffParameters.control;
 		var sKey = mDiffParameters.key;
@@ -247,7 +235,7 @@ sap.ui.define([
 		return this.initAdaptation(vControl, sKey).then(function(){
 
 			var oController = this.getController(vControl, sKey);
-            var mchangeOperations = oController.getChangeOperations();
+			var mchangeOperations = oController.getChangeOperations();
 
 			var oRegistryEntry = this._getRegistryEntry(vControl);
 			var oCurrentState = oController.getCurrentState();
@@ -267,7 +255,7 @@ sap.ui.define([
 			var aChanges = oController.getDelta(mDeltaConfig);
 
 			if (!bSuppressCallback) {
-				this._getChangeProcessor(vControl)(aChanges);
+				this._processChanges(vControl, aChanges);
 			}
 
 			return aChanges || [];
@@ -289,11 +277,11 @@ sap.ui.define([
 	 */
 	Engine.prototype.reset = function(oControl, sKey) {
 		var oController = this.getController(oControl, sKey);
-
+		var oModificationSetting = this._determineModification(oControl);
 		if (oController.getResetEnabled()) {
-			return this.getModificationHandler(oControl).reset({
+			return oModificationSetting.handler.reset({
 				selector: oControl
-			}).then(function(){
+			}, oModificationSetting.payload).then(function(){
 				//Re-Init housekeeping after update
 				return this.initAdaptation(oControl, sKey).then(function(){
 					oController.update();
@@ -305,6 +293,44 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Returns a promise resolving after all currently pending modifications have been applied.
+	 *
+	 * @private
+	 * @param {sap.ui.mdc.Control} oControl The according control instance.
+	 * @returns {Promise} A Promise resolving after all pending modifications have been applied.
+	 */
+	Engine.prototype.waitForChanges = function(oControl) {
+		var oModificationSetting = this._determineModification(oControl);
+		return oModificationSetting.handler.waitForChanges({
+			element: oControl
+		}, oModificationSetting.payload);
+	};
+
+	/**
+	 * Determines whether the environment is suitable for the desired modification of the provided control instance.
+	 *
+	 * @private
+	 * @param {sap.ui.mdc.Control} oControl The according control instance.
+	 */
+	Engine.prototype.isModificationSupported = function(oControl) {
+		var oModificationSetting = this._determineModification(oControl);
+		return oModificationSetting.handler.isModificationSupported({
+			element: oControl
+		}, oModificationSetting.payload);
+	};
+
+	/**
+	 * This method can be used to process an array of changes.
+	 * @private
+	 *
+	 * @param {sap.ui.mdc.Control} vControl The registered control instance
+	 * @returns {Promise} The change appliance promise.
+	 */
+	Engine.prototype._processChanges = function(vControl, aChanges) {
+		var oModificationSetting = this._determineModification(vControl);
+		return oModificationSetting.handler.processChanges(aChanges, oModificationSetting.payload);
+	};
 
 	/**
 	 * This method can be used in the control's according designtime metadata
@@ -322,6 +348,13 @@ sap.ui.define([
 	Engine.prototype.getRTASettingsActionHandler = function (oControl, mPropertyBag, sKey) {
 
 		var fResolveRTA;
+
+		//var aVMs = Engine.hasForReference(oControl, "sap.ui.fl.variants.VariantManagement");
+		var aPVs = Engine.hasForReference(oControl, "sap.ui.mdc.p13n.PersistenceProvider");
+
+		if (aPVs.length > 0) {
+			return Promise.reject("Please do not use a PeristenceProvider in RTA.");
+		}
 
 		var oModificationHandler = this.getModificationHandler(oControl);
 		var fnInitialAppliance = oModificationHandler.processChanges;
@@ -389,7 +422,7 @@ sap.ui.define([
 						aChanges = aChanges.concat(aSpecificChanges);
 					}
 				});
-				return this._getChangeProcessor(oControl)(aChanges);
+				return this._processChanges(oControl, aChanges);
 			}.bind(this));
 
 		}.bind(this));
@@ -421,10 +454,8 @@ sap.ui.define([
 		//ensure that the control has been initialized
 		return oControl.initialized().then(function() {
 
-			//ensure that the current state is affected by all pending modifications
-			return Engine.getInstance().getModificationHandler().waitForChanges({
-				element: oControl
-			}).then(function() {
+			//ensure that all changes have been applied
+			return Engine.getInstance().waitForChanges(oControl).then(function() {
 
 				var oRetrievedState = {};
 				Engine.getInstance().getRegisteredControllers(oControl).forEach(function(sKey){
@@ -456,7 +487,7 @@ sap.ui.define([
 		}
 
 		//check if flex is enabled
-		if (!this.getModificationHandler(oControl).isModificationSupported({element: oControl})) {
+		if (!this.isModificationSupported(oControl)) {
 			return false;
 		}
 
@@ -479,7 +510,7 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} A Promise resolving after the adaptation housekeeping has been initialized.
 	 */
-    Engine.prototype.initAdaptation = function(vControl, sKey, aCustomInfo) {
+	Engine.prototype.initAdaptation = function(vControl, sKey, aCustomInfo) {
 
 		if (!this.getController(vControl, sKey)) {
 			var oControl = Engine.getControlInstance(vControl);
@@ -495,7 +526,7 @@ sap.ui.define([
 			return;
 		}.bind(this));
 
-    };
+	};
 
 	/**
 	 * This method should only be used to register a new Controller.
@@ -505,8 +536,8 @@ sap.ui.define([
 	 * @param {sap.ui.mdc.p13n.subcontroller.Controller} oController The controller instance.
 	 * @param {string} sKey The key that defines the later access to the controller instance.
 	 */
-    Engine.prototype.addController = function(oController, sKey, ModificationHandler) {
-		var oRegistryEntry = this._createRegistryEntry(oController.getAdaptationControl(), ModificationHandler);
+	Engine.prototype.addController = function(oController, sKey) {
+		var oRegistryEntry = this._createRegistryEntry(oController.getAdaptationControl());
 		oRegistryEntry.controller[sKey] = oController;
 	};
 
@@ -558,11 +589,10 @@ sap.ui.define([
 	 * @returns {object} The according ModificationHandler.
 	 */
 	Engine.prototype.getModificationHandler = function(vControl) {
-		var oRegistryEntry = this._getRegistryEntry(vControl);
+		var oModificationSetting = this._determineModification(vControl);
 
 		//This method might also be retrieved by non-registered Controls (such as FilterBarBase) - the default should always be Flex.
-		var ModificationHandler = oRegistryEntry ? oRegistryEntry.modification : FlexModificationHandler.getInstance();
-		return ModificationHandler;
+		return oModificationSetting.handler;
 
 	};
 
@@ -574,14 +604,14 @@ sap.ui.define([
 	 *
 	 * @returns {object} The according registry entry.
 	 */
-	Engine.prototype._createRegistryEntry = function(vControl, ModificationHandler) {
+	Engine.prototype._createRegistryEntry = function(vControl) {
 
 		var oControl = Engine.getControlInstance(vControl);
 
 		if (!_mRegistry.has(oControl)) {
 
 			_mRegistry.set(oControl, {
-				modification: ModificationHandler || FlexModificationHandler.getInstance(),
+				modification: null,
 				controller: {},
 				activeP13n: null,
 				helper: null
@@ -591,6 +621,107 @@ sap.ui.define([
 
 		return _mRegistry.get(oControl);
 	};
+
+	/**
+	 * Determines and registeres the ModificationHandler per control instance
+	 *
+	 * @private
+	 * @param {sap.ui.mdc.Control} vControl
+	 * @returns {object} The according modification registry entry.
+	 */
+	Engine.prototype._determineModification = function (vControl) {
+
+		var oRegistryEntry = this._getRegistryEntry(vControl);
+
+		//Modification setting is only calculated once per control instance.
+		if (oRegistryEntry && oRegistryEntry.modification) {
+			return oRegistryEntry.modification;
+		}
+
+		var aPPResults = Engine.hasForReference(vControl, "sap.ui.mdc.p13n.PersistenceProvider");
+		var aVMResults = Engine.hasForReference(vControl, "sap.ui.fl.variants.VariantManagement");
+
+		var aPersistenceProvider = aPPResults.length ? aPPResults : undefined;
+		var sHandlerMode = aPersistenceProvider ? aPersistenceProvider[0].getMode() : "Standard";
+
+		var mHandlerMode = {
+			Global: FlexModificationHandler,
+			Transient: FlexModificationHandler,
+			Standard: FlexModificationHandler,
+			Auto: FlexModificationHandler
+		};
+
+		var ModificiationHandler = mHandlerMode[sHandlerMode];
+
+		if (!ModificiationHandler) {
+			throw new Error("Please provide a valid ModificationHandler! - valid Modification handlers are:" + Object.keys(mHandlerMode));
+		}
+
+		var oModificationSetting = {
+			handler: ModificiationHandler.getInstance(),
+			payload: {
+				hasVM: aVMResults && aVMResults.length > 0,
+				hasPP: aPPResults && aPPResults.length > 0,
+				mode: sHandlerMode
+			}
+		};
+
+		if (oRegistryEntry && !oRegistryEntry.modification) {
+			oRegistryEntry.modification = oModificationSetting;
+		}
+
+		return oModificationSetting;
+	};
+
+	Engine.hasForReference = function(vControl, sControlType) {
+		var sControlId = vControl && vControl.getId ? vControl.getId() : vControl;
+		var aResults = Element.registry.filter(function (oElement) {
+			if (!oElement.isA(sControlType)) {
+				return false;
+			}
+			var aFor = oElement.getFor();
+			for (var n = 0; n < aFor.length; n++) {
+				if (aFor[n] === sControlId || Engine.hasControlAncestorWithId(sControlId, aFor[n])) {
+					return true;
+				}
+			}
+			return false;
+		});
+		return aResults;
+	};
+
+	/**
+	 * Determines and registeres the ModificationHandler per control instance
+	 *
+	 * @private
+	 * @param {String} sControlId The control id
+	 * @param {String} sAncestorControlId The control ancestor id
+	 *
+	 * @returns {boolean} Returns whether an according ancestor could be found.
+	 */
+	Engine.hasControlAncestorWithId = function(sControlId, sAncestorControlId) {
+		var oControl;
+
+		if (sControlId === sAncestorControlId) {
+			return true;
+		}
+
+		oControl = sap.ui.getCore().byId(sControlId);
+		while (oControl) {
+			if (oControl.getId() === sAncestorControlId) {
+				return true;
+			}
+
+			if (typeof oControl.getParent === "function") {
+				oControl = oControl.getParent();
+			} else {
+				return false;
+			}
+		}
+
+		return false;
+	};
+
 
 	/**
 	 * This method can be used to get a control instance by passing either the control
@@ -643,8 +774,8 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oP13nControl The created p13n UI to be displayed.
 	 * @param {sap.ui.core.Control} oSource The source control (only for livemode).
 	 */
-    Engine.prototype._openP13nControl = function(vControl, sKey, oP13nControl, oSource){
-        var oController = this.getController(vControl, sKey);
+	Engine.prototype._openP13nControl = function(vControl, sKey, oP13nControl, oSource){
+		var oController = this.getController(vControl, sKey);
 		if (oController.getLiveMode()) {
 			oP13nControl.openBy(oSource);
 		} else {
@@ -665,10 +796,10 @@ sap.ui.define([
 	 * @returns {Promise} A Promise resolving in the according container
 	 * (Depending on the Controllers livemode config).
 	 */
-    Engine.prototype._retrieveP13nContainer = function (vControl, sKey) {
+	Engine.prototype._retrieveP13nContainer = function (vControl, sKey) {
 		return new Promise(function (resolve, reject) {
 
-            var oController = this.getController(vControl, sKey);
+			var oController = this.getController(vControl, sKey);
 
 			var bLiveMode = oController.getLiveMode();
 			var vAdaptationUI = oController.getAdaptationUI();
@@ -692,9 +823,9 @@ sap.ui.define([
 			}.bind(this);
 
 			if (typeof vAdaptationUI === "string") {
-                var sPath = vAdaptationUI;
+				var sPath = vAdaptationUI;
 				loadModules([sPath]).then(function(aModules){
-                    var Panel = aModules[0];
+					var Panel = aModules[0];
 					var oPanel = new Panel();
 					fnPrepareP13nUI(oPanel);
 				});
@@ -768,8 +899,8 @@ sap.ui.define([
 	 * @param {object[]} aAdditionalChanges An array of additional changes that should be applied.
 	 * (For example Inbuilt Filtering)
 	 */
-    Engine.prototype._handleChange = function(oControl, sKey, oNewState, aAdditionalChanges) {
-        this.createChanges({
+	Engine.prototype._handleChange = function(oControl, sKey, oNewState, aAdditionalChanges) {
+		this.createChanges({
 			control: oControl,
 			key: sKey,
 			state: oNewState.items,
@@ -780,11 +911,11 @@ sap.ui.define([
 			var aComulatedChanges = aAdditionalChanges ? aAdditionalChanges.concat(aItemChanges) : aItemChanges;
 
 			if (aComulatedChanges.length > 0) {
-				this._getChangeProcessor(oControl)(aComulatedChanges);
+				this._processChanges(oControl, aComulatedChanges);
 			}
 
 		}.bind(this));
-    };
+	};
 
 	/**
 	 * This method can be used to create the p13n container instance.
@@ -797,9 +928,9 @@ sap.ui.define([
 	 *
 	 * @returns {Promise} Returns a Promise resolving in the container instance
 	 */
-    Engine.prototype._createUIContainer = function (vControl, sKey, oPanel) {
+	Engine.prototype._createUIContainer = function (vControl, sKey, oPanel) {
 
-        var oController = this.getController(vControl, sKey);
+		var oController = this.getController(vControl, sKey);
 		var oContainerPromise;
 
 		if (oController.getLiveMode()) {
@@ -820,7 +951,7 @@ sap.ui.define([
 			if (!oController.getLiveMode()){
 				oContainer.setEscapeHandler(function(oDialogClose){
 					this._setActiveP13n(vControl, null);
-                    oContainer.close();
+					oContainer.close();
 					oContainer.destroy();
 					oDialogClose.resolve();
 				}.bind(this));
@@ -882,9 +1013,9 @@ sap.ui.define([
 	 *
 	 * @returns {sap.m.Dialog} The dialog instance.
 	 */
-    Engine.prototype._createModalDialog = function(vControl, sKey, oPanel){
+	Engine.prototype._createModalDialog = function(vControl, sKey, oPanel){
 
-        var oController = this.getController(vControl, sKey);
+		var oController = this.getController(vControl, sKey);
 
 		var fnDialogOk = function (oEvt) {
 			var oDialog = oEvt.getSource().getParent();
@@ -907,11 +1038,11 @@ sap.ui.define([
 		var mSettings = Object.assign({
 			verticalScrolling: true,
 			afterClose: function(oEvt) {
-                var oDialog = oEvt.getSource();
-                if (oDialog) {
-                    oDialog.destroy();
-                }
-            },
+				var oDialog = oEvt.getSource();
+				if (oDialog) {
+					oDialog.destroy();
+				}
+			},
 			cancel: fnDialogCancel
 		}, oController.getContainerSettings());
 
@@ -930,7 +1061,7 @@ sap.ui.define([
 		};
 
 		return P13nBuilder.createP13nDialog(oPanel, mSettings);
-    };
+	};
 
 	/**
 	 * This method can be used to confirm a Dialog container instance.
@@ -942,7 +1073,7 @@ sap.ui.define([
 	 * @param {sap.ui.core.Control} oPanel The control instance which is set in the content area of the container.
 	 *
 	 */
-    Engine.prototype._confirmContainer = function(vControl, sKey, oPanel){
+	Engine.prototype._confirmContainer = function(vControl, sKey, oPanel){
 		var oController = this.getController(vControl, sKey);
 
 		return oController.getBeforeApply(oPanel).then(function(aChanges){
@@ -960,9 +1091,9 @@ sap.ui.define([
 	 * @param {object[]} [aCustomPropertyInfo] A custom set of propertyinfo.
 	 *
 	 */
-    Engine.prototype._retrievePropertyHelper = function(vControl, aCustomPropertyInfo){
+	Engine.prototype._retrievePropertyHelper = function(vControl, aCustomPropertyInfo){
 
-        var oRegistryEntry = this._getRegistryEntry(vControl);
+		var oRegistryEntry = this._getRegistryEntry(vControl);
 
 		if (aCustomPropertyInfo) {
 			if (oRegistryEntry.helper){
@@ -970,10 +1101,10 @@ sap.ui.define([
 			}
 			oRegistryEntry.helper = new PropertyHelper(aCustomPropertyInfo);
 			return Promise.resolve(oRegistryEntry.oPropertyHelper);
-        }
+		}
 
-        if (oRegistryEntry.helper) {
-            return Promise.resolve(oRegistryEntry.helper);
+		if (oRegistryEntry.helper) {
+			return Promise.resolve(oRegistryEntry.helper);
 		}
 
 		return vControl.initPropertyHelper().then(function(oPropertyHelper){
@@ -981,7 +1112,7 @@ sap.ui.define([
 		}, function(sHelperError){
 			throw new Error(sHelperError);
 		});
-    };
+	};
 
 	/**
 	 * This method can be used to initialize the Controller housekeeping.
@@ -992,12 +1123,12 @@ sap.ui.define([
 	 * @param {string} sKey The registerd key to get the corresponding Controller.
 	 *
 	 */
-    Engine.prototype._prepareAdaptationData = function(vControl, sKey){
+	Engine.prototype._prepareAdaptationData = function(vControl, sKey){
 
-        var oRegistryEntry = this._getRegistryEntry(vControl);
+		var oRegistryEntry = this._getRegistryEntry(vControl);
 
-        var oController = this.getController(vControl, sKey);
-        var oPropertyHelper = oRegistryEntry.helper;
+		var oController = this.getController(vControl, sKey);
+		var oPropertyHelper = oRegistryEntry.helper;
 
 		oController.setP13nData(oPropertyHelper);
 	};
@@ -1041,5 +1172,5 @@ sap.ui.define([
 		_mRegistry.delete(this);
 	};
 
-    return Engine;
+	return Engine;
 });

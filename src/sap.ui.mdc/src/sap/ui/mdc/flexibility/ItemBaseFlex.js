@@ -139,9 +139,7 @@ sap.ui.define([
 		_delayInvalidate: function(oControl) {
 			if (oControl && oControl.isInvalidateSuppressed && !oControl.isInvalidateSuppressed()) {
 				oControl.iSuppressInvalidate = 1;
-				Engine.getInstance().getModificationHandler(oControl).waitForChanges({
-					element: oControl
-				}).then(function() {
+				Engine.getInstance().waitForChanges(oControl).then(function() {
 					oControl.iSuppressInvalidate = 0;
 					oControl.invalidate();
 				});

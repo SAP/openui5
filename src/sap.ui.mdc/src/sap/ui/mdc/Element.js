@@ -2,7 +2,7 @@
  * ${copyright}
  */
 sap.ui.define([
-	"sap/ui/core/Element", "sap/ui/mdc/mixin/DelegateMixin", "sap/ui/mdc/mixin/AdaptationMixin"
+	"sap/ui/core/Element",  "sap/ui/mdc/mixin/DelegateMixin", "sap/ui/mdc/mixin/AdaptationMixin"
 ], function(CoreElement, DelegateMixin, AdaptationMixin) {
 	"use strict";
 

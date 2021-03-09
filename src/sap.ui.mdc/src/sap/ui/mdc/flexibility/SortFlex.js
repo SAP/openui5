@@ -9,9 +9,7 @@ sap.ui.define(["sap/ui/mdc/p13n/Engine"], function(Engine) {
 		if (bExecuteRebindForTable || bExecuteRebindForChart) {
 			if (!oControl._bWaitForBindChanges) {
 				oControl._bWaitForBindChanges = true;
-				Engine.getInstance().getModificationHandler(oControl).waitForChanges({
-					element: oControl
-				}).then(function() {
+				Engine.getInstance().waitForChanges(oControl).then(function() {
 					if (bExecuteRebindForTable) {
 						oControl.checkAndRebind();
 					} else if (bExecuteRebindForChart) {

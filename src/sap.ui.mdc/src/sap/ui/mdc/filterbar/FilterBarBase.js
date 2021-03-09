@@ -558,7 +558,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._isPersistenceSupported = function(oEvent) {
-		return this.getEngine().getModificationHandler(this).isModificationSupported({element: this});
+		return this.getEngine().isModificationSupported(this);
 	};
 
 	FilterBarBase.prototype._handleConditionModelPropertyChange = function(oEvent) {
@@ -1478,9 +1478,7 @@ sap.ui.define([
 	};
 
 	FilterBarBase.prototype._getWaitForChangesPromise = function() {
-		return this.getEngine().getModificationHandler(this).waitForChanges({
-			element: this
-		});
+		return this.getEngine().waitForChanges(this);
 	};
 
 	FilterBarBase.prototype._suspendBinding = function(oFilterField) {

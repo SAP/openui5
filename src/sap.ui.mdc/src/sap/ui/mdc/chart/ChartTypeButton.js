@@ -173,7 +173,8 @@ sap.ui.define([
 										control: oChart,
 										chartType: oObj.key
 									}));
-									FlexUtil.handleChanges(aChanges, oChart);
+									//TODO: use engine for custom personalization
+									FlexUtil.handleChanges(aChanges);
 								});
 							}
 						}

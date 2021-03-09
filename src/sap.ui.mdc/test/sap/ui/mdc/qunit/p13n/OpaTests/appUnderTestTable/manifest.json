@@ -30,7 +30,7 @@
 				}
 			},
 			"type": "XML",
-			"viewName": "view.Main",
+			"viewName": "view.App",
 			"id": "IDViewTableOpaTest",
 			"height": "100%",
 			"async": true

@@ -402,6 +402,141 @@ sap.ui.define([
 
 	});
 
+	opaTest("When i use a PersistenceProvider having mode='Global', the changes should implicitly be stored.", function (Given, When, Then) {
+		Given.enableAndDeleteLrepLocalStorage();
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Implicit',
+			autoWait: true
+		});
+
+		When.iLookAtTheScreen();
+		When.iClickOnColumn("Name");
+		When.iSortCurrentOpenColumnContextMenu();
+
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+
+		Then.thePersonalizationDialogOpens();
+
+		aSortItems = [
+			{p13nItem: "Name", selected: true},
+			{p13nItem: "artistUUID", selected: false},
+			{p13nItem: "Breakout Year", selected: false},
+			{p13nItem: "Changed By", selected: false},
+			{p13nItem: "Changed On", selected: false},
+			{p13nItem: "cityOfOrigin_city", selected: false},
+			{p13nItem: "Country", selected: false},
+			{p13nItem: "Created By", selected: false},
+			{p13nItem: "Created On", selected: false},
+			{p13nItem: "Founding Year", selected: false},
+			{p13nItem: "regionOfOrigin_code", selected: false}
+		];
+
+		Then.iShouldSeeP13nItems(aSortItems);
+
+		When.iPressDialogOk();
+
+		Then.iTeardownMyAppFrame();
+	});
+
+	opaTest("'Implicit' changes are applied when i restart the 'appUnderTestTable' app", function (Given, When, Then) {
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html',
+			autoWait: true
+		});
+		When.iLookAtTheScreen();
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+
+		Then.thePersonalizationDialogOpens();
+
+		aSortItems = [
+			{p13nItem: "Name", selected: true},
+			{p13nItem: "artistUUID", selected: false},
+			{p13nItem: "Breakout Year", selected: false},
+			{p13nItem: "Changed By", selected: false},
+			{p13nItem: "Changed On", selected: false},
+			{p13nItem: "cityOfOrigin_city", selected: false},
+			{p13nItem: "Country", selected: false},
+			{p13nItem: "Created By", selected: false},
+			{p13nItem: "Created On", selected: false},
+			{p13nItem: "Founding Year", selected: false},
+			{p13nItem: "regionOfOrigin_code", selected: false}
+		];
+
+		Then.iShouldSeeP13nItems(aSortItems);
+		When.iPressDialogOk();
+		Then.iTeardownMyAppFrame();
+
+	});
+
+
+	opaTest("When i use a PersistenceProvider having mode='Transient', the changes are never stored and never affect an existing VariantManagement", function (Given, When, Then) {
+		Given.enableAndDeleteLrepLocalStorage();
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Transient',
+			autoWait: true
+		});
+
+		When.iLookAtTheScreen();
+		When.iClickOnColumn("Name");
+		When.iSortCurrentOpenColumnContextMenu();
+
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+
+		Then.thePersonalizationDialogOpens();
+
+		aSortItems = [
+			{p13nItem: "Name", selected: true},
+			{p13nItem: "artistUUID", selected: false},
+			{p13nItem: "Breakout Year", selected: false},
+			{p13nItem: "Changed By", selected: false},
+			{p13nItem: "Changed On", selected: false},
+			{p13nItem: "cityOfOrigin_city", selected: false},
+			{p13nItem: "Country", selected: false},
+			{p13nItem: "Created By", selected: false},
+			{p13nItem: "Created On", selected: false},
+			{p13nItem: "Founding Year", selected: false},
+			{p13nItem: "regionOfOrigin_code", selected: false}
+		];
+
+		Then.iShouldSeeP13nItems(aSortItems);
+		When.iPressDialogOk();
+
+		Then.theVariantManagementIsDirty(false);
+
+		Then.iTeardownMyAppFrame();
+	});
+
+	opaTest("'Transient' changes are never applied after i restart the 'appUnderTestTable' app", function (Given, When, Then) {
+
+		Given.iStartMyAppInAFrame({
+			source: 'test-resources/sap/ui/mdc/qunit/p13n/OpaTests/appUnderTestTable/TableOpaApp.html?view=Transient',
+			autoWait: true
+		});
+		When.iLookAtTheScreen();
+		When.iPressOnButtonWithIcon(Arrangement.P13nDialog.Sort.Icon);
+
+		Then.thePersonalizationDialogOpens();
+
+		var aSortItems = [
+			{p13nItem: "artistUUID", selected: false},
+			{p13nItem: "Breakout Year", selected: false},
+			{p13nItem: "Changed By", selected: false},
+			{p13nItem: "Changed On", selected: false},
+			{p13nItem: "cityOfOrigin_city", selected: false},
+			{p13nItem: "Country", selected: false},
+			{p13nItem: "Created By", selected: false},
+			{p13nItem: "Created On", selected: false},
+			{p13nItem: "Founding Year", selected: false},
+			{p13nItem: "Name", selected: false},
+			{p13nItem: "regionOfOrigin_code", selected: false}
+		];
+
+		Then.iShouldSeeP13nItems(aSortItems);
+		When.iPressDialogOk();
+		Then.iTeardownMyAppFrame();
+
+	});
+
 	// ----------------------------------------------------------------
 	// Methods
 	// ----------------------------------------------------------------
