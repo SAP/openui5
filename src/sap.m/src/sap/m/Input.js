@@ -1792,28 +1792,6 @@ function(
 		};
 
 		/**
-		 * Adds List items to the <code>SuggestionsPopover</code>.
-		 * Tabular items would be ignored.
-		 *
-		 * @param oFilterResults
-		 * @returns {number} Number of suggestions
-		 * @private
-		 */
-		Input.prototype.getSuggestionsCount = function (oFilterResults) {
-			// The number of all items, including group headers
-			var aHitItems = oFilterResults.items,
-				aGroups = oFilterResults.groups,
-				iItemsLength = aHitItems.length +  aGroups.length,
-				iSuggestionsLength = iItemsLength;
-
-			if (!this._hasTabularSuggestions()) {
-				iSuggestionsLength -= aGroups.length;
-			}
-
-			return iSuggestionsLength;
-		};
-
-		/**
 		 * Applies Suggestion Acc
 		 *
 		 * @param {Integer} iNumItems
@@ -1862,7 +1840,7 @@ function(
 			}
 
 			oFilterResults = this._getFilteredSuggestionItems(sTypedChars);
-			iSuggestionsLength = this.getSuggestionsCount(oFilterResults);
+			iSuggestionsLength = oFilterResults.items.length;
 
 			if (iSuggestionsLength > 0) {
 				this._openSuggestionPopup(this.getValue().length >= this.getStartSuggestion());
@@ -2923,7 +2901,7 @@ function(
 		this._clearSuggestionPopupItems();
 
 		oFilterResults = this._getFilteredSuggestionItems(this.getDOMValue());
-		iSuggestionsLength = this.getSuggestionsCount(oFilterResults);
+		iSuggestionsLength = oFilterResults.items.length;
 
 		if (iSuggestionsLength > 0) {
 			this._openSuggestionPopup();
