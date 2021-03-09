@@ -2286,7 +2286,7 @@ sap.ui.define([
 		var iTotalRowCount = getTotalRowCount(this, true);
 
 		if (mRowCounts.fixedBottom > 0 && mRowCounts.count - mRowCounts.fixedBottom < iTotalRowCount) {
-			return this._getContexts(iTotalRowCount - mRowCounts.fixedBottom, mRowCounts.fixedBottom, 0);
+			return this._getContexts(iTotalRowCount - mRowCounts.fixedBottom, mRowCounts.fixedBottom, 0, true);
 		} else {
 			return [];
 		}
@@ -2301,16 +2301,16 @@ sap.ui.define([
 		var mRowCounts = this._getRowCounts();
 
 		if (mRowCounts.fixedTop > 0) {
-			return this._getContexts(0, mRowCounts.fixedTop, 0);
+			return this._getContexts(0, mRowCounts.fixedTop, 0, true);
 		} else {
 			return [];
 		}
 	};
 
-	Table.prototype._getContexts = function(iStartIndex, iLength, iThreshold) {
+	Table.prototype._getContexts = function(iStartIndex, iLength, iThreshold, bKeepCurrent) {
 		var oBinding = this.getBinding();
 		if (oBinding) {
-			return oBinding.getContexts(iStartIndex, iLength, iThreshold);
+			return oBinding.getContexts(iStartIndex, iLength, iThreshold, bKeepCurrent);
 		} else {
 			return [];
 		}
@@ -2382,7 +2382,7 @@ sap.ui.define([
 		// if this is done before requesting fixed bottom rows, it saves some performance for the analytical table
 		// since the tree gets only build once (as result of getContexts call). If first the fixed bottom row would
 		// be requested the analytical binding would build the tree twice.
-		aTmpContexts = this._getContexts(iStartIndex, iLength, iThreshold);
+		aTmpContexts = this._getContexts(iStartIndex, iLength, iThreshold, undefined);
 
 		if (!bSuppressAdjustToBindingLength) {
 			this._adjustToTotalRowCount();
@@ -3268,10 +3268,8 @@ sap.ui.define([
 	 * @ui5-metamodel This method also will be described in the UI5 (legacy) designtime metamodel
 	 */
 	Table.prototype.getContextByIndex = function(iIndex) {
-		// TODO: ODataListBinding needs to make sure to prevent loading multiple times
-		// index must not be smaller than 0! otherwise the ODataModel fails
 		var oBinding = this.getBinding();
-		return iIndex >= 0 && oBinding ? oBinding.getContexts(iIndex, 1)[0] : null;
+		return iIndex >= 0 && oBinding ? oBinding.getContexts(iIndex, 1, 0, true)[0] : null;
 	};
 
 	// =============================================================================

@@ -41,7 +41,7 @@ sap.ui.define([
 		// render, refreshRows, updateRows
 		return pReady.then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the row count");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100, undefined), "All calls to Binding#getContexts consider the row count");
 			oTable.destroy();
 		});
 	});
@@ -55,7 +55,7 @@ sap.ui.define([
 		// refreshRows, render, updateRows
 		return pReady.then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the row count");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100, undefined), "All calls to Binding#getContexts consider the row count");
 			oTable.destroy();
 		});
 	});
