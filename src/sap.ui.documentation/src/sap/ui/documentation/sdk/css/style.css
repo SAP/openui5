@@ -1841,3 +1841,9 @@ html[dir="rtl"] .sapUiDemoKitTreeItemIcon {
 }
 
 /* SAP Quartz Light theme - end */
+
+/* prevent infinite resize when the code editor is in the preserve area */
+.sapUiForcedHidden .editorSrcWindow {
+	width: 0;
+	height: 0;
+}
