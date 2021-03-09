@@ -203,35 +203,6 @@ sap.ui.define([
 		return Promise.resolve(null);
 	};
 
-	ODataTableDelegate.updateBindingInfo = function(oMDCTable, oMetadataInfo, oBindingInfo) {
-		if (!oMDCTable) {
-			return;
-		}
-
-		if (oMetadataInfo && oBindingInfo) {
-			oBindingInfo.path = oBindingInfo.path || oMetadataInfo.collectionPath || "/" + oMetadataInfo.collectionName;
-			oBindingInfo.model = oBindingInfo.model || oMetadataInfo.model;
-		}
-
-		if (!oBindingInfo) {
-			oBindingInfo = {};
-		}
-
-		var oFilter = Core.byId(oMDCTable.getFilter()),
-			bFilterEnabled = oMDCTable.isFilteringEnabled(),
-			mConditions;
-
-		//TODO: consider a mechanism ('FilterMergeUtil' or enhance 'FilterUtil') to allow the connection between different filters)
-		var oFilterControl = bFilterEnabled ? oMDCTable : oFilter;
-		if (oFilterControl) {
-			var aPropertiesMetadata = bFilterEnabled ? [] : oFilter.getPropertyInfoSet();
-			mConditions = oFilterControl.getConditions();
-
-			var oFilterInfo = FilterUtil.getFilterInfo(oFilterControl, mConditions, aPropertiesMetadata);
-			oBindingInfo.filters = oFilterInfo.filters;
-		}
-	};
-
 	/**
 	 * Creates the Column for the specified property info and table
 	 *
