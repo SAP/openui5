@@ -9,19 +9,22 @@ sap.ui.define([
 	"sap/ui/model/FilterProcessor",
 	"sap/ui/model/Model",
 	"sap/ui/model/odata/_ODataMetaModelUtils",
+	"sap/ui/model/odata/CountMode",
 	"sap/ui/model/odata/MessageScope",
 	"sap/ui/model/odata/ODataMessageParser",
 	"sap/ui/model/odata/ODataMetaModel",
 	"sap/ui/model/odata/ODataPropertyBinding",
 	"sap/ui/model/odata/ODataUtils",
+	"sap/ui/model/odata/v2/ODataAnnotations",
 	"sap/ui/model/odata/v2/ODataContextBinding",
 	"sap/ui/model/odata/v2/ODataListBinding",
 	"sap/ui/model/odata/v2/ODataModel",
 	"sap/ui/model/odata/v2/ODataTreeBinding",
 	"sap/ui/test/TestUtils"
 ], function (Log, SyncPromise, coreLibrary, Message, FilterProcessor, Model, _ODataMetaModelUtils,
-		MessageScope, ODataMessageParser, ODataMetaModel, ODataPropertyBinding, ODataUtils,
-		ODataContextBinding, ODataListBinding, ODataModel, ODataTreeBinding, TestUtils
+		CountMode, MessageScope, ODataMessageParser, ODataMetaModel, ODataPropertyBinding,
+		ODataUtils, ODataAnnotations, ODataContextBinding, ODataListBinding, ODataModel,
+		ODataTreeBinding, TestUtils
 ) {
 	/*global QUnit,sinon*/
 	/*eslint camelcase: 0, max-nested-callbacks: 0, no-warning-comments: 0*/
@@ -54,6 +57,55 @@ sap.ui.define([
 		afterEach : function (assert) {
 			return TestUtils.awaitRendering();
 		}
+	});
+
+	//*********************************************************************************************
+	QUnit.test("constructor: codeListModelParameters and sMetadataUrl stored", function (assert) {
+		var oDataModelMock = this.mock(ODataModel),
+			oMetadata = {
+				oMetadata : {
+					isLoaded : function () {},
+					loaded : function () {}
+				}
+			},
+			mParameters = {
+				annotationURI : "~annotationURI",
+				serviceUrl : "/foo/bar",
+				skipMetadataAnnotationParsing : true,
+				tokenHandling : false
+			},
+			oPromise = {
+				then : function () {}
+			};
+
+		this.mock(ODataModel.prototype).expects("createCodeListModelParameters")
+			.withExactArgs(sinon.match.same(mParameters))
+			.returns("~codeListModelParameters");
+		this.mock(ODataModel.prototype).expects("_createMetadataUrl")
+			.withExactArgs("/$metadata")
+			.returns("~metadataUrl");
+		this.mock(ODataModel.prototype).expects("_getServerUrl").withExactArgs()
+			.returns("~serverUrl");
+		oDataModelMock.expects("_getSharedData").withExactArgs("server", "~serverUrl")
+			.returns(undefined);
+		oDataModelMock.expects("_getSharedData").withExactArgs("service", "/foo/bar")
+			.returns(undefined);
+		oDataModelMock.expects("_getSharedData").withExactArgs("meta", "~metadataUrl")
+			.returns(oMetadata);
+		this.mock(ODataModel.prototype).expects("_getAnnotationCacheKey")
+			.withExactArgs("~metadataUrl")
+			.returns(undefined);
+		// called in ODataModel#constructor and ODataAnnotations#constructor
+		this.mock(oMetadata.oMetadata).expects("loaded").withExactArgs().twice().returns(oPromise);
+		this.mock(oMetadata.oMetadata).expects("isLoaded").withExactArgs().returns(true);
+		this.mock(ODataAnnotations.prototype).expects("addSource")
+			.withExactArgs(["~annotationURI"]);
+
+		// code under test
+		var oModel = new ODataModel(mParameters);
+
+		assert.strictEqual(oModel.mCodeListModelParams, "~codeListModelParameters");
+		assert.strictEqual(oModel.sMetadataUrl, "~metadataUrl");
 	});
 
 	//*********************************************************************************************
@@ -4088,5 +4140,85 @@ sap.ui.define([
 
 		// code under test
 		assert.strictEqual(ODataModel.prototype.getMetaModel.call(oModel), "~oMetaModel");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCodeListModelParameters: mParameters=undefined and defaulting",
+			function (assert) {
+		var mExpectedResult = {
+				defaultCountMode : CountMode.None,
+				disableSoftStateHeader : true,
+				headers : undefined,
+				json : undefined,
+				metadataUrlParams : undefined,
+				persistTechnicalMessages : undefined,
+				serviceUrl : "~serviceUrl",
+				serviceUrlParams : undefined,
+				tokenHandling : false,
+				useBatch : false,
+				warmupUrl : undefined
+			},
+			oModel = {sServiceUrl : "~serviceUrl"};
+
+		// code under test
+		assert.deepEqual(ODataModel.prototype.createCodeListModelParameters.call(oModel),
+			mExpectedResult);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("createCodeListModelParameters: w/ mParameters and defaulting", function (assert) {
+		var mExpectedResult = {
+				defaultCountMode : CountMode.None,
+				disableSoftStateHeader : true,
+				headers : {foo : "bar"},
+				json : "~json",
+				metadataUrlParams : {meta : "data"},
+				persistTechnicalMessages : "~persist",
+				serviceUrl : "~serviceUrl",
+				serviceUrlParams : {service : "url"},
+				tokenHandling : false,
+				useBatch : false,
+				warmupUrl : "~warmupUrl"
+			},
+			oModel = {sServiceUrl : "~serviceUrl"},
+			mParameters = {
+				defaultCountMode : "~countMode",
+				disableSoftStateHeader : false,
+				headers : {foo : "bar"},
+				json : "~json",
+				metadataUrlParams : {meta : "data"},
+				persistTechnicalMessages : "~persist",
+				serviceUrl : "~serviceUrl",
+				serviceUrlParams : {service : "url"},
+				tokenHandling : true,
+				useBatch : true,
+				warmupUrl : "~warmupUrl"
+			},
+			mResults;
+
+		// code under test
+		mResults = ODataModel.prototype.createCodeListModelParameters.call(oModel, mParameters);
+
+		assert.deepEqual(mResults, mExpectedResult);
+		assert.notStrictEqual(mResults.headers, mParameters.headers);
+		assert.notStrictEqual(mResults.metadataUrlParams, mParameters.metadataUrlParams);
+		assert.notStrictEqual(mResults.serviceUrlParams, mParameters.serviceUrlParams);
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getCodeListModelParameters", function (assert) {
+		var oModel = {mCodeListModelParams : "~mCodeListModelParams"};
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.getCodeListModelParameters.call(oModel),
+			"~mCodeListModelParams");
+	});
+
+	//*********************************************************************************************
+	QUnit.test("getMetadataUrl", function (assert) {
+		var oModel = {sMetadataUrl : "~metadataUrl"};
+
+		// code under test
+		assert.strictEqual(ODataModel.prototype.getMetadataUrl.call(oModel), "~metadataUrl");
 	});
 });
