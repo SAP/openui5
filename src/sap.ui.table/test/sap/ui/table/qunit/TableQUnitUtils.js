@@ -1463,7 +1463,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oCell = jQuery.sap.domById(oTableInstance.getId() + "-rows-row" + iRow + "-col" + iCol);
+		var oCell = oTableInstance.getDomRef("rows-row" + iRow + "-col" + iCol);
 		if (bFocus) {
 			oCell.focus();
 		}
@@ -1482,7 +1482,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oCell = jQuery.sap.domById((oTableInstance._getVisibleColumns()[iCol]).getId());
+		var oCell = oTableInstance._getVisibleColumns()[iCol].getDomRef();
 		if (bFocus) {
 			oCell.focus();
 		}
@@ -1501,7 +1501,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oCell = jQuery.sap.domById(oTableInstance.getId() + "-rowsel" + iRow);
+		var oCell = oTableInstance.getDomRef("rowsel" + iRow);
 		if (bFocus) {
 			oCell.focus();
 		}
@@ -1520,7 +1520,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oCell = jQuery.sap.domById(oTableInstance.getId() + "-rowact" + iRow);
+		var oCell = oTableInstance.getDomRef("rowact" + iRow);
 		if (bFocus) {
 			oCell.focus();
 		}
@@ -1539,7 +1539,7 @@ sap.ui.define([
 			oTableInstance = oTable;
 		}
 
-		var oCell = jQuery.sap.domById(oTableInstance.getId() + "-selall");
+		var oCell = oTableInstance.getDomRef("selall");
 		if (bFocus) {
 			oCell.focus();
 		}

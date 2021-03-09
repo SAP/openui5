@@ -214,13 +214,13 @@ sap.ui.define([
 			"headers attribute of cell [" + iRow + ", " + iCol + "]"
 		);
 
-		var sText = jQuery.sap.byId(sTableId + "-rownumberofrows").text().trim();
+		var sText = oTable.$("rownumberofrows").text().trim();
 		if (bFirstTime || bRowChange) {
 			assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
 		} else {
 			assert.ok(sText.length == 0, "Number of rows are not set when row not changed: " + sText);
 		}
-		sText = jQuery.sap.byId(sTableId + "-colnumberofcols").text().trim();
+		sText = oTable.$("colnumberofcols").text().trim();
 		if (bFirstTime || bColChange) {
 			assert.ok(sText.length > 0, "Number of columns are set on column change: " + sText);
 		} else {
@@ -261,7 +261,7 @@ sap.ui.define([
 		var iIndex = Column.ofCell(oCell).getIndex();
 		var aExpected = [];
 
-		var sText = jQuery.sap.byId(oTable.getId() + "-cellacc").text().trim();
+		var sText = oTable.$("cellacc").text().trim();
 
 		if (iIndex < 3) {
 			aExpected.push("TYPE_" + oCell.getText());
@@ -616,7 +616,7 @@ sap.ui.define([
 		);
 
 		if (bFocus) {
-			var sText = jQuery.sap.byId(sTableId + "-colnumberofcols").text().trim();
+			var sText = oTable.$("colnumberofcols").text().trim();
 			if (bFirstTime || bColChange) {
 				assert.ok(sText.length > 0, "Number of columns are set on column change: " + sText);
 			} else {
@@ -743,7 +743,7 @@ sap.ui.define([
 			);
 
 			if (bFocus) {
-				var sText = jQuery.sap.byId(sTableId + "-rownumberofrows").text().trim();
+				var sText = oTable.$("rownumberofrows").text().trim();
 				if (bFirstTime || bRowChange) {
 					assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
 				} else {
@@ -1094,7 +1094,7 @@ sap.ui.define([
 			);
 
 			if (bFocus) {
-				var sText = jQuery.sap.byId(sTableId + "-rownumberofrows").text().trim();
+				var sText = oTable.$("rownumberofrows").text().trim();
 				if (bFirstTime || bRowChange) {
 					assert.ok(sText.length > 0, "Number of rows are set on row change: " + sText);
 				} else {
@@ -1632,7 +1632,7 @@ sap.ui.define([
 		$Elem = $Elem.children();
 		assert.strictEqual($Elem.length, aHiddenTexts.length, "Number of hidden Texts");
 		for (var i = 0; i < aHiddenTexts.length; i++) {
-			assert.strictEqual(jQuery.sap.byId(oTable.getId() + "-" + aHiddenTexts[i]).length, 1, "Hidden Text " + aHiddenTexts[i] + " available");
+			assert.ok(oTable.getDomRef(aHiddenTexts[i]) != null, "Hidden Text " + aHiddenTexts[i] + " available");
 		}
 		$Elem.each(function() {
 			var $T = jQuery(this);

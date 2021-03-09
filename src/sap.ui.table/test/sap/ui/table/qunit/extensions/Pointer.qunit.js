@@ -75,9 +75,9 @@ sap.ui.define([
 
 	QUnit.test("resize", function(assert) {
 		function testAdaptations(bDuringResize) {
-			assert.equal(jQuery.sap.byId(oTable.getId() + "-rzoverlay").length, bDuringResize ? 1 : 0,
+			assert.equal(oTable.getDomRef("rzoverlay") != null, bDuringResize,
 				"The handle to resize overlay is" + (bDuringResize ? "" : " not") + " visible");
-			assert.equal(jQuery.sap.byId(oTable.getId() + "-ghost").length, bDuringResize ? 1 : 0,
+			assert.equal(oTable.getDomRef("ghost") != null, bDuringResize,
 				"The handle to resize ghost is" + (bDuringResize ? "" : " not") + " visible");
 
 			var oEvent = jQuery.Event({type: "selectstart"});
@@ -632,8 +632,8 @@ sap.ui.define([
 		};
 
 		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
-		var $Icon = jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0").find(".sapUiTableTreeIcon");
-		qutils.triggerMouseEvent($Icon, "click");
+		var oTreeIcon = oTreeTable.getRows()[0].getDomRef("col0").querySelector(".sapUiTableTreeIcon");
+		qutils.triggerMouseEvent(oTreeIcon, "click");
 	});
 
 	QUnit.test("Group Header", function(assert) {
@@ -661,8 +661,8 @@ sap.ui.define([
 		};
 
 		oTreeTable.attachEventOnce("rowsUpdated", fnHandler);
-		var $GroupHdr = jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-groupHeader");
-		qutils.triggerMouseEvent($GroupHdr, "click");
+		var oGroupHeader = oTreeTable.getRows()[0].getDomRef("groupHeader");
+		qutils.triggerMouseEvent(oGroupHeader, "click");
 	});
 
 	QUnit.test("Analytical Table Sum", function(assert) {
@@ -676,8 +676,7 @@ sap.ui.define([
 		};
 
 		return fakeSumRow(0, oTreeTable).then(function() {
-			var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel0");
-			qutils.triggerMouseEvent($RowHdr, "click");
+			qutils.triggerMouseEvent(oTreeTable.getDomRef("rowsel0"), "click");
 			assert.ok(!bSelected, "Selection was not performed");
 
 			oExtension._ExtensionHelper._handleClickSelection = oExtension._ExtensionHelper.__handleClickSelection;
@@ -737,7 +736,7 @@ sap.ui.define([
 		initCellClickHandler(function(oEvent) {
 			bClickHandlerCalled = true;
 			assert.ok(oEvent.getParameter("cellControl") === oRowColCell.cell, "Cell Click Event: Parameter cellControl");
-			assert.ok(oEvent.getParameter("cellDomRef") === jQuery.sap.domById(oTreeTable.getId() + "-rows-row1-col2"),
+			assert.ok(oEvent.getParameter("cellDomRef") === document.getElementById(oTreeTable.getId() + "-rows-row1-col2"),
 				"Cell Click Event: Parameter cellDomRef");
 			assert.equal(oEvent.getParameter("rowIndex"), 1, "Cell Click Event: Parameter rowIndex");
 			assert.equal(oEvent.getParameter("columnIndex"), 2, "Cell Click Event: Parameter columnIndex");
@@ -761,7 +760,7 @@ sap.ui.define([
 		initCellClickHandler(function(oEvent) {
 			bClickHandlerCalled = true;
 		});
-		$Cell = jQuery.sap.byId(oTreeTable.getId() + "-rows-row0-col0");
+		$Cell = oTreeTable.getRows()[0].$("col0");
 		qutils.triggerMouseEvent($Cell, "click"); // Should increase the counter
 		assert.equal(iSelectCount, 2, iSelectCount + " selections performed");
 		assert.ok(bClickHandlerCalled, "Cell Click Event handler called");
@@ -773,13 +772,11 @@ sap.ui.define([
 		assert.equal(iSelectCount, 2, iSelectCount + " selections performed");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
-		var $RowHdr = jQuery.sap.byId(oTreeTable.getId() + "-rowsel0");
-		qutils.triggerMouseEvent($RowHdr, "click"); // Should increase the counter
+		qutils.triggerMouseEvent(oTreeTable.getDomRef("rowsel0"), "click"); // Should increase the counter
 		assert.equal(iSelectCount, 3, iSelectCount + " selections performed");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 
-		var $ColHdr = jQuery.sap.byId((oTable._getVisibleColumns()[0]).getId());
-		qutils.triggerMouseEvent($ColHdr, "click");
+		qutils.triggerMouseEvent(oTable._getVisibleColumns()[0].getDomRef(), "click");
 		assert.equal(iSelectCount, 3, iSelectCount + " selections performed");
 		assert.ok(!bClickHandlerCalled, "Cell Click Event handler not called");
 

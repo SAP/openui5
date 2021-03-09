@@ -79,7 +79,7 @@ sap.ui.define([
 		oParams.ctrlKey = false;
 
 		if (typeof (oTarget) == "string") {
-			oTarget = jQuery.sap.domById(oTarget);
+			oTarget = document.getElementById(oTarget);
 		}
 
 		/*eslint-disable new-cap */
@@ -96,7 +96,7 @@ sap.ui.define([
 			return;
 		}
 
-		var $Tabbables = findTabbables(document.activeElement, [jQuery.sap.domById("qunit-fixture")], !bBackward);
+		var $Tabbables = findTabbables(document.activeElement, [document.getElementById("qunit-fixture")], !bBackward);
 		if ($Tabbables.length) {
 			$Tabbables.get(bBackward ? $Tabbables.length - 1 : 0).focus();
 		}
@@ -732,7 +732,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
 		oElem = checkFocus(getCell(1, 1), assert);
 		simulateTabEvent(oElem, false);
-		oElem = checkFocus(jQuery.sap.domById("Focus2"), assert);
+		oElem = checkFocus(document.getElementById("Focus2"), assert);
 
 		simulateTabEvent(oElem, true);
 		checkFocus(getCell(1, 1), assert);
@@ -757,11 +757,11 @@ sap.ui.define([
 		sap.ui.getCore().applyChanges();
 		var oElem = checkFocus(getRowAction(1, true), assert);
 		simulateTabEvent(oElem, false);
-		oElem = checkFocus(jQuery.sap.domById("Focus2"), assert);
+		oElem = checkFocus(document.getElementById("Focus2"), assert);
 		simulateTabEvent(oElem, true);
 		oElem = checkFocus(getRowAction(1), assert);
 		simulateTabEvent(oElem, true);
-		checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(document.getElementById("Focus1"), assert);
 	});
 
 	QUnit.test("Extension and Footer", function(assert) {
@@ -771,7 +771,7 @@ sap.ui.define([
 
 		var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus2");
 		simulateTabEvent(oElem, true);
-		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+		oElem = checkFocus(document.getElementById("Footer"), assert);
 		simulateTabEvent(oElem, true);
 		oElem = checkFocus(getCell(0, 0), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
@@ -779,25 +779,25 @@ sap.ui.define([
 		simulateTabEvent(oElem, true);
 		oElem = checkFocus(getSelectAll(0), assert);
 		simulateTabEvent(oElem, true);
-		oElem = checkFocus(jQuery.sap.domById("Extension"), assert);
+		oElem = checkFocus(document.getElementById("Extension"), assert);
 		simulateTabEvent(oElem, true);
-		oElem = checkFocus(jQuery.sap.domById("Focus1"), assert);
+		oElem = checkFocus(document.getElementById("Focus1"), assert);
 		simulateTabEvent(oElem, false);
-		oElem = checkFocus(jQuery.sap.domById("Extension"), assert);
+		oElem = checkFocus(document.getElementById("Extension"), assert);
 		simulateTabEvent(oElem, false);
 		oElem = checkFocus(getSelectAll(0), assert);
 		simulateTabEvent(oElem, false);
 		oElem = checkFocus(getRowHeader(0), assert);
 		simulateTabEvent(oElem, false);
-		oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+		oElem = checkFocus(document.getElementById("Footer"), assert);
 		simulateTabEvent(oElem, false);
-		checkFocus(jQuery.sap.domById("Focus2"), assert);
+		checkFocus(document.getElementById("Focus2"), assert);
 
 		oTable.setColumnHeaderVisible(false);
 		sap.ui.getCore().applyChanges();
 		oElem = getCell(1, 1, true);
 		simulateTabEvent(oElem, true);
-		checkFocus(jQuery.sap.domById("Extension"), assert);
+		checkFocus(document.getElementById("Extension"), assert);
 	});
 
 	QUnit.test("On a non-interactive element inside a cell", function(assert) {
@@ -1142,23 +1142,23 @@ sap.ui.define([
 		simulateTabEvent(oElem, false);
 		oElem = checkFocus(this.oTable.qunit.getColumnHeaderCell(0), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
-		oElem = checkFocus(jQuery.sap.domById(this.oTable.qunit.getColumnHeaderCell(0).getAttribute("id") + "_1"), assert);
+		oElem = checkFocus(document.getElementById(this.oTable.qunit.getColumnHeaderCell(0).getAttribute("id") + "_1"), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
-		oElem = checkFocus(jQuery.sap.domById(this.oTable.qunit.getColumnHeaderCell(1).getAttribute("id") + "_1"), assert);
+		oElem = checkFocus(document.getElementById(this.oTable.qunit.getColumnHeaderCell(1).getAttribute("id") + "_1"), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
 		oElem = checkFocus(this.oTable.qunit.getColumnHeaderCell(1), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
-		oElem = checkFocus(jQuery.sap.domById(this.oTable.qunit.getColumnHeaderCell(1).getAttribute("id") + "_1"), assert);
+		oElem = checkFocus(document.getElementById(this.oTable.qunit.getColumnHeaderCell(1).getAttribute("id") + "_1"), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
-		oElem = checkFocus(jQuery.sap.domById(this.oTable.qunit.getColumnHeaderCell(2).getAttribute("id") + "_1"), assert);
+		oElem = checkFocus(document.getElementById(this.oTable.qunit.getColumnHeaderCell(2).getAttribute("id") + "_1"), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
 		oElem = checkFocus(this.oTable.qunit.getColumnHeaderCell(1), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
 		oElem = checkFocus(this.oTable.qunit.getColumnHeaderCell(3), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.DOWN, false, false, false);
-		oElem = checkFocus(jQuery.sap.domById(this.oTable.qunit.getColumnHeaderCell(3).getAttribute("id") + "_1"), assert);
+		oElem = checkFocus(document.getElementById(this.oTable.qunit.getColumnHeaderCell(3).getAttribute("id") + "_1"), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
-		oElem = checkFocus(jQuery.sap.domById(this.oTable.qunit.getColumnHeaderCell(2).getAttribute("id") + "_1"), assert);
+		oElem = checkFocus(document.getElementById(this.oTable.qunit.getColumnHeaderCell(2).getAttribute("id") + "_1"), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.UP, false, false, false);
 		oElem = checkFocus(this.oTable.qunit.getColumnHeaderCell(1), assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.LEFT, false, false, false);
@@ -1187,7 +1187,7 @@ sap.ui.define([
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
 		checkFocus(oElem, assert);
 
-		oElem = jQuery.sap.domById(this.oTable.qunit.getColumnHeaderCell(this.oTable.columnCount - 1).getAttribute("id") + "_1");
+		oElem = document.getElementById(this.oTable.qunit.getColumnHeaderCell(this.oTable.columnCount - 1).getAttribute("id") + "_1");
 		oElem.focus();
 		checkFocus(oElem, assert);
 		qutils.triggerKeydown(oElem, Key.Arrow.RIGHT, false, false, false);
@@ -2178,29 +2178,29 @@ sap.ui.define([
 		/* Test on second column header row */
 
 		// Fixed area - First cell
-		oElem = jQuery.sap.domById(getColumnHeader(0).attr("id") + "_1");
+		oElem = document.getElementById(getColumnHeader(0).attr("id") + "_1");
 		oElem.focus();
 		checkFocus(oElem, assert);
 
 		// *END* -> Fixed area - Last cell
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
-		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(oTable.getFixedColumnCount() - 1).attr("id") + "_1"), assert);
+		oElem = checkFocus(document.getElementById(getColumnHeader(oTable.getFixedColumnCount() - 1).attr("id") + "_1"), assert);
 
 		// *END* -> Non-Fixed area - Last cell
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
-		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(oTable.columnCount - 1).attr("id") + "_1"), assert);
+		oElem = checkFocus(document.getElementById(getColumnHeader(oTable.columnCount - 1).attr("id") + "_1"), assert);
 
 		// *END* -> Non-Fixed area - Last cell
 		qutils.triggerKeydown(oElem, Key.END, false, false, false);
-		checkFocus(jQuery.sap.domById(getColumnHeader(oTable.columnCount - 1).attr("id") + "_1"), assert);
+		checkFocus(document.getElementById(getColumnHeader(oTable.columnCount - 1).attr("id") + "_1"), assert);
 
 		// *HOME* -> Non-Fixed area - First cell
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
-		oElem = checkFocus(jQuery.sap.domById(getColumnHeader(oTable.getFixedColumnCount()).attr("id") + "_1"), assert);
+		oElem = checkFocus(document.getElementById(getColumnHeader(oTable.getFixedColumnCount()).attr("id") + "_1"), assert);
 
 		// *HOME* -> Fixed area - First cell
 		qutils.triggerKeydown(oElem, Key.HOME, false, false, false);
-		checkFocus(jQuery.sap.domById(getColumnHeader(0).attr("id") + "_1"), assert);
+		checkFocus(document.getElementById(getColumnHeader(0).attr("id") + "_1"), assert);
 	});
 
 	QUnit.test("Group Row Header", function(assert) {
@@ -3664,7 +3664,7 @@ sap.ui.define([
 			F6Navigation.handleF6GroupNavigation = function(oEvent, oSettings) {
 				oSettings = oSettings ? oSettings : {};
 				if (!oSettings.scope) {
-					oSettings.scope = jQuery.sap.domById("qunit-fixture");
+					oSettings.scope = document.getElementById("qunit-fixture");
 				}
 				that.handleF6GroupNavigationOriginal(oEvent, oSettings);
 			};
@@ -3686,23 +3686,23 @@ sap.ui.define([
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
 		oElem = checkFocus(getColumnHeader(0), assert);
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
-		checkFocus(jQuery.sap.domById("Footer"), assert);
+		checkFocus(document.getElementById("Footer"), assert);
 
 		oElem = getCell(1, 1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
-		checkFocus(jQuery.sap.domById("Footer"), assert);
+		checkFocus(document.getElementById("Footer"), assert);
 
 		oElem = getRowHeader(1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
-		checkFocus(jQuery.sap.domById("Footer"), assert);
+		checkFocus(document.getElementById("Footer"), assert);
 
 		oElem = getSelectAll(true, assert);
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
-		checkFocus(jQuery.sap.domById("Footer"), assert);
+		checkFocus(document.getElementById("Footer"), assert);
 
 		oElem = getColumnHeader(1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", false, false, false);
-		checkFocus(jQuery.sap.domById("Footer"), assert);
+		checkFocus(document.getElementById("Footer"), assert);
 	});
 
 	QUnit.test("Shift+F6 - Backward navigation - With Extension and Footer", function(assert) {
@@ -3714,23 +3714,23 @@ sap.ui.define([
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
 		oElem = checkFocus(getColumnHeader(0), assert);
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
-		checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(document.getElementById("Focus1"), assert);
 
 		oElem = getCell(1, 1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
-		checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(document.getElementById("Focus1"), assert);
 
 		oElem = getRowHeader(1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
-		checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(document.getElementById("Focus1"), assert);
 
 		oElem = getSelectAll(true, assert);
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
-		checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(document.getElementById("Focus1"), assert);
 
 		oElem = getColumnHeader(1, true, assert);
 		qutils.triggerKeydown(oElem, "F6", true, false, false);
-		checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(document.getElementById("Focus1"), assert);
 	});
 
 	QUnit.module("Navigation > Overlay", {
@@ -3749,7 +3749,7 @@ sap.ui.define([
 		simulateTabEvent(oElem, false);
 		oElem = checkFocus(oTable.getDomRef("overlay"), assert);
 		simulateTabEvent(oElem, false);
-		checkFocus(jQuery.sap.domById("Focus2"), assert);
+		checkFocus(document.getElementById("Focus2"), assert);
 	});
 
 	QUnit.test("Tab - With Extension and Footer", function(assert) {
@@ -3762,7 +3762,7 @@ sap.ui.define([
 		simulateTabEvent(oElem, false);
 		oElem = checkFocus(oTable.getDomRef("overlay"), assert);
 		simulateTabEvent(oElem, false);
-		checkFocus(jQuery.sap.domById("Focus2"), assert);
+		checkFocus(document.getElementById("Focus2"), assert);
 	});
 
 	QUnit.test("Shift+Tab - Default", function(assert) {
@@ -3772,7 +3772,7 @@ sap.ui.define([
 		simulateTabEvent(oElem, true);
 		oElem = checkFocus(oTable.getDomRef("overlay"), assert);
 		simulateTabEvent(oElem, true);
-		checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(document.getElementById("Focus1"), assert);
 	});
 
 	QUnit.test("Shift+Tab - With Extension and Footer", function(assert) {
@@ -3785,7 +3785,7 @@ sap.ui.define([
 		simulateTabEvent(oElem, true);
 		oElem = checkFocus(oTable.getDomRef("overlay"), assert);
 		simulateTabEvent(oElem, true);
-		checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(document.getElementById("Focus1"), assert);
 	});
 
 	QUnit.module("Navigation > NoData", {
@@ -3809,7 +3809,7 @@ sap.ui.define([
 			simulateTabEvent(oElem, false);
 			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
 			simulateTabEvent(oElem, false);
-			checkFocus(jQuery.sap.domById("Focus2"), assert);
+			checkFocus(document.getElementById("Focus2"), assert);
 
 			done();
 		}
@@ -3828,7 +3828,7 @@ sap.ui.define([
 			simulateTabEvent(oElem, false);
 			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
 			simulateTabEvent(oElem, false);
-			checkFocus(jQuery.sap.domById("Focus2"), assert);
+			checkFocus(document.getElementById("Focus2"), assert);
 
 			done();
 		}
@@ -3847,15 +3847,15 @@ sap.ui.define([
 
 			var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
 			simulateTabEvent(oElem, false);
-			checkFocus(jQuery.sap.domById("Extension"), assert);
+			checkFocus(document.getElementById("Extension"), assert);
 			simulateTabEvent(oElem, false);
 			oElem = checkFocus(getColumnHeader(0), assert);
 			simulateTabEvent(oElem, false);
 			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
 			simulateTabEvent(oElem, false);
-			checkFocus(jQuery.sap.domById("Footer"), assert);
+			checkFocus(document.getElementById("Footer"), assert);
 			simulateTabEvent(oElem, false);
-			checkFocus(jQuery.sap.domById("Focus2"), assert);
+			checkFocus(document.getElementById("Focus2"), assert);
 
 			done();
 		}
@@ -3879,7 +3879,7 @@ sap.ui.define([
 			simulateTabEvent(oElem, true);
 			oElem = checkFocus(getColumnHeader(0), assert);
 			simulateTabEvent(oElem, true);
-			checkFocus(jQuery.sap.domById("Focus1"), assert);
+			checkFocus(document.getElementById("Focus1"), assert);
 
 			done();
 		}
@@ -3896,15 +3896,15 @@ sap.ui.define([
 
 			var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus2");
 			simulateTabEvent(oElem, true);
-			oElem = checkFocus(jQuery.sap.domById("Footer"), assert);
+			oElem = checkFocus(document.getElementById("Footer"), assert);
 			simulateTabEvent(oElem, true);
 			oElem = checkFocus(oTable.getDomRef("noDataCnt"), assert);
 			simulateTabEvent(oElem, true);
 			oElem = checkFocus(getColumnHeader(0), assert);
 			simulateTabEvent(oElem, true);
-			oElem = checkFocus(jQuery.sap.domById("Extension"), assert);
+			oElem = checkFocus(document.getElementById("Extension"), assert);
 			simulateTabEvent(oElem, true);
-			checkFocus(jQuery.sap.domById("Focus1"), assert);
+			checkFocus(document.getElementById("Focus1"), assert);
 
 			done();
 		}
@@ -4009,7 +4009,7 @@ sap.ui.define([
 			simulateTabEvent(oElem, false);
 			oElem = checkFocus(oTable.getDomRef("overlay"), assert);
 			simulateTabEvent(oElem, false);
-			checkFocus(jQuery.sap.domById("Focus2"), assert);
+			checkFocus(document.getElementById("Focus2"), assert);
 
 			done();
 		}
@@ -4029,7 +4029,7 @@ sap.ui.define([
 			simulateTabEvent(oElem, true);
 			oElem = checkFocus(oTable.getDomRef("overlay"), assert);
 			simulateTabEvent(oElem, true);
-			checkFocus(jQuery.sap.domById("Focus1"), assert);
+			checkFocus(document.getElementById("Focus1"), assert);
 
 			done();
 		}
@@ -4056,20 +4056,20 @@ sap.ui.define([
 		var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus1");
 		simulateTabEvent(oElem, false);
 		// Due to changed BusyIndicator handling - BusyIndicator is now tabbable
-		oElem = jQuery.sap.domById(oTable.getId() + "-busyIndicator");
+		oElem = document.getElementById(oTable.getId() + "-busyIndicator");
 		checkFocus(oElem, assert);
 		simulateTabEvent(oElem, false);
-		checkFocus(jQuery.sap.domById("Focus2"), assert);
+		checkFocus(document.getElementById("Focus2"), assert);
 	});
 
 	QUnit.test("Shift+Tab", function(assert) {
 		var oElem = TableQUnitUtils.setFocusOutsideOfTable(assert, "Focus2");
 		simulateTabEvent(oElem, true);
 		// Due to changed BusyIndicator handling - BusyIndicator is now tabbable
-		oElem = jQuery.sap.domById(oTable.getId() + "-busyIndicator");
+		oElem = document.getElementById(oTable.getId() + "-busyIndicator");
 		checkFocus(oElem, assert);
 		simulateTabEvent(oElem, true);
-		checkFocus(jQuery.sap.domById("Focus1"), assert);
+		checkFocus(document.getElementById("Focus1"), assert);
 	});
 
 	QUnit.module("Navigation > Special Cases", {
@@ -4874,12 +4874,12 @@ sap.ui.define([
 		test.call(this, [aVisibleColumns[0], aVisibleColumns[1]], [aVisibleColumns[2]]);
 
 		// Second row - First span over 2 columns
-		oElem = jQuery.sap.domById(getColumnHeader(0).attr("id") + "_1");
+		oElem = document.getElementById(getColumnHeader(0).attr("id") + "_1");
 		oElem.focus();
 		test.call(this, [aVisibleColumns[0], aVisibleColumns[1]], aVisibleColumns[2]);
 
 		// Last row - Second column
-		oElem = jQuery.sap.domById(getColumnHeader(1).attr("id") + "_2");
+		oElem = document.getElementById(getColumnHeader(1).attr("id") + "_2");
 		oElem.focus();
 		test.call(this, [aVisibleColumns[1]], [aVisibleColumns[0], aVisibleColumns[2]]);
 	});

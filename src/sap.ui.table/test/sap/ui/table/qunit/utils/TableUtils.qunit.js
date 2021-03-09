@@ -246,7 +246,7 @@ sap.ui.define([
 		assert.strictEqual(oInfo.columnIndex, 3, "Column Index: 3");
 		assert.strictEqual(oInfo.columnSpan, 1, "Span Length: 1");
 
-		oCell = jQuery.sap.domById(getColumnHeader(2).attr("id") + "_1");
+		oCell = document.getElementById(getColumnHeader(2).attr("id") + "_1");
 		oInfo = TableUtils.getCellInfo(oCell);
 		assert.strictEqual(oInfo.rowIndex, 1, "Row Index: 1");
 		assert.strictEqual(oInfo.columnIndex, 3, "Column Index: 3");
@@ -339,7 +339,7 @@ sap.ui.define([
 		delete oInfo.isOfType;
 		assert.deepEqual(oInfo, oDefaultInfo, "Passed null as parameter -> Returned the info object with default values");
 
-		oInfo = TableUtils.getCellInfo(jQuery.sap.domById("outerelement"));
+		oInfo = TableUtils.getCellInfo(document.getElementById("outerelement"));
 		delete oInfo.isOfType;
 		assert.deepEqual(oInfo, oDefaultInfo, "Passed a dom element which is no table cell -> Returned the info object with default values");
 	});
