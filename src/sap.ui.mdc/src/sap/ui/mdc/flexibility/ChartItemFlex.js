@@ -16,7 +16,8 @@ sap.ui.define([
 	oChartItemFlex.findItem = function(oModifier, aItems, sName) {
 		return aItems.find(function(oItem) {
 			var sKey = oModifier.getProperty(oItem, "key");
-			return sKey === sName;
+			var sKeyNew = oModifier.getProperty(oItem, "name"); // for chart remake
+			return (sKey === sName || sKeyNew === sName);
 		});
 	};
 

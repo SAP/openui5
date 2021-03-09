@@ -165,6 +165,16 @@ sap.ui.define(["sap/ui/Device", './util/EnvHelper'], function (Device, EnvHelper
 					]
 				}
 			},
+			"ChartNew": {
+				skip: EnvHelper.isOpenUI5,
+				group: "ChartNew",
+				module: "./chartNew/ChartNew.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.fl", "sap.ui.mdc"
+					]
+				}
+			},
 			"ChartFlex": {
 				skip: EnvHelper.isOpenUI5,
 				group: "Chart",
