@@ -762,21 +762,21 @@ function (
 
 		// Assert
 		assert.strictEqual($oNotifications.attr("aria-haspopup"), "dialog", "Notifications aria-haspopup is correct");
-		assert.strictEqual($oNotifications.attr("aria-label"), sTooltip, "Notifications aria-label is correct");
+		assert.strictEqual($oNotifications.attr("aria-label"), sTooltip, "Notifications invisibleText is correct");
 		assert.strictEqual(oNotifications.getTooltip(), sTooltip, "Notifications tooltip is correct");
 
 		// Act
 		this.oSB.setNotificationsNumber("2");
 
 		// Assert
-		assert.strictEqual($oNotifications.attr("aria-label"), "2 " + sTooltip, "Notifications aria-label is updated");
+		assert.strictEqual(oNotifications._getBadgeInvisibleText().getText(), "2" + sTooltip, "Notifications invisibleText is updated");
 		assert.strictEqual(oNotifications.getTooltip(), "2 " + sTooltip, "Notifications tooltip is updated");
 
 		// Act
-		this.oSB.setNotificationsNumber(null);
+		this.oSB.setNotificationsNumber("0");
 
 		// Assert
-		assert.strictEqual($oNotifications.attr("aria-label"), sTooltip, "Notifications aria-label is restored to default");
+		assert.strictEqual(oNotifications._getBadgeInvisibleText().getText(), sTooltip, "Notifications invisibleText is restored to default");
 		assert.strictEqual(oNotifications.getTooltip(), sTooltip, "Notifications tooltip is restored to default");
 
 	});
@@ -815,12 +815,15 @@ function (
 		this.oSB.setNotificationsNumber("40");
 
 		// Arrange
-		sNotificationsButtonNumber = this.oSB._oNotifications.data("notifications");
-		sOverflowToolbarButtonNumber = this.oSB._oOverflowToolbar._getOverflowButton().data("notifications");
+
+		sNotificationsButtonNumber = this.oSB._oNotifications.getBadgeCustomData().getValue();
 
 		// Assert
-		assert.strictEqual(sNotificationsButtonNumber, "40", "Badge data rendered correctly inside notifications button");
-		assert.strictEqual(sOverflowToolbarButtonNumber, "40", "Badge data rendered correctly inside overflow button");
+		assert.strictEqual(sNotificationsButtonNumber, "40", "Badge custom data rendered correctly inside notifications button");
+
+		sOverflowToolbarButtonNumber = this.oSB._oOverflowToolbar._getOverflowButton().getBadgeCustomData().getValue();
+
+		assert.strictEqual(sOverflowToolbarButtonNumber, "40", "Badge custom data rendered correctly inside overflow button");
 
 		// Act
 		this.oSB.setNotificationsNumber("50");

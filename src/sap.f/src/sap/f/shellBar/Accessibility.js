@@ -101,7 +101,6 @@ sap.ui.define([
 			sAriaLabel = sNotificationsNumber ? sNotificationsNumber + " " + sTooltip : sTooltip;
 
 		this._oControl._oNotifications.setTooltip(sAriaLabel);
-		this._oControl._oNotifications.$().attr("aria-label", sAriaLabel);
 	};
 
 	Accessibility.prototype.onAfterRenderingSecondTitle = function () {
@@ -116,12 +115,8 @@ sap.ui.define([
 	};
 
 	Accessibility.prototype.onAfterRenderingNotifications = function () {
-		var $oNotifications = this._oControl._oNotifications.$(),
-			sTooltip = this.getEntityTooltip("NOTIFICATIONS"),
-			sNotificationsNubmer = this._oControl._oNotifications.data("notifications"),
-			sAriaLabel = sNotificationsNubmer ? sNotificationsNubmer + " " + sTooltip : sTooltip;
+		var $oNotifications = this._oControl._oNotifications.$();
 
-		$oNotifications.attr("aria-label", sAriaLabel);
 		$oNotifications.attr("aria-haspopup", "dialog");
 	};
 

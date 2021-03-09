@@ -36,7 +36,8 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 	var OverflowToolbarButton = Button.extend("sap.m.OverflowToolbarButton", /** @lends sap.m.OverflowToolbarButton.prototype */ {
 		metadata: {
 			interfaces: [
-				"sap.f.IShellBar"
+				"sap.f.IShellBar",
+				"sap.m.IOverflowToolbarContent"
 			]
 		},
 		renderer: ButtonRenderer.render
@@ -59,6 +60,24 @@ sap.ui.define(['sap/m/Button', 'sap/m/ButtonRenderer'],
 
 			return sTooltip;
 	};
+
+		/**
+		 * OVERFLOW TOOLBAR settings
+		 */
+		OverflowToolbarButton.prototype._onBeforeEnterOverflow = function () {this._bInOverflow = true;};
+
+		OverflowToolbarButton.prototype._onAfterExitOverflow = function () {this._bInOverflow = false;};
+
+		OverflowToolbarButton.prototype.getOverflowToolbarConfig = function () {
+			var oConfig = {
+				canOverflow: true
+			};
+
+			oConfig.onBeforeEnterOverflow = this._onBeforeEnterOverflow.bind(this);
+			oConfig.onAfterExitOverflow = this._onAfterExitOverflow.bind(this);
+
+			return oConfig;
+		};
 
 	return OverflowToolbarButton;
 

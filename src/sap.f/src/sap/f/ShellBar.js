@@ -11,6 +11,8 @@ sap.ui.define([
 	"./shellBar/ResponsiveHandler",
 	"./shellBar/Accessibility",
 	"sap/m/BarInPageEnabler",
+	"sap/m/BadgeCustomData",
+	"sap/m/Button",
 	"./ShellBarRenderer"
 ],
 function(
@@ -20,7 +22,9 @@ function(
 	AdditionalContentSupport,
 	ResponsiveHandler,
 	Accessibility,
-	BarInPageEnabler
+	BarInPageEnabler,
+	BadgeCustomData,
+	Button
 	/*, ShellBarRenderer */
 ) {
 	"use strict";
@@ -271,11 +275,6 @@ function(
 	};
 
 	ShellBar.prototype.onBeforeRendering = function () {
-		var sNotificationsNumber = this.getNotificationsNumber();
-
-		if (this.getShowNotifications() && sNotificationsNumber !== undefined) {
-			this._updateNotificationsIndicators(sNotificationsNumber);
-		}
 		this._assignControls();
 	};
 
@@ -420,9 +419,33 @@ function(
 	};
 
 	ShellBar.prototype.setShowNotifications = function (bShow) {
+		var oShellbar = this;
+
 		if (bShow) {
 			if (!this._oNotifications) {
 				this._oNotifications = this._oFactory.getNotifications();
+				this._oNotifications._onBeforeEnterOverflow = function () {
+					var oOTBButtonBadgeData = this.getParent()._getOverflowButton().getBadgeCustomData();
+					this._bInOverflow = true;
+					oOTBButtonBadgeData && oOTBButtonBadgeData.setVisible(this.getBadgeCustomData().getVisible());
+				};
+
+				this._oNotifications._onAfterExitOverflow = function () {
+					var oOTBButtonBadgeData = this.getParent()._getOverflowButton().getBadgeCustomData();
+					this._bInOverflow = false;
+					oOTBButtonBadgeData && oOTBButtonBadgeData.setVisible(false);
+				};
+
+				this._oNotifications.onBadgeUpdate = function(vValue, sState) {
+					Button.prototype.onBadgeUpdate.apply(this, arguments);
+
+					if (!this._bInOverflow) {
+						oShellbar._oAcc.updateNotificationsNumber(vValue);
+					} else {
+						oShellbar._oAcc.updateNotificationsNumber("");
+					}
+				};
+
 			}
 		} else {
 			this._oNotifications = null;
@@ -481,9 +504,9 @@ function(
 	 * @override
 	 */
 	ShellBar.prototype.setNotificationsNumber = function (sNotificationsNumber) {
-		if (this.getShowNotifications() && sNotificationsNumber !== undefined) {
+
+		if (this.getShowNotifications()) {
 			this._updateNotificationsIndicators(sNotificationsNumber);
-			this._oAcc.updateNotificationsNumber(sNotificationsNumber);
 		}
 
 		return this.setProperty("notificationsNumber", sNotificationsNumber, true);
@@ -624,11 +647,27 @@ function(
 	};
 
 	ShellBar.prototype._updateNotificationsIndicators = function(sNotificationsNumber) {
-		if (this._oOverflowToolbar._getOverflowButton()) {
-			this._oOverflowToolbar._getOverflowButton().data("notifications", sNotificationsNumber, true);
+		var oOTBButton;
+
+		if (!this.getShowNotifications()) { return; }
+
+		oOTBButton = this._oOverflowToolbar._getOverflowButton();
+
+		this._addOrUpdateBadges(oOTBButton, sNotificationsNumber);
+		if (!this._oNotifications._bInOverflow ) {
+			this._oOverflowToolbar._getOverflowButton().getBadgeCustomData().setVisible(false);
 		}
-		if (this._oNotifications) {
-			this._oNotifications.data("notifications", sNotificationsNumber, true);
+
+		this._addOrUpdateBadges(this._oNotifications, sNotificationsNumber);
+
+
+	};
+
+	ShellBar.prototype._addOrUpdateBadges = function(oControl, sData) {
+		if (oControl.getBadgeCustomData()) {
+			oControl.getBadgeCustomData().setValue(sData);
+		} else {
+			oControl.addCustomData(new BadgeCustomData({value: sData, animation: "Update"}));
 		}
 	};
 
