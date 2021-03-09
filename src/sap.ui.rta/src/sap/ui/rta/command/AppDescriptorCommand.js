@@ -65,7 +65,7 @@ sap.ui.define([
 	 * @param  {object} mFlexSettings Map of flex Settings
 	 * @param  {string} mFlexSettings.layer Layer where the change is applied
 	 */
-	AppDescriptorCommand.prototype.prepare = function(mFlexSettings) {
+	AppDescriptorCommand.prototype.prepare = function (mFlexSettings) {
 		this.setLayer(mFlexSettings.layer);
 		return true;
 	};
@@ -74,19 +74,26 @@ sap.ui.define([
 	 * Retrieves the prepared change for e.g. undo execution.
 	 * @return {sap.ui.fl.Change} Returns change after being created and stored
 	 */
-	AppDescriptorCommand.prototype.getPreparedChange = function() {
+	AppDescriptorCommand.prototype.getPreparedChange = function () {
 		return this._oPreparedChange;
+	};
+
+	AppDescriptorCommand.prototype.setCompositeId = function (sCompositeId) {
+		this._sCompositeId = sCompositeId;
 	};
 
 	/**
 	 * Create the change for the app descriptor and adds it to the Flex Persistence.
 	 * @return {Promise} Returns Promise resolving after change has been created and stored
 	 */
-	AppDescriptorCommand.prototype.createAndStoreChange = function() {
+	AppDescriptorCommand.prototype.createAndStoreChange = function () {
 		return AppVariantInlineChangeFactory.createDescriptorInlineChange({
 			changeType: this.getChangeType(),
 			content: this.getParameters(),
-			texts: this.getTexts()
+			texts: this.getTexts(),
+			support: {
+				compositeCommand: this._sCompositeId || ""
+			}
 		})
 			.then(function(oAppDescriptorChangeContent) {
 				return new DescriptorChangeFactory().createNew(this.getReference(),

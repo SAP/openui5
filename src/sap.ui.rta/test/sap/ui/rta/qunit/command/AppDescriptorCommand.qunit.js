@@ -143,6 +143,31 @@ function (
 				assert.ok(false, 'catch must never be called - Error: ' + oError);
 			});
 		});
+
+		QUnit.test("when calling command factory for a addLibraries app descriptor and adding composite command id ...", function(assert) {
+			var sCompositeCommandId = "my-fancy-new-composite-command";
+			return CommandFactory.getCommandFor(this.oButton, "appDescriptor", {
+				reference: this.sReference,
+				parameters: {
+					libraries: {}
+				},
+				texts: this.mTexts,
+				changeType: "create_ui5_addLibraries",
+				appComponent: this.oMockedAppComponent
+			}, {}, {layer: this.sLayer})
+				.then(function(oAppDescriptorCommand) {
+					oAppDescriptorCommand.setCompositeId(sCompositeCommandId);
+					assert.ok(oAppDescriptorCommand, "App Descriptor command exists for element");
+					return oAppDescriptorCommand.createAndStoreChange()
+						.then(function () {
+							var oStoredChange = oAppDescriptorCommand.getPreparedChange();
+							assert.strictEqual(oStoredChange.getDefinition().support.compositeCommand, sCompositeCommandId, "then composite command id is attached to the change definition");
+						});
+				})
+				.catch(function (oError) {
+					assert.ok(false, "catch must never be called - Error: " + oError);
+				});
+		});
 	});
 
 	QUnit.done(function () {
