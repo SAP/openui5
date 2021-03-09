@@ -136,10 +136,8 @@ sap.ui.define([
 			return fnBaseType.prototype.formatValue.call(this, aValues.slice(0, 2), sTargetType);
 		}
 
-		/**
-		 * @override
-		 * @see sap.ui.model.SimpleType#getFormatOptions
-		 */
+		// @override
+		// @see sap.ui.model.SimpleType#getFormatOptions
 		function getFormatOptions() {
 			var oBaseFormatOptions = fnBaseType.prototype.getFormatOptions.call(this);
 

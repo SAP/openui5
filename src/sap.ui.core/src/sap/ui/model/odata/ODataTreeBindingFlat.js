@@ -1931,7 +1931,6 @@ sap.ui.define([
 	};
 
 	/**
-	 * @override
 	 * @see sap.ui.model.odata.v2.ODataTreeBinding
 	 */
 	ODataTreeBindingFlat.prototype._hasChangedEntity = function (mChangedEntities) {

@@ -115,7 +115,6 @@ sap.ui.define([
 		 * Calculates a unique group ID for a given node
 		 * @param {Object} oNode Node of which the group ID shall be calculated
 		 * @returns {string} Group ID for oNode
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype._calculateGroupID = function (oNode) {
 			var sBindingPath = this.getPath();
@@ -172,7 +171,6 @@ sap.ui.define([
 		 * Expand function.
 		 * Due to the tree invalidation mechanism the tree has to be rebuilt before an expand operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype.expand = function() {
 			this._buildTree();
@@ -183,7 +181,6 @@ sap.ui.define([
 		 * Collapse function.
 		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a collapse operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype.collapse = function() {
 			this._buildTree();
@@ -194,7 +191,6 @@ sap.ui.define([
 		 * Builds the tree from start index with the specified number of nodes
 		 * @param {int} iStartIndex Index from which the tree shall be built
 		 * @param {int} iLength Number of Nodes
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype._buildTree = function(iStartIndex, iLength) {
 			if (this._invalidTree) {
@@ -209,7 +205,6 @@ sap.ui.define([
 		/**
 		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a findNode operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype.findNode = function () {
 			this._buildTree();
@@ -219,7 +214,6 @@ sap.ui.define([
 		/**
 		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a setSelectedIndex operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype.setSelectedIndex = function () {
 			this._buildTree();
@@ -229,7 +223,6 @@ sap.ui.define([
 		/**
 		 * Due to the tree invalidation mechanism the tree has to be rebuilt before a setSelctionInterval operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype.setSelectionInterval = function () {
 			this._buildTree();
@@ -239,7 +232,6 @@ sap.ui.define([
 		/**
 		 * Due to the tree invalidation mechanism the tree has to be rebuilt before an addSelectionInterval operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype.addSelectionInterval = function () {
 			this._buildTree();
@@ -249,7 +241,6 @@ sap.ui.define([
 		/**
 		 * Due to the tree invalidation mechanism the tree has to be rebuilt before an addSelectionInterval operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype.removeSelectionInterval = function () {
 			this._buildTree();
@@ -259,7 +250,6 @@ sap.ui.define([
 		/**
 		 * Due to the tree invalidation mechanism the tree has to be rebuilt before an addSelectionInterval operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype.clearSelection = function () {
 			this._buildTree();
@@ -269,7 +259,6 @@ sap.ui.define([
 		/**
 		 * Due to the tree invalidation mechanism the tree has to be rebuilt before an addSelectionInterval operation.
 		 * Calling buildTree is performance-safe, as the tree is invalid anyway.
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype.selectAll = function () {
 			this._buildTree();
@@ -282,7 +271,6 @@ sap.ui.define([
 		 * Because client treebinding knows all of the data from the very beginning, it should simply return the the
 		 * maximum group size without looking at the current section.
 		 *
-		 * @override
 		 */
 		ClientTreeBindingAdapter.prototype._calculateRequestLength = function(iMaxGroupSize, oSection) {
 			return iMaxGroupSize;

@@ -31,8 +31,8 @@ sap.ui.define([
 	 */
 	var MessageListBinding = ClientListBinding.extend("sap.ui.model.message.MessageListBinding");
 
-	/**
-	 * Define the symbol function when extended change detection is enabled
+	/*
+	 * Define the symbol function when extended change detection is enabled.
 	 * @override
 	 */
 	MessageListBinding.prototype.enableExtendedChangeDetection = function() {
