@@ -14,7 +14,7 @@
 .sapMWizardProgressNav {
 	box-sizing: border-box;
 	height: @_sap_m_WizardProgressNavigator_NavHeight;
-	padding: 0.875rem 1rem;
+	padding: 1rem;
 	-webkit-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
@@ -47,7 +47,7 @@
 .sapMWizardProgressNavStep {
 	display: table-cell;
 	position: relative;
-	min-width: 10.5rem;
+	padding: 0 @_sap_m_WizardProgressNavigator_StepPadding;
 
 	&:focus {
 		outline: none;
@@ -70,7 +70,6 @@
 	border-bottom-width: 1px;
 	border-bottom-style: solid;
 	z-index: -1;
-	margin-right: 0.25rem;
 }
 
 // we do not have a separator at the end for known number of steps
@@ -179,10 +178,13 @@
 	background: @sapUiObjectHeaderBackground;
 	border-color: @sapUiObjectHeaderBorderColor;
 	font-size: @sapMFontMediumSize;
-	margin: 0 0.125rem;
 	.sapUiIcon {
 		font-size: @sapMFontLargeSize;
 	}
+}
+
+.sapMSplitContainerDetail .sapMWizardProgressNav {
+	padding: 0.875rem 1rem;
 }
 
 html.sap-phone .sapMWizardProgressNav {
@@ -219,7 +221,7 @@ html.sap-phone .sapMWizardProgressNav {
 	display: inline-block;
 	vertical-align: middle;
 	text-align: left;
-	padding: 0 0.5rem 0 0.1875rem;
+	padding: 0 @_sap_m_WizardProgressNavigator_StepPadding;
 	max-height: 3rem;
 	overflow: hidden;
 	max-width: ~"calc(100% - 3rem)";
