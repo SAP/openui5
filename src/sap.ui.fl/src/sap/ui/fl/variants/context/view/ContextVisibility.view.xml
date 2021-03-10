@@ -26,7 +26,7 @@
 					<Toolbar style="Clear" id="restrictedToolbar">
 						<Label labelFor="selectedContextsList" text="{i18n>SELECTED_CONTEXT_LIST_TITLE}" design="Bold" required="true"/>
 						<ToolbarSpacer />
-						<Button id="removeAllButton" text="{i18n>REMOVE_ALL_BUTTON}" press=".removeAll"/>
+						<Button id="removeAllButton" text="{i18n>REMOVE_ALL_BUTTON}" press=".removeAll" enabled="{path: 'selectedContexts>/selected', formatter: '.isRemoveAllEnabled'}"/>
 						<Button id="addContextsButton" text="{i18n>ADD_CONTEXTS_BUTTON}" press=".onAddContextsHandler"/>
 					</Toolbar>
 				</headerToolbar>

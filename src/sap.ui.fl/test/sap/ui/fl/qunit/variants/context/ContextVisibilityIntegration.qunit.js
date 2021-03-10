@@ -141,8 +141,8 @@ sap.ui.define([
 			oCore.applyChanges();
 			assert.equal(this.oSelectedRolesList.getVisible(), true, "selected roles list is visible");
 			assert.equal(this.oSelectedRolesList.getItems().length, 0, "selected roles list contains entries");
-			assert.equal(this.oAddBtn.getVisible(), true, "add context button is visible");
-			assert.equal(this.oRemoveAllBtn.getVisible(), true, "remove all context button is visible");
+			assert.equal(this.oAddBtn.getEnabled(), true, "add context button is enabled");
+			assert.equal(this.oRemoveAllBtn.getEnabled(), false, "remove all context button is enabled");
 		});
 
 		QUnit.test("when checking for errors in component state before saving variant", function (assert) {
@@ -221,6 +221,8 @@ sap.ui.define([
 
 	}, function() {
 		QUnit.test("when initiating component with selected roles, then tooltips are rendered correctly", function (assert) {
+			assert.equal(this.oAddBtn.getEnabled(), true, "add context button is enabled");
+			assert.equal(this.oRemoveAllBtn.getEnabled(), true, "remove all context button is enabled");
 			assert.equal(this.oSelectedRolesList.getItems().length, 2, "selected roles list contains entries");
 			var oFirstItem = this.oSelectedRolesList.getItems()[0];
 			var oSecondItem = this.oSelectedRolesList.getItems()[1];
