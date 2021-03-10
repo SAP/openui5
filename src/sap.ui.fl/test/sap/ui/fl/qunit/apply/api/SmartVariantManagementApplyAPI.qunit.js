@@ -52,7 +52,7 @@ sap.ui.define([
 		QUnit.test("When loadVariants() is called and multiple variants are present for the persistencyKey of the passed control", function (assert) {
 			this.oControl = new Control("controlId1");
 			var sPersistencyKey = "variantManagement1";
-			this.oControl.getPersistencyKey = function () {
+			this.oControl.getPersonalizableControlPersistencyKey = function () {
 				return sPersistencyKey;
 			};
 
@@ -114,7 +114,7 @@ sap.ui.define([
 		QUnit.test("When loadVariants() is called and multiple variants, of which multiple are a overruling the standard variant, are present for the persistencyKey of the passed control", function (assert) {
 			this.oControl = new Control("controlId1");
 			var sPersistencyKey = "variantManagement1";
-			this.oControl.getPersistencyKey = function () {
+			this.oControl.getPersonalizableControlPersistencyKey = function () {
 				return sPersistencyKey;
 			};
 
@@ -289,7 +289,7 @@ sap.ui.define([
 			expected: "theDefaultVariant"
 		}].forEach(function (oTestData) {
 			QUnit.test(oTestData.testName, function (assert) {
-				this.oControl.getPersistencyKey = function () {
+				this.oControl.getPersonalizableControlPersistencyKey = function () {
 					return "variant1";
 				};
 				sandbox.stub(LrepConnector, "loadFlexData").resolves({
@@ -378,7 +378,7 @@ sap.ui.define([
 		}].forEach(function(oTestData) {
 			QUnit.test(oTestData.testName, function (assert) {
 				var sPersistencyKey = "variant1";
-				this.oControl.getPersistencyKey = function () {
+				this.oControl.getPersonalizableControlPersistencyKey = function () {
 					return sPersistencyKey;
 				};
 				sandbox.stub(LrepConnector, "loadFlexData").resolves({
@@ -413,7 +413,7 @@ sap.ui.define([
 		QUnit.test("collects the changes for a smartVariantManagement", function (assert) {
 			var sPersistencyKey = "smartVariantManagement1";
 
-			this.oControl.getPersistencyKey = function () {
+			this.oControl.getPersonalizableControlPersistencyKey = function () {
 				return sPersistencyKey;
 			};
 
@@ -483,7 +483,7 @@ sap.ui.define([
 				]
 			});
 
-			this.oControl.getPersistencyKey = function () {
+			this.oControl.getPersonalizableControlPersistencyKey = function () {
 				return sPersistencyKey;
 			};
 

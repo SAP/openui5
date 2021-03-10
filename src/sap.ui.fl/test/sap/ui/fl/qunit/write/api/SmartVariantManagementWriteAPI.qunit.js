@@ -64,7 +64,7 @@ sap.ui.define([
 				var sPersistencyKey = "thePersistencyKey";
 				var mPropertyBag = {
 					control: {
-						getPersistencyKey: function () {
+						getPersonalizableControlPersistencyKey: function () {
 							return sPersistencyKey;
 						}
 					},
