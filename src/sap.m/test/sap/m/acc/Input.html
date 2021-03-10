@@ -136,10 +136,23 @@
 				new sap.m.Label({text: "Price", labelFor: "I10"}),
 				new sap.m.Input("I10", { value: "220", description: "EUR", fieldWidth: "30%", change: handleChange}),
 				new sap.m.Label({text: "only \"Hello\" is valid", labelFor: "I11"}),
-				new sap.m.Input("I11", {type: sap.m.InputType.Text, value: "Hello", valueStateText: "Valid Value is Hello", change: handleChange2 })
-				]
+				new sap.m.Input("I11", {type: sap.m.InputType.Text, value: "Hello", valueStateText: "Valid Value is Hello", change: handleChange2 }),
+				new sap.m.Label({text: "Input with value state Error", labelFor: "I12"}),
+				new sap.m.Input("I12", {
+					showSuggestion: true,
+					valueState: "Error",
+					formattedValueStateText: new sap.m.FormattedText({
+						htmlText: "Error value state message with formatted text containing %%0",
+						controls: [
+							new sap.m.Link({
+								text: "link",
+								href: "#"
+							})
+						]
+					})
+				}).setModel(oModel1).bindAggregation("suggestionItems", "/", new sap.ui.core.Item({text: "{name}"}))
+			]
 		});
-
 		app.addPage(page1);
 		app.placeAt("body");
 

@@ -118,7 +118,7 @@
 			key: "{key}",
 			text: "{text}"
 		}),
-			oComboBoxDefault= new sap.m.ComboBox({
+			oComboBoxDefault= new sap.m.ComboBox("standardComboBox", {
 				items: {
 					path: "/items",
 					template: oItemTemplate
@@ -198,7 +198,7 @@
 				labelFor: oComboBoxWarning
 			}).addStyleClass("customLabel"),
 
-			oComboBoxError = new sap.m.ComboBox({
+			oComboBoxError = new sap.m.ComboBox("errorComboBox", {
 				valueState: sap.ui.core.ValueState.Error,
 				valueStateText: "Invalid entry",
 				items: {
