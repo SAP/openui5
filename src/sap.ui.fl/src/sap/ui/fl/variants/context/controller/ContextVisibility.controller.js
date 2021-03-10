@@ -203,6 +203,10 @@ function (
 				oErrorMessage = new MessageStrip(sErrorMessageId, {text: this.oI18n.getText("SELECTED_ROLES_ERROR"), type: MessageType.Error, showIcon: true});
 				this.byId("visibilityPanel").insertContent(oErrorMessage, 1);
 			}
+		},
+
+		isRemoveAllEnabled: function(aSelectedRoleIds) {
+			return aSelectedRoleIds.length !== 0;
 		}
 	});
 });
