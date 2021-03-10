@@ -222,7 +222,7 @@ sap.ui.define([
 	 */
 	DelegateMediator.getRequiredLibrariesForDefaultDelegate = function (aDelegateNames, oControl, sModelType) {
 		sModelType = getModelTypeForControl(oControl, sModelType);
-		var aDelegateInfo = DelegateMediator._mDefaultDelegateItems[sModelType] || {};
+		var aDelegateInfo = DelegateMediator._mDefaultDelegateItems[sModelType] || [];
 		return aDelegateInfo.reduce(function (aRequiredLibNames, mDelegateInfo) {
 			var bIsDefaultDelegate = aDelegateNames.indexOf(mDelegateInfo.name) > -1;
 			return aRequiredLibNames.concat(Object.keys((bIsDefaultDelegate && mDelegateInfo.requiredLibraries) || {}));
