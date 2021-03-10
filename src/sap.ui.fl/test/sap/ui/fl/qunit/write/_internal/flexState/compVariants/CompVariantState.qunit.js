@@ -25,7 +25,7 @@ sap.ui.define([
 	var sandbox = sinon.sandbox.create();
 
 	var sComponentId = "the.app.component";
-	new UIComponent(sComponentId);
+	var oComponent = new UIComponent(sComponentId);
 
 	QUnit.module("add", {
 		beforeEach: function () {
@@ -47,9 +47,10 @@ sap.ui.define([
 		});
 
 		[{
-			testName: "Given a change is added",
+			testName: "Given a change with specified ID is added",
 			propertyBag: {
 				changeSpecificData: {
+					id: "myFancyChangeId",
 					type: "addFavorite",
 					isUserDependent: true,
 					content: {}
@@ -144,9 +145,10 @@ sap.ui.define([
 			publicLayerAvailable: false,
 			expectedLayer: Layer.CUSTOMER
 		}, {
-			testName: "Given a user dependent variant is added",
+			testName: "Given a user dependent variant with specified ID is added",
 			propertyBag: {
 				changeSpecificData: {
+					id: "myFancyVariantId",
 					type: "pageVariant",
 					isVariant: true,
 					isUserDependent: true,
@@ -173,6 +175,10 @@ sap.ui.define([
 				assert.equal(mCompVariantsMapForPersistencyKey[oTestData.targetCategory].length, 1, "then one entity was stored");
 				assert.equal(mCompVariantsMapForPersistencyKey[oTestData.targetCategory][0], oAddedObject, "which is the returned entity");
 				assert.equal(mCompVariantsMapForPersistencyKey[oTestData.targetCategory][0].getLayer(), oTestData.expectedLayer, "which is in the correct layer");
+
+				if (oTestData.propertyBag.changeSpecificData.id) {
+					assert.equal(mCompVariantsMapForPersistencyKey[oTestData.targetCategory][0].getId(), oTestData.propertyBag.changeSpecificData.id, "the object has the passed ID");
+				}
 			});
 		});
 
@@ -818,6 +824,7 @@ sap.ui.define([
 	});
 
 	QUnit.done(function() {
+		oComponent.destroy();
 		jQuery("#qunit-fixture").hide();
 	});
 });

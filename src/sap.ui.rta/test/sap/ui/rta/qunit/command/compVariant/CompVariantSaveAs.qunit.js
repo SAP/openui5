@@ -49,10 +49,11 @@ sap.ui.define([
 				var oRemoveStub = sandbox.stub();
 				this.oControl.removeWeakVariant = oRemoveStub;
 
-				function assertExecute(oControl) {
+				function assertExecute(oControl, bRedo) {
 					assert.equal(oAddVariantAPIStub.callCount, 1, "the FL API was called");
 					var mExpectedProperties = {
 						changeSpecificData: {
+							id: bRedo ? sVariantId : undefined,
 							type: "myType",
 							texts: {
 								variantName: "myText"
@@ -127,7 +128,7 @@ sap.ui.define([
 					sandbox.resetHistory();
 					return oSaveAsCommand.execute();
 				}.bind(this)).then(function() {
-					assertExecute(this.oControl);
+					assertExecute(this.oControl, true);
 				}.bind(this));
 			});
 		});

@@ -63,6 +63,8 @@ sap.ui.define([
 		var oNewVariantProperties = this.getNewVariantProperties();
 		var mPropertyBag = {
 			changeSpecificData: {
+				// in case of redo the variant is still saved and the ID should be reused
+				id: this._oVariant ? this._oVariant.getId() : undefined,
 				type: oNewVariantProperties.type,
 				texts: {
 					variantName: oNewVariantProperties.text
