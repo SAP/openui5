@@ -9,11 +9,9 @@ sap.ui.define([
 	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/Device"
 ], function(
-	TableQUnitUtils, InteractiveRowMode, Table, Column, RowAction, PluginBase, TableUtils, library, JSONModel, JSONListBinding, Device
+	TableQUnitUtils, InteractiveRowMode, Table, Column, RowAction, PluginBase, TableUtils, library, Device
 ) {
 	"use strict";
 
@@ -287,7 +285,7 @@ sap.ui.define([
 
 	QUnit.module("Get contexts", {
 		beforeEach: function() {
-			this.oGetContextsSpy = sinon.spy(JSONListBinding.prototype, "getContexts");
+			this.oGetContextsSpy = sinon.spy(Table.prototype, "_getContexts");
 			this.oTable = TableQUnitUtils.createTable({
 				rowMode: new InteractiveRowMode(),
 				rows: {path: "/"},
@@ -304,8 +302,8 @@ sap.ui.define([
 		var oGetContextsSpy = this.oGetContextsSpy;
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts called once"); // render
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100, undefined), "All calls to Binding#getContexts consider the rendered row count");
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Method to get contexts called once"); // render
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls consider the rendered row count");
 		});
 	});
 

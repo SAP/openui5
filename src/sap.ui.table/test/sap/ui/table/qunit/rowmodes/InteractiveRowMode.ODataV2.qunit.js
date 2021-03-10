@@ -3,15 +3,15 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/table/rowmodes/InteractiveRowMode",
-	"sap/ui/model/odata/v2/ODataListBinding"
-], function(TableQUnitUtils, InteractiveRowMode, ODataListBinding) {
+	"sap/ui/table/Table"
+], function(TableQUnitUtils, InteractiveRowMode, Table) {
 	"use strict";
 
 	QUnit.module("Get contexts", {
 		before: function() {
 			this.oMockServer = TableQUnitUtils.startMockServer();
 			this.oDataModel = TableQUnitUtils.createODataModel();
-			this.oGetContextsSpy = sinon.spy(ODataListBinding.prototype, "getContexts");
+			this.oGetContextsSpy = sinon.spy(Table.prototype, "_getContexts");
 
 			TableQUnitUtils.setDefaultSettings({
 				rowMode: new InteractiveRowMode(),
@@ -40,8 +40,8 @@ sap.ui.define([
 
 		// render, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100, undefined), "All calls to Binding#getContexts consider the row count");
+			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls consider the row count");
 			oTable.destroy();
 		});
 	});
@@ -54,8 +54,8 @@ sap.ui.define([
 
 		// refreshRows, render, updateRows
 		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100, undefined), "All calls to Binding#getContexts consider the row count");
+			assert.equal(oGetContextsSpy.callCount, 3, "Method to get contexts called 3 times");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls consider the row count");
 			oTable.destroy();
 		});
 	});

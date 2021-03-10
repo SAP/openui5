@@ -9,11 +9,9 @@ sap.ui.define([
 	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/Device"
 ], function(
-	TableQUnitUtils, FixedRowMode, Table, Column, RowAction, PluginBase, TableUtils, library, JSONModel, JSONListBinding, Device
+	TableQUnitUtils, FixedRowMode, Table, Column, RowAction, PluginBase, TableUtils, library, Device
 ) {
 	"use strict";
 
@@ -336,7 +334,7 @@ sap.ui.define([
 
 	QUnit.module("Get contexts", {
 		beforeEach: function() {
-			this.oGetContextsSpy = sinon.spy(JSONListBinding.prototype, "getContexts");
+			this.oGetContextsSpy = sinon.spy(Table.prototype, "_getContexts");
 		},
 		afterEach: function() {
 			if (this.oTable) {
@@ -358,15 +356,15 @@ sap.ui.define([
 
 	QUnit.test("Initialization", function(assert) {
 		return this.createTable().qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Binding#getContexts called once"); // render
-			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100, undefined), "All calls to Binding#getContexts consider the row count");
+			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Method to get contexts called once"); // render
+			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls consider the row count");
 		}.bind(this));
 	});
 
 	QUnit.test("Initialization; Variable row heights", function(assert) {
 		return this.createTable(true).qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Binding#getContexts called once"); // render
-			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100, undefined), "All calls to Binding#getContexts consider the row count");
+			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Method to get contexts called once"); // render
+			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100), "All calls consider the row count");
 		}.bind(this));
 	});
 

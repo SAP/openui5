@@ -2307,8 +2307,20 @@ sap.ui.define([
 		}
 	};
 
+	/**
+	 * Gets contexts from the binding of the <code>rows</code> aggregation. If no binding exists, an empty array is returned.
+	 *
+	 * @param {int} [iStartIndex] The start index of the requested contexts.
+	 * @param {int} [iLength] The requested amount of contexts.
+	 * @param {int} [iThreshold] The threshold value.
+	 * @param {boolean} [bKeepCurrent] Whether this call keeps the result of {@link sap.ui.model.ListBinding#getCurrentContexts} untouched.
+	 * @returns {sap.ui.model.Context[]} The requested contexts.
+	 * @see sap.ui.model.ListBinding#getContexts
+	 * @private
+	 */
 	Table.prototype._getContexts = function(iStartIndex, iLength, iThreshold, bKeepCurrent) {
 		var oBinding = this.getBinding();
+
 		if (oBinding) {
 			return oBinding.getContexts(iStartIndex, iLength, iThreshold, bKeepCurrent);
 		} else {
@@ -2382,7 +2394,7 @@ sap.ui.define([
 		// if this is done before requesting fixed bottom rows, it saves some performance for the analytical table
 		// since the tree gets only build once (as result of getContexts call). If first the fixed bottom row would
 		// be requested the analytical binding would build the tree twice.
-		aTmpContexts = this._getContexts(iStartIndex, iLength, iThreshold, undefined);
+		aTmpContexts = this._getContexts(iStartIndex, iLength, iThreshold);
 
 		if (!bSuppressAdjustToBindingLength) {
 			this._adjustToTotalRowCount();

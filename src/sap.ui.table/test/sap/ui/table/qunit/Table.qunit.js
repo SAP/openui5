@@ -5056,11 +5056,50 @@ sap.ui.define([
 		assert.ok(!oTable._bLargeDataScrolling, "Large data scrolling disabled");
 	});
 
-	QUnit.test("test _getContexts, _getRowContexts functions", function(assert) {
-		assert.equal(oTable._getContexts(1, 4, 4).length, 4, "Correct contexts must have been returned");
-		assert.equal(oTable._getRowContexts().length, 10, "Correct row contexts must have been returned");
+	QUnit.test("_getContexts", function(assert) {
+		var oGetContexts = sinon.stub(oTable.getBinding(), "getContexts");
+		var sReturnValue = "Binding#getContexts return value";
+
+		oGetContexts.returns(sReturnValue);
+
+		assert.strictEqual(oTable._getContexts(), sReturnValue, "Called without arguments: Return value");
+		assert.equal(oGetContexts.callCount, 1, "Called without arguments: Binding#getContexts called once");
+		assert.ok(oGetContexts.calledWithExactly(undefined, undefined, undefined, undefined),
+			"Called without arguments: Binding#getContexts call arguments");
+
+		oGetContexts.reset();
+		assert.strictEqual(oTable._getContexts(1), sReturnValue, "Called with (1): Return value");
+		assert.equal(oGetContexts.callCount, 1, "Called with (1): Binding#getContexts called once");
+		assert.ok(oGetContexts.calledWithExactly(1, undefined, undefined, undefined), "Called with (1): Binding#getContexts call arguments");
+
+		oGetContexts.reset();
+		assert.strictEqual(oTable._getContexts(1, 2), sReturnValue, "Called with (1, 2): Return value");
+		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2): Binding#getContexts called once");
+		assert.ok(oGetContexts.calledWithExactly(1, 2, undefined, undefined), "Called with (1, 2): Binding#getContexts call arguments");
+
+		oGetContexts.reset();
+		assert.strictEqual(oTable._getContexts(1, 2, 3), sReturnValue, "Called with (1, 2, 3): Return value");
+		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3): Binding#getContexts called once");
+		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, undefined), "Called with (1, 2, 3): Binding#getContexts call arguments");
+
+		oGetContexts.reset();
+		assert.strictEqual(oTable._getContexts(1, 2, 3, true), sReturnValue, "Called with (1, 2, 3, true): Return value");
+		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3, true): Binding#getContexts called once");
+		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, true), "Called with (1, 2, 3, true): Binding#getContexts call arguments");
+
+		oGetContexts.reset();
+		assert.strictEqual(oTable._getContexts(1, 2, 3, false), sReturnValue, "Called with (1, 2, 3, false): Return value");
+		assert.equal(oGetContexts.callCount, 1, "Called with (1, 2, 3, false): Binding#getContexts called once");
+		assert.ok(oGetContexts.calledWithExactly(1, 2, 3, false), "Called with (1, 2, 3, false): Binding#getContexts call arguments");
+
+		oGetContexts.reset();
+		assert.strictEqual(oTable._getContexts(1, null, undefined, true), sReturnValue, "Called with (1, null, undefined, true): Return value");
+		assert.equal(oGetContexts.callCount, 1, "Called with (1, null, undefined, true): Binding#getContexts called once");
+		assert.ok(oGetContexts.calledWithExactly(1, null, undefined, true),
+			"Called with (1, null, undefined, true): Binding#getContexts call arguments");
+
 		oTable.unbindRows();
-		assert.equal(oTable._getContexts(1, 4, 4).length, 0, "Empty contexts returned as row binding was destoryed");
+		assert.deepEqual(oTable._getContexts(1, 2, 3), [], "Called without binding: Return value");
 	});
 
 	QUnit.test("test _getColumnsWidth function", function(assert) {

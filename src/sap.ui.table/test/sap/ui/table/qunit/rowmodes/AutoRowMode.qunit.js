@@ -10,11 +10,9 @@ sap.ui.define([
 	"sap/ui/table/plugins/PluginBase",
 	"sap/ui/table/utils/TableUtils",
 	"sap/ui/table/library",
-	"sap/ui/model/json/JSONModel",
-	"sap/ui/model/json/JSONListBinding",
 	"sap/ui/Device"
 ], function(
-	TableQUnitUtils, AutoRowMode, Table, Column, RowAction, CreationRow, PluginBase, TableUtils, library, JSONModel, JSONListBinding, Device
+	TableQUnitUtils, AutoRowMode, Table, Column, RowAction, CreationRow, PluginBase, TableUtils, library, Device
 ) {
 	"use strict";
 
@@ -425,7 +423,7 @@ sap.ui.define([
 			Device.resize.height = 500;
 		},
 		beforeEach: function() {
-			this.oGetContextsSpy = sinon.spy(JSONListBinding.prototype, "getContexts");
+			this.oGetContextsSpy = sinon.spy(Table.prototype, "_getContexts");
 		},
 		afterEach: function() {
 			if (this.oTable) {
@@ -450,21 +448,21 @@ sap.ui.define([
 
 	QUnit.test("Initialization", function(assert) {
 		return this.createTable().qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(this.oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times");  // updateRows, render
-			assert.ok(this.oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100, undefined),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(this.oGetContextsSpy.getCall(1).calledWithExactly(0, this.oTable.getRowMode().getComputedRowCounts().count, 100, undefined),
-				"The second call to Binding#getContexts considers the row count");
+			assert.strictEqual(this.oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times");  // updateRows, render
+			assert.ok(this.oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
+				"The first call considers the device height for the length");
+			assert.ok(this.oGetContextsSpy.getCall(1).calledWithExactly(0, this.oTable.getRowMode().getComputedRowCounts().count, 100),
+				"The second call considers the row count");
 		}.bind(this));
 	});
 
 	QUnit.test("Initialization; Variable row heights", function(assert) {
 		return this.createTable(true).qunit.whenRenderingFinished().then(function() {
-			assert.strictEqual(this.oGetContextsSpy.callCount, 2, "Binding#getContexts was called 2 times");  // updateRows, render
-			assert.ok(this.oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100, undefined),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(this.oGetContextsSpy.getCall(1).calledWithExactly(0, this.oTable.getRowMode().getComputedRowCounts().count + 1, 100, undefined),
-				"The second call to Binding#getContexts considers the row count");
+			assert.strictEqual(this.oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times");  // updateRows, render
+			assert.ok(this.oGetContextsSpy.getCall(0).calledWithExactly(0, 20, 100),
+				"The first call considers the device height for the length");
+			assert.ok(this.oGetContextsSpy.getCall(1).calledWithExactly(0, this.oTable.getRowMode().getComputedRowCounts().count + 1, 100),
+				"The second call considers the row count");
 		}.bind(this));
 	});
 
@@ -475,14 +473,14 @@ sap.ui.define([
 		return oTable.qunit.whenRenderingFinished().then(function() {
 			oGetContextsSpy.reset();
 		}).then(oTable.qunit.$resize({height: "756px"})).then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100, undefined),
-				"The call to Binding#getContexts considers the row count");
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
+				"The call considers the row count");
 			oGetContextsSpy.reset();
 		}).then(oTable.qunit.resetSize).then(function() {
-			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts was called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100, undefined),
-				"The call to Binding#getContexts considers the row count");
+			assert.strictEqual(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
+				"The call considers the row count");
 			oGetContextsSpy.reset();
 		});
 	});

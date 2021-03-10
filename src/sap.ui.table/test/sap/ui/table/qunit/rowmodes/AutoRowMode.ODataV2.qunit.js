@@ -3,9 +3,9 @@
 sap.ui.define([
 	"sap/ui/table/qunit/TableQUnitUtils.ODataV2",
 	"sap/ui/table/rowmodes/AutoRowMode",
-	"sap/ui/model/odata/v2/ODataListBinding",
+	"sap/ui/table/Table",
 	"sap/ui/Device"
-], function(TableQUnitUtils, AutoRowMode, ODataListBinding, Device) {
+], function(TableQUnitUtils, AutoRowMode, Table, Device) {
 	"use strict";
 
 	var iDeviceHeight = 550;
@@ -15,7 +15,7 @@ sap.ui.define([
 		before: function() {
 			this.oMockServer = TableQUnitUtils.startMockServer();
 			this.oDataModel = TableQUnitUtils.createODataModel();
-			this.oGetContextsSpy = sinon.spy(ODataListBinding.prototype, "getContexts");
+			this.oGetContextsSpy = sinon.spy(Table.prototype, "_getContexts");
 			this.iOriginalDeviceHeight = Device.resize.height;
 			Device.resize.height = iDeviceHeight;
 
@@ -47,15 +47,15 @@ sap.ui.define([
 
 		// render, auto rerender, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 4, "Binding#getContexts called 4 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The second call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The third call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100, undefined),
-				"The fourth call to Binding#getContexts considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 4, "Method to get contexts called 4 times");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
+				"The first call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100),
+				"The second call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRequestLength, 100),
+				"The third call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
+				"The fourth call considers the row count");
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -73,15 +73,15 @@ sap.ui.define([
 
 		// render, auto rerender, refreshRows, updateRows
 		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 4, "Binding#getContexts called 4 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The second call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The third call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count + 1, 100, undefined),
-				"The fourth call to Binding#getContexts considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 4, "Method to get contexts called 4 times");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
+				"The first call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100),
+				"The second call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRequestLength, 100),
+				"The third call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count + 1, 100),
+				"The fourth call considers the row count");
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -96,15 +96,15 @@ sap.ui.define([
 
 		// refreshRows, render, auto rerender, updateRows
 		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 4, "Binding#getContexts called 4 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The second call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The third call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100, undefined),
-				"The fourth call to Binding#getContexts considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 4, "Method to get contexts called 4 times");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
+				"The first call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100),
+				"The second call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRequestLength, 100),
+				"The third call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
+				"The fourth call considers the row count");
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -119,15 +119,15 @@ sap.ui.define([
 
 		// refreshRows, render, auto rerender, updateRows
 		return pReady.then(function() {
-			assert.equal(oGetContextsSpy.callCount, 4, "Binding#getContexts called 4 times");
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The second call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The third call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count + 1, 100, undefined),
-				"The fourth call to Binding#getContexts considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 4, "Method to get contexts called 4 times");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
+				"The first call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, iComputedRequestLength, 100),
+				"The second call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, iComputedRequestLength, 100),
+				"The third call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(3).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count + 1, 100),
+				"The fourth call considers the row count");
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count + 1, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -144,15 +144,15 @@ sap.ui.define([
 						   });
 
 		return pReady.then(oTable.qunit.$resize({height: "756px"})).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 1, "Binding#getContexts called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100, undefined),
-				"The call to Binding#getContexts considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
+				"The call considers the row count");
 			oGetContextsSpy.reset();
 
 		}).then(oTable.qunit.resetSize).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 1, "Binding#getContexts called once");
-			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100, undefined),
-				"The call to Binding#getContexts considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 1, "Method to get contexts called once");
+			assert.ok(oGetContextsSpy.calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
+				"The call considers the row count");
 			oTable.destroy();
 		});
 	});
@@ -169,11 +169,11 @@ sap.ui.define([
 		return pReady.then(function() {
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 2, "Binding#getContexts called 2 times"); // refreshRows, updateRows
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100, undefined),
-				"The second call to Binding#getContexts considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times"); // refreshRows, updateRows
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
+				"The first call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count, 100),
+				"The second call considers the row count");
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
@@ -192,11 +192,11 @@ sap.ui.define([
 		return pReady.then(function() {
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
-			assert.equal(oGetContextsSpy.callCount, 2, "Binding#getContexts called 2 times"); // refreshRows, updateRows
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100, undefined),
-				"The first call to Binding#getContexts considers the device height for the length");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count + 1, 100, undefined),
-				"The second call to Binding#getContexts considers the row count");
+			assert.equal(oGetContextsSpy.callCount, 2, "Method to get contexts called 2 times"); // refreshRows, updateRows
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, iComputedRequestLength, 100),
+				"The first call considers the device height for the length");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, oTable.getRowMode().getComputedRowCounts().count + 1, 100),
+				"The second call considers the row count");
 			assert.notEqual(oTable.getRowMode().getComputedRowCounts().count + 1, iComputedRequestLength,
 				"The computed request length and the row count should not be equal in this test");
 			oTable.destroy();
