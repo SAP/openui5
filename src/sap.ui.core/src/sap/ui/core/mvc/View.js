@@ -84,6 +84,7 @@ sap.ui.define([
 	 *       }
 	 *
 	 *       // create view content and return the root control(s)
+	 *       // or a Promise resolving with the control(s).
 	 *       createContent: function() {
 	 *         return new Promise(function(res, rej) {
 	 *             res(new Panel({...}));
@@ -96,13 +97,13 @@ sap.ui.define([
 	 * </pre>
 	 *
 	 * <h3>View Instantiation</h3>
-	 * The preferred ways of instantiating a typed View is via the generic factory {@link sap.ui.core.mvc.View.create
+	 * The preferred way of instantiating a typed View is via the generic factory {@link sap.ui.core.mvc.View.create
 	 * View.create}.
 	 *
 	 * When the <code>viewName</code> starts with prefix <code>"module:"</code>, the remainder of the name
 	 * is assumed to be the name of a module that exports a typed view (a subclass of <code>View</code>).
 	 * The module name must use the same syntax as for <code>sap.ui.define/sap.ui.require</code>
-	 * (slash-separated name).
+	 * (slash-separated name without '.js' suffix).
 	 *
 	 * <b>Example:</b> Instantiating a typed view with <code>View.create</code>
 	 * <pre>
@@ -1268,7 +1269,7 @@ sap.ui.define([
 		}
 	};
 
-	/*
+	/**
 	 * Extract module name from viewName property.
 	 *
 	 * @param {object} mSettings Settings as given to the view factory
@@ -1354,7 +1355,7 @@ sap.ui.define([
 	 * can construct the complete UI in this method, or only return the root control and create the remainder of the UI
 	 * lazily later on.
 	 *
-	 * @returns {sap.ui.core.Control|sap.ui.core.Control[]} A control or array of controls representing the view user interface
+	 * @returns {sap.ui.core.Control|sap.ui.core.Control[]|Promise<sap.ui.core.Control|sap.ui.core.Control[]>} A control or array of controls representing the view user interface or a Promise resolving with a control or an array of controls.
 	 * @public
 	 * @name sap.ui.core.mvc.View#createContent
 	 * @function
@@ -1367,7 +1368,9 @@ sap.ui.define([
 	 *
 	 * You can overwrite this function and return <code>true</code> to activate the automatic prefixing.
 	 *
-	 * @since 1.80
+	 * <b>Note</b>: Auto-prefixing is only available for synchronous content creation. For asynchronous content creation use {@link #createId} instead, to prefix the IDs programmatically.
+	 *
+	 * @since 1.88
 	 * @returns {boolean} Whether the control IDs should be prefixed automatically
 	 * @protected
 	 */
@@ -1389,11 +1392,9 @@ sap.ui.define([
 		return ManagedObject.runWithPreprocessors(function() {
 			if (mSettings.async) {
 				return this.createContent(oController).then(function(vContent) {
-					ManagedObject.runWithPreprocessors(function() {
-						this.applySettings({
-							content : vContent
-						});
-					}.bind(this), mPreprocessorSettings);
+					this.applySettings({
+						content : vContent
+					});
 				}.bind(this));
 			} else {
 				this.applySettings({
