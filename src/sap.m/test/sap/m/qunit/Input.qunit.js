@@ -5907,7 +5907,7 @@ sap.ui.define([
 
 	QUnit.test("Should restore default filtering function", function (assert) {
 		// Setup
-		var fnFilter = this.oInput._fnFilter;
+		var fnFilter = this.oInput._getFilterFunction();
 
 		// Act
 		this.oInput.showItems(function () {
@@ -5915,7 +5915,7 @@ sap.ui.define([
 		});
 
 		// Assert
-		assert.strictEqual(this.oInput._fnFilter, fnFilter, "Default function has been restored");
+		assert.strictEqual(this.oInput._getFilterFunction(), fnFilter, "Default function has been restored");
 
 		// Act
 		fnFilter = function (sValue, oItem) {
@@ -5927,7 +5927,7 @@ sap.ui.define([
 		});
 
 		// Assert
-		assert.strictEqual(this.oInput._fnFilter, fnFilter, "Custom filter function has been restored");
+		assert.strictEqual(this.oInput._getFilterFunction(), fnFilter, "Custom filter function has been restored");
 	});
 
 	QUnit.test("Should show all the items", function (assert) {

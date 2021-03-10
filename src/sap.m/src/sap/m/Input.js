@@ -535,7 +535,6 @@ function(
 	 */
 	Input.prototype.init = function() {
 		InputBase.prototype.init.call(this);
-		this._fnFilter = inputsDefaultFilter;
 
 		// Counter for concurrent issues with setValue:
 		this._iSetCount = 0;
@@ -1138,6 +1137,24 @@ function(
 		assert(typeof (fnFilter) === "function", "Input.setFilterFunction: first argument fnFilter must be a function on " + this);
 		this._fnFilter = fnFilter;
 		return this;
+	};
+
+	/**
+	 * Returns a custom or default filter function for list or tabular suggestions.
+	 *
+	 * If no custom filter is set, default filtering is set depending on the type of the suggestions.
+	 *
+	 * @private
+	 * @param {boolean} bForceDefaultFiltering Whether or not to apply the default filter even if custom one is set
+	 *
+	 * @returns {function} The default filter function depending on the type of the suggestions.
+	 */
+	Input.prototype._getFilterFunction = function(bForceDefaultFiltering) {
+		if (typeof this._fnFilter === "function" && !bForceDefaultFiltering) {
+			return this._fnFilter;
+		}
+
+		return !this._hasTabularSuggestions() ? inputsDefaultFilter : Input._DEFAULTFILTER_TABULAR;
 	};
 
 	/**
@@ -2604,11 +2621,6 @@ function(
 	 * @private
 	 */
 	Input.prototype._decorateSuggestionsPopoverTable = function () {
-		// tabular suggestions
-		// if no custom filter is set we replace the default filter function here
-		if (this._fnFilter === inputsDefaultFilter) {
-			this._fnFilter = Input._DEFAULTFILTER_TABULAR;
-		}
 
 		if (this.getShowTableSuggestionValueHelp()) {
 			this._addShowMoreButton();
@@ -2896,7 +2908,7 @@ function(
 	 */
 	Input.prototype.showItems = function (fnFilter) {
 		var oFilterResults, iSuggestionsLength,
-			fnFilterStore = this._fnFilter;
+			fnFilterStore = this._getFilterFunction();
 
 		// in case of a non-editable or disabled, the popup cannot be opened
 		if (!this.getEnabled() || !this.getEditable()) {
@@ -3059,7 +3071,7 @@ function(
 				sValue, // the value, to be used as a filter
 				this.getFilterSuggests(), // boolean that determines if the suggestions should be filtered
 				true, // filter also by secondary values
-				this._fnFilter // the filter function
+				this._getFilterFunction() // the filter function
 			);
 			this._mapItems(oFilterResults);
 		}
@@ -3079,7 +3091,8 @@ function(
 			bFilter = this.getFilterSuggests(),
 			aFilteredItems = [],
 			aGroups = [],
-			bIsAnySuggestionAlreadySelected = false;
+			bIsAnySuggestionAlreadySelected = false,
+			fnFilter = this._getFilterFunction();
 
 		// filter tabular items
 		aTabularRows.forEach(function(oTabularRow) {
@@ -3089,7 +3102,7 @@ function(
 					visible: false
 				});
 			} else {
-				bShowItem = !bFilter || this._fnFilter(sValue, oTabularRow);
+				bShowItem = !bFilter || fnFilter(sValue, oTabularRow);
 
 				oTabularRow.setVisible(bShowItem);
 				bShowItem && aFilteredItems.push(oTabularRow);
