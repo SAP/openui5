@@ -30,7 +30,7 @@
 				<Label text="Number of cards" />
 				<Input id="numberOfCards" width="4rem" type="Number" value="11" />
 				<Label text="dataMode to 'Auto'"/>
-				<checkBox id="dataMode"></checkBox>
+				<CheckBox id="dataMode"></CheckBox>
 				<Button text="Start loading" type="Emphasized" press=".onFormSubmit" />
 			</form:SimpleForm>
 
