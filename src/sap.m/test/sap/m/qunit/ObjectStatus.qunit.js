@@ -535,25 +535,35 @@ sap.ui.define([
 		oObjectStatus.destroy();
 	});
 
-	QUnit.test("Hidden state element invisibility class", function (assert) {
+	QUnit.test("State element is being referenced", function (assert) {
 		// Arrange
+		var oText = new sap.m.Text("description", {text: "test"});
 		var oObjectStatus = new ObjectStatus("os", {
 			text: "Something",
-			state: ValueState.Error
+			ariaDescribedBy: oText
 		});
 
+		oText.placeAt("qunit-fixture");
 		oObjectStatus.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
 		// Assert
-		assert.ok(oObjectStatus.$().find("#ossapSRH").hasClass("sapUiPseudoInvisibleText"),
-			"Hidden state element has the pseudo invisibility class");
+		assert.notOk(oObjectStatus._oInvisibleText, "Hidden state element has not been created");
+		assert.strictEqual(oObjectStatus.$().attr("aria-describedby"), "description",
+			"There should be 1 ID (only Text id) in aria-describedby");
 
-		assert.notOk(jQuery("#ossapSRH").hasClass("sapUiInvisibleText"),
-			"Hidden state element doesn't have the pure invisible text class");
+		// Act
+		oObjectStatus.setState(ValueState.Error);
+		sap.ui.getCore().applyChanges();
+
+		// Assert
+		assert.ok(oObjectStatus._oInvisibleText, "Hidden state element has been created");
+		assert.strictEqual(oObjectStatus.$().attr("aria-describedby"), "description" + " " + oObjectStatus._oInvisibleText.getId(),
+			"There should be 2 ID (Text and InvisibleText) in aria-describedby");
 
 		//Cleanup
 		oObjectStatus.destroy();
+		oText.destroy();
 	});
 
 	QUnit.test("Internal icon ARIA for icon-only ObjectStatus", function (assert) {
