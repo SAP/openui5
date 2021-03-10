@@ -1,12 +1,14 @@
 sap.ui.define([
-	"sap/ui/core/UIComponent"
+	"sap/ui/core/UIComponent",
+	"sap/ui/core/mvc/XMLView"
 ],
 function(
-	UIComponent
+	UIComponent,
+	XMLView
 ) {
 	"use strict";
 
-	var Component = UIComponent.extend("sap.m.sample.Table.Component", {
+	return UIComponent.extend("sap.m.sample.Table.Component", {
 		metadata: {
 			manifest: "json",
 			publicMethods: [
@@ -31,21 +33,19 @@ function(
 
 		getTable: function () {
 			return this._rootView.getContent()[0];
+		},
+
+		createContent: function () {
+			var oApp = new sap.m.App();
+
+			XMLView.create({
+				id: "idMain1",
+				viewName: "sap.m.sample.Table.Table"
+			}).then(function(oPage) {
+				oApp.addPage(oPage);
+			});
+			return oApp;
 		}
+
 	});
-
-	Component.prototype.createContent = function () {
-		var oApp = new sap.m.App();
-
-		var oPage = sap.ui.view(this.createId("idMain1"), {
-			viewName: "sap.m.sample.Table.Table",
-			type: sap.ui.core.mvc.ViewType.XML
-		});
-
-		oApp.addPage(oPage);
-
-		return oApp;
-	};
-
-	return Component;
 });

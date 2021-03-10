@@ -652,8 +652,7 @@ sap.ui.define([
 							"sap.ui.rta.test": "test-resources/sap/ui/rta/internal/testdata/rta/"
 						},
 						flexibilityServices: '[{"connector": "SessionStorageConnector"}]'
-					},
-					autostart: false // test calls QUnit.start after some async initialization
+					}
 				},
 				"integration/BasicFunctionality": {
 					group: "Integration",

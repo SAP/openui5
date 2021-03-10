@@ -108,11 +108,12 @@ function(
 				id: "sap.ui.fl.qunit.integration.async.testComponentWithView",
 				manifest: true,
 				componentData: {
-					async: true
+					async: true,
+					cacheKey: new Date().toString() //Needs to be different each time
 				}
 			}).then(function(oComponent) {
 				this.oComponent = oComponent;
-				return oComponent.getRootControl().loaded();
+				return oComponent.oViewPromise;
 			}.bind(this)).then(function(oView) {
 				assert.ok(oView);
 				assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml processing was called once for the view");
@@ -122,8 +123,9 @@ function(
 				assert.equal(XmlTreeModifier, oPassedModifier, "the call was done with the xml tree modifier");
 				oXmlPrepossessSpy.restore();
 				oAddGroupChangeHandlerSpy.restore();
-				return oView;
-			});
+				this.oComponent.destroy();
+				oView.destroy();
+			}.bind(this));
 		});
 
 		if (!CacheManager._isSupportedEnvironment()) {
@@ -149,9 +151,10 @@ function(
 					}
 				}).then(function(oComponent) {
 					that.oComponent = oComponent;
-					return oComponent.getRootControl().loaded();
-				}).then(function() {
+					return oComponent.oViewPromise;
+				}).then(function(oView) {
 					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
+					oView.destroy();
 					that.oComponent.destroy();
 				}).then(function() {
 					// recreate the application from scratch (reload scenario)
@@ -166,10 +169,11 @@ function(
 					});
 				}).then(function(oComponent) {
 					that.oComponent = oComponent;
-					return that.oComponent.getRootControl().loaded();
-				}).then(function() {
+					return oComponent.oViewPromise;
+				}).then(function(oView) {
 					assert.equal(oXmlPrepossessSpy.callCount, 1, "the view was cached so no further xml processing took place");
 					oXmlPrepossessSpy.restore();
+					oView.destroy();
 				});
 			});
 
@@ -191,9 +195,10 @@ function(
 					}
 				}).then(function(oComponent) {
 					that.oComponent = oComponent;
-					return oComponent.getRootControl().loaded();
-				}).then(function() {
+					return oComponent.oViewPromise;
+				}).then(function(oView) {
 					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
+					oView.destroy();
 					that.oComponent.destroy();
 				}).then(function() {
 					// recreate the application from scratch (reload scenario)
@@ -208,9 +213,10 @@ function(
 					});
 				}).then(function(oComponent) {
 					that.oComponent = oComponent;
-					return that.oComponent.getRootControl().loaded();
-				}).then(function() {
+					return that.oComponent.oViewPromise;
+				}).then(function(oView) {
 					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view cache key changed and a new xml processing took place");
+					oView.destroy();
 					oXmlPrepossessSpy.restore();
 				});
 			});
@@ -240,8 +246,8 @@ function(
 					}
 				}).then(function(oComponent) {
 					this.oComponent = oComponent;
-					return Promise.all([oComponent.getRootControl().loaded(), oSetCachePromise]);
-				}.bind(this)).then(function() {
+					return Promise.all([oComponent.oViewPromise, oSetCachePromise]);
+				}.bind(this)).then(function(oView) {
 					var oCacheManagerCall = oCacheManagerSpy.getCall(0);
 					var sCachedXml = oCacheManagerCall.args[1].xml;
 					//as cached xml string will vary in different browsers (especially namespace handling), we will parse the xml again (without tabs and newlines to reduce unwanted text nodes)
@@ -260,6 +266,7 @@ function(
 					var oPassedModifier = oAddGroupChangeHandlerSpy.getCall(0).args[2].modifier;
 					assert.equal(XmlTreeModifier, oPassedModifier, "the call was done with the xml tree modifier");
 					oAddGroupChangeHandlerSpy.restore();
+					oView[0].destroy();
 				});
 			});
 
@@ -292,19 +299,21 @@ function(
 				return Component.create(mSettings)
 				.then(function(oComponent) {
 					this.oComponent = oComponent;
-					return oComponent.getRootControl().loaded();
+					return oComponent.oViewPromise;
 				}.bind(this))
-				.then(function() {
+				.then(function(oView) {
 					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
+					oView.destroy();
 					this.oComponent.destroy();
 				}.bind(this))
 				.then(Component.create.bind(Component, mSettings)) // second component instance
 				.then(function(oComponent) {
 					this.oComponent = oComponent;
-					return this.oComponent.getRootControl().loaded();
+					return this.oComponent.oViewPromise;
 				}.bind(this))
-				.then(function() {
+				.then(function(oView) {
 					assert.equal(oXmlPrepossessSpy.callCount, 1, "the view was not processed again");
+					oView.destroy();
 				});
 			});
 
@@ -342,18 +351,20 @@ function(
 				return Component.create(mSettings)
 				.then(function(oComponent) {
 					this.oComponent = oComponent;
-					return oComponent.getRootControl().loaded();
+					return oComponent.oViewPromise;
 				}.bind(this))
-				.then(function() {
+				.then(function(oView) {
 					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
+					oView.destroy();
 					this.oComponent.destroy();
 				}.bind(this))
 				.then(Component.create.bind(Component, mSettings)) // second component instance
 				.then(function(oComponent) {
 					this.oComponent = oComponent;
-					return this.oComponent.getRootControl().loaded();
-				}.bind(this)).then(function() {
+					return this.oComponent.oViewPromise;
+				}.bind(this)).then(function(oView) {
 					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view was processed once more");
+					oView.destroy();
 				});
 			});
 
@@ -386,20 +397,22 @@ function(
 				return Component.create(mSettings)
 				.then(function(oComponent) {
 					this.oComponent = oComponent;
-					return oComponent.getRootControl().loaded();
+					return oComponent.oViewPromise;
 				}.bind(this))
-				.then(function() {
+				.then(function(oView) {
 					assert.equal(oXmlPrepossessSpy.callCount, 1, "the xml view was processed once");
 					Component.prototype.getModel.restore();
+					oView.destroy();
 					this.oComponent.destroy();
 				}.bind(this))
 				.then(Component.create.bind(Component, mSettings)) // second component instance
 				.then(function(oComponent) {
 					this.oComponent = oComponent;
-					return this.oComponent.getRootControl().loaded();
+					return this.oComponent.oViewPromise;
 				}.bind(this))
-				.then(function() {
+				.then(function(oView) {
 					assert.equal(oXmlPrepossessSpy.callCount, 2, "the view was processed once more");
+					oView.destroy();
 				});
 			});
 		}

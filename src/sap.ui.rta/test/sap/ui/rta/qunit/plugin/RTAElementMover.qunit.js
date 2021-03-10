@@ -99,9 +99,8 @@ sap.ui.define([
 				component: oComp
 			}).placeAt("qunit-fixture");
 			sap.ui.getCore().applyChanges();
-
-			this.oView = sap.ui.getCore().byId("Comp1---idMain1");
-			return this.oView.loaded().then(function() {
+			return oComp.oView.then(function() {
+				this.oView = sap.ui.getCore().byId("Comp1---idMain1");
 				return this.oView.getController().isDataReady();
 			}.bind(this));
 		},

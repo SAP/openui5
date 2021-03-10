@@ -2,17 +2,16 @@ sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/model/json/JSONModel",
 	"sap/m/App",
-	"sap/ui/core/library"
+	"sap/ui/core/library",
+	"sap/ui/core/mvc/XMLView"
 ], function(
 	UIComponent,
 	JSONModel,
 	App,
-	library
+	library,
+	XMLView
 ) {
 	"use strict";
-
-	// shortcut for sap.ui.core.mvc.ViewType
-	var ViewType = library.mvc.ViewType;
 
 	return UIComponent.extend("sap.ui.rta.test.rtaOpenUI5Only.Component", {
 		metadata: {
@@ -28,21 +27,17 @@ sap.ui.define([
 			var oModel = new JSONModel({
 				showAdaptButton: this._bShowAdaptButton
 			});
-
-			var oView = sap.ui.view(this.createId("idMain1"), {
-				viewName: "sap.ui.rta.test.rtaOpenUI5Only.Root",
-				type: ViewType.XML,
-				async: true
-			});
-
-			if (this._bShowAdaptButton) {
-				oView.addStyleClass("sapUiRtaMarginTopForToolbar");
-			}
-
-			oView.setModel(oModel, "view");
-
 			var oApp = new App();
-			oApp.addPage(oView);
+			XMLView.create({
+				id: "idMain1",
+				viewName: "sap.ui.rta.test.rtaOpenUI5Only.Root"
+			}).then(function(oView) {
+				if (this._bShowAdaptButton) {
+					oView.addStyleClass("sapUiRtaMarginTopForToolbar");
+				}
+				oView.setModel(oModel, "view");
+				oApp.addPage(oView);
+			}.bind(this));
 			return oApp;
 		}
 	});

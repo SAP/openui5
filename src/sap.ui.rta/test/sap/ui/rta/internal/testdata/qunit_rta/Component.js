@@ -1,11 +1,13 @@
 sap.ui.define([
 	"sap/ui/core/UIComponent",
 	"sap/ui/rta/test/SmartLinkUtil",
-	"sap/ui/core/CustomData"
+	"sap/ui/core/CustomData",
+	"sap/ui/core/mvc/XMLView"
 ], function(
 	UIComponent,
 	SmartLinkUtil,
-	CustomData
+	CustomData,
+	XMLView
 ) {
 	"use strict";
 
@@ -43,16 +45,14 @@ sap.ui.define([
 				showAdaptButton: this._bShowAdaptButton
 			});
 
-			var oPage = sap.ui.view(this.createId("idMain1"), {
-				viewName: "sap.ui.rta.qunitrta.ComplexTest",
-				type: sap.ui.core.mvc.ViewType.XML
+			this.oView = XMLView.create({
+				id: this.createId("idMain1"),
+				viewName: "sap.ui.rta.qunitrta.ComplexTest"
+			}).then(function(oPage) {
+				oPage.setModel(oModel, "view");
+				oApp.addPage(oPage);
+				return oPage;
 			});
-
-			this.oView = oPage;
-
-			oPage.setModel(oModel, "view");
-
-			oApp.addPage(oPage);
 
 			return oApp;
 		}

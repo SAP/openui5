@@ -12,9 +12,10 @@ sap.ui.define([
 	"sap/ui/fl/FlexController",
 	"sap/ui/fl/ChangePersistenceFactory",
 	"sap/ui/fl/Utils",
-	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor"
+	"sap/ui/fl/support/apps/uiFlexibilityDiagnostics/helper/Extractor",
+	"sap/ui/core/mvc/XMLView"
 ],
-	function (jQuery, Plugin, Support, JsControlTreeModifier, JSONModel, FlexController, ChangePersistenceFactory, Utils, Extractor) {
+	function (jQuery, Plugin, Support, JsControlTreeModifier, JSONModel, FlexController, ChangePersistenceFactory, Utils, Extractor, XMLView) {
 		"use strict";
 
 		/**
@@ -91,29 +92,28 @@ sap.ui.define([
 		 * @private
 		 */
 		Flexibility.prototype._renderToolPlugin = function () {
-			var that = this;
-
 			var _doPlainRendering = function () {
 				var rm = sap.ui.getCore().createRenderManager();
-				rm.write("<div id='" + that.getId() + "-FlexCacheArea' class='sapUiSizeCompact'></div>");
-				rm.flush(that.$().get(0));
+				rm.write("<div id='" + this.getId() + "-FlexCacheArea' class='sapUiSizeCompact'></div>");
+				rm.flush(this.$().get(0));
 				rm.destroy();
-			};
+			}.bind(this);
 
 			var _initView = function () {
-				that.oView = sap.ui.view({
+				this.oViewPromise = XMLView.create({
 					viewName: "sap.ui.fl.support.diagnostics.Flexibility",
-					type: sap.ui.core.mvc.ViewType.XML,
 					viewData: {
-						plugin: that
+						plugin: this
 					}
-				});
-				that.oView.placeAt(that.getId() + "-FlexCacheArea");
-				that.oView.setModel(that.oAppModel, "flexApps");
-				that.oView.setModel(that.oToolSettings, "flexToolSettings");
-				that.oView.setModel(that.oChangesModel, "flexChanges");
-				that.oView.setModel(that.oChangeDetails, "flexChangeDetails");
-			};
+				}).then(function(oView) {
+					this.oView = oView;
+					this.oView.placeAt(this.getId() + "-FlexCacheArea");
+					this.oView.setModel(this.oAppModel, "flexApps");
+					this.oView.setModel(this.oToolSettings, "flexToolSettings");
+					this.oView.setModel(this.oChangesModel, "flexChanges");
+					this.oView.setModel(this.oChangeDetails, "flexChangeDetails");
+				}.bind(this));
+			}.bind(this);
 
 			_doPlainRendering();
 			_initView();
