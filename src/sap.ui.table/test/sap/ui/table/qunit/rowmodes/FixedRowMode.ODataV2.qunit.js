@@ -49,7 +49,7 @@ sap.ui.define([
 		// render, refreshRows, updateRows
 		return pReady.then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the row count");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100, undefined), "All calls to Binding#getContexts consider the row count");
 		});
 	});
 
@@ -62,7 +62,7 @@ sap.ui.define([
 		// render, refreshRows, updateRows
 		return pReady.then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100), "All calls to Binding#getContexts consider the row count");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100, undefined), "All calls to Binding#getContexts consider the row count");
 		});
 	});
 
@@ -75,7 +75,7 @@ sap.ui.define([
 		// refreshRows, render, updateRows
 		return pReady.then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the row count");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100, undefined), "All calls to Binding#getContexts consider the row count");
 		});
 	});
 
@@ -88,7 +88,9 @@ sap.ui.define([
 		// refreshRows, render, updateRows
 		return pReady.then(function() {
 			assert.equal(oGetContextsSpy.callCount, 3, "Binding#getContexts called 3 times");
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100), "All calls to Binding#getContexts consider the row count");
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100, undefined), "First call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 11, 100, undefined), "Second call to Binding#getContexts");
+			assert.ok(oGetContextsSpy.getCall(2).calledWithExactly(0, 11, 100, undefined), "Third call to Binding#getContexts");
 		});
 	});
 
@@ -105,9 +107,9 @@ sap.ui.define([
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Binding#getContexts called 2 times"); // refreshRows, updateRows
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100),
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 10, 100, undefined),
 				"The first call to Binding#getContexts considers the row count");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 10, 100),
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 10, 100, undefined),
 				"The second call to Binding#getContexts considers the row count");
 		});
 	});
@@ -125,9 +127,9 @@ sap.ui.define([
 			oTable.getBinding().refresh();
 		}).then(oTable.qunit.whenRenderingFinished).then(function() {
 			assert.equal(oGetContextsSpy.callCount, 2, "Binding#getContexts called 2 times"); // refreshRows, updateRows
-			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 11, 100),
+			assert.ok(oGetContextsSpy.getCall(0).calledWithExactly(0, 11, 100, undefined),
 				"The first call to Binding#getContexts considers the row count");
-			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 11, 100),
+			assert.ok(oGetContextsSpy.getCall(1).calledWithExactly(0, 11, 100, undefined),
 				"The second call to Binding#getContexts considers the row count");
 		});
 	});
