@@ -95,7 +95,7 @@ sap.ui.define([
 	 *
 	 * @constructor
 	 * @public
-	 * @since 1.26.0
+	 * @deprecated as of version 1.88, replaced by {@link sap.m.upload.UploadSet}
 	 * @alias sap.m.UploadCollection
 	 * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
 	 */
