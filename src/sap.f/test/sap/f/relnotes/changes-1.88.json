@@ -3,6 +3,17 @@
     "date": "March 2021",
     "notes": [
       {
+        "id": "c8c1177c3c9ef4c6988aac7063c1750bf34bafa5",
+        "type": "FIX",
+        "text": " sap.f.DynamicPageTitle: Cutting of buttons is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180085793"
+          }
+        ]
+      },
+      {
         "id": "f629d3d5509832815953b8bc7fff183deb9949ed",
         "type": "FIX",
         "text": " sap.f.DynamicPage: Revert sample change"
