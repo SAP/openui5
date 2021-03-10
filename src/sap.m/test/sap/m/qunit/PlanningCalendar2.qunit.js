@@ -1591,6 +1591,18 @@ sap.ui.define([
 		oPC.destroy();
 	});
 
+	QUnit.test("Title referencing", function(assert) {
+		var oPC = new PlanningCalendar();
+
+		oPC.placeAt("bigUiArea");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oPC.$().attr("aria-labelledby"), oPC._getHeader().getId() + "-Title",
+			"Control's title is added in aria-labelledby");
+
+		oPC.destroy();
+	});
+
 	QUnit.module("views", {
 		beforeEach: function () {
 			this.oPC = new PlanningCalendar();
