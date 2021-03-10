@@ -5,9 +5,8 @@ sap.ui.define([
 	"sap/ui/core/ComponentContainer",
 	"sap/ui/core/UIComponent",
 	"sap/ui/core/UIComponentMetadata",
-	"sap/ui/core/mvc/View",
 	"sap/base/Log"
-], function(jQuery, Component, ManagedObject, ComponentContainer, UIComponent, UIComponentMetadata, View, Log) {
+], function(jQuery, Component, ManagedObject, ComponentContainer, UIComponent, UIComponentMetadata, Log) {
 
 	"use strict";
 	/*global sinon, QUnit*/
@@ -698,7 +697,6 @@ sap.ui.define([
 			//sinon.config.useFakeTimers = false;
 			this.requireSpy = sinon.spy(sap.ui, "require");
 			this.logWarningSpy = sinon.spy(Log, "warning");
-			this.oViewCreateSpy = sinon.spy(View, "create");
 		},
 
 		beforeEach : function() {
@@ -752,7 +750,6 @@ sap.ui.define([
 			this.oServer.restore();
 			this.requireSpy.reset();
 			this.logWarningSpy.reset();
-			this.oViewCreateSpy.restore();
 		},
 
 		after: function() {
@@ -962,96 +959,6 @@ sap.ui.define([
 		return sap.ui.component({
 			name: "manifestModules.scenario4",
 			manifest: true
-		}).catch(function() {
-			assert.ok(true, "Modules could not be loaded and an error occured.");
-		});
-	});
-
-	QUnit.test("Component with async rootView creation", function(assert) {
-		assert.expect(5);
-
-		var oManifest = {
-			"sap.app" : {
-				"id" : "app"
-			},
-			"sap.ui5": {
-				"rootView" : {
-					"viewName" : "testdata.view.Main",
-					"type" : "XML",
-					"async" : true
-				}
-			}
-		};
-		this.setRespondedManifest(oManifest, "scenario5");
-
-		sap.ui.predefine("manifestModules/scenario5/Component", ["sap/ui/core/UIComponent"], function(UIComponent) {
-			return UIComponent.extend("manifestModules.scenario5.Component", {
-				metadata: {
-					manifest: "json",
-					interfaces: [
-						"sap.ui.core.IAsyncComponent"
-					]
-				},
-				constructor: function() {
-					UIComponent.apply(this, arguments);
-				}
-			});
-		});
-
-		return Component.create({
-			name: "manifestModules.scenario5",
-			manifest: true
-		}).then(function(oComponent){
-			var oView = oComponent.getRootControl();
-
-			assert.ok(oView, "root control created");
-			assert.ok(oView, "view created");
-			assert.ok(oView.getContent().length > 0, "view content created");
-			assert.equal(this.oViewCreateSpy.callCount, 1, "async view factory called");
-		}).catch(function() {
-			assert.ok(true, "Modules could not be loaded and an error occured.");
-		});
-	});
-
-	QUnit.test("Component with async createContent", function(assert) {
-		assert.expect(5);
-		var oManifest = {
-			"sap.app" : {
-				"id" : "app"
-			}
-		};
-		this.setRespondedManifest(oManifest, "scenario6");
-
-		sap.ui.predefine("manifestModules/scenario6/Component", ["sap/ui/core/UIComponent", "sap/ui/core/mvc/View"], function(UIComponent, View) {
-			return UIComponent.extend("manifestModules.scenario6.Component", {
-				metadata: {
-					manifest: "json",
-					interfaces: [
-						"sap.ui.core.IAsyncComponent"
-					]
-				},
-				constructor: function() {
-					UIComponent.apply(this, arguments);
-				},
-				createContent: function() {
-					return View.create({
-						"viewName" : "testdata.view.Main",
-						"type" : "XML"
-					});
-				}
-			});
-		});
-
-		return Component.create({
-			name: "manifestModules.scenario6",
-			manifest: true
-		}).then(function(oComponent){
-			var oView = oComponent.getRootControl();
-
-			assert.ok(oComponent.getRootControl(), "root control created");
-			assert.ok(oView, "view created");
-			assert.ok(oView.getContent().length > 0, "view content created");
-			assert.equal(this.oViewCreateSpy.callCount, 1, "async view factory called");
 		}).catch(function() {
 			assert.ok(true, "Modules could not be loaded and an error occured.");
 		});

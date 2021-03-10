@@ -2218,18 +2218,15 @@ sap.ui.define([
 		}
 
 		function notifyOnInstanceCreated(oInstance, vConfig) {
-			if (vConfig.async) {
-				var pRootControlReady = oInstance.rootControlLoaded ? oInstance.rootControlLoaded() : Promise.resolve();
-				if (typeof Component._fnOnInstanceCreated === "function") {
-					return pRootControlReady.then(function() {
-						return Component._fnOnInstanceCreated(oInstance, vConfig);
-					});
-				}
-				// If we're async but we don't have a promise we still need to be one !
-				return pRootControlReady;
-			}
 			if (typeof Component._fnOnInstanceCreated === "function") {
-				Component._fnOnInstanceCreated(oInstance, vConfig);
+				var oPromise = Component._fnOnInstanceCreated(oInstance, vConfig);
+				if (vConfig.async && oPromise instanceof Promise) {
+					return oPromise;
+				}
+			}
+			if (vConfig.async) {
+				// If we're async but we don't have a promise we still need to be one !
+				return Promise.resolve(oInstance);
 			}
 			return oInstance;
 		}
@@ -2281,7 +2278,8 @@ sap.ui.define([
 						return oInstance;
 					});
 			} else {
-				return notifyOnInstanceCreated(oInstance, vConfig);
+				notifyOnInstanceCreated(oInstance, vConfig);
+				return oInstance;
 			}
 		}
 

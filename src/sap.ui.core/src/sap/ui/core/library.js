@@ -82,8 +82,7 @@ sap.ui.define([
 			"sap.ui.core.dnd.IDragInfo",
 			"sap.ui.core.dnd.IDropInfo",
 			"sap.ui.core.IDScope",
-			"sap.ui.core.ITitleContent",
-			"sap.ui.core.IAsyncComponent"
+			"sap.ui.core.ITitleContent"
 		],
 		controls: [
 			"sap.ui.core.ComponentContainer",
@@ -1676,25 +1675,6 @@ sap.ui.define([
 	 * @interface
 	 * @public
 	 * @ui5-metamodel This interface also will be described in the UI5 (legacy) designtime metamodel
-	 */
-
-	/**
-	 * Marker interface for subclasses of <code>sap.ui.core.UIComponent</code>.
-	 *
-	 * Implementing this interface allows a {@link sap.ui.core.UIComponent} to be created fully asynchronously.
-	 * When implementing this interface the {@link sap.ui.core.Component.create Component.create} factory's result Promise
-	 * will resolve once the defined <code>rootView</code> is fully processed.
-	 *
-	 * An asynchronous component can also return a Promise in its {@link sap.ui.core.UIComponent#createContent createContent} function.
-	 * This Promise will also be chained into the {@link sap.ui.core.Component.create Component.create} factory's result Promise.
-	 *
-	 * See {@link sap.ui.core.UIComponent#createContent} for more details and usage samples.
-	 *
-	 * @since 1.88.0
-	 * @name sap.ui.core.IAsyncComponent
-	 * @extends sap.ui.core.UIComponent
-	 * @interface
-	 * @public
 	 */
 
 	/**
