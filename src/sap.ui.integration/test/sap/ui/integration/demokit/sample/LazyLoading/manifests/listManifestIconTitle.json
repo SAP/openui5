@@ -1,6 +1,5 @@
 {
 	"sap.app": {
-		"id": "cardsdemo.samples.list6",
 		"type": "card"
 	},
 	"sap.card": {
