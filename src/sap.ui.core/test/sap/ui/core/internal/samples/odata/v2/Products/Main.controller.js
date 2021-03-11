@@ -14,12 +14,12 @@ sap.ui.define([
 				oCurrenciesCodelistPromise = oMetaModel.fetchCodeList("CurrencyCodes"),
 				oUnitsCodelistPromise = oMetaModel.fetchCodeList("UnitsOfMeasure");
 
-			Log.info("SAP__Currencies requested; Promis fulfilled: "
+			Log.info("SAP__Currencies requested; Promise fulfilled: "
 				+ oCurrenciesCodelistPromise.isFulfilled(), undefined, sClassName);
 			oCurrenciesCodelistPromise.then(function (mCodelist) {
 				Log.info("SAP__Currencies request resolved", undefined, sClassName);
 			});
-			Log.info("SAP__UnitsOfMeasure requested; Promis fulfilled: "
+			Log.info("SAP__UnitsOfMeasure requested; Promise fulfilled: "
 				+ oUnitsCodelistPromise.isFulfilled(), undefined, sClassName);
 			oUnitsCodelistPromise.then(function (mCodelist) {
 				Log.info("SAP__UnitsOfMeasure request resolved", undefined, sClassName);

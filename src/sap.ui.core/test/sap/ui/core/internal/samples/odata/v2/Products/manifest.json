@@ -50,7 +50,7 @@
 					"defaultCountMode" : "Inline",
 					"earlyTokenRequest" : true,
 					"metadataUrlParams" : {"customMeta" : "'custom/meta'"},
-					"serviceUrlParams" : "customService='custom%2Fservice'"
+					"serviceUrlParams" : {"customService" : "'custom/service'"}
 				},
 				"type" : "sap.ui.core.internal.samples.odata.v2.Products.SandboxModel",
 				"uriSettingName" : "serviceUrl"
