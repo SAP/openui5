@@ -679,6 +679,9 @@ sap.ui.define([
 							continue;
 						} else {
 							mResult[oItem.manifestpath] = oItem.value;
+							if (oItem.valueItems) {
+								mResult[oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueItems"] = oItem.valueItems;
+							}
 						}
 					} else if (oItem.translatable && oItem.value) {
 						//in translation mode create an entry if there is a value
@@ -1406,6 +1409,12 @@ sap.ui.define([
 								//get the translated default value for the language we want to translate this.getLanguage()
 								oItem._translatedLabel = this._getCurrentLanguageSpecificText(oItem.label.substring(6, oItem.label.length - 1), true);
 							}
+						}
+					} else if (oItem.type === "string[]") {
+						var sValueItemsPath = oItem.manifestpath.substring(0, oItem.manifestpath.lastIndexOf("/")) + "/valueItems";
+						var oValueItems = this._manifestModel.getProperty(sValueItemsPath);
+						if (oValueItems) {
+							oItem.valueItems = oValueItems;
 						}
 					}
 
