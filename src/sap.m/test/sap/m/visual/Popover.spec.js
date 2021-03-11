@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect,browser*/
+/*global describe,it,element,by,takeScreenshot,expect,browser,protractor*/
 
 describe("sap.m.Popover", function () {
 	"use strict";
@@ -121,5 +121,16 @@ describe("sap.m.Popover", function () {
 	it("Should open an overflowing popover which should be displayed with a visible scrollbar", function () {
 		element(by.id("overflowing-popover-arrow")).click();
 		expect(takeScreenshot(element(by.id(_resolvePopover())))).toLookAs("overflowing-popover");
+	});
+
+	it("Should dismiss only the inner popover with ESC when there's a case with nested Popovers", function () {
+		element(by.id("btn10")).click();
+		element(by.id("selectInPopover-arrow")).click();
+
+		expect(takeScreenshot()).toLookAs("popover-nested-popovers");
+
+		browser.actions().sendKeys(protractor.Key.ESCAPE).perform();
+
+		expect(takeScreenshot()).toLookAs("popover-nested-popovers-outer-closed");
 	});
 });

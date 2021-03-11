@@ -208,7 +208,7 @@ sap.ui.define([
 			oPopover.focus();
 			var oParams = {};
 			oParams.keyCode = KeyCodes.ESCAPE;
-			QUnitUtils.triggerEvent("keyup", oPopover.getDomRef(), oParams);
+			QUnitUtils.triggerEvent("keydown", oPopover.getDomRef(), oParams);
 		});
 	};
 
