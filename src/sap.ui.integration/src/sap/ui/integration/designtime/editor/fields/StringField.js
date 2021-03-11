@@ -61,7 +61,7 @@ sap.ui.define([
 						}
 					};
 				} else if (oConfig.values) {
-					var oItem = new ListItem(oConfig.values.item);
+					var oItem = this.formatListItem(oConfig.values.item);
 					if (!oConfig.values.item.key) {
 						oConfig.values.item.key = oConfig.values.item.text;
 					}
