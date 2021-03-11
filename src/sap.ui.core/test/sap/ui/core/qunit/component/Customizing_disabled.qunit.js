@@ -141,13 +141,16 @@ sap.ui.define([
 	QUnit.test("Controller Extension (Code Extensibility)", function(assert) {
 
 		// check lifecycle methods
-		assert.equal(oLifecycleSpy.callCount, 3, "3 lifecycle methods should be called");
+		assert.equal(oLifecycleSpy.callCount, 6, "6 lifecycle methods should be called");
 		// check calling order
 		assert.equal(oLifecycleSpy.getCall(0).args[0], "Sub6 Controller onInit()", "1st lifecycle method to be called should be: Sub6 Controller onInit()");
+		assert.equal(oLifecycleSpy.getCall(1).args[0], "Sub6 Controller onInit()", "2nd lifecycle method to be called should be: Sub6 Controller onInit() - View included 2nd time");
 
-		assert.equal(oLifecycleSpy.getCall(1).args[0], "Sub6 Controller onBeforeRendering()", "2nd lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onBeforeRendering()");
+		assert.equal(oLifecycleSpy.getCall(2).args[0], "Sub6 Controller onBeforeRendering()", "3rd lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onBeforeRendering()");
+		assert.equal(oLifecycleSpy.getCall(3).args[0], "Sub6 Controller onBeforeRendering()", "4th lifecycle method to be called should be: Sub6AnotherControllerExtension Controller onBeforeRendering() - View included 2nd time");
 
-		assert.equal(oLifecycleSpy.getCall(2).args[0], "Sub6 Controller onAfterRendering()", "3rd lifecycle method to be called should be: Sub6 Controller onAfterRendering()");
+		assert.equal(oLifecycleSpy.getCall(4).args[0], "Sub6 Controller onAfterRendering()", "5th lifecycle method to be called should be: Sub6 Controller onAfterRendering()");
+		assert.equal(oLifecycleSpy.getCall(5).args[0], "Sub6 Controller onAfterRendering()", "6th lifecycle method to be called should be: Sub6 Controller onAfterRendering() - View included 2nd time");
 
 	});
 

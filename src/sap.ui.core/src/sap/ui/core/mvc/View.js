@@ -447,24 +447,16 @@ sap.ui.define([
 					}
 					// create controller
 					if (bAsync) {
-						oController = Controller.create({name: defaultController});
+						oController = Controller.create({name: defaultController, _viewId: oThis.sId});
 					} else {
-						oController = sap.ui.controller(defaultController, true /* oControllerImpl = true: do not extend controller inside factory; happens below (potentially async)! */);
+						oController = sap.ui.controller(defaultController, true, false, oThis.sId);
 					}
 				}
 			} else if (oController) {
 				// if passed controller is not extended yet we need to do it.
 				var sOwnerId = ManagedObject._sOwnerId;
 				if (!oController._isExtended()) {
-					if (bAsync) {
-						oController = Controller.extendByCustomizing(oController, sName, sOwnerId, bAsync)
-							.then(function(oController) {
-								return Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
-							});
-					} else {
-						oController = Controller.extendByCustomizing(oController, sName, sOwnerId, bAsync);
-						oController = Controller.extendByProvider(oController, sName, sOwnerId, bAsync);
-					}
+					oController = Controller.applyExtensions(oController, sName, sOwnerId, oThis.sId, bAsync);
 				} else if (bAsync) {
 					oController = Promise.resolve(oController);
 				}

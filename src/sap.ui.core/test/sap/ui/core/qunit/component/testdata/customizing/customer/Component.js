@@ -133,6 +133,11 @@ sap.ui.define(['jquery.sap.global', 'testdata/customizing/sap/Component'],
 						"controllerNames": [
 							"testdata.customizing.customer.Sub6AnotherControllerExtension"
 						]
+					},
+					"testdata.customizing.sap.Sub6#mainView--sub6View": {
+						"controllerNames": [
+							"testdata.customizing.customer.Sub6InstanceSpecificControllerExtension"
+						]
 					}
 				}
 			}

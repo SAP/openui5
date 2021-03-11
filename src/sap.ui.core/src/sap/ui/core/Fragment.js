@@ -370,7 +370,10 @@ function(
 
 			if (mSettings.async) {
 				var fnCreateInstance = function () {
-					var oOwnerComponent = Component.get(mSettings.sOwnerId);
+					// owner-id is either available because the async factory was called in a sync block
+					// or: the containing view carries the owner id for us
+					var sOwnerId = mSettings.sOwnerId || mSettings.containingView && mSettings.containingView._sOwnerId;
+					var oOwnerComponent = Component.get(sOwnerId);
 					if (oOwnerComponent) {
 						return oOwnerComponent.runAsOwner(function () {
 							return new Fragment(mSettings);

@@ -704,7 +704,7 @@ sap.ui.define([
 		},
 		afterEach: function() {
 			//jQuery.sap.setObject("sample.ExtensionProvider", null);
-			Controller._sExtensionProvider = null;
+			Controller.registerExtensionProvider(null);
 			this.view.destroy();
 			this.view = null;
 		}
