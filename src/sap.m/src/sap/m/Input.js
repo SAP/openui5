@@ -2396,7 +2396,7 @@ function(
 				this._fnRowResultFilter = SuggestionsPopover._DEFAULTRESULT_TABULAR;
 			}
 
-			if (this.getShowTableSuggestionValueHelp()) {
+			if (this.getShowTableSuggestionValueHelp() && !this._bUseDialog) {
 				this._addShowMoreButton(bTabular);
 			}
 		}

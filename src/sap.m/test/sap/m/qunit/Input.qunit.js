@@ -2132,7 +2132,7 @@ sap.ui.define([
 			oPopup, // is lazy loaded
 			aAlreadyAddedProducts = [],
 			oDialogRendererSpy,
-			i;
+			i, oSuggestionRow;
 
 		oInput.attachSuggest(function() {
 			oInput.destroySuggestionRows();
