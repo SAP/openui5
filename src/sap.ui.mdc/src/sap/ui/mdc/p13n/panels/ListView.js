@@ -184,9 +184,11 @@ sap.ui.define([
 
         if (bShow){
             this.removeStyleClass("listViewHover");
+            this._oListControl.setKeyboardMode(ListKeyboardMode.Edit); //--> tab through editable fields (fields shown)
             this._addFactoryControl();
         } else {
             this.addStyleClass("listViewHover");
+            this._oListControl.setKeyboardMode(ListKeyboardMode.Navigation); //--> tab through list items (fields hidden)
             this._removeFactoryControl();
         }
     };
@@ -271,7 +273,6 @@ sap.ui.define([
 
     ListView.prototype._createInnerListControl = function() {
 		return new Table(this.getId() + "-innerListViewTable", Object.assign({
-            keyboardMode: ListKeyboardMode.Edit, //default for ACC --> tab through editable fields
             growing: true,
             updateStarted: function() {
                 this.removeMoveButtons();
