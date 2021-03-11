@@ -38,7 +38,7 @@
 			<f2:header>
 				<f2:DynamicPageHeader>
 					<f2:content>
-						<mdc:FilterBar id="booksFilterBar"  filtersChanged="onFiltersChanged" filterConditions = '\{"stock" : [\{"operator":"BT","values":[0,99999]}]\}' liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
+						<mdc:FilterBar id="booksFilterBar"  filtersChanged="onFiltersChanged" filterConditions = '\{"stock" : [\{"operator":"BT","values":[100,50000]}]\}' liveMode="false" delegate="{name: 'sap/ui/v4demo/delegate/Books.FB.delegate', payload: {collectionName: 'Books'}}" p13nMode="Item,Value">
 						<mdc:dependents>
 
 							<mdcf:FieldValueHelp filterFields="$search" title="Title" id="FH4" noDialog="false" keyPath="title" descriptionPath="title" showConditionPanel="true" delegate="{name: 'sap/ui/mdc/odata/v4/FieldValueHelpDelegate', payload: {}}">
@@ -410,7 +410,7 @@
 								maxConditions="1"
 								operators="BT">
 								<mdc:contentEdit>
-									<demo:CustomRangeSlider value="{path: '$field>/conditions/stock'}" max="99999" width="100%" class="sapUiMediumMarginBottom" />
+									<demo:CustomRangeSlider value="{path: '$field>/conditions', type: 'sap.ui.mdc.field.ConditionsType'}" max="99999" width="100%" class="sapUiMediumMarginBottom" />
 								</mdc:contentEdit>
 							</mdc:FilterField>
 
