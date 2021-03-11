@@ -1,8 +1,9 @@
-/* global QUnit */
+/* global QUnit, sinon */
 sap.ui.define([
-	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/flexibility/FilterBar.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/core/util/reflection/XmlTreeModifier", "sap/ui/mdc/FilterBarDelegate", 'sap/ui/mdc/FilterField'
-], function(createAppEnvironment, FilterBarFlexHandler, ChangesWriteAPI, JsControlTreeModifier, XMLTreeModifier, FilterBarDelegate, FilterField) {
+	"test-resources/sap/ui/mdc/qunit/util/createAppEnvironment", "sap/ui/mdc/flexibility/FilterBar.flexibility", "sap/ui/fl/write/api/ChangesWriteAPI", "sap/ui/core/util/reflection/JsControlTreeModifier", "sap/ui/core/util/reflection/XmlTreeModifier", "sap/ui/mdc/FilterBarDelegate", 'sap/ui/mdc/FilterField', "sap/ui/mdc/odata/TypeUtil"
+], function(createAppEnvironment, FilterBarFlexHandler, ChangesWriteAPI, JsControlTreeModifier, XMLTreeModifier, FilterBarDelegate, FilterField, TypeUtil) {
 	'use strict';
+
 
 	function createAddConditionChangeDefinition(sOperator) {
 		sOperator = sOperator ? sOperator : "Contains";
@@ -16,6 +17,22 @@ sap.ui.define([
 				"condition":{"operator":sOperator,"values":["12"]}
 			}
 		};
+	}
+
+	function createAddConditionChangeDefinitionNewFormat(sOperator) {
+
+		var oCondition = createAddConditionChangeDefinition(sOperator);
+		oCondition.content.condition["inParameters"] = {"conditions/Category": "Test"};
+
+		return oCondition;
+	}
+
+	function createAddConditionChangeDefinitionOldFormat(sOperator) {
+
+		var oCondition = createAddConditionChangeDefinition(sOperator);
+		oCondition.content.condition["inParameters"] = {"Category": "Test"};
+
+		return oCondition;
 	}
 
 	function createRemoveChangeDefinition() {
@@ -87,7 +104,7 @@ sap.ui.define([
 			FilterBarDelegate.addItem = addItem;
 		},
 		beforeEach: function() {
-			var sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/Category}" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field2" conditions="{$filters>/conditions/Name}" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field3" conditions="{$filters>/conditions/ProductID}"  maxConditions="1" dataType="Edm.String"/></mdc:filterItems></mdc:FilterBar></mvc:View>';
+			var sFilterBarView = '<mvc:View xmlns:mvc="sap.ui.core.mvc" xmlns:mdc="sap.ui.mdc"><mdc:FilterBar id="myFilterBar" p13nMode="Value"><mdc:filterItems><mdc:FilterField id="myFilterBar--field1" conditions="{$filters>/conditions/Category}" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field2" conditions="{$filters>/conditions/Name}" maxConditions="1" dataType="Edm.String"/><mdc:FilterField id="myFilterBar--field3" conditions="{$filters>/conditions/ProductID}"  maxConditions="1" dataType="Edm.String"/></mdc:filterItems></mdc:FilterBar></mvc:View>';
 			return createAppEnvironment(sFilterBarView, "FilterBar")
 			.then(function(mCreatedView){
 				this.oView = mCreatedView.view;
@@ -207,9 +224,71 @@ sap.ui.define([
 		}.bind(this));
 	});
 
-	QUnit.test('addCondition - applyChange & revertChange on a js control tree', function(assert) {
+	QUnit.test('addCondition - applyChange & revertChange on a js control tree with old format for in parameters', function(assert) {
 		var done = assert.async();
-		var oContent = createAddConditionChangeDefinition();
+		var oContent = createAddConditionChangeDefinitionOldFormat();
+
+		var aPropertyInfo = [{
+			name: "to_nav/field1",
+			maxConditions: 1,
+			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+		}, {
+			name: "Category",
+			maxConditions: 1,
+			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+		}];
+
+		var oStub = sinon.stub(this.oFilterBar, "_getPropertyByName");
+		oStub.withArgs("to_nav/field1").returns(aPropertyInfo[0]);
+		oStub.withArgs("Category").returns(aPropertyInfo[1]);
+
+		return ChangesWriteAPI.create({
+			changeSpecificData: oContent,
+			selector: this.oFilterBar
+		}).then(function(oChange) {
+			var oChangeHandler = FilterBarFlexHandler["addCondition"].changeHandler;
+
+			assert.deepEqual(this.oFilterBar.getFilterConditions()[oContent.content.name], undefined, "condition initially non existing");
+
+			// Test apply
+			oChangeHandler.applyChange(oChange, this.oFilterBar, {
+				modifier: JsControlTreeModifier,
+				appComponent: this.oUiComponent,
+				view: this.oView
+			}).then(function() {
+				assert.deepEqual(this.oFilterBar.getFilterConditions()[oContent.content.name], [ oContent.content.condition ], "condition has been applied successfully");
+				// Test revert
+				oChangeHandler.revertChange(oChange, this.oFilterBar, {
+					modifier: JsControlTreeModifier,
+					appComponent: this.oUiComponent,
+					view: this.oView
+				}).then(function() {
+					assert.deepEqual(this.oFilterBar.getFilterConditions()[oContent.content.name], [], "condition empty");
+					assert.deepEqual(this.oFilterBar._getConditionModel().getConditions(oContent.content.name), [], "Condition model does not contain conditions");
+					done();
+				}.bind(this));
+			}.bind(this));
+		}.bind(this));
+	});
+
+	QUnit.test('addCondition - applyChange & revertChange on a js control tree with new format for in parameters', function(assert) {
+		var done = assert.async();
+		var oContent = createAddConditionChangeDefinitionNewFormat();
+
+		var aPropertyInfo = [{
+			name: "to_nav/field1",
+			maxConditions: 1,
+			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+		}, {
+			name: "Category",
+			maxConditions: 1,
+			typeConfig: TypeUtil.getTypeConfig("Edm.String")
+		}];
+
+		var oStub = sinon.stub(this.oFilterBar, "_getPropertyByName");
+		oStub.withArgs("to_nav/field1").returns(aPropertyInfo[0]);
+		oStub.withArgs("Category").returns(aPropertyInfo[1]);
+
 		return ChangesWriteAPI.create({
 			changeSpecificData: oContent,
 			selector: this.oFilterBar

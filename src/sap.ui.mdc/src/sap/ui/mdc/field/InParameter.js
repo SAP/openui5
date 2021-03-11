@@ -127,12 +127,8 @@ sap.ui.define([
 			}
 		}
 
-		if (sPath) {
-			if (sPath.startsWith("/conditions/")) {
-				sPath = sPath.slice(12);
-			} else if (sPath.startsWith("/")) {
+		if (sPath && sPath.startsWith("/")) {
 				sPath = sPath.slice(1);
-			}
 		}
 
 		if (!sPath) {

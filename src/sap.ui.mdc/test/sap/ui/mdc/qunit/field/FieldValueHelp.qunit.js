@@ -875,8 +875,8 @@ sap.ui.define([
 		var oCM = new ConditionModel();
 		oOutParameter.setModel(oCM, "cm");
 		oFieldHelp.addOutParameter(oOutParameter);
-		var oCondition = Condition.createItemCondition("Test", "Test Text", undefined, {"test": "Test"});
-		var oCondition2 = Condition.createItemCondition("Test2", "Test Text2", undefined, {"test": "Test2"});
+		var oCondition = Condition.createItemCondition("Test", "Test Text", undefined, {"conditions/test": "Test"});
+		var oCondition2 = Condition.createItemCondition("Test2", "Test Text2", undefined, {"conditions/test": "Test2"});
 		oFieldHelp.setConditions([oCondition, oCondition2]);
 
 		oFieldHelp.onFieldChange();
@@ -916,7 +916,7 @@ sap.ui.define([
 		oOutParameter = new OutParameter({value: "{cm>/conditions/test}", fixedValue: "X"});
 		oOutParameter.setModel(oCM, "cm");
 		oFieldHelp.addOutParameter(oOutParameter);
-		oCondition = Condition.createItemCondition("Test", "Test Text", undefined, {"test": "Test"});
+		oCondition = Condition.createItemCondition("Test", "Test Text", undefined, {"conditions/test": "Test"});
 		oFieldHelp.setConditions([oCondition]);
 		oFieldHelp.onFieldChange();
 		vValue = oOutParameter.getValue();

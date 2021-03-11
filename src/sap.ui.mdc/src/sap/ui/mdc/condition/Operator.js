@@ -4,6 +4,7 @@
 sap.ui.define([
 	'sap/ui/base/Object',
 	'sap/ui/model/Filter',
+	"sap/ui/model/FilterOperator",
 	'sap/ui/model/ParseException',
 	'sap/ui/Device',
 	'sap/base/Log',
@@ -16,6 +17,7 @@ sap.ui.define([
 ], function(
 		BaseObject,
 		Filter,
+		FilterOperator,
 		ParseException,
 		Device,
 		Log,
@@ -303,7 +305,7 @@ sap.ui.define([
 			if (Array.isArray(vValue) && aFieldPaths.length > 1) {
 				vValue = vValue[0];
 				sFieldPath = aFieldPaths[0];
-				oFilterUnit = new Filter({path: aFieldPaths[1], operator: "EQ", value1: oCondition.values[0][1]});
+				oFilterUnit = new Filter({path: aFieldPaths[1], operator: FilterOperator.EQ, value1: oCondition.values[0][1]});
 			}
 			if (oFilterUnit && vValue === undefined) {
 				// filter only for unit
@@ -328,9 +330,13 @@ sap.ui.define([
 			if (oCondition.inParameters) {
 				var aFilters = [oFilter];
 				for ( var sInPath in oCondition.inParameters) {
-					aFilters.push(new Filter({path: sInPath, operator: "EQ", value1: oCondition.inParameters[sInPath]}));
+					if (sInPath.startsWith("conditions/")) { // only use InParameters that are in the same ConditionModel (Parameters from outside might not be valid filters)
+						aFilters.push(new Filter({path: sInPath.slice(11), operator: FilterOperator.EQ, value1: oCondition.inParameters[sInPath]}));
+					}
 				}
-				oFilter = new Filter({ filters: aFilters, and: true });
+				if (aFilters.length > 1) {
+					oFilter = new Filter({ filters: aFilters, and: true });
+				}
 			}
 
 			return oFilter;

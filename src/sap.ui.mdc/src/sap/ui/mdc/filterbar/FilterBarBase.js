@@ -593,38 +593,8 @@ sap.ui.define([
 
 		this._cleanupCondition(oConditionExternal);
 
-
-		if (oCondition.inParameters && (Object.keys(oCondition.inParameters).length > 0)) {
-			Object.keys(oCondition.inParameters).forEach(function(sKey) {
-				var oInParamProperty = this._getPropertyByName(sKey);
-				if (oInParamProperty) {
-					var oInConditionNonCov = Condition.createCondition("EQ", [oCondition.inParameters[sKey]]);
-					var oInCondition = ConditionConverter.toString(oInConditionNonCov, oInParamProperty.typeConfig, this.getTypeUtil());
-					if (!oConditionExternal.inParameters) {
-						oConditionExternal.inParameters = {};
-					}
-					oConditionExternal.inParameters[sKey] = oInCondition.values[0];
-				} else {
-					Log.error("mdc.FilterBar._toExternal: could not find property info for " + sKey);
-				}
-			}.bind(this));
-		}
-
-		if (oCondition.outParameters && (Object.keys(oCondition.outParameters).length > 0)) {
-			Object.keys(oCondition.outParameters).forEach(function(sKey) {
-				var oOutParamProperty = this._getPropertyByName(sKey);
-				if (oOutParamProperty) {
-					var oOutConditionNonCov = Condition.createCondition("EQ", [oCondition.outParameters[sKey]]);
-					var oOutCondition = ConditionConverter.toString(oOutConditionNonCov, oOutParamProperty.typeConfig, this.getTypeUtil());
-					if (!oConditionExternal.outParameters) {
-						oConditionExternal.outParameters = {};
-					}
-					oConditionExternal.outParameters[sKey] = oOutCondition.values[0];
-				} else {
-					Log.error("mdc.FilterBar._toExternal: could not find property info for " + sKey);
-				}
-			}.bind(this));
-		}
+		this. _convertInOutParameters(oCondition, oConditionExternal, "inParameters", ConditionConverter.toString);
+		this. _convertInOutParameters(oCondition, oConditionExternal, "outParameters", ConditionConverter.toString);
 
 		return oConditionExternal;
 	};
@@ -633,38 +603,35 @@ sap.ui.define([
 		var oConditionInternal = merge({}, oCondition);
 		oConditionInternal = ConditionConverter.toType(oConditionInternal, oProperty.typeConfig, this.getTypeUtil());
 
-		if (oCondition.inParameters && (Object.keys(oCondition.inParameters).length > 0)) {
-			Object.keys(oCondition.inParameters).forEach(function(sKey) {
-				var oInParamProperty = this._getPropertyByName(sKey);
-				if (oInParamProperty) {
-					var oInCondition = Condition.createCondition("EQ", [oCondition.inParameters[sKey]]);
-					var vValue = ConditionConverter.toType(oInCondition, oInParamProperty.typeConfig, this.getTypeUtil());
-					if (!oConditionInternal.inParameters) {
-						oConditionInternal.inParameters = {};
-					}
-					oConditionInternal.inParameters[sKey] = vValue.values[0];
-				} else {
-					Log.error("mdc.FilterBar._toInternal: could not find property info for " + sKey);
-				}
-			}.bind(this));
-		}
-		if (oCondition.outParameters && (Object.keys(oCondition.outParameters).length > 0)) {
-			Object.keys(oCondition.outParameters).forEach(function(sKey) {
-				var oOutParamProperty = this._getPropertyByName(sKey);
-				if (oOutParamProperty) {
-					var oOutCondition = Condition.createCondition("EQ", [oCondition.outParameters[sKey]]);
-					var vValue = ConditionConverter.toType(oOutCondition, oOutParamProperty.typeConfig, this.getTypeUtil());
-					if (!oConditionInternal.outParameters) {
-						oConditionInternal.outParameters = {};
-					}
-					oConditionInternal.outParameters[sKey] = vValue.values[0];
-				} else {
-					Log.error("mdc.FilterBar._toInternal: could not find property info for " + sKey);
-				}
-			}.bind(this));
-		}
+		this. _convertInOutParameters(oCondition, oConditionInternal, "inParameters", ConditionConverter.toType);
+		this. _convertInOutParameters(oCondition, oConditionInternal, "outParameters", ConditionConverter.toType);
+
 		return oConditionInternal;
 	};
+
+	FilterBarBase.prototype._convertInOutParameters = function(oCondition, oConditionConverted, sParameterName, fnConverter) {
+		if (oCondition[sParameterName] && (Object.keys(oCondition[sParameterName]).length > 0)) {
+			Object.keys(oCondition[sParameterName]).forEach(function(sKey) {
+				var sName = sKey.startsWith("conditions/") ? sKey.slice(11) : sKey; // just use field name
+				var oProperty = this._getPropertyByName(sName);
+				if (oProperty) {
+					var oOutCondition = Condition.createCondition("EQ", [oCondition[sParameterName][sKey]]);
+					var vValue = fnConverter(oOutCondition, oProperty.typeConfig, this.getTypeUtil());
+					if (!oConditionConverted[sParameterName]) {
+						oConditionConverted[sParameterName] = {};
+					}
+					if (!sKey.startsWith("conditions/")) { // old condition (from variant)
+						delete oConditionConverted[sParameterName][sKey]; // transform to new name
+						sKey = "conditions/" + sName;
+					}
+					oConditionConverted[sParameterName][sKey] = vValue.values[0];
+				} else {
+					Log.error("mdc.FilterBar._convertInOutParameters: could not find property info for " + sName);
+				}
+			}.bind(this));
+		}
+	};
+
 	FilterBarBase.prototype._cleanupCondition = function(oCondition) {
 		if (oCondition) {
 			if (oCondition.hasOwnProperty("isEmpty")) {

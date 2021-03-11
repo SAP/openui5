@@ -644,14 +644,14 @@ sap.ui.define([
 						assert.equal(aChanges.length, 1); // condition model does not know about filterExpression="Single"...
 
 						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters);
-						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["in"]);
-						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["in"], "INTEST");
+						assert.ok(aChanges[0].changeSpecificData.content.condition.inParameters["conditions/in"]);
+						assert.equal(aChanges[0].changeSpecificData.content.condition.inParameters["conditions/in"], "INTEST");
 						done();
 					};
 
 					oFilterBar.getEngine()._setModificationHandler(oFilterBar, oTestHandler);
 
-					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"], { "in": "INTEST" }));
+					oFilterBar._getConditionModel().addCondition("key", Condition.createCondition("EQ", ["a"], { "conditions/in": "INTEST" }));
 
 				});
 			});

@@ -1066,7 +1066,7 @@ sap.ui.define([
 				var oMyConditionModel = this.getModel(sConditionModelName);
 				if (oMyConditionModel !== oConditionModel) {
 					// no or different ConditionModel -> create new binding on given ConditionModel
-					aBindings.push(oConditionModel.bindProperty("/conditions/" + oParameter.getFieldPath()));
+					aBindings.push(oConditionModel.bindProperty("/" + oParameter.getFieldPath()));
 				}
 			} else if (oBinding) {
 				var sPath = oBinding.getPath();
@@ -1425,10 +1425,10 @@ sap.ui.define([
 						oCondition = merge({}, vValue[i]);
 						// change paths of in- and out-parameters
 						if (oCondition.inParameters) {
-							oCondition.inParameters = _mapInParametersToHelp.call(this, oCondition.inParameters);
+							oCondition.inParameters = _mapInParametersToHelp.call(this, oCondition.inParameters, true);
 						}
 						if (oCondition.outParameters) {
-							oCondition.outParameters = _mapOutParametersToHelp.call(this, oCondition.outParameters);
+							oCondition.outParameters = _mapOutParametersToHelp.call(this, oCondition.outParameters, false, true);
 						}
 
 						_addCondition.call(this, sFilterPath, oCondition);
@@ -1686,19 +1686,19 @@ sap.ui.define([
 
 	}
 
-	function _mapInParametersToHelp(oInParameters) {
+	function _mapInParametersToHelp(oInParameters, bNested) {
 
-		return _mapParametersToHelp.call(this, oInParameters, this.getInParameters());
-
-	}
-
-	function _mapOutParametersToHelp(oOutParameters, bNoDefault) {
-
-		return _mapParametersToHelp.call(this, oOutParameters, this.getOutParameters(), bNoDefault);
+		return _mapParametersToHelp.call(this, oInParameters, this.getInParameters(), false, undefined, undefined, false, bNested);
 
 	}
 
-	function _mapParametersToHelp(oParameters, aParameters, bNoDefault, aBindings, oBindingContext, bFilters) {
+	function _mapOutParametersToHelp(oOutParameters, bNoDefault, bNested) {
+
+		return _mapParametersToHelp.call(this, oOutParameters, this.getOutParameters(), bNoDefault, undefined, undefined, false, bNested);
+
+	}
+
+	function _mapParametersToHelp(oParameters, aParameters, bNoDefault, aBindings, oBindingContext, bFilters, bNested) {
 
 		var oHelpParameters;
 		var oParameter;
@@ -1717,7 +1717,7 @@ sap.ui.define([
 					var oMyBindingContext = this.getBindingContext();
 					for (i = 0; i < aParameters.length; i++) {
 						oParameter = aParameters[i];
-						sHelpPath = oParameter.getHelpPath();
+						sHelpPath = bNested ? "conditions/" + oParameter.getHelpPath() : oParameter.getHelpPath(); // if InParameter of InParameter it is part of the same FilterBar
 						var vValue = oParameter.getValue();
 						var bUseConditions = oParameter.getUseConditions();
 						var bInitialValueFilterEmpty = oParameter.getInitialValueFilterEmpty();
@@ -1729,7 +1729,7 @@ sap.ui.define([
 								sFieldPath = oParameter.getFieldPath();
 								for (j = 0; j < aBindings.length; j++) {
 									if ((oBinding && oBinding.getPath() === aBindings[j].getPath()) ||
-											(bUseConditions && aBindings[j].getPath() === "/conditions/" + sFieldPath)) {
+											(bUseConditions && aBindings[j].getPath() === "/" + sFieldPath)) {
 										vValue = aBindings[j].getValue();
 										bFound = true;
 										break;
@@ -1756,10 +1756,10 @@ sap.ui.define([
 										oCondition = merge({}, vValue[j]);
 										// change paths of in- and out-parameters
 										if (oCondition.inParameters) {
-											oCondition.inParameters = _mapInParametersToHelp.call(this, oCondition.inParameters);
+											oCondition.inParameters = _mapInParametersToHelp.call(this, oCondition.inParameters, true);
 										}
 										if (oCondition.outParameters) {
-											oCondition.outParameters = _mapOutParametersToHelp.call(this, oCondition.outParameters);
+											oCondition.outParameters = _mapOutParametersToHelp.call(this, oCondition.outParameters, false, true);
 										}
 										oHelpParameters[sHelpPath].push(oCondition);
 									}
@@ -1793,9 +1793,9 @@ sap.ui.define([
 				for (var sMyFieldPath in oParameters) {
 					for (i = 0; i < aParameters.length; i++) {
 						oParameter = aParameters[i];
-						sHelpPath = oParameter.getHelpPath();
+						sHelpPath = bNested ? "conditions/" + oParameter.getHelpPath() : oParameter.getHelpPath(); // if InParameter of InParameter it is part of the same FilterBar
 						sFieldPath = oParameter.getFieldPath();
-						if (sFieldPath && sFieldPath === sMyFieldPath && sHelpPath) {
+						if (sFieldPath && (sFieldPath === sMyFieldPath || sFieldPath === "conditions/" + sMyFieldPath) && sHelpPath) { // support also old saved conditions without "conditions/" in name
 							if (!oHelpParameters) {
 								oHelpParameters = {};
 							}
