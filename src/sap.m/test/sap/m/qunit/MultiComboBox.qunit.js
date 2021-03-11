@@ -5867,6 +5867,69 @@ sap.ui.define([
 		oMultiComboBox.destroy();
 	});
 
+	QUnit.test("Focus handling - ARROW keys", function (assert) {
+		// Arrange
+		var oGroupHeaderItem = new SeparatorItem({text: "Group Header"});
+		this.oMultiComboBox.setValueState("Warning");
+		this.oMultiComboBox.insertItem(oGroupHeaderItem, 0);
+		this.oMultiComboBox.syncPickerContent();
+		sap.ui.getCore().applyChanges();
+
+		this.oMultiComboBox.open();
+		this.clock.tick();
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getList().getItems()[0].getDomRef(), document.activeElement, "The first item in the list should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.ARROW_UP);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox.getFocusDomRef(), document.activeElement, "The input field should be focused");
+	});
+
+	QUnit.test("Focus handling - HOME and END keys", function (assert) {
+		// Arrange
+		this.oMultiComboBox.setValueState("Warning");
+		sap.ui.getCore().applyChanges();
+
+		this.oMultiComboBox.open();
+		this.clock.tick();
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(this.oMultiComboBox.getDomRef(), KeyCodes.ARROW_DOWN);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.END);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getList().getItems()[this.oMultiComboBox._getList().getItems().length - 1].getDomRef(), document.activeElement, "The last item in the list should be focused");
+
+		// Act
+		sap.ui.test.qunit.triggerKeydown(document.activeElement, KeyCodes.HOME);
+		this.clock.tick(500);
+		// Assert
+		assert.strictEqual(this.oMultiComboBox._getSuggestionsPopover()._getValueStateHeader().getDomRef(), document.activeElement, "The value state message should be focused");
+	});
+
 	QUnit.module("Mobile mode (dialog)");
 
 	QUnit.test("Prevent endless focus loop on mobile", function(assert) {

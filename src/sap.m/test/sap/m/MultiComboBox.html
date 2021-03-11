@@ -915,6 +915,75 @@
 		]
 	});
 
+	var oGroupedModel = new sap.ui.model.json.JSONModel({
+		"items" : [
+			{
+				"key" : "DZ",
+				"text" : "Algeria",
+				"group" : "Countries 1"
+			},
+
+			{
+				"key" : "AR",
+				"text" : "Argentina",
+				"group" : "Countries 1"
+			},
+
+			{
+				"key" : "AU",
+				"text" : "Australia",
+				"group" : "Countries 1"
+			},
+
+			{
+				"key" : "DI",
+				"text" : "Disabled",
+				"enabled" : false,
+				"group" : "Countries 1"
+			},
+
+			{
+				"key" : "AT",
+				"text" : "Austria",
+				"group" : "Countries 1"
+			},
+
+			{
+				"key" : "BH",
+				"text" : "Bahrain",
+				"group" : "Countries 2"
+			},
+
+			{
+				"key" : "BE",
+				"text" : "Belgium",
+				"group" : "Countries 2"
+			},
+
+			{
+				"key" : "SA",
+				"text" : "Saudi Arabia",
+				"group" : "Countries 3"
+			},
+		]
+	});
+
+	var oMultiComboBoxWithGrouping = new sap.m.MultiComboBox({
+		id : "MultiComboBoxWithGrouping",
+		width : "300px",
+		valueState: "Warning",
+		items : {
+			path: "groupedModel>/items",
+			template: new sap.ui.core.Item({
+				key : "{groupedModel>key}",
+				text : "{groupedModel>text}",
+				enabled : "{groupedModel>enabled}"
+			}),
+			sorter: [new sap.ui.model.Sorter("group", false, true)]
+		}
+	});
+	oMultiComboBoxWithGrouping.setModel(oGroupedModel, "groupedModel");
+
 	// Add a css class to the body HTML element, in order to be used for caret stylization in visual tests run.
 	var oCustomCssButton = new sap.m.Button ("customCssButton",{
 			text: "Toggle custom CSS for visual test",
@@ -938,11 +1007,13 @@
 				}),
 				oCustomCssButton,
 		],
-		content : [theCompactMode,oMultiComboBox2, oMultiComboBox, oMultiComboBox1,
-				oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
-				oMultiComboBoxErrorWithLink, oMultiComboBoxWarningWithLinks, oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
-				oMultiComboBoxSuccess, oMultiComboBoxOneToken, readOnlyButtonOneToken, MultiComboBoxFourItems,
-				oMultiComboBoxBinding, oToolbar],
+		content : [
+			theCompactMode,oMultiComboBox2, oMultiComboBox, oMultiComboBox1,
+			oMultiComboBoxDisabledListItemSelectable, oMultiComboBoxDisabledListItemDisabled, oMultiComboBoxReadOnly,
+			oMultiComboBoxErrorWithLink, oMultiComboBoxWarningWithLinks, oMultiComboBoxDisabled, oMultiComboBoxWithoutKey, oMultiComboBoxError, oMultiComboBoxWarning,
+			oMultiComboBoxSuccess, oMultiComboBoxOneToken, readOnlyButtonOneToken, MultiComboBoxFourItems,
+			oMultiComboBoxBinding, oMultiComboBoxWithGrouping, oToolbar
+		],
 		showNavButton : true,
 		navButtonPress : function() {
 			oApp.to("page2")

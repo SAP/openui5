@@ -28,6 +28,8 @@ sap.ui.define([
 	"sap/m/inputUtils/ListHelpers",
 	"sap/m/inputUtils/filterItems",
 	"sap/m/inputUtils/itemsVisibilityHandler",
+	"sap/m/inputUtils/selectionRange",
+	"sap/m/inputUtils/calculateSelectionStart",
 	"sap/ui/events/KeyCodes",
 	"sap/base/util/deepEqual",
 	"sap/base/assert",
@@ -66,6 +68,8 @@ function(
 	ListHelpers,
 	filterItems,
 	itemsVisibilityHandler,
+	selectionRange,
+	calculateSelectionStart,
 	KeyCodes,
 	deepEqual,
 	assert,
@@ -286,7 +290,7 @@ function(
 	MultiComboBox.prototype.onsaphome = function(oEvent) {
 		// if the caret is already moved to the start of the input text
 		// execute tokenizer's onsaphome handler
-		if (!this.getFocusDomRef().selectionStart) {
+		if (!this.getFocusDomRef().selectionStart && this._hasTokens()) {
 			Tokenizer.prototype.onsaphome.apply(this.getAggregation("tokenizer"), arguments);
 		}
 
@@ -301,13 +305,11 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype.onsapdown = function(oEvent) {
-
 		if (!this.getEnabled() || !this.getEditable()) {
 			return;
 		}
 
-		// mark the event for components that needs to know if the event was handled
-		// by this control
+		// mark the event for components that needs to know if the event was handled by this control
 		oEvent.setMarked();
 
 		// note: prevent document scrolling when arrow keys are pressed
@@ -315,36 +317,31 @@ function(
 
 		this.syncPickerContent();
 
-		// If list is open then go to the first visible list item. Set this item
-		// into the visual viewport.
-		// If list is closed...
-		var aItems = ListHelpers.getSelectableItems(this.getItems());
-		var oItem = aItems[0];
+		if (!this.isOpen()) {
+			this._oTraversalItem = this._getNextTraversalItem();
 
-		// If there is a link in the value state message
-		if (oItem && this.isOpen() && this.getValueStateLinks().length) {
+			if (this._oTraversalItem && !this.isFocusInTokenizer() && !this.isComposingCharacter()) {
+				this.updateDomValue(this._oTraversalItem.getText());
+				this.selectText(0, this.getValue().length);
+			}
+			return;
+		}
+
+		if (this.getValueState() != ValueState.None) {
 			this._handleFormattedTextNav();
 			return;
-		} else if (oItem && this.isOpen()) {
-			// wait for the composition and input events to fire properly
-			// since the focus of the list item triggers unwanted extra events
-			// when called in while composing
-			setTimeout(function() {
-				ListHelpers.getListItem(oItem).focus();
-			}, 0);
-			return;
 		}
 
-		if (this.isFocusInTokenizer()) {
-			return;
-		}
+		// wait for the composition and input events to fire properly since the focus of the list item
+		// triggers unwanted extra events when called in while composing
+		setTimeout(function() {
+			// If list is open then go to the first visible list item. Set this item into the visual viewport.
+			var aItems = ListHelpers.getVisibleItems(this.getItems()),
+				oItem = aItems[0];
 
-		this._oTraversalItem = this._getNextTraversalItem();
+			oItem && ListHelpers.getListItem(oItem).focus();
+		}.bind(this), 0);
 
-		if (this._oTraversalItem && !this.isComposingCharacter()) {
-			this.updateDomValue(this._oTraversalItem.getText());
-			this.selectText(0, this.getValue().length);
-		}
 	};
 
 	/**
@@ -370,7 +367,7 @@ function(
 
 		this.syncPickerContent();
 
-		if (this.isFocusInTokenizer()) {
+		if (this.isFocusInTokenizer() || this.isOpen()) {
 			return;
 		}
 
@@ -422,38 +419,43 @@ function(
 	 * @private
 	 */
 	MultiComboBox.prototype._valueStateNavDelegate = function(oValueStateHeader, oFormattedText, aValueStateLinks) {
-		var that = this;
-		this.oValueStateNavDelegate = {};
+		var oFocusDomRef = this.getFocusDomRef();
 
-		this.oValueStateNavDelegate.onsapdown = function() {
-			ListHelpers.getListItem(that.getSelectableItems()[0]).focus();
-		};
-		this.oValueStateNavDelegate.onsapup = function() {
-			that.getFocusDomRef().focus();
-		};
-		this.oValueStateNavDelegate.onsapend = function(oEvent) {
-			// Prevent document scrolling when End key is pressed
-			oEvent.preventDefault();
-			var aVisibleItems = that.getSelectableItems();
-			ListHelpers.getListItem(that.getSelectableItems()[aVisibleItems.length - 1]).focus();
-		};
+		this.oValueStateNavDelegate = {
+			onsapdown: function(oEvent) {
+				var aVisibleItems = ListHelpers.getVisibleItems(this.getItems()),
+					oListItem = aVisibleItems.length && ListHelpers.getListItem(aVisibleItems[0]);
 
-		// Links should not be tabbable after the focus is moved outside of the value state header
-		this.oValueStateNavDelegate.onfocusout = function(oEvent) {
-			oValueStateHeader.removeStyleClass("sapMFocusable");
+				oEvent.preventDefault();
+				oListItem && oListItem.focus();
+			}.bind(this),
+			onsapup: function() {
+				oFocusDomRef.focus();
+			},
+			onsapend: function(oEvent) {
+				var aVisibleItems = ListHelpers.getVisibleItems(this.getItems()),
+					oListItem = aVisibleItems.length && ListHelpers.getListItem(aVisibleItems[aVisibleItems.length - 1]);
 
-			// Check if the element getting the focus is outside the value state header
-			if (!oValueStateHeader.getDomRef().contains(oEvent.relatedTarget)) {
-				aValueStateLinks.forEach(function(oLink) {
-					oLink.getDomRef().setAttribute("tabindex", "-1");
-				});
-			}
+				oEvent.preventDefault();
+				oListItem && oListItem.focus();
+			}.bind(this),
+			onfocusout: function(oEvent) {
+				// Links should not be tabbable after the focus is moved outside of the value state header
+				oValueStateHeader.removeStyleClass("sapMFocusable");
 
-			// In IE a pseudo visual focus is applied to the FormattedText because no visible
-			// focus outlines are natively added to the value state header when it is active.
-			// Remove it when the picker is closed.
-			if (Device.browser.msie) {
-				oFormattedText.removeStyleClass("sapMPseudoFocus");
+				// Check if the element getting the focus is outside the value state header
+				if (!oValueStateHeader.getDomRef().contains(oEvent.relatedTarget)) {
+					aValueStateLinks.forEach(function(oLink) {
+						oLink.getDomRef().setAttribute("tabindex", "-1");
+					});
+				}
+
+				// In IE a pseudo visual focus is applied to the FormattedText because no visible
+				// focus outlines are natively added to the value state header when it is active.
+				// Remove it when the picker is closed.
+				if (Device.browser.msie) {
+					oFormattedText.removeStyleClass("sapMPseudoFocus");
+				}
 			}
 		};
 
@@ -516,7 +518,7 @@ function(
 			oLastValueStateLink = aValueStateLinks ? aValueStateLinks[aValueStateLinks.length - 1] : null,
 			oFirstValueStateLink = aValueStateLinks ? aValueStateLinks[0] : null;
 
-		if (!aValueStateLinks.length || oCustomHeader.getDomRef() === document.activeElement) {
+		if (!oCustomHeader.getDomRef()  || oCustomHeader.getDomRef() === document.activeElement) {
 			return;
 		}
 
@@ -547,8 +549,8 @@ function(
 			}
 		} : this.oMoveFocusBackToVSHeader;
 
-		oLastValueStateLink.addDelegate(this._closePickerDelegate, this);
-		oFirstValueStateLink.addDelegate(this.oMoveFocusBackToVSHeader, this);
+		oLastValueStateLink && oLastValueStateLink.addDelegate(this._closePickerDelegate, this);
+		oFirstValueStateLink && oFirstValueStateLink.addDelegate(this.oMoveFocusBackToVSHeader, this);
 	};
 
 	/**
@@ -1085,6 +1087,11 @@ function(
 	 * @function
 	 */
 	MultiComboBox.prototype._configureList = function (oList) {
+		// overwrite the default page size of the list
+		// in order to be consistent with the other inputs
+		// page size is used for pageup and pagedown
+		var iPageSize = 10;
+
 		if (!oList) {
 			return;
 		}
@@ -1092,6 +1099,7 @@ function(
 		// configure the list
 		oList.setMode(ListMode.MultiSelect);
 		oList.setIncludeItemInSelection(true);
+		oList.setGrowingThreshold(iPageSize);
 
 		// attach event handlers
 		oList
@@ -1776,7 +1784,73 @@ function(
 	 */
 	MultiComboBox.prototype._decorateListItem = function(oListItem) {
 		oListItem.addDelegate({
+			onkeyup: function(oEvent) {
+				var oItem = null;
+
+				// If an item is selected with SPACE inside of
+				// suggest list the list
+				// with all entries should be opened
+				if (oEvent.which == KeyCodes.SPACE && this.isOpen() && this._isListInSuggestMode()) {
+					this.open();
+					oItem = this._getLastSelectedItem();
+
+					// Scrolls an item into the visual viewport
+					if (oItem) {
+						ListHelpers.getListItem(oItem).focus();
+					}
+
+					return;
+				}
+			},
+
 			onkeydown: function(oEvent) {
+				if (!oListItem.isA("sap.m.GroupHeaderListItem")) {
+					var oItem = null, oItemCurrent = null;
+
+					if (oEvent.shiftKey && oEvent.which == KeyCodes.ARROW_DOWN) {
+						oItemCurrent = this._getCurrentItem();
+						oItem = this._getNextVisibleItemOf(oItemCurrent);
+					}
+
+					if (oEvent.shiftKey && oEvent.which == KeyCodes.ARROW_UP) {
+						oItemCurrent = this._getCurrentItem();
+						oItem = this._getPreviousVisibleItemOf(oItemCurrent);
+					}
+
+					if (oEvent.shiftKey && oEvent.which === KeyCodes.SPACE) {
+						oItemCurrent = this._getCurrentItem();
+						this._selectPreviousItemsOf(oItemCurrent);
+					}
+
+					if (oItem && oItem !== oItemCurrent) {
+
+						if (ListHelpers.getListItem(oItemCurrent).isSelected()) {
+							this.setSelection({
+								item: oItem,
+								id: oItem.getId(),
+								key: oItem.getKey(),
+								fireChangeEvent: true,
+								suppressInvalidate: true
+							});
+							this._setCurrentItem(oItem);
+						} else {
+
+							this.removeSelection({
+								item: oItem,
+								id: oItem.getId(),
+								key: oItem.getKey(),
+								fireChangeEvent: true,
+								suppressInvalidate: true
+							});
+							this._setCurrentItem(oItem);
+						}
+
+						return;
+					}
+
+					this._resetCurrentItem();
+				}
+
 				if ((oEvent.ctrlKey || oEvent.metaKey) && oEvent.which == KeyCodes.A) {
 					oEvent.setMarked();
 					oEvent.preventDefault();
@@ -1809,78 +1883,6 @@ function(
 						}, this);
 					}
 				}
-			}
-		}, this);
-
-		if (oListItem.isA("sap.m.GroupHeaderListItem")) {
-			return;
-		}
-
-		oListItem.addDelegate({
-			onkeyup: function(oEvent) {
-				var oItem = null;
-
-				// If an item is selected with SPACE inside of
-				// suggest list the list
-				// with all entries should be opened
-				if (oEvent.which == KeyCodes.SPACE && this.isOpen() && this._isListInSuggestMode()) {
-					this.open();
-					oItem = this._getLastSelectedItem();
-
-					// Scrolls an item into the visual viewport
-					if (oItem) {
-						ListHelpers.getListItem(oItem).focus();
-					}
-
-					return;
-				}
-			},
-
-			onkeydown: function(oEvent) {
-				var oItem = null, oItemCurrent = null;
-
-				if (oEvent.shiftKey && oEvent.which == KeyCodes.ARROW_DOWN) {
-					oItemCurrent = this._getCurrentItem();
-					oItem = this._getNextVisibleItemOf(oItemCurrent);
-				}
-
-				if (oEvent.shiftKey && oEvent.which == KeyCodes.ARROW_UP) {
-					oItemCurrent = this._getCurrentItem();
-					oItem = this._getPreviousVisibleItemOf(oItemCurrent);
-				}
-
-				if (oEvent.shiftKey && oEvent.which === KeyCodes.SPACE) {
-					oItemCurrent = this._getCurrentItem();
-					this._selectPreviousItemsOf(oItemCurrent);
-				}
-
-				if (oItem && oItem !== oItemCurrent) {
-
-					if (ListHelpers.getListItem(oItemCurrent).isSelected()) {
-						this.setSelection({
-							item: oItem,
-							id: oItem.getId(),
-							key: oItem.getKey(),
-							fireChangeEvent: true,
-							suppressInvalidate: true
-						});
-						this._setCurrentItem(oItem);
-					} else {
-
-						this.removeSelection({
-							item: oItem,
-							id: oItem.getId(),
-							key: oItem.getKey(),
-							fireChangeEvent: true,
-							suppressInvalidate: true
-						});
-						this._setCurrentItem(oItem);
-					}
-
-					return;
-				}
-
-				this._resetCurrentItem();
 			}
 		}, true, this);
 
@@ -1927,7 +1929,7 @@ function(
 				// note: prevent document scrolling when Home key is pressed
 				oEvent.preventDefault();
 
-				if (this.getValueStateLinks().length) {
+				if (this.getValueState() !== ValueState.None) {
 					this._handleFormattedTextNav();
 					oEvent.stopPropagation(true);
 					return;
@@ -1962,11 +1964,11 @@ function(
 				// note: prevent document scrolling when arrow keys are pressed
 				oEvent.preventDefault();
 
-				var aVisibleItems = ListHelpers.getSelectableItems(this.getItems());
+				var aVisibleItems = ListHelpers.getVisibleItems(this.getItems());
 				var oItemFirst = aVisibleItems[0];
 				var oItemCurrent = jQuery(document.activeElement).control()[0];
 
-				if (oItemCurrent === ListHelpers.getListItem(oItemFirst) && this.getValueStateLinks().length) {
+				if (oItemCurrent === ListHelpers.getListItem(oItemFirst) && this.getValueState() !== ValueState.None) {
 					this._handleFormattedTextNav();
 					oEvent.stopPropagation(true);
 					return;
@@ -3492,7 +3494,7 @@ function(
 			oItemToFocus = aSelectedItems.length ? ListHelpers.getItemByListItem(this.getItems(), this._getList().getSelectedItems()[0]) : aSelectableItems[0];
 		}
 
-		iItemToFocus = aSelectableItems.indexOf(oItemToFocus);
+		iItemToFocus = ListHelpers.getVisibleItems(this.getItems()).indexOf(oItemToFocus);
 
 		// Set the initial selected index and focus
 		if (oItemNavigation) {
