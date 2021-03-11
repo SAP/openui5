@@ -2,7 +2,7 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/base/Log",  "./shapes/ShapeFactory"], function (Log, ShapeFactory) {
+sap.ui.define(["sap/base/Log", "./shapes/ShapeFactory"], function (Log, ShapeFactory) {
 	"use strict";
 
 	var SVG_NAMESPACE = "http://www.w3.org/2000/svg";
@@ -14,11 +14,11 @@ sap.ui.define(["sap/base/Log",  "./shapes/ShapeFactory"], function (Log, ShapeFa
 	 */
 	function createSVG(oContainer) {
 		var oSvg = document.createElementNS(SVG_NAMESPACE, 'svg'),
-			fWidth = oContainer.getBoundingClientRect().width,
-			fHeight = oContainer.getBoundingClientRect().height;
+			oRect = oContainer.getBoundingClientRect(),
+			fWidth = oRect.width,
+			fHeight = oRect.height;
 
-		oSvg.setAttribute('height', fWidth);
-		oSvg.setAttribute('width', fHeight);
+		oSvg.setAttribute('viewBox', '0 0 ' + fWidth + ' ' + fHeight);
 
 		oSvg.setAttribute('class', 'overlay');
 
@@ -32,7 +32,7 @@ sap.ui.define(["sap/base/Log",  "./shapes/ShapeFactory"], function (Log, ShapeFa
 	 * @param oContainer {Node} node an HTML DOM to which the overlay should be attached.
 	 * @constructor
 	 */
-	function Overlay (oContainer) {
+	function Overlay(oContainer) {
 		this.oContainer = createSVG(oContainer);
 
 		// map for the svg shapes (rect, polygon, circle)
@@ -41,6 +41,10 @@ sap.ui.define(["sap/base/Log",  "./shapes/ShapeFactory"], function (Log, ShapeFa
 		// current shape type (string)
 		this.sCurrentShapeType = '';
 	}
+
+	Overlay.prototype.setSize = function (fWidth, fHeight) {
+		this.oContainer.setAttribute('viewBox', '0 0 ' + fWidth + ' ' + fHeight);
+	};
 
 	/**
 	 * Sets shape state/position. If there is no shape of that type, creates new one and stores it in the shape map

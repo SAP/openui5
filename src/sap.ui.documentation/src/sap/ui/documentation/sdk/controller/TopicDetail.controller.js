@@ -328,12 +328,12 @@ sap.ui.define([
 					}.bind(this));
 				}
 
-				aImagemaps.each(function (index, image) {
-					this._enableImageMap(image);
+				aImagemaps.each(function (index, imageMap) {
+					this._enableImageMap(imageMap);
 				}.bind(this));
 
-				aSideBySideImagemaps.each(function (index, image) {
-					this._enableImageMap(image, true);
+				aSideBySideImagemaps.each(function (index, imageMap) {
+					this._enableImageMap(imageMap, true);
 				}.bind(this));
 
 				aImgs.each(function (index, image) {
@@ -342,16 +342,15 @@ sap.ui.define([
 				});
 			},
 
-			_enableImageMap: function (image, bIsSideBySide) {
-				var newImage,
+			_enableImageMap: function (imageMap, bIsSideBySide) {
+				var oImage = imageMap.querySelector('img'),
+					newImage,
 					aSrcResult,
 					rex = /<img[^>]+src="([^">]+)/g,
-					fnComple = bIsSideBySide ? this._addSidyBySideImageMap : this._addResponsiveImageMap;
+					that = this;
 
-				fnComple = fnComple.bind(this);
-
-				if (image.complete) {
-					fnComple(image);
+				if (oImage.complete) {
+					this._addResponsiveImageMap(imageMap, bIsSideBySide);
 				} else {
 					// Image still not loaded
 					// If the src is already set, then the event is firing in the cached case,
@@ -361,10 +360,10 @@ sap.ui.define([
 					newImage = new Image();
 
 					newImage.onload = function () {
-						fnComple(image);
+						that._addResponsiveImageMap(imageMap, bIsSideBySide);
 					};
 
-					aSrcResult = rex.exec(image.innerHTML);
+					aSrcResult = rex.exec(oImage.outerHTML);
 					if (aSrcResult) {
 						newImage.src = aSrcResult && aSrcResult[1];
 					}
@@ -389,15 +388,10 @@ sap.ui.define([
 				return oTopicTablesConfig[sTableId];
 			},
 
-			_addResponsiveImageMap: function (data) {
-				this.aResponsiveImageMaps.push(new ResponsiveImageMap(
-					data.querySelector('map'),
-					data.querySelector('img')
-				));
-			},
+			_addResponsiveImageMap: function (data, bIsSideBySide) {
+				var fnClass = bIsSideBySide ? SidyBySideImageMap : ResponsiveImageMap;
 
-			_addSidyBySideImageMap: function (data) {
-				this.aResponsiveImageMaps.push(new SidyBySideImageMap(data));
+				this.aResponsiveImageMaps.push(new fnClass(data));
 			},
 
 			/**

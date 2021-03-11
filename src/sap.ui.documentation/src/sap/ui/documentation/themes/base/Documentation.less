@@ -20,6 +20,10 @@ html.sap-tablet:not(.sap-desktop) {
 }
 
 /*!********************************************* Documentation page styles *********************************************!*/
+.imagemap-overlay-popover {
+    pointer-events: none;
+}
+
 .topicWrapper,
 .topicWrapper .sapUiHLayoutChildWrapper {
     width: 100%;
@@ -213,6 +217,10 @@ html.sap-tablet:not(.sap-desktop) {
     .imagemap {
         position: relative;
 
+        map area:focus {
+            outline: none;
+        }
+
         .overlay {
             position: absolute;
             width: 100%;
@@ -226,8 +234,10 @@ html.sap-tablet:not(.sap-desktop) {
                 transition: opacity 0.3s;
             }
         }
+    }
 
-
+    .imagemap_sidebyside.stacked .imagemap.fig{
+        display: inline-block;
     }
 
     .imagemap_sidebyside:not(.stacked) {
@@ -243,7 +253,7 @@ html.sap-tablet:not(.sap-desktop) {
         }
     }
 
-    .imagemap_sidebyside[data-static-type="false"] .imagemap img {
+    .imagemap_sidebyside[data-static-type="false"] .imagemap {
         transition: width 0.5s;
     }
 

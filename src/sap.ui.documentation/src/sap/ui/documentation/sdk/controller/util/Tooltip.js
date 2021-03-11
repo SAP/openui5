@@ -17,7 +17,7 @@ sap.ui.define([
 			horizontalScrolling: false,
 			contentWidth: "200px",
 			content: oText
-		});
+		}).addStyleClass("imagemap-overlay-popover");
 
 	function Tooltip() { }
 

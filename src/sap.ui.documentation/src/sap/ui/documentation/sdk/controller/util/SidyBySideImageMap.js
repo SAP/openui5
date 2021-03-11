@@ -2,10 +2,10 @@
  * ${copyright}
  */
 
-sap.ui.define(["sap/ui/documentation/sdk/controller/util/ResponsiveImageMap"], function (ResponsiveImageMap) {
+sap.ui.define(["./overlay/Overlay", "sap/ui/documentation/sdk/controller/util/ResponsiveImageMap"], function (Overlay, ResponsiveImageMap) {
 	"use strict";
 
-	var COLLAPSED_IMAGE_WIDTH = "200px",
+	var COLLAPSED_IMAGE_WIDTH = "200",
 		rgxTargetTemplate = /.+\/(.+)/;
 
 	var fnToggleAttribute = function(attr, $element, toggle) {
@@ -18,17 +18,20 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/ResponsiveImageMap"], f
 
 	var SidyBySideImageMap = function (oData) {
 		var oMap = oData.querySelector('map'),
-			oImg = oData.querySelector('img');
+			oMapWrapper = oData.querySelector(".imagemap");
 
-		ResponsiveImageMap.call(this, oMap, oImg);
+		ResponsiveImageMap.call(this, oData);
 
+		this.oHighlighter = new Overlay(this.oImg.parentNode); // used to mark the active area with permanent overlay
+		this.oMapWrapper = oMapWrapper;
 		this.aSections = [].slice.call(oData.querySelectorAll("section"));
 		this.bStatic = oData.dataset.staticType === "true";
 		this.bRestoreSize = false;
 		this.oMap = oMap;
 		this.fnHandlers = Object.assign(this.fnHandlers, {
 			click: this.onclick.bind(this),
-			resize: this.resize.bind(this),
+			imgTransitionend: this.ontransitionendImage.bind(this),
+			imgTransitionstart: this.ontransitionstartImage.bind(this),
 			imgMouseenter: this.onmouseenterImage.bind(this),
 			imgMouseleave: this.onmouseleaveImage.bind(this)
 		});
@@ -38,9 +41,13 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/ResponsiveImageMap"], f
 		}, this);
 
 		if (!this.bStatic) {
-			this.oImg.addEventListener("transitionend", this.fnHandlers.resize);
-			this.oImg.addEventListener("mouseenter", this.fnHandlers.imgMouseenter);
-			this.oImg.addEventListener("mouseleave", this.fnHandlers.imgMouseleave);
+			// first run of transition is only working if the width value is in px initially
+			this.setWidth(this.iOriginalWidth);
+
+			this.oMapWrapper.addEventListener("transitionstart", this.fnHandlers.imgTransitionstart);
+			this.oMapWrapper.addEventListener("transitionend", this.fnHandlers.imgTransitionend);
+			this.oMapWrapper.addEventListener("mouseenter", this.fnHandlers.imgMouseenter);
+			this.oMapWrapper.addEventListener("mouseleave", this.fnHandlers.imgMouseleave);
 		}
 
 		this.showSection(this.aSections[0].getAttribute("id"));
@@ -57,9 +64,8 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/ResponsiveImageMap"], f
 
 	SidyBySideImageMap.prototype.onmouseenterImage = function () {
 		if (this.bRestoreSize) {
-			this.oImg.style.width = this.iOriginalWidth + "px";
+			this.setWidth(this.iOriginalWidth);
 			this.bRestoreSize = false;
-			this.resize();
 		}
 	};
 
@@ -71,29 +77,94 @@ sap.ui.define(["sap/ui/documentation/sdk/controller/util/ResponsiveImageMap"], f
 		this.bRestoreSize = true;
 	};
 
+	SidyBySideImageMap.prototype.ontransitionendImage = function (oEvent) {
+		if (oEvent.propertyName === "width") {
+			this.bAreasDisabled = false;
+			this.resize();
+		}
+	};
+	SidyBySideImageMap.prototype.ontransitionstartImage = function (oEvent) {
+		if (oEvent.propertyName === "width") {
+			this.bAreasDisabled = true;
+		}
+	};
+
+	SidyBySideImageMap.prototype.highlightArea = function (oAreaTarget) {
+		var sCoords = oAreaTarget.coords,
+			sShape = oAreaTarget.getAttribute("shape");
+
+		this.oHighlighter.setShape(sShape, sCoords);
+		this.oHighlighter.show();
+	};
+
+	SidyBySideImageMap.prototype.resizeHighlighter = function () {
+		var oRect = this.oMapWrapper.getBoundingClientRect(),
+			fWidth = oRect.width,
+			fHeight = oRect.height;
+
+		this.oHighlighter.setSize(fWidth, fHeight);
+	};
+
 	SidyBySideImageMap.prototype.onclick = function (oEvent) {
+		if (this.bAreasDisabled) {
+			return;
+		}
 		var sTargetId = oEvent.target.alt.match(rgxTargetTemplate)[1];
 
 		oEvent.preventDefault();
 		this.showSection(sTargetId);
 
+		this.resizeHighlighter();
+		this.highlightArea(oEvent.target);
+
 		if (!this.bStatic) {
-			this.oImg.style.width = COLLAPSED_IMAGE_WIDTH;
+			this.setWidth(COLLAPSED_IMAGE_WIDTH);
 		}
 	};
 
 	SidyBySideImageMap.prototype.removeEventListeners = function () {
-		ResponsiveImageMap.prototype.exit.call(this);
+		ResponsiveImageMap.prototype.removeEventListeners.call(this);
 
 		this.areas.forEach(function (oArea) {
 			oArea.element.removeEventListener("click", this.fnHandlers.click);
 		}, this);
 
 		if (!this.bStatic) {
-			this.oImg.removeEventListener("transitionend", this.fnHandlers.resize);
+			this.oImg.removeEventListener("transitionend", this.fnHandlers.imgTransitionend);
 			this.oImg.removeEventListener("mouseenter", this.fnHandlers.imgMouseenter);
 			this.oImg.removeEventListener("mouseleave", this.fnHandlers.imgMouseleave);
 		}
+	};
+
+	SidyBySideImageMap.prototype.getTooltipText = function (oEvent) {
+		var sTitle = oEvent.target.getAttribute('title'),
+			sTargetId,
+			oSection,
+			oSectionTitle;
+
+		if (!sTitle) {
+			// if no title attribute - get the corresponding section title text as tooltip
+			sTargetId = oEvent.target.alt.match(rgxTargetTemplate)[1];
+
+			oSection = this.getSection(sTargetId);
+
+			if (oSection) {
+				oSectionTitle = oSection.querySelector(".title");
+				sTitle = oSectionTitle && oSectionTitle.textContent;
+			}
+		}
+
+		return sTitle;
+	};
+
+	SidyBySideImageMap.prototype.setWidth = function (fWidth) {
+		this.oMapWrapper.style.width = fWidth + "px";
+	};
+
+	SidyBySideImageMap.prototype.getSection = function (sSectionId) {
+		return this.aSections.find(function (oSection) {
+			return oSection.id === sSectionId;
+		});
 	};
 
 	return SidyBySideImageMap;
