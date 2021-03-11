@@ -206,4 +206,17 @@ sap.ui.define([
         assert.equal(this.oListView.getTemplate().aDelegates.length, 0, "No hover event delegate registered");
     });
 
+    QUnit.test("Check keyboard mode upon 'Show Values' switch", function(assert){
+        this.oListView.setEnableReorder(true);
+
+        this.oListView.showFactory(true);
+
+        assert.equal(this.oListView._oListControl.getKeyboardMode(), "Edit", "List is in edit mode");
+
+        this.oListView.showFactory(false);
+
+        assert.equal(this.oListView._oListControl.getKeyboardMode(), "Navigation", "List is in navigation mode");
+
+    });
+
 });
