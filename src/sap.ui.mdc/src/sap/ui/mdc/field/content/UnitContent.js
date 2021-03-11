@@ -54,6 +54,7 @@ sap.ui.define([
 				showValueHelp: false,
 				width: "70%",
 				tooltip: "{$field>/tooltip}",
+				autocomplete: false,
 				fieldGroupIds: [oContentFactory.getField().getId()], // use FieldGroup to fire change only if focus leaved complete Field
 				change: oContentFactory.getHandleContentChange(),
 				liveChange: oContentFactory.getHandleContentLiveChange()
@@ -149,6 +150,7 @@ sap.ui.define([
 					ariaAttributes: "{$field>/_ariaAttributes}",
 					width: "30%",
 					tooltip: "{$field>/tooltip}",
+					autocomplete: false,
 					fieldGroupIds: [oContentFactory.getField().getId()], // use FieldGroup to fire change only if focus leaved complete Field
 					change: oContentFactory.getHandleContentChange(),
 					liveChange: oContentFactory.getHandleContentLiveChange(),

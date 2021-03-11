@@ -122,6 +122,7 @@ sap.ui.define([], function() {
 				ariaAttributes: "{$field>/_ariaAttributes}",
 				width: "100%",
 				tooltip: "{$field>/tooltip}",
+				autocomplete: false,
 				change: oContentFactory.getHandleContentChange(),
 				liveChange: oContentFactory.getHandleContentLiveChange(),
 				valueHelpRequest: oContentFactory.getHandleValueHelpRequest()
@@ -167,6 +168,7 @@ sap.ui.define([], function() {
 				tooltip: "{$field>/tooltip}",
 				tokens: { path: "$field>/conditions", template: oToken },
 				dependents: [oToken], // to destroy it if MultiInput is destroyed
+				autocomplete: false,
 				change: oContentFactory.getHandleContentChange(),
 				liveChange: oContentFactory.getHandleContentLiveChange(),
 				tokenUpdate: oContentFactory.getHandleTokenUpdate(),
