@@ -8,10 +8,11 @@ sap.ui.define([
 	'sap/ui/core/Control',
 	'sap/ui/core/Renderer',
 	'sap/ui/core/library',
+	"sap/ui/core/LabelEnablement",
 	"sap/ui/events/KeyCodes",
 	'./ObjectNumberRenderer'
 ],
-	function(library, Control, Renderer, coreLibrary, KeyCodes, ObjectNumberRenderer) {
+	function(library, Control, Renderer, coreLibrary, LabelEnablement, KeyCodes, ObjectNumberRenderer) {
 	"use strict";
 
 
@@ -112,6 +113,10 @@ sap.ui.define([
 
 		},
 		associations : {
+			/**
+			 * Association to controls / ids which label this control (see WAI-ARIA attribute aria-labelledby).
+			 */
+			ariaLabelledBy: {type: "sap.ui.core.Control", multiple: true, singularName: "ariaLabelledBy"},
 
 			/**
 			 * Association to controls / ids which describe this control (see WAI-ARIA attribute aria-describedby).
@@ -255,6 +260,43 @@ sap.ui.define([
 
 		//event should only be fired if the click is on the number, unit or link
 		return this._isActive() && (sSourceId === this.getId() + "-link" || sSourceId === this.getId() + "-number" || sSourceId === this.getId() + "-unit");
+	};
+
+	/**
+	 * Checks whether or not the control is labelled either via labels or its <code>ariaLabelledBy</code> association.
+	 * @returns {boolean}
+	 * @private
+	 */
+	ObjectNumber.prototype._hasExternalLabelling = function() {
+		return this.getAriaLabelledBy().length > 0 || LabelEnablement.getReferencingLabels(this).length > 0;
+	};
+
+	/**
+	 * Generates a string containing all internal elements' IDs, which provide information to the screen reader user.
+	 * @returns {string}
+	 * @private
+	 */
+	ObjectNumber.prototype._generateSelfLabellingIds = function() {
+		var sId = this.getId(),
+			sResult = "";
+
+		if (this.getNumber()) {
+			sResult += sId + "-number ";
+		}
+
+		if (this.getUnit()) {
+			sResult += sId + "-unit ";
+		}
+
+		if (this.getEmphasized()) {
+			sResult += sId + "-emphasized ";
+		}
+
+		if (this.getState() !== ValueState.None) {
+			sResult += sId + "-state";
+		}
+
+		return sResult.trim();
 	};
 
 	return ObjectNumber;

@@ -71,6 +71,13 @@ sap.ui.define(['sap/ui/core/Renderer', 'sap/ui/core/library'],
 			oRm.style("text-align", sTextAlign);
 		}
 
+		if (oON._hasExternalLabelling()) {
+			oAccAttributes["labelledby"] = {
+				value: oON._generateSelfLabellingIds(),
+				append: true
+			};
+		}
+
 		oRm.accessibilityState(oON, oAccAttributes);
 
 		oRm.openEnd();

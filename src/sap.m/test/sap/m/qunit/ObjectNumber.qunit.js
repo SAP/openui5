@@ -255,6 +255,22 @@ sap.ui.define([
 		assert.notOk(oStateElement, "Additional SPAN for the state isn't created");
 	});
 
+	QUnit.test("Active ObjectNumber", function (assert) {
+		var oLabel = new sap.m.Label("label", {
+			text: "Label",
+			labelFor: "ON"
+		});
+
+		this.oON.setActive(true);
+
+		oLabel.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(this.oON.getDomRef().getAttribute("aria-labelledby"), "label ON-number ON-unit",
+			"ObjectNumber's content information is added in aria-labelledby alongside the label");
+		oLabel.destroy();
+	});
+
 	QUnit.test("ObjectNumber with state (different than 'None')", function (assert) {
 		var oCore = sap.ui.getCore(),
 			sErrorText = oCore.getLibraryResourceBundle("sap.m").getText("OBJECTNUMBER_ARIA_VALUE_STATE_ERROR"),
