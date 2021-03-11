@@ -486,22 +486,50 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.getRootContexts
-	 * @param {object}
-	 *            mParameters specifying how the top-most aggregation level shall be fetched. Supported parameters are:
-	 * <ul>
-	 * <li>numberOfExpandedLevels: number of child levels that shall be fetched automatically</li>
-	 * <li>startIndex: index of first entry to return from parent group ID <code>"/"</code> (zero-based)</li>
-	 * <li>length: number of entries to return at and after the given start index</li>
-	 * <li>threshold: number of additional entries that shall be locally available in the binding for subsequent
-	 * accesses to contexts of parent group ID <code>"/"</code> or below, if auto-expanding is selected</li>
-	 * </ul>
-	 * @return {array}
-	 *            Array with a single object of class sap.ui.model.Context for the root context,
-	 *            or an empty array if an OData request is pending to fetch requested contexts that are not yet locally available.
+	 * @param {object|int} mParameters
+	 *   Parameter map specifying how the topmost aggregation level shall be fetched. If this
+	 *   parameter map is set, the optional function parameters are ignored. Optionally, instead
+	 *   of a parameter map an integer value can be set to define the parameter
+	 *   <code>startIndex</code> as described in this parameter list. In this case, the function
+	 *   parameters <code>iLength</code>, <code>iNumberOfExpandedLevels</code> and
+	 *   <code>iThreshold</code> become mandatory.
+	 * @param {int} mParameters.length
+	 *   Number of entries to return at and after the given start index; defaults to the model's
+	 *   size limit, see {@link sap.ui.model.Model#setSizeLimit}
+	 * @param {int} mParameters.numberOfExpandedLevels
+	 *   Number of child levels that shall be fetched automatically
+	 * @param {int} mParameters.startIndex
+	 *   Index of first entry to return from parent group ID <code>"/"</code> (zero-based)
+	 * @param {int} mParameters.threshold
+	 *   Number of additional entries that shall be locally available in the binding for subsequent
+	 *   accesses to contexts of parent group ID <code>"/"</code> or below, if auto-expanding is
+	 *   selected
+	 * @param {int} [iLength]
+	 *   See documentation of the <code>length</code> parameter in the parameter list of
+	 *   <code>mParameters</code>
+	 * @param {int} [iNumberOfExpandedLevels=0]
+	 *   See documentation of the <code>numberOfExpandedLevels</code> parameter in the parameter
+	 *   list of <code>mParameters</code>
+	 * @param {int} [iThreshold=0]
+	 *   See documentation of the <code>threshold</code> parameter in the parameter list of
+	 *   <code>mParameters</code>
+	 * @return {sap.ui.model.Context[]}
+	 *   Array with a single object of class sap.ui.model.Context for the root context, or an empty
+	 *   array if an OData request is pending to fetch requested contexts that are not yet locally
+	 *   available.
 	 *
 	 * @public
 	 */
-	AnalyticalBinding.prototype.getRootContexts = function(mParameters) {
+	AnalyticalBinding.prototype.getRootContexts = function(mParameters, iLength,
+			iNumberOfExpandedLevels, iThreshold) {
+		if (typeof mParameters !== "object") {
+			mParameters = {
+				length : iLength,
+				numberOfExpandedLevels : iNumberOfExpandedLevels,
+				startIndex : mParameters,
+				threshold : iThreshold
+			};
+		}
 
 		if (this.isInitial()) {
 			return [];
@@ -705,15 +733,19 @@ sap.ui.define([
 	 *
 	 * @function
 	 * @name sap.ui.model.analytics.AnalyticalBinding.prototype.hasChildren
-	 * @param {sap.ui.model.Context}
-	 *            oContext the parent context identifying the requested group of child contexts.
-	 * @param {object}
-	 *            mParameters The only supported parameter is level as the level number of oContext (because the context might occur at multiple levels)
+	 * @param {sap.ui.model.Context} oContext
+	 *   The parent context identifying the requested group of child contexts
+	 * @param {object} [mParameters]
+	 *   The only supported parameter is <code>level</code> as the level number of oContext (because
+	 *   the context might occur at multiple levels)
+	 * @param {int} [mParameters.level=1]
+	 *   The aggregation level number
 	 * @return {boolean}
-	 *            true if and only if the contexts in the specified group have further children.
+	 *   <code>true</code> if any of the contexts in the specified group has further children
 	 * @public
 	 */
 	AnalyticalBinding.prototype.hasChildren = function(oContext, mParameters) {
+		mParameters = mParameters || {level : 1};
 
 		if (oContext === undefined) {
 			return false; // API robustness

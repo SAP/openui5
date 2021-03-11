@@ -61,20 +61,21 @@ MessageParser.prototype.getProcessor = function() {
 	return this._processor;
 };
 
-
 /**
  * Abstract parse method must be implemented in the inheriting class.
  *
+ * @param {object} oResponse
+ *   The response from the server containing body and headers
+ * @param {object} oRequest
+ *   The original request that lead to this response
  * @public
- * @abstract
  */
-MessageParser.prototype.parse = function(oResponse) {
+MessageParser.prototype.parse = function(oResponse, oRequest) {
 	Log.error(
 		"MessageParser: parse-method must be implemented in the specific parser class. Messages " +
 		"have been ignored."
 	);
 };
-
 
 ////////////////////////////////////////// onEvent Methods /////////////////////////////////////////
 ////////////////////////////////////////// Private Methods /////////////////////////////////////////
