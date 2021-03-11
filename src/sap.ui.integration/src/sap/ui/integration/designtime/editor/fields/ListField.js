@@ -170,8 +170,8 @@ sap.ui.define([
 
 	ListField.prototype.mergeSelectedItems = function(oEvent) {
 		var oConfig = this.getConfiguration();
-		if (!this._aSelectedItems) {
-			this._aSelectedItems = [];
+		if (!oConfig.valueItems) {
+			oConfig.valueItems = [];
 		}
 		var sPath = oConfig.values.data.path || "/";
 		var oValueModel = this.getModel();
@@ -190,7 +190,7 @@ sap.ui.define([
 			var oResult = ObjectPath.get(aPath, oData);
 			if (Array.isArray(oResult)) {
 				//get keys of previous selected items
-				var aSelectedItemKeys = this._aSelectedItems.map(function (oSelectedItem) {
+				var aSelectedItemKeys = oConfig.valueItems.map(function (oSelectedItem) {
 					return this.getKeyFromItem(oSelectedItem);
 				}.bind(this));
 				//get the items which are in selectedItems list
@@ -203,20 +203,20 @@ sap.ui.define([
 					return item.Selected === oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
 				});
 				//add the selected items which are not in selectedItems list into selectedItems list
-				this._aSelectedItems = this._aSelectedItems.concat(oSelectedItemsMissedInSelectedItemsList);
+				oConfig.valueItems = oConfig.valueItems.concat(oSelectedItemsMissedInSelectedItemsList);
 				//get the items which are not selected
 				var oNotSelectedItems = oItemsNotInSelectedItemsList.filter(function (item) {
 					return item.Selected !== oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
 				});
 				//concat the filtered items to the selectedItems list as new data
-				oResult = this._aSelectedItems.concat(oNotSelectedItems);
+				oResult = oConfig.valueItems.concat(oNotSelectedItems);
 			} else {
-				oResult = this._aSelectedItems;
+				oResult = oConfig.valueItems;
 			}
 			ObjectPath.set(aPath, oResult, oData);
 		} else if (Array.isArray(oData)) {
 			//get keys of previous selected items
-			var aSelectedItemKeys = this._aSelectedItems.map(function (oSelectedItem) {
+			var aSelectedItemKeys = oConfig.valueItems.map(function (oSelectedItem) {
 				return this.getKeyFromItem(oSelectedItem);
 			}.bind(this));
 			//get the items which are in selectedItems list
@@ -229,15 +229,15 @@ sap.ui.define([
 				return item.Selected === oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
 			});
 			//add the selected items which are not in selectedItems list into selectedItems list
-			this._aSelectedItems = this._aSelectedItems.concat(oSelectedItemsMissedInSelectedItemsList);
+			oConfig.valueItems = oConfig.valueItems.concat(oSelectedItemsMissedInSelectedItemsList);
 			//get the items which are not selected
 			var oNotSelectedItems = oItemsNotInSelectedItemsList.filter(function (item) {
 				return item.Selected !== oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
 			});
 			//concat the filtered items to the selectedItems list as new data
-			oData = this._aSelectedItems.concat(oNotSelectedItems);
+			oData = oConfig.valueItems.concat(oNotSelectedItems);
 		} else {
-			oData = this._aSelectedItems;
+			oData = oConfig.valueItems;
 		}
 		oValueModel.setData(oData);
 		this.setSuggestValue();
@@ -270,8 +270,8 @@ sap.ui.define([
 		//update the selected item list
 		if (!bIsSelected) {
 			//remove the diselected item from current selected item list
-			if (oField._aSelectedItems) {
-				oField._aSelectedItems = oField._aSelectedItems.filter(function (oSelectedItem) {
+			if (oConfig.valueItems) {
+				oConfig.valueItems = oConfig.valueItems.filter(function (oSelectedItem) {
 					var sItemKey = oField.getKeyFromItem(oSelectedItem);
 					return sItemKey !== sChangedItemKey;
 				});
@@ -292,16 +292,16 @@ sap.ui.define([
 			}
 
 			if (oData) {
-				if (!oField._aSelectedItems) {
+				if (!oConfig.valueItems) {
 					//initial the selected item list
-					oField._aSelectedItems = [];
+					oConfig.valueItems = [];
 				}
 				//add the selected item into selected item list
 				oData.some(function (oItem) {
 					var sItemKey = oField.getKeyFromItem(oItem);
 					if (sItemKey === sChangedItemKey) {
 						oItem.Selected = oResourceBundle.getText("CARDEDITOR_ITEM_SELECTED");
-						oField._aSelectedItems.push(oItem);
+						oConfig.valueItems = oConfig.valueItems.concat([oItem]);
 						return true;
 					}
 					return false;
@@ -310,7 +310,7 @@ sap.ui.define([
 		}
 
 		//get selected keys of the selected items
-		var aSelectedItemKeys = oField._aSelectedItems.map(function (oSelectedItem) {
+		var aSelectedItemKeys = oConfig.valueItems.map(function (oSelectedItem) {
 			return oField.getKeyFromItem(oSelectedItem);
 		});
 
@@ -391,7 +391,7 @@ sap.ui.define([
 			oData = ObjectPath.get(aPath, oData);
 		}
 		if (oData) {
-			oField._aSelectedItems = oData.filter(function (oItem) {
+			oConfig.valueItems = oData.filter(function (oItem) {
 				var sItemKey = oField.getKeyFromItem(oItem);
 				return includes(aSelectedItemKeys, sItemKey);
 			});
