@@ -2742,19 +2742,18 @@ sap.ui.define([
 				isRoot : function () { return  true; }
 			},
 			oModel = this.createModel(),
+			aPaths = ["/foo", "/bar/baz"],
 			oPromise;
 
 		oModel.aAllBindings = [oBinding1, oBinding2, oBinding3, oBinding4];
-		this.mock(oModel.getMetaModel()).expects("getObject").withExactArgs("/$EntityContainer")
-			.returns("~container~");
 		this.mock(oBinding1).expects("requestAbsoluteSideEffects")
-			.withExactArgs("group", ["/foo", "/bar/baz"]).resolves("~1");
+			.withExactArgs("group", sinon.match.same(aPaths)).resolves("~1");
 		this.mock(oBinding2).expects("requestAbsoluteSideEffects").never();
 		this.mock(oBinding3).expects("requestAbsoluteSideEffects")
-			.withExactArgs("group", ["/foo", "/bar/baz"]).resolves("~3");
+			.withExactArgs("group", sinon.match.same(aPaths)).resolves("~3");
 
 		// code under test
-		oPromise = oModel.requestSideEffects("group", ["/~container~/foo", "/~container~/bar/baz"]);
+		oPromise = oModel.requestSideEffects("group", aPaths);
 
 		assert.notOk(oPromise.isFulfilled());
 		return oPromise.then(function (aResults) {
@@ -2774,19 +2773,6 @@ sap.ui.define([
 		this.mock(oBinding).expects("requestAbsoluteSideEffects").never();
 
 		assert.strictEqual(oModel.requestSideEffects("group", []), undefined);
-	});
-
-	//*********************************************************************************************
-	QUnit.test("requestSideEffects: wrong path", function (assert) {
-		var oModel = this.createModel();
-
-		this.mock(oModel.getMetaModel()).expects("getObject").withExactArgs("/$EntityContainer")
-			.returns("~container~");
-
-		// code under test
-		assert.throws(function () {
-			oModel.requestSideEffects("group", ["/wrong/path"]);
-		}, new Error("Path must start with '/~container~': /wrong/path"));
 	});
 
 	//*********************************************************************************************

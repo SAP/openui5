@@ -1109,7 +1109,8 @@ sap.ui.define([
 	 * @since 1.61.0
 	 */
 	Context.prototype.requestSideEffects = function (aPathExpressions, sGroupId) {
-		var oMetaModel = this.oModel.getMetaModel(),
+		var sEntityContainer,
+			oMetaModel = this.oModel.getMetaModel(),
 			aPathsForBinding = [],
 			aPathsForModel = [],
 			oRootBinding,
@@ -1148,6 +1149,7 @@ sap.ui.define([
 			throw new Error("Cannot request side effects of unresolved binding's context: " + this);
 		}
 
+		sEntityContainer = "/" + oMetaModel.getObject("/$EntityContainer") + "/";
 		aPathExpressions.map(function (vPath) {
 			if (vPath && typeof vPath === "object") {
 				if (isPropertyPath(vPath.$PropertyPath)) {
@@ -1164,7 +1166,10 @@ sap.ui.define([
 				+ JSON.stringify(vPath));
 		}).forEach(function (sPath) {
 			if (sPath[0] === "/") {
-				aPathsForModel.push(sPath);
+				if (!sPath.startsWith(sEntityContainer)) {
+					throw new Error("Path must start with '" + sEntityContainer + "': " + sPath);
+				}
+				aPathsForModel.push(sPath.slice(sEntityContainer.length - 1));
 			} else {
 				aPathsForBinding.push(sPath);
 			}
@@ -1176,6 +1181,7 @@ sap.ui.define([
 			return aPaths0.concat(oMetaModel.getAllPathReductions(
 				_Helper.buildPath(that.getPath(), sPath), sRootPath));
 		}, []);
+		aPathsForBinding = _Helper.filterPaths(aPathsForModel, aPathsForBinding);
 
 		sGroupId = sGroupId || this.getUpdateGroupId();
 
@@ -1210,7 +1216,7 @@ sap.ui.define([
 	 *   The effective group ID
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
-	 *   effects fails
+	 *   effects fails, or <code>undefined</code> if there is nothing to do
 	 *
 	 * @private
 	 */
@@ -1224,6 +1230,10 @@ sap.ui.define([
 			aParentPaths = [],
 			sPath,
 			aPromises = [];
+
+		if (!aAbsolutePaths.length) {
+			return undefined; // nothing to do
+		}
 
 		for (;;) {
 			oBinding = oCandidate.getBinding();

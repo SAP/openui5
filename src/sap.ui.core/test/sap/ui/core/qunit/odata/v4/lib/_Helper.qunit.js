@@ -3675,4 +3675,22 @@ sap.ui.define([
 		// code under test
 		assert.strictEqual(_Helper.getContentID({"@Foo.ContentID" : "bar"}), "bar");
 	});
+
+	//*********************************************************************************************
+	QUnit.test("filterPaths", function (assert) {
+		var aPaths = ["/foo", "/bar/baz"];
+
+		// code under test
+		assert.deepEqual(_Helper.filterPaths(aPaths, ["/baz/qux"]), ["/baz/qux"]);
+
+		// code under test
+		assert.deepEqual(_Helper.filterPaths(aPaths, ["/foo"]), []);
+
+		// code under test
+		assert.deepEqual(_Helper.filterPaths(aPaths, ["/foobar", "/bar/baz/qux"]),
+			["/foobar"]);
+
+		// code under test
+		assert.deepEqual(_Helper.filterPaths(aPaths, ["/bar(42)/baz", "/qux"]), ["/qux"]);
+	});
 });

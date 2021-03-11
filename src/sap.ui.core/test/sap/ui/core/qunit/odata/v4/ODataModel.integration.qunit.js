@@ -3234,12 +3234,15 @@ sap.ui.define([
 	//    expect refreshes for orders and items.
 	// 3. Request side effects on a sales order line item for the gross amount and the quantity for
 	//    all line items.
+	// 4. Request side effects on sales order line items with an absolute path to refresh the whole
+	//    collection. BCP: 2180132755
 	// JIRA: CPOUI5ODATAV4-398
 	QUnit.test("requestSideEffects: absolute paths", function (assert) {
 		var oBusinessPartnerContext,
 			oModel = createModel(sSalesOrderService + "?sap-client=123",
 				{autoExpandSelect : true}),
 			sEntityContainer = "/com.sap.gateway.default.zui5_epm_sample.v0002.Container",
+			oItemsTable,
 			sView = '\
 <Table id="contacts" items="{/ContactList}">\
 	<Text id="lastName" text="{LastName}"/>\
@@ -3408,14 +3411,46 @@ sap.ui.define([
 				})
 				.expectChange("quantity", ["5.000", "3.000"]);
 
+			oItemsTable = that.oView.byId("items");
+
 			return Promise.all([
 				// code under test
-				that.oView.byId("items").getItems()[0].getBindingContext().requestSideEffects([
+				oItemsTable.getItems()[0].getBindingContext().requestSideEffects([
 					{$PropertyPath : "GrossAmount"},
 					{$PropertyPath : "SOITEM_2_SO/SO_2_SOITEM/Note"},
 					{$PropertyPath : sEntityContainer + "/SalesOrderList/SO_2_SOITEM/Quantity"}
 				]),
 				that.waitForChanges(assert, "(3)")
+			]);
+		}).then(function () {
+			that.expectRequest("SalesOrderList('SO1')/SO_2_SOITEM?sap-client=123"
+					+ "&$select=GrossAmount,ItemPosition,Note,Quantity,SalesOrderID"
+					+ "&$skip=0&$top=100", {
+					value : [{
+						GrossAmount : "42.4",
+						ItemPosition : "0010",
+						Note : "Note 0010*4",
+						Quantity : "6",
+						SalesOrderID : "SO1"
+					}, {
+						GrossAmount : "23.4",
+						ItemPosition : "0020",
+						Note : "Note 0020*4",
+						Quantity : "4",
+						SalesOrderID : "SO1"
+					}]
+				})
+				.expectChange("grossAmount", ["42.4", "23.4"])
+				.expectChange("note", ["Note 0010*4", "Note 0020*4"])
+				.expectChange("quantity", ["6.000", "4.000"]);
+
+			return Promise.all([
+				// code under test
+				oItemsTable.getItems()[0].getBindingContext().requestSideEffects([
+					"GrossAmount",
+					sEntityContainer + "/SalesOrderList/SO_2_SOITEM"
+				]),
+				that.waitForChanges(assert, "(4)")
 			]);
 		});
 	});

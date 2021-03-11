@@ -1854,37 +1854,18 @@ sap.ui.define([
 	 * @param {string} sGroupId
 	 *   The effective group ID
 	 * @param {string[]} aAbsolutePaths
-	 *   The absolute paths to request side effects for; each path must start with the fully
+	 *   The absolute paths to request side effects for; each path must not start with the fully
 	 *   qualified container name.
 	 * @returns {sap.ui.base.SyncPromise}
 	 *   A promise resolving without a defined result, or rejecting with an error if loading of side
 	 *   effects fails, or <code>undefined</code> if there is nothing to do
-	 * @throws {Error}
-	 *   If a path does not start with the entity container
 	 *
 	 * @private
 	 */
 	ODataModel.prototype.requestSideEffects = function (sGroupId, aAbsolutePaths) {
-		var sEntityContainer;
-
 		if (!aAbsolutePaths.length) {
 			return undefined; // nothing to do
 		}
-
-		sEntityContainer = this.oMetaModel.getObject("/$EntityContainer");
-		aAbsolutePaths = aAbsolutePaths.map(function (sAbsolutePath) {
-			var aSegments = sAbsolutePath.split("/");
-
-			// aSegments[0] is empty because the path starts with "/"
-			if (aSegments[1] !== sEntityContainer) {
-				throw new Error("Path must start with '/" + sEntityContainer + "': "
-					+ sAbsolutePath);
-			}
-
-			aSegments.splice(1, 1); // remove the entity container from the path
-
-			return aSegments.join("/");
-		});
 
 		return SyncPromise.all(
 			this.aAllBindings.filter(function (oBinding) {
