@@ -855,6 +855,7 @@ sap.ui.define([
 			if (bOffsetContent) {
 				this._offsetContentOnMoveHeader();
 			}
+			this.fireEvent("_moveHeader");
 		}
 	};
 
@@ -872,6 +873,7 @@ sap.ui.define([
 			if (bOffsetContent) {
 				this._offsetContentOnMoveHeader();
 			}
+			this.fireEvent("_moveHeader");
 		}
 	};
 
