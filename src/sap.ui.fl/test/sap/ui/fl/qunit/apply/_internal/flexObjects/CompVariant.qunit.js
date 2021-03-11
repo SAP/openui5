@@ -319,20 +319,16 @@ sap.ui.define([
 
 		QUnit.test("when favorite is set to false", function(assert) {
 			var oVariant = new CompVariant({
-				content: {
-					favorite: false
-				}
+				favorite: false
 			});
 			assert.equal(oVariant.getFavorite(), false, "then it is NOT a favorite");
 		});
 
 		QUnit.test("when favorite is set to true", function(assert) {
 			var oVariant = new CompVariant({
-				content: {
-					favorite: true
-				}
+				favorite: true
 			});
-			assert.equal(oVariant.getFavorite(), true, "then it is NOT a favorite");
+			assert.equal(oVariant.getFavorite(), true, "then it is a favorite");
 		});
 
 		QUnit.test("when no executeOnSelect is provided", function(assert) {

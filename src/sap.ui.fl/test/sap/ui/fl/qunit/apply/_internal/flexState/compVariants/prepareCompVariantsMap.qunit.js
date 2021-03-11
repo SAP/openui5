@@ -40,8 +40,9 @@ sap.ui.define([
 			};
 			var mCompVariants = prepareCompVariantsMap(mPropertyBag);
 			assert.deepEqual(mCompVariants.byId, {}, "then the by ID list is provided,");
-			assert.equal(Object.keys(mCompVariants.map).length, 1, "the map is returned, with one entry");
-			assert.equal(typeof mCompVariants.map._getOrCreate, "function", "and the entry is the helper function '_getOrCreate'");
+			assert.equal(Object.keys(mCompVariants.map).length, 2, "the map is returned, with two entries");
+			assert.equal(typeof mCompVariants.map._getOrCreate, "function", "and one entry is the helper function '_getOrCreate'");
+			assert.equal(typeof mCompVariants.map._initialize, "function", "and the other entry is the helper function '_initialize'");
 		});
 
 		QUnit.test("given an response with favorite changes", function(assert) {
@@ -71,8 +72,9 @@ sap.ui.define([
 			var mCompVariants = prepareCompVariantsMap(mPropertyBag);
 			assert.deepEqual(Object.keys(mCompVariants.byId).length, 3, "then the by ID list with one entry is provided,");
 			assert.deepEqual(mCompVariants.byId[sId1].getId(), sId1, "which is the provided variant under its ID");
-			assert.equal(Object.keys(mCompVariants.map).length, 3, "the map is returned, with three entry");
+			assert.equal(Object.keys(mCompVariants.map).length, 4, "the map is returned, with four entry");
 			assert.equal(typeof mCompVariants.map._getOrCreate, "function", "and one entry is the helper function '_getOrCreate'");
+			assert.equal(typeof mCompVariants.map._initialize, "function", "and the other entry is the helper function '_initialize'");
 			assert.equal(typeof mCompVariants.map[sPersistencyKey1], "object", "another is the persistency key");
 			assert.equal(mCompVariants.map[sPersistencyKey1].changes.length, 2, "under the first persistencyKey with two change");
 			assert.equal(mCompVariants.map[sPersistencyKey1].changes[0].getId(), sId1, "which is the first provided addFavorite change");
@@ -105,7 +107,9 @@ sap.ui.define([
 			assert.deepEqual(Object.keys(mCompVariants.byId).length, 2, "then the by ID list with one entry is provided,");
 			assert.deepEqual(mCompVariants.byId[sId1].getId(), sId1, "which is the provided defaultVariant1 under its ID");
 			assert.deepEqual(mCompVariants.byId[sId2].getId(), sId2, "which is the provided defaultVariant2 under its ID");
-			assert.equal(Object.keys(mCompVariants.map).length, 2, "the map is returned, with two entry");
+			assert.equal(Object.keys(mCompVariants.map).length, 3, "the map is returned, with three entries");
+			assert.equal(typeof mCompVariants.map._getOrCreate, "function", "and one entry is the helper function '_getOrCreate'");
+			assert.equal(typeof mCompVariants.map._initialize, "function", "and the other entry is the helper function '_initialize'");
 			assert.equal(typeof mCompVariants.map._getOrCreate, "function", "and one entry is the helper function '_getOrCreate'");
 			assert.equal(typeof mCompVariants.map[sPersistencyKey], "object", "another is the persistency key");
 			assert.equal(mCompVariants.map[sPersistencyKey].defaultVariant.getId(), sId2, "and with the latest provided defaultVariant change");
@@ -134,8 +138,9 @@ sap.ui.define([
 			assert.deepEqual(Object.keys(mCompVariants.byId).length, 2, "then the by ID list with one entry is provided,");
 			assert.deepEqual(mCompVariants.byId[sId1].getId(), sId1, "which is the provided standardVariant1 under its ID");
 			assert.deepEqual(mCompVariants.byId[sId2].getId(), sId2, "which is the provided standardVariant2 under its ID");
-			assert.equal(Object.keys(mCompVariants.map).length, 2, "the map is returned, with two entry");
+			assert.equal(Object.keys(mCompVariants.map).length, 3, "the map is returned, with three entries");
 			assert.equal(typeof mCompVariants.map._getOrCreate, "function", "and one entry is the helper function '_getOrCreate'");
+			assert.equal(typeof mCompVariants.map._initialize, "function", "and the other entry is the helper function '_initialize'");
 			assert.equal(typeof mCompVariants.map[sPersistencyKey], "object", "another is the persistency key");
 			assert.equal(mCompVariants.map[sPersistencyKey].standardVariant.getId(), sId2, "and with the latest provided standardVariant change");
 		});
@@ -163,8 +168,9 @@ sap.ui.define([
 			assert.deepEqual(Object.keys(mCompVariants.byId).length, 2, "then the by ID list with two entries is provided,");
 			assert.deepEqual(mCompVariants.byId[sId1].getId(), sId1, "which is the provided variant1 under its ID");
 			assert.deepEqual(mCompVariants.byId[sId2].getId(), sId2, "which is the provided variant2 under its ID");
-			assert.equal(Object.keys(mCompVariants.map).length, 2, "the map is returned, with two entry");
+			assert.equal(Object.keys(mCompVariants.map).length, 3, "the map is returned, with three entries");
 			assert.equal(typeof mCompVariants.map._getOrCreate, "function", "and one entry is the helper function '_getOrCreate'");
+			assert.equal(typeof mCompVariants.map._initialize, "function", "and the other entry is the helper function '_initialize'");
 			assert.equal(typeof mCompVariants.map[sPersistencyKey], "object", "another is the persistency key");
 			assert.equal(mCompVariants.map[sPersistencyKey].variants.length, 2, "with two variant");
 			assert.equal(mCompVariants.map[sPersistencyKey].variants[0].getId(), sId1, "which is the provided variant1");
@@ -199,7 +205,9 @@ sap.ui.define([
 			assert.deepEqual(Object.keys(mCompVariants.byId).length, 3, "then the by ID list with three entries is provided,");
 			assert.deepEqual(mCompVariants.byId[sId1].getId(), sId1, "which is the provided variant1 under its ID");
 			assert.deepEqual(mCompVariants.byId[sId2].getId(), sId2, "which is the provided variant2 under its ID");
-			assert.equal(Object.keys(mCompVariants.map).length, 2, "the map is returned, with two entry");
+			assert.equal(Object.keys(mCompVariants.map).length, 3, "the map is returned, with three entries");
+			assert.equal(typeof mCompVariants.map._getOrCreate, "function", "and one entry is the helper function '_getOrCreate'");
+			assert.equal(typeof mCompVariants.map._initialize, "function", "and the other entry is the helper function '_initialize'");
 			assert.equal(typeof mCompVariants.map._getOrCreate, "function", "and one entry is the helper function '_getOrCreate'");
 			assert.equal(typeof mCompVariants.map[sPersistencyKey], "object", "another is the persistency key");
 			assert.equal(mCompVariants.map[sPersistencyKey].variants.length, 3, "with three variant");

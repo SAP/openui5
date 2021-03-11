@@ -14,12 +14,34 @@ sap.ui.define([
 	function getOrCreate(mMap, sKey) {
 		mMap[sKey] = mMap[sKey] || {
 			variants: [],
+			nonPersistedVariants: [],
 			changes: [],
 			defaultVariant: undefined,
 			standardVariant: undefined
 		};
 
 		return mMap[sKey];
+	}
+
+	function initialize(mMap, mById, sKey, aVariants) {
+		aVariants = aVariants || [];
+		var mMapOfKey = getOrCreate(mMap, sKey);
+
+		// clear all non-persisted variants in case of a reinitialization
+		mMapOfKey.nonPersistedVariants.forEach(function (oVariant) {
+			delete mById[oVariant.getId()];
+		});
+
+		mMapOfKey.nonPersistedVariants = aVariants.map(function (oVariant) {
+			var oVariantInstance = new CompVariant(Object.assign({
+				fileName: oVariant.id,
+				persisted: false
+			}, oVariant));
+			mById[oVariantInstance.getId()] = oVariantInstance;
+			return oVariantInstance;
+		});
+
+		return mMapOfKey;
 	}
 
 	function buildSectionMap(mCompSection, sSubSection, mById, mCompVariants) {
@@ -66,6 +88,7 @@ sap.ui.define([
 
 		// provide the function for fl-internal consumers reuse
 		mCompVariants._getOrCreate = getOrCreate.bind(undefined, mCompVariants);
+		mCompVariants._initialize = initialize.bind(undefined, mCompVariants, mById);
 
 		// check for the existence due to test mocks
 		if (mPropertyBag.storageResponse.changes.comp) {

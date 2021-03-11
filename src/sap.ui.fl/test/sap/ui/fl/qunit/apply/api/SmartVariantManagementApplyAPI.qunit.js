@@ -65,14 +65,17 @@ sap.ui.define([
 
 			var aVariants = [{
 				id: "variant_3",
-				name: "C variant"
+				name: "C variant",
+				content: {}
 			}, {
 				id: "variant_4",
 				executeOnSelection: true,
-				name: "B variant"
+				name: "B variant",
+				content: {}
 			}, {
 				id: "variant_5",
-				name: "A Variant"
+				name: "A Variant",
+				content: {}
 			}];
 
 			var sStandardVariantTitle = "this is a localized standard variant title";
@@ -127,14 +130,16 @@ sap.ui.define([
 
 			var aVariants = [{
 				id: "variant_3",
-				name: "C variant"
+				name: "C variant" // explicitly no content to test the optional content parameter
 			}, {
 				id: "variant_4",
 				executeOnSelection: true,
-				name: "A variant"
+				name: "A variant",
+				content: {}
 			}, {
 				id: "variant_5",
-				name: "A Variant"
+				name: "A Variant",
+				content: {}
 			}];
 
 			var sStandardVariantTitle = "this is a localized standard variant title";
