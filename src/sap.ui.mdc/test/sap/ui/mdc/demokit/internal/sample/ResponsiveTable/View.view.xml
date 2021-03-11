@@ -4,6 +4,7 @@
 		xmlns="sap.m"
 		xmlns:core="sap.ui.core"
 		xmlns:mvc="sap.ui.core.mvc"
+		xmlns:plugins="sap.m.plugins"
 		xmlns:variants="sap.ui.fl.variants"
 		controllerName="sap.ui.mdc.sample.controller.Controller">
 	<OverflowToolbar>
@@ -19,6 +20,9 @@
 			selectionMode="Multi"
 			height="100%"
 			paste="onPaste">
+		<mdc:dependents>
+			<plugins:DataStateIndicator enableFiltering="true" />
+		</mdc:dependents>
 		<mdc:columns>
 			<mdcTable:Column id="create" header="Created On" initialIndex="3" dataProperty="CreatedAt" importance="Low">
 				<Text text="{CreatedAt}"/>
