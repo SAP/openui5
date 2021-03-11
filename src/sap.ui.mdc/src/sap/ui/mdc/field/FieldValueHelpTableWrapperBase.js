@@ -248,51 +248,65 @@ sap.ui.define([
 	};
 
 
-	FieldValueHelpTableWrapperBase.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, bNoRequest) {
+	FieldValueHelpTableWrapperBase.prototype.getTextForKey = function(vKey, oInParameters, oOutParameters, bNoRequest, bCaseSensitive) {
 
-		return _checkTextOrKey.call(this, vKey, "key", oInParameters, oOutParameters, bNoRequest);
-
-	};
-
-	FieldValueHelpTableWrapperBase.prototype.getKeyForText = function(sText, oInParameters, bNoRequest) {
-
-		return _checkTextOrKey.call(this, sText, "description", oInParameters, undefined, bNoRequest);
+		return _checkTextOrKey.call(this, [vKey], ["key"], oInParameters, oOutParameters, bNoRequest, bCaseSensitive);
 
 	};
 
-	function _checkTextOrKey(vValue, sField, oInParameters, oOutParameters, bNoRequest) {
+	FieldValueHelpTableWrapperBase.prototype.getKeyForText = function(sText, oInParameters, bNoRequest, bCaseSensitive) {
 
-		if (vValue === null || vValue === undefined || (sField === "description" && vValue === "" )) { // TODO: support boolean?
+		return _checkTextOrKey.call(this, [sText], ["description"], oInParameters, undefined, bNoRequest, bCaseSensitive);
+
+	};
+
+	FieldValueHelpTableWrapperBase.prototype.getKeyAndText = function(vKey, sText, oInParameters, oOutParameters, bCaseSensitive) {
+
+		return _checkTextOrKey.call(this, [vKey, sText], ["key", "description"], oInParameters, oOutParameters, false, bCaseSensitive);
+
+	};
+
+	function _checkTextOrKey(aValues, aFields, oInParameters, oOutParameters, bNoRequest, bCaseSensitive) {
+
+		if ((aValues[0] === null || aValues[0] === undefined || (aFields[0] === "description" && aValues[0] === "" )) && (aValues.length === 1 || !aValues[1])) { // TODO: support boolean?
 			return null;
 		}
 
-		var Exception = sField === "description" ? ParseException : FormatException;
-		var fnFieldPath = sField === "description" ? this._getDescriptionPath : this._getKeyPath;
-		var oTable = this._getWrappedTable();
-		if (this._isTableReady(oTable) && this._getKeyPath()) { // Keypath needs to be known, if set late, wait until table Promise resolved in loadData
-			var aItems = this._getTableItems();
-			var oResult = _filterItems.call(this, vValue, aItems, fnFieldPath.call(this), oInParameters, oOutParameters, Exception);
-			if (oResult) {
-				return oResult;
+		return _checkTablePending.call(this).then(function(bReady) {
+			var Exception = aFields.length > 1 || aFields[0] === "description" ? ParseException : FormatException;
+			var aGetFieldPath = [aFields[0] === "description" ? this._getDescriptionPath : this._getKeyPath];
+			if (aFields.length > 1) {
+				aGetFieldPath.push(aFields[1] === "description" ? this._getDescriptionPath : this._getKeyPath);
 			}
-		}
+			if (bReady && this._getKeyPath()) { // KeyPath needs to be known, if set late, wait until table Promise resolved in loadData
+				var aItems = this._getTableItems();
+				var oResult = _filterItems.call(this, aValues, aItems, aGetFieldPath, oInParameters, oOutParameters, Exception, bCaseSensitive);
+				if (oResult) {
+					return oResult;
+				}
+			}
 
-		if (bNoRequest) {
-			throw new Exception(this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [vValue]));
-		} else {
-			// not in already loaded item -> ask the model
-			return this.loadData(fnFieldPath, vValue, oInParameters, oOutParameters, Exception);
-		}
+			if (bNoRequest) {
+				throw new Exception(this._oResourceBundle.getText("valuehelp.VALUE_NOT_EXIST", [aValues[0]]));
+			} else {
+				// not in already loaded item -> ask the model
+				return this.loadData(aGetFieldPath, aValues, oInParameters, oOutParameters, Exception, bCaseSensitive);
+			}
+		}.bind(this)).unwrap();
 
 	}
 
-	function _filterItems(vValue, aItems, sPath, oInFilters, oOutFilters, Exception) {
+	function _filterItems(aValues, aItems, aGetFieldPath, oInFilters, oOutFilters, Exception, bCaseSensitive) {
 
-		if (!sPath) {
-			throw new Error("path for filter missing"); // as we cannot filter key or description without path
+		var i = 0;
+		var aFieldPaths = [];
+		for (i = 0; i < aGetFieldPath.length; i++) {
+			aFieldPaths.push(aGetFieldPath[i].call(this));
+			if (!aFieldPaths[i]) {
+				throw new Error("path for filter missing"); // as we cannot filter key or description without path
+			}
 		}
 
-		var oFilter = new Filter({path: sPath, operator: FilterOperator.EQ, value1: vValue});
 		var _getFilterValue = function(oItem, sPath) {
 			var oBindingContext = oItem.isA("sap.ui.model.Context") ? oItem : oItem.getBindingContext();
 			var oDataModelRow = oBindingContext.getObject();
@@ -303,8 +317,20 @@ sap.ui.define([
 			}
 		};
 
+		var oFilter;
+		var aFilters = [];
+
+		for (i = 0; i < aValues.length; i++) {
+			aFilters.push(new Filter({path: aFieldPaths[i], operator: FilterOperator.EQ, value1: aValues[i], caseSensitive: bCaseSensitive}));
+		}
+		if (aFilters.length === 1) {
+			oFilter = aFilters[0];
+		} else {
+			oFilter = new Filter({filters: aFilters, and: false}); // key OR description
+		}
+
 		if (oInFilters || oOutFilters) {
-			var aFilters = [oFilter];
+			aFilters = [oFilter];
 			if (oInFilters) {
 				aFilters.push(oInFilters);
 			}
@@ -319,29 +345,36 @@ sap.ui.define([
 			var oValue = this._getDataFromItem(aFilteredItems[0]);
 			return {key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters};
 		} else if (aFilteredItems.length > 1) {
-			throw _createException.call(this, Exception, true, vValue);
+			throw _createException.call(this, Exception, true, aValues[0]);
 		}
 
 	}
 
-	FieldValueHelpTableWrapperBase.prototype.loadData = function (fnFieldPath, vValue, oInParameters, oOutParameters, Exception) {
+	FieldValueHelpTableWrapperBase.prototype.loadData = function (aGetFieldPath, aValues, oInParameters, oOutParameters, Exception, bCaseSensitive) {
 		// provide fieldPath function as this could be set late when Table is ready
 
 		// if already requested return existing promise. Do not request twice.
-		var sFieldPath = fnFieldPath.call(this);
-		if (this._oPromises[sFieldPath] && this._oPromises[sFieldPath][vValue]) {
-			return this._oPromises[sFieldPath][vValue];
+		var sFieldPath = "";
+		var i = 0;
+		for (i = 0; i < aGetFieldPath.length; i++) {
+			sFieldPath = sFieldPath + aGetFieldPath[i].call(this);
+		}
+		if (this._oPromises[sFieldPath] && this._oPromises[sFieldPath][aValues[0]]) {
+			return this._oPromises[sFieldPath][aValues[0]];
 		}
 
 		if (!this._oPromises[sFieldPath]) {
 			this._oPromises[sFieldPath] = {};
 		}
 
-		this._oPromises[sFieldPath][vValue] = new Promise(function(fResolve, fReject) {
+		this._oPromises[sFieldPath][aValues[0]] = new Promise(function(fResolve, fReject) {
 			this._oTablePromise.then(function(oTable) {
 				//FieldPath might not be set before Table was initialized -> in this case try it now
 				var sOldFieldPath = sFieldPath;
-				sFieldPath = fnFieldPath.call(this);
+				sFieldPath = "";
+				for (i = 0; i < aGetFieldPath.length; i++) {
+					sFieldPath = sFieldPath + aGetFieldPath[i].call(this);
+				}
 
 				if (!sFieldPath) {
 					// without FieldPath filter will fail -> stop here
@@ -352,16 +385,26 @@ sap.ui.define([
 					if (!this._oPromises[sFieldPath]) {
 						this._oPromises[sFieldPath] = {};
 					}
-					this._oPromises[sFieldPath][vValue] = this._oPromises[sOldFieldPath][vValue];
-					delete this._oPromises[sOldFieldPath][vValue];
+					this._oPromises[sFieldPath][aValues[0]] = this._oPromises[sOldFieldPath][aValues[0]];
+					delete this._oPromises[sOldFieldPath][aValues[0]];
 				}
 
 				var oListBinding = this.getListBinding();
 				var oModel = oListBinding.getModel();
 				var sPath = oListBinding.getPath();
-				var oFilter = new Filter(sFieldPath, "EQ", vValue);
+				var oFilter;
 				var oBindingContext = oListBinding.getContext();
 				var aFilters = [];
+
+				for (i = 0; i < aGetFieldPath.length; i++) {
+					aFilters.push(new Filter({path: aGetFieldPath[i].call(this), operator: FilterOperator.EQ, value1: aValues[i], caseSensitive: bCaseSensitive}));
+				}
+				if (aFilters.length === 1) {
+					oFilter = aFilters[0];
+				} else {
+					oFilter = new Filter({filters: aFilters, and: false}); // key OR description
+				}
+				aFilters = [];
 
 				if (oInParameters) {
 					// use in-parameters as additional filters
@@ -372,7 +415,7 @@ sap.ui.define([
 					if (oInParameters) {
 						var aOutFilters = oOutParameters.aFilters ? oOutParameters.aFilters : [oOutParameters];
 						var aInFilters = oInParameters.aFilters ? oInParameters.aFilters : [oInParameters];
-						for (var i = 0; i < aOutFilters.length; i++) {
+						for (i = 0; i < aOutFilters.length; i++) {
 							var oOutFilter = aOutFilters[i];
 							var bFound = false;
 							for (var j = 0; j < aInFilters.length; j++) {
@@ -403,18 +446,18 @@ sap.ui.define([
 							var oValue = this._getDataFromContext(aContexts[0]);
 							var oResult = {key: oValue.key, description: oValue.description, inParameters: oValue.inParameters, outParameters: oValue.outParameters};
 							fResolve(oResult);
-						} else if (vValue === "" && aContexts.length === 0) {
+						} else if (aValues[0] === "" && aContexts.length === 0) {
 							// nothing found for empty key -> this is not an error
 							fResolve(null);
 						} else {
-							var oException = _createException.call(this, Exception, aContexts.length > 1, vValue);
+							var oException = _createException.call(this, Exception, aContexts.length > 1, aValues[0]);
 							fReject(oException);
 						}
 
 						setTimeout(function() { // as Binding might process other steps after event was fired - destroy it lazy
 							oFilterListBinding.destroy();
 						}, 0);
-						delete this._oPromises[sFieldPath][vValue];
+						delete this._oPromises[sFieldPath][aValues[0]];
 					};
 
 					var oDelegate = this._getDelegate();
@@ -427,7 +470,7 @@ sap.ui.define([
 			}.bind(this));
 		}.bind(this));
 
-		return this._oPromises[sFieldPath][vValue];
+		return this._oPromises[sFieldPath][aValues[0]];
 
 	};
 
@@ -828,13 +871,28 @@ sap.ui.define([
 			return false;
 		}
 
-
 		if (oListBinding && (oListBinding.isSuspended() || oListBinding.getLength() === 0)) {
 			return false; // if no context exist, Table is not ready
 		}
 
 		return true;
 	};
+
+	function _checkTablePending() {
+
+		return SyncPromise.resolve().then(function() {
+			var oListBinding = this.getListBinding();
+			var oDelegate = this._getDelegate();
+			if (oListBinding && oDelegate.delegate){
+				return oDelegate.delegate.checkListBindingPending(oDelegate.payload, oListBinding);
+			} else {
+				return false;
+			}
+		}.bind(this)).catch(function(oException) {
+			throw oException; // just throw error
+		});
+
+	}
 
 	FieldValueHelpTableWrapperBase.prototype._handleItemPress = function (oEvent) {
 		// Defaults to no-op.

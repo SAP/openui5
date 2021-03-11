@@ -759,6 +759,7 @@ sap.ui.define([
 				oListBinding._fireChange({reason: "filter"});
 		});
 		sinon.stub(oListBinding, "getContexts").returns([]);
+		sinon.stub(oListBinding, "requestContexts").returns(Promise.resolve([]));
 		sinon.stub(oWrapper, "getListBinding").returns(oListBinding);
 		sinon.stub(oDataModel, "bindList").returns(oListBinding);
 

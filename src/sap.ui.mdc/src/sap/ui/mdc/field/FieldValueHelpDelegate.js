@@ -121,6 +121,28 @@ sap.ui.define([
 
 	};
 
+	/**
+	 * Checks if the <code>ListBinding</code> is waiting for an update.
+	 * As long as the context has not been set for <code>ListBinding</code>,
+	 * <code>FieldValueHelp</code> needs to wait.
+	 *
+	 * @param {object} oPayload Payload for delegate
+	 * @param {sap.ui.model.ListBinding} oListBindings <code>ListBinding</code> to check
+	 * @returns {boolean|Promise<boolean>} <code>Promise</code> that is resolved once <code>ListBinding</code> has been updated
+	 * @private
+	 * @ui5-restricted sap.ui.mdc.field.FieldvalueHelp, sap.ui.mdc.field.FieldValueHelpMTableWrapper
+	 * @since 1.80.0
+	 */
+	FieldValueHelpDelegate.checkListBindingPending = function(oPayload, oListBinding) {
+
+		if (oListBinding && (oListBinding.isSuspended() || oListBinding.getLength() === 0)) {
+			return false; // if no context exist, Binding is not ready
+		}
+
+		return true;
+
+	};
+
 	return FieldValueHelpDelegate;
 
 });

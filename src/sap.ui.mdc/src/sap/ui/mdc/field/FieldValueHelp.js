@@ -989,7 +989,7 @@ sap.ui.define([
 
 	}
 
-	FieldValueHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName) {
+	FieldValueHelp.prototype._getTextOrKey = function(vValue, bKey, oBindingContext, oInParameters, oOutParameters, bNoRequest, oConditionModel, sConditionModelName, vParsedValue, bKeyAndDescription, bCaseSensitive) {
 
 		var vResult = "";
 		var oWrapper = _getWrapper.call(this, true); // use suggest wrapper to determine text or key
@@ -1034,11 +1034,13 @@ sap.ui.define([
 				return _checkBindingsPending.call(this, aInBindings);
 			}.bind(this)).then(function() {
 				return SyncPromise.resolve().then(function() {
-					if (bKey) {
-						return oWrapper.getTextForKey(vValue, _mapParametersToHelp.call(this, oInParameters, aInParameters, false, aInBindings, oBindingContext, true), _mapParametersToHelp.call(this, oOutParameters, this.getOutParameters(), true, undefined, undefined, true), bNoRequest);
+					if (bKeyAndDescription) {
+						return oWrapper.getKeyAndText(vParsedValue, vValue, _mapParametersToHelp.call(this, oInParameters, aInParameters, false, aInBindings, oBindingContext, true), _mapParametersToHelp.call(this, oOutParameters, this.getOutParameters(), true, undefined, undefined, true), bCaseSensitive);
+					} else if (bKey) {
+						return oWrapper.getTextForKey(vValue, _mapParametersToHelp.call(this, oInParameters, aInParameters, false, aInBindings, oBindingContext, true), _mapParametersToHelp.call(this, oOutParameters, this.getOutParameters(), true, undefined, undefined, true), bNoRequest, bCaseSensitive);
 					} else {
 						// use default in-parameters for check
-						return oWrapper.getKeyForText(vValue, _mapParametersToHelp.call(this, undefined, aInParameters, false, aInBindings, oBindingContext, true), bNoRequest);
+						return oWrapper.getKeyForText(vValue, _mapParametersToHelp.call(this, undefined, aInParameters, false, aInBindings, oBindingContext, true), bNoRequest, bCaseSensitive);
 					}
 				}.bind(this)).then(function(vResult) {
 					_cleanupParameterBinding.call(this, aInBindings, bBindingChanged);

@@ -262,6 +262,12 @@ sap.ui.define([
 		oStub.withArgs("X-Item 3").returns("I3");
 		oStub.withArgs("Item 4").returns(new Promise(function(fResolve) {fResolve({key: "I4", description: "Item 4", inParameters: {myTestIn: "In4"}, outParameters: {myTest: "Out4"}});}));
 		oStub.withArgs("Item 5").returns(new Promise(function(fResolve) {throw new Error("wrong text");}));
+		oStub = sinon.stub(oWrapper, "getKeyAndText");
+		oStub.withArgs("I1", "I1").returns({key: "I1", description: "Item 1"});
+		oStub.withArgs("I2", "I2").returns({key: "I2", description: "Item 2", inParameters: {myTestIn: "In2"}, outParameters: {myTest: "Out2"}});
+		oStub.withArgs("Item3", "Item3").returns({key: "I3", description: "Item 3"});
+		oStub.withArgs("I4", "i4").returns(new Promise(function(fResolve) {fResolve({key: "I4", description: "Item 4", inParameters: {myTestIn: "In4"}, outParameters: {myTest: "Out4"}});}));
+		oStub.withArgs("I5", "I5").returns(new Promise(function(fResolve) {throw new Error("wrong key");}));
 		sinon.stub(oWrapper, "getListBinding").returns(oListBinding);
 
 		oFieldHelp = new FieldValueHelp("F1-H", {
@@ -448,7 +454,7 @@ sap.ui.define([
 
 		var vResult = oFieldHelp.getTextForKey("I1");
 		assert.equal(vResult, "Item 1", "Text for key");
-		assert.ok(oWrapper.getTextForKey.calledWith("I1"), "getTextForKey of Wrapper called");
+		assert.ok(oWrapper.getTextForKey.calledWith("I1", undefined, undefined, false, true), "getTextForKey of Wrapper called");
 
 		vResult = oFieldHelp.getTextForKey("Test");
 		assert.equal(vResult, "", "Text for not existing key");
@@ -457,7 +463,7 @@ sap.ui.define([
 		var oFilter1 = new Filter({path: "myTest", operator: FilterOperator.EQ, value1: "X"});
 		vResult = oFieldHelp.getTextForKey("I2", undefined, {test: "X"});
 		assert.equal(vResult.description, "Item 2", "Text for key");
-		assert.ok(oWrapper.getTextForKey.calledWith("I2", undefined, oFilter1, false), "getTextForKey of Wrapper called with outParameter");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", undefined, oFilter1, false, true), "getTextForKey of Wrapper called with outParameter");
 		assert.notOk(vResult.inParameters, "No In-paramters in result");
 		assert.deepEqual(vResult.outParameters, {test: "Out2"} , "Out-parameters in result");
 		oFilter1.destroy();
@@ -467,7 +473,7 @@ sap.ui.define([
 		var oFilter2 = new Filter({path: "myTest", operator: FilterOperator.EQ, value1: "Y"});
 		vResult = oFieldHelp.getTextForKey("I2", {testIn: "X"}, {test: "Y"});
 		assert.equal(vResult.description, "Item 2", "Text for key");
-		assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter1, oFilter2, false), "getTextForKey of Wrapper called with In- and OutParameter");
+		assert.ok(oWrapper.getTextForKey.calledWith("I2", oFilter1, oFilter2, false, true), "getTextForKey of Wrapper called with In- and OutParameter");
 		assert.deepEqual(vResult.inParameters, {testIn: "In2"} , "In-parameters in result");
 		assert.deepEqual(vResult.outParameters, {test: "Out2"} , "Out-parameters in result");
 		oFilter1.destroy();
@@ -620,11 +626,11 @@ sap.ui.define([
 
 		var vResult = oFieldHelp.getKeyForText("Item 1");
 		assert.equal(vResult, "I1", "key for text");
-		assert.ok(oWrapper.getKeyForText.calledWith("Item 1", undefined, false), "getKeyForText of Wrapper called");
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 1", undefined, false, true), "getKeyForText of Wrapper called");
 
 		vResult = oFieldHelp.getKeyForText("Item 2");
 		assert.equal(vResult.key, "I2", "key for text");
-		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", undefined, false), "getKeyForText of Wrapper called");
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", undefined, false, true), "getKeyForText of Wrapper called");
 		assert.notOk(vResult.inParameters, "No In-paramters in result");
 		assert.notOk(vResult.outParameters, "No out-paramters in result");
 
@@ -632,7 +638,7 @@ sap.ui.define([
 		oFieldHelp.addOutParameter(new OutParameter({value: "{/test}", helpPath: "myTest"}));
 		vResult = oFieldHelp.getKeyForText("Item 2");
 		assert.equal(vResult.key, "I2", "key for text");
-		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", undefined, false), "getKeyForText of Wrapper called");
+		assert.ok(oWrapper.getKeyForText.calledWith("Item 2", undefined, false, true), "getKeyForText of Wrapper called");
 		assert.deepEqual(vResult.inParameters, {testIn: "In2"} , "In-parameters in result");
 		assert.deepEqual(vResult.outParameters, {test: "Out2"} , "Out-parameters in result");
 
@@ -780,6 +786,48 @@ sap.ui.define([
 		assert.equal(vResult, "I1", "key for text");
 		assert.ok(oWrapper.getKeyForText.calledWith("Item 1", undefined, true), "getKeyForText of Wrapper called");
 		oWrapper.getKeyForText.resetHistory();
+
+	});
+
+	QUnit.test("_getTextOrKey - bKeyAndDescription", function(assert) {
+
+		var vResult = oFieldHelp._getTextOrKey("I1", true, undefined, undefined, undefined, false, undefined, undefined, "I1", true, false);
+		assert.deepEqual(vResult, {key: "I1", description: "Item 1"}, "returned item");
+		assert.ok(oWrapper.getKeyAndText.calledWith("I1", "I1", undefined, undefined, false), "getKeyAndText of Wrapper called");
+		oWrapper.getKeyAndText.resetHistory();
+
+		vResult = oFieldHelp._getTextOrKey("x", true, undefined, undefined, undefined, false, undefined, undefined, "y", true, false);
+		assert.notOk(vResult, "no result");
+		assert.ok(oWrapper.getKeyAndText.calledWith("y", "x", undefined, undefined, false), "getKeyAndText of Wrapper called");
+		oWrapper.getKeyAndText.resetHistory();
+
+		oFieldHelp.addInParameter(new InParameter({value: "{/testIn}", helpPath: "myTestIn"}));
+		oFieldHelp.addOutParameter(new OutParameter({value: "{/test}", helpPath: "myTest"}));
+		vResult = oFieldHelp._getTextOrKey("I2", true, undefined, undefined, undefined, false, undefined, undefined, "I2", true, true);
+		assert.deepEqual(vResult, {key: "I2", description: "Item 2", inParameters: {testIn: "In2"}, outParameters: {test: "Out2"}}, "returned item");
+		assert.ok(oWrapper.getKeyAndText.calledWith("I2", "I2", null, null, true), "getKeyAndText of Wrapper called");
+		oWrapper.getKeyAndText.resetHistory();
+
+		oWrapper.getListBinding.returns(null);
+		vResult = oFieldHelp._getTextOrKey("i4", true, undefined, undefined, undefined, false, undefined, undefined, "I4", true, false);
+		assert.ok(vResult instanceof Promise, "Promise returned");
+		assert.ok(bDataRequested, "dataRequested event fired");
+
+		var fnDone = assert.async();
+		vResult.then(function(vResult) {
+			assert.deepEqual(vResult, {key: "I4", description: "Item 4", inParameters: {testIn: "In4"}, outParameters: {test: "Out4"}}, "returned item");
+
+			vResult = oFieldHelp._getTextOrKey("I5", true, undefined, undefined, undefined, false, undefined, undefined, "I5", true, false);
+			assert.ok(vResult instanceof Promise, "Promise returned");
+
+			vResult.then(function(vResult) {
+				assert.notOk(true, "Promise Then must not be called");
+				fnDone();
+			}).catch(function(oError) {
+				assert.ok(true, "Promise Catch called");
+				fnDone();
+			});
+		});
 
 	});
 

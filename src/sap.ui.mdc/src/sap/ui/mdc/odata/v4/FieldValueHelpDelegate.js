@@ -101,6 +101,18 @@ sap.ui.define([
 
 	};
 
+	ODataFieldValueHelpDelegate.checkListBindingPending = function(oPayload, oListBinding) {
+
+		if (!oListBinding || oListBinding.isSuspended()) {
+			return false;
+		}
+
+		return oListBinding.requestContexts().then(function(aContexts){
+			return aContexts.length > 0;
+		});
+
+	};
+
 	ODataFieldValueHelpDelegate.getTypeUtil = function (oPayload) {
 		return TypeUtil;
 	};
