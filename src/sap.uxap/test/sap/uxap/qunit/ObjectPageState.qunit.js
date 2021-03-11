@@ -667,6 +667,30 @@ function (
 		assert.ok(this.oObjectPage.iHeaderContentHeight > 0, "iHeaderContentHeight is higher than zero");
 	});
 
+	QUnit.module("Snap events", {
+		beforeEach: function () {
+			this.oObjectPage = createPage("page1");
+		},
+		afterEach: function () {
+			this.oObjectPage.destroy();
+		}
+	});
+
+	QUnit.test("event is fired upon moving the header in/out scroll container", function (assert) {
+		var oSpy = this.spy();
+		this.oObjectPage.attachEvent("_snapChange", oSpy);
+		this.oObjectPage.placeAt("qunit-fixture");
+		Core.applyChanges();
+		oSpy.reset();
+
+		this.oObjectPage._moveHeaderToTitleArea();
+		assert.strictEqual(oSpy.callCount, 1, "the event is fired");
+
+		oSpy.reset();
+		this.oObjectPage._moveHeaderToContentArea();
+		assert.strictEqual(oSpy.callCount, 1, "the event is fired");
+	});
+
 	var bUseIconTabBar = true;
 
 	runParameterizedTests(bUseIconTabBar);

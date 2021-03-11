@@ -77,6 +77,8 @@ sap.ui.define([
 	// shortcut for sap.uxap.ObjectPageSubSectionLayout
 	var ObjectPageSubSectionLayout = library.ObjectPageSubSectionLayout;
 
+	var SNAP_EVENTS = ["toggleAnchorBar", "_moveHeader"];
+
 	/**
 	 * Constructor for a new <code>ObjectPageLayout</code>.
 	 *
@@ -625,6 +627,7 @@ sap.ui.define([
 		this._oABHelper = new ABHelper(this);
 
 		this._initializeScroller();
+		this._attachSnapListeners();
 	};
 
 	/**
@@ -749,6 +752,21 @@ sap.ui.define([
 			oTitle.attachEvent(ObjectPageLayout.EVENTS.TITLE_PRESS, this._handleDynamicTitlePress, this);
 			this._bAlreadyAttachedTitlePressHandler = true;
 		}
+	};
+
+	/**
+	 * Attaches listeners for the events fired when an element (anchorBar ot header)
+	 * is moved in/out the scroll container and fires a single private event to notify
+	 * RTA of scroll container update.
+	 *
+	 * @private
+	 */
+	ObjectPageLayout.prototype._attachSnapListeners = function () {
+		SNAP_EVENTS.forEach(function(sEvent) {
+			this.attachEvent(sEvent, function() {
+				this.fireEvent("_snapChange");
+			});
+		}, this);
 	};
 
 	ObjectPageLayout.prototype._toggleHeaderVisibility = function (bShow) {
@@ -1558,6 +1576,7 @@ sap.ui.define([
 	ObjectPageLayout.prototype._moveHeaderToTitleArea = function () {
 		this._$headerContent.children().appendTo(this._$stickyHeaderContent);
 		this._bHeaderInTitleArea = true;
+		this.fireEvent("_moveHeader", {fixed: true});
 
 		// suppress the first scroll event to prevent the header snap again immediately
 		this._bSupressModifyOnScrollOnce = true;
@@ -1572,6 +1591,7 @@ sap.ui.define([
 			this._$headerContent.append(this._$stickyHeaderContent.children());
 			this._$stickyHeaderContent.children().remove();
 			this._bHeaderInTitleArea = false;
+			this.fireEvent("_moveHeader", {fixed: false});
 		}
 	};
 
