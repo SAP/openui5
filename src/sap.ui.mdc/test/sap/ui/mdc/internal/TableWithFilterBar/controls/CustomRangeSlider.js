@@ -69,8 +69,14 @@ sap.ui.define([
 		this.setProperty("value", oValue);
 		if (oValue) {
 			var aNextValues = oValue.indexOf("...") != -1 ? oValue.split("...") : [this.getMin() || 0, this.getMax() || 100];
-			this.getContent().setValue(parseInt(aNextValues[0]));
-			this.getContent().setValue2(parseInt(aNextValues[1]));
+			var iValue1 = parseInt(aNextValues[0]);
+			var iValue2 = parseInt(aNextValues[1]);
+			if (iValue1 !== this.getContent().getValue()) {
+				this.getContent().setValue(iValue1);
+			}
+			if (iValue2 !== this.getContent().getValue2()) {
+				this.getContent().setValue2(iValue2);
+			}
 		}
 	};
 
