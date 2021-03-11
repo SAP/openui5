@@ -8,7 +8,9 @@ sap.ui.define([
 	"sap/m/MultiInput",
 	"./Settings",
 	"sap/m/Token",
-	"sap/ui/core/Core"
+	"sap/ui/core/Core",
+	"sap/ui/integration/util/BindingHelper",
+	"sap/ui/core/ListItem"
 ], function (
 	Control,
 	Button,
@@ -16,7 +18,9 @@ sap.ui.define([
 	MultiInput,
 	Settings,
 	Token,
-	Core
+	Core,
+	BindingHelper,
+	ListItem
 ) {
 	"use strict";
 
@@ -789,6 +793,14 @@ sap.ui.define([
 			}
 		}
 		return  bIsFilterBackend;
+	};
+
+	BaseField.prototype.formatListItem = function (vItems) {
+		var oItem = new ListItem();
+		for (var key in vItems) {
+			oItem.bindProperty(key, BindingHelper.createBindingInfos(vItems[key]));
+		}
+		return oItem;
 	};
 
 	return BaseField;
