@@ -3,6 +3,8 @@
 /* Sets the app component position */
 .sapUiOpaComponent {
 	margin-left: 20%;
+	width: 80%;
+	height: 100%;
 }
 
 /* Sets the qunit wrapper position and causes the proper positioning of all elements inside.
