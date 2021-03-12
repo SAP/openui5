@@ -5770,6 +5770,24 @@ sap.ui.define([
 		}}
 	);
 
+	QUnit.test("suggestionsCount should be aware of empty groups", function (assert) {
+		// Setup
+		var oCloseSpy = this.spy(this.oInput, "_hideSuggestionPopup");
+		this.stub(this.oInput, "_getFilteredSuggestionItems", function () {
+			return {items: [], groups: [{}, {}]};
+		});
+		this.stub(this.oInput, "_hasTabularSuggestions", function (){
+			return true;
+		});
+
+		// Act
+		// debugger;
+		this.oInput.showItems();
+
+		// Assert
+		assert.strictEqual(oCloseSpy.callCount, 1, "SuggestionsPopover should be closed");
+	});
+
 	QUnit.test("Group results", function(assert){
 		var aVisibleItems;
 
