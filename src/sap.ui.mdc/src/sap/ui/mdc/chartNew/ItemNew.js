@@ -2,8 +2,9 @@
  * !${copyright}
  */
 sap.ui.define([
-    "sap/ui/core/Element"
-], function(Element) {
+    "sap/ui/core/Element",
+    "sap/base/Log"
+], function(Element, Log) {
     "use strict";
 
     // Provides the Item class.
@@ -50,11 +51,20 @@ sap.ui.define([
                         type:"String",
                         defaultValue:""
                     },
-                    aggregationMethod: {
+                    aggregationMethod: { //TODO: Move this to "payload"
                         type: "String",
                         defaultValue: "average"
-                    }
+                    },
+                    /**
+                     * Specifies the role of the Item for the chart.
+                     * This is specific for the used chart library. Consult their documentation.
+                     *  <b>NOTE: </b> This property should not be changed after initialization.
+                     */
+                    role: {
+						type: "string"
+					}
                 }
+
             }
         });
 

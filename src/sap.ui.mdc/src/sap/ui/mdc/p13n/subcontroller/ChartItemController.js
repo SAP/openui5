@@ -38,8 +38,14 @@ sap.ui.define([
             mItem.position =  oExisting ? oExisting.position : -1;
             mItem.role =  oExisting ? oExisting.role : oProperty.role;
             mItem.kind = oProperty.kind;
+
+            if (oProperty.availableRoles) {
+                mItem.availableRoles = oProperty.availableRoles;
+            }
+
             return oProperty.visible;
         });
+
 
         P13nBuilder.sortP13nData({
             visible: "visible",

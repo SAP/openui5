@@ -863,7 +863,7 @@ sap.ui.define([
             this.getItems().forEach(function (oItem) {
                 aProperties.push({
                     name: oItem.getName(),
-                    role: oItem.getType()
+                    role: oItem.getRole()
                 });
 
             });
