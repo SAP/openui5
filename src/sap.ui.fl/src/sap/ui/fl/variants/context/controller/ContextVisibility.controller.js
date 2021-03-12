@@ -27,7 +27,9 @@ function (
 	function assignDescriptionsToSelectedRoles(oSelectedRoles) {
 		var mPropertyBag = {layer: Layer.CUSTOMER, flexObjects: oSelectedRoles};
 		return WriteStorage.loadContextDescriptions(mPropertyBag).then(function(oResponse) {
-			this.oSelectedContextsModel.setProperty("/selected", oResponse.role);
+			if (oResponse.role && oResponse.role.length === oSelectedRoles.role.length) {
+				this.oSelectedContextsModel.setProperty("/selected", oResponse.role);
+			}
 		}.bind(this));
 	}
 
