@@ -220,7 +220,7 @@ sap.ui.define([
 			details: "a new executeOnSelection flag",
 			propertyBag: {
 				id: "test_variant",
-				executeOnSelect: true
+				executeOnSelection: true
 			},
 			mockedVariant: {
 				fileName: "test_variant",
@@ -275,10 +275,10 @@ sap.ui.define([
 				favorite: true
 			}
 		}, {
-			details: "a new executeOnSelect flag overwriting an old one",
+			details: "a new executeOnSelection flag overwriting an old one",
 			propertyBag: {
 				id: "test_variant",
-				executeOnSelect: true
+				executeOnSelection: true
 			},
 			mockedVariant: {
 				fileName: "test_variant",
@@ -335,7 +335,7 @@ sap.ui.define([
 				favorite: true
 			}
 		}, {
-			details: "a new content and existing flags for executeOnSelect and favorite",
+			details: "a new content and existing flags for executeOnSelection and favorite",
 			propertyBag: {
 				id: "test_variant",
 				content: {

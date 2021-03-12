@@ -103,8 +103,6 @@ sap.ui.define([
 		 * @ui5-restricted sap.ui.rta.command
 		 */
 		updateVariant: function (mPropertyBag) {
-			// TODO: remove as soon as the consumer adjusted
-			mPropertyBag.executeOnSelection = mPropertyBag.executeOnSelect;
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.updateVariant);
 		},
 
@@ -183,11 +181,6 @@ sap.ui.define([
 		 */
 		setExecuteOnSelection: function(mPropertyBag) {
 			return setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, CompVariantState.setExecuteOnSelection);
-		},
-
-		setExecuteOnSelect: function(mPropertyBag) {
-			mPropertyBag.executeOnSelection = mPropertyBag.executeOnSelect;
-			return SmartVariantManagementWriteAPI.setExecuteOnSelection(mPropertyBag);
 		},
 
 		/**
