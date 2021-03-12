@@ -140,7 +140,11 @@ sap.ui.define([
 				this.setProperty("contexts", oFile.contexts);
 			}
 
-			if (oFile.favorite) {
+			if (oFile.layer === Layer.VENDOR || oFile.layer === Layer.CUSTOMER_BASE) {
+				this.setFavorite(true);
+			}
+
+			if (oFile.favorite !== undefined) {
 				this.setFavorite(oFile.favorite);
 			}
 
