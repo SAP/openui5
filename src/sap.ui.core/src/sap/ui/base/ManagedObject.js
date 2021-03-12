@@ -1365,6 +1365,12 @@ sap.ui.define([
 			throw new Error("Property \"" + sPropertyName + "\" does not exist in " + this);
 		}
 
+		if (!this.mProperties.hasOwnProperty(sPropertyName)) {
+			// the property is inserted into metadata after this instance is created and the setter of this property
+			// hasn't been called yet, the default value of this property needs to be used.
+			oValue = oProperty.getDefaultValue();
+		}
+
 		oType = DataType.getType(oProperty.type);
 
 		// If property has an array type, clone the array to avoid modification of original data

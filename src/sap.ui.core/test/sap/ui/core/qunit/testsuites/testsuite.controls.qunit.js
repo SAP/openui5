@@ -11,6 +11,12 @@ sap.ui.define(function() {
 
 		},
 		tests: {
+			EnabledPropagator: {
+				title: "sap.ui.core.EnabledPropagator",
+				qunit: {
+					reorder: false
+				}
+			},
 			FieldGroup: {
 				title: "QUnit page for FieldGroup",
 				ui5: {
