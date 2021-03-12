@@ -1,15 +1,11 @@
 sap.ui.define([
-	"sap/ui/Device",
 	"sap/ui/core/Patcher",
 	"sap/base/security/encodeXML",
 	"sap/base/security/encodeCSS"
-], function(Device, Patcher, encodeXML, encodeCSS) {
+], function(Patcher, encodeXML, encodeCSS) {
 
 	"use strict";
 	/*global QUnit,sinon*/
-
-	// IE11 does not include the child nodes when they are removed by setting the textContent=""
-	var bLegacyObserver = Device.browser.msie;
 
 	QUnit.module("Patcher", {
 		before: function() {
@@ -365,6 +361,22 @@ sap.ui.define([
 			assert.equal(oElement.lastChild.selected, true, "but selected property is updated");
 		});
 
+		this.html("<div value='value'></div>").patch(function(oElement) {
+			Patcher.openStart("div").
+				attr("value", "newvalue").
+				attr("checked", "checked").
+				attr("selected", "selected").
+			openEnd().close("div");
+		}, function(aMutations, oElement) {
+			assert.equal(oElement.getAttribute("value"), "newvalue", "value attribute is set");
+			assert.equal(oElement.getAttribute("checked"), "checked", "checked attribute is set");
+			assert.equal(oElement.getAttribute("selected"), "selected", "selected attribute is set");
+			assert.equal(aMutations.length, 3, "3 attributes are mutated");
+			assert.notOk("value" in oElement, "value property is not set since property update is only for input element");
+			assert.notOk("checked" in oElement, "checked property is not set since property update is only for input element");
+			assert.notOk("selected" in oElement, "selected property is not set since property update is only for option element");
+		});
+
 	});
 
 	QUnit.test("NodeName changes", function(assert) {
@@ -402,7 +414,7 @@ sap.ui.define([
 				openStart("div").openEnd().close("div").
 			close("span");
 		}, function(aMutations, oElement) {
-			assert.equal(aMutations.length, bLegacyObserver ? 3 : 2, "Two changes");
+			assert.equal(aMutations.length, 2, "Two changes");
 			assert.equal(oElement.firstChild.tagName, "DIV", "div is rendered");
 			assert.equal(aMutations[0].addedNodes[0].tagName, "DIV", "div is added");
 			assert.equal(aMutations[1].removedNodes[0].nodeName, "#text", "text is removed");
@@ -612,14 +624,8 @@ sap.ui.define([
 		).patch(function() {
 			Patcher.openStart("ul").openEnd().close("ul");
 		}, function(aMutations, oElement) {
-			if (bLegacyObserver) {
-				assert.equal(aMutations.length, 2, "Two changes for legacy observers");
-				assert.equal(aMutations[0].removedNodes[0].id, "x", "Node X is removed");
-				assert.equal(aMutations[1].removedNodes[0].id, "y", "Node Y is removed");
-			} else {
-				assert.equal(aMutations.length, 1, "Only one change: all children are removed with one delete operation");
-				assert.equal(aMutations[0].removedNodes.length, 2, "Two children are removed");
-			}
+			assert.equal(aMutations.length, 1, "Only one change: all children are removed with one delete operation");
+			assert.equal(aMutations[0].removedNodes.length, 2, "Two children are removed");
 			assert.equal(oElement.childElementCount, 0, "Has no child anymore");
 		});
 
@@ -677,11 +683,9 @@ sap.ui.define([
 		this.html("<div></div>").patch(function() {
 			Patcher.unsafeHtml("<img>");
 		}, function(aMutations, oElement) {
-			// IE11 and Edge do not include the child nodes when they are removed by setting the innerHTML.
-			var bLegacyInnerHtmlObserver = bLegacyObserver || Device.browser.edge;
-			assert.equal(aMutations.length, bLegacyInnerHtmlObserver ? 2 : 1, "outerHTML is replaced");
+			assert.equal(aMutations.length, 1, "outerHTML is replaced");
 			assert.equal(aMutations[0].removedNodes[0].tagName, "DIV", "div element is removed");
-			assert.equal(aMutations[bLegacyInnerHtmlObserver ? 1 : 0].addedNodes[0].tagName, "IMG", "img element is added");
+			assert.equal(aMutations[0].addedNodes[0].tagName, "IMG", "img element is added");
 			assert.equal(oElement.tagName, "IMG", "There is only an img element");
 		});
 

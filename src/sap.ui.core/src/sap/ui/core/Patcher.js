@@ -3,12 +3,13 @@
  */
 
 // Provides the Patcher for RenderManager
-sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQuery) {
+sap.ui.define([], function() {
 	"use strict";
 
 
 	/**
 	 * Provides custom mutators for attributes.
+	 * Custom mutators ensure that the attribute value is aligned with the property value.
 	 *
 	 * Mutator functions are executed before the properties are set or removed.
 	 * If the return value of the function is <code>true</code>, then the attribute will not be set.
@@ -19,24 +20,21 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 */
 	var AttributeMutators = {
 		value: function(oElement, sNewValue) {
-			oElement.value = (sNewValue == null) ? "" : sNewValue;
+			if (oElement.tagName == "INPUT") {
+				oElement.value = (sNewValue == null) ? "" : sNewValue;
+			}
 		},
 		checked: function(oElement, sNewValue) {
-			oElement.checked = (sNewValue == null) ? false : true;
+			if (oElement.tagName == "INPUT") {
+				oElement.checked = (sNewValue == null) ? false : true;
+			}
 		},
 		selected: function(oElement, sNewValue) {
-			oElement.selected = (sNewValue == null) ? false : true;
+			if (oElement.tagName == "OPTION") {
+				oElement.selected = (sNewValue == null) ? false : true;
+			}
 		}
 	};
-
-	// in IE11 the order of the style rules might differ
-	if (Device.browser.msie) {
-		AttributeMutators.style = function(oElement, sNewValue, sOldValue) {
-			if (sNewValue && sOldValue && sNewValue != sOldValue && sNewValue.length == sOldValue.length) {
-				return (sNewValue + " ").split("; ").sort().toString() == (sOldValue + " ").split("; ").sort().toString();
-			}
-		};
-	}
 
 	/**
 	 * Creates an HTML element from the given tag name and parent namespace
@@ -246,14 +244,9 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 	 * Gets and stores attributes of the current node.
 	 *
 	 * Using getAttributeNames along with getAttribute is a memory-efficient and performant alternative to accessing Element.attributes.
-	 * Edge 44 is supporting getAttributeNames, but it does not return qualified names of attributes.
 	 * For more information, see {@link https://developer.mozilla.org/en-US/docs/Web/API/Element/getAttributeNames}.
 	 */
-	Patcher._getAttributes = (Device.browser.msie || Device.browser.edge) ? function() {
-		for (var i = 0, aAttributes = this._oCurrent.attributes, iLength = aAttributes.length; i < iLength; i++) {
-			this._mAttributes[aAttributes[i].name] = aAttributes[i].value;
-		}
-	} : function() {
+	Patcher._getAttributes = function() {
 		for (var i = 0, aAttributeNames = this._oCurrent.getAttributeNames(); i < aAttributeNames.length; i++) {
 			this._mAttributes[aAttributeNames[i]] = this._oCurrent.getAttribute(aAttributeNames[i]);
 		}
@@ -514,15 +507,7 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 			if (sHtml) {
 				this._iTagOpenState = 0;
 				this._oCurrent.insertAdjacentHTML("afterbegin", sHtml);
-				if (oReference) {
-					this._oCurrent = oReference.previousSibling;
-					if (!this._oCurrent) { // IE & Edge normalize text nodes
-						oReference.data = sHtml;
-						this._oCurrent = oReference;
-					}
-				} else {
-					this._oCurrent = this._oCurrent.lastChild;
-				}
+				this._oCurrent = oReference ? oReference.previousSibling : this._oCurrent.lastChild;
 			}
 		} else {
 			oReference = this._oCurrent.nextSibling;
@@ -530,13 +515,9 @@ sap.ui.define(["sap/ui/Device", "sap/ui/thirdparty/jquery"], function(Device, jQ
 				var oParent = this._oCurrent.parentNode;
 				if (this._oCurrent.nodeType == 1) {
 					this._oCurrent.insertAdjacentHTML("afterend", sHtml);
-				} else if ("content" in this._oTemplate) {
+				} else {
 					this._oTemplate.innerHTML = sHtml;
 					oParent.insertBefore(this._oTemplate.content, oReference);
-				} else {
-					jQuery.parseHTML(sHtml).forEach(function(oNode) {
-						oParent.insertBefore(oNode, oReference);
-					});
 				}
 				this._oCurrent = oReference ? oReference.previousSibling : oParent.lastChild;
 			}
