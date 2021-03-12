@@ -42,7 +42,7 @@ sap.ui.define([
 		if (!oVisualization) {
 			if (oConfig.editable) {
 				if (oConfig.values) {
-					var oItem = new ListItem(oConfig.values.item);
+					var oItem = this.formatListItem(oConfig.values.item);
 					oVisualization = {
 						type: MultiComboBox,
 						settings: {

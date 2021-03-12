@@ -27,9 +27,6 @@ sap.ui.define([
 	DateTimeField.prototype.initVisualization = function (oConfig) {
 		var oVisualization = oConfig.visualization;
 		var oformatter = oConfig.formatter;
-		if (oformatter && !oformatter.UTC) {
-			oformatter.UTC = true;
-		}
 		if (oConfig.value !== "") {
 			oConfig.value = new Date(oConfig.value);
 		}
