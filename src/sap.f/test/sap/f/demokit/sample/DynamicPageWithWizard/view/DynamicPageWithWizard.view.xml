@@ -13,8 +13,7 @@
 				toggleHeaderOnTitleClick="{/titleClickable}"
 				stickySubheaderProvider="ShoppingCartWizard"
 				class="sapUiNoContentPadding"
-				showFooter="true"
-				fitContent="true">
+				showFooter="true">
 				<!-- DynamicPage Title -->
 				<f:title>
 					<f:DynamicPageTitle>
@@ -28,6 +27,7 @@
 					<Wizard id="ShoppingCartWizard"
 					        class="sapUiResponsivePadding--header sapUiResponsivePadding--content"
 					        complete="completedHandler"
+					        height="auto"
 					        enableBranching="true">
 						<WizardStep
 							id="ContentsStep"
