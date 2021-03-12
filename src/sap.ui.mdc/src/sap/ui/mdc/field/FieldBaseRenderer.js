@@ -40,33 +40,16 @@ sap.ui.define([
 			oRm.class("sapUiMdcFieldBaseMoreFields");
 		}
 
+		if (bShowEmptyIndicator) {
+			oRm.class("sapMShowEmpty-CTX"); // to allow the Text control determine if empty indicator is needed or not
+		}
+
 		oRm.style("width", sWidth);
 		oRm.openEnd();
 
-		// render empty indicator in display mode
-		if (bShowEmptyIndicator) {
-			// invisible text for screenreader
-			oRm.openStart("span");
-			oRm.class("sapUiPseudoInvisibleText");
-			oRm.openEnd();
-			oRm.text(oField._oResourceBundle.getText("field.NO_VALUE"));
-			oRm.close("span");
-
-			// element for empty indicator
-			oRm.openStart("span");
-			oRm.attr("aria-hidden", "true");
-			oRm.attr("emptyindicator", oField._oResourceBundle.getText("field.EMPTY_INDICATOR"));
-			oRm.class("sapMText");
-			oRm.class("sapUiSelectable");
-			oRm.class("sapMTextMaxWidth");
-			oRm.class("sapUiMdcFieldBaseEmpty");
-			oRm.openEnd();
-			oRm.close("span");
-		} else {
-			for (var i = 0; i < aContent.length; i++) {
-				var oContent = aContent[i];
-				oRm.renderControl(oContent);
-			}
+		for (var i = 0; i < aContent.length; i++) {
+			var oContent = aContent[i];
+			oRm.renderControl(oContent);
 		}
 
 		oRm.close("div");

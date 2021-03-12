@@ -1,8 +1,14 @@
 /*
  * ! ${copyright}
  */
-sap.ui.define([], function() {
+sap.ui.define([
+	"sap/m/library"
+], function(
+	mLibrary
+) {
 	"use strict";
+
+	var EmptyIndicatorMode = mLibrary.EmptyIndicatorMode;
 
 	/**
 	 * Object-based definition of the default content type that is used in the {@link sap.ui.mdc.field.content.ContentFactory}.
@@ -229,7 +235,8 @@ sap.ui.define([], function() {
 				textDirection: "{$field>/textDirection}",
 				wrapping: "{$field>/multipleLines}",
 				width: "100%",
-				tooltip: "{$field>/tooltip}"
+				tooltip: "{$field>/tooltip}",
+				emptyIndicatorMode: EmptyIndicatorMode.Auto
 			});
 			oContentFactory.setBoundProperty("text");
 
