@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.15#intersectionWith}
+ * See {@link https://lodash.com/docs/4.17.21#intersectionWith}
  *
  * @function
  * @alias sap/base/util/restricted/_intersectionWith
