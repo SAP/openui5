@@ -51,10 +51,6 @@ sap.ui.define([
                         type:"String",
                         defaultValue:""
                     },
-                    aggregationMethod: { //TODO: Move this to "payload"
-                        type: "String",
-                        defaultValue: "average"
-                    },
                     /**
                      * Specifies the role of the Item for the chart.
                      * This is specific for the used chart library. Consult their documentation.
