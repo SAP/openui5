@@ -112,7 +112,7 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 	DynamicPageRenderer.renderFooter = function (oRm, oDynamicPage, oDynamicPageFooter, bShowFooter, sFooterTag, oLandmarkInfo) {
 		if (oDynamicPageFooter) {
 			oRm.openStart(sFooterTag, oDynamicPage.getId() + "-footerWrapper");
-			oRm.class("sapContrast").class("sapContrastPlus").class("sapFDynamicPageFooter").class("sapFFooter-CTX");
+			oRm.class("sapContrast").class("sapContrastPlus").class("sapFDynamicPageFooter").class("sapMFooter-CTX");
 			if (!bShowFooter) {
 				oRm.class("sapUiHidden");
 			}
