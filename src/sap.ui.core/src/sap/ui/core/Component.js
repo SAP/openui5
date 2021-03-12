@@ -2020,6 +2020,9 @@ sap.ui.define([
 	 * only be required after all preloads have been rejected or resolved. Only then, the new instance will
 	 * be created.
 	 *
+	 * A component can implement the {@link sap.ui.core.IAsyncContentCreation} interface.
+	 * Please see the respective documentation for more information.
+	 *
 	 * @example
 	 *
 	 *   Component.create({
@@ -2197,6 +2200,9 @@ sap.ui.define([
 			Log.warning("Do not use synchronous component creation (" + vConfig["name"] + ")! " +
 				"Use the new asynchronous factory 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig["name"]));
 		}
+		// flag config as legacy factory call
+		vConfig.legacy = true;
+
 		return componentFactory(vConfig);
 	};
 
@@ -2218,27 +2224,42 @@ sap.ui.define([
 		}
 
 		function notifyOnInstanceCreated(oInstance, vConfig) {
-			if (typeof Component._fnOnInstanceCreated === "function") {
-				var oPromise = Component._fnOnInstanceCreated(oInstance, vConfig);
-				if (vConfig.async && oPromise instanceof Promise) {
-					return oPromise;
-				}
-			}
 			if (vConfig.async) {
+				var pRootControlReady = oInstance.rootControlLoaded ? oInstance.rootControlLoaded() : Promise.resolve();
+				if (typeof Component._fnOnInstanceCreated === "function") {
+					return pRootControlReady.then(function() {
+						return Component._fnOnInstanceCreated(oInstance, vConfig);
+					});
+				}
 				// If we're async but we don't have a promise we still need to be one !
-				return Promise.resolve(oInstance);
+				return pRootControlReady;
+			}
+			if (typeof Component._fnOnInstanceCreated === "function") {
+				Component._fnOnInstanceCreated(oInstance, vConfig);
 			}
 			return oInstance;
 		}
 
 		function createInstance(oClass) {
+			var fnLogProperties = function(name) {
+				return {
+					type: "sap.ui.component",
+					name: name
+				};
+			};
+
+			if (vConfig.legacy && oClass.getMetadata().isA("sap.ui.core.IAsyncContentCreation")) {
+				throw new Error("Do not use deprecated factory function 'sap.ui.component' in combination with IAsyncContentCreation (" + vConfig["name"] + "). " +
+				"Use 'Component.create' instead", "sap.ui.component", null, fnLogProperties.bind(null, vConfig["name"]));
+			}
+			delete vConfig.legacy;
 
 			// retrieve the required properties
 			var sName = vConfig.name,
-				sId = vConfig.id,
-				oComponentData = vConfig.componentData,
-				sController = sName + '.Component',
-				mSettings = vConfig.settings;
+			sId = vConfig.id,
+			oComponentData = vConfig.componentData,
+			sController = sName + '.Component',
+			mSettings = vConfig.settings;
 
 			// create an instance
 			var oInstance = new oClass(extend({}, mSettings, {
@@ -2278,8 +2299,7 @@ sap.ui.define([
 						return oInstance;
 					});
 			} else {
-				notifyOnInstanceCreated(oInstance, vConfig);
-				return oInstance;
+				return notifyOnInstanceCreated(oInstance, vConfig);
 			}
 		}
 

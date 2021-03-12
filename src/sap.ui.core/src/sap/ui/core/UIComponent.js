@@ -284,6 +284,7 @@ sap.ui.define([
 
 		var that = this;
 		var oPreprocessors = {};
+		var vRootControl;
 
 		// when auto prefixing is enabled we add the prefix
 		if (this.getAutoPrefixId()) {
@@ -292,11 +293,35 @@ sap.ui.define([
 			};
 		}
 
+		function afterRootControlCreated(oRootControl, oRoutingConfig) {
+			that.setAggregation("rootControl", oRootControl);
+
+			// only for root "views" we automatically define the target parent
+			if (oRootControl instanceof View) {
+				if (oRoutingConfig.targetParent === undefined) {
+					oRoutingConfig.targetParent = oRootControl.getId();
+				}
+				if (that._oTargets) {
+					that._oTargets._setRootViewId(oRootControl.getId());
+				}
+			}
+
+			// notify Component initialization callback handler
+			if (typeof UIComponent._fnOnInstanceInitialized === "function") {
+				UIComponent._fnOnInstanceInitialized(that);
+			}
+		}
+
 		// create the routing
 		// extend the metadata config, so that the metadata object cannot be modified afterwards
 		var oRoutingManifestEntry = this._getManifestEntry("/sap.ui5/routing", true) || {},
 			oRoutingConfig = oRoutingManifestEntry.config || {},
 			vRoutes = oRoutingManifestEntry.routes;
+
+		// If IAsyncContentCreation interface is implemented we default router view creation to async
+		if (this.isA("sap.ui.core.IAsyncContentCreation")) {
+			oRoutingConfig.async = true;
+		}
 
 		// create the router for the component instance
 		if (vRoutes) {
@@ -322,26 +347,23 @@ sap.ui.define([
 		// create the content
 		this.runAsOwner(function() {
 			ManagedObject.runWithPreprocessors(function() {
-				that.setAggregation("rootControl", that.createContent());
+				vRootControl = that.createContent();
 			}, oPreprocessors);
 		});
-
-		// only for root "views" we automatically define the target parent
-		var oRootControl = this.getRootControl();
-		if (oRootControl instanceof View) {
-			if (oRoutingConfig.targetParent === undefined) {
-				oRoutingConfig.targetParent = oRootControl.getId();
-			}
-			if (this._oTargets) {
-				this._oTargets._setRootViewId(oRootControl.getId());
+		if (vRootControl instanceof Promise) {
+			this.pRootControlLoaded = vRootControl.then(function(oRootControl) {
+				afterRootControlCreated(oRootControl, oRoutingConfig);
+				return oRootControl;
+			});
+		} else {
+			afterRootControlCreated(vRootControl, oRoutingConfig);
+			if (this.isA("sap.ui.core.IAsyncContentCreation") && vRootControl && vRootControl.isA("sap.ui.core.mvc.View")) {
+				// if rootControl is a view created with the legacy factory we chain the loaded promise
+				this.pRootControlLoaded = vRootControl.loaded();
+			} else {
+				this.pRootControlLoaded = Promise.resolve(vRootControl);
 			}
 		}
-
-		// notify Component initialization callback handler
-		if (typeof UIComponent._fnOnInstanceInitialized === "function") {
-			UIComponent._fnOnInstanceInitialized(this);
-		}
-
 	};
 
 	function getConstructorFunctionFor (vRoutingObjectConstructor) {
@@ -357,6 +379,21 @@ sap.ui.define([
 
 		return fnConstructor;
 	}
+
+	/**
+	* Returns a Promise representing loading state of the root control.
+	*
+	* For UIComponents loading its root control asynchronously the Promise resolves as soon as the creation is finished.
+	* For synchronous root control creation the Promise resolves immediately.
+	* The result Promise resolves with the created root control or <code>null</code> if none was created.
+	*
+	* @return {Promise<sap.ui.core.Control|null>} resolves with the created root control or null if none was created, rejects with any thrown error
+	* @private
+	* @ui5-restricted sap.ui.core.Component
+	*/
+	UIComponent.prototype.rootControlLoaded = function() {
+		return this.pRootControlLoaded;
+	};
 
 	/*
 	 * Destruction of the UIComponent
@@ -553,7 +590,64 @@ sap.ui.define([
 	 * Subclasses are not limited to views as return type but may return any control, but only a single control
 	 * (can be the root of a larger control tree, however).
 	 *
-	 * @returns {sap.ui.core.Control|null} Root control of the UI tree or <code>null</code> if none is configured
+	 * A <code>sap.ui.core.UIComponent</code> subclass can additionally implement the {@link sap.ui.core.IAsyncContentCreation} interface.
+	 * When implementing this interface the loading and processing of an asynchronous <code>rootView</code> will be chained into
+	 * the result Promise of the {@link sap.ui.core.Component.create Component.create} factory.
+	 * See Sample 1 below.
+	 *
+	 * Samples 2 and 3 show how subclasses can overwrite the <code>createContent</code> function
+	 * to run asynchronously. To create the root control asynchronously, the subclass has to define the
+	 * <code>sap.ui.core.IAsyncContentCreation</code> interface in the metadata.
+	 *
+	 * @example <caption>Sample 1: Asynchronous Root View Creation</caption>
+	 *
+	 * sap.ui.define(["sap/ui/core/UIComponent", "sap/ui/core/Fragment"], function(UIComponent, Fragment) {
+	 *     return UIComponent.extend("my.sample", {
+	 *         metadata: {
+	 *             rootView: {
+	 *                 viewName: "my.sample.views.Main",
+	 *                 type: "XML",
+	 *                 id: "sampleMainView",
+	 *                 async: true
+	 *             },
+	 *             interfaces: ["sap.ui.core.IAsyncContentCreation"]
+	 *         }
+	 *     });
+	 * });
+	 *
+	 * @example <caption>Sample 2: Asynchronous createContent() - XMLView</caption>
+	 *
+	 * sap.ui.define(["sap/ui/core/UIComponent", "sap/ui/core/mvc/XMLView"], function(UIComponent, XMLView) {
+	 *     return UIComponent.extend("my.sample", {
+	 *         metadata: {
+	 *             // ...
+	 *             interfaces: ["sap.ui.core.IAsyncContentCreation"]
+	 *         },
+	 *         createContent: function() {
+	 *             // Dynamically create a root view
+	 *             return XMLView.create({ ... });
+	 *         }
+	 *     });
+	 * });
+	 *
+	 * @example <caption>Sample 3: Asynchronous createContent() - Fragment</caption>
+	 *
+	 * sap.ui.define(["sap/ui/core/UIComponent", "sap/ui/core/Fragment"], function(UIComponent, Fragment) {
+	 *     return UIComponent.extend("my.sample", {
+	 *         metadata: {
+	 *             // ...
+	 *             interfaces: ["sap.ui.core.IAsyncContentCreation"]
+	 *         },
+	 *         createContent: function() {
+	 *             // In this use case, a Fragment must only have one single root control.
+	 *             // The root control can contain several controls in turn.
+	 *             return Fragment.load({ ... });
+	 *         }
+	 *     });
+	 * });
+	 *
+	 * @returns {sap.ui.core.Control|Promise<sap.ui.core.Control|null>|null}
+	 *   Root control of the UI tree, or a promise resolving with the root control, or <code>null</code>, if none is configured.
 	 * @throws {Error} When the root view configuration could not be interpreted; subclasses might throw errors also for other reasons
 	 * @public
 	 */
@@ -577,6 +671,10 @@ sap.ui.define([
 			if (oRootView.async && oRootView.type === ViewType.XML) {
 				oRootView.processingMode = "sequential";
 			}
+			if (this.isA("sap.ui.core.IAsyncContentCreation")) {
+				return View.create(oRootView);
+			}
+
 			return View._legacyCreate(oRootView);
 		} else if (oRootView) {
 			throw new Error("Configuration option 'rootView' of component '" + this.getMetadata().getName() + "' is invalid! 'rootView' must be type of string or object!");
