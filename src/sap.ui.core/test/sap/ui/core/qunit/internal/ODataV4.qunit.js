@@ -21,18 +21,9 @@
 			});
 
 		sap.ui.require(aModules, function () {
-			function start() {
-				Core.detachThemeChanged(start);
-				QUnit.start();
-			}
-
 			// don't start if autostart was stopped elsewhere (then the module is part of 1Ring)
 			if (!bAlreadyStopped) {
-				if (Core.isThemeApplied()) {
-					QUnit.start();
-				} else {
-					Core.attachThemeChanged(start);
-				}
+				Core.attachInit(QUnit.start.bind(QUnit, /*count*/0));
 			}
 		});
 	});

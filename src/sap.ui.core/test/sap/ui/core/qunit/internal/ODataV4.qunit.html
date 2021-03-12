@@ -13,12 +13,14 @@
 		<base href="../../../../../../">
 
 		<script src="test-resources/sap/ui/core/shared-config.js"></script>
+		<!-- BEWARE: data-sap-ui-async="true" prevents code coverage! -->
 		<script id="sap-ui-bootstrap" src="resources/sap-ui-core.js"
 			data-sap-ui-compatversion="edge"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-resourceRoots='{
 				"sap.ui.core.qunit": "test-resources/sap/ui/core/qunit"
-			}'>
+			}'
+			data-sap-ui-xx-waitForTheme="init">
 		</script>
 
 		<link href="resources/sap/ui/thirdparty/qunit-2.css" media="screen" rel="stylesheet">
