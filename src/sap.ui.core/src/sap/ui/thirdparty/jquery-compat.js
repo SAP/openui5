@@ -81,17 +81,17 @@ function jQueryVersionSince( version ) {
 
 
 // ##### BEGIN: MODIFIED BY SAP
-// Check the jquery version. If it's different than 3.5.1 but stays in the same major version 3.x.x, a warning is
+// Check the jquery version. If it's different than 3.6.0 but stays in the same major version 3.x.x, a warning is
 // logged and the compatibility layer is still applied. If it has a different major version as 3.x.x, an error is
 // logged and the application of the layer is skipped.
 /* eslint-disable no-console */
 if (jQueryVersionSince("3.0.0") && !jQueryVersionSince("4.0.0")) {
-	if (jQuery.fn.jquery !== "3.5.1" && console) {
-		console.warn("The current jQuery version " + jQuery.fn.jquery + " is different than the version 3.5.1 that is used for testing jquery-compat.js. jquery-compat.js is applied but it may not work properly.");
+	if (jQuery.fn.jquery !== "3.6.0" && console) {
+		console.warn("The current jQuery version " + jQuery.fn.jquery + " is different than the version 3.6.0 that is used for testing jquery-compat.js. jquery-compat.js is applied but it may not work properly.");
 	}
 } else {
 	if (console) {
-		console.error("The current jQuery version " + jQuery.fn.jquery + " differs at the major version than the version 3.5.1 that is used for testing jquery-compat.js. jquery-compat.js shouldn't be applied in this case!");
+		console.error("The current jQuery version " + jQuery.fn.jquery + " differs at the major version than the version 3.6.0 that is used for testing jquery-compat.js. jquery-compat.js shouldn't be applied in this case!");
 	}
 	// skip the appliation of jquery compatibility layer
 	return;

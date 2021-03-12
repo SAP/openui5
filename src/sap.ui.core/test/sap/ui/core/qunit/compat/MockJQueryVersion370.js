@@ -1,6 +1,6 @@
 (function(jQuery) {
 	"use strict";
-	jQuery.fn.jquery = "3.6.0";
+	jQuery.fn.jquery = "3.7.0";
 
 	/* eslint-disable no-console */
 	var fnConsoleWarn = console.warn;
