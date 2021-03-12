@@ -59,8 +59,6 @@ sap.ui.define([
          * @constructor
          * @experimental As of version ...
          * @private
-         * @ui5-restricted sap.fe
-         * @MDC_PUBLIC_CANDIDATE
          * @since 1.88
          * @alias sap.ui.mdc.ChartNew
          * @ui5-metamodel This control/element also will be described in the UI5 (legacy) designtime metamodel
