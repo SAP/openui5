@@ -56,7 +56,14 @@ sap.ui.define([
 
 		var oGroupPanelTemplate = new CustomListItem({
 			visible: "{" + this.P13N_MODEL + ">groupVisible}",
-			accDescription: "{" + this.P13N_MODEL + ">groupLabel}", //Do not read the whole content
+			accDescription: {
+				path: this.P13N_MODEL + ">groupLabel",
+				//Do not read the whole content
+				//Announce tet 'Filter Group' + <grouplabel>, e.g. "Filter Group Basic"
+				formatter: function(sGroupLabel) {
+					return this.getResourceText("p13nDialog.FILTER_GROUP_DESCRIPTION", sGroupLabel);
+				}.bind(this)
+			},
 			content: [
 				this._createGroupPanelTemplate()
 			]
