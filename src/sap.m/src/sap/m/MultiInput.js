@@ -1929,7 +1929,7 @@ function(
 
 		if (oItem && oItem.getText && oItem.getKey) {
 			oToken = new Token({
-				text : oItem.getText(),
+				text :  ManagedObject.escapeSettingsValue(oItem.getText()),
 				key : oItem.getKey()
 			});
 		}
