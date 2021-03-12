@@ -10,13 +10,13 @@ sap.ui.define(["sap/ui/layout/form/SimpleForm", "sap/ui/layout/VerticalLayout", 
 				layout: "ColumnLayout",
 				editable: false,
 				content: [
-						new Label({text: "Evangelize the UI framework accross the company", design: "Bold"}),
+						new Label({text: "Evangelize the UI framework accross the company"}),
 						new Text({text: "4 days overdue Cascaded"}),
 						new Text({text: " "}),
-						new Label({text: "Get trained in development management direction", design: "Bold"}),
+						new Label({text: "Get trained in development management direction"}),
 						new Text({text: "Due Nov 21"}),
 						new Text({text: " "}),
-						new Label({text: "Mentor junior developers", design: "Bold"}),
+						new Label({text: "Mentor junior developers"}),
 						new Text({text: "Due Dec 31 Cascaded"}),
 						new Button({text: "Hello from a JS View", press: oController.onBtnPress})
 					]
