@@ -359,14 +359,14 @@ sap.ui.define([
 	QUnit.test("Initialization", function(assert) {
 		return this.createTable().qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Binding#getContexts called once"); // render
-			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the row count");
+			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100, undefined), "All calls to Binding#getContexts consider the row count");
 		}.bind(this));
 	});
 
 	QUnit.test("Initialization; Variable row heights", function(assert) {
 		return this.createTable(true).qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(this.oGetContextsSpy.callCount, 1, "Binding#getContexts called once"); // render
-			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100), "All calls to Binding#getContexts consider the row count");
+			assert.ok(this.oGetContextsSpy.alwaysCalledWithExactly(0, 11, 100, undefined), "All calls to Binding#getContexts consider the row count");
 		}.bind(this));
 	});
 

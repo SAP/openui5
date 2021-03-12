@@ -305,7 +305,7 @@ sap.ui.define([
 
 		return this.oTable.qunit.whenRenderingFinished().then(function() {
 			assert.strictEqual(oGetContextsSpy.callCount, 1, "Binding#getContexts called once"); // render
-			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100), "All calls to Binding#getContexts consider the rendered row count");
+			assert.ok(oGetContextsSpy.alwaysCalledWithExactly(0, 10, 100, undefined), "All calls to Binding#getContexts consider the rendered row count");
 		});
 	});
 
