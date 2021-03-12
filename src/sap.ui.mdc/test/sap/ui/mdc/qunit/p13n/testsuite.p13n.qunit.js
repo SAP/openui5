@@ -66,6 +66,15 @@ sap.ui.define(["sap/ui/Device"], function (Device) {
 					]
 				}
 			},
+			"DefaultProviderRegistry": {
+				group: "Silent Persistence",
+				module: "./DefaultProviderRegistry.qunit",
+				ui5: {
+					libs: [
+						"sap.ui.mdc"
+					]
+				}
+			},
 			"BaseController": {
 				group: "SubController (generic)",
 				module: "./controllers/ControllerGeneric.qunit",
