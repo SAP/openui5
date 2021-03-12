@@ -16,7 +16,10 @@ sap.ui.define([
 	"use strict";
 
 	function getPersistencyKey(oControl) {
-		return oControl && oControl.getPersonalizableControlPersistencyKey && oControl.getPersonalizableControlPersistencyKey();
+		if (oControl) {
+			var oVMControl = oControl.getVariantManagement && oControl.getVariantManagement() || oControl;
+			return oVMControl.getPersonalizableControlPersistencyKey && oVMControl.getPersonalizableControlPersistencyKey();
+		}
 	}
 
 	function setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, fnFunction) {
@@ -42,7 +45,10 @@ sap.ui.define([
 		 * Adds a new change (could also be a variant) and returns the ID of the new change.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variants should be loaded
 		 * @param {object} mPropertyBag.changeSpecificData - Map of parameters, see below
 		 * @param {string} mPropertyBag.changeSpecificData.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
 		 * @param {string} mPropertyBag.changeSpecificData.ODataService - Name of the OData service --> can be null

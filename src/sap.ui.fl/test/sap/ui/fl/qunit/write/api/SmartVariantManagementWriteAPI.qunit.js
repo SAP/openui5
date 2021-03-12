@@ -9,7 +9,6 @@ sap.ui.define([
 	"sap/ui/fl/initial/_internal/Storage",
 	"sap/ui/fl/write/_internal/Storage",
 	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/core/UIComponent",
@@ -24,7 +23,6 @@ sap.ui.define([
 	InitialStorage,
 	WriteStorage,
 	Settings,
-	CompVariant,
 	Change,
 	ManifestUtils,
 	UIComponent,
@@ -43,6 +41,17 @@ sap.ui.define([
 		}
 	}, function() {
 		[{
+			bIsNoSVM: true,
+			apiFunctionName: "add",
+			compVariantStateFunctionName: "add",
+			mockedResponse: {
+				getId: function () {
+					return "id_123";
+				}
+			},
+			expectedResponse: "id_123"
+		}, {
+			bIsNoSVM: false,
 			apiFunctionName: "add",
 			compVariantStateFunctionName: "add",
 			mockedResponse: {
@@ -70,12 +79,21 @@ sap.ui.define([
 			QUnit.test("When " + testData.apiFunctionName + " is called", function (assert) {
 				// mock control
 				var sPersistencyKey = "thePersistencyKey";
-				var mPropertyBag = {
-					control: {
-						getPersonalizableControlPersistencyKey: function () {
-							return sPersistencyKey;
+				var oSVMControl = {
+					getPersonalizableControlPersistencyKey: function () {
+						return sPersistencyKey;
+					}
+				};
+				var oControl = oSVMControl;
+				if (testData.bIsNoSVM) {
+					oControl = {
+						getVariantManagement: function() {
+							return oSVMControl;
 						}
-					},
+					};
+				}
+				var mPropertyBag = {
+					control: oControl,
 					changeSpecificData: {},
 					command: "myCommand"
 				};
