@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.20#pickBy}
+ * See {@link https://lodash.com/docs/4.17.21#pickBy}
  *
  * @function
  * @alias module:sap/base/util/restricted/_pickBy
