@@ -17,8 +17,6 @@ sap.ui.define([
      *
      * @author SAP SE
      * @private
-     * @ui5-restricted sap.fe
-     * @MDC_PUBLIC_CANDIDATE
      * @since 1.88
      * @alias sap.ui.mdc.odata.v4.vizChart.ChartDelegateNew
      */
