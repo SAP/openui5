@@ -135,7 +135,7 @@ sap.ui.define([
 					sVariantManagementReference);
 			}.bind(this))
 			.then(function(oSettingsCommand) {
-				if (bRuntimeOnly) {
+				if (oSettingsCommand && bRuntimeOnly) {
 					oSettingsCommand.setRuntimeOnly(bRuntimeOnly);
 				}
 				return oCompositeCommand.addCommand(oSettingsCommand);
