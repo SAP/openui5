@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.20#flatten}
+ * See {@link https://lodash.com/docs/4.17.21#flatten}
  *
  * @function
  * @alias module:sap/base/util/restricted/_flatten
