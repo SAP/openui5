@@ -1137,7 +1137,7 @@ sap.ui.define([
 			assert.ok(aCells);
 			assert.equal(aCells.length, 7);
 
-			assert.ok(aCells[VariantManagement.COLUMN_EXEC_IDX].isA("sap.m.Text"));
+			assert.ok(aCells[VariantManagement.COLUMN_EXEC_IDX].isA("sap.m.CheckBox"));
 			assert.equal(aCells[VariantManagement.COLUMN_EXEC_IDX].getText(), "TEST");
 		});
 	});
