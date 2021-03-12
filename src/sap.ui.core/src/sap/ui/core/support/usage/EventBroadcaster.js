@@ -131,7 +131,7 @@ sap.ui.define(['sap/base/Log', '../../Component', '../../Element', '../../routin
 
 		/**
 		 * Starts broadcasting events. Consumers could stop broadcasting via
-		 * {@link sap.ui.core.support.usage.EventBroadcaster#disable EventBroadcaster.disable}
+		 * {@link sap.ui.core.support.usage.EventBroadcaster.disable EventBroadcaster.disable}
 		 * @public
 		 */
 		EventBroadcaster.enable = function () {

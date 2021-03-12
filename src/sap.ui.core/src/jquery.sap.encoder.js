@@ -155,7 +155,7 @@ sap.ui.define(['jquery.sap.global',
 	 * @param {int} iIndex index of entry
 	 * @public
 	 * @function
-	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator#clear} and {@link module:sap/base/security/URLListValidator#add} instead.
+	 * @deprecated since 1.58 use {@link module:sap/base/security/URLListValidator.clear} and {@link module:sap/base/security/URLListValidator.add} instead.
 	 * SAP strives to replace insensitive terms with inclusive language,
 	 * but APIs cannot be renamed or immediately removed for compatibility reasons.
 	 */
@@ -283,7 +283,7 @@ sap.ui.define(['jquery.sap.global',
 	 *
 	 * </pre>
 	 *
-	 * When an allowlist has been configured using {@link module:sap/base/security/URLListValidator#add add},
+	 * When an allowlist has been configured using {@link module:sap/base/security/URLListValidator.add add},
 	 * any URL that passes the syntactic checks above, additionally will be tested against
 	 * the content of the allowlist.
 	 *

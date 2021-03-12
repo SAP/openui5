@@ -689,8 +689,8 @@ sap.ui.define([
 		Opa5.prototype.waitFor = function (options) {
 			// if there are any declarative matchers, first, find the ancestors and descendants.
 			// do this recursively, until every expanded declaration is resolved,
-			// and then continue to finding the dependant control.
-			// the actual queueing of waitFors will be ensured by sap.ui.test.Opa.waitFor (see function ensureNewlyAddedWaitForStatementsPrepended)
+			// and then continue to finding the dependent control.
+			// the actual queueing of waitFors will be ensured by sap.ui.test.Opa#waitFor (see function ensureNewlyAddedWaitForStatementsPrepended)
 			var aPath = _getPathToExpansion(options);
 			var mExpansion = _getExpansion(options, aPath);
 			if (mExpansion) {
@@ -1225,8 +1225,8 @@ sap.ui.define([
 		 * The promise is not directly chained, but instead its result is awaited in a new waitFor statement.
 		 * This means that any "thenable" should be acceptable.
 		 * @public
-		 * @param {jQuery.promise|Promise} oPromise promise to schedule on the OPA5 queue
-		 * @returns {jQuery.promise} promise which is the result of a {@link sap.ui.test.Opa5.waitFor}
+		 * @param {jQuery.promise|Promise} oPromise promise to schedule on the Opa5 queue
+		 * @returns {jQuery.promise} promise which is the result of a {@link sap.ui.test.Opa5#waitFor}
 		 */
 		Opa5.prototype.iWaitForPromise = function (oPromise) {
 			var oOptions = createWaitForObjectWithoutDefaults();

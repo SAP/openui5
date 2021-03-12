@@ -412,7 +412,7 @@ sap.ui.define([
 	// ----------------------- sap/ui/mdc/LinkDelegate function calls ----------------------------------------------
 
 	/**
-	 * @returns {Promise} Resolves an array of type {@link sap.ui.base.Control}
+	 * @returns {Promise<sap.ui.core.Control[]>} Resolves an array of type {@link sap.ui.core.Control}
 	 * @protected
 	 * @ui5-restricted sap.ui.mdc
 	 * @MDC_PUBLIC_CANDIDATE

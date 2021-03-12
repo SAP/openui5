@@ -14,7 +14,7 @@ sap.ui.define([
 	 * @class
 	 * Constructor for a new <code>JsonEditor</code>.
 	 * This allows to set json text values for a specified property of a JSON object.
-	 * The editor is rendered as a {@link sap.ui.CodeEditor} inside a {@link sap.m.Dialog}.
+	 * The editor is rendered as a {@link sap.ui.codeeditor.CodeEditor} inside a {@link sap.m.Dialog}.
 	 * To get notified about changes made with the editor, you can use the <code>attachValueChange</code> method,
 	 * which passes the current property state as an object to the provided callback function when the user saves changes in the dialog.
 	 *

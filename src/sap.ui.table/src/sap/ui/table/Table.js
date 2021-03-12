@@ -410,7 +410,7 @@ sap.ui.define([
 			 * the next time. Also, properties must not be set to static values, as these would not change when scrolling.
 			 *
 			 * The cells of rows can be defined with the {@link sap.ui.table.Column#setTemplate template} aggregation of the columns in the
-			 * {@link sap.ui.table.Table#setColumns columns} aggregation of the table.
+			 * {@link sap.ui.table.Table#getColumns columns} aggregation of the table.
 			 * The actions of rows can be defined with the {@link sap.ui.table.Table#setRowActionTemplate rowActionTemplate} aggregation of the table.
 			 * Furthermore, row-specific settings can be defined with the {@link sap.ui.table.Table#setRowSettingsTemplate rowSettingsTemplate}
 			 * aggregation of the table.

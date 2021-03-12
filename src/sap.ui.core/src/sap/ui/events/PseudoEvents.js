@@ -49,7 +49,7 @@ sap.ui.define(['sap/ui/events/KeyCodes', 'sap/ui/thirdparty/jquery'], function(K
 	 * delivered to any jQuery-style listeners registered for that browser event.
 	 *
 	 * Pure JavaScript listeners can evaluate the classification information using
-	 * the {@link module:sap/ui/events/jquery/EventExtension#isPseudoType} method.
+	 * the {@link jQuery.Event.prototype.isPseudoType} method.
 	 *
 	 * Instead of using the procedure as described above, the SAPUI5 controls and elements
 	 * should simply implement an <code>on<i>pseudo-event</i>(oEvent)</code> method. It will

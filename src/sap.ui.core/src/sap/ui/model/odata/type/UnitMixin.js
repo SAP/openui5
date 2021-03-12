@@ -73,8 +73,8 @@ sap.ui.define([
 	 *   The concrete type's base class
 	 * @param {string} sFormatOptionName
 	 *   The name of the format option that accepts the custom units,
-	 *   see {@link sap.ui.core.format.NumberFormat#getCurrencyInstance} or
-	 *   {@link sap.ui.core.format.NumberFormat#getUnitInstance}
+	 *   see {@link sap.ui.core.format.NumberFormat.getCurrencyInstance} or
+	 *   {@link sap.ui.core.format.NumberFormat.getUnitInstance}
 	 */
 	return function (oPrototype, fnBaseType, sFormatOptionName) {
 		/**

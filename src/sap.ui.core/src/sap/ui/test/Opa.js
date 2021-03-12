@@ -614,7 +614,7 @@ sap.ui.define([
 		 * This means that any "thenable" should be acceptable.
 		 * @public
 		 * @param {jQuery.promise|Promise} oPromise promise to schedule on the OPA queue
-		 * @returns {jQuery.promise} promise which is the result of a {@link sap.ui.test.Opa.waitFor}
+		 * @returns {jQuery.promise} promise which is the result of a {@link sap.ui.test.Opa#waitFor}
 		 */
 		iWaitForPromise: function (oPromise) {
 			return this._schedulePromiseOnFlow(oPromise);

@@ -7712,7 +7712,7 @@ sap.ui.define([
 
 	/**
 	 * Sets the flag whether technical messages should always be treated as persistent. Works only
-	 * with {@link class sap.ui.model.odata.ODataMessageParser}.
+	 * with {@link sap.ui.model.odata.ODataMessageParser}.
 	 *
 	 * @param {boolean} bPersistTechnicalMessages
 	 *   Whether technical messages should always be treated as persistent

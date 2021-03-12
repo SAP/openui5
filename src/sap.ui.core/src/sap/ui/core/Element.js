@@ -883,7 +883,7 @@ sap.ui.define([
 	 *
 	 * To be overwritten by the specific control method.
 	 *
-	 * @param {object} oFocusInfo Focus info object as returned by {@link getFocusInfo}
+	 * @param {object} oFocusInfo Focus info object as returned by {@link #getFocusInfo}
 	 * @param {boolean} [oFocusInfo.preventScroll=false] @since 1.60 if it's set to true, the focused
 	 *   element won't be shifted into the viewport if it's not completely visible before the focus is set
 	 * @returns {this} Returns <code>this</code> to allow method chaining

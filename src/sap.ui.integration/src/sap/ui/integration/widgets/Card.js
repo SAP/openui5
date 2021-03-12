@@ -1076,7 +1076,7 @@ sap.ui.define([
 	/**
 	 * Gets translated text from the i18n properties files configured for this card.
 	 *
-	 * For more details see {@link sap.base.i18n.ResourceBundle#getText}.
+	 * For more details see {@link module:sap/base/i18n/ResourceBundle#getText}.
 	 *
 	 * @experimental Since 1.83. The API might change.
 	 * @public

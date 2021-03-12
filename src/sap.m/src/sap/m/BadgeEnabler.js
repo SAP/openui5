@@ -53,7 +53,7 @@ sap.ui.define([
 		 *
 		 * @since 1.80
 		 * @protected
-		 * @alias sap.m.IBadgeEnabler
+		 * @alias sap.m.BadgeEnabler
 		 */
 		var BadgeEnabler = function () {
 

@@ -364,9 +364,9 @@ sap.ui.define([
 		},
 
 		/**
-		 * Calls {@link sap.ui.core.util.reflection.BaseTreeModifier#setPropertyBinding} if the passed value is a
+		 * Calls {@link sap.ui.core.util.reflection.BaseTreeModifier.setPropertyBinding} if the passed value is a
 		 * binding info object or binding string,
-		 * otherwise calls {@link sap.ui.core.util.reflection.BaseTreeModifier#setProperty}.
+		 * otherwise calls {@link sap.ui.core.util.reflection.BaseTreeModifier.setProperty}.
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @param {string} sPropertyName - Property name
@@ -490,7 +490,7 @@ sap.ui.define([
 		 *
 		 * @param {sap.ui.base.ManagedObject|Element} vControl - Control representation
 		 * @param {string} sPropertyName - Property name
-		 * @param {any} vPropertyBinding - See {@link sap.ui.base.ManagedObject#extractBindingInfo} method
+		 * @param {any} vPropertyBinding - See source of <code>sap.ui.base.ManagedObject#extractBindingInfo</code> method
 		 * @public
 		 */
 		setPropertyBinding: function (vControl, sPropertyName, vPropertyBinding) {},
@@ -719,7 +719,7 @@ sap.ui.define([
 
 		/**
 		 * Loads a fragment, processes the XML templating and turns the result into an array of nodes or controls.
-		 * See {@link sap.ui.core.util.XMLPreprocessor#process}
+		 * See {@link sap.ui.core.util.XMLPreprocessor.process}
 		 *
 		 * @param {string} sFragmentName - XML fragment name (e.g. some.path.fragmentName)
 		 * @param {object} [mPreprocessorSettings={}] - Map/JSON object with initial property values, etc.

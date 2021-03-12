@@ -2247,7 +2247,7 @@ sap.ui.define([
 		 * When set to <code>false</code> the placement of the currency code is done dynamically, depending on the
 		 * configured locale using data provided by the Unicode Common Locale Data Repository (CLDR).
 		 *
-		 * Each currency instance ({@link sap.ui.core.format.NumberFormat#getCurrencyInstance}) will be created
+		 * Each currency instance ({@link sap.ui.core.format.NumberFormat.getCurrencyInstance}) will be created
 		 * with this setting unless overwritten on instance level.
 		 *
 		 * @param {boolean} bTrailingCurrencyCode Whether currency codes shall always be placed after the numeric value
