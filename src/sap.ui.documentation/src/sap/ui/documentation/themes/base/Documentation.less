@@ -247,8 +247,6 @@
     blockquote,
     div.syntax {
         border: unset; // remove prettyprint border
-        border-left: .6rem solid #2fa0e0;
-        background-color: #EEE;
         padding: .6em .75em .6em .75em;
         margin: 1.5em 0;
     }
@@ -486,8 +484,10 @@
         word-wrap: break-word;
     }
 
-	.fig-codeblock {
+	.codeblock-wrapper {
 		overflow-x: auto;
+        border-left: .6rem solid #2fa0e0;
+        background-color: #EEE;
 	}
 
     pre.codeblock {
@@ -766,4 +766,15 @@ html.sapUiMedia-Std-Tablet {
 #d4h5-main-content .apiname,
 #d4h5-main-content .parmname {
     font-size: 1.375em;
+}
+
+//copy buttons styles
+.copyButton {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+}
+
+.fig .fig-codeblock {
+    position: relative;
 }
