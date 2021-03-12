@@ -29,14 +29,17 @@ sap.ui.define([
 		var mRegistry = {};
 
 		/**
-		 * Instantiates a (MVC-style) controller. Consumers should call the constructor only in the
-		 * typed controller scenario. In the generic controller use case, they should use
-		 * {@link sap.ui.controller} instead.
+		 * Instantiates a (MVC-style) controller.
 		 *
 		 * @class A generic controller implementation for the UI5 Model-View-Controller concept.
 		 *
-		 * Can either be used as a generic controller which is enriched on the fly with methods
-		 * and properties (see {@link sap.ui.controller}) or  as a base class for typed controllers.
+		 * Can be used as a base class for typed controllers.
+		 *
+		 * <b>Typed Controller Scenario</b>:
+		 * <ul>
+		 * <li>use {@link sap.ui.core.mvc.Controller.extend Controller.extend} to define the controller class</li>
+		 * <li>use {@link sap.ui.core.mvc.Controller.create Controller.create} to create an instance</li>
+		 * </ul>
 		 *
 		 * @param {string|object[]} sName The name of the controller to instantiate. If a controller is defined as real sub-class,
 		 *                                    the "arguments" of the sub-class constructor should be given instead.
@@ -487,8 +490,8 @@ sap.ui.define([
 		 * @return {void | sap.ui.core.mvc.Controller | Promise} void, the new controller instance or a Promise
 		 * 	resolving with the controller in async case
 		 * @static
-		 * @deprecated Since 1.56, use {@link sap.ui.core.mvc.Controller.create Controller.create} or
-		 *  {@link sap.ui.core.mvc.Controller.extend Controller.extend} instead.
+		 * @deprecated Since 1.56, use {@link sap.ui.core.mvc.Controller.extend Controller.extend} to define the controller class
+		 * and {@link sap.ui.core.mvc.Controller.create Controller.create} to create controller instances. For further information, see {@link sap.ui.core.mvc.Controller}.
 		 * @public
 		 * @ui5-global-only
 		 */
@@ -697,7 +700,7 @@ sap.ui.define([
 		 * The extension provider module provides the <code>getControllerExtensions</code> function
 		 * which returns either directly an array of objects or a Promise that returns an array
 		 * of objects when it resolves. These objects are object literals defining the
-		 * methods and properties of the controller in a similar way as {@link sap.ui.controller}.
+		 * methods and properties of the controller in a similar way as for {@link sap.ui.core.mvc.Controller Controller} subclasses.
 		 *
 		 *
 		 * <b>Example for a callback module definition (sync):</b>
@@ -768,7 +771,7 @@ sap.ui.define([
 		 *
 		 * @param {string} sExtensionProvider the module name of the extension provider
 		 *
-		 * See {@link sap.ui.controller} for an overview of the available functions for controllers.
+		 * See {@link sap.ui.core.mvc.Controller} for an overview of the available functions for controllers.
 		 * @since 1.34.0
 		 * @public
 		 */
