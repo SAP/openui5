@@ -95,8 +95,12 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 */
 	PluginBase.prototype.getControl = function() {
 		var oParent = this.getParent();
-		var sPluginOwnerMethod = "get" + this.getMetadata().getName().split(".").pop() + "PluginOwner";
-		return oParent && oParent[sPluginOwnerMethod] ? oParent[sPluginOwnerMethod](this) : oParent;
+		if (oParent) {
+			var sPluginOwnerMethod = "get" + this.getMetadata().getName().split(".").pop() + "PluginOwner";
+			oParent = oParent[sPluginOwnerMethod] ? oParent[sPluginOwnerMethod](this) : oParent;
+		}
+
+		return oParent;
 	};
 
 	/**
@@ -185,9 +189,7 @@ sap.ui.define(["sap/ui/core/Element"], function(Element) {
 	 * @override
 	 */
 	PluginBase.prototype.setParent = function(oParent) {
-		var bEnabled = this.getEnabled();
-
-		if (bEnabled && this.getControl()) {
+		if (this.getEnabled() && this.getControl()) {
 			this._deactivate();
 		}
 

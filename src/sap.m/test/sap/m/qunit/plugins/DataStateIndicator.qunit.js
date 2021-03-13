@@ -245,79 +245,6 @@ sap.ui.define([
 		aSteps[iCurrentStep].action();
 	});
 
-	QUnit.test("Link control test when messageLinkText is set before MessageStrip is initialized", function(assert) {
-		var done = assert.async(),
-			bMessageLinkPressed = false;
-
-		assert.ok(this.oPlugin.getMetadata().getAllProperties().hasOwnProperty("enableFiltering"), "enableFiltering is a public property of the DataPluginIndicator");
-		assert.ok(this.oPlugin.setMessageLinkText, "setMessageLinkText method exists on the DataPluginIndicator");
-		this.oPlugin.setMessageLinkText("Test");
-		this.oPlugin.attachEvent("messageLinkPressed", function() {
-			bMessageLinkPressed = true;
-		});
-		this.addMessage("Error");
-
-		this.oPromise.then(function() {
-			var oMsgStrp = this.oPlugin._oMessageStrip;
-			assert.equal(oMsgStrp.getText(), "Error Message Text");
-			assert.equal(oMsgStrp.getType(), "Error");
-			assert.equal(this.oPlugin.getMessageLinkText(), "Test");
-			assert.ok(this.oPlugin._oLink, "Link control created");
-			assert.equal(oMsgStrp.getLink(), this.oPlugin._oLink, "MessageStrip aggregation set correctly");
-			this.oPlugin._oLink.firePress();
-			assert.ok(bMessageLinkPressed, "messageLinkPressed event fired");
-
-			this.oPlugin.setMessageLinkText("Test2");
-			assert.equal(this.oPlugin.getMessageLinkText(), "Test2", "property value updated correctly");
-			assert.equal(this.oPlugin._oLink.getText(), this.oPlugin.getMessageLinkText(), "Link text updated");
-
-			this.oPlugin.setMessageLinkText("");
-			assert.equal(this.oPlugin.getMessageLinkText(), "", "property value updated correctly");
-			assert.equal(oMsgStrp.getLink(), null, "link aggregation set to null");
-			assert.ok(this.oPlugin._oLink, "Link control available");
-
-			this.oPlugin.setMessageLinkText("Test");
-			assert.equal(this.oPlugin.getMessageLinkText(), "Test", "property value updated correctly");
-			assert.equal(oMsgStrp.getLink(), this.oPlugin._oLink, "MessageStrip aggregation set correctly");
-			assert.equal(this.oPlugin._oLink.getText(), this.oPlugin.getMessageLinkText(), "Link text updated");
-			done();
-		}.bind(this));
-	});
-
-	QUnit.test("Link control test when messageLinkText is set after MessageStrip is initialized", function(assert) {
-		var done = assert.async(),
-			bMessageLinkPressed = false;
-		this.oPlugin.attachEventOnce("messageLinkPressed", function() {
-			bMessageLinkPressed = true;
-		});
-		this.addMessage("Error");
-
-		this.oPromise.then(function() {
-			var oMsgStrp = this.oPlugin._oMessageStrip;
-			assert.equal(oMsgStrp.getText(), "Error Message Text");
-			assert.equal(oMsgStrp.getType(), "Error");
-			assert.notOk(this.oPlugin._oLink, "Link control not created yet");
-			assert.notOk(oMsgStrp.getLink(), "link aggreagtion not set for the MessageStrip");
-
-			this.oPlugin.setMessageLinkText("Test");
-			assert.equal(this.oPlugin.getMessageLinkText(), "Test", "property value updated correctly");
-
-			var oPromise = new Promise(function(resolve) {
-				oMsgStrp.addEventDelegate({
-					onAfterRendering: resolve
-				});
-			});
-
-			oPromise.then(function() {
-				assert.ok(this.oPlugin._oLink, "Link control created");
-				assert.equal(oMsgStrp.getLink(), this.oPlugin._oLink);
-				this.oPlugin._oLink.firePress();
-				assert.ok(bMessageLinkPressed, "messageLinkPressed event fired");
-				done();
-			}.bind(this));
-		}.bind(this));
-	});
-
 	QUnit.test("Focus after messagestrip close", function(assert) {
 		var done = assert.async();
 		this.oPlugin.showMessage("New Message", "Error");
@@ -420,7 +347,7 @@ sap.ui.define([
 		this.addTableMessage("Success");
 
 		setTimeout(function() {
-			assert.equal(this.oPlugin.getMessageLinkText(), "", "List specific messages did not result any link to filter");
+			assert.notOk(this.oPlugin._oLink, "List specific messages did not result any link to filter");
 			done();
 		}.bind(this), 300);
 
@@ -436,7 +363,7 @@ sap.ui.define([
 		});
 
 		setTimeout(function() {
-			assert.equal(this.oPlugin.getMessageLinkText(), "Filter Items", "Filter Items link is shown");
+			assert.equal(this.oPlugin._oLink.getText(), "Filter Items", "Filter Items link is shown");
 
 			this.oPlugin.attachEventOnce("applyFilter", function(oEvent) {
 
@@ -445,7 +372,7 @@ sap.ui.define([
 
 				setTimeout(function() {
 
-					assert.equal(this.oPlugin.getMessageLinkText(), "Clear Filter", "Clear Filter link is shown");
+					assert.equal(this.oPlugin._oLink.getText(), "Clear Filter", "Clear Filter link is shown");
 					assert.equal(this.oList.getInfoToolbar().getContent()[0].getText(), "Filtered By: Errors", "InfoToolbar message is correct");
 					assert.ok(this.oList.getInfoToolbar().getActive(), "Info toolbar is active");
 					assert.equal(this.oList.getItems().length, 1, "After message filtering the list has only 1 item");
@@ -453,7 +380,7 @@ sap.ui.define([
 
 					this.oPlugin.attachEventOnce("clearFilter", function() {
 
-						assert.equal(this.oPlugin.getMessageLinkText(), "Filter Items", "Filter Items link is shown after message filters are cleared");
+						assert.equal(this.oPlugin._oLink.getText(), "Filter Items", "Filter Items link is shown after message filters are cleared");
 						assert.equal(this.oList.getInfoToolbar(), null, "There is no InfoToolbar after message filters are cleared");
 						assert.ok(this.oPlugin._oMessageStrip.getShowCloseButton(), "Close button of the MessageStrip is visible");
 
@@ -487,19 +414,19 @@ sap.ui.define([
 		this.addInputMessage(this.oList.getItems()[1], "Error");
 
 		setTimeout(function() {
-			assert.equal(this.oPlugin.getMessageLinkText(), "Filter Items", "Filter Items link is shown");
+			assert.equal(this.oPlugin._oLink.getText(), "Filter Items", "Filter Items link is shown");
 
 			this.oPlugin.attachEventOnce("applyFilter", function() {
 
 				setTimeout(function() {
 
-					assert.equal(this.oPlugin.getMessageLinkText(), "Clear Filter", "Clear Filter link is shown");
+					assert.equal(this.oPlugin._oLink.getText(), "Clear Filter", "Clear Filter link is shown");
 					assert.equal(this.oList.getInfoToolbar().getContent()[0].getText(), "Filtered By: Issues", "InfoToolbar message is correct");
 					assert.equal(this.oList.getItems().length, 2, "After message filtering the list has 2 items");
 
 					this.oPlugin.attachEventOnce("clearFilter", function() {
 
-						assert.equal(this.oPlugin.getMessageLinkText(), "Filter Items", "Filter Items link is shown after message filters are cleared");
+						assert.equal(this.oPlugin._oLink.getText(), "Filter Items", "Filter Items link is shown after message filters are cleared");
 						assert.equal(this.oList.getInfoToolbar(), null, "There is no InfoToolbar after message filters are cleared");
 
 						setTimeout(function() {
@@ -531,13 +458,13 @@ sap.ui.define([
 		this.addInputMessage(this.oList.getItems()[3], "Warning");
 
 		setTimeout(function() {
-			assert.equal(this.oPlugin.getMessageLinkText(), "Filter Items", "Filter Items link is shown");
+			assert.equal(this.oPlugin._oLink.getText(), "Filter Items", "Filter Items link is shown");
 
 			this.oPlugin.attachEventOnce("applyFilter", function() {
 
 				setTimeout(function() {
 
-					assert.equal(this.oPlugin.getMessageLinkText(), "Clear Filter", "Clear Filter link is shown");
+					assert.equal(this.oPlugin._oLink.getText(), "Clear Filter", "Clear Filter link is shown");
 					assert.equal(this.oList.getInfoToolbar().getContent()[0].getText(), "Filtered By: Issues", "InfoToolbar message is correct");
 					assert.equal(this.oList.getItems().length, 2, "After message filtering the list has 2 items");
 
@@ -546,7 +473,7 @@ sap.ui.define([
 
 					setTimeout(function() {
 
-						assert.equal(this.oPlugin.getMessageLinkText(), "Clear Filter", "Clear Filter link is shown");
+						assert.equal(this.oPlugin._oLink.getText(), "Clear Filter", "Clear Filter link is shown");
 						assert.equal(this.oList.getInfoToolbar().getContent()[0].getText(), "Filtered By: Errors", "InfoToolbar message is correct");
 						assert.equal(this.oList.getItems().length, 1, "After message filtering the list has 1 items");
 						assert.equal(this.oList.getItems()[0].getTitle(), "C", "After message filtering the list has 1 items");
