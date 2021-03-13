@@ -174,16 +174,16 @@ function(
 
 			/**
 			 * Determines the content entities, between which the SplitContainer navigates in master area.
-			 * These can be of type sap.m.Page, sap.ui.core.View, sap.m.Carousel or any other control with fullscreen/page semantics.
-			 * These aggregated controls receive navigation events like {@link sap.m.NavContainerChild#event:beforeShow beforeShow},
+			 * These can be of type sap.m.Page, sap.ui.core.mvc.View, sap.m.Carousel or any other control with fullscreen/page semantics.
+			 * These aggregated controls receive navigation events like {@link sap.m.NavContainerChild#event:BeforeShow BeforeShow},
 			 * they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 			 */
 			masterPages : {type : "sap.ui.core.Control", multiple : true, singularName : "masterPage"},
 
 			/**
 			 * Determines the content entities, between which the SplitContainer navigates in detail area.
-			 * These can be of type sap.m.Page, sap.ui.core.View, sap.m.Carousel or any other control with fullscreen/page semantics.
-			 * These aggregated controls receive navigation events like {@link sap.m.NavContainerChild#event:beforeShow beforeShow},
+			 * These can be of type sap.m.Page, sap.ui.core.mvc.View, sap.m.Carousel or any other control with fullscreen/page semantics.
+			 * These aggregated controls receive navigation events like {@link sap.m.NavContainerChild#event:BeforeShow BeforeShow},
 			 * they are documented in the pseudo interface {@link sap.m.NavContainerChild sap.m.NavContainerChild}.
 			 */
 			detailPages : {type : "sap.ui.core.Control", multiple : true, singularName : "detailPage"},
@@ -805,7 +805,7 @@ function(
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
 	 * @param {object} oData
-	 *         This optional object can carry any payload data which should be made available to the target page. The beforeShow event on the target page will contain this data object as data property.
+	 *         This optional object can carry any payload data which should be made available to the target page. The BeforeShow event on the target page will contain this data object as data property.
 	 *
 	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *
@@ -836,10 +836,10 @@ function(
 	 * The transition effect, which had been used to get to the current page is inverted and used for this navigation.
 	 *
 	 * Calling this navigation method, first triggers the (cancelable) navigate event on the SplitContainer,
-	 * then the beforeHide pseudo event on the source page, beforeFirstShow (if applicable),
-	 * and beforeShow on the target page. Later, after the transition has completed,
-	 * the afterShow pseudo event is triggered on the target page and afterHide - on the page, which has been left.
-	 * The given backData object is available in the beforeFirstShow, beforeShow, and afterShow event objects as data
+	 * then the BeforeHide pseudo event on the source page, BeforeFirstShow (if applicable),
+	 * and BeforeShow on the target page. Later, after the transition has completed,
+	 * the AfterShow pseudo event is triggered on the target page and AfterHide - on the page, which has been left.
+	 * The given backData object is available in the BeforeFirstShow, BeforeShow, and AfterShow event objects as data
 	 * property. The original "data" object from the "to" navigation is also available in these event objects.
 	 *
 	 * @param {string} sPageId
@@ -927,7 +927,7 @@ function(
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
 	 * @param {object} oData
-	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page. The beforeShow event on the target page will contain this data object as data property.
+	 *         Since version 1.7.1. This optional object can carry any payload data which should be made available to the target page. The BeforeShow event on the target page will contain this data object as data property.
 	 *
 	 *         Use case: in scenarios where the entity triggering the navigation can't or shouldn't directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *
@@ -989,7 +989,7 @@ function(
 	 *
 	 *         None of the standard transitions is currently making use of any given transition parameters.
 	 * @param {object} oData
-	 *         This optional object can carry any payload data which should be made available to the target page. The beforeShow event on the target page will contain this data object as data property.
+	 *         This optional object can carry any payload data which should be made available to the target page. The BeforeShow event on the target page will contain this data object as data property.
 	 *
 	 *         Use case: in scenarios where the entity triggering the navigation can or should not directly initialize the target page, it can fill this object and the target page itself (or a listener on it) can take over the initialization, using the given data.
 	 *
@@ -1282,7 +1282,7 @@ function(
 	 * The method is provided mainly for providing API consistency between sap.m.SplitContainer and sap.m.App. So that the same code line can be reused.
 	 *
 	 * @param {sap.ui.core.Control} oPage
-	 *         The content entities between which this SplitContainer navigates in either master area or detail area depending on the master parameter. These can be of type sap.m.Page, sap.ui.core.View, sap.m.Carousel or any other control with fullscreen/page semantics.
+	 *         The content entities between which this SplitContainer navigates in either master area or detail area depending on the master parameter. These can be of type sap.m.Page, sap.ui.core.mvc.View, sap.m.Carousel or any other control with fullscreen/page semantics.
 	 * @param {boolean} bMaster
 	 *         States if the page should be added to the master area. If it's set to false, the page is added to detail area.
 	 * @type this

@@ -295,7 +295,7 @@ sap.ui.define([
 						// Find the control in the parent
 						if (oOptions.controlId) {
 							// The root control of a component may be any kind of control
-							// A check of sap.ui.core.View is needed before calling the loaded method to wait
+							// A check of sap.ui.core.mvc.View is needed before calling the loaded method to wait
 							// for the loading of the view
 							if (oViewContainingTheControl && oViewContainingTheControl.isA("sap.ui.core.mvc.View")) {
 								// controlId was specified - ask the parents view for it
