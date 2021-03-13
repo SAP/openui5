@@ -581,12 +581,21 @@ sap.ui.define([
 			icon: "sap-icon://edit",
 			ariaLabelledBy: "L1"
 		});
+		var oButtonDomRef;
 
 		oLabel.placeAt("qunit-fixture");
 		oButton.placeAt("qunit-fixture");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oButton.$().attr("aria-labelledby"), "L1", "Only Label id is written inside aria-labelledby attribute");
+		oButtonDomRef = oButton.getDomRef();
+		assert.strictEqual(oButtonDomRef.getAttribute("aria-labelledby"), "L1",
+			"Only Label id is written inside aria-labelledby attribute");
+
+		oButton.removeAllAriaLabelledBy();
+		sap.ui.getCore().applyChanges();
+
+		assert.strictEqual(oButtonDomRef.getAttribute("aria-labelledby"), "B1-tooltip",
+			"The button's tooltip is used as a default accessible name once label is removed");
 
 		oLabel.destroy();
 		oButton.destroy();

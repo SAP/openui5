@@ -85,6 +85,11 @@ sap.ui.define([
 			mAccProps["labelledby"] = { value: oButton.getId() + "-content", append: true };
 		}
 
+		// Ensures that the button can have an accessible name if no text/label is present
+		if (oButton._determineTooltipReferencePresence() && sTooltip) {
+			mAccProps["labelledby"] = { value: sTooltipId, append: true };
+		}
+
 		// prevent rendering of aria-disabled attribute
 		// no matter what state we have in the control
 		mAccProps["disabled"] = null;
