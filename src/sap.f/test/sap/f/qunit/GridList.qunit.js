@@ -677,6 +677,38 @@ function (
 		oGridList.destroy();
 	});
 
+	QUnit.test("'updateFinished' event is fired 'onAfterPageLoaded'", function (assert) {
+		// Arrange
+		var oGridList = new GridList({
+			growing: true,
+			growingThreshold: 4,
+			growingScrollToLoad: true,
+			items: {
+				path: "/",
+				template: new GridListItem({
+					content: [
+						new Text({ text: "This is the content"})
+					]
+				})
+			}
+		});
+
+		var oPageLoadedSpy = sinon.spy(oGridList, "onAfterPageLoaded");
+		var oUpdateFinishedSpy = sinon.spy(oGridList, "_fireUpdateFinished");
+
+		oGridList.setModel(new JSONModel([
+			"item1", "item2", "item3", "item4",
+			"item5", "item6", "item7", "item8"
+		]));
+
+		// Assert
+		assert.ok(oPageLoadedSpy.called, "'onAfterPageLoaded' is called ");
+		assert.ok(oUpdateFinishedSpy.called, "'updateFinished' event is fired ");
+
+		// Clean up
+		oGridList.destroy();
+	});
+
 	QUnit.module("Navigation matrix", {
 		beforeEach: function () {
 			this.oGridList = new GridList();
