@@ -7,21 +7,12 @@
 
 	<Title text="Responsive Table" titleStyle="H1" />
 
+	<!-- Note: for $$aggregation, see controller's onInit! -->
 	<Table growing="true" growingThreshold="5" id="mTable" items="{path : '/BusinessPartners',
 			parameters : {
-				$$aggregation : {
-					aggregate : {
-						SalesAmount : {grandTotal : true, unit : 'Currency'},
-						SalesNumber : {}
-					},
-					group : {
-						Region : {}
-					}
-				},
 				$count : true,
-				$filter : 'SalesNumber gt 0',
 				$orderby : 'Region desc'
-			}}">
+			}, suspended : true}">
 		<headerToolbar>
 			<Toolbar>
 				<Title id="title" text="Sales Number by Region ({headerContext>$count})"

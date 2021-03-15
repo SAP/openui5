@@ -22,6 +22,7 @@ sap.ui.define([
 					"with" : "string"
 				}
 			},
+			"grandTotal like 1.84" : "boolean",
 			grandTotalAtBottomOnly : "boolean",
 			group : {
 				"*" : {
@@ -52,16 +53,25 @@ sap.ui.define([
 	 * @param {object} oAggregation - An object holding the information needed for data aggregation
 	 * @param {string[]} aGroupBy - groupby((???),...) content
 	 * @param {string[]} aAggregate - aggregate(???) content
+	 * @param {boolean} bGrandTotalLike184 - Handle grand totals like 1.84?
 	 * @param {string} sAlias - An aggregatable property name/alias
 	 * @param {number} i - Index of sAlias in aAliases
 	 * @param {string[]} aAliases - Array of all applicable aggregatable property names/aliases
+	 * @throws {Error} If "average" or "countdistinct" are used together with grand totals like 1.84
 	 */
-	function aggregate(oAggregation, aGroupBy, aAggregate, sAlias, i, aAliases) {
+	function aggregate(oAggregation, aGroupBy, aAggregate, bGrandTotalLike184, sAlias, i, aAliases) {
 		var oDetails = oAggregation.aggregate[sAlias],
 			sAggregate = oDetails.name || sAlias,
 			sUnit = oDetails.unit,
 			sWith = oDetails.with;
 
+		if (bGrandTotalLike184) {
+			if (sWith === "average" || sWith === "countdistinct") {
+				throw new Error("Cannot aggregate totals with '" + sWith + "'");
+			}
+			sAggregate = sAlias;
+			sAlias = "UI5grand__" + sAlias;
+		}
 		if (sWith) {
 			sAggregate += " with " + sWith + " as " + sAlias;
 		} else if (oDetails.name) {
@@ -171,6 +181,7 @@ sap.ui.define([
 			var aAliases,
 				sApply = "",
 				aGrandTotalAggregate = [], // concat(aggregate(???),.) content for grand totals
+				bGrandTotalLike184 = oAggregation["grandTotal like 1.84"],
 				aGroupBy,
 				bIsLeafLevel,
 				aMinMaxAggregate = [], // concat(aggregate(???),.) content for min/max or count
@@ -227,7 +238,7 @@ sap.ui.define([
 				aAliases.filter(function (sAlias) {
 					return oAggregation.aggregate[sAlias].grandTotal;
 				}).forEach(
-					aggregate.bind(null, oAggregation, [], aGrandTotalAggregate)
+					aggregate.bind(null, oAggregation, [], aGrandTotalAggregate, bGrandTotalLike184)
 				);
 			}
 			if (!bFollowUp) {
@@ -239,7 +250,7 @@ sap.ui.define([
 			aAliases.filter(function (sAlias) {
 				return bIsLeafLevel || oAggregation.aggregate[sAlias].subtotals;
 			}).forEach(
-				aggregate.bind(null, oAggregation, aGroupBy, aSubtotalsAggregate)
+				aggregate.bind(null, oAggregation, aGroupBy, aSubtotalsAggregate, false)
 			);
 			if (aSubtotalsAggregate.length) {
 				sApply = "aggregate(" + aSubtotalsAggregate.join(",") + ")";
@@ -272,14 +283,25 @@ sap.ui.define([
 				delete mQueryOptions.$orderby;
 			}
 			sSkipTop = skipTop(mQueryOptions);
-			if (aMinMaxAggregate.length) {
-				sApply += "/concat(aggregate(" + aMinMaxAggregate.join(",") + "),"
+			if (bGrandTotalLike184 && aGrandTotalAggregate.length) {
+				if (oAggregation.groupLevels.length) {
+					throw new Error("Cannot combine visual grouping with grand total");
+				}
+				sApply += "/concat(aggregate(" + aGrandTotalAggregate.join(",")
+					// Note: because of $count=true, aMinMaxAggregate cannot be empty!
+					+ "),aggregate(" + aMinMaxAggregate.join(",") + "),"
 					+ (sSkipTop || "identity") + ")";
-			} else if (sSkipTop) {
-				sApply += "/" + sSkipTop;
-			}
-			if (aGrandTotalAggregate.length) {
-				sApply = "concat(aggregate(" + aGrandTotalAggregate.join(",") + ")," + sApply + ")";
+			} else {
+				if (aMinMaxAggregate.length) {
+					sApply += "/concat(aggregate(" + aMinMaxAggregate.join(",") + "),"
+						+ (sSkipTop || "identity") + ")";
+				} else if (sSkipTop) {
+					sApply += "/" + sSkipTop;
+				}
+				if (aGrandTotalAggregate.length) {
+					sApply = "concat(aggregate(" + aGrandTotalAggregate.join(",") + "),"
+						+ sApply + ")";
+				}
 			}
 			if (mQueryOptions.$$filterBeforeAggregate) {
 				sApply = "filter(" + mQueryOptions.$$filterBeforeAggregate + ")/" + sApply;
@@ -679,6 +701,20 @@ sap.ui.define([
 					|| Object.keys(oAggregation.group).some(fnAffects)
 					|| oAggregation.groupLevels.some(fnAffects)
 					|| hasAffectedFilter(sSideEffectPath, aFilters);
+			});
+		},
+
+		/**
+		 * Removes any potential "UI5grand__" prefix from the given grand totals.
+		 *
+		 * @param {object} oGrandTotal - A grand total element
+		 */
+		removeUI5grand__ : function (oGrandTotal) {
+			Object.keys(oGrandTotal).forEach(function (sKey) {
+				if (sKey.startsWith("UI5grand__")) {
+					oGrandTotal[sKey.slice(10)] = oGrandTotal[sKey];
+					delete oGrandTotal[sKey];
+				}
 			});
 		},
 

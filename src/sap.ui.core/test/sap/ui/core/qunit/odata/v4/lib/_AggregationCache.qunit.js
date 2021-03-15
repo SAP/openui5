@@ -126,16 +126,14 @@ sap.ui.define([
 
 	//*********************************************************************************************
 [{
-	bHasGrandTotal : false,
 	groupLevels : ["BillToParty"],
+	hasGrandTotal : false,
 	hasMinOrMax : false
 }, {
-	bHasGrandTotal : false,
-	groupLevels : [],
+	hasGrandTotal : false,
 	hasMinOrMax : true
 }, {
-	bHasGrandTotal : true,
-	groupLevels : [],
+	hasGrandTotal : true,
 	hasMinOrMax : false
 }].forEach(function (oFixture, i) {
 	["$expand", "$select"].forEach(function (sName) {
@@ -144,7 +142,7 @@ sap.ui.define([
 		var oAggregation = {
 				aggregate : {},
 				group : {},
-				groupLevels : oFixture.groupLevels
+				groupLevels : oFixture.groupLevels || []
 			},
 			mQueryOptions = {};
 
@@ -152,7 +150,7 @@ sap.ui.define([
 
 		this.mock(_AggregationHelper).expects("hasGrandTotal")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate))
-			.returns(oFixture.bHasGrandTotal);
+			.returns(oFixture.hasGrandTotal);
 		this.mock(_AggregationHelper).expects("hasMinOrMax")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(oFixture.hasMinOrMax);
 		this.mock(_MinMaxHelper).expects("createCache").never();
@@ -168,35 +166,61 @@ sap.ui.define([
 });
 
 	//*********************************************************************************************
-[{$count : true}, {$filter : "answer eq 42"}].forEach(function (mQueryOptions) {
-	var sName = Object.keys(mQueryOptions)[0];
-
-	QUnit.test("create: " + sName + " not allowed", function (assert) {
+[{
+	groupLevels : ["BillToParty"],
+	hasGrandTotal : false,
+	hasMinOrMax : true,
+	message : "Unsupported group levels together with min/max"
+}, {
+	hasGrandTotal : true,
+	hasMinOrMax : true,
+	message : "Unsupported grand totals together with min/max"
+}, {
+	groupLevels : ["BillToParty"],
+	hasGrandTotal : false,
+	hasMinOrMax : false,
+	message : "Unsupported system query option: $count",
+	queryOptions : {$count : true}
+}, {
+	groupLevels : ["BillToParty"],
+	hasGrandTotal : false,
+	hasMinOrMax : false,
+	message : "Unsupported system query option: $filter",
+	queryOptions : {$filter : "answer eq 42"}
+}, {
+	hasGrandTotal : true,
+	hasMinOrMax : false,
+	message : "Unsupported system query option: $filter",
+	queryOptions : {$filter : "answer eq 42"}
+}].forEach(function (oFixture, i) {
+	QUnit.test("create: " + oFixture.message, function (assert) {
 		var oAggregation = {
 				aggregate : {},
 				group : {},
-				groupLevels : ["BillToParty"]
-			};
+				groupLevels : oFixture.groupLevels || []
+			},
+			mQueryOptions = oFixture.queryOptions || {};
 
 		this.mock(_AggregationHelper).expects("hasGrandTotal")
 			.withExactArgs(sinon.match.same(oAggregation.aggregate))
-			.returns(false);
+			.returns(oFixture.hasGrandTotal);
 		this.mock(_AggregationHelper).expects("hasMinOrMax")
-			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(false);
+			.withExactArgs(sinon.match.same(oAggregation.aggregate)).returns(oFixture.hasMinOrMax);
 		this.mock(_MinMaxHelper).expects("createCache").never();
 		this.mock(_Cache).expects("create").never();
 
 		assert.throws(function () {
 			// code under test
 			_AggregationCache.create(this.oRequestor, "Foo", "", oAggregation, mQueryOptions);
-		}, new Error("Unsupported system query option: " + sName));
+		}, new Error(oFixture.message));
 	});
-
 });
 
 	//*********************************************************************************************
 ["none", "top", "bottom", "top&bottom"].forEach(function (sGrandTotalPosition) {
-	var sTitle = "create: either grandTotal or groupLevels, position = " + sGrandTotalPosition;
+	[false, true].forEach(function (bGrandTotalLike184) {
+		var sTitle = "create: either grandTotal or groupLevels, position = " + sGrandTotalPosition
+				+ ", grandTotal like 1.84 = " + bGrandTotalLike184;
 
 	QUnit.test(sTitle, function (assert) {
 		var bHasGrandTotal = sGrandTotalPosition !== "none",
@@ -208,6 +232,7 @@ sap.ui.define([
 						unit : "UnitY"
 					}
 				},
+				"grandTotal like 1.84" : bGrandTotalLike184,
 				group: {
 					c : {}, // intentionally out of ABC order
 					a : {},
@@ -228,7 +253,8 @@ sap.ui.define([
 			oHelperMock = this.mock(_Helper),
 			mQueryOptions = {
 				$count : bHasGrandTotal,
-				$filter : bHasGrandTotal ? "answer eq 42" : "",
+				//TODO get rid of bGrandTotalLike184 here (JIRA: CPOUI5ODATAV4-713)
+				$filter : bHasGrandTotal && bGrandTotalLike184 ? "answer eq 42" : "",
 				$orderby : "a",
 				"sap-client" : "123"
 			},
@@ -307,6 +333,9 @@ sap.ui.define([
 			assert.strictEqual(oReadPromise.isPending(), true);
 		}
 
+		this.mock(_AggregationHelper).expects("removeUI5grand__")
+			.exactly(bGrandTotalLike184 ? 1 : 0)
+			.withExactArgs(sinon.match.same(oGrandTotal));
 		this.mock(_AggregationHelper).expects("getAllProperties")
 			.withExactArgs(sinon.match.same(oAggregation)).returns(aAllProperties);
 		this.mock(_AggregationHelper).expects("setAnnotations")
@@ -344,6 +373,8 @@ sap.ui.define([
 			assert.strictEqual(oReadResult.value[0], oGrandTotal);
 			assert.notOk("$count" in oReadResult.value, "$count not available here");
 		});
+	});
+
 	});
 });
 

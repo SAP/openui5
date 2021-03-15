@@ -21,17 +21,6 @@ sap.ui.define([
 	});
 
 	//*********************************************************************************************
-	QUnit.test("createCache: group levels", function (assert) {
-		this.mock(_AggregationHelper).expects("buildApply").never();
-		this.mock(_Cache).expects("create").never();
-
-		assert.throws(function () {
-			// code under test
-			_MinMaxHelper.createCache(null, "", {groupLevels : ["foo"]});
-		}, new Error("Unsupported group levels together with min/max"));
-	});
-
-	//*********************************************************************************************
 	QUnit.test("createCache: success", function (assert) {
 		var oAggregation = {groupLevels : []},
 			oAggregationHelperMock = this.mock(_AggregationHelper),
