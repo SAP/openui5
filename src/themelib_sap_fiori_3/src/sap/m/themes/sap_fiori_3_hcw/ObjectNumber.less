@@ -13,9 +13,13 @@
 .sapMObjectNumberInverted {
 	box-sizing: border-box;
 	&:not(.sapMObjectNumberLarge) .sapMObjectNumberInner {
-		min-height: 0.875rem;
-		max-height: 0.875rem;
+		height: 0.875rem;
 		line-height: 0.75rem;
+	}
+	.sapMObjectNumberText,
+	.sapMObjectNumberUnit {
+		vertical-align: middle;
+		line-height: 0.875rem;
 	}
 }
 
@@ -28,7 +32,7 @@
 html.sap-desktop .sapMObjectNumberActive:focus {
 
 	.sapMObjectNumberInner::after {
-		top: -1px;
+		top: 0px;
 		left: 1px;
 		bottom: -1px;
 		right: 1px;

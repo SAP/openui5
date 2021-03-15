@@ -24,14 +24,37 @@
 	height: 1rem;
 }
 
-.sapMObjStatusInverted .sapMObjStatusText,
-.sapMObjStatusInverted .sapMObjStatusIcon {
-	line-height: 0.875rem;
-	min-height: 0.875rem;
+.sapMObjStatusInverted {
+
+	.sapMObjStatusText,
+	.sapMObjStatusIcon {
+		line-height: 0.875rem;
+		min-height: 0.875rem;
+	}
+
+	.sapMObjStatusText,
+	&.sapMObjStatusActive .sapMObjStatusText {
+		vertical-align: top;
+	}
+
+	.sapMObjStatusLink {
+		line-height: 0.875rem;
+		vertical-align: top;
+	}
+
+	.sapMObjStatusIcon > .sapUiIcon {
+		vertical-align: middle;
+		line-height: 0.75rem;
+	}
+
+	&.sapMObjStatusActive .sapMObjStatusIcon > .sapUiIcon {
+		vertical-align: middle;
+		line-height: 0.75rem;
+	}
 }
 
 .sapMObjStatusIcon > .sapUiIcon {
-	line-height: 0.75rem;
+	line-height: 0.875rem;
 }
 
 .sapMObjectStatusLarge {
@@ -203,6 +226,7 @@ html.sap-desktop .sapMObjStatusActive:focus .sapMObjStatusLink::after {
 		font-size: 1.25rem;
 		padding-left: 0;
 		padding-right: 0;
+		line-height: 2rem;
 	}
 	.sapMObjStatusIcon:not(.sapMObjStatusIconOnly) {
 		padding-left: 0;
@@ -225,6 +249,10 @@ html.sap-desktop .sapMObjStatusActive:focus {
 		left: 2px;
 		bottom: -1px;
 		right: 2px;
+
+		.sapMObjStatusIcon > .sapUiIcon {
+			line-height: 0.875rem;
+		}
 	}
 
 	&.sapMObjectStatusLarge {
@@ -245,4 +273,8 @@ html.sap-desktop .sapMObjStatusActive:focus {
 		}
 
 	}
+}
+
+.sapMListTbl .sapMObjStatusInverted .sapMObjStatusIcon > .sapUiIcon:not(.sapMLIBImgNav):not(.sapMBtnIcon) {
+	vertical-align: middle;
 }

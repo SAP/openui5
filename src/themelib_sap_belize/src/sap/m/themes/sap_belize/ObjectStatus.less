@@ -5,7 +5,8 @@
 
 .sapMObjStatusInverted {
 	.sapMObjStatusIcon > .sapUiIcon {
-		line-height: 1;
+		line-height: 1rem;
+		vertical-align: baseline;
 	}
 }
 
@@ -14,6 +15,13 @@
 	color: @sapUiContentContrastTextColor;
 	min-height: 1rem;
 	max-height: 1rem;
+	vertical-align: bottom;
+}
+
+.sapMObjStatusInverted .sapMObjStatusIcon {
+}
+
+.sapMObjStatusInverted .sapMObjStatusText {
 }
 
 .sapMObjectStatusLarge {
@@ -26,6 +34,7 @@
 		max-height: 2rem;
 		& > .sapUiIcon {
 			vertical-align: baseline;
+			line-height: 2rem;
 		}
 	}
 	.sapMObjStatusIcon > .sapUiIcon {

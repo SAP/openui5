@@ -189,6 +189,8 @@ sap.ui.define([
 			textAlign: TextAlign.End
 		});
 
+		var bodyMargin = parseInt(window.getComputedStyle(document.getElementsByTagName('body')[0]).getPropertyValue('margin-left'));
+
 		//Act
 		on4.placeAt("content");
 		on5.placeAt("content");
@@ -201,7 +203,7 @@ sap.ui.define([
 		var $onnum = jQuery("#on4").find(".sapMObjectNumberText");
 		var $onunit = jQuery("#on4").find(".sapMObjectNumberUnit");
 
-		assert.equal($onnum.offset().left, 0, "object number is left aligned");
+		assert.equal($onnum.offset().left, bodyMargin, "object number is left aligned");
 		assert.ok($onunit.offset().left > $onnum.offset().left, "number unit is on the right side of the number.");
 
 		$onnum = jQuery("#on5").find(".sapMObjectNumberText");
@@ -218,7 +220,7 @@ sap.ui.define([
 		$onnum = jQuery("#on7").find(".sapMObjectNumberText");
 		$onunit = jQuery("#on7").find(".sapMObjectNumberUnit");
 
-		assert.equal($onunit.offset().left, 0, "object number is left aligned");
+		assert.equal($onunit.offset().left, bodyMargin, "object number is left aligned");
 		assert.ok($onunit.offset().left < $onnum.offset().left, "number unit is on the left side of the number.");
 
 		//Cleanup
@@ -226,6 +228,7 @@ sap.ui.define([
 		on5.destroy();
 		on6.destroy();
 		on7.destroy();
+
 	});
 
 	QUnit.module("Screen reader support", {
