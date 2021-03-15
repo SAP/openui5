@@ -341,7 +341,7 @@ sap.ui.define([
 
 		beforeEach: function () {
 			this.fnGetContextsStub = sandbox.stub(WriteStorage, "getContexts").resolves(this.oMockResponse);
-			sandbox.stub(WriteStorage, "loadContextDescriptions").resolves(oDescriptionResponse);
+			this.fnLoadContextDescriptionStub = sandbox.stub(WriteStorage, "loadContextDescriptions").resolves({role: []});
 			return renderComponent.call(this, ["Random Test ID", "REMOTE"]).then(setInitialControls.bind(this));
 		},
 		afterEach: function() {
@@ -356,6 +356,15 @@ sap.ui.define([
 			assert.equal(this.oRestrictedRadioButton.getVisible(), true, "restricted radio button is visible");
 			assert.equal(this.oSelectedRolesList.getVisible(), true, "selected roles panel is visible");
 			assert.equal(this.oSelectedRolesList.getItems().length, 2, "list contains 2 entries");
+		});
+
+		QUnit.test("when rendering and back end returns empty list of tooltips", function (assert) {
+			assert.equal(this.oSelectedRolesList.getItems().length, 2, "selected roles still contains all entries");
+			assert.equal(this.fnLoadContextDescriptionStub.callCount, 1, "back end is called once to retrieve description");
+			var mExpectedProperties = {layer: "CUSTOMER", flexObjects: {role: ["Random Test ID", "REMOTE"]}};
+			assert.ok(this.fnLoadContextDescriptionStub.calledWith(mExpectedProperties), "back end is called with correct input");
+			assert.equal(this.oSelectedRolesList.getItems()[0].getTooltip(), "No description available", "fallback tooltip is used");
+			assert.equal(this.oSelectedRolesList.getItems()[1].getTooltip(), "No description available", "fallback tooltip is used");
 		});
 
 		QUnit.test("when pressing remove first row button, first context is removed", function (assert) {
