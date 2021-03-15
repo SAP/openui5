@@ -3,27 +3,22 @@
  */
 
 sap.ui.define([
+	"sap/ui/fl/apply/_internal/flexState/compVariants/Utils",
+	"sap/ui/fl/apply/_internal/flexState/ManifestUtils",
 	"sap/ui/fl/write/_internal/flexState/compVariants/CompVariantState",
 	"sap/ui/fl/write/_internal/transport/TransportSelection",
-	"sap/ui/fl/registry/Settings",
-	"sap/ui/fl/apply/_internal/flexState/ManifestUtils"
+	"sap/ui/fl/registry/Settings"
 ], function(
+	CompVariantUtils,
+	ManifestUtils,
 	CompVariantState,
 	TransportSelection,
-	Settings,
-	ManifestUtils
+	Settings
 ) {
 	"use strict";
 
-	function getPersistencyKey(oControl) {
-		if (oControl) {
-			var oVMControl = oControl.getVariantManagement && oControl.getVariantManagement() || oControl;
-			return oVMControl.getPersonalizableControlPersistencyKey && oVMControl.getPersonalizableControlPersistencyKey();
-		}
-	}
-
 	function setReferenceAndPersistencyKeyInPropertyBagAndCallFunction(mPropertyBag, fnFunction) {
-		mPropertyBag.persistencyKey = getPersistencyKey(mPropertyBag.control);
+		mPropertyBag.persistencyKey = CompVariantUtils.getPersistencyKey(mPropertyBag.control);
 		if (!mPropertyBag.reference) {
 			mPropertyBag.reference = ManifestUtils.getFlexReferenceForControl(mPropertyBag.control);
 		}

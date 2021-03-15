@@ -325,6 +325,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/prepareCompVariantsMap"]
 				}
 			},
+			"apply/_internal/flexState/compVariants/Utils": {
+				group: "Apply Internal",
+				coverage: {
+					only: ["sap/ui/fl/apply/_internal/flexState/compVariants/Utils"]
+				}
+			},
 			"apply/_internal/flexState/controlVariants/prepareVariantsMap": {
 				group: "Apply Internal",
 				coverage: {
