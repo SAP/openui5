@@ -18,3 +18,8 @@ nav.sapMBreadcrumbs {
 	margin: 0 !important;
 	padding: 5px;
 }
+
+/* Use initial positioning to give other DOM elements around the tnt tool page space */
+.sapTntToolPage {
+	position: initial;
+}

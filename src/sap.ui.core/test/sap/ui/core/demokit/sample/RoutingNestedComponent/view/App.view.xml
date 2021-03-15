@@ -1,8 +1,7 @@
 <mvc:View controllerName="sap.ui.core.sample.RoutingNestedComponent.controller.App"
 	xmlns="sap.m"
 	xmlns:mvc="sap.ui.core.mvc"
-	xmlns:tnt="sap.tnt"
-	displayBlock="true">
+	xmlns:tnt="sap.tnt">
 	<tnt:ToolPage id="toolPage">
 		<tnt:header>
 			<tnt:ToolHeader>
