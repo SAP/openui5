@@ -30,5 +30,51 @@
         "text": " sap.m.Text: Empty indicator is introduced"
       }
     ]
+  },
+  "1.87.1": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "04c05fd297c1fc505da1ee64e314a6c9401fd2a1",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Arrows in navigation are now disabled when border is reached",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170022309"
+          }
+        ]
+      },
+      {
+        "id": "35ca1e70dd9cd63620faab4cb3ebda121b185a4e",
+        "type": "FIX",
+        "text": " sap.m.Table: Doucble click to navigate issue is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180136742"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180129886"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180129839"
+          }
+        ]
+      },
+      {
+        "id": "80003877aee99850b249f26033000db496a5a7b9",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Performance optimisations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000292512021"
+          }
+        ]
+      }
+    ]
   }
 }

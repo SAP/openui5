@@ -82,5 +82,32 @@
         "text": " VariantManagement: Manage Views Dialog - Change \"OK\" to \"Save\""
       }
     ]
+  },
+  "1.87.1": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "e92ad779e696c4c696762b9853fb6774fd1f0740",
+        "type": "FIX",
+        "text": " sap.ui.fl - buisiness context description for custom fields",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180133164"
+          }
+        ]
+      },
+      {
+        "id": "d6f3e07f7c142c62993d19462bfc8cf9cea201c8",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl.apply.api.SmartVariantManagementApplyAPI loads multiple standards variant correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180107458"
+          }
+        ]
+      }
+    ]
   }
 }

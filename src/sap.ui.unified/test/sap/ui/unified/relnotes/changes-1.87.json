@@ -47,5 +47,32 @@
         ]
       }
     ]
+  },
+  "1.87.1": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "04c05fd297c1fc505da1ee64e314a6c9401fd2a1",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: Arrows in navigation are now disabled when border is reached",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170022309"
+          }
+        ]
+      },
+      {
+        "id": "35625f4d57b7a2a2658e78e35c100f52a871edbf",
+        "type": "FIX",
+        "text": " sap.ui.unified.Calendar: week selection working properly",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180121275"
+          }
+        ]
+      }
+    ]
   }
 }

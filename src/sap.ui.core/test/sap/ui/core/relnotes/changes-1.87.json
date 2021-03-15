@@ -19,5 +19,32 @@
         "text": " sap.m.Title: new 'content' aggregation added"
       }
     ]
+  },
+  "1.87.1": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "07b83dc4f2c89a84d93c01ce2be719b5de1355b2",
+        "type": "FIX",
+        "text": " Revert \"[INTERNAL] core.routing: propagate hash change to component only when browser hash contains its part\"",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170014800"
+          }
+        ]
+      },
+      {
+        "id": "6158290ccdc6b179005fcf71e45764f6dbc9c0eb",
+        "type": "FEATURE",
+        "text": " Localization: add Serbian (Latin), enhance Locale mappings",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "1780409720"
+          }
+        ]
+      }
+    ]
   }
 }

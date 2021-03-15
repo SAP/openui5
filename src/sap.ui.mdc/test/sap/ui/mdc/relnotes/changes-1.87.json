@@ -40,5 +40,21 @@
         "text": " VariantManagement: Manage Views Dialog - Change \"OK\" to \"Save\""
       }
     ]
+  },
+  "1.87.1": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "a6ea5c493d89d4559bd25bc680a09afba734bf36",
+        "type": "FIX",
+        "text": " FieldValueHelp: support complex InParameters for check",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180108029"
+          }
+        ]
+      }
+    ]
   }
 }

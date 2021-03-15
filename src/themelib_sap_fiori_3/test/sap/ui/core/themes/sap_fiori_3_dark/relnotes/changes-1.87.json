@@ -1,0 +1,26 @@
+{
+  "1.87.1": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "35ca1e70dd9cd63620faab4cb3ebda121b185a4e",
+        "type": "FIX",
+        "text": " sap.m.Table: Doucble click to navigate issue is fixed",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180136742"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180129886"
+          },
+          {
+            "type": "BCP",
+            "reference": "2180129839"
+          }
+        ]
+      }
+    ]
+  }
+}
