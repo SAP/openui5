@@ -109,5 +109,21 @@
         ]
       }
     ]
+  },
+  "1.87.2": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "8c34b704545745a1b81210dec73af26f8dca2c69",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl invalidates cache of sap-app-id variants correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170011312"
+          }
+        ]
+      }
+    ]
   }
 }
