@@ -53,7 +53,7 @@ sap.ui.define([
 				properties: {
 					 /**
 					 * Defines the icon to be displayed as graphical element within the <code>ProductSwitchItem</code>.
-					 * It can be an image or an icon from the SAP icon font.
+					 * It can be an icon from the SAP icon font.
 					 */
 					src: { type: "sap.ui.core.URI", defaultValue: null },
 					 /**
