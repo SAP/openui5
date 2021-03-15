@@ -1,0 +1,84 @@
+{
+  "1.89.0": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "8453edf84c97d02936f3525bd18e6dbf0c3506b3",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl SmartVariantManagementWriteAPI.add handles executeOnSelection correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170040033"
+          }
+        ]
+      },
+      {
+        "id": "bfe96e2e162433571fb90ef8607ac1c613e638de",
+        "type": "FIX",
+        "text": " sap.ui.fl: Disabled reset button although changes are present",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170024079"
+          }
+        ]
+      },
+      {
+        "id": "5858621adcf9c2c5cb870f56ea1d7e6c5b2d9f09",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl invalidates cache of sap-app-id variants correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2170011312"
+          }
+        ]
+      },
+      {
+        "id": "f1fe7fea3ce7927fb9ca1af34c544ced41efa6f5",
+        "type": "FIX",
+        "text": " sap.ui.fl - buisiness context description for custom fields",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180133164"
+          }
+        ]
+      },
+      {
+        "id": "2650b7418ca60c3ea0d73fca1501188b34ecd1dc",
+        "type": "FIX",
+        "text": " sap.ui.fl: reload when dirty higher layer changes are available",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180117681"
+          }
+        ]
+      },
+      {
+        "id": "7189f68b8fca1aac478fe460109c090f9d9ce1e4",
+        "type": "FIX",
+        "text": "[INTERNAL] sap.ui.fl.apply.api.SmartVariantManagementApplyAPI loads multiple standards variant correct",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180107458"
+          }
+        ]
+      },
+      {
+        "id": "669f56fef6a84e744942ec7621cd37cad8a2dcc1",
+        "type": "FIX",
+        "text": " sap.ui.layout: fix IDs when moving SimpleFormGroups to the first position",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180087715"
+          }
+        ]
+      }
+    ]
+  }
+}
