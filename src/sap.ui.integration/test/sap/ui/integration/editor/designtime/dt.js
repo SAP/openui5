@@ -234,6 +234,73 @@ sap.ui.define(["sap/ui/integration/Designtime"], function (
 							emptyString: ""
 						}
 					},
+					"stringArrayFormatter": {
+						"manifestpath": "/sap.card/configuration/parameters/stringArrayFormatter/value",
+						"label": "String Array",
+						"defaultValue": ["key1", "key2"],
+						"type": "string[]",
+						"editable": true,
+						"values": {
+							"data": {
+								"json": [
+									{ "text": 0.3, "key": "key1", "additionalText": 1293883200000, "icon": "sap-icon://accept" },
+									{ "text": 0.6, "key": "key2", "additionalText": 1293883200000, "icon": "sap-icon://cart" },
+									{ "text": 0.8, "key": "key3", "additionalText": 1293883200000, "icon": "sap-icon://zoom-in" }
+								],
+								"path": "/"
+							},
+							"item": {
+								"text": "Percent: {= format.percent(${text}) }",
+								"key": "{key}",
+								"additionalText": "datetime: {= format.dateTime(${additionalText}, {style: 'long'}) }",
+								"icon": "{icon}"
+							}
+						}
+					},
+					"InvoiceswithStringArray": {
+						"manifestpath": "/sap.card/configuration/parameters/InvoiceswithStringArray/value",
+						"type": "string[]",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Invoices",
+									"parameters": {
+										"$select": "OrderID, ShipName, ShippedDate",
+										"$skip": "5",
+										"$top": "5"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{OrderID}",
+								"key": "{OrderID}",
+								"additionalText": "{= format.dateTime(${ShippedDate}, {style: 'long'}) }"
+							}
+						}
+					},
+					"Invoices": {
+						"manifestpath": "/sap.card/configuration/parameters/Invoices/value",
+						"type": "string",
+						"values": {
+							"data": {
+								"request": {
+									"url": "{{destinations.northwind}}/Invoices",
+									"parameters": {
+										"$select": "ShipName, ShippedDate",
+										"$skip": "8",
+										"$top": "8"
+									}
+								},
+								"path": "/value"
+							},
+							"item": {
+								"text": "{ShipName}",
+								"key": "{ShipName}",
+								"additionalText": "Shipped Date: {= format.dateTime(${ShippedDate}, {style: 'short'}) }"
+							}
+						}
+					},
 					"validationGroup": {
 						"type": "group",
 						"label": "Validation"

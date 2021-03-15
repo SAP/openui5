@@ -170,6 +170,18 @@
 				},
 				"integerFormatter": {
 					"value": 99
+				},
+				"stringArrayFormatter": {
+					"value": [
+						"key1",
+						"key2"
+					]
+				},
+				"InvoiceswithStringArray": {
+					"value": []
+				},
+				"Invoices": {
+					"value": ""
 				}
 			},
 			"destinations": {

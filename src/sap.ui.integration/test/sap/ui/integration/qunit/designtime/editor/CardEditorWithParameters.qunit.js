@@ -368,6 +368,37 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("format the values of string array data type (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/stringArray", "type": "List", "configuration": { "parameters": { "stringArray": { "value": ["key1", "key2"] } } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var items = this.oCardEditor.getAggregation("_formContent")[2].getAggregation("_field").mAggregations.items;
+					for (var i = 0; i < items.length; i++) {
+						if (items[i].mProperties.additionalText) {
+							assert.ok(items[i].mProperties.additionalText === "2.67", "The value was formatted correctly");
+						}
+					}
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
+
+		QUnit.test("format the array values (as json)", function (assert) {
+			this.oCardEditor.setCard({ baseUrl: sBaseUrl, manifest: { "sap.app": { "id": "test.sample" }, "sap.card": { "designtime": "designtime/string", "type": "List", "configuration": { "parameters": { "string": { "value": "" } } } } } });
+			return new Promise(function (resolve, reject) {
+				this.oCardEditor.attachReady(function () {
+					assert.ok(this.oCardEditor.isReady(), "Card Editor is ready");
+					var items = this.oCardEditor.getAggregation("_formContent")[2].getAggregation("_field").mAggregations.items;
+					for (var i = 0; i < items.length; i++) {
+						if (items[i].mProperties.additionalText) {
+							assert.ok(items[i].mProperties.additionalText === "2.67", "The value was formatted correctly");
+						}
+					}
+					resolve();
+				}.bind(this));
+			}.bind(this));
+		});
 	});
 
 	QUnit.done(function () {
