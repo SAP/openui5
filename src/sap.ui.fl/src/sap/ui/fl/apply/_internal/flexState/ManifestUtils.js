@@ -78,10 +78,10 @@ function(
 			return appendComponentToReference(Utils.getAppIdFromManifest(oManifest));
 		},
 
-		getCacheKeyFromAsyncHints: function(oAsyncHints) {
+		getCacheKeyFromAsyncHints: function(sReference, oAsyncHints) {
 			if (oAsyncHints && oAsyncHints.requests && Array.isArray(oAsyncHints.requests)) {
 				var oFlAsyncHint = getFlAsyncHint(oAsyncHints);
-				if (oFlAsyncHint) {
+				if (oFlAsyncHint && oFlAsyncHint.reference === sReference) {
 					return oFlAsyncHint.cachebusterToken || "<NO CHANGES>";
 				}
 			}
