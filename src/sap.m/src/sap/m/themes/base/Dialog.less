@@ -33,6 +33,8 @@
 	outline: none;
 	overflow: hidden;
 	position: fixed !important;
+	display: flex !important;
+	flex-direction: column;
 	opacity: 0;
 	-webkit-transition: opacity .15s, left 0.2s, top 0.2s;
 	transition: opacity .15s, left 0.2s, top 0.2s;
@@ -501,7 +503,7 @@ html.sap-desktop .sapMDialog {
 	}
 
 	& > .sapMDialogSection {
-		height: 100%;
+		flex: 1 1 auto;
 		min-height: @_sap_m_Dialog_BarHeight;
 	}
 

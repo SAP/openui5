@@ -153,5 +153,15 @@ describe('sap.m.Dialog', function() {
 			var oDialogResponsivePadding = element(by.id("dialogResponsivePadding"));
 			expect(takeScreenshot(oDialogResponsivePadding)).toLookAs("responsive-paddings-dialog-quartz-only");
 		});
+		element(by.id('dialogResponsivePaddingOKButton')).click();
+	});
+
+	it('should open dialog with auto grow table)', function () {
+		browser.executeScript('document.getElementById("buttonAutoGrowTable").scrollIntoView()').then(function() {
+			element(by.id("buttonAutoGrowTable")).click();
+			var oDialogWithAutoGrowTable = element(by.id("dialogWithAutoGrowTable"));
+			expect(takeScreenshot(oDialogWithAutoGrowTable)).toLookAs("dialog-autogrow-table");
+		});
+		element(by.id('dialogWithAutoGrowTableOKButton')).click();
 	});
 });
