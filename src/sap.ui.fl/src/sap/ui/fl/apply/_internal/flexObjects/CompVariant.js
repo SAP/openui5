@@ -127,11 +127,16 @@ sap.ui.define([
 
 		constructor: function(oFile) {
 			Change.apply(this, arguments);
+			// TODO: align the executeOnSelection on the API level
 			// persisted variants
 			if (oFile.content && oFile.content.executeOnSelect) {
 				this.setExecuteOnSelection(oFile.content.executeOnSelect);
 			}
-			// API provided variants
+			// SmartVariantManagementAPI.add provided variants
+			if (oFile.content && oFile.content.executeOnSelection) {
+				this.setExecuteOnSelection(oFile.content.executeOnSelection);
+			}
+			// RTA API provided variants
 			if (oFile.executeOnSelection) {
 				this.setExecuteOnSelection(oFile.executeOnSelection);
 			}
@@ -193,7 +198,7 @@ sap.ui.define([
 			"packageName",
 			"layer",
 			"favorite",
-			"executeOnSelect",
+			"executeOnSelection",
 			"selector",
 			"texts",
 			"support",
