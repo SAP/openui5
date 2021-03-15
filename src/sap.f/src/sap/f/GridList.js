@@ -184,6 +184,8 @@ sap.ui.define([
 	 * @override
 	 */
 	GridList.prototype.onAfterPageLoaded = function () {
+		ListBase.prototype.onAfterPageLoaded.apply(this, arguments);
+
 		if (this._oItemNavigation) {
 			this._oItemNavigation.resetFocusPosition();
 		}
