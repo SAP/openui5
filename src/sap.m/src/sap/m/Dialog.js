@@ -803,7 +803,6 @@ function(
 		Dialog.prototype._openAnimation = function ($Ref, iRealDuration, fnOpened) {
 			$Ref.addClass("sapMDialogOpen");
 
-			$Ref.css("display", "block");
 			setTimeout(fnOpened, iAnimationDuration);
 		};
 
@@ -910,14 +909,9 @@ function(
 		Dialog.prototype._onResize = function () {
 			var $dialog = this.$(),
 				$dialogContent = this.$('cont'),
-				dialogContentScrollTop,
-				sContentHeight = this.getContentHeight(),
 				sContentWidth = this.getContentWidth(),
-				iDialogHeight,
-				iMaxDialogWidth = this._calcMaxSizes().maxWidth, // 90% of the max screen size
-				BORDER_THICKNESS = 2, // solves Scrollbar issue in IE when Table is in Dialog// TODO remove after 1.62 version
-				oBrowser = Device.browser,
-				iTotalChildrenHeight = 0;
+				iMaxDialogWidth = this._calcMaxSizes().maxWidth, //90% of the max screen size
+				oBrowser = Device.browser;
 
 			//if height is set by manually resizing return;
 			if (this._oManuallySetSize) {
@@ -925,29 +919,6 @@ function(
 					width: 'auto'
 				});
 				return;
-			}
-
-			$dialog.css(this._calcMaxSizes());
-
-			if (!sContentHeight || sContentHeight == 'auto') {
-				// save current scroll position so that it can be restored after the resize
-				dialogContentScrollTop = $dialogContent.scrollTop();
-
-				//reset the height so the dialog can grow
-				$dialogContent.css({
-					height: 'auto'
-				});
-
-				$dialog.children().each(function() {
-					iTotalChildrenHeight += jQuery(this).outerHeight(true);
-				});
-				if (this.getStretch() ||  iTotalChildrenHeight > $dialog.innerHeight()) {
-					//set the newly calculated size by getting it from the browser rendered layout - by the max-height
-					iDialogHeight = parseFloat($dialog.height()) + BORDER_THICKNESS;
-					$dialogContent.height(Math.round( iDialogHeight));
-				}
-
-				$dialogContent.scrollTop(dialogContentScrollTop);
 			}
 
 			// Browsers except chrome do not increase the width of the container to include scrollbar (when width is auto). So we need to compensate

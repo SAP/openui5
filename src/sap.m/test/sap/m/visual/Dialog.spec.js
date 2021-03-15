@@ -1,4 +1,4 @@
-/*global describe,it,element,by,takeScreenshot,expect*/
+/*global describe,it,element,by,takeScreenshot,expect,browser*/
 
 describe('sap.m.Dialog', function() {
 	"use strict";
@@ -83,5 +83,23 @@ describe('sap.m.Dialog', function() {
 		var dialogHighlightState = element(by.id('dialogInformationState'));
 		expect(takeScreenshot(dialogHighlightState)).toLookAs('information-state-dialog');
 		element(by.id('oDialogInformationStateOKButton')).click();
+	});
+
+	it('should open dialog with responsive paddings enabled (SAP Quartz themes only)', function () {
+		browser.executeScript('document.getElementById("buttonDialogResponsivePadding").scrollIntoView()').then(function() {
+			element(by.id("buttonDialogResponsivePadding")).click();
+			var oDialogResponsivePadding = element(by.id("dialogResponsivePadding"));
+			expect(takeScreenshot(oDialogResponsivePadding)).toLookAs("responsive-paddings-dialog-quartz-only");
+		});
+		element(by.id('dialogResponsivePaddingOKButton')).click();
+	});
+
+	it('should open dialog with auto grow table)', function () {
+		browser.executeScript('document.getElementById("buttonAutoGrowTable").scrollIntoView()').then(function() {
+			element(by.id("buttonAutoGrowTable")).click();
+			var oDialogWithAutoGrowTable = element(by.id("dialogWithAutoGrowTable"));
+			expect(takeScreenshot(oDialogWithAutoGrowTable)).toLookAs("dialog-autogrow-table");
+		});
+		element(by.id('dialogWithAutoGrowTableOKButton')).click();
 	});
 });
