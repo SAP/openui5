@@ -17,36 +17,36 @@ sap.ui.define([
 				component : "sap.ui.model.odata.v4.ODataListBinding",
 				level : Log.Level.ERROR,
 				message : "POST on 'SalesOrderList"
-			// }, { //TODO: prevent multipart response for OData error response in TestUtils.js
-			// 	component : "sap.ui.model.odata.v4.ODataListBinding",
-			// 	level : Log.Level.ERROR,
-			// 	message : "Failed to request side effects",
-			// 	details : "HTTP request was not processed because the previous request failed"
-			// }, {
-			// 	component : "sap.ui.model.odata.v4.ODataContextBinding",
-			// 	level : Log.Level.ERROR,
-			// 	message : "Failed to request side effects",
-			// 	details : "HTTP request was not processed because the previous request failed"
-			// }, {
-			// 	component : "sap.ui.model.odata.v4.ODataListBinding",
-			// 	level : Log.Level.ERROR,
-			// 	message : "Failed to request side effects",
-			// 	details : "HTTP request was not processed because the previous request failed"
-			// }, {
-			// 	component : "sap.ui.model.odata.v4.ODataPropertyBinding",
-			// 	level : Log.Level.ERROR,
-			// 	message : "Failed to read path /SalesOrderList",
-			// 	details : "HTTP request was not processed because the previous request failed"
-			// }, {
-			// 	component : "sap.ui.model.odata.v4.ODataListBinding",
-			// 	level : Log.Level.ERROR,
-			// 	message : "Failed to get contexts for",
-			// 	details : "HTTP request was not processed because the previous request failed"
-			// }, {
-			// 	component : "sap.ui.model.odata.v4.ODataContextBinding",
-			// 	level : Log.Level.ERROR,
-			// 	message : "Failed to request side effects",
-			// 	details : "HTTP request was not processed because the previous request failed"
+			}, {
+				component : "sap.ui.model.odata.v4.ODataListBinding",
+				level : Log.Level.ERROR,
+				message : "Failed to request side effects",
+				details : "HTTP request was not processed because the previous request failed"
+			}, {
+				component : "sap.ui.model.odata.v4.ODataContextBinding",
+				level : Log.Level.ERROR,
+				message : "Failed to request side effects",
+				details : "HTTP request was not processed because the previous request failed"
+			}, {
+				component : "sap.ui.model.odata.v4.ODataListBinding",
+				level : Log.Level.ERROR,
+				message : "Failed to request side effects",
+				details : "HTTP request was not processed because the previous request failed"
+			}, {
+				component : "sap.ui.model.odata.v4.ODataPropertyBinding",
+				level : Log.Level.ERROR,
+				message : "Failed to read path /SalesOrderList",
+				details : "HTTP request was not processed because the previous request failed"
+			}, {
+				component : "sap.ui.model.odata.v4.ODataListBinding",
+				level : Log.Level.ERROR,
+				message : "Failed to get contexts for",
+				details : "HTTP request was not processed because the previous request failed"
+			}, {
+				component : "sap.ui.model.odata.v4.ODataContextBinding",
+				level : Log.Level.ERROR,
+				message : "Failed to request side effects",
+				details : "HTTP request was not processed because the previous request failed"
 			}],
 			sQuantityMessage = "Quantity for Product HT-1003 has to be a multiple of 3";
 

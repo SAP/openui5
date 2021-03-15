@@ -454,6 +454,8 @@ sap.ui.define([
 			"sap.ui.test.TestUtils");
 		this.oLogMock.expects("info").withExactArgs("PATCH /Foo/bar", '{"If-Match":undefined}',
 			"sap.ui.test.TestUtils");
+		this.oLogMock.expects("info").withExactArgs("GET /Foo/bar", '{"If-Match":undefined}',
+			"sap.ui.test.TestUtils");
 
 		TestUtils.resetRequestCount();
 		return request("POST", "/Foo/$batch", {"OData-Version" : "4.0"}, [
@@ -485,6 +487,17 @@ sap.ui.define([
 			"",
 			'{"foo":"bar"}',
 			"--changeset_id-1538663822135-20--",
+			"--batch_id-1538663822135-19--",
+			"Content-Type:application/http",
+			"Content-Transfer-Encoding:binary",
+			"",
+			"GET bar HTTP/1.1",
+			"Accept:application/json;odata.metadata=minimal;IEEE754Compatible=true",
+			"Accept-Language:en",
+			"X-CSRF-Token:QzqAwcv5s1HQA7xOQgaNGQ==",
+			"Content-Type:application/json;charset=UTF-8;IEEE754Compatible=true",
+			"",
+			"",
 			"--batch_id-1538663822135-19--"
 		].join("\r\n")).then(function (oXHR) {
 			assert.strictEqual(oXHR.responseText, [
@@ -510,6 +523,15 @@ sap.ui.define([
 				"",
 				'{"@odata.etag":"abc123"}',
 				"--changeset_id-1538663822135-20--",
+				"--batch_id-1538663822135-19",
+				"Content-Type: application/http",
+				"Content-Transfer-Encoding: binary",
+				"",
+				"HTTP/1.1 200 ", // "server fixture"
+				"OData-Version: 4.0",
+				"Content-Type: application/json;charset=UTF-8;IEEE754Compatible=true",
+				"",
+				"{\"foo\":\"bar\",\"@odata.etag\":\"abc123\"}",
 				"--batch_id-1538663822135-19--",
 				""
 			].join("\r\n"));
@@ -523,6 +545,8 @@ sap.ui.define([
 		this.oLogMock.expects("info").withExactArgs("POST /Foo/any", '{"If-Match":undefined}',
 			"sap.ui.test.TestUtils");
 		this.oLogMock.expects("info").withExactArgs("POST /Foo/baz", '{"If-Match":undefined}',
+			"sap.ui.test.TestUtils");
+		this.oLogMock.expects("info").withExactArgs("GET /Foo/bar", '{"If-Match":undefined}',
 			"sap.ui.test.TestUtils");
 
 		TestUtils.resetRequestCount();
@@ -555,6 +579,17 @@ sap.ui.define([
 			"",
 			'{"foo":0}',
 			"--changeset_id-1538663822135-20--",
+			"--batch_id-1538663822135-19--",
+			"Content-Type:application/http",
+			"Content-Transfer-Encoding:binary",
+			"",
+			"GET bar HTTP/1.1",
+			"Accept:application/json;odata.metadata=minimal;IEEE754Compatible=true",
+			"Accept-Language:en",
+			"X-CSRF-Token:QzqAwcv5s1HQA7xOQgaNGQ==",
+			"Content-Type:application/json;charset=UTF-8;IEEE754Compatible=true",
+			"",
+			"",
 			"--batch_id-1538663822135-19--"
 		].join("\r\n")).then(function (oXHR) {
 			assert.strictEqual(oXHR.responseText, [

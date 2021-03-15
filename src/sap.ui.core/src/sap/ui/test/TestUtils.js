@@ -367,11 +367,12 @@ sap.ui.define([
 			function formatMultipart(oMultipart, mODataHeaders) {
 				var aResponseParts = [""];
 
-				oMultipart.parts.forEach(function (oPart) {
+				oMultipart.parts.every(function (oPart) {
 					aResponseParts.push(oPart.boundary
 						? "\r\nContent-Type: multipart/mixed;boundary=" + oPart.boundary
 							+ "\r\n\r\n" + formatMultipart(oPart, mODataHeaders)
 						: formatResponse(oPart, mODataHeaders));
+					return !oPart.code || oPart.code < 400; // change set or success response
 				});
 				aResponseParts.push("--\r\n");
 				return aResponseParts.join("--" + oMultipart.boundary);
