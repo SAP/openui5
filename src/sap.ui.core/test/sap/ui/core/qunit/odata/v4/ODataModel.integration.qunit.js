@@ -1032,7 +1032,7 @@ sap.ui.define([
 		 * (one column per control).
 		 *
 		 * @param {object} assert The QUnit assert object
-		 * @param {string} sViewXML The view content as XML
+		 * @param {string} [sViewXML=""] The view content as XML
 		 * @param {sap.ui.model.odata.v4.ODataModel} [oModel] The model; it is attached to the view
 		 *   and to the test instance.
 		 *   If no model is given, <code>createTeaBusiModel</code> is used.
@@ -1267,7 +1267,7 @@ sap.ui.define([
 			return View.create({
 				type : "XML",
 				controller : oController && new (Controller.extend(uid(), oController))(),
-				definition : xml(sViewXML),
+				definition : xml(sViewXML || ""),
 				preprocessors : mPreprocessors
 			}).then(function (oView) {
 				Object.keys(that.mChanges).forEach(function (sControlId) {
@@ -2279,7 +2279,7 @@ sap.ui.define([
 	QUnit.test("OLDB#requestContexts standalone: submitBatch must wait", function (assert) {
 		var that = this;
 
-		return this.createView(assert, "").then(function () {
+		return this.createView(assert).then(function () {
 			var oBinding = that.oModel.bindList(
 					"/Equipments(Category='C',ID=2)/EQUIPMENT_2_PRODUCT", undefined, undefined,
 					[new Filter("Name", FilterOperator.GE, "M")]);
@@ -2663,7 +2663,7 @@ sap.ui.define([
 		var oBinding,
 			that = this;
 
-		return this.createView(assert, "").then(function () {
+		return this.createView(assert).then(function () {
 			var oPromise;
 
 			that.expectRequest("GetEmployeeByID(EmployeeID='1')");
@@ -9639,6 +9639,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Merge PATCHes for different entities even if there are other changes in between
+	// JIRA: CPOUI5UISERVICESV3-1450
 	QUnit.test("Merge PATCHes for different entities", function (assert) {
 		var oModel = createSalesOrdersModel({
 				autoExpandSelect : true,
@@ -9920,6 +9921,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Modify a property while an update request is not yet resolved. Determine the ETag
 	// as late as possible
+	// JIRA: CPOUI5UISERVICESV3-1450
 	QUnit.test("Lazy determination of ETag while PATCH", function (assert) {
 		var oBinding,
 			oModel = createSalesOrdersModel({
@@ -9991,6 +9993,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Execute a bound action while an update request for the entity is not yet
 	// resolved. Determine the ETag as late as possible.
+	// JIRA: CPOUI5UISERVICESV3-1450
 	QUnit.test("Lazy determination of ETag while ODataContextBinding#execute", function (assert) {
 		var sAction = "com.sap.gateway.default.iwbep.tea_busi.v0001.AcChangeTeamOfEmployee",
 			oBinding,
@@ -10067,6 +10070,8 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Modify a property while an update request is not yet resolved. The second PATCH
 	// request must wait for the first one to finish and use the eTag returned in its response.
+	// JIRA: CPOUI5UISERVICESV3-1450
+	//
 	// A third PATCH request which also waits goes into a separate change set when submitBatch
 	// has been called before it was created (CPOUI5UISERVICESV3-1531).
 	QUnit.test("PATCH entity, two subsequent PATCHes on this entity wait", function (assert) {
@@ -10176,6 +10181,7 @@ sap.ui.define([
 	// request2 and request3 wait for request1 to return *and* apply the response to the cache;
 	// the PATCHes of request2 and request3 are merged and use the ETag from the response to
 	// request1.
+	// JIRA: CPOUI5UISERVICESV3-1450
 	QUnit.test("1=PATCH e1, 2=PATCH(e1,e2), 3=PATCH e2: request sequence 1,2,3", function (assert) {
 		var oBinding42,
 			oBinding77,
@@ -13086,7 +13092,7 @@ sap.ui.define([
 			aValues[i] = {Team_Id : aIDs[i]};
 		}
 
-		return this.createView(assert, "").then(function () {
+		return this.createView(assert).then(function () {
 			var fnDone,
 				oListBinding = that.oModel.bindList("/TEAMS");
 
@@ -24682,6 +24688,7 @@ sap.ui.define([
 	//*********************************************************************************************
 	// Scenario: Automatic retry of failed PATCHes, along the lines of
 	// MIT.SalesOrderCreateRelative.html, but with $auto group
+	// JIRA: CPOUI5UISERVICESV3-1450
 	[function () {
 		var oStatusBinding = this.oView.byId("status").getBinding("value");
 
@@ -24863,6 +24870,7 @@ sap.ui.define([
 
 	//*********************************************************************************************
 	// Scenario: Immediate retry of failed PATCHes; make sure that order is preserved
+	// JIRA: CPOUI5UISERVICESV3-1450
 	["$auto", "group"].forEach(function (sUpdateGroupId) {
 		QUnit.test("Immediately retry failed PATCHes for " + sUpdateGroupId, function (assert) {
 			var oAgeBinding,
@@ -28951,7 +28959,7 @@ sap.ui.define([
 	QUnit.skip("Server-driven paging with OLDB#requestContexts", function (assert) {
 		var that = this;
 
-		return this.createView(assert, "").then(function () {
+		return this.createView(assert).then(function () {
 			var oBinding = that.oModel.bindList("/EMPLOYEES"),
 				oPromise;
 
@@ -32377,6 +32385,176 @@ sap.ui.define([
 				return that.waitForChanges(assert, "(3) refresh the list");
 		}).then(function () {
 			sinon.assert.called(fnOnBeforeDestroy);
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: New change requests for the same group ID (e.g. $auto) are submitted before the
+	// previous response arrives, leading to the error "Unexpected second $batch". Here,
+	// Context#delete is used.
+	// BCP: 2170018878
+	QUnit.test("BCP: 2170018878 via Context#delete", function (assert) {
+		var aContexts,
+			oDeletePromise0,
+			oDeletePromise1,
+			fnResolveDelete0,
+			fnResolveDelete1,
+			that = this;
+
+		return this.createView(assert).then(function () {
+			var oListBinding = that.oModel.bindList("/TEAMS");
+
+			that.expectRequest("TEAMS?$skip=0&$top=100", {
+					value : [
+						{Team_Id : "Team_01"},
+						{Team_Id : "Team_02"}
+					]
+				});
+
+			return oListBinding.requestContexts();
+		}).then(function (aContexts0) {
+			aContexts = aContexts0;
+
+			that.expectRequest({
+					method : "DELETE",
+					url : "TEAMS('Team_01')"
+				}, new Promise(function (resolve) {
+					fnResolveDelete0 = resolve;
+				}));
+
+			// code under test
+			oDeletePromise0 = aContexts[0].delete();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "DELETE",
+					url : "TEAMS('Team_02')"
+				}, new Promise(function (resolve) {
+					fnResolveDelete1 = resolve;
+				}));
+
+			// code under test
+			oDeletePromise1 = aContexts[1].delete();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			fnResolveDelete1();
+
+			return oDeletePromise1;
+		}).then(function () {
+			fnResolveDelete0();
+
+			return oDeletePromise0;
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: New change requests for the same group ID (e.g. $auto) are submitted before the
+	// previous response arrives, leading to the error "Unexpected second $batch". Here,
+	// ODataListBinding#create is used.
+	// BCP: 2170018878
+	QUnit.test("BCP: 2170018878 via ODLB#create", function (assert) {
+		var oContext0,
+			oContext1,
+			oListBinding,
+			fnResolveCreate0,
+			fnResolveCreate1,
+			that = this;
+
+		return this.createView(assert).then(function () {
+			oListBinding = that.oModel.bindList("/TEAMS");
+
+			that.expectRequest({
+					method : "POST",
+					payload : {},
+					url : "TEAMS"
+				}, new Promise(function (resolve) {
+					fnResolveCreate0 = resolve.bind(null, {/* response does not matter here */});
+				}));
+
+			// code under test
+			oContext0 = oListBinding.create({}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			that.expectRequest({
+					method : "POST",
+					payload : {},
+					url : "TEAMS"
+				}, new Promise(function (resolve) {
+					fnResolveCreate1 = resolve.bind(null, {/* response does not matter here */});
+				}));
+
+			// code under test
+			oContext1 = oListBinding.create({}, true);
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			fnResolveCreate1();
+
+			return oContext1.created();
+		}).then(function () {
+			fnResolveCreate0();
+
+			return oContext0.created();
+		});
+	});
+
+	//*********************************************************************************************
+	// Scenario: New change requests for the same group ID (e.g. $auto) are submitted before the
+	// previous response arrives, leading to the error "Unexpected second $batch". Here,
+	// ODataContextBinding#execute is used.
+	// BCP: 2170018878
+	QUnit.test("BCP: 2170018878 via ODCB#execute", function (assert) {
+		var oExecutePromise0,
+			oExecutePromise1,
+			fnResolveOperation0,
+			fnResolveOperation1,
+			that = this;
+
+		return this.createView(assert).then(function () {
+			var oOperationBinding = that.oModel.bindContext("/FireEmployee(...)");
+
+			oOperationBinding.setParameter("EmployeeID", "1");
+
+			that.expectRequest({
+					method : "POST",
+					payload : {EmployeeID : "1"},
+					url : "FireEmployee"
+				}, new Promise(function (resolve) {
+					fnResolveOperation0 = resolve;
+				}));
+
+			// code under test
+			oExecutePromise0 = oOperationBinding.execute();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			var oOperationBinding = that.oModel.bindContext("/FireEmployee(...)");
+
+			oOperationBinding.setParameter("EmployeeID", "2");
+
+			that.expectRequest({
+					method : "POST",
+					payload : {EmployeeID : "2"},
+					url : "FireEmployee"
+				}, new Promise(function (resolve) {
+					fnResolveOperation1 = resolve;
+				}));
+
+			// code under test
+			oExecutePromise1 = oOperationBinding.execute();
+
+			return that.waitForChanges(assert);
+		}).then(function () {
+			fnResolveOperation1();
+
+			return oExecutePromise1;
+		}).then(function () {
+			fnResolveOperation0();
+
+			return oExecutePromise0;
 		});
 	});
 });
