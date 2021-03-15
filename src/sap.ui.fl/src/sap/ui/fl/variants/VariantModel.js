@@ -513,7 +513,9 @@ sap.ui.define([
 		var sVariantReference = oChange.getVariantReference();
 		var sVariantManagementReference = this.getVariantManagementReference(sVariantReference).variantManagementReference;
 		//*marker for VariantManagement control
-		this.oData[sVariantManagementReference].modified = true;
+		if (oChange.getState() === Change.states.NEW) {
+			this.oData[sVariantManagementReference].modified = true;
+		}
 		this.checkUpdate(true);
 		return VariantManagementState.addChangeToVariant({
 			reference: this.sFlexReference,

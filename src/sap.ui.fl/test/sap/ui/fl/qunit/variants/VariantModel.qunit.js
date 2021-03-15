@@ -1318,6 +1318,9 @@ sap.ui.define([
 				fileName: "addedChange",
 				getVariantReference: function() {
 					return "variant1";
+				},
+				getState: function() {
+					return Change.states.NEW;
 				}
 			};
 			this.oModel.oData["variantMgmtId1"].modified = false;

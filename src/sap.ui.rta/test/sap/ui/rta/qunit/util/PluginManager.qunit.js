@@ -2,6 +2,7 @@
 
 sap.ui.define([
 	"sap/ui/fl/registry/Settings",
+	"sap/ui/fl/Layer",
 	"sap/ui/rta/util/PluginManager",
 	"sap/ui/rta/plugin/CreateContainer",
 	"sap/ui/rta/plugin/Settings",
@@ -9,6 +10,7 @@ sap.ui.define([
 ],
 function(
 	Settings,
+	Layer,
 	PluginManager,
 	CreateContainerPlugin,
 	SettingsPlugin,
@@ -24,6 +26,12 @@ function(
 			sandbox.stub(Settings, "getInstanceOrUndef").returns({
 				isPublicLayerAvailable: function() {
 					return true;
+				},
+				isVersioningEnabled: function(sLayer) {
+					if (sLayer === Layer.USER) {
+						return true;
+					}
+					return false;
 				}
 			});
 		},
@@ -49,6 +57,7 @@ function(
 				"createContainer",
 				"cutPaste",
 				"dragDrop",
+				"localReset",
 				"remove",
 				"rename",
 				"selection",
@@ -111,7 +120,7 @@ function(
 		});
 
 		QUnit.test("when 'preparePlugins' function is called with specific plugins defined", function(assert) {
-			var oDefaultRenamePlugin = this.oPluginManager.getDefaultPlugins()["rename"];
+			var oDefaultRenamePlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.CUSTOMER})["rename"];
 			var oGetDefaultPluginsSpy = sandbox.spy(this.oPluginManager, "getDefaultPlugins");
 			var oDestroyDefaultPluginsSpy = sandbox.spy(this.oPluginManager, "_destroyDefaultPlugins");
 			this.oPluginManager.setPlugins({
@@ -132,6 +141,11 @@ function(
 			});
 			assert.strictEqual(this.oPluginManager.getPlugins()["settings"].getCommandStack().id,
 				oFakeCommandStack.id, "then command stack is provided to the settings plugin");
+		});
+
+		QUnit.test("when 'getDefaultPlugins' function is called with localReset plugin defined but with enabled versioning", function(assert) {
+			var oDefaultLocalResetPlugin = this.oPluginManager.getDefaultPlugins({layer: Layer.USER})["localReset"];
+			assert.notOk(oDefaultLocalResetPlugin, "then the localReset plugin is not available");
 		});
 
 		QUnit.test("when 'getPluginList' function is called", function(assert) {

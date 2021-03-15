@@ -447,6 +447,12 @@ sap.ui.define([
 					only: ["sap/ui/fl/write/api/VersionsAPI"]
 				}
 			},
+			"write/api/LocalResetAPI": {
+				group: "Write API",
+				coverage: {
+					only: ["sap/ui/fl/write/api/LocalResetAPI"]
+				}
+			},
 			"write/_internal/Storage": {
 				group: "Write Internal",
 				coverage: {

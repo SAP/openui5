@@ -662,6 +662,53 @@ sap.ui.define([
 			}.bind(this));
 		});
 
+		QUnit.test("getAllUIChanges shall return an map array with all UI changes for the component", function(assert) {
+			var oChange1 = new Change({
+				fileName: "change1",
+				fileType: "change",
+				layer: Layer.VENDOR,
+				selector: {id: "id1"}
+			});
+			oChange1.setState(Change.states.PERSISTED);
+			var oChange2 = new Change({
+				fileName: "change2",
+				fileType: "change",
+				layer: Layer.CUSTOMER,
+				selector: {id: "id2"}
+			});
+			oChange2.setState(Change.states.PERSISTED);
+			var oChange3 = new Change({
+				fileName: "change3",
+				fileType: "change",
+				layer: Layer.CUSTOMER,
+				selector: {id: "id3"}
+			});
+			oChange3.setState(Change.states.PERSISTED);
+			var oChange4 = new Change({
+				fileName: "change4",
+				fileType: "change",
+				layer: Layer.CUSTOMER,
+				selector: {id: "id4"}
+			});
+			var oChange5 = new Change({
+				fileName: "change5",
+				fileType: "change",
+				layer: Layer.CUSTOMER,
+				selector: {id: "id5"}
+			});
+
+			sandbox.stub(this.oChangePersistence, "getChangesMapForComponent").returns({
+				aChanges: [oChange1, oChange2, oChange3]
+			});
+			sandbox.stub(this.oChangePersistence, "getDirtyChanges").returns([oChange4, oChange5]);
+
+			var aAllUIChanges = this.oChangePersistence.getAllUIChanges({
+				includeDirtyChanges: true,
+				layer: Layer.CUSTOMER
+			});
+			assert.deepEqual(aAllUIChanges, [oChange2, oChange3, oChange4, oChange5], "all UI changes are returned");
+		});
+
 		QUnit.test("copyDependenciesFromInitialChangesMap", function(assert) {
 			var oChange0 = {
 				getId: function() {

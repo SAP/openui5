@@ -51,6 +51,7 @@ sap.ui.define([
 			this._aUndoOperations = null;
 			this._oExtensionPointInfo = null;
 			this.setState(Change.states.NEW);
+			this._sPreviousState = null;
 			this.setInitialApplyState();
 			this._oChangeProcessingPromises = {};
 		},
@@ -92,7 +93,9 @@ sap.ui.define([
 	};
 
 	Change.prototype.setState = function(sState) {
-		if (this._isValidState(sState)) {
+		var sCurrentState = this.getState();
+		if (sCurrentState !== sState && this._isValidState(sState)) {
+			this._sPreviousState = sCurrentState;
 			this.setProperty("state", sState);
 		}
 		return this;
@@ -690,6 +693,13 @@ sap.ui.define([
 	 */
 	Change.prototype.markForDeletion = function () {
 		this.setState(Change.states.DELETED);
+	};
+
+	Change.prototype.restorePreviousState = function () {
+		if (this._sPreviousState) {
+			this.setState(this._sPreviousState);
+			delete this._sPreviousState;
+		}
 	};
 
 	/**

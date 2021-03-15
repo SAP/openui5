@@ -300,6 +300,42 @@ function(
 			assert.equal(oInstance.getPendingAction(), "UPDATE");
 		});
 
+		QUnit.test("Change.restorePreviousState after change from DIRTY to PERSISTED", function(assert) {
+			var oInstance = new Change(this.oChangeDef);
+			oInstance.setState(Change.states.PERSISTED);
+			oInstance.restorePreviousState();
+			assert.strictEqual(
+				oInstance.getState(),
+				Change.states.NEW,
+				"then the state is changed back to dirty"
+			);
+		});
+
+		QUnit.test("Change.restorePreviousState after setting the state twice", function(assert) {
+			var oInstance = new Change(this.oChangeDef);
+			oInstance.setState(Change.states.PERSISTED);
+			oInstance.setState(Change.states.PERSISTED);
+			oInstance.restorePreviousState();
+			assert.strictEqual(
+				oInstance.getState(),
+				Change.states.NEW,
+				"then the state is changed back to the previous distinct state"
+			);
+		});
+
+		QUnit.test("Change.restorePreviousState twice", function(assert) {
+			var oInstance = new Change(this.oChangeDef);
+			oInstance.setState(Change.states.PERSISTED);
+			oInstance.setState(Change.states.DIRTY);
+			oInstance.restorePreviousState();
+			oInstance.restorePreviousState();
+			assert.strictEqual(
+				oInstance.getState(),
+				Change.states.PERSISTED,
+				"then the restore still only goes back to the previous state"
+			);
+		});
+
 		QUnit.test("Change.setContent", function(assert) {
 			var oInstance = new Change(this.oChangeDef);
 			assert.equal(oInstance.getPendingAction(), "NEW");

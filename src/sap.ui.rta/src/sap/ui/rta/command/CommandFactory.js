@@ -284,6 +284,9 @@ function(
 			configure: configureRemoveCommand,
 			adjustForBinding: adjustRemoveCommand
 		},
+		localReset: {
+			clazz: "sap.ui.rta.command.LocalReset"
+		},
 		rename: {
 			clazz: "sap.ui.rta.command.Rename",
 			configure: configureRenameCommand,
