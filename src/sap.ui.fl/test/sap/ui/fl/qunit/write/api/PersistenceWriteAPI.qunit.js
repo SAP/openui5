@@ -511,14 +511,14 @@ sap.ui.define([
 				selector: this.vSelector,
 				layer: Layer.CUSTOMER
 			};
-			var fnPersistenceStub = getMethodStub([], Promise.resolve({}));
+			var fnPersistenceStub = getMethodStub([], Promise.resolve({isResetEnabled: false, isPublishEnabled: false}));
 
 			mockFlexController(mPropertyBag.selector, {getResetAndPublishInfo: fnPersistenceStub});
 			sandbox.stub(PersistenceWriteAPI, "_getUIChanges").withArgs(mPropertyBag).resolves([]);
 			sandbox.stub(FeaturesAPI, "isPublishAvailable").withArgs().resolves(true);
 
 			return PersistenceWriteAPI.getResetAndPublishInfo(mPropertyBag).then(function (oResetAndPublishInfo) {
-				assert.equal(fnPersistenceStub.callCount, 0, "flex/info never called");
+				assert.equal(fnPersistenceStub.callCount, 1, "flex/info is called once");
 				assert.equal(oResetAndPublishInfo.isResetEnabled, false, "isResetEnabled is false");
 				assert.equal(oResetAndPublishInfo.isPublishEnabled, false, "isPublishEnabled is false");
 			});
