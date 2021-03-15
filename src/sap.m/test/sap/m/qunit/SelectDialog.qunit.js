@@ -1169,6 +1169,8 @@ sap.ui.define([
 					oOkButton = that.oSelectDialog._oOkButton;
 
 				that.oSelectDialog.destroy();
+				Core.applyChanges();
+				that.clock.tick(350);
 
 				// check if internal controls are destroyed correctly (when initialized they must be destroyed)
 				assert.strictEqual(that.oSelectDialog.$().length, 0, "There is no Domref for the SelectDialog");
