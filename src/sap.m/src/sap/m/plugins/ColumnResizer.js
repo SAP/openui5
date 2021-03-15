@@ -125,7 +125,9 @@ sap.ui.define([
 	};
 
 	ColumnResizer.prototype.ontouchstart = function(oEvent) {
-		if (this._iHoveredColumnIndex == -1 && this._oHandle && this._oHandle.style[sBeginDirection]) {
+		if (this.getControlPluginConfig("allowTouchResizing") && jQuery(oEvent.target).closest(this._aResizables)[0]) {
+			this._onmousemove(oEvent);
+		} else if (this._iHoveredColumnIndex == -1 && this._oHandle && this._oHandle.style[sBeginDirection]) {
 			this._onmousemove(oEvent);
 
 			if (this._iHoveredColumnIndex == -1) {
@@ -139,7 +141,6 @@ sap.ui.define([
 			return;
 		}
 
-		oEvent.preventDefault();
 		this._startResizeSession(this._iHoveredColumnIndex);
 		oSession.iTouchStartX = oEvent.targetTouches[0].clientX;
 		oSession.fHandleX = parseFloat(this._oHandle.style[sBeginDirection]);
@@ -165,9 +166,7 @@ sap.ui.define([
 		this._setPositions();
 
 		var iClientX = oEvent.targetTouches ? oEvent.targetTouches[0].clientX : oEvent.clientX;
-		var iHoveredColumnIndex = this._aPositions.findIndex(function(fPosition) {
-			return Math.abs(fPosition - iClientX) <= (this._oAlternateHandle ? 20 : 3);
-		}, this);
+		var iHoveredColumnIndex = this._getHoveredColumnIndex(iClientX);
 
 		this._displayHandle(iHoveredColumnIndex);
 	};
@@ -178,7 +177,7 @@ sap.ui.define([
 
 	ColumnResizer.prototype._ontouchend = function() {
 		this._setColumnWidth();
-		this._cancelResizing();
+		this._cancelResizing(true);
 	};
 
 	ColumnResizer.prototype.onsapescape = function() {
@@ -193,6 +192,55 @@ sap.ui.define([
 
 	ColumnResizer.prototype.onsapleftmodifiers = function(oEvent) {
 		this._onLeftRightModifiersKeyDown(oEvent, -16);
+	};
+
+	ColumnResizer.prototype.ondblclick = function(oEvent) {
+		var iClientX = oEvent.clientX,
+			iHoveredColumnIndex = this._getHoveredColumnIndex(iClientX);
+
+		if (iHoveredColumnIndex == -1) {
+			return;
+		}
+
+		this._startResizeSession(iHoveredColumnIndex);
+		this._setSessionDistanceX(this._calculateAutoColumnDistanceX());
+		this._setColumnWidth();
+		this._endResizeSession();
+	};
+
+	/**
+	 * Returns the hovered column index. If column index is found the returns the index else returns -1.
+	 * @param {integer} iClientX clientX from the mouse/touch event
+	 * @returns {integer} hovered column index
+	 * @private
+	 */
+	ColumnResizer.prototype._getHoveredColumnIndex = function(iClientX) {
+		return this._aPositions.findIndex(function(fPosition) {
+			return Math.abs(fPosition - iClientX) <= (this._oAlternateHandle || window.matchMedia("(hover:none)").matches ? 20 : 3);
+		}, this);
+	};
+
+	/**
+	 * Returns the horizontal distance by which a column's width should be increased or decreased.
+	 * This gets called when columns must be automatically resized on the double click mouse.
+	 * @returns {integer} horizontal distance
+	 * @private
+	 */
+	ColumnResizer.prototype._calculateAutoColumnDistanceX = function() {
+		var $Cells = this.getControlPluginConfig("columnRelatedCells", null, this._$Container, oSession.oCurrentColumn.getId());
+
+		if (!$Cells || !$Cells.length) {
+			return;
+		}
+
+		var $HiddenArea = jQuery("<div></div>").addClass(CSS_CLASS + "SizeDetector").addClass(this.getControlPluginConfig("cellPaddingStyleClass"));
+		var $ClonedCells = $Cells.children().clone().removeAttr("id");
+		this._$Container.append($HiddenArea);
+		var iWidth = Math.round($HiddenArea.append($ClonedCells)[0].getBoundingClientRect().width);
+		var iDistanceX = iWidth - oSession.fCurrentColumnWidth;
+		$HiddenArea.remove();
+
+		return iDistanceX;
 	};
 
 	ColumnResizer.prototype._invalidatePositions = function() {
@@ -216,7 +264,7 @@ sap.ui.define([
 			this._oHandle = document.createElement("div");
 			this._oHandle.className = CSS_CLASS + "Handle";
 
-			if (bMobileHandle) {
+			if (bMobileHandle || window.matchMedia("(hover:none)").matches) {
 				var oCircle = document.createElement("div");
 				oCircle.className = CSS_CLASS + "HandleCircle";
 				oCircle.style.top = this._aResizables[iColumnIndex].offsetHeight - 8 + "px";
@@ -249,11 +297,23 @@ sap.ui.define([
 
 	/**
 	 * Cancels the resizing session and restores the DOM.
+	 * @param {boolean} bDelayHideHandle whether there should be a delay in hiding the resize handle
 	 * @private
 	 */
-	ColumnResizer.prototype._cancelResizing = function() {
+	ColumnResizer.prototype._cancelResizing = function(bDelayHideHandle) {
 		this._$Container.removeClass(CSS_CLASS + "Resizing");
-		this._oHandle.style[sBeginDirection] = "";
+
+		if (oSession.iDistanceX || !bDelayHideHandle) {
+			this._oHandle.style[sBeginDirection] = "";
+		} else {
+			// delay hiding the handle so that in case of double-click mouse event,
+			// the resize handle does not disappear in the initial mousedown and mouseup event
+			// this will also prevent column press event to trigger
+			setTimeout(function() {
+				this._oHandle.style[sBeginDirection] = "";
+			}.bind(this), 300);
+		}
+
 		this._iHoveredColumnIndex = -1;
 
 		jQuery(document).off("." + CSS_CLASS);
@@ -422,18 +482,37 @@ sap.ui.define([
 		"sap.m.Table": {
 			container: "listUl",
 			resizable: ".sapMListTblHeaderCell:not([aria-hidden=true])",
+			focusable: ".sapMColumnHeaderFocusable",
+			cellPaddingStyleClass: "sapMListTblCell",
 			fixAutoWidthColumns: true,
 			onActivate: function(oTable) {
 				this._vOrigFixedLayout = oTable.getFixedLayout();
+
+				if (!oTable.bActiveHeaders) {
+					oTable.bFocusableHeaders = true;
+					this.allowTouchResizing = window.matchMedia("(hover:none)").matches;
+				}
+
 				oTable.setFixedLayout("Strict");
 			},
 			onDeactivate: function(oTable) {
+				oTable.bFocusableHeaders = false;
 				oTable.setFixedLayout(this._vOrigFixedLayout);
+
+				// rerendering of the table is required if _vOrigFixedLayout == "Strict", since the focusable DOM must be removed
+				if (this._vOrigFixedLayout == "Strict") {
+					oTable.rerender();
+				}
+
 				delete this._vOrigFixedLayout;
+				delete this.allowTouchResizing;
 			},
 			emptySpace: function(oTable) {
 				var oDummyCell = oTable.getDomRef("tblHeadDummyCell");
 				return oDummyCell ? oDummyCell.clientWidth : 0;
+			},
+			columnRelatedCells: function($oContainer, sColumnId) {
+				return $oContainer.find(".sapMListTblCell[data-sap-ui-column='" + sColumnId + "']");
 			}
 		}
 	}, ColumnResizer);

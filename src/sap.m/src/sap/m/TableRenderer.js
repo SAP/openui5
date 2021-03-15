@@ -181,6 +181,7 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 			});
 			rm.class(clsPrefix + "Cell");
 			rm.class(clsPrefix + type + "erCell");
+			rm.attr("data-sap-ui-column", oColumn.getId());
 			rm.attr("data-sap-width", oColumn.getWidth());
 			rm.style("width", width);
 
@@ -207,6 +208,9 @@ sap.ui.define(["sap/ui/core/Renderer", "sap/ui/core/Core", "./library", "./ListB
 						rm.attr("role", "button");
 						rm.attr("aria-haspopup", "dialog");
 						rm.class("sapMColumnHeaderActive");
+					} else if (oTable.bFocusableHeaders) {
+						rm.attr("tabindex", 0);
+						rm.class("sapMColumnHeaderFocusable");
 					}
 
 					if (align) {
