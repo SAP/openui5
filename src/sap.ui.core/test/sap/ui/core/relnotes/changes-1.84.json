@@ -206,5 +206,21 @@
         ]
       }
     ]
+  },
+  "1.84.8": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "c00a75ae1b9bfb2243c1fafb57855b76960e1147",
+        "type": "FIX",
+        "text": " message/ControlMessageProcessor: Avoid updating messages on destroyed controls",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "2180107439"
+          }
+        ]
+      }
+    ]
   }
 }

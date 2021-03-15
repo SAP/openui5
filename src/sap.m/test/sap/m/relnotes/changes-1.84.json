@@ -509,5 +509,21 @@
         ]
       }
     ]
+  },
+  "1.84.8": {
+    "date": "March 2021",
+    "notes": [
+      {
+        "id": "4c854f1e0379406b0765de79a3be0c5fd02d04d3",
+        "type": "FIX",
+        "text": " sap.m.ComboBox: Performance optimisations",
+        "references": [
+          {
+            "type": "BCP",
+            "reference": "002075129400000292512021"
+          }
+        ]
+      }
+    ]
   }
 }
