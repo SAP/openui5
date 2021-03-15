@@ -21,20 +21,27 @@ sap.ui.define([
 		 */
 		applyChanges: function (oManifest, aAppDescriptorChanges, mStrategy) {
 			var oUpdatedManifest = Object.assign({}, oManifest);
-			return mStrategy.registry().then(function(Registry) {
-				aAppDescriptorChanges.forEach(function (oChange) {
-					try {
-						var oChangeHandler = Registry[oChange.getChangeType()];
-						oUpdatedManifest = oChangeHandler.applyChange(oUpdatedManifest, oChange);
-						if (!oChangeHandler.skipPostprocessing && oChange.getTexts()) {
-							oUpdatedManifest = mStrategy.processTexts(oUpdatedManifest, oChange.getTexts());
+			return mStrategy.registry()
+				.then(function (Registry) {
+					var aChangeHandlerPromises = aAppDescriptorChanges.map(function (oChange) {
+						return Registry[oChange.getChangeType()];
+					});
+					return Promise.all(aChangeHandlerPromises);
+				})
+				.then(function (aChangeHandlers) {
+					aChangeHandlers.forEach(function (oChangeHandler, iIndex) {
+						try {
+							var oChange = aAppDescriptorChanges[iIndex];
+							oUpdatedManifest = oChangeHandler.applyChange(oUpdatedManifest, oChange);
+							if (!oChangeHandler.skipPostprocessing && oChange.getTexts()) {
+								oUpdatedManifest = mStrategy.processTexts(oUpdatedManifest, oChange.getTexts());
+							}
+						} catch (oError) {
+							mStrategy.handleError(oError);
 						}
-					} catch (oError) {
-						mStrategy.handleError(oError);
-					}
+					});
+					return oUpdatedManifest;
 				});
-				return oUpdatedManifest;
-			});
 		}
 	};
 
