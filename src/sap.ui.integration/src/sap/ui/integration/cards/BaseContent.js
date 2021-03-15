@@ -402,7 +402,7 @@ sap.ui.define([
 				return;
 			}
 
-			oAggregation = oControl.getAggregation(sAggregation);
+			oAggregation = oControl.getAggregation(sAggregation) || [];
 			oParamsModel.setProperty("/visibleItems", oAggregation.length);
 		});
 

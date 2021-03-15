@@ -97,6 +97,28 @@ sap.ui.define([
 		this.oCard.placeAt(DOM_RENDER_LOCATION);
 	});
 
+	QUnit.test("No data available for particular filter", function (assert) {
+		// Arrange
+		var done = assert.async();
+
+		this.oCard.attachEvent("_ready", function () {
+
+			this.oCard.getModel("filters").setProperty("/shipper/value", "43");
+
+			Core.applyChanges();
+
+			setTimeout(function () {
+				assert.strictEqual(this.oCard.getCardContent().getInnerList().getItems().length, 0, "an empty list is displayed");
+				done();
+			}.bind(this), 500);
+
+		}.bind(this));
+
+		// Act
+		this.oCard.setManifest("test-resources/sap/ui/integration/qunit/manifests/filtering_no_data.json");
+		this.oCard.placeAt(DOM_RENDER_LOCATION);
+	});
+
 	QUnit.module("Dynamic filters", {
 		beforeEach: function () {
 			this.oCard = new Card();
