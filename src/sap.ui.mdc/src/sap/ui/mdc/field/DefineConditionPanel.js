@@ -235,9 +235,40 @@ sap.ui.define([
 
 		removeCondition: function(oEvent) {
 			var oSource = oEvent.oSource;
-			var oCondition = oSource.getBindingContext("$this").getObject();
+			var oBindingContext = oSource.getBindingContext("$this");
 			var aConditions = this.getConditions();
-			var iIndex = FilterOperatorUtil.indexOfCondition(oCondition, aConditions);
+			var sPath = oBindingContext.getPath();
+			var aMatch = sPath.match(/^.*\/(\d+)\/$/);
+			var iIndex;
+			if (aMatch) {
+				iIndex = parseInt(aMatch[1]);
+			}
+
+			if (iIndex > 0 && aConditions.length - 1 === iIndex) {
+				this._bFocusLastRemoveBtn = true; // as remove-Button will disappear and focus should set on the last row remove button
+			}
+
+			// try to reset valueState and value of value Fields inside the removed row
+			var oGrid = this.byId("conditions");
+			var aGridContent = oGrid.getContent();
+			var iRow = 0;
+			for (var i = 0; i < aGridContent.length && iRow <= iIndex; i++) {
+				var oField = aGridContent[i];
+				if (iRow === iIndex && oField instanceof Field && oField.hasOwnProperty("_iValueIndex")) {
+					if (oField._bParseError) { // TODO: better was to find out parsing error
+						oField.setValue(null); // to remove invalid value from parsing
+						jQuery(oField.getFocusDomRef()).val(""); // TODO better solution to clean value
+						oField._bParseError = false;
+					}
+					if (oField.getValueState() !== ValueState.None) {
+						oField.setValueState(ValueState.None);
+						oField.setValueStateText();
+					}
+				}
+				if (oField instanceof Button && oField.getId().endsWith("-removeBtnLarge")) {
+					iRow++;
+				}
+			}
 
 			aConditions.splice(iIndex, 1);
 			this.setProperty("conditions", aConditions, true); // do not invalidate whole DefineConditionPanel
@@ -1010,12 +1041,46 @@ sap.ui.define([
 		}
 
 		if (this._bFocusLastCondition) {
-			// focus first condition, as we can be sure this is already rendered
-			// TODO: focus last condition after it is rendered
+			// focus last condition after it is rendered
 			aGridContent[0].focus();
 			this._bFocusLastCondition = false;
 		}
+		if (this._bFocusLastRemoveBtn) {
+			// focus the remove-Button of the last condition row
+			iIndex = _getGridIndexOfLastRowWithVisibleElement.call(this, ["-removeBtnLarge", "-removeBtnSmall"]);
+			aGridContent[iIndex].focus();
+			this._bFocusLastRemoveBtn = false;
+		}
 
+	}
+
+	function _getGridIndexOfLastRowWithVisibleElement(aIdEndsWith) {
+		var oGrid = this.byId("conditions");
+		var aElements = oGrid.getContent();
+		var n = aElements.length - 1;
+
+		if (!Array.isArray(aIdEndsWith)) {
+			aIdEndsWith = [aIdEndsWith];
+		}
+
+		var i = 0;
+		var sSearch = aIdEndsWith[i];
+
+		while (n >= 0 && sSearch !== undefined) {
+			var oElement = aElements[n];
+			if (oElement.getId().endsWith(sSearch)) {
+				var $check = jQuery(oElement.getDomRef());
+				if ($check.is(":visible")) {
+					return n;
+				} else {
+					i++;
+					sSearch = aIdEndsWith[i];
+				}
+			}
+			n--;
+		}
+
+		return 0;
 	}
 
 	function _createRow(oCondition, oGrid, iIndex, oBindingContext, iRow) {
@@ -1301,6 +1366,11 @@ sap.ui.define([
 			// operator field - use first value field fo validate
 			oBindingContext = oField.getBindingContext("$this");
 			iIndex = iIndex + 2; // as remove button is between operator an value field
+			oField = oGrid.getContent()[iIndex];
+		} else 		if (oField.getId().endsWith("-removeBtnSmall")) {
+			// operator field - use first value field fo validate
+			oBindingContext = oField.getBindingContext("$this");
+			iIndex = iIndex + 1; // as remove button is between operator an value field
 			oField = oGrid.getContent()[iIndex];
 		} else {
 			oBindingContext = oField.getBindingContext("$condition");
