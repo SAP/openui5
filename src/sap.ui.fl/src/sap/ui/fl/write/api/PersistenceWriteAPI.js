@@ -144,7 +144,7 @@ sap.ui.define([
 			};
 			// If there is change and the layer is transportable , the request to back end is always necessary
 			// because of control variant reset logic through setVisible change
-			if (bHasChanges && bIsLayerTransportable) {
+			if (bIsLayerTransportable) {
 				return ChangesController.getFlexControllerInstance(mPropertyBag.selector).getResetAndPublishInfo(mPropertyBag)
 					.then(function(oResponse) {
 						oFlexInfo.isResetEnabled = oResponse.isResetEnabled;
