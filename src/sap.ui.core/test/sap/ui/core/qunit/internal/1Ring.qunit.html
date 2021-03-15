@@ -20,13 +20,15 @@
 		<!-- @see sap-ui-core.js, @see BootstrapMinimal.qunit.html -->
 		<script src="resources/ui5loader.js"></script>
 		<script src="test-resources/sap/ui/core/qunit/internal/1Ring_handleAbort.js"></script>
+		<!-- BEWARE: data-sap-ui-async="true" prevents code coverage! -->
 		<script id="sap-ui-bootstrap" src="resources/ui5loader-autoconfig.js"
 			data-sap-ui-compatversion="edge"
 			data-sap-ui-libs="sap.m"
 			data-sap-ui-resourceroots='{
 				"sap/ui/core/qunit" : "test-resources/sap/ui/core/qunit",
 				"sap/ui/test/qunit" : "test-resources/sap/ui/test/qunit"
-			}'>
+			}'
+			data-sap-ui-xx-waitForTheme="init">
 		</script>
 		<!-- end of minimal bootstrap code -->
 		<script src="resources/sap/ui/qunit/qunit-junit.js"></script>

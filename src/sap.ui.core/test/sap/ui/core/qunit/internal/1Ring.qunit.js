@@ -24,17 +24,6 @@ sap.ui.require([
 				return oTestsuite.tests[sTest].module[0];
 			});
 
-		sap.ui.require(aModules, function () {
-			function start() {
-				Core.detachThemeChanged(start);
-				QUnit.start();
-			}
-
-			if (Core.isThemeApplied()) {
-				QUnit.start();
-			} else {
-				Core.attachThemeChanged(start);
-			}
-		});
+		sap.ui.require(aModules, Core.attachInit.bind(Core, QUnit.start.bind(QUnit, /*count*/0)));
 	});
 });
