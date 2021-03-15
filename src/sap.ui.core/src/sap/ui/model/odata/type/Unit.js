@@ -51,7 +51,6 @@ sap.ui.define([
 	 * @since 1.63.0
 	 * @version ${version}
 	 *
-	 * @borrows sap.ui.model.odata.type.UnitMixin#getInterface as #getInterface
 	 * @borrows sap.ui.model.odata.type.UnitMixin#validateValue as #validateValue
 	 */
 	var Unit = BaseUnit.extend("sap.ui.model.odata.type.Unit", {
