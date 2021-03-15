@@ -1357,27 +1357,26 @@ sap.ui.define([
 	};
 
 	/**
-	 * Adds the passed url parameters to the url. If bMeta set to true
-	 * also the metadata url params are added. In all other cases the
-	 * global defined url parameters are added.
+	 * Adds the passed URL parameters to the given <code>sUrl</code> to request data. Data URL
+	 * parameters stored at this model are also added.
 	 *
 	 * @param {string} sUrl The metadata url
-	 * @param {array} aUrlParams An array of url params
-	 * @returns {boolean} Wether consider metadata url params or the not metadata ones
+	 * @param {string[]} aUrlParams An array of url params
 	 * @returns {string} The request URL
+	 *
 	 * @private
 	 */
 	ODataModel.prototype._addUrlParams = function(sUrl, aUrlParams) {
-		var aAllUrlParameters = [];
+		var aAllUrlParams = [];
 
 		if (this.aUrlParams) {
-			aAllUrlParameters = aAllUrlParameters.concat(this.aUrlParams);
+			aAllUrlParams = aAllUrlParams.concat(this.aUrlParams);
 		}
 		if (aUrlParams) {
-			aAllUrlParameters = aAllUrlParameters.concat(aUrlParams);
+			aAllUrlParams = aAllUrlParams.concat(aUrlParams);
 		}
-		if (aAllUrlParameters && aAllUrlParameters.length > 0) {
-			sUrl += "?" + aAllUrlParameters.join("&");
+		if (aAllUrlParams.length > 0) {
+			sUrl += "?" + aAllUrlParams.join("&");
 		}
 		return sUrl;
 	};
