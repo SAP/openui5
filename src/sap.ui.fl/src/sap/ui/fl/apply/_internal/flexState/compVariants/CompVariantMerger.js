@@ -44,6 +44,7 @@ sap.ui.define([
 	function createVariant(sPersistencyKey, oVariantInput) {
 		var oVariantData = {
 			fileName: oVariantInput.id || "*standard*",
+			persisted: oVariantInput.persisted,
 			content: oVariantInput.content || {},
 			texts: {
 				variantName: {
@@ -56,11 +57,11 @@ sap.ui.define([
 		};
 
 		if (oVariantInput.favorite !== undefined) {
-			oVariantData.content.favorite = oVariantInput.favorite;
+			oVariantData.favorite = oVariantInput.favorite;
 		}
 
 		if (oVariantInput.executeOnSelection !== undefined) {
-			oVariantData.content.executeOnSelection = oVariantInput.executeOnSelection;
+			oVariantData.executeOnSelection = oVariantInput.executeOnSelection;
 		}
 
 		return new CompVariant(oVariantData);
@@ -125,6 +126,23 @@ sap.ui.define([
 				standardVariant: oStandardVariant,
 				variants: aVariants
 			};
+		},
+
+		/**
+		 * Enhances Standard Variants and non-persisted variants with additional properties and
+		 * creates a new CompVariant out of it.
+		 *
+		 * @function
+		 * @since 1.89
+		 * @version ${version}
+		 * @private
+		 * @ui5-restricted sap.ui.fl
+		 *
+		 * @param {string} persistencyKey - Key of the variant management
+		 * @param {object} oVariantInput - Standard Variant or non-persisted Variants like oData variant
+		 */
+		createVariant: function(sPersistencyKey, oVariantInput) {
+			return createVariant(sPersistencyKey, oVariantInput);
 		}
 	};
 });
