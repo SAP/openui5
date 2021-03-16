@@ -25,49 +25,49 @@
 		var oPage = new sap.m.Page("oPage", {
 			title: "MessageBox Accessibility Test Page",
 			content: [
-				new sap.m.Button({
+				new sap.m.Button("confirmMsgDialogButton", {
 					text: "Confirm",
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 					press: function () {
 						sap.m.MessageBox.confirm("Approve purchase order 12345?");
 					}
 				}),
-				new sap.m.Button({
+				new sap.m.Button("alertMsgDialogButton", {
 					text: "Alert",
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 					press: function () {
 						sap.m.MessageBox.alert("The quantity you have reported exceeds the quantity planed.");
 					}
 				}),
-				new sap.m.Button({
+				new sap.m.Button("errorMsgDialogButton", {
 					text: "Error",
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 					press: function () {
 						sap.m.MessageBox.error("Select a team in the \"Development\" area.\n\"Marketing\" isn't assigned to this area.");
 					}
 				}),
-				new sap.m.Button({
+				new sap.m.Button("informationMsgDialogButton", {
 					text: "Information",
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 					press: function () {
 						sap.m.MessageBox.information("You booking will be reserved for 24 hours.");
 					}
 				}),
-				new sap.m.Button({
+				new sap.m.Button("warningMsgDialogButton", {
 					text: "Warning",
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 					press: function () {
 						sap.m.MessageBox.warning("The project schedule was last updated over a year ago.");
 					}
 				}),
-				new sap.m.Button({
+				new sap.m.Button("successMsgDialogButton", {
 					text: "Success",
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 					press: function () {
 						sap.m.MessageBox.success("Project 1234567 was created and assigned to team \"ABC\".");
 					}
 				}),
-				new sap.m.Button({
+				new sap.m.Button("showDetailsMsgDialogButton", {
 					text: "Show Details",
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 					press: function () {
@@ -80,7 +80,7 @@
 						});
 					}
 				}),
-				new sap.m.Button({
+				new sap.m.Button("initialFocusMsgDialogButton", {
 					text: "Initial Focus Action",
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 					press: function () {
@@ -94,7 +94,7 @@
 						);
 					}
 				}),
-				new sap.m.Button({
+				new sap.m.Button("initialFocusCustomMsgDialogButton", {
 					text: "Initial Focus Custom Button",
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 					press: function () {

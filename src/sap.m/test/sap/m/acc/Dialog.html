@@ -130,7 +130,14 @@
 			oSearchFieldDialog = new sap.m.Dialog({
 				title: "Dialog with Search Field",
 				subHeader: new sap.m.Bar({
-					contentMiddle: new sap.m.SearchField()
+					contentMiddle: [
+						new sap.m.Label({
+							text: "Search Text:",
+							labelFor: "sf1",
+							width: "100px"
+						}),
+						new sap.m.SearchField("sf1")
+					]
 				}),
 				content: new sap.ui.core.HTML({
 					content: '<div style="width: 30px; height: 1000px;">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.Lorem ipsum dolor sit amet, consectetur adipisicing elit. Adipisci animi assumenda autem corporis cupiditate dicta dolores enim est eveniet laborum magnam magni maxime mollitia nostrum odit quasi, sunt! Nemo, sapiente.</div>'
@@ -157,7 +164,7 @@
 					}
 				}),
 				new sap.ui.core.HTML({content: "<br>"}),
-				new sap.m.Button({
+				new sap.m.Button('msgDialogButton', {
 					text: "Message Dialog",
 					width: _buttonWidth,
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
@@ -166,7 +173,7 @@
 					}
 				}),
 				new sap.ui.core.HTML({content: "<br>"}),
-				new sap.m.Button({
+				new sap.m.Button('cutomHeaderDialogButton', {
 					text: "With Custom Header",
 					width: _buttonWidth,
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
@@ -202,7 +209,7 @@
 					}
 				}),
 				new sap.ui.core.HTML({content: "<br>"}),
-				new sap.m.Button({
+				new sap.m.Button('searchFieldInDialogButton', {
 					text: "SearchField in Dialog",
 					width: _buttonWidth,
 					ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,

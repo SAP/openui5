@@ -33,7 +33,12 @@
 		{
 			"control": "sap.m.BusyDialog",
 			"url": "BusyDialog.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "Busy Dialog",
+				"title": "ACC test for sap.m.BusyDialog",
+				"module": "./busydialog.qunit"
+			}
 		},
 		{
 			"control": "sap.m.BusyIndicator",
@@ -100,7 +105,7 @@
 			"url": "Dialog.html",
 			"appComponent": "CA-UI5-CTR-ROD",
 			"accTest": {
-				"name": "dialog",
+				"name": "Dialog",
 				"title": "ACC test for sap.m.Dialog",
 				"module": "./dialog.qunit"
 			}
@@ -178,7 +183,12 @@
 		{
 			"control": "sap.m.LightBox",
 			"url": "LightBox.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "Light Box",
+				"title": "ACC test for sap.m.LightBox",
+				"module": "./lightbox.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Link",
@@ -219,7 +229,12 @@
 		{
 			"control": "sap.m.MessageBox",
 			"url": "MessageBox.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "Message Box",
+				"title": "ACC test for sap.m.MessageBox",
+				"module": "./messagebox.qunit"
+			}
 		},
 		{
 			"control": "sap.m.MessagePopover",
@@ -389,7 +404,12 @@
 		{
 			"control": "sap.m.QuickView",
 			"url": "QuickView.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "Quick View",
+				"title": "ACC test for sap.m.QuickView",
+				"module": "./quickview.qunit"
+			}
 		},
 		{
 			"control": "sap.m.QuickViewCard",
@@ -449,7 +469,12 @@
 		{
 			"control": "sap.m.SelectDialog",
 			"url": "SelectDialog.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "Select Dialog",
+				"title": "ACC test for sap.m.SelectDialog",
+				"module": "./selectdialog.qunit"
+			}
 		},
 		{
 			"control": "sap.m.SelectList",
@@ -490,7 +515,12 @@
 			"control": "sap.m.SuggestionsList",
 			"url": "../SearchField_Suggestions.html",
 			"desc" : "Suggestions list of the Search Field",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "Search Field Suggestions List",
+				"title": "ACC test for sap.m.SuggestionsList",
+				"module": "./suggestionslist.qunit"
+			}
 		},
 		{
 			"control": "sap.m.Switch",
@@ -510,7 +540,12 @@
 		{
 			"control": "sap.m.TableSelectDialog",
 			"url": "TableSelectDialog.html",
-			"appComponent": "CA-UI5-CTR-ROD"
+			"appComponent": "CA-UI5-CTR-ROD",
+			"accTest": {
+				"name": "Table Select Dialog",
+				"title": "ACC test for sap.m.TableSelectDialog",
+				"module": "./tableselectdialog.qunit"
+			}
 		},
 		{
 			"control": "sap.m.TimePicker",

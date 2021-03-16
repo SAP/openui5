@@ -48,7 +48,7 @@
 			var initialPage = new sap.m.Page('initialPage', {
 				title: 'Busy Dialog Control',
 				content: [
-					new sap.m.Button({
+					new sap.m.Button('defaultBusyDialogButton', {
 						text: 'Default (light)',
 						width: _buttonWidth,
 						press: function () {
@@ -58,7 +58,7 @@
 							});
 						}
 					}),
-					new sap.m.Button({
+					new sap.m.Button('defaultARIABusyDialogButton', {
 						text: 'Default (light) - ARIA',
 						width: _buttonWidth,
 						press: function () {
@@ -68,23 +68,23 @@
 							});
 						}
 					}),
-					new sap.m.Button({
-						text: 'Standart (static)',
+					new sap.m.Button('standardBusyDialogButton', {
+						text: 'Standard (static)',
 						width: _buttonWidth,
 						press: function () {
 							standartBusyDialog.open();
 						}
 					}),
 					new sap.ui.core.HTML({content: "<br>"}),
-					new sap.m.Button({
-						text: 'Standart - no header',
+					new sap.m.Button('standardNoNeaderBusyDialogButton', {
+						text: 'Standard - no header',
 						width: _buttonWidth,
 						press: function () {
 							standartNoHeaderBusyDialog.open();
 						}
 					}),
-					new sap.m.Button({
-						text: 'Standart without footer and header',
+					new sap.m.Button('standardNoNeaderAndFooterBusyDialogButton', {
+						text: 'Standard without footer and header',
 						width: _buttonWidth,
 						press: function () {
 							standartNoHeaderAndFooterBusyDialog.open();
