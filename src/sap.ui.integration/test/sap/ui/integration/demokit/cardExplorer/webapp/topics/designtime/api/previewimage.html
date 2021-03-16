@@ -24,6 +24,10 @@
 		td {
 			font-weight: normal !important;
 		}
+
+		.prettyprint[caption]::before {
+			width: 800px !important;
+		}
 	</style>
 </head>
 
@@ -35,33 +39,35 @@
 			<h3 id="preview">Configure the editor's preview</h3>
 			<p>An additional section in the configuration allows to influence the preview shown in the Card editor
 			</p>
-			<table style="background-color: transparent; border:none;">
-				<tr>
-					<td style="vertical-align: top;background-color: transparent; border:none;">
-						<pre class="prettyprint lang-js " lines="12-14">
-sap.ui.define(["sap/ui/integration/Designtime"], function (
-	Designtime
-) {
-	"use strict";
-	return function () {
-		return new Designtime({
-			"form": {
-				"items": {
+			<div class="tableWrapper">
+				<table style="background-color: transparent; border:none;">
+					<tr>
+						<td style="vertical-align: top;background-color: transparent; border:none; padding-left: 0;">
+							<pre class="prettyprint lang-js " lines="12-16">
+	sap.ui.define(["sap/ui/integration/Designtime"], function (
+		Designtime
+	) {
+		"use strict";
+		return function () {
+			return new Designtime({
+				"form": {
+					"items": {
+
+					}
+				},
+				"preview": {
 
 				}
-			},
-			"preview": {
-
-			}
-		});
-	};
-});</pre>
-					</td>
-					<td style="vertical-align: top;background-color: transparent; border:none;">
-						<img src="../img/ConfigurationEditorForm.png"
-							style="margin:2rem;width:400px;border:1px solid #f5f5f5"></td>
-				</tr>
-			</table>
+			});
+		};
+	});</pre>
+						</td>
+						<td style="vertical-align: top;background-color: transparent; border:none;">
+							<img src="../img/ConfigurationEditorForm.png"
+								style="margin:2rem;width:400px;border:1px solid #f5f5f5"></td>
+					</tr>
+				</table>
+			</div>
 			<div class="tableWrapper">
 				<table>
 					<caption>Field Type items</caption>

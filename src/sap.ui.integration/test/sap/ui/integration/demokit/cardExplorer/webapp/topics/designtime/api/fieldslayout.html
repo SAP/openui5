@@ -79,7 +79,7 @@
 		};
 
 		function init() {
-			sap.ui.require(["sap/ui/integration/designtime/editor/CardEditor"], function (CardEditor) {
+			sap.ui.require(["sap/ui/integration/designtime/editor/CardEditor", "sap/base/Log"], function (CardEditor, Log) {
 				function placeAdvancedEditor(domElement, sItem) {
 					var oAdvancedEditor = new CardEditor({
 						mode: "admin",
@@ -109,30 +109,30 @@
 								continue
 							}
 							placeAdvancedEditor(aSamples[i], sItem);
-						}
-						var sCode = document.querySelector("pre[sample='" + iSample + "']").innerText,
+						} else {
+							var sCode = document.querySelector("pre[sample='" + iSample + "']").innerText,
 							oConfig = JSON.parse(sCode);
-						if (!oConfig.param1) {
-							oConfig = {
-								param: oConfig
-							}
-						}
-						var oEditor = new CardEditor({
-							mode: "admin",
-							card: oBasicSettings,
-							designtime: {
-								form: {
-									items: oConfig
+							if (!oConfig.param1) {
+								oConfig = {
+									param: oConfig
 								}
 							}
-						});
-						oEditor.attachReady(function (oEditor, i) {
-							aSamples[i].innerHTML = "";
-							oEditor.placeAt(aSamples[i]);
-						}.bind(null, oEditor, i));
-
+							var oEditor = new CardEditor({
+								mode: "admin",
+								card: oBasicSettings,
+								designtime: {
+									form: {
+										items: oConfig
+									}
+								}
+							});
+							oEditor.attachReady(function (oEditor, i) {
+								aSamples[i].innerHTML = "";
+								oEditor.placeAt(aSamples[i]);
+							}.bind(null, oEditor, i));
+						}
 					} catch (ex) {
-
+						Log.error("Fail to load cards designtime: " + ex);
 					}
 				}
 			});
@@ -155,7 +155,7 @@
 			<h2 id="fields">Examples for field configuration</h2>
 			<p>
 				The following examples are part of the items of the form map within the designtime file.
-			<div>
+			<div style="overflow-x:auto">
 				<table class="tableWrapper">
 					<tr>
 						<th>Purpose</th>
