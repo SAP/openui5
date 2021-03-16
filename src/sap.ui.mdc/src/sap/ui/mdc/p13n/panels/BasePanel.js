@@ -332,9 +332,9 @@ sap.ui.define([
 		return this.getModel(this.P13N_MODEL);
 	};
 
-	BasePanel.prototype.getResourceText = function(sText) {
+	BasePanel.prototype.getResourceText = function(sText, vValue) {
 		this.oResourceBundle = this.oResourceBundle ? this.oResourceBundle : sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		return sText ? this.oResourceBundle.getText(sText) : this.oResourceBundle;
+		return sText ? this.oResourceBundle.getText(sText, vValue) : this.oResourceBundle;
 	};
 
 	BasePanel.prototype._addTableColumns = function(aColumns) {
