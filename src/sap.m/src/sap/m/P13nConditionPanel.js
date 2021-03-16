@@ -1719,7 +1719,7 @@ sap.ui.define([
 								var oCondition = {
 									"index": that._iConditions,
 									"key": that._createConditionKey(),
-									"exclude": that.getExclude(),
+									"exclude": that.getExclude() || that._oOperationsHelper.isExcludeType(oOperation.getSelectedKey()),
 									"operation": oOperation.getSelectedKey(),
 									"keyField": oKeyField.key,
 									"value1":  oPastedValue,
