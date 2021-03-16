@@ -274,6 +274,8 @@ sap.ui.define([
     ListView.prototype._createInnerListControl = function() {
 		return new Table(this.getId() + "-innerListViewTable", Object.assign({
             growing: true,
+            growingThreshold: 25,
+            growingScrollToLoad: true,
             updateStarted: function() {
                 this.removeMoveButtons();
                 this._removeFactoryControl();
