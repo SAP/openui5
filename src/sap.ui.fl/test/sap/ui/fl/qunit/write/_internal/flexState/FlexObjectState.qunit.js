@@ -142,7 +142,9 @@ sap.ui.define([
 
 			CompVariantState.add({
 				changeSpecificData: {
-					type: "addFavorite"
+					layer: Layer.USER,
+					type: "addFavorite",
+					isUserDependent: true
 				},
 				reference: sReference,
 				persistencyKey: sPersistencyKey
@@ -150,21 +152,18 @@ sap.ui.define([
 			CompVariantState.add({
 				changeSpecificData: {
 					type: "pageVariant",
-					isUserDependent: true,
+					layer: Layer.CUSTOMER,
 					isVariant: true,
 					content: {}
 				},
 				reference: sReference,
 				persistencyKey: sPersistencyKey
 			});
-			sandbox.stub(UriParameters, "fromQuery").returns({
-				get: function () {
-					return Layer.VENDOR;
-				}
-			});
+
 			CompVariantState.add({
 				changeSpecificData: {
 					type: "pageVariant",
+					layer: Layer.VENDOR,
 					isVariant: true,
 					content: {}
 				},
@@ -178,7 +177,7 @@ sap.ui.define([
 			})
 			.then(function (aFlexObjects) {
 				assert.equal(aFlexObjects.length, 1, "an array with one entry is returned");
-				assert.equal(aFlexObjects[0].getChangeType(), "addFavorite", "the change from the compVariantState is present");
+				assert.equal(aFlexObjects[0].getChangeType(), "pageVariant", "the change from the pageVariant is present");
 			});
 		});
 
