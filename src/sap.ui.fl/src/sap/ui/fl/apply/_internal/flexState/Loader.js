@@ -43,9 +43,10 @@ sap.ui.define([
 		 * @param {object} mPropertyBag.manifest - ManifestObject that belongs to current component
 		 * @param {object} mPropertyBag.reference - Flex Reference
 		 * @param {string} mPropertyBag.componentData - Component data of the current component
+		 * @param {object} [mPropertyBag.reInitialize] - Flag if the application is reinitialized even if it was loaded before
 		 * @param {object} [mPropertyBag.asyncHints] - Async hints passed from the app index to the component processing
 		 * @param {number} [mPropertyBag.version] - Number of the version in which the state should be initialized
-		 * @param {object} [mPropertyBag.partialFlexData] - Contains current flexstate for this reference, indictor to reload bundles from storage
+		 * @param {object} [mPropertyBag.partialFlexData] - Contains current flexstate for this reference, indicator to reload bundles from storage
 		 * @returns {Promise<object>} resolves with the change file for the given component from the Storage
 		 */
 		loadFlexData: function (mPropertyBag) {
@@ -59,10 +60,13 @@ sap.ui.define([
 				}).then(_formatFlexData);
 			}
 
+			// the cache key cannot be used in case of a reinitialization
+			var sCacheKey = mPropertyBag.reInitialize ? undefined : ManifestUtils.getCacheKeyFromAsyncHints(mPropertyBag.reference, mPropertyBag.asyncHints);
+
 			return ApplyStorage.loadFlexData({
 				reference: mPropertyBag.reference,
 				componentName: sComponentName,
-				cacheKey: ManifestUtils.getCacheKeyFromAsyncHints(mPropertyBag.reference, mPropertyBag.asyncHints),
+				cacheKey: sCacheKey,
 				siteId: Utils.getSiteIdByComponentData(mPropertyBag.componentData),
 				appDescriptor: mPropertyBag.manifest.getRawJson ? mPropertyBag.manifest.getRawJson() : mPropertyBag.manifest,
 				version: mPropertyBag.version
