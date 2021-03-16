@@ -1,29 +1,37 @@
 sap.ui.define([
+	"sap/base/util/UriParameters",
+	"sap/base/Log",
+	"sap/m/MessageToast",
 	"sap/ui/core/mvc/Controller",
 	"sap/ui/core/util/MockServer",
-	"sap/ui/model/odata/ODataModel",
+	"sap/ui/core/Fragment",
+	"sap/ui/model/BindingMode",
 	"sap/ui/model/json/JSONModel",
-	"sap/base/Log",
-	"sap/ui/core/Fragment"
+	"sap/ui/model/odata/ODataModel",
+	"sap/ui/model/odata/CountMode"
 ], function(
+	UriParameters,
+	Log,
+	MessageToast,
 	Controller,
 	MockServer,
-	ODataModel,
+	Fragment,
+	BindingMode,
 	JSONModel,
-	Log,
-	Fragment
+	ODataModel,
+	CountMode
 ) {
 	"use strict";
 
 	return Controller.extend("sap.ui.rta.test.ComplexTest", {
 
 		onInit: function () {
-			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/test/");
+			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
 			var sManifestUrl = this._sResourcePath + "/manifest.json";
 			var oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data;
-			var oUriParameters = jQuery.sap.getUriParameters();
+			var iServerDelay = UriParameters.fromQuery(window.location.search).get("serverDelay");
 
-			var iAutoRespond = (oUriParameters.get("serverDelay") || 1000);
+			var iAutoRespond = iServerDelay || 1000;
 			var oMockServer;
 			var dataSource;
 			var sMockServerPath;
@@ -68,8 +76,8 @@ sap.ui.define([
 								loadMetadataAsync: true
 							});
 
-							oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
-							oModel.setCountSupported(false);
+							oModel.setDefaultBindingMode(BindingMode.TwoWay);
+							oModel.setDefaultCountMode(CountMode.None);
 							this._oModel = oModel;
 
 							oView = this.getView();
@@ -89,7 +97,7 @@ sap.ui.define([
 						} else if (property === "smartFilterService") {
 							//smartfilterbar bind
 							var oSmartFilterModel = new ODataModel("/foo", true);
-							oSmartFilterModel.setCountSupported(false);
+							oSmartFilterModel.setDefaultCountMode(CountMode.None);
 							var oSmartFilterLayout = this.byId("smartFilterLayout");
 							if (oSmartFilterLayout) {
 								oSmartFilterLayout.unbindElement();
@@ -137,19 +145,6 @@ sap.ui.define([
 			}
 		},
 
-		_getUrlParameter: function(sParam) {
-			var sReturn = "";
-			var sPageURL = window.location.search.substring(1);
-			var sURLVariables = sPageURL.split('&');
-			for (var i = 0; i < sURLVariables.length; i++) {
-				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] === sParam) {
-					sReturn = sParameterName[1];
-				}
-			}
-			return sReturn;
-		},
-
 		_undoRedoStack: function(oStack) {
 			function undo(oStack) {
 				if (oStack.canUndo()) {
@@ -170,39 +165,24 @@ sap.ui.define([
 
 			undo(oStack)
 				.then(function() {
-					sap.m.MessageToast.show("All changes undone", {duration: 1000});
+					MessageToast.show("All changes undone", {duration: 1000});
 
 					return redo(oStack);
 				})
 				.then(function() {
-					sap.m.MessageToast.show("All changes redone", {duration: 1000});
+					MessageToast.show("All changes redone", {duration: 1000});
 				});
 		},
 
 		switchToAdaptionMode: function() {
 			sap.ui.require([
 				"sap/ui/rta/RuntimeAuthoring",
-				"sap/ui/rta/command/Stack",
-				"sap/ui/fl/FakeLrepConnectorLocalStorage",
-				"sap/m/MessageToast"
+				"sap/ui/rta/command/Stack"
 			], function(
 				RuntimeAuthoring,
-				Stack,
-				FakeLrepConnectorLocalStorage,
-				MessageToast
+				Stack
 			) {
 				var aFileNames = [];
-
-				// FakeLrepConnectorLocalStorage.getChanges().forEach(function(oChange) {
-				// 	if (
-				// 		oChange.fileType !== "ctrl_variant_change" &&
-				// 		oChange.fileType !== "ctrl_variant" &&
-				// 		oChange.fileType !== "ctrl_variant_management_change" &&
-				// 		oChange.projectId === "sap.ui.rta.test"
-				// 	) {
-				// 		aFileNames.push(oChange.fileName);
-				// 	}
-				// });
 
 				Stack.initializeWithChanges(sap.ui.getCore().byId("Comp1---idMain1"), aFileNames).then(function(oStack) {
 					//expose undo/redo test function to console
@@ -215,10 +195,10 @@ sap.ui.define([
 							developerMode: false
 						}
 					});
-					oRta.attachEvent('stop', function() {
+					oRta.attachEvent("stop", function() {
 						oRta.destroy();
 					});
-					oRta.attachEvent('start', function() {
+					oRta.attachEvent("start", function() {
 						MessageToast.show("Rta is started with all changes from local storage added to the command stack. Undo might already by enabled.\n To test the visual editor usage of our stack, there is a undoRedoStack() function in console available", {duration: 10000});
 					});
 
@@ -229,10 +209,8 @@ sap.ui.define([
 
 		openSmartFormDialog: function() {
 			sap.ui.require([
-				"sap/ui/core/mvc/XMLView",
 				"sap/m/Dialog"
 			], function(
-				XMLView,
 				Dialog
 			) {
 				var oComponent = this.getOwnerComponent();

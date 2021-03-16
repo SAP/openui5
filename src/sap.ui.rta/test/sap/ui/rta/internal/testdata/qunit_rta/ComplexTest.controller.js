@@ -1,28 +1,38 @@
 sap.ui.define([
-	"sap/base/Log"
+	"sap/base/util/UriParameters",
+	"sap/base/Log",
+	"sap/ui/core/util/MockServer",
+	"sap/ui/model/BindingMode",
+	"sap/ui/model/json/JSONModel",
+	"sap/ui/model/odata/v2/ODataModel",
+	"sap/ui/model/odata/CountMode"
 ], function(
-	Log
+	UriParameters,
+	Log,
+	MockServer,
+	BindingMode,
+	JSONModel,
+	ODataModel,
+	CountMode
 ) {
 	"use strict";
 
 	sap.ui.controller("sap.ui.rta.qunitrta.ComplexTest", {
 		onInit: function () {
-			jQuery.sap.require("sap.ui.core.util.MockServer");
-			this._sResourcePath = jQuery.sap.getResourcePath("sap/ui/rta/qunitrta/");
+			this._sResourcePath = sap.ui.require.toUrl("sap/ui/rta/test");
 			var sManifestUrl = this._sResourcePath + "/manifest.json";
 			var oManifest = jQuery.sap.syncGetJSON(sManifestUrl).data;
-			var oUriParameters = jQuery.sap.getUriParameters();
+			var iServerDelay = UriParameters.fromQuery(window.location.search).get("serverDelay");
 
-			var iAutoRespond = (oUriParameters.get("serverDelay") || 1000);
+			var iAutoRespond = iServerDelay || 1000;
 			var oMockServer;
 			var dataSource;
 			var sMockServerPath;
 			var sMetadataUrl;
 			var aEntities = [];
 			var oDataSources = oManifest["sap.app"]["dataSources"];
-			var MockServer = sap.ui.core.util.MockServer;
 
-			sap.ui.core.util.MockServer.config({
+			MockServer.config({
 				autoRespond: true,
 				autoRespondAfter: iAutoRespond
 			});
@@ -59,19 +69,19 @@ sap.ui.define([
 						}
 						//else if *Other types can be inserted here, like Annotations*
 						oMockServer.start();
-						jQuery.sap.log.info("Running the app with mock data for " + property);
+						Log.info("Running the app with mock data for " + property);
 
 						if (property === "mainService") {
 							var oModel;
 							var oView;
 
-							oModel = new sap.ui.model.odata.v2.ODataModel(dataSource.uri, {
+							oModel = new ODataModel(dataSource.uri, {
 								json: true,
 								loadMetadataAsync: true
 							});
 
-							oModel.setDefaultBindingMode(sap.ui.model.BindingMode.TwoWay);
-							oModel.setDefaultCountMode(sap.ui.model.odata.CountMode.None);
+							oModel.setDefaultBindingMode(BindingMode.TwoWay);
+							oModel.setDefaultCountMode(CountMode.None);
 							this._oModel = oModel;
 
 							oView = this.getView();
@@ -84,7 +94,7 @@ sap.ui.define([
 								enabled: true
 							};
 
-							var oStateModel = new sap.ui.model.json.JSONModel();
+							var oStateModel = new JSONModel();
 							oStateModel.setData(data);
 							oView.setModel(oStateModel, "state");
 
@@ -97,39 +107,27 @@ sap.ui.define([
 			}
 		},
 
-		_getUrlParameter: function(sParam) {
-			var sReturn = "";
-			var sPageURL = window.location.search.substring(1);
-			var sURLVariables = sPageURL.split('&');
-			for (var i = 0; i < sURLVariables.length; i++) {
-				var sParameterName = sURLVariables[i].split('=');
-				if (sParameterName[0] === sParam) {
-					sReturn = sParameterName[1];
-				}
-			}
-			return sReturn;
-		},
-
 		switchToAdaptionMode: function() {
-			jQuery.sap.require("sap.ui.rta.RuntimeAuthoring");
-			var oRta = new sap.ui.rta.RuntimeAuthoring({
-				rootControl: sap.ui.getCore().byId("Comp1---idMain1"),
-				customFieldUrl: this._sResourcePath + "/testdata/rta/CustomField.html",
-				showCreateCustomField: (this._getUrlParameter("sap-ui-xx-ccf") === "true"),
-				flexSettings: {
-					developerMode: false
-				}
-			});
-			oRta.attachEvent('stop', function() {
-				oRta.destroy();
-			});
-			oRta.start();
+			sap.ui.require(["sap/ui/rta/RuntimeAuthoring"], function(RuntimeAuthoring) {
+				var sUriParam = UriParameters.fromQuery(window.location.search).get("sap-ui-xx-ccf");
+				var oRta = new RuntimeAuthoring({
+					rootControl: sap.ui.getCore().byId("Comp1---idMain1"),
+					customFieldUrl: this._sResourcePath + "/testdata/rta/CustomField.html",
+					showCreateCustomField: sUriParam === "true",
+					flexSettings: {
+						developerMode: false
+					}
+				});
+				oRta.attachEvent("stop", function() {
+					oRta.destroy();
+				});
+				oRta.start();
+			}.bind(this));
 		},
 
 		isDataReady: function () {
 			return this._dataPromise;
 		}
-
 	});
 });
 
