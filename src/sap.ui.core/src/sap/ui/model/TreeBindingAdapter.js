@@ -990,6 +990,10 @@ sap.ui.define([
 				}
 			});
 
+			if (this.bCollapseRecursive) {
+				this.setNumberOfExpandedLevels(iLevel);
+			}
+
 			this._fireChange({reason: ChangeReason.Collapse});
 		};
 
