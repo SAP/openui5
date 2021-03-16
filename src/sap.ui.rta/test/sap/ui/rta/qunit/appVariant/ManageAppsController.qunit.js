@@ -10,6 +10,7 @@ sap.ui.define([
 	"sap/ui/core/Control",
 	"sap/base/i18n/ResourceBundle",
 	"sap/ui/base/Event",
+	"sap/m/MessageToast",
 	"sap/base/Log",
 	"sap/ui/thirdparty/jquery",
 	"sap/ui/thirdparty/sinon-4"
@@ -23,6 +24,7 @@ sap.ui.define([
 	Control,
 	ResourceBundle,
 	Event,
+	MessageToast,
 	Log,
 	jQuery,
 	sinon
@@ -220,10 +222,11 @@ sap.ui.define([
 
 		QUnit.test("when copyId is called", function(assert) {
 			var oManageAppsController = new ManageAppsController();
+			oManageAppsController._createResourceBundle();
 
-			var modelPropertySpy = sandbox.stub(oManageAppsController, "getModelProperty");
-
-			modelPropertySpy.onFirstCall().returns("Idcopied");
+			var fnModelPropertyStub = sandbox.stub(oManageAppsController, "getModelProperty");
+			fnModelPropertyStub.onFirstCall().returns("Idcopied");
+			var fnMessageToastSpy = sandbox.spy(MessageToast, "show");
 
 			var oButton = {
 				getBindingContext: function() {
@@ -239,7 +242,8 @@ sap.ui.define([
 
 
 			oManageAppsController.copyId(oEmptyEvent);
-			assert.ok(modelPropertySpy.calledOnce, "the modelProperty method is called once");
+			assert.equal(fnModelPropertyStub.callCount, 1, "the modelProperty method is called once");
+			assert.equal(fnMessageToastSpy.callCount, 1, "MessageToast.show is called once");
 		});
 
 		QUnit.test("when deleteAppVariant is called for app variant", function(assert) {
