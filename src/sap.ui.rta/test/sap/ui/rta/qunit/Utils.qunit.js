@@ -4,6 +4,7 @@ sap.ui.define([
 	"qunit/RtaQunitUtils",
 	"sap/base/util/restricted/_omit",
 	"sap/m/Button",
+	"sap/m/InstanceManager",
 	"sap/m/Label",
 	"sap/ui/core/Control",
 	"sap/ui/dt/DesignTime",
@@ -24,6 +25,7 @@ sap.ui.define([
 	RtaQunitUtils,
 	_omit,
 	Button,
+	InstanceManager,
 	Label,
 	Control,
 	DesignTime,
@@ -399,6 +401,24 @@ sap.ui.define([
 			sandbox.restore();
 		}
 	}, function() {
+		function waitForDialog() {
+			function checkForDialog(resolve) {
+				var oRtaDialog;
+				var bIsRtaDialog = InstanceManager.getOpenDialogs().some(function(oDialog) {
+					if (oDialog.hasStyleClass("sapUiRtaConfirmationDialog")) {
+						oRtaDialog = oDialog;
+						return true;
+					}
+				});
+				if (!bIsRtaDialog) {
+					return setTimeout(checkForDialog.bind(undefined, resolve));
+				}
+				return resolve(oRtaDialog);
+			}
+
+			return new Promise(checkForDialog);
+		}
+
 		QUnit.test("when the dialog gets closed", function(assert) {
 			var done = assert.async();
 			Utils.openRemoveConfirmationDialog()
@@ -408,10 +428,10 @@ sap.ui.define([
 				done();
 			});
 
-			setTimeout(function() {
-				assert.ok(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog is available");
-				sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogRemoveButton")[0].id).firePress();
-			}, 100);
+			waitForDialog().then(function(oDialog) {
+				assert.ok(oDialog, "the dialog is available");
+				oDialog.getBeginButton().firePress();
+			});
 		});
 
 		QUnit.test("when the dialog gets cancelled", function(assert) {
@@ -423,10 +443,10 @@ sap.ui.define([
 				done();
 			});
 
-			setTimeout(function() {
-				assert.ok(jQuery(".sapUiRtaConfirmationDialog").get(0), "the dialog is available");
-				sap.ui.getCore().byId(jQuery(".sapUiRtaConfirmationDialogCancelButton")[0].id).firePress();
-			}, 100);
+			waitForDialog().then(function(oDialog) {
+				assert.ok(oDialog, "the dialog is available");
+				oDialog.getEndButton().firePress();
+			});
 		});
 	});
 

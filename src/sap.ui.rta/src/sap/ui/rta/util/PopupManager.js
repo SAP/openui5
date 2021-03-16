@@ -4,7 +4,6 @@
 
 /* global Map */
 sap.ui.define([
-	"sap/ui/thirdparty/jquery",
 	"sap/ui/base/ManagedObject",
 	"sap/m/InstanceManager",
 	"sap/ui/dt/Overlay",
@@ -16,9 +15,7 @@ sap.ui.define([
 	"sap/m/Dialog",
 	"sap/m/Popover",
 	"sap/base/util/restricted/_curry"
-],
-function (
-	jQuery,
+], function(
 	ManagedObject,
 	InstanceManager,
 	Overlay,
