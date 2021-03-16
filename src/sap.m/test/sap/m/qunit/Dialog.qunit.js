@@ -1891,23 +1891,6 @@ sap.ui.define([
 		assert.strictEqual($dialogContentSection.height(), $dialog.height(), "The height of the content section is equal to the height of the dialog.");
 	});
 
-	QUnit.test("Check if after double click on header dialog has the right height", function(assert) {
-		// act
-		this.oDialog.open();
-		this.clock.tick(500);
-		var $dialogContent = this.oDialog.$('cont'),
-			$dialogHeader = this.oDialog._header.$(),
-			oCssStyles = {"height": 150,"width":540};
-		$dialogContent.css(oCssStyles);
-
-		assert.strictEqual($dialogContent.height(), 150, "Dialog height should be 150px");
-
-		$dialogHeader.trigger("dblclick");
-
-		// assert
-		assert.strictEqual($dialogContent.height(), 400, "Dialog height should be 400px");
-	});
-
 	QUnit.module("Keyboard drag and resize",{
 		beforeEach: function() {
 			var aListItems = [];
@@ -2305,23 +2288,6 @@ sap.ui.define([
 		afterEach: function() {
 			this.oDialog.destroy();
 		}
-	});
-
-	QUnit.test("Height should be 'auto' if content fits", function (assert) {
-		this.oDialog.open();
-		this.clock.tick(500);
-
-		// assert
-		assert.strictEqual(this.oDialog.$('cont')[0].style.height, "auto", "Height is auto when content fits");
-	});
-
-	QUnit.test("Height should be set, when the dialog is stretched", function (assert) {
-		this.oDialog.setStretch(true);
-		this.oDialog.open();
-		this.clock.tick(500);
-
-		// assert
-		assert.notEqual(this.oDialog.$('cont')[0].style.height, "auto", "Height is set when stretch=true");
 	});
 
 	QUnit.module("Dialog sizing", {

@@ -29,7 +29,7 @@
 			var _buttonWidth = "300px";
 			var dynamicContentDialogData = {
 				isVisible : false
-			}
+			};
 
 			var model = new sap.ui.model.json.JSONModel(dynamicContentDialogData);
 
@@ -39,7 +39,7 @@
 				subHeader: new sap.m.Bar({
 					contentMiddle: [
 						new sap.m.Text({
-							text: "Subheader ...",
+							text: "Subheader ..."
 						})
 					]
 				}),
@@ -390,7 +390,7 @@
 				content: new sap.m.OverflowToolbar({
 					content: new sap.m.Text({ text: "Only on SAP Quartz themes." })
 				}),
-				beginButton: new sap.m.Button({
+				beginButton: new sap.m.Button("dialogResponsivePaddingOKButton", {
 					text: "OK",
 					press: function () {
 						oDialogWithResponsivePadding.close();
@@ -814,7 +814,7 @@
 					text: "OK", press: function () {
 						oDialogSubHeaderInfoBar.close();
 					}
-				}),
+				})
 			});
 
 			var oDialogSubHeaderNoHeader = new sap.m.Dialog('subHeaderNoHeaderDialog', {
@@ -835,7 +835,7 @@
 					text: "OK", press: function () {
 						oDialogSubHeaderNoHeader.close();
 					}
-				}),
+				})
 			});
 
 			var oDialogStretched = new sap.m.Dialog('stretchedDialog', {
@@ -1378,6 +1378,53 @@
 
 			//=================================================================
 
+			var dummyData = {
+				names: []
+			};
+
+			for (var i = 0; i < 1000; i++) {
+				dummyData.names.push({
+					firstName: "First " + i,
+					lastName: "Last " + i
+				})
+			}
+
+			var oAutoGrowTable = new sap.m.Table({
+				growing: true,
+				growingThreshold: 5,
+				growingScrollToLoad: true,
+				columns: [
+					new sap.m.Column({header: new Text({text: "Last Name"})}),
+					new sap.m.Column({header: new Text({text: "First Name"})})
+				]
+			});
+
+			// bind the Table items to the data collection
+			oAutoGrowTable.bindItems({
+				path : "/names",
+				template : new sap.m.ColumnListItem({
+					cells: [
+						new sap.m.Text({text: "{lastName}"}),
+						new sap.m.Text({text: "{firstName}"})
+					]
+				})
+			});
+
+			oAutoGrowTable.setModel(new sap.ui.model.json.JSONModel(dummyData));
+
+			var oDialogWithAutoGrowTable = new sap.m.Dialog('dialogWithAutoGrowTable', {
+				title: 'dialogWithAutoGrowTable',
+				content: oAutoGrowTable,
+				beginButton: new sap.m.Button("dialogWithAutoGrowTableOKButton", {
+					text: "OK",
+					press: function () {
+						oDialogWithAutoGrowTable.close();
+					}
+				})
+			});
+
+			//=================================================================
+
 			var page1 = new sap.m.Page("page1", {
 				title: "Mobile Dialog Control",
 				content: [
@@ -1846,6 +1893,15 @@
 						ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
 						press: function() {
 							oDialogSubHeaderNoHeader.open();
+						}
+					}),
+
+					new sap.m.Button("buttonAutoGrowTable", {
+						text : "Dialog with auto grow Table",
+						width: _buttonWidth,
+						ariaHasPopup: sap.ui.core.aria.HasPopup.Dialog,
+						press: function() {
+							oDialogWithAutoGrowTable.open();
 						}
 					})
 				]
