@@ -237,13 +237,21 @@ html[data-sap-ui-browser^="ff"].sap-desktop {
 	}
 
 	.sapFDynamicPageTitleMainContent {
-		min-width: 0;
+		min-width: 0.0625rem;
 		padding: 0 0 0 0.5rem;
+
+		&.sapFDynamicPageTitleMainContentHasContent {
+			min-width: 3rem;
+		}
 	}
 
 	.sapFDynamicPageTitleMainActions {
 		margin-left: auto;
-		min-width: 0;
+		min-width: 0.0625rem;
+
+		&.sapFDynamicPageTitleMainActionsHasContent {
+			min-width: 3rem;
+		}
 
 	.sapFDynamicPageTitleActionsBar .sapMLabel.sapMLabelMaxWidth,
 	.sapFDynamicPageTitleActionsBar .sapMLnk.sapMLnkMaxWidth {

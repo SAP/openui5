@@ -158,6 +158,9 @@ sap.ui.define([
 		if (oDynamicPageTitleState.contentAreaFlexBasis) {
 			oRm.style("flex-basis", oDynamicPageTitleState.contentAreaFlexBasis);
 		}
+		if (oDynamicPageTitleState.contentAreaHasContent) {
+			oRm.class("sapFDynamicPageTitleMainContentHasContent");
+		}
 		oRm.openEnd();
 		oDynamicPageTitleState.content.forEach(oRm.renderControl, oRm);
 		oRm.close("div");
@@ -169,6 +172,9 @@ sap.ui.define([
 		oRm.style("flex-shrink", oDynamicPageTitleState.actionsAreaShrinkFactor);
 		if (oDynamicPageTitleState.actionsAreaFlexBasis) {
 			oRm.style("flex-basis", oDynamicPageTitleState.actionsAreaFlexBasis);
+		}
+		if (oDynamicPageTitleState.actionsAreaHasContent) {
+			oRm.class("sapFDynamicPageTitleMainActionsHasContent");
 		}
 		oRm.openEnd();
 		if (oDynamicPageTitleState.hasActions) {
