@@ -31,6 +31,7 @@ sap.ui.define([
 		return BaseController.extend("sap.ui.documentation.sdk.controller.SubApiDetail", {
 
 			NOT_AVAILABLE: 'N/A',
+			PUBLIC_GITHUB_FRAMEWORK_DOMAIN: 'https://github.com/SAP/openui5/blob/master/src/',
 			SECTION_MAP: {
 				"properties": "controlProperties",
 				"fields": "properties",
@@ -385,6 +386,19 @@ sap.ui.define([
 								]
 							}, true);
 						},
+						_getControlGithub: function (oControlData, oEntityData) {
+							return _getHBox({
+								items: [
+									_getLabel({design: "Bold", text: "GitHub:"}),
+									_getLink({
+										emphasized: true,
+										text: oControlData.resource,
+										visible: true,
+										href: this.PUBLIC_GITHUB_FRAMEWORK_DOMAIN + oEntityData.lib + '/src/' + oControlData.resource
+									})
+								]
+							}, true);
+						},
 						_getDocumentationBlock: function (oControlData, oEntityData) {
 							return _getHBox({
 								items: [
@@ -546,9 +560,11 @@ sap.ui.define([
 					aHeaderControls = [[], [], []],
 					oHeaderLayoutUtil = this._getHeaderLayoutUtil(),
 					aSubClasses = oEntityData.extendedBy || oEntityData.implementedBy || [],
+					bIsOpenUI5 = this.getModel("versionData").getProperty("/isOpenUI5"),
 					aHeaderBlocksInfo = [
 						{creator: "_getControlSampleBlock", exists: oControlData.isClass || oControlData.isNamespace},
 						{creator: "_getDocumentationBlock", exists: oControlData.docuLink !== undefined},
+						{creator: "_getControlGithub", exists: bIsOpenUI5 && oControlData.resource && oEntityData.lib},
 						{creator: "_getUXGuidelinesBlock", exists: oControlData.uxGuidelinesLink !== undefined},
 						{creator: "_getExtendsBlock", exists: oControlData.isClass},
 						{creator: "_getSubclassesBlock", exists: aSubClasses.length > 0},
