@@ -2,7 +2,7 @@
  * ${copyright}
  */
 /**
- * See {@link https://lodash.com/docs/4.17.20#compact}
+ * See {@link https://lodash.com/docs/4.17.21#compact}
  *
  * @function
  * @alias module:sap/base/util/restricted/_compact
