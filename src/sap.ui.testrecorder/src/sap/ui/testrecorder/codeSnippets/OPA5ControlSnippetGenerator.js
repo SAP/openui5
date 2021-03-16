@@ -65,7 +65,8 @@ sap.ui.define([
 			} else if (mAssertion.propertyType === "boolean") {
 				return "Opa5.assert.ok(" + sGetterCall + ");";
 			} else {
-				return 'Opa5.assert.strictEqual(' + sGetterCall + ', "' + mAssertion.expectedValue + '");';
+				var sExpectedValue = this._escapeQuotes(mAssertion.expectedValue);
+				return 'Opa5.assert.strictEqual(' + sGetterCall + ', "' + sExpectedValue + '");';
 			}
 		} else {
 			return "";

@@ -49,8 +49,8 @@ sap.ui.define([
 		return "";
 	};
 
-	ControlSnippetGenerator.prototype._getSelectorAsString = function (sControlSelector) {
-		var sSelector = JSON.stringify(sControlSelector, undefined, 4);
+	ControlSnippetGenerator.prototype._getSelectorAsString = function (mControlSelector) {
+		var sSelector = JSON.stringify(mControlSelector, undefined, 4);
 		// remove quotes from keys. our key names are 'safe'
 		return sSelector.replace(/\"([^(\")"]+)\":/g, "$1:");
 	};
@@ -61,6 +61,10 @@ sap.ui.define([
 			sResult += " ";
 		}
 		return sResult;
+	};
+
+	ControlSnippetGenerator.prototype._escapeQuotes = function (sValue) {
+		return sValue.replace(/"/g, '\\"');
 	};
 
 	return ControlSnippetGenerator;
