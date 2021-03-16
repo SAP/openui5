@@ -60,19 +60,21 @@
 						new sap.m.Select({
 							items: [
 								new sap.ui.core.Item({text: "No visual grouping", key: 0}),
-								new sap.ui.core.Item({text: "Group country", key: 1}),
-								new sap.ui.core.Item({text: "Group country and region", key: 2})
+								new sap.ui.core.Item({text: "Group country id", key: 1}),
+								new sap.ui.core.Item({text: "Group country text", key: 2}),
+								new sap.ui.core.Item({text: "Group country id and region", key: 3})
 							],
 							change: function(oEvent) {
 								switch (oEvent.getParameters().selectedItem.getProperty("key")) {
 									case "1":
 										oAggregationInfo.groupLevels = ["Country"];
 										break;
-
 									case "2":
+										oAggregationInfo.groupLevels = ["CountryText"];
+										break;
+									case "3":
 										oAggregationInfo.groupLevels = ["Country", "Region"];
 										break;
-
 									default:
 										oAggregationInfo.groupLevels = [];
 								}
@@ -197,7 +199,7 @@
 
 		oTable.addColumn(new sap.ui.table.Column({
 			label: new sap.m.Text({text: "Country"}),
-			template: new sap.m.Text({text: "{Country}", wrapping: false}),
+			template: new sap.m.Text({text: "{CountryText} ({Country})", wrapping: false}),
 			width: "120px"
 		}).data("propertyInfo", {
 			"Country": {
@@ -335,6 +337,14 @@
 			{
 				name: "Country",
 				path: "Country",
+				label: "Country",
+				text: "CountryText",
+				groupable: true
+			},
+			{
+				name: "CountryText",
+				path: "CountryText",
+				label: "Country Text",
 				groupable: true
 			},
 			{
@@ -401,7 +411,7 @@
 		]);
 
 		var oAggregationInfo = {
-			visible: ["Name", "Country", "Region", "Currency", "LocalCurrency", "SalesAmount", "SalesAmountLocalCurrency", "Industry"],
+			visible: ["Name", "Country", "CountryText", "Region", "Currency", "LocalCurrency", "SalesAmount", "SalesAmountLocalCurrency", "Industry"],
 			subtotals: [],
 			grandTotal: [],
 			groupLevels: []

@@ -41,7 +41,7 @@ sap.ui.define([
 	 */
 	var PropertyHelper = PropertyHelperBase.extend("sap.ui.mdc.table.PropertyHelper", {
 		constructor: function(aProperties, mExtensions, oParent, mExtensionAttributeMetadata) {
-			var aAllowedAttributes = ["filterable", "sortable", "groupable", "key", "unit", "exportSettings", "propertyInfos"];
+			var aAllowedAttributes = ["filterable", "sortable", "groupable", "key", "unit", "text", "exportSettings", "propertyInfos"];
 			PropertyHelperBase.call(this, aProperties, mExtensions, oParent, aAllowedAttributes, mExtensionAttributeMetadata);
 		}
 	});

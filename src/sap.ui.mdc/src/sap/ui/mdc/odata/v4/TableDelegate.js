@@ -96,13 +96,22 @@ sap.ui.define([
 		return this.fetchPropertyExtensions(oTable, aProperties);
 	};
 
+	/**
+	 * Formats the title text of a group header row of the table.
+	 *
+	 * @param {sap.ui.mdc.Table} oTable Instance of the MDC table
+	 * @param {sap.ui.model.Context} oContext Binding context
+	 * @param {string} sProperty The name of the grouped property
+	 * @returns {string | undefined} The group header title. If <code>undefined</code> is returned, the default group header title is set.
+	 */
+	Delegate.formatGroupHeader = function(oTable, oContext, sProperty) {};
+
 	Delegate.preInit = function(oTable) {
-		var that = this;
 		if (oTable._getStringType() === TableType.ResponsiveTable) {
-			throw new Error("This delegate does not support the table type '" + TableDelegate.ResponsiveTable + "'.");
+			throw new Error("This delegate does not support the table type '" + TableType.ResponsiveTable + "'.");
 		}
 
-		return enrichGridTable(oTable, that);
+		return enrichGridTable(oTable);
 	};
 
 	Delegate.addColumnMenuItems = function(oTable, oMDCColumn) {
@@ -201,13 +210,14 @@ sap.ui.define([
 			sTitle = sName == "Aggregate" ? oResourceBundle.getText("table.SETTINGS_AGGREGATE") : oResourceBundle.getText("table.SETTINGS_GROUP");
 			bForcedAnalytics = true;
 			MessageBox.warning(oResourceBundle.getText("table.SETTINGS_MESSAGE"), {
+				id: oTable.getId() + "-messageBox",
 				title: oResourceBundle.getText("table.SETTINGS_WARNING_TITLE") + " " + sTitle,
 				actions: [MessageBox.Action.YES, MessageBox.Action.NO],
 				onClose: function (oAction) {
 					if (oAction === sap.m.MessageBox.Action.YES) {
 						this._forceAnalytics(sName, oTable, sPath);
-						return;
 					}
+					Core.byId(oTable.getId() + "-messageBox").destroy();
 				}.bind(this)
 			});
 		}
@@ -227,7 +237,10 @@ sap.ui.define([
 	};
 
 	Delegate._forceAnalytics = function(sName, oTable, sPath) {
-		var self = this;
+		var that = this;
+
+		// TODO: We should get rid of the Delegate._setAggregation call
+		// FIXME: A flex change needs to be created for the removed grouping/aggregation
 		if (sName === "Aggregate") {
 			oTable.getCurrentState().groupLevels.forEach(function (item, index, object) {
 				if (item.name == sPath) {
@@ -235,7 +248,13 @@ sap.ui.define([
 					var oAggregate = oTable.getCurrentState().aggregations || {};
 					var aAggregate = Object.keys(oAggregate);
 					aGroupLevel.splice(index, 1);
-					self._setAggregation(oTable, aGroupLevel, aAggregate);
+
+					// TODO: There should be a test that fails if Delegate._setAggregation is called with invalid arguments
+					aGroupLevel = aGroupLevel.map(function (item) {
+						return item.name;
+					});
+
+					that._setAggregation(oTable, aGroupLevel, aAggregate);
 				}
 			});
 			oTable._onCustomAggregate(sPath);
@@ -246,7 +265,13 @@ sap.ui.define([
 					delete oAggregate[sPath];
 					var aAggregate = Object.keys(oAggregate);
 					var aGroupLevel = oTable.getCurrentState().groupLevels || [];
-					self._setAggregation(oTable, aGroupLevel, aAggregate);
+
+					// TODO: There should be a test that fails if Delegate._setAggregation is called with invalid arguments
+					aGroupLevel = aGroupLevel.map(function (item) {
+						return item.name;
+					});
+
+					that._setAggregation(oTable, aGroupLevel, aAggregate);
 				}
 			});
 			oTable._onCustomGroup(sPath);
@@ -317,6 +342,12 @@ sap.ui.define([
 		var aGroupLevel = oTable.getCurrentState().groupLevels || [];
 		var oAggregate  = oTable.getCurrentState().aggregations || {};
 		var aAggregate = Object.keys(oAggregate);
+
+		// TODO: There should be a test that fails if Delegate._setAggregation is called with invalid arguments
+		aGroupLevel = aGroupLevel.map(function (item) {
+			return item.name;
+		});
+
 		this._setAggregation(oTable, aGroupLevel, aAggregate);
 	};
 
@@ -353,11 +384,12 @@ sap.ui.define([
 	};
 
 
-	function enrichGridTable(oTable, that) {
+	function enrichGridTable(oTable) {
 		// The property helper is initialized after the table "initialized" promise resolves. So we can only wait for the property helper.
-		var aPropertiesForBinding,
-			mExtensionsForBinding,
-			oPlugin;
+		var aPropertiesForBinding;
+		var mExtensionsForBinding;
+		var oPlugin;
+		var oDelegate = oTable.getControlDelegate();
 
 		return Promise.all([
 			oTable.awaitPropertyHelper(),
@@ -366,7 +398,11 @@ sap.ui.define([
 			var V4AggregationPlugin = aResult[1][0],
 				oInnerTable = oTable._oTable;
 
-			oPlugin = new V4AggregationPlugin();
+			oPlugin = new V4AggregationPlugin({
+				groupHeaderFormatter: function(oContext, sProperty) {
+					return oDelegate.formatGroupHeader(oTable, oContext, sProperty);
+				}
+			});
 
 			oInnerTable.addDependent(oPlugin);
 
@@ -375,17 +411,17 @@ sap.ui.define([
 			});
 
 			// Configure the plugin with the propertyInfos
-			return that.fetchPropertiesForBinding(oTable);
+			return oDelegate.fetchPropertiesForBinding(oTable);
 		}).then(function(aProperties) {
 			aPropertiesForBinding = aProperties;
-			return that.fetchPropertyExtensionsForBinding(oTable, aPropertiesForBinding);
+			return oDelegate.fetchPropertyExtensionsForBinding(oTable, aPropertiesForBinding);
 		}).then(function(mExtensions) {
 			mExtensionsForBinding = mExtensions;
-			return that.fetchPropertyHelper(oTable, aPropertiesForBinding, mExtensionsForBinding);
+			return oDelegate.fetchPropertyHelper(oTable, aPropertiesForBinding, mExtensionsForBinding);
 		}).then(function(HelperClass) {
 			var oHelper = new HelperClass(aPropertiesForBinding, mExtensionsForBinding, oTable);
 			oPlugin.setPropertyInfos(oHelper.getProperties());
-			that._setAggregation(oTable, [], []);
+			oDelegate._setAggregation(oTable, [], []);
 			oHelper.destroy();
 		});
 	}

@@ -121,7 +121,10 @@ sap.ui.define([
 			type: "PropertyReference[]",
 			allowedForComplexProperty: true
 		},
-		unit: { // Name of the property that is the unit of this property.
+		unit: { // Name of the unit property that is related to this property.
+			type: "PropertyReference"
+		},
+		text: { // Name of the text property that is related to this property in a 1:1 relation.
 			type: "PropertyReference"
 		},
 		exportSettings: { // Export settings as specified by sap.ui.export.Spreadsheet.
