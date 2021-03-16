@@ -64,8 +64,9 @@ sap.ui.define(['sap/ui/Device', "sap/base/Log"],
 					return oMimeTypeItem !== null;
 				});
 			} else {
-				if (Device.browser.chrome) {
-					return bIsEnabled;
+				//Return true if the browser is headless, since there are no plugins installed on headless browsers
+				if (navigator.userAgent.match(/headless/gi)) {
+					bIsEnabled = false;
 				}
 			}
 

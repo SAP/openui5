@@ -22,7 +22,7 @@ sap.ui.define([
 	});
 
 	// this test suite is only for environment where no plugin is installed
-	if (PDFViewerRenderer._isPdfPluginEnabled() && !Device.browser.chrome) {
+	if (PDFViewerRenderer._isPdfPluginEnabled()) {
 		return;
 	}
 
