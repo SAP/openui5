@@ -718,34 +718,18 @@ sap.ui.define([
 
 	QUnit.test("Empty Indicator", function(assert) {
 
-		// initial no empty indicator
+		// show empty indicator
+		oField.setShowEmptyIndicator(true);
 		oField.setEditMode(EditMode.Display);
 		oField.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
 		var aContent = oField.getAggregation("_content");
 		var oContent = aContent && aContent.length > 0 && aContent[0];
-		var oDomRef = oField.getDomRef();
 		var oContentDomRef = oContent && oContent.getDomRef();
-
-		assert.ok(oContentDomRef, "content control rendered");
-		assert.equal(oDomRef && oDomRef.children.length, 1, "Only one child rendered");
-		assert.equal(oDomRef && oDomRef.children[0], oContentDomRef, "Content control is child");
-
-		// show empty indicator
-		oField.setShowEmptyIndicator(true);
-		sap.ui.getCore().applyChanges();
-
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
-		oDomRef = oField.getDomRef();
-		oContentDomRef = oContent && oContent.getDomRef();
-		assert.notOk(oContentDomRef, "content control not rendered");
-		assert.equal(oDomRef && oDomRef.children.length, 2, "two childs rendered");
-		assert.ok(jQuery(oDomRef.children[0]).hasClass("sapUiPseudoInvisibleText"), "First child is invisible text");
-		assert.equal(jQuery(oDomRef.children[0]).text(), oResourceBundle.getText("field.NO_VALUE"), "First child text");
-		assert.ok(jQuery(oDomRef.children[1]).hasClass("sapUiMdcFieldBaseEmpty"), "Second child is empty indicator");
-		assert.equal(jQuery(oDomRef.children[1]).text(), "", "Second child has no text");
-		assert.equal(jQuery(oDomRef.children[1]).attr("emptyIndicator"), oResourceBundle.getText("field.EMPTY_INDICATOR"), "Second child has emptyIndicator attribute");
+		assert.equal(oContent.getMetadata().getName(), "sap.m.Text", "sap.m.Text is used");
+		assert.ok(oContentDomRef, "content control is rendered");
+		assert.ok(jQuery(oContentDomRef.children[0]).hasClass("sapMEmptyIndicator"), "Empty indicator rendered in Text control");
 
 		// condition with empty key
 		var oCondition = Condition.createItemCondition("", "");
@@ -753,11 +737,10 @@ sap.ui.define([
 		oCM.checkUpdate(true, false); // update model syncronous
 		sap.ui.getCore().applyChanges();
 
-		oDomRef = oField.getDomRef();
 		oContentDomRef = oContent && oContent.getDomRef();
 		assert.ok(oContentDomRef, "content control rendered");
-		assert.equal(oDomRef && oDomRef.children.length, 1, "Only one child rendered");
-		assert.equal(oDomRef && oDomRef.children[0], oContentDomRef, "Content control is child");
+		assert.ok(jQuery(oContentDomRef.children[0]).hasClass("sapMEmptyIndicator"), "Empty indicator rendered in Text control");
+		assert.equal(jQuery(oContentDomRef.children[0]).css("display"), "none", "Empty indicator hidden");
 
 		// edit mode
 		oField.setEditMode(EditMode.Editable);
@@ -765,7 +748,7 @@ sap.ui.define([
 		oCM.checkUpdate(true, false); // update model syncronous
 		sap.ui.getCore().applyChanges();
 		oContent = aContent && aContent.length > 0 && aContent[0];
-		oDomRef = oField.getDomRef();
+		var oDomRef = oField.getDomRef();
 		oContentDomRef = oContent && oContent.getDomRef();
 		assert.ok(oContentDomRef, "content control rendered");
 		assert.equal(oDomRef && oDomRef.children.length, 1, "Only one child rendered");
@@ -928,13 +911,13 @@ sap.ui.define([
 
 	QUnit.test("getFormFormattedValue with showEmptyIndicator", function(assert) {
 
-		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.ui.mdc");
+		var oResourceBundle = sap.ui.getCore().getLibraryResourceBundle("sap.m");
 		oField.setShowEmptyIndicator(true);
 		oField.setDisplay(FieldDisplay.Description);
 		oField.placeAt("content");
 		sap.ui.getCore().applyChanges();
 
-		assert.equal(oField.getFormFormattedValue(), oResourceBundle.getText("field.EMPTY_INDICATOR"), "Formatted Value");
+		assert.equal(oField.getFormFormattedValue(), oResourceBundle.getText("EMPTY_INDICATOR"), "Formatted Value");
 
 	});
 

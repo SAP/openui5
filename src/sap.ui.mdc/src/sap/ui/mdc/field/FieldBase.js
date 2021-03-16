@@ -1200,7 +1200,10 @@ sap.ui.define([
 		var bShowEmptyIndicator = this.getShowEmptyIndicator() && aConditions.length === 0 && !this.getContent() && !this.getContentDisplay();
 
 		if (bShowEmptyIndicator) {
-			return this._oResourceBundle.getText("field.EMPTY_INDICATOR"); // TODO: clarify accessibility support for semantic conected fields
+			if (!this._oResourceBundleM) {
+				this._oResourceBundleM = sap.ui.getCore().getLibraryResourceBundle("sap.m");
+			}
+			return this._oResourceBundleM.getText("EMPTY_INDICATOR"); // TODO: clarify accessibility support for semantic conected fields
 		} else if (this._oContentFactory.isMeasure() && this._oContentFactory.getUnitOriginalType()) {
 			// in unit case use original data type for formatting (as internal type hides unit)
 			var aValue = aConditions.length > 0 ? aConditions[0].values[0] : [0, null]; // TODO: support multiple conditions or other operator than EQ?
