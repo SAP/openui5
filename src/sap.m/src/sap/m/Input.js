@@ -1290,18 +1290,22 @@ function(
 	 * @param {jQuery.Event} oEvent Keyboard event.
 	 */
 	Input.prototype.onsapenter = function(oEvent) {
-		var iValueLength;
+		var bPopupOpened = this._isSuggestionsPopoverOpen(),
+			bFocusInPopup = !this.hasStyleClass("sapMFocus") && bPopupOpened,
+			iValueLength;
+
 		// when enter is pressed before the timeout of suggestion delay, suggest event is cancelled
 		this.cancelPendingSuggest();
 
-		if (this._isSuggestionsPopoverOpen() && !this.isComposingCharacter()) {
-			this.setSelectionUpdatedFromList(true);
+		bFocusInPopup && this.setSelectionUpdatedFromList(true);
+
+		if (bPopupOpened && !this.isComposingCharacter()) {
 			this._closeSuggestionPopup();
 			iValueLength = this.getDOMValue() ? this.getDOMValue().length : null;
 			this.selectText(iValueLength, iValueLength); // Remove text selection
-		} else {
-			InputBase.prototype.onsapenter.apply(this, arguments);
 		}
+
+		!bFocusInPopup && InputBase.prototype.onsapenter.apply(this, arguments);
 
 		if (this.getEnabled() && this.getEditable() && !(this.getValueHelpOnly() && this.getShowValueHelp())) {
 			this.fireSubmit({value: this.getValue()});
