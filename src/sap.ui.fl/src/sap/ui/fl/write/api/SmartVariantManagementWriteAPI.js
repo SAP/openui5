@@ -284,7 +284,7 @@ sap.ui.define([
 		 */
 		isVariantAdaptationEnabled: function() {
 			return Settings.getInstance().then(function (oInstance) {
-				return oInstance.isPublicLayerAvailable();
+				return oInstance.isVariantAdaptationEnabled();
 			});
 		},
 
