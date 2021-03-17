@@ -25,9 +25,9 @@
 		"extension": "./NorthwindImageExtension",
 		"configuration": {
 			"destinations": {
-				"NorthwindDestination": {
-					"name": "Northwind",
-					"label": "Northwind Service URL",
+				"Northwind_V3": {
+					"name": "Northwind_V3",
+					"label": "Northwind V3 Service URL",
 					"defaultUrl": "https://services.odata.org/V3/Northwind/Northwind.svc"
 				}
 			},
@@ -42,7 +42,7 @@
 		},
 		"data": {
 			"request": {
-				"url": "{{destinations.NorthwindDestination}}/Employees({{parameters.employeeId}})",
+				"url": "{{destinations.Northwind_V3}}/Employees({{parameters.employeeId}})",
 				"parameters": {
 					"$format": "json"
 				}

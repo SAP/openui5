@@ -13,7 +13,7 @@ sap.ui.define([
 		var oCard = this.getCard();
 
 		return oCard
-			.resolveDestination("NorthwindDestination")
+			.resolveDestination("Northwind_V2")
 			.then(this.getEmployeeAndOrders.bind(this));
 	};
 

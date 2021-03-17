@@ -21,14 +21,15 @@
 					},
 					"data": {
 						"request": {
-							"url": "{{destinations.northwind}}/Shippers"
+							"url": "{{destinations.Northwind_V4}}/Shippers"
 						}
 					}
 				}
 			},
 			"destinations": {
-				"northwind": {
-					"name": "Northwind",
+				"Northwind_V4": {
+					"name": "Northwind_V4",
+					"label": "Northwind V4 Service URL",
 					"defaultUrl": "https://services.odata.org/V4/Northwind/Northwind.svc"
 				}
 			},
@@ -48,7 +49,7 @@
 		},
 		"data": {
 			"request": {
-				"url": "{{destinations.northwind}}/Orders",
+				"url": "{{destinations.Northwind_V4}}/Orders",
 				"parameters": {
 					"$top": "{{parameters.maxOrdersShown}}",
 					"$filter": "Shipper/ShipperID eq {filters>/shipper/value}"
