@@ -9,24 +9,26 @@
 	max-width: 100%;
 	text-overflow: ellipsis;
 	word-wrap: normal;
+	overflow: visible;
+	min-height: 1rem;
 	font-family: @sapUiFontFamily;
 	font-size: @sapMFontMediumSize;
-	overflow: visible;
-	line-height: 0.875rem;
-	min-height: 1rem;
-	vertical-align: middle;
 
 	&.sapMObjectNumberLarge {
 		vertical-align: middle;
-		min-height: 2rem;
-		line-height: 2rem;
+		height: 2rem;
 		font-size: 1.5rem;
 		&.sapMObjectNumberInverted .sapMObjectNumberInner{
 			padding: 0 0.25rem;
 		}
+		& .sapMObjectNumberInner {
+			height: 2rem;
+		}
 		.sapMObjectNumberText,
 		.sapMObjectNumberUnit {
-			vertical-align: top;
+			line-height: 2rem;
+			vertical-align: middle;
+			height: 2rem;
 		}
 	}
 }
@@ -37,8 +39,10 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	max-width: 100%;
-	vertical-align: middle;
 	text-decoration: none;
+	min-height: 1rem;
+	vertical-align: middle;
+	line-height: 1rem;
 	font-family: @sapUiFontFamily;
 	text-shadow: @sapUiContentTextShadow;
 }
@@ -53,8 +57,10 @@
 	overflow: hidden;
 	text-overflow: ellipsis;
 	max-width: 100%;
-	vertical-align: middle;
 	text-decoration: none;
+	height: 1rem;
+	line-height: 1rem;
+	vertical-align: middle;
 	font-family: @sapUiFontLightFamily;
  	text-shadow: @sapUiContentTextShadow;
 }
@@ -119,8 +125,11 @@ html[data-sap-ui-os^="Android"] {
 
 .sapMObjectNumberInner {
 	position: relative;
+	box-sizing: border-box;
 	display: inline-block;
 	min-height: 1rem;
+	line-height: 0.875rem;
+	vertical-align: text-top;
 }
 
 html.sap-desktop .sapMObjectNumberActive:focus {
@@ -134,18 +143,31 @@ html.sap-desktop .sapMObjectNumberActive:focus {
 		position: absolute;
 		top: -1px;
 		left: 1px;
-		bottom: -1px;
+		bottom: 0px;
 		right: 1px;
+		height: 1.125rem;
 		outline: 1px dotted @sapUiContentFocusColor;
 	}
+
+	&.sapMObjectNumberInverted .sapMObjectNumberInner::after {
+		top: -1px;
+		left: 1px;
+		bottom: -1px;
+		right: 1px;
+		height: 1.125rem;
+		outline: 1px dotted @sapUiContentFocusColor;
+	}
+
+
 
 	&.sapMObjectNumberLarge {
 
 		.sapMObjectNumberInner::after {
-			top: 1px;
+			top: 0px;
 			left: 1px;
-			bottom: 1px;
+			bottom: 0px;
 			right: 1px;
+			height: 2rem;
 		}
 
 		&.sapMObjectNumberInverted .sapMObjectNumberInner::after {
@@ -153,6 +175,7 @@ html.sap-desktop .sapMObjectNumberActive:focus {
 			left: 3px;
 			bottom: 3px;
 			right: 3px;
+			height: 1.625rem;
 			outline: 1px dotted @sapContent_ContrastFocusColor;
 		}
 
@@ -180,13 +203,24 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 
 .sapMObjectNumberInverted {
 
+	vertical-align: initial;
+
 	.sapMObjectNumberInner {
-		height: auto;
-		min-height: 1rem;
+		height: 1rem;
 		width: auto;
 		min-width: 1.25rem;
 		padding: 0 0.25rem;
 		border-radius: @sapUiElementBorderCornerRadius;
+		line-height: 0.75rem;
+	}
+
+	.sapMObjectNumberInner::after {
+		top: -1px;
+		left: 1px;
+		bottom: 1px;
+		right: 1px;
+		height: 1.25rem;
+		outline: 1px dotted @sapUiContentFocusColor;
 	}
 
 	&:not(.sapMObjectNumberLarge) {
@@ -195,13 +229,14 @@ html[data-sap-ui-browser ^= "ie"], html[data-sap-ui-browser^="ed"] {
 
 	.sapMObjectNumberText,
 	.sapMObjectNumberUnit {
+		font-family: @sapUiFontFamily;
 		font-size: @sapMFontSmallSize;
 		text-shadow: none;
 	}
 
 	&.sapMObjectNumberLarge {
 
-		min-height: 2rem;
+		height: 2rem;
 
 		.sapMObjectNumberText,
 		.sapMObjectNumberUnit {
