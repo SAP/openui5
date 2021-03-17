@@ -5,8 +5,6 @@
 sap.ui.define([
 	"sap/base/util/restricted/_omit",
 	"sap/base/util/restricted/_pick",
-	"sap/base/util/UriParameters",
-	"sap/ui/fl/Layer",
 	"sap/ui/fl/Change",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariant",
 	"sap/ui/fl/apply/_internal/flexObjects/CompVariantRevertData",
@@ -17,8 +15,6 @@ sap.ui.define([
 ], function(
 	_omit,
 	_pick,
-	UriParameters,
-	Layer,
 	Change,
 	CompVariant,
 	CompVariantRevertData,
@@ -75,7 +71,7 @@ sap.ui.define([
 				fileName: Utils.createDefaultFileName(sChangeType),
 				fileType: "change",
 				changeType: sChangeType,
-				layer: mPropertyBag.layer || Layer.USER,
+				layer: mPropertyBag.layer,
 				namespace: Utils.createNamespace(mPropertyBag, "changes"),
 				reference: mPropertyBag.reference,
 				selector: {
@@ -228,32 +224,6 @@ sap.ui.define([
 		return mInternalTexts;
 	}
 
-	function determineLayer(mPropertyBag) {
-		// the SmartVariantManagementWriteAPI.addVariant-caller within sap.ui.rta provides a layer ...
-		if (mPropertyBag.layer) {
-			return mPropertyBag.layer;
-		}
-
-		// ... the SmartVariantManagementWriteAPI.add-caller cannot determine the layer on its own, but provides a isUserDependent flag
-		if (mPropertyBag.isUserDependent) {
-			return Layer.USER;
-		}
-
-		var sLayer = UriParameters.fromQuery(window.location.search).get("sap-ui-layer") || "";
-		sLayer = sLayer.toUpperCase();
-		if (sLayer) {
-			return sLayer;
-		}
-
-		// PUBLIC is only used for "public" variants
-		if (!mPropertyBag.isVariant) {
-			return Layer.CUSTOMER;
-		}
-
-		var bPublicLayerAvailable = Settings.getInstanceOrUndef().isPublicLayerAvailable();
-		return bPublicLayerAvailable ? Layer.PUBLIC : Layer.CUSTOMER;
-	}
-
 	function getVariantById(mPropertyBag) {
 		var mCompVariantsByIdMap = FlexState.getCompEntitiesByIdMap(mPropertyBag.reference);
 		return mCompVariantsByIdMap[mPropertyBag.id];
@@ -356,7 +326,7 @@ sap.ui.define([
 			reference: mPropertyBag.reference,
 			fileType: oChangeSpecificData.isVariant ? "variant" : "change",
 			packageName: oChangeSpecificData.packageName,
-			layer: determineLayer(oChangeSpecificData),
+			layer: oChangeSpecificData.layer,
 			selector: {
 				persistencyKey: mPropertyBag.persistencyKey
 			},
