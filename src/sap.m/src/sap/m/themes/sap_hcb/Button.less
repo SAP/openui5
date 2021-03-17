@@ -82,29 +82,6 @@ html.sap-desktop .sapMBtn:focus > .sapMFocusable:not(.sapMBtnActive) {
 }
 
 /* ---------------------------------------------------------------------*/
-/* Custom focus outline for IE and Edge:                                */
-/* ---------------------------------------------------------------------*/
-.sapMBtn:focus > .sapMBtnInner.sapMFocusable.sapMIE {
-	outline: none;
-	position: relative;
-}
-
-.sapMBtnFocusDiv {
-	box-sizing: border-box;
-	width: 100%;
-	height: 100%;
-	position: absolute;
-	left: 0;
-	top: 0;
-	border-radius: 0;
-}
-
-/* dotted line appears blurry in IE and EDGE browsers. In these cases use dashed */
-.sapMBtn:focus .sapMBtnFocusDiv {
-	border: 0.125rem dashed @sapUiContentFocusColor;
-}
-
-/* ---------------------------------------------------------------------*/
 /* Disabled state                                                       */
 /* ---------------------------------------------------------------------*/
 

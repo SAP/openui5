@@ -95,25 +95,7 @@ html.sap-desktop .sapMTokenizer:focus {
 	display: inline-block;
 	-moz-user-select: none;
 	-webkit-user-select: none;
-	-ms-user-select: none;
 	height: 100%;
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop, /* TODO remove after the end of support for Internet Explorer */
-html[data-sap-ui-browser^="ed"].sap-desktop {
-	.sapMTokenizer:focus {
-		outline: none;
-
-		&:before {
-			position: absolute;
-			top: 2px;
-			left: 2px;
-			right: 2px;
-			bottom: 2px;
-			content: "";
-			pointer-events: none;
-		}
-	}
 }
 
 .sapMTokenizer.sapMTokenizerOneLongToken .sapMTokenizerScrollContainer{
