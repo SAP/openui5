@@ -184,29 +184,9 @@ td.sapUiFormElementLbl:not(.sapUiGridLabelFull) > .sapMLabel{
 	}
 }
 
-html[data-sap-ui-browser^=ie] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel,
-html[data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel {
-	text-align: right !important; /* to overwrite setting on label */
-}
-
-html[dir=rtl][data-sap-ui-browser^=ie] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer:first-child > .sapUiRFLContainerContent > .sapMLabel {
-	text-align: left !important; /* to overwrite setting on label */
-}
-
 .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel{
 	text-align: start !important; /* to overwrite setting on label */
 	padding-bottom: 2px;
-}
-
-html[data-sap-ui-browser^=ie] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel,
-html[data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel {
-	text-align: left !important; /* to overwrite setting on label */
-}
-
-html[dir=rtl][data-sap-ui-browser^=ie] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-child > .sapUiRFLContainer.sapUiRFLFullLength > .sapUiRFLContainerContent > .sapMLabel {
-	text-align: right !important; /* to overwrite setting on label */
 }
 
 /* ResponsiveGridLayout */
@@ -273,28 +253,6 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormResLayout .sapUiRFLRow:first-ch
 	float: none; /* as label has 100% width not needed (will bring wrong alignments on iPad) */
 }
 
-html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
-html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
-html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
-html[data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel,
-html[data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
-html[data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
-html[data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
-html[data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
-	text-align: right !important; /* to overwrite style set on element */
-}
-
-html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ie] .sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Phone.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanS12) > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Tablet.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanM12) > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-Desktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanL12) > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapUiFormResGridCont > .sapUiFormElementLbl:not(.sapUiRespGridSpanXL12) > .sapMLabel {
-	text-align: left !important; /* to overwrite style set on element */
-}
-
 /* ========================================================== */
 /* Form - ColumnLayout                                        */
 /* ========================================================== */
@@ -306,20 +264,6 @@ html[dir=rtl][data-sap-ui-browser^=ed] .sapUiRespGridMedia-Std-LargeDesktop.sapU
 .sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel {
 	text-align: end !important; /* to overwrite style set on element */
 	float: none; /* otherwise ":" is inside of Elements padding */
-}
-
-html[data-sap-ui-browser^=ie] .sapUiFormCL.sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12) > .sapMLabel,
-html[data-sap-ui-browser^=ie] .sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel,
-html[data-sap-ui-browser^=ed] .sapUiFormCL.sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12) > .sapMLabel,
-html[data-sap-ui-browser^=ed] .sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel {
-	text-align: right !important; /* to overwrite style set on element */
-}
-
-html[dir=rtl][data-sap-ui-browser^=ie] .sapUiFormCL.sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12) > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ie] .sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormCL.sapUiFormCLSmallColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsS12) > .sapMLabel,
-html[dir=rtl][data-sap-ui-browser^=ed] .sapUiFormCL.sapUiFormCLWideColumns .sapUiFormElementLbl:not(.sapUiFormCLCellsL12) > .sapMLabel {
-	text-align: left !important; /* to overwrite style set on element */
 }
 
 /* ========================================================== */
