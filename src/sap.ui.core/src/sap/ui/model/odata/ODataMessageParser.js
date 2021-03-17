@@ -134,12 +134,12 @@ ODataMessageParser.prototype.setHeaderField = function(sFieldName) {
  * @param {object} oResponse
  *   The response from the server containing body and headers
  * @param {object} oRequest
- *   The original request that leads to this response
- * @param {object} mGetEntities
+ *   The original request that lead to this response
+ * @param {object} [mGetEntities]
  *   A map with the keys of the entities requested from the back-end mapped to true
- * @param {object} mChangeEntities
+ * @param {object} [mChangeEntities]
  *   A map with the keys of the entities changed in the back-end mapped to true
- * @param {boolean} bMessageScopeSupported
+ * @param {boolean} [bMessageScopeSupported]
  *   Whether the used OData service supports the message scope
  *   {@link sap.ui.model.odata.MessageScope.BusinessObject}
  * @public

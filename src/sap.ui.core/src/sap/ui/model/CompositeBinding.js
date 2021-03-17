@@ -278,6 +278,9 @@ sap.ui.define([
 	 * nested binding, except for undefined values in the array.
 	 *
 	 * @param {object} oValue the value to set for this binding
+	 * @return {undefined|Promise} a promise in case of asynchronous type parsing or validation
+	 * @throws sap.ui.model.ParseException
+	 * @throws sap.ui.model.ValidateException
 	 *
 	 * @public
 	 */

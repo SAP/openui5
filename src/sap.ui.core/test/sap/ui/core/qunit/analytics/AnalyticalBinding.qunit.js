@@ -3390,4 +3390,72 @@ sap.ui.define([
 		AnalyticalBinding.prototype._refresh.call(oBinding,
 			/*bForceUpdate*/ undefined, /*mChangedEntities*/ undefined, "~mEntityTypes");
 	});
+
+	//*********************************************************************************************
+[
+	[{
+		length : "~iLength",
+		numberOfExpandedLevels : 42,
+		startIndex : "~iStartIndex",
+		threshold : "~iThreshold"
+	}],
+	["~iStartIndex", "~iLength", 42, "~iThreshold"]
+].forEach(function (aArguments, i) {
+	QUnit.test("getRootContexts: parameters map behaves the same as using optional parameters " + i,
+			function (assert) {
+		var oBinding = {
+				oModel : {getContext : function () {}},
+				_considerRequestGrouping : function () {},
+				_getContextsForParentContext : function () {},
+				_getRequestId : function () {},
+				_prepareGroupMembersAutoExpansionRequestIds : function () {},
+				getModel : function () {},
+				getNodeContexts : function () {},
+				isInitial : function () {}
+			},
+			aRootContext = ["foo", "bar"];
+
+		this.mock(oBinding).expects("isInitial").withExactArgs().returns(false);
+		this.mock(oBinding).expects("_getRequestId")
+			.withExactArgs(/*AnalyticalBinding._requestType*/1, {groupId : null})
+			.returns("~sRootContextGroupMembersRequestId");
+		this.mock(oBinding).expects("_getContextsForParentContext").withExactArgs(null)
+			.returns(aRootContext);
+		this.mock(oBinding).expects("_prepareGroupMembersAutoExpansionRequestIds")
+			.withExactArgs("/", /*numberOfExpandedLevels*/42)
+			.returns(["~requestId"]);
+		this.mock(oBinding).expects("_considerRequestGrouping")
+			.withExactArgs(["~requestId", "~sRootContextGroupMembersRequestId"]);
+		this.mock(oBinding).expects("getModel").withExactArgs().returns(oBinding.oModel);
+		this.mock(oBinding.oModel).expects("getContext").withExactArgs("/").returns("~context");
+		this.mock(oBinding).expects("getNodeContexts").withExactArgs("~context", {
+				startIndex : "~iStartIndex",
+				level : 0,
+				length : "~iLength",
+				threshold : "~iThreshold",
+				numberOfExpandedLevels : 42
+			});
+
+		// code under test
+		assert.strictEqual(AnalyticalBinding.prototype.getRootContexts.apply(oBinding, aArguments),
+			aRootContext);
+	});
+});
+
+	//*********************************************************************************************
+[
+	{mParameters : {level : 0}, bResult : true},
+	{mParameters : {level : 1}, bResult : false},
+	{mParameters : undefined, bResult : false}
+].forEach(function (oFixture, i) {
+	QUnit.test("hasChildren: mParameters is optional; " + i, function (assert) {
+		var oBinding = {
+				aAggregationLevel : []
+			};
+
+		// code under test
+		assert.strictEqual(AnalyticalBinding.prototype.hasChildren.call(oBinding, "~oContext",
+			oFixture.mParameters), oFixture.bResult);
+	});
+});
 });

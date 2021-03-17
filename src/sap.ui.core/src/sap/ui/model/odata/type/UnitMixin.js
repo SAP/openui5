@@ -49,7 +49,7 @@ sap.ui.define([
 	/**
 	 * Does nothing as the type does not support constraints.
 	 *
-	 * @param {string} vValue
+	 * @param {string|any[]} vValue
 	 *   The value to be validated
 	 * @throws {sap.ui.model.ValidateException}
 	 *   If {@link #formatValue} has not yet been called with a customizing part
