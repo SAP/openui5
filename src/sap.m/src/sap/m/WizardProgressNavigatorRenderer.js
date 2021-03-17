@@ -28,6 +28,8 @@ sap.ui.define([], function () {
 		OPEN_STEP_PREV: "data-sap-ui-wpn-step-open-prev",
 		OPEN_STEP_NEXT: "data-sap-ui-wpn-step-open-next",
 		ARIA_CURRENT: "aria-current",
+		ARIA_LABEL: "aria-label",
+		ARIA_HASPOPUP: "aria-haspopup",
 		ARIA_DISABLED: "aria-disabled"
 	};
 
@@ -47,15 +49,14 @@ sap.ui.define([], function () {
 	};
 
 	WizardProgressNavigatorRenderer.startNavigator = function (oRm, oControl) {
-		var sWizardRoleDescriptionText = oResourceBundle.getText("WIZARD_PROGRESS_NAVIGATOR_ARIA_ROLE_DESCRIPTION");
+		var sWizardAriaLabelText = oResourceBundle.getText("WIZARD_PROGRESS_NAVIGATOR_ARIA_LABEL");
 
 		oRm.openStart("nav", oControl)
 			.class(CLASSES.NAVIGATION)
 			.class("sapContrastPlus")
 			.attr(ATTRIBUTES.STEP_COUNT, oControl.getStepCount())
 			.accessibilityState({
-				role: "navigation",
-				roledescription: sWizardRoleDescriptionText
+				label: sWizardAriaLabelText
 			})
 			.openEnd();
 	};
@@ -68,6 +69,7 @@ sap.ui.define([], function () {
 
 	WizardProgressNavigatorRenderer.startList = function (oRm, oControl) {
 		var aStepTitles = oControl.getStepTitles();
+		var sWizardAriaLabelText = oResourceBundle.getText("WIZARD_PROGRESS_NAVIGATOR_LIST_ARIA_LABEL");
 
 		oRm.openStart("ul");
 		if (oControl.getVaryingStepCount()) {
@@ -81,7 +83,9 @@ sap.ui.define([], function () {
 		}
 
 		oRm.accessibilityState({
-			role: "list"
+			role: "list",
+			label: sWizardAriaLabelText,
+			controls: oControl.getParent().sId + "-step-container"
 		});
 
 		oRm.openEnd();
@@ -102,8 +106,9 @@ sap.ui.define([], function () {
 	};
 
 	WizardProgressNavigatorRenderer.startStep = function (oRm, oControl, iStepNumber, sStepTitle, sIconUri, sOptionalLabel) {
-		var aSteps = oControl._aCachedSteps,
-			oCurrentStep = aSteps[iStepNumber];
+		var aSteps = oControl._aCachedSteps;
+		var	oCurrentStep = aSteps[iStepNumber - 1];
+		var sValueText = oResourceBundle.getText("WIZARD_STEP_LABEL", [iStepNumber, sStepTitle, sOptionalLabel]);
 
 		oRm.openStart("li")
 			.class(CLASSES.STEP)
@@ -111,8 +116,7 @@ sap.ui.define([], function () {
 			.attr("tabindex", "-1")
 			.accessibilityState({
 				role: "listitem",
-				roledescription: this.writeStepRoleDescription(oRm, sStepTitle, sOptionalLabel, iStepNumber),
-				label: null
+				label: sValueText
 			});
 
 		if (!oCurrentStep || !!parseInt(oCurrentStep.style.zIndex)) {
@@ -155,24 +159,6 @@ sap.ui.define([], function () {
 		}
 
 		oRm.close("span");
-	};
-
-	WizardProgressNavigatorRenderer.writeStepRoleDescription = function (oRm, sStepTitle, sOptionalLabel, iStepNumber) {
-		var sStepText = oResourceBundle.getText("WIZARD_PROG_NAV_STEP_TITLE"),
-			sTitleAttribute;
-
-		if (sStepTitle) {
-			sTitleAttribute = iStepNumber + ". " + sStepTitle;
-		} else {
-			sTitleAttribute = sStepText + " " + iStepNumber;
-		}
-
-		// add optional label
-		if (sOptionalLabel) {
-			sTitleAttribute += " (" + sOptionalLabel + ")";
-		}
-
-		return sTitleAttribute;
 	};
 
 	WizardProgressNavigatorRenderer.renderStepTitle = function (oRm, sStepTitle, sOptionalLabel) {

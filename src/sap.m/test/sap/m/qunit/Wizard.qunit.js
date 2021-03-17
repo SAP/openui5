@@ -842,9 +842,11 @@ sap.ui.define([
 		}
 	});
 
-	QUnit.test("Wizard aria-label attribute", function (assert) {
+	QUnit.test("Wizard aria attributes are set correctly.", function (assert) {
+		var sRole = jQuery(this.oWizard.getDomRef()).attr("role");
 		var sAriaLabel = jQuery(this.oWizard.getDomRef()).attr("aria-label");
 		var sWizardLabel = this.oResourceBundle.getText("WIZARD_LABEL");
+		assert.strictEqual(sRole, "region", "Aria-roledescription attribute of the wizard should be set to 'region'");
 		assert.strictEqual(sAriaLabel, sWizardLabel, "Aria-label attribute of the wizard should be set to '" + sWizardLabel + "'");
 	});
 
