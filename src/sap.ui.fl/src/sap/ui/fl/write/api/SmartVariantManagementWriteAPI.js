@@ -74,7 +74,7 @@ sap.ui.define([
 		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
 		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
 		 * 			sap.ui.comp.smarttable.SmartTable|
-		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variants should be loaded
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the flex object should be added
 		 * @param {object} mPropertyBag.changeSpecificData - Map of parameters, see below
 		 * @param {string} mPropertyBag.changeSpecificData.type - Type (<code>filterVariant</code>, <code>tableVariant</code>, etc.)
 		 * @param {string} mPropertyBag.changeSpecificData.ODataService - Name of the OData service --> can be null
@@ -98,6 +98,10 @@ sap.ui.define([
 		 * Either the <code>Layer</code> or the <code>isUserDependent</code> should be provided for a proper layer determination.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be added
 		 * @param {object} mPropertyBag.changeSpecificData - Map of parameters, see below
 		 * @param {string} [mPropertyBag.changeSpecificData.id] - Id that should be used for the variant
 		 * @param {sap.ui.fl.Layer} [mPropertyBag.changeSpecificData.layer] - Layer to which the variant should be written
@@ -129,7 +133,10 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.reference - Flex reference of the application
-		 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be updated
 		 * @param {string} mPropertyBag.id - ID of the variant
 		 * @param {sap.ui.fl.Layer} [mPropertyBag.layer] - Layer in which the variant removal takes place
 		 * @param {boolean} [mPropertyBag.changeSpecificData.isUserDependent] - Flag if the adjustments of teh variant is personalization only
@@ -150,7 +157,10 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.reference - Flex reference of the application
-		 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be removed
 		 * @param {string} mPropertyBag.id - ID of the variant
 		 * @param {sap.ui.fl.Layer} mPropertyBag.layer - Layer in which the variant removal takes place;
 		 * this either removes the variant from the layer or writes a change to that layer.
@@ -166,7 +176,10 @@ sap.ui.define([
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
 		 * @param {string} mPropertyBag.reference - Flex reference of the application
-		 * @param {string} mPropertyBag.persistencyKey - Key of the variant management
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variants should be loaded
 		 * @param {string} mPropertyBag.id - ID of the variant
 		 * @returns {sap.ui.fl.apply._internal.flexObjects.CompVariant} The reverted variant
 		 */
@@ -178,7 +191,10 @@ sap.ui.define([
 		 * Saves/flushes all current changes to the back end.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the flex objects should be saved
 		 * @returns {Promise<object[]>} Promise that resolves with an array of responses or is rejected with the first error
 		 * @private
 		 * @ui5-restricted sap.ui.comp.smartvariant.SmartVariantManagement
@@ -193,7 +209,10 @@ sap.ui.define([
 		 * WARNING: The consumer has to make sure that the changes have already been retrieved with <code>getChanges</code>.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which a variant should be set as 'Default'
 		 * @param {string} mPropertyBag.defaultVariantId - ID of the new default variant
 		 * @param {string} [mPropertyBag.generator] - ID for the creating class / use case of the setDefault
 		 * @param {string} [mPropertyBag.compositeCommand] - Name of the composite command triggering the setting of the default
@@ -211,7 +230,10 @@ sap.ui.define([
 		 * WARNING: Tthe consumer has to make sure that the changes have already been retrieved with <code>getChanges</code>.
 		 *
 		 * @param {object} mPropertyBag - Object with parameters as properties
-		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement} mPropertyBag.control - SAPUI5 Smart Variant Management control
+		 * @param {sap.ui.comp.smartvariants.SmartVariantManagement|
+		 * 			sap.ui.comp.smartfilterbar.SmartFilterBar|
+		 * 			sap.ui.comp.smarttable.SmartTable|
+		 * 			sap.ui.comp.smartchart.SmartChart} mPropertyBag.control - Variant management control for which the variant should be set to 'Apply Automatically'
 		 * @param {boolean} mPropertyBag.executeOnSelection - New <code>ExecuteOnSelection</code> flag for standard variant
 		 * @private
 		 * @ui5-restricted
