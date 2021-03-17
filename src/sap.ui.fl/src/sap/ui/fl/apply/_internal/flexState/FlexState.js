@@ -292,8 +292,6 @@ sap.ui.define([
 				if (!_mInstances[mPropertyBag.reference].storageResponse) {
 					_mInstances[mPropertyBag.reference].storageResponse = filterByMaxLayer(mResponse);
 					updateComponentData(mPropertyBag);
-					// for the time being ensure variants map is prepared until getChangesForComponent() is removed
-					FlexState.getVariantsState(mPropertyBag.reference);
 				}
 			}.bind(null, mPropertyBag));
 	};
@@ -311,17 +309,11 @@ sap.ui.define([
 	 */
 	FlexState.clearAndInitialize = function(mPropertyBag) {
 		enhancePropertyBag(mPropertyBag);
-		var bVariantsMapExists = !!ObjectPath.get(["preparedMaps", "variantsMap"], _mInstances[mPropertyBag.reference]);
 
 		FlexState.clearState(mPropertyBag.reference);
 		FlexState.clearState(Utils.normalizeReference(mPropertyBag.reference));
 
-		return FlexState.initialize(mPropertyBag)
-			.then(function(bVariantsMapExists, sReference) {
-				if (bVariantsMapExists) {
-					return FlexState.getVariantsState(sReference);
-				}
-			}.bind(null, bVariantsMapExists, mPropertyBag.reference));
+		return FlexState.initialize(mPropertyBag);
 	};
 
 	FlexState.clearState = function(sReference) {
