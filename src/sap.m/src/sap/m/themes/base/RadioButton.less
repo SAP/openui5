@@ -29,7 +29,7 @@
 .sapMRb .sapMRbB {
 	height: 3rem;
 	width: 3rem;
-	display: inline-block; /* for ie*/
+	display: inline-block;
 	font-size: 1rem; /* override font size of the message dialog */
 
 	&:focus {
@@ -44,19 +44,6 @@
 		padding: 1px; /* using padding here so that margin won't collide */
 		stroke: @sapUiFieldBorderColor;
 		fill: @sapUiFieldBackground;
-	}
-}
-
-html[data-sap-ui-browser^="ie"].sap-desktop {
-	.sapMRbSvg {
-		position: relative;
-		left: 0.6875rem;
-		top: 0.6875rem;
-	}
-
-	.sapUiSizeCompact .sapMRbSvg {
-		left: 0.5rem;
-		top: 0.5rem;
 	}
 }
 

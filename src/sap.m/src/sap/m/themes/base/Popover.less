@@ -263,14 +263,6 @@ html[data-sap-ui-browser^="sf"] .sapMPopover {
 	}
 }
 
-/* TODO remove after the end of support for Internet Explorer */
-/* Outer width of the Popover's content is wrong in IE */
-html[data-sap-ui-browser^="ie"] {
-	.sapMPopover .sapMPopoverScroll {
-		display: block;
-	}
-}
-
 .sapMPopover.sapUiSizeCompact {
 	.sapMPopoverArrLeft:before,
 	.sapMPopoverArrRight:before {
@@ -321,7 +313,6 @@ html[data-sap-ui-browser^="ie"] {
 .sapMPopoverResizing * {
 	-moz-user-select: none !important;
 	-webkit-user-select: none !important;
-	-ms-user-select: none !important;
 	user-select: none !important;
 }
 
