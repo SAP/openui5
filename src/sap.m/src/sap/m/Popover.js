@@ -1159,10 +1159,12 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
-		Popover.prototype.onkeyup = function (oEvent) {
+		Popover.prototype.onkeydown = function (oEvent) {
 			var oKC = KeyCodes,
 				iKC = oEvent.which || oEvent.keyCode,
 				bAlt = oEvent.altKey;
+
+			this._isSpacePressed = this._isSpacePressed || oKC.SPACE === iKC;
 
 			// Popover should be closed when ESCAPE key or ATL+F4 is pressed
 			if ((!this._isSpacePressed && iKC === oKC.ESCAPE) ||
@@ -1177,10 +1179,6 @@ sap.ui.define([
 				oEvent.stopPropagation();
 				oEvent.preventDefault();
 			}
-
-			if (oKC.SPACE === iKC) {
-				this._isSpacePressed = false;
-			}
 		};
 
 		/**
@@ -1189,11 +1187,13 @@ sap.ui.define([
 		 * @param {jQuery.Event} oEvent The event object
 		 * @private
 		 */
-		Popover.prototype.onkeydown = function (oEvent) {
+		Popover.prototype.onkeyup = function (oEvent) {
 			var oKC = KeyCodes,
 				iKC = oEvent.which || oEvent.keyCode;
 
-			this._isSpacePressed = this._isSpacePressed || oKC.SPACE === iKC;
+			if (oKC.SPACE === iKC) {
+				this._isSpacePressed = false;
+			}
 		};
 
 		/**
