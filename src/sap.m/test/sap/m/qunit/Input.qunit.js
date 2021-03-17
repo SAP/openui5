@@ -486,6 +486,9 @@ sap.ui.define([
 		});
 		oInput.placeAt("content");
 
+		// change event should be fired only when the input is on focus
+		oInput.onfocusin();
+
 		function checkSubmit(sText, bSubmitExpected, bChangeExpected, sExpectedValue) {
 			var e = "";
 			if (bChangeExpected) {
@@ -3223,6 +3226,29 @@ sap.ui.define([
 
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ARROW_DOWN);
 		this.clock.tick();
+		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
+		this.clock.tick();
+
+		// Assert
+		assert.strictEqual(fnOnChangeSpy.calledOnce, true, "change event handler only called once");
+
+		// Clean
+		fnOnChangeSpy.restore();
+		oInput.destroy();
+	});
+
+	QUnit.test("Set selection with 'ENTER' key press", function(assert) {
+		// Arrange
+		var oInput = createInputWithSuggestions();
+		var fnOnChangeSpy = this.spy(InputBase.prototype, 'onChange');
+
+		oInput.placeAt("content");
+		sap.ui.getCore().applyChanges();
+
+		// Act
+		oInput._$input.trigger("focus").val("It").trigger("input");
+		this.clock.tick(300);
+
 		qutils.triggerKeydown(oInput.getFocusDomRef(), KeyCodes.ENTER);
 		this.clock.tick();
 
