@@ -3169,13 +3169,22 @@ sap.ui.define([
 					return that.fetchValueListMappings(oValueListModel,
 						/*sQualifiedParentName*/aResults[0], oProperty, /*aOverloads*/aResults[4]
 					).then(function (mValueListMappingByQualifier) {
-						// insert the returned mappings into oValueListInfo
-						Object.keys(mValueListMappingByQualifier).forEach(function (sQualifier) {
-							addMapping(mValueListMappingByQualifier[sQualifier], sQualifier,
-								sMappingUrl, oValueListModel);
+						// enrich with oValueListModel
+						return {
+							valueListMappingByQualifier : mValueListMappingByQualifier,
+							$model : oValueListModel
+						};
+					});
+				})).then(function (aResults) {
+					// insert the returned mappings into oValueListInfo in the order of aMappingUrls
+					aMappingUrls.forEach(function (sMappingUrl, i) {
+						var mvalueListMappingByQualifier = aResults[i].valueListMappingByQualifier;
+						Object.keys(mvalueListMappingByQualifier).forEach(function (sQualifier) {
+							addMapping(mvalueListMappingByQualifier[sQualifier], sQualifier,
+								sMappingUrl, aResults[i].$model);
 						});
 					});
-				}));
+				});
 			})).then(function () {
 				var aQualifiers;
 

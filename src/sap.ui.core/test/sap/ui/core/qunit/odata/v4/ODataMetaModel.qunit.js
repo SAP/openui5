@@ -5875,7 +5875,7 @@ sap.ui.define([
 					assert.strictEqual(oError.message,
 						"Annotations 'com.sap.vocabularies.Common.v1.ValueList' with "
 						+ "identical qualifier '' for property " + sPropertyPath
-						+ " in " + sMappingUrlBar + " and " + sMappingUrl1);
+						+ " in " + sMappingUrl1 + " and " + sMappingUrlBar);
 				});
 		});
 	});
@@ -6407,6 +6407,97 @@ sap.ui.define([
 							+ " in " + sValueListService + " and /Foo/DataService/$metadata");
 				});
 		});
+	});
+
+	//*********************************************************************************************
+	QUnit.test("requestValueListInfo: two ValueListReferences stay in order", function (assert) {
+		var oProperty = {
+				"$kind" : "Property"
+			},
+			sValueListService1 = "../FirstValueListService/$metadata",
+			sValueListService2 = "../SecondValueListService/$metadata",
+			oMetadata = {
+				"$EntityContainer" : "zui5_epm_sample.Container",
+				"zui5_epm_sample.Product" : {
+					"$kind" : "Entity",
+					"Category" : oProperty
+				},
+				"zui5_epm_sample.Container" : {
+					"ProductList" : {
+						"$kind" : "EntitySet",
+						"$Type" : "zui5_epm_sample.Product"
+					}
+				},
+				"$Annotations" : {
+					"zui5_epm_sample.Product/Category" : {
+						"@com.sap.vocabularies.Common.v1.ValueListReferences" :
+							[sValueListService1, sValueListService2]
+					}
+				}
+			},
+			oModel = new ODataModel({
+				serviceUrl : "/Foo/DataService/",
+				synchronizationMode : "None"
+			}),
+			oMetaModelMock = this.mock(oModel.getMetaModel()),
+			sPropertyPath = "/ProductList('HT-1000')/Category",
+			fnResolve1,
+			fnResolve2,
+			oResultPromise,
+			oValueListModel1 = {"id" : "FirstValueListModel"}, // for deepEqual
+			oValueListModel2 = {"id" : "SecondValueListModel"},
+			oValueListMapping1 = {
+				"$model" : oValueListModel1,
+				"CollectionPath" : "foo",
+				"Label" : "from first value list service"
+			},
+			oValueListMapping2 = {
+				"$model" : oValueListModel2,
+				"CollectionPath" : "bar",
+				"Label" : "from second value list service"
+			};
+
+		oMetaModelMock.expects("fetchEntityContainer").atLeast(1)
+			.returns(SyncPromise.resolve(oMetadata));
+		oMetaModelMock.expects("getOrCreateSharedModel")
+			.withExactArgs(sValueListService1, undefined, true)
+			.returns(oValueListModel1);
+		oMetaModelMock.expects("getOrCreateSharedModel")
+			.withExactArgs(sValueListService2, undefined, true)
+			.returns(oValueListModel2);
+		oMetaModelMock.expects("fetchValueListMappings")
+			.withExactArgs(sinon.match.same(oValueListModel1), "zui5_epm_sample.Product",
+				sinon.match.same(oProperty), undefined)
+			.returns(new Promise(function (resolve) {fnResolve1 = resolve;}));
+		oMetaModelMock.expects("fetchValueListMappings")
+			.withExactArgs(sinon.match.same(oValueListModel2), "zui5_epm_sample.Product",
+				sinon.match.same(oProperty), undefined)
+			.returns(new Promise(function (resolve) {fnResolve2 = resolve;}));
+
+		// code under test
+		oResultPromise = oModel.getMetaModel().requestValueListInfo(sPropertyPath, true)
+			.then(function (oResult) {
+				assert.deepEqual(Object.keys(oResult), ["foo", "bar"]);
+				assert.deepEqual(oResult, {
+					"foo" : {
+						$model : oValueListModel1,
+						CollectionPath : "foo",
+						Label : "from first value list service"
+					},
+					"bar" : {
+						$model : oValueListModel2,
+						CollectionPath : "bar",
+						Label : "from second value list service"
+					}
+				});
+			}, function (oError) {
+				assert.Ok(false, "Unexpected error");
+			});
+
+		fnResolve2({"bar" : oValueListMapping2});
+		// make sure the first fetchValueListMapping call is resolved only after the second
+		setTimeout(fnResolve1, 0, {"foo" : oValueListMapping1});
+		return oResultPromise;
 	});
 
 	//*********************************************************************************************
