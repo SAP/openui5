@@ -326,8 +326,21 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/assert"],
 		var M_LOCALE_TO_ABAP_LANGUAGE = inverse(M_ABAP_LANGUAGE_TO_LOCALE);
 
 		/**
-		 * Helper to analyze and parse designtime variables
+		 * Helper to analyze and parse designtime (aka buildtime) variables
 		 *
+		 * At buildtime, the build can detect a pattern like $some-variable-name:some-value$
+		 * and replace 'some-value' with a value determined at buildtime (here: the actual list of locales).
+		 *
+		 * At runtime, this method removes the surrounding pattern ('$some-variable-name:' and '$') and leaves only the 'some-value'.
+		 * Additionally, this value is parsed as a comma-separated list (because this is the only use case here).
+		 *
+		 * The mimic of the comments is borrowed from the CVS (Concurrent Versions System),
+		 * see http://web.mit.edu/gnu/doc/html/cvs_17.html.
+		 *
+		 * If no valid <code>sValue</code> is given, <code>null</code> is returned
+		 *
+		 * @param {string} sValue The raw designtime property e.g. $cldr-rtl-locales:ar,fa,he$
+		 * @returns {string[]|null} The designtime property e.g. ['ar', 'fa', 'he']
 		 * @private
 		 */
 		function getDesigntimePropertyAsArray(sValue) {
@@ -365,12 +378,14 @@ sap.ui.define(['sap/ui/base/Object', "sap/base/assert"],
 		 * that when a language (e.g. 'ar') is marked as 'RTL', then all language/region
 		 * combinations for that language (e.g. 'ar_SA') will be 'RTL' as well,
 		 * even if the combination is not mentioned in the above configuration.
-		 * There is no mean to define RTL=false for a language/region, when RTL=true for
+		 * There is no means to define RTL=false for a language/region, when RTL=true for
 		 * the language alone.
 		 *
 		 * As of 3/2013 this is true for all locales/regions supported by UI5.
 		 *
 		 * @param {string|sap.ui.core.Locale} vLanguage Locale or language to check
+		 * @returns {boolean} <code>true</code> if <code>vLanguage</code> implies RTL,
+		 *  otherwise <code>false</code>
 		 * @private
 		 */
 		Locale._impliesRTL = function(vLanguage) {
